@@ -600,7 +600,7 @@ describe('Device API routes for GxConnect Devices', () => {
       result: {
         id: 'UNIQUE-RESULT-ID',
         assay: {
-          id: 'MtbRifUltra',
+          id: 'GxMtbRifUltra',
           version: '2',
         },
         instrument: {
@@ -927,7 +927,7 @@ describe('Device API routes for GxConnect Devices', () => {
           },
           'DETECTED MEDIUM|INDETERMINATE|': {
             resultId: '816097_956643_6ee11f74',
-            assay: 'MtbRifUltra',
+            assay: 'GxMtbRifUltra',
             resultCategory1: 'Detected',
             resultCategory2: 'Indeterminate',
           },
@@ -1311,13 +1311,13 @@ describe('Device API routes for GxConnect Devices', () => {
           },
           'MTB DETECTED HIGH||RIF Resistance DETECTED': {
             resultId: '706164_531205_381c7c34',
-            assay: 'MtbRifUltra',
+            assay: 'GxMtbRifUltra',
             resultCategory1: 'Detected',
             resultCategory2: 'Detected',
           },
           'MTB DETECTED HIGH||RIF Resistance NOT DETECTED': {
             resultId: '816097_156913_5506995a',
-            assay: 'MtbRifUltra',
+            assay: 'GxMtbRifUltra',
             resultCategory1: 'Detected',
             resultCategory2: 'NotDetected',
           },
@@ -1353,7 +1353,7 @@ describe('Device API routes for GxConnect Devices', () => {
           },
           'MTB DETECTED LOW||RIF Resistance NOT DETECTED': {
             resultId: '816120_842542_47d46bea',
-            assay: 'MtbRifUltra',
+            assay: 'GxMtbRifUltra',
             resultCategory1: 'Detected',
             resultCategory2: 'NotDetected',
           },
@@ -1389,13 +1389,13 @@ describe('Device API routes for GxConnect Devices', () => {
           },
           'MTB DETECTED MEDIUM||RIF Resistance DETECTED': {
             resultId: '816096_819513_6ca15977',
-            assay: 'MtbRifUltra',
+            assay: 'GxMtbRifUltra',
             resultCategory1: 'Detected',
             resultCategory2: 'Detected',
           },
           'MTB DETECTED MEDIUM||RIF Resistance NOT DETECTED': {
             resultId: '816101_713437_2a34229c',
-            assay: 'MtbRifUltra',
+            assay: 'GxMtbRifUltra',
             resultCategory1: 'Detected',
             resultCategory2: 'NotDetected',
           },
@@ -1449,13 +1449,13 @@ describe('Device API routes for GxConnect Devices', () => {
           },
           'MTB DETECTED VERY LOW||RIF Resistance INDETERMINATE': {
             resultId: '816096_411048_b2be1867',
-            assay: 'MtbRifUltra',
+            assay: 'GxMtbRifUltra',
             resultCategory1: 'Detected',
             resultCategory2: 'Indeterminate',
           },
           'MTB DETECTED VERY LOW||RIF Resistance NOT DETECTED': {
             resultId: '816097_427124_6777ebf5',
-            assay: 'MtbRifUltra',
+            assay: 'GxMtbRifUltra',
             resultCategory1: 'Detected',
             resultCategory2: 'NotDetected',
           },
@@ -1467,7 +1467,7 @@ describe('Device API routes for GxConnect Devices', () => {
           },
           'MTB Trace DETECTED|RIF Resistance INDETERMINATE': {
             resultId: '816097_934455_be664213',
-            assay: 'MtbRifUltra',
+            assay: 'GxMtbRifUltra',
             resultCategory1: 'Detected',
             resultCategory2: 'Indeterminate',
           },
@@ -1629,7 +1629,7 @@ describe('Device API routes for GxConnect Devices', () => {
           },
           '|MTB Trace DETECTED|RIF Resistance INDETERMINATE': {
             resultId: '816097_516033_4ca9cda7',
-            assay: 'MtbRifUltra',
+            assay: 'GxMtbRifUltra',
             resultCategory1: 'Detected',
             resultCategory2: 'Indeterminate',
           },

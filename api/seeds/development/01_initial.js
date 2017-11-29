@@ -838,7 +838,7 @@ async function seed(knex) {
   const [assayGeneXpertMtbRifUltraId] = await knex('Assay').insert({
     name: 'GeneXpert MTB/Rif Ultra',
     i18nKey: 'assayGeneXpertMtbRifUltra',
-    externalId: 'MtbRifUltra',
+    externalId: 'GxMtbRifUltra',
     assayTypeId: assayTypeMTBRifId,
     deviceTypeId: deviceTypeGeneXpertId,
     resultSourceId: resultSourceDiagnosticId,
