@@ -1509,10 +1509,21 @@ describe('Device Result API routes', () => {
       }))
 
     describe('inventory management', () => {
-      function getInventoryItemsAtSite(knex, siteId) {
-        return knex('InventoryItem')
-          .where({ siteId })
-          .select('consumableId', 'lotNumber', 'expiresOn', 'quantityOnHand')
+      function* getInventoryItemsAtSite(knex, siteId) {
+        return _.map(
+          yield knex('InventoryItem')
+            .where({ siteId })
+            .select(
+              'consumableId',
+              'lotNumber',
+              knex.raw('CAST(expiresOn as CHAR) AS expiresOn'),
+              'quantityOnHand'
+            ),
+          inventoryItem =>
+            _.assign({}, inventoryItem, {
+              expiresOn: new Date(inventoryItem.expiresOn),
+            })
+        )
       }
 
       it('should deduct inventory levels from the site', () =>
@@ -1539,7 +1550,7 @@ describe('Device Result API routes', () => {
               .where({ name: resultDetails.cartridgeName })
               .first('id')).id
 
-            const inventoryItemsBefore = yield getInventoryItemsAtSite(
+            const inventoryItemsBefore = yield* getInventoryItemsAtSite(
               knex,
               siteId
             )
@@ -1571,7 +1582,7 @@ describe('Device Result API routes', () => {
                 assert.equal(res.status, 200)
               })
 
-            const inventoryItemsAfter = yield getInventoryItemsAtSite(
+            const inventoryItemsAfter = yield* getInventoryItemsAtSite(
               knex,
               siteId
             )
@@ -1610,7 +1621,7 @@ describe('Device Result API routes', () => {
 
           let resultDetails = {
             lotNumber: 'ABC123',
-            expirationDate: '2045-01-30T00:00:00+00:00',
+            expirationDate: '2045-01-30',
           }
 
           const [lotNumberAndExpirationDateMatch] = yield knex(
@@ -1634,11 +1645,11 @@ describe('Device Result API routes', () => {
             .first('ca.quantity')).quantity
 
           let cartridgeAtSiteBefore = _.find(
-            yield getInventoryItemsAtSite(knex, siteId),
+            yield* getInventoryItemsAtSite(knex, siteId),
             inventoryItem =>
               inventoryItem.lotNumber === resultDetails.lotNumber &&
-              inventoryItem.expiresOn.toJSON() ===
-                new Date(resultDetails.expirationDate).toJSON()
+              inventoryItem.expiresOn.toISOString() ===
+                new Date(resultDetails.expirationDate).toISOString()
           )
 
           yield server
@@ -1648,6 +1659,8 @@ describe('Device Result API routes', () => {
               startedOn: now,
               data: { a: 'b' },
               assay: { id: assayExternalId },
+              sample: { id: Math.random().toString(36).slice(2) },
+              instrument: { serial: '02384702' },
               consumable: {
                 lot: resultDetails.lotNumber,
                 expirationDate: resultDetails.expirationDate,
@@ -1658,11 +1671,11 @@ describe('Device Result API routes', () => {
             })
 
           let cartridgeAtSiteAfter = _.find(
-            yield getInventoryItemsAtSite(knex, siteId),
+            yield* getInventoryItemsAtSite(knex, siteId),
             inventoryItem =>
               inventoryItem.lotNumber === resultDetails.lotNumber &&
-              inventoryItem.expiresOn.toJSON() ===
-                new Date(resultDetails.expirationDate).toJSON()
+              inventoryItem.expiresOn.toISOString() ===
+                new Date(resultDetails.expirationDate).toISOString()
           )
 
           assert.equal(
@@ -1672,9 +1685,9 @@ describe('Device Result API routes', () => {
 
           resultDetails = {
             lotNumber: 'XYZ321',
-            expirationDate: '2035-01-30T00:00:00+00:00',
+            expirationDate: '2035-01-30',
           }
-          const randomExpiryDate = new Date('2017-03-05T00:00:00+00:00')
+          const randomExpiryDate = new Date('2017-03-05')
           const [onlyLotNumberMatches] = yield knex('InventoryItem').insert({
             consumableId: GXMtbRifCartridgeId,
             siteId,
@@ -1687,11 +1700,11 @@ describe('Device Result API routes', () => {
             updatedOn: now,
           })
           cartridgeAtSiteBefore = _.find(
-            yield getInventoryItemsAtSite(knex, siteId),
+            yield* getInventoryItemsAtSite(knex, siteId),
             inventoryItem =>
               inventoryItem.lotNumber === resultDetails.lotNumber &&
-              inventoryItem.expiresOn.toJSON() ===
-                new Date(randomExpiryDate).toJSON()
+              inventoryItem.expiresOn.toISOString() ===
+                new Date(randomExpiryDate).toISOString()
           )
 
           yield server
@@ -1701,6 +1714,8 @@ describe('Device Result API routes', () => {
               startedOn: now,
               data: { a: 'b' },
               assay: { id: assayExternalId },
+              sample: { id: Math.random().toString(36).slice(2) },
+              instrument: { serial: '02384702' },
               consumable: {
                 lot: resultDetails.lotNumber,
                 expirationDate: resultDetails.expirationDate,
@@ -1711,11 +1726,11 @@ describe('Device Result API routes', () => {
             })
 
           cartridgeAtSiteAfter = _.find(
-            yield getInventoryItemsAtSite(knex, siteId),
+            yield* getInventoryItemsAtSite(knex, siteId),
             inventoryItem =>
               inventoryItem.lotNumber === resultDetails.lotNumber &&
-              inventoryItem.expiresOn.toJSON() ===
-                new Date(randomExpiryDate).toJSON()
+              inventoryItem.expiresOn.toISOString() ===
+                new Date(randomExpiryDate).toISOString()
           )
 
           assert.equal(
@@ -1725,7 +1740,7 @@ describe('Device Result API routes', () => {
 
           resultDetails = {
             lotNumber: 'ABC123',
-            expirationDate: '2019-11-16T00:00:00+00:00',
+            expirationDate: '2019-11-16',
           }
           const randomLotNumber = 'RANDOM-LOT'
           const [onlyExpirationDateMatches] = yield knex(
@@ -1742,11 +1757,11 @@ describe('Device Result API routes', () => {
             updatedOn: now,
           })
           cartridgeAtSiteBefore = _.find(
-            yield getInventoryItemsAtSite(knex, siteId),
+            yield* getInventoryItemsAtSite(knex, siteId),
             inventoryItem =>
               inventoryItem.lotNumber === randomLotNumber &&
-              inventoryItem.expiresOn.toJSON() ===
-                new Date(resultDetails.expirationDate).toJSON()
+              inventoryItem.expiresOn.toISOString() ===
+                new Date(resultDetails.expirationDate).toISOString()
           )
 
           yield server
@@ -1756,8 +1771,10 @@ describe('Device Result API routes', () => {
               startedOn: now,
               data: { a: 'b' },
               assay: { id: assayExternalId },
+              sample: { id: Math.random().toString(36).slice(2) },
+              instrument: { serial: '02384702' },
               consumable: {
-                lot: resultDetails.lotNumber,
+                lot: randomLotNumber,
                 expirationDate: resultDetails.expirationDate,
               },
             })
@@ -1765,12 +1782,13 @@ describe('Device Result API routes', () => {
               assert.equal(res.status, 200)
             })
 
+          const inventoryAfter = yield* getInventoryItemsAtSite(knex, siteId)
           cartridgeAtSiteAfter = _.find(
-            yield getInventoryItemsAtSite(knex, siteId),
+            inventoryAfter,
             inventoryItem =>
               inventoryItem.lotNumber === randomLotNumber &&
-              inventoryItem.expiresOn.toJSON() ===
-                new Date(resultDetails.expirationDate).toJSON()
+              inventoryItem.expiresOn.toISOString() ===
+                new Date(resultDetails.expirationDate).toISOString()
           )
 
           yield knex('InventoryLog')
@@ -1815,9 +1833,9 @@ describe('Device Result API routes', () => {
 
           const resultDetails = {
             lotNumber: 'QWE987',
-            expirationDate: '2017-12-16T00:00:00+00:00',
+            expirationDate: '2017-12-16',
           }
-          const randomExpiryDate = new Date('2017-03-05T00:00:00+00:00')
+          const randomExpiryDate = new Date('2017-03-05')
           const [onlyLotNumberMatches] = yield knex('InventoryItem').insert({
             consumableId: GXMtbRifCartridgeId,
             siteId,
@@ -1843,7 +1861,7 @@ describe('Device Result API routes', () => {
             updatedBy: adminId,
             updatedOn: now,
           })
-          const inventoryItemsBefore = yield getInventoryItemsAtSite(
+          const inventoryItemsBefore = yield* getInventoryItemsAtSite(
             knex,
             siteId
           )
@@ -1851,15 +1869,15 @@ describe('Device Result API routes', () => {
             inventoryItemsBefore,
             inventoryItem =>
               inventoryItem.lotNumber === resultDetails.lotNumber &&
-              inventoryItem.expiresOn.toJSON() ===
-                new Date(randomExpiryDate).toJSON()
+              inventoryItem.expiresOn.toISOString() ===
+                new Date(randomExpiryDate).toISOString()
           )
           const matchingExpirationDateCartridgeAtSiteBefore = _.find(
             inventoryItemsBefore,
             inventoryItem =>
               inventoryItem.lotNumber === randomLotNumber &&
-              inventoryItem.expiresOn.toJSON() ===
-                new Date(resultDetails.expirationDate).toJSON()
+              inventoryItem.expiresOn.toISOString() ===
+                new Date(resultDetails.expirationDate).toISOString()
           )
 
           yield server
@@ -1878,7 +1896,7 @@ describe('Device Result API routes', () => {
               assert.equal(res.status, 200)
             })
 
-          const inventoryItemsAfter = yield getInventoryItemsAtSite(
+          const inventoryItemsAfter = yield* getInventoryItemsAtSite(
             knex,
             siteId
           )
@@ -1897,15 +1915,15 @@ describe('Device Result API routes', () => {
             inventoryItemsAfter,
             inventoryItem =>
               inventoryItem.lotNumber === resultDetails.lotNumber &&
-              inventoryItem.expiresOn.toJSON() ===
-                new Date(randomExpiryDate).toJSON()
+              inventoryItem.expiresOn.toISOString() ===
+                new Date(randomExpiryDate).toISOString()
           )
           const matchingExpirationDateCartridgeAtSiteAfter = _.find(
             inventoryItemsAfter,
             inventoryItem =>
               inventoryItem.lotNumber === randomLotNumber &&
-              inventoryItem.expiresOn.toJSON() ===
-                new Date(resultDetails.expirationDate).toJSON()
+              inventoryItem.expiresOn.toISOString() ===
+                new Date(resultDetails.expirationDate).toISOString()
           )
 
           assert.equal(
@@ -1948,7 +1966,7 @@ describe('Device Result API routes', () => {
               ).setHours(0, 0, 0, 0)
             ).toJSON(),
           }
-          const inventoryItemsBefore = yield getInventoryItemsAtSite(
+          const inventoryItemsBefore = yield* getInventoryItemsAtSite(
             knex,
             siteId
           )
@@ -1975,7 +1993,7 @@ describe('Device Result API routes', () => {
               assert.equal(res.status, 200)
             })
 
-          const inventoryItemsAfter = yield getInventoryItemsAtSite(
+          const inventoryItemsAfter = yield* getInventoryItemsAtSite(
             knex,
             siteId
           )
@@ -2027,8 +2045,8 @@ describe('Device Result API routes', () => {
             resultDetails.lotNumber
           )
           assert.equal(
-            inventoryConsumptionLog.expiresOn.toJSON(),
-            resultDetails.expirationDate
+            inventoryConsumptionLog.expiresOn.toISOString(),
+            new Date(resultDetails.expirationDate).toISOString()
           )
           assert.equal(
             inventoryConsumptionLog.quantity,

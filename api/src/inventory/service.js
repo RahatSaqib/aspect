@@ -1,6 +1,5 @@
 const _ = require('lodash')
 const Boom = require('boom')
-const setMilliseconds = require('date-fns/set_milliseconds')
 const {
   knex,
   transact,
@@ -76,12 +75,9 @@ function compareConsumableInResultWithInventoryItem(
   mustMatchLotNumber
 ) {
   const resultExpirationDate = consumableInResult.expirationDate
-    ? setMilliseconds(new Date(consumableInResult.expirationDate), 0)
+    ? new Date(new Date(consumableInResult.expirationDate).setHours(0, 0, 0, 0))
     : null
-  const inventoryItemExpirationDate = setMilliseconds(
-    inventoryItem.expiresOn,
-    0
-  )
+  const inventoryItemExpirationDate = inventoryItem.expiresOn
   const resultLotNumber = consumableInResult.lot ? consumableInResult.lot : null
   const inventoryItemLotNumber = inventoryItem.lotNumber
     ? inventoryItem.lotNumber
@@ -163,6 +159,7 @@ async function consumeInventoryForResult(
     'Test Conducted',
     true
   )
+
   const firstUnknownConsumableInResult =
     _.find(
       consumablesInResultData,
@@ -206,7 +203,9 @@ async function consumeInventoryForResult(
             siteId,
             lotNumber: lotNumberInResultData,
             expiresOn: expirationDateInResultData
-              ? setMilliseconds(new Date(expirationDateInResultData), 0)
+              ? new Date(
+                new Date(expirationDateInResultData).setHours(0, 0, 0, 0)
+              )
               : undefined,
             quantity: 0,
             now,
@@ -225,9 +224,10 @@ async function consumeInventoryForResult(
               id: null,
               lotNumber: firstUnknownConsumableInResult.lot,
               expiresOn: firstUnknownConsumableInResult.expirationDate
-                ? setMilliseconds(
-                  new Date(firstUnknownConsumableInResult.expirationDate),
-                  0
+                ? new Date(
+                  new Date(
+                    firstUnknownConsumableInResult.expirationDate
+                  ).setHours(0, 0, 0, 0)
                 )
                 : null,
             }
@@ -237,12 +237,13 @@ async function consumeInventoryForResult(
               inventoryItemAtSite.consumableId ===
               assayConsumable.consumableId &&
               inventoryItemAtSite.expiresOn >=
-              setMilliseconds(testStartedOn || now, 0)
+              new Date((testStartedOn || now).setHours(0, 0, 0, 0))
             ) ||
             _.find(_.sortBy(matchingInventoryItems, 'expiresOn'), {
               consumableId: assayConsumable.consumableId,
             }))
-        await knex('InventoryLog').insert({
+        await logInventoryChange({
+          knex,
           inventoryItemId: matchingInventoryOnHand.id,
           consumableId: assayConsumable.consumableId,
           siteId,
@@ -250,31 +251,20 @@ async function consumeInventoryForResult(
           resultId,
           lotNumber: matchingInventoryOnHand.lotNumber,
           expiresOn: matchingInventoryOnHand.expiresOn,
-          quantity: -assayConsumable.quantity,
+          quantity: assayConsumable.quantity,
           operation: 'result',
           adjustedFrom: testStartedOn,
           adjustedTo: testEndedOn,
           createdOn: now,
         })
         if (matchingInventoryOnHand.id) {
-          const currentQuantity = (await knex('InventoryItem')
-            .where({id: matchingInventoryOnHand.id})
-            .first('quantityOnHand')).quantityOnHand
-          if (assayConsumable.quantity === currentQuantity) {
-            await knex('InventoryItem')
-              .where({id: matchingInventoryOnHand.id})
-              .delete()
-          } else {
-            await knex('InventoryItem')
-              .where({id: matchingInventoryOnHand.id})
-              .update({
-                quantityOnHand: knex.raw(
-                  `quantityOnHand - ${assayConsumable.quantity}`
-                ),
-                updatedBy: null,
-                updatedOn: now,
-              })
-          }
+          await updateInventoryItem(knex, matchingInventoryOnHand.id, {
+            quantityOnHand: knex.raw(
+              `quantityOnHand - ${assayConsumable.quantity}`
+            ),
+            updatedBy: null,
+            updatedOn: now,
+          })
         }
       }
     })
@@ -715,6 +705,7 @@ async function transferInventory(request) {
     )
 
     await knex('InventoryLog').insert({
+      knex,
       inventoryItemId,
       consumableId,
       siteId: fromSiteId,
@@ -804,6 +795,7 @@ async function receiveInventory(request) {
     } = await findConsumableReason('Transfer Received', false)
 
     await knex('InventoryLog').insert({
+      knex,
       inventoryItemId: destinationInventoryItemId,
       consumableId,
       siteId: toSiteId,
@@ -877,7 +869,8 @@ async function changeInventoryQuantity({
       userId,
     })
 
-    await knex('InventoryLog').insert({
+    await logInventoryChange({
+      knex,
       inventoryItemId,
       consumableId,
       siteId,
@@ -895,6 +888,142 @@ async function changeInventoryQuantity({
   })
 
   return inventoryItemId
+}
+
+function* logInventoryChange({
+  knex,
+  inventoryItemId,
+  consumableId,
+  siteId,
+  consumableReasonId,
+  resultId,
+  lotNumber,
+  expiresOn,
+  quantity,
+  operation,
+  adjustedFrom,
+  adjustedTo,
+  createdOn,
+}) {
+  yield knex('InventoryLog').insert({
+    inventoryItemId,
+    consumableId,
+    siteId,
+    consumableReasonId,
+    resultId,
+    lotNumber,
+    expiresOn: expiresOn ? new Date(expiresOn.setHours(0, 0, 0, 0)) : null,
+    quantity,
+    operation,
+    adjustedFrom,
+    adjustedTo,
+    createdOn,
+  })
+}
+
+function* upsertInventoryItem({
+  knex,
+  inventoryItem,
+  consumableId,
+  siteId,
+  lotNumber,
+  expiresOn,
+  quantity,
+  quantityOnHand,
+  now,
+  userId,
+  inTransitFromSiteId,
+}) {
+  let inventoryItemId = -1
+  if (_.isEmpty(inventoryItem)) {
+    ;[inventoryItemId] = yield* insertInventoryItem(knex, {
+      consumableId,
+      inTransitFromSiteId: inTransitFromSiteId || null,
+      siteId,
+      lotNumber,
+      expiresOn,
+      quantityOnHand: _.isUndefined(quantityOnHand) ? quantity : quantityOnHand,
+      updatedOn: now,
+      updatedBy: userId,
+      createdOn: now,
+      createdBy: userId,
+    })
+  } else {
+    inventoryItemId = inventoryItem.id
+    yield* updateInventoryItem(knex, inventoryItemId, {
+      expiresOn,
+      lotNumber,
+      siteId,
+      quantityOnHand: _.isUndefined(quantityOnHand)
+        ? knex.raw(`quantityOnHand + (${quantity})`)
+        : quantityOnHand,
+      updatedOn: now,
+      updatedBy: userId,
+    })
+  }
+  return inventoryItemId
+}
+
+function* updateInventoryItem(knex, inventoryItemId, inventoryItemValues) {
+  const updateValues = {}
+  if (typeof inventoryItemValues.expiresOn !== 'undefined') {
+    updateValues.expiresOn = inventoryItemValues.expiresOn
+      ? new Date(inventoryItemValues.expiresOn.setHours(0, 0, 0, 0))
+      : null
+  }
+  if (typeof inventoryItemValues.lotNumber !== 'undefined') {
+    updateValues.lotNumber = inventoryItemValues.lotNumber
+  }
+  if (typeof inventoryItemValues.siteId !== 'undefined') {
+    updateValues.siteId = inventoryItemValues.siteId
+  }
+  if (typeof inventoryItemValues.quantityOnHand !== 'undefined') {
+    updateValues.quantityOnHand = inventoryItemValues.quantityOnHand
+  }
+  if (typeof inventoryItemValues.updatedOn !== 'undefined') {
+    updateValues.updatedOn = inventoryItemValues.updatedOn
+  }
+  if (typeof inventoryItemValues.updatedBy !== 'undefined') {
+    updateValues.updatedBy = inventoryItemValues.updatedBy
+  }
+  yield knex('InventoryItem').where('id', inventoryItemId).update(updateValues)
+}
+
+function* insertInventoryItem(knex, inventoryItemValues) {
+  const insertValues = {}
+  if (typeof inventoryItemValues.consumableId !== 'undefined') {
+    insertValues.consumableId = inventoryItemValues.consumableId
+  }
+  if (typeof inventoryItemValues.inTransitFromSiteId !== 'undefined') {
+    insertValues.inTransitFromSiteId = inventoryItemValues.inTransitFromSiteId
+  }
+  if (typeof inventoryItemValues.siteId !== 'undefined') {
+    insertValues.siteId = inventoryItemValues.siteId
+  }
+  if (typeof inventoryItemValues.lotNumber !== 'undefined') {
+    insertValues.lotNumber = inventoryItemValues.lotNumber
+  }
+  if (typeof inventoryItemValues.expiresOn !== 'undefined') {
+    insertValues.expiresOn = inventoryItemValues.expiresOn
+      ? new Date(inventoryItemValues.expiresOn.setHours(0, 0, 0, 0))
+      : null
+  }
+  if (typeof inventoryItemValues.quantityOnHand !== 'undefined') {
+    insertValues.quantityOnHand = inventoryItemValues.quantityOnHand
+  }
+  if (typeof inventoryItemValues.updatedOn !== 'undefined') {
+    insertValues.updatedOn = inventoryItemValues.updatedOn
+  }
+  if (typeof inventoryItemValues.updatedBy !== 'undefined') {
+    insertValues.updatedBy = inventoryItemValues.updatedBy
+  }
+  if (typeof inventoryItemValues.createdOn !== 'undefined') {
+    insertValues.createdOn = inventoryItemValues.createdOn
+  }
+  if (typeof inventoryItemValues.createdBy !== 'undefined') {
+    insertValues.createdBy = inventoryItemValues.createdBy
+  }
+  return yield knex('InventoryItem').insert(insertValues)
 }
 
 module.exports = {

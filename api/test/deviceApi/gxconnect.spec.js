@@ -1800,7 +1800,7 @@ describe('Device API routes for GxConnect Devices', () => {
           assert.isNotEmpty(consumableAssay)
           assert.isAbove(consumableAssay.quantity, 0)
 
-          expiryDate = setMilliseconds(addYears(now, 1), 0)
+          expiryDate = new Date(addYears(now, 1).setHours(0, 0, 0, 0))
           inventoryItemId = yield knex('InventoryItem').insert({
             consumableId: consumableAssay.consumableId,
             siteId: site.id,
@@ -2040,7 +2040,7 @@ describe('Device API routes for GxConnect Devices', () => {
 
         const startedOn = subHours(subDays(now, 1), 2)
         const endedOn = subHours(now, 2)
-        const expirationDate = setMilliseconds(addYears(now, 1), 0)
+        const expirationDate = new Date(addYears(now, 1).setHours(0, 0, 0, 0))
         const consumableName = 'Xpert HIV-1 Qual Cartridge'
         const consumableReason = 'Captured'
         const initialQuantity = 100
@@ -2145,7 +2145,7 @@ describe('Device API routes for GxConnect Devices', () => {
 
         const startedOn = subHours(subDays(now, 1), 2)
         const endedOn = subHours(now, 2)
-        const expirationDate = setMilliseconds(addYears(now, 1), 0)
+        const expirationDate = new Date(addYears(now, 1).setHours(0, 0, 0, 0))
 
         yield server
           .post('/device')
@@ -2201,7 +2201,9 @@ describe('Device API routes for GxConnect Devices', () => {
             Quantity: 13,
             ResultingQuantityOnHand: 86,
             DateChanged: addHours(startedOn, 1),
-            ExpirationDate: setMilliseconds(subDays(addYears(now, 1), 1), 0),
+            ExpirationDate: new Date(
+              subDays(addYears(now, 1), 1).setHours(0, 0, 0, 0)
+            ),
           },
           {
             ConsumableName: 'GeneXpert Ebola Cartridge',
@@ -2209,7 +2211,9 @@ describe('Device API routes for GxConnect Devices', () => {
             Quantity: 3,
             ResultingQuantityOnHand: 21,
             DateChanged: addHours(startedOn, 2),
-            ExpirationDate: setMilliseconds(subDays(addYears(now, 1), 3), 0),
+            ExpirationDate: new Date(
+              subDays(addYears(now, 1), 3).setHours(0, 0, 0, 0)
+            ),
           },
           {
             ConsumableName: 'Xpert HIV-1 Qual Cartridge',
@@ -2217,7 +2221,9 @@ describe('Device API routes for GxConnect Devices', () => {
             Quantity: 44,
             ResultingQuantityOnHand: 50,
             DateChanged: addHours(startedOn, 3),
-            ExpirationDate: setMilliseconds(subDays(addYears(now, 1), 3), 0),
+            ExpirationDate: new Date(
+              subDays(addYears(now, 1), 3).setHours(0, 0, 0, 0)
+            ),
           },
           {
             ConsumableName: 'Xpert HIV-1 Viral Load Cartridge',
@@ -2225,7 +2231,9 @@ describe('Device API routes for GxConnect Devices', () => {
             Quantity: 1,
             ResultingQuantityOnHand: 13,
             DateChanged: addHours(startedOn, 4),
-            ExpirationDate: setMilliseconds(subDays(addYears(now, 1), 4), 0),
+            ExpirationDate: new Date(
+              subDays(addYears(now, 1), 4).setHours(0, 0, 0, 0)
+            ),
           },
           {
             ConsumableName: 'GeneXpert TB Ultra Cartridge',
@@ -2233,7 +2241,9 @@ describe('Device API routes for GxConnect Devices', () => {
             Quantity: 26,
             ResultingQuantityOnHand: 41,
             DateChanged: addHours(startedOn, 5),
-            ExpirationDate: setMilliseconds(subDays(addYears(now, 1), 8), 0),
+            ExpirationDate: new Date(
+              subDays(addYears(now, 1), 8).setHours(0, 0, 0, 0)
+            ),
           },
         ]
 
@@ -2569,7 +2579,9 @@ describe('Device API routes for GxConnect Devices', () => {
             Quantity: 13,
             ResultingQuantityOnHand: 73,
             DateChanged: subHours(startedOn, 1),
-            ExpirationDate: setMilliseconds(subDays(addYears(now, 1), 5), 0),
+            ExpirationDate: new Date(
+              subDays(addYears(now, 1), 5).setHours(0, 0, 0, 0)
+            ),
           },
           {
             ConsumableName: 'GeneXpert Ebola Cartridge',
@@ -2577,7 +2589,9 @@ describe('Device API routes for GxConnect Devices', () => {
             Quantity: -3,
             ResultingQuantityOnHand: 18,
             DateChanged: subHours(startedOn, 2),
-            ExpirationDate: setMilliseconds(subDays(addYears(now, 1), 6), 0),
+            ExpirationDate: new Date(
+              subDays(addYears(now, 1), 6).setHours(0, 0, 0, 0)
+            ),
           },
           {
             ConsumableName: 'Xpert HIV-1 Qual Cartridge',
@@ -2585,7 +2599,9 @@ describe('Device API routes for GxConnect Devices', () => {
             Quantity: -4,
             ResultingQuantityOnHand: 46,
             DateChanged: subHours(startedOn, 3),
-            ExpirationDate: setMilliseconds(subDays(addYears(now, 1), 8), 0),
+            ExpirationDate: new Date(
+              subDays(addYears(now, 1), 8).setHours(0, 0, 0, 0)
+            ),
           },
           {
             ConsumableName: 'Xpert HIV-1 Viral Load Cartridge',
@@ -2593,7 +2609,9 @@ describe('Device API routes for GxConnect Devices', () => {
             Quantity: 11,
             ResultingQuantityOnHand: 24,
             DateChanged: subHours(startedOn, 4),
-            ExpirationDate: setMilliseconds(subDays(addYears(now, 1), 3), 0),
+            ExpirationDate: new Date(
+              subDays(addYears(now, 1), 3).setHours(0, 0, 0, 0)
+            ),
           },
           {
             ConsumableName: 'GeneXpert TB Ultra Cartridge',
@@ -2601,7 +2619,9 @@ describe('Device API routes for GxConnect Devices', () => {
             Quantity: -6,
             ResultingQuantityOnHand: 30,
             DateChanged: subHours(startedOn, 5),
-            ExpirationDate: setMilliseconds(subDays(addYears(now, 1), 7), 0),
+            ExpirationDate: new Date(
+              subDays(addYears(now, 1), 7).setHours(0, 0, 0, 0)
+            ),
           },
           {
             ConsumableName: 'GeneXpert TB Cartridge',
@@ -2609,7 +2629,9 @@ describe('Device API routes for GxConnect Devices', () => {
             Quantity: -6,
             ResultingQuantityOnHand: 50,
             DateChanged: subHours(startedOn, 6),
-            ExpirationDate: setMilliseconds(subDays(addYears(now, 1), 2), 0),
+            ExpirationDate: new Date(
+              subDays(addYears(now, 1), 2).setHours(0, 0, 0, 0)
+            ),
           },
         ]
 
@@ -2725,7 +2747,9 @@ describe('Device API routes for GxConnect Devices', () => {
           Quantity: 73,
           ResultingQuantityOnHand: 73,
           DateChanged: subHours(startedOn, 2),
-          ExpirationDate: setMilliseconds(subDays(addYears(now, 1), 21), 0),
+          ExpirationDate: new Date(
+            subDays(addYears(now, 1), 21).setHours(0, 0, 0, 0)
+          ),
         }
         const lot2 = {
           ConsumableName: 'GeneXpert TB Cartridge',
@@ -2733,7 +2757,9 @@ describe('Device API routes for GxConnect Devices', () => {
           Quantity: 38,
           ResultingQuantityOnHand: 38,
           DateChanged: subHours(startedOn, 2),
-          ExpirationDate: setMilliseconds(subDays(addYears(now, 1), 33), 0),
+          ExpirationDate: new Date(
+            subDays(addYears(now, 1), 33).setHours(0, 0, 0, 0)
+          ),
         }
 
         yield server
@@ -3054,9 +3080,8 @@ describe('Device API routes for GxConnect Devices', () => {
 
           const startedOn = subDays(now, 7)
           const endedOn = addHours(startedOn, 2)
-          const expirationDate = setMilliseconds(
-            subDays(addYears(now, 1), 16),
-            0
+          const expirationDate = new Date(
+            subDays(addYears(now, 1), 16).setHours(0, 0, 0, 0)
           )
 
           const initialLotCaptured = {
@@ -3190,9 +3215,8 @@ describe('Device API routes for GxConnect Devices', () => {
 
           const startedOn = subDays(now, 9)
           const endedOn = addHours(startedOn, 2)
-          const expirationDate = setMilliseconds(
-            subDays(addYears(now, 1), 15),
-            0
+          const expirationDate = new Date(
+            subDays(addYears(now, 1), 15).setHours(0, 0, 0, 0)
           )
 
           const initialLotCaptured = {

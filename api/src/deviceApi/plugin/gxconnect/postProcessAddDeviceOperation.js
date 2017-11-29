@@ -49,7 +49,7 @@ function* postProcessAddDeviceOperation(context) {
             siteId: device.siteId,
             consumableId: matchingConsumable.id,
             expiresOn: inventoryChange.ExpirationDate
-              ? setMilliseconds(new Date(inventoryChange.ExpirationDate), 0)
+              ? new Date(inventoryChange.ExpirationDate)
               : null,
             quantity: absoluteQuantity,
             quantityOnHand: inventoryChange.ResultingQuantityOnHand,

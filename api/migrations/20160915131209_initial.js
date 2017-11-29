@@ -150,7 +150,6 @@ async function up(knex) {
       .index()
       .references('id')
       .inTable('Country')
-    // TODO timezone table? < Bryan: I don't think this is required. Timezones are static
     person.string('timezone').notNullable()
     // TODO should user preferences be stored in separate table?
     person.boolean('hidePatientId')
@@ -911,7 +910,7 @@ async function up(knex) {
       .inTable('Site')
     inventoryItem.integer('inTransitFromSiteId').unsigned()
     inventoryItem.string('lotNumber')
-    inventoryItem.dateTime('expiresOn')
+    inventoryItem.date('expiresOn')
     inventoryItem.float('quantityOnHand')
     addCreateFieldsNullable(inventoryItem)
     addUpdateFieldsNullable(inventoryItem)
@@ -950,7 +949,7 @@ async function up(knex) {
       .inTable('Result')
     inventoryLog.string('operation', 50)
     inventoryLog.string('lotNumber')
-    inventoryLog.dateTime('expiresOn')
+    inventoryLog.date('expiresOn')
     inventoryLog.float('quantity')
     inventoryLog.string('notes', 2000)
     inventoryLog.dateTime('adjustedFrom')
