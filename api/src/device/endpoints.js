@@ -127,13 +127,11 @@ module.exports = [
           deviceId: Joi.string().description('Device id').required(),
         },
         payload: {
-          hostId: Joi.string().required(),
-          siteId: Joi.number().required(),
-          configurationData: Joi.object()
-            .required()
-            .description(
-              'Device configuration data.  The valid keys are dependent on Device Type.'
-            ),
+          siteId: Joi.number(),
+          statusToken: Joi.string(),
+          configurationData: Joi.object().description(
+            'Device configuration data.  The valid keys are dependent on Device Type.'
+          ),
         },
       },
     },
