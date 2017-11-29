@@ -883,7 +883,7 @@ async function seed(knex) {
   const [assayGeneXpertEbolaId] = await knex('Assay').insert({
     name: 'GeneXpert Ebola',
     i18nKey: 'assayGeneXpertEbola',
-    externalId: 'Ebola',
+    externalId: 'GxEbola',
     assayTypeId: assayTypeEbolaId,
     deviceTypeId: deviceTypeGeneXpertId,
     resultSourceId: resultSourceDiagnosticId,

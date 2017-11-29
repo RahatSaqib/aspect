@@ -1525,7 +1525,7 @@ describe('Device Result API routes', () => {
               deviceId,
             },
             {
-              assayExternalId: 'Ebola',
+              assayExternalId: 'GxEbola',
               cartridgeName: 'GeneXpert Ebola Cartridge',
               deviceId,
             },
@@ -1926,14 +1926,14 @@ describe('Device Result API routes', () => {
           const { siteId } = yield knex('Device')
             .where({ id: deviceId })
             .first('siteId')
-          const assayExternalId = 'Ebola'
-          const ebolaCartridgeId = (yield knex('Consumable as c')
+          const assayExternalId = 'GxEbola'
+          const GXEbolaCartridgeId = (yield knex('Consumable as c')
             .where('c.name', 'GeneXpert Ebola Cartridge')
             .first('c.id')).id
           const inventoryConsumedByTest = (yield knex('ConsumableAssay as ca')
             .join('Assay as a', 'ca.assayId', 'a.id')
             .where('a.externalId', assayExternalId)
-            .andWhere('ca.consumableId', ebolaCartridgeId)
+            .andWhere('ca.consumableId', GXEbolaCartridgeId)
             .first('ca.quantity')).quantity
 
           const resultDetails = {
@@ -1978,7 +1978,7 @@ describe('Device Result API routes', () => {
 
           const inventoryConsumptionLog = yield knex('InventoryLog as il')
             .join('ConsumableReason as cr', 'il.consumableReasonId', 'cr.id')
-            .where('il.consumableId', ebolaCartridgeId)
+            .where('il.consumableId', GXEbolaCartridgeId)
             .andWhere('il.siteId', siteId)
             .andWhere('il.lotNumber', resultDetails.lotNumber)
             .andWhere('il.expiresOn', new Date(resultDetails.expirationDate))
