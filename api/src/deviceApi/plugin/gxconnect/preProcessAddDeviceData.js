@@ -1,5 +1,6 @@
 const _ = require('lodash')
 const Boom = require('boom')
+const { macAddressValid } = require('./requestValidation')
 /*
 The purpose of this plugin is to ensure that results are captured
 even when the site is unknown to Aspect
@@ -114,14 +115,6 @@ function* getOrCreateSite(knex, device, payload, now) {
     }
   }
   return site
-}
-
-function macAddressValid(macAddress) {
-  return
-  !_.isEmpty(macAddress) &&
-    macAddress.indexOf('MAC') === 0 &&
-    macAddress.trim().length > 3 &&
-    macAddress !== 'MAC005345000000'
 }
 
 module.exports = preProcessAddDeviceData

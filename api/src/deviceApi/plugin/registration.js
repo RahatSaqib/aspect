@@ -11,6 +11,7 @@ const plugins = {
     preProcessCreateDevice,
     transformNewDevicePayload,
     preProcessAddDeviceData,
+    preProcessUpdateDeviceConfiguration,
     postProcessUpdateDeviceConfiguration,
     postProcessAddDeviceOperation,
     preProcessUpdateSite,
@@ -32,6 +33,7 @@ const plugins = {
   gxconnect: {
     preProcessCreateDevice: require('./gxconnect/preProcessCreateDevice'),
     preProcessAddDeviceData: require('./gxconnect/preProcessAddDeviceData'),
+    preProcessUpdateDeviceConfiguration: require('./gxconnect/preProcessUpdateDeviceConfiguration'),
     postProcessUpdateDeviceConfiguration: require('./gxconnect/postProcessUpdateDeviceConfiguration'),
     postProcessAddDeviceOperation: require('./gxconnect/postProcessAddDeviceOperation'),
     preProcessMergeResult: require('./gxconnect/preProcessMergeResult'),
@@ -93,6 +95,14 @@ async function preProcessUpdateSite(/* context */) {
  * any of this data has been processed
  */
 function* preProcessAddDeviceData(/* context */) {
+  // nothing to do by default
+}
+
+/**
+ * Device configuration payload has been sent to Aspect,
+ * called before configuration data has been saved
+ */
+function* preProcessUpdateDeviceConfiguration(/* context */) {
   // nothing to do by default
 }
 

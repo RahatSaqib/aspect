@@ -274,6 +274,12 @@ async function updateDeviceConfigurationWithContext(context) {
     pluginName: plugin,
   } = context
 
+  const preProcess = await loadPlugin(
+    plugin,
+    'preProcessUpdateDeviceConfiguration'
+  )
+  await preProcess(context)
+
   await updateDeviceConfiguration(knex, deviceId, payload, now)
   context.addDeviceLogUpdate('deviceConfigurationUpdated', true)
   const postProcess = await loadPlugin(
