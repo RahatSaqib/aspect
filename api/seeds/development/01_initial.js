@@ -459,7 +459,7 @@ async function seed(knex) {
     i18nKey: 'assayTypeTbGnd',
   })
 
-  await knex('AssayType').insert({
+  const [assayTypeUnknownId] = await knex('AssayType').insert({
     name: 'Unknown',
     i18nKey: 'assayTypeUnknown',
   })
@@ -892,6 +892,16 @@ async function seed(knex) {
     resultCategory2Label: 'NP',
     resultCategory2i18nKey: 'resultCategoryEbolaNp',
     resultDataSchema: geneXpertResultDataSchema,
+    patientDataSchema: geneXpertPatientDataSchema,
+  })
+
+  await knex('Assay').insert({
+    name: 'GeneXpert Unknown',
+    i18nKey: 'assayGeneXpertUnknown',
+    externalId: 'GxUnknown',
+    assayTypeId: assayTypeUnknownId,
+    deviceTypeId: deviceTypeGeneXpertId,
+    resultSourceId: resultSourceDiagnosticId,
     patientDataSchema: geneXpertPatientDataSchema,
   })
 

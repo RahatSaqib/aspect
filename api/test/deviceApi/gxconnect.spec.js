@@ -1726,7 +1726,7 @@ describe('Device API routes for GxConnect Devices', () => {
         })
       )
 
-      it('should create an assay', () =>
+      it('should set the result to assay GxUnknown', () =>
         runTest(function*(knex) {
           const { basicDevicePayload, deviceAuth, device } = context
 
@@ -1776,16 +1776,7 @@ describe('Device API routes for GxConnect Devices', () => {
 
           const resultDetails = yield* getLastResult(knex, device.id)
           assert.equal(resultDetails.resultData.geneXpertTestId, resultId)
-
-          const newAssayDetailsAfter = yield* getAssayDetails(assayName)
-          assert.deepEqual(_.omit(newAssayDetailsAfter, 'assayId'), {
-            assayName,
-            assayExternalId: assayName,
-            assayTypeName: 'Unknown',
-            deviceTypeExternalId: basicDevicePayload.type.id,
-          })
-
-          assert.equal(resultDetails.resultData.geneXpertTestId, resultId)
+          assert.equal(resultDetails.assay, 'GxUnknown')
         }))
     })
 

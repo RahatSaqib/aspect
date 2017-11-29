@@ -25,7 +25,6 @@ function* preProcessMergeResult({ knex, deviceId, payload }) {
   if (_.isEmpty(device)) {
     throw Boom.notFound(`Cannot find device ${deviceId}`)
   }
-  yield* createAssayIfNotExists(knex, device, payload)
   if (!_.isEmpty(payload.data)) {
     payload.category = getResultCategories(payload)
   } else {
@@ -39,10 +38,20 @@ function* preProcessMergeResult({ knex, deviceId, payload }) {
       const existingResult = yield knex
         .from('Result as r')
         .where({ 'r.externalId': payload.id })
+        .orWhere(function() {
+          // First filter by device for performance because
+          // JSON properties aren't indexed
+          this.where({ 'r.deviceId': deviceId }).andWhereRaw(
+            'JSON_EXTRACT(r.resultData, "$.geneXpertTestId") = ?',
+            payload.id
+          )
+        })
         .first('r.externalId')
       if (existingResult) {
         payload.id = existingResult.externalId
       } else {
+        // Only assign assay to GxUnknown if result is new
+        yield* assignGxUnknownAssayIfNotExists(knex, payload)
         delete payload.id
       }
     }
@@ -57,49 +66,14 @@ function* preProcessMergeResult({ knex, deviceId, payload }) {
   }
 }
 
-function* createAssayIfNotExists(knex, device, payload) {
+function* assignGxUnknownAssayIfNotExists(knex, payload) {
   const payloadAssayId = _.get(payload, 'assay.id', false)
-  const [assay] = yield knex
+  const assay = yield knex
     .from('Assay as a')
     .where({ 'a.externalId': payloadAssayId })
-    .select('a.id')
+    .first('a.externalId')
   if (_.isEmpty(assay)) {
-    const [unknownAssayType] = yield knex
-      .from('AssayType as at')
-      .where({ 'at.name': 'Unknown' })
-      .select('at.id')
-    if (!_.isEmpty(unknownAssayType)) {
-      const resultSourceExternalId =
-        _.get(payload, 'source.id') || 'DiagnosticDevice'
-      const resultSource = yield knex('ResultSource as rs')
-        .where({ 'rs.externalid': resultSourceExternalId })
-        .first('rs.id')
-      if (!_.isEmpty(resultSource)) {
-        if (device.deviceTypeId) {
-          yield knex
-            .insert({
-              name: payloadAssayId,
-              externalId: payloadAssayId,
-              assayTypeId: unknownAssayType.id,
-              deviceTypeId: device.deviceTypeId,
-              resultSourceId: resultSource.id,
-            })
-            .into('Assay')
-        } else {
-          throw Boom.notFound(
-            'Cannot find device type for this result, please ensure that the Device API key is linked to an actual device or type has been specified in this request'
-          )
-        }
-      } else {
-        throw Boom.notFound(
-          'Cannot determine the type of result source for a new assay no diagnostic device result source exists.'
-        )
-      }
-    } else {
-      throw Boom.notFound(
-        'Cannot determine the type of assay for this result and no unknown assay type exists.'
-      )
-    }
+    _.set(payload, 'assay.id', 'GxUnknown')
   }
 }
 
