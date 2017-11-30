@@ -250,7 +250,7 @@ function* getDeviceByDeviceId(request, fields = SELECT_SHOW_FIELDS) {
     .select(fields)
 
   if (devices.length !== 1) {
-    Boom.notFound()
+    return Boom.notFound()
   }
   const device = devices[0]
   const deviceType = yield knex('DeviceType as dt')
