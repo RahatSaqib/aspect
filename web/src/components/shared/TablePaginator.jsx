@@ -11,6 +11,10 @@ import FaAngleDoubleRight from 'react-icons/lib/fa/angle-double-right'
 
 const cssClasses = classnames.bind(require('./TablePaginator.css'))
 
+export const ALL_KEY = 'All'
+
+export const PAGE_SIZE_BUTTON_KEYS = [10, 25, 50, 100, ALL_KEY]
+
 const messages = defineMessages({
   all: {
     id: 'pages.TablePaginator.all',
@@ -67,10 +71,6 @@ const enhance = compose(
   pure
 )
 
-const ALL_KEY = 'All'
-
-const pageSizeButtonKeys = [10, 25, 50, 100, ALL_KEY]
-
 const TablePaginator = ({
   intl,
   paginatorStatus,
@@ -87,6 +87,7 @@ const TablePaginator = ({
   hasLastPage,
   total,
   pageSize,
+  pageSizeButtonKeys = PAGE_SIZE_BUTTON_KEYS,
   ...restProps
 }) => (
   <div className={cssClasses(className, 'Container')}>

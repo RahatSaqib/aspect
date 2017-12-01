@@ -2,6 +2,8 @@ import { compose, withHandlers, pure } from 'recompose'
 
 import TablePaginator from '../../components/shared/TablePaginator'
 
+export * from '../../components/shared/TablePaginator'
+
 const enhance = compose(
   pure,
   withHandlers({
