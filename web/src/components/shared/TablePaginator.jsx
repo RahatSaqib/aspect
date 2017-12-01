@@ -4,8 +4,10 @@ import React from 'react'
 import { defineMessages } from 'react-intl'
 import { compose, withProps, withHandlers, pure } from 'recompose'
 import { Button } from 'react-toolbox/lib/button'
-import KeyboardArrowLeft from 'react-icons/lib/md/keyboard-arrow-left'
-import KeyboardArrowRight from 'react-icons/lib/md/keyboard-arrow-right'
+import FaAngleDoubleLeft from 'react-icons/lib/fa/angle-double-left'
+import FaAngleLeft from 'react-icons/lib/fa/angle-left'
+import FaAngleRight from 'react-icons/lib/fa/angle-right'
+import FaAngleDoubleRight from 'react-icons/lib/fa/angle-double-right'
 
 const cssClasses = classnames.bind(require('./TablePaginator.css'))
 
@@ -18,18 +20,28 @@ const messages = defineMessages({
 
 const enhance = compose(
   withProps(({ pageAt, pageSize, total }) => ({
+    hasFirstPage: pageAt !== 0,
     hasPreviousPage: pageAt > 0,
     firstItemIndex: 1 + pageSize * pageAt,
     lastItemIndex: _.min([total, pageSize * (1 + pageAt)]),
     hasNextPage: total > pageSize * (1 + pageAt),
+    hasLastPage: total > pageSize * (1 + pageAt),
   })),
   withHandlers({
+    onFirstClick: ({ onPageChange }) => () => {
+      onPageChange(0)
+    },
+
     onPreviousClick: ({ pageAt, onPageChange }) => () => {
       onPageChange(pageAt - 1)
     },
 
     onNextClick: ({ pageAt, onPageChange }) => () => {
       onPageChange(pageAt + 1)
+    },
+
+    onLastClick: ({ total, pageSize, onPageChange }) => () => {
+      onPageChange(Math.floor(total / pageSize))
     },
 
     onPageSizeChange10: ({ onPageSizeChange }) => () => {
@@ -63,25 +75,33 @@ const TablePaginator = ({
   intl,
   paginatorStatus,
   className,
+  onFirstClick,
   onPreviousClick,
   onNextClick,
+  onLastClick,
+  hasFirstPage,
   hasPreviousPage,
   firstItemIndex,
   lastItemIndex,
   hasNextPage,
+  hasLastPage,
   total,
   pageSize,
   ...restProps
 }) => (
   <div className={cssClasses(className, 'Container')}>
     <div className={cssClasses('Left')}>
+      <Button disabled={!hasFirstPage} primary inverse onClick={onFirstClick}>
+        <FaAngleDoubleLeft />
+        First
+      </Button>
       <Button
         disabled={!hasPreviousPage}
         primary
         inverse
         onClick={onPreviousClick}
       >
-        <KeyboardArrowLeft />
+        <FaAngleLeft />
         Previous
       </Button>
       <div className={cssClasses('Left__Status')}>
@@ -99,7 +119,17 @@ const TablePaginator = ({
         onClick={onNextClick}
       >
         Next
-        <KeyboardArrowRight />
+        <FaAngleRight />
+      </Button>
+      <Button
+        className={cssClasses('Left__Button--next')}
+        disabled={!hasLastPage}
+        primary
+        inverse
+        onClick={onLastClick}
+      >
+        Last
+        <FaAngleDoubleRight />
       </Button>
     </div>
     <div className={cssClasses('Right')}>

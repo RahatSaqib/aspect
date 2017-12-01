@@ -12,12 +12,12 @@
 
 .Container__Content {
   width: 0;
-  flex-grow: 1;
   display: flex;
 }
 
 .Left {
   composes: Container__Content;
+  flex-grow: 1;
 }
 
 .Left__Status {
@@ -32,6 +32,7 @@
 
 .Right {
   composes: Container__Content;
+  flex-grow: 0;
   justify-content: flex-end;
 }
 
