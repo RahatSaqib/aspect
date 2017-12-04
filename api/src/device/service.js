@@ -121,12 +121,12 @@ function* getListDevices(query, auth) {
       knex('Result as r')
         .whereRaw('r.deviceId = d.id')
         .whereBetween('r.endedOn', [last60Day, last30Day])
-        .count('r.id')
+        .countDistinct('r.id')
         .as('lastMonth'),
       knex('Result as r')
         .whereRaw('r.deviceId = d.id')
         .where('r.endedOn', '>=', last30Day)
-        .count('r.id')
+        .countDistinct('r.id')
         .as('thisMonth'),
       knex('Result as r')
         .innerJoin('Sample as s', 'r.sampleId', 's.id')
@@ -139,7 +139,7 @@ function* getListDevices(query, auth) {
         .whereRaw('s.originSiteId = d.siteId')
         .whereBetween('rl.changedOn', [last60Day, last30Day])
         .where('rw.externalId', '=', 'Delivered')
-        .count('r.id')
+        .countDistinct('r.id')
         .as('deliveredLastMonth'),
 
       // TODO: Fix this/last month queries so they work for other (non-reporter) devices
@@ -154,7 +154,7 @@ function* getListDevices(query, auth) {
         .whereRaw('s.originSiteId = d.siteId')
         .where('rl.changedOn', '>=', last30Day)
         .where('rw.externalId', '=', 'Delivered')
-        .count('r.id')
+        .countDistinct('r.id')
         .as('deliveredThisMonth'),
       knex('Result as r')
         .innerJoin('Sample as s', 'r.sampleId', 's.id')
@@ -168,7 +168,7 @@ function* getListDevices(query, auth) {
           (() => {
             const acknowledgedCount =
               "sum(case when rw.externalId = 'Acknowledged' then 1 else 0 end)"
-            const totalCount = 'count(r.id)'
+            const totalCount = 'count(distinct r.id)'
 
             return knex.raw(
               `case when count(r.id) = 0 then 0 else ${acknowledgedCount} / ${totalCount} end`
@@ -185,7 +185,7 @@ function* getListDevices(query, auth) {
         )
         .whereRaw('s.originSiteId = d.siteId')
         .where('rw.externalId', '=', 'Flagged')
-        .count('r.id')
+        .countDistinct('r.id')
         .as('totalFlagged'),
     ])
 

@@ -1,6 +1,7 @@
 const _ = require('lodash')
 const supertest = require('supertest')
 const chai = require('chai')
+const subDays = require('date-fns/sub_days')
 const {
   createTestContext,
   getDeviceConfigurationData,
@@ -234,6 +235,41 @@ describe('Device API routes', () => {
             assert.deepEqual(res.body.configuration.data, config2)
             assert.typeOf(res.body.operation, 'Object')
             assert.deepEqual(res.body.operation.data, op2)
+          })
+      }))
+  })
+
+  describe('get result count', () => {
+    it('should return result count from device', () =>
+      runTest(function*(knex) {
+        const deviceListPath = '/api/device'
+        const { apiKey, deviceId, clientAuth } = context
+        const last30Day = subDays(new Date(), 30)
+        const last60Day = subDays(last30Day, 30)
+        assert.isOk(apiKey)
+
+        const totalResultsLastMonth = yield knex('Result as r')
+          .whereBetween('r.endedOn', [last60Day, last30Day])
+          .where({ deviceId })
+          .countDistinct('r.id as total')
+
+        const totalResultsThisMonth = yield knex('Result as r')
+          .where({ deviceId })
+          .andWhere('r.endedOn', '>=', last30Day)
+          .countDistinct('r.id as total')
+
+        // get total count of results
+        yield server
+          .get(deviceListPath)
+          .set('Authorization', clientAuth)
+          .then(res => {
+            assert.equal(res.status, 200)
+            const device = _.find(
+              res.body.data,
+              device => device.id === deviceId
+            )
+            assert.equal(device.lastMonth, totalResultsLastMonth[0].total)
+            assert.equal(device.thisMonth, totalResultsThisMonth[0].total)
           })
       }))
   })
