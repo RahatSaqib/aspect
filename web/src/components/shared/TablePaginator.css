@@ -25,6 +25,10 @@
   padding: 0 20px;
 }
 
+.Left__Button {
+  margin: 0 5px;
+}
+
 .Left__Button--next > svg {
   margin-left: 5px;
   margin-right: 0;
@@ -38,9 +42,11 @@
 
 .Right__Button {
   margin: 0 10px;
+  padding: 0;
   min-width: 40px;
   background-color: var(--aspect-color-grey-7);
   font-weight: var(--lato-font-weight-bold);
+  text-align: center;
   text-transform: capitalize;
 }
 

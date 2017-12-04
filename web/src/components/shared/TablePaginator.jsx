@@ -92,11 +92,18 @@ const TablePaginator = ({
 }) => (
   <div className={cssClasses(className, 'Container')}>
     <div className={cssClasses('Left')}>
-      <Button disabled={!hasFirstPage} primary inverse onClick={onFirstClick}>
+      <Button
+        className={cssClasses('Left__Button')}
+        disabled={!hasFirstPage}
+        primary
+        inverse
+        onClick={onFirstClick}
+      >
         <FaAngleDoubleLeft />
         First
       </Button>
       <Button
+        className={cssClasses('Left__Button')}
         disabled={!hasPreviousPage}
         primary
         inverse
@@ -113,7 +120,7 @@ const TablePaginator = ({
         })}
       </div>
       <Button
-        className={cssClasses('Left__Button--next')}
+        className={cssClasses('Left__Button', 'Left__Button--next')}
         disabled={!hasNextPage}
         primary
         inverse
@@ -123,7 +130,7 @@ const TablePaginator = ({
         <FaAngleRight />
       </Button>
       <Button
-        className={cssClasses('Left__Button--next')}
+        className={cssClasses('Left__Button', 'Left__Button--next')}
         disabled={!hasLastPage}
         primary
         inverse
