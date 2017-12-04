@@ -15,6 +15,8 @@ const nightwatchConfig = {
   },
 
   common_capabilities: {
+    project: 'Aspect',
+    name: 'Aspect',
     'browserstack.user': process.env['browserstack.user'],
     'browserstack.key': process.env['browserstack.key'],
     'browserstack.local': true,
@@ -58,19 +60,13 @@ const nightwatchConfig = {
 }
 
 // Code to support common capabilites
-Object.keys(nightwatchConfig.test_settings).forEach(env => {
-  const config = nightwatchConfig.test_settings[env]
+_.forEach(nightwatchConfig.test_settings, config => {
   config.selenium_host = nightwatchConfig.selenium.host
   config.selenium_port = nightwatchConfig.selenium.port
-  _.reduce(
-    nightwatchConfig.common_capabilities,
-    (result, value, key) => {
-      let desiredCapabilities = result
-      if (!desiredCapabilities) desiredCapabilities = {}
-      desiredCapabilities[key] = value
-      return desiredCapabilities
-    },
-    config.desiredCapabilities
+  config.desiredCapabilities = _.assign(
+    {},
+    config.desiredCapabilities,
+    nightwatchConfig.common_capabilities
   )
 })
 
