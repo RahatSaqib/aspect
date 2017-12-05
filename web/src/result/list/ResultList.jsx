@@ -17,7 +17,10 @@ import { sanitizeFiltersStringBy } from '../../filter/utils'
 import NavTitle from '../../globals/components/NavTitle'
 import BrowseFilters from '../../globals/components/BrowseFilters'
 import BrowseEmptyList from '../../globals/components/BrowseEmptyList'
-import BrowseTablePaginator from '../../globals/components/BrowseTablePaginator'
+import BrowseTablePaginator, {
+  ALL_KEY,
+  PAGE_SIZE_BUTTON_KEYS,
+} from '../../globals/components/BrowseTablePaginator'
 import DataTableCard from '../../components/shared/DataTableCard'
 import DataTableProgressBar from '../../components/shared/DataTableProgressBar'
 import { fetchResults, exportResults } from '../ResultRedux'
@@ -121,6 +124,8 @@ const filtersFromLocation = composeSanitizer(
   ),
   searchSanitizer
 )
+
+const RESULT_PAGE_SIZE_BUTTON_KEYS = _.without(PAGE_SIZE_BUTTON_KEYS, ALL_KEY)
 
 const enhance = compose(
   withProps(
@@ -351,6 +356,7 @@ export const ResultList = ({
           total={table.total}
           pageAt={pageAt}
           pageSize={pageSize}
+          pageSizeButtonKeys={RESULT_PAGE_SIZE_BUTTON_KEYS}
         />
       )}
     </DataTableCard>
