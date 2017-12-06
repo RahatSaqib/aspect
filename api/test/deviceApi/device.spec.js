@@ -8,6 +8,7 @@ const {
   getLastDeviceOperation,
   getLastDeviceOperationData,
   getLastDeviceOperationId,
+  getDeviceFromApiKey,
 } = require('./utils')
 
 // This agent refers to PORT where program is runninng.
@@ -271,6 +272,45 @@ describe('Device API routes', () => {
             assert.equal(device.lastMonth, totalResultsLastMonth[0].total)
             assert.equal(device.thisMonth, totalResultsThisMonth[0].total)
           })
+      }))
+  })
+  describe('add new device', () => {
+    const newDeviceContext = createTestContext(server, {
+      user: 'rrt_admin',
+      partner: 'RRT',
+    })
+    const runTest = newDeviceContext.runTest
+
+    beforeEach(newDeviceContext.beforeEach)
+    afterEach(newDeviceContext.afterEach)
+    it('should create Device with statusId and add log to DeviceStatusLog table', () =>
+      runTest(function*(knex) {
+        const { apiKey, deviceAuth } = newDeviceContext
+        assert.isOk(apiKey)
+
+        // add device
+        yield server
+          .post(devicePath)
+          .set('Authorization', deviceAuth)
+          .send({
+            type: { id: 'Daktari' },
+            site: { id: 'CHIZ' },
+          })
+          .then(res => {
+            assert.equal(res.status, 200)
+          })
+        const newDevice = yield* getDeviceFromApiKey(knex, apiKey)
+        assert.isOk(newDevice)
+        assert.isOk(newDevice.name)
+        assert.equal(newDevice.serial, null)
+
+        const deviceLogs = yield knex('DeviceStatusLog as dl').where(
+          'dl.deviceId',
+          newDevice.id
+        )
+        assert.isOk(deviceLogs)
+        assert.propertyVal(newDevice, 'id', deviceLogs[0].deviceId)
+        assert.isAtLeast(deviceLogs.length, 1)
       }))
   })
 })

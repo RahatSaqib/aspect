@@ -1875,8 +1875,6 @@ function* seed(knex) {
       updatedOn: new Date(+now - i * millisInHour),
       lastPingOn: new Date(+now - i * millisInHour / 3),
       lastSeenOn: new Date(+now - i * millisInHour / 3),
-      approvedOn: new Date(+now - 2 * i * millisInHour),
-      approvedBy: _.values(userIds)[_.random(_.size(userIds) - 1)],
       hostId: _.times(8, () =>
         String.fromCharCode(65 + _.random(25) + (_.random(1) > 0 ? 32 : 0))
       ).join(''),
@@ -1902,6 +1900,16 @@ function* seed(knex) {
         auditFields
       )
     )
+
+    // Create Status Log
+    yield knex('DeviceStatusLog').insert({
+      deviceId: device.id,
+      deviceStatusId:
+        _.random(1) > 0 ? deviceStatusApproved : deviceStatusAssigned,
+      changedOn: auditFields.updatedOn,
+      createdOn: auditFields.createdOn,
+      createdBy: auditFields.createdBy,
+    })
 
     // Create DeviceOperation
     const operationNumber = _.random(3, 11)
@@ -1942,8 +1950,6 @@ function* seed(knex) {
       updatedOn: new Date(+now - i * millisInHour),
       lastPingOn: new Date(+now - i * millisInHour / 3),
       lastSeenOn: new Date(+now - i * millisInHour / 3),
-      approvedOn: new Date(+now - 2 * i * millisInHour),
-      approvedBy: _.values(userIds)[_.random(_.size(userIds) - 1)],
       hostId: _.times(8, () =>
         String.fromCharCode(65 + _.random(25) + (_.random(1) > 0 ? 32 : 0))
       ).join(''),

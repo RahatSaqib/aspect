@@ -22,7 +22,6 @@ function* getDemoDevice(request) {
   const device = yield knex('Device as d')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .innerJoin('DeviceTypeCategory as dc', 'dt.deviceTypeCategoryId', 'dc.id')
-    .leftOuterJoin('User as u', 'u.id', 'd.approvedBy')
     .where('d.id', deviceId)
     .modify(addConstraints, dataConstraints, { device: 'd' })
     .first('d.id', 'd.name', 'd.deviceTypeId')

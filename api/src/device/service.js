@@ -47,8 +47,6 @@ const SELECT_SHOW_FIELDS = [
   's.name as siteName',
   'd.hostId',
   // TODO: First Connected
-  'd.approvedOn',
-  'u.name as approvedBy',
   'd.deviceTypeId',
   'd.deviceStatusId',
   'd.configurationData',
@@ -244,7 +242,6 @@ function* getDeviceByDeviceId(request, fields = SELECT_SHOW_FIELDS) {
     .innerJoin('DeviceStatus as ds', 'd.deviceStatusId', 'ds.id')
     .innerJoin('DeviceTypeCategory as dc', 'dt.deviceTypeCategoryId', 'dc.id')
     .innerJoin('Site as s', 'd.siteId', 's.id')
-    .leftOuterJoin('User as u', 'u.id', 'd.approvedBy')
     .where('d.id', +params.deviceId)
     .modify(addConstraints, dataConstraints, { device: 'd' })
     .select(fields)
@@ -256,6 +253,18 @@ function* getDeviceByDeviceId(request, fields = SELECT_SHOW_FIELDS) {
   const deviceType = yield knex('DeviceType as dt')
     .where('dt.id', device.deviceTypeId)
     .first()
+  const deviceLog = yield knex('DeviceStatusLog as dl')
+    .leftOuterJoin('DeviceStatus as ds', 'dl.deviceStatusId', 'ds.id')
+    .leftOuterJoin('User as u', 'dl.createdBy', 'u.id')
+    .where('dl.deviceId', device.id)
+    .select(
+      'ds.name as status',
+      'dl.changedOn',
+      'dl.createdOn',
+      'u.name as changedBy'
+    )
+
+  device.statusLogs = deviceLog
   deviceType.configurationDataSchema =
     JSON.parse(deviceType.configurationDataSchema) || {}
   deviceType.deviceOperationSchema =

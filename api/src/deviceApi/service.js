@@ -308,6 +308,16 @@ function* updateSiteWithContext(context) {
         .select('id'),
     })
 
+    yield knex('DeviceStatusLog').insert({
+      deviceId: device.id,
+      deviceStatusId: knex('DeviceStatus')
+        .where({ token: status })
+        .select('id'),
+      changedOn: now,
+      createdOn: now,
+      createdBy: null,
+    })
+
     // Update DeviceApiKey site with the new siteId
     yield knex('DeviceApiKey').where({ deviceId: device.id }).update({
       siteId: site.id,
@@ -618,11 +628,19 @@ function createNewDevice(request, now) {
       createdOn: now,
       updatedOn: now,
     }
-    if (device.status === 'approved') {
-      // TODO DeviceStatusLog ASP-340
-      inserts.approvedOn = now
-    }
+
     const [deviceId] = yield knex('Device').insert(inserts)
+
+    yield knex('DeviceStatusLog').insert({
+      deviceId,
+      deviceStatusId: knex('DeviceStatus')
+        .where({ token: device.status })
+        .select('id'),
+      changedOn: now,
+      createdOn: now,
+      createdBy: null,
+    })
+
     device.id = deviceId
 
     // Assign new device to API Key

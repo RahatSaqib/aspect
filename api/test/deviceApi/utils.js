@@ -60,6 +60,7 @@ function* deleteDeviceAndTestData(knex, apiKeys) {
     .whereIn('deviceId', deviceIds)
     .map(op => op.id)
 
+  yield knex('DeviceStatusLog').whereIn('deviceId', deviceIds).delete()
   yield knex('DeviceLog')
     .whereIn('deviceId', deviceIds)
     .orWhereIn('resultId', resultIds)

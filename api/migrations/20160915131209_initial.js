@@ -345,6 +345,30 @@ function* up(knex) {
     site.charset('utf8')
   })
 
+  yield knex.schema.createTable('DeviceStatusLog', deviceStatusLog => {
+    deviceStatusLog.increments('id')
+    deviceStatusLog
+      .integer('deviceId')
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('Device')
+    deviceStatusLog
+      .integer('deviceStatusId')
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('DeviceStatus')
+    deviceStatusLog.dateTime('changedOn')
+    deviceStatusLog.dateTime('createdOn')
+    deviceStatusLog
+      .integer('createdBy')
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('User')
+  })
+
   yield knex.schema.createTable('Device', device => {
     device.increments('id')
     device
@@ -396,13 +420,6 @@ function* up(knex) {
     device.string('lastPingFromIp', 45)
     device.dateTime('putInService')
     device.string('putInServiceSource')
-    device.dateTime('approvedOn')
-    device
-      .integer('approvedBy')
-      .unsigned()
-      .index()
-      .references('id')
-      .inTable('User')
     device.specificType('configurationData', 'JSON')
     addCreateFieldsNullable(device)
     addUpdateFieldsNullable(device)
@@ -941,6 +958,7 @@ function* down(knex) {
   yield knex.schema.dropTableIfExists('AssayType')
   yield knex.schema.dropTableIfExists('DeviceSiteHistory')
   yield knex.schema.dropTableIfExists('Device')
+  yield knex.schema.dropTableIfExists('DeviceStatusLog')
   yield knex.schema.dropTableIfExists('Site')
   yield knex.schema.dropTableIfExists('DeviceTypeCategory')
   yield knex.schema.dropTableIfExists('DeviceConfiguration')
