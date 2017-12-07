@@ -1,10 +1,9 @@
-require('babel-register')
 const path = require('path')
 const glob = require('glob')
 const _ = require('lodash')
 
 const partialConfig = _.pick(
-  require('./cfg/src.babel.js').default({ ASPECT_TARGET: 'local' }),
+  require('./cfg/src.js').default({ ASPECT_TARGET: 'local' }),
   ['resolve', 'module', 'plugins']
 )
 

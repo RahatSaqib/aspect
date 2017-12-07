@@ -7,9 +7,9 @@
   "scripts": {
     "styleguide": "styleguidist server",
     "prewebpack:dll": "npm run clean",
-    "webpack:dll": "webpack --config cfg/dll.babel.js",
-    "webpack-dev-server:src": "webpack-dev-server --config cfg/src.babel.js --open 'google chrome'",
-    "webpack:src": "webpack --config cfg/src.babel.js",
+    "webpack:dll": "webpack --config cfg/dll.js",
+    "webpack-dev-server:src": "webpack-dev-server --config cfg/src.js --open 'google chrome'",
+    "webpack:src": "webpack --config cfg/src.js",
     "start": "npm-run-all \"webpack:dll -- --{1}\" \"webpack-dev-server:src -- --{1}\" -- env.ASPECT_TARGET=local",
     "dist": "npm-run-all \"webpack:dll -- --{1}\" \"webpack:src -- --{1}\" -- env.ASPECT_TARGET=dist",
     "pretest": "fsys --task=remove --fileFolder=coverage && fsys --task=remove --fileFolder=mocha.json",

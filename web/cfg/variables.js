@@ -1,6 +1,6 @@
-import _ from 'lodash'
+const _ = require('lodash')
 
-export const customPropertiesVariables = {
+exports.customPropertiesVariables = {
   '--aspect-color-cyan': '#3cc0cd',
 
   '--aspect-color-scooter-blue-1': '#00c4e0',
@@ -30,8 +30,8 @@ export const customPropertiesVariables = {
   '--aspect-color-brink': '#f36283',
 }
 
-export const definePluginVariables = _.transform(
-  customPropertiesVariables,
+exports.definePluginVariables = _.transform(
+  exports.customPropertiesVariables,
   (result, value, key) =>
     // Transform key into the form like: process.env['--aspect-color-cyan']
     _.set(result, `process.env['${key}']`, JSON.stringify(value)),

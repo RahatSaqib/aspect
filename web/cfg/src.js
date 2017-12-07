@@ -1,19 +1,26 @@
-import path from 'path'
-import invariant from 'invariant'
-import webpack from 'webpack'
-import pxToRem from 'postcss-pxtorem'
-import cssImport from 'postcss-import'
-import cssNext from 'postcss-cssnext'
-import ExtractTextPlugin from 'extract-text-webpack-plugin'
-import CaseSensitivePathsPlugin from 'case-sensitive-paths-webpack-plugin'
-import FaviconsWebpackPlugin from 'favicons-webpack-plugin'
-import WebappManifestPlugin, { FAVICON_PLUGIN } from 'webapp-manifest-plugin'
-import HtmlWebpackPlugin from 'html-webpack-plugin'
-import HtmlWebpackIncludeAssetsPlugin from 'html-webpack-include-assets-plugin'
-import HtmlWebpackHarddiskPlugin from 'html-webpack-harddisk-plugin'
-import CompressionPlugin from 'compression-webpack-plugin'
+const path = require('path')
+const invariant = require('invariant')
+const _ = require('lodash')
+const webpack = require('webpack')
+const pxToRem = require('postcss-pxtorem')
+const cssImport = require('postcss-import')
+const cssNext = require('postcss-cssnext')
+const ExtractTextPlugin = require('extract-text-webpack-plugin')
+const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin')
+const FaviconsWebpackPlugin = require('favicons-webpack-plugin')
+const {
+  default: WebappManifestPlugin,
+  FAVICON_PLUGIN,
+} = require('webapp-manifest-plugin')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
+const HtmlWebpackIncludeAssetsPlugin = require('html-webpack-include-assets-plugin')
+const HtmlWebpackHarddiskPlugin = require('html-webpack-harddisk-plugin')
+const CompressionPlugin = require('compression-webpack-plugin')
 
-import { customPropertiesVariables, definePluginVariables } from './variables'
+const {
+  customPropertiesVariables,
+  definePluginVariables,
+} = require('./variables')
 
 const postcssPlugins = () => [
   pxToRem({
@@ -31,7 +38,7 @@ const postcssPlugins = () => [
   }),
 ]
 
-export default env => {
+module.exports = env => {
   switch (env.ASPECT_TARGET) {
     case 'local': {
       process.env.ASPECT_TARGET = 'local'
@@ -171,9 +178,7 @@ export default env => {
         minimize: isProduction,
       }),
       new webpack.EnvironmentPlugin(['NODE_ENV', 'ASPECT_TARGET']),
-      new webpack.DefinePlugin({
-        ...definePluginVariables,
-      }),
+      new webpack.DefinePlugin(_.assign({}, definePluginVariables)),
 
       extractCSS,
       new FaviconsWebpackPlugin({
