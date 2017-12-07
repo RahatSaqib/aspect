@@ -579,32 +579,29 @@ function createNewDevice(request, now) {
     const { auth } = request
 
     // Find API Key to use as template for new device
-    const apiKey = await knex('DeviceApiKey as k')
+    // Find API Key to use as template for new device
+    const partnerApiKey = await knex('DeviceApiKey as k')
       .where({
-        token: auth.credentials.token,
-        revoked: false,
-        deviceId: null,
+        'k.token': auth.credentials.token,
+        'k.revoked': false,
+        'k.deviceId': null,
       })
       .leftJoin('Partner as p', 'p.id', 'k.partnerId')
-      .leftJoin(
-        'DeviceType as dt',
-        knex.raw(`'${_.get(request, 'payload.type.id')}'`),
-        'dt.externalId'
-      )
-      .first(
-        'k.id',
-        'k.partnerId',
-        'k.geographyId',
-        'k.siteId',
-        knex.raw('coalesce(p.plugin, dt.plugin) as plugin')
-      )
-    if (apiKey == null) {
+      .first('k.id', 'k.partnerId', 'k.geographyId', 'k.siteId', 'p.plugin')
+    if (partnerApiKey == null) {
       return {
         error: Boom.notFound(
           'Cannot find available API Key when creating new device'
         ),
       }
     }
+    const deviceTypePlugin = await knex('DeviceType as dt')
+      .where({ 'dt.externalId': _.get(request, 'payload.type.id') })
+      .first('dt.plugin')
+    const apiKey = _.assign({}, partnerApiKey, {
+      plugin:
+        _.get(partnerApiKey, 'plugin') || _.get(deviceTypePlugin, 'plugin'),
+    })
 
     // Require Device Type when creating device
     const transformNewDevicePayload = await loadPlugin(
