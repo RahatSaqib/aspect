@@ -14,11 +14,17 @@ function* preProcessCreateDevice(request) {
       'configuration.data.instrumentSerialNumbers'
     )
     if (macAddress) {
+      const { partnerId } = yield knex('DeviceApiKey')
+        .where({ token: auth.credentials.token })
+        .first('partnerId')
       const matchingDevice = yield knex
         .from('Device as d')
         .leftJoin('DeviceStatus as ds', 'd.deviceStatusId', 'ds.id')
         .leftJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
-        .where({ 'd.macAddress': macAddress })
+        .where({
+          'd.macAddress': macAddress,
+          'd.partnerId': partnerId,
+        })
         .andWhere(function() {
           if (_.isEmpty(instrumentSerialNumbers)) {
             this.whereNull('d.serial')

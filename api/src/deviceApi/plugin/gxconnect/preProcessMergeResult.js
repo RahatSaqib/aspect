@@ -21,7 +21,7 @@ function* preProcessMergeResult({ knex, deviceId, payload }) {
   const [device] = yield knex
     .from('Device as d')
     .where({ 'd.id': deviceId })
-    .select('d.id', 'd.siteId', 'd.deviceTypeId')
+    .select('d.id', 'd.siteId', 'd.partnerId', 'd.deviceTypeId')
   if (_.isEmpty(device)) {
     throw Boom.notFound(`Cannot find device ${deviceId}`)
   }
@@ -37,7 +37,10 @@ function* preProcessMergeResult({ knex, deviceId, payload }) {
       payload.data.geneXpertTestId = payload.id
       const existingResult = yield knex
         .from('Result as r')
-        .where({ 'r.externalId': payload.id })
+        .where({
+          'r.externalId': payload.id,
+          'r.partnerId': device.partnerId,
+        })
         .orWhere(function() {
           // First filter by device for performance because
           // JSON properties aren't indexed

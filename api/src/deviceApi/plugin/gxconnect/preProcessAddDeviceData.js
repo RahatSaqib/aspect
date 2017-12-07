@@ -35,7 +35,10 @@ function* getOrCreateSite(knex, device, payload, now) {
     if (payloadSiteId) {
       const [{ id }] = yield knex
         .from('Site as s')
-        .where({ 's.externalId': payloadSiteId })
+        .where({
+          's.externalId': payloadSiteId,
+          's.partnerId': device.partnerId,
+        })
         .select('s.id')
       site.id = id
     }
@@ -55,7 +58,10 @@ function* getOrCreateSite(knex, device, payload, now) {
         .from('Site as s')
         .join('Geography as g', 's.geographyId', 'g.id')
         .join('Country as c', 'g.countryId', 'c.id')
-        .where({ 'c.abbreviation': countryCode })
+        .where({
+          's.partnerId': device.partnerId,
+          'c.abbreviation': countryCode,
+        })
         .andWhere(function() {
           this.where({ 's.name': facilityName })
             .orWhere({ 's.shortName': facilityName })
@@ -94,6 +100,7 @@ function* getOrCreateSite(knex, device, payload, now) {
           name: facilityName,
           shortName: facilityName,
           externalId: facilityName,
+          partnerId: device.partnerId,
           geographyId: geography.id,
           createdOn: now,
           updatedOn: now,
