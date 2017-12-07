@@ -1,12 +1,13 @@
+const path = require('path')
 require('dotenv-safe').load()
 const _ = require('lodash')
 
-const { SCREENSHOT_PATH } = require('../e2e/utils/testUtils')
+const { SCREENSHOT_PATH } = require('../nightwatch/utils/testUtils')
 
 const nightwatchConfig = {
-  src_folders: ['e2e/tests'],
-  output_folder: './reports',
-  page_objects_path: './e2e/page_objects',
+  src_folders: [path.resolve(__dirname, '../nightwatch/tests')],
+  output_folder: path.resolve(__dirname, '../reports'),
+  page_objects_path: path.resolve(__dirname, '../nightwatch/page_objects'),
 
   selenium: {
     start_process: false,
@@ -25,7 +26,7 @@ const nightwatchConfig = {
 
   test_settings: {
     default: {
-      launch_url: process.env.ASPECT_URL,
+      launch_url: process.env.aspectUrl,
       screenshots: {
         enabled: true,
         path: SCREENSHOT_PATH,

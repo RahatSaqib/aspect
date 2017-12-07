@@ -1,5 +1,5 @@
 module.exports = {
-  url: process.env.ASPECT_URL,
+  url: process.env.aspectUrl,
   elements: {
     textField: {
       selector: 'input[type=text]',
