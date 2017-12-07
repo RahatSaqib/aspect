@@ -1,6 +1,6 @@
 import _ from 'lodash'
 
-export const { noop } = _
+export const noop = _.noop // eslint-disable-line prefer-destructuring
 
 export const findKeyInTree = (target, key) => {
   while (_.isObject(target)) {
