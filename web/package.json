@@ -13,7 +13,7 @@
     "start": "npm-run-all \"webpack:dll -- --{1}\" \"webpack-dev-server:src -- --{1}\" -- env.ASPECT_TARGET=local",
     "dist": "npm-run-all \"webpack:dll -- --{1}\" \"webpack:src -- --{1}\" -- env.ASPECT_TARGET=dist",
     "pretest": "fsys --task=remove --fileFolder=coverage && fsys --task=remove --fileFolder=mocha.json",
-    "test": "cross-env ASPECT_TARGET=test BABEL_ENV=test JEST_FILE=mocha.json jest --config ./jest.json --coverage",
+    "test": "cross-env ASPECT_TARGET=test BABEL_ENV=test JEST_FILE=mocha.json jest --coverage",
     "e2e:local": "nightwatch -c cfg/nightwatch.dev.conf.js",
     "e2e:browserstack": "node cfg/local.runner.js -c cfg/nightwatch.conf.js -e chrome,firefox,safari,ie,edge",
     "postinstall": "node cfg/nightwatch.dev.conf.js",
@@ -53,6 +53,21 @@
         "git add"
       ]
     }
+  },
+  "jest": {
+    "setupFiles": [
+      "<rootDir>/src/__setup__/polyfills.js",
+      "<rootDir>/src/__setup__/mockDate.js",
+      "<rootDir>/src/__setup__/mockFetch.js",
+      "<rootDir>/src/__setup__/enzyme.js",
+      "<rootDir>/src/__setup__/injectTapEventPlugin.js"
+    ],
+    "moduleNameMapper": {
+      "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/src/__mocks__/fileMock.js",
+      "\\.scss$": "<rootDir>/src/__mocks__/globalStyleMock.js",
+      "\\.css$": "identity-obj-proxy"
+    },
+    "testResultsProcessor": "jest-bamboo-formatter"
   },
   "repository": "",
   "keywords": [],
