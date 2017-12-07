@@ -46,13 +46,13 @@ module.exports = env => {
     case 'local': {
       process.env.ASPECT_TARGET = 'local'
       process.env.NODE_ENV = 'development'
-      process.env.BABEL_ENV = 'development'
+      process.env.BABEL_ENV = 'webpack'
       break
     }
     case 'dist': {
       process.env.ASPECT_TARGET = 'dist'
       process.env.NODE_ENV = 'production'
-      process.env.BABEL_ENV = 'production'
+      process.env.BABEL_ENV = 'webpack'
       break
     }
     default:

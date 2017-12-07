@@ -69,6 +69,67 @@
     },
     "testResultsProcessor": "jest-bamboo-formatter"
   },
+  "babel": {
+    "env": {
+      "test": {
+        "plugins": ["babel-plugin-dynamic-import-node"],
+        "presets": [
+          [
+            "env",
+            {
+              "targets": {
+                "node": "current"
+              }
+            }
+          ],
+          "stage-1",
+          "react"
+        ]
+      },
+      "message": {
+        "plugins": [
+          [
+            "babel-plugin-react-intl",
+            {
+              "messagesDir": "./i18n"
+            }
+          ]
+        ],
+        "presets": [
+          [
+            "env",
+            {
+              "targets": {
+                "node": "current"
+              }
+            }
+          ],
+          "stage-1",
+          "react"
+        ]
+      },
+      "webpack": {
+        "plugins": [
+          ["babel-plugin-lodash", {}],
+          ["react-hot-loader/babel", {}]
+        ],
+        "presets": [
+          [
+            "env",
+            {
+              "modules": false,
+              "useBuiltIns": true,
+              "targets": {
+                "browsers": ["last 2 versions"]
+              }
+            }
+          ],
+          "stage-1",
+          "react"
+        ]
+      }
+    }
+  },
   "repository": "",
   "keywords": [],
   "author": "SystemOne",
