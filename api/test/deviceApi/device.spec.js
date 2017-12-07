@@ -274,6 +274,7 @@ describe('Device API routes', () => {
           })
       }))
   })
+
   describe('add new device', () => {
     const newDeviceContext = createTestContext(server, {
       user: 'rrt_admin',
@@ -293,7 +294,7 @@ describe('Device API routes', () => {
           .post(devicePath)
           .set('Authorization', deviceAuth)
           .send({
-            type: { id: 'Daktari' },
+            type: { id: 'DaktariInSight' },
             site: { id: 'CHIZ' },
           })
           .then(res => {
