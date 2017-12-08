@@ -22,11 +22,16 @@ const assert = chai.assert
 
 function* deleteSiteDataAndRefreshTokens(knex, apiKeys, clientId) {
   const tokens = apiKeys.map(key => key.token)
-  const siteIds = yield knex('Device as d')
-    .innerJoin('DeviceApiKey as dak', 'dak.deviceId', 'd.id')
+  const siteIds = yield knex('DeviceApiKey as dak')
+    .innerJoin('Device as d', 'dak.deviceId', 'd.id')
     .whereIn('dak.token', tokens)
-    .distinct('d.siteId')
     .pluck('d.siteId')
+    .union(function() {
+      this.from('DeviceApiKey as dak')
+        .whereNotNull('dak.siteId')
+        .whereIn('dak.token', tokens)
+        .pluck('dak.siteId')
+    })
 
   const inventoryItemIds = yield knex('InventoryItem as ii')
     .whereIn('ii.siteId', siteIds)

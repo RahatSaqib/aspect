@@ -54,11 +54,10 @@ async function deleteTestDataFromCheckpoint(knex, checkpoint, deviceIds) {
 
 async function deleteDeviceAndTestData(knex, apiKeys) {
   const tokens = apiKeys.map(key => key.token)
-  const deviceIds = await knex('Device as d')
-    .innerJoin('DeviceApiKey as dak', 'dak.deviceId', 'd.id')
+  const deviceIds = yield knex('DeviceApiKey as dak')
     .whereIn('dak.token', tokens)
-    .select('d.id')
-    .map(device => device.id)
+    .whereNotNull('dak.deviceId')
+    .pluck('dak.deviceId')
 
   const deviceResultIds = await knex('Result')
     .whereIn('deviceId', deviceIds)
