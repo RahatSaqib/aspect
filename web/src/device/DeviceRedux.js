@@ -162,7 +162,11 @@ function receiveSingleDevice(requestedAt, item) {
   }
 }
 
-export function fetchSingleDevice(deviceId, filtersParams) {
+export function fetchSingleDevice(deviceId, rawFiltersParams) {
+  const filtersParams = new URLSearchParams()
+  if (rawFiltersParams.has('dateRange')) {
+    filtersParams.set('dateRange', rawFiltersParams.get('dateRange'))
+  }
   return dispatch => {
     const filters = _.fromPairs([...filtersParams.entries()])
     const requestedAt = Date.now()
