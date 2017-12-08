@@ -1792,7 +1792,7 @@ describe('Device API routes for GxConnect Devices', () => {
 
           const consumableAssay = yield knex('ConsumableAssay as ca')
             .join('Assay as a', 'ca.assayId', 'a.id')
-            .join('deviceType as dt', 'a.deviceTypeId', 'dt.id')
+            .join('DeviceType as dt', 'a.deviceTypeId', 'dt.id')
             .where({ 'dt.externalId': basicDevicePayload.type.id })
             .andWhere('ca.quantity', '>', 0)
             .first('ca.consumableId', 'ca.quantity', 'a.externalId as assayId')
@@ -1875,7 +1875,7 @@ describe('Device API routes for GxConnect Devices', () => {
 
             const consumableAssay = yield knex('ConsumableAssay as ca')
               .join('Assay as a', 'ca.assayId', 'a.id')
-              .join('deviceType as dt', 'a.deviceTypeId', 'dt.id')
+              .join('DeviceType as dt', 'a.deviceTypeId', 'dt.id')
               .where({ 'dt.externalId': basicDevicePayload.type.id })
               .andWhere('ca.quantity', '>', 0)
               .first(
