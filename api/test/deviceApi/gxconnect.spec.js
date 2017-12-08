@@ -125,7 +125,7 @@ describe('Device API routes for GxConnect Devices', () => {
                 .catch(assert.fail)
             }))
 
-          it('should have created a device and link it to the device API key', () =>
+          it('should have created a device and linked it to the device API key', () =>
             runTest(function*(knex) {
               const { basicDevicePayload, apiKey } = context
               const deviceDetials = yield knex('DeviceApiKey as dak')
