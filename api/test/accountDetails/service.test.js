@@ -2,7 +2,7 @@ const proxyquire = require('proxyquire')
 const { assert } = require('chai')
 const _ = require('lodash')
 const sinon = require('sinon')
-const { run } = require('../utils/generatorFunctionUtils')
+const { runTest } = require('../utils/generatorFunctionUtils')
 
 describe('account details service', () => {
   let dbSpy
@@ -62,7 +62,9 @@ describe('account details service', () => {
     })
 
     it('Should lookup the account details for the currently logged in user', () =>
-      run(service.getAccountDetailsForLoggedInUser, [requestData])(response => {
+      runTest(service.getAccountDetailsForLoggedInUser, [
+        requestData,
+      ])(response => {
         assert.isTrue(response.ok)
         assert.deepEqual(response.data, accountDetails)
 
@@ -81,7 +83,9 @@ describe('account details service', () => {
       }))
 
     it('Should respond with an account details object for the currently logged in user', () =>
-      run(service.getAccountDetailsForLoggedInUser, [requestData])(response => {
+      runTest(service.getAccountDetailsForLoggedInUser, [
+        requestData,
+      ])(response => {
         assert.deepEqual(response.data, accountDetails)
       }))
   })
@@ -130,7 +134,7 @@ describe('account details service', () => {
       const now = new Date()
       const clock = sinon.useFakeTimers(now.getTime())
 
-      return run(service.saveContactDetailsForLoggedInUser, [
+      return runTest(service.saveContactDetailsForLoggedInUser, [
         {
           auth: requestData.auth,
           payload: Object.assign({}, contactDetails, changedRequestProperties),
@@ -159,7 +163,7 @@ describe('account details service', () => {
     })
 
     it('Should not save anything when no details have changed', () =>
-      run(service.saveContactDetailsForLoggedInUser, [
+      runTest(service.saveContactDetailsForLoggedInUser, [
         {
           auth: requestData.auth,
           payload: contactDetails,
@@ -173,7 +177,7 @@ describe('account details service', () => {
       }))
 
     it('Should respond with an account details object for the currently logged in user', () =>
-      run(service.saveContactDetailsForLoggedInUser, [
+      runTest(service.saveContactDetailsForLoggedInUser, [
         {
           auth: requestData.auth,
           payload: contactDetails,
@@ -189,7 +193,7 @@ describe('account details service', () => {
           Object.assign({}, contactDetails, { id: contactDetails.id + 5 })
         )
 
-      return run(service.saveContactDetailsForLoggedInUser, [
+      return runTest(service.saveContactDetailsForLoggedInUser, [
         {
           auth: Object.assign({}, requestData.auth, {
             credentials: {
@@ -256,7 +260,7 @@ describe('account details service', () => {
       const now = new Date()
       const clock = sinon.useFakeTimers(now.getTime())
 
-      return run(service.saveUserPreferencesForLoggedInUser, [
+      return runTest(service.saveUserPreferencesForLoggedInUser, [
         {
           auth: requestData.auth,
           payload: Object.assign({}, userPreferences, changedRequestProperties),
@@ -281,7 +285,7 @@ describe('account details service', () => {
     })
 
     it('Should not save anything when no details have changed', () =>
-      run(service.saveUserPreferencesForLoggedInUser, [
+      runTest(service.saveUserPreferencesForLoggedInUser, [
         {
           auth: requestData.auth,
           payload: userPreferences,
@@ -295,7 +299,7 @@ describe('account details service', () => {
       }))
 
     it('Should respond with an account details object for the currently logged in user', () =>
-      run(service.saveUserPreferencesForLoggedInUser, [
+      runTest(service.saveUserPreferencesForLoggedInUser, [
         {
           auth: requestData.auth,
           payload: userPreferences,
@@ -311,7 +315,7 @@ describe('account details service', () => {
           Object.assign({}, userPreferences, { id: userPreferences.id + 5 })
         )
 
-      return run(service.saveUserPreferencesForLoggedInUser, [
+      return runTest(service.saveUserPreferencesForLoggedInUser, [
         {
           auth: Object.assign({}, requestData.auth, {
             credentials: {

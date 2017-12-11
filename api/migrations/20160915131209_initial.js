@@ -691,7 +691,7 @@ function* up(knex) {
     result.specificType('resultData', 'JSON')
     result.string('assayVersion')
     result.dateTime('startedOn')
-    result.dateTime('endedOn')
+    result.dateTime('endedOn').index()
     result.string('consumableSerial')
     result.dateTime('consumableExpirationDate')
     result.string('consumableLot')
@@ -928,6 +928,49 @@ function* up(knex) {
     x.charset('utf8')
   })
 
+  // facts-table for result counts by device
+  yield knex.schema.createTable('FactResultCountDevice', x => {
+    x
+      .integer('deviceId')
+      .unsigned()
+      .references('id')
+      .inTable('Device')
+      .notNullable()
+    x.integer('assayId').unsigned().references('id').inTable('Assay')
+    x
+      .integer('resultCategory1')
+      .unsigned()
+      .references('id')
+      .inTable('ResultCategory')
+    x.integer('days').unsigned()
+    x.integer('resultCount').unsigned().notNullable()
+    x.dateTime('calculatedOn').notNullable()
+    x.unique(
+      ['days', 'deviceId', 'assayId', 'resultCategory1'],
+      'factresultcountdevice_unique'
+    )
+  })
+
+  // facts-table for device flags
+  yield knex.schema.createTable('FactDeviceFlag', x => {
+    x
+      .integer('deviceId')
+      .unsigned()
+      .references('id')
+      .inTable('Device')
+      .notNullable()
+    x.boolean('offline').notNullable().defaultTo(0)
+    x.boolean('service').notNullable().defaultTo(0)
+    x.boolean('calibration').notNullable().defaultTo(0)
+    x.boolean('errorRate').notNullable().defaultTo(0)
+    x.boolean('qcProblem').notNullable().defaultTo(0)
+    x.boolean('lowInventory').notNullable().defaultTo(0)
+    x.boolean('outOfInventory').notNullable().defaultTo(0)
+    x.boolean('expiringInventory').notNullable().defaultTo(0)
+    x.boolean('expiringWarranty').notNullable().defaultTo(0)
+    x.dateTime('updatedOn').notNullable()
+  })
+
   yield knex.raw('SET foreign_key_checks = 1')
 }
 
@@ -988,6 +1031,8 @@ function* down(knex) {
   yield knex.schema.dropTableIfExists('PartnerType')
   yield knex.schema.dropTableIfExists('DeviceSim')
   yield knex.schema.dropTableIfExists('ResultQualityControlLog')
+  yield knex.schema.dropTableIfExists('FactResultCountDevice')
+  yield knex.schema.dropTableIfExists('FactDeviceFlag')
 
   yield knex.raw('SET foreign_key_checks = 1')
 }

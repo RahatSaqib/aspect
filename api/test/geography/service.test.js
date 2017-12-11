@@ -2,7 +2,7 @@ const proxyquire = require('proxyquire')
 const { assert } = require('chai')
 const _ = require('lodash')
 const sinon = require('sinon')
-const { run } = require('../utils/generatorFunctionUtils')
+const { runTest } = require('../utils/generatorFunctionUtils')
 
 describe('geography service', () => {
   const countriesStatesAndLGAs = [
@@ -518,7 +518,7 @@ describe('geography service', () => {
     })
 
     it('Should query the country, state and lga tables, sorting the results by country name, then state name, then lga name', () =>
-      run(service.buildGeographySelectList)(() => {
+      runTest(service.buildGeographySelectList)(() => {
         const countriesStatesAndLGAsQuery = dbSpy.query.withArgs(
           'Get countries, states and LGAs for select lists'
         ).lastCall.returnValue
@@ -555,7 +555,7 @@ describe('geography service', () => {
       }))
 
     it('Should return a list of countries containing its nested states and LGAs', () =>
-      run(service.buildGeographySelectList)(response => {
+      runTest(service.buildGeographySelectList)(response => {
         assert.isTrue(response.ok)
         assert.deepEqual(response.data, countries)
       }))
@@ -614,7 +614,7 @@ describe('geography service', () => {
       })
 
       it('Should query the country table, sorting the results by country name', () =>
-        run(service.countrySelectList, [{ params: {} }])(() => {
+        runTest(service.countrySelectList, [{ params: {} }])(() => {
           const countryQuery = dbSpy.query.withArgs(
             'Get countries for select list'
           ).lastCall.returnValue
@@ -632,7 +632,7 @@ describe('geography service', () => {
         }))
 
       it('Should return a list of countries', () =>
-        run(service.countrySelectList, [{ params: {} }])(response => {
+        runTest(service.countrySelectList, [{ params: {} }])(response => {
           assert.isTrue(response.ok)
           assert.deepEqual(response.data, countriesForSelectList)
         }))
@@ -659,7 +659,7 @@ describe('geography service', () => {
       })
 
       it('Should query the country and state tables, sorting the results by country name and then state name', () =>
-        run(service.countrySelectList, [
+        runTest(service.countrySelectList, [
           { params: { countryId: selectedCountryId } },
         ])(() => {
           const countryQuery = dbSpy.query.withArgs(
@@ -727,7 +727,7 @@ describe('geography service', () => {
         )
         selectedCountry.states = _.sortBy(selectedCountryStates, 'name')
 
-        return run(service.countrySelectList, [
+        return runTest(service.countrySelectList, [
           { params: { countryId: selectedCountryId } },
         ])(response => {
           assert.isTrue(response.ok)
@@ -760,7 +760,7 @@ describe('geography service', () => {
       })
 
       it('Should query the country, state and lga tables, sorting the results by country name, then state and then LGA name', () =>
-        run(service.countrySelectList, [
+        runTest(service.countrySelectList, [
           {
             params: { countryId: selectedCountryId, stateId: selectedStateId },
           },
@@ -873,7 +873,7 @@ describe('geography service', () => {
 
         selectedState.lgas = _.sortBy(selectedStateLgas, 'name')
 
-        return run(service.countrySelectList, [
+        return runTest(service.countrySelectList, [
           {
             params: { countryId: selectedCountryId, stateId: selectedStateId },
           },
@@ -905,7 +905,7 @@ describe('geography service', () => {
     })
 
     it('Should query the state table, filtering by country ID, sorting the results by state name', () =>
-      run(service.stateSelectList, [requestData])(() => {
+      runTest(service.stateSelectList, [requestData])(() => {
         const stateQuery = dbSpy.query.withArgs('Get states for select list')
           .lastCall.returnValue
         assert.equal(stateQuery.from.lastCall.args[0], 'State as s')
@@ -927,7 +927,7 @@ describe('geography service', () => {
       }))
 
     it('Should return a list of states', () =>
-      run(service.stateSelectList, [requestData])(response => {
+      runTest(service.stateSelectList, [requestData])(response => {
         assert.isTrue(response.ok)
         assert.deepEqual(response.data, statesForSelectList)
       }))
@@ -953,7 +953,7 @@ describe('geography service', () => {
     })
 
     it('Should query the lga table, filtering by state ID, sorting the results by LGA name', () =>
-      run(service.lgaSelectList, [requestData])(() => {
+      runTest(service.lgaSelectList, [requestData])(() => {
         const stateQuery = dbSpy.query.withArgs('Get LGAs for select list')
           .lastCall.returnValue
         assert.equal(stateQuery.from.lastCall.args[0], 'Lga as l')
@@ -975,7 +975,7 @@ describe('geography service', () => {
       }))
 
     it('Should return a list of LGAs', () =>
-      run(service.lgaSelectList, [requestData])(response => {
+      runTest(service.lgaSelectList, [requestData])(response => {
         assert.isTrue(response.ok)
         assert.deepEqual(response.data, lgasForSelectList)
       }))

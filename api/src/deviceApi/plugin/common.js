@@ -1,5 +1,6 @@
 const _ = require('lodash')
 const inventory = require('../../inventory/service')
+const fact = require('../../fact/service')
 
 /**
  * Consumes inventory for the new result
@@ -18,6 +19,15 @@ function* consumeInventoryForResult(knex, payload, result) {
     result.partnerId,
     result.startedOn,
     result.endedOn,
+    knex
+  )
+}
+
+function* updateFactResultCountDevice(knex, payload, result) {
+  yield* fact.calculateResultCounts(
+    result.deviceId,
+    result.assayId,
+    result.resultCategory1,
     knex
   )
 }
@@ -112,4 +122,5 @@ module.exports = {
   addResultWorkflowLogIfChanged,
   consumeInventoryForResult,
   updateResultWorkflowStatus,
+  updateFactResultCountDevice,
 }

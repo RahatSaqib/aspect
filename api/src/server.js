@@ -6,6 +6,8 @@ const config = require('./config')
 const { version } = require('./../package.json')
 const { addClientRoutes, addDeviceRoutes } = require('./routes')
 const Hapi = require('hapi')
+const cron = require('node-cron')
+const { calculateResultCountsOnSchedule } = require('./fact/service')
 
 const server = new Hapi.Server()
 const port = process.env.PORT || 8080
@@ -56,6 +58,16 @@ const plugins = [
 ]
 
 addRavenPlugin(plugins)
+
+registerCronJobs()
+
+function registerCronJobs() {
+  // calculate device result counts on startup and every hour
+  calculateResultCountsOnSchedule()
+  cron.schedule('0 * * * *', () => {
+    calculateResultCountsOnSchedule()
+  })
+}
 
 // load and return the good logging configuration
 function loadGoodReporter() {

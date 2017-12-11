@@ -1963,6 +1963,83 @@ describe('Device Result API routes', () => {
             .del()
         }))
     })
+
+    describe('fact tables', () => {
+      function getDeviceResultCounts(knex, deviceId) {
+        return knex('FactResultCountDevice')
+          .where({ deviceId })
+          .andWhere('resultCategory1', null)
+          .select(
+            'deviceId',
+            'assayId',
+            'resultCategory1',
+            'days',
+            'resultCount',
+            'calculatedOn'
+          )
+      }
+
+      it('should update the result counts in the facts-table when a new result is reported', () =>
+        runTest(function*(knex) {
+          const resultDetails = {
+            assayExternalId: 'MtbRif',
+            deviceId: context.deviceId,
+          }
+
+          const resultCountsBefore = yield getDeviceResultCounts(
+            knex,
+            context.deviceId
+          )
+
+          const { id: assayId } = yield knex('Assay')
+            .where('externalId', resultDetails.assayExternalId)
+            .first('id')
+
+          yield server
+            .post(devicePostResultPath)
+            .set('Authorization', context.deviceAuth)
+            .send({
+              id: new Date().getTime().toString(),
+              data: { a: 'b' },
+              assay: { id: resultDetails.assayExternalId },
+              endedOn: new Date(),
+            })
+            .then(res => {
+              assert.equal(res.status, 200)
+              return waitAsyncComplete(res)
+            })
+
+          const resultCountsAfter = yield getDeviceResultCounts(
+            knex,
+            context.deviceId
+          )
+
+          resultCountsBefore.forEach(countBefore => {
+            const countAfter = _.find(resultCountsAfter, {
+              days: countBefore.days,
+              assayId: countBefore.assayId,
+              resultCategory1: countBefore.resultCategory1,
+            })
+
+            // compare before and after counts
+            if (countAfter) {
+              if (countAfter.assayId === assayId || !countAfter.assayId) {
+                assert.equal(
+                  countAfter.resultCount,
+                  countBefore.resultCount + 1,
+                  'Count in fact-table should have increased by one after posting a result'
+                )
+              } else {
+                assert.equal(
+                  countBefore.resultCount,
+                  countAfter.resultCount,
+                  'Count in fact-table should be the same as before for rows that are not assigned to the posted assay.'
+                )
+              }
+            }
+          })
+        }))
+    })
   })
 
   describe('RRT Lab/Clinic Tests', () => {

@@ -1,7 +1,7 @@
 const { assert } = require('chai')
 const path = require('path')
 const templateProcessor = require('../../src/email/templateProcessor')
-const { run } = require('../utils/generatorFunctionUtils')
+const { runTest } = require('../utils/generatorFunctionUtils')
 
 describe('email/templateProcessor', () => {
   describe('process', () => {
@@ -12,7 +12,7 @@ describe('email/templateProcessor', () => {
           aspectUrl: 'https://aspect.id',
           resetPasswordToken: 'reset-token-12345',
         }
-        return run(templateProcessor.process, [
+        return runTest(templateProcessor.process, [
           'resetPassword',
           tokenValues,
         ])(result => {
@@ -52,7 +52,7 @@ describe('email/templateProcessor', () => {
             aspectUrl: 'https://aspect.id',
             resetPasswordToken: 'reset-token-12345',
           }
-          return run(templateProcessor.process, [
+          return runTest(templateProcessor.process, [
             'resetPassword',
             tokenValues,
             'fr-FR',
@@ -102,7 +102,7 @@ describe('email/templateProcessor', () => {
           __dirname,
           '../../src/email/templates/systemone.jpg'
         )
-        return run(templateProcessor.generateAttachment, [
+        return runTest(templateProcessor.generateAttachment, [
           filePath,
           'image/jpeg',
           'inline',
@@ -118,7 +118,7 @@ describe('email/templateProcessor', () => {
 
   describe('getInlineImageAttachments', () => {
     it('should generate an array of image attachments referenced in the content', () =>
-      run(templateProcessor.getInlineImageAttachments, [
+      runTest(templateProcessor.getInlineImageAttachments, [
         '<html><body><img src="cid:systemone.jpg" /></body></html>',
       ])(inlineAttachments => {
         assert.equal(inlineAttachments.length, 1)

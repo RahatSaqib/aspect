@@ -3,6 +3,7 @@ const { get } = require('lodash')
 const {
   addResultWorkflowLogIfChanged,
   consumeInventoryForResult,
+  updateFactResultCountDevice,
 } = require('./common')
 
 const plugins = {
@@ -27,7 +28,7 @@ const plugins = {
 }
 
 /**
- * Loads a plugin by name and action see documentation for 
+ * Loads a plugin by name and action see documentation for
  * default plugin in ./default.js for available actions
  *
  * Falls back to default plugin if action
@@ -122,6 +123,7 @@ function* postProcessMergeResult(context, result, previousResult) {
   // TODO ASP-355 consume inventory using a message listener instead
   // of within plugin/same transaction
   yield* consumeInventoryForResult(knex, payload, result)
+  yield* updateFactResultCountDevice(knex, payload, result)
   return {}
 }
 
