@@ -2,7 +2,6 @@ import _ from 'lodash'
 import classnames from 'classnames/bind'
 import React from 'react'
 import { compose, withProps, withHandlers, lifecycle } from 'recompose'
-import { defineMessages } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
@@ -25,58 +24,9 @@ import {
   DeviceDataTableHead,
   DeviceDataTableRow,
 } from './DeviceDataTable'
+import messages from './messages'
 
 const cssClasses = classnames.bind(require('./DeviceList.css'))
-
-const messages = defineMessages({
-  devicesTitle: {
-    id: 'pages.DeviceList.devicesTitle',
-    defaultMessage: 'Devices',
-  },
-  deviceName: {
-    id: 'pages.DeviceList.deviceName',
-    defaultMessage: 'Device Name',
-  },
-  state: {
-    id: 'pages.DeviceList.state',
-    defaultMessage: 'State',
-  },
-  status: {
-    id: 'pages.DeviceList.status',
-    defaultMessage: 'Status',
-  },
-  reportingFor: {
-    id: 'pages.DeviceList.reportingFor',
-    defaultMessage: 'Reporting For',
-  },
-  lastSeen: {
-    id: 'pages.DeviceList.lastSeen',
-    defaultMessage: 'Last Seen',
-  },
-  numberOfTestsLeft: {
-    id: 'pages.DeviceList.numberOfTestsLeft',
-    defaultMessage: 'Number',
-  },
-  numberOfTestsRight: {
-    id: 'pages.DeviceList.numberOfTestsRight',
-    defaultMessage: 'Of Tests',
-  },
-  lastMonth: {
-    id: 'pages.DeviceList.lastMonth',
-    defaultMessage: 'Last Month',
-  },
-  thisMonth: {
-    id: 'pages.DeviceList.thisMonth',
-    defaultMessage: 'This Month',
-  },
-  paginatorStatus: {
-    id: 'pages.DeviceList.paginatorStatus',
-    defaultMessage: `Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural,
-      one {# device}
-      other {# devices}
-    }`,
-  },
-})
 
 const FILTERS_CONFIG = {
   assayAndResultCategory: true,
@@ -94,6 +44,8 @@ const searchSanitizer = makeSearchParamsSanitizer({
     'name',
     'state',
     'status',
+    'availabilityRate',
+    'errorRate',
     'createdOn',
     'lastSeen',
     'lastMonth',
@@ -186,6 +138,11 @@ const enhance = compose(
     onRowClick: ({ history }) => ({
       currentTarget: { dataset: { deviceId } },
     }) => history.push(`/browse/device/${deviceId}`),
+    onAlertClick: ({ history }) => event => {
+      event.stopPropagation()
+      const { currentTarget: { dataset: { pathname } } } = event
+      history.push(pathname)
+    },
   }),
   lifecycle({
     componentWillMount() {
@@ -232,6 +189,7 @@ export const DeviceList = ({
   onExportClick,
   onHeadColumnClick,
   onRowClick,
+  onAlertClick,
 }) => (
   <div className={cssClasses('Container')}>
     <Helmet title={intl.formatMessage(messages.devicesTitle)} />
@@ -255,6 +213,20 @@ export const DeviceList = ({
           className={cssClasses('DeviceDataTable')}
         >
           <DeviceDataTableHead
+            compact
+            columns={[
+              {
+                key: 'empty',
+                colSpan: 8,
+              },
+              {
+                key: 'tests',
+                colSpan: 2,
+                label: intl.formatMessage(messages.numberOfTests),
+              },
+            ]}
+          />
+          <DeviceDataTableHead
             sortColumnKey={sortCol}
             sortColumnDir={sortDir}
             columns={[
@@ -274,6 +246,20 @@ export const DeviceList = ({
                 onClick: onHeadColumnClick,
               },
               {
+                key: 'availabilityRate',
+                label: intl.formatMessage(messages.availabilityRate),
+                onClick: onHeadColumnClick,
+              },
+              {
+                key: 'errorRate',
+                label: intl.formatMessage(messages.errorRate),
+                onClick: onHeadColumnClick,
+              },
+              {
+                key: 'issues',
+                label: intl.formatMessage(messages.issues),
+              },
+              {
                 key: 'createdOn',
                 label: intl.formatMessage(messages.reportingFor),
                 onClick: onHeadColumnClick,
@@ -285,27 +271,13 @@ export const DeviceList = ({
               },
               {
                 key: 'lastMonth',
-                className: cssClasses('DeviceDataTableHead__Tests--left'),
                 onClick: onHeadColumnClick,
-                label: (
-                  <span>
-                    {intl.formatMessage(messages.numberOfTestsLeft)}
-                    <br />
-                    {intl.formatMessage(messages.lastMonth)}
-                  </span>
-                ),
+                label: intl.formatMessage(messages.lastMonth),
               },
               {
                 key: 'thisMonth',
-                className: cssClasses('DeviceDataTableHead__Tests--right'),
                 onClick: onHeadColumnClick,
-                label: (
-                  <span>
-                    {intl.formatMessage(messages.numberOfTestsRight)}
-                    <br />
-                    {intl.formatMessage(messages.thisMonth)}
-                  </span>
-                ),
+                label: intl.formatMessage(messages.thisMonth),
               },
             ]}
           />
@@ -317,6 +289,7 @@ export const DeviceList = ({
                 intl={intl}
                 device={device}
                 onClick={onRowClick}
+                onAlertClick={onAlertClick}
                 data-device-Id={device.get('id')}
               />
             ))}

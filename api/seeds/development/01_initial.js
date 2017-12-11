@@ -209,6 +209,16 @@ function* seed(knex) {
       type: 'string',
     },
   })
+  const commCareConfigurationDataSchema = JSON.stringify({
+    requirePrinter: {
+      title: 'Require printer',
+      type: 'string',
+    },
+    firmwareUpdateRequired: {
+      title: 'Firmware update required',
+      type: 'string',
+    },
+  })
 
   // define deviceOperation object
   const deviceOperationSchema = JSON.stringify({
@@ -225,6 +235,23 @@ function* seed(knex) {
       prefix: '',
       suffix: 'F',
       decimals: 1,
+    },
+  })
+
+  const commCareDeviceOperationSchema = JSON.stringify({
+    longitude: {
+      title: 'Longitude',
+      type: 'number',
+      prefix: '',
+      suffix: '',
+      decimals: 10,
+    },
+    latitude: {
+      title: 'Latitude',
+      type: 'number',
+      prefix: '',
+      suffix: '',
+      decimals: 10,
     },
   })
 
@@ -253,7 +280,7 @@ function* seed(knex) {
   })
 
   const [deviceTypeM2000Id] = yield knex('DeviceType').insert({
-    externalId: 'AbbotM2000',
+    externalId: 'AbbottM2000',
     name: 'm2000',
     manufacturer: 'Abbott',
     deviceTypeCategoryId: deviceTypeCategoryLab,
@@ -284,6 +311,15 @@ function* seed(knex) {
     name: 'Metacom Router',
     manufacturer: 'Metacom',
     deviceTypeCategoryId: deviceTypeCategoryConnectivity,
+  })
+
+  const [deviceTypeCommCare] = yield knex('DeviceType').insert({
+    externalId: 'CommCareApp',
+    name: 'CommCare App',
+    manufacturer: 'CommCare',
+    deviceTypeCategoryId: deviceTypeCategoryLab,
+    configurationDataSchema: commCareConfigurationDataSchema,
+    deviceOperationSchema: commCareDeviceOperationSchema,
   })
 
   // DeviceStatus
@@ -695,6 +731,57 @@ function* seed(knex) {
     },
   })
 
+  const commCareResultDataSchemaHiv = JSON.stringify({
+    result: {
+      title: 'Result',
+      type: 'string',
+      i18nKey: 'result',
+    },
+    qaResult: {
+      title: 'QA Result',
+      type: 'string',
+      i18nKey: 'qaResult',
+    },
+    urlPicture: {
+      title: 'Picture URL',
+      type: 'string',
+      i18nKey: 'urlPicture',
+    },
+  })
+
+  const commCarePatientDataSchema = JSON.stringify({
+    id: {
+      title: 'Patient ID',
+      type: 'string',
+      order: 0,
+    },
+    name: {
+      title: 'First Name',
+      type: 'string',
+      order: 1,
+    },
+    surName: {
+      title: 'Last Name',
+      type: 'string',
+      order: 2,
+    },
+    motherName: {
+      title: 'Mother First Name',
+      type: 'string',
+      order: 3,
+    },
+    fatherName: {
+      title: 'Father First Name',
+      type: 'string',
+      order: 4,
+    },
+    studyId: {
+      title: 'Study ID',
+      type: 'string',
+      order: 5,
+    },
+  })
+
   const [assayMtbRifId] = yield knex('Assay').insert({
     name: 'GeneXpert MTB/Rif',
     i18nKey: 'assayGeneXpertMtbRif',
@@ -845,8 +932,8 @@ function* seed(knex) {
   })
 
   yield knex('Assay').insert({
-    name: 'Abbot m2000 HIV VL',
-    i18nKey: 'AssayAbbotM2000HivVl',
+    name: 'Abbott m2000 HIV VL',
+    i18nKey: 'AssayAbbottM2000HivVl',
     externalId: 'HivVl',
     assayTypeId: assayTypeHivVlId,
     deviceTypeId: deviceTypeM2000Id,
@@ -894,8 +981,8 @@ function* seed(knex) {
   })
 
   yield knex('Assay').insert({
-    name: 'Abbot m2000 EID',
-    i18nKey: 'AssayAbbotM2000Eid',
+    name: 'Abbott m2000 EID',
+    i18nKey: 'AssayAbbottM2000Eid',
     externalId: 'EID',
     assayTypeId: assayTypeEid,
     deviceTypeId: deviceTypeM2000Id,
@@ -930,7 +1017,7 @@ function* seed(knex) {
         type: 'string',
         order: 3,
       },
-      nameMother: {
+      motherName: {
         title: "Mother's Name",
         type: 'string',
         order: 4,
@@ -1082,6 +1169,19 @@ function* seed(knex) {
     }),
   })
 
+  const [assayCommCareHiv] = yield knex('Assay').insert({
+    name: 'CommCare HIV',
+    i18nKey: 'commCareHiv',
+    externalId: 'CommCareHiv',
+    assayTypeId: assayTypeEid,
+    deviceTypeId: deviceTypeCommCare,
+    resultSourceId: resultSourceDiagnosticId,
+    resultCategory1Label: 'Result',
+    resultCategory1i18nKey: 'resultCategoryEid',
+    resultDataSchema: commCareResultDataSchemaHiv,
+    patientDataSchema: commCarePatientDataSchema,
+  })
+
   // Result types
   const [resultTypePatientId] = yield knex('ResultType').insert({
     name: 'Patient',
@@ -1154,6 +1254,48 @@ function* seed(knex) {
     name: 'Success',
     i18nKey: 'resultCategorySuccess',
     externalId: 'Success',
+  })
+
+  yield knex('ResultCategory').insert({
+    name: 'Collect New Sample',
+    i18nkey: 'resultCategoryCollectNewSample',
+    externalId: 'CollectNewSample',
+  })
+
+  yield knex('ResultCategory').insert({
+    name: 'Discordant',
+    i18nkey: 'resultCategoryDiscordant',
+    externalId: 'Discordant',
+  })
+
+  yield knex('ResultCategory').insert({
+    name: 'LessThan1000',
+    i18nkey: 'resultCategoryLessThan1000',
+    externalId: 'LessThan1000',
+  })
+
+  yield knex('ResultCategory').insert({
+    name: 'MoreThan1000',
+    i18nkey: 'resultCategoryMoreThan1000',
+    externalId: 'MoreThan1000',
+  })
+
+  yield knex('ResultCategory').insert({
+    name: 'Rejected',
+    i18nkey: 'resultCategoryRejected',
+    externalId: 'Rejected',
+  })
+
+  yield knex('ResultCategory').insert({
+    name: 'Missing',
+    i18nkey: 'resultCategoryMissing',
+    externalId: 'Missing',
+  })
+
+  yield knex('ResultCategory').insert({
+    name: 'Unknown',
+    i18nkey: 'resultCategoryUnknown',
+    externalId: 'Unknown',
   })
 
   // assign categories to Assays
@@ -1295,6 +1437,21 @@ function* seed(knex) {
   yield knex('ResultCategoryAssay').insert({
     resultCategoryId: resultCategoryErrorId,
     assayId: assayGeneXpertHcvId,
+  })
+
+  yield knex('ResultCategoryAssay').insert({
+    resultCategoryId: resultCategoryDetectedId,
+    assayId: assayCommCareHiv,
+  })
+
+  yield knex('ResultCategoryAssay').insert({
+    resultCategoryId: resultCategoryNotDetectedId,
+    assayId: assayCommCareHiv,
+  })
+
+  yield knex('ResultCategoryAssay').insert({
+    resultCategoryId: resultCategoryErrorId,
+    assayId: assayCommCareHiv,
   })
 
   // Units
@@ -1741,8 +1898,6 @@ function* seed(knex) {
       updatedOn: new Date(+now - i * millisInHour),
       lastPingOn: new Date(+now - i * millisInHour / 3),
       lastSeenOn: new Date(+now - i * millisInHour / 3),
-      approvedOn: new Date(+now - 2 * i * millisInHour),
-      approvedBy: _.values(userIds)[_.random(_.size(userIds) - 1)],
       hostId: _.times(8, () =>
         String.fromCharCode(65 + _.random(25) + (_.random(1) > 0 ? 32 : 0))
       ).join(''),
@@ -1768,6 +1923,16 @@ function* seed(knex) {
         auditFields
       )
     )
+
+    // Create Status Log
+    yield knex('DeviceStatusLog').insert({
+      deviceId: device.id,
+      deviceStatusId:
+        _.random(1) > 0 ? deviceStatusApproved : deviceStatusAssigned,
+      changedOn: auditFields.updatedOn,
+      createdOn: auditFields.createdOn,
+      createdBy: auditFields.createdBy,
+    })
 
     // Create DeviceOperation
     const operationNumber = _.random(3, 11)
@@ -1808,8 +1973,6 @@ function* seed(knex) {
       updatedOn: new Date(+now - i * millisInHour),
       lastPingOn: new Date(+now - i * millisInHour / 3),
       lastSeenOn: new Date(+now - i * millisInHour / 3),
-      approvedOn: new Date(+now - 2 * i * millisInHour),
-      approvedBy: _.values(userIds)[_.random(_.size(userIds) - 1)],
       hostId: _.times(8, () =>
         String.fromCharCode(65 + _.random(25) + (_.random(1) > 0 ? 32 : 0))
       ).join(''),
@@ -2027,12 +2190,14 @@ function* seed(knex) {
     const sample = samples[i % samples.length]
     const randomDate = calculateDateForResult(i, resultMtbNumber, 6000)
 
+    let j = 0
     for (const result of possibleResults) {
+      j += 1
       if (_.random(4) === 0) {
         resultData.resultText = result.resultText
         const resultId = yield knex('Result').insert(
           Object.assign({}, auditFields, {
-            externalId: `UQTB-${i}`,
+            externalId: `UQTB-${i}-${j}`,
             assayId: assayMtbRifId,
             partnerId: partnerOneId,
             geographyId: siteData.geographyId,
@@ -2181,12 +2346,14 @@ function* seed(knex) {
     const sample = samples[i % samples.length]
     const randomDate = calculateDateForResult(i, resultEbolaNumber, 6000)
 
+    let j = 0
     for (const result of possibleResults) {
+      j += 1
       if (_.random(5) === 0) {
         resultData.resultText = result.resultText
         const resultId = yield knex('Result').insert(
           Object.assign({}, auditFields, {
-            externalId: `UQEB-${i}`,
+            externalId: `UQEB-${i}-${j}`,
             assayId: assayEbolaId,
             partnerId: partnerOneId,
             geographyId: siteData.geographyId,
@@ -2316,7 +2483,9 @@ function* seed(knex) {
 
     // make sure we have at least one result with these status
     const ensureResultIds = [acknowledged, validated, deliverable]
+    let j = 0
     for (const result of possibleResults) {
+      j += 1
       if (_.random(4) === 0) {
         let copies = 3200
         let log = 5
@@ -2341,7 +2510,7 @@ function* seed(knex) {
 
         const resultId = yield knex('Result').insert(
           Object.assign({}, auditFields, {
-            externalId: `UQHIV-${i}`,
+            externalId: `UQHIV-${i}-${j}`,
             assayId: assayHivVlId,
             partnerId: partnerOneId,
             geographyId: siteData.geographyId,
@@ -2440,7 +2609,9 @@ function* seed(knex) {
     const sample = samples[i % samples.length]
     const randomDate = calculateDateForResult(i, resultHcvNumber, 6000)
 
+    let j = 0
     for (const result of possibleResults) {
+      j += 1
       if (_.random(4) === 0) {
         let count = 3200
         if (result === possibleResults[0]) {
@@ -2454,7 +2625,7 @@ function* seed(knex) {
 
         const resultId = yield knex('Result').insert(
           Object.assign({}, auditFields, {
-            externalId: `UQ-GX-HCV-${i}`,
+            externalId: `UQ-GX-HCV-${i}-${j}`,
             assayId: assayGeneXpertHcvId,
             partnerId: partnerOneId,
             geographyId: siteData.geographyId,
@@ -2563,7 +2734,9 @@ function* seed(knex) {
     const sample = samples[i % samples.length]
     const randomDate = calculateDateForResult(i, resultHivVlNumber, 6000)
 
+    let j = 0
     for (const result of possibleResults) {
+      j += 1
       if (_.random(4) === 0) {
         let copies = 3200
         let log = 5
@@ -2583,7 +2756,7 @@ function* seed(knex) {
 
         const resultId = yield knex('Result').insert(
           Object.assign({}, auditFields, {
-            externalId: `UQ-DAK-HIV-${i}`,
+            externalId: `UQ-DAK-HIV-${i}-${j}`,
             assayId: assayDaktariHivVlId,
             partnerId: partnerOneId,
             geographyId: siteData.geographyId,
@@ -2688,7 +2861,9 @@ function* seed(knex) {
     const sample = samples[i % samples.length]
     const randomDate = calculateDateForResult(i, resultHcvNumber, 6000)
 
+    let j = 0
     for (const result of possibleResults) {
+      j += 1
       if (_.random(4) === 0) {
         let copies = 3200
         let log = 5
@@ -2708,7 +2883,7 @@ function* seed(knex) {
 
         const resultId = yield knex('Result').insert(
           Object.assign({}, auditFields, {
-            externalId: `UQ-DAK-HCV-${i}`,
+            externalId: `UQ-DAK-HCV-${i}-${j}`,
             assayId: assayDaktariHcvId,
             partnerId: partnerOneId,
             geographyId: siteData.geographyId,

@@ -1,32 +1,68 @@
-.Container {
-  padding: 10px;
+@import '../../globals/variables.css';
+
+.Section {
+  padding: 10px var(--aspect-detail-horizontal-padding);
 }
 
-.Name {
-  margin: 0 0 10px;
-  font-weight: normal;
+.Section--first {
+  padding-top: 20px;
+}
+
+.Section__Content {
+  padding: 20px;
+}
+
+.Summary {
+  padding-bottom: 10px;
+}
+
+.Summary__Title {
+  line-height: 24px;
+  color: var(--aspect-color-grey-3);
+}
+
+.Summary__Description {
+  padding-right: 10px;
+  color: var(--aspect-color-grey-2);
+  font-weight: var(--lato-font-weight-bold);
+}
+
+.Summary__Description__Link {
+  margin-left: 10px;
+}
+
+.Summary__Description__Action {
+  margin-left: 20px;
+}
+
+.Header {
+  padding-bottom: 20px;
+  display: flex;
+}
+
+.Header__Title {
+  flex-grow: 1;
+  color: var(--aspect-color-grey-2);
   font-size: 24px;
 }
 
-.Site {
-  font-size: 16px;
+.Header__Actions {
+  margin-left: 20px;
 }
 
-.StatusText {
-  padding: 5px 0;
-  font-size: 14px;
+.Form__Actions {
+  padding: 20px;
+  text-align: right;
 }
 
-.Contact {
-  padding: 0 5px;
+.ResultDataTable,
+.DeviceOperationDataTable {
+  composes: ComponentDataTable from '../../components/shared/DataTable.css';
 }
 
-.CardText {
-  font-size: 14px;
-}
-
-.DemoLink {
-  padding: 0 16px;
-  text-decoration: none;
-  color: #ccc;
+.DelayShowingProgressBar {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  padding-left: -50%;
 }

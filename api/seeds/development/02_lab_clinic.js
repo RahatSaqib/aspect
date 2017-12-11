@@ -475,8 +475,6 @@ function* seed(knex) {
               lastPingFromIp: device.lastPingFromIp,
               putInService: device.putInService,
               putInServiceSource: device.putInServiceSource,
-              approvedOn: device.approvedOn,
-              approvedBy: labAdminPersonId,
               configurationData: device.configurationData,
             },
             auditFields

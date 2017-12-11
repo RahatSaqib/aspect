@@ -23,11 +23,11 @@
 }
 
 .Section {
-  composes: Section from '../status/Status.css';
+  padding: 10px 0;
 }
 
 .Section__Content {
-  composes: Section__Content from '../status/Status.css';
+  padding: 20px;
 }
 
 .TitleContainer {
@@ -50,31 +50,35 @@
   composes: Title__Color--site from '../status/Status.css';
 }
 
-.Graph {
+.AbnormalBarChart {
   padding: 10px;
   color: var(--aspect-color-grey-2);
 }
 
-.Graph__Title {
+.AbnormalBarChart__Title {
   line-height: 30px;
   font-size: 18px;
   font-weight: var(--lato-font-weight-black);
-  text-transform: capitalize;
+  text-align: center;
 }
 
-.Graph__Message {
+.AbnormalBarChart__Title::first-letter {
+  text-transform: uppercase;
+}
+
+.AbnormalBarChart__Message {
   display: flex;
 }
 
-.Graph__Message__Icon--abnormal {
+.AbnormalBarChart__Message__Icon--abnormal {
   color: var(--aspect-color-brink);
 }
 
-.Graph__Message__Icon--normal {
+.AbnormalBarChart__Message__Icon--normal {
   color: var(--aspect-color-mantis);
 }
 
-.Graph__Message__Text {
+.AbnormalBarChart__Message__Text {
   flex-grow: 1;
   padding-left: 10px;
 }

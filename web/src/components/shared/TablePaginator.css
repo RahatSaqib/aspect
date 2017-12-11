@@ -12,17 +12,21 @@
 
 .Container__Content {
   width: 0;
-  flex-grow: 1;
   display: flex;
 }
 
 .Left {
   composes: Container__Content;
+  flex-grow: 1;
 }
 
 .Left__Status {
   line-height: var(--button-height);
   padding: 0 20px;
+}
+
+.Left__Button {
+  margin: 0 5px;
 }
 
 .Left__Button--next > svg {
@@ -32,14 +36,17 @@
 
 .Right {
   composes: Container__Content;
+  flex-grow: 0;
   justify-content: flex-end;
 }
 
 .Right__Button {
   margin: 0 10px;
+  padding: 0;
   min-width: 40px;
   background-color: var(--aspect-color-grey-7);
   font-weight: var(--lato-font-weight-bold);
+  text-align: center;
   text-transform: capitalize;
 }
 

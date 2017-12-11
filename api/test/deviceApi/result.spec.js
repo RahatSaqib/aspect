@@ -2252,8 +2252,17 @@ describe('Device Result API routes', () => {
             assert.equal(res.status, 200)
           })
 
+        yield waitAsyncComplete()
         let lastResultId = yield* getLastResultId(knex, deviceLab.id)
-        yield approveResult(context, lastResultId)
+        let lastResult = yield knex('Result as r')
+          .join(
+            'ResultWorkflowStatus as rws',
+            'r.resultWorkflowStatusId',
+            'rws.id'
+          )
+          .where({ 'r.id': lastResultId })
+          .first('r.qcCheck', 'rws.externalId as workflow')
+        assert.deepEqual(lastResult, { qcCheck: 1, workflow: 'Deliverable' })
 
         yield server
           .get(`${devicePath}?checkpoint=rrt_0`)
@@ -2294,7 +2303,7 @@ describe('Device Result API routes', () => {
                   artNumber: '1341kjkj',
                 },
                 assay: { id: 'HivVl' },
-                category: [{ id: 'Success' }],
+                category: [{ id: 'MoreThan1000' }],
                 type: { id: 'Patient' },
                 source: { id: 'LIMS' },
                 notes: '454,112 Copies / mL',
@@ -2330,7 +2339,7 @@ describe('Device Result API routes', () => {
                 artNumber: '1341kjkj',
               },
               assay: { id: 'HivVl' },
-              category: [{ id: 'Success' }],
+              category: [{ id: 'MoreThan1000' }],
               type: { id: 'Patient' },
               source: { id: 'LIMS' },
               notes: '454,112 Copies / mL',
@@ -2411,8 +2420,17 @@ describe('Device Result API routes', () => {
             assert.equal(res.status, 200)
           })
 
+        yield waitAsyncComplete()
         lastResultId = yield* getLastResultId(knex, deviceLab.id)
-        yield approveResult(context, lastResultId)
+        lastResult = yield knex('Result as r')
+          .join(
+            'ResultWorkflowStatus as rws',
+            'r.resultWorkflowStatusId',
+            'rws.id'
+          )
+          .where({ 'r.id': lastResultId })
+          .first('r.qcCheck', 'rws.externalId as workflow')
+        assert.deepEqual(lastResult, { qcCheck: 1, workflow: 'Deliverable' })
 
         yield server
           .get(`${devicePath}?checkpoint=rrt1723_0&offset=1`)
@@ -2450,12 +2468,16 @@ describe('Device Result API routes', () => {
             )
           })
 
+        yield waitAsyncComplete()
+
         yield server
-          .get(`${devicePath}?checkpoint=rrt1723_0&offset=5`)
+          .get(`${devicePath}?checkpoint=rrt1723_0&offset=6`)
           .set('Authorization', device1723Auth)
           .then(res => {
             assert.equal(res.status, 404)
           })
+
+        yield waitAsyncComplete()
 
         yield server
           .get(`${devicePath}?checkpoint=rrt_0&offset=5`)
@@ -2487,7 +2509,7 @@ describe('Device Result API routes', () => {
                   artNumber: '2341sfkj',
                 },
                 assay: { id: 'HivVl' },
-                category: [{ id: 'Success' }],
+                category: [{ id: 'MoreThan1000' }],
                 type: { id: 'Patient' },
                 source: { id: 'LIMS' },
                 notes: '154,112 Copies / mL',
@@ -2524,7 +2546,7 @@ describe('Device Result API routes', () => {
                   artNumber: '2341sfkj',
                 },
                 assay: { id: 'HivVl' },
-                category: [{ id: 'Success' }],
+                category: [{ id: 'MoreThan1000' }],
                 type: { id: 'Patient' },
                 source: { id: 'LIMS' },
                 notes: '154,112 Copies / mL',
@@ -2561,7 +2583,7 @@ describe('Device Result API routes', () => {
                   artNumber: '2341sfkj',
                 },
                 assay: { id: 'HivVl' },
-                category: [{ id: 'Success' }],
+                category: [{ id: 'MoreThan1000' }],
                 type: { id: 'Patient' },
                 source: { id: 'LIMS' },
                 notes: '154,112 Copies / mL',
@@ -2598,7 +2620,7 @@ describe('Device Result API routes', () => {
                   artNumber: '1341kjkj',
                 },
                 assay: { id: 'HivVl' },
-                category: [{ id: 'Success' }],
+                category: [{ id: 'MoreThan1000' }],
                 type: { id: 'Patient' },
                 source: { id: 'LIMS' },
                 notes: '454,112 Copies / mL',
@@ -2643,7 +2665,7 @@ describe('Device Result API routes', () => {
           })
 
         yield server
-          .get(`${devicePath}?checkpoint=rrt1315_0&offset=5`)
+          .get(`${devicePath}?checkpoint=rrt1315_0&offset=6`)
           .set('Authorization', device1315Auth)
           .then(res => {
             assert.equal(res.status, 404)
@@ -2707,7 +2729,7 @@ describe('Device Result API routes', () => {
                   artNumber: '2341sfkj',
                 },
                 assay: { id: 'HivVl' },
-                category: [{ id: 'Success' }],
+                category: [{ id: 'MoreThan1000' }],
                 type: { id: 'Patient' },
                 source: { id: 'LIMS' },
                 notes: '154,112 Copies / mL',
@@ -2829,11 +2851,10 @@ describe('Device Result API routes', () => {
             assert.equal(res.status, 200)
           })
 
-        lastResultId = yield* getLastResultId(knex, deviceLab.id)
-        yield approveResult(context, lastResultId)
+        yield waitAsyncComplete()
 
         yield server
-          .get(`${devicePath}?checkpoint=rrt_0&offset=5`)
+          .get(`${devicePath}?checkpoint=rrt_0&offset=6`)
           .set('Authorization', deviceAuth)
           .then(res => {
             assert.equal(res.status, 200)
@@ -2861,7 +2882,7 @@ describe('Device Result API routes', () => {
                   artNumber: '2341sfkj',
                 },
                 assay: { id: 'HivVl' },
-                category: [{ id: 'Success' }],
+                category: [{ id: 'MoreThan1000' }],
                 type: { id: 'Patient' },
                 source: { id: 'LIMS' },
                 notes: '154,112 Copies / mL',
@@ -2870,7 +2891,7 @@ describe('Device Result API routes', () => {
           })
 
         yield server
-          .get(`${devicePath}?checkpoint=rrt_0&offset=10`)
+          .get(`${devicePath}?checkpoint=rrt_0&offset=12`)
           .set('Authorization', deviceAuth)
           .then(res => {
             assert.equal(res.status, 200)
@@ -2897,7 +2918,7 @@ describe('Device Result API routes', () => {
                   artNumber: '320113j',
                 },
                 assay: { id: 'HivVl' },
-                category: [{ id: 'Success' }],
+                category: [{ id: 'MoreThan1000' }],
                 type: { id: 'Patient' },
                 source: { id: 'LIMS' },
                 notes: '155,115 Copies / mL',
@@ -2906,7 +2927,7 @@ describe('Device Result API routes', () => {
           })
 
         yield server
-          .get(`${devicePath}?checkpoint=rrt_1&offset=4`)
+          .get(`${devicePath}?checkpoint=rrt_1&offset=5`)
           .set('Authorization', deviceAuth)
           .then(res => {
             assert.equal(res.status, 200)
@@ -2934,7 +2955,7 @@ describe('Device Result API routes', () => {
                   artNumber: '2341sfkj',
                 },
                 assay: { id: 'HivVl' },
-                category: [{ id: 'Success' }],
+                category: [{ id: 'MoreThan1000' }],
                 type: { id: 'Patient' },
                 source: { id: 'LIMS' },
                 notes: '154,112 Copies / mL',
@@ -2971,7 +2992,7 @@ describe('Device Result API routes', () => {
                   artNumber: '2341sfkj',
                 },
                 assay: { id: 'HivVl' },
-                category: [{ id: 'Success' }],
+                category: [{ id: 'MoreThan1000' }],
                 type: { id: 'Patient' },
                 source: { id: 'LIMS' },
                 notes: '154,112 Copies / mL',
@@ -3007,7 +3028,7 @@ describe('Device Result API routes', () => {
                   artNumber: '1341kjkj',
                 },
                 assay: { id: 'HivVl' },
-                category: [{ id: 'Success' }],
+                category: [{ id: 'MoreThan1000' }],
                 type: { id: 'Patient' },
                 source: { id: 'LIMS' },
                 notes: '454,112 Copies / mL',
@@ -3016,7 +3037,7 @@ describe('Device Result API routes', () => {
           })
 
         yield server
-          .get(`${devicePath}?checkpoint=rrt_3&offset=-6`)
+          .get(`${devicePath}?checkpoint=rrt_3&offset=-7`)
           .set('Authorization', deviceAuth)
           .then(res => {
             assert.equal(res.status, 200)
@@ -3043,7 +3064,7 @@ describe('Device Result API routes', () => {
                   artNumber: '1341kjkj',
                 },
                 assay: { id: 'HivVl' },
-                category: [{ id: 'Success' }],
+                category: [{ id: 'MoreThan1000' }],
                 type: { id: 'Patient' },
                 source: { id: 'LIMS' },
                 notes: '454,112 Copies / mL',
@@ -3640,6 +3661,191 @@ describe('Device Result API routes', () => {
           .first('d.id', 's.externalId as site', 'ds.token as status')
         assert.equal(device.site, 'CHIZ')
         assert.equal(device.status, 'assigned')
+      }))
+
+    it('should set the resultCategory of a result', () =>
+      runTest(function*(knex) {
+        const { apiKey, deviceAuth } = context
+        assert.isOk(apiKey)
+
+        const device = yield* getDeviceFromApiKey(knex, apiKey)
+        assert.isNotOk(device)
+
+        // HivVl Missing
+        yield server
+          .post(devicePath)
+          .set('Authorization', deviceAuth)
+          .send({
+            name: 'Device 0123',
+            type: { id: 'CHAILIMS' },
+            site: { id: 'CHIZ' },
+            checkpoint: 'ck1',
+            result: {
+              data: {
+                a: 'k',
+                resultText: 'Missing',
+              },
+              assay: { id: 'HivVl' },
+            },
+          })
+          .then(res => {
+            assert.equal(res.status, 200)
+            assert.typeOf(res.body, 'Object')
+          })
+
+        const malawiDevice1 = yield* getDeviceFromApiKey(knex, apiKey)
+        const malawiResult1Id = yield* getLastResultId(knex, malawiDevice1.id)
+
+        const malawiResult1 = yield knex('Result as r')
+          .where({ id: malawiResult1Id })
+          .first()
+
+        assert.deepEqual(JSON.parse(malawiResult1.resultData), {
+          a: 'k',
+          resultText: 'Missing',
+        })
+
+        const malawiResult1Category = (yield knex('ResultCategory as rc')
+          .where({ 'rc.id': malawiResult1.resultCategory1 })
+          .first('rc.externalId')).externalId
+
+        assert.equal(malawiResult1Category, 'Missing')
+
+        // HivVl < LDL
+        yield server
+          .post(devicePath)
+          .set('Authorization', deviceAuth)
+          .send({
+            name: 'Device 0124',
+            type: { id: 'CHAILIMS' },
+            site: { id: 'CHIZ' },
+            checkpoint: 'ck1',
+            result: {
+              data: {
+                a: 'g',
+                resultText: '< LDL',
+                copies: 102,
+              },
+              assay: { id: 'HivVl' },
+            },
+          })
+          .then(res => {
+            assert.equal(res.status, 200)
+            assert.typeOf(res.body, 'Object')
+          })
+
+        const malawiDevice2 = yield* getDeviceFromApiKey(knex, apiKey)
+        const malawiResultId2 = yield* getLastResultId(knex, malawiDevice2.id)
+
+        const malawiResult2 = yield knex('Result as r')
+          .where({ id: malawiResultId2 })
+          .first()
+
+        assert.deepEqual(JSON.parse(malawiResult2.resultData), {
+          a: 'g',
+          resultText: '< LDL',
+          copies: 102,
+        })
+
+        const malawiResult2Category = (yield knex('ResultCategory as rc')
+          .where({ 'rc.id': malawiResult2.resultCategory1 })
+          .first('rc.externalId')).externalId
+
+        assert.equal(malawiResult2Category, 'LessThan1000')
+
+        // HivVl MoreThan1000
+        yield server
+          .post(devicePath)
+          .set('Authorization', deviceAuth)
+          .send({
+            name: 'Device 0125',
+            type: { id: 'CHAILIMS' },
+            site: { id: 'CHIZ' },
+            checkpoint: 'ck1',
+            result: {
+              data: {
+                a: 'g',
+                resultText: 'RandomText',
+                copies: 102193,
+              },
+              assay: { id: 'HivVl' },
+            },
+          })
+          .then(res => {
+            assert.equal(res.status, 200)
+            assert.typeOf(res.body, 'Object')
+          })
+
+        const malawiDevice3 = yield* getDeviceFromApiKey(knex, apiKey)
+        const malawiResultId3 = yield* getLastResultId(knex, malawiDevice3.id)
+
+        const malawiResult3 = yield knex('Result as r')
+          .where({ id: malawiResultId3 })
+          .first()
+
+        assert.deepEqual(JSON.parse(malawiResult3.resultData), {
+          a: 'g',
+          resultText: 'RandomText',
+          copies: 102193,
+        })
+
+        const malawiResult3Category = (yield knex('ResultCategory as rc')
+          .where({ 'rc.id': malawiResult3.resultCategory1 })
+          .first('rc.externalId')).externalId
+
+        assert.equal(malawiResult3Category, 'MoreThan1000')
+
+        // EID Negative/Not Detected
+        yield server
+          .post(devicePath)
+          .set('Authorization', deviceAuth)
+          .send({
+            name: 'Device 0126',
+            type: { id: 'CHAILIMS' },
+            site: { id: 'CHIZ' },
+            checkpoint: 'ck1',
+            result: {
+              data: {
+                a: 'h',
+                resultText: 'Negative',
+              },
+              assay: { id: 'EID' },
+            },
+          })
+          .then(res => {
+            assert.equal(res.status, 200)
+            assert.typeOf(res.body, 'Object')
+          })
+
+        const malawiDevice4 = yield* getDeviceFromApiKey(knex, apiKey)
+        const malawiResultId4 = yield* getLastResultId(knex, malawiDevice4.id)
+
+        const malawiResult4 = yield knex('Result as r')
+          .where({ id: malawiResultId4 })
+          .first()
+
+        assert.deepEqual(JSON.parse(malawiResult4.resultData), {
+          a: 'h',
+          resultText: 'Negative',
+        })
+
+        const malawiResult4Category = (yield knex('ResultCategory as rc')
+          .where({ 'rc.id': malawiResult4.resultCategory1 })
+          .first('rc.externalId')).externalId
+
+        assert.equal(malawiResult4Category, 'NotDetected')
+
+        yield server
+          .post(devicePostResultPath)
+          .set('Authorization', deviceAuth)
+          .send({
+            checkpoint: 'ck012',
+            data: { a: 'f', resultText: 'Rejected' },
+            assay: { id: 'HivVl' },
+          })
+          .then(res => {
+            assert.equal(res.status, 200)
+          })
       }))
   })
 })

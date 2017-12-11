@@ -4,7 +4,7 @@ const { knex, transact } = require('../db')
 const { asyncHandler } = require('../routes')
 const {
   addListener,
-  dispatch,
+  createMessageContext,
   notifyResultUpdated,
   notifyResultLogged,
   types: { RESULT_UPDATED, RESULT_LOGGED },
@@ -117,7 +117,7 @@ function deviceApiHandler(handler, handlerOptions) {
 
     let response = {}
     let deviceLogUpdate = null
-    yield transact(function*(knex) {
+    yield context.messageContext.transact(function*(knex) {
       context.knex = knex
       response = yield* handler(context)
 
@@ -130,20 +130,17 @@ function deviceApiHandler(handler, handlerOptions) {
             .update(deviceLogUpdate)
         }
       }
-    })
 
-    // Dispatch actions outside of transaction
-    if (deviceLogUpdate != null && deviceLogUpdate.resultId != null) {
-      dispatch(
-        notifyResultUpdated(
-          deviceLogUpdate.resultId,
-          { deviceLogId },
-          DEVICE_LOG_COMMON_SOURCE
+      if (deviceLogUpdate != null && deviceLogUpdate.resultId != null) {
+        context.dispatch(
+          notifyResultUpdated(
+            deviceLogUpdate.resultId,
+            { deviceLogId },
+            DEVICE_LOG_COMMON_SOURCE
+          )
         )
-      )
-    }
-    context.commit()
-
+      }
+    })
     return response
   })
 }
@@ -309,6 +306,16 @@ function* updateSiteWithContext(context) {
       deviceStatusId: knex('DeviceStatus')
         .where({ token: status })
         .select('id'),
+    })
+
+    yield knex('DeviceStatusLog').insert({
+      deviceId: device.id,
+      deviceStatusId: knex('DeviceStatus')
+        .where({ token: status })
+        .select('id'),
+      changedOn: now,
+      createdOn: now,
+      createdBy: null,
     })
 
     // Update DeviceApiKey site with the new siteId
@@ -621,11 +628,19 @@ function createNewDevice(request, now) {
       createdOn: now,
       updatedOn: now,
     }
-    if (device.status === 'approved') {
-      // TODO DeviceStatusLog ASP-340
-      inserts.approvedOn = now
-    }
+
     const [deviceId] = yield knex('Device').insert(inserts)
+
+    yield knex('DeviceStatusLog').insert({
+      deviceId,
+      deviceStatusId: knex('DeviceStatus')
+        .where({ token: device.status })
+        .select('id'),
+      changedOn: now,
+      createdOn: now,
+      createdBy: null,
+    })
+
     device.id = deviceId
 
     // Assign new device to API Key
@@ -640,16 +655,10 @@ function createNewDevice(request, now) {
 class DeviceApiContext {
   constructor(props) {
     Object.assign(this, props)
-    this.actions = this.parent ? this.parent.actions : []
-    this.dispatch = action => this.actions.push(action)
-  }
-
-  commit() {
-    if (this.parent) {
-      this.parent.commit()
-    } else {
-      this.actions.forEach(action => dispatch(action))
-    }
+    this.messageContext = this.parent
+      ? this.parent.messageContext
+      : createMessageContext()
+    this.dispatch = this.messageContext.dispatch.bind(this.messageContext)
   }
 
   withPayload(payload) {
@@ -796,10 +805,10 @@ function addDeviceLogResultConstraints(queryBuilder) {
     .where('rws.externalId', '<>', 'Purged')
 }
 
-function onResultUpdated({ resultId, message, source }) {
+function onResultUpdated({ resultId, message, source }, context) {
   if (source === DEVICE_LOG_COMMON_SOURCE) {
     // we've already created device logs originating here, so ignore
-    dispatch(notifyResultLogged(resultId, message.deviceLogId))
+    context.dispatch(notifyResultLogged(resultId, message.deviceLogId))
   } else {
     // TODO dispatch from client API using plugin so
     // senderIp, createdOn, source, etc are available
@@ -821,14 +830,13 @@ function onResultUpdated({ resultId, message, source }) {
       .first('deviceId')
       .then(updateDeviceLog)
       .then(([deviceLogId]) =>
-        dispatch(notifyResultLogged(resultId, deviceLogId))
+        context.dispatch(notifyResultLogged(resultId, deviceLogId))
       )
   }
 }
 
-function onResultLogged({ resultId }) {
-  const context = new DeviceApiContext({})
-  transact(function*(knex) {
+function onResultLogged({ resultId }, context) {
+  context.transact(function*(knex) {
     const { plugin } = yield knex('Result as r')
       .join('Partner as p', 'r.partnerId', 'p.id')
       .where({ 'r.id': resultId })
@@ -843,7 +851,7 @@ function onResultLogged({ resultId }) {
       resultId,
     }
     yield* onResultLogged(pluginContext)
-  }).then(() => context.commit())
+  })
 }
 
 addListener(RESULT_UPDATED, onResultUpdated)

@@ -11,8 +11,10 @@ const {
 const Promise = require('bluebird')
 const addDays = require('date-fns/add_days')
 const isAfter = require('date-fns/is_after')
+const differenceInDays = require('date-fns/difference_in_days')
 
 const i18nKeys = {
+  // Dashboard
   sitesTitle: 'sitesTitle',
   devicesTitle: 'devicesTitle',
   runningLowStatus: 'runningLowStatus',
@@ -28,6 +30,15 @@ const i18nKeys = {
   withQualityIssues: 'withQualityIssues',
   ofTotalDevicesTitle: 'ofTotalDevicesTitle',
   ofTotalSitesTitle: 'ofTotalSitesTitle',
+  // Operational
+  stockOutsTitle: 'stockOutsTitle',
+  expiringTitle: 'expiringTitle',
+  siteWithProblems: 'siteWithProblems',
+  daysUnavailable: 'daysUnavailable',
+  testFailures: 'testFailures',
+  calibrationCompliance: 'calibrationCompliance',
+  deviceWithProblems: 'deviceWithProblems',
+  deviceCalibrationsUpToDate: 'deviceCalibrationsUpToDate',
 }
 
 function* summaryDashboard(request) {
@@ -182,9 +193,8 @@ function* resultDashboard(request) {
           rawResultCategoryExternalIds.split(',')
         )
         const resultCategoryNames = _.uniq(rawResultCategoryNames.split(','))
-        const data = _.map(
-          resultCntBySiteIdByAssayTypeId[`${id}`],
-          (it, siteId) =>
+        const data = _.sortBy(
+          _.map(resultCntBySiteIdByAssayTypeId[`${id}`], (it, siteId) =>
             _.reduce(
               it,
               (acc, { resultCategory1ExternalId, cnt }) => {
@@ -201,6 +211,8 @@ function* resultDashboard(request) {
                 { siteId, total: 0 }
               )
             )
+          ),
+          it => -1 * it.total
         )
 
         return {
@@ -261,7 +273,7 @@ function* getInventoryItemList(auth, dataConstraints) {
     it.remainingDays = Math.floor(
       it.quantityOnHand / MOCK_CURRENT_CONSUMPTION_RATE
     )
-    if (_.isString(it.expiresOn)) {
+    if (_.isDate(it.expiresOn)) {
       it.expiring = isAfter(
         addDays(it.expiresOn, it.remainingDays),
         it.expiresOn
@@ -277,24 +289,7 @@ function* inventoryItemDashboard(request) {
 
   // get data constraints
   const dataConstraints = yield getConstraints(auth.credentials)
-
-  const siteList = canViewSites(auth)
-    ? yield knex('Site as s')
-        .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
-        .leftOuterJoin('State as st', 'g.stateId', 'st.id')
-        .select(
-          's.id',
-          's.name',
-          'st.abbreviation as stateAbbr',
-          's.latitude',
-          's.longitude'
-        )
-        .modify(addConstraints, dataConstraints, {
-          site: 's',
-          geography: 'g',
-        })
-    : []
-
+  const siteList = yield* getSiteList(auth, dataConstraints)
   const inventoryItemList = yield* getInventoryItemList(auth, dataConstraints)
 
   const inventorySiteSummaryList = _.sortBy(
@@ -631,127 +626,211 @@ function* siteDashboard(request) {
   return result
 }
 
+const OPERATIONAL_TAKE_LIMIT = 20
+
+const OPERATIONAL_INVENTORY_MIN_DAYS = 21
+const OPERATIONAL_INVENTORY_MIN_EXPIRING = 0.15
+
+function* inventoryItemOperational(request) {
+  const { auth } = request
+
+  // get data constraints
+  const dataConstraints = yield getConstraints(auth.credentials)
+
+  const inventoryItemList = yield* getInventoryItemList(auth, dataConstraints)
+
+  const stockOutsInventoryItemList = _.sortBy(
+    _.reduce(
+      _.groupBy(inventoryItemList, 'siteId'),
+      (acc, list, siteId) => {
+        if (!_.isEmpty(list)) {
+          const minRemainingDays = _.minBy(list, 'remainingDays').remainingDays
+
+          acc.push({
+            id: siteId,
+            value: minRemainingDays,
+            abnormal: minRemainingDays < OPERATIONAL_INVENTORY_MIN_DAYS,
+          })
+        }
+        return acc
+      },
+      []
+    ),
+    'value'
+  )
+  const stockOutsAbnormalList = _.filter(stockOutsInventoryItemList, 'abnormal')
+  const expiringInventoryItemList = _.sortBy(
+    _.reduce(
+      _.groupBy(inventoryItemList, 'siteId'),
+      (acc, list, siteId) => {
+        if (!_.isEmpty(list)) {
+          const { totalQuantityOnHand, totalExpiring } = _.reduce(
+            list,
+            (total, it) => {
+              total.totalQuantityOnHand += it.quantityOnHand
+              if (it.expiring) {
+                total.totalExpiring += it.quantityOnHand
+              }
+              return total
+            },
+            { totalQuantityOnHand: 0, totalExpiring: 0 }
+          )
+          const value = totalExpiring / totalQuantityOnHand
+
+          acc.push({
+            id: siteId,
+            value,
+            abnormal: value > OPERATIONAL_INVENTORY_MIN_EXPIRING,
+          })
+        }
+        return acc
+      },
+      []
+    ),
+    'value'
+  )
+  const expiringAbnormalList = _.filter(expiringInventoryItemList, 'abnormal')
+
+  return [
+    {
+      key: 'stock-outs',
+      titleI18nKey: i18nKeys.stockOutsTitle,
+      someAbnormal: stockOutsAbnormalList.length > 0,
+      messageI18nKey: i18nKeys.siteWithProblems,
+      messageData: {
+        count: stockOutsAbnormalList.length,
+      },
+      data: _.take(stockOutsInventoryItemList, OPERATIONAL_TAKE_LIMIT),
+      averageValue:
+        _.sumBy(stockOutsInventoryItemList, 'value') /
+        stockOutsInventoryItemList.length,
+    },
+    {
+      key: 'expiring',
+      titleI18nKey: i18nKeys.expiringTitle,
+      someAbnormal: expiringAbnormalList.length > 0,
+      messageI18nKey: i18nKeys.siteWithProblems,
+      messageData: {
+        count: expiringAbnormalList.length,
+      },
+      data: _.take(expiringInventoryItemList, OPERATIONAL_TAKE_LIMIT),
+      averageValue:
+        _.sumBy(expiringInventoryItemList, 'value') /
+        expiringInventoryItemList.length,
+    },
+  ]
+}
+
+function* deviceOperational(request) {
+  const { auth } = request
+  const now = new Date()
+  const OPERATIONAL_DEVICE_TAKE_LIMIT = 10
+
+  // get data constraints
+  const dataConstraints = yield getConstraints(auth.credentials)
+
+  const deviceList = yield* getDeviceList(auth, dataConstraints)
+
+  const MOCK_PARTNER_OFFLINE_THRESHOLD_DAYS = 7
+  const MOCK_DEVICE_HIGH_ERROR_RATE_THRESHOLD = 0.05
+  const MOCK_DEVICE_CALIBRATION_THRESHOLD_DAYS = 60
+
+  const offlineDeviceList = _.sortBy(
+    deviceList.map(it => ({
+      id: it.id,
+      value: differenceInDays(now, it.lastSeenOn),
+      abnormal:
+        differenceInDays(now, it.lastSeenOn) >
+        MOCK_PARTNER_OFFLINE_THRESHOLD_DAYS,
+    })),
+    it => -1 * it.value
+  )
+  const offlineDeviceAbnormalList = _.filter(offlineDeviceList, 'abnormal')
+
+  const highErrorRateDeviceList = _.sortBy(
+    deviceList.map(it => {
+      const value = _.random(0, 1, true)
+
+      return {
+        id: it.id,
+        value,
+        abnormal: value > MOCK_DEVICE_HIGH_ERROR_RATE_THRESHOLD,
+      }
+    }),
+    it => -1 * it.value
+  )
+  const highErrorRateDeviceAbnormalList = _.filter(
+    highErrorRateDeviceList,
+    'abnormal'
+  )
+
+  const calibrationDeviceList = _.sortBy(
+    deviceList.map(it => {
+      const calibrationOn = addDays(now, _.random(55, 120))
+      const value = differenceInDays(calibrationOn, now)
+
+      return {
+        id: it.id,
+        value,
+        abnormal: value < MOCK_DEVICE_CALIBRATION_THRESHOLD_DAYS,
+      }
+    }),
+    it => -1 * it.value
+  )
+  const calibrationAbnormalList = _.filter(calibrationDeviceList, 'abnormal')
+
+  return [
+    {
+      key: 'days-unavailable',
+      titleI18nKey: i18nKeys.daysUnavailable,
+      someAbnormal: offlineDeviceAbnormalList.length > 0,
+      messageI18nKey: i18nKeys.deviceWithProblems,
+      messageData: {
+        count: offlineDeviceAbnormalList.length,
+      },
+      data: _.take(offlineDeviceList, OPERATIONAL_DEVICE_TAKE_LIMIT),
+    },
+    {
+      key: 'test-failures',
+      titleI18nKey: i18nKeys.testFailures,
+      titleTooltip: '10% (20/200) 10/27/2017',
+      someAbnormal: highErrorRateDeviceAbnormalList.length > 0,
+      messageI18nKey: i18nKeys.deviceWithProblems,
+      messageData: {
+        count: highErrorRateDeviceAbnormalList.length,
+      },
+      data: _.take(highErrorRateDeviceList, OPERATIONAL_DEVICE_TAKE_LIMIT),
+      averageValue:
+        _.sumBy(highErrorRateDeviceList, 'value') /
+        highErrorRateDeviceList.length,
+    },
+    {
+      key: 'calibration-compliance',
+      titleI18nKey: i18nKeys.calibrationCompliance,
+      someAbnormal: calibrationAbnormalList.length > 0,
+      messageI18nKey:
+        calibrationAbnormalList.length > 0
+          ? i18nKeys.deviceWithProblems
+          : i18nKeys.deviceCalibrationsUpToDate,
+      messageData: {
+        count: calibrationAbnormalList.length,
+      },
+      data: _.take(calibrationAbnormalList, OPERATIONAL_DEVICE_TAKE_LIMIT),
+    },
+  ]
+}
+
 function* operationalDashboard(request) {
   const { query } = request
 
   const result = {
     ok: true,
     data: {
-      inventory: [
-        {
-          key: 'stock-outs',
-          title: 'Stock outs',
-          isNormal: false,
-          message: '1 site with problems',
-          data: [
-            { id: 1, value: 4, abnormal: false },
-            { id: 2, value: 7, abnormal: false },
-            { id: 3, value: 4, abnormal: false },
-            { id: 4, value: 2, abnormal: false },
-            { id: 5, value: 5, abnormal: false },
-            { id: 6, value: 4, abnormal: false },
-            { id: 7, value: 3, abnormal: false },
-            { id: 8, value: 2, abnormal: false },
-            { id: 9, value: 6, abnormal: false },
-            { id: 10, value: 4, abnormal: false },
-            { id: 11, value: 8, abnormal: false },
-            { id: 12, value: 1, abnormal: true },
-            { id: 13, value: 4, abnormal: false },
-            { id: 14, value: 5, abnormal: false },
-            { id: 15, value: 10, abnormal: false },
-            { id: 16, value: 9, abnormal: false },
-            { id: 17, value: 7, abnormal: false },
-            { id: 18, value: 4, abnormal: false },
-          ],
-          averageValue: 1.75,
-        },
-        {
-          key: 'low-supply',
-          title: 'Low supply',
-          isNormal: false,
-          message: '3 sites with problems',
-          data: [
-            { id: 1, value: 4, abnormal: false },
-            { id: 2, value: 7, abnormal: false },
-            { id: 3, value: 8, abnormal: false },
-            { id: 4, value: 9, abnormal: false },
-            { id: 5, value: 6, abnormal: false },
-            { id: 6, value: 5, abnormal: false },
-            { id: 7, value: 2, abnormal: true },
-            { id: 8, value: 10, abnormal: false },
-            { id: 9, value: 4, abnormal: false },
-            { id: 10, value: 5, abnormal: false },
-            { id: 11, value: 2, abnormal: true },
-            { id: 12, value: 3, abnormal: true },
-            { id: 13, value: 3.5, abnormal: false },
-            { id: 14, value: 4.5, abnormal: false },
-            { id: 15, value: 3.5, abnormal: false },
-            { id: 16, value: 4, abnormal: false },
-            { id: 17, value: 7, abnormal: false },
-            { id: 18, value: 4, abnormal: false },
-          ],
-          averageValue: 3.2,
-        },
-        {
-          key: 'expiring',
-          title: 'Expiring',
-          isNormal: true,
-          message: '0 site with problems',
-          data: [
-            { id: 1, value: 4, abnormal: false },
-            { id: 2, value: 7, abnormal: false },
-            { id: 3, value: 4, abnormal: false },
-            { id: 4, value: 2, abnormal: false },
-            { id: 5, value: 5, abnormal: false },
-            { id: 6, value: 3.5, abnormal: false },
-            { id: 7, value: 3, abnormal: false },
-            { id: 8, value: 2, abnormal: false },
-            { id: 9, value: 5, abnormal: false },
-            { id: 10, value: 4, abnormal: false },
-            { id: 11, value: 8, abnormal: false },
-            { id: 12, value: 2, abnormal: false },
-            { id: 13, value: 5, abnormal: false },
-            { id: 14, value: 6, abnormal: false },
-            { id: 15, value: 10, abnormal: false },
-            { id: 16, value: 9, abnormal: false },
-            { id: 17, value: 7, abnormal: false },
-            { id: 18, value: 4, abnormal: false },
-          ],
-          averageValue: 12,
-        },
-        {
-          key: 'time-to-alert-resolution',
-          title: 'Time to alert resolution',
-          isNormal: false,
-          message: '1 site with problems',
-          data: [
-            { id: 1, value: 4, abnormal: false },
-            { id: 2, value: 7, abnormal: false },
-            { id: 3, value: 8, abnormal: false },
-            { id: 4, value: 9, abnormal: true },
-            { id: 5, value: 6, abnormal: false },
-            { id: 6, value: 5, abnormal: false },
-            { id: 7, value: 2, abnormal: false },
-            { id: 8, value: 10, abnormal: false },
-            { id: 9, value: 4, abnormal: false },
-            { id: 10, value: 5, abnormal: false },
-            { id: 11, value: 2, abnormal: false },
-            { id: 12, value: 3, abnormal: false },
-            { id: 13, value: 3.5, abnormal: false },
-            { id: 14, value: 4.5, abnormal: false },
-            { id: 15, value: 3.5, abnormal: false },
-            { id: 16, value: 4, abnormal: false },
-            { id: 17, value: 7, abnormal: false },
-            { id: 18, value: 4, abnormal: false },
-          ],
-          averageValue: 7.5,
-        },
-      ],
       device: [
         {
           key: 'modules-unavailable',
-          title: 'Modules unavailable',
-          isNormal: false,
+          title: 'modules unavailable',
+          someAbnormal: true,
           message: '6 site with problems',
           data: [
             { id: 1, value: 2, abnormal: false },
@@ -774,87 +853,9 @@ function* operationalDashboard(request) {
           ],
         },
         {
-          key: 'days-unavailable',
-          title: 'Days unavailable',
-          isNormal: false,
-          message: '8 site with problems',
-          data: [
-            { id: 1, value: 5, abnormal: false },
-            { id: 2, value: 7, abnormal: false },
-            { id: 3, value: 8, abnormal: false },
-            { id: 4, value: 9, abnormal: true },
-            { id: 5, value: 6, abnormal: false },
-            { id: 6, value: 6.5, abnormal: true },
-            { id: 7, value: 2, abnormal: false },
-            { id: 8, value: 7, abnormal: true },
-            { id: 9, value: 5, abnormal: false },
-            { id: 10, value: 6, abnormal: false },
-            { id: 11, value: 2, abnormal: true },
-            { id: 12, value: 2.2, abnormal: false },
-            { id: 13, value: 3, abnormal: true },
-            { id: 14, value: 5, abnormal: true },
-            { id: 15, value: 2, abnormal: true },
-            { id: 16, value: 4, abnormal: true },
-            { id: 17, value: 6, abnormal: true },
-            { id: 18, value: 5, abnormal: false },
-          ],
-        },
-        {
-          key: 'test-failures',
-          title: 'Test failures',
-          isNormal: false,
-          message: '4 site with problems',
-          data: [
-            { id: 1, value: 7, abnormal: false },
-            { id: 2, value: 10, abnormal: false },
-            { id: 3, value: 7, abnormal: false },
-            { id: 4, value: 3, abnormal: false },
-            { id: 5, value: 8, abnormal: false },
-            { id: 6, value: 6, abnormal: false },
-            { id: 7, value: 4, abnormal: false },
-            { id: 8, value: 3, abnormal: false },
-            { id: 9, value: 9, abnormal: false },
-            { id: 10, value: 7, abnormal: false },
-            { id: 11, value: 11, abnormal: false },
-            { id: 12, value: 2, abnormal: false },
-            { id: 13, value: 7, abnormal: false },
-            { id: 14, value: 8, abnormal: false },
-            { id: 15, value: 14, abnormal: true },
-            { id: 16, value: 12, abnormal: true },
-            { id: 17, value: 10, abnormal: true },
-            { id: 18, value: 7, abnormal: true },
-          ],
-        },
-        {
-          key: 'calibration-compliance',
-          title: 'Calibration compliance',
-          isNormal: false,
-          message: '1 site with problems',
-          data: [
-            { id: 1, value: 7, abnormal: false },
-            { id: 2, value: 9, abnormal: false },
-            { id: 3, value: 10, abnormal: false },
-            { id: 4, value: 11, abnormal: false },
-            { id: 5, value: 8, abnormal: false },
-            { id: 6, value: 7.5, abnormal: false },
-            { id: 7, value: 2, abnormal: false },
-            { id: 8, value: 9.5, abnormal: false },
-            { id: 9, value: 5, abnormal: false },
-            { id: 10, value: 8, abnormal: true },
-            { id: 11, value: 2, abnormal: false },
-            { id: 12, value: 3, abnormal: false },
-            { id: 13, value: 5, abnormal: false },
-            { id: 14, value: 8, abnormal: false },
-            { id: 15, value: 2, abnormal: false },
-            { id: 16, value: 6, abnormal: false },
-            { id: 17, value: 10, abnormal: false },
-            { id: 18, value: 7, abnormal: false },
-          ],
-        },
-        {
           key: 'maintenance-compliance',
-          title: 'Maintenance compliance',
-          isNormal: true,
+          title: 'maintenance compliance',
+          someAbnormal: false,
           message: '0 site with problems',
           data: [
             { id: 1, value: 2, abnormal: false },
@@ -878,8 +879,8 @@ function* operationalDashboard(request) {
         },
         {
           key: 'data-connectivity',
-          title: 'Data connectivity',
-          isNormal: false,
+          title: 'data connectivity',
+          someAbnormal: true,
           message: '6 site with problems',
           data: [
             { id: 1, value: 5, abnormal: true },
@@ -904,8 +905,8 @@ function* operationalDashboard(request) {
         },
         {
           key: 'utilisation',
-          title: 'Utilisation',
-          isNormal: true,
+          title: 'utilisation',
+          someAbnormal: false,
           message: '0 site with problems',
           data: [
             { id: 1, value: 7, abnormal: false },
@@ -930,8 +931,8 @@ function* operationalDashboard(request) {
         },
         {
           key: 'time-to-alert-resolution',
-          title: 'Time to alert resolution',
-          isNormal: false,
+          title: 'time to alert resolution',
+          someAbnormal: true,
           message: '1 site with problems',
           data: [
             { id: 1, value: 7, abnormal: false },
@@ -958,7 +959,7 @@ function* operationalDashboard(request) {
       site: [
         {
           key: 'high-performing',
-          title: 'High performing',
+          title: 'high performing',
           data: [
             { id: 12, name: 'Site name 12', data: [3, 4, 8] },
             { id: 74, name: 'Site name 74', data: [1, 4, 7] },
@@ -972,7 +973,7 @@ function* operationalDashboard(request) {
         },
         {
           key: 'improving',
-          title: 'Improving',
+          title: 'improving',
           data: [
             { id: 25, name: 'Site name 25', data: [3, 4, 8] },
             { id: 34, name: 'Site name 34', data: [1, 4, 7] },
@@ -1009,7 +1010,7 @@ function* operationalDashboard(request) {
         {
           key: 'staff-with-high-error-rates',
           title: 'staff with high error rates',
-          isNormal: false,
+          someAbnormal: true,
           message: '8 site with problems',
           data: [
             { id: 1, value: 7, abnormal: false },
@@ -1059,7 +1060,13 @@ function* operationalDashboard(request) {
     )
   }
 
-  return result
+  return {
+    ok: true,
+    data: Object.assign(result.data, {
+      inventory: yield* inventoryItemOperational(request),
+      device: [...(yield* deviceOperational(request)), ...result.data.device],
+    }),
+  }
 }
 
 module.exports = {

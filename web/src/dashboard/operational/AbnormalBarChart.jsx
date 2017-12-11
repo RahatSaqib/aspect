@@ -1,80 +1,72 @@
 import _ from 'lodash'
+import classnames from 'classnames/bind'
 import React from 'react'
-import { scaleLinear, scaleBand } from '@vx/scale'
-import { Point } from '@vx/point'
-import { Bar, Line } from '@vx/shape'
-import { AxisBottom } from '@vx/axis'
-import { ScaleSVG } from '@vx/responsive'
+import withTooltip from 'react-toolbox/lib/tooltip'
+import FaExclamationTriangle from 'react-icons/lib/fa/exclamation-triangle'
+import FaCircle from 'react-icons/lib/fa/circle'
+
+import AbnormalBarGraph from '../../components/graph/AbnormalBarGraph'
+import messages from './messages'
+
+const cssClasses = classnames.bind(require('./OperationalData.css'))
 
 const enhance = _.identity
 
-const AbnormalBarChart = ({
-  clientWidth = 150,
-  clientHeight = 100,
-  margin: rawMargin = {},
-  xPadding = 0.4,
-  yPadding = 1,
-  average,
-  data,
-  x,
-  y,
-  key = _.identity,
-  yDomainMax = _.max(data.map(y)),
-  fill,
-}) => {
-  const margin = _.assign(
-    {},
-    { top: 0, bottom: 0, left: 0, right: 0 },
-    rawMargin
-  )
-
-  // Create bounds
-  const xPointMax = clientWidth - margin.left - margin.right
-  const yPointMax = clientHeight - margin.top - margin.bottom
-
-  // Scale the graph axes according to data
-  const xScale = scaleBand({
-    rangeRound: [0, xPointMax],
-    domain: data.map(x),
-    padding: xPadding,
-  })
-
-  const yScale = scaleLinear({
-    rangeRound: [yPointMax, 0],
-    domain: [yDomainMax, 0],
-    padding: yPadding,
-  })
-
-  // Compose together the scale and accessor functions to get point functions
-  const xPoint = _.flowRight(xScale, x)
-  const yPoint = _.flowRight(yScale, y)
-
-  const [xFrom, xTo] = xScale.range()
-  const lineAtY = _.isNumber(average) ? yPointMax - yScale(average) : 0
-
-  return (
-    <ScaleSVG width={clientWidth} height={clientHeight}>
-      {_.isNumber(average) && (
-        <Line
-          from={new Point({ x: xFrom, y: lineAtY })}
-          to={new Point({ x: xTo, y: lineAtY })}
-          stroke="#eee"
-          strokeWidth="1"
-        />
-      )}
-      {data.map((d, index) => (
-        <Bar
-          key={key(index, d)}
-          x={xPoint(d)}
-          y={clientHeight - yPoint(d)}
-          height={yPoint(d)}
-          width={xScale.bandwidth()}
-          fill={fill(d)}
-        />
-      ))}
-      <AxisBottom scale={xScale} top={yPointMax} hideTicks />
-    </ScaleSVG>
-  )
+const yDomainMaxBy = {
+  'days-unavailable': 14,
 }
+
+const Title = ({ title, children, ...restProps }) => (
+  <div {..._.omit(restProps, ['tooltip', 'theme'])}>
+    {title}
+    {children}
+  </div>
+)
+
+const TitleWithTooltip = withTooltip(Title)
+
+const AbnormalBarChart = ({ component, intl, item, ...restProps }) =>
+  React.createElement(
+    component,
+    {
+      ...restProps,
+      className: cssClasses(restProps.className, 'AbnormalBarChart'),
+    },
+    <AbnormalBarGraph
+      average={item.get('averageValue')}
+      data={item.get('data').toJS()}
+      x={it => it.id}
+      y={it => it.value}
+      yDomainMax={yDomainMaxBy[item.get('key')]}
+      fill={it => (it.abnormal ? '#EA4E62' : '#36DED6')}
+    />,
+    React.createElement(item.get('titleTooltip') ? TitleWithTooltip : Title, {
+      className: cssClasses('AbnormalBarChart__Title'),
+      title:
+        item.get('title') ||
+        intl.formatMessage(messages[item.get('titleI18nKey')]),
+      tooltip: item.get('titleTooltip'),
+    }),
+    item.get('message') && (
+      <div className={cssClasses('AbnormalBarChart__Message')}>
+        {item.get('someAbnormal') ? (
+          <FaExclamationTriangle
+            className={cssClasses('AbnormalBarChart__Message__Icon--abnormal')}
+          />
+        ) : (
+          <FaCircle
+            className={cssClasses('AbnormalBarChart__Message__Icon--normal')}
+          />
+        )}
+        <span className={cssClasses('AbnormalBarChart__Message__Text')}>
+          {item.get('message') ||
+            intl.formatMessage(
+              messages[item.get('messageI18nKey')],
+              item.get('messageData').toJS()
+            )}
+        </span>
+      </div>
+    )
+  )
 
 export default enhance(AbnormalBarChart)

@@ -58,7 +58,7 @@ export default defineMessages({
   checkEmailContent: {
     id: 'pages.ResetPassword.checkEmailContent',
     defaultMessage:
-      'We have sent an email to {emailAddress} that contains a link which will allow you to reset your password. Please check your inbox',
+      'We have sent an email to {emailAddress} that contains a link which will allow you to reset your password. Please check your inbox. ',
   },
   iDidntReceiveAnEmail: {
     id: 'pages.ResetPassword.iDidntReceiveAnEmail',

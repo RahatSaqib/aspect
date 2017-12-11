@@ -18,51 +18,9 @@
   font-size: var(--notification-icon-size);
 }
 
-.FaCircle {
-  color: var(--aspect-color-chill-blue-1);
-}
-
-.FaCircleO {
-  color: var(--aspect-color-grey-2);
-}
-
-.FaBell {
-  color: var(--aspect-color-supernova);
-  position: relative;
-}
-
-.FaBell::after {
-  position: absolute;
-  content: 'z';
-  top: -5px;
-  right: -5px;
-  font-size: 12px;
-  font-weight: var(--lato-font-weight-black);
-}
-
-.Button {
+.ColoredButton {
   min-width: 120px;
   text-transform: capitalize;
-}
-
-.Button--ship-cove.Button--neutral:not([disabled]).Button--raised {
-  background-color: var(--aspect-color-ship-cove);
-  color: #ffffff;
-}
-
-.Button--shakespeare.Button--neutral:not([disabled]).Button--raised {
-  background-color: var(--aspect-color-shakespeare);
-  color: #ffffff;
-}
-
-.Button--mountain.Button--neutral:not([disabled]).Button--raised {
-  background-color: var(--aspect-color-mountain);
-  color: #ffffff;
-}
-
-.Button--brink.Button--neutral:not([disabled]).Button--raised {
-  background-color: var(--aspect-color-brink);
-  color: #ffffff;
 }
 
 .Message {

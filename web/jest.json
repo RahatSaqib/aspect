@@ -10,5 +10,9 @@
     "\\.scss$": "<rootDir>/__mocks__/globalStyleMock.js",
     "\\.css$": "identity-obj-proxy"
   },
+  "testPathIgnorePatterns": [
+    "/node_modules/",
+    "/e2e/"
+  ],
   "testResultsProcessor": "<rootDir>/node_modules/jest-bamboo-formatter"
 }

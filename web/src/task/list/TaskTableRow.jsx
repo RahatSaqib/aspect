@@ -2,23 +2,14 @@ import _ from 'lodash'
 import classnames from 'classnames/bind'
 import React from 'react'
 import { TableRow, TableCell } from 'react-toolbox/lib/table'
-import { Button } from 'react-toolbox/lib/button'
-import FaBell from 'react-icons/lib/fa/bell'
-import FaCircleO from 'react-icons/lib/fa/circle-o'
-import FaCircle from 'react-icons/lib/fa/circle'
 import FaExclamationTriangle from 'react-icons/lib/fa/exclamation-triangle'
 import MdModeComment from 'react-icons/lib/md/mode-comment'
+import ColoredButton from '../../components/themedReactToolbox/ColoredButton'
+import AlertType from '../../components/shared/AlertType'
 
 const cssClasses = classnames.bind(require('./TaskTableRow.css'))
 
 const enhance = _.identity
-
-const themes = {
-  Button: {
-    neutral: cssClasses('Button--neutral'),
-    raised: cssClasses('Button--raised'),
-  },
-}
 
 const TaskTableRow = ({ intl, messages, task, ...restProps }) => (
   <TableRow
@@ -26,31 +17,17 @@ const TaskTableRow = ({ intl, messages, task, ...restProps }) => (
     className={cssClasses(restProps.className, 'TableRow')}
   >
     <TableCell className={cssClasses('TableCell')}>
-      {task.get('alertType') === 'mine' && (
-        <FaCircle className={cssClasses('FaCircle')} />
-      )}
-      {task.get('alertType') === 'normal' && (
-        <FaCircleO className={cssClasses('FaCircleO')} />
-      )}
-      {task.get('alertType') === 'snoozed' && (
-        <span className={cssClasses('FaBell')}>
-          <FaBell />
-        </span>
-      )}
+      <AlertType alertType={task.get('alertType')} />
     </TableCell>
     <TableCell className={cssClasses('TableCell')}>
       <div className={cssClasses('Message')}>
-        <Button
-          className={cssClasses('Button', {
-            'Button--ship-cove': task.get('topic') === 'health',
-            'Button--shakespeare': task.get('topic') === 'device',
-            'Button--mountain': task.get('topic') === 'consumable',
-            'Button--brink': task.get('topic') === 'site',
-          })}
-          neutral
-          raised
+        <ColoredButton
+          className={cssClasses('ColoredButton')}
+          shipCove={task.get('topic') === 'health'}
+          shakespeare={task.get('topic') === 'device'}
+          mountain={task.get('topic') === 'consumable'}
+          brink={task.get('topic') === 'site'}
           label={task.get('topic')}
-          theme={themes.Button}
         />
         <span className={cssClasses('Message__Subject')}>
           {task.get('title')}

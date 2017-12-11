@@ -16,7 +16,8 @@ import {
 } from '../../shared/selectors/searchParams'
 import { sanitizeFiltersStringBy } from '../../filter/utils'
 // import FiltersPanel from '../../filter/popover/FiltersPanel'
-import NavDropdown from '../../components/shared/NavDropdown'
+import ButtonGroup from '../../components/themedReactToolbox/ButtonGroup'
+import StyledDropdown from '../../components/themedReactToolbox/StyledDropdown'
 import BrowseEmptyList from '../../globals/components/BrowseEmptyList'
 import BrowseTablePaginator from '../../globals/components/BrowseTablePaginator'
 import DataTableCard from '../../components/shared/DataTableCard'
@@ -219,9 +220,8 @@ export const TaskList = ({
   <div className={cssClasses('Container')}>
     <Helmet title={intl.formatMessage(messages.tasksTitle)} />
     <div className={cssClasses('FiltersGroup')}>
-      <div className={cssClasses('BtnGroup')}>
+      <ButtonGroup adjacent className={cssClasses('FiltersGroup__Child')}>
         <Button
-          className={cssClasses('Button')}
           primary
           raised
           inverse={alertType !== 'mine'}
@@ -230,15 +230,14 @@ export const TaskList = ({
           onClick={onAlertTypeClick}
         />
         <Button
-          className={cssClasses('Button', 'Button--mini')}
+          className={cssClasses('Button--mini')}
           primary
           raised
           label={`${countByAlert.get('mine', 0)}`}
         />
-      </div>
-      <div className={cssClasses('BtnGroup')}>
+      </ButtonGroup>
+      <ButtonGroup adjacent className={cssClasses('FiltersGroup__Child')}>
         <Button
-          className={cssClasses('Button')}
           primary
           raised
           inverse={alertType !== 'snoozed'}
@@ -247,15 +246,14 @@ export const TaskList = ({
           onClick={onAlertTypeClick}
         />
         <Button
-          className={cssClasses('Button', 'Button--mini')}
+          className={cssClasses('Button--mini')}
           primary
           raised
           label={`${countByAlert.get('snoozed', 0)}`}
         />
-      </div>
-      <div className={cssClasses('BtnGroup')}>
+      </ButtonGroup>
+      <ButtonGroup adjacent className={cssClasses('FiltersGroup__Child')}>
         <Button
-          className={cssClasses('Button')}
           primary
           raised
           inverse={alertType !== 'all'}
@@ -264,19 +262,19 @@ export const TaskList = ({
           onClick={onAlertTypeClick}
         />
         <Button
-          className={cssClasses('Button', 'Button--mini')}
+          className={cssClasses('Button--mini')}
           primary
           raised
           label={`${countByAlert.get('total', 0)}`}
         />
-      </div>
+      </ButtonGroup>
       <div
         className={cssClasses(
           'FiltersGroup__Child',
           'FiltersGroup__Child--dropdown'
         )}
       >
-        <NavDropdown
+        <StyledDropdown
           value={topic}
           source={[
             {

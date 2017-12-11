@@ -1,3 +1,4 @@
+const { transact } = require('./db')
 // TODO switch to Message Queue? Make more Redux Like?
 const EventEmitter = require('events')
 
@@ -10,15 +11,6 @@ const types = {
 }
 
 // ----------- Dispatch and  Listeners -----------
-
-/**
- * Dispatch an action created by an action creator
- */
-function dispatch(action) {
-  // emit is synchronous, use setImmediate so we can
-  // clear call stack and we don't rely on synchronous execution
-  setImmediate(() => emitter.emit(action.type, action))
-}
 
 /**
  * Adds a listener for the specified message type.
@@ -34,6 +26,82 @@ function addListener(type, listener) {
  */
 function removeListener(type, listener) {
   emitter.removeListener(type, listener)
+}
+
+/**
+ * Creates a message context to allow transactional
+ * updates and dispatch.
+ *
+ * You should normally deal with a provided context
+ * pre-created on request/response cycle.
+ */
+function createMessageContext() {
+  return new MessageContext()
+}
+
+class MessageContext {
+  constructor() {
+    this.dispatch = this.dispatch.bind(this)
+    this.transact = this.transact.bind(this)
+    this.rollback = this.rollback.bind(this)
+    this.commit = this.commit.bind(this)
+
+    this.reset()
+  }
+
+  dispatch(action) {
+    if (this.transaction) {
+      this.actions.push(action)
+    } else {
+      emit(action, this)
+    }
+  }
+
+  transact(task) {
+    this.tasks.push(task)
+    if (!this.transaction) {
+      const context = this
+      context.transaction = transact(function*(knex) {
+        while (context.tasks.length) {
+          const task = context.tasks.shift()
+          yield* task(knex)
+        }
+      })
+        .then(context.commit)
+        .then(null, err => {
+          context.rollback()
+          throw err
+        })
+    }
+    return this.transaction
+  }
+
+  commit() {
+    const { actions } = this
+    this.reset()
+    actions.forEach(action => this.dispatch(action))
+  }
+
+  rollback() {
+    this.reset()
+  }
+
+  reset() {
+    this.transaction = null
+    this.actions = []
+    this.tasks = []
+  }
+}
+
+/**
+ * Dispatch an action created by an action creator
+ */
+function dispatch(action) {
+  emit(action, createMessageContext())
+}
+
+function emit(action, context) {
+  emitter.emit(action.type, action, context)
 }
 
 // ----------- Action Creators -------------------
@@ -82,6 +150,7 @@ function notifyResultLogged(resultId, deviceLogId) {
 
 module.exports = {
   types,
+  createMessageContext,
   dispatch,
   addListener,
   removeListener,

@@ -6,11 +6,9 @@ import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 import { Card } from 'react-toolbox/lib/card'
 import { Button } from 'react-toolbox/lib/button'
-import FaExclamationTriangle from 'react-icons/lib/fa/exclamation-triangle'
-import FaCircle from 'react-icons/lib/fa/circle'
 
 import { Unit } from '../../components/pureGrids'
-import ColumnChart from '../../components/graph/ColumnChart'
+import ColumnGraph from '../../components/graph/ColumnGraph'
 import DelayShowingProgressBar from '../../components/shared/DelayShowingProgressBar'
 // import FiltersPanel from '../../filter/popover/FiltersPanel'
 import Title from '../status/Title'
@@ -102,6 +100,7 @@ const themes = {
 }
 
 const SectionAbnormalCollection = ({
+  intl,
   title,
   colorClassName,
   collection,
@@ -124,36 +123,14 @@ const SectionAbnormalCollection = ({
       </div>
       <div>
         {collection.map(c => (
-          <Unit
+          <AbnormalBarChart
+            key={c.get('key')}
+            component={Unit}
+            intl={intl}
+            item={c}
             sm="1-2"
             lg="1-4"
-            className={cssClasses('Graph')}
-            key={c.get('key')}
-          >
-            <AbnormalBarChart
-              average={c.get('averageValue')}
-              data={c.get('data').toJS()}
-              x={it => it.id}
-              y={it => it.value}
-              yDomainMax={30}
-              fill={it => (it.abnormal ? '#EA4E62' : '#36DED6')}
-            />
-            <div className={cssClasses('Graph__Title')}>{c.get('title')}</div>
-            <div className={cssClasses('Graph__Message')}>
-              {c.get('isNormal') ? (
-                <FaCircle
-                  className={cssClasses('Graph__Message__Icon--normal')}
-                />
-              ) : (
-                <FaExclamationTriangle
-                  className={cssClasses('Graph__Message__Icon--abnormal')}
-                />
-              )}
-              <span className={cssClasses('Graph__Message__Text')}>
-                {c.get('message')}
-              </span>
-            </div>
-          </Unit>
+          />
         ))}
       </div>
     </Card>
@@ -161,6 +138,7 @@ const SectionAbnormalCollection = ({
 )
 
 export const OperationalData = ({
+  intl,
   // --- injected by recompose ---
   loading,
   operational,
@@ -252,12 +230,14 @@ export const OperationalData = ({
     </div>
     <div className={cssClasses({ 'Content--loading': loading })}>
       <SectionAbnormalCollection
+        intl={intl}
         title="Consumables"
         colorClassName={cssClasses('Title__Color--inventory')}
         collection={operational.get('inventory', [])}
         onDataReportClick={onDataReportClick}
       />
       <SectionAbnormalCollection
+        intl={intl}
         title="Devices"
         colorClassName={cssClasses('Title__Color--device')}
         collection={operational.get('device', [])}
@@ -289,7 +269,7 @@ export const OperationalData = ({
                 <div className={cssClasses('Graph__Title')}>
                   {c.get('title')}
                 </div>
-                <ColumnChart
+                <ColumnGraph
                   data={c.get('data').toJS()}
                   color={['#e85164', '#fcb124', '#73d449']}
                   spacing={0.4}
@@ -303,6 +283,7 @@ export const OperationalData = ({
         </Card>
       </div>
       <SectionAbnormalCollection
+        intl={intl}
         title="Staff"
         collection={operational.get('staff', [])}
         onDataReportClick={onDataReportClick}

@@ -2,21 +2,14 @@ import _ from 'lodash'
 import classnames from 'classnames/bind'
 import React from 'react'
 import { TableRow, TableCell } from 'react-toolbox/lib/table'
-import { Button } from 'react-toolbox/lib/button'
 import FaCircle from 'react-icons/lib/fa/circle'
+import ColoredButton from '../../components/themedReactToolbox/ColoredButton'
 
 const cssClasses = classnames.bind(
   require('./NotificationDeliveryTableRow.css')
 )
 
 const enhance = _.identity
-
-const themes = {
-  Button: {
-    neutral: cssClasses('Button--neutral'),
-    raised: cssClasses('Button--raised'),
-  },
-}
 
 const NotificationDeliveryTableRow = ({ intl, delivery, ...restProps }) => (
   <TableRow
@@ -27,14 +20,10 @@ const NotificationDeliveryTableRow = ({ intl, delivery, ...restProps }) => (
       <FaCircle className={cssClasses('FaCircle')} />
     </TableCell>
     <TableCell className={cssClasses('TableCell')}>
-      <Button
-        className={cssClasses('Button', {
-          'Button--ship-cove': true,
-        })}
-        neutral
-        raised
+      <ColoredButton
+        className={cssClasses('ColoredButton')}
+        shipCove
         label={delivery.topic}
-        theme={themes.Button}
       />
     </TableCell>
     <TableCell className={cssClasses('TableCell')}>{delivery.title}</TableCell>

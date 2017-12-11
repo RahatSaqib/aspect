@@ -138,12 +138,14 @@ exports[`OperationData Component should shallow render correctly 1`] = `
         ]
       }
       colorClassName="Title__Color--inventory"
+      intl={undefined}
       onDataReportClick={[Function]}
       title="Consumables"
     />
     <SectionAbnormalCollection
       collection={Array []}
       colorClassName="Title__Color--device"
+      intl={undefined}
       onDataReportClick={[Function]}
       title="Devices"
     />
@@ -185,6 +187,7 @@ exports[`OperationData Component should shallow render correctly 1`] = `
     </div>
     <SectionAbnormalCollection
       collection={Array []}
+      intl={undefined}
       onDataReportClick={[Function]}
       title="Staff"
     />

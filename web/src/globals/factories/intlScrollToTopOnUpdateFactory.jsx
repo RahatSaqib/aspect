@@ -13,7 +13,8 @@ export class ScrollToTopOnUpdate extends PureComponent {
   }
 
   componentDidUpdate({ delegate: { location: prevLocation } }) {
-    if (this.props.delegate.location !== prevLocation) {
+    const { location } = this.props.delegate
+    if (location.pathname !== prevLocation.pathname) {
       window.scrollTo(0, 0)
     }
   }

@@ -10,6 +10,9 @@ const {
   generateExcelFile,
   generateCsvFile,
 } = require('../shared/io')
+const {
+  operationalDashboard /* FIXME: actual impl */,
+} = require('../dashboard/service')
 
 const SELECT_LIST_FIELDS = [
   'd.id',
@@ -44,8 +47,6 @@ const SELECT_SHOW_FIELDS = [
   's.name as siteName',
   'd.hostId',
   // TODO: First Connected
-  'd.approvedOn',
-  'u.name as approvedBy',
   'd.deviceTypeId',
   'd.deviceStatusId',
   'd.configurationData',
@@ -118,12 +119,12 @@ function* getListDevices(query, auth) {
       knex('Result as r')
         .whereRaw('r.deviceId = d.id')
         .whereBetween('r.endedOn', [last60Day, last30Day])
-        .count('r.id')
+        .countDistinct('r.id')
         .as('lastMonth'),
       knex('Result as r')
         .whereRaw('r.deviceId = d.id')
         .where('r.endedOn', '>=', last30Day)
-        .count('r.id')
+        .countDistinct('r.id')
         .as('thisMonth'),
       knex('Result as r')
         .innerJoin('Sample as s', 'r.sampleId', 's.id')
@@ -136,7 +137,7 @@ function* getListDevices(query, auth) {
         .whereRaw('s.originSiteId = d.siteId')
         .whereBetween('rl.changedOn', [last60Day, last30Day])
         .where('rw.externalId', '=', 'Delivered')
-        .count('r.id')
+        .countDistinct('r.id')
         .as('deliveredLastMonth'),
 
       // TODO: Fix this/last month queries so they work for other (non-reporter) devices
@@ -151,7 +152,7 @@ function* getListDevices(query, auth) {
         .whereRaw('s.originSiteId = d.siteId')
         .where('rl.changedOn', '>=', last30Day)
         .where('rw.externalId', '=', 'Delivered')
-        .count('r.id')
+        .countDistinct('r.id')
         .as('deliveredThisMonth'),
       knex('Result as r')
         .innerJoin('Sample as s', 'r.sampleId', 's.id')
@@ -165,7 +166,7 @@ function* getListDevices(query, auth) {
           (() => {
             const acknowledgedCount =
               "sum(case when rw.externalId = 'Acknowledged' then 1 else 0 end)"
-            const totalCount = 'count(r.id)'
+            const totalCount = 'count(distinct r.id)'
 
             return knex.raw(
               `case when count(r.id) = 0 then 0 else ${acknowledgedCount} / ${totalCount} end`
@@ -182,12 +183,38 @@ function* getListDevices(query, auth) {
         )
         .whereRaw('s.originSiteId = d.siteId')
         .where('rw.externalId', '=', 'Flagged')
-        .count('r.id')
+        .countDistinct('r.id')
         .as('totalFlagged'),
     ])
 
   // return result when both queries are finished
   const [{ count: total }, data] = yield Promise.all([getCount, getItems])
+
+  data.forEach(it => {
+    // FIXME: Use actual data instead
+    it.availability = {
+      count: _.random(1, 20),
+      total: 20,
+    }
+    it.error = {
+      count: _.random(1, 875),
+      total: 875,
+    }
+    it.alerts = [
+      {
+        type: 'needs-repair',
+      },
+      {
+        type: 'warranty',
+      },
+      {
+        type: 'quality-control',
+      },
+      {
+        type: 'connectivity',
+      },
+    ].filter(() => _.random(0, 10) > 7)
+  })
 
   const result = { ok: true, total, length: data.length, data }
 
@@ -215,75 +242,89 @@ function* getDeviceByDeviceId(request, fields = SELECT_SHOW_FIELDS) {
     .innerJoin('DeviceStatus as ds', 'd.deviceStatusId', 'ds.id')
     .innerJoin('DeviceTypeCategory as dc', 'dt.deviceTypeCategoryId', 'dc.id')
     .innerJoin('Site as s', 'd.siteId', 's.id')
-    .leftOuterJoin('User as u', 'u.id', 'd.approvedBy')
     .where('d.id', +params.deviceId)
     .modify(addConstraints, dataConstraints, { device: 'd' })
     .select(fields)
 
-  if (devices.length === 1) {
-    const device = devices[0]
-    const deviceType = yield knex('DeviceType as dt')
-      .where('dt.id', device.deviceTypeId)
-      .first()
-    deviceType.configurationDataSchema =
-      JSON.parse(deviceType.configurationDataSchema) || {}
-    deviceType.deviceOperationSchema =
-      JSON.parse(deviceType.deviceOperationSchema) || {}
-
-    device.configurationData = JSON.parse(device.configurationData) || {}
-    device.deviceType = deviceType
-    device.deviceOperations = yield knex('DeviceOperation as do')
-      .where('do.deviceId', device.id)
-      .limit(10)
-      .orderBy('do.startedOn', 'desc')
-      .map(deviceOperation =>
-        _.assign(deviceOperation, {
-          data: JSON.parse(deviceOperation.data) || {},
-        })
-      )
-
-    // Query for total number of results per device
-    const totalTestQuery = knex('Result as r')
-      .count('r.id as count')
-      .leftJoin('Sample as s', 's.id', 'r.sampleId')
-
-    // If the device is not a reporter
-    if (device.siteId == null || device.category !== 'Client') {
-      totalTestQuery.where('r.deviceId', device.id)
-    } else {
-      // TODO: This query would fail if there we had more than one reporter in one site
-      totalTestQuery.where(function() {
-        this.where('r.deviceId', device.id)
-        this.orWhere('s.originSiteId', device.siteId)
-      })
-    }
-
-    const [{ count: totalTests }] = yield totalTestQuery
-
-    device.totalTests = totalTests
-
-    const contacts = yield knex('Person as p')
-      .select('p.id', 'p.name')
-      .limit(50)
-
-    device.contacts = _.times(
-      3,
-      () => contacts.splice(_.random(0, contacts.length - 1), 1)[0]
+  if (devices.length !== 1) {
+    return Boom.notFound()
+  }
+  const device = devices[0]
+  const deviceType = yield knex('DeviceType as dt')
+    .where('dt.id', device.deviceTypeId)
+    .first()
+  const deviceLog = yield knex('DeviceStatusLog as dl')
+    .leftOuterJoin('DeviceStatus as ds', 'dl.deviceStatusId', 'ds.id')
+    .leftOuterJoin('User as u', 'dl.createdBy', 'u.id')
+    .where('dl.deviceId', device.id)
+    .select(
+      'ds.name as status',
+      'dl.changedOn',
+      'dl.createdOn',
+      'u.name as changedBy'
     )
 
-    return {
-      ok: true,
-      data: device,
-    }
+  device.statusLogs = deviceLog
+  deviceType.configurationDataSchema =
+    JSON.parse(deviceType.configurationDataSchema) || {}
+  deviceType.deviceOperationSchema =
+    JSON.parse(deviceType.deviceOperationSchema) || {}
+
+  device.configurationData = JSON.parse(device.configurationData) || {}
+  device.deviceType = deviceType
+
+  // Query for total number of results per device
+  const totalTestQuery = knex('Result as r')
+    .count('r.id as count')
+    .leftJoin('Sample as s', 's.id', 'r.sampleId')
+
+  // If the device is not a reporter
+  if (device.siteId == null || device.category !== 'Client') {
+    totalTestQuery.where('r.deviceId', device.id)
+  } else {
+    // TODO: This query would fail if there we had more than one reporter in one site
+    totalTestQuery.where(function() {
+      this.where('r.deviceId', device.id)
+      this.orWhere('s.originSiteId', device.siteId)
+    })
   }
-  return {
-    ok: false,
-  }
+
+  const [{ count: totalTests }] = yield totalTestQuery
+
+  device.totalTests = totalTests
+
+  const contacts = yield knex('Person as p').select('p.id', 'p.name').limit(50)
+
+  device.contacts = _.times(
+    3,
+    () => contacts.splice(_.random(0, contacts.length - 1), 1)[0]
+  )
+
+  return device
 }
 
 function* showDevice(request) {
   const device = yield* getDeviceByDeviceId(request)
-  return device.ok ? device : Boom.notFound()
+
+  const {
+    data: { device: operations /* FIXME: actual impl */ },
+  } = yield* operationalDashboard(request)
+
+  _.forEach(operations, it => {
+    it.message = undefined
+  })
+
+  device.operations = _.filter(
+    operations,
+    it => it.key !== 'modules-unavailable'
+  )
+
+  const result = {
+    ok: true,
+    data: device,
+  }
+
+  return result
 }
 
 function* updateDevice(request) {
@@ -291,7 +332,7 @@ function* updateDevice(request) {
 
   // TODO: check permission
 
-  const device = yield* showDevice(request)
+  const device = yield* getDeviceByDeviceId(request)
 
   const configurationData = _.assign(
     {},
@@ -301,7 +342,10 @@ function* updateDevice(request) {
 
   let { deviceStatusId } = device
   // check if a statusToken is provided
-  if (device.statusToken !== payload.statusToken) {
+  if (
+    _.has(payload, 'statusToken') &&
+    device.statusToken !== payload.statusToken
+  ) {
     ;({ id: deviceStatusId } = yield knex('DeviceStatus as ds')
       .where('ds.token', payload.statusToken)
       .first('ds.id'))
@@ -311,10 +355,7 @@ function* updateDevice(request) {
   const updatedCount = yield knex('Device')
     .where('id', params.deviceId)
     .update({
-      name: payload.name,
-      shortname: payload.shortname,
-      notes: payload.notes,
-      siteId: payload.siteId,
+      siteId: device.siteId || payload.siteId,
       deviceStatusId,
       configurationData: JSON.stringify(configurationData),
     })

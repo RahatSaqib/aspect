@@ -1,12 +1,14 @@
 const _ = require('lodash')
 const supertest = require('supertest')
 const chai = require('chai')
+const subDays = require('date-fns/sub_days')
 const {
   createTestContext,
   getDeviceConfigurationData,
   getLastDeviceOperation,
   getLastDeviceOperationData,
   getLastDeviceOperationId,
+  getDeviceFromApiKey,
 } = require('./utils')
 
 // This agent refers to PORT where program is runninng.
@@ -235,6 +237,80 @@ describe('Device API routes', () => {
             assert.typeOf(res.body.operation, 'Object')
             assert.deepEqual(res.body.operation.data, op2)
           })
+      }))
+  })
+
+  describe('get result count', () => {
+    it('should return result count from device', () =>
+      runTest(function*(knex) {
+        const deviceListPath = '/api/device'
+        const { apiKey, deviceId, clientAuth } = context
+        const last30Day = subDays(new Date(), 30)
+        const last60Day = subDays(last30Day, 30)
+        assert.isOk(apiKey)
+
+        const totalResultsLastMonth = yield knex('Result as r')
+          .whereBetween('r.endedOn', [last60Day, last30Day])
+          .where({ deviceId })
+          .countDistinct('r.id as total')
+
+        const totalResultsThisMonth = yield knex('Result as r')
+          .where({ deviceId })
+          .andWhere('r.endedOn', '>=', last30Day)
+          .countDistinct('r.id as total')
+
+        // get total count of results
+        yield server
+          .get(deviceListPath)
+          .set('Authorization', clientAuth)
+          .then(res => {
+            assert.equal(res.status, 200)
+            const device = _.find(
+              res.body.data,
+              device => device.id === deviceId
+            )
+            assert.equal(device.lastMonth, totalResultsLastMonth[0].total)
+            assert.equal(device.thisMonth, totalResultsThisMonth[0].total)
+          })
+      }))
+  })
+  describe('add new device', () => {
+    const newDeviceContext = createTestContext(server, {
+      user: 'rrt_admin',
+      partner: 'RRT',
+    })
+    const runTest = newDeviceContext.runTest
+
+    beforeEach(newDeviceContext.beforeEach)
+    afterEach(newDeviceContext.afterEach)
+    it('should create Device with statusId and add log to DeviceStatusLog table', () =>
+      runTest(function*(knex) {
+        const { apiKey, deviceAuth } = newDeviceContext
+        assert.isOk(apiKey)
+
+        // add device
+        yield server
+          .post(devicePath)
+          .set('Authorization', deviceAuth)
+          .send({
+            type: { id: 'Daktari' },
+            site: { id: 'CHIZ' },
+          })
+          .then(res => {
+            assert.equal(res.status, 200)
+          })
+        const newDevice = yield* getDeviceFromApiKey(knex, apiKey)
+        assert.isOk(newDevice)
+        assert.isOk(newDevice.name)
+        assert.equal(newDevice.serial, null)
+
+        const deviceLogs = yield knex('DeviceStatusLog as dl').where(
+          'dl.deviceId',
+          newDevice.id
+        )
+        assert.isOk(deviceLogs)
+        assert.propertyVal(newDevice, 'id', deviceLogs[0].deviceId)
+        assert.isAtLeast(deviceLogs.length, 1)
       }))
   })
 })

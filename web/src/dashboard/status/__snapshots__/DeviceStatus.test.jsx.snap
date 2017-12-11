@@ -17,6 +17,8 @@ exports[`Device Status component should shallow render correctly 1`] = `
     >
       <CountryWithPoints
         countryIsoAlpha2Code="US"
+        fill={undefined}
+        points={undefined}
       />
     </Unknown>
     <Unknown
@@ -24,6 +26,7 @@ exports[`Device Status component should shallow render correctly 1`] = `
       sm="1-2"
     >
       <SummaryItemsBlock
+        data-device-ids="[\\"38\\",\\"86\\"]"
         intl={
           Object {
             "defaultFormats": Object {},
@@ -52,19 +55,26 @@ exports[`Device Status component should shallow render correctly 1`] = `
         items={
           Array [
             Object {
-              "0": Object {
-                "count": 67,
-                "key": "operational",
-                "subI18nKey": "fullyOperationalStatus",
-                "titleI18nKey": "countOfTotalDevicesTitle",
-                "total": 83,
-              },
+              "count": 2,
+              "key": 0,
+              "subI18nKey": "fullyOperationalStatus",
+              "titleI18nKey": "ofTotalDevicesTitle",
+              "total": 53,
             },
           ]
         }
+        onClick={undefined}
+        onMouseEnter={undefined}
+        onMouseLeave={undefined}
         title="operational devices"
       />
+    </Unknown>
+    <Unknown
+      lg="1-4"
+      sm="1-2"
+    >
       <SummaryItemsBlock
+        data-device-ids="[\\"16\\"]"
         intl={
           Object {
             "defaultFormats": Object {},
@@ -93,86 +103,20 @@ exports[`Device Status component should shallow render correctly 1`] = `
         items={
           Array [
             Object {
-              "0": Object {
-                "count": 7,
-                "key": "qualityControl",
-                "subI18nKey": "withQCIssuesStatus",
-                "titleI18nKey": "devicesTitle",
-              },
+              "count": 16,
+              "key": 0,
+              "subI18nKey": "warrantyExpiringStatus",
+              "titleI18nKey": "devicesTitle",
             },
           ]
         }
-        title="quality control"
-      />
-    </Unknown>
-    <Unknown
-      lg="1-4"
-      sm="1-2"
-    >
-      <SummaryItemsBlock
-        intl={
-          Object {
-            "defaultFormats": Object {},
-            "defaultLocale": "en",
-            "formatDate": [Function],
-            "formatHTMLMessage": [Function],
-            "formatMessage": [Function],
-            "formatNumber": [Function],
-            "formatPlural": [Function],
-            "formatRelative": [Function],
-            "formatTime": [Function],
-            "formats": Object {},
-            "formatters": Object {
-              "getDateTimeFormat": [Function],
-              "getMessageFormat": [Function],
-              "getNumberFormat": [Function],
-              "getPluralFormat": [Function],
-              "getRelativeFormat": [Function],
-            },
-            "locale": "en",
-            "messages": Object {},
-            "now": [Function],
-            "textComponent": "span",
-          }
-        }
-        items={undefined}
-        title="servicing"
+        onClick={undefined}
+        onMouseEnter={undefined}
+        onMouseLeave={undefined}
+        title="warranty expiring"
       />
       <SummaryItemsBlock
-        intl={
-          Object {
-            "defaultFormats": Object {},
-            "defaultLocale": "en",
-            "formatDate": [Function],
-            "formatHTMLMessage": [Function],
-            "formatMessage": [Function],
-            "formatNumber": [Function],
-            "formatPlural": [Function],
-            "formatRelative": [Function],
-            "formatTime": [Function],
-            "formats": Object {},
-            "formatters": Object {
-              "getDateTimeFormat": [Function],
-              "getMessageFormat": [Function],
-              "getNumberFormat": [Function],
-              "getPluralFormat": [Function],
-              "getRelativeFormat": [Function],
-            },
-            "locale": "en",
-            "messages": Object {},
-            "now": [Function],
-            "textComponent": "span",
-          }
-        }
-        items={undefined}
-        title="uploading data"
-      />
-    </Unknown>
-    <Unknown
-      lg="1-4"
-      sm="1-2"
-    >
-      <SummaryItemsBlock
+        data-device-ids="[\\"20\\"]"
         intl={
           Object {
             "defaultFormats": Object {},
@@ -201,18 +145,25 @@ exports[`Device Status component should shallow render correctly 1`] = `
         items={
           Array [
             Object {
-              "0": Object {
-                "count": 3,
-                "key": "calibration",
-                "subI18nKey": "needCalibrationStatus",
-                "titleI18nKey": "devicesTitle",
-              },
+              "count": 15,
+              "key": 0,
+              "subI18nKey": "needCalibrationStatus",
+              "titleI18nKey": "devicesTitle",
             },
           ]
         }
+        onClick={undefined}
+        onMouseEnter={undefined}
+        onMouseLeave={undefined}
         title="calibration"
       />
+    </Unknown>
+    <Unknown
+      lg="1-4"
+      sm="1-2"
+    >
       <SummaryItemsBlock
+        data-device-ids="[\\"88\\",\\"109\\"]"
         intl={
           Object {
             "defaultFormats": Object {},
@@ -238,7 +189,61 @@ exports[`Device Status component should shallow render correctly 1`] = `
             "textComponent": "span",
           }
         }
-        items={undefined}
+        items={
+          Array [
+            Object {
+              "count": 50,
+              "key": 0,
+              "subI18nKey": "notReportingStatus",
+              "titleI18nKey": "devicesTitle",
+            },
+          ]
+        }
+        onClick={undefined}
+        onMouseEnter={undefined}
+        onMouseLeave={undefined}
+        title="uploading data"
+      />
+      <SummaryItemsBlock
+        data-device-ids="[\\"37\\"]"
+        intl={
+          Object {
+            "defaultFormats": Object {},
+            "defaultLocale": "en",
+            "formatDate": [Function],
+            "formatHTMLMessage": [Function],
+            "formatMessage": [Function],
+            "formatNumber": [Function],
+            "formatPlural": [Function],
+            "formatRelative": [Function],
+            "formatTime": [Function],
+            "formats": Object {},
+            "formatters": Object {
+              "getDateTimeFormat": [Function],
+              "getMessageFormat": [Function],
+              "getNumberFormat": [Function],
+              "getPluralFormat": [Function],
+              "getRelativeFormat": [Function],
+            },
+            "locale": "en",
+            "messages": Object {},
+            "now": [Function],
+            "textComponent": "span",
+          }
+        }
+        items={
+          Array [
+            Object {
+              "count": 11,
+              "key": 0,
+              "subI18nKey": "highFailuresRatesStatus",
+              "titleI18nKey": "devicesTitle",
+            },
+          ]
+        }
+        onClick={undefined}
+        onMouseEnter={undefined}
+        onMouseLeave={undefined}
         title="test failures"
       />
     </Unknown>

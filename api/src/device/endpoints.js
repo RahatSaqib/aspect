@@ -65,6 +65,8 @@ function listDevicesBaseConfig() {
           'name',
           'state',
           'status',
+          'availabilityRate',
+          'errorRate',
           'createdOn',
           'lastSeen',
           'lastMonth',
@@ -104,6 +106,11 @@ module.exports = [
         params: {
           deviceId: Joi.string().description('Device id').required(),
         },
+        query: {
+          dateRange: Joi.number()
+            .allow('')
+            .description('Filter for date range'),
+        },
       },
     },
   },
@@ -120,16 +127,11 @@ module.exports = [
           deviceId: Joi.string().description('Device id').required(),
         },
         payload: {
-          siteId: Joi.number().required(),
-          name: Joi.string().required(),
-          shortname: Joi.string().allow(''),
-          notes: Joi.string().allow(''),
-          statusToken: Joi.string().allow(''),
-          configurationData: Joi.object()
-            .required()
-            .description(
-              'Device configuration data.  The valid keys are dependent on Device Type.'
-            ),
+          siteId: Joi.number(),
+          statusToken: Joi.string(),
+          configurationData: Joi.object().description(
+            'Device configuration data.  The valid keys are dependent on Device Type.'
+          ),
         },
       },
     },
