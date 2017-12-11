@@ -352,6 +352,7 @@ export const ResultList = ({
           history={history}
           location={location}
           intl={intl}
+          timedMessageUsed={sortCol === 'endedOn'}
           paginatorStatus={messages.paginatorStatus}
           total={table.total}
           pageAt={pageAt}

@@ -20,6 +20,30 @@ const messages = defineMessages({
     id: 'pages.TablePaginator.all',
     defaultMessage: 'All',
   },
+  first: {
+    id: 'pages.TablePaginator.first',
+    defaultMessage: 'First',
+  },
+  previous: {
+    id: 'pages.TablePaginator.previous',
+    defaultMessage: 'Previous',
+  },
+  newer: {
+    id: 'pages.TablePaginator.newer',
+    defaultMessage: 'Newer',
+  },
+  older: {
+    id: 'pages.TablePaginator.older',
+    defaultMessage: 'Older',
+  },
+  next: {
+    id: 'pages.TablePaginator.next',
+    defaultMessage: 'Next',
+  },
+  last: {
+    id: 'pages.TablePaginator.last',
+    defaultMessage: 'Last',
+  },
 })
 
 const enhance = compose(
@@ -73,6 +97,7 @@ const enhance = compose(
 
 const TablePaginator = ({
   intl,
+  timedMessageUsed = false,
   paginatorStatus,
   className,
   onFirstClick,
@@ -100,7 +125,7 @@ const TablePaginator = ({
         onClick={onFirstClick}
       >
         <FaAngleDoubleLeft />
-        First
+        {intl.formatMessage(messages.first)}
       </Button>
       <Button
         className={cssClasses('Left__Button')}
@@ -110,7 +135,9 @@ const TablePaginator = ({
         onClick={onPreviousClick}
       >
         <FaAngleLeft />
-        Previous
+        {intl.formatMessage(
+          timedMessageUsed ? messages.newer : messages.previous
+        )}
       </Button>
       <div className={cssClasses('Left__Status')}>
         {intl.formatMessage(paginatorStatus, {
@@ -126,7 +153,7 @@ const TablePaginator = ({
         inverse
         onClick={onNextClick}
       >
-        Next
+        {intl.formatMessage(timedMessageUsed ? messages.older : messages.next)}
         <FaAngleRight />
       </Button>
       <Button
@@ -136,7 +163,7 @@ const TablePaginator = ({
         inverse
         onClick={onLastClick}
       >
-        Last
+        {intl.formatMessage(messages.last)}
         <FaAngleDoubleRight />
       </Button>
     </div>
