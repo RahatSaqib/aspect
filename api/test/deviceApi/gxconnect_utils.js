@@ -11,16 +11,12 @@ This is a test to see if checkpoint state is a requirement for all remote device
 */
 const _ = require('lodash')
 const chai = require('chai')
-const {
-  deleteDeviceAndTestData,
-  getSiteFromDeviceId,
-  getDeviceFromApiKey,
-} = require('./utils')
+const { getSiteFromDeviceId, getDeviceFromApiKey } = require('./utils')
 const { run } = require('../../src/db')
 
 const assert = chai.assert
 
-function* deleteSiteDataAndRefreshTokens(knex, apiKeys, clientId) {
+function* deleteDeviceSiteDataAndRefreshTokens(knex, apiKeys, clientId) {
   const tokens = apiKeys.map(key => key.token)
   const siteIds = yield knex('DeviceApiKey as dak')
     .innerJoin('Device as d', 'dak.deviceId', 'd.id')
@@ -32,6 +28,9 @@ function* deleteSiteDataAndRefreshTokens(knex, apiKeys, clientId) {
         .whereIn('dak.token', tokens)
         .pluck('dak.siteId')
     })
+  const deviceIds = yield knex('DeviceApiKey as dak')
+    .whereIn('dak.token', tokens)
+    .pluck('dak.deviceId')
 
   const inventoryItemIds = yield knex('InventoryItem as ii')
     .whereIn('ii.siteId', siteIds)
@@ -44,6 +43,41 @@ function* deleteSiteDataAndRefreshTokens(knex, apiKeys, clientId) {
 
   yield knex('InventoryItem').whereIn('id', inventoryItemIds).delete()
 
+  yield knex('DeviceApiKey').whereIn('token', tokens).delete()
+
+  const deviceResultIds = yield knex('Result')
+    .whereIn('deviceId', deviceIds)
+    .map(result => result.id)
+  const generatedResultIds = yield knex('ResultGeneratedResult')
+    .whereIn('sourceResultId', deviceResultIds)
+    .map(r => r.generatedResultId)
+  const resultIds = deviceResultIds.concat(generatedResultIds)
+
+  const opIds = yield knex('DeviceOperation')
+    .whereIn('deviceId', deviceIds)
+    .map(op => op.id)
+
+  yield knex('DeviceStatusLog').whereIn('deviceId', deviceIds).delete()
+  yield knex('DeviceLog')
+    .whereIn('deviceId', deviceIds)
+    .orWhereIn('resultId', resultIds)
+    .delete()
+
+  yield knex('DeviceSiteHistory').whereIn('deviceId', deviceIds).delete()
+  yield knex('InventoryLog').whereIn('resultId', resultIds).delete()
+  yield knex('ResultQualityControlLog').whereIn('resultId', resultIds).delete()
+  yield knex('ResultWorkflowLog').whereIn('resultId', resultIds).delete()
+  yield knex('ResultGeneratedResult')
+    .whereIn('sourceResultId', resultIds)
+    .orWhereIn('generatedResultId', resultIds)
+    .delete()
+  yield knex('Result').whereIn('id', resultIds).delete()
+  yield knex('DeviceOperation').whereIn('id', opIds).delete()
+
+  yield knex('Device')
+    .whereIn('siteId', siteIds)
+    .orWhereIn('deviceId', deviceIds)
+    .delete()
   yield knex('Site').whereIn('id', siteIds).delete()
 
   yield knex('RefreshToken').where({ clientId }).delete()
@@ -307,12 +341,11 @@ class GxConnectApiTestContext {
     const self = this
     return yield run(function*(knex) {
       if (!_.isEmpty(self.apiKey)) {
-        yield* deleteSiteDataAndRefreshTokens(
+        yield* deleteDeviceSiteDataAndRefreshTokens(
           knex,
           [{ token: self.apiKey }],
           self.clientId
         )
-        yield* deleteDeviceAndTestData(knex, [{ token: self.apiKey }])
       }
     })
   }
