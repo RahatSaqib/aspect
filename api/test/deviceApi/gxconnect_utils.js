@@ -31,6 +31,9 @@ function* deleteDeviceSiteDataAndRefreshTokens(knex, apiKeys, clientId) {
   const deviceIds = yield knex('DeviceApiKey as dak')
     .whereIn('dak.token', tokens)
     .pluck('dak.deviceId')
+    .union(function() {
+      this.from('Device').whereIn('siteId', siteIds).pluck('id as deviceId')
+    })
 
   const inventoryItemIds = yield knex('InventoryItem as ii')
     .whereIn('ii.siteId', siteIds)
@@ -43,19 +46,21 @@ function* deleteDeviceSiteDataAndRefreshTokens(knex, apiKeys, clientId) {
 
   yield knex('InventoryItem').whereIn('id', inventoryItemIds).delete()
 
-  yield knex('DeviceApiKey').whereIn('token', tokens).delete()
   yield knex('DeviceApiKey')
-    .whereIn('deviceId', deviceIds)
-    .update({ deviceId: null })
-  yield knex('DeviceApiKey').whereIn('siteId', siteIds).update({ siteId: null })
+    .whereIn('token', tokens)
+    .orWhereIn('deviceId', deviceIds)
+    .orWhereIn('siteId', siteIds)
+    .delete()
 
-  const deviceResultIds = yield knex('Result')
+  const resultIds = yield knex('Result')
     .whereIn('deviceId', deviceIds)
-    .map(result => result.id)
-  const generatedResultIds = yield knex('ResultGeneratedResult')
-    .whereIn('sourceResultId', deviceResultIds)
-    .map(r => r.generatedResultId)
-  const resultIds = deviceResultIds.concat(generatedResultIds)
+    .pluck('id')
+    .union(function() {
+      this.from('ResultGeneratedResult as rgr')
+        .innerJoin('Result as r', 'rgr.sourceResultId', 'r.id')
+        .whereIn('r.deviceId', deviceIds)
+        .pluck('generatedResultId as id')
+    })
 
   const opIds = yield knex('DeviceOperation')
     .whereIn('deviceId', deviceIds)
@@ -87,6 +92,8 @@ function* deleteDeviceSiteDataAndRefreshTokens(knex, apiKeys, clientId) {
     .whereIn('siteId', siteIds)
     .orWhereIn('deviceId', deviceIds)
     .delete()
+  yield knex('Sample').whereIn('originSiteId', siteIds).delete()
+
   yield knex('Site').whereIn('id', siteIds).delete()
 
   yield knex('RefreshToken').where({ clientId }).delete()
