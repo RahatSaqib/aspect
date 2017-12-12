@@ -159,6 +159,7 @@
     "core-js": "^2.4.0",
     "cross-env": "^5.0.1",
     "css-loader": "^0.28.0",
+    "del-webpack-plugin": "^1.0.1",
     "enzyme": "^3.0.0",
     "enzyme-adapter-react-15": "^1.0.0",
     "eslint": "^4.4.1",
