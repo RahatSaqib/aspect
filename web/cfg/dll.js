@@ -1,7 +1,14 @@
 const path = require('path')
-const invariant = require('invariant')
+const fs = require('fs')
+const promisify = require('util.promisify')
+const _ = require('lodash')
 const webpack = require('webpack')
 const CompressionPlugin = require('compression-webpack-plugin')
+
+const stat = promisify(fs.stat)
+
+const mTimeOf = file =>
+  stat(path.resolve(__dirname, file)).then(({ mtime }) => mtime, () => 0)
 
 // vendor packages so we can create a separate bundle
 const vendor = [
@@ -41,64 +48,50 @@ const vendor = [
   'whatwg-fetch',
 ]
 
-module.exports = env => {
-  switch (env.ASPECT_TARGET) {
-    case 'local': {
-      process.env.ASPECT_TARGET = 'local'
-      process.env.NODE_ENV = 'development'
-      process.env.BABEL_ENV = 'webpack'
-      break
-    }
-    case 'dist': {
-      process.env.ASPECT_TARGET = 'dist'
-      process.env.NODE_ENV = 'production'
-      process.env.BABEL_ENV = 'webpack'
-      break
-    }
-    default:
-      invariant(false, `Incorrect --env.ASPECT_TARGET=${env.ASPECT_TARGET}`)
-  }
-  // build flags for webpack
-  const isDevelopment = process.env.NODE_ENV === 'development'
-  const isProduction = process.env.NODE_ENV === 'production'
+module.exports = () => {
+  process.env.NODE_ENV = 'production'
+  process.env.BABEL_ENV = 'webpack'
 
-  return {
-    entry: {
-      vendor,
-    },
-    devtool: isProduction ? 'source-map' : 'inline-source-map',
-    output: {
-      pathinfo: isDevelopment,
-      path: path.join(__dirname, '../dist/assets'),
-      filename: 'dll.[name].js',
-      library: '[name]',
-    },
-    plugins: [
-      new webpack.DllPlugin({
-        path: path.join(
-          __dirname,
-          '../src/template',
-          'dll.[name].manifest.json'
-        ),
-        name: '[name]',
-        context: path.resolve(__dirname, '../src'),
-      }),
-
-      new webpack.EnvironmentPlugin(['NODE_ENV', 'ASPECT_TARGET']),
-    ].concat(
-      isProduction
-        ? [
-            new webpack.NoEmitOnErrorsPlugin(),
-            new webpack.optimize.UglifyJsPlugin({
-              sourceMap: true,
-            }),
-            new CompressionPlugin({
-              asset: '[path].gz[query]',
-              test: /\.(js|css)(\.map)?$/,
-              threshold: 10240,
-            }),
-          ]
-        : []
-    ),
-  }
+  return Promise.all([
+    mTimeOf('../dist/assets/dll.vendor.js'),
+    mTimeOf('../yarn.lock'),
+    mTimeOf(__filename),
+  ]).then(([dllMtime, ...dependencies]) => {
+    if (dllMtime > _.max(dependencies)) {
+      process.exit(0)
+      return
+    }
+    return {
+      entry: {
+        vendor,
+      },
+      devtool: 'source-map',
+      output: {
+        path: path.join(__dirname, '../dist/assets'),
+        filename: 'dll.[name].js',
+        library: '[name]',
+      },
+      plugins: [
+        new webpack.DllPlugin({
+          path: path.join(
+            __dirname,
+            '../src/template',
+            'dll.[name].manifest.json'
+          ),
+          name: '[name]',
+          context: path.resolve(__dirname, '../src'),
+        }),
+        new webpack.EnvironmentPlugin(['NODE_ENV']),
+        new webpack.NoEmitOnErrorsPlugin(),
+        new webpack.optimize.UglifyJsPlugin({
+          sourceMap: true,
+        }),
+        new CompressionPlugin({
+          asset: '[path].gz[query]',
+          test: /\.(js|css)(\.map)?$/,
+          threshold: 10240,
+        }),
+      ],
+    }
+  })
 }
