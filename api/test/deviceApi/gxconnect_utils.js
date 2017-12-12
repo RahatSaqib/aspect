@@ -196,6 +196,7 @@ class GxConnectApiTestContext {
     this.adminUsername = adminUsername
     this.adminPassword = adminPassword
     this.clientId = `${Math.floor(Math.random() * 800000000) + 100000000}`
+    this.apiKeys = []
     this.basicDevicePayload = {
       name: deviceName,
       serial: null,
@@ -236,6 +237,7 @@ class GxConnectApiTestContext {
     return yield run(function*() {
       const clientAccessToken = yield* self.requestClientToken()
       self.apiKey = yield* self.requestNewDeviceApiKey(clientAccessToken)
+      self.apiKeys.push(self.apiKey)
       self.deviceAuth = `Bearer ${self.apiKey}`
     })
   }
@@ -251,6 +253,7 @@ class GxConnectApiTestContext {
     const self = this
     return yield run(function*(knex) {
       self.apiKey = yield* self.registerDevice()
+      self.apiKeys.push(self.apiKey)
       self.deviceAuth = `Bearer ${self.apiKey}`
       self.device = yield* getDeviceFromApiKey(knex, { token: self.apiKey })
       assert.isNotEmpty(
@@ -356,10 +359,10 @@ class GxConnectApiTestContext {
   *cleanUp() {
     const self = this
     return yield run(function*(knex) {
-      if (!_.isEmpty(self.apiKey)) {
+      if (!_.isEmpty(self.apiKeys)) {
         yield* deleteDeviceSiteDataAndRefreshTokens(
           knex,
-          [{ token: self.apiKey }],
+          _.map(self.apiKeys, apiKey => ({ token: apiKey })),
           self.clientId
         )
       }
