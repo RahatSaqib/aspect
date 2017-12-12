@@ -199,6 +199,7 @@
     "static-loader": "^0.1.8",
     "style-loader": "^0.19.0",
     "url-loader": "^0.6.2",
+    "util.promisify": "^1.0.0",
     "webapp-manifest-plugin": "^0.0.4",
     "webpack": "^3.3.0",
     "webpack-dev-server": "^2.4.2",
