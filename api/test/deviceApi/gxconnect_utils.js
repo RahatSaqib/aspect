@@ -44,6 +44,10 @@ function* deleteDeviceSiteDataAndRefreshTokens(knex, apiKeys, clientId) {
   yield knex('InventoryItem').whereIn('id', inventoryItemIds).delete()
 
   yield knex('DeviceApiKey').whereIn('token', tokens).delete()
+  yield knex('DeviceApiKey')
+    .whereIn('deviceId', deviceIds)
+    .update({ deviceId: null })
+  yield knex('DeviceApiKey').whereIn('siteId', siteIds).update({ siteId: null })
 
   const deviceResultIds = yield knex('Result')
     .whereIn('deviceId', deviceIds)
@@ -64,6 +68,10 @@ function* deleteDeviceSiteDataAndRefreshTokens(knex, apiKeys, clientId) {
     .delete()
 
   yield knex('DeviceSiteHistory').whereIn('deviceId', deviceIds).delete()
+  yield knex('FactResultCountDevice').whereIn('deviceId', deviceIds).delete()
+  yield knex('FactDeviceFlag').whereIn('deviceId', deviceIds).delete()
+  yield knex('DeviceSiteHistory').whereIn('deviceId', deviceIds).delete()
+
   yield knex('InventoryLog').whereIn('resultId', resultIds).delete()
   yield knex('ResultQualityControlLog').whereIn('resultId', resultIds).delete()
   yield knex('ResultWorkflowLog').whereIn('resultId', resultIds).delete()
@@ -72,6 +80,7 @@ function* deleteDeviceSiteDataAndRefreshTokens(knex, apiKeys, clientId) {
     .orWhereIn('generatedResultId', resultIds)
     .delete()
   yield knex('Result').whereIn('id', resultIds).delete()
+
   yield knex('DeviceOperation').whereIn('id', opIds).delete()
 
   yield knex('Device')

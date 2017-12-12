@@ -2075,7 +2075,7 @@ describe('Device Result API routes', () => {
       it('should update the result counts in the facts-table when a new result is reported', () =>
         runTest(function*(knex) {
           const resultDetails = {
-            assayExternalId: 'MtbRif',
+            assayExternalId: 'GxMtbRif',
             deviceId: context.deviceId,
           }
 
