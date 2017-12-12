@@ -5,6 +5,7 @@ const webpack = require('webpack')
 const pxToRem = require('postcss-pxtorem')
 const cssImport = require('postcss-import')
 const cssNext = require('postcss-cssnext')
+const DelWebpackPlugin = require('del-webpack-plugin')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin')
 const FaviconsWebpackPlugin = require('favicons-webpack-plugin')
@@ -180,6 +181,14 @@ module.exports = env => {
       new webpack.EnvironmentPlugin(['NODE_ENV', 'ASPECT_TARGET']),
       new webpack.DefinePlugin(_.assign({}, definePluginVariables)),
 
+      new DelWebpackPlugin({
+        exclude: [
+          'dll.vendor.js',
+          'dll.vendor.js.gz',
+          'dll.vendor.js.map',
+          'dll.vendor.js.map.gz',
+        ],
+      }),
       extractCSS,
       new FaviconsWebpackPlugin({
         logo: path.join(__dirname, '../src/template/favicon.png'),
