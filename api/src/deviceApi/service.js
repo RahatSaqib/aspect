@@ -113,7 +113,9 @@ function deviceApiHandler(handler, handlerOptions) {
       deviceUpdates.lastPingOn = now
       deviceUpdates.lastPingFromIp = remoteAddress
     }
-    yield knex('Device').where({ id: device.id }).update(deviceUpdates)
+    yield knex('Device')
+      .where({ id: device.id })
+      .update(deviceUpdates)
 
     let response = {}
     let deviceLogUpdate = null
@@ -123,7 +125,7 @@ function deviceApiHandler(handler, handlerOptions) {
 
       // Update DeviceLog with changes added to context when calling handler
       if (deviceLogId !== null) {
-        deviceLogUpdate = context.deviceLogUpdate
+        ;({ deviceLogUpdate } = context)
         if (deviceLogUpdate != null) {
           yield knex('DeviceLog')
             .where({ id: deviceLogId })
@@ -301,12 +303,14 @@ function* updateSiteWithContext(context) {
   if (device.siteId !== site.id) {
     const status = device.siteId == null ? 'approved' : 'assigned'
 
-    yield knex('Device').where({ id: device.id }).update({
-      siteId: site.id,
-      deviceStatusId: knex('DeviceStatus')
-        .where({ token: status })
-        .select('id'),
-    })
+    yield knex('Device')
+      .where({ id: device.id })
+      .update({
+        siteId: site.id,
+        deviceStatusId: knex('DeviceStatus')
+          .where({ token: status })
+          .select('id'),
+      })
 
     yield knex('DeviceStatusLog').insert({
       deviceId: device.id,
@@ -319,9 +323,11 @@ function* updateSiteWithContext(context) {
     })
 
     // Update DeviceApiKey site with the new siteId
-    yield knex('DeviceApiKey').where({ deviceId: device.id }).update({
-      siteId: site.id,
-    })
+    yield knex('DeviceApiKey')
+      .where({ deviceId: device.id })
+      .update({
+        siteId: site.id,
+      })
 
     yield knex('DeviceSiteHistory').insert({
       deviceId: device.id,
@@ -436,7 +442,7 @@ function* createDeviceApiContext(request, handlerOptions) {
     if (deviceAndError.error) {
       return deviceAndError
     }
-    device = deviceAndError.device
+    ;({ device } = deviceAndError)
   }
 
   if (device == null) {
@@ -590,7 +596,7 @@ function createNewDevice(request, now) {
     // Use or generate device name
     let name
     if (payload.name) {
-      name = payload.name
+      ;({ name } = payload)
     } else if (payload.serial) {
       name = payload.serial
     } else {

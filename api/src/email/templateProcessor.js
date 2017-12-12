@@ -1,4 +1,4 @@
-const EmailTemplate = require('email-templates').EmailTemplate
+const { EmailTemplate } = require('email-templates')
 const path = require('path')
 const Promise = require('bluebird')
 const encode = Promise.promisify(require('node-base64-image').encode)

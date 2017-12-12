@@ -24,19 +24,27 @@ function listResultsBaseConfig() {
     validate: {
       query: Object.assign(
         {
-          deviceId: Joi.number().allow('').description('Filter for device ID'),
-          assayId: Joi.number().allow('').description('Filter for assay ID'),
+          deviceId: Joi.number()
+            .allow('')
+            .description('Filter for device ID'),
+          assayId: Joi.number()
+            .allow('')
+            .description('Filter for assay ID'),
           resultCategoryId: Joi.number()
             .allow('')
             .description('Result Category ID'),
           deviceName: Joi.string()
             .allow('')
             .description('Filter for device name'),
-          siteName: Joi.string().allow('').description('Filter for site name'),
+          siteName: Joi.string()
+            .allow('')
+            .description('Filter for site name'),
           patientOrResearchId: Joi.string()
             .allow('')
             .description('Filter for patient/research ID'),
-          sampleId: Joi.string().allow('').description('Filter for sample ID'),
+          sampleId: Joi.string()
+            .allow('')
+            .description('Filter for sample ID'),
           sampleGroup: Joi.string()
             .allow('')
             .description('Filter for sample group'),
@@ -89,7 +97,9 @@ module.exports = [
       auth: { scope: ['result:view', 'result:edit'] },
       validate: {
         params: {
-          resultId: Joi.string().description('Result ID').required(),
+          resultId: Joi.string()
+            .description('Result ID')
+            .required(),
         },
       },
     },
@@ -124,10 +134,15 @@ module.exports = [
       auth: { scope: ['result:edit'] },
       validate: {
         params: {
-          resultId: Joi.number().integer().positive().description('Result Id'),
+          resultId: Joi.number()
+            .integer()
+            .positive()
+            .description('Result Id'),
         },
         payload: {
-          resultWorkflowStatusId: Joi.number().integer().allow(null),
+          resultWorkflowStatusId: Joi.number()
+            .integer()
+            .allow(null),
           externalId: Joi.string().allow('', null),
         },
       },
@@ -143,7 +158,10 @@ module.exports = [
       auth: { scope: ['result:edit'] },
       validate: {
         params: {
-          resultId: Joi.number().integer().positive().description('Result Id'),
+          resultId: Joi.number()
+            .integer()
+            .positive()
+            .description('Result Id'),
         },
         payload: {
           qcCheck: Joi.boolean(),
@@ -173,7 +191,9 @@ module.exports = [
       validate: {
         query: validateSortPageParams(),
         params: {
-          resultId: Joi.string().description('Result ID').required(),
+          resultId: Joi.string()
+            .description('Result ID')
+            .required(),
         },
       },
     },

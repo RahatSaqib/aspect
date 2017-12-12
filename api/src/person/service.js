@@ -20,7 +20,10 @@ function* listPeople(request) {
     })
 
   // get total count for paging
-  const getCount = personQuery.clone().count('p.id as count').first()
+  const getCount = personQuery
+    .clone()
+    .count('p.id as count')
+    .first()
 
   const getJobFunctionNames = knex('Job as j')
     .innerJoin('JobFunction as jf', 'j.jobFunctionId', 'jf.id')

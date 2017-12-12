@@ -42,7 +42,10 @@ function* listAssays(request) {
     .modify(filterParams, query, { name: 'a.name' })
 
   // get total count for paging
-  const getCount = assayQuery.clone().count('a.id as count').first()
+  const getCount = assayQuery
+    .clone()
+    .count('a.id as count')
+    .first()
 
   // get rows
   const getItems = assayQuery

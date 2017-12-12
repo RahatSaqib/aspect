@@ -17,32 +17,57 @@ const {
 } = require('./service')
 
 const inventoryFilters = {
-  consumableId: Joi.number().integer().positive().allow('', null),
+  consumableId: Joi.number()
+    .integer()
+    .positive()
+    .allow('', null),
   siteName: Joi.string().allow('', null),
 }
 
 const addRemoveInventoryCommonParams = {
-  inventoryItemId: Joi.number().integer().positive().allow('', null),
+  inventoryItemId: Joi.number()
+    .integer()
+    .positive()
+    .allow('', null),
 }
 
 const transferReceiveInventoryCommonParams = {
-  inventoryItemId: Joi.number().integer().positive().required(),
+  inventoryItemId: Joi.number()
+    .integer()
+    .positive()
+    .required(),
 }
 
 const adjustInventoryCommonPayloadFields = {
-  consumableId: Joi.number().positive().required(),
-  lotNumber: Joi.string().max(255).allow('', null),
-  expiresOn: Joi.date().iso().allow(null),
-  quantity: Joi.number().positive().required(),
-  notes: Joi.string().max(2000).allow('', null),
+  consumableId: Joi.number()
+    .positive()
+    .required(),
+  lotNumber: Joi.string()
+    .max(255)
+    .allow('', null),
+  expiresOn: Joi.date()
+    .iso()
+    .allow(null),
+  quantity: Joi.number()
+    .positive()
+    .required(),
+  notes: Joi.string()
+    .max(2000)
+    .allow('', null),
 }
 
 const removeInventoryCommonPayloadFields = Object.assign(
   {},
   adjustInventoryCommonPayloadFields,
   {
-    fromSiteId: Joi.number().integer().positive().required(),
-    reasonId: Joi.number().integer().positive().required(),
+    fromSiteId: Joi.number()
+      .integer()
+      .positive()
+      .required(),
+    reasonId: Joi.number()
+      .integer()
+      .positive()
+      .required(),
   }
 )
 
@@ -113,8 +138,13 @@ module.exports = [
       auth: { scope: ['inventory:edit'] },
       validate: {
         payload: Object.assign({}, adjustInventoryCommonPayloadFields, {
-          toSiteId: Joi.number().integer().positive().required(),
-          dateAdjusted: Joi.date().iso().required(),
+          toSiteId: Joi.number()
+            .integer()
+            .positive()
+            .required(),
+          dateAdjusted: Joi.date()
+            .iso()
+            .required(),
         }),
       },
     },
@@ -130,8 +160,13 @@ module.exports = [
       validate: {
         params: addRemoveInventoryCommonParams,
         payload: Object.assign({}, adjustInventoryCommonPayloadFields, {
-          toSiteId: Joi.number().integer().positive().required(),
-          dateAdjusted: Joi.date().iso().required(),
+          toSiteId: Joi.number()
+            .integer()
+            .positive()
+            .required(),
+          dateAdjusted: Joi.date()
+            .iso()
+            .required(),
         }),
       },
     },
@@ -149,12 +184,18 @@ module.exports = [
         payload: Joi.alternatives().try(
           Joi.object().keys(
             Object.assign({}, removeInventoryCommonPayloadFields, {
-              dateAdjusted: Joi.date().iso().required(),
+              dateAdjusted: Joi.date()
+                .iso()
+                .required(),
             })
           ),
           Object.assign({}, removeInventoryCommonPayloadFields, {
-            dateAdjustedFrom: Joi.date().iso().required(),
-            dateAdjustedTo: Joi.date().iso().required(),
+            dateAdjustedFrom: Joi.date()
+              .iso()
+              .required(),
+            dateAdjustedTo: Joi.date()
+              .iso()
+              .required(),
           })
         ),
       },
@@ -171,9 +212,17 @@ module.exports = [
       validate: {
         params: transferReceiveInventoryCommonParams,
         payload: Object.assign({}, adjustInventoryCommonPayloadFields, {
-          fromSiteId: Joi.number().integer().positive().required(),
-          toSiteId: Joi.number().integer().positive().required(),
-          dateAdjusted: Joi.date().iso().required(),
+          fromSiteId: Joi.number()
+            .integer()
+            .positive()
+            .required(),
+          toSiteId: Joi.number()
+            .integer()
+            .positive()
+            .required(),
+          dateAdjusted: Joi.date()
+            .iso()
+            .required(),
         }),
       },
     },
@@ -189,9 +238,17 @@ module.exports = [
       validate: {
         params: transferReceiveInventoryCommonParams,
         payload: Object.assign({}, adjustInventoryCommonPayloadFields, {
-          fromSiteId: Joi.number().integer().positive().required(),
-          toSiteId: Joi.number().integer().positive().required(),
-          dateAdjusted: Joi.date().iso().required(),
+          fromSiteId: Joi.number()
+            .integer()
+            .positive()
+            .required(),
+          toSiteId: Joi.number()
+            .integer()
+            .positive()
+            .required(),
+          dateAdjusted: Joi.date()
+            .iso()
+            .required(),
         }),
       },
     },

@@ -21,7 +21,9 @@ describe('email/templateProcessor', () => {
           assert.include(result.html, 'Click here to reset your password')
           assert.include(
             result.html,
-            `${tokenValues.aspectUrl}/reset-password?token=${tokenValues.resetPasswordToken}`
+            `${tokenValues.aspectUrl}/reset-password?token=${
+              tokenValues.resetPasswordToken
+            }`
           )
           assert.include(result.html, 'Copyable link: ')
           assert.include(
@@ -36,7 +38,9 @@ describe('email/templateProcessor', () => {
           )
           assert.include(
             result.text,
-            `${tokenValues.aspectUrl}/reset-password?token=${tokenValues.resetPasswordToken}`
+            `${tokenValues.aspectUrl}/reset-password?token=${
+              tokenValues.resetPasswordToken
+            }`
           )
           assert.include(
             result.text,
@@ -68,7 +72,9 @@ describe('email/templateProcessor', () => {
             )
             assert.include(
               result.html,
-              `${tokenValues.aspectUrl}/reset-password?token=${tokenValues.resetPasswordToken}`
+              `${tokenValues.aspectUrl}/reset-password?token=${
+                tokenValues.resetPasswordToken
+              }`
             )
             assert.include(result.html, 'Lien éditable: ')
             assert.include(
@@ -83,7 +89,9 @@ describe('email/templateProcessor', () => {
             )
             assert.include(
               result.text,
-              `${tokenValues.aspectUrl}/reset-password?token=${tokenValues.resetPasswordToken}`
+              `${tokenValues.aspectUrl}/reset-password?token=${
+                tokenValues.resetPasswordToken
+              }`
             )
             assert.include(
               result.text,

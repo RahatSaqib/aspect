@@ -178,7 +178,9 @@ function validateSortPageParams(...sortColumns) {
   return {
     sortCol:
       sortColumns.length > 0
-        ? Joi.string().valid(sortColumns).description('Sort on named column')
+        ? Joi.string()
+            .valid(sortColumns)
+            .description('Sort on named column')
         : Joi.string().description('Sort on named column'),
     sortDir: Joi.string()
       .valid('asc', 'desc')
@@ -187,14 +189,23 @@ function validateSortPageParams(...sortColumns) {
       .integer()
       .min(0)
       .description('Page index with 0 as first page'),
-    size: Joi.number().integer().positive().description('Page size'),
+    size: Joi.number()
+      .integer()
+      .positive()
+      .description('Page size'),
   }
 }
 
 function validateDateRangeParams() {
   return {
-    minDate: Joi.date().iso().allow(null).description('From Date'),
-    maxDate: Joi.date().iso().allow(null).description('To Date'),
+    minDate: Joi.date()
+      .iso()
+      .allow(null)
+      .description('From Date'),
+    maxDate: Joi.date()
+      .iso()
+      .allow(null)
+      .description('To Date'),
   }
 }
 

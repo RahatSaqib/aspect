@@ -2,7 +2,7 @@ const supertest = require('supertest')
 const chai = require('chai')
 
 const server = supertest.agent('http://localhost:8080')
-const assert = chai.assert
+const { assert } = chai
 
 describe('Base route', () => {
   it('should return 200 and "Hello! The API is at /api." in the root', done => {

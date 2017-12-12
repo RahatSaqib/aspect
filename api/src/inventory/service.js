@@ -63,7 +63,9 @@ const INVENTORY_ITEM_FILTER_FIELDS = {
 const INVENTORY_ITEM_DATA_CONSTRAINT_ALIASES = { geography: 'g', site: 's' }
 
 function selectInventoryItemsAtSite(siteId, knex) {
-  return knex('InventoryItem').where({ siteId }).select()
+  return knex('InventoryItem')
+    .where({ siteId })
+    .select()
 }
 
 function compareConsumableInResultWithInventoryItem(
@@ -252,7 +254,10 @@ function* listInventoryItems(request) {
       INVENTORY_ITEM_DATA_CONSTRAINT_ALIASES
     )
 
-  const getCount = inventoryItemsQuery.clone().count('ii.id as count').first()
+  const getCount = inventoryItemsQuery
+    .clone()
+    .count('ii.id as count')
+    .first()
 
   const getItems = inventoryItemsQuery
     .modify(
@@ -337,9 +342,9 @@ function* listInventoryItemsGroupedBySite(request) {
       request.query.sortDir === 'desc'
         ? '1000-01-01 00:00:00'
         : '9999-12-31 23:59:59'
-    sortColumnField = `COALESCE(${INVENTORY_ITEM_SORT_FIELDS[
-      sortColumnName
-    ]}, '${defaultDateOrderBy}')`
+    sortColumnField = `COALESCE(${
+      INVENTORY_ITEM_SORT_FIELDS[sortColumnName]
+    }, '${defaultDateOrderBy}')`
   }
   const aggregateColumn = `${sortAggregate}(${sortColumnField}) as ${sortColumnName}`
   const getSiteIds = sitesQuery
@@ -477,14 +482,16 @@ function* upsertInventoryItem(
     })
   } else {
     inventoryItemId = inventoryItem.id
-    yield knex('InventoryItem').where({ id: inventoryItemId }).update({
-      expiresOn,
-      lotNumber,
-      siteId,
-      quantityOnHand: knex.raw(`quantityOnHand + ${quantity}`),
-      updatedOn: now,
-      updatedBy: userId,
-    })
+    yield knex('InventoryItem')
+      .where({ id: inventoryItemId })
+      .update({
+        expiresOn,
+        lotNumber,
+        siteId,
+        quantityOnHand: knex.raw(`quantityOnHand + ${quantity}`),
+        updatedOn: now,
+        updatedBy: userId,
+      })
   }
   return inventoryItemId
 }
@@ -703,14 +710,16 @@ function* transferInventory(request) {
       createdBy: currentlyLoggedInUser.id,
     })
 
-    yield knex('InventoryItem').where('id', inventoryItemId).update({
-      expiresOn,
-      lotNumber,
-      siteId: fromSiteId,
-      quantityOnHand: knex.raw(`quantityOnHand - ${quantity}`),
-      updatedOn: now,
-      updatedBy: currentlyLoggedInUser.id,
-    })
+    yield knex('InventoryItem')
+      .where('id', inventoryItemId)
+      .update({
+        expiresOn,
+        lotNumber,
+        siteId: fromSiteId,
+        quantityOnHand: knex.raw(`quantityOnHand - ${quantity}`),
+        updatedOn: now,
+        updatedBy: currentlyLoggedInUser.id,
+      })
   })
 
   return {
@@ -785,7 +794,9 @@ function* receiveInventory(request) {
       createdBy: currentlyLoggedInUser.id,
     })
 
-    yield knex('InventoryItem').where('id', inventoryItemId).delete()
+    yield knex('InventoryItem')
+      .where('id', inventoryItemId)
+      .delete()
   })
 
   return {

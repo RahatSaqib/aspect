@@ -96,7 +96,10 @@ function* summaryDashboard(request) {
           .sum('f.resultCount as cnt')
       : null,
     canViewResults(auth)
-      ? resultsTotalQuery.clone().where('f.days', 1).sum('f.resultCount as cnt')
+      ? resultsTotalQuery
+          .clone()
+          .where('f.days', 1)
+          .sum('f.resultCount as cnt')
       : null,
     usersTotalQuery,
   ])
@@ -316,11 +319,7 @@ function* inventoryItemDashboard(request) {
     _.groupBy(inventoryItemList, 'consumableId'),
     (acc, list) => {
       if (!_.isEmpty(list)) {
-        const {
-          runningLowCount,
-          expiringCount,
-          affectedSiteIds,
-        } = list.reduce(
+        const { runningLowCount, expiringCount, affectedSiteIds } = list.reduce(
           (result, it) => {
             result.runningLowCount += it.runningLow ? 1 : 0
             result.expiringCount += it.expiring ? 1 : 0
@@ -1053,7 +1052,7 @@ function* operationalDashboard(request) {
       _.forEach(v, o =>
         _.forEach(o.data, it => {
           if (it.value) {
-            it.value = it.value * multiplier % 17
+            it.value = (it.value * multiplier) % 17
           }
         })
       )

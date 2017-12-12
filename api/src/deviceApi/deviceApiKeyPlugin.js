@@ -18,7 +18,7 @@ function authenticate(request, reply) {
   let token = ''
   if (query.token) {
     // prefer token in query string
-    token = query.token
+    ;({ token } = query)
   } else if (headers.authorization) {
     // Remove Bearer from Authorization header
     token = headers.authorization.replace(/Bearer/gi, '')

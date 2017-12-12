@@ -65,9 +65,15 @@ module.exports = [
       notes: 'Returns an array of the fields that were updated',
       validate: {
         payload: {
-          currentPassword: Joi.string().max(100).required(),
-          newUsername: Joi.string().max(255).allow('', null),
-          newPassword: Joi.string().max(100).allow('', null),
+          currentPassword: Joi.string()
+            .max(100)
+            .required(),
+          newUsername: Joi.string()
+            .max(255)
+            .allow('', null),
+          newPassword: Joi.string()
+            .max(100)
+            .allow('', null),
           clientName: Joi.string().required(),
           clientId: Joi.string(),
         },
@@ -85,7 +91,9 @@ module.exports = [
         'Generate a new reset password token and send it to the user via email',
       validate: {
         params: {
-          email: Joi.string().description('Email address').required(),
+          email: Joi.string()
+            .description('Email address')
+            .required(),
         },
       },
     },
@@ -105,7 +113,9 @@ module.exports = [
             .required(),
         },
         payload: {
-          newPassword: Joi.string().max(100).required(),
+          newPassword: Joi.string()
+            .max(100)
+            .required(),
           clientName: Joi.string().required(),
           clientId: Joi.string(),
         },
@@ -121,11 +131,17 @@ module.exports = [
       notes: 'Returns an array of the fields that were updated',
       validate: {
         params: {
-          personId: Joi.string().description('Person ID').required(),
+          personId: Joi.string()
+            .description('Person ID')
+            .required(),
         },
         payload: {
-          newUsername: Joi.string().max(255).allow('', null),
-          newPassword: Joi.string().max(100).allow('', null),
+          newUsername: Joi.string()
+            .max(255)
+            .allow('', null),
+          newPassword: Joi.string()
+            .max(100)
+            .allow('', null),
         },
       },
     },

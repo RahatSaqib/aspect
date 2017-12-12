@@ -13,7 +13,7 @@ const {
 
 // This agent refers to PORT where program is running.
 const server = supertest.agent('http://localhost:8080')
-const assert = chai.assert
+const { assert } = chai
 
 const devicePath = '/device'
 const devicePostResultPath = '/device/result'
@@ -96,7 +96,7 @@ describe('Device Result API routes', () => {
       type: 'GeneXpert',
     })
 
-    const runTest = context.runTest
+    const { runTest } = context
 
     beforeEach(context.beforeEach)
     afterEach(context.afterEach)
@@ -999,7 +999,9 @@ describe('Device Result API routes', () => {
         const resultExternalIds = []
         resultExternalIds.push(`R1${now}`, `R2${now}`)
         const countResults = () =>
-          knex('Result').count('id as cnt').then(([{ cnt }]) => cnt)
+          knex('Result')
+            .count('id as cnt')
+            .then(([{ cnt }]) => cnt)
         const initialCount = yield countResults()
 
         yield server
@@ -1037,7 +1039,9 @@ describe('Device Result API routes', () => {
         let lastResultId = yield* getLastResultId(knex, deviceId)
         assert.equal(lastResultId, resultIds[0])
 
-        result1 = yield knex('Result as r').where({ id: resultIds[0] }).first()
+        result1 = yield knex('Result as r')
+          .where({ id: resultIds[0] })
+          .first()
         assert.equal(result1.externalId, resultExternalIds[0])
         assert.deepEqual(JSON.parse(result1.resultData), { a: 'b', c: 'd' })
         assert.isNotOk(result1.errorCode)
@@ -1166,7 +1170,9 @@ describe('Device Result API routes', () => {
         lastResultId = yield* getLastResultId(knex, deviceId)
         assert.equal(lastResultId, resultIds[1])
 
-        result2 = yield knex('Result as r').where({ id: resultIds[1] }).first()
+        result2 = yield knex('Result as r')
+          .where({ id: resultIds[1] })
+          .first()
         assert.equal(initialCount + 2, yield countResults())
         assert.equal(result2.externalId, resultExternalIds[1])
         assert.deepEqual(JSON.parse(result2.resultData), {
@@ -2048,7 +2054,7 @@ describe('Device Result API routes', () => {
       partner: 'RRT',
     })
 
-    const runTest = context.runTest
+    const { runTest } = context
 
     beforeEach(context.beforeEach)
     afterEach(context.afterEach)
@@ -3131,7 +3137,9 @@ describe('Device Result API routes', () => {
             assert.typeOf(lastResult, 'Object')
           })
 
-        const result = yield knex('Result as r').where({ externalId }).first()
+        const result = yield knex('Result as r')
+          .where({ externalId })
+          .first()
         assert.deepEqual(JSON.parse(result.resultData), {
           resultText: '454112',
           copies: 454112,

@@ -105,7 +105,10 @@ function* getListDevices(query, auth) {
     .modify(addConstraints, dataConstraints, { device: 'd' })
 
   // get total count for paging
-  const getCount = deviceQuery.clone().count('d.id as count').first()
+  const getCount = deviceQuery
+    .clone()
+    .count('d.id as count')
+    .first()
 
   const last30Day = subDays(new Date(), 30)
   const last60Day = subDays(last30Day, 30)
@@ -293,7 +296,9 @@ function* getDeviceByDeviceId(request, fields = SELECT_SHOW_FIELDS) {
 
   device.totalTests = totalTests
 
-  const contacts = yield knex('Person as p').select('p.id', 'p.name').limit(50)
+  const contacts = yield knex('Person as p')
+    .select('p.id', 'p.name')
+    .limit(50)
 
   device.contacts = _.times(
     3,
@@ -459,10 +464,16 @@ function* listStatusTypes() {
   const resultQuery = knex('DeviceStatus as ds')
 
   // get total count for paging
-  const getCount = resultQuery.clone().count('ds.id as count').first()
+  const getCount = resultQuery
+    .clone()
+    .count('ds.id as count')
+    .first()
 
   // get rows
-  const getItems = resultQuery.clone().orderBy('id', 'asc').select('id', 'name')
+  const getItems = resultQuery
+    .clone()
+    .orderBy('id', 'asc')
+    .select('id', 'name')
 
   // return result when both queries are finished
   const [{ count: total }, data] = yield Promise.all([getCount, getItems])

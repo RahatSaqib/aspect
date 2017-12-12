@@ -7,7 +7,7 @@ const {
 } = require('./utils')
 
 const server = supertest.agent('http://localhost:8080')
-const assert = chai.assert
+const { assert } = chai
 const context = createTestContext(server, { user: 'admin', status: 'assigned' })
 
 describe('Device API status tests', () => {
@@ -15,7 +15,7 @@ describe('Device API status tests', () => {
   const deviceConfigurationPath = '/device/configuration'
   const deviceOperationPath = '/device/operation'
 
-  const runTest = context.runTest
+  const { runTest } = context
 
   beforeEach(context.beforeEach)
   afterEach(context.afterEach)

@@ -107,7 +107,9 @@ function* getListResults(query, auth) {
 
   const assayColumns = []
   if (query.assayId) {
-    const assay = yield knex('Assay as a').where('a.id', query.assayId).first()
+    const assay = yield knex('Assay as a')
+      .where('a.id', query.assayId)
+      .first()
 
     if (assay.resultCategory1Label) {
       selectFields.push('rc1.name as resultCategory1Name')
@@ -205,7 +207,10 @@ function* getListResults(query, auth) {
     .modify(addConstraints, dataConstraints, { device: 'd', sample: 's' })
 
   // get total count for paging
-  const getCount = resultQuery.clone().count('r.id as count').first()
+  const getCount = resultQuery
+    .clone()
+    .count('r.id as count')
+    .first()
 
   // get rows
   const getItems = resultQuery
@@ -276,10 +281,12 @@ function* getResultByResultId(request, fields = SELECT_SHOW_FIELDS) {
   // translate result data back to an object and get assay details
   // if selecting the result was successful
   if (results.length === 1) {
-    data = results[0]
+    ;[data] = results
     data.resultData = JSON.parse(data.resultData)
     data.patientData = JSON.parse(data.patientData)
-    data.assay = yield knex('Assay as a').where('a.id', data.assayId).first()
+    data.assay = yield knex('Assay as a')
+      .where('a.id', data.assayId)
+      .first()
     data.assay.resultDataSchema = JSON.parse(data.assay.resultDataSchema)
     data.assay.patientDataSchema = JSON.parse(data.assay.patientDataSchema)
   }
@@ -295,7 +302,10 @@ function* listResultTypes(request) {
   })
 
   // get total count for paging
-  const getCount = resultTypeQuery.clone().count('rt.id as count').first()
+  const getCount = resultTypeQuery
+    .clone()
+    .count('rt.id as count')
+    .first()
 
   // get rows
   const getItems = resultTypeQuery
@@ -412,7 +422,7 @@ function* updateWorkflowStatus(request) {
     Boom.notFound()
   }
 
-  let resultWorkflowStatusId = payload.resultWorkflowStatusId
+  let { resultWorkflowStatusId } = payload
   // check if a externalId is provided
   if (payload.externalId) {
     ;[resultWorkflowStatusId] = yield knex('ResultWorkflowStatus as rs')
@@ -428,11 +438,13 @@ function* updateWorkflowStatus(request) {
 
   // update the resultWorkflowStatusId.
   if (resultWorkflowStatusId !== result.data.resultWorkflowStatusId) {
-    yield knex('Result').where('id', resultId).update({
-      resultWorkflowStatusId,
-      updatedBy: currentUserId,
-      updatedOn: now,
-    })
+    yield knex('Result')
+      .where('id', resultId)
+      .update({
+        resultWorkflowStatusId,
+        updatedBy: currentUserId,
+        updatedOn: now,
+      })
 
     yield knex('ResultWorkflowLog').insert({
       resultId,
@@ -465,11 +477,13 @@ function* updateQcCheck(request) {
   }
 
   // update the result QC Check flag
-  yield knex('Result').where('id', resultId).update({
-    qcCheck: payload.qcCheck,
-    updatedBy: currentUserId,
-    updatedOn: now,
-  })
+  yield knex('Result')
+    .where('id', resultId)
+    .update({
+      qcCheck: payload.qcCheck,
+      updatedBy: currentUserId,
+      updatedOn: now,
+    })
 
   // log QC-Check change in separate table
   yield knex('ResultQualityControlLog').insert({
@@ -489,10 +503,16 @@ function* listWorkflowStatusTypes() {
   const resultQuery = knex('ResultWorkflowStatus as rs')
 
   // get total count for paging
-  const getCount = resultQuery.clone().count('rs.id as count').first()
+  const getCount = resultQuery
+    .clone()
+    .count('rs.id as count')
+    .first()
 
   // get rows
-  const getItems = resultQuery.clone().orderBy('id', 'asc').select('id', 'name')
+  const getItems = resultQuery
+    .clone()
+    .orderBy('id', 'asc')
+    .select('id', 'name')
 
   // return result when both queries are finished
   const [{ count: total }, data] = yield Promise.all([getCount, getItems])
@@ -536,7 +556,10 @@ function* getWorkflowStatusLogByResultId(request) {
     .where('log.resultId', +params.resultId)
 
   // get total count for paging
-  const getCount = resultQuery.clone().count('log.id as count').first()
+  const getCount = resultQuery
+    .clone()
+    .count('log.id as count')
+    .first()
 
   // get rows
   const getItems = resultQuery

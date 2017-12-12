@@ -1,6 +1,6 @@
 const chai = require('chai')
 
-const assert = chai.assert
+const { assert } = chai
 
 module.exports = {
   // this can be reused in tests for all routes that require authentication

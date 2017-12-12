@@ -4,7 +4,7 @@ const chai = require('chai')
 const shared = require('../utils/sharedToken')
 
 const server = supertest.agent('http://localhost:8080')
-const assert = chai.assert
+const { assert } = chai
 
 describe('Assay Consumable Routes', () => {
   describe('Consumable Type Route', () => {

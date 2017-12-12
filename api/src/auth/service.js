@@ -177,22 +177,23 @@ function* authenticate(request) {
 function setRefreshToken(userId, clientName, clientId, refreshToken, now) {
   const expires = new Date(now.getTime() + 7 * 86400000) // 7 days from now
   // upsert refresh token
-  return query(
-    'Create new refresh token for the user'
-  ).raw('INSERT INTO RefreshToken set ? ON DUPLICATE KEY UPDATE ?', [
-    {
-      userId,
-      clientId,
-      clientName,
-      token: refreshToken,
-      expires,
-      createdOn: now,
-    },
-    {
-      token: refreshToken,
-      expires,
-    },
-  ])
+  return query('Create new refresh token for the user').raw(
+    'INSERT INTO RefreshToken set ? ON DUPLICATE KEY UPDATE ?',
+    [
+      {
+        userId,
+        clientId,
+        clientName,
+        token: refreshToken,
+        expires,
+        createdOn: now,
+      },
+      {
+        token: refreshToken,
+        expires,
+      },
+    ]
+  )
 }
 
 function* refreshToken(request) {
@@ -510,18 +511,20 @@ function* updateUsernameAndPasswordForPerson(request) {
     )
     responseData.username = userLinkedToPerson.name
   } else {
-    yield query('Insert new user details').from('User').insert({
-      name: payload.newUsername,
-      password: yield bcryptHash(
-        payload.newPassword,
-        parseInt(config.passwordSaltRounds, 10)
-      ),
-      approved: 1,
-      createdOn: new Date(),
-      lockedOut: 0,
-      failedPasswordAttempts: 0,
-      legacyPassword: 0,
-    })
+    yield query('Insert new user details')
+      .from('User')
+      .insert({
+        name: payload.newUsername,
+        password: yield bcryptHash(
+          payload.newPassword,
+          parseInt(config.passwordSaltRounds, 10)
+        ),
+        approved: 1,
+        createdOn: new Date(),
+        lockedOut: 0,
+        failedPasswordAttempts: 0,
+        legacyPassword: 0,
+      })
 
     responseData.changedFields = ['name', 'password']
     responseData.username = payload.newUsername

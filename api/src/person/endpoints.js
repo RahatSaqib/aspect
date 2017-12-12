@@ -42,7 +42,9 @@ module.exports = [
       auth: { scope: ['person:view', 'person:edit', 'person:admin'] },
       validate: {
         params: {
-          personId: Joi.string().description('Person ID').required(),
+          personId: Joi.string()
+            .description('Person ID')
+            .required(),
         },
       },
     },
@@ -57,21 +59,52 @@ module.exports = [
       auth: { scope: ['person:edit', 'person:admin'] },
       validate: {
         params: {
-          personId: Joi.string().description('Person ID').required(),
+          personId: Joi.string()
+            .description('Person ID')
+            .required(),
         },
         payload: {
-          name: Joi.string().max(500).required(),
-          title: Joi.string().max(255).allow('', null),
-          email: Joi.string().max(500).allow('', null),
-          email2: Joi.string().max(500).allow('', null),
-          phone: Joi.string().max(45).allow('', null),
-          cell: Joi.string().max(45).allow('', null),
-          countryId: Joi.number().integer().positive().allow('', null),
-          stateId: Joi.number().integer().positive().allow('', null),
-          lgaId: Joi.number().integer().positive().allow('', null),
-          zip: Joi.string().max(45).allow('', null),
-          notes: Joi.string().optional().max(1200).allow('', null),
-          lastPartnerId: Joi.number().integer().positive().allow('', null),
+          name: Joi.string()
+            .max(500)
+            .required(),
+          title: Joi.string()
+            .max(255)
+            .allow('', null),
+          email: Joi.string()
+            .max(500)
+            .allow('', null),
+          email2: Joi.string()
+            .max(500)
+            .allow('', null),
+          phone: Joi.string()
+            .max(45)
+            .allow('', null),
+          cell: Joi.string()
+            .max(45)
+            .allow('', null),
+          countryId: Joi.number()
+            .integer()
+            .positive()
+            .allow('', null),
+          stateId: Joi.number()
+            .integer()
+            .positive()
+            .allow('', null),
+          lgaId: Joi.number()
+            .integer()
+            .positive()
+            .allow('', null),
+          zip: Joi.string()
+            .max(45)
+            .allow('', null),
+          notes: Joi.string()
+            .optional()
+            .max(1200)
+            .allow('', null),
+          lastPartnerId: Joi.number()
+            .integer()
+            .positive()
+            .allow('', null),
         },
       },
     },
@@ -86,11 +119,17 @@ module.exports = [
       auth: { scope: ['person:edit', 'person:admin'] },
       validate: {
         params: {
-          personId: Joi.string().description('Person ID').required(),
+          personId: Joi.string()
+            .description('Person ID')
+            .required(),
         },
         payload: {
-          timezone: Joi.string().max(255).allow('', null),
-          culture: Joi.string().max(45).allow('', null),
+          timezone: Joi.string()
+            .max(255)
+            .allow('', null),
+          culture: Joi.string()
+            .max(45)
+            .allow('', null),
         },
       },
     },

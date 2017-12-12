@@ -15,8 +15,12 @@ const {
 } = require('./service')
 
 const errorPayload = Joi.object().keys({
-  code: Joi.string().allow('', null).description('Error code'),
-  notes: Joi.string().allow('', null).description('Description of the error'),
+  code: Joi.string()
+    .allow('', null)
+    .description('Error code'),
+  notes: Joi.string()
+    .allow('', null)
+    .description('Description of the error'),
 })
 
 const logPayload = {
@@ -36,8 +40,12 @@ const logResponse = Object.assign(
 )
 
 const devicePayload = {
-  name: Joi.string().allow('', null).description('The device name'),
-  serial: Joi.string().allow('', null).description('The device serial number'),
+  name: Joi.string()
+    .allow('', null)
+    .description('The device name'),
+  serial: Joi.string()
+    .allow('', null)
+    .description('The device serial number'),
   status: Joi.object().keys({
     id: Joi.string()
       .required()
@@ -58,7 +66,9 @@ const devicePayload = {
 }
 
 const configurationPayload = {
-  checkpoint: Joi.string().allow('', null).description('The client checkpoint'),
+  checkpoint: Joi.string()
+    .allow('', null)
+    .description('The client checkpoint'),
   data: Joi.object()
     .required()
     .description(
@@ -67,7 +77,9 @@ const configurationPayload = {
 }
 
 const operationPayload = {
-  checkpoint: Joi.string().allow('', null).description('The client checkpoint'),
+  checkpoint: Joi.string()
+    .allow('', null)
+    .description('The client checkpoint'),
   startedOn: Joi.date()
     .iso()
     .description(
@@ -91,7 +103,9 @@ const resultPayload = {
         ' multiple result updates with the same ID will merge into the same result.  If no ID is' +
         ' specified, a new result is created with every POST.'
     ),
-  checkpoint: Joi.string().allow('', null).description('The client checkpoint'),
+  checkpoint: Joi.string()
+    .allow('', null)
+    .description('The client checkpoint'),
   startedOn: Joi.date()
     .iso()
     .description(
@@ -152,9 +166,13 @@ const resultPayload = {
     group: Joi.string()
       .allow('', null)
       .description('The group, collection, or worksheet of a sample'),
-    runNumber: Joi.string().allow('', null).description('Sample run number.'),
+    runNumber: Joi.string()
+      .allow('', null)
+      .description('Sample run number.'),
     type: Joi.object().keys({
-      id: Joi.string().required().description('ID of the Sample Type'),
+      id: Joi.string()
+        .required()
+        .description('ID of the Sample Type'),
     }),
     originSite: Joi.object().keys({
       id: Joi.string()
@@ -227,17 +245,31 @@ const resultPayload = {
       ),
   }),
   patient: Joi.object().keys({
-    id: Joi.string().allow('', null).description('Patient Identifier'),
-    name: Joi.string().allow('', null).description('Patient name'),
-    surname: Joi.string().allow('', null).description('Patient surname'),
-    gender: Joi.string().allow('', null).description('Patient gender (M/F)'),
-    age: Joi.number().allow(null).description('Patient age (years)'),
+    id: Joi.string()
+      .allow('', null)
+      .description('Patient Identifier'),
+    name: Joi.string()
+      .allow('', null)
+      .description('Patient name'),
+    surname: Joi.string()
+      .allow('', null)
+      .description('Patient surname'),
+    gender: Joi.string()
+      .allow('', null)
+      .description('Patient gender (M/F)'),
+    age: Joi.number()
+      .allow(null)
+      .description('Patient age (years)'),
     dateOfBirth: Joi.date()
       .iso()
       .allow(null)
       .description('Patient date of birth'),
-    address: Joi.string().allow('', null).description('Patient address'),
-    phone: Joi.string().allow('', null).description('Patient phone number'),
+    address: Joi.string()
+      .allow('', null)
+      .description('Patient address'),
+    phone: Joi.string()
+      .allow('', null)
+      .description('Patient phone number'),
   }),
   sender: Joi.object().keys({
     version: Joi.string()
@@ -293,7 +325,9 @@ module.exports = [
           checkpoint: Joi.string()
             .allow('', null)
             .description('The client checkpoint'),
-          log: Joi.object().keys(logResponse).description('Device Log Data'),
+          log: Joi.object()
+            .keys(logResponse)
+            .description('Device Log Data'),
           configuration: Joi.object()
             .keys(configurationPayload)
             .description('Device Configuration Data'),
@@ -323,11 +357,15 @@ module.exports = [
         },
         payload: Joi.object().keys(
           Object.assign({}, devicePayload, {
-            name: Joi.string().allow('', null).description('The device name'),
+            name: Joi.string()
+              .allow('', null)
+              .description('The device name'),
             checkpoint: Joi.string()
               .allow('', null)
               .description('The client checkpoint'),
-            log: Joi.object().keys(logPayload).description('Device Log Data'),
+            log: Joi.object()
+              .keys(logPayload)
+              .description('Device Log Data'),
             configuration: Joi.object()
               .keys(configurationPayload)
               .description('Device Configuration Data'),
@@ -359,7 +397,9 @@ module.exports = [
         ' serial numbers, etc.',
       validate: {
         payload: Object.assign({}, configurationPayload, {
-          log: Joi.object().keys(logPayload).description('Device Log Data'),
+          log: Joi.object()
+            .keys(logPayload)
+            .description('Device Log Data'),
         }),
       },
       response: {
@@ -391,7 +431,9 @@ module.exports = [
           checkpoint: Joi.string()
             .allow('', null)
             .description('The client checkpoint'),
-          log: Joi.object().keys(logResponse).description('Device Log Data'),
+          log: Joi.object()
+            .keys(logResponse)
+            .description('Device Log Data'),
           operation: Joi.object()
             .keys(operationPayload)
             .description('Device Operation Data'),
@@ -412,7 +454,9 @@ module.exports = [
         ' statistics, status of mechanical systems, calibration information etc. ',
       validate: {
         payload: Object.assign({}, resultPayload, {
-          log: Joi.object().keys(logPayload).description('Device Log Data'),
+          log: Joi.object()
+            .keys(logPayload)
+            .description('Device Log Data'),
         }),
       },
       response: {
@@ -444,7 +488,9 @@ module.exports = [
           checkpoint: Joi.string()
             .allow('', null)
             .description('The client checkpoint'),
-          log: Joi.object().keys(logResponse).description('Device Log Data'),
+          log: Joi.object()
+            .keys(logResponse)
+            .description('Device Log Data'),
           result: Joi.object()
             .keys(resultPayload)
             .description('Device Result Data.'),
@@ -469,7 +515,9 @@ module.exports = [
           allowUnknown: true,
         },
         payload: Object.assign({}, resultPayload, {
-          log: Joi.object().keys(logPayload).description('Device Log Data'),
+          log: Joi.object()
+            .keys(logPayload)
+            .description('Device Log Data'),
         }),
       },
       response: {

@@ -131,10 +131,12 @@ function* generateHistoricalResults(
     const payload = reporterResultFromChaiResult(sourceResult)
     payload.workflow = { status: { id: DELIVERABLE_EXTERNALID } }
 
-    const {
-      processedResult,
-      existingResult,
-    } = yield* mergeResult(knex, deviceId, payload, { sampleId, now })
+    const { processedResult, existingResult } = yield* mergeResult(
+      knex,
+      deviceId,
+      payload,
+      { sampleId, now }
+    )
     yield* addResultWorkflowLogIfChanged(
       knex,
       payload,
@@ -165,7 +167,9 @@ function* generateHistoricalResults(
     }
 
     Object.assign(processedResult, resultUpdates)
-    yield knex('Result').where({ id: processedResult.id }).update(resultUpdates)
+    yield knex('Result')
+      .where({ id: processedResult.id })
+      .update(resultUpdates)
     yield knex('ResultGeneratedResult').insert({
       sourceResultId: resultId,
       generatedResultId: processedResult.id,

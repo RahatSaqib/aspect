@@ -17,7 +17,9 @@ module.exports = [
             alertType: Joi.string()
               .allow('')
               .description('Filter for alert type'),
-            topic: Joi.string().allow('').description('Filter for topic'),
+            topic: Joi.string()
+              .allow('')
+              .description('Filter for topic'),
           },
           validateSortPageParams('topic', 'site', 'time')
         ),
