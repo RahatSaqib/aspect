@@ -2418,7 +2418,7 @@ describe('Device API routes for GxConnect Devices', () => {
           .join('ConsumableReason as cr', 'il.consumableReasonId', 'cr.id')
           .join('Consumable as c', 'il.consumableId', 'c.id')
           .whereIn('il.inventoryItemId', _.map(inventoryItemsAtSiteAfter, 'id'))
-          .orderBy(['il.createdOn', 'il.id'], 'desc')
+          .orderBy('il.id', 'desc')
           .first(
             'c.name as consumableName',
             'il.siteId',
@@ -2531,7 +2531,7 @@ describe('Device API routes for GxConnect Devices', () => {
           .join('ConsumableReason as cr', 'il.consumableReasonId', 'cr.id')
           .join('Consumable as c', 'il.consumableId', 'c.id')
           .whereIn('il.inventoryItemId', _.map(inventoryItemsAtSiteAfter, 'id'))
-          .orderBy(['il.createdOn', 'il.id'], 'desc')
+          .orderBy('il.id', 'desc')
           .first(
             'c.name as consumableName',
             'il.siteId',
