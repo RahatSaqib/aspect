@@ -4,6 +4,7 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { Switch, Route } from 'react-router-dom'
 import NotificationDetailView from './view/NotificationDetailView'
+import NotificationDetailHistory from './history/NotificationDetailHistory'
 
 const enhance = compose(
   connect(
@@ -41,7 +42,11 @@ export const NotificationDetail = ({
         path={match.path}
         render={props => <NotificationDetailView intl={intl} {...props} />}
       />
-      <Route exact path={`${match.path}/history`} render={() => <div />} />
+      <Route
+        exact
+        path={`${match.path}/history`}
+        render={props => <NotificationDetailHistory intl={intl} {...props} />}
+      />
       />
     </Switch>
   </div>

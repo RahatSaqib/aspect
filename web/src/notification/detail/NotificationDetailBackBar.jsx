@@ -64,7 +64,6 @@ const NotificationDetailBackBar = ({
       {
         label: intl.formatMessage(messages.history),
         path: `/browse/notification/:notificationId/history`,
-        disabled: true,
       },
     ].map(({ label, path, disabled }) => (
       <Button
