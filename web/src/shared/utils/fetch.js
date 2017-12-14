@@ -1,52 +1,69 @@
 import _ from 'lodash'
-import { createFetch, base, header, accept, recv } from 'http-client'
+import { createFetch, base, header, accept } from 'http-client'
 import { defineMessages } from 'react-intl'
 import { showError } from '../../appNotification/AppNotificationRedux'
 
 import config from '../../config'
 import { getAspectAccess } from '../../globals/sideEffects/LocalStorage'
 
-// fetch with auth and other headers we need
-export function aspectFetch(path, options) {
-  const fetch = createFetch(
-    base(config.aspectApi),
-    accept('application/json'),
-    header('Content-Type', 'application/json'),
-    addAuthHeaderMiddleware,
-    recv(handleFetchResponse(options))
-  )
-  return fetch(path, options)
-}
+export const aspectFetch = createFetch(
+  base(config.aspectApi),
+  accept('application/json'),
+  header('Content-Type', 'application/json'),
+  addAuthHeaderMiddleware,
+  handleFetchResponseOrError
+)
+
+export default aspectFetch
 
 function addAuthHeaderMiddleware(fetch, input, options = {}) {
   const token = getAspectAccess()
   if (token) {
-    ;(options.headers || (options.headers = {})
-    ).Authorization = `Bearer ${token}`
+    _.set(options, 'headers.Authorization', `Bearer ${token}`)
   }
-  return fetch(input, options).catch(() => ({
-    statusCode: 0,
-  }))
+  return fetch(input, options)
 }
 
-// using this in a fetch (ajax request) to check if request was successful
-export function handleFetchResponse(options) {
-  return resp => {
-    const json = resp
-      ? resp.json()
-      : Promise.resolve({
-          statusCode: 0,
+class APIApplicationError extends Error {
+  constructor(...args) {
+    super(...args)
+    Error.captureStackTrace(this, APIApplicationError)
+  }
+}
+
+class ConnectionError extends Error {
+  constructor(...args) {
+    super(...args)
+    Error.captureStackTrace(this, ConnectionError)
+    this.statusCode = 0
+  }
+}
+
+function handleFetchResponseOrError(fetch, input, options = {}) {
+  return fetch(input, options)
+    .then(
+      resp => {
+        if (resp.ok) {
+          // HTTP Status === 2xx
+          return resp.json().then(changeAllIdsToString)
+        }
+        // HTTP Status !== 2xx
+        return resp.json().then(data => {
+          const error = new APIApplicationError(data.message)
+          error.statusCode =
+            data.statusCode /* HAPI always responds with statusCode */
+          throw error
         })
-    if (resp && resp.ok) {
-      return json.then(prevJson => {
-        const nextJson = changeAllIdsToString(prevJson)
-        return nextJson
-      })
-    }
-    return json.then(err => {
-      let errorNotification =
-        _.get(options, `errorNotifications.${err.statusCode}`) ||
+      },
+      () => Promise.reject(new ConnectionError('Connection Error'))
+    )
+    .catch(err => {
+      let errorNotification = _.get(
+        options,
+        `errorNotifications.${err.statusCode}`,
         _.get(options, 'errorNotifications.default')
+      )
+
       if (errorNotification) {
         if (errorNotification[err.message]) {
           errorNotification = errorNotification[err.message]
@@ -70,7 +87,6 @@ export function handleFetchResponse(options) {
       }
       return Promise.reject(err)
     })
-  }
 }
 
 // check if a property looks like an ID (key is equal to 'id' or ends with 'Id')
