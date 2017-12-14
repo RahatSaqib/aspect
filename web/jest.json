@@ -2,6 +2,7 @@
   "setupFiles": [
     "<rootDir>/__setup__/polyfills.js",
     "<rootDir>/__setup__/mockDate.js",
+    "<rootDir>/__setup__/mockFetch.js",
     "<rootDir>/__setup__/enzyme.js",
     "<rootDir>/__setup__/injectTapEventPlugin.js"
   ],
