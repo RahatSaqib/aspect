@@ -17,10 +17,15 @@ const enhance = compose(
       })
     },
 
-    onPageSizeChange: ({ history, location }) => nextPageSize => {
+    onPageSizeChange: ({
+      history,
+      location,
+      pageAt,
+      pageSize,
+    }) => nextPageSize => {
       const searchParams = new URLSearchParams(location.search)
       searchParams.set('pageSize', nextPageSize)
-      searchParams.set('pageAt', 0)
+      searchParams.set('pageAt', Math.floor(pageAt * pageSize / nextPageSize))
 
       history.replace({
         ...location,
