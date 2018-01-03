@@ -1,5 +1,6 @@
 import { defineMessages } from 'react-intl'
 import Immutable from 'immutable'
+import _ from 'lodash'
 import differenceInMinutes from 'date-fns/differenceInMinutes'
 import { aspectFetch } from '../shared/utils/fetch'
 import {
@@ -86,11 +87,32 @@ function requestWorkflowStatuses(state) {
   return state.set('loading', true)
 }
 
+function sortWorkFlowStatuses(workflowStatusArr) {
+  const sortedWorkflowStatusArr = _.sortBy(workflowStatusArr, obj => obj.name)
+  const errorStatusArr = []
+  const reducedWorkFlowArray = _.reduce(
+    sortedWorkflowStatusArr,
+    (result, item) => {
+      result.push(item)
+      if (
+        item.name.toUpperCase() === 'ERROR' ||
+        item.name.toUpperCase() === 'FLAGGED'
+      ) {
+        errorStatusArr.push(result.pop())
+      }
+      return result
+    },
+    []
+  )
+  return [...reducedWorkFlowArray, ...errorStatusArr]
+}
+
 function receiveWorkflowStatuses(state, items, lastRefreshed) {
+  const sortedItems = sortWorkFlowStatuses(items)
   return state.merge({
     loading: false,
     lastRefreshed,
-    items: new Immutable.fromJS(items),
+    items: new Immutable.fromJS(sortedItems),
   })
 }
 
