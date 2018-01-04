@@ -8,16 +8,6 @@
   color: var(--aspect-color-grey-2);
 }
 
-.FaBell {
+.FaBellZ {
   color: var(--aspect-color-supernova);
-  position: relative;
-}
-
-.FaBell::after {
-  position: absolute;
-  content: 'z';
-  top: -5px;
-  right: -5px;
-  font-size: 12px;
-  font-weight: var(--lato-font-weight-black);
 }

@@ -1,9 +1,9 @@
 import _ from 'lodash'
 import classnames from 'classnames/bind'
 import React from 'react'
-import FaBell from 'react-icons/lib/fa/bell'
 import FaCircleO from 'react-icons/lib/fa/circle-o'
 import FaCircle from 'react-icons/lib/fa/circle'
+import FaBellZ from './FaBellZ'
 
 const cssClasses = classnames.bind(require('./AlertType.css'))
 
@@ -28,12 +28,10 @@ const AlertType = ({ alertType, ...restProps }) => {
   }
   if (alertType === 'snoozed') {
     return (
-      <span
+      <FaBellZ
         {...restProps}
-        className={cssClasses(restProps.className, 'FaBell')}
-      >
-        <FaBell />
-      </span>
+        className={cssClasses(restProps.className, 'FaBellZ')}
+      />
     )
   }
 }
