@@ -14,6 +14,7 @@ import LoadableLogin from '../../auth/login/LoadableLogin'
 import ResetPassword from '../../auth/resetPassword/ResetPassword'
 import LoadableStatus from '../../dashboard/status/LoadableStatus'
 import TaskList from '../../task/list/TaskList'
+import TaskDetail from '../../task/detail/TaskDetail'
 import OperationalData from '../../dashboard/operational/OperationalData'
 import DeviceDemo from '../../demo/device/DeviceDemo'
 import DeviceList from '../../device/list/DeviceList'
@@ -71,6 +72,7 @@ const renderLoadableLogin = signedOutFactory(LoadableLogin)
 const renderResetPassword = signedOutFactory(ResetPassword)
 const renderLoadableStatus = loggedInFactory(LoadableStatus)
 const renderTaskList = loggedInFactory(TaskList)
+const renderTaskDetail = loggedInDetailFactory(TaskDetail)
 const renderOperationalData = loggedInFactory(OperationalData)
 const renderAccountDetails = loggedInFactory(AccountDetails)
 const renderDeviceDemo = loggedInFactory(DeviceDemo)
@@ -118,8 +120,13 @@ export const routerFactory = () => props => (
         render={renderRedirectToLoginOr(props) || renderLoadableStatus}
       />
       <Route
+        exact
         path="/task-list"
         render={renderRedirectToLoginOr(props) || renderTaskList}
+      />
+      <Route
+        path="/task-list/:taskId"
+        render={renderRedirectToLoginOr(props) || renderTaskDetail}
       />
       <Route
         path="/operational-data"

@@ -141,6 +141,9 @@ const enhance = compose(
         search: searchParams.toString(),
       })
     },
+
+    onRowClick: ({ history }) => ({ currentTarget: { dataset: { taskId } } }) =>
+      history.push(`/task-list/${taskId}`),
   }),
   lifecycle({
     componentWillMount() {
@@ -198,6 +201,7 @@ export const TaskList = ({
   sortDir,
   pageAt,
   pageSize,
+  onRowClick,
 }) => (
   <div className={cssClasses('Container')}>
     <Helmet title={intl.formatMessage(messages.tasksTitle)} />
@@ -342,6 +346,8 @@ export const TaskList = ({
                 intl={intl}
                 messages={messages}
                 task={task}
+                onClick={onRowClick}
+                data-task-Id="detail"
               />
             ))}
         </TaskDataTable>
