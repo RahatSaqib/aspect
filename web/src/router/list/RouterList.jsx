@@ -114,24 +114,6 @@ const enhance = compose(
         )
       }
     },
-
-    onHeadColumnClick: ({ history, location, sortCol, sortDir }) => ({
-      currentTarget: { dataset: { column: nextSortCol } },
-    }) => {
-      const searchParams = new URLSearchParams(location.search)
-
-      if (sortCol !== nextSortCol) {
-        searchParams.set('sortCol', nextSortCol)
-      } else {
-        searchParams.set('sortDir', sortDir !== 'asc' ? 'asc' : 'desc')
-      }
-
-      history.replace({
-        ...location,
-        search: searchParams.toString(),
-      })
-    },
-
     onRowClick: ({ history }) => ({
       currentTarget: { dataset: { routerId } },
     }) => history.push(`/browse/router/${routerId}`),
@@ -178,7 +160,6 @@ export const RouterList = ({
   sortDir,
   pageAt,
   pageSize,
-  onHeadColumnClick,
   onRowClick,
 }) => (
   <div className={cssClasses('Container')}>
@@ -201,28 +182,30 @@ export const RouterList = ({
           className={cssClasses('RouterDataTable')}
         >
           <RouterDataTableHead
+            history={history}
+            location={location}
             sortColumnKey={sortCol}
             sortColumnDir={sortDir}
             columns={[
               {
                 key: 'name',
                 label: intl.formatMessage(messages.routerName),
-                onClick: onHeadColumnClick,
+                sortable: true,
               },
               {
                 key: 'status',
                 label: intl.formatMessage(messages.status),
-                onClick: onHeadColumnClick,
+                sortable: true,
               },
               {
                 key: 'createdOn',
                 label: intl.formatMessage(messages.reportingFor),
-                onClick: onHeadColumnClick,
+                sortable: true,
               },
               {
                 key: 'lastSeen',
                 label: intl.formatMessage(messages.lastSeen),
-                onClick: onHeadColumnClick,
+                sortable: true,
               },
             ]}
           />

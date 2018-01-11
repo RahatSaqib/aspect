@@ -206,23 +206,6 @@ const enhance = compose(
       }
     },
 
-    onHeadColumnClick: ({ history, location, sortCol, sortDir }) => ({
-      currentTarget: { dataset: { column: nextSortCol } },
-    }) => {
-      const searchParams = new URLSearchParams(location.search)
-
-      if (sortCol !== nextSortCol) {
-        searchParams.set('sortCol', nextSortCol)
-      } else {
-        searchParams.set('sortDir', sortDir !== 'asc' ? 'asc' : 'desc')
-      }
-
-      history.replace({
-        ...location,
-        search: searchParams.toString(),
-      })
-    },
-
     onRowClick: ({ history }) => ({
       currentTarget: { dataset: { resultId } },
       // TODO: correct path?
@@ -276,7 +259,6 @@ export const DeviceDetailProfile = ({
   pageAt,
   pageSize,
   onExportClick,
-  onHeadColumnClick,
   onRowClick,
 }) => (
   <div>
@@ -399,43 +381,45 @@ export const DeviceDetailProfile = ({
               className={cssClasses('ResultDataTable')}
             >
               <ResultDataTableHead
+                history={history}
+                location={location}
                 sortColumnKey={sortCol}
                 sortColumnDir={sortDir}
                 columns={[
                   {
                     key: 'endedOn',
                     label: intl.formatMessage(messages.endedOn),
-                    onClick: onHeadColumnClick,
+                    sortable: true,
                   },
                   {
                     key: 'sampleOriginSiteName',
                     label: intl.formatMessage(messages.sampleOriginSiteName),
-                    onClick: onHeadColumnClick,
+                    sortable: true,
                   },
                   {
                     key: 'sampleId',
                     label: intl.formatMessage(messages.sampleId),
-                    onClick: onHeadColumnClick,
+                    sortable: true,
                   },
                   {
                     key: 'sampleGroup',
                     label: intl.formatMessage(messages.sampleGroup),
-                    onClick: onHeadColumnClick,
+                    sortable: true,
                   },
                   {
                     key: 'resultText',
                     label: intl.formatMessage(messages.resultText),
-                    onClick: onHeadColumnClick,
+                    sortable: true,
                   },
                   {
                     key: 'resultWorkflowStatus',
                     label: intl.formatMessage(messages.resultWorkflowStatus),
-                    onClick: onHeadColumnClick,
+                    sortable: true,
                   },
                   {
                     key: 'patientId',
                     label: intl.formatMessage(messages.patiendId),
-                    onClick: onHeadColumnClick,
+                    sortable: true,
                   },
                 ]}
               />

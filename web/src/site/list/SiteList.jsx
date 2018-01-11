@@ -112,23 +112,6 @@ const enhance = compose(
       }
     },
 
-    onHeadColumnClick: ({ history, location, sortCol, sortDir }) => ({
-      currentTarget: { dataset: { column: nextSortCol } },
-    }) => {
-      const searchParams = new URLSearchParams(location.search)
-
-      if (sortCol !== nextSortCol) {
-        searchParams.set('sortCol', nextSortCol)
-      } else {
-        searchParams.set('sortDir', sortDir !== 'asc' ? 'asc' : 'desc')
-      }
-
-      history.replace({
-        ...location,
-        search: searchParams.toString(),
-      })
-    },
-
     onRowClick: ({ history }) => ({ currentTarget: { dataset: { siteId } } }) =>
       history.push(`/browse/site/${siteId}`),
   }),
@@ -174,7 +157,6 @@ export const SiteList = ({
   sortDir,
   pageAt,
   pageSize,
-  onHeadColumnClick,
   onRowClick,
 }) => (
   <div className={cssClasses('Container')}>
@@ -197,28 +179,30 @@ export const SiteList = ({
           className={cssClasses('SiteDataTable')}
         >
           <SiteDataTableHead
+            history={history}
+            location={location}
             sortColumnKey={sortCol}
             sortColumnDir={sortDir}
             columns={[
               {
                 key: 'name',
                 label: intl.formatMessage(messages.siteName),
-                onClick: onHeadColumnClick,
+                sortable: true,
               },
               {
                 key: 'state',
                 label: intl.formatMessage(messages.state),
-                onClick: onHeadColumnClick,
+                sortable: true,
               },
               {
                 key: 'lga',
                 label: intl.formatMessage(messages.lga),
-                onClick: onHeadColumnClick,
+                sortable: true,
               },
               {
                 key: 'totalDevices',
                 label: intl.formatMessage(messages.totalDevices),
-                onClick: onHeadColumnClick,
+                sortable: true,
               },
             ]}
           />

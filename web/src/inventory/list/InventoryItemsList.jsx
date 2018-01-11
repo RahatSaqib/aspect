@@ -198,22 +198,6 @@ const enhance = compose(
         fetchInventoryItems(filtersParams, sortCol, sortDir, pageAt, pageSize)
       }
     },
-    onHeadColumnClick: ({ history, location, sortCol, sortDir }) => ({
-      currentTarget: { dataset: { column: nextSortCol } },
-    }) => {
-      const searchParams = new URLSearchParams(location.search)
-
-      if (sortCol !== nextSortCol) {
-        searchParams.set('sortCol', nextSortCol)
-      } else {
-        searchParams.set('sortDir', sortDir !== 'asc' ? 'asc' : 'desc')
-      }
-
-      history.replace({
-        ...location,
-        search: searchParams.toString(),
-      })
-    },
   }),
   lifecycle({
     componentWillMount() {
@@ -333,7 +317,6 @@ export const InventoryItemsList = ({
   sortDir,
   pageAt,
   pageSize,
-  onHeadColumnClick,
   showNewInventoryDialog,
   showReceiveInventoryDialog,
   showAddInventoryDialog,
@@ -382,34 +365,36 @@ export const InventoryItemsList = ({
           className={cssClasses('InventoryDataTable')}
         >
           <InventoryDataTableHead
+            history={history}
+            location={location}
             sortColumnKey={sortCol}
             sortColumnDir={sortDir}
             columns={[
               {
                 key: 'siteName',
                 label: intl.formatMessage(messages.siteName),
-                onClick: onHeadColumnClick,
+                sortable: true,
               },
               {
                 key: 'consumableName',
                 label: intl.formatMessage(messages.consumableName),
-                onClick: onHeadColumnClick,
+                sortable: true,
               },
               {
                 key: 'quantityOnHand',
                 label: intl.formatMessage(messages.quantityOnHand),
-                onClick: onHeadColumnClick,
+                sortable: true,
               },
               {
                 key: 'expiresOn',
                 label: intl.formatMessage(messages.expiresOn),
-                onClick: onHeadColumnClick,
+                sortable: true,
               },
               {
                 key: 'expiresIn',
                 label: intl.formatMessage(messages.expiresIn),
                 'data-column': 'expiresOn',
-                onClick: onHeadColumnClick,
+                sortable: true,
               },
               {
                 key: 'action',

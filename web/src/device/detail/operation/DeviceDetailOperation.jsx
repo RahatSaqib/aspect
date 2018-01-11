@@ -141,23 +141,6 @@ const enhance = compose(
         )
       }
     },
-
-    onHeadColumnClick: ({ history, location, sortCol, sortDir }) => ({
-      currentTarget: { dataset: { column: nextSortCol } },
-    }) => {
-      const searchParams = new URLSearchParams(location.search)
-
-      if (sortCol !== nextSortCol) {
-        searchParams.set('sortCol', nextSortCol)
-      } else {
-        searchParams.set('sortDir', sortDir !== 'asc' ? 'asc' : 'desc')
-      }
-
-      history.replace({
-        ...location,
-        search: searchParams.toString(),
-      })
-    },
   }),
   lifecycle({
     componentDidMount() {
@@ -186,7 +169,6 @@ export const DeviceDetailOperation = ({
   pageAt,
   pageSize,
   onExportClick,
-  onHeadColumnClick,
 }) => (
   <div>
     <Helmet title={device.get('name')} />
@@ -246,18 +228,20 @@ export const DeviceDetailOperation = ({
               className={cssClasses('DeviceOperationDataTable')}
             >
               <DeviceOperationDataTableHead
+                history={history}
+                location={location}
                 sortColumnKey={sortCol}
                 sortColumnDir={sortDir}
                 columns={Immutable.List([
                   {
                     key: 'startedOn',
                     label: intl.formatMessage(messages.startedOn),
-                    onClick: onHeadColumnClick,
+                    sortable: true,
                   },
                   {
                     key: 'id',
                     label: intl.formatMessage(messages.id),
-                    onClick: onHeadColumnClick,
+                    sortable: true,
                   },
                 ]).concat(
                   device

@@ -112,23 +112,6 @@ const enhance = compose(
       }
     },
 
-    onHeadColumnClick: ({ history, location, sortCol, sortDir }) => ({
-      currentTarget: { dataset: { column: nextSortCol } },
-    }) => {
-      const searchParams = new URLSearchParams(location.search)
-
-      if (sortCol !== nextSortCol) {
-        searchParams.set('sortCol', nextSortCol)
-      } else {
-        searchParams.set('sortDir', sortDir !== 'asc' ? 'asc' : 'desc')
-      }
-
-      history.replace({
-        ...location,
-        search: searchParams.toString(),
-      })
-    },
-
     onAlertTypeClick: ({ history, location }) => ({
       currentTarget: { dataset: { alertType } },
     }) => {
@@ -215,7 +198,6 @@ export const TaskList = ({
   sortDir,
   pageAt,
   pageSize,
-  onHeadColumnClick,
 }) => (
   <div className={cssClasses('Container')}>
     <Helmet title={intl.formatMessage(messages.tasksTitle)} />
@@ -324,6 +306,8 @@ export const TaskList = ({
           className={cssClasses('TaskDataTable')}
         >
           <TaskDataTableHead
+            history={history}
+            location={location}
             sortColumnKey={sortCol}
             sortColumnDir={sortDir}
             columns={[
@@ -333,17 +317,17 @@ export const TaskList = ({
               {
                 key: 'topic',
                 label: intl.formatMessage(messages.topic),
-                onClick: onHeadColumnClick,
+                sortable: true,
               },
               {
                 key: 'site',
                 label: intl.formatMessage(messages.site),
-                onClick: onHeadColumnClick,
+                sortable: true,
               },
               {
                 key: 'time',
                 label: intl.formatMessage(messages.time),
-                onClick: onHeadColumnClick,
+                sortable: true,
               },
               {
                 key: 'alert',
