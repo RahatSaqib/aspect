@@ -37,7 +37,9 @@ function listDevicesBaseConfig() {
           deviceIds: Joi.string()
             .allow('')
             .description('Filter for device ids'),
-          assayId: Joi.number().allow('').description('Assay ID'),
+          assayId: Joi.number()
+            .allow('')
+            .description('Assay ID'),
           resultCategoryId: Joi.number()
             .allow('')
             .description('Result Category ID'),
@@ -49,8 +51,12 @@ function listDevicesBaseConfig() {
             .description('Filter for device status ID'),
           category: Joi.string().description('Filter for device type category'),
           type: Joi.string().description('Filter for device type'),
-          name: Joi.string().allow('').description('Filter for device name'),
-          siteName: Joi.string().allow('').description('Filter for site name'),
+          name: Joi.string()
+            .allow('')
+            .description('Filter for device name'),
+          siteName: Joi.string()
+            .allow('')
+            .description('Filter for site name'),
           siteExternalId: Joi.string()
             .allow('')
             .description('Filter for facility code'),
@@ -104,7 +110,9 @@ module.exports = [
       auth: { scope: ['device:view', 'device:edit'] },
       validate: {
         params: {
-          deviceId: Joi.string().description('Device id').required(),
+          deviceId: Joi.string()
+            .description('Device id')
+            .required(),
         },
         query: {
           dateRange: Joi.number()
@@ -124,7 +132,9 @@ module.exports = [
       auth: { scope: ['device:edit'] },
       validate: {
         params: {
-          deviceId: Joi.string().description('Device id').required(),
+          deviceId: Joi.string()
+            .description('Device id')
+            .required(),
         },
         payload: {
           siteId: Joi.number(),
@@ -167,9 +177,15 @@ module.exports = [
       notes: "List of device ID's and names",
       validate: {
         query: {
-          countryId: Joi.number().allow('').description('Country ID'),
-          partnerId: Joi.number().allow('').description('Partner ID'),
-          siteId: Joi.number().allow('').description('Site ID'),
+          countryId: Joi.number()
+            .allow('')
+            .description('Country ID'),
+          partnerId: Joi.number()
+            .allow('')
+            .description('Partner ID'),
+          siteId: Joi.number()
+            .allow('')
+            .description('Site ID'),
         },
       },
     },

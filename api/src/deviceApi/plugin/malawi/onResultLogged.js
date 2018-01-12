@@ -104,20 +104,24 @@ function* mergeChaiResultToReporters(
   const payload = reporterResultFromChaiResult(chaiResult)
 
   for (const { deviceId } of reporterDevices) {
-    const {
-      processedResult,
-      existingResult,
-    } = yield* mergeResult(knex, deviceId, payload, { sampleId, now })
+    const { processedResult, existingResult } = yield* mergeResult(
+      knex,
+      deviceId,
+      payload,
+      { sampleId, now }
+    )
     if (!existingResult) {
       // auto QC Check new result and mark as deliverable, but do
       // not change workflow status otherwise
       const { id: deliverableId } = yield knex('ResultWorkflowStatus')
         .where({ externalId: DELIVERABLE_EXTERNALID })
         .first('id')
-      yield knex('Result').where({ id: processedResult.id }).update({
-        qcCheck: 1,
-        resultWorkflowStatusId: deliverableId,
-      })
+      yield knex('Result')
+        .where({ id: processedResult.id })
+        .update({
+          qcCheck: 1,
+          resultWorkflowStatusId: deliverableId,
+        })
       processedResult.qcCheck = 1
       processedResult.resultWorkflowStatusId = deliverableId
 

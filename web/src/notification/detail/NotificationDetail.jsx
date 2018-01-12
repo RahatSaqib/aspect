@@ -132,23 +132,19 @@ export const NotificationDetail = ({
       <Card className={cssClasses('Card')}>
         <h2 className={cssClasses('Card__Title')}>Alert type</h2>
         <div>
-          {[
-            'Result',
-            'Calibration',
-            'Error',
-            'Reporting',
-            'Inventory',
-          ].map(label => (
-            <MockTogglBtn
-              key={label}
-              className={cssClasses('Card__Button', 'Card__Button--inline')}
-              primary
-              raised
-              inverse={label !== 'Result'}
-              label={label}
-              theme={BUTTON_THEME}
-            />
-          ))}
+          {['Result', 'Calibration', 'Error', 'Reporting', 'Inventory'].map(
+            label => (
+              <MockTogglBtn
+                key={label}
+                className={cssClasses('Card__Button', 'Card__Button--inline')}
+                primary
+                raised
+                inverse={label !== 'Result'}
+                label={label}
+                theme={BUTTON_THEME}
+              />
+            )
+          )}
         </div>
       </Card>
     </section>

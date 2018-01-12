@@ -25,12 +25,13 @@ function* calculateResultCounts(deviceId, assayId, resultCategory1, knex) {
       const now = new Date()
 
       // query for selecting data for the device
-      const resultCountQuery = knex(
-        'Result as r'
-      ).whereRaw('r.deviceId = :deviceId and r.endedOn > :endedOn', {
-        deviceId: devId,
-        endedOn: subDays(now, days || 9999),
-      })
+      const resultCountQuery = knex('Result as r').whereRaw(
+        'r.deviceId = :deviceId and r.endedOn > :endedOn',
+        {
+          deviceId: devId,
+          endedOn: subDays(now, days || 9999),
+        }
+      )
 
       // empty facts table for that day so we don't have dupes:
       // if assay or result category was passed in, delete only the matching records
@@ -52,19 +53,17 @@ function* calculateResultCounts(deviceId, assayId, resultCategory1, knex) {
         .delete()
 
       // calculate by device
-      yield knex
-        .from('FactResultCountDevice')
-        .insert(
-          resultCountQuery
-            .clone()
-            .groupBy('r.deviceId')
-            .select(
-              knex.raw(
-                `r.deviceId, null as AssayId, null as resultCategory1, :days as days, count(r.id) as resultCount, :now as calculatedOn`,
-                { days, now }
-              )
+      yield knex.from('FactResultCountDevice').insert(
+        resultCountQuery
+          .clone()
+          .groupBy('r.deviceId')
+          .select(
+            knex.raw(
+              `r.deviceId, null as AssayId, null as resultCategory1, :days as days, count(r.id) as resultCount, :now as calculatedOn`,
+              { days, now }
             )
-        )
+          )
+      )
 
       // ... grouped by assay
       yield knex.from('FactResultCountDevice').insert(

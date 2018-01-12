@@ -16,7 +16,9 @@ module.exports = [
       notes: 'Detail of a device for the demo page',
       validate: {
         params: {
-          deviceId: Joi.string().description('Device id').required(),
+          deviceId: Joi.string()
+            .description('Device id')
+            .required(),
         },
       },
     },
@@ -39,10 +41,15 @@ module.exports = [
       notes: 'Posts a new result from template from the device demo page',
       validate: {
         params: {
-          deviceId: Joi.string().description('Device id').required(),
+          deviceId: Joi.string()
+            .description('Device id')
+            .required(),
         },
         payload: {
-          resultId: Joi.number().integer().description('Result Id').required(),
+          resultId: Joi.number()
+            .integer()
+            .description('Result Id')
+            .required(),
         },
       },
     },

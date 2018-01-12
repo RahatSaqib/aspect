@@ -1741,7 +1741,9 @@ function* seed(knex) {
               partnerId: partnerOneId,
               geographyId,
               externalId: `${state.name}_${siteNumber}`,
-              name: `${lga.name} ${country.lgaLabel} ${state.name} #${siteNumber}`,
+              name: `${lga.name} ${country.lgaLabel} ${
+                state.name
+              } #${siteNumber}`,
               shortname: `${lga.name}, ${stateKey} #${siteNumber}`,
               city: `${lga.name} City`,
               street1: `${lgaData.id} Main Street`,
@@ -2042,9 +2044,9 @@ function* seed(knex) {
           {
             consumableId: consumableGxEbolaCartridgeId,
             siteId: siteData.id,
-            lotNumber: `${(i + 7) * (i + 1)}${['Q', 'P'][
-              i % 2
-            ]}-${(siteData.id + i) * consumableGxEbolaCartridgeId}`,
+            lotNumber: `${(i + 7) * (i + 1)}${
+              ['Q', 'P'][i % 2]
+            }-${(siteData.id + i) * consumableGxEbolaCartridgeId}`,
             expiresOn: new Date(
               new Date(
                 now.getTime() +
@@ -2063,9 +2065,9 @@ function* seed(knex) {
           {
             consumableId: consumableGxHivVlCartridgeId,
             siteId: siteData.id,
-            lotNumber: `${(i + 11) * (i + 1)}${['A', 'V'][
-              i % 2
-            ]}-${(siteData.id + i) * consumableGxHivVlCartridgeId}`,
+            lotNumber: `${(i + 11) * (i + 1)}${
+              ['A', 'V'][i % 2]
+            }-${(siteData.id + i) * consumableGxHivVlCartridgeId}`,
             expiresOn: new Date(
               new Date(
                 now.getTime() +

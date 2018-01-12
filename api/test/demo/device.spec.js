@@ -5,13 +5,13 @@ const { createTestContext, getLastResultId } = require('../deviceApi/utils')
 
 // This agent refers to PORT where program is runninng.
 const server = supertest.agent('http://localhost:8080')
-const assert = chai.assert
+const { assert } = chai
 const context = createTestContext(server, { user: 'admin', type: 'GeneXpert' })
 
 describe('Demo Device routes', () => {
   const path = '/api/demo/device'
 
-  const runTest = context.runTest
+  const { runTest } = context
 
   beforeEach(context.beforeEach)
   afterEach(context.afterEach)

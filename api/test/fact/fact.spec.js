@@ -1,7 +1,7 @@
 const chai = require('chai')
 const { runTestWithKnex } = require('../utils/generatorFunctionUtils')
 
-const assert = chai.assert
+const { assert } = chai
 
 describe('Fact tables initial data', () => {
   describe('result counts', () => {

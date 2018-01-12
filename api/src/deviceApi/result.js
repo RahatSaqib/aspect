@@ -20,7 +20,7 @@ function* mergeResult(
     if (existingResults.length > 1) {
       throw Boom.badRequest(`Cannot find unique result with id ${payload.id}`)
     }
-    existingResult = existingResults[0]
+    ;[existingResult] = existingResults
   }
 
   const assayQ = knex('Assay as a')
@@ -173,26 +173,28 @@ function* mergeResult(
     })
   } else {
     if (sampleId == null) {
-      sampleId = existingResult.sampleId
+      ;({ sampleId } = existingResult)
     }
     if (_.has(payload, 'sample')) {
       const existingSample = yield knex('Sample')
         .where({ id: sampleId })
         .first('externalId', 'collectedOn', 'sampleTypeId', 'originSiteId')
-      yield knex('Sample').where({ id: sampleId }).update({
-        externalId: _.get(payload, 'sample.id', existingSample.externalId),
-        collectedOn: _.get(
-          payload,
-          'sample.collectedOn',
-          _.get(existingSample, 'collectedOn', null)
-        ),
-        sampleTypeId: payloadSampleTypeId
-          ? sampleTypeId
-          : existingSample.sampleTypeId,
-        originSiteId: payloadOriginSiteId
-          ? sampleOriginSiteId
-          : existingSample.originSiteId,
-      })
+      yield knex('Sample')
+        .where({ id: sampleId })
+        .update({
+          externalId: _.get(payload, 'sample.id', existingSample.externalId),
+          collectedOn: _.get(
+            payload,
+            'sample.collectedOn',
+            _.get(existingSample, 'collectedOn', null)
+          ),
+          sampleTypeId: payloadSampleTypeId
+            ? sampleTypeId
+            : existingSample.sampleTypeId,
+          originSiteId: payloadOriginSiteId
+            ? sampleOriginSiteId
+            : existingSample.originSiteId,
+        })
     }
   }
 
@@ -333,7 +335,9 @@ function* mergeResult(
   let resultId
   if (existingResult) {
     resultId = existingResult.id
-    yield knex('Result').where({ id: resultId }).update(result)
+    yield knex('Result')
+      .where({ id: resultId })
+      .update(result)
   } else {
     ;[resultId] = yield knex('Result').insert(processedResult)
   }

@@ -34,7 +34,6 @@
     "precommit": "lint-staged"
   },
   "lint-staged": {
-    "gitDir": "../",
     "linters": {
       "web/cfg/**/*.js": [
         "eslint --fix",
@@ -72,7 +71,9 @@
   "babel": {
     "env": {
       "test": {
-        "plugins": ["babel-plugin-dynamic-import-node"],
+        "plugins": [
+          "babel-plugin-dynamic-import-node"
+        ],
         "presets": [
           [
             "env",
@@ -110,8 +111,14 @@
       },
       "webpack": {
         "plugins": [
-          ["babel-plugin-lodash", {}],
-          ["react-hot-loader/babel", {}]
+          [
+            "babel-plugin-lodash",
+            {}
+          ],
+          [
+            "react-hot-loader/babel",
+            {}
+          ]
         ],
         "presets": [
           [
@@ -120,7 +127,9 @@
               "modules": false,
               "useBuiltIns": true,
               "targets": {
-                "browsers": ["last 2 versions"]
+                "browsers": [
+                  "last 2 versions"
+                ]
               }
             }
           ],
@@ -178,7 +187,7 @@
     "jest": "^21.2.0",
     "jest-bamboo-formatter": "^1.0.1",
     "jest-fetch-mock": "^1.4.0",
-    "lint-staged": "^4.0.0",
+    "lint-staged": "^6.0.0",
     "npm-run-all": "^4.0.2",
     "null-loader": "^0.1.1",
     "postcss": "^6.0.2",
@@ -197,20 +206,20 @@
     "webapp-manifest-plugin": "^0.0.4",
     "webpack": "^3.3.0",
     "webpack-dev-server": "^2.4.2",
-    "why-did-you-update": "^0.0.8"
+    "why-did-you-update": "^0.1.0"
   },
   "dependencies": {
-    "@vx/axis": "^0.0.146",
+    "@vx/axis": "^0.0.147",
     "@vx/geo": "^0.0.143",
     "@vx/glyph": "^0.0.143",
     "@vx/gradient": "^0.0.143",
-    "@vx/grid": "^0.0.146",
+    "@vx/grid": "^0.0.147",
     "@vx/group": "^0.0.143",
     "@vx/legend": "^0.0.143",
-    "@vx/responsive": "^0.0.143",
+    "@vx/responsive": "^0.0.149",
     "@vx/scale": "^0.0.143",
-    "@vx/shape": "^0.0.146",
-    "@vx/tooltip": "^0.0.143",
+    "@vx/shape": "^0.0.147",
+    "@vx/tooltip": "^0.0.148",
     "classnames": "^2.2.5",
     "d3-array": "^1.2.0",
     "d3-scale": "^1.0.6",
@@ -229,15 +238,15 @@
     "jwt-decode": "^2.2.0",
     "keycode": "^2.1.8",
     "lodash": "^4.17.4",
-    "material-ui": "^0.19.2",
+    "material-ui": "^0.20.0",
     "nightwatch": "^0.9.16",
-    "piwik-react-router": "^0.10.0",
+    "piwik-react-router": "^0.12.0",
     "prop-types": "^15.5.8",
     "raven-js": "^3.14.2",
     "react": "^15.5.4",
     "react-display-name": "^0.2.0",
     "react-dom": "^15.5.4",
-    "react-google-maps": "^8.3.0",
+    "react-google-maps": "^9.4.2",
     "react-helmet": "^5.0.3",
     "react-hot-loader": "^3.0.0-beta.6",
     "react-icons": "^2.2.5",
@@ -253,7 +262,7 @@
     "recompose": "^0.26.0",
     "redux": "^3.5.2",
     "redux-form": "^7.0.3",
-    "redux-idle-monitor": "^0.7.0",
+    "redux-idle-monitor": "^0.10.2",
     "redux-immutable": "^4.0.0",
     "redux-thunk": "^2.2.0",
     "selenium-download": "^2.0.10",

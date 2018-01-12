@@ -24,7 +24,10 @@ function* listConsumableTypes(request) {
     .modify(filterParams, query, { name: 'c.name' })
 
   // get total count for paging
-  const getCount = consumableQuery.clone().count('c.id as count').first()
+  const getCount = consumableQuery
+    .clone()
+    .count('c.id as count')
+    .first()
 
   // get rows
   const getItems = consumableQuery
@@ -44,12 +47,17 @@ function* listConsumableReasons(request) {
   const { query } = request
 
   // TODO: use dataContraints
-  const consumableReasonQuery = knex(
-    'ConsumableReason as cr'
-  ).modify(filterParams, query, { name: 'cr.name' })
+  const consumableReasonQuery = knex('ConsumableReason as cr').modify(
+    filterParams,
+    query,
+    { name: 'cr.name' }
+  )
 
   // get total count for paging
-  const getCount = consumableReasonQuery.clone().count('cr.id as count').first()
+  const getCount = consumableReasonQuery
+    .clone()
+    .count('cr.id as count')
+    .first()
 
   // get rows
   const getItems = consumableReasonQuery

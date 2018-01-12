@@ -5,7 +5,7 @@ const _ = require('lodash')
 
 // This agent refers to PORT where program is runninng.
 const server = supertest.agent('http://localhost:8080')
-const assert = chai.assert
+const { assert } = chai
 
 describe('Site routes', () => {
   describe('/site', () => {

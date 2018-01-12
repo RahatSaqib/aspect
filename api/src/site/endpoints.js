@@ -26,7 +26,9 @@ module.exports = [
       validate: {
         query: Object.assign(
           {
-            siteIds: Joi.string().allow('').description('Filter for site ids'),
+            siteIds: Joi.string()
+              .allow('')
+              .description('Filter for site ids'),
             deviceName: Joi.string()
               .allow('')
               .description('Filter for device name'),
@@ -62,7 +64,9 @@ module.exports = [
       auth: { scope: ['site:view', 'site:edit'] },
       validate: {
         params: {
-          siteId: Joi.string().description('Site id').required(),
+          siteId: Joi.string()
+            .description('Site id')
+            .required(),
         },
       },
     },
@@ -88,13 +92,24 @@ module.exports = [
           shortname: Joi.string().required(),
           externalId: Joi.string().allow('', null),
           timezone: Joi.string().allow('', null),
-          countryId: Joi.number().integer().positive().allow('', null),
-          stateId: Joi.number().integer().positive().allow('', null),
-          lgaId: Joi.number().integer().positive().allow('', null),
+          countryId: Joi.number()
+            .integer()
+            .positive()
+            .allow('', null),
+          stateId: Joi.number()
+            .integer()
+            .positive()
+            .allow('', null),
+          lgaId: Joi.number()
+            .integer()
+            .positive()
+            .allow('', null),
           street1: Joi.string().required(),
           street2: Joi.string().allow('', null),
           city: Joi.string().required(),
-          zip: Joi.string().max(45).allow('', null),
+          zip: Joi.string()
+            .max(45)
+            .allow('', null),
           longitude: Joi.number().allow('', null),
           latitude: Joi.number().allow('', null),
         },

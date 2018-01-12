@@ -321,19 +321,20 @@ describe('AccountRedux module', () => {
         })
 
         it('should request the account details from the server', () => {
-          expect(
-            fetchStub.aspectFetch
-          ).toHaveBeenCalledWith('/account-details/current', {
-            errorNotifications: {
-              default: errorPleaseTryAgainInAFewMinutes({
-                title: {
-                  id:
-                    'errorResponseMessages.fetchAccountDetails.GET.default.title',
-                  defaultMessage: 'Loading Account Details Failed',
-                },
-              }),
-            },
-          })
+          expect(fetchStub.aspectFetch).toHaveBeenCalledWith(
+            '/account-details/current',
+            {
+              errorNotifications: {
+                default: errorPleaseTryAgainInAFewMinutes({
+                  title: {
+                    id:
+                      'errorResponseMessages.fetchAccountDetails.GET.default.title',
+                    defaultMessage: 'Loading Account Details Failed',
+                  },
+                }),
+              },
+            }
+          )
         })
 
         describe('when a response is received from the server', () => {
@@ -398,21 +399,22 @@ describe('AccountRedux module', () => {
         })
 
         it('should send a PUT request to the server with the correct headers and the account details passed to it', () => {
-          expect(
-            fetchStub.aspectFetch
-          ).toHaveBeenCalledWith('/account-details/current-contact', {
-            method: 'PUT',
-            body: JSON.stringify(contactDetailsData),
-            errorNotifications: {
-              default: errorPleaseTryAgainInAFewMinutes({
-                title: {
-                  id:
-                    'errorResponseMessages.saveContactDetails.PUT.default.title',
-                  defaultMessage: 'Saving Contact Details Failed',
-                },
-              }),
-            },
-          })
+          expect(fetchStub.aspectFetch).toHaveBeenCalledWith(
+            '/account-details/current-contact',
+            {
+              method: 'PUT',
+              body: JSON.stringify(contactDetailsData),
+              errorNotifications: {
+                default: errorPleaseTryAgainInAFewMinutes({
+                  title: {
+                    id:
+                      'errorResponseMessages.saveContactDetails.PUT.default.title',
+                    defaultMessage: 'Saving Contact Details Failed',
+                  },
+                }),
+              },
+            }
+          )
         })
 
         describe('when a response is received from the server', () => {
@@ -492,54 +494,57 @@ describe('AccountRedux module', () => {
         })
 
         it('should send a PUT request to the server with the correct headers and the account details passed to it', () => {
-          expect(
-            fetchStub.aspectFetch
-          ).toHaveBeenCalledWith('/auth/update-login-details', {
-            method: 'PUT',
-            body: JSON.stringify(requestData),
-            errorNotifications: {
-              409: inlineWarning({
-                title: {
-                  id: 'errorResponseMessages.saveLoginDetails.PUT.409.title',
-                  defaultMessage: 'This Username is Unavailable',
-                },
-                message: {
-                  id: 'errorResponseMessages.saveLoginDetails.PUT.409.message',
-                  defaultMessage:
-                    'The username that you have entered is already in use by another user on the system',
-                },
-                resolution: {
-                  id:
-                    'errorResponseMessages.saveLoginDetails.PUT.409.resolution',
-                  defaultMessage: 'Please try another username',
-                },
-              }),
-              403: inlineWarning({
-                title: {
-                  id: 'errorResponseMessages.saveLoginDetails.PUT.403.title',
-                  defaultMessage: 'Invalid Password',
-                },
-                message: {
-                  id: 'errorResponseMessages.saveLoginDetails.PUT.403.message',
-                  defaultMessage:
-                    'The current password that you have entered is incorrect.',
-                },
-                resolution: {
-                  id:
-                    'errorResponseMessages.saveLoginDetails.PUT.403.resolution',
-                  defaultMessage:
-                    'Please try re-entering your password or contact us to reset your login details',
-                },
-              }),
-              default: errorPleaseTryAgainInAFewMinutes({
-                title: {
-                  id:
-                    'errorResponseMessages.saveLoginDetails.PUT.default.title',
-                  defaultMessage: 'Saving Login Details Failed',
-                },
-              }),
-            },
-          })
+          expect(fetchStub.aspectFetch).toHaveBeenCalledWith(
+            '/auth/update-login-details',
+            {
+              method: 'PUT',
+              body: JSON.stringify(requestData),
+              errorNotifications: {
+                409: inlineWarning({
+                  title: {
+                    id: 'errorResponseMessages.saveLoginDetails.PUT.409.title',
+                    defaultMessage: 'This Username is Unavailable',
+                  },
+                  message: {
+                    id:
+                      'errorResponseMessages.saveLoginDetails.PUT.409.message',
+                    defaultMessage:
+                      'The username that you have entered is already in use by another user on the system',
+                  },
+                  resolution: {
+                    id:
+                      'errorResponseMessages.saveLoginDetails.PUT.409.resolution',
+                    defaultMessage: 'Please try another username',
+                  },
+                }),
+                403: inlineWarning({
+                  title: {
+                    id: 'errorResponseMessages.saveLoginDetails.PUT.403.title',
+                    defaultMessage: 'Invalid Password',
+                  },
+                  message: {
+                    id:
+                      'errorResponseMessages.saveLoginDetails.PUT.403.message',
+                    defaultMessage:
+                      'The current password that you have entered is incorrect.',
+                  },
+                  resolution: {
+                    id:
+                      'errorResponseMessages.saveLoginDetails.PUT.403.resolution',
+                    defaultMessage:
+                      'Please try re-entering your password or contact us to reset your login details',
+                  },
+                }),
+                default: errorPleaseTryAgainInAFewMinutes({
+                  title: {
+                    id:
+                      'errorResponseMessages.saveLoginDetails.PUT.default.title',
+                    defaultMessage: 'Saving Login Details Failed',
+                  },
+                }),
+              },
+            }
+          )
         })
 
         describe('when a response is received from the server', () => {
@@ -598,21 +603,22 @@ describe('AccountRedux module', () => {
         })
 
         it('should send a PUT request to the server with the correct headers and the account details passed to it', () => {
-          expect(
-            fetchStub.aspectFetch
-          ).toHaveBeenCalledWith('/account-details/current-preferences', {
-            method: 'PUT',
-            body: JSON.stringify(userPreferencesData),
-            errorNotifications: {
-              default: errorPleaseTryAgainInAFewMinutes({
-                title: {
-                  id:
-                    'errorResponseMessages.saveUserPreferences.PUT.default.title',
-                  defaultMessage: 'Saving User Preferences Failed',
-                },
-              }),
-            },
-          })
+          expect(fetchStub.aspectFetch).toHaveBeenCalledWith(
+            '/account-details/current-preferences',
+            {
+              method: 'PUT',
+              body: JSON.stringify(userPreferencesData),
+              errorNotifications: {
+                default: errorPleaseTryAgainInAFewMinutes({
+                  title: {
+                    id:
+                      'errorResponseMessages.saveUserPreferences.PUT.default.title',
+                    defaultMessage: 'Saving User Preferences Failed',
+                  },
+                }),
+              },
+            }
+          )
         })
 
         describe('when a response is received from the server', () => {

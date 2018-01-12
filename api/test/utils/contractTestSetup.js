@@ -9,7 +9,7 @@ const config = require('../../src/config')
 const serverUrl = 'http://localhost:8080'
 const server = supertest.agent(serverUrl)
 let attemptsToConnect = 0
-const assert = chai.assert
+const { assert } = chai
 
 function attemptToConnectAndLogin(done) {
   if (attemptsToConnect === 3) {

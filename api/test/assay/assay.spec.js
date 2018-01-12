@@ -4,7 +4,7 @@ const shared = require('../utils/sharedToken')
 
 // This agent refers to PORT where program is runninng.
 const server = supertest.agent('http://localhost:8080')
-const assert = chai.assert
+const { assert } = chai
 
 describe('Assay routes', () => {
   const path = '/api/assay'

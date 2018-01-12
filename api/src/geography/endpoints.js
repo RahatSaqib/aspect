@@ -36,7 +36,9 @@ module.exports = [
         'List of country IDs and Names With States Populated for Selected Country',
       validate: {
         params: {
-          countryId: Joi.number().description('Country ID').required(),
+          countryId: Joi.number()
+            .description('Country ID')
+            .required(),
         },
       },
     },
@@ -51,8 +53,12 @@ module.exports = [
         'List of country IDs and Names With States Populated for Selected Country and LGAs Populated for Selected State',
       validate: {
         params: {
-          countryId: Joi.number().description('Country ID').required(),
-          stateId: Joi.number().description('State ID').required(),
+          countryId: Joi.number()
+            .description('Country ID')
+            .required(),
+          stateId: Joi.number()
+            .description('State ID')
+            .required(),
         },
       },
     },
@@ -66,7 +72,9 @@ module.exports = [
       notes: 'List of state IDs and Names',
       validate: {
         params: {
-          countryId: Joi.number().description('Country ID').required(),
+          countryId: Joi.number()
+            .description('Country ID')
+            .required(),
         },
       },
     },
@@ -81,8 +89,12 @@ module.exports = [
         'List of state IDs and Names with LGAs populated for selected state',
       validate: {
         params: {
-          countryId: Joi.number().description('Country ID').required(),
-          stateId: Joi.number().description('State ID').required(),
+          countryId: Joi.number()
+            .description('Country ID')
+            .required(),
+          stateId: Joi.number()
+            .description('State ID')
+            .required(),
         },
       },
     },
@@ -96,7 +108,9 @@ module.exports = [
       notes: 'List of LGA IDs and Names',
       validate: {
         params: {
-          stateId: Joi.number().description('State ID').required(),
+          stateId: Joi.number()
+            .description('State ID')
+            .required(),
         },
       },
     },

@@ -114,11 +114,13 @@ function* checkResultDeliverable(context, result) {
         .where('externalId', DELIVERABLE_EXTERNALID)
         .first('id')).id
 
-      yield knex('Result').where('id', resultId).update({
-        resultWorkflowStatusId: resultWorkflowDeliverableId,
-        // auto QC-check Deliverable results RRT-313
-        qcCheck: 1,
-      })
+      yield knex('Result')
+        .where('id', resultId)
+        .update({
+          resultWorkflowStatusId: resultWorkflowDeliverableId,
+          // auto QC-check Deliverable results RRT-313
+          qcCheck: 1,
+        })
 
       // add a second so this entry shows up after the workflow status log entry
       // that was added as part of the original update

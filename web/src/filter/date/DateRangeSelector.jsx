@@ -279,12 +279,13 @@ export class DateRangeSelector extends PureComponent {
         maxDate: endOfDay(now),
       },
       {
-        label: `${formatMessage(
-          messages.thisMonth
-        )} (${formatDate(thisMonthStart, {
-          day: '2-digit',
-          month: '2-digit',
-        })} - ${formatDate(thisMonthEnd, {
+        label: `${formatMessage(messages.thisMonth)} (${formatDate(
+          thisMonthStart,
+          {
+            day: '2-digit',
+            month: '2-digit',
+          }
+        )} - ${formatDate(thisMonthEnd, {
           day: '2-digit',
           month: '2-digit',
         })})`,
@@ -292,12 +293,13 @@ export class DateRangeSelector extends PureComponent {
         maxDate: thisMonthEnd,
       },
       {
-        label: `${formatMessage(
-          messages.lastMonth
-        )} (${formatDate(lastMonthStart, {
-          day: '2-digit',
-          month: '2-digit',
-        })} - ${formatDate(lastMonthEnd, {
+        label: `${formatMessage(messages.lastMonth)} (${formatDate(
+          lastMonthStart,
+          {
+            day: '2-digit',
+            month: '2-digit',
+          }
+        )} - ${formatDate(lastMonthEnd, {
           day: '2-digit',
           month: '2-digit',
         })})`,

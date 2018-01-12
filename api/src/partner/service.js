@@ -25,7 +25,10 @@ function* listPartners(request) {
   // .modify(addConstraints, dataConstraints, {Partner: 'p'})
 
   // get total count for paging
-  const getCount = partnerQuery.clone().count('p.id as count').first()
+  const getCount = partnerQuery
+    .clone()
+    .count('p.id as count')
+    .first()
 
   // get rows
   const getItems = partnerQuery

@@ -64,7 +64,10 @@ module.exports = [
       auth: { scope: ['assay:view'] },
       validate: {
         params: {
-          consumableId: Joi.number().integer().positive().required(),
+          consumableId: Joi.number()
+            .integer()
+            .positive()
+            .required(),
         },
       },
     },
@@ -79,7 +82,10 @@ module.exports = [
       auth: { scope: ['assay:view'] },
       validate: {
         params: {
-          assayId: Joi.number().integer().positive().required(),
+          assayId: Joi.number()
+            .integer()
+            .positive()
+            .required(),
         },
       },
     },
@@ -94,8 +100,14 @@ module.exports = [
       auth: { scope: ['assay:view', 'assay:edit'] },
       validate: {
         payload: {
-          assayId: Joi.number().integer().positive().required(),
-          consumableId: Joi.number().integer().positive().required(),
+          assayId: Joi.number()
+            .integer()
+            .positive()
+            .required(),
+          consumableId: Joi.number()
+            .integer()
+            .positive()
+            .required(),
           quantity: Joi.number()
             .positive()
             .precision(2)
@@ -117,8 +129,14 @@ module.exports = [
       auth: { scope: ['assay:view', 'assay:edit'] },
       validate: {
         params: {
-          assayId: Joi.number().integer().positive().required(),
-          consumableId: Joi.number().integer().positive().required(),
+          assayId: Joi.number()
+            .integer()
+            .positive()
+            .required(),
+          consumableId: Joi.number()
+            .integer()
+            .positive()
+            .required(),
         },
         payload: {
           quantity: Joi.number()
@@ -142,8 +160,14 @@ module.exports = [
       auth: { scope: ['assay:view', 'assay:edit'] },
       validate: {
         params: {
-          assayId: Joi.number().integer().positive().required(),
-          consumableId: Joi.number().integer().positive().required(),
+          assayId: Joi.number()
+            .integer()
+            .positive()
+            .required(),
+          consumableId: Joi.number()
+            .integer()
+            .positive()
+            .required(),
         },
       },
     },

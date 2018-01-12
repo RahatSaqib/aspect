@@ -13,7 +13,7 @@ const {
 
 // This agent refers to PORT where program is runninng.
 const server = supertest.agent('http://localhost:8080')
-const assert = chai.assert
+const { assert } = chai
 const context = createTestContext(server, { user: 'admin' })
 
 const baseConfig = {
@@ -25,7 +25,7 @@ const baseConfig = {
 describe('Device API routes', () => {
   const devicePath = '/device'
 
-  const runTest = context.runTest
+  const { runTest } = context
 
   beforeEach(context.beforeEach)
   afterEach(context.afterEach)
@@ -279,7 +279,7 @@ describe('Device API routes', () => {
       user: 'rrt_admin',
       partner: 'RRT',
     })
-    const runTest = newDeviceContext.runTest
+    const { runTest } = newDeviceContext
 
     beforeEach(newDeviceContext.beforeEach)
     afterEach(newDeviceContext.afterEach)

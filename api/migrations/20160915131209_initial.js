@@ -19,14 +19,20 @@ function* up(knex) {
       .inTable('PartnerType')
     partner.string('name').notNullable()
     partner.string('plugin')
-    partner.integer('deviceLogHistoryDays').notNullable().defaultTo(30)
+    partner
+      .integer('deviceLogHistoryDays')
+      .notNullable()
+      .defaultTo(30)
     partner.integer('autoAcknowledgeOlderThanDays')
     partner.integer('numberToLeaveUnacknowledged')
   })
 
   yield knex.schema.createTable('User', user => {
     user.increments('id')
-    user.string('name').unique().notNullable()
+    user
+      .string('name')
+      .unique()
+      .notNullable()
     user.string('password', 128).notNullable()
     user.boolean('approved').notNullable()
     user.dateTime('lastActive')
@@ -34,8 +40,14 @@ function* up(knex) {
     user.dateTime('lastPasswordChange')
     user.dateTime('createdOn').notNullable()
     user.boolean('lockedOut').notNullable()
-    user.integer('failedPasswordAttempts').unsigned().notNullable()
-    user.boolean('legacyPassword').notNullable().defaultTo(0)
+    user
+      .integer('failedPasswordAttempts')
+      .unsigned()
+      .notNullable()
+    user
+      .boolean('legacyPassword')
+      .notNullable()
+      .defaultTo(0)
     user.string('resetPasswordToken', 36)
     user.dateTime('resetPasswordTokenExpires')
     user.charset('utf8')
@@ -106,7 +118,12 @@ function* up(knex) {
 
   yield knex.schema.createTable('Person', person => {
     person.increments('id')
-    person.integer('userId').unsigned().index().references('id').inTable('User')
+    person
+      .integer('userId')
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('User')
     person
       .integer('geographyId')
       .unsigned()
@@ -244,7 +261,10 @@ function* up(knex) {
     refreshToken.string('clientName').notNullable()
     refreshToken.string('token').notNullable()
     refreshToken.dateTime('expires').notNullable()
-    refreshToken.boolean('revoked').notNullable().defaultTo(0)
+    refreshToken
+      .boolean('revoked')
+      .notNullable()
+      .defaultTo(0)
     refreshToken.dateTime('createdOn').notNullable()
     refreshToken.primary(['userId', 'clientId'])
     refreshToken.charset('utf8')
@@ -252,8 +272,15 @@ function* up(knex) {
 
   yield knex.schema.createTable('DeviceApiKey', apiKey => {
     apiKey.increments('id')
-    apiKey.string('token').notNullable().unique().index()
-    apiKey.boolean('revoked').notNullable().defaultTo(0)
+    apiKey
+      .string('token')
+      .notNullable()
+      .unique()
+      .index()
+    apiKey
+      .boolean('revoked')
+      .notNullable()
+      .defaultTo(0)
     apiKey
       .integer('partnerId')
       .unsigned()
@@ -266,7 +293,12 @@ function* up(knex) {
       .index()
       .references('id')
       .inTable('Geography')
-    apiKey.integer('siteId').unsigned().index().references('id').inTable('Site')
+    apiKey
+      .integer('siteId')
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('Site')
     apiKey
       .integer('deviceId')
       .unsigned()
@@ -281,8 +313,14 @@ function* up(knex) {
   yield knex.schema.createTable('DeviceTypeCategory', deviceTypeFeature => {
     deviceTypeFeature.increments('id')
     deviceTypeFeature.string('name').notNullable()
-    deviceTypeFeature.boolean('hasConnectivity').notNullable().defaultTo(0)
-    deviceTypeFeature.boolean('hasResults').notNullable().defaultTo(0)
+    deviceTypeFeature
+      .boolean('hasConnectivity')
+      .notNullable()
+      .defaultTo(0)
+    deviceTypeFeature
+      .boolean('hasResults')
+      .notNullable()
+      .defaultTo(0)
     deviceTypeFeature.charset('utf8')
   })
 
@@ -389,7 +427,12 @@ function* up(knex) {
       .index()
       .references('id')
       .inTable('Geography')
-    device.integer('siteId').unsigned().index().references('id').inTable('Site')
+    device
+      .integer('siteId')
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('Site')
     device
       .integer('deviceTypeId')
       .unsigned()
@@ -636,7 +679,12 @@ function* up(knex) {
       .index()
       .references('id')
       .inTable('Geography')
-    result.integer('siteId').unsigned().index().references('id').inTable('Site')
+    result
+      .integer('siteId')
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('Site')
     result
       .integer('deviceId')
       .unsigned()
@@ -707,7 +755,10 @@ function* up(knex) {
     result.text('rawData')
     result.string('errorCode')
     result.string('errorNotes', 2000)
-    result.boolean('qcCheck').notNullable().defaultTo(0)
+    result
+      .boolean('qcCheck')
+      .notNullable()
+      .defaultTo(0)
     addCreateFieldsNullable(result)
     addUpdateFieldsNullable(result)
     result.charset('utf8')
@@ -723,11 +774,17 @@ function* up(knex) {
       .references('id')
       .inTable('Device')
     deviceLog.string('source').notNullable() // LIS listener, API...
-    deviceLog.dateTime('createdOn').notNullable().index()
+    deviceLog
+      .dateTime('createdOn')
+      .notNullable()
+      .index()
     deviceLog.string('senderIp').notNullable()
     deviceLog.string('checkpoint').index()
     deviceLog.text('rawMessage')
-    deviceLog.boolean('deviceConfigurationUpdated').notNullable().defaultTo(0)
+    deviceLog
+      .boolean('deviceConfigurationUpdated')
+      .notNullable()
+      .defaultTo(0)
     deviceLog
       .integer('resultId')
       .unsigned()
@@ -765,9 +822,15 @@ function* up(knex) {
       .notNullable()
       .references('id')
       .inTable('Unit')
-    consumable.boolean('canExpire').notNullable().defaultTo(0)
+    consumable
+      .boolean('canExpire')
+      .notNullable()
+      .defaultTo(0)
     consumable.text('manufacturer')
-    consumable.boolean('autoInclude').notNullable().defaultTo(0)
+    consumable
+      .boolean('autoInclude')
+      .notNullable()
+      .defaultTo(0)
     consumable.charset('utf8')
   })
 
@@ -775,7 +838,10 @@ function* up(knex) {
     consumableReason.increments('id')
     consumableReason.string('name').notNullable()
     consumableReason.string('i18nKey')
-    consumableReason.boolean('decrease').notNullable().defaultTo(0)
+    consumableReason
+      .boolean('decrease')
+      .notNullable()
+      .defaultTo(0)
     consumableReason.charset('utf8')
   })
 
@@ -915,8 +981,15 @@ function* up(knex) {
   // this table logs any change of QC-Check checkbox on 'Result Details' page
   yield knex.schema.createTable('ResultQualityControlLog', x => {
     x.increments('id')
-    x.integer('resultId').unsigned().references('id').inTable('Result')
-    x.boolean('qcCheck').notNullable().defaultTo(0)
+    x
+      .integer('resultId')
+      .unsigned()
+      .references('id')
+      .inTable('Result')
+    x
+      .boolean('qcCheck')
+      .notNullable()
+      .defaultTo(0)
     x.dateTime('createdOn').notNullable()
     x
       .integer('createdBy')
@@ -936,14 +1009,21 @@ function* up(knex) {
       .references('id')
       .inTable('Device')
       .notNullable()
-    x.integer('assayId').unsigned().references('id').inTable('Assay')
+    x
+      .integer('assayId')
+      .unsigned()
+      .references('id')
+      .inTable('Assay')
     x
       .integer('resultCategory1')
       .unsigned()
       .references('id')
       .inTable('ResultCategory')
     x.integer('days').unsigned()
-    x.integer('resultCount').unsigned().notNullable()
+    x
+      .integer('resultCount')
+      .unsigned()
+      .notNullable()
     x.dateTime('calculatedOn').notNullable()
     x.unique(
       ['days', 'deviceId', 'assayId', 'resultCategory1'],
@@ -959,15 +1039,42 @@ function* up(knex) {
       .references('id')
       .inTable('Device')
       .notNullable()
-    x.boolean('offline').notNullable().defaultTo(0)
-    x.boolean('service').notNullable().defaultTo(0)
-    x.boolean('calibration').notNullable().defaultTo(0)
-    x.boolean('errorRate').notNullable().defaultTo(0)
-    x.boolean('qcProblem').notNullable().defaultTo(0)
-    x.boolean('lowInventory').notNullable().defaultTo(0)
-    x.boolean('outOfInventory').notNullable().defaultTo(0)
-    x.boolean('expiringInventory').notNullable().defaultTo(0)
-    x.boolean('expiringWarranty').notNullable().defaultTo(0)
+    x
+      .boolean('offline')
+      .notNullable()
+      .defaultTo(0)
+    x
+      .boolean('service')
+      .notNullable()
+      .defaultTo(0)
+    x
+      .boolean('calibration')
+      .notNullable()
+      .defaultTo(0)
+    x
+      .boolean('errorRate')
+      .notNullable()
+      .defaultTo(0)
+    x
+      .boolean('qcProblem')
+      .notNullable()
+      .defaultTo(0)
+    x
+      .boolean('lowInventory')
+      .notNullable()
+      .defaultTo(0)
+    x
+      .boolean('outOfInventory')
+      .notNullable()
+      .defaultTo(0)
+    x
+      .boolean('expiringInventory')
+      .notNullable()
+      .defaultTo(0)
+    x
+      .boolean('expiringWarranty')
+      .notNullable()
+      .defaultTo(0)
     x.dateTime('updatedOn').notNullable()
   })
 
@@ -1063,11 +1170,21 @@ function addUpdateFields(table) {
 
 function addCreateFieldsNullable(table) {
   table.dateTime('createdOn')
-  table.integer('createdBy').unsigned().index().references('id').inTable('User')
+  table
+    .integer('createdBy')
+    .unsigned()
+    .index()
+    .references('id')
+    .inTable('User')
 }
 
 // Adds updatedOn, updatedBy
 function addUpdateFieldsNullable(table) {
   table.dateTime('updatedOn')
-  table.integer('updatedBy').unsigned().index().references('id').inTable('User')
+  table
+    .integer('updatedBy')
+    .unsigned()
+    .index()
+    .references('id')
+    .inTable('User')
 }

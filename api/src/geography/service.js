@@ -238,7 +238,9 @@ function* transformGeographyFromUpdates(updates) {
   const transformedFields = _.omit(updates, geoFieldNames)
 
   if (!_.isEmpty(geoFields)) {
-    const geography = yield knex('Geography').where(geoFields).first('id')
+    const geography = yield knex('Geography')
+      .where(geoFields)
+      .first('id')
     transformedFields.geographyId = geography ? geography.id : null
   }
   return transformedFields

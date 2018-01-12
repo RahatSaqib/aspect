@@ -86,7 +86,10 @@ function* listSites(request) {
     .modify(addConstraints, dataConstraints, { site: 's', geography: 'g' })
 
   // get total count for paging
-  const getCount = siteQuery.clone().count('s.id as count').first()
+  const getCount = siteQuery
+    .clone()
+    .count('s.id as count')
+    .first()
 
   // get rows
   const getItems = siteQuery
@@ -134,24 +137,26 @@ function* updateSite(request) {
   const changedSiteFields = yield* transformGeographyFromUpdates(payload)
 
   // update item
-  const updatedCount = yield knex('Site').where('id', params.siteId).update(
-    Object.assign(
-      _.pick(changedSiteFields, [
-        'name',
-        'shortname',
-        'externalId',
-        'street1',
-        'street2',
-        'geographyId',
-        'city',
-        'state',
-        'zip',
-        'latitude',
-        'longitude',
-      ]),
-      { timezoneId: changedSiteFields.timezone } // TODO standardize timezone name
+  const updatedCount = yield knex('Site')
+    .where('id', params.siteId)
+    .update(
+      Object.assign(
+        _.pick(changedSiteFields, [
+          'name',
+          'shortname',
+          'externalId',
+          'street1',
+          'street2',
+          'geographyId',
+          'city',
+          'state',
+          'zip',
+          'latitude',
+          'longitude',
+        ]),
+        { timezoneId: changedSiteFields.timezone } // TODO standardize timezone name
+      )
     )
-  )
 
   if (updatedCount !== 1) {
     throw new Error('Unknown error')

@@ -7,7 +7,7 @@ const shared = require('../utils/sharedToken')
 
 // This agent refers to PORT where program is runninng.
 const server = supertest.agent('http://localhost:8080')
-const assert = chai.assert
+const { assert } = chai
 
 describe('Authentication routes', () => {
   const adminUsername = 'admin'
@@ -24,23 +24,29 @@ describe('Authentication routes', () => {
 
   describe('POST', () => {
     it('should return 400 and error message if no user name is provided', done => {
-      server.post(path).send().end((err, res) => {
-        assert.equal(res.status, 400)
-        assert.isString(res.body.message)
-        assert.notEqual('', res.body.message)
-        done()
-      })
+      server
+        .post(path)
+        .send()
+        .end((err, res) => {
+          assert.equal(res.status, 400)
+          assert.isString(res.body.message)
+          assert.notEqual('', res.body.message)
+          done()
+        })
     })
 
     it('should return 400 and error message if user name is provided, but pw is missing', done => {
-      server.post(path).send({ name: adminUsername }).end((err, res) => {
-        assert.equal(res.status, 400)
-        assert.equal(
-          res.body.message,
-          'child "password" fails because ["password" is required]'
-        )
-        done()
-      })
+      server
+        .post(path)
+        .send({ name: adminUsername })
+        .end((err, res) => {
+          assert.equal(res.status, 400)
+          assert.equal(
+            res.body.message,
+            'child "password" fails because ["password" is required]'
+          )
+          done()
+        })
     })
 
     it('should return 400 and error message if user name and password is provided, but client name is missing', done => {
@@ -107,7 +113,7 @@ describe('Authentication routes', () => {
           jwToken = res.body.access
           shared.token = jwToken
           refreshToken = res.body.refresh
-          clientId = res.body.clientId
+          ;({ clientId } = res.body)
 
           jwt.verify(res.body.access, config.secret, (err, decoded) => {
             assert.isNotOk(err) // isNotOk = is falsy
@@ -140,12 +146,15 @@ describe('Authentication routes', () => {
 
   describe('POST to /refresh', () => {
     it('should return 400 and error message if no client ID provided', done => {
-      server.post(`${path}/refresh`).send().end((err, res) => {
-        assert.equal(res.status, 400)
-        assert.isString(res.body.message)
-        assert.notEqual('', res.body.message)
-        done()
-      })
+      server
+        .post(`${path}/refresh`)
+        .send()
+        .end((err, res) => {
+          assert.equal(res.status, 400)
+          assert.isString(res.body.message)
+          assert.notEqual('', res.body.message)
+          done()
+        })
     })
 
     it('should return 400 and error message if client ID is provided, but token is missing', done => {
@@ -226,7 +235,7 @@ describe('Authentication routes', () => {
           jwToken = res.body.access
           shared.token = jwToken
           refreshToken = res.body.refresh
-          clientId = res.body.clientId
+          ;({ clientId } = res.body)
 
           jwt.verify(res.body.access, config.secret, (err, decoded) => {
             assert.isNotOk(err) // isNotOk = is falsy
@@ -254,7 +263,7 @@ describe('Authentication routes', () => {
                 jwToken = res.body.access
                 shared.token = jwToken
                 refreshToken = res.body.refresh
-                clientId = res.body.clientId
+                ;({ clientId } = res.body)
 
                 jwt.verify(res.body.access, config.secret, (err, decoded) => {
                   assert.isNotOk(err) // isNotOk = is falsy
@@ -284,7 +293,7 @@ describe('Authentication routes', () => {
                       jwToken = res.body.access
                       shared.token = jwToken
                       refreshToken = res.body.refresh
-                      clientId = res.body.clientId
+                      ;({ clientId } = res.body)
 
                       jwt.verify(
                         res.body.access,
@@ -315,7 +324,7 @@ describe('Authentication routes', () => {
                               jwToken = res.body.access
                               shared.token = jwToken
                               refreshToken = res.body.refresh
-                              clientId = res.body.clientId
+                              ;({ clientId } = res.body)
 
                               jwt.verify(
                                 res.body.access,
@@ -362,7 +371,7 @@ describe('Authentication routes', () => {
           jwToken = res.body.access
           shared.token = jwToken
           refreshToken = res.body.refresh
-          clientId = res.body.clientId
+          ;({ clientId } = res.body)
 
           jwt.verify(res.body.access, config.secret, (err, decoded) => {
             assert.isNotOk(err) // isNotOk = is falsy
@@ -390,7 +399,7 @@ describe('Authentication routes', () => {
                 jwToken = res.body.access
                 shared.token = jwToken
                 refreshToken = res.body.refresh
-                clientId = res.body.clientId
+                ;({ clientId } = res.body)
 
                 jwt.verify(res.body.access, config.secret, (err, decoded) => {
                   assert.isNotOk(err) // isNotOk = is falsy
@@ -422,7 +431,7 @@ describe('Authentication routes', () => {
                       jwToken = res.body.access
                       shared.token = jwToken
                       refreshToken = res.body.refresh
-                      clientId = res.body.clientId
+                      ;({ clientId } = res.body)
 
                       jwt.verify(
                         res.body.access,
@@ -453,7 +462,7 @@ describe('Authentication routes', () => {
                               jwToken = res.body.access
                               shared.token = jwToken
                               refreshToken = res.body.refresh
-                              clientId = res.body.clientId
+                              ;({ clientId } = res.body)
 
                               jwt.verify(
                                 res.body.access,
@@ -502,7 +511,7 @@ describe('Authentication routes', () => {
           jwToken = res.body.access
           shared.token = jwToken
           refreshToken = res.body.refresh
-          clientId = res.body.clientId
+          ;({ clientId } = res.body)
 
           jwt.verify(res.body.access, config.secret, (err, decoded) => {
             assert.isNotOk(err) // isNotOk = is falsy
@@ -530,7 +539,7 @@ describe('Authentication routes', () => {
                 jwToken = res.body.access
                 shared.token = jwToken
                 refreshToken = res.body.refresh
-                clientId = res.body.clientId
+                ;({ clientId } = res.body)
 
                 jwt.verify(res.body.access, config.secret, (err, decoded) => {
                   assert.isNotOk(err) // isNotOk = is falsy
@@ -564,7 +573,7 @@ describe('Authentication routes', () => {
                       jwToken = res.body.access
                       shared.token = jwToken
                       refreshToken = res.body.refresh
-                      clientId = res.body.clientId
+                      ;({ clientId } = res.body)
 
                       jwt.verify(
                         res.body.access,
@@ -595,7 +604,7 @@ describe('Authentication routes', () => {
                               jwToken = res.body.access
                               shared.token = jwToken
                               refreshToken = res.body.refresh
-                              clientId = res.body.clientId
+                              ;({ clientId } = res.body)
 
                               jwt.verify(
                                 res.body.access,

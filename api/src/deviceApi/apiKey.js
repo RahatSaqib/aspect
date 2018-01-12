@@ -18,7 +18,9 @@ function randomToken() {
 function groupToken(token) {
   // Groups 20 character token into 5 groups of 4 for easier readability
   // API Key validation will remove spaces and dashes, so they can be included
-  return _.chunk(token, 4).map(a => a.join('')).join('-')
+  return _.chunk(token, 4)
+    .map(a => a.join(''))
+    .join('-')
 }
 
 function normalizeToken(token) {

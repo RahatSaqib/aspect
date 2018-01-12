@@ -5,7 +5,7 @@ const _ = require('lodash')
 
 // This agent refers to PORT where program is runninng.
 const server = supertest.agent('http://localhost:8080')
-const assert = chai.assert
+const { assert } = chai
 
 describe('Result routes', () => {
   const path = '/api/result'
@@ -39,11 +39,13 @@ describe('Result routes', () => {
           assert.property(res.body.data[0], 'patientId')
           assert.property(res.body.data[0], 'assayName')
           assert.property(res.body, 'total')
-
-          resultId = res.body.data[0].id
-          assayId = res.body.data[0].assayId
-          initialResultWorkflowStatus = res.body.data[0].resultWorkflowStatus
-
+          ;[
+            {
+              id: resultId,
+              assayId,
+              resultWorkflowStatus: initialResultWorkflowStatus,
+            },
+          ] = res.body.data
           done()
         })
     })

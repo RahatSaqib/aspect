@@ -18,7 +18,10 @@ function* listDeviceOperations(request) {
     .modify(addConstraints, dataConstraints, { device: 'd' })
 
   // get total count for paging
-  const getCount = deviceOperationQuery.clone().count('do.id as count').first()
+  const getCount = deviceOperationQuery
+    .clone()
+    .count('do.id as count')
+    .first()
 
   // get rows
   const getItems = deviceOperationQuery

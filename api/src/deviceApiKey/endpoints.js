@@ -20,7 +20,9 @@ function listDeviceApiKeysBaseConfig() {
           partnerId: Joi.number()
             .allow('')
             .description('Filter for partner ID'),
-          siteName: Joi.string().allow('').description('Filter for site name'),
+          siteName: Joi.string()
+            .allow('')
+            .description('Filter for site name'),
           deviceName: Joi.string()
             .allow('')
             .description('Filter for device name'),
@@ -82,9 +84,15 @@ module.exports = [
           count: Joi.number()
             .description('Number of deviceApiKeys should be generated')
             .required(),
-          countryId: Joi.number().allow('').description('Country ID'),
-          partnerId: Joi.number().allow('').description('Partner ID'),
-          siteId: Joi.number().allow('').description('Site ID'),
+          countryId: Joi.number()
+            .allow('')
+            .description('Country ID'),
+          partnerId: Joi.number()
+            .allow('')
+            .description('Partner ID'),
+          siteId: Joi.number()
+            .allow('')
+            .description('Site ID'),
         },
       },
     },
@@ -102,10 +110,18 @@ module.exports = [
           deviceApiKeyIds: Joi.array()
             .items(Joi.number())
             .description('DeviceApiKey IDs'),
-          deviceId: Joi.number().allow('').description('Device ID'),
-          countryId: Joi.number().allow('').description('Country ID'),
-          partnerId: Joi.number().allow('').description('Partner ID'),
-          siteId: Joi.number().allow('').description('Site ID'),
+          deviceId: Joi.number()
+            .allow('')
+            .description('Device ID'),
+          countryId: Joi.number()
+            .allow('')
+            .description('Country ID'),
+          partnerId: Joi.number()
+            .allow('')
+            .description('Partner ID'),
+          siteId: Joi.number()
+            .allow('')
+            .description('Site ID'),
         },
       },
     },
