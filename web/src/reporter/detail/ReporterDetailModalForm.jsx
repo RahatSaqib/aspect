@@ -158,7 +158,8 @@ export const ReporterDetailModalForm = props => {
               onChange={event =>
                 props.onConfigurationDataChange(
                   values.configurationData.setIn(field.path, event.target.value)
-                )}
+                )
+              }
               fullWidth
             />
           )}

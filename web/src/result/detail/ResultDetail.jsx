@@ -344,7 +344,8 @@ export class ResultDetail extends PureComponent {
         title="Data"
         renderField={field => <ReadOnlyField {...field} />}
         formatNestedSubtitle={data =>
-          intl.formatMessage(messages.nestedDataSubtitle, { count: data.size })}
+          intl.formatMessage(messages.nestedDataSubtitle, { count: data.size })
+        }
         dataSchema={dataSchema}
         data={result.get('resultData')}
       />

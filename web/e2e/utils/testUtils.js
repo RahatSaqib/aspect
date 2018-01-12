@@ -7,10 +7,10 @@ let FILECOUNT = 0
 
 module.exports = {
   /**
- * Function that returns the correct path for storing  screenshots.
- * Adds some meta-data to the filename, specifically
- * the Platform/Browser where the test was run and the test (file) name.
- */
+   * Function that returns the correct path for storing  screenshots.
+   * Adds some meta-data to the filename, specifically
+   * the Platform/Browser where the test was run and the test (file) name.
+   */
   imgpath: browser => {
     const a = browser.options.desiredCapabilities
     const meta = [a.platform]

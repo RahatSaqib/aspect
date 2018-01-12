@@ -157,7 +157,8 @@ export const RouterDetailModalForm = props => {
               onChange={event =>
                 props.onConfigurationDataChange(
                   values.configurationData.setIn(field.path, event.target.value)
-                )}
+                )
+              }
               fullWidth
             />
           )}

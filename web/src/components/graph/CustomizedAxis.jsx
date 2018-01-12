@@ -6,9 +6,8 @@ export const CustomizedAxisLeft = props => (
   <AxisLeft
     {...props}
     tickFormat={value =>
-      Math.floor(value) === value
-        ? (props.tickFormat || _.toString)(value)
-        : ''}
+      Math.floor(value) === value ? (props.tickFormat || _.toString)(value) : ''
+    }
   />
 )
 
