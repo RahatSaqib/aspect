@@ -1,7 +1,7 @@
-import path from 'path'
-import invariant from 'invariant'
-import webpack from 'webpack'
-import CompressionPlugin from 'compression-webpack-plugin'
+const path = require('path')
+const invariant = require('invariant')
+const webpack = require('webpack')
+const CompressionPlugin = require('compression-webpack-plugin')
 
 // vendor packages so we can create a separate bundle
 const vendor = [
@@ -41,18 +41,18 @@ const vendor = [
   'whatwg-fetch',
 ]
 
-export default env => {
+module.exports = env => {
   switch (env.ASPECT_TARGET) {
     case 'local': {
       process.env.ASPECT_TARGET = 'local'
       process.env.NODE_ENV = 'development'
-      process.env.BABEL_ENV = 'development'
+      process.env.BABEL_ENV = 'webpack'
       break
     }
     case 'dist': {
       process.env.ASPECT_TARGET = 'dist'
       process.env.NODE_ENV = 'production'
-      process.env.BABEL_ENV = 'production'
+      process.env.BABEL_ENV = 'webpack'
       break
     }
     default:
