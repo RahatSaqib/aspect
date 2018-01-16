@@ -289,7 +289,7 @@ exports[`Device Api Key List module DeviceApiKeyList component should shallow re
       multiSelectable={false}
       selectable={false}
     >
-      <DataTableHead
+      <pure(withHandlers(withHandlers(DataTableHead)))
         columns={
           Array [
             Object {
@@ -307,39 +307,49 @@ exports[`Device Api Key List module DeviceApiKeyList component should shallow re
             Object {
               "key": "createdOn",
               "label": "Created On",
-              "onClick": [Function],
+              "sortable": true,
             },
             Object {
               "key": "token",
               "label": "Key",
-              "onClick": [Function],
+              "sortable": true,
             },
             Object {
               "key": "partner",
               "label": "Partner",
-              "onClick": [Function],
+              "sortable": true,
             },
             Object {
               "key": "country",
               "label": "Country",
-              "onClick": [Function],
+              "sortable": true,
             },
             Object {
               "key": "site",
               "label": "Site",
-              "onClick": [Function],
+              "sortable": true,
             },
             Object {
               "key": "device",
               "label": "Device",
-              "onClick": [Function],
+              "sortable": true,
             },
             Object {
               "key": "revoked",
               "label": "Revoked",
-              "onClick": [Function],
+              "sortable": true,
             },
           ]
+        }
+        history={
+          Object {
+            "push": [Function],
+          }
+        }
+        location={
+          Object {
+            "search": "",
+          }
         }
         sortColumnDir="asc"
         sortColumnKey="createdOn"
