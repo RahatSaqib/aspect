@@ -313,4 +313,43 @@ describe('Device API routes', () => {
         assert.isAtLeast(deviceLogs.length, 1)
       }))
   })
+
+  describe('add device Logs', () => {
+    const testContext = createTestContext(server, {
+      user: 'admin',
+      partner: 'CHIZ',
+    })
+
+    const runTest = testContext.runTest
+
+    beforeEach(testContext.beforeEach)
+    afterEach(testContext.afterEach)
+
+    it('should create add payload to DeviceLog on Joi failure', () =>
+      runTest(function*(knex) {
+        const { apiKey, deviceAuth } = testContext
+        assert.isOk(apiKey)
+
+        const [{ count: logLength1 }] = yield knex('DeviceLog as dl').count(
+          'id as count'
+        )
+        yield server
+          .post(devicePath)
+          .set('Authorization', deviceAuth)
+          .send({
+            site: {
+              data: `Device API Test - should create add payload to DeviceLog on Joi failure ${Date.now()}`,
+            },
+          })
+          .then(res => {
+            assert.equal(res.status, 400)
+          })
+
+        const [{ count: logLength2 }] = yield knex('DeviceLog as dl').count(
+          'id as count'
+        )
+
+        assert.equal(logLength1 + 1, logLength2)
+      }))
+  })
 })

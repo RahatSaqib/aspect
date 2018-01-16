@@ -769,7 +769,6 @@ function* up(knex) {
     deviceLog
       .integer('deviceId')
       .unsigned()
-      .notNullable()
       .index()
       .references('id')
       .inTable('Device')

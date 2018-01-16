@@ -2256,6 +2256,36 @@ function* seed(knex) {
           createdOn: addHours(randomDate, 1),
           createdBy: adminId,
         })
+
+        yield knex('DeviceLog').insert({
+          deviceId: device.id,
+          createdOn: addHours(randomDate, 1),
+          senderIp: '0.0.0.0',
+          checkPoint: `rrt_${_.random(20)}`,
+          source: 'seed data',
+          rawMessage: JSON.stringify({
+            type: {
+              id: _.sample([
+                deviceTypeGeneXpertId.name,
+                deviceTypeAfinionId.name,
+                deviceTypeQId.name,
+                deviceTypeM2000Id.name,
+                deviceTypeChaiId.name,
+                deviceTypeDaktariId.name,
+                deviceTypeIdRouter.name,
+                deviceTypeCommCare.name,
+              ]),
+              site: {
+                id: siteData.externalId,
+              },
+              result: {
+                data: {},
+              },
+            },
+          }),
+          deviceConfigurationUpdated: 0,
+          resultId,
+        })
       }
     }
   }

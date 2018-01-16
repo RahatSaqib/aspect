@@ -284,9 +284,23 @@ function* getResultByResultId(request, fields = SELECT_SHOW_FIELDS) {
     ;[data] = results
     data.resultData = JSON.parse(data.resultData)
     data.patientData = JSON.parse(data.patientData)
+    data.deviceLogs = yield knex('DeviceLog as dl')
+      .where('dl.resultId', params.resultId)
+      .orderBy('createdOn', 'desc')
+      .select(
+        'dl.createdOn',
+        'dl.checkpoint as checkPoint',
+        'dl.deviceOperationId',
+        'dl.source',
+        'dl.deviceConfigurationUpdated',
+        'dl.senderIp',
+        'dl.rawMessage'
+      )
+
     data.assay = yield knex('Assay as a')
       .where('a.id', data.assayId)
       .first()
+
     data.assay.resultDataSchema = JSON.parse(data.assay.resultDataSchema)
     data.assay.patientDataSchema = JSON.parse(data.assay.patientDataSchema)
   }

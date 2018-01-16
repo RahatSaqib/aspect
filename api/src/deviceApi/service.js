@@ -78,7 +78,7 @@ function deviceApiHandler(handler, handlerOptions) {
     )
     const { updatePing = false, updateDeviceLog = false } = handlerOptions
     if (error) {
-      // unauthorized or other error record nothing
+      yield* updateLogs(request)
       return error
     }
 
@@ -860,6 +860,29 @@ function onResultLogged({ resultId }, context) {
   })
 }
 
+function addDeviceLog(error) {
+  return asyncHandler(function*(request) {
+    yield* updateLogs(request)
+    return error
+  })
+}
+
+function* updateLogs(request) {
+  const { auth } = request
+  const device = yield knex('DeviceApiKey as k')
+    .innerJoin('Device as d', 'k.deviceId', 'd.id')
+    .where('k.token', auth.credentials.token)
+    .first('d.id')
+
+  yield knex('DeviceLog').insert({
+    deviceId: (device && device.id) || null,
+    resultId: null,
+    source: _.get(request.payload, 'log.source', ''),
+    createdOn: new Date(),
+    senderIp: (request.info && request.info.remoteAddress) || '',
+    rawMessage: JSON.stringify(request.payload),
+  })
+}
 addListener(RESULT_UPDATED, onResultUpdated)
 addListener(RESULT_LOGGED, onResultLogged)
 
@@ -871,4 +894,5 @@ module.exports = {
   updateDeviceConfigurationHandler,
   addDeviceOperationHandler,
   mergeResultHandler,
+  addDeviceLog,
 }

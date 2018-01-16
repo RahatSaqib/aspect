@@ -12,6 +12,7 @@ const {
   addDeviceOperationHandler,
   updateDeviceConfigurationHandler,
   mergeResultHandler,
+  addDeviceLog,
 } = require('./service')
 
 const errorPayload = Joi.object().keys({
@@ -377,6 +378,9 @@ module.exports = [
               .description('Device Result Data.'),
           })
         ),
+        failAction(request, reply, source, error) {
+          addDeviceLog(error)(request, reply)
+        },
       },
       response: {
         schema: {
@@ -401,6 +405,9 @@ module.exports = [
             .keys(logPayload)
             .description('Device Log Data'),
         }),
+        failAction(request, reply, source, error) {
+          addDeviceLog(error)(request, reply)
+        },
       },
       response: {
         schema: {
@@ -458,6 +465,9 @@ module.exports = [
             .keys(logPayload)
             .description('Device Log Data'),
         }),
+        failAction(request, reply, source, error) {
+          addDeviceLog(error)(request, reply)
+        },
       },
       response: {
         schema: {
@@ -519,6 +529,9 @@ module.exports = [
             .keys(logPayload)
             .description('Device Log Data'),
         }),
+        failAction(request, reply, source, error) {
+          addDeviceLog(error)(request, reply)
+        },
       },
       response: {
         schema: {

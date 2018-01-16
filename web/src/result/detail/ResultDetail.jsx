@@ -15,6 +15,8 @@ import { Card, CardHeader, CardText } from 'material-ui/Card'
 import IconButton from 'material-ui/IconButton'
 import Share from 'material-ui/svg-icons/social/share'
 import Checkbox from 'material-ui/Checkbox'
+import Dialog from 'material-ui/Dialog'
+import FlatButton from 'material-ui/FlatButton'
 
 // Our own imports
 import { Unit } from '../../components/pureGrids'
@@ -32,6 +34,7 @@ import {
 import ResultWorkflowStatusLog from './WorkflowLog'
 
 import { ReadOnlyField } from '../../components/shared/ReadOnlyFields'
+import RawData from './RawData'
 import styles from './ResultDetail.css'
 
 const cssClasses = classnames.bind(styles)
@@ -172,6 +175,14 @@ const messages = defineMessages({
     defaultMessage:
       '"QC Check" is only enabled if the result is in the status "Ready for Delivery" and hasn\'t been sent to the reporter yet',
   },
+  fieldRawData: {
+    id: 'pages.ResultDetail.rawData',
+    defaultMessage: 'Raw Data',
+  },
+  createdOnLabel: {
+    id: 'pages.ResultDetail.createdOnLabel',
+    defaultMessage: 'Created on: {date}',
+  },
 })
 
 const enhance = compose(
@@ -213,6 +224,14 @@ const enhance = compose(
 )
 
 export class ResultDetail extends PureComponent {
+  constructor() {
+    super()
+    this.state = {
+      isShown: false,
+    }
+    this.handleToggle = this.handleToggle.bind(this)
+  }
+
   componentDidMount() {
     this.handleFetchResult()
   }
@@ -295,6 +314,17 @@ export class ResultDetail extends PureComponent {
     return `${hours}h ${minutes}m ${seconds}s`
   }
 
+  handleToggle() {
+    this.setState({ isShown: !this.state.isShown })
+  }
+
+  dialogActions() {
+    const actions = [
+      <FlatButton label="Close" primary onClick={this.handleToggle} />,
+    ]
+    return actions
+  }
+
   handleFetchResult = () => {
     this.props.fetchSingleResult(this.props.match.params.resultId)
 
@@ -327,6 +357,48 @@ export class ResultDetail extends PureComponent {
 
   renderProgress() {
     return <LinearProgress />
+  }
+
+  renderRawResult() {
+    const deviceLogs = this.props.result.get('deviceLogs').toJS()
+    const { intl: { formatMessage } } = this.props
+
+    return (
+      <div>
+        <Link to="#" onClick={this.handleToggle}>
+          Raw Result
+        </Link>
+        <Dialog
+          actions={this.dialogActions()}
+          open={this.state.isShown}
+          onRequestClose={this.handleToggle}
+          title="Raw Result Data"
+          autoScrollBodyContent
+        >
+          {deviceLogs.length !== 0 ? (
+            deviceLogs.map((log, index) => {
+              const createdOn = new Date(log.createdOn)
+              const rawMessage = JSON.parse(log.rawMessage)
+              return (
+                <RawData
+                  createdOn={createdOn}
+                  createdOnLabel={messages.createdOnLabel}
+                  formatMessage={formatMessage}
+                  index={index}
+                  key={createdOn}
+                  rawMessage={rawMessage}
+                />
+              )
+            })
+          ) : (
+            <div style={{ paddingTop: '10px' }}>
+              {' '}
+              No log entries found for this result{' '}
+            </div>
+          )}
+        </Dialog>
+      </div>
+    )
   }
 
   renderLowerLevelSchemaSections() {
@@ -540,12 +612,8 @@ export class ResultDetail extends PureComponent {
         </Card>
         {/* Technical Info */}
         <Card initiallyExpanded>
-          <CardHeader
-            title="Technical Information"
-            actAsExpander
-            showExpandableButton
-          />
-          <CardText actAsExpander expandable style={{ paddingTop: 0 }}>
+          <CardHeader title="Technical Information" />
+          <CardText style={{ paddingTop: 0 }}>
             <Unit sm="1-1" md="1-2" lg="1-3">
               <ReadOnlyField
                 label={formatMessage(messages.fieldStartedOn)}
@@ -642,6 +710,12 @@ export class ResultDetail extends PureComponent {
               <ReadOnlyField
                 label={formatMessage(messages.fieldAssayName)}
                 value={result.get('assayName')}
+              />
+            </Unit>
+            <Unit sm="1-1" md="1-2" lg="1-3">
+              <ReadOnlyField
+                label={formatMessage(messages.fieldRawData)}
+                value={this.renderRawResult()}
               />
             </Unit>
           </CardText>
