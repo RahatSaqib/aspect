@@ -193,23 +193,6 @@ const enhance = compose(
         )
       }
     },
-
-    onHeadColumnClick: ({ history, location, sortCol, sortDir }) => ({
-      currentTarget: { dataset: { column: nextSortCol } },
-    }) => {
-      const searchParams = new URLSearchParams(location.search)
-
-      if (sortCol !== nextSortCol) {
-        searchParams.set('sortCol', nextSortCol)
-      } else {
-        searchParams.set('sortDir', sortDir !== 'asc' ? 'asc' : 'desc')
-      }
-
-      history.replace({
-        ...location,
-        search: searchParams.toString(),
-      })
-    },
   }),
   lifecycle({
     componentWillMount() {
@@ -357,7 +340,6 @@ export const DeviceApiKeyList = ({
   pageAt,
   pageSize,
   onExportClick,
-  onHeadColumnClick,
   selectableIds,
   dialogState: {
     generatorValues,
@@ -426,6 +408,8 @@ export const DeviceApiKeyList = ({
           className={cssClasses('DeviceApiKeyDataTable')}
         >
           <DeviceApiKeyDataTableHead
+            history={history}
+            location={location}
             sortColumnKey={sortCol}
             sortColumnDir={sortDir}
             columns={[
@@ -445,37 +429,37 @@ export const DeviceApiKeyList = ({
               {
                 key: 'createdOn',
                 label: intl.formatMessage(messages.createdOn),
-                onClick: onHeadColumnClick,
+                sortable: true,
               },
               {
                 key: 'token',
                 label: intl.formatMessage(messages.token),
-                onClick: onHeadColumnClick,
+                sortable: true,
               },
               {
                 key: 'partner',
                 label: intl.formatMessage(messages.partner),
-                onClick: onHeadColumnClick,
+                sortable: true,
               },
               {
                 key: 'country',
                 label: intl.formatMessage(messages.country),
-                onClick: onHeadColumnClick,
+                sortable: true,
               },
               {
                 key: 'site',
                 label: intl.formatMessage(messages.site),
-                onClick: onHeadColumnClick,
+                sortable: true,
               },
               {
                 key: 'device',
                 label: intl.formatMessage(messages.device),
-                onClick: onHeadColumnClick,
+                sortable: true,
               },
               {
                 key: 'revoked',
                 label: intl.formatMessage(messages.revoked),
-                onClick: onHeadColumnClick,
+                sortable: true,
               },
             ]}
           />

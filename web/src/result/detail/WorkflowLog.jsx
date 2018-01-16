@@ -58,7 +58,7 @@ const enhance = compose(
         table.sortCol === nextSortCol
           ? table.sortDir === 'asc' ? 'desc' : 'asc'
           : table.sortDir,
-        table.page,
+        0,
         table.pageSize
       ),
     onPageChange: ({ onFetch, table }) => nextPage =>

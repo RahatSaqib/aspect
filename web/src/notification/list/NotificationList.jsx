@@ -111,23 +111,6 @@ const enhance = compose(
       }
     },
 
-    onHeadColumnClick: ({ history, location, sortCol, sortDir }) => ({
-      currentTarget: { dataset: { column: nextSortCol } },
-    }) => {
-      const searchParams = new URLSearchParams(location.search)
-
-      if (sortCol !== nextSortCol) {
-        searchParams.set('sortCol', nextSortCol)
-      } else {
-        searchParams.set('sortDir', sortDir !== 'asc' ? 'asc' : 'desc')
-      }
-
-      history.replace({
-        ...location,
-        search: searchParams.toString(),
-      })
-    },
-
     onRowClick: ({ history }) => ({
       currentTarget: { dataset: { notificationId } },
     }) => history.push(`/browse/notification/${notificationId}`),
@@ -174,7 +157,6 @@ export const NotificationList = ({
   sortDir,
   pageAt,
   pageSize,
-  onHeadColumnClick,
   onRowClick,
 }) => (
   <div className={cssClasses('Container')}>
@@ -197,6 +179,8 @@ export const NotificationList = ({
           className={cssClasses('NotificationDataTable')}
         >
           <NotificationDataTableHead
+            history={history}
+            location={location}
             sortColumnKey={sortCol}
             sortColumnDir={sortDir}
             columns={[
@@ -205,27 +189,27 @@ export const NotificationList = ({
               },
               {
                 key: 'alertName',
-                onClick: onHeadColumnClick,
+                sortable: true,
               },
               {
                 key: 'lastTriggeredOn',
                 label: intl.formatMessage(messages.lastTriggered),
-                onClick: onHeadColumnClick,
+                sortable: true,
               },
               {
                 key: 'recipientsCount',
                 label: intl.formatMessage(messages.recipients),
-                onClick: onHeadColumnClick,
+                sortable: true,
               },
               {
                 key: 'triggersCount',
                 label: intl.formatMessage(messages.totalTriggers),
-                onClick: onHeadColumnClick,
+                sortable: true,
               },
               {
                 key: 'errorsCount',
                 label: intl.formatMessage(messages.errors),
-                onClick: onHeadColumnClick,
+                sortable: true,
               },
             ]}
           />

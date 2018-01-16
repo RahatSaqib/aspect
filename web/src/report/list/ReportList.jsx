@@ -118,23 +118,6 @@ const enhance = compose(
         fetchReports(filtersParams, sortCol, sortDir, pageAt, pageSize)
       }
     },
-
-    onHeadColumnClick: ({ history, location, sortCol, sortDir }) => ({
-      currentTarget: { dataset: { column: nextSortCol } },
-    }) => {
-      const searchParams = new URLSearchParams(location.search)
-
-      if (sortCol !== nextSortCol) {
-        searchParams.set('sortCol', nextSortCol)
-      } else {
-        searchParams.set('sortDir', sortDir !== 'asc' ? 'asc' : 'desc')
-      }
-
-      history.replace({
-        ...location,
-        search: searchParams.toString(),
-      })
-    },
   }),
   lifecycle({
     componentWillMount() {
@@ -178,7 +161,6 @@ export const ReportList = ({
   sortDir,
   pageAt,
   pageSize,
-  onHeadColumnClick,
 }) => (
   <div className={cssClasses('Container')}>
     <Helmet title={intl.formatMessage(messages.reportsTitle)} />
@@ -200,38 +182,40 @@ export const ReportList = ({
           className={cssClasses('ReportDataTable')}
         >
           <ReportDataTableHead
+            history={history}
+            location={location}
             sortColumnKey={sortCol}
             sortColumnDir={sortDir}
             columns={[
               {
                 key: 'deploymentName',
                 label: intl.formatMessage(messages.deploymentName),
-                onClick: onHeadColumnClick,
+                sortable: true,
               },
               {
                 key: 'moduleSerial',
                 label: intl.formatMessage(messages.moduleSerial),
-                onClick: onHeadColumnClick,
+                sortable: true,
               },
               {
                 key: 'dateOfError',
                 label: intl.formatMessage(messages.dateOfError),
-                onClick: onHeadColumnClick,
+                sortable: true,
               },
               {
                 key: 'error',
                 label: intl.formatMessage(messages.error),
-                onClick: onHeadColumnClick,
+                sortable: true,
               },
               {
                 key: 'totalTestsRun',
                 label: intl.formatMessage(messages.totalTestsRun),
-                onClick: onHeadColumnClick,
+                sortable: true,
               },
               {
                 key: 'totalErrors',
                 label: intl.formatMessage(messages.totalErrors),
-                onClick: onHeadColumnClick,
+                sortable: true,
               },
             ]}
           />

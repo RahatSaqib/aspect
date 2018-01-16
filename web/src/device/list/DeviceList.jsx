@@ -119,22 +119,6 @@ const enhance = compose(
         )
       }
     },
-    onHeadColumnClick: ({ history, location, sortCol, sortDir }) => ({
-      currentTarget: { dataset: { column: nextSortCol } },
-    }) => {
-      const searchParams = new URLSearchParams(location.search)
-
-      if (sortCol !== nextSortCol) {
-        searchParams.set('sortCol', nextSortCol)
-      } else {
-        searchParams.set('sortDir', sortDir !== 'asc' ? 'asc' : 'desc')
-      }
-
-      history.replace({
-        ...location,
-        search: searchParams.toString(),
-      })
-    },
     onRowClick: ({ history }) => ({
       currentTarget: { dataset: { deviceId } },
     }) => history.push(`/browse/device/${deviceId}`),
@@ -187,7 +171,6 @@ export const DeviceList = ({
   pageAt,
   pageSize,
   onExportClick,
-  onHeadColumnClick,
   onRowClick,
   onAlertClick,
 }) => (
@@ -227,33 +210,35 @@ export const DeviceList = ({
             ]}
           />
           <DeviceDataTableHead
+            history={history}
+            location={location}
             sortColumnKey={sortCol}
             sortColumnDir={sortDir}
             columns={[
               {
                 key: 'name',
                 label: intl.formatMessage(messages.deviceName),
-                onClick: onHeadColumnClick,
+                sortable: true,
               },
               {
                 key: 'state',
                 label: intl.formatMessage(messages.state),
-                onClick: onHeadColumnClick,
+                sortable: true,
               },
               {
                 key: 'status',
                 label: intl.formatMessage(messages.status),
-                onClick: onHeadColumnClick,
+                sortable: true,
               },
               {
                 key: 'availabilityRate',
                 label: intl.formatMessage(messages.availabilityRate),
-                onClick: onHeadColumnClick,
+                sortable: true,
               },
               {
                 key: 'errorRate',
                 label: intl.formatMessage(messages.errorRate),
-                onClick: onHeadColumnClick,
+                sortable: true,
               },
               {
                 key: 'issues',
@@ -261,22 +246,22 @@ export const DeviceList = ({
               },
               {
                 key: 'createdOn',
+                sortable: true,
                 label: intl.formatMessage(messages.reportingFor),
-                onClick: onHeadColumnClick,
               },
               {
                 key: 'lastSeen',
+                sortable: true,
                 label: intl.formatMessage(messages.lastSeen),
-                onClick: onHeadColumnClick,
               },
               {
                 key: 'lastMonth',
-                onClick: onHeadColumnClick,
+                sortable: true,
                 label: intl.formatMessage(messages.lastMonth),
               },
               {
                 key: 'thisMonth',
-                onClick: onHeadColumnClick,
+                sortable: true,
                 label: intl.formatMessage(messages.thisMonth),
               },
             ]}

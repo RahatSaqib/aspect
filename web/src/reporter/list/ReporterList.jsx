@@ -158,23 +158,6 @@ const enhance = compose(
       }
     },
 
-    onHeadColumnClick: ({ history, location, sortCol, sortDir }) => ({
-      currentTarget: { dataset: { column: nextSortCol } },
-    }) => {
-      const searchParams = new URLSearchParams(location.search)
-
-      if (sortCol !== nextSortCol) {
-        searchParams.set('sortCol', nextSortCol)
-      } else {
-        searchParams.set('sortDir', sortDir !== 'asc' ? 'asc' : 'desc')
-      }
-
-      history.replace({
-        ...location,
-        search: searchParams.toString(),
-      })
-    },
-
     onRowClick: ({ history }) => ({
       currentTarget: { dataset: { reporterId } },
     }) => history.push(`/browse/reporter/${reporterId}`),
@@ -221,7 +204,6 @@ export const ReporterList = ({
   sortDir,
   pageAt,
   pageSize,
-  onHeadColumnClick,
   onRowClick,
 }) => (
   <div className={cssClasses('Container')}>
@@ -244,38 +226,40 @@ export const ReporterList = ({
           className={cssClasses('ReporterDataTable')}
         >
           <ReporterDataTableHead
+            history={history}
+            location={location}
             sortColumnKey={sortCol}
             sortColumnDir={sortDir}
             columns={[
               {
                 key: 'siteName',
                 label: intl.formatMessage(messages.reporterSite),
-                onClick: onHeadColumnClick,
+                sortable: true,
               },
               {
                 key: 'shortname',
                 label: intl.formatMessage(messages.reporterShortName),
-                onClick: onHeadColumnClick,
+                sortable: true,
               },
               {
                 key: 'status',
                 label: intl.formatMessage(messages.status),
-                onClick: onHeadColumnClick,
+                sortable: true,
               },
               {
                 key: 'createdOn',
                 label: intl.formatMessage(messages.connectedSince),
-                onClick: onHeadColumnClick,
+                sortable: true,
               },
               {
                 key: 'lastSeen',
                 label: intl.formatMessage(messages.lastSeen),
-                onClick: onHeadColumnClick,
+                sortable: true,
               },
               {
                 key: 'deliveredLastMonth',
                 className: cssClasses('ReporterDataTableHead__Tests--left'),
-                onClick: onHeadColumnClick,
+                sortable: true,
                 label: (
                   <span>
                     {intl.formatMessage(messages.numberOfTestsLeft)}
@@ -287,7 +271,7 @@ export const ReporterList = ({
               {
                 key: 'deliveredThisMonth',
                 className: cssClasses('ReporterDataTableHead__Tests--right'),
-                onClick: onHeadColumnClick,
+                sortable: true,
                 label: (
                   <span>
                     {intl.formatMessage(messages.numberOfTestsRight)}
@@ -299,12 +283,12 @@ export const ReporterList = ({
               {
                 key: 'acknowledgedRatio',
                 label: intl.formatMessage(messages.acknowledgedRatio),
-                onClick: onHeadColumnClick,
+                sortable: true,
               },
               {
                 key: 'totalFlagged',
                 label: intl.formatMessage(messages.flagged),
-                onClick: onHeadColumnClick,
+                sortable: true,
               },
             ]}
           />

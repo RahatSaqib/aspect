@@ -107,23 +107,6 @@ const enhance = compose(
       }
     },
 
-    onHeadColumnClick: ({ history, location, sortCol, sortDir }) => ({
-      currentTarget: { dataset: { column: nextSortCol } },
-    }) => {
-      const searchParams = new URLSearchParams(location.search)
-
-      if (sortCol !== nextSortCol) {
-        searchParams.set('sortCol', nextSortCol)
-      } else {
-        searchParams.set('sortDir', sortDir !== 'asc' ? 'asc' : 'desc')
-      }
-
-      history.replace({
-        ...location,
-        search: searchParams.toString(),
-      })
-    },
-
     onRowClick: ({ history }) => ({
       currentTarget: { dataset: { personId } },
     }) => history.push(`/browse/person/${personId}`),
@@ -170,7 +153,6 @@ export const PersonList = ({
   sortDir,
   pageAt,
   pageSize,
-  onHeadColumnClick,
   onRowClick,
 }) => (
   <div className={cssClasses('Container')}>
@@ -193,28 +175,30 @@ export const PersonList = ({
           className={cssClasses('PersonDataTable')}
         >
           <PersonDataTableHead
+            history={history}
+            location={location}
             sortColumnKey={sortCol}
             sortColumnDir={sortDir}
             columns={[
               {
                 key: 'name',
                 label: intl.formatMessage(messages.personName),
-                onClick: onHeadColumnClick,
+                sortable: true,
               },
               {
                 key: 'level',
                 label: intl.formatMessage(messages.level),
-                onClick: onHeadColumnClick,
+                sortable: true,
               },
               {
                 key: 'state',
                 label: intl.formatMessage(messages.state),
-                onClick: onHeadColumnClick,
+                sortable: true,
               },
               {
                 key: 'lga',
                 label: intl.formatMessage(messages.lga),
-                onClick: onHeadColumnClick,
+                sortable: true,
               },
             ]}
           />
