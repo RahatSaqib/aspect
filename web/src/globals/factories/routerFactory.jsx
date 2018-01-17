@@ -14,6 +14,7 @@ import LoadableLogin from '../../auth/login/LoadableLogin'
 import ResetPassword from '../../auth/resetPassword/ResetPassword'
 import LoadableStatus from '../../dashboard/status/LoadableStatus'
 import TaskList from '../../task/list/TaskList'
+import TaskAggre from '../../task/aggre/TaskAggre'
 import TaskDetail from '../../task/detail/TaskDetail'
 import OperationalData from '../../dashboard/operational/OperationalData'
 import DeviceDemo from '../../demo/device/DeviceDemo'
@@ -72,6 +73,7 @@ const renderLoadableLogin = signedOutFactory(LoadableLogin)
 const renderResetPassword = signedOutFactory(ResetPassword)
 const renderLoadableStatus = loggedInFactory(LoadableStatus)
 const renderTaskList = loggedInFactory(TaskList)
+const renderTaskAggre = loggedInDetailFactory(TaskAggre)
 const renderTaskDetail = loggedInDetailFactory(TaskDetail)
 const renderOperationalData = loggedInFactory(OperationalData)
 const renderAccountDetails = loggedInFactory(AccountDetails)
@@ -123,6 +125,11 @@ export const routerFactory = () => props => (
         exact
         path="/task-list"
         render={renderRedirectToLoginOr(props) || renderTaskList}
+      />
+      <Route
+        exact
+        path="/task-list/aggre-list"
+        render={renderRedirectToLoginOr(props) || renderTaskAggre}
       />
       <Route
         path="/task-list/:taskId"

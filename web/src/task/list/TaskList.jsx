@@ -68,11 +68,11 @@ const FILTERS_CONFIG = {
   contactNameOrEmail: true,
 }
 
-const searchSanitizer = makeSearchParamsSanitizer({
+export const searchSanitizer = makeSearchParamsSanitizer({
   availableSortCol: ['topic', 'site', 'time'],
 })
-const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
-const filtersFromLocation = composeSanitizer(
+export const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
+export const filtersFromLocation = composeSanitizer(
   _.flowRight(
     filtersSanitizer,
     searchParams => searchParams.get('filters') || ''
@@ -347,7 +347,9 @@ export const TaskList = ({
                 messages={messages}
                 task={task}
                 onClick={onRowClick}
-                data-task-Id="detail"
+                data-task-Id={
+                  task.get('alertCount') > 0 ? 'aggre-list' : 'detail'
+                }
               />
             ))}
         </TaskDataTable>

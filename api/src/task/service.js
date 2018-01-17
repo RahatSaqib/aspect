@@ -98,7 +98,7 @@ function* listTasks(request) {
       message: 'Positive results',
       alertCount: 22,
       site: 'Kampala Lab',
-      time: subDays(now, 6),
+      time: subMinutes(subDays(now, 1), 30),
       notificationCount: 0,
     },
     {
