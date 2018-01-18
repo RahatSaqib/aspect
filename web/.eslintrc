@@ -38,7 +38,7 @@
     "jsx-a11y/anchor-is-valid": [
       "error",
       {
-        "specialLink": "to"
+        "specialLink": ["to"]
       }
     ],
     "linebreak-style": "off",
