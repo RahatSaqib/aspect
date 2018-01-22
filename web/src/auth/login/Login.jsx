@@ -16,6 +16,7 @@ import { Unit } from '../../components/pureGrids'
 import recomposeForm from '../../components/recomposeForm'
 import { loginStart } from '../AuthRedux'
 import Reason from './Reason'
+import { reasonTypes } from '../loggedOutReasons'
 
 const cssClasses = classnames.bind(require('./Login.css'))
 
@@ -44,7 +45,9 @@ const messages = defineMessages({
 
 const enhance = compose(
   connect(
-    null,
+    state => ({
+      loggedOutReason: state.user.loggedOutReason,
+    }),
     bindActionCreators.bind(null, {
       loginStart,
     })
@@ -57,12 +60,19 @@ const enhance = compose(
       },
     },
     {
-      onSubmit: (state, { history, location, loginStart }) => data => {
+      onSubmit: (
+        state,
+        { history, location, loginStart, loggedOutReason }
+      ) => data => {
         loginStart(data).then(() => {
           const referrer = _.get(location, 'state.referrer', {
             pathname: '/dashboard',
           })
-          history.push(referrer)
+          if (loggedOutReason === reasonTypes.idle) {
+            history.replace(referrer)
+          } else {
+            history.push(referrer)
+          }
         })
       },
 
