@@ -3,7 +3,7 @@ import classnames from 'classnames/bind'
 import React from 'react'
 import { TableRow, TableCell } from 'react-toolbox/lib/table'
 import FaCircle from 'react-icons/lib/fa/circle'
-import ColoredButton from '../../components/themedReactToolbox/ColoredButton'
+import ColoredButton from '../../../components/themedReactToolbox/ColoredButton'
 
 const cssClasses = classnames.bind(
   require('./NotificationDeliveryTableRow.css')
