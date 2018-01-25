@@ -49,6 +49,22 @@ export const messages = defineMessages({
     id: 'pages.DeviceList.thisMonth',
     defaultMessage: 'This Month',
   },
+  needsRepair: {
+    id: 'pages.DeviceList.needsRepair',
+    defaultMessage: 'Needs Repair',
+  },
+  warranty: {
+    id: 'pages.DeviceList.warranty',
+    defaultMessage: 'Warranty',
+  },
+  qualityControl: {
+    id: 'pages.DeviceList.qualityControl',
+    defaultMessage: 'Quality Control',
+  },
+  connectivity: {
+    id: 'pages.DeviceList.connectivity',
+    defaultMessage: 'Connectivity',
+  },
   availabilityOfDays: {
     id: 'pages.DeviceList.availabilityOfDays',
     defaultMessage: '{count} of {total} days',
