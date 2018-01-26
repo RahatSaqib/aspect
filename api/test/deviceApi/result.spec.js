@@ -2538,12 +2538,11 @@ describe('Device Result API routes', () => {
         assert.deepEqual(lastResult, { qcCheck: 1, workflow: 'Deliverable' })
 
         yield server
-          .get(`${devicePath}?checkpoint=rrt1723_0&offset=1`)
+          .get(`${devicePath}?checkpoint=rrt1723_0&offset=2`)
           .set('Authorization', device1723Auth)
           .then(res => {
             assert.equal(res.status, 200)
             assert.typeOf(res.body.checkpoint, 'undefined')
-
             const lastResult = res.body.result
             assert.typeOf(lastResult, 'Object')
             assert.property(lastResult.sample.originSite, 'id')
@@ -2576,7 +2575,7 @@ describe('Device Result API routes', () => {
         yield waitAsyncComplete()
 
         yield server
-          .get(`${devicePath}?checkpoint=rrt1723_0&offset=6`)
+          .get(`${devicePath}?checkpoint=rrt1723_0&offset=7`)
           .set('Authorization', device1723Auth)
           .then(res => {
             assert.equal(res.status, 404)
@@ -2880,7 +2879,7 @@ describe('Device Result API routes', () => {
           })
 
         yield server
-          .get(`${devicePath}?checkpoint=rrt1723_0&offset=1`)
+          .get(`${devicePath}?checkpoint=rrt1723_0&offset=2`)
           .set('Authorization', device1723Auth)
           .then(res => {
             assert.equal(res.status, 200)
