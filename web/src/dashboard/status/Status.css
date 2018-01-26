@@ -132,11 +132,13 @@
   text-transform: capitalize;
 }
 
-.SummaryItemsBlocks--horizontal-scrollable {
-  height: 400px;
-  overflow-x: scroll;
-  display: flex;
-  flex-flow: column wrap;
+@media screen and (min-width: 64em) {
+  .SummaryItemsBlocks--horizontal-scrollable {
+    height: 400px;
+    overflow-x: scroll;
+    display: flex;
+    flex-flow: column wrap;
+  }
 }
 
 .ButtonsBlock {
