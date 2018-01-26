@@ -57,7 +57,7 @@ const DeviceTableRow = ({ intl, device, onAlertClick, ...restProps }) => (
             shakespeare={it.get('type') === 'warranty'}
             mountain={it.get('type') === 'quality-control'}
             brink={it.get('type') === 'connectivity'}
-            label={_.camelCase(it.get('type'))}
+            label={intl.formatMessage(messages[_.camelCase(it.get('type'))])}
             onClick={onAlertClick}
             data-pathname="/browse/notification/detail"
           />
