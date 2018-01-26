@@ -16,7 +16,8 @@ const {
 } = require('./service')
 
 const errorPayload = Joi.object()
-  .allow(null).keys({
+  .allow(null)
+  .keys({
     code: Joi.string()
       .allow('', null)
       .description('Error code'),
@@ -167,13 +168,13 @@ const resultPayload = {
             'The workflow status. Default Error if error specified, otherwise OK'
           ),
       }),
-    operator: Joi.string()
-      .allow('', null)
-      .description('The person who updated the workflow'),
-    changedOn: Joi.date()
-      .iso()
-      .description('Date and optional time the workflow changed.'),
-  }),
+      operator: Joi.string()
+        .allow('', null)
+        .description('The person who updated the workflow'),
+      changedOn: Joi.date()
+        .iso()
+        .description('Date and optional time the workflow changed.'),
+    }),
   sample: Joi.object().keys({
     id: Joi.string()
       .allow('', null)
@@ -189,7 +190,8 @@ const resultPayload = {
       .allow('', null)
       .description('Sample run number.'),
     type: Joi.object()
-      .allow(null).keys({
+      .allow(null)
+      .keys({
         id: Joi.string()
           .required()
           .description('ID of the Sample Type'),

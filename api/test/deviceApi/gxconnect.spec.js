@@ -15,7 +15,7 @@ const { getLastResultId } = require('./utils')
 const { run } = require('../../src/db')
 
 const server = supertest.agent('http://localhost:8080')
-const assert = chai.assert
+const { assert } = chai
 
 describe('Device API routes for GxConnect Devices', () => {
   const macAddress = 'MAC00000000FAKE'
@@ -33,7 +33,7 @@ describe('Device API routes for GxConnect Devices', () => {
         adminPassword,
       })
 
-      const runTest = context.runTest
+      const { runTest } = context
 
       it('should respond with UNAUTHORIZED', () =>
         runTest(function*() {
@@ -56,7 +56,7 @@ describe('Device API routes for GxConnect Devices', () => {
         adminPassword,
       })
 
-      const runTest = context.runTest
+      const { runTest } = context
 
       it('should respond with UNAUTHORIZED', () =>
         runTest(function*() {
@@ -82,7 +82,7 @@ describe('Device API routes for GxConnect Devices', () => {
           })
 
           before(context.beforeRequestNewApiKey)
-          const runTest = context.runTest
+          const { runTest } = context
           after(context.afterCleanUp)
 
           it('should respond with NOT_FOUND', () =>
@@ -109,7 +109,7 @@ describe('Device API routes for GxConnect Devices', () => {
           })
 
           before(context.beforeRegisterAndSetDevice)
-          const runTest = context.runTest
+          const { runTest } = context
           after(context.afterCleanUp)
 
           it('should respond with OK', () =>
@@ -346,7 +346,7 @@ describe('Device API routes for GxConnect Devices', () => {
         })
 
         before(context.beforeRegisterAndSetDevice)
-        const runTest = context.runTest
+        const { runTest } = context
         after(context.afterCleanUp)
 
         it('should update the MAC address of the existing device', () =>
@@ -518,7 +518,7 @@ describe('Device API routes for GxConnect Devices', () => {
         })
 
         before(context.beforeRegisterAndSetDevice)
-        const runTest = context.runTest
+        const { runTest } = context
         after(context.afterCleanUp)
 
         it('should update the serial of the existing device', () =>
@@ -651,7 +651,7 @@ describe('Device API routes for GxConnect Devices', () => {
       instrumentSerialNumbers,
     })
     before(context.beforeRegisterAndSetDevice)
-    const runTest = context.runTest
+    const { runTest } = context
     after(context.afterCleanUp)
 
     it('should reject a result without a start or end date date', () =>
@@ -1722,7 +1722,9 @@ describe('Device API routes for GxConnect Devices', () => {
       const assayName = 'New Assay Type'
       after(() =>
         run(function*(knex) {
-          return yield knex('Assay').where({ externalId: assayName }).delete()
+          return yield knex('Assay')
+            .where({ externalId: assayName })
+            .delete()
         })
       )
 
@@ -2027,7 +2029,7 @@ describe('Device API routes for GxConnect Devices', () => {
       instrumentSerialNumbers,
     })
     before(context.beforeRegisterAndSetDevice)
-    const runTest = context.runTest
+    const { runTest } = context
     after(context.afterCleanUp)
 
     it('should create inventory items that do not exist', () =>

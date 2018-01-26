@@ -14,7 +14,7 @@ const chai = require('chai')
 const { getSiteFromDeviceId, getDeviceFromApiKey } = require('./utils')
 const { run } = require('../../src/db')
 
-const assert = chai.assert
+const { assert } = chai
 
 function* deleteDeviceSiteDataAndRefreshTokens(knex, apiKeys, clientId) {
   const tokens = apiKeys.map(key => key.token)
@@ -32,7 +32,9 @@ function* deleteDeviceSiteDataAndRefreshTokens(knex, apiKeys, clientId) {
     .whereIn('dak.token', tokens)
     .pluck('dak.deviceId')
     .union(function() {
-      this.from('Device').whereIn('siteId', siteIds).pluck('id as deviceId')
+      this.from('Device')
+        .whereIn('siteId', siteIds)
+        .pluck('id as deviceId')
     })
 
   const inventoryItemIds = yield knex('InventoryItem as ii')
@@ -44,7 +46,9 @@ function* deleteDeviceSiteDataAndRefreshTokens(knex, apiKeys, clientId) {
     .whereIn('inventoryItemId', inventoryItemIds)
     .delete()
 
-  yield knex('InventoryItem').whereIn('id', inventoryItemIds).delete()
+  yield knex('InventoryItem')
+    .whereIn('id', inventoryItemIds)
+    .delete()
 
   yield knex('DeviceApiKey')
     .whereIn('token', tokens)
@@ -66,37 +70,63 @@ function* deleteDeviceSiteDataAndRefreshTokens(knex, apiKeys, clientId) {
     .whereIn('deviceId', deviceIds)
     .map(op => op.id)
 
-  yield knex('DeviceStatusLog').whereIn('deviceId', deviceIds).delete()
+  yield knex('DeviceStatusLog')
+    .whereIn('deviceId', deviceIds)
+    .delete()
   yield knex('DeviceLog')
     .whereIn('deviceId', deviceIds)
     .orWhereIn('resultId', resultIds)
     .delete()
 
-  yield knex('DeviceSiteHistory').whereIn('deviceId', deviceIds).delete()
-  yield knex('FactResultCountDevice').whereIn('deviceId', deviceIds).delete()
-  yield knex('FactDeviceFlag').whereIn('deviceId', deviceIds).delete()
-  yield knex('DeviceSiteHistory').whereIn('deviceId', deviceIds).delete()
+  yield knex('DeviceSiteHistory')
+    .whereIn('deviceId', deviceIds)
+    .delete()
+  yield knex('FactResultCountDevice')
+    .whereIn('deviceId', deviceIds)
+    .delete()
+  yield knex('FactDeviceFlag')
+    .whereIn('deviceId', deviceIds)
+    .delete()
+  yield knex('DeviceSiteHistory')
+    .whereIn('deviceId', deviceIds)
+    .delete()
 
-  yield knex('InventoryLog').whereIn('resultId', resultIds).delete()
-  yield knex('ResultQualityControlLog').whereIn('resultId', resultIds).delete()
-  yield knex('ResultWorkflowLog').whereIn('resultId', resultIds).delete()
+  yield knex('InventoryLog')
+    .whereIn('resultId', resultIds)
+    .delete()
+  yield knex('ResultQualityControlLog')
+    .whereIn('resultId', resultIds)
+    .delete()
+  yield knex('ResultWorkflowLog')
+    .whereIn('resultId', resultIds)
+    .delete()
   yield knex('ResultGeneratedResult')
     .whereIn('sourceResultId', resultIds)
     .orWhereIn('generatedResultId', resultIds)
     .delete()
-  yield knex('Result').whereIn('id', resultIds).delete()
+  yield knex('Result')
+    .whereIn('id', resultIds)
+    .delete()
 
-  yield knex('DeviceOperation').whereIn('id', opIds).delete()
+  yield knex('DeviceOperation')
+    .whereIn('id', opIds)
+    .delete()
 
   yield knex('Device')
     .whereIn('siteId', siteIds)
     .orWhereIn('deviceId', deviceIds)
     .delete()
-  yield knex('Sample').whereIn('originSiteId', siteIds).delete()
+  yield knex('Sample')
+    .whereIn('originSiteId', siteIds)
+    .delete()
 
-  yield knex('Site').whereIn('id', siteIds).delete()
+  yield knex('Site')
+    .whereIn('id', siteIds)
+    .delete()
 
-  yield knex('RefreshToken').where({ clientId }).delete()
+  yield knex('RefreshToken')
+    .where({ clientId })
+    .delete()
 }
 
 function* getLastResult(knex, deviceId) {

@@ -42,7 +42,6 @@ describe('Result routes', () => {
             assert.property(res.body.data[0], 'patientId')
             assert.property(res.body.data[0], 'assayName')
             assert.property(res.body, 'total')
-
             ;[
               {
                 id: resultId,

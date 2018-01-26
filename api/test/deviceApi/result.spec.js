@@ -1659,7 +1659,11 @@ describe('Device Result API routes', () => {
               startedOn: now,
               data: { a: 'b' },
               assay: { id: assayExternalId },
-              sample: { id: Math.random().toString(36).slice(2) },
+              sample: {
+                id: Math.random()
+                  .toString(36)
+                  .slice(2),
+              },
               instrument: { serial: '02384702' },
               consumable: {
                 lot: resultDetails.lotNumber,
@@ -1714,7 +1718,11 @@ describe('Device Result API routes', () => {
               startedOn: now,
               data: { a: 'b' },
               assay: { id: assayExternalId },
-              sample: { id: Math.random().toString(36).slice(2) },
+              sample: {
+                id: Math.random()
+                  .toString(36)
+                  .slice(2),
+              },
               instrument: { serial: '02384702' },
               consumable: {
                 lot: resultDetails.lotNumber,
@@ -1771,7 +1779,11 @@ describe('Device Result API routes', () => {
               startedOn: now,
               data: { a: 'b' },
               assay: { id: assayExternalId },
-              sample: { id: Math.random().toString(36).slice(2) },
+              sample: {
+                id: Math.random()
+                  .toString(36)
+                  .slice(2),
+              },
               instrument: { serial: '02384702' },
               consumable: {
                 lot: randomLotNumber,

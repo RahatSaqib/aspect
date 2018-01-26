@@ -890,7 +890,7 @@ async function changeInventoryQuantity({
   return inventoryItemId
 }
 
-function* logInventoryChange({
+async function logInventoryChange({
   knex,
   inventoryItemId,
   consumableId,
@@ -905,7 +905,7 @@ function* logInventoryChange({
   adjustedTo,
   createdOn,
 }) {
-  yield knex('InventoryLog').insert({
+  await knex('InventoryLog').insert({
     inventoryItemId,
     consumableId,
     siteId,
@@ -921,7 +921,7 @@ function* logInventoryChange({
   })
 }
 
-function* upsertInventoryItem({
+async function upsertInventoryItem({
   knex,
   inventoryItem,
   consumableId,
@@ -936,7 +936,7 @@ function* upsertInventoryItem({
 }) {
   let inventoryItemId = -1
   if (_.isEmpty(inventoryItem)) {
-    ;[inventoryItemId] = yield* insertInventoryItem(knex, {
+    ;[inventoryItemId] = await insertInventoryItem(knex, {
       consumableId,
       inTransitFromSiteId: inTransitFromSiteId || null,
       siteId,
@@ -950,7 +950,7 @@ function* upsertInventoryItem({
     })
   } else {
     inventoryItemId = inventoryItem.id
-    yield* updateInventoryItem(knex, inventoryItemId, {
+    await updateInventoryItem(knex, inventoryItemId, {
       expiresOn,
       lotNumber,
       siteId,
@@ -964,7 +964,7 @@ function* upsertInventoryItem({
   return inventoryItemId
 }
 
-function* updateInventoryItem(knex, inventoryItemId, inventoryItemValues) {
+async function updateInventoryItem(knex, inventoryItemId, inventoryItemValues) {
   const updateValues = {}
   if (typeof inventoryItemValues.expiresOn !== 'undefined') {
     updateValues.expiresOn = inventoryItemValues.expiresOn
@@ -986,10 +986,12 @@ function* updateInventoryItem(knex, inventoryItemId, inventoryItemValues) {
   if (typeof inventoryItemValues.updatedBy !== 'undefined') {
     updateValues.updatedBy = inventoryItemValues.updatedBy
   }
-  yield knex('InventoryItem').where('id', inventoryItemId).update(updateValues)
+  await knex('InventoryItem')
+    .where('id', inventoryItemId)
+    .update(updateValues)
 }
 
-function* insertInventoryItem(knex, inventoryItemValues) {
+async function insertInventoryItem(knex, inventoryItemValues) {
   const insertValues = {}
   if (typeof inventoryItemValues.consumableId !== 'undefined') {
     insertValues.consumableId = inventoryItemValues.consumableId
@@ -1023,7 +1025,7 @@ function* insertInventoryItem(knex, inventoryItemValues) {
   if (typeof inventoryItemValues.createdBy !== 'undefined') {
     insertValues.createdBy = inventoryItemValues.createdBy
   }
-  return yield knex('InventoryItem').insert(insertValues)
+  return await knex('InventoryItem').insert(insertValues)
 }
 
 module.exports = {

@@ -504,7 +504,9 @@ async function listDevicesForSelectList(request) {
 }
 
 function* getDevice(deviceId) {
-  return yield knex('Device as d').where('d.id', deviceId).first()
+  return yield knex('Device as d')
+    .where('d.id', deviceId)
+    .first()
 }
 
 module.exports = {

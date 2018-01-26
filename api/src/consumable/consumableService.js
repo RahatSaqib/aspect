@@ -72,7 +72,9 @@ async function listConsumableReasons(request) {
 }
 
 function* findConsumables(knownConsumableDetails) {
-  return yield knex('Consumable').where(knownConsumableDetails).select()
+  return yield knex('Consumable')
+    .where(knownConsumableDetails)
+    .select()
 }
 
 function* findConsumableReason(consumableReasonName, isDecrease) {
