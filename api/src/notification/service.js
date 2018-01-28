@@ -1,7 +1,7 @@
 const _ = require('lodash')
 const subMinutes = require('date-fns/sub_minutes')
 
-function* listNotifications(request) {
+async function listNotifications(request) {
   const { query } = request
   const now = Date.now()
 

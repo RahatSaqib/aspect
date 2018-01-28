@@ -1,4 +1,3 @@
-const Promise = require('bluebird')
 const _ = require('lodash')
 const subDays = require('date-fns/sub_days')
 const Boom = require('boom')
@@ -57,9 +56,9 @@ const SELECT_SHOW_FIELDS = [
 // ---------------------------------
 // basic method for reading dataset of devices
 // ---------------------------------
-function* getListDevices(query, auth) {
+async function getListDevices(query, auth) {
   // get data constraints
-  const dataConstraints = yield getConstraints(auth.credentials)
+  const dataConstraints = await getConstraints(auth.credentials)
 
   const deviceQuery = knex('Device as d')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
@@ -191,7 +190,7 @@ function* getListDevices(query, auth) {
     ])
 
   // return result when both queries are finished
-  const [{ count: total }, data] = yield Promise.all([getCount, getItems])
+  const [{ count: total }, data] = await Promise.all([getCount, getItems])
 
   data.forEach(it => {
     // FIXME: Use actual data instead
@@ -227,20 +226,20 @@ function* getListDevices(query, auth) {
 // ---------------------------------
 // reading dataset for Devices grid
 // ---------------------------------
-function* listDevices(request) {
+async function listDevices(request) {
   const { query, auth } = request
 
   // get dataset for current query params (sorting, filtering and pagination) and auth constraints
-  const result = yield* getListDevices(query, auth)
+  const result = await getListDevices(query, auth)
 
   return result
 }
 
-function* getDeviceByDeviceId(request, fields = SELECT_SHOW_FIELDS) {
+async function getDeviceByDeviceId(request, fields = SELECT_SHOW_FIELDS) {
   const { auth, params } = request
-  const dataConstraints = yield getConstraints(auth.credentials)
+  const dataConstraints = await getConstraints(auth.credentials)
 
-  const devices = yield knex('Device as d')
+  const devices = await knex('Device as d')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .innerJoin('DeviceStatus as ds', 'd.deviceStatusId', 'ds.id')
     .innerJoin('DeviceTypeCategory as dc', 'dt.deviceTypeCategoryId', 'dc.id')
@@ -253,10 +252,10 @@ function* getDeviceByDeviceId(request, fields = SELECT_SHOW_FIELDS) {
     return Boom.notFound()
   }
   const device = devices[0]
-  const deviceType = yield knex('DeviceType as dt')
+  const deviceType = await knex('DeviceType as dt')
     .where('dt.id', device.deviceTypeId)
     .first()
-  const deviceLog = yield knex('DeviceStatusLog as dl')
+  const deviceLog = await knex('DeviceStatusLog as dl')
     .leftOuterJoin('DeviceStatus as ds', 'dl.deviceStatusId', 'ds.id')
     .leftOuterJoin('User as u', 'dl.createdBy', 'u.id')
     .where('dl.deviceId', device.id)
@@ -292,11 +291,11 @@ function* getDeviceByDeviceId(request, fields = SELECT_SHOW_FIELDS) {
     })
   }
 
-  const [{ count: totalTests }] = yield totalTestQuery
+  const [{ count: totalTests }] = await totalTestQuery
 
   device.totalTests = totalTests
 
-  const contacts = yield knex('Person as p')
+  const contacts = await knex('Person as p')
     .select('p.id', 'p.name')
     .limit(50)
 
@@ -308,12 +307,12 @@ function* getDeviceByDeviceId(request, fields = SELECT_SHOW_FIELDS) {
   return device
 }
 
-function* showDevice(request) {
-  const device = yield* getDeviceByDeviceId(request)
+async function showDevice(request) {
+  const device = await getDeviceByDeviceId(request)
 
   const {
     data: { device: operations /* FIXME: actual impl */ },
-  } = yield* operationalDashboard(request)
+  } = await operationalDashboard(request)
 
   _.forEach(operations, it => {
     it.message = undefined
@@ -332,12 +331,12 @@ function* showDevice(request) {
   return result
 }
 
-function* updateDevice(request) {
+async function updateDevice(request) {
   const { params, payload } = request
 
   // TODO: check permission
 
-  const device = yield* getDeviceByDeviceId(request)
+  const device = await getDeviceByDeviceId(request)
 
   const configurationData = _.assign(
     {},
@@ -351,13 +350,13 @@ function* updateDevice(request) {
     _.has(payload, 'statusToken') &&
     device.statusToken !== payload.statusToken
   ) {
-    ;({ id: deviceStatusId } = yield knex('DeviceStatus as ds')
+    ;({ id: deviceStatusId } = await knex('DeviceStatus as ds')
       .where('ds.token', payload.statusToken)
       .first('ds.id'))
   }
 
   // update item
-  const updatedCount = yield knex('Device')
+  const updatedCount = await knex('Device')
     .where('id', params.deviceId)
     .update({
       siteId: device.siteId || payload.siteId,
@@ -369,13 +368,14 @@ function* updateDevice(request) {
     return Boom.badRequest()
   }
 
-  return yield* showDevice(request)
+  const result = await showDevice(request)
+  return result
 }
 
 // ---------------------------------
 // exporting Devices data
 // ---------------------------------
-function* exportDevices(request) {
+async function exportDevices(request) {
   const { query, auth } = request
 
   // ---------------
@@ -385,7 +385,7 @@ function* exportDevices(request) {
   query.size = 1e5
 
   // get whole dataset - based on current query params (sorting, filtering) and auth constraints
-  const devices = yield* getListDevices(query, auth)
+  const devices = await getListDevices(query, auth)
 
   let result = null
 
@@ -420,7 +420,7 @@ function* exportDevices(request) {
       }
     }
 
-    result = yield* generateExcelFile({
+    result = await generateExcelFile({
       templateFileName: 'Devices.xlsx',
       outputFileName: 'devices.xlsx',
       populateData,
@@ -449,7 +449,7 @@ function* exportDevices(request) {
       'hasConnectivity',
       'totalTests',
     ]
-    result = yield* generateCsvFile(
+    result = await generateCsvFile(
       'devices.csv',
       items,
       columnNames,
@@ -460,7 +460,7 @@ function* exportDevices(request) {
   return result
 }
 
-function* listStatusTypes() {
+async function listStatusTypes() {
   const resultQuery = knex('DeviceStatus as ds')
 
   // get total count for paging
@@ -476,20 +476,20 @@ function* listStatusTypes() {
     .select('id', 'name')
 
   // return result when both queries are finished
-  const [{ count: total }, data] = yield Promise.all([getCount, getItems])
+  const [{ count: total }, data] = await Promise.all([getCount, getItems])
 
   const result = { ok: true, total, length: data.length, data }
 
   return result
 }
 
-function* listDevicesForSelectList(request) {
+async function listDevicesForSelectList(request) {
   const { query, auth } = request
 
   // get data constraints
-  const dataConstraints = yield getConstraints(auth.credentials)
+  const dataConstraints = await getConstraints(auth.credentials)
 
-  const devices = yield knex('Device as d')
+  const devices = await knex('Device as d')
     .leftOuterJoin('Geography as g', 'd.geographyId', 'g.id')
     .modify(addConstraints, dataConstraints, { device: 'd' })
     .modify(filterParams, query, {

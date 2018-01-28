@@ -22,11 +22,11 @@ describe('Device API status tests', () => {
 
   describe('unapproved', () => {
     it('should not download data for unapproved device', () =>
-      runTest(function*(knex) {
+      runTest(async knex => {
         const { deviceAuth, deviceId } = context
         assert.isOk(deviceId)
 
-        yield server
+        await server
           .get(devicePath)
           .set('Authorization', deviceAuth)
           .then(res => {
@@ -38,8 +38,8 @@ describe('Device API status tests', () => {
             assert.equal(res.body.status.id, 'assigned')
           })
 
-        const configPre = yield* getDeviceConfigurationData(knex, deviceId)
-        yield server
+        const configPre = await getDeviceConfigurationData(knex, deviceId)
+        await server
           .post(devicePath)
           .set('Authorization', deviceAuth)
           .send({
@@ -49,38 +49,38 @@ describe('Device API status tests', () => {
           .then(res => {
             assert.equal(res.status, 200)
           })
-        const configPost1 = yield* getDeviceConfigurationData(knex, deviceId)
+        const configPost1 = await getDeviceConfigurationData(knex, deviceId)
         assert.deepEqual(
           Object.assign({ shouldChangeThisThing: 'b' }, configPre),
           configPost1
         )
-        const opPost1 = yield* getLastDeviceOperationData(knex, deviceId)
+        const opPost1 = await getLastDeviceOperationData(knex, deviceId)
         assert.deepEqual({ shouldChangeThisOtherThing: 'c' }, opPost1)
 
-        yield server
+        await server
           .post(deviceConfigurationPath)
           .set('Authorization', deviceAuth)
           .send({ data: { shouldChangeThisThing: 'c' } })
           .then(res => {
             assert.equal(res.status, 200)
           })
-        const configPost2 = yield* getDeviceConfigurationData(knex, deviceId)
+        const configPost2 = await getDeviceConfigurationData(knex, deviceId)
         assert.deepEqual(
           Object.assign({ shouldChangeThisThing: 'c' }, configPre),
           configPost2
         )
 
-        yield server
+        await server
           .post(deviceOperationPath)
           .set('Authorization', deviceAuth)
           .send({ data: { shouldChangeThisOtherThing: 'e' } })
           .then(res => {
             assert.equal(res.status, 200)
           })
-        const opPost2 = yield* getLastDeviceOperationData(knex, deviceId)
+        const opPost2 = await getLastDeviceOperationData(knex, deviceId)
         assert.deepEqual({ shouldChangeThisOtherThing: 'e' }, opPost2)
 
-        yield server
+        await server
           .get(devicePath)
           .set('Authorization', deviceAuth)
           .then(res => {

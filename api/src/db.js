@@ -1,4 +1,3 @@
-const Promise = require('bluebird')
 const _ = require('lodash')
 const { getSortPageParams, getSortParams, getPageParams } = require('./routes')
 
@@ -85,21 +84,18 @@ function filterDateRangeParams(queryBuilder, params, dateColumnName) {
 }
 
 // helper function for run, transact and migration
-const runBlock = Promise.coroutine(function*(block, blockArg) {
-  try {
-    return yield* block(blockArg)
-  } catch (err) {
+const makeBlockRunner = block => blockArg =>
+  block(blockArg).catch(err => {
     console.error(err) // eslint-disable-line no-console
     throw err
-  }
-})
+  })
 
 // Returns a promise that runs the provided generator function
 // within a knex transaction
 //
 // See also run
 function transact(block) {
-  return load().transaction(trx => runBlock(block, trx))
+  return load().transaction(makeBlockRunner(block))
 }
 
 // Returns a promise that runs the provided generator function
@@ -107,7 +103,7 @@ function transact(block) {
 //
 // See also transact
 function run(block) {
-  return runBlock(block, load())
+  return makeBlockRunner(block)(load())
 }
 
 // Helper for migrations. Loads db with knex set by migration
@@ -116,13 +112,8 @@ function run(block) {
 // set module.exports = migrate(up, down)
 function migration(up, down) {
   return {
-    up(knex) {
-      return runBlock(up, knex)
-    },
-
-    down(knex) {
-      return runBlock(down, knex)
-    },
+    up: makeBlockRunner(up),
+    down: makeBlockRunner(down),
   }
 }
 
@@ -130,7 +121,7 @@ function migration(up, down) {
 function seed(seed) {
   return {
     seed(knex) {
-      return knex.transaction(trx => runBlock(seed, trx))
+      return knex.transaction(makeBlockRunner(seed))
     },
   }
 }

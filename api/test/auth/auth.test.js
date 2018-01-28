@@ -47,18 +47,18 @@ describe('auth endpoints', () => {
     jwt = require('jsonwebtoken')
     sinon.spy(jwt, 'sign')
     templateProcessorFake = {
-      *process() {
-        return yield Promise.resolve(generatedEmail)
+      async process() {
+        return await Promise.resolve(generatedEmail) // eslint-disable-line
       },
-      *getInlineImageAttachments() {
-        return yield Promise.resolve(inlineImageAttachments)
+      async getInlineImageAttachments() {
+        return await Promise.resolve(inlineImageAttachments) // eslint-disable-line
       },
     }
     sinon.spy(templateProcessorFake, 'process')
     sinon.spy(templateProcessorFake, 'getInlineImageAttachments')
     emailUtilFake = {
-      *sendEmail() {
-        return yield Promise.resolve()
+      async sendEmail() {
+        return await Promise.resolve() // eslint-disable-line
       },
     }
     sinon.spy(emailUtilFake, 'sendEmail')

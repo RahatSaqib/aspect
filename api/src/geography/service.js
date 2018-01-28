@@ -2,8 +2,8 @@ const _ = require('lodash')
 const { query, knex } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 
-function* buildGeographySelectList() {
-  const countriesStatesAndLGAs = yield query(
+async function buildGeographySelectList() {
+  const countriesStatesAndLGAs = await query(
     'Get countries, states and LGAs for select lists'
   )
     .from('Country as c')
@@ -59,15 +59,15 @@ function* buildGeographySelectList() {
   return result
 }
 
-function* countrySelectList(request) {
+async function countrySelectList(request) {
   const { params, auth } = request
   const { countryId, stateId } = params
-  const dataConstraints = auth ? yield getConstraints(auth.credentials) : null
+  const dataConstraints = auth ? await getConstraints(auth.credentials) : null
   const addConstraintsLocal = auth ? addConstraints : _.identity
 
   let countries = []
   if (!countryId) {
-    countries = yield query('Get countries for select list')
+    countries = await query('Get countries for select list')
       .from('Country as c')
       .leftJoin('Geography as g', 'g.countryId', 'c.id')
       .modify(addConstraintsLocal, dataConstraints, { geography: 'g' })
@@ -76,7 +76,7 @@ function* countrySelectList(request) {
       .orderBy(['c.name'], 'asc')
       .select('c.id', 'c.name')
   } else if (!stateId) {
-    const countriesAndStates = yield query(
+    const countriesAndStates = await query(
       'Get countries and country states for select lists'
     )
       .from('Country as c')
@@ -112,7 +112,7 @@ function* countrySelectList(request) {
 
     selectedCountry.states = _.sortBy(selectedCountryStates, 'name')
   } else {
-    const countriesStatesAndLgas = yield query(
+    const countriesStatesAndLgas = await query(
       'Get countries, country states and state LGAs for select lists'
     )
       .from('Country as c')
@@ -173,19 +173,19 @@ function* countrySelectList(request) {
   return { ok: true, data: countries }
 }
 
-function* stateSelectList(request) {
+async function stateSelectList(request) {
   const { countryId, stateId } = request.params
 
   let states = []
   if (!stateId) {
-    states = yield query('Get states for select list')
+    states = await query('Get states for select list')
       .from('State as s')
       .innerJoin('Geography as g', 'g.stateId', 's.id')
       .where('g.countryId', countryId)
       .orderBy(['s.name'], 'asc')
       .distinct('s.id', 's.name')
   } else {
-    const statesAndLgas = yield query(
+    const statesAndLgas = await query(
       'Get states and state LGAs for select lists'
     )
       .from('State as s')
@@ -220,9 +220,9 @@ function* stateSelectList(request) {
   return { ok: true, data: states }
 }
 
-function* lgaSelectList(request) {
+async function lgaSelectList(request) {
   const { params } = request
-  const lgas = yield query('Get LGAs for select list')
+  const lgas = await query('Get LGAs for select list')
     .from('Lga as l')
     .innerJoin('Geography as g', 'g.lgaId', 'l.id')
     .where('g.stateId', params.stateId)
@@ -232,13 +232,13 @@ function* lgaSelectList(request) {
   return { ok: true, data: lgas }
 }
 
-function* transformGeographyFromUpdates(updates) {
+async function transformGeographyFromUpdates(updates) {
   const geoFieldNames = ['countryId', 'stateId', 'lgaId']
   const geoFields = _.pick(updates, geoFieldNames)
   const transformedFields = _.omit(updates, geoFieldNames)
 
   if (!_.isEmpty(geoFields)) {
-    const geography = yield knex('Geography')
+    const geography = await knex('Geography')
       .where(geoFields)
       .first('id')
     transformedFields.geographyId = geography ? geography.id : null

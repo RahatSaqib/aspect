@@ -2,8 +2,8 @@ const { knex } = require('../db')
 
 const SELECT_LIST_FIELDS = ['dt.id', 'dt.name']
 
-function* listDeviceTypesForSelectList() {
-  const data = yield knex('DeviceType as dt')
+async function listDeviceTypesForSelectList() {
+  const data = await knex('DeviceType as dt')
     .orderBy(['dt.name'], 'asc')
     .select(SELECT_LIST_FIELDS)
 

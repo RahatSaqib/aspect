@@ -18,7 +18,7 @@ describe('deviceApiKey endpoints', () => {
 
       beforeEach(() => {
         endpoint = setupRoute('GET', '/deviceApiKey', {
-          *listDeviceApiKeys() {
+          async listDeviceApiKeys() {
             return expectedResponse
           },
         })
@@ -40,7 +40,7 @@ describe('deviceApiKey endpoints', () => {
 
       beforeEach(() => {
         endpoint = setupRoute('GET', '/deviceApiKey/export', {
-          *exportDeviceApiKeys() {
+          async exportDeviceApiKeys() {
             return expectedResponse
           },
         })
@@ -64,7 +64,7 @@ describe('deviceApiKey endpoints', () => {
 
       beforeEach(() => {
         endpoint = setupRoute('PUT', '/deviceApiKey/assign', {
-          *assignDeviceApiKeys() {
+          async assignDeviceApiKeys() {
             return expectedResponse
           },
         })
@@ -86,7 +86,7 @@ describe('deviceApiKey endpoints', () => {
 
       beforeEach(() => {
         endpoint = setupRoute('PUT', '/deviceApiKey/{deviceApiKeyId}', {
-          *revokeDeviceApiKey() {
+          async revokeDeviceApiKey() {
             return expectedResponse
           },
         })
@@ -110,7 +110,7 @@ describe('deviceApiKey endpoints', () => {
 
       beforeEach(() => {
         endpoint = setupRoute('POST', '/deviceApiKey/generate', {
-          *generateDeviceApiKeys() {
+          async generateDeviceApiKeys() {
             return expectedResponse
           },
         })

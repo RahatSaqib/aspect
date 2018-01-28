@@ -18,7 +18,7 @@ describe('auth endpoints', () => {
 
       beforeEach(() => {
         endpoint = setupRoute('GET', '/device', {
-          *listDevices() {
+          async listDevices() {
             return expectedResponse
           },
         })
@@ -40,7 +40,7 @@ describe('auth endpoints', () => {
 
       beforeEach(() => {
         endpoint = setupRoute('GET', '/device/{deviceId}', {
-          *showDevice() {
+          async showDevice() {
             return expectedResponse
           },
         })
@@ -62,7 +62,7 @@ describe('auth endpoints', () => {
 
       beforeEach(() => {
         endpoint = setupRoute('GET', '/device/status-types', {
-          *listStatusTypes() {
+          async listStatusTypes() {
             return expectedResponse
           },
         })
@@ -84,7 +84,7 @@ describe('auth endpoints', () => {
 
       beforeEach(() => {
         endpoint = setupRoute('GET', '/device/export', {
-          *exportDevices() {
+          async exportDevices() {
             return expectedResponse
           },
         })
@@ -106,7 +106,7 @@ describe('auth endpoints', () => {
 
       beforeEach(() => {
         endpoint = setupRoute('GET', '/device/select-list', {
-          *listDevicesForSelectList() {
+          async listDevicesForSelectList() {
             return expectedResponse
           },
         })
@@ -130,7 +130,7 @@ describe('auth endpoints', () => {
 
       beforeEach(() => {
         endpoint = setupRoute('PUT', '/device/{deviceId}', {
-          *updateDevice() {
+          async updateDevice() {
             return expectedResponse
           },
         })

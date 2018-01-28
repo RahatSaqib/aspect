@@ -1,5 +1,4 @@
 const _ = require('lodash')
-const Promise = require('bluebird')
 const {
   knex,
   filterParams,
@@ -47,11 +46,11 @@ const SELECT_SHOW_FIELDS = [
   's.latitude',
 ]
 
-function* listSites(request) {
+async function listSites(request) {
   const { query, auth } = request
 
   // get data constraints
-  const dataConstraints = yield getConstraints(auth.credentials)
+  const dataConstraints = await getConstraints(auth.credentials)
 
   const siteQuery = knex('Site as s')
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
@@ -98,7 +97,7 @@ function* listSites(request) {
     .select(SELECT_LIST_FIELDS)
 
   // return result when both queries are finished
-  const [{ count: total }, data] = yield Promise.all([getCount, getItems])
+  const [{ count: total }, data] = await Promise.all([getCount, getItems])
 
   const result = { ok: true, total, length: data.length, data }
 
@@ -116,28 +115,28 @@ function getSite(siteId, dataConstraints) {
     .first(SELECT_SHOW_FIELDS)
 }
 
-function* showSite(request) {
+async function showSite(request) {
   const { params, auth } = request
 
-  const dataConstraints = yield getConstraints(auth.credentials)
+  const dataConstraints = await getConstraints(auth.credentials)
 
   // get item
-  const item = yield getSite(params.siteId, dataConstraints)
+  const item = await getSite(params.siteId, dataConstraints)
 
   const result = { ok: true, data: item }
 
   return result
 }
 
-function* updateSite(request) {
+async function updateSite(request) {
   const { params, payload } = request
 
   // TODO: check permission
 
-  const changedSiteFields = yield* transformGeographyFromUpdates(payload)
+  const changedSiteFields = await transformGeographyFromUpdates(payload)
 
   // update item
-  const updatedCount = yield knex('Site')
+  const updatedCount = await knex('Site')
     .where('id', params.siteId)
     .update(
       Object.assign(
@@ -162,16 +161,17 @@ function* updateSite(request) {
     throw new Error('Unknown error')
   }
 
-  return yield* showSite(request)
+  const result = await showSite(request)
+  return result
 }
 
-function* listSitesForSelectList(request) {
+async function listSitesForSelectList(request) {
   const { auth } = request
 
   // get data constraints
-  const dataConstraints = yield getConstraints(auth.credentials)
+  const dataConstraints = await getConstraints(auth.credentials)
 
-  const sites = yield knex('Site as s')
+  const sites = await knex('Site as s')
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
     .modify(addConstraints, dataConstraints, { site: 's', geography: 'g' })
     .orderBy(['s.name'], 'asc')

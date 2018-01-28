@@ -1,5 +1,3 @@
-const Promise = require('bluebird')
-const Boom = require('boom')
 const Joi = require('joi')
 
 // Adds all API routes to the server
@@ -115,27 +113,9 @@ function decorateAPI({ scope, strategies }) {
   }
 }
 
-/**
- * Creates a coroutine based handler using the provided
- * handler generator that can be used in the style of
- * a Bluebird coroutine accepting the Hapi request and
- * returning a value to render as the reply.
- *
- * Any unhandled error will result in a 500 error. Return
- * a Boom error for custom error reporting
- */
 function asyncHandler(handler) {
-  return Promise.coroutine(function*(request, reply) {
-    try {
-      const result = yield* handler(request)
-      reply(result)
-    } catch (err) {
-      console.error(err) // eslint-disable-line no-console
-      const err1 = err.isBoom ? err : Boom.wrap(err, 500)
-      // Need to rethrow error for detection of plugins
-      throw err1
-    }
-  })
+  // No need to handle error case. Hapi handles error case and Boom.500
+  return (request, reply) => handler(request).then(reply)
 }
 
 // extracts and sanitizes the parameters related to sorting and paging

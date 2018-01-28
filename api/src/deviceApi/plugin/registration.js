@@ -35,7 +35,7 @@ const plugins = {
  * with name not registered
  *
  */
-function* loadPlugin(pluginName, actionName) {
+async function loadPlugin(pluginName, actionName) {
   const action = get(plugins, [pluginName, actionName])
   return action != null ? action : plugins.default[actionName]
 }
@@ -50,7 +50,7 @@ function* loadPlugin(pluginName, actionName) {
  *
  * Default context.payload
  */
-function* transformNewDevicePayload({ payload }) {
+async function transformNewDevicePayload({ payload }) {
   return payload
 }
 
@@ -58,7 +58,7 @@ function* transformNewDevicePayload({ payload }) {
  * A site is being updated, called before any processing
  * or querying of site.
  */
-function* preProcessUpdateSite(/* context */) {
+async function preProcessUpdateSite(/* context */) {
   // nothing to do by default
 }
 
@@ -66,7 +66,7 @@ function* preProcessUpdateSite(/* context */) {
  * A site has been updated, called after any processing
  * or querying of site.
  */
-function* postProcessUpdateSite(/* context, site, previousSite */) {
+async function postProcessUpdateSite(/* context, site, previousSite */) {
   // nothing to do by deafult
 }
 
@@ -74,7 +74,7 @@ function* postProcessUpdateSite(/* context, site, previousSite */) {
  * A result is queried
  * called prior to any processing of result.
  */
-function* preProcessGetResult(/* context */) {
+async function preProcessGetResult(/* context */) {
   // nothing to do by default
 }
 
@@ -84,14 +84,14 @@ function* preProcessGetResult(/* context */) {
  *
  * Return result to return to client
  */
-function* postProcessGetResult(context, result) {
+async function postProcessGetResult(context, result) {
   return result
 }
 
 /**
  * A new result is received, called prior to any processing of result.
  */
-function* preProcessMergeResult(/* context */) {
+async function preProcessMergeResult(/* context */) {
   // nothing to do by default
 }
 
@@ -100,7 +100,7 @@ function* preProcessMergeResult(/* context */) {
  * to process in format expected by Device API
  * Default context.payload
  */
-function* transformMergeResultPayload(context) {
+async function transformMergeResultPayload(context) {
   return context.payload
 }
 
@@ -110,9 +110,9 @@ function* transformMergeResultPayload(context) {
  *
  * Return the response to send back to client
  */
-function* postProcessMergeResult(context, result, previousResult) {
+async function postProcessMergeResult(context, result, previousResult) {
   const { knex, payload, now } = context
-  yield* addResultWorkflowLogIfChanged(
+  await addResultWorkflowLogIfChanged(
     knex,
     payload,
     result,
@@ -120,10 +120,10 @@ function* postProcessMergeResult(context, result, previousResult) {
     'Device API Update',
     now
   )
-  // TODO ASP-355 consume inventory using a message listener instead
-  // of within plugin/same transaction
-  yield* consumeInventoryForResult(knex, payload, result)
-  yield* updateFactResultCountDevice(knex, payload, result)
+  // // TODO ASP-355 consume inventory using a message listener instead
+  // // of within plugin/same transaction
+  await consumeInventoryForResult(knex, payload, result)
+  updateFactResultCountDevice(knex, payload, result)
   return {}
 }
 
@@ -131,7 +131,7 @@ function* postProcessMergeResult(context, result, previousResult) {
  * RESULT_LOGGED action has been dispatched referencing
  * a result handled by this plugin
  */
-function* onResultLogged(/* context */) {
+async function onResultLogged(/* context */) {
   // do nothing by default
 }
 

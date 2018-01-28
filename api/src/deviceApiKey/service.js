@@ -1,4 +1,3 @@
-const Promise = require('bluebird')
 const _ = require('lodash')
 const Boom = require('boom')
 
@@ -23,10 +22,10 @@ const SELECT_LIST_FIELDS = [
   'd.name as device',
 ]
 
-function* listDeviceApiKeys(request) {
+async function listDeviceApiKeys(request) {
   const { query, auth } = request
 
-  const dataConstraints = yield getConstraints(auth.credentials)
+  const dataConstraints = await getConstraints(auth.credentials)
 
   const dakQuery = knex('DeviceApiKey as dak')
     .leftJoin('Partner as p', 'dak.partnerId', 'p.id')
@@ -66,14 +65,14 @@ function* listDeviceApiKeys(request) {
     )
 
   // return result when both queries are finished
-  const [{ count: total }, data] = yield Promise.all([getCount, getItems])
+  const [{ count: total }, data] = await Promise.all([getCount, getItems])
 
   const result = { ok: true, total, length: data.length, data }
 
   return result
 }
 
-function* exportDeviceApiKeys(request) {
+async function exportDeviceApiKeys(request) {
   const { query } = request
 
   // ---------------
@@ -83,7 +82,7 @@ function* exportDeviceApiKeys(request) {
   query.size = 1e5
 
   // get whole dataset - based on current query params (sorting, filtering) and auth constraints
-  const devices = yield* listDeviceApiKeys(request)
+  const devices = await listDeviceApiKeys(request)
 
   let result = null
 
@@ -123,7 +122,7 @@ function* exportDeviceApiKeys(request) {
       }
     }
 
-    result = yield* generateExcelFile({
+    result = await generateExcelFile({
       templateFileName: 'DeviceApiKeys.xlsx',
       outputFileName: 'deviceApiKeys.xlsx',
       populateData,
@@ -148,7 +147,7 @@ function* exportDeviceApiKeys(request) {
       'device',
       'revoked',
     ]
-    result = yield* generateCsvFile(
+    result = await generateCsvFile(
       'deviceApiKeys.csv',
       items,
       columnNames,
@@ -159,12 +158,12 @@ function* exportDeviceApiKeys(request) {
   return result
 }
 
-function* generateDeviceApiKeys(request) {
+async function generateDeviceApiKeys(request) {
   const { auth, payload } = request
 
   let geographyId
   if (payload.countryId) {
-    ;({ id: geographyId } = yield knex('Geography as g')
+    ;({ id: geographyId } = await knex('Geography as g')
       .where({
         'g.countryId': payload.countryId,
         'g.stateId': null,
@@ -174,7 +173,7 @@ function* generateDeviceApiKeys(request) {
   }
 
   const now = new Date()
-  const currentlyLoggedInUser = yield getUser(auth.credentials.name)
+  const currentlyLoggedInUser = await getUser(auth.credentials.name)
 
   const deviceApiKeys = _.times(payload.count).map(() => ({
     token: randomToken(),
@@ -188,19 +187,19 @@ function* generateDeviceApiKeys(request) {
     updatedBy: currentlyLoggedInUser.id,
   }))
 
-  yield knex('DeviceApiKey').insert(deviceApiKeys)
+  await knex('DeviceApiKey').insert(deviceApiKeys)
 
   const result = { ok: true }
 
   return result
 }
 
-function* assignDeviceApiKeys(request) {
+async function assignDeviceApiKeys(request) {
   const { auth, payload } = request
 
   let geographyId
   if (payload.countryId) {
-    ;({ id: geographyId } = yield knex('Geography as g')
+    ;({ id: geographyId } = await knex('Geography as g')
       .where({
         'g.countryId': payload.countryId,
         'g.stateId': null,
@@ -210,9 +209,9 @@ function* assignDeviceApiKeys(request) {
   }
 
   const now = new Date()
-  const currentlyLoggedInUser = yield getUser(auth.credentials.name)
+  const currentlyLoggedInUser = await getUser(auth.credentials.name)
 
-  yield knex('DeviceApiKey as dak')
+  await knex('DeviceApiKey as dak')
     .whereIn('dak.id', payload.deviceApiKeyIds)
     .whereNull('dak.deviceId') // Ensure only assign to a device ONCE
     .update({
@@ -229,10 +228,10 @@ function* assignDeviceApiKeys(request) {
   return result
 }
 
-function* revokeDeviceApiKey(request) {
+async function revokeDeviceApiKey(request) {
   const { params, payload } = request
 
-  const updatedCount = yield knex('DeviceApiKey')
+  const updatedCount = await knex('DeviceApiKey')
     .where('id', params.deviceApiKeyId)
     .update({
       revoked: payload.revoked,

@@ -18,7 +18,7 @@ describe('consumable endpoints', () => {
 
       beforeEach(() => {
         endpoint = setupRoute('GET', '/demo/device/{deviceId}', {
-          *getDemoDevice() {
+          async getDemoDevice() {
             return expectedResponse
           },
         })
@@ -42,7 +42,7 @@ describe('consumable endpoints', () => {
 
       beforeEach(() => {
         endpoint = setupRoute('POST', '/demo/device/api-key', {
-          *createDemoDeviceApiKey() {
+          async createDemoDeviceApiKey() {
             return expectedResponse
           },
         })
@@ -64,7 +64,7 @@ describe('consumable endpoints', () => {
 
       beforeEach(() => {
         endpoint = setupRoute('POST', '/demo/device/{deviceId}/result', {
-          *postDemoDeviceResult() {
+          async postDemoDeviceResult() {
             return expectedResponse
           },
         })

@@ -1,4 +1,3 @@
-const Promise = require('bluebird')
 const _ = require('lodash')
 
 const { knex, filterParams, sortPageParams } = require('../db')
@@ -6,9 +5,9 @@ const { getConstraints, addConstraints } = require('../auth/constraints')
 
 const SELECT_LIST_FIELDS = ['do.id', 'do.startedOn', 'do.data']
 
-function* listDeviceOperations(request) {
+async function listDeviceOperations(request) {
   const { query, auth } = request
-  const dataConstraints = yield getConstraints(auth.credentials)
+  const dataConstraints = await getConstraints(auth.credentials)
 
   const deviceOperationQuery = knex('DeviceOperation as do')
     .innerJoin('Device as d', 'do.deviceId', 'd.id')
@@ -35,7 +34,7 @@ function* listDeviceOperations(request) {
     )
 
   // return result when both queries are finished
-  const [{ count: total }, data] = yield Promise.all([getCount, getItems])
+  const [{ count: total }, data] = await Promise.all([getCount, getItems])
 
   const result = { ok: true, total, length: data.length, data }
 

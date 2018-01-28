@@ -18,7 +18,7 @@ describe('account details endpoints', () => {
 
       beforeEach(() => {
         endpoint = setupRoute('GET', '/account-details/current', {
-          *getAccountDetailsForLoggedInUser() {
+          async getAccountDetailsForLoggedInUser() {
             return expectedResponse
           },
         })
@@ -43,7 +43,7 @@ describe('account details endpoints', () => {
 
       beforeEach(() => {
         endpoint = setupRoute('PUT', '/account-details/current-contact', {
-          *saveContactDetailsForLoggedInUser() {
+          async saveContactDetailsForLoggedInUser() {
             return expectedResponse
           },
         })
@@ -66,7 +66,7 @@ describe('account details endpoints', () => {
 
       beforeEach(() => {
         endpoint = setupRoute('PUT', '/account-details/current-preferences', {
-          *saveUserPreferencesForLoggedInUser() {
+          async saveUserPreferencesForLoggedInUser() {
             return expectedResponse
           },
         })

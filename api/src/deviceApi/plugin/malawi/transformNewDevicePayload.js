@@ -3,7 +3,7 @@ const DEVICE_TYPE_REPORTER = 'AspectReporter'
 
 const { get } = require('lodash')
 
-function* transformNewDevicePayload({ payload }) {
+async function transformNewDevicePayload({ payload }) {
   const deviceType = get(payload, 'type.id', null)
   if (deviceType === null) {
     return payload

@@ -1,3 +1,4 @@
+const _ = require('lodash')
 const { transact } = require('./db')
 // TODO switch to Message Queue? Make more Redux Like?
 const EventEmitter = require('events')
@@ -61,11 +62,13 @@ class MessageContext {
     this.tasks.push(task)
     if (!this.transaction) {
       const context = this
-      context.transaction = transact(function*(knex) {
-        while (context.tasks.length) {
-          const task = context.tasks.shift()
-          yield* task(knex)
-        }
+      context.transaction = transact(async knex => {
+        await Promise.all(
+          _.map(_.range(context.tasks.length), async () => {
+            const task = context.tasks.shift()
+            await task(knex)
+          })
+        )
       })
         .then(context.commit)
         .then(null, err => {

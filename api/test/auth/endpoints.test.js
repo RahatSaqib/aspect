@@ -18,7 +18,7 @@ describe('auth endpoints', () => {
 
       beforeEach(() => {
         endpoint = setupRoute('GET', '/auth', {
-          *checkAuthentication() {
+          async checkAuthentication() {
             return expectedResponse
           },
         })
@@ -42,7 +42,7 @@ describe('auth endpoints', () => {
 
       beforeEach(() => {
         endpoint = setupRoute('PUT', '/auth/update-login-details', {
-          *updateUsernameAndPasswordForLoggedInUser() {
+          async updateUsernameAndPasswordForLoggedInUser() {
             return expectedResponse
           },
         })
@@ -67,7 +67,7 @@ describe('auth endpoints', () => {
           'PUT',
           '/auth/update-password/{resetPasswordToken}',
           {
-            *updatePasswordWithResetPasswordToken() {
+            async updatePasswordWithResetPasswordToken() {
               return expectedResponse
             },
           }
@@ -93,7 +93,7 @@ describe('auth endpoints', () => {
           'PUT',
           '/auth/update-person-login-details/{personId}',
           {
-            *updateUsernameAndPasswordForPerson() {
+            async updateUsernameAndPasswordForPerson() {
               return expectedResponse
             },
           }
@@ -118,7 +118,7 @@ describe('auth endpoints', () => {
 
       beforeEach(() => {
         endpoint = setupRoute('POST', '/auth', {
-          *authenticate() {
+          async authenticate() {
             return expectedResponse
           },
         })
@@ -140,7 +140,7 @@ describe('auth endpoints', () => {
 
       beforeEach(() => {
         endpoint = setupRoute('POST', '/auth/refresh', {
-          *refreshToken() {
+          async refreshToken() {
             return expectedResponse
           },
         })
@@ -165,7 +165,7 @@ describe('auth endpoints', () => {
           'POST',
           '/auth/send-reset-password-token/{email}',
           {
-            *createResetPasswordToken() {
+            async createResetPasswordToken() {
               return expectedResponse
             },
           }

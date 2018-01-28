@@ -18,7 +18,7 @@ describe('geography endpoints', () => {
 
       beforeEach(() => {
         endpoint = setupRoute('GET', '/geography/select-list', {
-          *buildGeographySelectList() {
+          async buildGeographySelectList() {
             return expectedResponse
           },
         })
@@ -43,7 +43,7 @@ describe('geography endpoints', () => {
 
       beforeEach(() => {
         endpoint = setupRoute('GET', '/geography/country-select-list', {
-          *countrySelectList() {
+          async countrySelectList() {
             return expectedResponse
           },
         })
@@ -72,7 +72,7 @@ describe('geography endpoints', () => {
           'GET',
           '/geography/country-select-list/{countryId}',
           {
-            *countrySelectList() {
+            async countrySelectList() {
               return expectedResponse
             },
           }
@@ -102,7 +102,7 @@ describe('geography endpoints', () => {
           'GET',
           '/geography/country-select-list/{countryId}/{stateId}',
           {
-            *countrySelectList() {
+            async countrySelectList() {
               return expectedResponse
             },
           }
@@ -132,7 +132,7 @@ describe('geography endpoints', () => {
           'GET',
           '/geography/state-select-list/{countryId}',
           {
-            *stateSelectList() {
+            async stateSelectList() {
               return expectedResponse
             },
           }
@@ -158,7 +158,7 @@ describe('geography endpoints', () => {
 
       beforeEach(() => {
         endpoint = setupRoute('GET', '/geography/lga-select-list/{stateId}', {
-          *lgaSelectList() {
+          async lgaSelectList() {
             return expectedResponse
           },
         })

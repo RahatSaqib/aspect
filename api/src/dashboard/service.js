@@ -8,7 +8,6 @@ const {
   canViewResults,
   canViewInventories,
 } = require('../auth/constraints')
-const Promise = require('bluebird')
 const addDays = require('date-fns/add_days')
 const isAfter = require('date-fns/is_after')
 const differenceInDays = require('date-fns/difference_in_days')
@@ -41,11 +40,11 @@ const i18nKeys = {
   deviceCalibrationsUpToDate: 'deviceCalibrationsUpToDate',
 }
 
-function* summaryDashboard(request) {
+async function summaryDashboard(request) {
   const { auth } = request
 
   // get data constraints
-  const dataConstraints = yield getConstraints(auth.credentials)
+  const dataConstraints = await getConstraints(auth.credentials)
 
   const sitesTotalQuery = knex('Site as s')
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
@@ -84,7 +83,7 @@ function* summaryDashboard(request) {
     resultsTotal30d,
     resultsTotal1d,
     usersTotal,
-  ] = yield Promise.all([
+  ] = await Promise.all([
     canViewSites(auth) ? sitesTotalQuery.clone().count('s.id as cnt') : null,
     canViewDevices(auth)
       ? devicesTotalQuery.clone().count('d.id as cnt')
@@ -117,11 +116,11 @@ function* summaryDashboard(request) {
   return result
 }
 
-function* resultDashboard(request) {
+async function resultDashboard(request) {
   const { auth } = request
 
   // get data constraints
-  const dataConstraints = yield getConstraints(auth.credentials)
+  const dataConstraints = await getConstraints(auth.credentials)
 
   const siteQuery = knex('Site as s')
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
@@ -137,7 +136,7 @@ function* resultDashboard(request) {
       site: 's',
       geography: 'g',
     })
-  const [siteList, resultCnt, assayTypes] = yield Promise.all(
+  const [siteList, resultCnt, assayTypes] = await Promise.all(
     canViewResults(auth)
       ? [
           canViewSites(auth) ? siteQuery : [],
@@ -244,11 +243,11 @@ function* resultDashboard(request) {
   return result
 }
 
-function* getInventoryItemList(auth, dataConstraints) {
+async function getInventoryItemList(auth, dataConstraints) {
   if (!canViewInventories(auth)) {
     return []
   }
-  const inventoryItemList = yield knex('InventoryItem as ii')
+  const inventoryItemList = await knex('InventoryItem as ii')
     .innerJoin('Site as s', 'ii.siteId', 's.id')
     .innerJoin('Geography as g', 's.geographyId', 'g.id')
     .innerJoin('Country as co', 'g.countryId', 'co.id')
@@ -287,13 +286,13 @@ function* getInventoryItemList(auth, dataConstraints) {
   return inventoryItemList
 }
 
-function* inventoryItemDashboard(request) {
+async function inventoryItemDashboard(request) {
   const { auth } = request
 
   // get data constraints
-  const dataConstraints = yield getConstraints(auth.credentials)
-  const siteList = yield* getSiteList(auth, dataConstraints)
-  const inventoryItemList = yield* getInventoryItemList(auth, dataConstraints)
+  const dataConstraints = await getConstraints(auth.credentials)
+  const siteList = await getSiteList(auth, dataConstraints)
+  const inventoryItemList = await getInventoryItemList(auth, dataConstraints)
 
   const inventorySiteSummaryList = _.sortBy(
     _.reduce(
@@ -378,11 +377,11 @@ function* inventoryItemDashboard(request) {
   return result
 }
 
-function* getSiteList(auth, dataConstraints) {
+async function getSiteList(auth, dataConstraints) {
   if (!canViewSites(auth)) {
     return []
   }
-  return yield knex('Site as s')
+  const siteList = await knex('Site as s')
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
     .leftOuterJoin('State as st', 'g.stateId', 'st.id')
     .modify(addConstraints, dataConstraints, {
@@ -396,13 +395,15 @@ function* getSiteList(auth, dataConstraints) {
       's.latitude',
       's.longitude'
     )
+  return siteList
 }
 
-function* getDeviceList(auth, dataConstraints) {
+async function getDeviceList(auth, dataConstraints) {
   if (!canViewDevices(auth)) {
     return []
   }
-  return yield knex('Device as d')
+
+  const deviceList = await knex('Device as d')
     .innerJoin('FactDeviceFlag as fdf', 'd.id', 'fdf.deviceId')
     .innerJoin('Site as s', 's.id', 'd.siteId')
     .innerJoin('Partner as p', 'd.partnerId', 'p.id')
@@ -412,16 +413,17 @@ function* getDeviceList(auth, dataConstraints) {
       site: 's',
       geography: 'g',
     })
+  return deviceList
 }
 
-function* deviceDashboard(request) {
+async function deviceDashboard(request) {
   const { auth } = request
 
   // get data constraints
-  const dataConstraints = yield getConstraints(auth.credentials)
+  const dataConstraints = await getConstraints(auth.credentials)
 
-  const siteList = yield* getSiteList(auth, dataConstraints)
-  const deviceList = yield* getDeviceList(auth, dataConstraints)
+  const siteList = await getSiteList(auth, dataConstraints)
+  const deviceList = await getDeviceList(auth, dataConstraints)
 
   const siteById = _.keyBy(siteList, 'id')
   _.forEach(deviceList, it => {
@@ -515,15 +517,15 @@ function* deviceDashboard(request) {
   return result
 }
 
-function* siteDashboard(request) {
+async function siteDashboard(request) {
   const { auth } = request
 
   // get data constraints
-  const dataConstraints = yield getConstraints(auth.credentials)
+  const dataConstraints = await getConstraints(auth.credentials)
 
-  const siteList = yield* getSiteList(auth, dataConstraints)
-  const deviceList = yield* getDeviceList(auth, dataConstraints)
-  const inventoryItemList = yield* getInventoryItemList(auth, dataConstraints)
+  const siteList = await getSiteList(auth, dataConstraints)
+  const deviceList = await getDeviceList(auth, dataConstraints)
+  const inventoryItemList = await getInventoryItemList(auth, dataConstraints)
 
   const filteredLength = _.flowRight(_.size, _.filter)
   const siteIdAccumulator = (acc, it, siteId) => {
@@ -630,13 +632,13 @@ const OPERATIONAL_TAKE_LIMIT = 20
 const OPERATIONAL_INVENTORY_MIN_DAYS = 21
 const OPERATIONAL_INVENTORY_MIN_EXPIRING = 0.15
 
-function* inventoryItemOperational(request) {
+async function inventoryItemOperational(request) {
   const { auth } = request
 
   // get data constraints
-  const dataConstraints = yield getConstraints(auth.credentials)
+  const dataConstraints = await getConstraints(auth.credentials)
 
-  const inventoryItemList = yield* getInventoryItemList(auth, dataConstraints)
+  const inventoryItemList = await getInventoryItemList(auth, dataConstraints)
 
   const stockOutsInventoryItemList = _.sortBy(
     _.reduce(
@@ -720,15 +722,15 @@ function* inventoryItemOperational(request) {
   ]
 }
 
-function* deviceOperational(request) {
+async function deviceOperational(request) {
   const { auth } = request
   const now = new Date()
   const OPERATIONAL_DEVICE_TAKE_LIMIT = 10
 
   // get data constraints
-  const dataConstraints = yield getConstraints(auth.credentials)
+  const dataConstraints = await getConstraints(auth.credentials)
 
-  const deviceList = yield* getDeviceList(auth, dataConstraints)
+  const deviceList = await getDeviceList(auth, dataConstraints)
 
   const MOCK_PARTNER_OFFLINE_THRESHOLD_DAYS = 7
   const MOCK_DEVICE_HIGH_ERROR_RATE_THRESHOLD = 0.05
@@ -819,7 +821,7 @@ function* deviceOperational(request) {
   ]
 }
 
-function* operationalDashboard(request) {
+async function operationalDashboard(request) {
   const { query } = request
 
   const result = {
@@ -1062,8 +1064,8 @@ function* operationalDashboard(request) {
   return {
     ok: true,
     data: Object.assign(result.data, {
-      inventory: yield* inventoryItemOperational(request),
-      device: [...(yield* deviceOperational(request)), ...result.data.device],
+      inventory: await inventoryItemOperational(request),
+      device: [...(await deviceOperational(request)), ...result.data.device],
     }),
   }
 }

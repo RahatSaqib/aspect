@@ -1,6 +1,6 @@
 const _ = require('lodash')
 
-function* listReports(request) {
+async function listReports(request) {
   const { query } = request
 
   const data = _.sortBy(

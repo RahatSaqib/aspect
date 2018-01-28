@@ -14,9 +14,9 @@ const DONOT_LOG_DELIVERED = [
   ERROR_EXTERNALID,
 ]
 
-function* preProcessGetResult({ knex, dispatch, resultId, query, now }) {
+async function preProcessGetResult({ knex, dispatch, resultId, query, now }) {
   const offset = Number(query.offset)
-  yield* updateResultWorkflowStatusOnGetResult(
+  await updateResultWorkflowStatusOnGetResult(
     knex,
     dispatch,
     resultId,
@@ -25,14 +25,14 @@ function* preProcessGetResult({ knex, dispatch, resultId, query, now }) {
   )
 }
 
-function* updateResultWorkflowStatusOnGetResult(
+async function updateResultWorkflowStatusOnGetResult(
   knex,
   dispatch,
   resultId,
   offset,
   now = new Date()
 ) {
-  const row = yield knex('Result as r')
+  const row = await knex('Result as r')
     .leftJoin('ResultWorkflowStatus as rs', 'r.resultWorkflowStatusId', 'rs.id')
     .where('r.id', resultId)
     .first('r.id as resultId', 'rs.externalId as resultWorkflowStatusId')
@@ -42,7 +42,7 @@ function* updateResultWorkflowStatusOnGetResult(
     row != null &&
     _.indexOf(DONOT_LOG_DELIVERED, row.resultWorkflowStatusId) === -1
   ) {
-    yield* updateResultWorkflowStatus(
+    await updateResultWorkflowStatus(
       knex,
       row.resultId,
       DELIVERED_EXTERNALID,

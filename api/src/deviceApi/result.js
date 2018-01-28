@@ -1,7 +1,7 @@
 const Boom = require('boom')
 const _ = require('lodash')
 
-function* mergeResult(
+async function mergeResult(
   knex,
   deviceId,
   payload,
@@ -10,7 +10,7 @@ function* mergeResult(
   // Look up existing result matching external id if specified
   let existingResult = null
   if (payload.id) {
-    const existingResults = yield knex('Result as r')
+    const existingResults = await knex('Result as r')
       .where({
         'r.externalId': payload.id,
         'r.deviceId': deviceId,
@@ -93,7 +93,7 @@ function* mergeResult(
     resultType,
     resultWorkflowStatus,
     categories,
-  ] = yield Promise.all([
+  ] = await Promise.all([
     assayQ,
     siteQ,
     resultTypeQ,
@@ -134,7 +134,7 @@ function* mergeResult(
   // Select ResultSource if specified, otherwise from Assay
   let resultSource
   if (_.has(payload, 'source.id')) {
-    resultSource = yield knex('ResultSource as rs')
+    resultSource = await knex('ResultSource as rs')
       .where({ 'rs.externalId': _.get(payload, 'source.id') })
       .first('rs.id')
     if (!resultSource) {
@@ -151,7 +151,7 @@ function* mergeResult(
   let sampleTypeId = null
   const payloadSampleTypeId = _.get(payload, 'sample.type.id', false)
   if (payloadSampleTypeId) {
-    sampleTypeId = (yield knex('SampleType')
+    sampleTypeId = (await knex('SampleType')
       .where({ externalId: payloadSampleTypeId })
       .first('id')).id
   }
@@ -159,13 +159,13 @@ function* mergeResult(
   let sampleOriginSiteId = site.id
   const payloadOriginSiteId = _.get(payload, 'sample.originSite.id', false)
   if (payloadOriginSiteId) {
-    sampleOriginSiteId = (yield knex('Site')
+    sampleOriginSiteId = (await knex('Site')
       .where({ partnerId: site.partnerId, externalId: payloadOriginSiteId })
       .first('id')).id
   }
 
   if (sampleId == null && existingResult == null) {
-    ;[sampleId] = yield knex('Sample').insert({
+    ;[sampleId] = await knex('Sample').insert({
       externalId: _.get(payload, 'sample.id', null),
       collectedOn: _.get(payload, 'sample.collectedOn', null),
       sampleTypeId,
@@ -176,10 +176,10 @@ function* mergeResult(
       ;({ sampleId } = existingResult)
     }
     if (_.has(payload, 'sample')) {
-      const existingSample = yield knex('Sample')
+      const existingSample = await knex('Sample')
         .where({ id: sampleId })
         .first('externalId', 'collectedOn', 'sampleTypeId', 'originSiteId')
-      yield knex('Sample')
+      await knex('Sample')
         .where({ id: sampleId })
         .update({
           externalId: _.get(payload, 'sample.id', existingSample.externalId),
@@ -335,18 +335,18 @@ function* mergeResult(
   let resultId
   if (existingResult) {
     resultId = existingResult.id
-    yield knex('Result')
+    await knex('Result')
       .where({ id: resultId })
       .update(result)
   } else {
-    ;[resultId] = yield knex('Result').insert(processedResult)
+    ;[resultId] = await knex('Result').insert(processedResult)
   }
   processedResult.id = resultId
   return { processedResult, existingResult }
 }
 
-function* getResult(knex, resultId) {
-  const row = yield knex('Result as r')
+async function getResult(knex, resultId) {
+  const row = await knex('Result as r')
     .innerJoin('Assay as a', 'r.assayId', 'a.id')
     .leftJoin('Sample as s', 'r.sampleId', 's.id')
     .leftJoin('SampleType as st', 's.sampleTypeId', 'st.id')
@@ -401,7 +401,7 @@ function* getResult(knex, resultId) {
     return null
   }
 
-  const resultWorkflowLog = yield knex('ResultWorkflowLog')
+  const resultWorkflowLog = await knex('ResultWorkflowLog')
     .where({ resultId: row.resultId })
     .orderBy('createdOn', 'desc')
     .orderBy('id', 'desc')

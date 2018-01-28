@@ -14,12 +14,12 @@ const SELECT_LIST_FIELDS = [
   'a.i18nKey as assayI18nKey',
 ]
 
-function* getConsumableAssays(request) {
+async function getConsumableAssays(request) {
   const { auth, params: { consumableId } } = request
 
-  const dataConstraints = yield getConstraints(auth.credentials)
+  const dataConstraints = await getConstraints(auth.credentials)
 
-  const assayConsumables = yield query('Get assay consumables')
+  const assayConsumables = await query('Get assay consumables')
     .from('ConsumableAssay as ca')
     .join('Consumable as c', 'ca.consumableId', 'c.id')
     .join('Unit as u', 'c.unit', 'u.id')
@@ -58,12 +58,12 @@ function selectAssayConsumables(knex, partnerId, assayId, consumableId) {
   )
 }
 
-function* getAssayConsumables(request) {
+async function getAssayConsumables(request) {
   const { auth, params: { assayId } } = request
 
-  const { partner: { id: partnerId } } = yield getConstraints(auth.credentials)
+  const { partner: { id: partnerId } } = await getConstraints(auth.credentials)
 
-  const assayConsumables = yield selectAssayConsumables(
+  const assayConsumables = await selectAssayConsumables(
     query('Get assay consumable'),
     partnerId,
     assayId
@@ -72,13 +72,13 @@ function* getAssayConsumables(request) {
   return { ok: true, data: assayConsumables }
 }
 
-function* createAssayConsumable(request) {
+async function createAssayConsumable(request) {
   const { auth, payload: { assayId, consumableId, quantity } } = request
 
-  const dataConstraints = yield getConstraints(auth.credentials)
+  const dataConstraints = await getConstraints(auth.credentials)
 
   try {
-    yield query('Insert assay consumable')
+    await query('Insert assay consumable')
       .insert({ assayId, consumableId, quantity })
       .into('ConsumableAssay')
   } catch (err) {
@@ -90,7 +90,7 @@ function* createAssayConsumable(request) {
     throw err
   }
 
-  const assayConsumables = yield selectAssayConsumables(
+  const assayConsumables = await selectAssayConsumables(
     query('Get assay consumable'),
     dataConstraints.partner.id,
     assayId,
@@ -100,22 +100,22 @@ function* createAssayConsumable(request) {
   return { ok: true, data: _.head(assayConsumables) }
 }
 
-function* updateAssayConsumableQuantity(request) {
+async function updateAssayConsumableQuantity(request) {
   const {
     auth,
     params: { assayId, consumableId },
     payload: { quantity },
   } = request
 
-  const dataConstraints = yield getConstraints(auth.credentials)
+  const dataConstraints = await getConstraints(auth.credentials)
 
-  yield query('Update assay consumable')
+  await query('Update assay consumable')
     .from('ConsumableAssay as ca')
     .where('ca.assayId', assayId)
     .andWhere('ca.consumableId', consumableId)
     .update({ quantity })
 
-  const assayConsumables = yield selectAssayConsumables(
+  const assayConsumables = await selectAssayConsumables(
     query('Get assay consumable'),
     dataConstraints.partner.id,
     assayId,
@@ -129,10 +129,10 @@ function* updateAssayConsumableQuantity(request) {
   return { ok: true, data: _.head(assayConsumables) }
 }
 
-function* deleteAssayConsumable(request) {
+async function deleteAssayConsumable(request) {
   const { assayId, consumableId } = request.params
 
-  yield query('Delete assay consumable')
+  await query('Delete assay consumable')
     .from('ConsumableAssay')
     .where('assayId', assayId)
     .andWhere('consumableId', consumableId)

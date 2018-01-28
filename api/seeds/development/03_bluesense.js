@@ -5,9 +5,9 @@ const bcrypt = require('bcrypt')
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 
-function* seed(knex) {
+async function seed(knex) {
   // Skip this seed file if we already have an admin user
-  const existingAdminUser = yield knex('User')
+  const existingAdminUser = await knex('User')
     .where({ name: 'blusense' })
     .first('id')
   if (existingAdminUser) {
@@ -16,7 +16,7 @@ function* seed(knex) {
 
   // Create admin user and audit fields
   const now = new Date()
-  const [adminId] = yield knex('User').insert({
+  const [adminId] = await knex('User').insert({
     name: 'blusense',
     password: bcrypt.hashSync('blu2017', saltRounds),
     approved: 1,
@@ -32,25 +32,25 @@ function* seed(knex) {
   }
 
   // Reuse previously seeded "static" data
-  const partnerTypes = yield rowsAsObject(knex, 'PartnerType')
-  const [partnerId] = yield knex('Partner').insert({
+  const partnerTypes = await rowsAsObject(knex, 'PartnerType')
+  const [partnerId] = await knex('Partner').insert({
     name: 'BluSense',
     partnerTypeId: partnerTypes.Operating.id,
     deviceLogHistoryDays: 365,
   })
-  const deviceTypeCategories = yield rowsAsObject(knex, 'DeviceTypeCategory')
-  const resultSources = yield rowsAsObject(knex, 'ResultSource', 'externalId')
-  const assayTypes = yield rowsAsObject(knex, 'AssayType')
+  const deviceTypeCategories = await rowsAsObject(knex, 'DeviceTypeCategory')
+  const resultSources = await rowsAsObject(knex, 'ResultSource', 'externalId')
+  const assayTypes = await rowsAsObject(knex, 'AssayType')
 
   // BluSense Device Type
-  const [deviceTypeId] = yield knex('DeviceType').insert({
+  const [deviceTypeId] = await knex('DeviceType').insert({
     externalId: 'BluSenseBluBox',
     name: 'BluBox',
     manufacturer: 'BluSense',
     deviceTypeCategoryId: deviceTypeCategories.Lab.id,
   })
 
-  yield knex('Assay').insert({
+  await knex('Assay').insert({
     name: 'BluSense Dengue',
     i18nKey: 'assayBlusenseDengue',
     externalId: 'Dengue',
@@ -83,7 +83,7 @@ function* seed(knex) {
     }),
   })
 
-  yield knex('Assay').insert({
+  await knex('Assay').insert({
     name: 'BluSense Zika',
     i18nKey: 'assayBlusenseZika',
     externalId: 'Zika',
@@ -116,7 +116,7 @@ function* seed(knex) {
     }),
   })
 
-  const modules = yield knex('Permission').reduce((memo, row) => {
+  const modules = await knex('Permission').reduce((memo, row) => {
     if (!memo[row.module]) {
       memo[row.module] = {}
     }
@@ -125,20 +125,20 @@ function* seed(knex) {
   }, {})
 
   // Create clinics for every state in Malawi
-  const [usCountry] = yield knex('Country as c')
+  const [usCountry] = await knex('Country as c')
     .where({ 'c.a3': 'USA' })
     .select('c.id', 'c.culture', 'c.timezone')
 
   const { culture, timezone, id: countryId } = usCountry
 
-  const { id: geographyId } = yield knex('Geography')
+  const { id: geographyId } = await knex('Geography')
     .where({ countryId })
     .whereNull('stateId')
     .whereNull('lgaId')
     .first()
 
   // Permissions for BluSense Admin
-  const [adminPersonId] = yield knex('Person').insert(
+  const [adminPersonId] = await knex('Person').insert(
     Object.assign(
       {
         userId: adminId,
@@ -153,12 +153,12 @@ function* seed(knex) {
     )
   )
 
-  const [jobFunctionIdAdmin] = yield knex('JobFunction').insert({
+  const [jobFunctionIdAdmin] = await knex('JobFunction').insert({
     name: 'Admin',
     partnerId,
   })
 
-  yield knex('JobFunctionPermission').insert([
+  await knex('JobFunctionPermission').insert([
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.demo.admin },
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.device.admin },
     {
@@ -170,12 +170,13 @@ function* seed(knex) {
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.assay.admin },
   ])
 
-  const [jobIdAdmin] = yield knex('Job').insert([
+  const [jobIdAdmin] = await knex('Job').insert([
     { personId: adminPersonId, jobFunctionId: jobFunctionIdAdmin },
   ])
-  yield knex('JobContext').insert({ jobId: jobIdAdmin, geographyId })
+  await knex('JobContext').insert({ jobId: jobIdAdmin, geographyId })
 
   // sites
+  const sites = []
   for (const siteNum of ['1', '2', '3']) {
     const siteData = Object.assign(
       {
@@ -187,8 +188,9 @@ function* seed(knex) {
       },
       auditFields
     )
-    yield knex('Site').insert(siteData)
+    sites.push(knex('Site').insert(siteData))
   }
+  await Promise.all(sites)
 }
 
 function rowsAsObject(knex, table, column = 'name') {

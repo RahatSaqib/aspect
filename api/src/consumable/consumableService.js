@@ -1,4 +1,3 @@
-const Promise = require('bluebird')
 const { knex, filterParams, sortPageParams } = require('../db')
 const { getConstraints } = require('../auth/constraints')
 
@@ -11,10 +10,10 @@ const SELECT_LIST_FIELDS = [
   'c.manufacturer',
   'c.autoInclude',
 ]
-function* listConsumableTypes(request) {
+async function listConsumableTypes(request) {
   const { query, auth } = request
 
-  const dataConstraints = yield getConstraints(auth.credentials)
+  const dataConstraints = await getConstraints(auth.credentials)
 
   const consumableQuery = knex('Consumable as c')
     .leftJoin('Unit as u', 'c.unit', 'u.id')
@@ -36,14 +35,14 @@ function* listConsumableTypes(request) {
     .select(SELECT_LIST_FIELDS)
 
   // return result when both queries are finished
-  const [{ count: total }, data] = yield Promise.all([getCount, getItems])
+  const [{ count: total }, data] = await Promise.all([getCount, getItems])
 
   const result = { ok: true, total, length: data.length, data }
 
   return result
 }
 
-function* listConsumableReasons(request) {
+async function listConsumableReasons(request) {
   const { query } = request
 
   // TODO: use dataContraints
@@ -65,7 +64,7 @@ function* listConsumableReasons(request) {
     .modify(sortPageParams, query, 'name')
     .select(['id', 'name', 'i18nKey', 'decrease'])
 
-  const [{ count: total }, data] = yield Promise.all([getCount, getItems])
+  const [{ count: total }, data] = await Promise.all([getCount, getItems])
 
   const result = { ok: true, total, length: data.length, data }
 

@@ -1,14 +1,14 @@
 module.exports = require('../src/db').migration(up, down)
 
-function* up(knex) {
-  yield knex.raw('SET foreign_key_checks = 0')
+async function up(knex) {
+  await knex.raw('SET foreign_key_checks = 0')
 
-  yield knex.schema.createTable('PartnerType', pt => {
+  await knex.schema.createTable('PartnerType', pt => {
     pt.increments('id')
     pt.string('name').notNullable()
   })
 
-  yield knex.schema.createTable('Partner', partner => {
+  await knex.schema.createTable('Partner', partner => {
     partner.increments('id')
     partner
       .integer('partnerTypeId')
@@ -27,7 +27,7 @@ function* up(knex) {
     partner.integer('numberToLeaveUnacknowledged')
   })
 
-  yield knex.schema.createTable('User', user => {
+  await knex.schema.createTable('User', user => {
     user.increments('id')
     user
       .string('name')
@@ -53,7 +53,7 @@ function* up(knex) {
     user.charset('utf8')
   })
 
-  yield knex.schema.createTable('Country', country => {
+  await knex.schema.createTable('Country', country => {
     country.increments('id')
     country.string('name').notNullable()
     country.string('abbreviation', 10).notNullable()
@@ -80,20 +80,20 @@ function* up(knex) {
     country.charset('utf8')
   })
 
-  yield knex.schema.createTable('State', state => {
+  await knex.schema.createTable('State', state => {
     state.increments('id')
     state.string('name').notNullable()
     state.string('abbreviation', 10)
     state.charset('utf8')
   })
 
-  yield knex.schema.createTable('Lga', lga => {
+  await knex.schema.createTable('Lga', lga => {
     lga.increments('id')
     lga.string('name').notNullable()
     lga.charset('utf8')
   })
 
-  yield knex.schema.createTable('Geography', geography => {
+  await knex.schema.createTable('Geography', geography => {
     geography.increments('id')
     geography
       .integer('countryId')
@@ -116,7 +116,7 @@ function* up(knex) {
     geography.charset('utf8')
   })
 
-  yield knex.schema.createTable('Person', person => {
+  await knex.schema.createTable('Person', person => {
     person.increments('id')
     person
       .integer('userId')
@@ -163,7 +163,7 @@ function* up(knex) {
     person.charset('utf8')
   })
 
-  yield knex.schema.createTable('JobFunction', jobFunction => {
+  await knex.schema.createTable('JobFunction', jobFunction => {
     jobFunction.increments('id')
     jobFunction.string('name').notNullable()
     jobFunction
@@ -176,7 +176,7 @@ function* up(knex) {
     jobFunction.charset('utf8')
   })
 
-  yield knex.schema.createTable('Permission', permission => {
+  await knex.schema.createTable('Permission', permission => {
     permission.increments('id')
 
     // e.g. clinical, inventory, operational, device, etc.
@@ -188,7 +188,7 @@ function* up(knex) {
     permission.charset('utf8')
   })
 
-  yield knex.schema.createTable(
+  await knex.schema.createTable(
     'JobFunctionPermission',
     jobFunctionPermission => {
       jobFunctionPermission
@@ -208,7 +208,7 @@ function* up(knex) {
     }
   )
 
-  yield knex.schema.createTable('Job', job => {
+  await knex.schema.createTable('Job', job => {
     job.increments('id')
     job
       .integer('personId')
@@ -226,7 +226,7 @@ function* up(knex) {
     job.charset('utf8')
   })
 
-  yield knex.schema.createTable('JobContext', jobContext => {
+  await knex.schema.createTable('JobContext', jobContext => {
     jobContext.increments('id')
     jobContext
       .integer('jobId')
@@ -250,7 +250,7 @@ function* up(knex) {
     jobContext.charset('utf8')
   })
 
-  yield knex.schema.createTable('RefreshToken', refreshToken => {
+  await knex.schema.createTable('RefreshToken', refreshToken => {
     refreshToken
       .integer('userId')
       .unsigned()
@@ -270,7 +270,7 @@ function* up(knex) {
     refreshToken.charset('utf8')
   })
 
-  yield knex.schema.createTable('DeviceApiKey', apiKey => {
+  await knex.schema.createTable('DeviceApiKey', apiKey => {
     apiKey.increments('id')
     apiKey
       .string('token')
@@ -310,7 +310,7 @@ function* up(knex) {
     apiKey.charset('utf8')
   })
 
-  yield knex.schema.createTable('DeviceTypeCategory', deviceTypeFeature => {
+  await knex.schema.createTable('DeviceTypeCategory', deviceTypeFeature => {
     deviceTypeFeature.increments('id')
     deviceTypeFeature.string('name').notNullable()
     deviceTypeFeature
@@ -324,7 +324,7 @@ function* up(knex) {
     deviceTypeFeature.charset('utf8')
   })
 
-  yield knex.schema.createTable('DeviceType', deviceType => {
+  await knex.schema.createTable('DeviceType', deviceType => {
     deviceType.increments('id')
     deviceType
       .integer('deviceTypeCategoryId')
@@ -342,14 +342,14 @@ function* up(knex) {
     // used to uniquely identify devices and still to be discussed
   })
 
-  yield knex.schema.createTable('DeviceStatus', deviceStatus => {
+  await knex.schema.createTable('DeviceStatus', deviceStatus => {
     deviceStatus.increments('id')
     deviceStatus.string('name').notNullable()
     deviceStatus.string('i18nKey')
     deviceStatus.string('token')
   })
 
-  yield knex.schema.createTable('Site', site => {
+  await knex.schema.createTable('Site', site => {
     site.increments('id')
     site.string('name').notNullable()
     site.string('shortname', 45)
@@ -383,7 +383,7 @@ function* up(knex) {
     site.charset('utf8')
   })
 
-  yield knex.schema.createTable('DeviceStatusLog', deviceStatusLog => {
+  await knex.schema.createTable('DeviceStatusLog', deviceStatusLog => {
     deviceStatusLog.increments('id')
     deviceStatusLog
       .integer('deviceId')
@@ -407,7 +407,7 @@ function* up(knex) {
       .inTable('User')
   })
 
-  yield knex.schema.createTable('Device', device => {
+  await knex.schema.createTable('Device', device => {
     device.increments('id')
     device
       .integer('deviceId')
@@ -469,7 +469,7 @@ function* up(knex) {
     device.charset('utf8')
   })
 
-  yield knex.schema.createTable('DeviceSim', sim => {
+  await knex.schema.createTable('DeviceSim', sim => {
     sim.increments('id')
     sim
       .integer('deviceId')
@@ -486,7 +486,7 @@ function* up(knex) {
     sim.charset('utf8')
   })
 
-  yield knex.schema.createTable('DeviceSiteHistory', history => {
+  await knex.schema.createTable('DeviceSiteHistory', history => {
     history.increments('id')
     history
       .integer('deviceId')
@@ -506,7 +506,7 @@ function* up(knex) {
     history.charset('utf8')
   })
 
-  yield knex.schema.createTable('DeviceOperation', op => {
+  await knex.schema.createTable('DeviceOperation', op => {
     op.increments('id')
     op
       .integer('deviceId')
@@ -523,14 +523,14 @@ function* up(knex) {
     op.charset('utf8')
   })
 
-  yield knex.schema.createTable('AssayType', assayType => {
+  await knex.schema.createTable('AssayType', assayType => {
     assayType.increments('id')
     assayType.string('name').notNullable()
     assayType.string('i18nKey')
     assayType.charset('utf8')
   })
 
-  yield knex.schema.createTable('Assay', assay => {
+  await knex.schema.createTable('Assay', assay => {
     assay.increments('id')
     assay.string('name').notNullable()
     assay.string('i18nKey')
@@ -565,7 +565,7 @@ function* up(knex) {
     assay.charset('utf8')
   })
 
-  yield knex.schema.createTable('ResultSource', resultType => {
+  await knex.schema.createTable('ResultSource', resultType => {
     resultType.increments('id')
     resultType.string('name').notNullable()
     resultType.string('i18nKey')
@@ -573,7 +573,7 @@ function* up(knex) {
     resultType.charset('utf8')
   })
 
-  yield knex.schema.createTable('ResultGeneratedResult', table => {
+  await knex.schema.createTable('ResultGeneratedResult', table => {
     table
       .integer('sourceResultId')
       .unsigned()
@@ -590,7 +590,7 @@ function* up(knex) {
     table.charset('utf8')
   })
 
-  yield knex.schema.createTable('ResultType', resultType => {
+  await knex.schema.createTable('ResultType', resultType => {
     resultType.increments('id')
     resultType.string('name').notNullable()
     resultType.string('i18nKey')
@@ -599,7 +599,7 @@ function* up(knex) {
   })
 
   // holds general categories such as "Detected"/"Invalid"
-  yield knex.schema.createTable('ResultCategory', resultCategory => {
+  await knex.schema.createTable('ResultCategory', resultCategory => {
     resultCategory.increments('id')
     resultCategory.string('name').notNullable()
     resultCategory.string('i18nKey')
@@ -608,7 +608,7 @@ function* up(knex) {
   })
 
   // which result categories apply to which assays?
-  yield knex.schema.createTable(
+  await knex.schema.createTable(
     'ResultCategoryAssay',
     resultTypeCategoryAssay => {
       resultTypeCategoryAssay
@@ -629,7 +629,7 @@ function* up(knex) {
     }
   )
 
-  yield knex.schema.createTable('SampleType', sampleType => {
+  await knex.schema.createTable('SampleType', sampleType => {
     sampleType.increments('id')
     sampleType.string('name').notNullable()
     sampleType.string('i18nKey').notNullable()
@@ -638,7 +638,7 @@ function* up(knex) {
   })
 
   // the sample that the result is based on (multiple results can refer to the same sample)
-  yield knex.schema.createTable('Sample', sample => {
+  await knex.schema.createTable('Sample', sample => {
     sample.increments('id')
     sample.string('externalId')
     sample.dateTime('collectedOn')
@@ -657,7 +657,7 @@ function* up(knex) {
     sample.charset('utf8')
   })
 
-  yield knex.schema.createTable('Result', result => {
+  await knex.schema.createTable('Result', result => {
     result.increments('id')
     result.string('externalId')
     result
@@ -764,7 +764,7 @@ function* up(knex) {
     result.charset('utf8')
   })
 
-  yield knex.schema.createTable('DeviceLog', deviceLog => {
+  await knex.schema.createTable('DeviceLog', deviceLog => {
     deviceLog.bigincrements('id')
     deviceLog
       .integer('deviceId')
@@ -799,14 +799,14 @@ function* up(knex) {
     deviceLog.charset('utf8')
   })
 
-  yield knex.schema.createTable('Unit', unit => {
+  await knex.schema.createTable('Unit', unit => {
     unit.increments('id')
     unit.string('name').notNullable()
     unit.string('shortname')
     unit.charset('utf8')
   })
 
-  yield knex.schema.createTable('Consumable', consumable => {
+  await knex.schema.createTable('Consumable', consumable => {
     consumable.increments('id')
     consumable.string('name').notNullable()
     consumable
@@ -833,7 +833,7 @@ function* up(knex) {
     consumable.charset('utf8')
   })
 
-  yield knex.schema.createTable('ConsumableReason', consumableReason => {
+  await knex.schema.createTable('ConsumableReason', consumableReason => {
     consumableReason.increments('id')
     consumableReason.string('name').notNullable()
     consumableReason.string('i18nKey')
@@ -844,7 +844,7 @@ function* up(knex) {
     consumableReason.charset('utf8')
   })
 
-  yield knex.schema.createTable('ConsumableAssay', consumableAssay => {
+  await knex.schema.createTable('ConsumableAssay', consumableAssay => {
     consumableAssay
       .integer('consumableId')
       .unsigned()
@@ -864,7 +864,7 @@ function* up(knex) {
   })
 
   // Result status table
-  yield knex.schema.createTable(
+  await knex.schema.createTable(
     'ResultWorkflowStatus',
     resultWorkflowStatus => {
       resultWorkflowStatus.increments('id')
@@ -874,7 +874,7 @@ function* up(knex) {
     }
   )
 
-  yield knex.schema.createTable('ResultWorkflowLog', resultWorkflowLog => {
+  await knex.schema.createTable('ResultWorkflowLog', resultWorkflowLog => {
     resultWorkflowLog.increments('id')
     resultWorkflowLog
       .integer('resultId')
@@ -894,7 +894,7 @@ function* up(knex) {
     addCreateFieldsNullable(resultWorkflowLog)
   })
 
-  yield knex.schema.createTable('InventoryItem', inventoryItem => {
+  await knex.schema.createTable('InventoryItem', inventoryItem => {
     inventoryItem.increments('id')
     inventoryItem
       .integer('consumableId')
@@ -930,7 +930,7 @@ function* up(knex) {
     inventoryItem.charset('utf8')
   })
 
-  yield knex.schema.createTable('InventoryLog', inventoryLog => {
+  await knex.schema.createTable('InventoryLog', inventoryLog => {
     inventoryLog.increments('id')
     inventoryLog
       .integer('inventoryItemId')
@@ -978,7 +978,7 @@ function* up(knex) {
   })
 
   // this table logs any change of QC-Check checkbox on 'Result Details' page
-  yield knex.schema.createTable('ResultQualityControlLog', x => {
+  await knex.schema.createTable('ResultQualityControlLog', x => {
     x.increments('id')
     x
       .integer('resultId')
@@ -1001,7 +1001,7 @@ function* up(knex) {
   })
 
   // facts-table for result counts by device
-  yield knex.schema.createTable('FactResultCountDevice', x => {
+  await knex.schema.createTable('FactResultCountDevice', x => {
     x
       .integer('deviceId')
       .unsigned()
@@ -1031,7 +1031,7 @@ function* up(knex) {
   })
 
   // facts-table for device flags
-  yield knex.schema.createTable('FactDeviceFlag', x => {
+  await knex.schema.createTable('FactDeviceFlag', x => {
     x
       .integer('deviceId')
       .unsigned()
@@ -1077,70 +1077,70 @@ function* up(knex) {
     x.dateTime('updatedOn').notNullable()
   })
 
-  yield knex.raw('SET foreign_key_checks = 1')
+  await knex.raw('SET foreign_key_checks = 1')
 }
 
-function* down(knex) {
-  yield knex.raw('SET foreign_key_checks = 0')
+async function down(knex) {
+  await knex.raw('SET foreign_key_checks = 0')
 
-  yield knex.schema.dropTableIfExists('InventoryLog')
-  yield knex.schema.dropTableIfExists('ConsumableAssay')
-  yield knex.schema.dropTableIfExists('ResultWorkflowLog')
-  yield knex.schema.dropTableIfExists('ResultWorkflowStatus')
-  yield knex.schema.dropTableIfExists('ConsumableAssay')
-  yield knex.schema.dropTableIfExists('InventoryItem')
-  yield knex.schema.dropTableIfExists('ConsumableReason')
-  yield knex.schema.dropTableIfExists('Unit')
-  yield knex.schema.dropTableIfExists('Consumable')
-  yield knex.schema.dropTableIfExists('ResultCategoryAssay')
-  yield knex.schema.dropTableIfExists('ResultSource')
-  yield knex.schema.dropTableIfExists('ResultGeneratedResult')
-  yield knex.schema.dropTableIfExists('ResultType')
-  yield knex.schema.dropTableIfExists('ResultCategory')
-  yield knex.schema.dropTableIfExists('ResultLog')
-  yield knex.schema.dropTableIfExists('DeviceLog')
-  yield knex.schema.dropTableIfExists('DeviceLogUpdate')
-  yield knex.schema.dropTableIfExists('Result')
-  yield knex.schema.dropTableIfExists('SampleType')
-  yield knex.schema.dropTableIfExists('Sample')
-  yield knex.schema.dropTableIfExists('Assay')
-  yield knex.schema.dropTableIfExists('AssayType')
-  yield knex.schema.dropTableIfExists('DeviceSiteHistory')
-  yield knex.schema.dropTableIfExists('Device')
-  yield knex.schema.dropTableIfExists('DeviceStatusLog')
-  yield knex.schema.dropTableIfExists('Site')
-  yield knex.schema.dropTableIfExists('DeviceTypeCategory')
-  yield knex.schema.dropTableIfExists('DeviceConfiguration')
-  yield knex.schema.dropTableIfExists('DeviceOperation')
-  yield knex.schema.dropTableIfExists('DeviceType')
-  yield knex.schema.dropTableIfExists('DeviceStatus')
-  yield knex.schema.dropTableIfExists('DeviceRole')
-  yield knex.schema.dropTableIfExists('DeviceApiKey')
-  yield knex.schema.dropTableIfExists('RefreshToken')
-  yield knex.schema.dropTableIfExists('JobFunctionPermission')
-  yield knex.schema.dropTableIfExists('JobFunction')
-  yield knex.schema.dropTableIfExists('JobContext')
-  yield knex.schema.dropTableIfExists('Job')
-  yield knex.schema.dropTableIfExists('UserRole')
-  yield knex.schema.dropTableIfExists('RolePermission')
-  yield knex.schema.dropTableIfExists('Permission')
-  yield knex.schema.dropTableIfExists('Role')
-  yield knex.schema.dropTableIfExists('Person')
-  yield knex.schema.dropTableIfExists('Lga')
-  yield knex.schema.dropTableIfExists('State')
-  yield knex.schema.dropTableIfExists('Country')
-  yield knex.schema.dropTableIfExists('Geography')
-  yield knex.schema.dropTableIfExists('User')
-  yield knex.schema.dropTableIfExists('DataFilter')
-  yield knex.schema.dropTableIfExists('OrgUnit')
-  yield knex.schema.dropTableIfExists('Partner')
-  yield knex.schema.dropTableIfExists('PartnerType')
-  yield knex.schema.dropTableIfExists('DeviceSim')
-  yield knex.schema.dropTableIfExists('ResultQualityControlLog')
-  yield knex.schema.dropTableIfExists('FactResultCountDevice')
-  yield knex.schema.dropTableIfExists('FactDeviceFlag')
+  await knex.schema.dropTableIfExists('InventoryLog')
+  await knex.schema.dropTableIfExists('ConsumableAssay')
+  await knex.schema.dropTableIfExists('ResultWorkflowLog')
+  await knex.schema.dropTableIfExists('ResultWorkflowStatus')
+  await knex.schema.dropTableIfExists('ConsumableAssay')
+  await knex.schema.dropTableIfExists('InventoryItem')
+  await knex.schema.dropTableIfExists('ConsumableReason')
+  await knex.schema.dropTableIfExists('Unit')
+  await knex.schema.dropTableIfExists('Consumable')
+  await knex.schema.dropTableIfExists('ResultCategoryAssay')
+  await knex.schema.dropTableIfExists('ResultSource')
+  await knex.schema.dropTableIfExists('ResultGeneratedResult')
+  await knex.schema.dropTableIfExists('ResultType')
+  await knex.schema.dropTableIfExists('ResultCategory')
+  await knex.schema.dropTableIfExists('ResultLog')
+  await knex.schema.dropTableIfExists('DeviceLog')
+  await knex.schema.dropTableIfExists('DeviceLogUpdate')
+  await knex.schema.dropTableIfExists('Result')
+  await knex.schema.dropTableIfExists('SampleType')
+  await knex.schema.dropTableIfExists('Sample')
+  await knex.schema.dropTableIfExists('Assay')
+  await knex.schema.dropTableIfExists('AssayType')
+  await knex.schema.dropTableIfExists('DeviceSiteHistory')
+  await knex.schema.dropTableIfExists('Device')
+  await knex.schema.dropTableIfExists('DeviceStatusLog')
+  await knex.schema.dropTableIfExists('Site')
+  await knex.schema.dropTableIfExists('DeviceTypeCategory')
+  await knex.schema.dropTableIfExists('DeviceConfiguration')
+  await knex.schema.dropTableIfExists('DeviceOperation')
+  await knex.schema.dropTableIfExists('DeviceType')
+  await knex.schema.dropTableIfExists('DeviceStatus')
+  await knex.schema.dropTableIfExists('DeviceRole')
+  await knex.schema.dropTableIfExists('DeviceApiKey')
+  await knex.schema.dropTableIfExists('RefreshToken')
+  await knex.schema.dropTableIfExists('JobFunctionPermission')
+  await knex.schema.dropTableIfExists('JobFunction')
+  await knex.schema.dropTableIfExists('JobContext')
+  await knex.schema.dropTableIfExists('Job')
+  await knex.schema.dropTableIfExists('UserRole')
+  await knex.schema.dropTableIfExists('RolePermission')
+  await knex.schema.dropTableIfExists('Permission')
+  await knex.schema.dropTableIfExists('Role')
+  await knex.schema.dropTableIfExists('Person')
+  await knex.schema.dropTableIfExists('Lga')
+  await knex.schema.dropTableIfExists('State')
+  await knex.schema.dropTableIfExists('Country')
+  await knex.schema.dropTableIfExists('Geography')
+  await knex.schema.dropTableIfExists('User')
+  await knex.schema.dropTableIfExists('DataFilter')
+  await knex.schema.dropTableIfExists('OrgUnit')
+  await knex.schema.dropTableIfExists('Partner')
+  await knex.schema.dropTableIfExists('PartnerType')
+  await knex.schema.dropTableIfExists('DeviceSim')
+  await knex.schema.dropTableIfExists('ResultQualityControlLog')
+  await knex.schema.dropTableIfExists('FactResultCountDevice')
+  await knex.schema.dropTableIfExists('FactDeviceFlag')
 
-  yield knex.raw('SET foreign_key_checks = 1')
+  await knex.raw('SET foreign_key_checks = 1')
 }
 
 // Adds createdOn, createdBy

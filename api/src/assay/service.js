@@ -1,4 +1,3 @@
-const Promise = require('bluebird')
 const _ = require('lodash')
 const { knex, filterParams, sortPageParams } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
@@ -24,12 +23,12 @@ const SELECT_LIST_RESULT_CATEGORY_FIELDS = [
   'rca.assayId',
 ]
 
-function* listAssays(request) {
+async function listAssays(request) {
   const { query, auth } = request
 
   // get all assays that have results that user has access to
-  const dataConstraints = yield getConstraints(auth.credentials)
-  const usedAssayIds = yield knex('Result as r')
+  const dataConstraints = await getConstraints(auth.credentials)
+  const usedAssayIds = await knex('Result as r')
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
     .modify(addConstraints, dataConstraints, { device: 'd' })
     .distinct('r.assayId')
@@ -54,10 +53,10 @@ function* listAssays(request) {
     .select(SELECT_LIST_FIELDS)
 
   // return result when both queries are finished
-  const [{ count: total }, rawAssays] = yield Promise.all([getCount, getItems])
+  const [{ count: total }, rawAssays] = await Promise.all([getCount, getItems])
 
   // get resultCategories for all assays
-  const rawResultCategories = yield knex('ResultCategory as rc')
+  const rawResultCategories = await knex('ResultCategory as rc')
     .innerJoin('ResultCategoryAssay as rca', 'rc.id', 'rca.resultCategoryId')
     .whereIn('rca.assayId', _.map(rawAssays, 'id'))
     .select(SELECT_LIST_RESULT_CATEGORY_FIELDS)

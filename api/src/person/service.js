@@ -1,11 +1,10 @@
-const Promise = require('bluebird')
 const _ = require('lodash')
 const Boom = require('boom')
 const { query, knex, filterParams, sortPageParams } = require('../db')
 const userService = require('../auth/service')
 const { transformGeographyFromUpdates } = require('../geography/service')
 
-function* listPeople(request) {
+async function listPeople(request) {
   const { query } = request
 
   const personQuery = knex('Person as p')
@@ -44,7 +43,7 @@ function* listPeople(request) {
     )
 
   // return result when both queries are finished
-  const [{ count: total }, data] = yield Promise.all([getCount, getItems])
+  const [{ count: total }, data] = await Promise.all([getCount, getItems])
 
   return { ok: true, total, data, length: data.length }
 }
@@ -85,10 +84,10 @@ function getPersonDetails(personId) {
     )
 }
 
-function* showPerson(request) {
+async function showPerson(request) {
   const { params } = request
 
-  const personDetails = yield getPersonDetails(params.personId)
+  const personDetails = await getPersonDetails(params.personId)
   if (_.isEmpty(personDetails)) {
     return Boom.notFound()
   }
@@ -96,7 +95,7 @@ function* showPerson(request) {
   if (personDetails.userId == null) {
     personDetails.jobFunctions = []
   } else {
-    const jobFunctionsForUser = yield query('Get job functions for user')
+    const jobFunctionsForUser = await query('Get job functions for user')
       .from('Job as j')
       .innerJoin('JobFunction as jf', 'jf.id', 'j.jobFunctionId')
       .innerJoin('Person as ps', 'ps.id', 'j.personId')
@@ -111,15 +110,15 @@ function* showPerson(request) {
   return { ok: true, data: personDetails }
 }
 
-function* savePerson(request, updatablePersonFields) {
+async function savePerson(request, updatablePersonFields) {
   const { params, payload } = request
 
   // TODO: check access level permissions
-  const currentlyLoggedInUser = yield userService.getUser(
+  const currentlyLoggedInUser = await userService.getUser(
     request.auth.credentials.name
   )
 
-  const personDetails = yield getPersonDetails(params.personId)
+  const personDetails = await getPersonDetails(params.personId)
   if (_.isEmpty(personDetails)) {
     return Boom.notFound()
   }
@@ -139,9 +138,7 @@ function* savePerson(request, updatablePersonFields) {
   )
 
   // Update record if any values have changed
-  const changedPersonFields = yield* transformGeographyFromUpdates(
-    changedFields
-  )
+  const changedPersonFields = await transformGeographyFromUpdates(changedFields)
   if (!_.isEmpty(changedPersonFields)) {
     if (
       changedFields.countryId &&
@@ -153,17 +150,18 @@ function* savePerson(request, updatablePersonFields) {
     changedFields.updatedOn = new Date()
     changedFields.updatedBy = currentlyLoggedInUser.id
 
-    yield query('Save person details')
+    await query('Save person details')
       .from('Person as p')
       .where({ 'p.id': personDetails.id })
       .update(changedPersonFields)
   }
 
-  return yield* showPerson(request)
+  const response = await showPerson(request)
+  return response
 }
 
-function* updatePerson(request) {
-  return yield* savePerson(request, [
+async function updatePerson(request) {
+  return await savePerson(request, [ //eslint-disable-line
     'name',
     'title',
     'email',
@@ -179,8 +177,9 @@ function* updatePerson(request) {
   ])
 }
 
-function* updatePersonUserPreferences(request) {
-  return yield* savePerson(request, ['timezone', 'culture'])
+async function updatePersonUserPreferences(request) {
+  const response = await savePerson(request, ['timezone', 'culture'])
+  return response
 }
 
 module.exports = {

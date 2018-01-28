@@ -18,7 +18,7 @@ describe('inventory endpoints', () => {
 
       beforeEach(() => {
         endpoint = setupRoute('GET', '/inventory', {
-          *listInventoryItems() {
+          async listInventoryItems() {
             return expectedResponse
           },
         })
@@ -40,7 +40,7 @@ describe('inventory endpoints', () => {
 
       beforeEach(() => {
         endpoint = setupRoute('GET', '/inventory/group-by-site', {
-          *listInventoryItemsGroupedBySite() {
+          async listInventoryItemsGroupedBySite() {
             return expectedResponse
           },
         })
@@ -64,7 +64,7 @@ describe('inventory endpoints', () => {
 
       beforeEach(() => {
         endpoint = setupRoute('PUT', '/inventory/add/{inventoryItemId}', {
-          *addInventory() {
+          async addInventory() {
             return expectedResponse
           },
         })
@@ -86,7 +86,7 @@ describe('inventory endpoints', () => {
 
       beforeEach(() => {
         endpoint = setupRoute('PUT', '/inventory/remove/{inventoryItemId}', {
-          *removeInventory() {
+          async removeInventory() {
             return expectedResponse
           },
         })
@@ -108,7 +108,7 @@ describe('inventory endpoints', () => {
 
       beforeEach(() => {
         endpoint = setupRoute('PUT', '/inventory/transfer/{inventoryItemId}', {
-          *transferInventory() {
+          async transferInventory() {
             return expectedResponse
           },
         })
@@ -132,7 +132,7 @@ describe('inventory endpoints', () => {
 
       beforeEach(() => {
         endpoint = setupRoute('POST', '/inventory/add', {
-          *addInventory() {
+          async addInventory() {
             return expectedResponse
           },
         })

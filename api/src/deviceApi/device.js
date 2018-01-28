@@ -1,45 +1,47 @@
 const _ = require('lodash')
 
-function* updateDeviceConfiguration(knex, deviceId, payload) {
-  const previousConfig = yield* getDeviceConfiguration(knex, deviceId)
+async function updateDeviceConfiguration(knex, deviceId, payload) {
+  const previousConfig = await getDeviceConfiguration(knex, deviceId)
   const configurationData =
     previousConfig == null
       ? payload.data
       : _.merge(previousConfig.data, payload.data)
 
-  yield knex('Device')
+  await knex('Device')
     .where({ id: deviceId })
     .update({ configurationData: JSON.stringify(configurationData) })
 
   return {}
 }
 
-function* getDeviceConfiguration(knex, deviceId) {
+async function getDeviceConfiguration(knex, deviceId) {
   const deviceQuery = knex('Device as d')
     .first('d.configurationData')
     .where({ id: deviceId })
-  return yield* getDeviceConfigurationFromQuery(deviceQuery)
+  const deviceConfiguration = await getDeviceConfigurationFromQuery(deviceQuery)
+  return deviceConfiguration
 }
 
-function* getDeviceConfigurationFromDeviceLog(knex, deviceLogId) {
+async function getDeviceConfigurationFromDeviceLog(knex, deviceLogId) {
   const deviceQuery = knex('Device as d').first('d.configurationData')
   deviceQuery.innerJoin('DeviceLog as dl', 'dl.deviceId', 'd.id').where({
     'dl.id': deviceLogId,
     'dl.deviceConfigurationUpdated': true,
   })
-  return yield* getDeviceConfigurationFromQuery(deviceQuery)
+  const deviceConfiguration = await getDeviceConfigurationFromQuery(deviceQuery)
+  return deviceConfiguration
 }
 
-function* getDeviceConfigurationFromQuery(deviceQuery) {
-  const device = yield deviceQuery
+async function getDeviceConfigurationFromQuery(deviceQuery) {
+  const device = await deviceQuery
   if (device == null || device.configurationData == null) {
     return null
   }
   return { data: JSON.parse(device.configurationData) }
 }
 
-function* addDeviceOperation(knex, deviceId, payload, now = new Date()) {
-  const [deviceOperationId] = yield knex('DeviceOperation').insert({
+async function addDeviceOperation(knex, deviceId, payload, now = new Date()) {
+  const [deviceOperationId] = await knex('DeviceOperation').insert({
     deviceId,
     externalId: payload.id,
     data: JSON.stringify(payload.data),
@@ -50,8 +52,8 @@ function* addDeviceOperation(knex, deviceId, payload, now = new Date()) {
   return { id: deviceOperationId }
 }
 
-function* getDeviceOperation(knex, deviceLogId) {
-  const op = yield knex('DeviceOperation as do')
+async function getDeviceOperation(knex, deviceLogId) {
+  const op = await knex('DeviceOperation as do')
     .innerJoin('DeviceLog as dl', 'dl.deviceOperationId', 'do.id')
     .where({
       'dl.id': deviceLogId,
@@ -77,8 +79,8 @@ function* getDeviceOperation(knex, deviceLogId) {
   return result
 }
 
-function* getSite(knex, deviceId) {
-  const site = yield knex('Site as s')
+async function getSite(knex, deviceId) {
+  const site = await knex('Site as s')
     .innerJoin('Device as d', 'd.siteId', 's.id')
     .where('d.id', deviceId)
     .first('s.externalId')

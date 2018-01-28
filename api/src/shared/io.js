@@ -64,37 +64,38 @@ const getCellsByValue = (sheet, value) => {
 // read/write Excel file - 'exceljs' API returns Promise for readFile and writeFile
 // ---------------------------------
 // read Excel file and return workbook
-function* readExcelFile(fileName) {
-  return yield new excel.Workbook().xlsx
+async function readExcelFile(fileName) {
+  return await new excel.Workbook().xlsx //eslint-disable-line
     .readFile(fileName)
     .then(workbook => workbook)
 }
 // write workbook into Excel and Csv file
-function* writeExcelFile(fileName, workbook) {
-  return yield workbook.xlsx.writeFile(fileName).then(() => true)
+async function writeExcelFile(fileName, workbook) {
+  return await workbook.xlsx.writeFile(fileName).then(() => true) //eslint-disable-line
 }
-function* writeCsvFile(fileName, workbook) {
-  return yield workbook.csv.writeFile(fileName).then(() => true)
+
+async function writeCsvFile(fileName, workbook) {
+  return await workbook.csv.writeFile(fileName).then(() => true) //eslint-disable-line
 }
 
 // ---------------------------------
 // generate Excel file for given template,
 // props = { templateFileName, outputFileName, populateData }
 // ---------------------------------
-function* generateExcelFile(props) {
+async function generateExcelFile(props) {
   const message = null
 
   // template file in folder /templates
   const fileName = `${createDirectory('templates')}/${props.templateFileName}`
 
   // read file into workbook
-  const workbook = yield* readExcelFile(fileName)
+  const workbook = await readExcelFile(fileName)
 
   // execute callback function to populate workbook with caller-side data
   props.populateData(workbook)
 
   const dir = getExportDirectory() // get path for export directory
-  const ok = yield* writeExcelFile(
+  const ok = await writeExcelFile(
     `${dir.full}/${props.outputFileName}`,
     workbook
   )
@@ -104,7 +105,7 @@ function* generateExcelFile(props) {
 // ---------------------------------
 // generate CSV file - string arrays columnNames and fieldNames should have same size
 // ---------------------------------
-function* generateCsvFile(outputFileName, items, columnNames, fieldNames) {
+async function generateCsvFile(outputFileName, items, columnNames, fieldNames) {
   const message = null
 
   const workbook = new excel.Workbook()
@@ -129,7 +130,7 @@ function* generateCsvFile(outputFileName, items, columnNames, fieldNames) {
   worksheet.addRows(rows)
 
   const dir = getExportDirectory() // get path for export directory
-  const ok = yield* writeCsvFile(`${dir.full}/${outputFileName}`, workbook)
+  const ok = await writeCsvFile(`${dir.full}/${outputFileName}`, workbook)
   return { ok, url: `${dir.url}/${outputFileName}`, message }
 }
 

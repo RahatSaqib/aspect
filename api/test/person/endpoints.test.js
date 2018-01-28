@@ -18,7 +18,7 @@ describe('person endpoints', () => {
 
       beforeEach(() => {
         endpoint = setupRoute('GET', '/person', {
-          *listPeople() {
+          async listPeople() {
             return expectedResponse
           },
         })
@@ -40,7 +40,7 @@ describe('person endpoints', () => {
 
       beforeEach(() => {
         endpoint = setupRoute('GET', '/person/{personId}', {
-          *showPerson() {
+          async showPerson() {
             return expectedResponse
           },
         })
@@ -64,7 +64,7 @@ describe('person endpoints', () => {
 
       beforeEach(() => {
         endpoint = setupRoute('PUT', '/person/{personId}', {
-          *updatePerson() {
+          async updatePerson() {
             return expectedResponse
           },
         })
@@ -86,7 +86,7 @@ describe('person endpoints', () => {
 
       beforeEach(() => {
         endpoint = setupRoute('PUT', '/person/preferences/{personId}', {
-          *updatePersonUserPreferences() {
+          async updatePersonUserPreferences() {
             return expectedResponse
           },
         })

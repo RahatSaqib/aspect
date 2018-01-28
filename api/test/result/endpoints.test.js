@@ -18,7 +18,7 @@ describe('result endpoints', () => {
 
       beforeEach(() => {
         endpoint = setupRoute('GET', '/result', {
-          *listResults() {
+          async listResults() {
             return expectedResponse
           },
         })
@@ -40,7 +40,7 @@ describe('result endpoints', () => {
 
       beforeEach(() => {
         endpoint = setupRoute('GET', '/result/{resultId}', {
-          *showResult() {
+          async showResult() {
             return expectedResponse
           },
         })
@@ -62,7 +62,7 @@ describe('result endpoints', () => {
 
       beforeEach(() => {
         endpoint = setupRoute('GET', '/result/result-types', {
-          *listResultTypes() {
+          async listResultTypes() {
             return expectedResponse
           },
         })
@@ -84,7 +84,7 @@ describe('result endpoints', () => {
 
       beforeEach(() => {
         endpoint = setupRoute('GET', '/result/workflow-status-types', {
-          *listWorkflowStatusTypes() {
+          async listWorkflowStatusTypes() {
             return expectedResponse
           },
         })
@@ -109,7 +109,7 @@ describe('result endpoints', () => {
           'GET',
           '/result/workflow-status-logs/{resultId}',
           {
-            *listWorkflowStatusLog() {
+            async listWorkflowStatusLog() {
               return expectedResponse
             },
           }
@@ -132,7 +132,7 @@ describe('result endpoints', () => {
 
       beforeEach(() => {
         endpoint = setupRoute('GET', '/result/export', {
-          *exportResults() {
+          async exportResults() {
             return expectedResponse
           },
         })
@@ -156,7 +156,7 @@ describe('result endpoints', () => {
 
       beforeEach(() => {
         endpoint = setupRoute('PUT', '/result/workflow-status/{resultId}', {
-          *updateWorkflowStatus() {
+          async updateWorkflowStatus() {
             return expectedResponse
           },
         })

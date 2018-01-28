@@ -296,69 +296,26 @@ describe('Result routes', () => {
     })
 
     it('Should update "QC Check" given a resultId and boolean if in status "Deliverable"', done => {
-      // get first result in status "Deliverable"
+      // ensure we have a result in status "Deliverable"
       server
-        .get(`${path}?workflowStatusId=7`)
-        .set('Authorization', `Bearer ${shared.token}`)
-        .end((err, res) => {
-          resultId = res.body.data[0].id
-
-          // set to true
+        .put(`${path}/workflow-status/${resultId}`)
+        .send({
+          resultWorkflowStatusId: null,
+          externalId: 'Deliverable',
+        })
+        .set('Authorization', `Bearer${shared.token}`)
+        .end(() => {
+          // get first result in status "Deliverable"
           server
-            .put(`${path}/qc-check/${resultId}`)
-            .send({ qcCheck: true })
-            .set('Authorization', `Bearer${shared.token}`)
+            .get(`${path}?workflowStatusId=7`)
+            .set('Authorization', `Bearer ${shared.token}`)
             .end((err, res) => {
-              assert.equal(res.status, 200)
-              assert.typeOf(res.body, 'Object')
-              assert.property(res.body, 'data')
-              assert.typeOf(res.body.data, 'Object')
-              assert.typeOf(res.body.data.assay, 'Object')
-              assert.typeOf(res.body.data.assay.resultDataSchema, 'Object')
-              assert.typeOf(res.body.data.resultData, 'Object')
-              const resultFieldNames = [
-                'id',
-                'endedOn',
-                'deviceName',
-                'countryName',
-                'stateName',
-                'lgaName',
-                'resultCategory1Name',
-                'resultCategory2Name',
-                'resultData',
-                'sampleId',
-                'sampleGroup',
-                'patientId',
-                'siteName',
-                'assayVersion',
-                'consumableSerial',
-                'consumableLot',
-                'consumableExpirationDate',
-                'instrumentSerial',
-                'moduleName',
-                'moduleSerial',
-                'researchId',
-                'senderVersion',
-                'senderOperator',
-                'notes',
-                'errorCode',
-                'errorNotes',
-                'createdOn',
-                'updatedOn',
-                'assayId',
-                'assay',
-              ]
-              _.each(resultFieldNames, fieldName => {
-                assert.property(res.body.data, fieldName)
-              })
+              resultId = res.body.data[0].id
 
-              // check that flag was set to true
-              assert.equal(res.body.data.qcCheck, 1)
-
-              // ...and back to false
+              // set to true
               server
                 .put(`${path}/qc-check/${resultId}`)
-                .send({ qcCheck: false })
+                .send({ qcCheck: true })
                 .set('Authorization', `Bearer${shared.token}`)
                 .end((err, res) => {
                   assert.equal(res.status, 200)
@@ -404,10 +361,80 @@ describe('Result routes', () => {
                     assert.property(res.body.data, fieldName)
                   })
 
-                  // check that flag was set to false
-                  assert.equal(res.body.data.qcCheck, 0)
+                  // check that flag was set to true
+                  assert.equal(res.body.data.qcCheck, 1)
 
-                  done()
+                  // ...and back to false
+                  server
+                    .put(`${path}/qc-check/${resultId}`)
+                    .send({ qcCheck: false })
+                    .set('Authorization', `Bearer${shared.token}`)
+                    .end((err, res) => {
+                      assert.equal(res.status, 200)
+                      assert.typeOf(res.body, 'Object')
+                      assert.property(res.body, 'data')
+                      assert.typeOf(res.body.data, 'Object')
+                      assert.typeOf(res.body.data.assay, 'Object')
+                      assert.typeOf(
+                        res.body.data.assay.resultDataSchema,
+                        'Object'
+                      )
+                      assert.typeOf(res.body.data.resultData, 'Object')
+                      const resultFieldNames = [
+                        'id',
+                        'endedOn',
+                        'deviceName',
+                        'countryName',
+                        'stateName',
+                        'lgaName',
+                        'resultCategory1Name',
+                        'resultCategory2Name',
+                        'resultData',
+                        'sampleId',
+                        'sampleGroup',
+                        'patientId',
+                        'siteName',
+                        'assayVersion',
+                        'consumableSerial',
+                        'consumableLot',
+                        'consumableExpirationDate',
+                        'instrumentSerial',
+                        'moduleName',
+                        'moduleSerial',
+                        'researchId',
+                        'senderVersion',
+                        'senderOperator',
+                        'notes',
+                        'errorCode',
+                        'errorNotes',
+                        'createdOn',
+                        'updatedOn',
+                        'assayId',
+                        'assay',
+                      ]
+                      _.each(resultFieldNames, fieldName => {
+                        assert.property(res.body.data, fieldName)
+                      })
+
+                      // check that flag was set to false
+                      assert.equal(res.body.data.qcCheck, 0)
+
+                      // Clean Up: Update resultWorkflowStatus with original status
+                      server
+                        .put(`${path}/workflow-status/${resultId}`)
+                        .send({
+                          resultWorkflowStatusId: null,
+                          externalId: initialResultWorkflowStatus,
+                        })
+                        .set('Authorization', `Bearer${shared.token}`)
+                        .end((err, res) => {
+                          assert.equal(
+                            res.body.data.resultWorkflowStatus,
+                            initialResultWorkflowStatus
+                          )
+                          done()
+                        })
+                    })
                 })
             })
         })

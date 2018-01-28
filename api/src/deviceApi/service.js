@@ -71,14 +71,14 @@ const mergeResultHandler = deviceApiHandler(mergeResultWithContext, {
 })
 
 function deviceApiHandler(handler, handlerOptions) {
-  return asyncHandler(function*(request) {
-    const { error, context } = yield* createDeviceApiContext(
+  return asyncHandler(async request => {
+    const { error, context } = await createDeviceApiContext(
       request,
       handlerOptions
     )
     const { updatePing = false, updateDeviceLog = false } = handlerOptions
     if (error) {
-      yield* updateLogs(request)
+      await updateLogs(request)
       return error
     }
 
@@ -98,7 +98,7 @@ function deviceApiHandler(handler, handlerOptions) {
       deviceLogRawMessage = JSON.stringify(request.plugins.rawPayload)
 
       // need to ensure DeviceLog is inserted even if failure below
-      ;[deviceLogId] = yield knex('DeviceLog').insert({
+      ;[deviceLogId] = await knex('DeviceLog').insert({
         deviceId,
         checkpoint,
         source: _.get(request.payload, 'log.source', ''),
@@ -113,21 +113,21 @@ function deviceApiHandler(handler, handlerOptions) {
       deviceUpdates.lastPingOn = now
       deviceUpdates.lastPingFromIp = remoteAddress
     }
-    yield knex('Device')
+    await knex('Device')
       .where({ id: device.id })
       .update(deviceUpdates)
 
     let response = {}
     let deviceLogUpdate = null
-    yield context.messageContext.transact(function*(knex) {
+    await context.messageContext.transact(async knex => {
       context.knex = knex
-      response = yield* handler(context)
+      response = await handler(context)
 
       // Update DeviceLog with changes added to context when calling handler
       if (deviceLogId !== null) {
         ;({ deviceLogUpdate } = context)
         if (deviceLogUpdate != null) {
-          yield knex('DeviceLog')
+          await knex('DeviceLog')
             .where({ id: deviceLogId })
             .update(deviceLogUpdate)
         }
@@ -147,39 +147,39 @@ function deviceApiHandler(handler, handlerOptions) {
   })
 }
 
-function* addDeviceDataWithContext(context) {
+async function addDeviceDataWithContext(context) {
   const response = {}
   const { knex, now, payload, device } = context
   const { name, site, result, configuration, operation } = payload
 
   if (name) {
-    yield knex('Device')
+    await knex('Device')
       .where({ id: device.id })
       .update({ name, updatedOn: now })
   }
 
   if (site) {
-    yield* updateSiteWithContext(context.withPayload(site))
+    await updateSiteWithContext(context.withPayload(site))
   }
 
   if (configuration) {
-    yield* updateDeviceConfigurationWithContext(
+    await updateDeviceConfigurationWithContext(
       context.withPayload(configuration)
     )
   }
 
   if (operation) {
-    yield* addDeviceOperationWithContext(context.withPayload(operation))
+    await addDeviceOperationWithContext(context.withPayload(operation))
   }
 
   if (result) {
-    yield* mergeResultWithContext(context.withPayload(result))
+    await mergeResultWithContext(context.withPayload(result))
   }
 
   return response
 }
 
-function* getDeviceDataWithContext(context) {
+async function getDeviceDataWithContext(context) {
   const { knex, now, device, deviceLog, deviceLogType } = context
 
   // include fields based on device log type configured in endpoints
@@ -203,7 +203,7 @@ function* getDeviceDataWithContext(context) {
   }
 
   if (includeSite) {
-    const site = yield* getSite(knex, context.device.id)
+    const site = await getSite(knex, context.device.id)
     if (site != null) {
       response.site = site
     }
@@ -220,7 +220,7 @@ function* getDeviceDataWithContext(context) {
     }
 
     if (includeConfig) {
-      const config = yield* getDeviceConfigurationFromDeviceLog(
+      const config = await getDeviceConfigurationFromDeviceLog(
         knex,
         deviceLog.id
       )
@@ -230,14 +230,14 @@ function* getDeviceDataWithContext(context) {
     }
 
     if (includeOp) {
-      const op = yield* getDeviceOperationWithContext(context)
+      const op = await getDeviceOperationWithContext(context)
       if (op != null) {
         response.operation = op
       }
     }
 
     if (includeResult) {
-      const result = yield* getResultWithContext(context)
+      const result = await getResultWithContext(context)
       if (result != null) {
         response.result = result
       }
@@ -247,27 +247,27 @@ function* getDeviceDataWithContext(context) {
   return response
 }
 
-function* addDeviceOperationWithContext(context) {
+async function addDeviceOperationWithContext(context) {
   const { knex, payload, device: { id: deviceId }, now } = context
-  const op = yield* addDeviceOperation(knex, deviceId, payload, now)
+  const op = await addDeviceOperation(knex, deviceId, payload, now)
   context.addDeviceLogUpdate('deviceOperationId', op.id)
   return {}
 }
 
-function* updateDeviceConfigurationWithContext(context) {
+async function updateDeviceConfigurationWithContext(context) {
   const { knex, payload, device: { id: deviceId } } = context
-  const config = yield* updateDeviceConfiguration(knex, deviceId, payload)
+  const config = await updateDeviceConfiguration(knex, deviceId, payload)
   context.addDeviceLogUpdate('deviceConfigurationUpdated', true)
   return config
 }
 
-function* getDeviceOperationWithContext(context) {
+async function getDeviceOperationWithContext(context) {
   const { knex, deviceLog: { id: deviceLogId } } = context
-  const op = yield* getDeviceOperation(knex, deviceLogId)
+  const op = await getDeviceOperation(knex, deviceLogId)
   return op
 }
 
-function* updateSiteWithContext(context) {
+async function updateSiteWithContext(context) {
   const { knex, dispatch, device, payload, now, pluginName: plugin } = context
 
   const pluginContext = {
@@ -279,8 +279,8 @@ function* updateSiteWithContext(context) {
     deviceId: device.id,
   }
 
-  const preProcessUpdateSite = yield* loadPlugin(plugin, 'preProcessUpdateSite')
-  yield* preProcessUpdateSite(pluginContext)
+  const preProcessUpdateSite = await loadPlugin(plugin, 'preProcessUpdateSite')
+  await preProcessUpdateSite(pluginContext)
 
   const siteExternalId = payload.id || null
   if (siteExternalId == null) {
@@ -288,7 +288,7 @@ function* updateSiteWithContext(context) {
   }
 
   // Find unique site with specified external ID for same partner as device
-  const sites = yield knex('Site as s')
+  const sites = await knex('Site as s')
     .where({
       partnerId: device.partnerId,
       externalId: siteExternalId,
@@ -303,7 +303,7 @@ function* updateSiteWithContext(context) {
   if (device.siteId !== site.id) {
     const status = device.siteId == null ? 'approved' : 'assigned'
 
-    yield knex('Device')
+    await knex('Device')
       .where({ id: device.id })
       .update({
         siteId: site.id,
@@ -312,7 +312,7 @@ function* updateSiteWithContext(context) {
           .select('id'),
       })
 
-    yield knex('DeviceStatusLog').insert({
+    await knex('DeviceStatusLog').insert({
       deviceId: device.id,
       deviceStatusId: knex('DeviceStatus')
         .where({ token: status })
@@ -323,31 +323,31 @@ function* updateSiteWithContext(context) {
     })
 
     // Update DeviceApiKey site with the new siteId
-    yield knex('DeviceApiKey')
+    await knex('DeviceApiKey')
       .where({ deviceId: device.id })
       .update({
         siteId: site.id,
       })
 
-    yield knex('DeviceSiteHistory').insert({
+    await knex('DeviceSiteHistory').insert({
       deviceId: device.id,
       siteId: site.id,
       createdOn: now,
     })
   }
 
-  const postProcessUpdateSite = yield* loadPlugin(
+  const postProcessUpdateSite = await loadPlugin(
     plugin,
     'postProcessUpdateSite'
   )
-  yield* postProcessUpdateSite(
+  await postProcessUpdateSite(
     pluginContext,
     { id: site.id, externalId: siteExternalId },
     { id: device.siteId }
   )
 }
 
-function* mergeResultWithContext(context) {
+async function mergeResultWithContext(context) {
   const {
     knex,
     dispatch,
@@ -365,27 +365,27 @@ function* mergeResultWithContext(context) {
     now,
   }
 
-  const preProcess = yield* loadPlugin(plugin, 'preProcessMergeResult')
-  yield* preProcess(pluginContext)
+  const preProcess = await loadPlugin(plugin, 'preProcessMergeResult')
+  await preProcess(pluginContext)
 
-  const transformPayload = yield* loadPlugin(
+  const transformPayload = await loadPlugin(
     plugin,
     'transformMergeResultPayload'
   )
-  const transformedPayload = yield* transformPayload(pluginContext)
+  const transformedPayload = await transformPayload(pluginContext)
 
   const {
     processedResult: result,
     existingResult: previousResult,
-  } = yield* mergeResult(knex, deviceId, transformedPayload, { now })
+  } = await mergeResult(knex, deviceId, transformedPayload, { now })
 
   context.addDeviceLogUpdate('resultId', result.id)
 
-  const postProcess = yield* loadPlugin(plugin, 'postProcessMergeResult')
-  return yield* postProcess(pluginContext, result, previousResult)
+  const postProcess = await loadPlugin(plugin, 'postProcessMergeResult')
+  return await postProcess(pluginContext, result, previousResult) //eslint-disable-line
 }
 
-function* getResultWithContext(context) {
+async function getResultWithContext(context) {
   const {
     knex,
     dispatch,
@@ -397,24 +397,24 @@ function* getResultWithContext(context) {
 
   const pluginContext = { knex, dispatch, resultId, query, now }
 
-  const preProcess = yield* loadPlugin(plugin, 'preProcessGetResult')
-  yield* preProcess(pluginContext)
+  const preProcess = await loadPlugin(plugin, 'preProcessGetResult')
+  await preProcess(pluginContext)
 
-  const result = yield* getResult(knex, resultId)
+  const result = await getResult(knex, resultId)
 
-  const postProcess = yield* loadPlugin(plugin, 'postProcessGetResult')
+  const postProcess = await loadPlugin(plugin, 'postProcessGetResult')
 
-  return yield* postProcess(pluginContext, result)
+  return await postProcess(pluginContext, result) //eslint-disable-line
 }
 
-function* createDeviceApiContext(request, handlerOptions) {
+async function createDeviceApiContext(request, handlerOptions) {
   const {
     createDevice = false,
     deviceLogType = DEVICE_LOG_TYPE_NONE,
   } = handlerOptions
   const { auth } = request
   const now = new Date()
-  const existingDeviceAndData = yield knex('DeviceApiKey as dak')
+  const existingDeviceAndData = await knex('DeviceApiKey as dak')
     .innerJoin('Device as d', 'dak.deviceId', 'd.id')
     .innerJoin('DeviceStatus as ds', 'd.deviceStatusId', 'ds.id')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
@@ -438,7 +438,7 @@ function* createDeviceApiContext(request, handlerOptions) {
   if (existingDeviceAndData != null) {
     device = existingDeviceAndData
   } else if (createDevice) {
-    const deviceAndError = yield createNewDevice(request, now)
+    const deviceAndError = await createNewDevice(request, now)
     if (deviceAndError.error) {
       return deviceAndError
     }
@@ -451,7 +451,7 @@ function* createDeviceApiContext(request, handlerOptions) {
     return { error: Boom.notFound('No device found') }
   }
 
-  const partner = yield knex('Partner as p')
+  const partner = await knex('Partner as p')
     .innerJoin('Device as d', 'd.partnerId', 'p.id')
     .where({ 'd.id': device.id })
     .first('p.id', 'p.deviceLogHistoryDays', 'p.plugin')
@@ -503,7 +503,7 @@ function* createDeviceApiContext(request, handlerOptions) {
       } else if (deviceLogType === DEVICE_LOG_TYPE_OPERATION) {
         lastDeviceLogQuery.whereNotNull('dl.deviceOperationId')
       }
-      const lastDeviceLog = yield lastDeviceLogQuery
+      const lastDeviceLog = await lastDeviceLogQuery
       context.deviceLog = lastDeviceLog || null
       return { context }
     }
@@ -512,7 +512,7 @@ function* createDeviceApiContext(request, handlerOptions) {
     const historyCutoff = new Date(
       +new Date() - partner.deviceLogHistoryDays * millisInDay
     )
-    const deviceLog = yield* getDeviceLog(
+    const deviceLog = await getDeviceLog(
       context,
       checkpoint,
       offset,
@@ -521,7 +521,7 @@ function* createDeviceApiContext(request, handlerOptions) {
     )
     if (deviceLog == null) {
       // See if requested log is forbidden or not found
-      const deviceLogNoHistory = yield* getDeviceLog(
+      const deviceLogNoHistory = await getDeviceLog(
         context,
         checkpoint,
         offset,
@@ -545,11 +545,11 @@ function* createDeviceApiContext(request, handlerOptions) {
 }
 
 function createNewDevice(request, now) {
-  return transact(function*(knex) {
+  return transact(async knex => {
     const { auth } = request
 
     // Find API Key to use as template for new device
-    const apiKey = yield knex('DeviceApiKey as k')
+    const apiKey = await knex('DeviceApiKey as k')
       .where({
         token: auth.credentials.token,
         revoked: false,
@@ -566,11 +566,11 @@ function createNewDevice(request, now) {
     }
 
     // Require Device Type when creating device
-    const transformNewDevicePayload = yield* loadPlugin(
+    const transformNewDevicePayload = await loadPlugin(
       apiKey.plugin,
       'transformNewDevicePayload'
     )
-    const payload = yield* transformNewDevicePayload({
+    const payload = await transformNewDevicePayload({
       payload: request.payload,
     })
 
@@ -582,7 +582,7 @@ function createNewDevice(request, now) {
         ),
       }
     }
-    const deviceType = yield knex('DeviceType')
+    const deviceType = await knex('DeviceType')
       .where({ externalId: deviceTypeExternalId })
       .first('id', 'name')
     if (deviceType == null) {
@@ -600,7 +600,7 @@ function createNewDevice(request, now) {
     } else if (payload.serial) {
       name = payload.serial
     } else {
-      const [deviceCount] = yield knex('Device')
+      const [deviceCount] = await knex('Device')
         .where({
           partnerId: apiKey.partnerId,
           deviceTypeId: deviceType.id,
@@ -635,9 +635,9 @@ function createNewDevice(request, now) {
       updatedOn: now,
     }
 
-    const [deviceId] = yield knex('Device').insert(inserts)
+    const [deviceId] = await knex('Device').insert(inserts)
 
-    yield knex('DeviceStatusLog').insert({
+    await knex('DeviceStatusLog').insert({
       deviceId,
       deviceStatusId: knex('DeviceStatus')
         .where({ token: device.status })
@@ -650,7 +650,7 @@ function createNewDevice(request, now) {
     device.id = deviceId
 
     // Assign new device to API Key
-    yield knex('DeviceApiKey')
+    await knex('DeviceApiKey')
       .where({ id: apiKey.id })
       .update({ deviceId, updatedOn: now })
 
@@ -687,7 +687,7 @@ class DeviceApiContext {
   }
 }
 
-function* getDeviceLog(
+async function getDeviceLog(
   context,
   checkpoint,
   offset,
@@ -709,7 +709,7 @@ function* getDeviceLog(
   if (historyCutoff != null) {
     initialDeviceLogQuery.where('createdOn', '>=', historyCutoff)
   }
-  const initialDeviceLog = yield initialDeviceLogQuery.first(
+  const initialDeviceLog = await initialDeviceLogQuery.first(
     'id',
     'checkpoint',
     'deviceId',
@@ -782,7 +782,7 @@ function* getDeviceLog(
     deviceLogQuery.where('dl.createdOn', '>=', historyCutoff)
   }
 
-  const deviceLog = yield deviceLogQuery.first(
+  const deviceLog = await deviceLogQuery.first(
     'dl.id',
     'dl.deviceId',
     'dl.resultId',
@@ -842,12 +842,12 @@ function onResultUpdated({ resultId, message, source }, context) {
 }
 
 function onResultLogged({ resultId }, context) {
-  context.transact(function*(knex) {
-    const { plugin } = yield knex('Result as r')
+  context.transact(async knex => {
+    const { plugin } = await knex('Result as r')
       .join('Partner as p', 'r.partnerId', 'p.id')
       .where({ 'r.id': resultId })
       .first('p.plugin')
-    const onResultLogged = yield* loadPlugin(plugin, 'onResultLogged')
+    const onResultLogged = await loadPlugin(plugin, 'onResultLogged')
     const now = new Date()
 
     const pluginContext = {
@@ -856,25 +856,25 @@ function onResultLogged({ resultId }, context) {
       now,
       resultId,
     }
-    yield* onResultLogged(pluginContext)
+    await onResultLogged(pluginContext)
   })
 }
 
 function addDeviceLog(error) {
-  return asyncHandler(function*(request) {
-    yield* updateLogs(request)
+  return asyncHandler(async request => {
+    await updateLogs(request)
     return error
   })
 }
 
-function* updateLogs(request) {
+async function updateLogs(request) {
   const { auth } = request
-  const device = yield knex('DeviceApiKey as k')
+  const device = await knex('DeviceApiKey as k')
     .innerJoin('Device as d', 'k.deviceId', 'd.id')
     .where('k.token', auth.credentials.token)
     .first('d.id')
 
-  yield knex('DeviceLog').insert({
+  await knex('DeviceLog').insert({
     deviceId: (device && device.id) || null,
     resultId: null,
     source: _.get(request.payload, 'log.source', ''),

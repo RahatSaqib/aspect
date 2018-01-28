@@ -13,13 +13,13 @@ const {
   body,
 } = require('http-client')
 
-function* getDemoDevice(request) {
+async function getDemoDevice(request) {
   const { auth, params } = request
   const { deviceId } = params
 
-  const dataConstraints = yield getConstraints(auth.credentials)
+  const dataConstraints = await getConstraints(auth.credentials)
 
-  const device = yield knex('Device as d')
+  const device = await knex('Device as d')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .innerJoin('DeviceTypeCategory as dc', 'dt.deviceTypeCategoryId', 'dc.id')
     .where('d.id', deviceId)
@@ -29,40 +29,42 @@ function* getDemoDevice(request) {
     return Boom.notFound()
   }
 
-  const access = yield* getApiKey(deviceId, dataConstraints)
+  const access = await getApiKey(deviceId, dataConstraints)
   const result = { id: device.id, name: device.name, access }
 
-  const assays = yield knex('Assay as a')
+  const assays = await knex('Assay as a')
     .innerJoin('DeviceType as dt', 'dt.id', 'a.deviceTypeId')
     .where({ 'dt.id': device.deviceTypeId })
     .orderBy('a.name')
     .select('a.id', 'a.name')
 
   result.assays = []
-  for (const assay of assays) {
-    const results = yield knex('Result as r')
-      .where('r.assayId', assay.id)
-      .distinct(
-        'id',
-        knex.raw(
-          'JSON_UNQUOTE(JSON_EXTRACT(resultData, "$.resultText")) as name'
+  await Promise.all(
+    _.map(assays, async assay => {
+      const results = await knex('Result as r')
+        .where('r.assayId', assay.id)
+        .distinct(
+          'id',
+          knex.raw(
+            'JSON_UNQUOTE(JSON_EXTRACT(resultData, "$.resultText")) as name'
+          )
         )
+        .orderBy('name')
+        .limit(1000)
+      result.assays.push(
+        Object.assign({ results: _.sortedUniqBy(results, 'name') }, assay)
       )
-      .orderBy('name')
-      .limit(1000)
-    result.assays.push(
-      Object.assign({ results: _.sortedUniqBy(results, 'name') }, assay)
-    )
-  }
+    })
+  )
 
   return result
 }
 
-function* createDemoDeviceApiKey(request) {
+async function createDemoDeviceApiKey(request) {
   // FIXME Remove demo device api key once key management UI/API available
   const { auth } = request
   const now = new Date()
-  const user = yield knex('Person as p')
+  const user = await knex('Person as p')
     .join('User as u', 'u.id', 'p.userId')
     .where('u.name', auth.credentials.name)
     .first('u.id', 'p.lastPartnerId as partnerId')
@@ -71,7 +73,7 @@ function* createDemoDeviceApiKey(request) {
   }
 
   const apiKey = { token: randomToken() }
-  yield knex('DeviceApiKey').insert({
+  await knex('DeviceApiKey').insert({
     token: apiKey.token,
     revoked: 0,
     partnerId: user.partnerId,
@@ -83,8 +85,8 @@ function* createDemoDeviceApiKey(request) {
   return apiKey
 }
 
-function* getApiKey(deviceId, userConstraints) {
-  const apiKey = yield knex('DeviceApiKey as dak')
+async function getApiKey(deviceId, userConstraints) {
+  const apiKey = await knex('DeviceApiKey as dak')
     .innerJoin('Device as d', 'dak.deviceId', 'd.id')
     .where({ 'd.id': +deviceId, 'dak.revoked': 0 })
     .modify(addConstraints, userConstraints, { device: 'd' })
@@ -92,18 +94,18 @@ function* getApiKey(deviceId, userConstraints) {
   return apiKey == null ? '' : groupToken(apiKey.token)
 }
 
-function* postDemoDeviceResult(request) {
+async function postDemoDeviceResult(request) {
   const { auth, params, payload } = request
   const { deviceId } = params
   const { resultId } = payload
 
-  const userConstraints = yield getConstraints(auth.credentials)
-  const apiKey = yield* getApiKey(deviceId, userConstraints)
+  const userConstraints = await getConstraints(auth.credentials)
+  const apiKey = await getApiKey(deviceId, userConstraints)
   if (!apiKey) {
     return Boom.badRequest()
   }
 
-  const resultTemplate = yield knex('Result as r')
+  const resultTemplate = await knex('Result as r')
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
     .innerJoin('Assay as a', 'r.assayId', 'a.id')
     .leftJoin('Sample as s', 'r.sampleId', 's.id')
@@ -244,8 +246,9 @@ function* postDemoDeviceResult(request) {
     body(JSON.stringify({ result }), 'application/json')
   )
 
-  const resp = yield deviceApiFetch('/device')
-  const respJson = yield resp.json()
+  const resp = await deviceApiFetch('/device')
+  const respJson = await resp.json()
+
   return resp.ok
     ? respJson
     : Boom.create(+resp.status || 500, JSON.stringify(respJson))

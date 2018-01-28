@@ -5,13 +5,13 @@ const fact = require('../../fact/service')
 /**
  * Consumes inventory for the new result
  */
-function* consumeInventoryForResult(knex, payload, result) {
+async function consumeInventoryForResult(knex, payload, result) {
   // TODO ASP-355 Move consumeInventory for Result to listener
   // Update Inventory Levels at Site
   const consumablesInResultData = _.isEmpty(payload.consumable)
     ? []
     : payload.consumable
-  yield* inventory.consumeInventoryForResult(
+  await inventory.consumeInventoryForResult(
     result.id,
     result.assayId,
     result.siteId,
@@ -23,8 +23,8 @@ function* consumeInventoryForResult(knex, payload, result) {
   )
 }
 
-function* updateFactResultCountDevice(knex, payload, result) {
-  yield* fact.calculateResultCounts(
+async function updateFactResultCountDevice(knex, payload, result) {
+  await fact.calculateResultCounts(
     result.deviceId,
     result.assayId,
     result.resultCategory1,
@@ -32,7 +32,7 @@ function* updateFactResultCountDevice(knex, payload, result) {
   )
 }
 
-function* addResultWorkflowLogIfChanged(
+async function addResultWorkflowLogIfChanged(
   knex,
   payload,
   result,
@@ -50,7 +50,7 @@ function* addResultWorkflowLogIfChanged(
       _.has(payload, 'workflow.changedOn'))
   ) {
     // check to see if operator or changedOn is different from latest log
-    const resultWorkflowLog = yield* getLatestResultWorkflowLog(knex, result.id)
+    const resultWorkflowLog = await getLatestResultWorkflowLog(knex, result.id)
     resultWorkflowChanged =
       !resultWorkflowLog ||
       _.get(payload, 'workflow.operator', null) !==
@@ -60,7 +60,7 @@ function* addResultWorkflowLogIfChanged(
   }
 
   if (resultWorkflowChanged) {
-    yield knex('ResultWorkflowLog').insert({
+    await knex('ResultWorkflowLog').insert({
       resultId: result.id,
       resultWorkflowStatusId: result.resultWorkflowStatusId,
       reason,
@@ -72,7 +72,7 @@ function* addResultWorkflowLogIfChanged(
   return resultWorkflowChanged
 }
 
-function* updateResultWorkflowStatus(
+async function updateResultWorkflowStatus(
   knex,
   resultId,
   workflowStatusExternalId,
@@ -80,7 +80,7 @@ function* updateResultWorkflowStatus(
   now = new Date()
 ) {
   // get internal workflow status id based on the external id we got
-  const workflowStatusRow = yield knex('ResultWorkflowStatus')
+  const workflowStatusRow = await knex('ResultWorkflowStatus')
     .where('externalId', workflowStatusExternalId)
     .select('id')
     .first()
@@ -91,14 +91,14 @@ function* updateResultWorkflowStatus(
   }
 
   // update result
-  const rows = yield knex('Result as r')
+  const rows = await knex('Result as r')
     .where('r.id', resultId)
     .update('resultWorkflowStatusId', workflowStatusRow.id)
 
   // keep log if update was successful. don't need to check permission again because
   // rows would be 0 if no permission in query above
   if (rows) {
-    yield knex('ResultWorkflowLog').insert({
+    await knex('ResultWorkflowLog').insert({
       resultId,
       resultWorkflowStatusId: workflowStatusRow.id,
       reason,
@@ -110,12 +110,13 @@ function* updateResultWorkflowStatus(
   return {}
 }
 
-function* getLatestResultWorkflowLog(knex, resultId) {
-  return yield knex('ResultWorkflowLog')
+async function getLatestResultWorkflowLog(knex, resultId) {
+  const latestResultWorkFlowLog = await knex('ResultWorkflowLog')
     .where({ resultId })
     .orderBy('createdOn', 'desc')
     .orderBy('id', 'desc')
     .first('operator', 'changedOn')
+  return latestResultWorkFlowLog
 }
 
 module.exports = {

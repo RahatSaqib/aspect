@@ -34,10 +34,10 @@ describe('Device API routes', () => {
     const deviceConfigurationPath = '/device/configuration'
 
     it('should add and merge device configuration', () =>
-      runTest(function*(knex) {
+      runTest(async knex => {
         const { deviceAuth, deviceId } = context
 
-        yield server
+        await server
           .post(deviceConfigurationPath)
           .set('Authorization', deviceAuth)
           .send({ data: { a: 'b' } })
@@ -45,10 +45,10 @@ describe('Device API routes', () => {
             assert.equal(res.status, 200)
             assert.typeOf(res.body, 'Object')
           })
-        const config1 = yield* getDeviceConfigurationData(knex, deviceId)
+        const config1 = await getDeviceConfigurationData(knex, deviceId)
         assert.deepEqual(config1, _.assign({}, baseConfig, { a: 'b' }))
 
-        yield server
+        await server
           .post(deviceConfigurationPath)
           .set('Authorization', deviceAuth)
           .send({ data: { b: 3 } })
@@ -56,10 +56,10 @@ describe('Device API routes', () => {
             assert.equal(res.status, 200)
             assert.typeOf(res.body, 'Object')
           })
-        const config2 = yield* getDeviceConfigurationData(knex, deviceId)
+        const config2 = await getDeviceConfigurationData(knex, deviceId)
         assert.deepEqual(config2, _.assign({}, baseConfig, { a: 'b', b: 3 }))
 
-        yield server
+        await server
           .post(devicePath)
           .set('Authorization', deviceAuth)
           .send({
@@ -68,7 +68,7 @@ describe('Device API routes', () => {
           .then(res => {
             assert.equal(res.status, 200)
           })
-        const config3 = yield* getDeviceConfigurationData(knex, deviceId)
+        const config3 = await getDeviceConfigurationData(knex, deviceId)
         assert.deepEqual(
           config3,
           _.assign({}, baseConfig, {
@@ -80,14 +80,14 @@ describe('Device API routes', () => {
           })
         )
 
-        yield server
+        await server
           .post(devicePath)
           .set('Authorization', deviceAuth)
           .send({ configuration: { data: { e: { f: 'h' } } } })
           .then(res => {
             assert.equal(res.status, 200)
           })
-        const config4 = yield* getDeviceConfigurationData(knex, deviceId)
+        const config4 = await getDeviceConfigurationData(knex, deviceId)
         assert.deepEqual(
           config4,
           _.assign({}, baseConfig, {
@@ -105,10 +105,10 @@ describe('Device API routes', () => {
     const deviceOperationPath = '/device/operation'
 
     it('should add and return device operation', () =>
-      runTest(function*(knex) {
+      runTest(async knex => {
         const { deviceId, deviceAuth } = context
 
-        yield server
+        await server
           .post(deviceOperationPath)
           .set('Authorization', deviceAuth)
           .send({ data: { a: 'b' } })
@@ -117,13 +117,13 @@ describe('Device API routes', () => {
             assert.typeOf(res.body, 'Object')
           })
 
-        const op1 = yield* getLastDeviceOperationData(knex, deviceId)
+        const op1 = await getLastDeviceOperationData(knex, deviceId)
         assert.deepEqual(op1, { a: 'b' })
 
         let previousOpId = null
-        let currentOpId = yield* getLastDeviceOperationId(knex, deviceId)
+        let currentOpId = await getLastDeviceOperationId(knex, deviceId)
 
-        yield server
+        await server
           .post(devicePath)
           .set('Authorization', deviceAuth)
           .send({
@@ -138,23 +138,23 @@ describe('Device API routes', () => {
             assert.typeOf(res.body, 'Object')
           })
 
-        const op2 = yield* getLastDeviceOperation(knex, deviceId)
+        const op2 = await getLastDeviceOperation(knex, deviceId)
         assert.deepEqual(op2.data, { a: 'b', c: 2, d: false, e: { f: 'g' } })
         assert.deepEqual(op2.startedOn, new Date('2013-12-01'))
         assert.deepEqual(op2.endedOn, new Date('2013-12-01T01:30'))
 
         previousOpId = currentOpId
-        currentOpId = yield* getLastDeviceOperationId(knex, deviceId)
+        currentOpId = await getLastDeviceOperationId(knex, deviceId)
 
         assert.notEqual(previousOpId, currentOpId)
       }))
   })
   describe('add and get device data', () => {
     it('should add and return device data', () =>
-      runTest(function*(knex) {
+      runTest(async knex => {
         const { deviceAuth, deviceId } = context
 
-        yield server
+        await server
           .get(devicePath)
           .set('Authorization', deviceAuth)
           .then(res => {
@@ -163,7 +163,7 @@ describe('Device API routes', () => {
             assert.equal(res.body.status.id, 'approved')
           })
 
-        yield server
+        await server
           .post(devicePath)
           .set('Authorization', deviceAuth)
           .send({
@@ -176,12 +176,12 @@ describe('Device API routes', () => {
             assert.typeOf(res.body, 'Object')
           })
 
-        const config1 = yield* getDeviceConfigurationData(knex, deviceId)
-        const op1 = yield* getLastDeviceOperationData(knex, deviceId)
+        const config1 = await getDeviceConfigurationData(knex, deviceId)
+        const op1 = await getLastDeviceOperationData(knex, deviceId)
         assert.deepEqual(config1, _.assign({}, baseConfig, { a: 'b' }))
         assert.deepEqual(op1, { a: 'b' })
 
-        yield server
+        await server
           .get(devicePath)
           .set('Authorization', deviceAuth)
           .then(res => {
@@ -195,7 +195,7 @@ describe('Device API routes', () => {
             assert.deepEqual(res.body.operation.data, op1)
           })
 
-        yield server
+        await server
           .get(devicePath)
           .set('Authorization', deviceAuth)
           .then(res => {
@@ -205,7 +205,7 @@ describe('Device API routes', () => {
             assert.equal(res.body.checkpoint, '124j')
           })
 
-        yield server
+        await server
           .post(devicePath)
           .set('Authorization', deviceAuth)
           .send({
@@ -218,15 +218,15 @@ describe('Device API routes', () => {
             assert.typeOf(res.body, 'Object')
           })
 
-        const config2 = yield* getDeviceConfigurationData(knex, deviceId)
-        const op2 = yield* getLastDeviceOperationData(knex, deviceId)
+        const config2 = await getDeviceConfigurationData(knex, deviceId)
+        const op2 = await getLastDeviceOperationData(knex, deviceId)
         assert.deepEqual(
           config2,
           _.assign({}, baseConfig, { a: 'c', c: 2, d: false, e: { f: 'g' } })
         )
         assert.deepEqual(op2, { a: 'b', c: 2, d: false, e: { f: 'g' } })
 
-        yield server
+        await server
           .get(`${devicePath}?checkpoint=12313`)
           .set('Authorization', deviceAuth)
           .then(res => {
@@ -242,25 +242,25 @@ describe('Device API routes', () => {
 
   describe('get result count', () => {
     it('should return result count from device', () =>
-      runTest(function*(knex) {
+      runTest(async knex => {
         const deviceListPath = '/api/device'
         const { apiKey, deviceId, clientAuth } = context
         const last30Day = subDays(new Date(), 30)
         const last60Day = subDays(last30Day, 30)
         assert.isOk(apiKey)
 
-        const totalResultsLastMonth = yield knex('Result as r')
+        const totalResultsLastMonth = await knex('Result as r')
           .whereBetween('r.endedOn', [last60Day, last30Day])
           .where({ deviceId })
           .countDistinct('r.id as total')
 
-        const totalResultsThisMonth = yield knex('Result as r')
+        const totalResultsThisMonth = await knex('Result as r')
           .where({ deviceId })
           .andWhere('r.endedOn', '>=', last30Day)
           .countDistinct('r.id as total')
 
         // get total count of results
-        yield server
+        await server
           .get(deviceListPath)
           .set('Authorization', clientAuth)
           .then(res => {
@@ -284,12 +284,12 @@ describe('Device API routes', () => {
     beforeEach(newDeviceContext.beforeEach)
     afterEach(newDeviceContext.afterEach)
     it('should create Device with statusId and add log to DeviceStatusLog table', () =>
-      runTest(function*(knex) {
+      runTest(async knex => {
         const { apiKey, deviceAuth } = newDeviceContext
         assert.isOk(apiKey)
 
         // add device
-        yield server
+        await server
           .post(devicePath)
           .set('Authorization', deviceAuth)
           .send({
@@ -299,12 +299,12 @@ describe('Device API routes', () => {
           .then(res => {
             assert.equal(res.status, 200)
           })
-        const newDevice = yield* getDeviceFromApiKey(knex, apiKey)
+        const newDevice = await getDeviceFromApiKey(knex, apiKey)
         assert.isOk(newDevice)
         assert.isOk(newDevice.name)
         assert.equal(newDevice.serial, null)
 
-        const deviceLogs = yield knex('DeviceStatusLog as dl').where(
+        const deviceLogs = await knex('DeviceStatusLog as dl').where(
           'dl.deviceId',
           newDevice.id
         )
@@ -320,20 +320,20 @@ describe('Device API routes', () => {
       partner: 'CHIZ',
     })
 
-    const runTest = testContext.runTest
+    const { runTest } = testContext
 
     beforeEach(testContext.beforeEach)
     afterEach(testContext.afterEach)
 
     it('should create add payload to DeviceLog on Joi failure', () =>
-      runTest(function*(knex) {
+      runTest(async knex => {
         const { apiKey, deviceAuth } = testContext
         assert.isOk(apiKey)
 
-        const [{ count: logLength1 }] = yield knex('DeviceLog as dl').count(
+        const [{ count: logLength1 }] = await knex('DeviceLog as dl').count(
           'id as count'
         )
-        yield server
+        await server
           .post(devicePath)
           .set('Authorization', deviceAuth)
           .send({
@@ -345,7 +345,7 @@ describe('Device API routes', () => {
             assert.equal(res.status, 400)
           })
 
-        const [{ count: logLength2 }] = yield knex('DeviceLog as dl').count(
+        const [{ count: logLength2 }] = await knex('DeviceLog as dl').count(
           'id as count'
         )
 

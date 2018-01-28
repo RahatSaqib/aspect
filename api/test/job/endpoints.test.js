@@ -18,7 +18,7 @@ describe('job endpoints', () => {
 
       beforeEach(() => {
         endpoint = setupRoute('GET', '/job-function/select-list', {
-          *getJobFunctionsForSelectList() {
+          async getJobFunctionsForSelectList() {
             return expectedResponse
           },
         })

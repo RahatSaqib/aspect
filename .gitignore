@@ -33,3 +33,6 @@ mocha.json
 # packages/web
 **/dist/assets/
 **/dist/index.html
+
+#nyc output
+.nyc_output/

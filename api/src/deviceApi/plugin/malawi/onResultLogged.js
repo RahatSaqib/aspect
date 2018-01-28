@@ -26,8 +26,8 @@ const MERGEABLE_REPORTABLE_IDS = [
   ERROR_EXTERNALID,
 ]
 
-function* onResultLogged({ knex, dispatch, resultId, now }) {
-  const qcResult = yield knex('Result as r')
+async function onResultLogged({ knex, dispatch, resultId, now }) {
+  const qcResult = await knex('Result as r')
     .join('ResultWorkflowStatus as rws', 'r.resultWorkflowStatusId', 'rws.id')
     .join('Device as d', 'r.deviceId', 'd.id')
     .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
@@ -51,7 +51,7 @@ function* onResultLogged({ knex, dispatch, resultId, now }) {
       _.indexOf(MERGEABLE_CHAI_IDS, workflowStatus) !== -1
     ) {
       // it is a qcChecked CHAI result, merge into Reporter results
-      yield* mergeChaiResultToReporters(
+      await mergeChaiResultToReporters(
         knex,
         dispatch,
         resultId,
@@ -64,7 +64,7 @@ function* onResultLogged({ knex, dispatch, resultId, now }) {
       _.indexOf(MERGEABLE_REPORTABLE_IDS, workflowStatus) !== -1
     ) {
       // it is a qcChecked Reportable result, merge into CHAI results
-      yield* mergeReporterToChaiResult(
+      await mergeReporterToChaiResult(
         knex,
         dispatch,
         resultId,
@@ -76,7 +76,7 @@ function* onResultLogged({ knex, dispatch, resultId, now }) {
   }
 }
 
-function* mergeChaiResultToReporters(
+async function mergeChaiResultToReporters(
   knex,
   dispatch,
   resultId,
@@ -86,7 +86,7 @@ function* mergeChaiResultToReporters(
 ) {
   // Find all Reporter devices assigned to sample origin site
   // And merge result for that device with same external id
-  const reporterDevices = yield knex('Device as d')
+  const reporterDevices = await knex('Device as d')
     .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .where({
       'd.siteId': sampleSiteId,
@@ -94,55 +94,58 @@ function* mergeChaiResultToReporters(
     })
     .select('d.id as deviceId')
 
-  const { sampleId } = yield knex('Sample as sm')
+  const { sampleId } = await knex('Sample as sm')
     .join('Result as r', 'r.sampleId', 'sm.id')
     .where('r.id', resultId)
     .first('r.sampleId')
 
   // Get CHAI result in Device API format
-  const chaiResult = yield* getResult(knex, resultId)
+  const chaiResult = await getResult(knex, resultId)
   const payload = reporterResultFromChaiResult(chaiResult)
 
-  for (const { deviceId } of reporterDevices) {
-    const { processedResult, existingResult } = yield* mergeResult(
-      knex,
-      deviceId,
-      payload,
-      { sampleId, now }
-    )
-    if (!existingResult) {
-      // auto QC Check new result and mark as deliverable, but do
-      // not change workflow status otherwise
-      const { id: deliverableId } = yield knex('ResultWorkflowStatus')
-        .where({ externalId: DELIVERABLE_EXTERNALID })
-        .first('id')
-      yield knex('Result')
-        .where({ id: processedResult.id })
-        .update({
-          qcCheck: 1,
-          resultWorkflowStatusId: deliverableId,
-        })
-      processedResult.qcCheck = 1
-      processedResult.resultWorkflowStatusId = deliverableId
-
-      yield* addResultWorkflowLogIfChanged(
+  await Promise.all(
+    _.map(reporterDevices, async device => {
+      const { deviceId } = device
+      const { processedResult, existingResult } = await mergeResult(
         knex,
+        deviceId,
         payload,
-        processedResult,
-        existingResult,
-        `Update from ${deviceName}`,
-        now
+        { sampleId, now }
       )
-      yield knex('ResultGeneratedResult').insert({
-        sourceResultId: resultId,
-        generatedResultId: processedResult.id,
-      })
-    }
-    dispatch(notifyResultUpdated(processedResult.id, payload, 'MalawiPlugin'))
-  }
+      if (!existingResult) {
+        // auto QC Check new result and mark as deliverable, but do
+        // not change workflow status otherwise
+        const { id: deliverableId } = await knex('ResultWorkflowStatus')
+          .where({ externalId: DELIVERABLE_EXTERNALID })
+          .first('id')
+        await knex('Result')
+          .where({ id: processedResult.id })
+          .update({
+            qcCheck: 1,
+            resultWorkflowStatusId: deliverableId,
+          })
+        processedResult.qcCheck = 1
+        processedResult.resultWorkflowStatusId = deliverableId
+
+        await addResultWorkflowLogIfChanged(
+          knex,
+          payload,
+          processedResult,
+          existingResult,
+          `Update from ${deviceName}`,
+          now
+        )
+        await knex('ResultGeneratedResult').insert({
+          sourceResultId: resultId,
+          generatedResultId: processedResult.id,
+        })
+      }
+      dispatch(notifyResultUpdated(processedResult.id, payload, 'MalawiPlugin'))
+    })
+  )
 }
 
-function* mergeReporterToChaiResult(
+async function mergeReporterToChaiResult(
   knex,
   dispatch,
   resultId,
@@ -151,7 +154,7 @@ function* mergeReporterToChaiResult(
   now
 ) {
   // Get Reporter result in Device API format
-  const reporterResult = yield* getResult(knex, resultId)
+  const reporterResult = await getResult(knex, resultId)
 
   // We only want to update workflow status of CHAI Result
   // and only if in whitelisted updates
@@ -162,7 +165,7 @@ function* mergeReporterToChaiResult(
 
   // Find all CHAI devices assigned to sample origin site
   // And merge result for that device with same external id
-  const chaiDevices = yield knex('Device as d')
+  const chaiDevices = await knex('Device as d')
     .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .innerJoin('Result as r', 'r.deviceId', 'd.id')
     .innerJoin('Sample as sm', 'r.sampleId', 'sm.id')
@@ -172,27 +175,33 @@ function* mergeReporterToChaiResult(
     })
     .distinct('d.id as deviceId')
 
-  for (const { deviceId } of chaiDevices) {
-    const { processedResult, existingResult } = yield* mergeResult(
-      knex,
-      deviceId,
-      payload,
-      now
-    )
-    const workflowChanged = yield* addResultWorkflowLogIfChanged(
-      knex,
-      payload,
-      processedResult,
-      existingResult,
-      `Update from ${deviceName}`,
-      now
-    )
-    // since we only updated workflow, only dispatch if changed
-    // this also breaks a potential cycle on dispatching between CHAI and Reporter
-    if (workflowChanged) {
-      dispatch(notifyResultUpdated(processedResult.id, payload, 'MalawiPlugin'))
-    }
-  }
+  await Promise.all(
+    _.map(chaiDevices, async device => {
+      const { deviceId } = device
+
+      const { processedResult, existingResult } = await mergeResult(
+        knex,
+        deviceId,
+        payload,
+        now
+      )
+      const workflowChanged = await addResultWorkflowLogIfChanged(
+        knex,
+        payload,
+        processedResult,
+        existingResult,
+        `Update from ${deviceName}`,
+        now
+      )
+      // since we only updated workflow, only dispatch if changed
+      // this also breaks a potential cycle on dispatching between CHAI and Reporter
+      if (workflowChanged) {
+        dispatch(
+          notifyResultUpdated(processedResult.id, payload, 'MalawiPlugin')
+        )
+      }
+    })
+  )
 }
 
 function reporterResultFromChaiResult(chaiResult) {

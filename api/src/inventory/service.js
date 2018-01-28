@@ -1,4 +1,3 @@
-const Promise = require('bluebird')
 const _ = require('lodash')
 const Boom = require('boom')
 const {
@@ -137,7 +136,7 @@ function findInventoryItemMatchingConsumableInResultData(
   )
 }
 
-function* consumeInventoryForResult(
+async function consumeInventoryForResult(
   resultId,
   assayId,
   siteId,
@@ -148,13 +147,13 @@ function* consumeInventoryForResult(
   knex
 ) {
   const now = new Date()
-  const assayConsumables = yield selectAssayConsumables(
+  const assayConsumables = await selectAssayConsumables(
     knex,
     partnerId,
     assayId
   )
-  const inventoryItemsAtSite = yield selectInventoryItemsAtSite(siteId, knex)
-  const { testRunConsumableReasonId } = yield knex('ConsumableReason as cr')
+  const inventoryItemsAtSite = await selectInventoryItemsAtSite(siteId, knex)
+  const { testRunConsumableReasonId } = await knex('ConsumableReason as cr')
     .where({ 'cr.name': 'Test Conducted', 'cr.decrease': 1 })
     .first('cr.id as testRunConsumableReasonId')
 
@@ -178,62 +177,64 @@ function* consumeInventoryForResult(
         }
       : consumablesInResultData[0]
 
-  for (const assayConsumable of assayConsumables) {
-    // Find Inventory on hand where lot number and expiry date match
-    const matchingInventoryItems = _.filter(inventoryItemsAtSite, {
-      consumableId: assayConsumable.consumableId,
-    })
-    const matchingInventoryOnHand = findInventoryItemMatchingConsumableInResultData(
-      consumablesInResultData,
-      matchingInventoryItems
-    ) || {
-      id: null,
-      lotNumber: firstUnknownConsumableInResult.lot,
-      expiresOn: firstUnknownConsumableInResult.expirationDate
-        ? new Date(firstUnknownConsumableInResult.expirationDate)
-        : null,
-    }
-    yield knex('InventoryLog').insert({
-      inventoryItemId: matchingInventoryOnHand.id,
-      consumableId: assayConsumable.consumableId,
-      siteId,
-      consumableReasonId: testRunConsumableReasonId,
-      resultId,
-      lotNumber: matchingInventoryOnHand.lotNumber,
-      expiresOn: matchingInventoryOnHand.expiresOn,
-      quantity: -assayConsumable.quantity,
-      operation: 'result',
-      adjustedFrom: testStartedOn,
-      adjustedTo: testEndedOn,
-      createdOn: now,
-    })
-    if (matchingInventoryOnHand.id) {
-      const currentQuantity = (yield knex('InventoryItem')
-        .where({ id: matchingInventoryOnHand.id })
-        .first('quantityOnHand')).quantityOnHand
-      if (assayConsumable.quantity === currentQuantity) {
-        yield knex('InventoryItem')
-          .where({ id: matchingInventoryOnHand.id })
-          .delete()
-      } else {
-        yield knex('InventoryItem')
-          .where({ id: matchingInventoryOnHand.id })
-          .update({
-            quantityOnHand: knex.raw(
-              `quantityOnHand - ${assayConsumable.quantity}`
-            ),
-            updatedBy: null,
-            updatedOn: now,
-          })
+  await Promise.all(
+    _.map(assayConsumables, async assayConsumable => {
+      // Find Inventory on hand where lot number and expiry date match
+      const matchingInventoryItems = _.filter(inventoryItemsAtSite, {
+        consumableId: assayConsumable.consumableId,
+      })
+      const matchingInventoryOnHand = findInventoryItemMatchingConsumableInResultData(
+        consumablesInResultData,
+        matchingInventoryItems
+      ) || {
+        id: null,
+        lotNumber: firstUnknownConsumableInResult.lot,
+        expiresOn: firstUnknownConsumableInResult.expirationDate
+          ? new Date(firstUnknownConsumableInResult.expirationDate)
+          : null,
       }
-    }
-  }
+      await knex('InventoryLog').insert({
+        inventoryItemId: matchingInventoryOnHand.id,
+        consumableId: assayConsumable.consumableId,
+        siteId,
+        consumableReasonId: testRunConsumableReasonId,
+        resultId,
+        lotNumber: matchingInventoryOnHand.lotNumber,
+        expiresOn: matchingInventoryOnHand.expiresOn,
+        quantity: -assayConsumable.quantity,
+        operation: 'result',
+        adjustedFrom: testStartedOn,
+        adjustedTo: testEndedOn,
+        createdOn: now,
+      })
+      if (matchingInventoryOnHand.id) {
+        const currentQuantity = (await knex('InventoryItem')
+          .where({ id: matchingInventoryOnHand.id })
+          .first('quantityOnHand')).quantityOnHand
+        if (assayConsumable.quantity === currentQuantity) {
+          await knex('InventoryItem')
+            .where({ id: matchingInventoryOnHand.id })
+            .delete()
+        } else {
+          await knex('InventoryItem')
+            .where({ id: matchingInventoryOnHand.id })
+            .update({
+              quantityOnHand: knex.raw(
+                `quantityOnHand - ${assayConsumable.quantity}`
+              ),
+              updatedBy: null,
+              updatedOn: now,
+            })
+        }
+      }
+    })
+  )
 }
 
-function* listInventoryItems(request) {
+async function listInventoryItems(request) {
   const { auth } = request
 
-  const dataConstraints = yield getConstraints(auth.credentials)
+  const dataConstraints = await getConstraints(auth.credentials)
 
   const inventoryItemsQuery = query('Search Inventory Items')
     .from('InventoryItem as ii')
@@ -268,7 +269,7 @@ function* listInventoryItems(request) {
     )
     .select(INVENTORY_ITEM_SELECT_LIST_FIELDS)
 
-  const [{ count: total }, data] = yield Promise.all([getCount, getItems])
+  const [{ count: total }, data] = await Promise.all([getCount, getItems])
 
   return { ok: true, total, length: data.length, data }
 }
@@ -297,10 +298,10 @@ const inventoryItemFields = [
   'inTransitFromSiteName',
 ]
 
-function* listInventoryItemsGroupedBySite(request) {
+async function listInventoryItemsGroupedBySite(request) {
   const { auth } = request
 
-  const dataConstraints = yield getConstraints(auth.credentials)
+  const dataConstraints = await getConstraints(auth.credentials)
 
   /* TODO: Add inventory item <--> site bridging table and fix this query so that
      user can view items that are out of stock */
@@ -352,7 +353,7 @@ function* listInventoryItemsGroupedBySite(request) {
     .select('ii.siteId', knex.raw(aggregateColumn))
     .modify(sortPageParams, request.query, sortColumnName)
 
-  const [{ count: total }, sitesData] = yield Promise.all([
+  const [{ count: total }, sitesData] = await Promise.all([
     getSiteCount,
     getSiteIds,
   ])
@@ -362,7 +363,7 @@ function* listInventoryItemsGroupedBySite(request) {
   })
 
   const sortDirection = request.query.sortDir === 'desc' ? 'desc' : 'asc'
-  const inventoryItems = yield inventoryItemsSiteByGeographyQuery
+  const inventoryItems = await inventoryItemsSiteByGeographyQuery
     .modify(filterParams, inventoryItemFilters, INVENTORY_ITEM_FILTER_FIELDS)
     .modify(
       addConstraints,
@@ -396,7 +397,7 @@ function* listInventoryItemsGroupedBySite(request) {
   }
 }
 
-function* findInventoryItem(
+async function findInventoryItem(
   siteId,
   consumableId,
   expiresOn,
@@ -430,7 +431,7 @@ function* findInventoryItem(
   } else {
     matchingInventoryItemsQuery.whereNull('ii.inTransitFromSiteId')
   }
-  const matchingInventoryItems = yield matchingInventoryItemsQuery.select(
+  const matchingInventoryItems = await matchingInventoryItemsQuery.select(
     INVENTORY_ITEM_SELECT_LIST_FIELDS
   )
   return (
@@ -454,7 +455,7 @@ function getInventoryItem(inventoryItemId) {
     .first(INVENTORY_ITEM_SELECT_LIST_FIELDS)
 }
 
-function* upsertInventoryItem(
+async function upsertInventoryItem(
   knex,
   inventoryItem,
   consumableId,
@@ -468,7 +469,7 @@ function* upsertInventoryItem(
 ) {
   let inventoryItemId = -1
   if (_.isEmpty(inventoryItem)) {
-    ;[inventoryItemId] = yield knex('InventoryItem').insert({
+    ;[inventoryItemId] = await knex('InventoryItem').insert({
       consumableId,
       inTransitFromSiteId: inTransitFromSiteId || null,
       siteId,
@@ -482,7 +483,7 @@ function* upsertInventoryItem(
     })
   } else {
     inventoryItemId = inventoryItem.id
-    yield knex('InventoryItem')
+    await knex('InventoryItem')
       .where({ id: inventoryItemId })
       .update({
         expiresOn,
@@ -496,7 +497,7 @@ function* upsertInventoryItem(
   return inventoryItemId
 }
 
-function* addInventory(request) {
+async function addInventory(request) {
   const {
     auth,
     payload: {
@@ -510,25 +511,25 @@ function* addInventory(request) {
     },
   } = request
 
-  const dataConstraints = yield getConstraints(auth.credentials)
+  const dataConstraints = await getConstraints(auth.credentials)
 
-  const toSite = yield getSite(toSiteId, dataConstraints)
+  const toSite = await getSite(toSiteId, dataConstraints)
 
   if (!toSite) {
     return Boom.forbidden('You are not permitted to add inventory to this site')
   }
 
-  const currentlyLoggedInUser = yield getUser(auth.credentials.name)
+  const currentlyLoggedInUser = await getUser(auth.credentials.name)
   const now = new Date()
-  const inventoryItem = yield* findInventoryItem(
+  const inventoryItem = await findInventoryItem(
     toSiteId,
     consumableId,
     expiresOn,
     lotNumber
   )
   let inventoryItemId = -1
-  yield transact(function*(knex) {
-    inventoryItemId = yield* upsertInventoryItem(
+  await transact(async knex => {
+    inventoryItemId = await upsertInventoryItem(
       knex,
       inventoryItem,
       consumableId,
@@ -540,7 +541,7 @@ function* addInventory(request) {
       currentlyLoggedInUser.id
     )
 
-    yield knex('InventoryLog').insert({
+    await knex('InventoryLog').insert({
       inventoryItemId,
       consumableId,
       siteId: toSiteId,
@@ -557,11 +558,11 @@ function* addInventory(request) {
 
   return {
     ok: true,
-    data: yield getInventoryItem(inventoryItemId),
+    data: await getInventoryItem(inventoryItemId),
   }
 }
 
-function* removeInventory(request) {
+async function removeInventory(request) {
   const {
     auth,
     payload: {
@@ -578,9 +579,9 @@ function* removeInventory(request) {
     },
   } = request
 
-  const dataConstraints = yield getConstraints(auth.credentials)
+  const dataConstraints = await getConstraints(auth.credentials)
 
-  const fromSite = yield getSite(fromSiteId, dataConstraints)
+  const fromSite = await getSite(fromSiteId, dataConstraints)
 
   if (!fromSite) {
     return Boom.forbidden(
@@ -588,17 +589,17 @@ function* removeInventory(request) {
     )
   }
 
-  const currentlyLoggedInUser = yield getUser(auth.credentials.name)
+  const currentlyLoggedInUser = await getUser(auth.credentials.name)
   const now = new Date()
-  const inventoryItem = yield* findInventoryItem(
+  const inventoryItem = await findInventoryItem(
     fromSiteId,
     consumableId,
     expiresOn,
     lotNumber
   )
   let inventoryItemId = -1
-  yield transact(function*(knex) {
-    inventoryItemId = yield* upsertInventoryItem(
+  await transact(async knex => {
+    inventoryItemId = await upsertInventoryItem(
       knex,
       inventoryItem,
       consumableId,
@@ -610,7 +611,7 @@ function* removeInventory(request) {
       currentlyLoggedInUser.id
     )
 
-    yield knex('InventoryLog').insert({
+    await knex('InventoryLog').insert({
       inventoryItemId,
       consumableId,
       siteId: fromSiteId,
@@ -629,11 +630,11 @@ function* removeInventory(request) {
 
   return {
     ok: true,
-    data: yield getInventoryItem(inventoryItemId),
+    data: await getInventoryItem(inventoryItemId),
   }
 }
 
-function* transferInventory(request) {
+async function transferInventory(request) {
   const {
     auth,
     payload: {
@@ -649,9 +650,9 @@ function* transferInventory(request) {
     params: { inventoryItemId },
   } = request
 
-  const dataConstraints = yield getConstraints(auth.credentials)
+  const dataConstraints = await getConstraints(auth.credentials)
 
-  const toSite = yield getSite(toSiteId, dataConstraints)
+  const toSite = await getSite(toSiteId, dataConstraints)
 
   if (!toSite) {
     return Boom.forbidden(
@@ -659,7 +660,7 @@ function* transferInventory(request) {
     )
   }
 
-  const fromSite = yield getSite(fromSiteId, dataConstraints)
+  const fromSite = await getSite(fromSiteId, dataConstraints)
 
   if (!fromSite) {
     return Boom.forbidden(
@@ -667,14 +668,14 @@ function* transferInventory(request) {
     )
   }
 
-  const currentlyLoggedInUser = yield getUser(auth.credentials.name)
+  const currentlyLoggedInUser = await getUser(auth.credentials.name)
   const now = new Date()
-  const sourceInventoryItem = yield getInventoryItem(inventoryItemId)
+  const sourceInventoryItem = await getInventoryItem(inventoryItemId)
   if (_.isEmpty(sourceInventoryItem)) {
     return Boom.notFound('Could not find source item')
   }
 
-  const destinationInventoryItem = yield* findInventoryItem(
+  const destinationInventoryItem = await findInventoryItem(
     toSiteId,
     consumableId,
     expiresOn,
@@ -682,8 +683,8 @@ function* transferInventory(request) {
     fromSiteId
   )
   let destinationInventoryItemId = -1
-  yield transact(function*(knex) {
-    destinationInventoryItemId = yield* upsertInventoryItem(
+  await transact(async knex => {
+    destinationInventoryItemId = await upsertInventoryItem(
       knex,
       destinationInventoryItem,
       consumableId,
@@ -696,7 +697,7 @@ function* transferInventory(request) {
       fromSiteId
     )
 
-    yield knex('InventoryLog').insert({
+    await knex('InventoryLog').insert({
       inventoryItemId,
       consumableId,
       siteId: fromSiteId,
@@ -710,7 +711,7 @@ function* transferInventory(request) {
       createdBy: currentlyLoggedInUser.id,
     })
 
-    yield knex('InventoryItem')
+    await knex('InventoryItem')
       .where('id', inventoryItemId)
       .update({
         expiresOn,
@@ -725,13 +726,13 @@ function* transferInventory(request) {
   return {
     ok: true,
     data: {
-      existingInventoryItem: yield getInventoryItem(inventoryItemId),
-      newInventoryItem: yield getInventoryItem(destinationInventoryItemId),
+      existingInventoryItem: await getInventoryItem(inventoryItemId),
+      newInventoryItem: await getInventoryItem(destinationInventoryItemId),
     },
   }
 }
 
-function* receiveInventory(request) {
+async function receiveInventory(request) {
   const {
     auth,
     payload: {
@@ -746,29 +747,29 @@ function* receiveInventory(request) {
     params: { inventoryItemId },
   } = request
 
-  const dataConstraints = yield getConstraints(auth.credentials)
+  const dataConstraints = await getConstraints(auth.credentials)
 
-  const toSite = yield getSite(toSiteId, dataConstraints)
+  const toSite = await getSite(toSiteId, dataConstraints)
 
   if (!toSite) {
     return Boom.forbidden('You are not permitted to add inventory to this site')
   }
 
-  const currentlyLoggedInUser = yield getUser(auth.credentials.name)
+  const currentlyLoggedInUser = await getUser(auth.credentials.name)
   const now = new Date()
-  const sourceInventoryItem = yield getInventoryItem(inventoryItemId)
+  const sourceInventoryItem = await getInventoryItem(inventoryItemId)
   if (_.isEmpty(sourceInventoryItem)) {
     return Boom.notFound('Could not find source item')
   }
-  const destinationInventoryItem = yield* findInventoryItem(
+  const destinationInventoryItem = await findInventoryItem(
     toSiteId,
     consumableId,
     expiresOn,
     lotNumber
   )
   let destinationInventoryItemId = -1
-  yield transact(function*(knex) {
-    destinationInventoryItemId = yield* upsertInventoryItem(
+  await transact(async knex => {
+    destinationInventoryItemId = await upsertInventoryItem(
       knex,
       destinationInventoryItem,
       consumableId,
@@ -780,7 +781,7 @@ function* receiveInventory(request) {
       currentlyLoggedInUser.id
     )
 
-    yield knex('InventoryLog').insert({
+    await knex('InventoryLog').insert({
       inventoryItemId: destinationInventoryItemId,
       consumableId,
       siteId: toSiteId,
@@ -794,14 +795,14 @@ function* receiveInventory(request) {
       createdBy: currentlyLoggedInUser.id,
     })
 
-    yield knex('InventoryItem')
+    await knex('InventoryItem')
       .where('id', inventoryItemId)
       .delete()
   })
 
   return {
     ok: true,
-    data: yield getInventoryItem(destinationInventoryItemId),
+    data: await getInventoryItem(destinationInventoryItemId),
   }
 }
 

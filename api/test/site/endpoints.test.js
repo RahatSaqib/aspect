@@ -18,7 +18,7 @@ describe('site endpoints', () => {
 
       beforeEach(() => {
         endpoint = setupRoute('GET', '/site', {
-          *listSites() {
+          async listSites() {
             return expectedResponse
           },
         })
@@ -40,7 +40,7 @@ describe('site endpoints', () => {
 
       beforeEach(() => {
         endpoint = setupRoute('GET', '/site/{siteId}', {
-          *showSite() {
+          async showSite() {
             return expectedResponse
           },
         })
@@ -62,7 +62,7 @@ describe('site endpoints', () => {
 
       beforeEach(() => {
         endpoint = setupRoute('GET', '/site/select-list', {
-          *listSitesForSelectList() {
+          async listSitesForSelectList() {
             return expectedResponse
           },
         })
@@ -86,7 +86,7 @@ describe('site endpoints', () => {
 
       beforeEach(() => {
         endpoint = setupRoute('PUT', '/site/{siteId}', {
-          *updateSite() {
+          async updateSite() {
             return expectedResponse
           },
         })

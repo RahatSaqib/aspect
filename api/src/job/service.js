@@ -2,10 +2,10 @@ const _ = require('lodash')
 const { query } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 
-function* getJobFunctionsForSelectList(request) {
+async function getJobFunctionsForSelectList(request) {
   const { auth } = request
-  const dataConstraints = yield getConstraints(auth.credentials)
-  const partnersAndJobFunctions = yield query(
+  const dataConstraints = await getConstraints(auth.credentials)
+  const partnersAndJobFunctions = await query(
     'Get partners and job functions for select lists'
   )
     .from('JobFunction as jf')

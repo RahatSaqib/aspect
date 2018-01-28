@@ -10,8 +10,7 @@
     "mocha:contract": "mocha --opts test/contract.mocha.opts",
     "mocha:unit": "mocha --opts test/unit.mocha.opts",
     "mocha:unit:clear:coverage": "fsys --task=remove --fileFolder=coverage && fsys --task=remove --fileFolder=mocha.json",
-    "mocha:unit:coverage": "istanbul cover --config test/istanbul.yml node_modules/mocha/bin/_mocha -- --opts test/unit.mocha.opts",
-    "mocha:unit:check:coverage": "istanbul check-coverage --config test/istanbul.yml",
+    "mocha:unit:coverage": "nyc mocha --opts test/unit.mocha.opts",
     "poststop:background": "shx echo API LOGS: && shx echo ------------------------------------------------------------- && shx cat out.log && shx echo API ERRORS: && shx echo ------------------------------------------------------------- && shx cat err.log",
     "prestart:background": "fsys --task=remove --fileFolder=out.log && fsys --task=remove --fileFolder=err.log",
     "precommit": "lint-staged",
@@ -22,7 +21,24 @@
     "stop:background": "forever stop src/server.js",
     "test": "npm-run-all test:unit test:contract",
     "test:contract": "npm-run-all -c start:background mocha:contract stop:background",
-    "test:unit": "npm-run-all lint mocha:unit:clear:coverage mocha:unit:coverage mocha:unit:check:coverage"
+    "test:unit": "npm-run-all lint mocha:unit:clear:coverage mocha:unit:coverage"
+  },
+  "nyc": {
+    "check-coverage": true,
+    "per-file": true,
+    "lines": 0,
+    "statements": 0,
+    "functions": 0,
+    "branches": 0,
+    "exclude": [
+      "**/*.test.js", "**/*.test.jsx", "test/*"
+    ],
+    "reporter": [
+      "lcov"
+    ],
+    "cache": false,
+    "all": true,
+    "report-dir": "./coverage"
   },
   "lint-staged": {
     "linters": {
@@ -50,7 +66,6 @@
     "babel-eslint": "^7.2.2",
     "base32": "^0.0.6",
     "bcrypt": "^1.0.3",
-    "bluebird": "^3.5.0",
     "boom": "^5.2.0",
     "date-fns": "^1.28.5",
     "dotenv-safe": "^4.0.4",
@@ -94,13 +109,13 @@
     "forever": "^0.15.3",
     "fs-extra-cli": "^0.0.4",
     "husky": "^0.14.3",
-    "istanbul": "^0.4.5",
     "lint-staged": "^6.0.0",
     "mocha": "^3.5.0",
     "mocha-bamboo-reporter": "^1.1.1",
     "mocha-multi": "^0.11.0",
     "nodemon": "^1.11.0",
     "npm-run-all": "^4.0.2",
+    "nyc": "^11.4.1",
     "prettier": "^1.5.3",
     "proxyquire": "^1.8.0",
     "shx": "^0.2.2",

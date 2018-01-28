@@ -17,13 +17,13 @@ describe('Demo Device routes', () => {
   afterEach(context.afterEach)
 
   it('should return a list of assays and post result', () =>
-    runTest(function*(knex) {
+    runTest(async knex => {
       const { deviceId, clientAuth } = context
 
-      const firstResultId = yield* getLastResultId(knex, deviceId)
+      const firstResultId = await getLastResultId(knex, deviceId)
 
       let resultId = null
-      yield server
+      await server
         .get(`${path}/${deviceId}`)
         .set('Authorization', clientAuth)
         .then(res => {
@@ -54,7 +54,7 @@ describe('Demo Device routes', () => {
           resultId = result.id
         })
 
-      yield server
+      await server
         .post(`${path}/${deviceId}/result`)
         .set('Authorization', clientAuth)
         .send({ resultId })
@@ -63,7 +63,7 @@ describe('Demo Device routes', () => {
           assert.typeOf(res.body, 'Object')
         })
 
-      const lastResultId = yield* getLastResultId(knex, deviceId)
+      const lastResultId = await getLastResultId(knex, deviceId)
       assert.isNotNull(resultId)
       assert.notEqual(resultId, lastResultId)
       assert.notEqual(resultId, firstResultId)

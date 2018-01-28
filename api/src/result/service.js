@@ -1,4 +1,3 @@
-const Promise = require('bluebird')
 const Boom = require('boom')
 const _ = require('lodash')
 const {
@@ -101,13 +100,13 @@ const SORT_FIELDS = [
   'patientId',
 ]
 
-function* getListResults(query, auth) {
+async function getListResults(query, auth) {
   const selectFields = _.clone(SELECT_LIST_FIELDS)
   const sortableFields = _.clone(SORT_FIELDS)
 
   const assayColumns = []
   if (query.assayId) {
-    const assay = yield knex('Assay as a')
+    const assay = await knex('Assay as a')
       .where('a.id', query.assayId)
       .first()
 
@@ -161,7 +160,7 @@ function* getListResults(query, auth) {
   }
 
   // get data constraints
-  const dataConstraints = yield getConstraints(auth.credentials)
+  const dataConstraints = await getConstraints(auth.credentials)
 
   const resultQuery = knex('Result as r')
     .innerJoin('Assay as a', 'r.assayId', 'a.id')
@@ -219,7 +218,7 @@ function* getListResults(query, auth) {
     .select(selectFields)
 
   // return result when both queries are finished
-  const [{ count: total }, data] = yield Promise.all([getCount, getItems])
+  const [{ count: total }, data] = await Promise.all([getCount, getItems])
 
   // if assay specified columns from the resultData field, parse them to valid JSON
   if (assayColumns) {
@@ -243,22 +242,22 @@ function* getListResults(query, auth) {
 
   return result
 }
-function* listResults(request) {
+async function listResults(request) {
   const { query, auth } = request
-  const result = yield* getListResults(query, auth)
+  const result = await getListResults(query, auth)
   return result
 }
 
-function* showResult(request) {
-  const result = yield* getResultByResultId(request)
+async function showResult(request) {
+  const result = await getResultByResultId(request)
   return result.ok ? result : Boom.notFound()
 }
 
-function* getResultByResultId(request, fields = SELECT_SHOW_FIELDS) {
+async function getResultByResultId(request, fields = SELECT_SHOW_FIELDS) {
   const { auth, params } = request
-  const dataConstraints = yield getConstraints(auth.credentials)
+  const dataConstraints = await getConstraints(auth.credentials)
 
-  const results = yield knex('Result as r')
+  const results = await knex('Result as r')
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
     .innerJoin('Assay as a', 'r.assayId', 'a.id')
     .leftJoin('Geography as g', 'r.geographyId', 'g.id')
@@ -284,7 +283,7 @@ function* getResultByResultId(request, fields = SELECT_SHOW_FIELDS) {
     ;[data] = results
     data.resultData = JSON.parse(data.resultData)
     data.patientData = JSON.parse(data.patientData)
-    data.deviceLogs = yield knex('DeviceLog as dl')
+    data.deviceLogs = await knex('DeviceLog as dl')
       .where('dl.resultId', params.resultId)
       .orderBy('createdOn', 'desc')
       .select(
@@ -297,7 +296,7 @@ function* getResultByResultId(request, fields = SELECT_SHOW_FIELDS) {
         'dl.rawMessage'
       )
 
-    data.assay = yield knex('Assay as a')
+    data.assay = await knex('Assay as a')
       .where('a.id', data.assayId)
       .first()
 
@@ -308,7 +307,7 @@ function* getResultByResultId(request, fields = SELECT_SHOW_FIELDS) {
   return { ok: results.length === 1, data }
 }
 
-function* listResultTypes(request) {
+async function listResultTypes(request) {
   const { query } = request
 
   const resultTypeQuery = knex('ResultType as rt').modify(filterParams, query, {
@@ -328,7 +327,7 @@ function* listResultTypes(request) {
     .select('id', 'name')
 
   // return result when both queries are finished
-  const [{ count: total }, data] = yield Promise.all([getCount, getItems])
+  const [{ count: total }, data] = await Promise.all([getCount, getItems])
 
   const result = { ok: true, total, length: data.length, data }
 
@@ -338,7 +337,7 @@ function* listResultTypes(request) {
 // ---------------------------------
 // exporting Results data
 // ---------------------------------
-function* exportResults(request) {
+async function exportResults(request) {
   const { query, auth } = request
 
   // ---------------
@@ -348,7 +347,7 @@ function* exportResults(request) {
   query.size = 1e5
 
   // get whole dataset - based on current query params (sorting, filtering) and auth constraints
-  const results = yield* getListResults(query, auth)
+  const results = await getListResults(query, auth)
 
   let result = null
 
@@ -390,7 +389,7 @@ function* exportResults(request) {
       }
     }
 
-    result = yield* generateExcelFile({
+    result = await generateExcelFile({
       templateFileName: 'Results.xlsx',
       outputFileName: 'results.xlsx',
       populateData,
@@ -413,7 +412,7 @@ function* exportResults(request) {
       'sampleGroup',
       'patientId',
     ]
-    result = yield* generateCsvFile(
+    result = await generateCsvFile(
       'results.csv',
       items,
       columnNames,
@@ -424,14 +423,14 @@ function* exportResults(request) {
   return result
 }
 
-function* updateWorkflowStatus(request) {
+async function updateWorkflowStatus(request) {
   const { auth, params, payload } = request
   const now = new Date()
   const { resultId } = params
-  const { id: currentUserId } = yield getUser(auth.credentials.name)
+  const { id: currentUserId } = await getUser(auth.credentials.name)
 
   // get the result so we can check access and if status changed
-  const result = yield* getResultByResultId(request)
+  const result = await getResultByResultId(request)
   if (!result.ok) {
     Boom.notFound()
   }
@@ -439,7 +438,7 @@ function* updateWorkflowStatus(request) {
   let { resultWorkflowStatusId } = payload
   // check if a externalId is provided
   if (payload.externalId) {
-    ;[resultWorkflowStatusId] = yield knex('ResultWorkflowStatus as rs')
+    ;[resultWorkflowStatusId] = await knex('ResultWorkflowStatus as rs')
       .where('rs.externalId', payload.externalId)
       .select('rs.id')
       .limit(1)
@@ -452,7 +451,7 @@ function* updateWorkflowStatus(request) {
 
   // update the resultWorkflowStatusId.
   if (resultWorkflowStatusId !== result.data.resultWorkflowStatusId) {
-    yield knex('Result')
+    await knex('Result')
       .where('id', resultId)
       .update({
         resultWorkflowStatusId,
@@ -460,7 +459,7 @@ function* updateWorkflowStatus(request) {
         updatedOn: now,
       })
 
-    yield knex('ResultWorkflowLog').insert({
+    await knex('ResultWorkflowLog').insert({
       resultId,
       resultWorkflowStatusId,
       createdBy: currentUserId,
@@ -469,17 +468,18 @@ function* updateWorkflowStatus(request) {
     })
   }
 
-  return yield* showResult(request)
+  const response = await showResult(request)
+  return response
 }
 
-function* updateQcCheck(request) {
+async function updateQcCheck(request) {
   const { auth, params, payload } = request
   const now = new Date()
   const { resultId } = params
-  const { id: currentUserId } = yield getUser(auth.credentials.name)
+  const { id: currentUserId } = await getUser(auth.credentials.name)
 
   // get the result so we can check access and workflow status
-  const result = yield* getResultByResultId(request)
+  const result = await getResultByResultId(request)
   if (!result.ok) {
     return Boom.notFound()
   }
@@ -491,7 +491,8 @@ function* updateQcCheck(request) {
   }
 
   // update the result QC Check flag
-  yield knex('Result')
+
+  await knex('Result')
     .where('id', resultId)
     .update({
       qcCheck: payload.qcCheck,
@@ -500,7 +501,7 @@ function* updateQcCheck(request) {
     })
 
   // log QC-Check change in separate table
-  yield knex('ResultQualityControlLog').insert({
+  await knex('ResultQualityControlLog').insert({
     resultId,
     qcCheck: payload.qcCheck,
     createdBy: currentUserId,
@@ -510,10 +511,11 @@ function* updateQcCheck(request) {
   // notify result updated so result is redelivered
   dispatch(notifyResultUpdated(resultId, { qcCheck: 1 }))
 
-  return yield* showResult(request)
+  const response = await showResult(request)
+  return response
 }
 
-function* listWorkflowStatusTypes() {
+async function listWorkflowStatusTypes() {
   const resultQuery = knex('ResultWorkflowStatus as rs')
 
   // get total count for paging
@@ -529,19 +531,19 @@ function* listWorkflowStatusTypes() {
     .select('id', 'name')
 
   // return result when both queries are finished
-  const [{ count: total }, data] = yield Promise.all([getCount, getItems])
+  const [{ count: total }, data] = await Promise.all([getCount, getItems])
 
   const result = { ok: true, total, length: data.length, data }
 
   return result
 }
 
-function* listWorkflowStatusLog(request) {
-  const result = yield* getWorkflowStatusLogByResultId(request)
+async function listWorkflowStatusLog(request) {
+  const result = await getWorkflowStatusLogByResultId(request)
   return result.ok ? result : Boom.notFound()
 }
 
-function* getWorkflowStatusLogByResultId(request) {
+async function getWorkflowStatusLogByResultId(request) {
   const { query, params } = request
 
   const selectFields = [
@@ -582,7 +584,7 @@ function* getWorkflowStatusLogByResultId(request) {
     .select(selectFields)
 
   // return result when both queries are finished
-  const [{ count: total }, data] = yield Promise.all([getCount, getItems])
+  const [{ count: total }, data] = await Promise.all([getCount, getItems])
 
   const result = { ok: true, total, length: data.length, data }
 

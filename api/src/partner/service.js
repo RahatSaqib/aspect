@@ -1,4 +1,3 @@
-const Promise = require('bluebird')
 const { knex, filterParams, sortPageParams } = require('../db')
 
 const SELECT_LIST_FIELDS = [
@@ -15,7 +14,7 @@ const SELECT_SHOW_FIELDS = [
   'pt.name as partnerTypeName',
 ]
 
-function* listPartners(request) {
+async function listPartners(request) {
   const { query } = request
 
   const partnerQuery = knex('Partner as p').modify(filterParams, query, {
@@ -38,18 +37,18 @@ function* listPartners(request) {
     .select(SELECT_LIST_FIELDS)
 
   // return result when both queries are finished
-  const [{ count: total }, data] = yield Promise.all([getCount, getItems])
+  const [{ count: total }, data] = await Promise.all([getCount, getItems])
 
   const result = { ok: true, total, length: data.length, data }
 
   return result
 }
 
-function* showPartner(request) {
+async function showPartner(request) {
   const { params } = request
 
   // get item
-  const [item] = yield knex('Partner as p')
+  const [item] = await knex('Partner as p')
     .where('p.id', params.partnerId)
     .innerJoin('PartnerType as pt', 'pt.id', 'p.partnerTypeId')
     // TODO: modify addConstraints to not require site or device

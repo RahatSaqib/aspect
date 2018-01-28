@@ -8,8 +8,8 @@ const { assert } = chai
 
 const devicePath = '/device'
 
-function* deleteTestDataFromCheckpoint(knex, checkpoint, deviceIds) {
-  const minDeviceLog = yield knex('DeviceLog as dl')
+async function deleteTestDataFromCheckpoint(knex, checkpoint, deviceIds) {
+  const minDeviceLog = await knex('DeviceLog as dl')
     .where('dl.checkpoint', checkpoint)
     .first('dl.id as id')
   if (!minDeviceLog) {
@@ -17,7 +17,7 @@ function* deleteTestDataFromCheckpoint(knex, checkpoint, deviceIds) {
     return
   }
 
-  const deviceUpdates = yield knex('DeviceLog as dl')
+  const deviceUpdates = await knex('DeviceLog as dl')
     .where('dl.id', '>=', minDeviceLog.id)
     .whereIn('dl.deviceId', deviceIds)
     .select('dl.id', 'dl.resultId', 'dl.deviceOperationId')
@@ -26,127 +26,127 @@ function* deleteTestDataFromCheckpoint(knex, checkpoint, deviceIds) {
   const resultIds = _.uniq(_.map(deviceUpdates, 'resultId'))
   const opIds = _.uniq(_.map(deviceUpdates, 'deviceOperationId'))
 
-  yield knex('DeviceLog')
+  await knex('DeviceLog')
     .whereIn('id', deviceLogIds)
     .delete()
-  yield knex('InventoryLog')
+  await knex('InventoryLog')
     .whereIn('resultId', resultIds)
     .delete()
-  yield knex('ResultQualityControlLog')
+  await knex('ResultQualityControlLog')
     .whereIn('resultId', resultIds)
     .delete()
-  yield knex('ResultWorkflowLog')
+  await knex('ResultWorkflowLog')
     .whereIn('resultId', resultIds)
     .delete()
-  yield knex('ResultGeneratedResult')
+  await knex('ResultGeneratedResult')
     .whereIn('generatedResultId', resultIds)
     .delete()
-  yield knex('ResultGeneratedResult')
+  await knex('ResultGeneratedResult')
     .whereIn('sourceResultId', resultIds)
     .delete()
-  yield knex('Result')
+  await knex('Result')
     .whereIn('id', resultIds)
     .delete()
-  yield knex('DeviceOperation')
+  await knex('DeviceOperation')
     .whereIn('id', opIds)
     .delete()
 }
 
-function* deleteDeviceAndTestData(knex, apiKeys) {
+async function deleteDeviceAndTestData(knex, apiKeys) {
   const tokens = apiKeys.map(key => key.token)
-  const deviceIds = yield knex('Device as d')
+  const deviceIds = await knex('Device as d')
     .innerJoin('DeviceApiKey as dak', 'dak.deviceId', 'd.id')
     .whereIn('dak.token', tokens)
     .select('d.id')
     .map(device => device.id)
 
-  const deviceResultIds = yield knex('Result')
+  const deviceResultIds = await knex('Result')
     .whereIn('deviceId', deviceIds)
     .map(result => result.id)
-  const generatedResultIds = yield knex('ResultGeneratedResult')
+  const generatedResultIds = await knex('ResultGeneratedResult')
     .whereIn('sourceResultId', deviceResultIds)
     .map(r => r.generatedResultId)
   const resultIds = deviceResultIds.concat(generatedResultIds)
 
-  const opIds = yield knex('DeviceOperation')
+  const opIds = await knex('DeviceOperation')
     .whereIn('deviceId', deviceIds)
     .map(op => op.id)
 
-  yield knex('DeviceStatusLog')
+  await knex('DeviceStatusLog')
     .whereIn('deviceId', deviceIds)
     .delete()
-  yield knex('DeviceLog')
+  await knex('DeviceLog')
     .whereIn('deviceId', deviceIds)
     .orWhereIn('resultId', resultIds)
     .delete()
-  yield knex('DeviceSiteHistory')
+  await knex('DeviceSiteHistory')
     .whereIn('deviceId', deviceIds)
     .delete()
-  yield knex('InventoryLog')
+  await knex('InventoryLog')
     .whereIn('resultId', resultIds)
     .delete()
-  yield knex('ResultQualityControlLog')
+  await knex('ResultQualityControlLog')
     .whereIn('resultId', resultIds)
     .delete()
-  yield knex('ResultWorkflowLog')
+  await knex('ResultWorkflowLog')
     .whereIn('resultId', resultIds)
     .delete()
-  yield knex('ResultGeneratedResult')
+  await knex('ResultGeneratedResult')
     .whereIn('sourceResultId', resultIds)
     .orWhereIn('generatedResultId', resultIds)
     .delete()
-  yield knex('Result')
+  await knex('Result')
     .whereIn('id', resultIds)
     .delete()
-  yield knex('DeviceOperation')
+  await knex('DeviceOperation')
     .whereIn('id', opIds)
     .delete()
-  yield knex('DeviceApiKey')
+  await knex('DeviceApiKey')
     .whereIn('deviceId', deviceIds)
     .update({ deviceId: null })
-  yield knex('Device')
+  await knex('Device')
     .whereIn('id', deviceIds)
     .delete()
-  yield knex('DeviceApiKey')
+  await knex('DeviceApiKey')
     .whereIn('token', tokens)
     .delete()
 }
 
-function* getDeviceConfigurationData(knex, deviceId) {
-  const { configurationData } = yield knex('Device')
+async function getDeviceConfigurationData(knex, deviceId) {
+  const { configurationData } = await knex('Device')
     .where({ id: deviceId })
     .first('configurationData')
 
   return JSON.parse(configurationData || null)
 }
 
-function* getDeviceFromApiKey(knex, apiKey) {
-  const device = yield knex('Device as d')
+async function getDeviceFromApiKey(knex, apiKey) {
+  const device = await knex('Device as d')
     .innerJoin('DeviceApiKey as dak', 'd.id', 'dak.deviceId')
     .where('dak.token', apiKey.token)
     .first('d.*')
   return device
 }
 
-function* getLastDeviceOperation(knex, deviceId) {
-  const lastOpId = yield* getLastDeviceOperationId(knex, deviceId)
+async function getLastDeviceOperation(knex, deviceId) {
+  const lastOpId = await getLastDeviceOperationId(knex, deviceId)
   if (!lastOpId) {
     return null
   }
 
-  const op = yield knex('DeviceOperation')
+  const op = await knex('DeviceOperation')
     .where({ id: lastOpId })
     .first('id', 'startedOn', 'endedOn', 'data')
   return Object.assign(op, { data: JSON.parse(op.data || null) })
 }
 
-function* getLastDeviceOperationData(knex, deviceId) {
-  const op = yield* getLastDeviceOperation(knex, deviceId)
+async function getLastDeviceOperationData(knex, deviceId) {
+  const op = await getLastDeviceOperation(knex, deviceId)
   return op ? op.data : null
 }
 
-function* getLastDeviceOperationId(knex, deviceId) {
-  const op = yield knex('DeviceLog as dl')
+async function getLastDeviceOperationId(knex, deviceId) {
+  const op = await knex('DeviceLog as dl')
     .where('dl.deviceId', deviceId)
     .whereNotNull('dl.deviceOperationId')
     .orderBy('dl.id', 'desc')
@@ -154,8 +154,8 @@ function* getLastDeviceOperationId(knex, deviceId) {
   return op && op.id
 }
 
-function* getLastResultId(knex, deviceId) {
-  const result = yield knex('DeviceLog as dl')
+async function getLastResultId(knex, deviceId) {
+  const result = await knex('DeviceLog as dl')
     .where('dl.deviceId', deviceId)
     .whereNotNull('dl.resultId')
     .orderBy('dl.id', 'desc')
@@ -181,12 +181,11 @@ class DeviceApiTestContext {
   }
 
   beforeEach() {
-    const self = this
-    return run(function*() {
-      self.checkpoint = null
-      self.deviceIds.splice(0)
-      self.initialConfigurationData = {}
-      self.apiKeysWithoutDevice.splice(0)
+    return run(async () => {
+      this.checkpoint = null
+      this.deviceIds.splice(0)
+      this.initialConfigurationData = {}
+      this.apiKeysWithoutDevice.splice(0)
     })
   }
 
@@ -196,23 +195,22 @@ class DeviceApiTestContext {
   // Also allows device authentication in setup of test without relying
   // on run order of tests
   runTest(test) {
-    const self = this
-    return run(function*(knex) {
-      self.deviceIds.splice(0)
-      self.apiKeysWithoutDevice.splice(0)
+    return run(async knex => {
+      this.deviceIds.splice(0)
+      this.apiKeysWithoutDevice.splice(0)
 
       // Authenticates device and user from auth setup
-      const { server, auth } = self
+      const { server, auth } = this
       const { user, type, status = 'approved' } = auth
       const now = new Date()
-      self.now = now
-      const { userId } = yield knex('User')
+      this.now = now
+      const { userId } = await knex('User')
         .where({ name: user })
         .first('id as userId')
       assert.isOk(userId, `Cannot find user ${user}`)
-      self.userId = userId
+      this.userId = userId
 
-      const clientToken = yield server
+      const clientToken = await server
         .post('/api/auth')
         .send({ name: user, password: 'test07', clientName: 'Mocha/Chai' })
         .then(res => {
@@ -222,9 +220,9 @@ class DeviceApiTestContext {
           assert.isAbove(res.body.clientId.length, 32)
           return res.body.access
         })
-      const dataConstraints = yield getConstraints({ name: user })
+      const dataConstraints = await getConstraints({ name: user })
 
-      const device = yield knex('Device as d')
+      const device = await knex('Device as d')
         .innerJoin('DeviceApiKey as dak', 'dak.deviceId', 'd.id')
         .innerJoin('DeviceType as dt', 'dt.id', 'd.deviceTypeId')
         .innerJoin('DeviceStatus as ds', 'ds.id', 'd.deviceStatusId')
@@ -250,61 +248,61 @@ class DeviceApiTestContext {
           `Cannot find device with status ${auth.status}`
         )
         assert.isOk(auth.partner, 'Must specify partner')
-        const partner = yield knex('Partner')
+        const partner = await knex('Partner')
           .where({ name: auth.partner })
           .first('id')
         assert.isOk(partner, `Cannot find partner ${auth.partner}`)
-        self.partnerId = partner.id
-        apiKey = yield* self.createApiKey(knex, auth.site || null)
+        this.partnerId = partner.id
+        apiKey = await this.createApiKey(knex, auth.site || null)
       }
       assert.isOk(apiKey)
 
       // save device id for the following tests
-      self.apiKey = apiKey
-      self.clientAuth = `Bearer ${clientToken}`
-      self.deviceAuth = `Bearer ${apiKey.token}`
+      this.apiKey = apiKey
+      this.clientAuth = `Bearer ${clientToken}`
+      this.deviceAuth = `Bearer ${apiKey.token}`
 
       if (device != null) {
-        self.deviceId = device.id
+        this.deviceId = device.id
 
-        self.deviceIds.push(device.id)
-        const { configurationData } = yield knex('Device')
+        this.deviceIds.push(device.id)
+        const { configurationData } = await knex('Device')
           .where({ id: device.id })
           .first('configurationData')
 
-        self.initialConfigurationData[device.id] = configurationData || null
-        self.deviceConfigurationData = JSON.parse(
-          self.initialConfigurationData[device.id]
+        this.initialConfigurationData[device.id] = configurationData || null
+        this.deviceConfigurationData = JSON.parse(
+          this.initialConfigurationData[device.id]
         )
 
-        self.checkpoint = `Device API Device Tests ${new Date()}`
-        yield self.server
+        this.checkpoint = `Device API Device Tests ${new Date()}`
+        await this.server
           .post(devicePath)
-          .set('Authorization', self.deviceAuth)
-          .send({ checkpoint: self.checkpoint })
+          .set('Authorization', this.deviceAuth)
+          .send({ checkpoint: this.checkpoint })
           .then(res => {
             assert.equal(res.status, 200)
             assert.typeOf(res.body, 'Object')
           })
       }
 
-      return yield* test(knex)
+      return test(knex)
     })
   }
 
-  *createApiKey(knex, siteName = null) {
-    const site =
-      siteName == null
-        ? null
-        : yield knex('Site')
-            .where({ externalId: siteName, partnerId: this.partnerId })
-            .first('id', 'partnerId', 'geographyId')
+  async createApiKey(knex, siteName = null) {
+    let site = null
+    if (siteName === null) {
+      site = await knex('Site')
+        .where({ externalId: siteName, partnerId: this.partnerId })
+        .first('id', 'partnerId', 'geographyId')
+    }
 
     if (siteName != null && site == null) {
       assert.isOk(siteName, `Cannot find site ${siteName}`)
     }
     const apiKey = { token: randomToken() }
-    yield knex('DeviceApiKey').insert({
+    await knex('DeviceApiKey').insert({
       token: apiKey.token,
       revoked: 0,
       partnerId: this.partnerId,
@@ -320,27 +318,28 @@ class DeviceApiTestContext {
   }
 
   afterEach() {
-    const self = this
-    return run(function*(knex) {
+    return run(async knex => {
       // Reset to previous device configuration
-      for (const deviceId of self.deviceIds) {
-        const configurationData =
-          self.initialConfigurationData[deviceId] || null
-        yield knex('Device')
-          .where({ id: deviceId })
-          .update({ configurationData })
-      }
+      await Promise.all(
+        this.deviceIds.map(deviceId => {
+          const configurationData =
+            this.initialConfigurationData[deviceId] || null
+          return knex('Device')
+            .where({ id: deviceId })
+            .update({ configurationData })
+        })
+      )
 
-      if (self.checkpoint) {
-        yield* deleteTestDataFromCheckpoint(
+      if (this.checkpoint) {
+        await deleteTestDataFromCheckpoint(
           knex,
-          self.checkpoint,
-          self.deviceIds
+          this.checkpoint,
+          this.deviceIds
         )
       }
 
-      if (self.apiKeysWithoutDevice.length > 0) {
-        yield* deleteDeviceAndTestData(knex, self.apiKeysWithoutDevice)
+      if (this.apiKeysWithoutDevice.length > 0) {
+        await deleteDeviceAndTestData(knex, this.apiKeysWithoutDevice)
       }
     })
   }

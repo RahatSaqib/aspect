@@ -28,7 +28,7 @@ describe('account details service', () => {
     service = proxyquire.noCallThru().load('../../src/accountDetails/service', {
       '../db': dbSpy,
       '../geography/service': {
-        *transformGeographyFromUpdates(updates) {
+        async transformGeographyFromUpdates(updates) {
           const geoFieldNames = ['countryId', 'stateId', 'lgaId']
           const geoFields = _.pick(updates, geoFieldNames)
           if (!_.isEmpty(geoFields)) {

@@ -9,10 +9,10 @@ const EXTERNAL_ID_EID = 'EID'
 const DEVICE_TYPE_EXTERNAL_ID = 'CHAILIMS'
 const RESULT_TEXT_LDL = '< LDL'
 
-function* postProcessMergeResult(context, result, previousResult) {
+async function postProcessMergeResult(context, result, previousResult) {
   const { knex, payload, now } = context
   const { deviceId } = result
-  yield* addResultWorkflowLogIfChanged(
+  await addResultWorkflowLogIfChanged(
     knex,
     payload,
     result,
@@ -21,28 +21,28 @@ function* postProcessMergeResult(context, result, previousResult) {
     now
   )
 
-  const deviceTypeExternalId = (yield knex('Device as d')
+  const deviceTypeExternalId = (await knex('Device as d')
     .where('d.id', deviceId)
     .join('DeviceType as dt', 'd.deviceTypeid', 'dt.id')
     .first('dt.externalId')).externalId
 
   if (deviceTypeExternalId === DEVICE_TYPE_EXTERNAL_ID) {
-    yield* checkResultDeliverable(context, result)
-    yield* addResultCategory(context, result)
+    await checkResultDeliverable(context, result)
+    await addResultCategory(context, result)
   }
 
   // TODO do we want to consume in inventory in malawi plugin? (we don't use it)
-  // yield* consumeInventoryForResult(knex, payload, result)
+  // await consumeInventoryForResult(knex, payload, result)
 
   return {}
 }
 
 // Add category to result]
-function* addResultCategory(context, result) {
+async function addResultCategory(context, result) {
   const { knex, dispatch } = context
   const { id: resultId, assayId, resultData } = result
   const { resultText, copies } = JSON.parse(resultData)
-  const assayExternalId = (yield knex('Assay as a')
+  const assayExternalId = (await knex('Assay as a')
     .where({ 'a.id': assayId })
     .first('a.externalId')).externalId
 
@@ -76,12 +76,12 @@ function* addResultCategory(context, result) {
   }
 
   if (externalId) {
-    const resultCategoryId = (yield knex('ResultCategory')
+    const resultCategoryId = (await knex('ResultCategory')
       .where('externalId', externalId)
       .first('id')).id
 
     // Update Result Category
-    yield knex('Result')
+    await knex('Result')
       .where('id', resultId)
       .update('resultCategory1', resultCategoryId)
     dispatch(
@@ -94,14 +94,14 @@ function* addResultCategory(context, result) {
   }
 }
 
-function* checkResultDeliverable(context, result) {
+async function checkResultDeliverable(context, result) {
   const { knex, dispatch, now } = context
   const { id: resultId, patientData } = result
 
   // Now's a good time to see if the result is in the
   // status "Validated" and can be promoted to "Deliverable" base on patient data
   if (patientData && patientDataIsComplete(JSON.parse(patientData))) {
-    const resultWorkflowExternalId = (yield knex('Result as r')
+    const resultWorkflowExternalId = (await knex('Result as r')
       .where('r.id', resultId)
       .join('ResultWorkflowStatus as rw', 'r.resultWorkflowStatusId', 'rw.id')
       .first('rw.externalId')).externalId
@@ -110,11 +110,11 @@ function* checkResultDeliverable(context, result) {
     // status, it hasn't been delivered yet,
     // and it is now in the status "Validated"
     if (resultWorkflowExternalId === VALIDATED_EXTERNALID) {
-      const resultWorkflowDeliverableId = (yield knex('ResultWorkflowStatus')
+      const resultWorkflowDeliverableId = (await knex('ResultWorkflowStatus')
         .where('externalId', DELIVERABLE_EXTERNALID)
         .first('id')).id
 
-      yield knex('Result')
+      await knex('Result')
         .where('id', resultId)
         .update({
           resultWorkflowStatusId: resultWorkflowDeliverableId,
@@ -125,7 +125,7 @@ function* checkResultDeliverable(context, result) {
       // add a second so this entry shows up after the workflow status log entry
       // that was added as part of the original update
       const logEntryNow = new Date(now.getTime() + 1000)
-      yield knex('ResultWorkflowLog').insert({
+      await knex('ResultWorkflowLog').insert({
         resultId,
         resultWorkflowStatusId: resultWorkflowDeliverableId,
         operator: null,

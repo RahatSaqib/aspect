@@ -18,7 +18,7 @@ describe('report endpoints', () => {
 
       beforeEach(() => {
         endpoint = setupRoute('GET', '/report', {
-          *listReports() {
+          async listReports() {
             return expectedResponse
           },
         })

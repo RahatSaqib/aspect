@@ -18,7 +18,7 @@ describe('notification endpoints', () => {
 
       beforeEach(() => {
         endpoint = setupRoute('GET', '/notification', {
-          *listNotifications() {
+          async listNotifications() {
             return expectedResponse
           },
         })

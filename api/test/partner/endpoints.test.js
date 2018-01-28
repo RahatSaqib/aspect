@@ -18,7 +18,7 @@ describe('partner endpoints', () => {
 
       beforeEach(() => {
         endpoint = setupRoute('GET', '/partner', {
-          *listPartners() {
+          async listPartners() {
             return expectedResponse
           },
         })
@@ -40,7 +40,7 @@ describe('partner endpoints', () => {
 
       beforeEach(() => {
         endpoint = setupRoute('GET', '/partner/{partnerId}', {
-          *showPartner() {
+          async showPartner() {
             return expectedResponse
           },
         })

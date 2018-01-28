@@ -28,19 +28,19 @@ function getAccountDetailsForUsername(username) {
     )
 }
 
-function* getAccountDetailsForLoggedInUser(request) {
-  const accountDetails = yield getAccountDetailsForUsername(
+async function getAccountDetailsForLoggedInUser(request) {
+  const accountDetails = await getAccountDetailsForUsername(
     request.auth.credentials.name
   )
 
   return { ok: true, data: accountDetails }
 }
 
-function* saveDetailsForLoggedInUser(request, updatablePersonFields) {
+async function saveDetailsForLoggedInUser(request, updatablePersonFields) {
   const username = request.auth.credentials.name
   const newAccountDetails = request.payload
 
-  let accountDetails = yield getAccountDetailsForUsername(username)
+  let accountDetails = await getAccountDetailsForUsername(username)
 
   // The account details do not belong to the user that submitted this request!
   if (accountDetails.id !== newAccountDetails.id) {
@@ -63,26 +63,24 @@ function* saveDetailsForLoggedInUser(request, updatablePersonFields) {
   )
 
   // Update record if any values have changed
-  const changedPersonFields = yield* transformGeographyFromUpdates(
-    changedFields
-  )
+  const changedPersonFields = await transformGeographyFromUpdates(changedFields)
 
   if (!_.isEmpty(changedPersonFields)) {
     changedPersonFields.updatedOn = new Date()
     changedPersonFields.updatedBy = accountDetails.userId
 
-    yield query('Save account details for currently logged in user')
+    await query('Save account details for currently logged in user')
       .from('Person as p')
       .where({ 'p.id': accountDetails.id })
       .update(changedPersonFields)
-    accountDetails = yield getAccountDetailsForUsername(username)
+    accountDetails = await getAccountDetailsForUsername(username)
   }
 
   return { ok: true, data: accountDetails }
 }
 
-function* saveContactDetailsForLoggedInUser(request) {
-  return yield* saveDetailsForLoggedInUser(request, [
+async function saveContactDetailsForLoggedInUser(request) {
+  const response = await saveDetailsForLoggedInUser(request, [
     'name',
     'title',
     'email',
@@ -94,10 +92,15 @@ function* saveContactDetailsForLoggedInUser(request) {
     'lgaId',
     'zip',
   ])
+  return response
 }
 
-function* saveUserPreferencesForLoggedInUser(request) {
-  return yield* saveDetailsForLoggedInUser(request, ['timezone', 'culture'])
+async function saveUserPreferencesForLoggedInUser(request) {
+  const response = await saveDetailsForLoggedInUser(request, [
+    'timezone',
+    'culture',
+  ])
+  return response
 }
 
 module.exports = {

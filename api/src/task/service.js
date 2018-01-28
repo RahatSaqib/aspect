@@ -2,7 +2,7 @@ const _ = require('lodash')
 const subDays = require('date-fns/sub_days')
 const subMinutes = require('date-fns/sub_minutes')
 
-function* listTasks(request) {
+async function listTasks(request) {
   const { query } = request
 
   const now = new Date()
