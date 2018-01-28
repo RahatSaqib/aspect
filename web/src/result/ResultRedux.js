@@ -8,6 +8,7 @@ import {
   errorNotFound,
   filterFieldsRejectedError,
   errorPleaseTryAgainInAFewMinutes,
+  errorInsufficientScope,
 } from '../error/CommonErrorNotifications'
 import { receiveList, receiveItem, Items } from '../shared/metaReducers/items'
 import {
@@ -73,6 +74,14 @@ export function fetchResults(filtersParams, sortCol, sortDir, page, pageSize) {
               title: {
                 id: 'errorResponseMessages.fetchResults.GET.400.title',
                 defaultMessage: 'Searching Results Failed',
+              },
+            })
+          ),
+          403: errorInsufficientScope(
+            defineMessages({
+              title: {
+                id: 'errorResponseMessages.fetchPersons.GET.403.title',
+                defaultMessage: 'Insufficient Permissions',
               },
             })
           ),

@@ -7,6 +7,7 @@ import { aspectFetch } from '../shared/utils/fetch'
 import {
   filterFieldsRejectedError,
   errorPleaseTryAgainInAFewMinutes,
+  errorInsufficientScope,
 } from '../error/CommonErrorNotifications'
 import { receiveList, Items } from '../shared/metaReducers/items'
 import {
@@ -63,6 +64,14 @@ export function fetchReports(filtersParams, sortCol, sortDir, page, pageSize) {
               title: {
                 id: 'errorResponseMessages.fetchReports.GET.400.title',
                 defaultMessage: 'Searching Reports Failed',
+              },
+            })
+          ),
+          403: errorInsufficientScope(
+            defineMessages({
+              title: {
+                id: 'errorResponseMessages.fetchPersons.GET.403.title',
+                defaultMessage: 'Insufficient Permissions',
               },
             })
           ),

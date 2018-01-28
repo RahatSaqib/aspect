@@ -7,8 +7,9 @@ const enhance = compose(
   withHandlers({
     onClearFilters: ({ history, location }) => () => {
       const searchParams = new URLSearchParams(location.search)
-      searchParams.delete('filters')
-
+      for (const key of searchParams.keys()) {
+        searchParams.delete(key)
+      }
       history.replace({
         ...location,
         search: searchParams.toString(),

@@ -10,6 +10,7 @@ import {
   filterFieldsRejectedError,
   errorNotFound,
   errorPleaseTryAgainInAFewMinutes,
+  errorInsufficientScope,
 } from '../error/CommonErrorNotifications'
 
 import { receiveList, receiveItem, Items } from '../shared/metaReducers/items'
@@ -83,6 +84,14 @@ export function fetchDevices(
               title: {
                 id: 'errorResponseMessages.fetchDevices.GET.400.title',
                 defaultMessage: 'Searching Devices Failed',
+              },
+            })
+          ),
+          403: errorInsufficientScope(
+            defineMessages({
+              title: {
+                id: 'errorResponseMessages.fetchPersons.GET.403.title',
+                defaultMessage: 'Insufficient Permissions',
               },
             })
           ),
@@ -266,6 +275,14 @@ export function exportDevices(
               title: {
                 id: 'errorResponseMessages.exportDevices.GET.400.title',
                 defaultMessage: 'Exporting Devices Failed',
+              },
+            })
+          ),
+          403: errorInsufficientScope(
+            defineMessages({
+              title: {
+                id: 'errorResponseMessages.fetchPersons.GET.403.title',
+                defaultMessage: 'Insufficient Permissions',
               },
             })
           ),

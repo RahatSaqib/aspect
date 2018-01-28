@@ -9,6 +9,7 @@ import {
   filterFieldsRejectedError,
   errorNotFound,
   errorPleaseTryAgainInAFewMinutes,
+  errorInsufficientScope,
 } from '../error/CommonErrorNotifications'
 
 import { receiveList, receiveItem, Items } from '../shared/metaReducers/items'
@@ -76,6 +77,14 @@ export function fetchSites(filtersParams, sortCol, sortDir, page, pageSize) {
               },
             })
           ),
+          403: errorInsufficientScope(
+            defineMessages({
+              title: {
+                id: 'errorResponseMessages.fetchPersons.GET.403.title',
+                defaultMessage: 'Insufficient Permissions',
+              },
+            })
+          ),
           default: errorPleaseTryAgainInAFewMinutes(
             defineMessages({
               title: {
@@ -130,6 +139,14 @@ export function fetchSitesForSelectList(forceRefresh) {
             title: {
               id: 'errorResponseMessages.fetchSites.GET.default.title',
               defaultMessage: 'Loading Sites Failed',
+            },
+          })
+        ),
+        403: errorInsufficientScope(
+          defineMessages({
+            title: {
+              id: 'errorResponseMessages.fetchPersons.GET.403.title',
+              defaultMessage: 'Insufficient Permissions',
             },
           })
         ),

@@ -13,7 +13,10 @@ import {
   makeSearchParamsSanitizer,
   composeSanitizer,
 } from '../../shared/selectors/searchParams'
-import { sanitizeFiltersStringBy } from '../../filter/utils'
+import {
+  sanitizeFiltersStringBy,
+  reduceFiltersConfig,
+} from '../../filter/utils'
 import NavTitle from '../../globals/components/NavTitle'
 import BrowseFilters from '../../globals/components/BrowseFilters'
 import BrowseEmptyList from '../../globals/components/BrowseEmptyList'
@@ -86,19 +89,25 @@ const messages = defineMessages({
   },
 })
 
-const FILTERS_CONFIG = {
-  assayAndResultCategory: true,
-  geography: true,
-  state: true,
-  lga: true,
-  date: true,
-  patientOrResearchId: true,
-  sampleId: true,
-  sampleGroup: true,
-  siteName: true,
-  sampleOriginSite: true,
-  workflowStatus: true,
-}
+const FILTERS_CONFIG = [
+  {
+    assayAndResultCategory: true,
+    requiredPermissions: ['assay:view', 'assay:admin', 'assay:edit'],
+  },
+  { geography: true, requiredPermissions: [] },
+  { state: true, requiredPermissions: [] },
+  { lga: true, requiredPermissions: [] },
+  { date: true, requiredPermissions: [] },
+  { patientOrResearchId: true, requiredPermissions: [] },
+  { sampleId: true, requiredPermissions: [] },
+  { sampleGroup: true, requiredPermissions: [] },
+  {
+    siteName: true,
+    requiredPermissions: ['site:view', 'site:admin', 'site:edit'],
+  },
+  { sampleOriginSite: true, requiredPermissions: [] },
+  { workflowStatus: true, requiredPermissions: [] },
+]
 
 const searchSanitizer = makeSearchParamsSanitizer({
   availableSortCol: [
@@ -138,6 +147,7 @@ const enhance = compose(
     state => ({
       items: state.result.items,
       table: state.result.table,
+      userPermissions: state.user.jwt.permissions,
     }),
     bindActionCreators.bind(null, {
       fetchResults,
@@ -201,6 +211,13 @@ const enhance = compose(
           search: searchParams.toString(),
         })
       }
+      const reducedFilters = reduceFiltersConfig(
+        FILTERS_CONFIG,
+        this.props.userPermissions
+      )
+      this.setState({
+        reducedFilters,
+      })
     },
 
     componentDidMount() {
@@ -238,6 +255,7 @@ export const ResultList = ({
   pageSize,
   onExportClick,
   onRowClick,
+  reducedFilters,
 }) => (
   <div className={cssClasses('Container')}>
     <Helmet title={intl.formatMessage(messages.resultsTitle)} />
@@ -246,7 +264,7 @@ export const ResultList = ({
       history={history}
       location={location}
       intl={intl}
-      config={FILTERS_CONFIG}
+      config={reducedFilters}
       onClickExport={onExportClick}
       askConfirmationForExport={table.total > 1000}
     />

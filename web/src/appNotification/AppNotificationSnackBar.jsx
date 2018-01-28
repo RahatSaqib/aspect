@@ -108,7 +108,7 @@ export class AppNotificationSnackBar extends PureComponent {
         message={title ? formatMessage(title, messageValues) : ''}
         autoHideDuration={4000}
         action={actionText}
-        onActionTouchTap={actionTouchTap}
+        onActionClick={actionTouchTap}
         onRequestClose={this.handleClose}
       />
     )

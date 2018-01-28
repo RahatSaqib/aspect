@@ -1,4 +1,4 @@
-import { compose, mapProps } from 'recompose'
+import { compose, mapProps, defaultProps } from 'recompose'
 
 import StyledDropdown from '../../components/themedReactToolbox/StyledDropdown'
 
@@ -30,9 +30,11 @@ const enhance = compose(
         search: searchParams.toString(),
       })
     },
-    source: navigations,
     value: location.pathname,
-  }))
+  })),
+  defaultProps({
+    source: navigations,
+  })
 )
 
 export default enhance(StyledDropdown)

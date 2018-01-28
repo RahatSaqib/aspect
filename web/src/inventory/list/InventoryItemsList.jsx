@@ -22,7 +22,10 @@ import {
   makeSearchParamsSanitizer,
   composeSanitizer,
 } from '../../shared/selectors/searchParams'
-import { sanitizeFiltersStringBy } from '../../filter/utils'
+import {
+  sanitizeFiltersStringBy,
+  reduceFiltersConfig,
+} from '../../filter/utils'
 import NavTitle from '../../globals/components/NavTitle'
 import BrowseFilters from '../../globals/components/BrowseFilters'
 import BrowseEmptyList from '../../globals/components/BrowseEmptyList'
@@ -126,14 +129,17 @@ const messages = defineMessages({
   },
 })
 
-const FILTERS_CONFIG = {
-  consumable: true,
-  geography: true,
-  state: true,
-  lga: true,
-  siteName: true,
-  date: true,
-}
+const FILTERS_CONFIG = [
+  { consumable: true, requiredPermissions: [] },
+  { geography: true, requiredPermissions: [] },
+  { state: true, requiredPermissions: [] },
+  { lga: true, requiredPermissions: [] },
+  {
+    siteName: true,
+    requiredPermissions: ['site:view', 'site:admin', 'site:edit'],
+  },
+  { date: true, requiredPermissions: [] },
+]
 
 const searchSanitizer = makeSearchParamsSanitizer({
   availableSortCol: [
@@ -164,6 +170,7 @@ const enhance = compose(
       items: state.inventory.items,
       table: state.inventory.table,
       inventoryAdjustment: state.inventory.inventoryAdjustment,
+      userPermissions: state.user.jwt.permissions,
     }),
     bindActionCreators.bind(null, {
       showAcknowledgement,
@@ -216,6 +223,13 @@ const enhance = compose(
           search: searchParams.toString(),
         })
       }
+      const reducedFilters = reduceFiltersConfig(
+        FILTERS_CONFIG,
+        this.props.userPermissions
+      )
+      this.setState({
+        reducedFilters,
+      })
     },
 
     componentDidMount() {
@@ -328,6 +342,7 @@ export const InventoryItemsList = ({
   onRemoveInventorySubmit,
   onTransferInventorySubmit,
   onReceiveInventorySubmit,
+  reducedFilters,
 }) => (
   <div className={cssClasses('Container')}>
     <Helmet title={intl.formatMessage(messages.inventoryItemsTitle)} />
@@ -336,7 +351,7 @@ export const InventoryItemsList = ({
       history={history}
       location={location}
       intl={intl}
-      config={FILTERS_CONFIG}
+      config={reducedFilters}
       dateFilterLabel={intl.formatMessage(messages.expiresOn)}
     />
     <DataTableCard className={cssClasses('DataTableCard--action')}>

@@ -97,7 +97,7 @@ const initialState = new App()
 export default function rootReducer(state = initialState, action) {
   let nextState = state
   // on logout, empty state
-  if (action.type === authTypes.LOGOUT_SUCCESS) {
+  if (action.type === authTypes.LOGOUT) {
     nextState = initialState
   }
 

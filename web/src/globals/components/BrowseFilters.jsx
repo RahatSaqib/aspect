@@ -1,12 +1,12 @@
 import _ from 'lodash'
 import classnames from 'classnames/bind'
 import React from 'react'
-import { compose, withProps, withHandlers, pure } from 'recompose'
+import { compose, withProps, withHandlers, pure, lifecycle } from 'recompose'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 
 import BrowseNavDropdown from './BrowseNavDropdown'
-import { mergeToFiltersParams } from '../../filter/utils'
+import { mergeToFiltersParams, reduceNavLinks } from '../../filter/utils'
 import FiltersBtnGroup from '../../filter/btnGroup/FiltersBtnGroup'
 import FiltersPanel from '../../filter/popover/FiltersPanel'
 import {
@@ -78,13 +78,22 @@ const enhance = compose(
     state => ({
       listExport: state.filter.listExport,
       exportFormatTypes,
+      userPermissions: state.user.jwt.permissions,
     }),
     bindActionCreators.bind(null, {
       askExportConfirmation,
       closeExportConfirmation,
       beginListExportProcessing,
     })
-  )
+  ),
+  lifecycle({
+    componentWillMount() {
+      const reducedNav = reduceNavLinks(navigations, this.props.userPermissions)
+      this.setState({
+        reducedSource: reducedNav,
+      })
+    },
+  })
 )
 
 export const BrowseFilters = ({
@@ -92,6 +101,8 @@ export const BrowseFilters = ({
   location,
   intl,
   onRemoveFilterItem,
+  reducedSource,
+  userPermissions,
   ...restProps
 }) => (
   <div className={cssClasses('Container')}>
@@ -101,7 +112,11 @@ export const BrowseFilters = ({
       onRemoveFilterItem={onRemoveFilterItem}
       className={cssClasses('FiltersBtnGroup')}
     >
-      <BrowseNavDropdown history={history} location={location} />
+      <BrowseNavDropdown
+        history={history}
+        location={location}
+        source={reducedSource}
+      />
     </FiltersBtnGroup>
     <FiltersPanel
       intl={intl}
@@ -110,5 +125,70 @@ export const BrowseFilters = ({
     />
   </div>
 )
+
+export const navigations = [
+  {
+    value: '/browse/device',
+    label: 'Devices',
+    requiredPermissions: ['device:view', 'device:admin', 'device:edit'],
+  },
+  {
+    value: '/browse/result',
+    label: 'Results',
+    requiredPermissions: ['result:view', 'result:admin', 'result:edit'],
+  },
+  {
+    value: '/browse/person',
+    label: 'Contacts',
+    requiredPermissions: ['person:view', 'person:admin', 'person:edit'],
+  },
+  {
+    value: '/browse/site',
+    label: 'Sites',
+    requiredPermissions: ['site:view', 'site:admin', 'site:edit'],
+  },
+  {
+    value: '/browse/inventory',
+    label: 'Supplies',
+    requiredPermissions: [
+      'inventory:view',
+      'inventory:admin',
+      'inventory:edit',
+    ],
+  },
+  {
+    value: '/browse/router',
+    label: 'Routers',
+    requiredPermissions: ['device:view', 'device:admin', 'device:edit'],
+  },
+  {
+    value: '/browse/reporter',
+    label: 'Reporters',
+    requiredPermissions: ['device:view', 'device:admin', 'device:edit'],
+  },
+  {
+    value: '/browse/notification',
+    label: 'Notifications',
+    requiredPermissions: [
+      'notification:view',
+      'notification:admin',
+      'notification:edit',
+    ],
+  },
+  {
+    value: '/browse/report',
+    label: 'Reports',
+    requiredPermissions: ['report:view', 'report:admin', 'report:edit'],
+  },
+  {
+    value: '/browse/deviceApiKey',
+    label: 'Device API Keys',
+    requiredPermissions: [
+      'deviceApiKey:view',
+      'deviceApiKey:admin',
+      'deviceApiKey:edit',
+    ],
+  },
+]
 
 export default enhance(BrowseFilters)

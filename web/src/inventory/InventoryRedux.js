@@ -13,6 +13,7 @@ import {
 import {
   filterFieldsRejectedError,
   errorPleaseTryAgainInAFewMinutes,
+  errorInsufficientScope,
 } from '../error/CommonErrorNotifications'
 
 export const types = {
@@ -92,6 +93,14 @@ export function fetchInventoryItems(
               title: {
                 id: 'errorResponseMessages.fetchInventoryItems.GET.400.title',
                 defaultMessage: 'Searching Inventory Items Failed',
+              },
+            })
+          ),
+          403: errorInsufficientScope(
+            defineMessages({
+              title: {
+                id: 'errorResponseMessages.fetchPersons.GET.403.title',
+                defaultMessage: 'Insufficient Permissions',
               },
             })
           ),

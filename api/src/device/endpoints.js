@@ -68,10 +68,10 @@ function listDevicesBaseConfig() {
         validateAllGeographyFilterParams(),
         validateDateRangeParams(),
         validateSortPageParams(
+          // TODO: Add 'availabilityRate' Sort Page Param
           'name',
           'state',
           'status',
-          'availabilityRate',
           'errorRate',
           'createdOn',
           'lastSeen',

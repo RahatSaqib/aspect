@@ -22,7 +22,10 @@ import {
   makeSearchParamsSanitizer,
   composeSanitizer,
 } from '../../shared/selectors/searchParams'
-import { sanitizeFiltersStringBy } from '../../filter/utils'
+import {
+  sanitizeFiltersStringBy,
+  reduceFiltersConfig,
+} from '../../filter/utils'
 import NavTitle from '../../globals/components/NavTitle'
 import BrowseFilters from '../../globals/components/BrowseFilters'
 import BrowseEmptyList from '../../globals/components/BrowseEmptyList'
@@ -107,13 +110,16 @@ const messages = defineMessages({
   },
 })
 
-const FILTERS_CONFIG = {
-  geography: true,
-  state: false,
-  partnerId: true,
-  deviceName: true,
-  siteName: true,
-}
+const FILTERS_CONFIG = [
+  { geography: true, requiredPermissions: [] },
+  { state: false, requiredPermissions: [] },
+  { partnerId: true, requiredPermissions: [] },
+  { deviceName: true, requiredPermissions: [] },
+  {
+    siteName: true,
+    requiredPermissions: ['site:view', 'site:admin', 'site:edit'],
+  },
+]
 const DEFAULT_GENERATOR_VALUES = { count: 1 }
 const DEFAULT_ASSIGNER_VALUES = { deviceApiKeyIds: [] }
 
@@ -149,6 +155,7 @@ const enhance = compose(
     state => ({
       items: state.deviceApiKey.items,
       table: state.deviceApiKey.table,
+      userPermissions: state.user.jwt.permissions,
     }),
     bindActionCreators.bind(null, {
       fetchDeviceApiKeys,
@@ -211,6 +218,13 @@ const enhance = compose(
           search: searchParams.toString(),
         })
       }
+      const reducedFilters = reduceFiltersConfig(
+        FILTERS_CONFIG,
+        this.props.userPermissions
+      )
+      this.setState({
+        reducedFilters,
+      })
     },
 
     componentDidMount() {
@@ -358,6 +372,7 @@ export const DeviceApiKeyList = ({
   onSelectAllChange,
   onSelectedChange,
   onRevokedChange,
+  reducedFilters,
 }) => (
   <div className={cssClasses('Container')}>
     <Helmet title={intl.formatMessage(messages.title)} />
@@ -366,7 +381,7 @@ export const DeviceApiKeyList = ({
       history={history}
       location={location}
       intl={intl}
-      config={FILTERS_CONFIG}
+      config={reducedFilters}
       onClickExport={onExportClick}
     />
     <div>

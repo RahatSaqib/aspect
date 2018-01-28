@@ -31,6 +31,7 @@ import {
   ResultDataTableHead,
   ResultDataTableRow,
 } from './ResultDataTable'
+import requirePermissions from '../../../components/shared/requirePermissions'
 
 const cssClasses = classnames.bind(require('../DeviceDetail.css'))
 
@@ -150,6 +151,21 @@ const enhance = compose(
       sortDir: 'desc',
     })
   ),
+  withHandlers({
+    onToggleDeviceStatus: ({ device, updateSingleDevice }) => () =>
+      updateSingleDevice(device.get('id'), {
+        statusToken:
+          device.get('statusToken') !== tokens.APPROVED
+            ? tokens.APPROVED
+            : tokens.ASSIGNED,
+      }),
+  })
+)
+
+const enhanceResults = compose(
+  requirePermissions({
+    permissions: ['result:admin', 'result:view', 'result:edit'],
+  }),
   connect(
     state => ({
       items: state.result.items,
@@ -161,14 +177,6 @@ const enhance = compose(
     })
   ),
   withHandlers({
-    onToggleDeviceStatus: ({ device, updateSingleDevice }) => () =>
-      updateSingleDevice(device.get('id'), {
-        statusToken:
-          device.get('statusToken') !== tokens.APPROVED
-            ? tokens.APPROVED
-            : tokens.ASSIGNED,
-      }),
-
     onInitialLoad: ({
       match,
       location,
@@ -242,6 +250,116 @@ const enhance = compose(
   })
 )
 
+const Results = enhanceResults(
+  ({
+    intl,
+    history,
+    location,
+    sortDir,
+    sortCol,
+    pageAt,
+    pageSize,
+    // injected by recompose
+    items,
+    table,
+    onRowClick,
+    onExportClick,
+  }) => (
+    <section className={cssClasses('Section')}>
+      <Card className={cssClasses('Section__Content')}>
+        <header className={cssClasses('Header')}>
+          <div className={cssClasses('Header__Title')}>Test history</div>
+          <div className={cssClasses('Header__Actions')}>
+            <Button icon={<MdFileDownload />} onClick={onExportClick} />
+          </div>
+        </header>
+        <div>
+          <DataTableProgressBar disabled={!table.loading} />
+          {items.currentIdList.isEmpty() && (
+            <BrowseEmptyList
+              history={history}
+              location={location}
+              intl={intl}
+            />
+          )}
+          {!items.currentIdList.isEmpty() && (
+            <ResultDataTable
+              selectable={false}
+              className={cssClasses('ResultDataTable')}
+            >
+              <ResultDataTableHead
+                history={history}
+                location={location}
+                sortColumnKey={sortCol}
+                sortColumnDir={sortDir}
+                columns={[
+                  {
+                    key: 'endedOn',
+                    label: intl.formatMessage(messages.endedOn),
+                    sortable: true,
+                  },
+                  {
+                    key: 'sampleOriginSiteName',
+                    label: intl.formatMessage(messages.sampleOriginSiteName),
+                    sortable: true,
+                  },
+                  {
+                    key: 'sampleId',
+                    label: intl.formatMessage(messages.sampleId),
+                    sortable: true,
+                  },
+                  {
+                    key: 'sampleGroup',
+                    label: intl.formatMessage(messages.sampleGroup),
+                    sortable: true,
+                  },
+                  {
+                    key: 'resultText',
+                    label: intl.formatMessage(messages.resultText),
+                    sortable: true,
+                  },
+                  {
+                    key: 'resultWorkflowStatus',
+                    label: intl.formatMessage(messages.resultWorkflowStatus),
+                    sortable: true,
+                  },
+                  {
+                    key: 'patientId',
+                    label: intl.formatMessage(messages.patiendId),
+                    sortable: true,
+                  },
+                ]}
+              />
+              {items.currentIdList
+                .map(id => items.byId.get(id))
+                .map(result => (
+                  <ResultDataTableRow
+                    key={result.get('id')}
+                    intl={intl}
+                    result={result}
+                    onClick={onRowClick}
+                    data-result-Id={result.get('id')}
+                  />
+                ))}
+            </ResultDataTable>
+          )}
+          {!items.currentIdList.isEmpty() && (
+            <BrowseTablePaginator
+              history={history}
+              location={location}
+              intl={intl}
+              paginatorStatus={messages.paginatorStatus}
+              total={table.total}
+              pageAt={pageAt}
+              pageSize={pageSize}
+            />
+          )}
+        </div>
+      </Card>
+    </section>
+  )
+)
+
 export const DeviceDetailProfile = ({
   intl,
   history,
@@ -252,14 +370,10 @@ export const DeviceDetailProfile = ({
   device,
   // --- injected by recompose ---
   onToggleDeviceStatus,
-  table,
-  items,
   sortCol,
   sortDir,
   pageAt,
   pageSize,
-  onExportClick,
-  onRowClick,
 }) => (
   <div>
     <Helmet title={device.get('name')} />
@@ -358,98 +472,16 @@ export const DeviceDetailProfile = ({
         </div>
       </Card>
     </section>
-    <section className={cssClasses('Section')}>
-      <Card className={cssClasses('Section__Content')}>
-        <header className={cssClasses('Header')}>
-          <div className={cssClasses('Header__Title')}>Test history</div>
-          <div className={cssClasses('Header__Actions')}>
-            <Button icon={<MdFileDownload />} onClick={onExportClick} />
-          </div>
-        </header>
-        <div>
-          <DataTableProgressBar disabled={!table.loading} />
-          {items.currentIdList.isEmpty() && (
-            <BrowseEmptyList
-              history={history}
-              location={location}
-              intl={intl}
-            />
-          )}
-          {!items.currentIdList.isEmpty() && (
-            <ResultDataTable
-              selectable={false}
-              className={cssClasses('ResultDataTable')}
-            >
-              <ResultDataTableHead
-                history={history}
-                location={location}
-                sortColumnKey={sortCol}
-                sortColumnDir={sortDir}
-                columns={[
-                  {
-                    key: 'endedOn',
-                    label: intl.formatMessage(messages.endedOn),
-                    sortable: true,
-                  },
-                  {
-                    key: 'sampleOriginSiteName',
-                    label: intl.formatMessage(messages.sampleOriginSiteName),
-                    sortable: true,
-                  },
-                  {
-                    key: 'sampleId',
-                    label: intl.formatMessage(messages.sampleId),
-                    sortable: true,
-                  },
-                  {
-                    key: 'sampleGroup',
-                    label: intl.formatMessage(messages.sampleGroup),
-                    sortable: true,
-                  },
-                  {
-                    key: 'resultText',
-                    label: intl.formatMessage(messages.resultText),
-                    sortable: true,
-                  },
-                  {
-                    key: 'resultWorkflowStatus',
-                    label: intl.formatMessage(messages.resultWorkflowStatus),
-                    sortable: true,
-                  },
-                  {
-                    key: 'patientId',
-                    label: intl.formatMessage(messages.patiendId),
-                    sortable: true,
-                  },
-                ]}
-              />
-              {items.currentIdList
-                .map(id => items.byId.get(id))
-                .map(result => (
-                  <ResultDataTableRow
-                    key={result.get('id')}
-                    intl={intl}
-                    result={result}
-                    onClick={onRowClick}
-                    data-result-Id={result.get('id')}
-                  />
-                ))}
-            </ResultDataTable>
-          )}
-          {!items.currentIdList.isEmpty() && (
-            <BrowseTablePaginator
-              history={history}
-              location={location}
-              intl={intl}
-              paginatorStatus={messages.paginatorStatus}
-              total={table.total}
-              pageAt={pageAt}
-              pageSize={pageSize}
-            />
-          )}
-        </div>
-      </Card>
-    </section>
+    <Results
+      match={match}
+      history={history}
+      location={location}
+      sortDir={sortDir}
+      sortCol={sortCol}
+      intl={intl}
+      pageAt={pageAt}
+      pageSize={pageSize}
+    />
   </div>
 )
 

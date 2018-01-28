@@ -4,7 +4,10 @@ import { defineMessages } from 'react-intl'
 import Immutable from 'immutable'
 
 import { aspectFetch } from '../shared/utils/fetch'
-import { errorPleaseTryAgainInAFewMinutes } from '../error/CommonErrorNotifications'
+import {
+  errorPleaseTryAgainInAFewMinutes,
+  errorInsufficientScope,
+} from '../error/CommonErrorNotifications'
 
 export const REQUEST_SUMMARY_DASHBOARD = 'REQUEST_SUMMARY_DASHBOARD'
 export const RECEIVE_SUMMARY_DASHBOARD = 'RECEIVE_SUMMARY_DASHBOARD'
@@ -50,6 +53,14 @@ export function fetchSummaryDashboard() {
 
     return aspectFetch('/dashboard/summary', {
       errorNotifications: {
+        403: errorInsufficientScope(
+          defineMessages({
+            title: {
+              id: 'errorResponseMessages.fetchPersons.GET.403.title',
+              defaultMessage: 'Insufficient Permissions',
+            },
+          })
+        ),
         default: errorPleaseTryAgainInAFewMinutes(
           defineMessages({
             title: {
@@ -236,6 +247,14 @@ export function fetchOperationalStatus(filtersParams) {
       })}`,
       {
         errorNotifications: {
+          403: errorInsufficientScope(
+            defineMessages({
+              title: {
+                id: 'errorResponseMessages.fetchPersons.GET.403.title',
+                defaultMessage: 'Insufficient Permissions',
+              },
+            })
+          ),
           default: errorPleaseTryAgainInAFewMinutes(
             defineMessages({
               title: {

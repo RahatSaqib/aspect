@@ -550,6 +550,7 @@ export const FiltersPanel = ({
               name="siteName"
               value={filters.siteName || ''}
               onSiteNameChange={onSiteNameChange}
+              onUpdateInput={onSiteNameChange}
               floatingLabelFixed
               hintText={intl.formatMessage(messages.enterSiteName)}
               floatingLabelText={intl.formatMessage(messages.site)}
@@ -562,6 +563,7 @@ export const FiltersPanel = ({
               name="sampleOriginSite"
               value={filters.sampleOriginSite || ''}
               onSiteNameChange={onSampleOriginSiteChange}
+              onUpdateInput={onSampleOriginSiteChange}
               floatingLabelFixed
               hintText={intl.formatMessage(messages.enterSampleOriginSite)}
               floatingLabelText={intl.formatMessage(messages.sampleOriginSite)}

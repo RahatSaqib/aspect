@@ -123,6 +123,7 @@ module.exports = [
     config: {
       description: 'Sites for Select List',
       notes: "List of site ID's and names",
+      auth: { scope: ['site:view', 'site:edit'] },
     },
   },
 ]

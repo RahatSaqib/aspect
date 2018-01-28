@@ -9,6 +9,7 @@ import {
   filterFieldsRejectedError,
   errorNotFound,
   errorPleaseTryAgainInAFewMinutes,
+  errorInsufficientScope,
 } from '../error/CommonErrorNotifications'
 
 import { receiveList, receiveItem, Items } from '../shared/metaReducers/items'
@@ -78,6 +79,14 @@ export function fetchRouters(
               title: {
                 id: 'errorResponseMessages.fetchRouters.GET.400.title',
                 defaultMessage: 'Searching Routers Failed',
+              },
+            })
+          ),
+          403: errorInsufficientScope(
+            defineMessages({
+              title: {
+                id: 'errorResponseMessages.fetchPersons.GET.403.title',
+                defaultMessage: 'Insufficient Permissions',
               },
             })
           ),

@@ -12,7 +12,10 @@ import {
   makeSearchParamsSanitizer,
   composeSanitizer,
 } from '../../shared/selectors/searchParams'
-import { sanitizeFiltersStringBy } from '../../filter/utils'
+import {
+  sanitizeFiltersStringBy,
+  reduceFiltersConfig,
+} from '../../filter/utils'
 import NavTitle from '../../globals/components/NavTitle'
 import BrowseFilters from '../../globals/components/BrowseFilters'
 import BrowseEmptyList from '../../globals/components/BrowseEmptyList'
@@ -58,9 +61,12 @@ const messages = defineMessages({
   },
 })
 
-const FILTERS_CONFIG = {
-  contactNameOrEmail: true,
-}
+const FILTERS_CONFIG = [
+  {
+    contactNameOrEmail: true,
+    requiredPermissions: [],
+  },
+]
 
 const searchSanitizer = makeSearchParamsSanitizer({
   availableSortCol: [
@@ -91,6 +97,7 @@ const enhance = compose(
     state => ({
       items: state.notification.items,
       table: state.notification.table,
+      userPermissions: state.user.jwt.permissions,
     }),
     bindActionCreators.bind(null, {
       fetchNotifications,
@@ -132,6 +139,13 @@ const enhance = compose(
           search: searchParams.toString(),
         })
       }
+      const reducedFilters = reduceFiltersConfig(
+        FILTERS_CONFIG,
+        this.props.userPermissions
+      )
+      this.setState({
+        reducedFilters,
+      })
     },
 
     componentDidMount() {
@@ -158,6 +172,7 @@ export const NotificationList = ({
   pageAt,
   pageSize,
   onRowClick,
+  reducedFilters,
 }) => (
   <div className={cssClasses('Container')}>
     <Helmet title={intl.formatMessage(messages.notificationsTitle)} />
@@ -166,7 +181,7 @@ export const NotificationList = ({
       history={history}
       location={location}
       intl={intl}
-      config={FILTERS_CONFIG}
+      config={reducedFilters}
     />
     <DataTableCard>
       <DataTableProgressBar disabled={!table.loading} />

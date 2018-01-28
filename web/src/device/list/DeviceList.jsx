@@ -11,7 +11,10 @@ import {
   makeSearchParamsSanitizer,
   composeSanitizer,
 } from '../../shared/selectors/searchParams'
-import { sanitizeFiltersStringBy } from '../../filter/utils'
+import {
+  sanitizeFiltersStringBy,
+  reduceFiltersConfig,
+} from '../../filter/utils'
 import NavTitle from '../../globals/components/NavTitle'
 import BrowseFilters from '../../globals/components/BrowseFilters'
 import BrowseEmptyList from '../../globals/components/BrowseEmptyList'
@@ -28,16 +31,28 @@ import messages from './messages'
 
 const cssClasses = classnames.bind(require('./DeviceList.css'))
 
-const FILTERS_CONFIG = {
-  assayAndResultCategory: true,
-  geography: true,
-  state: true,
-  lga: true,
-  siteName: true,
-  date: true,
-  deviceName: true,
-  deviceStatus: true,
-}
+const FILTERS_CONFIG = [
+  {
+    assayAndResultCategory: true,
+    requiredPermissions: ['assay:view', 'assay:admin', 'assay:edit'],
+  },
+  { geography: true, requiredPermissions: [] },
+  { state: true, requiredPermissions: [] },
+  { lga: true, requiredPermissions: [] },
+  {
+    siteName: true,
+    requiredPermissions: ['site:view', 'site:admin', 'site:edit'],
+  },
+  { date: true, requiredPermissions: [] },
+  {
+    deviceName: true,
+    requiredPermissions: [],
+  },
+  {
+    deviceStatus: true,
+    requiredPermissions: [],
+  },
+]
 
 const searchSanitizer = makeSearchParamsSanitizer({
   availableSortCol: [
@@ -71,6 +86,7 @@ const enhance = compose(
     state => ({
       items: state.device.items,
       table: state.device.table,
+      userPermissions: state.user.jwt.permissions,
     }),
     bindActionCreators.bind(null, {
       fetchDevices,
@@ -145,6 +161,13 @@ const enhance = compose(
           search: searchParams.toString(),
         })
       }
+      const reducedFilters = reduceFiltersConfig(
+        FILTERS_CONFIG,
+        this.props.userPermissions
+      )
+      this.setState({
+        reducedFilters,
+      })
     },
 
     componentDidMount() {
@@ -173,6 +196,7 @@ export const DeviceList = ({
   onExportClick,
   onRowClick,
   onAlertClick,
+  reducedFilters,
 }) => (
   <div className={cssClasses('Container')}>
     <Helmet title={intl.formatMessage(messages.devicesTitle)} />
@@ -181,7 +205,7 @@ export const DeviceList = ({
       history={history}
       location={location}
       intl={intl}
-      config={FILTERS_CONFIG}
+      config={reducedFilters}
       onClickExport={onExportClick}
       askConfirmationForExport={table.total > 1000}
     />
@@ -233,12 +257,12 @@ export const DeviceList = ({
               {
                 key: 'availabilityRate',
                 label: intl.formatMessage(messages.availabilityRate),
-                sortable: true,
+                sortable: false,
               },
               {
                 key: 'errorRate',
                 label: intl.formatMessage(messages.errorRate),
-                sortable: true,
+                sortable: false,
               },
               {
                 key: 'issues',

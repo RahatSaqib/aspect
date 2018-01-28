@@ -362,7 +362,7 @@ class DropDownMenu extends Component {
             value={value}
             style={menuStyle}
             listStyle={listStyle}
-            onItemTouchTap={this.handleItemTouchTap}
+            onItemClick={this.handleItemTouchTap}
             // Forked
             onEscKeyDown={this.handleRequestCloseMenuFromEsc}
           >

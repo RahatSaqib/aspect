@@ -7,6 +7,7 @@ import { aspectFetch } from '../shared/utils/fetch'
 import {
   filterFieldsRejectedError,
   errorPleaseTryAgainInAFewMinutes,
+  errorInsufficientScope,
 } from '../error/CommonErrorNotifications'
 
 import { receiveList, receiveItem, Items } from '../shared/metaReducers/items'
@@ -74,6 +75,14 @@ export function fetchDeviceApiKeys(
               title: {
                 id: 'errorResponseMessages.fetchDeviceApiKeys.GET.400.title',
                 defaultMessage: 'Searching DeviceApiKeys Failed',
+              },
+            })
+          ),
+          403: errorInsufficientScope(
+            defineMessages({
+              title: {
+                id: 'errorResponseMessages.fetchPersons.GET.403.title',
+                defaultMessage: 'Insufficient Permissions',
               },
             })
           ),

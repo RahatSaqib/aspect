@@ -17,6 +17,21 @@ export function errorPleaseTryAgainInAFewMinutes(
   }
 }
 
+export function errorInsufficientScope(messageDescriptors, messageValues) {
+  return {
+    severity: 'error',
+    ...defineMessages({
+      resolution: {
+        id: 'errorResponseMessages.common.insufficientScope.resolution',
+        defaultMessage:
+          'Please contact your administrator to grant access permissions.',
+      },
+    }),
+    ...messageDescriptors,
+    messageValues,
+  }
+}
+
 export function inlineErrorPleaseTryAgainInAFewMinutes(
   messageDescriptors,
   messageValues

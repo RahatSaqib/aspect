@@ -69,7 +69,9 @@ const enhance = compose(
     },
 
     onLastClick: ({ total, pageSize, onPageChange }) => () => {
-      onPageChange(Math.floor(total / pageSize))
+      const lastPage =
+        total % pageSize === 0 ? total / pageSize - 1 : total / pageSize
+      onPageChange(Math.floor(lastPage))
     },
 
     onPageSizeChange10: ({ onPageSizeChange }) => () => {
