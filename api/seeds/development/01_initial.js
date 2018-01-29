@@ -2311,11 +2311,11 @@ async function seed(knex) {
         await knex('InventoryItem').insert(
           Object.assign(
             {
-              consumableId: consumableGxHivVlCartridgeId,
+              consumableId: consumableGxHiv1VlCartridgeId,
               siteId: siteData.id,
               lotNumber: `${(i + 11) * (i + 1)}${
                 ['A', 'V'][i % 2]
-              }-${(siteData.id + i) * consumableGxHivVlCartridgeId}`,
+              }-${(siteData.id + i) * consumableGxHiv1VlCartridgeId}`,
               expiresOn: new Date(
                 new Date(
                   now.getTime() +
@@ -2501,39 +2501,40 @@ async function seed(knex) {
             createdBy: adminId,
           })
 
-        await knex('DeviceLog').insert({
-          deviceId: device.id,
-          createdOn: addHours(randomDate, 1),
-          senderIp: '0.0.0.0',
-          checkPoint: `rrt_${_.random(20)}`,
-          source: 'seed data',
-          rawMessage: JSON.stringify({
-            type: {
-              id: _.sample([
-                deviceTypeGeneXpertId.name,
-                deviceTypeAfinionId.name,
-                deviceTypeQId.name,
-                deviceTypeM2000Id.name,
-                deviceTypeChaiId.name,
-                deviceTypeDaktariVirologyId.name,
-                deviceTypeDaktariInSightId.name,
-                deviceTypeIdRouter.name,
-                deviceTypeCommCare.name,
-              ]),
-              site: {
-                id: siteData.externalId,
+          await knex('DeviceLog').insert({
+            deviceId: device.id,
+            createdOn: addHours(randomDate, 1),
+            senderIp: '0.0.0.0',
+            checkPoint: `rrt_${_.random(20)}`,
+            source: 'seed data',
+            rawMessage: JSON.stringify({
+              type: {
+                id: _.sample([
+                  deviceTypeGeneXpertId.name,
+                  deviceTypeAfinionId.name,
+                  deviceTypeQId.name,
+                  deviceTypeM2000Id.name,
+                  deviceTypeChaiId.name,
+                  deviceTypeDaktariVirologyId.name,
+                  deviceTypeDaktariInSightId.name,
+                  deviceTypeIdRouter.name,
+                  deviceTypeCommCare.name,
+                ]),
+                site: {
+                  id: siteData.externalId,
+                },
+                result: {
+                  data: {},
+                },
               },
-              result: {
-                data: {},
-              },
-            },
-          }),
-          deviceConfigurationUpdated: 0,
-          resultId,
-        })
-      }
-    }
-  }
+            }),
+            deviceConfigurationUpdated: 0,
+            resultId,
+          })
+        }
+      })
+    )
+  })
 
   // some Ebola samples:
   samples = []
