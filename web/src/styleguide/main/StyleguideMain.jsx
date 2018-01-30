@@ -1,5 +1,8 @@
 import _ from 'lodash'
+import Immutable from 'immutable'
 import React, { PureComponent } from 'react'
+import { bindActionCreators } from 'redux'
+import { connect } from 'react-redux'
 import { compose, setPropTypes, pure } from 'recompose'
 import { injectIntl, defineMessages, intlShape } from 'react-intl'
 import Helmet from 'react-helmet'
@@ -11,6 +14,9 @@ import StateSelectField from '../../filter/geography/StateSelectField'
 import LgaSelectField from '../../filter/geography/LgaSelectField'
 import FiltersPanel from '../../filter/popover/FiltersPanel'
 import styles from './StyleguideMain.css'
+
+import ConnectedTagInput from '../../tag/ConnectedTagInput'
+import { fetchTags, updateTags } from '../../tag/TagRedux'
 
 const messages = defineMessages({
   title: {
@@ -29,6 +35,15 @@ const messages = defineMessages({
 
 const enhance = compose(
   pure,
+  connect(
+    state => ({
+      tags: state.tag.tags,
+    }),
+    bindActionCreators.bind(null, {
+      fetchTags,
+      updateTags,
+    })
+  ),
   injectIntl,
   setPropTypes({
     intl: intlShape.isRequired,
@@ -41,6 +56,12 @@ export class StyleguideMain extends PureComponent {
     countryId: null,
     stateId: null,
     lgaId: null,
+    resultId: 23,
+    siteId: 16,
+  }
+
+  componentDidMount() {
+    this.props.fetchTags(this.state.resultId, 'result')
   }
 
   handleChangeFilter = filter => {
@@ -64,14 +85,48 @@ export class StyleguideMain extends PureComponent {
     this.setState({ lgaId })
   }
 
+  handleResultTagChange = (qryId, qryType, tags) => {
+    console.log(qryId, qryType, tags)
+    this.props.updateTags(qryId, qryType, tags.join(','))
+  }
+
+  handleSiteTagChange = (qryId, qryType, tags) => {
+    console.log(qryId, qryType, tags)
+    this.props.updateTags(qryId, qryType, tags.join(','))
+  }
+
   render() {
-    const { intl } = this.props
+    const { intl, tags } = this.props
+    const { resultId, siteId } = this.state
     const { formatMessage } = intl
+    const resultTags = tags.getIn(['result', resultId], Immutable.List()).toJS()
+    const siteTags = tags.getIn(['site', siteId], Immutable.List()).toJS()
 
     return (
       <div className={styles.Container}>
         <Helmet title={formatMessage(messages.title)} />
         <h1>Styleguide</h1>
+
+        <div style={{ padding: '30px' }}>
+          <ConnectedTagInput
+            qryId={resultId}
+            qryType="result"
+            allowCreate
+            onTagChange={this.handleResultTagChange}
+            value={resultTags}
+          />
+        </div>
+
+        <div style={{ padding: '30px' }}>
+          <ConnectedTagInput
+            qryId={siteId}
+            qryType="site"
+            allowCreate
+            onTagChange={this.handleResultTagChange}
+            value={siteTags}
+          />
+        </div>
+
         <FallbackUntilDone
           fallbacks={[
             { style: { width: '100px' } },
