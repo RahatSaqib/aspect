@@ -36,9 +36,9 @@ describe('Device API routes for GxConnect Devices', () => {
       const { runTest } = context
 
       it('should respond with UNAUTHORIZED', () =>
-        runTest(function*() {
+        runTest(async () => {
           const { basicDevicePayload } = context
-          yield server
+          await server
             .post('/device')
             .set('Authorization', 'Bearer ')
             .send(basicDevicePayload)
@@ -59,9 +59,9 @@ describe('Device API routes for GxConnect Devices', () => {
       const { runTest } = context
 
       it('should respond with UNAUTHORIZED', () =>
-        runTest(function*() {
+        runTest(async () => {
           const { basicDevicePayload } = context
-          yield server
+          await server
             .post('/device')
             .set('Authorization', 'Bearer fg2g9cjx0njzgbfmkem0')
             .send(basicDevicePayload)
@@ -86,9 +86,9 @@ describe('Device API routes for GxConnect Devices', () => {
           after(context.afterCleanUp)
 
           it('should respond with NOT_FOUND', () =>
-            runTest(function*() {
+            runTest(async () => {
               const { deviceAuth, basicDevicePayload } = context
-              yield server
+              await server
                 .post('/device')
                 .set('Authorization', deviceAuth)
                 .send(basicDevicePayload)
@@ -113,9 +113,9 @@ describe('Device API routes for GxConnect Devices', () => {
           after(context.afterCleanUp)
 
           it('should respond with OK', () =>
-            runTest(function*() {
+            runTest(async () => {
               const { deviceAuth, basicDevicePayload } = context
-              yield server
+              await server
                 .post('/device')
                 .set('Authorization', deviceAuth)
                 .send(basicDevicePayload)
@@ -126,9 +126,9 @@ describe('Device API routes for GxConnect Devices', () => {
             }))
 
           it('should have created a device and linked it to the device API key', () =>
-            runTest(function*(knex) {
+            runTest(async knex => {
               const { basicDevicePayload, apiKey } = context
-              const deviceDetials = yield knex('DeviceApiKey as dak')
+              const deviceDetials = await knex('DeviceApiKey as dak')
                 .join('Device as d', 'dak.DeviceId', 'd.id')
                 .join('Site as s', 'd.siteId', 's.id')
                 .join('Geography as g', 's.geographyId', 'g.id')
@@ -170,9 +170,9 @@ describe('Device API routes for GxConnect Devices', () => {
       after(firstContext.afterCleanUp)
 
       it('should not create a duplicate device', () =>
-        firstContext.runTest(function*(knex) {
+        firstContext.runTest(async knex => {
           // Check that device exists with MAC Address and Instrument Serial
-          const firstDeviceUniqueIdentifiers = yield knex('DeviceApiKey as dak')
+          const firstDeviceUniqueIdentifiers = await knex('DeviceApiKey as dak')
             .join('Device as d', 'dak.DeviceId', 'd.id')
             .where({ 'dak.token': firstContext.apiKey })
             .select('d.macAddress', 'd.serial')
@@ -194,12 +194,12 @@ describe('Device API routes for GxConnect Devices', () => {
             instrumentSerialNumbers,
           })
 
-          yield* secondContext.registerAndSetDevice()
+          await secondContext.registerAndSetDevice()
 
-          yield* secondContext.runTestInline(function*(knex) {
+          await secondContext.runTestInline(async knex => {
             assert.notEqual(secondContext.apiKey, firstContext.apiKey)
             // Submit same device configuration with MAC address and instrument serial numbers
-            yield server
+            await server
               .post('/device')
               .set('Authorization', secondContext.deviceAuth)
               .send(
@@ -215,7 +215,7 @@ describe('Device API routes for GxConnect Devices', () => {
                 })
               )
 
-            const firstDeviceApiKeyStatus = yield knex('DeviceApiKey as dak')
+            const firstDeviceApiKeyStatus = await knex('DeviceApiKey as dak')
               .where({ 'dak.token': firstContext.apiKey })
               .select('dak.deviceId', 'dak.revoked')
 
@@ -229,7 +229,7 @@ describe('Device API routes for GxConnect Devices', () => {
 
             // Check that device exists with MAC Address and Instrument
             // Serial linked to the new device API key
-            const secondDeviceUniqueIdentifiers = yield knex(
+            const secondDeviceUniqueIdentifiers = await knex(
               'DeviceApiKey as dak'
             )
               .join('Device as d', 'dak.DeviceId', 'd.id')
@@ -244,7 +244,7 @@ describe('Device API routes for GxConnect Devices', () => {
             ])
           })
 
-          yield* secondContext.cleanUp()
+          await secondContext.cleanUp()
         }))
     })
 
@@ -263,9 +263,9 @@ describe('Device API routes for GxConnect Devices', () => {
         after(firstContext.afterCleanUp)
 
         it('should create a new device', () =>
-          firstContext.runTest(function*(knex) {
+          firstContext.runTest(async knex => {
             // Check that device exists with MAC Address and Instrument Serial
-            const firstDeviceUniqueIdentifiers = yield knex(
+            const firstDeviceUniqueIdentifiers = await knex(
               'DeviceApiKey as dak'
             )
               .join('Device as d', 'dak.DeviceId', 'd.id')
@@ -290,12 +290,12 @@ describe('Device API routes for GxConnect Devices', () => {
               instrumentSerialNumbers,
             })
 
-            yield* secondContext.registerAndSetDevice()
+            await secondContext.registerAndSetDevice()
 
-            yield* secondContext.runTestInline(function*(knex) {
+            await secondContext.runTestInline(async knex => {
               assert.notEqual(secondContext.apiKey, firstContext.apiKey)
 
-              const firstDeviceApiKeyStatus = yield knex('DeviceApiKey as dak')
+              const firstDeviceApiKeyStatus = await knex('DeviceApiKey as dak')
                 .where({ 'dak.token': firstContext.apiKey })
                 .select('dak.deviceId', 'dak.revoked')
 
@@ -309,7 +309,7 @@ describe('Device API routes for GxConnect Devices', () => {
 
               // Check that a new device exists with the new MAC Address and Instrument
               // Serial linked to the new device API key
-              const secondDeviceUniqueIdentifiers = yield knex(
+              const secondDeviceUniqueIdentifiers = await knex(
                 'DeviceApiKey as dak'
               )
                 .join('Device as d', 'dak.DeviceId', 'd.id')
@@ -331,7 +331,7 @@ describe('Device API routes for GxConnect Devices', () => {
               )
             })
 
-            yield* secondContext.cleanUp()
+            await secondContext.cleanUp()
           }))
       })
 
@@ -350,9 +350,9 @@ describe('Device API routes for GxConnect Devices', () => {
         after(context.afterCleanUp)
 
         it('should update the MAC address of the existing device', () =>
-          runTest(function*(knex) {
+          runTest(async knex => {
             // Check that device exists with MAC Address and Instrument Serial
-            const deviceUniqueIdentifiers = yield knex('DeviceApiKey as dak')
+            const deviceUniqueIdentifiers = await knex('DeviceApiKey as dak')
               .join('Device as d', 'dak.DeviceId', 'd.id')
               .where({ 'dak.token': context.apiKey })
               .select('d.macAddress', 'd.serial')
@@ -366,7 +366,7 @@ describe('Device API routes for GxConnect Devices', () => {
 
             // Single device exists, now send a new MAC address
             const newMacAddress = 'MAC12345678FAKE'
-            yield server
+            await server
               .post('/device')
               .set('Authorization', context.deviceAuth)
               .send(
@@ -380,7 +380,7 @@ describe('Device API routes for GxConnect Devices', () => {
               )
 
             // Check that the MAC address has changed
-            const newDeviceDetails = yield knex('DeviceApiKey as dak')
+            const newDeviceDetails = await knex('DeviceApiKey as dak')
               .join('Device as d', 'dak.DeviceId', 'd.id')
               .join('Site as s', 'd.siteId', 's.id')
               .join('Geography as g', 's.geographyId', 'g.id')
@@ -411,7 +411,7 @@ describe('Device API routes for GxConnect Devices', () => {
 
             // Check that there are no orphaned devices with
             // the old MAC address
-            const orphanedDevices = yield knex('Device')
+            const orphanedDevices = await knex('Device')
               .where({ macAddress })
               .select()
 
@@ -435,9 +435,9 @@ describe('Device API routes for GxConnect Devices', () => {
         after(firstContext.afterCleanUp)
 
         it('should create a new device', () =>
-          firstContext.runTest(function*(knex) {
+          firstContext.runTest(async knex => {
             // Check that device exists with MAC Address and Instrument Serial
-            const firstDeviceUniqueIdentifiers = yield knex(
+            const firstDeviceUniqueIdentifiers = await knex(
               'DeviceApiKey as dak'
             )
               .join('Device as d', 'dak.DeviceId', 'd.id')
@@ -462,12 +462,12 @@ describe('Device API routes for GxConnect Devices', () => {
               instrumentSerialNumbers: newInstrumentSerialNumbers,
             })
 
-            yield* secondContext.registerAndSetDevice()
+            await secondContext.registerAndSetDevice()
 
-            yield* secondContext.runTestInline(function*(knex) {
+            await secondContext.runTestInline(async knex => {
               assert.notEqual(secondContext.apiKey, firstContext.apiKey)
 
-              const firstDeviceApiKeyStatus = yield knex('DeviceApiKey as dak')
+              const firstDeviceApiKeyStatus = await knex('DeviceApiKey as dak')
                 .where({ 'dak.token': firstContext.apiKey })
                 .select('dak.deviceId', 'dak.revoked')
 
@@ -481,7 +481,7 @@ describe('Device API routes for GxConnect Devices', () => {
 
               // Check that a new device exists with the new MAC Address and Instrument
               // Serial linked to the new device API key
-              const secondDeviceUniqueIdentifiers = yield knex(
+              const secondDeviceUniqueIdentifiers = await knex(
                 'DeviceApiKey as dak'
               )
                 .join('Device as d', 'dak.DeviceId', 'd.id')
@@ -503,7 +503,7 @@ describe('Device API routes for GxConnect Devices', () => {
               )
             })
 
-            yield* secondContext.cleanUp()
+            await secondContext.cleanUp()
           }))
       })
 
@@ -522,9 +522,9 @@ describe('Device API routes for GxConnect Devices', () => {
         after(context.afterCleanUp)
 
         it('should update the serial of the existing device', () =>
-          runTest(function*(knex) {
+          runTest(async knex => {
             // Check that device exists with MAC Address and Instrument Serial
-            const deviceUniqueIdentifiers = yield knex('DeviceApiKey as dak')
+            const deviceUniqueIdentifiers = await knex('DeviceApiKey as dak')
               .join('Device as d', 'dak.DeviceId', 'd.id')
               .where({ 'dak.token': context.apiKey })
               .select('d.macAddress', 'd.serial')
@@ -538,7 +538,7 @@ describe('Device API routes for GxConnect Devices', () => {
 
             // Single device exists, now send a new instrument serial numbers
             const newInstrumentSerialNumbers = ['654321', '098765']
-            yield server
+            await server
               .post('/device')
               .set('Authorization', context.deviceAuth)
               .send(
@@ -552,7 +552,7 @@ describe('Device API routes for GxConnect Devices', () => {
               )
 
             // Check that the instrument serial has changed
-            const newDeviceDetails = yield knex('DeviceApiKey as dak')
+            const newDeviceDetails = await knex('DeviceApiKey as dak')
               .join('Device as d', 'dak.DeviceId', 'd.id')
               .join('Site as s', 'd.siteId', 's.id')
               .join('Geography as g', 's.geographyId', 'g.id')
@@ -585,7 +585,7 @@ describe('Device API routes for GxConnect Devices', () => {
 
             // Check that there are no orphaned devices with
             // the instrument serial numbers
-            const orphanedDevices = yield knex('Device')
+            const orphanedDevices = await knex('Device')
               .where({ serial: instrumentSerialNumbers.join() })
               .select()
 
@@ -655,14 +655,14 @@ describe('Device API routes for GxConnect Devices', () => {
     after(context.afterCleanUp)
 
     it('should reject a result without a start or end date date', () =>
-      runTest(function*(knex) {
+      runTest(async knex => {
         const { basicDevicePayload, deviceAuth, device } = context
 
-        const beforeResultDetails = yield* getLastResult(knex, device.id)
+        const beforeResultDetails = await getLastResult(knex, device.id)
 
         assert.isUndefined(beforeResultDetails)
 
-        yield server
+        await server
           .post('/device')
           .set('Authorization', deviceAuth)
           .send(_.assign({}, basicDevicePayload, basicResultPayload))
@@ -671,20 +671,20 @@ describe('Device API routes for GxConnect Devices', () => {
           })
           .catch(assert.fail)
 
-        const afterResultDetails = yield* getLastResult(knex, device.id)
+        const afterResultDetails = await getLastResult(knex, device.id)
         assert.isUndefined(afterResultDetails)
       }))
 
     it('should append a result if the external ID is not known', () =>
-      runTest(function*(knex) {
+      runTest(async knex => {
         const { basicDevicePayload, deviceAuth, device, site } = context
 
-        const beforeResultDetails = yield* getLastResult(knex, device.id)
+        const beforeResultDetails = await getLastResult(knex, device.id)
 
         assert.isUndefined(beforeResultDetails)
 
         const testStartedOn = setMilliseconds(subDays(context.now, 3), 0)
-        yield server
+        await server
           .post('/device')
           .set('Authorization', deviceAuth)
           .send(
@@ -702,7 +702,7 @@ describe('Device API routes for GxConnect Devices', () => {
           })
           .catch(assert.fail)
 
-        const afterResultDetails = yield* getLastResult(knex, device.id)
+        const afterResultDetails = await getLastResult(knex, device.id)
         assert.deepEqual(_.omit(afterResultDetails, 'id', 'externalId'), {
           deviceId: device.id,
           siteId: device.siteId,
@@ -738,15 +738,15 @@ describe('Device API routes for GxConnect Devices', () => {
       }))
 
     it('should update a result if the external ID is known', () =>
-      runTest(function*(knex) {
+      runTest(async knex => {
         const { basicDevicePayload, deviceAuth, device, site } = context
 
-        const beforeResultDetails = yield* getLastResult(knex, device.id)
+        const beforeResultDetails = await getLastResult(knex, device.id)
 
         assert.isNotEmpty(beforeResultDetails)
 
         const testStartedOn = setMilliseconds(subDays(context.now, 3), 0)
-        yield server
+        await server
           .post('/device')
           .set('Authorization', deviceAuth)
           .send(
@@ -764,7 +764,7 @@ describe('Device API routes for GxConnect Devices', () => {
           })
           .catch(assert.fail)
 
-        const afterResultDetails = yield* getLastResult(knex, device.id)
+        const afterResultDetails = await getLastResult(knex, device.id)
         assert.equal(beforeResultDetails.id, afterResultDetails.id)
         assert.deepEqual(_.omit(afterResultDetails, 'id', 'externalId'), {
           deviceId: device.id,
@@ -801,7 +801,7 @@ describe('Device API routes for GxConnect Devices', () => {
       }))
 
     it('should map result categories based on result text', () =>
-      runTest(function*(knex) {
+      runTest(async knex => {
         const { basicDevicePayload, deviceAuth, device } = context
 
         const resultTextToResultCategoryMapping = {
@@ -1634,14 +1634,14 @@ describe('Device API routes for GxConnect Devices', () => {
             resultCategory2: 'Indeterminate',
           },
         }
-        const sendResult = function*(
+        const sendResult = async (
           resultId,
           assay,
           resultText,
           expectedResultCategory1,
           expectedResultCategory2,
           runNumber
-        ) {
+        ) => {
           const testStartedOn = setMilliseconds(
             addSeconds(subDays(context.now, 3), runNumber),
             0
@@ -1650,7 +1650,7 @@ describe('Device API routes for GxConnect Devices', () => {
             addSeconds(addHours(testStartedOn, 2), runNumber),
             0
           )
-          yield server
+          await server
             .post('/device')
             .set('Authorization', deviceAuth)
             .send(
@@ -1678,7 +1678,7 @@ describe('Device API routes for GxConnect Devices', () => {
             })
             .catch(assert.fail)
 
-          const resultDetails = yield* getLastResult(knex, device.id)
+          const resultDetails = await getLastResult(knex, device.id)
 
           assert.equal(resultDetails.resultData.geneXpertTestId, resultId)
           assert.equal(
@@ -1694,48 +1694,50 @@ describe('Device API routes for GxConnect Devices', () => {
         }
 
         let runNumber = 1
-        for (const resultText in resultTextToResultCategoryMapping) {
-          if (
-            resultText &&
-            !_.isEmpty(resultTextToResultCategoryMapping[resultText])
-          ) {
-            const {
-              resultId,
-              assay,
-              resultCategory1,
-              resultCategory2,
-            } = resultTextToResultCategoryMapping[resultText]
-            yield* sendResult(
-              resultId,
-              assay,
-              resultText,
-              resultCategory1,
-              resultCategory2,
-              runNumber
-            )
-            runNumber += 1
-          }
-        }
+        await Promise.all(
+          _.map(resultTextToResultCategoryMapping, async resultText => {
+            if (
+              resultText &&
+              !_.isEmpty(resultTextToResultCategoryMapping[resultText])
+            ) {
+              const {
+                resultId,
+                assay,
+                resultCategory1,
+                resultCategory2,
+              } = resultTextToResultCategoryMapping[resultText]
+              await sendResult(
+                resultId,
+                assay,
+                resultText,
+                resultCategory1,
+                resultCategory2,
+                runNumber
+              )
+              runNumber += 1
+            }
+          })
+        )
       }))
 
     describe('when the assay in the result payload is unknown to Aspect', () => {
       const assayName = 'New Assay Type'
-      after(() =>
-        run(function*(knex) {
-          return yield knex('Assay')
+      after(async () =>
+        run(async knex =>
+          knex('Assay')
             .where({ externalId: assayName })
             .delete()
-        })
+        )
       )
 
       it('should set the result to assay GxUnknown', () =>
-        runTest(function*(knex) {
+        runTest(async knex => {
           const { basicDevicePayload, deviceAuth, device } = context
 
           const resultId = 'UNIQUE-ID-NEW-ASSAY'
           const assayVersion = '1'
-          const getAssayDetails = function*(assayName) {
-            return yield knex('Assay as a')
+          const getAssayDetails = async assayName =>
+            knex('Assay as a')
               .join('AssayType as at', 'a.assayTypeId', 'at.id')
               .join('DeviceType as dt', 'a.deviceTypeId', 'dt.id')
               .where({ 'a.externalId': assayName })
@@ -1746,12 +1748,11 @@ describe('Device API routes for GxConnect Devices', () => {
                 'at.name as assayTypeName',
                 'dt.externalId as deviceTypeExternalId'
               )
-          }
-          const newAssayDetailsBefore = yield* getAssayDetails(assayName)
+          const newAssayDetailsBefore = await getAssayDetails(assayName)
           assert.isUndefined(newAssayDetailsBefore)
 
           const testStartedOn = setMilliseconds(subDays(context.now, 3), 0)
-          yield server
+          await server
             .post('/device')
             .set('Authorization', deviceAuth)
             .send(
@@ -1776,7 +1777,7 @@ describe('Device API routes for GxConnect Devices', () => {
             })
             .catch(assert.fail)
 
-          const resultDetails = yield* getLastResult(knex, device.id)
+          const resultDetails = await getLastResult(knex, device.id)
           assert.equal(resultDetails.resultData.geneXpertTestId, resultId)
           assert.equal(resultDetails.assay, 'GxUnknown')
         }))
@@ -1789,10 +1790,10 @@ describe('Device API routes for GxConnect Devices', () => {
       let inventoryItemId
 
       it('should reduce inventory levels of that consumable appropriately', () =>
-        runTest(function*(knex) {
+        runTest(async knex => {
           const { basicDevicePayload, deviceAuth, device, site, now } = context
 
-          const consumableAssay = yield knex('ConsumableAssay as ca')
+          const consumableAssay = await knex('ConsumableAssay as ca')
             .join('Assay as a', 'ca.assayId', 'a.id')
             .join('DeviceType as dt', 'a.deviceTypeId', 'dt.id')
             .where({ 'dt.externalId': basicDevicePayload.type.id })
@@ -1803,7 +1804,7 @@ describe('Device API routes for GxConnect Devices', () => {
           assert.isAbove(consumableAssay.quantity, 0)
 
           expiryDate = new Date(addYears(now, 1).setHours(0, 0, 0, 0))
-          inventoryItemId = yield knex('InventoryItem').insert({
+          inventoryItemId = await knex('InventoryItem').insert({
             consumableId: consumableAssay.consumableId,
             siteId: site.id,
             expiresOn: expiryDate,
@@ -1812,7 +1813,7 @@ describe('Device API routes for GxConnect Devices', () => {
 
           const testStartedOn = setMilliseconds(subDays(context.now, 3), 0)
           const testEndedOn = setMilliseconds(addHours(testStartedOn, 2), 0)
-          yield server
+          await server
             .post('/device')
             .set('Authorization', deviceAuth)
             .send(
@@ -1840,8 +1841,8 @@ describe('Device API routes for GxConnect Devices', () => {
             })
             .catch(assert.fail)
 
-          const lastResultId = yield* getLastResultId(knex, device.id)
-          const inventoryItem = yield knex('InventoryItem')
+          const lastResultId = await getLastResultId(knex, device.id)
+          const inventoryItem = await knex('InventoryItem')
             .where({ id: inventoryItemId })
             .first()
           assert.equal(
@@ -1849,7 +1850,7 @@ describe('Device API routes for GxConnect Devices', () => {
             initialQuantityOnHand - consumableAssay.quantity
           )
 
-          const inventoryLogs = yield knex('InventoryLog as il')
+          const inventoryLogs = await knex('InventoryLog as il')
             .join('ConsumableReason as cr', 'il.consumableReasonId', 'cr.id')
             .where({ inventoryItemId })
             .select(
@@ -1872,10 +1873,10 @@ describe('Device API routes for GxConnect Devices', () => {
 
       describe('when the test already exists in the database', () => {
         it('should NOT reduce inventory levels of the consumable', () =>
-          runTest(function*(knex) {
+          runTest(async knex => {
             const { basicDevicePayload, deviceAuth, device, site } = context
 
-            const consumableAssay = yield knex('ConsumableAssay as ca')
+            const consumableAssay = await knex('ConsumableAssay as ca')
               .join('Assay as a', 'ca.assayId', 'a.id')
               .join('DeviceType as dt', 'a.deviceTypeId', 'dt.id')
               .where({ 'dt.externalId': basicDevicePayload.type.id })
@@ -1889,7 +1890,7 @@ describe('Device API routes for GxConnect Devices', () => {
             assert.isNotEmpty(consumableAssay)
             assert.isAbove(consumableAssay.quantity, 0)
 
-            let inventoryItem = yield knex('InventoryItem')
+            let inventoryItem = await knex('InventoryItem')
               .where({ id: inventoryItemId })
               .first()
             assert.equal(
@@ -1899,7 +1900,7 @@ describe('Device API routes for GxConnect Devices', () => {
 
             const testStartedOn = setMilliseconds(subDays(context.now, 3), 0)
             const testEndedOn = setMilliseconds(addHours(testStartedOn, 2), 0)
-            yield server
+            await server
               .post('/device')
               .set('Authorization', deviceAuth)
               .send(
@@ -1927,8 +1928,8 @@ describe('Device API routes for GxConnect Devices', () => {
               })
               .catch(assert.fail)
 
-            const lastResultId = yield* getLastResultId(knex, device.id)
-            inventoryItem = yield knex('InventoryItem')
+            const lastResultId = await getLastResultId(knex, device.id)
+            inventoryItem = await knex('InventoryItem')
               .where({
                 consumableId: consumableAssay.consumableId,
                 siteId: site.id,
@@ -1942,7 +1943,7 @@ describe('Device API routes for GxConnect Devices', () => {
               initialQuantityOnHand - consumableAssay.quantity
             )
 
-            const inventoryLogs = yield knex('InventoryLog as il')
+            const inventoryLogs = await knex('InventoryLog as il')
               .join('ConsumableReason as cr', 'il.consumableReasonId', 'cr.id')
               .where({ inventoryItemId })
               .select(
@@ -1967,7 +1968,7 @@ describe('Device API routes for GxConnect Devices', () => {
 
     describe('when an error code has been specified in the result payload', () => {
       it('should set the workflow status of the result to error', () =>
-        runTest(function*(knex) {
+        runTest(async knex => {
           const { basicDevicePayload, deviceAuth, device } = context
 
           const errorTestResultId = 'UNIQUE-ID-WITH-ERROR-RESULT'
@@ -1975,7 +1976,7 @@ describe('Device API routes for GxConnect Devices', () => {
 
           const testStartedOn = setMilliseconds(subDays(context.now, 3), 0)
           const testEndedOn = setMilliseconds(addHours(testStartedOn, 2), 0)
-          yield server
+          await server
             .post('/device')
             .set('Authorization', deviceAuth)
             .send(
@@ -2000,7 +2001,7 @@ describe('Device API routes for GxConnect Devices', () => {
             })
             .catch(assert.fail)
 
-          const lastResult = yield* getLastResult(knex, device.id)
+          const lastResult = await getLastResult(knex, device.id)
           assert.deepEqual(
             _.pick(
               lastResult,
@@ -2033,9 +2034,9 @@ describe('Device API routes for GxConnect Devices', () => {
     after(context.afterCleanUp)
 
     it('should create inventory items that do not exist', () =>
-      runTest(function*(knex) {
+      runTest(async knex => {
         const { basicDevicePayload, deviceAuth, site, now } = context
-        const inventoryItemsAtSiteBefore = yield knex('InventoryItem')
+        const inventoryItemsAtSiteBefore = await knex('InventoryItem')
           .where({ siteId: site.id })
           .select()
         assert.isEmpty(inventoryItemsAtSiteBefore)
@@ -2048,7 +2049,7 @@ describe('Device API routes for GxConnect Devices', () => {
         const initialQuantity = 100
         const quantity = 5
 
-        yield server
+        await server
           .post('/device')
           .set('Authorization', deviceAuth)
           .send(
@@ -2077,7 +2078,7 @@ describe('Device API routes for GxConnect Devices', () => {
           })
           .catch(assert.fail)
 
-        const inventoryItemsAtSiteAfter = yield knex('InventoryItem as ii')
+        const inventoryItemsAtSiteAfter = await knex('InventoryItem as ii')
           .join('Consumable as c', 'ii.consumableId', 'c.id')
           .where({ siteId: site.id })
           .select(
@@ -2103,7 +2104,7 @@ describe('Device API routes for GxConnect Devices', () => {
           ]
         )
 
-        const inventoryLog = yield knex('InventoryLog as il')
+        const inventoryLog = await knex('InventoryLog as il')
           .join('ConsumableReason as cr', 'il.consumableReasonId', 'cr.id')
           .join('Consumable as c', 'il.consumableId', 'c.id')
           .whereIn('il.inventoryItemId', _.map(inventoryItemsAtSiteAfter, 'id'))
@@ -2139,9 +2140,9 @@ describe('Device API routes for GxConnect Devices', () => {
       }))
 
     it('should ignore changes for consumables that are unknown', () =>
-      runTest(function*(knex) {
+      runTest(async knex => {
         const { basicDevicePayload, deviceAuth, site, now } = context
-        const inventoryItemsAtSiteBefore = yield knex('InventoryItem')
+        const inventoryItemsAtSiteBefore = await knex('InventoryItem')
           .where({ siteId: site.id })
           .select()
 
@@ -2149,7 +2150,7 @@ describe('Device API routes for GxConnect Devices', () => {
         const endedOn = subHours(now, 2)
         const expirationDate = new Date(addYears(now, 1).setHours(0, 0, 0, 0))
 
-        yield server
+        await server
           .post('/device')
           .set('Authorization', deviceAuth)
           .send(
@@ -2178,17 +2179,17 @@ describe('Device API routes for GxConnect Devices', () => {
           })
           .catch(assert.fail)
 
-        const inventoryItemsAtSiteAfter = yield knex('InventoryItem')
+        const inventoryItemsAtSiteAfter = await knex('InventoryItem')
           .where({ siteId: site.id })
           .select()
         assert.deepEqual(inventoryItemsAtSiteBefore, inventoryItemsAtSiteAfter)
       }))
 
     it('should accept all types of GeneXpert cartridges', () =>
-      runTest(function*(knex) {
+      runTest(async knex => {
         const { basicDevicePayload, deviceAuth, site, now } = context
 
-        const inventoryItemsAtSiteBefore = yield knex('InventoryItem')
+        const inventoryItemsAtSiteBefore = await knex('InventoryItem')
           .where({ siteId: site.id })
           .pluck('id')
 
@@ -2249,7 +2250,7 @@ describe('Device API routes for GxConnect Devices', () => {
           },
         ]
 
-        yield server
+        await server
           .post('/device')
           .set('Authorization', deviceAuth)
           .send(
@@ -2267,7 +2268,7 @@ describe('Device API routes for GxConnect Devices', () => {
           })
           .catch(assert.fail)
 
-        const inventoryItemsAtSiteAfter = yield knex('InventoryItem as ii')
+        const inventoryItemsAtSiteAfter = await knex('InventoryItem as ii')
           .join('Consumable as c', 'ii.consumableId', 'c.id')
           .where({ siteId: site.id })
           .whereNotIn('ii.id', inventoryItemsAtSiteBefore)
@@ -2298,7 +2299,7 @@ describe('Device API routes for GxConnect Devices', () => {
           )
         )
 
-        const inventoryLog = yield knex('InventoryLog as il')
+        const inventoryLog = await knex('InventoryLog as il')
           .join('ConsumableReason as cr', 'il.consumableReasonId', 'cr.id')
           .join('Consumable as c', 'il.consumableId', 'c.id')
           .whereIn('il.inventoryItemId', _.map(inventoryItemsAtSiteAfter, 'id'))
@@ -2338,9 +2339,9 @@ describe('Device API routes for GxConnect Devices', () => {
       }))
 
     it('should increase the quantity inventory items that do exist', () =>
-      runTest(function*(knex) {
+      runTest(async knex => {
         const { basicDevicePayload, deviceAuth, site, now } = context
-        const inventoryItemAtSiteBefore = yield knex('InventoryItem as ii')
+        const inventoryItemAtSiteBefore = await knex('InventoryItem as ii')
           .join('Consumable as c', 'ii.consumableId', 'c.id')
           .where({ siteId: site.id })
           .orderBy(['ii.createdOn', 'ii.id'])
@@ -2359,7 +2360,7 @@ describe('Device API routes for GxConnect Devices', () => {
         const consumableReason = 'Captured'
         const quantity = 13
 
-        yield server
+        await server
           .post('/device')
           .set('Authorization', deviceAuth)
           .send(
@@ -2389,7 +2390,7 @@ describe('Device API routes for GxConnect Devices', () => {
           })
           .catch(assert.fail)
 
-        const inventoryItemsAtSiteAfter = yield knex('InventoryItem as ii')
+        const inventoryItemsAtSiteAfter = await knex('InventoryItem as ii')
           .join('Consumable as c', 'ii.consumableId', 'c.id')
           .where({ 'ii.id': inventoryItemAtSiteBefore.id })
           .select(
@@ -2416,7 +2417,7 @@ describe('Device API routes for GxConnect Devices', () => {
           ]
         )
 
-        const inventoryLog = yield knex('InventoryLog as il')
+        const inventoryLog = await knex('InventoryLog as il')
           .join('ConsumableReason as cr', 'il.consumableReasonId', 'cr.id')
           .join('Consumable as c', 'il.consumableId', 'c.id')
           .whereIn('il.inventoryItemId', _.map(inventoryItemsAtSiteAfter, 'id'))
@@ -2451,9 +2452,9 @@ describe('Device API routes for GxConnect Devices', () => {
       }))
 
     it('should decrease the quantity on hand of existing inventory items', () =>
-      runTest(function*(knex) {
+      runTest(async knex => {
         const { basicDevicePayload, deviceAuth, site, now } = context
-        const inventoryItemAtSiteBefore = yield knex('InventoryItem as ii')
+        const inventoryItemAtSiteBefore = await knex('InventoryItem as ii')
           .join('Consumable as c', 'ii.consumableId', 'c.id')
           .where({ siteId: site.id })
           .orderBy(['ii.createdOn', 'ii.id'])
@@ -2472,7 +2473,7 @@ describe('Device API routes for GxConnect Devices', () => {
         const consumableReason = 'Captured'
         const quantity = -3
 
-        yield server
+        await server
           .post('/device')
           .set('Authorization', deviceAuth)
           .send(
@@ -2502,7 +2503,7 @@ describe('Device API routes for GxConnect Devices', () => {
           })
           .catch(assert.fail)
 
-        const inventoryItemsAtSiteAfter = yield knex('InventoryItem as ii')
+        const inventoryItemsAtSiteAfter = await knex('InventoryItem as ii')
           .join('Consumable as c', 'ii.consumableId', 'c.id')
           .where({ 'ii.id': inventoryItemAtSiteBefore.id })
           .select(
@@ -2513,6 +2514,7 @@ describe('Device API routes for GxConnect Devices', () => {
             'ii.expiresOn',
             'ii.quantityOnHand'
           )
+
         assert.deepEqual(
           _.map(inventoryItemsAtSiteAfter, inventoryItem =>
             _.omit(inventoryItem, 'id')
@@ -2529,7 +2531,7 @@ describe('Device API routes for GxConnect Devices', () => {
           ]
         )
 
-        const inventoryLog = yield knex('InventoryLog as il')
+        const inventoryLog = await knex('InventoryLog as il')
           .join('ConsumableReason as cr', 'il.consumableReasonId', 'cr.id')
           .join('Consumable as c', 'il.consumableId', 'c.id')
           .whereIn('il.inventoryItemId', _.map(inventoryItemsAtSiteAfter, 'id'))
@@ -2564,10 +2566,10 @@ describe('Device API routes for GxConnect Devices', () => {
       }))
 
     it('should accept different reasons', () =>
-      runTest(function*(knex) {
+      runTest(async knex => {
         const { basicDevicePayload, deviceAuth, site, now } = context
 
-        const inventoryItemsAtSiteBefore = yield knex('InventoryItem')
+        const inventoryItemsAtSiteBefore = await knex('InventoryItem')
           .where({ siteId: site.id })
           .pluck('id')
 
@@ -2637,7 +2639,7 @@ describe('Device API routes for GxConnect Devices', () => {
           },
         ]
 
-        yield server
+        await server
           .post('/device')
           .set('Authorization', deviceAuth)
           .send(
@@ -2655,7 +2657,7 @@ describe('Device API routes for GxConnect Devices', () => {
           })
           .catch(assert.fail)
 
-        const inventoryItemsAtSiteAfter = yield knex('InventoryItem as ii')
+        const inventoryItemsAtSiteAfter = await knex('InventoryItem as ii')
           .join('Consumable as c', 'ii.consumableId', 'c.id')
           .where({ siteId: site.id })
           .whereNotIn('ii.id', inventoryItemsAtSiteBefore)
@@ -2686,7 +2688,7 @@ describe('Device API routes for GxConnect Devices', () => {
           )
         )
 
-        const inventoryLog = yield knex('InventoryLog as il')
+        const inventoryLog = await knex('InventoryLog as il')
           .join('ConsumableReason as cr', 'il.consumableReasonId', 'cr.id')
           .join('Consumable as c', 'il.consumableId', 'c.id')
           .whereIn('il.inventoryItemId', _.map(inventoryItemsAtSiteAfter, 'id'))
@@ -2733,10 +2735,10 @@ describe('Device API routes for GxConnect Devices', () => {
       }))
 
     it('should accept identify lots based on expiration date and adjust the quantity of the correct lot', () =>
-      runTest(function*(knex) {
+      runTest(async knex => {
         const { basicDevicePayload, deviceAuth, site, now } = context
 
-        const inventoryItemsAtSiteBefore = yield knex('InventoryItem')
+        const inventoryItemsAtSiteBefore = await knex('InventoryItem')
           .where({ siteId: site.id })
           .pluck('id')
 
@@ -2764,7 +2766,7 @@ describe('Device API routes for GxConnect Devices', () => {
           ),
         }
 
-        yield server
+        await server
           .post('/device')
           .set('Authorization', deviceAuth)
           .send(
@@ -2782,7 +2784,7 @@ describe('Device API routes for GxConnect Devices', () => {
           })
           .catch(assert.fail)
 
-        const inventoryItemsAtSiteAfter = yield knex('InventoryItem as ii')
+        const inventoryItemsAtSiteAfter = await knex('InventoryItem as ii')
           .join('Consumable as c', 'ii.consumableId', 'c.id')
           .where({ siteId: site.id })
           .whereNotIn('ii.id', inventoryItemsAtSiteBefore)
@@ -2813,7 +2815,7 @@ describe('Device API routes for GxConnect Devices', () => {
           )
         )
 
-        const inventoryLogs = yield knex('InventoryLog as il')
+        const inventoryLogs = await knex('InventoryLog as il')
           .join('ConsumableReason as cr', 'il.consumableReasonId', 'cr.id')
           .join('Consumable as c', 'il.consumableId', 'c.id')
           .whereIn('il.inventoryItemId', _.map(inventoryItemsAtSiteAfter, 'id'))
@@ -2865,7 +2867,7 @@ describe('Device API routes for GxConnect Devices', () => {
           DateChanged: subHours(startedOn, 1),
         })
 
-        yield server
+        await server
           .post('/device')
           .set('Authorization', deviceAuth)
           .send(
@@ -2889,7 +2891,7 @@ describe('Device API routes for GxConnect Devices', () => {
         const lot2InventoryItem = _.find(inventoryItemsAtSiteAfter, {
           expiresOn: lot2.ExpirationDate,
         })
-        const lot1InventoryItemAfterAdjustment1 = yield knex(
+        const lot1InventoryItemAfterAdjustment1 = await knex(
           'InventoryItem as ii'
         )
           .join('Consumable as c', 'ii.consumableId', 'c.id')
@@ -2901,7 +2903,7 @@ describe('Device API routes for GxConnect Devices', () => {
             'ii.expiresOn',
             'ii.quantityOnHand'
           )
-        const lot2InventoryItemAfterAdjustment1 = yield knex(
+        const lot2InventoryItemAfterAdjustment1 = await knex(
           'InventoryItem as ii'
         )
           .join('Consumable as c', 'ii.consumableId', 'c.id')
@@ -2936,7 +2938,7 @@ describe('Device API routes for GxConnect Devices', () => {
           DateChanged: subHours(startedOn, 1),
         })
 
-        yield server
+        await server
           .post('/device')
           .set('Authorization', deviceAuth)
           .send(
@@ -2954,7 +2956,7 @@ describe('Device API routes for GxConnect Devices', () => {
           })
           .catch(assert.fail)
 
-        const lot1InventoryItemAfterAdjustment2 = yield knex(
+        const lot1InventoryItemAfterAdjustment2 = await knex(
           'InventoryItem as ii'
         )
           .join('Consumable as c', 'ii.consumableId', 'c.id')
@@ -2966,7 +2968,7 @@ describe('Device API routes for GxConnect Devices', () => {
             'ii.expiresOn',
             'ii.quantityOnHand'
           )
-        const lot2InventoryItemAfterAdjustment2 = yield knex(
+        const lot2InventoryItemAfterAdjustment2 = await knex(
           'InventoryItem as ii'
         )
           .join('Consumable as c', 'ii.consumableId', 'c.id')
@@ -2994,7 +2996,7 @@ describe('Device API routes for GxConnect Devices', () => {
           quantityOnHand:
             lot2InventoryItem.quantityOnHand + updateToLot2.Quantity,
         })
-        const inventoryLogsForLot1And2 = yield knex('InventoryLog as il')
+        const inventoryLogsForLot1And2 = await knex('InventoryLog as il')
           .join('ConsumableReason as cr', 'il.consumableReasonId', 'cr.id')
           .join('Consumable as c', 'il.consumableId', 'c.id')
           .whereIn('il.inventoryItemId', [
@@ -3073,10 +3075,10 @@ describe('Device API routes for GxConnect Devices', () => {
 
     describe('when quantity on hand is explicitly specified in the data', () => {
       it('should overwrite the quantity on hand in the inventory record', () =>
-        runTest(function*(knex) {
+        runTest(async knex => {
           const { basicDevicePayload, deviceAuth, site, now } = context
 
-          const inventoryItemsAtSiteBefore = yield knex('InventoryItem')
+          const inventoryItemsAtSiteBefore = await knex('InventoryItem')
             .where({ siteId: site.id })
             .pluck('id')
 
@@ -3095,7 +3097,7 @@ describe('Device API routes for GxConnect Devices', () => {
             ExpirationDate: expirationDate,
           }
 
-          yield server
+          await server
             .post('/device')
             .set('Authorization', deviceAuth)
             .send(
@@ -3113,7 +3115,7 @@ describe('Device API routes for GxConnect Devices', () => {
             })
             .catch(assert.fail)
 
-          const inventoryItemsAtSiteAfterCapture = yield knex(
+          const inventoryItemsAtSiteAfterCapture = await knex(
             'InventoryItem as ii'
           )
             .join('Consumable as c', 'ii.consumableId', 'c.id')
@@ -3154,7 +3156,7 @@ describe('Device API routes for GxConnect Devices', () => {
             ExpirationDate: expirationDate,
           }
 
-          yield server
+          await server
             .post('/device')
             .set('Authorization', deviceAuth)
             .send(
@@ -3172,7 +3174,7 @@ describe('Device API routes for GxConnect Devices', () => {
             })
             .catch(assert.fail)
 
-          const inventoryItemsAtSiteAfterLoss = yield knex(
+          const inventoryItemsAtSiteAfterLoss = await knex(
             'InventoryItem as ii'
           )
             .join('Consumable as c', 'ii.consumableId', 'c.id')
@@ -3208,10 +3210,10 @@ describe('Device API routes for GxConnect Devices', () => {
 
     describe('when quantity on hand is not specified in the data', () => {
       it('should calculate the quantity on hand in the inventory record', () =>
-        runTest(function*(knex) {
+        runTest(async knex => {
           const { basicDevicePayload, deviceAuth, site, now } = context
 
-          const inventoryItemsAtSiteBefore = yield knex('InventoryItem')
+          const inventoryItemsAtSiteBefore = await knex('InventoryItem')
             .where({ siteId: site.id })
             .pluck('id')
 
@@ -3229,7 +3231,7 @@ describe('Device API routes for GxConnect Devices', () => {
             ExpirationDate: expirationDate,
           }
 
-          yield server
+          await server
             .post('/device')
             .set('Authorization', deviceAuth)
             .send(
@@ -3247,7 +3249,7 @@ describe('Device API routes for GxConnect Devices', () => {
             })
             .catch(assert.fail)
 
-          const inventoryItemsAtSiteAfterCapture = yield knex(
+          const inventoryItemsAtSiteAfterCapture = await knex(
             'InventoryItem as ii'
           )
             .join('Consumable as c', 'ii.consumableId', 'c.id')
@@ -3287,7 +3289,7 @@ describe('Device API routes for GxConnect Devices', () => {
             ExpirationDate: expirationDate,
           }
 
-          yield server
+          await server
             .post('/device')
             .set('Authorization', deviceAuth)
             .send(
@@ -3305,7 +3307,7 @@ describe('Device API routes for GxConnect Devices', () => {
             })
             .catch(assert.fail)
 
-          const inventoryItemsAtSiteAfterLoss = yield knex(
+          const inventoryItemsAtSiteAfterLoss = await knex(
             'InventoryItem as ii'
           )
             .join('Consumable as c', 'ii.consumableId', 'c.id')

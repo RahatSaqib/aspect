@@ -18,8 +18,8 @@ describe('Result routes', () => {
     shared.checkToken(server, path)
 
     it('should return a list of results', () =>
-      runTestWithKnex(function*(knex) {
-        initialResultWorkflowStatusName = yield server
+      runTestWithKnex(async knex => {
+        initialResultWorkflowStatusName = await server
           .get(path)
           .set('Authorization', `Bearer ${shared.token}`)
           .then(res => {
@@ -52,7 +52,7 @@ describe('Result routes', () => {
             return res.body.data[0].resultWorkflowStatus
           })
 
-        initialResultWorkflowStatus = (yield knex
+        initialResultWorkflowStatus = (await knex
           .from('ResultWorkflowStatus')
           .where({ name: initialResultWorkflowStatusName })
           .first('externalId')).externalId
@@ -313,12 +313,6 @@ describe('Result routes', () => {
     })
 
     it('Should update "QC Check" given a resultId and boolean if in status "Deliverable"', done => {
-      // update a result to status Deliverable
-      const updateWithExternalId = {
-        resultWorkflowStatusId: null,
-        externalId: 'Deliverable',
-      }
-
       // ensure we have a result in status "Deliverable"
       server
         .put(`${path}/workflow-status/${resultId}`)

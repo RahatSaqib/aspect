@@ -54,7 +54,7 @@ async function deleteTestDataFromCheckpoint(knex, checkpoint, deviceIds) {
 
 async function deleteDeviceAndTestData(knex, apiKeys) {
   const tokens = apiKeys.map(key => key.token)
-  const deviceIds = yield knex('DeviceApiKey as dak')
+  const deviceIds = await knex('DeviceApiKey as dak')
     .whereIn('dak.token', tokens)
     .whereNotNull('dak.deviceId')
     .pluck('dak.deviceId')
@@ -135,8 +135,8 @@ async function getSiteFromDeviceId(knex, deviceId) {
   return site
 }
 
-function* getLastDeviceOperation(knex, deviceId) {
-  const lastOpId = yield* getLastDeviceOperationId(knex, deviceId)
+async function getLastDeviceOperation(knex, deviceId) {
+  const lastOpId = await getLastDeviceOperationId(knex, deviceId)
   if (!lastOpId) {
     return null
   }

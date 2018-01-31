@@ -152,7 +152,10 @@ async function addDeviceDataWithContext(context) {
   const { knex, now, payload, device, pluginName: plugin } = context
   const { name, site, result, configuration, operation } = payload
 
-  const preProcessAddDeviceData = await loadPlugin(plugin, 'preProcessAddDeviceData')
+  const preProcessAddDeviceData = await loadPlugin(
+    plugin,
+    'preProcessAddDeviceData'
+  )
   await preProcessAddDeviceData(context)
 
   if (name) {
@@ -262,7 +265,8 @@ async function addDeviceOperationWithContext(context) {
   context.addDeviceLogUpdate('deviceOperationId', op.id)
 
   const postProcess = await loadPlugin(plugin, 'postProcessAddDeviceOperation')
-  return await postProcess(context)
+  const postProcessResult = await postProcess(context)
+  return postProcessResult
 }
 
 async function updateDeviceConfigurationWithContext(context) {
@@ -286,7 +290,8 @@ async function updateDeviceConfigurationWithContext(context) {
     plugin,
     'postProcessUpdateDeviceConfiguration'
   )
-  return await postProcess(context)
+  const postProcessResult = await postProcess(context)
+  return postProcessResult
 }
 
 async function getDeviceOperationWithContext(context) {
@@ -411,7 +416,12 @@ async function mergeResultWithContext(context) {
   context.addDeviceLogUpdate('resultId', result.id)
 
   const postProcess = await loadPlugin(plugin, 'postProcessMergeResult')
-  return await postProcess(pluginContext, result, previousResult) //eslint-disable-line
+  const postProcessResult = await postProcess(
+    pluginContext,
+    result,
+    previousResult
+  )
+  return postProcessResult
 }
 
 async function getResultWithContext(context) {
@@ -433,7 +443,8 @@ async function getResultWithContext(context) {
 
   const postProcess = await loadPlugin(plugin, 'postProcessGetResult')
 
-  return await postProcess(pluginContext, result) //eslint-disable-line
+  const postProcessResult = await postProcess(pluginContext, result)
+  return postProcessResult
 }
 
 async function createDeviceApiContext(request, handlerOptions) {

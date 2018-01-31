@@ -31,12 +31,14 @@ async function updateDeviceDetails(knex, deviceId, deviceDetails, now) {
         ['id', 'createdOn', 'createdBy'].includes(k) || existingDevice[k] == v // eslint-disable-line eqeqeq
     )
     if (!_.isEmpty(changedDetails)) {
-      await knex('Device').where({ id: deviceId }).update(
-        _.merge(changedDetails, {
-          updatedBy: null,
-          updatedOn: now,
-        })
-      )
+      await knex('Device')
+        .where({ id: deviceId })
+        .update(
+          _.merge(changedDetails, {
+            updatedBy: null,
+            updatedOn: now,
+          })
+        )
     }
   }
   return {}

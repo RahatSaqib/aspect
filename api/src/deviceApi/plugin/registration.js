@@ -78,7 +78,7 @@ async function transformNewDevicePayload({ payload }) {
  *
  * Returns a device object if as new one should not be created
  */
-function* preProcessCreateDevice(/* request, now */) {
+async function preProcessCreateDevice(/* request, now */) {
   return null
 }
 
@@ -94,7 +94,7 @@ async function preProcessUpdateSite(/* context */) {
  * Device payload has been sent to Aspect, called before
  * any of this data has been processed
  */
-function* preProcessAddDeviceData(/* context */) {
+async function preProcessAddDeviceData(/* context */) {
   // nothing to do by default
 }
 
@@ -102,7 +102,7 @@ function* preProcessAddDeviceData(/* context */) {
  * Device configuration payload has been sent to Aspect,
  * called before configuration data has been saved
  */
-function* preProcessUpdateDeviceConfiguration(/* context */) {
+async function preProcessUpdateDeviceConfiguration(/* context */) {
   // nothing to do by default
 }
 
@@ -110,7 +110,7 @@ function* preProcessUpdateDeviceConfiguration(/* context */) {
  * Device configuration payload has been sent to Aspect,
  * called after configuration data has been saved
  */
-function* postProcessUpdateDeviceConfiguration(/* context */) {
+async function postProcessUpdateDeviceConfiguration(/* context */) {
   // nothing to do by default
   return {}
 }
@@ -119,7 +119,7 @@ function* postProcessUpdateDeviceConfiguration(/* context */) {
  * Device operation payload has been sent to Aspect,
  * called after operation data has been saved
  */
-function* postProcessAddDeviceOperation(/* context */) {
+async function postProcessAddDeviceOperation(/* context */) {
   // nothing to do by default
   return {}
 }
@@ -129,7 +129,7 @@ function* postProcessAddDeviceOperation(/* context */) {
  * or querying of site.
  */
 async function postProcessUpdateSite(/* context, site, previousSite */) {
-  // nothing to do by deafult
+  // nothing to do by default
 }
 
 /**

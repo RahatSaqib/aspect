@@ -7,7 +7,7 @@ even when the site is unknown to Aspect
 If the device is unknown, ignore this request
 If the site for the device in unknown, create a site and link it to the device
 */
-function* preProcessAddDeviceData({ knex, device, payload, now }) {
+async function preProcessAddDeviceData({ knex, device, payload, now }) {
   if (_.isEmpty(device)) {
     throw Boom.notFound(`Cannot find device ${JSON.stringify(device)}`)
   }
@@ -15,9 +15,9 @@ function* preProcessAddDeviceData({ knex, device, payload, now }) {
   if (!macAddressValid(macAddress)) {
     throw Boom.badRequest(`Invalid MAC address in request: '${macAddress}'`)
   }
-  const site = yield* getOrCreateSite(knex, device, payload, now)
+  const site = await getOrCreateSite(knex, device, payload, now)
   if (device.siteId !== site.id) {
-    yield knex
+    await knex
       .from('Device')
       .where({ id: device.id })
       .update({ siteId: site.id, updatedOn: now, updatedBy: null })
@@ -25,7 +25,7 @@ function* preProcessAddDeviceData({ knex, device, payload, now }) {
   // TODO: Update device API key with new site ID
 }
 
-function* getOrCreateSite(knex, device, payload, now) {
+async function getOrCreateSite(knex, device, payload, now) {
   const site = {}
   if (device.siteId) {
     site.id = device.siteId
@@ -33,7 +33,7 @@ function* getOrCreateSite(knex, device, payload, now) {
   if (!site.id) {
     const payloadSiteId = _.get(payload, 'site.id')
     if (payloadSiteId) {
-      const [{ id }] = yield knex
+      const [{ id }] = await knex
         .from('Site as s')
         .where({
           's.externalId': payloadSiteId,
@@ -44,7 +44,7 @@ function* getOrCreateSite(knex, device, payload, now) {
     }
   }
   if (!site.id && device.id) {
-    const [{ siteId }] = yield knex
+    const [{ siteId }] = await knex
       .from('Device as d')
       .where({ 'd.id': device.id })
       .select('d.siteId')
@@ -54,7 +54,7 @@ function* getOrCreateSite(knex, device, payload, now) {
     const facilityName = _.get(payload, 'name')
     const countryCode = _.get(payload, 'configuration.data.country')
     if (facilityName && countryCode) {
-      const siteIds = yield knex
+      const siteIds = await knex
         .from('Site as s')
         .join('Geography as g', 's.geographyId', 'g.id')
         .join('Country as c', 'g.countryId', 'c.id')
@@ -76,7 +76,7 @@ function* getOrCreateSite(knex, device, payload, now) {
         )
       }
       if (!site.id) {
-        const [{ countryId }] = yield knex
+        const [{ countryId }] = await knex
           .from('Country as c')
           .where({ abbreviation: countryCode })
           .select('c.id as countryId')
@@ -85,14 +85,14 @@ function* getOrCreateSite(knex, device, payload, now) {
             `Cannot determine the country from ${countryCode}.`
           )
         }
-        const [geography] = yield knex
+        const [geography] = await knex
           .from('Geography as g')
           .where({ 'g.countryId': countryId })
           .whereNull('g.stateId')
           .whereNull('g.lgaId')
           .select('g.id')
         if (_.isEmpty(geography)) {
-          const [id] = yield knex('Geography').insert({ countryId })
+          const [id] = await knex('Geography').insert({ countryId })
           geography.id = id
         }
 
@@ -114,7 +114,7 @@ function* getOrCreateSite(knex, device, payload, now) {
         if (newSite.externalId.length > 255) {
           newSite.externalId = newSite.externalId.substr(0, 255)
         }
-        const [id] = yield knex.insert(newSite).into('Site')
+        const [id] = await knex.insert(newSite).into('Site')
         site.id = id
       }
     } else {

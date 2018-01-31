@@ -5,8 +5,8 @@ The purpose of this plugin is to guard against duplicate GxConnect
 devices being created. If the macAddress and instrument serial number
 match an existing device, return that device
 */
-function* preProcessCreateDevice(request) {
-  return yield transact(function*(knex) {
+async function preProcessCreateDevice(request) {
+  const device = await transact(async knex => {
     const { auth, payload } = request
     const macAddress = _.get(payload, 'configuration.data.macAddress')
     const instrumentSerialNumbers = _.get(
@@ -14,10 +14,10 @@ function* preProcessCreateDevice(request) {
       'configuration.data.instrumentSerialNumbers'
     )
     if (macAddress) {
-      const { partnerId } = yield knex('DeviceApiKey')
+      const { partnerId } = await knex('DeviceApiKey')
         .where({ token: auth.credentials.token })
         .first('partnerId')
-      const matchingDevice = yield knex
+      const matchingDevice = await knex
         .from('Device as d')
         .leftJoin('DeviceStatus as ds', 'd.deviceStatusId', 'ds.id')
         .leftJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
@@ -43,12 +43,12 @@ function* preProcessCreateDevice(request) {
           'dt.plugin as deviceTypePluginName'
         )
       if (!_.isEmpty(matchingDevice)) {
-        yield knex
+        await knex
           .from('DeviceApiKey')
           .where({ deviceId: matchingDevice.id })
           .update({ deviceId: null, revoked: 1 })
 
-        yield knex
+        await knex
           .from('DeviceApiKey')
           .where({
             token: auth.credentials.token,
@@ -59,6 +59,7 @@ function* preProcessCreateDevice(request) {
     }
     return null
   })
+  return device
 }
 
 module.exports = preProcessCreateDevice

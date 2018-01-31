@@ -302,15 +302,6 @@ async function seed(knex) {
     deviceOperationSchema: '{}',
   })
 
-  const [deviceTypeDaktariId] = await knex('DeviceType').insert({
-    externalId: 'Daktari',
-    name: 'Daktari',
-    manufacturer: 'Daktari',
-    deviceTypeCategoryId: deviceTypeCategoryLab,
-    configurationDataSchema: daktariConfigurationDataSchema,
-    deviceOperationSchema,
-  })
-
   const [deviceTypeDaktariVirologyId] = await knex('DeviceType').insert({
     externalId: 'DaktariVirology',
     name: 'Daktari Virology',
@@ -1778,54 +1769,63 @@ async function seed(knex) {
     name: 'Asserted Zero Inventory',
     i18nKey: 'ConsumableReason_AssertedZeroInventory',
     decrease: 0,
+    reset: 1,
   })
 
   await knex('ConsumableReason').insert({
     name: 'Test Conducted',
     i18nKey: 'ConsumableReason_TestConducted',
     decrease: 1,
+    reset: 0,
   })
 
   await knex('ConsumableReason').insert({
     name: 'Transfer Sent',
     i18nKey: 'ConsumableReason_TransferSent',
     decrease: 1,
+    reset: 0,
   })
 
   await knex('ConsumableReason').insert({
     name: 'Transfer Received',
     i18nKey: 'ConsumableReason_TransferReceived',
     decrease: 0,
+    reset: 0,
   })
 
   await knex('ConsumableReason').insert({
     name: 'Expired',
     i18nKey: 'ConsumableReason_Expired',
     decrease: 1,
+    reset: 0,
   })
 
   await knex('ConsumableReason').insert({
     name: 'Imported',
     i18nKey: 'ConsumableReason_Imported',
     decrease: 0,
+    reset: 1,
   })
 
   await knex('ConsumableReason').insert({
     name: 'Stolen',
     i18nKey: 'ConsumableReason_Stolen',
     decrease: 1,
+    reset: 0,
   })
 
   await knex('ConsumableReason').insert({
     name: 'Lost',
     i18nKey: 'ConsumableReason_Lost',
     decrease: 1,
+    reset: 0,
   })
 
   await knex('ConsumableReason').insert({
     name: 'Captured',
     i18nKey: 'ConsumableReason_Captured',
     decrease: 0,
+    reset: 1,
   })
 
   // Result Workflow Status

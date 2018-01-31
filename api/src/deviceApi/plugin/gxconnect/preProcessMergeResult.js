@@ -7,7 +7,7 @@ even when the assay name in the result is unknown to Aspect
 If the device is unknown, ignore this request
 If an unknown assay is detected, create it
 */
-function* preProcessMergeResult({ knex, deviceId, payload }) {
+async function preProcessMergeResult({ knex, deviceId, payload }) {
   if (!deviceId) {
     throw Boom.notFound('Cannot find device')
   }
@@ -18,7 +18,7 @@ function* preProcessMergeResult({ knex, deviceId, payload }) {
       'Start date or end date is required for a result from GxConnect'
     )
   }
-  const [device] = yield knex
+  const [device] = await knex
     .from('Device as d')
     .where({ 'd.id': deviceId })
     .select('d.id', 'd.siteId', 'd.partnerId', 'd.deviceTypeId')
@@ -35,7 +35,7 @@ function* preProcessMergeResult({ knex, deviceId, payload }) {
   if (instrumentSerial && sampleId) {
     if (payload.id) {
       payload.data.geneXpertTestId = payload.id
-      const existingResult = yield knex
+      const existingResult = await knex
         .from('Result as r')
         .where({
           'r.externalId': payload.id,
@@ -54,7 +54,7 @@ function* preProcessMergeResult({ knex, deviceId, payload }) {
         payload.id = existingResult.externalId
       } else {
         // Only assign assay to GxUnknown if result is new
-        yield* assignGxUnknownAssayIfNotExists(knex, payload)
+        await assignGxUnknownAssayIfNotExists(knex, payload)
         delete payload.id
       }
     }
@@ -69,9 +69,9 @@ function* preProcessMergeResult({ knex, deviceId, payload }) {
   }
 }
 
-function* assignGxUnknownAssayIfNotExists(knex, payload) {
+async function assignGxUnknownAssayIfNotExists(knex, payload) {
   const payloadAssayId = _.get(payload, 'assay.id', false)
-  const assay = yield knex
+  const assay = await knex
     .from('Assay as a')
     .where({ 'a.externalId': payloadAssayId })
     .first('a.externalId')

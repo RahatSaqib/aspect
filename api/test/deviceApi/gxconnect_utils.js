@@ -16,9 +16,9 @@ const { run } = require('../../src/db')
 
 const { assert } = chai
 
-function* deleteDeviceSiteDataAndRefreshTokens(knex, apiKeys, clientId) {
+async function deleteDeviceSiteDataAndRefreshTokens(knex, apiKeys, clientId) {
   const tokens = apiKeys.map(key => key.token)
-  const siteIds = yield knex('DeviceApiKey as dak')
+  const siteIds = await knex('DeviceApiKey as dak')
     .innerJoin('Device as d', 'dak.deviceId', 'd.id')
     .whereIn('dak.token', tokens)
     .pluck('d.siteId')
@@ -28,7 +28,7 @@ function* deleteDeviceSiteDataAndRefreshTokens(knex, apiKeys, clientId) {
         .whereIn('dak.token', tokens)
         .pluck('dak.siteId')
     })
-  const deviceIds = yield knex('DeviceApiKey as dak')
+  const deviceIds = await knex('DeviceApiKey as dak')
     .whereIn('dak.token', tokens)
     .pluck('dak.deviceId')
     .union(function() {
@@ -37,26 +37,26 @@ function* deleteDeviceSiteDataAndRefreshTokens(knex, apiKeys, clientId) {
         .pluck('id as deviceId')
     })
 
-  const inventoryItemIds = yield knex('InventoryItem as ii')
+  const inventoryItemIds = await knex('InventoryItem as ii')
     .whereIn('ii.siteId', siteIds)
     .distinct('ii.id')
     .pluck('ii.id')
 
-  yield knex('InventoryLog')
+  await knex('InventoryLog')
     .whereIn('inventoryItemId', inventoryItemIds)
     .delete()
 
-  yield knex('InventoryItem')
+  await knex('InventoryItem')
     .whereIn('id', inventoryItemIds)
     .delete()
 
-  yield knex('DeviceApiKey')
+  await knex('DeviceApiKey')
     .whereIn('token', tokens)
     .orWhereIn('deviceId', deviceIds)
     .orWhereIn('siteId', siteIds)
     .delete()
 
-  const resultIds = yield knex('Result')
+  const resultIds = await knex('Result')
     .whereIn('deviceId', deviceIds)
     .pluck('id')
     .union(function() {
@@ -66,71 +66,71 @@ function* deleteDeviceSiteDataAndRefreshTokens(knex, apiKeys, clientId) {
         .pluck('generatedResultId as id')
     })
 
-  const opIds = yield knex('DeviceOperation')
+  const opIds = await knex('DeviceOperation')
     .whereIn('deviceId', deviceIds)
     .map(op => op.id)
 
-  yield knex('DeviceStatusLog')
+  await knex('DeviceStatusLog')
     .whereIn('deviceId', deviceIds)
     .delete()
-  yield knex('DeviceLog')
+  await knex('DeviceLog')
     .whereIn('deviceId', deviceIds)
     .orWhereIn('resultId', resultIds)
     .delete()
 
-  yield knex('DeviceSiteHistory')
+  await knex('DeviceSiteHistory')
     .whereIn('deviceId', deviceIds)
     .delete()
-  yield knex('FactResultCountDevice')
+  await knex('FactResultCountDevice')
     .whereIn('deviceId', deviceIds)
     .delete()
-  yield knex('FactDeviceFlag')
+  await knex('FactDeviceFlag')
     .whereIn('deviceId', deviceIds)
     .delete()
-  yield knex('DeviceSiteHistory')
+  await knex('DeviceSiteHistory')
     .whereIn('deviceId', deviceIds)
     .delete()
 
-  yield knex('InventoryLog')
+  await knex('InventoryLog')
     .whereIn('resultId', resultIds)
     .delete()
-  yield knex('ResultQualityControlLog')
+  await knex('ResultQualityControlLog')
     .whereIn('resultId', resultIds)
     .delete()
-  yield knex('ResultWorkflowLog')
+  await knex('ResultWorkflowLog')
     .whereIn('resultId', resultIds)
     .delete()
-  yield knex('ResultGeneratedResult')
+  await knex('ResultGeneratedResult')
     .whereIn('sourceResultId', resultIds)
     .orWhereIn('generatedResultId', resultIds)
     .delete()
-  yield knex('Result')
+  await knex('Result')
     .whereIn('id', resultIds)
     .delete()
 
-  yield knex('DeviceOperation')
+  await knex('DeviceOperation')
     .whereIn('id', opIds)
     .delete()
 
-  yield knex('Device')
+  await knex('Device')
     .whereIn('siteId', siteIds)
     .orWhereIn('deviceId', deviceIds)
     .delete()
-  yield knex('Sample')
+  await knex('Sample')
     .whereIn('originSiteId', siteIds)
     .delete()
 
-  yield knex('Site')
+  await knex('Site')
     .whereIn('id', siteIds)
     .delete()
 
-  yield knex('RefreshToken')
+  await knex('RefreshToken')
     .where({ clientId })
     .delete()
 }
 
-function* getLastResult(knex, deviceId) {
-  const resultDetails = yield knex('DeviceLog as dl')
+async function getLastResult(knex, deviceId) {
+  const resultDetails = await knex('DeviceLog as dl')
     .join('Result as r', 'dl.resultId', 'r.id')
     .leftJoin(
       'ResultWorkflowStatus as rws',
@@ -256,57 +256,49 @@ class GxConnectApiTestContext {
   }
 
   beforeRequestNewApiKey() {
-    const self = this
-    return run(function*() {
-      return yield* self.requestNewApiKey()
-    })
+    return run(async () => this.requestNewApiKey())
   }
 
-  *requestNewApiKey() {
-    const self = this
-    return yield run(function*() {
-      const clientAccessToken = yield* self.requestClientToken()
-      self.apiKey = yield* self.requestNewDeviceApiKey(clientAccessToken)
-      self.apiKeys.push(self.apiKey)
-      self.deviceAuth = `Bearer ${self.apiKey}`
+  requestNewApiKey() {
+    return run(async () => {
+      const clientAccessToken = await this.requestClientToken()
+      this.apiKey = await this.requestNewDeviceApiKey(clientAccessToken)
+      this.apiKeys.push(this.apiKey)
+      this.deviceAuth = `Bearer ${this.apiKey}`
     })
   }
 
   beforeRegisterAndSetDevice() {
-    const self = this
-    return run(function*() {
-      return yield* self.registerAndSetDevice()
-    })
+    return run(async () => this.registerAndSetDevice())
   }
 
-  *registerAndSetDevice() {
-    const self = this
-    return yield run(function*(knex) {
-      self.apiKey = yield* self.registerDevice()
-      self.apiKeys.push(self.apiKey)
-      self.deviceAuth = `Bearer ${self.apiKey}`
-      self.device = yield* getDeviceFromApiKey(knex, { token: self.apiKey })
+  registerAndSetDevice() {
+    return run(async knex => {
+      this.apiKey = await this.registerDevice()
+      this.apiKeys.push(this.apiKey)
+      this.deviceAuth = `Bearer ${this.apiKey}`
+      this.device = await getDeviceFromApiKey(knex, { token: this.apiKey })
       assert.isNotEmpty(
-        self.device,
-        `Cannot find device created from ${self.apiKey}`
+        this.device,
+        `Cannot find device created from ${this.apiKey}`
       )
-      self.site = yield* getSiteFromDeviceId(knex, self.device.id)
+      this.site = await getSiteFromDeviceId(knex, this.device.id)
       assert.isNotEmpty(
-        self.site,
-        `Cannot find site linked to device ${self.device.id}`
+        this.site,
+        `Cannot find site linked to device ${this.device.id}`
       )
     })
   }
 
-  *registerDevice() {
-    const clientAccessToken = yield* this.requestClientToken()
-    const deviceApiKey = yield* this.requestNewDeviceApiKey(clientAccessToken)
-    yield* this.sendInitialDeviceConfiguration(deviceApiKey)
+  async registerDevice() {
+    const clientAccessToken = await this.requestClientToken()
+    const deviceApiKey = await this.requestNewDeviceApiKey(clientAccessToken)
+    await this.sendInitialDeviceConfiguration(deviceApiKey)
     return deviceApiKey
   }
 
-  *requestClientToken() {
-    return yield this.server
+  requestClientToken() {
+    return this.server
       .post('/api/auth')
       .send({
         name: this.adminUsername,
@@ -323,8 +315,8 @@ class GxConnectApiTestContext {
       .catch(assert.fail)
   }
 
-  *requestNewDeviceApiKey(clientAccessToken) {
-    return yield this.server
+  requestNewDeviceApiKey(clientAccessToken) {
+    return this.server
       .post('/api/demo/device/api-key')
       .set('Authorization', `Bearer ${clientAccessToken}`)
       .then(res => {
@@ -335,7 +327,7 @@ class GxConnectApiTestContext {
       .catch(assert.fail)
   }
 
-  *sendInitialDeviceConfiguration(deviceApiKey) {
+  async sendInitialDeviceConfiguration(deviceApiKey) {
     const configurationData = {}
     if (this.macAddress) {
       configurationData.macAddress = this.macAddress
@@ -346,7 +338,7 @@ class GxConnectApiTestContext {
     if (this.instrumentSerialNumbers) {
       configurationData.instrumentSerialNumbers = this.instrumentSerialNumbers
     }
-    yield this.server
+    await this.server
       .post('/device')
       .set('Authorization', `Bearer ${deviceApiKey}`)
       .send(
@@ -364,36 +356,29 @@ class GxConnectApiTestContext {
   }
 
   runTest(test) {
-    const self = this
-    return run(function*() {
-      return yield* self.runTestInline(test)
-    })
+    return run(async () => this.runTestInline(test))
   }
 
-  *runTestInline(test) {
-    const self = this
-    return yield run(function*(knex) {
+  runTestInline(test) {
+    return run(async knex => {
       const now = new Date()
-      self.now = now
-      return yield* test(knex)
+      this.now = now
+      const testResult = await test(knex)
+      return testResult
     })
   }
 
   afterCleanUp() {
-    const self = this
-    return run(function*() {
-      return yield* self.cleanUp()
-    })
+    return run(async () => this.cleanUp())
   }
 
-  *cleanUp() {
-    const self = this
-    return yield run(function*(knex) {
-      if (!_.isEmpty(self.apiKeys)) {
-        yield* deleteDeviceSiteDataAndRefreshTokens(
+  async cleanUp() {
+    return run(async knex => {
+      if (!_.isEmpty(this.apiKeys)) {
+        await deleteDeviceSiteDataAndRefreshTokens(
           knex,
-          _.map(self.apiKeys, apiKey => ({ token: apiKey })),
-          self.clientId
+          _.map(this.apiKeys, apiKey => ({ token: apiKey })),
+          this.clientId
         )
       }
     })

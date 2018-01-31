@@ -57,6 +57,7 @@ describe('Assay Consumable Routes', () => {
             assert.property(res.body.data[0], 'name')
             assert.property(res.body.data[0], 'i18nKey')
             assert.property(res.body.data[0], 'decrease')
+            assert.property(res.body.data[0], 'reset')
             assert.property(res.body, 'total')
             done()
           })

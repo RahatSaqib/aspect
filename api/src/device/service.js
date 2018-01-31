@@ -503,10 +503,11 @@ async function listDevicesForSelectList(request) {
   return { ok: true, data: devices }
 }
 
-function* getDevice(deviceId) {
-  return yield knex('Device as d')
+async function getDevice(deviceId) {
+  const device = await knex('Device as d')
     .where('d.id', deviceId)
     .first()
+  return device
 }
 
 module.exports = {

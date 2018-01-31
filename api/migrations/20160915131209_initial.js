@@ -841,6 +841,10 @@ async function up(knex) {
       .boolean('decrease')
       .notNullable()
       .defaultTo(0)
+    consumableReason
+      .boolean('reset')
+      .notNullable()
+      .defaultTo(0)
     consumableReason.charset('utf8')
   })
 
