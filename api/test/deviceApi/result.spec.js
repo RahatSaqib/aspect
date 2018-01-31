@@ -3298,39 +3298,37 @@ describe('Device Result API routes', () => {
             const numberOfTestsToRun = partner.numberToLeaveUnacknowledged + 10
             const externalIdStart = `1515-${format(testEndedOn, 'YYYYMMDD')}`
 
-            await Promise.all(
-              _.map(_.range(numberOfTestsToRun), async i => {
-                // Increment the checkpoint and
-                // upload a historical test which
-                // has been validated
-                await server
-                  .post(devicePostResultPath)
-                  .set('Authorization', deviceAuth)
-                  .send({
-                    id: `${externalIdStart}-${i}`,
-                    checkpoint: `rrt_${i + 1}`,
-                    data: {
-                      resultText: '454112',
-                      endedOn: subMinutes(testEndedOn, i),
-                      copies: 454112,
-                    },
-                    sample: {
-                      originSite: {
-                        id: '1315',
-                      },
-                    },
+            for (let i = 0; i < numberOfTestsToRun; i++) {
+              // Increment the checkpoint and
+              // upload a historical test which
+              // has been validated
+              await server // eslint-disable-line no-await-in-loop
+                .post(devicePostResultPath)
+                .set('Authorization', deviceAuth)
+                .send({
+                  id: `${externalIdStart}-${i}`,
+                  checkpoint: `rrt_${i + 1}`,
+                  data: {
+                    resultText: '454112',
                     endedOn: subMinutes(testEndedOn, i),
-                    assay: { id: 'HivVl' },
-                    notes: '454,112 Copies / mL',
-                  })
-                  .then(res => {
-                    assert.equal(res.status, 200)
-                  })
+                    copies: 454112,
+                  },
+                  sample: {
+                    originSite: {
+                      id: '1315',
+                    },
+                  },
+                  endedOn: subMinutes(testEndedOn, i),
+                  assay: { id: 'HivVl' },
+                  notes: '454,112 Copies / mL',
+                })
+                .then(res => {
+                  assert.equal(res.status, 200)
+                })
 
-                const lastResultId = await getLastResultId(knex, deviceLab.id)
-                await setResultAsDeliverableAndApprove(context, lastResultId)
-              })
-            )
+              const lastResultId = await getLastResultId(knex, deviceLab.id) // eslint-disable-line no-await-in-loop
+              await setResultAsDeliverableAndApprove(context, lastResultId) // eslint-disable-line no-await-in-loop
+            }
 
             // Start a sync operation with a new check point
             const device1315Key = await context.createApiKey(knex)
@@ -3373,24 +3371,22 @@ describe('Device Result API routes', () => {
             }
 
             // Verify that results have been auto acknowledged correctly
-            await Promise.all(
-              _.map(_.range(numberOfTestsToRun), async i => {
-                const resultWorkflowStatus = await knex('Result as r')
-                  .innerJoin(
-                    'ResultWorkflowStatus as rs',
-                    'r.resultWorkflowStatusId',
-                    'rs.id'
-                  )
-                  .where({ 'r.externalId': `${externalIdStart}-${i}` })
-                  .first('rs.externalId')
+            for (let i = 0; i < numberOfTestsToRun; i++) {
+              const resultWorkflowStatus = await knex('Result as r') // eslint-disable-line no-await-in-loop
+                .innerJoin(
+                  'ResultWorkflowStatus as rs',
+                  'r.resultWorkflowStatusId',
+                  'rs.id'
+                )
+                .where({ 'r.externalId': `${externalIdStart}-${i}` })
+                .first('rs.externalId')
 
-                if (i < partner.numberToLeaveUnacknowledged) {
-                  assert.equal(resultWorkflowStatus.externalId, 'Delivered')
-                } else {
-                  assert.equal(resultWorkflowStatus.externalId, 'Acknowledged')
-                }
-              })
-            )
+              if (i < partner.numberToLeaveUnacknowledged) {
+                assert.equal(resultWorkflowStatus.externalId, 'Delivered')
+              } else {
+                assert.equal(resultWorkflowStatus.externalId, 'Acknowledged')
+              }
+            }
           }))
       })
 
@@ -3441,39 +3437,37 @@ describe('Device Result API routes', () => {
             const numberOfTestsToRun = partner.numberToLeaveUnacknowledged - 1
             const externalIdStart = `1615-${format(testEndedOn, 'YYYYMMDD')}`
 
-            await Promise.all(
-              _.map(_.range(numberOfTestsToRun), async i => {
-                // Increment the checkpoint and
-                // upload a historical test which
-                // has been validated
-                await server
-                  .post(devicePostResultPath)
-                  .set('Authorization', deviceAuth)
-                  .send({
-                    id: `${externalIdStart}-${i}`,
-                    checkpoint: `rrt_${i + 1}`,
-                    data: {
-                      resultText: '454112',
-                      endedOn: subMinutes(testEndedOn, i),
-                      copies: 454112,
-                    },
-                    sample: {
-                      originSite: {
-                        id: '1315',
-                      },
-                    },
+            for (let i = 0; i < numberOfTestsToRun; i++) {
+              // Increment the checkpoint and
+              // upload a historical test which
+              // has been validated
+              await server // eslint-disable-line no-await-in-loop
+                .post(devicePostResultPath)
+                .set('Authorization', deviceAuth)
+                .send({
+                  id: `${externalIdStart}-${i}`,
+                  checkpoint: `rrt_${i + 1}`,
+                  data: {
+                    resultText: '454112',
                     endedOn: subMinutes(testEndedOn, i),
-                    assay: { id: 'HivVl' },
-                    notes: '454,112 Copies / mL',
-                  })
-                  .then(res => {
-                    assert.equal(res.status, 200)
-                  })
+                    copies: 454112,
+                  },
+                  sample: {
+                    originSite: {
+                      id: '1315',
+                    },
+                  },
+                  endedOn: subMinutes(testEndedOn, i),
+                  assay: { id: 'HivVl' },
+                  notes: '454,112 Copies / mL',
+                })
+                .then(res => {
+                  assert.equal(res.status, 200)
+                })
 
-                const lastResultId = await getLastResultId(knex, deviceLab.id)
-                await setResultAsDeliverableAndApprove(context, lastResultId)
-              })
-            )
+              const lastResultId = await getLastResultId(knex, deviceLab.id) // eslint-disable-line no-await-in-loop
+              await setResultAsDeliverableAndApprove(context, lastResultId) // eslint-disable-line no-await-in-loop
+            }
 
             // Start a sync operation with a new check point
             const device1315Key = await context.createApiKey(knex)
@@ -3515,41 +3509,37 @@ describe('Device Result API routes', () => {
                 })
             }
 
-            await Promise.all(
-              _.map(_.range(numberOfTestsToRun), async i => {
-                // Download a historical result from the
-                // checkpoint created when we started the
-                // sync operation
-                const offset = i + 1
-                await server
-                  .get(
-                    `${devicePostResultPath}?checkpoint=rrt_0&offset=${offset}`
-                  )
-                  .set('Authorization', deviceAuth)
-                  .then(res => {
-                    assert.equal(res.status, 200)
+            for (let i = 0; i < numberOfTestsToRun; i++) {
+              // Download a historical result from the
+              // checkpoint created when we started the
+              // sync operation
+              const offset = i + 1
+              await server // eslint-disable-line no-await-in-loop
+                .get(
+                  `${devicePostResultPath}?checkpoint=rrt_0&offset=${offset}`
+                )
+                .set('Authorization', deviceAuth)
+                .then(res => {
+                  assert.equal(res.status, 200)
 
-                    const lastResult = res.body.result
-                    assert.typeOf(lastResult, 'Object')
-                  })
-              })
-            )
+                  const lastResult = res.body.result
+                  assert.typeOf(lastResult, 'Object')
+                })
+            }
 
             // Verify that results have been not been auto acknowledged
-            await Promise.all(
-              _.map(_.range(numberOfTestsToRun), async i => {
-                const resultWorkflowStatus = await knex('Result as r')
-                  .innerJoin(
-                    'ResultWorkflowStatus as rs',
-                    'r.resultWorkflowStatusId',
-                    'rs.id'
-                  )
-                  .where({ 'r.externalId': `${externalIdStart}-${i}` })
-                  .first('rs.externalId')
+            for (let i = 0; i < numberOfTestsToRun; i++) {
+              const resultWorkflowStatus = await knex('Result as r') // eslint-disable-line no-await-in-loop
+                .innerJoin(
+                  'ResultWorkflowStatus as rs',
+                  'r.resultWorkflowStatusId',
+                  'rs.id'
+                )
+                .where({ 'r.externalId': `${externalIdStart}-${i}` })
+                .first('rs.externalId')
 
-                assert.equal(resultWorkflowStatus.externalId, 'Delivered')
-              })
-            )
+              assert.equal(resultWorkflowStatus.externalId, 'Delivered')
+            }
           }))
       })
 
@@ -3600,39 +3590,37 @@ describe('Device Result API routes', () => {
             const numberOfTestsToRun = partner.numberToLeaveUnacknowledged * 2
             const externalIdStart = `1715-${format(testEndedOn, 'YYYYMMDD')}`
 
-            await Promise.all(
-              _.map(_.range(numberOfTestsToRun), async i => {
-                // Increment the checkpoint and
-                // upload a historical test which
-                // has been validated
-                await server
-                  .post(devicePostResultPath)
-                  .set('Authorization', deviceAuth)
-                  .send({
-                    id: `${externalIdStart}-${i}`,
-                    checkpoint: `rrt_${i + 1}`,
-                    data: {
-                      resultText: '454112',
-                      endedOn: subMinutes(testEndedOn, i),
-                      copies: 454112,
-                    },
-                    sample: {
-                      originSite: {
-                        id: '1315',
-                      },
-                    },
+            for (let i = 0; i < numberOfTestsToRun; i++) {
+              // Increment the checkpoint and
+              // upload a historical test which
+              // has been validated
+              await server // eslint-disable-line no-await-in-loop
+                .post(devicePostResultPath)
+                .set('Authorization', deviceAuth)
+                .send({
+                  id: `${externalIdStart}-${i}`,
+                  checkpoint: `rrt_${i + 1}`,
+                  data: {
+                    resultText: '454112',
                     endedOn: subMinutes(testEndedOn, i),
-                    assay: { id: 'HivVl' },
-                    notes: '454,112 Copies / mL',
-                  })
-                  .then(res => {
-                    assert.equal(res.status, 200)
-                  })
+                    copies: 454112,
+                  },
+                  sample: {
+                    originSite: {
+                      id: '1315',
+                    },
+                  },
+                  endedOn: subMinutes(testEndedOn, i),
+                  assay: { id: 'HivVl' },
+                  notes: '454,112 Copies / mL',
+                })
+                .then(res => {
+                  assert.equal(res.status, 200)
+                })
 
-                const lastResultId = await getLastResultId(knex, deviceLab.id)
-                await setResultAsDeliverableAndApprove(context, lastResultId)
-              })
-            )
+              const lastResultId = await getLastResultId(knex, deviceLab.id) // eslint-disable-line no-await-in-loop
+              await setResultAsDeliverableAndApprove(context, lastResultId) // eslint-disable-line no-await-in-loop
+            }
 
             // Start a sync operation with a new check point
             const device1315Key = await context.createApiKey(knex)
@@ -3675,20 +3663,18 @@ describe('Device Result API routes', () => {
             }
 
             // Verify that results have been not been auto acknowledged
-            await Promise.all(
-              _.map(_.range(numberOfTestsToRun), async i => {
-                const resultWorkflowStatus = await knex('Result as r')
-                  .innerJoin(
-                    'ResultWorkflowStatus as rs',
-                    'r.resultWorkflowStatusId',
-                    'rs.id'
-                  )
-                  .where({ 'r.externalId': `${externalIdStart}-${i}` })
-                  .first('rs.externalId')
+            for (let i = 0; i < numberOfTestsToRun; i++) {
+              const resultWorkflowStatus = await knex('Result as r') // eslint-disable-line no-await-in-loop
+                .innerJoin(
+                  'ResultWorkflowStatus as rs',
+                  'r.resultWorkflowStatusId',
+                  'rs.id'
+                )
+                .where({ 'r.externalId': `${externalIdStart}-${i}` })
+                .first('rs.externalId')
 
-                assert.equal(resultWorkflowStatus.externalId, 'Delivered')
-              })
-            )
+              assert.equal(resultWorkflowStatus.externalId, 'Delivered')
+            }
           }))
       })
     })
