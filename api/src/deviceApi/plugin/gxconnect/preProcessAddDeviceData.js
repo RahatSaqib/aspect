@@ -76,6 +76,8 @@ async function getOrCreateSite(knex, device, payload, now) {
         )
       }
       if (!site.id) {
+        // If we cannot determine the site by name, external ID or device
+        // create a new site
         const [{ countryId }] = await knex
           .from('Country as c')
           .where({ abbreviation: countryCode })

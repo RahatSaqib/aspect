@@ -1,5 +1,6 @@
 const _ = require('lodash')
 const { transact } = require('../../../db')
+const { macAddressValid } = require('./requestValidation')
 /*
 The purpose of this plugin is to guard against duplicate GxConnect
 devices being created. If the macAddress and instrument serial number
@@ -13,7 +14,7 @@ async function preProcessCreateDevice(request) {
       payload,
       'configuration.data.instrumentSerialNumbers'
     )
-    if (macAddress) {
+    if (macAddressValid(macAddress)) {
       const { partnerId } = await knex('DeviceApiKey')
         .where({ token: auth.credentials.token })
         .first('partnerId')
