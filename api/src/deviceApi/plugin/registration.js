@@ -185,7 +185,7 @@ async function postProcessMergeResult(context, result, previousResult) {
   // // TODO ASP-355 consume inventory using a message listener instead
   // // of within plugin/same transaction
   await consumeInventoryForResult(knex, payload, result)
-  updateFactResultCountDevice(knex, payload, result)
+  await updateFactResultCountDevice(knex, payload, result)
   return {}
 }
 
