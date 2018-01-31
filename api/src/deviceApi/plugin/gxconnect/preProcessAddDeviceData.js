@@ -11,8 +11,8 @@ async function preProcessAddDeviceData({ knex, device, payload, now }) {
   if (_.isEmpty(device)) {
     throw Boom.notFound(`Cannot find device ${JSON.stringify(device)}`)
   }
-  const macAddress = _.get(payload, 'data.macAddress')
-  if (!macAddressValid(macAddress)) {
+  const macAddress = _.get(payload, 'configuration.data.macAddress')
+  if (macAddress && !macAddressValid(macAddress)) {
     throw Boom.badRequest(`Invalid MAC address in request: '${macAddress}'`)
   }
   const site = await getOrCreateSite(knex, device, payload, now)

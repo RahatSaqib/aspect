@@ -4,7 +4,7 @@ const { macAddressValid } = require('./requestValidation')
 
 async function preProcessUpdateDeviceConfiguration(context) {
   const macAddress = _.get(context.payload, 'data.macAddress')
-  if (!macAddressValid(macAddress)) {
+  if (macAddress && !macAddressValid(macAddress)) {
     throw Boom.badRequest(`Invalid MAC address in request: '${macAddress}'`)
   }
 }
