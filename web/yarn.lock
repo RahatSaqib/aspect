@@ -8057,12 +8057,6 @@ react-side-effect@^1.1.0:
     exenv "^1.2.1"
     shallowequal "^1.0.1"
 
-react-sparklines@^1.5.2:
-  version "1.7.0"
-  resolved "https://registry.yarnpkg.com/react-sparklines/-/react-sparklines-1.7.0.tgz#9b1d97e8c8610095eeb2ad658d2e1fcf91f91a60"
-  dependencies:
-    prop-types "^15.5.10"
-
 react-style-proptype@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/react-style-proptype/-/react-style-proptype-3.0.0.tgz#89e0b646f266c656abb0f0dd8202dbd5036c31e6"

@@ -5,7 +5,7 @@ exports[`App Notification SnackBar component should shallow render correctly 1`]
   action="Details..."
   autoHideDuration={4000}
   message="Login Failed"
-  onActionTouchTap={[Function]}
+  onActionClick={[Function]}
   onRequestClose={[Function]}
   open={false}
 />

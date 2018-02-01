@@ -12,12 +12,8 @@ exports[`NotificationList module NotificationList component should render correc
   <Connect(lifecycle(Component))
     title="Notifications"
   />
-  <pure(withProps(withHandlers(Connect(BrowseFilters))))
-    config={
-      Object {
-        "contactNameOrEmail": true,
-      }
-    }
+  <pure(withProps(withHandlers(Connect(lifecycle(BrowseFilters)))))
+    config={undefined}
     history={undefined}
     intl={
       Object {

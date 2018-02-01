@@ -2,6 +2,7 @@ import _ from 'lodash'
 import classnames from 'classnames/bind'
 import React from 'react'
 import { TableRow, TableCell } from 'react-toolbox/lib/table'
+import { formatDistanceStrict } from 'date-fns'
 import ColoredButton from '../../components/themedReactToolbox/ColoredButton'
 import messages from './messages'
 
@@ -64,7 +65,9 @@ const DeviceTableRow = ({ intl, device, onAlertClick, ...restProps }) => (
         ))}
     </TableCell>
     <TableCell className={cssClasses('TableCell')}>
-      {intl.formatRelative(device.get('createdOn'))}
+      {intl.formatMessage(messages.reportingForDays, {
+        period: formatDistanceStrict(new Date(), device.get('createdOn')),
+      })}
     </TableCell>
     <TableCell className={cssClasses('TableCell')}>
       {intl.formatRelative(device.get('lastSeen'))}

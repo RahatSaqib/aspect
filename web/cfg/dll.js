@@ -37,7 +37,6 @@ const vendor = [
   'react-redux',
   'react-router',
   'react-router-dom',
-  'react-sparklines',
   'react-tap-event-plugin',
   'recompose',
   'redux',
