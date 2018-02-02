@@ -42,6 +42,16 @@ const plugins = [
         title: 'Aspect API',
         version,
       },
+      swaggerUIPath: `${config.swagger.uiPath}/swaggerui/`,
+      jsonPath: `${config.swagger.uiPath}/swagger.json`,
+      documentationPath: `${config.swagger.uiPath}/documentation`,
+      pathReplacements: [
+        {
+          replaceIn: 'all',
+          pattern: /^/,
+          replacement: config.swagger.uiPath,
+        },
+      ],
     },
   },
 

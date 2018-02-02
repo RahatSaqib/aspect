@@ -14,6 +14,9 @@ module.exports = {
     database: process.env['db.databaseName'],
     debug: process.env['db.debug'] === 'true',
   },
+  swagger: {
+    uiPath: process.env['swagger.uiPath'] || '',
+  },
 }
 
 configureOptional(module.exports)
