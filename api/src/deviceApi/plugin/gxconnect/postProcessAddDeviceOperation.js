@@ -17,23 +17,23 @@ async function postProcessAddDeviceOperation(context) {
   if (!_.isEmpty(inventoryChanges)) {
     const sortedInventoryChanges = _.sortBy(
       inventoryChanges,
-      inventoryChange => new Date(inventoryChange.DateChanged)
+      inventoryChange => new Date(inventoryChange.dateChanged)
     )
     await Promise.all(
       _.map(sortedInventoryChanges, async inventoryChange => {
         const matchingConsumables = await findConsumables({
-          name: inventoryChange.ConsumableName,
+          name: inventoryChange.consumableName,
         })
         if (matchingConsumables.length === 1) {
           const matchingConsumable = matchingConsumables[0]
           const matchingConsumableReason = await findConsumableReason(
-            inventoryChange.ConsumableReasonName
+            inventoryChange.consumableReasonName
           )
           if (matchingConsumableReason) {
-            const absoluteQuantity = Math.abs(inventoryChange.Quantity)
+            const absoluteQuantity = Math.abs(inventoryChange.quantity)
             const isDecrease =
               (matchingConsumableReason.reset &&
-                inventoryChange.Quantity < 0) ||
+                inventoryChange.quantity < 0) ||
               matchingConsumableReason.decrease
             const changeFunction = isDecrease
               ? decreaseInventory
@@ -50,14 +50,14 @@ async function postProcessAddDeviceOperation(context) {
             const changeParameters = {
               siteId: device.siteId,
               consumableId: matchingConsumable.id,
-              expiresOn: inventoryChange.ExpirationDate
-                ? new Date(inventoryChange.ExpirationDate)
+              expiresOn: inventoryChange.expirationDate
+                ? new Date(inventoryChange.expirationDate)
                 : null,
               quantity: absoluteQuantity,
-              quantityOnHand: inventoryChange.ResultingQuantityOnHand,
+              quantityOnHand: inventoryChange.resultingQuantityOnHand,
               reasonId: matchingConsumableReason.id,
-              dateAdjustedFrom: inventoryChange.DateChanged
-                ? setMilliseconds(new Date(inventoryChange.DateChanged), 0)
+              dateAdjustedFrom: inventoryChange.dateChanged
+                ? setMilliseconds(new Date(inventoryChange.dateChanged), 0)
                 : null,
               now,
             }

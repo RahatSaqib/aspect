@@ -84,7 +84,7 @@ function getResultCategories(payload) {
   let payloadCategory = _.get(payload, 'category')
   if (_.isEmpty(payloadCategory)) {
     payloadCategory = []
-    const payloadResultText = _.get(payload, 'data.ResultText')
+    const payloadResultText = _.get(payload, 'data.resultText')
     if (payloadResultText) {
       const resultTextValues = _.compact(payloadResultText.split('|'))
       if (resultTextValues.length > 0) {
