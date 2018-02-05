@@ -3,19 +3,23 @@
 .ColoredButton--ship-cove.ColoredButton--neutral:not([disabled]).ColoredButton--raised {
   background-color: var(--aspect-color-ship-cove);
   color: #ffffff;
+  margin-right: 5px;
 }
 
 .ColoredButton--shakespeare.ColoredButton--neutral:not([disabled]).ColoredButton--raised {
   background-color: var(--aspect-color-shakespeare);
   color: #ffffff;
+  margin-right: 5px;
 }
 
 .ColoredButton--mountain.ColoredButton--neutral:not([disabled]).ColoredButton--raised {
   background-color: var(--aspect-color-mountain);
   color: #ffffff;
+  margin-right: 5px;
 }
 
 .ColoredButton--brink.ColoredButton--neutral:not([disabled]).ColoredButton--raised {
   background-color: var(--aspect-color-brink);
   color: #ffffff;
+  margin-right: 5px;
 }

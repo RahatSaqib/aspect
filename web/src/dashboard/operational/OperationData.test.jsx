@@ -1,4 +1,4 @@
-import Immutable from 'Immutable'
+import Immutable from 'immutable'
 import React from 'react'
 import ReactShallowRenderer from 'react-test-renderer/shallow'
 

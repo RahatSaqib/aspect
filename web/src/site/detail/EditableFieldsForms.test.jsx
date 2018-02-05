@@ -1,6 +1,6 @@
 import React from 'react'
 import ReactShallowRenderer from 'react-test-renderer/shallow'
-import { fromJS } from 'Immutable'
+import { fromJS } from 'immutable'
 
 import EditableFieldsForm from './EditableFieldsForm'
 
