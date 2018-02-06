@@ -1,9 +1,10 @@
 const supertest = require('supertest')
 const chai = require('chai')
-const shared = require('../utils/sharedToken')
 const _ = require('lodash')
 
-// This agent refers to PORT where program is runninng.
+const shared = require('../utils/sharedToken')
+const { runTestWithKnex } = require('../utils/generatorFunctionUtils')
+
 const server = supertest.agent('http://localhost:8080')
 const { assert } = chai
 
@@ -12,43 +13,50 @@ describe('Result routes', () => {
   let resultId = 1
   let assayId = 1
   let initialResultWorkflowStatus = ''
+  let initialResultWorkflowStatusName = ''
   describe('GET', () => {
     shared.checkToken(server, path)
 
-    it('should return a list of results', done => {
-      server
-        .get(path)
-        .set('Authorization', `Bearer ${shared.token}`)
-        .end((err, res) => {
-          assert.equal(res.status, 200)
-          assert.typeOf(res.body, 'Object')
-          assert.property(res.body, 'data')
-          assert.typeOf(res.body.data, 'array')
-          assert.isAtLeast(res.body.data.length, 5)
-          assert.property(res.body.data[0], 'id')
-          assert.property(res.body.data[0], 'endedOn')
-          assert.property(res.body.data[0], 'deviceName')
-          assert.property(res.body.data[0], 'sampleOriginSiteName')
-          assert.property(res.body.data[0], 'countryName')
-          assert.property(res.body.data[0], 'stateName')
-          assert.property(res.body.data[0], 'lgaName')
-          assert.property(res.body.data[0], 'sampleId')
-          assert.property(res.body.data[0], 'sampleGroup')
-          assert.property(res.body.data[0], 'resultText')
-          assert.property(res.body.data[0], 'resultWorkflowStatus')
-          assert.property(res.body.data[0], 'patientId')
-          assert.property(res.body.data[0], 'assayName')
-          assert.property(res.body, 'total')
-          ;[
-            {
-              id: resultId,
-              assayId,
-              resultWorkflowStatus: initialResultWorkflowStatus,
-            },
-          ] = res.body.data
-          done()
-        })
-    })
+    it('should return a list of results', () =>
+      runTestWithKnex(async knex => {
+        initialResultWorkflowStatusName = await server
+          .get(path)
+          .set('Authorization', `Bearer ${shared.token}`)
+          .then(res => {
+            assert.equal(res.status, 200)
+            assert.typeOf(res.body, 'Object')
+            assert.property(res.body, 'data')
+            assert.typeOf(res.body.data, 'array')
+            assert.isAtLeast(res.body.data.length, 5)
+            assert.property(res.body.data[0], 'id')
+            assert.property(res.body.data[0], 'endedOn')
+            assert.property(res.body.data[0], 'deviceName')
+            assert.property(res.body.data[0], 'sampleOriginSiteName')
+            assert.property(res.body.data[0], 'countryName')
+            assert.property(res.body.data[0], 'stateName')
+            assert.property(res.body.data[0], 'lgaName')
+            assert.property(res.body.data[0], 'sampleId')
+            assert.property(res.body.data[0], 'sampleGroup')
+            assert.property(res.body.data[0], 'resultText')
+            assert.property(res.body.data[0], 'resultWorkflowStatus')
+            assert.property(res.body.data[0], 'patientId')
+            assert.property(res.body.data[0], 'assayName')
+            assert.property(res.body, 'total')
+            ;[
+              {
+                id: resultId,
+                assayId,
+                resultWorkflowStatus: initialResultWorkflowStatus,
+              },
+            ] = res.body.data
+            return res.body.data[0].resultWorkflowStatus
+          })
+
+        initialResultWorkflowStatus = (await knex
+          .from('ResultWorkflowStatus')
+          .where({ name: initialResultWorkflowStatusName })
+          .first('externalId')).externalId
+      }))
 
     it('should return a list of results with assay-specific fields if TB assay is requested', done => {
       server
@@ -274,7 +282,7 @@ describe('Result routes', () => {
                     .end((err, res) => {
                       assert.equal(
                         res.body.data.resultWorkflowStatus,
-                        initialResultWorkflowStatus
+                        initialResultWorkflowStatusName
                       )
                       done()
                     })
@@ -286,12 +294,21 @@ describe('Result routes', () => {
     it('Updating "QC Check" should fail if not in status "Deliverable"', done => {
       // try settings
       server
-        .put(`${path}/qc-check/${resultId}`)
-        .send({ qcCheck: true })
+        .put(`${path}/workflow-status/${resultId}`)
+        .send({
+          resultWorkflowStatusId: null,
+          externalId: 'Validated',
+        })
         .set('Authorization', `Bearer${shared.token}`)
-        .end((err, res) => {
-          assert.equal(res.status, 400)
-          done()
+        .end(() => {
+          server
+            .put(`${path}/qc-check/${resultId}`)
+            .send({ qcCheck: true })
+            .set('Authorization', `Bearer${shared.token}`)
+            .end((err, res) => {
+              assert.equal(res.status, 400)
+              done()
+            })
         })
     })
 

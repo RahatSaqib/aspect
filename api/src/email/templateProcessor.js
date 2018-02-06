@@ -20,7 +20,7 @@ async function process(templateName, tokenValues, locale) {
   const localeTemplateDir = path.join(templateDir, locale)
   const emailTemplate = new EmailTemplate(localeTemplateDir)
 
-  return await new Promise((resolve, reject) => { //eslint-disable-line
+  return new Promise((resolve, reject) => {
     emailTemplate.render(tokenValues, (err, result) => {
       if (err) {
         reject(err)

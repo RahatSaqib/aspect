@@ -149,8 +149,14 @@ function deviceApiHandler(handler, handlerOptions) {
 
 async function addDeviceDataWithContext(context) {
   const response = {}
-  const { knex, now, payload, device } = context
+  const { knex, now, payload, device, pluginName: plugin } = context
   const { name, site, result, configuration, operation } = payload
+
+  const preProcessAddDeviceData = await loadPlugin(
+    plugin,
+    'preProcessAddDeviceData'
+  )
+  await preProcessAddDeviceData(context)
 
   if (name) {
     await knex('Device')
@@ -248,17 +254,44 @@ async function getDeviceDataWithContext(context) {
 }
 
 async function addDeviceOperationWithContext(context) {
-  const { knex, payload, device: { id: deviceId }, now } = context
+  const {
+    knex,
+    payload,
+    device: { id: deviceId },
+    now,
+    pluginName: plugin,
+  } = context
   const op = await addDeviceOperation(knex, deviceId, payload, now)
   context.addDeviceLogUpdate('deviceOperationId', op.id)
-  return {}
+
+  const postProcess = await loadPlugin(plugin, 'postProcessAddDeviceOperation')
+  const postProcessResult = await postProcess(context)
+  return postProcessResult
 }
 
 async function updateDeviceConfigurationWithContext(context) {
-  const { knex, payload, device: { id: deviceId } } = context
-  const config = await updateDeviceConfiguration(knex, deviceId, payload)
+  const {
+    knex,
+    payload,
+    device: { id: deviceId },
+    now,
+    pluginName: plugin,
+  } = context
+
+  const preProcess = await loadPlugin(
+    plugin,
+    'preProcessUpdateDeviceConfiguration'
+  )
+  await preProcess(context)
+
+  await updateDeviceConfiguration(knex, deviceId, payload, now)
   context.addDeviceLogUpdate('deviceConfigurationUpdated', true)
-  return config
+  const postProcess = await loadPlugin(
+    plugin,
+    'postProcessUpdateDeviceConfiguration'
+  )
+  const postProcessResult = await postProcess(context)
+  return postProcessResult
 }
 
 async function getDeviceOperationWithContext(context) {
@@ -359,6 +392,7 @@ async function mergeResultWithContext(context) {
 
   const pluginContext = {
     knex,
+    deviceId,
     dispatch,
     deviceType,
     payload,
@@ -382,7 +416,12 @@ async function mergeResultWithContext(context) {
   context.addDeviceLogUpdate('resultId', result.id)
 
   const postProcess = await loadPlugin(plugin, 'postProcessMergeResult')
-  return await postProcess(pluginContext, result, previousResult) //eslint-disable-line
+  const postProcessResult = await postProcess(
+    pluginContext,
+    result,
+    previousResult
+  )
+  return postProcessResult
 }
 
 async function getResultWithContext(context) {
@@ -404,7 +443,8 @@ async function getResultWithContext(context) {
 
   const postProcess = await loadPlugin(plugin, 'postProcessGetResult')
 
-  return await postProcess(pluginContext, result) //eslint-disable-line
+  const postProcessResult = await postProcess(pluginContext, result)
+  return postProcessResult
 }
 
 async function createDeviceApiContext(request, handlerOptions) {
@@ -431,6 +471,7 @@ async function createDeviceApiContext(request, handlerOptions) {
       'd.siteId',
       'ds.token as status',
       'dt.externalId as deviceType',
+      'dt.plugin as deviceTypePluginName',
       'dtc.name as deviceTypeCategory'
     )
 
@@ -454,7 +495,7 @@ async function createDeviceApiContext(request, handlerOptions) {
   const partner = await knex('Partner as p')
     .innerJoin('Device as d', 'd.partnerId', 'p.id')
     .where({ 'd.id': device.id })
-    .first('p.id', 'p.deviceLogHistoryDays', 'p.plugin')
+    .first('p.id', 'p.deviceLogHistoryDays', 'p.plugin as partnerPluginName')
   if (partner == null) {
     return { error: Boom.internal('Device not assigned to partner') }
   }
@@ -466,7 +507,7 @@ async function createDeviceApiContext(request, handlerOptions) {
     query: request.query,
     deviceLogType,
     partnerId: partner.id,
-    pluginName: partner.plugin,
+    pluginName: partner.partnerPluginName || device.deviceTypePluginName,
   })
 
   // Add Device Log if requested
@@ -549,21 +590,29 @@ function createNewDevice(request, now) {
     const { auth } = request
 
     // Find API Key to use as template for new device
-    const apiKey = await knex('DeviceApiKey as k')
+    // Find API Key to use as template for new device
+    const partnerApiKey = await knex('DeviceApiKey as k')
       .where({
-        token: auth.credentials.token,
-        revoked: false,
-        deviceId: null,
+        'k.token': auth.credentials.token,
+        'k.revoked': false,
+        'k.deviceId': null,
       })
-      .join('Partner as p', 'p.id', 'k.partnerId')
+      .leftJoin('Partner as p', 'p.id', 'k.partnerId')
       .first('k.id', 'k.partnerId', 'k.geographyId', 'k.siteId', 'p.plugin')
-    if (apiKey == null) {
+    if (partnerApiKey == null) {
       return {
         error: Boom.notFound(
           'Cannot find available API Key when creating new device'
         ),
       }
     }
+    const deviceTypePlugin = await knex('DeviceType as dt')
+      .where({ 'dt.externalId': _.get(request, 'payload.type.id') })
+      .first('dt.plugin')
+    const apiKey = _.assign({}, partnerApiKey, {
+      plugin:
+        _.get(partnerApiKey, 'plugin') || _.get(deviceTypePlugin, 'plugin'),
+    })
 
     // Require Device Type when creating device
     const transformNewDevicePayload = await loadPlugin(
@@ -573,6 +622,16 @@ function createNewDevice(request, now) {
     const payload = await transformNewDevicePayload({
       payload: request.payload,
     })
+
+    const preProcessCreateDevice = await loadPlugin(
+      apiKey.plugin,
+      'preProcessCreateDevice'
+    )
+    const existingDevice = await preProcessCreateDevice(request, now)
+
+    if (!_.isEmpty(existingDevice)) {
+      return { device: existingDevice }
+    }
 
     const deviceTypeExternalId = _.get(payload, 'type.id', null)
     if (deviceTypeExternalId == null) {
@@ -584,7 +643,7 @@ function createNewDevice(request, now) {
     }
     const deviceType = await knex('DeviceType')
       .where({ externalId: deviceTypeExternalId })
-      .first('id', 'name')
+      .first('id', 'name', 'plugin')
     if (deviceType == null) {
       return {
         error: Boom.badRequest(
@@ -617,6 +676,7 @@ function createNewDevice(request, now) {
       serial: payload.serial,
       status: apiKey.siteId ? 'approved' : 'provisioned',
       deviceType: deviceTypeExternalId,
+      deviceTypePluginName: deviceType.plugin,
     }
     const inserts = {
       partnerId: device.partnerId,
@@ -844,9 +904,11 @@ function onResultUpdated({ resultId, message, source }, context) {
 function onResultLogged({ resultId }, context) {
   context.transact(async knex => {
     const { plugin } = await knex('Result as r')
-      .join('Partner as p', 'r.partnerId', 'p.id')
+      .leftJoin('Partner as p', 'r.partnerId', 'p.id')
+      .leftJoin('Device as d', 'r.deviceId', 'd.id')
+      .leftJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
       .where({ 'r.id': resultId })
-      .first('p.plugin')
+      .first(knex.raw('coalesce(p.plugin, dt.plugin) as plugin'))
     const onResultLogged = await loadPlugin(plugin, 'onResultLogged')
     const now = new Date()
 

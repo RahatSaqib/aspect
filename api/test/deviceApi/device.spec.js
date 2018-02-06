@@ -11,7 +11,6 @@ const {
   getDeviceFromApiKey,
 } = require('./utils')
 
-// This agent refers to PORT where program is runninng.
 const server = supertest.agent('http://localhost:8080')
 const { assert } = chai
 const context = createTestContext(server, { user: 'admin' })
@@ -149,6 +148,7 @@ describe('Device API routes', () => {
         assert.notEqual(previousOpId, currentOpId)
       }))
   })
+
   describe('add and get device data', () => {
     it('should add and return device data', () =>
       runTest(async knex => {
@@ -274,6 +274,7 @@ describe('Device API routes', () => {
           })
       }))
   })
+
   describe('add new device', () => {
     const newDeviceContext = createTestContext(server, {
       user: 'rrt_admin',
@@ -293,7 +294,7 @@ describe('Device API routes', () => {
           .post(devicePath)
           .set('Authorization', deviceAuth)
           .send({
-            type: { id: 'Daktari' },
+            type: { id: 'DaktariInSight' },
             site: { id: 'CHIZ' },
           })
           .then(res => {

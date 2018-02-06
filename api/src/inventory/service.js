@@ -12,6 +12,7 @@ const { getConstraints, addConstraints } = require('../auth/constraints')
 const {
   selectAssayConsumables,
 } = require('../consumable/assayConsumableService')
+const { findConsumableReason } = require('../consumable/consumableService')
 const { getUser } = require('../auth/service')
 const { getSite } = require('../site/service')
 
@@ -74,7 +75,7 @@ function compareConsumableInResultWithInventoryItem(
   mustMatchLotNumber
 ) {
   const resultExpirationDate = consumableInResult.expirationDate
-    ? new Date(consumableInResult.expirationDate)
+    ? new Date(new Date(consumableInResult.expirationDate).setHours(0, 0, 0, 0))
     : null
   const inventoryItemExpirationDate = inventoryItem.expiresOn
   const resultLotNumber = consumableInResult.lot ? consumableInResult.lot : null
@@ -152,10 +153,11 @@ async function consumeInventoryForResult(
     partnerId,
     assayId
   )
+
   const inventoryItemsAtSite = await selectInventoryItemsAtSite(siteId, knex)
-  const { testRunConsumableReasonId } = await knex('ConsumableReason as cr')
-    .where({ 'cr.name': 'Test Conducted', 'cr.decrease': 1 })
-    .first('cr.id as testRunConsumableReasonId')
+  const { id: testRunConsumableReasonId } = await findConsumableReason(
+    'Test Conducted'
+  )
 
   const firstUnknownConsumableInResult =
     _.find(
@@ -170,61 +172,103 @@ async function consumeInventoryForResult(
             )
         )
     ) || _.isEmpty(consumablesInResultData)
-      ? {
-          lot: null,
-          expirationDate: null,
-          serial: null,
-        }
+      ? null
       : consumablesInResultData[0]
 
   await Promise.all(
     _.map(assayConsumables, async assayConsumable => {
-      // Find Inventory on hand where lot number and expiry date match
-      const matchingInventoryItems = _.filter(inventoryItemsAtSite, {
-        consumableId: assayConsumable.consumableId,
-      })
-      const matchingInventoryOnHand = findInventoryItemMatchingConsumableInResultData(
-        consumablesInResultData,
-        matchingInventoryItems
-      ) || {
-        id: null,
-        lotNumber: firstUnknownConsumableInResult.lot,
-        expiresOn: firstUnknownConsumableInResult.expirationDate
-          ? new Date(firstUnknownConsumableInResult.expirationDate)
-          : null,
-      }
-      await knex('InventoryLog').insert({
-        inventoryItemId: matchingInventoryOnHand.id,
-        consumableId: assayConsumable.consumableId,
-        siteId,
-        consumableReasonId: testRunConsumableReasonId,
-        resultId,
-        lotNumber: matchingInventoryOnHand.lotNumber,
-        expiresOn: matchingInventoryOnHand.expiresOn,
-        quantity: -assayConsumable.quantity,
-        operation: 'result',
-        adjustedFrom: testStartedOn,
-        adjustedTo: testEndedOn,
-        createdOn: now,
-      })
-      if (matchingInventoryOnHand.id) {
-        const currentQuantity = (await knex('InventoryItem')
-          .where({ id: matchingInventoryOnHand.id })
-          .first('quantityOnHand')).quantityOnHand
-        if (assayConsumable.quantity === currentQuantity) {
-          await knex('InventoryItem')
-            .where({ id: matchingInventoryOnHand.id })
-            .delete()
-        } else {
-          await knex('InventoryItem')
-            .where({ id: matchingInventoryOnHand.id })
-            .update({
-              quantityOnHand: knex.raw(
-                `quantityOnHand - ${assayConsumable.quantity}`
-              ),
-              updatedBy: null,
-              updatedOn: now,
-            })
+      const existingInventoryLog = await knex('InventoryLog as il')
+        .join('InventoryItem as ii', 'il.inventoryItemId', 'ii.id')
+        .where({
+          'il.resultId': resultId,
+          'ii.consumableId': assayConsumable.consumableId,
+        })
+        .first('ii.id')
+      // Don't double deduct inventory for the same result
+      if (_.isEmpty(existingInventoryLog)) {
+        // Find Inventory on hand where lot number and expiry date match
+        const matchingInventoryItems = _.filter(inventoryItemsAtSite, {
+          consumableId: assayConsumable.consumableId,
+        })
+        if (_.isEmpty(matchingInventoryItems)) {
+          const lotNumberInResultData = _.get(
+            consumablesInResultData,
+            '[0].lot'
+          )
+          const expirationDateInResultData = _.get(
+            consumablesInResultData,
+            '[0].expirationDate'
+          )
+          const newInventoryItemId = await upsertInventoryItem({
+            knex,
+            consumableId: assayConsumable.consumableId,
+            siteId,
+            lotNumber: lotNumberInResultData,
+            expiresOn: expirationDateInResultData
+              ? new Date(
+                  new Date(expirationDateInResultData).setHours(0, 0, 0, 0)
+                )
+              : undefined,
+            quantity: 0,
+            now,
+          })
+          matchingInventoryItems.push(
+            await knex('InventoryItem')
+              .where({ id: newInventoryItemId })
+              .first()
+          )
+        }
+        const matchingInventoryOnHand =
+          findInventoryItemMatchingConsumableInResultData(
+            consumablesInResultData,
+            matchingInventoryItems
+          ) ||
+          (firstUnknownConsumableInResult
+            ? {
+                id: null,
+                lotNumber: firstUnknownConsumableInResult.lot,
+                expiresOn: firstUnknownConsumableInResult.expirationDate
+                  ? new Date(
+                      new Date(
+                        firstUnknownConsumableInResult.expirationDate
+                      ).setHours(0, 0, 0, 0)
+                    )
+                  : null,
+              }
+            : _.find(
+                _.sortBy(matchingInventoryItems, 'expiresOn'),
+                inventoryItemAtSite =>
+                  inventoryItemAtSite.consumableId ===
+                    assayConsumable.consumableId &&
+                  inventoryItemAtSite.expiresOn >=
+                    new Date((testStartedOn || now).setHours(0, 0, 0, 0))
+              ) ||
+              _.find(_.sortBy(matchingInventoryItems, 'expiresOn'), {
+                consumableId: assayConsumable.consumableId,
+              }))
+        await logInventoryChange({
+          knex,
+          inventoryItemId: matchingInventoryOnHand.id,
+          consumableId: assayConsumable.consumableId,
+          siteId,
+          consumableReasonId: testRunConsumableReasonId,
+          resultId,
+          lotNumber: matchingInventoryOnHand.lotNumber,
+          expiresOn: matchingInventoryOnHand.expiresOn,
+          quantity: assayConsumable.quantity,
+          operation: 'result',
+          adjustedFrom: testStartedOn,
+          adjustedTo: testEndedOn,
+          createdOn: now,
+        })
+        if (matchingInventoryOnHand.id) {
+          await updateInventoryItem(knex, matchingInventoryOnHand.id, {
+            quantityOnHand: knex.raw(
+              `quantityOnHand - ${assayConsumable.quantity}`
+            ),
+            updatedBy: null,
+            updatedOn: now,
+          })
         }
       }
     })
@@ -455,48 +499,6 @@ function getInventoryItem(inventoryItemId) {
     .first(INVENTORY_ITEM_SELECT_LIST_FIELDS)
 }
 
-async function upsertInventoryItem(
-  knex,
-  inventoryItem,
-  consumableId,
-  siteId,
-  lotNumber,
-  expiresOn,
-  quantity,
-  now,
-  userId,
-  inTransitFromSiteId
-) {
-  let inventoryItemId = -1
-  if (_.isEmpty(inventoryItem)) {
-    ;[inventoryItemId] = await knex('InventoryItem').insert({
-      consumableId,
-      inTransitFromSiteId: inTransitFromSiteId || null,
-      siteId,
-      lotNumber,
-      expiresOn,
-      quantityOnHand: quantity,
-      updatedOn: now,
-      updatedBy: userId,
-      createdOn: now,
-      createdBy: userId,
-    })
-  } else {
-    inventoryItemId = inventoryItem.id
-    await knex('InventoryItem')
-      .where({ id: inventoryItemId })
-      .update({
-        expiresOn,
-        lotNumber,
-        siteId,
-        quantityOnHand: knex.raw(`quantityOnHand + ${quantity}`),
-        updatedOn: now,
-        updatedBy: userId,
-      })
-  }
-  return inventoryItemId
-}
-
 async function addInventory(request) {
   const {
     auth,
@@ -506,6 +508,7 @@ async function addInventory(request) {
       expiresOn,
       lotNumber,
       quantity,
+      reasonId,
       dateAdjusted,
       notes,
     },
@@ -521,39 +524,18 @@ async function addInventory(request) {
 
   const currentlyLoggedInUser = await getUser(auth.credentials.name)
   const now = new Date()
-  const inventoryItem = await findInventoryItem(
-    toSiteId,
+  const inventoryItemId = await increaseInventory({
+    siteId: toSite.id,
     consumableId,
     expiresOn,
-    lotNumber
-  )
-  let inventoryItemId = -1
-  await transact(async knex => {
-    inventoryItemId = await upsertInventoryItem(
-      knex,
-      inventoryItem,
-      consumableId,
-      toSiteId,
-      lotNumber,
-      expiresOn,
-      quantity,
-      now,
-      currentlyLoggedInUser.id
-    )
-
-    await knex('InventoryLog').insert({
-      inventoryItemId,
-      consumableId,
-      siteId: toSiteId,
-      lotNumber,
-      expiresOn,
-      quantity,
-      operation: 'add',
-      notes,
-      adjustedFrom: dateAdjusted,
-      createdOn: now,
-      createdBy: currentlyLoggedInUser.id,
-    })
+    lotNumber,
+    quantity,
+    reasonId,
+    dateAdjustedFrom: dateAdjusted,
+    notes,
+    now,
+    operation: 'add',
+    userId: currentlyLoggedInUser.id,
   })
 
   return {
@@ -591,41 +573,20 @@ async function removeInventory(request) {
 
   const currentlyLoggedInUser = await getUser(auth.credentials.name)
   const now = new Date()
-  const inventoryItem = await findInventoryItem(
-    fromSiteId,
+
+  const inventoryItemId = await decreaseInventory({
+    siteId: fromSite.id,
     consumableId,
     expiresOn,
-    lotNumber
-  )
-  let inventoryItemId = -1
-  await transact(async knex => {
-    inventoryItemId = await upsertInventoryItem(
-      knex,
-      inventoryItem,
-      consumableId,
-      fromSiteId,
-      lotNumber,
-      expiresOn,
-      -quantity,
-      now,
-      currentlyLoggedInUser.id
-    )
-
-    await knex('InventoryLog').insert({
-      inventoryItemId,
-      consumableId,
-      siteId: fromSiteId,
-      lotNumber,
-      expiresOn,
-      quantity: -quantity,
-      consumableReasonId: reasonId,
-      operation: 'remove',
-      notes,
-      adjustedFrom: dateAdjusted || dateAdjustedFrom,
-      adjustedTo: dateAdjustedTo,
-      createdOn: now,
-      createdBy: currentlyLoggedInUser.id,
-    })
+    lotNumber,
+    quantity,
+    reasonId,
+    dateAdjustedFrom: dateAdjusted || dateAdjustedFrom,
+    dateAdjustedTo,
+    notes,
+    now,
+    operation: 'remove',
+    userId: currentlyLoggedInUser.id,
   })
 
   return {
@@ -684,26 +645,32 @@ async function transferInventory(request) {
   )
   let destinationInventoryItemId = -1
   await transact(async knex => {
-    destinationInventoryItemId = await upsertInventoryItem(
+    destinationInventoryItemId = await upsertInventoryItem({
       knex,
-      destinationInventoryItem,
+      inventoryItem: destinationInventoryItem,
       consumableId,
-      toSiteId,
+      siteId: toSiteId,
       lotNumber,
       expiresOn,
       quantity,
       now,
-      currentlyLoggedInUser.id,
-      fromSiteId
+      userId: currentlyLoggedInUser.id,
+      inTransitFromSiteId: fromSiteId,
+    })
+
+    const { id: transferSentConsumableReasonId } = await findConsumableReason(
+      'Transfer Sent'
     )
 
-    await knex('InventoryLog').insert({
+    await logInventoryChange({
+      knex,
       inventoryItemId,
       consumableId,
       siteId: fromSiteId,
+      consumableReasonId: transferSentConsumableReasonId,
       lotNumber,
       expiresOn,
-      quantity: -quantity,
+      quantity,
       operation: 'transfer from',
       notes,
       adjustedFrom: dateAdjusted,
@@ -769,22 +736,28 @@ async function receiveInventory(request) {
   )
   let destinationInventoryItemId = -1
   await transact(async knex => {
-    destinationInventoryItemId = await upsertInventoryItem(
+    destinationInventoryItemId = await upsertInventoryItem({
       knex,
-      destinationInventoryItem,
+      inventoryItem: destinationInventoryItem,
       consumableId,
-      toSiteId,
+      siteId: toSiteId,
       lotNumber,
       expiresOn,
       quantity,
       now,
-      currentlyLoggedInUser.id
-    )
+      userId: currentlyLoggedInUser.id,
+    })
 
-    await knex('InventoryLog').insert({
+    const {
+      id: transferReceivedConsumableReasonId,
+    } = await findConsumableReason('Transfer Received')
+
+    await logInventoryChange({
+      knex,
       inventoryItemId: destinationInventoryItemId,
       consumableId,
       siteId: toSiteId,
+      consumableReasonId: transferReceivedConsumableReasonId,
       lotNumber,
       expiresOn,
       quantity,
@@ -806,10 +779,224 @@ async function receiveInventory(request) {
   }
 }
 
+async function decreaseInventory(inventoryAjustment) {
+  const inventoryItemId = await changeInventoryQuantity(
+    _.merge(inventoryAjustment, { quantity: -inventoryAjustment.quantity })
+  )
+  return inventoryItemId
+}
+
+async function increaseInventory(inventoryAjustment) {
+  const inventoryItemId = await changeInventoryQuantity(inventoryAjustment)
+  return inventoryItemId
+}
+
+async function changeInventoryQuantity({
+  siteId,
+  consumableId,
+  expiresOn,
+  lotNumber,
+  quantity,
+  quantityOnHand,
+  reasonId,
+  dateAdjustedFrom,
+  dateAdjustedTo,
+  notes,
+  now,
+  operation,
+  userId,
+}) {
+  const inventoryItem = await findInventoryItem(
+    siteId,
+    consumableId,
+    expiresOn,
+    lotNumber
+  )
+  let inventoryItemId = -1
+  await transact(async knex => {
+    inventoryItemId = await upsertInventoryItem({
+      knex,
+      inventoryItem,
+      consumableId,
+      siteId,
+      lotNumber,
+      expiresOn,
+      quantity,
+      quantityOnHand,
+      now,
+      userId,
+    })
+
+    await logInventoryChange({
+      knex,
+      inventoryItemId,
+      consumableId,
+      siteId,
+      lotNumber,
+      expiresOn,
+      quantity: Math.abs(quantity),
+      consumableReasonId: reasonId,
+      operation,
+      notes,
+      adjustedFrom: dateAdjustedFrom,
+      adjustedTo: dateAdjustedTo,
+      createdOn: now,
+      createdBy: userId,
+    })
+  })
+
+  return inventoryItemId
+}
+
+async function logInventoryChange({
+  knex,
+  inventoryItemId,
+  consumableId,
+  siteId,
+  consumableReasonId,
+  resultId,
+  lotNumber,
+  expiresOn,
+  quantity,
+  operation,
+  notes,
+  adjustedFrom,
+  adjustedTo,
+  createdOn,
+  createdBy,
+}) {
+  await knex('InventoryLog').insert({
+    inventoryItemId,
+    consumableId,
+    siteId,
+    consumableReasonId,
+    resultId,
+    lotNumber,
+    expiresOn: expiresOn ? new Date(expiresOn.setHours(0, 0, 0, 0)) : null,
+    quantity,
+    operation,
+    notes,
+    adjustedFrom,
+    adjustedTo,
+    createdOn,
+    createdBy,
+  })
+}
+
+async function upsertInventoryItem({
+  knex,
+  inventoryItem,
+  consumableId,
+  siteId,
+  lotNumber,
+  expiresOn,
+  quantity,
+  quantityOnHand,
+  now,
+  userId,
+  inTransitFromSiteId,
+}) {
+  let inventoryItemId = -1
+  if (_.isEmpty(inventoryItem)) {
+    ;[inventoryItemId] = await insertInventoryItem(knex, {
+      consumableId,
+      inTransitFromSiteId: inTransitFromSiteId || null,
+      siteId,
+      lotNumber,
+      expiresOn,
+      quantityOnHand: _.isUndefined(quantityOnHand) ? quantity : quantityOnHand,
+      updatedOn: now,
+      updatedBy: userId,
+      createdOn: now,
+      createdBy: userId,
+    })
+  } else {
+    inventoryItemId = inventoryItem.id
+    await updateInventoryItem(knex, inventoryItemId, {
+      expiresOn,
+      lotNumber,
+      siteId,
+      quantityOnHand: _.isUndefined(quantityOnHand)
+        ? knex.raw(`quantityOnHand + (${quantity})`)
+        : quantityOnHand,
+      updatedOn: now,
+      updatedBy: userId,
+    })
+  }
+  return inventoryItemId
+}
+
+async function updateInventoryItem(knex, inventoryItemId, inventoryItemValues) {
+  const updateValues = {}
+  if (typeof inventoryItemValues.expiresOn !== 'undefined') {
+    updateValues.expiresOn = inventoryItemValues.expiresOn
+      ? new Date(inventoryItemValues.expiresOn.setHours(0, 0, 0, 0))
+      : null
+  }
+  if (typeof inventoryItemValues.lotNumber !== 'undefined') {
+    updateValues.lotNumber = inventoryItemValues.lotNumber
+  }
+  if (typeof inventoryItemValues.siteId !== 'undefined') {
+    updateValues.siteId = inventoryItemValues.siteId
+  }
+  if (typeof inventoryItemValues.quantityOnHand !== 'undefined') {
+    updateValues.quantityOnHand = inventoryItemValues.quantityOnHand
+  }
+  if (typeof inventoryItemValues.updatedOn !== 'undefined') {
+    updateValues.updatedOn = inventoryItemValues.updatedOn
+  }
+  if (typeof inventoryItemValues.updatedBy !== 'undefined') {
+    updateValues.updatedBy = inventoryItemValues.updatedBy
+  }
+  await knex('InventoryItem')
+    .where('id', inventoryItemId)
+    .update(updateValues)
+}
+
+async function insertInventoryItem(knex, inventoryItemValues) {
+  const insertValues = {}
+  if (typeof inventoryItemValues.consumableId !== 'undefined') {
+    insertValues.consumableId = inventoryItemValues.consumableId
+  }
+  if (typeof inventoryItemValues.inTransitFromSiteId !== 'undefined') {
+    insertValues.inTransitFromSiteId = inventoryItemValues.inTransitFromSiteId
+  }
+  if (typeof inventoryItemValues.siteId !== 'undefined') {
+    insertValues.siteId = inventoryItemValues.siteId
+  }
+  if (typeof inventoryItemValues.lotNumber !== 'undefined') {
+    insertValues.lotNumber = inventoryItemValues.lotNumber
+  }
+  if (typeof inventoryItemValues.expiresOn !== 'undefined') {
+    insertValues.expiresOn = inventoryItemValues.expiresOn
+      ? new Date(inventoryItemValues.expiresOn.setHours(0, 0, 0, 0))
+      : null
+  }
+  if (typeof inventoryItemValues.quantityOnHand !== 'undefined') {
+    insertValues.quantityOnHand = inventoryItemValues.quantityOnHand
+  }
+  if (typeof inventoryItemValues.updatedOn !== 'undefined') {
+    insertValues.updatedOn = inventoryItemValues.updatedOn
+  }
+  if (typeof inventoryItemValues.updatedBy !== 'undefined') {
+    insertValues.updatedBy = inventoryItemValues.updatedBy
+  }
+  if (typeof inventoryItemValues.createdOn !== 'undefined') {
+    insertValues.createdOn = inventoryItemValues.createdOn
+  }
+  if (typeof inventoryItemValues.createdBy !== 'undefined') {
+    insertValues.createdBy = inventoryItemValues.createdBy
+  }
+  const newInventoryItem = await knex('InventoryItem').insert(insertValues)
+  return newInventoryItem
+}
+
 module.exports = {
   listInventoryItems,
   listInventoryItemsGroupedBySite,
   consumeInventoryForResult,
+  increaseInventory,
+  decreaseInventory,
   addInventory,
   removeInventory,
   transferInventory,

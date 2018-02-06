@@ -57,6 +57,7 @@ describe('Assay Consumable Routes', () => {
             assert.property(res.body.data[0], 'name')
             assert.property(res.body.data[0], 'i18nKey')
             assert.property(res.body.data[0], 'decrease')
+            assert.property(res.body.data[0], 'reset')
             assert.property(res.body, 'total')
             done()
           })
@@ -173,8 +174,8 @@ describe('Assay Consumable Routes', () => {
 
     describe('/assay-consumable', () => {
       const path = '/api/assay-consumable'
-      let gxHivVlAssayId
-      let gxHivVlCartridgeId
+      let daktariCD4AssayId
+      let daktariCD4CartridgeId
       const initialQuantity = 0.32
       const updatedQuantity = 5.68
 
@@ -184,25 +185,25 @@ describe('Assay Consumable Routes', () => {
             .get('/api/assay')
             .set('Authorization', `Bearer ${shared.token}`)
             .end((err, res) => {
-              const gxHivVlAssay = _.find(res.body.data, {
-                name: 'GeneXpert HIV VL',
+              const daktariCD4Assay = _.find(res.body.data, {
+                name: 'Daktari CD4',
               })
-              gxHivVlAssayId = gxHivVlAssay.id
+              daktariCD4AssayId = daktariCD4Assay.id
 
               server
                 .get('/api/inventory/consumable-types')
                 .set('Authorization', `Bearer ${shared.token}`)
                 .end((err, res) => {
-                  const gxHivVlCartridge = _.find(res.body.data, {
-                    name: 'GeneXpert HIV Viral Load Cartridge',
+                  const daktariCD4Cartridge = _.find(res.body.data, {
+                    name: 'Daktari CD4 Cartridge',
                   })
-                  gxHivVlCartridgeId = gxHivVlCartridge.id
+                  daktariCD4CartridgeId = daktariCD4Cartridge.id
 
                   server
                     .post(path)
                     .send({
-                      assayId: gxHivVlAssayId,
-                      consumableId: gxHivVlCartridgeId,
+                      assayId: daktariCD4AssayId,
+                      consumableId: daktariCD4CartridgeId,
                       quantity: initialQuantity,
                     })
                     .set('Authorization', `Bearer ${shared.token}`)
@@ -214,9 +215,9 @@ describe('Assay Consumable Routes', () => {
                       assert.typeOf(res.body.data, 'Object')
                       assert.equal(
                         res.body.data.consumableId,
-                        gxHivVlCartridgeId
+                        daktariCD4CartridgeId
                       )
-                      assert.equal(res.body.data.assayId, gxHivVlAssayId)
+                      assert.equal(res.body.data.assayId, daktariCD4AssayId)
                       assert.equal(res.body.data.quantity, initialQuantity)
                       assert.property(res.body.data, 'consumableName')
                       assert.property(res.body.data, 'unitName')
@@ -228,8 +229,8 @@ describe('Assay Consumable Routes', () => {
                         .post(path)
                         .set('Authorization', `Bearer ${shared.token}`)
                         .send({
-                          assayId: gxHivVlAssayId,
-                          consumableId: gxHivVlCartridgeId,
+                          assayId: daktariCD4AssayId,
+                          consumableId: daktariCD4CartridgeId,
                           quantity: updatedQuantity,
                         })
                         .set('Authorization', `Bearer ${shared.token}`)
@@ -247,12 +248,12 @@ describe('Assay Consumable Routes', () => {
                           })
 
                           server
-                            .get(`/api/assay-consumables/${gxHivVlAssayId}`)
+                            .get(`/api/assay-consumables/${daktariCD4AssayId}`)
                             .set('Authorization', `Bearer ${shared.token}`)
                             .end((err, res) => {
                               const newAssayConsumable = _.find(res.body.data, {
-                                assayId: gxHivVlAssayId,
-                                consumableId: gxHivVlCartridgeId,
+                                assayId: daktariCD4AssayId,
+                                consumableId: daktariCD4CartridgeId,
                               })
                               assert.equal(
                                 newAssayConsumable.quantity,
@@ -270,7 +271,7 @@ describe('Assay Consumable Routes', () => {
       describe('PUT', () => {
         it('should return the updated assay consumable when using valid token, consumable id and an assay id', done => {
           server
-            .put(`${path}/${gxHivVlAssayId}/${gxHivVlCartridgeId}`)
+            .put(`${path}/${daktariCD4AssayId}/${daktariCD4CartridgeId}`)
             .send({ quantity: updatedQuantity })
             .set('Authorization', `Bearer ${shared.token}`)
             .end((err, res) => {
@@ -279,8 +280,8 @@ describe('Assay Consumable Routes', () => {
               assert.isTrue(res.body.ok)
               assert.property(res.body, 'data')
               assert.typeOf(res.body.data, 'Object')
-              assert.equal(res.body.data.consumableId, gxHivVlCartridgeId)
-              assert.equal(res.body.data.assayId, gxHivVlAssayId)
+              assert.equal(res.body.data.consumableId, daktariCD4CartridgeId)
+              assert.equal(res.body.data.assayId, daktariCD4AssayId)
               assert.equal(res.body.data.quantity, updatedQuantity)
               assert.property(res.body.data, 'consumableName')
               assert.property(res.body.data, 'unitName')
@@ -289,12 +290,12 @@ describe('Assay Consumable Routes', () => {
               assert.property(res.body.data, 'assayI18nKey')
 
               server
-                .get(`/api/assay-consumables/${gxHivVlAssayId}`)
+                .get(`/api/assay-consumables/${daktariCD4AssayId}`)
                 .set('Authorization', `Bearer ${shared.token}`)
                 .end((err, res) => {
                   const newAssayConsumable = _.find(res.body.data, {
-                    assayId: gxHivVlAssayId,
-                    consumableId: gxHivVlCartridgeId,
+                    assayId: daktariCD4AssayId,
+                    consumableId: daktariCD4CartridgeId,
                   })
                   assert.equal(newAssayConsumable.quantity, updatedQuantity)
                   done()
@@ -306,19 +307,19 @@ describe('Assay Consumable Routes', () => {
       describe('DELETE', () => {
         it('should remove the assay consumable from the system', done => {
           server
-            .delete(`${path}/${gxHivVlAssayId}/${gxHivVlCartridgeId}`)
+            .delete(`${path}/${daktariCD4AssayId}/${daktariCD4CartridgeId}`)
             .set('Authorization', `Bearer ${shared.token}`)
             .end((err, res) => {
               assert.equal(res.status, 200)
               assert.isTrue(res.body.ok)
 
               server
-                .get(`/api/assay-consumables/${gxHivVlAssayId}`)
+                .get(`/api/assay-consumables/${daktariCD4AssayId}`)
                 .set('Authorization', `Bearer ${shared.token}`)
                 .end((err, res) => {
                   const deletedAssayConsumable = _.find(res.body.data, {
-                    assayId: gxHivVlAssayId,
-                    consumableId: gxHivVlCartridgeId,
+                    assayId: daktariCD4AssayId,
+                    consumableId: daktariCD4CartridgeId,
                   })
                   assert.isTrue(_.isEmpty(deletedAssayConsumable))
                   done()

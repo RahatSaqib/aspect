@@ -62,7 +62,7 @@ async function listConsumableReasons(request) {
   const getItems = consumableReasonQuery
     .clone()
     .modify(sortPageParams, query, 'name')
-    .select(['id', 'name', 'i18nKey', 'decrease'])
+    .select(['id', 'name', 'i18nKey', 'decrease', 'reset'])
 
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
 
@@ -71,7 +71,25 @@ async function listConsumableReasons(request) {
   return result
 }
 
+async function findConsumables(knownConsumableDetails) {
+  const consumables = await knex('Consumable')
+    .where(knownConsumableDetails)
+    .select()
+  return consumables
+}
+
+async function findConsumableReason(consumableReasonName) {
+  const consumableReason = await knex('ConsumableReason')
+    .where({
+      name: consumableReasonName,
+    })
+    .first()
+  return consumableReason
+}
+
 module.exports = {
   listConsumableTypes,
   listConsumableReasons,
+  findConsumables,
+  findConsumableReason,
 }

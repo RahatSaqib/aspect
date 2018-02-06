@@ -15,14 +15,16 @@ const {
   addDeviceLog,
 } = require('./service')
 
-const errorPayload = Joi.object().keys({
-  code: Joi.string()
-    .allow('', null)
-    .description('Error code'),
-  notes: Joi.string()
-    .allow('', null)
-    .description('Description of the error'),
-})
+const errorPayload = Joi.object()
+  .allow(null)
+  .keys({
+    code: Joi.string()
+      .allow('', null)
+      .description('Error code'),
+    notes: Joi.string()
+      .allow('', null)
+      .description('Description of the error'),
+  })
 
 const logPayload = {
   source: Joi.string()
@@ -47,23 +49,29 @@ const devicePayload = {
   serial: Joi.string()
     .allow('', null)
     .description('The device serial number'),
-  status: Joi.object().keys({
-    id: Joi.string()
-      .required()
-      .description(
-        'The device status. Only approved devices will deliver results.'
-      ),
-  }),
-  type: Joi.object().keys({
-    id: Joi.string()
-      .required()
-      .description('The Device Type. Required on first request with API Key'),
-  }),
-  site: Joi.object().keys({
-    id: Joi.string()
-      .required()
-      .description('ID of the site where the device is located'),
-  }),
+  status: Joi.object()
+    .allow(null)
+    .keys({
+      id: Joi.string()
+        .required()
+        .description(
+          'The device status. Only approved devices will deliver results.'
+        ),
+    }),
+  type: Joi.object()
+    .allow(null)
+    .keys({
+      id: Joi.string()
+        .required()
+        .description('The Device Type. Required on first request with API Key'),
+    }),
+  site: Joi.object()
+    .allow(null)
+    .keys({
+      id: Joi.string()
+        .required()
+        .description('ID of the site where the device is located'),
+    }),
 }
 
 const configurationPayload = {
@@ -108,11 +116,13 @@ const resultPayload = {
     .allow('', null)
     .description('The client checkpoint'),
   startedOn: Joi.date()
+    .allow(null)
     .iso()
     .description(
       'Date and optional time the test began. If only one date is available, use endedOn'
     ),
   endedOn: Joi.date()
+    .allow(null)
     .iso()
     .description('Date and optional time the test finished.'),
   data: Joi.object().description('Assay dependent test result data.'),
@@ -122,46 +132,55 @@ const resultPayload = {
       .description('A known Assay configured within Aspect.'),
     version: Joi.string()
       .allow('', null)
-      .description('Version of assay specfied by Device'),
+      .description('Version of assay specified by Device'),
   }),
-  location: Joi.object().keys({
-    latitude: Joi.number().description(
-      'Latitude where the test was collected. Will default to the site location'
-    ),
-    longitude: Joi.number().description(
-      'Longitude where the test was collected. Will default to the site location'
-    ),
-  }),
-  type: Joi.object().keys({
-    id: Joi.string()
-      .required()
-      .description('The Result Type. Defaults to Patient.'),
-  }),
-  source: Joi.object().keys({
-    id: Joi.string()
-      .required()
-      .description('The Result Source. Defaults to "Diagnostic Device".'),
-  }),
-  workflow: Joi.object().keys({
-    status: Joi.object().keys({
+  location: Joi.object()
+    .allow(null)
+    .keys({
+      latitude: Joi.number().description(
+        'Latitude where the test was collected. Will default to the site location'
+      ),
+      longitude: Joi.number().description(
+        'Longitude where the test was collected. Will default to the site location'
+      ),
+    }),
+  type: Joi.object()
+    .allow(null)
+    .keys({
       id: Joi.string()
         .required()
-        .description(
-          'The workflow status. Default Error if error specified, otherwise OK'
-        ),
+        .description('The Result Type. Defaults to Patient.'),
     }),
-    operator: Joi.string()
-      .allow('', null)
-      .description('The person who updated the workflow'),
-    changedOn: Joi.date()
-      .iso()
-      .description('Date and optional time the workflow changed.'),
-  }),
+  source: Joi.object()
+    .allow(null)
+    .keys({
+      id: Joi.string()
+        .required()
+        .description('The Result Source. Defaults to "Diagnostic Device".'),
+    }),
+  workflow: Joi.object()
+    .allow(null)
+    .keys({
+      status: Joi.object().keys({
+        id: Joi.string()
+          .required()
+          .description(
+            'The workflow status. Default Error if error specified, otherwise OK'
+          ),
+      }),
+      operator: Joi.string()
+        .allow('', null)
+        .description('The person who updated the workflow'),
+      changedOn: Joi.date()
+        .iso()
+        .description('Date and optional time the workflow changed.'),
+    }),
   sample: Joi.object().keys({
     id: Joi.string()
       .allow('', null)
       .description('Client specific identifier of the sample tested.'),
     collectedOn: Joi.date()
+      .allow(null)
       .iso()
       .description('Date and optional time the sample was collected.'),
     group: Joi.string()
@@ -170,25 +189,30 @@ const resultPayload = {
     runNumber: Joi.string()
       .allow('', null)
       .description('Sample run number.'),
-    type: Joi.object().keys({
-      id: Joi.string()
-        .required()
-        .description('ID of the Sample Type'),
-    }),
-    originSite: Joi.object().keys({
-      id: Joi.string()
-        .required()
-        .description('ID of the site where the sample was collected'),
-    }),
+    type: Joi.object()
+      .allow(null)
+      .keys({
+        id: Joi.string()
+          .required()
+          .description('ID of the Sample Type'),
+      }),
+    originSite: Joi.object()
+      .allow(null)
+      .keys({
+        id: Joi.string()
+          .required()
+          .description('ID of the site where the sample was collected'),
+      }),
   }),
   category: Joi.array()
+    .allow(null)
     .items(
       Joi.object().keys({
         id: Joi.string()
           .required()
           .description(
             'Assay dependent categorization of the Result.  Default Error if error specified,' +
-              ' otherwise OK. If the Assay supports only a single category, can send a single' +
+              ' otherwise Success. If the Assay supports only a single category, can send a single' +
               ' JSON object instead of an Array.'
           ),
       })
@@ -197,6 +221,7 @@ const resultPayload = {
     .max(2)
     .single(true),
   consumable: Joi.array()
+    .allow(null)
     .items(
       Joi.object().keys({
         serial: Joi.string()
@@ -238,13 +263,15 @@ const resultPayload = {
         ),
     }),
   }),
-  research: Joi.object().keys({
-    id: Joi.string()
-      .allow('', null)
-      .description(
-        'Identifies a research study for which the test is completed.'
-      ),
-  }),
+  research: Joi.object()
+    .allow(null)
+    .keys({
+      id: Joi.string()
+        .allow('', null)
+        .description(
+          'Identifies a research study for which the test is completed.'
+        ),
+    }),
   patient: Joi.object().keys({
     id: Joi.string()
       .allow('', null)
@@ -365,15 +392,19 @@ module.exports = [
               .allow('', null)
               .description('The client checkpoint'),
             log: Joi.object()
+              .allow(null)
               .keys(logPayload)
               .description('Device Log Data'),
             configuration: Joi.object()
+              .allow(null)
               .keys(configurationPayload)
               .description('Device Configuration Data'),
             operation: Joi.object()
+              .allow(null)
               .keys(operationPayload)
               .description('Device Operation Data'),
             result: Joi.object()
+              .allow(null)
               .keys(resultPayload)
               .description('Device Result Data.'),
           })

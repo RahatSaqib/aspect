@@ -125,62 +125,86 @@ async function generateHistoricalResults(
 
   let index = -1
 
-  await Promise.all(
-    _.map(sourceResults, async result => {
-      index += 1
-      const { resultId, resultEndedOn, deviceName, sampleId } = result
+  for (const result of sourceResults) {
+    index += 1
+    /* eslint-disable no-await-in-loop */
+    await mergeResultAndUpdateWorkflowStatus(
+      knex,
+      dispatch,
+      deviceId,
+      now,
+      result,
+      index,
+      autoAcknowledgeMaxIndex,
+      autoAcknowledgeOlderThan,
+      acknowledgedStatusId
+    )
+    /* eslint-enable no-await-in-loop */
+  }
+}
 
-      const sourceResult = await getResult(knex, resultId)
-      const payload = reporterResultFromChaiResult(sourceResult)
-      payload.workflow = { status: { id: DELIVERABLE_EXTERNALID } }
+async function mergeResultAndUpdateWorkflowStatus(
+  knex,
+  dispatch,
+  deviceId,
+  now,
+  result,
+  index,
+  autoAcknowledgeMaxIndex,
+  autoAcknowledgeOlderThan,
+  acknowledgedStatusId
+) {
+  const { resultId, resultEndedOn, deviceName, sampleId } = result
 
-      const { processedResult, existingResult } = await mergeResult(
-        knex,
-        deviceId,
-        payload,
-        { sampleId, now }
-      )
-      await addResultWorkflowLogIfChanged(
-        knex,
-        payload,
-        processedResult,
-        existingResult,
-        `Historical Result from ${deviceName}`,
-        now
-      )
+  const sourceResult = await getResult(knex, resultId)
+  const payload = reporterResultFromChaiResult(sourceResult)
+  payload.workflow = { status: { id: DELIVERABLE_EXTERNALID } }
 
-      const autoAcknowledge =
-        index < autoAcknowledgeMaxIndex &&
-        (resultEndedOn != null &&
-          autoAcknowledgeOlderThan != null &&
-          +resultEndedOn < +autoAcknowledgeOlderThan)
-
-      const resultUpdates = { qcCheck: 1 }
-      if (autoAcknowledge) {
-        processedResult.resultWorkflowStatusId = acknowledgedStatusId
-        await addResultWorkflowLogIfChanged(
-          knex,
-          payload,
-          processedResult,
-          existingResult,
-          `Auto acknowledged from ${deviceName}`,
-          new Date(+now + 1000) // in future to maintain order in UI
-        )
-        resultUpdates.resultWorkflowStatusId = acknowledgedStatusId
-      }
-
-      Object.assign(processedResult, resultUpdates)
-      await knex('Result')
-        .where({ id: processedResult.id })
-        .update(resultUpdates)
-      await knex('ResultGeneratedResult').insert({
-        sourceResultId: resultId,
-        generatedResultId: processedResult.id,
-      })
-
-      dispatch(notifyResultUpdated(processedResult.id, payload, 'MalawiPlugin'))
-    })
+  const { processedResult, existingResult } = await mergeResult(
+    knex,
+    deviceId,
+    payload,
+    { sampleId, now }
   )
+  await addResultWorkflowLogIfChanged(
+    knex,
+    payload,
+    processedResult,
+    existingResult,
+    `Historical Result from ${deviceName}`,
+    now
+  )
+
+  const autoAcknowledge =
+    index < autoAcknowledgeMaxIndex &&
+    (resultEndedOn != null &&
+      autoAcknowledgeOlderThan != null &&
+      +resultEndedOn < +autoAcknowledgeOlderThan)
+
+  const resultUpdates = { qcCheck: 1 }
+  if (autoAcknowledge) {
+    processedResult.resultWorkflowStatusId = acknowledgedStatusId
+    await addResultWorkflowLogIfChanged(
+      knex,
+      payload,
+      processedResult,
+      existingResult,
+      `Auto acknowledged from ${deviceName}`,
+      new Date(+now + 1000) // in future to maintain order in UI
+    )
+    resultUpdates.resultWorkflowStatusId = acknowledgedStatusId
+  }
+
+  Object.assign(processedResult, resultUpdates)
+  await knex('Result')
+    .where({ id: processedResult.id })
+    .update(resultUpdates)
+  await knex('ResultGeneratedResult').insert({
+    sourceResultId: resultId,
+    generatedResultId: processedResult.id,
+  })
+
+  dispatch(notifyResultUpdated(processedResult.id, payload, 'MalawiPlugin'))
 }
 
 function reporterResultFromChaiResult(chaiResult) {

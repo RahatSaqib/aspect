@@ -54,11 +54,10 @@ async function deleteTestDataFromCheckpoint(knex, checkpoint, deviceIds) {
 
 async function deleteDeviceAndTestData(knex, apiKeys) {
   const tokens = apiKeys.map(key => key.token)
-  const deviceIds = await knex('Device as d')
-    .innerJoin('DeviceApiKey as dak', 'dak.deviceId', 'd.id')
+  const deviceIds = await knex('DeviceApiKey as dak')
     .whereIn('dak.token', tokens)
-    .select('d.id')
-    .map(device => device.id)
+    .whereNotNull('dak.deviceId')
+    .pluck('dak.deviceId')
 
   const deviceResultIds = await knex('Result')
     .whereIn('deviceId', deviceIds)
@@ -126,6 +125,14 @@ async function getDeviceFromApiKey(knex, apiKey) {
     .where('dak.token', apiKey.token)
     .first('d.*')
   return device
+}
+
+async function getSiteFromDeviceId(knex, deviceId) {
+  const site = await knex('Device as d')
+    .innerJoin('Site as s', 'd.siteId', 's.id')
+    .where('d.id', deviceId)
+    .first('s.*')
+  return site
 }
 
 async function getLastDeviceOperation(knex, deviceId) {
@@ -349,8 +356,10 @@ module.exports = {
   createTestContext,
   getDeviceConfigurationData,
   getDeviceFromApiKey,
+  getSiteFromDeviceId,
   getLastDeviceOperation,
   getLastDeviceOperationData,
   getLastDeviceOperationId,
   getLastResultId,
+  deleteDeviceAndTestData,
 }

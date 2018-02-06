@@ -1,6 +1,6 @@
 const _ = require('lodash')
 
-async function updateDeviceConfiguration(knex, deviceId, payload) {
+async function updateDeviceConfiguration(knex, deviceId, payload, now) {
   const previousConfig = await getDeviceConfiguration(knex, deviceId)
   const configurationData =
     previousConfig == null
@@ -9,8 +9,38 @@ async function updateDeviceConfiguration(knex, deviceId, payload) {
 
   await knex('Device')
     .where({ id: deviceId })
-    .update({ configurationData: JSON.stringify(configurationData) })
+    .update({
+      configurationData: JSON.stringify(configurationData),
+      updatedBy: null,
+      updatedOn: now,
+    })
 
+  return {}
+}
+
+async function updateDeviceDetails(knex, deviceId, deviceDetails, now) {
+  if (deviceId) {
+    // Compare existing device to these details
+    // which field vakues are different?
+    const existingDevice = await knex('Device as d')
+      .where({ 'd.id': deviceId })
+      .select()
+    const changedDetails = _.omitBy(
+      deviceDetails,
+      (v, k) =>
+        ['id', 'createdOn', 'createdBy'].includes(k) || existingDevice[k] == v // eslint-disable-line eqeqeq
+    )
+    if (!_.isEmpty(changedDetails)) {
+      await knex('Device')
+        .where({ id: deviceId })
+        .update(
+          _.merge(changedDetails, {
+            updatedBy: null,
+            updatedOn: now,
+          })
+        )
+    }
+  }
   return {}
 }
 
@@ -89,6 +119,7 @@ async function getSite(knex, deviceId) {
 
 module.exports = {
   updateDeviceConfiguration,
+  updateDeviceDetails,
   getDeviceConfiguration,
   getDeviceConfigurationFromDeviceLog,
   getDeviceOperation,

@@ -161,7 +161,7 @@ async function savePerson(request, updatablePersonFields) {
 }
 
 async function updatePerson(request) {
-  return await savePerson(request, [ //eslint-disable-line
+  return savePerson(request, [
     'name',
     'title',
     'email',

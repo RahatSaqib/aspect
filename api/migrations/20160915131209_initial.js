@@ -150,7 +150,6 @@ async function up(knex) {
       .index()
       .references('id')
       .inTable('Country')
-    // TODO timezone table? < Bryan: I don't think this is required. Timezones are static
     person.string('timezone').notNullable()
     // TODO should user preferences be stored in separate table?
     person.boolean('hidePatientId')
@@ -335,6 +334,7 @@ async function up(knex) {
     deviceType.string('externalId').notNullable()
     deviceType.string('name').notNullable()
     deviceType.string('manufacturer').notNullable()
+    deviceType.string('plugin')
     deviceType.specificType('configurationDataSchema', 'JSON')
     deviceType.specificType('deviceOperationSchema', 'JSON')
     deviceType.charset('utf8')
@@ -378,8 +378,8 @@ async function up(knex) {
     site.string('timezoneId', 45)
     site.integer('hoursStart')
     site.integer('hoursEnd')
-    addCreateFields(site)
-    addUpdateFields(site)
+    addCreateFieldsNullable(site)
+    addUpdateFieldsNullable(site)
     site.charset('utf8')
   })
 
@@ -841,6 +841,10 @@ async function up(knex) {
       .boolean('decrease')
       .notNullable()
       .defaultTo(0)
+    consumableReason
+      .boolean('reset')
+      .notNullable()
+      .defaultTo(0)
     consumableReason.charset('utf8')
   })
 
@@ -910,23 +914,10 @@ async function up(knex) {
       .inTable('Site')
     inventoryItem.integer('inTransitFromSiteId').unsigned()
     inventoryItem.string('lotNumber')
-    inventoryItem.dateTime('expiresOn')
+    inventoryItem.date('expiresOn')
     inventoryItem.float('quantityOnHand')
-    inventoryItem.dateTime('createdOn').notNullable()
-    inventoryItem
-      .integer('createdBy')
-      .unsigned()
-      .notNullable()
-      .index()
-      .references('id')
-      .inTable('User')
-    inventoryItem.dateTime('updatedOn').notNullable()
-    inventoryItem
-      .integer('updatedBy')
-      .unsigned()
-      .index()
-      .references('id')
-      .inTable('User')
+    addCreateFieldsNullable(inventoryItem)
+    addUpdateFieldsNullable(inventoryItem)
     inventoryItem.charset('utf8')
   })
 
@@ -962,43 +953,33 @@ async function up(knex) {
       .inTable('Result')
     inventoryLog.string('operation', 50)
     inventoryLog.string('lotNumber')
-    inventoryLog.dateTime('expiresOn')
+    inventoryLog.date('expiresOn')
     inventoryLog.float('quantity')
     inventoryLog.string('notes', 2000)
     inventoryLog.dateTime('adjustedFrom')
     inventoryLog.dateTime('adjustedTo')
-    inventoryLog.dateTime('createdOn').notNullable()
-    inventoryLog
-      .integer('createdBy')
-      .unsigned()
-      .index()
-      .references('id')
-      .inTable('User')
+    addCreateFieldsNullable(inventoryLog)
     inventoryLog.charset('utf8')
   })
 
   // this table logs any change of QC-Check checkbox on 'Result Details' page
-  await knex.schema.createTable('ResultQualityControlLog', x => {
-    x.increments('id')
-    x
-      .integer('resultId')
-      .unsigned()
-      .references('id')
-      .inTable('Result')
-    x
-      .boolean('qcCheck')
-      .notNullable()
-      .defaultTo(0)
-    x.dateTime('createdOn').notNullable()
-    x
-      .integer('createdBy')
-      .notNullable()
-      .unsigned()
-      .index()
-      .references('id')
-      .inTable('User')
-    x.charset('utf8')
-  })
+  await knex.schema.createTable(
+    'ResultQualityControlLog',
+    resultQualityControlLog => {
+      resultQualityControlLog.increments('id')
+      resultQualityControlLog
+        .integer('resultId')
+        .unsigned()
+        .references('id')
+        .inTable('Result')
+      resultQualityControlLog
+        .boolean('qcCheck')
+        .notNullable()
+        .defaultTo(0)
+      addCreateFields(resultQualityControlLog)
+      resultQualityControlLog.charset('utf8')
+    }
+  )
 
   // facts-table for result counts by device
   await knex.schema.createTable('FactResultCountDevice', x => {
@@ -1148,8 +1129,8 @@ function addCreateFields(table) {
   table.dateTime('createdOn').notNullable()
   table
     .integer('createdBy')
-    .unsigned()
     .notNullable()
+    .unsigned()
     .index()
     .references('id')
     .inTable('User')
@@ -1160,8 +1141,8 @@ function addUpdateFields(table) {
   table.dateTime('updatedOn').notNullable()
   table
     .integer('updatedBy')
-    .unsigned()
     .notNullable()
+    .unsigned()
     .index()
     .references('id')
     .inTable('User')

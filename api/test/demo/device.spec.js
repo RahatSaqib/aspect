@@ -3,7 +3,6 @@ const chai = require('chai')
 const _ = require('lodash')
 const { createTestContext, getLastResultId } = require('../deviceApi/utils')
 
-// This agent refers to PORT where program is runninng.
 const server = supertest.agent('http://localhost:8080')
 const { assert } = chai
 const context = createTestContext(server, { user: 'admin', type: 'GeneXpert' })
