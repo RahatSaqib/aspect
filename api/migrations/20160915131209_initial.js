@@ -1060,6 +1060,81 @@ async function up(knex) {
     x.dateTime('updatedOn').notNullable()
   })
 
+  await knex.schema.createTable('Tag', tag => {
+    tag.increments('id')
+    tag.string('title').notNullable()
+    tag
+      .integer('partnerId')
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('Partner')
+  })
+
+  await knex.schema.createTable('ResultTag', rt => {
+    rt
+      .integer('resultId')
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('Result')
+    rt
+      .integer('tagId')
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('Tag')
+    rt.primary(['resultId', 'tagId'])
+  })
+
+  await knex.schema.createTable('SiteTag', st => {
+    st
+      .integer('siteId')
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('Site')
+    st
+      .integer('tagId')
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('Tag')
+    st.primary(['siteId', 'tagId'])
+  })
+
+  await knex.schema.createTable('DeviceTag', dt => {
+    dt
+      .integer('deviceId')
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('Device')
+    dt
+      .integer('tagId')
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('Tag')
+    dt.primary(['deviceId', 'tagId'])
+  })
+
+  await knex.schema.createTable('PersonTag', pt => {
+    pt
+      .integer('personId')
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('Person')
+    pt
+      .integer('tagId')
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('Tag')
+    pt.primary(['personId', 'tagId'])
+  })
+
   await knex.raw('SET foreign_key_checks = 1')
 }
 
@@ -1122,6 +1197,11 @@ async function down(knex) {
   await knex.schema.dropTableIfExists('ResultQualityControlLog')
   await knex.schema.dropTableIfExists('FactResultCountDevice')
   await knex.schema.dropTableIfExists('FactDeviceFlag')
+  await knex.schema.dropTableIfExists('Tag')
+  await knex.schema.dropTableIfExists('ResultTag')
+  await knex.schema.dropTableIfExists('SiteTag')
+  await knex.schema.dropTableIfExists('DeviceTag')
+  await knex.schema.dropTableIfExists('PersonTag')
 
   await knex.raw('SET foreign_key_checks = 1')
 }

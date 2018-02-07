@@ -3428,4 +3428,40 @@ async function seed(knex) {
       })
     })
   )
+
+  // Create tag
+  const [tagOneId] = await knex('Tag').insert({
+    title: 'SCO',
+    partnerId: partnerOneId,
+  })
+
+  const [tagTwoId] = await knex('Tag').insert({
+    title: 'STP',
+    partnerId: partnerOneId,
+  })
+
+  const [tagThreeId] = await knex('Tag').insert({
+    title: 'DBP',
+    partnerId: partnerTwoId,
+  })
+
+  const tagIds = [tagOneId, tagTwoId, tagThreeId]
+
+  const results = await knex('Result')
+    .select('id')
+    .limit(20)
+  await Promise.all(
+    _.map(results, async result => {
+      await Promise.all(
+        _.map(tagIds, async tagId => {
+          if (_.random(2) === 0) {
+            await knex('ResultTag').insert({
+              resultId: result.id,
+              tagId,
+            })
+          }
+        })
+      )
+    })
+  )
 }
