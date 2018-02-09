@@ -9,6 +9,7 @@ const validHashedPassword =
   '$2a$10$blGsMw08vX52YoZUnI18cOTluN170WvPJq1XApyif8Y2PuZThzK5K' // = test07
 
 const {
+  canEdit,
   canViewSites,
   canViewDevices,
   canViewResults,
@@ -38,6 +39,18 @@ describe('auth endpoints', () => {
   const mockAuthObj = {
     credentials: {
       permissions: ['site:admin', 'device:admin', 'result:admin'],
+    },
+  }
+
+  const mockAuthObjView = {
+    credentials: {
+      permissions: ['site:view', 'device:view', 'result:view'],
+    },
+  }
+
+  const mockAuthObjEdit = {
+    credentials: {
+      permissions: ['site:edit', 'device:edit', 'result:edit'],
     },
   }
 
@@ -129,6 +142,21 @@ describe('auth endpoints', () => {
         assert.isTrue(canViewSites(mockAuthObj))
         assert.isTrue(canViewDevices(mockAuthObj))
         assert.isTrue(canViewResults(mockAuthObj))
+      })
+
+      it('Should be approved to edit resource', () => {
+        assert.isTrue(canEdit(mockAuthObj, 'result:'))
+        assert.isTrue(canEdit(mockAuthObj, 'device:'))
+        assert.isTrue(canEdit(mockAuthObj, 'site:'))
+        assert.isTrue(canEdit(mockAuthObjEdit, 'result:'))
+        assert.isTrue(canEdit(mockAuthObjEdit, 'device:'))
+        assert.isTrue(canEdit(mockAuthObjEdit, 'site:'))
+      })
+
+      it('Should be not permitted to edit resource due to insufficient permissions', () => {
+        assert.isFalse(canEdit(mockAuthObjView, 'result:'))
+        assert.isFalse(canEdit(mockAuthObjView, 'device:'))
+        assert.isFalse(canEdit(mockAuthObjView, 'site:'))
       })
 
       it('Should respond with a signed JSON web token, a refresh token id and the client id passed to it', done => {

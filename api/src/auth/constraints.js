@@ -157,11 +157,20 @@ function canViewInventories(auth) {
   return canView(auth, 'inventory:')
 }
 
+function canEdit(auth, flag) {
+  const requirePermissions = [`${flag}admin`, `${flag}edit`]
+  return (
+    _.intersection(auth.credentials.permissions, requirePermissions).length > 0
+  )
+}
+
 module.exports = {
   getConstraints,
   addConstraints,
+  canView,
   canViewSites,
   canViewDevices,
   canViewResults,
   canViewInventories,
+  canEdit,
 }
