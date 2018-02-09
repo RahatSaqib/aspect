@@ -7,6 +7,7 @@ const { randomToken } = require('../../src/deviceApi/apiKey')
 const permissions = require('./fixtures/permissions.json')
 const geography = require('./fixtures/geography.json')
 const patients = require('./fixtures/patients.json')
+const dashboardWidget = require('./fixtures/dashboardWidget.json')
 const {
   addMilliseconds,
   addMinutes,
@@ -3464,4 +3465,31 @@ async function seed(knex) {
       )
     })
   )
+  // Create DashboardWidget
+  const widgetIds = {}
+  await Promise.all(
+    _.map(dashboardWidget, async widget => {
+      const [widgetId] = await knex('DashboardWidget').insert(widget)
+      widgetIds[_.toLower(widget.title)] = widgetId
+    })
+  )
+
+  await knex('JobFunctionWidget').insert([
+    { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.sites },
+    { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.devices },
+    { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.results },
+    { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.contacts },
+
+    { jobFunctionId: jobFunctionIdManager, widgetId: widgetIds.sites },
+    { jobFunctionId: jobFunctionIdManager, widgetId: widgetIds.devices },
+    { jobFunctionId: jobFunctionIdManager, widgetId: widgetIds.contacts },
+
+    { jobFunctionId: jobFunctionIdPartnerTwo, widgetId: widgetIds.sites },
+    { jobFunctionId: jobFunctionIdPartnerTwo, widgetId: widgetIds.devices },
+    { jobFunctionId: jobFunctionIdPartnerTwo, widgetId: widgetIds.contacts },
+
+    { jobFunctionId: jobFunctionIdClinician, widgetId: widgetIds.sites },
+    { jobFunctionId: jobFunctionIdClinician, widgetId: widgetIds.devices },
+    { jobFunctionId: jobFunctionIdClinician, widgetId: widgetIds.contacts },
+  ])
 }
