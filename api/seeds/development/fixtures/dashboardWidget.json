@@ -33,7 +33,7 @@
     "sortOrder": 2
   },
   {
-    "icon": "permIdentity",
+    "icon": "perm-identity",
     "title": "Contacts",
     "titleI18nKey": "personTitle",
     "subTitle": "",
