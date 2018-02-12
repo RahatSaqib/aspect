@@ -11,20 +11,22 @@ describe('Dashboard routes', () => {
   describe('GET', () => {
     shared.checkToken(server, path)
 
-    it('should return an object with site, device, result and user counts', done => {
+    it('should return an list of dashboard widget object', done => {
       server
         .get(path)
         .set('Authorization', `Bearer ${shared.token}`)
         .end((err, res) => {
           assert.equal(res.status, 200)
-          assert.typeOf(res.body, 'Object')
-          assert.property(res.body, 'data')
-          assert.typeOf(res.body.data, 'Object')
-          assert.property(res.body.data, 'sitesTotal')
-          assert.property(res.body.data, 'devicesTotal')
-          assert.property(res.body.data, 'resultsTotal30d')
-          assert.property(res.body.data, 'resultsTotal1d')
-          assert.property(res.body.data, 'usersTotal')
+          assert.typeOf(res.body, 'array')
+          assert.isAtLeast(res.body.length, 4)
+          assert.property(res.body[0], 'id')
+          assert.property(res.body[0], 'icon')
+          assert.property(res.body[0], 'title')
+          assert.property(res.body[0], 'titleI18nKey')
+          assert.property(res.body[0], 'subTitle')
+          assert.property(res.body[0], 'subTitleI18nKey')
+          assert.property(res.body[0], 'link')
+          assert.property(res.body[0], 'count')
           done()
         })
     })
