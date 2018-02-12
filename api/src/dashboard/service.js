@@ -101,7 +101,7 @@ async function summaryDashboard(request) {
   const user = await getUser(auth.credentials.name)
   const widgets = await getDashboardWidget(user)
 
-  const resultSummaryList = await Promise.all(
+  const data = await Promise.all(
     widgets.map(async widget => {
       const tableAlias = getTableAlias(widget.sqlForIndicator)
       const sqlBuilder = getSqlBuilder(widget.sqlForIndicator)
@@ -116,7 +116,7 @@ async function summaryDashboard(request) {
       )
     })
   )
-  return resultSummaryList
+  return { ok: true, data }
 }
 
 async function resultDashboard(request) {
