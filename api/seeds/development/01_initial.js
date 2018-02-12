@@ -86,12 +86,14 @@ async function seed(knex) {
     name: 'Partner One',
     partnerTypeId: partnerTypeFundingId,
     deviceLogHistoryDays: 14,
+    maxDaysDeviceOffline: 7,
   })
 
   const [partnerTwoId] = await knex('Partner').insert({
     name: 'Partner Two',
     partnerTypeId: partnerTypeImplementingId,
     deviceLogHistoryDays: 14,
+    maxDaysDeviceOffline: 7,
   })
 
   // Categories of devices (lab, connectivity...)

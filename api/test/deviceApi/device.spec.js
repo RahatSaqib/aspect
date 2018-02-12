@@ -10,6 +10,7 @@ const {
   getLastDeviceOperationId,
   getDeviceFromApiKey,
 } = require('./utils')
+const { synthDeviceOfflineOnSchedule } = require('../../src/fact/service')
 
 const server = supertest.agent('http://localhost:8080')
 const { assert } = chai
@@ -312,6 +313,28 @@ describe('Device API routes', () => {
         assert.isOk(deviceLogs)
         assert.propertyVal(newDevice, 'id', deviceLogs[0].deviceId)
         assert.isAtLeast(deviceLogs.length, 1)
+
+        // ensure device exists on FactDeviceFlag table
+        const factDevice = await knex('FactDeviceFlag as fdf')
+          .where('fdf.deviceId', newDevice.id)
+          .select('fdf.deviceId')
+
+        assert.equal(factDevice.length, 1)
+
+        // update last ping to a date earlier and greater than 7 days and ensure device marked as offline
+        const last8Day = subDays(new Date(), 8)
+
+        await knex('Device as d')
+          .where('d.id', factDevice[0].deviceId)
+          .update({ lastPingOn: last8Day })
+
+        synthDeviceOfflineOnSchedule().then(async () => {
+          const [offlineFactDevice] = await knex('FactDeviceFlag as fdf').where(
+            'fdf.deviceId',
+            newDevice.id
+          )
+          assert.equal(offlineFactDevice.offline, 1)
+        })
       }))
   })
 

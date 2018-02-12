@@ -7,7 +7,10 @@ const { version } = require('./../package.json')
 const { addClientRoutes, addDeviceRoutes } = require('./routes')
 const Hapi = require('hapi')
 const cron = require('node-cron')
-const { calculateResultCountsOnSchedule } = require('./fact/service')
+const {
+  calculateResultCountsOnSchedule,
+  synthDeviceOfflineOnSchedule,
+} = require('./fact/service')
 
 const server = new Hapi.Server()
 const port = process.env.PORT || 8080
@@ -74,8 +77,10 @@ registerCronJobs()
 function registerCronJobs() {
   // calculate device result counts on startup and every hour
   calculateResultCountsOnSchedule()
+  synthDeviceOfflineOnSchedule()
   cron.schedule('0 * * * *', () => {
     calculateResultCountsOnSchedule()
+    synthDeviceOfflineOnSchedule()
   })
 }
 

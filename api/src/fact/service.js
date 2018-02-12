@@ -6,6 +6,39 @@ function calculateResultCountsOnSchedule() {
   runGeneratedFunction(calculateResultCounts, null, null, null, knex)
 }
 
+function synthDeviceOfflineOnSchedule() {
+  return runGeneratedFunction(synthDeviceOffline, knex)
+}
+
+async function synthDeviceOffline(knex) {
+  const devices = await knex
+    .select('id', 'partnerId', 'lastPingOn')
+    .from('Device')
+    .orderBy('partnerId')
+
+  let lastPartnerId
+  let deviceMaxDaysOffline
+  await Promise.all(
+    _.map(devices, async ({ id, partnerId, lastPingOn }) => {
+      if (lastPartnerId !== partnerId) {
+        deviceMaxDaysOffline = await knex('Partner')
+          .where('id', partnerId)
+          .pluck('maxDaysDeviceOffline')
+        lastPartnerId = partnerId
+      }
+      const maxLastDateOffline = subDays(new Date(), deviceMaxDaysOffline)
+
+      if (lastPingOn <= maxLastDateOffline || lastPingOn === null) {
+        await knex('FactDeviceFlag')
+          .where({
+            deviceId: id,
+          })
+          .update({ offline: true })
+      }
+    })
+  )
+}
+
 async function calculateResultCounts(deviceId, assayId, resultCategory1, knex) {
   const daysToCalculate = [1, 7, 30, 60, 90, 365, null]
 
@@ -108,4 +141,5 @@ async function calculateResultCounts(deviceId, assayId, resultCategory1, knex) {
 module.exports = {
   calculateResultCounts,
   calculateResultCountsOnSchedule,
+  synthDeviceOfflineOnSchedule,
 }

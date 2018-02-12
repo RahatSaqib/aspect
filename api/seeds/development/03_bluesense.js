@@ -37,6 +37,7 @@ async function seed(knex) {
     name: 'BluSense',
     partnerTypeId: partnerTypes.Operating.id,
     deviceLogHistoryDays: 365,
+    maxDaysDeviceOffline: 7,
   })
   const deviceTypeCategories = await rowsAsObject(knex, 'DeviceTypeCategory')
   const resultSources = await rowsAsObject(knex, 'ResultSource', 'externalId')

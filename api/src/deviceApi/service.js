@@ -113,6 +113,10 @@ function deviceApiHandler(handler, handlerOptions) {
       deviceUpdates.lastPingOn = now
       deviceUpdates.lastPingFromIp = remoteAddress
     }
+    // need to ensure device is flagged as online
+    await knex('FactDeviceFlag')
+      .where({ deviceId })
+      .update({ offline: false })
     await knex('Device')
       .where({ id: device.id })
       .update(deviceUpdates)
@@ -713,6 +717,9 @@ function createNewDevice(request, now) {
     await knex('DeviceApiKey')
       .where({ id: apiKey.id })
       .update({ deviceId, updatedOn: now })
+
+    // add device into FactDeviceFlag
+    await knex('FactDeviceFlag').insert({ deviceId, updatedOn: now })
 
     return { device }
   })
