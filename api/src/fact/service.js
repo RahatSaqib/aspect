@@ -1,4 +1,5 @@
 const { subDays } = require('date-fns')
+const _ = require('lodash')
 const { knex } = require('../db')
 const { runGeneratedFunction } = require('../util')
 
