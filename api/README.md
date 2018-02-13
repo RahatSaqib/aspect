@@ -29,6 +29,8 @@ EOT
 
 # Create an .env file and configure settings for your environment
 # using .env.example as a template
+# Make sure to uncomment following line so that knex could find it's seed directory
+# seeds.directory='./seeds/development'
 cp .env.example .env
 vim .env
 
