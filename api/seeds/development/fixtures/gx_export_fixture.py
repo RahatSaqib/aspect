@@ -67,7 +67,7 @@ q_locations = '''
         l.hours_end as hoursEnd
     from location l
         left join state s on l.state_id = s.StateId
-        left join lga lga on l.state_id = lga.LgaId
+        left join lga lga on l.lga_id = lga.LgaId
     where l.country_id=%s
     order by l.name
 '''
