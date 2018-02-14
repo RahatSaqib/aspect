@@ -275,7 +275,7 @@ export function fetchOperationalStatus(filtersParams) {
  */
 const Summary = Immutable.Record({
   requestedAtSet: Immutable.Set(),
-  summary: Immutable.Map(),
+  summary: Immutable.List(),
   resultSiteList: Immutable.List(),
   resultSummaryList: Immutable.List(),
   inventoryItemSiteList: Immutable.List(),
