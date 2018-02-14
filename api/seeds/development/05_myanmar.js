@@ -139,6 +139,11 @@ async function seed(knex) {
     partnerId,
   })
 
+  const [jobFunctionIdLabUser] = await knex('JobFunction').insert({
+    name: 'Lab User',
+    partnerId,
+  })
+
   await knex('JobFunctionPermission').insert([
     // Admin Permissions
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.demo.admin },
@@ -165,12 +170,27 @@ async function seed(knex) {
       jobFunctionId: jobFunctionIdRegionalOfficer,
       permissionId: modules.site.admin,
     },
+
+    // Lab User Permissions
+    {
+      jobFunctionId: jobFunctionIdLabUser,
+      permissionId: modules.device.admin,
+    },
+    {
+      jobFunctionId: jobFunctionIdLabUser,
+      permissionId: modules.result.admin,
+    },
+    {
+      jobFunctionId: jobFunctionIdLabUser,
+      permissionId: modules.site.admin,
+    },
   ])
 
   // Admin Job
-  const [jobIdAdmin] = await knex('Job').insert([
-    { personId: adminPersonId, jobFunctionId: jobFunctionIdAdmin },
-  ])
+  const [jobIdAdmin] = await knex('Job').insert({
+    personId: adminPersonId,
+    jobFunctionId: jobFunctionIdAdmin,
+  })
   await knex('JobContext').insert({
     jobId: jobIdAdmin,
     geographyId: myanmarGeographyId,
@@ -211,12 +231,10 @@ async function seed(knex) {
           auditFields
         )
       )
-      const [jobIdRegion] = await knex('Job').insert([
-        {
-          personId: regionPersonId,
-          jobFunctionId: jobFunctionIdRegionalOfficer,
-        },
-      ])
+      const [jobIdRegion] = await knex('Job').insert({
+        personId: regionPersonId,
+        jobFunctionId: jobFunctionIdRegionalOfficer,
+      })
       await knex('JobContext').insert({
         jobId: jobIdRegion,
         geographyId: regionId,
@@ -433,6 +451,53 @@ async function seed(knex) {
           )
         })
       )
+    })
+  )
+
+  // Lab User Jobs
+  let labNumber = 0
+  await Promise.all(
+    _.map(adminRegions, async region => {
+      labNumber += 1
+      const labUserName = `myanmar_lab${labNumber}`
+      const { siteId, geographyId } = await knex('Site as s')
+        .join('Geography as g', 's.geographyId', 'g.id')
+        .where({
+          's.partnerId': partnerId,
+          'g.countryId': countryId,
+          'g.stateId': statesByAbbreviation[region].id,
+        })
+        .first('s.id as siteId', 'g.id as geographyId')
+      const [labUserId] = await knex('User').insert({
+        name: labUserName,
+        password: bcrypt.hashSync(labUserName, saltRounds),
+        approved: 1,
+        createdOn: now,
+        lockedOut: 0,
+        failedPasswordAttempts: 0,
+      })
+      const [labPersonId] = await knex('Person').insert(
+        Object.assign(
+          {
+            userId: labUserId,
+            name: `Myanmar Lab User ${region}`,
+            lastPartnerId: partnerId,
+            lastCountryId: countryId,
+            geographyId,
+            culture: myanmarCountry.culture,
+            timezone: myanmarCountry.timezone,
+          },
+          auditFields
+        )
+      )
+      const [jobIdLab] = await knex('Job').insert({
+        personId: labPersonId,
+        jobFunctionId: jobFunctionIdLabUser,
+      })
+      await knex('JobContext').insert({
+        jobId: jobIdLab,
+        siteId,
+      })
     })
   )
 }
