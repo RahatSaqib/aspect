@@ -5,6 +5,14 @@ const _ = require('lodash')
 
 const config = require('../../src/config')
 const myanmarSites = require('./fixtures/myanmarSites.json')
+const patients = require('./fixtures/patients.json')
+
+const { addMilliseconds, addMinutes, subDays } = require('date-fns')
+
+const now = new Date()
+const millisInHour = 1000 * 60 * 60
+const millisInMinute = 1000 * 60
+const resultTimeFrameInDays = 365
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 
@@ -18,7 +26,6 @@ async function seed(knex) {
   }
 
   // Create admin user and audit fields
-  const now = new Date()
   const [adminId] = await knex('User').insert({
     name: 'myanmar_admin',
     password: bcrypt.hashSync('test07', saltRounds),
@@ -35,9 +42,27 @@ async function seed(knex) {
   }
 
   // Reuse previously seeded "static" data
-  const partnerTypes = await rowsAsObject(knex, 'PartnerType', 'name')
-  const deviceTypes = await rowsAsObject(knex, 'DeviceType', 'externalId')
-  const deviceStatuses = await rowsAsObject(knex, 'DeviceStatus', 'token')
+  const [
+    partnerTypes,
+    deviceTypes,
+    deviceStatuses,
+    assays,
+    sampleTypes,
+    resultCategories,
+    resultSources,
+    resultTypes,
+    resultWorkflowStatuses,
+  ] = await Promise.all([
+    rowsAsObject(knex, 'PartnerType', 'name'),
+    rowsAsObject(knex, 'DeviceType', 'externalId'),
+    rowsAsObject(knex, 'DeviceStatus', 'token'),
+    rowsAsObject(knex, 'Assay', 'externalId'),
+    rowsAsObject(knex, 'SampleType', 'externalId'),
+    rowsAsObject(knex, 'ResultCategory', 'externalId'),
+    rowsAsObject(knex, 'ResultSource', 'externalId'),
+    rowsAsObject(knex, 'ResultType', 'externalId'),
+    rowsAsObject(knex, 'ResultWorkflowStatus', 'externalId'),
+  ])
 
   const [partnerId] = await knex('Partner').insert({
     name: 'Myanmar',
@@ -130,7 +155,64 @@ async function seed(knex) {
     return memo
   }, {})
 
-  // every clinic has a site, GxAlert device
+  // every clinic has a site, GxAlert device and MTB/Rif+ and Ultra results
+  const possibleResults = [
+    {
+      resultText: 'Not Detected',
+      category1: resultCategories.NotDetected.id,
+      category2: null,
+    },
+    {
+      resultText: 'MTB Detected, Rif Resistance Not Detected',
+      category1: resultCategories.Detected.id,
+      category2: resultCategories.NotDetected.id,
+    },
+    {
+      resultText: 'MTB Detected, Rif Indeterminate',
+      category1: resultCategories.Detected.id,
+      category2: resultCategories.Indeterminate.id,
+    },
+    {
+      resultText: 'ERROR',
+      category1: resultCategories.Error.id,
+      category2: null,
+    },
+    {
+      resultText: 'Invalid',
+      category1: resultCategories.Invalid.id,
+      category2: null,
+    },
+  ]
+
+  const resultData = {
+    probes: {
+      probeA: 'NEG',
+      probeB: 'POS',
+      probeC: 'NO RESULT',
+      probeD: 'NEG',
+      probeE: 'POS',
+      probeSpc: 'NO RESULT',
+      qc1: 'YES',
+      qc2: 'No',
+      probeACt: 12.32,
+      probeBCt: 11.2,
+      probeCCt: 12.5,
+      probeDCt: 0.5,
+      probeECt: 1.2,
+      probeSpcCt: 5.78,
+      qc1Ct: 1,
+      qc2Ct: 0.007,
+      probeAEndpt: 1.6,
+      probeBEndpt: 2.33,
+      probeCEndpt: 457,
+      probeDEndpt: 12.43,
+      probeEEndpt: 3.14,
+      probeSpcEndpt: 8.9018,
+      qc1Endpt: 0.1234,
+      qc2Endpt: 1.22,
+    },
+  }
+
   await Promise.all(
     _.map(myanmarSites.sites, async site => {
       const { id: siteGeographyId } = await knex('Geography')
@@ -167,25 +249,113 @@ async function seed(knex) {
       const [siteId] = await knex('Site').insert(siteData)
       siteData.id = siteId
 
+      const samples = []
       await Promise.all(
-        _.map(site.devices, device =>
-          knex('Device').insert({
+        _.map(_.range(500), async i => {
+          const sample = Object.assign(
+            {},
+            {
+              externalId: `SMP-TB-${i}`,
+              collectedOn: calculateDateForResult(i, 500, millisInMinute),
+              sampleTypeId: sampleTypes.DBS.id,
+              originSiteId: siteData.id,
+            }
+          )
+
+          sample.id = await knex('Sample').insert(sample)
+          samples.push(sample)
+        })
+      )
+
+      await Promise.all(
+        _.map(site.devices, async deviceSeed => {
+          const device = {
             partnerId,
             geographyId: siteGeographyId,
             siteId,
             deviceTypeId: deviceTypes.CepheidGeneXpert.id,
             deviceStatusId: deviceStatuses.approved.id,
-            name: device.name,
-            shortname: device.shortname,
-            macAddress: device.macAddress,
-            serial: device.serial,
-            hostId: device.hostId,
-            culture: device.culture,
-            timezone: device.timezone,
-            notes: device.notes,
+            name: deviceSeed.name,
+            shortname: deviceSeed.shortname,
+            macAddress: deviceSeed.macAddress,
+            serial: deviceSeed.serial,
+            hostId: deviceSeed.hostId,
+            culture: deviceSeed.culture,
+            timezone: deviceSeed.timezone,
+            notes: deviceSeed.notes,
             lastSeenOn: now,
-          })
-        )
+          }
+          const [deviceId] = await knex('Device').insert(device)
+          device.id = deviceId
+
+          const resultMtbNumber = 1000 + Math.floor(Math.random() * 200 - 100)
+          await Promise.all(
+            _.map(_.range(resultMtbNumber), async i => {
+              const sample = samples[i % samples.length]
+              const randomDate = calculateDateForResult(
+                i,
+                resultMtbNumber,
+                6000
+              )
+
+              let j = 0
+              await Promise.all(
+                _.map(possibleResults, async result => {
+                  j += 1
+                  if (_.random(4) === 0) {
+                    resultData.resultText = result.resultText
+                    await knex('Result').insert(
+                      Object.assign({}, auditFields, {
+                        externalId: `UQTB-${i}-${j}`,
+                        assayId: assays.GxMtbRif.id,
+                        partnerId,
+                        geographyId: siteData.geographyId,
+                        siteId: siteData.id,
+                        deviceId: device.id,
+                        resultWorkflowStatusId:
+                          resultWorkflowStatuses.Ordered.id,
+                        longitude: siteData.latitude,
+                        latitude: siteData.longitude,
+                        resultSourceId: resultSources.DiagnosticDevice.id,
+                        resultTypeId: resultTypes.Patient.id,
+                        sampleId: sample.id,
+                        sampleRunNumber: `${i % 2 + 1}`,
+                        sampleGroup: `GRP-TB-${i % 5}`,
+                        resultCategory1: result.category1,
+                        resultCategory2: result.category2,
+                        resultData: JSON.stringify(resultData),
+                        assayVersion: '4',
+                        startedOn: randomDate,
+                        endedOn: addMinutes(randomDate, 100),
+                        consumableSerial: `${i}12`,
+                        consumableExpirationDate: new Date(
+                          +now + 200 * i * millisInHour
+                        ),
+                        consumableLot: `Lot ${i % 5}`,
+                        instrumentSerial: `S-1234-${i % 3}`,
+                        moduleName: 'Module A',
+                        moduleSerial: `M-1234-${i % 4}`,
+                        researchId: `R-ID-${i}`,
+                        patientData: JSON.stringify(patients[_.random(99)]),
+                        senderVersion: '4.6b',
+                        senderOperator: 'Marsha',
+                        notes: 'This is a test... result',
+                        errorCode:
+                          result.category1 === resultCategories.Error.id
+                            ? '1024'
+                            : null,
+                        errorNotes:
+                          result.category1 === resultCategories.Error.id
+                            ? 'Exceeded cycle threshold'
+                            : null,
+                      })
+                    )
+                  }
+                })
+              )
+            })
+          )
+        })
       )
     })
   )
@@ -196,4 +366,19 @@ function rowsAsObject(knex, table, column = 'name') {
     memo[row[column]] = row
     return memo
   }, {})
+}
+
+function calculateDateForResult(
+  currentResult,
+  totalResults,
+  randomMillisToAdd
+) {
+  const daysToSubtract =
+    resultTimeFrameInDays -
+    Math.ceil(currentResult / totalResults * resultTimeFrameInDays)
+
+  return addMilliseconds(
+    subDays(now, daysToSubtract),
+    _.random(randomMillisToAdd)
+  )
 }
