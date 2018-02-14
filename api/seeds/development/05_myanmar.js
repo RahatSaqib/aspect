@@ -92,6 +92,27 @@ async function seed(knex) {
     .whereNull('stateId', 'lgaId')
     .first()
 
+  const myanmarStates = await knex('Geography as g')
+    .innerJoin('State as s', 's.id', 'g.stateId')
+    .where({ 'g.countryId': countryId })
+    .whereNull('g.lgaId')
+    .select('s.id', 's.name', 's.abbreviation')
+
+  const myanmarLgas = await knex('Geography as g')
+    .innerJoin('Lga as l', 'l.id', 'g.lgaId')
+    .where({ 'g.countryId': countryId })
+    .select('l.id', 'l.name')
+
+  const statesByAbbreviation = myanmarStates.reduce((memo, state) => {
+    memo[state.abbreviation] = state
+    return memo
+  }, {})
+
+  const lgasByName = myanmarLgas.reduce((memo, lga) => {
+    memo[lga.name] = lga
+    return memo
+  }, {})
+
   // Permissions for Myanmar Admin
   const [adminPersonId] = await knex('Person').insert(
     Object.assign(
@@ -113,7 +134,13 @@ async function seed(knex) {
     partnerId,
   })
 
+  const [jobFunctionIdRegionalOfficer] = await knex('JobFunction').insert({
+    name: 'Regional Officer',
+    partnerId,
+  })
+
   await knex('JobFunctionPermission').insert([
+    // Admin Permissions
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.demo.admin },
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.device.admin },
     {
@@ -124,8 +151,23 @@ async function seed(knex) {
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.result.admin },
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.site.admin },
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.assay.admin },
+
+    // Regional Officer Permissions
+    {
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      permissionId: modules.device.admin,
+    },
+    {
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      permissionId: modules.result.admin,
+    },
+    {
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      permissionId: modules.site.admin,
+    },
   ])
 
+  // Admin Job
   const [jobIdAdmin] = await knex('Job').insert([
     { personId: adminPersonId, jobFunctionId: jobFunctionIdAdmin },
   ])
@@ -134,26 +176,53 @@ async function seed(knex) {
     geographyId: myanmarGeographyId,
   })
 
-  const myanmarStates = await knex('Geography as g')
-    .innerJoin('State as s', 's.id', 'g.stateId')
-    .where({ 'g.countryId': countryId })
-    .whereNull('g.lgaId')
-    .select('s.id', 's.name', 's.abbreviation')
-
-  const myanmarLgas = await knex('Geography as g')
-    .innerJoin('Lga as l', 'l.id', 'g.lgaId')
-    .where({ 'g.countryId': countryId })
-    .select('l.id', 'l.name')
-
-  const statesByAbbreviation = myanmarStates.reduce((memo, state) => {
-    memo[state.abbreviation] = state
-    return memo
-  }, {})
-
-  const lgasByName = myanmarLgas.reduce((memo, lga) => {
-    memo[lga.name] = lga
-    return memo
-  }, {})
+  // Regional Officer Jobs
+  const adminRegions = ['AYY', 'KCN', 'MDY']
+  let regionNumber = 0
+  await Promise.all(
+    _.map(adminRegions, async region => {
+      regionNumber += 1
+      const regionUserName = `myanmar_ro${regionNumber}`
+      const { id: regionId } = await knex('Geography')
+        .where({
+          countryId,
+          stateId: statesByAbbreviation[region].id,
+        })
+        .first()
+      const [regionUserId] = await knex('User').insert({
+        name: regionUserName,
+        password: bcrypt.hashSync(regionUserName, saltRounds),
+        approved: 1,
+        createdOn: now,
+        lockedOut: 0,
+        failedPasswordAttempts: 0,
+      })
+      const [regionPersonId] = await knex('Person').insert(
+        Object.assign(
+          {
+            userId: regionUserId,
+            name: `Myanmar Regional Officer ${region}`,
+            lastPartnerId: partnerId,
+            lastCountryId: countryId,
+            geographyId: myanmarGeographyId,
+            culture: myanmarCountry.culture,
+            timezone: myanmarCountry.timezone,
+          },
+          auditFields
+        )
+      )
+      const [jobIdRegion] = await knex('Job').insert([
+        {
+          personId: regionPersonId,
+          jobFunctionId: jobFunctionIdRegionalOfficer,
+        },
+      ])
+      await knex('JobContext').insert({
+        jobId: jobIdRegion,
+        geographyId: regionId,
+      })
+    })
+  )
 
   // every clinic has a site, GxAlert device and MTB/Rif+ and Ultra results
   const possibleResults = [
@@ -215,6 +284,7 @@ async function seed(knex) {
 
   await Promise.all(
     _.map(myanmarSites.sites, async site => {
+      const isManagedRegion = _.includes(adminRegions, site.stateAbbreviation)
       const { id: siteGeographyId } = await knex('Geography')
         .where({
           countryId,
@@ -249,23 +319,26 @@ async function seed(knex) {
       const [siteId] = await knex('Site').insert(siteData)
       siteData.id = siteId
 
+      // only create results if in managed regions
       const samples = []
-      await Promise.all(
-        _.map(_.range(500), async i => {
-          const sample = Object.assign(
-            {},
-            {
-              externalId: `SMP-TB-${i}`,
-              collectedOn: calculateDateForResult(i, 500, millisInMinute),
-              sampleTypeId: sampleTypes.DBS.id,
-              originSiteId: siteData.id,
-            }
-          )
+      if (isManagedRegion) {
+        await Promise.all(
+          _.map(_.range(500), async i => {
+            const sample = Object.assign(
+              {},
+              {
+                externalId: `SMP-TB-${i}`,
+                collectedOn: calculateDateForResult(i, 500, millisInMinute),
+                sampleTypeId: sampleTypes.DBS.id,
+                originSiteId: siteData.id,
+              }
+            )
 
-          sample.id = await knex('Sample').insert(sample)
-          samples.push(sample)
-        })
-      )
+            sample.id = await knex('Sample').insert(sample)
+            samples.push(sample)
+          })
+        )
+      }
 
       await Promise.all(
         _.map(site.devices, async deviceSeed => {
@@ -288,7 +361,10 @@ async function seed(knex) {
           const [deviceId] = await knex('Device').insert(device)
           device.id = deviceId
 
-          const resultMtbNumber = 1000 + Math.floor(Math.random() * 200 - 100)
+          // only create results if managed region
+          const resultMtbNumber = !isManagedRegion
+            ? 0
+            : 1000 + Math.floor(Math.random() * 200 - 100)
           await Promise.all(
             _.map(_.range(resultMtbNumber), async i => {
               const sample = samples[i % samples.length]
