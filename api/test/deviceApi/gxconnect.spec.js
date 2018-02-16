@@ -2734,7 +2734,7 @@ describe('Device API routes for GxConnect Devices', () => {
         )
       }))
 
-    it('should accept identify lots based on expiration date and adjust the quantity of the correct lot', () =>
+    it('should identify lots based on expiration date and adjust the quantity of the correct lot', () =>
       runTest(async knex => {
         const { basicDevicePayload, deviceAuth, site, now } = context
 
@@ -2837,7 +2837,7 @@ describe('Device API routes for GxConnect Devices', () => {
         assert.deepEqual(
           _.sortBy(
             _.map(inventoryLogs, inventoryLog => _.omit(inventoryLog, 'id')),
-            ['consumableName', 'consumableReason']
+            ['consumableName', 'consumableReason', 'expiresOn']
           ),
           _.sortBy(
             _.map([lot1, lot2], inventoryChange => ({
@@ -2856,7 +2856,7 @@ describe('Device API routes for GxConnect Devices', () => {
               adjustedFrom: setMilliseconds(inventoryChange.dateChanged, 0),
               adjustedTo: null,
             })),
-            ['consumableName', 'consumableReason']
+            ['consumableName', 'consumableReason', 'expiresOn']
           )
         )
 

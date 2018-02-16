@@ -952,6 +952,7 @@ async function updateLogs(request) {
     rawMessage: JSON.stringify(request.payload),
   })
 }
+
 addListener(RESULT_UPDATED, onResultUpdated)
 addListener(RESULT_LOGGED, onResultLogged)
 
