@@ -13,6 +13,7 @@ const {
   listWorkflowStatusTypes,
   listWorkflowStatusLog,
   exportResults,
+  showDeviceLogs,
 } = require('./service')
 const {
   validateAllGeographyFilterParams,
@@ -94,6 +95,23 @@ module.exports = [
     config: {
       description: 'Result Detail',
       notes: 'Details of a result',
+      auth: { scope: ['result:view', 'result:edit'] },
+      validate: {
+        params: {
+          resultId: Joi.string()
+            .description('Result ID')
+            .required(),
+        },
+      },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/result/device-logs/{resultId}',
+    handler: asyncHandler(showDeviceLogs),
+    config: {
+      description: 'Device Logs',
+      notes: 'Device Logs by result id',
       auth: { scope: ['result:view', 'result:edit'] },
       validate: {
         params: {

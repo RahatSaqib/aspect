@@ -25,7 +25,7 @@ const RawData = ({
       <CardText actAsExpander expandable>
         <ReadOnlyField
           label=""
-          value={<pre>{JSON.stringify(rawMessage, null, 2)}</pre>}
+          value={<pre>{JSON.stringify(rawMessage, null, 1)}</pre>}
         />
       </CardText>
     </Card>

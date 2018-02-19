@@ -30,6 +30,9 @@ export const types = {
 
   REQUEST_WORKFLOW_LOG: 'REQUEST_WORKFLOW_LOG',
   RECEIVE_WORKFLOW_LOG: 'RECEIVE_WORKFLOW_LOG',
+
+  REQUEST_RESULT_LOG: 'REQUEST_RESULT_LOG',
+  RECEIVE_RESULT_LOG: 'RECEIVE_RESULT_LOG',
 }
 /*
  * ---------------- Action Creators -----------------
@@ -114,7 +117,20 @@ function receiveSingleResult(item) {
     item,
   }
 }
+// request device log
+function requestDeviceLogs() {
+  return {
+    type: types.REQUEST_RESULT_LOG,
+  }
+}
 
+// received result logs
+function receiveResultLogs(item) {
+  return {
+    type: types.RECEIVE_RESULT_LOG,
+    item,
+  }
+}
 // load a single result with given resultId
 export function fetchSingleResult(resultId) {
   return dispatch => {
@@ -140,6 +156,26 @@ export function fetchSingleResult(resultId) {
         ),
       },
     }).then(json => dispatch(receiveSingleResult(json.data)))
+  }
+}
+
+// load a single result log with given resultId
+export function fetchResultLog(resultId) {
+  return dispatch => {
+    dispatch(requestDeviceLogs())
+
+    return aspectFetch(`/result/device-logs/${resultId}`, {
+      errorNotifications: {
+        default: errorPleaseTryAgainInAFewMinutes(
+          defineMessages({
+            title: {
+              id: 'errorResponseMessages.fetchSingleResult.GET.default.title',
+              defaultMessage: 'Error Loading Result Logs',
+            },
+          })
+        ),
+      },
+    }).then(json => dispatch(receiveResultLogs(json.data)))
   }
 }
 
@@ -385,6 +421,8 @@ export const Result = Immutable.Record({
     extraColumns: new Immutable.List(),
   }),
   workflowLog: new WorkflowLogModel(),
+  deviceLogs: new Immutable.List(),
+  loading: true,
 })
 
 const initialState = new Result()
@@ -407,6 +445,15 @@ export default function resultReducer(state = initialState, action) {
       return state.withMutations(mutState => {
         const immutItem = Immutable.fromJS(action.item)
         mutState.set('items', receiveItem(mutState.items, immutItem))
+      })
+    case types.REQUEST_RESULT_LOG:
+      return state.merge({
+        loading: true,
+      })
+    case types.RECEIVE_RESULT_LOG:
+      return state.merge({
+        deviceLogs: action.item,
+        loading: false,
       })
 
     case types.REQUEST_WORKFLOW_LOG:

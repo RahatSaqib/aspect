@@ -257,6 +257,32 @@ async function showResult(request) {
   return result.ok ? result : Boom.notFound()
 }
 
+async function showDeviceLogs(request) {
+  const result = await getDeviceLogsByResultId(request)
+  return result
+}
+
+async function getDeviceLogsByResultId(request) {
+  const { params, auth } = request
+  const dataConstraints = await getConstraints(auth.credentials)
+  const deviceLogs = await knex('DeviceLog as dl')
+    .innerJoin('Device as d', 'dl.deviceId', 'd.id')
+    .where('dl.resultId', params.resultId)
+    .orderBy('createdOn', 'desc')
+    .modify(addConstraints, dataConstraints, { device: 'd' })
+    .select(
+      'dl.createdOn',
+      'dl.checkpoint as checkPoint',
+      'dl.deviceOperationId',
+      'dl.source',
+      'dl.deviceConfigurationUpdated',
+      'dl.senderIp',
+      'dl.rawMessage'
+    )
+    .limit(50)
+  return { data: deviceLogs }
+}
+
 async function getResultByResultId(request, fields = SELECT_SHOW_FIELDS) {
   const { auth, params } = request
   const dataConstraints = await getConstraints(auth.credentials)
@@ -287,18 +313,6 @@ async function getResultByResultId(request, fields = SELECT_SHOW_FIELDS) {
     ;[data] = results
     data.resultData = JSON.parse(data.resultData)
     data.patientData = JSON.parse(data.patientData)
-    data.deviceLogs = await knex('DeviceLog as dl')
-      .where('dl.resultId', params.resultId)
-      .orderBy('createdOn', 'desc')
-      .select(
-        'dl.createdOn',
-        'dl.checkpoint as checkPoint',
-        'dl.deviceOperationId',
-        'dl.source',
-        'dl.deviceConfigurationUpdated',
-        'dl.senderIp',
-        'dl.rawMessage'
-      )
 
     data.assay = await knex('Assay as a')
       .where('a.id', data.assayId)
@@ -621,5 +635,6 @@ module.exports = {
   listWorkflowStatusTypes,
   listWorkflowStatusLog,
   exportResults,
+  showDeviceLogs,
   createUniqueIdForResult,
 }

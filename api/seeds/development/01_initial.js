@@ -2526,7 +2526,49 @@ async function seed(knex) {
                   id: siteData.externalId,
                 },
                 result: {
-                  data: {},
+                  data: Object.assign({}, auditFields, {
+                    externalId: `UQTB-${i}-${j}`,
+                    assayId: assayGeneXpertMtbRifId,
+                    partnerId: partnerOneId,
+                    geographyId: siteData.geographyId,
+                    siteId: siteData.id,
+                    deviceId: device.id,
+                    resultWorkflowStatusId: ordered,
+                    longitude: -81.581222,
+                    latitude: 28.419348,
+                    resultSourceId: resultSourceDiagnosticId,
+                    resultTypeId: resultTypePatientId,
+                    sampleId: sample.id,
+                    sampleRunNumber: `${i % 2 + 1}`,
+                    sampleGroup: `GRP-HIV-${i % 5}`,
+                    resultCategory1: result.category1,
+                    resultCategory2: result.category2,
+                    resultData,
+                    assayVersion: '4',
+                    startedOn: randomDate,
+                    endedOn: addMinutes(randomDate, 100),
+                    consumableSerial: `${i}12`,
+                    consumableExpirationDate: new Date(
+                      +now + 200 * i * millisInHour
+                    ),
+                    consumableLot: `Lot ${i % 5}`,
+                    instrumentSerial: `S-1234-${i % 3}`,
+                    moduleName: 'Module A',
+                    moduleSerial: `M-1234-${i % 4}`,
+                    researchId: `R-ID-${i}`,
+                    patientData: patients[_.random(99)],
+                    senderVersion: '4.6b',
+                    senderOperator: 'Marsha',
+                    notes: 'This is a test... result',
+                    errorCode:
+                      result.category1 === resultCategoryErrorId
+                        ? '1024'
+                        : null,
+                    errorNotes:
+                      result.category1 === resultCategoryErrorId
+                        ? 'Exceeded cycle threshold'
+                        : null,
+                  }),
                 },
               },
             }),

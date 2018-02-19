@@ -15,8 +15,6 @@ import { Card, CardHeader, CardText } from 'material-ui/Card'
 import IconButton from 'material-ui/IconButton'
 import Share from 'material-ui/svg-icons/social/share'
 import Checkbox from 'material-ui/Checkbox'
-import Dialog from 'material-ui/Dialog'
-import FlatButton from 'material-ui/FlatButton'
 
 // Our own imports
 import { Unit } from '../../components/pureGrids'
@@ -34,7 +32,7 @@ import {
 import ResultWorkflowStatusLog from './WorkflowLog'
 
 import { ReadOnlyField } from '../../components/shared/ReadOnlyFields'
-import RawData from './RawData'
+import RawDataDialog from './RawDataDialog'
 import styles from './ResultDetail.css'
 
 const cssClasses = classnames.bind(styles)
@@ -200,6 +198,7 @@ const enhance = compose(
       return {
         result,
         workflowLog: state.result.workflowLog,
+        deviceLogs: state.result.deviceLogs,
       }
     },
     dispatch =>
@@ -318,13 +317,6 @@ export class ResultDetail extends PureComponent {
     this.setState({ isShown: !this.state.isShown })
   }
 
-  dialogActions() {
-    const actions = [
-      <FlatButton label="Close" primary onClick={this.handleToggle} />,
-    ]
-    return actions
-  }
-
   handleFetchResult = () => {
     this.props.fetchSingleResult(this.props.match.params.resultId)
 
@@ -360,43 +352,24 @@ export class ResultDetail extends PureComponent {
   }
 
   renderRawResult() {
-    const deviceLogs = this.props.result.get('deviceLogs').toJS()
-    const { intl: { formatMessage } } = this.props
+    const { intl: { formatMessage }, deviceLogs, match } = this.props
+    const logs = deviceLogs.toJS()
 
     return (
       <div>
         <Link to="#" onClick={this.handleToggle}>
           Raw Result
         </Link>
-        <Dialog
-          actions={this.dialogActions()}
-          open={this.state.isShown}
-          onRequestClose={this.handleToggle}
-          title="Raw Result Data"
-          autoScrollBodyContent
-        >
-          {deviceLogs.length !== 0 ? (
-            deviceLogs.map((log, index) => {
-              const createdOn = new Date(log.createdOn)
-              const rawMessage = JSON.parse(log.rawMessage)
-              return (
-                <RawData
-                  createdOn={createdOn}
-                  createdOnLabel={messages.createdOnLabel}
-                  formatMessage={formatMessage}
-                  index={index}
-                  key={createdOn}
-                  rawMessage={rawMessage}
-                />
-              )
-            })
-          ) : (
-            <div style={{ paddingTop: '10px' }}>
-              {' '}
-              No log entries found for this result{' '}
-            </div>
-          )}
-        </Dialog>
+        {this.state.isShown && (
+          <RawDataDialog
+            formatMessage={formatMessage}
+            handleToggle={this.handleToggle}
+            isShown={this.state.isShown}
+            logs={logs}
+            match={match}
+            createdOnLabel={messages.createdOnLabel}
+          />
+        )}
       </div>
     )
   }
