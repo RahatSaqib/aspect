@@ -516,7 +516,7 @@ async function createDeviceApiContext(request, handlerOptions) {
 
   // Add Device Log if requested
   if (deviceLogType !== DEVICE_LOG_TYPE_NONE) {
-    const { checkpoint } = request.query
+    const { checkpoint, resultId } = request.query
     const offset = +(request.query.offset || 0)
 
     if (existingDeviceAndData == null) {
@@ -533,7 +533,7 @@ async function createDeviceApiContext(request, handlerOptions) {
       }
       // Checkpoint not specified, return last one for this device
       const lastDeviceLogQuery = knex('DeviceLog as dl')
-        .where({ deviceId: device.id })
+        .where({ 'dl.deviceId': device.id })
         .whereNotNull('dl.checkpoint')
         .orderBy('dl.id', 'desc')
         .first(
@@ -545,12 +545,22 @@ async function createDeviceApiContext(request, handlerOptions) {
         )
       if (deviceLogType === DEVICE_LOG_TYPE_RESULT) {
         lastDeviceLogQuery.modify(addDeviceLogResultConstraints)
+        // if checkpoint not specified but externalId specified
+        if (resultId) {
+          lastDeviceLogQuery.where({ 'r.externalId': resultId })
+        }
       } else if (deviceLogType === DEVICE_LOG_TYPE_OPERATION) {
         lastDeviceLogQuery.whereNotNull('dl.deviceOperationId')
       }
       const lastDeviceLog = await lastDeviceLogQuery
       context.deviceLog = lastDeviceLog || null
-      return { context }
+
+      return {
+        error:
+          lastDeviceLog == null &&
+          Boom.notFound('Cannot find specified resultId'),
+        context,
+      }
     }
 
     // Calculate min log date configured by Partner
@@ -561,6 +571,7 @@ async function createDeviceApiContext(request, handlerOptions) {
       context,
       checkpoint,
       offset,
+      resultId,
       deviceLogType,
       historyCutoff
     )
@@ -570,15 +581,18 @@ async function createDeviceApiContext(request, handlerOptions) {
         context,
         checkpoint,
         offset,
+        resultId,
         deviceLogType,
         null
       )
       return {
         error:
           deviceLogNoHistory == null
-            ? Boom.notFound('Cannot find specified checkpoint and offset')
+            ? Boom.notFound(
+                'Cannot find specified checkpoint and offset or resultId'
+              )
             : Boom.forbidden(
-                'Not authorized to view specified checkpoint and offset'
+                'Not authorized to view specified checkpoint and offset or resultId'
               ),
       }
     }
@@ -758,33 +772,40 @@ async function getDeviceLog(
   context,
   checkpoint,
   offset,
+  resultId,
   deviceLogType,
   historyCutoff
 ) {
   const { device } = context
 
   // Find device log at checkpoint or latest
-  const initialDeviceLogQuery = knex('DeviceLog')
+  const initialDeviceLogQuery = knex('DeviceLog as dl')
     .where({
-      deviceId: device.id,
-      checkpoint,
+      'dl.deviceId': device.id,
+      'dl.checkpoint': checkpoint,
     })
     // If we are querying future data, must use minimum device log for
     // this device with same checkpoint so we don't miss data interleaving
     // from other sources while data with checkpoint is being posted
     .orderBy('id', offset > 0 ? 'asc' : 'desc')
   if (historyCutoff != null) {
-    initialDeviceLogQuery.where('createdOn', '>=', historyCutoff)
+    initialDeviceLogQuery.where('dl.createdOn', '>=', historyCutoff)
+  }
+  if (resultId) {
+    initialDeviceLogQuery
+      .join('Result as r', 'dl.resultId', 'r.id')
+      .where({ 'r.externalId': resultId })
   }
   const initialDeviceLog = await initialDeviceLogQuery.first(
-    'id',
-    'checkpoint',
-    'deviceId',
-    'resultId',
-    'deviceOperationId',
-    'createdOn',
-    'source'
+    'dl.id',
+    'dl.checkpoint',
+    'dl.deviceId',
+    'dl.resultId',
+    'dl.deviceOperationId',
+    'dl.createdOn',
+    'dl.source'
   )
+
   if (!initialDeviceLog) {
     // No log found at checkpoint for this device
     return null

@@ -519,6 +519,7 @@ module.exports = [
         query: {
           checkpoint: Joi.string(),
           offset: Joi.string(),
+          resultId: Joi.string(),
         },
       },
       response: {

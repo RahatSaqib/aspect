@@ -3468,6 +3468,23 @@ describe('Device Result API routes', () => {
               const lastResultId = await getLastResultId(knex, deviceLab.id) // eslint-disable-line no-await-in-loop
               await setResultAsDeliverableAndApprove(context, lastResultId) // eslint-disable-line no-await-in-loop
             }
+            // resultId filter
+            await server
+              .get(`${devicePostResultPath}?resultId=${externalIdStart}-0`)
+              .set('Authorization', deviceAuth)
+              .then(res => {
+                assert.equal(res.status, 200)
+                assert.typeOf(res.body, 'Object')
+              })
+
+            await server
+              .get(`${devicePostResultPath}?resultId=doesNotExist`)
+              .set('Authorization', deviceAuth)
+              .then(res => {
+                assert.equal(res.status, 404)
+                assert.typeOf(res.body, 'Object')
+                assert.equal(res.body.message, 'Cannot find specified resultId')
+              })
 
             // Start a sync operation with a new check point
             const device1315Key = await context.createApiKey(knex)
