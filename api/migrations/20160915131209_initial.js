@@ -1142,7 +1142,8 @@ async function up(knex) {
     widget.string('titleI18nKey').notNullable()
     widget.string('subTitle').notNullable()
     widget.string('subTitleI18nKey')
-    widget.string('sqlForIndicator', 2000)
+    widget.string('sqlForIndicator', 2000).notNullable()
+    widget.string('formula', 300).notNullable()
     widget.string('link').notNullable()
     widget
       .integer('sortOrder')

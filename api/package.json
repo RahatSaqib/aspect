@@ -31,7 +31,9 @@
     "functions": 0,
     "branches": 0,
     "exclude": [
-      "**/*.test.js", "**/*.test.jsx", "test/*"
+      "**/*.test.js",
+      "**/*.test.jsx",
+      "test/*"
     ],
     "reporter": [
       "lcov"
@@ -88,6 +90,7 @@
     "jsonwebtoken": "^7.4.3",
     "knex": "^0.13.0",
     "lodash": "^4.17.4",
+    "mathjs": "^3.20.2",
     "mysql": "^2.14.1",
     "node-base64-image": "^1.0.4",
     "node-cron": "^1.2.1",

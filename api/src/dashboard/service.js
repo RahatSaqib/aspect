@@ -1,4 +1,5 @@
 const _ = require('lodash')
+const math = require('mathjs')
 const { knex } = require('../db')
 const {
   getConstraints,
@@ -70,7 +71,7 @@ function getTableAlias(sql) {
 
 function getSqlBuilder(sql) {
   const sqlRegExp = new RegExp(
-    /\bselect\s+(.*?)\s+from\s+(.*?)\s*((?:(?:LEFT|RIGHT)?\s+(?:INNER|OUTER)?\s+join)\s+(?:.*?))?\s*(?:(?:\s+where)\s(.*?))?\s*(?:(?:\s+having)\s(.*?))?$\b/gi
+    /\bselect\s+(.*?)\s+from\s+(.*?)\s*((?:(?:LEFT|RIGHT)?\s+(?:INNER|OUTER)?\s+join)\s+(?:.*?))?\s*(?:(?:\s+where)\s+(.*?))?\s*(?:(?:\s+having)\s(.*?))?$/gi
   )
   let match
   let sqlBuilder
@@ -94,7 +95,6 @@ function getSqlBuilder(sql) {
 
 async function summaryDashboard(request) {
   const { auth } = request
-
   // get data constraints
   const dataConstraints = await getConstraints(auth.credentials)
 
@@ -104,15 +104,29 @@ async function summaryDashboard(request) {
   const data = await Promise.all(
     widgets.map(async widget => {
       const tableAlias = getTableAlias(widget.sqlForIndicator)
-      const sqlBuilder = getSqlBuilder(widget.sqlForIndicator)
-      const count = sqlBuilder
-        ? await sqlBuilder.modify(addConstraints, dataConstraints, tableAlias)
-        : 0
-
+      const sqlStrings = _.split(widget.sqlForIndicator, ';')
+      const qryResult = await Promise.all(
+        sqlStrings.map(async sql => {
+          const sqlBuilder = getSqlBuilder(sql)
+          const count = sqlBuilder
+            ? await sqlBuilder.modify(
+                addConstraints,
+                dataConstraints,
+                tableAlias
+              )
+            : [0]
+          return count[0]
+        })
+      )
+      const variables = _.reduce(
+        qryResult,
+        (acc, count) => _.assign(acc, count),
+        {}
+      )
       return _.set(
-        _.omit(widget, ['sqlForIndicator', 'sortOrder']),
+        _.omit(widget, ['sqlForIndicator', 'formula', 'sortOrder']),
         'count',
-        count && count.length === 1 ? _.values(count[0])[0] : 0
+        math.eval(widget.formula, variables)
       )
     })
   )
