@@ -126,6 +126,14 @@ async function seed(knex) {
     hasResults: 0,
   })
 
+  const [deviceTypeCategoryInformationSystem] = await knex(
+    'DeviceTypeCategory'
+  ).insert({
+    name: 'Information System',
+    hasConnectivity: 0,
+    hasResults: 1,
+  })
+
   // define configurationData object
   const geneXpertConfigurationDataSchema = JSON.stringify({
     requirePrinter: {
@@ -339,6 +347,14 @@ async function seed(knex) {
     deviceTypeCategoryId: deviceTypeCategoryLab,
     configurationDataSchema: commCareConfigurationDataSchema,
     deviceOperationSchema: commCareDeviceOperationSchema,
+  })
+
+  await knex('DeviceType').insert({
+    externalId: 'GxAlert',
+    name: 'GxAlert',
+    manufacturer: 'SystemOne',
+    plugin: 'gxalert',
+    deviceTypeCategoryId: deviceTypeCategoryInformationSystem,
   })
 
   // DeviceStatus

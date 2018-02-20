@@ -11,8 +11,7 @@ const {
 } = require('../../../inventory/service')
 const { getDevice } = require('../../../device/service')
 
-async function postProcessAddDeviceOperation(context) {
-  const { payload, device, now } = context
+async function postProcessAddDeviceOperation({ device, payload, now }) {
   const inventoryChanges = _.get(payload, 'data.inventoryChanges')
   if (!_.isEmpty(inventoryChanges)) {
     const sortedInventoryChanges = _.sortBy(
@@ -35,7 +34,7 @@ async function postProcessAddDeviceOperation(context) {
               (matchingConsumableReason.reset &&
                 inventoryChange.quantity < 0) ||
               matchingConsumableReason.decrease
-            const changeFunction = isDecrease
+            const adjustInventory = isDecrease
               ? decreaseInventory
               : increaseInventory
             if (!device.siteId && device.id) {
@@ -64,7 +63,7 @@ async function postProcessAddDeviceOperation(context) {
             changeParameters.operation = isDecrease
               ? 'remove from GxConnect'
               : 'add from GxConnect'
-            await changeFunction(changeParameters)
+            await adjustInventory(changeParameters)
           }
         }
       })

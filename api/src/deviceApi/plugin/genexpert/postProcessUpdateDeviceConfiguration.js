@@ -1,8 +1,12 @@
 const _ = require('lodash')
 const { updateDeviceDetails } = require('../../device')
 
-async function postProcessUpdateDeviceConfiguration(context) {
-  const { knex, payload, device: { id: deviceId }, now } = context
+async function postProcessUpdateDeviceConfiguration({
+  knex,
+  payload,
+  device: { id: deviceId },
+  now,
+}) {
   if (!_.isEmpty(_.get(payload, 'data'))) {
     const {
       data: { macAddress, hostId, culture, timezone, instrumentSerialNumbers },

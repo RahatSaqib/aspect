@@ -31,12 +31,19 @@ const plugins = {
     onResultLogged: require('./malawi/onResultLogged'),
   },
   gxconnect: {
-    preProcessCreateDevice: require('./gxconnect/preProcessCreateDevice'),
-    preProcessAddDeviceData: require('./gxconnect/preProcessAddDeviceData'),
-    preProcessUpdateDeviceConfiguration: require('./gxconnect/preProcessUpdateDeviceConfiguration'),
-    postProcessUpdateDeviceConfiguration: require('./gxconnect/postProcessUpdateDeviceConfiguration'),
-    postProcessAddDeviceOperation: require('./gxconnect/postProcessAddDeviceOperation'),
-    preProcessMergeResult: require('./gxconnect/preProcessMergeResult'),
+    preProcessCreateDevice: require('./genexpert/gxconnect_plugin/preProcessCreateDevice'),
+    preProcessAddDeviceData: require('./genexpert/preProcessAddDeviceData'),
+    preProcessUpdateDeviceConfiguration: require('./genexpert/preProcessUpdateDeviceConfiguration'),
+    postProcessUpdateDeviceConfiguration: require('./genexpert/postProcessUpdateDeviceConfiguration'),
+    postProcessAddDeviceOperation: require('./genexpert/postProcessAddDeviceOperation'),
+    preProcessMergeResult: require('./genexpert/preProcessMergeResult'),
+  },
+  gxalert: {
+    preProcessAddDeviceData: require('./genexpert/gxalert_plugin/preProcessAddDeviceData'),
+    preProcessUpdateDeviceConfiguration: require('./genexpert/preProcessUpdateDeviceConfiguration'),
+    postProcessUpdateDeviceConfiguration: require('./genexpert/postProcessUpdateDeviceConfiguration'),
+    postProcessAddDeviceOperation: require('./genexpert/postProcessAddDeviceOperation'),
+    preProcessMergeResult: require('./genexpert/preProcessMergeResult'),
   },
 }
 
@@ -55,7 +62,7 @@ async function loadPlugin(pluginName, actionName) {
 
 /**
  * Device data is received for an API Key that does not yet have a device
- * Tranform the payload to new payload  to process in format expected by
+ * Transform the payload to new payload  to process in format expected by
  * Device API
  *
  * This can be used, for example, to set default device type or name
