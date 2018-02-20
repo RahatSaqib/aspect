@@ -7,13 +7,13 @@ async function preProcessAddDeviceData(context) {
   // Get or create source device
   // GxAlert forwards data from source devices.
   // We want the context's device to be replaced with the source device
-  const geneXpertDevice = getOrCreateDevice(knex, payload, device, now)
-  if (_.isEmpty(geneXpertDevice)) {
+  const geneXpertDevice = await getOrCreateDevice(knex, payload, device, now)
+  if (!_.isEmpty(geneXpertDevice)) {
     context.device = geneXpertDevice
   } else {
-    throw Boom.notFound(`Cannot find or create device with the provided data`)
+    throw Boom.badData(`Cannot find or create device with the provided data`)
   }
-  return genexpertPreProcessAddDeviceData(context)
+  await genexpertPreProcessAddDeviceData(context)
 }
 
 async function getOrCreateDevice(knex, payload, gxAlertDevice, now) {
@@ -65,8 +65,9 @@ async function getOrCreateDevice(knex, payload, gxAlertDevice, now) {
     ;[countryAbbreviation] = await knex('device as d')
       .innerJoin('Geography as g', 'd.geographyId', 'g.id')
       .innerJoin('Country as c', 'g.countryId', 'c.id')
-      .where('d.id = ?', gxAlertDevice.id)
+      .where('d.id', gxAlertDevice.id)
       .select('c.abbreviation')
+      .map(row => row.abbreviation)
   }
   const deviceNameFromGxAlert = _.get(payload, 'name', null)
   const matchingDevices = await deviceQueryStart
@@ -75,14 +76,14 @@ async function getOrCreateDevice(knex, payload, gxAlertDevice, now) {
     .innerJoin('Country as c', 'g.countryId', 'c.id')
     .where(function() {
       if (macAddress) {
-        this.where('d.macAddress = ?', macAddress)
+        this.where('d.macAddress', macAddress)
       }
     })
     .orWhere(function() {
       if (countryAbbreviation && deviceNameFromGxAlert) {
-        this.where('c.abbreviation = ?', countryAbbreviation)
+        this.where('c.abbreviation', countryAbbreviation)
         this.andWhere(function() {
-          this.where('d.name= ?', deviceNameFromGxAlert)
+          this.where('d.name', deviceNameFromGxAlert)
           this.orWhere('d.shortName', deviceNameFromGxAlert)
         })
       }
@@ -124,7 +125,6 @@ async function getOrCreateDevice(knex, payload, gxAlertDevice, now) {
       createdOn: now,
       updatedOn: now,
     })
-
     await knex('DeviceStatusLog').insert({
       deviceId,
       deviceStatusId: deviceStatus.id,
@@ -134,7 +134,7 @@ async function getOrCreateDevice(knex, payload, gxAlertDevice, now) {
     })
     return deviceQueryStart
       .clone()
-      .where('d.id = ?', deviceId)
+      .where('d.id', deviceId)
       .first(deviceQuerySelectFields)
   } else if (matchingDevices.length === 1) {
     return matchingDevices[0]
@@ -224,6 +224,7 @@ async function getOrCreateSite(
   } else {
     throw Boom.notFound('Cannot determine which site this request came from')
   }
+  return site
 }
 
 module.exports = preProcessAddDeviceData
