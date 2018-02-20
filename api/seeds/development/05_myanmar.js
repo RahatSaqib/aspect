@@ -156,6 +156,11 @@ async function seed(knex) {
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.result.admin },
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.site.admin },
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.assay.admin },
+    {
+      jobFunctionId: jobFunctionIdAdmin,
+      permissionId: modules.inventory.admin,
+    },
+    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.task.admin },
 
     // Regional Officer Permissions
     {
@@ -170,6 +175,14 @@ async function seed(knex) {
       jobFunctionId: jobFunctionIdRegionalOfficer,
       permissionId: modules.site.admin,
     },
+    {
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      permissionId: modules.inventory.admin,
+    },
+    {
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      permissionId: modules.task.admin,
+    },
 
     // Lab User Permissions
     {
@@ -183,6 +196,14 @@ async function seed(knex) {
     {
       jobFunctionId: jobFunctionIdLabUser,
       permissionId: modules.site.admin,
+    },
+    {
+      jobFunctionId: jobFunctionIdLabUser,
+      permissionId: modules.inventory.admin,
+    },
+    {
+      jobFunctionId: jobFunctionIdLabUser,
+      permissionId: modules.task.admin,
     },
   ])
 
@@ -302,7 +323,6 @@ async function seed(knex) {
 
   await Promise.all(
     _.map(myanmarSites.sites, async site => {
-      const isManagedRegion = _.includes(adminRegions, site.stateAbbreviation)
       const { id: siteGeographyId } = await knex('Geography')
         .where({
           countryId,
@@ -339,24 +359,22 @@ async function seed(knex) {
 
       // only create results if in managed regions
       const samples = []
-      if (isManagedRegion) {
-        await Promise.all(
-          _.map(_.range(500), async i => {
-            const sample = Object.assign(
-              {},
-              {
-                externalId: `SMP-TB-${i}`,
-                collectedOn: calculateDateForResult(i, 500, millisInMinute),
-                sampleTypeId: sampleTypes.DBS.id,
-                originSiteId: siteData.id,
-              }
-            )
+      await Promise.all(
+        _.map(_.range(500), async i => {
+          const sample = Object.assign(
+            {},
+            {
+              externalId: `SMP-TB-${i}`,
+              collectedOn: calculateDateForResult(i, 500, millisInMinute),
+              sampleTypeId: sampleTypes.DBS.id,
+              originSiteId: siteData.id,
+            }
+          )
 
-            sample.id = await knex('Sample').insert(sample)
-            samples.push(sample)
-          })
-        )
-      }
+          sample.id = await knex('Sample').insert(sample)
+          samples.push(sample)
+        })
+      )
 
       await Promise.all(
         _.map(site.devices, async deviceSeed => {
@@ -380,9 +398,7 @@ async function seed(knex) {
           device.id = deviceId
 
           // only create results if managed region
-          const resultMtbNumber = !isManagedRegion
-            ? 0
-            : 1000 + Math.floor(Math.random() * 200 - 100)
+          const resultMtbNumber = 1000 + Math.floor(Math.random() * 200 - 100)
           await Promise.all(
             _.map(_.range(resultMtbNumber), async i => {
               const sample = samples[i % samples.length]

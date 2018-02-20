@@ -66,17 +66,19 @@ q_locations = '''
         l.hours_start as hoursStart,
         l.hours_end as hoursEnd
     from location l
-        left join state s on l.state_id = s.StateId
-        left join lga lga on l.lga_id = lga.LgaId
+        join state s on l.state_id = s.StateId
+        join lga lga on l.lga_id = lga.LgaId
     where l.country_id=%s
+        and s.Abbreviation in ('AYY', 'KCN', 'MDY')
+        and l.city is not null
     order by l.name
 '''
 
 q_devices = '''
     select
         dep.LocationId as locationId,
-        dep.Description as name,
-        dep.ShortName as shortname,
+        concat(l.city, ' GeneXpert') as name,
+        '' as shortname,
         dep.ComputerCulture as culture,
         dep.ComputerTimeZoneId as timezone,
         dep.Notes as notes,
@@ -85,7 +87,11 @@ q_devices = '''
         d.ComputerId as macAddress
     from device d
         join deployment dep on d.CurrentDeploymentId=dep.DeploymentId
+        join location l on l.id=dep.LocationId
+        join state s on l.state_id = s.StateId
         where dep.CountryId=%s
+            and s.Abbreviation in ('AYY', 'KCN', 'MDY')
+            and l.city is not null
         order by locationId, name
 '''
 

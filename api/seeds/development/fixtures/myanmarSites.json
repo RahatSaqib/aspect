@@ -1,156 +1,16 @@
 {
   "sites": [
     {
-      "city": "Bago", 
-      "devices": [
-        {
-          "culture": null, 
-          "hostId": "HostId-383", 
-          "macAddress": null, 
-          "name": "Deployment 350", 
-          "notes": null, 
-          "serial": "DevSerial-383", 
-          "shortname": "ShortName 350", 
-          "timezone": null
-        }
-      ], 
-      "externalId": "Bago TBC", 
-      "hoursEnd": 1020, 
-      "hoursStart": 540, 
-      "latitude": 96.25, 
-      "lgaName": "Bago", 
-      "longitude": 18.25, 
-      "name": "Bago TBC", 
-      "shortname": "Bago TBC", 
-      "stateAbbreviation": "BGO", 
-      "street1": null, 
-      "street2": null, 
-      "timezoneId": "Myanmar Standard Time", 
-      "zip": null
-    }, 
-    {
-      "city": null, 
-      "devices": [
-        {
-          "culture": "en-US", 
-          "hostId": "HostId-1008", 
-          "macAddress": "MAC10081008", 
-          "name": "Deployment 1849", 
-          "notes": null, 
-          "serial": "DevSerial-1008", 
-          "shortname": "ShortName 1849", 
-          "timezone": "Myanmar Standard Time"
-        }
-      ], 
-      "externalId": "Bedded 1000", 
-      "hoursEnd": null, 
-      "hoursStart": null, 
-      "latitude": null, 
-      "lgaName": "Detkhina", 
-      "longitude": null, 
-      "name": "Bedded 1000", 
-      "shortname": "Bedded 1000", 
-      "stateAbbreviation": "NPW", 
-      "street1": null, 
-      "street2": null, 
-      "timezoneId": "Myanmar Standard Time", 
-      "zip": null
-    }, 
-    {
-      "city": null, 
-      "devices": [
-        {
-          "culture": null, 
-          "hostId": "HostId-733", 
-          "macAddress": null, 
-          "name": "Deployment 1560", 
-          "notes": null, 
-          "serial": "DevSerial-733", 
-          "shortname": "ShortName 1560", 
-          "timezone": null
-        }
-      ], 
-      "externalId": "Bhamaw TBC", 
-      "hoursEnd": null, 
-      "hoursStart": null, 
-      "latitude": null, 
-      "lgaName": "Bhamo", 
-      "longitude": null, 
-      "name": "Bhamaw TBC", 
-      "shortname": "Bhamaw TBC", 
-      "stateAbbreviation": "KCN", 
-      "street1": null, 
-      "street2": null, 
-      "timezoneId": "Myanmar Standard Time", 
-      "zip": null
-    }, 
-    {
-      "city": "Dawei", 
-      "devices": [
-        {
-          "culture": null, 
-          "hostId": "HostId-427", 
-          "macAddress": null, 
-          "name": "Deployment 394", 
-          "notes": null, 
-          "serial": "DevSerial-427", 
-          "shortname": "ShortName 394", 
-          "timezone": null
-        }
-      ], 
-      "externalId": "Dawei TBC", 
-      "hoursEnd": null, 
-      "hoursStart": null, 
-      "latitude": 98.815399, 
-      "lgaName": "Dawei", 
-      "longitude": 12.5817, 
-      "name": "Dawei TBC", 
-      "shortname": "Dawei TBC", 
-      "stateAbbreviation": "TNI", 
-      "street1": null, 
-      "street2": null, 
-      "timezoneId": "Myanmar Standard Time", 
-      "zip": null
-    }, 
-    {
-      "city": "Hakha", 
-      "devices": [
-        {
-          "culture": null, 
-          "hostId": "HostId-423", 
-          "macAddress": null, 
-          "name": "Deployment 390", 
-          "notes": null, 
-          "serial": "DevSerial-423", 
-          "shortname": "ShortName 390", 
-          "timezone": null
-        }
-      ], 
-      "externalId": "Hakha TBC", 
-      "hoursEnd": null, 
-      "hoursStart": null, 
-      "latitude": 93.616997, 
-      "lgaName": "Hakha", 
-      "longitude": 22.65, 
-      "name": "Hakha TBC", 
-      "shortname": "Hakha TBC", 
-      "stateAbbreviation": "CHN", 
-      "street1": null, 
-      "street2": null, 
-      "timezoneId": "Myanmar Standard Time", 
-      "zip": null
-    }, 
-    {
       "city": "Hinthada", 
       "devices": [
         {
           "culture": null, 
           "hostId": "HostId-397", 
           "macAddress": null, 
-          "name": "Deployment 364", 
+          "name": "Hinthada GeneXpert", 
           "notes": null, 
           "serial": "DevSerial-397", 
-          "shortname": "ShortName 364", 
+          "shortname": "", 
           "timezone": null
         }
       ], 
@@ -169,358 +29,16 @@
       "zip": null
     }, 
     {
-      "city": null, 
-      "devices": [
-        {
-          "culture": null, 
-          "hostId": "HostId-385", 
-          "macAddress": null, 
-          "name": "Deployment 352", 
-          "notes": null, 
-          "serial": "DevSerial-385", 
-          "shortname": "ShortName 352", 
-          "timezone": null
-        }
-      ], 
-      "externalId": "Hpa An TBC", 
-      "hoursEnd": null, 
-      "hoursStart": null, 
-      "latitude": 97.75, 
-      "lgaName": "Hpa-An", 
-      "longitude": 17.5, 
-      "name": "Hpa An TBC", 
-      "shortname": "Hpa An TBC", 
-      "stateAbbreviation": "KYN", 
-      "street1": null, 
-      "street2": null, 
-      "timezoneId": "Myanmar Standard Time", 
-      "zip": null
-    }, 
-    {
-      "city": "Kalaw", 
-      "devices": [
-        {
-          "culture": "en-US", 
-          "hostId": "HostId-1086", 
-          "macAddress": "MAC10861086", 
-          "name": "Deployment 1926", 
-          "notes": null, 
-          "serial": "DevSerial-1086", 
-          "shortname": "ShortName 1926", 
-          "timezone": "Pacific Standard Time"
-        }
-      ], 
-      "externalId": "Kalaw TBC", 
-      "hoursEnd": null, 
-      "hoursStart": null, 
-      "latitude": 96.564003, 
-      "lgaName": "Taunggyi", 
-      "longitude": 20.635, 
-      "name": "Kalaw TBC", 
-      "shortname": "Kalaw TBC", 
-      "stateAbbreviation": "SHN", 
-      "street1": null, 
-      "street2": null, 
-      "timezoneId": "Myanmar Standard Time", 
-      "zip": null
-    }, 
-    {
-      "city": "Kale", 
-      "devices": [
-        {
-          "culture": null, 
-          "hostId": "HostId-419", 
-          "macAddress": null, 
-          "name": "Deployment 386", 
-          "notes": null, 
-          "serial": "DevSerial-419", 
-          "shortname": "ShortName 386", 
-          "timezone": null
-        }
-      ], 
-      "externalId": "Kalay TBC", 
-      "hoursEnd": 960, 
-      "hoursStart": 540, 
-      "latitude": null, 
-      "lgaName": "Kale", 
-      "longitude": null, 
-      "name": "Kalay TBC", 
-      "shortname": "Kalay TBC", 
-      "stateAbbreviation": "SGG", 
-      "street1": null, 
-      "street2": null, 
-      "timezoneId": "Myanmar Standard Time", 
-      "zip": null
-    }, 
-    {
-      "city": "Kawthoung", 
-      "devices": [
-        {
-          "culture": null, 
-          "hostId": "HostId-1125", 
-          "macAddress": null, 
-          "name": "Deployment 1963", 
-          "notes": "Kawthoung TBC@111111", 
-          "serial": "DevSerial-1125", 
-          "shortname": "ShortName 1963", 
-          "timezone": null
-        }
-      ], 
-      "externalId": "Kawthaung TBC", 
-      "hoursEnd": null, 
-      "hoursStart": null, 
-      "latitude": 98.550003, 
-      "lgaName": "Kawthoung", 
-      "longitude": 9.982, 
-      "name": "Kawthaung TBC", 
-      "shortname": "Kawthaung TBC", 
-      "stateAbbreviation": "TNI", 
-      "street1": null, 
-      "street2": null, 
-      "timezoneId": "Eastern Standard Time", 
-      "zip": null
-    }, 
-    {
-      "city": "Kengtung", 
-      "devices": [
-        {
-          "culture": null, 
-          "hostId": "HostId-388", 
-          "macAddress": null, 
-          "name": "Deployment 355", 
-          "notes": "kyawwin@250131662", 
-          "serial": "DevSerial-388", 
-          "shortname": "ShortName 355", 
-          "timezone": null
-        }
-      ], 
-      "externalId": "Kyaing Tong TBC", 
-      "hoursEnd": null, 
-      "hoursStart": null, 
-      "latitude": 98.0, 
-      "lgaName": "Kengtung", 
-      "longitude": 22.0, 
-      "name": "Kyaing Tong TBC", 
-      "shortname": "Kyaing Tong TBC", 
-      "stateAbbreviation": "SHN", 
-      "street1": null, 
-      "street2": null, 
-      "timezoneId": "Myanmar Standard Time", 
-      "zip": null
-    }, 
-    {
-      "city": "Kyaukpyu", 
-      "devices": [
-        {
-          "culture": "en-US", 
-          "hostId": "HostId-1095", 
-          "macAddress": "MAC10951095", 
-          "name": "Deployment 1935", 
-          "notes": "@09421739897", 
-          "serial": "DevSerial-1095", 
-          "shortname": "ShortName 1935", 
-          "timezone": "Pacific Standard Time"
-        }
-      ], 
-      "externalId": "Kyaukpyu TBC", 
-      "hoursEnd": 930, 
-      "hoursStart": 570, 
-      "latitude": 94.25, 
-      "lgaName": "Kyaukpyu", 
-      "longitude": 19.0, 
-      "name": "Kyaukpyu TBC", 
-      "shortname": "Kyaukpyu TBC", 
-      "stateAbbreviation": "RKE", 
-      "street1": null, 
-      "street2": null, 
-      "timezoneId": "Myanmar Standard Time", 
-      "zip": null
-    }, 
-    {
-      "city": "Insein", 
-      "devices": [], 
-      "externalId": "NTRL", 
-      "hoursEnd": 960, 
-      "hoursStart": 540, 
-      "latitude": null, 
-      "lgaName": "Yangon (North)", 
-      "longitude": null, 
-      "name": "Laboratory Central Store (NTRL)", 
-      "shortname": "NTRL", 
-      "stateAbbreviation": "YGN", 
-      "street1": null, 
-      "street2": null, 
-      "timezoneId": "Myanmar Standard Time", 
-      "zip": null
-    }, 
-    {
-      "city": "Lashio", 
-      "devices": [
-        {
-          "culture": null, 
-          "hostId": "HostId-416", 
-          "macAddress": null, 
-          "name": "Deployment 383", 
-          "notes": "LSOTBC@08225535", 
-          "serial": "DevSerial-416", 
-          "shortname": "ShortName 383", 
-          "timezone": null
-        }
-      ], 
-      "externalId": "Lashio TBC", 
-      "hoursEnd": 900, 
-      "hoursStart": 570, 
-      "latitude": 98.0, 
-      "lgaName": "Lashio", 
-      "longitude": 22.0, 
-      "name": "Lashio TBC", 
-      "shortname": "Lashio TBC", 
-      "stateAbbreviation": "SHN", 
-      "street1": null, 
-      "street2": null, 
-      "timezoneId": "Myanmar Standard Time", 
-      "zip": null
-    }, 
-    {
-      "city": "Latha", 
-      "devices": [
-        {
-          "culture": null, 
-          "hostId": "HostId-196", 
-          "macAddress": null, 
-          "name": "Deployment 161", 
-          "notes": null, 
-          "serial": "DevSerial-196", 
-          "shortname": "ShortName 161", 
-          "timezone": null
-        }
-      ], 
-      "externalId": "Latha No-2", 
-      "hoursEnd": null, 
-      "hoursStart": null, 
-      "latitude": 96.167, 
-      "lgaName": "Yangon (West)", 
-      "longitude": 17.0, 
-      "name": "Latha No-2 (UNOPS)", 
-      "shortname": "Latha No-2", 
-      "stateAbbreviation": "YGN", 
-      "street1": null, 
-      "street2": null, 
-      "timezoneId": "Myanmar Standard Time", 
-      "zip": "11181"
-    }, 
-    {
-      "city": "Latha", 
-      "devices": [
-        {
-          "culture": null, 
-          "hostId": "HostId-566", 
-          "macAddress": null, 
-          "name": "Deployment 528", 
-          "notes": null, 
-          "serial": "DevSerial-566", 
-          "shortname": "ShortName 528", 
-          "timezone": null
-        }
-      ], 
-      "externalId": "Latha XVI", 
-      "hoursEnd": 1020, 
-      "hoursStart": 540, 
-      "latitude": 96.167, 
-      "lgaName": "Yangon (West)", 
-      "longitude": 17.0, 
-      "name": "Latha XVI", 
-      "shortname": "Latha XVI", 
-      "stateAbbreviation": "YGN", 
-      "street1": null, 
-      "street2": null, 
-      "timezoneId": "Myanmar Standard Time", 
-      "zip": null
-    }, 
-    {
-      "city": "Insein", 
-      "devices": [], 
-      "externalId": "LM Sub-Main Store (NTRL)", 
-      "hoursEnd": null, 
-      "hoursStart": null, 
-      "latitude": null, 
-      "lgaName": "Yangon (North)", 
-      "longitude": null, 
-      "name": "LM Sub-Main Store (NTRL)", 
-      "shortname": null, 
-      "stateAbbreviation": "YGN", 
-      "street1": null, 
-      "street2": null, 
-      "timezoneId": null, 
-      "zip": null
-    }, 
-    {
-      "city": "Loikaw", 
-      "devices": [
-        {
-          "culture": null, 
-          "hostId": "HostId-415", 
-          "macAddress": null, 
-          "name": "Deployment 382", 
-          "notes": null, 
-          "serial": "DevSerial-415", 
-          "shortname": "ShortName 382", 
-          "timezone": null
-        }
-      ], 
-      "externalId": "Loikaw TBC", 
-      "hoursEnd": null, 
-      "hoursStart": null, 
-      "latitude": 97.5, 
-      "lgaName": "Loikaw", 
-      "longitude": 19.25, 
-      "name": "Loikaw TBC", 
-      "shortname": "Loikaw TBC", 
-      "stateAbbreviation": "KYH", 
-      "street1": null, 
-      "street2": null, 
-      "timezoneId": "Myanmar Standard Time", 
-      "zip": null
-    }, 
-    {
-      "city": "Magway", 
-      "devices": [
-        {
-          "culture": null, 
-          "hostId": "HostId-411", 
-          "macAddress": null, 
-          "name": "Deployment 378", 
-          "notes": "theinwin@43009226", 
-          "serial": "DevSerial-411", 
-          "shortname": "ShortName 378", 
-          "timezone": null
-        }
-      ], 
-      "externalId": "Magway TBC", 
-      "hoursEnd": null, 
-      "hoursStart": null, 
-      "latitude": 94.75, 
-      "lgaName": "Magway", 
-      "longitude": 20.5, 
-      "name": "Magway TBC", 
-      "shortname": "Magway TBC", 
-      "stateAbbreviation": "MGY", 
-      "street1": null, 
-      "street2": null, 
-      "timezoneId": "Myanmar Standard Time", 
-      "zip": null
-    }, 
-    {
       "city": "Maubin", 
       "devices": [
         {
           "culture": null, 
           "hostId": "HostId-399", 
           "macAddress": null, 
-          "name": "Deployment 366", 
+          "name": "Maubin GeneXpert", 
           "notes": "theintun@250320871", 
           "serial": "DevSerial-399", 
-          "shortname": "ShortName 366", 
+          "shortname": "", 
           "timezone": null
         }
       ], 
@@ -539,72 +57,16 @@
       "zip": null
     }, 
     {
-      "city": null, 
-      "devices": [
-        {
-          "culture": null, 
-          "hostId": "HostId-1079", 
-          "macAddress": "MAC10791079", 
-          "name": "Deployment 1919", 
-          "notes": null, 
-          "serial": "DevSerial-1079", 
-          "shortname": "ShortName 1919", 
-          "timezone": null
-        }
-      ], 
-      "externalId": "Maungdaw TBC", 
-      "hoursEnd": null, 
-      "hoursStart": null, 
-      "latitude": 94.25, 
-      "lgaName": "Maungdaw", 
-      "longitude": 19.0, 
-      "name": "Maungdaw TBC", 
-      "shortname": "Maungdaw TBC", 
-      "stateAbbreviation": "RKE", 
-      "street1": null, 
-      "street2": null, 
-      "timezoneId": "Myanmar Standard Time", 
-      "zip": null
-    }, 
-    {
-      "city": "Mawlamyine", 
-      "devices": [
-        {
-          "culture": null, 
-          "hostId": "HostId-382", 
-          "macAddress": null, 
-          "name": "Deployment 349", 
-          "notes": null, 
-          "serial": "DevSerial-382", 
-          "shortname": "ShortName 349", 
-          "timezone": null
-        }
-      ], 
-      "externalId": "Mawlamyine TBC", 
-      "hoursEnd": 960, 
-      "hoursStart": 540, 
-      "latitude": -4.407191, 
-      "lgaName": "Mawlamyine", 
-      "longitude": 53.295773, 
-      "name": "Mawlamyine TBC", 
-      "shortname": "Mawlamyine TBC", 
-      "stateAbbreviation": "MON", 
-      "street1": null, 
-      "street2": null, 
-      "timezoneId": "Myanmar Standard Time", 
-      "zip": null
-    }, 
-    {
       "city": "Meikthila", 
       "devices": [
         {
           "culture": "en-US", 
           "hostId": "HostId-609", 
           "macAddress": "MAC609609", 
-          "name": "Deployment 571", 
+          "name": "Meikthila GeneXpert", 
           "notes": null, 
           "serial": "DevSerial-609", 
-          "shortname": "ShortName 571", 
+          "shortname": "", 
           "timezone": "Pacific Standard Time"
         }
       ], 
@@ -629,10 +91,10 @@
           "culture": null, 
           "hostId": "HostId-278", 
           "macAddress": null, 
-          "name": "Deployment 243", 
+          "name": "Chanayethazan 1 GeneXpert", 
           "notes": null, 
           "serial": "DevSerial-278", 
-          "shortname": "ShortName 243", 
+          "shortname": "", 
           "timezone": null
         }
       ], 
@@ -657,10 +119,10 @@
           "culture": null, 
           "hostId": "HostId-279", 
           "macAddress": null, 
-          "name": "Deployment 244", 
+          "name": "Chanayethazan 2 GeneXpert", 
           "notes": null, 
           "serial": "DevSerial-279", 
-          "shortname": "ShortName 244", 
+          "shortname": "", 
           "timezone": null
         }
       ], 
@@ -685,10 +147,10 @@
           "culture": "en-US", 
           "hostId": "HostId-1047", 
           "macAddress": "MAC10471047", 
-          "name": "Deployment 1888", 
+          "name": "Mohnyin GeneXpert", 
           "notes": null, 
           "serial": "DevSerial-1047", 
-          "shortname": "ShortName 1888", 
+          "shortname": "", 
           "timezone": "Pacific Standard Time"
         }
       ], 
@@ -707,72 +169,16 @@
       "zip": null
     }, 
     {
-      "city": "Monywa", 
-      "devices": [
-        {
-          "culture": null, 
-          "hostId": "HostId-418", 
-          "macAddress": null, 
-          "name": "Deployment 385", 
-          "notes": null, 
-          "serial": "DevSerial-418", 
-          "shortname": "ShortName 385", 
-          "timezone": null
-        }
-      ], 
-      "externalId": "Monywa TBC", 
-      "hoursEnd": null, 
-      "hoursStart": null, 
-      "latitude": null, 
-      "lgaName": "Monywa", 
-      "longitude": null, 
-      "name": "Monywa TBC", 
-      "shortname": "Monywa TBC", 
-      "stateAbbreviation": "SGG", 
-      "street1": null, 
-      "street2": null, 
-      "timezoneId": "Myanmar Standard Time", 
-      "zip": null
-    }, 
-    {
-      "city": "Muse", 
-      "devices": [
-        {
-          "culture": "en-US", 
-          "hostId": "HostId-981", 
-          "macAddress": "MAC981981", 
-          "name": "Deployment 1825", 
-          "notes": " Old Card Number: 9964041365", 
-          "serial": "DevSerial-981", 
-          "shortname": "ShortName 1825", 
-          "timezone": "Myanmar Standard Time"
-        }
-      ], 
-      "externalId": "Muse GH", 
-      "hoursEnd": 960, 
-      "hoursStart": 540, 
-      "latitude": null, 
-      "lgaName": "Muse", 
-      "longitude": null, 
-      "name": "Muse GH", 
-      "shortname": "Muse GH", 
-      "stateAbbreviation": "SHN", 
-      "street1": "Lasho-Muse Rd", 
-      "street2": null, 
-      "timezoneId": "Myanmar Standard Time", 
-      "zip": null
-    }, 
-    {
       "city": "Myaungmya", 
       "devices": [
         {
           "culture": null, 
           "hostId": "HostId-395", 
           "macAddress": null, 
-          "name": "Deployment 362", 
+          "name": "Myaungmya GeneXpert", 
           "notes": "thetwai@401527645", 
           "serial": "DevSerial-395", 
-          "shortname": "ShortName 362", 
+          "shortname": "", 
           "timezone": null
         }
       ], 
@@ -791,72 +197,16 @@
       "zip": null
     }, 
     {
-      "city": "Myawaddy", 
-      "devices": [
-        {
-          "culture": null, 
-          "hostId": "HostId-548", 
-          "macAddress": null, 
-          "name": "Deployment 513", 
-          "notes": null, 
-          "serial": "DevSerial-548", 
-          "shortname": "ShortName 513", 
-          "timezone": null
-        }
-      ], 
-      "externalId": "Myawaddy TBC", 
-      "hoursEnd": null, 
-      "hoursStart": null, 
-      "latitude": 97.75, 
-      "lgaName": "Myawaddy", 
-      "longitude": 17.5, 
-      "name": "Myawaddy TBC", 
-      "shortname": "Myawaddy TBC", 
-      "stateAbbreviation": "KYN", 
-      "street1": null, 
-      "street2": null, 
-      "timezoneId": "Myanmar Standard Time", 
-      "zip": null
-    }, 
-    {
-      "city": "Myeik", 
-      "devices": [
-        {
-          "culture": "en-US", 
-          "hostId": "HostId-663", 
-          "macAddress": "MAC663663", 
-          "name": "Deployment 1489", 
-          "notes": null, 
-          "serial": "DevSerial-663", 
-          "shortname": "ShortName 1489", 
-          "timezone": "Pacific Standard Time"
-        }
-      ], 
-      "externalId": "Myeik TBC", 
-      "hoursEnd": null, 
-      "hoursStart": null, 
-      "latitude": 99.0, 
-      "lgaName": "Myeik", 
-      "longitude": 13.0, 
-      "name": "Myeik TBC", 
-      "shortname": "Myeik TBC", 
-      "stateAbbreviation": "TNI", 
-      "street1": null, 
-      "street2": null, 
-      "timezoneId": "Myanmar Standard Time", 
-      "zip": null
-    }, 
-    {
       "city": "Myingyan", 
       "devices": [
         {
           "culture": null, 
           "hostId": "HostId-360", 
           "macAddress": null, 
-          "name": "Deployment 326", 
+          "name": "Myingyan GeneXpert", 
           "notes": null, 
           "serial": "DevSerial-360", 
-          "shortname": "ShortName 326", 
+          "shortname": "", 
           "timezone": null
         }
       ], 
@@ -875,145 +225,16 @@
       "zip": null
     }, 
     {
-      "city": null, 
-      "devices": [
-        {
-          "culture": null, 
-          "hostId": "HostId-771", 
-          "macAddress": null, 
-          "name": "Deployment 1598", 
-          "notes": "Xpert Check Date: 21-Jan-2016, Pass Module No. 644812", 
-          "serial": "DevSerial-771", 
-          "shortname": "ShortName 1598", 
-          "timezone": null
-        }
-      ], 
-      "externalId": "Myitkyina TBC", 
-      "hoursEnd": 960, 
-      "hoursStart": 570, 
-      "latitude": 97.5, 
-      "lgaName": "Myitkyina", 
-      "longitude": 26.0, 
-      "name": "Myitkyina TBC", 
-      "shortname": "Myitkyina TBC", 
-      "stateAbbreviation": "KCN", 
-      "street1": null, 
-      "street2": null, 
-      "timezoneId": "Myanmar Standard Time", 
-      "zip": null
-    }, 
-    {
-      "city": "Pyinmana", 
-      "devices": [], 
-      "externalId": "Naypyitaw TB Store", 
-      "hoursEnd": 960, 
-      "hoursStart": 600, 
-      "latitude": null, 
-      "lgaName": "Detkhina", 
-      "longitude": null, 
-      "name": "Naypyitaw TB Store", 
-      "shortname": "Naypyitaw TB Store", 
-      "stateAbbreviation": "NPW", 
-      "street1": null, 
-      "street2": null, 
-      "timezoneId": "Myanmar Standard Time", 
-      "zip": null
-    }, 
-    {
-      "city": "North Okkalapa", 
-      "devices": [
-        {
-          "culture": null, 
-          "hostId": "HostId-168", 
-          "macAddress": null, 
-          "name": "Deployment 160", 
-          "notes": null, 
-          "serial": "DevSerial-168", 
-          "shortname": "ShortName 160", 
-          "timezone": null
-        }
-      ], 
-      "externalId": "N-Okkalapa 2", 
-      "hoursEnd": null, 
-      "hoursStart": null, 
-      "latitude": 96.169998, 
-      "lgaName": "Yangon (East)", 
-      "longitude": 17.0, 
-      "name": "North Okkalapa (FIND)", 
-      "shortname": "N-Okkalapa 2", 
-      "stateAbbreviation": "YGN", 
-      "street1": null, 
-      "street2": null, 
-      "timezoneId": "Myanmar Standard Time", 
-      "zip": "11181"
-    }, 
-    {
-      "city": "North Okkalapa", 
-      "devices": [
-        {
-          "culture": null, 
-          "hostId": "HostId-246", 
-          "macAddress": null, 
-          "name": "Deployment 210", 
-          "notes": "Computer Nam: Cepheid-3031JB9", 
-          "serial": "DevSerial-246", 
-          "shortname": "ShortName 210", 
-          "timezone": null
-        }
-      ], 
-      "externalId": "N-Okkalapa", 
-      "hoursEnd": null, 
-      "hoursStart": null, 
-      "latitude": 96.167, 
-      "lgaName": "Yangon (East)", 
-      "longitude": 17.0, 
-      "name": "North Okkalapa TBC", 
-      "shortname": "N-Okkalapa", 
-      "stateAbbreviation": "YGN", 
-      "street1": null, 
-      "street2": null, 
-      "timezoneId": "Myanmar Standard Time", 
-      "zip": null
-    }, 
-    {
-      "city": "Pakokku", 
-      "devices": [
-        {
-          "culture": null, 
-          "hostId": "HostId-413", 
-          "macAddress": null, 
-          "name": "Deployment 380", 
-          "notes": "tintin@33079574", 
-          "serial": "DevSerial-413", 
-          "shortname": "ShortName 380", 
-          "timezone": null
-        }
-      ], 
-      "externalId": "Pakokku TBC", 
-      "hoursEnd": null, 
-      "hoursStart": null, 
-      "latitude": null, 
-      "lgaName": "Pakokku", 
-      "longitude": null, 
-      "name": "Pakokku TBC", 
-      "shortname": "Pakokku TBC", 
-      "stateAbbreviation": "MGY", 
-      "street1": null, 
-      "street2": null, 
-      "timezoneId": "Myanmar Standard Time", 
-      "zip": null
-    }, 
-    {
       "city": "Pathein", 
       "devices": [
         {
           "culture": null, 
           "hostId": "HostId-394", 
           "macAddress": null, 
-          "name": "Deployment 361", 
+          "name": "Pathein GeneXpert", 
           "notes": null, 
           "serial": "DevSerial-394", 
-          "shortname": "ShortName 361", 
+          "shortname": "", 
           "timezone": null
         }
       ], 
@@ -1038,10 +259,10 @@
           "culture": null, 
           "hostId": "HostId-359", 
           "macAddress": null, 
-          "name": "Deployment 325", 
+          "name": "Patheingyi 1 GeneXpert", 
           "notes": null, 
           "serial": "DevSerial-359", 
-          "shortname": "ShortName 325", 
+          "shortname": "", 
           "timezone": null
         }
       ], 
@@ -1054,387 +275,6 @@
       "name": "Patheingyi TBH", 
       "shortname": "Patheingyi TBH", 
       "stateAbbreviation": "MDY", 
-      "street1": null, 
-      "street2": null, 
-      "timezoneId": "Myanmar Standard Time", 
-      "zip": null
-    }, 
-    {
-      "city": null, 
-      "devices": [
-        {
-          "culture": null, 
-          "hostId": "HostId-401", 
-          "macAddress": null, 
-          "name": "Deployment 368", 
-          "notes": "myatsu@43118382", 
-          "serial": "DevSerial-401", 
-          "shortname": "ShortName 368", 
-          "timezone": null
-        }
-      ], 
-      "externalId": "Pyapon TBC", 
-      "hoursEnd": null, 
-      "hoursStart": null, 
-      "latitude": 95.0, 
-      "lgaName": "Pyapon", 
-      "longitude": 17.0, 
-      "name": "Pyapon TBC", 
-      "shortname": "Pyapon TBC", 
-      "stateAbbreviation": "AYY", 
-      "street1": null, 
-      "street2": null, 
-      "timezoneId": "Myanmar Standard Time", 
-      "zip": null
-    }, 
-    {
-      "city": "Pyay", 
-      "devices": [
-        {
-          "culture": null, 
-          "hostId": "HostId-378", 
-          "macAddress": null, 
-          "name": "Deployment 345", 
-          "notes": "myintmg@423665091", 
-          "serial": "DevSerial-378", 
-          "shortname": "ShortName 345", 
-          "timezone": null
-        }
-      ], 
-      "externalId": "Pyay TBC", 
-      "hoursEnd": null, 
-      "hoursStart": null, 
-      "latitude": 96.25, 
-      "lgaName": "Pyay", 
-      "longitude": 18.25, 
-      "name": "Pyay TBC", 
-      "shortname": "Pyay TBC", 
-      "stateAbbreviation": "BGO", 
-      "street1": null, 
-      "street2": null, 
-      "timezoneId": "Myanmar Standard Time", 
-      "zip": null
-    }, 
-    {
-      "city": "Pyinmana ", 
-      "devices": [
-        {
-          "culture": null, 
-          "hostId": "HostId-386", 
-          "macAddress": null, 
-          "name": "Deployment 353", 
-          "notes": null, 
-          "serial": "DevSerial-386", 
-          "shortname": "ShortName 353", 
-          "timezone": null
-        }
-      ], 
-      "externalId": "Pyinmana TBC", 
-      "hoursEnd": 960, 
-      "hoursStart": 600, 
-      "latitude": 96.522003, 
-      "lgaName": "Detkhina", 
-      "longitude": 20.33, 
-      "name": "Pyinmana TBC", 
-      "shortname": "Pyinmana TBC", 
-      "stateAbbreviation": "NPW", 
-      "street1": null, 
-      "street2": null, 
-      "timezoneId": "Myanmar Standard Time", 
-      "zip": null
-    }, 
-    {
-      "city": "Mingalardon", 
-      "devices": [
-        {
-          "culture": null, 
-          "hostId": "HostId-627", 
-          "macAddress": null, 
-          "name": "Deployment 1449", 
-          "notes": null, 
-          "serial": "DevSerial-627", 
-          "shortname": "ShortName 1449", 
-          "timezone": null
-        }
-      ], 
-      "externalId": "SH-Mingaladon", 
-      "hoursEnd": null, 
-      "hoursStart": null, 
-      "latitude": 96.098, 
-      "lgaName": "Yangon (North)", 
-      "longitude": 16.924, 
-      "name": "SH-Mingaladon", 
-      "shortname": "SH-Mingaladon", 
-      "stateAbbreviation": "YGN", 
-      "street1": null, 
-      "street2": null, 
-      "timezoneId": "Myanmar Standard Time", 
-      "zip": null
-    }, 
-    {
-      "city": "North Okkalapa", 
-      "devices": [
-        {
-          "culture": null, 
-          "hostId": "HostId-358", 
-          "macAddress": null, 
-          "name": "Deployment 324", 
-          "notes": null, 
-          "serial": "DevSerial-358", 
-          "shortname": "ShortName 324", 
-          "timezone": null
-        }
-      ], 
-      "externalId": "SH-WBG", 
-      "hoursEnd": null, 
-      "hoursStart": null, 
-      "latitude": 96.167, 
-      "lgaName": "Yangon (East)", 
-      "longitude": 17.0, 
-      "name": "SH-Waibargi", 
-      "shortname": "SH-WBG", 
-      "stateAbbreviation": "YGN", 
-      "street1": null, 
-      "street2": null, 
-      "timezoneId": "Myanmar Standard Time", 
-      "zip": null
-    }, 
-    {
-      "city": "Shwe Bo", 
-      "devices": [
-        {
-          "culture": null, 
-          "hostId": "HostId-768", 
-          "macAddress": null, 
-          "name": "Deployment 1595", 
-          "notes": null, 
-          "serial": "DevSerial-768", 
-          "shortname": "ShortName 1595", 
-          "timezone": null
-        }
-      ], 
-      "externalId": "Shwebo TBC", 
-      "hoursEnd": null, 
-      "hoursStart": null, 
-      "latitude": null, 
-      "lgaName": "Shwebo", 
-      "longitude": null, 
-      "name": "Shwebo TBC", 
-      "shortname": "Shwebo TBC", 
-      "stateAbbreviation": "SGG", 
-      "street1": null, 
-      "street2": null, 
-      "timezoneId": "Myanmar Standard Time", 
-      "zip": null
-    }, 
-    {
-      "city": "Sittwe", 
-      "devices": [
-        {
-          "culture": null, 
-          "hostId": "HostId-396", 
-          "macAddress": null, 
-          "name": "Deployment 363", 
-          "notes": null, 
-          "serial": "DevSerial-396", 
-          "shortname": "ShortName 363", 
-          "timezone": null
-        }
-      ], 
-      "externalId": "Sittwe TBC", 
-      "hoursEnd": null, 
-      "hoursStart": null, 
-      "latitude": 94.25, 
-      "lgaName": "Sittwe", 
-      "longitude": 19.0, 
-      "name": "Sittwe TBC", 
-      "shortname": "Sittwe TBC", 
-      "stateAbbreviation": "RKE", 
-      "street1": null, 
-      "street2": null, 
-      "timezoneId": "Myanmar Standard Time", 
-      "zip": null
-    }, 
-    {
-      "city": null, 
-      "devices": [
-        {
-          "culture": "en-US", 
-          "hostId": "SystemOne LIS 2", 
-          "macAddress": "MAC00155D016703", 
-          "name": "SystemOne LIS 2", 
-          "notes": null, 
-          "serial": "GeneXpert46a", 
-          "shortname": "SystemOne LIS 2", 
-          "timezone": "Eastern Standard Time"
-        }
-      ], 
-      "externalId": "SystemOne LIS 2", 
-      "hoursEnd": null, 
-      "hoursStart": null, 
-      "latitude": null, 
-      "lgaName": null, 
-      "longitude": null, 
-      "name": "SystemOne LIS 2", 
-      "shortname": "SystemOne LIS 2", 
-      "stateAbbreviation": null, 
-      "street1": null, 
-      "street2": null, 
-      "timezoneId": "W. Central Africa Standard Time", 
-      "zip": null
-    }, 
-    {
-      "city": "Taunggyi", 
-      "devices": [
-        {
-          "culture": null, 
-          "hostId": "HostId-1111", 
-          "macAddress": null, 
-          "name": "Deployment 381", 
-          "notes": "+95 9976801326", 
-          "serial": "DevSerial-1111", 
-          "shortname": "ShortName 381", 
-          "timezone": null
-        }
-      ], 
-      "externalId": "Taunggyi TBC", 
-      "hoursEnd": 900, 
-      "hoursStart": 570, 
-      "latitude": null, 
-      "lgaName": "Taunggyi", 
-      "longitude": null, 
-      "name": "Taunggyi TBC", 
-      "shortname": "Taunggyi TBC", 
-      "stateAbbreviation": "SHN", 
-      "street1": null, 
-      "street2": null, 
-      "timezoneId": "Myanmar Standard Time", 
-      "zip": null
-    }, 
-    {
-      "city": null, 
-      "devices": [], 
-      "externalId": "Taunggyi TBC2", 
-      "hoursEnd": null, 
-      "hoursStart": null, 
-      "latitude": 98.0, 
-      "lgaName": "Taunggyi", 
-      "longitude": 22.0, 
-      "name": "Taunggyi TBC2", 
-      "shortname": "Taunggyi TBC2", 
-      "stateAbbreviation": "SHN", 
-      "street1": null, 
-      "street2": null, 
-      "timezoneId": "Myanmar Standard Time", 
-      "zip": null
-    }, 
-    {
-      "city": "Taungoo", 
-      "devices": [
-        {
-          "culture": null, 
-          "hostId": "HostId-766", 
-          "macAddress": null, 
-          "name": "Deployment 1593", 
-          "notes": null, 
-          "serial": "DevSerial-766", 
-          "shortname": "ShortName 1593", 
-          "timezone": null
-        }
-      ], 
-      "externalId": "Taungoo TBC", 
-      "hoursEnd": null, 
-      "hoursStart": null, 
-      "latitude": null, 
-      "lgaName": "Taungoo", 
-      "longitude": null, 
-      "name": "Taungoo TBC", 
-      "shortname": "Taungoo TBC", 
-      "stateAbbreviation": "BGO", 
-      "street1": null, 
-      "street2": null, 
-      "timezoneId": "Myanmar Standard Time", 
-      "zip": null
-    }, 
-    {
-      "city": null, 
-      "devices": [
-        {
-          "culture": null, 
-          "hostId": "HostId-924", 
-          "macAddress": null, 
-          "name": "Deployment 1765", 
-          "notes": null, 
-          "serial": "DevSerial-924", 
-          "shortname": "ShortName 1765", 
-          "timezone": null
-        }
-      ], 
-      "externalId": "Thandwe TBC", 
-      "hoursEnd": null, 
-      "hoursStart": null, 
-      "latitude": 94.25, 
-      "lgaName": "Thandwe", 
-      "longitude": 19.0, 
-      "name": "Thandwe TBC", 
-      "shortname": "Thandwe TBC", 
-      "stateAbbreviation": "RKE", 
-      "street1": null, 
-      "street2": null, 
-      "timezoneId": "Myanmar Standard Time", 
-      "zip": null
-    }, 
-    {
-      "city": "Thanlyin", 
-      "devices": [
-        {
-          "culture": null, 
-          "hostId": "HostId-242", 
-          "macAddress": null, 
-          "name": "Deployment 206", 
-          "notes": "User: thanwin Password: 420169163", 
-          "serial": "DevSerial-242", 
-          "shortname": "ShortName 206", 
-          "timezone": null
-        }
-      ], 
-      "externalId": "Thanlyin", 
-      "hoursEnd": null, 
-      "hoursStart": null, 
-      "latitude": 96.167, 
-      "lgaName": "Yangon (South)", 
-      "longitude": 17.0, 
-      "name": "Thanlyin TBC", 
-      "shortname": "Thanlyin", 
-      "stateAbbreviation": "YGN", 
-      "street1": null, 
-      "street2": null, 
-      "timezoneId": "Myanmar Standard Time", 
-      "zip": null
-    }, 
-    {
-      "city": null, 
-      "devices": [
-        {
-          "culture": null, 
-          "hostId": "HostId-762", 
-          "macAddress": null, 
-          "name": "Deployment 1589", 
-          "notes": null, 
-          "serial": "DevSerial-762", 
-          "shortname": "ShortName 1589", 
-          "timezone": null
-        }
-      ], 
-      "externalId": "Thaton TBC", 
-      "hoursEnd": null, 
-      "hoursStart": null, 
-      "latitude": -4.407, 
-      "lgaName": "Thaton", 
-      "longitude": 53.296001, 
-      "name": "Thaton TBC", 
-      "shortname": "Thaton TBC", 
-      "stateAbbreviation": "MON", 
       "street1": null, 
       "street2": null, 
       "timezoneId": "Myanmar Standard Time", 
@@ -1464,10 +304,10 @@
           "culture": null, 
           "hostId": "HostId-277", 
           "macAddress": null, 
-          "name": "Deployment 242", 
+          "name": "Patheingyi 2 GeneXpert", 
           "notes": null, 
           "serial": "DevSerial-277", 
-          "shortname": "ShortName 242", 
+          "shortname": "", 
           "timezone": null
         }
       ], 
@@ -1483,135 +323,6 @@
       "street1": null, 
       "street2": null, 
       "timezoneId": "Myanmar Standard Time", 
-      "zip": null
-    }, 
-    {
-      "city": null, 
-      "devices": [
-        {
-          "culture": null, 
-          "hostId": "HostId-613", 
-          "macAddress": null, 
-          "name": "Deployment 575", 
-          "notes": null, 
-          "serial": "DevSerial-613", 
-          "shortname": "ShortName 575", 
-          "timezone": null
-        }
-      ], 
-      "externalId": "UMTBC XVI", 
-      "hoursEnd": null, 
-      "hoursStart": null, 
-      "latitude": 121.400002, 
-      "lgaName": "Mandalay", 
-      "longitude": 12.517, 
-      "name": "UMTBC XVI", 
-      "shortname": "UMTBC XVI", 
-      "stateAbbreviation": "MDY", 
-      "street1": null, 
-      "street2": null, 
-      "timezoneId": "Myanmar Standard Time", 
-      "zip": null
-    }, 
-    {
-      "city": "Insein", 
-      "devices": [
-        {
-          "culture": null, 
-          "hostId": "HostId-490", 
-          "macAddress": null, 
-          "name": "Deployment 454", 
-          "notes": null, 
-          "serial": "DevSerial-490", 
-          "shortname": "ShortName 454", 
-          "timezone": null
-        }
-      ], 
-      "externalId": "UTI XVI", 
-      "hoursEnd": null, 
-      "hoursStart": null, 
-      "latitude": 96.269501, 
-      "lgaName": "Yangon (North)", 
-      "longitude": 17.151199, 
-      "name": "UTI XVI", 
-      "shortname": "UTI XVI", 
-      "stateAbbreviation": "YGN", 
-      "street1": null, 
-      "street2": null, 
-      "timezoneId": "Myanmar Standard Time", 
-      "zip": null
-    }, 
-    {
-      "city": "Insein", 
-      "devices": [
-        {
-          "culture": null, 
-          "hostId": "HostId-255", 
-          "macAddress": null, 
-          "name": "Deployment 220", 
-          "notes": "CepheidB7F18V1", 
-          "serial": "DevSerial-255", 
-          "shortname": "ShortName 220", 
-          "timezone": null
-        }
-      ], 
-      "externalId": "UTI-1", 
-      "hoursEnd": null, 
-      "hoursStart": null, 
-      "latitude": 96.269997, 
-      "lgaName": "Yangon (North)", 
-      "longitude": 17.150999, 
-      "name": "UTI-1 (UNOPS)", 
-      "shortname": "UTI-1", 
-      "stateAbbreviation": "YGN", 
-      "street1": null, 
-      "street2": null, 
-      "timezoneId": "Myanmar Standard Time", 
-      "zip": null
-    }, 
-    {
-      "city": "Insein", 
-      "devices": [
-        {
-          "culture": null, 
-          "hostId": "HostId-256", 
-          "macAddress": null, 
-          "name": "Deployment 221", 
-          "notes": "Cepheid-3031J9X", 
-          "serial": "DevSerial-256", 
-          "shortname": "ShortName 221", 
-          "timezone": null
-        }
-      ], 
-      "externalId": "UTI-2", 
-      "hoursEnd": null, 
-      "hoursStart": null, 
-      "latitude": 96.269997, 
-      "lgaName": "Yangon (North)", 
-      "longitude": 17.150999, 
-      "name": "UTI-2 (USAID)", 
-      "shortname": "UTI-2", 
-      "stateAbbreviation": "YGN", 
-      "street1": null, 
-      "street2": null, 
-      "timezoneId": "Myanmar Standard Time", 
-      "zip": null
-    }, 
-    {
-      "city": "Insein", 
-      "devices": [], 
-      "externalId": "Yangon Regional Laboratory Store", 
-      "hoursEnd": null, 
-      "hoursStart": null, 
-      "latitude": null, 
-      "lgaName": "Yangon (North)", 
-      "longitude": null, 
-      "name": "Yangon Regional Laboratory Store", 
-      "shortname": null, 
-      "stateAbbreviation": "YGN", 
-      "street1": null, 
-      "street2": null, 
-      "timezoneId": null, 
       "zip": null
     }
   ]
