@@ -76,7 +76,14 @@ export const Status = ({
                   icon={widget.icon}
                   className={cssClasses('Summary__Card__Title__Icon')}
                 />
-                {intl.formatMessage(messages[widget.titleI18nKey])}
+                {messages[widget.titleI18nKey]
+                  ? intl.formatMessage(messages[widget.titleI18nKey])
+                  : widget.title}
+                <span className={cssClasses('Summary__Card__Title__Sub')}>
+                  {messages[widget.subTitleI18nKey]
+                    ? intl.formatMessage(messages[widget.subTitleI18nKey])
+                    : widget.subTitle}
+                </span>
               </div>
               <div className={cssClasses('Summary__Card__Count')}>
                 {intl.formatNumber(widget.count, 0)}
