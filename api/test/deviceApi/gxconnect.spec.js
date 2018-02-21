@@ -7,10 +7,8 @@ const addHours = require('date-fns/add_hours')
 const subHours = require('date-fns/sub_hours')
 const addSeconds = require('date-fns/add_seconds')
 const setMilliseconds = require('date-fns/set_milliseconds')
-const {
-  createGxConnectTestContext,
-  getLastResult,
-} = require('./gxconnect_utils')
+const { createGxConnectTestContext } = require('./gxconnect_utils')
+const { getLastResult } = require('./genexpert_utils')
 const { getLastResultId } = require('./utils')
 const { run } = require('../../src/db')
 
@@ -128,7 +126,7 @@ describe('Device API routes for GxConnect Devices', () => {
           it('should have created a device and linked it to the device API key', () =>
             runTest(async knex => {
               const { basicDevicePayload, apiKey } = context
-              const deviceDetials = await knex('DeviceApiKey as dak')
+              const deviceDetails = await knex('DeviceApiKey as dak')
                 .join('Device as d', 'dak.DeviceId', 'd.id')
                 .join('Site as s', 'd.siteId', 's.id')
                 .join('Geography as g', 's.geographyId', 'g.id')
@@ -142,7 +140,7 @@ describe('Device API routes for GxConnect Devices', () => {
                   'c.abbreviation as countryCode',
                   'dt.externalId as deviceType'
                 )
-              assert.deepEqual(deviceDetials, [
+              assert.deepEqual(deviceDetails, [
                 {
                   deviceName,
                   macAddress,
