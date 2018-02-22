@@ -9,14 +9,15 @@
 }
 
 .autocomplete {
-  display: inline-block;
-  border: 1px solid rgba(0, 0, 0, 0.12);
-  border-radius: 4px;
-  padding: var(--autocomplete-padding);
+  display: flex;
+  flex-wrap: wrap;
+  padding: 0;
+  width: 100%;
 }
 
 .input {
   display: inline-block;
+  flex-grow: 1;
   padding: var(--input-padding);
   vertical-align: middle;
 }
@@ -55,12 +56,18 @@
   background: transparent;
 }
 
+.autocomplete_disabled .chip__delete {
+  cursor: default;
+}
+
 .autocomplete_disabled .chip__deletable {
   padding-right: var(--chip-padding);
+  cursor: default;
 }
 
 .autocomplete_disabled .chip__deleteIcon {
   opacity: 0;
+  cursor: default;
 }
 
 .autocomplete_disabled .input {

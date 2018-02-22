@@ -12,6 +12,8 @@ import TextField from 'material-ui/TextField'
 // Our own imports
 import TimezoneSelect from '../../components/shared/TimezoneSelect'
 import LocationSelector from '../../components/shared/LocationSelector'
+import ConnectedTagInput from '../../tag/ConnectedTagInput'
+import { ReadOnlyField } from '../../components/shared/ReadOnlyFields'
 
 const renderTextField = ({ input, meta, ...restProps }) => (
   <TextField
@@ -55,6 +57,7 @@ const enhance = compose(
     handleSubmit: PropTypes.func.isRequired,
     pristine: PropTypes.bool.isRequired,
     submitting: PropTypes.bool.isRequired,
+    onChangeSiteTag: PropTypes.func.isRequired,
   })
 )
 
@@ -66,6 +69,8 @@ export const EditableFieldsForm = ({
   handleSubmit,
   pristine,
   submitting,
+  siteTags,
+  onSiteTagChange,
 }) => (
   <form onSubmit={handleSubmit}>
     <Field
@@ -116,6 +121,19 @@ export const EditableFieldsForm = ({
       name="zip"
       floatingLabelText={labels.zip}
       component={renderTextField}
+    />
+    <ReadOnlyField
+      label={labels.tags}
+      value={siteTags}
+      format={v => (
+        <ConnectedTagInput
+          qryId={initialValues.get('id')}
+          qryType="site"
+          allowCreate
+          onTagChange={onSiteTagChange}
+          value={v}
+        />
+      )}
     />
     <RaisedButton
       disabled={pristine || submitting}

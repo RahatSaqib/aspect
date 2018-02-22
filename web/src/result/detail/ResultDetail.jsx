@@ -28,7 +28,9 @@ import {
   fetchWorkflowStatusLogs,
   Result,
 } from '../ResultRedux'
-
+import ConnectedTagInput from '../../tag/ConnectedTagInput'
+import { fetchTags, updateTags } from '../../tag/TagRedux'
+import isEditable from '../../shared/selectors/result'
 import ResultWorkflowStatusLog from './WorkflowLog'
 
 import { ReadOnlyField } from '../../components/shared/ReadOnlyFields'
@@ -181,6 +183,10 @@ const messages = defineMessages({
     id: 'pages.ResultDetail.createdOnLabel',
     defaultMessage: 'Created on: {date}',
   },
+  tags: {
+    id: 'pages.ResultDetail.tags',
+    defaultMessage: 'Tags',
+  },
 })
 
 const enhance = compose(
@@ -194,11 +200,16 @@ const enhance = compose(
   connect(
     (state, props) => {
       const result = state.result.items.byId.get(props.match.params.resultId)
-
+      const resultTags = state.tag.tags.getIn(
+        ['result', props.match.params.resultId],
+        Immutable.List()
+      )
       return {
         result,
         workflowLog: state.result.workflowLog,
         deviceLogs: state.result.deviceLogs,
+        resultTags,
+        editable: isEditable(state.user, result),
       }
     },
     dispatch =>
@@ -208,6 +219,8 @@ const enhance = compose(
           updateSingleResult,
           updateResultQcCheck,
           fetchWorkflowStatusLogs,
+          fetchTags,
+          updateTags,
         },
         dispatch
       )
@@ -215,10 +228,14 @@ const enhance = compose(
   setPropTypes({
     result: PropTypes.objectOf(Result),
     workflowLog: PropTypes.objectOf(WorkflowLogModel).isRequired,
+    resultTags: PropTypes.instanceOf(Immutable.List).isRequired,
+    editable: PropTypes.bool.isRequired,
     fetchSingleResult: PropTypes.func.isRequired,
     updateSingleResult: PropTypes.func.isRequired,
     updateResultQcCheck: PropTypes.func.isRequired,
     fetchWorkflowStatusLogs: PropTypes.func.isRequired,
+    fetchTags: PropTypes.func.isRequired,
+    updateTags: PropTypes.func.isRequired,
   })
 )
 
@@ -245,6 +262,10 @@ export class ResultDetail extends PureComponent {
     const { result } = this.props
 
     this.props.updateResultQcCheck(result.get('id'), event.target.checked)
+  }
+
+  onResultTagChange = (qryId, qryType, tags) => {
+    this.props.updateTags(qryId, qryType, tags.join(','))
   }
 
   getAssayFields() {
@@ -322,6 +343,8 @@ export class ResultDetail extends PureComponent {
 
     // refresh grid 'Result Workflow Status Logs'
     this.handleFetchWorkflowStatusLogs()
+
+    this.props.fetchTags(this.props.match.params.resultId, 'result')
   }
 
   handleFetchWorkflowStatusLogs = (...args) => {
@@ -410,6 +433,8 @@ export class ResultDetail extends PureComponent {
   renderContent() {
     const {
       result,
+      resultTags,
+      editable,
       intl: { formatMessage, formatDate, formatTime },
     } = this.props
     const assay = result.get('assay')
@@ -568,6 +593,22 @@ export class ResultDetail extends PureComponent {
                     ? formatMessage(messages.qcCheckDisabledHelp)
                     : ''
                 }
+              />
+            </Unit>
+            <Unit sm="1-2" md="1-2" lg="2-4">
+              <ReadOnlyField
+                label={formatMessage(messages.tags)}
+                value={resultTags.toJS()}
+                format={v => (
+                  <ConnectedTagInput
+                    qryId={result.get('id')}
+                    disabled={!editable}
+                    qryType="result"
+                    allowCreate
+                    onTagChange={this.onResultTagChange}
+                    value={v}
+                  />
+                )}
               />
             </Unit>
           </CardText>

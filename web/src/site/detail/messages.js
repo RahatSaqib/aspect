@@ -51,4 +51,8 @@ export default defineMessages({
     id: 'pages.SiteDetail.fieldZip',
     defaultMessage: 'Zip',
   },
+  fieldTags: {
+    id: 'pages.SiteDetail.fieldTags',
+    defaultMessage: 'Tags',
+  },
 })

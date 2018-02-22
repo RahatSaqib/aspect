@@ -2,6 +2,7 @@ import _ from 'lodash'
 import classnames from 'classnames/bind'
 import { defineMessages } from 'react-intl'
 import React from 'react'
+import Immutable from 'immutable'
 import { compose, withStateHandlers, withHandlers, lifecycle } from 'recompose'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
@@ -14,7 +15,9 @@ import recomposeForm from '../../../components/recomposeForm'
 import FormGroup from '../../../components/themedReactToolbox/FormGroup'
 import ButtonGroup from '../../../components/themedReactToolbox/ButtonGroup'
 import SiteSelectField from '../../../filter/resource/SiteSelectField'
+import ConnectedTagInput from '../../../tag/ConnectedTagInput'
 import { fetchDeviceTypesForSelectList } from '../../../deviceType/DeviceTypeRedux'
+import { fetchTags, updateTags } from '../../../tag/TagRedux'
 
 const cssClasses = classnames.bind(require('../DeviceDetail.css'))
 
@@ -34,6 +37,10 @@ const messages = defineMessages({
   no: {
     id: 'pages.DeviceDetailEdit.no',
     defaultMessage: 'No',
+  },
+  tags: {
+    id: 'pages.DeviceDetailEdit.tags',
+    defaultMessage: 'Tags',
   },
   hostId: {
     id: 'pages.DeviceDetailEdit.hostId',
@@ -70,11 +77,21 @@ const initializeValuesFrom = device => ({
 
 const enhance = compose(
   connect(
-    state => ({
-      deviceTypeSelectList: state.deviceType.selectList,
-    }),
+    (state, props) => {
+      const deviceTags = state.tag.tags.getIn(
+        ['device', props.device.get('id')],
+        Immutable.List()
+      )
+
+      return {
+        deviceTypeSelectList: state.deviceType.selectList,
+        deviceTags,
+      }
+    },
     bindActionCreators.bind(null, {
       fetchDeviceTypesForSelectList,
+      fetchTags,
+      updateTags,
     })
   ),
   withStateHandlers(
@@ -110,8 +127,13 @@ const enhance = compose(
     }
   ),
   withHandlers({
-    onInitialLoad: ({ fetchDeviceTypesForSelectList }) => () => {
+    onInitialLoad: ({
+      device,
+      fetchDeviceTypesForSelectList,
+      fetchTags,
+    }) => () => {
       fetchDeviceTypesForSelectList()
+      fetchTags(device.get('id'), 'device')
     },
 
     onSubmit: ({ device, updateSingleDevice }) => values =>
@@ -122,6 +144,10 @@ const enhance = compose(
           .map(($, key) => values[key])
           .toJS(),
       }),
+
+    onDeviceTagChange: ({ updateTags }) => (qryId, qryType, tags) => {
+      updateTags(qryId, qryType, tags.join(','))
+    },
   }),
   lifecycle({
     componentDidMount() {
@@ -156,8 +182,10 @@ export const DeviceDetailEdit = ({
   location,
   match,
   device,
+  editable,
   // --- injected by recompose ---
   deviceTypeSelectList,
+  deviceTags,
   form,
   meta,
   values,
@@ -167,6 +195,7 @@ export const DeviceDetailEdit = ({
   onSiteIdChange,
   onDiscardClick,
   handleSubmit,
+  onDeviceTagChange,
 }) => (
   <div>
     <Helmet title={device.get('name')} />
@@ -226,6 +255,17 @@ export const DeviceDetailEdit = ({
               </ButtonGroup>
             </FormGroup>
           )}
+          <FormGroup label={intl.formatMessage(messages.tags)}>
+            <ConnectedTagInput
+              qryId={device.get('id')}
+              qryType="device"
+              label="Choose countries"
+              allowCreate
+              disabled={!editable}
+              onTagChange={onDeviceTagChange}
+              value={deviceTags.toJS()}
+            />
+          </FormGroup>
           <Input
             type="text"
             name="hostId"

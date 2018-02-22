@@ -35,8 +35,10 @@ const enhance = compose(
     className: cssClasses({ autocomplete_disabled: disabled }),
   })),
   withHandlers({
-    onChange: ({ onTagChange }) => value => {
-      onTagChange(value)
+    onChange: ({ disabled, onTagChange }) => value => {
+      if (!disabled) {
+        onTagChange(value)
+      }
     },
   })
 )

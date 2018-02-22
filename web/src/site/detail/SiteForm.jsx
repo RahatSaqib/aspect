@@ -3,8 +3,11 @@ import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
 
 // Our own imports
-import ReadOnlyFields from '../../components/shared/ReadOnlyFields'
+import ReadOnlyFields, {
+  ReadOnlyField,
+} from '../../components/shared/ReadOnlyFields'
 import { EditableFieldsFormContainer } from './EditableFieldsForm'
+import ConnectedTagInput from '../../tag/ConnectedTagInput'
 import messages from './messages'
 import { Site } from '../../site/SiteRedux'
 
@@ -14,12 +17,15 @@ export default class SiteForm extends PureComponent {
   static propTypes = {
     formatMessage: PropTypes.func.isRequired,
     onSubmit: PropTypes.func.isRequired,
+    onSiteTagChange: PropTypes.func.isRequired,
     editable: PropTypes.bool.isRequired,
     site: PropTypes.objectOf(Site),
+    siteTags: PropTypes.arrayOf(PropTypes.object),
   }
 
   static defaultProps = {
     site: null,
+    siteTags: [],
   }
 
   handleSubmit = data => {
@@ -45,7 +51,7 @@ export default class SiteForm extends PureComponent {
 
   // this renders the fields in controls for a user who has write access
   renderEditableFieldsFormContainer() {
-    const { site, formatMessage } = this.props
+    const { site, siteTags, formatMessage, onSiteTagChange } = this.props
     const extraValuesForMap = {
       // SiteLocationFormMap reads the values from redux-form to construct names for Geocoder
       country: site.get('country'),
@@ -66,6 +72,7 @@ export default class SiteForm extends PureComponent {
       address2: site.get('street2') || /* FIXME */ '',
       city: site.get('city'),
       zip: site.get('zip'),
+      id: site.get('id'),
     }
     const labels = {
       name: formatMessage(messages.fieldName),
@@ -76,20 +83,23 @@ export default class SiteForm extends PureComponent {
       address2: formatMessage(messages.fieldAddress2),
       city: formatMessage(messages.fieldCity),
       zip: formatMessage(messages.fieldZip),
+      tags: formatMessage(messages.fieldTags),
     }
     return (
       <EditableFieldsFormContainer
         labels={labels}
         enableReinitialize
         initialValues={initialValues}
+        siteTags={siteTags}
         onSubmit={this.handleSubmit}
+        onSiteTagChange={onSiteTagChange}
       />
     )
   }
 
   // these are the same fields in read only mode in case the user has read access only
   renderReadOnlyFields() {
-    const { site, formatMessage } = this.props
+    const { site, siteTags, formatMessage } = this.props
     const fields = [
       {
         label: formatMessage(messages.fieldName),
@@ -136,7 +146,24 @@ export default class SiteForm extends PureComponent {
         value: site.get('zip'),
       },
     ]
-    return <ReadOnlyFields fields={fields} />
+    return (
+      <div>
+        <ReadOnlyFields fields={fields} />
+        <ReadOnlyField
+          label={formatMessage(messages.fieldTags)}
+          value={siteTags}
+          format={v => (
+            <ConnectedTagInput
+              qryId={site.get('id')}
+              qryType="site"
+              disabled
+              allowCreate
+              value={v}
+            />
+          )}
+        />
+      </div>
+    )
   }
 
   render() {

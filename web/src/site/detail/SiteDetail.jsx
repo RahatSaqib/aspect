@@ -4,6 +4,7 @@ import { compose, setPropTypes } from 'recompose'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
+import Immutable from 'immutable'
 
 // Material-UI
 import Paper from 'material-ui/Paper'
@@ -13,6 +14,7 @@ import LinearProgress from 'material-ui/LinearProgress'
 import NavTitle from '../../globals/components/NavTitle'
 import isEditable from '../../shared/selectors/site'
 import { fetchSingleSite, updateSingleSite, Site } from '../SiteRedux'
+import { fetchTags, updateTags } from '../../tag/TagRedux'
 import SiteForm from './SiteForm'
 import SiteLocationFormMap from './SiteLocationFormMap'
 import messages from './messages'
@@ -29,10 +31,14 @@ const enhance = compose(
   connect(
     (state, props) => {
       const site = state.site.items.byId.get(props.match.params.siteId)
-
+      const siteTags = state.tag.tags.getIn(
+        ['site', props.match.params.siteId],
+        Immutable.List()
+      )
       return {
         editable: isEditable(state.user, site),
         site,
+        siteTags,
       }
     },
     dispatch =>
@@ -40,6 +46,8 @@ const enhance = compose(
         {
           fetchSingleSite,
           updateSingleSite,
+          fetchTags,
+          updateTags,
         },
         dispatch
       )
@@ -47,8 +55,11 @@ const enhance = compose(
   setPropTypes({
     editable: PropTypes.bool.isRequired,
     site: PropTypes.objectOf(Site),
+    siteTags: PropTypes.instanceOf(Immutable.List).isRequired,
     fetchSingleSite: PropTypes.func.isRequired,
     updateSingleSite: PropTypes.func.isRequired,
+    fetchTags: PropTypes.func.isRequired,
+    updateTags: PropTypes.func.isRequired,
   })
 )
 
@@ -63,8 +74,13 @@ export class SiteDetail extends PureComponent {
     }
   }
 
+  onSiteTagChange = (qryId, qryType, tags) => {
+    this.props.updateTags(qryId, qryType, tags.join(','))
+  }
+
   handleFetchSite = ({ match }) => {
     this.props.fetchSingleSite(match.params.siteId)
+    this.props.fetchTags(match.params.siteId, 'site')
   }
 
   hasSiteWithLocation() {
@@ -77,6 +93,7 @@ export class SiteDetail extends PureComponent {
       intl: { formatMessage },
       updateSingleSite,
       site,
+      siteTags,
       editable,
     } = this.props
 
@@ -91,8 +108,10 @@ export class SiteDetail extends PureComponent {
               <SiteForm
                 formatMessage={formatMessage}
                 onSubmit={updateSingleSite}
+                onSiteTagChange={this.onSiteTagChange}
                 editable={editable}
                 site={site}
+                siteTags={siteTags.toJS()}
               />
             </div>
           )}

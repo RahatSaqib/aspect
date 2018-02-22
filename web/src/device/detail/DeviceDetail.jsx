@@ -77,6 +77,7 @@ export const DeviceDetail = ({
   match,
   // --- injected by recompose ---
   loading,
+  editable,
   dateRange,
   onDateRangeChange,
   device,
@@ -121,6 +122,7 @@ export const DeviceDetail = ({
               intl={intl}
               {...props}
               device={device}
+              editable={editable}
               updateSingleDevice={updateSingleDevice}
             />
           )}
