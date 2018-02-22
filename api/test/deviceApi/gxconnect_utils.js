@@ -5,9 +5,6 @@ This is a copy of utils.js but removes the concept of checkpoint from the device
 GxConnect is unaware of checkpoints
 
 GxConnect also has the requirement to be able to  register itself as a device
-
-This is a test to see if checkpoint state is a requirement for all remote devices
-  connecting to Aspect
 */
 const _ = require('lodash')
 const chai = require('chai')

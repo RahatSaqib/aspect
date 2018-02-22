@@ -1,18 +1,8 @@
-/*
-This is a copy of utils.js but removes the concept of checkpoint from the device
-  context
-
-GxConnect is unaware of checkpoints
-
-GxConnect also has the requirement to be able to  register itself as a device
-
-This is a test to see if checkpoint state is a requirement for all remote devices
-  connecting to Aspect
-*/
 const _ = require('lodash')
 const chai = require('chai')
-const { getSiteFromDeviceId, getDeviceFromApiKey } = require('./utils')
+const { getDeviceFromApiKey } = require('./utils')
 const { run } = require('../../src/db')
+const { randomToken } = require('../../src/deviceApi/apiKey')
 
 const { assert } = chai
 
@@ -21,20 +11,11 @@ async function deleteGxAlertDeviceDataAndRefreshTokens(
   apiKeys,
   clientId
 ) {
-  const tokens = apiKeys.map(key => key.token)
   const deviceIds = await knex('DeviceApiKey as dak')
-    .innerJoin('Device as d', 'dak.deviceId', 'd.id')
-    .whereIn('dak.token', tokens)
-    .pluck('d.siteId')
-    .union(function() {
-      this.from('DeviceApiKey as dak')
-        .whereNotNull('dak.siteId')
-        .whereIn('dak.token', tokens)
-        .pluck('dak.deviceId')
-    })
-
+    .whereIn('dak.token', apiKeys)
+    .pluck('dak.deviceId')
   await knex('DeviceApiKey')
-    .whereIn('token', tokens)
+    .whereIn('token', apiKeys)
     .orWhereIn('deviceId', deviceIds)
     .delete()
 
@@ -54,7 +35,7 @@ async function deleteGxAlertDeviceDataAndRefreshTokens(
     .delete()
 
   await knex('Device')
-    .whereIn('deviceId', deviceIds)
+    .whereIn('id', deviceIds)
     .delete()
 
   await knex('RefreshToken')
@@ -68,8 +49,9 @@ async function deleteGeneXpertDeviceSiteDataAndRefreshTokens(
 ) {
   const deviceAndSiteIds = await knex('Device as d')
     .whereRaw(
-      'JSON_EXTRACT(d.configurationData, "$.gxAlertDeviceId") IN (?)',
-      gxAlertDeviceIds.join(',')
+      `JSON_EXTRACT(d.configurationData, "$.gxAlertDeviceId") IN (${gxAlertDeviceIds.join(
+        ','
+      )})`
     )
     .select('d.id', 'd.siteId')
   const deviceIds = _.uniq(
@@ -161,33 +143,19 @@ async function deleteGeneXpertDeviceSiteDataAndRefreshTokens(
     .delete()
 }
 
-function createGxAlertTestContext(
-  server,
-  { countryAbbreviation, deviceName, adminUsername, adminPassword }
-) {
-  return new GxAlertApiTestContext(server, {
-    countryAbbreviation,
-    deviceName,
-    adminUsername,
-    adminPassword,
-  })
+function createGxAlertTestContext(server) {
+  return new GxAlertApiTestContext(server)
 }
 
 class GxAlertApiTestContext {
-  constructor(
-    server,
-    { countryAbbreviation, deviceName, adminUsername, adminPassword }
-  ) {
+  constructor(server) {
     this.server = server
-    this.countryAbbreviation = countryAbbreviation
-    this.deviceName = deviceName
-    this.adminUsername = adminUsername
-    this.adminPassword = adminPassword
     this.clientId = `${Math.floor(Math.random() * 800000000) + 100000000}`
     this.apiKeys = []
     this.gxAlertDeviceIds = []
+    this.gxAlertDeviceName = 'GxAlert Cloud'
     this.basicDevicePayload = {
-      name: deviceName,
+      name: this.gxAlertDeviceName,
       serial: null,
       status: null,
       type: {
@@ -201,36 +169,69 @@ class GxAlertApiTestContext {
       result: null,
     }
     _.bindAll(this, [
-      'beforeRequestNewApiKey',
-      'requestNewApiKey',
-      'beforeRegisterAndSetDevice',
-      'registerAndSetDevice',
+      'beforeCreateGxAlertApiKey',
+      'useGxAlertDeviceId',
       'runTest',
       'afterCleanUp',
       'cleanUp',
     ])
   }
 
-  beforeRequestNewApiKey() {
-    return run(async () => this.requestNewApiKey())
+  beforeCreateGxAlertApiKey() {
+    return run(async () => this.createGxAlertApiKey())
   }
 
-  requestNewApiKey() {
-    return run(async () => {
-      const clientAccessToken = await this.requestClientToken()
-      this.apiKey = await this.requestNewDeviceApiKey(clientAccessToken)
-      this.apiKeys.push(this.apiKey)
-      this.deviceAuth = `Bearer ${this.apiKey}`
-    })
-  }
-
-  beforeRegisterAndSetDevice() {
-    return run(async () => this.registerAndSetDevice())
-  }
-
-  registerAndSetDevice() {
+  createGxAlertApiKey() {
     return run(async knex => {
-      this.apiKey = await this.registerDevice()
+      const gxAlertDeviceType = await knex
+        .from('DeviceType')
+        .where('externalId', 'GxAlert')
+        .first()
+      const partnerOne = await knex
+        .from('Partner')
+        .where('name', 'Partner One')
+        .first()
+      const usGeography = await knex
+        .from('Country as c')
+        .join('Geography as g', 'g.countryId', 'c.id')
+        .where('c.abbreviation', 'US')
+        .andWhere('g.stateId', null)
+        .andWhere('g.lgaId', null)
+        .first('g.*')
+      const approvedDeviceStatus = await knex
+        .from('DeviceStatus')
+        .where('token', 'approved')
+        .first()
+      const now = new Date()
+      const [deviceId] = await knex('Device').insert({
+        partnerId: partnerOne.id,
+        geographyId: usGeography.id,
+        deviceTypeId: gxAlertDeviceType.id,
+        deviceStatusId: approvedDeviceStatus.id,
+        name: this.basicDevicePayload.name,
+        shortName: this.basicDevicePayload.name,
+        configurationData: '{}',
+        putInService: now,
+        lastSeenOn: now,
+        createdOn: now,
+        updatedOn: now,
+      })
+      const adminUser = await knex
+        .from('User')
+        .where('name', 'admin')
+        .first()
+      this.apiKey = randomToken()
+      await knex('DeviceApiKey').insert({
+        token: this.apiKey,
+        revoked: 0,
+        partnerId: partnerOne.id,
+        geographyId: usGeography.id,
+        deviceId,
+        createdOn: now,
+        createdBy: adminUser.id,
+        updatedOn: now,
+        updatedBy: adminUser.id,
+      })
       this.apiKeys.push(this.apiKey)
       this.deviceAuth = `Bearer ${this.apiKey}`
       this.device = await getDeviceFromApiKey(knex, { token: this.apiKey })
@@ -238,84 +239,24 @@ class GxAlertApiTestContext {
         this.device,
         `Cannot find device created from ${this.apiKey}`
       )
-      this.site = await getSiteFromDeviceId(knex, this.device.id)
-      assert.isNotEmpty(
-        this.site,
-        `Cannot find site linked to device ${this.device.id}`
-      )
     })
-  }
-
-  async registerDevice() {
-    const clientAccessToken = await this.requestClientToken()
-    const deviceApiKey = await this.requestNewDeviceApiKey(clientAccessToken)
-    await this.sendInitialDeviceConfiguration(deviceApiKey)
-    return deviceApiKey
-  }
-
-  requestClientToken() {
-    return this.server
-      .post('/api/auth')
-      .send({
-        name: this.adminUsername,
-        password: this.adminPassword,
-        clientName: 'gx_alert',
-        clientId: this.clientId,
-      })
-      .then(res => {
-        assert.equal(res.status, 200)
-        assert.isAbove(res.body.access.length, 100)
-        assert.isAbove(res.body.refresh.length, 50)
-        return res.body.access
-      })
-      .catch(assert.fail)
-  }
-
-  requestNewDeviceApiKey(clientAccessToken) {
-    return this.server
-      .post('/api/demo/device/api-key')
-      .set('Authorization', `Bearer ${clientAccessToken}`)
-      .then(res => {
-        assert.equal(res.statusCode, 200)
-        assert.isOk(res.body.token)
-        return res.body.token
-      })
-      .catch(assert.fail)
-  }
-
-  async sendInitialDeviceConfiguration(deviceApiKey) {
-    const configurationData = {}
-    if (this.countryAbbreviation) {
-      configurationData.country = this.countryAbbreviation
-    }
-    await this.server
-      .post('/device')
-      .set('Authorization', `Bearer ${deviceApiKey}`)
-      .send(
-        _.merge(this.basicDevicePayload, {
-          configuration: {
-            checkpoint: null,
-            data: configurationData,
-          },
-        })
-      )
-      .then(res => {
-        assert.equal(res.statusCode, 200)
-      })
-      .catch(assert.fail)
   }
 
   useGxAlertDeviceId(gxAlertDeviceId) {
     if (!this.gxAlertDeviceIds.includes(gxAlertDeviceId)) {
-      this.gxAlertDeviceIds.push(this.gxAlertDeviceIds)
+      this.gxAlertDeviceIds.push(gxAlertDeviceId)
     }
-    if (this.basicDevicePayload.configuration == null) {
-      this.basicDevicePayload.configuration = {}
+    if (this.basicDevicePayload.configuration === null) {
+      this.basicDevicePayload.configuration = { data: {} }
+    }
+    if (this.basicDevicePayload.configuration.data === null) {
+      this.basicDevicePayload.configuration.data = {}
     }
     if (
-      this.basicDevicePayload.configuration.gxAlertDeviceIds !== gxAlertDeviceId
+      this.basicDevicePayload.configuration.data.gxAlertDeviceId !==
+      gxAlertDeviceId
     ) {
-      this.basicDevicePayload.configuration.gxAlertDeviceIds = gxAlertDeviceId
+      this.basicDevicePayload.configuration.data.gxAlertDeviceId = gxAlertDeviceId
     }
   }
 
@@ -347,7 +288,7 @@ class GxAlertApiTestContext {
       if (!_.isEmpty(this.apiKeys)) {
         await deleteGxAlertDeviceDataAndRefreshTokens(
           knex,
-          _.map(this.apiKeys, apiKey => ({ token: apiKey })),
+          this.apiKeys,
           this.clientId
         )
       }

@@ -9,6 +9,7 @@ async function preProcessAddDeviceData(context) {
   // We want the context's device to be replaced with the source device
   const geneXpertDevice = await getOrCreateDevice(knex, payload, device, now)
   if (!_.isEmpty(geneXpertDevice)) {
+    geneXpertDevice.deviceTypePluginName = device.deviceTypePluginName
     context.device = geneXpertDevice
   } else {
     throw Boom.badData(`Cannot find or create device with the provided data`)
@@ -41,7 +42,6 @@ async function getOrCreateDevice(knex, payload, gxAlertDevice, now) {
     'd.siteId',
     'ds.token as status',
     'dt.externalId as deviceType',
-    'dt.plugin as deviceTypePluginName',
     'dtc.name as deviceTypeCategory',
   ]
   const deviceFromGxAlert = await deviceQueryStart
@@ -59,7 +59,7 @@ async function getOrCreateDevice(knex, payload, gxAlertDevice, now) {
   if (!deviceTypeExternalId) {
     throw Boom.badRequest('Must specify device type for data from GxAlert')
   }
-  const macAddress = _.get(payload, 'configuration.data.gxAlertDeviceId', null)
+  const macAddress = _.get(payload, 'configuration.data.macAddress', null)
   let countryAbbreviation = _.get(payload, 'configuration.data.country', null)
   if (!countryAbbreviation) {
     ;[countryAbbreviation] = await knex('device as d')

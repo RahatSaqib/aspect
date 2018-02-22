@@ -138,14 +138,16 @@ function deviceApiHandler(handler, handlerOptions) {
 
 async function addDeviceDataWithContext(context) {
   const response = {}
-  const { knex, now, payload, device, pluginName: plugin } = context
-  const { name, site, result, configuration, operation } = payload
+  const { pluginName: plugin } = context
 
   const preProcessAddDeviceData = await loadPlugin(
     plugin,
     'preProcessAddDeviceData'
   )
   await preProcessAddDeviceData(context)
+
+  const { knex, now, payload, device } = context
+  const { name, site, result, configuration, operation } = payload
 
   if (name) {
     await knex('Device')
