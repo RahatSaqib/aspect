@@ -6,8 +6,7 @@ import { connect } from 'react-redux'
 import _ from 'lodash'
 import { defineMessages, intlShape } from 'react-intl'
 
-// Material-UI
-import Snackbar from 'material-ui/Snackbar'
+import { Snackbar } from 'react-toolbox'
 
 // Our own imports
 import {
@@ -104,12 +103,13 @@ export class AppNotificationSnackBar extends PureComponent {
     const showDetails = appNotification.get('showDetails')
     return (
       <Snackbar
-        open={hasNotification && !showDetails}
-        message={title ? formatMessage(title, messageValues) : ''}
-        autoHideDuration={4000}
-        action={actionText}
-        onActionClick={actionTouchTap}
-        onRequestClose={this.handleClose}
+        action={actionText ? actionText.toUpperCase() : actionText}
+        active={hasNotification && !showDetails}
+        label={title ? formatMessage(title, messageValues) : ''}
+        timeout={4000}
+        onClick={actionTouchTap}
+        onTimeout={this.handleClose}
+        type={isError ? 'warning' : 'accept'}
       />
     )
   }

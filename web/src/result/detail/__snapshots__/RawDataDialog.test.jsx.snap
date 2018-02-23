@@ -2,13 +2,6 @@
 
 exports[`NotificationList module RawDataDialog component should render correctly 1`] = `
 <div>
-  <Link
-    onClick={undefined}
-    replace={false}
-    to="#"
-  >
-    Raw Result
-  </Link>
   <Dialog
     actions={undefined}
     autoDetectWindowHeight={true}
