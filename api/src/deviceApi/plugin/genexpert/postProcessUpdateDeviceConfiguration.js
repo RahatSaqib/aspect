@@ -1,5 +1,5 @@
 const _ = require('lodash')
-const { updateDeviceDetails } = require('../../../device')
+const { updateDeviceDetails } = require('../../device')
 
 async function postProcessUpdateDeviceConfiguration({
   knex,
