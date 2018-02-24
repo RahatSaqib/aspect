@@ -10,13 +10,12 @@ const setMilliseconds = require('date-fns/set_milliseconds')
 const { createGxAlertTestContext } = require('./gxalert_utils')
 const { getLastResult } = require('./genexpert_utils')
 const { getLastResultId } = require('./utils')
-const { assertSpecifiedItemsEqual } = require('../utils/partialObjectUtils')
 const { run } = require('../../src/db')
 
 const server = supertest.agent('http://localhost:8080')
-const { assert } = chai
+const { assert, expect } = chai
 
-describe.only('Device API routes for GxAlert Device', () => {
+describe('Device API routes for GxAlert Device', () => {
   function createContext() {
     return createGxAlertTestContext(server)
   }
@@ -184,7 +183,7 @@ describe.only('Device API routes for GxAlert Device', () => {
                 maxDeviceIdBefore,
                 knex
               )
-              assertSpecifiedItemsEqual(devicesCreatedDuringTest, [
+              expect(devicesCreatedDuringTest).to.containSubset([
                 {
                   name: context.gxAlertDeviceName,
                   deviceTypeId: gxAlertDeviceType.id,
@@ -204,7 +203,21 @@ describe.only('Device API routes for GxAlert Device', () => {
                 knex
               )
 
-              assertSpecifiedItemsEqual(devicesCreatedDuringTest, [
+              expect(devicesCreatedDuringTest).to.containSubset([
+                {
+                  name: context.gxAlertDeviceName,
+                  deviceTypeId: gxAlertDeviceType.id,
+                  macAddress: null,
+                  configurationData: {},
+                },
+                {
+                  name: deviceName,
+                  deviceTypeId: geneXpertDeviceType.id,
+                  macAddress: null,
+                  configurationData: { gxAlertDeviceId },
+                },
+              ])
+              expect(devicesCreatedDuringTest).to.containSubset([
                 {
                   name: context.gxAlertDeviceName,
                   deviceTypeId: gxAlertDeviceType.id,
@@ -293,7 +306,7 @@ describe.only('Device API routes for GxAlert Device', () => {
               maxDeviceIdBefore,
               knex
             )
-            assertSpecifiedItemsEqual(devicesCreatedDuringTestBefore, [
+            expect(devicesCreatedDuringTestBefore).to.containSubset([
               {
                 name: gxAlertDeviceName,
                 deviceTypeId: gxAlertDeviceType.id,
@@ -330,7 +343,7 @@ describe.only('Device API routes for GxAlert Device', () => {
               knex
             )
 
-            assertSpecifiedItemsEqual(devicesCreatedDuringTestAfter, [
+            expect(devicesCreatedDuringTestAfter).to.containSubset([
               {
                 name: gxAlertDeviceName,
                 deviceTypeId: gxAlertDeviceType.id,
@@ -371,7 +384,7 @@ describe.only('Device API routes for GxAlert Device', () => {
               maxDeviceIdBefore,
               knex
             )
-            assertSpecifiedItemsEqual(devicesCreatedDuringTestBefore, [
+            expect(devicesCreatedDuringTestBefore).to.containSubset([
               {
                 name: gxAlertDeviceName,
                 deviceTypeId: gxAlertDeviceType.id,
@@ -415,7 +428,7 @@ describe.only('Device API routes for GxAlert Device', () => {
               knex
             )
 
-            assertSpecifiedItemsEqual(devicesCreatedDuringTestAfter, [
+            expect(devicesCreatedDuringTestAfter).to.containSubset([
               {
                 name: gxAlertDeviceName,
                 deviceTypeId: gxAlertDeviceType.id,
@@ -455,7 +468,7 @@ describe.only('Device API routes for GxAlert Device', () => {
               maxDeviceIdBefore,
               knex
             )
-            assertSpecifiedItemsEqual(devicesCreatedDuringTestBefore, [
+            expect(devicesCreatedDuringTestBefore).to.containSubset([
               {
                 name: gxAlertDeviceName,
                 deviceTypeId: gxAlertDeviceType.id,
@@ -500,7 +513,7 @@ describe.only('Device API routes for GxAlert Device', () => {
               knex
             )
 
-            assertSpecifiedItemsEqual(devicesCreatedDuringTestAfter, [
+            expect(devicesCreatedDuringTestAfter).to.containSubset([
               {
                 name: gxAlertDeviceName,
                 deviceTypeId: gxAlertDeviceType.id,
@@ -581,7 +594,7 @@ describe.only('Device API routes for GxAlert Device', () => {
               maxDeviceIdBefore,
               knex
             )
-            assertSpecifiedItemsEqual(devicesCreatedDuringTestBefore, [
+            expect(devicesCreatedDuringTestBefore).to.containSubset([
               {
                 name: gxAlertDeviceName,
                 deviceTypeId: gxAlertDeviceType.id,
@@ -618,7 +631,7 @@ describe.only('Device API routes for GxAlert Device', () => {
               knex
             )
 
-            assertSpecifiedItemsEqual(devicesCreatedDuringTestAfter, [
+            expect(devicesCreatedDuringTestAfter).to.containSubset([
               {
                 name: gxAlertDeviceName,
                 deviceTypeId: gxAlertDeviceType.id,
@@ -659,7 +672,7 @@ describe.only('Device API routes for GxAlert Device', () => {
               maxDeviceIdBefore,
               knex
             )
-            assertSpecifiedItemsEqual(devicesCreatedDuringTestBefore, [
+            expect(devicesCreatedDuringTestBefore).to.containSubset([
               {
                 name: gxAlertDeviceName,
                 deviceTypeId: gxAlertDeviceType.id,
@@ -704,7 +717,7 @@ describe.only('Device API routes for GxAlert Device', () => {
               knex
             )
 
-            assertSpecifiedItemsEqual(devicesCreatedDuringTestAfter, [
+            expect(devicesCreatedDuringTestAfter).to.containSubset([
               {
                 name: gxAlertDeviceName,
                 deviceTypeId: gxAlertDeviceType.id,
@@ -744,7 +757,7 @@ describe.only('Device API routes for GxAlert Device', () => {
               maxDeviceIdBefore,
               knex
             )
-            assertSpecifiedItemsEqual(devicesCreatedDuringTestBefore, [
+            expect(devicesCreatedDuringTestBefore).to.containSubset([
               {
                 name: gxAlertDeviceName,
                 deviceTypeId: gxAlertDeviceType.id,
@@ -789,7 +802,7 @@ describe.only('Device API routes for GxAlert Device', () => {
               knex
             )
 
-            assertSpecifiedItemsEqual(devicesCreatedDuringTestAfter, [
+            expect(devicesCreatedDuringTestAfter).to.containSubset([
               {
                 name: gxAlertDeviceName,
                 deviceTypeId: gxAlertDeviceType.id,
@@ -875,14 +888,7 @@ describe.only('Device API routes for GxAlert Device', () => {
     }
 
     const context = createContext()
-    const {
-      beforeCreateGxAlertApiKey,
-      gxAlertDeviceName,
-      useGxAlertDeviceId,
-      basicDevicePayload,
-      runTest,
-      afterCleanUp,
-    } = context
+    const { beforeCreateGxAlertApiKey, basicDevicePayload, runTest } = context
     before(beforeCreateGxAlertApiKey)
     after(context.afterCleanUp)
 
@@ -894,17 +900,6 @@ describe.only('Device API routes for GxAlert Device', () => {
 
         assert.isUndefined(beforeResultDetails)
 
-        await postToDeviceApi({
-          authHeader: deviceAuth,
-          payload: _.merge({}, basicDevicePayload, {
-            name: deviceName,
-            configuration: {
-              data: {
-                macAddress: firstMacAddress,
-              },
-            },
-          }),
-        })
         await server
           .post('/device')
           .set('Authorization', deviceAuth)
