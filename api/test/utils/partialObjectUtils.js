@@ -14,6 +14,17 @@ function isPrimitive(value) {
   )
 }
 
+function isObject(value) {
+  return (
+    typeof value === 'object' &&
+    !(value instanceof Date) &&
+    !(value instanceof Boolean) &&
+    !(value instanceof Number) &&
+    !(value instanceof String) &&
+    value !== null
+  )
+}
+
 function isArray(value) {
   return value instanceof Array
 }
@@ -99,6 +110,11 @@ function assertSpecifiedItemsEqual(actual, expected) {
     : specifiedPropertiesEqual(actual, expected)
   if (!areEqual) {
     const message = `expected specified members of ${expected} to equal those of ${actual}`
+    assert.deepEqual(
+      actual,
+      _.merge(isArray(expected) ? [] : {}, actual, expected),
+      message
+    )
     assert.deepEqual(actual, expected, message)
     assert.fail(actual, expected, message)
   }
