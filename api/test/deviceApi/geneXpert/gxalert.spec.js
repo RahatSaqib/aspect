@@ -89,7 +89,7 @@ describe('Device API routes for GxAlert Device', () => {
         'deviceTypeId',
         'deviceStatusId',
         'name',
-        'shortname',
+        'shortName',
         'macAddress',
         'serial',
         'hostId',
@@ -294,7 +294,7 @@ describe('Device API routes for GxAlert Device', () => {
               const initialGeneXpertDevice = await getCurrentGeneXpertDevice()
               expect(initialGeneXpertDevice).to.containSubset({
                 name: deviceName,
-                shortname: deviceName,
+                shortName: deviceName,
                 macAddress,
                 serial: instrumentSerialNumbers.join(','),
                 hostId,
@@ -331,7 +331,7 @@ describe('Device API routes for GxAlert Device', () => {
                 const newGeneXpertDevice = await getCurrentGeneXpertDevice()
                 expect(newGeneXpertDevice).to.containSubset({
                   name: deviceName,
-                  shortname: deviceName,
+                  shortName: deviceName,
                   macAddress,
                   serial: instrumentSerialNumbers.join(','),
                   hostId,
@@ -348,7 +348,7 @@ describe('Device API routes for GxAlert Device', () => {
                     .where({ macAddress })
                     .orWhere({ hostId })
                     .orWhere('name', deviceName)
-                    .orWhere('shortname', deviceName)
+                    .orWhere('shortName', deviceName)
                     .orWhere('serial', instrumentSerialNumbers.join(','))
                     .select(),
                   device =>
@@ -360,7 +360,7 @@ describe('Device API routes for GxAlert Device', () => {
                 expect(devicesWithDuplicateProperties).to.containSubset([
                   {
                     name: deviceName,
-                    shortname: deviceName,
+                    shortName: deviceName,
                     macAddress,
                     serial: instrumentSerialNumbers.join(','),
                     hostId,
@@ -373,7 +373,7 @@ describe('Device API routes for GxAlert Device', () => {
                   },
                   {
                     name: deviceName,
-                    shortname: deviceName,
+                    shortName: deviceName,
                     macAddress,
                     serial: instrumentSerialNumbers.join(','),
                     hostId,

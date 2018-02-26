@@ -43,7 +43,7 @@ const routes = [
           validateDateRangeParams(),
           validateSortPageParams(
             'name',
-            'shortname',
+            'shortName',
             'state',
             'lga',
             'createdOn',
@@ -89,7 +89,7 @@ const routes = [
         },
         payload: {
           name: Joi.string().required(),
-          shortname: Joi.string().required(),
+          shortName: Joi.string().required(),
           externalId: Joi.string().allow('', null),
           timezone: Joi.string().allow('', null),
           countryId: Joi.number()

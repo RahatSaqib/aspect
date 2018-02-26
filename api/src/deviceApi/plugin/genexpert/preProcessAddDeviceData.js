@@ -64,7 +64,7 @@ async function getOrCreateSite(knex, device, payload, now) {
         })
         .andWhere(function() {
           this.where({ 's.name': facilityName })
-            .orWhere({ 's.shortname': facilityName })
+            .orWhere({ 's.shortName': facilityName })
             .orWhere({ 's.externalId': facilityName })
         })
         .select('s.id')
@@ -100,7 +100,7 @@ async function getOrCreateSite(knex, device, payload, now) {
 
         const newSite = {
           name: facilityName,
-          shortname: facilityName,
+          shortName: facilityName,
           externalId: facilityName,
           partnerId: device.partnerId,
           geographyId: geography.id,
@@ -110,8 +110,8 @@ async function getOrCreateSite(knex, device, payload, now) {
         if (newSite.name.length > 255) {
           newSite.name = newSite.name.substr(0, 255)
         }
-        if (newSite.shortname.length > 45) {
-          newSite.shortname = newSite.shortname.substr(0, 45)
+        if (newSite.shortName.length > 45) {
+          newSite.shortName = newSite.shortName.substr(0, 45)
         }
         if (newSite.externalId.length > 255) {
           newSite.externalId = newSite.externalId.substr(0, 255)

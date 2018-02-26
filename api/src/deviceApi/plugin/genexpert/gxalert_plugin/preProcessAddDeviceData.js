@@ -79,7 +79,7 @@ async function getOrCreateDevice(knex, payload, gxAlertDevice, now) {
           this.where('c.abbreviation', countryAbbreviation)
           this.andWhere(function() {
             this.where('d.name', deviceNameFromGxAlert)
-            this.orWhere('d.shortname', deviceNameFromGxAlert)
+            this.orWhere('d.shortName', deviceNameFromGxAlert)
           })
         })
       } else if (countryAbbreviation && deviceNameFromGxAlert) {
@@ -87,7 +87,7 @@ async function getOrCreateDevice(knex, payload, gxAlertDevice, now) {
           this.where('c.abbreviation', countryAbbreviation)
           this.andWhere(function() {
             this.where('d.name', deviceNameFromGxAlert)
-            this.orWhere('d.shortname', deviceNameFromGxAlert)
+            this.orWhere('d.shortName', deviceNameFromGxAlert)
           })
         })
       }
@@ -115,7 +115,7 @@ async function getOrCreateDevice(knex, payload, gxAlertDevice, now) {
       deviceTypeId: deviceType.id,
       deviceStatusId: deviceStatus.id,
       name: deviceNameFromGxAlert,
-      shortname: deviceNameFromGxAlert,
+      shortName: deviceNameFromGxAlert,
       macAddress,
       serial: payload.serial,
       hostId: _.get(payload, 'configuration.data.putInService', null),
@@ -170,7 +170,7 @@ async function getOrCreateSite(
       })
       .andWhere(function() {
         this.where({ 's.name': deviceNameFromGxAlert })
-          .orWhere({ 's.shortname': deviceNameFromGxAlert })
+          .orWhere({ 's.shortName': deviceNameFromGxAlert })
           .orWhere({ 's.externalId': deviceNameFromGxAlert })
       })
       .select('s.*')
@@ -206,7 +206,7 @@ async function getOrCreateSite(
 
       const newSite = {
         name: deviceNameFromGxAlert,
-        shortname: deviceNameFromGxAlert,
+        shortName: deviceNameFromGxAlert,
         externalId: deviceNameFromGxAlert,
         partnerId: gxAlertDevice.partnerId,
         geographyId: geography.id,
@@ -216,8 +216,8 @@ async function getOrCreateSite(
       if (newSite.name.length > 255) {
         newSite.name = newSite.name.substr(0, 255)
       }
-      if (newSite.shortname.length > 45) {
-        newSite.shortname = newSite.shortname.substr(0, 45)
+      if (newSite.shortName.length > 45) {
+        newSite.shortName = newSite.shortName.substr(0, 45)
       }
       if (newSite.externalId.length > 255) {
         newSite.externalId = newSite.externalId.substr(0, 255)

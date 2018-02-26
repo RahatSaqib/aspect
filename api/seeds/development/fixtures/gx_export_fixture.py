@@ -53,7 +53,7 @@ q_locations = '''
     select
         l.id,
         l.name,
-        l.shortname,
+        l.shortName,
         s.Abbreviation as stateAbbreviation,
         lga.name as lgaName,
         l.city,
@@ -78,7 +78,7 @@ q_devices = '''
     select
         dep.LocationId as locationId,
         concat(l.city, ' GeneXpert') as name,
-        '' as shortname,
+        '' as shortName,
         dep.ComputerCulture as culture,
         dep.ComputerTimeZoneId as timezone,
         dep.Notes as notes,
@@ -139,7 +139,7 @@ with mysql_gx.cursor() as cursor:
     for location in locations:
         loc = dict((key, location[key]) for key in (
             'name',
-            'shortname',
+            'shortName',
             'stateAbbreviation',
             'lgaName',
             'city',
@@ -153,7 +153,7 @@ with mysql_gx.cursor() as cursor:
             'hoursEnd'
         ))
         # TODO what should site externalId?
-        loc['externalId'] = loc['shortname'] or loc['name']
+        loc['externalId'] = loc['shortName'] or loc['name']
         loc['devices'] = []
         site_map[location['id']] = loc
 
@@ -163,7 +163,7 @@ with mysql_gx.cursor() as cursor:
         site_map[device['locationId']]['devices'].append(
             dict((key, device[key]) for key in (
                 'name',
-                'shortname',
+                'shortName',
                 'serial',
                 'hostId',
                 'macAddress',

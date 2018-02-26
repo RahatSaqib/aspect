@@ -301,7 +301,7 @@ export const InventoryAdjustmentDialogForm = ({
             maxLength={500}
           />
           <p className={cssClasses('Field__quantity--status')}>
-            <span>{consumable.get('unitShortname')}</span>
+            <span>{consumable.get('unitShortName')}</span>
             <span>{labels.nextQuantityStatus}</span>
           </p>
         </section>

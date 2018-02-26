@@ -51,9 +51,9 @@ const messages = defineMessages({
     id: 'pages.RouterDetail.fieldName',
     defaultMessage: 'Name',
   },
-  fieldShortname: {
-    id: 'pages.RouterDetail.fieldShortname',
-    defaultMessage: 'Shortname',
+  fieldShortName: {
+    id: 'pages.RouterDetail.fieldShortName',
+    defaultMessage: 'ShortName',
   },
   fieldNotes: {
     id: 'pages.RouterDetail.fieldNotes',
@@ -139,7 +139,7 @@ const enhance = compose(
       // see /api/src/device/service.js, const SELECT_SHOW_FIELDS
       id: PropTypes.number,
       name: PropTypes.string,
-      shortname: PropTypes.string,
+      shortName: PropTypes.string,
       createdOn: PropTypes.string,
       lastPingOn: PropTypes.string,
       lastSeen: PropTypes.string,
@@ -166,7 +166,7 @@ export class RouterDetail extends PureComponent {
     isDemoDialogOpen: false,
     values: {
       name: '',
-      shortname: '',
+      shortName: '',
       notes: '',
       siteId: '',
     },
@@ -196,7 +196,7 @@ export class RouterDetail extends PureComponent {
 
       this.handleFormChange({
         name: router.get('name') || '',
-        shortname: router.get('shortname') || '',
+        shortName: router.get('shortName') || '',
         notes: router.get('notes') || '',
         statusToken: router.get('statusToken') || '',
         siteId: router.get('siteId'),
@@ -236,7 +236,7 @@ export class RouterDetail extends PureComponent {
     const { formatMessage } = intl
     const labels = {
       name: formatMessage(messages.fieldName),
-      shortname: formatMessage(messages.fieldShortname),
+      shortName: formatMessage(messages.fieldShortName),
       notes: formatMessage(messages.fieldNotes),
       statusToken: formatMessage(messages.approved),
       siteId: formatMessage(messages.fieldSiteId),
@@ -287,7 +287,7 @@ export class RouterDetail extends PureComponent {
         (value, key) => `${value.get('type') !== 'object' ? '_' : ''}${key}`
       )
 
-    const shortname = router.get('shortname')
+    const shortName = router.get('shortName')
 
     return (
       <div>
@@ -301,7 +301,7 @@ export class RouterDetail extends PureComponent {
                 format={v => (
                   <div>
                     <h1 className={styles.Name}>
-                      {v} {shortname && <small>({shortname})</small>}
+                      {v} {shortName && <small>({shortName})</small>}
                     </h1>
                     <div className={styles.StatusText}>
                       <Link

@@ -11,9 +11,9 @@ export default defineMessages({
     id: 'pages.SiteDetail.fieldName',
     defaultMessage: 'Name',
   },
-  fieldShortname: {
-    id: 'pages.SiteDetail.fieldShortname',
-    defaultMessage: 'Shortname',
+  fieldShortName: {
+    id: 'pages.SiteDetail.fieldShortName',
+    defaultMessage: 'ShortName',
   },
   fieldExternalId: {
     id: 'pages.SiteDetail.fieldExternalId',

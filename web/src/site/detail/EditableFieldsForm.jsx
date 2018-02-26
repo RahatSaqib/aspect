@@ -35,8 +35,8 @@ function validate(values) {
     if (!values.get('name')) {
       errors.name = 'Required'
     }
-    if (!values.get('shortname')) {
-      errors.shortname = 'Required'
+    if (!values.get('shortName')) {
+      errors.shortName = 'Required'
     }
   }
   return errors
@@ -79,8 +79,8 @@ export const EditableFieldsForm = ({
       component={renderTextField}
     />
     <Field
-      name="shortname"
-      floatingLabelText={labels.shortname}
+      name="shortName"
+      floatingLabelText={labels.shortName}
       component={renderTextField}
     />
     <Field

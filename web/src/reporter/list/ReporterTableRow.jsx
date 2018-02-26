@@ -18,7 +18,7 @@ const ReporterTableRow = ({ intl, reporter, ...restProps }) => (
       {reporter.get('siteName')}
     </TableCell>
     <TableCell className={cssClasses('TableCell')}>
-      {reporter.get('shortname')}
+      {reporter.get('shortName')}
     </TableCell>
     <TableCell className={cssClasses('TableCell')}>
       {reporter.get('status')}

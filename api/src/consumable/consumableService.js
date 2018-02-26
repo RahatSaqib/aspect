@@ -5,7 +5,7 @@ const SELECT_LIST_FIELDS = [
   'c.id',
   'c.name',
   'u.name as unit',
-  'u.shortname as unitShortname',
+  'u.shortName as unitShortName',
   'c.canExpire',
   'c.manufacturer',
   'c.autoInclude',

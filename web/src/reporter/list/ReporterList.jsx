@@ -40,8 +40,8 @@ const messages = defineMessages({
     id: 'pages.ReporterList.reporterName',
     defaultMessage: 'Reporter Name',
   },
-  reporterShortname: {
-    id: 'pages.ReporterList.reporterShortname',
+  reporterShortName: {
+    id: 'pages.ReporterList.reporterShortName',
     defaultMessage: 'Reporter',
   },
   reporterSite: {
@@ -108,7 +108,7 @@ const FILTERS_CONFIG = [
 const searchSanitizer = makeSearchParamsSanitizer({
   availableSortCol: [
     'siteName',
-    'shortname',
+    'shortName',
     'status',
     'createdOn',
     'lastSeen',
@@ -252,8 +252,8 @@ export const ReporterList = ({
                 sortable: true,
               },
               {
-                key: 'shortname',
-                label: intl.formatMessage(messages.reporterShortname),
+                key: 'shortName',
+                label: intl.formatMessage(messages.reporterShortName),
                 sortable: true,
               },
               {

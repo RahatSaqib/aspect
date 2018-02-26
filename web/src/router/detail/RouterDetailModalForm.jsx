@@ -32,7 +32,7 @@ const enhance = compose(
   recomposeForm({
     fields: [
       'name',
-      'shortname',
+      'shortName',
       'notes',
       {
         fieldName: 'statusToken',
@@ -102,12 +102,12 @@ export const RouterDetailModalForm = props => {
           errorText={meta.name.touched && meta.name.error}
         />
         <TextField
-          name="Shortname"
-          floatingLabelText={labels.shortname}
-          value={values.shortname}
-          onChange={props.onShortnameChange}
+          name="ShortName"
+          floatingLabelText={labels.shortName}
+          value={values.shortName}
+          onChange={props.onShortNameChange}
           fullWidth
-          errorText={meta.shortname.touched && meta.shortname.error}
+          errorText={meta.shortName.touched && meta.shortName.error}
         />
         <TextField
           name="Notes"
