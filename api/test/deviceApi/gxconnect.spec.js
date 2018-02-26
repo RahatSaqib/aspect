@@ -8,7 +8,6 @@ const subHours = require('date-fns/sub_hours')
 const addSeconds = require('date-fns/add_seconds')
 const setMilliseconds = require('date-fns/set_milliseconds')
 const { createGxConnectTestContext } = require('./gxconnect_utils')
-const { getLastResult } = require('./genexpert_utils')
 const { getLastResultId } = require('./utils')
 const { run } = require('../../src/db')
 
@@ -649,14 +648,14 @@ describe('Device API routes for GxConnect Devices', () => {
       instrumentSerialNumbers,
     })
     before(context.beforeRegisterAndSetDevice)
-    const { runTest } = context
+    const { runTest, getLastResult } = context
     after(context.afterCleanUp)
 
     it('should reject a result without a start or end date date', () =>
-      runTest(async knex => {
-        const { basicDevicePayload, deviceAuth, device } = context
+      runTest(async () => {
+        const { basicDevicePayload, deviceAuth } = context
 
-        const beforeResultDetails = await getLastResult(knex, device.id)
+        const beforeResultDetails = await getLastResult()
 
         assert.isUndefined(beforeResultDetails)
 
@@ -669,15 +668,15 @@ describe('Device API routes for GxConnect Devices', () => {
           })
           .catch(assert.fail)
 
-        const afterResultDetails = await getLastResult(knex, device.id)
+        const afterResultDetails = await getLastResult()
         assert.isUndefined(afterResultDetails)
       }))
 
     it('should append a result if the external ID is not known', () =>
-      runTest(async knex => {
+      runTest(async () => {
         const { basicDevicePayload, deviceAuth, device, site } = context
 
-        const beforeResultDetails = await getLastResult(knex, device.id)
+        const beforeResultDetails = await getLastResult()
 
         assert.isUndefined(beforeResultDetails)
 
@@ -700,7 +699,7 @@ describe('Device API routes for GxConnect Devices', () => {
           })
           .catch(assert.fail)
 
-        const afterResultDetails = await getLastResult(knex, device.id)
+        const afterResultDetails = await getLastResult()
         assert.deepEqual(_.omit(afterResultDetails, 'id', 'externalId'), {
           deviceId: device.id,
           siteId: device.siteId,
@@ -736,10 +735,10 @@ describe('Device API routes for GxConnect Devices', () => {
       }))
 
     it('should update a result if the external ID is known', () =>
-      runTest(async knex => {
+      runTest(async () => {
         const { basicDevicePayload, deviceAuth, device, site } = context
 
-        const beforeResultDetails = await getLastResult(knex, device.id)
+        const beforeResultDetails = await getLastResult()
 
         assert.isNotEmpty(beforeResultDetails)
 
@@ -762,7 +761,7 @@ describe('Device API routes for GxConnect Devices', () => {
           })
           .catch(assert.fail)
 
-        const afterResultDetails = await getLastResult(knex, device.id)
+        const afterResultDetails = await getLastResult()
         assert.equal(beforeResultDetails.id, afterResultDetails.id)
         assert.deepEqual(_.omit(afterResultDetails, 'id', 'externalId'), {
           deviceId: device.id,
@@ -799,8 +798,8 @@ describe('Device API routes for GxConnect Devices', () => {
       }))
 
     it('should map result categories based on result text', () =>
-      runTest(async knex => {
-        const { basicDevicePayload, deviceAuth, device } = context
+      runTest(async () => {
+        const { basicDevicePayload, deviceAuth } = context
 
         const resultTextToResultCategoryMapping = {
           'DETECTADO ALTO|DETECTADO|': {
@@ -1676,7 +1675,7 @@ describe('Device API routes for GxConnect Devices', () => {
             })
             .catch(assert.fail)
 
-          const resultDetails = await getLastResult(knex, device.id)
+          const resultDetails = await getLastResult()
 
           assert.equal(resultDetails.resultData.geneXpertTestId, resultId)
           assert.equal(
@@ -1966,8 +1965,8 @@ describe('Device API routes for GxConnect Devices', () => {
 
     describe('when an error code has been specified in the result payload', () => {
       it('should set the workflow status of the result to error', () =>
-        runTest(async knex => {
-          const { basicDevicePayload, deviceAuth, device } = context
+        runTest(async () => {
+          const { basicDevicePayload, deviceAuth } = context
 
           const errorTestResultId = 'UNIQUE-ID-WITH-ERROR-RESULT'
           const errorCode = '12345'
@@ -1999,7 +1998,7 @@ describe('Device API routes for GxConnect Devices', () => {
             })
             .catch(assert.fail)
 
-          const lastResult = await getLastResult(knex, device.id)
+          const lastResult = await getLastResult()
           assert.deepEqual(
             _.pick(
               lastResult,

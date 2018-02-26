@@ -47,8 +47,7 @@ async function getOrCreateDevice(knex, payload, gxAlertDevice, now) {
   const deviceFromGxAlert = await deviceQueryStart
     .clone()
     .whereRaw(
-      'JSON_EXTRACT(d.configurationData, "$.gxAlertDeviceId") = ?',
-      gxAlertDeviceId
+      `JSON_EXTRACT(d.configurationData, "$.gxAlertDeviceId") = ${gxAlertDeviceId}`
     )
     .first(deviceQuerySelectFields)
   if (!_.isEmpty(deviceFromGxAlert)) {
@@ -66,25 +65,30 @@ async function getOrCreateDevice(knex, payload, gxAlertDevice, now) {
       .innerJoin('Geography as g', 'd.geographyId', 'g.id')
       .innerJoin('Country as c', 'g.countryId', 'c.id')
       .where('d.id', gxAlertDevice.id)
-      .select('c.abbreviation')
-      .map(row => row.abbreviation)
+      .pluck('c.abbreviation')
   }
   const deviceNameFromGxAlert = _.get(payload, 'name', null)
   const matchingDevices = await deviceQueryStart
     .clone()
     .innerJoin('Geography as g', 'd.geographyId', 'g.id')
     .innerJoin('Country as c', 'g.countryId', 'c.id')
-    .where(function() {
-      if (macAddress) {
-        this.where('d.macAddress', macAddress)
-      }
-    })
-    .orWhere(function() {
-      if (countryAbbreviation && deviceNameFromGxAlert) {
-        this.where('c.abbreviation', countryAbbreviation)
-        this.andWhere(function() {
-          this.where('d.name', deviceNameFromGxAlert)
-          this.orWhere('d.shortName', deviceNameFromGxAlert)
+    .whereRaw(`JSON_EXTRACT(d.configurationData, "$.gxAlertDeviceId") IS NULL`)
+    .andWhere(function() {
+      if (macAddress && countryAbbreviation && deviceNameFromGxAlert) {
+        this.where('d.macAddress', macAddress).orWhere(function() {
+          this.where('c.abbreviation', countryAbbreviation)
+          this.andWhere(function() {
+            this.where('d.name', deviceNameFromGxAlert)
+            this.orWhere('d.shortName', deviceNameFromGxAlert)
+          })
+        })
+      } else if (countryAbbreviation && deviceNameFromGxAlert) {
+        this.where(function() {
+          this.where('c.abbreviation', countryAbbreviation)
+          this.andWhere(function() {
+            this.where('d.name', deviceNameFromGxAlert)
+            this.orWhere('d.shortName', deviceNameFromGxAlert)
+          })
         })
       }
     })
@@ -154,9 +158,9 @@ async function getOrCreateSite(
   countryAbbreviation,
   deviceNameFromGxAlert
 ) {
-  const site = {}
+  let site = null
   if (deviceNameFromGxAlert && countryAbbreviation) {
-    const siteIds = await knex
+    const sites = await knex
       .from('Site as s')
       .join('Geography as g', 's.geographyId', 'g.id')
       .join('Country as c', 'g.countryId', 'c.id')
@@ -169,32 +173,32 @@ async function getOrCreateSite(
           .orWhere({ 's.shortName': deviceNameFromGxAlert })
           .orWhere({ 's.externalId': deviceNameFromGxAlert })
       })
-      .select('s.id')
-    if (siteIds.length === 1) {
-      site.id = siteIds[0].id
-    } else if (siteIds.length > 1) {
+      .select('s.*')
+    if (sites.length === 1) {
+      site = _.head(sites)
+    } else if (sites.length > 1) {
       throw Boom.conflict(
         `Cannot uniquely determine which site this request came from using ${deviceNameFromGxAlert} in ${countryAbbreviation})`
       )
     }
-    if (!site.id) {
+    if (!site) {
       // If we cannot determine the site by name or external ID
       // create a new site
-      const [{ countryId }] = await knex
+      const { countryId } = await knex
         .from('Country as c')
         .where({ abbreviation: countryAbbreviation })
-        .select('c.id as countryId')
+        .first('c.id as countryId')
       if (!countryId) {
         throw Boom.notFound(
           `Cannot determine the country from ${countryAbbreviation}.`
         )
       }
-      const [geography] = await knex
+      const geography = await knex
         .from('Geography as g')
         .where({ 'g.countryId': countryId })
         .whereNull('g.stateId')
         .whereNull('g.lgaId')
-        .select('g.id')
+        .first('g.id')
       if (_.isEmpty(geography)) {
         const [id] = await knex('Geography').insert({ countryId })
         geography.id = id
@@ -219,7 +223,10 @@ async function getOrCreateSite(
         newSite.externalId = newSite.externalId.substr(0, 255)
       }
       const [id] = await knex.insert(newSite).into('Site')
-      site.id = id
+      site = await knex
+        .from('Site')
+        .where('id', id)
+        .first()
     }
   } else {
     throw Boom.notFound('Cannot determine which site this request came from')
