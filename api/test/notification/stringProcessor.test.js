@@ -17,7 +17,7 @@ describe('notification/stringProcessor', () => {
     it('should replace matching words in the template string', () =>
       runTest(stringProcessor.process, [sampleString, inputObject])(
         resultString => {
-          assert.equal(resultString, expectedResult)
+          assert.deepEqual(resultString, expectedResult)
         }
       ))
   })
@@ -34,7 +34,7 @@ describe('notification/stringProcessor', () => {
     it('should handle missing word replacements in input inputObject', () =>
       runTest(stringProcessor.process, [sampleString, inputObject])(
         resultString => {
-          assert.equal(resultString, expectedResult)
+          assert.deepEqual(resultString, expectedResult)
         }
       ))
   })
@@ -50,7 +50,7 @@ describe('notification/stringProcessor', () => {
     it('should handle missing value in the input object', () =>
       runTest(stringProcessor.process, [sampleString, inputObject])(
         resultString => {
-          assert.equal(resultString, expectedResult)
+          assert.deepEqual(resultString, expectedResult)
         }
       ))
   })
@@ -78,7 +78,7 @@ describe('notification/stringProcessor', () => {
     it('should handle mulitple objects in the input object', () =>
       runTest(stringProcessor.process, [sampleString, inputObject])(
         resultString => {
-          assert.equal(resultString, expectedResult)
+          assert.deepEqual(resultString, expectedResult)
         }
       ))
   })
