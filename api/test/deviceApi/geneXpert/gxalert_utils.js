@@ -1,8 +1,8 @@
 const _ = require('lodash')
 const chai = require('chai')
-const { getDeviceFromApiKey } = require('./utils')
-const { run } = require('../../src/db')
-const { randomToken } = require('../../src/deviceApi/apiKey')
+const { getDeviceFromApiKey } = require('../utils')
+const { run } = require('../../../src/db')
+const { randomToken } = require('../../../src/deviceApi/apiKey')
 
 const { assert } = chai
 

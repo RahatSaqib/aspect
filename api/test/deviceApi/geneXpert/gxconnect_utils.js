@@ -8,8 +8,8 @@ GxConnect also has the requirement to be able to  register itself as a device
 */
 const _ = require('lodash')
 const chai = require('chai')
-const { getSiteFromDeviceId, getDeviceFromApiKey } = require('./utils')
-const { run } = require('../../src/db')
+const { getSiteFromDeviceId, getDeviceFromApiKey } = require('../utils')
+const { run } = require('../../../src/db')
 
 const { assert } = chai
 

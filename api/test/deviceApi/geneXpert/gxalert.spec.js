@@ -1,10 +1,18 @@
 const _ = require('lodash')
 const supertest = require('supertest')
 const chai = require('chai')
+const addYears = require('date-fns/add_years')
 const subDays = require('date-fns/sub_days')
+const addHours = require('date-fns/add_hours')
+const addSeconds = require('date-fns/add_seconds')
 const setMilliseconds = require('date-fns/set_milliseconds')
 const { createGxAlertTestContext } = require('./gxalert_utils')
-const { run } = require('../../src/db')
+const { getLastResultId } = require('../utils')
+const {
+  resultTextToResultCategoryMapping,
+  basicResultPayload,
+} = require('./geneXpertConstants')
+const { run } = require('../../../src/db')
 
 const server = supertest.agent('http://localhost:8080')
 const { assert, expect } = chai
@@ -246,6 +254,139 @@ describe('Device API routes for GxAlert Device', () => {
               )
               assert.notEqual(deviceDetails[0].name, deviceName)
             }))
+        })
+
+        describe('when a new gxAlertDeviceId is specified', () => {
+          const initialGxAlertDeviceId = 2012
+          const deviceName = 'Some Laboratory'
+          const macAddress = 'MAC00000INITIAL'
+          const hostId = 'GXDevice5'
+          const instrumentSerialNumbers = ['SERIAL1', 'SERIAL2']
+
+          const context = createContext()
+          const {
+            beforeCreateGxAlertApiKey,
+            useGxAlertDeviceId,
+            runTest,
+            getCurrentGeneXpertDevice,
+            afterCleanUp,
+          } = context
+          let { deviceAuth, basicDevicePayload } = context
+
+          before(async () =>
+            run(async () => {
+              await beforeCreateGxAlertApiKey()
+              useGxAlertDeviceId(initialGxAlertDeviceId)
+              ;({ deviceAuth, basicDevicePayload } = context)
+              await postToDeviceApi({
+                authHeader: deviceAuth,
+                payload: _.merge({}, basicDevicePayload, {
+                  name: deviceName,
+                  configuration: {
+                    data: {
+                      macAddress,
+                      hostId,
+                      instrumentSerialNumbers,
+                    },
+                  },
+                }),
+              })
+              const initialGeneXpertDevice = await getCurrentGeneXpertDevice()
+              expect(initialGeneXpertDevice).to.containSubset({
+                name: deviceName,
+                shortname: deviceName,
+                macAddress,
+                serial: instrumentSerialNumbers.join(','),
+                hostId,
+                configurationData: {
+                  macAddress,
+                  instrumentSerialNumbers,
+                  hostId,
+                  gxAlertDeviceId: initialGxAlertDeviceId,
+                },
+              })
+            })
+          )
+          after(afterCleanUp)
+
+          describe('and other identifying properties already belong to another device', () => {
+            it('should create a new GeneXpert device with a duplicate MAC address', () =>
+              runTest(async knex => {
+                const newGxAlertDeviceId = 8972
+                useGxAlertDeviceId(newGxAlertDeviceId)
+                ;({ basicDevicePayload } = context)
+                await postToDeviceApi({
+                  authHeader: deviceAuth,
+                  payload: _.merge({}, basicDevicePayload, {
+                    name: deviceName,
+                    configuration: {
+                      data: {
+                        macAddress,
+                        hostId,
+                        instrumentSerialNumbers,
+                      },
+                    },
+                  }),
+                })
+                const newGeneXpertDevice = await getCurrentGeneXpertDevice()
+                expect(newGeneXpertDevice).to.containSubset({
+                  name: deviceName,
+                  shortname: deviceName,
+                  macAddress,
+                  serial: instrumentSerialNumbers.join(','),
+                  hostId,
+                  configurationData: {
+                    macAddress,
+                    instrumentSerialNumbers,
+                    hostId,
+                    gxAlertDeviceId: newGxAlertDeviceId,
+                  },
+                })
+                const devicesWithDuplicateProperties = _.map(
+                  await knex
+                    .from('Device')
+                    .where({ macAddress })
+                    .orWhere({ hostId })
+                    .orWhere('name', deviceName)
+                    .orWhere('shortname', deviceName)
+                    .orWhere('serial', instrumentSerialNumbers.join(','))
+                    .select(),
+                  device =>
+                    _.assign({}, device, {
+                      configurationData: JSON.parse(device.configurationData),
+                    })
+                )
+                expect(devicesWithDuplicateProperties).to.have.length(2)
+                expect(devicesWithDuplicateProperties).to.containSubset([
+                  {
+                    name: deviceName,
+                    shortname: deviceName,
+                    macAddress,
+                    serial: instrumentSerialNumbers.join(','),
+                    hostId,
+                    configurationData: {
+                      macAddress,
+                      instrumentSerialNumbers,
+                      hostId,
+                      gxAlertDeviceId: initialGxAlertDeviceId,
+                    },
+                  },
+                  {
+                    name: deviceName,
+                    shortname: deviceName,
+                    macAddress,
+                    serial: instrumentSerialNumbers.join(','),
+                    hostId,
+                    configurationData: {
+                      macAddress,
+                      instrumentSerialNumbers,
+                      hostId,
+                      gxAlertDeviceId: newGxAlertDeviceId,
+                    },
+                  },
+                ])
+              }))
+          })
         })
       })
     })
@@ -827,61 +968,9 @@ describe('Device API routes for GxAlert Device', () => {
     })
   })
 
-  // TODO: When new GxAlert device ID is sent for a device with a MAC address that already exists
-  //     Do we update the existing device?
-  //         Do we overwrite the GxAlert device ID?
-  // TODO: When new GxAlert device ID is sent for a device with a Host ID that already exists
-  // TODO: When new GxAlert device ID is sent for a device with a Device Name that already exists
-  // TODO: Repeated different scanerios and assert that GxAlert device ID is unique every time
-
   describe('results', () => {
     const gxAlertDeviceId = 23847
     const deviceName = 'This Lab Has Results!'
-    const basicResultPayload = {
-      result: {
-        id: 'UNIQUE-RESULT-ID',
-        assay: {
-          id: 'GxMtbRifUltra',
-          version: '2',
-        },
-        instrument: {
-          serial: '123456',
-          module: {
-            serial: '654321',
-            name: 'A1',
-          },
-        },
-        sender: {
-          version: '4.7b',
-          operator: 'Ashley Smashley',
-        },
-        patient: {
-          id: '0833223622',
-          name: 'Peta J',
-          surname: 'McAllister',
-          address: '22 Marble Road, Greenstone Hill',
-          age: 25,
-          gender: 'Female',
-          phone: '0833243682',
-        },
-        sample: { id: 'PJM0833243682' },
-        data: {
-          probeData: {},
-          customFieldData: {
-            '1': {
-              notAvailable: false,
-              label: 'HIV Status',
-              value: 'Unknown',
-            },
-            '2': {
-              notAvailable: false,
-              label: 'Visual Analysis',
-              value: 'Blood Stained',
-            },
-          },
-        },
-      },
-    }
 
     const context = createContext()
     const {
@@ -893,18 +982,18 @@ describe('Device API routes for GxAlert Device', () => {
       getCurrentGeneXpertDevice,
       afterCleanUp,
     } = context
+    let { deviceAuth, device: gxAlertDevice } = context
     before(async () =>
       run(async () => {
         await beforeCreateGxAlertApiKey()
         useGxAlertDeviceId(gxAlertDeviceId)
+        ;({ deviceAuth, device: gxAlertDevice } = context)
       })
     )
     after(afterCleanUp)
 
     it('should reject a result without a start or end date date', () =>
       runTest(async () => {
-        const { deviceAuth } = context
-
         const beforeResultDetails = await getLastResult()
 
         assert.isUndefined(beforeResultDetails)
@@ -926,13 +1015,12 @@ describe('Device API routes for GxAlert Device', () => {
 
     it('should append a result if the external ID is not known', () =>
       runTest(async () => {
-        const { deviceAuth } = context
-
+        const { now } = context
         const beforeResultDetails = await getLastResult()
 
         assert.isUndefined(beforeResultDetails)
 
-        const testStartedOn = setMilliseconds(subDays(context.now, 3), 0)
+        const testStartedOn = setMilliseconds(subDays(now, 3), 0)
 
         const response = await postToDeviceApi({
           authHeader: deviceAuth,
@@ -989,17 +1077,14 @@ describe('Device API routes for GxAlert Device', () => {
         })
       }))
 
-    // TODO: Should log the result under the GxAlert device
-
     it('should update a result if the external ID is known', () =>
       runTest(async () => {
-        const { deviceAuth } = context
-
+        const { now } = context
         const beforeResultDetails = await getLastResult()
 
         assert.isNotEmpty(beforeResultDetails)
 
-        const testStartedOn = setMilliseconds(subDays(context.now, 3), 0)
+        const testStartedOn = setMilliseconds(subDays(now, 3), 0)
         const response = await postToDeviceApi({
           authHeader: deviceAuth,
           payload: _.merge(
@@ -1021,8 +1106,8 @@ describe('Device API routes for GxAlert Device', () => {
 
         const afterResultDetails = await getLastResult()
         const currentGeneXpertDevice = await getCurrentGeneXpertDevice()
-        assert.equal(beforeResultDetails.id, afterResultDetails.id)
         expect(afterResultDetails).to.containSubset({
+          id: beforeResultDetails.id,
           deviceId: currentGeneXpertDevice.id,
           siteId: currentGeneXpertDevice.siteId,
           geographyId: currentGeneXpertDevice.geographyId,
@@ -1055,5 +1140,421 @@ describe('Device API routes for GxAlert Device', () => {
           errorCode: null,
         })
       }))
+
+    it('should map result categories based on result text', () =>
+      runTest(async () => {
+        const sendResult = async (
+          resultId,
+          assay,
+          resultText,
+          expectedResultCategory1,
+          expectedResultCategory2,
+          runNumber
+        ) => {
+          const { now } = context
+          const testStartedOn = setMilliseconds(
+            addSeconds(subDays(now, 3), runNumber),
+            0
+          )
+          const testEndedOn = setMilliseconds(
+            addSeconds(addHours(testStartedOn, 2), runNumber),
+            0
+          )
+          const response = await postToDeviceApi({
+            authHeader: deviceAuth,
+            payload: _.merge(
+              {},
+              basicDevicePayload,
+              { name: deviceName },
+              basicResultPayload,
+              {
+                result: {
+                  id: resultId,
+                  startedOn: testStartedOn,
+                  endedOn: testEndedOn,
+                  assay: { id: assay },
+                  data: { resultText },
+                },
+              }
+            ),
+            expectedStatusCode: 200,
+          })
+          assert.typeOf(response.body, 'Object')
+
+          const resultDetails = await getLastResult()
+
+          expect(resultDetails).to.containSubset({
+            resultData: {
+              geneXpertTestId: resultId,
+            },
+            resultCategory1: expectedResultCategory1,
+            resultCategory2: expectedResultCategory2,
+          })
+        }
+
+        let runNumber = 1
+        for (const resultText in resultTextToResultCategoryMapping) {
+          /* eslint-disable no-await-in-loop */
+          // Running these requests in parallel causes the connection pool in MySQL to fill up too quickly.
+          // This is probably due to the fact table updates.
+          // For now: sending these requests sequentially and sweeping this under the rug
+          // TODO: Defer fact updates to another process and change this test to send results in parallel
+          if (
+            resultText &&
+            !_.isEmpty(resultTextToResultCategoryMapping[resultText])
+          ) {
+            const {
+              resultId,
+              assay,
+              resultCategory1,
+              resultCategory2,
+            } = resultTextToResultCategoryMapping[resultText]
+            await sendResult(
+              resultId,
+              assay,
+              resultText,
+              resultCategory1,
+              resultCategory2,
+              runNumber
+            )
+            runNumber += 1
+          }
+          /* eslint-enable no-await-in-loop */
+        }
+      }))
+
+    it('should belong to the GeneXpert device, not the GxAlert device', () =>
+      runTest(async knex => {
+        const { now } = context
+        await postToDeviceApi({
+          authHeader: deviceAuth,
+          payload: _.merge(
+            {},
+            basicDevicePayload,
+            { name: deviceName },
+            basicResultPayload,
+            {
+              result: {
+                startedOn: setMilliseconds(subDays(now, 3), 0),
+              },
+            }
+          ),
+        })
+        const result = await getLastResult()
+        const geneXpertDevice = await getCurrentGeneXpertDevice()
+        const geneXpertDeviceType = await getDeviceType(
+          'CepheidGeneXpert',
+          knex
+        )
+        assert.notEqual(gxAlertDevice.id, geneXpertDevice.id)
+        assert.equal(geneXpertDevice.deviceTypeId, geneXpertDeviceType.id)
+        assert.equal(result.deviceId, geneXpertDevice.id)
+      }))
+
+    it('should log the result under the GxAlert device', () =>
+      runTest(async knex => {
+        const { now } = context
+        const resultId = 'ID_FOR_CHECKING_DEVICE_LOGS'
+        await postToDeviceApi({
+          authHeader: deviceAuth,
+          payload: _.merge(
+            {},
+            basicDevicePayload,
+            { name: deviceName },
+            basicResultPayload,
+            {
+              result: {
+                id: resultId,
+                startedOn: setMilliseconds(subDays(now, 3), 0),
+              },
+            }
+          ),
+        })
+        const result = await getLastResult()
+        assert.equal(result.resultData.geneXpertTestId, resultId)
+        const deviceIdsInDeviceLogsForResult = await knex
+          .from('DeviceLog')
+          .where('resultId', result.id)
+          .pluck('deviceId')
+          .distinct()
+        assert.deepEqual(deviceIdsInDeviceLogsForResult, [gxAlertDevice.id])
+      }))
+
+    describe('when the assay in the result payload is unknown to Aspect', () => {
+      const assayName = 'New Assay Type'
+      after(async () =>
+        run(async knex =>
+          knex('Assay')
+            .where({ externalId: assayName })
+            .delete()
+        )
+      )
+
+      it('should set the result to assay GxUnknown', () =>
+        runTest(async knex => {
+          const { now } = context
+          const resultId = 'UNIQUE-ID-NEW-ASSAY'
+          const assayVersion = '1'
+          const getAssayDetails = async assayName =>
+            knex('Assay as a')
+              .join('AssayType as at', 'a.assayTypeId', 'at.id')
+              .join('DeviceType as dt', 'a.deviceTypeId', 'dt.id')
+              .where({ 'a.externalId': assayName })
+              .first(
+                'a.id as assayId',
+                'a.name as assayName',
+                'a.externalId as assayExternalId',
+                'at.name as assayTypeName',
+                'dt.externalId as deviceTypeExternalId'
+              )
+          const newAssayDetailsBefore = await getAssayDetails(assayName)
+          assert.isUndefined(newAssayDetailsBefore)
+
+          const testStartedOn = setMilliseconds(subDays(now, 3), 0)
+
+          const response = await postToDeviceApi({
+            authHeader: deviceAuth,
+            payload: _.merge(
+              {},
+              basicDevicePayload,
+              { name: deviceName },
+              basicResultPayload,
+              {
+                result: {
+                  id: resultId,
+                  startedOn: testStartedOn,
+                  assay: {
+                    id: assayName,
+                    version: assayVersion,
+                  },
+                },
+              }
+            ),
+            expectedStatusCode: 200,
+          })
+          assert.typeOf(response.body, 'Object')
+
+          const resultDetails = await getLastResult()
+          expect(resultDetails).to.containSubset({
+            resultData: {
+              geneXpertTestId: resultId,
+            },
+            assay: 'GxUnknown',
+          })
+        }))
+    })
+
+    describe('when the assay in the result payload is mapped to a consumable', () => {
+      const deductInventoryTestResultId = 'UNIQUE-ID-TEST-DEDUCT-INVENTORY'
+      const initialQuantityOnHand = 100
+      let expiryDate
+      let inventoryItemId
+
+      it('should reduce inventory levels of that consumable appropriately', () =>
+        runTest(async knex => {
+          const { now } = context
+          const consumableAssay = await knex('ConsumableAssay as ca')
+            .join('Assay as a', 'ca.assayId', 'a.id')
+            .join('DeviceType as dt', 'a.deviceTypeId', 'dt.id')
+            .where({ 'dt.externalId': basicDevicePayload.type.id })
+            .andWhere('ca.quantity', '>', 0)
+            .first('ca.consumableId', 'ca.quantity', 'a.externalId as assayId')
+
+          assert.isNotEmpty(consumableAssay)
+          assert.isAbove(consumableAssay.quantity, 0)
+
+          const geneXpertDevice = await getCurrentGeneXpertDevice()
+          expiryDate = new Date(addYears(now, 1).setHours(0, 0, 0, 0))
+          inventoryItemId = await knex('InventoryItem').insert({
+            consumableId: consumableAssay.consumableId,
+            siteId: geneXpertDevice.siteId,
+            expiresOn: expiryDate,
+            quantityOnHand: initialQuantityOnHand,
+          })
+
+          const testStartedOn = setMilliseconds(subDays(now, 3), 0)
+          const testEndedOn = setMilliseconds(addHours(testStartedOn, 2), 0)
+
+          const response = await postToDeviceApi({
+            authHeader: deviceAuth,
+            payload: _.merge(
+              {},
+              basicDevicePayload,
+              { name: deviceName },
+              basicResultPayload,
+              {
+                result: {
+                  id: deductInventoryTestResultId,
+                  startedOn: testStartedOn,
+                  endedOn: testEndedOn,
+                  sample: { id: 'Existing Sample' },
+                  instrument: { serial: 'Existing Instrument' },
+                  assay: {
+                    id: consumableAssay.assayId,
+                    version: '2',
+                  },
+                },
+              }
+            ),
+            expectedStatusCode: 200,
+          })
+          assert.typeOf(response.body, 'Object')
+
+          const lastResultId = await getLastResultId(knex, gxAlertDevice.id)
+          const inventoryItem = await knex('InventoryItem')
+            .where({ id: inventoryItemId })
+            .first()
+          assert.equal(
+            inventoryItem.quantityOnHand,
+            initialQuantityOnHand - consumableAssay.quantity
+          )
+
+          const inventoryLogs = await knex('InventoryLog as il')
+            .join('ConsumableReason as cr', 'il.consumableReasonId', 'cr.id')
+            .where({ inventoryItemId })
+            .select(
+              'il.consumableId',
+              'il.siteId',
+              'cr.name as consumableReason',
+              'il.resultId',
+              'il.quantity'
+            )
+          assert.deepEqual(inventoryLogs, [
+            {
+              consumableId: inventoryItem.consumableId,
+              siteId: geneXpertDevice.siteId,
+              consumableReason: 'Test Conducted',
+              resultId: lastResultId,
+              quantity: consumableAssay.quantity,
+            },
+          ])
+        }))
+
+      describe('when the test already exists in the database', () => {
+        it('should NOT reduce inventory levels of the consumable', () =>
+          runTest(async knex => {
+            const { now } = context
+            const consumableAssay = await knex('ConsumableAssay as ca')
+              .join('Assay as a', 'ca.assayId', 'a.id')
+              .join('DeviceType as dt', 'a.deviceTypeId', 'dt.id')
+              .where({ 'dt.externalId': basicDevicePayload.type.id })
+              .andWhere('ca.quantity', '>', 0)
+              .first(
+                'ca.consumableId',
+                'ca.quantity',
+                'a.externalId as assayId'
+              )
+
+            assert.isNotEmpty(consumableAssay)
+            assert.isAbove(consumableAssay.quantity, 0)
+
+            const inventoryItemBefore = await knex('InventoryItem')
+              .where({ id: inventoryItemId })
+              .first()
+
+            const testStartedOn = setMilliseconds(subDays(now, 3), 0)
+            const testEndedOn = setMilliseconds(addHours(testStartedOn, 2), 0)
+            const response = await postToDeviceApi({
+              authHeader: deviceAuth,
+              payload: _.merge(
+                {},
+                basicDevicePayload,
+                { name: deviceName },
+                basicResultPayload,
+                {
+                  result: {
+                    id: deductInventoryTestResultId,
+                    assay: {
+                      id: consumableAssay.assayId,
+                      version: '2',
+                    },
+                    sample: { id: 'Existing Sample' },
+                    instrument: { serial: 'Existing Instrument' },
+                    startedOn: testStartedOn,
+                    endedOn: testEndedOn,
+                  },
+                }
+              ),
+              expectedStatusCode: 200,
+            })
+            assert.typeOf(response.body, 'Object')
+
+            const geneXpertDevice = await getCurrentGeneXpertDevice()
+            const lastResultId = await getLastResultId(knex, gxAlertDevice.id)
+            const inventoryItemAfter = await knex('InventoryItem')
+              .where({
+                consumableId: consumableAssay.consumableId,
+                siteId: geneXpertDevice.siteId,
+                expiresOn: expiryDate,
+              })
+              .first()
+            assert.equal(inventoryItemAfter.id, inventoryItemId)
+            assert.equal(
+              inventoryItemAfter.quantityOnHand,
+              inventoryItemBefore.quantityOnHand
+            )
+            const inventoryLogs = await knex('InventoryLog as il')
+              .join('ConsumableReason as cr', 'il.consumableReasonId', 'cr.id')
+              .where({ inventoryItemId })
+              .select(
+                'il.consumableId',
+                'il.siteId',
+                'cr.name as consumableReason',
+                'il.resultId',
+                'il.quantity'
+              )
+            assert.deepEqual(inventoryLogs, [
+              {
+                consumableId: consumableAssay.consumableId,
+                siteId: geneXpertDevice.siteId,
+                consumableReason: 'Test Conducted',
+                resultId: lastResultId,
+                quantity: consumableAssay.quantity,
+              },
+            ])
+          }))
+      })
+    })
+
+    describe('when an error code has been specified in the result payload', () => {
+      it('should set the workflow status of the result to error', () =>
+        runTest(async () => {
+          const { now } = context
+          const errorTestResultId = 'UNIQUE-ID-WITH-ERROR-RESULT'
+          const errorCode = '12345'
+
+          const testStartedOn = setMilliseconds(subDays(now, 3), 0)
+          const testEndedOn = setMilliseconds(addHours(testStartedOn, 2), 0)
+          await postToDeviceApi({
+            authHeader: deviceAuth,
+            payload: _.merge(
+              {},
+              basicDevicePayload,
+              { name: deviceName },
+              basicResultPayload,
+              {
+                result: {
+                  id: errorTestResultId,
+                  startedOn: testStartedOn,
+                  endedOn: testEndedOn,
+                  error: {
+                    code: errorCode,
+                  },
+                },
+              }
+            ),
+          })
+
+          const lastResult = await getLastResult()
+          expect(lastResult).to.containSubset({
+            errorCode,
+            resultCategory1: 'Error',
+            resultWorkflowStatus: 'Error',
+            resultData: {
+              geneXpertTestId: errorTestResultId,
+            },
+          })
+        }))
+    })
   })
 })
