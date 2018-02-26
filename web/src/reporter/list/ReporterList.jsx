@@ -40,8 +40,8 @@ const messages = defineMessages({
     id: 'pages.ReporterList.reporterName',
     defaultMessage: 'Reporter Name',
   },
-  reporterShortName: {
-    id: 'pages.ReporterList.reporterShortName',
+  reporterShortname: {
+    id: 'pages.ReporterList.reporterShortname',
     defaultMessage: 'Reporter',
   },
   reporterSite: {
@@ -253,7 +253,7 @@ export const ReporterList = ({
               },
               {
                 key: 'shortname',
-                label: intl.formatMessage(messages.reporterShortName),
+                label: intl.formatMessage(messages.reporterShortname),
                 sortable: true,
               },
               {

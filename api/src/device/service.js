@@ -440,7 +440,7 @@ async function exportDevices(request) {
     ]
     const fieldNames = [
       'name',
-      'shortName',
+      'shortname',
       'status',
       'createdOn',
       'lastSeen',

@@ -28,7 +28,7 @@ describe('Grouped Items Reducer', () => {
         consumableId: 1,
         consumableName: 'Gloves',
         manufacturer: 'ABC Company',
-        unitShortName: 'pc',
+        unitShortname: 'pc',
         id: 76,
         expiresOn: null,
         quantityOnHand: 53,
@@ -51,7 +51,7 @@ describe('Grouped Items Reducer', () => {
         consumableId: 2,
         consumableName: 'GeneXpert TB Cartridge',
         manufacturer: 'Cepheid',
-        unitShortName: 'pc',
+        unitShortname: 'pc',
         id: 75,
         expiresOn: '2016-06-23T19:26:29.000Z',
         quantityOnHand: 34,
@@ -74,7 +74,7 @@ describe('Grouped Items Reducer', () => {
         consumableId: 2,
         consumableName: 'GeneXpert TB Cartridge',
         manufacturer: 'Cepheid',
-        unitShortName: 'pc',
+        unitShortname: 'pc',
         id: 79,
         expiresOn: '2016-12-15T00:00:00.000Z',
         quantityOnHand: 18,
@@ -97,7 +97,7 @@ describe('Grouped Items Reducer', () => {
         consumableId: 1,
         consumableName: 'Gloves',
         manufacturer: 'ABC Company',
-        unitShortName: 'pc',
+        unitShortname: 'pc',
         id: 78,
         expiresOn: null,
         quantityOnHand: 8,
@@ -120,7 +120,7 @@ describe('Grouped Items Reducer', () => {
         consumableId: 2,
         consumableName: 'GeneXpert TB Cartridge',
         manufacturer: 'Cepheid',
-        unitShortName: 'pc',
+        unitShortname: 'pc',
         id: 77,
         expiresOn: '2017-02-27T09:17:09.000Z',
         quantityOnHand: 225,
@@ -143,7 +143,7 @@ describe('Grouped Items Reducer', () => {
         consumableId: 2,
         consumableName: 'GeneXpert TB Cartridge',
         manufacturer: 'Cepheid',
-        unitShortName: 'pc',
+        unitShortname: 'pc',
         id: 63,
         expiresOn: '2016-03-31T00:33:37.000Z',
         quantityOnHand: 860,
@@ -166,7 +166,7 @@ describe('Grouped Items Reducer', () => {
         consumableId: 2,
         consumableName: 'GeneXpert TB Cartridge',
         manufacturer: 'Cepheid',
-        unitShortName: 'pc',
+        unitShortname: 'pc',
         id: 61,
         expiresOn: '2017-04-31T00:33:37.000Z',
         quantityOnHand: 13,
@@ -189,7 +189,7 @@ describe('Grouped Items Reducer', () => {
         consumableId: 3,
         consumableName: 'Gloves',
         manufacturer: 'XYZ Company',
-        unitShortName: 'pc',
+        unitShortname: 'pc',
         id: 44,
         expiresOn: null,
         quantityOnHand: 24,
@@ -212,7 +212,7 @@ describe('Grouped Items Reducer', () => {
         consumableId: 3,
         consumableName: 'Gloves',
         manufacturer: 'XYZ Company',
-        unitShortName: 'pc',
+        unitShortname: 'pc',
         id: 45,
         expiresOn: null,
         quantityOnHand: 16,
@@ -234,7 +234,7 @@ describe('Grouped Items Reducer', () => {
         lgaName: 'Suffolk',
         consumableName: 'GeneXpert TB Cartridge',
         manufacturer: 'Cepheid',
-        unitShortName: 'pc',
+        unitShortname: 'pc',
         consumableId: 2,
         id: 43,
         expiresOn: '2017-03-23T14:21:28.000Z',
@@ -257,7 +257,7 @@ describe('Grouped Items Reducer', () => {
         lgaName: 'Suffolk',
         consumableName: 'GeneXpert TB Cartridge',
         manufacturer: 'Cepheid',
-        unitShortName: 'pc',
+        unitShortname: 'pc',
         consumableId: 2,
         id: 46,
         expiresOn: '2017-05-01T00:00:00.000Z',
@@ -280,7 +280,7 @@ describe('Grouped Items Reducer', () => {
         lgaName: 'Suffolk',
         consumableName: 'GeneXpert TB Cartridge',
         manufacturer: 'Cepheid',
-        unitShortName: 'pc',
+        unitShortname: 'pc',
         consumableId: 2,
         id: 47,
         expiresOn: '2017-04-21T00:00:00.000Z',
@@ -304,7 +304,7 @@ describe('Grouped Items Reducer', () => {
         consumableId: 2,
         consumableName: 'GeneXpert TB Cartridge',
         manufacturer: 'Cepheid',
-        unitShortName: 'pc',
+        unitShortname: 'pc',
         id: 35,
         expiresOn: '2017-08-18T22:00:00.000Z',
         quantityOnHand: 931,
@@ -327,7 +327,7 @@ describe('Grouped Items Reducer', () => {
         consumableId: 2,
         consumableName: 'GeneXpert TB Cartridge',
         manufacturer: 'Cepheid',
-        unitShortName: 'pc',
+        unitShortname: 'pc',
         id: 36,
         expiresOn: '2017-03-14T22:00:00.000Z',
         quantityOnHand: 693,
@@ -350,7 +350,7 @@ describe('Grouped Items Reducer', () => {
         consumableId: 1,
         consumableName: 'Gloves',
         manufacturer: 'ABC Company',
-        unitShortName: 'pc',
+        unitShortname: 'pc',
         id: 39,
         expiresOn: null,
         quantityOnHand: 930,
@@ -373,7 +373,7 @@ describe('Grouped Items Reducer', () => {
         consumableId: 1,
         consumableName: 'Gloves',
         manufacturer: 'ABC Company',
-        unitShortName: 'pc',
+        unitShortname: 'pc',
         id: 38,
         expiresOn: null,
         quantityOnHand: 92,
@@ -396,7 +396,7 @@ describe('Grouped Items Reducer', () => {
         consumableId: 3,
         consumableName: 'GeneXpert Ebola Cartridge',
         manufacturer: 'Cepheid',
-        unitShortName: 'pc',
+        unitShortname: 'pc',
         id: 37,
         expiresOn: '2016-08-19T22:00:00.000Z',
         quantityOnHand: 102,
@@ -422,7 +422,7 @@ describe('Grouped Items Reducer', () => {
         consumableId: 1,
         consumableName: 1,
         manufacturer: 1,
-        unitShortName: 1,
+        unitShortname: 1,
         id: 1,
         expiresOn: 1,
         quantityOnHand: 1,
@@ -439,7 +439,7 @@ describe('Grouped Items Reducer', () => {
         consumableId: 2,
         consumableName: 2,
         manufacturer: 2,
-        unitShortName: 2,
+        unitShortname: 2,
         id: 1,
         expiresOn: 1,
         quantityOnHand: 1,
@@ -456,7 +456,7 @@ describe('Grouped Items Reducer', () => {
         consumableId: 2,
         consumableName: 2,
         manufacturer: 2,
-        unitShortName: 2,
+        unitShortname: 2,
         id: 1,
         expiresOn: 1,
         quantityOnHand: 1,
@@ -473,7 +473,7 @@ describe('Grouped Items Reducer', () => {
         consumableId: 1,
         consumableName: 1,
         manufacturer: 1,
-        unitShortName: 1,
+        unitShortname: 1,
         id: 1,
         expiresOn: 1,
         quantityOnHand: 1,
@@ -490,7 +490,7 @@ describe('Grouped Items Reducer', () => {
         consumableId: 1,
         consumableName: 1,
         manufacturer: 1,
-        unitShortName: 1,
+        unitShortname: 1,
         id: 1,
         expiresOn: 1,
         quantityOnHand: 1,
@@ -507,7 +507,7 @@ describe('Grouped Items Reducer', () => {
         consumableId: 2,
         consumableName: 2,
         manufacturer: 2,
-        unitShortName: 2,
+        unitShortname: 2,
         id: 1,
         expiresOn: 1,
         quantityOnHand: 1,
@@ -524,7 +524,7 @@ describe('Grouped Items Reducer', () => {
         consumableId: 2,
         consumableName: 2,
         manufacturer: 2,
-        unitShortName: 2,
+        unitShortname: 2,
         id: 1,
         expiresOn: 1,
         quantityOnHand: 1,
@@ -541,7 +541,7 @@ describe('Grouped Items Reducer', () => {
         consumableId: 2,
         consumableName: 2,
         manufacturer: 2,
-        unitShortName: 2,
+        unitShortname: 2,
         id: 1,
         expiresOn: 1,
         quantityOnHand: 1,
@@ -558,7 +558,7 @@ describe('Grouped Items Reducer', () => {
         consumableId: 2,
         consumableName: 2,
         manufacturer: 2,
-        unitShortName: 2,
+        unitShortname: 2,
         id: 1,
         expiresOn: 1,
         quantityOnHand: 1,
@@ -575,7 +575,7 @@ describe('Grouped Items Reducer', () => {
         consumableId: 3,
         consumableName: 3,
         manufacturer: 3,
-        unitShortName: 3,
+        unitShortname: 3,
         id: 1,
         expiresOn: 1,
         quantityOnHand: 1,
@@ -592,7 +592,7 @@ describe('Grouped Items Reducer', () => {
         consumableId: 3,
         consumableName: 3,
         manufacturer: 3,
-        unitShortName: 3,
+        unitShortname: 3,
         id: 1,
         expiresOn: 1,
         quantityOnHand: 1,
@@ -609,7 +609,7 @@ describe('Grouped Items Reducer', () => {
         consumableId: 3,
         consumableName: 3,
         manufacturer: 3,
-        unitShortName: 3,
+        unitShortname: 3,
         id: 1,
         expiresOn: 1,
         quantityOnHand: 1,
@@ -626,7 +626,7 @@ describe('Grouped Items Reducer', () => {
         consumableId: 2,
         consumableName: 2,
         manufacturer: 2,
-        unitShortName: 2,
+        unitShortname: 2,
         id: 1,
         expiresOn: 1,
         quantityOnHand: 1,
@@ -643,7 +643,7 @@ describe('Grouped Items Reducer', () => {
         consumableId: 2,
         consumableName: 2,
         manufacturer: 2,
-        unitShortName: 2,
+        unitShortname: 2,
         id: 1,
         expiresOn: 1,
         quantityOnHand: 1,
@@ -660,7 +660,7 @@ describe('Grouped Items Reducer', () => {
         consumableId: 2,
         consumableName: 2,
         manufacturer: 2,
-        unitShortName: 2,
+        unitShortname: 2,
         id: 1,
         expiresOn: 1,
         quantityOnHand: 1,
@@ -677,7 +677,7 @@ describe('Grouped Items Reducer', () => {
         consumableId: 2,
         consumableName: 2,
         manufacturer: 2,
-        unitShortName: 2,
+        unitShortname: 2,
         id: 1,
         expiresOn: 1,
         quantityOnHand: 1,
@@ -694,7 +694,7 @@ describe('Grouped Items Reducer', () => {
         consumableId: 1,
         consumableName: 1,
         manufacturer: 1,
-        unitShortName: 1,
+        unitShortname: 1,
         id: 1,
         expiresOn: 1,
         quantityOnHand: 1,
@@ -728,7 +728,7 @@ describe('Grouped Items Reducer', () => {
         'siteName',
         'stateId',
         'stateName',
-        'unitShortName',
+        'unitShortname',
       ])
       expect(
         newState
@@ -742,7 +742,7 @@ describe('Grouped Items Reducer', () => {
         'id',
         'manufacturer',
         'quantityOnHand',
-        'unitShortName',
+        'unitShortname',
       ])
       expect(
         newState
@@ -770,7 +770,7 @@ describe('Grouped Items Reducer', () => {
         'siteName',
         'stateId',
         'stateName',
-        'unitShortName',
+        'unitShortname',
       ])
       expect(
         newState
@@ -784,7 +784,7 @@ describe('Grouped Items Reducer', () => {
         'id',
         'manufacturer',
         'quantityOnHand',
-        'unitShortName',
+        'unitShortname',
       ])
       expect(
         newState
@@ -806,7 +806,7 @@ describe('Grouped Items Reducer', () => {
         'siteName',
         'stateId',
         'stateName',
-        'unitShortName',
+        'unitShortname',
       ])
       expect(
         newState
@@ -834,7 +834,7 @@ describe('Grouped Items Reducer', () => {
         'siteName',
         'stateId',
         'stateName',
-        'unitShortName',
+        'unitShortname',
       ])
       expect(
         newState
@@ -854,7 +854,7 @@ describe('Grouped Items Reducer', () => {
         'id',
         'manufacturer',
         'quantityOnHand',
-        'unitShortName',
+        'unitShortname',
       ])
       expect(
         newState
@@ -888,7 +888,7 @@ describe('Grouped Items Reducer', () => {
         'siteName',
         'stateId',
         'stateName',
-        'unitShortName',
+        'unitShortname',
       ])
       expect(
         newState
@@ -908,7 +908,7 @@ describe('Grouped Items Reducer', () => {
         'id',
         'manufacturer',
         'quantityOnHand',
-        'unitShortName',
+        'unitShortname',
       ])
       expect(
         newState
@@ -928,7 +928,7 @@ describe('Grouped Items Reducer', () => {
         'id',
         'manufacturer',
         'quantityOnHand',
-        'unitShortName',
+        'unitShortname',
       ])
     })
 
@@ -997,7 +997,7 @@ describe('Grouped Items Reducer', () => {
         'id',
         'manufacturer',
         'quantityOnHand',
-        'unitShortName',
+        'unitShortname',
       ])
       expect(
         newState
@@ -1025,7 +1025,7 @@ describe('Grouped Items Reducer', () => {
         'siteName',
         'stateId',
         'stateName',
-        'unitShortName',
+        'unitShortname',
       ])
       expect(
         newState
@@ -1053,7 +1053,7 @@ describe('Grouped Items Reducer', () => {
         'siteName',
         'stateId',
         'stateName',
-        'unitShortName',
+        'unitShortname',
       ])
       expect(
         newState
@@ -1081,7 +1081,7 @@ describe('Grouped Items Reducer', () => {
         'siteName',
         'stateId',
         'stateName',
-        'unitShortName',
+        'unitShortname',
       ])
       expect(
         newState
@@ -1101,7 +1101,7 @@ describe('Grouped Items Reducer', () => {
         'id',
         'manufacturer',
         'quantityOnHand',
-        'unitShortName',
+        'unitShortname',
       ])
     })
 
@@ -1120,7 +1120,7 @@ describe('Grouped Items Reducer', () => {
             consumableId: 1,
             consumableName: 'Gloves',
             manufacturer: 'ABC Company',
-            unitShortName: 'pc',
+            unitShortname: 'pc',
             inventoryItems: [
               {
                 id: 76,
@@ -1132,7 +1132,7 @@ describe('Grouped Items Reducer', () => {
           {
             consumableName: 'GeneXpert TB Cartridge',
             manufacturer: 'Cepheid',
-            unitShortName: 'pc',
+            unitShortname: 'pc',
             consumableId: 2,
             inventoryItems: [
               {
@@ -1162,7 +1162,7 @@ describe('Grouped Items Reducer', () => {
           {
             consumableName: 'Gloves',
             manufacturer: 'ABC Company',
-            unitShortName: 'pc',
+            unitShortname: 'pc',
             consumableId: 1,
             inventoryItems: [
               {
@@ -1175,7 +1175,7 @@ describe('Grouped Items Reducer', () => {
           {
             consumableName: 'GeneXpert TB Cartridge',
             manufacturer: 'Cepheid',
-            unitShortName: 'pc',
+            unitShortname: 'pc',
             consumableId: 2,
             inventoryItems: [
               {
@@ -1200,7 +1200,7 @@ describe('Grouped Items Reducer', () => {
           {
             consumableName: 'GeneXpert TB Cartridge',
             manufacturer: 'Cepheid',
-            unitShortName: 'pc',
+            unitShortname: 'pc',
             consumableId: 2,
             inventoryItems: [
               {
@@ -1230,7 +1230,7 @@ describe('Grouped Items Reducer', () => {
           {
             consumableName: 'Gloves',
             manufacturer: 'XYZ Company',
-            unitShortName: 'pc',
+            unitShortname: 'pc',
             consumableId: 3,
             inventoryItems: [
               {
@@ -1248,7 +1248,7 @@ describe('Grouped Items Reducer', () => {
           {
             consumableName: 'GeneXpert TB Cartridge',
             manufacturer: 'Cepheid',
-            unitShortName: 'pc',
+            unitShortname: 'pc',
             consumableId: 2,
             inventoryItems: [
               {
@@ -1284,7 +1284,7 @@ describe('Grouped Items Reducer', () => {
             consumableId: 2,
             consumableName: 'GeneXpert TB Cartridge',
             manufacturer: 'Cepheid',
-            unitShortName: 'pc',
+            unitShortname: 'pc',
             inventoryItems: [
               {
                 id: 35,
@@ -1302,7 +1302,7 @@ describe('Grouped Items Reducer', () => {
             consumableId: 1,
             consumableName: 'Gloves',
             manufacturer: 'ABC Company',
-            unitShortName: 'pc',
+            unitShortname: 'pc',
             inventoryItems: [
               {
                 id: 39,
@@ -1320,7 +1320,7 @@ describe('Grouped Items Reducer', () => {
             consumableId: 3,
             consumableName: 'GeneXpert Ebola Cartridge',
             manufacturer: 'Cepheid',
-            unitShortName: 'pc',
+            unitShortname: 'pc',
             inventoryItems: [
               {
                 id: 37,
@@ -1356,7 +1356,7 @@ describe('Grouped Items Reducer', () => {
         consumableId: 1,
         consumableName: 'Gloves',
         manufacturer: 'ABC Company',
-        unitShortName: 'pc',
+        unitShortname: 'pc',
         id: 76,
         expiresOn: null,
         quantityOnHand: 53,
@@ -1379,7 +1379,7 @@ describe('Grouped Items Reducer', () => {
         consumableId: 2,
         consumableName: 'GeneXpert TB Cartridge',
         manufacturer: 'Cepheid',
-        unitShortName: 'pc',
+        unitShortname: 'pc',
         id: 75,
         expiresOn: '2016-06-23T19:26:29.000Z',
         quantityOnHand: 34,
@@ -1402,7 +1402,7 @@ describe('Grouped Items Reducer', () => {
         consumableId: 2,
         consumableName: 'GeneXpert TB Cartridge',
         manufacturer: 'Cepheid',
-        unitShortName: 'pc',
+        unitShortname: 'pc',
         id: 79,
         expiresOn: '2016-12-15T00:00:00.000Z',
         quantityOnHand: 18,
@@ -1425,7 +1425,7 @@ describe('Grouped Items Reducer', () => {
         consumableId: 1,
         consumableName: 'Gloves',
         manufacturer: 'ABC Company',
-        unitShortName: 'pc',
+        unitShortname: 'pc',
         id: 78,
         expiresOn: null,
         quantityOnHand: 8,
@@ -1448,7 +1448,7 @@ describe('Grouped Items Reducer', () => {
         consumableId: 2,
         consumableName: 'GeneXpert TB Cartridge',
         manufacturer: 'Cepheid',
-        unitShortName: 'pc',
+        unitShortname: 'pc',
         id: 77,
         expiresOn: '2017-02-27T09:17:09.000Z',
         quantityOnHand: 225,
@@ -1471,7 +1471,7 @@ describe('Grouped Items Reducer', () => {
         consumableId: 2,
         consumableName: 'GeneXpert TB Cartridge',
         manufacturer: 'Cepheid',
-        unitShortName: 'pc',
+        unitShortname: 'pc',
         id: 63,
         expiresOn: '2016-03-31T00:33:37.000Z',
         quantityOnHand: 860,
@@ -1494,7 +1494,7 @@ describe('Grouped Items Reducer', () => {
         consumableId: 2,
         consumableName: 'GeneXpert TB Cartridge',
         manufacturer: 'Cepheid',
-        unitShortName: 'pc',
+        unitShortname: 'pc',
         id: 61,
         expiresOn: '2017-04-31T00:33:37.000Z',
         quantityOnHand: 13,
@@ -1516,7 +1516,7 @@ describe('Grouped Items Reducer', () => {
         consumableId: 1,
         consumableName: 1,
         manufacturer: 1,
-        unitShortName: 1,
+        unitShortname: 1,
         id: 1,
         expiresOn: 1,
         quantityOnHand: 1,
@@ -1533,7 +1533,7 @@ describe('Grouped Items Reducer', () => {
         consumableId: 1,
         consumableName: 1,
         manufacturer: 1,
-        unitShortName: 1,
+        unitShortname: 1,
         id: 1,
         expiresOn: 1,
         quantityOnHand: 1,
@@ -1550,7 +1550,7 @@ describe('Grouped Items Reducer', () => {
         consumableId: 1,
         consumableName: 1,
         manufacturer: 1,
-        unitShortName: 1,
+        unitShortname: 1,
         id: 1,
         expiresOn: 1,
         quantityOnHand: 1,
@@ -1567,7 +1567,7 @@ describe('Grouped Items Reducer', () => {
         consumableId: 1,
         consumableName: 1,
         manufacturer: 1,
-        unitShortName: 1,
+        unitShortname: 1,
         id: 1,
         expiresOn: 1,
         quantityOnHand: 1,
@@ -1584,7 +1584,7 @@ describe('Grouped Items Reducer', () => {
         consumableId: 1,
         consumableName: 1,
         manufacturer: 1,
-        unitShortName: 1,
+        unitShortname: 1,
         id: 1,
         expiresOn: 1,
         quantityOnHand: 1,
@@ -1601,7 +1601,7 @@ describe('Grouped Items Reducer', () => {
         consumableId: 1,
         consumableName: 1,
         manufacturer: 1,
-        unitShortName: 1,
+        unitShortname: 1,
         id: 1,
         expiresOn: 1,
         quantityOnHand: 1,
@@ -1618,7 +1618,7 @@ describe('Grouped Items Reducer', () => {
         consumableId: 1,
         consumableName: 1,
         manufacturer: 1,
-        unitShortName: 1,
+        unitShortname: 1,
         id: 1,
         expiresOn: 1,
         quantityOnHand: 1,
@@ -1686,7 +1686,7 @@ describe('Grouped Items Reducer', () => {
         consumableId: 1,
         consumableName: 'Gloves',
         manufacturer: 'ABC Company',
-        unitShortName: 'pc',
+        unitShortname: 'pc',
         id: 76,
         expiresOn: null,
         quantityOnHand: 53,
@@ -1702,7 +1702,7 @@ describe('Grouped Items Reducer', () => {
         lgaName: 'Cuyahoga',
         consumableName: 'GeneXpert TB Cartridge',
         manufacturer: 'Cepheid',
-        unitShortName: 'pc',
+        unitShortname: 'pc',
         consumableId: 2,
         id: 75,
         expiresOn: '2016-06-23T19:26:29.000Z',
@@ -1719,7 +1719,7 @@ describe('Grouped Items Reducer', () => {
         lgaName: 'Cuyahoga',
         consumableName: 'GeneXpert TB Cartridge',
         manufacturer: 'Cepheid',
-        unitShortName: 'pc',
+        unitShortname: 'pc',
         consumableId: 2,
         id: 79,
         expiresOn: '2016-12-15T00:00:00.000Z',
@@ -1736,7 +1736,7 @@ describe('Grouped Items Reducer', () => {
         lgaName: 'Cuyahoga',
         consumableName: 'Gloves',
         manufacturer: 'ABC Company',
-        unitShortName: 'pc',
+        unitShortname: 'pc',
         consumableId: 1,
         id: 78,
         expiresOn: null,
@@ -1753,7 +1753,7 @@ describe('Grouped Items Reducer', () => {
         lgaName: 'Cuyahoga',
         consumableName: 'GeneXpert TB Cartridge',
         manufacturer: 'Cepheid',
-        unitShortName: 'pc',
+        unitShortname: 'pc',
         consumableId: 2,
         id: 77,
         expiresOn: '2017-02-27T09:17:09.000Z',
@@ -1770,7 +1770,7 @@ describe('Grouped Items Reducer', () => {
         lgaName: 'Wayne',
         consumableName: 'GeneXpert TB Cartridge',
         manufacturer: 'Cepheid',
-        unitShortName: 'pc',
+        unitShortname: 'pc',
         consumableId: 2,
         id: 63,
         expiresOn: '2016-03-31T00:33:37.000Z',
@@ -1787,7 +1787,7 @@ describe('Grouped Items Reducer', () => {
         lgaName: 'Wayne',
         consumableName: 'GeneXpert TB Cartridge',
         manufacturer: 'Cepheid',
-        unitShortName: 'pc',
+        unitShortname: 'pc',
         consumableId: 2,
         id: 61,
         expiresOn: '2017-04-31T00:33:37.000Z',

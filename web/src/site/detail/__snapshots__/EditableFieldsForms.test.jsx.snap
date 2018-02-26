@@ -9,7 +9,7 @@ exports[`EditableFieldsForm Component should shallow render correctly 1`] = `
       "zip": "12345-13",
       "lga": "Cuyahoga",
       "externalId": "Ohio_2",
-      "shortName": "Cuyahoga, OH #2",
+      "shortname": "Cuyahoga, OH #2",
       "city": "Cuyahoga City",
       "name": "Cuyahoga County Ohio #2",
       "stateId": "67",
@@ -28,7 +28,7 @@ exports[`EditableFieldsForm Component should shallow render correctly 1`] = `
       "city": "City",
       "externalId": "Facility Code",
       "name": "Name",
-      "shortName": "Shortname",
+      "shortname": "Shortname",
       "timezone": "Time Zone",
       "zip": "Zip",
     }

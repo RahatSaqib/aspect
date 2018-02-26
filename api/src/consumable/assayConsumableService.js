@@ -9,7 +9,7 @@ const SELECT_LIST_FIELDS = [
   'ca.quantity',
   'c.name as consumableName',
   'u.name as unitName',
-  'u.shortname as unitShortName',
+  'u.shortname as unitShortname',
   'a.name as assayName',
   'a.i18nKey as assayI18nKey',
 ]

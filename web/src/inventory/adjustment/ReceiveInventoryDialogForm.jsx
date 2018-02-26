@@ -35,7 +35,7 @@ const messages = defineMessages({
   },
   nextQuantityStatus: {
     id: 'pages.ReceiveInventoryDialogForm.nextQuantityStatus',
-    defaultMessage: '(Quantity Transferred: {nextQuantity} {unitShortName})',
+    defaultMessage: '(Quantity Transferred: {nextQuantity} {unitShortname})',
   },
 })
 
@@ -119,7 +119,7 @@ const enhance = compose(
       dateAdjusted: intl.formatMessage(messages.dateAdjusted),
       nextQuantityStatus: intl.formatMessage(messages.nextQuantityStatus, {
         nextQuantity: inventoryItem.get('quantityOnHand', 0) + values.quantity,
-        unitShortName: consumable.get('unitShortName'),
+        unitShortname: consumable.get('unitShortname'),
       }),
     },
   })),

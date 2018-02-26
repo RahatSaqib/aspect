@@ -34,7 +34,7 @@ export default class SiteForm extends PureComponent {
     this.props.onSubmit(site.get('id'), {
       // Map form fields to API fields
       name: data.get('name'),
-      shortname: data.get('shortName'),
+      shortname: data.get('shortname'),
       externalId: data.get('externalId'),
       timezone: data.get('timezone'),
       countryId: data.get('countryId'),
@@ -62,7 +62,7 @@ export default class SiteForm extends PureComponent {
       ...extraValuesForMap,
       // Map API fields to form fields
       name: site.get('name'),
-      shortName: site.get('shortname'),
+      shortname: site.get('shortname'),
       externalId: site.get('externalId') || '',
       timezone: site.get('timezone') || /* FIXME */ '',
       countryId: site.get('countryId'),
@@ -76,7 +76,7 @@ export default class SiteForm extends PureComponent {
     }
     const labels = {
       name: formatMessage(messages.fieldName),
-      shortName: formatMessage(messages.fieldShortname),
+      shortname: formatMessage(messages.fieldShortname),
       externalId: formatMessage(messages.fieldExternalId),
       timezone: formatMessage(messages.fieldTimeZone),
       address: formatMessage(messages.fieldAddress),

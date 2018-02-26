@@ -489,7 +489,7 @@ async function seed(knex) {
                   deviceStatusId,
                   deviceId: device.deviceId,
                   name: device.name,
-                  shortName: device.shortName,
+                  shortname: device.shortname,
                   macAddress: device.macAddress,
                   serial: device.serial,
                   hostId: device.hostId,

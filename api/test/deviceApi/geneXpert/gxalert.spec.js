@@ -89,7 +89,7 @@ describe('Device API routes for GxAlert Device', () => {
         'deviceTypeId',
         'deviceStatusId',
         'name',
-        'shortName',
+        'shortname',
         'macAddress',
         'serial',
         'hostId',
