@@ -5,7 +5,7 @@ async function updateDeviceConfiguration(knex, deviceId, payload, now) {
   const configurationData =
     previousConfig == null
       ? payload.data
-      : _.merge(previousConfig.data, payload.data)
+      : _.merge(previousConfig.data, _.omitBy(payload.data, _.isNull))
 
   await knex('Device')
     .where({ id: deviceId })

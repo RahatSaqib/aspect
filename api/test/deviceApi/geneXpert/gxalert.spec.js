@@ -14,6 +14,7 @@ const {
   basicResultPayload,
 } = require('./geneXpertConstants')
 const { run } = require('../../../src/db')
+const { waitForApproximately } = require('../../utils/generatorFunctionUtils')
 
 const server = supertest.agent('http://localhost:8080')
 const { assert, expect } = chai
@@ -43,7 +44,7 @@ describe('Device API routes for GxAlert Device', () => {
           assert.fail(
             res.statusCode.toString(),
             '2XX',
-            'The post to Aspect device API failed'
+            `The post to Aspect device API failed: ${JSON.stringify(res.body)}`
           )
         }
         if (expectedResponseBody !== undefined) {
@@ -407,6 +408,7 @@ describe('Device API routes for GxAlert Device', () => {
         gxAlertDeviceName,
         useGxAlertDeviceId,
         runTest,
+        getCurrentGeneXpertDevice,
         afterCleanUp,
       } = context
 
@@ -677,6 +679,58 @@ describe('Device API routes for GxAlert Device', () => {
             ])
           }))
       })
+
+      describe('to NULL', () => {
+        it('should not update the macAddress to NULL', () =>
+          runTest(async () => {
+            const { deviceAuth, basicDevicePayload } = context
+            const geneXpertDeviceId = 7334
+            useGxAlertDeviceId(geneXpertDeviceId)
+            const validMacAddress = 'MAC0000000VALID'
+            await postToDeviceApi({
+              authHeader: deviceAuth,
+              payload: _.merge({}, basicDevicePayload, {
+                name: deviceName,
+                configuration: {
+                  data: {
+                    macAddress: validMacAddress,
+                  },
+                },
+              }),
+            })
+
+            const deviceWithMacBefore = await getCurrentGeneXpertDevice()
+            expect(deviceWithMacBefore).to.containSubset({
+              macAddress: validMacAddress,
+              configurationData: {
+                gxAlertDeviceId: geneXpertDeviceId,
+                macAddress: validMacAddress,
+              },
+            })
+
+            await postToDeviceApi({
+              authHeader: deviceAuth,
+              payload: _.merge({}, basicDevicePayload, {
+                name: deviceName,
+                configuration: {
+                  data: {
+                    macAddress: null,
+                  },
+                },
+              }),
+            })
+
+            const deviceWithMacAfter = await getCurrentGeneXpertDevice()
+            assert.equal(deviceWithMacAfter.id, deviceWithMacBefore.id)
+            expect(deviceWithMacAfter).to.containSubset({
+              macAddress: validMacAddress,
+              configurationData: {
+                gxAlertDeviceId: geneXpertDeviceId,
+                macAddress: validMacAddress,
+              },
+            })
+          }))
+      })
     })
 
     describe('when instrument serial changes', () => {
@@ -694,6 +748,7 @@ describe('Device API routes for GxAlert Device', () => {
         gxAlertDeviceName,
         useGxAlertDeviceId,
         runTest,
+        getCurrentGeneXpertDevice,
         afterCleanUp,
       } = context
 
@@ -966,7 +1021,568 @@ describe('Device API routes for GxAlert Device', () => {
             ])
           }))
       })
+
+      describe('to NULL', () => {
+        it('should not update the serial to NULL', () =>
+          runTest(async () => {
+            const { deviceAuth, basicDevicePayload } = context
+            const geneXpertDeviceId = 7335
+            useGxAlertDeviceId(geneXpertDeviceId)
+            const instrumentSerialNumbers = ['SERIAL1', 'SERIAL2']
+            await postToDeviceApi({
+              authHeader: deviceAuth,
+              payload: _.merge({}, basicDevicePayload, {
+                name: deviceName,
+                configuration: {
+                  data: { instrumentSerialNumbers },
+                },
+              }),
+            })
+
+            const deviceWithSerialBefore = await getCurrentGeneXpertDevice()
+            expect(deviceWithSerialBefore).to.containSubset({
+              serial: instrumentSerialNumbers.join(','),
+              configurationData: {
+                gxAlertDeviceId: geneXpertDeviceId,
+                instrumentSerialNumbers,
+              },
+            })
+
+            await postToDeviceApi({
+              authHeader: deviceAuth,
+              payload: _.merge({}, basicDevicePayload, {
+                name: deviceName,
+                configuration: {
+                  data: {
+                    instrumentSerialNumbers: null,
+                  },
+                },
+              }),
+            })
+
+            const deviceWithSerialAfter = await getCurrentGeneXpertDevice()
+            assert.equal(deviceWithSerialAfter.id, deviceWithSerialBefore.id)
+            expect(deviceWithSerialAfter).to.containSubset({
+              serial: instrumentSerialNumbers.join(','),
+              configurationData: {
+                gxAlertDeviceId: geneXpertDeviceId,
+                instrumentSerialNumbers,
+              },
+            })
+          }))
+      })
     })
+
+    describe('when hostId changes', () => {
+      const deviceName = 'GeneXpert Lab from GxAlert'
+      const firstGxAlertDeviceId = 47
+      const secondGxAlertDeviceId = 88
+      const firstHostId = 'HostId1'
+      const secondHostId = 'HostId Two'
+      const thirdHostId = 'Third Host ID'
+      let maxDeviceIdBefore = -1
+
+      const context = createContext()
+      const {
+        beforeCreateGxAlertApiKey,
+        gxAlertDeviceName,
+        useGxAlertDeviceId,
+        runTest,
+        getCurrentGeneXpertDevice,
+        afterCleanUp,
+      } = context
+
+      before(async () =>
+        run(async knex => {
+          maxDeviceIdBefore = await getMaxDeviceId(knex)
+          await beforeCreateGxAlertApiKey()
+          useGxAlertDeviceId(firstGxAlertDeviceId)
+          const { deviceAuth, basicDevicePayload } = context
+          await postToDeviceApi({
+            authHeader: deviceAuth,
+            payload: _.merge({}, basicDevicePayload, {
+              name: deviceName,
+              configuration: {
+                data: {
+                  hostId: firstHostId,
+                },
+              },
+            }),
+          })
+        })
+      )
+      after(afterCleanUp)
+
+      describe('and gxAlertDeviceId changes', () => {
+        it('should create a new device', () =>
+          runTest(async knex => {
+            const gxAlertDeviceType = await getDeviceType('GxAlert', knex)
+            const geneXpertDeviceType = await getDeviceType(
+              'CepheidGeneXpert',
+              knex
+            )
+            const devicesCreatedDuringTestBefore = await getDevicesWithIdLargerThan(
+              maxDeviceIdBefore,
+              knex
+            )
+            expect(devicesCreatedDuringTestBefore).to.containSubset([
+              {
+                name: gxAlertDeviceName,
+                deviceTypeId: gxAlertDeviceType.id,
+                hostId: null,
+                configurationData: {},
+              },
+              {
+                name: deviceName,
+                deviceTypeId: geneXpertDeviceType.id,
+                hostId: firstHostId,
+                configurationData: {
+                  hostId: firstHostId,
+                  gxAlertDeviceId: firstGxAlertDeviceId,
+                },
+              },
+            ])
+
+            useGxAlertDeviceId(secondGxAlertDeviceId)
+            const { deviceAuth, basicDevicePayload } = context
+            await postToDeviceApi({
+              authHeader: deviceAuth,
+              payload: _.merge({}, basicDevicePayload, {
+                name: deviceName,
+                configuration: {
+                  data: {
+                    hostId: secondHostId,
+                  },
+                },
+              }),
+            })
+
+            const devicesCreatedDuringTestAfter = await getDevicesWithIdLargerThan(
+              maxDeviceIdBefore,
+              knex
+            )
+            expect(devicesCreatedDuringTestAfter).to.containSubset([
+              {
+                name: gxAlertDeviceName,
+                deviceTypeId: gxAlertDeviceType.id,
+                hostId: null,
+                configurationData: {},
+              },
+              {
+                name: deviceName,
+                deviceTypeId: geneXpertDeviceType.id,
+                hostId: firstHostId,
+                configurationData: {
+                  gxAlertDeviceId: firstGxAlertDeviceId,
+                  hostId: firstHostId,
+                },
+              },
+              {
+                name: deviceName,
+                deviceTypeId: geneXpertDeviceType.id,
+                hostId: secondHostId,
+                configurationData: {
+                  gxAlertDeviceId: secondGxAlertDeviceId,
+                  hostId: secondHostId,
+                },
+              },
+            ])
+          }))
+      })
+
+      describe('but gxAlertDeviceId remains the same', () => {
+        it('should update the Host ID of the existing device', () =>
+          runTest(async knex => {
+            const gxAlertDeviceType = await getDeviceType('GxAlert', knex)
+            const geneXpertDeviceType = await getDeviceType(
+              'CepheidGeneXpert',
+              knex
+            )
+            const devicesCreatedDuringTestBefore = await getDevicesWithIdLargerThan(
+              maxDeviceIdBefore,
+              knex
+            )
+            expect(devicesCreatedDuringTestBefore).to.containSubset([
+              {
+                name: gxAlertDeviceName,
+                deviceTypeId: gxAlertDeviceType.id,
+                hostId: null,
+                configurationData: {},
+              },
+              {
+                name: deviceName,
+                deviceTypeId: geneXpertDeviceType.id,
+                hostId: firstHostId,
+                configurationData: {
+                  gxAlertDeviceId: firstGxAlertDeviceId,
+                  hostId: firstHostId,
+                },
+              },
+              {
+                name: deviceName,
+                deviceTypeId: geneXpertDeviceType.id,
+                hostId: secondHostId,
+                configurationData: {
+                  hostId: secondHostId,
+                },
+              },
+            ])
+
+            const { deviceAuth, basicDevicePayload } = context
+            await postToDeviceApi({
+              authHeader: deviceAuth,
+              payload: _.merge({}, basicDevicePayload, {
+                name: deviceName,
+                configuration: {
+                  data: {
+                    hostId: thirdHostId,
+                  },
+                },
+              }),
+            })
+
+            const devicesCreatedDuringTestAfter = await getDevicesWithIdLargerThan(
+              maxDeviceIdBefore,
+              knex
+            )
+
+            expect(devicesCreatedDuringTestAfter).to.containSubset([
+              {
+                name: gxAlertDeviceName,
+                deviceTypeId: gxAlertDeviceType.id,
+                hostId: null,
+                configurationData: {},
+              },
+              {
+                name: deviceName,
+                deviceTypeId: geneXpertDeviceType.id,
+                hostId: firstHostId,
+                configurationData: {
+                  gxAlertDeviceId: firstGxAlertDeviceId,
+                  hostId: firstHostId,
+                },
+              },
+              {
+                name: deviceName,
+                deviceTypeId: geneXpertDeviceType.id,
+                hostId: thirdHostId,
+                configurationData: {
+                  hostId: thirdHostId,
+                },
+              },
+            ])
+          }))
+      })
+
+      describe("and collides with another device's Host ID", () => {
+        it('should update the Host ID of the device, creating a duplicate Host ID', () =>
+          runTest(async knex => {
+            const gxAlertDeviceType = await getDeviceType('GxAlert', knex)
+            const geneXpertDeviceType = await getDeviceType(
+              'CepheidGeneXpert',
+              knex
+            )
+            const devicesCreatedDuringTestBefore = await getDevicesWithIdLargerThan(
+              maxDeviceIdBefore,
+              knex
+            )
+            expect(devicesCreatedDuringTestBefore).to.containSubset([
+              {
+                name: gxAlertDeviceName,
+                deviceTypeId: gxAlertDeviceType.id,
+                hostId: null,
+                configurationData: {},
+              },
+              {
+                name: deviceName,
+                deviceTypeId: geneXpertDeviceType.id,
+                hostId: firstHostId,
+                configurationData: {
+                  gxAlertDeviceId: firstGxAlertDeviceId,
+                  hostId: firstHostId,
+                },
+              },
+              {
+                name: deviceName,
+                deviceTypeId: geneXpertDeviceType.id,
+                hostId: thirdHostId,
+                configurationData: {
+                  gxAlertDeviceId: secondGxAlertDeviceId,
+                  hostId: thirdHostId,
+                },
+              },
+            ])
+
+            const { deviceAuth, basicDevicePayload } = context
+            await postToDeviceApi({
+              authHeader: deviceAuth,
+              payload: _.merge({}, basicDevicePayload, {
+                name: deviceName,
+                configuration: {
+                  data: {
+                    hostId: firstHostId,
+                  },
+                },
+              }),
+            })
+
+            const devicesCreatedDuringTestAfter = await getDevicesWithIdLargerThan(
+              maxDeviceIdBefore,
+              knex
+            )
+
+            expect(devicesCreatedDuringTestAfter).to.containSubset([
+              {
+                name: gxAlertDeviceName,
+                deviceTypeId: gxAlertDeviceType.id,
+                hostId: null,
+                configurationData: {},
+              },
+              {
+                name: deviceName,
+                deviceTypeId: geneXpertDeviceType.id,
+                hostId: firstHostId,
+                configurationData: {
+                  gxAlertDeviceId: firstGxAlertDeviceId,
+                  hostId: firstHostId,
+                },
+              },
+              {
+                name: deviceName,
+                deviceTypeId: geneXpertDeviceType.id,
+                hostId: firstHostId,
+                configurationData: {
+                  gxAlertDeviceId: secondGxAlertDeviceId,
+                  hostId: firstHostId,
+                },
+              },
+            ])
+          }))
+      })
+
+      describe('to NULL', () => {
+        it('should not update the Host ID to NULL', () =>
+          runTest(async () => {
+            const { deviceAuth, basicDevicePayload } = context
+            const geneXpertDeviceId = 7336
+            useGxAlertDeviceId(geneXpertDeviceId)
+            const validHostId = 'Xpert Host'
+            await postToDeviceApi({
+              authHeader: deviceAuth,
+              payload: _.merge({}, basicDevicePayload, {
+                name: deviceName,
+                configuration: {
+                  data: {
+                    hostId: validHostId,
+                  },
+                },
+              }),
+            })
+
+            const deviceWithHostIdBefore = await getCurrentGeneXpertDevice()
+            expect(deviceWithHostIdBefore).to.containSubset({
+              hostId: validHostId,
+              configurationData: {
+                gxAlertDeviceId: geneXpertDeviceId,
+                hostId: validHostId,
+              },
+            })
+
+            await postToDeviceApi({
+              authHeader: deviceAuth,
+              payload: _.merge({}, basicDevicePayload, {
+                name: deviceName,
+                configuration: {
+                  data: {
+                    hostId: null,
+                  },
+                },
+              }),
+            })
+
+            const deviceWithHostIdAfter = await getCurrentGeneXpertDevice()
+            assert.equal(deviceWithHostIdAfter.id, deviceWithHostIdBefore.id)
+            expect(deviceWithHostIdAfter).to.containSubset({
+              hostId: validHostId,
+              configurationData: {
+                gxAlertDeviceId: geneXpertDeviceId,
+                hostId: validHostId,
+              },
+            })
+          }))
+      })
+    })
+
+    describe('when configuration data is sparser than a previous request', () => {
+      const gxAlertDeviceId = 445
+      const context = createContext()
+      const {
+        beforeCreateGxAlertApiKey,
+        useGxAlertDeviceId,
+        runTest,
+        getCurrentGeneXpertDevice,
+        afterCleanUp,
+      } = context
+
+      before(async () =>
+        run(async () => {
+          await beforeCreateGxAlertApiKey()
+          useGxAlertDeviceId(gxAlertDeviceId)
+          const { deviceAuth } = context
+          await postToDeviceApi({
+            authHeader: deviceAuth,
+            payload: {
+              name: 'Xpert Lab',
+              serial: 'DESKTOP-028CNRT',
+              status: null,
+              type: { id: 'CepheidGeneXpert' },
+              site: null,
+              checkpoint: null,
+              log: null,
+              configuration: {
+                checkpoint: null,
+                data: {
+                  macAddress: 'MAC0A0027000010',
+                  hostId: 'xPertLab',
+                  culture: 'en-ZA',
+                  computerOsVersion: 'Microsoft Windows NT 6.2.9200.0',
+                  timezone: 'Eastern Standard Time',
+                  country: 'US',
+                  routerNumber: '562340956',
+                  sim1SerialNumber: '203981234097',
+                  sim2SerialNumber: '23472903587',
+                  labContactCell: '+27800243232',
+                  labContactEmail: 'test@example.com',
+                  labContactName: 'Mrs Lab COntact',
+                  installerCell: '+27831238183',
+                  installerEmail: 'another@someemail.io',
+                  installerName: 'Mr Installer',
+                  latestGrabbedModifiedDate: '2015-12-15T00:33:38',
+                  uploadProbeLevelData: true,
+                  gxConnectVersion: '1.10.0.0',
+                  databaseDeviceOk: true,
+                  lisConfigOk: true,
+                  nsisInstaller: true,
+                  putInService: '2018-01-01T08:02:30',
+                  putInServiceSource: 1,
+                  lastCalibrated: '2018-01-01T08:02:30',
+                  teamViewerId: '',
+                  teamViewerPassword: '',
+                  noInventory: false,
+                  latestErrors: null,
+                  autoCompleteJsonDate: '',
+                  enableCustomFields: true,
+                  instrumentSerialNumbers: ['SERIAL2', 'SERIAL2'],
+                  dbVersion: '3.0.5.0',
+                  lisConfig:
+                    'True|xPertLab|0|0|1|True|192.168.8.113|3012|-1|1|ASSAY=MTB-RIF 2[MTB=MTB][Rif Resistance=Rif Resistance][QC Check=QC Check]',
+                  gxAlertDeviceId,
+                },
+              },
+              operation: null,
+              result: null,
+            },
+          })
+        })
+      )
+      after(afterCleanUp)
+
+      it('should keep data from the prior request', () =>
+        runTest(async () => {
+          const geneXpertDeviceAfterDailyDetails = await getCurrentGeneXpertDevice()
+          const { deviceAuth } = context
+          await postToDeviceApi({
+            authHeader: deviceAuth,
+            payload: {
+              name: 'Xpert Lab',
+              serial: 'DESKTOP-028CNRT',
+              status: null,
+              type: { id: 'CepheidGeneXpert' },
+              site: null,
+              checkpoint: null,
+              log: null,
+              configuration: {
+                checkpoint: null,
+                data: {
+                  macAddress: 'MAC0A0027000010',
+                  gxAlertDeviceId,
+                },
+              },
+              operation: null,
+              result: null,
+            },
+          })
+          const geneXpertDeviceAfterPing = await getCurrentGeneXpertDevice()
+
+          assert.deepEqual(
+            geneXpertDeviceAfterPing.configurationData,
+            geneXpertDeviceAfterDailyDetails.configurationData
+          )
+        }))
+    })
+  })
+
+  describe('ping', () => {
+    const deviceName = 'GeneXpert Lab Pinged GxAlert'
+    const gxAlertDeviceId = 8322
+    const macAddress = 'MAC00000000PING'
+
+    const context = createContext()
+    const {
+      beforeCreateGxAlertApiKey,
+      useGxAlertDeviceId,
+      runTest,
+      getCurrentGeneXpertDevice,
+      afterCleanUp,
+    } = context
+    let { deviceAuth, basicDevicePayload } = context
+
+    before(async () =>
+      run(async () => {
+        await beforeCreateGxAlertApiKey()
+        useGxAlertDeviceId(gxAlertDeviceId)
+        ;({ deviceAuth, basicDevicePayload } = context)
+        await postToDeviceApi({
+          authHeader: deviceAuth,
+          payload: _.merge({}, basicDevicePayload, {
+            name: deviceName,
+            configuration: {
+              data: { macAddress },
+            },
+          }),
+        })
+      })
+    )
+    after(afterCleanUp)
+
+    it('should update the last seen and last ping time', () =>
+      runTest(async () => {
+        const deviceBefore = await getCurrentGeneXpertDevice()
+        await waitForApproximately(1, 'second')
+        await postToDeviceApi({
+          authHeader: deviceAuth,
+          payload: {
+            name: deviceName,
+            serial: null,
+            status: null,
+            type: { id: 'CepheidGeneXpert' },
+            site: null,
+            checkpoint: null,
+            log: null,
+            configuration: {
+              checkpoint: null,
+              data: { macAddress, gxAlertDeviceId },
+            },
+            operation: null,
+            result: null,
+          },
+        })
+
+        const deviceAfter = await getCurrentGeneXpertDevice()
+        deviceAfter.id.should.equal(deviceBefore.id)
+        deviceAfter.lastSeenOn.should.be.above(deviceBefore.lastSeenOn)
+        deviceAfter.lastPingOn.should.be.above(deviceBefore.lastPingOn)
+      }))
   })
 
   describe('results', () => {

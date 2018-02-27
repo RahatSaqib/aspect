@@ -18,9 +18,7 @@ describe('Demo Device routes', () => {
   it('should return a list of assays and post result', () =>
     runTest(async knex => {
       const { deviceId, clientAuth } = context
-
       const firstResultId = await getLastResultId(knex, deviceId)
-
       let resultId = null
       await server
         .get(`${path}/${deviceId}`)

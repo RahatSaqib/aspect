@@ -11,18 +11,35 @@ async function preProcessAddDeviceData({ knex, device, payload, now }) {
   if (_.isEmpty(device)) {
     throw Boom.notFound(`Cannot find device ${JSON.stringify(device)}`)
   }
-  const macAddress = _.get(payload, 'configuration.data.macAddress')
+  const configurationData = _.get(payload, 'configuration.data') || {}
+  const { macAddress } = configurationData
   if (macAddress && !macAddressValid(macAddress)) {
     throw Boom.badRequest(`Invalid MAC address in request: '${macAddress}'`)
   }
   const site = await getOrCreateSite(knex, device, payload, now)
-  if (device.siteId !== site.id) {
-    await knex
-      .from('Device')
-      .where({ id: device.id })
-      .update({ siteId: site.id, updatedOn: now, updatedBy: null })
+  const deviceDetails = {
+    lastSeenOn: now,
+    updatedOn: now,
+    updatedBy: null,
   }
-  // TODO: Update device API key with new site ID
+  if (device.siteId !== site.id) {
+    deviceDetails.siteId = site.id
+  }
+  // A ping from GxConnect is just a configuration POST with a MAC address
+  // A ping from GxConnect forwarded by GxAlert is just a POST with a MAC
+  // address and a gxAlertDeviceId
+  if (
+    !_.isEmpty(configurationData) &&
+    _.every(Object.keys(configurationData), configurationDataKey =>
+      ['macAddress', 'gxAlertDeviceId'].includes(configurationDataKey)
+    )
+  ) {
+    deviceDetails.lastPingOn = now
+  }
+  await knex
+    .from('Device')
+    .where({ id: device.id })
+    .update(deviceDetails)
 }
 
 async function getOrCreateSite(knex, device, payload, now) {

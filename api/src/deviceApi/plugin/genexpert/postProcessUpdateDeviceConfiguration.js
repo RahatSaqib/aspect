@@ -16,6 +16,7 @@ async function postProcessUpdateDeviceConfiguration({
       hostId,
       culture,
       timezone,
+      lastSeenOn: now,
     }
     if (instrumentSerialNumbers) {
       deviceDetails.serial = instrumentSerialNumbers.join()
@@ -23,7 +24,7 @@ async function postProcessUpdateDeviceConfiguration({
     await updateDeviceDetails(
       knex,
       deviceId,
-      _.omitBy(deviceDetails, _.isUndefined),
+      _.omitBy(deviceDetails, _.isEmpty),
       now
     )
   }

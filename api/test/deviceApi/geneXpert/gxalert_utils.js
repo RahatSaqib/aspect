@@ -385,8 +385,13 @@ class GxAlertApiTestContext {
           'hostId',
           'culture',
           'timezone',
-          'configurationData'
+          'configurationData',
+          'lastSeenOn',
+          'lastPingOn'
         )
+      if (_.isEmpty(device)) {
+        return device
+      }
       return _.merge({}, device, {
         configurationData: JSON.parse(device.configurationData),
       })
