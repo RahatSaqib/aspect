@@ -3474,7 +3474,7 @@ async function seed(knex) {
     })
   )
 
-  await knex('JobFunctionWidget').insert([
+  await knex('JobFunctionDashboardWidget').insert([
     { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.sites },
     { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.devices },
     { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.results },

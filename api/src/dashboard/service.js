@@ -45,7 +45,7 @@ const i18nKeys = {
 function getDashboardWidget({ id, partnerId }) {
   return knex('DashboardWidget as w')
     .select('w.*')
-    .innerJoin('JobFunctionWidget as jfw', 'w.id', 'jfw.widgetId')
+    .innerJoin('JobFunctionDashboardWidget as jfw', 'w.id', 'jfw.widgetId')
     .innerJoin('JobFunction as jf', 'jfw.jobFunctionId', 'jf.id')
     .innerJoin('Job as j', 'j.jobFunctionId', 'jf.id')
     .innerJoin('Person as ps', 'j.personId', 'ps.id')
