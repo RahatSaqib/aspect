@@ -1,5 +1,4 @@
 const _ = require('lodash')
-const math = require('mathjs')
 const { knex } = require('../db')
 const {
   getConstraints,
