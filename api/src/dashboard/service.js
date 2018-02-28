@@ -104,29 +104,15 @@ async function summaryDashboard(request) {
   const data = await Promise.all(
     widgets.map(async widget => {
       const tableAlias = getTableAlias(widget.sqlForIndicator)
-      const sqlStrings = _.split(widget.sqlForIndicator, ';')
-      const qryResult = await Promise.all(
-        sqlStrings.map(async sql => {
-          const sqlBuilder = getSqlBuilder(sql)
-          const count = sqlBuilder
-            ? await sqlBuilder.modify(
-                addConstraints,
-                dataConstraints,
-                tableAlias
-              )
-            : [0]
-          return count[0]
-        })
-      )
-      const variables = _.reduce(
-        qryResult,
-        (acc, count) => _.assign(acc, count),
-        {}
-      )
+      const sqlBuilder = getSqlBuilder(widget.sqlForIndicator)
+      const count = sqlBuilder
+        ? await sqlBuilder.modify(addConstraints, dataConstraints, tableAlias)
+        : [0]
+
       return _.set(
-        _.omit(widget, ['sqlForIndicator', 'formula', 'sortOrder']),
+        _.omit(widget, ['sqlForIndicator', 'sortOrder']),
         'count',
-        math.eval(widget.formula, variables)
+        count && count.length === 1 ? _.values(count[0])[0] : 0
       )
     })
   )

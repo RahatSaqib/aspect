@@ -7,7 +7,6 @@
     "subTitleI18nKey": null,
     "sqlForIndicator":
       "select count(s.id) as cnt from Site as s left outer join Geography as g on s.geographyId = g.id left outer join State as st on g.stateId = st.id left outer join Lga as l on g.lgaId = l.id",
-    "formula": "cnt",
     "link": "/browse/site",
     "sortOrder": 0
   },
@@ -19,7 +18,6 @@
     "subTitleI18nKey": null,
     "sqlForIndicator":
       "select count(d.id) as cnt from Device as d inner join Site as s on s.id = d.siteId inner join DeviceType as dt on dt.id = d.deviceTypeId inner join DeviceTypeCategory as dc on dc.id = dt.deviceTypeCategoryId left outer join Geography as g on s.geographyId = g.id left outer join State as st on g.stateId = st.id left outer join Lga as l on g.lgaId = l.id where dc.hasResults = 1",
-    "formula": "cnt",
     "link": "/browse/device",
     "sortOrder": 1
   },
@@ -31,7 +29,6 @@
     "subTitleI18nKey": "subResultsTitle",
     "sqlForIndicator":
       "select sum(f.resultCount) as cnt from FactResultCountDevice as f inner join Device as d on d.id = f.deviceId inner join Site as s on s.id = d.siteId left outer join Geography as g on s.geographyId = g.id where assayId is null and resultCategory1 is null and f.days = 30",
-    "formula": "cnt",
     "link": "/browse/result",
     "sortOrder": 2
   },
@@ -42,7 +39,6 @@
     "subTitle": null,
     "subTitleI18nKey": null,
     "sqlForIndicator": "select count(u.id) as cnt from User as u",
-    "formula": "cnt",
     "link": "/browse/person",
     "sortOrder": 3
   }
