@@ -45,7 +45,6 @@ async function purgePreviousResults(knex, dispatch, deviceId, now) {
       'r.resultWorkflowStatusId': purgedStatusId,
     })
     .select('r.id as resultId', 'd.name as deviceName')
-  const payload = { resultWorkflowStatus: PURGED_EXTERNALID }
   await Promise.all(
     _.map(resultIds, async result => {
       const { resultId, deviceName } = result
@@ -58,7 +57,7 @@ async function purgePreviousResults(knex, dispatch, deviceId, now) {
         createdOn: now,
         changedOn: now,
       })
-      dispatch(notifyResultUpdated(resultId, payload, 'MalawiPlugin'))
+      dispatch(notifyResultUpdated(resultId))
     })
   )
 }
@@ -204,7 +203,7 @@ async function mergeResultAndUpdateWorkflowStatus(
     generatedResultId: processedResult.id,
   })
 
-  dispatch(notifyResultUpdated(processedResult.id, payload, 'MalawiPlugin'))
+  dispatch(notifyResultUpdated(processedResult.id))
 }
 
 function reporterResultFromChaiResult(chaiResult) {

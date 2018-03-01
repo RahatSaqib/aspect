@@ -140,7 +140,7 @@ async function mergeChaiResultToReporters(
           generatedResultId: processedResult.id,
         })
       }
-      dispatch(notifyResultUpdated(processedResult.id, payload, 'MalawiPlugin'))
+      dispatch(notifyResultUpdated(processedResult.id))
     })
   )
 }
@@ -196,9 +196,7 @@ async function mergeReporterToChaiResult(
       // since we only updated workflow, only dispatch if changed
       // this also breaks a potential cycle on dispatching between CHAI and Reporter
       if (workflowChanged) {
-        dispatch(
-          notifyResultUpdated(processedResult.id, payload, 'MalawiPlugin')
-        )
+        dispatch(notifyResultUpdated(processedResult.id))
       }
     })
   )

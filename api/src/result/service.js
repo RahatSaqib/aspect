@@ -527,7 +527,7 @@ async function updateQcCheck(request) {
   })
 
   // notify result updated so result is redelivered
-  dispatch(notifyResultUpdated(resultId, { qcCheck: 1 }))
+  dispatch(notifyResultUpdated(resultId))
 
   const response = await showResult(request)
   return response

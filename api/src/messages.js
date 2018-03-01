@@ -26,7 +26,9 @@ client.on('message', (topic, message) => {
   if (match) {
     const action = JSON.parse(message.toString())
     if (action.type === match[1]) {
-      emitter.emit(action.type, action)
+      setImmediate(() => {
+        emitter.emit(action.type, action)
+      })
     }
   }
 })
@@ -129,22 +131,21 @@ class MessageContext {
  * Creates an action to notify the result with given id
  * has been updated.
  *
- * The resultId is required.
- *
- * The message can be specified, indicating the change made
- * and is recommended, but is optional.
+ * resultId is required.
+ * deviceLogId is optional, specified if update is already
+ * associated with a device log entry (NOTE if not specified,
+ * device API listener will create one)
  *
  * The source is also optional, defaults to 'ClientAPI'
  */
-function notifyResultUpdated(resultId, message, source = 'ClientAPI') {
+function notifyResultUpdated(resultId, deviceLogId) {
   if (resultId == null) {
     throw new Error('Must specify resultId for notifyResultUpdated')
   }
   return {
     type: types.RESULT_UPDATED,
     resultId,
-    message,
-    source,
+    deviceLogId,
   }
 }
 
@@ -152,7 +153,8 @@ function notifyResultUpdated(resultId, message, source = 'ClientAPI') {
  * Creates an action to notify the result with given id
  * has been logged in the DeviceLog.
  *
- * The resultId is required and deviceLogId are required.
+ * resultId is required
+ * deviceLogId is required
  */
 function notifyResultLogged(resultId, deviceLogId) {
   if (resultId == null || deviceLogId == null) {

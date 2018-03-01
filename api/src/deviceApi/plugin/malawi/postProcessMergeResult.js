@@ -84,13 +84,7 @@ async function addResultCategory(context, result) {
     await knex('Result')
       .where('id', resultId)
       .update('resultCategory1', resultCategoryId)
-    dispatch(
-      notifyResultUpdated(
-        resultId,
-        { resultCategory1: resultCategoryId },
-        'MalawiPlugin'
-      )
-    )
+    dispatch(notifyResultUpdated(resultId))
   }
 }
 
@@ -134,13 +128,7 @@ async function checkResultDeliverable(context, result) {
         reason: 'Validated & Complete Patient Data',
       })
 
-      dispatch(
-        notifyResultUpdated(
-          resultId,
-          { resultWorkflowStatus: DELIVERABLE_EXTERNALID },
-          'MalawiPlugin'
-        )
-      )
+      dispatch(notifyResultUpdated(resultId))
     }
   }
 }

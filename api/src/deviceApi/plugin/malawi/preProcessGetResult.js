@@ -48,13 +48,7 @@ async function updateResultWorkflowStatusOnGetResult(
       DELIVERED_EXTERNALID,
       now
     )
-    dispatch(
-      notifyResultUpdated(
-        row.resultId,
-        { resultWorkflowStatus: DELIVERED_EXTERNALID },
-        'GetResult'
-      )
-    )
+    dispatch(notifyResultUpdated(row.resultId))
   }
 }
 
