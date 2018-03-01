@@ -1,4 +1,5 @@
 const _ = require('lodash')
+const config = require('./config')
 const mqtt = require('mqtt')
 const EventEmitter = require('events')
 const { transact } = require('./db')
@@ -11,7 +12,7 @@ const types = {
 
 // ------------- Setup ---------------------------
 
-const client = mqtt.connect('mqtt://localhost:1883')
+const client = mqtt.connect(config.mqtt.url)
 const emitter = new EventEmitter()
 client.on('connect', () => {
   console.log('Connected')

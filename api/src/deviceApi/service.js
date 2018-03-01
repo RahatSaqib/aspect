@@ -134,7 +134,7 @@ function deviceApiHandler(handler, handlerOptions) {
         }
       }
       if (deviceLogUpdate != null && deviceLogUpdate.resultId != null) {
-        context.dispatch(
+        context.messageContext.dispatch(
           notifyResultUpdated(deviceLogUpdate.resultId, deviceLogId)
         )
       }
