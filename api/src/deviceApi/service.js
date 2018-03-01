@@ -23,10 +23,6 @@ const { loadPlugin } = require('./plugin/registration')
 
 const millisInDay = 1000 * 60 * 60 * 24
 
-// Source for messages so we can skip logs that we handled ourselves
-// Note that this is a bit of a hack and is not stored in the DB
-const DEVICE_LOG_COMMON_SOURCE = 'DeviceApiCommon'
-
 const DEVICE_LOG_TYPE_NONE = 0
 const DEVICE_LOG_TYPE_OPTIONAL = 1
 const DEVICE_LOG_TYPE_OPERATION = 2
@@ -139,11 +135,7 @@ function deviceApiHandler(handler, handlerOptions) {
       }
       if (deviceLogUpdate != null && deviceLogUpdate.resultId != null) {
         context.dispatch(
-          notifyResultUpdated(
-            deviceLogUpdate.resultId,
-            { deviceLogId },
-            DEVICE_LOG_COMMON_SOURCE
-          )
+          notifyResultUpdated(deviceLogUpdate.resultId, deviceLogId)
         )
       }
     })
@@ -899,10 +891,11 @@ function addDeviceLogResultConstraints(queryBuilder) {
     .where('rws.externalId', '<>', 'Purged')
 }
 
-function onResultUpdated({ resultId, message, source }) {
-  if (source === DEVICE_LOG_COMMON_SOURCE) {
+function onResultUpdated({ resultId, deviceLogId }) {
+  console.log('Result UPDATED'+resultId)
+  if (deviceLogId) {
     // we've already created device logs originating here, so ignore
-    dispatch(notifyResultLogged(resultId, message.deviceLogId))
+    dispatch(notifyResultLogged(resultId, deviceLogId))
   } else {
     // TODO dispatch from client API using plugin so
     // senderIp, createdOn, source, etc are available
@@ -913,10 +906,10 @@ function onResultUpdated({ resultId, message, source }) {
       knex('DeviceLog').insert({
         deviceId,
         resultId,
-        source,
+        source: 'DeviceApiResultUpdated',
         createdOn,
         senderIp: '',
-        rawMessage: JSON.stringify(message),
+        rawMessage: '',
       })
 
     knex('Result')
