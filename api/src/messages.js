@@ -15,14 +15,12 @@ const types = {
 const client = mqtt.connect(config.mqtt.url)
 const emitter = new EventEmitter()
 client.on('connect', () => {
-  console.log('Connected')
   _.each(types, type => {
     client.subscribe(`aspect/messages/${type}`)
   })
 })
 
 client.on('message', (topic, message) => {
-  console.log(`Message on ${topic}`)
   const match = /^aspect\/messages\/([^/]+)$/.exec(topic)
   if (match) {
     const action = JSON.parse(message.toString())

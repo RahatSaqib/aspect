@@ -918,7 +918,6 @@ function addDeviceLogResultConstraints(queryBuilder) {
 }
 
 function onResultUpdated({ resultId, deviceLogId }) {
-  console.log('Result UPDATED'+resultId)
   if (deviceLogId) {
     // we've already created device logs originating here, so ignore
     dispatch(notifyResultLogged(resultId, deviceLogId))
