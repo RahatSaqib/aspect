@@ -93,15 +93,18 @@ class MessageContext {
     if (!this.transaction) {
       const context = this
       context.transaction = transact(async knex => {
-        await Promise.all(
-          _.map(_.range(context.tasks.length), async () => {
-            const task = context.tasks.shift()
-            await task(knex)
-          })
-        )
+        // This needs to be in loop and synchronous
+        // because task may add to stack. Do not change
+        // to Promise.all or map over assumed range
+        /* eslint-disable no-await-in-loop */
+        while (context.tasks.length > 0) {
+          task = context.tasks.shift()
+          await task(knex)
+        }
       })
         .then(context.commit)
         .then(null, err => {
+          console.error(err) // eslint-disable-line no-console
           context.rollback()
           throw err
         })
