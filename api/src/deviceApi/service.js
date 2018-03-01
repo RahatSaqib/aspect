@@ -1,10 +1,11 @@
 const Boom = require('boom')
 const _ = require('lodash')
-const { knex, transact } = require('../db')
+const { knex, transact, run } = require('../db')
 const { asyncHandler } = require('../routes')
 const {
   addListener,
   createMessageContext,
+  dispatch,
   notifyResultUpdated,
   notifyResultLogged,
   types: { RESULT_UPDATED, RESULT_LOGGED },
@@ -136,7 +137,6 @@ function deviceApiHandler(handler, handlerOptions) {
             .update(deviceLogUpdate)
         }
       }
-
       if (deviceLogUpdate != null && deviceLogUpdate.resultId != null) {
         context.dispatch(
           notifyResultUpdated(
@@ -899,10 +899,10 @@ function addDeviceLogResultConstraints(queryBuilder) {
     .where('rws.externalId', '<>', 'Purged')
 }
 
-function onResultUpdated({ resultId, message, source }, context) {
+function onResultUpdated({ resultId, message, source }) {
   if (source === DEVICE_LOG_COMMON_SOURCE) {
     // we've already created device logs originating here, so ignore
-    context.dispatch(notifyResultLogged(resultId, message.deviceLogId))
+    dispatch(notifyResultLogged(resultId, message.deviceLogId))
   } else {
     // TODO dispatch from client API using plugin so
     // senderIp, createdOn, source, etc are available
@@ -924,13 +924,13 @@ function onResultUpdated({ resultId, message, source }, context) {
       .first('deviceId')
       .then(updateDeviceLog)
       .then(([deviceLogId]) =>
-        context.dispatch(notifyResultLogged(resultId, deviceLogId))
+        dispatch(notifyResultLogged(resultId, deviceLogId))
       )
   }
 }
 
-function onResultLogged({ resultId }, context) {
-  context.transact(async knex => {
+function onResultLogged({ resultId }) {
+  run(async knex => {
     const { plugin } = await knex('Result as r')
       .leftJoin('Partner as p', 'r.partnerId', 'p.id')
       .leftJoin('Device as d', 'r.deviceId', 'd.id')
@@ -942,7 +942,7 @@ function onResultLogged({ resultId }, context) {
 
     const pluginContext = {
       knex,
-      dispatch: context.dispatch,
+      dispatch,
       now,
       resultId,
     }
