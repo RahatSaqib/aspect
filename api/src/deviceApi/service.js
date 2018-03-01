@@ -737,7 +737,38 @@ class DeviceApiContext {
     this.messageContext = this.parent
       ? this.parent.messageContext
       : createMessageContext()
-    this.dispatch = this.messageContext.dispatch.bind(this.messageContext)
+    this.dispatch = this.dispatch.bind(this)
+  }
+
+  dispatch(action) {
+    if (this.parent) {
+      this.parent.dispatch(action)
+    } else {
+      let dispatchIt = true
+      const { deviceLogUpdate } = this
+
+      if (action.type === RESULT_UPDATED) {
+        if (
+          deviceLogUpdate != null &&
+          deviceLogUpdate.resultId === action.resultId
+        ) {
+          dispatchIt = false
+        } else if (
+          _.findIndex(
+            this.messageContext.actions,
+            existingAction =>
+              existingAction.type === RESULT_UPDATED &&
+              existingAction.resultId === action.resultId
+          ) !== -1
+        ) {
+          dispatchIt = false
+        }
+      }
+
+      if (dispatchIt) {
+        this.messageContext.dispatch(action)
+      }
+    }
   }
 
   withPayload(payload) {
