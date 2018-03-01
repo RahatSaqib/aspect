@@ -119,24 +119,19 @@ function deviceApiHandler(handler, handlerOptions) {
       .update(deviceUpdates)
 
     let response = {}
-    let deviceLogUpdate = null
     await context.messageContext.transact(async knex => {
       context.knex = knex
+      context.deviceLogId = deviceLogId
       response = await handler(context)
 
       // Update DeviceLog with changes added to context when calling handler
       if (deviceLogId !== null) {
-        ;({ deviceLogUpdate } = context)
+        const { deviceLogUpdate } = context
         if (deviceLogUpdate != null) {
           await knex('DeviceLog')
             .where({ id: deviceLogId })
             .update(deviceLogUpdate)
         }
-      }
-      if (deviceLogUpdate != null && deviceLogUpdate.resultId != null) {
-        context.messageContext.dispatch(
-          notifyResultUpdated(deviceLogUpdate.resultId, deviceLogId)
-        )
       }
     })
     return response
@@ -745,24 +740,19 @@ class DeviceApiContext {
       this.parent.dispatch(action)
     } else {
       let dispatchIt = true
-      const { deviceLogUpdate } = this
 
-      if (action.type === RESULT_UPDATED) {
-        if (
-          deviceLogUpdate != null &&
-          deviceLogUpdate.resultId === action.resultId
-        ) {
-          dispatchIt = false
-        } else if (
-          _.findIndex(
-            this.messageContext.actions,
-            existingAction =>
-              existingAction.type === RESULT_UPDATED &&
-              existingAction.resultId === action.resultId
-          ) !== -1
-        ) {
-          dispatchIt = false
-        }
+      // only dispatch result updated action once per result id
+      // within this Device API transaction
+      if (
+        action.type === RESULT_UPDATED &&
+        _.findIndex(
+          this.messageContext.actions,
+          existingAction =>
+            existingAction.type === RESULT_UPDATED &&
+            existingAction.resultId === action.resultId
+        ) !== -1
+      ) {
+        dispatchIt = false
       }
 
       if (dispatchIt) {
@@ -778,15 +768,22 @@ class DeviceApiContext {
   }
 
   addDeviceLogUpdate(prop, value) {
-    let update = this.deviceLogUpdate
-    if (update == null) {
-      update = {}
-      this.deviceLogUpdate = update
-    }
-
-    update[prop] = value
     if (this.parent) {
       this.parent.addDeviceLogUpdate(prop, value)
+    } else {
+      let update = this.deviceLogUpdate
+      if (update == null) {
+        update = {}
+        this.deviceLogUpdate = update
+      }
+
+      // add result updated on first device log update
+      if (prop === 'resultId' && update[prop] == null) {
+        this.dispatch(
+          notifyResultUpdated(value, this.deviceLogId)
+        )
+      }
+      update[prop] = value
     }
   }
 }
