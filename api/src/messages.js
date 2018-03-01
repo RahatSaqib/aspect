@@ -1,9 +1,7 @@
 const _ = require('lodash')
-const { transact } = require('./db')
-// TODO switch to Message Queue? Make more Redux Like?
+const mqtt = require('mqtt')
 const EventEmitter = require('events')
-
-const emitter = new EventEmitter()
+const { transact } = require('./db')
 
 // ----------- Message Types ---------------------
 const types = {
@@ -11,7 +9,36 @@ const types = {
   RESULT_LOGGED: 'RESULT_LOGGED',
 }
 
+// ------------- Setup ---------------------------
+
+const client = mqtt.connect('mqtt://localhost:1883')
+const emitter = new EventEmitter()
+client.on('connect', () => {
+  console.log('Connected')
+  _.each(types, type => {
+    client.subscribe(`aspect/messages/${type}`)
+  })
+})
+
+client.on('message', (topic, message) => {
+  console.log(`Message on ${topic}`)
+  const match = /^aspect\/messages\/([^/]+)$/.exec(topic)
+  if (match) {
+    const action = JSON.parse(message.toString())
+    if (action.type === match[1]) {
+      emitter.emit(action.type, action)
+    }
+  }
+})
+
 // ----------- Dispatch and  Listeners -----------
+
+/**
+ * Dispatch an action created by an action creator
+ */
+function dispatch(action) {
+  client.publish(`aspect/messages/${action.type}`, JSON.stringify(action))
+}
 
 /**
  * Adds a listener for the specified message type.
@@ -54,7 +81,7 @@ class MessageContext {
     if (this.transaction) {
       this.actions.push(action)
     } else {
-      emit(action, this)
+      dispatch(action)
     }
   }
 
@@ -94,17 +121,6 @@ class MessageContext {
     this.actions = []
     this.tasks = []
   }
-}
-
-/**
- * Dispatch an action created by an action creator
- */
-function dispatch(action) {
-  emit(action, createMessageContext())
-}
-
-function emit(action, context) {
-  emitter.emit(action.type, action, context)
 }
 
 // ----------- Action Creators -------------------
