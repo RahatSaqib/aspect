@@ -2576,7 +2576,7 @@ describe('Device Result API routes', () => {
         await waitAsyncComplete()
 
         await server
-          .get(`${devicePath}?checkpoint=rrt1723_0&offset=7`)
+          .get(`${devicePath}?checkpoint=rrt1723_0&offset=5`)
           .set('Authorization', device1723Auth)
           .then(res => {
             assert.equal(res.status, 404)
@@ -2585,7 +2585,7 @@ describe('Device Result API routes', () => {
         await waitAsyncComplete()
 
         await server
-          .get(`${devicePath}?checkpoint=rrt_0&offset=5`)
+          .get(`${devicePath}?checkpoint=rrt_0&offset=3`)
           .set('Authorization', deviceAuth)
           .then(res => {
             assert.equal(res.status, 200)
@@ -2623,7 +2623,7 @@ describe('Device Result API routes', () => {
           })
 
         await server
-          .get(`${devicePath}?checkpoint=rrt_1&offset=4`)
+          .get(`${devicePath}?checkpoint=rrt_1&offset=2`)
           .set('Authorization', deviceAuth)
           .then(res => {
             assert.equal(res.status, 200)
@@ -2697,7 +2697,7 @@ describe('Device Result API routes', () => {
           })
 
         await server
-          .get(`${devicePath}?checkpoint=rrt_2&offset=-4`)
+          .get(`${devicePath}?checkpoint=rrt_2&offset=-2`)
           .set('Authorization', deviceAuth)
           .then(res => {
             assert.equal(res.status, 200)
@@ -2959,7 +2959,7 @@ describe('Device Result API routes', () => {
         await waitAsyncComplete()
 
         await server
-          .get(`${devicePath}?checkpoint=rrt_0&offset=6`)
+          .get(`${devicePath}?checkpoint=rrt_0&offset=3`)
           .set('Authorization', deviceAuth)
           .then(res => {
             assert.equal(res.status, 200)
@@ -2996,7 +2996,7 @@ describe('Device Result API routes', () => {
           })
 
         await server
-          .get(`${devicePath}?checkpoint=rrt_0&offset=12`)
+          .get(`${devicePath}?checkpoint=rrt_0&offset=6`)
           .set('Authorization', deviceAuth)
           .then(res => {
             assert.equal(res.status, 200)
@@ -3032,7 +3032,7 @@ describe('Device Result API routes', () => {
           })
 
         await server
-          .get(`${devicePath}?checkpoint=rrt_1&offset=5`)
+          .get(`${devicePath}?checkpoint=rrt_1&offset=3`)
           .set('Authorization', deviceAuth)
           .then(res => {
             assert.equal(res.status, 200)
@@ -3142,7 +3142,7 @@ describe('Device Result API routes', () => {
           })
 
         await server
-          .get(`${devicePath}?checkpoint=rrt_3&offset=-7`)
+          .get(`${devicePath}?checkpoint=rrt_3&offset=-4`)
           .set('Authorization', deviceAuth)
           .then(res => {
             assert.equal(res.status, 200)
