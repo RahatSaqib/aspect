@@ -155,17 +155,25 @@ async function mergeResult(
   let sampleTypeId = null
   const payloadSampleTypeId = _.get(payload, 'sample.type.id', false)
   if (payloadSampleTypeId) {
-    sampleTypeId = (await knex('SampleType')
+    const sampleType = await knex('SampleType')
       .where({ externalId: payloadSampleTypeId })
-      .first('id')).id
+      .first('id')
+    if (sampleType == null) {
+      throw Boom.badRequest(`Cannot find sample type ${payloadSampleTypeId}`)
+    }
+    sampleTypeId = sampleType.id
   }
 
   let sampleOriginSiteId = site.id
   const payloadOriginSiteId = _.get(payload, 'sample.originSite.id', false)
   if (payloadOriginSiteId) {
-    sampleOriginSiteId = (await knex('Site')
+    const sampleOriginSite = await knex('Site')
       .where({ partnerId: site.partnerId, externalId: payloadOriginSiteId })
-      .first('id')).id
+      .first('id')
+    if (sampleOriginSite == null) {
+      throw Boom.badRequest(`Cannot find Sample origin site ${payloadOriginSiteId}`)
+    }
+    sampleOriginSiteId = sampleOriginSite.id
   }
 
   if (sampleId == null && existingResult == null) {
