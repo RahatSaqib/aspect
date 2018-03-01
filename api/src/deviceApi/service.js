@@ -1,6 +1,6 @@
 const Boom = require('boom')
 const _ = require('lodash')
-const { knex, transact, run } = require('../db')
+const { knex, transact } = require('../db')
 const { asyncHandler } = require('../routes')
 const {
   addListener,
@@ -948,7 +948,8 @@ function onResultUpdated({ resultId, deviceLogId }) {
 }
 
 function onResultLogged({ resultId }) {
-  run(async knex => {
+  const context = createMessageContext()
+  context.transact(async knex => {
     const { plugin } = await knex('Result as r')
       .leftJoin('Partner as p', 'r.partnerId', 'p.id')
       .leftJoin('Device as d', 'r.deviceId', 'd.id')
@@ -960,7 +961,7 @@ function onResultLogged({ resultId }) {
 
     const pluginContext = {
       knex,
-      dispatch,
+      dispatch: context.dispatch,
       now,
       resultId,
     }
