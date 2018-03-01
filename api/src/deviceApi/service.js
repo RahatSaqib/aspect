@@ -779,9 +779,7 @@ class DeviceApiContext {
 
       // add result updated on first device log update
       if (prop === 'resultId' && update[prop] == null) {
-        this.dispatch(
-          notifyResultUpdated(value, this.deviceLogId)
-        )
+        this.dispatch(notifyResultUpdated(value, this.deviceLogId))
       }
       update[prop] = value
     }
