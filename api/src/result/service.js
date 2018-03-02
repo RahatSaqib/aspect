@@ -8,7 +8,7 @@ const {
   filterDateRangeParams,
   sortPageParams,
 } = require('../db')
-const { dispatch, notifyResultUpdated } = require('../messages')
+const { publish, resultUpdated } = require('../messages')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 const { getUser } = require('../auth/service')
 const {
@@ -527,7 +527,7 @@ async function updateQcCheck(request) {
   })
 
   // notify result updated so result is redelivered
-  dispatch(notifyResultUpdated(resultId))
+  publish(resultUpdated(resultId))
 
   const response = await showResult(request)
   return response

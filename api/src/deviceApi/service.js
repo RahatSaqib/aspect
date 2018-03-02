@@ -3,11 +3,11 @@ const _ = require('lodash')
 const { knex, transact } = require('../db')
 const { asyncHandler } = require('../routes')
 const {
+  publish,
   subscribe,
   createMessageContext,
-  dispatch,
-  notifyResultUpdated,
-  notifyResultLogged,
+  resultUpdated,
+  resultLogged,
   types: { RESULT_UPDATED },
 } = require('../messages')
 
@@ -292,11 +292,11 @@ async function getDeviceOperationWithContext(context) {
 }
 
 async function updateSiteWithContext(context) {
-  const { knex, dispatch, device, payload, now, pluginName: plugin } = context
+  const { knex, publish, device, payload, now, pluginName: plugin } = context
 
   const pluginContext = {
     knex,
-    dispatch,
+    publish,
     payload,
     now,
     deviceType: device.deviceType,
@@ -374,7 +374,7 @@ async function updateSiteWithContext(context) {
 async function mergeResultWithContext(context) {
   const {
     knex,
-    dispatch,
+    publish,
     device: { id: deviceId, deviceType },
     pluginName: plugin,
     payload,
@@ -384,7 +384,7 @@ async function mergeResultWithContext(context) {
   const pluginContext = {
     knex,
     deviceId,
-    dispatch,
+    publish,
     deviceType,
     payload,
     now,
@@ -418,14 +418,14 @@ async function mergeResultWithContext(context) {
 async function getResultWithContext(context) {
   const {
     knex,
-    dispatch,
+    publish,
     deviceLog: { resultId },
     pluginName: plugin,
     query,
     now,
   } = context
 
-  const pluginContext = { knex, dispatch, resultId, query, now }
+  const pluginContext = { knex, publish, resultId, query, now }
 
   const preProcess = await loadPlugin(plugin, 'preProcessGetResult')
   await preProcess(pluginContext)
@@ -732,16 +732,16 @@ class DeviceApiContext {
     this.messageContext = this.parent
       ? this.parent.messageContext
       : createMessageContext()
-    this.dispatch = this.dispatch.bind(this)
+    this.publish = this.publish.bind(this)
   }
 
-  dispatch(action) {
+  publish(action) {
     if (this.parent) {
-      this.parent.dispatch(action)
+      this.parent.publish(action)
     } else {
-      let dispatchIt = true
+      let publishIt = true
 
-      // only dispatch result updated action once per result id
+      // only publish result updated action once per result id
       // within this Device API transaction
       if (
         action.type === RESULT_UPDATED &&
@@ -752,11 +752,11 @@ class DeviceApiContext {
             existingAction.resultId === action.resultId
         ) !== -1
       ) {
-        dispatchIt = false
+        publishIt = false
       }
 
-      if (dispatchIt) {
-        this.messageContext.dispatch(action)
+      if (publishIt) {
+        this.messageContext.publish(action)
       }
     }
   }
@@ -779,7 +779,7 @@ class DeviceApiContext {
 
       // add result updated on first device log update
       if (prop === 'resultId' && update[prop] == null) {
-        this.dispatch(notifyResultUpdated(value, this.deviceLogId))
+        this.publish(resultUpdated(value, this.deviceLogId))
       }
       update[prop] = value
     }
@@ -920,9 +920,9 @@ function addDeviceLogResultConstraints(queryBuilder) {
 function onResultUpdated({ resultId, deviceLogId }) {
   if (deviceLogId) {
     // we've already created device logs originating here, so ignore
-    dispatch(notifyResultLogged(resultId, deviceLogId))
+    publish(resultLogged(resultId, deviceLogId))
   } else {
-    // TODO dispatch from client API using plugin so
+    // TODO publish from client API using plugin so
     // senderIp, createdOn, source, etc are available
     // Everything else, we should add a device log entry so that
     // the updates will be downloaded
@@ -941,9 +941,7 @@ function onResultUpdated({ resultId, deviceLogId }) {
       .where({ id: resultId })
       .first('deviceId')
       .then(updateDeviceLog)
-      .then(([deviceLogId]) =>
-        dispatch(notifyResultLogged(resultId, deviceLogId))
-      )
+      .then(([deviceLogId]) => publish(resultLogged(resultId, deviceLogId)))
   }
 }
 
@@ -961,7 +959,7 @@ function onResultLogged({ resultId }) {
 
     const pluginContext = {
       knex,
-      dispatch: context.dispatch,
+      publish: context.publish,
       now,
       resultId,
     }
