@@ -1,6 +1,5 @@
 const _ = require('lodash')
 const { addResultWorkflowLogIfChanged } = require('../common')
-const { resultUpdated } = require('../../../messages')
 const { mergeResult, getResult } = require('../../result')
 
 const DEVICE_TYPE_CHAI = 'CHAILIMS'
@@ -26,7 +25,7 @@ const MERGEABLE_REPORTABLE_IDS = [
   ERROR_EXTERNALID,
 ]
 
-async function onResultLogged({ knex, publish, resultId, now }) {
+async function onResultLogged({ knex, actions, resultId, now }) {
   const qcResult = await knex('Result as r')
     .join('ResultWorkflowStatus as rws', 'r.resultWorkflowStatusId', 'rws.id')
     .join('Device as d', 'r.deviceId', 'd.id')
@@ -53,7 +52,7 @@ async function onResultLogged({ knex, publish, resultId, now }) {
       // it is a qcChecked CHAI result, merge into Reporter results
       await mergeChaiResultToReporters(
         knex,
-        publish,
+        actions,
         resultId,
         sampleSiteId,
         deviceName,
@@ -66,7 +65,7 @@ async function onResultLogged({ knex, publish, resultId, now }) {
       // it is a qcChecked Reportable result, merge into CHAI results
       await mergeReporterToChaiResult(
         knex,
-        publish,
+        actions,
         resultId,
         sampleSiteId,
         deviceName,
@@ -78,7 +77,7 @@ async function onResultLogged({ knex, publish, resultId, now }) {
 
 async function mergeChaiResultToReporters(
   knex,
-  publish,
+  actions,
   resultId,
   sampleSiteId,
   deviceName,
@@ -140,14 +139,14 @@ async function mergeChaiResultToReporters(
           generatedResultId: processedResult.id,
         })
       }
-      publish(resultUpdated(processedResult.id))
+      actions.resultUpdated(processedResult.id)
     })
   )
 }
 
 async function mergeReporterToChaiResult(
   knex,
-  publish,
+  actions,
   resultId,
   sampleSiteId,
   deviceName,
@@ -196,7 +195,7 @@ async function mergeReporterToChaiResult(
       // since we only updated workflow, only publish if changed
       // this also breaks a potential cycle on publish between CHAI and Reporter
       if (workflowChanged) {
-        publish(resultUpdated(processedResult.id))
+        actions.resultUpdated(processedResult.id)
       }
     })
   )

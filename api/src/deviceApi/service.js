@@ -2,14 +2,13 @@ const Boom = require('boom')
 const _ = require('lodash')
 const { knex, transact } = require('../db')
 const { asyncHandler } = require('../routes')
+const { dispatch, subscribe, createMessageContext } = require('../mq')
+
 const {
-  publish,
-  subscribe,
-  createMessageContext,
   resultUpdated,
   resultLogged,
   types: { RESULT_UPDATED },
-} = require('../messages')
+} = require('../result/actions')
 
 const {
   updateDeviceConfiguration,
@@ -292,11 +291,11 @@ async function getDeviceOperationWithContext(context) {
 }
 
 async function updateSiteWithContext(context) {
-  const { knex, publish, device, payload, now, pluginName: plugin } = context
+  const { knex, actions, device, payload, now, pluginName: plugin } = context
 
   const pluginContext = {
     knex,
-    publish,
+    actions,
     payload,
     now,
     deviceType: device.deviceType,
@@ -374,7 +373,7 @@ async function updateSiteWithContext(context) {
 async function mergeResultWithContext(context) {
   const {
     knex,
-    publish,
+    actions,
     device: { id: deviceId, deviceType },
     pluginName: plugin,
     payload,
@@ -384,7 +383,7 @@ async function mergeResultWithContext(context) {
   const pluginContext = {
     knex,
     deviceId,
-    publish,
+    actions,
     deviceType,
     payload,
     now,
@@ -418,14 +417,14 @@ async function mergeResultWithContext(context) {
 async function getResultWithContext(context) {
   const {
     knex,
-    publish,
+    actions,
     deviceLog: { resultId },
     pluginName: plugin,
     query,
     now,
   } = context
 
-  const pluginContext = { knex, publish, resultId, query, now }
+  const pluginContext = { knex, actions, resultId, query, now }
 
   const preProcess = await loadPlugin(plugin, 'preProcessGetResult')
   await preProcess(pluginContext)
@@ -731,34 +730,9 @@ class DeviceApiContext {
     Object.assign(this, props)
     this.messageContext = this.parent
       ? this.parent.messageContext
-      : createMessageContext()
-    this.publish = this.publish.bind(this)
-  }
-
-  publish(action) {
-    if (this.parent) {
-      this.parent.publish(action)
-    } else {
-      let publishIt = true
-
-      // only publish result updated action once per result id
-      // within this Device API transaction
-      if (
-        action.type === RESULT_UPDATED &&
-        _.findIndex(
-          this.messageContext.actions,
-          existingAction =>
-            existingAction.type === RESULT_UPDATED &&
-            existingAction.resultId === action.resultId
-        ) !== -1
-      ) {
-        publishIt = false
-      }
-
-      if (publishIt) {
-        this.messageContext.publish(action)
-      }
-    }
+      : createMessageContext({ resultUpdated })
+    this.resultUpdated = this.resultUpdated.bind(this)
+    this.actions = { resultUpdated: this.resultUpdated }
   }
 
   withPayload(payload) {
@@ -779,9 +753,26 @@ class DeviceApiContext {
 
       // add result updated on first device log update
       if (prop === 'resultId' && update[prop] == null) {
-        this.publish(resultUpdated(value, this.deviceLogId))
+        this.resultUpdated(value, this.deviceLogId)
       }
       update[prop] = value
+    }
+  }
+
+  resultUpdated(resultId, deviceLogId) {
+    if (this.parent) {
+      this.parent.resultUpdated(resultId, deviceLogId)
+    } else if (
+      _.findIndex(
+        this.messageContext.actions,
+        existingAction =>
+          existingAction.type === RESULT_UPDATED &&
+          existingAction.resultId === resultId
+      ) === -1
+    ) {
+      // only dispatch result updated action once per result id
+      // within this Device API transaction
+      this.messageContext.resultUpdated(resultId, deviceLogId)
     }
   }
 }
@@ -920,9 +911,9 @@ function addDeviceLogResultConstraints(queryBuilder) {
 function onResultUpdated({ resultId, deviceLogId }) {
   if (deviceLogId) {
     // we've already created device logs originating here, so ignore
-    publish(resultLogged(resultId, deviceLogId))
+    dispatch(resultLogged(resultId, deviceLogId))
   } else {
-    // TODO publish from client API using plugin so
+    // TODO dispatch from client API using plugin so
     // senderIp, createdOn, source, etc are available
     // Everything else, we should add a device log entry so that
     // the updates will be downloaded
@@ -941,12 +932,12 @@ function onResultUpdated({ resultId, deviceLogId }) {
       .where({ id: resultId })
       .first('deviceId')
       .then(updateDeviceLog)
-      .then(([deviceLogId]) => publish(resultLogged(resultId, deviceLogId)))
+      .then(([deviceLogId]) => dispatch(resultLogged(resultId, deviceLogId)))
   }
 }
 
 function onResultLogged({ resultId }) {
-  const context = createMessageContext()
+  const context = createMessageContext({ resultUpdated })
   context.transact(async knex => {
     const { plugin } = await knex('Result as r')
       .leftJoin('Partner as p', 'r.partnerId', 'p.id')
@@ -959,9 +950,9 @@ function onResultLogged({ resultId }) {
 
     const pluginContext = {
       knex,
-      publish: context.publish,
       now,
       resultId,
+      actions: { resultUpdated: context.resultUpdated },
     }
     await onResultLogged(pluginContext)
   })
@@ -991,13 +982,14 @@ async function updateLogs(request) {
   })
 }
 
-subscribe(
-  { name: 'deviceApi', durable: true },
-  {
+subscribe({
+  name: 'deviceApi',
+  durable: true,
+  actions: {
     RESULT_UPDATED: onResultUpdated,
     RESULT_LOGGED: onResultLogged,
-  }
-)
+  },
+})
 
 module.exports = {
   getDeviceDataHandler,
