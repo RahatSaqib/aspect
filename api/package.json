@@ -31,7 +31,9 @@
     "functions": 0,
     "branches": 0,
     "exclude": [
-      "**/*.test.js", "**/*.test.jsx", "test/*"
+      "**/*.test.js",
+      "**/*.test.jsx",
+      "test/*"
     ],
     "reporter": [
       "lcov"

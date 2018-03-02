@@ -21,8 +21,8 @@ export const messages = defineMessages({
     id: 'pages.Status.resultsTitle',
     defaultMessage: 'results',
   },
-  usersTitle: {
-    id: 'pages.Status.usersTitle',
+  personTitle: {
+    id: 'pages.Status.personTitle',
     defaultMessage: 'users',
   },
   clinicalTitle: {
@@ -140,6 +140,10 @@ export const messages = defineMessages({
   ofTotalSitesTitle: {
     id: 'pages.Status.ofTotalSitesTitle',
     defaultMessage: 'of {total} sites',
+  },
+  subResultsTitle: {
+    id: 'pages.Status.subResultsTitle',
+    defaultMessage: 'Last 30 Days',
   },
 })
 

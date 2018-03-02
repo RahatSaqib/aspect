@@ -11,6 +11,7 @@ const {
 const addDays = require('date-fns/add_days')
 const isAfter = require('date-fns/is_after')
 const differenceInDays = require('date-fns/difference_in_days')
+const { getUser } = require('../auth/service')
 
 const i18nKeys = {
   // Dashboard
@@ -40,80 +41,81 @@ const i18nKeys = {
   deviceCalibrationsUpToDate: 'deviceCalibrationsUpToDate',
 }
 
+function getDashboardWidget({ id, partnerId }) {
+  return knex('DashboardWidget as w')
+    .select('w.*')
+    .innerJoin('JobFunctionDashboardWidget as jfw', 'w.id', 'jfw.widgetId')
+    .innerJoin('JobFunction as jf', 'jfw.jobFunctionId', 'jf.id')
+    .innerJoin('Job as j', 'j.jobFunctionId', 'jf.id')
+    .innerJoin('Person as ps', 'j.personId', 'ps.id')
+    .where({ 'ps.userId': id, 'jf.partnerId': partnerId })
+    .orderBy(['w.sortOrder'])
+}
+
+function getTableAlias(sql) {
+  const tableAliasRegExp = new RegExp(
+    /\b(?:from|join)\s+([a-zA-Z0-9_$#-]*)\s+as\s+([a-zA-Z0-9_$#-]*)\b/gi
+  )
+  let match
+  const tableAlias = {}
+  // eslint-disable-next-line no-cond-assign
+  while ((match = tableAliasRegExp.exec(sql)) !== null) {
+    if (match.length === 3) {
+      const [, tableName, alias] = match
+      tableAlias[tableName.toLowerCase()] = alias
+    }
+  }
+  return tableAlias
+}
+
+function getSqlBuilder(sql) {
+  const sqlRegExp = new RegExp(
+    /\bselect\s+(.*?)\s+from\s+(.*?)\s*((?:(?:LEFT|RIGHT)?\s+(?:INNER|OUTER)?\s+join)\s+(?:.*?))?\s*(?:(?:\s+where)\s+(.*?))?\s*(?:(?:\s+having)\s(.*?))?$/gi
+  )
+  let match
+  let sqlBuilder
+  // eslint-disable-next-line no-cond-assign
+  if ((match = sqlRegExp.exec(sql)) !== null) {
+    if (match.length === 6) {
+      sqlBuilder = knex.select(knex.raw(match[1])).from(match[2])
+      if (match[3]) {
+        sqlBuilder.joinRaw(match[3])
+      }
+      if (match[4]) {
+        sqlBuilder.whereRaw(match[4])
+      }
+      if (match[5]) {
+        sqlBuilder.havingRaw(match[5])
+      }
+    }
+  }
+  return sqlBuilder
+}
+
 async function summaryDashboard(request) {
   const { auth } = request
-
   // get data constraints
   const dataConstraints = await getConstraints(auth.credentials)
 
-  const sitesTotalQuery = knex('Site as s')
-    .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
-    .leftOuterJoin('State as st', 'g.stateId', 'st.id')
-    .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
-    .modify(addConstraints, dataConstraints, { site: 's', geography: 'g' })
+  const user = await getUser(auth.credentials.name)
+  const widgets = await getDashboardWidget(user)
 
-  const devicesTotalQuery = knex('Device as d')
-    .innerJoin('Site as s', 's.id', 'd.siteId')
-    .innerJoin('DeviceType as dt', 'dt.id', 'd.deviceTypeId')
-    .innerJoin('DeviceTypeCategory as dc', 'dc.id', 'dt.deviceTypeCategoryId')
-    .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
-    .leftOuterJoin('State as st', 'g.stateId', 'st.id')
-    .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
-    .where('dc.hasResults', 1)
-    .modify(addConstraints, dataConstraints, { site: 's', geography: 'g' })
+  const data = await Promise.all(
+    widgets.map(async widget => {
+      const tableAlias = getTableAlias(widget.sqlForIndicator)
+      const sqlBuilder = getSqlBuilder(widget.sqlForIndicator)
+      const count = sqlBuilder
+        ? await sqlBuilder.modify(addConstraints, dataConstraints, tableAlias)
+        : [0]
 
-  const resultsTotalQuery = knex('FactResultCountDevice as f')
-    .innerJoin('Device as d', 'd.id', 'f.deviceId')
-    .innerJoin('Site as s', 's.id', 'd.siteId')
-    .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
-    .where('assayId', null)
-    .where('resultCategory1', null)
-    .modify(addConstraints, dataConstraints, {
-      device: 'd',
-      site: 's',
-      geography: 'g',
+      return _.set(
+        _.omit(widget, ['sqlForIndicator', 'sortOrder']),
+        'count',
+        count && count.length === 1 ? _.values(count[0])[0] : 0
+      )
     })
-
-  // TODO: - limit users by job
-  const usersTotalQuery = knex('User as u').count('u.id as cnt')
-
-  const [
-    sitesTotal,
-    devicesTotal,
-    resultsTotal30d,
-    resultsTotal1d,
-    usersTotal,
-  ] = await Promise.all([
-    canViewSites(auth) ? sitesTotalQuery.clone().count('s.id as cnt') : null,
-    canViewDevices(auth)
-      ? devicesTotalQuery.clone().count('d.id as cnt')
-      : null,
-    canViewResults(auth)
-      ? resultsTotalQuery
-          .clone()
-          .where('f.days', 30)
-          .sum('f.resultCount as cnt')
-      : null,
-    canViewResults(auth)
-      ? resultsTotalQuery
-          .clone()
-          .where('f.days', 1)
-          .sum('f.resultCount as cnt')
-      : null,
-    usersTotalQuery,
-  ])
-
-  const result = {
-    data: {
-      sitesTotal: sitesTotal ? sitesTotal[0].cnt : null,
-      devicesTotal: devicesTotal ? devicesTotal[0].cnt : null,
-      resultsTotal30d: resultsTotal30d ? resultsTotal30d[0].cnt : null,
-      resultsTotal1d: resultsTotal1d ? resultsTotal1d[0].cnt : null,
-      usersTotal: usersTotal[0].cnt,
-    },
-  }
-
-  return result
+  )
+  return { ok: true, data }
 }
 
 async function resultDashboard(request) {

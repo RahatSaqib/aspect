@@ -1135,6 +1135,42 @@ async function up(knex) {
     pt.primary(['personId', 'tagId'])
   })
 
+  await knex.schema.createTable('DashboardWidget', widget => {
+    widget.increments('id')
+    widget.string('icon').notNullable()
+    widget.string('title').notNullable()
+    widget.string('titleI18nKey').notNullable()
+    widget.string('subTitle')
+    widget.string('subTitleI18nKey')
+    widget.string('sqlForIndicator', 2000).notNullable()
+    widget.string('link')
+    widget
+      .integer('sortOrder')
+      .unsigned()
+      .notNullable()
+    widget.charset('utf8')
+  })
+
+  await knex.schema.createTable(
+    'JobFunctionDashboardWidget',
+    jobFunctionDashboardWidget => {
+      jobFunctionDashboardWidget
+        .integer('jobFunctionId')
+        .unsigned()
+        .index()
+        .references('id')
+        .inTable('JobFunction')
+      jobFunctionDashboardWidget
+        .integer('widgetId')
+        .unsigned()
+        .index()
+        .references('id')
+        .inTable('DashboardWidget')
+      jobFunctionDashboardWidget.primary(['widgetId', 'jobFunctionId'])
+      jobFunctionDashboardWidget.charset('utf8')
+    }
+  )
+
   await knex.raw('SET foreign_key_checks = 1')
 }
 
@@ -1202,6 +1238,8 @@ async function down(knex) {
   await knex.schema.dropTableIfExists('SiteTag')
   await knex.schema.dropTableIfExists('DeviceTag')
   await knex.schema.dropTableIfExists('PersonTag')
+  await knex.schema.dropTableIfExists('DashboardWidget')
+  await knex.schema.dropTableIfExists('JobFunctionDashboardWidget')
 
   await knex.raw('SET foreign_key_checks = 1')
 }
