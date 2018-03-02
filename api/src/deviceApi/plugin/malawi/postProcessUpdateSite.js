@@ -1,5 +1,4 @@
 const _ = require('lodash')
-const { resultUpdated } = require('../../../messages')
 const { mergeResult, getResult } = require('../../result')
 const { addResultWorkflowLogIfChanged } = require('../common')
 
@@ -24,14 +23,14 @@ const MERGEABLE_CHAI_IDS = [
 const millisInDay = 1000 * 60 * 60 * 24
 
 async function postProcessUpdateSite(context, site, previousSite) {
-  const { knex, publish, deviceId, deviceType, now } = context
+  const { knex, actions, deviceId, deviceType, now } = context
   if (deviceType === DEVICE_TYPE_REPORTER && site.id !== previousSite.id) {
-    await purgePreviousResults(knex, publish, deviceId, now)
-    await generateHistoricalResults(knex, publish, deviceId, site.id, now)
+    await purgePreviousResults(knex, actions, deviceId, now)
+    await generateHistoricalResults(knex, actions, deviceId, site.id, now)
   }
 }
 
-async function purgePreviousResults(knex, publish, deviceId, now) {
+async function purgePreviousResults(knex, actions, deviceId, now) {
   const { id: purgedStatusId } = await knex('ResultWorkflowStatus')
     .where({ externalId: PURGED_EXTERNALID })
     .first('id')
@@ -57,14 +56,14 @@ async function purgePreviousResults(knex, publish, deviceId, now) {
         createdOn: now,
         changedOn: now,
       })
-      publish(resultUpdated(resultId))
+      actions.resultUpdated(resultId)
     })
   )
 }
 
 async function generateHistoricalResults(
   knex,
-  publish,
+  actions,
   deviceId,
   siteId,
   now = new Date()
@@ -129,7 +128,7 @@ async function generateHistoricalResults(
     /* eslint-disable no-await-in-loop */
     await mergeResultAndUpdateWorkflowStatus(
       knex,
-      publish,
+      actions,
       deviceId,
       now,
       result,
@@ -144,7 +143,7 @@ async function generateHistoricalResults(
 
 async function mergeResultAndUpdateWorkflowStatus(
   knex,
-  publish,
+  actions,
   deviceId,
   now,
   result,
@@ -203,7 +202,7 @@ async function mergeResultAndUpdateWorkflowStatus(
     generatedResultId: processedResult.id,
   })
 
-  publish(resultUpdated(processedResult.id))
+  actions.resultUpdated(processedResult.id)
 }
 
 function reporterResultFromChaiResult(chaiResult) {
