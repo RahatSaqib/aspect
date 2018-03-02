@@ -171,7 +171,9 @@ async function mergeResult(
       .where({ partnerId: site.partnerId, externalId: payloadOriginSiteId })
       .first('id')
     if (sampleOriginSite == null) {
-      throw Boom.badRequest(`Cannot find Sample origin site ${payloadOriginSiteId}`)
+      throw Boom.badRequest(
+        `Cannot find Sample origin site ${payloadOriginSiteId}`
+      )
     }
     sampleOriginSiteId = sampleOriginSite.id
   }
