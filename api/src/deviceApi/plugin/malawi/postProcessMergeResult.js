@@ -1,6 +1,6 @@
 const _ = require('lodash')
 const { addResultWorkflowLogIfChanged } = require('../common')
-const { notifyResultUpdated } = require('../../../messages')
+const { resultUpdated } = require('../../../messages')
 
 const VALIDATED_EXTERNALID = 'Validated'
 const DELIVERABLE_EXTERNALID = 'Deliverable'
@@ -39,7 +39,7 @@ async function postProcessMergeResult(context, result, previousResult) {
 
 // Add category to result]
 async function addResultCategory(context, result) {
-  const { knex, dispatch } = context
+  const { knex, publish } = context
   const { id: resultId, assayId, resultData } = result
   const { resultText, copies } = JSON.parse(resultData)
   const assayExternalId = (await knex('Assay as a')
@@ -84,12 +84,12 @@ async function addResultCategory(context, result) {
     await knex('Result')
       .where('id', resultId)
       .update('resultCategory1', resultCategoryId)
-    dispatch(notifyResultUpdated(resultId))
+    publish(resultUpdated(resultId))
   }
 }
 
 async function checkResultDeliverable(context, result) {
-  const { knex, dispatch, now } = context
+  const { knex, publish, now } = context
   const { id: resultId, patientData } = result
 
   // Now's a good time to see if the result is in the
@@ -128,7 +128,7 @@ async function checkResultDeliverable(context, result) {
         reason: 'Validated & Complete Patient Data',
       })
 
-      dispatch(notifyResultUpdated(resultId))
+      publish(resultUpdated(resultId))
     }
   }
 }

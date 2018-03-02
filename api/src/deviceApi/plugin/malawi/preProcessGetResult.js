@@ -1,6 +1,6 @@
 const _ = require('lodash')
 const { updateResultWorkflowStatus } = require('../common')
-const { notifyResultUpdated } = require('../../../messages')
+const { resultUpdated } = require('../../../messages')
 
 const DELIVERED_EXTERNALID = 'Delivered'
 const ACKNOWLEDGED_EXTERNALID = 'Acknowledged'
@@ -14,11 +14,11 @@ const DONOT_LOG_DELIVERED = [
   ERROR_EXTERNALID,
 ]
 
-async function preProcessGetResult({ knex, dispatch, resultId, query, now }) {
+async function preProcessGetResult({ knex, publish, resultId, query, now }) {
   const offset = Number(query.offset)
   await updateResultWorkflowStatusOnGetResult(
     knex,
-    dispatch,
+    publish,
     resultId,
     offset,
     now
@@ -27,7 +27,7 @@ async function preProcessGetResult({ knex, dispatch, resultId, query, now }) {
 
 async function updateResultWorkflowStatusOnGetResult(
   knex,
-  dispatch,
+  publish,
   resultId,
   offset,
   now = new Date()
@@ -48,7 +48,7 @@ async function updateResultWorkflowStatusOnGetResult(
       DELIVERED_EXTERNALID,
       now
     )
-    dispatch(notifyResultUpdated(row.resultId))
+    publish(resultUpdated(row.resultId))
   }
 }
 

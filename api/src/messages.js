@@ -9,17 +9,15 @@ const types = {
   RESULT_LOGGED: 'RESULT_LOGGED',
 }
 
-// ------------- Setup ---------------------------
-
-// ----------- Dispatch and  Listeners -----------
+// ----------- Publish and  Subscribe -----------
 const messageClient = mqtt.connect(config.mqtt.url, {
   clientId: 'aspect-messages',
 })
 
 /**
- * Dispatch an action created by an action creator
+ * Publish an action created by an action creator
  */
-function dispatch(action) {
+function publish(action) {
   messageClient.publish(
     `aspect/messages/${action.type}`,
     JSON.stringify(action),
@@ -73,7 +71,7 @@ function subscribe({ name, durable = false }, listeners) {
 
 /**
  * Creates a message context to allow transactional
- * updates and dispatch.
+ * updates and publish.
  *
  * You should normally deal with a provided context
  * pre-created on request/response cycle.
@@ -84,7 +82,7 @@ function createMessageContext() {
 
 class MessageContext {
   constructor() {
-    this.dispatch = this.dispatch.bind(this)
+    this.publish = this.publish.bind(this)
     this.transact = this.transact.bind(this)
     this.rollback = this.rollback.bind(this)
     this.commit = this.commit.bind(this)
@@ -92,11 +90,11 @@ class MessageContext {
     this.reset()
   }
 
-  dispatch(action) {
+  publish(action) {
     if (this.transaction) {
       this.actions.push(action)
     } else {
-      dispatch(action)
+      publish(action)
     }
   }
 
@@ -127,7 +125,7 @@ class MessageContext {
   commit() {
     const { actions } = this
     this.reset()
-    actions.forEach(action => this.dispatch(action))
+    actions.forEach(action => this.publish(action))
   }
 
   rollback() {
@@ -154,7 +152,7 @@ class MessageContext {
  *
  * The source is also optional, defaults to 'ClientAPI'
  */
-function notifyResultUpdated(resultId, deviceLogId) {
+function resultUpdated(resultId, deviceLogId) {
   if (resultId == null) {
     throw new Error('Must specify resultId for notifyResultUpdated')
   }
@@ -172,7 +170,7 @@ function notifyResultUpdated(resultId, deviceLogId) {
  * resultId is required
  * deviceLogId is required
  */
-function notifyResultLogged(resultId, deviceLogId) {
+function resultLogged(resultId, deviceLogId) {
   if (resultId == null || deviceLogId == null) {
     throw new Error(
       'Must specify resultId and deviceLogId for notifyResultLogged'
@@ -188,8 +186,8 @@ function notifyResultLogged(resultId, deviceLogId) {
 module.exports = {
   types,
   createMessageContext,
-  dispatch,
+  publish,
   subscribe,
-  notifyResultUpdated,
-  notifyResultLogged,
+  resultUpdated,
+  resultLogged,
 }
