@@ -3,12 +3,12 @@ const _ = require('lodash')
 const { knex, transact } = require('../db')
 const { asyncHandler } = require('../routes')
 const {
-  addListener,
+  subscribe,
   createMessageContext,
   dispatch,
   notifyResultUpdated,
   notifyResultLogged,
-  types: { RESULT_UPDATED, RESULT_LOGGED },
+  types: { RESULT_UPDATED },
 } = require('../messages')
 
 const {
@@ -993,8 +993,13 @@ async function updateLogs(request) {
   })
 }
 
-addListener(RESULT_UPDATED, onResultUpdated)
-addListener(RESULT_LOGGED, onResultLogged)
+subscribe(
+  { name: 'deviceApi', durable: true },
+  {
+    RESULT_UPDATED: onResultUpdated,
+    RESULT_LOGGED: onResultLogged,
+  }
+)
 
 module.exports = {
   getDeviceDataHandler,
