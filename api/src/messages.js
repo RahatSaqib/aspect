@@ -1,7 +1,6 @@
 const _ = require('lodash')
 const config = require('./config')
 const mqtt = require('mqtt')
-const EventEmitter = require('events')
 const { transact } = require('./db')
 
 // ----------- Message Types ---------------------
@@ -12,49 +11,64 @@ const types = {
 
 // ------------- Setup ---------------------------
 
-const client = mqtt.connect(config.mqtt.url)
-const emitter = new EventEmitter()
-client.on('connect', () => {
-  _.each(types, type => {
-    client.subscribe(`aspect/messages/${type}`)
-  })
-})
-
-client.on('message', (topic, message) => {
-  const match = /^aspect\/messages\/([^/]+)$/.exec(topic)
-  if (match) {
-    const action = JSON.parse(message.toString())
-    if (action.type === match[1]) {
-      setImmediate(() => {
-        emitter.emit(action.type, action)
-      })
-    }
-  }
-})
-
 // ----------- Dispatch and  Listeners -----------
+const messageClient = mqtt.connect(config.mqtt.url, {
+  clientId: 'aspect-messages',
+})
 
 /**
  * Dispatch an action created by an action creator
  */
 function dispatch(action) {
-  client.publish(`aspect/messages/${action.type}`, JSON.stringify(action))
+  messageClient.publish(
+    `aspect/messages/${action.type}`,
+    JSON.stringify(action),
+    { qos: 1 }
+  )
 }
 
 /**
- * Adds a listener for the specified message type.
- * Will be invoked with action created by action
- * creators and dispatched using dispatch
+ * Subscribes to messages with the named service.
+ *
+ * name: required. Unique service identifier
+ *
+ * durable (optional, default false):
+ *
+ *   false for at most once delivery, messages may be lost (though rare)
+ *   but will not be duplicated and will not be queued on disconnect
+ *
+ *   true for at least once delivery guarantee, messages will be
+ *   queued on disconnect and best effort to deliver at least once.
+ *   messages may be duplicated (though rare)
+ *
+ * listeners: map Message Type name to listener function that
+ *   accepts incoming messages of that type. Can specify multiple
+ *   message types per subscription.
  */
-function addListener(type, listener) {
-  emitter.addListener(type, listener)
-}
+function subscribe({ name, durable = false }, listeners) {
+  const clean = !durable
+  const qos = durable ? 1 : 0
+  const client = mqtt.connect(config.mqtt.url, {
+    clientId: `aspect-${name}`,
+    clean,
+  })
+  client.on('connect', () => {
+    const topics = _.map(listeners, (listener, type) => {
+      if (types[type] == null) {
+        throw new Error(`Unknown message type ${type}`)
+      }
+      return `aspect/messages/${type}`
+    })
+    client.subscribe(topics, { qos })
+  })
 
-/**
- * Removes a listener added by addListener
- */
-function removeListener(type, listener) {
-  emitter.removeListener(type, listener)
+  client.on('message', (topic, message) => {
+    const action = JSON.parse(message.toString())
+    const listener = listeners[action.type]
+    if (listener != null) {
+      listener(action)
+    }
+  })
 }
 
 /**
@@ -175,8 +189,7 @@ module.exports = {
   types,
   createMessageContext,
   dispatch,
-  addListener,
-  removeListener,
+  subscribe,
   notifyResultUpdated,
   notifyResultLogged,
 }
