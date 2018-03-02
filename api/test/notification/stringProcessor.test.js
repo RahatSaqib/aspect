@@ -75,7 +75,7 @@ describe('notification/stringProcessor', () => {
         sampleId: 'GRP-HIV-2',
       },
     }
-    it('should handle mulitple objects in the input object', () =>
+    it('should handle multiple objects in the input object', () =>
       runTest(stringProcessor.process, [sampleString, inputObject])(
         resultString => {
           assert.deepEqual(resultString, expectedResult)
