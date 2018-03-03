@@ -92,9 +92,15 @@ class MessageContext {
   }
 
   dispatch(action) {
+    if (_.isFunction(action)) {
+      // Allow thunks
+      action = action(this.dispatch)
+    }
     if (this.transaction) {
+      // Queue actions until transaction committed
       this.actions.push(action)
     } else {
+      // transaction complete, dispatch to MQ
       dispatch(action)
     }
   }
@@ -152,7 +158,6 @@ function bindActionCreator(actionCreator, dispatch) {
 }
 
 module.exports = {
-  dispatch,
   subscribe,
   createMessageContext,
 }
