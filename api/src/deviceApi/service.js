@@ -2,7 +2,7 @@ const Boom = require('boom')
 const _ = require('lodash')
 const { knex, transact } = require('../db')
 const { asyncHandler } = require('../routes')
-const { dispatch, subscribe, createMessageContext } = require('../mq')
+const { subscribe, createMessageContext } = require('../mq')
 
 const {
   resultUpdated,
@@ -909,30 +909,32 @@ function addDeviceLogResultConstraints(queryBuilder) {
 }
 
 function onResultUpdated({ resultId, deviceLogId }) {
+  const context = createMessageContext({ resultLogged })
   if (deviceLogId) {
     // we've already created device logs originating here, so ignore
-    dispatch(resultLogged(resultId, deviceLogId))
+    context.resultLogged(resultId, deviceLogId)
   } else {
-    // TODO dispatch from client API using plugin so
-    // senderIp, createdOn, source, etc are available
-    // Everything else, we should add a device log entry so that
-    // the updates will be downloaded
-    const createdOn = new Date()
-    const updateDeviceLog = ({ deviceId }) =>
-      knex('DeviceLog').insert({
-        deviceId,
-        resultId,
-        source: 'DeviceApiResultUpdated',
-        createdOn,
-        senderIp: '',
-        rawMessage: '',
-      })
-
-    knex('Result')
-      .where({ id: resultId })
-      .first('deviceId')
-      .then(updateDeviceLog)
-      .then(([deviceLogId]) => dispatch(resultLogged(resultId, deviceLogId)))
+    context.transact(async knex => {
+      // TODO dispatch from client API using plugin so
+      // senderIp, createdOn, source, etc are available
+      // Everything else, we should add a device log entry so that
+      // the updates will be downloaded
+      const createdOn = new Date()
+      const [deviceLogId] = await knex('Result')
+        .where({ id: resultId })
+        .first('deviceId')
+        .then(({ deviceId }) =>
+          knex('DeviceLog').insert({
+            deviceId,
+            resultId,
+            source: 'DeviceApiResultUpdated',
+            createdOn,
+            senderIp: '',
+            rawMessage: '',
+          })
+        )
+      context.resultLogged(resultId, deviceLogId)
+    })
   }
 }
 

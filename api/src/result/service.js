@@ -8,7 +8,7 @@ const {
   filterDateRangeParams,
   sortPageParams,
 } = require('../db')
-const { dispatch } = require('../mq')
+const { createMessageContext } = require('../mq')
 const { resultUpdated } = require('./actions')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 const { getUser } = require('../auth/service')
@@ -510,25 +510,27 @@ async function updateQcCheck(request) {
   }
 
   // update the result QC Check flag
+  const context = createMessageContext({ resultUpdated })
+  await context.transact(async knex => {
+    await knex('Result')
+      .where('id', resultId)
+      .update({
+        qcCheck: payload.qcCheck,
+        updatedBy: currentUserId,
+        updatedOn: now,
+      })
 
-  await knex('Result')
-    .where('id', resultId)
-    .update({
+    // log QC-Check change in separate table
+    await knex('ResultQualityControlLog').insert({
+      resultId,
       qcCheck: payload.qcCheck,
-      updatedBy: currentUserId,
-      updatedOn: now,
+      createdBy: currentUserId,
+      createdOn: now,
     })
 
-  // log QC-Check change in separate table
-  await knex('ResultQualityControlLog').insert({
-    resultId,
-    qcCheck: payload.qcCheck,
-    createdBy: currentUserId,
-    createdOn: now,
+    // notify result updated so result is redelivered
+    context.resultUpdated(resultId)
   })
-
-  // notify result updated so result is redelivered
-  dispatch(resultUpdated(resultId))
 
   const response = await showResult(request)
   return response
