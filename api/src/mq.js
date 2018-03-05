@@ -12,9 +12,7 @@ function loadDefaultQueue() {
 }
 
 function createMessageQueue(name) {
-  const publishClient = mqtt.connect(config.mqtt.url, {
-    clientId: `aspect-${name}`,
-  })
+  const publishClient = mqtt.connect(config.mqtt.url)
   return new MessageQueue(publishClient)
 }
 
