@@ -8,7 +8,7 @@ describe('geography endpoints', () => {
     const endpoints = proxyquire('../../src/geography/endpoints', {
       './service': serviceStub,
     })
-    return _.find(endpoints, { method, path })
+    return _.find(endpoints.routes, { method, path })
   }
 
   describe('/geography/select-list', () => {
