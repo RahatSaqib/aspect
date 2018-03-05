@@ -5,6 +5,8 @@ const _ = require('lodash')
 const config = require('./config')
 const { version } = require('./../package.json')
 const { addClientRoutes, addDeviceRoutes } = require('./routes')
+const { loadDefaultQueue } = require('./mq')
+const { addSubscriptions } = require('./subscriptions')
 const Hapi = require('hapi')
 const cron = require('node-cron')
 const {
@@ -246,6 +248,12 @@ server.register(
     if (err) throw err
   }
 )
+
+// Load Queue
+loadQueue()
+function loadQueue() {
+  addSubscriptions(loadDefaultQueue())
+}
 
 // =======================
 // start the server ======
