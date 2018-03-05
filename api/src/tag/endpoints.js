@@ -2,7 +2,7 @@ const Joi = require('joi')
 const { asyncHandler } = require('../routes')
 const { listTags, listTagsByType, updateTag } = require('./service')
 
-module.exports = [
+const routes = [
   {
     method: 'GET',
     path: '/tag/{tagType}',
@@ -69,3 +69,5 @@ module.exports = [
     },
   },
 ]
+
+module.exports = { routes }
