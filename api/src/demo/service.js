@@ -42,11 +42,13 @@ async function getDemoDevice(request) {
   await Promise.all(
     _.map(assays, async assay => {
       const results = await knex('Result as r')
+        .innerJoin('Device as d', 'r.deviceId', 'd.id')
         .where('r.assayId', assay.id)
+        .modify(addConstraints, dataConstraints, { device: 'd' })
         .distinct(
-          'id',
+          'r.id',
           knex.raw(
-            'JSON_UNQUOTE(JSON_EXTRACT(resultData, "$.resultText")) as name'
+            'JSON_UNQUOTE(JSON_EXTRACT(r.resultData, "$.resultText")) as name'
           )
         )
         .orderBy('name')

@@ -147,6 +147,7 @@ function asyncHandler(handler) {
     handler(request)
       .then(reply)
       .then(null, err => {
+        // Log err stack and Rethrow to Hapi handles error case and Boom.500
         console.error(err) // eslint-disable-line no-console
         throw err
       })
