@@ -7,12 +7,8 @@ const { version } = require('./../package.json')
 const { addClientRoutes, addDeviceRoutes } = require('./routes')
 const { loadDefaultQueue } = require('./mq')
 const { addSubscriptions } = require('./subscriptions')
+const { startScheduler } = require('./scheduler')
 const Hapi = require('hapi')
-const cron = require('node-cron')
-const {
-  calculateResultCountsOnSchedule,
-  synthDeviceOfflineOnSchedule,
-} = require('./fact/service')
 
 const server = new Hapi.Server()
 const port = process.env.PORT || 8080
@@ -74,16 +70,11 @@ const plugins = [
 
 addRavenPlugin(plugins)
 
-registerCronJobs()
-
-function registerCronJobs() {
-  // calculate device result counts on startup and every hour
-  calculateResultCountsOnSchedule()
-  synthDeviceOfflineOnSchedule()
-  cron.schedule('0 * * * *', () => {
-    calculateResultCountsOnSchedule()
-    synthDeviceOfflineOnSchedule()
-  })
+loadQueue()
+function loadQueue() {
+  const queue = loadDefaultQueue()
+  addSubscriptions(queue)
+  startScheduler(queue)
 }
 
 // load and return the good logging configuration
@@ -248,12 +239,6 @@ server.register(
     if (err) throw err
   }
 )
-
-// Load Queue
-loadQueue()
-function loadQueue() {
-  addSubscriptions(loadDefaultQueue())
-}
 
 // =======================
 // start the server ======

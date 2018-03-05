@@ -3,6 +3,11 @@ const _ = require('lodash')
 const { knex } = require('../db')
 const { runGeneratedFunction } = require('../util')
 
+function onFactGenerate() {
+  calculateResultCountsOnSchedule()
+  synthDeviceOfflineOnSchedule()
+}
+
 function calculateResultCountsOnSchedule() {
   runGeneratedFunction(calculateResultCounts, null, null, null, knex)
 }
@@ -140,6 +145,7 @@ async function calculateResultCounts(deviceId, assayId, resultCategory1, knex) {
 }
 
 module.exports = {
+  onFactGenerate,
   calculateResultCounts,
   calculateResultCountsOnSchedule,
   synthDeviceOfflineOnSchedule,
