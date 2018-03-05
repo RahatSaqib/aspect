@@ -2,7 +2,7 @@ const Boom = require('boom')
 const _ = require('lodash')
 const { knex, transact } = require('../db')
 const { asyncHandler } = require('../routes')
-const { subscribe, createMessageContext } = require('../mq')
+const { createMessageContext } = require('../mq')
 
 const {
   resultUpdated,
@@ -984,15 +984,6 @@ async function updateLogs(request) {
   })
 }
 
-subscribe({
-  name: 'deviceApi',
-  durable: true,
-  actions: {
-    RESULT_UPDATED: onResultUpdated,
-    RESULT_LOGGED: onResultLogged,
-  },
-})
-
 module.exports = {
   getDeviceDataHandler,
   getDeviceOperationHandler,
@@ -1002,4 +993,6 @@ module.exports = {
   addDeviceOperationHandler,
   mergeResultHandler,
   addDeviceLog,
+  onResultUpdated,
+  onResultLogged,
 }
