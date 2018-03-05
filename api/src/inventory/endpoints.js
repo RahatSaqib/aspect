@@ -71,7 +71,7 @@ const removeInventoryCommonPayloadFields = Object.assign(
   }
 )
 
-module.exports = [
+const routes = [
   {
     method: 'GET',
     path: '/inventory',
@@ -254,3 +254,5 @@ module.exports = [
     },
   },
 ]
+
+module.exports = { routes }

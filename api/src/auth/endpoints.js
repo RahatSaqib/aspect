@@ -12,7 +12,7 @@ const {
   updatePasswordWithResetPasswordToken,
 } = require('./service')
 
-module.exports = [
+const routes = [
   {
     method: 'POST',
     path: '/auth',
@@ -147,3 +147,5 @@ module.exports = [
     },
   },
 ]
+
+module.exports = { routes }

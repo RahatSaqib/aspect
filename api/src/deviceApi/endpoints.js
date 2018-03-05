@@ -319,7 +319,7 @@ const resultPayload = {
   error: errorPayload,
 }
 
-module.exports = [
+const routes = [
   {
     // GET /device
     method: 'GET',
@@ -573,3 +573,5 @@ module.exports = [
     },
   },
 ]
+
+module.exports = { routes }

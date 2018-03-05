@@ -46,7 +46,7 @@ function listDeviceApiKeysBaseConfig() {
   }
 }
 
-module.exports = [
+const routes = [
   {
     method: 'GET',
     path: '/deviceApiKey',
@@ -147,3 +147,5 @@ module.exports = [
     },
   },
 ]
+
+module.exports = { routes }

@@ -9,7 +9,7 @@ const {
   operationalDashboard,
 } = require('./service')
 
-module.exports = [
+const routes = [
   {
     method: 'GET',
     path: '/dashboard/summary',
@@ -81,3 +81,5 @@ module.exports = [
     },
   },
 ]
+
+module.exports = { routes }

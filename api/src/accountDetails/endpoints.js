@@ -6,7 +6,7 @@ const {
   saveUserPreferencesForLoggedInUser,
 } = require('./service')
 
-module.exports = [
+const routes = [
   {
     method: 'GET',
     path: '/account-details/current',
@@ -93,3 +93,5 @@ module.exports = [
     },
   },
 ]
+
+module.exports = { routes }

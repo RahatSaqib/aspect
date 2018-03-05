@@ -87,7 +87,7 @@ function listDevicesBaseConfig() {
   }
 }
 
-module.exports = [
+const routes = [
   {
     method: 'GET',
     path: '/device',
@@ -191,3 +191,5 @@ module.exports = [
     },
   },
 ]
+
+module.exports = { routes }
