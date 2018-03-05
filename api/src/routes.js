@@ -2,45 +2,73 @@ const Joi = require('joi')
 
 // Adds all API routes to the server
 function addClientRoutes(server) {
-  server.route(require('./accountDetails/endpoints').map(decorateClientAPI()))
-  server.route(require('./auth/endpoints').map(decorateClientAPI()))
-  server.route(require('./assay/endpoints').map(decorateClientAPI('assay')))
-  server.route(require('./demo/endpoints').map(decorateClientAPI('demo')))
-  server.route(require('./device/endpoints').map(decorateClientAPI('device')))
   server.route(
-    require('./deviceApiKey/endpoints').map(decorateClientAPI('deviceApiKey'))
+    require('./accountDetails/endpoints').routes.map(decorateClientAPI())
+  )
+  server.route(require('./auth/endpoints').routes.map(decorateClientAPI()))
+  server.route(
+    require('./assay/endpoints').routes.map(decorateClientAPI('assay'))
   )
   server.route(
-    require('./deviceOperation/endpoints').map(decorateClientAPI('device'))
+    require('./demo/endpoints').routes.map(decorateClientAPI('demo'))
   )
   server.route(
-    require('./deviceType/endpoints').map(decorateClientAPI('device'))
-  )
-  server.route(require('./geography/endpoints').map(decorateClientAPI()))
-  server.route(require('./person/endpoints').map(decorateClientAPI('person')))
-  server.route(require('./site/endpoints').map(decorateClientAPI('site')))
-  server.route(require('./result/endpoints').map(decorateClientAPI('result')))
-  server.route(require('./report/endpoints').map(decorateClientAPI('report')))
-  server.route(require('./partner/endpoints').map(decorateClientAPI('partner')))
-  server.route(require('./job/endpoints').map(decorateClientAPI('person')))
-  server.route(
-    require('./consumable/endpoints').map(decorateClientAPI('inventory'))
+    require('./device/endpoints').routes.map(decorateClientAPI('device'))
   )
   server.route(
-    require('./notification/endpoints').map(decorateClientAPI('notification'))
-  )
-  server.route(require('./task/endpoints').map(decorateClientAPI('task')))
-  server.route(
-    require('./inventory/endpoints').map(decorateClientAPI('inventory'))
+    require('./deviceApiKey/endpoints').routes.map(
+      decorateClientAPI('deviceApiKey')
+    )
   )
   server.route(
-    require('./dashboard/endpoints').map(decorateClientAPI('dashboard'))
+    require('./deviceOperation/endpoints').routes.map(
+      decorateClientAPI('device')
+    )
+  )
+  server.route(
+    require('./deviceType/endpoints').routes.map(decorateClientAPI('device'))
+  )
+  server.route(require('./geography/endpoints').routes.map(decorateClientAPI()))
+  server.route(
+    require('./person/endpoints').routes.map(decorateClientAPI('person'))
+  )
+  server.route(
+    require('./site/endpoints').routes.map(decorateClientAPI('site'))
+  )
+  server.route(
+    require('./result/endpoints').routes.map(decorateClientAPI('result'))
+  )
+  server.route(
+    require('./report/endpoints').routes.map(decorateClientAPI('report'))
+  )
+  server.route(
+    require('./partner/endpoints').routes.map(decorateClientAPI('partner'))
+  )
+  server.route(
+    require('./job/endpoints').routes.map(decorateClientAPI('person'))
+  )
+  server.route(
+    require('./consumable/endpoints').routes.map(decorateClientAPI('inventory'))
+  )
+  server.route(
+    require('./notification/endpoints').routes.map(
+      decorateClientAPI('notification')
+    )
+  )
+  server.route(
+    require('./task/endpoints').routes.map(decorateClientAPI('task'))
+  )
+  server.route(
+    require('./inventory/endpoints').routes.map(decorateClientAPI('inventory'))
+  )
+  server.route(
+    require('./dashboard/endpoints').routes.map(decorateClientAPI('dashboard'))
   )
 }
 
 function addDeviceRoutes(server) {
   server.route(
-    require('./deviceApi/endpoints').map(decorateDeviceAPI('device'))
+    require('./deviceApi/endpoints').routes.map(decorateDeviceAPI('device'))
   )
 }
 

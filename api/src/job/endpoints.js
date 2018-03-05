@@ -1,7 +1,7 @@
 const { asyncHandler } = require('../routes')
 const { getJobFunctionsForSelectList } = require('./service')
 
-module.exports = [
+const routes = [
   {
     method: 'GET',
     path: '/job-function/select-list',
@@ -13,3 +13,5 @@ module.exports = [
     },
   },
 ]
+
+module.exports = { routes }
