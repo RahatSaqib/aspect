@@ -14,8 +14,6 @@ const types = {
  * deviceLogId is optional, specified if update is already
  * associated with a device log entry (NOTE if not specified,
  * device API listener will create one)
- *
- * The source is also optional, defaults to 'ClientAPI'
  */
 function resultUpdated(resultId, deviceLogId) {
   if (resultId == null) {

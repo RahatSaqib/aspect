@@ -1,5 +1,7 @@
 const { subDays } = require('date-fns')
 const _ = require('lodash')
+const { deviceOffline } = require('../device/actions')
+const { createMessageContext } = require('../mq')
 const { knex } = require('../db')
 const { runGeneratedFunction } = require('../util')
 
@@ -17,6 +19,8 @@ function synthDeviceOfflineOnSchedule() {
 }
 
 async function synthDeviceOffline(knex) {
+  const context = createMessageContext({ deviceOffline })
+
   const devices = await knex
     .select('id', 'partnerId', 'lastPingOn')
     .from('Device')
@@ -40,6 +44,7 @@ async function synthDeviceOffline(knex) {
             deviceId: id,
           })
           .update({ offline: true })
+        context.deviceOffline(id)
       }
     })
   )
