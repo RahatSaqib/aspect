@@ -3,26 +3,21 @@ const config = require('./config')
 const mqtt = require('mqtt')
 const { transact } = require('./db')
 
-let defaultQueue = null
-function loadDefaultQueue() {
-  if (defaultQueue == null) {
-    defaultQueue = createMessageQueue('messages')
-  }
-  return defaultQueue
-}
-
-function createMessageQueue(name) {
+function createMessageQueue() {
   const publishClient = mqtt.connect(config.mqtt.url)
   return new MessageQueue(publishClient)
-}
-
-function createMessageContext(actionCreators = null) {
-  return loadDefaultQueue().createMessageContext(actionCreators)
 }
 
 class MessageQueue {
   constructor(publishClient) {
     this.publishClient = publishClient
+    _.bindAll(this, [
+      'dispatch',
+      'publish',
+      'subscribe',
+      'subscribeAll',
+      'createMessageContext',
+    ])
   }
 
   /**
@@ -81,7 +76,7 @@ class MessageQueue {
         const action = JSON.parse(message.toString())
         const listener = actions[action.type]
         if (listener != null && action.type === actionMatch[1]) {
-          listener(action)
+          listener(action, { messageContext: this.createMessageContext() })
         }
       }
     })
@@ -104,19 +99,15 @@ class MessageQueue {
    * actionCreators: if specified, context will have
    * bound actions with same name as action creators
    */
-  createMessageContext(actionCreators = null) {
-    return new MessageContext(this, actionCreators)
+  createMessageContext() {
+    return new MessageContext(this)
   }
 }
 
 class MessageContext {
-  constructor(queue, actionCreators) {
+  constructor(queue) {
     this.queue = queue
     _.bindAll(this, ['dispatch', 'transact', 'rollback', 'commit'])
-    if (actionCreators != null) {
-      Object.assign(this, bindActionCreators(actionCreators, this.dispatch))
-      _.bindAll(this, Object.keys(actionCreators))
-    }
     this.reset()
   }
 
@@ -173,20 +164,14 @@ class MessageContext {
     this.actions = []
     this.tasks = []
   }
-}
 
-function bindActionCreators(creators, dispatch = dispatch) {
-  return _.mapValues(creators, creator => bindActionCreator(creator, dispatch))
-}
-
-function bindActionCreator(actionCreator, dispatch) {
-  return function invokeAction(...args) {
-    const action = actionCreator(...args)
-    dispatch(action)
+  bindActionCreators(creators) {
+    _.each(creators, (creator, name) => {
+      this[name] = (...args) => this.dispatch(creator(...args))
+      this[name].bind(this)
+    })
+    return this
   }
 }
 
-module.exports = {
-  loadDefaultQueue,
-  createMessageContext,
-}
+module.exports = { createMessageQueue }

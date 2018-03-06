@@ -1,26 +1,24 @@
 const { subDays } = require('date-fns')
 const _ = require('lodash')
 const { deviceOffline } = require('../device/actions')
-const { createMessageContext } = require('../mq')
-const { knex } = require('../db')
-const { runGeneratedFunction } = require('../util')
 
-function onFactGenerate() {
-  calculateResultCountsOnSchedule()
-  synthDeviceOfflineOnSchedule()
+function onFactGenerate(action, { messageContext }) {
+  const context = messageContext.bindActionCreators({ deviceOffline })
+
+  context.transact(async knex => {
+    await calculateResultCountsOnSchedule(context, knex)
+  })
+
+  context.transact(async knex => {
+    await synthDeviceOfflineOnSchedule(context, knex)
+  })
 }
 
-function calculateResultCountsOnSchedule() {
-  runGeneratedFunction(calculateResultCounts, null, null, null, knex)
+async function calculateResultCountsOnSchedule(context, knex) {
+  await calculateResultCounts(null, null, null, knex)
 }
 
-function synthDeviceOfflineOnSchedule() {
-  return runGeneratedFunction(synthDeviceOffline, knex)
-}
-
-async function synthDeviceOffline(knex) {
-  const context = createMessageContext({ deviceOffline })
-
+async function synthDeviceOfflineOnSchedule(context, knex) {
   const devices = await knex
     .select('id', 'partnerId', 'lastPingOn')
     .from('Device')
@@ -152,6 +150,4 @@ async function calculateResultCounts(deviceId, assayId, resultCategory1, knex) {
 module.exports = {
   onFactGenerate,
   calculateResultCounts,
-  calculateResultCountsOnSchedule,
-  synthDeviceOfflineOnSchedule,
 }

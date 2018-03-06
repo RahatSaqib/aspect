@@ -1,14 +1,15 @@
 const cron = require('node-cron')
 const { factGenerate } = require('./fact/actions')
 
-function startScheduler(queue) {
+function startScheduler(context) {
+  context.bindActionCreators({ factGenerate })
+
   // run hourly tasks on startup and cron every hour
-  runHourlyTasks(queue)
-  cron.schedule('0 * * * *', () => runHourlyTasks(queue))
+  runHourlyTasks(context)
+  cron.schedule('0 * * * *', () => runHourlyTasks(context))
 }
 
-function runHourlyTasks(queue) {
-  const context = queue.createMessageContext({ factGenerate })
+function runHourlyTasks(context) {
   context.factGenerate()
 }
 

@@ -8,7 +8,6 @@ const {
   filterDateRangeParams,
   sortPageParams,
 } = require('../db')
-const { createMessageContext } = require('../mq')
 const { resultUpdated } = require('./actions')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 const { getUser } = require('../auth/service')
@@ -491,7 +490,7 @@ async function updateWorkflowStatus(request) {
   return response
 }
 
-async function updateQcCheck(request) {
+async function updateQcCheck(request, { messageContext }) {
   const { auth, params, payload } = request
   const now = new Date()
   const { resultId } = params
@@ -510,8 +509,10 @@ async function updateQcCheck(request) {
   }
 
   // update the result QC Check flag
-  const context = createMessageContext({ resultUpdated })
-  await context.transact(async knex => {
+  messageContext.bindActionCreators({
+    resultUpdated,
+  })
+  await messageContext.transact(async knex => {
     await knex('Result')
       .where('id', resultId)
       .update({
@@ -529,7 +530,7 @@ async function updateQcCheck(request) {
     })
 
     // notify result updated so result is redelivered
-    context.resultUpdated(resultId)
+    messageContext.resultUpdated(resultId)
   })
 
   const response = await showResult(request)

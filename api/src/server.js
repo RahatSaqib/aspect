@@ -5,7 +5,7 @@ const _ = require('lodash')
 const config = require('./config')
 const { version } = require('./../package.json')
 const { addClientRoutes, addDeviceRoutes } = require('./routes')
-const { loadDefaultQueue } = require('./mq')
+const { createMessageQueue } = require('./mq')
 const { addSubscriptions } = require('./subscriptions')
 const { startScheduler } = require('./scheduler')
 const Hapi = require('hapi')
@@ -66,15 +66,27 @@ const plugins = [
 
   // Set payload prior to validation transformation
   rawPayloadPlugin,
+
+  // Set message queue
+  messageQueuePlugin,
 ]
 
 addRavenPlugin(plugins)
 
-loadQueue()
-function loadQueue() {
-  const queue = loadDefaultQueue()
+function messageQueuePlugin(server, options, next) {
+  const queue = createMessageQueue()
   addSubscriptions(queue)
-  startScheduler(queue)
+  startScheduler(queue.createMessageContext())
+
+  server.ext('onPreHandler', (request, reply) => {
+    request.plugins.messageContext = queue.createMessageContext()
+    reply.continue()
+  })
+  next()
+}
+messageQueuePlugin.attributes = {
+  name: 'messageQueue',
+  version,
 }
 
 // load and return the good logging configuration

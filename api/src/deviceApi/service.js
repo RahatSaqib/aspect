@@ -2,7 +2,6 @@ const Boom = require('boom')
 const _ = require('lodash')
 const { knex, transact } = require('../db')
 const { asyncHandler } = require('../routes')
-const { createMessageContext } = require('../mq')
 
 const {
   resultUpdated,
@@ -495,6 +494,9 @@ async function createDeviceApiContext(request, handlerOptions) {
     device,
     payload: request.payload,
     query: request.query,
+    messageContext: request.plugins.messageContext.bindActionCreators({
+      resultUpdated,
+    }),
     deviceLogType,
     partnerId: partner.id,
     pluginName: partner.partnerPluginName || device.deviceTypePluginName,
@@ -728,9 +730,6 @@ function createNewDevice(request, now) {
 class DeviceApiContext {
   constructor(props) {
     Object.assign(this, props)
-    this.messageContext = this.parent
-      ? this.parent.messageContext
-      : createMessageContext({ resultUpdated })
     this.resultUpdated = this.resultUpdated.bind(this)
     this.actions = { resultUpdated: this.resultUpdated }
   }
@@ -908,8 +907,8 @@ function addDeviceLogResultConstraints(queryBuilder) {
     .where('rws.externalId', '<>', 'Purged')
 }
 
-function onResultUpdated({ resultId, deviceLogId }) {
-  const context = createMessageContext({ resultLogged })
+function onResultUpdated({ resultId, deviceLogId }, { messageContext }) {
+  const context = messageContext.bindActionCreators({ resultLogged })
   if (deviceLogId) {
     // we've already created device logs originating here, so ignore
     context.resultLogged(resultId, deviceLogId)
@@ -938,8 +937,8 @@ function onResultUpdated({ resultId, deviceLogId }) {
   }
 }
 
-function onResultLogged({ resultId }) {
-  const context = createMessageContext({ resultUpdated })
+function onResultLogged({ resultId }, { messageContext }) {
+  const context = messageContext.bindActionCreators({ resultUpdated })
   context.transact(async knex => {
     const { plugin } = await knex('Result as r')
       .leftJoin('Partner as p', 'r.partnerId', 'p.id')
