@@ -490,8 +490,8 @@ async function updateWorkflowStatus(request) {
   return response
 }
 
-async function updateQcCheck(request, { messageContext }) {
-  const { auth, params, payload } = request
+async function updateQcCheck(request) {
+  const { auth, params, payload, plugins: { messageContext } } = request
   const now = new Date()
   const { resultId } = params
   const { id: currentUserId } = await getUser(auth.credentials.name)

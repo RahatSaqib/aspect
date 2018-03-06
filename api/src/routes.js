@@ -144,7 +144,7 @@ function decorateAPI({ scope, strategies }) {
 
 function asyncHandler(handler) {
   return (request, reply) =>
-    handler(request, { messageContext: request.plugins.messageContext })
+    handler(request)
       .then(reply)
       .then(null, err => {
         // Log err stack and Rethrow to Hapi handles error case and Boom.500
