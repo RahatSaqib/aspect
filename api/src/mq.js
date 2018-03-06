@@ -15,12 +15,6 @@ class MessageQueue {
   constructor(name) {
     this.name = name
     this.emitter = new EventEmitter()
-    _.bindAll(this, [
-      'dispatch',
-      'subscribe',
-      'subscribeAll',
-      'createMessageContext',
-    ])
   }
 
   async connect() {
@@ -42,6 +36,7 @@ class MessageQueue {
               messageContext: this.createMessageContext(),
             })
           }
+          this.emitter.emit('+', action)
         }
       })
 
@@ -83,21 +78,23 @@ class MessageQueue {
   /**
    * Subscribes to messages with the named service.
    *
+   * Accepts array of subscriptions, each with the following
+   * properties:
+   *
    * actions: map Action Type name to listener function that
-   *   accepts incoming actions of that type. Can specify multiple
-   *   action types per subscription.
+   *   accepts incoming actions of that type.
+   *
+   *   The listener will be called with the action and
+   *   new message context created from this queue.
+   *
+   *   Can specify multiple action types per subscription.
    */
-  subscribe({ actions = {} }) {
-    _.each(actions, (listener, type) => {
-      this.emitter.addListener(type, listener)
+  subscribe(subscriptions) {
+    _.each(subscriptions, ({ actions }) => {
+      _.each(actions, (listener, type) => {
+        this.emitter.addListener(type, listener)
+      })
     })
-  }
-
-  /**
-   * Subscribes to multiple subscriptions defined as an array
-   */
-  subscribeAll(subscriptions) {
-    return subscriptions.map(subscription => this.subscribe(subscription))
   }
 
   /**
@@ -112,6 +109,32 @@ class MessageQueue {
    */
   createMessageContext() {
     return new MessageContext(this)
+  }
+
+  /**
+   * Creates a listener that waits for an action
+   * passing the given predicate and resolves with
+   * the action.
+   *
+   * The rules for predicate follow the same rules
+   * as lodash (see _.iteratee)
+   *
+   * NOTE: It is generally preferred to avoid
+   * relying on this function and create additional
+   * action creators. This is mainly exposed for
+   * testing.
+   */
+  waitForAction(predicate) {
+    return new Promise(resolve => {
+      const check = _.iteratee(predicate)
+      const checkedListener = action => {
+        if (check(action)) {
+          this.emitter.removeListener('+', checkedListener)
+          resolve(action)
+        }
+      }
+      this.emitter.addListener('+', checkedListener)
+    })
   }
 }
 
