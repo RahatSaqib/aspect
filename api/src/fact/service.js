@@ -2,15 +2,18 @@ const { subDays } = require('date-fns')
 const _ = require('lodash')
 const { deviceOffline } = require('../device/actions')
 
-function onFactGenerate(action, { messageContext }) {
+function onFactGenerateDeviceOffline(action, { messageContext }) {
+  const context = messageContext.bindActionCreators({ deviceOffline })
+  context.transact(async knex => {
+    await synthDeviceOfflineOnSchedule(context, knex)
+  })
+}
+
+function onFactGenerateResultCounts(action, { messageContext }) {
   const context = messageContext.bindActionCreators({ deviceOffline })
 
   context.transact(async knex => {
     await calculateResultCountsOnSchedule(context, knex)
-  })
-
-  context.transact(async knex => {
-    await synthDeviceOfflineOnSchedule(context, knex)
   })
 }
 
@@ -148,6 +151,7 @@ async function calculateResultCounts(deviceId, assayId, resultCategory1, knex) {
 }
 
 module.exports = {
-  onFactGenerate,
+  onFactGenerateDeviceOffline,
+  onFactGenerateResultCounts,
   calculateResultCounts,
 }

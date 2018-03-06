@@ -3,14 +3,17 @@ const config = require('./config')
 const mqtt = require('mqtt')
 const { transact } = require('./db')
 
-function createMessageQueue() {
-  const publishClient = mqtt.connect(config.mqtt.url)
-  return new MessageQueue(publishClient)
+function createMessageQueue(name) {
+  if (name == null) {
+    throw new Error('Must specify unique queue name')
+  }
+  return new MessageQueue(name)
 }
 
 class MessageQueue {
-  constructor(publishClient) {
-    this.publishClient = publishClient
+  constructor(name) {
+    this.name = name
+    this.clients = []
     _.bindAll(this, [
       'dispatch',
       'publish',
@@ -18,6 +21,18 @@ class MessageQueue {
       'subscribeAll',
       'createMessageContext',
     ])
+  }
+
+  close() {
+    return Promise.all(
+      _.map(
+        this.clients,
+        client => new Promise(resolve => client.end(resolve))
+      ).then(() => {
+        this.publishClient = null
+        this.clients = []
+      })
+    )
   }
 
   /**
@@ -33,6 +48,12 @@ class MessageQueue {
   }
 
   publish(topic, message, { durable = false }) {
+    if (this.publishClient == null) {
+      this.publishClient = mqtt.connect(config.mqtt.url, {
+        clientId: `${this.name}-publish`,
+      })
+      this.clients.push(this.publishClient)
+    }
     const qos = durable ? 1 : 0
     this.publishClient.publish(topic, message, { qos })
   }
@@ -56,12 +77,13 @@ class MessageQueue {
    *   action types per subscription.
    */
   subscribe({ name, durable = false, actions = {} }) {
-    const clean = !durable
+    const clean = false
     const qos = durable ? 1 : 0
     const client = mqtt.connect(config.mqtt.url, {
-      clientId: `aspect-${name}`,
+      clientId: `${this.name}-${name}`,
       clean,
     })
+    this.clients.push(client)
     client.on('connect', () => {
       const topics = _.map(
         actions,
@@ -75,7 +97,8 @@ class MessageQueue {
       if (actionMatch != null) {
         const action = JSON.parse(message.toString())
         const listener = actions[action.type]
-        if (listener != null && action.type === actionMatch[1]) {
+        const matchType = actionMatch[1]
+        if (listener != null && action.type === matchType) {
           listener(action, { messageContext: this.createMessageContext() })
         }
       }

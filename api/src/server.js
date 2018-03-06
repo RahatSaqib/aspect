@@ -74,9 +74,9 @@ const plugins = [
 addRavenPlugin(plugins)
 
 function messageQueuePlugin(server, options, next) {
-  const queue = createMessageQueue()
+  const queue = createMessageQueue('aspect')
   addSubscriptions(queue)
-  startScheduler(queue.createMessageContext())
+  startScheduler(queue)
 
   server.ext('onPreHandler', (request, reply) => {
     request.plugins.messageContext = queue.createMessageContext()
