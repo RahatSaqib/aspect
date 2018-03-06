@@ -579,7 +579,6 @@ const routes = [
 const subscriptions = [
   {
     name: 'deviceApi',
-    durable: true,
     actions: {
       RESULT_UPDATED: onResultUpdated,
       RESULT_LOGGED: onResultLogged,

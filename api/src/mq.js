@@ -42,20 +42,17 @@ class MessageQueue {
     if (!_.isString(action.type)) {
       throw new Error('Actions must be object with string type')
     }
-    this.publish(`aspect/actions/${action.type}`, JSON.stringify(action), {
-      durable: true,
-    })
+    this.publish(`aspect/actions/${action.type}`, JSON.stringify(action))
   }
 
-  publish(topic, message, { durable = false }) {
+  publish(topic, message) {
     if (this.publishClient == null) {
       this.publishClient = mqtt.connect(config.mqtt.url, {
         clientId: `${this.name}-publish`,
       })
       this.clients.push(this.publishClient)
     }
-    const qos = durable ? 1 : 0
-    this.publishClient.publish(topic, message, { qos })
+    this.publishClient.publish(topic, message, { qos: 1 })
   }
 
   /**
@@ -76,12 +73,10 @@ class MessageQueue {
    *   accepts incoming actions of that type. Can specify multiple
    *   action types per subscription.
    */
-  subscribe({ name, durable = false, actions = {} }) {
-    const clean = false
-    const qos = durable ? 1 : 0
+  subscribe({ name, actions = {} }) {
     const client = mqtt.connect(config.mqtt.url, {
       clientId: `${this.name}-${name}`,
-      clean,
+      clean: true,
     })
     this.clients.push(client)
     client.on('connect', () => {
@@ -89,7 +84,7 @@ class MessageQueue {
         actions,
         (listener, type) => `aspect/actions/${type}`
       )
-      client.subscribe(topics, { qos })
+      client.subscribe(topics, { qos: 1 })
     })
 
     client.on('message', (topic, message) => {
