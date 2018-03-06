@@ -74,15 +74,17 @@ const plugins = [
 addRavenPlugin(plugins)
 
 function messageQueuePlugin(server, options, next) {
-  const queue = createMessageQueue('aspect')
-  addSubscriptions(queue)
-  startScheduler(queue)
-
-  server.ext('onPreHandler', (request, reply) => {
-    request.plugins.messageContext = queue.createMessageContext()
-    reply.continue()
-  })
-  next()
+  createMessageQueue('aspect')
+    .then(queue => {
+      addSubscriptions(queue)
+      startScheduler(queue)
+      server.ext('onPreHandler', (request, reply) => {
+        request.plugins.messageContext = queue.createMessageContext()
+        reply.continue()
+      })
+      next()
+    })
+    .catch(next)
 }
 messageQueuePlugin.attributes = {
   name: 'messageQueue',
@@ -155,7 +157,9 @@ rawPayloadPlugin.attributes = {
 }
 
 server.register(plugins, err => {
-  if (err) throw err
+  if (err) {
+    throw err
+  }
 })
 
 // ================================================
@@ -257,6 +261,7 @@ server.register(
 // =======================
 server.start(err => {
   if (err) {
+    console.error(err) // eslint-disable-line no-console
     throw err
   }
   console.log(`Magic happens at http://localhost:${port}`) // eslint-disable-line no-console

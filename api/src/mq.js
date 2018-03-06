@@ -2,37 +2,68 @@ const _ = require('lodash')
 const config = require('./config')
 const mqtt = require('mqtt')
 const { transact } = require('./db')
+const EventEmitter = require('events')
 
-function createMessageQueue(name) {
+async function createMessageQueue(name) {
   if (name == null) {
     throw new Error('Must specify unique queue name')
   }
-  return new MessageQueue(name)
+  return new MessageQueue(name).connect()
 }
 
 class MessageQueue {
   constructor(name) {
     this.name = name
-    this.clients = []
+    this.emitter = new EventEmitter()
     _.bindAll(this, [
       'dispatch',
-      'publish',
       'subscribe',
       'subscribeAll',
       'createMessageContext',
     ])
   }
 
-  close() {
-    return Promise.all(
-      _.map(
-        this.clients,
-        client => new Promise(resolve => client.end(resolve))
-      ).then(() => {
-        this.publishClient = null
-        this.clients = []
+  async connect() {
+    await this.close()
+    await new Promise((resolve, reject) => {
+      const client = mqtt.connect(config.mqtt.url, {
+        clientId: this.name,
+        clean: false,
       })
-    )
+
+      this.client = client
+      client.on('message', (topic, message) => {
+        const actionMatch = /^aspect\/actions\/([^/]+)$/.exec(topic)
+        if (actionMatch != null) {
+          const action = JSON.parse(message.toString())
+          const matchType = actionMatch[1]
+          if (action.type === matchType) {
+            this.emitter.emit(action.type, action, {
+              messageContext: this.createMessageContext(),
+            })
+          }
+        }
+      })
+
+      client.on('connect', () => {
+        client.subscribe('aspect/actions/+', { qos: 1 }, err => {
+          if (err) {
+            reject(err)
+          } else {
+            resolve()
+          }
+        })
+      })
+    })
+    return this
+  }
+
+  async close() {
+    if (this.client) {
+      await new Promise(resolve => this.client.end(resolve))
+    }
+    this.client = null
+    this.emitter.removeAllListeners()
   }
 
   /**
@@ -42,61 +73,23 @@ class MessageQueue {
     if (!_.isString(action.type)) {
       throw new Error('Actions must be object with string type')
     }
-    this.publish(`aspect/actions/${action.type}`, JSON.stringify(action))
-  }
-
-  publish(topic, message) {
-    if (this.publishClient == null) {
-      this.publishClient = mqtt.connect(config.mqtt.url, {
-        clientId: `${this.name}-publish`,
-      })
-      this.clients.push(this.publishClient)
-    }
-    this.publishClient.publish(topic, message, { qos: 1 })
+    this.client.publish(
+      `aspect/actions/${action.type}`,
+      JSON.stringify(action),
+      { qos: 1 }
+    )
   }
 
   /**
    * Subscribes to messages with the named service.
    *
-   * name: required. Unique service identifier
-   *
-   * durable (optional, default false):
-   *
-   *   false for at most once delivery, messages may be lost (though rare)
-   *   but will not be duplicated and will not be queued on disconnect
-   *
-   *   true for at least once delivery guarantee, messages will be
-   *   queued on disconnect and best effort to deliver at least once.
-   *   messages may be duplicated (though rare)
-   *
    * actions: map Action Type name to listener function that
    *   accepts incoming actions of that type. Can specify multiple
    *   action types per subscription.
    */
-  subscribe({ name, actions = {} }) {
-    const client = mqtt.connect(config.mqtt.url, {
-      clientId: `${this.name}-${name}`,
-      clean: true,
-    })
-    this.clients.push(client)
-    client.on('connect', () => {
-      const topics = _.map(
-        actions,
-        (listener, type) => `aspect/actions/${type}`
-      )
-      client.subscribe(topics, { qos: 1 })
-    })
-
-    client.on('message', (topic, message) => {
-      const actionMatch = /^aspect\/actions\/([^/]+)$/.exec(topic)
-      if (actionMatch != null) {
-        const action = JSON.parse(message.toString())
-        const listener = actions[action.type]
-        const matchType = actionMatch[1]
-        if (listener != null && action.type === matchType) {
-          listener(action, { messageContext: this.createMessageContext() })
-        }
-      }
+  subscribe({ actions = {} }) {
+    _.each(actions, (listener, type) => {
+      this.emitter.addListener(type, listener)
     })
   }
 
