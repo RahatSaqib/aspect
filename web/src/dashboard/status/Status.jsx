@@ -58,6 +58,20 @@ const Icon = ({ icon, className }) => {
   }
 }
 
+const TargetLabel = ({ widget }) => {
+  const isGreaterThan = parseFloat(widget.count) > parseFloat(widget.target)
+  return (
+    <span
+      className={cssClasses('Summary__Card__Target', {
+        'Summary__Card__Target--less': !isGreaterThan,
+        'Summary__Card__Target--greater': isGreaterThan,
+      })}
+    >
+      {widget.target}
+    </span>
+  )
+}
+
 export const Status = ({
   history,
   intl,
@@ -85,8 +99,17 @@ export const Status = ({
                     : widget.subTitle}
                 </span>
               </div>
-              <div className={cssClasses('Summary__Card__Count')}>
-                {intl.formatNumber(widget.count, 0)}
+              <div className={cssClasses('Summary__Card__Content')}>
+                <span className={cssClasses('Summary__Card__Count')}>
+                  {widget.count}
+                </span>
+                {widget.target && (
+                  <TargetLabel
+                    widget={widget}
+                    intl={intl}
+                    className={cssClasses('Summary__Card__Target')}
+                  />
+                )}
               </div>
             </Card>
           </Link>

@@ -21,7 +21,7 @@ async function listTags(request) {
 
 async function getTags(auth, tagType) {
   const dataConstraints = await getConstraints(auth.credentials)
-  const tableName = `${tagType}Tag`
+  const tableName = tagTableName(tagType)
 
   const refQuery = knex(tableName).distinct('tagId')
   const data = await knex('Tag as t')
@@ -43,7 +43,7 @@ async function listTagsByType(request) {
 }
 
 async function getTagsById(auth, id, tagType) {
-  const tableName = `${tagType}Tag`
+  const tableName = tagTableName(tagType)
   const idName = `${tagType}Id`
   const dataConstraints = await getConstraints(auth.credentials)
 
@@ -82,7 +82,7 @@ async function updateTag(request) {
     )
   }
 
-  const tableName = `${tagType}Tag`
+  const tableName = tagTableName(tagType)
   const idName = `${tagType}Id`
   const dataConstraints = await getConstraints(auth.credentials)
 
@@ -133,6 +133,10 @@ async function updateTag(request) {
     ok: true,
     data: await getTagsById(auth, id, tagType),
   }
+}
+
+function tagTableName(tagType) {
+  return `${tagType.charAt(0).toUpperCase()}${tagType.slice(1)}Tag`
 }
 
 module.exports = {
