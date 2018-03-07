@@ -29,6 +29,7 @@
     "subTitleI18nKey": "dashboardWidgetSubTitleFailedTestRate",
     "sqlForIndicator":
       "select concat(round(sum(case when f.resultCategory1 in (5,6,7) then f.resultCount else 0 end)/sum(case when f.assayId is null and f.resultCategory1 is null then f.resultCount else 0 end)*100,2),'%') as cnt from FactResultCountDevice as f inner join Device as d on d.id = f.deviceId  inner join Site as s on s.id = d.siteId inner join Partner as p on s.partnerId = p.id left outer join Geography as g on s.geographyId = g.id where f.days = 30",
+    "sqlForTarget": "select '5%' as cnt",
     "link": "/browse/result",
     "sortOrder": 2
   },
@@ -73,6 +74,7 @@
     "subTitleI18nKey": "dashboardWidgetSubTitleMtbPositiveRifIndeterminateRate",
     "sqlForIndicator":
       "select concat(round(sum(case when resultCategory1=1 and resultCategory2=4 then 1 else 0 end)/count(r.id)*100,2),'%') as cnt from Result as r inner join Device as d on d.id = r.deviceId inner join Site as s on s.id = d.siteId inner join Partner as p on s.partnerId = p.id left outer join Geography as g on s.geographyId = g.id where r.endedOn > date_sub(now(), interval 30 day)",
+    "sqlForTarget": "select '2%' as cnt",
     "link": "/browse/result",
     "sortOrder": 6
   },

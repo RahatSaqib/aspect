@@ -70,7 +70,7 @@ function getTableAlias(sql) {
 
 function getSqlBuilder(sql) {
   const sqlRegExp = new RegExp(
-    /\bselect\s+(.*?)\s+from\s+(.*?)\s*((?:(?:LEFT|RIGHT)?\s+(?:INNER|OUTER)?\s+join)\s+(?:.*?))?\s*(?:(?:\s+where)\s+(.*?))?\s*(?:(?:\s+having)\s(.*?))?$/gi
+    /\bselect\s+(.*?)\s?(?:\s+from\s+(.*?)\s*((?:(?:LEFT|RIGHT)?\s+(?:INNER|OUTER)?\s+join)\s+(?:.*?))?\s*(?:(?:\s+where)\s+(.*?))?\s*(?:(?:\s+having)\s(.*?))?)?$/gi
   )
   let match
   let sqlBuilder
@@ -108,10 +108,25 @@ async function summaryDashboard(request) {
         ? await sqlBuilder.modify(addConstraints, dataConstraints, tableAlias)
         : [0]
 
-      return _.set(
-        _.omit(widget, ['sqlForIndicator', 'sortOrder']),
-        'count',
-        count && count.length === 1 ? _.values(count[0])[0] : 0
+      let target = null
+      if (widget.sqlForTarget) {
+        const sqlTargetTableAlias = getTableAlias(widget.sqlForTarget)
+        const sqlTargetBuilder = getSqlBuilder(widget.sqlForTarget)
+        target = sqlTargetBuilder
+          ? await sqlTargetBuilder.modify(
+              addConstraints,
+              dataConstraints,
+              sqlTargetTableAlias
+            )
+          : null
+      }
+
+      return _.assign(
+        _.omit(widget, ['sqlForIndicator', 'sqlForTarget', 'sortOrder']),
+        {
+          count: count && count.length === 1 ? _.values(count[0])[0] : 0,
+          target: target && target.length === 1 ? _.values(target[0])[0] : null,
+        }
       )
     })
   )

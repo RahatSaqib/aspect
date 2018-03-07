@@ -41,11 +41,36 @@
 }
 
 .Summary__Card__Title__Sub:before {
-  content: "\00a0 ";
+  content: "\00a0";
+}
+
+.Summary__Card__Content {
+  display: flex;
 }
 
 .Summary__Card__Count {
   font-size: 40px;
+  flex-grow: 1;
+}
+
+.Summary__Card__Target {
+  font-size: 24px;
+}
+
+.Summary__Card__Target--less {  
+  color: var(--aspect-color-mantis);    
+}
+
+.Summary__Card__Target--less::before {    
+  content: "\003c ";
+}
+
+.Summary__Card__Target--greater {  
+  color: var(--aspect-color-mandy);  
+}
+
+.Summary__Card__Target--greater::before {    
+  content: "\003e ";
 }
 
 .Title {
