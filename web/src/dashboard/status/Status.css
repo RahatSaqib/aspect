@@ -37,8 +37,11 @@
 }
 
 .Summary__Card__Title__Sub {
-  margin-left: 0.5em;
   color: var(--aspect-color-grey-4);
+}
+
+.Summary__Card__Title__Sub:before {
+  content: "\00a0 ";
 }
 
 .Summary__Card__Count {

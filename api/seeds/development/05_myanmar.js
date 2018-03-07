@@ -6,7 +6,7 @@ const _ = require('lodash')
 const config = require('../../src/config')
 const myanmarSites = require('./fixtures/myanmarSites.json')
 const patients = require('./fixtures/patients.json')
-
+const dashboardWidget = require('./fixtures/myanmarDashboardWidget.json')
 const { addMilliseconds, addMinutes, subDays } = require('date-fns')
 
 const now = new Date()
@@ -514,6 +514,25 @@ async function seed(knex) {
         jobId: jobIdLab,
         siteId,
       })
+    })
+  )
+
+  // Create DashboardWidget
+  const widgetIds = []
+  await Promise.all(
+    _.map(dashboardWidget, async widget => {
+      const [widgetId] = await knex('DashboardWidget').insert(widget)
+      widgetIds.push(widgetId)
+    })
+  )
+
+  await Promise.all(
+    _.map(widgetIds, async widgetId => {
+      await knex('JobFunctionDashboardWidget').insert([
+        { jobFunctionId: jobFunctionIdAdmin, widgetId },
+        { jobFunctionId: jobFunctionIdRegionalOfficer, widgetId },
+        { jobFunctionId: jobFunctionIdLabUser, widgetId },
+      ])
     })
   )
 }

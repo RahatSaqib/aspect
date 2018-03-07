@@ -86,7 +86,7 @@ export const Status = ({
                 </span>
               </div>
               <div className={cssClasses('Summary__Card__Count')}>
-                {intl.formatNumber(widget.count, 0)}
+                {widget.count}
               </div>
             </Card>
           </Link>
