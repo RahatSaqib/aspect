@@ -1513,12 +1513,7 @@ describe('Device Result API routes', () => {
         return _.map(
           await knex('InventoryItem')
             .where({ siteId })
-            .select(
-              'consumableId',
-              'lotNumber',
-              knex.raw('CAST(expiresOn as CHAR) AS expiresOn'),
-              'quantityOnHand'
-            ),
+            .select('consumableId', 'lotNumber', 'expiresOn', 'quantityOnHand'),
           inventoryItem =>
             _.assign({}, inventoryItem, {
               expiresOn: new Date(inventoryItem.expiresOn),
@@ -1622,7 +1617,7 @@ describe('Device Result API routes', () => {
 
           let resultDetails = {
             lotNumber: 'ABC123',
-            expirationDate: '2045-01-30',
+            expirationDate: '2045-01-30 00:00:00',
           }
 
           const [lotNumberAndExpirationDateMatch] = await knex(
@@ -1690,9 +1685,9 @@ describe('Device Result API routes', () => {
 
           resultDetails = {
             lotNumber: 'XYZ321',
-            expirationDate: '2035-01-30',
+            expirationDate: '2035-01-30 00:00:00',
           }
-          const randomExpiryDate = new Date('2017-03-05')
+          const randomExpiryDate = new Date('2017-03-05 00:00:00')
           const [onlyLotNumberMatches] = await knex('InventoryItem').insert({
             consumableId: GXMtbRifCartridgeId,
             siteId,
@@ -1749,7 +1744,7 @@ describe('Device Result API routes', () => {
 
           resultDetails = {
             lotNumber: 'ABC123',
-            expirationDate: '2019-11-16',
+            expirationDate: '2019-11-16 00:00:00',
           }
           const randomLotNumber = 'RANDOM-LOT'
           const [onlyExpirationDateMatches] = await knex(
@@ -1846,9 +1841,9 @@ describe('Device Result API routes', () => {
 
           const resultDetails = {
             lotNumber: 'QWE987',
-            expirationDate: '2017-12-16',
+            expirationDate: '2017-12-16 00:00:00',
           }
-          const randomExpiryDate = new Date('2017-03-05')
+          const randomExpiryDate = new Date('2017-03-05 00:00:00')
           const [onlyLotNumberMatches] = await knex('InventoryItem').insert({
             consumableId: GXMtbRifCartridgeId,
             siteId,
