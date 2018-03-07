@@ -1513,12 +1513,7 @@ describe('Device Result API routes', () => {
         return _.map(
           await knex('InventoryItem')
             .where({ siteId })
-            .select(
-              'consumableId',
-              'lotNumber',
-              knex.raw('CAST(expiresOn as CHAR) AS expiresOn'),
-              'quantityOnHand'
-            ),
+            .select('consumableId', 'lotNumber', 'expiresOn', 'quantityOnHand'),
           inventoryItem =>
             _.assign({}, inventoryItem, {
               expiresOn: new Date(inventoryItem.expiresOn),
