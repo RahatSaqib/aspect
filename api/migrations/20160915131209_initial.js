@@ -982,6 +982,166 @@ async function up(knex) {
     }
   )
 
+  // Messages
+
+  // Pending, Sent, Error
+  await knex.schema.createTable('MessageStatus', messageStatus => {
+    messageStatus.increments('id')
+    messageStatus.string('name').notNullable()
+    messageStatus.string('i18nKey').notNullable()
+    messageStatus.string('externalId').notNullable()
+    messageStatus.charset('utf8')
+  })
+
+  // Alert, Recommendation
+  await knex.schema.createTable('AlertType', alertType => {
+    alertType.increments('id')
+    alertType.string('name').notNullable()
+    alertType.string('i18nKey').notNullable()
+    alertType.string('externalId').notNullable()
+    alertType.charset('utf8')
+  })
+
+  await knex.schema.createTable('AlertTemplate', alertTemplate => {
+    alertTemplate.increments('id')
+    alertTemplate
+      .integer('alertTypeId')
+      .unsigned()
+      .references('id')
+      .inTable('AlertType')
+      .notNullable()
+    alertTemplate.string('externalId')
+    alertTemplate.string('message').notNullable()
+    alertTemplate.charset('utf8')
+  })
+
+  await knex.schema.createTable('AlertMessage', alertMessage => {
+    alertMessage.increments('id')
+    alertMessage
+      .integer('alertTemplateId')
+      .unsigned()
+      .references('id')
+      .inTable('AlertTemplate')
+      .notNullable()
+    alertMessage
+      .integer('personId')
+      .unsigned()
+      .references('id')
+      .inTable('Person')
+      .notNullable()
+    alertMessage
+      .integer('messageStatusId')
+      .unsigned()
+      .references('id')
+      .inTable('MessageStatus')
+      .notNullable()
+    alertMessage.string('message').notNullable()
+    alertMessage.charset('utf8')
+  })
+
+  await knex.schema.createTable('EmailTemplate', emailTemplate => {
+    emailTemplate.increments('id')
+    emailTemplate.string('externalId')
+    emailTemplate.string('subject').notNullable()
+    emailTemplate.string('body').notNullable()
+    emailTemplate.string('htmlBody')
+    emailTemplate.charset('utf8')
+  })
+
+  await knex.schema.createTable('EmailMessage', emailMessage => {
+    emailMessage.increments('id')
+    emailMessage
+      .integer('emailTemplateId')
+      .unsigned()
+      .references('id')
+      .inTable('EmailTemplate')
+      .notNullable()
+    emailMessage
+      .integer('personId')
+      .unsigned()
+      .references('id')
+      .inTable('Person')
+      .notNullable()
+    emailMessage
+      .integer('messageStatusId')
+      .unsigned()
+      .references('id')
+      .inTable('MessageStatus')
+      .notNullable()
+    emailMessage.string('subject').notNullable()
+    emailMessage.string('body').notNullable()
+    emailMessage.string('htmlBody')
+    emailMessage.charset('utf8')
+  })
+
+  await knex.schema.createTable('SmsTemplate', smsTemplate => {
+    smsTemplate.increments('id')
+    smsTemplate.string('externalId')
+    smsTemplate.string('message').notNullable()
+    smsTemplate.charset('utf8')
+  })
+
+  await knex.schema.createTable('SmsMessage', smsMessage => {
+    smsMessage.increments('id')
+    smsMessage
+      .integer('smsTemplateId')
+      .unsigned()
+      .references('id')
+      .inTable('SmsTemplate')
+      .notNullable()
+    smsMessage
+      .integer('personId')
+      .unsigned()
+      .references('id')
+      .inTable('Person')
+      .notNullable()
+    smsMessage
+      .integer('messageStatusId')
+      .unsigned()
+      .references('id')
+      .inTable('MessageStatus')
+      .notNullable()
+    smsMessage.string('message').notNullable()
+    smsMessage.charset('utf8')
+  })
+
+  await knex.schema.createTable('WebhookTemplate', webhookTemplate => {
+    webhookTemplate.increments('id')
+    webhookTemplate.string('externalId')
+    webhookTemplate.string('method').notNullable()
+    webhookTemplate.string('url').notNullable()
+    webhookTemplate.specificType('headers', 'JSON')
+    webhookTemplate.string('body')
+    webhookTemplate.charset('utf8')
+  })
+
+  await knex.schema.createTable('WebhookMessage', webhookMessage => {
+    webhookMessage.increments('id')
+    webhookMessage
+      .integer('webhookTemplateId')
+      .unsigned()
+      .references('id')
+      .inTable('WebhookTemplate')
+      .notNullable()
+    webhookMessage
+      .integer('personId')
+      .unsigned()
+      .references('id')
+      .inTable('Person')
+      .notNullable()
+    webhookMessage
+      .integer('messageStatusId')
+      .unsigned()
+      .references('id')
+      .inTable('MessageStatus')
+      .notNullable()
+    webhookMessage.string('method').notNullable()
+    webhookMessage.string('url').notNullable()
+    webhookMessage.specificType('headers', 'JSON')
+    webhookMessage.string('body')
+    webhookMessage.charset('utf8')
+  })
+
   // Issues
 
   // holds general categories (aka class), Device Health, Reagent Health
@@ -1065,17 +1225,73 @@ async function up(knex) {
   await knex.schema.createTable('Notification', notification => {
     notification.increments('id')
     notification
-      .integer('issueId')
+      .integer('partnerId')
       .unsigned()
+      .index()
       .references('id')
-      .inTable('Issue')
+      .inTable('Partner')
     notification
       .integer('notificationTypeId')
       .unsigned()
       .references('id')
       .inTable('NotificationType')
+    notification
+      .integer('issueId')
+      .unsigned()
+      .references('id')
+      .inTable('Issue')
+    notification
+      .integer('alertTemplateId')
+      .unsigned()
+      .references('id')
+      .inTable('AlertTemplate')
+    notification
+      .integer('emailTemplateId')
+      .unsigned()
+      .references('id')
+      .inTable('EmailTemplate')
+    notification
+      .integer('smsTemplateId')
+      .unsigned()
+      .references('id')
+      .inTable('SmsTemplate')
+    notification
+      .integer('webhookTemplateId')
+      .unsigned()
+      .references('id')
+      .inTable('WebhookTemplate')
     notification.string('name').notNullable()
     notification.charset('utf8')
+  })
+
+  await knex.schema.createTable('NotificationLog', notificationLog => {
+    notificationLog.increments('id')
+    notificationLog
+      .integer('notificationId')
+      .unsigned()
+      .references('id')
+      .inTable('Notification')
+    notificationLog
+      .integer('alertMessageId')
+      .unsigned()
+      .references('id')
+      .inTable('AlertMessage')
+    notificationLog
+      .integer('emailMessageId')
+      .unsigned()
+      .references('id')
+      .inTable('EmailMessage')
+    notificationLog
+      .integer('smsMessageId')
+      .unsigned()
+      .references('id')
+      .inTable('SmsMessage')
+    notificationLog
+      .integer('webhookMessageId')
+      .unsigned()
+      .references('id')
+      .inTable('WebhookMessage')
+    notificationLog.charset('utf8')
   })
 
   await knex.schema.createTable(
@@ -1357,12 +1573,23 @@ async function down(knex) {
   await knex.schema.dropTableIfExists('RefreshToken')
   await knex.schema.dropTableIfExists('NotificationContext')
   await knex.schema.dropTableIfExists('NotificationJobFunction')
+  await knex.schema.dropTableIfExists('NotificationLog')
   await knex.schema.dropTableIfExists('Notification')
   await knex.schema.dropTableIfExists('NotificationType')
   await knex.schema.dropTableIfExists('Issue')
   await knex.schema.dropTableIfExists('IssueCategory')
   await knex.schema.dropTableIfExists('IssueStatus')
   await knex.schema.dropTableIfExists('IssueType')
+  await knex.schema.dropTableIfExists('WebhookMessage')
+  await knex.schema.dropTableIfExists('WebhookTemplate')
+  await knex.schema.dropTableIfExists('SmsMessage')
+  await knex.schema.dropTableIfExists('SmsTemplate')
+  await knex.schema.dropTableIfExists('EmailMessage')
+  await knex.schema.dropTableIfExists('EmailTemplate')
+  await knex.schema.dropTableIfExists('AlertMessage')
+  await knex.schema.dropTableIfExists('AlertTemplate')
+  await knex.schema.dropTableIfExists('AlertType')
+  await knex.schema.dropTableIfExists('MessageStatus')
   await knex.schema.dropTableIfExists('JobFunctionPermission')
   await knex.schema.dropTableIfExists('JobFunction')
   await knex.schema.dropTableIfExists('JobContext')

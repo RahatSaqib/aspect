@@ -3493,6 +3493,38 @@ async function seed(knex) {
     { jobFunctionId: jobFunctionIdClinician, widgetId: widgetIds.contacts },
   ])
 
+  // Messages
+  await knex('MessageStatus').insert([
+    {
+      name: 'Pending',
+      externalId: 'Pending',
+      i18nKey: 'messageStatusPending',
+    },
+    {
+      name: 'Sent',
+      externalId: 'Sent',
+      i18nKey: 'messageStatusSent',
+    },
+    {
+      name: 'Error',
+      externalId: 'Error',
+      i18nKey: 'messageStatusError',
+    },
+  ])
+
+  await knex('AlertType').insert([
+    {
+      name: 'Alert',
+      externalId: 'Alert',
+      i18nKey: 'alertTypeAlert',
+    },
+    {
+      name: 'Recommendation',
+      externalId: 'Recommendation',
+      i18nKey: 'alertTypeRecommendation',
+    },
+  ])
+
   // Issues
   await knex('IssueCategory').insert([
     {
