@@ -988,7 +988,7 @@ async function up(knex) {
   await knex.schema.createTable('IssueCategory', issueCategory => {
     issueCategory.increments('id')
     issueCategory.string('name').notNullable()
-    issueCategory.string('i18nKey')
+    issueCategory.string('i18nKey').notNullable()
     issueCategory.string('externalId').notNullable()
     issueCategory.charset('utf8')
   })
@@ -1001,8 +1001,9 @@ async function up(knex) {
       .unsigned()
       .references('id')
       .inTable('IssueCategory')
+      .notNullable()
     issueType.string('name').notNullable()
-    issueType.string('i18nKey')
+    issueType.string('i18nKey').notNullable()
     issueType.string('externalId').notNullable()
     issueType.charset('utf8')
   })
@@ -1011,8 +1012,8 @@ async function up(knex) {
   await knex.schema.createTable('IssueStatus', issueStatus => {
     issueStatus.increments('id')
     issueStatus.string('name').notNullable()
-    issueStatus.string('i18nKey')
-    issueStatus.string('externalId')
+    issueStatus.string('i18nKey').notNullable()
+    issueStatus.string('externalId').notNullable()
     issueStatus.charset('utf8')
   })
 
@@ -1023,11 +1024,13 @@ async function up(knex) {
       .unsigned()
       .references('id')
       .inTable('IssueType')
+      .notNullable()
     issue
       .integer('issueStatusId')
       .unsigned()
       .references('id')
       .inTable('IssueStatus')
+      .notNullable()
     issue
       .integer('supersededByIssueId')
       .unsigned()
@@ -1043,6 +1046,83 @@ async function up(knex) {
     addCreateFieldsNullable(issue)
     addUpdateFieldsNullable(issue)
     issue.charset('utf8')
+  })
+
+  // Notifications
+  await knex.schema.createTable('NotificationType', notificationType => {
+    notificationType.increments('id')
+    notificationType
+      .integer('issueTypeId')
+      .unsigned()
+      .references('id')
+      .inTable('IssueType')
+    notificationType.string('name').notNullable()
+    notificationType.string('i18nKey')
+    notificationType.string('externalId')
+    notificationType.charset('utf8')
+  })
+
+  await knex.schema.createTable('Notification', notification => {
+    notification.increments('id')
+    notification
+      .integer('issueId')
+      .unsigned()
+      .references('id')
+      .inTable('Issue')
+    notification
+      .integer('notificationTypeId')
+      .unsigned()
+      .references('id')
+      .inTable('NotificationType')
+    notification.string('name').notNullable()
+    notification.charset('utf8')
+  })
+
+  await knex.schema.createTable(
+    'NotificationJobFunction',
+    notificationJobFunction => {
+      notificationJobFunction
+        .integer('notificationid')
+        .unsigned()
+        .index()
+        .references('id')
+        .inTable('Notification')
+      notificationJobFunction
+        .integer('jobFunctionId')
+        .unsigned()
+        .index()
+        .references('id')
+        .inTable('JobFunction')
+      notificationJobFunction.primary(['notificationId', 'jobFunctionId'])
+      notificationJobFunction.charset('utf8')
+    }
+  )
+
+  await knex.schema.createTable('NotificationContext', notificationContext => {
+    notificationContext.increments('id')
+    notificationContext
+      .integer('notificationId')
+      .unsigned()
+      .references('id')
+      .inTable('Notification')
+      .notNullable()
+    notificationContext
+      .integer('geographyId')
+      .unsigned()
+      .references('id')
+      .inTable('Geography')
+    notificationContext
+      .integer('siteId')
+      .unsigned()
+      .references('id')
+      .inTable('Site')
+    notificationContext
+      .integer('personId')
+      .unsigned()
+      .references('id')
+      .inTable('Person')
+    notificationContext.string('name').notNullable()
+    notificationContext.charset('utf8')
   })
 
   // facts-table for result counts by device
@@ -1275,6 +1355,14 @@ async function down(knex) {
   await knex.schema.dropTableIfExists('DeviceRole')
   await knex.schema.dropTableIfExists('DeviceApiKey')
   await knex.schema.dropTableIfExists('RefreshToken')
+  await knex.schema.dropTableIfExists('NotificationContext')
+  await knex.schema.dropTableIfExists('NotificationJobFunction')
+  await knex.schema.dropTableIfExists('Notification')
+  await knex.schema.dropTableIfExists('NotificationType')
+  await knex.schema.dropTableIfExists('Issue')
+  await knex.schema.dropTableIfExists('IssueCategory')
+  await knex.schema.dropTableIfExists('IssueStatus')
+  await knex.schema.dropTableIfExists('IssueType')
   await knex.schema.dropTableIfExists('JobFunctionPermission')
   await knex.schema.dropTableIfExists('JobFunction')
   await knex.schema.dropTableIfExists('JobContext')
@@ -1295,10 +1383,6 @@ async function down(knex) {
   await knex.schema.dropTableIfExists('PartnerType')
   await knex.schema.dropTableIfExists('DeviceSim')
   await knex.schema.dropTableIfExists('ResultQualityControlLog')
-  await knex.schema.dropTableIfExists('Issue')
-  await knex.schema.dropTableIfExists('IssueCategory')
-  await knex.schema.dropTableIfExists('IssueStatus')
-  await knex.schema.dropTableIfExists('IssueType')
   await knex.schema.dropTableIfExists('FactResultCountDevice')
   await knex.schema.dropTableIfExists('FactDeviceFlag')
   await knex.schema.dropTableIfExists('Tag')
