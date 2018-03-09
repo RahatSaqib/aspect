@@ -52,6 +52,8 @@ async function seed(knex) {
     resultSources,
     resultTypes,
     resultWorkflowStatuses,
+    issueTypes,
+    messageTypes,
   ] = await Promise.all([
     rowsAsObject(knex, 'PartnerType', 'name'),
     rowsAsObject(knex, 'DeviceType', 'externalId'),
@@ -62,6 +64,8 @@ async function seed(knex) {
     rowsAsObject(knex, 'ResultSource', 'externalId'),
     rowsAsObject(knex, 'ResultType', 'externalId'),
     rowsAsObject(knex, 'ResultWorkflowStatus', 'externalId'),
+    rowsAsObject(knex, 'IssueType', 'externalId'),
+    rowsAsObject(knex, 'MessageType', 'externalId'),
   ])
 
   const [partnerId] = await knex('Partner').insert({
@@ -535,6 +539,28 @@ async function seed(knex) {
       ])
     })
   )
+
+  // Notifications
+  await knex('NotificationType').insert([
+    {
+      partnerId,
+      issueTypeId: issueTypes.DeviceOffline.id,
+      messageTypeId: messageTypes.DeviceOfflineLevel1.id,
+      name: messageTypes.DeviceOfflineLevel1.name,
+    },
+    {
+      partnerId,
+      issueTypeId: issueTypes.DeviceOffline.id,
+      messageTypeId: messageTypes.DeviceOfflineLevel2.id,
+      name: messageTypes.DeviceOfflineLevel3.name,
+    },
+    {
+      partnerId,
+      issueTypeId: issueTypes.DeviceOffline.id,
+      messageTypeId: messageTypes.DeviceOfflineLevel3.id,
+      name: messageTypes.DeviceOfflineLevel3.name,
+    },
+  ])
 }
 
 function rowsAsObject(knex, table, column = 'name') {

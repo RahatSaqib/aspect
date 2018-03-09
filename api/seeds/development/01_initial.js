@@ -3493,38 +3493,6 @@ async function seed(knex) {
     { jobFunctionId: jobFunctionIdClinician, widgetId: widgetIds.contacts },
   ])
 
-  // Messages
-  await knex('MessageStatus').insert([
-    {
-      name: 'Pending',
-      externalId: 'Pending',
-      i18nKey: 'messageStatusPending',
-    },
-    {
-      name: 'Sent',
-      externalId: 'Sent',
-      i18nKey: 'messageStatusSent',
-    },
-    {
-      name: 'Error',
-      externalId: 'Error',
-      i18nKey: 'messageStatusError',
-    },
-  ])
-
-  await knex('AlertType').insert([
-    {
-      name: 'Alert',
-      externalId: 'Alert',
-      i18nKey: 'alertTypeAlert',
-    },
-    {
-      name: 'Recommendation',
-      externalId: 'Recommendation',
-      i18nKey: 'alertTypeRecommendation',
-    },
-  ])
-
   // Issues
   await knex('IssueCategory').insert([
     {
@@ -3548,11 +3516,7 @@ async function seed(knex) {
       i18nKey: 'issueCategoryConnectivityHealth',
     },
   ])
-  const issueCategories = await rowsAsObject(
-    knex,
-    'IssueCategory',
-    'externalId'
-  )
+  const issueCategories = await rowsAsObject(knex, 'IssueCategory')
 
   await knex('IssueStatus').insert([
     {
@@ -3578,6 +3542,117 @@ async function seed(knex) {
       externalId: 'DeviceOffline',
       i18nKey: 'issueStatusDeviceOffline',
       issueCategoryId: issueCategories.ConnectivityHealth.id,
+    },
+  ])
+
+  await knex('MessageStatus').insert([
+    {
+      name: 'Pending',
+      externalId: 'Pending',
+      i18nKey: 'messageStatusPending',
+    },
+    {
+      name: 'Sent',
+      externalId: 'Sent',
+      i18nKey: 'messageStatusSent',
+    },
+    {
+      name: 'Error',
+      externalId: 'Error',
+      i18nKey: 'messageStatusError',
+    },
+  ])
+
+  await knex('MessageSeverity').insert([
+    {
+      name: 'Alert',
+      externalId: 'Alert',
+      i18nKey: 'messageSeverityAlert',
+    },
+    {
+      name: 'Recommendation',
+      externalId: 'Recommendation',
+      i18nKey: 'messageSeverityRecommendation',
+    },
+  ])
+  const messageSeverities = await rowsAsObject(knex, 'MessageSeverity')
+
+  await knex('MessageType').insert([
+    {
+      name: 'Device Offline Level 1',
+      externalId: 'DeviceOfflineLevel1',
+      i18nKey: 'messageTypeDeviceOfflineLevel1',
+      messageSeverityId: messageSeverities.Alert.id,
+      level: 1,
+    },
+    {
+      name: 'Device Offline Level 2',
+      externalId: 'DeviceOfflineLevel2',
+      i18nKey: 'messageTypeDeviceOfflineLevel2',
+      messageSeverityId: messageSeverities.Alert.id,
+      level: 2,
+    },
+    {
+      name: 'Device Offline Level 3',
+      externalId: 'DeviceOfflineLevel3',
+      i18nKey: 'messageTypeDeviceOfflineLevel3',
+      messageSeverityId: messageSeverities.Alert.id,
+      level: 3,
+    },
+  ])
+  const messageTypes = await rowsAsObject(knex, 'MessageType')
+
+  await knex('AlertTemplate').insert([
+    /* eslint-disable no-template-curly-in-string */
+    {
+      messageTypeId: messageTypes.DeviceOfflineLevel1.id,
+      message: 'Cannot reach network for ${numberOfDays} days',
+    },
+    {
+      messageTypeId: messageTypes.DeviceOfflineLevel2.id,
+      message: '${site.name} no contact for ${numberOfDays} days.',
+    },
+    {
+      messageTypeId: messageTypes.DeviceOfflineLevel3.id,
+      message: '${site.name} no contact for ${numberOfDays} days.',
+    },
+  ])
+
+  await knex('SmsTemplate').insert([
+    /* eslint-disable no-template-curly-in-string */
+    {
+      messageTypeId: messageTypes.DeviceOfflineLevel1.id,
+      message: '${site.name} no contact for ${numberOfDays} days.',
+    },
+    {
+      messageTypeId: messageTypes.DeviceOfflineLevel2.id,
+      message: '${site.name} no contact for ${numberOfDays} days.',
+    },
+    {
+      messageTypeId: messageTypes.DeviceOfflineLevel3.id,
+      message: '${site.name} no contact for ${numberOfDays} days.',
+    },
+  ])
+
+  await knex('EmailTemplate').insert([
+    /* eslint-disable no-template-curly-in-string */
+    {
+      messageTypeId: messageTypes.DeviceOfflineLevel1.id,
+      subject: '${site.name} Device Offline',
+      body: '${site.name} no contact for ${numberOfDays} days.',
+      htmlBody: '<em>${site.name}</em> no contact for ${numberOfDays} days.',
+    },
+    {
+      messageTypeId: messageTypes.DeviceOfflineLevel2.id,
+      subject: '${site.name} Device Offline',
+      body: '${site.name} no contact for ${numberOfDays} days.',
+      htmlBody: '<em>${site.name}</em> no contact for ${numberOfDays} days.',
+    },
+    {
+      messageTypeId: messageTypes.DeviceOfflineLevel3.id,
+      subject: '${site.name} Device Offline',
+      body: '${site.name} no contact for ${numberOfDays} days.',
+      htmlBody: '<em>${site.name}</em> no contact for ${numberOfDays} days.',
     },
   ])
 }
