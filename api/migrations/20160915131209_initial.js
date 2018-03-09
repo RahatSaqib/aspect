@@ -996,6 +996,11 @@ async function up(knex) {
   // Type of issue Device Offline, Module Error, etc.
   await knex.schema.createTable('IssueType', issueType => {
     issueType.increments('id')
+    issueType
+      .integer('issueCategoryId')
+      .unsigned()
+      .references('id')
+      .inTable('IssueCategory')
     issueType.string('name').notNullable()
     issueType.string('i18nKey')
     issueType.string('externalId').notNullable()
@@ -1007,45 +1012,38 @@ async function up(knex) {
     issueStatus.increments('id')
     issueStatus.string('name').notNullable()
     issueStatus.string('i18nKey')
-    issueStatus.string('token')
+    issueStatus.string('externalId')
+    issueStatus.charset('utf8')
   })
 
-  await knex.schema.createTable(
-    'Issue',
-    issue => {
-      issue.increments('id')
-      issue
-        .integer('issueCategoryId')
-        .unsigned()
-        .references('id')
-        .inTable('IssueCategory')
-      issue
-        .integer('issueTypeId')
-        .unsigned()
-        .references('id')
-        .inTable('IssueType')
-      issue
-        .integer('issueStatusId')
-        .unsigned()
-        .references('id')
-        .inTable('IssueStatus')
-      issue
-        .integer('supersededByIssueId')
-        .unsigned()
-        .references('id')
-        .inTable('Issue')
-      // TODO Is escalated independent of status? Should it be another Enum
-      issue
-        .boolean('escalated')
-        .notNullable()
-        .defaultTo(0)
-      issue.string('name').notNullable()
-      issue.string('description').notNullable()
-      addCreateFieldsNullable(issue)
-      addUpdateFieldsNullable(issue)
-      issue.charset('utf8')
-    }
-  )
+  await knex.schema.createTable('Issue', issue => {
+    issue.increments('id')
+    issue
+      .integer('issueTypeId')
+      .unsigned()
+      .references('id')
+      .inTable('IssueType')
+    issue
+      .integer('issueStatusId')
+      .unsigned()
+      .references('id')
+      .inTable('IssueStatus')
+    issue
+      .integer('supersededByIssueId')
+      .unsigned()
+      .references('id')
+      .inTable('Issue')
+    // TODO Is escalated independent of status? Should it be another Enum
+    issue
+      .boolean('escalated')
+      .notNullable()
+      .defaultTo(0)
+    issue.string('name').notNullable()
+    issue.string('description').notNullable()
+    addCreateFieldsNullable(issue)
+    addUpdateFieldsNullable(issue)
+    issue.charset('utf8')
+  })
 
   // facts-table for result counts by device
   await knex.schema.createTable('FactResultCountDevice', x => {

@@ -3492,4 +3492,67 @@ async function seed(knex) {
     { jobFunctionId: jobFunctionIdClinician, widgetId: widgetIds.devices },
     { jobFunctionId: jobFunctionIdClinician, widgetId: widgetIds.contacts },
   ])
+
+  // Issues
+  await knex('IssueCategory').insert([
+    {
+      name: 'Device Health',
+      externalId: 'DeviceHealth',
+      i18nKey: 'issueCategoryDeviceHealth',
+    },
+    {
+      name: 'Reagent Health',
+      externalId: 'ReagentHealth',
+      i18nKey: 'issueCategoryReagentHealth',
+    },
+    {
+      name: 'Data Health',
+      externalId: 'DataHealth',
+      i18nKey: 'issueCategoryDataHealth',
+    },
+    {
+      name: 'Connectivity Health',
+      externalId: 'ConnectivityHealth',
+      i18nKey: 'issueCategoryConnectivityHealth',
+    },
+  ])
+  const issueCategories = await rowsAsObject(
+    knex,
+    'IssueCategory',
+    'externalId'
+  )
+
+  await knex('IssueStatus').insert([
+    {
+      name: 'Inactive',
+      externalId: 'Inactive',
+      i18nKey: 'issueStatusInactive',
+    },
+    { name: 'Active', externalId: 'Active', i18nKey: 'issueStatusActive' },
+    {
+      name: 'Acknowledged',
+      externalId: 'Acknowledged',
+      i18nKey: 'issueStatusAcknowledged',
+    },
+    { name: 'OK', externalId: 'OK', i18nKey: 'issueStatusOK' },
+    { name: 'Due Soon', externalId: 'DueSoon', i18nKey: 'issueStatusDueSoon' },
+    { name: 'Due Now', externalId: 'DueNow', i18nKey: 'issueStatusDueNow' },
+    { name: 'Overdue', externalId: 'Overdue', i18nKey: 'issueStatusOverdue' },
+  ])
+
+  await knex('IssueType').insert([
+    {
+      name: 'Device Offline',
+      externalId: 'DeviceOffline',
+      i18nKey: 'issueStatusDeviceOffline',
+      issueCategoryId: issueCategories.ConnectivityHealth.id,
+    },
+  ])
+}
+
+function rowsAsObject(knex, table, column = 'externalId') {
+  return knex(table).reduce((memo, row) => {
+    memo[row[column]] = row
+    return memo
+  }, {})
 }
