@@ -1,0 +1,19 @@
+@import '../../globals/variables.css';
+
+.Indicator_Icon {
+  font-size: 32px;
+  line-height: 32px;
+  color: var(--aspect-color-grey-4);
+}
+
+.Indicator_Icon svg {
+  vertical-align: top !important;
+}
+
+.Indicator_Icon_Colored--less {
+  color: var(--aspect-color-mandy);
+}
+
+.Indicator_Icon_Colored--greater {
+  color: var(--aspect-color-mantis);
+}
