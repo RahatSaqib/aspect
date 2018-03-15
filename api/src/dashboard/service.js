@@ -92,6 +92,15 @@ function getSqlBuilder(sql) {
   return sqlBuilder
 }
 
+function queryCount(sql, dataConstraints) {
+  const sqlTableAlias = getTableAlias(sql)
+  const sqlBuilder = getSqlBuilder(sql)
+  const cnt = sqlBuilder
+    ? sqlBuilder.modify(addConstraints, dataConstraints, sqlTableAlias)
+    : null
+  return cnt
+}
+
 async function summaryDashboard(request) {
   const { auth } = request
   // get data constraints
@@ -102,30 +111,23 @@ async function summaryDashboard(request) {
 
   const data = await Promise.all(
     widgets.map(async widget => {
-      const tableAlias = getTableAlias(widget.sqlForIndicator)
-      const sqlBuilder = getSqlBuilder(widget.sqlForIndicator)
-      const count = sqlBuilder
-        ? await sqlBuilder.modify(addConstraints, dataConstraints, tableAlias)
-        : [0]
-
-      let target = null
-      if (widget.sqlForTarget) {
-        const sqlTargetTableAlias = getTableAlias(widget.sqlForTarget)
-        const sqlTargetBuilder = getSqlBuilder(widget.sqlForTarget)
-        target = sqlTargetBuilder
-          ? await sqlTargetBuilder.modify(
-              addConstraints,
-              dataConstraints,
-              sqlTargetTableAlias
-            )
-          : null
-      }
-
+      const count = await queryCount(widget.sqlForIndicator, dataConstraints)
+      const target = await queryCount(widget.sqlForTarget, dataConstraints)
+      const unit = await queryCount(widget.sqlForStatUnit, dataConstraints)
+      const extra = await queryCount(widget.sqlForExtra, dataConstraints)
       return _.assign(
-        _.omit(widget, ['sqlForIndicator', 'sqlForTarget', 'sortOrder']),
+        _.omit(widget, [
+          'sqlForIndicator',
+          'sqlForTarget',
+          'sqlForStatUnit',
+          'sqlForExtra',
+          'sortOrder',
+        ]),
         {
           count: count && count.length === 1 ? _.values(count[0])[0] : 0,
           target: target && target.length === 1 ? _.values(target[0])[0] : null,
+          unit: unit && unit.length === 1 ? _.values(unit[0])[0] : null,
+          extra: extra && extra.length === 1 ? _.values(extra[0])[0] : null,
         }
       )
     })
