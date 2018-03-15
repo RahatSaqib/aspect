@@ -44,10 +44,44 @@
   content: "\00a0";
 }
 
-.Summary__Card__Content {
+.Summary__Card__Content {  
   display: flex;
+  flex-flow: row wrap;
+  justify-content: space-between;
 }
 
+.Summary__Card__Item {
+  padding: 10px 0;
+  display: flex;
+  flex-flow: row wrap;
+}
+
+.Summary__Card__Item__Count {
+  padding-right: 10px;
+  line-height: 40px;
+  font-size:40px;
+}
+
+.Summary__Card__Item__Messages {
+  line-height: 20px;
+  font-size: 16px;
+  color: var(--aspect-color-grey-4);
+}
+
+.Summary__Card__Item__Messages--sub {
+  font-weight: var(--lato-font-weight-black);
+}
+
+.Summary__Card__Item__Messages--sub::first-letter {
+  text-transform: capitalize;
+}
+
+.Summary__Card__Item--right  {
+  composes: Summary__Card__Item;
+  text-align: right;
+}
+
+/* 
 .Summary__Card__Count {
   font-size: 40px;
   flex-grow: 1;
@@ -71,7 +105,7 @@
 
 .Summary__Card__Target--greater::before {    
   content: "\003e ";
-}
+} */
 
 .Title {
   display: flex;
