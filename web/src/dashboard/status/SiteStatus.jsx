@@ -29,7 +29,7 @@ const EMPTY_LIST = Immutable.List()
 const enhance = compose(
   pure,
   requirePermissions({
-    permissions: ['site:admin', 'site:view', 'site:edit'],
+    permissions: ['siteDashboard:admin', 'siteDashboard:view'],
   }),
   connect(
     state => ({

@@ -23,7 +23,7 @@ const cssClasses = classnames.bind(require('./Status.css'))
 const enhance = compose(
   pure,
   requirePermissions({
-    permissions: ['result:admin', 'result:view', 'result:edit'],
+    permissions: ['resultDashboard:admin', 'resultDashboard:view'],
   }),
   connect(
     state => ({

@@ -218,7 +218,27 @@ async function seed(knex) {
       permissionId: modules.inventory.admin,
     },
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.task.admin },
-
+    // dasboard permissions - admin
+    {
+      jobFunctionId: jobFunctionIdAdmin,
+      permissionId: modules.summaryDashboard.admin,
+    },
+    {
+      jobFunctionId: jobFunctionIdAdmin,
+      permissionId: modules.resultDashboard.admin,
+    },
+    {
+      jobFunctionId: jobFunctionIdAdmin,
+      permissionId: modules.inventoryItemDashboard.admin,
+    },
+    {
+      jobFunctionId: jobFunctionIdAdmin,
+      permissionId: modules.deviceDashboard.admin,
+    },
+    {
+      jobFunctionId: jobFunctionIdAdmin,
+      permissionId: modules.siteDashboard.admin,
+    },
     // Regional Officer Permissions
     {
       jobFunctionId: jobFunctionIdRegionalOfficer,
@@ -240,7 +260,27 @@ async function seed(knex) {
       jobFunctionId: jobFunctionIdRegionalOfficer,
       permissionId: modules.task.admin,
     },
-
+    // dasboard permissions - Regional Officer
+    {
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      permissionId: modules.summaryDashboard.admin,
+    },
+    {
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      permissionId: modules.resultDashboard.admin,
+    },
+    {
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      permissionId: modules.inventoryItemDashboard.admin,
+    },
+    {
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      permissionId: modules.deviceDashboard.admin,
+    },
+    {
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      permissionId: modules.siteDashboard.admin,
+    },
     // Lab User Permissions
     {
       jobFunctionId: jobFunctionIdLabUser,
@@ -261,6 +301,27 @@ async function seed(knex) {
     {
       jobFunctionId: jobFunctionIdLabUser,
       permissionId: modules.task.admin,
+    },
+    // dasboard permissions - lab user
+    {
+      jobFunctionId: jobFunctionIdLabUser,
+      permissionId: modules.summaryDashboard.admin,
+    },
+    {
+      jobFunctionId: jobFunctionIdLabUser,
+      permissionId: modules.resultDashboard.admin,
+    },
+    {
+      jobFunctionId: jobFunctionIdLabUser,
+      permissionId: modules.inventoryItemDashboard.admin,
+    },
+    {
+      jobFunctionId: jobFunctionIdLabUser,
+      permissionId: modules.deviceDashboard.admin,
+    },
+    {
+      jobFunctionId: jobFunctionIdLabUser,
+      permissionId: modules.siteDashboard.admin,
     },
   ])
 

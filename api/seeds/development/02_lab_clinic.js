@@ -372,6 +372,31 @@ async function seed(knex) {
       jobFunctionId: jobFunctionIdLabAdmin,
       permissionId: modules.result.admin,
     },
+    // dasboard permissions - lab admin
+    {
+      jobFunctionId: jobFunctionIdLabAdmin,
+      permissionId: modules.summaryDashboard.view,
+    },
+    {
+      jobFunctionId: jobFunctionIdLabAdmin,
+      permissionId: modules.resultDashboard.view,
+    },
+    {
+      jobFunctionId: jobFunctionIdLabAdmin,
+      permissionId: modules.inventoryItemDashboard.view,
+    },
+    {
+      jobFunctionId: jobFunctionIdLabAdmin,
+      permissionId: modules.deviceDashboard.view,
+    },
+    {
+      jobFunctionId: jobFunctionIdLabAdmin,
+      permissionId: modules.siteDashboard.view,
+    },
+    {
+      jobFunctionId: jobFunctionIdLabAdmin,
+      permissionId: modules.operationalDashboard.view,
+    },
   ])
 
   await knex('JobFunctionPermission').insert([
@@ -385,6 +410,31 @@ async function seed(knex) {
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.result.admin },
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.site.admin },
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.assay.admin },
+    // dasboard permissions - admin
+    {
+      jobFunctionId: jobFunctionIdAdmin,
+      permissionId: modules.summaryDashboard.admin,
+    },
+    {
+      jobFunctionId: jobFunctionIdAdmin,
+      permissionId: modules.resultDashboard.admin,
+    },
+    {
+      jobFunctionId: jobFunctionIdAdmin,
+      permissionId: modules.inventoryItemDashboard.admin,
+    },
+    {
+      jobFunctionId: jobFunctionIdAdmin,
+      permissionId: modules.deviceDashboard.admin,
+    },
+    {
+      jobFunctionId: jobFunctionIdAdmin,
+      permissionId: modules.siteDashboard.admin,
+    },
+    {
+      jobFunctionId: jobFunctionIdAdmin,
+      permissionId: modules.operationalDashboard.view,
+    },
   ])
 
   const [jobIdAdmin] = await knex('Job').insert([

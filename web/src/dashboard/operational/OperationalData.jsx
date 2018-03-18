@@ -21,6 +21,7 @@ const cssClasses = classnames.bind(require('./OperationalData.css'))
 
 const enhance = compose(
   requirePermissions({
+    permissions: ['operationalDashboard:admin', 'operationalDashboard:view'],
     features: ['operationalData:true'],
     ForbiddenComponent: NotFound,
   }),

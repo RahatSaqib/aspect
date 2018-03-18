@@ -43,6 +43,30 @@
     {
       "name": "report",
       "activities": ["view", "edit", "admin"]
+    },
+    {
+      "name": "summaryDashboard",
+      "activities": ["view", "admin"]
+    },
+    {
+      "name": "resultDashboard",
+      "activities": ["view", "admin"]
+    },
+    {
+      "name": "inventoryItemDashboard",
+      "activities": ["view", "admin"]
+    },
+    {
+      "name": "deviceDashboard",                                                  
+      "activities": ["view", "admin"]
+    },
+    {
+      "name": "siteDashboard",
+      "activities": ["view", "admin"]
+    },
+    {
+      "name": "operationalDashboard",
+      "activities": ["view", "admin"]
     }
   ]
 }
