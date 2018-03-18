@@ -25,6 +25,8 @@ import NavTitle from '../../globals/components/NavTitle'
 import RouterDetailModalForm from './RouterDetailModalForm'
 import DeviceDemoLink from '../../device/DeviceDemoLink'
 import styles from './RouterDetail.css'
+import requirePermissions from '../../components/shared/requirePermissions'
+import NotFound from '../../error/notFound/NotFound'
 
 const messages = defineMessages({
   title: {
@@ -106,6 +108,10 @@ const messages = defineMessages({
 })
 
 const enhance = compose(
+  requirePermissions({
+    features: ['routerDetail:true'],
+    ForbiddenComponent: NotFound,
+  }),
   setPropTypes({
     match: PropTypes.shape({
       params: PropTypes.shape({

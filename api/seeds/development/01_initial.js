@@ -8,6 +8,8 @@ const permissions = require('./fixtures/permissions.json')
 const geography = require('./fixtures/geography.json')
 const patients = require('./fixtures/patients.json')
 const dashboardWidget = require('./fixtures/dashboardWidget.json')
+const features = require('./fixtures/features.json')
+
 const {
   addMilliseconds,
   addMinutes,
@@ -1894,16 +1896,34 @@ async function seed(knex) {
   const modules = {}
 
   await Promise.all(
-    _.map(permissions.modules, module => {
+    _.map(permissions.modules, async module => {
       const moduleData = {}
       modules[module.name] = moduleData
-      _.map(module.activities, async activity => {
-        const [permissionId] = await knex('Permission').insert({
-          module: module.name,
-          activity,
+      await Promise.all(
+        _.map(module.activities, async activity => {
+          const [permissionId] = await knex('Permission').insert({
+            module: module.name,
+            activity,
+          })
+          moduleData[activity] = permissionId
         })
-        moduleData[activity] = permissionId
-      })
+      )
+    })
+  )
+  const featureModules = {}
+  await Promise.all(
+    _.map(features.modules, async module => {
+      const moduleData = {}
+      featureModules[module.name] = moduleData
+      await Promise.all(
+        _.map(module.enable, async enable => {
+          const [featureId] = await knex('Feature').insert({
+            module: module.name,
+            enable,
+          })
+          moduleData[enable] = featureId
+        })
+      )
     })
   )
 
@@ -3305,6 +3325,30 @@ async function seed(knex) {
     name: 'Lab Manager',
     partnerId: partnerTwoId,
   })
+
+  // assign features to JobFeatures
+  await Promise.all(
+    _.map(featureModules, async (module, key) => {
+      await knex('JobFunctionFeature').insert([
+        {
+          jobFunctionId: jobFunctionIdAdmin,
+          featureId: featureModules[key].true,
+        },
+        {
+          jobFunctionId: jobFunctionIdManager,
+          featureId: featureModules[key].true,
+        },
+        {
+          jobFunctionId: jobFunctionIdPartnerTwo,
+          featureId: featureModules[key].true,
+        },
+        {
+          jobFunctionId: jobFunctionIdClinician,
+          featureId: featureModules[key].true,
+        },
+      ])
+    })
+  )
 
   // assign permissions to job functions
   await knex('JobFunctionPermission').insert([

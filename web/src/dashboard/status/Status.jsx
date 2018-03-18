@@ -16,10 +16,16 @@ import DeviceStatus from './DeviceStatus'
 import InventoryStatus from './InventoryStatus'
 import ResultStatus from './ResultStatus'
 import SiteStatus from './SiteStatus'
+import requirePermissions from '../../components/shared/requirePermissions'
+import NotFound from '../../error/notFound/NotFound'
 
 const cssClasses = classnames.bind(require('./Status.css'))
 
 const enhance = compose(
+  requirePermissions({
+    features: ['dashboard:true'],
+    ForbiddenComponent: NotFound,
+  }),
   connect(
     state => ({
       userName: state.user.jwt.name,

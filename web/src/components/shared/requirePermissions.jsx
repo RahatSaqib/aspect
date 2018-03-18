@@ -40,6 +40,14 @@ export function groupByPermissionTypes(permissions) {
     optional: optionalPermissions,
   }
 }
+// Given a user's features list, and required featuresInConfig
+// check if the user is allowed to the resource
+export function isEnabledFeature(userFeatures, requiredFeatures) {
+  const source =
+    _.intersection(userFeatures.toJS(), requiredFeatures).length >= 1
+
+  return requiredFeatures.length === 0 || source
+}
 
 // Given a user's permissions list, and a permission group (return type of groupByPermissionTypes),
 // check if the user is allowed to the resource protected by the permission group
@@ -63,6 +71,7 @@ export function isPermittedUser(
 // props (overriddenPermissions, extraPermissions) as well.
 export const requirePermissions = ({
   permissions: permissionsInConfig = [],
+  features: featuresInConfig = [],
   ForbiddenComponent = _.constant(false),
 }) => WrappedComponent =>
   class RequirePermissions extends PureComponent {
@@ -99,6 +108,7 @@ export const requirePermissions = ({
       const { store } = this.context
       return {
         userPermissions: store.getState().user.jwt.permissions,
+        userFeatures: store.getState().user.jwt.features,
       }
     }
 
@@ -117,17 +127,18 @@ export const requirePermissions = ({
         extraPermissions = [],
         ...restProps
       } = this.props
-      const { userPermissions } = this.state
+      const { userPermissions, userFeatures } = this.state
       const permissionsByTypes = _.flowRight([
         groupByPermissionTypes,
         getPermissions,
       ])(permissionsInConfig, overriddenPermissions, extraPermissions)
       const isPermitted = isPermittedUser(userPermissions, permissionsByTypes)
+      const isEnabled = isEnabledFeature(userFeatures, featuresInConfig)
 
-      return isPermitted ? (
+      return isPermitted && isEnabled ? (
         <WrappedComponent {...restProps} />
       ) : (
-        <ForbiddenComponent />
+        <ForbiddenComponent {...restProps} />
       )
     }
   }

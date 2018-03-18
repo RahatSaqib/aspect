@@ -32,6 +32,8 @@ import {
   ResultDataTableHead,
   ResultDataTableRow,
 } from './ResultDataTable'
+import requirePermissions from '../../components/shared/requirePermissions'
+import NotFound from '../../error/notFound/NotFound'
 
 const cssClasses = classnames.bind(require('./ResultList.css'))
 
@@ -137,6 +139,10 @@ const filtersFromLocation = composeSanitizer(
 const RESULT_PAGE_SIZE_BUTTON_KEYS = _.without(PAGE_SIZE_BUTTON_KEYS, ALL_KEY)
 
 const enhance = compose(
+  requirePermissions({
+    features: ['resultList:true'],
+    ForbiddenComponent: NotFound,
+  }),
   withProps(
     makeSortPageSelector({
       sortCol: 'endedOn',

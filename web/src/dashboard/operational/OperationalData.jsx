@@ -14,10 +14,16 @@ import DelayShowingProgressBar from '../../components/shared/DelayShowingProgres
 import Title from '../status/Title'
 import { fetchOperationalStatus } from '../DashboardRedux'
 import AbnormalBarChart from './AbnormalBarChart'
+import requirePermissions from '../../components/shared/requirePermissions'
+import NotFound from '../../error/notFound/NotFound'
 
 const cssClasses = classnames.bind(require('./OperationalData.css'))
 
 const enhance = compose(
+  requirePermissions({
+    features: ['operationalData:true'],
+    ForbiddenComponent: NotFound,
+  }),
   connect(
     state => ({
       loading: !!state.getIn(['dashboard', 'requestedAt']),

@@ -1,0 +1,112 @@
+{
+  "modules": [
+    {
+      "name": "dashboard",
+      "enable": [true, false]
+    },
+    {
+      "name": "browse",
+      "enable": [true, false]
+    },
+    {
+      "name": "accountDetails",
+      "enable": [true, false]
+    },
+    {
+      "name": "clinicalIndicators",
+      "enable": [true, false]
+    },
+    {
+      "name": "manage",
+      "enable": [true, false]
+    },
+    {
+      "name": "operationalData",
+      "enable": [true, false]
+    },
+    {
+      "name": "reports",
+      "enable": [true, false]
+    },
+    {
+      "name": "taskList",
+      "enable": [true, false]
+    },
+    {
+      "name": "taskDetail",
+      "enable": [true, false]
+    },
+    {
+      "name": "deviceDemo",
+      "enable": [true, false]
+    },
+    {
+      "name": "deviceList",
+      "enable": [true, false]
+    },
+    {
+      "name": "deviceDetail",
+      "enable": [true, false]
+    },
+    {
+      "name": "deviceApiKey",
+      "enable": [true, false]
+    },
+    {
+      "name": "routerList",
+      "enable": [true, false]
+    },
+    {
+      "name": "routerDetail",
+      "enable": [true, false]
+    },
+    {
+      "name": "reporterList",
+      "enable": [true, false]
+    },
+    {
+      "name": "reporterDetail",
+      "enable": [true, false]
+    },
+    {
+      "name": "reportsList",
+      "enable": [true, false]
+    },
+    {
+      "name": "resultList",
+      "enable": [true, false]
+    },
+    {
+      "name": "resultDetail",
+      "enable": [true, false]
+    },
+    {
+      "name": "siteList",
+      "enable": [true, false]
+    },
+    {
+      "name": "siteDetail",
+      "enable": [true, false]
+    },
+    {
+      "name": "personList",
+      "enable": [true, false]
+    },
+    {
+      "name": "personDetail",
+      "enable": [true, false]
+    },
+    {
+      "name": "inventoryList",
+      "enable": [true, false]
+    },
+    {
+      "name": "notificationList",
+      "enable": [true, false]
+    },
+    {
+      "name": "notificationDetail",
+      "enable": [true, false]
+    }
+  ]
+}

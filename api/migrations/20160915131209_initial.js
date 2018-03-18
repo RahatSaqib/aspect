@@ -188,6 +188,30 @@ async function up(knex) {
     permission.charset('utf8')
   })
 
+  await knex.schema.createTable('Feature', feature => {
+    feature.increments('id')
+    feature.string('module').notNullable()
+    feature.boolean('enable').notNullable()
+    feature.charset('utf8')
+  })
+
+  await knex.schema.createTable('JobFunctionFeature', jobFunctionFeature => {
+    jobFunctionFeature
+      .integer('jobFunctionId')
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('JobFunction')
+    jobFunctionFeature
+      .integer('featureId')
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('Feature')
+    jobFunctionFeature.primary(['jobFunctionId', 'featureId'])
+    jobFunctionFeature.charset('utf8')
+  })
+
   await knex.schema.createTable(
     'JobFunctionPermission',
     jobFunctionPermission => {
@@ -1670,6 +1694,8 @@ async function down(knex) {
   await knex.schema.dropTableIfExists('DashboardWidget')
   await knex.schema.dropTableIfExists('JobFunctionDashboardWidget')
   await knex.schema.dropTableIfExists('Target')
+  await knex.schema.dropTableIfExists('Feature')
+  await knex.schema.dropTableIfExists('JobFunctionFeature')
 
   await knex.raw('SET foreign_key_checks = 1')
 }

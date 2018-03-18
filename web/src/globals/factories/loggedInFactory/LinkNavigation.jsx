@@ -25,6 +25,7 @@ const enhance = compose(
   pure,
   connect(state => ({
     userPermissions: state.user.jwt.permissions,
+    userFeatures: state.user.jwt.features,
   }))
 )
 const LinkNavigation = ({
@@ -33,36 +34,57 @@ const LinkNavigation = ({
 
   type,
   userPermissions,
+  userFeatures,
   onClick,
   children,
 }) => {
   const reduceNav = reduceNavLinks(
     [
-      { href: '/dashboard', label: 'Home', requiredPermissions: [] },
+      {
+        href: '/dashboard',
+        label: 'Home',
+        requiredPermissions: [],
+        requiredFeatures: ['dashboard:true'],
+      },
       {
         href: '/task-list',
         label: 'Task List',
         requiredPermissions: ['task:admin', 'task:view', 'task:edit'],
+        requiredFeatures: ['taskList:true'],
       },
       {
         href: '/operational-data',
         label: 'Operational  Data',
         requiredPermissions: [],
+        requiredFeatures: ['operationalData:true'],
       },
       {
         href: '/clinical-indicators',
         label: 'Clinical Indicators',
         requiredPermissions: [],
+        requiredFeatures: ['clinicalIndicators:true'],
       },
-      { href: '/browse', label: 'Browse', requiredPermissions: [] },
+      {
+        href: '/browse',
+        label: 'Browse',
+        requiredPermissions: [],
+        requiredFeatures: ['browse:true'],
+      },
       {
         href: '/reports',
         label: 'Reports',
         requiredPermissions: ['report:view', 'report:edit', 'report:admin'],
+        requiredFeatures: ['reports:true'],
       },
-      { href: '/manage', label: 'Manage', requiredPermissions: [] },
+      {
+        href: '/manage',
+        label: 'Manage',
+        requiredPermissions: [],
+        requiredFeatures: ['manage:true'],
+      },
     ],
-    userPermissions
+    userPermissions,
+    userFeatures
   )
   return (
     <Navigation

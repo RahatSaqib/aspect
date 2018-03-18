@@ -28,6 +28,8 @@ import {
   ReportDataTableHead,
   ReportDataTableRow,
 } from './ReportDataTable'
+import requirePermissions from '../../components/shared/requirePermissions'
+import NotFound from '../../error/notFound/NotFound'
 
 const cssClasses = classnames.bind(require('./ReportList.css'))
 
@@ -96,6 +98,10 @@ const filtersFromLocation = composeSanitizer(
 )
 
 const enhance = compose(
+  requirePermissions({
+    features: ['reportsList:true'],
+    ForbiddenComponent: NotFound,
+  }),
   withProps(
     makeSortPageSelector({
       sortCol: 'name',

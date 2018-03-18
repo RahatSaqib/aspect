@@ -136,7 +136,7 @@ export function fetchSingleReporter(reporterId) {
           defineMessages({
             title: {
               id: 'errorResponseMessages.fetchSingleReporter.GET.default.title',
-              defaultMessage: 'Error Loading Reoirter Details',
+              defaultMessage: 'Error Loading Reporter Details',
             },
           })
         ),
