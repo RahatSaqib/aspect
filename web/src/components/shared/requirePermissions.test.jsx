@@ -110,7 +110,7 @@ describe('requirePermissions', () => {
   const ForbiddenComponent = () => {}
   const WrappedComponent = () => {}
 
-  function makeContext(userPermissions) {
+  function makeContext(userPermissions, userFeatures) {
     return {
       store: {
         subscribe() {},
@@ -119,6 +119,7 @@ describe('requirePermissions', () => {
             user: {
               jwt: {
                 permissions: Immutable.Set(userPermissions),
+                features: Immutable.Set(userFeatures),
               },
             },
           }
@@ -130,12 +131,13 @@ describe('requirePermissions', () => {
   describe('given right user permissions', () => {
     const DecoratedComponent = requirePermissions({
       permissions: ['person:admin'],
+      features: ['personList:true'],
       ForbiddenComponent,
     })(WrappedComponent)
 
     it('should render WrappedComponent', () => {
       const ComponentWrapper = shallow(<DecoratedComponent />, {
-        context: makeContext(['person:admin']),
+        context: makeContext(['person:admin'], ['personList:true']),
       })
 
       expect(ComponentWrapper.find(WrappedComponent).length).toEqual(1)
@@ -144,7 +146,10 @@ describe('requirePermissions', () => {
 
     it('should render WrappedComponent', () => {
       const ComponentWrapper = shallow(<DecoratedComponent />, {
-        context: makeContext(['person:admin', 'device:view']),
+        context: makeContext(
+          ['person:admin', 'device:view'],
+          ['personList:true']
+        ),
       })
 
       expect(ComponentWrapper.find(WrappedComponent).length).toEqual(1)
@@ -160,7 +165,7 @@ describe('requirePermissions', () => {
 
     it('should render ForbiddenComponent', () => {
       const ComponentWrapper = shallow(<DecoratedComponent />, {
-        context: makeContext(['device:view']),
+        context: makeContext(['device:view'], ['personList:true']),
       })
 
       expect(ComponentWrapper.find(WrappedComponent).length).toEqual(0)
@@ -169,7 +174,10 @@ describe('requirePermissions', () => {
 
     it('should render ForbiddenComponent', () => {
       const ComponentWrapper = shallow(<DecoratedComponent />, {
-        context: makeContext(['person:view', 'device:view']),
+        context: makeContext(
+          ['person:view', 'device:view'],
+          ['personList:true']
+        ),
       })
 
       expect(ComponentWrapper.find(WrappedComponent).length).toEqual(0)

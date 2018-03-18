@@ -3,7 +3,7 @@ import ReactShallowRenderer from 'react-test-renderer/shallow'
 import { IntlProvider } from 'react-intl'
 import { Items } from '../../shared/metaReducers/items'
 import { Table } from '../../shared/metaReducers/table'
-import ReportList from './ReportList'
+import { ReportList } from './ReportList'
 
 describe('ReportList component', () => {
   const renderer = new ReactShallowRenderer()
