@@ -271,7 +271,9 @@ function getAccessToken({ id, name, partnerId }) {
         {
           name,
           permissions: data.map(p => `${p.module}:${p.activity}`),
-          features: featureModules.map(f => `${f.module}:${Boolean(f.enable)}`),
+          features: featureModules
+            ? featureModules.map(f => `${f.module}:${Boolean(f.enable)}`)
+            : [],
         },
         config.secret,
         {
