@@ -1,6 +1,9 @@
+const { issueCreated, issueEscalated, issueResolved } = require('./actions')
+
 function onIssueTriggered(issueType) {
-  return async (action, context) =>
-    context.transact(async knex => {
+  return async (action, context) => {
+    context.bindActionCreators({ issueCreated, issueEscalated, issueResolved })
+    return context.transact(async knex => {
       const now = new Date()
       const openIssue = await findOpenIssue(knex, issueType, action)
 
@@ -9,6 +12,7 @@ function onIssueTriggered(issueType) {
         issue = openIssue
       } else {
         issue = createNewIssue(knex, issueType, action)
+        context.issueCreated(issue.id)
       }
 
       await knex('IssueEvent').insert({
@@ -18,10 +22,12 @@ function onIssueTriggered(issueType) {
         createdOn: now,
       })
     })
+  }
 }
 
 function onIssueResolved(issueType) {
-  return async (action, context) =>
+  return async (action, context) => {
+    context.bindActionCreators({ issueCreated, issueEscalated, issueResolved })
     context.transact(async knex => {
       const now = new Date()
       const openIssue = await findOpenIssue(knex, issueType, action)
@@ -30,6 +36,7 @@ function onIssueResolved(issueType) {
       if (openIssue != null) {
         await resolveOpenIssue(knex, openIssue.id)
         issue = openIssue
+        context.issueResolved(openIssue.id)
       }
 
       await knex('IssueEvent').insert({
@@ -39,6 +46,7 @@ function onIssueResolved(issueType) {
         createdOn: now,
       })
     })
+  }
 }
 
 async function findOpenIssue(knex, issueType, action) {
@@ -89,7 +97,9 @@ async function createNewIssue(knex, issueType, action) {
     issue.partnerId = action.partnerId
   }
 
-  return knex('Issue').insert(issue)
+  const [issueId] = knex('Issue').insert(issue)
+  issue.id = issueId
+  return issue
 }
 
 async function resolveOpenIssue(knex, issueId) {
