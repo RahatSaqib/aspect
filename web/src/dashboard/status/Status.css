@@ -1,4 +1,4 @@
-@import '../../globals/variables.css';
+@import "../../globals/variables.css";
 
 .Container {
   padding: 0 10px;
@@ -103,11 +103,25 @@
   text-align: right;
 }
 
+.TitleContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.TitleContainer::after {
+  content: "D";
+  visibility: hidden;
+  flex: 1;
+}
+
 .Title {
   display: flex;
   text-transform: capitalize;
   font-size: 24px;
   color: var(--aspect-color-grey-2);
+  flex: 1;
 }
 
 .Title__Color {
@@ -131,6 +145,14 @@
 
 .Title__Color--site {
   background-color: var(--aspect-color-brink);
+}
+
+.Title__Color--status {
+  background-color: var(--aspect-color-supernova);
+}
+
+.Title__FiltersGroup {
+  margin: 0 10px;
 }
 
 .ChartContainer {
@@ -217,4 +239,59 @@
 
 .Button--discard:not([disabled]).Button--raised {
   background-color: var(--aspect-color-mandy);
+}
+
+.TargetItemBlock {
+  padding: 20px 0;
+}
+
+.TargetItemBlock__Title {
+  font-size: 20px;
+  text-align: center;
+  margin-bottom: 4px;
+}
+
+.TargetItemBlock__Title::first-letter {
+  text-transform: capitalize;
+}
+
+.TargetItemBlock__Graph {
+  padding: 0 40px;
+}
+
+.TargetItemBlock__Label {
+  font-size: 16px;
+  color: var(--aspect-color-grey-4);
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 4px;
+}
+
+.TargetItemBlock .TargetItemBlock__Label__Sub {
+  visibility: hidden;
+  flex: 1;
+}
+@media screen and (min-width: 64em) {
+  .TargetItemBlock:nth-child(4n+1) .TargetItemBlock__Label__Sub {
+    visibility: visible;
+  }
+}
+
+@media screen and (min-width: 48em) and (max-width: 63.938em) {
+  .TargetItemBlock:nth-child(2n+1) .TargetItemBlock__Label__Sub {
+    visibility: visible;
+  }
+}
+
+@media screen and (max-width: 47.938em) {
+  .TargetItemBlock .TargetItemBlock__Label__Sub {
+    visibility: visible;
+  }
+}
+
+.TargetItemBlock__Label::after {
+  content: "D";
+  visibility: hidden;
+  flex: 1;
 }

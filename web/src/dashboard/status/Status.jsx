@@ -13,6 +13,7 @@ import ResultStatus from './ResultStatus'
 import SiteStatus from './SiteStatus'
 import requirePermissions from '../../components/shared/requirePermissions'
 import NotFound from '../../error/notFound/NotFound'
+import TargetStatus from './TargetStatus'
 
 const cssClasses = classnames.bind(require('./Status.css'))
 
@@ -54,6 +55,13 @@ const Status = ({ history, location, intl }) => (
       history={history}
       location={location}
       className={cssClasses('Section--summary')}
+    />
+
+    <TargetStatus
+      history={history}
+      intl={intl}
+      className={cssClasses('Section--withStatus')}
+      title={intl.formatMessage(messages.targetsTitle)}
     />
 
     <ResultStatus

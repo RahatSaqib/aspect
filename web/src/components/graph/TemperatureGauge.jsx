@@ -6,14 +6,14 @@ import { AxisRight } from '@vx/axis'
 import { scaleLinear } from '@vx/scale'
 
 const TemperatureGauge = ({
-  width = 50,
+  width = 300,
   height = 200,
-  goal = 1000,
-  value = 1500,
+  goal = 100,
+  value = 0,
   hasError = false,
-  normalColor = '#dadbdf',
-  achievedColor = '#73d449',
-  errorColor = '#e75164',
+  normalColor = process.env['--aspect-color-grey-6'],
+  achievedColor = process.env['--aspect-color-mantis'],
+  errorColor = process.env['--aspect-color-mandy'],
 }) => {
   const margin = { top: 5, bottom: 5 }
 

@@ -145,6 +145,30 @@ export const messages = defineMessages({
     id: 'pages.Status.subResultsTitle',
     defaultMessage: 'Last 30 Days',
   },
+  targetsTitle: {
+    id: 'pages.Status.targetsTitle',
+    defaultMessage: 'Testing Targets',
+  },
+  thisYear: {
+    id: 'pages.Status.thisYear',
+    defaultMessage: 'This Year',
+  },
+  thisMonth: {
+    id: 'pages.Status.thisMonth',
+    defaultMessage: 'THis Month',
+  },
+  lastMonth: {
+    id: 'pages.Status.lastMonth',
+    defaultMessage: 'Last Month',
+  },
+  targetGoalLabel: {
+    id: 'pages.Status.targetGoalLabel',
+    defaultMessage: 'Goal:',
+  },
+  targetCurrentLabel: {
+    id: 'pages.Status.targetCurrentLabel',
+    defaultMessage: 'Tested:',
+  },
 })
 
 export default messages
