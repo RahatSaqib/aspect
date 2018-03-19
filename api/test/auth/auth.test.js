@@ -85,7 +85,7 @@ describe('auth endpoints', () => {
     const endpoints = proxyquire.noCallThru().load('../../src/auth/endpoints', {
       './service': service,
     })
-    endpoint = _.find(endpoints, { method, path })
+    endpoint = _.find(endpoints.routes, { method, path })
   }
 
   afterEach(() => {

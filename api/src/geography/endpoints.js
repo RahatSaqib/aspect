@@ -7,7 +7,7 @@ const {
   lgaSelectList,
 } = require('./service')
 
-module.exports = [
+const routes = [
   {
     method: 'GET',
     path: '/geography/select-list',
@@ -116,3 +116,5 @@ module.exports = [
     },
   },
 ]
+
+module.exports = { routes }

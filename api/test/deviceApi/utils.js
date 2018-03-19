@@ -1,6 +1,7 @@
 const _ = require('lodash')
 const chai = require('chai')
 const { run } = require('../../src/db')
+const { createMessageQueue } = require('../../src/mq')
 const { getConstraints, addConstraints } = require('../../src/auth/constraints')
 const { randomToken } = require('../../src/deviceApi/apiKey')
 
@@ -187,7 +188,14 @@ class DeviceApiTestContext {
     this.initialConfigurationData = {}
     this.apiKeysWithoutDevice = []
 
-    _.bindAll(this, ['beforeEach', 'afterEach', 'runTest'])
+    _.bindAll(this, [
+      'beforeEach',
+      'afterEach',
+      'runTest',
+      'queueConnect',
+      'createMessageContext',
+      'waitForAction',
+    ])
   }
 
   beforeEach() {
@@ -327,6 +335,23 @@ class DeviceApiTestContext {
     return apiKey
   }
 
+  async queueConnect() {
+    if (this.queue == null) {
+      this.queue = await createMessageQueue(`aspect-test-device-api`)
+    }
+    return this.queue
+  }
+
+  async createMessageContext() {
+    const queue = await this.queueConnect()
+    return queue.createMessageContext()
+  }
+
+  async waitForAction(predicate) {
+    const queue = await this.queueConnect()
+    return queue.waitForAction(predicate)
+  }
+
   afterEach() {
     return run(async knex => {
       // Reset to previous device configuration
@@ -350,6 +375,11 @@ class DeviceApiTestContext {
 
       if (this.apiKeysWithoutDevice.length > 0) {
         await deleteDeviceAndTestData(knex, this.apiKeysWithoutDevice)
+      }
+
+      if (this.queue) {
+        await this.queue.close()
+        this.queue = null
       }
     })
   }

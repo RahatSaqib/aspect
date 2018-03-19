@@ -12,7 +12,7 @@ const {
   deleteAssayConsumable,
 } = require('./assayConsumableService')
 
-module.exports = [
+const routes = [
   {
     method: 'GET',
     path: '/inventory/consumable-types',
@@ -173,3 +173,5 @@ module.exports = [
     },
   },
 ]
+
+module.exports = { routes }

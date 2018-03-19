@@ -2,7 +2,7 @@ const Joi = require('joi')
 const { asyncHandler, validateSortPageParams } = require('../routes')
 const { listTasks } = require('./service')
 
-module.exports = [
+const routes = [
   {
     method: 'GET',
     path: '/task',
@@ -27,3 +27,5 @@ module.exports = [
     },
   },
 ]
+
+module.exports = { routes }

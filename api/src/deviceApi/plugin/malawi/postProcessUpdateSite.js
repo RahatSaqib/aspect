@@ -1,5 +1,4 @@
 const _ = require('lodash')
-const { notifyResultUpdated } = require('../../../messages')
 const { mergeResult, getResult } = require('../../result')
 const { addResultWorkflowLogIfChanged } = require('../common')
 
@@ -24,14 +23,14 @@ const MERGEABLE_CHAI_IDS = [
 const millisInDay = 1000 * 60 * 60 * 24
 
 async function postProcessUpdateSite(context, site, previousSite) {
-  const { knex, dispatch, deviceId, deviceType, now } = context
+  const { knex, actions, deviceId, deviceType, now } = context
   if (deviceType === DEVICE_TYPE_REPORTER && site.id !== previousSite.id) {
-    await purgePreviousResults(knex, dispatch, deviceId, now)
-    await generateHistoricalResults(knex, dispatch, deviceId, site.id, now)
+    await purgePreviousResults(knex, actions, deviceId, now)
+    await generateHistoricalResults(knex, actions, deviceId, site.id, now)
   }
 }
 
-async function purgePreviousResults(knex, dispatch, deviceId, now) {
+async function purgePreviousResults(knex, actions, deviceId, now) {
   const { id: purgedStatusId } = await knex('ResultWorkflowStatus')
     .where({ externalId: PURGED_EXTERNALID })
     .first('id')
@@ -45,7 +44,6 @@ async function purgePreviousResults(knex, dispatch, deviceId, now) {
       'r.resultWorkflowStatusId': purgedStatusId,
     })
     .select('r.id as resultId', 'd.name as deviceName')
-  const payload = { resultWorkflowStatus: PURGED_EXTERNALID }
   await Promise.all(
     _.map(resultIds, async result => {
       const { resultId, deviceName } = result
@@ -58,14 +56,14 @@ async function purgePreviousResults(knex, dispatch, deviceId, now) {
         createdOn: now,
         changedOn: now,
       })
-      dispatch(notifyResultUpdated(resultId, payload, 'MalawiPlugin'))
+      actions.resultUpdated(resultId)
     })
   )
 }
 
 async function generateHistoricalResults(
   knex,
-  dispatch,
+  actions,
   deviceId,
   siteId,
   now = new Date()
@@ -130,7 +128,7 @@ async function generateHistoricalResults(
     /* eslint-disable no-await-in-loop */
     await mergeResultAndUpdateWorkflowStatus(
       knex,
-      dispatch,
+      actions,
       deviceId,
       now,
       result,
@@ -145,7 +143,7 @@ async function generateHistoricalResults(
 
 async function mergeResultAndUpdateWorkflowStatus(
   knex,
-  dispatch,
+  actions,
   deviceId,
   now,
   result,
@@ -204,7 +202,7 @@ async function mergeResultAndUpdateWorkflowStatus(
     generatedResultId: processedResult.id,
   })
 
-  dispatch(notifyResultUpdated(processedResult.id, payload, 'MalawiPlugin'))
+  actions.resultUpdated(processedResult.id)
 }
 
 function reporterResultFromChaiResult(chaiResult) {

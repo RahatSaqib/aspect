@@ -12,12 +12,21 @@ Quick Start for development. Everything is explained in more detail throughout t
 ### New Development Setup
 
 ```bash
+# Install Node.js and Yarn
+# Install MySQL
+# Install RabbitMQ
+
+# Enable RabbitMQ plugins
+rabbitmq-plugins enable rabbitmq_mqtt
+rabbitmq-plugins enable rabbitmq_management
+# Management console at http://localhost:15672 guest:guest by default
+
 # Clone the repository
 git clone git@github.com:SystemOneId/aspect
 cd aspect/api
 
 # Install dependencies
-npm install
+yarn install
 
 # Create database and database user (changing password as desired)
 mysql -u root <<EOT
@@ -35,13 +44,13 @@ cp .env.example .env
 vim .env
 
 # Run migrations
-npm run knex migrate:latest
+yarn run knex migrate:latest
 
 # Populate database with seed files (optional)
-npm run knex seed:run
+yarn run knex seed:run
 
 # Start the server
-nodemon src/server
+yarn start
 ```
 
 ### Update development environment
@@ -66,8 +75,8 @@ create database aspect;
 EOT
 
 # Run migrations and seed files
-npm run knex migrate:latest
-npm run knex seed:run
+yarn run knex migrate:latest
+yarn run knex seed:run
 ```
 
 
@@ -76,7 +85,7 @@ Clone the repository, then:
 
 ```bash
 # Install dependencies
-npm install
+yarn install
 ```
 
 ###Environment Configuration
@@ -98,6 +107,7 @@ sendgrid.apiKey=SG.OD6gVj_hSOquEZDxPNe04w.eqijcHKyR64Ug3eHl13SB7V_xyE_kot9m-Tq0q
 email.fromAddress=support@gxalert.com
 
 aspectUrl=http://dev.aspect.id
+mqtt.url=mqtt://localhost:1883
 ```
 
 Logs requests to console by default, to forward to Logstash, set the endpoint.

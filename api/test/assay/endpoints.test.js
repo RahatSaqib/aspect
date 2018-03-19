@@ -8,7 +8,7 @@ describe('assay endpoint', () => {
     const endpoints = proxyquire('../../src/assay/endpoints', {
       './service': serviceStub,
     })
-    return _.find(endpoints, { method, path })
+    return _.find(endpoints.routes, { method, path })
   }
 
   describe('/assay', () => {

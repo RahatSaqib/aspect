@@ -10,11 +10,12 @@ const {
   getLastDeviceOperationId,
   getDeviceFromApiKey,
 } = require('./utils')
-const { synthDeviceOfflineOnSchedule } = require('../../src/fact/service')
 
 const server = supertest.agent('http://localhost:8080')
 const { assert } = chai
 const context = createTestContext(server, { user: 'admin' })
+const { factGenerateDeviceOffline } = require('../../src/fact/actions')
+const { types: { DEVICE_OFFLINE } } = require('../../src/device/actions')
 
 const baseConfig = {
   requirePrinter: 'yes',
@@ -287,8 +288,11 @@ describe('Device API routes', () => {
     afterEach(newDeviceContext.afterEach)
     it('should create Device with statusId and add log to DeviceStatusLog table', () =>
       runTest(async knex => {
-        const { apiKey, deviceAuth } = newDeviceContext
+        const { apiKey, deviceAuth, createMessageContext } = newDeviceContext
         assert.isOk(apiKey)
+
+        const messageContext = await createMessageContext()
+        messageContext.bindActionCreators({ factGenerateDeviceOffline })
 
         // add device
         await server
@@ -328,13 +332,19 @@ describe('Device API routes', () => {
           .where('d.id', factDevice[0].deviceId)
           .update({ lastPingOn: last8Day })
 
-        synthDeviceOfflineOnSchedule().then(async () => {
-          const [offlineFactDevice] = await knex('FactDeviceFlag as fdf').where(
-            'fdf.deviceId',
-            newDevice.id
-          )
-          assert.equal(offlineFactDevice.offline, 1)
+        // Generate device offline facts and wait for offline action for new device
+        const waitForOffline = context.waitForAction({
+          type: DEVICE_OFFLINE,
+          deviceId: newDevice.id,
         })
+        messageContext.factGenerateDeviceOffline()
+        await waitForOffline
+
+        const [offlineFactDevice] = await knex('FactDeviceFlag as fdf').where(
+          'fdf.deviceId',
+          newDevice.id
+        )
+        assert.equal(offlineFactDevice.offline, 1)
       }))
   })
 

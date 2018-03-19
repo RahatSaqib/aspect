@@ -75,7 +75,7 @@ function listResultsBaseConfig() {
   }
 }
 
-module.exports = [
+const routes = [
   {
     method: 'GET',
     path: '/result',
@@ -229,3 +229,5 @@ module.exports = [
     ),
   },
 ]
+
+module.exports = { routes }

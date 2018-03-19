@@ -6,7 +6,7 @@ const {
   postDemoDeviceResult,
 } = require('./service')
 
-module.exports = [
+const routes = [
   {
     method: 'GET',
     path: '/demo/device/{deviceId}',
@@ -55,3 +55,5 @@ module.exports = [
     },
   },
 ]
+
+module.exports = { routes }

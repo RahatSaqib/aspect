@@ -190,7 +190,7 @@ async function postProcessMergeResult(context, result, previousResult) {
 }
 
 /**
- * RESULT_LOGGED action has been dispatched referencing
+ * RESULT_LOGGED action has been published referencing
  * a result handled by this plugin
  */
 async function onResultLogged(/* context */) {

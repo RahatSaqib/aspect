@@ -13,6 +13,8 @@ const {
   updateDeviceConfigurationHandler,
   mergeResultHandler,
   addDeviceLog,
+  onResultUpdated,
+  onResultLogged,
 } = require('./service')
 
 const errorPayload = Joi.object()
@@ -319,7 +321,7 @@ const resultPayload = {
   error: errorPayload,
 }
 
-module.exports = [
+const routes = [
   {
     // GET /device
     method: 'GET',
@@ -573,3 +575,14 @@ module.exports = [
     },
   },
 ]
+
+const subscriptions = [
+  {
+    actions: {
+      RESULT_UPDATED: onResultUpdated,
+      RESULT_LOGGED: onResultLogged,
+    },
+  },
+]
+
+module.exports = { routes, subscriptions }

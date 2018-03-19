@@ -90,6 +90,7 @@
     "jsonwebtoken": "^7.4.3",
     "knex": "^0.13.0",
     "lodash": "^4.17.4",
+    "mqtt": "^2.16.0",
     "mysql": "^2.14.1",
     "node-base64-image": "^1.0.4",
     "node-cron": "^1.2.1",

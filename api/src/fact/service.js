@@ -1,17 +1,27 @@
 const { subDays } = require('date-fns')
 const _ = require('lodash')
-const { knex } = require('../db')
-const { runGeneratedFunction } = require('../util')
+const { deviceOffline } = require('../device/actions')
 
-function calculateResultCountsOnSchedule() {
-  runGeneratedFunction(calculateResultCounts, null, null, null, knex)
+function onFactGenerateDeviceOffline(action, { messageContext }) {
+  const context = messageContext.bindActionCreators({ deviceOffline })
+  context.transact(async knex => {
+    await synthDeviceOfflineOnSchedule(context, knex)
+  })
 }
 
-function synthDeviceOfflineOnSchedule() {
-  return runGeneratedFunction(synthDeviceOffline, knex)
+function onFactGenerateResultCounts(action, { messageContext }) {
+  const context = messageContext.bindActionCreators({ deviceOffline })
+
+  context.transact(async knex => {
+    await calculateResultCountsOnSchedule(context, knex)
+  })
 }
 
-async function synthDeviceOffline(knex) {
+async function calculateResultCountsOnSchedule(context, knex) {
+  await calculateResultCounts(null, null, null, knex)
+}
+
+async function synthDeviceOfflineOnSchedule(context, knex) {
   const devices = await knex
     .select('id', 'partnerId', 'lastPingOn')
     .from('Device')
@@ -35,6 +45,7 @@ async function synthDeviceOffline(knex) {
             deviceId: id,
           })
           .update({ offline: true })
+        context.deviceOffline(id)
       }
     })
   )
@@ -140,7 +151,7 @@ async function calculateResultCounts(deviceId, assayId, resultCategory1, knex) {
 }
 
 module.exports = {
+  onFactGenerateDeviceOffline,
+  onFactGenerateResultCounts,
   calculateResultCounts,
-  calculateResultCountsOnSchedule,
-  synthDeviceOfflineOnSchedule,
 }

@@ -8,7 +8,7 @@ const {
   filterDateRangeParams,
   sortPageParams,
 } = require('../db')
-const { dispatch, notifyResultUpdated } = require('../messages')
+const { resultUpdated } = require('./actions')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 const { getUser } = require('../auth/service')
 const {
@@ -491,7 +491,7 @@ async function updateWorkflowStatus(request) {
 }
 
 async function updateQcCheck(request) {
-  const { auth, params, payload } = request
+  const { auth, params, payload, plugins: { messageContext } } = request
   const now = new Date()
   const { resultId } = params
   const { id: currentUserId } = await getUser(auth.credentials.name)
@@ -509,25 +509,29 @@ async function updateQcCheck(request) {
   }
 
   // update the result QC Check flag
+  messageContext.bindActionCreators({
+    resultUpdated,
+  })
+  await messageContext.transact(async knex => {
+    await knex('Result')
+      .where('id', resultId)
+      .update({
+        qcCheck: payload.qcCheck,
+        updatedBy: currentUserId,
+        updatedOn: now,
+      })
 
-  await knex('Result')
-    .where('id', resultId)
-    .update({
+    // log QC-Check change in separate table
+    await knex('ResultQualityControlLog').insert({
+      resultId,
       qcCheck: payload.qcCheck,
-      updatedBy: currentUserId,
-      updatedOn: now,
+      createdBy: currentUserId,
+      createdOn: now,
     })
 
-  // log QC-Check change in separate table
-  await knex('ResultQualityControlLog').insert({
-    resultId,
-    qcCheck: payload.qcCheck,
-    createdBy: currentUserId,
-    createdOn: now,
+    // notify result updated so result is redelivered
+    messageContext.resultUpdated(resultId)
   })
-
-  // notify result updated so result is redelivered
-  dispatch(notifyResultUpdated(resultId, { qcCheck: 1 }))
 
   const response = await showResult(request)
   return response

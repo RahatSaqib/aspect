@@ -2,13 +2,12 @@ const Boom = require('boom')
 const _ = require('lodash')
 const { knex, transact } = require('../db')
 const { asyncHandler } = require('../routes')
+
 const {
-  addListener,
-  createMessageContext,
-  notifyResultUpdated,
-  notifyResultLogged,
-  types: { RESULT_UPDATED, RESULT_LOGGED },
-} = require('../messages')
+  resultUpdated,
+  resultLogged,
+  types: { RESULT_UPDATED },
+} = require('../result/actions')
 
 const {
   updateDeviceConfiguration,
@@ -21,10 +20,6 @@ const { mergeResult, getResult } = require('./result')
 const { loadPlugin } = require('./plugin/registration')
 
 const millisInDay = 1000 * 60 * 60 * 24
-
-// Source for messages so we can skip logs that we handled ourselves
-// Note that this is a bit of a hack and is not stored in the DB
-const DEVICE_LOG_COMMON_SOURCE = 'DeviceApiCommon'
 
 const DEVICE_LOG_TYPE_NONE = 0
 const DEVICE_LOG_TYPE_OPTIONAL = 1
@@ -122,29 +117,19 @@ function deviceApiHandler(handler, handlerOptions) {
       .update(deviceUpdates)
 
     let response = {}
-    let deviceLogUpdate = null
     await context.messageContext.transact(async knex => {
       context.knex = knex
+      context.deviceLogId = deviceLogId
       response = await handler(context)
 
       // Update DeviceLog with changes added to context when calling handler
       if (deviceLogId !== null) {
-        ;({ deviceLogUpdate } = context)
+        const { deviceLogUpdate } = context
         if (deviceLogUpdate != null) {
           await knex('DeviceLog')
             .where({ id: deviceLogId })
             .update(deviceLogUpdate)
         }
-      }
-
-      if (deviceLogUpdate != null && deviceLogUpdate.resultId != null) {
-        context.dispatch(
-          notifyResultUpdated(
-            deviceLogUpdate.resultId,
-            { deviceLogId },
-            DEVICE_LOG_COMMON_SOURCE
-          )
-        )
       }
     })
     return response
@@ -305,11 +290,11 @@ async function getDeviceOperationWithContext(context) {
 }
 
 async function updateSiteWithContext(context) {
-  const { knex, dispatch, device, payload, now, pluginName: plugin } = context
+  const { knex, actions, device, payload, now, pluginName: plugin } = context
 
   const pluginContext = {
     knex,
-    dispatch,
+    actions,
     payload,
     now,
     deviceType: device.deviceType,
@@ -387,7 +372,7 @@ async function updateSiteWithContext(context) {
 async function mergeResultWithContext(context) {
   const {
     knex,
-    dispatch,
+    actions,
     device: { id: deviceId, deviceType },
     pluginName: plugin,
     payload,
@@ -397,7 +382,7 @@ async function mergeResultWithContext(context) {
   const pluginContext = {
     knex,
     deviceId,
-    dispatch,
+    actions,
     deviceType,
     payload,
     now,
@@ -431,14 +416,14 @@ async function mergeResultWithContext(context) {
 async function getResultWithContext(context) {
   const {
     knex,
-    dispatch,
+    actions,
     deviceLog: { resultId },
     pluginName: plugin,
     query,
     now,
   } = context
 
-  const pluginContext = { knex, dispatch, resultId, query, now }
+  const pluginContext = { knex, actions, resultId, query, now }
 
   const preProcess = await loadPlugin(plugin, 'preProcessGetResult')
   await preProcess(pluginContext)
@@ -509,6 +494,9 @@ async function createDeviceApiContext(request, handlerOptions) {
     device,
     payload: request.payload,
     query: request.query,
+    messageContext: request.plugins.messageContext.bindActionCreators({
+      resultUpdated,
+    }),
     deviceLogType,
     partnerId: partner.id,
     pluginName: partner.partnerPluginName || device.deviceTypePluginName,
@@ -742,10 +730,8 @@ function createNewDevice(request, now) {
 class DeviceApiContext {
   constructor(props) {
     Object.assign(this, props)
-    this.messageContext = this.parent
-      ? this.parent.messageContext
-      : createMessageContext()
-    this.dispatch = this.messageContext.dispatch.bind(this.messageContext)
+    this.resultUpdated = this.resultUpdated.bind(this)
+    this.actions = { resultUpdated: this.resultUpdated }
   }
 
   withPayload(payload) {
@@ -755,15 +741,37 @@ class DeviceApiContext {
   }
 
   addDeviceLogUpdate(prop, value) {
-    let update = this.deviceLogUpdate
-    if (update == null) {
-      update = {}
-      this.deviceLogUpdate = update
-    }
-
-    update[prop] = value
     if (this.parent) {
       this.parent.addDeviceLogUpdate(prop, value)
+    } else {
+      let update = this.deviceLogUpdate
+      if (update == null) {
+        update = {}
+        this.deviceLogUpdate = update
+      }
+
+      // add result updated on first device log update
+      if (prop === 'resultId' && update[prop] == null) {
+        this.resultUpdated(value, this.deviceLogId)
+      }
+      update[prop] = value
+    }
+  }
+
+  resultUpdated(resultId, deviceLogId) {
+    if (this.parent) {
+      this.parent.resultUpdated(resultId, deviceLogId)
+    } else if (
+      _.findIndex(
+        this.messageContext.actions,
+        existingAction =>
+          existingAction.type === RESULT_UPDATED &&
+          existingAction.resultId === resultId
+      ) === -1
+    ) {
+      // only dispatch result updated action once per result id
+      // within this Device API transaction
+      this.messageContext.resultUpdated(resultId, deviceLogId)
     }
   }
 }
@@ -899,37 +907,38 @@ function addDeviceLogResultConstraints(queryBuilder) {
     .where('rws.externalId', '<>', 'Purged')
 }
 
-function onResultUpdated({ resultId, message, source }, context) {
-  if (source === DEVICE_LOG_COMMON_SOURCE) {
+function onResultUpdated({ resultId, deviceLogId }, { messageContext }) {
+  const context = messageContext.bindActionCreators({ resultLogged })
+  if (deviceLogId) {
     // we've already created device logs originating here, so ignore
-    context.dispatch(notifyResultLogged(resultId, message.deviceLogId))
+    context.resultLogged(resultId, deviceLogId)
   } else {
-    // TODO dispatch from client API using plugin so
-    // senderIp, createdOn, source, etc are available
-    // Everything else, we should add a device log entry so that
-    // the updates will be downloaded
-    const createdOn = new Date()
-    const updateDeviceLog = ({ deviceId }) =>
-      knex('DeviceLog').insert({
-        deviceId,
-        resultId,
-        source,
-        createdOn,
-        senderIp: '',
-        rawMessage: JSON.stringify(message),
-      })
-
-    knex('Result')
-      .where({ id: resultId })
-      .first('deviceId')
-      .then(updateDeviceLog)
-      .then(([deviceLogId]) =>
-        context.dispatch(notifyResultLogged(resultId, deviceLogId))
-      )
+    context.transact(async knex => {
+      // TODO dispatch from client API using plugin so
+      // senderIp, createdOn, source, etc are available
+      // Everything else, we should add a device log entry so that
+      // the updates will be downloaded
+      const createdOn = new Date()
+      const [deviceLogId] = await knex('Result')
+        .where({ id: resultId })
+        .first('deviceId')
+        .then(({ deviceId }) =>
+          knex('DeviceLog').insert({
+            deviceId,
+            resultId,
+            source: 'DeviceApiResultUpdated',
+            createdOn,
+            senderIp: '',
+            rawMessage: '',
+          })
+        )
+      context.resultLogged(resultId, deviceLogId)
+    })
   }
 }
 
-function onResultLogged({ resultId }, context) {
+function onResultLogged({ resultId }, { messageContext }) {
+  const context = messageContext.bindActionCreators({ resultUpdated })
   context.transact(async knex => {
     const { plugin } = await knex('Result as r')
       .leftJoin('Partner as p', 'r.partnerId', 'p.id')
@@ -942,9 +951,9 @@ function onResultLogged({ resultId }, context) {
 
     const pluginContext = {
       knex,
-      dispatch: context.dispatch,
       now,
       resultId,
+      actions: { resultUpdated: context.resultUpdated },
     }
     await onResultLogged(pluginContext)
   })
@@ -974,9 +983,6 @@ async function updateLogs(request) {
   })
 }
 
-addListener(RESULT_UPDATED, onResultUpdated)
-addListener(RESULT_LOGGED, onResultLogged)
-
 module.exports = {
   getDeviceDataHandler,
   getDeviceOperationHandler,
@@ -986,4 +992,6 @@ module.exports = {
   addDeviceOperationHandler,
   mergeResultHandler,
   addDeviceLog,
+  onResultUpdated,
+  onResultLogged,
 }

@@ -14,7 +14,7 @@ const {
   listSitesForSelectList,
 } = require('./service')
 
-module.exports = [
+const routes = [
   {
     method: 'GET',
     path: '/site',
@@ -127,3 +127,5 @@ module.exports = [
     },
   },
 ]
+
+module.exports = { routes }

@@ -5,12 +5,10 @@ const _ = require('lodash')
 const config = require('./config')
 const { version } = require('./../package.json')
 const { addClientRoutes, addDeviceRoutes } = require('./routes')
+const { createMessageQueue } = require('./mq')
+const { addSubscriptions } = require('./subscriptions')
+const { startScheduler } = require('./scheduler')
 const Hapi = require('hapi')
-const cron = require('node-cron')
-const {
-  calculateResultCountsOnSchedule,
-  synthDeviceOfflineOnSchedule,
-} = require('./fact/service')
 
 const server = new Hapi.Server()
 const port = process.env.PORT || 8080
@@ -68,20 +66,29 @@ const plugins = [
 
   // Set payload prior to validation transformation
   rawPayloadPlugin,
+
+  // Set message queue
+  messageQueuePlugin,
 ]
 
 addRavenPlugin(plugins)
 
-registerCronJobs()
-
-function registerCronJobs() {
-  // calculate device result counts on startup and every hour
-  calculateResultCountsOnSchedule()
-  synthDeviceOfflineOnSchedule()
-  cron.schedule('0 * * * *', () => {
-    calculateResultCountsOnSchedule()
-    synthDeviceOfflineOnSchedule()
-  })
+function messageQueuePlugin(server, options, next) {
+  createMessageQueue('aspect')
+    .then(queue => {
+      addSubscriptions(queue)
+      startScheduler(queue)
+      server.ext('onPreHandler', (request, reply) => {
+        request.plugins.messageContext = queue.createMessageContext()
+        reply.continue()
+      })
+      next()
+    })
+    .catch(next)
+}
+messageQueuePlugin.attributes = {
+  name: 'messageQueue',
+  version,
 }
 
 // load and return the good logging configuration
@@ -150,7 +157,9 @@ rawPayloadPlugin.attributes = {
 }
 
 server.register(plugins, err => {
-  if (err) throw err
+  if (err) {
+    throw err
+  }
 })
 
 // ================================================
@@ -252,6 +261,7 @@ server.register(
 // =======================
 server.start(err => {
   if (err) {
+    console.error(err) // eslint-disable-line no-console
     throw err
   }
   console.log(`Magic happens at http://localhost:${port}`) // eslint-disable-line no-console
