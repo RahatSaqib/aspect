@@ -1172,6 +1172,17 @@ async function up(knex) {
     }
   )
 
+  await knex.schema.createTable('TestingTarget', TestingTarget => {
+    TestingTarget.increments('id')
+    TestingTarget.integer('geographyId')
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('Geography')
+    TestingTarget.string('targetToken')
+    TestingTarget.integer('targetValue')
+  })
+
   await knex.raw('SET foreign_key_checks = 1')
 }
 
