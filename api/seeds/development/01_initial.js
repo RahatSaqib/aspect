@@ -3534,6 +3534,11 @@ async function seed(knex) {
     { name: 'Due Soon', externalId: 'DueSoon', i18nKey: 'issueStatusDueSoon' },
     { name: 'Due Now', externalId: 'DueNow', i18nKey: 'issueStatusDueNow' },
     { name: 'Overdue', externalId: 'Overdue', i18nKey: 'issueStatusOverdue' },
+    {
+      name: 'Resolved',
+      externalId: 'Resolved',
+      i18nKey: 'issueStatusResolved',
+    },
   ])
 
   await knex('IssueType').insert([

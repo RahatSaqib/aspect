@@ -1006,10 +1006,6 @@ async function up(knex) {
   await knex.schema.createTable('MessageType', messageType => {
     messageType.increments('id')
     messageType
-      .integer('level')
-      .notNullable()
-      .defaultTo(1)
-    messageType
       .integer('messageSeverityId')
       .unsigned()
       .references('id')
@@ -1178,7 +1174,8 @@ async function up(knex) {
     webhookMessage.string('body')
     webhookMessage.charset('utf8')
   })
-  // Issues
+
+  // Issues and events
 
   // holds general categories (aka class), Device Health, Reagent Health
   await knex.schema.createTable('IssueCategory', issueCategory => {
@@ -1213,8 +1210,40 @@ async function up(knex) {
     issueStatus.charset('utf8')
   })
 
+  // Triggered, Resolved
+  await knex.schema.createTable('IssueEventStatus', issueStatus => {
+    issueStatus.increments('id')
+    issueStatus.string('externalId').notNullable()
+    issueStatus.charset('utf8')
+  })
+
   await knex.schema.createTable('Issue', issue => {
     issue.increments('id')
+    issue
+      .integer('partnerId')
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('Partner')
+    issue
+      .integer('geographyId')
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('Geography')
+    issue
+      .integer('siteId')
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('Site')
+    issue
+      .integer('deviceId')
+      .unsigned()
+      .notNullable()
+      .index()
+      .references('id')
+      .inTable('Device')
     issue
       .integer('issueTypeId')
       .unsigned()
@@ -1228,20 +1257,30 @@ async function up(knex) {
       .inTable('IssueStatus')
       .notNullable()
     issue
-      .integer('supersededByIssueId')
-      .unsigned()
-      .references('id')
-      .inTable('Issue')
-    // TODO Is escalated independent of status? Should it be another Enum
-    issue
-      .boolean('escalated')
+      .integer('level')
       .notNullable()
-      .defaultTo(0)
+      .defaultTo(1)
     issue.string('name').notNullable()
     issue.string('description').notNullable()
     addCreateFieldsNullable(issue)
     addUpdateFieldsNullable(issue)
     issue.charset('utf8')
+  })
+
+  await knex.schema.createTable('IssueEvent', issueEvent => {
+    issueEvent
+      .integer('issueEventStatusId')
+      .unsigned()
+      .references('id')
+      .inTable('issueEventStatus')
+    issueEvent
+      .integer('issueId')
+      .unsigned()
+      .references('id')
+      .inTable('Issue')
+    addCreateFieldsNullable(issueEvent)
+    issueEvent.specificType('data', 'JSON')
+    issueEvent.charset('utf8')
   })
 
   // Notifications
@@ -1570,6 +1609,8 @@ async function down(knex) {
   await knex.schema.dropTableIfExists('NotificationLog')
   await knex.schema.dropTableIfExists('Notification')
   await knex.schema.dropTableIfExists('NotificationType')
+  await knex.schema.dropTableIfExists('IssueEvent')
+  await knex.schema.dropTableIfExists('IssueEventStatus')
   await knex.schema.dropTableIfExists('Issue')
   await knex.schema.dropTableIfExists('IssueCategory')
   await knex.schema.dropTableIfExists('IssueStatus')
