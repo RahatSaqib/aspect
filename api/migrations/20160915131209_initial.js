@@ -1252,6 +1252,7 @@ async function down(knex) {
   await knex.schema.dropTableIfExists('PersonTag')
   await knex.schema.dropTableIfExists('DashboardWidget')
   await knex.schema.dropTableIfExists('JobFunctionDashboardWidget')
+  await knex.schema.dropTableIfExists('TestingTarget')
 
   await knex.raw('SET foreign_key_checks = 1')
 }
