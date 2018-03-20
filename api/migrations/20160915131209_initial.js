@@ -1172,15 +1172,15 @@ async function up(knex) {
     }
   )
 
-  await knex.schema.createTable('TestingTarget', TestingTarget => {
-    TestingTarget.increments('id')
-    TestingTarget.integer('geographyId')
+  await knex.schema.createTable('Target', Target => {
+    Target.increments('id')
+    Target.integer('geographyId')
       .unsigned()
       .index()
       .references('id')
       .inTable('Geography')
-    TestingTarget.string('targetToken')
-    TestingTarget.integer('targetValue')
+    Target.string('targetToken')
+    Target.integer('targetValue')
   })
 
   await knex.raw('SET foreign_key_checks = 1')
@@ -1252,7 +1252,7 @@ async function down(knex) {
   await knex.schema.dropTableIfExists('PersonTag')
   await knex.schema.dropTableIfExists('DashboardWidget')
   await knex.schema.dropTableIfExists('JobFunctionDashboardWidget')
-  await knex.schema.dropTableIfExists('TestingTarget')
+  await knex.schema.dropTableIfExists('Target')
 
   await knex.raw('SET foreign_key_checks = 1')
 }
