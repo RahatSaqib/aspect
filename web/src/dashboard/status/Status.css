@@ -25,51 +25,73 @@
 
 .Summary__Card {
   padding: 5px 15px;
-  line-height: 48px;
+  line-height: 36px;
 }
 
 .Summary__Card__Title {
   text-transform: capitalize;
+  display: inline-flex;
+  align-items: center;
 }
 
 .Summary__Card__Title__Icon {
-  font-size: 36px;
+  font-size: 20px;
+  margin-right: 3px;
 }
 
-.Summary__Card__Title__Sub {
+.Summary__Card__Title--main {
+  white-space: nowrap;
+  overflow: hidden;
+  padding-right: 2px;
+}
+
+.Summary__Card__Title--sub {
+  white-space: nowrap;
+  overflow: hidden;
   color: var(--aspect-color-grey-4);
 }
 
-.Summary__Card__Title__Sub:before {
+.Summary__Card__Title--sub:before {
   content: "\00a0";
 }
 
-.Summary__Card__Content {  
+.Summary__Card__Content {
   display: flex;
-  flex-flow: row wrap;
+  flex-flow: row nowrap;
   justify-content: space-between;
 }
 
 .Summary__Card__Item {
   padding: 10px 0;
   display: flex;
-  flex-flow: row wrap;
+  flex-flow: row nowrap;
+  overflow: hidden;
 }
 
 .Summary__Card__Item__Count {
   padding-right: 10px;
-  line-height: 40px;
+  line-height: 0.8;
   font-size:40px;
 }
 
 .Summary__Card__Item__Messages {
   line-height: 20px;
   font-size: 16px;
+  overflow: hidden;
   color: var(--aspect-color-grey-4);
 }
 
+.Summary__Card__Item__Messages--main {
+  line-height: 1;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
 .Summary__Card__Item__Messages--sub {
-  font-weight: var(--lato-font-weight-black);
+  line-height: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  font-weight: var(--lato-font-weight-bold);
 }
 
 .Summary__Card__Item__Messages--sub::first-letter {
@@ -80,32 +102,6 @@
   composes: Summary__Card__Item;
   text-align: right;
 }
-
-/* 
-.Summary__Card__Count {
-  font-size: 40px;
-  flex-grow: 1;
-}
-
-.Summary__Card__Target {
-  font-size: 24px;
-}
-
-.Summary__Card__Target--less {  
-  color: var(--aspect-color-mantis);    
-}
-
-.Summary__Card__Target--less::before {    
-  content: "\003c ";
-}
-
-.Summary__Card__Target--greater {  
-  color: var(--aspect-color-mandy);  
-}
-
-.Summary__Card__Target--greater::before {    
-  content: "\003e ";
-} */
 
 .Title {
   display: flex;

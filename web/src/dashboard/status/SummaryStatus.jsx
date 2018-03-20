@@ -121,7 +121,7 @@ export const SummaryStatus = ({
 }) => (
   <div className={className}>
     {_.map(summary.toJS(), widget => (
-      <Unit sm="1-2" lg="1-4">
+      <Unit key={widget.id} sm="1-2" lg="1-3" xl="1-4">
         <Link to={widget.link} className={cssClasses('Summary')}>
           <Card className={cssClasses('Summary__Card')}>
             <div className={cssClasses('Summary__Card__Title')}>
@@ -129,8 +129,10 @@ export const SummaryStatus = ({
                 icon={widget.icon}
                 className={cssClasses('Summary__Card__Title__Icon')}
               />
-              {formatMessage('title', widget, intl, defaultMessages)}
-              <span className={cssClasses('Summary__Card__Title__Sub')}>
+              <span className={cssClasses('Summary__Card__Title--main')}>
+                {formatMessage('title', widget, intl, defaultMessages)}
+              </span>
+              <span className={cssClasses('Summary__Card__Title--sub')}>
                 {formatMessage('subTitle', widget, intl, defaultMessages)}
               </span>
             </div>
@@ -140,7 +142,11 @@ export const SummaryStatus = ({
                   {widget.count}
                 </div>
                 <div className={cssClasses('Summary__Card__Item__Messages')}>
-                  <div>
+                  <div
+                    className={cssClasses(
+                      'Summary__Card__Item__Messages--main'
+                    )}
+                  >
                     {formatMessage('statUnit', widget, intl, defaultMessages)}
                   </div>
                   <div
@@ -161,7 +167,11 @@ export const SummaryStatus = ({
               </div>
               <div className={cssClasses('Summary__Card__Item--right')}>
                 <div className={cssClasses('Summary__Card__Item__Messages')}>
-                  <div>
+                  <div
+                    className={cssClasses(
+                      'Summary__Card__Item__Messages--main'
+                    )}
+                  >
                     {widget.extra}
                     {formatMessage('extraUnit', widget, intl, defaultMessages)}
                   </div>

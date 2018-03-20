@@ -5,8 +5,9 @@ exports[`Summary Status component should shallow render correctly 1`] = `
   className={undefined}
 >
   <Unknown
-    lg="1-4"
+    lg="1-3"
     sm="1-2"
+    xl="1-4"
   >
     <Link
       className="Summary"
@@ -25,9 +26,13 @@ exports[`Summary Status component should shallow render correctly 1`] = `
             className="Summary__Card__Title__Icon"
             icon="assignment"
           />
-          Tests
           <span
-            className="Summary__Card__Title__Sub"
+            className="Summary__Card__Title--main"
+          >
+            Tests
+          </span>
+          <span
+            className="Summary__Card__Title--sub"
           >
             This Month
           </span>
@@ -46,7 +51,9 @@ exports[`Summary Status component should shallow render correctly 1`] = `
             <div
               className="Summary__Card__Item__Messages"
             >
-              <div>
+              <div
+                className="Summary__Card__Item__Messages--main"
+              >
                 Tests
               </div>
               <div
@@ -60,7 +67,9 @@ exports[`Summary Status component should shallow render correctly 1`] = `
             <div
               className="Summary__Card__Item__Messages"
             >
-              <div>
+              <div
+                className="Summary__Card__Item__Messages--main"
+              >
                 61.43%
               </div>
               <div
@@ -75,8 +84,9 @@ exports[`Summary Status component should shallow render correctly 1`] = `
     </Link>
   </Unknown>
   <Unknown
-    lg="1-4"
+    lg="1-3"
     sm="1-2"
+    xl="1-4"
   >
     <Link
       className="Summary"
@@ -95,9 +105,13 @@ exports[`Summary Status component should shallow render correctly 1`] = `
             className="Summary__Card__Title__Icon"
             icon="assignment"
           />
-          MTB+ Rate
           <span
-            className="Summary__Card__Title__Sub"
+            className="Summary__Card__Title--main"
+          >
+            MTB+ Rate
+          </span>
+          <span
+            className="Summary__Card__Title--sub"
           >
             Last 30 Days
           </span>
@@ -116,7 +130,9 @@ exports[`Summary Status component should shallow render correctly 1`] = `
             <div
               className="Summary__Card__Item__Messages"
             >
-              <div>
+              <div
+                className="Summary__Card__Item__Messages--main"
+              >
                 for {unit} Results
               </div>
               <div
@@ -132,7 +148,9 @@ exports[`Summary Status component should shallow render correctly 1`] = `
             <div
               className="Summary__Card__Item__Messages"
             >
-              <div />
+              <div
+                className="Summary__Card__Item__Messages--main"
+              />
               <div
                 className="Summary__Card__Item__Messages--sub"
               />
@@ -143,8 +161,9 @@ exports[`Summary Status component should shallow render correctly 1`] = `
     </Link>
   </Unknown>
   <Unknown
-    lg="1-4"
+    lg="1-3"
     sm="1-2"
+    xl="1-4"
   >
     <Link
       className="Summary"
@@ -163,9 +182,13 @@ exports[`Summary Status component should shallow render correctly 1`] = `
             className="Summary__Card__Title__Icon"
             icon="assignment"
           />
-          RR Rate
           <span
-            className="Summary__Card__Title__Sub"
+            className="Summary__Card__Title--main"
+          >
+            RR Rate
+          </span>
+          <span
+            className="Summary__Card__Title--sub"
           >
             Last 30 Days
           </span>
@@ -184,7 +207,9 @@ exports[`Summary Status component should shallow render correctly 1`] = `
             <div
               className="Summary__Card__Item__Messages"
             >
-              <div>
+              <div
+                className="Summary__Card__Item__Messages--main"
+              >
                 for {unit} MTB+
               </div>
               <div
@@ -200,7 +225,9 @@ exports[`Summary Status component should shallow render correctly 1`] = `
             <div
               className="Summary__Card__Item__Messages"
             >
-              <div />
+              <div
+                className="Summary__Card__Item__Messages--main"
+              />
               <div
                 className="Summary__Card__Item__Messages--sub"
               />
@@ -211,8 +238,9 @@ exports[`Summary Status component should shallow render correctly 1`] = `
     </Link>
   </Unknown>
   <Unknown
-    lg="1-4"
+    lg="1-3"
     sm="1-2"
+    xl="1-4"
   >
     <Link
       className="Summary"
@@ -231,9 +259,13 @@ exports[`Summary Status component should shallow render correctly 1`] = `
             className="Summary__Card__Title__Icon"
             icon="assignment"
           />
-          TI Rate
           <span
-            className="Summary__Card__Title__Sub"
+            className="Summary__Card__Title--main"
+          >
+            TI Rate
+          </span>
+          <span
+            className="Summary__Card__Title--sub"
           >
             Last 30 Days
           </span>
@@ -252,7 +284,9 @@ exports[`Summary Status component should shallow render correctly 1`] = `
             <div
               className="Summary__Card__Item__Messages"
             >
-              <div>
+              <div
+                className="Summary__Card__Item__Messages--main"
+              >
                 for {unit} MTB+
               </div>
               <div
@@ -268,7 +302,9 @@ exports[`Summary Status component should shallow render correctly 1`] = `
             <div
               className="Summary__Card__Item__Messages"
             >
-              <div />
+              <div
+                className="Summary__Card__Item__Messages--main"
+              />
               <div
                 className="Summary__Card__Item__Messages--sub"
               />
