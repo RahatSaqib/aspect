@@ -148,8 +148,11 @@ async function onIssueEscalated({ issueId }, context) {
       .first('nep.level', 'nep.jobFunctionId', 'nep.messageTypeId')
 
     if (policy) {
-      // FIXME Find all people that should be receiving notification based on policy
-      const people = []
+      const people = await knex('Job as j')
+        .join('JobFunction as jf', 'j.jobFunctionId', 'jf.id')
+        .where({ 'jf.id': policy.jobFunctionId })
+        .select('j.personId as id')
+      // FIXME need to limit person by JobContext and Issue deviceId, siteId, etc.
 
       // Issue notification to every person assigned, (subscriber will create as necessary)
       await Promise.all(
