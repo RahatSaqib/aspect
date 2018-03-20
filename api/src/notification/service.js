@@ -173,9 +173,111 @@ async function onIssueEscalated({ issueId }, context) {
 
 async function onIssueResolved(/* { issueId }, context */) {}
 
+async function onNotificationCreated({ notificationId }, context) {
+  const now = new Date()
+  await context.transact(async knex => {
+    const existingLog = await knex('NotificationLog')
+      .where({ notificationId })
+      .first()
+    if (existingLog == null) {
+      const {
+        personId,
+        alertTemplateId,
+        emailTemplateId,
+        smsTemplateId,
+        webhookTemplateId,
+      } = await knex('Notification as n')
+        .join(
+          'NotificationEscalationPolicy as nep',
+          'n.notificationEscalationPolicyId',
+          'nep.id'
+        )
+        .join('MessageType as mt', 'nep.messageTypeId', 'mt.id')
+        .where({ 'n.id': notificationId })
+        .first(
+          'n.personId',
+          'mt.alertTemplateId',
+          'mt.emailTemplateId',
+          'mt.smsTemplateId',
+          'mt.webhookTemplateId'
+        )
+
+      const { messageStatusId } = await knex('MessageStatus')
+        .where({ externalId: 'Initial' })
+        .first()
+
+      // FIXME fire message created actions
+      const sharedMessageProperties = {
+        personId,
+        messageStatusId,
+        createdOn: now,
+        updatedOn: now,
+      }
+
+      let alertMessageId = null
+      if (alertTemplateId != null) {
+        ;[alertMessageId] = await knex('AlertMessage').insert(
+          Object.assign(
+            {
+              alertTemplateId,
+            },
+            sharedMessageProperties
+          )
+        )
+      }
+
+      let emailMessageId = null
+      if (emailTemplateId != null) {
+        ;[emailMessageId] = await knex('EmailMessage').insert(
+          Object.assign(
+            {
+              emailTemplateId,
+            },
+            sharedMessageProperties
+          )
+        )
+      }
+
+      let smsMessageId = null
+      if (smsTemplateId != null) {
+        ;[smsMessageId] = await knex('SmsMessage').insert(
+          Object.assign(
+            {
+              smsTemplateId,
+            },
+            sharedMessageProperties
+          )
+        )
+      }
+
+      let webhookMessageId = null
+      if (webhookTemplateId != null) {
+        ;[webhookMessageId] = await knex('WebhookMessage').insert(
+          Object.assign(
+            {
+              webhookTemplateId,
+            },
+            sharedMessageProperties
+          )
+        )
+      }
+
+      await knex('NotificationLog').insert({
+        notificationId,
+        alertMessageId,
+        emailMessageId,
+        smsMessageId,
+        webhookMessageId,
+        createdOn: now,
+      })
+    }
+  })
+}
+
 module.exports = {
   listNotifications,
   onIssueCreated,
   onIssueEscalated,
   onIssueResolved,
+  onNotificationCreated,
 }

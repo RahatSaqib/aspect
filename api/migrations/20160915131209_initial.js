@@ -984,7 +984,7 @@ async function up(knex) {
 
   // Messages
 
-  // Pending, Sent, Error
+  // Initial, Pending, Sent, Error
   await knex.schema.createTable('MessageStatus', messageStatus => {
     messageStatus.increments('id')
     messageStatus.string('name').notNullable()
@@ -1002,27 +1002,11 @@ async function up(knex) {
     messageSeverity.charset('utf8')
   })
 
-  // Device Offline, Module Error
-  await knex.schema.createTable('MessageType', messageType => {
-    messageType.increments('id')
-    messageType
-      .integer('messageSeverityId')
-      .unsigned()
-      .references('id')
-      .inTable('MessageSeverity')
-      .notNullable()
-    messageType.charset('utf8')
-  })
-
   await knex.schema.createTable('AlertTemplate', alertTemplate => {
     alertTemplate.increments('id')
-    alertTemplate
-      .integer('messageTypeId')
-      .unsigned()
-      .references('id')
-      .inTable('MessageType')
-      .notNullable()
     alertTemplate.string('message').notNullable()
+    addCreateFieldsNullable(alertTemplate)
+    addUpdateFieldsNullable(alertTemplate)
     alertTemplate.charset('utf8')
   })
 
@@ -1046,22 +1030,18 @@ async function up(knex) {
       .references('id')
       .inTable('MessageStatus')
       .notNullable()
-    alertMessage.string('message').notNullable()
+    alertMessage.string('message')
     addTimestamps(alertMessage)
     alertMessage.charset('utf8')
   })
 
   await knex.schema.createTable('EmailTemplate', emailTemplate => {
     emailTemplate.increments('id')
-    emailTemplate
-      .integer('messageTypeId')
-      .unsigned()
-      .references('id')
-      .inTable('MessageType')
-      .notNullable()
     emailTemplate.string('subject').notNullable()
     emailTemplate.string('body').notNullable()
     emailTemplate.string('htmlBody')
+    addCreateFieldsNullable(emailTemplate)
+    addUpdateFieldsNullable(emailTemplate)
     emailTemplate.charset('utf8')
   })
 
@@ -1085,8 +1065,8 @@ async function up(knex) {
       .references('id')
       .inTable('MessageStatus')
       .notNullable()
-    emailMessage.string('subject').notNullable()
-    emailMessage.string('body').notNullable()
+    emailMessage.string('subject')
+    emailMessage.string('body')
     emailMessage.string('htmlBody')
     addTimestamps(emailMessage)
     emailMessage.charset('utf8')
@@ -1094,13 +1074,9 @@ async function up(knex) {
 
   await knex.schema.createTable('SmsTemplate', smsTemplate => {
     smsTemplate.increments('id')
-    smsTemplate
-      .integer('messageTypeId')
-      .unsigned()
-      .references('id')
-      .inTable('MessageType')
-      .notNullable()
     smsTemplate.string('message').notNullable()
+    addCreateFieldsNullable(smsTemplate)
+    addUpdateFieldsNullable(smsTemplate)
     smsTemplate.charset('utf8')
   })
 
@@ -1124,23 +1100,19 @@ async function up(knex) {
       .references('id')
       .inTable('MessageStatus')
       .notNullable()
-    smsMessage.string('message').notNullable()
+    smsMessage.string('message')
     addTimestamps(smsMessage)
     smsMessage.charset('utf8')
   })
 
   await knex.schema.createTable('WebhookTemplate', webhookTemplate => {
     webhookTemplate.increments('id')
-    webhookTemplate
-      .integer('messageTypeId')
-      .unsigned()
-      .references('id')
-      .inTable('MessageType')
-      .notNullable()
     webhookTemplate.string('method').notNullable()
     webhookTemplate.string('url').notNullable()
     webhookTemplate.specificType('headers', 'JSON')
     webhookTemplate.string('body')
+    addCreateFieldsNullable(webhookTemplate)
+    addUpdateFieldsNullable(webhookTemplate)
     webhookTemplate.charset('utf8')
   })
 
@@ -1164,12 +1136,44 @@ async function up(knex) {
       .references('id')
       .inTable('MessageStatus')
       .notNullable()
-    webhookMessage.string('method').notNullable()
-    webhookMessage.string('url').notNullable()
+    webhookMessage.string('method')
+    webhookMessage.string('url')
     webhookMessage.specificType('headers', 'JSON')
     webhookMessage.string('body')
     addTimestamps(webhookMessage)
     webhookMessage.charset('utf8')
+  })
+
+  // Device Offline, Module Error
+  await knex.schema.createTable('MessageType', messageType => {
+    messageType.increments('id')
+    messageType
+      .integer('messageSeverityId')
+      .unsigned()
+      .references('id')
+      .inTable('MessageSeverity')
+      .notNullable()
+    messageType
+      .integer('alertTemplateId')
+      .unsigned()
+      .references('id')
+      .inTable('AlertTemplate')
+    messageType
+      .integer('emailTemplateId')
+      .unsigned()
+      .references('id')
+      .inTable('EmailTemplate')
+    messageType
+      .integer('smsTemplateId')
+      .unsigned()
+      .references('id')
+      .inTable('SmsTemplate')
+    messageType
+      .integer('webhookTemplateId')
+      .unsigned()
+      .references('id')
+      .inTable('WebhookTemplate')
+    messageType.charset('utf8')
   })
 
   // Issues and events
