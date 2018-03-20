@@ -30,7 +30,7 @@ const enhance = compose(
     state => ({
       userName: state.user.jwt.name,
       summary: state.dashboard.summary,
-      permissions: state.user.jwt.permissions,
+      features: state.user.jwt.features,
     }),
     bindActionCreators.bind(null, {
       showAcknowledgement,
@@ -84,12 +84,11 @@ export const Status = ({
   intl,
   // --- injected by recompose ---
   summary,
-  permissions,
+  features,
 }) => (
   <div className={cssClasses('Container')}>
     <Helmet title="Status" />
-    {(permissions.get('summaryDashboard:view') ||
-      permissions.get('summaryDashboard:admin')) && (
+    {features.get('summaryDashboard:true') && (
       <div className={cssClasses('Section--summary')}>
         {_.map(summary.toJS(), widget => (
           <Unit sm="1-2" lg="1-4">

@@ -3352,31 +3352,6 @@ async function seed(knex) {
 
   // assign permissions to job functions
   await knex('JobFunctionPermission').insert([
-    // dasboard permissions
-    {
-      jobFunctionId: jobFunctionIdAdmin,
-      permissionId: modules.summaryDashboard.admin,
-    },
-    {
-      jobFunctionId: jobFunctionIdAdmin,
-      permissionId: modules.resultDashboard.admin,
-    },
-    {
-      jobFunctionId: jobFunctionIdAdmin,
-      permissionId: modules.inventoryItemDashboard.admin,
-    },
-    {
-      jobFunctionId: jobFunctionIdAdmin,
-      permissionId: modules.deviceDashboard.admin,
-    },
-    {
-      jobFunctionId: jobFunctionIdAdmin,
-      permissionId: modules.siteDashboard.admin,
-    },
-    {
-      jobFunctionId: jobFunctionIdAdmin,
-      permissionId: modules.operationalDashboard.admin,
-    },
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.demo.admin },
     {
       jobFunctionId: jobFunctionIdAdmin,
@@ -3404,96 +3379,6 @@ async function seed(knex) {
     {
       jobFunctionId: jobFunctionIdManager,
       permissionId: modules.inventory.edit,
-    },
-    // dasboard permissions - Manager
-    {
-      jobFunctionId: jobFunctionIdManager,
-      permissionId: modules.summaryDashboard.view,
-    },
-    {
-      jobFunctionId: jobFunctionIdManager,
-      permissionId: modules.resultDashboard.view,
-    },
-    {
-      jobFunctionId: jobFunctionIdManager,
-      permissionId: modules.inventoryItemDashboard.view,
-    },
-    {
-      jobFunctionId: jobFunctionIdManager,
-      permissionId: modules.deviceDashboard.view,
-    },
-    {
-      jobFunctionId: jobFunctionIdManager,
-      permissionId: modules.siteDashboard.view,
-    },
-    {
-      jobFunctionId: jobFunctionIdManager,
-      permissionId: modules.operationalDashboard.view,
-    },
-    { jobFunctionId: jobFunctionIdPartnerTwo, permissionId: modules.site.edit },
-    {
-      jobFunctionId: jobFunctionIdPartnerTwo,
-      permissionId: modules.device.edit,
-    },
-    // dasboard permissions - partner two
-    {
-      jobFunctionId: jobFunctionIdPartnerTwo,
-      permissionId: modules.summaryDashboard.view,
-    },
-    {
-      jobFunctionId: jobFunctionIdPartnerTwo,
-      permissionId: modules.resultDashboard.view,
-    },
-    {
-      jobFunctionId: jobFunctionIdPartnerTwo,
-      permissionId: modules.inventoryItemDashboard.view,
-    },
-    {
-      jobFunctionId: jobFunctionIdPartnerTwo,
-      permissionId: modules.deviceDashboard.view,
-    },
-    {
-      jobFunctionId: jobFunctionIdPartnerTwo,
-      permissionId: modules.siteDashboard.view,
-    },
-    {
-      jobFunctionId: jobFunctionIdPartnerTwo,
-      permissionId: modules.operationalDashboard.view,
-    },
-    { jobFunctionId: jobFunctionIdClinician, permissionId: modules.site.view },
-    {
-      jobFunctionId: jobFunctionIdClinician,
-      permissionId: modules.device.view,
-    },
-    { jobFunctionId: jobFunctionIdClinician, permissionId: modules.assay.view },
-    {
-      jobFunctionId: jobFunctionIdClinician,
-      permissionId: modules.inventory.view,
-    },
-    // dasboard permissions - clinician
-    {
-      jobFunctionId: jobFunctionIdClinician,
-      permissionId: modules.summaryDashboard.view,
-    },
-    {
-      jobFunctionId: jobFunctionIdClinician,
-      permissionId: modules.resultDashboard.view,
-    },
-    {
-      jobFunctionId: jobFunctionIdClinician,
-      permissionId: modules.inventoryItemDashboard.view,
-    },
-    {
-      jobFunctionId: jobFunctionIdClinician,
-      permissionId: modules.deviceDashboard.view,
-    },
-    {
-      jobFunctionId: jobFunctionIdClinician,
-      permissionId: modules.siteDashboard.view,
-    },
-    {
-      jobFunctionId: jobFunctionIdClinician,
-      permissionId: modules.operationalDashboard.view,
     },
   ])
 

@@ -17,7 +17,7 @@ const routes = [
     config: {
       description: 'Summary Dashboard',
       notes: 'The top level summary dashboard',
-      auth: { scope: ['summaryDashboard'] },
+      auth: { scope: ['site', 'device'] },
     },
   },
   {
@@ -27,7 +27,7 @@ const routes = [
     config: {
       description: 'Result Dashboard',
       notes: 'The top level result dashboard',
-      auth: { scope: ['resultDashboard'] },
+      auth: { scope: ['site', 'result'] },
     },
   },
   {
@@ -37,7 +37,7 @@ const routes = [
     config: {
       description: 'Consumable Dashboard',
       notes: 'The top level consumable dashboard',
-      auth: { scope: ['inventoryItemDashboard'] },
+      auth: { scope: ['site', 'consumable'] },
     },
   },
   {
@@ -47,7 +47,7 @@ const routes = [
     config: {
       description: 'Device Dashboard',
       notes: 'The top level device dashboard',
-      auth: { scope: ['deviceDashboard'] },
+      auth: { scope: ['site', 'device'] },
     },
   },
   {
@@ -57,7 +57,7 @@ const routes = [
     config: {
       description: 'Site Dashboard',
       notes: 'The top level site dashboard',
-      auth: { scope: ['siteDashboard'] },
+      auth: { scope: ['site', 'device'] },
     },
   },
   {
@@ -67,7 +67,7 @@ const routes = [
     config: {
       description: 'Operational Data Dashboard',
       notes: 'The top level operational data',
-      auth: { scope: ['operationalDashboard'] },
+      auth: { scope: ['site', 'device'] },
       validate: {
         query: Object.assign({
           assayType: Joi.string()

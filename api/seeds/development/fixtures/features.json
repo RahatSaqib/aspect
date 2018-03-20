@@ -107,6 +107,30 @@
     {
       "name": "notificationDetail",
       "enable": [true, false]
+    },
+    {
+      "name": "summaryDashboard",
+      "enable": [true, false]
+    },
+    {
+      "name": "resultDashboard",
+      "enable": [true, false]
+    },
+    {
+      "name": "inventoryItemDashboard",
+      "enable": [true, false]
+    },
+    {
+      "name": "deviceDashboard",
+      "enable": [true, false]
+    },
+    {
+      "name": "siteDashboard",
+      "enable": [true, false]
+    },
+    {
+      "name": "operationalDashboard",
+      "enable": [true, false]
     }
   ]
 }
