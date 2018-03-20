@@ -4,7 +4,6 @@ const { notificationCreated } = require('./actions')
 const { alertMessageCreated } = require('../alert/actions')
 const { emailMessageCreated } = require('../email/actions')
 const { smsMessageCreated } = require('../sms/actions')
-const { webhookMessageCreated } = require('../webhook/actions')
 
 async function listNotifications(request) {
   const { query } = request
@@ -186,7 +185,6 @@ async function onNotificationCreated({ notificationId }, context) {
     alertMessageCreated,
     emailMessageCreated,
     smsMessageCreated,
-    webhookMessageCreated,
   })
   await context.transact(async knex => {
     const existingLog = await knex('NotificationLog')
@@ -198,7 +196,6 @@ async function onNotificationCreated({ notificationId }, context) {
         alertTemplateId,
         emailTemplateId,
         smsTemplateId,
-        webhookTemplateId,
       } = await knex('Notification as n')
         .join(
           'NotificationEscalationPolicy as nep',
@@ -212,7 +209,6 @@ async function onNotificationCreated({ notificationId }, context) {
           'mt.alertTemplateId',
           'mt.emailTemplateId',
           'mt.smsTemplateId',
-          'mt.webhookTemplateId'
         )
 
       const { messageStatusId } = await knex('MessageStatus')
@@ -265,25 +261,11 @@ async function onNotificationCreated({ notificationId }, context) {
         context.smsMessageCreated(smsMessageId)
       }
 
-      let webhookMessageId = null
-      if (webhookTemplateId != null) {
-        ;[webhookMessageId] = await knex('WebhookMessage').insert(
-          Object.assign(
-            {
-              webhookTemplateId,
-            },
-            sharedMessageProperties
-          )
-        )
-        context.webhookMessageCreated(webhookMessageId)
-      }
-
       await knex('NotificationLog').insert({
         notificationId,
         alertMessageId,
         emailMessageId,
         smsMessageId,
-        webhookMessageId,
         createdOn: now,
       })
     }

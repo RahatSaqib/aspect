@@ -1105,45 +1105,6 @@ async function up(knex) {
     smsMessage.charset('utf8')
   })
 
-  await knex.schema.createTable('WebhookTemplate', webhookTemplate => {
-    webhookTemplate.increments('id')
-    webhookTemplate.string('method').notNullable()
-    webhookTemplate.string('url').notNullable()
-    webhookTemplate.specificType('headers', 'JSON')
-    webhookTemplate.string('body')
-    addCreateFieldsNullable(webhookTemplate)
-    addUpdateFieldsNullable(webhookTemplate)
-    webhookTemplate.charset('utf8')
-  })
-
-  await knex.schema.createTable('WebhookMessage', webhookMessage => {
-    webhookMessage.increments('id')
-    webhookMessage
-      .integer('webhookTemplateId')
-      .unsigned()
-      .references('id')
-      .inTable('WebhookTemplate')
-      .notNullable()
-    webhookMessage
-      .integer('personId')
-      .unsigned()
-      .references('id')
-      .inTable('Person')
-      .notNullable()
-    webhookMessage
-      .integer('messageStatusId')
-      .unsigned()
-      .references('id')
-      .inTable('MessageStatus')
-      .notNullable()
-    webhookMessage.string('method')
-    webhookMessage.string('url')
-    webhookMessage.specificType('headers', 'JSON')
-    webhookMessage.string('body')
-    addTimestamps(webhookMessage)
-    webhookMessage.charset('utf8')
-  })
-
   // Device Offline, Module Error
   await knex.schema.createTable('MessageType', messageType => {
     messageType.increments('id')
@@ -1168,11 +1129,6 @@ async function up(knex) {
       .unsigned()
       .references('id')
       .inTable('SmsTemplate')
-    messageType
-      .integer('webhookTemplateId')
-      .unsigned()
-      .references('id')
-      .inTable('WebhookTemplate')
     messageType.charset('utf8')
   })
 
@@ -1392,11 +1348,6 @@ async function up(knex) {
       .unsigned()
       .references('id')
       .inTable('SmsMessage')
-    notificationLog
-      .integer('webhookMessageId')
-      .unsigned()
-      .references('id')
-      .inTable('WebhookMessage')
     addTimestamps(notificationLog, { update: false })
     notificationLog.charset('utf8')
   })
@@ -1641,8 +1592,6 @@ async function down(knex) {
   await knex.schema.dropTableIfExists('IssueCategory')
   await knex.schema.dropTableIfExists('IssueStatus')
   await knex.schema.dropTableIfExists('IssueType')
-  await knex.schema.dropTableIfExists('WebhookMessage')
-  await knex.schema.dropTableIfExists('WebhookTemplate')
   await knex.schema.dropTableIfExists('SmsMessage')
   await knex.schema.dropTableIfExists('SmsTemplate')
   await knex.schema.dropTableIfExists('EmailMessage')
