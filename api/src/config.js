@@ -18,7 +18,6 @@ module.exports = {
     uiPath: process.env['swagger.uiPath'] || '',
   },
   sms: {
-    useTwilio: process.env.useTwilio === 'true',
     twilio: {
       accountSid: process.env.twilioAccountSid,
       authToken: process.env.twilioAuthToken,
