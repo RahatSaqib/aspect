@@ -1195,6 +1195,11 @@ async function up(knex) {
       .references('id')
       .inTable('IssueCategory')
       .notNullable()
+    issueType
+      .integer('defaultMessageTypeId')
+      .unsigned()
+      .references('id')
+      .inTable('MessageType')
     issueType.string('name').notNullable()
     issueType.string('i18nKey').notNullable()
     issueType.string('externalId').notNullable()
@@ -1298,35 +1303,36 @@ async function up(knex) {
       .unsigned()
       .references('id')
       .inTable('IssueType')
-    notificationType
-      .integer('messageTypeId')
-      .unsigned()
-      .references('id')
-      .inTable('MessageType')
     notificationType.string('name').notNullable()
     notificationType.charset('utf8')
   })
 
   await knex.schema.createTable(
-    'NotificationTypeJobFunction',
-    notificationTypeJobFunction => {
-      notificationTypeJobFunction
+    'NotificationEscalationPolicy',
+    notificationEscalationPolicy => {
+      notificationEscalationPolicy.increments('id')
+      notificationEscalationPolicy
         .integer('notificationTypeid')
         .unsigned()
         .index()
         .references('id')
         .inTable('NotificationType')
-      notificationTypeJobFunction
+      notificationEscalationPolicy
         .integer('jobFunctionId')
         .unsigned()
         .index()
         .references('id')
         .inTable('JobFunction')
-      notificationTypeJobFunction.primary([
-        'notificationTypeId',
-        'jobFunctionId',
-      ])
-      notificationTypeJobFunction.charset('utf8')
+      notificationEscalationPolicy
+        .integer('level')
+        .notNullable()
+        .defaultTo(1)
+      notificationEscalationPolicy
+        .integer('messageTypeId')
+        .unsigned()
+        .references('id')
+        .inTable('MessageType')
+      notificationEscalationPolicy.charset('utf8')
     }
   )
 
@@ -1605,7 +1611,7 @@ async function down(knex) {
   await knex.schema.dropTableIfExists('DeviceRole')
   await knex.schema.dropTableIfExists('DeviceApiKey')
   await knex.schema.dropTableIfExists('RefreshToken')
-  await knex.schema.dropTableIfExists('NotificationJobFunction')
+  await knex.schema.dropTableIfExists('NotificationEscalationPolicy')
   await knex.schema.dropTableIfExists('NotificationLog')
   await knex.schema.dropTableIfExists('Notification')
   await knex.schema.dropTableIfExists('NotificationType')
