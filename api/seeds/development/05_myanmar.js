@@ -217,8 +217,9 @@ async function seed(knex) {
     geographyId: myanmarGeographyId,
   })
 
-  // Regional Officer Jobs
+  // Regional Officer Jobs and Targets
   const adminRegions = ['AYY', 'KCN', 'MDY']
+  const targetTokens = ['MDR', 'Smear', 'HIV', 'Children']
   let regionNumber = 0
   await Promise.all(
     _.map(adminRegions, async region => {
@@ -260,6 +261,16 @@ async function seed(knex) {
         jobId: jobIdRegion,
         geographyId: regionId,
       })
+      await Promise.all(
+        _.map(targetTokens, async token => {
+          const targetValue = 350 + Math.floor(Math.random() * 200 - 100)
+          await knex('TestingTarget').insert({
+            geographyId: regionId,
+            targetToken: token,
+            targetValue,
+          })
+        })
+      )
     })
   )
 
