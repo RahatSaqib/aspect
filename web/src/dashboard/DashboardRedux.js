@@ -12,6 +12,9 @@ import {
 export const REQUEST_SUMMARY_DASHBOARD = 'REQUEST_SUMMARY_DASHBOARD'
 export const RECEIVE_SUMMARY_DASHBOARD = 'RECEIVE_SUMMARY_DASHBOARD'
 
+export const REQUEST_TARGET_DASHBOARD = 'REQUEST_TARGET_DASHBOARD'
+export const RECEIVE_TARGET_DASHBOARD = 'RECEIVE_TARGET_DASHBOARD'
+
 export const REQUEST_RESULT_DASHBOARD = 'REQUEST_RESULT_DASHBOARD'
 export const RECEIVE_RESULT_DASHBOARD = 'RECEIVE_RESULT_DASHBOARD'
 
@@ -31,47 +34,74 @@ export const RECEIVE_OPERATIONAL_STATUS = 'RECEIVE_OPERATIONAL_STATUS'
 /*
  * ---------------- Action Creators -----------------
  */
-function requestSummaryDashboard(requestedAt) {
+function requestSummaryDashboard(type, requestedAt) {
   return {
-    type: REQUEST_SUMMARY_DASHBOARD,
+    type,
     requestedAt,
   }
 }
 
-function receiveSummaryDashboard(requestedAt, data) {
+function receiveSummaryDashboard(type, requestedAt, data) {
   return {
-    type: RECEIVE_SUMMARY_DASHBOARD,
+    type,
     requestedAt,
     data,
   }
 }
 
-export function fetchSummaryDashboard() {
+export function fetchStatDashboard(filtersParams) {
+  const filters = _.fromPairs([['layout', 'stat'], ...filtersParams.entries()])
+  return fetchSummaryDashboard(
+    filters,
+    REQUEST_SUMMARY_DASHBOARD,
+    RECEIVE_SUMMARY_DASHBOARD
+  )
+}
+export function fetchTargetDashboard(filtersParams) {
+  const filters = _.fromPairs([
+    ['layout', 'target'],
+    ...filtersParams.entries(),
+  ])
+  return fetchSummaryDashboard(
+    filters,
+    REQUEST_TARGET_DASHBOARD,
+    RECEIVE_TARGET_DASHBOARD
+  )
+}
+
+function fetchSummaryDashboard(filters, requestType, receiveType) {
   return dispatch => {
     const requestedAt = Date.now()
-    dispatch(requestSummaryDashboard(requestedAt))
+    dispatch(requestSummaryDashboard(requestType, requestedAt))
 
-    return aspectFetch('/dashboard/summary', {
-      errorNotifications: {
-        403: errorInsufficientScope(
-          defineMessages({
-            title: {
-              id: 'errorResponseMessages.fetchPersons.GET.403.title',
-              defaultMessage: 'Insufficient Permissions',
-            },
-          })
-        ),
-        default: errorPleaseTryAgainInAFewMinutes(
-          defineMessages({
-            title: {
-              id:
-                'errorResponseMessages.fetchSummaryDashboard.GET.default.title',
-              defaultMessage: 'Error Loading Dashboard Summary',
-            },
-          })
-        ),
-      },
-    }).then(json => dispatch(receiveSummaryDashboard(requestedAt, json.data)))
+    return aspectFetch(
+      `/dashboard/summary?${stringify({
+        ...filters,
+      })}`,
+      {
+        errorNotifications: {
+          403: errorInsufficientScope(
+            defineMessages({
+              title: {
+                id: 'errorResponseMessages.fetchPersons.GET.403.title',
+                defaultMessage: 'Insufficient Permissions',
+              },
+            })
+          ),
+          default: errorPleaseTryAgainInAFewMinutes(
+            defineMessages({
+              title: {
+                id:
+                  'errorResponseMessages.fetchSummaryDashboard.GET.default.title',
+                defaultMessage: 'Error Loading Dashboard Summary',
+              },
+            })
+          ),
+        },
+      }
+    ).then(json =>
+      dispatch(receiveSummaryDashboard(receiveType, requestedAt, json.data))
+    )
   }
 }
 
@@ -276,6 +306,7 @@ export function fetchOperationalStatus(filtersParams) {
 const Summary = Immutable.Record({
   requestedAtSet: Immutable.Set(),
   summary: Immutable.List(),
+  targetSummaryList: Immutable.List(),
   resultSiteList: Immutable.List(),
   resultSummaryList: Immutable.List(),
   inventoryItemSiteList: Immutable.List(),
@@ -293,6 +324,7 @@ const initialState = new Summary()
 export default function dashboardReducer(state = initialState, action) {
   switch (action.type) {
     case REQUEST_SUMMARY_DASHBOARD:
+    case REQUEST_TARGET_DASHBOARD:
     case REQUEST_RESULT_DASHBOARD:
     case REQUEST_INVENTORY_ITEM_DASHBOARD:
     case REQUEST_DEVICE_DASHBOARD:
@@ -310,6 +342,16 @@ export default function dashboardReducer(state = initialState, action) {
             mutState.requestedAtSet.delete(action.requestedAt)
           )
           mutState.mergeDeepIn(['summary'], action.data)
+        }
+      })
+    case RECEIVE_TARGET_DASHBOARD:
+      return state.withMutations(mutState => {
+        if (mutState.hasIn(['requestedAtSet', action.requestedAt])) {
+          mutState.set(
+            'requestedAtSet',
+            mutState.requestedAtSet.delete(action.requestedAt)
+          )
+          mutState.mergeDeepIn(['targetSummaryList'], action.data)
         }
       })
     case RECEIVE_RESULT_DASHBOARD:

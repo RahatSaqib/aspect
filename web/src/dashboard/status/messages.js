@@ -155,7 +155,7 @@ export const messages = defineMessages({
   },
   thisMonth: {
     id: 'pages.Status.thisMonth',
-    defaultMessage: 'THis Month',
+    defaultMessage: 'This Month',
   },
   lastMonth: {
     id: 'pages.Status.lastMonth',
@@ -168,6 +168,10 @@ export const messages = defineMessages({
   targetCurrentLabel: {
     id: 'pages.Status.targetCurrentLabel',
     defaultMessage: 'Tested:',
+  },
+  targetErrorMessageLabel: {
+    id: 'pages.Status.targetErrorMessageLabel',
+    defaultMessage: 'Collection Rate: {extra}',
   },
 })
 

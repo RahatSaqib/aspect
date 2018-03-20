@@ -151,8 +151,10 @@
   background-color: var(--aspect-color-supernova);
 }
 
-.Title__FiltersGroup {
-  margin: 0 10px;
+.Title__FiltersGroup__Button {
+  border: 1px solid var(--aspect-color-chill-blue-1);
+  line-height: 34px; /* due to border */
+  margin: 0 5px;
 }
 
 .ChartContainer {
@@ -268,24 +270,33 @@
   margin-bottom: 4px;
 }
 
-.TargetItemBlock .TargetItemBlock__Label__Sub {
+.TargetItemBlock__Label--error {
+  font-size: 16px;
+  color: var(--aspect-color-mandy);
+  font-weight: var(--lato-font-weight-bold);
+  text-align: center;
+  margin-bottom: 4px;
+}
+
+.TargetItemBlock .TargetItemBlock__Label--sub {
   visibility: hidden;
   flex: 1;
 }
+
 @media screen and (min-width: 64em) {
-  .TargetItemBlock:nth-child(4n+1) .TargetItemBlock__Label__Sub {
+  .TargetItemBlock:nth-child(4n+1) .TargetItemBlock__Label--sub {
     visibility: visible;
   }
 }
 
 @media screen and (min-width: 48em) and (max-width: 63.938em) {
-  .TargetItemBlock:nth-child(2n+1) .TargetItemBlock__Label__Sub {
+  .TargetItemBlock:nth-child(2n+1) .TargetItemBlock__Label--sub {
     visibility: visible;
   }
 }
 
 @media screen and (max-width: 47.938em) {
-  .TargetItemBlock .TargetItemBlock__Label__Sub {
+  .TargetItemBlock .TargetItemBlock__Label--sub {
     visibility: visible;
   }
 }
