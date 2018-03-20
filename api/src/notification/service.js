@@ -1,6 +1,10 @@
 const _ = require('lodash')
 const subMinutes = require('date-fns/sub_minutes')
 const { notificationCreated } = require('./actions')
+const { alertMessageCreated } = require('../alert/actions')
+const { emailMessageCreated } = require('../email/actions')
+const { smsMessageCreated } = require('../sms/actions')
+const { webhookMessageCreated } = require('../webhook/actions')
 
 async function listNotifications(request) {
   const { query } = request
@@ -175,6 +179,12 @@ async function onIssueResolved(/* { issueId }, context */) {}
 
 async function onNotificationCreated({ notificationId }, context) {
   const now = new Date()
+  context.bindActionCreators({
+    alertMessageCreated,
+    emailMessageCreated,
+    smsMessageCreated,
+    webhookMessageCreated,
+  })
   await context.transact(async knex => {
     const existingLog = await knex('NotificationLog')
       .where({ notificationId })
@@ -206,7 +216,6 @@ async function onNotificationCreated({ notificationId }, context) {
         .where({ externalId: 'Initial' })
         .first()
 
-      // FIXME fire message created actions
       const sharedMessageProperties = {
         personId,
         messageStatusId,
@@ -224,6 +233,7 @@ async function onNotificationCreated({ notificationId }, context) {
             sharedMessageProperties
           )
         )
+        context.alertMessageCreated(alertMessageId)
       }
 
       let emailMessageId = null
@@ -236,6 +246,7 @@ async function onNotificationCreated({ notificationId }, context) {
             sharedMessageProperties
           )
         )
+        context.emailMessageCreated(emailMessageId)
       }
 
       let smsMessageId = null
@@ -248,6 +259,7 @@ async function onNotificationCreated({ notificationId }, context) {
             sharedMessageProperties
           )
         )
+        context.smsMessageCreated(smsMessageId)
       }
 
       let webhookMessageId = null
@@ -260,6 +272,7 @@ async function onNotificationCreated({ notificationId }, context) {
             sharedMessageProperties
           )
         )
+        context.webhookMessageCreated(webhookMessageId)
       }
 
       await knex('NotificationLog').insert({
