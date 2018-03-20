@@ -595,10 +595,14 @@ async function seed(knex) {
 
   await Promise.all(
     _.map(widgetIds, async widgetId => {
+      if (widgetId <= 12) {
+        await knex('JobFunctionDashboardWidget').insert([
+          { jobFunctionId: jobFunctionIdLabUser, widgetId },
+        ])
+      }
       await knex('JobFunctionDashboardWidget').insert([
         { jobFunctionId: jobFunctionIdAdmin, widgetId },
         { jobFunctionId: jobFunctionIdRegionalOfficer, widgetId },
-        { jobFunctionId: jobFunctionIdLabUser, widgetId },
       ])
     })
   )

@@ -18,6 +18,14 @@ const routes = [
       description: 'Summary Dashboard',
       notes: 'The top level summary dashboard',
       auth: { scope: ['site', 'device'] },
+      validate: {
+        query: Object.assign({
+          layout: Joi.string()
+            .valid('stat', 'target')
+            .required()
+            .description('Filter for layout type'),
+        }),
+      },
     },
   },
   {

@@ -1,16 +1,18 @@
 [
   {
-    "icon": "place",
+    "layout":  "stat",
+    "icon": "place",    
     "title": "Sites",
     "titleI18nKey": "sitesTitle",
     "subTitle": null,
     "subTitleI18nKey": null,
     "sqlForIndicator":
-      "select count(s.id) as cnt from Site as s left outer join Geography as g on s.geographyId = g.id left outer join State as st on g.stateId = st.id left outer join Lga as l on g.lgaId = l.id",
+      "select count(s.id) as cnt from Site as s left outer join Geography as g on s.geographyId = g.id left outer join State as st on g.stateId = st.id left outer join Lga as l on g.lgaId = l.id",        
     "link": "/browse/site",
     "sortOrder": 0
   },
   {
+    "layout":  "stat",
     "icon": "computer",
     "title": "Devices",
     "titleI18nKey": "devicesTitle",
@@ -22,6 +24,7 @@
     "sortOrder": 1
   },
   {
+    "layout":  "stat",
     "icon": "assignment",
     "title": "Results",
     "titleI18nKey": "resultsTitle",
@@ -33,6 +36,7 @@
     "sortOrder": 2
   },
   {
+    "layout":  "stat",
     "icon": "perm-identity",
     "title": "Contacts",
     "titleI18nKey": "personTitle",
