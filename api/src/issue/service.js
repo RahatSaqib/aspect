@@ -83,10 +83,19 @@ async function createNewIssue(knex, issueType, action) {
 
   if (action.deviceId) {
     issue.deviceId = action.deviceId
-  }
-
-  if (action.siteId) {
+    const issueContext = await knex('Device')
+      .where({ id: issue.deviceId })
+      .first('siteId', 'geographyId', 'partnerId')
+    issue.siteId = issueContext.siteId
+    issue.geographyId = issueContext.geographyId
+    issue.partnerId = issueContext.partnerId
+  } else if (action.siteId) {
     issue.siteId = action.siteId
+    const issueContext = await knex('Site')
+      .where({ id: issue.deviceId })
+      .first('geographyId', 'partnerId')
+    issue.geographyId = issueContext.geographyId
+    issue.partnerId = issueContext.partnerId
   }
 
   if (action.geographyId) {

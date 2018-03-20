@@ -119,6 +119,36 @@ async function listNotifications(request) {
   return result
 }
 
+async function onIssueCreated({ issueId }, context) {
+  await onIssueEscalated({ issueId }, context)
+}
+
+async function onIssueEscalated({ issueId }, context) {
+  await context.transact(async knex => {
+    // Find escalation policy for the issue
+    const policy = await knex('NotificationEscalationPolicy as nep')
+      .join('NotificationType as nt', 'nt.id', 'nep.notificationTypeId')
+      .join('Issue as i', function() {
+        // If issue is escalated past configured level, send again
+        // on escalation to maximum configured level
+        this.on('i.issueTypeId', 'nt.issueTypeId')
+          .andOn('i.partnerId', 'nt.partnerId')
+          .andOn('i.level', '>=', 'nep.level')
+      })
+      .where({ 'i.id': issueId })
+      .orderBy('nep.level', 'DESC')
+      .first('nep.level', 'nep.jobFunctionId', 'nep.messageTypeId')
+
+    // FIXME Find all people that should be receiving notification based on policy
+    // FIXME create Notication for all people that do not already have one
+  })
+}
+
+async function onIssueResolved(/* { issueId }, context */) {}
+
 module.exports = {
   listNotifications,
+  onIssueCreated,
+  onIssueEscalated,
+  onIssueResolved,
 }

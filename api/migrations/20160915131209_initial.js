@@ -1339,15 +1339,21 @@ async function up(knex) {
   await knex.schema.createTable('Notification', notification => {
     notification.increments('id')
     notification
-      .integer('notificationTypeId')
+      .integer('notificationEscalationPolicyId')
       .unsigned()
       .references('id')
-      .inTable('NotificationType')
+      .inTable('NotificationEscalationPolicy')
     notification
       .integer('issueId')
       .unsigned()
       .references('id')
       .inTable('Issue')
+    notification
+      .integer('personId')
+      .unsigned()
+      .references('id')
+      .inTable('Person')
+      .notNullable()
     notification.charset('utf8')
   })
 
