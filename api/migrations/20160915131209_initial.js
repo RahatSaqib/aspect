@@ -1011,9 +1011,6 @@ async function up(knex) {
       .references('id')
       .inTable('MessageSeverity')
       .notNullable()
-    messageType.string('name').notNullable()
-    messageType.string('i18nKey')
-    messageType.string('externalId')
     messageType.charset('utf8')
   })
 
@@ -1025,7 +1022,6 @@ async function up(knex) {
       .references('id')
       .inTable('MessageType')
       .notNullable()
-    alertTemplate.string('externalId')
     alertTemplate.string('message').notNullable()
     alertTemplate.charset('utf8')
   })
@@ -1051,6 +1047,7 @@ async function up(knex) {
       .inTable('MessageStatus')
       .notNullable()
     alertMessage.string('message').notNullable()
+    addTimestamps(alertMessage)
     alertMessage.charset('utf8')
   })
 
@@ -1062,7 +1059,6 @@ async function up(knex) {
       .references('id')
       .inTable('MessageType')
       .notNullable()
-    emailTemplate.string('externalId')
     emailTemplate.string('subject').notNullable()
     emailTemplate.string('body').notNullable()
     emailTemplate.string('htmlBody')
@@ -1092,6 +1088,7 @@ async function up(knex) {
     emailMessage.string('subject').notNullable()
     emailMessage.string('body').notNullable()
     emailMessage.string('htmlBody')
+    addTimestamps(emailMessage)
     emailMessage.charset('utf8')
   })
 
@@ -1103,7 +1100,6 @@ async function up(knex) {
       .references('id')
       .inTable('MessageType')
       .notNullable()
-    smsTemplate.string('externalId')
     smsTemplate.string('message').notNullable()
     smsTemplate.charset('utf8')
   })
@@ -1129,12 +1125,12 @@ async function up(knex) {
       .inTable('MessageStatus')
       .notNullable()
     smsMessage.string('message').notNullable()
+    addTimestamps(smsMessage)
     smsMessage.charset('utf8')
   })
 
   await knex.schema.createTable('WebhookTemplate', webhookTemplate => {
     webhookTemplate.increments('id')
-    webhookTemplate.string('externalId')
     webhookTemplate
       .integer('messageTypeId')
       .unsigned()
@@ -1172,6 +1168,7 @@ async function up(knex) {
     webhookMessage.string('url').notNullable()
     webhookMessage.specificType('headers', 'JSON')
     webhookMessage.string('body')
+    addTimestamps(webhookMessage)
     webhookMessage.charset('utf8')
   })
 
@@ -1230,6 +1227,7 @@ async function up(knex) {
       .index()
       .references('id')
       .inTable('Partner')
+      .notNullable()
     issue
       .integer('geographyId')
       .unsigned()
@@ -1245,7 +1243,6 @@ async function up(knex) {
     issue
       .integer('deviceId')
       .unsigned()
-      .notNullable()
       .index()
       .references('id')
       .inTable('Device')
@@ -1265,26 +1262,26 @@ async function up(knex) {
       .integer('level')
       .notNullable()
       .defaultTo(1)
-    issue.string('name').notNullable()
-    issue.string('description').notNullable()
-    addCreateFieldsNullable(issue)
-    addUpdateFieldsNullable(issue)
+    addTimestamps(issue)
     issue.charset('utf8')
   })
 
   await knex.schema.createTable('IssueEvent', issueEvent => {
+    issueEvent.increments('id')
     issueEvent
       .integer('issueEventStatusId')
       .unsigned()
       .references('id')
       .inTable('issueEventStatus')
+      .notNullable()
     issueEvent
       .integer('issueId')
       .unsigned()
       .references('id')
       .inTable('Issue')
-    addCreateFieldsNullable(issueEvent)
+      .notNullable()
     issueEvent.specificType('data', 'JSON')
+    addTimestamps(issueEvent, { update: false })
     issueEvent.charset('utf8')
   })
 
@@ -1303,7 +1300,10 @@ async function up(knex) {
       .unsigned()
       .references('id')
       .inTable('IssueType')
+      .notNullable()
     notificationType.string('name').notNullable()
+    addCreateFields(notificationType)
+    addUpdateFields(notificationType)
     notificationType.charset('utf8')
   })
 
@@ -1317,12 +1317,14 @@ async function up(knex) {
         .index()
         .references('id')
         .inTable('NotificationType')
+        .notNullable()
       notificationEscalationPolicy
         .integer('jobFunctionId')
         .unsigned()
         .index()
         .references('id')
         .inTable('JobFunction')
+        .notNullable()
       notificationEscalationPolicy
         .integer('level')
         .notNullable()
@@ -1332,6 +1334,9 @@ async function up(knex) {
         .unsigned()
         .references('id')
         .inTable('MessageType')
+        .notNullable()
+      addCreateFields(notificationEscalationPolicy)
+      addUpdateFields(notificationEscalationPolicy)
       notificationEscalationPolicy.charset('utf8')
     }
   )
@@ -1339,21 +1344,24 @@ async function up(knex) {
   await knex.schema.createTable('Notification', notification => {
     notification.increments('id')
     notification
-      .integer('notificationEscalationPolicyId')
-      .unsigned()
-      .references('id')
-      .inTable('NotificationEscalationPolicy')
-    notification
       .integer('issueId')
       .unsigned()
       .references('id')
       .inTable('Issue')
+      .notNullable()
+    notification
+      .integer('notificationEscalationPolicyId')
+      .unsigned()
+      .references('id')
+      .inTable('NotificationEscalationPolicy')
+      .notNullable()
     notification
       .integer('personId')
       .unsigned()
       .references('id')
       .inTable('Person')
       .notNullable()
+    addTimestamps(notification, { update: false })
     notification.charset('utf8')
   })
 
@@ -1364,6 +1372,7 @@ async function up(knex) {
       .unsigned()
       .references('id')
       .inTable('Notification')
+      .notNullable()
     notificationLog
       .integer('alertMessageId')
       .unsigned()
@@ -1384,6 +1393,7 @@ async function up(knex) {
       .unsigned()
       .references('id')
       .inTable('WebhookMessage')
+    addTimestamps(notificationLog, { update: false })
     notificationLog.charset('utf8')
   })
 
@@ -1714,4 +1724,18 @@ function addUpdateFieldsNullable(table) {
     .index()
     .references('id')
     .inTable('User')
+}
+
+function addTimestamps(table, { nullable = false, update = true }) {
+  if (nullable) {
+    table.dateTime('createdOn')
+    if (update) {
+      table.dateTime('updatedOn')
+    }
+  } else {
+    table.dateTime('createdOn').notNullable()
+    if (update) {
+      table.dateTime('updatedOn').notNullable()
+    }
+  }
 }

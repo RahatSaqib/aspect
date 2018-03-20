@@ -1,5 +1,6 @@
 const _ = require('lodash')
 const subMinutes = require('date-fns/sub_minutes')
+const { notificationCreated } = require('./actions')
 
 async function listNotifications(request) {
   const { query } = request
@@ -124,7 +125,10 @@ async function onIssueCreated({ issueId }, context) {
 }
 
 async function onIssueEscalated({ issueId }, context) {
+  context.bindActionCreators({ notificationCreated })
   await context.transact(async knex => {
+    const now = new Date()
+
     // Find escalation policy for the issue
     const policy = await knex('NotificationEscalationPolicy as nep')
       .join('NotificationType as nt', 'nt.id', 'nep.notificationTypeId')
@@ -139,8 +143,31 @@ async function onIssueEscalated({ issueId }, context) {
       .orderBy('nep.level', 'DESC')
       .first('nep.level', 'nep.jobFunctionId', 'nep.messageTypeId')
 
-    // FIXME Find all people that should be receiving notification based on policy
-    // FIXME create Notication for all people that do not already have one
+    if (policy) {
+      // FIXME Find all people that should be receiving notification based on policy
+      const people = []
+
+      // Issue notification to every person assigned, (subscriber will create as necessary)
+      await Promise.all(
+        people.map(async person => {
+          const notification = {
+            issueId,
+            notificationEscalationPolicyId: policy.id,
+            personId: person.id,
+          }
+          const existingNotification = await knex('Notification')
+            .where(notification)
+            .first()
+          if (existingNotification == null) {
+            notification.createdOn = now
+            const [notificationId] = await knex('Notification').insert(
+              notification
+            )
+            context.notificationCreated(notificationId)
+          }
+        })
+      )
+    }
   })
 }
 
