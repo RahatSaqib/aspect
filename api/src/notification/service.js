@@ -1,5 +1,6 @@
 const _ = require('lodash')
 const subMinutes = require('date-fns/sub_minutes')
+const { getJobConstraints, addConstraints } = require('../auth/constraints')
 const { notificationCreated } = require('./actions')
 const { alertMessageCreated } = require('../alert/actions')
 const { emailMessageCreated } = require('../email/actions')
@@ -142,34 +143,60 @@ async function onIssueEscalated({ issueId }, context) {
           .andOn('i.partnerId', 'nt.partnerId')
           .andOn('i.level', '>=', 'nep.level')
       })
+      .leftJoin('Geography as g', 'i.geographyId', 'g.id')
       .where({ 'i.id': issueId })
       .orderBy('nep.level', 'DESC')
-      .first('nep.level', 'nep.jobFunctionId', 'nep.messageTypeId')
+      .first(
+        'nep.jobFunctionId',
+        'i.siteId',
+        'g.countryId',
+        'g.stateId',
+        'g.lgaId'
+      )
 
     if (policy) {
       const people = await knex('Job as j')
         .join('JobFunction as jf', 'j.jobFunctionId', 'jf.id')
         .where({ 'jf.id': policy.jobFunctionId })
-        .select('j.personId as id')
-      // FIXME need to limit person by JobContext and Issue deviceId, siteId, etc.
+        .distinct('j.personId as id')
 
       // Issue notification to every person assigned, (subscriber will create as necessary)
       await Promise.all(
         people.map(async person => {
-          const notification = {
-            issueId,
-            notificationEscalationPolicyId: policy.id,
-            personId: person.id,
-          }
-          const existingNotification = await knex('Notification')
-            .where(notification)
-            .first()
-          if (existingNotification == null) {
-            notification.createdOn = now
-            const [notificationId] = await knex('Notification').insert(
-              notification
-            )
-            context.notificationCreated(notificationId)
+          // does person have job context that can see this issue?
+          const constraints = await getJobConstraints(
+            person.id,
+            policy.jobFunctionId
+          )
+          const issuePermitted = await knex('Issue as i')
+            .leftJoin('Device as d', 'i.deviceId', 'd.id')
+            .leftJoin('Site as s', 'i.siteId', 's.id')
+            .leftJoin('Geography as g', 'i.geographyId', 'g.id')
+            .leftJoin('Partner as p', 'i.partnerId', 'p.id')
+            .modify(addConstraints, constraints, {
+              device: 'd',
+              site: 's',
+              geography: 'g',
+              partner: 'p',
+            })
+            .where({ 'i.id': issueId })
+            .first('i.id')
+          if (issuePermitted != null) {
+            const notification = {
+              issueId,
+              notificationEscalationPolicyId: policy.id,
+              personId: person.id,
+            }
+            const existingNotification = await knex('Notification')
+              .where(notification)
+              .first()
+            if (existingNotification == null) {
+              notification.createdOn = now
+              const [notificationId] = await knex('Notification').insert(
+                notification
+              )
+              context.notificationCreated(notificationId)
+            }
           }
         })
       )
@@ -208,7 +235,7 @@ async function onNotificationCreated({ notificationId }, context) {
           'n.personId',
           'mt.alertTemplateId',
           'mt.emailTemplateId',
-          'mt.smsTemplateId',
+          'mt.smsTemplateId'
         )
 
       const { messageStatusId } = await knex('MessageStatus')

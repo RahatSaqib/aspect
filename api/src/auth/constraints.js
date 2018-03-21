@@ -9,57 +9,94 @@ function alias(table) {
   return `${ALIAS_PREFIX}_${table}`
 }
 
-function getConstraints(credentials) {
-  return getUser(credentials.name).then(user => {
-    const constraints = {
-      partner: {
-        id: user.partnerId,
-      },
-      country: {
-        id: user.countryId,
-      },
-    }
+async function getConstraints(credentials) {
+  const user = await getUser(credentials.name)
+  const constraints = {
+    partner: {
+      id: user.partnerId,
+    },
+    country: {
+      id: user.countryId,
+    },
+  }
 
-    const jobContextsQ = knex('JobContext as jc')
-      .leftJoin('Site as s', 'jc.siteId', 's.id')
-      .leftJoin('Geography as g', 'jc.geographyId', 'g.id')
-      .innerJoin('Job as j', 'jc.jobId', 'j.id')
-      .innerJoin('JobFunction as jf', 'j.jobFunctionId', 'jf.id')
-      .innerJoin('Person as ps', 'j.personId', 'ps.id')
-      .where({
-        'ps.userId': user.id,
-        'jf.partnerId': user.partnerId,
-      })
-      .select('s.id as siteId', 'g.countryId', 'g.stateId', 'g.lgaId')
-
-    return jobContextsQ.then(jobContexts => {
-      const filterConstraints = jobContexts.map(context => {
-        const constraint = {}
-
-        // constrain to most specific site/geography
-        // works because all geographies include higher levels
-        if (context.siteId != null) {
-          constraint.site = { id: context.siteId }
-        } else if (context.lgaId != null) {
-          constraint.geography = { lgaId: context.lgaId }
-        } else if (context.stateId != null) {
-          constraint.geography = { stateId: context.stateId }
-        } else if (context.countryId != null) {
-          constraint.geography = { countryId: context.countryId }
-        }
-        return constraint
-      })
-      if (filterConstraints.length) {
-        constraints.$or = filterConstraints
-      }
-      return constraints
+  const jobContexts = await knex('JobContext as jc')
+    .leftJoin('Geography as g', 'jc.geographyId', 'g.id')
+    .innerJoin('Job as j', 'jc.jobId', 'j.id')
+    .innerJoin('JobFunction as jf', 'j.jobFunctionId', 'jf.id')
+    .innerJoin('Person as ps', 'j.personId', 'ps.id')
+    .where({
+      'ps.userId': user.id,
+      'jf.partnerId': user.partnerId,
     })
-  })
+    .select('jc.siteId', 'g.countryId', 'g.stateId', 'g.lgaId')
+
+  const filterConstraints = jobContexts.map(getJobContextConstraint)
+  if (filterConstraints.length) {
+    constraints.$or = filterConstraints
+  }
+
+  return constraints
+}
+
+async function getJobConstraints(personId, jobFunctionId) {
+  const jobContexts = await knex('JobContext as jc')
+    .leftJoin('Site as s', 'jc.siteId', 's.id')
+    .leftJoin('Geography as g', 'jc.geographyId', 'g.id')
+    .innerJoin('Job as j', 'jc.jobId', 'j.id')
+    .innerJoin('JobFunction as jf', 'j.jobFunctionId', 'jf.id')
+    .where({
+      'j.personId': personId,
+      'jf.id': jobFunctionId,
+    })
+    .select(
+      'jf.partnerId',
+      's.id as siteId',
+      'g.countryId',
+      'g.stateId',
+      'g.lgaId'
+    )
+
+  if (jobContexts.length === 0) {
+    return null
+  }
+
+  const constraints = {
+    partner: {
+      id: jobContexts[0].partnerId,
+    },
+  }
+
+  const filterConstraints = jobContexts.map(getJobContextConstraint)
+  constraints.$or = filterConstraints
+  return constraints
+}
+
+function getJobContextConstraint(context) {
+  const constraint = {}
+
+  // constrain to most specific site/geography
+  // works because all geographies include higher levels
+  if (context.siteId != null) {
+    constraint.site = { id: context.siteId }
+  } else if (context.lgaId != null) {
+    constraint.geography = { lgaId: context.lgaId }
+  } else if (context.stateId != null) {
+    constraint.geography = { stateId: context.stateId }
+  } else if (context.countryId != null) {
+    constraint.geography = { countryId: context.countryId }
+  }
+  return constraint
 }
 
 function addConstraints(queryBuilder, constraints, aliases) {
   let { partner, geography, site } = aliases
   const { device, sample } = aliases
+
+  if (constraints == null) {
+    queryBuilder.whereRaw('0 = 1')
+    return
+  }
 
   // TODO generalize constraint building
   // TODO only join queries if needed within constraints or required by unspecified aliases
@@ -166,6 +203,7 @@ function canEdit(auth, flag) {
 
 module.exports = {
   getConstraints,
+  getJobConstraints,
   addConstraints,
   canView,
   canViewSites,
