@@ -1,5 +1,5 @@
 const Joi = require('joi')
-const { asyncHandler } = require('../routes')
+const { asyncHandler, validateDateRangeParams } = require('../routes')
 const {
   summaryDashboard,
   resultDashboard,
@@ -19,12 +19,15 @@ const routes = [
       notes: 'The top level summary dashboard',
       auth: { scope: ['site', 'device'] },
       validate: {
-        query: Object.assign({
-          layout: Joi.string()
-            .valid('stat', 'target')
-            .required()
-            .description('Filter for layout type'),
-        }),
+        query: Object.assign(
+          {
+            layout: Joi.string()
+              .valid('stat', 'target')
+              .required()
+              .description('Filter for layout type'),
+          },
+          validateDateRangeParams()
+        ),
       },
     },
   },

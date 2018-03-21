@@ -27,7 +27,7 @@ const TemperatureGauge = ({
   const tubeHeight = bulbY - tubeY - bulbRadius + tubeBorderWidth
 
   const tubeBorderColor = '#91949d'
-  const tubeFillcolor = '#fff'
+  const tubeFillColor = '#fff'
 
   const axisScale = scaleLinear({
     rangeRound: [tubeHeight, 0],
@@ -36,7 +36,7 @@ const TemperatureGauge = ({
   })
 
   const fillScale = scaleLinear({
-    rangeRound: [tubeY + tubeHeight - 2, tubeY],
+    rangeRound: [tubeY + tubeHeight, tubeY],
     nice: true,
     domain: [0, 10],
   })
@@ -64,7 +64,7 @@ const TemperatureGauge = ({
           height={tubeHeight}
           width={tubeWidth}
           shapeRendering="crispEdges"
-          fill={tubeFillcolor}
+          fill={tubeFillColor}
           stroke={tubeBorderColor}
           strokeWidth={tubeBorderWidth}
         />
@@ -73,7 +73,7 @@ const TemperatureGauge = ({
           r={bulbRadius}
           cx={bulbX}
           cy={bulbY}
-          fill={value > 0 ? fillColor : tubeFillcolor}
+          fill={value > 0 ? fillColor : tubeFillColor}
           stroke={tubeBorderColor}
           strokeWidth={tubeBorderWidth}
         />
@@ -84,7 +84,7 @@ const TemperatureGauge = ({
           height={tubeHeight}
           width={tubeWidth - tubeBorderWidth}
           shapeRendering="crispEdges"
-          fill={tubeFillcolor}
+          fill={tubeFillColor}
           stroke="none"
         />
 

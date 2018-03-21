@@ -1,5 +1,5 @@
 const _ = require('lodash')
-const { knex } = require('../db')
+const { knex, filterDateRangeParams } = require('../db')
 const {
   getConstraints,
   addConstraints,
@@ -97,29 +97,44 @@ function getSqlBuilder(sql) {
   return sqlBuilder
 }
 
-function queryCount(sql, dataConstraints) {
+function queryCount(sql, dataConstraints, query) {
   const sqlTableAlias = getTableAlias(sql)
   const sqlBuilder = getSqlBuilder(sql)
-  const cnt = sqlBuilder
-    ? sqlBuilder.modify(addConstraints, dataConstraints, sqlTableAlias)
-    : null
-  return cnt
+  if (sqlBuilder) {
+    sqlBuilder.modify(addConstraints, dataConstraints, sqlTableAlias)
+    if (sqlTableAlias.result) {
+      sqlBuilder.modify(filterDateRangeParams, query, 'r.endedOn')
+    }
+  }
+  return sqlBuilder
 }
 
 async function summaryDashboard(request) {
-  const { auth, query: { layout } } = request
+  const { auth, query } = request
   // get data constraints
   const dataConstraints = await getConstraints(auth.credentials)
 
   const user = await getUser(auth.credentials.name)
-  const widgets = await getDashboardWidget(user, layout)
+  const widgets = await getDashboardWidget(user, query.layout)
 
   const data = await Promise.all(
     widgets.map(async widget => {
-      const count = await queryCount(widget.sqlForIndicator, dataConstraints)
-      const target = await queryCount(widget.sqlForTarget, dataConstraints)
-      const unit = await queryCount(widget.sqlForStatUnit, dataConstraints)
-      const extra = await queryCount(widget.sqlForExtra, dataConstraints)
+      const count = await queryCount(
+        widget.sqlForIndicator,
+        dataConstraints,
+        query
+      )
+      const target = await queryCount(
+        widget.sqlForTarget,
+        dataConstraints,
+        query
+      )
+      const unit = await queryCount(
+        widget.sqlForStatUnit,
+        dataConstraints,
+        query
+      )
+      const extra = await queryCount(widget.sqlForExtra, dataConstraints, query)
       return _.assign(
         _.omit(widget, [
           'sqlForIndicator',

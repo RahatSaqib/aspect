@@ -49,8 +49,8 @@ function receiveSummaryDashboard(type, requestedAt, data) {
   }
 }
 
-export function fetchStatDashboard(filtersParams) {
-  const filters = _.fromPairs([['layout', 'stat'], ...filtersParams.entries()])
+export function fetchStatDashboard() {
+  const filters = _.fromPairs([['layout', 'stat']])
   return fetchSummaryDashboard(
     filters,
     REQUEST_SUMMARY_DASHBOARD,
@@ -71,7 +71,7 @@ export function fetchTargetDashboard(filtersParams) {
 
 function fetchSummaryDashboard(filters, requestType, receiveType) {
   return dispatch => {
-    const requestedAt = Date.now()
+    const requestedAt = `summary_${Date.now()}`
     dispatch(requestSummaryDashboard(requestType, requestedAt))
 
     return aspectFetch(
@@ -122,7 +122,7 @@ function receiveResultDashboard(requestedAt, data) {
 
 export function fetchResultDashboard() {
   return dispatch => {
-    const requestedAt = Date.now()
+    const requestedAt = `result_${Date.now()}`
     dispatch(requestResultDashboard(requestedAt))
 
     return aspectFetch('/dashboard/result', {
@@ -158,7 +158,7 @@ function receiveInventoryItemDashboard(requestedAt, data) {
 
 export function fetchInventoryItemDashboard() {
   return dispatch => {
-    const requestedAt = Date.now()
+    const requestedAt = `inventory_${Date.now()}`
     dispatch(requestInventoryItemDashboard(requestedAt))
 
     return aspectFetch('/dashboard/inventory-item', {
@@ -196,7 +196,7 @@ function receiveDeviceDashboard(requestedAt, data) {
 
 export function fetchDeviceDashboard() {
   return dispatch => {
-    const requestedAt = Date.now()
+    const requestedAt = `device_${Date.now()}`
     dispatch(requestDeviceDashboard(requestedAt))
 
     return aspectFetch('/dashboard/device', {
@@ -232,7 +232,7 @@ function receiveSiteDashboard(requestedAt, data) {
 
 export function fetchSiteDashboard() {
   return dispatch => {
-    const requestedAt = Date.now()
+    const requestedAt = `site_${Date.now()}`
     dispatch(requestSiteDashboard(requestedAt))
 
     return aspectFetch('/dashboard/site', {
@@ -268,7 +268,7 @@ function receiveOperationalStatus(requestedAt, data) {
 export function fetchOperationalStatus(filtersParams) {
   return dispatch => {
     const filters = _.fromPairs([...filtersParams.entries()])
-    const requestedAt = Date.now()
+    const requestedAt = `operational_${Date.now()}`
     dispatch(requestOperationalStatus(requestedAt))
 
     return aspectFetch(
