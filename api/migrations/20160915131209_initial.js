@@ -1246,7 +1246,6 @@ async function up(knex) {
   })
 
   // Notifications
-  // TODO remove NotificationType, merge into NotificationEscalationPolicy?
   await knex.schema.createTable('NotificationType', notificationType => {
     notificationType.increments('id')
     notificationType
@@ -1262,58 +1261,42 @@ async function up(knex) {
       .references('id')
       .inTable('IssueType')
       .notNullable()
+    notificationType
+      .integer('jobFunctionId')
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('JobFunction')
+      .notNullable()
+    notificationType
+      .integer('level')
+      .notNullable()
+      .defaultTo(1)
+    notificationType
+      .integer('messageTypeId')
+      .unsigned()
+      .references('id')
+      .inTable('MessageType')
+      .notNullable()
+    notificationType.string('name').notNullable()
     addCreateFields(notificationType)
     addUpdateFields(notificationType)
     notificationType.charset('utf8')
   })
 
-  await knex.schema.createTable(
-    'NotificationEscalationPolicy',
-    notificationEscalationPolicy => {
-      notificationEscalationPolicy.increments('id')
-      notificationEscalationPolicy
-        .integer('notificationTypeid')
-        .unsigned()
-        .index()
-        .references('id')
-        .inTable('NotificationType')
-        .notNullable()
-      notificationEscalationPolicy
-        .integer('jobFunctionId')
-        .unsigned()
-        .index()
-        .references('id')
-        .inTable('JobFunction')
-        .notNullable()
-      notificationEscalationPolicy
-        .integer('level')
-        .notNullable()
-        .defaultTo(1)
-      notificationEscalationPolicy
-        .integer('messageTypeId')
-        .unsigned()
-        .references('id')
-        .inTable('MessageType')
-        .notNullable()
-      addCreateFields(notificationEscalationPolicy)
-      addUpdateFields(notificationEscalationPolicy)
-      notificationEscalationPolicy.charset('utf8')
-    }
-  )
-
   await knex.schema.createTable('Notification', notification => {
     notification.increments('id')
+    notification
+      .integer('notificationTypeId')
+      .unsigned()
+      .references('id')
+      .inTable('NotificationType')
+      .notNullable()
     notification
       .integer('issueId')
       .unsigned()
       .references('id')
       .inTable('Issue')
-      .notNullable()
-    notification
-      .integer('notificationEscalationPolicyId')
-      .unsigned()
-      .references('id')
-      .inTable('NotificationEscalationPolicy')
       .notNullable()
     notification
       .integer('personId')
@@ -1583,7 +1566,6 @@ async function down(knex) {
   await knex.schema.dropTableIfExists('DeviceRole')
   await knex.schema.dropTableIfExists('DeviceApiKey')
   await knex.schema.dropTableIfExists('RefreshToken')
-  await knex.schema.dropTableIfExists('NotificationEscalationPolicy')
   await knex.schema.dropTableIfExists('NotificationLog')
   await knex.schema.dropTableIfExists('Notification')
   await knex.schema.dropTableIfExists('NotificationType')

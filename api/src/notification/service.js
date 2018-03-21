@@ -134,20 +134,20 @@ async function onIssueEscalated({ issueId }, context) {
     const now = new Date()
 
     // Find escalation policy for the issue
-    const policy = await knex('NotificationEscalationPolicy as nep')
-      .join('NotificationType as nt', 'nt.id', 'nep.notificationTypeId')
+    const policy = await knex('NotificationType as nt')
       .join('Issue as i', function() {
         // If issue is escalated past configured level, send again
         // on escalation to maximum configured level
         this.on('i.issueTypeId', 'nt.issueTypeId')
           .andOn('i.partnerId', 'nt.partnerId')
-          .andOn('i.level', '>=', 'nep.level')
+          .andOn('i.level', '>=', 'nt.level')
       })
       .leftJoin('Geography as g', 'i.geographyId', 'g.id')
       .where({ 'i.id': issueId })
-      .orderBy('nep.level', 'DESC')
+      .orderBy('nt.level', 'DESC')
       .first(
-        'nep.jobFunctionId',
+        'nt.id',
+        'nt.jobFunctionId',
         'i.siteId',
         'g.countryId',
         'g.stateId',
@@ -184,7 +184,7 @@ async function onIssueEscalated({ issueId }, context) {
           if (issuePermitted != null) {
             const notification = {
               issueId,
-              notificationEscalationPolicyId: policy.id,
+              notificationTypeId: policy.id,
               personId: person.id,
             }
             const existingNotification = await knex('Notification')
@@ -224,12 +224,8 @@ async function onNotificationCreated({ notificationId }, context) {
         emailTemplateId,
         smsTemplateId,
       } = await knex('Notification as n')
-        .join(
-          'NotificationEscalationPolicy as nep',
-          'n.notificationEscalationPolicyId',
-          'nep.id'
-        )
-        .join('MessageType as mt', 'nep.messageTypeId', 'mt.id')
+        .join('NotificationType as nt', 'n.notificationTypeId', 'nt.id')
+        .join('MessageType as mt', 'nt.messageTypeId', 'mt.id')
         .where({ 'n.id': notificationId })
         .first(
           'n.personId',

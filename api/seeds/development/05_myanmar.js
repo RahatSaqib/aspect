@@ -541,22 +541,12 @@ async function seed(knex) {
   )
 
   // Notifications
-  const [deviceOfflineNotificationTypeId] = await knex(
-    'NotificationType'
-  ).insert(
+  await knex('NotificationType').insert([
     Object.assign(
       {
+        name: 'LU Network',
         partnerId,
         issueTypeId: issueTypes.DeviceOffline.id,
-      },
-      auditFields
-    )
-  )
-
-  await knex('NotificationEscalationPolicy').insert([
-    Object.assign(
-      {
-        notificationTypeId: deviceOfflineNotificationTypeId,
         jobFunctionId: jobFunctionIdLabUser,
         level: 1,
         messageTypeId: defaultMessageTypes.DeviceOffline.id,
@@ -565,7 +555,9 @@ async function seed(knex) {
     ),
     Object.assign(
       {
-        notificationTypeId: deviceOfflineNotificationTypeId,
+        name: 'RO Network',
+        partnerId,
+        issueTypeId: issueTypes.DeviceOffline.id,
         jobFunctionId: jobFunctionIdRegionalOfficer,
         level: 2,
         messageTypeId: defaultMessageTypes.DeviceOffline.id,
@@ -574,7 +566,9 @@ async function seed(knex) {
     ),
     Object.assign(
       {
-        notificationTypeId: deviceOfflineNotificationTypeId,
+        name: 'RO Escalated Network',
+        partnerId,
+        issueTypeId: issueTypes.DeviceOffline.id,
         jobFunctionId: jobFunctionIdRegionalOfficer,
         level: 3,
         messageTypeId: defaultMessageTypes.DeviceOffline.id,
