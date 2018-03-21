@@ -264,7 +264,7 @@ async function seed(knex) {
       await Promise.all(
         _.map(targetTokens, async token => {
           const targetValue = 350 + Math.floor(Math.random() * 200 - 100)
-          await knex('TestingTarget').insert({
+          await knex('Target').insert({
             geographyId: regionId,
             targetToken: token,
             targetValue,
