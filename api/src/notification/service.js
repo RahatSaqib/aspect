@@ -129,12 +129,18 @@ async function onIssueCreated({ issueId }, context) {
 }
 
 async function onIssueEscalated({ issueId }, context) {
-  context.bindActionCreators({ notificationCreated })
+  context.bindActionCreators({
+    notificationCreated,
+    alertMessageCreated,
+    emailMessageCreated,
+    smsMessageCreated,
+  })
   await context.transact(async knex => {
     const now = new Date()
 
     // Find escalation policy for the issue
     const policy = await knex('NotificationType as nt')
+      .join('MessageType as mt', 'nt.messageTypeId', 'mt.id')
       .join('Issue as i', function() {
         // If issue is escalated past configured level, send again
         // on escalation to maximum configured level
@@ -151,7 +157,10 @@ async function onIssueEscalated({ issueId }, context) {
         'i.siteId',
         'g.countryId',
         'g.stateId',
-        'g.lgaId'
+        'g.lgaId',
+        'mt.alertTemplateId',
+        'mt.emailTemplateId',
+        'mt.smsTemplateId'
       )
 
     if (policy) {
@@ -192,6 +201,57 @@ async function onIssueEscalated({ issueId }, context) {
               .first()
             if (existingNotification == null) {
               notification.createdOn = now
+
+              const { messageStatusId } = await knex('MessageStatus')
+                .where({ externalId: 'Initial' })
+                .first()
+
+              const sharedMessageProperties = {
+                personId: person.id,
+                messageStatusId,
+                createdOn: now,
+                updatedOn: now,
+              }
+
+              if (policy.alertTemplateId != null) {
+                const [alertMessageId] = await knex('AlertMessage').insert(
+                  Object.assign(
+                    {
+                      alertTemplateId: policy.alertTemplateId,
+                    },
+                    sharedMessageProperties
+                  )
+                )
+                notification.alertMessageId = alertMessageId
+                context.alertMessageCreated(alertMessageId)
+              }
+
+              if (policy.emailTemplateId != null) {
+                const [emailMessageId] = await knex('EmailMessage').insert(
+                  Object.assign(
+                    {
+                      emailTemplateId: policy.emailTemplateId,
+                    },
+                    sharedMessageProperties
+                  )
+                )
+                notification.emailMessageId = emailMessageId
+                context.emailMessageCreated(emailMessageId)
+              }
+
+              if (policy.smsTemplateId != null) {
+                const [smsMessageId] = await knex('SmsMessage').insert(
+                  Object.assign(
+                    {
+                      smsTemplateId: policy.smsTemplateId,
+                    },
+                    sharedMessageProperties
+                  )
+                )
+                notification.smsMessageId = smsMessageId
+                context.smsMessageCreated(smsMessageId)
+              }
+
               const [notificationId] = await knex('Notification').insert(
                 notification
               )
@@ -206,99 +266,9 @@ async function onIssueEscalated({ issueId }, context) {
 
 async function onIssueResolved(/* { issueId }, context */) {}
 
-async function onNotificationCreated({ notificationId }, context) {
-  const now = new Date()
-  context.bindActionCreators({
-    alertMessageCreated,
-    emailMessageCreated,
-    smsMessageCreated,
-  })
-  await context.transact(async knex => {
-    const existingLog = await knex('NotificationLog')
-      .where({ notificationId })
-      .first()
-    if (existingLog == null) {
-      const {
-        personId,
-        alertTemplateId,
-        emailTemplateId,
-        smsTemplateId,
-      } = await knex('Notification as n')
-        .join('NotificationType as nt', 'n.notificationTypeId', 'nt.id')
-        .join('MessageType as mt', 'nt.messageTypeId', 'mt.id')
-        .where({ 'n.id': notificationId })
-        .first(
-          'n.personId',
-          'mt.alertTemplateId',
-          'mt.emailTemplateId',
-          'mt.smsTemplateId'
-        )
-
-      const { messageStatusId } = await knex('MessageStatus')
-        .where({ externalId: 'Initial' })
-        .first()
-
-      const sharedMessageProperties = {
-        personId,
-        messageStatusId,
-        createdOn: now,
-        updatedOn: now,
-      }
-
-      let alertMessageId = null
-      if (alertTemplateId != null) {
-        ;[alertMessageId] = await knex('AlertMessage').insert(
-          Object.assign(
-            {
-              alertTemplateId,
-            },
-            sharedMessageProperties
-          )
-        )
-        context.alertMessageCreated(alertMessageId)
-      }
-
-      let emailMessageId = null
-      if (emailTemplateId != null) {
-        ;[emailMessageId] = await knex('EmailMessage').insert(
-          Object.assign(
-            {
-              emailTemplateId,
-            },
-            sharedMessageProperties
-          )
-        )
-        context.emailMessageCreated(emailMessageId)
-      }
-
-      let smsMessageId = null
-      if (smsTemplateId != null) {
-        ;[smsMessageId] = await knex('SmsMessage').insert(
-          Object.assign(
-            {
-              smsTemplateId,
-            },
-            sharedMessageProperties
-          )
-        )
-        context.smsMessageCreated(smsMessageId)
-      }
-
-      await knex('NotificationLog').insert({
-        notificationId,
-        alertMessageId,
-        emailMessageId,
-        smsMessageId,
-        createdOn: now,
-      })
-    }
-  })
-}
-
 module.exports = {
   listNotifications,
   onIssueCreated,
   onIssueEscalated,
   onIssueResolved,
-  onNotificationCreated,
 }

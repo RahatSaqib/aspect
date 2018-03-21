@@ -1304,36 +1304,23 @@ async function up(knex) {
       .references('id')
       .inTable('Person')
       .notNullable()
-    addTimestamps(notification, { update: false })
-    notification.charset('utf8')
-  })
-
-  // TODO Remove NotificationLog, merge into Notification with status?
-  await knex.schema.createTable('NotificationLog', notificationLog => {
-    notificationLog.increments('id')
-    notificationLog
-      .integer('notificationId')
-      .unsigned()
-      .references('id')
-      .inTable('Notification')
-      .notNullable()
-    notificationLog
+    notification
       .integer('alertMessageId')
       .unsigned()
       .references('id')
       .inTable('AlertMessage')
-    notificationLog
+    notification
       .integer('emailMessageId')
       .unsigned()
       .references('id')
       .inTable('EmailMessage')
-    notificationLog
+    notification
       .integer('smsMessageId')
       .unsigned()
       .references('id')
       .inTable('SmsMessage')
-    addTimestamps(notificationLog, { update: false })
-    notificationLog.charset('utf8')
+    addTimestamps(notification, { update: false })
+    notification.charset('utf8')
   })
 
   // facts-table for result counts by device
@@ -1566,7 +1553,6 @@ async function down(knex) {
   await knex.schema.dropTableIfExists('DeviceRole')
   await knex.schema.dropTableIfExists('DeviceApiKey')
   await knex.schema.dropTableIfExists('RefreshToken')
-  await knex.schema.dropTableIfExists('NotificationLog')
   await knex.schema.dropTableIfExists('Notification')
   await knex.schema.dropTableIfExists('NotificationType')
   await knex.schema.dropTableIfExists('IssueEvent')

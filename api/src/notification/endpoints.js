@@ -5,7 +5,6 @@ const {
   onIssueCreated,
   onIssueEscalated,
   onIssueResolved,
-  onNotificationCreated,
 } = require('./service')
 
 const routes = [
@@ -43,7 +42,6 @@ const subscriptions = [
       ISSUE_CREATED: onIssueCreated,
       ISSUE_ESCALATED: onIssueEscalated,
       ISSUE_RESOLVED: onIssueResolved,
-      NOTIFICATION_CREATED: onNotificationCreated,
     },
   },
 ]
