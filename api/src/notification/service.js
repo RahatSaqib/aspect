@@ -155,6 +155,8 @@ async function onIssueEscalated({ issueId }, context) {
         'nt.id',
         'nt.jobFunctionId',
         'i.siteId',
+        'i.deviceId',
+        'i.resultId',
         'g.countryId',
         'g.stateId',
         'g.lgaId',
@@ -207,8 +209,11 @@ async function onIssueEscalated({ issueId }, context) {
                 .first()
 
               const sharedMessageProperties = {
-                personId: person.id,
                 messageStatusId,
+                personId: person.id,
+                siteId: policy.siteId,
+                deviceId: policy.deviceId,
+                resultId: policy.resultId,
                 createdOn: now,
                 updatedOn: now,
               }
