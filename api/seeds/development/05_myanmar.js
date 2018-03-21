@@ -53,7 +53,7 @@ async function seed(knex) {
     resultTypes,
     resultWorkflowStatuses,
     issueTypes,
-    messageTypes,
+    defaultMessageTypes,
   ] = await Promise.all([
     rowsAsObject(knex, 'PartnerType', 'name'),
     rowsAsObject(knex, 'DeviceType', 'externalId'),
@@ -65,7 +65,7 @@ async function seed(knex) {
     rowsAsObject(knex, 'ResultType', 'externalId'),
     rowsAsObject(knex, 'ResultWorkflowStatus', 'externalId'),
     rowsAsObject(knex, 'IssueType', 'externalId'),
-    rowsAsObject(knex, 'MessageType', 'externalId'),
+    getDefaultMessageTypes(knex),
   ])
 
   const [partnerId] = await knex('Partner').insert({
@@ -541,25 +541,46 @@ async function seed(knex) {
   )
 
   // Notifications
-  await knex('NotificationType').insert([
-    {
-      partnerId,
-      issueTypeId: issueTypes.DeviceOffline.id,
-      messageTypeId: messageTypes.DeviceOfflineLevel1.id,
-      name: messageTypes.DeviceOfflineLevel1.name,
-    },
-    {
-      partnerId,
-      issueTypeId: issueTypes.DeviceOffline.id,
-      messageTypeId: messageTypes.DeviceOfflineLevel2.id,
-      name: messageTypes.DeviceOfflineLevel3.name,
-    },
-    {
-      partnerId,
-      issueTypeId: issueTypes.DeviceOffline.id,
-      messageTypeId: messageTypes.DeviceOfflineLevel3.id,
-      name: messageTypes.DeviceOfflineLevel3.name,
-    },
+  const [deviceOfflineNotificationTypeId] = await knex(
+    'NotificationType'
+  ).insert(
+    Object.assign(
+      {
+        partnerId,
+        issueTypeId: issueTypes.DeviceOffline.id,
+      },
+      auditFields
+    )
+  )
+
+  await knex('NotificationEscalationPolicy').insert([
+    Object.assign(
+      {
+        notificationTypeId: deviceOfflineNotificationTypeId,
+        jobFunctionId: jobFunctionIdLabUser,
+        level: 1,
+        messageTypeId: defaultMessageTypes.DeviceOffline.id,
+      },
+      auditFields
+    ),
+    Object.assign(
+      {
+        notificationTypeId: deviceOfflineNotificationTypeId,
+        jobFunctionId: jobFunctionIdRegionalOfficer,
+        level: 2,
+        messageTypeId: defaultMessageTypes.DeviceOffline.id,
+      },
+      auditFields
+    ),
+    Object.assign(
+      {
+        notificationTypeId: deviceOfflineNotificationTypeId,
+        jobFunctionId: jobFunctionIdRegionalOfficer,
+        level: 3,
+        messageTypeId: defaultMessageTypes.DeviceOffline.id,
+      },
+      auditFields
+    ),
   ])
 }
 
@@ -568,6 +589,16 @@ function rowsAsObject(knex, table, column = 'name') {
     memo[row[column]] = row
     return memo
   }, {})
+}
+
+function getDefaultMessageTypes(knex) {
+  return knex('MessageType as mt')
+    .join('IssueType as it', 'it.defaultMessageTypeId', 'mt.id')
+    .select('it.externalId as issueTypeExternalId', 'mt.*')
+    .reduce((memo, row) => {
+      memo[row.issueTypeExternalId] = row
+      return memo
+    }, {})
 }
 
 function calculateDateForResult(

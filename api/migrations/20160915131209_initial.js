@@ -1246,6 +1246,7 @@ async function up(knex) {
   })
 
   // Notifications
+  // TODO remove NotificationType, merge into NotificationEscalationPolicy?
   await knex.schema.createTable('NotificationType', notificationType => {
     notificationType.increments('id')
     notificationType
@@ -1261,7 +1262,6 @@ async function up(knex) {
       .references('id')
       .inTable('IssueType')
       .notNullable()
-    notificationType.string('name').notNullable()
     addCreateFields(notificationType)
     addUpdateFields(notificationType)
     notificationType.charset('utf8')
@@ -1325,6 +1325,7 @@ async function up(knex) {
     notification.charset('utf8')
   })
 
+  // TODO Remove NotificationLog, merge into Notification with status?
   await knex.schema.createTable('NotificationLog', notificationLog => {
     notificationLog.increments('id')
     notificationLog
@@ -1679,7 +1680,10 @@ function addUpdateFieldsNullable(table) {
     .inTable('User')
 }
 
-function addTimestamps(table, { nullable = false, update = true }) {
+function addTimestamps(
+  table,
+  { nullable = false, update = true } = { nullable: false, update: true }
+) {
   if (nullable) {
     table.dateTime('createdOn')
     if (update) {
