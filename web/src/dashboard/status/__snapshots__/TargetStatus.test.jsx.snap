@@ -37,7 +37,7 @@ exports[`Target Status component should shallow render correctly 1`] = `
           >
             Goal:
           </span>
-          897
+          833
         </div>
         <div
           className="TargetItemBlock__Graph"
@@ -54,9 +54,9 @@ exports[`Target Status component should shallow render correctly 1`] = `
           <span
             className="TargetItemBlock__Label--sub"
           >
-            Tested:
+            Progress:
           </span>
-          833
+          108%
         </div>
         <div
           className="TargetItemBlock__Label--error"
@@ -82,7 +82,7 @@ exports[`Target Status component should shallow render correctly 1`] = `
           >
             Goal:
           </span>
-          533
+          211
         </div>
         <div
           className="TargetItemBlock__Graph"
@@ -99,9 +99,9 @@ exports[`Target Status component should shallow render correctly 1`] = `
           <span
             className="TargetItemBlock__Label--sub"
           >
-            Tested:
+            Progress:
           </span>
-          211
+          253%
         </div>
         <div
           className="TargetItemBlock__Label--error"
@@ -127,7 +127,7 @@ exports[`Target Status component should shallow render correctly 1`] = `
           >
             Goal:
           </span>
-          1220
+          100
         </div>
         <div
           className="TargetItemBlock__Graph"
@@ -144,9 +144,9 @@ exports[`Target Status component should shallow render correctly 1`] = `
           <span
             className="TargetItemBlock__Label--sub"
           >
-            Tested:
+            Progress:
           </span>
-          100
+          1220%
         </div>
         <div
           className="TargetItemBlock__Label--error"
@@ -170,7 +170,7 @@ exports[`Target Status component should shallow render correctly 1`] = `
           >
             Goal:
           </span>
-          986
+          183
         </div>
         <div
           className="TargetItemBlock__Graph"
@@ -187,9 +187,9 @@ exports[`Target Status component should shallow render correctly 1`] = `
           <span
             className="TargetItemBlock__Label--sub"
           >
-            Tested:
+            Progress:
           </span>
-          183
+          539%
         </div>
         <div
           className="TargetItemBlock__Label--error"

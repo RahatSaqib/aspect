@@ -165,9 +165,9 @@ export const messages = defineMessages({
     id: 'pages.Status.targetGoalLabel',
     defaultMessage: 'Goal:',
   },
-  targetCurrentLabel: {
-    id: 'pages.Status.targetCurrentLabel',
-    defaultMessage: 'Tested:',
+  targetProgressLabel: {
+    id: 'pages.Status.targetProgressLabel',
+    defaultMessage: 'Progress:',
   },
   targetErrorMessageLabel: {
     id: 'pages.Status.targetErrorMessageLabel',

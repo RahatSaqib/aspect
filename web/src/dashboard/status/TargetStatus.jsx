@@ -147,6 +147,9 @@ export const TargetStatus = ({
       ? target.get('target')
       : Math.round(target.get('target') / 12)
 
+  const getProgressValue = target =>
+    `${Math.round(target.get('count') / getGoalValue(target) * 100)}%`
+
   return (
     targetSummaryList.size > 0 && (
       <Card className={className}>
@@ -182,7 +185,7 @@ export const TargetStatus = ({
                 <span className={cssClasses('TargetItemBlock__Label--sub')}>
                   {intl.formatMessage(messages.targetGoalLabel)}
                 </span>
-                {target.get('count')}
+                {getGoalValue(target)}
               </div>
               <div className={cssClasses('TargetItemBlock__Graph')}>
                 <TemperatureGauge
@@ -193,9 +196,9 @@ export const TargetStatus = ({
               </div>
               <div className={cssClasses('TargetItemBlock__Label')}>
                 <span className={cssClasses('TargetItemBlock__Label--sub')}>
-                  {intl.formatMessage(messages.targetCurrentLabel)}
+                  {intl.formatMessage(messages.targetProgressLabel)}
                 </span>
-                {getGoalValue(target)}
+                {getProgressValue(target)}
               </div>
               <div className={cssClasses('TargetItemBlock__Label--error')}>
                 {hasError(target) &&
