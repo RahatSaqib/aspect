@@ -1337,7 +1337,6 @@ async function up(knex) {
       .unsigned()
       .references('id')
       .inTable('MessageType')
-      .notNullable()
     notificationType.string('name').notNullable()
     addCreateFields(notificationType)
     addUpdateFields(notificationType)
