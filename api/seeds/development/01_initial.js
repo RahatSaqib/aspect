@@ -3492,4 +3492,155 @@ async function seed(knex) {
     { jobFunctionId: jobFunctionIdClinician, widgetId: widgetIds.devices },
     { jobFunctionId: jobFunctionIdClinician, widgetId: widgetIds.contacts },
   ])
+
+  // Messages
+  await knex('MessageStatus').insert([
+    {
+      name: 'Initial',
+      externalId: 'Initial',
+      i18nKey: 'messageStatusInitial',
+    },
+    {
+      name: 'Pending',
+      externalId: 'Pending',
+      i18nKey: 'messageStatusPending',
+    },
+    {
+      name: 'Sent',
+      externalId: 'Sent',
+      i18nKey: 'messageStatusSent',
+    },
+    {
+      name: 'Error',
+      externalId: 'Error',
+      i18nKey: 'messageStatusError',
+    },
+  ])
+
+  await knex('MessageSeverity').insert([
+    {
+      name: 'Alert',
+      externalId: 'Alert',
+      i18nKey: 'messageSeverityAlert',
+    },
+    {
+      name: 'Recommendation',
+      externalId: 'Recommendation',
+      i18nKey: 'messageSeverityRecommendation',
+    },
+  ])
+  const messageSeverities = await rowsAsObject(knex, 'MessageSeverity')
+
+  const [deviceOfflineAlertTemplateId] = await knex('AlertTemplate').insert(
+    /* eslint-disable no-template-curly-in-string */
+    Object.assign(
+      {
+        message: '${site.name} no contact for ${numberOfDays} days.',
+      },
+      auditFields
+    )
+  )
+
+  const [deviceOfflineSmsTemplateId] = await knex('SmsTemplate').insert(
+    /* eslint-disable no-template-curly-in-string */
+    Object.assign(
+      {
+        message: '${site.name} no contact for ${numberOfDays} days.',
+      },
+      auditFields
+    )
+  )
+
+  const [deviceOfflineEmailTemplateId] = await knex('EmailTemplate').insert(
+    /* eslint-disable no-template-curly-in-string */
+    Object.assign(
+      {
+        subject: '${site.name} Device Offline',
+        body: '${site.name} no contact for ${numberOfDays} days.',
+        htmlBody: '<em>${site.name}</em> no contact for ${numberOfDays} days.',
+      },
+      auditFields
+    )
+  )
+
+  const [deviceOfflineMessageTypeId] = await knex('MessageType').insert({
+    messageSeverityId: messageSeverities.Alert.id,
+    alertTemplateId: deviceOfflineAlertTemplateId,
+    smsTemplateId: deviceOfflineSmsTemplateId,
+    emailTemplateId: deviceOfflineEmailTemplateId,
+  })
+
+  // Issues
+  await knex('IssueCategory').insert([
+    {
+      name: 'Device Health',
+      externalId: 'DeviceHealth',
+      i18nKey: 'issueCategoryDeviceHealth',
+    },
+    {
+      name: 'Reagent Health',
+      externalId: 'ReagentHealth',
+      i18nKey: 'issueCategoryReagentHealth',
+    },
+    {
+      name: 'Data Health',
+      externalId: 'DataHealth',
+      i18nKey: 'issueCategoryDataHealth',
+    },
+    {
+      name: 'Connectivity Health',
+      externalId: 'ConnectivityHealth',
+      i18nKey: 'issueCategoryConnectivityHealth',
+    },
+  ])
+  const issueCategories = await rowsAsObject(knex, 'IssueCategory')
+
+  await knex('IssueStatus').insert([
+    {
+      name: 'Inactive',
+      externalId: 'Inactive',
+      i18nKey: 'issueStatusInactive',
+    },
+    { name: 'Active', externalId: 'Active', i18nKey: 'issueStatusActive' },
+    {
+      name: 'Acknowledged',
+      externalId: 'Acknowledged',
+      i18nKey: 'issueStatusAcknowledged',
+    },
+    { name: 'OK', externalId: 'OK', i18nKey: 'issueStatusOK' },
+    { name: 'Due Soon', externalId: 'DueSoon', i18nKey: 'issueStatusDueSoon' },
+    { name: 'Due Now', externalId: 'DueNow', i18nKey: 'issueStatusDueNow' },
+    { name: 'Overdue', externalId: 'Overdue', i18nKey: 'issueStatusOverdue' },
+    {
+      name: 'Resolved',
+      externalId: 'Resolved',
+      i18nKey: 'issueStatusResolved',
+    },
+  ])
+
+  await knex('IssueEventStatus').insert([
+    {
+      externalId: 'Triggered',
+    },
+    {
+      externalId: 'Resolved',
+    },
+  ])
+
+  await knex('IssueType').insert([
+    {
+      name: 'Device Offline',
+      externalId: 'DeviceOffline',
+      i18nKey: 'issueStatusDeviceOffline',
+      issueCategoryId: issueCategories.ConnectivityHealth.id,
+      defaultMessageTypeId: deviceOfflineMessageTypeId,
+    },
+  ])
+}
+
+function rowsAsObject(knex, table, column = 'externalId') {
+  return knex(table).reduce((memo, row) => {
+    memo[row[column]] = row
+    return memo
+  }, {})
 }

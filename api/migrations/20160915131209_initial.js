@@ -982,6 +982,406 @@ async function up(knex) {
     }
   )
 
+  // Messages
+
+  // Initial, Pending, Sent, Error
+  await knex.schema.createTable('MessageStatus', messageStatus => {
+    messageStatus.increments('id')
+    messageStatus.string('name').notNullable()
+    messageStatus.string('i18nKey').notNullable()
+    messageStatus.string('externalId').notNullable()
+    messageStatus.charset('utf8')
+  })
+
+  // Alert, Recommendation
+  await knex.schema.createTable('MessageSeverity', messageSeverity => {
+    messageSeverity.increments('id')
+    messageSeverity.string('name').notNullable()
+    messageSeverity.string('i18nKey').notNullable()
+    messageSeverity.string('externalId').notNullable()
+    messageSeverity.charset('utf8')
+  })
+
+  await knex.schema.createTable('AlertTemplate', alertTemplate => {
+    alertTemplate.increments('id')
+    alertTemplate.text('message').notNullable()
+    addCreateFieldsNullable(alertTemplate)
+    addUpdateFieldsNullable(alertTemplate)
+    alertTemplate.charset('utf8')
+  })
+
+  await knex.schema.createTable('AlertMessage', alertMessage => {
+    alertMessage.increments('id')
+    alertMessage
+      .integer('alertTemplateId')
+      .unsigned()
+      .references('id')
+      .inTable('AlertTemplate')
+      .notNullable()
+    alertMessage
+      .integer('messageStatusId')
+      .unsigned()
+      .references('id')
+      .inTable('MessageStatus')
+      .notNullable()
+    alertMessage
+      .integer('personId')
+      .unsigned()
+      .references('id')
+      .inTable('Person')
+      .notNullable()
+    alertMessage
+      .integer('siteId')
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('Site')
+    alertMessage
+      .integer('deviceId')
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('Device')
+    alertMessage
+      .integer('resultId')
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('Result')
+    alertMessage.text('message')
+    addTimestamps(alertMessage)
+    alertMessage.charset('utf8')
+  })
+
+  await knex.schema.createTable('EmailTemplate', emailTemplate => {
+    emailTemplate.increments('id')
+    emailTemplate.string('subject', 1000).notNullable()
+    emailTemplate.text('body').notNullable()
+    emailTemplate.text('htmlBody')
+    addCreateFieldsNullable(emailTemplate)
+    addUpdateFieldsNullable(emailTemplate)
+    emailTemplate.charset('utf8')
+  })
+
+  await knex.schema.createTable('EmailMessage', emailMessage => {
+    emailMessage.increments('id')
+    emailMessage
+      .integer('emailTemplateId')
+      .unsigned()
+      .references('id')
+      .inTable('EmailTemplate')
+      .notNullable()
+    emailMessage
+      .integer('messageStatusId')
+      .unsigned()
+      .references('id')
+      .inTable('MessageStatus')
+      .notNullable()
+    emailMessage
+      .integer('personId')
+      .unsigned()
+      .references('id')
+      .inTable('Person')
+      .notNullable()
+    emailMessage
+      .integer('siteId')
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('Site')
+    emailMessage
+      .integer('deviceId')
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('Device')
+    emailMessage
+      .integer('resultId')
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('Result')
+    emailMessage.string('subject', 1000)
+    emailMessage.text('body')
+    emailMessage.text('htmlBody')
+    addTimestamps(emailMessage)
+    emailMessage.charset('utf8')
+  })
+
+  await knex.schema.createTable('SmsTemplate', smsTemplate => {
+    smsTemplate.increments('id')
+    smsTemplate.string('message', 1000).notNullable()
+    addCreateFieldsNullable(smsTemplate)
+    addUpdateFieldsNullable(smsTemplate)
+    smsTemplate.charset('utf8')
+  })
+
+  await knex.schema.createTable('SmsMessage', smsMessage => {
+    smsMessage.increments('id')
+    smsMessage
+      .integer('smsTemplateId')
+      .unsigned()
+      .references('id')
+      .inTable('SmsTemplate')
+      .notNullable()
+    smsMessage
+      .integer('messageStatusId')
+      .unsigned()
+      .references('id')
+      .inTable('MessageStatus')
+      .notNullable()
+    smsMessage
+      .integer('personId')
+      .unsigned()
+      .references('id')
+      .inTable('Person')
+      .notNullable()
+    smsMessage
+      .integer('siteId')
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('Site')
+    smsMessage
+      .integer('deviceId')
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('Device')
+    smsMessage
+      .integer('resultId')
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('Result')
+    smsMessage.string('message', 1000)
+    addTimestamps(smsMessage)
+    smsMessage.charset('utf8')
+  })
+
+  // Device Offline, Module Error
+  await knex.schema.createTable('MessageType', messageType => {
+    messageType.increments('id')
+    messageType
+      .integer('messageSeverityId')
+      .unsigned()
+      .references('id')
+      .inTable('MessageSeverity')
+      .notNullable()
+    messageType
+      .integer('alertTemplateId')
+      .unsigned()
+      .references('id')
+      .inTable('AlertTemplate')
+    messageType
+      .integer('emailTemplateId')
+      .unsigned()
+      .references('id')
+      .inTable('EmailTemplate')
+    messageType
+      .integer('smsTemplateId')
+      .unsigned()
+      .references('id')
+      .inTable('SmsTemplate')
+    messageType.charset('utf8')
+  })
+
+  // Issues and events
+
+  // holds general categories (aka class), Device Health, Reagent Health
+  await knex.schema.createTable('IssueCategory', issueCategory => {
+    issueCategory.increments('id')
+    issueCategory.string('name').notNullable()
+    issueCategory.string('i18nKey').notNullable()
+    issueCategory.string('externalId').notNullable()
+    issueCategory.charset('utf8')
+  })
+
+  // Type of issue Device Offline, Module Error, etc.
+  await knex.schema.createTable('IssueType', issueType => {
+    issueType.increments('id')
+    issueType
+      .integer('issueCategoryId')
+      .unsigned()
+      .references('id')
+      .inTable('IssueCategory')
+      .notNullable()
+    issueType
+      .integer('defaultMessageTypeId')
+      .unsigned()
+      .references('id')
+      .inTable('MessageType')
+    issueType.string('name').notNullable()
+    issueType.string('i18nKey').notNullable()
+    issueType.string('externalId').notNullable()
+    issueType.charset('utf8')
+  })
+
+  // Issue status, e.g. Active, Acknowledged, DueSoon, OK
+  await knex.schema.createTable('IssueStatus', issueStatus => {
+    issueStatus.increments('id')
+    issueStatus.string('name').notNullable()
+    issueStatus.string('i18nKey').notNullable()
+    issueStatus.string('externalId').notNullable()
+    issueStatus.charset('utf8')
+  })
+
+  // Triggered, Resolved
+  await knex.schema.createTable('IssueEventStatus', issueStatus => {
+    issueStatus.increments('id')
+    issueStatus.string('externalId').notNullable()
+    issueStatus.charset('utf8')
+  })
+
+  await knex.schema.createTable('Issue', issue => {
+    issue.increments('id')
+    issue
+      .integer('issueTypeId')
+      .unsigned()
+      .references('id')
+      .inTable('IssueType')
+      .notNullable()
+    issue
+      .integer('issueStatusId')
+      .unsigned()
+      .references('id')
+      .inTable('IssueStatus')
+      .notNullable()
+    issue
+      .integer('partnerId')
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('Partner')
+      .notNullable()
+    issue
+      .integer('geographyId')
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('Geography')
+    issue
+      .integer('siteId')
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('Site')
+    issue
+      .integer('deviceId')
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('Device')
+    issue
+      .integer('resultId')
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('Result')
+    issue
+      .integer('level')
+      .notNullable()
+      .defaultTo(1)
+    addTimestamps(issue)
+    issue.charset('utf8')
+  })
+
+  await knex.schema.createTable('IssueEvent', issueEvent => {
+    issueEvent.increments('id')
+    issueEvent
+      .integer('issueEventStatusId')
+      .unsigned()
+      .references('id')
+      .inTable('issueEventStatus')
+      .notNullable()
+    issueEvent
+      .integer('issueId')
+      .unsigned()
+      .references('id')
+      .inTable('Issue')
+      .notNullable()
+    issueEvent.specificType('data', 'JSON')
+    addTimestamps(issueEvent, { update: false })
+    issueEvent.charset('utf8')
+  })
+
+  // Notifications
+  await knex.schema.createTable('NotificationType', notificationType => {
+    notificationType.increments('id')
+    notificationType
+      .integer('partnerId')
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('Partner')
+      .notNullable()
+    notificationType
+      .integer('issueTypeId')
+      .unsigned()
+      .references('id')
+      .inTable('IssueType')
+      .notNullable()
+    notificationType
+      .integer('jobFunctionId')
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('JobFunction')
+      .notNullable()
+    notificationType
+      .integer('level')
+      .notNullable()
+      .defaultTo(1)
+    notificationType
+      .integer('messageTypeId')
+      .unsigned()
+      .references('id')
+      .inTable('MessageType')
+    notificationType.string('name').notNullable()
+    addCreateFields(notificationType)
+    addUpdateFields(notificationType)
+    notificationType.charset('utf8')
+  })
+
+  await knex.schema.createTable('Notification', notification => {
+    notification.increments('id')
+    notification
+      .integer('notificationTypeId')
+      .unsigned()
+      .references('id')
+      .inTable('NotificationType')
+      .notNullable()
+    notification
+      .integer('issueId')
+      .unsigned()
+      .references('id')
+      .inTable('Issue')
+      .notNullable()
+    notification
+      .integer('personId')
+      .unsigned()
+      .references('id')
+      .inTable('Person')
+      .notNullable()
+    notification
+      .integer('alertMessageId')
+      .unsigned()
+      .references('id')
+      .inTable('AlertMessage')
+    notification
+      .integer('emailMessageId')
+      .unsigned()
+      .references('id')
+      .inTable('EmailMessage')
+    notification
+      .integer('smsMessageId')
+      .unsigned()
+      .references('id')
+      .inTable('SmsMessage')
+    addTimestamps(notification, { update: false })
+    notification.charset('utf8')
+  })
+
   // facts-table for result counts by device
   await knex.schema.createTable('FactResultCountDevice', x => {
     x
@@ -1223,6 +1623,23 @@ async function down(knex) {
   await knex.schema.dropTableIfExists('DeviceRole')
   await knex.schema.dropTableIfExists('DeviceApiKey')
   await knex.schema.dropTableIfExists('RefreshToken')
+  await knex.schema.dropTableIfExists('Notification')
+  await knex.schema.dropTableIfExists('NotificationType')
+  await knex.schema.dropTableIfExists('IssueEvent')
+  await knex.schema.dropTableIfExists('IssueEventStatus')
+  await knex.schema.dropTableIfExists('Issue')
+  await knex.schema.dropTableIfExists('IssueCategory')
+  await knex.schema.dropTableIfExists('IssueStatus')
+  await knex.schema.dropTableIfExists('IssueType')
+  await knex.schema.dropTableIfExists('SmsMessage')
+  await knex.schema.dropTableIfExists('SmsTemplate')
+  await knex.schema.dropTableIfExists('EmailMessage')
+  await knex.schema.dropTableIfExists('EmailTemplate')
+  await knex.schema.dropTableIfExists('AlertMessage')
+  await knex.schema.dropTableIfExists('AlertTemplate')
+  await knex.schema.dropTableIfExists('MessageSeverity')
+  await knex.schema.dropTableIfExists('MessageType')
+  await knex.schema.dropTableIfExists('MessageStatus')
   await knex.schema.dropTableIfExists('JobFunctionPermission')
   await knex.schema.dropTableIfExists('JobFunction')
   await knex.schema.dropTableIfExists('JobContext')
@@ -1300,4 +1717,21 @@ function addUpdateFieldsNullable(table) {
     .index()
     .references('id')
     .inTable('User')
+}
+
+function addTimestamps(
+  table,
+  { nullable = false, update = true } = { nullable: false, update: true }
+) {
+  if (nullable) {
+    table.dateTime('createdOn')
+    if (update) {
+      table.dateTime('updatedOn')
+    }
+  } else {
+    table.dateTime('createdOn').notNullable()
+    if (update) {
+      table.dateTime('updatedOn').notNullable()
+    }
+  }
 }

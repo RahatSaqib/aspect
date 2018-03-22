@@ -52,6 +52,8 @@ async function seed(knex) {
     resultSources,
     resultTypes,
     resultWorkflowStatuses,
+    issueTypes,
+    defaultMessageTypes,
   ] = await Promise.all([
     rowsAsObject(knex, 'PartnerType', 'name'),
     rowsAsObject(knex, 'DeviceType', 'externalId'),
@@ -62,6 +64,8 @@ async function seed(knex) {
     rowsAsObject(knex, 'ResultSource', 'externalId'),
     rowsAsObject(knex, 'ResultType', 'externalId'),
     rowsAsObject(knex, 'ResultWorkflowStatus', 'externalId'),
+    rowsAsObject(knex, 'IssueType', 'externalId'),
+    getDefaultMessageTypes(knex),
   ])
 
   const [partnerId] = await knex('Partner').insert({
@@ -546,6 +550,43 @@ async function seed(knex) {
       ])
     })
   )
+
+  // Notifications
+  await knex('NotificationType').insert([
+    Object.assign(
+      {
+        name: 'LU Network',
+        partnerId,
+        issueTypeId: issueTypes.DeviceOffline.id,
+        jobFunctionId: jobFunctionIdLabUser,
+        level: 1,
+        messageTypeId: defaultMessageTypes.DeviceOffline.id,
+      },
+      auditFields
+    ),
+    Object.assign(
+      {
+        name: 'RO Network',
+        partnerId,
+        issueTypeId: issueTypes.DeviceOffline.id,
+        jobFunctionId: jobFunctionIdRegionalOfficer,
+        level: 2,
+        messageTypeId: defaultMessageTypes.DeviceOffline.id,
+      },
+      auditFields
+    ),
+    Object.assign(
+      {
+        name: 'RO Escalated Network',
+        partnerId,
+        issueTypeId: issueTypes.DeviceOffline.id,
+        jobFunctionId: jobFunctionIdRegionalOfficer,
+        level: 3,
+        messageTypeId: defaultMessageTypes.DeviceOffline.id,
+      },
+      auditFields
+    ),
+  ])
 }
 
 function rowsAsObject(knex, table, column = 'name') {
@@ -553,6 +594,16 @@ function rowsAsObject(knex, table, column = 'name') {
     memo[row[column]] = row
     return memo
   }, {})
+}
+
+function getDefaultMessageTypes(knex) {
+  return knex('MessageType as mt')
+    .join('IssueType as it', 'it.defaultMessageTypeId', 'mt.id')
+    .select('it.externalId as issueTypeExternalId', 'mt.*')
+    .reduce((memo, row) => {
+      memo[row.issueTypeExternalId] = row
+      return memo
+    }, {})
 }
 
 function calculateDateForResult(
