@@ -4,7 +4,6 @@ const {
   listNotifications,
   onIssueCreated,
   onIssueEscalated,
-  onIssueResolved,
 } = require('./service')
 
 const routes = [
@@ -41,7 +40,6 @@ const subscriptions = [
     actions: {
       ISSUE_CREATED: onIssueCreated,
       ISSUE_ESCALATED: onIssueEscalated,
-      ISSUE_RESOLVED: onIssueResolved,
     },
   },
 ]

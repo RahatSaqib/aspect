@@ -269,11 +269,8 @@ async function onIssueEscalated({ issueId }, context) {
   })
 }
 
-async function onIssueResolved(/* { issueId }, context */) {}
-
 module.exports = {
   listNotifications,
   onIssueCreated,
   onIssueEscalated,
-  onIssueResolved,
 }
