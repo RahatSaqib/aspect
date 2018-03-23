@@ -172,6 +172,21 @@
   {
     "layout": "target",
     "icon": "assignment",
+    "title": "Total Tests",
+    "titleI18nKey": "dashboardWidgetTitleTotal",
+    "sqlForIndicator":
+      "select count(r.id) as cnt from Result as r inner join Device as d on d.id = r.deviceId inner join Site as s on s.id = d.siteId inner join Partner p on s.partnerId = p.id left outer join Geography as g on s.geographyId = g.id inner join Assay as a on a.id = r.assayId ",
+    "sqlForTarget":
+      "select 10000 as target",
+    "lowerThanThreshold": 0,
+    "threshold": 50,
+    "sqlForExtra": "select concat(round(sum(case when resultCategory1 not in (5,6,7) then 1 else 0 end)/count(r.id)*100,2),'%') as extra from Result as r inner join Device as d on d.id = r.deviceId inner join Site as s on s.id = d.siteId inner join Partner as p on s.partnerId = p.id left outer join Geography as g on s.geographyId = g.id ",
+    "link": "/browse/result",
+    "sortOrder": 12
+  },
+  {
+    "layout": "target",
+    "icon": "assignment",
     "title": "MDR-TB",
     "titleI18nKey": "dashboardWidgetTitleMDRTB",
     "sqlForIndicator":
@@ -182,7 +197,7 @@
     "threshold": 50,
     "sqlForExtra": "select concat(round(sum(case when resultCategory1 not in (5,6,7) then 1 else 0 end)/count(r.id)*100,2),'%') as extra from Result as r inner join Device as d on d.id = r.deviceId inner join Site as s on s.id = d.siteId inner join Partner as p on s.partnerId = p.id left outer join Geography as g on s.geographyId = g.id where r.assayId in (1,2)",
     "link": "/browse/result",
-    "sortOrder": 12
+    "sortOrder": 13
   },
   {
     "layout": "target",
@@ -197,7 +212,7 @@
     "threshold": 50,
     "sqlForExtra": "select '45%' as extra",
     "link": "/browse/result",
-    "sortOrder": 13
+    "sortOrder": 14
   },
   {
     "layout": "target",
@@ -212,7 +227,7 @@
     "threshold": 50,
     "sqlForExtra": "select '75%' as extra",
     "link": "/browse/result",
-    "sortOrder": 14
+    "sortOrder": 15
   },
   {
     "layout": "target",
@@ -227,6 +242,6 @@
     "threshold": 50,
     "sqlForExtra": "select '55%' as extra",
     "link": "/browse/result",
-    "sortOrder": 15
+    "sortOrder": 16
   }
 ]

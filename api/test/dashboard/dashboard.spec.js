@@ -11,7 +11,7 @@ describe('Dashboard routes', () => {
   describe('GET', () => {
     shared.checkToken(server, path)
 
-    it('should return an list of stat dashboard widget object', done => {
+    it('should return a list of stat dashboard widget objects', done => {
       server
         .get(`${path}?layout=stat`)
         .set('Authorization', `Bearer ${shared.token}`)
@@ -33,7 +33,7 @@ describe('Dashboard routes', () => {
         })
     })
 
-    it('should return an list of target dashboard widget object', done => {
+    it('should return a list of target dashboard widget objects', done => {
       server
         .get(`${path}?layout=target`)
         .set('Authorization', `Bearer ${shared.token}`)
