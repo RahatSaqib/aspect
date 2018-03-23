@@ -1896,20 +1896,19 @@ async function seed(knex) {
   const modules = {}
 
   await Promise.all(
-    _.map(permissions.modules, async module => {
+    _.map(permissions.modules, module => {
       const moduleData = {}
       modules[module.name] = moduleData
-      await Promise.all(
-        _.map(module.activities, async activity => {
-          const [permissionId] = await knex('Permission').insert({
-            module: module.name,
-            activity,
-          })
-          moduleData[activity] = permissionId
+      _.map(module.activities, async activity => {
+        const [permissionId] = await knex('Permission').insert({
+          module: module.name,
+          activity,
         })
-      )
+        moduleData[activity] = permissionId
+      })
     })
   )
+
   const featureModules = {}
   await Promise.all(
     _.map(features.modules, async module => {
@@ -3379,6 +3378,23 @@ async function seed(knex) {
     {
       jobFunctionId: jobFunctionIdManager,
       permissionId: modules.inventory.edit,
+    },
+
+    { jobFunctionId: jobFunctionIdPartnerTwo, permissionId: modules.site.edit },
+    {
+      jobFunctionId: jobFunctionIdPartnerTwo,
+      permissionId: modules.device.edit,
+    },
+
+    { jobFunctionId: jobFunctionIdClinician, permissionId: modules.site.view },
+    {
+      jobFunctionId: jobFunctionIdClinician,
+      permissionId: modules.device.view,
+    },
+    { jobFunctionId: jobFunctionIdClinician, permissionId: modules.assay.view },
+    {
+      jobFunctionId: jobFunctionIdClinician,
+      permissionId: modules.inventory.view,
     },
   ])
 
