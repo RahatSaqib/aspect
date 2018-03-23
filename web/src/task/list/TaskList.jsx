@@ -28,6 +28,8 @@ import {
   TaskDataTableHead,
   TaskDataTableRow,
 } from './TaskDataTable'
+import requirePermissions from '../../components/shared/requirePermissions'
+import NotFound from '../../error/notFound/NotFound'
 
 const cssClasses = classnames.bind(require('./TaskList.css'))
 
@@ -81,6 +83,10 @@ export const filtersFromLocation = composeSanitizer(
 )
 
 const enhance = compose(
+  requirePermissions({
+    features: ['taskList:true'],
+    ForbiddenComponent: NotFound,
+  }),
   withProps(
     makeSortPageSelector({
       sortCol: 'time',

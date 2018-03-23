@@ -162,6 +162,7 @@ export function loginStart({ user, password }) {
             clientId: json.clientId,
             culture: json.culture,
             timezoneId: json.timezone,
+            features: json.features,
           })
         )
       )
@@ -306,6 +307,7 @@ const JWT = Immutable.Record({
   iat: undefined,
   exp: undefined,
   iss: '',
+  features: Immutable.Set(),
 })
 const User = Immutable.Record({
   requestedAt: undefined,

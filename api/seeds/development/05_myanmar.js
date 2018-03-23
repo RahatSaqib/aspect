@@ -86,6 +86,14 @@ async function seed(knex) {
     return memo
   }, {})
 
+  const featureModules = await knex('Feature').reduce((memo, row) => {
+    if (!memo[row.module]) {
+      memo[row.module] = {}
+    }
+    memo[row.module][Boolean(row.enable)] = row.id
+    return memo
+  }, {})
+
   const [myanmarCountry] = await knex('Country as c')
     .where({ 'c.a3': 'MMR' })
     .select('c.id', 'c.culture', 'c.timezone')
@@ -147,6 +155,52 @@ async function seed(knex) {
     name: 'Lab User',
     partnerId,
   })
+  await Promise.all(
+    _.map(featureModules, async (module, key) => {
+      if (
+        key === 'dashboard' ||
+        key === 'browse' ||
+        key === 'deviceDemo' ||
+        key === 'deviceList' ||
+        key === 'deviceDetail' ||
+        key === 'resultList' ||
+        key === 'resultDetail' ||
+        key === 'siteList' ||
+        key === 'siteDetail' ||
+        key === 'summaryDashboard'
+      ) {
+        await knex('JobFunctionFeature').insert([
+          {
+            jobFunctionId: jobFunctionIdAdmin,
+            featureId: featureModules[key].true,
+          },
+          {
+            jobFunctionId: jobFunctionIdRegionalOfficer,
+            featureId: featureModules[key].true,
+          },
+          {
+            jobFunctionId: jobFunctionIdLabUser,
+            featureId: featureModules[key].true,
+          },
+        ])
+      } else {
+        await knex('JobFunctionFeature').insert([
+          {
+            jobFunctionId: jobFunctionIdAdmin,
+            featureId: featureModules[key].false,
+          },
+          {
+            jobFunctionId: jobFunctionIdRegionalOfficer,
+            featureId: featureModules[key].false,
+          },
+          {
+            jobFunctionId: jobFunctionIdLabUser,
+            featureId: featureModules[key].false,
+          },
+        ])
+      }
+    })
+  )
 
   await knex('JobFunctionPermission').insert([
     // Admin Permissions
@@ -165,7 +219,6 @@ async function seed(knex) {
       permissionId: modules.inventory.admin,
     },
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.task.admin },
-
     // Regional Officer Permissions
     {
       jobFunctionId: jobFunctionIdRegionalOfficer,
@@ -187,7 +240,6 @@ async function seed(knex) {
       jobFunctionId: jobFunctionIdRegionalOfficer,
       permissionId: modules.task.admin,
     },
-
     // Lab User Permissions
     {
       jobFunctionId: jobFunctionIdLabUser,

@@ -298,6 +298,14 @@ async function seed(knex) {
     return memo
   }, {})
 
+  const featureModules = await knex('Feature').reduce((memo, row) => {
+    if (!memo[row.module]) {
+      memo[row.module] = {}
+    }
+    memo[row.module][Boolean(row.enable)] = row.id
+    return memo
+  }, {})
+
   // Create clinics for every state in Malawi
   const [malawiCountry] = await knex('Country as c')
     .where({ 'c.a3': 'MWI' })
@@ -339,6 +347,22 @@ async function seed(knex) {
     name: 'Lab Admin',
     partnerId,
   })
+
+  await Promise.all(
+    _.map(featureModules, async (module, key) => {
+      await knex('JobFunctionFeature').insert([
+        {
+          jobFunctionId: jobFunctionIdLabAdmin,
+          featureId: featureModules[key].true,
+        },
+        {
+          jobFunctionId: jobFunctionIdAdmin,
+          featureId: featureModules[key].true,
+        },
+      ])
+    })
+  )
+
   await knex('JobFunctionPermission').insert([
     {
       jobFunctionId: jobFunctionIdLabAdmin,

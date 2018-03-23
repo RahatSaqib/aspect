@@ -16,14 +16,21 @@ import DeviceStatus from './DeviceStatus'
 import InventoryStatus from './InventoryStatus'
 import ResultStatus from './ResultStatus'
 import SiteStatus from './SiteStatus'
+import requirePermissions from '../../components/shared/requirePermissions'
+import NotFound from '../../error/notFound/NotFound'
 
 const cssClasses = classnames.bind(require('./Status.css'))
 
 const enhance = compose(
+  requirePermissions({
+    features: ['dashboard:true'],
+    ForbiddenComponent: NotFound,
+  }),
   connect(
     state => ({
       userName: state.user.jwt.name,
       summary: state.dashboard.summary,
+      features: state.user.jwt.features,
     }),
     bindActionCreators.bind(null, {
       showAcknowledgement,
@@ -77,45 +84,48 @@ export const Status = ({
   intl,
   // --- injected by recompose ---
   summary,
+  features,
 }) => (
   <div className={cssClasses('Container')}>
     <Helmet title="Status" />
-    <div className={cssClasses('Section--summary')}>
-      {_.map(summary.toJS(), widget => (
-        <Unit sm="1-2" lg="1-4">
-          <Link to={widget.link} className={cssClasses('Summary')}>
-            <Card className={cssClasses('Summary__Card')}>
-              <div className={cssClasses('Summary__Card__Title')}>
-                <Icon
-                  icon={widget.icon}
-                  className={cssClasses('Summary__Card__Title__Icon')}
-                />
-                {messages[widget.titleI18nKey]
-                  ? intl.formatMessage(messages[widget.titleI18nKey])
-                  : widget.title}
-                <span className={cssClasses('Summary__Card__Title__Sub')}>
-                  {messages[widget.subTitleI18nKey]
-                    ? intl.formatMessage(messages[widget.subTitleI18nKey])
-                    : widget.subTitle}
-                </span>
-              </div>
-              <div className={cssClasses('Summary__Card__Content')}>
-                <span className={cssClasses('Summary__Card__Count')}>
-                  {widget.count}
-                </span>
-                {widget.target && (
-                  <TargetLabel
-                    widget={widget}
-                    intl={intl}
-                    className={cssClasses('Summary__Card__Target')}
+    {features.get('summaryDashboard:true') && (
+      <div className={cssClasses('Section--summary')}>
+        {_.map(summary.toJS(), widget => (
+          <Unit sm="1-2" lg="1-4">
+            <Link to={widget.link} className={cssClasses('Summary')}>
+              <Card className={cssClasses('Summary__Card')}>
+                <div className={cssClasses('Summary__Card__Title')}>
+                  <Icon
+                    icon={widget.icon}
+                    className={cssClasses('Summary__Card__Title__Icon')}
                   />
-                )}
-              </div>
-            </Card>
-          </Link>
-        </Unit>
-      ))}
-    </div>
+                  {messages[widget.titleI18nKey]
+                    ? intl.formatMessage(messages[widget.titleI18nKey])
+                    : widget.title}
+                  <span className={cssClasses('Summary__Card__Title__Sub')}>
+                    {messages[widget.subTitleI18nKey]
+                      ? intl.formatMessage(messages[widget.subTitleI18nKey])
+                      : widget.subTitle}
+                  </span>
+                </div>
+                <div className={cssClasses('Summary__Card__Content')}>
+                  <span className={cssClasses('Summary__Card__Count')}>
+                    {widget.count}
+                  </span>
+                  {widget.target && (
+                    <TargetLabel
+                      widget={widget}
+                      intl={intl}
+                      className={cssClasses('Summary__Card__Target')}
+                    />
+                  )}
+                </div>
+              </Card>
+            </Link>
+          </Unit>
+        ))}
+      </div>
+    )}
 
     <ResultStatus
       intl={intl}

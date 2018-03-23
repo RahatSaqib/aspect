@@ -8,6 +8,8 @@ const permissions = require('./fixtures/permissions.json')
 const geography = require('./fixtures/geography.json')
 const patients = require('./fixtures/patients.json')
 const dashboardWidget = require('./fixtures/dashboardWidget.json')
+const features = require('./fixtures/features.json')
+
 const {
   addMilliseconds,
   addMinutes,
@@ -1907,6 +1909,23 @@ async function seed(knex) {
     })
   )
 
+  const featureModules = {}
+  await Promise.all(
+    _.map(features.modules, async module => {
+      const moduleData = {}
+      featureModules[module.name] = moduleData
+      await Promise.all(
+        _.map(module.enable, async enable => {
+          const [featureId] = await knex('Feature').insert({
+            module: module.name,
+            enable,
+          })
+          moduleData[enable] = featureId
+        })
+      )
+    })
+  )
+
   // Create geographic hierarchy
   const countries = {}
   const geographies = []
@@ -3305,6 +3324,30 @@ async function seed(knex) {
     name: 'Lab Manager',
     partnerId: partnerTwoId,
   })
+
+  // assign features to JobFeatures
+  await Promise.all(
+    _.map(featureModules, async (module, key) => {
+      await knex('JobFunctionFeature').insert([
+        {
+          jobFunctionId: jobFunctionIdAdmin,
+          featureId: featureModules[key].true,
+        },
+        {
+          jobFunctionId: jobFunctionIdManager,
+          featureId: featureModules[key].true,
+        },
+        {
+          jobFunctionId: jobFunctionIdPartnerTwo,
+          featureId: featureModules[key].true,
+        },
+        {
+          jobFunctionId: jobFunctionIdClinician,
+          featureId: featureModules[key].true,
+        },
+      ])
+    })
+  )
 
   // assign permissions to job functions
   await knex('JobFunctionPermission').insert([

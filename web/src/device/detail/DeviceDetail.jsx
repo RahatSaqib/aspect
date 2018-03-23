@@ -12,12 +12,18 @@ import DeviceDetailProfile from './profile/DeviceDetailProfile'
 import DeviceDetailOperation from './operation/DeviceDetailOperation'
 import DeviceDetailAlerts from './alerts/DeviceDetailAlerts'
 import DeviceDetailEdit from './edit/DeviceDetailEdit'
+import requirePermissions from '../../components/shared/requirePermissions'
+import NotFound from '../../error/notFound/NotFound'
 
 const cssClasses = classnames.bind(require('./DeviceDetail.css'))
 
 const EMPTY_MAP = Immutable.Map()
 
 const enhance = compose(
+  requirePermissions({
+    features: ['deviceDetail:true'],
+    ForbiddenComponent: NotFound,
+  }),
   connect(
     (state, props) => {
       const device = state.device.items.byId.get(

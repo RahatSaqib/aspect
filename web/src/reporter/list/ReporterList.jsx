@@ -28,6 +28,8 @@ import {
   ReporterDataTableHead,
   ReporterDataTableRow,
 } from './ReporterDataTable'
+import requirePermissions from '../../components/shared/requirePermissions'
+import NotFound from '../../error/notFound/NotFound'
 
 const cssClasses = classnames.bind(require('./ReporterList.css'))
 
@@ -128,6 +130,10 @@ const filtersFromLocation = composeSanitizer(
 )
 
 const enhance = compose(
+  requirePermissions({
+    features: ['reporterList:true'],
+    ForbiddenComponent: NotFound,
+  }),
   withProps(
     makeSortPageSelector({
       sortCol: 'name',

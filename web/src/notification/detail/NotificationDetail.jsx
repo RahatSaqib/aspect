@@ -5,8 +5,14 @@ import { connect } from 'react-redux'
 import { Switch, Route } from 'react-router-dom'
 import NotificationDetailView from './view/NotificationDetailView'
 import NotificationDetailHistory from './history/NotificationDetailHistory'
+import requirePermissions from '../../components/shared/requirePermissions'
+import NotFound from '../../error/notFound/NotFound'
 
 const enhance = compose(
+  requirePermissions({
+    features: ['notificationDetail:true'],
+    ForbiddenComponent: NotFound,
+  }),
   connect(
     state => ({
       items: state.notification.items,

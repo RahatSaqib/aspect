@@ -11,6 +11,7 @@ import FaUser from 'react-icons/lib/fa/user'
 import ConfluenceIcon from './ConfluenceIcon'
 import LinkNavigation from './LinkNavigation'
 import { closeDrawer, userRequestedLogout } from '../../../auth/AuthRedux'
+import { isEnabledFeature } from '../../../components/shared/requirePermissions'
 
 const cssClasses = classnames.bind(require('./index.css'))
 
@@ -26,7 +27,7 @@ const enhance = compose(
       history.push('/account-details/current'),
   }),
   connect(
-    null,
+    state => ({ userFeatures: state.user.jwt.features }),
     bindActionCreators.bind(null, {
       closeDrawer,
       userRequestedLogout,
@@ -51,6 +52,7 @@ const HorizontalAppBar = ({
   goToExternalHelp,
   navigateCurrentAccountDetails,
   userRequestedLogout,
+  userFeatures,
 }) => (
   <AppBar
     leftIcon={<ConfluenceIcon />}
@@ -70,10 +72,12 @@ const HorizontalAppBar = ({
       menuRipple
     >
       <MenuItem caption="Help" onClick={goToExternalHelp} />
-      <MenuItem
-        caption="Account Details"
-        onClick={navigateCurrentAccountDetails}
-      />
+      {isEnabledFeature(userFeatures, ['accountDetails:true']) && (
+        <MenuItem
+          caption="Account Details"
+          onClick={navigateCurrentAccountDetails}
+        />
+      )}
       <MenuDivider />
       <MenuItem caption="Sign out" onClick={userRequestedLogout} />
     </IconMenu>

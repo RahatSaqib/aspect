@@ -28,6 +28,8 @@ import {
   NotificationDataTableHead,
   NotificationDataTableRow,
 } from './NotificationDataTable'
+import requirePermissions from '../../components/shared/requirePermissions'
+import NotFound from '../../error/notFound/NotFound'
 
 const cssClasses = classnames.bind(require('./NotificationList.css'))
 
@@ -87,6 +89,10 @@ const filtersFromLocation = composeSanitizer(
 )
 
 const enhance = compose(
+  requirePermissions({
+    features: ['notificationList:true'],
+    ForbiddenComponent: NotFound,
+  }),
   withProps(
     makeSortPageSelector({
       sortCol: 'lastTriggeredOn',
