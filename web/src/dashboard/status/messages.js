@@ -161,9 +161,9 @@ export const messages = defineMessages({
     id: 'pages.Status.lastMonth',
     defaultMessage: 'Last Month',
   },
-  targetGoalLabel: {
-    id: 'pages.Status.targetGoalLabel',
-    defaultMessage: 'Goal:',
+  targetLabel: {
+    id: 'pages.Status.targetLabel',
+    defaultMessage: 'Target:',
   },
   targetProgressLabel: {
     id: 'pages.Status.targetProgressLabel',
@@ -171,7 +171,7 @@ export const messages = defineMessages({
   },
   targetErrorMessageLabel: {
     id: 'pages.Status.targetErrorMessageLabel',
-    defaultMessage: 'Collection Rate: {extra}',
+    defaultMessage: 'Patient Data Collection {extra}',
   },
 })
 

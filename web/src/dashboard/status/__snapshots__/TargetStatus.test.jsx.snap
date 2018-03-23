@@ -21,7 +21,8 @@ exports[`Target Status component should shallow render correctly 1`] = `
     Immutable.List [
       <Unknown
         className="TargetItemBlock"
-        lg="1-4"
+        lg="1-5"
+        md="1-3"
         sm="1-2"
       >
         <div
@@ -35,7 +36,7 @@ exports[`Target Status component should shallow render correctly 1`] = `
           <span
             className="TargetItemBlock__Label--sub"
           >
-            Goal:
+            Target:
           </span>
           833
         </div>
@@ -61,12 +62,13 @@ exports[`Target Status component should shallow render correctly 1`] = `
         <div
           className="TargetItemBlock__Label--error"
         >
-          Collection Rate: 59.53%
+          Patient Data Collection 59.53%
         </div>
       </Unknown>,
       <Unknown
         className="TargetItemBlock"
-        lg="1-4"
+        lg="1-5"
+        md="1-3"
         sm="1-2"
       >
         <div
@@ -80,7 +82,7 @@ exports[`Target Status component should shallow render correctly 1`] = `
           <span
             className="TargetItemBlock__Label--sub"
           >
-            Goal:
+            Target:
           </span>
           211
         </div>
@@ -106,12 +108,13 @@ exports[`Target Status component should shallow render correctly 1`] = `
         <div
           className="TargetItemBlock__Label--error"
         >
-          Collection Rate: 45%
+          Patient Data Collection 45%
         </div>
       </Unknown>,
       <Unknown
         className="TargetItemBlock"
-        lg="1-4"
+        lg="1-5"
+        md="1-3"
         sm="1-2"
       >
         <div
@@ -125,7 +128,7 @@ exports[`Target Status component should shallow render correctly 1`] = `
           <span
             className="TargetItemBlock__Label--sub"
           >
-            Goal:
+            Target:
           </span>
           100
         </div>
@@ -154,7 +157,8 @@ exports[`Target Status component should shallow render correctly 1`] = `
       </Unknown>,
       <Unknown
         className="TargetItemBlock"
-        lg="1-4"
+        lg="1-5"
+        md="1-3"
         sm="1-2"
       >
         <div
@@ -168,7 +172,7 @@ exports[`Target Status component should shallow render correctly 1`] = `
           <span
             className="TargetItemBlock__Label--sub"
           >
-            Goal:
+            Target:
           </span>
           183
         </div>

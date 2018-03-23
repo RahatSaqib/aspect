@@ -8,7 +8,7 @@ import { Link } from 'react-router-dom'
 import { Card } from 'react-toolbox/lib/card'
 import { Unit } from '../../components/pureGrids'
 import Indicator from '../../components/shared/Indicator'
-import { fetchSummaryDashboard } from '../DashboardRedux'
+import { fetchStatDashboard } from '../DashboardRedux'
 import messages from './messages'
 
 const cssClasses = classnames.bind(require('./Status.css'))
@@ -46,16 +46,16 @@ const enhance = compose(
       summary: state.dashboard.summary,
     }),
     bindActionCreators.bind(null, {
-      fetchSummaryDashboard,
+      fetchStatDashboard,
     })
   ),
   withHandlers({
-    onInitialLoad: ({ location, fetchSummaryDashboard }) => () => {
+    onInitialLoad: ({ location, fetchStatDashboard }) => () => {
       const searchParams = new URLSearchParams(location.search)
       const filtersParams = new URLSearchParams(
         searchParams.get('filters') || ''
       )
-      fetchSummaryDashboard(filtersParams)
+      fetchStatDashboard(filtersParams)
     },
   }),
   lifecycle({

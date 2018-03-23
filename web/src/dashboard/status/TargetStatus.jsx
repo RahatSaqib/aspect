@@ -162,6 +162,7 @@ export const TargetStatus = ({
             {_fp.map(
               date => (
                 <Button
+                  key={date.key}
                   className={cssClasses('Title__FiltersGroup__Button')}
                   primary
                   raised
@@ -177,13 +178,19 @@ export const TargetStatus = ({
         </div>
         <div className={cssClasses('Section--summary')}>
           {targetSummaryList.map(target => (
-            <Unit sm="1-2" lg="1-4" className={cssClasses('TargetItemBlock')}>
+            <Unit
+              sm="1-2"
+              md="1-3"
+              lg="1-5"
+              key={target.get('id')}
+              className={cssClasses('TargetItemBlock')}
+            >
               <div className={cssClasses('TargetItemBlock__Title')}>
                 {target.get('title')}
               </div>
               <div className={cssClasses('TargetItemBlock__Label')}>
                 <span className={cssClasses('TargetItemBlock__Label--sub')}>
-                  {intl.formatMessage(messages.targetGoalLabel)}
+                  {intl.formatMessage(messages.targetLabel)}
                 </span>
                 {getGoalValue(target)}
               </div>

@@ -71,7 +71,7 @@
 .Summary__Card__Item__Count {
   padding-right: 10px;
   line-height: 0.8;
-  font-size:40px;
+  font-size: 40px;
 }
 
 .Summary__Card__Item__Messages {
@@ -98,7 +98,7 @@
   text-transform: capitalize;
 }
 
-.Summary__Card__Item--right  {
+.Summary__Card__Item--right {
   composes: Summary__Card__Item;
   text-align: right;
 }
@@ -244,7 +244,7 @@
 }
 
 .TargetItemBlock {
-  padding: 20px 0;
+  padding: 20px 0 0 0;
 }
 
 .TargetItemBlock__Title {
@@ -284,18 +284,24 @@
 }
 
 @media screen and (min-width: 64em) {
-  .TargetItemBlock:nth-child(4n+1) .TargetItemBlock__Label--sub {
+  .TargetItemBlock:nth-child(5n + 1) .TargetItemBlock__Label--sub {
     visibility: visible;
   }
 }
 
 @media screen and (min-width: 48em) and (max-width: 63.938em) {
-  .TargetItemBlock:nth-child(2n+1) .TargetItemBlock__Label--sub {
+  .TargetItemBlock:nth-child(3n + 1) .TargetItemBlock__Label--sub {
     visibility: visible;
   }
 }
 
-@media screen and (max-width: 47.938em) {
+@media screen and (min-width: 35.5em) and (max-width: 47.938em) {
+  .TargetItemBlock:nth-child(2n + 1) .TargetItemBlock__Label--sub {
+    visibility: visible;
+  }
+}
+
+@media screen and (max-width: 35.438em) {
   .TargetItemBlock .TargetItemBlock__Label--sub {
     visibility: visible;
   }
