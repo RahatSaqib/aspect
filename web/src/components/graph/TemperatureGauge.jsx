@@ -17,14 +17,12 @@ const TemperatureGauge = ({
 }) => {
   const margin = { top: 5, bottom: 5 }
 
-  const bulbRadius = 22
-  const bulbY = height - margin.top - margin.bottom - bulbRadius
-  const bulbX = width / 2
-
   const tubeWidth = 20
+  const tubeRadius = tubeWidth / 2
   const tubeBorderWidth = 4
-  const tubeY = margin.top + tubeWidth / 2
-  const tubeHeight = bulbY - tubeY - bulbRadius + tubeBorderWidth
+  const tubeY = margin.top + tubeRadius
+  const tubeHeight =
+    height - tubeY - tubeRadius - margin.bottom + tubeBorderWidth
 
   const tubeBorderColor = '#91949d'
   const tubeFillColor = '#fff'
@@ -53,27 +51,28 @@ const TemperatureGauge = ({
         <circle
           r={tubeWidth / 2}
           cx={width / 2}
-          cy={tubeY + 2}
+          cy={tubeY + tubeBorderWidth}
           fill={tubeBorderColor}
-          stroke={tubeBorderColor}
-          strokeWidth={tubeBorderWidth}
-        />
-        <rect
-          x={width / 2 - tubeWidth / 2}
-          y={tubeY}
-          height={tubeHeight}
-          width={tubeWidth}
-          shapeRendering="crispEdges"
-          fill={tubeFillColor}
           stroke={tubeBorderColor}
           strokeWidth={tubeBorderWidth}
         />
 
         <circle
-          r={bulbRadius}
-          cx={bulbX}
-          cy={bulbY}
-          fill={value > 0 ? fillColor : tubeFillColor}
+          r={tubeWidth / 2}
+          cx={width / 2}
+          cy={tubeY + tubeHeight - tubeBorderWidth}
+          fill={tubeBorderColor}
+          stroke={tubeBorderColor}
+          strokeWidth={tubeBorderWidth}
+        />
+
+        <rect
+          x={width / 2 - tubeWidth / 2}
+          y={tubeY + tubeBorderWidth}
+          height={tubeHeight - tubeBorderWidth * 2}
+          width={tubeWidth}
+          shapeRendering="crispEdges"
+          fill={tubeFillColor}
           stroke={tubeBorderColor}
           strokeWidth={tubeBorderWidth}
         />
@@ -106,6 +105,7 @@ const TemperatureGauge = ({
           tickStroke={tubeBorderColor}
           tickFormat={_.noop}
           hideAxisLine
+          hideZero
         />
       </Group>
     </ScaleSVG>
