@@ -8,6 +8,12 @@
   margin: 20px 0;
 }
 
+.Section--target {
+  composes: Section--summary;
+  padding: 20px;
+  overflow: inherit;
+}
+
 .Section--withStatus {
   composes: Section--summary;
   padding: 20px;
@@ -151,10 +157,14 @@
   background-color: var(--aspect-color-supernova);
 }
 
-.Title__FiltersGroup__Button {
-  border: 1px solid var(--aspect-color-chill-blue-1);
-  line-height: 34px; /* due to border */
+.FiltersGroup__Child {
+  vertical-align: middle;
+  display: inline-block;
   margin: 0 5px;
+}
+
+.FiltersGroup__Child--dropdown {
+  text-align: left;
 }
 
 .ChartContainer {

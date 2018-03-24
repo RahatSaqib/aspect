@@ -7,18 +7,30 @@ import startOfDay from 'date-fns/startOfDay'
 import endOfMonth from 'date-fns/endOfMonth'
 import startOfMonth from 'date-fns/startOfMonth'
 import subtractMonths from 'date-fns/subMonths'
+import endOfQuarter from 'date-fns/endOfQuarter'
+import startOfQuarter from 'date-fns/startOfQuarter'
+import subtractQuarters from 'date-fns/subQuarters'
 import endOfYear from 'date-fns/endOfYear'
 import startOfYear from 'date-fns/startOfYear'
+import subtractYears from 'date-fns/subYears'
 
 import { bindActionCreators } from 'redux'
-import { compose, lifecycle, pure, withHandlers, withProps } from 'recompose'
+import {
+  compose,
+  lifecycle,
+  pure,
+  withHandlers,
+  withProps,
+  withPropsOnChange,
+} from 'recompose'
 import { connect } from 'react-redux'
 import { Card } from 'react-toolbox/lib/card'
-import { Button } from 'react-toolbox/lib/button'
 import { Unit } from '../../components/pureGrids'
 import { fetchTargetDashboard } from '../DashboardRedux'
 import Title from './Title'
 import TemperatureGauge from '../../components/graph/TemperatureGauge'
+import StyledDropdown from '../../components/themedReactToolbox/StyledDropdown'
+
 import messages from './messages'
 
 const cssClasses = classnames.bind(require('./Status.css'))
@@ -44,24 +56,52 @@ const enhance = compose(
     const thisMonthEnd = endOfMonth(now)
     const thisYearStart = startOfYear(now)
     const thisYearEnd = endOfYear(now)
+    const thisQuarterStart = startOfQuarter(now)
+    const thisQuarterEnd = endOfQuarter(now)
+
     const lastMonth = subtractMonths(now, 1)
     const lastMonthStart = startOfMonth(lastMonth)
     const lastMonthEnd = endOfMonth(lastMonth)
+    const lastYear = subtractYears(now, 1)
+    const lastYearStart = startOfYear(lastYear)
+    const lastYearnEnd = endOfYear(lastYear)
+    const lastQuarter = subtractQuarters(now, 1)
+    const lastQuarterStart = startOfQuarter(lastQuarter)
+    const lastQuarterEnd = endOfQuarter(lastQuarter)
+
     const dateRangeList = [
       {
-        key: 'thisYear',
+        value: 'thisYear',
         label: `${formatMessage(messages.thisYear)}`,
         minDate: thisYearStart,
         maxDate: thisYearEnd,
       },
       {
-        key: 'thisMonth',
+        value: 'lastYear',
+        label: `${formatMessage(messages.lastYear)}`,
+        minDate: lastYearStart,
+        maxDate: lastYearnEnd,
+      },
+      {
+        value: 'thisQuarter',
+        label: `${formatMessage(messages.thisQuarter)}`,
+        minDate: thisQuarterStart,
+        maxDate: thisQuarterEnd,
+      },
+      {
+        value: 'lastQuarter',
+        label: `${formatMessage(messages.lastQuarter)}`,
+        minDate: lastQuarterStart,
+        maxDate: lastQuarterEnd,
+      },
+      {
+        value: 'thisMonth',
         label: `${formatMessage(messages.thisMonth)}`,
         minDate: thisMonthStart,
         maxDate: thisMonthEnd,
       },
       {
-        key: 'lastMonth',
+        value: 'lastMonth',
         label: `${formatMessage(messages.lastMonth)}`,
         minDate: startOfDay(lastMonthStart),
         maxDate: endOfDay(lastMonthEnd),
@@ -79,10 +119,19 @@ const enhance = compose(
       dateRangeList
     )
     return {
-      dateRange: !dateRange ? 'thisYear' : dateRange.key,
+      dateRange: !dateRange ? 'thisYear' : dateRange.value,
       dateRangeList,
     }
   }),
+  withPropsOnChange(
+    (props, nextProps) =>
+      props.targetSummaryList !== nextProps.targetSummaryList,
+    ({ targetSummaryList, dateRange }) => ({
+      targetSummaryList: targetSummaryList.map(target =>
+        target.set('target', getGoalValue(target, dateRange))
+      ),
+    })
+  ),
   withHandlers({
     onInitialLoad: ({ location, fetchTargetDashboard }) => () => {
       const searchParams = new URLSearchParams(location.search)
@@ -91,9 +140,7 @@ const enhance = compose(
       )
       fetchTargetDashboard(filtersParams)
     },
-    onDateRangeClick: ({ history, location, dateRangeList }) => ({
-      currentTarget: { dataset: { dateRange } },
-    }) => {
+    onDateRangeClick: ({ history, location, dateRangeList }) => dateRange => {
       const searchParams = new URLSearchParams(location.search)
       const filtersParams = new URLSearchParams(
         searchParams.get('filters') || DEFAULT_DATE_RANGE
@@ -101,7 +148,7 @@ const enhance = compose(
 
       const selectedValue = _fp.find(
         {
-          key: dateRange,
+          value: dateRange,
         },
         dateRangeList
       )
@@ -129,6 +176,19 @@ const enhance = compose(
   })
 )
 
+const getGoalValue = (target, dateRange) => {
+  switch (dateRange) {
+    case 'thisMonth':
+    case 'lastMonth':
+      return Math.round(target.get('target') / 12)
+    case 'thisQuarter':
+    case 'lastQuarter':
+      return Math.round(target.get('target') / 4)
+    default:
+      return target.get('target')
+  }
+}
+
 export const TargetStatus = ({
   intl,
   // --- injected by recompose ---
@@ -142,13 +202,8 @@ export const TargetStatus = ({
   const hasError = target =>
     parseFloat(target.get('extra')) < parseFloat(target.get('threshold'))
 
-  const getGoalValue = target =>
-    dateRange === 'thisYear'
-      ? target.get('target')
-      : Math.round(target.get('target') / 12)
-
   const getProgressValue = target =>
-    `${Math.round(target.get('count') / getGoalValue(target) * 100)}%`
+    `${Math.round(target.get('count') / target.get('target') * 100)}%`
 
   return (
     targetSummaryList.size > 0 && (
@@ -158,22 +213,17 @@ export const TargetStatus = ({
             colorClassName={cssClasses('Title__Color--status')}
             title={title}
           />
-          <div>
-            {_fp.map(
-              date => (
-                <Button
-                  key={date.key}
-                  className={cssClasses('Title__FiltersGroup__Button')}
-                  primary
-                  raised
-                  inverse={date.key !== dateRange}
-                  label={date.label}
-                  data-date-range={date.key}
-                  onClick={onDateRangeClick}
-                />
-              ),
-              dateRangeList
+          <div
+            className={cssClasses(
+              'FiltersGroup__Child',
+              'FiltersGroup__Child--dropdown'
             )}
+          >
+            <StyledDropdown
+              value={dateRange}
+              source={dateRangeList}
+              onChange={onDateRangeClick}
+            />
           </div>
         </div>
         <div className={cssClasses('Section--summary')}>
@@ -192,11 +242,11 @@ export const TargetStatus = ({
                 <span className={cssClasses('TargetItemBlock__Label--sub')}>
                   {intl.formatMessage(messages.targetLabel)}
                 </span>
-                {getGoalValue(target)}
+                {target.get('target')}
               </div>
               <div className={cssClasses('TargetItemBlock__Graph')}>
                 <TemperatureGauge
-                  goal={getGoalValue(target)}
+                  goal={target.get('target')}
                   value={target.get('count')}
                   hasError={hasError(target)}
                 />

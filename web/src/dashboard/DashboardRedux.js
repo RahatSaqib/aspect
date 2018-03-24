@@ -341,7 +341,7 @@ export default function dashboardReducer(state = initialState, action) {
             'requestedAtSet',
             mutState.requestedAtSet.delete(action.requestedAt)
           )
-          mutState.mergeDeepIn(['summary'], action.data)
+          mutState.set('summary', new Immutable.fromJS(action.data))
         }
       })
     case RECEIVE_TARGET_DASHBOARD:
@@ -351,7 +351,7 @@ export default function dashboardReducer(state = initialState, action) {
             'requestedAtSet',
             mutState.requestedAtSet.delete(action.requestedAt)
           )
-          mutState.mergeDeepIn(['targetSummaryList'], action.data)
+          mutState.set('targetSummaryList', new Immutable.fromJS(action.data))
         }
       })
     case RECEIVE_RESULT_DASHBOARD:

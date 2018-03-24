@@ -13,7 +13,15 @@ exports[`Target Status component should shallow render correctly 1`] = `
       colorClassName="Title__Color--status"
       title="Testing Targets"
     />
-    <div />
+    <div
+      className="FiltersGroup__Child FiltersGroup__Child--dropdown"
+    >
+      <mapProps(ThemedDropdown)
+        onChange={undefined}
+        source={undefined}
+        value={undefined}
+      />
+    </div>
   </div>
   <div
     className="Section--summary"
@@ -38,13 +46,13 @@ exports[`Target Status component should shallow render correctly 1`] = `
           >
             Target:
           </span>
-          833
+          10000
         </div>
         <div
           className="TargetItemBlock__Graph"
         >
           <TemperatureGauge
-            goal={833}
+            goal={10000}
             hasError={true}
             value={897}
           />
@@ -57,7 +65,7 @@ exports[`Target Status component should shallow render correctly 1`] = `
           >
             Progress:
           </span>
-          108%
+          9%
         </div>
         <div
           className="TargetItemBlock__Label--error"
@@ -84,13 +92,13 @@ exports[`Target Status component should shallow render correctly 1`] = `
           >
             Target:
           </span>
-          211
+          2536
         </div>
         <div
           className="TargetItemBlock__Graph"
         >
           <TemperatureGauge
-            goal={211}
+            goal={2536}
             hasError={true}
             value={533}
           />
@@ -103,7 +111,7 @@ exports[`Target Status component should shallow render correctly 1`] = `
           >
             Progress:
           </span>
-          253%
+          21%
         </div>
         <div
           className="TargetItemBlock__Label--error"
@@ -130,13 +138,13 @@ exports[`Target Status component should shallow render correctly 1`] = `
           >
             Target:
           </span>
-          100
+          1200
         </div>
         <div
           className="TargetItemBlock__Graph"
         >
           <TemperatureGauge
-            goal={100}
+            goal={1200}
             hasError={false}
             value={1220}
           />
@@ -149,7 +157,7 @@ exports[`Target Status component should shallow render correctly 1`] = `
           >
             Progress:
           </span>
-          1220%
+          102%
         </div>
         <div
           className="TargetItemBlock__Label--error"
@@ -174,13 +182,13 @@ exports[`Target Status component should shallow render correctly 1`] = `
           >
             Target:
           </span>
-          183
+          2190
         </div>
         <div
           className="TargetItemBlock__Graph"
         >
           <TemperatureGauge
-            goal={183}
+            goal={2190}
             hasError={false}
             value={986}
           />
@@ -193,7 +201,7 @@ exports[`Target Status component should shallow render correctly 1`] = `
           >
             Progress:
           </span>
-          539%
+          45%
         </div>
         <div
           className="TargetItemBlock__Label--error"

@@ -61,7 +61,7 @@ const Status = ({ history, location, intl }) => (
       intl={intl}
       history={history}
       location={location}
-      className={cssClasses('Section--withStatus')}
+      className={cssClasses('Section--target')}
       title={intl.formatMessage(messages.targetsTitle)}
     />
 

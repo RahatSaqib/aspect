@@ -153,6 +153,18 @@ export const messages = defineMessages({
     id: 'pages.Status.thisYear',
     defaultMessage: 'This Year',
   },
+  lastYear: {
+    id: 'pages.Status.lastYear',
+    defaultMessage: 'Last Year',
+  },
+  thisQuarter: {
+    id: 'pages.Status.thisQuarter',
+    defaultMessage: 'This Quarter',
+  },
+  lastQuarter: {
+    id: 'pages.Status.lastQuarter',
+    defaultMessage: 'Last Quarter',
+  },
   thisMonth: {
     id: 'pages.Status.thisMonth',
     defaultMessage: 'This Month',
