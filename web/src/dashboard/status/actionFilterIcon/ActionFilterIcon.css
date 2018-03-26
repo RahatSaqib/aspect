@@ -1,0 +1,77 @@
+.ActionFilterIcon {
+  background: url("./ActionFilterIconSprites.png");
+  background-repeat: no-repeat;
+  display: block;
+}
+
+.ActionFilterIcon_Connectivity--acknowledge {
+  width: 82px;
+  height: 95px;
+  background-position: 0 0;
+}
+
+.ActionFilterIcon_Connectivity--active {
+  width: 82px;
+  height: 95px;
+  background-position: -82px 0;
+}
+
+.ActionFilterIcon_Connectivity--ok {
+  width: 82px;
+  height: 95px;
+  background-position: -164px 0;
+}
+
+.ActionFilterIcon_Data--acknowledge {
+  width: 82px;
+  height: 95px;
+  background-position: 0 -95px;
+}
+
+.ActionFilterIcon_Data--active {
+  width: 82px;
+  height: 95px;
+  background-position: -82px -95px;
+}
+
+.ActionFilterIcon_Data--ok {
+  width: 82px;
+  height: 95px;
+  background-position: -164px -95px;
+}
+
+.ActionFilterIcon_Device--acknowledge {
+  width: 82px;
+  height: 95px;
+  background-position: 0 -190px;
+}
+
+.ActionFilterIcon_Device--active {
+  width: 82px;
+  height: 95px;
+  background-position: -82px -190px;
+}
+
+.ActionFilterIcon_Device--ok {
+  width: 82px;
+  height: 95px;
+  background-position: -164px -190px;
+}
+
+.ActionFilterIcon_Reagent--acknowledge {
+  width: 82px;
+  height: 95px;
+  background-position: -246px 0;
+}
+
+.ActionFilterIcon_Reagent--active {
+  width: 82px;
+  height: 95px;
+  background-position: -246px -95px;
+}
+
+.ActionFilterIcon_Reagent--ok {
+  width: 82px;
+  height: 95px;
+  background-position: -246px -190px;
+}
