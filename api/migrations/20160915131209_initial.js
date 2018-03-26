@@ -1561,6 +1561,7 @@ async function up(knex) {
 
   await knex.schema.createTable('DashboardWidget', widget => {
     widget.increments('id')
+    widget.string('layout').notNullable()
     widget.string('icon').notNullable()
     widget.string('title').notNullable()
     widget.string('titleI18nKey').notNullable()
@@ -1578,6 +1579,11 @@ async function up(knex) {
     widget.string('extraLabel')
     widget.string('extraLabelI18nKey')
     widget.string('sqlForTarget', 2000)
+    widget
+      .boolean('lowerThanThreshold')
+      .notNullable()
+      .defaultTo(0)
+    widget.integer('threshold')
     widget
       .boolean('indicator')
       .notNullable()

@@ -145,6 +145,46 @@ export const messages = defineMessages({
     id: 'pages.Status.subResultsTitle',
     defaultMessage: 'Last 30 Days',
   },
+  targetsTitle: {
+    id: 'pages.Status.targetsTitle',
+    defaultMessage: 'Testing Targets',
+  },
+  thisYear: {
+    id: 'pages.Status.thisYear',
+    defaultMessage: 'This Year',
+  },
+  lastYear: {
+    id: 'pages.Status.lastYear',
+    defaultMessage: 'Last Year',
+  },
+  thisQuarter: {
+    id: 'pages.Status.thisQuarter',
+    defaultMessage: 'This Quarter',
+  },
+  lastQuarter: {
+    id: 'pages.Status.lastQuarter',
+    defaultMessage: 'Last Quarter',
+  },
+  thisMonth: {
+    id: 'pages.Status.thisMonth',
+    defaultMessage: 'This Month',
+  },
+  lastMonth: {
+    id: 'pages.Status.lastMonth',
+    defaultMessage: 'Last Month',
+  },
+  targetLabel: {
+    id: 'pages.Status.targetLabel',
+    defaultMessage: 'Target:',
+  },
+  targetProgressLabel: {
+    id: 'pages.Status.targetProgressLabel',
+    defaultMessage: 'Progress:',
+  },
+  targetErrorMessageLabel: {
+    id: 'pages.Status.targetErrorMessageLabel',
+    defaultMessage: 'Patient Data Collection {extra}',
+  },
 })
 
 export default messages

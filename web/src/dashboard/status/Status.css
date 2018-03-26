@@ -1,4 +1,4 @@
-@import '../../globals/variables.css';
+@import "../../globals/variables.css";
 
 .Container {
   padding: 0 10px;
@@ -6,6 +6,12 @@
 
 .Section--summary {
   margin: 20px 0;
+}
+
+.Section--target {
+  composes: Section--summary;
+  padding: 20px;
+  overflow: inherit;
 }
 
 .Section--withStatus {
@@ -71,7 +77,7 @@
 .Summary__Card__Item__Count {
   padding-right: 10px;
   line-height: 0.8;
-  font-size:40px;
+  font-size: 40px;
 }
 
 .Summary__Card__Item__Messages {
@@ -98,9 +104,22 @@
   text-transform: capitalize;
 }
 
-.Summary__Card__Item--right  {
+.Summary__Card__Item--right {
   composes: Summary__Card__Item;
   text-align: right;
+}
+
+.TitleContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.TitleContainer::after {
+  content: "D";
+  visibility: hidden;
+  flex: 1;
 }
 
 .Title {
@@ -108,6 +127,7 @@
   text-transform: capitalize;
   font-size: 24px;
   color: var(--aspect-color-grey-2);
+  flex: 1;
 }
 
 .Title__Color {
@@ -131,6 +151,20 @@
 
 .Title__Color--site {
   background-color: var(--aspect-color-brink);
+}
+
+.Title__Color--status {
+  background-color: var(--aspect-color-supernova);
+}
+
+.FiltersGroup__Child {
+  vertical-align: middle;
+  display: inline-block;
+  margin: 0 5px;
+}
+
+.FiltersGroup__Child--dropdown {
+  text-align: left;
 }
 
 .ChartContainer {
@@ -217,4 +251,74 @@
 
 .Button--discard:not([disabled]).Button--raised {
   background-color: var(--aspect-color-mandy);
+}
+
+.TargetItemBlock {
+  padding: 20px 0 0 0;
+}
+
+.TargetItemBlock__Title {
+  font-size: 20px;
+  text-align: center;
+  margin-bottom: 4px;
+}
+
+.TargetItemBlock__Title::first-letter {
+  text-transform: capitalize;
+}
+
+.TargetItemBlock__Graph {
+  padding: 0 40px;
+}
+
+.TargetItemBlock__Label {
+  font-size: 16px;
+  color: var(--aspect-color-grey-4);
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 4px;
+}
+
+.TargetItemBlock__Label--error {
+  font-size: 16px;
+  color: var(--aspect-color-mandy);
+  font-weight: var(--lato-font-weight-bold);
+  text-align: center;
+  margin-bottom: 4px;
+}
+
+.TargetItemBlock .TargetItemBlock__Label--sub {
+  visibility: hidden;
+  flex: 1;
+}
+
+@media screen and (min-width: 64em) {
+  .TargetItemBlock:nth-child(5n + 1) .TargetItemBlock__Label--sub {
+    visibility: visible;
+  }
+}
+
+@media screen and (min-width: 48em) and (max-width: 63.938em) {
+  .TargetItemBlock:nth-child(3n + 1) .TargetItemBlock__Label--sub {
+    visibility: visible;
+  }
+}
+
+@media screen and (min-width: 35.5em) and (max-width: 47.938em) {
+  .TargetItemBlock:nth-child(2n + 1) .TargetItemBlock__Label--sub {
+    visibility: visible;
+  }
+}
+
+@media screen and (max-width: 35.438em) {
+  .TargetItemBlock .TargetItemBlock__Label--sub {
+    visibility: visible;
+  }
+}
+
+.TargetItemBlock__Label::after {
+  content: "D";
+  visibility: hidden;
+  flex: 1;
 }

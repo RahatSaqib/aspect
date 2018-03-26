@@ -11,9 +11,9 @@ describe('Dashboard routes', () => {
   describe('GET', () => {
     shared.checkToken(server, path)
 
-    it('should return an list of dashboard widget object', done => {
+    it('should return a list of stat dashboard widget objects', done => {
       server
-        .get(path)
+        .get(`${path}?layout=stat`)
         .set('Authorization', `Bearer ${shared.token}`)
         .end((err, res) => {
           assert.equal(res.status, 200)
@@ -29,6 +29,19 @@ describe('Dashboard routes', () => {
           assert.property(res.body.data[0], 'subTitleI18nKey')
           assert.property(res.body.data[0], 'link')
           assert.property(res.body.data[0], 'count')
+          done()
+        })
+    })
+
+    it('should return a list of target dashboard widget objects', done => {
+      server
+        .get(`${path}?layout=target`)
+        .set('Authorization', `Bearer ${shared.token}`)
+        .end((err, res) => {
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+          assert.property(res.body, 'data')
+          assert.typeOf(res.body.data, 'array')
           done()
         })
     })

@@ -1,5 +1,6 @@
 [
   {
+    "layout": "stat",
     "icon": "assignment",
     "title": "Number of tests",
     "titleI18nKey": "dashboardWidgetTitleAllTests",
@@ -11,6 +12,7 @@
     "sortOrder": 0
   },
   {
+    "layout": "stat",
     "icon": "assignment-turned-in",
     "title": "Successful Tests",
     "titleI18nKey": "dashboardWidgetTitleSuccessfulTests",
@@ -22,6 +24,7 @@
     "sortOrder": 1
   },
   {
+    "layout": "stat",
     "icon": "assignment-late",
     "title": "Failed Test Rate",
     "titleI18nKey": "dashboardWidgetTitleFailedTestRate",
@@ -36,6 +39,7 @@
     "sortOrder": 2
   },
   {
+    "layout": "stat",
     "icon": "trending-up",
     "title": "Failed Tests",
     "titleI18nKey": "dashboardWidgetTitleFailedTestTrend",
@@ -47,6 +51,7 @@
     "sortOrder": 3
   },
   {
+    "layout": "stat",
     "icon": "playlist-add-check",
     "title": "MTB+",
     "titleI18nKey": "dashboardWidgetTitleMtbPositive",
@@ -58,6 +63,7 @@
     "sortOrder": 4
   },
   {
+    "layout": "stat",
     "icon": "playlist-add",
     "title": "MTB+ Rif+",
     "titleI18nKey": "dashboardWidgetTitleMtbPositiveRifPositive",
@@ -69,6 +75,7 @@
     "sortOrder": 5
   },
   {
+    "layout": "stat",
     "icon": "playlist-play",
     "title": "MTB+ Rif?",
     "titleI18nKey": "dashboardWidgetTitleMtbPositiveRifIndeterminateRate",
@@ -83,6 +90,7 @@
     "sortOrder": 6
   },
   {
+    "layout": "stat",
     "icon": "trending-up",
     "title": "MTB+ Rif?",
     "titleI18nKey": "dashboardWidgetTitleMtbPositiveRifIndeterminateTrend",
@@ -94,6 +102,7 @@
     "sortOrder": 7
   },
   {
+    "layout": "stat",
     "icon": "assignment",
     "title": "Tests",
     "titleI18nKey": "dashboardWidgetTitleTests",
@@ -110,6 +119,7 @@
     "sortOrder": 8
   },
   {
+    "layout": "stat",
     "icon": "assignment",
     "title": "MTB+ Rate",
     "titleI18nKey": "dashboardWidgetTitleMTBPositiveRate",
@@ -126,6 +136,7 @@
     "sortOrder": 9
   },
   {
+    "layout": "stat",
     "icon": "assignment",
     "title": "RR Rate",
     "titleI18nKey": "dashboardWidgetTitleRRRate",
@@ -142,6 +153,7 @@
     "sortOrder": 10
   },
   {
+    "layout": "stat",
     "icon": "assignment",
     "title": "TI Rate",
     "titleI18nKey": "dashboardWidgetTitleTIRate",
@@ -156,5 +168,80 @@
     "statStatusI18nKey": "dashboardWidgetStatusTIRate",
     "link": "/browse/result",
     "sortOrder": 11
+  },
+  {
+    "layout": "target",
+    "icon": "assignment",
+    "title": "Total Tests",
+    "titleI18nKey": "dashboardWidgetTitleTotal",
+    "sqlForIndicator":
+      "select count(r.id) as cnt from Result as r inner join Device as d on d.id = r.deviceId inner join Site as s on s.id = d.siteId inner join Partner p on s.partnerId = p.id left outer join Geography as g on s.geographyId = g.id inner join Assay as a on a.id = r.assayId ",
+    "sqlForTarget":
+      "select 10000 as target",
+    "lowerThanThreshold": 0,
+    "threshold": 50,
+    "sqlForExtra": "select concat(round(sum(case when resultCategory1 not in (5,6,7) then 1 else 0 end)/count(r.id)*100,2),'%') as extra from Result as r inner join Device as d on d.id = r.deviceId inner join Site as s on s.id = d.siteId inner join Partner as p on s.partnerId = p.id left outer join Geography as g on s.geographyId = g.id ",
+    "link": "/browse/result",
+    "sortOrder": 12
+  },
+  {
+    "layout": "target",
+    "icon": "assignment",
+    "title": "MDR-TB",
+    "titleI18nKey": "dashboardWidgetTitleMDRTB",
+    "sqlForIndicator":
+      "select count(r.id) as cnt from Result as r inner join Device as d on d.id = r.deviceId inner join Site as s on s.id = d.siteId inner join Partner p on s.partnerId = p.id left outer join Geography as g on s.geographyId = g.id inner join Assay as a on a.id = r.assayId where r.assayId in (1,2)",
+    "sqlForTarget":
+      "select 10000 as target",
+    "lowerThanThreshold": 0,
+    "threshold": 50,
+    "sqlForExtra": "select concat(round(sum(case when resultCategory1 not in (5,6,7) then 1 else 0 end)/count(r.id)*100,2),'%') as extra from Result as r inner join Device as d on d.id = r.deviceId inner join Site as s on s.id = d.siteId inner join Partner as p on s.partnerId = p.id left outer join Geography as g on s.geographyId = g.id where r.assayId in (1,2)",
+    "link": "/browse/result",
+    "sortOrder": 13
+  },
+  {
+    "layout": "target",
+    "icon": "assignment",
+    "title": "HIV+",
+    "titleI18nKey": "dashboardWidgetTitleHIV",
+    "sqlForIndicator":
+      "select 533 as cnt",
+    "sqlForTarget":
+      "select 2536 as cnt",
+    "lowerThanThreshold": 0,
+    "threshold": 50,
+    "sqlForExtra": "select '45%' as extra",
+    "link": "/browse/result",
+    "sortOrder": 14
+  },
+  {
+    "layout": "target",
+    "icon": "assignment",
+    "title": "Smear+",
+    "titleI18nKey": "dashboardWidgetTitleSmear",
+    "sqlForIndicator":
+      "select 1220 as cnt",
+    "sqlForTarget":
+      "select 1200 as cnt",
+    "lowerThanThreshold": 0,
+    "threshold": 50,
+    "sqlForExtra": "select '75%' as extra",
+    "link": "/browse/result",
+    "sortOrder": 15
+  },
+  {
+    "layout": "target",
+    "icon": "assignment",
+    "title": "Children",
+    "titleI18nKey": "dashboardWidgetTitleChildren",
+    "sqlForIndicator":
+      "select 986 as cnt",
+    "sqlForTarget":
+      "select 2190 as cnt",
+    "lowerThanThreshold": 0,
+    "threshold": 50,
+    "sqlForExtra": "select '55%' as extra",
+    "link": "/browse/result",
+    "sortOrder": 16
   }
 ]

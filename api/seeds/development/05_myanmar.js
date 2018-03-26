@@ -585,20 +585,29 @@ async function seed(knex) {
   )
 
   // Create DashboardWidget
-  const widgetIds = []
+  const widgets = {}
   await Promise.all(
     _.map(dashboardWidget, async widget => {
-      const [widgetId] = await knex('DashboardWidget').insert(widget)
-      widgetIds.push(widgetId)
+      const [id] = await knex('DashboardWidget').insert(widget)
+      if (!widgets[widget.layout]) {
+        widgets[widget.layout] = []
+      }
+      widgets[widget.layout].push(id)
     })
   )
 
   await Promise.all(
-    _.map(widgetIds, async widgetId => {
+    _.map(widgets.stat, async widgetId => {
       await knex('JobFunctionDashboardWidget').insert([
         { jobFunctionId: jobFunctionIdAdmin, widgetId },
         { jobFunctionId: jobFunctionIdRegionalOfficer, widgetId },
         { jobFunctionId: jobFunctionIdLabUser, widgetId },
+      ])
+    }),
+    _.map(widgets.target, async widgetId => {
+      await knex('JobFunctionDashboardWidget').insert([
+        { jobFunctionId: jobFunctionIdAdmin, widgetId },
+        { jobFunctionId: jobFunctionIdRegionalOfficer, widgetId },
       ])
     })
   )

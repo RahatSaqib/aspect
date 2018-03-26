@@ -1,5 +1,6 @@
 [
   {
+    "layout": "stat",
     "icon": "place",
     "title": "Sites",
     "titleI18nKey": "sitesTitle",
@@ -11,6 +12,7 @@
     "sortOrder": 0
   },
   {
+    "layout": "stat",
     "icon": "computer",
     "title": "Devices",
     "titleI18nKey": "devicesTitle",
@@ -22,6 +24,7 @@
     "sortOrder": 1
   },
   {
+    "layout": "stat",
     "icon": "assignment",
     "title": "Results",
     "titleI18nKey": "resultsTitle",
@@ -33,6 +36,7 @@
     "sortOrder": 2
   },
   {
+    "layout": "stat",
     "icon": "perm-identity",
     "title": "Contacts",
     "titleI18nKey": "personTitle",
