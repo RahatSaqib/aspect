@@ -7,6 +7,7 @@ const {
   deviceDashboard,
   siteDashboard,
   operationalDashboard,
+  actionDashboard,
 } = require('./service')
 
 const routes = [
@@ -87,6 +88,23 @@ const routes = [
           dateRange: Joi.number()
             .allow('')
             .description('Filter for date range'),
+        }),
+      },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/dashboard/action',
+    handler: asyncHandler(actionDashboard),
+    config: {
+      description: 'Action Data Dashboard',
+      notes: 'List of action category with actions',
+      auth: { scope: ['site', 'device'] },
+      validate: {
+        query: Object.assign({
+          siteId: Joi.number()
+            .allow('')
+            .description('Site ID'),
         }),
       },
     },
