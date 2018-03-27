@@ -1,0 +1,74 @@
+@import "../../../globals/variables.css";
+
+:root {
+  --notification-icon-size: 36px;
+}
+
+.TableRow {
+  composes: TableRow from "../../../components/shared/DataTableRow.css";
+}
+
+.TableCell {
+  composes: TableCell from "../../../components/shared/DataTableRow.css";
+  color: var(--aspect-color-grey-4);
+}
+
+.TableCell--actionType {
+  text-align: center;
+}
+
+.TableCell--site {
+  font-weight: var(--lato-font-weight-bold);
+  color: var(--aspect-color-grey-1);
+}
+
+.TableCell--issue {
+  width: 60%;
+  color: var(--aspect-color-grey-1);
+}
+
+.TableCell--acknowledged {
+  text-align: center;
+  font-weight: var(--lato-font-weight-bold);
+}
+
+.ActionType--active {
+  color: var(--aspect-color-brink);
+  font-size: 20px;
+}
+
+.ActionType--acknowledged {
+  color: var(--aspect-color-supernova);
+  font-size: 20px;
+}
+
+.ActionType--ok {
+  color: var(--aspect-color-mantis);
+  font-size: 20px;
+}
+
+.Button__Acknowledge {
+  background-color: var(--aspect-color-grey-5);
+  color: #ffffff !important;
+  font-weight: var(--lato-font-weight-bold);
+}
+
+.Button__Link {
+  margin: 0;
+  padding: 0;
+  min-width: 40px;
+  background-color: var(--aspect-color-grey-5);
+  color: #ffffff !important;
+  font-weight: var(--lato-font-weight-bold);
+  text-align: center;
+  text-transform: capitalize;
+}
+
+.ArrowLeft {
+  font-size: 28px;
+}
+
+.Message {
+  display: flex;
+  align-items: center;
+}

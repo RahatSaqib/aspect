@@ -4,7 +4,7 @@
   display: block;
 }
 
-.ActionFilterIcon_Connectivity--acknowledge {
+.ActionFilterIcon_Connectivity--acknowledged {
   width: 82px;
   height: 95px;
   background-position: 0 0;
@@ -22,7 +22,7 @@
   background-position: -164px 0;
 }
 
-.ActionFilterIcon_Data--acknowledge {
+.ActionFilterIcon_Data--acknowledged {
   width: 82px;
   height: 95px;
   background-position: 0 -95px;
@@ -40,7 +40,7 @@
   background-position: -164px -95px;
 }
 
-.ActionFilterIcon_Device--acknowledge {
+.ActionFilterIcon_Device--acknowledged {
   width: 82px;
   height: 95px;
   background-position: 0 -190px;
@@ -58,7 +58,7 @@
   background-position: -164px -190px;
 }
 
-.ActionFilterIcon_Reagent--acknowledge {
+.ActionFilterIcon_Reagent--acknowledged {
   width: 82px;
   height: 95px;
   background-position: -246px 0;

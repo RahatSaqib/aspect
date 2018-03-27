@@ -322,3 +322,49 @@
   visibility: hidden;
   flex: 1;
 }
+
+.ActionFilter {
+  padding: 20px 40px 0 40px;
+}
+
+.ActionFilterButton {
+  cursor: pointer;
+}
+
+.ActionFilterButton--selected {
+  border: 4px solid var(--aspect-color-chill-blue-1);
+  border-radius: 10px;
+}
+
+.ActionFilterButton__Title {
+  font-size: 20px;
+  text-transform: capitalize;
+  text-align: center;
+  line-height: 2;
+  align-items: center;
+}
+
+.ActionFilterButton__Icon {
+  margin: auto;
+}
+
+.ActionFilterButton__Messages {
+  font-size: 20px;
+  font-weight: var(--lato-font-weight-bold);
+  color: var(--aspect-color-mandy);
+  text-transform: capitalize;
+  text-align: center;
+  align-items: center;
+}
+
+.ActionFilterButton__Messages--hidden {
+  visibility: hidden;
+}
+
+.ActionDataTable {
+  composes: ComponentDataTable from "../../components/shared/DataTable.css";
+}
+
+.ActionDataTable__TableHead__Status {
+  text-align: center;
+}

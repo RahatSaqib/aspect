@@ -185,6 +185,50 @@ export const messages = defineMessages({
     id: 'pages.Status.targetErrorMessageLabel',
     defaultMessage: 'Patient Data Collection {extra}',
   },
+  actionTitle: {
+    id: 'pages.Status.actionTitle',
+    defaultMessage: 'Actions',
+  },
+  issueCategoryDeviceHealth: {
+    id: 'pages.Status.issueCategoryDeviceHealth',
+    defaultMessage: 'GeneXpert',
+  },
+  issueCategoryReagentHealth: {
+    id: 'pages.Status.issueCategoryReagentHealth',
+    defaultMessage: 'Reagents',
+  },
+  issueCategoryDataHealth: {
+    id: 'pages.Status.issueCategoryDataHealth',
+    defaultMessage: 'Patient Data',
+  },
+  issueCategoryConnectivityHealth: {
+    id: 'pages.Status.issueCategoryConnectivityHealth',
+    defaultMessage: 'Connection',
+  },
+  actionCount: {
+    id: 'pages.Status.actionCount',
+    defaultMessage: `{actionCount, plural, one {# Action} other {# Actions}}`,
+  },
+  actionStatus: {
+    id: 'pages.Status.actionStatus',
+    defaultMessage: 'Status',
+  },
+  actionLab: {
+    id: 'pages.Status.actionLab',
+    defaultMessage: 'Lab',
+  },
+  actionIssue: {
+    id: 'pages.Status.actionIssue',
+    defaultMessage: 'Issue',
+  },
+  Acknowledged: {
+    id: 'pages.Status.Acknowledged',
+    defaultMessage: 'Acknowledged',
+  },
+  Acknowledge: {
+    id: 'pages.Status.Acknowledge',
+    defaultMessage: 'Acknowledge',
+  },
 })
 
 export default messages
