@@ -12,13 +12,14 @@ const {
 const { getDevice } = require('../../../device/service')
 
 async function postProcessAddDeviceOperation({ device, payload, now }) {
+  let inventoryItemIds = []
   const inventoryChanges = _.get(payload, 'data.inventoryChanges')
   if (!_.isEmpty(inventoryChanges)) {
     const sortedInventoryChanges = _.sortBy(
       inventoryChanges,
       inventoryChange => new Date(inventoryChange.dateChanged)
     )
-    await Promise.all(
+    inventoryItemIds = await Promise.all(
       _.map(sortedInventoryChanges, async inventoryChange => {
         const matchingConsumables = await findConsumables({
           name: inventoryChange.consumableName,
@@ -63,13 +64,16 @@ async function postProcessAddDeviceOperation({ device, payload, now }) {
             changeParameters.operation = isDecrease
               ? 'remove from GxConnect'
               : 'add from GxConnect'
-            await adjustInventory(changeParameters)
+            return adjustInventory(changeParameters)
           }
         }
+        return -1
       })
     )
   }
-  return {}
+  return {
+    inventoryItemIds: _.filter(inventoryItemIds, id => id > 0),
+  }
 }
 
 module.exports = postProcessAddDeviceOperation

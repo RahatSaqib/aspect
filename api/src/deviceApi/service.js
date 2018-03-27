@@ -137,7 +137,7 @@ function deviceApiHandler(handler, handlerOptions) {
 }
 
 async function addDeviceDataWithContext(context) {
-  const response = {}
+  let response = {}
   const { pluginName: plugin } = context
 
   const preProcessAddDeviceData = await loadPlugin(
@@ -156,21 +156,37 @@ async function addDeviceDataWithContext(context) {
   }
 
   if (site) {
-    await updateSiteWithContext(context.withPayload(site))
+    response = Object.assign(
+      {},
+      response,
+      await updateSiteWithContext(context.withPayload(site))
+    )
   }
 
   if (configuration) {
-    await updateDeviceConfigurationWithContext(
-      context.withPayload(configuration)
+    response = Object.assign(
+      {},
+      response,
+      await updateDeviceConfigurationWithContext(
+        context.withPayload(configuration)
+      )
     )
   }
 
   if (operation) {
-    await addDeviceOperationWithContext(context.withPayload(operation))
+    response = Object.assign(
+      {},
+      response,
+      await addDeviceOperationWithContext(context.withPayload(operation))
+    )
   }
 
   if (result) {
-    await mergeResultWithContext(context.withPayload(result))
+    response = Object.assign(
+      {},
+      response,
+      await mergeResultWithContext(context.withPayload(result))
+    )
   }
 
   return response

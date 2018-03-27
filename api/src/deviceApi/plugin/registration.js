@@ -41,9 +41,10 @@ const plugins = {
   gxalert: {
     preProcessAddDeviceData: require('./genexpert/gxalert_plugin/preProcessAddDeviceData'),
     preProcessUpdateDeviceConfiguration: require('./genexpert/preProcessUpdateDeviceConfiguration'),
-    postProcessUpdateDeviceConfiguration: require('./genexpert/postProcessUpdateDeviceConfiguration'),
-    postProcessAddDeviceOperation: require('./genexpert/postProcessAddDeviceOperation'),
+    postProcessUpdateDeviceConfiguration: require('./genexpert/gxalert_plugin/postProcessUpdateDeviceConfiguration'),
+    postProcessAddDeviceOperation: require('./genexpert/gxalert_plugin/postProcessAddDeviceOperation'),
     preProcessMergeResult: require('./genexpert/preProcessMergeResult'),
+    postProcessMergeResult: require('./genexpert/gxalert_plugin/postProcessMergeResult'),
   },
 }
 

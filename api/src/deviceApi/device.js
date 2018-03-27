@@ -41,7 +41,9 @@ async function updateDeviceDetails(knex, deviceId, deviceDetails, now) {
         )
     }
   }
-  return {}
+  return knex('Device as d')
+    .where({ 'd.id': deviceId })
+    .first()
 }
 
 async function getDeviceConfiguration(knex, deviceId) {

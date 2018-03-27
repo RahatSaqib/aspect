@@ -7,6 +7,7 @@ async function postProcessUpdateDeviceConfiguration({
   device: { id: deviceId },
   now,
 }) {
+  let device = {}
   if (!_.isEmpty(_.get(payload, 'data'))) {
     const {
       data: { macAddress, hostId, culture, timezone, instrumentSerialNumbers },
@@ -21,14 +22,14 @@ async function postProcessUpdateDeviceConfiguration({
     if (instrumentSerialNumbers) {
       deviceDetails.serial = instrumentSerialNumbers.join()
     }
-    await updateDeviceDetails(
+    device = await updateDeviceDetails(
       knex,
       deviceId,
       _.omitBy(deviceDetails, _.isEmpty),
       now
     )
   }
-  return {}
+  return { device }
 }
 
 module.exports = postProcessUpdateDeviceConfiguration
