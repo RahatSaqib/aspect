@@ -15,6 +15,7 @@ Quick Start for development. Everything is explained in more detail throughout t
 # Install Node.js and Yarn
 # Install MySQL
 # Install RabbitMQ
+#  WINDOWS USERS READ THIS: https://www.rabbitmq.com/install-windows-manual.html
 
 # Enable RabbitMQ plugins
 rabbitmq-plugins enable rabbitmq_mqtt
