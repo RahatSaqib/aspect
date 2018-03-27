@@ -1118,6 +1118,8 @@ async function actionDashboard(request) {
 
   const allActionByCategory = _.flowRight(
     x => _.groupBy(x, 'issueCategory'),
+    query.sortDir === 'desc' ? _.reverse : _.identity,
+    x => _.sortBy(x, query.sortCol || _.identity),
     query.siteId > 0 ? x => _.filter(x, ['siteId', query.siteId]) : _.identity
   )([
     {

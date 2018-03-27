@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import classnames from 'classnames/bind'
 import Immutable from 'immutable'
 import React from 'react'
@@ -8,6 +9,7 @@ import {
   lifecycle,
   pure,
   withHandlers,
+  withProps,
   withStateHandlers,
 } from 'recompose'
 
@@ -22,6 +24,12 @@ import {
   ActionDataTableHead,
   ActionDataTableRow,
 } from './list/ActionDataTable'
+import {
+  makeSortPageSelector,
+  makeSearchParamsSanitizer,
+  composeSanitizer,
+} from '../../shared/selectors/searchParams'
+import { sanitizeFiltersStringBy } from '../../filter/utils'
 
 import messages from './messages'
 
@@ -29,8 +37,30 @@ const cssClasses = classnames.bind(require('./Status.css'))
 
 const EMPTY_LIST = Immutable.List()
 
+const FILTERS_CONFIG = {
+  siteName: true,
+}
+
+export const searchSanitizer = makeSearchParamsSanitizer({
+  availableSortCol: ['status', 'site', 'issue'],
+})
+export const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
+export const filtersFromLocation = composeSanitizer(
+  _.flowRight(
+    filtersSanitizer,
+    searchParams => searchParams.get('filters') || ''
+  ),
+  searchSanitizer
+)
+
 const enhance = compose(
   pure,
+  withProps(
+    makeSortPageSelector({
+      sortCol: 'status',
+      sortDir: 'desc',
+    })
+  ),
   connect(
     state => ({
       actionSummaryMap: state.dashboard.actionSummaryMap,
@@ -40,13 +70,16 @@ const enhance = compose(
     })
   ),
   withHandlers({
-    onInitialLoad: ({ location, fetchActionDashboard }) => () => {
-      const searchParams = new URLSearchParams(location.search)
-      const filtersParams = new URLSearchParams(
-        searchParams.get('filters') || ''
-      )
-
-      fetchActionDashboard(filtersParams)
+    onInitialLoad: ({
+      location,
+      sortCol,
+      sortDir,
+      fetchActionDashboard,
+    }) => () => {
+      const { sanitized, value: filtersParams } = filtersFromLocation(location)
+      if (!sanitized) {
+        fetchActionDashboard(filtersParams, sortCol, sortDir)
+      }
     },
   }),
   lifecycle({
@@ -69,15 +102,27 @@ const enhance = compose(
         selectedCategory: findKeyInTree(target, 'value'),
       }),
     }
-  )
+  ),
+  withProps(({ location }) => {
+    const searchParams = new URLSearchParams(location.search)
+    const filtersParams = new URLSearchParams(searchParams.get('filters') || '')
+
+    return {
+      alertType: filtersParams.get('alertType') || 'all',
+      topic: filtersParams.get('topic') || 'all',
+    }
+  })
 )
 
 export const ActionStatus = ({
   intl,
   history,
+  location,
   className,
   title,
   // --- injected by recompose ---
+  sortCol,
+  sortDir,
   actionSummaryMap,
   selectedCategory,
   onCategoryClick,
@@ -109,19 +154,25 @@ export const ActionStatus = ({
         >
           <ActionDataTableHead
             history={history}
+            location={location}
+            sortColumnKey={sortCol}
+            sortColumnDir={sortDir}
             columns={[
               {
                 key: 'status',
                 label: intl.formatMessage(messages.actionStatus),
                 className: cssClasses('ActionDataTable__TableHead__Status'),
+                sortable: true,
               },
               {
                 key: 'site',
                 label: intl.formatMessage(messages.actionLab),
+                sortable: true,
               },
               {
                 key: 'issue',
                 label: intl.formatMessage(messages.actionIssue),
+                sortable: true,
               },
               {
                 key: 'status',

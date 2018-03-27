@@ -325,7 +325,7 @@ function receiveActionDashboard(requestedAt, data) {
   }
 }
 
-export function fetchActionDashboard(rawFiltersParams) {
+export function fetchActionDashboard(rawFiltersParams, sortCol, sortDir) {
   const filtersParams = new URLSearchParams()
   if (rawFiltersParams.has('siteId')) {
     filtersParams.set('siteId', rawFiltersParams.get('siteId'))
@@ -337,6 +337,8 @@ export function fetchActionDashboard(rawFiltersParams) {
 
     return aspectFetch(
       `/dashboard/action?${stringify({
+        sortCol,
+        sortDir,
         ...filters,
       })}`,
       {
