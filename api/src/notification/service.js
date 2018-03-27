@@ -124,11 +124,11 @@ async function listNotifications(request) {
   return result
 }
 
-async function onIssueCreated({ issueId }, context) {
+async function onIssueCreated({ issueId }, { messageContext: context }) {
   await onIssueEscalated({ issueId }, context)
 }
 
-async function onIssueEscalated({ issueId }, context) {
+async function onIssueEscalated({ issueId }, { messageContext: context }) {
   context.bindActionCreators({
     notificationCreated,
     alertMessageCreated,

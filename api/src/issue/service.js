@@ -1,8 +1,8 @@
-const { issueCreated, issueEscalated, issueResolved } = require('./actions')
+const { issueCreated, issueResolved } = require('./actions')
 
 function onIssueTriggered(issueType) {
-  return async (action, context) => {
-    context.bindActionCreators({ issueCreated, issueEscalated, issueResolved })
+  return async (action, { messageContext: context }) => {
+    context.bindActionCreators({ issueCreated })
     return context.transact(async knex => {
       const now = new Date()
       const openIssue = await findOpenIssue(knex, issueType, action)
@@ -11,7 +11,7 @@ function onIssueTriggered(issueType) {
       if (openIssue != null) {
         issue = openIssue
       } else {
-        issue = createNewIssue(knex, issueType, action)
+        issue = await createNewIssue(knex, issueType, action)
         context.issueCreated(issue.id)
       }
 
@@ -26,8 +26,8 @@ function onIssueTriggered(issueType) {
 }
 
 function onIssueResolved(issueType) {
-  return async (action, context) => {
-    context.bindActionCreators({ issueCreated, issueEscalated, issueResolved })
+  return async (action, { messageContext: context }) => {
+    context.bindActionCreators({ issueResolved })
     context.transact(async knex => {
       const now = new Date()
       const openIssue = await findOpenIssue(knex, issueType, action)
@@ -55,7 +55,7 @@ async function findOpenIssue(knex, issueType, action) {
     .join('IssueStatus as is', 'i.issueStatusId', 'is.id')
     .where({ 'it.externalId': issueType })
     .whereNotIn('is.externalId', ['Inactive', 'Resolved'])
-    .orderBy('updatedOn', 'desc')
+    .orderBy('i.updatedOn', 'desc')
 
   if (action.deviceId) {
     findOpenIssue.join('Device as d', 'i.deviceId', 'd.id')
@@ -115,7 +115,7 @@ async function createNewIssue(knex, issueType, action) {
     issue.partnerId = action.partnerId
   }
 
-  const [issueId] = knex('Issue').insert(issue)
+  const [issueId] = await knex('Issue').insert(issue)
   issue.id = issueId
   return issue
 }
