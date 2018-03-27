@@ -31,6 +31,9 @@ export const RECEIVE_SITE_DASHBOARD = 'RECEIVE_SITE_DASHBOARD'
 
 export const REQUEST_OPERATIONAL_STATUS = 'REQUEST_OPERATIONAL_STATUS'
 export const RECEIVE_OPERATIONAL_STATUS = 'RECEIVE_OPERATIONAL_STATUS'
+
+export const REQUEST_ACTION_STATUS = 'REQUEST_ACTION_STATUS'
+export const RECEIVE_ACTION_STATUS = 'RECEIVE_ACTION_STATUS'
 /*
  * ---------------- Action Creators -----------------
  */
@@ -57,7 +60,14 @@ export function fetchStatDashboard() {
     RECEIVE_SUMMARY_DASHBOARD
   )
 }
-export function fetchTargetDashboard(filtersParams) {
+export function fetchTargetDashboard(rawFiltersParams) {
+  const filtersParams = new URLSearchParams()
+  if (rawFiltersParams.has('minDate')) {
+    filtersParams.set('minDate', rawFiltersParams.get('minDate'))
+  }
+  if (rawFiltersParams.has('maxDate')) {
+    filtersParams.set('maxDate', rawFiltersParams.get('maxDate'))
+  }
   const filters = _.fromPairs([
     ['layout', 'target'],
     ...filtersParams.entries(),
@@ -300,6 +310,60 @@ export function fetchOperationalStatus(filtersParams) {
   }
 }
 
+function requestActionDashboard(requestedAt) {
+  return {
+    type: REQUEST_ACTION_STATUS,
+    requestedAt,
+  }
+}
+
+function receiveActionDashboard(requestedAt, data) {
+  return {
+    type: RECEIVE_ACTION_STATUS,
+    requestedAt,
+    data,
+  }
+}
+
+export function fetchActionDashboard(rawFiltersParams) {
+  const filtersParams = new URLSearchParams()
+  if (rawFiltersParams.has('siteId')) {
+    filtersParams.set('siteId', rawFiltersParams.get('siteId'))
+  }
+  return dispatch => {
+    const filters = _.fromPairs([...filtersParams.entries()])
+    const requestedAt = `action_${Date.now()}`
+    dispatch(requestActionDashboard(requestedAt))
+
+    return aspectFetch(
+      `/dashboard/action?${stringify({
+        ...filters,
+      })}`,
+      {
+        errorNotifications: {
+          403: errorInsufficientScope(
+            defineMessages({
+              title: {
+                id: 'errorResponseMessages.fetchPersons.GET.403.title',
+                defaultMessage: 'Insufficient Permissions',
+              },
+            })
+          ),
+          default: errorPleaseTryAgainInAFewMinutes(
+            defineMessages({
+              title: {
+                id:
+                  'errorResponseMessages.receiveActionDashboard.GET.default.title',
+                defaultMessage: 'Error Loading Action Data',
+              },
+            })
+          ),
+        },
+      }
+    ).then(json => dispatch(receiveActionDashboard(requestedAt, json.data)))
+  }
+}
+
 /*
  * ---------------- Reducers -----------------
  */
@@ -317,6 +381,7 @@ const Summary = Immutable.Record({
   siteList: Immutable.List(),
   siteSummaryMap: Immutable.Map(),
   operational: Immutable.Map(),
+  actionSummaryMap: Immutable.Map(),
 })
 
 const initialState = new Summary()
@@ -330,6 +395,7 @@ export default function dashboardReducer(state = initialState, action) {
     case REQUEST_DEVICE_DASHBOARD:
     case REQUEST_SITE_DASHBOARD:
     case REQUEST_OPERATIONAL_STATUS:
+    case REQUEST_ACTION_STATUS:
       return state.set(
         'requestedAtSet',
         state.requestedAtSet.add(action.requestedAt)
@@ -419,6 +485,16 @@ export default function dashboardReducer(state = initialState, action) {
             mutState.requestedAtSet.delete(action.requestedAt)
           )
           mutState.mergeDeepIn(['operational'], action.data)
+        }
+      })
+    case RECEIVE_ACTION_STATUS:
+      return state.withMutations(mutState => {
+        if (mutState.hasIn(['requestedAtSet', action.requestedAt])) {
+          mutState.set(
+            'requestedAtSet',
+            mutState.requestedAtSet.delete(action.requestedAt)
+          )
+          mutState.mergeDeepIn(['actionSummaryMap'], action.data)
         }
       })
     default:

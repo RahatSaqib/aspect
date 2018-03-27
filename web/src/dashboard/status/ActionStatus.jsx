@@ -1,10 +1,19 @@
-import Immutable from 'immutable'
 import classnames from 'classnames/bind'
+import Immutable from 'immutable'
 import React from 'react'
+import { bindActionCreators } from 'redux'
+import { connect } from 'react-redux'
+import {
+  compose,
+  lifecycle,
+  pure,
+  withHandlers,
+  withStateHandlers,
+} from 'recompose'
 
-import { compose, pure, withProps, withStateHandlers } from 'recompose'
 import { Card } from 'react-toolbox/lib/card'
 import { Unit } from '../../components/pureGrids'
+import { fetchActionDashboard } from '../DashboardRedux'
 import Title from './Title'
 import ActionFilterButton from './ActionFilterButton'
 import { findKeyInTree } from '../../shared/utils/dom'
@@ -13,75 +22,44 @@ import {
   ActionDataTableHead,
   ActionDataTableRow,
 } from './list/ActionDataTable'
+
 import messages from './messages'
 
 const cssClasses = classnames.bind(require('./Status.css'))
 
-const mockActionSummaryMap = {
-  Device: {
-    titleI18nKey: 'issueCategoryDeviceHealth',
-    items: [
-      {
-        site: 'Someville',
-        status: 'Active',
-        issue: 'Machine Temperature',
-      },
-      {
-        site: 'Someville',
-        status: 'Acknowledged',
-        issue: 'Machine Temperature',
-        acknowledgedOn: new Date(),
-      },
-    ],
-  },
-  Reagent: {
-    titleI18nKey: 'issueCategoryReagentHealth',
-    items: [],
-  },
-  Data: {
-    titleI18nKey: 'issueCategoryDataHealth',
-    items: [
-      {
-        site: 'Taunggyi, SHN #2',
-        status: 'Acknowledged',
-        issue: 'Machine Temperature',
-        acknowledgedOn: new Date(),
-      },
-    ],
-  },
-  Connectivity: {
-    titleI18nKey: 'issueCategoryConnectivityHealth',
-    items: [
-      {
-        site: 'Tachileik, SHN #1',
-        status: 'Active',
-        issue: 'Machine Temperature',
-      },
-      {
-        site: 'Tachileik, SHN #1',
-        status: 'Active',
-        issue: 'Machine Temperature',
-      },
-      {
-        site: 'Tachileik, SHN #1',
-        status: 'Active',
-        issue: 'Machine Temperature',
-      },
-      {
-        site: 'Someville',
-        status: 'Acknowledged',
-        issue: 'Machine Temperature',
-        acknowledgedOn: new Date(),
-      },
-    ],
-  },
-}
+const EMPTY_LIST = Immutable.List()
 
 const enhance = compose(
   pure,
-  withProps(() => ({
-    actionSummaryMap: Immutable.fromJS(mockActionSummaryMap),
-  })),
+  connect(
+    state => ({
+      actionSummaryMap: state.dashboard.actionSummaryMap,
+    }),
+    bindActionCreators.bind(null, {
+      fetchActionDashboard,
+    })
+  ),
+  withHandlers({
+    onInitialLoad: ({ location, fetchActionDashboard }) => () => {
+      const searchParams = new URLSearchParams(location.search)
+      const filtersParams = new URLSearchParams(
+        searchParams.get('filters') || ''
+      )
+
+      fetchActionDashboard(filtersParams)
+    },
+  }),
+  lifecycle({
+    componentDidMount() {
+      this.props.onInitialLoad()
+    },
+
+    componentWillReceiveProps(nextProps) {
+      if (this.props.location.search !== nextProps.location.search) {
+        this.props.onInitialLoad()
+      }
+    },
+  }),
   withStateHandlers(
     () => ({
       selectedCategory: 'Device',
@@ -113,18 +91,18 @@ export const ActionStatus = ({
             intl={intl}
             selected={selectedCategory === category}
             title={intl.formatMessage(
-              messages[actionSummaryMap.getIn([category, 'titleI18nKey'])]
+              messages[`issueCategory${category}Health`]
             )}
             category={category}
             data-value={category}
-            actions={actionSummaryMap.getIn([category, 'items'])}
+            actions={actionSummaryMap.get(category, EMPTY_LIST)}
             onClick={onCategoryClick}
           />
         </Unit>
       ))}
     </div>
     <div>
-      {!actionSummaryMap.getIn([selectedCategory, 'items']).isEmpty() && (
+      {actionSummaryMap.get(selectedCategory) && (
         <ActionDataTable
           selectable={false}
           className={cssClasses('ActionDataTable')}
@@ -154,7 +132,7 @@ export const ActionStatus = ({
             ]}
           />
           {actionSummaryMap
-            .getIn([selectedCategory, 'items'])
+            .get(selectedCategory)
             .map(action => (
               <ActionDataTableRow
                 key={action.get('id')}
