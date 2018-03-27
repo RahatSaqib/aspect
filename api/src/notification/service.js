@@ -124,7 +124,7 @@ async function listNotifications(request) {
   return result
 }
 
-async function onIssueCreated({ issueId }, { messageContext: context }) {
+async function onIssueTriggered({ issueId }, context) {
   await onIssueEscalated({ issueId }, context)
 }
 
@@ -204,9 +204,9 @@ async function onIssueEscalated({ issueId }, { messageContext: context }) {
             if (existingNotification == null) {
               notification.createdOn = now
 
-              const { messageStatusId } = await knex('MessageStatus')
+              const { id: messageStatusId } = await knex('MessageStatus')
                 .where({ externalId: 'Initial' })
-                .first()
+                .first('id')
 
               const sharedMessageProperties = {
                 messageStatusId,
@@ -271,6 +271,6 @@ async function onIssueEscalated({ issueId }, { messageContext: context }) {
 
 module.exports = {
   listNotifications,
-  onIssueCreated,
+  onIssueTriggered,
   onIssueEscalated,
 }

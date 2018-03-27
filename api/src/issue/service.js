@@ -1,8 +1,8 @@
-const { issueCreated, issueResolved } = require('./actions')
+const { issueCreated, issueTriggered, issueResolved } = require('./actions')
 
-function onIssueTriggered(issueType) {
+function onIssueEventTrigger(issueType) {
   return async (action, { messageContext: context }) => {
-    context.bindActionCreators({ issueCreated })
+    context.bindActionCreators({ issueCreated, issueTriggered })
     return context.transact(async knex => {
       const now = new Date()
       const openIssue = await findOpenIssue(knex, issueType, action)
@@ -21,11 +21,12 @@ function onIssueTriggered(issueType) {
         data: JSON.stringify(action),
         createdOn: now,
       })
+      context.issueTriggered(issue.id)
     })
   }
 }
 
-function onIssueResolved(issueType) {
+function onIssueEventResolve(issueType) {
   return async (action, { messageContext: context }) => {
     context.bindActionCreators({ issueResolved })
     context.transact(async knex => {
@@ -148,6 +149,6 @@ async function getEventStatusId(knex, externalId) {
 }
 
 module.exports = {
-  onIssueTriggered,
-  onIssueResolved,
+  onIssueEventTrigger,
+  onIssueEventResolve,
 }
