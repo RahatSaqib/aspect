@@ -62,7 +62,7 @@ const Status = ({ history, location, intl }) => (
       intl={intl}
       history={history}
       location={location}
-      className={cssClasses('Section--target')}
+      className={cssClasses('Section--withDropdown')}
       title={intl.formatMessage(messages.targetsTitle)}
     />
 
@@ -70,7 +70,7 @@ const Status = ({ history, location, intl }) => (
       intl={intl}
       history={history}
       location={location}
-      className={cssClasses('Section--withStatus')}
+      className={cssClasses('Section--withDropdown')}
       title={intl.formatMessage(messages.actionTitle)}
     />
 

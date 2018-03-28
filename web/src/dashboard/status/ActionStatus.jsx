@@ -30,7 +30,7 @@ import {
   composeSanitizer,
 } from '../../shared/selectors/searchParams'
 import { sanitizeFiltersStringBy } from '../../filter/utils'
-
+import BrowseSiteDropdown from '../../globals/components/BrowseSiteDropdown'
 import messages from './messages'
 
 const cssClasses = classnames.bind(require('./Status.css'))
@@ -39,6 +39,7 @@ const EMPTY_LIST = Immutable.List()
 
 const FILTERS_CONFIG = {
   siteName: true,
+  siteId: true,
 }
 
 export const searchSanitizer = makeSearchParamsSanitizer({
@@ -76,10 +77,8 @@ const enhance = compose(
       sortDir,
       fetchActionDashboard,
     }) => () => {
-      const { sanitized, value: filtersParams } = filtersFromLocation(location)
-      if (!sanitized) {
-        fetchActionDashboard(filtersParams, sortCol, sortDir)
-      }
+      const { value: filtersParams } = filtersFromLocation(location)
+      fetchActionDashboard(filtersParams, sortCol, sortDir)
     },
   }),
   lifecycle({
@@ -102,16 +101,7 @@ const enhance = compose(
         selectedCategory: findKeyInTree(target, 'value'),
       }),
     }
-  ),
-  withProps(({ location }) => {
-    const searchParams = new URLSearchParams(location.search)
-    const filtersParams = new URLSearchParams(searchParams.get('filters') || '')
-
-    return {
-      alertType: filtersParams.get('alertType') || 'all',
-      topic: filtersParams.get('topic') || 'all',
-    }
-  })
+  )
 )
 
 export const ActionStatus = ({
@@ -128,7 +118,18 @@ export const ActionStatus = ({
   onCategoryClick,
 }) => (
   <Card className={className}>
-    <Title colorClassName={cssClasses('Title__Color--site')} title={title} />
+    <div className={cssClasses('TitleContainer')}>
+      <Title colorClassName={cssClasses('Title__Color--site')} title={title} />
+      <div
+        className={cssClasses(
+          'FiltersGroup__Child',
+          'FiltersGroup__Child--dropdown'
+        )}
+      >
+        <BrowseSiteDropdown history={history} location={location} />
+      </div>
+    </div>
+
     <div className={cssClasses('ActionFilter')}>
       {['Device', 'Reagent', 'Connectivity', 'Data'].map(category => (
         <Unit sm="1-2" lg="1-4">

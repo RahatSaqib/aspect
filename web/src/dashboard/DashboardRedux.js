@@ -496,7 +496,7 @@ export default function dashboardReducer(state = initialState, action) {
             'requestedAtSet',
             mutState.requestedAtSet.delete(action.requestedAt)
           )
-          mutState.mergeDeepIn(['actionSummaryMap'], action.data)
+          mutState.set('actionSummaryMap', new Immutable.fromJS(action.data))
         }
       })
     default:

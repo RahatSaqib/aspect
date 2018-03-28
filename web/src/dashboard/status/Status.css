@@ -8,7 +8,7 @@
   margin: 20px 0;
 }
 
-.Section--target {
+.Section--withDropdown {
   composes: Section--summary;
   padding: 20px;
   overflow: inherit;

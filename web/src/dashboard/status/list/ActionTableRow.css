@@ -49,8 +49,8 @@
 
 .Button__Acknowledge {
   background-color: var(--aspect-color-grey-5);
-  color: #ffffff !important;
   font-weight: var(--lato-font-weight-bold);
+  color: #ffffff !important;
 }
 
 .Button__Link {
@@ -59,16 +59,10 @@
   min-width: 40px;
   background-color: var(--aspect-color-grey-5);
   color: #ffffff !important;
-  font-weight: var(--lato-font-weight-bold);
   text-align: center;
   text-transform: capitalize;
 }
 
 .ArrowLeft {
-  font-size: 28px;
-}
-
-.Message {
-  display: flex;
-  align-items: center;
+  font-size: 28px !important;
 }
