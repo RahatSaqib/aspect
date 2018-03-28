@@ -29,8 +29,6 @@ function waitForApproximately(numberOf, units = 'milliseconds') {
   )
 }
 
-
-
 // Number of milliseconds to wait for completion of
 // asynchronous updates as acceptance criteria
 const ASYNC_TEST_ACCEPTANCE_TIME = 250

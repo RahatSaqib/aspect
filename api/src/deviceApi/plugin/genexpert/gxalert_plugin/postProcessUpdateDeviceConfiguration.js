@@ -2,7 +2,6 @@ const geneXpertPostProcessUpdateDeviceConfiguration = require('../postProcessUpd
 
 async function postProcessUpdateDeviceConfiguration(context) {
   const device = await geneXpertPostProcessUpdateDeviceConfiguration(context)
-  console.log(device)
   return { device }
 }
 
