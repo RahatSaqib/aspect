@@ -10,6 +10,7 @@ const {
   getLastDeviceOperationData,
   getLastResultId,
 } = require('./utils')
+const { waitAsyncComplete } = require('../utils/generatorFunctionUtils')
 
 const server = supertest.agent('http://localhost:8080')
 const { assert } = chai
@@ -27,17 +28,6 @@ const baseConfig = {
     module3: '33550994',
     module4: '73235848',
   },
-}
-
-// Number of milliseconds to wait for completion of
-// asynchronous updates as acceptance criteria
-const ASYNC_TEST_ACCEPTANCE_TIME = 250
-
-// Waits acceptance time and resolves promise with optional result
-function waitAsyncComplete(result) {
-  return new Promise(resolve =>
-    setTimeout(() => resolve(result), ASYNC_TEST_ACCEPTANCE_TIME)
-  )
 }
 
 describe('Device Result API routes', () => {

@@ -1897,6 +1897,31 @@ describe('Device API routes for GxAlert Device', () => {
         assert.deepEqual(deviceIdsInDeviceLogsForResult, [gxAlertDevice.id])
       }))
 
+    it('should respond the result that has been updated', () =>
+      runTest(async () => {
+        const { now } = context
+        const resultId = 'A_RESULT_ID'
+        const response = await postToDeviceApi({
+          authHeader: deviceAuth,
+          payload: _.merge(
+            {},
+            basicDevicePayload,
+            { name: deviceName },
+            basicResultPayload,
+            {
+              result: {
+                id: resultId,
+                startedOn: setMilliseconds(subDays(now, 3), 0),
+              },
+            }
+          ),
+        })
+        assert.equal(
+          JSON.parse(response.body.result.resultData).geneXpertTestId,
+          resultId
+        )
+      }))
+
     describe('when the assay in the result payload is unknown to Aspect', () => {
       const assayName = 'New Assay Type'
       after(async () =>
@@ -2017,7 +2042,7 @@ describe('Device API routes for GxAlert Device', () => {
           })
           assert.typeOf(response.body, 'Object')
 
-          const lastResultId = await getLastResultId(knex, gxAlertDevice.id)
+          const { id: lastResultId } = response.body.result
           const inventoryItem = await knex('InventoryItem')
             .where({ id: inventoryItemId })
             .first()

@@ -1,10 +1,6 @@
 const { get } = require('lodash')
 
-const {
-  addResultWorkflowLogIfChanged,
-  consumeInventoryForResult,
-  updateFactResultCountDevice,
-} = require('./common')
+const postProcessMergeResult = require('./postProcessMergeResult')
 
 const plugins = {
   default: {
@@ -172,29 +168,6 @@ async function preProcessMergeResult(/* context */) {
  */
 async function transformMergeResultPayload(context) {
   return context.payload
-}
-
-/**
- * A new result has been created and stored to the datatase, perform
- * any post processing of the result.
- *
- * Return the response to send back to client
- */
-async function postProcessMergeResult(context, result, previousResult) {
-  const { knex, payload, now } = context
-  await addResultWorkflowLogIfChanged(
-    knex,
-    payload,
-    result,
-    previousResult,
-    'Device API Update',
-    now
-  )
-  // // TODO ASP-355 consume inventory using a message listener instead
-  // // of within plugin/same transaction
-  await consumeInventoryForResult(knex, payload, result)
-  await updateFactResultCountDevice(knex, payload, result)
-  return {}
 }
 
 /**
