@@ -10,6 +10,7 @@ const {
   updateUsernameAndPasswordForPerson,
   createResetPasswordToken,
   updatePasswordWithResetPasswordToken,
+  getUserFeatures,
 } = require('./service')
 
 const routes = [
@@ -144,6 +145,15 @@ const routes = [
             .allow('', null),
         },
       },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/auth/features',
+    handler: asyncHandler(getUserFeatures),
+    config: {
+      description: 'Get UI features of the logged in user',
+      notes: 'Returns a list of feature object',
     },
   },
 ]

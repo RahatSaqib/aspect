@@ -111,13 +111,7 @@ async function seed(knex) {
     return memo
   }, {})
 
-  const featureModules = await knex('Feature').reduce((memo, row) => {
-    if (!memo[row.module]) {
-      memo[row.module] = {}
-    }
-    memo[row.module][Boolean(row.enable)] = row.id
-    return memo
-  }, {})
+  const featureModules = await knex('Feature').select('id')
 
   const [usCountry] = await knex('Country as c')
     .where({ 'c.a3': 'USA' })
@@ -152,11 +146,11 @@ async function seed(knex) {
     partnerId,
   })
   await Promise.all(
-    _.map(featureModules, async (module, key) => {
+    _.map(featureModules, async ({ id: featureId }) => {
       await knex('JobFunctionFeature').insert([
         {
           jobFunctionId: jobFunctionIdAdmin,
-          featureId: featureModules[key].true,
+          featureId,
         },
       ])
     })

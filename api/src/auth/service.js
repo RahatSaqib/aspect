@@ -241,6 +241,7 @@ async function refreshToken(request) {
     clientId,
   }
 }
+
 async function getFeatures(id, name, partnerId) {
   const modules = await query('Get features for user and partner')
     .from('Feature as f')
@@ -249,10 +250,11 @@ async function getFeatures(id, name, partnerId) {
     .innerJoin('Job as j', 'j.jobFunctionId', 'jf.id')
     .innerJoin('Person as ps', 'j.personId', 'ps.id')
     .where({ 'ps.userId': id, 'jf.partnerId': partnerId })
-    .orderBy(['f.module', 'f.enable'])
-    .distinct('f.module', 'f.enable')
+    .orderBy(['f.module'])
+    .distinct('f.module')
   return modules
 }
+
 // generate a new jwt for the given user data
 function getAccessToken({ id, name, partnerId }) {
   return query('Get permissions for user and partner')
@@ -265,15 +267,11 @@ function getAccessToken({ id, name, partnerId }) {
     .orderBy(['p.module', 'p.activity'])
     .distinct('p.module', 'p.activity')
     .then(async data => {
-      const featureModules = await getFeatures(id, name, partnerId)
       // create a new token
       const token = jwt.sign(
         {
           name,
           permissions: data.map(p => `${p.module}:${p.activity}`),
-          features: featureModules
-            ? featureModules.map(f => `${f.module}:${Boolean(f.enable)}`)
-            : [],
         },
         config.secret,
         {
@@ -551,6 +549,13 @@ async function updateUsernameAndPasswordForPerson(request) {
   }
 }
 
+async function getUserFeatures(request) {
+  const { auth } = request
+  const { id, name, partnerId } = await getUser(auth.credentials.name)
+  const featureModules = await getFeatures(id, name, partnerId)
+  return { ok: true, data: featureModules }
+}
+
 module.exports = {
   getUser,
   authenticate,
@@ -560,4 +565,5 @@ module.exports = {
   updateUsernameAndPasswordForPerson,
   createResetPasswordToken,
   updatePasswordWithResetPasswordToken,
+  getUserFeatures,
 }
