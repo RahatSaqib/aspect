@@ -229,6 +229,10 @@ export const messages = defineMessages({
     id: 'pages.Status.Acknowledge',
     defaultMessage: 'Acknowledge',
   },
+  noActionsTitle: {
+    id: 'pages.Status.noActionsTitle',
+    defaultMessage: 'There are no waiting actions!',
+  },
 })
 
 export default messages

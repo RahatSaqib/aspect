@@ -132,7 +132,7 @@ export const ActionStatus = ({
 
     <div className={cssClasses('ActionFilter')}>
       {['Device', 'Reagent', 'Connectivity', 'Data'].map(category => (
-        <Unit sm="1-2" lg="1-4">
+        <Unit xs="1-4" sm="1-4">
           <ActionFilterButton
             intl={intl}
             selected={selectedCategory === category}
@@ -148,53 +148,52 @@ export const ActionStatus = ({
       ))}
     </div>
     <div>
-      {actionSummaryMap.get(selectedCategory) && (
-        <ActionDataTable
-          selectable={false}
-          className={cssClasses('ActionDataTable')}
-        >
-          <ActionDataTableHead
-            history={history}
-            location={location}
-            sortColumnKey={sortCol}
-            sortColumnDir={sortDir}
-            columns={[
-              {
-                key: 'status',
-                label: intl.formatMessage(messages.actionStatus),
-                className: cssClasses('ActionDataTable__TableHead__Status'),
-                sortable: true,
-              },
-              {
-                key: 'site',
-                label: intl.formatMessage(messages.actionLab),
-                sortable: true,
-              },
-              {
-                key: 'issue',
-                label: intl.formatMessage(messages.actionIssue),
-                sortable: true,
-              },
-              {
-                key: 'status',
-              },
-              {
-                key: 'link',
-              },
-            ]}
-          />
-          {actionSummaryMap
-            .get(selectedCategory)
-            .map(action => (
-              <ActionDataTableRow
-                key={action.get('id')}
-                intl={intl}
-                messages={messages}
-                action={action}
-                data-action-Id={action.get('id')}
-              />
-            ))}
-        </ActionDataTable>
+      <ActionDataTable
+        selectable={false}
+        className={cssClasses('ActionDataTable')}
+      >
+        <ActionDataTableHead
+          history={history}
+          location={location}
+          sortColumnKey={sortCol}
+          sortColumnDir={sortDir}
+          columns={[
+            {
+              key: 'status',
+              label: intl.formatMessage(messages.actionStatus),
+              className: cssClasses('ActionDataTable__TableHead__Status'),
+              sortable: true,
+            },
+            {
+              key: 'site',
+              label: intl.formatMessage(messages.actionLab),
+              className: cssClasses('ActionDataTable__TableHead__Lab'),
+              sortable: true,
+            },
+            {
+              key: 'issue',
+              label: intl.formatMessage(messages.actionIssue),
+              className: cssClasses('ActionDataTable__TableHead__Issue'),
+              sortable: true,
+            },
+          ]}
+        />
+        {actionSummaryMap
+          .get(selectedCategory, EMPTY_LIST)
+          .map(action => (
+            <ActionDataTableRow
+              key={action.get('id')}
+              intl={intl}
+              messages={messages}
+              action={action}
+              data-action-Id={action.get('id')}
+            />
+          ))}
+      </ActionDataTable>
+      {!actionSummaryMap.has(selectedCategory) && (
+        <div className={cssClasses('ActionDataTable--empty')}>
+          <p>{intl.formatMessage(messages.noActionsTitle)}</p>
+        </div>
       )}
     </div>
   </Card>

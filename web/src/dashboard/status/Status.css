@@ -324,7 +324,7 @@
 }
 
 .ActionFilter {
-  padding: 20px 40px 0 40px;
+  padding: 20px 10px 0 10px;
 }
 
 .ActionFilterButton {
@@ -337,7 +337,7 @@
 }
 
 .ActionFilterButton__Title {
-  font-size: 20px;
+  font-size: 16px;
   text-transform: capitalize;
   text-align: center;
   line-height: 2;
@@ -349,7 +349,7 @@
 }
 
 .ActionFilterButton__Messages {
-  font-size: 20px;
+  font-size: 16px;
   font-weight: var(--lato-font-weight-bold);
   color: var(--aspect-color-mandy);
   text-transform: capitalize;
@@ -361,10 +361,40 @@
   visibility: hidden;
 }
 
+@media screen and (--md-viewport) {
+  .ActionFilter {
+    width: 80%;
+    margin: 0 auto;
+  }
+  .ActionFilterButton__Title {
+    font-size: 20px;
+  }
+  .ActionFilterButton__Messages {
+    font-size: 20px;
+  }
+}
+
 .ActionDataTable {
   composes: ComponentDataTable from "../../components/shared/DataTable.css";
 }
 
 .ActionDataTable__TableHead__Status {
   text-align: center;
+  padding-left: 0 !important;
+  padding-right: 0;
+  width: 10%;
+}
+
+.ActionDataTable__TableHead__Lab {
+  width: 10%;
+}
+
+.ActionDataTable__TableHead__Issue {
+  width: 80%;
+}
+
+.ActionDataTable--empty {
+  text-align: center;
+  font-size: 16px;
+  border-top: 2px solid #e6e6e6;
 }

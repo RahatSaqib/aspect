@@ -27,31 +27,34 @@ const ActionTableRow = ({ intl, messages, action, ...restProps }) => (
       {action.get('site')}
     </TableCell>
     <TableCell className={cssClasses('TableCell', 'TableCell--issue')}>
-      {action.get('issue')}
-    </TableCell>
-    <TableCell className={cssClasses('TableCell', 'TableCell--acknowledged')}>
-      {action.get('status') === 'Active' && (
-        <Button
-          className={cssClasses('Button__Acknowledge')}
-          label={intl.formatMessage(messages.Acknowledge)}
-        />
-      )}
-      {action.get('status') === 'Acknowledged' && (
-        <div>
-          {intl.formatMessage(messages.Acknowledged)}
-          <br />
-
-          {intl.formatDate(
-            action.get('acknowledgedOn', new Date()),
-            shortNumericDate
-          )}
+      <div className={cssClasses('Issue')}>
+        <span className={cssClasses('Issue__Message')}>
+          {action.get('issue')}
+        </span>
+        <div className={cssClasses('Issue__Action')}>
+          <div className={cssClasses('Issue__Action_Status')}>
+            {action.get('status') === 'Active' && (
+              <Button
+                inverse
+                className={cssClasses('Button__Acknowledge')}
+                label={intl.formatMessage(messages.Acknowledge)}
+              />
+            )}
+            {action.get('status') === 'Acknowledged' && (
+              <span>
+                {`${intl.formatMessage(messages.Acknowledged)}
+                 ${intl.formatDate(
+                   action.get('acknowledgedOn', new Date()),
+                   shortNumericDate
+                 )}`}
+              </span>
+            )}
+          </div>
+          <Button inverse className={cssClasses('Button__Link')}>
+            <ArrowLeft className={cssClasses('ArrowLeft')} />
+          </Button>
         </div>
-      )}
-    </TableCell>
-    <TableCell className={cssClasses('TableCell')}>
-      <Button className={cssClasses('Button__Link')}>
-        <ArrowLeft className={cssClasses('ArrowLeft')} />
-      </Button>
+      </div>
     </TableCell>
   </TableRow>
 )

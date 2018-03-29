@@ -1,7 +1,10 @@
+@import "../../../globals/variables.css";
+
 .ActionFilterIcon {
   background: url("./ActionFilterIconSprites.png");
   background-repeat: no-repeat;
   display: block;
+  transform: scale(0.8);
 }
 
 .ActionFilterIcon_Connectivity--acknowledged {
