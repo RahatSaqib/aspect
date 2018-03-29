@@ -10,7 +10,7 @@ async function postProcessUpdateDeviceConfiguration({
   let device = {}
   if (!_.isEmpty(_.get(payload, 'data'))) {
     const {
-      data: { macAddress, hostId, culture, timezone, instrumentSerialNumbers },
+      data: { macAddress, hostId, culture, timezone, instrumentSerialNumber },
     } = payload
     const deviceDetails = {
       macAddress,
@@ -19,8 +19,8 @@ async function postProcessUpdateDeviceConfiguration({
       timezone,
       lastSeenOn: now,
     }
-    if (instrumentSerialNumbers) {
-      deviceDetails.serial = instrumentSerialNumbers.join()
+    if (instrumentSerialNumber) {
+      deviceDetails.serial = instrumentSerialNumber
     }
     device = await updateDeviceDetails(
       knex,

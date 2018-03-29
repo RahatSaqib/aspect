@@ -9,9 +9,9 @@ match an existing device, return that device
 async function preProcessCreateDevice({ auth, payload }) {
   const device = await transact(async knex => {
     const macAddress = _.get(payload, 'configuration.data.macAddress')
-    const instrumentSerialNumbers = _.get(
+    const instrumentSerialNumber = _.get(
       payload,
-      'configuration.data.instrumentSerialNumbers'
+      'configuration.data.instrumentSerialNumber'
     )
     if (macAddressValid(macAddress)) {
       const { partnerId } = await knex('DeviceApiKey')
@@ -26,10 +26,10 @@ async function preProcessCreateDevice({ auth, payload }) {
           'd.partnerId': partnerId,
         })
         .andWhere(function() {
-          if (_.isEmpty(instrumentSerialNumbers)) {
+          if (_.isEmpty(instrumentSerialNumber)) {
             this.whereNull('d.serial')
           } else {
-            this.where({ 'd.serial': instrumentSerialNumbers.join() })
+            this.where({ 'd.serial': instrumentSerialNumber })
           }
         })
         .first(

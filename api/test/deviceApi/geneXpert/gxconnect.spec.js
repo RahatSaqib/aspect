@@ -24,7 +24,7 @@ describe('Device API routes for GxConnect Devices', () => {
   const adminPassword = 'test07'
   const countryCode = 'US'
   const deviceName = 'New GeneXpert Laboratory'
-  const instrumentSerialNumbers = ['123456']
+  const instrumentSerialNumber = '123456'
 
   describe('registration and configuration', () => {
     describe('when no device API key is specified', () => {
@@ -164,7 +164,7 @@ describe('Device API routes for GxConnect Devices', () => {
         adminPassword,
         deviceName,
         macAddress,
-        instrumentSerialNumbers,
+        instrumentSerialNumber,
       })
 
       before(firstContext.beforeRegisterAndSetDevice)
@@ -181,7 +181,7 @@ describe('Device API routes for GxConnect Devices', () => {
           assert.deepEqual(firstDeviceUniqueIdentifiers, [
             {
               macAddress,
-              serial: instrumentSerialNumbers.join(),
+              serial: instrumentSerialNumber,
             },
           ])
 
@@ -192,7 +192,7 @@ describe('Device API routes for GxConnect Devices', () => {
             adminPassword,
             deviceName,
             macAddress,
-            instrumentSerialNumbers,
+            instrumentSerialNumber,
           })
 
           await secondContext.registerAndSetDevice()
@@ -210,7 +210,7 @@ describe('Device API routes for GxConnect Devices', () => {
                     data: {
                       macAddress,
                       country: countryCode,
-                      instrumentSerialNumbers,
+                      instrumentSerialNumber,
                     },
                   },
                 })
@@ -239,7 +239,7 @@ describe('Device API routes for GxConnect Devices', () => {
             assert.deepEqual(secondDeviceUniqueIdentifiers, [
               {
                 macAddress,
-                serial: instrumentSerialNumbers.join(),
+                serial: instrumentSerialNumber,
                 id: secondContext.device.id,
               },
             ])
@@ -257,7 +257,7 @@ describe('Device API routes for GxConnect Devices', () => {
           adminPassword,
           deviceName,
           macAddress,
-          instrumentSerialNumbers,
+          instrumentSerialNumber,
         })
 
         before(firstContext.beforeRegisterAndSetDevice)
@@ -276,7 +276,7 @@ describe('Device API routes for GxConnect Devices', () => {
             assert.deepEqual(firstDeviceUniqueIdentifiers, [
               {
                 macAddress,
-                serial: instrumentSerialNumbers.join(),
+                serial: instrumentSerialNumber,
               },
             ])
 
@@ -288,7 +288,7 @@ describe('Device API routes for GxConnect Devices', () => {
               adminPassword,
               deviceName,
               macAddress: newMacAddress,
-              instrumentSerialNumbers,
+              instrumentSerialNumber,
             })
 
             await secondContext.registerAndSetDevice()
@@ -319,7 +319,7 @@ describe('Device API routes for GxConnect Devices', () => {
               assert.deepEqual(secondDeviceUniqueIdentifiers, [
                 {
                   macAddress: newMacAddress,
-                  serial: instrumentSerialNumbers.join(),
+                  serial: instrumentSerialNumber,
                   id: secondContext.device.id,
                   revoked: 0,
                 },
@@ -343,7 +343,7 @@ describe('Device API routes for GxConnect Devices', () => {
           adminPassword,
           deviceName,
           macAddress,
-          instrumentSerialNumbers,
+          instrumentSerialNumber,
         })
 
         before(context.beforeRegisterAndSetDevice)
@@ -361,7 +361,7 @@ describe('Device API routes for GxConnect Devices', () => {
             assert.deepEqual(deviceUniqueIdentifiers, [
               {
                 macAddress,
-                serial: instrumentSerialNumbers.join(),
+                serial: instrumentSerialNumber,
               },
             ])
 
@@ -429,7 +429,7 @@ describe('Device API routes for GxConnect Devices', () => {
           adminPassword,
           deviceName,
           macAddress,
-          instrumentSerialNumbers,
+          instrumentSerialNumber,
         })
 
         before(firstContext.beforeRegisterAndSetDevice)
@@ -448,19 +448,19 @@ describe('Device API routes for GxConnect Devices', () => {
             assert.deepEqual(firstDeviceUniqueIdentifiers, [
               {
                 macAddress,
-                serial: instrumentSerialNumbers.join(),
+                serial: instrumentSerialNumber,
               },
             ])
 
             // Single device exists, now generate a new API key
-            const newInstrumentSerialNumbers = ['123456', '098765', '456789']
+            const newInstrumentSerialNumber = 'Cepheid-PC-123'
             const secondContext = createGxConnectTestContext(server, {
               countryAbbreviation: countryCode,
               adminUsername,
               adminPassword,
               deviceName,
               macAddress,
-              instrumentSerialNumbers: newInstrumentSerialNumbers,
+              instrumentSerialNumber: newInstrumentSerialNumber,
             })
 
             await secondContext.registerAndSetDevice()
@@ -491,7 +491,7 @@ describe('Device API routes for GxConnect Devices', () => {
               assert.deepEqual(secondDeviceUniqueIdentifiers, [
                 {
                   macAddress,
-                  serial: newInstrumentSerialNumbers.join(),
+                  serial: newInstrumentSerialNumber,
                   id: secondContext.device.id,
                   revoked: 0,
                 },
@@ -515,7 +515,7 @@ describe('Device API routes for GxConnect Devices', () => {
           adminPassword,
           deviceName,
           macAddress,
-          instrumentSerialNumbers,
+          instrumentSerialNumber,
         })
 
         before(context.beforeRegisterAndSetDevice)
@@ -533,12 +533,12 @@ describe('Device API routes for GxConnect Devices', () => {
             assert.deepEqual(deviceUniqueIdentifiers, [
               {
                 macAddress,
-                serial: instrumentSerialNumbers.join(),
+                serial: instrumentSerialNumber,
               },
             ])
 
             // Single device exists, now send a new instrument serial numbers
-            const newInstrumentSerialNumbers = ['654321', '098765']
+            const newInstrumentSerialNumber = 'Cepheid-PC-098765'
             await server
               .post('/device')
               .set('Authorization', context.deviceAuth)
@@ -546,7 +546,7 @@ describe('Device API routes for GxConnect Devices', () => {
                 _.assign({}, context.basicDevicePayload, {
                   configuration: {
                     data: {
-                      instrumentSerialNumbers: newInstrumentSerialNumbers,
+                      instrumentSerialNumber: newInstrumentSerialNumber,
                     },
                   },
                 })
@@ -576,7 +576,7 @@ describe('Device API routes for GxConnect Devices', () => {
                 {
                   deviceName,
                   macAddress,
-                  serial: newInstrumentSerialNumbers.join(),
+                  serial: newInstrumentSerialNumber,
                   siteName: deviceName,
                   countryCode,
                   deviceType: context.basicDevicePayload.type.id,
@@ -587,7 +587,7 @@ describe('Device API routes for GxConnect Devices', () => {
             // Check that there are no orphaned devices with
             // the instrument serial numbers
             const orphanedDevices = await knex('Device')
-              .where({ serial: instrumentSerialNumbers.join() })
+              .where({ serial: instrumentSerialNumber })
               .select()
 
             assert.isEmpty(orphanedDevices)
@@ -603,7 +603,7 @@ describe('Device API routes for GxConnect Devices', () => {
       adminPassword,
       deviceName,
       macAddress,
-      instrumentSerialNumbers,
+      instrumentSerialNumber,
     })
     before(context.beforeRegisterAndSetDevice)
     const { runTest, getLastResult } = context
@@ -1156,7 +1156,7 @@ describe('Device API routes for GxConnect Devices', () => {
       adminPassword,
       deviceName,
       macAddress,
-      instrumentSerialNumbers,
+      instrumentSerialNumber,
     })
     before(context.beforeRegisterAndSetDevice)
     const { runTest } = context
