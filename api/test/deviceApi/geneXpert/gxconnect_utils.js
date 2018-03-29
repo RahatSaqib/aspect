@@ -132,7 +132,7 @@ function createGxConnectTestContext(
     countryAbbreviation,
     deviceName,
     macAddress,
-    instrumentSerialNumber,
+    deviceSerialNumber,
     adminUsername,
     adminPassword,
   }
@@ -141,7 +141,7 @@ function createGxConnectTestContext(
     countryAbbreviation,
     deviceName,
     macAddress,
-    instrumentSerialNumber,
+    deviceSerialNumber,
     adminUsername,
     adminPassword,
   })
@@ -154,7 +154,7 @@ class GxConnectApiTestContext {
       countryAbbreviation,
       deviceName,
       macAddress,
-      instrumentSerialNumber,
+      deviceSerialNumber,
       adminUsername,
       adminPassword,
     }
@@ -163,7 +163,7 @@ class GxConnectApiTestContext {
     this.countryAbbreviation = countryAbbreviation
     this.deviceName = deviceName
     this.macAddress = macAddress
-    this.instrumentSerialNumber = instrumentSerialNumber
+    this.deviceSerialNumber = deviceSerialNumber
     this.adminUsername = adminUsername
     this.adminPassword = adminPassword
     this.clientId = `${Math.floor(Math.random() * 800000000) + 100000000}`
@@ -277,8 +277,8 @@ class GxConnectApiTestContext {
     if (this.countryAbbreviation) {
       configurationData.country = this.countryAbbreviation
     }
-    if (this.instrumentSerialNumber) {
-      configurationData.instrumentSerialNumber = this.instrumentSerialNumber
+    if (this.deviceSerialNumber) {
+      configurationData.deviceSerialNumber = this.deviceSerialNumber
     }
     await this.server
       .post('/device')

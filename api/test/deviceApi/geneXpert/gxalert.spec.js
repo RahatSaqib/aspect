@@ -275,8 +275,8 @@ describe('Device API routes for GxAlert Device', () => {
           const deviceName = 'Some Laboratory'
           const macAddress = 'MAC00000INITIAL'
           const hostId = 'GXDevice5'
-          const instrumentSerialNumber = 'SERIAL1'
-          const deviceSerialNumbers = ['SERIAL2', 'SERIAL3']
+          const deviceSerialNumber = 'SERIAL1'
+          const instrumentSerialNumbers = ['SERIAL2', 'SERIAL3']
 
           const context = createContext()
           const {
@@ -301,8 +301,8 @@ describe('Device API routes for GxAlert Device', () => {
                     data: {
                       macAddress,
                       hostId,
-                      instrumentSerialNumber,
-                      deviceSerialNumbers,
+                      deviceSerialNumber,
+                      instrumentSerialNumbers,
                     },
                   },
                 }),
@@ -317,12 +317,12 @@ describe('Device API routes for GxAlert Device', () => {
                 name: deviceName,
                 shortName: deviceName,
                 macAddress,
-                serial: instrumentSerialNumber,
+                serial: deviceSerialNumber,
                 hostId,
                 configurationData: {
                   macAddress,
-                  instrumentSerialNumber,
-                  deviceSerialNumbers,
+                  deviceSerialNumber,
+                  instrumentSerialNumbers,
                   hostId,
                   gxAlertDeviceId: initialGxAlertDeviceId,
                 },
@@ -332,12 +332,12 @@ describe('Device API routes for GxAlert Device', () => {
                 name: deviceName,
                 shortName: deviceName,
                 macAddress,
-                serial: instrumentSerialNumber,
+                serial: deviceSerialNumber,
                 hostId,
                 configurationData: {
                   macAddress,
-                  instrumentSerialNumber,
-                  deviceSerialNumbers,
+                  deviceSerialNumber,
+                  instrumentSerialNumbers,
                   hostId,
                   gxAlertDeviceId: initialGxAlertDeviceId,
                 },
@@ -360,8 +360,8 @@ describe('Device API routes for GxAlert Device', () => {
                       data: {
                         macAddress,
                         hostId,
-                        instrumentSerialNumber,
-                        deviceSerialNumbers,
+                        deviceSerialNumber,
+                        instrumentSerialNumbers,
                       },
                     },
                   }),
@@ -376,12 +376,12 @@ describe('Device API routes for GxAlert Device', () => {
                   name: deviceName,
                   shortName: deviceName,
                   macAddress,
-                  serial: instrumentSerialNumber,
+                  serial: deviceSerialNumber,
                   hostId,
                   configurationData: {
                     macAddress,
-                    instrumentSerialNumber,
-                    deviceSerialNumbers,
+                    deviceSerialNumber,
+                    instrumentSerialNumbers,
                     hostId,
                     gxAlertDeviceId: newGxAlertDeviceId,
                   },
@@ -391,12 +391,12 @@ describe('Device API routes for GxAlert Device', () => {
                   name: deviceName,
                   shortName: deviceName,
                   macAddress,
-                  serial: instrumentSerialNumber,
+                  serial: deviceSerialNumber,
                   hostId,
                   configurationData: {
                     macAddress,
-                    instrumentSerialNumber,
-                    deviceSerialNumbers,
+                    deviceSerialNumber,
+                    instrumentSerialNumbers,
                     hostId,
                     gxAlertDeviceId: newGxAlertDeviceId,
                   },
@@ -408,7 +408,7 @@ describe('Device API routes for GxAlert Device', () => {
                     .orWhere({ hostId })
                     .orWhere('name', deviceName)
                     .orWhere('shortName', deviceName)
-                    .orWhere('serial', instrumentSerialNumber)
+                    .orWhere('serial', deviceSerialNumber)
                     .select(),
                   device =>
                     _.assign({}, device, {
@@ -421,12 +421,12 @@ describe('Device API routes for GxAlert Device', () => {
                     name: deviceName,
                     shortName: deviceName,
                     macAddress,
-                    serial: instrumentSerialNumber,
+                    serial: deviceSerialNumber,
                     hostId,
                     configurationData: {
                       macAddress,
-                      instrumentSerialNumber,
-                      deviceSerialNumbers,
+                      deviceSerialNumber,
+                      instrumentSerialNumbers,
                       hostId,
                       gxAlertDeviceId: initialGxAlertDeviceId,
                     },
@@ -435,12 +435,12 @@ describe('Device API routes for GxAlert Device', () => {
                     name: deviceName,
                     shortName: deviceName,
                     macAddress,
-                    serial: instrumentSerialNumber,
+                    serial: deviceSerialNumber,
                     hostId,
                     configurationData: {
                       macAddress,
-                      instrumentSerialNumber,
-                      deviceSerialNumbers,
+                      deviceSerialNumber,
+                      instrumentSerialNumbers,
                       hostId,
                       gxAlertDeviceId: newGxAlertDeviceId,
                     },
@@ -866,9 +866,9 @@ describe('Device API routes for GxAlert Device', () => {
       const deviceName = 'GeneXpert Lab from GxAlert'
       const firstGxAlertDeviceId = 95
       const secondGxAlertDeviceId = 13
-      const firstInstrumentSerial = 'FIRST1'
-      const secondInstrumentSerial = 'SECOND'
-      const thirdInstrumentSerial = 'THIRD3'
+      const firstDeviceSerial = 'FIRST1'
+      const secondDeviceSerial = 'SECOND'
+      const thirdDeviceSerial = 'THIRD3'
       let maxDeviceIdBefore = -1
 
       const context = createContext()
@@ -893,7 +893,7 @@ describe('Device API routes for GxAlert Device', () => {
               name: deviceName,
               configuration: {
                 data: {
-                  instrumentSerialNumber: firstInstrumentSerial,
+                  deviceSerialNumber: firstDeviceSerial,
                 },
               },
             }),
@@ -924,9 +924,9 @@ describe('Device API routes for GxAlert Device', () => {
               {
                 name: deviceName,
                 deviceTypeId: geneXpertDeviceType.id,
-                serial: firstInstrumentSerial,
+                serial: firstDeviceSerial,
                 configurationData: {
-                  instrumentSerialNumber: firstInstrumentSerial,
+                  deviceSerialNumber: firstDeviceSerial,
                   gxAlertDeviceId: firstGxAlertDeviceId,
                 },
               },
@@ -940,7 +940,7 @@ describe('Device API routes for GxAlert Device', () => {
                 name: deviceName,
                 configuration: {
                   data: {
-                    instrumentSerialNumber: secondInstrumentSerial,
+                    deviceSerialNumber: secondDeviceSerial,
                   },
                 },
               }),
@@ -954,10 +954,10 @@ describe('Device API routes for GxAlert Device', () => {
             ).to.containSubset({
               name: deviceName,
               deviceTypeId: geneXpertDeviceType.id,
-              serial: secondInstrumentSerial,
+              serial: secondDeviceSerial,
               configurationData: {
                 gxAlertDeviceId: secondGxAlertDeviceId,
-                instrumentSerialNumber: secondInstrumentSerial,
+                deviceSerialNumber: secondDeviceSerial,
               },
             })
 
@@ -976,19 +976,19 @@ describe('Device API routes for GxAlert Device', () => {
               {
                 name: deviceName,
                 deviceTypeId: geneXpertDeviceType.id,
-                serial: firstInstrumentSerial,
+                serial: firstDeviceSerial,
                 configurationData: {
                   gxAlertDeviceId: firstGxAlertDeviceId,
-                  instrumentSerialNumber: firstInstrumentSerial,
+                  deviceSerialNumber: firstDeviceSerial,
                 },
               },
               {
                 name: deviceName,
                 deviceTypeId: geneXpertDeviceType.id,
-                serial: secondInstrumentSerial,
+                serial: secondDeviceSerial,
                 configurationData: {
                   gxAlertDeviceId: secondGxAlertDeviceId,
-                  instrumentSerialNumber: secondInstrumentSerial,
+                  deviceSerialNumber: secondDeviceSerial,
                 },
               },
             ])
@@ -1017,19 +1017,19 @@ describe('Device API routes for GxAlert Device', () => {
               {
                 name: deviceName,
                 deviceTypeId: geneXpertDeviceType.id,
-                serial: firstInstrumentSerial,
+                serial: firstDeviceSerial,
                 configurationData: {
                   gxAlertDeviceId: firstGxAlertDeviceId,
-                  instrumentSerialNumber: firstInstrumentSerial,
+                  deviceSerialNumber: firstDeviceSerial,
                 },
               },
               {
                 name: deviceName,
                 deviceTypeId: geneXpertDeviceType.id,
-                serial: secondInstrumentSerial,
+                serial: secondDeviceSerial,
                 configurationData: {
                   gxAlertDeviceId: secondGxAlertDeviceId,
-                  instrumentSerialNumber: secondInstrumentSerial,
+                  deviceSerialNumber: secondDeviceSerial,
                 },
               },
             ])
@@ -1041,7 +1041,7 @@ describe('Device API routes for GxAlert Device', () => {
                 name: deviceName,
                 configuration: {
                   data: {
-                    instrumentSerialNumber: thirdInstrumentSerial,
+                    deviceSerialNumber: thirdDeviceSerial,
                   },
                 },
               }),
@@ -1055,9 +1055,9 @@ describe('Device API routes for GxAlert Device', () => {
             ).to.containSubset({
               name: deviceName,
               deviceTypeId: geneXpertDeviceType.id,
-              serial: thirdInstrumentSerial,
+              serial: thirdDeviceSerial,
               configurationData: {
-                instrumentSerialNumber: thirdInstrumentSerial,
+                deviceSerialNumber: thirdDeviceSerial,
               },
             })
 
@@ -1076,18 +1076,18 @@ describe('Device API routes for GxAlert Device', () => {
               {
                 name: deviceName,
                 deviceTypeId: geneXpertDeviceType.id,
-                serial: firstInstrumentSerial,
+                serial: firstDeviceSerial,
                 configurationData: {
                   gxAlertDeviceId: firstGxAlertDeviceId,
-                  instrumentSerialNumber: firstInstrumentSerial,
+                  deviceSerialNumber: firstDeviceSerial,
                 },
               },
               {
                 name: deviceName,
                 deviceTypeId: geneXpertDeviceType.id,
-                serial: thirdInstrumentSerial,
+                serial: thirdDeviceSerial,
                 configurationData: {
-                  instrumentSerialNumber: thirdInstrumentSerial,
+                  deviceSerialNumber: thirdDeviceSerial,
                 },
               },
             ])
@@ -1116,19 +1116,19 @@ describe('Device API routes for GxAlert Device', () => {
               {
                 name: deviceName,
                 deviceTypeId: geneXpertDeviceType.id,
-                serial: firstInstrumentSerial,
+                serial: firstDeviceSerial,
                 configurationData: {
                   gxAlertDeviceId: firstGxAlertDeviceId,
-                  instrumentSerialNumber: firstInstrumentSerial,
+                  deviceSerialNumber: firstDeviceSerial,
                 },
               },
               {
                 name: deviceName,
                 deviceTypeId: geneXpertDeviceType.id,
-                serial: thirdInstrumentSerial,
+                serial: thirdDeviceSerial,
                 configurationData: {
                   gxAlertDeviceId: secondGxAlertDeviceId,
-                  instrumentSerialNumber: thirdInstrumentSerial,
+                  deviceSerialNumber: thirdDeviceSerial,
                 },
               },
             ])
@@ -1140,7 +1140,7 @@ describe('Device API routes for GxAlert Device', () => {
                 name: deviceName,
                 configuration: {
                   data: {
-                    instrumentSerialNumber: firstInstrumentSerial,
+                    deviceSerialNumber: firstDeviceSerial,
                   },
                 },
               }),
@@ -1154,10 +1154,10 @@ describe('Device API routes for GxAlert Device', () => {
             ).to.containSubset({
               name: deviceName,
               deviceTypeId: geneXpertDeviceType.id,
-              serial: firstInstrumentSerial,
+              serial: firstDeviceSerial,
               configurationData: {
                 gxAlertDeviceId: secondGxAlertDeviceId,
-                instrumentSerialNumber: firstInstrumentSerial,
+                deviceSerialNumber: firstDeviceSerial,
               },
             })
 
@@ -1176,19 +1176,19 @@ describe('Device API routes for GxAlert Device', () => {
               {
                 name: deviceName,
                 deviceTypeId: geneXpertDeviceType.id,
-                serial: firstInstrumentSerial,
+                serial: firstDeviceSerial,
                 configurationData: {
                   gxAlertDeviceId: firstGxAlertDeviceId,
-                  instrumentSerialNumber: firstInstrumentSerial,
+                  deviceSerialNumber: firstDeviceSerial,
                 },
               },
               {
                 name: deviceName,
                 deviceTypeId: geneXpertDeviceType.id,
-                serial: firstInstrumentSerial,
+                serial: firstDeviceSerial,
                 configurationData: {
                   gxAlertDeviceId: secondGxAlertDeviceId,
-                  instrumentSerialNumber: firstInstrumentSerial,
+                  deviceSerialNumber: firstDeviceSerial,
                 },
               },
             ])
@@ -1201,23 +1201,23 @@ describe('Device API routes for GxAlert Device', () => {
             const { deviceAuth, basicDevicePayload } = context
             const geneXpertDeviceId = 7335
             useGxAlertDeviceId(geneXpertDeviceId)
-            const instrumentSerialNumber = 'SERIAL1'
+            const deviceSerialNumber = 'SERIAL1'
             await postToDeviceApi({
               authHeader: deviceAuth,
               payload: _.merge({}, basicDevicePayload, {
                 name: deviceName,
                 configuration: {
-                  data: { instrumentSerialNumber },
+                  data: { deviceSerialNumber },
                 },
               }),
             })
 
             const deviceWithSerialBefore = await getCurrentGeneXpertDevice()
             expect(deviceWithSerialBefore).to.containSubset({
-              serial: instrumentSerialNumber,
+              serial: deviceSerialNumber,
               configurationData: {
                 gxAlertDeviceId: geneXpertDeviceId,
-                instrumentSerialNumber,
+                deviceSerialNumber,
               },
             })
 
@@ -1227,7 +1227,7 @@ describe('Device API routes for GxAlert Device', () => {
                 name: deviceName,
                 configuration: {
                   data: {
-                    instrumentSerialNumber: null,
+                    deviceSerialNumber: null,
                   },
                 },
               }),
@@ -1239,20 +1239,20 @@ describe('Device API routes for GxAlert Device', () => {
                 ),
               })
             ).to.containSubset({
-              serial: instrumentSerialNumber,
+              serial: deviceSerialNumber,
               configurationData: {
                 gxAlertDeviceId: geneXpertDeviceId,
-                instrumentSerialNumber,
+                deviceSerialNumber,
               },
             })
 
             const deviceWithSerialAfter = await getCurrentGeneXpertDevice()
             assert.equal(deviceWithSerialAfter.id, deviceWithSerialBefore.id)
             expect(deviceWithSerialAfter).to.containSubset({
-              serial: instrumentSerialNumber,
+              serial: deviceSerialNumber,
               configurationData: {
                 gxAlertDeviceId: geneXpertDeviceId,
-                instrumentSerialNumber,
+                deviceSerialNumber,
               },
             })
           }))
@@ -1728,7 +1728,7 @@ describe('Device API routes for GxAlert Device', () => {
                   latestErrors: null,
                   autoCompleteJsonDate: '',
                   enableCustomFields: true,
-                  instrumentSerialNumber: 'SERIAL2',
+                  deviceSerialNumber: 'SERIAL2',
                   dbVersion: '3.0.5.0',
                   lisConfig:
                     'True|xPertLab|0|0|1|True|192.168.8.113|3012|-1|1|ASSAY=MTB-RIF 2[MTB=MTB][Rif Resistance=Rif Resistance][QC Check=QC Check]',
