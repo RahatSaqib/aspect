@@ -27,7 +27,7 @@ const enhance = compose(
       history.push('/account-details/current'),
   }),
   connect(
-    state => ({ userFeatures: state.user.jwt.features }),
+    state => ({ userFeatures: state.user.features }),
     bindActionCreators.bind(null, {
       closeDrawer,
       userRequestedLogout,
@@ -72,7 +72,7 @@ const HorizontalAppBar = ({
       menuRipple
     >
       <MenuItem caption="Help" onClick={goToExternalHelp} />
-      {isEnabledFeature(userFeatures, ['accountDetails:true']) && (
+      {isEnabledFeature(userFeatures, ['account']) && (
         <MenuItem
           caption="Account Details"
           onClick={navigateCurrentAccountDetails}

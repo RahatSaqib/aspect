@@ -5,6 +5,7 @@ import requirePermissions from '../components/shared/requirePermissions'
 
 const DeviceDemoLink = requirePermissions({
   permissions: ['demo:admin'],
+  features: ['deviceDemo'],
 })(Link)
 
 export default DeviceDemoLink

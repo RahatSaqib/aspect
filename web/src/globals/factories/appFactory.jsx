@@ -77,6 +77,7 @@ const mapStateToProps = state => {
     // For render()
     isLoggedOut,
     loggedOutReason,
+    features: state.user.features,
   }
 }
 

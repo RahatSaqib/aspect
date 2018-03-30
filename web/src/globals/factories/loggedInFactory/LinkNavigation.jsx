@@ -25,7 +25,7 @@ const enhance = compose(
   pure,
   connect(state => ({
     userPermissions: state.user.jwt.permissions,
-    userFeatures: state.user.jwt.features,
+    userFeatures: state.user.features,
   }))
 )
 const LinkNavigation = ({
@@ -44,43 +44,41 @@ const LinkNavigation = ({
         href: '/dashboard',
         label: 'Home',
         requiredPermissions: [],
-        requiredFeatures: ['dashboard:true'],
       },
       {
         href: '/task-list',
         label: 'Task List',
         requiredPermissions: ['task:admin', 'task:view', 'task:edit'],
-        requiredFeatures: ['taskList:true'],
+        requiredFeatures: ['task'],
       },
       {
         href: '/operational-data',
         label: 'Operational  Data',
         requiredPermissions: [],
-        requiredFeatures: ['operationalData:true'],
+        requiredFeatures: ['operationalData'],
       },
       {
         href: '/clinical-indicators',
         label: 'Clinical Indicators',
         requiredPermissions: [],
-        requiredFeatures: ['clinicalIndicators:true'],
+        requiredFeatures: ['clinicalIndicators'],
       },
       {
         href: '/browse',
         label: 'Browse',
         requiredPermissions: [],
-        requiredFeatures: ['browse:true'],
       },
       {
         href: '/reports',
         label: 'Reports',
         requiredPermissions: ['report:view', 'report:edit', 'report:admin'],
-        requiredFeatures: ['reports:true'],
+        requiredFeatures: ['reports'],
       },
       {
         href: '/manage',
         label: 'Manage',
         requiredPermissions: [],
-        requiredFeatures: ['manage:true'],
+        requiredFeatures: ['manage'],
       },
     ],
     userPermissions,
