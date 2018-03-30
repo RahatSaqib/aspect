@@ -396,9 +396,9 @@ class DeviceApiTestContext {
     return queue.createMessageContext()
   }
 
-  async waitForAction(predicate) {
+  async waitForAction(predicate, timeout = QUEUE_IDLE_TIME) {
     const queue = await this.queueConnect()
-    return queue.waitForAction(predicate)
+    return queue.waitForAction(predicate, timeout)
   }
 
   async waitForIdle(idleTime = QUEUE_IDLE_TIME) {

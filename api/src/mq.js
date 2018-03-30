@@ -116,22 +116,41 @@ class MessageQueue {
    * passing the given predicate and returns a
    * Promise that resolves with the action.
    *
-   * The rules for predicate follow the same rules
-   * as lodash (see _.iteratee)
+   * predicate: rules for predicate follow the
+   * same rules * as lodash (see _.iteratee)
+   * timeout: if specified, promise will be
+   * rejected if action does not occur before
+   * timeout in millis.
    *
    * NOTE: It is generally preferred to avoid
    * relying on this function and create additional
    * action creators. This is mainly exposed for
    * testing.
    */
-  waitForAction(predicate) {
-    return new Promise(resolve => {
+  waitForAction(predicate, timeout = null) {
+    return new Promise((resolve, reject) => {
       const check = _.iteratee(predicate)
       const checkedListener = action => {
         if (check(action)) {
-          this.emitter.removeListener('+', checkedListener)
+          dispose()
           resolve(action)
         }
+      }
+
+      let timeoutId = null
+      if (timeout != null) {
+        timeoutId = setTimeout(() => {
+          dispose()
+          reject(new Error('waitForAction timeout'))
+        }, timeout)
+      }
+
+      const dispose = () => {
+        if (timeoutId != null) {
+          clearTimeout(timeoutId)
+          timeoutId = null
+        }
+        this.emitter.removeListener('+', checkedListener)
       }
       this.emitter.addListener('+', checkedListener)
     })
