@@ -46,13 +46,24 @@ describe('Notification endpoints', () => {
         assert.isOk(newDevice.name)
         assert.equal(newDevice.serial, null)
 
+        const { id: deviceId } = newDevice
+
         // Notify device offline and wait for completion
         const waitForOffline = context.waitForAction({
           type: DEVICE_OFFLINE,
-          deviceId: newDevice.id,
+          deviceId,
         })
-        messageContext.deviceOffline(newDevice.id)
+        messageContext.deviceOffline(deviceId)
         await waitForOffline
+
+        await context.waitForIdle()
+        const issues = await knex('Issue as i')
+          .join('IssueType as it', 'i.issueTypeId', 'it.id')
+          .where({ 'i.deviceId': deviceId })
+          .select('i.id', 'it.externalId as issueType', 'i.deviceId')
+        assert.equal(issues.length, 1)
+        assert.equal(issues[0].issueType, 'DeviceOffline')
+        assert.equal(issues[0].deviceId, deviceId)
       }))
   })
 })
