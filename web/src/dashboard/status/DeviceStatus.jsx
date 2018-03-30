@@ -21,6 +21,7 @@ import { fetchDeviceDashboard } from '../DashboardRedux'
 import Title from './Title'
 import CountryWithPoints from './CountryWithPoints'
 import SummaryItemsBlock from './SummaryItemsBlock'
+
 import messages from './messages'
 
 const cssClasses = classnames.bind(require('./Status.css'))
@@ -31,6 +32,7 @@ const enhance = compose(
   pure,
   requirePermissions({
     permissions: ['device:admin', 'device:view', 'device:edit'],
+    features: ['deviceDashboard'],
   }),
   connect(
     state => ({

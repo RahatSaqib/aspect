@@ -9,6 +9,7 @@ import { Card } from 'react-toolbox/lib/card'
 import { Unit } from '../../components/pureGrids'
 import Indicator from '../../components/shared/Indicator'
 import { fetchStatDashboard } from '../DashboardRedux'
+import requirePermissions from '../../components/shared/requirePermissions'
 import messages from './messages'
 
 const cssClasses = classnames.bind(require('./Status.css'))
@@ -41,6 +42,9 @@ const widgetMessageTypeList = [
 ]
 
 const enhance = compose(
+  requirePermissions({
+    features: ['summaryDashboard'],
+  }),
   connect(
     state => ({
       summary: state.dashboard.summary,

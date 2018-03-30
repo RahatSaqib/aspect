@@ -29,6 +29,7 @@ const enhance = compose(
   pure,
   requirePermissions({
     permissions: ['inventory:admin', 'inventory:view', 'inventory:edit'],
+    features: ['inventoryDashboard'],
   }),
   connect(
     state => ({
