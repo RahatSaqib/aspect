@@ -35,7 +35,10 @@ async function findDevices(availableDeviceDetails, knex) {
     .leftJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .leftJoin('DeviceTypeCategory as dtc', 'dtc.id', 'dt.deviceTypeCategoryId')
   if (deviceId) {
-    return deviceQuery.clone().where('d.id', deviceId).select(fields)
+    return deviceQuery
+      .clone()
+      .where('d.id', deviceId)
+      .select(fields)
   }
   if (deviceIdFromGxAlertSource) {
     return deviceQuery
@@ -55,7 +58,11 @@ async function findDevices(availableDeviceDetails, knex) {
       .andWhere('c.abbreviation', countryAbbreviation)
       .select(fields)
   }
-  if (_.isEmpty(matchingDevices) && macAddressValid(macAddress) && countryAbbreviation) {
+  if (
+    _.isEmpty(matchingDevices) &&
+    macAddressValid(macAddress) &&
+    countryAbbreviation
+  ) {
     matchingDevices = await deviceQuery
       .clone()
       .where('d.partnerId', partnerId)

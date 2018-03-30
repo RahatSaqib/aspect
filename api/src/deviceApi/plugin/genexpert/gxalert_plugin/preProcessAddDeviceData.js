@@ -8,12 +8,7 @@ async function preProcessAddDeviceData(context) {
   // Get or create source device
   // GxAlert forwards data from source devices.
   // We want the context's device to be replaced with the source device
-  const geneXpertDevice = await getOrCreateDevice(
-    knex,
-    payload,
-    device,
-    now
-  )
+  const geneXpertDevice = await getOrCreateDevice(knex, payload, device, now)
   if (!_.isEmpty(geneXpertDevice)) {
     geneXpertDevice.deviceTypePluginName = device.deviceTypePluginName
     context.device = geneXpertDevice
