@@ -131,6 +131,7 @@ function createGxConnectTestContext(
   {
     countryAbbreviation,
     deviceName,
+    hostId,
     macAddress,
     deviceSerialNumber,
     adminUsername,
@@ -140,6 +141,7 @@ function createGxConnectTestContext(
   return new GxConnectApiTestContext(server, {
     countryAbbreviation,
     deviceName,
+    hostId,
     macAddress,
     deviceSerialNumber,
     adminUsername,
@@ -153,6 +155,7 @@ class GxConnectApiTestContext {
     {
       countryAbbreviation,
       deviceName,
+      hostId,
       macAddress,
       deviceSerialNumber,
       adminUsername,
@@ -162,6 +165,7 @@ class GxConnectApiTestContext {
     this.server = server
     this.countryAbbreviation = countryAbbreviation
     this.deviceName = deviceName
+    this.hostId = hostId
     this.macAddress = macAddress
     this.deviceSerialNumber = deviceSerialNumber
     this.adminUsername = adminUsername
@@ -180,7 +184,7 @@ class GxConnectApiTestContext {
       log: null,
       configuration: {
         checkpoint: null,
-        data: { macAddress },
+        data: { macAddress, hostId, deviceSerialNumber },
       },
       operation: null,
       result: null,

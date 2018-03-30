@@ -1,13 +1,19 @@
 const _ = require('lodash')
 const Boom = require('boom')
 const genexpertPreProcessAddDeviceData = require('../preProcessAddDeviceData')
+const { findDevices } = require('../device')
 
 async function preProcessAddDeviceData(context) {
   const { device, payload, knex, now } = context
   // Get or create source device
   // GxAlert forwards data from source devices.
   // We want the context's device to be replaced with the source device
-  const geneXpertDevice = await getOrCreateDevice(knex, payload, device, now)
+  const geneXpertDevice = await getOrCreateDevice(
+    knex,
+    payload,
+    device,
+    now
+  )
   if (!_.isEmpty(geneXpertDevice)) {
     geneXpertDevice.deviceTypePluginName = device.deviceTypePluginName
     context.device = geneXpertDevice
@@ -18,40 +24,16 @@ async function preProcessAddDeviceData(context) {
 }
 
 async function getOrCreateDevice(knex, payload, gxAlertDevice, now) {
-  const gxAlertDeviceId = _.get(
+  const { id: gxAlertDeviceId, partnerId } = gxAlertDevice
+  const deviceIdFromGxAlertSource = _.get(
     payload,
     'configuration.data.gxAlertDeviceId',
     null
   )
-  if (!gxAlertDeviceId) {
+  if (!deviceIdFromGxAlertSource) {
     throw Boom.badRequest(
       'Must specify GxAlert device ID for data from GxAlert'
     )
-  }
-  const deviceQueryStart = knex('Device as d')
-    .innerJoin('DeviceStatus as ds', 'd.deviceStatusId', 'ds.id')
-    .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
-    .innerJoin('DeviceTypeCategory as dtc', 'dtc.id', 'dt.deviceTypeCategoryId')
-
-  const deviceQuerySelectFields = [
-    'd.id',
-    'd.name',
-    'd.macAddress',
-    'd.serial',
-    'd.partnerId',
-    'd.siteId',
-    'ds.token as status',
-    'dt.externalId as deviceType',
-    'dtc.name as deviceTypeCategory',
-  ]
-  const deviceFromGxAlert = await deviceQueryStart
-    .clone()
-    .whereRaw(
-      `JSON_EXTRACT(d.configurationData, "$.gxAlertDeviceId") = ${gxAlertDeviceId}`
-    )
-    .first(deviceQuerySelectFields)
-  if (!_.isEmpty(deviceFromGxAlert)) {
-    return deviceFromGxAlert
   }
 
   const deviceTypeExternalId = _.get(payload, 'type.id', null)
@@ -59,40 +41,31 @@ async function getOrCreateDevice(knex, payload, gxAlertDevice, now) {
     throw Boom.badRequest('Must specify device type for data from GxAlert')
   }
   const macAddress = _.get(payload, 'configuration.data.macAddress', null)
+  const hostId = _.get(payload, 'configuration.data.hostId', null)
+  const deviceSerialNumber = _.get(
+    payload,
+    'configuration.data.deviceSerialNumber',
+    null
+  )
   let countryAbbreviation = _.get(payload, 'configuration.data.country', null)
   if (!countryAbbreviation) {
     ;[countryAbbreviation] = await knex('device as d')
       .innerJoin('Geography as g', 'd.geographyId', 'g.id')
       .innerJoin('Country as c', 'g.countryId', 'c.id')
-      .where('d.id', gxAlertDevice.id)
+      .where('d.id', gxAlertDeviceId)
       .pluck('c.abbreviation')
   }
   const deviceNameFromGxAlert = _.get(payload, 'name', null)
-  const matchingDevices = await deviceQueryStart
-    .clone()
-    .innerJoin('Geography as g', 'd.geographyId', 'g.id')
-    .innerJoin('Country as c', 'g.countryId', 'c.id')
-    .whereRaw(`JSON_EXTRACT(d.configurationData, "$.gxAlertDeviceId") IS NULL`)
-    .andWhere(function() {
-      if (macAddress && countryAbbreviation && deviceNameFromGxAlert) {
-        this.where('d.macAddress', macAddress).orWhere(function() {
-          this.where('c.abbreviation', countryAbbreviation)
-          this.andWhere(function() {
-            this.where('d.name', deviceNameFromGxAlert)
-            this.orWhere('d.shortName', deviceNameFromGxAlert)
-          })
-        })
-      } else if (countryAbbreviation && deviceNameFromGxAlert) {
-        this.where(function() {
-          this.where('c.abbreviation', countryAbbreviation)
-          this.andWhere(function() {
-            this.where('d.name', deviceNameFromGxAlert)
-            this.orWhere('d.shortName', deviceNameFromGxAlert)
-          })
-        })
-      }
-    })
-    .select(deviceQuerySelectFields)
+  const deviceDetails = {
+    partnerId,
+    hostId,
+    deviceSerialNumber,
+    countryAbbreviation,
+    macAddress,
+    deviceName: deviceNameFromGxAlert,
+    deviceIdFromGxAlertSource,
+  }
+  let matchingDevices = await findDevices(deviceDetails, knex)
   if (_.isEmpty(matchingDevices)) {
     const site = await getOrCreateSite(
       knex,
@@ -109,7 +82,7 @@ async function getOrCreateDevice(knex, payload, gxAlertDevice, now) {
       .where({ externalId: deviceTypeExternalId })
       .first('id')
     const [deviceId] = await knex('Device').insert({
-      partnerId: gxAlertDevice.partnerId,
+      partnerId,
       geographyId: site.geographyId,
       siteId: site.id,
       deviceTypeId: deviceType.id,
@@ -136,18 +109,26 @@ async function getOrCreateDevice(knex, payload, gxAlertDevice, now) {
       createdOn: now,
       createdBy: null,
     })
-    return deviceQueryStart
-      .clone()
-      .where('d.id', deviceId)
-      .first(deviceQuerySelectFields)
-  } else if (matchingDevices.length === 1) {
-    return matchingDevices[0]
-  } else if (macAddress) {
-    return _.first(matchingDevices, { macAddress })
-  } else if (deviceNameFromGxAlert) {
-    return _.first(matchingDevices, { name: deviceNameFromGxAlert })
+    deviceDetails.deviceId = deviceId
+    matchingDevices = await findDevices(deviceDetails, knex)
   }
-  return null
+  let matchingDevice = null
+  if (matchingDevices.length > 1) {
+    const matchingDevicesByMac = _.filter(matchingDevices, { macAddress })
+    if (matchingDevicesByMac.length === 1) {
+      ;[matchingDevice] = matchingDevicesByMac
+    } else {
+      const matchingDevicesByName = _.filter(matchingDevices, {
+        name: deviceNameFromGxAlert,
+      })
+      if (matchingDevicesByName.length === 1) {
+        ;[matchingDevice] = matchingDevicesByName
+      }
+    }
+  } else if (matchingDevices.length === 1) {
+    ;[matchingDevice] = matchingDevices
+  }
+  return matchingDevice
 }
 
 async function getOrCreateSite(

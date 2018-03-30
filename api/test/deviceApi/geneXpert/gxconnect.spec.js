@@ -24,7 +24,8 @@ describe('Device API routes for GxConnect Devices', () => {
   const adminPassword = 'test07'
   const countryCode = 'US'
   const deviceName = 'New GeneXpert Laboratory'
-  const deviceSerialNumber = '123456'
+  const deviceSerialNumber = 'Cepheid-PC-BLH'
+  const hostId = 'BLH-Expert'
 
   describe('registration and configuration', () => {
     describe('when no device API key is specified', () => {
@@ -157,14 +158,14 @@ describe('Device API routes for GxConnect Devices', () => {
       })
     })
 
-    describe('generating a new device API key from a device with a known MAC address/instrument serial combination', () => {
+    describe('generating a new device API key from a device with a known Host ID/device serial combination', () => {
       const firstContext = createGxConnectTestContext(server, {
         countryAbbreviation: countryCode,
         adminUsername,
         adminPassword,
         deviceName,
-        macAddress,
         deviceSerialNumber,
+        hostId,
       })
 
       before(firstContext.beforeRegisterAndSetDevice)
@@ -176,11 +177,11 @@ describe('Device API routes for GxConnect Devices', () => {
           const firstDeviceUniqueIdentifiers = await knex('DeviceApiKey as dak')
             .join('Device as d', 'dak.DeviceId', 'd.id')
             .where({ 'dak.token': firstContext.apiKey })
-            .select('d.macAddress', 'd.serial')
+            .select('d.hostId', 'd.serial')
 
           assert.deepEqual(firstDeviceUniqueIdentifiers, [
             {
-              macAddress,
+              hostId,
               serial: deviceSerialNumber,
             },
           ])
@@ -191,15 +192,15 @@ describe('Device API routes for GxConnect Devices', () => {
             adminUsername,
             adminPassword,
             deviceName,
-            macAddress,
             deviceSerialNumber,
+            hostId,
           })
 
           await secondContext.registerAndSetDevice()
 
           await secondContext.runTestInline(async knex => {
             assert.notEqual(secondContext.apiKey, firstContext.apiKey)
-            // Submit same device configuration with MAC address and instrument serial numbers
+            // Submit same device configuration with host ID and device serial numbers
             await server
               .post('/device')
               .set('Authorization', secondContext.deviceAuth)
@@ -208,9 +209,9 @@ describe('Device API routes for GxConnect Devices', () => {
                   configuration: {
                     checkpoint: null,
                     data: {
-                      macAddress,
                       country: countryCode,
                       deviceSerialNumber,
+                      hostId,
                     },
                   },
                 })
@@ -235,10 +236,10 @@ describe('Device API routes for GxConnect Devices', () => {
             )
               .join('Device as d', 'dak.DeviceId', 'd.id')
               .where({ 'dak.token': secondContext.apiKey })
-              .select('d.macAddress', 'd.serial', 'd.id')
+              .select('d.hostId', 'd.serial', 'd.id')
             assert.deepEqual(secondDeviceUniqueIdentifiers, [
               {
-                macAddress,
+                hostId,
                 serial: deviceSerialNumber,
                 id: secondContext.device.id,
               },
@@ -257,13 +258,12 @@ describe('Device API routes for GxConnect Devices', () => {
           adminPassword,
           deviceName,
           macAddress,
-          deviceSerialNumber,
         })
 
         before(firstContext.beforeRegisterAndSetDevice)
         after(firstContext.afterCleanUp)
 
-        it('should create a new device', () =>
+        it('should update the MAC address for the device and assign it with a new API key', () =>
           firstContext.runTest(async knex => {
             // Check that device exists with MAC Address and Instrument Serial
             const firstDeviceUniqueIdentifiers = await knex(
@@ -271,14 +271,9 @@ describe('Device API routes for GxConnect Devices', () => {
             )
               .join('Device as d', 'dak.DeviceId', 'd.id')
               .where({ 'dak.token': firstContext.apiKey })
-              .select('d.macAddress', 'd.serial')
+              .first('d.macAddress', 'dak.token')
 
-            assert.deepEqual(firstDeviceUniqueIdentifiers, [
-              {
-                macAddress,
-                serial: deviceSerialNumber,
-              },
-            ])
+            assert.equal(firstDeviceUniqueIdentifiers.macAddress, macAddress)
 
             // Single device exists, now generate a new API key
             const newMacAddress = 'MAC12345678FAKE'
@@ -288,7 +283,6 @@ describe('Device API routes for GxConnect Devices', () => {
               adminPassword,
               deviceName,
               macAddress: newMacAddress,
-              deviceSerialNumber,
             })
 
             await secondContext.registerAndSetDevice()
@@ -297,29 +291,28 @@ describe('Device API routes for GxConnect Devices', () => {
               assert.notEqual(secondContext.apiKey, firstContext.apiKey)
 
               const firstDeviceApiKeyStatus = await knex('DeviceApiKey as dak')
-                .where({ 'dak.token': firstContext.apiKey })
+                .where({ 'dak.token': firstDeviceUniqueIdentifiers.token })
                 .select('dak.deviceId', 'dak.revoked')
 
-              // Check that old API key still associated with a device and is active
+              // Check that old API key no longer associated with a device and is revoked
               assert.deepEqual(firstDeviceApiKeyStatus, [
                 {
-                  deviceId: firstContext.device.id,
-                  revoked: 0,
+                  deviceId: null,
+                  revoked: 1,
                 },
               ])
 
-              // Check that a new device exists with the new MAC Address and Instrument
+              // Check that the device still exists with the new MAC Address
               // Serial linked to the new device API key
               const secondDeviceUniqueIdentifiers = await knex(
                 'DeviceApiKey as dak'
               )
                 .join('Device as d', 'dak.DeviceId', 'd.id')
                 .where({ 'dak.token': secondContext.apiKey })
-                .select('d.macAddress', 'd.serial', 'd.id', 'dak.revoked')
+                .select('d.macAddress', 'd.id', 'dak.revoked')
               assert.deepEqual(secondDeviceUniqueIdentifiers, [
                 {
                   macAddress: newMacAddress,
-                  serial: deviceSerialNumber,
                   id: secondContext.device.id,
                   revoked: 0,
                 },
@@ -343,6 +336,7 @@ describe('Device API routes for GxConnect Devices', () => {
           adminPassword,
           deviceName,
           macAddress,
+          hostId,
           deviceSerialNumber,
         })
 
@@ -356,11 +350,12 @@ describe('Device API routes for GxConnect Devices', () => {
             const deviceUniqueIdentifiers = await knex('DeviceApiKey as dak')
               .join('Device as d', 'dak.DeviceId', 'd.id')
               .where({ 'dak.token': context.apiKey })
-              .select('d.macAddress', 'd.serial')
+              .select('d.macAddress', 'd.hostId', 'd.serial')
 
             assert.deepEqual(deviceUniqueIdentifiers, [
               {
                 macAddress,
+                hostId,
                 serial: deviceSerialNumber,
               },
             ])
@@ -375,6 +370,8 @@ describe('Device API routes for GxConnect Devices', () => {
                   configuration: {
                     data: {
                       macAddress: newMacAddress,
+                      deviceSerialNumber,
+                      hostId,
                     },
                   },
                 })
@@ -392,6 +389,8 @@ describe('Device API routes for GxConnect Devices', () => {
                 'd.id as deviceId',
                 'd.name as deviceName',
                 'd.macAddress',
+                'd.serial',
+                'd.hostId',
                 's.name as siteName',
                 'c.abbreviation as countryCode',
                 'dt.externalId as deviceType'
@@ -403,6 +402,8 @@ describe('Device API routes for GxConnect Devices', () => {
                 {
                   deviceName,
                   macAddress: newMacAddress,
+                  serial: deviceSerialNumber,
+                  hostId,
                   siteName: deviceName,
                   countryCode,
                   deviceType: context.basicDevicePayload.type.id,
@@ -421,7 +422,7 @@ describe('Device API routes for GxConnect Devices', () => {
       })
     })
 
-    describe('when instrument serial changes', () => {
+    describe('when device serial changes', () => {
       describe('and device API key changes', () => {
         const firstContext = createGxConnectTestContext(server, {
           countryAbbreviation: countryCode,
@@ -429,13 +430,14 @@ describe('Device API routes for GxConnect Devices', () => {
           adminPassword,
           deviceName,
           macAddress,
+          hostId,
           deviceSerialNumber,
         })
 
         before(firstContext.beforeRegisterAndSetDevice)
         after(firstContext.afterCleanUp)
 
-        it('should create a new device', () =>
+        it('should update the device serial for the device and assign it with a new API key', () =>
           firstContext.runTest(async knex => {
             // Check that device exists with MAC Address and Instrument Serial
             const firstDeviceUniqueIdentifiers = await knex(
@@ -443,14 +445,11 @@ describe('Device API routes for GxConnect Devices', () => {
             )
               .join('Device as d', 'dak.DeviceId', 'd.id')
               .where({ 'dak.token': firstContext.apiKey })
-              .select('d.macAddress', 'd.serial')
-
-            assert.deepEqual(firstDeviceUniqueIdentifiers, [
-              {
-                macAddress,
-                serial: deviceSerialNumber,
-              },
-            ])
+              .first('dak.token', 'd.serial')
+            assert.equal(
+              firstDeviceUniqueIdentifiers.serial,
+              deviceSerialNumber
+            )
 
             // Single device exists, now generate a new API key
             const newDeviceSerialNumber = 'Cepheid-PC-123'
@@ -460,6 +459,7 @@ describe('Device API routes for GxConnect Devices', () => {
               adminPassword,
               deviceName,
               macAddress,
+              hostId,
               deviceSerialNumber: newDeviceSerialNumber,
             })
 
@@ -469,28 +469,35 @@ describe('Device API routes for GxConnect Devices', () => {
               assert.notEqual(secondContext.apiKey, firstContext.apiKey)
 
               const firstDeviceApiKeyStatus = await knex('DeviceApiKey as dak')
-                .where({ 'dak.token': firstContext.apiKey })
+                .where({ 'dak.token': firstDeviceUniqueIdentifiers.token })
                 .select('dak.deviceId', 'dak.revoked')
 
-              // Check that old API key still associated with a device and is active
+              // Check that old API key no longer associated with a device and is revoked
               assert.deepEqual(firstDeviceApiKeyStatus, [
                 {
-                  deviceId: firstContext.device.id,
-                  revoked: 0,
+                  deviceId: null,
+                  revoked: 1,
                 },
               ])
 
-              // Check that a new device exists with the new MAC Address and Instrument
+              // Check that the device exists with the new Device
               // Serial linked to the new device API key
               const secondDeviceUniqueIdentifiers = await knex(
                 'DeviceApiKey as dak'
               )
                 .join('Device as d', 'dak.DeviceId', 'd.id')
                 .where({ 'dak.token': secondContext.apiKey })
-                .select('d.macAddress', 'd.serial', 'd.id', 'dak.revoked')
+                .select(
+                  'd.macAddress',
+                  'd.hostId',
+                  'd.serial',
+                  'd.id',
+                  'dak.revoked'
+                )
               assert.deepEqual(secondDeviceUniqueIdentifiers, [
                 {
                   macAddress,
+                  hostId,
                   serial: newDeviceSerialNumber,
                   id: secondContext.device.id,
                   revoked: 0,
@@ -515,6 +522,7 @@ describe('Device API routes for GxConnect Devices', () => {
           adminPassword,
           deviceName,
           macAddress,
+          hostId,
           deviceSerialNumber,
         })
 
@@ -528,11 +536,12 @@ describe('Device API routes for GxConnect Devices', () => {
             const deviceUniqueIdentifiers = await knex('DeviceApiKey as dak')
               .join('Device as d', 'dak.DeviceId', 'd.id')
               .where({ 'dak.token': context.apiKey })
-              .select('d.macAddress', 'd.serial')
+              .select('d.macAddress', 'd.hostId', 'd.serial')
 
             assert.deepEqual(deviceUniqueIdentifiers, [
               {
                 macAddress,
+                hostId,
                 serial: deviceSerialNumber,
               },
             ])
@@ -546,6 +555,7 @@ describe('Device API routes for GxConnect Devices', () => {
                 _.assign({}, context.basicDevicePayload, {
                   configuration: {
                     data: {
+                      hostId,
                       deviceSerialNumber: newDeviceSerialNumber,
                     },
                   },
@@ -564,6 +574,7 @@ describe('Device API routes for GxConnect Devices', () => {
                 'd.id as deviceId',
                 'd.name as deviceName',
                 'd.macAddress',
+                'd.hostId',
                 'd.serial',
                 's.name as siteName',
                 'c.abbreviation as countryCode',
@@ -576,6 +587,7 @@ describe('Device API routes for GxConnect Devices', () => {
                 {
                   deviceName,
                   macAddress,
+                  hostId,
                   serial: newDeviceSerialNumber,
                   siteName: deviceName,
                   countryCode,
