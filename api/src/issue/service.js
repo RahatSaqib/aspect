@@ -59,13 +59,13 @@ async function findOpenIssue(knex, issueType, action) {
     .orderBy('i.updatedOn', 'desc')
 
   if (action.deviceId) {
-    findOpenIssue.join('Device as d', 'i.deviceId', 'd.id')
+    findOpenIssue.where({ 'i.deviceId': action.deviceId })
   } else if (action.siteId) {
-    findOpenIssue.join('Site as s', 'i.siteId', 's.id')
+    findOpenIssue.where({ 'i.siteId': action.siteId })
   } else if (action.geographyId) {
-    findOpenIssue.join('Geography as g', 'g.geographyId', 'g.id')
+    findOpenIssue.where({ 'i.geographyId': action.geographyId })
   } else if (action.partnerId) {
-    findOpenIssue.join('Partner as p', 'i.partnerId', 'p.id')
+    findOpenIssue.where({ 'i.partnerId': action.partnerId })
   }
 
   return findOpenIssue.first('i.id', 'it.id as issueTypeId')
