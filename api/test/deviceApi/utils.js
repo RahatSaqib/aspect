@@ -122,39 +122,32 @@ async function deleteDeviceAndTestData(knex, apiKeys) {
 async function deleteIssues(knex, { deviceIds, resultIds }) {
   const issueIdQ = knex('Issue as i')
   if (deviceIds != null && deviceIds.length > 0) {
-    issueIdQ.where('i.deviceId', deviceIds)
+    issueIdQ.orWhereIn('i.deviceId', deviceIds)
   }
   if (resultIds != null && resultIds.length > 0) {
-    issueIdQ.where('i.resultId', resultIds)
+    issueIdQ.orWhereIn('i.resultId', resultIds)
   }
-  const issueIds = await issueIdQ.select('i.id')
 
+  const issueIds = await issueIdQ.select('i.id').pluck('id')
+  const notifications = await knex('Notification')
+    .whereIn('issueId', issueIds)
+    .select('id', 'alertMessageId', 'emailMessageId', 'smsMessageId')
+  const notificationIds = _.map(notifications, 'id')
+  const alertMessageIds = _.map(notifications, 'alertMessageId')
+  const emailMessageIds = _.map(notifications, 'emailMessageId')
+  const smsMessageIds = _.map(notifications, 'smsMessageId')
+
+  await knex('Notification')
+    .whereIn('id', notificationIds)
+    .delete()
   await knex('AlertMessage')
-    .whereIn(
-      'id',
-      knex('Notification as n')
-        .whereIn('i.issueId', issueIds)
-        .select('n.alertMessageId')
-    )
+    .whereIn('id', alertMessageIds)
     .delete()
   await knex('EmailMessage')
-    .whereIn(
-      'id',
-      knex('Notification as n')
-        .whereIn('i.issueId', issueIds)
-        .select('n.emailMessageId')
-    )
+    .whereIn('id', emailMessageIds)
     .delete()
   await knex('SmsMessage')
-    .whereIn(
-      'id',
-      knex('Notification as n')
-        .whereIn('i.issueId', issueIds)
-        .select('n.smsMessageId')
-    )
-    .delete()
-  await knex('Notification')
-    .whereIn('issueId', issueIds)
+    .whereIn('id', smsMessageIds)
     .delete()
   await knex('IssueEvent')
     .whereIn('issueId', issueIds)

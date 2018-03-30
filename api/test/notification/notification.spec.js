@@ -13,7 +13,7 @@ const context = createTestContext(server, {
   partner: 'myanmar',
 })
 
-describe.only('Notification endpoints', () => {
+describe('Notification endpoints', () => {
   const devicePath = '/device'
 
   const { runTest } = context
