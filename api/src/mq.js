@@ -113,8 +113,8 @@ class MessageQueue {
 
   /**
    * Creates a listener that waits for an action
-   * passing the given predicate and resolves with
-   * the action.
+   * passing the given predicate and returns a
+   * Promise that resolves with the action.
    *
    * The rules for predicate follow the same rules
    * as lodash (see _.iteratee)
@@ -134,6 +134,37 @@ class MessageQueue {
         }
       }
       this.emitter.addListener('+', checkedListener)
+    })
+  }
+
+  /**
+   * Creates a listener that waits for the queue
+   * to be idle for a certain time and returns
+   * a promise that resolves when idle time has passed.
+   *
+   * idleTime: time in millis to determine queue is idle
+   *
+   * NOTE: It is generally preferred to avoid
+   * relying on this function and create additional
+   * action creators. This is mainly exposed for
+   * testing.
+   */
+  waitForIdle(idleTime) {
+    return new Promise(resolve => {
+      let timeIdle = 0
+      const clearTimeIdle = () => {
+        timeIdle = 0
+      }
+      const idleTimeIncrement = idleTime / 10
+      const idleIntervalId = setInterval(() => {
+        timeIdle += idleTimeIncrement
+        if (timeIdle >= idleTime) {
+          clearInterval(idleIntervalId)
+          this.emitter.removeListener('+', clearTimeIdle)
+          resolve()
+        }
+      }, idleTimeIncrement)
+      this.emitter.addListener('+', clearTimeIdle)
     })
   }
 }
