@@ -19,14 +19,9 @@ import TargetStatus from './TargetStatus'
 const cssClasses = classnames.bind(require('./Status.css'))
 
 const enhance = compose(
-  requirePermissions({
-    features: ['dashboard:true'],
-    ForbiddenComponent: NotFound,
-  }),
   connect(
     state => ({
       userName: state.user.jwt.name,
-      features: state.user.jwt.features,
     }),
     bindActionCreators.bind(null, {
       showAcknowledgement,

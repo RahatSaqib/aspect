@@ -14,18 +14,12 @@ import SelectField from 'material-ui/SelectField'
 
 // Our own imports
 import { fetchDemoDevice, postDemoDeviceResult } from '../DemoRedux'
-import requirePermissions from '../../components/shared/requirePermissions'
-import NotFound from '../../error/notFound/NotFound'
 
 import { Unit } from '../../components/pureGrids'
 import ReadOnlyFields from '../../components/shared/ReadOnlyFields'
 import styles from './DeviceDemo.css'
 
 const enhance = compose(
-  requirePermissions({
-    features: ['operationalData:true'],
-    ForbiddenComponent: NotFound,
-  }),
   setPropTypes({
     match: PropTypes.object.isRequired,
   }),

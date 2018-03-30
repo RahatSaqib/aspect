@@ -31,14 +31,8 @@ import {
   LoginDetails,
   UserPreferences,
 } from '../../person/PersonRedux'
-import requirePermissions from '../../components/shared/requirePermissions'
-import NotFound from '../../error/notFound/NotFound'
 
 const enhance = compose(
-  requirePermissions({
-    features: ['operationalData:true'],
-    ForbiddenComponent: NotFound,
-  }),
   setPropTypes({
     location: PropTypes.object.isRequired, // eslint-disable-line
     history: PropTypes.object.isRequired, // eslint-disable-line

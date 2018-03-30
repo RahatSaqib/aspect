@@ -46,8 +46,6 @@ import {
   DeviceApiKeyDataTableHead,
   DeviceApiKeyDataTableRow,
 } from './DeviceApiKeyDataTable'
-import requirePermissions from '../../components/shared/requirePermissions'
-import NotFound from '../../error/notFound/NotFound'
 
 const cssClasses = classnames.bind(require('./DeviceApiKeyList.css'))
 
@@ -147,10 +145,6 @@ const filtersFromLocation = composeSanitizer(
 )
 
 const enhance = compose(
-  requirePermissions({
-    features: ['deviceApiKey:true'],
-    ForbiddenComponent: NotFound,
-  }),
   withProps(
     makeSortPageSelector({
       sortCol: 'createdOn',

@@ -19,14 +19,8 @@ import SiteForm from './SiteForm'
 import SiteLocationFormMap from './SiteLocationFormMap'
 import messages from './messages'
 import styles from './SiteDetail.css'
-import requirePermissions from '../../components/shared/requirePermissions'
-import NotFound from '../../error/notFound/NotFound'
 
 const enhance = compose(
-  requirePermissions({
-    features: ['siteDetail:true'],
-    ForbiddenComponent: NotFound,
-  }),
   setPropTypes({
     match: PropTypes.shape({
       params: PropTypes.shape({

@@ -30,7 +30,7 @@ const EMPTY_LIST = Immutable.List()
 const enhance = compose(
   pure,
   requirePermissions({
-    features: ['deviceDashboard:true'],
+    permissions: ['device:admin', 'device:view', 'device:edit'],
   }),
   connect(
     state => ({
