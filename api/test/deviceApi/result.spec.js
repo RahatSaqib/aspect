@@ -13,7 +13,7 @@ const {
 const { waitAsyncComplete } = require('../utils/generatorFunctionUtils')
 
 const server = supertest.agent('http://localhost:8080')
-const { assert } = chai
+const { assert, expect } = chai
 
 const devicePath = '/device'
 const devicePostResultPath = '/device/result'
@@ -1043,7 +1043,7 @@ describe('Device Result API routes', () => {
           .where({ id: resultIds[0] })
           .first()
         assert.equal(result1.externalId, resultExternalIds[0])
-        assert.deepEqual(JSON.parse(result1.resultData), { a: 'b' })
+        expect(JSON.parse(result1.resultData)).to.containSubset({ a: 'b' })
         assert.isNotOk(result1.errorCode)
         assert.equal(initialCount + 1, await countResults())
 
@@ -1066,7 +1066,10 @@ describe('Device Result API routes', () => {
           .where({ id: resultIds[0] })
           .first()
         assert.equal(result1.externalId, resultExternalIds[0])
-        assert.deepEqual(JSON.parse(result1.resultData), { a: 'b', c: 'd' })
+        expect(JSON.parse(result1.resultData)).to.containSubset({
+          a: 'b',
+          c: 'd',
+        })
         assert.isNotOk(result1.errorCode)
         assert.equal(initialCount + 1, await countResults())
 

@@ -619,10 +619,8 @@ function createUniqueIdForResult(
   testEndedOn,
   sampleId
 ) {
-  if (!instrumentSerial) {
-    throw new Error(
-      'Instrument Serial is required in order to generate a unique ID.'
-    )
+  if (!instrumentSerial || !testStartedOn || !testEndedOn || !sampleId) {
+    return null
   }
   const hashedSampleId = oneDirectionalMd5Hash(sampleId)
   return `${instrumentSerial}_${dateFormat(testStartedOn, 'mmss').substr(
