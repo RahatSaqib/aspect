@@ -1,13 +1,7 @@
 const _ = require('lodash')
-const { createUniqueIdForResult } = require('../../../result/service')
 
 async function findExistingResult(availableResultDetails, knex) {
   const {
-    externalId,
-    startedOn,
-    endedOn,
-    instrumentSerial,
-    sampleId,
     partnerId,
     geneXpertTestId, // GxConnect -> GxAlert -> Aspect: result.data.id, GxConnect -> Aspect: result.id
     gxAlertUniqueId, // GxConnect/Listener -> GxAlert -> Aspect: result.data.gxAlertTestUniqueId
@@ -16,28 +10,11 @@ async function findExistingResult(availableResultDetails, knex) {
   const queryStart = knex.from('Result as r').where('r.partnerId', partnerId)
   let matchingResults = []
   let matchingResult = null
-  if (externalId) {
+  if (gxAlertUniqueId) {
     matchingResults = await queryStart
       .clone()
-      .andWhere('r.externalId', externalId)
+      .andWhere('r.externalId', gxAlertUniqueId)
       .select(selectFields)
-  }
-  if (matchingResults.length === 1) {
-    ;[matchingResult] = matchingResults
-  }
-  const generatedExternalId = createUniqueIdForResult(
-    instrumentSerial,
-    startedOn,
-    endedOn,
-    sampleId
-  )
-  if (_.isEmpty(matchingResult) && generatedExternalId) {
-    if (generatedExternalId) {
-      matchingResults = await queryStart
-        .clone()
-        .andWhere('r.externalId', generatedExternalId)
-        .select(selectFields)
-    }
   }
   if (matchingResults.length === 1) {
     ;[matchingResult] = matchingResults
@@ -60,28 +37,8 @@ async function findExistingResult(availableResultDetails, knex) {
     }
   }
 
-  if (_.isEmpty(matchingResult) && gxAlertUniqueId) {
-    matchingResults = await await queryStart
-      .clone()
-      .andWhere('r.externalId', gxAlertUniqueId)
-      .select(selectFields)
-    if (matchingResults.length === 1) {
-      ;[matchingResult] = matchingResults
-    } else if (matchingResults.length > 1 && geneXpertTestId) {
-      matchingResults = _.filter(
-        matchingResults,
-        result =>
-          _.get(JSON.parse(result.resultData), 'geneXpertTestId') ===
-          geneXpertTestId
-      )
-      if (matchingResults.length === 1) {
-        ;[matchingResult] = matchingResults
-      }
-    }
-  }
-
   if (_.isEmpty(matchingResult) && geneXpertTestId) {
-    matchingResults = await await queryStart
+    matchingResults = await queryStart
       .clone()
       .andWhereRaw(
         'JSON_EXTRACT(r.resultData, "$.geneXpertTestId") = ?',
@@ -90,14 +47,6 @@ async function findExistingResult(availableResultDetails, knex) {
       .select(selectFields)
     if (matchingResults.length === 1) {
       ;[matchingResult] = matchingResults
-    }
-    if (matchingResults.length > 1 && generatedExternalId) {
-      matchingResults = _.filter(matchingResults, {
-        externalId: generatedExternalId,
-      })
-      if (matchingResults.length === 1) {
-        ;[matchingResult] = matchingResults
-      }
     }
     if (matchingResults.length > 1 && gxAlertUniqueId) {
       matchingResults = _.filter(matchingResults, {

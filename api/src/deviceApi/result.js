@@ -1,6 +1,8 @@
 const Boom = require('boom')
 const _ = require('lodash')
 
+const { isJson, deepMerge } = require('../shared/json')
+
 async function mergeResult(
   knex,
   deviceId,
@@ -212,14 +214,28 @@ async function mergeResult(
     }
   }
 
-  // TODO: should we merge within patient or result data payload?
-  const resultData = _.has(payload, 'data')
-    ? JSON.stringify(payload.data)
-    : _.get(existingResult, 'resultData', null)
+  const existingResultDataString = _.get(existingResult, 'resultData', '{}')
+  const existingResultData = isJson(existingResultDataString)
+    ? JSON.parse(existingResultDataString)
+    : {}
 
-  const patientData = _.has(payload, 'patient')
-    ? JSON.stringify(payload.patient)
-    : _.get(existingResult, 'patientData')
+  let resultData = _.has(payload, 'data')
+    ? JSON.stringify(deepMerge(existingResultData, payload.data))
+    : JSON.stringify(existingResultDataString)
+  if (_.isEmpty(resultData)) {
+    resultData = null
+  }
+
+  const existingResultPatientString = _.get(existingResult, 'patientData', '{}')
+  const existingResultPatient = isJson(existingResultPatientString)
+    ? JSON.parse(existingResultPatientString)
+    : {}
+  let patientData = _.has(payload, 'patient')
+    ? JSON.stringify(deepMerge(existingResultPatient, payload.patient))
+    : JSON.stringify(existingResultPatientString)
+  if (_.isEmpty(patientData)) {
+    patientData = null
+  }
 
   const oemData = _.has(payload, 'oemData')
     ? String(payload.oemData)

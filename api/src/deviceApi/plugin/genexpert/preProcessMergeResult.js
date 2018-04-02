@@ -39,14 +39,16 @@ async function preProcessMergeResult({ knex, deviceId, payload }) {
     payload.data.geneXpertTestId = payload.id
   }
 
-  const availableResultDetails = {
+  const generatedExternalId = createUniqueIdForResult(
+    instrumentSerial,
     startedOn,
     endedOn,
-    instrumentSerial,
-    sampleId,
+    sampleId
+  )
+  const availableResultDetails = {
     partnerId: device.partnerId,
     geneXpertTestId: payload.id || payload.data.id,
-    gxAlertUniqueId: payload.data.gxAlertTestUniqueId,
+    gxAlertUniqueId: payload.data.gxAlertTestUniqueId || generatedExternalId,
   }
   const existingResult = await findExistingResult(availableResultDetails, knex)
   if (existingResult) {
@@ -55,14 +57,7 @@ async function preProcessMergeResult({ knex, deviceId, payload }) {
     // Only assign assay to GxUnknown if result is new
     await assignGxUnknownAssayIfNotExists(knex, payload)
   }
-  if (!payload.id) {
-    payload.id = createUniqueIdForResult(
-      instrumentSerial,
-      startedOn,
-      endedOn,
-      sampleId
-    )
-  }
+  payload.id = generatedExternalId
 }
 
 async function assignGxUnknownAssayIfNotExists(knex, payload) {

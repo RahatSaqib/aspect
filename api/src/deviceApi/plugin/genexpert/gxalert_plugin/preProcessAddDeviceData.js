@@ -71,7 +71,7 @@ async function getOrCreateDevice(knex, payload, gxAlertDevice, now) {
       deviceNameFromGxAlert
     )
     const deviceStatus = await knex('DeviceStatus')
-      .where({ token: 'provisioned' })
+      .where({ token: 'assigned' })
       .first('id')
     const deviceType = await knex('DeviceType')
       .where({ externalId: deviceTypeExternalId })
