@@ -1,4 +1,4 @@
-const _ = require('lodash')
+const handlebars = require('handlebars')
 
 // See unit tests for examples
 const processStringTemplate = (
@@ -8,9 +8,9 @@ const processStringTemplate = (
   result = {},
   person = {}
 ) => {
-  const inputObject = { site, device, result, person }
-  const template = _.template(inputString)
-  return template(inputObject)
+  const data = { site, device, result, person }
+  const template = handlebars.compile(inputString)
+  return template(data)
 }
 
 module.exports = {

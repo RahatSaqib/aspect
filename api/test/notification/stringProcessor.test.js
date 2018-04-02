@@ -6,7 +6,7 @@ const { runTest } = require('../utils/generatorFunctionUtils')
 describe('notification/stringProcessor', () => {
   describe('process', () => {
     const sampleString =
-      'Device in ${site.state}, ${site.country} is currently offline'
+      'Device in {{site.state}}, {{site.country}} is currently offline'
     const expectedResult = 'Device in Ohio, United States is currently offline'
     const site = {
       shortName: 'Cuyoga, OH #1',
@@ -21,7 +21,7 @@ describe('notification/stringProcessor', () => {
       ))
   })
   describe('process', () => {    
-    const sampleString = 'Hello ${person.name}'
+    const sampleString = 'Hello {{person.name}}'
     const expectedResult = 'Hello '
     const inputObject = {
       site: {
@@ -38,7 +38,7 @@ describe('notification/stringProcessor', () => {
       ))
   })
   describe('process', () => {
-    const sampleString = 'Device ${device.shortName} is offline'
+    const sampleString = 'Device {{device.shortName}} is offline'
     const expectedResult = 'Device  is offline'
     const inputObject = {
       device: {
@@ -55,7 +55,7 @@ describe('notification/stringProcessor', () => {
   })
   describe('process', () => {
     const sampleString =
-      'New ${result.assayName} result from Device ${device.shortName} at ${site.state}, ${site.country}'
+      'New {{result.assayName}} result from Device {{device.shortName}} at {{site.state}}, {{site.country}}'
     const expectedResult =
       'New HivVl result from Device Eldoret #1 at Uasin Gishu, Kenya'
     const site = {
