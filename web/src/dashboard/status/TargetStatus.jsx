@@ -15,14 +15,7 @@ import startOfYear from 'date-fns/startOfYear'
 import subtractYears from 'date-fns/subYears'
 
 import { bindActionCreators } from 'redux'
-import {
-  compose,
-  lifecycle,
-  pure,
-  withHandlers,
-  withProps,
-  withPropsOnChange,
-} from 'recompose'
+import { compose, lifecycle, pure, withHandlers, withProps } from 'recompose'
 import { connect } from 'react-redux'
 import { Card } from 'react-toolbox/lib/card'
 import { Unit } from '../../components/pureGrids'
@@ -137,15 +130,6 @@ const enhance = compose(
       dateRangeList,
     }
   }),
-  withPropsOnChange(
-    (props, nextProps) =>
-      props.targetSummaryList !== nextProps.targetSummaryList,
-    ({ targetSummaryList, dateRange }) => ({
-      targetSummaryList: targetSummaryList.map(target =>
-        target.set('target', getGoalValue(target, dateRange))
-      ),
-    })
-  ),
   withHandlers({
     onInitialLoad: ({ location, fetchTargetDashboard }) => () => {
       const filtersParams = filtersFromLocation(
@@ -191,19 +175,6 @@ const enhance = compose(
   })
 )
 
-const getGoalValue = (target, dateRange) => {
-  switch (dateRange) {
-    case 'thisMonth':
-    case 'lastMonth':
-      return Math.round(target.get('target') / 12)
-    case 'thisQuarter':
-    case 'lastQuarter':
-      return Math.round(target.get('target') / 4)
-    default:
-      return target.get('target')
-  }
-}
-
 export const TargetStatus = ({
   intl,
   // --- injected by recompose ---
@@ -215,7 +186,8 @@ export const TargetStatus = ({
   onDateRangeClick,
 }) => {
   const hasError = target =>
-    parseFloat(target.get('extra')) < parseFloat(target.get('threshold'))
+    parseFloat(target.get('dataCollection')) <
+    parseFloat(target.get('threshold'))
 
   const getProgressValue = target =>
     `${Math.round(target.get('count') / target.get('target') * 100)}%`

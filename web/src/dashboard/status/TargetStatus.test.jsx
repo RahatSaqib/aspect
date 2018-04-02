@@ -25,7 +25,7 @@ describe('Target Status component', () => {
         link: '/browse/result',
         count: 897,
         target: 10000,
-        extra: '59.53%',
+        dataCollection: '59.53%',
       },
       {
         id: 18,
@@ -38,7 +38,7 @@ describe('Target Status component', () => {
         link: '/browse/result',
         count: 533,
         target: 2536,
-        extra: '45%',
+        dataCollection: '45%',
       },
       {
         id: 19,
@@ -51,7 +51,7 @@ describe('Target Status component', () => {
         link: '/browse/result',
         count: 1220,
         target: 1200,
-        extra: '75%',
+        dataCollection: '75%',
       },
       {
         id: 20,
@@ -64,7 +64,7 @@ describe('Target Status component', () => {
         link: '/browse/result',
         count: 986,
         target: 2190,
-        extra: '55%',
+        dataCollection: '55%',
       },
     ]),
   }

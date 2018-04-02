@@ -183,7 +183,7 @@ export const messages = defineMessages({
   },
   targetErrorMessageLabel: {
     id: 'pages.Status.targetErrorMessageLabel',
-    defaultMessage: 'Patient Data Collection {extra}',
+    defaultMessage: 'Patient Data Collection {dataCollection}',
   },
   actionTitle: {
     id: 'pages.Status.actionTitle',
