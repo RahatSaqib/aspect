@@ -214,28 +214,22 @@ async function mergeResult(
     }
   }
 
-  const existingResultDataString = _.get(existingResult, 'resultData', '{}')
+  const existingResultDataString = _.get(existingResult, 'resultData', null)
   const existingResultData = isJson(existingResultDataString)
     ? JSON.parse(existingResultDataString)
     : {}
 
-  let resultData = _.has(payload, 'data')
+  const resultData = _.has(payload, 'data')
     ? JSON.stringify(deepMerge(existingResultData, payload.data))
-    : JSON.stringify(existingResultDataString)
-  if (_.isEmpty(resultData)) {
-    resultData = null
-  }
+    : existingResultDataString
 
-  const existingResultPatientString = _.get(existingResult, 'patientData', '{}')
+  const existingResultPatientString = _.get(existingResult, 'patientData', null)
   const existingResultPatient = isJson(existingResultPatientString)
     ? JSON.parse(existingResultPatientString)
     : {}
-  let patientData = _.has(payload, 'patient')
+  const patientData = _.has(payload, 'patient')
     ? JSON.stringify(deepMerge(existingResultPatient, payload.patient))
-    : JSON.stringify(existingResultPatientString)
-  if (_.isEmpty(patientData)) {
-    patientData = null
-  }
+    : existingResultPatientString
 
   const oemData = _.has(payload, 'oemData')
     ? String(payload.oemData)

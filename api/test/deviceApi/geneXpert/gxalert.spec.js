@@ -2232,10 +2232,17 @@ describe('Device API routes for GxAlert Device', () => {
               {
                 result: {
                   id: resultId,
-                  startedOn: testStartedOn,
+                  startedOn: subHours(testStartedOn, 2),
+                  endedOn: testStartedOn,
                   assay: {
                     id: assayName,
                     version: assayVersion,
+                  },
+                  instrument: {
+                    serial: '20345230',
+                  },
+                  sample: {
+                    id: 'Sample with Unknown Assay',
                   },
                 },
               }

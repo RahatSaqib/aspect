@@ -310,7 +310,8 @@ describe('Device Result API routes', () => {
                 'sample',
                 'workflow',
                 'location',
-                'startedOn'
+                'startedOn',
+                'patient'
               ),
               {
                 data: resultPayload.data,
@@ -1012,13 +1013,11 @@ describe('Device Result API routes', () => {
         assert.equal(result4Category2.externalId, 'NotDetected')
       }))
 
-    it('should merge results with same id', () =>
+    it('should merge results with same sample ID, start teime, end time and instrument serial', () =>
       runTest(async knex => {
         const { deviceId, deviceAuth, now } = context
 
         const resultIds = []
-        const resultExternalIds = []
-        resultExternalIds.push(`R1${now}`, `R2${now}`)
         const countResults = () =>
           knex('Result')
             .count('id as cnt')
@@ -1029,8 +1028,14 @@ describe('Device Result API routes', () => {
           .post(devicePostResultPath)
           .set('Authorization', deviceAuth)
           .send({
-            id: resultExternalIds[0],
             startedOn: now,
+            endedOn: now,
+            instrument: {
+              serial: 'CEPH-PC-7813',
+            },
+            sample: {
+              id: "Bryan's Sputum",
+            },
             data: { a: 'b' },
             assay: { id: 'GxHiv1Vl' },
           })
@@ -1042,7 +1047,6 @@ describe('Device Result API routes', () => {
         let result1 = await knex('Result as r')
           .where({ id: resultIds[0] })
           .first()
-        assert.equal(result1.externalId, resultExternalIds[0])
         expect(JSON.parse(result1.resultData)).to.containSubset({ a: 'b' })
         assert.isNotOk(result1.errorCode)
         assert.equal(initialCount + 1, await countResults())
@@ -1051,8 +1055,14 @@ describe('Device Result API routes', () => {
           .post(devicePostResultPath)
           .set('Authorization', deviceAuth)
           .send({
-            id: resultExternalIds[0],
             startedOn: now,
+            endedOn: now,
+            instrument: {
+              serial: 'CEPH-PC-7813',
+            },
+            sample: {
+              id: "Bryan's Sputum",
+            },
             data: { a: 'b', c: 'd' },
             assay: { id: 'GxHiv1Vl' },
           })
@@ -1065,7 +1075,6 @@ describe('Device Result API routes', () => {
         result1 = await knex('Result as r')
           .where({ id: resultIds[0] })
           .first()
-        assert.equal(result1.externalId, resultExternalIds[0])
         expect(JSON.parse(result1.resultData)).to.containSubset({
           a: 'b',
           c: 'd',
@@ -1077,8 +1086,14 @@ describe('Device Result API routes', () => {
           .post(devicePostResultPath)
           .set('Authorization', deviceAuth)
           .send({
-            id: resultExternalIds[1],
-            startedOn: now,
+            startedOn: subMinutes(now, 5),
+            endedOn: now,
+            instrument: {
+              serial: 'CEPH-PC-7813',
+            },
+            sample: {
+              id: "Bryan's Sputum",
+            },
             data: { a: 'b' },
             assay: { id: 'GxHiv1Vl' },
           })
@@ -1092,7 +1107,6 @@ describe('Device Result API routes', () => {
         let result2 = await knex('Result as r')
           .where({ id: resultIds[1] })
           .first()
-        assert.equal(result2.externalId, resultExternalIds[1])
         assert.equal(initialCount + 2, await countResults())
 
         const result1SampleSite = await knex('Site as s')
@@ -1108,7 +1122,6 @@ describe('Device Result API routes', () => {
           .post(devicePostResultPath)
           .set('Authorization', deviceAuth)
           .send({
-            id: resultExternalIds[1],
             data: { a: 'b', c: 2, d: false, e: { f: 'g' } },
             type: { id: 'Study' },
             source: { id: 'EnteredByHand' },
@@ -1118,8 +1131,10 @@ describe('Device Result API routes', () => {
               id: 'GxMtbRif',
               version: '1a.c1',
             },
+            startedOn: subMinutes(now, 5),
+            endedOn: now,
             sample: {
-              id: `Sample${now}`,
+              id: "Bryan's Sputum",
               type: {
                 id: 'Plasma',
               },
@@ -1131,15 +1146,13 @@ describe('Device Result API routes', () => {
               longitude: -87.581222,
               latitude: 30.419348,
             },
-            startedOn: '2013-12-01',
-            endedOn: '2013-12-01T01:30',
             consumable: {
               serial: '132-44-222',
               expirationDate: '2014-03-01',
               lot: '331-1',
             },
             instrument: {
-              serial: '444-3',
+              serial: 'CEPH-PC-7813',
               module: {
                 name: 'ModA',
                 serial: '555-8',
@@ -1201,7 +1214,6 @@ describe('Device Result API routes', () => {
           .where({ id: resultIds[1] })
           .first()
         assert.equal(initialCount + 2, await countResults())
-        assert.equal(result2.externalId, resultExternalIds[1])
         assert.deepEqual(
           _.omit(JSON.parse(result2.resultData), 'geneXpertTestId'),
           {
@@ -1214,15 +1226,13 @@ describe('Device Result API routes', () => {
         assert.equal(result2.assayVersion, '1a.c1')
         assert.approximately(result2.latitude, 30.419348, 0.000001)
         assert.approximately(result2.longitude, -87.581222, 0.000001)
-        assert.deepEqual(result2.startedOn, new Date('2013-12-01'))
-        assert.deepEqual(result2.endedOn, new Date('2013-12-01T01:30'))
         assert.equal(result2.consumableSerial, '132-44-222')
         assert.deepEqual(
           result2.consumableExpirationDate,
           new Date('2014-03-01')
         )
         assert.equal(result2.consumableLot, '331-1')
-        assert.equal(result2.instrumentSerial, '444-3')
+        assert.equal(result2.instrumentSerial, 'CEPH-PC-7813')
         assert.equal(result2.moduleName, 'ModA')
         assert.equal(result2.moduleSerial, '555-8')
         assert.equal(result2.researchId, 'R123')
@@ -1295,7 +1305,7 @@ describe('Device Result API routes', () => {
 
         assert.notEqual(result2.siteId, result2Sample.originSiteId)
         assert.equal(result2SampleSite.id, result2Sample.originSiteId)
-        assert.equal(result2Sample.externalId, `Sample${now}`)
+        assert.equal(result2Sample.externalId, "Bryan's Sputum")
 
         const [result2Category1, result2Category2] = await knex(
           'ResultCategory as rt'
