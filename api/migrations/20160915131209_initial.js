@@ -1596,6 +1596,7 @@ async function up(knex) {
       .integer('sortOrder')
       .unsigned()
       .notNullable()
+    widget.string('targetToken')
     widget.charset('utf8')
   })
 

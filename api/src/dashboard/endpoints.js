@@ -6,6 +6,7 @@ const {
 } = require('../routes')
 const {
   summaryDashboard,
+  targetDashboard,
   resultDashboard,
   inventoryItemDashboard,
   deviceDashboard,
@@ -23,16 +24,18 @@ const routes = [
       description: 'Summary Dashboard',
       notes: 'The top level summary dashboard',
       auth: { scope: ['site', 'device'] },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/dashboard/target',
+    handler: asyncHandler(targetDashboard),
+    config: {
+      description: 'Target Dashboard',
+      notes: 'The top level target dashboard',
+      auth: { scope: ['site', 'device'] },
       validate: {
-        query: Object.assign(
-          {
-            layout: Joi.string()
-              .valid('stat', 'target')
-              .required()
-              .description('Filter for layout type'),
-          },
-          validateDateRangeParams()
-        ),
+        query: Object.assign(validateDateRangeParams()),
       },
     },
   },

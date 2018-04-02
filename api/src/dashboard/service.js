@@ -11,6 +11,8 @@ const {
 const addDays = require('date-fns/add_days')
 const isAfter = require('date-fns/is_after')
 const differenceInDays = require('date-fns/difference_in_days')
+const isSameMonth = require('date-fns/is_same_month')
+const isSameQuarter = require('date-fns/is_same_quarter')
 const { getUser } = require('../auth/service')
 const subDays = require('date-fns/sub_days')
 const subMinutes = require('date-fns/sub_minutes')
@@ -103,7 +105,7 @@ function queryCount(sql, dataConstraints, query) {
   const sqlTableAlias = getTableAlias(sql)
   const sqlBuilder = getSqlBuilder(sql)
   if (sqlBuilder) {
-    sqlBuilder.modify(addConstraints, dataConstraints, sqlTableAlias)
+    sqlBuilder.modify(addConstraints, dataConstraints, sqlTableAlias).first()
     if (sqlTableAlias.result) {
       sqlBuilder.modify(filterDateRangeParams, query, 'r.endedOn')
     }
@@ -117,7 +119,7 @@ async function summaryDashboard(request) {
   const dataConstraints = await getConstraints(auth.credentials)
 
   const user = await getUser(auth.credentials.name)
-  const widgets = await getDashboardWidget(user, query.layout)
+  const widgets = await getDashboardWidget(user, 'stat')
 
   const data = await Promise.all(
     widgets.map(async widget => {
@@ -146,12 +148,56 @@ async function summaryDashboard(request) {
           'sortOrder',
         ]),
         {
-          count: count && count.length === 1 ? _.values(count[0])[0] : 0,
-          target: target && target.length === 1 ? _.values(target[0])[0] : null,
-          unit: unit && unit.length === 1 ? _.values(unit[0])[0] : null,
-          extra: extra && extra.length === 1 ? _.values(extra[0])[0] : null,
+          count: count ? count.cnt : 0,
+          target: target ? target.cnt : null,
+          unit: unit ? unit.cnt : null,
+          extra: extra ? extra.cnt : null,
         }
       )
+    })
+  )
+  return { ok: true, data }
+}
+
+async function targetDashboard(request) {
+  const { auth, query } = request
+  // get data constraints
+  const dataConstraints = await getConstraints(auth.credentials)
+
+  const user = await getUser(auth.credentials.name)
+  const widgets = await getDashboardWidget(user, 'target')
+
+  let targetDivide = 1
+  if (isSameMonth(query.maxDate, query.minDate)) {
+    targetDivide = 12
+  } else if (isSameQuarter(query.maxDate, query.minDate)) {
+    targetDivide = 4
+  }
+
+  const data = await Promise.all(
+    widgets.map(async widget => {
+      const count = await queryCount(
+        widget.sqlForIndicator,
+        dataConstraints,
+        query
+      )
+
+      const target = await knex('Target as t')
+        .innerJoin('Geography as g', 't.geographyId', 'g.id')
+        .where({ 't.targetToken': widget.targetToken })
+        .modify(addConstraints, dataConstraints, {
+          geography: 'g',
+        })
+        .sum('t.targetValue as cnt')
+        .first()
+
+      const extra = await queryCount(widget.sqlForExtra, dataConstraints, query)
+
+      return _.assign(_.pick(widget, ['id', 'title', 'threshold', 'link']), {
+        count: count ? count.cnt : 0,
+        target: target ? Math.round(target.cnt / targetDivide) : 0,
+        dataCollection: extra ? extra.cnt : 0,
+      })
     })
   )
   return { ok: true, data }
@@ -1187,6 +1233,7 @@ async function actionDashboard(request) {
 
 module.exports = {
   summaryDashboard,
+  targetDashboard,
   resultDashboard,
   inventoryItemDashboard,
   deviceDashboard,
