@@ -29,6 +29,10 @@
   text-decoration: inherit;
 }
 
+.Summary_Link--disabled {
+  pointer-events: none;
+}
+
 .Summary__Card {
   padding: 5px 15px;
   line-height: 36px;
