@@ -7,7 +7,6 @@ import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { Card } from 'react-toolbox/lib/card'
 import { Unit } from '../../components/pureGrids'
-import Indicator from '../../components/shared/Indicator'
 import { fetchStatDashboard } from '../DashboardRedux'
 import requirePermissions from '../../components/shared/requirePermissions'
 import messages from './messages'
@@ -158,16 +157,7 @@ export const SummaryStatus = ({
                   >
                     {formatMessage('statStatus', widget, intl, defaultMessages)}
                   </div>
-                </div>
-                {widget.target && (
-                  <Indicator
-                    indicator={widget.indicator}
-                    coloredIndicator={widget.coloredIndicator}
-                    isGreaterThan={
-                      parseFloat(widget.count) > parseFloat(widget.target)
-                    }
-                  />
-                )}
+                </div>                
               </div>
               <div className={cssClasses('Summary__Card__Item--right')}>
                 <div className={cssClasses('Summary__Card__Item__Messages')}>
