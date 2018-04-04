@@ -30,7 +30,7 @@ import { fetchTargetDashboard } from '../DashboardRedux'
 import Title from './Title'
 import TemperatureGauge from '../../components/graph/TemperatureGauge'
 import StyledDropdown from '../../components/themedReactToolbox/StyledDropdown'
-
+import { mergeToFiltersParams } from '../../filter/utils'
 import messages from './messages'
 
 const cssClasses = classnames.bind(require('./Status.css'))
@@ -39,6 +39,16 @@ const DEFAULT_DATE_RANGE = {
   minDate: startOfYear(new Date()).toJSON(),
   maxDate: endOfYear(new Date()).toJSON(),
 }
+
+const defaultFilters = rawFiltersParams =>
+  rawFiltersParams.has('minDate')
+    ? rawFiltersParams
+    : new URLSearchParams(DEFAULT_DATE_RANGE)
+
+const filtersFromLocation = _fp.flowRight(
+  defaultFilters,
+  searchParams => new URLSearchParams(searchParams.get('filters') || '')
+)
 
 const enhance = compose(
   pure,
@@ -108,9 +118,8 @@ const enhance = compose(
       },
     ]
     const searchParams = new URLSearchParams(location.search)
-    const filtersParams = new URLSearchParams(
-      searchParams.get('filters') || DEFAULT_DATE_RANGE
-    )
+    const filtersParams = filtersFromLocation(searchParams)
+
     const dateRange = _fp.find(
       {
         minDate: new Date(filtersParams.get('minDate')),
@@ -134,27 +143,28 @@ const enhance = compose(
   ),
   withHandlers({
     onInitialLoad: ({ location, fetchTargetDashboard }) => () => {
-      const searchParams = new URLSearchParams(location.search)
-      const filtersParams = new URLSearchParams(
-        searchParams.get('filters') || DEFAULT_DATE_RANGE
+      const filtersParams = filtersFromLocation(
+        new URLSearchParams(location.search)
       )
       fetchTargetDashboard(filtersParams)
     },
     onDateRangeClick: ({ history, location, dateRangeList }) => dateRange => {
-      const searchParams = new URLSearchParams(location.search)
-      const filtersParams = new URLSearchParams(
-        searchParams.get('filters') || DEFAULT_DATE_RANGE
-      )
-
       const selectedValue = _fp.find(
         {
           value: dateRange,
         },
         dateRangeList
       )
+      const nextFilters = {
+        minDate: selectedValue.minDate.toJSON(),
+        maxDate: selectedValue.maxDate.toJSON(),
+      }
 
-      filtersParams.set('minDate', selectedValue.minDate.toJSON())
-      filtersParams.set('maxDate', selectedValue.maxDate.toJSON())
+      const searchParams = new URLSearchParams(location.search)
+      const filtersParams = mergeToFiltersParams(
+        nextFilters,
+        new URLSearchParams(searchParams.get('filters') || '')
+      )
       searchParams.set('filters', filtersParams)
 
       history.replace({

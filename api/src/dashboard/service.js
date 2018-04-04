@@ -12,6 +12,8 @@ const addDays = require('date-fns/add_days')
 const isAfter = require('date-fns/is_after')
 const differenceInDays = require('date-fns/difference_in_days')
 const { getUser } = require('../auth/service')
+const subDays = require('date-fns/sub_days')
+const subMinutes = require('date-fns/sub_minutes')
 
 const i18nKeys = {
   // Dashboard
@@ -1109,6 +1111,80 @@ async function operationalDashboard(request) {
   }
 }
 
+async function actionDashboard(request) {
+  const { query } = request
+
+  const now = new Date()
+
+  const allActionByCategory = _.flowRight(
+    x => _.groupBy(x, 'issueCategory'),
+    query.sortDir === 'desc' ? _.reverse : _.identity,
+    x => _.sortBy(x, query.sortCol || _.identity),
+    query.siteId > 0 ? x => _.filter(x, ['siteId', query.siteId]) : _.identity
+  )([
+    {
+      issueCategory: 'Device',
+      siteId: 1116,
+      site: 'Hinthada TBC',
+      status: 'Active',
+      issue: 'Critical Error on Module 4, Lab Acknowledged',
+    },
+    {
+      issueCategory: 'Device',
+      siteId: 1118,
+      site: 'Meikhtila TBC',
+      status: 'Active',
+      issue: 'Machine Temperature',
+    },
+    {
+      issueCategory: 'Device',
+      siteId: 1116,
+      site: 'Hinthada TBC',
+      status: 'Acknowledged',
+      issue: 'Critical Error on Module 4, Lab Acknowledged',
+      acknowledgedOn: subMinutes(subDays(now, 2), 5),
+    },
+    {
+      issueCategory: 'Device',
+      siteId: 1118,
+      site: 'Meikhtila TBC',
+      status: 'Acknowledged',
+      issue: 'Machine Temperature Errors',
+      acknowledgedOn: subMinutes(subDays(now, 2), 10),
+    },
+    {
+      issueCategory: 'Reagent',
+      siteId: 1118,
+      site: 'Meikhtila TBC',
+      status: 'Acknowledged',
+      issue: 'Machine Temperature',
+      acknowledgedOn: subMinutes(subDays(now, 2), 5),
+    },
+    {
+      issueCategory: 'Reagent',
+      siteId: 1116,
+      site: 'Hinthada TBC',
+      status: 'Acknowledged',
+      issue: 'Critical Error on Module 4, Lab Acknowledged',
+      acknowledgedOn: subMinutes(subDays(now, 2), 5),
+    },
+    {
+      issueCategory: 'Data',
+      siteId: 1116,
+      site: 'Hinthada TBC',
+      status: 'Active',
+      issue: 'Machine Temperature',
+    },
+  ])
+
+  const result = {
+    ok: true,
+    data: allActionByCategory,
+  }
+
+  return result
+}
+
 module.exports = {
   summaryDashboard,
   resultDashboard,
@@ -1116,4 +1192,5 @@ module.exports = {
   deviceDashboard,
   siteDashboard,
   operationalDashboard,
+  actionDashboard,
 }

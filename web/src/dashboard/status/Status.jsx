@@ -11,6 +11,7 @@ import DeviceStatus from './DeviceStatus'
 import InventoryStatus from './InventoryStatus'
 import ResultStatus from './ResultStatus'
 import SiteStatus from './SiteStatus'
+import ActionStatus from './ActionStatus'
 import requirePermissions from '../../components/shared/requirePermissions'
 import NotFound from '../../error/notFound/NotFound'
 import TargetStatus from './TargetStatus'
@@ -61,8 +62,16 @@ const Status = ({ history, location, intl }) => (
       intl={intl}
       history={history}
       location={location}
-      className={cssClasses('Section--target')}
+      className={cssClasses('Section--withDropdown')}
       title={intl.formatMessage(messages.targetsTitle)}
+    />
+
+    <ActionStatus
+      intl={intl}
+      history={history}
+      location={location}
+      className={cssClasses('Section--withDropdown')}
+      title={intl.formatMessage(messages.actionTitle)}
     />
 
     <ResultStatus

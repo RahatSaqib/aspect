@@ -8,7 +8,7 @@
   margin: 20px 0;
 }
 
-.Section--target {
+.Section--withDropdown {
   composes: Section--summary;
   padding: 20px;
   overflow: inherit;
@@ -321,4 +321,80 @@
   content: "D";
   visibility: hidden;
   flex: 1;
+}
+
+.ActionFilter {
+  padding: 20px 10px 0 10px;
+}
+
+.ActionFilterButton {
+  cursor: pointer;
+}
+
+.ActionFilterButton--selected {
+  border: 4px solid var(--aspect-color-chill-blue-1);
+  border-radius: 10px;
+}
+
+.ActionFilterButton__Title {
+  font-size: 16px;
+  text-transform: capitalize;
+  text-align: center;
+  line-height: 2;
+  align-items: center;
+}
+
+.ActionFilterButton__Icon {
+  margin: auto;
+}
+
+.ActionFilterButton__Messages {
+  font-size: 16px;
+  font-weight: var(--lato-font-weight-bold);
+  color: var(--aspect-color-mandy);
+  text-transform: capitalize;
+  text-align: center;
+  align-items: center;
+}
+
+.ActionFilterButton__Messages--hidden {
+  visibility: hidden;
+}
+
+@media screen and (--md-viewport) {
+  .ActionFilter {
+    width: 80%;
+    margin: 0 auto;
+  }
+  .ActionFilterButton__Title {
+    font-size: 20px;
+  }
+  .ActionFilterButton__Messages {
+    font-size: 20px;
+  }
+}
+
+.ActionDataTable {
+  composes: ComponentDataTable from "../../components/shared/DataTable.css";
+}
+
+.ActionDataTable__TableHead__Status {
+  text-align: center;
+  padding-left: 0 !important;
+  padding-right: 0;
+  width: 10%;
+}
+
+.ActionDataTable__TableHead__Lab {
+  width: 10%;
+}
+
+.ActionDataTable__TableHead__Issue {
+  width: 80%;
+}
+
+.ActionDataTable--empty {
+  text-align: center;
+  font-size: 16px;
+  border-top: 2px solid #e6e6e6;
 }
