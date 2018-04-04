@@ -187,7 +187,7 @@ export const TargetStatus = ({
 }) => {
   const hasError = target =>
     parseFloat(target.get('dataCollection')) <
-    parseFloat(target.get('threshold'))
+    parseFloat(target.get('thresholdPercentageDataCollection'))
 
   const getProgressValue = target =>
     `${Math.round(target.get('count') / target.get('target') * 100)}%`

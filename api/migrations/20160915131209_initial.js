@@ -1560,13 +1560,22 @@ async function up(knex) {
 
   await knex.schema.createTable('DashboardWidget', widget => {
     widget.increments('id')
-    widget.string('layout').notNullable()
-    widget.string('icon').notNullable()
     widget.string('title').notNullable()
     widget.string('titleI18nKey').notNullable()
     widget.string('subTitle')
     widget.string('subTitleI18nKey')
     widget.string('sqlForIndicator', 2000).notNullable()
+    widget.string('link')
+    widget
+      .integer('sortOrder')
+      .unsigned()
+      .notNullable()
+    widget.charset('utf8')
+  })
+
+  await knex.schema.createTable('DashboardWidgetStat', widget => {
+    widget.increments('id')
+    widget.string('icon').notNullable()
     widget.string('sqlForStatUnit', 2000)
     widget.string('statUnit')
     widget.string('statUnitI18nKey')
@@ -1577,26 +1586,26 @@ async function up(knex) {
     widget.string('extraUnitI18nKey')
     widget.string('extraLabel')
     widget.string('extraLabelI18nKey')
-    widget.string('sqlForTarget', 2000)
     widget
-      .boolean('lowerThanThreshold')
-      .notNullable()
-      .defaultTo(0)
-    widget.integer('threshold')
-    widget
-      .boolean('indicator')
-      .notNullable()
-      .defaultTo(0)
-    widget
-      .boolean('coloredIndicator')
-      .notNullable()
-      .defaultTo(0)
-    widget.string('link')
-    widget
-      .integer('sortOrder')
+      .integer('dashboardWidgetId')
       .unsigned()
-      .notNullable()
+      .index()
+      .references('id')
+      .inTable('DashboardWidget')
+    widget.charset('utf8')
+  })
+
+  await knex.schema.createTable('DashboardWidgetTarget', widget => {
+    widget.increments('id')
     widget.string('targetToken')
+    widget.string('sqlForDataCollection', 2000)
+    widget.integer('thresholdPercentageDataCollection')
+    widget
+      .integer('dashboardWidgetId')
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('DashboardWidget')
     widget.charset('utf8')
   })
 

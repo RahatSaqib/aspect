@@ -46,9 +46,10 @@ const i18nKeys = {
 }
 
 function getDashboardWidget({ id, partnerId }, layout) {
-  const layoutType = layout === 'target' ? 'target' : 'stat'
+  const tableName =
+    layout === 'target' ? 'DashboardWidgetTarget' : 'DashboardWidgetStat'
   return knex('DashboardWidget as w')
-    .select('w.*')
+    .innerJoin(`${tableName} as sw`, 'w.id', 'sw.dashboardWidgetId')
     .innerJoin('JobFunctionDashboardWidget as jfw', 'w.id', 'jfw.widgetId')
     .innerJoin('JobFunction as jf', 'jfw.jobFunctionId', 'jf.id')
     .innerJoin('Job as j', 'j.jobFunctionId', 'jf.id')
@@ -56,8 +57,8 @@ function getDashboardWidget({ id, partnerId }, layout) {
     .where({
       'ps.userId': id,
       'jf.partnerId': partnerId,
-      'w.layout': layoutType,
     })
+    .select(['w.*', 'sw.*'])
     .orderBy(['w.sortOrder'])
 }
 
@@ -128,11 +129,6 @@ async function summaryDashboard(request) {
         dataConstraints,
         query
       )
-      const target = await queryCount(
-        widget.sqlForTarget,
-        dataConstraints,
-        query
-      )
       const unit = await queryCount(
         widget.sqlForStatUnit,
         dataConstraints,
@@ -142,14 +138,12 @@ async function summaryDashboard(request) {
       return _.assign(
         _.omit(widget, [
           'sqlForIndicator',
-          'sqlForTarget',
           'sqlForStatUnit',
           'sqlForExtra',
           'sortOrder',
         ]),
         {
           count: count ? count.cnt : 0,
-          target: target ? target.cnt : null,
           unit: unit ? unit.cnt : null,
           extra: extra ? extra.cnt : null,
         }
@@ -191,13 +185,25 @@ async function targetDashboard(request) {
         .sum('t.targetValue as cnt')
         .first()
 
-      const extra = await queryCount(widget.sqlForExtra, dataConstraints, query)
+      const dataCollection = await queryCount(
+        widget.sqlForDataCollection,
+        dataConstraints,
+        query
+      )
 
-      return _.assign(_.pick(widget, ['id', 'title', 'threshold', 'link']), {
-        count: count ? count.cnt : 0,
-        target: target ? Math.round(target.cnt / targetDivide) : 0,
-        dataCollection: extra ? extra.cnt : 0,
-      })
+      return _.assign(
+        _.pick(widget, [
+          'id',
+          'title',
+          'thresholdPercentageDataCollection',
+          'link',
+        ]),
+        {
+          count: count ? count.cnt : 0,
+          target: target ? Math.round(target.cnt / targetDivide) : 0,
+          dataCollection: dataCollection ? dataCollection.cnt : 0,
+        }
+      )
     })
   )
   return { ok: true, data }
