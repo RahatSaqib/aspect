@@ -162,10 +162,14 @@
   background-color: var(--aspect-color-supernova);
 }
 
-.FiltersGroup__Child {
-  vertical-align: middle;
-  display: inline-block;
-  margin: 0 5px;
+.FiltersGroup {
+  padding-top: 15px;
+  display: flex;
+  justify-content: center;
+}
+
+.FiltersGroup__Child {  
+  margin: 0 10px;
 }
 
 .FiltersGroup__Child--dropdown {

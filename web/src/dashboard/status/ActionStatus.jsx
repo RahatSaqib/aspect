@@ -31,7 +31,6 @@ import {
 } from '../../shared/selectors/searchParams'
 import { sanitizeFiltersStringBy } from '../../filter/utils'
 import requirePermissions from '../../components/shared/requirePermissions'
-import BrowseSiteDropdown from '../../globals/components/BrowseSiteDropdown'
 import messages from './messages'
 
 const cssClasses = classnames.bind(require('./Status.css'))
@@ -123,15 +122,7 @@ export const ActionStatus = ({
 }) => (
   <Card className={className}>
     <div className={cssClasses('TitleContainer')}>
-      <Title colorClassName={cssClasses('Title__Color--site')} title={title} />
-      <div
-        className={cssClasses(
-          'FiltersGroup__Child',
-          'FiltersGroup__Child--dropdown'
-        )}
-      >
-        <BrowseSiteDropdown history={history} location={location} />
-      </div>
+      <Title colorClassName={cssClasses('Title__Color--site')} title={title} />      
     </div>
 
     <div className={cssClasses('ActionFilter')}>
