@@ -59,8 +59,6 @@ import {
   InventoryDataTableHead,
   InventoryDataTableRow,
 } from './InventoryDataTable'
-import requirePermissions from '../../components/shared/requirePermissions'
-import NotFound from '../../error/notFound/NotFound'
 
 const cssClasses = classnames.bind(require('./InventoryItemsList.css'))
 
@@ -161,10 +159,6 @@ const filtersFromLocation = composeSanitizer(
 )
 
 const enhance = compose(
-  requirePermissions({
-    features: ['inventoryList:true'],
-    ForbiddenComponent: NotFound,
-  }),
   withProps(
     makeSortPageSelector({
       sortCol: 'siteName',

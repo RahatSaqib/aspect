@@ -43,10 +43,10 @@ export function groupByPermissionTypes(permissions) {
 // Given a user's features list, and required featuresInConfig
 // check if the user is allowed to the resource
 export function isEnabledFeature(userFeatures, requiredFeatures) {
-  const source =
-    _.intersection(userFeatures.toJS(), requiredFeatures).length >= 1
-
-  return requiredFeatures.length === 0 || source
+  return (
+    _.isEmpty(requiredFeatures) ||
+    userFeatures.intersect(requiredFeatures).size > 0
+  )
 }
 
 // Given a user's permissions list, and a permission group (return type of groupByPermissionTypes),
@@ -108,7 +108,7 @@ export const requirePermissions = ({
       const { store } = this.context
       return {
         userPermissions: store.getState().user.jwt.permissions,
-        userFeatures: store.getState().user.jwt.features,
+        userFeatures: store.getState().user.features,
       }
     }
 

@@ -31,6 +31,9 @@ export const types = {
 
   RESET_PASSWORD_ENTER_PASSWORD_SUCCESS:
     'RESET_PASSWORD_ENTER_PASSWORD_SUCCESS',
+
+  REQUEST_FEATURES: 'REQUEST_FEATURES',
+  RECEIVE_FEATURES: 'RECEIVE_FEATURES',
 }
 
 /*
@@ -162,10 +165,10 @@ export function loginStart({ user, password }) {
             clientId: json.clientId,
             culture: json.culture,
             timezoneId: json.timezone,
-            features: json.features,
           })
         )
       )
+      .then(() => dispatch(fetchFeatures()))
       .catch(err => dispatch(loginFailure(err)))
   }
 }
@@ -224,6 +227,7 @@ export function refreshStart() {
           })
         )
       )
+      .then(() => dispatch(fetchFeatures()))
       .catch(() => {
         dispatch(refreshFailure())
       })
@@ -298,6 +302,38 @@ export function resetPasswordEnterPassword(resetPasswordToken, newPassword) {
   }
 }
 
+function requestFeatures() {
+  return {
+    type: types.REQUEST_FEATURES,
+  }
+}
+
+function receiveFeatures(data) {
+  return {
+    type: types.RECEIVE_FEATURES,
+    data,
+  }
+}
+
+export function fetchFeatures() {
+  return dispatch => {
+    dispatch(requestFeatures())
+
+    return aspectFetch('/auth/features', {
+      errorNotifications: {
+        default: errorPleaseTryAgainInAFewMinutes(
+          defineMessages({
+            title: {
+              id: 'errorResponseMessages.fetchSingleSite.GET.default.title',
+              defaultMessage: 'Error Loading Site Details',
+            },
+          })
+        ),
+      },
+    }).then(json => dispatch(receiveFeatures(json.data)))
+  }
+}
+
 /*
  * ---------------- Reducers -----------------
  */
@@ -307,7 +343,6 @@ const JWT = Immutable.Record({
   iat: undefined,
   exp: undefined,
   iss: '',
-  features: Immutable.Set(),
 })
 const User = Immutable.Record({
   requestedAt: undefined,
@@ -319,6 +354,7 @@ const User = Immutable.Record({
   timezoneId: 'Eastern Standard Time',
   drawerOpen: false,
   loggedOutReason: '',
+  features: Immutable.Set(),
 })
 
 const initialState = new User()
@@ -367,6 +403,11 @@ export default function authReducer(state = initialState, action) {
 
     case types.RESET_PASSWORD_ENTER_PASSWORD_SUCCESS:
       return state
+    case types.RECEIVE_FEATURES:
+      return state.set(
+        'features',
+        Immutable.Set(action.data.map(x => x.module))
+      )
     default:
       return state
   }

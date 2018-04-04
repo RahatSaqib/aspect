@@ -119,8 +119,8 @@ describe('requirePermissions', () => {
             user: {
               jwt: {
                 permissions: Immutable.Set(userPermissions),
-                features: Immutable.Set(userFeatures),
               },
+              features: Immutable.Set(userFeatures),
             },
           }
         },
@@ -131,13 +131,12 @@ describe('requirePermissions', () => {
   describe('given right user permissions', () => {
     const DecoratedComponent = requirePermissions({
       permissions: ['person:admin'],
-      features: ['personList:true'],
       ForbiddenComponent,
     })(WrappedComponent)
 
     it('should render WrappedComponent', () => {
       const ComponentWrapper = shallow(<DecoratedComponent />, {
-        context: makeContext(['person:admin'], ['personList:true']),
+        context: makeContext(['person:admin']),
       })
 
       expect(ComponentWrapper.find(WrappedComponent).length).toEqual(1)
@@ -146,10 +145,7 @@ describe('requirePermissions', () => {
 
     it('should render WrappedComponent', () => {
       const ComponentWrapper = shallow(<DecoratedComponent />, {
-        context: makeContext(
-          ['person:admin', 'device:view'],
-          ['personList:true']
-        ),
+        context: makeContext(['person:admin', 'device:view']),
       })
 
       expect(ComponentWrapper.find(WrappedComponent).length).toEqual(1)
@@ -165,7 +161,7 @@ describe('requirePermissions', () => {
 
     it('should render ForbiddenComponent', () => {
       const ComponentWrapper = shallow(<DecoratedComponent />, {
-        context: makeContext(['device:view'], ['personList:true']),
+        context: makeContext(['device:view']),
       })
 
       expect(ComponentWrapper.find(WrappedComponent).length).toEqual(0)
@@ -174,10 +170,50 @@ describe('requirePermissions', () => {
 
     it('should render ForbiddenComponent', () => {
       const ComponentWrapper = shallow(<DecoratedComponent />, {
-        context: makeContext(
-          ['person:view', 'device:view'],
-          ['personList:true']
-        ),
+        context: makeContext(['person:view', 'device:view']),
+      })
+
+      expect(ComponentWrapper.find(WrappedComponent).length).toEqual(0)
+      expect(ComponentWrapper.find(ForbiddenComponent).length).toEqual(1)
+    })
+  })
+
+  describe('given right user features', () => {
+    const DecoratedComponent = requirePermissions({
+      permissions: ['person:admin'],
+      features: ['person'],
+      ForbiddenComponent,
+    })(WrappedComponent)
+
+    it('should render WrappedComponent', () => {
+      const ComponentWrapper = shallow(<DecoratedComponent />, {
+        context: makeContext(['person:admin'], ['person']),
+      })
+
+      expect(ComponentWrapper.find(WrappedComponent).length).toEqual(1)
+      expect(ComponentWrapper.find(ForbiddenComponent).length).toEqual(0)
+    })
+
+    it('should render WrappedComponent', () => {
+      const ComponentWrapper = shallow(<DecoratedComponent />, {
+        context: makeContext(['person:admin'], ['task', 'person']),
+      })
+
+      expect(ComponentWrapper.find(WrappedComponent).length).toEqual(1)
+      expect(ComponentWrapper.find(ForbiddenComponent).length).toEqual(0)
+    })
+  })
+
+  describe('given wrong user features', () => {
+    const DecoratedComponent = requirePermissions({
+      permissions: ['person:admin'],
+      features: ['person'],
+      ForbiddenComponent,
+    })(WrappedComponent)
+
+    it('should render ForbiddenComponent', () => {
+      const ComponentWrapper = shallow(<DecoratedComponent />, {
+        context: makeContext(['person:admin'], ['task']),
       })
 
       expect(ComponentWrapper.find(WrappedComponent).length).toEqual(0)

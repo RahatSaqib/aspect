@@ -31,6 +31,8 @@ import Title from './Title'
 import TemperatureGauge from '../../components/graph/TemperatureGauge'
 import StyledDropdown from '../../components/themedReactToolbox/StyledDropdown'
 import { mergeToFiltersParams } from '../../filter/utils'
+import requirePermissions from '../../components/shared/requirePermissions'
+
 import messages from './messages'
 
 const cssClasses = classnames.bind(require('./Status.css'))
@@ -52,6 +54,9 @@ const filtersFromLocation = _fp.flowRight(
 
 const enhance = compose(
   pure,
+  requirePermissions({
+    features: ['targetDashboard'],
+  }),
   connect(
     state => ({
       targetSummaryList: state.dashboard.targetSummaryList,

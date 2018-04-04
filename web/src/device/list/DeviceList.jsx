@@ -28,8 +28,6 @@ import {
   DeviceDataTableRow,
 } from './DeviceDataTable'
 import messages from './messages'
-import requirePermissions from '../../components/shared/requirePermissions'
-import NotFound from '../../error/notFound/NotFound'
 
 const cssClasses = classnames.bind(require('./DeviceList.css'))
 
@@ -79,10 +77,6 @@ const filtersFromLocation = composeSanitizer(
 )
 
 const enhance = compose(
-  requirePermissions({
-    features: ['deviceList:true'],
-    ForbiddenComponent: NotFound,
-  }),
   withProps(
     makeSortPageSelector({
       sortCol: 'name',

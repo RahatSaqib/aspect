@@ -18,8 +18,6 @@ import DetailBackBar from '../../globals/components/DetailBackBar'
 import { Unit } from '../../components/pureGrids'
 import AlertType from '../../components/shared/AlertType'
 import FaBellZ from '../../components/shared/FaBellZ'
-import requirePermissions from '../../components/shared/requirePermissions'
-import NotFound from '../../error/notFound/NotFound'
 
 const cssClasses = classnames.bind(require('./TaskDetail.css'))
 
@@ -31,10 +29,6 @@ const messages = defineMessages({
 })
 
 const enhance = compose(
-  requirePermissions({
-    features: ['taskDetail:true'],
-    ForbiddenComponent: NotFound,
-  }),
   connect(
     state => ({
       items: state.notification.items,

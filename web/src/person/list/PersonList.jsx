@@ -28,8 +28,6 @@ import {
   PersonDataTableHead,
   PersonDataTableRow,
 } from './PersonDataTable'
-import requirePermissions from '../../components/shared/requirePermissions'
-import NotFound from '../../error/notFound/NotFound'
 
 const cssClasses = classnames.bind(require('./PersonList.css'))
 
@@ -86,10 +84,6 @@ const filtersFromLocation = composeSanitizer(
 )
 
 const enhance = compose(
-  requirePermissions({
-    features: ['personList:true'],
-    ForbiddenComponent: NotFound,
-  }),
   withProps(
     makeSortPageSelector({
       sortCol: 'name',

@@ -32,17 +32,11 @@ import {
 } from '../PersonRedux'
 import { fetchPartnersAndJobFunctionsForSelectList } from '../../job/JobRedux'
 import { showAcknowledgement } from '../../appNotification/AppNotificationRedux'
-import requirePermissions from '../../components/shared/requirePermissions'
-import NotFound from '../../error/notFound/NotFound'
 
 import messages from './messages'
 import styles from './PersonDetail.css'
 
 const enhance = compose(
-  requirePermissions({
-    features: ['personDetail:true'],
-    ForbiddenComponent: NotFound,
-  }),
   setPropTypes({
     match: PropTypes.shape({
       params: PropTypes.shape({

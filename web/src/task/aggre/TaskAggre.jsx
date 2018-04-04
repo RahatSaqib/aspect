@@ -26,8 +26,6 @@ import {
   TaskDataTableRow,
 } from '../list/TaskDataTable'
 import { fetchTasks } from '../TaskRedux'
-import requirePermissions from '../../components/shared/requirePermissions'
-import NotFound from '../../error/notFound/NotFound'
 
 const cssClasses = classnames.bind(require('./TaskAggre.css'))
 
@@ -58,10 +56,6 @@ const messages = defineMessages({
 })
 
 const enhance = compose(
-  requirePermissions({
-    features: ['taskList:true'],
-    ForbiddenComponent: NotFound,
-  }),
   withProps(
     makeSortPageSelector({
       sortCol: 'time',

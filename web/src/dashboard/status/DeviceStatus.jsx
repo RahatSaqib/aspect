@@ -21,6 +21,7 @@ import { fetchDeviceDashboard } from '../DashboardRedux'
 import Title from './Title'
 import CountryWithPoints from './CountryWithPoints'
 import SummaryItemsBlock from './SummaryItemsBlock'
+
 import messages from './messages'
 
 const cssClasses = classnames.bind(require('./Status.css'))
@@ -30,7 +31,8 @@ const EMPTY_LIST = Immutable.List()
 const enhance = compose(
   pure,
   requirePermissions({
-    features: ['deviceDashboard:true'],
+    permissions: ['device:admin', 'device:view', 'device:edit'],
+    features: ['deviceDashboard'],
   }),
   connect(
     state => ({

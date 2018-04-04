@@ -30,6 +30,7 @@ import {
   composeSanitizer,
 } from '../../shared/selectors/searchParams'
 import { sanitizeFiltersStringBy } from '../../filter/utils'
+import requirePermissions from '../../components/shared/requirePermissions'
 import BrowseSiteDropdown from '../../globals/components/BrowseSiteDropdown'
 import messages from './messages'
 
@@ -56,6 +57,9 @@ export const filtersFromLocation = composeSanitizer(
 
 const enhance = compose(
   pure,
+  requirePermissions({
+    features: ['actionDashboard'],
+  }),
   withProps(
     makeSortPageSelector({
       sortCol: 'status',

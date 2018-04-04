@@ -226,7 +226,6 @@ describe('auth endpoints', () => {
               assert.deepEqual(unsignedToken, {
                 name: britishUser.name,
                 permissions: permissions.map(p => `${p.module}:${p.activity}`),
-                features: [],
               })
             })
             .thenCall(done)
@@ -801,7 +800,6 @@ describe('auth endpoints', () => {
               assert.deepEqual(unsignedToken, {
                 name: southAfricanUser.name,
                 permissions: permissions.map(p => `${p.module}:${p.activity}`),
-                features: [],
               })
             })
             .thenCall(done)

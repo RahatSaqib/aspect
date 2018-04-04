@@ -1909,20 +1909,11 @@ async function seed(knex) {
     })
   )
 
-  const featureModules = {}
+  const featureModules = []
   await Promise.all(
-    _.map(features.modules, async module => {
-      const moduleData = {}
-      featureModules[module.name] = moduleData
-      await Promise.all(
-        _.map(module.enable, async enable => {
-          const [featureId] = await knex('Feature').insert({
-            module: module.name,
-            enable,
-          })
-          moduleData[enable] = featureId
-        })
-      )
+    _.map(features.modules, async feature => {
+      const [featureId] = await knex('Feature').insert({ module: feature.name })
+      featureModules.push(featureId)
     })
   )
 
@@ -3327,23 +3318,23 @@ async function seed(knex) {
 
   // assign features to JobFeatures
   await Promise.all(
-    _.map(featureModules, async (module, key) => {
+    _.map(featureModules, async featureId => {
       await knex('JobFunctionFeature').insert([
         {
           jobFunctionId: jobFunctionIdAdmin,
-          featureId: featureModules[key].true,
+          featureId,
         },
         {
           jobFunctionId: jobFunctionIdManager,
-          featureId: featureModules[key].true,
+          featureId,
         },
         {
           jobFunctionId: jobFunctionIdPartnerTwo,
-          featureId: featureModules[key].true,
+          featureId,
         },
         {
           jobFunctionId: jobFunctionIdClinician,
-          featureId: featureModules[key].true,
+          featureId,
         },
       ])
     })

@@ -28,8 +28,6 @@ import {
   SiteDataTableHead,
   SiteDataTableRow,
 } from './SiteDataTable'
-import requirePermissions from '../../components/shared/requirePermissions'
-import NotFound from '../../error/notFound/NotFound'
 
 const cssClasses = classnames.bind(require('./SiteList.css'))
 
@@ -94,10 +92,6 @@ const filtersFromLocation = composeSanitizer(
 )
 
 const enhance = compose(
-  requirePermissions({
-    features: ['siteList:true'],
-    ForbiddenComponent: NotFound,
-  }),
   withProps(
     makeSortPageSelector({
       sortCol: 'name',

@@ -28,7 +28,8 @@ const cssClasses = classnames.bind(require('./Status.css'))
 const enhance = compose(
   pure,
   requirePermissions({
-    features: ['inventoryItemDashboard:true'],
+    permissions: ['inventory:admin', 'inventory:view', 'inventory:edit'],
+    features: ['inventoryDashboard'],
   }),
   connect(
     state => ({

@@ -5,8 +5,12 @@ import { bindActionCreators } from 'redux'
 import StyledDropdown from '../../components/themedReactToolbox/StyledDropdown'
 import { fetchSitesForSelectList } from '../../site/SiteRedux'
 import { mergeToFiltersParams } from '../../filter/utils'
+import requirePermissions from '../../components/shared/requirePermissions'
 
 const enhance = compose(
+  requirePermissions({
+    features: ['siteFilterDashboard'],
+  }),
   connect(
     state => ({
       sitesSelectList: state.site.selectList,

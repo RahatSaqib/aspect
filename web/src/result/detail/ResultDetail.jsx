@@ -32,8 +32,6 @@ import ConnectedTagInput from '../../tag/ConnectedTagInput'
 import { fetchTags, updateTags } from '../../tag/TagRedux'
 import isEditable from '../../shared/selectors/result'
 import ResultWorkflowStatusLog from './WorkflowLog'
-import requirePermissions from '../../components/shared/requirePermissions'
-import NotFound from '../../error/notFound/NotFound'
 
 import { ReadOnlyField } from '../../components/shared/ReadOnlyFields'
 import RawDataDialog from './RawDataDialog'
@@ -192,10 +190,6 @@ const messages = defineMessages({
 })
 
 const enhance = compose(
-  requirePermissions({
-    features: ['resultDetail:true'],
-    ForbiddenComponent: NotFound,
-  }),
   setPropTypes({
     match: PropTypes.shape({
       params: PropTypes.shape({

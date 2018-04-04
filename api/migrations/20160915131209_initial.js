@@ -191,7 +191,6 @@ async function up(knex) {
   await knex.schema.createTable('Feature', feature => {
     feature.increments('id')
     feature.string('module').notNullable()
-    feature.boolean('enable').notNullable()
     feature.charset('utf8')
   })
 
