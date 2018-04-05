@@ -122,7 +122,7 @@ export const ActionStatus = ({
 }) => (
   <Card className={className}>
     <div className={cssClasses('TitleContainer')}>
-      <Title colorClassName={cssClasses('Title__Color--site')} title={title} />      
+      <Title colorClassName={cssClasses('Title__Color--site')} title={title} />
     </div>
 
     <div className={cssClasses('ActionFilter')}>
