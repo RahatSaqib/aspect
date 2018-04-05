@@ -51,7 +51,7 @@ const Status = ({ history, location, intl }) => (
           'FiltersGroup__Child--dropdown'
         )}
       >
-        <BrowseSiteDropdown history={history} location={location} />
+        <BrowseSiteDropdown intl={intl} history={history} location={location} />
       </div>
     </div>
     <SummaryStatus

@@ -177,7 +177,20 @@ async function listSitesForSelectList(request) {
     .orderBy(['s.name'], 'asc')
     .select('s.id', 's.name', 's.partnerId', 'g.countryId')
 
-  return { ok: true, data: sites }
+  const countryState = await knex('Country as c')
+    .innerJoin('Geography as g', 'g.countryId', 'c.id')
+    .leftJoin('State as s', 's.id', 'g.stateId')
+    .modify(addConstraints, dataConstraints, { geography: 'g' })
+    .orderBy(['c.name', 's.name'], 'asc')
+    .select('c.name as countryName', 's.name as stateName')
+    .first()
+
+  return {
+    ok: true,
+    countryName: countryState.countryName,
+    stateName: countryState.stateName,
+    data: sites,
+  }
 }
 
 module.exports = {

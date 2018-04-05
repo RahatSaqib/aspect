@@ -105,10 +105,12 @@ function requestSitesForSelectList() {
   }
 }
 
-function receiveSitesForSelectList(sitesForSelectList) {
+function receiveSitesForSelectList(json) {
   return {
     type: types.RECEIVE_SITES_FOR_SELECT_LIST,
-    items: sitesForSelectList,
+    items: json.data,
+    countryName: json.countryName,
+    stateName: json.stateName,
     lastRefreshed: new Date(),
   }
 }
@@ -151,7 +153,7 @@ export function fetchSitesForSelectList(forceRefresh) {
           })
         ),
       },
-    }).then(json => dispatch(receiveSitesForSelectList(json.data)))
+    }).then(json => dispatch(receiveSitesForSelectList(json)))
   }
 }
 
@@ -243,6 +245,8 @@ export function updateSingleSite(siteId, data) {
 export const SelectListItems = Immutable.Record({
   loading: false,
   items: Immutable.List([]),
+  countryName: undefined,
+  stateName: undefined,
   lastRefreshed: undefined,
 })
 export const Site = Immutable.Record({
@@ -276,6 +280,8 @@ export default function siteReducer(state = initialState, action) {
         loading: false,
         lastRefreshed: action.lastRefreshed,
         items: new Immutable.fromJS(action.items),
+        countryName: action.countryName,
+        stateName: action.stateName,
       })
     default:
       return state
