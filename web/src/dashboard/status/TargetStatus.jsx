@@ -38,7 +38,7 @@ const DEFAULT_DATE_RANGE = {
 const defaultFilters = rawFiltersParams =>
   rawFiltersParams.has('minDate')
     ? rawFiltersParams
-    : new URLSearchParams(DEFAULT_DATE_RANGE)
+    : mergeToFiltersParams(DEFAULT_DATE_RANGE, rawFiltersParams)
 
 const filtersFromLocation = _fp.flowRight(
   defaultFilters,
@@ -125,7 +125,9 @@ const enhance = compose(
       },
       dateRangeList
     )
+
     return {
+      isShow: _fp.isEmpty(filtersParams.get('siteId')),
       dateRange: !dateRange ? 'thisYear' : dateRange.value,
       dateRangeList,
     }
@@ -178,6 +180,7 @@ const enhance = compose(
 export const TargetStatus = ({
   intl,
   // --- injected by recompose ---
+  isShow,
   className,
   title,
   targetSummaryList,
@@ -193,6 +196,7 @@ export const TargetStatus = ({
     `${Math.round(target.get('count') / target.get('target') * 100)}%`
 
   return (
+    isShow &&
     targetSummaryList.size > 0 && (
       <Card className={className}>
         <div className={cssClasses('TitleContainer')}>

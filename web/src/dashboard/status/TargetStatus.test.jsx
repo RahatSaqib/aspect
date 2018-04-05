@@ -11,8 +11,10 @@ describe('Target Status component', () => {
 
   const props = {
     intl,
+    isShow: true,
     title: 'Testing Targets',
     className: 'Section--withStatus',
+    stateName: undefined,
     targetSummaryList: Immutable.fromJS([
       {
         id: 17,
