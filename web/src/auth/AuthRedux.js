@@ -380,7 +380,16 @@ export default function authReducer(state = initialState, action) {
             mutState.set(k, v)
           }
         })
-        mutState.mergeDeepIn(['jwt'], jwtDecode(action.data.access))
+        mutState.mergeDeepIn(
+          ['jwt'],
+          _.pick(jwtDecode(action.data.access), [
+            'name',
+            'permissions',
+            'iat',
+            'exp',
+            'iss',
+          ])
+        )
       })
     case types.LOGIN_FAILURE:
       return state.delete('requestedAt')
