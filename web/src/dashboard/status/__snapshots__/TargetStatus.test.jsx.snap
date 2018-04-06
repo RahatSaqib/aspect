@@ -24,14 +24,13 @@ exports[`Target Status component should shallow render correctly 1`] = `
     </div>
   </div>
   <div
-    className="Section--summary"
+    className="Section--summary TargetItemBlockContainer"
   >
     Immutable.List [
       <Unknown
         className="TargetItemBlock"
-        lg="1-5"
-        md="1-3"
-        sm="1-2"
+        sm="1-5"
+        xs="1-5"
       >
         <div
           className="TargetItemBlock__Title"
@@ -51,10 +50,11 @@ exports[`Target Status component should shallow render correctly 1`] = `
         <div
           className="TargetItemBlock__Graph"
         >
-          <TemperatureGauge
+          <WrappedComponent
             goal={10000}
             hasError={true}
             value={897}
+            windowResizeDebounceTime={300}
           />
         </div>
         <div
@@ -75,9 +75,8 @@ exports[`Target Status component should shallow render correctly 1`] = `
       </Unknown>,
       <Unknown
         className="TargetItemBlock"
-        lg="1-5"
-        md="1-3"
-        sm="1-2"
+        sm="1-5"
+        xs="1-5"
       >
         <div
           className="TargetItemBlock__Title"
@@ -97,10 +96,11 @@ exports[`Target Status component should shallow render correctly 1`] = `
         <div
           className="TargetItemBlock__Graph"
         >
-          <TemperatureGauge
+          <WrappedComponent
             goal={2536}
             hasError={true}
             value={533}
+            windowResizeDebounceTime={300}
           />
         </div>
         <div
@@ -121,9 +121,8 @@ exports[`Target Status component should shallow render correctly 1`] = `
       </Unknown>,
       <Unknown
         className="TargetItemBlock"
-        lg="1-5"
-        md="1-3"
-        sm="1-2"
+        sm="1-5"
+        xs="1-5"
       >
         <div
           className="TargetItemBlock__Title"
@@ -143,10 +142,11 @@ exports[`Target Status component should shallow render correctly 1`] = `
         <div
           className="TargetItemBlock__Graph"
         >
-          <TemperatureGauge
+          <WrappedComponent
             goal={1200}
             hasError={false}
             value={1220}
+            windowResizeDebounceTime={300}
           />
         </div>
         <div
@@ -165,9 +165,8 @@ exports[`Target Status component should shallow render correctly 1`] = `
       </Unknown>,
       <Unknown
         className="TargetItemBlock"
-        lg="1-5"
-        md="1-3"
-        sm="1-2"
+        sm="1-5"
+        xs="1-5"
       >
         <div
           className="TargetItemBlock__Title"
@@ -187,10 +186,11 @@ exports[`Target Status component should shallow render correctly 1`] = `
         <div
           className="TargetItemBlock__Graph"
         >
-          <TemperatureGauge
+          <WrappedComponent
             goal={2190}
             hasError={false}
             value={986}
+            windowResizeDebounceTime={300}
           />
         </div>
         <div

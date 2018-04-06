@@ -124,7 +124,12 @@
   display: block;
   content: "D";
   visibility: hidden;
-  flex: 1;
+}
+
+@media screen and (--lg-viewport) {
+  .TitleContainer::after {
+    flex: 1;
+  }
 }
 
 .Title {
@@ -168,7 +173,7 @@
   justify-content: center;
 }
 
-.FiltersGroup__Child {  
+.FiltersGroup__Child {
   margin: 0 10px;
 }
 
@@ -262,6 +267,17 @@
   background-color: var(--aspect-color-mandy);
 }
 
+.TargetItemBlockContainer {
+  margin-left: 40px;
+}
+
+@media screen and (--lg-viewport) {
+  .TargetItemBlockContainer {
+    margin-left: 60px;
+    margin-right: 60px;
+  }
+}
+
 .TargetItemBlock {
   padding: 20px 0 0 0;
 }
@@ -298,39 +314,21 @@
 }
 
 .TargetItemBlock .TargetItemBlock__Label--sub {
-  visibility: hidden;
-  flex: 1;
+  display: none;
 }
 
-@media screen and (min-width: 64em) {
-  .TargetItemBlock:nth-child(5n + 1) .TargetItemBlock__Label--sub {
-    visibility: visible;
-  }
-}
-
-@media screen and (min-width: 48em) and (max-width: 63.938em) {
-  .TargetItemBlock:nth-child(3n + 1) .TargetItemBlock__Label--sub {
-    visibility: visible;
-  }
-}
-
-@media screen and (min-width: 35.5em) and (max-width: 47.938em) {
-  .TargetItemBlock:nth-child(2n + 1) .TargetItemBlock__Label--sub {
-    visibility: visible;
-  }
-}
-
-@media screen and (max-width: 35.438em) {
-  .TargetItemBlock .TargetItemBlock__Label--sub {
-    visibility: visible;
-  }
-}
-
-.TargetItemBlock__Label::after {
+.TargetItemBlock:first-child .TargetItemBlock__Label--sub {
   display: block;
-  content: "D";
-  visibility: hidden;
-  flex: 1;
+  position: absolute;
+  left: 20px;
+  width: 70px;
+  text-align: right;
+}
+
+@media screen and (--lg-viewport) {
+  .TargetItemBlock:first-child .TargetItemBlock__Label--sub {
+    left: 40px;
+  }
 }
 
 .ActionFilter {

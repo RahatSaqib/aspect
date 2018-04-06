@@ -217,12 +217,13 @@ export const TargetStatus = ({
             />
           </div>
         </div>
-        <div className={cssClasses('Section--summary')}>
+        <div
+          className={cssClasses('Section--summary', 'TargetItemBlockContainer')}
+        >
           {targetSummaryList.map(target => (
             <Unit
-              sm="1-2"
-              md="1-3"
-              lg="1-5"
+              xs="1-5"
+              sm="1-5"
               key={target.get('id')}
               className={cssClasses('TargetItemBlock')}
             >
