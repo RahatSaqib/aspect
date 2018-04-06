@@ -17,6 +17,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const HtmlWebpackIncludeAssetsPlugin = require('html-webpack-include-assets-plugin')
 const HtmlWebpackHarddiskPlugin = require('html-webpack-harddisk-plugin')
 const CompressionPlugin = require('compression-webpack-plugin')
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
 
 const {
   customPropertiesVariables,
@@ -253,6 +254,7 @@ module.exports = env => {
         : [
             new webpack.HotModuleReplacementPlugin(),
             new webpack.NamedModulesPlugin(),
+            new BundleAnalyzerPlugin({ openAnalyzer: false }),
           ]
     ),
   }
