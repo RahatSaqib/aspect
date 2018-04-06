@@ -5,9 +5,8 @@ exports[`Summary Status component should shallow render correctly 1`] = `
   className={undefined}
 >
   <Unknown
-    lg="1-3"
+    lg="1-4"
     sm="1-2"
-    xl="1-4"
   >
     <Link
       className="Summary"
@@ -84,9 +83,8 @@ exports[`Summary Status component should shallow render correctly 1`] = `
     </Link>
   </Unknown>
   <Unknown
-    lg="1-3"
+    lg="1-4"
     sm="1-2"
-    xl="1-4"
   >
     <Link
       className="Summary"
@@ -161,9 +159,8 @@ exports[`Summary Status component should shallow render correctly 1`] = `
     </Link>
   </Unknown>
   <Unknown
-    lg="1-3"
+    lg="1-4"
     sm="1-2"
-    xl="1-4"
   >
     <Link
       className="Summary"
@@ -238,9 +235,8 @@ exports[`Summary Status component should shallow render correctly 1`] = `
     </Link>
   </Unknown>
   <Unknown
-    lg="1-3"
+    lg="1-4"
     sm="1-2"
-    xl="1-4"
   >
     <Link
       className="Summary"
