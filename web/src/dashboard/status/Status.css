@@ -140,31 +140,8 @@
   flex: 1;
 }
 
-.Title__Color {
-  width: 24px;
-  height: 24px;
-  margin-right: 1em;
-  border-radius: 3px;
-}
-
-.Title__Color--result {
-  background-color: var(--aspect-color-ship-cove);
-}
-
-.Title__Color--inventory {
-  background-color: var(--aspect-color-mountain);
-}
-
-.Title__Color--device {
-  background-color: var(--aspect-color-shakespeare);
-}
-
-.Title__Color--site {
-  background-color: var(--aspect-color-brink);
-}
-
-.Title__Color--status {
-  background-color: var(--aspect-color-supernova);
+.Title__Icon {
+  font-size: 28px;
 }
 
 .FiltersGroup {

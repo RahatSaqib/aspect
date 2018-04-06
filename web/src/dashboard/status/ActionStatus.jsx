@@ -12,7 +12,7 @@ import {
   withProps,
   withStateHandlers,
 } from 'recompose'
-
+import MdAssignmentLate from 'react-icons/lib/md/assignment-late'
 import { Card } from 'react-toolbox/lib/card'
 import { Unit } from '../../components/pureGrids'
 import { fetchActionDashboard } from '../DashboardRedux'
@@ -122,7 +122,10 @@ export const ActionStatus = ({
 }) => (
   <Card className={className}>
     <div className={cssClasses('TitleContainer')}>
-      <Title colorClassName={cssClasses('Title__Color--site')} title={title} />
+      <Title
+        title={title}
+        icon={<MdAssignmentLate className={cssClasses('Title__Icon')} />}
+      />
     </div>
 
     <div className={cssClasses('ActionFilter')}>

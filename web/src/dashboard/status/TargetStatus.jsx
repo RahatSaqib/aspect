@@ -17,6 +17,7 @@ import subtractYears from 'date-fns/subYears'
 import { bindActionCreators } from 'redux'
 import { compose, lifecycle, pure, withHandlers, withProps } from 'recompose'
 import { connect } from 'react-redux'
+import MdAssignment from 'react-icons/lib/md/assignment'
 import { Card } from 'react-toolbox/lib/card'
 import { Unit } from '../../components/pureGrids'
 import { fetchTargetDashboard } from '../DashboardRedux'
@@ -201,8 +202,8 @@ export const TargetStatus = ({
       <Card className={className}>
         <div className={cssClasses('TitleContainer')}>
           <Title
-            colorClassName={cssClasses('Title__Color--status')}
             title={title}
+            icon={<MdAssignment className={cssClasses('Title__Icon')} />}
           />
           <div
             className={cssClasses(

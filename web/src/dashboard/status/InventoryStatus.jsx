@@ -12,6 +12,7 @@ import {
 import { connect } from 'react-redux'
 import { Card } from 'react-toolbox/lib/card'
 import { Button } from 'react-toolbox/lib/button'
+import MdAssignmentTurnedIn from 'react-icons/lib/md/assignment-turned-in'
 
 import { findKeyInTree } from '../../shared/utils/dom'
 import { Unit } from '../../components/pureGrids'
@@ -129,8 +130,8 @@ export const InventoryStatus = ({
 }) => (
   <Card className={className}>
     <Title
-      colorClassName={cssClasses('Title__Color--inventory')}
       title={title}
+      icon={<MdAssignmentTurnedIn className={cssClasses('Title__Icon')} />}
     />
     <div>
       <Unit sm="1-2" lg="1-4">
