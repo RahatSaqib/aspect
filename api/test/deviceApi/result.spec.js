@@ -1204,14 +1204,12 @@ describe('Device Result API routes', () => {
           .first()
         assert.equal(initialCount + 2, await countResults())
         assert.equal(result2.externalId, resultExternalIds[1])
-        expect(JSON.parse(result2.resultData)).to.containSubset(
-          {
-            a: 'b',
-            c: 2,
-            d: false,
-            e: { f: 'g' },
-          }
-        )
+        expect(JSON.parse(result2.resultData)).to.containSubset({
+          a: 'b',
+          c: 2,
+          d: false,
+          e: { f: 'g' },
+        })
         assert.equal(result2.assayVersion, '1a.c1')
         assert.approximately(result2.latitude, 30.419348, 0.000001)
         assert.approximately(result2.longitude, -87.581222, 0.000001)

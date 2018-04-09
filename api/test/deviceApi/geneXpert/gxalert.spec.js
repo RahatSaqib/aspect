@@ -1823,7 +1823,7 @@ describe('Device API routes for GxAlert Device', () => {
         assert.isUndefined(afterResultDetails)
       }))
 
-    it('should append a result if the external ID is not known', () =>
+    it('should append a result if the instrument, sample, test date combination is not known', () =>
       runTest(async () => {
         const { now } = context
         const beforeResultDetails = await getLastResult()
@@ -2529,7 +2529,7 @@ describe('Device API routes for GxAlert Device', () => {
 
           const geneXpertDevice = await getCurrentGeneXpertDevice()
           expiryDate = new Date(addYears(now, 1).setHours(0, 0, 0, 0))
-          inventoryItemId = await knex('InventoryItem').insert({
+          ;[inventoryItemId] = await knex('InventoryItem').insert({
             consumableId: consumableAssay.consumableId,
             siteId: geneXpertDevice.siteId,
             expiresOn: expiryDate,
@@ -2598,19 +2598,19 @@ describe('Device API routes for GxAlert Device', () => {
         it('should NOT reduce inventory levels of the consumable', () =>
           runTest(async knex => {
             const { now } = context
-            const consumableAssay = await knex('ConsumableAssay as ca')
+            const consumableAssays = await knex('ConsumableAssay as ca')
               .join('Assay as a', 'ca.assayId', 'a.id')
               .join('DeviceType as dt', 'a.deviceTypeId', 'dt.id')
               .where({ 'dt.externalId': basicDevicePayload.type.id })
               .andWhere('ca.quantity', '>', 0)
-              .first(
+              .select(
                 'ca.consumableId',
                 'ca.quantity',
                 'a.externalId as assayId'
               )
 
-            assert.isNotEmpty(consumableAssay)
-            assert.isAbove(consumableAssay.quantity, 0)
+            assert.isNotEmpty(consumableAssays)
+            assert.isAbove(_.sumBy(consumableAssays, 'quantity'), 0)
 
             const inventoryItemBefore = await knex('InventoryItem')
               .where({ id: inventoryItemId })
@@ -2629,7 +2629,7 @@ describe('Device API routes for GxAlert Device', () => {
                   result: {
                     id: deductInventoryTestResultId,
                     assay: {
-                      id: consumableAssay.assayId,
+                      id: _.head(consumableAssays).assayId,
                       version: '2',
                     },
                     sample: { id: 'Existing Sample' },
@@ -2645,14 +2645,18 @@ describe('Device API routes for GxAlert Device', () => {
 
             const geneXpertDevice = await getCurrentGeneXpertDevice()
             const lastResultId = await getLastResultId(knex, gxAlertDevice.id)
-            const inventoryItemAfter = await knex('InventoryItem')
-              .where({
-                consumableId: consumableAssay.consumableId,
+
+            const inventoryItemsAfter = await knex('InventoryItem')
+              .whereIn('consumableId', _.map(consumableAssays, 'consumableId'))
+              .andWhere({
                 siteId: geneXpertDevice.siteId,
                 expiresOn: expiryDate,
               })
-              .first()
-            assert.equal(inventoryItemAfter.id, inventoryItemId)
+              .select()
+
+            const inventoryItemAfter = _.find(inventoryItemsAfter, {
+              id: inventoryItemId,
+            })
             assert.equal(
               inventoryItemAfter.quantityOnHand,
               inventoryItemBefore.quantityOnHand
@@ -2667,15 +2671,18 @@ describe('Device API routes for GxAlert Device', () => {
                 'il.resultId',
                 'il.quantity'
               )
-            assert.deepEqual(inventoryLogs, [
+            expect(inventoryLogs).to.containSubset([
               {
-                consumableId: consumableAssay.consumableId,
                 siteId: geneXpertDevice.siteId,
                 consumableReason: 'Test Conducted',
                 resultId: lastResultId,
-                quantity: consumableAssay.quantity,
               },
             ])
+            const matchingConsumableAssay = _.find(consumableAssays, {
+              consumableId: _.head(inventoryLogs).consumableId,
+              quantity: _.head(inventoryLogs).quantity,
+            })
+            assert.isNotEmpty(matchingConsumableAssay)
           }))
       })
     })

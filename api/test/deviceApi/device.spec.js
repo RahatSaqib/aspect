@@ -18,9 +18,9 @@ const { factGenerateDeviceOffline } = require('../../src/fact/actions')
 const { deviceOffline } = require('../../src/device/actions')
 
 const baseConfig = {
-  requirePrinter: 'no',
+  requirePrinter: 'yes',
   adminPassword: 'pwd123',
-  firmwareUpdateRequired: 'yes',
+  firmwareUpdateRequired: 'no',
 }
 
 describe('Device API routes', () => {
