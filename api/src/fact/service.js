@@ -17,6 +17,22 @@ function onFactGenerateResultCounts(action, { messageContext }) {
   })
 }
 
+function onDeviceOffline({ deviceId }, { messageContext }) {
+  messageContext.transact(async knex => {
+    await knex('FactDeviceFlag')
+      .where({ deviceId })
+      .update({ offline: true })
+  })
+}
+
+function onDeviceOnline({ deviceId }, { messageContext }) {
+  messageContext.transact(async knex => {
+    await knex('FactDeviceFlag')
+      .where({ deviceId })
+      .update({ offline: false })
+  })
+}
+
 async function calculateResultCountsOnSchedule(context, knex) {
   await calculateResultCounts(null, null, null, knex)
 }
@@ -40,11 +56,6 @@ async function synthDeviceOfflineOnSchedule(context, knex) {
       const maxLastDateOffline = subDays(new Date(), deviceMaxDaysOffline)
 
       if (lastPingOn <= maxLastDateOffline || lastPingOn === null) {
-        await knex('FactDeviceFlag')
-          .where({
-            deviceId: id,
-          })
-          .update({ offline: true })
         context.deviceOffline(id)
       }
     })
@@ -153,5 +164,7 @@ async function calculateResultCounts(deviceId, assayId, resultCategory1, knex) {
 module.exports = {
   onFactGenerateDeviceOffline,
   onFactGenerateResultCounts,
+  onDeviceOffline,
+  onDeviceOnline,
   calculateResultCounts,
 }
