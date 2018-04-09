@@ -117,6 +117,7 @@
 }
 
 .TitleContainer::after {
+  display: block;
   content: "D";
   visibility: hidden;
   flex: 1;
@@ -318,6 +319,7 @@
 }
 
 .TargetItemBlock__Label::after {
+  display: block;
   content: "D";
   visibility: hidden;
   flex: 1;
