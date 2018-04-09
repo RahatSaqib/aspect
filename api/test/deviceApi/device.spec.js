@@ -333,7 +333,9 @@ describe('Device API routes', () => {
           .update({ lastPingOn: last8Day })
 
         // Generate device offline facts and wait for offline action for new device
-        const waitForOffline = context.waitForAction(deviceOffline(newDevice.id))
+        const waitForOffline = context.waitForAction(
+          deviceOffline(newDevice.id)
+        )
         messageContext.factGenerateDeviceOffline()
         await waitForOffline
         await context.waitForIdle()

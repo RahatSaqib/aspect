@@ -38,16 +38,17 @@ function onIssueEventResolve(issueType) {
         issue = openIssue
         await knex('Issue')
           .where({ id: issue.id })
-          .update({ issueStatusId: await getId('IssueStatus', 'Resolved') })
+          .update({
+            issueStatusId: await getId(knex, 'IssueStatus', 'Resolved'),
+          })
         context.issueResolved(issue.id)
+        await knex('IssueEvent').insert({
+          issueId: issue.id,
+          issueEventStatusId: await getId(knex, 'IssueEventStatus', 'Resolved'),
+          data: JSON.stringify(action),
+          createdOn: now,
+        })
       }
-
-      await knex('IssueEvent').insert({
-        issueId: issue == null ? null : issue.id,
-        issueEventStatusId: await getId(knex, 'IssueEventStatus', 'Resolved'),
-        data: JSON.stringify(action),
-        createdOn: now,
-      })
     })
   }
 }

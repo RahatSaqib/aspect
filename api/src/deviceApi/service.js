@@ -16,9 +16,7 @@ const {
   addDeviceOperation,
   getSite,
 } = require('./device')
-const {
-  deviceOnline,
-} = require('../device/actions')
+const { deviceOnline } = require('../device/actions')
 const { mergeResult, getResult } = require('./result')
 const { loadPlugin } = require('./plugin/registration')
 
