@@ -236,7 +236,7 @@ export const NotificationList = ({
                 intl={intl}
                 notification={notification}
                 onClick={onRowClick}
-                data-notification-Id="detail"
+                data-notification-id="detail"
               />
             ))}
         </NotificationDataTable>

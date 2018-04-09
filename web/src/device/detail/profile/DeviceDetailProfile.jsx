@@ -338,7 +338,7 @@ const Results = enhanceResults(
                     intl={intl}
                     result={result}
                     onClick={onRowClick}
-                    data-result-Id={result.get('id')}
+                    data-result-id={result.get('id')}
                   />
                 ))}
             </ResultDataTable>

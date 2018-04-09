@@ -315,7 +315,7 @@ export const ReporterList = ({
                 intl={intl}
                 reporter={reporter}
                 onClick={onRowClick}
-                data-reporter-Id={reporter.get('id')}
+                data-reporter-id={reporter.get('id')}
               />
             ))}
         </ReporterDataTable>

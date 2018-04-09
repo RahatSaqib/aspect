@@ -299,7 +299,7 @@ export const DeviceList = ({
                 device={device}
                 onClick={onRowClick}
                 onAlertClick={onAlertClick}
-                data-device-Id={device.get('id')}
+                data-device-id={device.get('id')}
               />
             ))}
         </DeviceDataTable>

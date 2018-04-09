@@ -190,7 +190,7 @@ export const ActionStatus = ({
               intl={intl}
               messages={messages}
               action={action}
-              data-action-Id={action.get('id')}
+              data-action-id={action.get('id')}
             />
           ))}
       </ActionDataTable>

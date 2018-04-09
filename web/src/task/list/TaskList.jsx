@@ -347,7 +347,7 @@ export const TaskList = ({
                 messages={messages}
                 task={task}
                 onClick={onRowClick}
-                data-task-Id={
+                data-task-id={
                   task.get('alertCount') > 0 ? 'aggre-list' : 'detail'
                 }
               />
