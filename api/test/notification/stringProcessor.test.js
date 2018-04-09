@@ -11,7 +11,7 @@ describe('notification/stringProcessor', () => {
     const site = {
       shortName: 'Cuyoga, OH #1',
       state: 'Ohio',
-      country: 'United States'
+      country: 'United States',
     }
     it('should replace matching words in the template string', () =>
       runTest(stringProcessor.processStringTemplate, [sampleString, site])(
@@ -20,7 +20,7 @@ describe('notification/stringProcessor', () => {
         }
       ))
   })
-  describe('process', () => {    
+  describe('process', () => {
     const sampleString = 'Hello {{person.name}}'
     const expectedResult = 'Hello '
     const inputObject = {
@@ -31,11 +31,12 @@ describe('notification/stringProcessor', () => {
       },
     }
     it('should handle missing word replacements in input inputObject', () =>
-      runTest(stringProcessor.processStringTemplate, [sampleString, inputObject])(
-        resultString => {
-          assert.deepEqual(resultString, expectedResult)
-        }
-      ))
+      runTest(stringProcessor.processStringTemplate, [
+        sampleString,
+        inputObject,
+      ])(resultString => {
+        assert.deepEqual(resultString, expectedResult)
+      }))
   })
   describe('process', () => {
     const sampleString = 'Device {{device.shortName}} is offline'
@@ -47,11 +48,12 @@ describe('notification/stringProcessor', () => {
       },
     }
     it('should handle missing value in the input object', () =>
-      runTest(stringProcessor.processStringTemplate, [sampleString, inputObject])(
-        resultString => {
-          assert.deepEqual(resultString, expectedResult)
-        }
-      ))
+      runTest(stringProcessor.processStringTemplate, [
+        sampleString,
+        inputObject,
+      ])(resultString => {
+        assert.deepEqual(resultString, expectedResult)
+      }))
   })
   describe('process', () => {
     const sampleString =
@@ -61,23 +63,26 @@ describe('notification/stringProcessor', () => {
     const site = {
       state: 'Uasin Gishu',
       country: 'Kenya',
-      }
+    }
     const device = {
       shortName: 'Eldoret #1',
       name: 'Uasin Gishu County, Eldoret #1',
-      }
+    }
     const result = {
       endedOn: '2018-02-20',
       patientId: 'P001-005',
       assayName: 'HivVl',
-      sampleId: 'GRP-HIV-2'
-      }
+      sampleId: 'GRP-HIV-2',
+    }
 
     it('should handle multiple objects in the input object', () =>
-      runTest(stringProcessor.processStringTemplate, [sampleString, site, device, result])(
-        resultString => {
-          assert.deepEqual(resultString, expectedResult)
-        }
-      ))
+      runTest(stringProcessor.processStringTemplate, [
+        sampleString,
+        site,
+        device,
+        result,
+      ])(resultString => {
+        assert.deepEqual(resultString, expectedResult)
+      }))
   })
 })

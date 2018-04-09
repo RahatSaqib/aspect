@@ -1748,6 +1748,14 @@ async function seed(knex) {
     autoInclude: 0,
   })
 
+  const [consumableDaktariHivVlCartridgeId] = await knex('Consumable').insert({
+    name: 'Daktari HIV-VL Cartridge',
+    unit: piece,
+    canExpire: 1,
+    manufacturer: 'Daktari',
+    autoInclude: 0,
+  })
+
   // Assay Consumables
   await knex('ConsumableAssay').insert({
     consumableId: consumableGxTbCartridgeId,
@@ -1782,6 +1790,12 @@ async function seed(knex) {
   await knex('ConsumableAssay').insert({
     consumableId: consumableGxHiv1QualCartridgeId,
     assayId: assayGeneXpertHiv1QualId,
+    quantity: 1,
+  })
+
+  await knex('ConsumableAssay').insert({
+    consumableId: consumableDaktariHivVlCartridgeId,
+    assayId: assayDaktariHivVlId,
     quantity: 1,
   })
 
@@ -2801,7 +2815,7 @@ async function seed(knex) {
     })
   )
 
-  // HIV VL Results:
+  // HIV VL Results for the GeneXpert:
   possibleResults = [
     {
       resultText: 'HIV-1 DÉTECTÉ {0} copies/mL (log {1})',
@@ -3066,7 +3080,7 @@ async function seed(knex) {
     })
   )
 
-  // HIV VL Results:
+  // HIV VL Results for the GeneXpert:
   possibleResults = [
     {
       resultText: 'HIV Detected (log {1})',

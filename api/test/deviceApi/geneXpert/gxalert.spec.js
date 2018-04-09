@@ -5,10 +5,17 @@ const addYears = require('date-fns/add_years')
 const subDays = require('date-fns/sub_days')
 const addHours = require('date-fns/add_hours')
 const subHours = require('date-fns/sub_hours')
+const subMinutes = require('date-fns/sub_minutes')
 const addSeconds = require('date-fns/add_seconds')
 const setMilliseconds = require('date-fns/set_milliseconds')
 const { createGxAlertTestContext } = require('./gxalert_utils')
 const { getLastResultId } = require('../utils')
+const {
+  postToDeviceApi,
+  getMaxDeviceId,
+  getDeviceType,
+  getDevicesWithIdLargerThan,
+} = require('./utils')
 const {
   resultTextToResultCategoryMapping,
   basicResultPayload,
@@ -22,88 +29,6 @@ const { assert, expect } = chai
 describe('Device API routes for GxAlert Device', () => {
   function createContext() {
     return createGxAlertTestContext(server)
-  }
-
-  async function postToDeviceApi({
-    authHeader,
-    payload,
-    expectedStatusCode,
-    expectedResponseBody,
-  }) {
-    return server
-      .post('/device')
-      .set('Authorization', authHeader)
-      .send(payload)
-      .then(res => {
-        if (expectedStatusCode) {
-          assert.equal(res.statusCode, expectedStatusCode)
-        } else if (
-          !expectedResponseBody &&
-          !_.inRange(res.statusCode, 200, 300)
-        ) {
-          assert.fail(
-            res.statusCode.toString(),
-            '2XX',
-            `The post to Aspect device API failed: ${JSON.stringify(res.body)}`
-          )
-        }
-        if (expectedResponseBody !== undefined) {
-          assert.deepEqual(res.body, expectedResponseBody)
-        }
-        return res
-      })
-      .catch(error => {
-        const { actual, expected, message } = error
-        assert.fail(actual, expected, message)
-      })
-  }
-
-  async function getMaxDeviceId(knex) {
-    const [maxDeviceId] = await knex
-      .from('Device')
-      .orderBy('id', 'desc')
-      .limit(1)
-      .select('id')
-      .pluck('id')
-    return maxDeviceId
-  }
-
-  const deviceTypes = {}
-  async function getDeviceType(externalId, knex) {
-    if (!deviceTypes[externalId]) {
-      deviceTypes[externalId] = await knex
-        .from('DeviceType')
-        .where({ externalId })
-        .first('id', 'deviceTypeCategoryId', 'externalid', 'name', 'plugin')
-    }
-    return Promise.resolve(deviceTypes[externalId])
-  }
-
-  async function getDevicesWithIdLargerThan(deviceId, knex) {
-    const devices = await knex
-      .from('Device')
-      .where('id', '>', deviceId)
-      .orderBy('id', 'asc')
-      .select(
-        'partnerId',
-        'geographyId',
-        'siteId',
-        'deviceTypeId',
-        'deviceStatusId',
-        'name',
-        'shortName',
-        'macAddress',
-        'serial',
-        'hostId',
-        'culture',
-        'timezone',
-        'configurationData'
-      )
-    return _.map(devices, device =>
-      _.merge({}, device, {
-        configurationData: JSON.parse(device.configurationData),
-      })
-    )
   }
 
   describe('registration and configuration', () => {
@@ -1962,7 +1887,7 @@ describe('Device API routes for GxAlert Device', () => {
         })
       }))
 
-    it('should update a result if the external ID is known', () =>
+    it('should update a result if the sample ID, instrument serial and test start times are known', () =>
       runTest(async () => {
         const { now } = context
         const beforeResultDetails = await getLastResult()
@@ -2024,6 +1949,328 @@ describe('Device API routes for GxAlert Device', () => {
           notes: null,
           errorCode: null,
         })
+      }))
+
+    it('should merge results with same sample ID, start time, end time and instrument serial', () =>
+      runTest(async knex => {
+        const { deviceAuth, now } = context
+
+        const resultIds = []
+        const countResults = () =>
+          knex('Result')
+            .count('id as cnt')
+            .then(([{ cnt }]) => cnt)
+        const initialCount = await countResults()
+
+        let deviceApiResponse = await postToDeviceApi({
+          authHeader: deviceAuth,
+          payload: _.merge(
+            {},
+            basicDevicePayload,
+            { name: deviceName },
+            basicResultPayload,
+            {
+              result: {
+                startedOn: now,
+                endedOn: now,
+                instrument: {
+                  serial: 'CEPH-PC-7813',
+                },
+                sample: {
+                  id: "Bryan's Sputum",
+                },
+                data: { a: 'b' },
+                assay: { id: 'GxHiv1Vl' },
+              },
+            }
+          ),
+          expectedStatusCode: 200,
+        })
+        resultIds.push(deviceApiResponse.body.result.id)
+
+        let result1 = await knex('Result as r')
+          .where({ id: resultIds[0] })
+          .first()
+        expect(JSON.parse(result1.resultData)).to.containSubset({ a: 'b' })
+        assert.isNotOk(result1.errorCode)
+        assert.equal(initialCount + 1, await countResults())
+
+        deviceApiResponse = await postToDeviceApi({
+          authHeader: deviceAuth,
+          payload: _.merge(
+            {},
+            basicDevicePayload,
+            { name: deviceName },
+            basicResultPayload,
+            {
+              result: {
+                startedOn: now,
+                endedOn: now,
+                instrument: {
+                  serial: 'CEPH-PC-7813',
+                },
+                sample: {
+                  id: "Bryan's Sputum",
+                },
+                data: { a: 'b', c: 'd' },
+                assay: { id: 'GxHiv1Vl' },
+              },
+            }
+          ),
+          expectedStatusCode: 200,
+        })
+        assert.equal(deviceApiResponse.body.result.id, resultIds.slice(-1)[0])
+
+        result1 = await knex('Result as r')
+          .where({ id: resultIds.slice(-1)[0] })
+          .first()
+        expect(JSON.parse(result1.resultData)).to.containSubset({
+          a: 'b',
+          c: 'd',
+        })
+        assert.isNotOk(result1.errorCode)
+        assert.equal(initialCount + 1, await countResults())
+
+        deviceApiResponse = await postToDeviceApi({
+          authHeader: deviceAuth,
+          payload: _.merge(
+            {},
+            basicDevicePayload,
+            { name: deviceName },
+            basicResultPayload,
+            {
+              result: {
+                startedOn: subMinutes(now, 5),
+                endedOn: now,
+                instrument: {
+                  serial: 'CEPH-PC-7813',
+                },
+                sample: {
+                  id: "Bryan's Sputum",
+                },
+                data: { a: 'b' },
+                assay: { id: 'GxHiv1Vl' },
+              },
+            }
+          ),
+          expectedStatusCode: 200,
+        })
+        let lastResultId = deviceApiResponse.body.result.id
+        assert.notEqual(lastResultId, resultIds[0])
+
+        resultIds.push(lastResultId)
+
+        let result2 = await knex('Result as r')
+          .where({ id: resultIds[1] })
+          .first()
+        assert.equal(initialCount + 2, await countResults())
+
+        const result1SampleSite = await knex('Site as s')
+          .where({ id: result1.siteId })
+          .first()
+
+        const result2SampleSite = await knex('Site as s')
+          .where('partnerId', result1SampleSite.partnerId)
+          .where('id', '<>', result1.siteId)
+          .first()
+
+        deviceApiResponse = await postToDeviceApi({
+          authHeader: deviceAuth,
+          payload: _.merge(
+            {},
+            basicDevicePayload,
+            { name: deviceName },
+            basicResultPayload,
+            {
+              result: {
+                data: { a: 'b', c: 2, d: false, e: { f: 'g' } },
+                type: { id: 'Study' },
+                source: { id: 'EnteredByHand' },
+                workflow: { status: { id: 'Acknowledged' } },
+                category: [{ id: 'Detected' }, { id: 'Indeterminate' }],
+                assay: {
+                  id: 'GxMtbRif',
+                  version: '1a.c1',
+                },
+                startedOn: subMinutes(now, 5),
+                endedOn: now,
+                sample: {
+                  id: "Bryan's Sputum",
+                  type: {
+                    id: 'Plasma',
+                  },
+                  originSite: {
+                    id: result2SampleSite.externalId,
+                  },
+                },
+                location: {
+                  longitude: -87.581222,
+                  latitude: 30.419348,
+                },
+                consumable: {
+                  serial: '132-44-222',
+                  expirationDate: '2014-03-01',
+                  lot: '331-1',
+                },
+                instrument: {
+                  serial: 'CEPH-PC-7813',
+                  module: {
+                    name: 'ModA',
+                    serial: '555-8',
+                  },
+                },
+                research: { id: 'R123' },
+                patient: {
+                  id: 'P-333',
+                  name: 'Bob',
+                  surname: 'Hope',
+                  gender: 'M',
+                  age: 72,
+                  dateOfBirth: '1903-05-29',
+                  address: '123 Main Street',
+                  phone: '856-7909',
+                },
+                oemData: JSON.stringify({
+                  maker: 'ABC',
+                  model: '123A',
+                  serial: '123-456-789',
+                }),
+                rawData: JSON.stringify({
+                  startedOn: '2013-05-13',
+                  endedOn: '2013-12-01T01:30',
+                  patientData: {
+                    id: 'P-333',
+                    name: 'Bob',
+                    surname: 'Hope',
+                    gender: 'M',
+                    age: 72,
+                    dateOfBirth: '1903-05-29',
+                    address: '123 Main Street',
+                    phone: '856-7909',
+                  },
+                  location: {
+                    longitude: -87.581222,
+                    latitude: 30.419348,
+                  },
+                }),
+                sender: {
+                  version: '99-1',
+                  operator: 'Bob O',
+                },
+                notes: 'My Awesome notes about this Awesome result!',
+                error: {
+                  code: '123',
+                  notes: 'Oh NOZE!',
+                },
+              },
+            }
+          ),
+          expectedStatusCode: 200,
+        })
+        lastResultId = deviceApiResponse.body.result.id
+        assert.equal(lastResultId, resultIds[1])
+
+        result2 = await knex('Result as r')
+          .where({ id: resultIds[1] })
+          .first()
+        assert.equal(initialCount + 2, await countResults())
+        expect(JSON.parse(result2.resultData)).to.containSubset({
+          a: 'b',
+          c: 2,
+          d: false,
+          e: { f: 'g' },
+        })
+        assert.equal(result2.assayVersion, '1a.c1')
+        assert.approximately(result2.latitude, 30.419348, 0.000001)
+        assert.approximately(result2.longitude, -87.581222, 0.000001)
+        assert.equal(result2.consumableSerial, '132-44-222')
+        assert.deepEqual(
+          result2.consumableExpirationDate,
+          new Date('2014-03-01')
+        )
+        assert.equal(result2.consumableLot, '331-1')
+        assert.equal(result2.instrumentSerial, 'CEPH-PC-7813')
+        assert.equal(result2.moduleName, 'ModA')
+        assert.equal(result2.moduleSerial, '555-8')
+        assert.equal(result2.researchId, 'R123')
+        assert.deepEqual(JSON.parse(result2.patientData), {
+          id: 'P-333',
+          name: 'Bob',
+          surname: 'Hope',
+          gender: 'M',
+          age: 72,
+          dateOfBirth: '1903-05-29T00:00:00.000Z',
+          address: '123 Main Street',
+          phone: '856-7909',
+        })
+        assert.deepEqual(JSON.parse(result2.oemData), {
+          maker: 'ABC',
+          model: '123A',
+          serial: '123-456-789',
+        })
+        assert.deepEqual(JSON.parse(result2.rawData), {
+          startedOn: '2013-05-13',
+          endedOn: '2013-12-01T01:30',
+          patientData: {
+            id: 'P-333',
+            name: 'Bob',
+            surname: 'Hope',
+            gender: 'M',
+            age: 72,
+            dateOfBirth: '1903-05-29',
+            address: '123 Main Street',
+            phone: '856-7909',
+          },
+          location: {
+            longitude: -87.581222,
+            latitude: 30.419348,
+          },
+        })
+        assert.equal(result2.senderVersion, '99-1')
+        assert.equal(result2.senderOperator, 'Bob O')
+        assert.equal(
+          result2.notes,
+          'My Awesome notes about this Awesome result!'
+        )
+        assert.equal(result2.errorCode, '123')
+        assert.equal(result2.errorNotes, 'Oh NOZE!')
+
+        const result2Type = await knex('ResultType as rt')
+          .where({ id: result2.resultTypeId })
+          .first('externalId')
+        assert.equal(result2Type.externalId, 'Study')
+
+        const result2Source = await knex('ResultSource as rs')
+          .where({ id: result2.resultSourceId })
+          .first('externalId')
+        assert.equal(result2Source.externalId, 'EnteredByHand')
+
+        const result2Status = await knex('ResultWorkflowStatus as rs')
+          .where({ id: result2.resultWorkflowStatusId })
+          .first('externalId')
+        assert.equal(result2Status.externalId, 'Acknowledged')
+
+        const result2Assay = await knex('Assay as assay')
+          .where({ id: result2.assayId })
+          .first('externalId', 'name')
+        assert.equal(result2Assay.externalId, 'GxMtbRif')
+        assert.equal(result2Assay.name, 'GeneXpert MTB/Rif')
+
+        const result2Sample = await knex('Sample as s')
+          .where({ id: result2.sampleId })
+          .first()
+
+        assert.notEqual(result2.siteId, result2Sample.originSiteId)
+        assert.equal(result2SampleSite.id, result2Sample.originSiteId)
+        assert.equal(result2Sample.externalId, "Bryan's Sputum")
+
+        const [result2Category1, result2Category2] = await knex(
+          'ResultCategory as rt'
+        )
+          .whereIn('id', [result2.resultCategory1, result2.resultCategory2])
+          .select('externalId')
+        assert.equal(result2Category1.externalId, 'Detected')
+        assert.equal(result2Category2.externalId, 'Indeterminate')
       }))
 
     it('should map result categories based on result text', () =>

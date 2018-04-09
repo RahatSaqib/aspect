@@ -5,7 +5,11 @@ const { createTestContext, getLastResultId } = require('../deviceApi/utils')
 
 const server = supertest.agent('http://localhost:8080')
 const { assert } = chai
-const context = createTestContext(server, { user: 'admin', type: 'GeneXpert' })
+const context = createTestContext(server, {
+  user: 'admin',
+  type: 'Daktari Virology',
+  partner: 'Partner One',
+})
 
 describe('Demo Device routes', () => {
   const path = '/api/demo/device'
@@ -35,7 +39,7 @@ describe('Demo Device routes', () => {
           assert.typeOf(assays, 'array')
           assert.isAtLeast(assays.length, 1)
 
-          const assay = _.find(assays, { name: 'GeneXpert MTB/Rif' })
+          const assay = _.find(assays, { name: 'Daktari HIV-VL' })
           assert.typeOf(assay, 'Object')
           assert.property(assay, 'id')
           assert.property(assay, 'name')
