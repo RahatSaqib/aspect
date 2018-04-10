@@ -1,5 +1,4 @@
 const _ = require('lodash')
-const { macAddressValid } = require('./requestValidation')
 
 async function findDevices(availableDeviceDetails, knex) {
   const {
@@ -7,9 +6,7 @@ async function findDevices(availableDeviceDetails, knex) {
     partnerId,
     hostId,
     deviceSerialNumber,
-    countryAbbreviation,
-    macAddress,
-    deviceName,
+    countryCode,
     deviceIdFromGxAlertSource,
   } = availableDeviceDetails
   const fields = [
@@ -19,6 +16,7 @@ async function findDevices(availableDeviceDetails, knex) {
     'd.name',
     'd.serial',
     'd.macAddress',
+    'd.configurationData',
     'ds.token as status',
     'dt.externalId as deviceType',
     'dt.plugin as deviceTypePluginName',
@@ -40,46 +38,28 @@ async function findDevices(availableDeviceDetails, knex) {
       .where('d.id', deviceId)
       .select(fields)
   }
-  if (deviceIdFromGxAlertSource) {
-    return deviceQuery
-      .clone()
-      .whereRaw(
-        `JSON_EXTRACT(d.configurationData, "$.gxAlertDeviceId") = ${deviceIdFromGxAlertSource}`
-      )
-      .select(fields)
-  }
   let matchingDevices = []
-  if (hostId && deviceSerialNumber && countryAbbreviation) {
-    matchingDevices = await deviceQuery
-      .clone()
-      .where('d.partnerId', partnerId)
-      .andWhere('d.hostId', hostId)
-      .andWhere('d.serial', deviceSerialNumber)
-      .andWhere('c.abbreviation', countryAbbreviation)
-      .select(fields)
-  }
-  if (
-    _.isEmpty(matchingDevices) &&
-    macAddressValid(macAddress) &&
-    countryAbbreviation
-  ) {
-    matchingDevices = await deviceQuery
-      .clone()
-      .where('d.partnerId', partnerId)
-      .andWhere('d.macAddress', macAddress)
-      .andWhere('c.abbreviation', countryAbbreviation)
-      .select(fields)
-  }
-  if (_.isEmpty(matchingDevices) && countryAbbreviation && deviceName) {
-    matchingDevices = await deviceQuery
-      .clone()
-      .where('d.partnerId', partnerId)
-      .andWhere('c.abbreviation', countryAbbreviation)
-      .andWhere(function() {
-        this.where('d.name', deviceName)
-        this.orWhere('d.shortName', deviceName)
-      })
-      .select(fields)
+  if (partnerId) {
+    if (deviceIdFromGxAlertSource) {
+      matchingDevices = await deviceQuery
+        .clone()
+        .whereRaw(
+          `JSON_EXTRACT(d.configurationData, "$.gxAlertDeviceId") = ${deviceIdFromGxAlertSource}`
+        )
+        .andWhere('d.partnerId', partnerId)
+        .select(fields)
+    }
+    if (_.isEmpty(matchingDevices) && countryCode) {
+      if (hostId && deviceSerialNumber) {
+        matchingDevices = await deviceQuery
+          .clone()
+          .where('d.partnerId', partnerId)
+          .andWhere('d.hostId', hostId)
+          .andWhere('d.serial', deviceSerialNumber)
+          .andWhere('c.abbreviation', countryCode)
+          .select(fields)
+      }
+    }
   }
   return matchingDevices
 }

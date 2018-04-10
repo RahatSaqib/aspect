@@ -105,7 +105,7 @@ describe('Device API routes for GxConnect Devices', () => {
 
         describe('after a device name and country code have been specified', () => {
           const context = createGxConnectTestContext(server, {
-            countryAbbreviation: countryCode,
+            countryCode,
             adminUsername,
             adminPassword,
             deviceName,
@@ -162,7 +162,7 @@ describe('Device API routes for GxConnect Devices', () => {
 
     describe('generating a new device API key from a device with a known Host ID/device serial combination', () => {
       const firstContext = createGxConnectTestContext(server, {
-        countryAbbreviation: countryCode,
+        countryCode,
         adminUsername,
         adminPassword,
         deviceName,
@@ -190,7 +190,7 @@ describe('Device API routes for GxConnect Devices', () => {
 
           // Single device exists, now generate a new API key
           const secondContext = createGxConnectTestContext(server, {
-            countryAbbreviation: countryCode,
+            countryCode,
             adminUsername,
             adminPassword,
             deviceName,
@@ -207,7 +207,7 @@ describe('Device API routes for GxConnect Devices', () => {
               .post('/device')
               .set('Authorization', secondContext.deviceAuth)
               .send(
-                _.assign({}, secondContext.basicDevicePayload, {
+                _.merge({}, secondContext.basicDevicePayload, {
                   configuration: {
                     checkpoint: null,
                     data: {
@@ -255,11 +255,13 @@ describe('Device API routes for GxConnect Devices', () => {
     describe('when MAC address changes', () => {
       describe('and device API key changes', () => {
         const firstContext = createGxConnectTestContext(server, {
-          countryAbbreviation: countryCode,
+          countryCode,
           adminUsername,
           adminPassword,
           deviceName,
           macAddress,
+          deviceSerialNumber,
+          hostId,
         })
 
         before(firstContext.beforeRegisterAndSetDevice)
@@ -280,11 +282,13 @@ describe('Device API routes for GxConnect Devices', () => {
             // Single device exists, now generate a new API key
             const newMacAddress = 'MAC12345678FAKE'
             const secondContext = createGxConnectTestContext(server, {
-              countryAbbreviation: countryCode,
+              countryCode,
               adminUsername,
               adminPassword,
               deviceName,
               macAddress: newMacAddress,
+              deviceSerialNumber,
+              hostId,
             })
 
             await secondContext.registerAndSetDevice()
@@ -333,7 +337,7 @@ describe('Device API routes for GxConnect Devices', () => {
 
       describe('but device API key remains the same', () => {
         const context = createGxConnectTestContext(server, {
-          countryAbbreviation: countryCode,
+          countryCode,
           adminUsername,
           adminPassword,
           deviceName,
@@ -427,7 +431,7 @@ describe('Device API routes for GxConnect Devices', () => {
     describe('when device serial changes', () => {
       describe('and device API key changes', () => {
         const firstContext = createGxConnectTestContext(server, {
-          countryAbbreviation: countryCode,
+          countryCode,
           adminUsername,
           adminPassword,
           deviceName,
@@ -439,7 +443,7 @@ describe('Device API routes for GxConnect Devices', () => {
         before(firstContext.beforeRegisterAndSetDevice)
         after(firstContext.afterCleanUp)
 
-        it('should update the device serial for the device and assign it with a new API key', () =>
+        it('should create a new device with the new serial and assign it with a new API key', () =>
           firstContext.runTest(async knex => {
             // Check that device exists with MAC Address and Instrument Serial
             const firstDeviceUniqueIdentifiers = await knex(
@@ -456,7 +460,7 @@ describe('Device API routes for GxConnect Devices', () => {
             // Single device exists, now generate a new API key
             const newDeviceSerialNumber = 'Cepheid-PC-123'
             const secondContext = createGxConnectTestContext(server, {
-              countryAbbreviation: countryCode,
+              countryCode,
               adminUsername,
               adminPassword,
               deviceName,
@@ -477,8 +481,8 @@ describe('Device API routes for GxConnect Devices', () => {
               // Check that old API key no longer associated with a device and is revoked
               assert.deepEqual(firstDeviceApiKeyStatus, [
                 {
-                  deviceId: null,
-                  revoked: 1,
+                  deviceId: firstDeviceApiKeyStatus[0].deviceId,
+                  revoked: 0,
                 },
               ])
 
@@ -519,7 +523,7 @@ describe('Device API routes for GxConnect Devices', () => {
 
       describe('but device API key remains the same', () => {
         const context = createGxConnectTestContext(server, {
-          countryAbbreviation: countryCode,
+          countryCode,
           adminUsername,
           adminPassword,
           deviceName,
@@ -612,7 +616,7 @@ describe('Device API routes for GxConnect Devices', () => {
 
   describe('results', () => {
     const context = createGxConnectTestContext(server, {
-      countryAbbreviation: countryCode,
+      countryCode,
       adminUsername,
       adminPassword,
       deviceName,
@@ -1489,7 +1493,7 @@ describe('Device API routes for GxConnect Devices', () => {
 
   describe('inventory changes', () => {
     const context = createGxConnectTestContext(server, {
-      countryAbbreviation: countryCode,
+      countryCode,
       adminUsername,
       adminPassword,
       deviceName,

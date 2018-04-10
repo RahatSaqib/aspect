@@ -272,7 +272,7 @@ describe('Device API routes for GxAlert Device', () => {
           after(afterCleanUp)
 
           describe('and other identifying properties already belong to another device', () => {
-            it('should create a new GeneXpert device with a duplicate MAC address', () =>
+            it('should update the gxAlertDeviceId on the existing device', () =>
               runTest(async knex => {
                 const newGxAlertDeviceId = 8972
                 useGxAlertDeviceId(newGxAlertDeviceId)
@@ -340,22 +340,8 @@ describe('Device API routes for GxAlert Device', () => {
                       configurationData: JSON.parse(device.configurationData),
                     })
                 )
-                expect(devicesWithDuplicateProperties).to.have.length(2)
+                expect(devicesWithDuplicateProperties).to.have.length(1)
                 expect(devicesWithDuplicateProperties).to.containSubset([
-                  {
-                    name: deviceName,
-                    shortName: deviceName,
-                    macAddress,
-                    serial: deviceSerialNumber,
-                    hostId,
-                    configurationData: {
-                      macAddress,
-                      deviceSerialNumber,
-                      instrumentSerialNumbers,
-                      hostId,
-                      gxAlertDeviceId: initialGxAlertDeviceId,
-                    },
-                  },
                   {
                     name: deviceName,
                     shortName: deviceName,

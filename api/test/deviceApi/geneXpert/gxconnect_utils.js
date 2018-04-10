@@ -129,7 +129,7 @@ async function deleteDeviceSiteDataAndRefreshTokens(knex, apiKeys, clientId) {
 function createGxConnectTestContext(
   server,
   {
-    countryAbbreviation,
+    countryCode,
     deviceName,
     hostId,
     macAddress,
@@ -139,7 +139,7 @@ function createGxConnectTestContext(
   }
 ) {
   return new GxConnectApiTestContext(server, {
-    countryAbbreviation,
+    countryCode,
     deviceName,
     hostId,
     macAddress,
@@ -153,7 +153,7 @@ class GxConnectApiTestContext {
   constructor(
     server,
     {
-      countryAbbreviation,
+      countryCode,
       deviceName,
       hostId,
       macAddress,
@@ -163,7 +163,7 @@ class GxConnectApiTestContext {
     }
   ) {
     this.server = server
-    this.countryAbbreviation = countryAbbreviation
+    this.countryCode = countryCode
     this.deviceName = deviceName
     this.hostId = hostId
     this.macAddress = macAddress
@@ -278,8 +278,8 @@ class GxConnectApiTestContext {
     if (this.macAddress) {
       configurationData.macAddress = this.macAddress
     }
-    if (this.countryAbbreviation) {
-      configurationData.country = this.countryAbbreviation
+    if (this.countryCode) {
+      configurationData.country = this.countryCode
     }
     if (this.deviceSerialNumber) {
       configurationData.deviceSerialNumber = this.deviceSerialNumber

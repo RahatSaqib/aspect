@@ -2246,7 +2246,8 @@ async function seed(knex) {
         name: `Daktari #${i} ${siteData.shortName}`,
         shortName: `Daktari #${i}`,
         deviceTypeId: deviceTypeDaktariVirologyId,
-        deviceStatusId: deviceStatusApproved,
+        deviceStatusId:
+          _.random(1) > 0 ? deviceStatusApproved : deviceStatusAssigned,
         configurationData: JSON.stringify({
           requirePrinter: 'yes',
           adminPassword: 'pwd123',

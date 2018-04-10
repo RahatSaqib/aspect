@@ -13,7 +13,11 @@ const {
 
 const server = supertest.agent('http://localhost:8080')
 const { assert } = chai
-const context = createTestContext(server, { user: 'admin' })
+const context = createTestContext(server, {
+  user: 'admin',
+  type: 'Daktari Virology',
+  partner: 'Partner One',
+})
 const { factGenerateDeviceOffline } = require('../../src/fact/actions')
 const { deviceOffline } = require('../../src/device/actions')
 
