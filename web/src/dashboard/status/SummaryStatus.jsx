@@ -7,7 +7,6 @@ import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { Card } from 'react-toolbox/lib/card'
 import { Unit } from '../../components/pureGrids'
-import Indicator from '../../components/shared/Indicator'
 import { fetchStatDashboard } from '../DashboardRedux'
 import requirePermissions from '../../components/shared/requirePermissions'
 import messages from './messages'
@@ -126,7 +125,12 @@ export const SummaryStatus = ({
   <div className={className}>
     {_.map(summary.toJS(), widget => (
       <Unit key={widget.id} sm="1-2" lg="1-3" xl="1-4">
-        <Link to={widget.link} className={cssClasses('Summary')}>
+        <Link
+          to={widget.link || ''}
+          className={cssClasses('Summary', {
+            'Summary_Link--disabled': !widget.link,
+          })}
+        >
           <Card className={cssClasses('Summary__Card')}>
             <div className={cssClasses('Summary__Card__Title')}>
               <Icon
@@ -159,15 +163,6 @@ export const SummaryStatus = ({
                     {formatMessage('statStatus', widget, intl, defaultMessages)}
                   </div>
                 </div>
-                {widget.target && (
-                  <Indicator
-                    indicator={widget.indicator}
-                    coloredIndicator={widget.coloredIndicator}
-                    isGreaterThan={
-                      parseFloat(widget.count) > parseFloat(widget.target)
-                    }
-                  />
-                )}
               </div>
               <div className={cssClasses('Summary__Card__Item--right')}>
                 <div className={cssClasses('Summary__Card__Item__Messages')}>

@@ -9,8 +9,8 @@ import {
   errorInsufficientScope,
 } from '../error/CommonErrorNotifications'
 
-export const REQUEST_SUMMARY_DASHBOARD = 'REQUEST_SUMMARY_DASHBOARD'
-export const RECEIVE_SUMMARY_DASHBOARD = 'RECEIVE_SUMMARY_DASHBOARD'
+export const REQUEST_STAT_DASHBOARD = 'REQUEST_STAT_DASHBOARD'
+export const RECEIVE_STAT_DASHBOARD = 'RECEIVE_STAT_DASHBOARD'
 
 export const REQUEST_TARGET_DASHBOARD = 'REQUEST_TARGET_DASHBOARD'
 export const RECEIVE_TARGET_DASHBOARD = 'RECEIVE_TARGET_DASHBOARD'
@@ -37,55 +37,72 @@ export const RECEIVE_ACTION_STATUS = 'RECEIVE_ACTION_STATUS'
 /*
  * ---------------- Action Creators -----------------
  */
-function requestSummaryDashboard(type, requestedAt) {
+function requestStatDashboard(requestedAt) {
   return {
-    type,
+    type: REQUEST_STAT_DASHBOARD,
     requestedAt,
   }
 }
 
-function receiveSummaryDashboard(type, requestedAt, data) {
+function receiveStatDashboard(requestedAt, data) {
   return {
-    type,
+    type: RECEIVE_STAT_DASHBOARD,
     requestedAt,
     data,
   }
 }
 
 export function fetchStatDashboard() {
-  const filters = _.fromPairs([['layout', 'stat']])
-  return fetchSummaryDashboard(
-    filters,
-    REQUEST_SUMMARY_DASHBOARD,
-    RECEIVE_SUMMARY_DASHBOARD
-  )
-}
-export function fetchTargetDashboard(rawFiltersParams) {
-  const filtersParams = new URLSearchParams()
-  if (rawFiltersParams.has('minDate')) {
-    filtersParams.set('minDate', rawFiltersParams.get('minDate'))
-  }
-  if (rawFiltersParams.has('maxDate')) {
-    filtersParams.set('maxDate', rawFiltersParams.get('maxDate'))
-  }
-  const filters = _.fromPairs([
-    ['layout', 'target'],
-    ...filtersParams.entries(),
-  ])
-  return fetchSummaryDashboard(
-    filters,
-    REQUEST_TARGET_DASHBOARD,
-    RECEIVE_TARGET_DASHBOARD
-  )
-}
-
-function fetchSummaryDashboard(filters, requestType, receiveType) {
   return dispatch => {
     const requestedAt = `summary_${Date.now()}`
-    dispatch(requestSummaryDashboard(requestType, requestedAt))
+    dispatch(requestStatDashboard(requestedAt))
+
+    return aspectFetch(`/dashboard/summary`, {
+      errorNotifications: {
+        403: errorInsufficientScope(
+          defineMessages({
+            title: {
+              id: 'errorResponseMessages.fetchPersons.GET.403.title',
+              defaultMessage: 'Insufficient Permissions',
+            },
+          })
+        ),
+        default: errorPleaseTryAgainInAFewMinutes(
+          defineMessages({
+            title: {
+              id: 'errorResponseMessages.fetchStatDashboard.GET.default.title',
+              defaultMessage: 'Error Loading Dashboard Stat',
+            },
+          })
+        ),
+      },
+    }).then(json => dispatch(receiveStatDashboard(requestedAt, json.data)))
+  }
+}
+
+function requestTargetDashboard(requestedAt) {
+  return {
+    type: REQUEST_TARGET_DASHBOARD,
+    requestedAt,
+  }
+}
+
+function receiveTargetDashboard(requestedAt, data) {
+  return {
+    type: RECEIVE_TARGET_DASHBOARD,
+    requestedAt,
+    data,
+  }
+}
+
+export function fetchTargetDashboard(filtersParams) {
+  return dispatch => {
+    const filters = _.fromPairs([...filtersParams.entries()])
+    const requestedAt = `target_${Date.now()}`
+    dispatch(requestTargetDashboard(requestedAt))
 
     return aspectFetch(
-      `/dashboard/summary?${stringify({
+      `/dashboard/target?${stringify({
         ...filters,
       })}`,
       {
@@ -102,16 +119,14 @@ function fetchSummaryDashboard(filters, requestType, receiveType) {
             defineMessages({
               title: {
                 id:
-                  'errorResponseMessages.fetchSummaryDashboard.GET.default.title',
-                defaultMessage: 'Error Loading Dashboard Summary',
+                  'errorResponseMessages.fetchTargetDashboard.GET.default.title',
+                defaultMessage: 'Error Loading Dashboard Target',
               },
             })
           ),
         },
       }
-    ).then(json =>
-      dispatch(receiveSummaryDashboard(receiveType, requestedAt, json.data))
-    )
+    ).then(json => dispatch(receiveTargetDashboard(requestedAt, json.data)))
   }
 }
 
@@ -390,7 +405,7 @@ const initialState = new Summary()
 
 export default function dashboardReducer(state = initialState, action) {
   switch (action.type) {
-    case REQUEST_SUMMARY_DASHBOARD:
+    case REQUEST_STAT_DASHBOARD:
     case REQUEST_TARGET_DASHBOARD:
     case REQUEST_RESULT_DASHBOARD:
     case REQUEST_INVENTORY_ITEM_DASHBOARD:
@@ -402,7 +417,7 @@ export default function dashboardReducer(state = initialState, action) {
         'requestedAtSet',
         state.requestedAtSet.add(action.requestedAt)
       )
-    case RECEIVE_SUMMARY_DASHBOARD:
+    case RECEIVE_STAT_DASHBOARD:
       return state.withMutations(mutState => {
         if (mutState.hasIn(['requestedAtSet', action.requestedAt])) {
           mutState.set(

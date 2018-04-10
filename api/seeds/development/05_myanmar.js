@@ -307,7 +307,7 @@ async function seed(knex) {
 
   // Regional Officer Jobs and Targets
   const adminRegions = ['AYY', 'KCN', 'MDY']
-  const targetTokens = ['MDR', 'Smear', 'HIV', 'Children']
+  const targetTokens = ['Total', 'MDR', 'Smear', 'HIV', 'Children']
   let regionNumber = 0
   await Promise.all(
     _.map(adminRegions, async region => {
@@ -351,7 +351,7 @@ async function seed(knex) {
       })
       await Promise.all(
         _.map(targetTokens, async token => {
-          const targetValue = 350 + Math.floor(Math.random() * 200 - 100)
+          const targetValue = 850 + Math.floor(Math.random() * 200 - 100)
           await knex('Target').insert({
             geographyId: regionId,
             targetToken: token,
@@ -617,26 +617,73 @@ async function seed(knex) {
   )
 
   // Create DashboardWidget
-  const widgets = {}
+  const statWidgets = []
   await Promise.all(
-    _.map(dashboardWidget, async widget => {
-      const [id] = await knex('DashboardWidget').insert(widget)
-      if (!widgets[widget.layout]) {
-        widgets[widget.layout] = []
-      }
-      widgets[widget.layout].push(id)
+    _.map(dashboardWidget.stat, async widget => {
+      const widgetData = _.pick(widget, [
+        'title',
+        'titleI18nKey',
+        'subTitle',
+        'subTitleI18nKey',
+        'sqlForIndicator',
+        'link',
+        'sortOrder',
+      ])
+      const [widgetId] = await knex('DashboardWidget').insert(widgetData)
+      const statWidgetData = _.pick(widget, [
+        'icon',
+        'sqlForStatUnit',
+        'statUnit',
+        'statUnitI18nKey',
+        'statStatus',
+        'statStatusI18nKey',
+        'sqlForExtra',
+        'extraUnit',
+        'extraUnitI18nKey',
+        'extraLabel',
+        'extraLabelI18nKey',
+      ])
+      await knex('DashboardWidgetStat').insert(
+        Object.assign({ dashboardWidgetId: widgetId }, statWidgetData)
+      )
+      statWidgets.push(widgetId)
+    })
+  )
+
+  const targetWidgets = []
+  await Promise.all(
+    _.map(dashboardWidget.target, async widget => {
+      const widgetData = _.pick(widget, [
+        'title',
+        'titleI18nKey',
+        'subTitle',
+        'subTitleI18nKey',
+        'sqlForIndicator',
+        'link',
+        'sortOrder',
+      ])
+      const [widgetId] = await knex('DashboardWidget').insert(widgetData)
+      const statWidgetData = _.pick(widget, [
+        'sqlForDataCollection',
+        'thresholdPercentageDataCollection',
+        'targetToken',
+      ])
+      await knex('DashboardWidgetTarget').insert(
+        Object.assign({ dashboardWidgetId: widgetId }, statWidgetData)
+      )
+      targetWidgets.push(widgetId)
     })
   )
 
   await Promise.all(
-    _.map(widgets.stat, async widgetId => {
+    _.map(statWidgets, async widgetId => {
       await knex('JobFunctionDashboardWidget').insert([
         { jobFunctionId: jobFunctionIdAdmin, widgetId },
         { jobFunctionId: jobFunctionIdRegionalOfficer, widgetId },
         { jobFunctionId: jobFunctionIdLabUser, widgetId },
       ])
     }),
-    _.map(widgets.target, async widgetId => {
+    _.map(targetWidgets, async widgetId => {
       await knex('JobFunctionDashboardWidget').insert([
         { jobFunctionId: jobFunctionIdAdmin, widgetId },
         { jobFunctionId: jobFunctionIdRegionalOfficer, widgetId },

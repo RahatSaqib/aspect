@@ -3502,8 +3502,33 @@ async function seed(knex) {
   // Create DashboardWidget
   const widgetIds = {}
   await Promise.all(
-    _.map(dashboardWidget, async widget => {
-      const [widgetId] = await knex('DashboardWidget').insert(widget)
+    _.map(dashboardWidget.stat, async widget => {
+      const widgetData = _.pick(widget, [
+        'title',
+        'titleI18nKey',
+        'subTitle',
+        'subTitleI18nKey',
+        'sqlForIndicator',
+        'link',
+        'sortOrder',
+      ])
+      const [widgetId] = await knex('DashboardWidget').insert(widgetData)
+      const statWidgetData = _.pick(widget, [
+        'icon',
+        'sqlForStatUnit',
+        'statUnit',
+        'statUnitI18nKey',
+        'statStatus',
+        'statStatusI18nKey',
+        'sqlForExtra',
+        'extraUnit',
+        'extraUnitI18nKey',
+        'extraLabel',
+        'extraLabelI18nKey',
+      ])
+      await knex('DashboardWidgetStat').insert(
+        Object.assign({ dashboardWidgetId: widgetId }, statWidgetData)
+      )
       widgetIds[_.toLower(widget.title)] = widgetId
     })
   )

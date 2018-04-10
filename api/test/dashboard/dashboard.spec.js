@@ -13,7 +13,7 @@ describe('Dashboard routes', () => {
 
     it('should return a list of stat dashboard widget objects', done => {
       server
-        .get(`${path}?layout=stat`)
+        .get(`${path}`)
         .set('Authorization', `Bearer ${shared.token}`)
         .end((err, res) => {
           assert.equal(res.status, 200)
@@ -35,7 +35,7 @@ describe('Dashboard routes', () => {
 
     it('should return a list of target dashboard widget objects', done => {
       server
-        .get(`${path}?layout=target`)
+        .get(`${path}`)
         .set('Authorization', `Bearer ${shared.token}`)
         .end((err, res) => {
           assert.equal(res.status, 200)
