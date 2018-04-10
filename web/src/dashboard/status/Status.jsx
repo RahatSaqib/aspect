@@ -13,6 +13,7 @@ import ResultStatus from './ResultStatus'
 import SiteStatus from './SiteStatus'
 import ActionStatus from './ActionStatus'
 import TargetStatus from './TargetStatus'
+import BrowseSiteDropdown from '../../globals/components/BrowseSiteDropdown'
 
 const cssClasses = classnames.bind(require('./Status.css'))
 
@@ -43,7 +44,16 @@ const enhance = compose(
 const Status = ({ history, location, intl }) => (
   <div className={cssClasses('Container')}>
     <Helmet title="Status" />
-
+    <div className={cssClasses('FiltersGroup')}>
+      <div
+        className={cssClasses(
+          'FiltersGroup__Child',
+          'FiltersGroup__Child--dropdown'
+        )}
+      >
+        <BrowseSiteDropdown intl={intl} history={history} location={location} />
+      </div>
+    </div>
     <SummaryStatus
       intl={intl}
       history={history}

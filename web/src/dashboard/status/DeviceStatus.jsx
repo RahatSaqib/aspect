@@ -12,6 +12,7 @@ import {
 } from 'recompose'
 import { connect } from 'react-redux'
 import { Card } from 'react-toolbox/lib/card'
+import MdDescription from 'react-icons/lib/md/description'
 
 import { findKeyInTree } from '../../shared/utils/dom'
 
@@ -114,7 +115,10 @@ export const DeviceStatus = ({
   onMouseLeave,
 }) => (
   <Card className={className}>
-    <Title colorClassName={cssClasses('Title__Color--device')} title={title} />
+    <Title
+      title={title}
+      icon={<MdDescription className={cssClasses('Title__Icon')} />}
+    />
     <div>
       <Unit sm="1-2" lg="1-4">
         <CountryWithPoints

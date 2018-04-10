@@ -124,7 +124,7 @@ export const SummaryStatus = ({
 }) => (
   <div className={className}>
     {_.map(summary.toJS(), widget => (
-      <Unit key={widget.id} sm="1-2" lg="1-3" xl="1-4">
+      <Unit key={widget.id} sm="1-2" lg="1-4">
         <Link
           to={widget.link || ''}
           className={cssClasses('Summary', {

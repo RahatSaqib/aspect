@@ -1,5 +1,5 @@
 const _ = require('lodash')
-const { knex, filterDateRangeParams } = require('../db')
+const { knex, filterParams, filterDateRangeParams } = require('../db')
 const {
   getConstraints,
   addConstraints,
@@ -105,10 +105,14 @@ function getSqlBuilder(sql) {
 function queryCount(sql, dataConstraints, query) {
   const sqlTableAlias = getTableAlias(sql)
   const sqlBuilder = getSqlBuilder(sql)
+
   if (sqlBuilder) {
     sqlBuilder.modify(addConstraints, dataConstraints, sqlTableAlias).first()
     if (sqlTableAlias.result) {
       sqlBuilder.modify(filterDateRangeParams, query, 'r.endedOn')
+    }
+    if (sqlTableAlias.site) {
+      sqlBuilder.modify(filterParams, query, { siteId: 's.id' })
     }
   }
   return sqlBuilder

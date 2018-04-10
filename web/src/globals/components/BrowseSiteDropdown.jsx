@@ -2,10 +2,18 @@ import Immutable from 'immutable'
 import { compose, lifecycle, withHandlers, withProps } from 'recompose'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
+import { defineMessages } from 'react-intl'
 import StyledDropdown from '../../components/themedReactToolbox/StyledDropdown'
 import { fetchSitesForSelectList } from '../../site/SiteRedux'
 import { mergeToFiltersParams } from '../../filter/utils'
 import requirePermissions from '../../components/shared/requirePermissions'
+
+const messages = defineMessages({
+  allSites: {
+    id: 'pages.SiteDropdown.allSites',
+    defaultMessage: 'Region: {region}',
+  },
+})
 
 const enhance = compose(
   requirePermissions({
@@ -38,19 +46,24 @@ const enhance = compose(
       })
     },
   }),
-  withProps(({ location, ...restProps }) => {
+  withProps(({ intl, location, sitesSelectList }) => {
     const searchParams = new URLSearchParams(location.search)
     const filtersParams = new URLSearchParams(searchParams.get('filters') || '')
 
     return {
-      source: restProps.sitesSelectList.items
+      source: sitesSelectList.items
         .map(item => ({
           value: item.get('id'),
           label: item.get('name'),
         }))
-        .insert(0, { value: '', label: 'All Sites' })
+        .insert(0, {
+          value: '',
+          label: intl.formatMessage(messages.allSites, {
+            region: sitesSelectList.stateName || sitesSelectList.countryName,
+          }),
+        })
         .toJS(),
-      value: restProps.sitesSelectList.items
+      value: sitesSelectList.items
         .find(
           it => it.get('id') === filtersParams.get('siteId'),
           null,

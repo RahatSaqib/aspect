@@ -8,6 +8,7 @@ import { connect } from 'react-redux'
 import { Card } from 'react-toolbox/lib/card'
 import { scaleOrdinal } from '@vx/scale'
 import { LegendOrdinal } from '@vx/legend'
+import MdAssignment from 'react-icons/lib/md/assignment'
 
 import { Unit } from '../../components/pureGrids'
 import requirePermissions from '../../components/shared/requirePermissions'
@@ -102,7 +103,10 @@ export const ResultStatus = ({
   resultSummaryList,
 }) => (
   <Card className={className}>
-    <Title colorClassName={cssClasses('Title__Color--result')} title={title} />
+    <Title
+      title={title}
+      icon={<MdAssignment className={cssClasses('Title__Icon')} />}
+    />
     <div>
       <Unit md="1-2" lg="1-3">
         <CountryWithPoints

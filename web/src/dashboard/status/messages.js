@@ -147,7 +147,7 @@ export const messages = defineMessages({
   },
   targetsTitle: {
     id: 'pages.Status.targetsTitle',
-    defaultMessage: 'Testing Targets',
+    defaultMessage: 'Regional Testing Targets',
   },
   thisYear: {
     id: 'pages.Status.thisYear',

@@ -12,6 +12,7 @@ import {
 } from 'recompose'
 import { connect } from 'react-redux'
 import { Card } from 'react-toolbox/lib/card'
+import MdDashboard from 'react-icons/lib/md/dashboard'
 
 import { findKeyInTree } from '../../shared/utils/dom'
 import { Unit } from '../../components/pureGrids'
@@ -110,7 +111,10 @@ export const SiteStatus = ({
   onMouseLeave,
 }) => (
   <Card className={className}>
-    <Title colorClassName={cssClasses('Title__Color--site')} title={title} />
+    <Title
+      title={title}
+      icon={<MdDashboard className={cssClasses('Title__Icon')} />}
+    />
     <div>
       <Unit sm="1-2" lg="1-4">
         <CountryWithPoints

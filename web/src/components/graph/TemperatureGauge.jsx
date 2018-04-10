@@ -1,12 +1,12 @@
 import React from 'react'
 import _ from 'lodash'
 import { Group } from '@vx/group'
-import { ScaleSVG } from '@vx/responsive'
+import { withParentSize } from '@vx/responsive'
 import { AxisRight } from '@vx/axis'
 import { scaleLinear } from '@vx/scale'
 
 const TemperatureGauge = ({
-  width = 300,
+  parentWidth: width = 200,
   height = 200,
   goal = 100,
   value = 0,
@@ -17,7 +17,7 @@ const TemperatureGauge = ({
 }) => {
   const margin = { top: 5, bottom: 5 }
 
-  const tubeWidth = 20
+  const tubeWidth = 16
   const tubeRadius = tubeWidth / 2
   const tubeBorderWidth = 4
   const tubeY = margin.top + tubeRadius
@@ -46,7 +46,7 @@ const TemperatureGauge = ({
     : value >= goal ? achievedColor : normalColor
 
   return (
-    <ScaleSVG width={width} height={height}>
+    <svg width={width} height={height}>
       <Group>
         <circle
           r={tubeWidth / 2}
@@ -108,8 +108,8 @@ const TemperatureGauge = ({
           hideZero
         />
       </Group>
-    </ScaleSVG>
+    </svg>
   )
 }
 
-export default TemperatureGauge
+export default withParentSize(TemperatureGauge)

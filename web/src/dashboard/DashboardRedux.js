@@ -52,12 +52,17 @@ function receiveStatDashboard(requestedAt, data) {
   }
 }
 
-export function fetchStatDashboard() {
+export function fetchStatDashboard(rawFiltersParams) {
+  const filtersParams = new URLSearchParams()
+  if (rawFiltersParams.has('siteId')) {
+    filtersParams.set('siteId', rawFiltersParams.get('siteId'))
+  }
   return dispatch => {
+    const filters = _.fromPairs([...filtersParams.entries()])
     const requestedAt = `summary_${Date.now()}`
     dispatch(requestStatDashboard(requestedAt))
 
-    return aspectFetch(`/dashboard/summary`, {
+    return aspectFetch(`/dashboard/summary?${stringify(filters)}`, {
       errorNotifications: {
         403: errorInsufficientScope(
           defineMessages({
@@ -95,7 +100,14 @@ function receiveTargetDashboard(requestedAt, data) {
   }
 }
 
-export function fetchTargetDashboard(filtersParams) {
+export function fetchTargetDashboard(rawFiltersParams) {
+  const filtersParams = new URLSearchParams()
+  if (rawFiltersParams.has('minDate')) {
+    filtersParams.set('minDate', rawFiltersParams.get('minDate'))
+  }
+  if (rawFiltersParams.has('maxDate')) {
+    filtersParams.set('maxDate', rawFiltersParams.get('maxDate'))
+  }
   return dispatch => {
     const filters = _.fromPairs([...filtersParams.entries()])
     const requestedAt = `target_${Date.now()}`

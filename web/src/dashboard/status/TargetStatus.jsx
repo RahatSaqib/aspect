@@ -17,6 +17,7 @@ import subtractYears from 'date-fns/subYears'
 import { bindActionCreators } from 'redux'
 import { compose, lifecycle, pure, withHandlers, withProps } from 'recompose'
 import { connect } from 'react-redux'
+import MdAssignment from 'react-icons/lib/md/assignment'
 import { Card } from 'react-toolbox/lib/card'
 import { Unit } from '../../components/pureGrids'
 import { fetchTargetDashboard } from '../DashboardRedux'
@@ -38,7 +39,7 @@ const DEFAULT_DATE_RANGE = {
 const defaultFilters = rawFiltersParams =>
   rawFiltersParams.has('minDate')
     ? rawFiltersParams
-    : new URLSearchParams(DEFAULT_DATE_RANGE)
+    : mergeToFiltersParams(DEFAULT_DATE_RANGE, rawFiltersParams)
 
 const filtersFromLocation = _fp.flowRight(
   defaultFilters,
@@ -125,7 +126,9 @@ const enhance = compose(
       },
       dateRangeList
     )
+
     return {
+      isShow: _fp.isEmpty(filtersParams.get('siteId')),
       dateRange: !dateRange ? 'thisYear' : dateRange.value,
       dateRangeList,
     }
@@ -178,6 +181,7 @@ const enhance = compose(
 export const TargetStatus = ({
   intl,
   // --- injected by recompose ---
+  isShow,
   className,
   title,
   targetSummaryList,
@@ -193,12 +197,13 @@ export const TargetStatus = ({
     `${Math.round(target.get('count') / target.get('target') * 100)}%`
 
   return (
+    isShow &&
     targetSummaryList.size > 0 && (
       <Card className={className}>
         <div className={cssClasses('TitleContainer')}>
           <Title
-            colorClassName={cssClasses('Title__Color--status')}
             title={title}
+            icon={<MdAssignment className={cssClasses('Title__Icon')} />}
           />
           <div
             className={cssClasses(
@@ -213,12 +218,13 @@ export const TargetStatus = ({
             />
           </div>
         </div>
-        <div className={cssClasses('Section--summary')}>
+        <div
+          className={cssClasses('Section--summary', 'TargetItemBlockContainer')}
+        >
           {targetSummaryList.map(target => (
             <Unit
-              sm="1-2"
-              md="1-3"
-              lg="1-5"
+              xs="1-5"
+              sm="1-5"
               key={target.get('id')}
               className={cssClasses('TargetItemBlock')}
             >

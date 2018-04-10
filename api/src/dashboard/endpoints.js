@@ -24,6 +24,13 @@ const routes = [
       description: 'Summary Dashboard',
       notes: 'The top level summary dashboard',
       auth: { scope: ['site', 'device'] },
+      validate: {
+        query: Object.assign({
+          siteId: Joi.number()
+            .allow('')
+            .description('Filter for site ID'),
+        }),
+      },
     },
   },
   {
@@ -112,7 +119,7 @@ const routes = [
           {
             siteId: Joi.number()
               .allow('')
-              .description('Site ID'),
+              .description('Filter for Site ID'),
           },
           validateSortPageParams('status', 'site', 'issue')
         ),
