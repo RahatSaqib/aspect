@@ -24,14 +24,22 @@ async function preProcessAddDeviceData({ knex, device, payload, now }) {
   }
   if (device.siteId !== site.id) {
     deviceDetails.siteId = site.id
+    deviceDetails.geographyId = site.geographyId
   }
-  // A ping from GxConnect is just a configuration POST with a MAC address
-  // A ping from GxConnect forwarded by GxAlert is just a POST with a MAC
-  // address and a gxAlertDeviceId
+  // A ping from GxConnect is just a configuration POST with a MAC address,
+  // host ID, device Serial and country abbreviation
+  // A ping from GxConnect forwarded by GxAlert is just a POST with a MAC address,
+  // gxAlertDeviceId, host ID, device Serial and country abbreviation
   if (
     !_.isEmpty(configurationData) &&
     _.every(Object.keys(configurationData), configurationDataKey =>
-      ['macAddress', 'gxAlertDeviceId'].includes(configurationDataKey)
+      [
+        'macAddress',
+        'gxAlertDeviceId',
+        'hostId',
+        'deviceSerialNumber',
+        'country',
+      ].includes(configurationDataKey)
     )
   ) {
     deviceDetails.lastPingOn = now
