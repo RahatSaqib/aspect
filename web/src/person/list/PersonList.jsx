@@ -225,7 +225,7 @@ export const PersonList = ({
                 intl={intl}
                 person={person}
                 onClick={onRowClick}
-                data-person-Id={person.get('id')}
+                data-person-id={person.get('id')}
               />
             ))}
         </PersonDataTable>

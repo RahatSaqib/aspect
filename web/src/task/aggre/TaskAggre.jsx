@@ -264,7 +264,7 @@ export const TaskAggre = ({
                   messages={messages}
                   task={task}
                   onClick={onRowClick}
-                  data-task-Id="detail"
+                  data-task-id="detail"
                 />
               ))}
           </TaskDataTable>

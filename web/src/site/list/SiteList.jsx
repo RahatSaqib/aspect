@@ -232,7 +232,7 @@ export const SiteList = ({
                 intl={intl}
                 site={site}
                 onClick={onRowClick}
-                data-site-Id={site.get('id')}
+                data-site-id={site.get('id')}
               />
             ))}
         </SiteDataTable>

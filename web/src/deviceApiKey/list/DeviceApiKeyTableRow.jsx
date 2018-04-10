@@ -28,7 +28,7 @@ const DeviceApiKeyTableRow = ({
     <TableCell className={cssClasses('TableCell')}>
       <Checkbox
         name="selected"
-        data-device-Api-Key-Id={deviceApiKey.get('id')}
+        data-device-api-key-id={deviceApiKey.get('id')}
         disabled={disabled}
         checked={checked}
         onChange={onSelectedChange}
@@ -56,7 +56,7 @@ const DeviceApiKeyTableRow = ({
     <TableCell className={cssClasses('TableCell')}>
       <Checkbox
         name="revoked"
-        data-device-Api-Key-Id={deviceApiKey.get('id')}
+        data-device-api-key-id={deviceApiKey.get('id')}
         checked={deviceApiKey.get('revoked') > 0}
         onChange={onRevokedChange}
       />

@@ -232,7 +232,7 @@ export const RouterList = ({
                 intl={intl}
                 router={router}
                 onClick={onRowClick}
-                data-router-Id={router.get('id')}
+                data-router-id={router.get('id')}
               />
             ))}
         </RouterDataTable>
