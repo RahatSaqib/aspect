@@ -16,6 +16,7 @@ const {
   addDeviceOperation,
   getSite,
 } = require('./device')
+const { deviceOnline } = require('../device/actions')
 const { mergeResult, getResult } = require('./result')
 const { loadPlugin } = require('./plugin/registration')
 
@@ -108,13 +109,12 @@ function deviceApiHandler(handler, handlerOptions) {
       deviceUpdates.lastPingOn = now
       deviceUpdates.lastPingFromIp = remoteAddress
     }
-    // need to ensure device is flagged as online
-    await knex('FactDeviceFlag')
-      .where({ deviceId })
-      .update({ offline: false })
     await knex('Device')
       .where({ id: device.id })
       .update(deviceUpdates)
+
+    // need to ensure device is flagged as online
+    context.messageContext.dispatch(deviceOnline(deviceId))
 
     let response = {}
     await context.messageContext.transact(async knex => {

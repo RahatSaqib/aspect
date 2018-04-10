@@ -1,8 +1,8 @@
-const { issueCreated, issueEscalated, issueResolved } = require('./actions')
+const { issueCreated, issueTriggered, issueResolved } = require('./actions')
 
-function onIssueTriggered(issueType) {
-  return async (action, context) => {
-    context.bindActionCreators({ issueCreated, issueEscalated, issueResolved })
+function onIssueEventTrigger(issueType) {
+  return async (action, { messageContext: context }) => {
+    context.bindActionCreators({ issueCreated, issueTriggered })
     return context.transact(async knex => {
       const now = new Date()
       const openIssue = await findOpenIssue(knex, issueType, action)
@@ -11,40 +11,44 @@ function onIssueTriggered(issueType) {
       if (openIssue != null) {
         issue = openIssue
       } else {
-        issue = createNewIssue(knex, issueType, action)
+        issue = await createNewIssue(knex, issueType, action)
         context.issueCreated(issue.id)
       }
 
       await knex('IssueEvent').insert({
         issueId: issue == null ? null : issue.id,
-        issueEventStatusId: await getEventStatusId(knex, 'Triggered'),
+        issueEventStatusId: await getId(knex, 'IssueEventStatus', 'Triggered'),
         data: JSON.stringify(action),
         createdOn: now,
       })
+      context.issueTriggered(issue.id)
     })
   }
 }
 
-function onIssueResolved(issueType) {
-  return async (action, context) => {
-    context.bindActionCreators({ issueCreated, issueEscalated, issueResolved })
+function onIssueEventResolve(issueType) {
+  return async (action, { messageContext: context }) => {
+    context.bindActionCreators({ issueResolved })
     context.transact(async knex => {
       const now = new Date()
       const openIssue = await findOpenIssue(knex, issueType, action)
 
       let issue = null
       if (openIssue != null) {
-        await resolveOpenIssue(knex, openIssue.id)
         issue = openIssue
-        context.issueResolved(openIssue.id)
+        await knex('Issue')
+          .where({ id: issue.id })
+          .update({
+            issueStatusId: await getId(knex, 'IssueStatus', 'Resolved'),
+          })
+        context.issueResolved(issue.id)
+        await knex('IssueEvent').insert({
+          issueId: issue.id,
+          issueEventStatusId: await getId(knex, 'IssueEventStatus', 'Resolved'),
+          data: JSON.stringify(action),
+          createdOn: now,
+        })
       }
-
-      await knex('IssueEvent').insert({
-        issueId: issue == null ? null : issue.id,
-        issueEventStatusId: await getEventStatusId(knex, 'Resolved'),
-        data: JSON.stringify(action),
-        createdOn: now,
-      })
     })
   }
 }
@@ -55,27 +59,26 @@ async function findOpenIssue(knex, issueType, action) {
     .join('IssueStatus as is', 'i.issueStatusId', 'is.id')
     .where({ 'it.externalId': issueType })
     .whereNotIn('is.externalId', ['Inactive', 'Resolved'])
-    .orderBy('updatedOn', 'desc')
+    .orderBy('i.updatedOn', 'desc')
 
   if (action.deviceId) {
-    findOpenIssue.join('Device as d', 'i.deviceId', 'd.id')
+    findOpenIssue.where({ 'i.deviceId': action.deviceId })
   } else if (action.siteId) {
-    findOpenIssue.join('Site as s', 'i.siteId', 's.id')
+    findOpenIssue.where({ 'i.siteId': action.siteId })
   } else if (action.geographyId) {
-    findOpenIssue.join('Geography as g', 'g.geographyId', 'g.id')
+    findOpenIssue.where({ 'i.geographyId': action.geographyId })
   } else if (action.partnerId) {
-    findOpenIssue.join('Partner as p', 'i.partnerId', 'p.id')
+    findOpenIssue.where({ 'i.partnerId': action.partnerId })
   }
 
-  return findOpenIssue.first('i.id', 'it.id as issueTypeId')
+  return findOpenIssue.first('i.id')
 }
 
 async function createNewIssue(knex, issueType, action) {
-  // TODO name/description, etc.
   const now = new Date()
   const issue = {
-    issueStatusId: await getIssueStatusId(knex, 'Active'),
-    issueTypeId: await getIssueTypeId(knex, issueType),
+    issueStatusId: await getId(knex, 'IssueStatus', 'Active'),
+    issueTypeId: await getId(knex, 'IssueType', issueType),
     level: 1,
     createdOn: now,
     updatedOn: now,
@@ -115,39 +118,19 @@ async function createNewIssue(knex, issueType, action) {
     issue.partnerId = action.partnerId
   }
 
-  const [issueId] = knex('Issue').insert(issue)
+  const [issueId] = await knex('Issue').insert(issue)
   issue.id = issueId
   return issue
 }
 
-async function resolveOpenIssue(knex, issueId) {
-  await knex('Issue')
-    .where({ id: issueId })
-    .update({ issueStatusId: getIssueStatusId('Resolved') })
-}
-
-async function getIssueStatusId(knex, externalId) {
-  const { id } = await knex('IssueStatus')
-    .where({ externalId })
-    .first('id')
-  return id
-}
-
-async function getIssueTypeId(knex, externalId) {
-  const { id } = await knex('IssueType')
-    .where({ externalId })
-    .first('id')
-  return id
-}
-
-async function getEventStatusId(knex, externalId) {
-  const { id } = await knex('IssueEventStatus')
+async function getId(knex, table, externalId) {
+  const { id } = await knex(table)
     .where({ externalId })
     .first('id')
   return id
 }
 
 module.exports = {
-  onIssueTriggered,
-  onIssueResolved,
+  onIssueEventTrigger,
+  onIssueEventResolve,
 }

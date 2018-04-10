@@ -7,6 +7,8 @@ const { randomToken } = require('../../src/deviceApi/apiKey')
 
 const { assert } = chai
 
+const QUEUE_IDLE_TIME = 250
+
 const devicePath = '/device'
 
 async function deleteTestDataFromCheckpoint(knex, checkpoint, deviceIds) {
@@ -27,6 +29,7 @@ async function deleteTestDataFromCheckpoint(knex, checkpoint, deviceIds) {
   const resultIds = _.uniq(_.map(deviceUpdates, 'resultId'))
   const opIds = _.uniq(_.map(deviceUpdates, 'deviceOperationId'))
 
+  await deleteIssues(knex, { resultIds })
   await knex('DeviceLog')
     .whereIn('id', deviceLogIds)
     .delete()
@@ -72,6 +75,7 @@ async function deleteDeviceAndTestData(knex, apiKeys) {
     .whereIn('deviceId', deviceIds)
     .map(op => op.id)
 
+  await deleteIssues(knex, { deviceIds })
   await knex('DeviceStatusLog')
     .whereIn('deviceId', deviceIds)
     .delete()
@@ -112,6 +116,44 @@ async function deleteDeviceAndTestData(knex, apiKeys) {
     .delete()
   await knex('DeviceApiKey')
     .whereIn('token', tokens)
+    .delete()
+}
+
+async function deleteIssues(knex, { deviceIds, resultIds }) {
+  const issueIdQ = knex('Issue as i')
+  if (deviceIds != null && deviceIds.length > 0) {
+    issueIdQ.orWhereIn('i.deviceId', deviceIds)
+  }
+  if (resultIds != null && resultIds.length > 0) {
+    issueIdQ.orWhereIn('i.resultId', resultIds)
+  }
+
+  const issueIds = await issueIdQ.select('i.id').pluck('id')
+  const notifications = await knex('Notification')
+    .whereIn('issueId', issueIds)
+    .select('id', 'alertMessageId', 'emailMessageId', 'smsMessageId')
+  const notificationIds = _.map(notifications, 'id')
+  const alertMessageIds = _.map(notifications, 'alertMessageId')
+  const emailMessageIds = _.map(notifications, 'emailMessageId')
+  const smsMessageIds = _.map(notifications, 'smsMessageId')
+
+  await knex('Notification')
+    .whereIn('id', notificationIds)
+    .delete()
+  await knex('AlertMessage')
+    .whereIn('id', alertMessageIds)
+    .delete()
+  await knex('EmailMessage')
+    .whereIn('id', emailMessageIds)
+    .delete()
+  await knex('SmsMessage')
+    .whereIn('id', smsMessageIds)
+    .delete()
+  await knex('IssueEvent')
+    .whereIn('issueId', issueIds)
+    .delete()
+  await knex('Issue')
+    .whereIn('id', issueIds)
     .delete()
 }
 
@@ -347,13 +389,22 @@ class DeviceApiTestContext {
     return queue.createMessageContext()
   }
 
-  async waitForAction(predicate) {
+  async waitForAction(predicate, timeout = QUEUE_IDLE_TIME) {
     const queue = await this.queueConnect()
-    return queue.waitForAction(predicate)
+    return queue.waitForAction(predicate, timeout)
+  }
+
+  async waitForIdle(idleTime = QUEUE_IDLE_TIME) {
+    const queue = await this.queueConnect()
+    return queue.waitForIdle(idleTime)
   }
 
   afterEach() {
     return run(async knex => {
+      // Wait for queue to be idle so all created data
+      // that will be created can be cleared
+      await this.waitForIdle()
+
       // Reset to previous device configuration
       await Promise.all(
         this.deviceIds.map(deviceId => {

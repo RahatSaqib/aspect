@@ -1,6 +1,7 @@
 // ----------- Action Types ---------------------
 const types = {
   ISSUE_CREATED: 'ISSUE_CREATED',
+  ISSUE_TRIGGERED: 'ISSUE_TRIGGERED',
   ISSUE_ESCALATED: 'ISSUE_ESCALATED',
   ISSUE_RESOLVED: 'ISSUE_RESOLVED',
 }
@@ -19,6 +20,24 @@ function issueCreated(issueId) {
   }
   return {
     type: types.ISSUE_CREATED,
+    issueId,
+  }
+}
+
+/**
+ * Creates an action to notify the issue with given id
+ * has been triggered. This will be whenever an issue
+ * has been triggered whether it is a new or prexisting
+ * issue.
+ *
+ * issueId is required.
+ */
+function issueTriggered(issueId) {
+  if (issueId == null) {
+    throw new Error('Must specify issueId')
+  }
+  return {
+    type: types.ISSUE_TRIGGERED,
     issueId,
   }
 }
@@ -63,6 +82,7 @@ function issueResolved(issueId) {
 module.exports = {
   types,
   issueCreated,
+  issueTriggered,
   issueEscalated,
   issueResolved,
 }

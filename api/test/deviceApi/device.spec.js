@@ -15,7 +15,7 @@ const server = supertest.agent('http://localhost:8080')
 const { assert } = chai
 const context = createTestContext(server, { user: 'admin' })
 const { factGenerateDeviceOffline } = require('../../src/fact/actions')
-const { types: { DEVICE_OFFLINE } } = require('../../src/device/actions')
+const { deviceOffline } = require('../../src/device/actions')
 
 const baseConfig = {
   requirePrinter: 'yes',
@@ -333,12 +333,12 @@ describe('Device API routes', () => {
           .update({ lastPingOn: last8Day })
 
         // Generate device offline facts and wait for offline action for new device
-        const waitForOffline = context.waitForAction({
-          type: DEVICE_OFFLINE,
-          deviceId: newDevice.id,
-        })
+        const waitForOffline = context.waitForAction(
+          deviceOffline(newDevice.id)
+        )
         messageContext.factGenerateDeviceOffline()
         await waitForOffline
+        await context.waitForIdle()
 
         const [offlineFactDevice] = await knex('FactDeviceFlag as fdf').where(
           'fdf.deviceId',
