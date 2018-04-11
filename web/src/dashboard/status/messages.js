@@ -233,6 +233,14 @@ export const messages = defineMessages({
     id: 'pages.Status.noActionsTitle',
     defaultMessage: 'There are no waiting actions!',
   },
+  reportsTitle: {
+    id: 'pages.Status.reportsTitle',
+    defaultMessage: 'Reports',
+  },
+  downloadReport: {
+    id: 'pages.Status.downloadReport',
+    defaultMessage: 'Download Report',
+  },
 })
 
 export default messages

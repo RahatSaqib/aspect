@@ -13,6 +13,7 @@ import ResultStatus from './ResultStatus'
 import SiteStatus from './SiteStatus'
 import ActionStatus from './ActionStatus'
 import TargetStatus from './TargetStatus'
+import Reports from './Reports'
 import BrowseSiteDropdown from '../../globals/components/BrowseSiteDropdown'
 
 const cssClasses = classnames.bind(require('./Status.css'))
@@ -102,6 +103,13 @@ const Status = ({ history, location, intl }) => (
       intl={intl}
       className={cssClasses('Section--withStatus')}
       title={intl.formatMessage(messages.sitesTitle)}
+    />
+
+    <Reports
+      intl={intl}
+      location={location}
+      className={cssClasses('Section--withStatus')}
+      title={intl.formatMessage(messages.reportsTitle)}
     />
   </div>
 )
