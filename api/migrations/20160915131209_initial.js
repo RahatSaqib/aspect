@@ -1315,7 +1315,7 @@ async function up(knex) {
       .integer('issueEventStatusId')
       .unsigned()
       .references('id')
-      .inTable('issueEventStatus')
+      .inTable('IssueEventStatus')
       .notNullable()
     issueEvent
       .integer('issueId')
