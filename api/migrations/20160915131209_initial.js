@@ -1724,6 +1724,8 @@ async function down(knex) {
   await knex.schema.dropTableIfExists('SiteTag')
   await knex.schema.dropTableIfExists('DeviceTag')
   await knex.schema.dropTableIfExists('PersonTag')
+  await knex.schema.dropTableIfExists('DashboardWidgetStat')
+  await knex.schema.dropTableIfExists('DashboardWidgetTarget')
   await knex.schema.dropTableIfExists('DashboardWidget')
   await knex.schema.dropTableIfExists('JobFunctionDashboardWidget')
   await knex.schema.dropTableIfExists('Target')
