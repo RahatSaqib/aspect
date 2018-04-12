@@ -28,7 +28,7 @@ const enhance = compose(
     userFeatures: state.user.features,
   }))
 )
-const LinkNavigation = ({
+export const LinkNavigation = ({
   history,
   location,
 
@@ -67,6 +67,18 @@ const LinkNavigation = ({
         href: '/browse',
         label: 'Browse',
         requiredPermissions: [],
+        requiredFeatures: [
+          'device',
+          'result',
+          'person',
+          'site',
+          'inventory',
+          'router',
+          'reporter',
+          'notification',
+          'report',
+          'deviceApiKey',
+        ],
       },
       {
         href: '/reports',
