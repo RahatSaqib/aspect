@@ -32,9 +32,7 @@ class MessageQueue {
           const action = JSON.parse(message.toString())
           const matchType = actionMatch[1]
           if (action.type === matchType) {
-            this.emitter.emit(action.type, action, {
-              messageContext: this.createMessageContext(),
-            })
+            this.emitter.emit(action.type, action)
           }
           this.emitter.emit('+', action)
         }
@@ -92,7 +90,15 @@ class MessageQueue {
   subscribe(subscriptions) {
     _.each(subscriptions, ({ actions }) => {
       _.each(actions, (listener, type) => {
-        this.emitter.addListener(type, listener)
+        this.emitter.addListener(type, action => {
+          try {
+            listener(action, {
+              messageContext: this.createMessageContext(),
+            })
+          } catch (err) {
+            console.error(err) // eslint-disable-line no-console
+          }
+        })
       })
     })
   }
