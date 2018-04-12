@@ -19,7 +19,7 @@ describe('Notification endpoints', () => {
   afterEach(context.afterEach)
 
   describe('Device Offline', () => {
-    it.skip('should create Notification when DeviceOffline', () =>
+    it('should create Notification when DeviceOffline', () =>
       runTest(async knex => {
         const { apiKey, deviceAuth, createMessageContext } = context
         assert.isOk(apiKey)
