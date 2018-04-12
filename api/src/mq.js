@@ -198,14 +198,16 @@ class MessageContext {
   constructor(queue) {
     this.queue = queue
     _.bindAll(this, ['dispatch', 'transact', 'rollback', 'commit'])
-    this.reset()
+    this.transaction = null
+    this.actions = []
+    this.isFinalState = false
   }
 
   dispatch(action) {
-    if (_.isFunction(action)) {
-      // Allow thunks
-      action = action(this.dispatch)
+    if (this.isFinalState) {
+      throw new Error('Cannot dispatch after final state, create new context')
     }
+
     if (this.transaction) {
       // Queue actions until transaction committed
       this.actions.push(action)
@@ -216,43 +218,34 @@ class MessageContext {
   }
 
   transact(task) {
-    this.tasks.push(task)
-    if (!this.transaction) {
-      const context = this
-      context.transaction = transact(async knex => {
-        // This needs to be in loop and synchronous
-        // because task may add to stack. Do not change
-        // to Promise.all or map over assumed range
-        /* eslint-disable no-await-in-loop */
-        while (context.tasks.length > 0) {
-          task = context.tasks.shift()
-          await task(knex)
-        }
-      })
-        .then(context.commit)
-        .then(null, err => {
-          console.error(err) // eslint-disable-line no-console
-          context.rollback()
-          throw err
-        })
+    if (this.transaction) {
+      throw new Error('Cannot create multiple transactions, create new context')
     }
+    this.transaction = transact(async knex => task(knex))
+      .then(this.commit)
+      .then(null, err => {
+        console.error(err) // eslint-disable-line no-console
+        this.rollback()
+        throw err
+      })
     return this.transaction
   }
 
   commit() {
-    const { actions } = this
-    this.reset()
-    actions.forEach(action => this.dispatch(action))
+    if (this.isFinalState) {
+      throw new Error('Cannot commit after final state, create new context')
+    }
+    this.transaction = null
+    this.actions.forEach(action => this.dispatch(action))
+    this.isFinalState = true
   }
 
   rollback() {
-    this.reset()
-  }
-
-  reset() {
+    if (this.isFinalState) {
+      throw new Error('Cannot rollback after final state, create new context')
+    }
     this.transaction = null
-    this.actions = []
-    this.tasks = []
+    this.isFinalState = true
   }
 
   bindActionCreators(creators) {
