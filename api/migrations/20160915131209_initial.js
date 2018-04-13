@@ -814,12 +814,14 @@ async function up(knex) {
       .index()
       .references('id')
       .inTable('Result')
+      .onDelete('SET NULL')
     deviceLog
       .integer('deviceOperationId')
       .unsigned()
       .index()
       .references('id')
       .inTable('DeviceOperation')
+      .onDelete('SET NULL')
     deviceLog.charset('utf8')
   })
 

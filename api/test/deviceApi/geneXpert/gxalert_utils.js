@@ -2,6 +2,7 @@ const _ = require('lodash')
 const chai = require('chai')
 const { getDeviceFromApiKey } = require('../utils')
 const { run } = require('../../../src/db')
+const { waitAsyncComplete } = require('../../utils/generatorFunctionUtils')
 const { randomToken } = require('../../../src/deviceApi/apiKey')
 
 const { assert } = chai
@@ -281,6 +282,7 @@ class GxAlertApiTestContext {
 
   async cleanUp() {
     return run(async knex => {
+      await waitAsyncComplete()
       if (!_.isEmpty(this.gxAlertDeviceIds)) {
         await deleteGeneXpertDeviceSiteDataAndRefreshTokens(
           knex,
