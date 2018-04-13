@@ -379,7 +379,7 @@ class DeviceApiTestContext {
 
   async queueConnect() {
     if (this.queue == null) {
-      this.queue = await createMessageQueue()
+      this.queue = await createMessageQueue('aspect_test_device_api')
     }
     return this.queue
   }

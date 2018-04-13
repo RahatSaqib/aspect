@@ -4,13 +4,18 @@ const amqp = require('amqplib')
 const { transact } = require('./db')
 const EventEmitter = require('events')
 
-async function createMessageQueue() {
-  return new MessageQueue().connect()
+const exchange = 'aspect'
+
+async function createMessageQueue(name) {
+  if (name == null) {
+    throw new Error('Must specify unique queue name')
+  }
+  return new MessageQueue(name).connect()
 }
 
-const exchange = 'aspect'
 class MessageQueue {
-  constructor() {
+  constructor(name) {
+    this.name = name
     this.emitter = new EventEmitter()
   }
 
@@ -20,12 +25,13 @@ class MessageQueue {
     const channel = await connection.createChannel()
     await channel.assertExchange(exchange, 'topic', { durable: true })
     this.channel = channel
-    const { queue } = channel.assertQueue('', { exclusive: true })
-    this.channel.bindQueue(queue, exchange, 'aspect.actions.*')
 
+    const { queue } = channel.assertQueue(`${this.name}_actions_all`)
+    channel.bindQueue(queue, exchange, 'aspect.actions.*')
     channel.consume(queue, message => {
       const action = JSON.parse(message.content.toString())
       this.emitter.emit('action', action)
+      this.channel.ack(message)
     })
     return this
   }
@@ -69,10 +75,9 @@ class MessageQueue {
   subscribe(name, subscriptions) {
     _.each(subscriptions, ({ actions }, subscriptionIndex) => {
       _.each(actions, (listener, type) => {
-        const { channel } = this
+        const { channel, name: queueName } = this
         const { queue } = channel.assertQueue(
-          `aspect_${name}_${subscriptionIndex}_actions_${type}`,
-          { exclusive: true }
+          `${queueName}_${name}_${subscriptionIndex}_actions_${type}`
         )
         channel.bindQueue(queue, exchange, `aspect.actions.${type}`)
         channel.consume(queue, message => {
@@ -84,6 +89,7 @@ class MessageQueue {
           } catch (err) {
             console.error(err) // eslint-disable-line no-console
           }
+          this.channel.ack(message)
         })
       })
     })
