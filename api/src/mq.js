@@ -25,8 +25,7 @@ class MessageQueue {
 
     channel.consume(queue, message => {
       const action = JSON.parse(message.content.toString())
-      this.emitter.emit(action.type, action)
-      this.emitter.emit('+', action)
+      this.emitter.emit('action', action)
     })
     return this
   }
@@ -67,10 +66,17 @@ class MessageQueue {
    *
    *   Can specify multiple action types per subscription.
    */
-  subscribe(subscriptions) {
-    _.each(subscriptions, ({ actions }) => {
+  subscribe(name, subscriptions) {
+    _.each(subscriptions, ({ actions }, subscriptionIndex) => {
       _.each(actions, (listener, type) => {
-        this.emitter.addListener(type, action => {
+        const { channel } = this
+        const { queue } = channel.assertQueue(
+          `aspect_${name}_${subscriptionIndex}_actions_${type}`,
+          { exclusive: true }
+        )
+        channel.bindQueue(queue, exchange, `aspect.actions.${type}`)
+        channel.consume(queue, message => {
+          const action = JSON.parse(message.content.toString())
           try {
             listener(action, {
               messageContext: this.createMessageContext(),
@@ -136,9 +142,9 @@ class MessageQueue {
           clearTimeout(timeoutId)
           timeoutId = null
         }
-        this.emitter.removeListener('+', checkedListener)
+        this.emitter.removeListener('action', checkedListener)
       }
-      this.emitter.addListener('+', checkedListener)
+      this.emitter.addListener('action', checkedListener)
     })
   }
 
@@ -165,11 +171,11 @@ class MessageQueue {
         timeIdle += idleTimeIncrement
         if (timeIdle >= idleTime) {
           clearInterval(idleIntervalId)
-          this.emitter.removeListener('+', clearTimeIdle)
+          this.emitter.removeListener('action', clearTimeIdle)
           resolve()
         }
       }, idleTimeIncrement)
-      this.emitter.addListener('+', clearTimeIdle)
+      this.emitter.addListener('action', clearTimeIdle)
     })
   }
 }
