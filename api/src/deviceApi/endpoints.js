@@ -416,6 +416,9 @@ const routes = [
         },
       },
       response: {
+        options: {
+          allowUnknown: true,
+        },
         schema: {
           error: errorPayload,
         },
@@ -443,6 +446,9 @@ const routes = [
         },
       },
       response: {
+        options: {
+          allowUnknown: true,
+        },
         schema: {
           error: errorPayload,
         },
@@ -503,6 +509,9 @@ const routes = [
         },
       },
       response: {
+        options: {
+          allowUnknown: true,
+        },
         schema: {
           error: errorPayload,
         },
@@ -568,6 +577,9 @@ const routes = [
         },
       },
       response: {
+        options: {
+          allowUnknown: true,
+        },
         schema: {
           error: errorPayload,
         },

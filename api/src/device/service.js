@@ -16,7 +16,7 @@ const {
 const SELECT_LIST_FIELDS = [
   'd.id',
   'd.name',
-  'd.shortname',
+  'd.shortName',
   'd.createdOn',
   'd.lastPingOn',
   'd.lastSeenOn as lastSeen',
@@ -32,7 +32,7 @@ const SELECT_LIST_FIELDS = [
 const SELECT_SHOW_FIELDS = [
   'd.id',
   'd.name',
-  'd.shortname',
+  'd.shortName',
   'd.createdOn',
   'd.lastPingOn',
   'd.lastSeenOn as lastSeen',

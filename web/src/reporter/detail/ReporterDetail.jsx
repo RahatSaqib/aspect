@@ -51,9 +51,9 @@ const messages = defineMessages({
     id: 'pages.ReporterDetail.fieldName',
     defaultMessage: 'Name',
   },
-  fieldShortname: {
-    id: 'pages.ReporterDetail.fieldShortname',
-    defaultMessage: 'Shortname',
+  fieldShortName: {
+    id: 'pages.ReporterDetail.fieldShortName',
+    defaultMessage: 'ShortName',
   },
   fieldNotes: {
     id: 'pages.ReporterDetail.fieldNotes',
@@ -142,7 +142,7 @@ const enhance = compose(
       // see /api/src/device/service.js, const SELECT_SHOW_FIELDS
       id: PropTypes.number,
       name: PropTypes.string,
-      shortname: PropTypes.string,
+      shortName: PropTypes.string,
       createdOn: PropTypes.string,
       lastPingOn: PropTypes.string,
       lastSeen: PropTypes.string,
@@ -169,7 +169,7 @@ export class ReporterDetail extends PureComponent {
     isDemoDialogOpen: false,
     values: {
       name: '',
-      shortname: '',
+      shortName: '',
       notes: '',
       siteId: '',
     },
@@ -203,7 +203,7 @@ export class ReporterDetail extends PureComponent {
 
         this.handleFormChange({
           name: reporter.get('name') || '',
-          shortname: reporter.get('shortname') || '',
+          shortName: reporter.get('shortName') || '',
           notes: reporter.get('notes') || '',
           statusToken: reporter.get('statusToken') || '',
           siteId: reporter.get('siteId'),
@@ -243,7 +243,7 @@ export class ReporterDetail extends PureComponent {
     const { formatMessage } = intl
     const labels = {
       name: formatMessage(messages.fieldName),
-      shortname: formatMessage(messages.fieldShortname),
+      shortName: formatMessage(messages.fieldShortName),
       notes: formatMessage(messages.fieldNotes),
       statusToken: formatMessage(messages.approved),
       siteId: formatMessage(messages.fieldSiteId),
@@ -295,7 +295,7 @@ export class ReporterDetail extends PureComponent {
         (value, key) => `${value.get('type') !== 'object' ? '_' : ''}${key}`
       )
 
-    const shortname = reporter.get('shortname')
+    const shortName = reporter.get('shortName')
 
     return (
       <div>
@@ -309,7 +309,7 @@ export class ReporterDetail extends PureComponent {
                 format={v => (
                   <div>
                     <h1 className={styles.Name}>
-                      {v} {shortname && <small>({shortname})</small>}
+                      {v} {shortName && <small>({shortName})</small>}
                     </h1>
                     <div className={styles.StatusText}>
                       <Link

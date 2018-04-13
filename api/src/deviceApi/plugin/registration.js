@@ -1,10 +1,6 @@
 const { get } = require('lodash')
 
-const {
-  addResultWorkflowLogIfChanged,
-  consumeInventoryForResult,
-  updateFactResultCountDevice,
-} = require('./common')
+const postProcessMergeResult = require('./postProcessMergeResult')
 
 const plugins = {
   default: {
@@ -31,12 +27,20 @@ const plugins = {
     onResultLogged: require('./malawi/onResultLogged'),
   },
   gxconnect: {
-    preProcessCreateDevice: require('./gxconnect/preProcessCreateDevice'),
-    preProcessAddDeviceData: require('./gxconnect/preProcessAddDeviceData'),
-    preProcessUpdateDeviceConfiguration: require('./gxconnect/preProcessUpdateDeviceConfiguration'),
-    postProcessUpdateDeviceConfiguration: require('./gxconnect/postProcessUpdateDeviceConfiguration'),
-    postProcessAddDeviceOperation: require('./gxconnect/postProcessAddDeviceOperation'),
-    preProcessMergeResult: require('./gxconnect/preProcessMergeResult'),
+    preProcessCreateDevice: require('./genexpert/gxconnect_plugin/preProcessCreateDevice'),
+    preProcessAddDeviceData: require('./genexpert/preProcessAddDeviceData'),
+    preProcessUpdateDeviceConfiguration: require('./genexpert/preProcessUpdateDeviceConfiguration'),
+    postProcessUpdateDeviceConfiguration: require('./genexpert/postProcessUpdateDeviceConfiguration'),
+    postProcessAddDeviceOperation: require('./genexpert/postProcessAddDeviceOperation'),
+    preProcessMergeResult: require('./genexpert/preProcessMergeResult'),
+  },
+  gxalert: {
+    preProcessAddDeviceData: require('./genexpert/gxalert_plugin/preProcessAddDeviceData'),
+    preProcessUpdateDeviceConfiguration: require('./genexpert/preProcessUpdateDeviceConfiguration'),
+    postProcessUpdateDeviceConfiguration: require('./genexpert/gxalert_plugin/postProcessUpdateDeviceConfiguration'),
+    postProcessAddDeviceOperation: require('./genexpert/gxalert_plugin/postProcessAddDeviceOperation'),
+    preProcessMergeResult: require('./genexpert/preProcessMergeResult'),
+    postProcessMergeResult: require('./genexpert/gxalert_plugin/postProcessMergeResult'),
   },
 }
 
@@ -55,7 +59,7 @@ async function loadPlugin(pluginName, actionName) {
 
 /**
  * Device data is received for an API Key that does not yet have a device
- * Tranform the payload to new payload  to process in format expected by
+ * Transform the payload to new payload  to process in format expected by
  * Device API
  *
  * This can be used, for example, to set default device type or name
@@ -164,29 +168,6 @@ async function preProcessMergeResult(/* context */) {
  */
 async function transformMergeResultPayload(context) {
   return context.payload
-}
-
-/**
- * A new result has been created and stored to the datatase, perform
- * any post processing of the result.
- *
- * Return the response to send back to client
- */
-async function postProcessMergeResult(context, result, previousResult) {
-  const { knex, payload, now } = context
-  await addResultWorkflowLogIfChanged(
-    knex,
-    payload,
-    result,
-    previousResult,
-    'Device API Update',
-    now
-  )
-  // // TODO ASP-355 consume inventory using a message listener instead
-  // // of within plugin/same transaction
-  await consumeInventoryForResult(knex, payload, result)
-  await updateFactResultCountDevice(knex, payload, result)
-  return {}
 }
 
 /**

@@ -27,7 +27,7 @@ const INVENTORY_ITEM_SELECT_LIST_FIELDS = [
   'c.name as consumableName',
   'c.manufacturer',
   'c.canExpire',
-  'u.shortname as unitShortName',
+  'u.shortName as unitShortName',
   's.name as siteName',
   'g.countryId',
   'g.stateId',
@@ -497,6 +497,24 @@ function getInventoryItem(inventoryItemId) {
     .leftJoin('Site as itfs', 'ii.inTransitFromSiteId', 'itfs.id')
     .where('ii.id', inventoryItemId)
     .first(INVENTORY_ITEM_SELECT_LIST_FIELDS)
+}
+
+async function getInventoryItems(inventoryItemIds) {
+  if (_.isEmpty(inventoryItemIds)) {
+    return Promise.resolve([])
+  }
+  return query('Get Inventory Item')
+    .from('InventoryItem as ii')
+    .innerJoin('Consumable as c', 'ii.consumableId', 'c.id')
+    .innerJoin('Unit as u', 'c.unit', 'u.id')
+    .innerJoin('Site as s', 'ii.siteId', 's.id')
+    .leftJoin('Geography as g', 's.geographyId', 'g.id')
+    .leftJoin('Country as co', 'g.countryId', 'co.id')
+    .leftJoin('State as st', 'g.stateId', 'st.id')
+    .leftJoin('Lga as l', 'g.lgaId', 'l.id')
+    .leftJoin('Site as itfs', 'ii.inTransitFromSiteId', 'itfs.id')
+    .whereIn('ii.id', inventoryItemIds)
+    .select(INVENTORY_ITEM_SELECT_LIST_FIELDS)
 }
 
 async function addInventory(request) {
@@ -992,6 +1010,7 @@ async function insertInventoryItem(knex, inventoryItemValues) {
 }
 
 module.exports = {
+  getInventoryItems,
   listInventoryItems,
   listInventoryItemsGroupedBySite,
   consumeInventoryForResult,

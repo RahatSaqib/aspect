@@ -182,7 +182,7 @@ async function seed(knex) {
         partnerId,
         geographyId,
         name: `Site ${siteNum}`,
-        shortname: `Site ${siteNum}`,
+        shortName: `Site ${siteNum}`,
         externalId: `site${siteNum}`,
       },
       auditFields

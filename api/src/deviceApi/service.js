@@ -137,15 +137,17 @@ function deviceApiHandler(handler, handlerOptions) {
 }
 
 async function addDeviceDataWithContext(context) {
-  const response = {}
-  const { knex, now, payload, device, pluginName: plugin } = context
-  const { name, site, result, configuration, operation } = payload
+  let response = {}
+  const { pluginName: plugin } = context
 
   const preProcessAddDeviceData = await loadPlugin(
     plugin,
     'preProcessAddDeviceData'
   )
   await preProcessAddDeviceData(context)
+
+  const { knex, now, payload, device } = context
+  const { name, site, result, configuration, operation } = payload
 
   if (name) {
     await knex('Device')
@@ -154,21 +156,37 @@ async function addDeviceDataWithContext(context) {
   }
 
   if (site) {
-    await updateSiteWithContext(context.withPayload(site))
+    response = Object.assign(
+      {},
+      response,
+      await updateSiteWithContext(context.withPayload(site))
+    )
   }
 
   if (configuration) {
-    await updateDeviceConfigurationWithContext(
-      context.withPayload(configuration)
+    response = Object.assign(
+      {},
+      response,
+      await updateDeviceConfigurationWithContext(
+        context.withPayload(configuration)
+      )
     )
   }
 
   if (operation) {
-    await addDeviceOperationWithContext(context.withPayload(operation))
+    response = Object.assign(
+      {},
+      response,
+      await addDeviceOperationWithContext(context.withPayload(operation))
+    )
   }
 
   if (result) {
-    await mergeResultWithContext(context.withPayload(result))
+    response = Object.assign(
+      {},
+      response,
+      await mergeResultWithContext(context.withPayload(result))
+    )
   }
 
   return response

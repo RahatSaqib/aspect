@@ -1,6 +1,8 @@
 const _ = require('lodash')
 const Boom = require('boom')
 const { createUniqueIdForResult } = require('../../../result/service')
+const { findExistingResult } = require('./result')
+
 /*
 The purpose of this plugin is to ensure that results are captured
 even when the assay name in the result is unknown to Aspect
@@ -32,41 +34,30 @@ async function preProcessMergeResult({ knex, deviceId, payload }) {
   }
   const instrumentSerial = _.get(payload, 'instrument.serial')
   const sampleId = _.get(payload, 'sample.id')
-  if (instrumentSerial && sampleId) {
-    if (payload.id) {
-      payload.data.geneXpertTestId = payload.id
-      const existingResult = await knex
-        .from('Result as r')
-        .where({
-          'r.externalId': payload.id,
-          'r.partnerId': device.partnerId,
-        })
-        .orWhere(function() {
-          // First filter by device for performance because
-          // JSON properties aren't indexed
-          this.where({ 'r.deviceId': deviceId }).andWhereRaw(
-            'JSON_EXTRACT(r.resultData, "$.geneXpertTestId") = ?',
-            payload.id
-          )
-        })
-        .first('r.externalId')
-      if (existingResult) {
-        payload.id = existingResult.externalId
-      } else {
-        // Only assign assay to GxUnknown if result is new
-        await assignGxUnknownAssayIfNotExists(knex, payload)
-        delete payload.id
-      }
-    }
-    if (!payload.id) {
-      payload.id = createUniqueIdForResult(
-        instrumentSerial,
-        startedOn,
-        endedOn,
-        sampleId
-      )
-    }
+
+  if (payload.id) {
+    payload.data.geneXpertTestId = payload.id
   }
+
+  const generatedExternalId = createUniqueIdForResult(
+    instrumentSerial,
+    startedOn,
+    endedOn,
+    sampleId
+  )
+  const availableResultDetails = {
+    partnerId: device.partnerId,
+    geneXpertTestId: payload.id || payload.data.id,
+    gxAlertUniqueId: payload.data.gxAlertTestUniqueId || generatedExternalId,
+  }
+  const existingResult = await findExistingResult(availableResultDetails, knex)
+  if (existingResult) {
+    payload.id = existingResult.externalId
+  } else {
+    // Only assign assay to GxUnknown if result is new
+    await assignGxUnknownAssayIfNotExists(knex, payload)
+  }
+  payload.id = generatedExternalId
 }
 
 async function assignGxUnknownAssayIfNotExists(knex, payload) {

@@ -26,7 +26,7 @@ describe('Site routes', () => {
             assert.isAtLeast(res.body.data.length, 3)
             assert.property(res.body.data[0], 'id')
             assert.property(res.body.data[0], 'name')
-            assert.property(res.body.data[0], 'shortname')
+            assert.property(res.body.data[0], 'shortName')
             assert.property(res.body.data[0], 'createdOn')
             assert.property(res.body, 'total')
             siteId = res.body.data[0].id
@@ -44,7 +44,7 @@ describe('Site routes', () => {
             assert.typeOf(res.body.data, 'Object')
             assert.property(res.body.data, 'id')
             assert.property(res.body.data, 'name')
-            assert.property(res.body.data, 'shortname')
+            assert.property(res.body.data, 'shortName')
             assert.property(res.body.data, 'state')
             assert.property(res.body.data, 'lga')
             assert.property(res.body.data, 'country')
@@ -91,7 +91,7 @@ describe('Site routes', () => {
             const siteFieldNames = [
               'id',
               'name',
-              'shortname',
+              'shortName',
               'state',
               'lga',
               'country',

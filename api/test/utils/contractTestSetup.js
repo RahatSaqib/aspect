@@ -10,6 +10,8 @@ const serverUrl = 'http://localhost:8080'
 const server = supertest.agent(serverUrl)
 let attemptsToConnect = 0
 const { assert } = chai
+chai.should()
+chai.use(require('chai-subset'))
 
 function attemptToConnectAndLogin(done) {
   if (attemptsToConnect === 3) {

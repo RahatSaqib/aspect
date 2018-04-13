@@ -16,7 +16,7 @@ const totalDevicesQuery = knex('Device as d')
 const SELECT_LIST_FIELDS = [
   's.id',
   's.name',
-  's.shortname',
+  's.shortName',
   'st.name as state',
   'l.name as lga',
   's.createdOn',
@@ -27,7 +27,7 @@ const SELECT_LIST_FIELDS = [
 const SELECT_SHOW_FIELDS = [
   's.id',
   's.name',
-  's.shortname',
+  's.shortName',
   's.externalId',
   'st.name as state',
   'l.name as lga',
@@ -142,7 +142,7 @@ async function updateSite(request) {
       Object.assign(
         _.pick(changedSiteFields, [
           'name',
-          'shortname',
+          'shortName',
           'externalId',
           'street1',
           'street2',

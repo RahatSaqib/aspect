@@ -376,7 +376,7 @@ async function up(knex) {
   await knex.schema.createTable('Site', site => {
     site.increments('id')
     site.string('name').notNullable()
-    site.string('shortname', 45)
+    site.string('shortName', 45)
     site.string('externalId').notNullable()
     site.string('notes', 2000)
     // TODO is site to partner many to many?
@@ -475,7 +475,7 @@ async function up(knex) {
     // TODO Add device id1 - id4 or equivalent
     // used to uniquely identify provisioned devices, still to be discussed
     device.string('name').notNullable()
-    device.string('shortname', 45)
+    device.string('shortName', 45)
     device.string('macAddress')
     device.string('serial')
     device.string('hostId')
@@ -826,7 +826,7 @@ async function up(knex) {
   await knex.schema.createTable('Unit', unit => {
     unit.increments('id')
     unit.string('name').notNullable()
-    unit.string('shortname')
+    unit.string('shortName')
     unit.charset('utf8')
   })
 

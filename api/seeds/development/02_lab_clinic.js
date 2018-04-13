@@ -409,7 +409,7 @@ async function seed(knex) {
           partnerId,
           geographyId: clinicGeographyId,
           name: clinic.name,
-          shortname: clinic.shortname,
+          shortName: clinic.shortName,
           externalId: clinic.externalId,
         },
         auditFields
@@ -428,7 +428,7 @@ async function seed(knex) {
           partnerId,
           geographyId,
           name: lab.name,
-          shortname: lab.shortname,
+          shortName: lab.shortName,
           externalId: lab.externalId,
         },
         auditFields
@@ -450,7 +450,7 @@ async function seed(knex) {
         Object.assign(
           {
             userId: labAdminUserId,
-            name: `${lab.shortname} Admin`,
+            name: `${lab.shortName} Admin`,
             lastPartnerId: partnerId,
             lastCountryId: countryId,
             geographyId,

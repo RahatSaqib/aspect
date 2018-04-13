@@ -5,14 +5,11 @@ This is a copy of utils.js but removes the concept of checkpoint from the device
 GxConnect is unaware of checkpoints
 
 GxConnect also has the requirement to be able to  register itself as a device
-
-This is a test to see if checkpoint state is a requirement for all remote devices
-  connecting to Aspect
 */
 const _ = require('lodash')
 const chai = require('chai')
-const { getSiteFromDeviceId, getDeviceFromApiKey } = require('./utils')
-const { run } = require('../../src/db')
+const { getSiteFromDeviceId, getDeviceFromApiKey } = require('../utils')
+const { run } = require('../../../src/db')
 
 const { assert } = chai
 
@@ -129,78 +126,24 @@ async function deleteDeviceSiteDataAndRefreshTokens(knex, apiKeys, clientId) {
     .delete()
 }
 
-async function getLastResult(knex, deviceId) {
-  const resultDetails = await knex('DeviceLog as dl')
-    .join('Result as r', 'dl.resultId', 'r.id')
-    .leftJoin(
-      'ResultWorkflowStatus as rws',
-      'r.resultWorkflowStatusId',
-      'rws.id'
-    )
-    .leftJoin('Assay as a', 'r.assayId', 'a.id')
-    .leftJoin('ResultSource as rs', 'r.resultSourceId', 'rs.id')
-    .leftJoin('ResultType as rt', 'r.resultTypeId', 'rt.id')
-    .leftJoin('Sample as s', 'r.sampleId', 's.id')
-    .leftJoin('SampleType as st', 's.sampleTypeId', 'st.id')
-    .leftJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
-    .leftJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
-    .where('dl.deviceId', deviceId)
-    .orderBy('dl.id', 'desc')
-    .first(
-      'r.id',
-      'r.externalId',
-      'r.deviceId',
-      'r.siteId',
-      'r.geographyId',
-      'a.externalId as assay',
-      'rws.externalId as resultWorkflowStatus',
-      'rs.externalId as resultSource',
-      'rt.externalId as resultType',
-      'rc1.externalId as resultCategory1',
-      'rc2.externalId as resultCategory2',
-      's.externalId as sampleId',
-      's.collectedOn as sampleCollectedOn',
-      's.originSiteId as sampleOriginSiteId',
-      'st.externalId as sampleTypeId',
-      'r.resultData',
-      'r.assayVersion',
-      'r.startedOn',
-      'r.endedOn',
-      'r.consumableSerial',
-      'r.consumableExpirationDate',
-      'r.consumableLot',
-      'r.instrumentSerial',
-      'r.moduleName',
-      'r.moduleSerial',
-      'r.patientData',
-      'r.senderVersion',
-      'r.senderOperator',
-      'r.notes',
-      'r.errorCode'
-    )
-  if (resultDetails) {
-    resultDetails.patientData = JSON.parse(resultDetails.patientData)
-    resultDetails.resultData = JSON.parse(resultDetails.resultData)
-  }
-  return resultDetails
-}
-
 function createGxConnectTestContext(
   server,
   {
-    countryAbbreviation,
+    countryCode,
     deviceName,
+    hostId,
     macAddress,
-    instrumentSerialNumbers,
+    deviceSerialNumber,
     adminUsername,
     adminPassword,
   }
 ) {
   return new GxConnectApiTestContext(server, {
-    countryAbbreviation,
+    countryCode,
     deviceName,
+    hostId,
     macAddress,
-    instrumentSerialNumbers,
+    deviceSerialNumber,
     adminUsername,
     adminPassword,
   })
@@ -210,19 +153,21 @@ class GxConnectApiTestContext {
   constructor(
     server,
     {
-      countryAbbreviation,
+      countryCode,
       deviceName,
+      hostId,
       macAddress,
-      instrumentSerialNumbers,
+      deviceSerialNumber,
       adminUsername,
       adminPassword,
     }
   ) {
     this.server = server
-    this.countryAbbreviation = countryAbbreviation
+    this.countryCode = countryCode
     this.deviceName = deviceName
+    this.hostId = hostId
     this.macAddress = macAddress
-    this.instrumentSerialNumbers = instrumentSerialNumbers
+    this.deviceSerialNumber = deviceSerialNumber
     this.adminUsername = adminUsername
     this.adminPassword = adminPassword
     this.clientId = `${Math.floor(Math.random() * 800000000) + 100000000}`
@@ -239,7 +184,7 @@ class GxConnectApiTestContext {
       log: null,
       configuration: {
         checkpoint: null,
-        data: { macAddress },
+        data: { macAddress, hostId, deviceSerialNumber },
       },
       operation: null,
       result: null,
@@ -250,6 +195,7 @@ class GxConnectApiTestContext {
       'beforeRegisterAndSetDevice',
       'registerAndSetDevice',
       'runTest',
+      'getLastResult',
       'afterCleanUp',
       'cleanUp',
     ])
@@ -332,11 +278,11 @@ class GxConnectApiTestContext {
     if (this.macAddress) {
       configurationData.macAddress = this.macAddress
     }
-    if (this.countryAbbreviation) {
-      configurationData.country = this.countryAbbreviation
+    if (this.countryCode) {
+      configurationData.country = this.countryCode
     }
-    if (this.instrumentSerialNumbers) {
-      configurationData.instrumentSerialNumbers = this.instrumentSerialNumbers
+    if (this.deviceSerialNumber) {
+      configurationData.deviceSerialNumber = this.deviceSerialNumber
     }
     await this.server
       .post('/device')
@@ -383,9 +329,66 @@ class GxConnectApiTestContext {
       }
     })
   }
+
+  getLastResult() {
+    return run(async knex => {
+      const resultDetails = await knex('DeviceLog as dl')
+        .join('Result as r', 'dl.resultId', 'r.id')
+        .leftJoin(
+          'ResultWorkflowStatus as rws',
+          'r.resultWorkflowStatusId',
+          'rws.id'
+        )
+        .leftJoin('Assay as a', 'r.assayId', 'a.id')
+        .leftJoin('ResultSource as rs', 'r.resultSourceId', 'rs.id')
+        .leftJoin('ResultType as rt', 'r.resultTypeId', 'rt.id')
+        .leftJoin('Sample as s', 'r.sampleId', 's.id')
+        .leftJoin('SampleType as st', 's.sampleTypeId', 'st.id')
+        .leftJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
+        .leftJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
+        .where('dl.deviceId', this.device.id)
+        .orderBy('dl.id', 'desc')
+        .first(
+          'r.id',
+          'r.externalId',
+          'r.deviceId',
+          'r.siteId',
+          'r.geographyId',
+          'a.externalId as assay',
+          'rws.externalId as resultWorkflowStatus',
+          'rs.externalId as resultSource',
+          'rt.externalId as resultType',
+          'rc1.externalId as resultCategory1',
+          'rc2.externalId as resultCategory2',
+          's.externalId as sampleId',
+          's.collectedOn as sampleCollectedOn',
+          's.originSiteId as sampleOriginSiteId',
+          'st.externalId as sampleTypeId',
+          'r.resultData',
+          'r.assayVersion',
+          'r.startedOn',
+          'r.endedOn',
+          'r.consumableSerial',
+          'r.consumableExpirationDate',
+          'r.consumableLot',
+          'r.instrumentSerial',
+          'r.moduleName',
+          'r.moduleSerial',
+          'r.patientData',
+          'r.senderVersion',
+          'r.senderOperator',
+          'r.notes',
+          'r.errorCode'
+        )
+      if (resultDetails) {
+        resultDetails.patientData = JSON.parse(resultDetails.patientData)
+        resultDetails.resultData = JSON.parse(resultDetails.resultData)
+      }
+      return resultDetails
+    })
+  }
 }
 
 module.exports = {
   createGxConnectTestContext,
-  getLastResult,
 }

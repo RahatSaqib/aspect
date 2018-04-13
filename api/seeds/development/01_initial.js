@@ -126,6 +126,14 @@ async function seed(knex) {
     hasResults: 0,
   })
 
+  const [deviceTypeCategoryInformationSystem] = await knex(
+    'DeviceTypeCategory'
+  ).insert({
+    name: 'Information System',
+    hasConnectivity: 0,
+    hasResults: 1,
+  })
+
   // define configurationData object
   const geneXpertConfigurationDataSchema = JSON.stringify({
     requirePrinter: {
@@ -339,6 +347,14 @@ async function seed(knex) {
     deviceTypeCategoryId: deviceTypeCategoryLab,
     configurationDataSchema: commCareConfigurationDataSchema,
     deviceOperationSchema: commCareDeviceOperationSchema,
+  })
+
+  await knex('DeviceType').insert({
+    externalId: 'GxAlert',
+    name: 'GxAlert',
+    manufacturer: 'SystemOne',
+    plugin: 'gxalert',
+    deviceTypeCategoryId: deviceTypeCategoryInformationSystem,
   })
 
   // DeviceStatus
@@ -1642,37 +1658,37 @@ async function seed(knex) {
   // Units
   const [piece] = await knex('Unit').insert({
     name: 'Piece',
-    shortname: 'pc',
+    shortName: 'pc',
   })
 
   await knex('Unit').insert({
     name: 'Liter',
-    shortname: 'l',
+    shortName: 'l',
   })
 
   await knex('Unit').insert({
     name: 'Milliliter',
-    shortname: 'ml',
+    shortName: 'ml',
   })
 
   await knex('Unit').insert({
     name: 'Milligram',
-    shortname: 'mg',
+    shortName: 'mg',
   })
 
   await knex('Unit').insert({
     name: 'Gram',
-    shortname: 'g',
+    shortName: 'g',
   })
 
   await knex('Unit').insert({
     name: 'Kilogram',
-    shortname: 'kg',
+    shortName: 'kg',
   })
 
   await knex('Unit').insert({
     name: 'Ounce',
-    shortname: 'oz',
+    shortName: 'oz',
   })
 
   // Consumable types
@@ -1732,6 +1748,14 @@ async function seed(knex) {
     autoInclude: 0,
   })
 
+  const [consumableDaktariHivVlCartridgeId] = await knex('Consumable').insert({
+    name: 'Daktari HIV-VL Cartridge',
+    unit: piece,
+    canExpire: 1,
+    manufacturer: 'Daktari',
+    autoInclude: 0,
+  })
+
   // Assay Consumables
   await knex('ConsumableAssay').insert({
     consumableId: consumableGxTbCartridgeId,
@@ -1766,6 +1790,12 @@ async function seed(knex) {
   await knex('ConsumableAssay').insert({
     consumableId: consumableGxHiv1QualCartridgeId,
     assayId: assayGeneXpertHiv1QualId,
+    quantity: 1,
+  })
+
+  await knex('ConsumableAssay').insert({
+    consumableId: consumableDaktariHivVlCartridgeId,
+    assayId: assayDaktariHivVlId,
     quantity: 1,
   })
 
@@ -1985,7 +2015,7 @@ async function seed(knex) {
                       name: `${lga.name} ${country.lgaLabel} ${
                         state.name
                       } #${siteNumber}`,
-                      shortname: `${lga.name}, ${stateKey} #${siteNumber}`,
+                      shortName: `${lga.name}, ${stateKey} #${siteNumber}`,
                       city: `${lga.name} City`,
                       street1: `${lgaData.id} Main Street`,
                       zip: `12345-${lgaData.id}`,
@@ -2091,8 +2121,8 @@ async function seed(knex) {
       const siteData = siteDatas[i % siteDatas.length]
       const [routerId] = await knex('Device').insert(
         Object.assign({}, auditFields, {
-          name: `Router at ${i} ${siteData.shortname}`,
-          shortname: `r${i}`,
+          name: `Router at ${i} ${siteData.shortName}`,
+          shortName: `r${i}`,
           deviceTypeId: deviceTypeIdRouter,
           deviceStatusId: deviceStatusApproved,
           partnerId: siteData.partnerId,
@@ -2127,8 +2157,8 @@ async function seed(knex) {
       const siteData = siteDatas[i % siteDatas.length]
       const routerId = routerIds[i]
       const device = Object.assign({}, auditFields, {
-        name: `GeneXpert #${i} ${siteData.shortname}`,
-        shortname: `GeneXpert #${i}`,
+        name: `GeneXpert #${i} ${siteData.shortName}`,
+        shortName: `GeneXpert #${i}`,
         deviceTypeId: deviceTypeGeneXpertId,
         deviceStatusId:
           _.random(1) > 0 ? deviceStatusApproved : deviceStatusAssigned,
@@ -2213,10 +2243,11 @@ async function seed(knex) {
       const siteData = siteDatas[i % siteDatas.length]
       const routerId = routerIds[i]
       const device = Object.assign({}, auditFields, {
-        name: `Daktari #${i} ${siteData.shortname}`,
-        shortname: `Daktari #${i}`,
+        name: `Daktari #${i} ${siteData.shortName}`,
+        shortName: `Daktari #${i}`,
         deviceTypeId: deviceTypeDaktariVirologyId,
-        deviceStatusId: deviceStatusApproved,
+        deviceStatusId:
+          _.random(1) > 0 ? deviceStatusApproved : deviceStatusAssigned,
         configurationData: JSON.stringify({
           requirePrinter: 'yes',
           adminPassword: 'pwd123',
@@ -2785,7 +2816,7 @@ async function seed(knex) {
     })
   )
 
-  // HIV VL Results:
+  // HIV VL Results for the GeneXpert:
   possibleResults = [
     {
       resultText: 'HIV-1 DÉTECTÉ {0} copies/mL (log {1})',
@@ -3050,7 +3081,7 @@ async function seed(knex) {
     })
   )
 
-  // HIV VL Results:
+  // HIV VL Results for the GeneXpert:
   possibleResults = [
     {
       resultText: 'HIV Detected (log {1})',

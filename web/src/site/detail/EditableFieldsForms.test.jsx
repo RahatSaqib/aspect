@@ -30,7 +30,7 @@ describe('EditableFieldsForm Component', () => {
       city: 'City',
       externalId: 'Facility Code',
       name: 'Name',
-      shortName: 'Shortname',
+      shortName: 'ShortName',
       timezone: 'Time Zone',
       zip: 'Zip',
     },

@@ -108,7 +108,7 @@ const FILTERS_CONFIG = [
 const searchSanitizer = makeSearchParamsSanitizer({
   availableSortCol: [
     'siteName',
-    'shortname',
+    'shortName',
     'status',
     'createdOn',
     'lastSeen',
@@ -252,7 +252,7 @@ export const ReporterList = ({
                 sortable: true,
               },
               {
-                key: 'shortname',
+                key: 'shortName',
                 label: intl.formatMessage(messages.reporterShortName),
                 sortable: true,
               },

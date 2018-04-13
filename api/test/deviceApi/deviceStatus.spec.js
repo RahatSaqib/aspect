@@ -8,7 +8,12 @@ const {
 
 const server = supertest.agent('http://localhost:8080')
 const { assert } = chai
-const context = createTestContext(server, { user: 'admin', status: 'assigned' })
+const context = createTestContext(server, {
+  user: 'admin',
+  type: 'Daktari Virology',
+  partner: 'Partner One',
+  status: 'assigned',
+})
 
 describe('Device API status tests', () => {
   const devicePath = '/device'
