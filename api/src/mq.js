@@ -1,61 +1,41 @@
 const _ = require('lodash')
 const config = require('./config')
-const mqtt = require('mqtt')
+const amqp = require('amqplib')
 const { transact } = require('./db')
 const EventEmitter = require('events')
 
-async function createMessageQueue(name) {
-  if (name == null) {
-    throw new Error('Must specify unique queue name')
-  }
-  return new MessageQueue(name).connect()
+async function createMessageQueue() {
+  return new MessageQueue().connect()
 }
 
+const exchange = 'aspect'
 class MessageQueue {
-  constructor(name) {
-    this.name = name
+  constructor() {
     this.emitter = new EventEmitter()
   }
 
   async connect() {
     await this.close()
-    await new Promise((resolve, reject) => {
-      const client = mqtt.connect(config.mqtt.url, {
-        clientId: this.name,
-        clean: false,
-      })
+    const connection = await amqp.connect(config.amqp.url)
+    const channel = await connection.createChannel()
+    await channel.assertExchange(exchange, 'topic', { durable: true })
+    this.channel = channel
+    const { queue } = channel.assertQueue('', { exclusive: true })
+    this.channel.bindQueue(queue, exchange, 'aspect.actions.*')
 
-      this.client = client
-      client.on('message', (topic, message) => {
-        const actionMatch = /^aspect\/actions\/([^/]+)$/.exec(topic)
-        if (actionMatch != null) {
-          const action = JSON.parse(message.toString())
-          const matchType = actionMatch[1]
-          if (action.type === matchType) {
-            this.emitter.emit(action.type, action)
-          }
-          this.emitter.emit('+', action)
-        }
-      })
-
-      client.on('connect', () => {
-        client.subscribe('aspect/actions/+', { qos: 1 }, err => {
-          if (err) {
-            reject(err)
-          } else {
-            resolve()
-          }
-        })
-      })
+    channel.consume(queue, message => {
+      const action = JSON.parse(message.content.toString())
+      this.emitter.emit(action.type, action)
+      this.emitter.emit('+', action)
     })
     return this
   }
 
   async close() {
-    if (this.client) {
-      await new Promise(resolve => this.client.end(resolve))
+    if (this.channel) {
+      await this.channel.close()
     }
-    this.client = null
+    this.channel = null
     this.emitter.removeAllListeners()
   }
 
@@ -66,10 +46,10 @@ class MessageQueue {
     if (!_.isString(action.type)) {
       throw new Error('Actions must be object with string type')
     }
-    this.client.publish(
-      `aspect/actions/${action.type}`,
-      JSON.stringify(action),
-      { qos: 1 }
+    this.channel.publish(
+      exchange,
+      `aspect.actions.${action.type}`,
+      Buffer.from(JSON.stringify(action))
     )
   }
 

@@ -14,8 +14,8 @@ module.exports = {
     database: process.env['db.databaseName'],
     debug: process.env['db.debug'] === 'true',
   },
-  mqtt: {
-    url: process.env['mqtt.url'],
+  amqp: {
+    url: process.env['amqp.url'],
   },
   swagger: {
     uiPath: process.env['swagger.uiPath'] || '',
