@@ -45,7 +45,7 @@ async function getOrCreateDevice(knex, payload, gxAlertDevice, now) {
   )
   let countryCode = _.get(payload, 'configuration.data.country', null)
   if (!countryCode) {
-    ;[countryCode] = await knex('device as d')
+    ;[countryCode] = await knex('Device as d')
       .innerJoin('Geography as g', 'd.geographyId', 'g.id')
       .innerJoin('Country as c', 'g.countryId', 'c.id')
       .where('d.id', gxAlertDeviceId)
