@@ -5,6 +5,7 @@ const subscriptions = [
     actions: {
       DEVICE_OFFLINE: onIssueEventTrigger('DeviceOffline'),
       DEVICE_ONLINE: onIssueEventResolve('DeviceOffline'),
+      DEVICE_MODULE_ERROR: onIssueEventTrigger('ModuleError'),
     },
   },
 ]
