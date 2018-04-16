@@ -6,6 +6,7 @@ function addSubscriptions(queue) {
     'notification',
     require('./notification/endpoints').subscriptions
   )
+  queue.subscribe('result', require('./result/endpoints').subscriptions)
 }
 
 module.exports = { addSubscriptions }
