@@ -1,5 +1,6 @@
 const Boom = require('boom')
 const _ = require('lodash')
+const subDays = require('date-fns/sub_days')
 const { knex, transact } = require('../db')
 const { asyncHandler } = require('../routes')
 
@@ -9,6 +10,7 @@ const {
   types: { RESULT_UPDATED },
 } = require('../result/actions')
 
+const { moduleError } = require('../device/actions')
 const {
   updateDeviceConfiguration,
   getDeviceConfigurationFromDeviceLog,
@@ -429,6 +431,7 @@ async function mergeResultWithContext(context) {
     result,
     previousResult
   )
+  triggerModuleError(context, deviceId)
   return postProcessResult
 }
 
@@ -941,6 +944,26 @@ async function updateLogs(request) {
   })
 }
 
+async function onDeviceModuleError({ deviceId }, { messageContext }) {
+  const context = messageContext.bindActionCreators({ moduleError })
+  const last30Day = subDays(new Date(), 30)
+  const days = 4
+  const errorCodes = [1001, 1004, 1017, 2014, 2022, 4009, 4010]
+  let issueCountQuery
+  await context.transact(async knex => {
+    ;[issueCountQuery] = await knex('Result as r')
+      .innerJoin('ResultCategory as rc', 'r.resultCategory1', 'rc.id')
+      .where('rc.externalId', 'Error')
+      .where('r.endedOn', '>=', last30Day)
+      .where('r.deviceId', deviceId)
+      .whereIn('r.errorCode', errorCodes)
+      .count('r.id as count')
+  })
+  if (issueCountQuery.count > days) {
+    context.moduleError(deviceId)
+  }
+}
+
 module.exports = {
   getDeviceDataHandler,
   getDeviceOperationHandler,
@@ -952,4 +975,5 @@ module.exports = {
   addDeviceLog,
   onResultUpdated,
   onResultLogged,
+  onDeviceModuleError,
 }
