@@ -1,6 +1,8 @@
 const Boom = require('boom')
 const _ = require('lodash')
-const { dateFormat, subDays } = require('date-fns')
+const dateFormat = require('date-fns/format')
+const subDays = require('date-fns/sub_days')
+
 const {
   knex,
   filterParams,
@@ -631,29 +633,26 @@ function createUniqueIdForResult(
 // check for a module error when a result is logged
 async function onResultLogged({ resultId }, { messageContext }) {
   const context = messageContext.bindActionCreators({ resultModuleError })
-  let deviceId
   await context.transact(async knex => {
-    ;[deviceId] = await knex('Result as r')
-      .where('r.id', resultId)
-      .select('r.deviceId')
+    let issueCountQuery
+    const maxIssues = 4
+    const [result] = await knex('Result as r').where('r.id', resultId)
+    if (result.errorCode) {
+      const { deviceId } = result
+      const last30Day = subDays(new Date(), 365)
+      const errorCodes = [1001, 1004, 1017, 2014, 2022, 4009, 4010]
+      ;[issueCountQuery] = await knex('Result as r')
+        .innerJoin('ResultCategory as rc', 'r.resultCategory1', 'rc.id')
+        .where('rc.externalId', 'Error')
+        .where('r.endedOn', '>=', last30Day)
+        .where('r.deviceId', deviceId)
+        .whereIn('r.errorCode', errorCodes)
+        .count('r.id as count')
+      if (issueCountQuery.count > maxIssues) {
+        context.resultModuleError(deviceId)
+      }
+    }
   })
-  console.log('deviceId!!!', deviceId)
-  // const last30Day = subDays(new Date(), 30)
-  // const days = 4
-  // const errorCodes = [1001, 1004, 1017, 2014, 2022, 4009, 4010]
-  // let issueCountQuery
-  // await context.transact(async knex => {
-  //   ;[issueCountQuery] = await knex('Result as r')
-  //     .innerJoin('ResultCategory as rc', 'r.resultCategory1', 'rc.id')
-  //     .where('rc.externalId', 'Error')
-  //     .where('r.endedOn', '>=', last30Day)
-  //     .where('r.deviceId', deviceId)
-  //     .whereIn('r.errorCode', errorCodes)
-  //     .count('r.id as count')
-  // })
-  // if (issueCountQuery.count > days) {
-  //   context.moduleError(deviceId)
-  // }
 }
 
 module.exports = {
