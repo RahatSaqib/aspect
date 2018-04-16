@@ -3,7 +3,6 @@ const types = {
   DEVICE_SEEN: 'DEVICE_SEEN',
   DEVICE_OFFLINE: 'DEVICE_OFFLINE',
   DEVICE_ONLINE: 'DEVICE_ONLINE',
-  DEVICE_MODULE_ERROR: 'DEVICE_MODULE_ERROR',
 }
 
 // ----------- Action Creators -------------------
@@ -58,26 +57,9 @@ function deviceOnline(deviceId) {
   }
 }
 
-/**
- * Creates an action to notify the device with given id
- * has a module error issue
- *
- * deviceId is required.
- */
-function moduleError(deviceId) {
-  if (deviceId == null) {
-    throw new Error('Must specify deviceId for notify moduleError')
-  }
-  return {
-    type: types.DEVICE_MODULE_ERROR,
-    deviceId,
-  }
-}
-
 module.exports = {
   types,
   deviceSeen,
   deviceOffline,
   deviceOnline,
-  moduleError,
 }

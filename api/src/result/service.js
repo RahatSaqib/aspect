@@ -1,7 +1,6 @@
 const Boom = require('boom')
 const _ = require('lodash')
-const dateFormat = require('date-fns/format')
-
+const { dateFormat, subDays } = require('date-fns')
 const {
   knex,
   filterParams,
@@ -17,6 +16,7 @@ const {
   generateCsvFile,
 } = require('../shared/io')
 const { oneDirectionalMd5Hash } = require('../shared/encryption')
+const { resultModuleError } = require('../result/actions')
 
 const SELECT_LIST_FIELDS = [
   'r.id',
@@ -628,6 +628,34 @@ function createUniqueIdForResult(
   )}${dateFormat(testEndedOn, 'mmss').substr(1)}_${hashedSampleId.substr(0, 8)}`
 }
 
+// check for a module error when a result is logged
+async function onResultLogged({ resultId }, { messageContext }) {
+  const context = messageContext.bindActionCreators({ resultModuleError })
+  let deviceId
+  await context.transact(async knex => {
+    ;[deviceId] = await knex('Result as r')
+      .where('r.id', resultId)
+      .select('r.deviceId')
+  })
+  console.log('deviceId!!!', deviceId)
+  // const last30Day = subDays(new Date(), 30)
+  // const days = 4
+  // const errorCodes = [1001, 1004, 1017, 2014, 2022, 4009, 4010]
+  // let issueCountQuery
+  // await context.transact(async knex => {
+  //   ;[issueCountQuery] = await knex('Result as r')
+  //     .innerJoin('ResultCategory as rc', 'r.resultCategory1', 'rc.id')
+  //     .where('rc.externalId', 'Error')
+  //     .where('r.endedOn', '>=', last30Day)
+  //     .where('r.deviceId', deviceId)
+  //     .whereIn('r.errorCode', errorCodes)
+  //     .count('r.id as count')
+  // })
+  // if (issueCountQuery.count > days) {
+  //   context.moduleError(deviceId)
+  // }
+}
+
 module.exports = {
   listResults,
   showResult,
@@ -639,4 +667,5 @@ module.exports = {
   exportResults,
   showDeviceLogs,
   createUniqueIdForResult,
+  onResultLogged,
 }

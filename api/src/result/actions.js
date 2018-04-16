@@ -2,6 +2,7 @@
 const types = {
   RESULT_UPDATED: 'RESULT_UPDATED',
   RESULT_LOGGED: 'RESULT_LOGGED',
+  RESULT_MODULE_ERROR: 'RESULT_MODULE_ERROR',
 }
 
 // ----------- Action Creators -------------------
@@ -46,8 +47,25 @@ function resultLogged(resultId, deviceLogId) {
   }
 }
 
+/**
+ * Creates an action to notify the device with given id
+ * has a module error issue
+ *
+ * deviceId is required.
+ */
+function resultModuleError(deviceId) {
+  if (deviceId == null) {
+    throw new Error('Must specify deviceId for notify resultModuleError')
+  }
+  return {
+    type: types.RESULT_MODULE_ERROR,
+    deviceId,
+  }
+}
+
 module.exports = {
   types,
   resultUpdated,
   resultLogged,
+  resultModuleError,
 }
