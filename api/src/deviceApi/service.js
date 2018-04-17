@@ -16,7 +16,7 @@ const {
   addDeviceOperation,
   getSite,
 } = require('./device')
-const { deviceOnline } = require('../device/actions')
+const { deviceSeen } = require('../device/actions')
 const { mergeResult, getResult } = require('./result')
 const { loadPlugin } = require('./plugin/registration')
 
@@ -114,7 +114,7 @@ function deviceApiHandler(handler, handlerOptions) {
       .update(deviceUpdates)
 
     // need to ensure device is flagged as online
-    context.messageContext.dispatch(deviceOnline(deviceId))
+    context.messageContext.dispatch(deviceSeen(deviceId))
 
     let response = {}
     await context.messageContext.transact(async knex => {

@@ -8,6 +8,7 @@ const { randomToken } = require('../../src/deviceApi/apiKey')
 const { assert } = chai
 
 const QUEUE_IDLE_TIME = 250
+const QUEUE_TIMEOUT_TIME = 850
 
 const devicePath = '/device'
 
@@ -396,7 +397,7 @@ class DeviceApiTestContext {
     return queue.createMessageContext()
   }
 
-  async waitForAction(predicate, timeout = QUEUE_IDLE_TIME) {
+  async waitForAction(predicate, timeout = QUEUE_TIMEOUT_TIME) {
     const queue = await queueConnect()
     return queue.waitForAction(predicate, timeout)
   }

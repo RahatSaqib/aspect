@@ -1,7 +1,7 @@
 const _ = require('lodash')
 const config = require('./config')
 const amqp = require('amqplib')
-const { transact } = require('./db')
+const { run, transact } = require('./db')
 const EventEmitter = require('events')
 const debug = require('debug')('aspect:mq')
 
@@ -91,14 +91,12 @@ class MessageQueue {
         const { channel, name: queueName } = this
         const subscribeName = `${queueName}_${name}_${subscriptionIndex}_actions_${type}`
         const topic = `aspect.actions.${type}`
-        debug(`subscribe ${subscribeName}`)
         const { queue } = channel.assertQueue(subscribeName, this.queueOptions)
         this.queues.push(queue)
         channel.bindQueue(queue, exchange, topic)
         channel.consume(queue, message => {
           const content = message.content.toString()
           const action = JSON.parse(content)
-          debug(`consume ${subscribeName} ${content}`)
           try {
             listener(action, {
               messageContext: this.createMessageContext(subscribeName),
@@ -121,7 +119,6 @@ class MessageQueue {
       channel.bindQueue(queue, exchange, 'aspect.actions.*')
       channel.consume(queue, message => {
         const content = message.content.toString()
-        debug(`emit action ${content}`)
         const action = JSON.parse(content)
         this.emitter.emit('action', action)
         this.channel.ack(message)
@@ -141,7 +138,6 @@ class MessageQueue {
    */
   createMessageContext(id) {
     const contextId = `${id != null ? id : this.name}_${this.messageContextIdx}`
-    debug(`createMessageContext ${contextId}`)
     this.messageContextIdx += 1
     return new MessageContext(this, contextId)
   }
@@ -258,7 +254,6 @@ class MessageContext {
     if (this.transaction) {
       throw new Error('Cannot create multiple transactions, create new context')
     }
-    debug(`transact ${this.id}`)
     this.transaction = transact(async knex => task(knex))
       .then(this.commit)
       .then(null, err => {
@@ -267,6 +262,10 @@ class MessageContext {
         throw err
       })
     return this.transaction
+  }
+
+  run(task) {
+    return run(async knex => task(knex))
   }
 
   commit() {
@@ -289,7 +288,6 @@ class MessageContext {
   }
 
   bindActionCreators(creators) {
-    debug(`bindActionCreators ${this.id}`)
     _.each(creators, (creator, name) => {
       this[name] = (...args) => this.dispatch(creator(...args))
       this[name].bind(this)

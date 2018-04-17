@@ -19,7 +19,7 @@ const context = createTestContext(server, {
   partner: 'Partner One',
 })
 const { factGenerateDeviceOffline } = require('../../src/fact/actions')
-const { deviceOffline } = require('../../src/device/actions')
+const { deviceOffline, deviceOnline } = require('../../src/device/actions')
 
 const baseConfig = {
   requirePrinter: 'yes',
@@ -349,6 +349,26 @@ describe('Device API routes', () => {
           newDevice.id
         )
         assert.equal(offlineFactDevice.offline, 1)
+
+        await server
+          .post(devicePath)
+          .set('Authorization', deviceAuth)
+          .send({
+            type: { id: 'DaktariInSight' },
+          })
+          .then(res => {
+            assert.equal(res.status, 200)
+          })
+
+        const waitForOnline = context.waitForAction(deviceOnline(newDevice.id))
+        await waitForOnline
+        await context.waitForIdle()
+
+        const [onlineFactDevice] = await knex('FactDeviceFlag as fdf').where(
+          'fdf.deviceId',
+          newDevice.id
+        )
+        assert.equal(onlineFactDevice.offline, 0)
       }))
   })
 
