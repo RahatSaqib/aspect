@@ -83,6 +83,19 @@ const enhance = compose(
       const { value: filtersParams } = filtersFromLocation(location)
       fetchActionDashboard(filtersParams, sortCol, sortDir)
     },
+    onActionListClick: ({ history }) => event => {
+      event.stopPropagation()
+      const {
+        currentTarget: { dataset: { siteId, deviceId, resultId } },
+      } = event
+      if (resultId) {
+        history.push(`/browse/result/${resultId}`)
+      } else if (deviceId) {
+        history.push(`/browse/device/${deviceId}`)
+      } else if (siteId) {
+        history.push(`/browse/site/${siteId}`)
+      }
+    },
   }),
   lifecycle({
     componentDidMount() {
@@ -119,6 +132,7 @@ export const ActionStatus = ({
   actionSummaryMap,
   selectedCategory,
   onCategoryClick,
+  onActionListClick,
 }) => (
   <Card className={className}>
     <div className={cssClasses('TitleContainer')}>
@@ -184,7 +198,7 @@ export const ActionStatus = ({
               intl={intl}
               messages={messages}
               action={action}
-              data-action-id={action.get('id')}
+              onActionListClick={onActionListClick}
             />
           ))}
       </ActionDataTable>

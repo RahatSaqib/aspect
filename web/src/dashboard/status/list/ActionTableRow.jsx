@@ -28,7 +28,13 @@ const ActionLinkButton = requirePermissions({
   ],
 })(Button)
 
-const ActionTableRow = ({ intl, messages, action, ...restProps }) => (
+const ActionTableRow = ({
+  intl,
+  messages,
+  action,
+  onActionListClick,
+  ...restProps
+}) => (
   <TableRow
     {...restProps}
     className={cssClasses(restProps.className, 'TableRow')}
@@ -67,7 +73,14 @@ const ActionTableRow = ({ intl, messages, action, ...restProps }) => (
               </span>
             )}
           </div>
-          <ActionLinkButton inverse className={cssClasses('Button__Link')}>
+          <ActionLinkButton
+            inverse
+            className={cssClasses('Button__Link')}
+            data-site-id={action.get('siteId')}
+            data-device-id={action.get('deviceId')}
+            data-result-id={action.get('resultId')}
+            onClick={onActionListClick}
+          >
             <ArrowLeft className={cssClasses('ArrowLeft')} />
           </ActionLinkButton>
         </div>
