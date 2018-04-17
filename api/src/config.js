@@ -6,7 +6,7 @@ module.exports = {
   passwordSaltRounds: process.env.passwordSaltRounds,
   gxAlertApi: process.env.gxAlertApi,
   db: {
-    connectionLimit: process.env['db.connectionLimit'],
+    connectionLimit: parseInt(process.env['db.connectionLimit'], 10) || 10,
     host: process.env['db.host'],
     user: process.env['db.user'],
     port: process.env['db.port'] || 3306,

@@ -134,6 +134,10 @@ function load() {
     knex = require('knex')({
       client: 'mysql',
       connection: config.db,
+      pool: {
+        min: 2,
+        max: config.db.connectionLimit,
+      },
     })
   }
   return knex
