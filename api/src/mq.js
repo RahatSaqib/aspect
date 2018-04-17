@@ -6,41 +6,58 @@ const EventEmitter = require('events')
 
 const exchange = 'aspect'
 
-async function createMessageQueue(name) {
+async function createMessageQueue(name, queueOptions = { exclusive: true }) {
   if (name == null) {
     throw new Error('Must specify unique queue name')
   }
-  return new MessageQueue(name).connect()
+  return new MessageQueue(name, queueOptions).connect()
 }
 
 class MessageQueue {
-  constructor(name) {
+  constructor(name, queueOptions) {
     this.name = name
     this.emitter = new EventEmitter()
+    this.queueOptions = queueOptions
+    this.queues = []
   }
 
   async connect() {
-    await this.close()
-    const connection = await amqp.connect(config.amqp.url)
-    const channel = await connection.createChannel()
-    await channel.assertExchange(exchange, 'topic', { durable: true })
-    this.channel = channel
+    if (!this.channel) {
+      const connection = await amqp.connect(config.amqp.url)
+      const channel = await connection.createChannel()
+      await channel.assertExchange(exchange, 'topic', { durable: true })
+      this.channel = channel
 
-    const { queue } = channel.assertQueue(`${this.name}_actions_all`)
-    channel.bindQueue(queue, exchange, 'aspect.actions.*')
-    channel.consume(queue, message => {
-      const action = JSON.parse(message.content.toString())
-      this.emitter.emit('action', action)
-      this.channel.ack(message)
-    })
+      const { queue } = channel.assertQueue(
+        `${this.name}_actions_all`,
+        this.queueOptions
+      )
+      this.queues.push(queue)
+      channel.bindQueue(queue, exchange, 'aspect.actions.*')
+      channel.consume(queue, message => {
+        const action = JSON.parse(message.content.toString())
+        this.emitter.emit('action', action)
+        this.channel.ack(message)
+      })
+    }
     return this
+  }
+
+  async purge() {
+    if (this.channel) {
+      return Promise.all(
+        this.queues.map(queue => this.channel.purgeQueue(queue))
+      )
+    }
   }
 
   async close() {
     if (this.channel) {
+      await this.purge()
       await this.channel.close()
     }
     this.channel = null
+    this.queues = []
     this.emitter.removeAllListeners()
   }
 
@@ -77,7 +94,8 @@ class MessageQueue {
       _.each(actions, (listener, type) => {
         const { channel, name: queueName } = this
         const { queue } = channel.assertQueue(
-          `${queueName}_${name}_${subscriptionIndex}_actions_${type}`
+          `${queueName}_${name}_${subscriptionIndex}_actions_${type}`,
+          this.queueOptions
         )
         channel.bindQueue(queue, exchange, `aspect.actions.${type}`)
         channel.consume(queue, message => {
