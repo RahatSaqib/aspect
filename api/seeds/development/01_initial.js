@@ -9,7 +9,6 @@ const geography = require('./fixtures/geography.json')
 const patients = require('./fixtures/patients.json')
 const dashboardWidget = require('./fixtures/dashboardWidget.json')
 const features = require('./fixtures/features.json')
-
 const {
   addMilliseconds,
   addMinutes,
@@ -3664,12 +3663,51 @@ async function seed(knex) {
       auditFields
     )
   )
+  // Module temperature messages - TODO - Update templates with actual messages
+  const [moduleTemperatureErrorAlertTemplateId] = await knex('AlertTemplate').insert(
+    /* eslint-disable no-template-curly-in-string */
+    Object.assign(
+    {
+      message: '${device.name} had ${numberOfModuleTemperatureErrors } in the last ${numberOfDays} days.',
+    },
+    auditFields
+    )
+  )
+
+  const [moduleTemperatureErrorSmsTemplateId] = await knex('SmsTemplate').insert(
+    /* eslint-disable no-template-curly-in-string */
+    Object.assign(
+      {
+        message: '${device.name} had ${numberOfModuleTemperatureErrors } in the last ${numberOfDays} days.',
+      },
+      auditFields
+    )
+  )
+
+  const [moduleTemperatureErrorEmailTemplateId] = await knex('EmailTemplate').insert(
+    /* eslint-disable no-template-curly-in-string */
+    Object.assign(
+      {
+        subject: '${device.name} Module Temperature Error',
+        body: '${device.name} had ${numberOfModuleTemperatureErrors } in the last ${numberOfDays} days.',
+        htmlBody: '<em>${device.name}</em> had ${numberOfModuleTemperatureErrors } in the last ${numberOfDays} days.',
+      },
+      auditFields
+    )
+  )
 
   const [deviceOfflineMessageTypeId] = await knex('MessageType').insert({
     messageSeverityId: messageSeverities.Alert.id,
     alertTemplateId: deviceOfflineAlertTemplateId,
     smsTemplateId: deviceOfflineSmsTemplateId,
     emailTemplateId: deviceOfflineEmailTemplateId,
+  })
+
+  const [moduleTemperatureErrorTypeId] = await knex('MessageType').insert({
+    messageSeverityId: messageSeverities.Alert.id,
+    alertTemplateId: moduleTemperatureErrorAlertTemplateId,
+    smsTemplateId: moduleTemperatureErrorSmsTemplateId,
+    emailTemplateId: moduleTemperatureErrorEmailTemplateId,
   })
 
   // Issues
@@ -3736,6 +3774,13 @@ async function seed(knex) {
       i18nKey: 'issueStatusDeviceOffline',
       issueCategoryId: issueCategories.ConnectivityHealth.id,
       defaultMessageTypeId: deviceOfflineMessageTypeId,
+    },
+    {
+      name: 'Module Temperature Error',
+      externalId: 'ModuleTemperatureError',
+      i18nKey: 'issueStatusModuleTemperatureError',
+      issueCategoryId: issueCategories.DeviceHealth.id,
+      defaultMessageTypeId: moduleTemperatureErrorTypeId,
     },
   ])
 }

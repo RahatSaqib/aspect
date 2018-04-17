@@ -719,6 +719,39 @@ async function seed(knex) {
       },
       auditFields
     ),
+    Object.assign(
+      {
+        name: 'LU Module Temperature',
+        partnerId,
+        issueTypeId: issueTypes.ModuleTemperatureError.id,
+        jobFunctionId: jobFunctionIdLabUser,
+        level: 1,
+        messageTypeId: defaultMessageTypes.ModuleTemperatureError.id,
+      },
+      auditFields
+    ),
+    Object.assign(
+      {
+        name: 'RO Module',
+        partnerId,
+        issueTypeId: issueTypes.ModuleTemperatureError.id,
+        jobFunctionId: jobFunctionIdRegionalOfficer,
+        level: 2,
+        messageTypeId: defaultMessageTypes.ModuleTemperatureError.id,
+      },
+      auditFields
+    ),
+    Object.assign(
+      {
+        name: 'RO Escalated Module Temperature',
+        partnerId,
+        issueTypeId: issueTypes.ModuleTemperatureError.id,
+        jobFunctionId: jobFunctionIdRegionalOfficer,
+        level: 3,
+        messageTypeId: defaultMessageTypes.ModuleTemperatureError.id,
+      },
+      auditFields
+    ),
   ])
 }
 
