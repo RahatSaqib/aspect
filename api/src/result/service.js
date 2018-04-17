@@ -18,8 +18,9 @@ const {
   generateCsvFile,
 } = require('../shared/io')
 const { oneDirectionalMd5Hash } = require('../shared/encryption')
-const { resultModuleError } = require('../result/actions')
+const { resultModuleTemperatureError } = require('../result/actions')
 
+const MODULE_TEMPERATURE_ERROR_CODES = [1001, 1004, 1017, 2014, 2022, 4009, 4010, 1024]
 const SELECT_LIST_FIELDS = [
   'r.id',
   'r.externalId',
@@ -104,7 +105,6 @@ const SORT_FIELDS = [
   'resultCategory2Name',
   'patientId',
 ]
-
 async function getListResults(query, auth) {
   const selectFields = _.clone(SELECT_LIST_FIELDS)
   const sortableFields = _.clone(SORT_FIELDS)
@@ -630,16 +630,18 @@ function createUniqueIdForResult(
   )}${dateFormat(testEndedOn, 'mmss').substr(1)}_${hashedSampleId.substr(0, 8)}`
 }
 
-// check for a module error when a result is logged
+// check for error codes when a result is logged
 async function onResultLogged({ resultId }, { messageContext }) {
-  const context = messageContext.bindActionCreators({ resultModuleError })
+  const maxIssues = 2
+  const days = 30
+  const context = messageContext.bindActionCreators({ resultModuleTemperatureError })
   await context.transact(async knex => {
     let issueCountQuery
-    const maxIssues = 4
+
     const [result] = await knex('Result as r').where('r.id', resultId)
-    if (result.errorCode) {
+    if (result.errorCode && result.errorCode in MODULE_TEMPERATURE_ERROR_CODES) {
       const { deviceId } = result
-      const last30Day = subDays(new Date(), 365)
+      const last30Day = subDays(new Date(), days)
       const errorCodes = [1001, 1004, 1017, 2014, 2022, 4009, 4010]
       ;[issueCountQuery] = await knex('Result as r')
         .innerJoin('ResultCategory as rc', 'r.resultCategory1', 'rc.id')
@@ -649,7 +651,7 @@ async function onResultLogged({ resultId }, { messageContext }) {
         .whereIn('r.errorCode', errorCodes)
         .count('r.id as count')
       if (issueCountQuery.count > maxIssues) {
-        context.resultModuleError(deviceId)
+        context.resultModuleTemperatureError(deviceId)
       }
     }
   })
