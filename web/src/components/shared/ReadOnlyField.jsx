@@ -21,13 +21,16 @@ export const ReadOnlyField = ({
   label,
   value,
   lg,
+  hideLabel = false,
   format = _.identity,
   nullText = '-',
 }) => (
   <div className={cssClasses('Container', { 'Container--large': lg })}>
     <label
       htmlFor={label.replace(' ', '_')}
-      className={cssClasses('Container__Label')}
+      className={cssClasses('Container__Label', {
+        'Container__Label--hidden': hideLabel,
+      })}
     >
       {label}
     </label>

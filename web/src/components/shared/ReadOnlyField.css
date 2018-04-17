@@ -15,6 +15,10 @@
   padding: 0 0 2px 0;
 }
 
+.Container__Label--hidden {
+  visibility: hidden;
+}
+
 .Container__Value {
   word-break: break-all;
 }
