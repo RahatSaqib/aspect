@@ -383,3 +383,14 @@
   font-size: 16px;
   border-top: 2px solid #e6e6e6;
 }
+
+.ReportsContainer {
+  display: flex;
+  justify-content: center;
+  padding: 10px 0 0 0;
+}
+
+.ReportsContainer__Button {  
+  margin: 0 20px;
+  background-color: var(--aspect-color-grey-5);
+}

@@ -1,0 +1,97 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`LinkNavigation component should not see browse link when having no browse feature 1`] = `
+<ThemedNavigation
+  actions={Array []}
+  className="Navigation"
+  composeTheme="deeply"
+  mapThemrProps={[Function]}
+  routes={Array []}
+  type="horizontal"
+>
+  <withHandlers(pure(Link))
+    history={undefined}
+    href="/dashboard"
+    label="Home"
+    location={undefined}
+    onClick={undefined}
+    theme={
+      Object {
+        "active": "Link__active",
+        "icon": "Link__icon",
+        "link": "Link__link",
+      }
+    }
+    title="Home"
+  />
+</ThemedNavigation>
+`;
+
+exports[`LinkNavigation component should see browse link when having browse feature 1`] = `
+<ThemedNavigation
+  actions={Array []}
+  className="Navigation"
+  composeTheme="deeply"
+  mapThemrProps={[Function]}
+  routes={Array []}
+  type="horizontal"
+>
+  <withHandlers(pure(Link))
+    history={undefined}
+    href="/dashboard"
+    label="Home"
+    location={undefined}
+    onClick={undefined}
+    theme={
+      Object {
+        "active": "Link__active",
+        "icon": "Link__icon",
+        "link": "Link__link",
+      }
+    }
+    title="Home"
+  />
+  <withHandlers(pure(Link))
+    history={undefined}
+    href="/browse/device"
+    label="Browse"
+    location={undefined}
+    onClick={undefined}
+    theme={
+      Object {
+        "active": "Link__active",
+        "icon": "Link__icon",
+        "link": "Link__link",
+      }
+    }
+    title="Browse"
+  />
+</ThemedNavigation>
+`;
+
+exports[`LinkNavigation component should shallow render correctly 1`] = `
+<ThemedNavigation
+  actions={Array []}
+  className="Navigation"
+  composeTheme="deeply"
+  mapThemrProps={[Function]}
+  routes={Array []}
+  type="horizontal"
+>
+  <withHandlers(pure(Link))
+    history={undefined}
+    href="/dashboard"
+    label="Home"
+    location={undefined}
+    onClick={undefined}
+    theme={
+      Object {
+        "active": "Link__active",
+        "icon": "Link__icon",
+        "link": "Link__link",
+      }
+    }
+    title="Home"
+  />
+</ThemedNavigation>
+`;

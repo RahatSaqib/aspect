@@ -6,10 +6,27 @@ import { TableRow, TableCell } from 'react-toolbox/lib/table'
 import { Button } from 'react-toolbox/lib/button'
 import ArrowLeft from 'react-icons/lib/ti/arrow-right'
 import { shortNumericDate } from '../../../shared/utils/dateFormat'
+import requirePermissions from '../../../components/shared/requirePermissions'
 
 const cssClasses = classnames.bind(require('./ActionTableRow.css'))
 
 const enhance = _.identity
+
+const ActionLinkButton = requirePermissions({
+  permissions: [],
+  features: [
+    'device',
+    'result',
+    'person',
+    'site',
+    'inventory',
+    'router',
+    'reporter',
+    'notification',
+    'report',
+    'deviceApiKey',
+  ],
+})(Button)
 
 const ActionTableRow = ({ intl, messages, action, ...restProps }) => (
   <TableRow
@@ -50,9 +67,9 @@ const ActionTableRow = ({ intl, messages, action, ...restProps }) => (
               </span>
             )}
           </div>
-          <Button inverse className={cssClasses('Button__Link')}>
+          <ActionLinkButton inverse className={cssClasses('Button__Link')}>
             <ArrowLeft className={cssClasses('ArrowLeft')} />
-          </Button>
+          </ActionLinkButton>
         </div>
       </div>
     </TableCell>

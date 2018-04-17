@@ -217,9 +217,6 @@ async function seed(knex) {
       featureId: featureModules.siteFilterDashboard,
     },
     // Lab User Permissions
-    { jobFunctionId: jobFunctionIdLabUser, featureId: featureModules.site },
-    { jobFunctionId: jobFunctionIdLabUser, featureId: featureModules.device },
-    { jobFunctionId: jobFunctionIdLabUser, featureId: featureModules.result },
     {
       jobFunctionId: jobFunctionIdLabUser,
       featureId: featureModules.summaryDashboard,
@@ -227,10 +224,6 @@ async function seed(knex) {
     {
       jobFunctionId: jobFunctionIdLabUser,
       featureId: featureModules.actionDashboard,
-    },
-    {
-      jobFunctionId: jobFunctionIdLabUser,
-      featureId: featureModules.reportDashboard,
     },
   ])
 
