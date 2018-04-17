@@ -3,6 +3,7 @@ const config = require('./config')
 const amqp = require('amqplib')
 const { transact } = require('./db')
 const EventEmitter = require('events')
+const debug = require('debug')('aspect:mq')
 
 const exchange = 'aspect'
 
@@ -19,10 +20,12 @@ class MessageQueue {
     this.emitter = new EventEmitter()
     this.queues = []
     this.queueEmitActions = null
+    this.messageContextIdx = 0
   }
 
   async connect() {
     if (!this.channel) {
+      debug(`connect ${this.name}`)
       const connection = await amqp.connect(config.amqp.url)
       const channel = await connection.createChannel()
       await channel.assertExchange(exchange, 'topic', { durable: true })
@@ -33,6 +36,7 @@ class MessageQueue {
 
   async purge() {
     if (this.channel) {
+      debug(`purge ${this.name}`)
       return Promise.all(
         this.queues.map(queue => this.channel.purgeQueue(queue))
       )
@@ -40,6 +44,7 @@ class MessageQueue {
   }
 
   async close() {
+    debug(`close ${this.name}`)
     if (this.channel) {
       await this.purge()
       await this.channel.close()
@@ -57,10 +62,12 @@ class MessageQueue {
     if (!_.isString(action.type)) {
       throw new Error('Actions must be object with string type')
     }
+    const message = JSON.stringify(action)
+    debug(`dispatch ${this.name} ${message}`)
     this.channel.publish(
       exchange,
       `aspect.actions.${action.type}`,
-      Buffer.from(JSON.stringify(action))
+      Buffer.from(message)
     )
   }
 
@@ -82,17 +89,19 @@ class MessageQueue {
     _.each(subscriptions, ({ actions }, subscriptionIndex) => {
       _.each(actions, (listener, type) => {
         const { channel, name: queueName } = this
-        const { queue } = channel.assertQueue(
-          `${queueName}_${name}_${subscriptionIndex}_actions_${type}`,
-          this.queueOptions
-        )
+        const subscribeName = `${queueName}_${name}_${subscriptionIndex}_actions_${type}`
+        const topic = `aspect.actions.${type}`
+        debug(`subscribe ${subscribeName}`)
+        const { queue } = channel.assertQueue(subscribeName, this.queueOptions)
         this.queues.push(queue)
-        channel.bindQueue(queue, exchange, `aspect.actions.${type}`)
+        channel.bindQueue(queue, exchange, topic)
         channel.consume(queue, message => {
-          const action = JSON.parse(message.content.toString())
+          const content = message.content.toString()
+          const action = JSON.parse(content)
+          debug(`consume ${subscribeName} ${content}`)
           try {
             listener(action, {
-              messageContext: this.createMessageContext(),
+              messageContext: this.createMessageContext(subscribeName),
             })
           } catch (err) {
             console.error(err) // eslint-disable-line no-console
@@ -111,7 +120,9 @@ class MessageQueue {
       this.queues.push(queue)
       channel.bindQueue(queue, exchange, 'aspect.actions.*')
       channel.consume(queue, message => {
-        const action = JSON.parse(message.content.toString())
+        const content = message.content.toString()
+        debug(`emit action ${content}`)
+        const action = JSON.parse(content)
         this.emitter.emit('action', action)
         this.channel.ack(message)
       })
@@ -128,8 +139,11 @@ class MessageQueue {
    * actionCreators: if specified, context will have
    * bound actions with same name as action creators
    */
-  createMessageContext() {
-    return new MessageContext(this)
+  createMessageContext(id) {
+    const contextId = `${id != null ? id : this.name}_${this.messageContextIdx}`
+    debug(`createMessageContext ${contextId}`)
+    this.messageContextIdx += 1
+    return new MessageContext(this, contextId)
   }
 
   /**
@@ -154,6 +168,7 @@ class MessageQueue {
       const check = _.iteratee(predicate)
       const checkedListener = action => {
         if (check(action)) {
+          debug(`waitForAction resolve ${JSON.stringify(action)}`)
           dispose()
           resolve(action)
         }
@@ -163,6 +178,7 @@ class MessageQueue {
       if (timeout != null) {
         timeoutId = setTimeout(() => {
           dispose()
+          debug('waitForAction timeout')
           reject(new Error('waitForAction timeout'))
         }, timeout)
       }
@@ -201,6 +217,7 @@ class MessageQueue {
       const idleIntervalId = setInterval(() => {
         timeIdle += idleTimeIncrement
         if (timeIdle >= idleTime) {
+          debug('waitForAction resolve')
           clearInterval(idleIntervalId)
           this.emitter.removeListener('action', clearTimeIdle)
           resolve()
@@ -212,8 +229,9 @@ class MessageQueue {
 }
 
 class MessageContext {
-  constructor(queue) {
+  constructor(queue, id) {
     this.queue = queue
+    this.id = id
     _.bindAll(this, ['dispatch', 'transact', 'rollback', 'commit'])
     this.transaction = null
     this.actions = []
@@ -227,9 +245,11 @@ class MessageContext {
 
     if (this.transaction) {
       // Queue actions until transaction committed
+      debug(`dispatch delay ${this.id} ${JSON.stringify(action)}`)
       this.actions.push(action)
     } else {
       // transaction complete, dispatch to MQ
+      debug(`dispatch ${this.id} ${JSON.stringify(action)}`)
       this.queue.dispatch(action)
     }
   }
@@ -238,6 +258,7 @@ class MessageContext {
     if (this.transaction) {
       throw new Error('Cannot create multiple transactions, create new context')
     }
+    debug(`transact ${this.id}`)
     this.transaction = transact(async knex => task(knex))
       .then(this.commit)
       .then(null, err => {
@@ -252,12 +273,14 @@ class MessageContext {
     if (this.isFinalState) {
       throw new Error('Cannot commit after final state, create new context')
     }
+    debug(`commit ${this.id}`)
     this.transaction = null
     this.actions.forEach(action => this.dispatch(action))
     this.isFinalState = true
   }
 
   rollback() {
+    debug(`rollback ${this.id}`)
     if (this.isFinalState) {
       throw new Error('Cannot rollback after final state, create new context')
     }
@@ -266,6 +289,7 @@ class MessageContext {
   }
 
   bindActionCreators(creators) {
+    debug(`bindActionCreators ${this.id}`)
     _.each(creators, (creator, name) => {
       this[name] = (...args) => this.dispatch(creator(...args))
       this[name].bind(this)

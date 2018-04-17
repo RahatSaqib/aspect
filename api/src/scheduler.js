@@ -21,7 +21,8 @@ function startScheduler(queue) {
 function createActionDispatcher(queue, actionCreators) {
   const dispatcher = {}
   _.each(actionCreators, (creator, name) => {
-    dispatcher[name] = () => queue.createMessageContext().dispatch(creator())
+    dispatcher[name] = () =>
+      queue.createMessageContext(`aspect_scheduler_${name}`).dispatch(creator())
   })
   return dispatcher
 }

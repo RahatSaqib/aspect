@@ -80,7 +80,9 @@ function messageQueuePlugin(server, options, next) {
       // FIXME (KB) Start scheduler after deadlock issues resolved ASP-734
       // startScheduler(queue)
       server.ext('onPreHandler', (request, reply) => {
-        request.plugins.messageContext = queue.createMessageContext()
+        request.plugins.messageContext = queue.createMessageContext(
+          'aspect_request'
+        )
         reply.continue()
       })
       next()
