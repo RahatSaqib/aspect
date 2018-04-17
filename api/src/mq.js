@@ -6,19 +6,19 @@ const EventEmitter = require('events')
 
 const exchange = 'aspect'
 
-async function createMessageQueue(name, queueOptions = { exclusive: true }) {
+async function createMessageQueue(name) {
   if (name == null) {
     throw new Error('Must specify unique queue name')
   }
-  return new MessageQueue(name, queueOptions).connect()
+  return new MessageQueue(name).connect()
 }
 
 class MessageQueue {
-  constructor(name, queueOptions) {
+  constructor(name) {
     this.name = name
     this.emitter = new EventEmitter()
-    this.queueOptions = queueOptions
     this.queues = []
+    this.queueEmitActions = null
   }
 
   async connect() {
@@ -27,18 +27,6 @@ class MessageQueue {
       const channel = await connection.createChannel()
       await channel.assertExchange(exchange, 'topic', { durable: true })
       this.channel = channel
-
-      const { queue } = channel.assertQueue(
-        `${this.name}_actions_all`,
-        this.queueOptions
-      )
-      this.queues.push(queue)
-      channel.bindQueue(queue, exchange, 'aspect.actions.*')
-      channel.consume(queue, message => {
-        const action = JSON.parse(message.content.toString())
-        this.emitter.emit('action', action)
-        this.channel.ack(message)
-      })
     }
     return this
   }
@@ -58,6 +46,7 @@ class MessageQueue {
     }
     this.channel = null
     this.queues = []
+    this.queueEmitActions = null
     this.emitter.removeAllListeners()
   }
 
@@ -97,6 +86,7 @@ class MessageQueue {
           `${queueName}_${name}_${subscriptionIndex}_actions_${type}`,
           this.queueOptions
         )
+        this.queues.push(queue)
         channel.bindQueue(queue, exchange, `aspect.actions.${type}`)
         channel.consume(queue, message => {
           const action = JSON.parse(message.content.toString())
@@ -111,6 +101,21 @@ class MessageQueue {
         })
       })
     })
+  }
+
+  subscribeEmitActions() {
+    if (this.queueEmitActions == null) {
+      const { channel } = this
+      const { queue } = channel.assertQueue('', { exclusive: true })
+      this.queueEmitActions = queue
+      this.queues.push(queue)
+      channel.bindQueue(queue, exchange, 'aspect.actions.*')
+      channel.consume(queue, message => {
+        const action = JSON.parse(message.content.toString())
+        this.emitter.emit('action', action)
+        this.channel.ack(message)
+      })
+    }
   }
 
   /**
@@ -145,6 +150,7 @@ class MessageQueue {
    */
   waitForAction(predicate, timeout = null) {
     return new Promise((resolve, reject) => {
+      this.subscribeEmitActions()
       const check = _.iteratee(predicate)
       const checkedListener = action => {
         if (check(action)) {
@@ -186,6 +192,7 @@ class MessageQueue {
    */
   waitForIdle(idleTime) {
     return new Promise(resolve => {
+      this.subscribeEmitActions()
       let timeIdle = 0
       const clearTimeIdle = () => {
         timeIdle = 0

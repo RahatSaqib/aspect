@@ -74,7 +74,7 @@ const plugins = [
 addRavenPlugin(plugins)
 
 function messageQueuePlugin(server, options, next) {
-  createMessageQueue('aspect', { durable: true })
+  createMessageQueue('aspect')
     .then(queue => {
       addSubscriptions(queue)
       // FIXME (KB) Start scheduler after deadlock issues resolved ASP-734
