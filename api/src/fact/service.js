@@ -50,10 +50,11 @@ async function calculateResultCountsOnSchedule(context, knex) {
 }
 
 async function synthDeviceOfflineOnSchedule(context, knex) {
-  const devices = await knex
-    .select('id', 'partnerId', 'lastPingOn')
-    .from('Device')
-    .orderBy('partnerId')
+  const devices = await knex('Device as d')
+    .join('FactDeviceFlag as f', 'f.deviceId', 'd.id')
+    .select('d.id', 'd.partnerId', 'd.lastPingOn')
+    .where({ 'f.offline': false })
+    .orderBy('d.partnerId')
 
   let lastPartnerId
   let deviceMaxDaysOffline
