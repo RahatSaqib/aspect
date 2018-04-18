@@ -100,7 +100,7 @@ function onFactGenerateResultCountsForDevice(
   const daysToCalculate = [1, 7, 30, 60, 90, 365, null]
 
   const devId = deviceId
-  return messageContext.run(async knex => {
+  return messageContext.transact(async knex => {
     for (const days of daysToCalculate) {
       /* eslint-disable no-await-in-loop */
       // empty facts table for that day so we don't have dupes:
