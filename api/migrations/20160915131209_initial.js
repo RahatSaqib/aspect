@@ -1415,6 +1415,7 @@ async function up(knex) {
       .references('id')
       .inTable('Device')
       .notNullable()
+      .onDelete('CASCADE')
     x
       .integer('assayId')
       .unsigned()
@@ -1446,6 +1447,7 @@ async function up(knex) {
       .inTable('Device')
       .notNullable()
       .primary()
+      .onDelete('CASCADE')
     x
       .boolean('offline')
       .notNullable()
