@@ -8,7 +8,7 @@ const { randomToken } = require('../../src/deviceApi/apiKey')
 const { assert } = chai
 
 const QUEUE_IDLE_TIME = 250
-const QUEUE_TIMEOUT_TIME = 850
+const QUEUE_TIMEOUT_TIME = 4000
 
 const devicePath = '/device'
 
