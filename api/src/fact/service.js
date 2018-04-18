@@ -139,7 +139,7 @@ function onFactGenerateResultCountsForDevice(
         .groupBy('r.deviceId')
         .select(
           knex.raw(
-            `r.deviceId, null as AssayId, null as resultCategory1, :days as days, count(r.id) as resultCount, :now as calculatedOn`,
+            `r.deviceId, null as assayId, null as resultCategory1, :days as days, count(r.id) as resultCount, :now as calculatedOn`,
             { days, now }
           )
         )
@@ -154,7 +154,7 @@ function onFactGenerateResultCountsForDevice(
         .groupBy('r.assayid')
         .select(
           knex.raw(
-            `r.deviceId, r.assayId as AssayId, null as resultCategory1, :days as days, count(r.id) as resultCount, :now as calculatedOn`,
+            `r.deviceId, r.assayId as assayId, null as resultCategory1, :days as days, count(r.id) as resultCount, :now as calculatedOn`,
             { days, now }
           )
         )
@@ -172,7 +172,7 @@ function onFactGenerateResultCountsForDevice(
         .groupBy('r.assayid', 'r.resultCategory1')
         .select(
           knex.raw(
-            `r.deviceId, r.assayId as AssayId, r.resultCategory1 as resultCategory1, :days as days, count(r.id) as resultCount, :now as calculatedOn`,
+            `r.deviceId, r.assayId as assayId, r.resultCategory1 as resultCategory1, :days as days, count(r.id) as resultCount, :now as calculatedOn`,
             { days, now }
           )
         )
