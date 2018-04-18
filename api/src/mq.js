@@ -29,6 +29,8 @@ class MessageQueue {
       const connection = await amqp.connect(config.amqp.url)
       const channel = await connection.createChannel()
       await channel.assertExchange(exchange, 'topic', { durable: true })
+      // Do not deliver next message until ack previous per subscriber
+      await channel.prefetch(1, false)
       this.channel = channel
     }
     return this
@@ -99,12 +101,19 @@ class MessageQueue {
           const messageContext = this.createMessageContext(subscribeName)
           const action = JSON.parse(content)
           debug(`consume ${messageContext.id} ${content}`)
-          try {
-            listener(action, { messageContext })
-          } catch (err) {
-            console.error(err) // eslint-disable-line no-console
-          }
-          this.channel.ack(message)
+          Promise.resolve(listener(action, { messageContext }))
+            .then(() => {
+              // Do not ack until listener result resolves
+              // Allows backpressure per consumer, if this is not needed can
+              // return something (or nothing) that resolves immediately
+              debug(`ack ${messageContext.id}`)
+              this.channel.ack(message)
+            })
+            .catch(err => {
+              console.error(err) // eslint-disable-line no-console
+              // TODO nack/dead letter queue?
+              this.channel.ack(message)
+            })
         })
       })
     })

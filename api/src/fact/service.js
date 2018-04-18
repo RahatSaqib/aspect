@@ -5,7 +5,7 @@ const { deviceOffline, deviceOnline } = require('../device/actions')
 
 function onFactGenerateDeviceOffline(action, { messageContext }) {
   const context = messageContext.bindActionCreators({ deviceOffline })
-  context.run(async knex => {
+  return context.run(async knex => {
     const devices = await knex('Device as d')
       .join('FactDeviceFlag as f', 'f.deviceId', 'd.id')
       .select('d.id', 'd.partnerId', 'd.lastPingOn')
@@ -36,7 +36,7 @@ function onFactGenerateResultCounts(action, { messageContext }) {
   const context = messageContext.bindActionCreators({
     factGenerateResultCountsForDevice,
   })
-  context.run(async knex => {
+  return context.run(async knex => {
     // TODO do we really need to generate result counts for every device every hour?
     await knex('Device as d')
       .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
@@ -51,7 +51,7 @@ function onFactGenerateResultCounts(action, { messageContext }) {
 
 function onDeviceSeen({ deviceId }, { messageContext }) {
   const context = messageContext.bindActionCreators({ deviceOnline })
-  context.run(async knex => {
+  return context.run(async knex => {
     const isOffline = await knex('FactDeviceFlag')
       .where({ deviceId, offline: true })
       .first('offline')
@@ -62,7 +62,7 @@ function onDeviceSeen({ deviceId }, { messageContext }) {
 }
 
 function onDeviceOffline({ deviceId }, { messageContext }) {
-  messageContext.transact(async knex => {
+  return messageContext.transact(async knex => {
     await knex('FactDeviceFlag')
       .where({ deviceId })
       .update({ offline: true })
@@ -70,7 +70,7 @@ function onDeviceOffline({ deviceId }, { messageContext }) {
 }
 
 function onDeviceOnline({ deviceId }, { messageContext }) {
-  messageContext.transact(async knex => {
+  return messageContext.transact(async knex => {
     await knex('FactDeviceFlag')
       .where({ deviceId })
       .update({ offline: false })
@@ -81,7 +81,7 @@ function onResultLogged({ resultId }, { messageContext }) {
   const context = messageContext.bindActionCreators({
     factGenerateResultCountsForDevice,
   })
-  context.run(async knex => {
+  return context.run(async knex => {
     const { deviceId, assayId, resultCategory1 } = await knex('Result')
       .where({ id: resultId })
       .first('deviceId', 'assayId', 'resultCategory1')
@@ -100,7 +100,7 @@ function onFactGenerateResultCountsForDevice(
   const daysToCalculate = [1, 7, 30, 60, 90, 365, null]
 
   const devId = deviceId
-  messageContext.run(async knex => {
+  return messageContext.run(async knex => {
     for (const days of daysToCalculate) {
       /* eslint-disable no-await-in-loop */
       // empty facts table for that day so we don't have dupes:

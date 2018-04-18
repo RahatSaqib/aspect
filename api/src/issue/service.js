@@ -1,7 +1,7 @@
 const { issueCreated, issueTriggered, issueResolved } = require('./actions')
 
 function onIssueEventTrigger(issueType) {
-  return (action, { messageContext: context }) => {
+  return async (action, { messageContext: context }) => {
     context.bindActionCreators({ issueCreated, issueTriggered })
     return context.transact(async knex => {
       const now = new Date()
@@ -27,7 +27,7 @@ function onIssueEventTrigger(issueType) {
 }
 
 function onIssueEventResolve(issueType) {
-  return (action, { messageContext: context }) => {
+  return async (action, { messageContext: context }) => {
     context.bindActionCreators({ issueResolved })
     context.transact(async knex => {
       const now = new Date()
