@@ -6,7 +6,11 @@ async function postProcessMergeResult(context, result, previousResult) {
     result,
     previousResult
   )
-  return Object.assign({}, response, { result })
+  const { knex } = context
+  const resultFromDatabase = await knex('Result as r')
+    .where('r.id', result.id)
+    .first()
+  return Object.assign({}, response, { result: resultFromDatabase })
 }
 
 module.exports = postProcessMergeResult

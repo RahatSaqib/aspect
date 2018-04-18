@@ -339,6 +339,7 @@ async function mergeResult(
       _.get(existingResult, 'errorNotes', null)
     ),
     updatedOn: now,
+    createdOn: _.get(existingResult, 'createdOn', now),
   }
 
   // Processed result contains result with additional fields

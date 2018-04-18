@@ -378,7 +378,9 @@ class GxConnectApiTestContext {
           'r.senderVersion',
           'r.senderOperator',
           'r.notes',
-          'r.errorCode'
+          'r.errorCode',
+          'r.updatedOn',
+          'r.createdOn'
         )
       if (resultDetails) {
         resultDetails.patientData = JSON.parse(resultDetails.patientData)
