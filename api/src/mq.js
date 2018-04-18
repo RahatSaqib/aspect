@@ -96,11 +96,11 @@ class MessageQueue {
         channel.bindQueue(queue, exchange, topic)
         channel.consume(queue, message => {
           const content = message.content.toString()
+          const messageContext = this.createMessageContext(subscribeName)
           const action = JSON.parse(content)
+          debug(`consume ${messageContext.id} ${content}`)
           try {
-            listener(action, {
-              messageContext: this.createMessageContext(subscribeName),
-            })
+            listener(action, { messageContext })
           } catch (err) {
             console.error(err) // eslint-disable-line no-console
           }

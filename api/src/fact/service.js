@@ -1,25 +1,57 @@
 const { subDays } = require('date-fns')
 const _ = require('lodash')
+const { factGenerateResultCountsForDevice } = require('./actions')
 const { deviceOffline, deviceOnline } = require('../device/actions')
 
 function onFactGenerateDeviceOffline(action, { messageContext }) {
   const context = messageContext.bindActionCreators({ deviceOffline })
   context.run(async knex => {
-    await synthDeviceOfflineOnSchedule(context, knex)
+    const devices = await knex('Device as d')
+      .join('FactDeviceFlag as f', 'f.deviceId', 'd.id')
+      .select('d.id', 'd.partnerId', 'd.lastPingOn')
+      .where({ 'f.offline': false })
+      .orderBy('d.partnerId')
+
+    let lastPartnerId
+    let deviceMaxDaysOffline
+    await Promise.all(
+      _.map(devices, async ({ id, partnerId, lastPingOn }) => {
+        if (lastPartnerId !== partnerId) {
+          deviceMaxDaysOffline = await knex('Partner')
+            .where('id', partnerId)
+            .pluck('maxDaysDeviceOffline')
+          lastPartnerId = partnerId
+        }
+        const maxLastDateOffline = subDays(new Date(), deviceMaxDaysOffline)
+
+        if (lastPingOn <= maxLastDateOffline || lastPingOn === null) {
+          context.deviceOffline(id)
+        }
+      })
+    )
   })
 }
 
 function onFactGenerateResultCounts(action, { messageContext }) {
-  const context = messageContext.bindActionCreators({ deviceOffline })
-
-  context.transact(async knex => {
-    await calculateResultCountsOnSchedule(context, knex)
+  const context = messageContext.bindActionCreators({
+    factGenerateResultCountsForDevice,
+  })
+  context.run(async knex => {
+    // TODO do we really need to generate result counts for every device every hour?
+    await knex('Device as d')
+      .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
+      .join('DeviceTypeCategory as dtc', 'dt.deviceTypeCategoryId', 'dtc.id')
+      .where('dtc.hasResults', 1)
+      .select('d.id as deviceId')
+      .map(({ deviceId }) =>
+        context.factGenerateResultCountsForDevice(deviceId)
+      )
   })
 }
 
 function onDeviceSeen({ deviceId }, { messageContext }) {
   const context = messageContext.bindActionCreators({ deviceOnline })
-  messageContext.run(async knex => {
+  context.run(async knex => {
     const isOffline = await knex('FactDeviceFlag')
       .where({ deviceId, offline: true })
       .first('offline')
@@ -45,51 +77,30 @@ function onDeviceOnline({ deviceId }, { messageContext }) {
   })
 }
 
-async function calculateResultCountsOnSchedule(context, knex) {
-  await calculateResultCounts(null, null, null, knex)
+function onResultLogged({ resultId }, { messageContext }) {
+  const context = messageContext.bindActionCreators({
+    factGenerateResultCountsForDevice,
+  })
+  context.run(async knex => {
+    const { deviceId, assayId, resultCategory1 } = await knex('Result')
+      .where({ id: resultId })
+      .first('deviceId', 'assayId', 'resultCategory1')
+    context.factGenerateResultCountsForDevice(
+      deviceId,
+      assayId,
+      resultCategory1
+    )
+  })
 }
 
-async function synthDeviceOfflineOnSchedule(context, knex) {
-  const devices = await knex('Device as d')
-    .join('FactDeviceFlag as f', 'f.deviceId', 'd.id')
-    .select('d.id', 'd.partnerId', 'd.lastPingOn')
-    .where({ 'f.offline': false })
-    .orderBy('d.partnerId')
-
-  let lastPartnerId
-  let deviceMaxDaysOffline
-  await Promise.all(
-    _.map(devices, async ({ id, partnerId, lastPingOn }) => {
-      if (lastPartnerId !== partnerId) {
-        deviceMaxDaysOffline = await knex('Partner')
-          .where('id', partnerId)
-          .pluck('maxDaysDeviceOffline')
-        lastPartnerId = partnerId
-      }
-      const maxLastDateOffline = subDays(new Date(), deviceMaxDaysOffline)
-
-      if (lastPingOn <= maxLastDateOffline || lastPingOn === null) {
-        context.deviceOffline(id)
-      }
-    })
-  )
-}
-
-async function calculateResultCounts(deviceId, assayId, resultCategory1, knex) {
+function onFactGenerateResultCountsForDevice(
+  { deviceId, assayId, resultCategory1 },
+  { messageContext }
+) {
   const daysToCalculate = [1, 7, 30, 60, 90, 365, null]
 
-  let deviceIds = [deviceId]
-
-  // if device ID wasn't passed, calculate for all devices
-  if (!deviceId) {
-    deviceIds = await knex('Device as d')
-      .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
-      .join('DeviceTypeCategory as dtc', 'dt.deviceTypeCategoryId', 'dtc.id')
-      .where('dtc.hasResults', 1)
-      .pluck('d.id')
-  }
-
-  for (const devId of deviceIds) {
+  const devId = deviceId
+  messageContext.run(async knex => {
     for (const days of daysToCalculate) {
       /* eslint-disable no-await-in-loop */
       // empty facts table for that day so we don't have dupes:
@@ -170,15 +181,15 @@ async function calculateResultCounts(deviceId, assayId, resultCategory1, knex) {
         .insert(resultCountsByAssayAndResultCategory)
       /* eslint-enable no-await-in-loop */
     }
-  }
-  return { ok: true }
+  })
 }
 
 module.exports = {
   onFactGenerateDeviceOffline,
   onFactGenerateResultCounts,
+  onFactGenerateResultCountsForDevice,
   onDeviceSeen,
   onDeviceOffline,
   onDeviceOnline,
-  calculateResultCounts,
+  onResultLogged,
 }

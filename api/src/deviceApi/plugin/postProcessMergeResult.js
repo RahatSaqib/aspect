@@ -1,7 +1,6 @@
 const {
   addResultWorkflowLogIfChanged,
   consumeInventoryForResult,
-  updateFactResultCountDevice,
 } = require('./common')
 
 async function postProcessMergeResult(context, result, previousResult) {
@@ -17,7 +16,6 @@ async function postProcessMergeResult(context, result, previousResult) {
   // // TODO ASP-355 consume inventory using a message listener instead
   // // of within plugin/same transaction
   await consumeInventoryForResult(knex, payload, result)
-  await updateFactResultCountDevice(knex, payload, result)
   return {}
 }
 
