@@ -356,6 +356,17 @@ async function seed(knex) {
   )
 
   // every clinic has a site, GxAlert device and MTB/Rif+ and Ultra results
+  const errorCodes = [
+    '1001',
+    '1004',
+    '1017',
+    '2014',
+    '2022',
+    '4009',
+    '4010',
+    '1024',
+  ]
+
   const possibleResults = [
     {
       resultText: 'Not Detected',
@@ -544,7 +555,7 @@ async function seed(knex) {
                         notes: 'This is a test... result',
                         errorCode:
                           result.category1 === resultCategories.Error.id
-                            ? '1024'
+                            ? errorCodes[_.random(errorCodes.length)]
                             : null,
                         errorNotes:
                           result.category1 === resultCategories.Error.id

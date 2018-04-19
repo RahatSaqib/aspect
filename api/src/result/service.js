@@ -20,7 +20,15 @@ const {
 const { oneDirectionalMd5Hash } = require('../shared/encryption')
 const { resultModuleTemperatureError } = require('../result/actions')
 
-const LU_MODULE_TEMPERATURE_ERROR_CODES = [1001, 1004, 1017, 2014, 2022, 4009, 4010, 1024]
+const LU_MODULE_TEMPERATURE_ERROR_CODES = [
+  1001,
+  1004,
+  1017,
+  2014,
+  2022,
+  4009,
+  4010,
+]
 const luModuleTemperatureMaxErrors = 2
 const luModuleTemperatureDays = 30
 const SELECT_LIST_FIELDS = [
