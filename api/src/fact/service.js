@@ -62,7 +62,7 @@ function onDeviceSeen({ deviceId }, { messageContext }) {
 }
 
 function onDeviceOffline({ deviceId }, { messageContext }) {
-  return messageContext.transact(async knex => {
+  return messageContext.run(async knex => {
     await knex('FactDeviceFlag')
       .where({ deviceId })
       .update({ offline: true })
@@ -70,7 +70,7 @@ function onDeviceOffline({ deviceId }, { messageContext }) {
 }
 
 function onDeviceOnline({ deviceId }, { messageContext }) {
-  return messageContext.transact(async knex => {
+  return messageContext.run(async knex => {
     await knex('FactDeviceFlag')
       .where({ deviceId })
       .update({ offline: false })
