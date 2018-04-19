@@ -338,7 +338,8 @@ describe('Device API routes', () => {
 
         // Generate device offline facts and wait for offline action for new device
         const waitForOffline = context.waitForAction(
-          deviceOffline(newDevice.id)
+          deviceOffline(newDevice.id),
+          null
         )
         messageContext.factGenerateDeviceOffline()
         await waitForOffline
@@ -360,7 +361,10 @@ describe('Device API routes', () => {
             assert.equal(res.status, 200)
           })
 
-        const waitForOnline = context.waitForAction(deviceOnline(newDevice.id))
+        const waitForOnline = context.waitForAction(
+          deviceOnline(newDevice.id),
+          null
+        )
         await waitForOnline
         await context.waitForIdle()
 
