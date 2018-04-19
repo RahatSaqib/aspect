@@ -225,7 +225,7 @@ class MessageQueue {
       const idleIntervalId = setInterval(() => {
         timeIdle += idleTimeIncrement
         if (timeIdle >= idleTime) {
-          debug('waitForAction resolve')
+          debug('waitForIdle resolve')
           clearInterval(idleIntervalId)
           this.emitter.removeListener('action', clearTimeIdle)
           resolve()
