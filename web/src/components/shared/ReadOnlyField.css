@@ -16,9 +16,13 @@
 }
 
 .Container__Label--hidden {
-  visibility: hidden;
+  display: none;
 }
 
 .Container__Value {
   word-break: break-all;
+}
+
+.Container__Link {
+  margin-left: 10px;
 }
