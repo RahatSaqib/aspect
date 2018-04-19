@@ -1,4 +1,4 @@
-const QUEUE_IDLE_TIME = 500
+const QUEUE_IDLE_TIME = 250
 const QUEUE_TIMEOUT_TIME = 4000
 
 const { createMessageQueue } = require('../../src/mq')
