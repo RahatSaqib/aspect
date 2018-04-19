@@ -330,9 +330,10 @@ describe('Device API routes', () => {
         // ensure device exists on FactDeviceFlag table
         const factDevice = await knex('FactDeviceFlag as fdf')
           .where('fdf.deviceId', newDevice.id)
-          .select('fdf.deviceId')
+          .select('fdf.deviceId', 'fdf.offline')
 
         assert.equal(factDevice.length, 1)
+        assert.equal(factDevice[0].offline, 0)
 
         // update last ping to a date earlier and greater than 7 days and ensure device marked as offline
         const last8Day = subDays(new Date(), 8)
@@ -342,7 +343,7 @@ describe('Device API routes', () => {
           .update({ lastPingOn: last8Day })
 
         // Generate device offline facts and wait for offline action for new device
-        const waitForOffline = waitForAction(deviceOffline(newDevice.id), null)
+        const waitForOffline = waitForAction(deviceOffline(newDevice.id))
         messageContext.factGenerateDeviceOffline()
         await waitForOffline
         await waitForIdle()
@@ -353,6 +354,7 @@ describe('Device API routes', () => {
         )
         assert.equal(offlineFactDevice.offline, 1)
 
+        const waitForOnline = waitForAction(deviceOnline(newDevice.id))
         await server
           .post(devicePath)
           .set('Authorization', deviceAuth)
@@ -362,8 +364,6 @@ describe('Device API routes', () => {
           .then(res => {
             assert.equal(res.status, 200)
           })
-
-        const waitForOnline = waitForAction(deviceOnline(newDevice.id), null)
         await waitForOnline
         await waitForIdle()
 

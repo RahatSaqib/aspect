@@ -119,14 +119,15 @@ class MessageQueue {
     })
   }
 
-  subscribeEmitActions() {
+  async subscribeEmitActions() {
     if (this.queueEmitActions == null) {
+      debug('subscribeEmitActions')
       const { channel } = this
-      const { queue } = channel.assertQueue('', { exclusive: true })
+      const { queue } = await channel.assertQueue('', { exclusive: true })
       this.queueEmitActions = queue
       this.queues.push(queue)
-      channel.bindQueue(queue, exchange, 'aspect.actions.*')
-      channel.consume(queue, message => {
+      await channel.bindQueue(queue, exchange, 'aspect.actions.*')
+      await channel.consume(queue, message => {
         const content = message.content.toString()
         const action = JSON.parse(content)
         this.emitter.emit('action', action)
@@ -167,9 +168,9 @@ class MessageQueue {
    * action creators. This is mainly exposed for
    * testing.
    */
-  waitForAction(predicate, timeout = null) {
+  async waitForAction(predicate, timeout = null) {
+    await this.subscribeEmitActions()
     return new Promise((resolve, reject) => {
-      this.subscribeEmitActions()
       const check = _.iteratee(predicate)
       const checkedListener = action => {
         if (check(action)) {
@@ -182,9 +183,11 @@ class MessageQueue {
       let timeoutId = null
       if (timeout != null) {
         timeoutId = setTimeout(() => {
-          dispose()
-          debug('waitForAction timeout')
-          reject(new Error('waitForAction timeout'))
+          if (timeoutId != null) {
+            dispose()
+            debug('waitForAction timeout')
+            reject(new Error('waitForAction timeout'))
+          }
         }, timeout)
       }
 
@@ -211,9 +214,9 @@ class MessageQueue {
    * action creators. This is mainly exposed for
    * testing.
    */
-  waitForIdle(idleTime) {
+  async waitForIdle(idleTime) {
+    await this.subscribeEmitActions()
     return new Promise(resolve => {
-      this.subscribeEmitActions()
       let timeIdle = 0
       const clearTimeIdle = () => {
         timeIdle = 0
@@ -222,7 +225,7 @@ class MessageQueue {
       const idleIntervalId = setInterval(() => {
         timeIdle += idleTimeIncrement
         if (timeIdle >= idleTime) {
-          debug('waitForAction resolve')
+          debug('waitForIdle resolve')
           clearInterval(idleIntervalId)
           this.emitter.removeListener('action', clearTimeIdle)
           resolve()
