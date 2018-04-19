@@ -1,4 +1,5 @@
 const { run } = require('../../src/db')
+const { waitForIdle } = require('./mqUtils')
 
 function runTest(generator, args = []) {
   return async reply => {
@@ -26,7 +27,7 @@ function waitForApproximately(numberOf, units = 'milliseconds') {
   }
   return new Promise(resolve =>
     setTimeout(resolve, unitInMilliseconds[lowerUnits] * numberOf)
-  )
+  ).then(waitForIdle)
 }
 
 // Number of milliseconds to wait for completion of
@@ -35,9 +36,9 @@ const ASYNC_TEST_ACCEPTANCE_TIME = 250
 
 // Waits acceptance time and resolves promise with optional result
 function waitAsyncComplete(resolveWith) {
-  return new Promise(resolve =>
-    setTimeout(() => resolve(resolveWith), ASYNC_TEST_ACCEPTANCE_TIME)
-  )
+  return new Promise(resolve => setTimeout(resolve, ASYNC_TEST_ACCEPTANCE_TIME))
+    .then(waitForIdle)
+    .then(() => resolveWith)
 }
 
 module.exports = {

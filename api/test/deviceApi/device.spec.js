@@ -10,6 +10,11 @@ const {
   getLastDeviceOperationId,
   getDeviceFromApiKey,
 } = require('./utils')
+const {
+  createMessageContext,
+  waitForIdle,
+  waitForAction,
+} = require('../utils/mqUtils')
 
 const server = supertest.agent('http://localhost:8080')
 const { assert } = chai
@@ -292,7 +297,7 @@ describe('Device API routes', () => {
     afterEach(newDeviceContext.afterEach)
     it('should create Device with statusId and add log to DeviceStatusLog table', () =>
       runTest(async knex => {
-        const { apiKey, deviceAuth, createMessageContext } = newDeviceContext
+        const { apiKey, deviceAuth } = newDeviceContext
         assert.isOk(apiKey)
 
         const messageContext = await createMessageContext()
@@ -337,13 +342,10 @@ describe('Device API routes', () => {
           .update({ lastPingOn: last8Day })
 
         // Generate device offline facts and wait for offline action for new device
-        const waitForOffline = context.waitForAction(
-          deviceOffline(newDevice.id),
-          null
-        )
+        const waitForOffline = waitForAction(deviceOffline(newDevice.id), null)
         messageContext.factGenerateDeviceOffline()
         await waitForOffline
-        await context.waitForIdle()
+        await waitForIdle()
 
         const [offlineFactDevice] = await knex('FactDeviceFlag as fdf').where(
           'fdf.deviceId',
@@ -361,12 +363,9 @@ describe('Device API routes', () => {
             assert.equal(res.status, 200)
           })
 
-        const waitForOnline = context.waitForAction(
-          deviceOnline(newDevice.id),
-          null
-        )
+        const waitForOnline = waitForAction(deviceOnline(newDevice.id), null)
         await waitForOnline
-        await context.waitForIdle()
+        await waitForIdle()
 
         const [onlineFactDevice] = await knex('FactDeviceFlag as fdf').where(
           'fdf.deviceId',

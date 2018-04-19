@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken')
 const chai = require('chai')
 const shared = require('./sharedToken')
 const config = require('../../src/config')
+const { queuePurge } = require('./mqUtils')
 
 const serverUrl = 'http://localhost:8080'
 const server = supertest.agent(serverUrl)
@@ -75,5 +76,14 @@ function tryRefreshToken(refreshToken, clientId, done) {
 
 before(done => {
   // Wait until server is up and running
-  attemptToConnectAndLogin(done)
+  attemptToConnectAndLogin(() => {
+    // Start with clean test queue
+    // after waitForIdle on any startup tasks
+    queuePurge().then(done)
+  })
+})
+
+after(done => {
+  // waitForIdle and cleanup any leftovers
+  queuePurge().then(done)
 })
