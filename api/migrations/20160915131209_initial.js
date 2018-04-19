@@ -373,6 +373,16 @@ async function up(knex) {
     deviceStatus.string('token')
   })
 
+  await knex.schema.createTable(
+    'DeviceMaintenanceStatus',
+    maintenanceStatus => {
+      maintenanceStatus.increments('id')
+      maintenanceStatus.string('name').notNullable()
+      maintenanceStatus.string('i18nKey')
+      maintenanceStatus.string('token')
+    }
+  )
+
   await knex.schema.createTable('Site', site => {
     site.increments('id')
     site.string('name').notNullable()
@@ -430,6 +440,34 @@ async function up(knex) {
       .references('id')
       .inTable('User')
   })
+
+  await knex.schema.createTable(
+    'DeviceMaintenanceStatusLog',
+    maintenanceStatusLog => {
+      maintenanceStatusLog.increments('id')
+      maintenanceStatusLog
+        .integer('deviceId')
+        .unsigned()
+        .index()
+        .references('id')
+        .inTable('Device')
+      maintenanceStatusLog
+        .integer('deviceMaintenanceStatusId')
+        .unsigned()
+        .index()
+        .references('id')
+        .inTable('DeviceMaintenanceStatus')
+      maintenanceStatusLog.specificType('data', 'JSON').notNullable()
+      maintenanceStatusLog.dateTime('changedOn')
+      maintenanceStatusLog.dateTime('createdOn')
+      maintenanceStatusLog
+        .integer('createdBy')
+        .unsigned()
+        .index()
+        .references('id')
+        .inTable('User')
+    }
+  )
 
   await knex.schema.createTable('Device', device => {
     device.increments('id')
@@ -1675,12 +1713,14 @@ async function down(knex) {
   await knex.schema.dropTableIfExists('DeviceSiteHistory')
   await knex.schema.dropTableIfExists('Device')
   await knex.schema.dropTableIfExists('DeviceStatusLog')
+  await knex.schema.dropTableIfExists('DeviceMaintenanceStatusLog')
   await knex.schema.dropTableIfExists('Site')
   await knex.schema.dropTableIfExists('DeviceTypeCategory')
   await knex.schema.dropTableIfExists('DeviceConfiguration')
   await knex.schema.dropTableIfExists('DeviceOperation')
   await knex.schema.dropTableIfExists('DeviceType')
   await knex.schema.dropTableIfExists('DeviceStatus')
+  await knex.schema.dropTableIfExists('DeviceMaintenanceStatus')
   await knex.schema.dropTableIfExists('DeviceRole')
   await knex.schema.dropTableIfExists('DeviceApiKey')
   await knex.schema.dropTableIfExists('RefreshToken')
