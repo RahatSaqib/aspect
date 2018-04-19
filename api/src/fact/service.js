@@ -9,7 +9,7 @@ function onFactGenerateDeviceOffline(action, { messageContext }) {
     const devices = await knex('Device as d')
       .join('FactDeviceFlag as f', 'f.deviceId', 'd.id')
       .select('d.id', 'd.partnerId', 'd.lastPingOn')
-      .where({ 'f.offline': false })
+      .where({ 'f.offline': 0 })
       .orderBy('d.partnerId')
 
     let lastPartnerId
@@ -53,7 +53,7 @@ function onDeviceSeen({ deviceId }, { messageContext }) {
   const context = messageContext.bindActionCreators({ deviceOnline })
   return context.run(async knex => {
     const isOffline = await knex('FactDeviceFlag')
-      .where({ deviceId, offline: true })
+      .where({ deviceId, offline: 1 })
       .first('offline')
     if (isOffline != null) {
       context.deviceOnline(deviceId)
@@ -65,7 +65,7 @@ function onDeviceOffline({ deviceId }, { messageContext }) {
   return messageContext.run(async knex => {
     await knex('FactDeviceFlag')
       .where({ deviceId })
-      .update({ offline: true })
+      .update({ offline: 1 })
   })
 }
 
@@ -73,7 +73,7 @@ function onDeviceOnline({ deviceId }, { messageContext }) {
   return messageContext.run(async knex => {
     await knex('FactDeviceFlag')
       .where({ deviceId })
-      .update({ offline: false })
+      .update({ offline: 0 })
   })
 }
 
