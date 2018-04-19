@@ -9,6 +9,7 @@ GxConnect also has the requirement to be able to  register itself as a device
 const _ = require('lodash')
 const chai = require('chai')
 const { getSiteFromDeviceId, getDeviceFromApiKey } = require('../utils')
+const { waitForIdle } = require('../../utils/mqUtils')
 const { run } = require('../../../src/db')
 
 const { assert } = chai
@@ -320,6 +321,7 @@ class GxConnectApiTestContext {
 
   async cleanUp() {
     return run(async knex => {
+      await waitForIdle()
       if (!_.isEmpty(this.apiKeys)) {
         await deleteDeviceSiteDataAndRefreshTokens(
           knex,

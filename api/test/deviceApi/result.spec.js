@@ -11,6 +11,8 @@ const {
   getLastResultId,
 } = require('./utils')
 
+const { waitForIdle } = require('../utils/mqUtils')
+
 const server = supertest.agent('http://localhost:8080')
 const { assert, expect } = chai
 
@@ -29,9 +31,9 @@ const ASYNC_TEST_ACCEPTANCE_TIME = 250
 
 // Waits acceptance time and resolves promise with optional result
 function waitAsyncComplete(result) {
-  return new Promise(resolve =>
-    setTimeout(() => resolve(result), ASYNC_TEST_ACCEPTANCE_TIME)
-  )
+  return new Promise(resolve => setTimeout(resolve, ASYNC_TEST_ACCEPTANCE_TIME))
+    .then(waitForIdle)
+    .then(() => result)
 }
 
 describe('Device Result API routes', () => {

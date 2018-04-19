@@ -1,31 +1,13 @@
 const _ = require('lodash')
 const chai = require('chai')
 const { run } = require('../../src/db')
-const { createMessageQueue } = require('../../src/mq')
 const { getConstraints, addConstraints } = require('../../src/auth/constraints')
 const { randomToken } = require('../../src/deviceApi/apiKey')
+const { queuePurge } = require('../utils/mqUtils')
 
 const { assert } = chai
 
-const QUEUE_IDLE_TIME = 250
-const QUEUE_TIMEOUT_TIME = 4000
-
 const devicePath = '/device'
-
-let sharedQueue = null
-async function queueConnect() {
-  if (sharedQueue == null) {
-    sharedQueue = await createMessageQueue('aspect_test_device_api')
-  }
-  return sharedQueue
-}
-
-async function queuePurge() {
-  if (this.queue) {
-    await sharedQueue.waitForIdle(QUEUE_IDLE_TIME)
-    await sharedQueue.purge()
-  }
-}
 
 async function deleteTestDataFromCheckpoint(knex, checkpoint, deviceIds) {
   const minDeviceLog = await knex('DeviceLog as dl')
@@ -246,13 +228,7 @@ class DeviceApiTestContext {
     this.initialConfigurationData = {}
     this.apiKeysWithoutDevice = []
 
-    _.bindAll(this, [
-      'beforeEach',
-      'afterEach',
-      'runTest',
-      'createMessageContext',
-      'waitForAction',
-    ])
+    _.bindAll(this, ['beforeEach', 'afterEach', 'runTest'])
   }
 
   beforeEach() {
@@ -390,21 +366,6 @@ class DeviceApiTestContext {
     })
     this.apiKeysWithoutDevice.push(apiKey)
     return apiKey
-  }
-
-  async createMessageContext() {
-    const queue = await queueConnect()
-    return queue.createMessageContext()
-  }
-
-  async waitForAction(predicate, timeout = QUEUE_TIMEOUT_TIME) {
-    const queue = await queueConnect()
-    return queue.waitForAction(predicate, timeout)
-  }
-
-  async waitForIdle(idleTime = QUEUE_IDLE_TIME) {
-    const queue = await queueConnect()
-    return queue.waitForIdle(idleTime)
   }
 
   afterEach() {

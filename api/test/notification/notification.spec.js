@@ -2,6 +2,11 @@ const supertest = require('supertest')
 const chai = require('chai')
 const { createTestContext, getDeviceFromApiKey } = require('../deviceApi/utils')
 const { deviceOffline, deviceOnline } = require('../../src/device/actions')
+const {
+  createMessageContext,
+  waitForIdle,
+  waitForAction,
+} = require('../utils/mqUtils')
 
 const server = supertest.agent('http://localhost:8080')
 const { assert } = chai
@@ -21,7 +26,7 @@ describe('Notification endpoints', () => {
   describe('Device Offline', () => {
     it('should create Notification when DeviceOffline', () =>
       runTest(async knex => {
-        const { apiKey, deviceAuth, createMessageContext } = context
+        const { apiKey, deviceAuth } = context
         assert.isOk(apiKey)
 
         const messageContext = await createMessageContext()
@@ -46,10 +51,10 @@ describe('Notification endpoints', () => {
         const { id: deviceId } = newDevice
 
         // Notify device offline and wait for completion
-        const waitForOffline = context.waitForAction(deviceOffline(deviceId))
+        const waitForOffline = waitForAction(deviceOffline(deviceId))
         messageContext.deviceOffline(deviceId)
         await waitForOffline
-        await context.waitForIdle()
+        await waitForIdle()
 
         let issues = await knex('Issue as i')
           .join('IssueType as it', 'i.issueTypeId', 'it.id')
@@ -68,10 +73,10 @@ describe('Notification endpoints', () => {
         const issueId = issues[0].id
 
         // Notify device online and wait for completion
-        const waitForOnline = context.waitForAction(deviceOnline(deviceId))
+        const waitForOnline = waitForAction(deviceOnline(deviceId))
         messageContext.deviceOnline(deviceId)
         await waitForOnline
-        await context.waitForIdle()
+        await waitForIdle()
 
         issues = await knex('Issue as i')
           .join('IssueType as it', 'i.issueTypeId', 'it.id')
