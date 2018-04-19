@@ -3664,33 +3664,43 @@ async function seed(knex) {
     )
   )
   // Module temperature messages - TODO - Update templates with actual messages
-  const [moduleTemperatureErrorAlertTemplateId] = await knex('AlertTemplate').insert(
-    /* eslint-disable no-template-curly-in-string */
-    Object.assign(
-    {
-      message: '${device.name} had ${numberOfModuleTemperatureErrors } in the last ${numberOfDays} days.',
-    },
-    auditFields
-    )
-  )
-
-  const [moduleTemperatureErrorSmsTemplateId] = await knex('SmsTemplate').insert(
+  const [moduleTemperatureErrorAlertTemplateId] = await knex(
+    'AlertTemplate'
+  ).insert(
     /* eslint-disable no-template-curly-in-string */
     Object.assign(
       {
-        message: '${device.name} had ${numberOfModuleTemperatureErrors } in the last ${numberOfDays} days.',
+        message:
+          '{{device.name}} had {{numberOfModuleTemperatureErrors}} in the last {{numberOfDays}} days.',
       },
       auditFields
     )
   )
 
-  const [moduleTemperatureErrorEmailTemplateId] = await knex('EmailTemplate').insert(
+  const [moduleTemperatureErrorSmsTemplateId] = await knex(
+    'SmsTemplate'
+  ).insert(
     /* eslint-disable no-template-curly-in-string */
     Object.assign(
       {
-        subject: '${device.name} Module Temperature Error',
-        body: '${device.name} had ${numberOfModuleTemperatureErrors } in the last ${numberOfDays} days.',
-        htmlBody: '<em>${device.name}</em> had ${numberOfModuleTemperatureErrors } in the last ${numberOfDays} days.',
+        message:
+          '{{device.name}} had {{numberOfModuleTemperatureErrors}} in the last {{numberOfDays}} days.',
+      },
+      auditFields
+    )
+  )
+
+  const [moduleTemperatureErrorEmailTemplateId] = await knex(
+    'EmailTemplate'
+  ).insert(
+    /* eslint-disable no-template-curly-in-string */
+    Object.assign(
+      {
+        subject: '{{device.name}} Module Temperaure Error',
+        body:
+          '{{device.name}} had {{numberOfModuleTemperatureErrors}} in the last {{numberOfDays}} days.',
+        htmlBody:
+          '<em>{{device.name}}</em> had {{numberOfModuleTemperatureErrors}} in the last {{numberOfDays}} days.',
       },
       auditFields
     )
