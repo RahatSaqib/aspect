@@ -8,6 +8,7 @@ const subHours = require('date-fns/sub_hours')
 const subMinutes = require('date-fns/sub_minutes')
 const addSeconds = require('date-fns/add_seconds')
 const setMilliseconds = require('date-fns/set_milliseconds')
+const Promise = require('bluebird')
 const { createGxConnectTestContext } = require('./gxconnect_utils')
 const { getLastResultId } = require('../utils')
 const { postToDeviceApi } = require('./utils')
@@ -16,6 +17,7 @@ const {
   basicResultPayload,
 } = require('./geneXpertConstants')
 const { run } = require('../../../src/db')
+const { waitForApproximately } = require('../../utils/generatorFunctionUtils')
 
 const server = supertest.agent('http://localhost:8080')
 const { assert, expect } = chai
@@ -648,15 +650,21 @@ describe('Device API routes for GxConnect Devices', () => {
         assert.isUndefined(afterResultDetails)
       }))
 
-    it('should append a result if the external ID is not known', () =>
+    it('should append a result if the sample ID, instrument serial and test dates are not known', () =>
       runTest(async () => {
-        const { basicDevicePayload, deviceAuth, device, site } = context
+        const { basicDevicePayload, deviceAuth, device, site, now } = context
 
         const beforeResultDetails = await getLastResult()
 
         assert.isUndefined(beforeResultDetails)
 
-        const testStartedOn = setMilliseconds(subDays(context.now, 3), 0)
+        const testStartedOn = setMilliseconds(
+          subMinutes(
+            subHours(now, Math.floor(Math.random() * 24)),
+            Math.floor(Math.random() * 60)
+          ),
+          0
+        )
         await server
           .post('/device')
           .set('Authorization', deviceAuth)
@@ -676,7 +684,7 @@ describe('Device API routes for GxConnect Devices', () => {
           .catch(assert.fail)
 
         const afterResultDetails = await getLastResult()
-        assert.deepEqual(_.omit(afterResultDetails, 'id', 'externalId'), {
+        expect(afterResultDetails).to.containSubset({
           deviceId: device.id,
           siteId: device.siteId,
           geographyId: site.geographyId,
@@ -710,23 +718,29 @@ describe('Device API routes for GxConnect Devices', () => {
         })
       }))
 
-    it('should update a result if the external ID is known', () =>
+    it('should update a result if the sample ID, instrument serial and test dates are known', () =>
       runTest(async () => {
-        const { basicDevicePayload, deviceAuth, device, site } = context
+        const { basicDevicePayload, deviceAuth, now } = context
 
-        const beforeResultDetails = await getLastResult()
+        const testStartedOn = setMilliseconds(
+          subMinutes(
+            subHours(now, Math.floor(Math.random() * 24)),
+            Math.floor(Math.random() * 60)
+          ),
+          0
+        )
+        const sampleId = 'GxConnect test will be updated'
+        const instrumentSerial = 'GxConnect Test with same instrument'
 
-        assert.isNotEmpty(beforeResultDetails)
-
-        const testStartedOn = setMilliseconds(subDays(context.now, 3), 0)
+        // Send a new result
         await server
           .post('/device')
           .set('Authorization', deviceAuth)
           .send(
             _.assign({}, _.assign({}, basicDevicePayload, basicResultPayload), {
               result: _.assign({}, basicResultPayload.result, {
-                sample: { id: 'new sample' },
-                instrument: { serial: 'new instrument' },
+                sample: { id: sampleId },
+                instrument: { serial: instrumentSerial },
                 startedOn: testStartedOn,
               }),
             })
@@ -737,40 +751,57 @@ describe('Device API routes for GxConnect Devices', () => {
           })
           .catch(assert.fail)
 
-        const afterResultDetails = await getLastResult()
-        assert.equal(beforeResultDetails.id, afterResultDetails.id)
-        assert.deepEqual(_.omit(afterResultDetails, 'id', 'externalId'), {
-          deviceId: device.id,
-          siteId: device.siteId,
-          geographyId: site.geographyId,
-          assay: basicResultPayload.result.assay.id,
-          assayVersion: basicResultPayload.result.assay.version,
-          resultWorkflowStatus: 'OK',
-          resultSource: 'DiagnosticDevice',
-          resultType: 'Patient',
-          resultCategory1: 'Success',
-          resultCategory2: null,
-          sampleId: 'new sample',
-          sampleCollectedOn: null,
-          sampleOriginSiteId: device.siteId,
-          sampleTypeId: null,
-          resultData: _.assign({}, basicResultPayload.result.data, {
-            geneXpertTestId: basicResultPayload.result.id,
-          }),
-          startedOn: testStartedOn,
-          endedOn: null,
-          consumableSerial: null,
-          consumableExpirationDate: null,
-          consumableLot: null,
-          instrumentSerial: 'new instrument',
-          moduleName: null,
-          moduleSerial: null,
-          patientData: basicResultPayload.result.patient,
-          senderVersion: basicResultPayload.result.sender.version,
-          senderOperator: basicResultPayload.result.sender.operator,
-          notes: null,
-          errorCode: null,
-        })
+        const beforeUpdateResultDetails = await getLastResult()
+
+        await waitForApproximately(2, 'seconds')
+
+        // Send new data about existing result
+        const newResultData = {
+          customFieldData: {
+            '1': {
+              notAvailable: false,
+              label: 'HIV Status',
+              value: 'Positive',
+            },
+            '2': {
+              notAvailable: false,
+              label: 'Visual Analysis',
+              value: 'Blood Stained',
+            },
+          },
+        }
+        await server
+          .post('/device')
+          .set('Authorization', deviceAuth)
+          .send(
+            _.assign({}, _.assign({}, basicDevicePayload, basicResultPayload), {
+              result: _.assign({}, basicResultPayload.result, {
+                sample: { id: sampleId },
+                instrument: { serial: instrumentSerial },
+                startedOn: testStartedOn,
+                data: newResultData,
+              }),
+            })
+          )
+          .then(res => {
+            assert.equal(res.status, 200)
+            assert.typeOf(res.body, 'Object')
+          })
+          .catch(assert.fail)
+
+        const afterUpdateResultDetails = await getLastResult()
+
+        assert.equal(beforeUpdateResultDetails.id, afterUpdateResultDetails.id)
+        assert.equal(
+          beforeUpdateResultDetails.createdOn.toString(),
+          afterUpdateResultDetails.createdOn.toString()
+        )
+        expect(afterUpdateResultDetails.resultData).to.containSubset(
+          newResultData
+        )
+        expect(afterUpdateResultDetails.updatedOn).to.be.above(
+          beforeUpdateResultDetails.updatedOn
+        )
       }))
 
     it('should merge results with same sample ID, start time, end time and instrument serial', () =>
@@ -1161,34 +1192,36 @@ describe('Device API routes for GxConnect Devices', () => {
         }
 
         let runNumber = 1
-        for (const resultText in resultTextToResultCategoryMapping) {
-          /* eslint-disable no-await-in-loop */
-          // Running these requests in parallel causes the connection pool in MySQL to fill up too quickly.
-          // This is probably due to the fact table updates.
-          // For now: sending these requests sequentially and sweeping this under the rug
-          // TODO: Defer fact updates to another process and change this test to send results in parallel
-          if (
-            resultText &&
-            !_.isEmpty(resultTextToResultCategoryMapping[resultText])
-          ) {
-            const {
-              resultId,
-              assay,
-              resultCategory1,
-              resultCategory2,
-            } = resultTextToResultCategoryMapping[resultText]
-            await sendResult(
-              resultId,
-              assay,
-              resultText,
-              resultCategory1,
-              resultCategory2,
-              runNumber
-            )
-            runNumber += 1
+        await Promise.each(
+          Object.keys(resultTextToResultCategoryMapping),
+          async resultText => {
+            // Running these requests in parallel causes the connection pool in MySQL to fill up too quickly.
+            // This is probably due to the fact table updates.
+            // For now: sending these requests sequentially and sweeping this under the rug
+            if (
+              resultText &&
+              !_.isEmpty(resultTextToResultCategoryMapping[resultText])
+            ) {
+              const {
+                resultId,
+                assay,
+                resultCategory1,
+                resultCategory2,
+              } = resultTextToResultCategoryMapping[resultText]
+              runNumber += 1
+              await sendResult(
+                resultId,
+                assay,
+                resultText,
+                resultCategory1,
+                resultCategory2,
+                runNumber
+              )
+            } else {
+              await Promise.resolve()
+            }
           }
-          /* eslint-enable no-await-in-loop */
-        }
+        )
       }))
 
     describe('when the assay in the result payload is unknown to Aspect', () => {
@@ -1345,32 +1378,43 @@ describe('Device API routes for GxConnect Devices', () => {
       describe('when the test already exists in the database', () => {
         it('should NOT reduce inventory levels of the consumable', () =>
           runTest(async knex => {
-            const { basicDevicePayload, deviceAuth, device, site } = context
+            const { basicDevicePayload, deviceAuth, site, now } = context
 
-            const consumableAssay = await knex('ConsumableAssay as ca')
+            const consumableAssays = await knex('ConsumableAssay as ca')
               .join('Assay as a', 'ca.assayId', 'a.id')
               .join('DeviceType as dt', 'a.deviceTypeId', 'dt.id')
               .where({ 'dt.externalId': basicDevicePayload.type.id })
               .andWhere('ca.quantity', '>', 0)
-              .first(
+              .select(
                 'ca.consumableId',
                 'ca.quantity',
                 'a.externalId as assayId'
               )
 
-            assert.isNotEmpty(consumableAssay)
+            assert.isNotEmpty(consumableAssays)
+            const [consumableAssay] = consumableAssays
             assert.isAbove(consumableAssay.quantity, 0)
 
-            let inventoryItem = await knex('InventoryItem')
-              .where({ id: inventoryItemId })
+            const inventoryItemBeforeFirstRequest = await knex('InventoryItem')
+              .where({
+                consumableId: consumableAssay.consumableId,
+                siteId: site.id,
+                expiresOn: expiryDate,
+              })
               .first()
-            assert.equal(
-              inventoryItem.quantityOnHand,
-              initialQuantityOnHand - consumableAssay.quantity
-            )
 
-            const testStartedOn = setMilliseconds(subDays(context.now, 3), 0)
+            const testStartedOn = setMilliseconds(
+              subMinutes(
+                subHours(now, Math.floor(Math.random() * 24)),
+                Math.floor(Math.random() * 60)
+              ),
+              0
+            )
             const testEndedOn = setMilliseconds(addHours(testStartedOn, 2), 0)
+            const sampleId = 'GxConnect test reduces inventory'
+            const instrumentSerial = 'Cepheid PC serial'
+
+            // Send first test
             await server
               .post('/device')
               .set('Authorization', deviceAuth)
@@ -1385,8 +1429,8 @@ describe('Device API routes for GxConnect Devices', () => {
                         id: consumableAssay.assayId,
                         version: '2',
                       },
-                      sample: { id: 'Existing Sample' },
-                      instrument: { serial: 'Existing Instrument' },
+                      sample: { id: sampleId },
+                      instrument: { serial: instrumentSerial },
                       startedOn: testStartedOn,
                       endedOn: testEndedOn,
                     }),
@@ -1399,22 +1443,11 @@ describe('Device API routes for GxConnect Devices', () => {
               })
               .catch(assert.fail)
 
-            const lastResultId = await getLastResultId(knex, device.id)
-            inventoryItem = await knex('InventoryItem')
-              .where({
-                consumableId: consumableAssay.consumableId,
-                siteId: site.id,
-                expiresOn: expiryDate,
-              })
-              .first()
+            const beforeUpdateResultDetails = await getLastResult()
 
-            assert.equal(inventoryItem.id, inventoryItemId)
-            assert.equal(
-              inventoryItem.quantityOnHand,
-              initialQuantityOnHand - consumableAssay.quantity
+            const inventoryLogsAfterFirstRequest = await knex(
+              'InventoryLog as il'
             )
-
-            const inventoryLogs = await knex('InventoryLog as il')
               .join('ConsumableReason as cr', 'il.consumableReasonId', 'cr.id')
               .where({ inventoryItemId })
               .select(
@@ -1424,15 +1457,119 @@ describe('Device API routes for GxConnect Devices', () => {
                 'il.resultId',
                 'il.quantity'
               )
-            assert.deepEqual(inventoryLogs, [
-              {
-                consumableId: inventoryItem.consumableId,
+
+            const inventoryItemAfterFirstRequest = await knex('InventoryItem')
+              .where({
+                consumableId: consumableAssay.consumableId,
                 siteId: site.id,
-                consumableReason: 'Test Conducted',
-                resultId: lastResultId,
-                quantity: consumableAssay.quantity,
+                expiresOn: expiryDate,
+              })
+              .first()
+            assert.equal(
+              inventoryItemAfterFirstRequest.quantityOnHand,
+              inventoryItemBeforeFirstRequest.quantityOnHand -
+                consumableAssay.quantity
+            )
+
+            await waitForApproximately(2, 'seconds')
+
+            // Send second request for same test
+            const newResultData = {
+              customFieldData: {
+                '1': {
+                  notAvailable: false,
+                  label: 'HIV Status',
+                  value: 'Positive',
+                },
+                '2': {
+                  notAvailable: false,
+                  label: 'Visual Analysis',
+                  value: 'Blood Stained',
+                },
               },
-            ])
+            }
+            await server
+              .post('/device')
+              .set('Authorization', deviceAuth)
+              .send(
+                _.assign(
+                  {},
+                  _.assign({}, basicDevicePayload, basicResultPayload),
+                  {
+                    result: _.assign({}, basicResultPayload.result, {
+                      id: deductInventoryTestResultId,
+                      assay: {
+                        id: consumableAssay.assayId,
+                        version: '2',
+                      },
+                      sample: { id: sampleId },
+                      instrument: { serial: instrumentSerial },
+                      startedOn: testStartedOn,
+                      endedOn: testEndedOn,
+                      data: newResultData,
+                    }),
+                  }
+                )
+              )
+              .then(res => {
+                assert.equal(res.status, 200)
+                assert.typeOf(res.body, 'Object')
+              })
+              .catch(assert.fail)
+
+            const afterUpdateResultDetails = await getLastResult()
+
+            assert.equal(
+              afterUpdateResultDetails.id,
+              beforeUpdateResultDetails.id
+            )
+            assert.equal(
+              afterUpdateResultDetails.createdOn.toString(),
+              beforeUpdateResultDetails.createdOn.toString()
+            )
+            expect(afterUpdateResultDetails.updatedOn).to.be.above(
+              beforeUpdateResultDetails.updatedOn
+            )
+
+            const inventoryItemAfterSecondRequest = await knex('InventoryItem')
+              .where({
+                consumableId: consumableAssay.consumableId,
+                siteId: site.id,
+                expiresOn: expiryDate,
+              })
+              .first()
+
+            assert.deepEqual(
+              inventoryItemAfterSecondRequest,
+              inventoryItemAfterFirstRequest
+            )
+
+            const inventoryLogsAfterSecondRequest = await knex(
+              'InventoryLog as il'
+            )
+              .join('ConsumableReason as cr', 'il.consumableReasonId', 'cr.id')
+              .where({ inventoryItemId })
+              .select(
+                'il.consumableId',
+                'il.siteId',
+                'cr.name as consumableReason',
+                'il.resultId',
+                'il.quantity'
+              )
+            assert.deepEqual(
+              inventoryLogsAfterSecondRequest,
+              inventoryLogsAfterFirstRequest
+            )
+
+            const matchingConsumableAssayAfterSecondRequest = _.find(
+              consumableAssays,
+              {
+                consumableId: _.head(inventoryLogsAfterSecondRequest)
+                  .consumableId,
+                quantity: _.head(inventoryLogsAfterSecondRequest).quantity,
+              }
+            )
+            assert.isNotEmpty(matchingConsumableAssayAfterSecondRequest)
           }))
       })
     })

@@ -8,8 +8,8 @@ const subHours = require('date-fns/sub_hours')
 const subMinutes = require('date-fns/sub_minutes')
 const addSeconds = require('date-fns/add_seconds')
 const setMilliseconds = require('date-fns/set_milliseconds')
+const Promise = require('bluebird')
 const { createGxAlertTestContext } = require('./gxalert_utils')
-const { getLastResultId } = require('../utils')
 const {
   postToDeviceApi,
   getMaxDeviceId,
@@ -1816,7 +1816,13 @@ describe('Device API routes for GxAlert Device', () => {
 
         assert.isUndefined(beforeResultDetails)
 
-        const testStartedOn = setMilliseconds(subDays(now, 3), 0)
+        const testStartedOn = setMilliseconds(
+          subMinutes(
+            subHours(now, Math.floor(Math.random() * 24)),
+            Math.floor(Math.random() * 60)
+          ),
+          0
+        )
 
         const response = await postToDeviceApi({
           authHeader: deviceAuth,
@@ -1876,12 +1882,18 @@ describe('Device API routes for GxAlert Device', () => {
     it('should update a result if the sample ID, instrument serial and test start times are known', () =>
       runTest(async () => {
         const { now } = context
-        const beforeResultDetails = await getLastResult()
+        const testStartedOn = setMilliseconds(
+          subMinutes(
+            subHours(now, Math.floor(Math.random() * 24)),
+            Math.floor(Math.random() * 60)
+          ),
+          0
+        )
+        const sampleId = 'This test will be updated'
+        const instrumentSerial = 'Tested on the same instrument'
 
-        assert.isNotEmpty(beforeResultDetails)
-
-        const testStartedOn = setMilliseconds(subDays(now, 3), 0)
-        const response = await postToDeviceApi({
+        // Send a new result
+        const firstResponse = await postToDeviceApi({
           authHeader: deviceAuth,
           payload: _.merge(
             {},
@@ -1890,51 +1902,61 @@ describe('Device API routes for GxAlert Device', () => {
             basicResultPayload,
             {
               result: {
-                sample: { id: 'new sample' },
-                instrument: { serial: 'new instrument' },
+                sample: { id: sampleId },
+                instrument: { serial: instrumentSerial },
                 startedOn: testStartedOn,
               },
             }
           ),
           expectedStatusCode: 200,
         })
-        assert.typeOf(response.body, 'Object')
 
-        const afterResultDetails = await getLastResult()
-        const currentGeneXpertDevice = await getCurrentGeneXpertDevice()
-        expect(afterResultDetails).to.containSubset({
-          id: beforeResultDetails.id,
-          deviceId: currentGeneXpertDevice.id,
-          siteId: currentGeneXpertDevice.siteId,
-          geographyId: currentGeneXpertDevice.geographyId,
-          assay: basicResultPayload.result.assay.id,
-          assayVersion: basicResultPayload.result.assay.version,
-          resultWorkflowStatus: 'OK',
-          resultSource: 'DiagnosticDevice',
-          resultType: 'Patient',
-          resultCategory1: 'Success',
-          resultCategory2: null,
-          sampleId: 'new sample',
-          sampleCollectedOn: null,
-          sampleOriginSiteId: currentGeneXpertDevice.siteId,
-          sampleTypeId: null,
-          resultData: _.assign({}, basicResultPayload.result.data, {
-            geneXpertTestId: basicResultPayload.result.id,
-          }),
-          startedOn: testStartedOn,
-          endedOn: null,
-          consumableSerial: null,
-          consumableExpirationDate: null,
-          consumableLot: null,
-          instrumentSerial: 'new instrument',
-          moduleName: basicResultPayload.result.instrument.module.name,
-          moduleSerial: basicResultPayload.result.instrument.module.serial,
-          patientData: basicResultPayload.result.patient,
-          senderVersion: basicResultPayload.result.sender.version,
-          senderOperator: basicResultPayload.result.sender.operator,
-          notes: null,
-          errorCode: null,
+        await waitForApproximately(2, 'seconds')
+
+        // Send new data about existing result
+        const newResultData = {
+          customFieldData: {
+            '1': {
+              notAvailable: false,
+              label: 'HIV Status',
+              value: 'Positive',
+            },
+            '2': {
+              notAvailable: false,
+              label: 'Visual Analysis',
+              value: 'Blood Stained',
+            },
+          },
+        }
+        const secondResponse = await postToDeviceApi({
+          authHeader: deviceAuth,
+          payload: _.merge(
+            {},
+            basicDevicePayload,
+            { name: deviceName },
+            basicResultPayload,
+            {
+              result: {
+                sample: { id: sampleId },
+                instrument: { serial: instrumentSerial },
+                startedOn: testStartedOn,
+                data: newResultData,
+              },
+            }
+          ),
+          expectedStatusCode: 200,
         })
+
+        const { body: { result: firstResult } } = firstResponse
+        const { body: { result: secondResult } } = secondResponse
+        assert.equal(secondResult.id, firstResult.id)
+        assert.equal(secondResult.createdOn, firstResult.createdOn)
+        expect(JSON.parse(secondResult.resultData)).to.containSubset(
+          newResultData
+        )
+        expect(new Date(secondResult.updatedOn)).to.be.above(
+          new Date(firstResult.updatedOn)
+        )
       }))
 
     it('should merge results with same sample ID, start time, end time and instrument serial', () =>
@@ -2311,34 +2333,36 @@ describe('Device API routes for GxAlert Device', () => {
         }
 
         let runNumber = 1
-        for (const resultText in resultTextToResultCategoryMapping) {
-          /* eslint-disable no-await-in-loop */
-          // Running these requests in parallel causes the connection pool in MySQL to fill up too quickly.
-          // This is probably due to the fact table updates.
-          // For now: sending these requests sequentially and sweeping this under the rug
-          // TODO: Defer fact updates to another process and change this test to send results in parallel
-          if (
-            resultText &&
-            !_.isEmpty(resultTextToResultCategoryMapping[resultText])
-          ) {
-            const {
-              resultId,
-              assay,
-              resultCategory1,
-              resultCategory2,
-            } = resultTextToResultCategoryMapping[resultText]
-            await sendResult(
-              resultId,
-              assay,
-              resultText,
-              resultCategory1,
-              resultCategory2,
-              runNumber
-            )
-            runNumber += 1
+        await Promise.each(
+          Object.keys(resultTextToResultCategoryMapping),
+          async resultText => {
+            // Running these requests in parallel causes the connection pool in MySQL to fill up too quickly.
+            // This is probably due to the fact table updates.
+            // For now: sending these requests sequentially and sweeping this under the rug
+            if (
+              resultText &&
+              !_.isEmpty(resultTextToResultCategoryMapping[resultText])
+            ) {
+              const {
+                resultId,
+                assay,
+                resultCategory1,
+                resultCategory2,
+              } = resultTextToResultCategoryMapping[resultText]
+              runNumber += 1
+              await sendResult(
+                resultId,
+                assay,
+                resultText,
+                resultCategory1,
+                resultCategory2,
+                runNumber
+              )
+            } else {
+              await Promise.resolve()
+            }
           }
-          /* eslint-enable no-await-in-loop */
-        }
+        )
       }))
 
     it('should belong to the GeneXpert device, not the GxAlert device', () =>
@@ -2583,7 +2607,6 @@ describe('Device API routes for GxAlert Device', () => {
       describe('when the test already exists in the database', () => {
         it('should NOT reduce inventory levels of the consumable', () =>
           runTest(async knex => {
-            const { now } = context
             const consumableAssays = await knex('ConsumableAssay as ca')
               .join('Assay as a', 'ca.assayId', 'a.id')
               .join('DeviceType as dt', 'a.deviceTypeId', 'dt.id')
@@ -2602,9 +2625,20 @@ describe('Device API routes for GxAlert Device', () => {
               .where({ id: inventoryItemId })
               .first()
 
-            const testStartedOn = setMilliseconds(subDays(now, 3), 0)
+            const { now } = context
+            const testStartedOn = setMilliseconds(
+              subMinutes(
+                subHours(now, Math.floor(Math.random() * 24)),
+                Math.floor(Math.random() * 60)
+              ),
+              0
+            )
             const testEndedOn = setMilliseconds(addHours(testStartedOn, 2), 0)
-            const response = await postToDeviceApi({
+            const sampleId = 'This test will reduce inventory once'
+            const instrumentSerial = 'Same instrument serial'
+
+            // Send first test
+            const firstResponse = await postToDeviceApi({
               authHeader: deviceAuth,
               payload: _.merge(
                 {},
@@ -2618,8 +2652,8 @@ describe('Device API routes for GxAlert Device', () => {
                       id: _.head(consumableAssays).assayId,
                       version: '2',
                     },
-                    sample: { id: 'Existing Sample' },
-                    instrument: { serial: 'Existing Instrument' },
+                    sample: { id: sampleId },
+                    instrument: { serial: instrumentSerial },
                     startedOn: testStartedOn,
                     endedOn: testEndedOn,
                   },
@@ -2627,27 +2661,33 @@ describe('Device API routes for GxAlert Device', () => {
               ),
               expectedStatusCode: 200,
             })
-            assert.typeOf(response.body, 'Object')
+            const { siteId: siteIdFromFirstRequest } = await knex('Device as d')
+              .where('d.id', firstResponse.body.device.id)
+              .first('d.siteId')
+            const {
+              body: { result: { id: resultIdAfterFirstRequest } },
+            } = firstResponse
 
-            const geneXpertDevice = await getCurrentGeneXpertDevice()
-            const lastResultId = await getLastResultId(knex, gxAlertDevice.id)
-
-            const inventoryItemsAfter = await knex('InventoryItem')
+            const inventoryItemsAfterFirstRequest = await knex('InventoryItem')
               .whereIn('consumableId', _.map(consumableAssays, 'consumableId'))
               .andWhere({
-                siteId: geneXpertDevice.siteId,
+                siteId: siteIdFromFirstRequest,
                 expiresOn: expiryDate,
               })
               .select()
 
-            const inventoryItemAfter = _.find(inventoryItemsAfter, {
-              id: inventoryItemId,
-            })
-            assert.equal(
-              inventoryItemAfter.quantityOnHand,
-              inventoryItemBefore.quantityOnHand
+            const inventoryItemAfterFirstRequest = _.find(
+              inventoryItemsAfterFirstRequest,
+              {
+                id: inventoryItemId,
+              }
             )
-            const inventoryLogs = await knex('InventoryLog as il')
+            expect(inventoryItemBefore.quantityOnHand).to.be.above(
+              inventoryItemAfterFirstRequest.quantityOnHand
+            )
+            const inventoryLogsAfterFirstRequest = await knex(
+              'InventoryLog as il'
+            )
               .join('ConsumableReason as cr', 'il.consumableReasonId', 'cr.id')
               .where({ inventoryItemId })
               .select(
@@ -2657,18 +2697,116 @@ describe('Device API routes for GxAlert Device', () => {
                 'il.resultId',
                 'il.quantity'
               )
-            expect(inventoryLogs).to.containSubset([
+            expect(inventoryLogsAfterFirstRequest).to.containSubset([
               {
-                siteId: geneXpertDevice.siteId,
+                siteId: siteIdFromFirstRequest,
                 consumableReason: 'Test Conducted',
-                resultId: lastResultId,
+                resultId: resultIdAfterFirstRequest,
               },
             ])
-            const matchingConsumableAssay = _.find(consumableAssays, {
-              consumableId: _.head(inventoryLogs).consumableId,
-              quantity: _.head(inventoryLogs).quantity,
+            const matchingConsumableAssayAfterFirstRequest = _.find(
+              consumableAssays,
+              {
+                consumableId: _.head(inventoryLogsAfterFirstRequest)
+                  .consumableId,
+                quantity: _.head(inventoryLogsAfterFirstRequest).quantity,
+              }
+            )
+            assert.isNotEmpty(matchingConsumableAssayAfterFirstRequest)
+
+            // Send update to test
+            const newResultData = {
+              customFieldData: {
+                '1': {
+                  notAvailable: false,
+                  label: 'HIV Status',
+                  value: 'HIV Negative',
+                },
+                '2': {
+                  notAvailable: false,
+                  label: 'Visual Analysis',
+                  value: 'Spotty',
+                },
+              },
+            }
+            const secondResponse = await postToDeviceApi({
+              authHeader: deviceAuth,
+              payload: _.merge(
+                {},
+                basicDevicePayload,
+                { name: deviceName },
+                basicResultPayload,
+                {
+                  result: {
+                    id: deductInventoryTestResultId,
+                    assay: {
+                      id: _.head(consumableAssays).assayId,
+                      version: '2',
+                    },
+                    sample: { id: sampleId },
+                    instrument: { serial: instrumentSerial },
+                    startedOn: testStartedOn,
+                    endedOn: testEndedOn,
+                    data: newResultData,
+                  },
+                }
+              ),
+              expectedStatusCode: 200,
             })
-            assert.isNotEmpty(matchingConsumableAssay)
+            const { siteId: siteIdFromSecondRequest } = await knex(
+              'Device as d'
+            )
+              .where('d.id', secondResponse.body.device.id)
+              .first('d.siteId')
+            assert.equal(siteIdFromSecondRequest, siteIdFromFirstRequest)
+            const {
+              body: { result: { id: resultIdAfterSecondRequest } },
+            } = secondResponse
+            assert.equal(resultIdAfterSecondRequest, resultIdAfterFirstRequest)
+
+            const inventoryItemsAfterSecondRequest = await knex('InventoryItem')
+              .whereIn('consumableId', _.map(consumableAssays, 'consumableId'))
+              .andWhere({
+                siteId: siteIdFromSecondRequest,
+                expiresOn: expiryDate,
+              })
+              .select()
+
+            const inventoryItemAfterSecondRequest = _.find(
+              inventoryItemsAfterSecondRequest,
+              {
+                id: inventoryItemId,
+              }
+            )
+            assert.equal(
+              inventoryItemAfterFirstRequest.quantityOnHand,
+              inventoryItemAfterSecondRequest.quantityOnHand
+            )
+            const inventoryLogsAfterSecondRequest = await knex(
+              'InventoryLog as il'
+            )
+              .join('ConsumableReason as cr', 'il.consumableReasonId', 'cr.id')
+              .where({ inventoryItemId })
+              .select(
+                'il.consumableId',
+                'il.siteId',
+                'cr.name as consumableReason',
+                'il.resultId',
+                'il.quantity'
+              )
+            assert.deepEqual(
+              inventoryLogsAfterSecondRequest,
+              inventoryLogsAfterFirstRequest
+            )
+            const matchingConsumableAssayAfterSecondRequest = _.find(
+              consumableAssays,
+              {
+                consumableId: _.head(inventoryLogsAfterSecondRequest)
+                  .consumableId,
+                quantity: _.head(inventoryLogsAfterSecondRequest).quantity,
+              }
+            )
+            assert.isNotEmpty(matchingConsumableAssayAfterSecondRequest)
           }))
       })
     })
