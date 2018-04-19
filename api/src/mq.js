@@ -1,8 +1,11 @@
 const _ = require('lodash')
 const config = require('./config')
-const mqtt = require('mqtt')
-const { transact } = require('./db')
+const amqp = require('amqplib')
+const { run, transact } = require('./db')
 const EventEmitter = require('events')
+const debug = require('debug')('aspect:mq')
+
+const exchange = 'aspect'
 
 async function createMessageQueue(name) {
   if (name == null) {
@@ -15,49 +18,42 @@ class MessageQueue {
   constructor(name) {
     this.name = name
     this.emitter = new EventEmitter()
+    this.queues = []
+    this.queueEmitActions = null
+    this.messageContextIdx = 0
   }
 
   async connect() {
-    await this.close()
-    await new Promise((resolve, reject) => {
-      const client = mqtt.connect(config.mqtt.url, {
-        clientId: this.name,
-        clean: false,
-      })
-
-      this.client = client
-      client.on('message', (topic, message) => {
-        const actionMatch = /^aspect\/actions\/([^/]+)$/.exec(topic)
-        if (actionMatch != null) {
-          const action = JSON.parse(message.toString())
-          const matchType = actionMatch[1]
-          if (action.type === matchType) {
-            this.emitter.emit(action.type, action, {
-              messageContext: this.createMessageContext(),
-            })
-          }
-          this.emitter.emit('+', action)
-        }
-      })
-
-      client.on('connect', () => {
-        client.subscribe('aspect/actions/+', { qos: 1 }, err => {
-          if (err) {
-            reject(err)
-          } else {
-            resolve()
-          }
-        })
-      })
-    })
+    if (!this.channel) {
+      debug(`connect ${this.name}`)
+      const connection = await amqp.connect(config.amqp.url)
+      const channel = await connection.createChannel()
+      await channel.assertExchange(exchange, 'topic', { durable: true })
+      // Do not deliver next message until ack previous per subscriber
+      await channel.prefetch(1, false)
+      this.channel = channel
+    }
     return this
   }
 
-  async close() {
-    if (this.client) {
-      await new Promise(resolve => this.client.end(resolve))
+  async purge() {
+    if (this.channel) {
+      debug(`purge ${this.name}`)
+      return Promise.all(
+        this.queues.map(queue => this.channel.purgeQueue(queue))
+      )
     }
-    this.client = null
+  }
+
+  async close() {
+    debug(`close ${this.name}`)
+    if (this.channel) {
+      await this.purge()
+      await this.channel.close()
+    }
+    this.channel = null
+    this.queues = []
+    this.queueEmitActions = null
     this.emitter.removeAllListeners()
   }
 
@@ -68,10 +64,12 @@ class MessageQueue {
     if (!_.isString(action.type)) {
       throw new Error('Actions must be object with string type')
     }
-    this.client.publish(
-      `aspect/actions/${action.type}`,
-      JSON.stringify(action),
-      { qos: 1 }
+    const message = JSON.stringify(action)
+    debug(`dispatch ${this.name} ${message}`)
+    this.channel.publish(
+      exchange,
+      `aspect.actions.${action.type}`,
+      Buffer.from(message)
     )
   }
 
@@ -89,12 +87,52 @@ class MessageQueue {
    *
    *   Can specify multiple action types per subscription.
    */
-  subscribe(subscriptions) {
-    _.each(subscriptions, ({ actions }) => {
+  subscribe(name, subscriptions) {
+    _.each(subscriptions, ({ actions }, subscriptionIndex) => {
       _.each(actions, (listener, type) => {
-        this.emitter.addListener(type, listener)
+        const { channel, name: queueName } = this
+        const subscribeName = `${queueName}_${name}_${subscriptionIndex}_actions_${type}`
+        const topic = `aspect.actions.${type}`
+        const { queue } = channel.assertQueue(subscribeName, this.queueOptions)
+        this.queues.push(queue)
+        channel.bindQueue(queue, exchange, topic)
+        channel.consume(queue, message => {
+          const content = message.content.toString()
+          const messageContext = this.createMessageContext(subscribeName)
+          const action = JSON.parse(content)
+          debug(`consume ${messageContext.id} ${content}`)
+          Promise.resolve(listener(action, { messageContext }))
+            .then(() => {
+              // Do not ack until listener result resolves
+              // Allows backpressure per consumer, if this is not needed can
+              // return something (or nothing) that resolves immediately
+              debug(`ack ${messageContext.id}`)
+              this.channel.ack(message)
+            })
+            .catch(err => {
+              console.error(err) // eslint-disable-line no-console
+              // TODO nack/dead letter queue?
+              this.channel.ack(message)
+            })
+        })
       })
     })
+  }
+
+  subscribeEmitActions() {
+    if (this.queueEmitActions == null) {
+      const { channel } = this
+      const { queue } = channel.assertQueue('', { exclusive: true })
+      this.queueEmitActions = queue
+      this.queues.push(queue)
+      channel.bindQueue(queue, exchange, 'aspect.actions.*')
+      channel.consume(queue, message => {
+        const content = message.content.toString()
+        const action = JSON.parse(content)
+        this.emitter.emit('action', action)
+        this.channel.ack(message)
+      })
+    }
   }
 
   /**
@@ -107,8 +145,10 @@ class MessageQueue {
    * actionCreators: if specified, context will have
    * bound actions with same name as action creators
    */
-  createMessageContext() {
-    return new MessageContext(this)
+  createMessageContext(id) {
+    const contextId = `${id != null ? id : this.name}_${this.messageContextIdx}`
+    this.messageContextIdx += 1
+    return new MessageContext(this, contextId)
   }
 
   /**
@@ -129,9 +169,11 @@ class MessageQueue {
    */
   waitForAction(predicate, timeout = null) {
     return new Promise((resolve, reject) => {
+      this.subscribeEmitActions()
       const check = _.iteratee(predicate)
       const checkedListener = action => {
         if (check(action)) {
+          debug(`waitForAction resolve ${JSON.stringify(action)}`)
           dispose()
           resolve(action)
         }
@@ -141,6 +183,7 @@ class MessageQueue {
       if (timeout != null) {
         timeoutId = setTimeout(() => {
           dispose()
+          debug('waitForAction timeout')
           reject(new Error('waitForAction timeout'))
         }, timeout)
       }
@@ -150,9 +193,9 @@ class MessageQueue {
           clearTimeout(timeoutId)
           timeoutId = null
         }
-        this.emitter.removeListener('+', checkedListener)
+        this.emitter.removeListener('action', checkedListener)
       }
-      this.emitter.addListener('+', checkedListener)
+      this.emitter.addListener('action', checkedListener)
     })
   }
 
@@ -170,6 +213,7 @@ class MessageQueue {
    */
   waitForIdle(idleTime) {
     return new Promise(resolve => {
+      this.subscribeEmitActions()
       let timeIdle = 0
       const clearTimeIdle = () => {
         timeIdle = 0
@@ -178,75 +222,78 @@ class MessageQueue {
       const idleIntervalId = setInterval(() => {
         timeIdle += idleTimeIncrement
         if (timeIdle >= idleTime) {
+          debug('waitForAction resolve')
           clearInterval(idleIntervalId)
-          this.emitter.removeListener('+', clearTimeIdle)
+          this.emitter.removeListener('action', clearTimeIdle)
           resolve()
         }
       }, idleTimeIncrement)
-      this.emitter.addListener('+', clearTimeIdle)
+      this.emitter.addListener('action', clearTimeIdle)
     })
   }
 }
 
 class MessageContext {
-  constructor(queue) {
+  constructor(queue, id) {
     this.queue = queue
+    this.id = id
     _.bindAll(this, ['dispatch', 'transact', 'rollback', 'commit'])
-    this.reset()
+    this.transaction = null
+    this.actions = []
+    this.isFinalState = false
   }
 
   dispatch(action) {
-    if (_.isFunction(action)) {
-      // Allow thunks
-      action = action(this.dispatch)
+    if (this.isFinalState) {
+      throw new Error('Cannot dispatch after final state, create new context')
     }
+
     if (this.transaction) {
       // Queue actions until transaction committed
+      debug(`dispatch delay ${this.id} ${JSON.stringify(action)}`)
       this.actions.push(action)
     } else {
       // transaction complete, dispatch to MQ
+      debug(`dispatch ${this.id} ${JSON.stringify(action)}`)
       this.queue.dispatch(action)
     }
   }
 
   transact(task) {
-    this.tasks.push(task)
-    if (!this.transaction) {
-      const context = this
-      context.transaction = transact(async knex => {
-        // This needs to be in loop and synchronous
-        // because task may add to stack. Do not change
-        // to Promise.all or map over assumed range
-        /* eslint-disable no-await-in-loop */
-        while (context.tasks.length > 0) {
-          task = context.tasks.shift()
-          await task(knex)
-        }
-      })
-        .then(context.commit)
-        .then(null, err => {
-          console.error(err) // eslint-disable-line no-console
-          context.rollback()
-          throw err
-        })
+    if (this.transaction) {
+      throw new Error('Cannot create multiple transactions, create new context')
     }
+    this.transaction = transact(async knex => task(knex))
+      .then(this.commit)
+      .then(null, err => {
+        console.error(err) // eslint-disable-line no-console
+        this.rollback()
+        throw err
+      })
     return this.transaction
   }
 
+  run(task) {
+    return run(async knex => task(knex))
+  }
+
   commit() {
-    const { actions } = this
-    this.reset()
-    actions.forEach(action => this.dispatch(action))
+    if (this.isFinalState) {
+      throw new Error('Cannot commit after final state, create new context')
+    }
+    debug(`commit ${this.id}`)
+    this.transaction = null
+    this.actions.forEach(action => this.dispatch(action))
+    this.isFinalState = true
   }
 
   rollback() {
-    this.reset()
-  }
-
-  reset() {
+    debug(`rollback ${this.id}`)
+    if (this.isFinalState) {
+      throw new Error('Cannot rollback after final state, create new context')
+    }
     this.transaction = null
-    this.actions = []
-    this.tasks = []
+    this.isFinalState = true
   }
 
   bindActionCreators(creators) {

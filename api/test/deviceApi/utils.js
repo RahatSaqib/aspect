@@ -8,8 +8,24 @@ const { randomToken } = require('../../src/deviceApi/apiKey')
 const { assert } = chai
 
 const QUEUE_IDLE_TIME = 250
+const QUEUE_TIMEOUT_TIME = 4000
 
 const devicePath = '/device'
+
+let sharedQueue = null
+async function queueConnect() {
+  if (sharedQueue == null) {
+    sharedQueue = await createMessageQueue('aspect_test_device_api')
+  }
+  return sharedQueue
+}
+
+async function queuePurge() {
+  if (this.queue) {
+    await sharedQueue.waitForIdle(QUEUE_IDLE_TIME)
+    await sharedQueue.purge()
+  }
+}
 
 async function deleteTestDataFromCheckpoint(knex, checkpoint, deviceIds) {
   const minDeviceLog = await knex('DeviceLog as dl')
@@ -234,7 +250,6 @@ class DeviceApiTestContext {
       'beforeEach',
       'afterEach',
       'runTest',
-      'queueConnect',
       'createMessageContext',
       'waitForAction',
     ])
@@ -377,25 +392,18 @@ class DeviceApiTestContext {
     return apiKey
   }
 
-  async queueConnect() {
-    if (this.queue == null) {
-      this.queue = await createMessageQueue(`aspect-test-device-api`)
-    }
-    return this.queue
-  }
-
   async createMessageContext() {
-    const queue = await this.queueConnect()
+    const queue = await queueConnect()
     return queue.createMessageContext()
   }
 
-  async waitForAction(predicate, timeout = QUEUE_IDLE_TIME) {
-    const queue = await this.queueConnect()
+  async waitForAction(predicate, timeout = QUEUE_TIMEOUT_TIME) {
+    const queue = await queueConnect()
     return queue.waitForAction(predicate, timeout)
   }
 
   async waitForIdle(idleTime = QUEUE_IDLE_TIME) {
-    const queue = await this.queueConnect()
+    const queue = await queueConnect()
     return queue.waitForIdle(idleTime)
   }
 
@@ -403,7 +411,7 @@ class DeviceApiTestContext {
     return run(async knex => {
       // Wait for queue to be idle so all created data
       // that will be created can be cleared
-      await this.waitForIdle()
+      await queuePurge()
 
       // Reset to previous device configuration
       await Promise.all(
@@ -426,11 +434,6 @@ class DeviceApiTestContext {
 
       if (this.apiKeysWithoutDevice.length > 0) {
         await deleteDeviceAndTestData(knex, this.apiKeysWithoutDevice)
-      }
-
-      if (this.queue) {
-        await this.queue.close()
-        this.queue = null
       }
     })
   }

@@ -35,6 +35,14 @@ async function deleteGxAlertDeviceDataAndRefreshTokens(
     .whereIn('id', opIds)
     .delete()
 
+  await knex('FactDeviceFlag')
+    .whereIn('deviceId', deviceIds)
+    .delete()
+
+  await knex('FactResultCountDevice')
+    .whereIn('deviceId', deviceIds)
+    .delete()
+
   await knex('Device')
     .whereIn('id', deviceIds)
     .delete()

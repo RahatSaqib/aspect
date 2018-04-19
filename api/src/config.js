@@ -6,7 +6,7 @@ module.exports = {
   passwordSaltRounds: process.env.passwordSaltRounds,
   gxAlertApi: process.env.gxAlertApi,
   db: {
-    connectionLimit: process.env['db.connectionLimit'],
+    connectionLimit: parseInt(process.env['db.connectionLimit'], 10) || 10,
     host: process.env['db.host'],
     user: process.env['db.user'],
     port: process.env['db.port'] || 3306,
@@ -14,8 +14,8 @@ module.exports = {
     database: process.env['db.databaseName'],
     debug: process.env['db.debug'] === 'true',
   },
-  mqtt: {
-    url: process.env['mqtt.url'],
+  amqp: {
+    url: process.env['amqp.url'],
   },
   swagger: {
     uiPath: process.env['swagger.uiPath'] || '',

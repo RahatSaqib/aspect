@@ -18,7 +18,6 @@ Quick Start for development. Everything is explained in more detail throughout t
 #  WINDOWS USERS READ THIS: https://www.rabbitmq.com/install-windows-manual.html
 
 # Enable RabbitMQ plugins
-rabbitmq-plugins enable rabbitmq_mqtt
 rabbitmq-plugins enable rabbitmq_management
 # Management console at http://localhost:15672 guest:guest by default
 
@@ -108,7 +107,7 @@ sendgrid.apiKey=SG.OD6gVj_hSOquEZDxPNe04w.eqijcHKyR64Ug3eHl13SB7V_xyE_kot9m-Tq0q
 email.fromAddress=support@gxalert.com
 
 aspectUrl=http://dev.aspect.id
-mqtt.url=mqtt://localhost:1883
+amqp.url=amqp://localhost
 ```
 
 Logs requests to console by default, to forward to Logstash, set the endpoint.

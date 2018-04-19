@@ -16,7 +16,7 @@ const {
   addDeviceOperation,
   getSite,
 } = require('./device')
-const { deviceOnline } = require('../device/actions')
+const { deviceSeen } = require('../device/actions')
 const { mergeResult, getResult } = require('./result')
 const { loadPlugin } = require('./plugin/registration')
 
@@ -114,7 +114,7 @@ function deviceApiHandler(handler, handlerOptions) {
       .update(deviceUpdates)
 
     // need to ensure device is flagged as online
-    context.messageContext.dispatch(deviceOnline(deviceId))
+    context.messageContext.dispatch(deviceSeen(deviceId))
 
     let response = {}
     await context.messageContext.transact(async knex => {
@@ -931,7 +931,7 @@ function onResultUpdated({ resultId, deviceLogId }, { messageContext }) {
     // we've already created device logs originating here, so ignore
     context.resultLogged(resultId, deviceLogId)
   } else {
-    context.transact(async knex => {
+    return context.transact(async knex => {
       // TODO dispatch from client API using plugin so
       // senderIp, createdOn, source, etc are available
       // Everything else, we should add a device log entry so that
@@ -957,7 +957,7 @@ function onResultUpdated({ resultId, deviceLogId }, { messageContext }) {
 
 function onResultLogged({ resultId }, { messageContext }) {
   const context = messageContext.bindActionCreators({ resultUpdated })
-  context.transact(async knex => {
+  return context.transact(async knex => {
     const { plugin } = await knex('Result as r')
       .leftJoin('Partner as p', 'r.partnerId', 'p.id')
       .leftJoin('Device as d', 'r.deviceId', 'd.id')

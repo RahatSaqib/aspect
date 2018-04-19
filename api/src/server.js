@@ -7,7 +7,7 @@ const { version } = require('./../package.json')
 const { addClientRoutes, addDeviceRoutes } = require('./routes')
 const { createMessageQueue } = require('./mq')
 const { addSubscriptions } = require('./subscriptions')
-// const { startScheduler } = require('./scheduler')
+const { startScheduler } = require('./scheduler')
 const Hapi = require('hapi')
 
 const server = new Hapi.Server()
@@ -77,10 +77,11 @@ function messageQueuePlugin(server, options, next) {
   createMessageQueue('aspect')
     .then(queue => {
       addSubscriptions(queue)
-      // FIXME (KB) Start scheduler after deadlock issues resolved ASP-734
-      // startScheduler(queue)
+      startScheduler(queue)
       server.ext('onPreHandler', (request, reply) => {
-        request.plugins.messageContext = queue.createMessageContext()
+        request.plugins.messageContext = queue.createMessageContext(
+          'aspect_request'
+        )
         reply.continue()
       })
       next()
