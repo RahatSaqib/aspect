@@ -22,7 +22,7 @@ const { resultModuleTemperatureError } = require('../result/actions')
 
 const LU_MODULE_TEMPERATURE_ERROR_CODES = [1001, 1004, 1017, 2014, 2022, 4009, 4010, 1024]
 const luModuleTemperatureMaxErrors = 2
-const luModuleTemperatureDays = 350
+const luModuleTemperatureDays = 30
 const SELECT_LIST_FIELDS = [
   'r.id',
   'r.externalId',
@@ -634,27 +634,30 @@ function createUniqueIdForResult(
 
 // check for error codes when a result is logged
 async function onResultLogged({ resultId }, { messageContext }) {
-  const context = messageContext.bindActionCreators({ resultModuleTemperatureError })
+  const context = messageContext.bindActionCreators({
+    resultModuleTemperatureError,
+  })
   await context.transact(async knex => {
     const [result] = await knex('Result as r').where('r.id', resultId)
     if (result.errorCode) {
       const { deviceId } = result
-      let deviceErrorQuery = knex('Result as r')
-          .innerJoin('ResultCategory as rc', 'r.resultCategory1', 'rc.id')
-          .where('rc.externalId', 'Error')
-          .where('r.deviceId', deviceId)
-
+      const deviceErrorQuery = knex('Result as r')
+        .innerJoin('ResultCategory as rc', 'r.resultCategory1', 'rc.id')
+        .where('rc.externalId', 'Error')
+        .where('r.deviceId', deviceId)
+      console.log('result.errorCode', result.errorCode)
       if (result.errorCode in LU_MODULE_TEMPERATURE_ERROR_CODES) {
         const lastNday = subDays(new Date(), luModuleTemperatureDays)
         const [errorCountQResult] = await deviceErrorQuery
           .where('r.endedOn', '>=', lastNday)
           .whereIn('r.errorCode', LU_MODULE_TEMPERATURE_ERROR_CODES)
           .count('r.id as count')
-        if (errorCountQResult.count > luModuleTemperatureDays) {
+        console.log('errorCountQResult', errorCountQResult)
+        if (errorCountQResult.count > luModuleTemperatureMaxErrors) {
           console.log('about to call resultModuleTemperatureError')
           context.resultModuleTemperatureError(deviceId)
         }
-      }// else if (result.errorCode in LU_MODULE_POWER_ERROR_CODES) { }
+      } // else if (result.errorCode in LU_MODULE_POWER_ERROR_CODES) { }
     }
   })
 }
