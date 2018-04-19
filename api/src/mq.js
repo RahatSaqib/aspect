@@ -183,8 +183,8 @@ class MessageQueue {
       let timeoutId = null
       if (timeout != null) {
         timeoutId = setTimeout(() => {
-          dispose()
           if (timeoutId != null) {
+            dispose()
             debug('waitForAction timeout')
             reject(new Error('waitForAction timeout'))
           }
