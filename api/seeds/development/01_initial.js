@@ -9,6 +9,7 @@ const geography = require('./fixtures/geography.json')
 const patients = require('./fixtures/patients.json')
 const dashboardWidget = require('./fixtures/dashboardWidget.json')
 const features = require('./fixtures/features.json')
+const { errorCodes } = require('./fixtures/errorCodes.js')
 const {
   addMilliseconds,
   addMinutes,
@@ -2530,7 +2531,9 @@ async function seed(knex) {
               senderOperator: 'Marsha',
               notes: 'This is a test... result',
               errorCode:
-                result.category1 === resultCategoryErrorId ? '1024' : null,
+                result.category1 === resultCategoryErrorId
+                  ? errorCodes[_.random(errorCodes.length)]
+                  : null,
               errorNotes:
                 result.category1 === resultCategoryErrorId
                   ? 'Exceeded cycle threshold'
@@ -2615,7 +2618,7 @@ async function seed(knex) {
                     notes: 'This is a test... result',
                     errorCode:
                       result.category1 === resultCategoryErrorId
-                        ? '1024'
+                        ? errorCodes[_.random(errorCodes.length)]
                         : null,
                     errorNotes:
                       result.category1 === resultCategoryErrorId
@@ -2763,7 +2766,9 @@ async function seed(knex) {
               senderOperator: 'Marsha',
               notes: 'This is an Ebola test result',
               errorCode:
-                result.category1 === resultCategoryErrorId ? '1024' : null,
+                result.category1 === resultCategoryErrorId
+                  ? errorCodes[_.random(errorCodes.length)]
+                  : null,
               errorNotes:
                 result.category1 === resultCategoryErrorId
                   ? 'Exceeded cycle threshold'
@@ -2922,7 +2927,9 @@ async function seed(knex) {
               senderOperator: 'Marsha',
               notes: 'This is an HIV test result',
               errorCode:
-                result.category1 === resultCategoryErrorId ? '1024' : null,
+                result.category1 === resultCategoryErrorId
+                  ? errorCodes[_.random(errorCodes.length)]
+                  : null,
               errorNotes:
                 result.category1 === resultCategoryErrorId
                   ? 'Exceeded cycle threshold'
@@ -3046,7 +3053,9 @@ async function seed(knex) {
               senderOperator: 'Gene Hackman',
               notes: 'This is an HCV test result',
               errorCode:
-                result.category1 === resultCategoryErrorId ? '1024' : null,
+                result.category1 === resultCategoryErrorId
+                  ? errorCodes[_.random(errorCodes.length)]
+                  : null,
               errorNotes:
                 result.category1 === resultCategoryErrorId
                   ? 'Exceeded cycle threshold'
@@ -3181,7 +3190,9 @@ async function seed(knex) {
               senderOperator: 'Aaron',
               notes: 'This is an HIV test result',
               errorCode:
-                result.category1 === resultCategoryErrorId ? '1024' : null,
+                result.category1 === resultCategoryErrorId
+                  ? errorCodes[_.random(errorCodes.length)]
+                  : null,
               errorNotes:
                 result.category1 === resultCategoryErrorId
                   ? 'Exceeded cycle threshold'
@@ -3316,7 +3327,9 @@ async function seed(knex) {
               senderOperator: 'Aaron',
               notes: 'This is an HCV test result',
               errorCode:
-                result.category1 === resultCategoryErrorId ? '1024' : null,
+                result.category1 === resultCategoryErrorId
+                  ? errorCodes[_.random(errorCodes.length)]
+                  : null,
               errorNotes:
                 result.category1 === resultCategoryErrorId
                   ? 'Exceeded cycle threshold'

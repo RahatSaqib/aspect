@@ -7,6 +7,7 @@ const config = require('../../src/config')
 const myanmarSites = require('./fixtures/myanmarSites.json')
 const patients = require('./fixtures/patients.json')
 const dashboardWidget = require('./fixtures/myanmarDashboardWidget.json')
+const { errorCodes } = require('./fixtures/errorCodes.js')
 const { addMilliseconds, addMinutes, subDays } = require('date-fns')
 
 const now = new Date()
@@ -356,16 +357,6 @@ async function seed(knex) {
   )
 
   // every clinic has a site, GxAlert device and MTB/Rif+ and Ultra results
-  const errorCodes = [
-    '1001',
-    '1004',
-    '1017',
-    '2014',
-    '2022',
-    '4009',
-    '4010',
-    '1024',
-  ]
 
   const possibleResults = [
     {
