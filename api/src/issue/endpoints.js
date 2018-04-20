@@ -5,7 +5,9 @@ const subscriptions = [
     actions: {
       DEVICE_OFFLINE: onIssueEventTrigger('DeviceOffline'),
       DEVICE_ONLINE: onIssueEventResolve('DeviceOffline'),
-      RESULT_MODULE_ERROR: onIssueEventTrigger('DeviceModuleError'),
+      RESULT_MODULE_TEMPERATURE_ERROR: onIssueEventTrigger(
+        'ModuleTemperatureError'
+      ),
     },
   },
 ]

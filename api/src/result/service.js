@@ -20,7 +20,7 @@ const {
 const { oneDirectionalMd5Hash } = require('../shared/encryption')
 const { resultModuleTemperatureError } = require('../result/actions')
 
-const LU_MODULE_TEMPERATURE_ERROR_CODES = [
+const MODULE_TEMPERATURE_ERROR_CODES = [
   1001,
   1004,
   1017,
@@ -29,7 +29,7 @@ const LU_MODULE_TEMPERATURE_ERROR_CODES = [
   4009,
   4010,
 ]
-const luModuleTemperatureMaxErrors = 2
+const luModuleTemperatureMaxErrors = 4
 const luModuleTemperatureDays = 30
 const SELECT_LIST_FIELDS = [
   'r.id',
@@ -653,16 +653,13 @@ async function onResultLogged({ resultId }, { messageContext }) {
         .innerJoin('ResultCategory as rc', 'r.resultCategory1', 'rc.id')
         .where('rc.externalId', 'Error')
         .where('r.deviceId', deviceId)
-      console.log('result.errorCode', result.errorCode)
-      if (result.errorCode in LU_MODULE_TEMPERATURE_ERROR_CODES) {
+      if (result.errorCode in MODULE_TEMPERATURE_ERROR_CODES) {
         const lastNday = subDays(new Date(), luModuleTemperatureDays)
-        const [errorCountQResult] = await deviceErrorQuery
+        const [{ count: errorCount }] = await deviceErrorQuery
           .where('r.endedOn', '>=', lastNday)
-          .whereIn('r.errorCode', LU_MODULE_TEMPERATURE_ERROR_CODES)
+          .whereIn('r.errorCode', MODULE_TEMPERATURE_ERROR_CODES)
           .count('r.id as count')
-        console.log('errorCountQResult', errorCountQResult)
-        if (errorCountQResult.count > luModuleTemperatureMaxErrors) {
-          console.log('about to call resultModuleTemperatureError')
+        if (errorCount > luModuleTemperatureMaxErrors) {
           context.resultModuleTemperatureError(deviceId)
         }
       } // else if (result.errorCode in LU_MODULE_POWER_ERROR_CODES) { }

@@ -55,7 +55,9 @@ function resultLogged(resultId, deviceLogId) {
  */
 function resultModuleTemperatureError(deviceId) {
   if (deviceId == null) {
-    throw new Error('Must specify deviceId for notify resultModuleTemperatureError')
+    throw new Error(
+      'Must specify deviceId for notify resultModuleTemperatureError'
+    )
   }
   return {
     type: types.RESULT_MODULE_TEMPERATURE_ERROR,
