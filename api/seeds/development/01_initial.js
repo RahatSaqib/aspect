@@ -3633,32 +3633,30 @@ async function seed(knex) {
   const messageSeverities = await rowsAsObject(knex, 'MessageSeverity')
 
   const [deviceOfflineAlertTemplateId] = await knex('AlertTemplate').insert(
-    /* eslint-disable no-template-curly-in-string */
     Object.assign(
       {
-        message: '${site.name} no contact for ${numberOfDays} days.',
+        message: '{{site.name}} no contact for {{numberOfDays}} days.',
       },
       auditFields
     )
   )
 
   const [deviceOfflineSmsTemplateId] = await knex('SmsTemplate').insert(
-    /* eslint-disable no-template-curly-in-string */
     Object.assign(
       {
-        message: '${site.name} no contact for ${numberOfDays} days.',
+        message: '{{site.name}} no contact for {{numberOfDays}} days.',
       },
       auditFields
     )
   )
 
   const [deviceOfflineEmailTemplateId] = await knex('EmailTemplate').insert(
-    /* eslint-disable no-template-curly-in-string */
     Object.assign(
       {
-        subject: '${site.name} Device Offline',
-        body: '${site.name} no contact for ${numberOfDays} days.',
-        htmlBody: '<em>${site.name}</em> no contact for ${numberOfDays} days.',
+        subject: '{{site.name}} Device Offline',
+        body: '{{site.name}} no contact for {{numberOfDays}} days.',
+        htmlBody:
+          '<em>{{site.name}}</em> no contact for {{numberOfDays}} days.',
       },
       auditFields
     )
@@ -3667,7 +3665,6 @@ async function seed(knex) {
   const [moduleTemperatureErrorAlertTemplateId] = await knex(
     'AlertTemplate'
   ).insert(
-    /* eslint-disable no-template-curly-in-string */
     Object.assign(
       {
         message:
@@ -3680,7 +3677,6 @@ async function seed(knex) {
   const [moduleTemperatureErrorSmsTemplateId] = await knex(
     'SmsTemplate'
   ).insert(
-    /* eslint-disable no-template-curly-in-string */
     Object.assign(
       {
         message:
@@ -3693,7 +3689,6 @@ async function seed(knex) {
   const [moduleTemperatureErrorEmailTemplateId] = await knex(
     'EmailTemplate'
   ).insert(
-    /* eslint-disable no-template-curly-in-string */
     Object.assign(
       {
         subject: '{{device.name}} Module Temperaure Error',
