@@ -3,6 +3,7 @@ const Boom = require('boom')
 const { getOrCreateSite } = require('../site')
 const genexpertPreProcessAddDeviceData = require('../preProcessAddDeviceData')
 const { findDevices } = require('../device')
+const { createNewDevice } = require('../../../device')
 
 async function preProcessAddDeviceData(context) {
   const { device, payload, knex, now } = context
@@ -70,41 +71,25 @@ async function getOrCreateDevice(knex, payload, gxAlertDevice, now) {
       deviceName,
       true
     )
-    const deviceStatus = await knex('DeviceStatus')
-      .where({ token: 'assigned' })
-      .first('id')
-    const deviceType = await knex('DeviceType')
-      .where({ externalId: deviceTypeExternalId })
-      .first('id')
-    const [deviceId] = await knex('Device').insert({
-      partnerId,
-      geographyId: site.geographyId,
-      siteId: site.id,
-      deviceTypeId: deviceType.id,
-      deviceStatusId: deviceStatus.id,
+    const { device } = await createNewDevice(knex, now, {
+      deviceTypeExternalId,
       name: deviceName,
+      serial: payload.serial,
+      partnerId,
+      siteId: site.id,
+      geographyId: site.geographyId,
+      status: 'assigned',
       shortName: deviceName,
       macAddress,
-      serial: payload.serial,
-      hostId: _.get(payload, 'configuration.data.putInService', null),
+      hostId: _.get(payload, 'configuration.data.hostId', null),
       culture: _.get(payload, 'configuration.data.culture', null),
       timezone: _.get(payload, 'configuration.data.timezone', null),
       configurationData: JSON.stringify(
         _.get(payload, 'configuration.data', '{}')
       ),
       putInService: _.get(payload, 'configuration.data.putInService', now),
-      lastSeenOn: now,
-      createdOn: now,
-      updatedOn: now,
     })
-    await knex('DeviceStatusLog').insert({
-      deviceId,
-      deviceStatusId: deviceStatus.id,
-      changedOn: now,
-      createdOn: now,
-      createdBy: null,
-    })
-    deviceDetails.deviceId = deviceId
+    deviceDetails.deviceId = device.id
     matchingDevices = await findDevices(deviceDetails, knex)
   }
   let matchingDevice = null

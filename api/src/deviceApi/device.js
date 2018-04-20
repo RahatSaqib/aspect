@@ -119,6 +119,101 @@ async function getSite(knex, deviceId) {
   return site == null ? null : { id: site.externalId }
 }
 
+async function createNewDevice(
+  knex,
+  now,
+  {
+    deviceTypeExternalId,
+    name,
+    serial,
+    partnerId,
+    siteId,
+    geographyId,
+    status,
+    shortName,
+    macAddress,
+    hostId,
+    culture,
+    timezone,
+    configurationData = '{}',
+    putInService,
+  }
+) {
+  const deviceType = await knex('DeviceType')
+    .where({ externalId: deviceTypeExternalId })
+    .first('id', 'name', 'plugin')
+  if (deviceType == null) {
+    return {
+      error: Boom.badRequest(
+        `Cannot find DeviceType with id ${deviceTypeExternalId}`
+      ),
+    }
+  }
+
+  // Use or generate device name
+  if (!name) {
+    if (serial) {
+      name = serial
+    } else {
+      const [deviceCount] = await knex('Device')
+        .where({
+          partnerId,
+          deviceTypeId: deviceType.id,
+        })
+        .count('id as cnt')
+      name = `${deviceType.name} #${deviceCount.cnt + 1}`
+    }
+  }
+  const [deviceId] = await knex('Device').insert({
+    partnerId,
+    geographyId,
+    siteId,
+    deviceTypeId: deviceType.id,
+    deviceStatusId: knex('DeviceStatus')
+      .where({ token: status })
+      .select('id'),
+    name,
+    serial,
+    shortName,
+    macAddress,
+    hostId,
+    culture,
+    timezone,
+    configurationData,
+    putInService: putInService || now,
+    lastSeenOn: now,
+    createdOn: now,
+    updatedOn: now,
+  })
+  await knex('DeviceStatusLog').insert({
+    deviceId,
+    deviceStatusId: knex('DeviceStatus')
+      .where({ token: status })
+      .select('id'),
+    changedOn: now,
+    createdOn: now,
+    createdBy: null,
+  })
+
+  // add device into FactDeviceFlag
+  await knex('FactDeviceFlag').insert({ deviceId, updatedOn: now })
+  const device = await knex('Device as d')
+    .join('DeviceStatus as ds', 'd.deviceStatusId', 'ds.id')
+    .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
+    .where('d.id', deviceId)
+    .first(
+      'd.id',
+      'd.partnerId',
+      'd.siteId',
+      'd.name',
+      'd.serial',
+      'ds.token as status',
+      'dt.externalId as deviceType',
+      'dt.plugin as deviceTypePluginName'
+    )
+  return { device }
+}
+
 module.exports = {
   updateDeviceConfiguration,
   updateDeviceDetails,
@@ -127,4 +222,5 @@ module.exports = {
   getDeviceOperation,
   addDeviceOperation,
   getSite,
+  createNewDevice,
 }
