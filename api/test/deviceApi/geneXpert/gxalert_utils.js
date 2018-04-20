@@ -27,6 +27,9 @@ async function deleteGxAlertDeviceDataAndRefreshTokens(
   await knex('DeviceStatusLog')
     .whereIn('deviceId', deviceIds)
     .delete()
+  await knex('DeviceMaintenanceStatusLog')
+    .whereIn('deviceId', deviceIds)
+    .delete()
   await knex('DeviceLog')
     .whereIn('deviceId', deviceIds)
     .delete()
@@ -98,6 +101,9 @@ async function deleteGeneXpertDeviceSiteDataAndRefreshTokens(
     .map(op => op.id)
 
   await knex('DeviceStatusLog')
+    .whereIn('deviceId', deviceIds)
+    .delete()
+  await knex('DeviceMaintenanceStatusLog')
     .whereIn('deviceId', deviceIds)
     .delete()
   await knex('DeviceLog')
@@ -192,20 +198,25 @@ class GxAlertApiTestContext {
     return run(async () => this.createGxAlertApiKey())
   }
 
-  createGxAlertApiKey() {
+  createGxAlertApiKey(apiKeyDetails) {
+    const supplementedApiKeyDetails = Object.assign(
+      { countryAbbreviation: 'US', partnerName: 'Partner One' },
+      apiKeyDetails
+    )
+    const { countryAbbreviation, partnerName } = supplementedApiKeyDetails
     return run(async knex => {
       const gxAlertDeviceType = await knex
         .from('DeviceType')
         .where('externalId', 'GxAlert')
         .first()
-      const partnerOne = await knex
+      const partner = await knex
         .from('Partner')
-        .where('name', 'Partner One')
+        .where('name', partnerName)
         .first()
-      const usGeography = await knex
+      const geography = await knex
         .from('Country as c')
         .join('Geography as g', 'g.countryId', 'c.id')
-        .where('c.abbreviation', 'US')
+        .where('c.abbreviation', countryAbbreviation)
         .andWhere('g.stateId', null)
         .andWhere('g.lgaId', null)
         .first('g.*')
@@ -215,8 +226,8 @@ class GxAlertApiTestContext {
         .first()
       const now = new Date()
       const [deviceId] = await knex('Device').insert({
-        partnerId: partnerOne.id,
-        geographyId: usGeography.id,
+        partnerId: partner.id,
+        geographyId: geography.id,
         deviceTypeId: gxAlertDeviceType.id,
         deviceStatusId: approvedDeviceStatus.id,
         name: this.basicDevicePayload.name,
@@ -235,8 +246,8 @@ class GxAlertApiTestContext {
       await knex('DeviceApiKey').insert({
         token: this.apiKey,
         revoked: 0,
-        partnerId: partnerOne.id,
-        geographyId: usGeography.id,
+        partnerId: partner.id,
+        geographyId: geography.id,
         deviceId,
         createdOn: now,
         createdBy: adminUser.id,

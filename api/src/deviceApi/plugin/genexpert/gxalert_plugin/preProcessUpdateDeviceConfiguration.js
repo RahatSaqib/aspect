@@ -46,17 +46,36 @@ async function preProcessUpdateDeviceConfiguration(context) {
       newMaintenanceStatusId !== currentMaintenanceStatusId ||
       currentMaintenanceData.reason !== reason ||
       currentMaintenanceData.note !== note ||
-      currentMaintenanceData.expectedBackOnline !== expectedBackOnline
+      String(currentMaintenanceData.expectedBackOnline) !==
+        String(expectedBackOnline)
     ) {
+      if (newMaintenanceStatusId !== currentMaintenanceStatusId) {
+        console.log(newMaintenanceStatusId, currentMaintenanceStatusId)
+      }
+      if (currentMaintenanceData.reason !== reason) {
+        console.log(currentMaintenanceData.reason, reason)
+      }
+      if (currentMaintenanceData.note !== note) {
+        console.log(currentMaintenanceData.note, note)
+      }
+      if (
+        String(currentMaintenanceData.expectedBackOnline) !==
+        String(expectedBackOnline)
+      ) {
+        console.log(
+          String(currentMaintenanceData.expectedBackOnline),
+          String(expectedBackOnline)
+        )
+      }
       const newMaintenanceData = _.merge({}, blankMaintenanceData, {
-        reason,
-        note,
-        expectedBackOnline,
+        reason: inactive ? reason : null,
+        note: inactive ? note : null,
+        expectedBackOnline: inactive ? expectedBackOnline : null,
       })
       await knex('DeviceMaintenanceStatusLog').insert({
         deviceId,
         deviceMaintenanceStatusId: newMaintenanceStatusId,
-        data: newMaintenanceData,
+        data: JSON.stringify(newMaintenanceData),
         changedOn: now,
         createdOn: now,
       })

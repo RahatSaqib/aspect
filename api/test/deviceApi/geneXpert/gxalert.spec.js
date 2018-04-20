@@ -3,6 +3,7 @@ const supertest = require('supertest')
 const chai = require('chai')
 const addYears = require('date-fns/add_years')
 const subDays = require('date-fns/sub_days')
+const addDays = require('date-fns/add_days')
 const addHours = require('date-fns/add_hours')
 const subHours = require('date-fns/sub_hours')
 const subMinutes = require('date-fns/sub_minutes')
@@ -1691,6 +1692,329 @@ describe('Device API routes for GxAlert Device', () => {
             geneXpertDeviceAfterDailyDetails.configurationData
           )
         }))
+    })
+
+    describe('when maintenance data is included in device configuration data', () => {
+      const context = createContext()
+      const deviceName = 'Xpert Lab With Maintenance'
+      const deviceSerial = 'Cepheid-1874GX'
+      const hostId = 'MaintenanceXpertLab'
+      const country = 'MM'
+      const partner = 'Myanmar'
+      const gxAlertDeviceId = 153
+
+      const { beforeCreateGxAlertApiKey, runTest, afterCleanUp } = context
+
+      let deviceId
+      let standardDevicePayload
+
+      async function getLatestDeviceMaintenanceStatusLog(knex) {
+        const logEntry = await knex('DeviceMaintenanceStatusLog as dmsl')
+          .innerJoin(
+            'DeviceMaintenanceStatus as dms',
+            'dmsl.deviceMaintenanceStatusId',
+            'dms.id'
+          )
+          .where('dmsl.deviceId', deviceId)
+          .orderBy(['dmsl.changedOn', 'dmsl.id'], 'desc')
+          .first(
+            'dms.token',
+            'dmsl.data',
+            'dmsl.id',
+            'dmsl.changedOn',
+            'dmsl.createdOn'
+          )
+        if (_.isEmpty(logEntry)) {
+          return logEntry
+        }
+        const parsedData = JSON.parse(logEntry.data)
+        return _.merge(
+          logEntry,
+          { data: parsedData },
+          parsedData.expectedBackOnline
+            ? {
+                data: {
+                  expectedBackOnline: new Date(parsedData.expectedBackOnline),
+                },
+              }
+            : {}
+        )
+      }
+
+      before(async () =>
+        run(async () => {
+          await beforeCreateGxAlertApiKey({
+            countryAbbreviation: country,
+            partnerName: partner,
+          })
+          const { deviceAuth } = context
+          standardDevicePayload = {
+            authHeader: deviceAuth,
+            payload: {
+              name: deviceName,
+              serial: deviceSerial,
+              status: null,
+              type: { id: 'CepheidGeneXpert' },
+              site: null,
+              checkpoint: null,
+              log: null,
+              configuration: {
+                checkpoint: null,
+                data: {
+                  macAddress: 'MAC0A0127001010',
+                  hostId,
+                  culture: 'en-US',
+                  computerOsVersion: 'Microsoft Windows NT 6.2.9200.0',
+                  timezone: 'Myanmar Standard Time',
+                  country,
+                  routerNumber: '029347800',
+                  sim1SerialNumber: '82347234879',
+                  sim2SerialNumber: '90878796559',
+                  labContactCell: '+27800243232',
+                  labContactEmail: 'test@contract.co',
+                  labContactName: 'Mr Lab Contact',
+                  installerCell: '+27831238183',
+                  installerEmail: 'another@email.io',
+                  installerName: 'Mr Installer',
+                  latestGrabbedModifiedDate: '2018-03-15T14:12:34',
+                  uploadProbeLevelData: true,
+                  gxConnectVersion: '1.10.1.0',
+                  databaseDeviceOk: true,
+                  lisConfigOk: true,
+                  nsisInstaller: true,
+                  putInService: '2018-01-01T08:02:30',
+                  putInServiceSource: 1,
+                  lastCalibrated: '2018-01-01T08:02:30',
+                  teamViewerId: '',
+                  teamViewerPassword: '',
+                  noInventory: false,
+                  latestErrors: null,
+                  autoCompleteJsonDate: '',
+                  enableCustomFields: true,
+                  deviceSerialNumber: deviceSerial,
+                  dbVersion: '3.0.5.0',
+                  lisConfig:
+                    'True|xPertLab|0|0|1|True|192.168.8.113|3012|-1|1|ASSAY=MTB-RIF 2[MTB=MTB][Rif Resistance=Rif Resistance][QC Check=QC Check]',
+                  gxAlertDeviceId,
+                },
+              },
+              operation: null,
+              result: null,
+            },
+          }
+          const response = await postToDeviceApi(standardDevicePayload)
+          deviceId = response.body.device.id
+        })
+      )
+      after(afterCleanUp)
+
+      describe('which has been updated since the device configuration was last updated', () => {
+        it('should create an entry in the device maintenance status log', () =>
+          runTest(async knex => {
+            const { now } = context
+
+            const deviceMaintenanceLogBeforeMaintenanceUpdate = await getLatestDeviceMaintenanceStatusLog(
+              knex
+            )
+            assert.isUndefined(deviceMaintenanceLogBeforeMaintenanceUpdate)
+
+            await postToDeviceApi(
+              _.merge(standardDevicePayload, {
+                payload: {
+                  configuration: {
+                    data: {
+                      inactive: false,
+                    },
+                  },
+                },
+              })
+            )
+
+            const deviceMaintenanceLogAfterFirstMaintenanceUpdate = await getLatestDeviceMaintenanceStatusLog(
+              knex
+            )
+            expect(
+              deviceMaintenanceLogAfterFirstMaintenanceUpdate
+            ).to.containSubset({
+              token: 'online',
+              data: {
+                reason: null,
+                note: null,
+                expectedBackOnline: null,
+              },
+            })
+
+            waitForApproximately(1, 'second')
+
+            const inactiveMaintenanceReason =
+              "Connectivity issues, router can't connect"
+            const inactiveMaintenanceNote =
+              'Router only has one yellow SIM in it'
+            const inactiveMaintenanceExpectedBackOnline = addDays(now, 15)
+            await postToDeviceApi(
+              _.merge(standardDevicePayload, {
+                payload: {
+                  configuration: {
+                    data: {
+                      inactive: true,
+                      inactiveMaintenanceReason,
+                      inactiveMaintenanceNote,
+                      inactiveMaintenanceExpectedBackOnline,
+                    },
+                  },
+                },
+              })
+            )
+
+            const deviceMaintenanceLogAfterSecondMaintenanceUpdate = await getLatestDeviceMaintenanceStatusLog(
+              knex
+            )
+            expect(
+              deviceMaintenanceLogAfterSecondMaintenanceUpdate
+            ).to.containSubset({
+              token: 'offline',
+              data: {
+                reason: inactiveMaintenanceReason,
+                note: inactiveMaintenanceNote,
+                expectedBackOnline: inactiveMaintenanceExpectedBackOnline,
+              },
+            })
+          }))
+
+        describe('which includes {... inactive: false... }', () => {
+          it('should clear the values in maintenance status log data', () =>
+            runTest(async knex => {
+              const { now } = context
+
+              const inactiveMaintenanceReason = 'Connectivity Problems'
+              const inactiveMaintenanceNote = 'Router cannot connect to VPN'
+              const inactiveMaintenanceExpectedBackOnline = addDays(now, 23)
+              await postToDeviceApi(
+                _.merge(standardDevicePayload, {
+                  payload: {
+                    configuration: {
+                      data: {
+                        inactive: true,
+                        inactiveMaintenanceReason,
+                        inactiveMaintenanceNote,
+                        inactiveMaintenanceExpectedBackOnline,
+                      },
+                    },
+                  },
+                })
+              )
+
+              const deviceMaintenanceLogAfterInactiveMaintenanceUpdate = await getLatestDeviceMaintenanceStatusLog(
+                knex
+              )
+              expect(
+                deviceMaintenanceLogAfterInactiveMaintenanceUpdate
+              ).to.containSubset({
+                token: 'offline',
+                data: {
+                  reason: inactiveMaintenanceReason,
+                  note: inactiveMaintenanceNote,
+                  expectedBackOnline: inactiveMaintenanceExpectedBackOnline,
+                },
+              })
+
+              waitForApproximately(1, 'second')
+
+              const activeMaintenanceReason = 'Connectivity Resolved'
+              const activeMaintenanceNote = 'VPN config was incorrect'
+              const activeMaintenanceExpectedBackOnline = now
+              await postToDeviceApi(
+                _.merge(standardDevicePayload, {
+                  payload: {
+                    configuration: {
+                      data: {
+                        inactive: false,
+                        inactiveMaintenanceReason: activeMaintenanceReason,
+                        inactiveMaintenanceNote: activeMaintenanceNote,
+                        inactiveMaintenanceExpectedBackOnline: activeMaintenanceExpectedBackOnline,
+                      },
+                    },
+                  },
+                })
+              )
+
+              const deviceMaintenanceLogAfterActiveMaintenanceUpdate = await getLatestDeviceMaintenanceStatusLog(
+                knex
+              )
+              expect(
+                deviceMaintenanceLogAfterActiveMaintenanceUpdate
+              ).to.containSubset({
+                token: 'online',
+                data: {
+                  reason: null,
+                  note: null,
+                  expectedBackOnline: null,
+                },
+              })
+            }))
+        })
+      })
+
+      describe('which is just a duplicate of what was sent previously', () => {
+        it('should NOT create an entry in the device maintenance status log', () =>
+          runTest(async knex => {
+            const { now } = context
+
+            const inactiveMaintenanceReason = 'No ping coming from device'
+            const inactiveMaintenanceNote = "Router says it's connected"
+            const inactiveMaintenanceExpectedBackOnline = addDays(now, 19)
+            await postToDeviceApi(
+              _.merge(standardDevicePayload, {
+                payload: {
+                  configuration: {
+                    data: {
+                      inactive: true,
+                      inactiveMaintenanceReason,
+                      inactiveMaintenanceNote,
+                      inactiveMaintenanceExpectedBackOnline,
+                    },
+                  },
+                },
+              })
+            )
+
+            const deviceMaintenanceLogAfterInactiveUpdate = await getLatestDeviceMaintenanceStatusLog(
+              knex
+            )
+            expect(deviceMaintenanceLogAfterInactiveUpdate).to.containSubset({
+              token: 'offline',
+              data: {
+                reason: inactiveMaintenanceReason,
+                note: inactiveMaintenanceNote,
+                expectedBackOnline: inactiveMaintenanceExpectedBackOnline,
+              },
+            })
+
+            waitForApproximately(1, 'second')
+            await postToDeviceApi(
+              _.merge(standardDevicePayload, {
+                payload: {
+                  configuration: {
+                    data: {
+                      inactive: true,
+                      inactiveMaintenanceReason,
+                      inactiveMaintenanceNote,
+                      inactiveMaintenanceExpectedBackOnline,
+                    },
+                  },
+                },
+              })
+            )
+
+            const deviceMaintenanceLogAfterSecondInactiveUpdate = await getLatestDeviceMaintenanceStatusLog(
+              knex
+            )
+            assert.deepEqual(
+              deviceMaintenanceLogAfterSecondInactiveUpdate,
+              deviceMaintenanceLogAfterInactiveUpdate
+            )
+          }))
+      })
     })
   })
 

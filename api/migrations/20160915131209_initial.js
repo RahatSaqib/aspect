@@ -451,12 +451,14 @@ async function up(knex) {
         .index()
         .references('id')
         .inTable('Device')
+        .onDelete('CASCADE')
       maintenanceStatusLog
         .integer('deviceMaintenanceStatusId')
         .unsigned()
         .index()
         .references('id')
         .inTable('DeviceMaintenanceStatus')
+        .onDelete('SET NULL')
       maintenanceStatusLog.specificType('data', 'JSON').notNullable()
       maintenanceStatusLog.dateTime('changedOn')
       maintenanceStatusLog.dateTime('createdOn')
@@ -466,6 +468,7 @@ async function up(knex) {
         .index()
         .references('id')
         .inTable('User')
+        .onDelete('SET NULL')
     }
   )
 
