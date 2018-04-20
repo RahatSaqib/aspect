@@ -9,6 +9,7 @@ const subHours = require('date-fns/sub_hours')
 const subMinutes = require('date-fns/sub_minutes')
 const addSeconds = require('date-fns/add_seconds')
 const setMilliseconds = require('date-fns/set_milliseconds')
+const dateFormat = require('date-fns/format')
 const Promise = require('bluebird')
 const { createGxAlertTestContext } = require('./gxalert_utils')
 const {
@@ -1703,7 +1704,12 @@ describe('Device API routes for GxAlert Device', () => {
       const partner = 'Myanmar'
       const gxAlertDeviceId = 153
 
-      const { beforeCreateGxAlertApiKey, runTest, afterCleanUp } = context
+      const {
+        beforeCreateGxAlertApiKey,
+        useGxAlertDeviceId,
+        runTest,
+        afterCleanUp,
+      } = context
 
       let deviceId
       let standardDevicePayload
@@ -1716,7 +1722,7 @@ describe('Device API routes for GxAlert Device', () => {
             'dms.id'
           )
           .where('dmsl.deviceId', deviceId)
-          .orderBy(['dmsl.changedOn', 'dmsl.id'], 'desc')
+          .orderByRaw('dmsl.changedOn DESC, dmsl.id DESC')
           .first(
             'dms.token',
             'dmsl.data',
@@ -1727,18 +1733,7 @@ describe('Device API routes for GxAlert Device', () => {
         if (_.isEmpty(logEntry)) {
           return logEntry
         }
-        const parsedData = JSON.parse(logEntry.data)
-        return _.merge(
-          logEntry,
-          { data: parsedData },
-          parsedData.expectedBackOnline
-            ? {
-                data: {
-                  expectedBackOnline: new Date(parsedData.expectedBackOnline),
-                },
-              }
-            : {}
-        )
+        return _.merge(logEntry, { data: JSON.parse(logEntry.data) })
       }
 
       before(async () =>
@@ -1747,6 +1742,7 @@ describe('Device API routes for GxAlert Device', () => {
             countryAbbreviation: country,
             partnerName: partner,
           })
+          useGxAlertDeviceId(gxAlertDeviceId)
           const { deviceAuth } = context
           standardDevicePayload = {
             authHeader: deviceAuth,
@@ -1844,13 +1840,13 @@ describe('Device API routes for GxAlert Device', () => {
               },
             })
 
-            waitForApproximately(1, 'second')
-
             const inactiveMaintenanceReason =
-              "Connectivity issues, router can't connect"
-            const inactiveMaintenanceNote =
-              'Router only has one yellow SIM in it'
-            const inactiveMaintenanceExpectedBackOnline = addDays(now, 15)
+              'Connectivity issues, router cannot connect'
+            const inactiveMaintenanceNote = 'Router only has one SIM in it'
+            const inactiveMaintenanceExpectedBackOnline = dateFormat(
+              addDays(now, 15),
+              'YYYY-MM-DD'
+            )
             await postToDeviceApi(
               _.merge(standardDevicePayload, {
                 payload: {
@@ -1888,7 +1884,10 @@ describe('Device API routes for GxAlert Device', () => {
 
               const inactiveMaintenanceReason = 'Connectivity Problems'
               const inactiveMaintenanceNote = 'Router cannot connect to VPN'
-              const inactiveMaintenanceExpectedBackOnline = addDays(now, 23)
+              const inactiveMaintenanceExpectedBackOnline = dateFormat(
+                addDays(now, 23),
+                'YYYY-MM-DD'
+              )
               await postToDeviceApi(
                 _.merge(standardDevicePayload, {
                   payload: {
@@ -1918,11 +1917,14 @@ describe('Device API routes for GxAlert Device', () => {
                 },
               })
 
-              waitForApproximately(1, 'second')
+              await waitForApproximately(100, 'milliseconds')
 
               const activeMaintenanceReason = 'Connectivity Resolved'
               const activeMaintenanceNote = 'VPN config was incorrect'
-              const activeMaintenanceExpectedBackOnline = now
+              const activeMaintenanceExpectedBackOnline = dateFormat(
+                now,
+                'YYYY-MM-DD'
+              )
               await postToDeviceApi(
                 _.merge(standardDevicePayload, {
                   payload: {
@@ -1960,9 +1962,13 @@ describe('Device API routes for GxAlert Device', () => {
           runTest(async knex => {
             const { now } = context
 
-            const inactiveMaintenanceReason = 'No ping coming from device'
-            const inactiveMaintenanceNote = "Router says it's connected"
-            const inactiveMaintenanceExpectedBackOnline = addDays(now, 19)
+            const inactiveMaintenanceReason = 'Duplicate No ping'
+            const inactiveMaintenanceNote = 'Duplicate Router shows connected'
+            const inactiveMaintenanceExpectedBackOnline = dateFormat(
+              addDays(now, 19),
+              'YYYY-MM-DD'
+            )
+            await waitForApproximately(100, 'milliseconds')
             await postToDeviceApi(
               _.merge(standardDevicePayload, {
                 payload: {
@@ -1990,7 +1996,7 @@ describe('Device API routes for GxAlert Device', () => {
               },
             })
 
-            waitForApproximately(1, 'second')
+            await waitForApproximately(100, 'milliseconds')
             await postToDeviceApi(
               _.merge(standardDevicePayload, {
                 payload: {
