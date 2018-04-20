@@ -7,6 +7,7 @@ import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { Card } from 'react-toolbox/lib/card'
 import { Unit } from '../../components/pureGrids'
+import Icon from '../../components/shared/icon/Icon'
 import { fetchStatDashboard } from '../DashboardRedux'
 import requirePermissions from '../../components/shared/requirePermissions'
 import messages from './messages'
@@ -98,15 +99,6 @@ const enhance = compose(
   })
 )
 
-const Icon = ({ icon, className }) => {
-  try {
-    const Icon = require(`react-icons/lib/md/${icon}`) // eslint-disable-line import/no-dynamic-require
-    return <Icon className={className} />
-  } catch (e) {
-    return <div />
-  }
-}
-
 const formatMessage = (key, widget, intl, defaultMessages) => {
   const i18nKey = widget[`${key}I18nKey`]
   const messageDescriptor = messages[i18nKey] || defaultMessages[i18nKey]
@@ -134,8 +126,11 @@ export const SummaryStatus = ({
           <Card className={cssClasses('Summary__Card')}>
             <div className={cssClasses('Summary__Card__Title')}>
               <Icon
-                icon={widget.icon}
                 className={cssClasses('Summary__Card__Title__Icon')}
+                // eslint-disable-next-line import/no-dynamic-require
+                type={require(`../../components/shared/icon/assets/${
+                  widget.icon
+                }.svg`)}
               />
               <span className={cssClasses('Summary__Card__Title--main')}>
                 {formatMessage('title', widget, intl, defaultMessages)}

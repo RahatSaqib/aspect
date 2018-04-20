@@ -12,11 +12,12 @@ import {
   withProps,
   withStateHandlers,
 } from 'recompose'
-import MdAssignmentLate from 'react-icons/lib/md/assignment-late'
 import { Card } from 'react-toolbox/lib/card'
+
 import { Unit } from '../../components/pureGrids'
 import { fetchActionDashboard } from '../DashboardRedux'
 import Title from './Title'
+import Icon from '../../components/shared/icon/Icon'
 import ActionFilterButton from './ActionFilterButton'
 import { findKeyInTree } from '../../shared/utils/dom'
 import {
@@ -138,7 +139,12 @@ export const ActionStatus = ({
     <div className={cssClasses('TitleContainer')}>
       <Title
         title={title}
-        icon={<MdAssignmentLate className={cssClasses('Title__Icon')} />}
+        icon={
+          <Icon
+            className={cssClasses('Title__Icon')}
+            type={require('../../components/shared/icon/assets/action.svg')}
+          />
+        }
       />
     </div>
 
