@@ -237,6 +237,7 @@ class GxAlertApiTestContext {
         createdOn: now,
         updatedOn: now,
       })
+      await knex('FactDeviceFlag').insert({ deviceId, updatedOn: now })
       const adminUser = await knex
         .from('User')
         .where('name', 'admin')

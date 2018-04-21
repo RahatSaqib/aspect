@@ -1,3 +1,4 @@
+const Boom = require('boom')
 const _ = require('lodash')
 
 async function updateDeviceConfiguration(knex, deviceId, payload, now) {

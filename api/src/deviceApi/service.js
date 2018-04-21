@@ -667,7 +667,7 @@ function createNewDeviceFromRequest(request, now) {
       }
     }
 
-    const { device } = await createNewDevice(knex, now, {
+    const { device, error } = await createNewDevice(knex, now, {
       deviceTypeExternalId,
       name: payload.name,
       serial: payload.serial,
@@ -682,7 +682,7 @@ function createNewDeviceFromRequest(request, now) {
       .where({ id: apiKey.id })
       .update({ deviceId: device.id, updatedOn: now })
 
-    return { device }
+    return { device, error }
   })
 }
 

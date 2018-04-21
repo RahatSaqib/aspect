@@ -24,6 +24,8 @@ const {
 } = require('./geneXpertConstants')
 const { run } = require('../../../src/db')
 const { waitForApproximately } = require('../../utils/generatorFunctionUtils')
+const { waitForIdle, waitForAction } = require('../../utils/mqUtils')
+const { deviceSeen, deviceOffline } = require('../../../src/device/actions')
 
 const server = supertest.agent('http://localhost:8080')
 const { assert, expect } = chai
@@ -1708,6 +1710,7 @@ describe('Device API routes for GxAlert Device', () => {
         beforeCreateGxAlertApiKey,
         useGxAlertDeviceId,
         runTest,
+        getCurrentGeneXpertDevice,
         afterCleanUp,
       } = context
 
@@ -1954,6 +1957,186 @@ describe('Device API routes for GxAlert Device', () => {
                 },
               })
             }))
+
+          it('should update the last seen on time for the device', () =>
+            runTest(async knex => {
+              const { now } = context
+
+              // First mark as inactive
+              await waitForApproximately(100, 'milliseconds')
+              const inactiveMaintenanceReason = 'No Connection'
+              const inactiveMaintenanceNote =
+                'Router cannot connect to the network'
+              const inactiveMaintenanceExpectedBackOnline = dateFormat(
+                addDays(now, 16),
+                'YYYY-MM-DD'
+              )
+              await postToDeviceApi(
+                _.merge(standardDevicePayload, {
+                  payload: {
+                    configuration: {
+                      data: {
+                        inactive: true,
+                        inactiveMaintenanceReason,
+                        inactiveMaintenanceNote,
+                        inactiveMaintenanceExpectedBackOnline,
+                      },
+                    },
+                  },
+                })
+              )
+
+              const { lastSeenOn: lastSeenOnAfterInactive } = await knex(
+                'Device'
+              )
+                .where({ id: deviceId })
+                .first('lastSeenOn')
+
+              // Then mark as active
+              await waitForApproximately(1, 'second')
+
+              const activeMaintenanceReason = 'Connectivity Resolved'
+              const activeMaintenanceNote = 'VPN config was incorrect'
+              const activeMaintenanceExpectedBackOnline = dateFormat(
+                now,
+                'YYYY-MM-DD'
+              )
+              await postToDeviceApi(
+                _.merge(standardDevicePayload, {
+                  payload: {
+                    configuration: {
+                      data: {
+                        inactive: false,
+                        inactiveMaintenanceReason: activeMaintenanceReason,
+                        inactiveMaintenanceNote: activeMaintenanceNote,
+                        inactiveMaintenanceExpectedBackOnline: activeMaintenanceExpectedBackOnline,
+                      },
+                    },
+                  },
+                })
+              )
+              const { lastSeenOn: lastSeenOnAfterActive } = await knex('Device')
+                .where({ id: deviceId })
+                .first('lastSeenOn')
+              expect(lastSeenOnAfterActive).to.be.above(lastSeenOnAfterInactive)
+            }))
+        })
+
+        describe('which includes {... inactive: true... }', () => {
+          it('should eventually set device flag: offline to true', () =>
+            runTest(async knex => {
+              const { now } = context
+              const { id: deviceId } = await getCurrentGeneXpertDevice()
+
+              await knex('FactDeviceFlag')
+                .where({ deviceId })
+                .update({ offline: 0 })
+              let deviceFacts = await knex('FactDeviceFlag')
+                .where({ deviceId })
+                .first()
+              assert.notOk(deviceFacts.offline)
+
+              const waitForDeviceOffline = waitForAction(
+                deviceOffline(deviceId)
+              )
+
+              const inactiveMaintenanceReason = 'Connectivity Problems'
+              const inactiveMaintenanceNote = 'Router cannot connect to VPN'
+              const inactiveMaintenanceExpectedBackOnline = dateFormat(
+                addDays(now, 23),
+                'YYYY-MM-DD'
+              )
+              const response = await postToDeviceApi(
+                _.merge(standardDevicePayload, {
+                  payload: {
+                    configuration: {
+                      data: {
+                        inactive: true,
+                        inactiveMaintenanceReason,
+                        inactiveMaintenanceNote,
+                        inactiveMaintenanceExpectedBackOnline,
+                      },
+                    },
+                  },
+                })
+              )
+              assert.equal(response.body.device.id, deviceId)
+
+              await waitForDeviceOffline
+              await waitForIdle()
+
+              deviceFacts = await knex('FactDeviceFlag')
+                .where({ deviceId })
+                .first()
+              assert.ok(deviceFacts.offline)
+            }))
+
+          it('should NOT update the last seen on time for the device', () =>
+            runTest(async knex => {
+              const { now } = context
+
+              // First mark as active
+              const activeResponse = await postToDeviceApi(
+                _.merge(standardDevicePayload, {
+                  payload: {
+                    configuration: {
+                      data: {
+                        inactive: false,
+                      },
+                    },
+                  },
+                })
+              )
+
+              // Then mark as inactive and wait for the DEVICE_OFFLINE action to be dispatched
+              const { lastSeenOn: lastSeenOnAfterActive } = await knex('Device')
+                .where({ id: activeResponse.body.device.id })
+                .first('lastSeenOn')
+
+              await waitForApproximately(100, 'milliseconds')
+              const waitForOffline = waitForAction(
+                deviceOffline(activeResponse.body.device.id)
+              )
+              const inactiveMaintenanceReason = 'No 3G Connection'
+              const inactiveMaintenanceNote =
+                'Signal quality poor at this facility'
+              const inactiveMaintenanceExpectedBackOnline = dateFormat(
+                addDays(now, 13),
+                'YYYY-MM-DD'
+              )
+              const inactiveResponse = await postToDeviceApi(
+                _.merge(standardDevicePayload, {
+                  payload: {
+                    configuration: {
+                      data: {
+                        inactive: true,
+                        inactiveMaintenanceReason,
+                        inactiveMaintenanceNote,
+                        inactiveMaintenanceExpectedBackOnline,
+                      },
+                    },
+                  },
+                })
+              )
+
+              assert.equal(
+                inactiveResponse.body.device.id,
+                activeResponse.body.device.id
+              )
+
+              await waitForOffline
+              await waitForIdle()
+
+              const { lastSeenOn: lastSeenOnAfterInactive } = await knex(
+                'Device'
+              )
+                .where({ id: inactiveResponse.body.device.id })
+                .first('lastSeenOn')
+
+              expect(lastSeenOnAfterInactive.getTime()).to.equal(
+                lastSeenOnAfterActive.getTime()
+              )
+            }))
         })
       })
 
@@ -2026,7 +2209,7 @@ describe('Device API routes for GxAlert Device', () => {
 
   describe('ping', () => {
     const deviceName = 'GeneXpert Lab Pinged GxAlert'
-    const gxAlertDeviceId = 8322
+    const deviceIdFromGxAlert = 8322
     const macAddress = 'MAC00000000PING'
 
     const context = createContext()
@@ -2042,7 +2225,7 @@ describe('Device API routes for GxAlert Device', () => {
     before(async () =>
       run(async () => {
         await beforeCreateGxAlertApiKey()
-        useGxAlertDeviceId(gxAlertDeviceId)
+        useGxAlertDeviceId(deviceIdFromGxAlert)
         ;({ deviceAuth, basicDevicePayload } = context)
         await postToDeviceApi({
           authHeader: deviceAuth,
@@ -2060,26 +2243,23 @@ describe('Device API routes for GxAlert Device', () => {
     it('should update the last seen and last ping time', () =>
       runTest(async () => {
         const deviceBefore = await getCurrentGeneXpertDevice()
+
+        const waitForDeviceSeen = waitForAction(deviceSeen(deviceBefore.id))
         await waitForApproximately(1, 'second')
         const response = await postToDeviceApi({
           authHeader: deviceAuth,
-          payload: {
+          payload: _.merge({}, basicDevicePayload, {
             name: deviceName,
-            serial: null,
-            status: null,
-            type: { id: 'CepheidGeneXpert' },
-            site: null,
-            checkpoint: null,
-            log: null,
             configuration: {
-              checkpoint: null,
-              data: { macAddress, gxAlertDeviceId },
+              data: { macAddress, gxAlertDeviceId: deviceIdFromGxAlert },
             },
-            operation: null,
-            result: null,
-          },
+          }),
         })
         response.body.device.id.should.equal(deviceBefore.id)
+
+        await waitForDeviceSeen
+        await waitForIdle()
+
         new Date(response.body.device.lastSeenOn).should.be.above(
           deviceBefore.lastSeenOn
         )
@@ -2091,6 +2271,46 @@ describe('Device API routes for GxAlert Device', () => {
         deviceAfter.id.should.equal(deviceBefore.id)
         deviceAfter.lastSeenOn.should.be.above(deviceBefore.lastSeenOn)
         deviceAfter.lastPingOn.should.be.above(deviceBefore.lastPingOn)
+      }))
+
+    it('should eventually update the device fact offline status to false', () =>
+      runTest(async knex => {
+        const { id: deviceId } = await getCurrentGeneXpertDevice()
+        await knex('FactDeviceFlag')
+          .where({ deviceId })
+          .update({ offline: 1 })
+        let deviceFacts = await knex('FactDeviceFlag')
+          .where({ deviceId })
+          .first()
+        assert.ok(deviceFacts.offline)
+
+        const waitForDeviceSeen = waitForAction(deviceSeen(deviceId))
+
+        await postToDeviceApi({
+          authHeader: deviceAuth,
+          payload: {
+            name: deviceName,
+            serial: null,
+            status: null,
+            type: { id: 'CepheidGeneXpert' },
+            site: null,
+            checkpoint: null,
+            log: null,
+            configuration: {
+              checkpoint: null,
+              data: { macAddress, gxAlertDeviceId: deviceIdFromGxAlert },
+            },
+            operation: null,
+            result: null,
+          },
+        })
+        await waitForDeviceSeen
+        await waitForIdle()
+
+        deviceFacts = await knex('FactDeviceFlag')
+          .where({ deviceId })
+          .first()
+        assert.notOk(deviceFacts.offline)
       }))
   })
 

@@ -1,11 +1,17 @@
 const _ = require('lodash')
 const dateFormat = require('date-fns/format')
 const geneXpertPreProcessUpdateDeviceConfiguration = require('../preProcessUpdateDeviceConfiguration')
+const { deviceSeen, deviceOffline } = require('../../../../device/actions')
 
 async function preProcessUpdateDeviceConfiguration(context) {
   await geneXpertPreProcessUpdateDeviceConfiguration(context)
-
-  const { knex, payload, device: { id: deviceId }, now } = context
+  const {
+    knex,
+    payload,
+    device: { id: deviceId },
+    now,
+    messageContext,
+  } = context
   const inactive = _.get(payload, 'data.inactive', null)
   if (!_.isNull(inactive)) {
     const {
@@ -63,6 +69,11 @@ async function preProcessUpdateDeviceConfiguration(context) {
         changedOn: now,
         createdOn: now,
       })
+      if (inactive) {
+        messageContext.dispatch(deviceOffline(deviceId))
+      } else {
+        messageContext.dispatch(deviceSeen(deviceId))
+      }
     }
   }
 }
