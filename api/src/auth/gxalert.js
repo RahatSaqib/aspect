@@ -275,7 +275,7 @@ async function getCreateGeographyIdBy(
   let stateId = null
   if (stateName) {
     // get state which has Geography - inner join
-    let state = await knex
+    const state = await knex
       .from('State as s')
       .innerJoin('Geography as g', 's.id', 'g.stateId')
       .where(() =>
@@ -290,21 +290,10 @@ async function getCreateGeographyIdBy(
     if (state) {
       stateId = state.id
     } else {
-      // get state with same name/abbreviation
-      state = await knex
-        .from('State')
-        .where('name', stateName)
-        .orWhere('abbreviation', stateAbbreviation)
-        .first('id')
-      if (!state) {
-        // if state is still missing - insert it in State table
-        d = { name: stateName, abbreviation: stateAbbreviation }
-        stateId = await knex.insert(d, 'id').into('State')
-      } else {
-        stateId = state.id
-      }
-
-      // insert missing Geography for this state
+      // insert State
+      d = { name: stateName, abbreviation: stateAbbreviation }
+      stateId = await knex.insert(d, 'id').into('State')
+      // insert Geography for this state
       d = { countryId, stateId, lgaId: null }
       await knex.insert(d).into('Geography')
     }
@@ -315,7 +304,7 @@ async function getCreateGeographyIdBy(
   if (lgaName) {
     // get lga which has Geography - inner join
     d = { 'g.countryId': countryId, 'g.stateId': stateId, 'l.name': lgaName }
-    let lga = await knex
+    const lga = await knex
       .from('Lga as l')
       .innerJoin('Geography as g', 'l.id', 'g.lgaId')
       .where(d)
@@ -323,18 +312,8 @@ async function getCreateGeographyIdBy(
     if (lga) {
       lgaId = lga.id
     } else {
-      // get lga with same name/abbreviation
-      lga = await knex
-        .from('Lga')
-        .where('name', lgaName)
-        .first('id')
-      if (!lga) {
-        // if lga is still missing - insert it in Lga table
-        lgaId = await knex.insert({ name: lgaName }, 'id').into('Lga')
-      } else {
-        lgaId = lga.id
-      }
-
+      // insert Lga
+      lgaId = await knex.insert({ name: lgaName }, 'id').into('Lga')
       // insert missing Geography for this lga
       d = { countryId, stateId, lgaId }
       await knex.insert(d).into('Geography')
