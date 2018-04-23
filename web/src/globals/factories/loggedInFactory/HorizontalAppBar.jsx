@@ -1,11 +1,10 @@
-import window from 'global/window'
 import classnames from 'classnames/bind'
 import React from 'react'
 import { compose, withHandlers } from 'recompose'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import AppBar from 'react-toolbox/lib/app_bar'
-import { IconMenu, MenuItem, MenuDivider } from 'react-toolbox/lib/menu'
+import { IconMenu, MenuItem } from 'react-toolbox/lib/menu'
 import FaUser from 'react-icons/lib/fa/user'
 
 import ConfluenceIcon from './ConfluenceIcon'
@@ -18,10 +17,6 @@ const cssClasses = classnames.bind(require('./index.css'))
 const enhance = compose(
   withHandlers({
     navigateRoot: ({ history }) => () => history.push('/'),
-
-    goToExternalHelp: () => () => {
-      window.location.href = 'https://admin.gxalert.com'
-    },
 
     navigateCurrentAccountDetails: ({ history }) => () =>
       history.push('/account-details/current'),
@@ -49,7 +44,6 @@ const HorizontalAppBar = ({
 
   navigateRoot,
   closeDrawer,
-  goToExternalHelp,
   navigateCurrentAccountDetails,
   userRequestedLogout,
   userFeatures,
@@ -71,14 +65,12 @@ const HorizontalAppBar = ({
       position="topRight"
       menuRipple
     >
-      <MenuItem caption="Help" onClick={goToExternalHelp} />
       {isEnabledFeature(userFeatures, ['account']) && (
         <MenuItem
           caption="Account Details"
           onClick={navigateCurrentAccountDetails}
         />
       )}
-      <MenuDivider />
       <MenuItem caption="Sign out" onClick={userRequestedLogout} />
     </IconMenu>
   </AppBar>
