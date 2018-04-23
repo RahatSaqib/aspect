@@ -17,6 +17,7 @@ import {
   Table,
 } from '../shared/metaReducers/table'
 import { receivedExportResponse } from '../filter/FilterRedux'
+import screenSchema from './ResultScreenSchema.json'
 
 export const types = {
   REQUEST_RESULTS: 'REQUEST_RESULTS',
@@ -422,6 +423,7 @@ export const Result = Immutable.Record({
   }),
   workflowLog: new WorkflowLogModel(),
   deviceLogs: new Immutable.List(),
+  screenSchema: new Immutable.fromJS(screenSchema),
   loading: true,
 })
 

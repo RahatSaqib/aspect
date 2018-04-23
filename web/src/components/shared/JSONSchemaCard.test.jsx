@@ -1,8 +1,6 @@
-import _ from 'lodash'
 import Immutable from 'immutable'
 import React from 'react'
 import ReactTestRenderer from 'react-test-renderer'
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 
 import { ReadOnlyField } from '../../components/shared/ReadOnlyFields'
 import JSONSchemaCard, { PropertiesSchemaCard } from './JSONSchemaCard'
@@ -11,24 +9,14 @@ describe('JSONSchemaCard module', () => {
   describe('PropertiesSchemaCard testInstance', () => {
     it('should handle nested field expanding correctly', () => {
       const testInstance = ReactTestRenderer.create(
-        <MuiThemeProvider>
-          <PropertiesSchemaCard
-            title="Data"
-            path={['probes']}
-            formatSubtitle={() => 'subtitle'}
-            renderField={field => <ReadOnlyField {...field} />}
-            dataSchema={dataSchema.getIn(['probes', 'properties'])}
-            data={data.get('probes')}
-          />
-        </MuiThemeProvider>
+        <PropertiesSchemaCard
+          title="Data"
+          initiallyExpanded
+          renderField={field => <ReadOnlyField {...field} />}
+          dataSchema={dataSchema.getIn(['probes', 'properties'])}
+          data={data.get('probes')}
+        />
       )
-      expect(testInstance).toMatchSnapshot()
-
-      const tree = testInstance.toJSON()
-      tree.children[0].props.onTouchTap({
-        preventDefault: _.noop,
-        stopPropagation: _.noop,
-      })
       expect(testInstance).toMatchSnapshot()
     })
   })
@@ -36,15 +24,12 @@ describe('JSONSchemaCard module', () => {
   describe('JSONSchemaCard testInstance', () => {
     it('should render correctly', () => {
       const testInstance = ReactTestRenderer.create(
-        <MuiThemeProvider>
-          <JSONSchemaCard
-            title="Data"
-            renderField={field => <ReadOnlyField {...field} />}
-            formatNestedSubtitle={() => 'subtitle'}
-            dataSchema={dataSchema}
-            data={data}
-          />
-        </MuiThemeProvider>
+        <JSONSchemaCard
+          title="Data"
+          renderField={field => <ReadOnlyField {...field} />}
+          dataSchema={dataSchema}
+          data={data}
+        />
       )
       expect(testInstance).toMatchSnapshot()
     })
