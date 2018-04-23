@@ -187,7 +187,7 @@ async function updateCreatePerson(knex, userId, gxUser) {
     .first('id')
   let personId = person.id
 
-  const geography = await getCreateGeographyIdBy(
+  const geography = await getCreateGeographyIdByGxGeo(
     knex, // pass 'knex' for transaction consistency
     gxUser.country.abbreviation,
     gxUser.state.name,
@@ -241,18 +241,15 @@ async function getCountryIdByAbbr(countryAbbreviation) {
   return countryId
 }
 
-async function getCreateGeographyIdBy(
+async function getCreateGeographyIdByGxGeo(
   knex,
   countryAbbreviation,
   stateName,
   stateAbbreviation,
   lgaName
 ) {
-  const { id: countryId } = await knex
-    .from('Country')
-    .where('abbreviation', countryAbbreviation)
-    .first('id')
-
+  const countryId = await getCountryIdByAbbr(countryAbbreviation)
+  
   // exit if country is unknown
   if (!countryId) {
     return null
