@@ -77,6 +77,9 @@ async function getOrCreateDevice(knex, payload, gxAlertDevice, now) {
       deviceName,
       true
     )
+    const lastPingOn = new Date(
+      _.get(payload, 'configuration.data.lastPingOn', now)
+    )
     const { device, error } = await createNewDevice(knex, now, {
       deviceTypeExternalId,
       name: deviceName,
@@ -94,7 +97,8 @@ async function getOrCreateDevice(knex, payload, gxAlertDevice, now) {
         _.get(payload, 'configuration.data', '{}')
       ),
       putInService: _.get(payload, 'configuration.data.putInService', now),
-      lastSeenOn: _.get(payload, 'configuration.data.lastPingOn', now),
+      lastSeenOn: lastPingOn,
+      lastPingOn,
     })
     if (error) {
       throw error

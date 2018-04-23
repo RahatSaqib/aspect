@@ -19,7 +19,7 @@ async function preProcessAddDeviceData({ knex, device, payload, now }) {
   }
   const site = await getOrCreateSite(knex, device, payload, now)
   const deviceDetails = {
-    lastSeenOn: now,
+    lastSeenOn: new Date(configurationData.lastPingOn || now),
     updatedOn: now,
     updatedBy: null,
   }
@@ -42,10 +42,11 @@ async function preProcessAddDeviceData({ knex, device, payload, now }) {
         'hostId',
         'deviceSerialNumber',
         'country',
+        'lastPingOn',
       ].includes(configurationDataKey)
     )
   ) {
-    deviceDetails.lastPingOn = now
+    deviceDetails.lastPingOn = new Date(configurationData.lastPingOn || now)
   }
   await knex
     .from('Device')

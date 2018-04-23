@@ -615,7 +615,6 @@ function createNewDeviceFromRequest(request, now) {
     const { auth } = request
 
     // Find API Key to use as template for new device
-    // Find API Key to use as template for new device
     const partnerApiKey = await knex('DeviceApiKey as k')
       .where({
         'k.token': auth.credentials.token,

@@ -35,7 +35,7 @@ async function updateDeviceDetails(knex, deviceId, deviceDetails, now) {
       await knex('Device')
         .where({ id: deviceId })
         .update(
-          _.merge(changedDetails, {
+          _.merge({}, changedDetails, {
             updatedBy: null,
             updatedOn: now,
           })
@@ -139,6 +139,7 @@ async function createNewDevice(
     configurationData = '{}',
     putInService,
     lastSeenOn,
+    lastPingOn,
   }
 ) {
   const deviceType = await knex('DeviceType')
@@ -184,6 +185,7 @@ async function createNewDevice(
     configurationData,
     putInService: putInService || now,
     lastSeenOn: lastSeenOn || now,
+    lastPingOn: lastPingOn || now,
     createdOn: now,
     updatedOn: now,
   })

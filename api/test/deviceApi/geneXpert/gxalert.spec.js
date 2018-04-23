@@ -2077,73 +2077,6 @@ describe('Device API routes for GxAlert Device', () => {
                 .first()
               assert.ok(deviceFacts.offline)
             }))
-
-          it('should NOT update the last seen on time for the device', () =>
-            runTest(async knex => {
-              const { now } = context
-
-              // First mark as active
-              const activeResponse = await postToDeviceApi(
-                _.merge(standardDevicePayload, {
-                  payload: {
-                    configuration: {
-                      data: {
-                        inactive: false,
-                      },
-                    },
-                  },
-                })
-              )
-
-              // Then mark as inactive and wait for the DEVICE_OFFLINE action to be dispatched
-              const { lastSeenOn: lastSeenOnAfterActive } = await knex('Device')
-                .where({ id: activeResponse.body.device.id })
-                .first('lastSeenOn')
-
-              await waitForApproximately(100, 'milliseconds')
-              const waitForOffline = waitForAction(
-                deviceOffline(activeResponse.body.device.id)
-              )
-              const inactiveMaintenanceReason = 'No 3G Connection'
-              const inactiveMaintenanceNote =
-                'Signal quality poor at this facility'
-              const inactiveMaintenanceExpectedBackOnline = dateFormat(
-                addDays(now, 13),
-                'YYYY-MM-DD'
-              )
-              const inactiveResponse = await postToDeviceApi(
-                _.merge(standardDevicePayload, {
-                  payload: {
-                    configuration: {
-                      data: {
-                        inactive: true,
-                        inactiveMaintenanceReason,
-                        inactiveMaintenanceNote,
-                        inactiveMaintenanceExpectedBackOnline,
-                      },
-                    },
-                  },
-                })
-              )
-
-              assert.equal(
-                inactiveResponse.body.device.id,
-                activeResponse.body.device.id
-              )
-
-              await waitForOffline
-              await waitForIdle()
-
-              const { lastSeenOn: lastSeenOnAfterInactive } = await knex(
-                'Device'
-              )
-                .where({ id: inactiveResponse.body.device.id })
-                .first('lastSeenOn')
-
-              expect(lastSeenOnAfterInactive.getTime()).to.equal(
-                lastSeenOnAfterActive.getTime()
-              )
-            }))
         })
       })
 
@@ -2211,6 +2144,70 @@ describe('Device API routes for GxAlert Device', () => {
             )
           }))
       })
+    })
+
+    describe('when lastPingOn is included in the configuration data payload', () => {
+      const deviceName = 'GeneXpert Lab With Last Ping Time'
+      const deviceIdFromGxAlert = 12
+      const macAddress = 'MAC0012LASTPING'
+
+      const context = createContext()
+      const {
+        beforeCreateGxAlertApiKey,
+        useGxAlertDeviceId,
+        runTest,
+        getCurrentGeneXpertDevice,
+        afterCleanUp,
+      } = context
+      let { deviceAuth, basicDevicePayload } = context
+
+      before(async () =>
+        run(async () => {
+          await beforeCreateGxAlertApiKey()
+          useGxAlertDeviceId(deviceIdFromGxAlert)
+          ;({ deviceAuth, basicDevicePayload } = context)
+          await postToDeviceApi({
+            authHeader: deviceAuth,
+            payload: _.merge({}, basicDevicePayload, {
+              name: deviceName,
+              configuration: {
+                data: { macAddress },
+              },
+            }),
+          })
+        })
+      )
+      after(afterCleanUp)
+
+      it('should explicitly set the lastSeenOn and lastPingOn dates on the device', () =>
+        runTest(async () => {
+          const { deviceAuth, basicDevicePayload, now } = context
+          const lastPingOn = setMilliseconds(
+            subMinutes(
+              subHours(now, Math.floor(Math.random() * 24)),
+              Math.floor(Math.random() * 60)
+            ),
+            0
+          )
+          await postToDeviceApi({
+            authHeader: deviceAuth,
+            payload: _.merge({}, basicDevicePayload, {
+              name: deviceName,
+              configuration: {
+                data: {
+                  lastPingOn,
+                },
+              },
+            }),
+          })
+          const sourceDevice = await getCurrentGeneXpertDevice()
+          expect(sourceDevice.lastSeenOn.getTime()).to.equal(
+            lastPingOn.getTime()
+          )
+          expect(sourceDevice.lastPingOn.getTime()).to.equal(
+            lastPingOn.getTime()
+          )
+        }))
     })
   })
 

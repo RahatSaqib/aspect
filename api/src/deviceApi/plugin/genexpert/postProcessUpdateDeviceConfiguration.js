@@ -24,7 +24,10 @@ async function postProcessUpdateDeviceConfiguration({
       hostId,
       culture,
       timezone,
-      lastSeenOn: lastPingOn || now,
+      lastSeenOn: new Date(lastPingOn || now),
+    }
+    if (lastPingOn) {
+      deviceDetails.lastPingOn = new Date(lastPingOn)
     }
     if (deviceSerialNumber) {
       deviceDetails.serial = deviceSerialNumber
