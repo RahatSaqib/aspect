@@ -48,7 +48,7 @@ describe('Device API routes for GxAlert Device', () => {
         ))
     })
 
-    describe('when unknown device API key is specified', () => {
+    describe('when an unknown device API key is specified', () => {
       const { runTest, basicDevicePayload } = createContext()
       it('should respond with UNAUTHORIZED', () =>
         runTest(async () =>
@@ -60,7 +60,7 @@ describe('Device API routes for GxAlert Device', () => {
         ))
     })
 
-    describe('when known device API key is specified', () => {
+    describe('when a known device API key is specified', () => {
       describe('send new device data', () => {
         describe('before a gxAlertDeviceId has been specified', () => {
           const context = createContext()
@@ -367,7 +367,7 @@ describe('Device API routes for GxAlert Device', () => {
       })
     })
 
-    describe('when MAC address changes', () => {
+    describe('when the MAC address of the source device changes', () => {
       const deviceName = 'GeneXpert Lab from GxAlert'
       const firstGxAlertDeviceId = 47
       const secondGxAlertDeviceId = 88
@@ -777,7 +777,7 @@ describe('Device API routes for GxAlert Device', () => {
       })
     })
 
-    describe('when instrument serial changes', () => {
+    describe('when the instrument serial of the source device changes', () => {
       const deviceName = 'GeneXpert Lab from GxAlert'
       const firstGxAlertDeviceId = 95
       const secondGxAlertDeviceId = 13
@@ -1174,7 +1174,7 @@ describe('Device API routes for GxAlert Device', () => {
       })
     })
 
-    describe('when hostId changes', () => {
+    describe('when the hostId of the source device changes', () => {
       const deviceName = 'GeneXpert Lab from GxAlert'
       const firstGxAlertDeviceId = 47
       const secondGxAlertDeviceId = 88
@@ -2886,9 +2886,6 @@ describe('Device API routes for GxAlert Device', () => {
         await Promise.each(
           Object.keys(resultTextToResultCategoryMapping),
           async resultText => {
-            // Running these requests in parallel causes the connection pool in MySQL to fill up too quickly.
-            // This is probably due to the fact table updates.
-            // For now: sending these requests sequentially and sweeping this under the rug
             if (
               resultText &&
               !_.isEmpty(resultTextToResultCategoryMapping[resultText])
