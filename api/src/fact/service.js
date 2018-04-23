@@ -49,14 +49,26 @@ function onFactGenerateResultCounts(action, { messageContext }) {
   })
 }
 
-function onDeviceSeen({ deviceId }, { messageContext }) {
+function onDeviceSeen({ deviceId, dateSeen }, { messageContext }) {
   const context = messageContext.bindActionCreators({ deviceOnline })
   return context.run(async knex => {
-    const isOffline = await knex('FactDeviceFlag')
-      .where({ deviceId, offline: 1 })
-      .first('offline')
-    if (isOffline != null) {
-      context.deviceOnline(deviceId)
+    const getDeviceAndFactDeviceFlag = async deviceId =>
+      knex('Device as d')
+        .leftJoin('FactDeviceFlag as fdf', 'd.id', 'fdf.deviceId')
+        .where('d.id', deviceId)
+        .first('d.id', 'fdf.deviceId', 'd.lastSeenOn', 'fdf.offline')
+    let deviceAndFactDeviceFlag = await getDeviceAndFactDeviceFlag(deviceId)
+    if (deviceAndFactDeviceFlag) {
+      if (!deviceAndFactDeviceFlag.deviceId) {
+        await knex('FactDeviceFlag').insert({ deviceId, updatedOn: new Date() })
+        deviceAndFactDeviceFlag = await getDeviceAndFactDeviceFlag(deviceId)
+      }
+      if (
+        deviceAndFactDeviceFlag.offline &&
+        (!dateSeen || deviceAndFactDeviceFlag.lastSeenOn < dateSeen)
+      ) {
+        context.deviceOnline(deviceId)
+      }
     }
   })
 }

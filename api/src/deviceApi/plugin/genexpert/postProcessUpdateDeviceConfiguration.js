@@ -10,14 +10,21 @@ async function postProcessUpdateDeviceConfiguration({
   let device = {}
   if (!_.isEmpty(_.get(payload, 'data'))) {
     const {
-      data: { macAddress, hostId, culture, timezone, deviceSerialNumber },
+      data: {
+        macAddress,
+        hostId,
+        culture,
+        timezone,
+        deviceSerialNumber,
+        lastPingOn,
+      },
     } = payload
     const deviceDetails = {
       macAddress,
       hostId,
       culture,
       timezone,
-      lastSeenOn: now,
+      lastSeenOn: lastPingOn || now,
     }
     if (deviceSerialNumber) {
       deviceDetails.serial = deviceSerialNumber

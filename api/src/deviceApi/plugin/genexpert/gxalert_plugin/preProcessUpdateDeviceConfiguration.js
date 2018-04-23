@@ -12,6 +12,7 @@ async function preProcessUpdateDeviceConfiguration(context) {
     now,
     messageContext,
   } = context
+  const lastPingOn = _.get(payload, 'data.lastPingOn', null)
   const inactive = _.get(payload, 'data.inactive', null)
   if (!_.isNull(inactive)) {
     const {
@@ -72,7 +73,7 @@ async function preProcessUpdateDeviceConfiguration(context) {
       if (inactive) {
         messageContext.dispatch(deviceOffline(deviceId))
       } else {
-        messageContext.dispatch(deviceSeen(deviceId))
+        messageContext.dispatch(deviceSeen(deviceId, lastPingOn))
       }
     }
   }

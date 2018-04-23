@@ -138,6 +138,7 @@ async function createNewDevice(
     timezone,
     configurationData = '{}',
     putInService,
+    lastSeenOn,
   }
 ) {
   const deviceType = await knex('DeviceType')
@@ -182,7 +183,7 @@ async function createNewDevice(
     timezone,
     configurationData,
     putInService: putInService || now,
-    lastSeenOn: now,
+    lastSeenOn: lastSeenOn || now,
     createdOn: now,
     updatedOn: now,
   })
@@ -208,6 +209,7 @@ async function createNewDevice(
       'd.siteId',
       'd.name',
       'd.serial',
+      'd.lastSeenOn',
       'ds.token as status',
       'dt.externalId as deviceType',
       'dt.plugin as deviceTypePluginName'

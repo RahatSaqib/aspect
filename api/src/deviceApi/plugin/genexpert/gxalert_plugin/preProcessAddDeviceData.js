@@ -94,6 +94,7 @@ async function getOrCreateDevice(knex, payload, gxAlertDevice, now) {
         _.get(payload, 'configuration.data', '{}')
       ),
       putInService: _.get(payload, 'configuration.data.putInService', now),
+      lastSeenOn: _.get(payload, 'configuration.data.lastPingOn', now),
     })
     if (error) {
       throw error

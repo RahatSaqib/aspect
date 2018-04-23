@@ -1704,7 +1704,7 @@ describe('Device API routes for GxAlert Device', () => {
       const hostId = 'MaintenanceXpertLab'
       const country = 'MM'
       const partner = 'Myanmar'
-      const gxAlertDeviceId = 153
+      const gxAlertDeviceId = 1777
 
       const {
         beforeCreateGxAlertApiKey,
@@ -1817,6 +1817,7 @@ describe('Device API routes for GxAlert Device', () => {
             )
             assert.isUndefined(deviceMaintenanceLogBeforeMaintenanceUpdate)
 
+            const waitForDeviceSeen = waitForAction(deviceSeen(deviceId))
             await postToDeviceApi(
               _.merge(standardDevicePayload, {
                 payload: {
@@ -1828,6 +1829,7 @@ describe('Device API routes for GxAlert Device', () => {
                 },
               })
             )
+            await waitForDeviceSeen
 
             const deviceMaintenanceLogAfterFirstMaintenanceUpdate = await getLatestDeviceMaintenanceStatusLog(
               knex
@@ -1850,6 +1852,7 @@ describe('Device API routes for GxAlert Device', () => {
               addDays(now, 15),
               'YYYY-MM-DD'
             )
+            const waitForDeviceOffline = waitForAction(deviceOffline(deviceId))
             await postToDeviceApi(
               _.merge(standardDevicePayload, {
                 payload: {
@@ -1864,7 +1867,7 @@ describe('Device API routes for GxAlert Device', () => {
                 },
               })
             )
-
+            await waitForDeviceOffline
             const deviceMaintenanceLogAfterSecondMaintenanceUpdate = await getLatestDeviceMaintenanceStatusLog(
               knex
             )
@@ -1891,6 +1894,9 @@ describe('Device API routes for GxAlert Device', () => {
                 addDays(now, 23),
                 'YYYY-MM-DD'
               )
+              const waitForDeviceOffline = waitForAction(
+                deviceOffline(deviceId)
+              )
               await postToDeviceApi(
                 _.merge(standardDevicePayload, {
                   payload: {
@@ -1905,7 +1911,7 @@ describe('Device API routes for GxAlert Device', () => {
                   },
                 })
               )
-
+              await waitForDeviceOffline
               const deviceMaintenanceLogAfterInactiveMaintenanceUpdate = await getLatestDeviceMaintenanceStatusLog(
                 knex
               )
@@ -1928,6 +1934,7 @@ describe('Device API routes for GxAlert Device', () => {
                 now,
                 'YYYY-MM-DD'
               )
+              const waitForDeviceSeen = waitForAction(deviceSeen(deviceId))
               await postToDeviceApi(
                 _.merge(standardDevicePayload, {
                   payload: {
@@ -1942,7 +1949,7 @@ describe('Device API routes for GxAlert Device', () => {
                   },
                 })
               )
-
+              await waitForDeviceSeen
               const deviceMaintenanceLogAfterActiveMaintenanceUpdate = await getLatestDeviceMaintenanceStatusLog(
                 knex
               )
