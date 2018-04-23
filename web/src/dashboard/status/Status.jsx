@@ -46,14 +46,7 @@ const Status = ({ history, location, intl }) => (
   <div className={cssClasses('Container')}>
     <Helmet title="Status" />
     <div className={cssClasses('FiltersGroup')}>
-      <div
-        className={cssClasses(
-          'FiltersGroup__Child',
-          'FiltersGroup__Child--dropdown'
-        )}
-      >
-        <BrowseSiteDropdown intl={intl} history={history} location={location} />
-      </div>
+      <BrowseSiteDropdown intl={intl} history={history} location={location} />
     </div>
     <SummaryStatus
       intl={intl}

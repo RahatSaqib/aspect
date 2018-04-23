@@ -5,7 +5,7 @@
 }
 
 .Section--summary {
-  margin: 10px 0 20px 0;
+  margin: 10px 0;
 }
 
 .Section--withDropdown {
@@ -20,7 +20,7 @@
 }
 
 .Summary {
-  padding: 5px 3px;
+  padding: 3px;
   display: block;
   color: inherit;
 }
@@ -39,17 +39,18 @@
 }
 
 .Summary__Card__Title {
+  font-size: var(--aspect-font-size-sm);
   text-transform: capitalize;
   display: inline-flex;
   align-items: center;
 }
 
 .Summary__Card__Title__Icon {
-  font-size: 20px;
   margin-right: 3px;
 }
 
 .Summary__Card__Title--main {
+  font-weight: var(--lato-font-weight-bold);
   white-space: nowrap;
   overflow: hidden;
   padding-right: 2px;
@@ -81,12 +82,12 @@
 .Summary__Card__Item__Count {
   padding-right: 10px;
   line-height: 0.8;
-  font-size: 40px;
+  font-size: var(--aspect-font-size-lg);
 }
 
 .Summary__Card__Item__Messages {
   line-height: 20px;
-  font-size: 16px;
+  font-size: var(--aspect-font-size-sm);
   overflow: hidden;
   color: var(--aspect-color-grey-4);
 }
@@ -135,27 +136,28 @@
 .Title {
   display: flex;
   text-transform: capitalize;
-  font-size: 24px;
+  font-size: var(--aspect-font-size-sm);
+  font-weight: var(--lato-font-weight-bold);
   color: var(--aspect-color-grey-2);
   flex: 1;
 }
 
 .Title__Icon {
   margin: auto 5px;
+  font-size: var(--aspect-font-size-lg);
+}
+
+.Title__Label {
+  margin: auto 0;
 }
 
 .FiltersGroup {
-  padding-top: 15px;
   display: flex;
   justify-content: center;
 }
 
-.FiltersGroup__Child {
-  margin: 0 10px;
-}
-
-.FiltersGroup__Child--dropdown {
-  text-align: left;
+.FiltersGroup > *:first-child {
+  padding-top: 15px;
 }
 
 .ChartContainer {
@@ -198,12 +200,12 @@
 .SummaryItemsBlock__Item__Count {
   padding-right: 10px;
   line-height: 40px;
-  font-size: 40px;
+  font-size: var(--aspect-font-size-lg);
 }
 
 .SummaryItemsBlock__Item__Messages {
   line-height: 20px;
-  font-size: 16px;
+  font-size: var(--aspect-font-size-md);
   color: var(--aspect-color-grey-4);
 }
 
@@ -260,7 +262,8 @@
 }
 
 .TargetItemBlock__Title {
-  font-size: 20px;
+  font-size: var(--aspect-font-size-md);
+  font-weight: var(--lato-font-weight-bold);
   text-align: center;
   margin-bottom: 4px;
 }
@@ -274,7 +277,7 @@
 }
 
 .TargetItemBlock__Label {
-  font-size: 16px;
+  font-size: var(--aspect-font-size-sm);
   color: var(--aspect-color-grey-4);
   text-align: center;
   display: flex;
@@ -283,7 +286,7 @@
 }
 
 .TargetItemBlock__Label--error {
-  font-size: 16px;
+  font-size: var(--aspect-font-size-sm);
   color: var(--aspect-color-mandy);
   font-weight: var(--lato-font-weight-bold);
   text-align: center;
@@ -322,7 +325,8 @@
 }
 
 .ActionFilterButton__Title {
-  font-size: 16px;
+  font-size: var(--aspect-font-size-md);
+  font-weight: var(--lato-font-weight-bold);
   text-transform: capitalize;
   text-align: center;
   line-height: 2;
@@ -334,7 +338,7 @@
 }
 
 .ActionFilterButton__Messages {
-  font-size: 16px;
+  font-size: var(--aspect-font-size-md);
   font-weight: var(--lato-font-weight-bold);
   color: var(--aspect-color-mandy);
   text-transform: capitalize;
@@ -351,19 +355,18 @@
     width: 80%;
     margin: 0 auto;
   }
-  .ActionFilterButton__Title {
-    font-size: 20px;
-  }
-  .ActionFilterButton__Messages {
-    font-size: 20px;
-  }
 }
 
 .ActionDataTable {
   composes: ComponentDataTable from "../../components/shared/DataTable.css";
 }
 
+.ActionDataTable__TableHead {
+  font-size: var(--aspect-font-size-sm);
+}
+
 .ActionDataTable__TableHead__Status {
+  composes: ActionDataTable__TableHead;
   text-align: center;
   padding-left: 0 !important;
   padding-right: 0;
@@ -371,16 +374,18 @@
 }
 
 .ActionDataTable__TableHead__Lab {
+  composes: ActionDataTable__TableHead;
   width: 10%;
 }
 
 .ActionDataTable__TableHead__Issue {
+  composes: ActionDataTable__TableHead;
   width: 80%;
 }
 
 .ActionDataTable--empty {
   text-align: center;
-  font-size: 16px;
+  font-size: var(--aspect-font-size-md);
   border-top: 2px solid #e6e6e6;
 }
 
@@ -390,7 +395,7 @@
   padding: 10px 0 0 0;
 }
 
-.ReportsContainer__Button {  
+.ReportsContainer__Button {
   margin: 0 20px;
   background-color: var(--aspect-color-grey-5);
 }

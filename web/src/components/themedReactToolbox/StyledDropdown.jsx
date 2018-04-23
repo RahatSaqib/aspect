@@ -12,6 +12,7 @@ const enhance = compose(
       inputDisabled: cssClasses('input__disabled'),
       inputInput: cssClasses('input__input'),
       inputInputElement: cssClasses('input__inputElement'),
+      values: cssClasses('input__values'),
     },
   }))
 )

@@ -59,6 +59,7 @@
 
 .Link__link {
   color: var(--aspect-color-grey-4);
+  font-size: var(--aspect-font-size-sm);
 }
 
 .Link__link:hover {

@@ -11,6 +11,7 @@
 .TableCell {
   composes: TableCell from "../../../components/shared/DataTableRow.css";
   color: var(--aspect-color-grey-4);
+  font-size: var(--aspect-font-size-md);
 }
 
 .TableCell--actionType {
@@ -20,7 +21,7 @@
 .TableCell--site {
   font-weight: var(--lato-font-weight-bold);
   color: var(--aspect-color-grey-1);
-  min-width: 120px;
+  min-width: 150px;
 }
 
 .TableCell--issue {
@@ -30,17 +31,17 @@
 
 .ActionType--active {
   color: var(--aspect-color-brink);
-  font-size: 20px;
+  font-size: var(--aspect-font-size-md);
 }
 
 .ActionType--acknowledged {
   color: var(--aspect-color-supernova);
-  font-size: 20px;
+  font-size: var(--aspect-font-size-md);
 }
 
 .ActionType--ok {
   color: var(--aspect-color-mantis);
-  font-size: 20px;
+  font-size: var(--aspect-font-size-md);
 }
 
 .Button__Acknowledge {
@@ -59,7 +60,7 @@
 }
 
 .ArrowLeft {
-  font-size: 28px !important;
+  font-size: var(--aspect-font-size-lg) !important;
 }
 
 .Issue {
@@ -88,6 +89,7 @@
   flex-shrink: 0;
   margin: auto 5px auto 0;
   color: var(--aspect-color-grey-4);
+  font-size: var(--aspect-font-size-sm);
 }
 
 @media screen and (--md-viewport) {

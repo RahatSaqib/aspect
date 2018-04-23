@@ -28,6 +28,11 @@ exports.customPropertiesVariables = {
   '--aspect-color-shakespeare': '#41aeda',
   '--aspect-color-mountain': '#9874b2',
   '--aspect-color-brink': '#f36283',
+
+  // Font Size
+  '--aspect-font-size-sm': '14px',
+  '--aspect-font-size-md': '16px',
+  '--aspect-font-size-lg': '24px',
 }
 
 exports.definePluginVariables = _.transform(
