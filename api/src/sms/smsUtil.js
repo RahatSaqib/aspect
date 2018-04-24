@@ -13,17 +13,13 @@ function sendSms(cellNumber, message) {
   } = smsCfg.twilio
   const client = twilio(accountSid, authToken)
 
-  // send sms
-  client.messages
-    .create({
-      messagingServiceSid,
-      from: fromNumber,
-      to: cellNumber,
-      body: message,
-    })
-    .then(response => {
-      console.log(response)
-    })
+  // send sms - see https://www.twilio.com/docs/api/messaging/send-messages-copilot#sending-messages-with-copilot
+  return client.messages.create({
+    messagingServiceSid,
+    from: fromNumber,
+    to: cellNumber,
+    body: message,
+  })
 }
 
 module.exports = {
