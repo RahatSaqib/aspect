@@ -1,0 +1,236 @@
+{
+  "countries": [
+    {
+      "abbreviation": "MM",
+      "name": "Myanmar",
+      "a3": "MMR",
+      "culture": "en",
+      "countryCode": "95",
+      "stateLabel": "State/Region",
+      "lgaLabel": "District",
+      "timezone": "Myanmar Standard Time",
+      "portNumber": 2952,
+      "exportColumns": "DeploymentDescription|TestEndedOn|AssayName|AssayVersion|User|Result1|Result2|ReagentLotID|ExpirationDate|CartridgeSerial|ModuleSerial|SoftwareVersion|ErrorCode|ErrorCategory|ErrorDescription|SampleId|PatientId|PatientAge|PatientGender|PatientCity|Hiv|PreviouslyTreated|MicroscopyResult|Notes|TestReason|Tag",
+      "inventoryDaysThreshold": 21,
+      "monthStartsOnDay": 1,
+      "states": [
+        {
+          "name": "Ayeyarwady",
+          "abbreviation": "AYY",
+          "lgas": [
+            { "name": "Hinthada" },
+            { "name": "Labutta" },
+            { "name": "Maubin" },
+            { "name": "Myaungmya" },
+            { "name": "Pathein" },
+            { "name": "Pyapon" }
+          ]
+        },
+        {
+          "name": "Bago",
+          "abbreviation": "BGO",
+          "lgas": [
+            { "name": "Bago" },
+            { "name": "Pyay" },
+            { "name": "Taungoo" },
+            { "name": "Thayarwady" }
+          ]
+        },
+        {
+          "name": "Chin",
+          "abbreviation": "CHN",
+          "lgas": [
+            { "name": "Falam" },
+            { "name": "Hakha" },
+            { "name": "Mindat" }
+          ]
+        },
+        {
+          "name": "Kachin",
+          "abbreviation": "KCN",
+          "lgas": [
+            { "name": "Bhamo" },
+            { "name": "Mohnyin" },
+            { "name": "Myitkyina" },
+            { "name": "Puta-O" }
+          ]
+        },
+        {
+          "name": "Kayah",
+          "abbreviation": "KYH",
+          "lgas": [
+            { "name": "Bawlake" },
+            { "name": "Loikaw" }
+          ]
+        },
+        {
+          "name": "Kayin",
+          "abbreviation": "KYN",
+          "lgas": [
+            { "name": "Hpa-An" },
+            { "name": "Hpapun" },
+            { "name": "Kawkareik" },
+            { "name": "Myawaddy" }
+          ]
+        },
+        {
+          "name": "Magway",
+          "abbreviation": "MGY",
+          "lgas": [
+            { "name": "Gangaw" },
+            { "name": "Magway" },
+            { "name": "Minbu" },
+            { "name": "Pakokku" },
+            { "name": "Thayet" }
+          ]
+        },
+        {
+          "name": "Mandalay",
+          "abbreviation": "MDY",
+          "lgas": [
+            { "name": "Kyaukse" },
+            { "name": "Mandalay" },
+            { "name": "Meiktila" },
+            { "name": "Myingyan" },
+            { "name": "Nyaung-U" },
+            { "name": "Pyinoolwin" },
+            { "name": "Yamethin" }
+          ]
+        },
+        {
+          "name": "Mon",
+          "abbreviation": "MON",
+          "lgas": [
+            { "name": "Mawlamyine" },
+            { "name": "Thaton" }
+          ]
+        },
+        {
+          "name": "Naypyitaw",
+          "abbreviation": "NPW",
+          "lgas": [
+            { "name": "Detkhina" },
+            { "name": "Oketara" }
+          ]
+        },
+        {
+          "name": "Rakhine",
+          "abbreviation": "RKE",
+          "lgas": [
+            { "name": "Kyaukpyu" },
+            { "name": "Maungdaw" },
+            { "name": "Mrauk-U" },
+            { "name": "Sittwe" },
+            { "name": "Thandwe" }
+          ]
+        },
+        {
+          "name": "Sagaing",
+          "abbreviation": "SGG",
+          "lgas": [
+            { "name": "Hkamti" },
+            { "name": "Kale" },
+            { "name": "Katha" },
+            { "name": "Mawlaik" },
+            { "name": "Monywa" },
+            { "name": "Sagaing" },
+            { "name": "Shwebo" },
+            { "name": "Tamu" },
+            { "name": "Yinmarbin" }
+          ]
+        },
+        {
+          "name": "Shan (East)",
+          "abbreviation": "SHN",
+          "lgas": [
+            { "name": "Hopang" },
+            { "name": "Kengtung" },
+            { "name": "Kunlong" },
+            { "name": "Kyaukme" },
+            { "name": "Langkho" },
+            { "name": "Lashio" },
+            { "name": "Laukkaing" },
+            { "name": "Laukkaing (Kokang SAZ)" },
+            { "name": "Loilen" },
+            { "name": "Matman" },
+            { "name": "Mong Maw (Wa SAD)" },
+            { "name": "Mong Pawk (Wa SAD)" },
+            { "name": "Monghpyak" },
+            { "name": "Monghsat" },
+            { "name": "Muse" },
+            { "name": "Tachileik" },
+            { "name": "Taunggyi" },
+            { "name": "Wein Kawng (Wein Kao) (Wa SAD)" }
+          ]
+        },
+        {
+          "name": "Shan (North)",
+          "abbreviation": "SHN",
+          "lgas": [
+            { "name": "Hopang" },
+            { "name": "Kengtung" },
+            { "name": "Kunlong" },
+            { "name": "Kyaukme" },
+            { "name": "Langkho" },
+            { "name": "Lashio" },
+            { "name": "Laukkaing" },
+            { "name": "Laukkaing (Kokang SAZ)" },
+            { "name": "Loilen" },
+            { "name": "Matman" },
+            { "name": "Mong Maw (Wa SAD)" },
+            { "name": "Mong Pawk (Wa SAD)" },
+            { "name": "Monghpyak" },
+            { "name": "Monghsat" },
+            { "name": "Muse" },
+            { "name": "Tachileik" },
+            { "name": "Taunggyi" },
+            { "name": "Wein Kawng (Wein Kao) (Wa SAD)" }
+          ]
+        },
+        {
+          "name": "Shan (South)",
+          "abbreviation": "SHN",
+          "lgas": [
+            { "name": "Hopang" },
+            { "name": "Kengtung" },
+            { "name": "Kunlong" },
+            { "name": "Kyaukme" },
+            { "name": "Langkho" },
+            { "name": "Lashio" },
+            { "name": "Laukkaing" },
+            { "name": "Laukkaing (Kokang SAZ)" },
+            { "name": "Loilen" },
+            { "name": "Matman" },
+            { "name": "Mong Maw (Wa SAD)" },
+            { "name": "Mong Pawk (Wa SAD)" },
+            { "name": "Monghpyak" },
+            { "name": "Monghsat" },
+            { "name": "Muse" },
+            { "name": "Tachileik" },
+            { "name": "Taunggyi" },
+            { "name": "Wein Kawng (Wein Kao) (Wa SAD)" }
+          ]
+        },
+        {
+          "name": "Tanintharyi",
+          "abbreviation": "TNI",
+          "lgas": [
+            { "name": "Dawei" },
+            { "name": "Kawthoung" },
+            { "name": "Myeik" }
+          ]
+        },
+        {
+          "name": "Yangon",
+          "abbreviation": "YGN",
+          "lgas": [
+            { "name": "Yangon (East)" },
+            { "name": "Yangon (North)" },
+            { "name": "Yangon (South)" },
+            { "name": "Yangon (West)" }
+          ]
+        }
+      ]
+    }
+  ]
+}
