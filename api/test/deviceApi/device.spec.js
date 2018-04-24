@@ -23,7 +23,10 @@ const context = createTestContext(server, {
   type: 'Daktari Virology',
   partner: 'Partner One',
 })
-const { factGenerateDeviceOffline } = require('../../src/fact/actions')
+const {
+  factGenerate,
+  factTypes: { DEVICE_OFFLINE },
+} = require('../../src/fact/actions')
 const { deviceOffline, deviceOnline } = require('../../src/device/actions')
 
 const baseConfig = {
@@ -301,7 +304,7 @@ describe('Device API routes', () => {
         assert.isOk(apiKey)
 
         const messageContext = await createMessageContext()
-        messageContext.bindActionCreators({ factGenerateDeviceOffline })
+        messageContext.bindActionCreators({ factGenerate })
 
         // add device
         await server
@@ -344,7 +347,7 @@ describe('Device API routes', () => {
 
         // Generate device offline facts and wait for offline action for new device
         const waitForOffline = waitForAction(deviceOffline(newDevice.id))
-        messageContext.factGenerateDeviceOffline()
+        messageContext.factGenerate(DEVICE_OFFLINE, newDevice.id)
         await waitForOffline
         await waitForIdle()
 

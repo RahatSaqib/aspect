@@ -1,10 +1,18 @@
 // ----------- Action Types ---------------------
 const types = {
   FACT_GENERATE: 'FACT_GENERATE',
-  FACT_GENERATE_RESULT_COUNTS: 'FACT_GENERATE_RESULT_COUNTS',
-  FACT_GENERATE_RESULT_COUNTS_FOR_DEVICE:
-    'FACT_GENERATE_RESULT_COUNTS_FOR_DEVICE',
 }
+
+// Optionally discriminates types of facts to generate
+// Defined to allow internal specialization and to share queue
+// Normally should simply add actoin types
+const factTypes = {
+  OFFLINE: 'OFFLINE',
+  NO_TESTING: 'NO_TESTING',
+  RESULT_COUNTS: 'RESULT_COUNTS',
+}
+
+// ----------- Action Creators -------------------
 
 /**
  * Requests fact device flags to be regenerated. Will be called on
@@ -12,50 +20,22 @@ const types = {
  *
  * factType: optional, e.g. offline, service, calibration. If not
  * specified will create new actions for each of known flags
- * deviceId: optional, if not specified, will generate flags
- * for all devices.
+ * deviceId: optional, if specified, request facts to be generated
+ * for a specific device.
+ * options: additional options, specific to the fact type,
+ * intended for internal use of the fact service
  */
-function factGenerate(factType, deviceId) {
+function factGenerate(factType, deviceId, options) {
   return {
     type: types.FACT_GENERATE,
     factType,
     deviceId,
-  }
-}
-
-// ----------- Action Creators -------------------
-
-/**
- * Requests facts to be regenerated. Will be called on
- * schedule to run fact ETL
- */
-function factGenerateResultCounts() {
-  return {
-    type: types.FACT_GENERATE_RESULT_COUNTS,
-  }
-}
-
-/**
- * Requests facts to be regenerated. Will be called on
- * schedule to run fact ETL
- */
-function factGenerateResultCountsForDevice(deviceId, assayId, resultCategory1) {
-  if (deviceId == null) {
-    throw new Error(
-      'Must specify deviceId for factGenerateResultCountsForDevice'
-    )
-  }
-  return {
-    type: types.FACT_GENERATE_RESULT_COUNTS_FOR_DEVICE,
-    deviceId,
-    assayId,
-    resultCategory1,
+    options,
   }
 }
 
 module.exports = {
   types,
+  factTypes,
   factGenerate,
-  factGenerateResultCounts,
-  factGenerateResultCountsForDevice,
 }

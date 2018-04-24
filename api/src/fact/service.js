@@ -1,25 +1,44 @@
 const { subDays } = require('date-fns')
 const _ = require('lodash')
-const { factGenerate, factGenerateResultCountsForDevice } = require('./actions')
+const {
+  factGenerate,
+  factTypes: { OFFLINE, NO_TESTING, RESULT_COUNTS },
+} = require('./actions')
 const { deviceOffline, deviceOnline } = require('../device/actions')
 
+// We are dispatching internally because we want to share a queue for
+// all fact generation since they are lower priority background tasks.
+// Normally, you would want to dispatch by adding actions and dispatch
+// separately on the queue. This is an exception to that rule.
+const factTypes = [OFFLINE, NO_TESTING, RESULT_COUNTS]
 const factGenerateDispatch = {
-  offline: onFactGenerateDeviceOffline,
-  noTesting: onFactGenerateNoTesting,
+  [OFFLINE]: onFactGenerateDeviceOffline,
+  [NO_TESTING]: onFactGenerateNoTesting,
+  [RESULT_COUNTS]: onFactGenerateResultCounts,
 }
-const factTypes = Object.keys(factGenerateDispatch)
+const factGenerateDispatchForDevice = {
+  [RESULT_COUNTS]: onFactGenerateResultCountsForDevice,
+  // FIXME allow generation of offline for single device.
+  [OFFLINE]: onFactGenerateDeviceOffline,
+}
 
 async function onFactGenerate(action, context) {
-  const { factType } = action
+  const { factType, deviceId } = action
   if (factType == null) {
     // If no fact type specified, dispatch new action for all
     // known fact types
     const { messageContext } = context
     messageContext.bindActionCreators({ factGenerate })
     factTypes.forEach(factType => messageContext.factGenerate(factType))
-  } else {
+  } else if (deviceId == null) {
     // If dispatch specified for fact type, delegate to dispatcher
     const dispatch = factGenerateDispatch[factType]
+    if (dispatch != null) {
+      await dispatch(action, context)
+    }
+  } else {
+    // If dispatch specified for fact type and deviceId, delegate
+    const dispatch = factGenerateDispatchForDevice[factType]
     if (dispatch != null) {
       await dispatch(action, context)
     }
@@ -63,9 +82,7 @@ function onFactGenerateNoTesting(action, { messageContext }) {
 }
 
 function onFactGenerateResultCounts(action, { messageContext }) {
-  const context = messageContext.bindActionCreators({
-    factGenerateResultCountsForDevice,
-  })
+  const context = messageContext.bindActionCreators({ factGenerate })
   return context.run(async knex => {
     // TODO do we really need to generate result counts for every device every hour?
     await knex('Device as d')
@@ -73,9 +90,7 @@ function onFactGenerateResultCounts(action, { messageContext }) {
       .join('DeviceTypeCategory as dtc', 'dt.deviceTypeCategoryId', 'dtc.id')
       .where('dtc.hasResults', 1)
       .select('d.id as deviceId')
-      .map(({ deviceId }) =>
-        context.factGenerateResultCountsForDevice(deviceId)
-      )
+      .map(({ deviceId }) => context.factGenerate(RESULT_COUNTS, deviceId))
   })
 }
 
@@ -120,25 +135,23 @@ function onDeviceOnline({ deviceId }, { messageContext }) {
 }
 
 function onResultLogged({ resultId }, { messageContext }) {
-  const context = messageContext.bindActionCreators({
-    factGenerateResultCountsForDevice,
-  })
+  const context = messageContext.bindActionCreators({ factGenerate })
   return context.run(async knex => {
     const { deviceId, assayId, resultCategory1 } = await knex('Result')
       .where({ id: resultId })
       .first('deviceId', 'assayId', 'resultCategory1')
-    context.factGenerateResultCountsForDevice(
-      deviceId,
+    context.factGenerate(RESULT_COUNTS, deviceId, {
       assayId,
-      resultCategory1
-    )
+      resultCategory1,
+    })
   })
 }
 
 function onFactGenerateResultCountsForDevice(
-  { deviceId, assayId, resultCategory1 },
+  { deviceId, options = {} },
   { messageContext }
 ) {
+  const { assayId, resultCategory1 } = options
   const daysToCalculate = [1, 7, 30, 60, 90, 365, null]
 
   const devId = deviceId
@@ -228,8 +241,6 @@ function onFactGenerateResultCountsForDevice(
 
 module.exports = {
   onFactGenerate,
-  onFactGenerateResultCounts,
-  onFactGenerateResultCountsForDevice,
   onDeviceSeen,
   onDeviceOffline,
   onDeviceOnline,
