@@ -1,7 +1,7 @@
 {
   "stat": [
     {
-      "icon": "assignment",
+      "icon": "data",
       "title": "Tests",
       "titleI18nKey": "dashboardWidgetTitleTests",
       "subTitle": "This Month",
@@ -17,7 +17,7 @@
       "sortOrder": 4
     },
     {
-      "icon": "assignment",
+      "icon": "data",
       "title": "MTB+ Rate",
       "titleI18nKey": "dashboardWidgetTitleMTBPositiveRate",
       "subTitle": "Last 30 Days",
@@ -33,7 +33,7 @@
       "sortOrder": 5
     },
     {
-      "icon": "assignment",
+      "icon": "data",
       "title": "RR Rate",
       "titleI18nKey": "dashboardWidgetTitleRRRate",
       "subTitle": "Last 30 Days",
@@ -49,7 +49,7 @@
       "sortOrder": 6
     },
     {
-      "icon": "assignment",
+      "icon": "data",
       "title": "TI Rate",
       "titleI18nKey": "dashboardWidgetTitleTIRate",
       "subTitle": "Last 30 Days",

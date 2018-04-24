@@ -11,8 +11,9 @@ exports[`Target Status component should shallow render correctly 1`] = `
   >
     <Unknown
       icon={
-        <MdAssignment
+        <Icon
           className="Title__Icon"
+          type="test-file-stub"
         />
       }
       title="Testing Targets"

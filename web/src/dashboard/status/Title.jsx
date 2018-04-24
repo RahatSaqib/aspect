@@ -9,7 +9,7 @@ const enhance = _.identity
 export const Title = ({ className, icon, title }) => (
   <div className={cssClasses('Title', className)}>
     {icon}
-    {title}
+    <span className={cssClasses('Title__Label', className)}>{title}</span>
   </div>
 )
 

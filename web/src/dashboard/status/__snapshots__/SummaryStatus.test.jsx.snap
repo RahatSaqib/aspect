@@ -23,7 +23,7 @@ exports[`Summary Status component should shallow render correctly 1`] = `
         >
           <Icon
             className="Summary__Card__Title__Icon"
-            icon="assignment"
+            type="test-file-stub"
           />
           <span
             className="Summary__Card__Title--main"
@@ -101,7 +101,7 @@ exports[`Summary Status component should shallow render correctly 1`] = `
         >
           <Icon
             className="Summary__Card__Title__Icon"
-            icon="assignment"
+            type="test-file-stub"
           />
           <span
             className="Summary__Card__Title--main"
@@ -177,7 +177,7 @@ exports[`Summary Status component should shallow render correctly 1`] = `
         >
           <Icon
             className="Summary__Card__Title__Icon"
-            icon="assignment"
+            type="test-file-stub"
           />
           <span
             className="Summary__Card__Title--main"
@@ -253,7 +253,7 @@ exports[`Summary Status component should shallow render correctly 1`] = `
         >
           <Icon
             className="Summary__Card__Title__Icon"
-            icon="assignment"
+            type="test-file-stub"
           />
           <span
             className="Summary__Card__Title--main"

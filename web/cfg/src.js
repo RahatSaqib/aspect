@@ -18,6 +18,7 @@ const HtmlWebpackIncludeAssetsPlugin = require('html-webpack-include-assets-plug
 const HtmlWebpackHarddiskPlugin = require('html-webpack-harddisk-plugin')
 const CompressionPlugin = require('compression-webpack-plugin')
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
+const SpriteLoaderPlugin = require('svg-sprite-loader/plugin')
 
 const {
   customPropertiesVariables,
@@ -150,7 +151,20 @@ module.exports = env => {
           ],
         },
         {
+          test: /\.svg$/,
+          include: path.resolve(__dirname, '../src'),
+          use: [
+            {
+              loader: 'svg-sprite-loader',
+              options: {
+                extract: true,
+              },
+            },
+          ],
+        },
+        {
           test: /\.(mp4|ogg|svg)$/,
+          exclude: path.resolve(__dirname, '../src'),
           use: ['file-loader'],
         },
         {
@@ -190,6 +204,7 @@ module.exports = env => {
           'dll.vendor.js.map.gz',
         ],
       }),
+      new SpriteLoaderPlugin(),
       extractCSS,
       new FaviconsWebpackPlugin({
         logo: path.join(__dirname, '../src/template/favicon.png'),

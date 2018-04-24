@@ -46,11 +46,12 @@ const enhance = compose(
       })
     },
   }),
-  withProps(({ intl, location, sitesSelectList }) => {
+  withProps(({ intl, location, sitesSelectList, theme }) => {
     const searchParams = new URLSearchParams(location.search)
     const filtersParams = new URLSearchParams(searchParams.get('filters') || '')
 
     return {
+      theme,
       source: sitesSelectList.items
         .map(item => ({
           value: item.get('id'),

@@ -2,12 +2,12 @@ import classnames from 'classnames/bind'
 import _ from 'lodash'
 import React from 'react'
 import { compose, pure, withProps, withStateHandlers } from 'recompose'
-import MdDescription from 'react-icons/lib/md/description'
 import { Card } from 'react-toolbox/lib/card'
 import { Button } from 'react-toolbox/lib/button'
 import { Dialog } from 'react-toolbox/lib/dialog'
 
 import Title from './Title'
+import Icon from '../../components/shared/icon/Icon'
 import requirePermissions from '../../components/shared/requirePermissions'
 import messages from './messages'
 
@@ -51,7 +51,12 @@ export const Reports = ({
       <div className={cssClasses('TitleContainer')}>
         <Title
           title={title}
-          icon={<MdDescription className={cssClasses('Title__Icon')} />}
+          icon={
+            <Icon
+              className={cssClasses('Title__Icon')}
+              type={require('../../components/shared/icon/assets/reports.svg')}
+            />
+          }
         />
       </div>
 
