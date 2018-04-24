@@ -3,12 +3,12 @@ const types = {
   FACT_GENERATE: 'FACT_GENERATE',
 }
 
-// Optionally discriminates types of facts to generate
+// Optionally discriminates types of facts to generateno
 // Defined to allow internal specialization and to share queue
 // Normally should simply add actoin types
 const factTypes = {
   DEVICE_OFFLINE: 'DEVICE_OFFLINE',
-  NO_TESTING: 'NO_TESTING',
+  DEVICE_NO_RESULTS: 'DEVICE_NO_RESULTS',
   RESULT_COUNTS: 'RESULT_COUNTS',
 }
 

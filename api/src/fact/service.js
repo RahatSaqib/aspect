@@ -2,7 +2,7 @@ const { subDays } = require('date-fns')
 const _ = require('lodash')
 const {
   factGenerate,
-  factTypes: { DEVICE_OFFLINE, NO_TESTING, RESULT_COUNTS },
+  factTypes: { DEVICE_OFFLINE, DEVICE_NO_RESULTS, RESULT_COUNTS },
 } = require('./actions')
 const { deviceOffline, deviceOnline } = require('../device/actions')
 
@@ -10,15 +10,15 @@ const { deviceOffline, deviceOnline } = require('../device/actions')
 // all fact generation since they are lower priority background tasks.
 // Normally, you would want to dispatch by adding actions and dispatch
 // separately on the queue. This is an exception to that rule.
-const factTypes = [DEVICE_OFFLINE, NO_TESTING, RESULT_COUNTS]
+const factTypes = [DEVICE_OFFLINE, DEVICE_NO_RESULTS, RESULT_COUNTS]
 const factGenerateDispatch = {
   [DEVICE_OFFLINE]: onFactGenerateDeviceOffline,
-  [NO_TESTING]: onFactGenerateNoTesting,
+  [DEVICE_NO_RESULTS]: onFactGenerateDeviceNoResults,
   [RESULT_COUNTS]: onFactGenerateResultCounts,
 }
 const factGenerateDispatchForDevice = {
   [DEVICE_OFFLINE]: onFactGenerateDeviceOffline,
-  [NO_TESTING]: onFactGenerateNoTesting,
+  [DEVICE_NO_RESULTS]: onFactGenerateDeviceNoResults,
   [RESULT_COUNTS]: onFactGenerateResultCountsForDevice,
 }
 
@@ -78,10 +78,10 @@ function onFactGenerateDeviceOffline({ deviceId }, { messageContext }) {
   })
 }
 
-function onFactGenerateNoTesting(action, { messageContext }) {
+function onFactGenerateDeviceNoResults(action, { messageContext }) {
   const context = messageContext.bindActionCreators({})
   return context.run(async knex => {
-    // TODO generate noTesting facts
+    // TODO generate deviceNoResults facts
   })
 }
 
