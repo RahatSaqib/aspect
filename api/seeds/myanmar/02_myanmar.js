@@ -4,7 +4,7 @@ const bcrypt = require('bcrypt')
 const _ = require('lodash')
 
 const config = require('../../src/config')
-const dashboardWidget = require('./fixtures/myanmarDashboardWidget.json')
+const dashboardWidget = require('./fixtures/dashboardWidget.json')
 
 const now = new Date()
 
@@ -40,24 +40,12 @@ async function seed(knex) {
     partnerTypes,
     deviceTypes,
     deviceStatuses,
-    assays,
-    sampleTypes,
-    resultCategories,
-    resultSources,
-    resultTypes,
-    resultWorkflowStatuses,
     issueTypes,
     defaultMessageTypes,
   ] = await Promise.all([
     rowsAsObject(knex, 'PartnerType', 'name'),
     rowsAsObject(knex, 'DeviceType', 'externalId'),
     rowsAsObject(knex, 'DeviceStatus', 'token'),
-    rowsAsObject(knex, 'Assay', 'externalId'),
-    rowsAsObject(knex, 'SampleType', 'externalId'),
-    rowsAsObject(knex, 'ResultCategory', 'externalId'),
-    rowsAsObject(knex, 'ResultSource', 'externalId'),
-    rowsAsObject(knex, 'ResultType', 'externalId'),
-    rowsAsObject(knex, 'ResultWorkflowStatus', 'externalId'),
     rowsAsObject(knex, 'IssueType', 'externalId'),
     getDefaultMessageTypes(knex),
   ])
@@ -65,7 +53,6 @@ async function seed(knex) {
   const [partnerId] = await knex('Partner').insert({
     name: 'Myanmar',
     partnerTypeId: partnerTypes.Operating.id,
-    // plugin: 'myanmar',
     deviceLogHistoryDays: 365,
     autoAcknowledgeOlderThanDays: 28,
     numberToLeaveUnacknowledged: 15,
@@ -106,18 +93,36 @@ async function seed(knex) {
     .whereNull('g.lgaId')
     .select('s.id', 's.name', 's.abbreviation')
 
-  const myanmarLgas = await knex('Geography as g')
-    .innerJoin('Lga as l', 'l.id', 'g.lgaId')
-    .where({ 'g.countryId': countryId })
-    .select('l.id', 'l.name')
+  // insert GxAlert device
+  const gxAlertDeviceId = await knex('Device').insert(
+    Object.assign({}, auditFields, {
+      name: 'GxAlert',
+      deviceTypeId: deviceTypes.GxAlert.id,
+      deviceStatusId: deviceStatuses.approved.id,
+      partnerId,
+      geographyId: myanmarGeographyId,
+      createdOn: new Date(),
+      updatedOn: new Date(),
+      lastPingOn: new Date(),
+      lastSeenOn: new Date(),
+    })
+  )
+
+  await knex('DeviceApiKey').insert(
+    Object.assign(
+      {
+        token: 'ukpjat39531egjy4pc20',
+        revoked: 0,
+        partnerId,
+        geographyId: myanmarGeographyId,
+        deviceId: gxAlertDeviceId,
+      },
+      auditFields
+    )
+  )
 
   const statesByAbbreviation = myanmarStates.reduce((memo, state) => {
     memo[state.abbreviation] = state
-    return memo
-  }, {})
-
-  const lgasByName = myanmarLgas.reduce((memo, lga) => {
-    memo[lga.name] = lga
     return memo
   }, {})
 
@@ -348,35 +353,6 @@ async function seed(knex) {
       )
     })
   )
-
-  // every clinic has a site, GxAlert device and MTB/Rif+ and Ultra results
-  const possibleResults = [
-    {
-      resultText: 'Not Detected',
-      category1: resultCategories.NotDetected.id,
-      category2: null,
-    },
-    {
-      resultText: 'MTB Detected, Rif Resistance Not Detected',
-      category1: resultCategories.Detected.id,
-      category2: resultCategories.NotDetected.id,
-    },
-    {
-      resultText: 'MTB Detected, Rif Indeterminate',
-      category1: resultCategories.Detected.id,
-      category2: resultCategories.Indeterminate.id,
-    },
-    {
-      resultText: 'ERROR',
-      category1: resultCategories.Error.id,
-      category2: null,
-    },
-    {
-      resultText: 'Invalid',
-      category1: resultCategories.Invalid.id,
-      category2: null,
-    },
-  ]
 
   // Create DashboardWidget
   const statWidgets = []
