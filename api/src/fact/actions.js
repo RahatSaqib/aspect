@@ -7,7 +7,7 @@ const types = {
 // Defined to allow internal specialization and to share queue
 // Normally should simply add actoin types
 const factTypes = {
-  OFFLINE: 'OFFLINE',
+  DEVICE_OFFLINE: 'DEVICE_OFFLINE',
   NO_TESTING: 'NO_TESTING',
   RESULT_COUNTS: 'RESULT_COUNTS',
 }

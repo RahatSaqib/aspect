@@ -2,7 +2,7 @@ const { subDays } = require('date-fns')
 const _ = require('lodash')
 const {
   factGenerate,
-  factTypes: { OFFLINE, NO_TESTING, RESULT_COUNTS },
+  factTypes: { DEVICE_OFFLINE, NO_TESTING, RESULT_COUNTS },
 } = require('./actions')
 const { deviceOffline, deviceOnline } = require('../device/actions')
 
@@ -10,16 +10,16 @@ const { deviceOffline, deviceOnline } = require('../device/actions')
 // all fact generation since they are lower priority background tasks.
 // Normally, you would want to dispatch by adding actions and dispatch
 // separately on the queue. This is an exception to that rule.
-const factTypes = [OFFLINE, NO_TESTING, RESULT_COUNTS]
+const factTypes = [DEVICE_OFFLINE, NO_TESTING, RESULT_COUNTS]
 const factGenerateDispatch = {
-  [OFFLINE]: onFactGenerateDeviceOffline,
+  [DEVICE_OFFLINE]: onFactGenerateDeviceOffline,
   [NO_TESTING]: onFactGenerateNoTesting,
   [RESULT_COUNTS]: onFactGenerateResultCounts,
 }
 const factGenerateDispatchForDevice = {
+  [DEVICE_OFFLINE]: onFactGenerateDeviceOffline,
+  [NO_TESTING]: onFactGenerateNoTesting,
   [RESULT_COUNTS]: onFactGenerateResultCountsForDevice,
-  // FIXME allow generation of offline for single device.
-  [OFFLINE]: onFactGenerateDeviceOffline,
 }
 
 async function onFactGenerate(action, context) {
@@ -45,14 +45,18 @@ async function onFactGenerate(action, context) {
   }
 }
 
-function onFactGenerateDeviceOffline(action, { messageContext }) {
+function onFactGenerateDeviceOffline({ deviceId }, { messageContext }) {
   const context = messageContext.bindActionCreators({ deviceOffline })
   return context.run(async knex => {
-    const devices = await knex('Device as d')
+    const devicesQ = knex('Device as d')
       .join('FactDeviceFlag as f', 'f.deviceId', 'd.id')
       .select('d.id', 'd.partnerId', 'd.lastPingOn')
       .where({ 'f.offline': 0 })
       .orderBy('d.partnerId')
+    if (deviceId != null) {
+      devicesQ.where({ 'd.id': deviceId })
+    }
+    const devices = await devicesQ
 
     let lastPartnerId
     let deviceMaxDaysOffline
