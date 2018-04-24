@@ -4,7 +4,11 @@ const {
   factGenerate,
   factTypes: { DEVICE_OFFLINE, DEVICE_NO_RESULTS, RESULT_COUNTS },
 } = require('./actions')
-const { deviceOffline, deviceOnline } = require('../device/actions')
+const {
+  deviceOffline,
+  deviceOnline,
+  deviceNoResults,
+} = require('../device/actions')
 
 // We are dispatching internally because we want to share a queue for
 // all fact generation since they are lower priority background tasks.
@@ -78,10 +82,37 @@ function onFactGenerateDeviceOffline({ deviceId }, { messageContext }) {
   })
 }
 
-function onFactGenerateDeviceNoResults(action, { messageContext }) {
-  const context = messageContext.bindActionCreators({})
+function onFactGenerateDeviceNoResults({ deviceId }, { messageContext }) {
+  const context = messageContext.bindActionCreators({ deviceNoResults })
   return context.run(async knex => {
-    // TODO generate deviceNoResults facts
+    const devicesQ = knex('Device as d')
+      .join('FactDeviceFlag as f', 'f.deviceId', 'd.id')
+      // FIXME query actual last result on and also handle no results
+      .select('d.id', 'd.partnerId', 'd.lastPingOn as lastResultOn')
+      .where({ 'f.offline': 0, 'f.noResults': 0 })
+      .orderBy('d.partnerId')
+    if (deviceId != null) {
+      devicesQ.where({ 'd.id': deviceId })
+    }
+    const devices = await devicesQ
+
+    let lastPartnerId
+    let deviceMaxDaysNoResults
+    await Promise.all(
+      _.map(devices, async ({ id, partnerId, lastResultOn }) => {
+        if (lastPartnerId !== partnerId) {
+          deviceMaxDaysNoResults = await knex('Partner')
+            .where('id', partnerId)
+            .pluck('maxDaysDeviceNoResults')
+          lastPartnerId = partnerId
+        }
+        const maxLastDateNoResult = subDays(new Date(), deviceMaxDaysNoResults)
+
+        if (lastResultOn <= maxLastDateNoResult || lastResultOn === null) {
+          context.deviceNoResult(id)
+        }
+      })
+    )
   })
 }
 
