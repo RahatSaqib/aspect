@@ -1,7 +1,30 @@
 const { subDays } = require('date-fns')
 const _ = require('lodash')
-const { factGenerateResultCountsForDevice } = require('./actions')
+const { factGenerate, factGenerateResultCountsForDevice } = require('./actions')
 const { deviceOffline, deviceOnline } = require('../device/actions')
+
+const factGenerateDispatch = {
+  offline: onFactGenerateDeviceOffline,
+  noTesting: onFactGenerateNoTesting,
+}
+const factTypes = Object.keys(factGenerateDispatch)
+
+async function onFactGenerate(action, context) {
+  const { factType } = action
+  if (factType == null) {
+    // If no fact type specified, dispatch new action for all
+    // known fact types
+    const { messageContext } = context
+    messageContext.bindActionCreators({ factGenerate })
+    factTypes.forEach(factType => messageContext.factGenerate(factType))
+  } else {
+    // If dispatch specified for fact type, delegate to dispatcher
+    const dispatch = factGenerateDispatch[factType]
+    if (dispatch != null) {
+      await dispatch(action, context)
+    }
+  }
+}
 
 function onFactGenerateDeviceOffline(action, { messageContext }) {
   const context = messageContext.bindActionCreators({ deviceOffline })
@@ -29,6 +52,13 @@ function onFactGenerateDeviceOffline(action, { messageContext }) {
         }
       })
     )
+  })
+}
+
+function onFactGenerateNoTesting(action, { messageContext }) {
+  const context = messageContext.bindActionCreators({})
+  return context.run(async knex => {
+    // TODO generate noTesting facts
   })
 }
 
@@ -197,7 +227,7 @@ function onFactGenerateResultCountsForDevice(
 }
 
 module.exports = {
-  onFactGenerateDeviceOffline,
+  onFactGenerate,
   onFactGenerateResultCounts,
   onFactGenerateResultCountsForDevice,
   onDeviceSeen,

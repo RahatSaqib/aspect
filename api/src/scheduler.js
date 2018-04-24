@@ -1,20 +1,17 @@
 const _ = require('lodash')
 const cron = require('node-cron')
-const {
-  factGenerateDeviceOffline,
-  factGenerateResultCounts,
-} = require('./fact/actions')
+const { factGenerate, factGenerateResultCounts } = require('./fact/actions')
 
 function startScheduler(queue) {
   // run hourly tasks on startup and cron every hour
   const dispatcher = createActionDispatcher(queue, {
-    factGenerateDeviceOffline,
+    factGenerate,
     factGenerateResultCounts,
   })
-  dispatcher.factGenerateDeviceOffline()
-  dispatcher.factGenerateResultCounts()
+  dispatcher.factGenerate()
+  // dispatcher.factGenerateResultCounts()
 
-  cron.schedule('0 * * * *', dispatcher.factGenerateDeviceOffline)
+  cron.schedule('0 * * * *', dispatcher.factGenerate)
   cron.schedule('1 * * * *', dispatcher.factGenerateResultCounts)
 }
 

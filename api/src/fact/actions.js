@@ -1,9 +1,26 @@
 // ----------- Action Types ---------------------
 const types = {
+  FACT_GENERATE: 'FACT_GENERATE',
   FACT_GENERATE_RESULT_COUNTS: 'FACT_GENERATE_RESULT_COUNTS',
-  FACT_GENERATE_DEVICE_OFFLINE: 'FACT_GENERATE_DEVICE_OFFLINE',
   FACT_GENERATE_RESULT_COUNTS_FOR_DEVICE:
     'FACT_GENERATE_RESULT_COUNTS_FOR_DEVICE',
+}
+
+/**
+ * Requests fact device flags to be regenerated. Will be called on
+ * schedule to run fact device flag ETL
+ *
+ * factType: optional, e.g. offline, service, calibration. If not
+ * specified will create new actions for each of known flags
+ * deviceId: optional, if not specified, will generate flags
+ * for all devices.
+ */
+function factGenerate(factType, deviceId) {
+  return {
+    type: types.FACT_GENERATE,
+    factType,
+    deviceId,
+  }
 }
 
 // ----------- Action Creators -------------------
@@ -36,19 +53,9 @@ function factGenerateResultCountsForDevice(deviceId, assayId, resultCategory1) {
   }
 }
 
-/**
- * Requests facts to be regenerated. Will be called on
- * schedule to run fact ETL
- */
-function factGenerateDeviceOffline() {
-  return {
-    type: types.FACT_GENERATE_DEVICE_OFFLINE,
-  }
-}
-
 module.exports = {
   types,
+  factGenerate,
   factGenerateResultCounts,
   factGenerateResultCountsForDevice,
-  factGenerateDeviceOffline,
 }

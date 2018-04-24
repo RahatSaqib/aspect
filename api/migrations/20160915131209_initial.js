@@ -1499,6 +1499,10 @@ async function up(knex) {
       .notNullable()
       .defaultTo(0)
     x
+      .boolean('noTesting')
+      .notNullable()
+      .defaultTo(0)
+    x
       .boolean('service')
       .notNullable()
       .defaultTo(0)
