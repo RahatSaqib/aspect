@@ -1,7 +1,11 @@
 const supertest = require('supertest')
 const chai = require('chai')
 const { createTestContext, getDeviceFromApiKey } = require('../deviceApi/utils')
-const { deviceOffline, deviceOnline } = require('../../src/device/actions')
+const {
+  deviceOffline,
+  deviceOnline,
+  deviceNoResults,
+} = require('../../src/device/actions')
 const {
   createMessageContext,
   waitForIdle,
@@ -93,6 +97,55 @@ describe('Notification endpoints', () => {
         assert.equal(issues[0].issueType, 'DeviceOffline')
         assert.equal(issues[0].deviceId, deviceId)
         assert.equal(issues[0].issueStatus, 'Resolved')
+      }))
+  })
+  describe('Device No Testing', () => {
+    it('should create Notification when DeviceNoTesting', () =>
+      runTest(async knex => {
+        const { apiKey, deviceAuth } = context
+        assert.isOk(apiKey)
+
+        const messageContext = await createMessageContext()
+        messageContext.bindActionCreators({ deviceNoResults })
+
+        // add device
+        await server
+          .post(devicePath)
+          .set('Authorization', deviceAuth)
+          .send({
+            type: { id: 'GenericRDT' },
+            site: { id: 'Hinthada TBC' },
+          })
+          .then(res => {
+            assert.equal(res.status, 200)
+          })
+        const newDevice = await getDeviceFromApiKey(knex, apiKey)
+        assert.isOk(newDevice)
+        assert.isOk(newDevice.name)
+        assert.equal(newDevice.serial, null)
+
+        const { id: deviceId } = newDevice
+
+        // Notify device no testing and wait for completion
+        const waitForOffline = waitForAction(deviceNoResults(deviceId))
+        messageContext.deviceNoResults(deviceId)
+        await waitForOffline
+        await waitForIdle()
+
+        const issues = await knex('Issue as i')
+          .join('IssueType as it', 'i.issueTypeId', 'it.id')
+          .join('IssueStatus as is', 'i.issueStatusId', 'is.id')
+          .where({ 'i.deviceId': deviceId })
+          .select(
+            'i.id',
+            'it.externalId as issueType',
+            'i.deviceId',
+            'is.externalId as issueStatus'
+          )
+        assert.equal(issues.length, 1)
+        assert.equal(issues[0].issueType, 'DeviceNoResults')
+        assert.equal(issues[0].deviceId, deviceId)
+        assert.equal(issues[0].issueStatus, 'Active')
       }))
   })
 })
