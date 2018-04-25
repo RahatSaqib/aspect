@@ -1,0 +1,122 @@
+{
+  "stat": [
+    {
+      "icon": "assignment",
+      "title": "Tests",
+      "titleI18nKey": "dashboardWidgetTitleTests",
+      "subTitle": "This Month",
+      "subTitleI18nKey": "dashboardWidgetSubTitleTests",
+      "sqlForIndicator":
+        "select count(r.id) as cnt from Result as r inner join Device as d on d.id = r.deviceId inner join Site as s on s.id = d.siteId inner join Partner p on s.partnerId = p.id left outer join Geography as g on s.geographyId = g.id where YEAR(r.endedOn) = YEAR(CURRENT_DATE) and MONTH(r.endedOn) = MONTH(CURRENT_DATE)",
+      "statUnit": "Tests",
+      "statUnitI18nKey": "dashboardWidgetUnitTests",
+      "sqlForExtra":
+        "select concat(round(sum(case when r.resultCategory1 not in (5,6,7) then 1 else 0 end)/count(r.id)*100),'%') as cnt from Result as r inner join Device as d on d.id = r.deviceId inner join Site as s on s.id = d.siteId inner join Partner p on s.partnerId = p.id left outer join Geography as g on s.geographyId = g.id where YEAR(r.endedOn) = YEAR(CURRENT_DATE) and MONTH(r.endedOn) = MONTH(CURRENT_DATE)",
+      "extraLabel": "Successful",
+      "extraLabelI18nKey": "dashboardWidgetExtraLabelTests",
+      "sortOrder": 4
+    },
+    {
+      "icon": "assignment",
+      "title": "MTB+ Rate",
+      "titleI18nKey": "dashboardWidgetTitleMTBPositiveRate",
+      "subTitle": "Last 30 Days",
+      "subTitleI18nKey": "dashboardWidgetSubTitleMTBPositiveRate",
+      "sqlForIndicator":
+        "select concat(round(sum(case when f.resultCategory1 in (1,2) then f.resultCount else 0 end)/sum(case when f.resultCategory1 not in (5,6,7) then f.resultCount else 0 end)*100),'%') as cnt from FactResultCountDevice as f inner join Device as d on d.id = f.deviceId inner join Site as s on s.id = d.siteId inner join Partner as p on s.partnerId = p.id left outer join Geography as g on s.geographyId = g.id where f.assayId in (1,2) and f.days = 30",
+      "sqlForStatUnit":
+        "select sum(f.resultCount) as cnt from FactResultCountDevice as f inner join Device as d on d.id = f.deviceId inner join Site as s on s.id = d.siteId inner join Partner as p on s.partnerId = p.id left outer join Geography as g on s.geographyId = g.id where  resultCategory1 not in (5,6,7) and f.days = 30",
+      "statUnit": "for {unit} Results",
+      "statUnitI18nKey": "dashboardWidgetUnitMTBPositiveRate",
+      "statStatus": "MTB+",
+      "statStatusI18nKey": "dashboardWidgetStatusMTBPositiveRate",
+      "sortOrder": 5
+    },
+    {
+      "icon": "assignment",
+      "title": "RR Rate",
+      "titleI18nKey": "dashboardWidgetTitleRRRate",
+      "subTitle": "Last 30 Days",
+      "subTitleI18nKey": "dashboardWidgetSubTitleRRRate",
+      "sqlForIndicator":
+        "select count(r.id) as cnt from Result as r inner join Device as d on d.id = r.deviceId inner join Site as s on s.id = d.siteId inner join Partner as p on s.partnerId = p.id left outer join Geography as g on s.geographyId = g.id where resultCategory1=1 and resultCategory2=1 and r.endedOn > date_sub(now(), interval 30 day)",
+      "sqlForStatUnit":
+        "select sum(f.resultCount) as cnt from FactResultCountDevice as f inner join Device as d on d.id = f.deviceId inner join Site as s on s.id = d.siteId inner join Partner as p on s.partnerId = p.id left outer join Geography as g on s.geographyId = g.id where f.resultCategory1=1 and f.assayId in (1,2) and f.days = 30",
+      "statUnit": "for {unit} MTB+",
+      "statUnitI18nKey": "dashboardWidgetUnitRRRate",
+      "statStatus": "Rif Resistant",
+      "statStatusI18nKey": "dashboardWidgetStatusRRRate",
+      "sortOrder": 6
+    },
+    {
+      "icon": "assignment",
+      "title": "TI Rate",
+      "titleI18nKey": "dashboardWidgetTitleTIRate",
+      "subTitle": "Last 30 Days",
+      "subTitleI18nKey": "dashboardWidgetSubTitleTIRate",
+      "sqlForIndicator":
+        "select concat(round(sum(case when resultCategory1=1 and resultCategory2=4 then 1 else 0 end)/count(case when resultCategory1 not in (5,6,7) then 1 else 0 end)*100),'%') as cnt from Result as r inner join Device as d on d.id = r.deviceId inner join Site as s on s.id = d.siteId inner join Partner as p on s.partnerId = p.id left outer join Geography as g on s.geographyId = g.id where r.assayId in (1,2) and r.endedOn > date_sub(now(), interval 30 day)",
+      "sqlForStatUnit":
+        "select sum(f.resultCount) as cnt from FactResultCountDevice as f inner join Device as d on d.id = f.deviceId inner join Site as s on s.id = d.siteId inner join Partner as p on s.partnerId = p.id left outer join Geography as g on s.geographyId = g.id where  resultCategory1 not in (5,6,7) and f.days = 30",
+      "statUnit": "for {unit} MTB+",
+      "statUnitI18nKey": "dashboardWidgetUnitTIRate",
+      "statStatus": "Trace Indet.",
+      "statStatusI18nKey": "dashboardWidgetStatusTIRate",
+      "sortOrder": 7
+    }
+  ],
+  "target": [
+    {
+      "title": "Total Tests",
+      "titleI18nKey": "dashboardWidgetTitleTotal",
+      "sqlForIndicator":
+        "select count(r.id) as cnt from Result as r inner join Device as d on d.id = r.deviceId inner join Site as s on s.id = d.siteId inner join Partner p on s.partnerId = p.id left outer join Geography as g on s.geographyId = g.id inner join Assay as a on a.id = r.assayId ",
+      "thresholdPercentageDataCollection": 50,
+      "sqlForDataCollection":
+        "select concat(round(sum(case when resultCategory1 not in (5,6,7) then 1 else 0 end)/count(r.id)*100,2),'%') as cnt from Result as r inner join Device as d on d.id = r.deviceId inner join Site as s on s.id = d.siteId inner join Partner as p on s.partnerId = p.id left outer join Geography as g on s.geographyId = g.id ",
+      "targetToken": "Total",
+      "sortOrder": 0
+    },
+    {
+      "title": "MDR-TB",
+      "titleI18nKey": "dashboardWidgetTitleMDRTB",
+      "sqlForIndicator":
+        "select count(r.id) as cnt from Result as r inner join Device as d on d.id = r.deviceId inner join Site as s on s.id = d.siteId inner join Partner p on s.partnerId = p.id left outer join Geography as g on s.geographyId = g.id inner join Assay as a on a.id = r.assayId where r.resultCategory1 = 1 and r.resultCategory2 = 1 and r.assayId in (1,2)",
+      "thresholdPercentageDataCollection": 50,
+      "sqlForDataCollection":
+        "select concat(round(sum(case when resultCategory1 not in (5,6,7) then 1 else 0 end)/count(r.id)*100,2),'%') as cnt from Result as r inner join Device as d on d.id = r.deviceId inner join Site as s on s.id = d.siteId inner join Partner as p on s.partnerId = p.id left outer join Geography as g on s.geographyId = g.id where r.assayId in (1,2)",
+      "targetToken": "MDR",
+      "sortOrder": 1
+    },
+    {
+      "title": "HIV+",
+      "titleI18nKey": "dashboardWidgetTitleHIV",
+      "sqlForIndicator": "select 533 as cnt",
+      "lowerThanthresholdPercentageDataCollection": 0,
+      "thresholdPercentageDataCollection": 50,
+      "sqlForDataCollection": "select '45%' as cnt",
+      "targetToken": "HIV",
+      "sortOrder": 2
+    },
+    {
+      "title": "Smear+",
+      "titleI18nKey": "dashboardWidgetTitleSmear",
+      "sqlForIndicator": "select 1220 as cnt",
+      "lowerThanthresholdPercentageDataCollection": 0,
+      "thresholdPercentageDataCollection": 50,
+      "sqlForDataCollection": "select '75%' as cnt",
+      "targetToken": "Smear",
+      "sortOrder": 3
+    },
+    {
+      "title": "Children",
+      "titleI18nKey": "dashboardWidgetTitleChildren",
+      "sqlForIndicator": "select 986 as cnt",
+      "lowerThanthresholdPercentageDataCollection": 0,
+      "thresholdPercentageDataCollection": 50,
+      "sqlForDataCollection": "select '55%' as cnt",
+      "targetToken": "Children",
+      "sortOrder": 16
+    }
+  ]
+}
