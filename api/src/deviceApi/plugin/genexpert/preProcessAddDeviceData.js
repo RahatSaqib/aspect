@@ -19,7 +19,7 @@ async function preProcessAddDeviceData({ knex, device, payload, now }) {
   }
   const site = await getOrCreateSite(knex, device, payload, now)
   const deviceDetails = {
-    lastSeenOn: now,
+    lastSeenOn: new Date(configurationData.lastPingOn || now),
     updatedOn: now,
     updatedBy: null,
   }
@@ -31,8 +31,8 @@ async function preProcessAddDeviceData({ knex, device, payload, now }) {
   }
   // A ping from GxConnect is just a configuration POST with a MAC address,
   // host ID, device Serial and country abbreviation
-  // A ping from GxConnect forwarded by GxAlert is just a POST with a MAC address,
-  // gxAlertDeviceId, host ID, device Serial and country abbreviation
+  // A ping from GxConnect forwarded by GxAlert is the same as a ping cooming
+  // directly from GxConnect but also includes gxAlertDeviceId
   if (
     !_.isEmpty(configurationData) &&
     _.every(Object.keys(configurationData), configurationDataKey =>
@@ -42,10 +42,11 @@ async function preProcessAddDeviceData({ knex, device, payload, now }) {
         'hostId',
         'deviceSerialNumber',
         'country',
+        'lastPingOn',
       ].includes(configurationDataKey)
     )
   ) {
-    deviceDetails.lastPingOn = now
+    deviceDetails.lastPingOn = new Date(configurationData.lastPingOn || now)
   }
   await knex
     .from('Device')

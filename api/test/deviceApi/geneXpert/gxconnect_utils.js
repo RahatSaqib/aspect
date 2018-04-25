@@ -289,7 +289,7 @@ class GxConnectApiTestContext {
       .post('/device')
       .set('Authorization', `Bearer ${deviceApiKey}`)
       .send(
-        _.merge(this.basicDevicePayload, {
+        _.merge({}, this.basicDevicePayload, {
           configuration: {
             checkpoint: null,
             data: configurationData,

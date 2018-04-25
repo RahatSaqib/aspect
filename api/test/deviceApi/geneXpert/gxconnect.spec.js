@@ -18,6 +18,8 @@ const {
 } = require('./geneXpertConstants')
 const { run } = require('../../../src/db')
 const { waitForApproximately } = require('../../utils/generatorFunctionUtils')
+const { waitForIdle, waitForAction } = require('../../utils/mqUtils')
+const { deviceSeen } = require('../../../src/device/actions')
 
 const server = supertest.agent('http://localhost:8080')
 const { assert, expect } = chai
@@ -55,7 +57,7 @@ describe('Device API routes for GxConnect Devices', () => {
         }))
     })
 
-    describe('when unknown device API key is specified', () => {
+    describe('when an unknown device API key is specified', () => {
       const context = createGxConnectTestContext(server, {
         macAddress,
         adminUsername,
@@ -78,7 +80,7 @@ describe('Device API routes for GxConnect Devices', () => {
         }))
     })
 
-    describe('when known device API key is specified', () => {
+    describe('when a known device API key is specified', () => {
       describe('send new device data', () => {
         describe('before a device name and country code have been specified', () => {
           const context = createGxConnectTestContext(server, {
@@ -254,7 +256,7 @@ describe('Device API routes for GxConnect Devices', () => {
         }))
     })
 
-    describe('when MAC address changes', () => {
+    describe('when the MAC address of the device changes', () => {
       describe('and device API key changes', () => {
         const firstContext = createGxConnectTestContext(server, {
           countryCode,
@@ -430,7 +432,7 @@ describe('Device API routes for GxConnect Devices', () => {
       })
     })
 
-    describe('when device serial changes', () => {
+    describe('when the device serial of the device changes', () => {
       describe('and device API key changes', () => {
         const firstContext = createGxConnectTestContext(server, {
           countryCode,
@@ -614,6 +616,88 @@ describe('Device API routes for GxConnect Devices', () => {
           }))
       })
     })
+  })
+
+  describe('ping', () => {
+    const macAddress = 'MAC00000321PING'
+
+    const context = createGxConnectTestContext(server, {
+      countryCode,
+      adminUsername,
+      adminPassword,
+      deviceName,
+      macAddress,
+      deviceSerialNumber,
+    })
+    before(context.beforeRegisterAndSetDevice)
+    const { runTest } = context
+    after(context.afterCleanUp)
+
+    it('should update the last seen and last ping time', () =>
+      runTest(async knex => {
+        const { basicDevicePayload, deviceAuth, device } = context
+        const deviceBefore = await knex('Device')
+          .where('id', device.id)
+          .first()
+
+        const waitForDeviceSeen = waitForAction(deviceSeen(deviceBefore.id))
+        await waitForApproximately(1, 'second')
+        await server
+          .post('/device')
+          .set('Authorization', deviceAuth)
+          .send(basicDevicePayload)
+          .then(res => {
+            assert.equal(res.status, 200)
+          })
+          .catch(assert.fail)
+
+        await waitForDeviceSeen
+        await waitForIdle()
+
+        const deviceAfter = await knex('Device')
+          .where('id', device.id)
+          .first()
+        deviceAfter.id.should.equal(deviceBefore.id)
+        new Date(deviceAfter.lastSeenOn).should.be.above(
+          deviceBefore.lastSeenOn
+        )
+        new Date(deviceAfter.lastPingOn).should.be.above(
+          deviceBefore.lastPingOn
+        )
+      }))
+
+    it('should eventually update the device fact offline status to false', () =>
+      runTest(async knex => {
+        const { basicDevicePayload, deviceAuth, device } = context
+        await knex('FactDeviceFlag')
+          .where('deviceId', device.id)
+          .update({ offline: 1 })
+
+        const deviceBefore = await knex('Device')
+          .where('id', device.id)
+          .first()
+
+        const waitForDeviceSeen = waitForAction(deviceSeen(deviceBefore.id))
+        await waitForApproximately(1, 'second')
+        await server
+          .post('/device')
+          .set('Authorization', deviceAuth)
+          .send(basicDevicePayload)
+          .then(res => {
+            assert.equal(res.status, 200)
+          })
+          .catch(assert.fail)
+
+        await waitForDeviceSeen
+        await waitForIdle()
+
+        const deviceAfter = await knex('Device as d')
+          .join('FactDeviceFlag as fdf', 'd.id', 'fdf.deviceId')
+          .where('d.id', device.id)
+          .first()
+        deviceAfter.id.should.equal(deviceBefore.id)
+        assert.notOk(deviceAfter.offline)
+      }))
   })
 
   describe('results', () => {
@@ -1195,9 +1279,6 @@ describe('Device API routes for GxConnect Devices', () => {
         await Promise.each(
           Object.keys(resultTextToResultCategoryMapping),
           async resultText => {
-            // Running these requests in parallel causes the connection pool in MySQL to fill up too quickly.
-            // This is probably due to the fact table updates.
-            // For now: sending these requests sequentially and sweeping this under the rug
             if (
               resultText &&
               !_.isEmpty(resultTextToResultCategoryMapping[resultText])

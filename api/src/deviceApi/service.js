@@ -15,6 +15,7 @@ const {
   getDeviceOperation,
   addDeviceOperation,
   getSite,
+  createNewDevice,
 } = require('./device')
 const { deviceSeen } = require('../device/actions')
 const { mergeResult, getResult } = require('./result')
@@ -486,7 +487,7 @@ async function createDeviceApiContext(request, handlerOptions) {
   if (existingDeviceAndData != null) {
     device = existingDeviceAndData
   } else if (createDevice) {
-    const deviceAndError = await createNewDevice(request, now)
+    const deviceAndError = await createNewDeviceFromRequest(request, now)
     if (deviceAndError.error) {
       return deviceAndError
     }
@@ -609,11 +610,10 @@ async function createDeviceApiContext(request, handlerOptions) {
   return { context }
 }
 
-function createNewDevice(request, now) {
+function createNewDeviceFromRequest(request, now) {
   return transact(async knex => {
     const { auth } = request
 
-    // Find API Key to use as template for new device
     // Find API Key to use as template for new device
     const partnerApiKey = await knex('DeviceApiKey as k')
       .where({
@@ -665,83 +665,23 @@ function createNewDevice(request, now) {
         ),
       }
     }
-    const deviceType = await knex('DeviceType')
-      .where({ externalId: deviceTypeExternalId })
-      .first('id', 'name', 'plugin')
-    if (deviceType == null) {
-      return {
-        error: Boom.badRequest(
-          `Cannot find DeviceType with id ${deviceTypeExternalId}`
-        ),
-      }
-    }
 
-    // Use or generate device name
-    let name
-    if (payload.name) {
-      ;({ name } = payload)
-    } else if (payload.serial) {
-      name = payload.serial
-    } else {
-      const [deviceCount] = await knex('Device')
-        .where({
-          partnerId: apiKey.partnerId,
-          deviceTypeId: deviceType.id,
-        })
-        .count('id as cnt')
-      name = `${deviceType.name} #${deviceCount.cnt + 1}`
-    }
-
-    // create new device based on API Key
-    const device = {
+    const { device, error } = await createNewDevice(knex, now, {
+      deviceTypeExternalId,
+      name: payload.name,
+      serial: payload.serial,
       partnerId: apiKey.partnerId,
       siteId: apiKey.siteId,
-      name,
-      serial: payload.serial,
-      status: apiKey.siteId ? 'approved' : 'provisioned',
-      deviceType: deviceTypeExternalId,
-      deviceTypePluginName: deviceType.plugin,
-    }
-    const inserts = {
-      partnerId: device.partnerId,
       geographyId: apiKey.geographyId,
-      siteId: device.siteId,
-      deviceTypeId: deviceType.id,
-      deviceStatusId: knex('DeviceStatus')
-        .where({ token: device.status })
-        .select('id'),
-      name: device.name,
-      serial: device.serial,
-      configurationData: '{}',
-      putInService: now,
-      lastSeenOn: now,
-      createdOn: now,
-      updatedOn: now,
-    }
-
-    const [deviceId] = await knex('Device').insert(inserts)
-
-    await knex('DeviceStatusLog').insert({
-      deviceId,
-      deviceStatusId: knex('DeviceStatus')
-        .where({ token: device.status })
-        .select('id'),
-      changedOn: now,
-      createdOn: now,
-      createdBy: null,
+      status: apiKey.siteId ? 'approved' : 'provisioned',
     })
-
-    device.id = deviceId
 
     // Assign new device to API Key
     await knex('DeviceApiKey')
       .where({ id: apiKey.id })
-      .update({ deviceId, updatedOn: now })
+      .update({ deviceId: device.id, updatedOn: now })
 
-    // add device into FactDeviceFlag
-    await knex('FactDeviceFlag').insert({ deviceId, updatedOn: now })
-
-    return { device }
+    return { device, error }
   })
 }
 
