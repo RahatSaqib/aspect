@@ -12,11 +12,6 @@ const { run } = require('../../../src/db')
 const server = supertest.agent('http://localhost:8080')
 const { assert, expect } = chai
 const { waitForIdle } = require('../../utils/mqUtils')
-/* TODO
-* import tempModuleError issue? 
-* import createMessageContext, waitForIdle, waitForAction etc 
-* 
-*/
 
 describe('Issue endpoints', () => {
   function createContext() {
@@ -122,6 +117,5 @@ describe('Issue endpoints', () => {
       assert.equal(issues[0].issueType, 'ModuleTemperatureError')
       assert.equal(issues[0].deviceId, deviceId)
       assert.equal(issues[0].issueStatus, 'Active')
-      // const issueId = issues[0].id
     }))
 })
