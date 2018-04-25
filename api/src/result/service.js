@@ -21,13 +21,13 @@ const { oneDirectionalMd5Hash } = require('../shared/encryption')
 const { resultModuleTemperatureError } = require('../result/actions')
 
 const MODULE_TEMPERATURE_ERROR_CODES = [
-  1001,
-  1004,
-  1017,
-  2014,
-  2022,
-  4009,
-  4010,
+  '1001',
+  '1004',
+  '1017',
+  '2014',
+  '2022',
+  '4009',
+  '4010',
 ]
 const luModuleTemperatureMaxErrors = 4
 const luModuleTemperatureDays = 30
@@ -635,9 +635,13 @@ function createUniqueIdForResult(
     return null
   }
   const hashedSampleId = oneDirectionalMd5Hash(sampleId)
-  return `${instrumentSerial}_${dateFormat(testStartedOn, 'mmss').substr(
+  const uniqueId = `${instrumentSerial}_${dateFormat(
+    testStartedOn,
+    'mmss'
+  ).substr(1)}${dateFormat(testEndedOn, 'mmss').substr(
     1
-  )}${dateFormat(testEndedOn, 'mmss').substr(1)}_${hashedSampleId.substr(0, 8)}`
+  )}_${hashedSampleId.substr(0, 8)}`
+  return uniqueId
 }
 
 // check for error codes when a result is logged
@@ -645,7 +649,7 @@ async function onResultLogged({ resultId }, { messageContext }) {
   const context = messageContext.bindActionCreators({
     resultModuleTemperatureError,
   })
-  await context.transact(async knex => {
+  await context.run(async knex => {
     const [result] = await knex('Result as r').where('r.id', resultId)
     if (result.errorCode) {
       const { deviceId } = result
@@ -653,7 +657,7 @@ async function onResultLogged({ resultId }, { messageContext }) {
         .innerJoin('ResultCategory as rc', 'r.resultCategory1', 'rc.id')
         .where('rc.externalId', 'Error')
         .where('r.deviceId', deviceId)
-      if (result.errorCode in MODULE_TEMPERATURE_ERROR_CODES) {
+      if (MODULE_TEMPERATURE_ERROR_CODES.includes(result.errorCode)) {
         const lastNday = subDays(new Date(), luModuleTemperatureDays)
         const [{ count: errorCount }] = await deviceErrorQuery
           .where('r.endedOn', '>=', lastNday)
