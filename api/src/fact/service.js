@@ -61,7 +61,12 @@ function onFactGenerateDeviceConnectivity({ deviceId }, { messageContext }) {
         'p.maxDaysDeviceOffline',
         'p.maxDaysDeviceNoResults',
         'd.lastPingOn',
-        'd.createdOn as lastResultOn'
+        'd.createdOn as deviceCreatedOn',
+        knex('DeviceLog as dl')
+          .whereRaw('dl.deviceId = d.id')
+          .whereNotNull('dl.resultId')
+          .max('dl.createdOn')
+          .as('lastResultOn')
       )
     if (deviceId != null) {
       devicesQ.where({ 'd.id': deviceId })
@@ -72,16 +77,17 @@ function onFactGenerateDeviceConnectivity({ deviceId }, { messageContext }) {
         maxDaysDeviceOffline,
         maxDaysDeviceNoResults,
         lastPingOn,
+        deviceCreatedOn,
         lastResultOn,
       }) => {
         const now = new Date()
         const maxLastDateOffline = subDays(now, maxDaysDeviceOffline)
         const maxLastDateNoResult = subDays(now, maxDaysDeviceNoResults)
-        if (lastPingOn <= maxLastDateOffline || lastPingOn === null) {
+        if (lastPingOn == null || lastPingOn <= maxLastDateOffline) {
           context.deviceOffline(id)
         } else if (
-          lastResultOn <= maxLastDateNoResult ||
-          lastResultOn === null
+          (lastResultOn != null && lastResultOn <= maxLastDateNoResult) ||
+          (lastResultOn == null && deviceCreatedOn <= maxLastDateNoResult)
         ) {
           context.deviceNoResults(id)
         }
