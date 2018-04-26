@@ -1358,6 +1358,30 @@ async function up(knex) {
     issue.charset('utf8')
   })
 
+  await knex.schema.createTable(
+    'IssueEscalationTrigger',
+    issueEscalationTrigger => {
+      issueEscalationTrigger.increments('id')
+      issueEscalationTrigger
+        .integer('issueTypeId')
+        .unsigned()
+        .references('id')
+        .inTable('IssueType')
+        .notNullable()
+      issueEscalationTrigger
+        .integer('partnerId')
+        .unsigned()
+        .index()
+        .references('id')
+        .inTable('Partner')
+        .notNullable()
+      issueEscalationTrigger.integer('escalateToLevel').notNullable()
+      issueEscalationTrigger.specificType('escalationConditions', 'JSON')
+      addTimestamps(issueEscalationTrigger)
+      issueEscalationTrigger.charset('utf8')
+    }
+  )
+
   await knex.schema.createTable('IssueEvent', issueEvent => {
     issueEvent.increments('id')
     issueEvent
