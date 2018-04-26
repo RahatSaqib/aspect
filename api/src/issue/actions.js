@@ -4,6 +4,7 @@ const types = {
   ISSUE_TRIGGERED: 'ISSUE_TRIGGERED',
   ISSUE_ESCALATED: 'ISSUE_ESCALATED',
   ISSUE_RESOLVED: 'ISSUE_RESOLVED',
+  ESCALATE_ISSUES: 'ESCALATE_ISSUES',
 }
 
 // ----------- Action Creators -------------------
@@ -79,10 +80,15 @@ function issueResolved(issueId) {
   }
 }
 
+function escalateIssues() {
+  return { type: types.ESCALATE_ISSUES }
+}
+
 module.exports = {
   types,
   issueCreated,
   issueTriggered,
   issueEscalated,
   issueResolved,
+  escalateIssues,
 }
