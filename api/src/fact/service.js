@@ -1,5 +1,4 @@
 const { subDays } = require('date-fns')
-const _ = require('lodash')
 const {
   factGenerate,
   factTypes: { DEVICE_OFFLINE, DEVICE_NO_RESULTS, RESULT_COUNTS },
@@ -54,31 +53,19 @@ function onFactGenerateDeviceOffline({ deviceId }, { messageContext }) {
   return context.run(async knex => {
     const devicesQ = knex('Device as d')
       .join('FactDeviceFlag as f', 'f.deviceId', 'd.id')
-      .select('d.id', 'd.partnerId', 'd.lastPingOn')
+      .join('Partner as p', 'd.partnerId', 'p.id')
       .where({ 'f.offline': 0 })
-      .orderBy('d.partnerId')
+      .select('d.id', 'p.maxDaysDeviceOffline', 'd.lastPingOn')
     if (deviceId != null) {
       devicesQ.where({ 'd.id': deviceId })
     }
-    const devices = await devicesQ
-
-    let lastPartnerId
-    let deviceMaxDaysOffline
-    await Promise.all(
-      _.map(devices, async ({ id, partnerId, lastPingOn }) => {
-        if (lastPartnerId !== partnerId) {
-          deviceMaxDaysOffline = await knex('Partner')
-            .where('id', partnerId)
-            .pluck('maxDaysDeviceOffline')
-          lastPartnerId = partnerId
-        }
-        const maxLastDateOffline = subDays(new Date(), deviceMaxDaysOffline)
-
-        if (lastPingOn <= maxLastDateOffline || lastPingOn === null) {
-          context.deviceOffline(id)
-        }
-      })
-    )
+    await devicesQ.map(({ id, maxDaysDeviceOffline, lastPingOn }) => {
+      const maxLastDateOffline = subDays(new Date(), maxDaysDeviceOffline)
+      if (lastPingOn <= maxLastDateOffline || lastPingOn === null) {
+        context.deviceOffline(id)
+      }
+      return id // for lint
+    })
   })
 }
 
@@ -87,32 +74,19 @@ function onFactGenerateDeviceNoResults({ deviceId }, { messageContext }) {
   return context.run(async knex => {
     const devicesQ = knex('Device as d')
       .join('FactDeviceFlag as f', 'f.deviceId', 'd.id')
-      // FIXME query actual last result on and also handle no results
-      .select('d.id', 'd.partnerId', 'd.lastPingOn as lastResultOn')
+      .join('Partner as p', 'd.partnerId', 'p.id')
       .where({ 'f.offline': 0, 'f.noResults': 0 })
-      .orderBy('d.partnerId')
+      .select('d.id', 'p.maxDaysDeviceNoResults', 'd.lastPingOn')
     if (deviceId != null) {
       devicesQ.where({ 'd.id': deviceId })
     }
-    const devices = await devicesQ
-
-    let lastPartnerId
-    let deviceMaxDaysNoResults
-    await Promise.all(
-      _.map(devices, async ({ id, partnerId, lastResultOn }) => {
-        if (lastPartnerId !== partnerId) {
-          deviceMaxDaysNoResults = await knex('Partner')
-            .where('id', partnerId)
-            .pluck('maxDaysDeviceNoResults')
-          lastPartnerId = partnerId
-        }
-        const maxLastDateNoResult = subDays(new Date(), deviceMaxDaysNoResults)
-
-        if (lastResultOn <= maxLastDateNoResult || lastResultOn === null) {
-          context.deviceNoResult(id)
-        }
-      })
-    )
+    await devicesQ.map(({ id, maxDaysDeviceNoResults, lastPingOn }) => {
+      const maxLastDateNoResult = subDays(new Date(), maxDaysDeviceNoResults)
+      if (lastPingOn <= maxLastDateNoResult || lastPingOn === null) {
+        context.deviceNoResult(id)
+      }
+      return id // for lint
+    })
   })
 }
 
