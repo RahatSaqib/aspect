@@ -25,7 +25,7 @@ const context = createTestContext(server, {
 })
 const {
   factGenerate,
-  factTypes: { DEVICE_OFFLINE },
+  factTypes: { DEVICE_CONNECTIVITY },
 } = require('../../src/fact/actions')
 const { deviceOffline, deviceOnline } = require('../../src/device/actions')
 
@@ -347,7 +347,7 @@ describe('Device API routes', () => {
 
         // Generate device offline facts and wait for offline action for new device
         const waitForOffline = waitForAction(deviceOffline(newDevice.id))
-        messageContext.factGenerate(DEVICE_OFFLINE, newDevice.id)
+        messageContext.factGenerate(DEVICE_CONNECTIVITY, newDevice.id)
         await waitForOffline
         await waitForIdle()
 

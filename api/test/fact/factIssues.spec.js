@@ -14,7 +14,7 @@ const {
 } = require('../utils/mqUtils')
 const {
   factGenerate,
-  factTypes: { DEVICE_OFFLINE, DEVICE_NO_RESULTS },
+  factTypes: { DEVICE_CONNECTIVITY },
 } = require('../../src/fact/actions')
 
 const server = supertest.agent('http://localhost:8080')
@@ -67,8 +67,7 @@ describe('Fact based issues', () => {
       assert.equal(factDevice.offline, 0)
       assert.equal(factDevice.noResults, 0)
 
-      messageContext.factGenerate(DEVICE_OFFLINE, newDevice.id)
-      messageContext.factGenerate(DEVICE_NO_RESULTS, newDevice.id)
+      messageContext.factGenerate(DEVICE_CONNECTIVITY, newDevice.id)
       await waitForIdle()
       ;[factDevice] = await knex('FactDeviceFlag').where({ deviceId })
       assert.equal(factDevice.offline, 0)
@@ -91,8 +90,7 @@ describe('Fact based issues', () => {
         })
 
       const waitForOffline = waitForAction(deviceOffline(newDevice.id))
-      messageContext.factGenerate(DEVICE_OFFLINE, newDevice.id)
-      messageContext.factGenerate(DEVICE_NO_RESULTS, newDevice.id)
+      messageContext.factGenerate(DEVICE_CONNECTIVITY, newDevice.id)
       await waitForOffline
       await waitForIdle()
       ;[factDevice] = await knex('FactDeviceFlag').where({ deviceId })
@@ -146,8 +144,7 @@ describe('Fact based issues', () => {
       assert.equal(issues[0].issueStatus, 'Resolved')
 
       const waitForNoResults = waitForAction(deviceNoResults(newDevice.id))
-      messageContext.factGenerate(DEVICE_OFFLINE, newDevice.id)
-      messageContext.factGenerate(DEVICE_NO_RESULTS, newDevice.id)
+      messageContext.factGenerate(DEVICE_CONNECTIVITY, newDevice.id)
       await waitForNoResults
       await waitForIdle()
       ;[factDevice] = await knex('FactDeviceFlag').where({ deviceId })
@@ -164,10 +161,14 @@ describe('Fact based issues', () => {
           'i.deviceId',
           'is.externalId as issueStatus'
         )
-        .orderBy('id', 'DESC')
+        .orderBy('id', 'ASC')
       assert.equal(issues.length, 2)
-      assert.equal(issues[0].issueType, 'DeviceNoResults')
+      assert.equal(issues[0].id, issueId)
+      assert.equal(issues[0].issueType, 'DeviceOffline')
       assert.equal(issues[0].deviceId, deviceId)
-      assert.equal(issues[0].issueStatus, 'Active')
+      assert.equal(issues[0].issueStatus, 'Resolved')
+      assert.equal(issues[1].issueType, 'DeviceNoResults')
+      assert.equal(issues[1].deviceId, deviceId)
+      assert.equal(issues[1].issueStatus, 'Active')
     }))
 })

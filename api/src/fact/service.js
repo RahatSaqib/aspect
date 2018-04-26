@@ -1,7 +1,7 @@
 const { subDays } = require('date-fns')
 const {
   factGenerate,
-  factTypes: { DEVICE_OFFLINE, DEVICE_NO_RESULTS, RESULT_COUNTS },
+  factTypes: { DEVICE_CONNECTIVITY, RESULT_COUNTS },
 } = require('./actions')
 const {
   deviceOffline,
@@ -13,15 +13,13 @@ const {
 // all fact generation since they are lower priority background tasks.
 // Normally, you would want to dispatch by adding actions and dispatch
 // separately on the queue. This is an exception to that rule.
-const factTypes = [DEVICE_OFFLINE, DEVICE_NO_RESULTS, RESULT_COUNTS]
+const factTypes = [DEVICE_CONNECTIVITY, RESULT_COUNTS]
 const factGenerateDispatch = {
-  [DEVICE_OFFLINE]: onFactGenerateDeviceOffline,
-  [DEVICE_NO_RESULTS]: onFactGenerateDeviceNoResults,
+  [DEVICE_CONNECTIVITY]: onFactGenerateDeviceConnectivity,
   [RESULT_COUNTS]: onFactGenerateResultCounts,
 }
 const factGenerateDispatchForDevice = {
-  [DEVICE_OFFLINE]: onFactGenerateDeviceOffline,
-  [DEVICE_NO_RESULTS]: onFactGenerateDeviceNoResults,
+  [DEVICE_CONNECTIVITY]: onFactGenerateDeviceConnectivity,
   [RESULT_COUNTS]: onFactGenerateResultCountsForDevice,
 }
 
@@ -48,29 +46,11 @@ async function onFactGenerate(action, context) {
   }
 }
 
-function onFactGenerateDeviceOffline({ deviceId }, { messageContext }) {
-  const context = messageContext.bindActionCreators({ deviceOffline })
-  return context.run(async knex => {
-    const devicesQ = knex('Device as d')
-      .join('FactDeviceFlag as f', 'f.deviceId', 'd.id')
-      .join('Partner as p', 'd.partnerId', 'p.id')
-      .where({ 'f.offline': 0 })
-      .select('d.id', 'p.maxDaysDeviceOffline', 'd.lastPingOn')
-    if (deviceId != null) {
-      devicesQ.where({ 'd.id': deviceId })
-    }
-    await devicesQ.map(({ id, maxDaysDeviceOffline, lastPingOn }) => {
-      const maxLastDateOffline = subDays(new Date(), maxDaysDeviceOffline)
-      if (lastPingOn <= maxLastDateOffline || lastPingOn === null) {
-        context.deviceOffline(id)
-      }
-      return id // for lint
-    })
+function onFactGenerateDeviceConnectivity({ deviceId }, { messageContext }) {
+  const context = messageContext.bindActionCreators({
+    deviceOffline,
+    deviceNoResults,
   })
-}
-
-function onFactGenerateDeviceNoResults({ deviceId }, { messageContext }) {
-  const context = messageContext.bindActionCreators({ deviceNoResults })
   return context.run(async knex => {
     const devicesQ = knex('Device as d')
       .join('FactDeviceFlag as f', 'f.deviceId', 'd.id')
