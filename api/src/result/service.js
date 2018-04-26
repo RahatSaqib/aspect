@@ -29,8 +29,8 @@ const MODULE_TEMPERATURE_ERROR_CODES = [
   '4009',
   '4010',
 ]
-const luModuleTemperatureMaxErrors = 4
-const luModuleTemperatureDays = 30
+const moduleTemperatureMaxErrors = 4
+const moduleTemperatureDays = 30
 const SELECT_LIST_FIELDS = [
   'r.id',
   'r.externalId',
@@ -658,14 +658,18 @@ async function onResultLogged({ resultId }, { messageContext }) {
         .where('rc.externalId', 'Error')
         .where('r.deviceId', deviceId)
       if (MODULE_TEMPERATURE_ERROR_CODES.includes(result.errorCode)) {
-        const lastNday = subDays(new Date(), luModuleTemperatureDays)
-        const [{ count: errorCount }] = await deviceErrorQuery
+        const lastNday = subDays(new Date(), moduleTemperatureDays)
+        const errorCounts = await deviceErrorQuery
+          .clone()
           .where('r.endedOn', '>=', lastNday)
           .whereIn('r.errorCode', MODULE_TEMPERATURE_ERROR_CODES)
-          .count('r.id as count')
-        if (errorCount > luModuleTemperatureMaxErrors) {
-          context.resultModuleTemperatureError(deviceId)
-        }
+          .count('r.id as errorCount')
+          .groupBy('r.moduleSerial')
+        _.forEach(errorCounts, count => {
+          if (count.errorCount > moduleTemperatureMaxErrors) {
+            context.resultModuleTemperatureError(deviceId)
+          }
+        })
       } // else if (result.errorCode in LU_MODULE_POWER_ERROR_CODES) { }
     }
   })

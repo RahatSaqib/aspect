@@ -11,7 +11,12 @@ const { run } = require('../../../src/db')
 
 const server = supertest.agent('http://localhost:8080')
 const { assert, expect } = chai
-const { waitForIdle } = require('../../utils/mqUtils')
+const { resultModuleTemperatureError } = require('../../../src/result/actions')
+const {
+  createMessageContext,
+  waitForIdle,
+  waitForAction,
+} = require('../../utils/mqUtils')
 
 describe('Issue endpoints', () => {
   function createContext() {
@@ -30,18 +35,16 @@ describe('Issue endpoints', () => {
     afterCleanUp,
   } = context
   let { deviceAuth, device: gxAlertDevice } = context
-  // let { device: gxAlertDevice } = context
-  beforeEach(async () =>
+  before(async () =>
     run(async () => {
       await beforeCreateGxAlertApiKey()
       useGxAlertDeviceId(gxAlertDeviceId)
       ;({ deviceAuth, device: gxAlertDevice } = context)
     })
   )
-  afterEach(afterCleanUp)
+  after(afterCleanUp)
 
   it('should create/update issue for results with related error code', () =>
-    // should merge results with same sample ID, start time, end time and instrument serial
     runTest(async knex => {
       const { now } = context
       const errorCode = '4010'
@@ -50,9 +53,8 @@ describe('Issue endpoints', () => {
         /* eslint-disable no-await-in-loop */
         const errorTestResultId = `UNIQUE-ID-WITH-ERROR-RESULT-${i}`
         const sampleId = `BBC2542552${i}`
-        const instrumentSerial = `12345${i}`
-        const moduleSerial = `65432${i}`
-
+        const moduleSerial = `654321`
+        const instrumentSerial = `CEPH-PC-123${i}`
         const testStartedOn = setMilliseconds(subDays(now, i + 3), 0)
         const testEndedOn = setMilliseconds(addHours(testStartedOn, i + 2), 0)
         const payload = _.merge(
@@ -69,12 +71,12 @@ describe('Issue endpoints', () => {
                 code: errorCode,
               },
               sample: { id: sampleId },
-            },
-            instrument: {
-              serial: instrumentSerial,
-              module: {
-                serial: moduleSerial,
-                name: 'A1',
+              instrument: {
+                serial: instrumentSerial,
+                module: {
+                  serial: moduleSerial,
+                  name: 'A1',
+                },
               },
             },
           }
@@ -101,6 +103,13 @@ describe('Issue endpoints', () => {
         .where('id', resultId)
         .pluck('deviceId')
 
+      // Wait for completion of module error action
+      const messageContext = await createMessageContext()
+      messageContext.bindActionCreators({ resultModuleTemperatureError })
+      const waitForModuleTemperatureError = waitForAction(
+        resultModuleTemperatureError(deviceId)
+      )
+      await waitForModuleTemperatureError
       await waitForIdle()
 
       const issues = await knex('Issue as i')
