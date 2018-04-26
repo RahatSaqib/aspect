@@ -5,6 +5,7 @@ const { run } = require('../../src/db')
 const { queuePurge } = require('../utils/mqUtils')
 
 const { assert } = chai
+const { waitForIdle } = require('../utils/mqUtils')
 
 // ------------------------------------------------------
 // sms context
@@ -66,6 +67,9 @@ class SmsTestContext {
 
   afterEach() {
     return run(async knex => {
+      // make sure MQ finished it's job before removing sample message
+      await waitForIdle()
+
       // remove sample message
       if (this.messageId) {
         await knex('SmsMessage')

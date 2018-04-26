@@ -55,7 +55,23 @@ describe('Sending Email via Message Queue', () => {
       await waitForIdle()
 
       const messageStatusIdSent = (await dictionary.messageStatusToId()).Sent
-      const [msg] = await knex('EmailMessage').where('id', messageId)
+      const msg = await knex('EmailMessage')
+        .where('id', messageId)
+        .first()
+      // check status id
       assert.equal(msg.messageStatusId, messageStatusIdSent)
+      // make sure generated message does not have unprocessed curly braces {{ }}
+      assert(
+        !msg.subject.includes('{{') && !msg.subject.includes('}}'),
+        'Email subject template has not been parsed well'
+      )
+      assert(
+        !msg.body.includes('{{') && !msg.body.includes('}}'),
+        'Email body template has not been parsed well'
+      )
+      assert(
+        !msg.htmlBody.includes('{{') && !msg.htmlBody.includes('}}'),
+        'Email htmlBody template has not been parsed well'
+      )
     }))
 })

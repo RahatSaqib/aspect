@@ -53,7 +53,14 @@ describe('Sending SMS via Message Queue', () => {
       await waitForIdle()
 
       const messageStatusIdSent = (await dictionary.messageStatusToId()).Sent
-      const [msg] = await knex('SmsMessage').where('id', messageId)
+      const msg = await knex('SmsMessage')
+        .where('id', messageId)
+        .first()
       assert.equal(msg.messageStatusId, messageStatusIdSent)
+      // make sure generated message does not have unprocessed curly braces {{ }}
+      assert(
+        !msg.message.includes('{{') && !msg.message.includes('}}'),
+        'Sms message template has not been parsed well'
+      )
     }))
 })
