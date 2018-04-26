@@ -1,7 +1,7 @@
 const twilio = require('twilio')
 const config = require('../config')
 
-function sendSms(cellNumber, message) {
+async function sendSms(cellNumber, message) {
   const smsCfg = config.sms
 
   // These consts are your settings from https://www.twilio.com/console

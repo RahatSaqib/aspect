@@ -3625,7 +3625,7 @@ async function seed(knex) {
     /* eslint-disable no-template-curly-in-string */
     Object.assign(
       {
-        message: '${site.name} no contact for ${numberOfDays} days.',
+        message: '{{site.name}} no contact for {{numberOfDays}} days.',
       },
       auditFields
     )
@@ -3635,7 +3635,7 @@ async function seed(knex) {
     /* eslint-disable no-template-curly-in-string */
     Object.assign(
       {
-        message: '${site.name} no contact for ${numberOfDays} days.',
+        message: '{{site.name}} no contact for {{numberOfDays}} days.',
       },
       auditFields
     )
@@ -3645,9 +3645,10 @@ async function seed(knex) {
     /* eslint-disable no-template-curly-in-string */
     Object.assign(
       {
-        subject: '${site.name} Device Offline',
-        body: '${site.name} no contact for ${numberOfDays} days.',
-        htmlBody: '<em>${site.name}</em> no contact for ${numberOfDays} days.',
+        subject: '{{site.name}} Device Offline',
+        body: '{{site.name}} no contact for {{numberOfDays}} days.',
+        htmlBody:
+          '<em>{{site.name}}</em> no contact for {{numberOfDays}} days.',
       },
       auditFields
     )

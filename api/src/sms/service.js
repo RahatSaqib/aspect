@@ -11,7 +11,7 @@ function onSmsMessageCreated({ smsMessageId }, { messageContext }) {
     smsMessageReadyForSending,
   })
 
-  context.transact(async knex => {
+  return context.transact(async knex => {
     // after sms message entry created - process it's template and merge it with data
     await prepareSmsMessageForSending(context, knex, smsMessageId)
   })
@@ -21,13 +21,12 @@ function onSmsMessageCreated({ smsMessageId }, { messageContext }) {
 // prepareSmsMessageForSending
 // -----------------------------
 async function prepareSmsMessageForSending(context, knex, smsMessageId) {
-  // get datasource for message template - TBD: discuss on meeting
   const data = await knex('SmsMessage as m')
-    .innerJoin('SmsTemplate as tmpl', 'm.SmsTemplateId', 'tmpl.id')
-    .innerJoin('Person as p', 'm.PersonId', 'p.id')
-    .leftJoin('Site as s', 'm.SiteId', 's.id')
-    .leftJoin('Device as d', 'm.DeviceId', 'd.id')
-    .leftJoin('Result as r', 'm.ResultId', 'r.id')
+    .innerJoin('SmsTemplate as tmpl', 'm.smsTemplateId', 'tmpl.id')
+    .innerJoin('Person as p', 'm.personId', 'p.id')
+    .leftJoin('Site as s', 'm.siteId', 's.id')
+    .leftJoin('Device as d', 'm.deviceId', 'd.id')
+    .leftJoin('Result as r', 'm.resultId', 'r.id')
     .where({ 'm.id': smsMessageId })
     .first(
       'tmpl.message as messageTemplate',
@@ -71,7 +70,7 @@ function onSmsMessageReadyForSending({ smsMessageId }, { messageContext }) {
     smsMessageSent,
   })
 
-  context.transact(async knex => {
+  return context.transact(async knex => {
     await doSendSmsMessage(context, knex, smsMessageId)
   })
 }
@@ -82,7 +81,7 @@ function onSmsMessageReadyForSending({ smsMessageId }, { messageContext }) {
 async function doSendSmsMessage(context, knex, smsMessageId) {
   // get message and cell phone
   const d = await knex('SmsMessage as sm')
-    .leftJoin('Person as p', 'sm.PersonId', 'p.id')
+    .leftJoin('Person as p', 'sm.personId', 'p.id')
     .where({ 'sm.id': smsMessageId })
     .first('sm.message', 'p.cell')
 
@@ -98,7 +97,7 @@ async function doSendSmsMessage(context, knex, smsMessageId) {
   let messageStatusId = messageStatusIdFor.Sent
 
   // send sms
-  sendSms(cell, message)
+  await sendSms(cell, message)
     // .then(response => {
     //   // temporaly log to console
     //   console.log('Sms has been sent out', response)

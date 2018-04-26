@@ -11,7 +11,7 @@ function onEmailMessageCreated({ emailMessageId }, { messageContext }) {
     emailMessageReadyForSending,
   })
 
-  context.transact(async knex => {
+  return context.transact(async knex => {
     // after email message entry created - process it's template and merge it with data
     await prepareEmailMessageForSending(context, knex, emailMessageId)
   })
@@ -21,13 +21,12 @@ function onEmailMessageCreated({ emailMessageId }, { messageContext }) {
 // prepareEmailMessageForSending
 // -----------------------------
 async function prepareEmailMessageForSending(context, knex, emailMessageId) {
-  // get datasource for message template - TBD: discuss on meeting
   const data = await knex('EmailMessage as m')
-    .innerJoin('EmailTemplate as tmpl', 'm.EmailTemplateId', 'tmpl.id')
-    .innerJoin('Person as p', 'm.PersonId', 'p.id')
-    .leftJoin('Site as s', 'm.SiteId', 's.id')
-    .leftJoin('Device as d', 'm.DeviceId', 'd.id')
-    .leftJoin('Result as r', 'm.ResultId', 'r.id')
+    .innerJoin('EmailTemplate as tmpl', 'm.emailTemplateId', 'tmpl.id')
+    .innerJoin('Person as p', 'm.personId', 'p.id')
+    .leftJoin('Site as s', 'm.siteId', 's.id')
+    .leftJoin('Device as d', 'm.deviceId', 'd.id')
+    .leftJoin('Result as r', 'm.resultId', 'r.id')
     .where({ 'm.id': emailMessageId })
     .first(
       'tmpl.subject as subjectTemplate',
@@ -76,7 +75,7 @@ function onEmailMessageReadyForSending({ emailMessageId }, { messageContext }) {
     emailMessageSent,
   })
 
-  context.transact(async knex => {
+  return context.transact(async knex => {
     await doSendEmailMessage(context, knex, emailMessageId)
   })
 }
@@ -103,7 +102,7 @@ async function doSendEmailMessage(context, knex, emailMessageId) {
   let messageStatusId = messageStatusIdFor.Sent
 
   // send email
-  sendEmail(email, subject, htmlBody, body)
+  await sendEmail(email, subject, htmlBody, body)
     // .then(response => {
     //   console.log('Email has been sent out', response)
     // })
