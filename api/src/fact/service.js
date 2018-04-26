@@ -76,17 +76,38 @@ function onFactGenerateDeviceNoResults({ deviceId }, { messageContext }) {
       .join('FactDeviceFlag as f', 'f.deviceId', 'd.id')
       .join('Partner as p', 'd.partnerId', 'p.id')
       .where({ 'f.offline': 0, 'f.noResults': 0 })
-      .select('d.id', 'p.maxDaysDeviceNoResults', 'd.lastPingOn')
+      .select(
+        'd.id',
+        'p.maxDaysDeviceOffline',
+        'p.maxDaysDeviceNoResults',
+        'd.lastPingOn',
+        'd.createdOn as lastResultOn'
+      )
     if (deviceId != null) {
       devicesQ.where({ 'd.id': deviceId })
     }
-    await devicesQ.map(({ id, maxDaysDeviceNoResults, lastPingOn }) => {
-      const maxLastDateNoResult = subDays(new Date(), maxDaysDeviceNoResults)
-      if (lastPingOn <= maxLastDateNoResult || lastPingOn === null) {
-        context.deviceNoResult(id)
+    await devicesQ.map(
+      ({
+        id,
+        maxDaysDeviceOffline,
+        maxDaysDeviceNoResults,
+        lastPingOn,
+        lastResultOn,
+      }) => {
+        const now = new Date()
+        const maxLastDateOffline = subDays(now, maxDaysDeviceOffline)
+        const maxLastDateNoResult = subDays(now, maxDaysDeviceNoResults)
+        if (lastPingOn <= maxLastDateOffline || lastPingOn === null) {
+          context.deviceOffline(id)
+        } else if (
+          lastResultOn <= maxLastDateNoResult ||
+          lastResultOn === null
+        ) {
+          context.deviceNoResults(id)
+        }
+        return id // for lint
       }
-      return id // for lint
-    })
+    )
   })
 }
 
@@ -127,20 +148,13 @@ function onDeviceSeen({ deviceId, dateSeen }, { messageContext }) {
   })
 }
 
-function onDeviceOffline({ deviceId }, { messageContext }) {
-  return messageContext.run(async knex => {
-    await knex('FactDeviceFlag')
-      .where({ deviceId })
-      .update({ offline: 1 })
-  })
-}
-
-function onDeviceOnline({ deviceId }, { messageContext }) {
-  return messageContext.run(async knex => {
-    await knex('FactDeviceFlag')
-      .where({ deviceId })
-      .update({ offline: 0 })
-  })
+function onDeviceUpdateFlag(updates) {
+  return ({ deviceId }, { messageContext }) =>
+    messageContext.run(async knex =>
+      knex('FactDeviceFlag')
+        .where({ deviceId })
+        .update(updates)
+    )
 }
 
 function onResultLogged({ resultId }, { messageContext }) {
@@ -251,7 +265,6 @@ function onFactGenerateResultCountsForDevice(
 module.exports = {
   onFactGenerate,
   onDeviceSeen,
-  onDeviceOffline,
-  onDeviceOnline,
+  onDeviceUpdateFlag,
   onResultLogged,
 }
