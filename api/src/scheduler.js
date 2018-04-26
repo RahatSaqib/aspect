@@ -3,6 +3,7 @@ const cron = require('node-cron')
 const {
   factGenerateDeviceOffline,
   factGenerateResultCounts,
+  factCheckInventoryStock,
 } = require('./fact/actions')
 
 function startScheduler(queue) {
@@ -10,12 +11,14 @@ function startScheduler(queue) {
   const dispatcher = createActionDispatcher(queue, {
     factGenerateDeviceOffline,
     factGenerateResultCounts,
+    factCheckInventoryStock,
   })
   dispatcher.factGenerateDeviceOffline()
   dispatcher.factGenerateResultCounts()
 
   cron.schedule('0 * * * *', dispatcher.factGenerateDeviceOffline)
   cron.schedule('1 * * * *', dispatcher.factGenerateResultCounts)
+  cron.schedule('2 * * * *', dispatcher.factCheckInventoryStock)
 }
 
 function createActionDispatcher(queue, actionCreators) {

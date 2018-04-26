@@ -28,6 +28,14 @@ module.exports = {
       messagingServiceSid: process.env.twilioMessagingServiceSid,
     },
   },
+  inventory: {
+    daysLeft: {
+      stockout: 30, // 'Stock level is projected to run out in under X (30) days'
+      stockoutEscalated: 14, // Stock level is projected to run out in under X (14) days
+      expiring: 10, // Stock will expire in X days
+      expiringEscalated: 3, // Stock will expire in X days
+    },
+  },
 }
 
 configureOptional(module.exports)

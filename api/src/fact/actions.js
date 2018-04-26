@@ -4,6 +4,7 @@ const types = {
   FACT_GENERATE_DEVICE_OFFLINE: 'FACT_GENERATE_DEVICE_OFFLINE',
   FACT_GENERATE_RESULT_COUNTS_FOR_DEVICE:
     'FACT_GENERATE_RESULT_COUNTS_FOR_DEVICE',
+  FACT_CHECK_INVENTORY_STOCK: 'FACT_CHECK_INVENTORY_STOCK',
 }
 
 // ----------- Action Creators -------------------
@@ -46,9 +47,20 @@ function factGenerateDeviceOffline() {
   }
 }
 
+/**
+ * Requests facts to be regenerated. Will be called on
+ * schedule to run fact ETL
+ */
+function factCheckInventoryStock() {
+  return {
+    type: types.FACT_CHECK_INVENTORY_STOCK,
+  }
+}
+
 module.exports = {
   types,
   factGenerateResultCounts,
   factGenerateResultCountsForDevice,
   factGenerateDeviceOffline,
+  factCheckInventoryStock,
 }

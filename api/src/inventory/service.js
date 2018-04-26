@@ -15,6 +15,8 @@ const {
 const { findConsumableReason } = require('../consumable/consumableService')
 const { getUser } = require('../auth/service')
 const { getSite } = require('../site/service')
+const { inventoryConfig } = require('../config')
+const { inventoryStockout, inventoryStockoutEscalated } = require('./actions')
 
 const INVENTORY_ITEM_SELECT_LIST_FIELDS = [
   'ii.id',
@@ -556,9 +558,13 @@ async function addInventory(request) {
     userId: currentlyLoggedInUser.id,
   })
 
+  // refresh consumption rates (daily, weekly, monthly, quarterly, yearly)
+  const rates = await refreshConsumptionRates(toSiteId, consumableId)
+
   return {
     ok: true,
     data: await getInventoryItem(inventoryItemId),
+    rates,
   }
 }
 
@@ -607,9 +613,12 @@ async function removeInventory(request) {
     userId: currentlyLoggedInUser.id,
   })
 
+  const rates = await refreshConsumptionRates(fromSiteId, consumableId)
+
   return {
     ok: true,
     data: await getInventoryItem(inventoryItemId),
+    rates,
   }
 }
 
@@ -713,6 +722,10 @@ async function transferInventory(request) {
     data: {
       existingInventoryItem: await getInventoryItem(inventoryItemId),
       newInventoryItem: await getInventoryItem(destinationInventoryItemId),
+    },
+    rates: {
+      existingItem: await refreshConsumptionRates(fromSiteId, consumableId),
+      newItem: await refreshConsumptionRates(toSiteId, consumableId),
     },
   }
 }
@@ -1009,6 +1022,42 @@ async function insertInventoryItem(knex, inventoryItemValues) {
   return newInventoryItem
 }
 
+async function refreshConsumptionRates(siteId, consumableId) {
+  const items = await knex('InventoryItem')
+    .where({ siteId, consumableId })
+    .select()
+
+  // TODO: add table FactInventoryFlag to store (dailyRate, weeklyRate, monthlyRate, quarterlyRate, yearlyRate)
+
+  const rates = {
+    daily: undefined,
+    weekly: undefined,
+    monthly: undefined,
+    quarterly: undefined,
+    yearly: undefined,
+    wholePeriod: undefined,
+  }
+
+  return rates
+}
+
+async function onInventoryCountChanged(
+  { siteId, consumableId },
+  { messageContext }
+) {
+  const context = messageContext.bindActionCreators({
+    inventoryStockout,
+    inventoryStockoutEscalated,
+  })
+  const { daysLeft } = inventoryConfig
+
+  const items = await knex('InventoryItem')
+    .where({ siteId, consumableId })
+    .select('id', 'lotNumber', 'expiresOn', 'quantityOnHand')
+
+  return Promise.resolve()
+}
+
 module.exports = {
   getInventoryItems,
   listInventoryItems,
@@ -1020,4 +1069,5 @@ module.exports = {
   removeInventory,
   transferInventory,
   receiveInventory,
+  onInventoryCountChanged,
 }

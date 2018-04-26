@@ -14,6 +14,7 @@ const {
   removeInventory,
   transferInventory,
   receiveInventory,
+  onInventoryCountChanged,
 } = require('./service')
 
 const inventoryFilters = {
@@ -255,4 +256,12 @@ const routes = [
   },
 ]
 
-module.exports = { routes }
+const subscriptions = [
+  {
+    actions: {
+      INVENTORY_COUNT_CHANGED: onInventoryCountChanged,
+    },
+  },
+]
+
+module.exports = { routes, subscriptions }
