@@ -73,7 +73,6 @@ function resultModuleTemperatureError(deviceId) {
  * deviceId is required.
  */
 function resultModulePowerError(deviceId) {
-  console.log('resultModulePowerError got called!!')
   if (deviceId == null) {
     throw new Error('Must specify deviceId for notify resultModulePowerError')
   }
