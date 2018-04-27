@@ -21,7 +21,7 @@ const {
   waitForAction,
 } = require('../../utils/mqUtils')
 
-describe.only('Issue endpoints', () => {
+describe('Issue endpoints', () => {
   function createContext() {
     return createGxAlertTestContext(server)
   }
@@ -44,7 +44,7 @@ describe.only('Issue endpoints', () => {
       ;({ deviceAuth } = context)
     })
   )
-  after(afterCleanUp)
+  afterEach(afterCleanUp)
 
   it('should create a module temperature issue', () =>
     runTest(async knex => {
