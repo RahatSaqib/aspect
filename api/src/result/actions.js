@@ -3,6 +3,7 @@ const types = {
   RESULT_UPDATED: 'RESULT_UPDATED',
   RESULT_LOGGED: 'RESULT_LOGGED',
   RESULT_MODULE_TEMPERATURE_ERROR: 'RESULT_MODULE_TEMPERATURE_ERROR',
+  RESULT_MODULE_POWER_ERROR: 'RESULT_MODULE_POWER_ERROR',
 }
 
 // ----------- Action Creators -------------------
@@ -72,6 +73,7 @@ function resultModuleTemperatureError(deviceId) {
  * deviceId is required.
  */
 function resultModulePowerError(deviceId) {
+  console.log('resultModulePowerError got called!!')
   if (deviceId == null) {
     throw new Error('Must specify deviceId for notify resultModulePowerError')
   }
