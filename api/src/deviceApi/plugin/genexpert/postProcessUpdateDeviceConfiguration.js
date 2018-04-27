@@ -1,5 +1,6 @@
 const _ = require('lodash')
 const { updateDeviceDetails } = require('../../device')
+const { macAddressValid } = require('./requestValidation')
 
 async function postProcessUpdateDeviceConfiguration({
   knex,
@@ -22,11 +23,13 @@ async function postProcessUpdateDeviceConfiguration({
       },
     } = payload
     const deviceDetails = {
-      macAddress,
       hostId,
       culture,
       timezone,
       lastSeenOn: new Date(lastPingOn || now),
+    }
+    if (macAddress && macAddressValid(macAddress)) {
+      deviceDetails.macAddress = macAddress
     }
     if (lastPingOn) {
       deviceDetails.lastPingOn = new Date(lastPingOn)

@@ -1,10 +1,8 @@
 const _ = require('lodash')
 const dateFormat = require('date-fns/format')
-const geneXpertPreProcessUpdateDeviceConfiguration = require('../preProcessUpdateDeviceConfiguration')
 const { deviceSeen, deviceOffline } = require('../../../../device/actions')
 
 async function preProcessUpdateDeviceConfiguration(context) {
-  await geneXpertPreProcessUpdateDeviceConfiguration(context)
   const {
     knex,
     payload,
