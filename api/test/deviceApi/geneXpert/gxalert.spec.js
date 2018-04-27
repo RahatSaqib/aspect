@@ -2209,6 +2209,339 @@ describe('Device API routes for GxAlert Device', () => {
           )
         }))
     })
+
+    describe('when location data included in device configuration data', () => {
+      const context = createContext()
+      const deviceName = 'Xpert Lab Location'
+      const deviceSerial = 'Cepheid-19921GX'
+      const hostId = 'StateLGAXpertLab'
+      const country = 'MM'
+      const partner = 'Myanmar'
+      const gxAlertDeviceId = 19921
+
+      const {
+        beforeCreateGxAlertApiKey,
+        useGxAlertDeviceId,
+        runTest,
+        getCurrentGeneXpertDevice,
+        afterCleanUp,
+      } = context
+
+      let standardDevicePayload
+
+      before(async () =>
+        run(async () => {
+          await beforeCreateGxAlertApiKey({
+            countryAbbreviation: country,
+            partnerName: partner,
+          })
+          useGxAlertDeviceId(gxAlertDeviceId)
+          const { deviceAuth } = context
+          standardDevicePayload = {
+            authHeader: deviceAuth,
+            payload: {
+              name: deviceName,
+              serial: deviceSerial,
+              status: null,
+              type: { id: 'CepheidGeneXpert' },
+              site: null,
+              checkpoint: null,
+              log: null,
+              configuration: {
+                checkpoint: null,
+                data: {
+                  macAddress: 'MAC0A0127019921',
+                  hostId,
+                  culture: 'en-US',
+                  computerOsVersion: 'Microsoft Windows NT 6.2.9200.0',
+                  timezone: 'Myanmar Standard Time',
+                  country,
+                  routerNumber: '029347800',
+                  sim1SerialNumber: '82347234879',
+                  sim2SerialNumber: '90878796559',
+                  labContactCell: '+27800243232',
+                  labContactEmail: 'test@contract.co',
+                  labContactName: 'Mr Lab Contact',
+                  installerCell: '+27831238183',
+                  installerEmail: 'another@email.io',
+                  installerName: 'Mr Installer',
+                  latestGrabbedModifiedDate: '2018-03-15T14:12:34',
+                  uploadProbeLevelData: true,
+                  gxConnectVersion: '1.10.1.0',
+                  databaseDeviceOk: true,
+                  lisConfigOk: true,
+                  nsisInstaller: true,
+                  putInService: '2018-01-01T08:02:30',
+                  putInServiceSource: 1,
+                  lastCalibrated: '2018-01-01T08:02:30',
+                  teamViewerId: '',
+                  teamViewerPassword: '',
+                  noInventory: false,
+                  latestErrors: null,
+                  autoCompleteJsonDate: '',
+                  enableCustomFields: true,
+                  deviceSerialNumber: deviceSerial,
+                  dbVersion: '3.0.5.0',
+                  lisConfig:
+                    'True|xPertLab|0|0|1|True|192.168.8.113|3012|-1|1|ASSAY=MTB-RIF 2[MTB=MTB][Rif Resistance=Rif Resistance][QC Check=QC Check]',
+                  gxAlertDeviceId,
+                },
+              },
+              operation: null,
+              result: null,
+            },
+          }
+          await postToDeviceApi(standardDevicePayload)
+          await waitForIdle()
+        })
+      )
+      after(afterCleanUp)
+
+      describe('and state as well as LGA belong to the country that the device is in', () => {
+        it('should update the device and site to the location that was specified', () =>
+          runTest(async knex => {
+            const { countryGeographyId } = await knex('Geography as g')
+              .join('Country as c', 'g.countryId', 'c.id')
+              .where('c.abbreviation', country)
+              .andWhere(function() {
+                this.whereNull('g.stateId')
+              })
+              .andWhere(function() {
+                this.whereNull('g.lgaId')
+              })
+              .first('g.id as countryGeographyId')
+
+            const deviceBeforeUpdate = await getCurrentGeneXpertDevice()
+
+            assert.equal(deviceBeforeUpdate.geographyId, countryGeographyId)
+
+            const { newGeographyId, stateName, lgaName } = await knex(
+              'Geography as g'
+            )
+              .join('Country as c', 'g.countryId', 'c.id')
+              .join('State as s', 'g.stateId', 's.id')
+              .join('Lga as l', 'g.lgaId', 'l.id')
+              .where('c.abbreviation', country)
+              .first(
+                'g.id as newGeographyId',
+                's.name as stateName',
+                'l.name as lgaName'
+              )
+
+            await postToDeviceApi(
+              _.merge(standardDevicePayload, {
+                payload: {
+                  configuration: {
+                    data: {
+                      state: stateName,
+                      lga: lgaName,
+                    },
+                  },
+                },
+              })
+            )
+
+            const deviceAfterUpdate = await getCurrentGeneXpertDevice()
+            expect(deviceAfterUpdate).to.containSubset({
+              id: deviceBeforeUpdate.id,
+              siteId: deviceBeforeUpdate.siteId,
+              geographyId: newGeographyId,
+            })
+
+            const siteAfterUpdate = await knex('Site')
+              .where('id', deviceAfterUpdate.siteId)
+              .first()
+            assert.equal(siteAfterUpdate.geographyId, newGeographyId)
+          }))
+      })
+
+      describe('and only state belongs to the country that the device is in', () => {
+        it('should update the device and site to the state that was specified, setting LGA to NULL', () =>
+          runTest(async knex => {
+            const { stateGeographyId, stateId, stateName } = await knex(
+              'Geography as g'
+            )
+              .join('Country as c', 'g.countryId', 'c.id')
+              .join('State as s', 'g.stateId', 's.id')
+              .where('c.abbreviation', country)
+              .andWhere(function() {
+                this.whereNull('g.lgaId')
+              })
+              .first(
+                'g.id as stateGeographyId',
+                'g.stateId',
+                's.name as stateName'
+              )
+
+            const deviceBeforeUpdate = await getCurrentGeneXpertDevice()
+
+            assert.notEqual(deviceBeforeUpdate.geographyId, stateGeographyId)
+
+            await postToDeviceApi(
+              _.merge(standardDevicePayload, {
+                payload: {
+                  configuration: {
+                    data: {
+                      state: stateName,
+                      lga: 'Some random LGA',
+                    },
+                  },
+                },
+              })
+            )
+
+            const deviceAfterUpdate = await getCurrentGeneXpertDevice()
+            expect(deviceAfterUpdate).to.containSubset({
+              id: deviceBeforeUpdate.id,
+              siteId: deviceBeforeUpdate.siteId,
+              geographyId: stateGeographyId,
+            })
+
+            const siteAfterUpdate = await knex('Site')
+              .where('id', deviceAfterUpdate.siteId)
+              .first()
+            assert.equal(siteAfterUpdate.geographyId, stateGeographyId)
+
+            const {
+              secondStateGeographyId,
+              secondStateId,
+              secondStateName,
+            } = await knex('Geography as g')
+              .join('Country as c', 'g.countryId', 'c.id')
+              .join('State as s', 'g.stateId', 's.id')
+              .where('c.abbreviation', country)
+              .andWhere('g.stateId', '<>', stateId)
+              .andWhere(function() {
+                this.whereNull('g.lgaId')
+              })
+              .first(
+                'g.id as secondStateGeographyId',
+                'g.stateId as secondStateId',
+                's.name as secondStateName'
+              )
+
+            assert.notEqual(secondStateName, stateName)
+
+            const {
+              invalidLgaInCountryGeographyId,
+              invalidLgaName,
+            } = await knex('Geography as g')
+              .join('Country as c', 'g.countryId', 'c.id')
+              .join('State as s', 'g.stateId', 's.id')
+              .join('Lga as l', 'g.lgaId', 'l.id')
+              .where('c.abbreviation', country)
+              .andWhere('g.stateId', '<>', secondStateId)
+              .first(
+                'g.id as invalidLgaInCountryGeographyId',
+                'l.name as lgaName'
+              )
+
+            assert.notEqual(
+              invalidLgaInCountryGeographyId,
+              secondStateGeographyId
+            )
+
+            await postToDeviceApi(
+              _.merge(standardDevicePayload, {
+                payload: {
+                  configuration: {
+                    data: {
+                      state: secondStateName,
+                      lga: invalidLgaName,
+                    },
+                  },
+                },
+              })
+            )
+
+            const deviceAfterSecondUpdate = await getCurrentGeneXpertDevice()
+            expect(deviceAfterSecondUpdate).to.containSubset({
+              id: deviceAfterUpdate.id,
+              siteId: deviceAfterUpdate.siteId,
+              geographyId: secondStateGeographyId,
+            })
+
+            const siteAfterSecondUpdate = await knex('Site')
+              .where('id', deviceAfterSecondUpdate.siteId)
+              .first()
+            assert.equal(
+              siteAfterSecondUpdate.geographyId,
+              secondStateGeographyId
+            )
+          }))
+      })
+
+      describe('but only includes lga', () => {
+        it('should not update the location information of the device or site', () =>
+          runTest(async knex => {
+            const deviceBeforeUpdate = await getCurrentGeneXpertDevice()
+
+            const { lgaGeographyId, lgaName } = await knex('Geography as g')
+              .join('Country as c', 'g.countryId', 'c.id')
+              .join('Lga as l', 'g.lgaId', 'l.id')
+              .where('c.abbreviation', country)
+              .andWhere('g.id', '<>', deviceBeforeUpdate.geographyId)
+              .first('g.id as lgaGeographyId', 'g.lgaId', 'l.name as lgaName')
+
+            assert.notEqual(deviceBeforeUpdate.geographyId, lgaGeographyId)
+
+            await postToDeviceApi(
+              _.merge(standardDevicePayload, {
+                payload: {
+                  configuration: {
+                    data: {
+                      lga: lgaName,
+                    },
+                  },
+                },
+              })
+            )
+
+            const deviceAfterUpdate = await getCurrentGeneXpertDevice()
+            expect(deviceAfterUpdate).to.containSubset({
+              id: deviceBeforeUpdate.id,
+              siteId: deviceBeforeUpdate.siteId,
+              geographyId: deviceBeforeUpdate.geographyId,
+            })
+
+            const siteAfterUpdate = await knex('Site')
+              .where('id', deviceAfterUpdate.siteId)
+              .first()
+            assert.equal(
+              siteAfterUpdate.geographyId,
+              deviceBeforeUpdate.geographyId
+            )
+
+            await postToDeviceApi(
+              _.merge(standardDevicePayload, {
+                payload: {
+                  configuration: {
+                    data: {
+                      state: null,
+                      lga: lgaName,
+                    },
+                  },
+                },
+              })
+            )
+
+            const deviceAfterSecondUpdate = await getCurrentGeneXpertDevice()
+            expect(deviceAfterSecondUpdate).to.containSubset({
+              id: deviceBeforeUpdate.id,
+              siteId: deviceBeforeUpdate.siteId,
+              geographyId: deviceBeforeUpdate.geographyId,
+            })
+
+            const siteAfterSecondUpdate = await knex('Site')
+              .where('id', deviceAfterSecondUpdate.siteId)
+              .first()
+            assert.equal(
+              siteAfterSecondUpdate.geographyId,
+              deviceBeforeUpdate.geographyId
+            )
+          }))
+      })
+    })
   })
 
   describe('ping', () => {

@@ -62,7 +62,7 @@ async function findDevices(availableDeviceDetails, knex) {
       }
     }
   }
-  return matchingDevices
+  return _.uniqBy(matchingDevices, 'id')
 }
 
 module.exports = { findDevices }

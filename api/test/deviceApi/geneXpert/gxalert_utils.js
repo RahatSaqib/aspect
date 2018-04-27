@@ -194,8 +194,8 @@ class GxAlertApiTestContext {
     ])
   }
 
-  beforeCreateGxAlertApiKey() {
-    return run(async () => this.createGxAlertApiKey())
+  beforeCreateGxAlertApiKey(apiKeyDetails) {
+    return run(async () => this.createGxAlertApiKey(apiKeyDetails))
   }
 
   createGxAlertApiKey(apiKeyDetails = {}) {
