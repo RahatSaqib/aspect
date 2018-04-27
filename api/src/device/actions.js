@@ -4,6 +4,7 @@ const types = {
   DEVICE_OFFLINE: 'DEVICE_OFFLINE',
   DEVICE_ONLINE: 'DEVICE_ONLINE',
   DEVICE_NO_RESULTS: 'DEVICE_NO_RESULTS',
+  DEVICE_HAS_NEW_RESULTS: 'DEVICE_HAS_NEW_RESULTS',
 }
 
 // ----------- Action Creators -------------------
@@ -75,10 +76,27 @@ function deviceNoResults(deviceId) {
   }
 }
 
+/**
+ * Creates an action to notify the device has seen new
+ * results after notifying deviceNoResults
+ *
+ * deviceId is required.
+ */
+function deviceHasNewResults(deviceId) {
+  if (deviceId == null) {
+    throw new Error('Must specify deviceId for notify deviceHasNewResults')
+  }
+  return {
+    type: types.DEVICE_HAS_NEW_RESULTS,
+    deviceId,
+  }
+}
+
 module.exports = {
   types,
   deviceSeen,
   deviceOffline,
   deviceOnline,
   deviceNoResults,
+  deviceHasNewResults,
 }

@@ -7,6 +7,7 @@ const {
   deviceOffline,
   deviceOnline,
   deviceNoResults,
+  deviceHasNewResults,
 } = require('../device/actions')
 
 // We are dispatching internally because we want to share a queue for
@@ -144,11 +145,20 @@ function onDeviceUpdateFlag(updates) {
 }
 
 function onResultLogged({ resultId }, { messageContext }) {
-  const context = messageContext.bindActionCreators({ factGenerate })
+  const context = messageContext.bindActionCreators({
+    factGenerate,
+    deviceHasNewResults,
+  })
   return context.run(async knex => {
-    const { deviceId, assayId, resultCategory1 } = await knex('Result')
+    const { deviceId, assayId, resultCategory1, noResults } = await knex(
+      'Result as r'
+    )
+      .leftJoin('FactDeviceFlag as fdf', 'fdf.deviceId', 'r.deviceId')
       .where({ id: resultId })
-      .first('deviceId', 'assayId', 'resultCategory1')
+      .first('r.deviceId', 'r.assayId', 'r.resultCategory1', 'fdf.noResults')
+    if (noResults === 1) {
+      context.deviceHasNewResults(deviceId)
+    }
     context.factGenerate(RESULT_COUNTS, deviceId, {
       assayId,
       resultCategory1,
