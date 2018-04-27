@@ -11,14 +11,17 @@ const { run } = require('../../../src/db')
 
 const server = supertest.agent('http://localhost:8080')
 const { assert } = chai
-const { resultModuleTemperatureError } = require('../../../src/result/actions')
+const {
+  resultModuleTemperatureError,
+  resultModulePowerError,
+} = require('../../../src/result/actions')
 const {
   createMessageContext,
   waitForIdle,
   waitForAction,
 } = require('../../utils/mqUtils')
 
-describe('Issue endpoints', () => {
+describe.only('Issue endpoints', () => {
   function createContext() {
     return createGxAlertTestContext(server)
   }
@@ -43,7 +46,7 @@ describe('Issue endpoints', () => {
   )
   after(afterCleanUp)
 
-  it('should create/update issue for results with related error code', () =>
+  it('should create a module temperature issue', () =>
     runTest(async knex => {
       const { now } = context
       const errorCode = '4010'
@@ -62,9 +65,9 @@ describe('Issue endpoints', () => {
 
       for (let i = 0; i < 5; i++) {
         /* eslint-disable no-await-in-loop */
-        const errorTestResultId = `UNIQUE-ID-WITH-ERROR-RESULT-${i}`
-        const sampleId = `BBC2542552${i}`
-        const moduleSerial = `654321`
+        const errorTestResultId = `UNIQUE-ID-WITH-TEMP-ERROR-${i}`
+        const sampleId = `TEM2542552${i}`
+        const moduleSerial = `MOD98765`
         const instrumentSerial = `CEPH-PC-123${i}`
         const testStartedOn = setMilliseconds(subDays(now, i + 3), 0)
         const testEndedOn = setMilliseconds(addHours(testStartedOn, i + 2), 0)
@@ -127,5 +130,89 @@ describe('Issue endpoints', () => {
           assert.equal(issues[0].issueStatus, 'Active')
         }
       }
+    }))
+
+  it('should create a module power issue issue ', () =>
+    runTest(async knex => {
+      const { now } = context
+      const errorCode = '1007'
+      const resultIds = []
+      for (let i = 0; i < 6; i++) {
+        /* eslint-disable no-await-in-loop */
+        const errorTestResultId = `UNIQUE-ID-WITH-MODULE-ERROR-${i}`
+        const sampleId = `MOD2542552${i}`
+        const moduleSerial = `MOD12345`
+        const instrumentSerial = `CEPH-PC-123${i}`
+        const testStartedOn = setMilliseconds(subDays(now, i + 3), 0)
+        const testEndedOn = setMilliseconds(addHours(testStartedOn, i + 2), 0)
+        const payload = _.merge(
+          {},
+          basicDevicePayload,
+          { name: deviceName },
+          basicResultPayload,
+          {
+            result: {
+              id: errorTestResultId,
+              startedOn: testStartedOn,
+              endedOn: testEndedOn,
+              error: {
+                code: errorCode,
+              },
+              sample: { id: sampleId },
+              instrument: {
+                serial: instrumentSerial,
+                module: {
+                  serial: moduleSerial,
+                  name: 'A1',
+                },
+              },
+            },
+          }
+        )
+        await postToDeviceApi({
+          authHeader: deviceAuth,
+          payload,
+        })
+
+        const lastResult = await getLastResult()
+        resultIds.push(lastResult.id)
+        expect(lastResult).to.containSubset({
+          errorCode,
+          resultCategory1: 'Error',
+          resultWorkflowStatus: 'Error',
+          resultData: {
+            geneXpertTestId: errorTestResultId,
+          },
+        })
+      }
+
+      const resultId = resultIds.pop()
+      const [deviceId] = await knex('Result')
+        .where('id', resultId)
+        .pluck('deviceId')
+
+      // Wait for completion of module error action
+      const messageContext = await createMessageContext()
+      messageContext.bindActionCreators({ resultModulePowerError })
+      const waitForModulePowerError = waitForAction(
+        resultModulePowerError(deviceId)
+      )
+      await waitForModulePowerError
+      await waitForIdle()
+
+      const issues = await knex('Issue as i')
+        .join('IssueType as it', 'i.issueTypeId', 'it.id')
+        .join('IssueStatus as is', 'i.issueStatusId', 'is.id')
+        .where({ 'i.deviceId': deviceId })
+        .select(
+          'i.id',
+          'it.externalId as issueType',
+          'i.deviceId',
+          'is.externalId as issueStatus'
+        )
+      assert.equal(issues.length, 1)
+      assert.equal(issues[0].issueType, 'ModulePowerError')
+      assert.equal(issues[0].deviceId, deviceId)
+      assert.equal(issues[0].issueStatus, 'Active')
     }))
 })
