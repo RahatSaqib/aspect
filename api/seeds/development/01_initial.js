@@ -3714,6 +3714,36 @@ async function seed(knex) {
     )
   )
 
+  // Module power error messages - TODO - Update templates with actual messages
+  const [modulePowerErrorAlertTemplateId] = await knex('AlertTemplate').insert(
+    Object.assign(
+      {
+        message: 'Power errors on Module {{result.moduleName}}; notify RO',
+      },
+      auditFields
+    )
+  )
+
+  const [modulePowerErrorSmsTemplateId] = await knex('SmsTemplate').insert(
+    Object.assign(
+      {
+        message: 'Power errors on Module {{result.moduleName}}; notify RO',
+      },
+      auditFields
+    )
+  )
+
+  const [modulePowerErrorEmailTemplateId] = await knex('EmailTemplate').insert(
+    Object.assign(
+      {
+        subject: '{{result.moduleName}} Power Errors',
+        body: 'Power errors on Module {{result.moduleName}}; notify RO',
+        htmlBody: 'Power errros on <em>{{result.moduleName}}</em> notify RO',
+      },
+      auditFields
+    )
+  )
+
   const [deviceOfflineMessageTypeId] = await knex('MessageType').insert({
     messageSeverityId: messageSeverities.Alert.id,
     alertTemplateId: deviceOfflineAlertTemplateId,
@@ -3726,6 +3756,13 @@ async function seed(knex) {
     alertTemplateId: moduleTemperatureErrorAlertTemplateId,
     smsTemplateId: moduleTemperatureErrorSmsTemplateId,
     emailTemplateId: moduleTemperatureErrorEmailTemplateId,
+  })
+
+  const [modulePowerErrorTypeId] = await knex('MessageType').insert({
+    messageSeverityId: messageSeverities.Alert.id,
+    alertTemplateId: modulePowerErrorAlertTemplateId,
+    smsTemplateId: modulePowerErrorSmsTemplateId,
+    emailTemplateId: modulePowerErrorEmailTemplateId,
   })
 
   // Issues
@@ -3799,6 +3836,13 @@ async function seed(knex) {
       i18nKey: 'issueStatusModuleTemperatureError',
       issueCategoryId: issueCategories.DeviceHealth.id,
       defaultMessageTypeId: moduleTemperatureErrorTypeId,
+    },
+    {
+      name: 'Module Power Error',
+      externalId: 'ModulePowerError',
+      i18nKey: 'issueStatusModulePowerError',
+      issueCategoryId: issueCategories.DeviceHealth.id,
+      defaultMessageTypeId: modulePowerErrorTypeId,
     },
   ])
 }
