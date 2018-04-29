@@ -349,6 +349,8 @@ class GxAlertApiTestContext {
           'r.deviceId',
           'r.siteId',
           'r.geographyId',
+          'r.latitude',
+          'r.longitude',
           'a.externalId as assay',
           'rws.externalId as resultWorkflowStatus',
           'rs.externalId as resultSource',
@@ -386,29 +388,35 @@ class GxAlertApiTestContext {
   getCurrentGeneXpertDevice() {
     return run(async knex => {
       const device = await knex
-        .from('Device')
+        .from('Device as d')
+        .leftJoin('Site as s', 's.id', 'd.siteId')
+        .innerJoin('Geography as g', function() {
+          this.on('d.geographyId', 'g.id').orOn('s.geographyId', 'g.id')
+        })
+        .leftJoin('Country as c', 'g.countryId', 'c.id')
         .whereRaw(
-          `JSON_EXTRACT(configurationData, "$.gxAlertDeviceId") = ${_.last(
+          `JSON_EXTRACT(d.configurationData, "$.gxAlertDeviceId") = ${_.last(
             this.gxAlertDeviceIds
           )}`
         )
         .first(
-          'id',
-          'partnerId',
-          'geographyId',
-          'siteId',
-          'deviceTypeId',
-          'deviceStatusId',
-          'name',
-          'shortName',
-          'macAddress',
-          'serial',
-          'hostId',
-          'culture',
-          'timezone',
-          'configurationData',
-          'lastSeenOn',
-          'lastPingOn'
+          'd.id',
+          'd.partnerId',
+          'g.id as geographyId',
+          'c.abbreviation as countryAbbreviation',
+          's.id as siteId',
+          'd.deviceTypeId',
+          'd.deviceStatusId',
+          'd.name',
+          'd.shortName',
+          'd.macAddress',
+          'd.serial',
+          'd.hostId',
+          'd.culture',
+          'd.timezone',
+          'd.configurationData',
+          'd.lastSeenOn',
+          'd.lastPingOn'
         )
       if (_.isEmpty(device)) {
         return device

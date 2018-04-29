@@ -2322,6 +2322,7 @@ describe('Device API routes for GxAlert Device', () => {
               .join('State as s', 'g.stateId', 's.id')
               .join('Lga as l', 'g.lgaId', 'l.id')
               .where('c.abbreviation', country)
+              .orderBy('g.id', 'desc')
               .first(
                 'g.id as newGeographyId',
                 's.name as stateName',
@@ -3802,6 +3803,134 @@ describe('Device API routes for GxAlert Device', () => {
             },
           })
         }))
+    })
+
+    describe('when the result comes from a site that has location data saved', () => {
+      describe('and the result has NO coordinates specified in the payload', () => {
+        it('should set the the GPS coordinates and geography of the result to those of the site/device', () =>
+          runTest(async knex => {
+            const { now } = context
+            const latitude = Math.random() * 360
+            const longitude = Math.random() * 360
+            const geneXpertDevice = await getCurrentGeneXpertDevice()
+            const { id: geographyId } = await knex('Geography as g')
+              .join('Country as c')
+              .where('c.abbreviation', geneXpertDevice.countryAbbreviation)
+              .andWhere(function() {
+                this.whereNotNull('g.stateId')
+              })
+              .andWhere(function() {
+                this.whereNotNull('g.lgaId')
+              })
+              .first('g.id')
+            await knex('Site')
+              .where({ id: geneXpertDevice.siteId })
+              .update({ latitude, longitude, geographyId })
+            const gpsCoordsMissingResultId = 'UNIQUE-ID-WITHOUT-GPS-COORDS'
+            const testStartedOn = setMilliseconds(
+              subMinutes(
+                subHours(now, Math.floor(Math.random() * 24)),
+                Math.floor(Math.random() * 60)
+              ),
+              0
+            )
+            const testEndedOn = setMilliseconds(addHours(testStartedOn, 2), 0)
+            await postToDeviceApi({
+              authHeader: deviceAuth,
+              payload: _.merge(
+                {},
+                basicDevicePayload,
+                { name: deviceName },
+                basicResultPayload,
+                {
+                  result: {
+                    id: gpsCoordsMissingResultId,
+                    startedOn: testStartedOn,
+                    endedOn: testEndedOn,
+                  },
+                }
+              ),
+            })
+
+            const lastResult = await getLastResult()
+            const resultSite = await knex('Site')
+              .where({ id: geneXpertDevice.siteId })
+              .first()
+            expect(lastResult).to.containSubset({
+              latitude: resultSite.latitude,
+              longitude: resultSite.longitude,
+              geographyId: resultSite.geographyId,
+            })
+          }))
+      })
+
+      describe('and the result HAS coordinates specified in the payload', () => {
+        it('should set the the GPS coordinates of the ones specified in the payload and the geography to that of the site that the result came from', () =>
+          runTest(async knex => {
+            const { now } = context
+            const siteLatitude = Math.random() * 360
+            const siteLongitude = Math.random() * 360
+            const geneXpertDevice = await getCurrentGeneXpertDevice()
+            const { id: geographyId } = await knex('Geography as g')
+              .join('Country as c')
+              .where('c.abbreviation', geneXpertDevice.countryAbbreviation)
+              .andWhere(function() {
+                this.whereNotNull('g.stateId')
+              })
+              .andWhere(function() {
+                this.whereNotNull('g.lgaId')
+              })
+              .first('g.id')
+            await knex('Site')
+              .where({ id: geneXpertDevice.siteId })
+              .update({
+                latitude: siteLatitude,
+                longitude: siteLongitude,
+                geographyId,
+              })
+            const gpsCoordsInResultId = 'UNIQUE-ID-WITH-GPS-COORDS'
+            const resultLatitude = Math.random() * 360
+            const resultLongitude = Math.random() * 360
+            assert.notEqual(siteLatitude, resultLatitude)
+            assert.notEqual(siteLongitude, resultLongitude)
+            const testStartedOn = setMilliseconds(
+              subMinutes(
+                subHours(now, Math.floor(Math.random() * 24)),
+                Math.floor(Math.random() * 60)
+              ),
+              0
+            )
+            const testEndedOn = setMilliseconds(addHours(testStartedOn, 2), 0)
+            await postToDeviceApi({
+              authHeader: deviceAuth,
+              payload: _.merge(
+                {},
+                basicDevicePayload,
+                { name: deviceName },
+                basicResultPayload,
+                {
+                  result: {
+                    id: gpsCoordsInResultId,
+                    startedOn: testStartedOn,
+                    endedOn: testEndedOn,
+                    location: {
+                      latitude: resultLatitude,
+                      longitude: resultLongitude,
+                    },
+                  },
+                }
+              ),
+            })
+
+            const lastResult = await getLastResult()
+            const resultSite = await knex('Site')
+              .where({ id: lastResult.siteId })
+              .first()
+            assert.notEqual(lastResult.latitude, resultSite.latitude)
+            assert.notEqual(lastResult.longitude, resultSite.longitude)
+            assert.equal(lastResult.geographyId, geographyId)
+          }))
+      })
     })
   })
 

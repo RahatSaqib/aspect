@@ -356,6 +356,8 @@ class GxConnectApiTestContext {
           'r.deviceId',
           'r.siteId',
           'r.geographyId',
+          'r.latitude',
+          'r.longitude',
           'a.externalId as assay',
           'rws.externalId as resultWorkflowStatus',
           'rs.externalId as resultSource',
