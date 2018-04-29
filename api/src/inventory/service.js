@@ -1,4 +1,5 @@
 const _ = require('lodash')
+const subDays = require('date-fns/sub_days')
 const Boom = require('boom')
 const {
   knex,
@@ -15,8 +16,8 @@ const {
 const { findConsumableReason } = require('../consumable/consumableService')
 const { getUser } = require('../auth/service')
 const { getSite } = require('../site/service')
-const { inventoryConfig } = require('../config')
-const { inventoryStockout, inventoryStockoutEscalated } = require('./actions')
+// const { inventoryConfig } = require('../config')
+// const { inventoryStockout, inventoryStockoutEscalated } = require('./actions')
 
 const INVENTORY_ITEM_SELECT_LIST_FIELDS = [
   'ii.id',
@@ -558,8 +559,8 @@ async function addInventory(request) {
     userId: currentlyLoggedInUser.id,
   })
 
-  // refresh consumption rates (daily, weekly, monthly, quarterly, yearly)
-  const rates = await refreshConsumptionRates(toSiteId, consumableId)
+  // refresh consumption rates
+  const rates = await refreshConsumptionRates(toSite.id, consumableId)
 
   return {
     ok: true,
@@ -613,7 +614,8 @@ async function removeInventory(request) {
     userId: currentlyLoggedInUser.id,
   })
 
-  const rates = await refreshConsumptionRates(fromSiteId, consumableId)
+  // refresh consumption rates
+  const rates = await refreshConsumptionRates(fromSite.id, consumableId)
 
   return {
     ok: true,
@@ -1022,40 +1024,46 @@ async function insertInventoryItem(knex, inventoryItemValues) {
   return newInventoryItem
 }
 
-async function refreshConsumptionRates(siteId, consumableId) {
-  const items = await knex('InventoryItem')
-    .where({ siteId, consumableId })
-    .select()
+async function getConsumptionRateForLastDays(siteId, consumableId, lastDays) {
+  const dateFrom = subDays(new Date(), lastDays)
+  const totalConsumed = await knex('Result as r')
+    .innerJoin('Assay as a', 'r.assayId', 'a.id')
+    .innerJoin('ConsumableAssay as ca', 'a.id', 'ca.assayId')
+    .innerJoin('Device as d', 'r.deviceId', 'd.id')
+    .where('r.startedOn', '>=', dateFrom)
+    .where('d.siteId', siteId)
+    .where('ca.consumableId', consumableId)
+    .groupBy('d.siteId', 'r.assayId')
+    .first(knex.raw('count(r.id) * ca.quantity as totals'))
 
-  // TODO: add table FactInventoryFlag to store (dailyRate, weeklyRate, monthlyRate, quarterlyRate, yearlyRate)
+  return lastDays > 0 ? totalConsumed / lastDays : 0
+}
+
+async function refreshConsumptionRates(siteId, consumableId) {
+  const dailyRate = await getConsumptionRateForLastDays(10)
+  const monthlyRate = await getConsumptionRateForLastDays(30)
+
+  const updatedOn = new Date()
+  const dataUpdate = { dailyRate, monthlyRate, updatedOn }
+
+  const id = await knex('InventoryConsumptionRate')
+    .where({ siteId, consumableId })
+    .first('id')
+  if (id) {
+    await knex('InventoryConsumptionRate')
+      .where({ siteId, consumableId })
+      .update(dataUpdate)
+  } else {
+    const dataInsert = { ...dataUpdate, siteId, consumableId }
+    await knex('InventoryConsumptionRate').insert(dataInsert)
+  }
 
   const rates = {
-    daily: undefined,
-    weekly: undefined,
-    monthly: undefined,
-    quarterly: undefined,
-    yearly: undefined,
-    wholePeriod: undefined,
+    daily: dailyRate,
+    monthly: monthlyRate,
   }
 
   return rates
-}
-
-async function onInventoryCountChanged(
-  { siteId, consumableId },
-  { messageContext }
-) {
-  const context = messageContext.bindActionCreators({
-    inventoryStockout,
-    inventoryStockoutEscalated,
-  })
-  const { daysLeft } = inventoryConfig
-
-  const items = await knex('InventoryItem')
-    .where({ siteId, consumableId })
-    .select('id', 'lotNumber', 'expiresOn', 'quantityOnHand')
-
-  return Promise.resolve()
 }
 
 module.exports = {
@@ -1069,5 +1077,4 @@ module.exports = {
   removeInventory,
   transferInventory,
   receiveInventory,
-  onInventoryCountChanged,
 }

@@ -2,6 +2,12 @@ const { subDays } = require('date-fns')
 const _ = require('lodash')
 const { factGenerateResultCountsForDevice } = require('./actions')
 const { deviceOffline, deviceOnline } = require('../device/actions')
+const {
+  inventoryStockout,
+  inventoryStockoutEscalated,
+  inventoryStockExpiring,
+  inventoryStockExpiringEscalated,
+} = require('../inventory/actions')
 
 function onFactGenerateDeviceOffline(action, { messageContext }) {
   const context = messageContext.bindActionCreators({ deviceOffline })
@@ -184,10 +190,106 @@ function onFactGenerateResultCountsForDevice(
   })
 }
 
+async function auditInventoryStock(site, dueDays, dispatch) {
+  const {
+    siteId,
+    consumableId,
+    maxQuantityPerAssay,
+    totalInStock,
+    dailyRate,
+  } = site
+
+  if (
+    dailyRate && // no sense to project if rate is unknown
+    dailyRate > 0 && // or is 0
+    maxQuantityPerAssay > 0 // just in case - check this to not be 0
+  ) {
+    const days = totalInStock / (maxQuantityPerAssay * dailyRate)
+    if (days < dueDays) {
+      await dispatch(siteId, consumableId, days)
+    }
+  }
+}
+
+// ----------------------------------------------
+// This function is triggered by scheduler, and checks stock for all sites
+// ----------------------------------------------
+function onFactCheckInventoryStock(action, { messageContext }) {
+  const context = messageContext.bindActionCreators({
+    inventoryStockout,
+    inventoryStockoutEscalated,
+    inventoryStockExpiring,
+    inventoryStockExpiringEscalated,
+  })
+  // we do not write db here - so use 'run'
+  // (MQ only writes to db)
+  return context.run(async knex => {
+    const now = new Date()
+
+    // get list of inventory details grouped by site/consumable
+    const sites = await knex('InventoryItem as ii')
+      .innerJoin('Site as s', 'ii.siteId', 's.id')
+      .innerJoin('Consumable as c', 'ii.consumableId', 'c.id')
+      .innerJoin('ConsumableAssay as ca', 'c.id', 'ca.consumableId')
+      .leftOuterJoin('InventoryConsumptionRate as icr', () => {
+        this.on('ii.siteId', 'icr.siteId').on(
+          'ii.consumableId',
+          'icr.consumableId'
+        )
+      })
+      .where('ii.expiresOn', '>', now) // take only unexpired
+      .groupBy('ii.siteId', 'ii.consumableId')
+      .select(
+        'ii.siteId',
+        'ii.consumableId',
+        // take max value of 'consumables per assay' for projection
+        'max(ca.quantity) as maxQuantityPerAssay',
+        // how many items are on hand
+        'sum(ii.quantityOnHand) as totalInStock',
+        // consumption rates
+        'icr.dailyRate',
+        'icr.monthlyRate'
+      )
+
+    const { inventoryConfig: { daysDue } } = require('../config')
+
+    // loop all sites and for each check if there are enough inventory items in stock
+    await Promise.all(
+      _.map(sites, async site => {
+        // ----------------
+        // for each site/consumable - project for how long stock is okay
+        // ----------------
+        await auditInventoryStock(
+          site,
+          daysDue.stockout,
+          context.inventoryStockout
+        )
+        await auditInventoryStock(
+          site,
+          daysDue.stockoutEscalated,
+          context.inventoryStockoutEscalated
+        )
+        await auditInventoryStock(
+          site,
+          daysDue.expiring,
+          context.inventoryStockExpiring
+        )
+        await auditInventoryStock(
+          site,
+          daysDue.expiringEscalated,
+          context.inventoryStockExpiringEscalated
+        )
+      })
+    )
+    // all set
+  })
+}
+
 module.exports = {
   onFactGenerateDeviceOffline,
   onFactGenerateResultCounts,
   onFactGenerateResultCountsForDevice,
+  onFactCheckInventoryStock,
   onDeviceSeen,
   onDeviceOffline,
   onDeviceOnline,

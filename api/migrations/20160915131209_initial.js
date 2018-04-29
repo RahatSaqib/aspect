@@ -947,6 +947,26 @@ async function up(knex) {
     inventoryItem.charset('utf8')
   })
 
+  await knex.schema.createTable('InventoryConsumptionRate', x => {
+    x.increments('id')
+    x
+      .integer('consumableId')
+      .unsigned()
+      .notNullable()
+      .references('id')
+      .inTable('Consumable')
+    x
+      .integer('siteId')
+      .unsigned()
+      .notNullable()
+      .references('id')
+      .inTable('Site')
+    x.dateTime('updatedOn').notNullable()
+    x.float('dailyRate')
+    x.float('monthlyRate')
+    x.unique(['siteId', 'consumableId'], 'inventoryConsumptionRate_unique')
+  })
+
   await knex.schema.createTable('InventoryLog', inventoryLog => {
     inventoryLog.increments('id')
     inventoryLog
@@ -1485,6 +1505,36 @@ async function up(knex) {
       .notNullable()
       .defaultTo(0)
     x.dateTime('updatedOn').notNullable()
+  })
+
+  // facts-table for inventory counts and flags by site/consumable
+  await knex.schema.createTable('FactInventoryFlag', x => {
+    x.increments('id')
+    x
+      .integer('siteId')
+      .unsigned()
+      .references('id')
+      .inTable('Site')
+      .notNullable()
+      .onDelete('CASCADE')
+    x
+      .integer('consumableId')
+      .unsigned()
+      .notNullable()
+      .references('id')
+      .inTable('Consumable')
+    x
+      .boolean('stockout')
+      .notNullable()
+      .defaultTo(0)
+    x.integer('stockoutIn').unsigned()
+    x
+      .boolean('stockoutExpiring')
+      .notNullable()
+      .defaultTo(0)
+    x.integer('stockoutExpiringIn').unsigned()
+    x.dateTime('updatedOn').notNullable()
+    x.unique(['siteId', 'consumableId'], 'factinventoryflag_unique')
   })
 
   await knex.schema.createTable('Tag', tag => {

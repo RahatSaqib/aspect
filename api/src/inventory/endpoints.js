@@ -14,7 +14,8 @@ const {
   removeInventory,
   transferInventory,
   receiveInventory,
-  onInventoryCountChanged,
+
+  refreshConsumptionRates,
 } = require('./service')
 
 const inventoryFilters = {
@@ -259,7 +260,7 @@ const routes = [
 const subscriptions = [
   {
     actions: {
-      INVENTORY_COUNT_CHANGED: onInventoryCountChanged,
+      INVENTORY_RECALCULATE_CONSUMPTION_RATES: refreshConsumptionRates,
     },
   },
 ]
