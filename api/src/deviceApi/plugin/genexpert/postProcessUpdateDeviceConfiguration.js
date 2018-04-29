@@ -20,6 +20,8 @@ async function postProcessUpdateDeviceConfiguration({
         lastPingOn,
         state,
         lga,
+        latitude,
+        longitude,
       },
     } = payload
     const deviceDetails = {
@@ -37,7 +39,7 @@ async function postProcessUpdateDeviceConfiguration({
     if (deviceSerialNumber) {
       deviceDetails.serial = deviceSerialNumber
     }
-    if (state) {
+    if (state || !_.isUndefined(latitude) || !_.isUndefined(latitude)) {
       const currentDeviceGeography = await knex('Device as d')
         .leftJoin('Site as s', 'd.siteId', 's.id')
         .innerJoin('Geography as g', function() {
@@ -52,8 +54,11 @@ async function postProcessUpdateDeviceConfiguration({
           'st.name as stateName',
           'g.lgaId',
           'l.name as lgaName',
-          'd.siteId'
+          'd.siteId',
+          's.latitude',
+          's.longitude'
         )
+      const siteUpdateDetails = {}
       if (!_.isEmpty(currentDeviceGeography)) {
         let newStateId = currentDeviceGeography.stateId
         let newLgaId = currentDeviceGeography.lgaId
@@ -89,11 +94,26 @@ async function postProcessUpdateDeviceConfiguration({
             })
             .first('g.id')
           if (currentDeviceGeography.siteId) {
-            await knex('Site')
-              .where({ id: currentDeviceGeography.siteId })
-              .update({ geographyId: newGeographyId })
+            siteUpdateDetails.geographyId = newGeographyId
           }
           deviceDetails.geographyId = newGeographyId
+        }
+        if (
+          !_.isUndefined(latitude) &&
+          currentDeviceGeography.latitude !== latitude
+        ) {
+          siteUpdateDetails.latitude = latitude
+        }
+        if (
+          !_.isUndefined(longitude) &&
+          currentDeviceGeography.longitude !== longitude
+        ) {
+          siteUpdateDetails.longitude = longitude
+        }
+        if (!_.isEmpty(siteUpdateDetails)) {
+          await knex('Site')
+            .where({ id: currentDeviceGeography.siteId })
+            .update(siteUpdateDetails)
         }
       }
     }

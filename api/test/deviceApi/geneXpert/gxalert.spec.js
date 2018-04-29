@@ -2541,6 +2541,74 @@ describe('Device API routes for GxAlert Device', () => {
             )
           }))
       })
+
+      describe('and GPS coordinates are present in the payload', () => {
+        it("should update the site's GPS coordinates", () =>
+          runTest(async knex => {
+            const deviceBeforeUpdate = await getCurrentGeneXpertDevice()
+            const siteBeforeUpdate = await knex('Site')
+              .where('id', deviceBeforeUpdate.siteId)
+              .first()
+
+            assert.isNull(siteBeforeUpdate.latitude)
+            assert.isNull(siteBeforeUpdate.longitude)
+
+            const latitude = 96.269997
+            const longitude = 17.150999
+
+            await postToDeviceApi(
+              _.merge(standardDevicePayload, {
+                payload: {
+                  configuration: {
+                    data: {
+                      latitude,
+                      longitude,
+                    },
+                  },
+                },
+              })
+            )
+
+            const siteAfterUpdate = await knex('Site')
+              .where('id', deviceBeforeUpdate.siteId)
+              .first()
+
+            expect(siteAfterUpdate).to.containSubset({
+              latitude,
+              longitude,
+            })
+
+            await postToDeviceApi(_.merge(standardDevicePayload))
+
+            const siteAfterSecondUpdate = await knex('Site')
+              .where('id', deviceBeforeUpdate.siteId)
+              .first()
+
+            expect(siteAfterSecondUpdate).to.containSubset({
+              latitude,
+              longitude,
+            })
+
+            await postToDeviceApi(
+              _.merge(standardDevicePayload, {
+                payload: {
+                  configuration: {
+                    data: {
+                      latitude: null,
+                      longitude: null,
+                    },
+                  },
+                },
+              })
+            )
+
+            const siteAfterThirdUpdate = await knex('Site')
+              .where('id', deviceBeforeUpdate.siteId)
+              .first()
+            assert.isNull(siteAfterThirdUpdate.latitude)
+            assert.isNull(siteAfterThirdUpdate.longitude)
+          }))
+      })
     })
   })
 
