@@ -175,6 +175,9 @@ async function createNewDevice(
     deviceStatusId: knex('DeviceStatus')
       .where({ token: status })
       .select('id'),
+    deviceMaintenanceStatusId: knex('DeviceMaintenanceStatus')
+      .where({ token: 'online' })
+      .select('id'),
     name,
     serial,
     shortName,

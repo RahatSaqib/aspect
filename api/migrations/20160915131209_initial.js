@@ -513,6 +513,14 @@ async function up(knex) {
       .index()
       .references('id')
       .inTable('DeviceStatus')
+    device
+      .integer('deviceMaintenanceStatusId')
+      .unsigned()
+      .notNullable()
+      .index()
+      .references('id')
+      .inTable('DeviceMaintenanceStatus')
+    device.dateTime('deviceMaintenanceResolveOn')
 
     // TODO Add device id1 - id4 or equivalent
     // used to uniquely identify provisioned devices, still to be discussed

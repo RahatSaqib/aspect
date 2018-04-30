@@ -266,12 +266,17 @@ class GxAlertApiTestContext {
         .from('DeviceStatus')
         .where('token', 'approved')
         .first()
+      const onlineMaintenanceStatus = await knex
+        .from('DeviceMaintenanceStatus')
+        .where('token', 'online')
+        .first()
       const now = new Date()
       const [deviceId] = await knex('Device').insert({
         partnerId: partner.id,
         geographyId: geography.id,
         deviceTypeId: gxAlertDeviceType.id,
         deviceStatusId: approvedDeviceStatus.id,
+        deviceMaintenanceStatusId: onlineMaintenanceStatus.id,
         name: this.basicDevicePayload.name,
         shortName: this.basicDevicePayload.name,
         configurationData: '{}',
