@@ -1529,10 +1529,10 @@ async function up(knex) {
       .defaultTo(0)
     x.integer('stockoutIn').unsigned()
     x
-      .boolean('stockoutExpiring')
+      .boolean('stockExpiring')
       .notNullable()
       .defaultTo(0)
-    x.integer('stockoutExpiringIn').unsigned()
+    x.integer('stockExpiringIn').unsigned()
     x.dateTime('updatedOn').notNullable()
     x.unique(['siteId', 'consumableId'], 'factinventoryflag_unique')
   })
