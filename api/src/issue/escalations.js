@@ -34,7 +34,25 @@ function onEscalateIssues() {
 }
 
 async function findOpenIssuesToCheckForEscalation(knex, issueId) {
+  const resolvedIssueEventStatus = await knex('IssueEventStatus')
+    .where('externalId', 'Resolved')
+    .first()
+  const triggeredIssueEventStatus = await knex('IssueEventStatus')
+    .where('externalId', 'Triggered')
+    .first()
   return knex('Issue as i')
+    .leftJoin('IssueEvent resolvedIssueEvent', function() {
+      this.on('i.id', 'resolvedIssueEvent.issueId').on(
+        'resolvedIssueEvent.issueEventStatusId',
+        knex.raw(resolvedIssueEventStatus.id)
+      )
+    })
+    .join('IssueEvent triggeredIssueEvent', function() {
+      this.on('i.id', 'triggeredIssueEvent.issueId').on(
+        'triggeredIssueEvent.issueEventStatusId',
+        knex.raw(triggeredIssueEventStatus.id)
+      )
+    })
     .join('IssueEscalationTrigger as iet', function() {
       this.on('i.issueTypeId', 'iet.id')
         .on('i.partnerId', 'iet.partnerId')
@@ -47,8 +65,17 @@ async function findOpenIssuesToCheckForEscalation(knex, issueId) {
         this.andWhere('i.id', issueId)
       }
     })
+    .andWhere(function() {
+      this.whereNull('resolvedIssueEvent.id')
+    })
+    .groupBy('i.id', 'iet.id')
     .orderBy(['i.createdOn', 'iet.escalateToLevel'], 'asc')
-    .select('i.*', 'iet.escalateToLevel', 'iet.escalationConditions')
+    .select(
+      'i.*',
+      'iet.escalateToLevel',
+      'iet.escalationConditions',
+      knex.raw('max(triggeredIssueEvent.createdOn) as triggeredOn')
+    )
     .map(issueEscalationTrigger =>
       Object.assign({}, issueEscalationTrigger, {
         escalationConditions: JSON.parse(
@@ -129,6 +156,7 @@ async function evaluateSql(knex, issue, sql) {
   const parameterPlaceholders = _.mapValues(issueValues, () => '?')
   /*
   issueValues Schema:
+  -------------------
    id int NOT NULL
    issueTypeId int NOT NULL
    issueStatusId int NOT NULL
@@ -141,6 +169,7 @@ async function evaluateSql(knex, issue, sql) {
    createdOn datetime NOT NULL
    updatedOn datetime NOT NULL
    escalateToLevel int NOT NULL
+   triggeredOn datetime NOT NULL
   */
   const parameterisedSqlQuery = processUsingHandlebarsSyntax(
     sql,
