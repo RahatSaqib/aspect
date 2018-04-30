@@ -86,7 +86,7 @@ function onEmailMessageReadyForSending({ emailMessageId }, { messageContext }) {
 async function doSendEmailMessage(context, knex, emailMessageId) {
   // get message and cell phone
   const d = await knex('EmailMessage as m')
-    .leftJoin('Person as p', 'm.PersonId', 'p.id')
+    .leftJoin('Person as p', 'm.personId', 'p.id')
     .where({ 'm.id': emailMessageId })
     .first('m.subject', 'm.body', 'm.htmlBody', 'p.email', 'p.email2')
 
@@ -102,14 +102,10 @@ async function doSendEmailMessage(context, knex, emailMessageId) {
   let messageStatusId = messageStatusIdFor.Sent
 
   // send email
-  await sendEmail(email, subject, htmlBody, body)
-    // .then(response => {
-    //   console.log('Email has been sent out', response)
-    // })
-    .catch(() => {
-      // set status to 'Error'
-      messageStatusId = messageStatusIdFor.Error
-    })
+  await sendEmail(email, subject, htmlBody, body).catch(() => {
+    // set status to 'Error'
+    messageStatusId = messageStatusIdFor.Error
+  })
 
   // store status in db
   await knex('EmailMessage')

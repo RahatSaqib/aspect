@@ -97,15 +97,10 @@ async function doSendSmsMessage(context, knex, smsMessageId) {
   let messageStatusId = messageStatusIdFor.Sent
 
   // send sms
-  await sendSms(cell, message)
-    // .then(response => {
-    //   // temporaly log to console
-    //   console.log('Sms has been sent out', response)
-    // })
-    .catch(() => {
-      // set status to 'Error'
-      messageStatusId = messageStatusIdFor.Error
-    })
+  await sendSms(cell, message).catch(() => {
+    // set status to 'Error'
+    messageStatusId = messageStatusIdFor.Error
+  })
 
   // store status in db
   await knex('SmsMessage')
