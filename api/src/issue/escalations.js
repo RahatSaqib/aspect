@@ -32,9 +32,14 @@ function onEscalateIssues() {
           issueEscalationTrigger
         )
         if (shouldEscalate) {
-          // TODO: escalate issue to escalateToLevel
-          console.log(
-            `IT'S TIME TO ESCALATE!!! ${JSON.stringify(issueEscalationTrigger)}`
+          await knex('Issue')
+            .where('id', issueEscalationTrigger.id)
+            .update({ level: issueEscalationTrigger.escalateToLevel })
+          context.dispatch(
+            issueEscalated(
+              issueEscalationTrigger.id,
+              issueEscalationTrigger.escalateToLevel
+            )
           )
         }
       })
