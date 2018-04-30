@@ -1,5 +1,14 @@
 const Promise = require('bluebird')
 const _ = require('lodash')
+const {
+  addSeconds,
+  addMinutes,
+  addHours,
+  addDays,
+  addWeeks,
+  addMonths,
+  addYears,
+} = require('date-fns')
 const { issueEscalated } = require('./actions')
 const {
   processUsingHandlebarsSyntax,
@@ -103,7 +112,7 @@ async function escalationConditionsMet(knex, issue, escalationConditions) {
   const evaluationMethods = {
     'inline-sql': evaluateInlineSql,
     'sql-script': evaluateSqlScript,
-    'issue-age': evaluateIssueAge,
+    'issue-age': triggerEventOlderThan,
     'child-condition': escalationConditionsMet,
     'child-conditions': escalationConditionsMet,
   }
@@ -210,10 +219,39 @@ function isResultTruthy(result, parameterisedSqlQuery, parameters) {
   return !!result
 }
 
-async function evaluateIssueAge(knex, issue, issueAge) {
-  // TODO: Implement issue-age
-  console.log('evaluateIssueAge', issue, issueAge)
-  return Promise.resolve(true)
+async function triggerEventOlderThan(knex, issue, issueAge) {
+  const issueAgeSpec = _.assign(
+    {
+      seconds: 0,
+      minutes: 0,
+      hours: 0,
+      days: 0,
+      weeks: 0,
+      months: 0,
+      years: 0,
+    },
+    issueAge
+  )
+  const issueTriggeredOnPlusAge = addYears(
+    addMonths(
+      addWeeks(
+        addDays(
+          addHours(
+            addMinutes(
+              addSeconds(issueAge.triggeredOn, issueAgeSpec.seconds),
+              issueAgeSpec.minutes
+            ),
+            issueAgeSpec.hours
+          ),
+          issueAgeSpec.days
+        ),
+        issueAgeSpec.weeks
+      ),
+      issueAgeSpec.months
+    ),
+    issueAgeSpec.years
+  )
+  return Promise.resolve(issueTriggeredOnPlusAge < new Date())
 }
 
 module.exports = {
