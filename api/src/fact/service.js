@@ -94,103 +94,183 @@ function onResultLogged({ resultId }, { messageContext }) {
     factGenerateResultCountsForDevice,
   })
   return context.run(async knex => {
-    const { deviceId, assayId, resultCategory1 } = await knex('Result')
+    const { deviceId, assayId, resultCategory1, resultCategory2 } = await knex(
+      'Result'
+    )
       .where({ id: resultId })
-      .first('deviceId', 'assayId', 'resultCategory1')
+      .first('deviceId', 'assayId', 'resultCategory1', 'resultCategory2')
     context.factGenerateResultCountsForDevice(
       deviceId,
       assayId,
-      resultCategory1
+      resultCategory1,
+      resultCategory2
     )
   })
 }
 
 function onFactGenerateResultCountsForDevice(
-  { deviceId, assayId, resultCategory1 },
+  { deviceId, assayId = -1, resultCategory1 = -1, resultCategory2 = -1 },
   { messageContext }
 ) {
-  const daysToCalculate = [1, 7, 30, 60, 90, 365, null]
+  const daysToCalculate = [1, 7, 30, 60, 90, 365, 9999]
 
-  const devId = deviceId
   return messageContext.transact(async knex => {
     for (const days of daysToCalculate) {
       /* eslint-disable no-await-in-loop */
-      // empty facts table for that day so we don't have dupes:
-      // if assay or result category was passed in, delete only the matching records
-      await knex('FactResultCountDevice')
-        .where('deviceId', devId)
-        .andWhere({ days })
-        .andWhereRaw(
-          '(assayId is null or assayId = :assayId or :assayId = -1)',
-          {
-            assayId: assayId || -1,
-          }
-        )
-        .andWhereRaw(
-          '(resultCategory1 is null or resultCategory1 = :rc or :rc = -1)',
-          {
-            rc: resultCategory1 || -1,
-          }
-        )
-        .delete()
-
       const now = new Date()
 
       // query for selecting data for the device
       const resultCountQuery = knex('Result as r').whereRaw(
         'r.deviceId = :deviceId and r.endedOn > :endedOn',
         {
-          deviceId: devId,
-          endedOn: subDays(now, days || 9999),
+          deviceId,
+          endedOn: subDays(now, days),
         }
       )
 
       // calculate by device
-      const resultCountsByDevice = await resultCountQuery
+      await knex('FactResultsDevice')
+        .where({ deviceId })
+        .andWhere({ days })
+        .delete()
+
+      const countByDevice = await resultCountQuery
         .clone()
-        .groupBy('r.deviceId')
-        .select(
-          knex.raw(
-            `r.deviceId, null as assayId, null as resultCategory1, :days as days, count(r.id) as resultCount, :now as calculatedOn`,
-            { days, now }
-          )
-        )
-      await knex.from('FactResultCountDevice').insert(resultCountsByDevice)
+        .count('r.id as resultCount')
+        .first()
+
+      if (countByDevice) {
+        await knex('FactResultsDevice').insert({
+          deviceId,
+          days,
+          resultCount: countByDevice.resultCount,
+          calculatedOn: now,
+        })
+      }
 
       // ...grouped by assay
-      const resultCountsByAssay = await resultCountQuery
+      await knex('FactResultsDeviceByAssay')
+        .where({ deviceId })
+        .andWhere({ days })
+        .andWhereRaw('(assayId = :assayId or :assayId = -1)', {
+          assayId,
+        })
+        .delete()
+
+      const countsByAssay = await resultCountQuery
         .clone()
         .andWhereRaw('(assayId = :assayId or :assayId = -1)', {
-          assayId: assayId || -1,
+          assayId,
         })
         .groupBy('r.assayid')
-        .select(
-          knex.raw(
-            `r.deviceId, r.assayId as assayId, null as resultCategory1, :days as days, count(r.id) as resultCount, :now as calculatedOn`,
-            { days, now }
-          )
-        )
-      await knex.from('FactResultCountDevice').insert(resultCountsByAssay)
+        .count('r.id as resultCount')
+        .select('r.assayId')
+
+      for (const count of countsByAssay) {
+        await knex('FactResultsDeviceByAssay').insert({
+          deviceId,
+          assayId: count.assayId,
+          days,
+          resultCount: count.resultCount,
+          calculatedOn: now,
+        })
+      }
 
       // ...grouped by assay, resultCategory
-      const resultCountsByAssayAndResultCategory = await resultCountQuery
+      await knex('FactResultsDeviceByCategory')
+        .where({ deviceId })
+        .andWhere({ days })
+        .andWhereRaw('(assayId = :assayId or :assayId = -1)', {
+          assayId,
+        })
+        .andWhereRaw(
+          '(resultCategory1 = :resultCategory1 or :resultCategory1 = -1)',
+          {
+            resultCategory1,
+          }
+        )
+        .delete()
+
+      const countsByCategory = await resultCountQuery
         .clone()
         .andWhereRaw('(assayId = :assayId or :assayId = -1)', {
-          assayId: assayId || -1,
+          assayId,
         })
-        .andWhereRaw('(resultCategory1 = :rc or :rc = -1)', {
-          rc: resultCategory1 || -1,
-        })
-        .groupBy('r.assayid', 'r.resultCategory1')
-        .select(
-          knex.raw(
-            `r.deviceId, r.assayId as assayId, r.resultCategory1 as resultCategory1, :days as days, count(r.id) as resultCount, :now as calculatedOn`,
-            { days, now }
-          )
+        .andWhereRaw(
+          '(resultCategory1 = :resultCategory1 or :resultCategory1 = -1)',
+          {
+            resultCategory1,
+          }
         )
-      await knex
-        .from('FactResultCountDevice')
-        .insert(resultCountsByAssayAndResultCategory)
+        .groupBy('r.assayId', 'r.resultCategory1')
+        .count('r.id as resultCount')
+        .select('r.assayId', 'r.resultCategory1')
+
+      for (const count of countsByCategory) {
+        await knex('FactResultsDeviceByCategory').insert({
+          deviceId,
+          assayId: count.assayId,
+          resultCategory1: count.resultCategory1,
+          days,
+          resultCount: count.resultCount,
+          calculatedOn: now,
+        })
+      }
+
+      // ...grouped by assay, resultCategory 1 & 2
+      await knex('FactResultsDeviceByBothCategories')
+        .where({ deviceId })
+        .andWhere({ days })
+        .andWhereRaw('(assayId = :assayId or :assayId = -1)', {
+          assayId,
+        })
+        .andWhereRaw(
+          '(resultCategory1 = :resultCategory1 or :resultCategory1 = -1)',
+          {
+            resultCategory1,
+          }
+        )
+        .andWhereRaw(
+          '(resultCategory2 = :resultCategory2 or :resultCategory2 = -1)',
+          {
+            resultCategory2,
+          }
+        )
+        .delete()
+
+      const countsByCategories = await resultCountQuery
+        .clone()
+        .andWhereRaw('(assayId = :assayId or :assayId = -1)', {
+          assayId,
+        })
+        .andWhereRaw(
+          '(resultCategory1 = :resultCategory1 or :resultCategory1 = -1)',
+          {
+            resultCategory1,
+          }
+        )
+        .andWhereRaw(
+          '(resultCategory2 = :resultCategory2 or :resultCategory2 = -1)',
+          {
+            resultCategory2,
+          }
+        )
+        .whereNotNull('resultCategory2')
+        .groupBy('r.assayId', 'r.resultCategory1', 'r.resultCategory2')
+        .count('r.id as resultCount')
+        .select('r.assayId', 'r.resultCategory1', 'r.resultCategory2')
+
+      for (const count of countsByCategories) {
+        await knex('FactResultsDeviceByBothCategories').insert({
+          deviceId,
+          assayId: count.assayId,
+          resultCategory1: count.resultCategory1,
+          resultCategory2: count.resultCategory2,
+          days,
+          resultCount: count.resultCount,
+          calculatedOn: now,
+        })
+      }
       /* eslint-enable no-await-in-loop */
     }
   })

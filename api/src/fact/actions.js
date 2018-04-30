@@ -22,7 +22,12 @@ function factGenerateResultCounts() {
  * Requests facts to be regenerated. Will be called on
  * schedule to run fact ETL
  */
-function factGenerateResultCountsForDevice(deviceId, assayId, resultCategory1) {
+function factGenerateResultCountsForDevice(
+  deviceId,
+  assayId,
+  resultCategory1,
+  resultCategory2
+) {
   if (deviceId == null) {
     throw new Error(
       'Must specify deviceId for factGenerateResultCountsForDevice'
@@ -33,6 +38,7 @@ function factGenerateResultCountsForDevice(deviceId, assayId, resultCategory1) {
     deviceId,
     assayId,
     resultCategory1,
+    resultCategory2,
   }
 }
 
