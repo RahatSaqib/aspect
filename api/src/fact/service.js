@@ -4,9 +4,7 @@ const { factGenerateResultCountsForDevice } = require('./actions')
 const { deviceOffline, deviceOnline } = require('../device/actions')
 const {
   inventoryStockout,
-  inventoryStockoutEscalated,
   inventoryStockExpiring,
-  inventoryStockExpiringEscalated,
 } = require('../inventory/actions')
 
 function onFactGenerateDeviceOffline(action, { messageContext }) {
@@ -217,9 +215,7 @@ async function auditInventoryStock(site, dueDays, dispatch) {
 function onFactCheckInventoryStock(action, { messageContext }) {
   const context = messageContext.bindActionCreators({
     inventoryStockout,
-    inventoryStockoutEscalated,
     inventoryStockExpiring,
-    inventoryStockExpiringEscalated,
   })
   // we do not write db here - so use 'run'
   // (MQ only writes to db)
@@ -266,18 +262,8 @@ function onFactCheckInventoryStock(action, { messageContext }) {
         )
         await auditInventoryStock(
           site,
-          daysDue.stockoutEscalated,
-          context.inventoryStockoutEscalated
-        )
-        await auditInventoryStock(
-          site,
           daysDue.expiring,
           context.inventoryStockExpiring
-        )
-        await auditInventoryStock(
-          site,
-          daysDue.expiringEscalated,
-          context.inventoryStockExpiringEscalated
         )
       })
     )

@@ -16,8 +16,8 @@ const {
 const { findConsumableReason } = require('../consumable/consumableService')
 const { getUser } = require('../auth/service')
 const { getSite } = require('../site/service')
-// const { inventoryConfig } = require('../config')
-// const { inventoryStockout, inventoryStockoutEscalated } = require('./actions')
+const { emailMessageCreated } = require('../email/actions')
+const { smsMessageCreated } = require('../sms/actions')
 
 const INVENTORY_ITEM_SELECT_LIST_FIELDS = [
   'ii.id',
@@ -1066,6 +1066,87 @@ async function refreshConsumptionRates(siteId, consumableId) {
   return rates
 }
 
+async function handleInventoryStock(action, messageContext) {
+  const context = messageContext.bindActionCreators({
+    emailMessageCreated,
+    smsMessageCreated,
+  })
+  const { siteId, consumableId, daysDue } = action
+
+  const now = new Date()
+  const messageStatusId = await knex('MessageStatus')
+    .where('externalId', 'Initial')
+    .first('id')
+  const emailTemplateId = 1
+  const smsTemplateId = 1
+
+  // base entry for both EmailMessage and SmsMessage tables
+  const base = {
+    messageStatusId,
+    siteId,
+    createdOn: now,
+    updatedOn: now,
+  }
+
+  // all persons from this site
+  const persons = await knex('Person as p')
+    .where('', '')
+    .select('p.id')
+
+  return context.transact(async knex => {
+    const emailMsgIds = []
+    const smsMsgIds = []
+    await Promise.all(
+      // for each person create email/sms message and keep messageId's in corresponding array
+      _.map(persons, async person => {
+        const personId = person.id
+
+        // add entry in EmailMessage
+        const emailMessageId = await knex('EmailMessage').insert(
+          {
+            ...base,
+            personId,
+            emailTemplateId,
+          },
+          'id'
+        )
+        emailMsgIds.push(emailMessageId)
+
+        // add entry in SmsMessage
+        const smsMessageId = await knex('SmsMessage').insert(
+          {
+            ...base,
+            personId,
+            smsTemplateId,
+          },
+          'id'
+        )
+        smsMsgIds.push(smsMessageId)
+      })
+    ).then(() => {
+      // let MQ know messages have been created
+
+      // emails
+      _.forEach(emailMsgIds, messageId => {
+        context.emailMessageCreated(messageId)
+      })
+
+      // sms's
+      _.forEach(smsMsgIds, messageId => {
+        context.smsMessageCreated(messageId)
+      })
+    })
+  })
+}
+
+async function inventoryStock(action, { messageContext }) {
+  return handleInventoryStock(action, messageContext)
+}
+
+async function inventoryStockExpiring(action, { messageContext }) {
+  return handleInventoryStock(action, messageContext)
+}
+
 module.exports = {
   getInventoryItems,
   listInventoryItems,
@@ -1077,4 +1158,7 @@ module.exports = {
   removeInventory,
   transferInventory,
   receiveInventory,
+
+  inventoryStock,
+  inventoryStockExpiring,
 }
