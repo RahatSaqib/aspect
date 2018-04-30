@@ -14,6 +14,7 @@ const {
   listWorkflowStatusLog,
   exportResults,
   showDeviceLogs,
+  onResultLogged,
 } = require('./service')
 const {
   validateAllGeographyFilterParams,
@@ -230,4 +231,12 @@ const routes = [
   },
 ]
 
-module.exports = { routes }
+const subscriptions = [
+  {
+    actions: {
+      RESULT_LOGGED: onResultLogged,
+    },
+  },
+]
+
+module.exports = { routes, subscriptions }

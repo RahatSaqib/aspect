@@ -1,6 +1,7 @@
 const Boom = require('boom')
 const _ = require('lodash')
 const dateFormat = require('date-fns/format')
+const subDays = require('date-fns/sub_days')
 
 const {
   knex,
@@ -17,7 +18,19 @@ const {
   generateCsvFile,
 } = require('../shared/io')
 const { oneDirectionalMd5Hash } = require('../shared/encryption')
+const { resultModuleTemperatureError } = require('../result/actions')
 
+const MODULE_TEMPERATURE_ERROR_CODES = [
+  '1001',
+  '1004',
+  '1017',
+  '2014',
+  '2022',
+  '4009',
+  '4010',
+]
+const moduleTemperatureMaxErrors = 4
+const moduleTemperatureDays = 30
 const SELECT_LIST_FIELDS = [
   'r.id',
   'r.externalId',
@@ -102,7 +115,6 @@ const SORT_FIELDS = [
   'resultCategory2Name',
   'patientId',
 ]
-
 async function getListResults(query, auth) {
   const selectFields = _.clone(SELECT_LIST_FIELDS)
   const sortableFields = _.clone(SORT_FIELDS)
@@ -623,9 +635,44 @@ function createUniqueIdForResult(
     return null
   }
   const hashedSampleId = oneDirectionalMd5Hash(sampleId)
-  return `${instrumentSerial}_${dateFormat(testStartedOn, 'mmss').substr(
+  const uniqueId = `${instrumentSerial}_${dateFormat(
+    testStartedOn,
+    'mmss'
+  ).substr(1)}${dateFormat(testEndedOn, 'mmss').substr(
     1
-  )}${dateFormat(testEndedOn, 'mmss').substr(1)}_${hashedSampleId.substr(0, 8)}`
+  )}_${hashedSampleId.substr(0, 8)}`
+  return uniqueId
+}
+
+// check for error codes when a result is logged
+async function onResultLogged({ resultId }, { messageContext }) {
+  const context = messageContext.bindActionCreators({
+    resultModuleTemperatureError,
+  })
+  await context.run(async knex => {
+    const [result] = await knex('Result as r').where('r.id', resultId)
+    if (result.errorCode) {
+      const { deviceId } = result
+      const deviceErrorQuery = knex('Result as r')
+        .innerJoin('ResultCategory as rc', 'r.resultCategory1', 'rc.id')
+        .where('rc.externalId', 'Error')
+        .where('r.deviceId', deviceId)
+      if (MODULE_TEMPERATURE_ERROR_CODES.includes(result.errorCode)) {
+        const lastNday = subDays(new Date(), moduleTemperatureDays)
+        const errorCounts = await deviceErrorQuery
+          .clone()
+          .where('r.endedOn', '>=', lastNday)
+          .whereIn('r.errorCode', MODULE_TEMPERATURE_ERROR_CODES)
+          .count('r.id as errorCount')
+          .groupBy('r.moduleSerial')
+        _.forEach(errorCounts, count => {
+          if (count.errorCount > moduleTemperatureMaxErrors) {
+            context.resultModuleTemperatureError(deviceId)
+          }
+        })
+      } // else if (result.errorCode in LU_MODULE_POWER_ERROR_CODES) { }
+    }
+  })
 }
 
 module.exports = {
@@ -639,4 +686,5 @@ module.exports = {
   exportResults,
   showDeviceLogs,
   createUniqueIdForResult,
+  onResultLogged,
 }

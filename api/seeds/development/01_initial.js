@@ -9,7 +9,7 @@ const geography = require('./fixtures/geography.json')
 const patients = require('./fixtures/patients.json')
 const dashboardWidget = require('./fixtures/dashboardWidget.json')
 const features = require('./fixtures/features.json')
-
+const { errorCodes } = require('./fixtures/errorCodes.js')
 const {
   addMilliseconds,
   addMinutes,
@@ -2531,7 +2531,9 @@ async function seed(knex) {
               senderOperator: 'Marsha',
               notes: 'This is a test... result',
               errorCode:
-                result.category1 === resultCategoryErrorId ? '1024' : null,
+                result.category1 === resultCategoryErrorId
+                  ? errorCodes[_.random(errorCodes.length)]
+                  : null,
               errorNotes:
                 result.category1 === resultCategoryErrorId
                   ? 'Exceeded cycle threshold'
@@ -2616,7 +2618,7 @@ async function seed(knex) {
                     notes: 'This is a test... result',
                     errorCode:
                       result.category1 === resultCategoryErrorId
-                        ? '1024'
+                        ? errorCodes[_.random(errorCodes.length)]
                         : null,
                     errorNotes:
                       result.category1 === resultCategoryErrorId
@@ -2764,7 +2766,9 @@ async function seed(knex) {
               senderOperator: 'Marsha',
               notes: 'This is an Ebola test result',
               errorCode:
-                result.category1 === resultCategoryErrorId ? '1024' : null,
+                result.category1 === resultCategoryErrorId
+                  ? errorCodes[_.random(errorCodes.length)]
+                  : null,
               errorNotes:
                 result.category1 === resultCategoryErrorId
                   ? 'Exceeded cycle threshold'
@@ -2923,7 +2927,9 @@ async function seed(knex) {
               senderOperator: 'Marsha',
               notes: 'This is an HIV test result',
               errorCode:
-                result.category1 === resultCategoryErrorId ? '1024' : null,
+                result.category1 === resultCategoryErrorId
+                  ? errorCodes[_.random(errorCodes.length)]
+                  : null,
               errorNotes:
                 result.category1 === resultCategoryErrorId
                   ? 'Exceeded cycle threshold'
@@ -3047,7 +3053,9 @@ async function seed(knex) {
               senderOperator: 'Gene Hackman',
               notes: 'This is an HCV test result',
               errorCode:
-                result.category1 === resultCategoryErrorId ? '1024' : null,
+                result.category1 === resultCategoryErrorId
+                  ? errorCodes[_.random(errorCodes.length)]
+                  : null,
               errorNotes:
                 result.category1 === resultCategoryErrorId
                   ? 'Exceeded cycle threshold'
@@ -3182,7 +3190,9 @@ async function seed(knex) {
               senderOperator: 'Aaron',
               notes: 'This is an HIV test result',
               errorCode:
-                result.category1 === resultCategoryErrorId ? '1024' : null,
+                result.category1 === resultCategoryErrorId
+                  ? errorCodes[_.random(errorCodes.length)]
+                  : null,
               errorNotes:
                 result.category1 === resultCategoryErrorId
                   ? 'Exceeded cycle threshold'
@@ -3317,7 +3327,9 @@ async function seed(knex) {
               senderOperator: 'Aaron',
               notes: 'This is an HCV test result',
               errorCode:
-                result.category1 === resultCategoryErrorId ? '1024' : null,
+                result.category1 === resultCategoryErrorId
+                  ? errorCodes[_.random(errorCodes.length)]
+                  : null,
               errorNotes:
                 result.category1 === resultCategoryErrorId
                   ? 'Exceeded cycle threshold'
@@ -3634,32 +3646,69 @@ async function seed(knex) {
   const messageSeverities = await rowsAsObject(knex, 'MessageSeverity')
 
   const [deviceOfflineAlertTemplateId] = await knex('AlertTemplate').insert(
-    /* eslint-disable no-template-curly-in-string */
     Object.assign(
       {
-        message: '${site.name} no contact for ${numberOfDays} days.',
+        message: '{{site.name}} no contact for {{numberOfDays}} days.',
       },
       auditFields
     )
   )
 
   const [deviceOfflineSmsTemplateId] = await knex('SmsTemplate').insert(
-    /* eslint-disable no-template-curly-in-string */
     Object.assign(
       {
-        message: '${site.name} no contact for ${numberOfDays} days.',
+        message: '{{site.name}} no contact for {{numberOfDays}} days.',
       },
       auditFields
     )
   )
 
   const [deviceOfflineEmailTemplateId] = await knex('EmailTemplate').insert(
-    /* eslint-disable no-template-curly-in-string */
     Object.assign(
       {
-        subject: '${site.name} Device Offline',
-        body: '${site.name} no contact for ${numberOfDays} days.',
-        htmlBody: '<em>${site.name}</em> no contact for ${numberOfDays} days.',
+        subject: '{{site.name}} Device Offline',
+        body: '{{site.name}} no contact for {{numberOfDays}} days.',
+        htmlBody:
+          '<em>{{site.name}}</em> no contact for {{numberOfDays}} days.',
+      },
+      auditFields
+    )
+  )
+  // Module temperature messages - TODO - Update templates with actual messages
+  const [moduleTemperatureErrorAlertTemplateId] = await knex(
+    'AlertTemplate'
+  ).insert(
+    Object.assign(
+      {
+        message:
+          '{{device.name}} had {{numberOfModuleTemperatureErrors}} in the last {{numberOfDays}} days.',
+      },
+      auditFields
+    )
+  )
+
+  const [moduleTemperatureErrorSmsTemplateId] = await knex(
+    'SmsTemplate'
+  ).insert(
+    Object.assign(
+      {
+        message:
+          '{{device.name}} had {{numberOfModuleTemperatureErrors}} in the last {{numberOfDays}} days.',
+      },
+      auditFields
+    )
+  )
+
+  const [moduleTemperatureErrorEmailTemplateId] = await knex(
+    'EmailTemplate'
+  ).insert(
+    Object.assign(
+      {
+        subject: '{{device.name}} Module Temperaure Error',
+        body:
+          '{{device.name}} had {{numberOfModuleTemperatureErrors}} in the last {{numberOfDays}} days.',
+        htmlBody:
+          '<em>{{device.name}}</em> had {{numberOfModuleTemperatureErrors}} in the last {{numberOfDays}} days.',
       },
       auditFields
     )
@@ -3670,6 +3719,13 @@ async function seed(knex) {
     alertTemplateId: deviceOfflineAlertTemplateId,
     smsTemplateId: deviceOfflineSmsTemplateId,
     emailTemplateId: deviceOfflineEmailTemplateId,
+  })
+
+  const [moduleTemperatureErrorTypeId] = await knex('MessageType').insert({
+    messageSeverityId: messageSeverities.Alert.id,
+    alertTemplateId: moduleTemperatureErrorAlertTemplateId,
+    smsTemplateId: moduleTemperatureErrorSmsTemplateId,
+    emailTemplateId: moduleTemperatureErrorEmailTemplateId,
   })
 
   // Issues
@@ -3736,6 +3792,13 @@ async function seed(knex) {
       i18nKey: 'issueStatusDeviceOffline',
       issueCategoryId: issueCategories.ConnectivityHealth.id,
       defaultMessageTypeId: deviceOfflineMessageTypeId,
+    },
+    {
+      name: 'Module Temperature Error',
+      externalId: 'ModuleTemperatureError',
+      i18nKey: 'issueStatusModuleTemperatureError',
+      issueCategoryId: issueCategories.DeviceHealth.id,
+      defaultMessageTypeId: moduleTemperatureErrorTypeId,
     },
   ])
 }
