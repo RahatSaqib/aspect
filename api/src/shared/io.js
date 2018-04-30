@@ -1,6 +1,7 @@
 const fs = require('fs')
 const uuid = require('node-uuid')
 const excel = require('exceljs') // see https://www.npmjs.com/package/exceljs
+const Promise = require('bluebird')
 
 // ---------------------------------
 // create missing directories in the path and return path back
@@ -61,6 +62,14 @@ const getCellsByValue = (sheet, value) => {
 }
 
 // ---------------------------------
+// read Text file
+// ---------------------------------
+// read Text file and return a string
+async function readTextFile(filePath, encoding = 'utf8') {
+  return Promise.promisify(fs.readFile(filePath, encoding))
+}
+
+// ---------------------------------
 // read/write Excel file - 'exceljs' API returns Promise for readFile and writeFile
 // ---------------------------------
 // read Excel file and return workbook
@@ -69,6 +78,7 @@ async function readExcelFile(fileName) {
     .readFile(fileName)
     .then(workbook => workbook)
 }
+
 // write workbook into Excel and Csv file
 async function writeExcelFile(fileName, workbook) {
   return await workbook.xlsx.writeFile(fileName).then(() => true) //eslint-disable-line
@@ -135,6 +145,7 @@ async function generateCsvFile(outputFileName, items, columnNames, fieldNames) {
 }
 
 module.exports = {
+  readTextFile,
   createDirectory,
   getExportDirectory,
   getCellsByValue,

@@ -1,11 +1,4 @@
-const Promise = require('bluebird')
-const _ = require('lodash')
-const {
-  issueCreated,
-  issueTriggered,
-  issueResolved,
-  issueEscalated,
-} = require('./actions')
+const { issueCreated, issueTriggered, issueResolved } = require('./actions')
 
 function onIssueEventTrigger(issueType) {
   return async (action, { messageContext: context }) => {
@@ -137,87 +130,7 @@ async function getId(knex, table, externalId) {
   return id
 }
 
-function onEscalateIssues() {
-  return async (action, { messageContext: context }) => {
-    context.bindActionCreators({ issueEscalated })
-    context.transact(async knex => {
-      const openIssuesToCheck = await knex('Issue as i')
-        .join('IssueEscalationTrigger as iet', function() {
-          this.on('i.issueTypeId', 'iet.id')
-            .on('i.partnerId', 'iet.partnerId')
-            .on('i.level', '<', 'iet.escalateToLevel')
-        })
-        .join('IssueStatus as is', 'i.issueStatusId', 'is.id')
-        .whereNotIn('is.externalId', ['Inactive', 'Resolved'])
-        .orderBy(['i.createdOn', 'iet.escalateToLevel'], 'asc')
-        .select('i.*', 'iet.escalateToLevel', 'iet.escalationConditions')
-        .map(issueEscalationTrigger =>
-          Object.assign({}, issueEscalationTrigger, {
-            escalationConditions: JSON.parse(
-              issueEscalationTrigger.escalationConditions
-            ),
-          })
-        )
-      await Promise.each(openIssuesToCheck, async issueEscalationTrigger => {
-        const shouldEscalate = await escalationConditionsMet(
-          issueEscalationTrigger
-        )
-        if (shouldEscalate) {
-          // TODO: escalate issue to escalateToLevel
-        }
-      })
-    })
-  }
-}
-
-async function escalationConditionsMet(issue, escalationConditions) {
-  if (_.isEmpty(escalationConditions)) {
-    return Promise.resolve(true)
-  }
-  if (Array.isArray(escalationConditions)) {
-    const andConditions = _.filter(
-      escalationConditions,
-      escalationCondition =>
-        !escalationCondition.operator || escalationCondition.operator === 'AND'
-    )
-    const andConditionsMet = await Promise.spread(
-      andConditions,
-      escalationConditionsMet
-    )
-    if (_.some(andConditionsMet, andConditionMet => !andConditionMet)) {
-      return false
-    }
-    const orConditions = _.filter(escalationConditions, { operator: 'OR' })
-    const orConditionsMet = await Promise.spread(
-      orConditions,
-      escalationConditionsMet
-    )
-    if (_.every(orConditionsMet, orConditionMet => !orConditionMet)) {
-      return false
-    }
-    return true
-  }
-  const {
-    evaluationMethod = null,
-    evaluationParameter = null,
-  } = escalationConditions
-  if (evaluationMethod === 'inline-sql') {
-    // TODO: Implement inline-sql
-    console.log(evaluationParameter)
-  } else if (evaluationMethod === 'sql-script') {
-    // TODO: Implement sql-script
-    console.log(evaluationParameter)
-  } else if (evaluationMethod === 'issue-age') {
-    // TODO: Implement issue-age
-    console.log(evaluationParameter)
-  } else if (evaluationMethod === 'child-conditions') {
-    return escalationConditionsMet(issue, evaluationParameter)
-  }
-  return Promise.resolve(true)
-}
-
 module.exports = {
   onIssueEventTrigger,
   onIssueEventResolve,
-  onEscalateIssues,
 }

@@ -1,8 +1,5 @@
-const {
-  onIssueEventTrigger,
-  onIssueEventResolve,
-  onEscalateIssues,
-} = require('./service')
+const { onIssueEventTrigger, onIssueEventResolve } = require('./service')
+const { onEscalateIssues } = require('./escalations')
 
 const subscriptions = [
   {

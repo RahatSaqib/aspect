@@ -80,8 +80,17 @@ function issueResolved(issueId) {
   }
 }
 
-function escalateIssues() {
-  return { type: types.ESCALATE_ISSUES }
+/**
+ * Creates an action to trigger a process that looks up
+ * and escalates issues needing escalation.
+ *
+ * issueId is optional.
+ */
+function escalateIssues(issueId) {
+  return {
+    type: types.ESCALATE_ISSUES,
+    issueId,
+  }
 }
 
 module.exports = {

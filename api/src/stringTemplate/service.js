@@ -6,6 +6,11 @@ function processUsingHandlebarsSyntax(inputString, data = {}) {
   return template(data)
 }
 
+function getMustacheTokensInString(inputString) {
+  return inputString.match(/{{\s*[\w.[\]\s]+\s*}}/g)
+}
+
 module.exports = {
   processUsingHandlebarsSyntax,
+  getMustacheTokensInString,
 }
