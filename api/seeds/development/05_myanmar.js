@@ -13,6 +13,7 @@ const { addMilliseconds, addMinutes, subDays } = require('date-fns')
 const now = new Date()
 const millisInHour = 1000 * 60 * 60
 const millisInMinute = 1000 * 60
+const millisInNormalYear = 1000 * 60 * 60 * 24 * 365
 const resultTimeFrameInDays = 365
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
@@ -404,6 +405,7 @@ async function seed(knex) {
     },
   }
 
+  const siteDatas = []
   await Promise.all(
     _.map(myanmarSites.sites, async site => {
       const { id: siteGeographyId } = await knex('Geography')
@@ -439,6 +441,7 @@ async function seed(knex) {
       )
       const [siteId] = await knex('Site').insert(siteData)
       siteData.id = siteId
+      siteDatas.push(siteData)
 
       // only create results if in managed regions
       const samples = []
@@ -799,6 +802,37 @@ async function seed(knex) {
       auditFields
     ),
   ])
+
+  // TB Cartridges Consumable Id
+  const { id: consumableGxTbCartridgeId } = await knex('Consumable')
+    .where({ name: 'GeneXpert TB Cartridge' })
+    .first('id')
+  // Insert Inventory Items
+  await Promise.all(
+    _.map(_.range(siteDatas.length), async i => {
+      const siteData = siteDatas[i]
+      // TB Cartridges
+      await knex('InventoryItem').insert(
+        Object.assign(
+          {
+            consumableId: consumableGxTbCartridgeId,
+            siteId: siteData.id,
+            lotNumber: `${(i + 3) * (i + 1)}${
+              ['A', 'B'][i % 2]
+            }-${(siteData.id + i) * consumableGxTbCartridgeId}`,
+            expiresOn: new Date(
+              new Date(
+                now.getTime() +
+                  _.random(-millisInNormalYear, millisInNormalYear)
+              ).setHours(0, 0, 0, 0)
+            ),
+            quantityOnHand: _.random(0, 1000),
+          },
+          auditFields
+        )
+      )
+    })
+  )
 }
 
 function rowsAsObject(knex, table, column = 'name') {
