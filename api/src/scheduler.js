@@ -18,7 +18,7 @@ function startScheduler(queue) {
 
   cron.schedule('0 * * * *', dispatcher.factGenerateDeviceOffline)
   cron.schedule('1 * * * *', dispatcher.factGenerateResultCounts)
-  cron.schedule('2 * * * *', dispatcher.factCheckInventoryStock)
+  cron.schedule('0 1 * * *', dispatcher.factCheckInventoryStock) // daily at 1 am
 }
 
 function createActionDispatcher(queue, actionCreators) {
