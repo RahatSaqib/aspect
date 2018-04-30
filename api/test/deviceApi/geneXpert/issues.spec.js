@@ -18,7 +18,7 @@ const {
   waitForAction,
 } = require('../../utils/mqUtils')
 
-describe.only('Issue endpoints', () => {
+describe('Issue endpoints', () => {
   function createContext() {
     return createGxAlertTestContext(server)
   }
