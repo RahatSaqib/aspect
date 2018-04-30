@@ -21,7 +21,7 @@ const {
   waitForAction,
 } = require('../../utils/mqUtils')
 
-describe('Issue endpoints', () => {
+describe.only('Issue endpoints', () => {
   function createContext() {
     return createGxAlertTestContext(server)
   }
@@ -37,7 +37,7 @@ describe('Issue endpoints', () => {
     afterCleanUp,
   } = context
   let { deviceAuth } = context
-  before(async () =>
+  beforeEach(async () =>
     run(async () => {
       await beforeCreateGxAlertApiKey()
       useGxAlertDeviceId(gxAlertDeviceId)
@@ -136,8 +136,19 @@ describe('Issue endpoints', () => {
     runTest(async knex => {
       const { now } = context
       const errorCode = '1007'
-      const resultIds = []
-      for (let i = 0; i < 6; i++) {
+
+      const messageContext = await createMessageContext()
+      messageContext.bindActionCreators({ resultModulePowerError })
+
+      // Post to deviceApi to ensure the device in in Aspect
+      const response = await postToDeviceApi({
+        authHeader: deviceAuth,
+        payload: _.merge({}, basicDevicePayload, {
+          name: deviceName,
+        }),
+      })
+      const deviceId = response.body.device.id
+      for (let i = 0; i < 5; i++) {
         /* eslint-disable no-await-in-loop */
         const errorTestResultId = `UNIQUE-ID-WITH-MODULE-ERROR-${i}`
         const sampleId = `MOD2542552${i}`
@@ -169,50 +180,39 @@ describe('Issue endpoints', () => {
             },
           }
         )
-        await postToDeviceApi({
-          authHeader: deviceAuth,
-          payload,
-        })
+        if (i < 4) {
+          // Post the result to aspect
+          await postToDeviceApi({
+            authHeader: deviceAuth,
+            payload,
+          })
+        } else {
+          // Should create issue when errors > 4
+          const waitForModulePowerError = waitForAction(
+            resultModulePowerError(deviceId)
+          )
+          await postToDeviceApi({
+            authHeader: deviceAuth,
+            payload,
+          })
+          await waitForModulePowerError
+          await waitForIdle()
 
-        const lastResult = await getLastResult()
-        resultIds.push(lastResult.id)
-        expect(lastResult).to.containSubset({
-          errorCode,
-          resultCategory1: 'Error',
-          resultWorkflowStatus: 'Error',
-          resultData: {
-            geneXpertTestId: errorTestResultId,
-          },
-        })
+          const issues = await knex('Issue as i')
+            .join('IssueType as it', 'i.issueTypeId', 'it.id')
+            .join('IssueStatus as is', 'i.issueStatusId', 'is.id')
+            .where({ 'i.deviceId': deviceId })
+            .select(
+              'i.id',
+              'it.externalId as issueType',
+              'i.deviceId',
+              'is.externalId as issueStatus'
+            )
+          assert.equal(issues.length, 1)
+          assert.equal(issues[0].issueType, 'ModulePowerError')
+          assert.equal(issues[0].deviceId, deviceId)
+          assert.equal(issues[0].issueStatus, 'Active')
+        }
       }
-
-      const resultId = resultIds.pop()
-      const [deviceId] = await knex('Result')
-        .where('id', resultId)
-        .pluck('deviceId')
-
-      // Wait for completion of module error action
-      const messageContext = await createMessageContext()
-      messageContext.bindActionCreators({ resultModulePowerError })
-      const waitForModulePowerError = waitForAction(
-        resultModulePowerError(deviceId)
-      )
-      await waitForModulePowerError
-      await waitForIdle()
-
-      const issues = await knex('Issue as i')
-        .join('IssueType as it', 'i.issueTypeId', 'it.id')
-        .join('IssueStatus as is', 'i.issueStatusId', 'is.id')
-        .where({ 'i.deviceId': deviceId })
-        .select(
-          'i.id',
-          'it.externalId as issueType',
-          'i.deviceId',
-          'is.externalId as issueStatus'
-        )
-      assert.equal(issues.length, 1)
-      assert.equal(issues[0].issueType, 'ModulePowerError')
-      assert.equal(issues[0].deviceId, deviceId)
-      assert.equal(issues[0].issueStatus, 'Active')
     }))
 })
