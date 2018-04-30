@@ -13,7 +13,6 @@ const { addMilliseconds, addMinutes, subDays } = require('date-fns')
 const now = new Date()
 const millisInHour = 1000 * 60 * 60
 const millisInMinute = 1000 * 60
-const millisInNormalYear = 1000 * 60 * 60 * 24 * 365
 const resultTimeFrameInDays = 365
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
@@ -811,26 +810,20 @@ async function seed(knex) {
   await Promise.all(
     _.map(_.range(siteDatas.length), async i => {
       const siteData = siteDatas[i]
+      const siteId = siteData.id
       // TB Cartridges
-      await knex('InventoryItem').insert(
-        Object.assign(
-          {
-            consumableId: consumableGxTbCartridgeId,
-            siteId: siteData.id,
-            lotNumber: `${(i + 3) * (i + 1)}${
-              ['A', 'B'][i % 2]
-            }-${(siteData.id + i) * consumableGxTbCartridgeId}`,
-            expiresOn: new Date(
-              new Date(
-                now.getTime() +
-                  _.random(-millisInNormalYear, millisInNormalYear)
-              ).setHours(0, 0, 0, 0)
-            ),
-            quantityOnHand: _.random(0, 1000),
-          },
-          auditFields
+      if (siteId % 2 === 0) {
+        await knex('InventoryItem').insert(
+          Object.assign(
+            {
+              consumableId: consumableGxTbCartridgeId,
+              siteId,
+              quantityOnHand: _.random(0, 1000),
+            },
+            auditFields
+          )
         )
-      )
+      }
     })
   )
 }

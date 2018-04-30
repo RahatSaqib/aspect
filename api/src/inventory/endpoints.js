@@ -14,6 +14,7 @@ const {
   removeInventory,
   transferInventory,
   receiveInventory,
+  updateInventoryStockLevel,
 } = require('./service')
 
 const inventoryFilters = {
@@ -250,6 +251,33 @@ const routes = [
             .iso()
             .required(),
         }),
+      },
+    },
+  },
+  {
+    method: 'PUT',
+    path: '/inventory/{siteId}/{consumableId}',
+    handler: asyncHandler(updateInventoryStockLevel),
+    config: {
+      description: 'Update Inventory Stock Level At Site',
+      notes: 'Update the total quantity of a consumable at site',
+      auth: { scope: ['inventory:edit'] },
+      validate: {
+        params: {
+          siteId: Joi.number()
+            .integer()
+            .positive()
+            .required(),
+          consumableId: Joi.number()
+            .integer()
+            .positive()
+            .required(),
+        },
+        payload: {
+          quantity: Joi.number()
+            .positive()
+            .required(),
+        },
       },
     },
   },

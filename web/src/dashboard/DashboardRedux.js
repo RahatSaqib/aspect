@@ -9,6 +9,8 @@ import {
   errorInsufficientScope,
 } from '../error/CommonErrorNotifications'
 
+import { types as inventoryTypes } from '../inventory/InventoryRedux'
+
 export const REQUEST_STAT_DASHBOARD = 'REQUEST_STAT_DASHBOARD'
 export const RECEIVE_STAT_DASHBOARD = 'RECEIVE_STAT_DASHBOARD'
 
@@ -525,6 +527,21 @@ export default function dashboardReducer(state = initialState, action) {
           )
           mutState.set('actionSummaryMap', new Immutable.fromJS(action.data))
         }
+      })
+    case inventoryTypes.RECEIVE_UPDATED_SINGLE_INVENTORY_ITEM:
+      return state.withMutations(mutState => {
+        const list = mutState.getIn(['actionSummaryMap', 'Reagent']).map(it => {
+          if (
+            it.get('siteId') === action.item.siteId &&
+            it.get('consumableId') === action.item.consumableId
+          ) {
+            return it
+              .set('totalInStock', action.item.quantityOnHand)
+              .set('status', 'OK')
+          }
+          return it
+        })
+        mutState.mergeDeepIn(['actionSummaryMap', 'Reagent'], list)
       })
     default:
       return state
