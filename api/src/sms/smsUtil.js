@@ -1,8 +1,9 @@
+const _ = require('lodash')
 const twilio = require('twilio')
 const config = require('../config')
 
 async function sendSms(cellNumber, message) {
-  const smsCfg = config.sms
+  cellNumber = _.isNil(cellNumber) ? config.throwAway.sms : cellNumber
 
   // These consts are your settings from https://www.twilio.com/console
   const {
@@ -10,7 +11,7 @@ async function sendSms(cellNumber, message) {
     authToken,
     fromNumber,
     messagingServiceSid,
-  } = smsCfg.twilio
+  } = config.sms.twilio
   const client = twilio(accountSid, authToken)
 
   // send sms - see https://www.twilio.com/docs/api/messaging/send-messages-copilot#sending-messages-with-copilot

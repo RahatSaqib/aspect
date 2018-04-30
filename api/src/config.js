@@ -28,6 +28,10 @@ module.exports = {
       messagingServiceSid: process.env.twilioMessagingServiceSid,
     },
   },
+  throwAway: {
+    email: process.env['email.throwAway'],
+    sms: process.env['sms.throwAway'],
+  },
 }
 
 configureOptional(module.exports)
