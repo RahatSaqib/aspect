@@ -998,7 +998,8 @@ async function seed(knex) {
       escalateToLevel: 3,
       escalationConditions: JSON.stringify({
         evaluationMethod: 'sql-script',
-        evaluationParameter: './issueEscalationScripts/Myanmar/deviceOfflineLevel3ROEscalatedNetwork.sql',
+        evaluationParameter:
+          './issueEscalationScripts/Myanmar/deviceOfflineLevel3ROEscalatedNetwork.sql',
       }),
       createdOn: now,
       updatedOn: now,

@@ -87,10 +87,14 @@ function issueResolved(issueId) {
  * issueId is optional.
  */
 function escalateIssues(issueId) {
-  return {
-    type: types.ESCALATE_ISSUES,
-    issueId,
-  }
+  return issueId
+    ? {
+        type: types.ESCALATE_ISSUES,
+        issueId,
+      }
+    : {
+        type: types.ESCALATE_ISSUES,
+      }
 }
 
 module.exports = {

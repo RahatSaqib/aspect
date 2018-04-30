@@ -12,5 +12,4 @@ describe('Base route', () => {
       done()
     })
   })
-  // TODO: Test - Are scheduled jobs running?
 })

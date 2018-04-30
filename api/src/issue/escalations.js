@@ -29,17 +29,17 @@ function onEscalateIssues() {
       }
       return Promise.each(openIssuesToCheck, async issueEscalationTrigger => {
         const shouldEscalate = await escalationConditionsMet(
-          issueEscalationTrigger
+          knex,
+          issueEscalationTrigger,
+          issueEscalationTrigger.escalationConditions
         )
         if (shouldEscalate) {
           await knex('Issue')
             .where('id', issueEscalationTrigger.id)
             .update({ level: issueEscalationTrigger.escalateToLevel })
-          context.dispatch(
-            issueEscalated(
-              issueEscalationTrigger.id,
-              issueEscalationTrigger.escalateToLevel
-            )
+          context.issueEscalated(
+            issueEscalationTrigger.id,
+            issueEscalationTrigger.escalateToLevel
           )
         }
       })
@@ -55,13 +55,13 @@ async function findOpenIssuesToCheckForEscalation(knex, issueId) {
     .where('externalId', 'Triggered')
     .first()
   return knex('Issue as i')
-    .leftJoin('IssueEvent resolvedIssueEvent', function() {
+    .leftJoin('IssueEvent as resolvedIssueEvent', function() {
       this.on('i.id', 'resolvedIssueEvent.issueId').on(
         'resolvedIssueEvent.issueEventStatusId',
         knex.raw(resolvedIssueEventStatus.id)
       )
     })
-    .join('IssueEvent triggeredIssueEvent', function() {
+    .join('IssueEvent as triggeredIssueEvent', function() {
       this.on('i.id', 'triggeredIssueEvent.issueId').on(
         'triggeredIssueEvent.issueEventStatusId',
         knex.raw(triggeredIssueEventStatus.id)
@@ -243,7 +243,7 @@ async function triggerEventOlderThan(knex, issue, issueAge) {
         addDays(
           addHours(
             addMinutes(
-              addSeconds(issueAge.triggeredOn, issueAgeSpec.seconds),
+              addSeconds(issue.triggeredOn, issueAgeSpec.seconds),
               issueAgeSpec.minutes
             ),
             issueAgeSpec.hours
