@@ -185,18 +185,6 @@ async function seed(knex) {
     // Regional Officer Permissions
     {
       jobFunctionId: jobFunctionIdRegionalOfficer,
-      featureId: featureModules.site,
-    },
-    {
-      jobFunctionId: jobFunctionIdRegionalOfficer,
-      featureId: featureModules.device,
-    },
-    {
-      jobFunctionId: jobFunctionIdRegionalOfficer,
-      featureId: featureModules.result,
-    },
-    {
-      jobFunctionId: jobFunctionIdRegionalOfficer,
       featureId: featureModules.summaryDashboard,
     },
     {
