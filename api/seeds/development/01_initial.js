@@ -3704,7 +3704,7 @@ async function seed(knex) {
   ).insert(
     Object.assign(
       {
-        subject: '{{device.name}} Module Temperaure Error',
+        subject: '{{device.name}} Module Temperature Error',
         body:
           '{{device.name}} had {{numberOfModuleTemperatureErrors}} in the last {{numberOfDays}} days.',
         htmlBody:
@@ -3738,7 +3738,42 @@ async function seed(knex) {
       {
         subject: '{{result.moduleName}} Power Errors',
         body: 'Power errors on Module {{result.moduleName}}; notify RO',
-        htmlBody: 'Power errros on <em>{{result.moduleName}}</em> notify RO',
+        htmlBody: 'Power errors on <em>{{result.moduleName}}</em> notify RO',
+      },
+      auditFields
+    )
+  )
+
+  // Module failure error messages
+  const [moduleFailureErrorAlertTemplateId] = await knex(
+    'AlertTemplate'
+  ).insert(
+    Object.assign(
+      {
+        message: 'Module {{result.moduleName}}: Critical errors; notify R.O.',
+      },
+      auditFields
+    )
+  )
+
+  const [moduleFailureErrorSmsTemplateId] = await knex('SmsTemplate').insert(
+    Object.assign(
+      {
+        message: 'Module {{result.moduleName}}: Critical errors; notify R.O.',
+      },
+      auditFields
+    )
+  )
+
+  const [moduleFailureErrorEmailTemplateId] = await knex(
+    'EmailTemplate'
+  ).insert(
+    Object.assign(
+      {
+        subject: 'Module Failure Errors',
+        body: 'Module {{result.moduleName}}: Critical errors; notify R.O.',
+        htmlBody:
+          'Module <em>{{result.moduleName}</em>}: Critical errors; notify R.O.',
       },
       auditFields
     )
@@ -3763,6 +3798,13 @@ async function seed(knex) {
     alertTemplateId: modulePowerErrorAlertTemplateId,
     smsTemplateId: modulePowerErrorSmsTemplateId,
     emailTemplateId: modulePowerErrorEmailTemplateId,
+  })
+
+  const [moduleFailureErrorTypeId] = await knex('MessageType').insert({
+    messageSeverityId: messageSeverities.Alert.id,
+    alertTemplateId: moduleFailureErrorAlertTemplateId,
+    smsTemplateId: moduleFailureErrorSmsTemplateId,
+    emailTemplateId: moduleFailureErrorEmailTemplateId,
   })
 
   // Issues
@@ -3843,6 +3885,13 @@ async function seed(knex) {
       i18nKey: 'issueStatusModulePowerError',
       issueCategoryId: issueCategories.DeviceHealth.id,
       defaultMessageTypeId: modulePowerErrorTypeId,
+    },
+    {
+      name: 'Module Failure Error',
+      externalId: 'ModuleFailureError',
+      i18nKey: 'issueStatusModuleFailureError',
+      issueCategoryId: issueCategories.DeviceHealth.id,
+      defaultMessageTypeId: moduleFailureErrorTypeId,
     },
   ])
 }
