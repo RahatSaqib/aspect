@@ -104,7 +104,7 @@ async function createNewIssue(knex, issueType, action) {
   } else if (action.siteId) {
     issue.siteId = action.siteId
     let issueContext
-    if (issueType.indexOf('InventoryStock') !== -1) {
+    if (action.consumableId != null) {
       issueContext = await knex('Site as s')
         .innerJoin('Consumable as c', 's.id', 'c.siteId')
         .where('s.id', issue.siteId)
