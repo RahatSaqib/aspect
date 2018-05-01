@@ -21,6 +21,7 @@ const { oneDirectionalMd5Hash } = require('../shared/encryption')
 const {
   resultModuleTemperatureError,
   resultModulePowerError,
+  resultModuleFailureError,
 } = require('../result/actions')
 
 const MODULE_TEMPERATURE_ERROR_CODES = [
@@ -42,8 +43,46 @@ const MODULE_POWER_ERROR_CODES = [
   '4008',
 ]
 
+const MODULE_FAILURE_ERROR_CODES = [
+  '1002',
+  '1005',
+  '1006',
+  '1018',
+  '2011',
+  '2012',
+  '2016',
+  '2017',
+  '2018',
+  '2021',
+  '2023',
+  '2024',
+  '2026',
+  '2032',
+  '2034',
+  '2035',
+  '3000',
+  '4001',
+  '4002',
+  '4003',
+  '4004',
+  '4006',
+  '4011',
+  '4012',
+  '4013',
+  '4014',
+  '4015',
+  '4016',
+  '4017',
+  '4019',
+  '5013',
+  '5014',
+  '5015',
+  '5016',
+]
+
 const moduleTemperatureMaxErrors = 4
 const modulePowerMaxErrors = 4
+const moduleFailureMaxErrors = 2
 const SELECT_LIST_FIELDS = [
   'r.id',
   'r.externalId',
@@ -662,6 +701,7 @@ async function onResultLogged({ resultId }, { messageContext }) {
   const context = messageContext.bindActionCreators({
     resultModuleTemperatureError,
     resultModulePowerError,
+    resultModuleFailureError,
   })
   await context.run(async knex => {
     const [result] = await knex('Result as r').where('r.id', resultId)
@@ -694,6 +734,18 @@ async function onResultLogged({ resultId }, { messageContext }) {
         _.forEach(errorCounts, count => {
           if (count.errorCount > modulePowerMaxErrors) {
             context.resultModulePowerError(deviceId)
+          }
+        })
+      } else if (MODULE_FAILURE_ERROR_CODES.includes(result.errorCode)) {
+        const errorCounts = await deviceErrorQuery
+          .clone()
+          .where('r.endedOn', '>=', last30day)
+          .whereIn('r.errorCode', MODULE_FAILURE_ERROR_CODES)
+          .count('r.id as errorCount')
+          .groupBy('r.moduleSerial')
+        _.forEach(errorCounts, count => {
+          if (count.errorCount > moduleFailureMaxErrors) {
+            context.resultModuleFailureError(deviceId)
           }
         })
       }
