@@ -1452,7 +1452,7 @@ async function up(knex) {
       .unsigned()
       .references('id')
       .inTable('Issue')
-      .notNullable()
+      .onDelete('SET NULL')
     notification
       .integer('personId')
       .unsigned()
