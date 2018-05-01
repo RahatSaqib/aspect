@@ -2055,10 +2055,29 @@ describe('Device Result API routes', () => {
     })
 
     describe('fact tables', () => {
-      function getDeviceResultCounts(knex, deviceId) {
-        return knex('FactResultCountDevice')
+      function getFactResultsDevice(knex, deviceId) {
+        return knex('FactResultsDevice')
           .where({ deviceId })
-          .andWhere('resultCategory1', null)
+          .select('deviceId', 'days', 'resultCount', 'calculatedOn')
+      }
+
+      function getFactResultsDeviceByAssay(knex, deviceId, assayId) {
+        return knex('FactResultsDeviceByAssay')
+          .where({ deviceId })
+          .andWhere({ assayId })
+          .select('deviceId', 'assayId', 'days', 'resultCount', 'calculatedOn')
+      }
+
+      function getFactResultsDeviceByCategory1(
+        knex,
+        deviceId,
+        assayId,
+        resultCategory1
+      ) {
+        return knex('FactResultsDeviceByCategory1')
+          .where({ deviceId })
+          .andWhere({ assayId })
+          .andWhere({ resultCategory1 })
           .select(
             'deviceId',
             'assayId',
@@ -2069,20 +2088,48 @@ describe('Device Result API routes', () => {
           )
       }
 
-      it('should update the result counts in the facts-table when a new result is reported', () =>
+      function getFactResultsDeviceByCategory1And2(
+        knex,
+        deviceId,
+        assayId,
+        resultCategory1,
+        resultCategory2
+      ) {
+        return knex('FactResultsDeviceByCategory1And2')
+          .where({ deviceId })
+          .andWhere({ assayId })
+          .andWhere({ resultCategory1 })
+          .andWhere({ resultCategory2 })
+          .select(
+            'deviceId',
+            'assayId',
+            'resultCategory1',
+            'resultCategory2',
+            'days',
+            'resultCount',
+            'calculatedOn'
+          )
+      }
+
+      it('should update the result counts in the facts-tables when a new result is reported', () =>
         runTest(async knex => {
           const resultDetails = {
             assayExternalId: 'DaktariHivVl',
+            resultCategory1ExternalId: 'Detected',
+            resultCategory2ExternalId: 'MoreThan1000',
             deviceId: context.deviceId,
           }
 
-          const resultCountsBefore = await getDeviceResultCounts(
-            knex,
-            context.deviceId
-          )
-
           const { id: assayId } = await knex('Assay')
             .where('externalId', resultDetails.assayExternalId)
+            .first('id')
+
+          const { id: resultCategory1 } = await knex('ResultCategory')
+            .where('externalId', resultDetails.resultCategory1ExternalId)
+            .first('id')
+
+          const { id: resultCategory2 } = await knex('ResultCategory')
+            .where('externalId', resultDetails.resultCategory2ExternalId)
             .first('id')
 
           await server
@@ -2092,6 +2139,10 @@ describe('Device Result API routes', () => {
               id: new Date().getTime().toString(),
               data: { a: 'b' },
               assay: { id: resultDetails.assayExternalId },
+              category: [
+                { id: resultDetails.resultCategory1ExternalId },
+                { id: resultDetails.resultCategory2ExternalId },
+              ],
               endedOn: new Date(),
             })
             .then(res => {
@@ -2099,33 +2150,142 @@ describe('Device Result API routes', () => {
               return waitAsyncComplete(res)
             })
 
-          const resultCountsAfter = await getDeviceResultCounts(
+          const factResultsDeviceBefore = await getFactResultsDevice(
             knex,
             context.deviceId
           )
 
-          resultCountsBefore.forEach(countBefore => {
-            const countAfter = _.find(resultCountsAfter, {
+          const factResultsDeviceByAssayBefore = await getFactResultsDeviceByAssay(
+            knex,
+            context.deviceId,
+            assayId
+          )
+
+          const factResultsDeviceByCategory1Before = await getFactResultsDeviceByCategory1(
+            knex,
+            context.deviceId,
+            assayId,
+            resultCategory1
+          )
+
+          const factResultsDeviceByCategory1And2Before = await getFactResultsDeviceByCategory1And2(
+            knex,
+            context.deviceId,
+            assayId,
+            resultCategory1,
+            resultCategory2
+          )
+
+          assert.equal(
+            factResultsDeviceBefore.length,
+            7,
+            'There should be one entry per day in the device count table'
+          )
+
+          await server
+            .post(devicePostResultPath)
+            .set('Authorization', context.deviceAuth)
+            .send({
+              id: new Date().getTime().toString(),
+              data: { a: 'b' },
+              assay: { id: resultDetails.assayExternalId },
+              category: [
+                { id: resultDetails.resultCategory1ExternalId },
+                { id: resultDetails.resultCategory2ExternalId },
+              ],
+              endedOn: new Date(),
+            })
+            .then(res => {
+              assert.equal(res.status, 200)
+              return waitAsyncComplete(res)
+            })
+
+          const factResultsDeviceAfter = await getFactResultsDevice(
+            knex,
+            context.deviceId
+          )
+
+          const factResultsDeviceByAssayAfter = await getFactResultsDeviceByAssay(
+            knex,
+            context.deviceId,
+            assayId
+          )
+
+          const factResultsDeviceByCategory1After = await getFactResultsDeviceByCategory1(
+            knex,
+            context.deviceId,
+            assayId,
+            resultCategory1
+          )
+
+          const factResultsDeviceByCategory1And2After = await getFactResultsDeviceByCategory1And2(
+            knex,
+            context.deviceId,
+            assayId,
+            resultCategory1,
+            resultCategory2
+          )
+
+          factResultsDeviceBefore.forEach(countBefore => {
+            const countAfter = _.find(factResultsDeviceAfter, {
               days: countBefore.days,
-              assayId: countBefore.assayId,
-              resultCategory1: countBefore.resultCategory1,
             })
 
             // compare before and after counts
             if (countAfter) {
-              if (countAfter.assayId === assayId || !countAfter.assayId) {
-                assert.equal(
-                  countAfter.resultCount,
-                  countBefore.resultCount + 1,
-                  'Count in fact-table should have increased by one after posting a result'
-                )
-              } else {
-                assert.equal(
-                  countBefore.resultCount,
-                  countAfter.resultCount,
-                  'Count in fact-table should be the same as before for rows that are not assigned to the posted assay.'
-                )
-              }
+              assert.equal(
+                countAfter.resultCount,
+                countBefore.resultCount + 1,
+                'Count in device fact-table should have increased by one after posting a result'
+              )
+            }
+          })
+
+          factResultsDeviceByAssayBefore.forEach(countBefore => {
+            const countAfter = _.find(factResultsDeviceByAssayAfter, {
+              days: countBefore.days,
+            })
+
+            // compare before and after counts
+            if (countAfter) {
+              assert.equal(
+                countAfter.resultCount,
+                countBefore.resultCount + 1,
+                'Count in device assay fact-table should have increased by one after posting a result'
+              )
+            }
+          })
+
+          factResultsDeviceByCategory1Before.forEach(countBefore => {
+            const countAfter = _.find(factResultsDeviceByCategory1After, {
+              days: countBefore.days,
+              resultCategory1: countBefore.result1Category1,
+            })
+
+            // compare before and after counts
+            if (countAfter) {
+              assert.equal(
+                countAfter.resultCount,
+                countBefore.resultCount + 1,
+                'Count in device category 1 fact-table should have increased by one after posting a result'
+              )
+            }
+          })
+
+          factResultsDeviceByCategory1And2Before.forEach(countBefore => {
+            const countAfter = _.find(factResultsDeviceByCategory1And2After, {
+              days: countBefore.days,
+              resultCategory1: countBefore.resultCategory1,
+              resultCategory2: countBefore.resultCategory2,
+            })
+
+            // compare before and after counts
+            if (countAfter) {
+              assert.equal(
+                countAfter.resultCount,
+                countBefore.resultCount + 1,
+                'Count in device category 1 and 2 fact-table should have increased by one after posting a result'
+              )
             }
           })
         }))

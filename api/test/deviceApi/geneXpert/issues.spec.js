@@ -33,12 +33,12 @@ describe('Issue endpoints', () => {
     runTest,
     afterCleanUp,
   } = context
-  let { deviceAuth, device: gxAlertDevice } = context
+  let { deviceAuth } = context
   before(async () =>
     run(async () => {
       await beforeCreateGxAlertApiKey()
       useGxAlertDeviceId(gxAlertDeviceId)
-      ;({ deviceAuth, device: gxAlertDevice } = context)
+      ;({ deviceAuth } = context)
     })
   )
   after(afterCleanUp)

@@ -42,7 +42,19 @@ async function deleteGxAlertDeviceDataAndRefreshTokens(
     .whereIn('deviceId', deviceIds)
     .delete()
 
-  await knex('FactResultCountDevice')
+  await knex('FactResultsDevice')
+    .whereIn('deviceId', deviceIds)
+    .delete()
+
+  await knex('FactResultsDeviceByAssay')
+    .whereIn('deviceId', deviceIds)
+    .delete()
+
+  await knex('FactResultsDeviceByCategory1')
+    .whereIn('deviceId', deviceIds)
+    .delete()
+
+  await knex('FactResultsDeviceByCategory1And2')
     .whereIn('deviceId', deviceIds)
     .delete()
 
@@ -103,9 +115,11 @@ async function deleteGeneXpertDeviceSiteDataAndRefreshTokens(
   await knex('DeviceStatusLog')
     .whereIn('deviceId', deviceIds)
     .delete()
+
   await knex('DeviceMaintenanceStatusLog')
     .whereIn('deviceId', deviceIds)
     .delete()
+
   await knex('DeviceLog')
     .whereIn('deviceId', deviceIds)
     .orWhereIn('resultId', resultIds)
@@ -114,12 +128,27 @@ async function deleteGeneXpertDeviceSiteDataAndRefreshTokens(
   await knex('DeviceSiteHistory')
     .whereIn('deviceId', deviceIds)
     .delete()
-  await knex('FactResultCountDevice')
+
+  await knex('FactResultsDevice')
     .whereIn('deviceId', deviceIds)
     .delete()
+
+  await knex('FactResultsDeviceByAssay')
+    .whereIn('deviceId', deviceIds)
+    .delete()
+
+  await knex('FactResultsDeviceByCategory1')
+    .whereIn('deviceId', deviceIds)
+    .delete()
+
+  await knex('FactResultsDeviceByCategory1And2')
+    .whereIn('deviceId', deviceIds)
+    .delete()
+
   await knex('FactDeviceFlag')
     .whereIn('deviceId', deviceIds)
     .delete()
+
   await knex('DeviceSiteHistory')
     .whereIn('deviceId', deviceIds)
     .delete()
@@ -127,16 +156,20 @@ async function deleteGeneXpertDeviceSiteDataAndRefreshTokens(
   await knex('InventoryLog')
     .whereIn('resultId', resultIds)
     .delete()
+
   await knex('ResultQualityControlLog')
     .whereIn('resultId', resultIds)
     .delete()
+
   await knex('ResultWorkflowLog')
     .whereIn('resultId', resultIds)
     .delete()
+
   await knex('ResultGeneratedResult')
     .whereIn('sourceResultId', resultIds)
     .orWhereIn('generatedResultId', resultIds)
     .delete()
+
   await knex('Result')
     .whereIn('id', resultIds)
     .delete()
