@@ -250,23 +250,21 @@ function onFactCheckInventoryStock(action, { messageContext }) {
     const { inventoryConfig: { daysDue } } = require('../config')
 
     // loop all sites and for each check if there are enough inventory items in stock
-    await Promise.all(
-      _.map(sites, async site => {
-        // ----------------
-        // for each site/consumable - project for how long stock is okay
-        // ----------------
-        await auditInventoryStock(
-          site,
-          daysDue.stockout,
-          context.inventoryStockout
-        )
-        await auditInventoryStock(
-          site,
-          daysDue.expiring,
-          context.inventoryStockExpiring
-        )
-      })
-    )
+    _.map(sites, async site => {
+      // ----------------
+      // for each site/consumable - project for how long stock is okay
+      // ----------------
+      await auditInventoryStock(
+        site,
+        daysDue.stockout,
+        context.inventoryStockout
+      )
+      await auditInventoryStock(
+        site,
+        daysDue.expiring,
+        context.inventoryStockExpiring
+      )
+    })
     // all set
   })
 }
