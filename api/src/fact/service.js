@@ -204,7 +204,7 @@ async function auditInventoryStock(site, dueDays, dispatch) {
   ) {
     const days = totalInStock / (maxQuantityPerAssay * dailyRate)
     if (days < dueDays) {
-      await dispatch(siteId, consumableId, days)
+      dispatch(siteId, consumableId, days)
     }
   }
 }
