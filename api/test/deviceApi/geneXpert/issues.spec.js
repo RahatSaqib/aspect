@@ -15,11 +15,7 @@ const {
   resultModuleTemperatureError,
   resultModulePowerError,
 } = require('../../../src/result/actions')
-const {
-  createMessageContext,
-  waitForIdle,
-  waitForAction,
-} = require('../../utils/mqUtils')
+const { waitForIdle, waitForAction } = require('../../utils/mqUtils')
 
 describe('Issue endpoints', () => {
   function createContext() {
@@ -50,9 +46,6 @@ describe('Issue endpoints', () => {
     runTest(async knex => {
       const { now } = context
       const errorCode = '4010'
-
-      const messageContext = await createMessageContext()
-      messageContext.bindActionCreators({ resultModuleTemperatureError })
 
       // Post to deviceApi to ensure the device in in Aspect
       const response = await postToDeviceApi({
@@ -136,9 +129,6 @@ describe('Issue endpoints', () => {
     runTest(async knex => {
       const { now } = context
       const errorCode = '1007'
-
-      const messageContext = await createMessageContext()
-      messageContext.bindActionCreators({ resultModulePowerError })
 
       // Post to deviceApi to ensure the device in in Aspect
       const response = await postToDeviceApi({
