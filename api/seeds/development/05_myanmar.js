@@ -754,6 +754,17 @@ async function seed(knex) {
       },
       auditFields
     ),
+    Object.assign(
+      {
+        name: 'LU Module Power',
+        partnerId,
+        issueTypeId: issueTypes.ModulePowerError.id,
+        jobFunctionId: jobFunctionIdLabUser,
+        level: 1,
+        messageTypeId: defaultMessageTypes.ModulePowerError.id,
+      },
+      auditFields
+    ),
   ])
 }
 

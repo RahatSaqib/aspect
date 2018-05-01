@@ -18,7 +18,10 @@ const {
   generateCsvFile,
 } = require('../shared/io')
 const { oneDirectionalMd5Hash } = require('../shared/encryption')
-const { resultModuleTemperatureError } = require('../result/actions')
+const {
+  resultModuleTemperatureError,
+  resultModulePowerError,
+} = require('../result/actions')
 
 const MODULE_TEMPERATURE_ERROR_CODES = [
   '1001',
@@ -29,8 +32,18 @@ const MODULE_TEMPERATURE_ERROR_CODES = [
   '4009',
   '4010',
 ]
+const MODULE_POWER_ERROR_CODES = [
+  '1007',
+  '2122',
+  '2123',
+  '2124',
+  '2126',
+  '2127',
+  '4008',
+]
+
 const moduleTemperatureMaxErrors = 4
-const moduleTemperatureDays = 30
+const modulePowerMaxErrors = 4
 const SELECT_LIST_FIELDS = [
   'r.id',
   'r.externalId',
@@ -648,20 +661,21 @@ function createUniqueIdForResult(
 async function onResultLogged({ resultId }, { messageContext }) {
   const context = messageContext.bindActionCreators({
     resultModuleTemperatureError,
+    resultModulePowerError,
   })
   await context.run(async knex => {
     const [result] = await knex('Result as r').where('r.id', resultId)
     if (result.errorCode) {
       const { deviceId } = result
+      const last30day = subDays(new Date(), 30)
       const deviceErrorQuery = knex('Result as r')
         .innerJoin('ResultCategory as rc', 'r.resultCategory1', 'rc.id')
         .where('rc.externalId', 'Error')
         .where('r.deviceId', deviceId)
       if (MODULE_TEMPERATURE_ERROR_CODES.includes(result.errorCode)) {
-        const lastNday = subDays(new Date(), moduleTemperatureDays)
         const errorCounts = await deviceErrorQuery
           .clone()
-          .where('r.endedOn', '>=', lastNday)
+          .where('r.endedOn', '>=', last30day)
           .whereIn('r.errorCode', MODULE_TEMPERATURE_ERROR_CODES)
           .count('r.id as errorCount')
           .groupBy('r.moduleSerial')
@@ -670,7 +684,19 @@ async function onResultLogged({ resultId }, { messageContext }) {
             context.resultModuleTemperatureError(deviceId)
           }
         })
-      } // else if (result.errorCode in LU_MODULE_POWER_ERROR_CODES) { }
+      } else if (MODULE_POWER_ERROR_CODES.includes(result.errorCode)) {
+        const errorCounts = await deviceErrorQuery
+          .clone()
+          .where('r.endedOn', '>=', last30day)
+          .whereIn('r.errorCode', MODULE_POWER_ERROR_CODES)
+          .count('r.id as errorCount')
+          .groupBy('r.moduleSerial')
+        _.forEach(errorCounts, count => {
+          if (count.errorCount > modulePowerMaxErrors) {
+            context.resultModulePowerError(deviceId)
+          }
+        })
+      }
     }
   })
 }

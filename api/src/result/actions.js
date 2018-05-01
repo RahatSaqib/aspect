@@ -3,6 +3,7 @@ const types = {
   RESULT_UPDATED: 'RESULT_UPDATED',
   RESULT_LOGGED: 'RESULT_LOGGED',
   RESULT_MODULE_TEMPERATURE_ERROR: 'RESULT_MODULE_TEMPERATURE_ERROR',
+  RESULT_MODULE_POWER_ERROR: 'RESULT_MODULE_POWER_ERROR',
 }
 
 // ----------- Action Creators -------------------
@@ -49,7 +50,7 @@ function resultLogged(resultId, deviceLogId) {
 
 /**
  * Creates an action to notify the device with given id
- * has a module error issue
+ * has a module temperature error issue
  *
  * deviceId is required.
  */
@@ -65,9 +66,26 @@ function resultModuleTemperatureError(deviceId) {
   }
 }
 
+/**
+ * Creates an action to notify the device with given id
+ * has a module power error issue
+ *
+ * deviceId is required.
+ */
+function resultModulePowerError(deviceId) {
+  if (deviceId == null) {
+    throw new Error('Must specify deviceId for notify resultModulePowerError')
+  }
+  return {
+    type: types.RESULT_MODULE_POWER_ERROR,
+    deviceId,
+  }
+}
+
 module.exports = {
   types,
   resultUpdated,
   resultLogged,
   resultModuleTemperatureError,
+  resultModulePowerError,
 }
