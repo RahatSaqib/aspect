@@ -14,8 +14,6 @@ const {
   removeInventory,
   transferInventory,
   receiveInventory,
-  inventoryStockout,
-  inventoryStockExpiring,
 } = require('./service')
 
 const inventoryFilters = {
@@ -257,13 +255,4 @@ const routes = [
   },
 ]
 
-const subscriptions = [
-  {
-    actions: {
-      INVENTORY_STOCKOUT: inventoryStockout,
-      INVENTORY_STOCK_EXPIRING: inventoryStockExpiring,
-    },
-  },
-]
-
-module.exports = { routes, subscriptions }
+module.exports = { routes }

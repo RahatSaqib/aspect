@@ -18,6 +18,9 @@ const { getUser } = require('../auth/service')
 const { getSite } = require('../site/service')
 const { emailMessageCreated } = require('../email/actions')
 const { smsMessageCreated } = require('../sms/actions')
+const {
+  types: { INVENTORY_STOCKOUT, INVENTORY_STOCK_EXPIRING },
+} = require('./actions')
 
 const INVENTORY_ITEM_SELECT_LIST_FIELDS = [
   'ii.id',
@@ -1071,14 +1074,23 @@ async function handleInventoryStock(action, messageContext) {
     emailMessageCreated,
     smsMessageCreated,
   })
-  const { siteId, consumableId, daysDue } = action
+  // const { siteId, consumableId, daysDue } = action
+  const { siteId } = action
 
   const now = new Date()
   const messageStatusId = await knex('MessageStatus')
     .where('externalId', 'Initial')
     .first('id')
-  const emailTemplateId = 1
-  const smsTemplateId = 1
+
+  // get template id's for email and sms
+  const issueExternalId =
+    action.type === INVENTORY_STOCKOUT
+      ? 'InventoryStockout'
+      : action.type === INVENTORY_STOCK_EXPIRING ? 'InventoryStockExpiring' : ''
+  const { emailTemplateId, smsTemplateId } = await knex('IssueType as it')
+    .innerJoin('MessageType as mt', 'it.defaultMessageTypeId', 'mt.id')
+    .where('mt.externalId', issueExternalId)
+    .first('mt.emailTemplateId', 'mt.smsTemplateId')
 
   // base entry for both EmailMessage and SmsMessage tables
   const base = {
@@ -1088,8 +1100,9 @@ async function handleInventoryStock(action, messageContext) {
     updatedOn: now,
   }
 
-  // all persons from this site
+  // get message recipients (all persons from this site?)
   const persons = await knex('Person as p')
+    // clarify who are addressees
     .where('', '')
     .select('p.id')
 
@@ -1101,27 +1114,29 @@ async function handleInventoryStock(action, messageContext) {
       _.map(persons, async person => {
         const personId = person.id
 
-        // add entry in EmailMessage
-        const emailMessageId = await knex('EmailMessage').insert(
-          {
-            ...base,
-            personId,
-            emailTemplateId,
-          },
-          'id'
+        // add entry into EmailMessage
+        emailMsgIds.push(
+          await knex('EmailMessage').insert(
+            {
+              ...base,
+              personId,
+              emailTemplateId,
+            },
+            'id'
+          )
         )
-        emailMsgIds.push(emailMessageId)
 
-        // add entry in SmsMessage
-        const smsMessageId = await knex('SmsMessage').insert(
-          {
-            ...base,
-            personId,
-            smsTemplateId,
-          },
-          'id'
+        // add entry into SmsMessage
+        smsMsgIds.push(
+          await knex('SmsMessage').insert(
+            {
+              ...base,
+              personId,
+              smsTemplateId,
+            },
+            'id'
+          )
         )
-        smsMsgIds.push(smsMessageId)
       })
     ).then(() => {
       // let MQ know messages have been created
@@ -1139,7 +1154,7 @@ async function handleInventoryStock(action, messageContext) {
   })
 }
 
-async function inventoryStock(action, { messageContext }) {
+async function inventoryStockout(action, { messageContext }) {
   return handleInventoryStock(action, messageContext)
 }
 
@@ -1159,6 +1174,6 @@ module.exports = {
   transferInventory,
   receiveInventory,
 
-  inventoryStock,
+  inventoryStockout,
   inventoryStockExpiring,
 }

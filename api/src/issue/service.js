@@ -103,9 +103,18 @@ async function createNewIssue(knex, issueType, action) {
     issue.partnerId = issueContext.partnerId
   } else if (action.siteId) {
     issue.siteId = action.siteId
-    const issueContext = await knex('Site')
-      .where({ id: issue.deviceId })
-      .first('geographyId', 'partnerId')
+    let issueContext
+    if (issueType.indexOf('InventoryStock') !== -1) {
+      issueContext = await knex('Site as s')
+        .innerJoin('Consumable as c', 's.id', 'c.siteId')
+        .where('s.id', issue.siteId)
+        .where('c.id', action.consumableId)
+        .first('s.geographyId', 'c.partnerId')
+    } else {
+      issueContext = await knex('Site')
+        .where({ id: issue.deviceId })
+        .first('geographyId', 'partnerId')
+    }
     issue.geographyId = issueContext.geographyId
     issue.partnerId = issueContext.partnerId
   }
