@@ -18,7 +18,7 @@ const {
 } = require('../../../src/result/actions')
 const { waitForIdle, waitForAction } = require('../../utils/mqUtils')
 
-describe.only('Issue endpoints', () => {
+describe('Issue endpoints', () => {
   function createContext() {
     return createGxAlertTestContext(server)
   }
@@ -210,7 +210,7 @@ describe.only('Issue endpoints', () => {
   it('should create a module failure issue ', () =>
     runTest(async knex => {
       const { now } = context
-      const errorCode = '1002'
+      const errorCode = '2032'
 
       // Post to deviceApi to ensure the device in in Aspect
       const response = await postToDeviceApi({
@@ -220,7 +220,7 @@ describe.only('Issue endpoints', () => {
         }),
       })
       const deviceId = response.body.device.id
-      for (let i = 0; i < 5; i++) {
+      for (let i = 0; i < 3; i++) {
         /* eslint-disable no-await-in-loop */
         const errorTestResultId = `UNIQUE-ID-WITH-FAILURE-ERROR-${i}`
         const sampleId = `FAIL2542552${i}`
@@ -252,7 +252,7 @@ describe.only('Issue endpoints', () => {
             },
           }
         )
-        if (i < 4) {
+        if (i < 2) {
           // Post the result to aspect
           await postToDeviceApi({
             authHeader: deviceAuth,
