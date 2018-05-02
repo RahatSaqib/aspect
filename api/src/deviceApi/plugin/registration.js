@@ -29,9 +29,9 @@ const plugins = {
   gxconnect: {
     preProcessCreateDevice: require('./genexpert/gxconnect_plugin/preProcessCreateDevice'),
     preProcessAddDeviceData: require('./genexpert/preProcessAddDeviceData'),
-    preProcessUpdateDeviceConfiguration: require('./genexpert/preProcessUpdateDeviceConfiguration'),
     postProcessUpdateDeviceConfiguration: require('./genexpert/postProcessUpdateDeviceConfiguration'),
     postProcessAddDeviceOperation: require('./genexpert/postProcessAddDeviceOperation'),
+    transformMergeResultPayload: require('./genexpert/transformMergeResultPayload'),
     preProcessMergeResult: require('./genexpert/preProcessMergeResult'),
   },
   gxalert: {
@@ -39,6 +39,7 @@ const plugins = {
     preProcessUpdateDeviceConfiguration: require('./genexpert/gxalert_plugin/preProcessUpdateDeviceConfiguration'),
     postProcessUpdateDeviceConfiguration: require('./genexpert/gxalert_plugin/postProcessUpdateDeviceConfiguration'),
     postProcessAddDeviceOperation: require('./genexpert/gxalert_plugin/postProcessAddDeviceOperation'),
+    transformMergeResultPayload: require('./genexpert/transformMergeResultPayload'),
     preProcessMergeResult: require('./genexpert/preProcessMergeResult'),
     postProcessMergeResult: require('./genexpert/gxalert_plugin/postProcessMergeResult'),
   },
