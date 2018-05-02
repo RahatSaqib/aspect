@@ -3829,6 +3829,42 @@ async function seed(knex) {
     )
   )
 
+  // Machine temperature error messages
+  const [machineTemperatureErrorAlertTemplateId] = await knex(
+    'AlertTemplate'
+  ).insert(
+    Object.assign(
+      {
+        message: 'Temperature errors across machine, conduct troubleshooting.',
+      },
+      auditFields
+    )
+  )
+
+  const [machineTemperatureErrorSmsTemplateId] = await knex(
+    'SmsTemplate'
+  ).insert(
+    Object.assign(
+      {
+        message: 'Temperature errors across machine, conduct troubleshooting.',
+      },
+      auditFields
+    )
+  )
+
+  const [machineTemperatureErrorEmailTemplateId] = await knex(
+    'EmailTemplate'
+  ).insert(
+    Object.assign(
+      {
+        subject: 'Machine Temperature Errors',
+        body: 'Temperature errors across machine, conduct troubleshooting.',
+        htmlBody: 'Temperature errors across machine, conduct troubleshooting',
+      },
+      auditFields
+    )
+  )
+
   const [deviceOfflineMessageTypeId] = await knex('MessageType').insert({
     messageSeverityId: messageSeverities.Alert.id,
     alertTemplateId: deviceOfflineAlertTemplateId,
@@ -3862,6 +3898,13 @@ async function seed(knex) {
     alertTemplateId: moduleFailureErrorAlertTemplateId,
     smsTemplateId: moduleFailureErrorSmsTemplateId,
     emailTemplateId: moduleFailureErrorEmailTemplateId,
+  })
+
+  const [machineTemperatureErrorTypeId] = await knex('MessageType').insert({
+    messageSeverityId: messageSeverities.Alert.id,
+    alertTemplateId: machineTemperatureErrorAlertTemplateId,
+    smsTemplateId: machineTemperatureErrorSmsTemplateId,
+    emailTemplateId: machineTemperatureErrorEmailTemplateId,
   })
 
   // Issues
@@ -3956,6 +3999,13 @@ async function seed(knex) {
       i18nKey: 'issueStatusModuleFailureError',
       issueCategoryId: issueCategories.DeviceHealth.id,
       defaultMessageTypeId: moduleFailureErrorTypeId,
+    },
+    {
+      name: 'Machine Temperature Error',
+      externalId: 'MachineTemperatureError',
+      i18nKey: 'issueStatusMachineTemperatureError',
+      issueCategoryId: issueCategories.DeviceHealth.id,
+      defaultMessageTypeId: machineTemperatureErrorTypeId,
     },
   ])
 }
