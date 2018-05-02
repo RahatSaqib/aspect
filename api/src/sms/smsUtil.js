@@ -1,10 +1,7 @@
-const _ = require('lodash')
 const twilio = require('twilio')
 const config = require('../config')
 
 async function sendSms(cellNumber, message) {
-  cellNumber = _.isNil(cellNumber) ? config.throwAway.sms : cellNumber
-
   // These consts are your settings from https://www.twilio.com/console
   const {
     accountSid,

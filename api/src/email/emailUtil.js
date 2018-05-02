@@ -1,10 +1,7 @@
 const _ = require('lodash')
 const helper = require('sendgrid').mail
-const config = require('../config')
 
 async function sendEmail(to, subject, htmlContent, textContent, attachments) {
-  to = _.isNil(to) ? config.throwAway.email : to
-
   const fromEmail = new helper.Email(process.env['email.fromAddress'], 'Aspect')
   const toEmail = new helper.Email(to)
   const htmlBody = htmlContent

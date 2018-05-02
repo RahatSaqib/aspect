@@ -2114,6 +2114,14 @@ async function seed(knex) {
     )
   )
 
+  // set admin's email/sms
+  await knex('Person')
+    .where('userId', adminId)
+    .update({
+      email: config.admin.email,
+      cell: config.admin.cell,
+    })
+
   // insert some routers with sims:
   const routerIds = []
   await Promise.all(
