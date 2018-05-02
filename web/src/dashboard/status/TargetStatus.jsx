@@ -224,46 +224,50 @@ export const TargetStatus = ({
           </div>
         </div>
         <div
-          className={cssClasses('Section--summary', 'TargetItemBlockContainer')}
+          className={cssClasses(
+            'TargetItemBlockContainer--horizontal-scrollable'
+          )}
         >
-          {targetSummaryList.map(target => (
-            <Unit
-              xs="1-5"
-              sm="1-5"
-              key={target.get('id')}
-              className={cssClasses('TargetItemBlock')}
-            >
-              <div className={cssClasses('TargetItemBlock__Title')}>
-                {target.get('title')}
-              </div>
-              <div className={cssClasses('TargetItemBlock__Label')}>
-                <span className={cssClasses('TargetItemBlock__Label--sub')}>
-                  {intl.formatMessage(messages.targetLabel)}
-                </span>
-                {target.get('target')}
-              </div>
-              <div className={cssClasses('TargetItemBlock__Graph')}>
-                <TemperatureGauge
-                  goal={target.get('target')}
-                  value={target.get('count')}
-                  hasError={hasError(target)}
-                />
-              </div>
-              <div className={cssClasses('TargetItemBlock__Label')}>
-                <span className={cssClasses('TargetItemBlock__Label--sub')}>
-                  {intl.formatMessage(messages.targetProgressLabel)}
-                </span>
-                {getProgressValue(target)}
-              </div>
-              <div className={cssClasses('TargetItemBlock__Label--error')}>
-                {hasError(target) &&
-                  intl.formatMessage(
-                    messages.targetErrorMessageLabel,
-                    target.toJS()
-                  )}
-              </div>
-            </Unit>
-          ))}
+          <div className={cssClasses('TargetItemBlockContainer')}>
+            {targetSummaryList.map(target => (
+              <Unit
+                xs="1-5"
+                sm="1-5"
+                key={target.get('id')}
+                className={cssClasses('TargetItemBlock')}
+              >
+                <div className={cssClasses('TargetItemBlock__Title')}>
+                  {target.get('title')}
+                </div>
+                <div className={cssClasses('TargetItemBlock__Label')}>
+                  <span className={cssClasses('TargetItemBlock__Label--sub')}>
+                    {intl.formatMessage(messages.targetLabel)}
+                  </span>
+                  {target.get('target')}
+                </div>
+                <div className={cssClasses('TargetItemBlock__Graph')}>
+                  <TemperatureGauge
+                    goal={target.get('target')}
+                    value={target.get('count')}
+                    hasError={hasError(target)}
+                  />
+                </div>
+                <div className={cssClasses('TargetItemBlock__Label')}>
+                  <span className={cssClasses('TargetItemBlock__Label--sub')}>
+                    {intl.formatMessage(messages.targetProgressLabel)}
+                  </span>
+                  {getProgressValue(target)}
+                </div>
+                <div className={cssClasses('TargetItemBlock__Label--error')}>
+                  {hasError(target) &&
+                    intl.formatMessage(
+                      messages.targetErrorMessageLabel,
+                      target.toJS()
+                    )}
+                </div>
+              </Unit>
+            ))}
+          </div>
         </div>
       </Card>
     )
