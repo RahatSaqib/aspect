@@ -12,6 +12,9 @@ const subscriptions = [
       ),
       RESULT_MODULE_POWER_ERROR: onIssueEventTrigger('ModulePowerError'),
       RESULT_MODULE_FAILURE_ERROR: onIssueEventTrigger('ModuleFailureError'),
+      RESULT_MACHINE_TEMPERATURE_ERROR: onIssueEventTrigger(
+        'MachineTemperatureError'
+      ),
     },
   },
 ]
