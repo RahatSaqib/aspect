@@ -5,6 +5,7 @@ const types = {
   DEVICE_ONLINE: 'DEVICE_ONLINE',
   DEVICE_NO_RESULTS: 'DEVICE_NO_RESULTS',
   DEVICE_HAS_NEW_RESULTS: 'DEVICE_HAS_NEW_RESULTS',
+  DEVICE_MAINTENANCE: 'DEVICE_MAINTENANCE',
 }
 
 // ----------- Action Creators -------------------
@@ -25,6 +26,31 @@ function deviceSeen(deviceId, dateSeen) {
     deviceId,
   }
   return dateSeen ? Object.assign({}, action, { dateSeen }) : action
+}
+
+/**
+ * Creates an action to notify the device is under maintenance
+ *
+ * deviceId is required.
+ * status is required: the token/externalId of DeviceMaintenanceStatus
+ * data the optoinal maintenance data is plain object
+ * resolveOn: optional deviceMaintenanceResolveOn date
+ *
+ */
+function deviceMaintenance(deviceId, status, data, resolveOn) {
+  if (deviceId == null) {
+    throw new Error('Must specify deviceId for notify deviceMaintenance')
+  }
+  if (status == null) {
+    throw new Error('Must specify status for notify deviceMaintenance')
+  }
+  return {
+    type: types.DEVICE_MAINTENANCE,
+    deviceId,
+    status,
+    data,
+    resolveOn,
+  }
 }
 
 /**
@@ -95,6 +121,7 @@ function deviceHasNewResults(deviceId) {
 module.exports = {
   types,
   deviceSeen,
+  deviceMaintenance,
   deviceOffline,
   deviceOnline,
   deviceNoResults,

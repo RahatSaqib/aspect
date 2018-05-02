@@ -11,6 +11,8 @@ const {
   listStatusTypes,
   exportDevices,
   listDevicesForSelectList,
+  onDeviceSeen,
+  onDeviceMaintenance,
 } = require('./service')
 const {
   validateAllGeographyFilterParams,
@@ -192,4 +194,13 @@ const routes = [
   },
 ]
 
-module.exports = { routes }
+const subscriptions = [
+  {
+    actions: {
+      DEVICE_SEEN: onDeviceSeen,
+      DEVICE_MAINTENANCE: onDeviceMaintenance,
+    },
+  },
+]
+
+module.exports = { routes, subscriptions }

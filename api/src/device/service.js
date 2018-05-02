@@ -12,6 +12,7 @@ const {
 const {
   operationalDashboard /* FIXME: actual impl */,
 } = require('../dashboard/service')
+const { deviceSeen, deviceOffline } = require('./actions')
 
 const SELECT_LIST_FIELDS = [
   'd.id',
@@ -52,6 +53,11 @@ const SELECT_SHOW_FIELDS = [
   'd.notes',
   'd.serial',
 ]
+
+const deviceMaintenanceStatusAction = {
+  online: deviceSeen,
+  offline: deviceOffline,
+}
 
 // ---------------------------------
 // basic method for reading dataset of devices
@@ -510,6 +516,70 @@ async function getDevice(deviceId) {
   return device
 }
 
+async function onDeviceSeen({ deviceId }, context) {
+  return onDeviceMaintenance({ deviceId, status: 'online' }, context)
+}
+
+async function onDeviceMaintenance(
+  { deviceId, status, data: newMaintenanceData, resolveOn: newResolveOn },
+  { messageContext }
+) {
+  const now = new Date()
+  return messageContext.transact(async knex => {
+    const {
+      deviceMaintenanceStatusId: currentMaintenanceStatusId,
+      deviceMaintenanceData: currentStringData,
+      deviceMaintenanceResolveOn: currentResolveOn,
+      newMaintenanceStatusId,
+    } = await knex('Device as d')
+      .join(
+        'DeviceMaintenanceStatus as dms',
+        'd.deviceMaintenanceStatusId',
+        'dms.id'
+      )
+      .where('d.id', deviceId)
+      .first(
+        'd.deviceMaintenanceStatusId as currentMaintenanceStatusId',
+        'd.deviceMaintenanceData',
+        'd.deviceMaintenanceResolveOn',
+        knex('DeviceMaintenanceStatus as dmsNew')
+          .where('dmsNew.token', status)
+          .first('dmsNew.id')
+          .as('newMaintenanceStatusId')
+      )
+    const currentMaintenanceData =
+      currentStringData == null ? {} : JSON.parse(currentStringData)
+    if (
+      newMaintenanceStatusId !== currentMaintenanceStatusId ||
+      !_.isEqual(currentResolveOn, newResolveOn) ||
+      !_.isEqual(currentMaintenanceData, newMaintenanceData)
+    ) {
+      const stringData = JSON.stringify(
+        _.merge(currentMaintenanceData, newMaintenanceData)
+      )
+      await knex('DeviceMaintenanceStatusLog').insert({
+        deviceId,
+        deviceMaintenanceStatusId: newMaintenanceStatusId,
+        data: stringData,
+        changedOn: now,
+        createdOn: now,
+      })
+      await knex('Device')
+        .where({ id: deviceId })
+        .update({
+          deviceMaintenanceStatusId: newMaintenanceStatusId,
+          deviceMaintenanceData: stringData,
+          deviceMaintenanceResolveOn: newResolveOn,
+        })
+      const action = deviceMaintenanceStatusAction[status]
+      if (action != null) {
+        // FIXME deviceSeen / common resolveOn ?
+        messageContext.dispatch(action(deviceId))
+      }
+    }
+  })
+}
+
 module.exports = {
   listDevices,
   showDevice,
@@ -518,4 +588,6 @@ module.exports = {
   exportDevices,
   listDevicesForSelectList,
   getDevice,
+  onDeviceSeen,
+  onDeviceMaintenance,
 }
