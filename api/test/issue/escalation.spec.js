@@ -139,10 +139,8 @@ describe('Issue Escalation', () => {
 
     describe('and DeviceOffline issues exist', () => {
       let device1
-      let device1LabUser
       let device1RegionalOfficer
       let device2
-      let device2LabUser
       let device2RegionalOfficer
 
       before(async () =>
@@ -152,7 +150,6 @@ describe('Issue Escalation', () => {
             countryAbbreviation,
           })
           device1 = device1Details.d
-          device1LabUser = device1Details.labUser
           device1RegionalOfficer = device1Details.regionalOfficer
 
           const device2Details = await getDevice(knex, {
@@ -161,7 +158,6 @@ describe('Issue Escalation', () => {
             notIn: [device1.id],
           })
           device2 = device2Details.d
-          device2LabUser = device2Details.labUser
           device2RegionalOfficer = device2Details.regionalOfficer
         })
       )
@@ -229,6 +225,131 @@ describe('Issue Escalation', () => {
       }
 
       describe("which have been open for more than 30 days but haven't been escalated yet", () => {
+        const dateIssueRaised = subDays(new Date(), 31)
+        let device1OfflineIssueId
+        let device2OfflineIssueId
+
+        beforeEach(async () =>
+          run(async knex => {
+            device1OfflineIssueId = await createDeviceOfflineIssue(
+              knex,
+              device1,
+              dateIssueRaised
+            )
+            device2OfflineIssueId = await createDeviceOfflineIssue(
+              knex,
+              device2,
+              dateIssueRaised
+            )
+          })
+        )
+
+        afterEach(async () =>
+          run(async knex => {
+            await cleanUpIssues(knex, [
+              device1OfflineIssueId,
+              device2OfflineIssueId,
+            ])
+          })
+        )
+
+        describe('then ESCALATE_ISSUES is dispatched with no issue ID', () => {
+          it('all the issues should be escalated', () =>
+            runTestWithKnex(async knex => {
+              const waitForEscalateIssues = waitForAction(escalateIssues())
+              messageContext.escalateIssues()
+              await waitForEscalateIssues
+              await waitForIdle()
+
+              const device1OfflineIssue = await getIssue(
+                knex,
+                device1OfflineIssueId
+              )
+              const device2OfflineIssue = await getIssue(
+                knex,
+                device2OfflineIssueId
+              )
+
+              assert.equal(device1OfflineIssue.level, 2)
+              assert.equal(device2OfflineIssue.level, 2)
+            }))
+
+          it('a notifications should be created for the level that the issue has been escalated to', () =>
+            runTestWithKnex(async knex => {
+              let notificationsForDevice1Issue = await getIssueNotifications(
+                knex,
+                device1OfflineIssueId
+              )
+              assert.isEmpty(notificationsForDevice1Issue)
+              let notificationsForDevice2Issue = await getIssueNotifications(
+                knex,
+                device2OfflineIssueId
+              )
+              assert.isEmpty(notificationsForDevice2Issue)
+
+              const waitForEscalateIssues = waitForAction(escalateIssues())
+              messageContext.escalateIssues()
+              await waitForEscalateIssues
+              await waitForIdle()
+
+              notificationsForDevice1Issue = await getIssueNotifications(
+                knex,
+                device1OfflineIssueId
+              )
+              expect(notificationsForDevice1Issue).to.containSubset([
+                {
+                  NotificationType: {
+                    level: 2,
+                  },
+                  Notification: {
+                    personId: device1RegionalOfficer.id,
+                  },
+                },
+              ])
+
+              notificationsForDevice2Issue = await getIssueNotifications(
+                knex,
+                device2OfflineIssueId
+              )
+              expect(notificationsForDevice2Issue).to.containSubset([
+                {
+                  NotificationType: {
+                    level: 2,
+                  },
+                  Notification: {
+                    personId: device2RegionalOfficer.id,
+                  },
+                },
+              ])
+            }))
+        })
+
+        describe("then ESCALATE_ISSUES is dispatched with one of the issue's ID", () => {
+          it('that one issue should be escalated', () =>
+            runTestWithKnex(async knex => {
+              const waitForEscalateIssues = waitForAction(
+                escalateIssues(device1OfflineIssueId)
+              )
+              messageContext.escalateIssues(device1OfflineIssueId)
+              await waitForEscalateIssues
+              await waitForIdle()
+
+              const device1OfflineIssue = await getIssue(
+                knex,
+                device1OfflineIssueId
+              )
+              const device2OfflineIssue = await getIssue(
+                knex,
+                device2OfflineIssueId
+              )
+
+              assert.equal(device1OfflineIssue.level, 2)
+              assert.equal(device2OfflineIssue.level, 1)
+            }))
+        })
+      })
+
+      describe('which have been escalated one and was escalated was more than 30 days ago', () => {
         const dateIssueRaised = subDays(new Date(), 31)
         let device1OfflineIssueId
         let device2OfflineIssueId
