@@ -44,7 +44,7 @@ const FILTERS_CONFIG = {
 }
 
 export const searchSanitizer = makeSearchParamsSanitizer({
-  availableSortCol: ['status', 'site', 'issue'],
+  availableSortCol: ['status', 'siteName', 'message'],
 })
 export const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
 export const filtersFromLocation = composeSanitizer(
@@ -111,7 +111,7 @@ const enhance = compose(
   }),
   withStateHandlers(
     () => ({
-      selectedCategory: 'Device',
+      selectedCategory: 'DeviceHealth',
     }),
     {
       onCategoryClick: () => ({ target }) => ({
@@ -149,14 +149,17 @@ export const ActionStatus = ({
     </div>
 
     <div className={cssClasses('ActionFilter')}>
-      {['Device', 'Reagent', 'Connectivity', 'Data'].map(category => (
+      {[
+        'DeviceHealth',
+        'ReagentHealth',
+        'ConnectivityHealth',
+        'DataHealth',
+      ].map(category => (
         <Unit xs="1-4" sm="1-4">
           <ActionFilterButton
             intl={intl}
             selected={selectedCategory === category}
-            title={intl.formatMessage(
-              messages[`issueCategory${category}Health`]
-            )}
+            title={intl.formatMessage(messages[`issueCategory${category}`])}
             category={category}
             data-value={category}
             actions={actionSummaryMap.get(category, EMPTY_LIST)}
@@ -183,13 +186,13 @@ export const ActionStatus = ({
               sortable: true,
             },
             {
-              key: 'site',
+              key: 'siteName',
               label: intl.formatMessage(messages.actionLab),
               className: cssClasses('ActionDataTable__TableHead__Lab'),
               sortable: true,
             },
             {
-              key: 'issue',
+              key: 'message',
               label: intl.formatMessage(messages.actionIssue),
               className: cssClasses('ActionDataTable__TableHead__Issue'),
               sortable: true,

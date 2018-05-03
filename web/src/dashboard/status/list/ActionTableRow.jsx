@@ -47,12 +47,12 @@ const ActionTableRow = ({
       />
     </TableCell>
     <TableCell className={cssClasses('TableCell', 'TableCell--site')}>
-      {action.get('site')}
+      {action.get('siteName')}
     </TableCell>
     <TableCell className={cssClasses('TableCell', 'TableCell--issue')}>
       <div className={cssClasses('Issue')}>
         <span className={cssClasses('Issue__Message')}>
-          {action.get('issue')}
+          {action.get('message')}
         </span>
         <div className={cssClasses('Issue__Action')}>
           <ActionStatus intl={intl} messages={messages} action={action} />

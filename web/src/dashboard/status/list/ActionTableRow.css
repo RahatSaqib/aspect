@@ -21,7 +21,7 @@
 .TableCell--site {
   font-weight: var(--lato-font-weight-bold);
   color: var(--aspect-color-grey-1);
-  min-width: 150px;
+  min-width: 200px;
 }
 
 .TableCell--issue {

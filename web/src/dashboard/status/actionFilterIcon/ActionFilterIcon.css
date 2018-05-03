@@ -7,73 +7,73 @@
   transform: scale(0.8);
 }
 
-.ActionFilterIcon_Connectivity--acknowledged {
+.ActionFilterIcon_ConnectivityHealth--acknowledged {
   width: 82px;
   height: 95px;
   background-position: 0 0;
 }
 
-.ActionFilterIcon_Connectivity--active {
+.ActionFilterIcon_ConnectivityHealth--active {
   width: 82px;
   height: 95px;
   background-position: -82px 0;
 }
 
-.ActionFilterIcon_Connectivity--ok {
+.ActionFilterIcon_ConnectivityHealth--ok {
   width: 82px;
   height: 95px;
   background-position: -164px 0;
 }
 
-.ActionFilterIcon_Data--acknowledged {
+.ActionFilterIcon_DataHealth--acknowledged {
   width: 82px;
   height: 95px;
   background-position: 0 -95px;
 }
 
-.ActionFilterIcon_Data--active {
+.ActionFilterIcon_DataHealth--active {
   width: 82px;
   height: 95px;
   background-position: -82px -95px;
 }
 
-.ActionFilterIcon_Data--ok {
+.ActionFilterIcon_DataHealth--ok {
   width: 82px;
   height: 95px;
   background-position: -164px -95px;
 }
 
-.ActionFilterIcon_Device--acknowledged {
+.ActionFilterIcon_DeviceHealth--acknowledged {
   width: 82px;
   height: 95px;
   background-position: 0 -190px;
 }
 
-.ActionFilterIcon_Device--active {
+.ActionFilterIcon_DeviceHealth--active {
   width: 82px;
   height: 95px;
   background-position: -82px -190px;
 }
 
-.ActionFilterIcon_Device--ok {
+.ActionFilterIcon_DeviceHealth--ok {
   width: 82px;
   height: 95px;
   background-position: -164px -190px;
 }
 
-.ActionFilterIcon_Reagent--acknowledged {
+.ActionFilterIcon_ReagentHealth--acknowledged {
   width: 82px;
   height: 95px;
   background-position: -246px 0;
 }
 
-.ActionFilterIcon_Reagent--active {
+.ActionFilterIcon_ReagentHealth--active {
   width: 82px;
   height: 95px;
   background-position: -246px -95px;
 }
 
-.ActionFilterIcon_Reagent--ok {
+.ActionFilterIcon_ReagentHealth--ok {
   width: 82px;
   height: 95px;
   background-position: -246px -190px;
