@@ -1,4 +1,5 @@
--- Are there any level 2 Notifications for this issue which are more than 30 days old?
+-- Check if there are any level 2 Notifications for this issue which are more
+-- than 30 days old
 SELECT EXISTS (
   SELECT n.id
   FROM Notification AS n
@@ -10,7 +11,5 @@ SELECT EXISTS (
   LEFT JOIN SmsMessage AS sm ON sm.id = n.smsMessageId
   LEFT JOIN MessageStatus AS smStatus ON smStatus.id = sm.messageStatusId
   WHERE n.issueId = {{id}}
-  AND COALESCE(n.alertMessageId, n.emailMessageId, n.smsMessageId, 0) <> 0
-  AND 'Sent' IN (amStatus.externalId, emStatus.externalId, smStatus.externalId)
   AND DATEDIFF(NOW(), n.createdOn) > 30
 ) AS ShouldEscalate;

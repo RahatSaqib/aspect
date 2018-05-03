@@ -66,7 +66,7 @@ const getCellsByValue = (sheet, value) => {
 // ---------------------------------
 // read Text file and return a string
 async function readTextFile(filePath, encoding = 'utf8') {
-  return Promise.promisify(fs.readFile(filePath, encoding))
+  return Promise.promisify(fs.readFile)(filePath, encoding)
 }
 
 // ---------------------------------

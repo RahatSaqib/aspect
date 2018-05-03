@@ -68,7 +68,7 @@ async function findOpenIssuesToCheckForEscalation(knex, issueId) {
       )
     })
     .join('IssueEscalationTrigger as iet', function() {
-      this.on('i.issueTypeId', 'iet.id')
+      this.on('i.issueTypeId', 'iet.issueTypeId')
         .on('i.partnerId', 'iet.partnerId')
         .on('i.level', '<', 'iet.escalateToLevel')
     })
@@ -189,9 +189,9 @@ async function evaluateSql(knex, issue, sql) {
     sql,
     parameterPlaceholders
   )
-  const parameters = processUsingHandlebarsSyntax(
-    getMustacheTokensInString(sql).join(),
-    issueValues
+  const parameterPlaceHolders = getMustacheTokensInString(sql)
+  const parameters = _.map(parameterPlaceHolders, parameterPlaceHolder =>
+    processUsingHandlebarsSyntax(parameterPlaceHolder, issueValues)
   )
   const evaluatedResult = await knex.raw(parameterisedSqlQuery, parameters)
   return isResultTruthy(evaluatedResult, parameterisedSqlQuery, parameters)
@@ -207,20 +207,33 @@ function isResultTruthy(result, parameterisedSqlQuery, parameters) {
   if (_.isUndefined(result)) {
     throw noResultException
   }
-  if (_.isArray(result)) {
-    if (result.length > 1) {
-      throw manyResultsException
-    } else if (_.isEmpty(result)) {
-      throw noResultException
+  // Parse the RowDataObjects from a raw knex query
+  const rowAndFieldObjects = JSON.parse(JSON.stringify(result))
+  if (_.isArray(rowAndFieldObjects)) {
+    if (rowAndFieldObjects.length > 0) {
+      const queryResults = rowAndFieldObjects[0]
+      if (queryResults.length > 1) {
+        throw manyResultsException
+      } else if (_.isEmpty(queryResults)) {
+        throw noResultException
+      }
+      return isResultTruthy(
+        _.head(queryResults),
+        parameterisedSqlQuery,
+        parameters
+      )
     }
-    return isResultTruthy(_.head(result), parameterisedSqlQuery, parameters)
+    throw noResultException
   }
   if (_.isPlainObject(result)) {
     // Is the first value in the record from the SQL query
     // return something that is truthy?
-    return isResultTruthy(_.head(_.values(result)))
+    return isResultTruthy(
+      _.head(_.values(result)),
+      parameterisedSqlQuery,
+      parameters
+    )
   }
-  // Is the result value from the SQL query truthy?
   return !!result
 }
 
