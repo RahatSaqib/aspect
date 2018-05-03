@@ -105,11 +105,15 @@ async function createNewIssue(knex, issueType, action) {
     issue.siteId = action.siteId
     let issueContext
     if (action.consumableId != null) {
-      issueContext = await knex('Site as s')
-        .innerJoin('Consumable as c', 's.id', 'c.siteId')
+      issueContext = await knex('InventoryItem as ii')
+        .innerJoin('Site as s', 'ii.siteId', 's.id')
+        .innerJoin('Consumable as c', 'ii.consumableId', 'c.id')
         .where('s.id', issue.siteId)
-        .where('c.id', action.consumableId)
-        .first('s.geographyId', 'c.partnerId')
+        .where('ii.consumableId', action.consumableId)
+        .first(
+          's.geographyId',
+          knex.raw('COALESCE(c.partnerId, s.partnerId) as partnerId')
+        )
     } else {
       issueContext = await knex('Site')
         .where({ id: issue.deviceId })

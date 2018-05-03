@@ -16,11 +16,6 @@ const {
 const { findConsumableReason } = require('../consumable/consumableService')
 const { getUser } = require('../auth/service')
 const { getSite } = require('../site/service')
-const { emailMessageCreated } = require('../email/actions')
-const { smsMessageCreated } = require('../sms/actions')
-const {
-  types: { INVENTORY_STOCKOUT, INVENTORY_STOCK_EXPIRING },
-} = require('./actions')
 
 const INVENTORY_ITEM_SELECT_LIST_FIELDS = [
   'ii.id',
@@ -1029,7 +1024,7 @@ async function insertInventoryItem(knex, inventoryItemValues) {
 
 async function getConsumptionRateForLastDays(siteId, consumableId, lastDays) {
   const dateFrom = subDays(new Date(), lastDays)
-  const totalConsumed = await knex('Result as r')
+  const consumed = await knex('Result as r')
     .innerJoin('Assay as a', 'r.assayId', 'a.id')
     .innerJoin('ConsumableAssay as ca', 'a.id', 'ca.assayId')
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
@@ -1037,14 +1032,21 @@ async function getConsumptionRateForLastDays(siteId, consumableId, lastDays) {
     .where('d.siteId', siteId)
     .where('ca.consumableId', consumableId)
     .groupBy('d.siteId', 'r.assayId')
-    .first(knex.raw('count(r.id) * ca.quantity as totals'))
-
-  return lastDays > 0 ? totalConsumed / lastDays : 0
+    .first(knex.raw('(count(r.id) * ca.quantity) as totals'))
+  return lastDays > 0 && consumed ? consumed.totals / lastDays : 0
 }
 
 async function refreshConsumptionRates(siteId, consumableId) {
-  const dailyRate = await getConsumptionRateForLastDays(10)
-  const monthlyRate = await getConsumptionRateForLastDays(30)
+  const dailyRate = await getConsumptionRateForLastDays(
+    siteId,
+    consumableId,
+    10
+  )
+  const monthlyRate = await getConsumptionRateForLastDays(
+    siteId,
+    consumableId,
+    30
+  )
 
   const updatedOn = new Date()
   const dataUpdate = { dailyRate, monthlyRate, updatedOn }
@@ -1069,99 +1071,6 @@ async function refreshConsumptionRates(siteId, consumableId) {
   return rates
 }
 
-async function handleInventoryStock(action, messageContext) {
-  const context = messageContext.bindActionCreators({
-    emailMessageCreated,
-    smsMessageCreated,
-  })
-  // const { siteId, consumableId, daysDue } = action
-  const { siteId } = action
-
-  const now = new Date()
-  const messageStatusId = await knex('MessageStatus')
-    .where('externalId', 'Initial')
-    .first('id')
-
-  // get template id's for email and sms
-  const issueExternalId =
-    action.type === INVENTORY_STOCKOUT
-      ? 'InventoryStockout'
-      : action.type === INVENTORY_STOCK_EXPIRING ? 'InventoryStockExpiring' : ''
-  const { emailTemplateId, smsTemplateId } = await knex('IssueType as it')
-    .innerJoin('MessageType as mt', 'it.defaultMessageTypeId', 'mt.id')
-    .where('mt.externalId', issueExternalId)
-    .first('mt.emailTemplateId', 'mt.smsTemplateId')
-
-  // base entry for both EmailMessage and SmsMessage tables
-  const base = {
-    messageStatusId,
-    siteId,
-    createdOn: now,
-    updatedOn: now,
-  }
-
-  // get message recipients (all persons from this site?)
-  const persons = await knex('Person as p')
-    // clarify who are addressees
-    .where('', '')
-    .select('p.id')
-
-  return context.transact(async knex => {
-    const emailMsgIds = []
-    const smsMsgIds = []
-    await Promise.all(
-      // for each person create email/sms message and keep messageId's in corresponding array
-      _.map(persons, async person => {
-        const personId = person.id
-
-        // add entry into EmailMessage
-        emailMsgIds.push(
-          await knex('EmailMessage').insert(
-            {
-              ...base,
-              personId,
-              emailTemplateId,
-            },
-            'id'
-          )
-        )
-
-        // add entry into SmsMessage
-        smsMsgIds.push(
-          await knex('SmsMessage').insert(
-            {
-              ...base,
-              personId,
-              smsTemplateId,
-            },
-            'id'
-          )
-        )
-      })
-    ).then(() => {
-      // let MQ know messages have been created
-
-      // emails
-      _.forEach(emailMsgIds, messageId => {
-        context.emailMessageCreated(messageId)
-      })
-
-      // sms's
-      _.forEach(smsMsgIds, messageId => {
-        context.smsMessageCreated(messageId)
-      })
-    })
-  })
-}
-
-async function inventoryStockout(action, { messageContext }) {
-  return handleInventoryStock(action, messageContext)
-}
-
-async function inventoryStockExpiring(action, { messageContext }) {
-  return handleInventoryStock(action, messageContext)
-}
-
 module.exports = {
   getInventoryItems,
   listInventoryItems,
@@ -1173,7 +1082,4 @@ module.exports = {
   removeInventory,
   transferInventory,
   receiveInventory,
-
-  inventoryStockout,
-  inventoryStockExpiring,
 }
