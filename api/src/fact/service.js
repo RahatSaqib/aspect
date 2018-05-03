@@ -109,34 +109,53 @@ function onResultLogged({ resultId }, { messageContext }) {
 }
 
 function onFactGenerateResultCountsForDevice(
-  { deviceId, assayId = -1, resultCategory1 = -1, resultCategory2 = -1 },
+  { deviceId, assayId, resultCategory1, resultCategory2 },
   { messageContext }
 ) {
-  const daysToCalculate = [1, 7, 30, 60, 90, 365, 9999]
-
   return messageContext.transact(async knex => {
+    const daysToCalculate = [1, 7, 30, 60, 90, 365, 9999]
+
+    const now = new Date()
+
+    // query for selecting data for the device
+    const query = knex('Result as r').where({ deviceId })
+    query.modify(queryBuilder => {
+      if (assayId) {
+        queryBuilder.where({ assayId })
+      }
+      if (resultCategory1) {
+        queryBuilder.where({ resultCategory1 })
+      }
+      if (resultCategory2) {
+        queryBuilder.where({ resultCategory2 })
+      }
+    })
+
     for (const days of daysToCalculate) {
       /* eslint-disable no-await-in-loop */
-      const now = new Date()
+      const endedOn = subDays(now, days)
 
       // query for selecting data for the device
-      const resultCountQuery = knex('Result as r').whereRaw(
+      const query = knex('Result as r').whereRaw(
         'r.deviceId = :deviceId and r.endedOn > :endedOn',
         {
           deviceId,
-          endedOn: subDays(now, days),
+          endedOn,
         }
       )
 
-      // calculate by device
-      await knex('FactResultsDevice')
-        .where({ deviceId })
-        .andWhere({ days })
-        .delete()
+      // calculate by device - make sure it still exists
+      const device = await knex('Device')
+        .where({ id: deviceId })
+        .first('deviceId')
+      if (!device) {
+        return
+      }
 
-      const countByDevice = await resultCountQuery
+      const countByDevice = await query
         .clone()
         .count('r.id as resultCount')
+        .select('r.deviceId')
         .first()
 
       await knex.raw(
@@ -148,23 +167,12 @@ function onFactGenerateResultCountsForDevice(
             calculatedOn: now,
           })
           .toString()
-          .replace(/^insert/i, 'insert ignore')
+          .replace(/^insert/i, 'replace')
       )
 
       // ...grouped by assay
-      await knex('FactResultsDeviceByAssay')
-        .where({ deviceId })
-        .andWhere({ days })
-        .andWhereRaw('(assayId = :assayId or :assayId = -1)', {
-          assayId,
-        })
-        .delete()
-
-      const countsByAssay = await resultCountQuery
+      const countsByAssay = await query
         .clone()
-        .andWhereRaw('(assayId = :assayId or :assayId = -1)', {
-          assayId,
-        })
         .groupBy('r.assayid')
         .count('r.id as resultCount')
         .select('r.assayId')
@@ -180,36 +188,13 @@ function onFactGenerateResultCountsForDevice(
               calculatedOn: now,
             })
             .toString()
-            .replace(/^insert/i, 'insert ignore')
+            .replace(/^insert/i, 'replace')
         )
       }
 
       // ...grouped by assay, resultCategory
-      await knex('FactResultsDeviceByCategory1')
-        .where({ deviceId })
-        .andWhere({ days })
-        .andWhereRaw('(assayId = :assayId or :assayId = -1)', {
-          assayId,
-        })
-        .andWhereRaw(
-          '(resultCategory1 = :resultCategory1 or :resultCategory1 = -1)',
-          {
-            resultCategory1,
-          }
-        )
-        .delete()
-
-      const countsByCategory = await resultCountQuery
+      const countsByCategory = await query
         .clone()
-        .andWhereRaw('(assayId = :assayId or :assayId = -1)', {
-          assayId,
-        })
-        .andWhereRaw(
-          '(resultCategory1 = :resultCategory1 or :resultCategory1 = -1)',
-          {
-            resultCategory1,
-          }
-        )
         .groupBy('r.assayId', 'r.resultCategory1')
         .count('r.id as resultCount')
         .select('r.assayId', 'r.resultCategory1')
@@ -226,48 +211,13 @@ function onFactGenerateResultCountsForDevice(
               calculatedOn: now,
             })
             .toString()
-            .replace(/^insert/i, 'insert ignore')
+            .replace(/^insert/i, 'replace')
         )
       }
 
       // ...grouped by assay, resultCategory 1 & 2
-      await knex('FactResultsDeviceByCategory1And2')
-        .where({ deviceId })
-        .andWhere({ days })
-        .andWhereRaw('(assayId = :assayId or :assayId = -1)', {
-          assayId,
-        })
-        .andWhereRaw(
-          '(resultCategory1 = :resultCategory1 or :resultCategory1 = -1)',
-          {
-            resultCategory1,
-          }
-        )
-        .andWhereRaw(
-          '(resultCategory2 = :resultCategory2 or :resultCategory2 = -1)',
-          {
-            resultCategory2,
-          }
-        )
-        .delete()
-
-      const countsByCategories = await resultCountQuery
+      const countsByCategories = await query
         .clone()
-        .andWhereRaw('(assayId = :assayId or :assayId = -1)', {
-          assayId,
-        })
-        .andWhereRaw(
-          '(resultCategory1 = :resultCategory1 or :resultCategory1 = -1)',
-          {
-            resultCategory1,
-          }
-        )
-        .andWhereRaw(
-          '(resultCategory2 = :resultCategory2 or :resultCategory2 = -1)',
-          {
-            resultCategory2,
-          }
-        )
         .whereNotNull('resultCategory2')
         .groupBy('r.assayId', 'r.resultCategory1', 'r.resultCategory2')
         .count('r.id as resultCount')
@@ -286,11 +236,56 @@ function onFactGenerateResultCountsForDevice(
               calculatedOn: now,
             })
             .toString()
-            .replace(/^insert/i, 'insert ignore')
+            .replace(/^insert/i, 'replace')
         )
       }
       /* eslint-enable no-await-in-loop */
     }
+
+    // delete orphan data (=not updated in the loop)
+    await knex('FactResultsDevice')
+      .where({ deviceId })
+      .whereRaw('calculatedOn < ?', now)
+      .delete()
+
+    await knex('FactResultsDeviceByAssay')
+      .where({ deviceId })
+      .whereRaw('calculatedOn < ?', now)
+      .modify(queryBuilder => {
+        if (assayId) {
+          queryBuilder.where({ assayId })
+        }
+      })
+      .delete()
+
+    await knex('FactResultsDeviceByCategory1')
+      .where({ deviceId })
+      .whereRaw('calculatedOn < ?', now)
+      .modify(queryBuilder => {
+        if (assayId) {
+          queryBuilder.where({ assayId })
+        }
+        if (resultCategory1) {
+          queryBuilder.where({ resultCategory1 })
+        }
+      })
+      .delete()
+
+    await knex('FactResultsDeviceByCategory1And2')
+      .where({ deviceId })
+      .whereRaw('calculatedOn < ?', now)
+      .modify(queryBuilder => {
+        if (assayId) {
+          queryBuilder.where({ assayId })
+        }
+        if (resultCategory1) {
+          queryBuilder.where({ resultCategory1 })
+        }
+        if (resultCategory2) {
+          queryBuilder.where({ resultCategory2 })
+        }
+      })
+      .delete()
   })
 }
 

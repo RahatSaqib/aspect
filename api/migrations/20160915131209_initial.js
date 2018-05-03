@@ -1470,7 +1470,7 @@ async function up(knex) {
       .integer('resultCount')
       .unsigned()
       .notNullable()
-    x.dateTime('calculatedOn').notNullable()
+    x.specificType('calculatedOn', 'DATETIME(3)').notNullable()
     x.unique(['deviceId', 'days'], 'factresultsdevice_unique')
   })
 
@@ -1497,7 +1497,7 @@ async function up(knex) {
       .integer('resultCount')
       .unsigned()
       .notNullable()
-    x.dateTime('calculatedOn').notNullable()
+    x.specificType('calculatedOn', 'DATETIME(3)').notNullable()
     x.unique(['deviceId', 'assayId', 'days'], 'factresultsdevicebyassay_unique')
   })
 
@@ -1532,7 +1532,7 @@ async function up(knex) {
       .integer('resultCount')
       .unsigned()
       .notNullable()
-    x.dateTime('calculatedOn').notNullable()
+    x.specificType('calculatedOn', 'DATETIME(3)').notNullable()
     x.unique(
       ['deviceId', 'assayId', 'resultCategory1', 'days'],
       'factresultsdevicebycategory1_unique'
@@ -1578,7 +1578,7 @@ async function up(knex) {
       .integer('resultCount')
       .unsigned()
       .notNullable()
-    x.dateTime('calculatedOn').notNullable()
+    x.specificType('calculatedOn', 'DATETIME(3)').notNullable()
     x.unique(
       ['deviceId', 'assayId', 'resultCategory1', 'resultCategory2', 'days'],
       'factresultsdevicebycategory1and2_unique'
