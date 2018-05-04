@@ -23,6 +23,7 @@ const {
   resultModulePowerError,
   resultModuleFailureError,
   resultMachineTemperatureError,
+  resultModuleGenericError,
 } = require('../result/actions')
 
 const MODULE_TEMPERATURE_ERROR_CODES = [
@@ -80,11 +81,36 @@ const MODULE_FAILURE_ERROR_CODES = [
   '5015',
   '5016',
 ]
+const MODULE_GENERIC_ERROR_CODES = [
+  '1096',
+  '1097',
+  '1098',
+  '1099',
+  '1100',
+  '2096',
+  '2097',
+  '2098',
+  '2099',
+  '2100',
+  '2125',
+  '1125',
+  '2005',
+  '2006',
+  '2008',
+  '2009',
+  '5006',
+  '5007',
+  '5008',
+  '5009',
+  '5010',
+  '2003',
+]
 
 const moduleTemperatureMaxErrors = 4
 const modulePowerMaxErrors = 4
 const moduleFailureMaxErrors = 2
 const machineTemperatureMaxErrors = 8
+const moduleGenericMaxPercentage = 5
 const SELECT_LIST_FIELDS = [
   'r.id',
   'r.externalId',
@@ -705,6 +731,7 @@ async function onResultLogged({ resultId }, { messageContext }) {
     resultModulePowerError,
     resultModuleFailureError,
     resultMachineTemperatureError,
+    resultModuleGenericError,
   })
   await context.run(async knex => {
     const [result] = await knex('Result as r').where('r.id', resultId)
@@ -762,6 +789,28 @@ async function onResultLogged({ resultId }, { messageContext }) {
         _.forEach(errorCounts, count => {
           if (count.errorCount > moduleFailureMaxErrors) {
             context.resultModuleFailureError(deviceId)
+          }
+        })
+      } else if (MODULE_GENERIC_ERROR_CODES.includes(result.errorCode)) {
+        const modules = await deviceErrorQuery
+          .clone()
+          .where('r.endedOn', '>=', last30day)
+          .whereIn('r.errorCode', MODULE_GENERIC_ERROR_CODES)
+          .select('r.moduleSerial as moduleSerial')
+          .count('r.id as errorCount')
+          .groupBy('r.moduleSerial')
+
+        const [existingIssue] = await knex('Issue as i')
+          .join('IssueStatus as is', 'i.issueStatusId', 'is.id')
+          .whereIn('is.externalId', ['Active', 'Acknowledged'])
+        _.forEach(modules, async module => {
+          const [{ moduleResultCount }] = await knex('Result as r')
+            .where('r.endedOn', '>=', last30day)
+            .where('r.moduleSerial', module.moduleSerial)
+            .count('r.id as moduleResultCount')
+          const prcntModuleError = module.errorCount / moduleResultCount * 100
+          if (!existingIssue && prcntModuleError > moduleGenericMaxPercentage) {
+            context.resultModuleGenericError(deviceId)
           }
         })
       }
