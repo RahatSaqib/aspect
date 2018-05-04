@@ -18,7 +18,7 @@ function startScheduler(queue) {
 
   cron.schedule('0 * * * *', dispatcher.factGenerateResultCounts) // run every hour as it changes
   cron.schedule('1 * * * *', dispatcher.factGenerateDeviceConnectivity) // run every hour at 1 minute past the hour
-  cron.schedule('*/22 * * * *', dispatcher.escalateIssues) // run every 15 minutes
+  cron.schedule('*/15 * * * *', dispatcher.escalateIssues) // run every 15 minutes
 }
 
 function createActionDispatcher(queue, actionCreators) {
