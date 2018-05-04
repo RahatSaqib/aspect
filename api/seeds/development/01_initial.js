@@ -3793,7 +3793,7 @@ async function seed(knex) {
         subject: 'Module Failure Errors',
         body: 'Module {{result.moduleName}}: Critical errors; notify R.O.',
         htmlBody:
-          'Module <em>{{result.moduleName}</em>}: Critical errors; notify R.O.',
+          'Module <em>{{result.moduleName}}</em>: Critical errors; notify R.O.',
       },
       auditFields
     )
@@ -3865,6 +3865,41 @@ async function seed(knex) {
     )
   )
 
+  // Module Generic issue messages
+  const [moduleGenericErrorAlertTemplateId] = await knex(
+    'AlertTemplate'
+  ).insert(
+    Object.assign(
+      {
+        message: 'Module {{module.moduleName}} errors, conduct troubleshooting',
+      },
+      auditFields
+    )
+  )
+
+  const [moduleGenericErrorSmsTemplateId] = await knex('SmsTemplate').insert(
+    Object.assign(
+      {
+        message: 'Module {{result.moduleName}} errors, conduct troubleshooting',
+      },
+      auditFields
+    )
+  )
+
+  const [moduleGenericErrorEmailTemplateId] = await knex(
+    'EmailTemplate'
+  ).insert(
+    Object.assign(
+      {
+        subject: 'Machine Temperature Errors',
+        body: 'Module {{result.moduleName}} errors, conduct troubleshooting',
+        htmlBody:
+          'Module <em>{{result.moduleName}}</em> errors, conduct troubleshooting',
+      },
+      auditFields
+    )
+  )
+
   const [deviceOfflineMessageTypeId] = await knex('MessageType').insert({
     messageSeverityId: messageSeverities.Alert.id,
     alertTemplateId: deviceOfflineAlertTemplateId,
@@ -3905,6 +3940,13 @@ async function seed(knex) {
     alertTemplateId: machineTemperatureErrorAlertTemplateId,
     smsTemplateId: machineTemperatureErrorSmsTemplateId,
     emailTemplateId: machineTemperatureErrorEmailTemplateId,
+  })
+
+  const [moduleGenericErrorTypeId] = await knex('MessageType').insert({
+    messageSeverityId: messageSeverities.Alert.id,
+    alertTemplateId: moduleGenericErrorAlertTemplateId,
+    smsTemplateId: moduleGenericErrorSmsTemplateId,
+    emailTemplateId: moduleGenericErrorEmailTemplateId,
   })
 
   // Issues
@@ -4006,6 +4048,13 @@ async function seed(knex) {
       i18nKey: 'issueStatusMachineTemperatureError',
       issueCategoryId: issueCategories.DeviceHealth.id,
       defaultMessageTypeId: machineTemperatureErrorTypeId,
+    },
+    {
+      name: 'Module Generic Error',
+      externalId: 'ModuleGenericError',
+      i18nKey: 'issueStatusModuleGenericError',
+      issueCategoryId: issueCategories.DeviceHealth.id,
+      defaultMessageTypeId: moduleGenericErrorTypeId,
     },
   ])
 }
