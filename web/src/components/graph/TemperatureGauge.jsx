@@ -6,7 +6,7 @@ import { AxisRight } from '@vx/axis'
 import { scaleLinear } from '@vx/scale'
 
 const TemperatureGauge = ({
-  parentWidth: width = 200,
+  parentWidth = 200,
   height = 200,
   goal = 100,
   value = 0,
@@ -15,9 +15,9 @@ const TemperatureGauge = ({
   achievedColor = process.env['--aspect-color-mantis'],
   errorColor = process.env['--aspect-color-mandy'],
 }) => {
+  const width = Math.max(parentWidth, 80)
+  const tubeWidth = Math.min(width / 5, 16)
   const margin = { top: 5, bottom: 5 }
-
-  const tubeWidth = 16
   const tubeRadius = tubeWidth / 2
   const tubeBorderWidth = 4
   const tubeY = margin.top + tubeRadius

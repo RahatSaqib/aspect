@@ -163,7 +163,6 @@ function getResultCategories(payload) {
             indéterminé: 'Indeterminate',
             error: 'Error',
             invalid: 'Invalid',
-            na: 'Indeterminate',
             'no result': 'NoResult',
           }
           if (result2CategoryMapping[result2Text]) {
@@ -173,15 +172,11 @@ function getResultCategories(payload) {
             ]
           }
         }
-      } else if (canHaveSecondResult) {
-        payloadCategory = [
-          ...payloadCategory,
-          {
-            id: ['Error', 'Invalid', 'NoResult'].includes(result1)
-              ? result1
-              : 'Indeterminate',
-          },
-        ]
+      } else if (
+        canHaveSecondResult &&
+        ['Error', 'Invalid', 'NoResult'].includes(result1)
+      ) {
+        payloadCategory = [...payloadCategory, { id: result1 }]
       }
     }
   }

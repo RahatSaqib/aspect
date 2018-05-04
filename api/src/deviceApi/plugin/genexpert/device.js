@@ -17,6 +17,7 @@ async function findDevices(availableDeviceDetails, knex) {
     'd.serial',
     'd.macAddress',
     'd.configurationData',
+    'd.lastSeenOn',
     'ds.token as status',
     'dt.externalId as deviceType',
     'dt.plugin as deviceTypePluginName',
@@ -61,7 +62,7 @@ async function findDevices(availableDeviceDetails, knex) {
       }
     }
   }
-  return matchingDevices
+  return _.uniqBy(matchingDevices, 'id')
 }
 
 module.exports = { findDevices }

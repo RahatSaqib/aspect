@@ -14,14 +14,15 @@ const types = {
  *
  * deviceId is required.
  */
-function deviceSeen(deviceId) {
+function deviceSeen(deviceId, dateSeen) {
   if (deviceId == null) {
     throw new Error('Must specify deviceId for notify deviceSeen')
   }
-  return {
+  const action = {
     type: types.DEVICE_SEEN,
     deviceId,
   }
+  return dateSeen ? Object.assign({}, action, { dateSeen }) : action
 }
 
 /**

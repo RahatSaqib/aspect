@@ -18,6 +18,8 @@ const {
 } = require('./geneXpertConstants')
 const { run } = require('../../../src/db')
 const { waitForApproximately } = require('../../utils/generatorFunctionUtils')
+const { waitForIdle, waitForAction } = require('../../utils/mqUtils')
+const { deviceSeen } = require('../../../src/device/actions')
 
 const server = supertest.agent('http://localhost:8080')
 const { assert, expect } = chai
@@ -55,7 +57,7 @@ describe('Device API routes for GxConnect Devices', () => {
         }))
     })
 
-    describe('when unknown device API key is specified', () => {
+    describe('when an unknown device API key is specified', () => {
       const context = createGxConnectTestContext(server, {
         macAddress,
         adminUsername,
@@ -78,7 +80,7 @@ describe('Device API routes for GxConnect Devices', () => {
         }))
     })
 
-    describe('when known device API key is specified', () => {
+    describe('when a known device API key is specified', () => {
       describe('send new device data', () => {
         describe('before a device name and country code have been specified', () => {
           const context = createGxConnectTestContext(server, {
@@ -254,7 +256,7 @@ describe('Device API routes for GxConnect Devices', () => {
         }))
     })
 
-    describe('when MAC address changes', () => {
+    describe('when the MAC address of the device changes', () => {
       describe('and device API key changes', () => {
         const firstContext = createGxConnectTestContext(server, {
           countryCode,
@@ -430,7 +432,7 @@ describe('Device API routes for GxConnect Devices', () => {
       })
     })
 
-    describe('when device serial changes', () => {
+    describe('when the device serial of the device changes', () => {
       describe('and device API key changes', () => {
         const firstContext = createGxConnectTestContext(server, {
           countryCode,
@@ -614,6 +616,88 @@ describe('Device API routes for GxConnect Devices', () => {
           }))
       })
     })
+  })
+
+  describe('ping', () => {
+    const macAddress = 'MAC00000321PING'
+
+    const context = createGxConnectTestContext(server, {
+      countryCode,
+      adminUsername,
+      adminPassword,
+      deviceName,
+      macAddress,
+      deviceSerialNumber,
+    })
+    before(context.beforeRegisterAndSetDevice)
+    const { runTest } = context
+    after(context.afterCleanUp)
+
+    it('should update the last seen and last ping time', () =>
+      runTest(async knex => {
+        const { basicDevicePayload, deviceAuth, device } = context
+        const deviceBefore = await knex('Device')
+          .where('id', device.id)
+          .first()
+
+        const waitForDeviceSeen = waitForAction(deviceSeen(deviceBefore.id))
+        await waitForApproximately(1, 'second')
+        await server
+          .post('/device')
+          .set('Authorization', deviceAuth)
+          .send(basicDevicePayload)
+          .then(res => {
+            assert.equal(res.status, 200)
+          })
+          .catch(assert.fail)
+
+        await waitForDeviceSeen
+        await waitForIdle()
+
+        const deviceAfter = await knex('Device')
+          .where('id', device.id)
+          .first()
+        deviceAfter.id.should.equal(deviceBefore.id)
+        new Date(deviceAfter.lastSeenOn).should.be.above(
+          deviceBefore.lastSeenOn
+        )
+        new Date(deviceAfter.lastPingOn).should.be.above(
+          deviceBefore.lastPingOn
+        )
+      }))
+
+    it('should eventually update the device fact offline status to false', () =>
+      runTest(async knex => {
+        const { basicDevicePayload, deviceAuth, device } = context
+        await knex('FactDeviceFlag')
+          .where('deviceId', device.id)
+          .update({ offline: 1 })
+
+        const deviceBefore = await knex('Device')
+          .where('id', device.id)
+          .first()
+
+        const waitForDeviceSeen = waitForAction(deviceSeen(deviceBefore.id))
+        await waitForApproximately(1, 'second')
+        await server
+          .post('/device')
+          .set('Authorization', deviceAuth)
+          .send(basicDevicePayload)
+          .then(res => {
+            assert.equal(res.status, 200)
+          })
+          .catch(assert.fail)
+
+        await waitForDeviceSeen
+        await waitForIdle()
+
+        const deviceAfter = await knex('Device as d')
+          .join('FactDeviceFlag as fdf', 'd.id', 'fdf.deviceId')
+          .where('d.id', device.id)
+          .first()
+        deviceAfter.id.should.equal(deviceBefore.id)
+        assert.notOk(deviceAfter.offline)
+      }))
   })
 
   describe('results', () => {
@@ -1195,9 +1279,6 @@ describe('Device API routes for GxConnect Devices', () => {
         await Promise.each(
           Object.keys(resultTextToResultCategoryMapping),
           async resultText => {
-            // Running these requests in parallel causes the connection pool in MySQL to fill up too quickly.
-            // This is probably due to the fact table updates.
-            // For now: sending these requests sequentially and sweeping this under the rug
             if (
               resultText &&
               !_.isEmpty(resultTextToResultCategoryMapping[resultText])
@@ -1625,6 +1706,180 @@ describe('Device API routes for GxConnect Devices', () => {
           )
           assert.equal(lastResult.resultData.geneXpertTestId, errorTestResultId)
         }))
+    })
+
+    describe('when the result comes from a site that has location data saved', () => {
+      describe('and the result has NO coordinates specified in the payload', () => {
+        it('should set the the GPS coordinates and geography of the result to those of the site/device', () =>
+          runTest(async knex => {
+            const { now, basicDevicePayload, deviceAuth, apiKey } = context
+            const latitude = Math.random() * 360
+            const longitude = Math.random() * 360
+            const deviceLocationDetails = await knex('DeviceApiKey as dak')
+              .join('Device as d', 'dak.DeviceId', 'd.id')
+              .join('Site as s', 'd.siteId', 's.id')
+              .innerJoin('Geography as g', function() {
+                this.on('d.geographyId', 'g.id').orOn('s.geographyId', 'g.id')
+              })
+              .join('Country as c', 'g.countryId', 'c.id')
+              .where({ 'dak.token': apiKey })
+              .first(
+                'd.id',
+                's.id as siteId',
+                'g.id as geographyId',
+                'c.id as countryId'
+              )
+            const { id: geographyId } = await knex('Geography')
+              .where('countryId', deviceLocationDetails.countryId)
+              .andWhere(function() {
+                this.whereNotNull('stateId')
+              })
+              .andWhere(function() {
+                this.whereNotNull('lgaId')
+              })
+              .orderBy('id', 'desc')
+              .first('id')
+            await knex('Site')
+              .where({ id: deviceLocationDetails.siteId })
+              .update({ latitude, longitude, geographyId })
+            const gpsCoordsMissingResultId = 'GXCONNECT-ID-WITHOUT-GPS-COORDS'
+            const testStartedOn = setMilliseconds(
+              subMinutes(
+                subHours(now, Math.floor(Math.random() * 24)),
+                Math.floor(Math.random() * 60)
+              ),
+              0
+            )
+            const testEndedOn = setMilliseconds(addHours(testStartedOn, 2), 0)
+
+            await server
+              .post('/device')
+              .set('Authorization', deviceAuth)
+              .send(
+                _.assign(
+                  {},
+                  _.assign({}, basicDevicePayload, basicResultPayload),
+                  {
+                    result: _.assign({}, basicResultPayload.result, {
+                      id: gpsCoordsMissingResultId,
+                      startedOn: testStartedOn,
+                      endedOn: testEndedOn,
+                    }),
+                  }
+                )
+              )
+              .then(res => {
+                assert.equal(res.status, 200)
+                assert.typeOf(res.body, 'Object')
+              })
+              .catch(assert.fail)
+
+            const lastResult = await getLastResult()
+            const resultSite = await knex('Site')
+              .where({ id: lastResult.siteId })
+              .first()
+            expect(lastResult).to.containSubset({
+              latitude: resultSite.latitude,
+              longitude: resultSite.longitude,
+              geographyId: resultSite.geographyId,
+            })
+          }))
+      })
+
+      describe('and the result HAS coordinates specified in the payload', () => {
+        it('should set the the GPS coordinates of the ones specified in the payload', () =>
+          runTest(async knex => {
+            const { now, deviceAuth, apiKey } = context
+            const siteLatitude = Math.random() * 360
+            const siteLongitude = Math.random() * 360
+            const deviceLocationDetails = await knex('DeviceApiKey as dak')
+              .join('Device as d', 'dak.DeviceId', 'd.id')
+              .join('Site as s', 'd.siteId', 's.id')
+              .innerJoin('Geography as g', function() {
+                this.on('d.geographyId', 'g.id').orOn('s.geographyId', 'g.id')
+              })
+              .join('Country as c', 'g.countryId', 'c.id')
+              .where({ 'dak.token': apiKey })
+              .first(
+                'd.id',
+                's.id as siteId',
+                'g.id as geographyId',
+                'c.id as countryId'
+              )
+            const { id: geographyId } = await knex('Geography')
+              .where('countryId', deviceLocationDetails.countryId)
+              .andWhere(function() {
+                this.whereNotNull('stateId')
+              })
+              .andWhere(function() {
+                this.whereNotNull('lgaId')
+              })
+              .orderBy('id', 'desc')
+              .first('id')
+            await knex('Site')
+              .where({ id: deviceLocationDetails.siteId })
+              .update({
+                latitude: siteLatitude,
+                longitude: siteLongitude,
+                geographyId,
+              })
+
+            const gpsCoordsInResultId = 'GXCONNECT-ID-WITH-GPS-COORDS'
+            const resultLatitude = Math.random() * 360
+            const resultLongitude = Math.random() * 360
+            assert.notEqual(siteLatitude, resultLatitude)
+            assert.notEqual(siteLongitude, resultLongitude)
+            const testStartedOn = setMilliseconds(
+              subMinutes(
+                subHours(now, Math.floor(Math.random() * 24)),
+                Math.floor(Math.random() * 60)
+              ),
+              0
+            )
+            const testEndedOn = setMilliseconds(addHours(testStartedOn, 2), 0)
+
+            await server
+              .post('/device')
+              .set('Authorization', deviceAuth)
+              .send(
+                _.assign(
+                  {},
+                  _.assign({}, basicDevicePayload, basicResultPayload),
+                  {
+                    result: _.assign({}, basicResultPayload.result, {
+                      id: gpsCoordsInResultId,
+                      startedOn: testStartedOn,
+                      endedOn: testEndedOn,
+                      instrument: {
+                        serial: '512934',
+                        module: {
+                          serial: '654321',
+                          name: 'A1',
+                        },
+                      },
+                      location: {
+                        latitude: resultLatitude,
+                        longitude: resultLongitude,
+                      },
+                    }),
+                  }
+                )
+              )
+              .then(res => {
+                assert.equal(res.status, 200)
+                assert.typeOf(res.body, 'Object')
+              })
+              .catch(assert.fail)
+
+            const lastResult = await getLastResult()
+            const resultSite = await knex('Site')
+              .where({ id: lastResult.siteId })
+              .first()
+            assert.notEqual(lastResult.latitude, resultSite.latitude)
+            assert.notEqual(lastResult.longitude, resultSite.longitude)
+            assert.equal(lastResult.geographyId, geographyId)
+          }))
+      })
     })
   })
 
