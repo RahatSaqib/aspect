@@ -245,6 +245,10 @@ export const messages = defineMessages({
     id: 'pages.Status.noActionsTitle',
     defaultMessage: 'There are no waiting actions!',
   },
+  stockLevelUpdatedSuccessfully: {
+    id: 'pages.Status.stockLevelUpdatedSuccessfully',
+    defaultMessage: 'Stock levels have been updated successfully',
+  },
   reportsTitle: {
     id: 'pages.Status.reportsTitle',
     defaultMessage: 'Reports',

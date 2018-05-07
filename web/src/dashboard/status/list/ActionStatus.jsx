@@ -10,6 +10,7 @@ import { compose, lifecycle, pure, withHandlers } from 'recompose'
 import { shortNumericDate } from '../../../shared/utils/dateFormat'
 import recomposeForm from '../../../components/recomposeForm'
 import { updateStockLevel } from '../../../inventory/InventoryRedux'
+import { showAcknowledgement } from '../../../appNotification/AppNotificationRedux'
 
 const cssClasses = classnames.bind(require('./ActionTableRow.css'))
 
@@ -24,7 +25,10 @@ const enhance = _.identity
 
 const UpdateStockLevelInput = compose(
   pure,
-  connect(null, bindActionCreators.bind(null, { updateStockLevel })),
+  connect(
+    null,
+    bindActionCreators.bind(null, { updateStockLevel, showAcknowledgement })
+  ),
   lifecycle({
     componentWillMount() {
       const onChange = values => this.setState({ values })
@@ -49,12 +53,21 @@ const UpdateStockLevelInput = compose(
     },
   }),
   withHandlers({
-    onSubmit: ({ action, updateStockLevel }) => values =>
+    onSubmit: ({
+      action,
+      messages,
+      updateStockLevel,
+      showAcknowledgement,
+    }) => values =>
       updateStockLevel(
         action.get('siteId'),
         action.get('consumableId'),
         values
-      ),
+      ).then(() => {
+        showAcknowledgement({
+          title: messages.stockLevelUpdatedSuccessfully,
+        })
+      }),
   }),
   recomposeForm({
     fields: [
