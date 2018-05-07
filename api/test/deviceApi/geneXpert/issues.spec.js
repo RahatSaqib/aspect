@@ -19,7 +19,7 @@ const {
 } = require('../../../src/result/actions')
 const { waitForIdle, waitForAction } = require('../../utils/mqUtils')
 
-describe('Issue endpoints', () => {
+describe.only('Issue endpoints', () => {
   function createContext() {
     return createGxAlertTestContext(server)
   }
@@ -180,7 +180,7 @@ describe('Issue endpoints', () => {
             payload,
           })
         } else {
-          // Should create issue when errors > 4
+          // Should create issue when errors > 8
           const waitForMachineTemperatureError = waitForAction(
             resultMachineTemperatureError(deviceId)
           )
