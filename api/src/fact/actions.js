@@ -11,8 +11,6 @@ const factTypes = {
   RESULT_COUNTS: 'RESULT_COUNTS',
 }
 
-// ----------- Action Creators -------------------
-
 /**
  * Requests fact device flags to be regenerated. Will be called on
  * schedule to run fact device flag ETL

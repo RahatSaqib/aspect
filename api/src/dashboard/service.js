@@ -237,7 +237,7 @@ async function resultDashboard(request) {
     canViewResults(auth)
       ? [
           canViewSites(auth) ? siteQuery : [],
-          knex('FactResultCountDevice as f')
+          knex('FactResultsDeviceByCategory1 as f')
             .innerJoin('Device as d', 'd.id', 'f.deviceId')
             .innerJoin('Site as s', 's.id', 'd.siteId')
             .innerJoin('Assay as a', 'a.id', 'f.assayId')

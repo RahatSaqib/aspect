@@ -1393,13 +1393,13 @@ async function seed(knex) {
     externalId: 'Discordant',
   })
 
-  await knex('ResultCategory').insert({
+  const [resultCategoryLessThan1000] = await knex('ResultCategory').insert({
     name: 'LessThan1000',
     i18nkey: 'resultCategoryLessThan1000',
     externalId: 'LessThan1000',
   })
 
-  await knex('ResultCategory').insert({
+  const [resultCategoryMoreThan1000] = await knex('ResultCategory').insert({
     name: 'MoreThan1000',
     i18nkey: 'resultCategoryMoreThan1000',
     externalId: 'MoreThan1000',
@@ -1593,6 +1593,16 @@ async function seed(knex) {
   // Daktari HIV Viral Load
   await knex('ResultCategoryAssay').insert({
     resultCategoryId: resultCategoryDetectedId,
+    assayId: assayDaktariHivVlId,
+  })
+
+  await knex('ResultCategoryAssay').insert({
+    resultCategoryId: resultCategoryLessThan1000,
+    assayId: assayDaktariHivVlId,
+  })
+
+  await knex('ResultCategoryAssay').insert({
+    resultCategoryId: resultCategoryMoreThan1000,
     assayId: assayDaktariHivVlId,
   })
 
