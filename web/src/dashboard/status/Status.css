@@ -246,8 +246,13 @@
   background-color: var(--aspect-color-mandy);
 }
 
+.TargetItemBlockContainer--horizontal-scrollable {
+  margin-left: 50px;
+  overflow-x: auto;
+}
+
 .TargetItemBlockContainer {
-  margin-left: 40px;
+  min-width: 460px;
 }
 
 @media screen and (--lg-viewport) {
@@ -273,7 +278,7 @@
 }
 
 .TargetItemBlock__Graph {
-  padding: 0 40px;
+  padding: 0;
 }
 
 .TargetItemBlock__Label {
@@ -301,13 +306,13 @@
   display: block;
   position: absolute;
   left: 20px;
-  width: 70px;
+  width: 50px;
   text-align: right;
 }
 
 @media screen and (--lg-viewport) {
   .TargetItemBlock:first-child .TargetItemBlock__Label--sub {
-    left: 40px;
+    left: 60px;
   }
 }
 
@@ -398,4 +403,19 @@
 .ReportsContainer__Button {
   margin: 0 20px;
   background-color: var(--aspect-color-grey-5);
+  white-space: normal;
+  height: auto;
+}
+
+.ReportsContainer__Button {
+  margin: 0 10px;
+  background-color: var(--aspect-color-grey-5);
+  white-space: normal;
+  height: auto;
+}
+
+@media screen and (--sm-viewport) {
+  .ReportsContainer__Button  {
+    margin: 0 20px;
+  }
 }

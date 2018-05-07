@@ -1,6 +1,5 @@
 const _ = require('lodash')
 const Boom = require('boom')
-const { macAddressValid } = require('./requestValidation')
 const { getOrCreateSite } = require('./site')
 /*
 The purpose of this plugin is to ensure that results are captured
@@ -13,13 +12,9 @@ async function preProcessAddDeviceData({ knex, device, payload, now }) {
     throw Boom.notFound(`Cannot find device ${JSON.stringify(device)}`)
   }
   const configurationData = _.get(payload, 'configuration.data') || {}
-  const { macAddress } = configurationData
-  if (macAddress && !macAddressValid(macAddress)) {
-    throw Boom.badRequest(`Invalid MAC address in request: '${macAddress}'`)
-  }
   const site = await getOrCreateSite(knex, device, payload, now)
   const deviceDetails = {
-    lastSeenOn: now,
+    lastSeenOn: new Date(configurationData.lastPingOn || now),
     updatedOn: now,
     updatedBy: null,
   }
@@ -31,8 +26,8 @@ async function preProcessAddDeviceData({ knex, device, payload, now }) {
   }
   // A ping from GxConnect is just a configuration POST with a MAC address,
   // host ID, device Serial and country abbreviation
-  // A ping from GxConnect forwarded by GxAlert is just a POST with a MAC address,
-  // gxAlertDeviceId, host ID, device Serial and country abbreviation
+  // A ping from GxConnect forwarded by GxAlert is the same as a ping cooming
+  // directly from GxConnect but also includes gxAlertDeviceId
   if (
     !_.isEmpty(configurationData) &&
     _.every(Object.keys(configurationData), configurationDataKey =>
@@ -42,10 +37,11 @@ async function preProcessAddDeviceData({ knex, device, payload, now }) {
         'hostId',
         'deviceSerialNumber',
         'country',
+        'lastPingOn',
       ].includes(configurationDataKey)
     )
   ) {
-    deviceDetails.lastPingOn = now
+    deviceDetails.lastPingOn = new Date(configurationData.lastPingOn || now)
   }
   await knex
     .from('Device')

@@ -27,6 +27,9 @@ async function deleteGxAlertDeviceDataAndRefreshTokens(
   await knex('DeviceStatusLog')
     .whereIn('deviceId', deviceIds)
     .delete()
+  await knex('DeviceMaintenanceStatusLog')
+    .whereIn('deviceId', deviceIds)
+    .delete()
   await knex('DeviceLog')
     .whereIn('deviceId', deviceIds)
     .delete()
@@ -98,6 +101,9 @@ async function deleteGeneXpertDeviceSiteDataAndRefreshTokens(
     .map(op => op.id)
 
   await knex('DeviceStatusLog')
+    .whereIn('deviceId', deviceIds)
+    .delete()
+  await knex('DeviceMaintenanceStatusLog')
     .whereIn('deviceId', deviceIds)
     .delete()
   await knex('DeviceLog')
@@ -188,24 +194,28 @@ class GxAlertApiTestContext {
     ])
   }
 
-  beforeCreateGxAlertApiKey() {
-    return run(async () => this.createGxAlertApiKey())
+  beforeCreateGxAlertApiKey(apiKeyDetails) {
+    return run(async () => this.createGxAlertApiKey(apiKeyDetails))
   }
 
-  createGxAlertApiKey() {
+  createGxAlertApiKey(apiKeyDetails = {}) {
+    const {
+      countryAbbreviation = 'US',
+      partnerName = 'Partner One',
+    } = apiKeyDetails
     return run(async knex => {
       const gxAlertDeviceType = await knex
         .from('DeviceType')
         .where('externalId', 'GxAlert')
         .first()
-      const partnerOne = await knex
+      const partner = await knex
         .from('Partner')
-        .where('name', 'Partner One')
+        .where('name', partnerName)
         .first()
-      const usGeography = await knex
+      const geography = await knex
         .from('Country as c')
         .join('Geography as g', 'g.countryId', 'c.id')
-        .where('c.abbreviation', 'US')
+        .where('c.abbreviation', countryAbbreviation)
         .andWhere('g.stateId', null)
         .andWhere('g.lgaId', null)
         .first('g.*')
@@ -215,8 +225,8 @@ class GxAlertApiTestContext {
         .first()
       const now = new Date()
       const [deviceId] = await knex('Device').insert({
-        partnerId: partnerOne.id,
-        geographyId: usGeography.id,
+        partnerId: partner.id,
+        geographyId: geography.id,
         deviceTypeId: gxAlertDeviceType.id,
         deviceStatusId: approvedDeviceStatus.id,
         name: this.basicDevicePayload.name,
@@ -227,6 +237,7 @@ class GxAlertApiTestContext {
         createdOn: now,
         updatedOn: now,
       })
+      await knex('FactDeviceFlag').insert({ deviceId, updatedOn: now })
       const adminUser = await knex
         .from('User')
         .where('name', 'admin')
@@ -235,8 +246,8 @@ class GxAlertApiTestContext {
       await knex('DeviceApiKey').insert({
         token: this.apiKey,
         revoked: 0,
-        partnerId: partnerOne.id,
-        geographyId: usGeography.id,
+        partnerId: partner.id,
+        geographyId: geography.id,
         deviceId,
         createdOn: now,
         createdBy: adminUser.id,
@@ -338,6 +349,8 @@ class GxAlertApiTestContext {
           'r.deviceId',
           'r.siteId',
           'r.geographyId',
+          'r.latitude',
+          'r.longitude',
           'a.externalId as assay',
           'rws.externalId as resultWorkflowStatus',
           'rs.externalId as resultSource',
@@ -375,29 +388,35 @@ class GxAlertApiTestContext {
   getCurrentGeneXpertDevice() {
     return run(async knex => {
       const device = await knex
-        .from('Device')
+        .from('Device as d')
+        .leftJoin('Site as s', 's.id', 'd.siteId')
+        .innerJoin('Geography as g', function() {
+          this.on('d.geographyId', 'g.id').orOn('s.geographyId', 'g.id')
+        })
+        .leftJoin('Country as c', 'g.countryId', 'c.id')
         .whereRaw(
-          `JSON_EXTRACT(configurationData, "$.gxAlertDeviceId") = ${_.last(
+          `JSON_EXTRACT(d.configurationData, "$.gxAlertDeviceId") = ${_.last(
             this.gxAlertDeviceIds
           )}`
         )
         .first(
-          'id',
-          'partnerId',
-          'geographyId',
-          'siteId',
-          'deviceTypeId',
-          'deviceStatusId',
-          'name',
-          'shortName',
-          'macAddress',
-          'serial',
-          'hostId',
-          'culture',
-          'timezone',
-          'configurationData',
-          'lastSeenOn',
-          'lastPingOn'
+          'd.id',
+          'd.partnerId',
+          'g.id as geographyId',
+          'c.abbreviation as countryAbbreviation',
+          's.id as siteId',
+          'd.deviceTypeId',
+          'd.deviceStatusId',
+          'd.name',
+          'd.shortName',
+          'd.macAddress',
+          'd.serial',
+          'd.hostId',
+          'd.culture',
+          'd.timezone',
+          'd.configurationData',
+          'd.lastSeenOn',
+          'd.lastPingOn'
         )
       if (_.isEmpty(device)) {
         return device

@@ -3,11 +3,13 @@ const supertest = require('supertest')
 const chai = require('chai')
 const addYears = require('date-fns/add_years')
 const subDays = require('date-fns/sub_days')
+const addDays = require('date-fns/add_days')
 const addHours = require('date-fns/add_hours')
 const subHours = require('date-fns/sub_hours')
 const subMinutes = require('date-fns/sub_minutes')
 const addSeconds = require('date-fns/add_seconds')
 const setMilliseconds = require('date-fns/set_milliseconds')
+const dateFormat = require('date-fns/format')
 const Promise = require('bluebird')
 const { createGxAlertTestContext } = require('./gxalert_utils')
 const {
@@ -22,6 +24,8 @@ const {
 } = require('./geneXpertConstants')
 const { run } = require('../../../src/db')
 const { waitForApproximately } = require('../../utils/generatorFunctionUtils')
+const { waitForIdle, waitForAction } = require('../../utils/mqUtils')
+const { deviceSeen, deviceOffline } = require('../../../src/device/actions')
 
 const server = supertest.agent('http://localhost:8080')
 const { assert, expect } = chai
@@ -44,7 +48,7 @@ describe('Device API routes for GxAlert Device', () => {
         ))
     })
 
-    describe('when unknown device API key is specified', () => {
+    describe('when an unknown device API key is specified', () => {
       const { runTest, basicDevicePayload } = createContext()
       it('should respond with UNAUTHORIZED', () =>
         runTest(async () =>
@@ -56,7 +60,7 @@ describe('Device API routes for GxAlert Device', () => {
         ))
     })
 
-    describe('when known device API key is specified', () => {
+    describe('when a known device API key is specified', () => {
       describe('send new device data', () => {
         describe('before a gxAlertDeviceId has been specified', () => {
           const context = createContext()
@@ -363,7 +367,7 @@ describe('Device API routes for GxAlert Device', () => {
       })
     })
 
-    describe('when MAC address changes', () => {
+    describe('when the MAC address of the source device changes', () => {
       const deviceName = 'GeneXpert Lab from GxAlert'
       const firstGxAlertDeviceId = 47
       const secondGxAlertDeviceId = 88
@@ -773,7 +777,7 @@ describe('Device API routes for GxAlert Device', () => {
       })
     })
 
-    describe('when instrument serial changes', () => {
+    describe('when the instrument serial of the source device changes', () => {
       const deviceName = 'GeneXpert Lab from GxAlert'
       const firstGxAlertDeviceId = 95
       const secondGxAlertDeviceId = 13
@@ -1170,7 +1174,7 @@ describe('Device API routes for GxAlert Device', () => {
       })
     })
 
-    describe('when hostId changes', () => {
+    describe('when the hostId of the source device changes', () => {
       const deviceName = 'GeneXpert Lab from GxAlert'
       const firstGxAlertDeviceId = 47
       const secondGxAlertDeviceId = 88
@@ -1692,11 +1696,926 @@ describe('Device API routes for GxAlert Device', () => {
           )
         }))
     })
+
+    describe('when maintenance data is included in device configuration data', () => {
+      const context = createContext()
+      const deviceName = 'Xpert Lab With Maintenance'
+      const deviceSerial = 'Cepheid-1874GX'
+      const hostId = 'MaintenanceXpertLab'
+      const country = 'MM'
+      const partner = 'Myanmar'
+      const gxAlertDeviceId = 1777
+
+      const {
+        beforeCreateGxAlertApiKey,
+        useGxAlertDeviceId,
+        runTest,
+        getCurrentGeneXpertDevice,
+        afterCleanUp,
+      } = context
+
+      let deviceId
+      let standardDevicePayload
+
+      async function getLatestDeviceMaintenanceStatusLog(knex) {
+        const logEntry = await knex('DeviceMaintenanceStatusLog as dmsl')
+          .innerJoin(
+            'DeviceMaintenanceStatus as dms',
+            'dmsl.deviceMaintenanceStatusId',
+            'dms.id'
+          )
+          .where('dmsl.deviceId', deviceId)
+          .orderByRaw('dmsl.changedOn DESC, dmsl.id DESC')
+          .first(
+            'dms.token',
+            'dmsl.data',
+            'dmsl.id',
+            'dmsl.changedOn',
+            'dmsl.createdOn'
+          )
+        if (_.isEmpty(logEntry)) {
+          return logEntry
+        }
+        return _.merge(logEntry, { data: JSON.parse(logEntry.data) })
+      }
+
+      before(async () =>
+        run(async () => {
+          await beforeCreateGxAlertApiKey({
+            countryAbbreviation: country,
+            partnerName: partner,
+          })
+          useGxAlertDeviceId(gxAlertDeviceId)
+          const { deviceAuth } = context
+          standardDevicePayload = {
+            authHeader: deviceAuth,
+            payload: {
+              name: deviceName,
+              serial: deviceSerial,
+              status: null,
+              type: { id: 'CepheidGeneXpert' },
+              site: null,
+              checkpoint: null,
+              log: null,
+              configuration: {
+                checkpoint: null,
+                data: {
+                  macAddress: 'MAC0A0127001010',
+                  hostId,
+                  culture: 'en-US',
+                  computerOsVersion: 'Microsoft Windows NT 6.2.9200.0',
+                  timezone: 'Myanmar Standard Time',
+                  country,
+                  routerNumber: '029347800',
+                  sim1SerialNumber: '82347234879',
+                  sim2SerialNumber: '90878796559',
+                  labContactCell: '+27800243232',
+                  labContactEmail: 'test@contract.co',
+                  labContactName: 'Mr Lab Contact',
+                  installerCell: '+27831238183',
+                  installerEmail: 'another@email.io',
+                  installerName: 'Mr Installer',
+                  latestGrabbedModifiedDate: '2018-03-15T14:12:34',
+                  uploadProbeLevelData: true,
+                  gxConnectVersion: '1.10.1.0',
+                  databaseDeviceOk: true,
+                  lisConfigOk: true,
+                  nsisInstaller: true,
+                  putInService: '2018-01-01T08:02:30',
+                  putInServiceSource: 1,
+                  lastCalibrated: '2018-01-01T08:02:30',
+                  teamViewerId: '',
+                  teamViewerPassword: '',
+                  noInventory: false,
+                  latestErrors: null,
+                  autoCompleteJsonDate: '',
+                  enableCustomFields: true,
+                  deviceSerialNumber: deviceSerial,
+                  dbVersion: '3.0.5.0',
+                  lisConfig:
+                    'True|xPertLab|0|0|1|True|192.168.8.113|3012|-1|1|ASSAY=MTB-RIF 2[MTB=MTB][Rif Resistance=Rif Resistance][QC Check=QC Check]',
+                  gxAlertDeviceId,
+                },
+              },
+              operation: null,
+              result: null,
+            },
+          }
+          const response = await postToDeviceApi(standardDevicePayload)
+          deviceId = response.body.device.id
+        })
+      )
+      after(afterCleanUp)
+
+      describe('which has been updated since the device configuration was last updated', () => {
+        it('should create an entry in the device maintenance status log', () =>
+          runTest(async knex => {
+            const { now } = context
+
+            const deviceMaintenanceLogBeforeMaintenanceUpdate = await getLatestDeviceMaintenanceStatusLog(
+              knex
+            )
+            assert.isUndefined(deviceMaintenanceLogBeforeMaintenanceUpdate)
+
+            const waitForDeviceSeen = waitForAction(deviceSeen(deviceId))
+            await postToDeviceApi(
+              _.merge(standardDevicePayload, {
+                payload: {
+                  configuration: {
+                    data: {
+                      inactive: false,
+                    },
+                  },
+                },
+              })
+            )
+            await waitForDeviceSeen
+
+            const deviceMaintenanceLogAfterFirstMaintenanceUpdate = await getLatestDeviceMaintenanceStatusLog(
+              knex
+            )
+            expect(
+              deviceMaintenanceLogAfterFirstMaintenanceUpdate
+            ).to.containSubset({
+              token: 'online',
+              data: {
+                reason: null,
+                note: null,
+                expectedBackOnline: null,
+              },
+            })
+
+            const inactiveMaintenanceReason =
+              'Connectivity issues, router cannot connect'
+            const inactiveMaintenanceNote = 'Router only has one SIM in it'
+            const inactiveMaintenanceExpectedBackOnline = dateFormat(
+              addDays(now, 15),
+              'YYYY-MM-DD'
+            )
+            const waitForDeviceOffline = waitForAction(deviceOffline(deviceId))
+            await postToDeviceApi(
+              _.merge(standardDevicePayload, {
+                payload: {
+                  configuration: {
+                    data: {
+                      inactive: true,
+                      inactiveMaintenanceReason,
+                      inactiveMaintenanceNote,
+                      inactiveMaintenanceExpectedBackOnline,
+                    },
+                  },
+                },
+              })
+            )
+            await waitForDeviceOffline
+            const deviceMaintenanceLogAfterSecondMaintenanceUpdate = await getLatestDeviceMaintenanceStatusLog(
+              knex
+            )
+            expect(
+              deviceMaintenanceLogAfterSecondMaintenanceUpdate
+            ).to.containSubset({
+              token: 'offline',
+              data: {
+                reason: inactiveMaintenanceReason,
+                note: inactiveMaintenanceNote,
+                expectedBackOnline: inactiveMaintenanceExpectedBackOnline,
+              },
+            })
+          }))
+
+        describe('which includes {... inactive: false... }', () => {
+          it('should clear the values in maintenance status log data', () =>
+            runTest(async knex => {
+              const { now } = context
+
+              const inactiveMaintenanceReason = 'Connectivity Problems'
+              const inactiveMaintenanceNote = 'Router cannot connect to VPN'
+              const inactiveMaintenanceExpectedBackOnline = dateFormat(
+                addDays(now, 23),
+                'YYYY-MM-DD'
+              )
+              const waitForDeviceOffline = waitForAction(
+                deviceOffline(deviceId)
+              )
+              await postToDeviceApi(
+                _.merge(standardDevicePayload, {
+                  payload: {
+                    configuration: {
+                      data: {
+                        inactive: true,
+                        inactiveMaintenanceReason,
+                        inactiveMaintenanceNote,
+                        inactiveMaintenanceExpectedBackOnline,
+                      },
+                    },
+                  },
+                })
+              )
+              await waitForDeviceOffline
+              const deviceMaintenanceLogAfterInactiveMaintenanceUpdate = await getLatestDeviceMaintenanceStatusLog(
+                knex
+              )
+              expect(
+                deviceMaintenanceLogAfterInactiveMaintenanceUpdate
+              ).to.containSubset({
+                token: 'offline',
+                data: {
+                  reason: inactiveMaintenanceReason,
+                  note: inactiveMaintenanceNote,
+                  expectedBackOnline: inactiveMaintenanceExpectedBackOnline,
+                },
+              })
+
+              await waitForApproximately(100, 'milliseconds')
+
+              const activeMaintenanceReason = 'Connectivity Resolved'
+              const activeMaintenanceNote = 'VPN config was incorrect'
+              const activeMaintenanceExpectedBackOnline = dateFormat(
+                now,
+                'YYYY-MM-DD'
+              )
+              const waitForDeviceSeen = waitForAction(deviceSeen(deviceId))
+              await postToDeviceApi(
+                _.merge(standardDevicePayload, {
+                  payload: {
+                    configuration: {
+                      data: {
+                        inactive: false,
+                        inactiveMaintenanceReason: activeMaintenanceReason,
+                        inactiveMaintenanceNote: activeMaintenanceNote,
+                        inactiveMaintenanceExpectedBackOnline: activeMaintenanceExpectedBackOnline,
+                      },
+                    },
+                  },
+                })
+              )
+              await waitForDeviceSeen
+              const deviceMaintenanceLogAfterActiveMaintenanceUpdate = await getLatestDeviceMaintenanceStatusLog(
+                knex
+              )
+              expect(
+                deviceMaintenanceLogAfterActiveMaintenanceUpdate
+              ).to.containSubset({
+                token: 'online',
+                data: {
+                  reason: null,
+                  note: null,
+                  expectedBackOnline: null,
+                },
+              })
+            }))
+
+          it('should update the last seen on time for the device', () =>
+            runTest(async knex => {
+              const { now } = context
+
+              // First mark as inactive
+              await waitForApproximately(100, 'milliseconds')
+              const inactiveMaintenanceReason = 'No Connection'
+              const inactiveMaintenanceNote =
+                'Router cannot connect to the network'
+              const inactiveMaintenanceExpectedBackOnline = dateFormat(
+                addDays(now, 16),
+                'YYYY-MM-DD'
+              )
+              await postToDeviceApi(
+                _.merge(standardDevicePayload, {
+                  payload: {
+                    configuration: {
+                      data: {
+                        inactive: true,
+                        inactiveMaintenanceReason,
+                        inactiveMaintenanceNote,
+                        inactiveMaintenanceExpectedBackOnline,
+                      },
+                    },
+                  },
+                })
+              )
+
+              const { lastSeenOn: lastSeenOnAfterInactive } = await knex(
+                'Device'
+              )
+                .where({ id: deviceId })
+                .first('lastSeenOn')
+
+              // Then mark as active
+              await waitForApproximately(1, 'second')
+
+              const activeMaintenanceReason = 'Connectivity Resolved'
+              const activeMaintenanceNote = 'VPN config was incorrect'
+              const activeMaintenanceExpectedBackOnline = dateFormat(
+                now,
+                'YYYY-MM-DD'
+              )
+              await postToDeviceApi(
+                _.merge(standardDevicePayload, {
+                  payload: {
+                    configuration: {
+                      data: {
+                        inactive: false,
+                        inactiveMaintenanceReason: activeMaintenanceReason,
+                        inactiveMaintenanceNote: activeMaintenanceNote,
+                        inactiveMaintenanceExpectedBackOnline: activeMaintenanceExpectedBackOnline,
+                      },
+                    },
+                  },
+                })
+              )
+              const { lastSeenOn: lastSeenOnAfterActive } = await knex('Device')
+                .where({ id: deviceId })
+                .first('lastSeenOn')
+              expect(lastSeenOnAfterActive).to.be.above(lastSeenOnAfterInactive)
+            }))
+        })
+
+        describe('which includes {... inactive: true... }', () => {
+          it('should eventually set device flag: offline to true', () =>
+            runTest(async knex => {
+              const { now } = context
+              const { id: deviceId } = await getCurrentGeneXpertDevice()
+
+              await knex('FactDeviceFlag')
+                .where({ deviceId })
+                .update({ offline: 0 })
+              let deviceFacts = await knex('FactDeviceFlag')
+                .where({ deviceId })
+                .first()
+              assert.notOk(deviceFacts.offline)
+
+              const waitForDeviceOffline = waitForAction(
+                deviceOffline(deviceId)
+              )
+
+              const inactiveMaintenanceReason = 'Connectivity Problems'
+              const inactiveMaintenanceNote = 'Router cannot connect to VPN'
+              const inactiveMaintenanceExpectedBackOnline = dateFormat(
+                addDays(now, 23),
+                'YYYY-MM-DD'
+              )
+              const response = await postToDeviceApi(
+                _.merge(standardDevicePayload, {
+                  payload: {
+                    configuration: {
+                      data: {
+                        inactive: true,
+                        inactiveMaintenanceReason,
+                        inactiveMaintenanceNote,
+                        inactiveMaintenanceExpectedBackOnline,
+                      },
+                    },
+                  },
+                })
+              )
+              assert.equal(response.body.device.id, deviceId)
+
+              await waitForDeviceOffline
+              await waitForIdle()
+
+              deviceFacts = await knex('FactDeviceFlag')
+                .where({ deviceId })
+                .first()
+              assert.ok(deviceFacts.offline)
+            }))
+        })
+      })
+
+      describe('which is just a duplicate of what was sent previously', () => {
+        it('should NOT create an entry in the device maintenance status log', () =>
+          runTest(async knex => {
+            const { now } = context
+
+            const inactiveMaintenanceReason = 'Duplicate No ping'
+            const inactiveMaintenanceNote = 'Duplicate Router shows connected'
+            const inactiveMaintenanceExpectedBackOnline = dateFormat(
+              addDays(now, 19),
+              'YYYY-MM-DD'
+            )
+            await waitForApproximately(100, 'milliseconds')
+            await postToDeviceApi(
+              _.merge(standardDevicePayload, {
+                payload: {
+                  configuration: {
+                    data: {
+                      inactive: true,
+                      inactiveMaintenanceReason,
+                      inactiveMaintenanceNote,
+                      inactiveMaintenanceExpectedBackOnline,
+                    },
+                  },
+                },
+              })
+            )
+
+            const deviceMaintenanceLogAfterInactiveUpdate = await getLatestDeviceMaintenanceStatusLog(
+              knex
+            )
+            expect(deviceMaintenanceLogAfterInactiveUpdate).to.containSubset({
+              token: 'offline',
+              data: {
+                reason: inactiveMaintenanceReason,
+                note: inactiveMaintenanceNote,
+                expectedBackOnline: inactiveMaintenanceExpectedBackOnline,
+              },
+            })
+
+            await waitForApproximately(100, 'milliseconds')
+            await postToDeviceApi(
+              _.merge(standardDevicePayload, {
+                payload: {
+                  configuration: {
+                    data: {
+                      inactive: true,
+                      inactiveMaintenanceReason,
+                      inactiveMaintenanceNote,
+                      inactiveMaintenanceExpectedBackOnline,
+                    },
+                  },
+                },
+              })
+            )
+
+            const deviceMaintenanceLogAfterSecondInactiveUpdate = await getLatestDeviceMaintenanceStatusLog(
+              knex
+            )
+            assert.deepEqual(
+              deviceMaintenanceLogAfterSecondInactiveUpdate,
+              deviceMaintenanceLogAfterInactiveUpdate
+            )
+          }))
+      })
+    })
+
+    describe('when lastPingOn is included in the configuration data payload', () => {
+      const deviceName = 'GeneXpert Lab With Last Ping Time'
+      const deviceIdFromGxAlert = 12
+      const macAddress = 'MAC0012LASTPING'
+
+      const context = createContext()
+      const {
+        beforeCreateGxAlertApiKey,
+        useGxAlertDeviceId,
+        runTest,
+        getCurrentGeneXpertDevice,
+        afterCleanUp,
+      } = context
+      let { deviceAuth, basicDevicePayload } = context
+
+      before(async () =>
+        run(async () => {
+          await beforeCreateGxAlertApiKey()
+          useGxAlertDeviceId(deviceIdFromGxAlert)
+          ;({ deviceAuth, basicDevicePayload } = context)
+          await postToDeviceApi({
+            authHeader: deviceAuth,
+            payload: _.merge({}, basicDevicePayload, {
+              name: deviceName,
+              configuration: {
+                data: { macAddress },
+              },
+            }),
+          })
+        })
+      )
+      after(afterCleanUp)
+
+      it('should explicitly set the lastSeenOn and lastPingOn dates on the device', () =>
+        runTest(async () => {
+          const { deviceAuth, basicDevicePayload, now } = context
+          const lastPingOn = setMilliseconds(
+            subMinutes(
+              subHours(now, Math.floor(Math.random() * 24)),
+              Math.floor(Math.random() * 60)
+            ),
+            0
+          )
+          await postToDeviceApi({
+            authHeader: deviceAuth,
+            payload: _.merge({}, basicDevicePayload, {
+              name: deviceName,
+              configuration: {
+                data: {
+                  lastPingOn,
+                },
+              },
+            }),
+          })
+          const sourceDevice = await getCurrentGeneXpertDevice()
+          expect(sourceDevice.lastSeenOn.getTime()).to.equal(
+            lastPingOn.getTime()
+          )
+          expect(sourceDevice.lastPingOn.getTime()).to.equal(
+            lastPingOn.getTime()
+          )
+        }))
+    })
+
+    describe('when location data included in device configuration data', () => {
+      const context = createContext()
+      const deviceName = 'Xpert Lab Location'
+      const deviceSerial = 'Cepheid-19921GX'
+      const hostId = 'StateLGAXpertLab'
+      const country = 'MM'
+      const partner = 'Myanmar'
+      const gxAlertDeviceId = 19921
+
+      const {
+        beforeCreateGxAlertApiKey,
+        useGxAlertDeviceId,
+        runTest,
+        getCurrentGeneXpertDevice,
+        afterCleanUp,
+      } = context
+
+      let standardDevicePayload
+
+      before(async () =>
+        run(async () => {
+          await beforeCreateGxAlertApiKey({
+            countryAbbreviation: country,
+            partnerName: partner,
+          })
+          useGxAlertDeviceId(gxAlertDeviceId)
+          const { deviceAuth } = context
+          standardDevicePayload = {
+            authHeader: deviceAuth,
+            payload: {
+              name: deviceName,
+              serial: deviceSerial,
+              status: null,
+              type: { id: 'CepheidGeneXpert' },
+              site: null,
+              checkpoint: null,
+              log: null,
+              configuration: {
+                checkpoint: null,
+                data: {
+                  macAddress: 'MAC0A0127019921',
+                  hostId,
+                  culture: 'en-US',
+                  computerOsVersion: 'Microsoft Windows NT 6.2.9200.0',
+                  timezone: 'Myanmar Standard Time',
+                  country,
+                  routerNumber: '029347800',
+                  sim1SerialNumber: '82347234879',
+                  sim2SerialNumber: '90878796559',
+                  labContactCell: '+27800243232',
+                  labContactEmail: 'test@contract.co',
+                  labContactName: 'Mr Lab Contact',
+                  installerCell: '+27831238183',
+                  installerEmail: 'another@email.io',
+                  installerName: 'Mr Installer',
+                  latestGrabbedModifiedDate: '2018-03-15T14:12:34',
+                  uploadProbeLevelData: true,
+                  gxConnectVersion: '1.10.1.0',
+                  databaseDeviceOk: true,
+                  lisConfigOk: true,
+                  nsisInstaller: true,
+                  putInService: '2018-01-01T08:02:30',
+                  putInServiceSource: 1,
+                  lastCalibrated: '2018-01-01T08:02:30',
+                  teamViewerId: '',
+                  teamViewerPassword: '',
+                  noInventory: false,
+                  latestErrors: null,
+                  autoCompleteJsonDate: '',
+                  enableCustomFields: true,
+                  deviceSerialNumber: deviceSerial,
+                  dbVersion: '3.0.5.0',
+                  lisConfig:
+                    'True|xPertLab|0|0|1|True|192.168.8.113|3012|-1|1|ASSAY=MTB-RIF 2[MTB=MTB][Rif Resistance=Rif Resistance][QC Check=QC Check]',
+                  gxAlertDeviceId,
+                },
+              },
+              operation: null,
+              result: null,
+            },
+          }
+          await postToDeviceApi(standardDevicePayload)
+          await waitForIdle()
+        })
+      )
+      after(afterCleanUp)
+
+      describe('and state as well as LGA belong to the country that the device is in', () => {
+        it('should update the device and site to the location that was specified', () =>
+          runTest(async knex => {
+            const { countryGeographyId } = await knex('Geography as g')
+              .join('Country as c', 'g.countryId', 'c.id')
+              .where('c.abbreviation', country)
+              .andWhere(function() {
+                this.whereNull('g.stateId')
+              })
+              .andWhere(function() {
+                this.whereNull('g.lgaId')
+              })
+              .first('g.id as countryGeographyId')
+
+            const deviceBeforeUpdate = await getCurrentGeneXpertDevice()
+
+            assert.equal(deviceBeforeUpdate.geographyId, countryGeographyId)
+
+            const { newGeographyId, stateName, lgaName } = await knex(
+              'Geography as g'
+            )
+              .join('Country as c', 'g.countryId', 'c.id')
+              .join('State as s', 'g.stateId', 's.id')
+              .join('Lga as l', 'g.lgaId', 'l.id')
+              .where('c.abbreviation', country)
+              .orderBy('g.id', 'desc')
+              .first(
+                'g.id as newGeographyId',
+                's.name as stateName',
+                'l.name as lgaName'
+              )
+
+            await postToDeviceApi(
+              _.merge(standardDevicePayload, {
+                payload: {
+                  configuration: {
+                    data: {
+                      state: stateName,
+                      lga: lgaName,
+                    },
+                  },
+                },
+              })
+            )
+
+            const deviceAfterUpdate = await getCurrentGeneXpertDevice()
+            expect(deviceAfterUpdate).to.containSubset({
+              id: deviceBeforeUpdate.id,
+              siteId: deviceBeforeUpdate.siteId,
+              geographyId: newGeographyId,
+            })
+
+            const siteAfterUpdate = await knex('Site')
+              .where('id', deviceAfterUpdate.siteId)
+              .first()
+            assert.equal(siteAfterUpdate.geographyId, newGeographyId)
+          }))
+      })
+
+      describe('and only state belongs to the country that the device is in', () => {
+        it('should update the device and site to the state that was specified, setting LGA to NULL', () =>
+          runTest(async knex => {
+            const { stateGeographyId, stateId, stateName } = await knex(
+              'Geography as g'
+            )
+              .join('Country as c', 'g.countryId', 'c.id')
+              .join('State as s', 'g.stateId', 's.id')
+              .where('c.abbreviation', country)
+              .andWhere(function() {
+                this.whereNull('g.lgaId')
+              })
+              .first(
+                'g.id as stateGeographyId',
+                'g.stateId',
+                's.name as stateName'
+              )
+
+            const deviceBeforeUpdate = await getCurrentGeneXpertDevice()
+
+            assert.notEqual(deviceBeforeUpdate.geographyId, stateGeographyId)
+
+            await postToDeviceApi(
+              _.merge(standardDevicePayload, {
+                payload: {
+                  configuration: {
+                    data: {
+                      state: stateName,
+                      lga: 'Some random LGA',
+                    },
+                  },
+                },
+              })
+            )
+
+            const deviceAfterUpdate = await getCurrentGeneXpertDevice()
+            expect(deviceAfterUpdate).to.containSubset({
+              id: deviceBeforeUpdate.id,
+              siteId: deviceBeforeUpdate.siteId,
+              geographyId: stateGeographyId,
+            })
+
+            const siteAfterUpdate = await knex('Site')
+              .where('id', deviceAfterUpdate.siteId)
+              .first()
+            assert.equal(siteAfterUpdate.geographyId, stateGeographyId)
+
+            const {
+              secondStateGeographyId,
+              secondStateId,
+              secondStateName,
+            } = await knex('Geography as g')
+              .join('Country as c', 'g.countryId', 'c.id')
+              .join('State as s', 'g.stateId', 's.id')
+              .where('c.abbreviation', country)
+              .andWhere('g.stateId', '<>', stateId)
+              .andWhere(function() {
+                this.whereNull('g.lgaId')
+              })
+              .first(
+                'g.id as secondStateGeographyId',
+                'g.stateId as secondStateId',
+                's.name as secondStateName'
+              )
+
+            assert.notEqual(secondStateName, stateName)
+
+            const {
+              invalidLgaInCountryGeographyId,
+              invalidLgaName,
+            } = await knex('Geography as g')
+              .join('Country as c', 'g.countryId', 'c.id')
+              .join('State as s', 'g.stateId', 's.id')
+              .join('Lga as l', 'g.lgaId', 'l.id')
+              .where('c.abbreviation', country)
+              .andWhere('g.stateId', '<>', secondStateId)
+              .first(
+                'g.id as invalidLgaInCountryGeographyId',
+                'l.name as lgaName'
+              )
+
+            assert.notEqual(
+              invalidLgaInCountryGeographyId,
+              secondStateGeographyId
+            )
+
+            await postToDeviceApi(
+              _.merge(standardDevicePayload, {
+                payload: {
+                  configuration: {
+                    data: {
+                      state: secondStateName,
+                      lga: invalidLgaName,
+                    },
+                  },
+                },
+              })
+            )
+
+            const deviceAfterSecondUpdate = await getCurrentGeneXpertDevice()
+            expect(deviceAfterSecondUpdate).to.containSubset({
+              id: deviceAfterUpdate.id,
+              siteId: deviceAfterUpdate.siteId,
+              geographyId: secondStateGeographyId,
+            })
+
+            const siteAfterSecondUpdate = await knex('Site')
+              .where('id', deviceAfterSecondUpdate.siteId)
+              .first()
+            assert.equal(
+              siteAfterSecondUpdate.geographyId,
+              secondStateGeographyId
+            )
+          }))
+      })
+
+      describe('but only includes lga', () => {
+        it('should not update the location information of the device or site', () =>
+          runTest(async knex => {
+            const deviceBeforeUpdate = await getCurrentGeneXpertDevice()
+
+            const { lgaGeographyId, lgaName } = await knex('Geography as g')
+              .join('Country as c', 'g.countryId', 'c.id')
+              .join('Lga as l', 'g.lgaId', 'l.id')
+              .where('c.abbreviation', country)
+              .andWhere('g.id', '<>', deviceBeforeUpdate.geographyId)
+              .first('g.id as lgaGeographyId', 'g.lgaId', 'l.name as lgaName')
+
+            assert.notEqual(deviceBeforeUpdate.geographyId, lgaGeographyId)
+
+            await postToDeviceApi(
+              _.merge(standardDevicePayload, {
+                payload: {
+                  configuration: {
+                    data: {
+                      lga: lgaName,
+                    },
+                  },
+                },
+              })
+            )
+
+            const deviceAfterUpdate = await getCurrentGeneXpertDevice()
+            expect(deviceAfterUpdate).to.containSubset({
+              id: deviceBeforeUpdate.id,
+              siteId: deviceBeforeUpdate.siteId,
+              geographyId: deviceBeforeUpdate.geographyId,
+            })
+
+            const siteAfterUpdate = await knex('Site')
+              .where('id', deviceAfterUpdate.siteId)
+              .first()
+            assert.equal(
+              siteAfterUpdate.geographyId,
+              deviceBeforeUpdate.geographyId
+            )
+
+            await postToDeviceApi(
+              _.merge(standardDevicePayload, {
+                payload: {
+                  configuration: {
+                    data: {
+                      state: null,
+                      lga: lgaName,
+                    },
+                  },
+                },
+              })
+            )
+
+            const deviceAfterSecondUpdate = await getCurrentGeneXpertDevice()
+            expect(deviceAfterSecondUpdate).to.containSubset({
+              id: deviceBeforeUpdate.id,
+              siteId: deviceBeforeUpdate.siteId,
+              geographyId: deviceBeforeUpdate.geographyId,
+            })
+
+            const siteAfterSecondUpdate = await knex('Site')
+              .where('id', deviceAfterSecondUpdate.siteId)
+              .first()
+            assert.equal(
+              siteAfterSecondUpdate.geographyId,
+              deviceBeforeUpdate.geographyId
+            )
+          }))
+      })
+
+      describe('and GPS coordinates are present in the payload', () => {
+        it("should update the site's GPS coordinates", () =>
+          runTest(async knex => {
+            const deviceBeforeUpdate = await getCurrentGeneXpertDevice()
+            const siteBeforeUpdate = await knex('Site')
+              .where('id', deviceBeforeUpdate.siteId)
+              .first()
+
+            assert.isNull(siteBeforeUpdate.latitude)
+            assert.isNull(siteBeforeUpdate.longitude)
+
+            const latitude = 96.269997
+            const longitude = 17.150999
+
+            await postToDeviceApi(
+              _.merge(standardDevicePayload, {
+                payload: {
+                  configuration: {
+                    data: {
+                      latitude,
+                      longitude,
+                    },
+                  },
+                },
+              })
+            )
+
+            const siteAfterUpdate = await knex('Site')
+              .where('id', deviceBeforeUpdate.siteId)
+              .first()
+
+            expect(siteAfterUpdate).to.containSubset({
+              latitude,
+              longitude,
+            })
+
+            await postToDeviceApi(_.merge(standardDevicePayload))
+
+            const siteAfterSecondUpdate = await knex('Site')
+              .where('id', deviceBeforeUpdate.siteId)
+              .first()
+
+            expect(siteAfterSecondUpdate).to.containSubset({
+              latitude,
+              longitude,
+            })
+
+            await postToDeviceApi(
+              _.merge(standardDevicePayload, {
+                payload: {
+                  configuration: {
+                    data: {
+                      latitude: null,
+                      longitude: null,
+                    },
+                  },
+                },
+              })
+            )
+
+            const siteAfterThirdUpdate = await knex('Site')
+              .where('id', deviceBeforeUpdate.siteId)
+              .first()
+            assert.isNull(siteAfterThirdUpdate.latitude)
+            assert.isNull(siteAfterThirdUpdate.longitude)
+          }))
+      })
+    })
   })
 
   describe('ping', () => {
     const deviceName = 'GeneXpert Lab Pinged GxAlert'
-    const gxAlertDeviceId = 8322
+    const deviceIdFromGxAlert = 8322
     const macAddress = 'MAC00000000PING'
 
     const context = createContext()
@@ -1712,7 +2631,7 @@ describe('Device API routes for GxAlert Device', () => {
     before(async () =>
       run(async () => {
         await beforeCreateGxAlertApiKey()
-        useGxAlertDeviceId(gxAlertDeviceId)
+        useGxAlertDeviceId(deviceIdFromGxAlert)
         ;({ deviceAuth, basicDevicePayload } = context)
         await postToDeviceApi({
           authHeader: deviceAuth,
@@ -1730,26 +2649,23 @@ describe('Device API routes for GxAlert Device', () => {
     it('should update the last seen and last ping time', () =>
       runTest(async () => {
         const deviceBefore = await getCurrentGeneXpertDevice()
+
+        const waitForDeviceSeen = waitForAction(deviceSeen(deviceBefore.id))
         await waitForApproximately(1, 'second')
         const response = await postToDeviceApi({
           authHeader: deviceAuth,
-          payload: {
+          payload: _.merge({}, basicDevicePayload, {
             name: deviceName,
-            serial: null,
-            status: null,
-            type: { id: 'CepheidGeneXpert' },
-            site: null,
-            checkpoint: null,
-            log: null,
             configuration: {
-              checkpoint: null,
-              data: { macAddress, gxAlertDeviceId },
+              data: { macAddress, gxAlertDeviceId: deviceIdFromGxAlert },
             },
-            operation: null,
-            result: null,
-          },
+          }),
         })
         response.body.device.id.should.equal(deviceBefore.id)
+
+        await waitForDeviceSeen
+        await waitForIdle()
+
         new Date(response.body.device.lastSeenOn).should.be.above(
           deviceBefore.lastSeenOn
         )
@@ -1761,6 +2677,46 @@ describe('Device API routes for GxAlert Device', () => {
         deviceAfter.id.should.equal(deviceBefore.id)
         deviceAfter.lastSeenOn.should.be.above(deviceBefore.lastSeenOn)
         deviceAfter.lastPingOn.should.be.above(deviceBefore.lastPingOn)
+      }))
+
+    it('should eventually update the device fact offline status to false', () =>
+      runTest(async knex => {
+        const { id: deviceId } = await getCurrentGeneXpertDevice()
+        await knex('FactDeviceFlag')
+          .where({ deviceId })
+          .update({ offline: 1 })
+        let deviceFacts = await knex('FactDeviceFlag')
+          .where({ deviceId })
+          .first()
+        assert.ok(deviceFacts.offline)
+
+        const waitForDeviceSeen = waitForAction(deviceSeen(deviceId))
+
+        await postToDeviceApi({
+          authHeader: deviceAuth,
+          payload: {
+            name: deviceName,
+            serial: null,
+            status: null,
+            type: { id: 'CepheidGeneXpert' },
+            site: null,
+            checkpoint: null,
+            log: null,
+            configuration: {
+              checkpoint: null,
+              data: { macAddress, gxAlertDeviceId: deviceIdFromGxAlert },
+            },
+            operation: null,
+            result: null,
+          },
+        })
+        await waitForDeviceSeen
+        await waitForIdle()
+
+        deviceFacts = await knex('FactDeviceFlag')
+          .where({ deviceId })
+          .first()
+        assert.notOk(deviceFacts.offline)
       }))
   })
 
@@ -2336,9 +3292,6 @@ describe('Device API routes for GxAlert Device', () => {
         await Promise.each(
           Object.keys(resultTextToResultCategoryMapping),
           async resultText => {
-            // Running these requests in parallel causes the connection pool in MySQL to fill up too quickly.
-            // This is probably due to the fact table updates.
-            // For now: sending these requests sequentially and sweeping this under the rug
             if (
               resultText &&
               !_.isEmpty(resultTextToResultCategoryMapping[resultText])
@@ -2850,6 +3803,134 @@ describe('Device API routes for GxAlert Device', () => {
             },
           })
         }))
+    })
+
+    describe('when the result comes from a site that has location data saved', () => {
+      describe('and the result has NO coordinates specified in the payload', () => {
+        it('should set the the GPS coordinates and geography of the result to those of the site/device', () =>
+          runTest(async knex => {
+            const { now } = context
+            const latitude = Math.random() * 360
+            const longitude = Math.random() * 360
+            const geneXpertDevice = await getCurrentGeneXpertDevice()
+            const { id: geographyId } = await knex('Geography as g')
+              .join('Country as c')
+              .where('c.abbreviation', geneXpertDevice.countryAbbreviation)
+              .andWhere(function() {
+                this.whereNotNull('g.stateId')
+              })
+              .andWhere(function() {
+                this.whereNotNull('g.lgaId')
+              })
+              .first('g.id')
+            await knex('Site')
+              .where({ id: geneXpertDevice.siteId })
+              .update({ latitude, longitude, geographyId })
+            const gpsCoordsMissingResultId = 'UNIQUE-ID-WITHOUT-GPS-COORDS'
+            const testStartedOn = setMilliseconds(
+              subMinutes(
+                subHours(now, Math.floor(Math.random() * 24)),
+                Math.floor(Math.random() * 60)
+              ),
+              0
+            )
+            const testEndedOn = setMilliseconds(addHours(testStartedOn, 2), 0)
+            await postToDeviceApi({
+              authHeader: deviceAuth,
+              payload: _.merge(
+                {},
+                basicDevicePayload,
+                { name: deviceName },
+                basicResultPayload,
+                {
+                  result: {
+                    id: gpsCoordsMissingResultId,
+                    startedOn: testStartedOn,
+                    endedOn: testEndedOn,
+                  },
+                }
+              ),
+            })
+
+            const lastResult = await getLastResult()
+            const resultSite = await knex('Site')
+              .where({ id: geneXpertDevice.siteId })
+              .first()
+            expect(lastResult).to.containSubset({
+              latitude: resultSite.latitude,
+              longitude: resultSite.longitude,
+              geographyId: resultSite.geographyId,
+            })
+          }))
+      })
+
+      describe('and the result HAS coordinates specified in the payload', () => {
+        it('should set the the GPS coordinates of the ones specified in the payload and the geography to that of the site that the result came from', () =>
+          runTest(async knex => {
+            const { now } = context
+            const siteLatitude = Math.random() * 360
+            const siteLongitude = Math.random() * 360
+            const geneXpertDevice = await getCurrentGeneXpertDevice()
+            const { id: geographyId } = await knex('Geography as g')
+              .join('Country as c')
+              .where('c.abbreviation', geneXpertDevice.countryAbbreviation)
+              .andWhere(function() {
+                this.whereNotNull('g.stateId')
+              })
+              .andWhere(function() {
+                this.whereNotNull('g.lgaId')
+              })
+              .first('g.id')
+            await knex('Site')
+              .where({ id: geneXpertDevice.siteId })
+              .update({
+                latitude: siteLatitude,
+                longitude: siteLongitude,
+                geographyId,
+              })
+            const gpsCoordsInResultId = 'UNIQUE-ID-WITH-GPS-COORDS'
+            const resultLatitude = Math.random() * 360
+            const resultLongitude = Math.random() * 360
+            assert.notEqual(siteLatitude, resultLatitude)
+            assert.notEqual(siteLongitude, resultLongitude)
+            const testStartedOn = setMilliseconds(
+              subMinutes(
+                subHours(now, Math.floor(Math.random() * 24)),
+                Math.floor(Math.random() * 60)
+              ),
+              0
+            )
+            const testEndedOn = setMilliseconds(addHours(testStartedOn, 2), 0)
+            await postToDeviceApi({
+              authHeader: deviceAuth,
+              payload: _.merge(
+                {},
+                basicDevicePayload,
+                { name: deviceName },
+                basicResultPayload,
+                {
+                  result: {
+                    id: gpsCoordsInResultId,
+                    startedOn: testStartedOn,
+                    endedOn: testEndedOn,
+                    location: {
+                      latitude: resultLatitude,
+                      longitude: resultLongitude,
+                    },
+                  },
+                }
+              ),
+            })
+
+            const lastResult = await getLastResult()
+            const resultSite = await knex('Site')
+              .where({ id: lastResult.siteId })
+              .first()
+            assert.notEqual(lastResult.latitude, resultSite.latitude)
+            assert.notEqual(lastResult.longitude, resultSite.longitude)
+            assert.equal(lastResult.geographyId, geographyId)
+          }))
+      })
     })
   })
 
