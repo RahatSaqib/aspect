@@ -1454,7 +1454,7 @@ async function up(knex) {
   })
 
   // facts-table for result counts by device
-  await knex.schema.createTable('FactResultCountDevice', x => {
+  await knex.schema.createTable('FactResultsDevice', x => {
     x
       .integer('deviceId')
       .unsigned()
@@ -1463,24 +1463,125 @@ async function up(knex) {
       .notNullable()
       .onDelete('CASCADE')
     x
-      .integer('assayId')
+      .integer('days')
       .unsigned()
-      .references('id')
-      .inTable('Assay')
-    x
-      .integer('resultCategory1')
-      .unsigned()
-      .references('id')
-      .inTable('ResultCategory')
-    x.integer('days').unsigned()
+      .notNullable()
     x
       .integer('resultCount')
       .unsigned()
       .notNullable()
-    x.dateTime('calculatedOn').notNullable()
+    x.specificType('calculatedOn', 'DATETIME(3)').notNullable()
+    x.unique(['deviceId', 'days'], 'factresultsdevice_unique')
+  })
+
+  await knex.schema.createTable('FactResultsDeviceByAssay', x => {
+    x
+      .integer('deviceId')
+      .unsigned()
+      .references('id')
+      .inTable('Device')
+      .notNullable()
+      .onDelete('CASCADE')
+    x
+      .integer('days')
+      .unsigned()
+      .notNullable()
+    x
+      .integer('assayId')
+      .unsigned()
+      .references('id')
+      .inTable('Assay')
+      .notNullable()
+      .onDelete('CASCADE')
+    x
+      .integer('resultCount')
+      .unsigned()
+      .notNullable()
+    x.specificType('calculatedOn', 'DATETIME(3)').notNullable()
+    x.unique(['deviceId', 'assayId', 'days'], 'factresultsdevicebyassay_unique')
+  })
+
+  await knex.schema.createTable('FactResultsDeviceByCategory1', x => {
+    x
+      .integer('deviceId')
+      .unsigned()
+      .references('id')
+      .inTable('Device')
+      .notNullable()
+      .onDelete('CASCADE')
+    x
+      .integer('days')
+      .unsigned()
+      .notNullable()
+    x
+      .integer('assayId')
+      .unsigned()
+      .references('id')
+      .inTable('Assay')
+      .notNullable()
+      .onDelete('CASCADE')
+    x
+      .integer('resultCategory1')
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('ResultCategory')
+      .notNullable()
+      .onDelete('CASCADE')
+    x
+      .integer('resultCount')
+      .unsigned()
+      .notNullable()
+    x.specificType('calculatedOn', 'DATETIME(3)').notNullable()
     x.unique(
-      ['days', 'deviceId', 'assayId', 'resultCategory1'],
-      'factresultcountdevice_unique'
+      ['deviceId', 'assayId', 'resultCategory1', 'days'],
+      'factresultsdevicebycategory1_unique'
+    )
+  })
+
+  await knex.schema.createTable('FactResultsDeviceByCategory1And2', x => {
+    x
+      .integer('deviceId')
+      .unsigned()
+      .references('id')
+      .inTable('Device')
+      .notNullable()
+      .onDelete('CASCADE')
+    x
+      .integer('days')
+      .unsigned()
+      .notNullable()
+    x
+      .integer('assayId')
+      .unsigned()
+      .references('id')
+      .inTable('Assay')
+      .notNullable()
+      .onDelete('CASCADE')
+    x
+      .integer('resultCategory1')
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('ResultCategory')
+      .notNullable()
+      .onDelete('CASCADE')
+    x
+      .integer('resultCategory2')
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('ResultCategory')
+      .notNullable()
+      .onDelete('CASCADE')
+    x
+      .integer('resultCount')
+      .unsigned()
+      .notNullable()
+    x.specificType('calculatedOn', 'DATETIME(3)').notNullable()
+    x.unique(
+      ['deviceId', 'assayId', 'resultCategory1', 'resultCategory2', 'days'],
+      'factresultsdevicebycategory1and2_unique'
     )
   })
 
@@ -1769,7 +1870,10 @@ async function down(knex) {
   await knex.schema.dropTableIfExists('PartnerType')
   await knex.schema.dropTableIfExists('DeviceSim')
   await knex.schema.dropTableIfExists('ResultQualityControlLog')
-  await knex.schema.dropTableIfExists('FactResultCountDevice')
+  await knex.schema.dropTableIfExists('FactResultsDevice')
+  await knex.schema.dropTableIfExists('FactResultsDeviceByAssay')
+  await knex.schema.dropTableIfExists('FactResultsDeviceByCategory1')
+  await knex.schema.dropTableIfExists('FactResultsDeviceByCategory1And2')
   await knex.schema.dropTableIfExists('FactDeviceFlag')
   await knex.schema.dropTableIfExists('Tag')
   await knex.schema.dropTableIfExists('ResultTag')
