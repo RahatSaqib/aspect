@@ -12,10 +12,7 @@ const {
   waitForIdle,
   waitForAction,
 } = require('../utils/mqUtils')
-const {
-  factGenerate,
-  factTypes: { DEVICE_CONNECTIVITY },
-} = require('../../src/fact/actions')
+const { factGenerateDeviceConnectivity } = require('../../src/fact/actions')
 
 const server = supertest.agent('http://localhost:8080')
 const { assert } = chai
@@ -42,7 +39,7 @@ describe('Fact based issues', () => {
       messageContext.bindActionCreators({
         deviceOffline,
         deviceOnline,
-        factGenerate,
+        factGenerateDeviceConnectivity,
       })
 
       await server
@@ -67,7 +64,7 @@ describe('Fact based issues', () => {
       assert.equal(factDevice.offline, 0)
       assert.equal(factDevice.noResults, 0)
 
-      messageContext.factGenerate(DEVICE_CONNECTIVITY, newDevice.id)
+      messageContext.factGenerateDeviceConnectivity(newDevice.id)
       await waitForIdle()
       ;[factDevice] = await knex('FactDeviceFlag').where({ deviceId })
       assert.equal(factDevice.offline, 0)
@@ -90,7 +87,7 @@ describe('Fact based issues', () => {
         })
 
       const waitForOffline = waitForAction(deviceOffline(newDevice.id))
-      messageContext.factGenerate(DEVICE_CONNECTIVITY, newDevice.id)
+      messageContext.factGenerateDeviceConnectivity(newDevice.id)
       await waitForOffline
       await waitForIdle()
       ;[factDevice] = await knex('FactDeviceFlag').where({ deviceId })
@@ -144,7 +141,7 @@ describe('Fact based issues', () => {
       assert.equal(issues[0].issueStatus, 'Resolved')
 
       const waitForNoResults = waitForAction(deviceNoResults(newDevice.id))
-      messageContext.factGenerate(DEVICE_CONNECTIVITY, newDevice.id)
+      messageContext.factGenerateDeviceConnectivity(newDevice.id)
       await waitForNoResults
       await waitForIdle()
       ;[factDevice] = await knex('FactDeviceFlag').where({ deviceId })

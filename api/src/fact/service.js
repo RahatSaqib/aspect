@@ -1,51 +1,11 @@
 const { subDays } = require('date-fns')
-const {
-  factGenerate,
-  factTypes: { DEVICE_CONNECTIVITY, RESULT_COUNTS },
-} = require('./actions')
+const { factGenerateResultCounts } = require('./actions')
 const {
   deviceOffline,
   deviceOnline,
   deviceNoResults,
   deviceHasNewResults,
 } = require('../device/actions')
-
-// We are dispatching internally because we want to share a queue for
-// all fact generation since they are lower priority background tasks.
-// Normally, you would want to dispatch by adding actions and dispatch
-// separately on the queue. This is an exception to that rule.
-const factTypes = [DEVICE_CONNECTIVITY, RESULT_COUNTS]
-const factGenerateDispatch = {
-  [DEVICE_CONNECTIVITY]: onFactGenerateDeviceConnectivity,
-  [RESULT_COUNTS]: onFactGenerateResultCounts,
-}
-const factGenerateDispatchForDevice = {
-  [DEVICE_CONNECTIVITY]: onFactGenerateDeviceConnectivity,
-  [RESULT_COUNTS]: onFactGenerateResultCountsForDevice,
-}
-
-async function onFactGenerate(action, context) {
-  const { factType, deviceId } = action
-  if (factType == null) {
-    // If no fact type specified, dispatch new action for all
-    // known fact types
-    const { messageContext } = context
-    messageContext.bindActionCreators({ factGenerate })
-    factTypes.forEach(factType => messageContext.factGenerate(factType))
-  } else if (deviceId == null) {
-    // If dispatch specified for fact type, delegate to dispatcher
-    const dispatch = factGenerateDispatch[factType]
-    if (dispatch != null) {
-      await dispatch(action, context)
-    }
-  } else {
-    // If dispatch specified for fact type and deviceId, delegate
-    const dispatch = factGenerateDispatchForDevice[factType]
-    if (dispatch != null) {
-      await dispatch(action, context)
-    }
-  }
-}
 
 function onFactGenerateDeviceConnectivity({ deviceId }, { messageContext }) {
   const context = messageContext.bindActionCreators({
@@ -98,16 +58,23 @@ function onFactGenerateDeviceConnectivity({ deviceId }, { messageContext }) {
   })
 }
 
-function onFactGenerateResultCounts(action, { messageContext }) {
-  const context = messageContext.bindActionCreators({ factGenerate })
-  return context.run(async knex => {
+function onFactGenerateResultCounts(action, context) {
+  if (action.deviceId != null) {
+    // specialization if device id specified, otherwise query for devices below.
+    return onFactGenerateResultCountsForDevice(action, context)
+  }
+
+  const messageContext = context.messageContext.bindActionCreators({
+    factGenerateResultCounts,
+  })
+  return messageContext.run(async knex => {
     // TODO do we really need to generate result counts for every device every hour?
     await knex('Device as d')
       .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
       .join('DeviceTypeCategory as dtc', 'dt.deviceTypeCategoryId', 'dtc.id')
       .where('dtc.hasResults', 1)
       .select('d.id as deviceId')
-      .map(({ deviceId }) => context.factGenerate(RESULT_COUNTS, deviceId))
+      .map(({ deviceId }) => messageContext.factGenerateResultCounts(deviceId))
   })
 }
 
@@ -146,7 +113,7 @@ function onDeviceUpdateFlag(updates) {
 
 function onResultLogged({ resultId }, { messageContext }) {
   const context = messageContext.bindActionCreators({
-    factGenerate,
+    factGenerateResultCounts,
     deviceHasNewResults,
   })
   return context.run(async knex => {
@@ -169,7 +136,7 @@ function onResultLogged({ resultId }, { messageContext }) {
     if (noResults === 1) {
       context.deviceHasNewResults(deviceId)
     }
-    context.factGenerate(RESULT_COUNTS, deviceId, {
+    context.factGenerateResultCounts(deviceId, {
       assayId,
       resultCategory1,
       resultCategory2,
@@ -365,7 +332,8 @@ function onFactGenerateResultCountsForDevice(
 }
 
 module.exports = {
-  onFactGenerate,
+  onFactGenerateDeviceConnectivity,
+  onFactGenerateResultCounts,
   onDeviceSeen,
   onDeviceUpdateFlag,
   onResultLogged,
