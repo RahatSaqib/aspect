@@ -36,6 +36,10 @@ module.exports = {
       expiringEscalated: 3, // Stock will expire in X days
     },
   },
+  admin: {
+    email: process.env['admin.email'],
+    cell: process.env['admin.cell'],
+  },
 }
 
 configureOptional(module.exports)
