@@ -26,6 +26,7 @@ async function up(knex) {
     partner.integer('autoAcknowledgeOlderThanDays')
     partner.integer('numberToLeaveUnacknowledged')
     partner.integer('maxDaysDeviceOffline')
+    partner.integer('maxDaysDeviceNoResults')
   })
 
   await knex.schema.createTable('User', user => {
@@ -1597,6 +1598,10 @@ async function up(knex) {
       .onDelete('CASCADE')
     x
       .boolean('offline')
+      .notNullable()
+      .defaultTo(0)
+    x
+      .boolean('noResults')
       .notNullable()
       .defaultTo(0)
     x

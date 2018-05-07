@@ -1,41 +1,105 @@
 const { subDays } = require('date-fns')
-const _ = require('lodash')
-const { factGenerateResultCountsForDevice } = require('./actions')
-const { deviceOffline, deviceOnline } = require('../device/actions')
+const {
+  factGenerate,
+  factTypes: { DEVICE_CONNECTIVITY, RESULT_COUNTS },
+} = require('./actions')
+const {
+  deviceOffline,
+  deviceOnline,
+  deviceNoResults,
+  deviceHasNewResults,
+} = require('../device/actions')
 
-function onFactGenerateDeviceOffline(action, { messageContext }) {
-  const context = messageContext.bindActionCreators({ deviceOffline })
+// We are dispatching internally because we want to share a queue for
+// all fact generation since they are lower priority background tasks.
+// Normally, you would want to dispatch by adding actions and dispatch
+// separately on the queue. This is an exception to that rule.
+const factTypes = [DEVICE_CONNECTIVITY, RESULT_COUNTS]
+const factGenerateDispatch = {
+  [DEVICE_CONNECTIVITY]: onFactGenerateDeviceConnectivity,
+  [RESULT_COUNTS]: onFactGenerateResultCounts,
+}
+const factGenerateDispatchForDevice = {
+  [DEVICE_CONNECTIVITY]: onFactGenerateDeviceConnectivity,
+  [RESULT_COUNTS]: onFactGenerateResultCountsForDevice,
+}
+
+async function onFactGenerate(action, context) {
+  const { factType, deviceId } = action
+  if (factType == null) {
+    // If no fact type specified, dispatch new action for all
+    // known fact types
+    const { messageContext } = context
+    messageContext.bindActionCreators({ factGenerate })
+    factTypes.forEach(factType => messageContext.factGenerate(factType))
+  } else if (deviceId == null) {
+    // If dispatch specified for fact type, delegate to dispatcher
+    const dispatch = factGenerateDispatch[factType]
+    if (dispatch != null) {
+      await dispatch(action, context)
+    }
+  } else {
+    // If dispatch specified for fact type and deviceId, delegate
+    const dispatch = factGenerateDispatchForDevice[factType]
+    if (dispatch != null) {
+      await dispatch(action, context)
+    }
+  }
+}
+
+function onFactGenerateDeviceConnectivity({ deviceId }, { messageContext }) {
+  const context = messageContext.bindActionCreators({
+    deviceOffline,
+    deviceNoResults,
+  })
   return context.run(async knex => {
-    const devices = await knex('Device as d')
+    const devicesQ = knex('Device as d')
       .join('FactDeviceFlag as f', 'f.deviceId', 'd.id')
-      .select('d.id', 'd.partnerId', 'd.lastPingOn')
-      .where({ 'f.offline': 0 })
-      .orderBy('d.partnerId')
-
-    let lastPartnerId
-    let deviceMaxDaysOffline
-    await Promise.all(
-      _.map(devices, async ({ id, partnerId, lastPingOn }) => {
-        if (lastPartnerId !== partnerId) {
-          deviceMaxDaysOffline = await knex('Partner')
-            .where('id', partnerId)
-            .pluck('maxDaysDeviceOffline')
-          lastPartnerId = partnerId
-        }
-        const maxLastDateOffline = subDays(new Date(), deviceMaxDaysOffline)
-
-        if (lastPingOn <= maxLastDateOffline || lastPingOn === null) {
+      .join('Partner as p', 'd.partnerId', 'p.id')
+      .where({ 'f.offline': 0, 'f.noResults': 0 })
+      .select(
+        'd.id',
+        'p.maxDaysDeviceOffline',
+        'p.maxDaysDeviceNoResults',
+        'd.lastPingOn',
+        'd.createdOn as deviceCreatedOn',
+        knex('DeviceLog as dl')
+          .whereRaw('dl.deviceId = d.id')
+          .whereNotNull('dl.resultId')
+          .max('dl.createdOn')
+          .as('lastResultOn')
+      )
+    if (deviceId != null) {
+      devicesQ.where({ 'd.id': deviceId })
+    }
+    await devicesQ.map(
+      ({
+        id,
+        maxDaysDeviceOffline,
+        maxDaysDeviceNoResults,
+        lastPingOn,
+        deviceCreatedOn,
+        lastResultOn,
+      }) => {
+        const now = new Date()
+        const maxLastDateOffline = subDays(now, maxDaysDeviceOffline)
+        const maxLastDateNoResult = subDays(now, maxDaysDeviceNoResults)
+        if (lastPingOn == null || lastPingOn <= maxLastDateOffline) {
           context.deviceOffline(id)
+        } else if (
+          (lastResultOn != null && lastResultOn <= maxLastDateNoResult) ||
+          (lastResultOn == null && deviceCreatedOn <= maxLastDateNoResult)
+        ) {
+          context.deviceNoResults(id)
         }
-      })
+        return id // for lint
+      }
     )
   })
 }
 
 function onFactGenerateResultCounts(action, { messageContext }) {
-  const context = messageContext.bindActionCreators({
-    factGenerateResultCountsForDevice,
-  })
+  const context = messageContext.bindActionCreators({ factGenerate })
   return context.run(async knex => {
     // TODO do we really need to generate result counts for every device every hour?
     await knex('Device as d')
@@ -43,9 +107,7 @@ function onFactGenerateResultCounts(action, { messageContext }) {
       .join('DeviceTypeCategory as dtc', 'dt.deviceTypeCategoryId', 'dtc.id')
       .where('dtc.hasResults', 1)
       .select('d.id as deviceId')
-      .map(({ deviceId }) =>
-        context.factGenerateResultCountsForDevice(deviceId)
-      )
+      .map(({ deviceId }) => context.factGenerate(RESULT_COUNTS, deviceId))
   })
 }
 
@@ -73,45 +135,53 @@ function onDeviceSeen({ deviceId, dateSeen }, { messageContext }) {
   })
 }
 
-function onDeviceOffline({ deviceId }, { messageContext }) {
-  return messageContext.run(async knex => {
-    await knex('FactDeviceFlag')
-      .where({ deviceId })
-      .update({ offline: 1 })
-  })
-}
-
-function onDeviceOnline({ deviceId }, { messageContext }) {
-  return messageContext.run(async knex => {
-    await knex('FactDeviceFlag')
-      .where({ deviceId })
-      .update({ offline: 0 })
-  })
+function onDeviceUpdateFlag(updates) {
+  return ({ deviceId }, { messageContext }) =>
+    messageContext.run(async knex =>
+      knex('FactDeviceFlag')
+        .where({ deviceId })
+        .update(updates)
+    )
 }
 
 function onResultLogged({ resultId }, { messageContext }) {
   const context = messageContext.bindActionCreators({
-    factGenerateResultCountsForDevice,
+    factGenerate,
+    deviceHasNewResults,
   })
   return context.run(async knex => {
-    const { deviceId, assayId, resultCategory1, resultCategory2 } = await knex(
-      'Result'
-    )
-      .where({ id: resultId })
-      .first('deviceId', 'assayId', 'resultCategory1', 'resultCategory2')
-    context.factGenerateResultCountsForDevice(
+    const {
       deviceId,
       assayId,
       resultCategory1,
-      resultCategory2
-    )
+      resultCategory2,
+      noResults,
+    } = await knex('Result as r')
+      .leftJoin('FactDeviceFlag as fdf', 'fdf.deviceId', 'r.deviceId')
+      .where({ id: resultId })
+      .first(
+        'r.deviceId',
+        'r.assayId',
+        'r.resultCategory1',
+        'r.resultCategory2',
+        'fdf.noResults'
+      )
+    if (noResults === 1) {
+      context.deviceHasNewResults(deviceId)
+    }
+    context.factGenerate(RESULT_COUNTS, deviceId, {
+      assayId,
+      resultCategory1,
+      resultCategory2,
+    })
   })
 }
 
 function onFactGenerateResultCountsForDevice(
-  { deviceId, assayId, resultCategory1, resultCategory2 },
+  { deviceId, options = {} },
   { messageContext }
 ) {
+  const { assayId, resultCategory1, resultCategory2 } = options
   return messageContext.transact(async knex => {
     const daysToCalculate = [1, 7, 30, 60, 90, 365, 9999]
 
@@ -295,11 +365,8 @@ function onFactGenerateResultCountsForDevice(
 }
 
 module.exports = {
-  onFactGenerateDeviceOffline,
-  onFactGenerateResultCounts,
-  onFactGenerateResultCountsForDevice,
+  onFactGenerate,
   onDeviceSeen,
-  onDeviceOffline,
-  onDeviceOnline,
+  onDeviceUpdateFlag,
   onResultLogged,
 }

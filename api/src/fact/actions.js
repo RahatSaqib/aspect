@@ -1,60 +1,38 @@
 // ----------- Action Types ---------------------
 const types = {
-  FACT_GENERATE_RESULT_COUNTS: 'FACT_GENERATE_RESULT_COUNTS',
-  FACT_GENERATE_DEVICE_OFFLINE: 'FACT_GENERATE_DEVICE_OFFLINE',
-  FACT_GENERATE_RESULT_COUNTS_FOR_DEVICE:
-    'FACT_GENERATE_RESULT_COUNTS_FOR_DEVICE',
+  FACT_GENERATE: 'FACT_GENERATE',
 }
 
-// ----------- Action Creators -------------------
-
-/**
- * Requests facts to be regenerated. Will be called on
- * schedule to run fact ETL
- */
-function factGenerateResultCounts() {
-  return {
-    type: types.FACT_GENERATE_RESULT_COUNTS,
-  }
+// Optionally discriminates types of facts to generateno
+// Defined to allow internal specialization and to share queue
+// Normally should simply add actoin types
+const factTypes = {
+  DEVICE_CONNECTIVITY: 'DEVICE_CONNECTIVITY',
+  RESULT_COUNTS: 'RESULT_COUNTS',
 }
 
 /**
- * Requests facts to be regenerated. Will be called on
- * schedule to run fact ETL
+ * Requests fact device flags to be regenerated. Will be called on
+ * schedule to run fact device flag ETL
+ *
+ * factType: optional, e.g. offline, service, calibration. If not
+ * specified will create new actions for each of known flags
+ * deviceId: optional, if specified, request facts to be generated
+ * for a specific device.
+ * options: additional options, specific to the fact type,
+ * intended for internal use of the fact service
  */
-function factGenerateResultCountsForDevice(
-  deviceId,
-  assayId,
-  resultCategory1,
-  resultCategory2
-) {
-  if (deviceId == null) {
-    throw new Error(
-      'Must specify deviceId for factGenerateResultCountsForDevice'
-    )
-  }
+function factGenerate(factType, deviceId, options) {
   return {
-    type: types.FACT_GENERATE_RESULT_COUNTS_FOR_DEVICE,
+    type: types.FACT_GENERATE,
+    factType,
     deviceId,
-    assayId,
-    resultCategory1,
-    resultCategory2,
-  }
-}
-
-/**
- * Requests facts to be regenerated. Will be called on
- * schedule to run fact ETL
- */
-function factGenerateDeviceOffline() {
-  return {
-    type: types.FACT_GENERATE_DEVICE_OFFLINE,
+    options,
   }
 }
 
 module.exports = {
   types,
-  factGenerateResultCounts,
-  factGenerateResultCountsForDevice,
-  factGenerateDeviceOffline,
+  factTypes,
+  factGenerate,
 }

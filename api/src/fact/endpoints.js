@@ -1,22 +1,19 @@
 const {
-  onFactGenerateResultCounts,
-  onFactGenerateResultCountsForDevice,
-  onFactGenerateDeviceOffline,
+  onFactGenerate,
   onDeviceSeen,
-  onDeviceOnline,
-  onDeviceOffline,
+  onDeviceUpdateFlag,
   onResultLogged,
 } = require('./service')
 
 const subscriptions = [
   {
     actions: {
-      FACT_GENERATE_RESULT_COUNTS: onFactGenerateResultCounts,
-      FACT_GENERATE_RESULT_COUNTS_FOR_DEVICE: onFactGenerateResultCountsForDevice,
-      FACT_GENERATE_DEVICE_OFFLINE: onFactGenerateDeviceOffline,
+      FACT_GENERATE: onFactGenerate,
       DEVICE_SEEN: onDeviceSeen,
-      DEVICE_ONLINE: onDeviceOnline,
-      DEVICE_OFFLINE: onDeviceOffline,
+      DEVICE_ONLINE: onDeviceUpdateFlag({ offline: 0 }),
+      DEVICE_OFFLINE: onDeviceUpdateFlag({ offline: 1 }),
+      DEVICE_HAS_NEW_RESULTS: onDeviceUpdateFlag({ noResults: 0 }),
+      DEVICE_NO_RESULTS: onDeviceUpdateFlag({ noResults: 1 }),
       RESULT_LOGGED: onResultLogged,
     },
   },

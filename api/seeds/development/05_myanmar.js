@@ -77,6 +77,7 @@ async function seed(knex) {
     autoAcknowledgeOlderThanDays: 28,
     numberToLeaveUnacknowledged: 15,
     maxDaysDeviceOffline: 7,
+    maxDaysDeviceNoResults: 14,
   })
 
   const modules = await knex('Permission').reduce((memo, row) => {
@@ -711,6 +712,17 @@ async function seed(knex) {
     ),
     Object.assign(
       {
+        name: 'LU No Testing',
+        partnerId,
+        issueTypeId: issueTypes.DeviceNoResults.id,
+        jobFunctionId: jobFunctionIdLabUser,
+        level: 1,
+        messageTypeId: defaultMessageTypes.DeviceNoResults.id,
+      },
+      auditFields
+    ),
+    Object.assign(
+      {
         name: 'LU Module Temperature',
         partnerId,
         issueTypeId: issueTypes.ModuleTemperatureError.id,
@@ -722,12 +734,34 @@ async function seed(knex) {
     ),
     Object.assign(
       {
+        name: 'RO No Testing',
+        partnerId,
+        issueTypeId: issueTypes.DeviceNoResults.id,
+        jobFunctionId: jobFunctionIdRegionalOfficer,
+        level: 2,
+        messageTypeId: defaultMessageTypes.DeviceNoResults.id,
+      },
+      auditFields
+    ),
+    Object.assign(
+      {
         name: 'RO Module',
         partnerId,
         issueTypeId: issueTypes.ModuleTemperatureError.id,
         jobFunctionId: jobFunctionIdRegionalOfficer,
         level: 2,
         messageTypeId: defaultMessageTypes.ModuleTemperatureError.id,
+      },
+      auditFields
+    ),
+    Object.assign(
+      {
+        name: 'RO Escalated No Testing',
+        partnerId,
+        issueTypeId: issueTypes.DeviceNoResults.id,
+        jobFunctionId: jobFunctionIdRegionalOfficer,
+        level: 3,
+        messageTypeId: defaultMessageTypes.DeviceNoResults.id,
       },
       auditFields
     ),

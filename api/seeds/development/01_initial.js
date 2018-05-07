@@ -90,6 +90,7 @@ async function seed(knex) {
     partnerTypeId: partnerTypeFundingId,
     deviceLogHistoryDays: 14,
     maxDaysDeviceOffline: 7,
+    maxDaysDeviceNoResults: 14,
   })
 
   const [partnerTwoId] = await knex('Partner').insert({
@@ -97,6 +98,7 @@ async function seed(knex) {
     partnerTypeId: partnerTypeImplementingId,
     deviceLogHistoryDays: 14,
     maxDaysDeviceOffline: 7,
+    maxDaysDeviceNoResults: 14,
   })
 
   // Categories of devices (lab, connectivity...)
@@ -3797,11 +3799,48 @@ async function seed(knex) {
     )
   )
 
+  const [deviceNoResultsAlertTemplateId] = await knex('AlertTemplate').insert(
+    Object.assign(
+      {
+        message: '{{site.name}} no results for {{numberOfDays}} days.',
+      },
+      auditFields
+    )
+  )
+
+  const [deviceNoResultsSmsTemplateId] = await knex('SmsTemplate').insert(
+    Object.assign(
+      {
+        message: '{{site.name}} no results for {{numberOfDays}} days.',
+      },
+      auditFields
+    )
+  )
+
+  const [deviceNoResultsEmailTemplateId] = await knex('EmailTemplate').insert(
+    Object.assign(
+      {
+        subject: '{{site.name}} Device No Results',
+        body: '{{site.name}} no results for {{numberOfDays}} days.',
+        htmlBody:
+          '<em>{{site.name}}</em> no results for {{numberOfDays}} days.',
+      },
+      auditFields
+    )
+  )
+
   const [deviceOfflineMessageTypeId] = await knex('MessageType').insert({
     messageSeverityId: messageSeverities.Alert.id,
     alertTemplateId: deviceOfflineAlertTemplateId,
     smsTemplateId: deviceOfflineSmsTemplateId,
     emailTemplateId: deviceOfflineEmailTemplateId,
+  })
+
+  const [deviceNoResultsMessageTypeId] = await knex('MessageType').insert({
+    messageSeverityId: messageSeverities.Alert.id,
+    alertTemplateId: deviceNoResultsAlertTemplateId,
+    smsTemplateId: deviceNoResultsSmsTemplateId,
+    emailTemplateId: deviceNoResultsEmailTemplateId,
   })
 
   const [moduleTemperatureErrorTypeId] = await knex('MessageType').insert({
@@ -3889,6 +3928,13 @@ async function seed(knex) {
       i18nKey: 'issueStatusDeviceOffline',
       issueCategoryId: issueCategories.ConnectivityHealth.id,
       defaultMessageTypeId: deviceOfflineMessageTypeId,
+    },
+    {
+      name: 'Device No Results',
+      externalId: 'DeviceNoResults',
+      i18nKey: 'issueStatusDeviceNoResults',
+      issueCategoryId: issueCategories.ConnectivityHealth.id,
+      defaultMessageTypeId: deviceNoResultsMessageTypeId,
     },
     {
       name: 'Module Temperature Error',
