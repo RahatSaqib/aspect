@@ -11,12 +11,12 @@ const { run } = require('../../../src/db')
 
 const server = supertest.agent('http://localhost:8080')
 const { assert } = chai
-const { resultModuleTemperatureError } = require('../../../src/result/actions')
 const {
-  createMessageContext,
-  waitForIdle,
-  waitForAction,
-} = require('../../utils/mqUtils')
+  resultModuleTemperatureError,
+  resultModulePowerError,
+  resultModuleFailureError,
+} = require('../../../src/result/actions')
+const { waitForIdle, waitForAction } = require('../../utils/mqUtils')
 
 describe('Issue endpoints', () => {
   function createContext() {
@@ -34,22 +34,19 @@ describe('Issue endpoints', () => {
     afterCleanUp,
   } = context
   let { deviceAuth } = context
-  before(async () =>
+  beforeEach(async () =>
     run(async () => {
       await beforeCreateGxAlertApiKey()
       useGxAlertDeviceId(gxAlertDeviceId)
       ;({ deviceAuth } = context)
     })
   )
-  after(afterCleanUp)
+  afterEach(afterCleanUp)
 
-  it('should create/update issue for results with related error code', () =>
+  it('should create a module temperature issue', () =>
     runTest(async knex => {
       const { now } = context
       const errorCode = '4010'
-
-      const messageContext = await createMessageContext()
-      messageContext.bindActionCreators({ resultModuleTemperatureError })
 
       // Post to deviceApi to ensure the device in in Aspect
       const response = await postToDeviceApi({
@@ -62,9 +59,9 @@ describe('Issue endpoints', () => {
 
       for (let i = 0; i < 5; i++) {
         /* eslint-disable no-await-in-loop */
-        const errorTestResultId = `UNIQUE-ID-WITH-ERROR-RESULT-${i}`
-        const sampleId = `BBC2542552${i}`
-        const moduleSerial = `654321`
+        const errorTestResultId = `UNIQUE-ID-WITH-TEMP-ERROR-${i}`
+        const sampleId = `TEM2542552${i}`
+        const moduleSerial = `MOD98765`
         const instrumentSerial = `CEPH-PC-123${i}`
         const testStartedOn = setMilliseconds(subDays(now, i + 3), 0)
         const testEndedOn = setMilliseconds(addHours(testStartedOn, i + 2), 0)
@@ -123,6 +120,168 @@ describe('Issue endpoints', () => {
             )
           assert.equal(issues.length, 1)
           assert.equal(issues[0].issueType, 'ModuleTemperatureError')
+          assert.equal(issues[0].deviceId, deviceId)
+          assert.equal(issues[0].issueStatus, 'Active')
+        }
+      }
+    }))
+
+  it('should create a module power issue ', () =>
+    runTest(async knex => {
+      const { now } = context
+      const errorCode = '1007'
+
+      // Post to deviceApi to ensure the device in in Aspect
+      const response = await postToDeviceApi({
+        authHeader: deviceAuth,
+        payload: _.merge({}, basicDevicePayload, {
+          name: deviceName,
+        }),
+      })
+      const deviceId = response.body.device.id
+      for (let i = 0; i < 5; i++) {
+        /* eslint-disable no-await-in-loop */
+        const errorTestResultId = `UNIQUE-ID-WITH-POWER-ERROR-${i}`
+        const sampleId = `POW2542552${i}`
+        const moduleSerial = `POW12345`
+        const instrumentSerial = `CEPH-PC-123${i}`
+        const testStartedOn = setMilliseconds(subDays(now, i + 3), 0)
+        const testEndedOn = setMilliseconds(addHours(testStartedOn, i + 2), 0)
+        const payload = _.merge(
+          {},
+          basicDevicePayload,
+          { name: deviceName },
+          basicResultPayload,
+          {
+            result: {
+              id: errorTestResultId,
+              startedOn: testStartedOn,
+              endedOn: testEndedOn,
+              error: {
+                code: errorCode,
+              },
+              sample: { id: sampleId },
+              instrument: {
+                serial: instrumentSerial,
+                module: {
+                  serial: moduleSerial,
+                  name: 'A1',
+                },
+              },
+            },
+          }
+        )
+        if (i < 4) {
+          // Post the result to aspect
+          await postToDeviceApi({
+            authHeader: deviceAuth,
+            payload,
+          })
+        } else {
+          // Should create issue when errors > 4
+          const waitForModulePowerError = waitForAction(
+            resultModulePowerError(deviceId)
+          )
+          await postToDeviceApi({
+            authHeader: deviceAuth,
+            payload,
+          })
+          await waitForModulePowerError
+          await waitForIdle()
+
+          const issues = await knex('Issue as i')
+            .join('IssueType as it', 'i.issueTypeId', 'it.id')
+            .join('IssueStatus as is', 'i.issueStatusId', 'is.id')
+            .where({ 'i.deviceId': deviceId })
+            .select(
+              'i.id',
+              'it.externalId as issueType',
+              'i.deviceId',
+              'is.externalId as issueStatus'
+            )
+          assert.equal(issues.length, 1)
+          assert.equal(issues[0].issueType, 'ModulePowerError')
+          assert.equal(issues[0].deviceId, deviceId)
+          assert.equal(issues[0].issueStatus, 'Active')
+        }
+      }
+    }))
+
+  it('should create a module failure issue ', () =>
+    runTest(async knex => {
+      const { now } = context
+      const errorCode = '2032'
+
+      // Post to deviceApi to ensure the device in in Aspect
+      const response = await postToDeviceApi({
+        authHeader: deviceAuth,
+        payload: _.merge({}, basicDevicePayload, {
+          name: deviceName,
+        }),
+      })
+      const deviceId = response.body.device.id
+      for (let i = 0; i < 3; i++) {
+        /* eslint-disable no-await-in-loop */
+        const errorTestResultId = `UNIQUE-ID-WITH-FAILURE-ERROR-${i}`
+        const sampleId = `FAIL2542552${i}`
+        const moduleSerial = `FAIL12345`
+        const instrumentSerial = `CEPH-PC-123${i}`
+        const testStartedOn = setMilliseconds(subDays(now, i + 3), 0)
+        const testEndedOn = setMilliseconds(addHours(testStartedOn, i + 2), 0)
+        const payload = _.merge(
+          {},
+          basicDevicePayload,
+          { name: deviceName },
+          basicResultPayload,
+          {
+            result: {
+              id: errorTestResultId,
+              startedOn: testStartedOn,
+              endedOn: testEndedOn,
+              error: {
+                code: errorCode,
+              },
+              sample: { id: sampleId },
+              instrument: {
+                serial: instrumentSerial,
+                module: {
+                  serial: moduleSerial,
+                  name: 'A1',
+                },
+              },
+            },
+          }
+        )
+        if (i < 2) {
+          // Post the result to aspect
+          await postToDeviceApi({
+            authHeader: deviceAuth,
+            payload,
+          })
+        } else {
+          // Should create issue when errors > 4
+          const waitForModuleFailureError = waitForAction(
+            resultModuleFailureError(deviceId)
+          )
+          await postToDeviceApi({
+            authHeader: deviceAuth,
+            payload,
+          })
+          await waitForModuleFailureError
+          await waitForIdle()
+
+          const issues = await knex('Issue as i')
+            .join('IssueType as it', 'i.issueTypeId', 'it.id')
+            .join('IssueStatus as is', 'i.issueStatusId', 'is.id')
+            .where({ 'i.deviceId': deviceId })
+            .select(
+              'i.id',
+              'it.externalId as issueType',
+              'i.deviceId',
+              'is.externalId as issueStatus'
+            )
+          assert.equal(issues.length, 1)
+          assert.equal(issues[0].issueType, 'ModuleFailureError')
           assert.equal(issues[0].deviceId, deviceId)
           assert.equal(issues[0].issueStatus, 'Active')
         }

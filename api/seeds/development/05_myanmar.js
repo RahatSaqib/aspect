@@ -187,18 +187,6 @@ async function seed(knex) {
     // Regional Officer Permissions
     {
       jobFunctionId: jobFunctionIdRegionalOfficer,
-      featureId: featureModules.site,
-    },
-    {
-      jobFunctionId: jobFunctionIdRegionalOfficer,
-      featureId: featureModules.device,
-    },
-    {
-      jobFunctionId: jobFunctionIdRegionalOfficer,
-      featureId: featureModules.result,
-    },
-    {
-      jobFunctionId: jobFunctionIdRegionalOfficer,
       featureId: featureModules.summaryDashboard,
     },
     {
@@ -751,6 +739,28 @@ async function seed(knex) {
         jobFunctionId: jobFunctionIdRegionalOfficer,
         level: 3,
         messageTypeId: defaultMessageTypes.ModuleTemperatureError.id,
+      },
+      auditFields
+    ),
+    Object.assign(
+      {
+        name: 'LU Module Power',
+        partnerId,
+        issueTypeId: issueTypes.ModulePowerError.id,
+        jobFunctionId: jobFunctionIdLabUser,
+        level: 1,
+        messageTypeId: defaultMessageTypes.ModulePowerError.id,
+      },
+      auditFields
+    ),
+    Object.assign(
+      {
+        name: 'LU Module Failure',
+        partnerId,
+        issueTypeId: issueTypes.ModuleFailureError.id,
+        jobFunctionId: jobFunctionIdLabUser,
+        level: 1,
+        messageTypeId: defaultMessageTypes.ModuleFailureError.id,
       },
       auditFields
     ),

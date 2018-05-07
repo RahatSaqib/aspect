@@ -1,6 +1,5 @@
 const _ = require('lodash')
 const Boom = require('boom')
-const { macAddressValid } = require('./requestValidation')
 const { getOrCreateSite } = require('./site')
 /*
 The purpose of this plugin is to ensure that results are captured
@@ -13,10 +12,6 @@ async function preProcessAddDeviceData({ knex, device, payload, now }) {
     throw Boom.notFound(`Cannot find device ${JSON.stringify(device)}`)
   }
   const configurationData = _.get(payload, 'configuration.data') || {}
-  const { macAddress } = configurationData
-  if (macAddress && !macAddressValid(macAddress)) {
-    throw Boom.badRequest(`Invalid MAC address in request: '${macAddress}'`)
-  }
   const site = await getOrCreateSite(knex, device, payload, now)
   const deviceDetails = {
     lastSeenOn: new Date(configurationData.lastPingOn || now),

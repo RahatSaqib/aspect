@@ -28,6 +28,10 @@ module.exports = {
       messagingServiceSid: process.env.twilioMessagingServiceSid,
     },
   },
+  admin: {
+    email: process.env['admin.email'],
+    cell: process.env['admin.cell'],
+  },
 }
 
 configureOptional(module.exports)

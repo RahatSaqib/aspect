@@ -1707,6 +1707,180 @@ describe('Device API routes for GxConnect Devices', () => {
           assert.equal(lastResult.resultData.geneXpertTestId, errorTestResultId)
         }))
     })
+
+    describe('when the result comes from a site that has location data saved', () => {
+      describe('and the result has NO coordinates specified in the payload', () => {
+        it('should set the the GPS coordinates and geography of the result to those of the site/device', () =>
+          runTest(async knex => {
+            const { now, basicDevicePayload, deviceAuth, apiKey } = context
+            const latitude = Math.random() * 360
+            const longitude = Math.random() * 360
+            const deviceLocationDetails = await knex('DeviceApiKey as dak')
+              .join('Device as d', 'dak.DeviceId', 'd.id')
+              .join('Site as s', 'd.siteId', 's.id')
+              .innerJoin('Geography as g', function() {
+                this.on('d.geographyId', 'g.id').orOn('s.geographyId', 'g.id')
+              })
+              .join('Country as c', 'g.countryId', 'c.id')
+              .where({ 'dak.token': apiKey })
+              .first(
+                'd.id',
+                's.id as siteId',
+                'g.id as geographyId',
+                'c.id as countryId'
+              )
+            const { id: geographyId } = await knex('Geography')
+              .where('countryId', deviceLocationDetails.countryId)
+              .andWhere(function() {
+                this.whereNotNull('stateId')
+              })
+              .andWhere(function() {
+                this.whereNotNull('lgaId')
+              })
+              .orderBy('id', 'desc')
+              .first('id')
+            await knex('Site')
+              .where({ id: deviceLocationDetails.siteId })
+              .update({ latitude, longitude, geographyId })
+            const gpsCoordsMissingResultId = 'GXCONNECT-ID-WITHOUT-GPS-COORDS'
+            const testStartedOn = setMilliseconds(
+              subMinutes(
+                subHours(now, Math.floor(Math.random() * 24)),
+                Math.floor(Math.random() * 60)
+              ),
+              0
+            )
+            const testEndedOn = setMilliseconds(addHours(testStartedOn, 2), 0)
+
+            await server
+              .post('/device')
+              .set('Authorization', deviceAuth)
+              .send(
+                _.assign(
+                  {},
+                  _.assign({}, basicDevicePayload, basicResultPayload),
+                  {
+                    result: _.assign({}, basicResultPayload.result, {
+                      id: gpsCoordsMissingResultId,
+                      startedOn: testStartedOn,
+                      endedOn: testEndedOn,
+                    }),
+                  }
+                )
+              )
+              .then(res => {
+                assert.equal(res.status, 200)
+                assert.typeOf(res.body, 'Object')
+              })
+              .catch(assert.fail)
+
+            const lastResult = await getLastResult()
+            const resultSite = await knex('Site')
+              .where({ id: lastResult.siteId })
+              .first()
+            expect(lastResult).to.containSubset({
+              latitude: resultSite.latitude,
+              longitude: resultSite.longitude,
+              geographyId: resultSite.geographyId,
+            })
+          }))
+      })
+
+      describe('and the result HAS coordinates specified in the payload', () => {
+        it('should set the the GPS coordinates of the ones specified in the payload', () =>
+          runTest(async knex => {
+            const { now, deviceAuth, apiKey } = context
+            const siteLatitude = Math.random() * 360
+            const siteLongitude = Math.random() * 360
+            const deviceLocationDetails = await knex('DeviceApiKey as dak')
+              .join('Device as d', 'dak.DeviceId', 'd.id')
+              .join('Site as s', 'd.siteId', 's.id')
+              .innerJoin('Geography as g', function() {
+                this.on('d.geographyId', 'g.id').orOn('s.geographyId', 'g.id')
+              })
+              .join('Country as c', 'g.countryId', 'c.id')
+              .where({ 'dak.token': apiKey })
+              .first(
+                'd.id',
+                's.id as siteId',
+                'g.id as geographyId',
+                'c.id as countryId'
+              )
+            const { id: geographyId } = await knex('Geography')
+              .where('countryId', deviceLocationDetails.countryId)
+              .andWhere(function() {
+                this.whereNotNull('stateId')
+              })
+              .andWhere(function() {
+                this.whereNotNull('lgaId')
+              })
+              .orderBy('id', 'desc')
+              .first('id')
+            await knex('Site')
+              .where({ id: deviceLocationDetails.siteId })
+              .update({
+                latitude: siteLatitude,
+                longitude: siteLongitude,
+                geographyId,
+              })
+
+            const gpsCoordsInResultId = 'GXCONNECT-ID-WITH-GPS-COORDS'
+            const resultLatitude = Math.random() * 360
+            const resultLongitude = Math.random() * 360
+            assert.notEqual(siteLatitude, resultLatitude)
+            assert.notEqual(siteLongitude, resultLongitude)
+            const testStartedOn = setMilliseconds(
+              subMinutes(
+                subHours(now, Math.floor(Math.random() * 24)),
+                Math.floor(Math.random() * 60)
+              ),
+              0
+            )
+            const testEndedOn = setMilliseconds(addHours(testStartedOn, 2), 0)
+
+            await server
+              .post('/device')
+              .set('Authorization', deviceAuth)
+              .send(
+                _.assign(
+                  {},
+                  _.assign({}, basicDevicePayload, basicResultPayload),
+                  {
+                    result: _.assign({}, basicResultPayload.result, {
+                      id: gpsCoordsInResultId,
+                      startedOn: testStartedOn,
+                      endedOn: testEndedOn,
+                      instrument: {
+                        serial: '512934',
+                        module: {
+                          serial: '654321',
+                          name: 'A1',
+                        },
+                      },
+                      location: {
+                        latitude: resultLatitude,
+                        longitude: resultLongitude,
+                      },
+                    }),
+                  }
+                )
+              )
+              .then(res => {
+                assert.equal(res.status, 200)
+                assert.typeOf(res.body, 'Object')
+              })
+              .catch(assert.fail)
+
+            const lastResult = await getLastResult()
+            const resultSite = await knex('Site')
+              .where({ id: lastResult.siteId })
+              .first()
+            assert.notEqual(lastResult.latitude, resultSite.latitude)
+            assert.notEqual(lastResult.longitude, resultSite.longitude)
+            assert.equal(lastResult.geographyId, geographyId)
+          }))
+      })
+    })
   })
 
   describe('inventory changes', () => {
