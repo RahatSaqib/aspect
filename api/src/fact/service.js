@@ -196,7 +196,8 @@ function onFactGenerateResultCountsForDevice(
       // ...grouped by assay, resultCategory
       const countsByCategory = await query
         .clone()
-        .whereNotNull('r.assayId', 'r.resultCategory1')
+        .whereNotNull('r.assayId')
+        .whereNotNull('r.resultCategory1')
         .groupBy('r.assayId', 'r.resultCategory1')
         .count('r.id as resultCount')
         .select('r.assayId', 'r.resultCategory1')
@@ -220,7 +221,9 @@ function onFactGenerateResultCountsForDevice(
       // ...grouped by assay, resultCategory 1 & 2
       const countsByCategories = await query
         .clone()
-        .whereNotNull('r.assayId', 'r.resultCategory1', 'r.resultCategory2')
+        .whereNotNull('r.assayId')
+        .whereNotNull('r.resultCategory1')
+        .whereNotNull('r.resultCategory2')
         .groupBy('r.assayId', 'r.resultCategory1', 'r.resultCategory2')
         .count('r.id as resultCount')
         .select('r.assayId', 'r.resultCategory1', 'r.resultCategory2')
