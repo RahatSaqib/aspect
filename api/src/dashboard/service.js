@@ -1169,9 +1169,20 @@ async function operationalDashboard(request) {
 }
 
 async function actionDashboard(request) {
-  const { query } = request
+  const { auth, query } = request
 
   const now = new Date()
+
+  const user = await getUser(auth.credentials.name)
+  const { jobFunctionName } = await knex('JobFunction as jf')
+    .innerJoin('Job as j', 'j.jobFunctionId', 'jf.id')
+    .innerJoin('Person as ps', 'j.personId', 'ps.id')
+    .where({
+      'ps.userId': user.id,
+      'jf.partnerId': user.partnerId,
+    })
+    .first('jf.name as jobFunctionName')
+  const MOCK_NOTIFICATION_TYPE = jobFunctionName === 'Lab User' ? 'LU' : 'RO'
 
   const allActionByCategory = _.flowRight(
     x => _.groupBy(x, 'issueCategory'),
@@ -1190,7 +1201,7 @@ async function actionDashboard(request) {
       status: 'Active',
       issue: 'Critical Error on Module 4, Lab Acknowledged',
       level: 1,
-      notificationType: _.camelCase('LU Module Failure'),
+      notificationType: _.camelCase(`${MOCK_NOTIFICATION_TYPE} Module Failure`),
     },
     {
       issueCategory: 'Device',
@@ -1201,7 +1212,9 @@ async function actionDashboard(request) {
       status: 'Active',
       issue: 'Machine Temperature',
       level: 1,
-      notificationType: _.camelCase('LU Machine Temperature'),
+      notificationType: _.camelCase(
+        `${MOCK_NOTIFICATION_TYPE} Machine Temperature`
+      ),
     },
     {
       issueCategory: 'Device',
@@ -1213,7 +1226,7 @@ async function actionDashboard(request) {
       issue: 'Critical Error on Module 4, Lab Acknowledged',
       acknowledgedOn: subMinutes(subDays(now, 2), 5),
       level: 1,
-      notificationType: _.camelCase('LU Module Failure'),
+      notificationType: _.camelCase(`${MOCK_NOTIFICATION_TYPE} Module Failure`),
     },
     {
       issueCategory: 'Device',
@@ -1225,7 +1238,9 @@ async function actionDashboard(request) {
       issue: 'Machine Temperature Errors',
       acknowledgedOn: subMinutes(subDays(now, 2), 10),
       level: 1,
-      notificationType: _.camelCase('LU Machine Temperature'),
+      notificationType: _.camelCase(
+        `${MOCK_NOTIFICATION_TYPE} Machine Temperature`
+      ),
     },
     {
       issueCategory: 'Reagent',
@@ -1236,7 +1251,7 @@ async function actionDashboard(request) {
       issue: 'Stock-out expected - Contact Regional Officer.',
       acknowledgedOn: subMinutes(subDays(now, 2), 5),
       level: 1,
-      notificationType: _.camelCase('LU Stockout'),
+      notificationType: _.camelCase(`${MOCK_NOTIFICATION_TYPE} Stockout`),
     },
     {
       issueCategory: 'Reagent',
@@ -1246,7 +1261,9 @@ async function actionDashboard(request) {
       status: 'Active',
       issue: 'Stock level: MTB Cartridges',
       level: 1,
-      notificationType: _.camelCase('LU Stock Level Update'),
+      notificationType: _.camelCase(
+        `${MOCK_NOTIFICATION_TYPE} Stock Level Update`
+      ),
     },
     {
       issueCategory: 'Connectivity',
@@ -1256,7 +1273,7 @@ async function actionDashboard(request) {
       status: 'Active',
       issue: 'Hinthada TBC no contact for 9 days.',
       level: 2,
-      notificationType: _.camelCase('RO Network'),
+      notificationType: _.camelCase(`${MOCK_NOTIFICATION_TYPE} Network`),
     },
     {
       issueCategory: 'Connectivity',
@@ -1267,7 +1284,7 @@ async function actionDashboard(request) {
       issue: 'Meikhtila TBC no contact for 9 days.',
       acknowledgedOn: subMinutes(subDays(now, 1), 5),
       level: 1,
-      notificationType: _.camelCase('LU Network'),
+      notificationType: _.camelCase(`${MOCK_NOTIFICATION_TYPE} Network`),
     },
     {
       issueCategory: 'Connectivity',
@@ -1278,7 +1295,7 @@ async function actionDashboard(request) {
       issue: 'Meikhtila TBC no contact for 8 days.',
       acknowledgedOn: subMinutes(subDays(now, 5), 5),
       level: 1,
-      notificationType: _.camelCase('LU Network'),
+      notificationType: _.camelCase(`${MOCK_NOTIFICATION_TYPE} Network`),
     },
   ])
 
