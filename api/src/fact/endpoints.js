@@ -1,5 +1,6 @@
 const {
-  onFactGenerate,
+  onFactGenerateDeviceConnectivity,
+  onFactGenerateResultCounts,
   onDeviceSeen,
   onDeviceUpdateFlag,
   onResultLogged,
@@ -8,7 +9,8 @@ const {
 const subscriptions = [
   {
     actions: {
-      FACT_GENERATE: onFactGenerate,
+      FACT_GENERATE_DEVICE_CONNECTIVITY: onFactGenerateDeviceConnectivity,
+      FACT_GENERATE_RESULT_COUNTS: onFactGenerateResultCounts,
       DEVICE_SEEN: onDeviceSeen,
       DEVICE_ONLINE: onDeviceUpdateFlag({ offline: 0 }),
       DEVICE_OFFLINE: onDeviceUpdateFlag({ offline: 1 }),
