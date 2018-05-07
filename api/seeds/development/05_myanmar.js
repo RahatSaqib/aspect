@@ -7,6 +7,7 @@ const config = require('../../src/config')
 const myanmarSites = require('./fixtures/myanmarSites.json')
 const patients = require('./fixtures/patients.json')
 const dashboardWidget = require('./fixtures/myanmarDashboardWidget.json')
+const { errorCodes } = require('./fixtures/errorCodes.js')
 const { addMilliseconds, addMinutes, subDays } = require('date-fns')
 
 const now = new Date()
@@ -187,18 +188,6 @@ async function seed(knex) {
     // Regional Officer Permissions
     {
       jobFunctionId: jobFunctionIdRegionalOfficer,
-      featureId: featureModules.site,
-    },
-    {
-      jobFunctionId: jobFunctionIdRegionalOfficer,
-      featureId: featureModules.device,
-    },
-    {
-      jobFunctionId: jobFunctionIdRegionalOfficer,
-      featureId: featureModules.result,
-    },
-    {
-      jobFunctionId: jobFunctionIdRegionalOfficer,
       featureId: featureModules.summaryDashboard,
     },
     {
@@ -357,6 +346,7 @@ async function seed(knex) {
   )
 
   // every clinic has a site, GxAlert device and MTB/Rif+ and Ultra results
+
   const possibleResults = [
     {
       resultText: 'Not Detected',
@@ -545,7 +535,7 @@ async function seed(knex) {
                         notes: 'This is a test... result',
                         errorCode:
                           result.category1 === resultCategories.Error.id
-                            ? '1024'
+                            ? errorCodes[_.random(errorCodes.length)]
                             : null,
                         errorNotes:
                           result.category1 === resultCategories.Error.id
@@ -733,6 +723,17 @@ async function seed(knex) {
     ),
     Object.assign(
       {
+        name: 'LU Module Temperature',
+        partnerId,
+        issueTypeId: issueTypes.ModuleTemperatureError.id,
+        jobFunctionId: jobFunctionIdLabUser,
+        level: 1,
+        messageTypeId: defaultMessageTypes.ModuleTemperatureError.id,
+      },
+      auditFields
+    ),
+    Object.assign(
+      {
         name: 'RO No Testing',
         partnerId,
         issueTypeId: issueTypes.DeviceNoResults.id,
@@ -744,12 +745,56 @@ async function seed(knex) {
     ),
     Object.assign(
       {
+        name: 'RO Module',
+        partnerId,
+        issueTypeId: issueTypes.ModuleTemperatureError.id,
+        jobFunctionId: jobFunctionIdRegionalOfficer,
+        level: 2,
+        messageTypeId: defaultMessageTypes.ModuleTemperatureError.id,
+      },
+      auditFields
+    ),
+    Object.assign(
+      {
         name: 'RO Escalated No Testing',
         partnerId,
         issueTypeId: issueTypes.DeviceNoResults.id,
         jobFunctionId: jobFunctionIdRegionalOfficer,
         level: 3,
         messageTypeId: defaultMessageTypes.DeviceNoResults.id,
+      },
+      auditFields
+    ),
+    Object.assign(
+      {
+        name: 'RO Escalated Module Temperature',
+        partnerId,
+        issueTypeId: issueTypes.ModuleTemperatureError.id,
+        jobFunctionId: jobFunctionIdRegionalOfficer,
+        level: 3,
+        messageTypeId: defaultMessageTypes.ModuleTemperatureError.id,
+      },
+      auditFields
+    ),
+    Object.assign(
+      {
+        name: 'LU Module Power',
+        partnerId,
+        issueTypeId: issueTypes.ModulePowerError.id,
+        jobFunctionId: jobFunctionIdLabUser,
+        level: 1,
+        messageTypeId: defaultMessageTypes.ModulePowerError.id,
+      },
+      auditFields
+    ),
+    Object.assign(
+      {
+        name: 'LU Module Failure',
+        partnerId,
+        issueTypeId: issueTypes.ModuleFailureError.id,
+        jobFunctionId: jobFunctionIdLabUser,
+        level: 1,
+        messageTypeId: defaultMessageTypes.ModuleFailureError.id,
       },
       auditFields
     ),

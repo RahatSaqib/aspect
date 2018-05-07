@@ -15,7 +15,7 @@ const resultTextToResultCategoryMapping = {
     resultId: '806297_759939_62aa53c5',
     assay: 'GxMtbRif',
     resultCategory1: 'Detected',
-    resultCategory2: 'Indeterminate',
+    resultCategory2: null,
   },
   'DETECTADO BAIXO|DETECTADO|': {
     resultId: '806296_000000_36b79ac4',
@@ -27,7 +27,7 @@ const resultTextToResultCategoryMapping = {
     resultId: '806297_143248_fefcb73a',
     assay: 'GxMtbRif',
     resultCategory1: 'Detected',
-    resultCategory2: 'Indeterminate',
+    resultCategory2: null,
   },
   'DETECTADO BAJO|DETECTADO|': {
     resultId: '808660_516549_5843113c',
@@ -93,7 +93,7 @@ const resultTextToResultCategoryMapping = {
     resultId: '806315_233435_85d8ce59',
     assay: 'GxMtbRif',
     resultCategory1: 'Detected',
-    resultCategory2: 'Indeterminate',
+    resultCategory2: null,
   },
   'DETECTED LOW|DETECTED|': {
     resultId: '805204_258307_e10886fc',
@@ -111,7 +111,7 @@ const resultTextToResultCategoryMapping = {
     resultId: '806611_616843_1534b76d',
     assay: 'GxMtbRif',
     resultCategory1: 'Detected',
-    resultCategory2: 'Indeterminate',
+    resultCategory2: null,
   },
   'DETECTED MEDIUM|DETECTED|': {
     resultId: '703926_656626_767c9e0d',
@@ -135,7 +135,7 @@ const resultTextToResultCategoryMapping = {
     resultId: '806588_916211_8f121ce0',
     assay: 'GxMtbRif',
     resultCategory1: 'Detected',
-    resultCategory2: 'Indeterminate',
+    resultCategory2: null,
   },
   'DETECTED VERY LOW|DETECTED|': {
     resultId: '703926_751717_9caa47e2',
@@ -159,7 +159,7 @@ const resultTextToResultCategoryMapping = {
     resultId: '807414_342358_fe131d7f',
     assay: 'GxMtbRif',
     resultCategory1: 'Detected',
-    resultCategory2: 'Indeterminate',
+    resultCategory2: null,
   },
   'DETECTED|DETECTED|': {
     resultId: '807407_248750_de319d6d',
@@ -471,7 +471,7 @@ const resultTextToResultCategoryMapping = {
     resultId: '803385_800800_8e296a06',
     assay: 'GxMtbRif',
     resultCategory1: 'Detected',
-    resultCategory2: 'Indeterminate',
+    resultCategory2: null,
   },
   'MTB DETECTED HIGH|Rif Resistance DETECTED': {
     resultId: '803896_128250_68ce199e',
@@ -543,7 +543,7 @@ const resultTextToResultCategoryMapping = {
     resultId: '801599_818054_cb172839',
     assay: 'GxMtbRif',
     resultCategory1: 'Detected',
-    resultCategory2: 'Indeterminate',
+    resultCategory2: null,
   },
   'MTB DETECTED LOW||RIF Resistance NOT DETECTED': {
     resultId: '816120_842542_47d46bea',
@@ -579,7 +579,7 @@ const resultTextToResultCategoryMapping = {
     resultId: '707393_832012_30bf6efd',
     assay: 'GxMtbRif',
     resultCategory1: 'Detected',
-    resultCategory2: 'Indeterminate',
+    resultCategory2: null,
   },
   'MTB DETECTED MEDIUM||RIF Resistance DETECTED': {
     resultId: '816096_819513_6ca15977',
@@ -603,7 +603,7 @@ const resultTextToResultCategoryMapping = {
     resultId: '708171_123123_cb4371bc',
     assay: 'GxMtbRif',
     resultCategory1: 'Detected',
-    resultCategory2: 'Indeterminate',
+    resultCategory2: null,
   },
   'MTB DETECTED VERY LOW|Rif Resistance DETECTED': {
     resultId: '801337_221331_2ba59664',
