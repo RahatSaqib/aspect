@@ -1396,6 +1396,7 @@ async function up(knex) {
       .references('id')
       .inTable('Issue')
       .notNullable()
+      .onDelete('CASCADE')
     issueEvent.specificType('data', 'JSON')
     addTimestamps(issueEvent, { update: false })
     issueEvent.charset('utf8')
