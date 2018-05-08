@@ -4057,6 +4057,22 @@ async function seed(knex) {
       defaultMessageTypeId: moduleGenericErrorTypeId,
     },
   ])
+  const issueTypes = await rowsAsObject(knex, 'IssueType')
+
+  await knex('NotificationType').insert([
+    Object.assign(
+      {
+        name: 'Admin Device OFfline',
+        partnerId: partnerOneId,
+        issueTypeId: issueTypes.DeviceOffline.id,
+        jobFunctionId: jobFunctionIdAdmin,
+        level: 1,
+        canAcknowledge: 1,
+        messageTypeId: deviceOfflineMessageTypeId,
+      },
+      auditFields
+    ),
+  ])
 }
 
 function rowsAsObject(knex, table, column = 'externalId') {

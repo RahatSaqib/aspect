@@ -17,11 +17,10 @@ const { factGenerateDeviceConnectivity } = require('../../src/fact/actions')
 
 const server = supertest.agent('http://localhost:8080')
 const { assert } = chai
-const shared = require('../utils/sharedToken')
 
 const context = createTestContext(server, {
-  user: 'myanmar_admin',
-  partner: 'myanmar',
+  user: 'admin',
+  partner: 'Partner 1',
 })
 
 describe('Fact based issues', () => {
@@ -36,7 +35,7 @@ describe('Fact based issues', () => {
   it('should create issues when Device Offline and No Results', () =>
     runTest(async knex => {
       const now = new Date()
-      const { apiKey, deviceAuth } = context
+      const { apiKey, deviceAuth, clientAuth } = context
       assert.isOk(apiKey)
 
       const messageContext = await createMessageContext()
@@ -50,8 +49,8 @@ describe('Fact based issues', () => {
         .post(devicePath)
         .set('Authorization', deviceAuth)
         .send({
-          type: { id: 'GenericRDT' },
-          site: { id: 'Hinthada TBC' },
+          type: { id: 'DaktariVirology' },
+          site: { id: 'Nebraska_5' },
         })
         .then(res => {
           assert.equal(res.status, 200)
@@ -124,7 +123,7 @@ describe('Fact based issues', () => {
       const waitForAck = waitForAction(issueAcknowledged(issueId))
       await server
         .put(`${issuePath}/status/${issueId}`)
-        .set('Authorization', `Bearer${shared.token}`)
+        .set('Authorization', clientAuth)
         .send({ issueStatusExternalId: 'Acknowledged' })
         .then(res => {
           assert.equal(res.status, 200)
@@ -214,7 +213,7 @@ describe('Fact based issues', () => {
       const resultPayload = {
         startedOn: now,
         data: { a: 'b' },
-        assay: { id: 'genericRDT' },
+        assay: { id: 'DaktariHcv' },
         instrument: { serial: '1234567' },
         sample: { id: '76543789' },
       }
