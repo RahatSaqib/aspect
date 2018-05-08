@@ -22,6 +22,7 @@ const {
   resultModuleTemperatureError,
   resultModulePowerError,
   resultModuleFailureError,
+  resultMachineTemperatureError,
 } = require('../result/actions')
 
 const MODULE_TEMPERATURE_ERROR_CODES = [
@@ -83,6 +84,7 @@ const MODULE_FAILURE_ERROR_CODES = [
 const moduleTemperatureMaxErrors = 4
 const modulePowerMaxErrors = 4
 const moduleFailureMaxErrors = 2
+const machineTemperatureMaxErrors = 8
 const SELECT_LIST_FIELDS = [
   'r.id',
   'r.externalId',
@@ -702,6 +704,7 @@ async function onResultLogged({ resultId }, { messageContext }) {
     resultModuleTemperatureError,
     resultModulePowerError,
     resultModuleFailureError,
+    resultMachineTemperatureError,
   })
   await context.run(async knex => {
     const [result] = await knex('Result as r').where('r.id', resultId)
@@ -713,17 +716,30 @@ async function onResultLogged({ resultId }, { messageContext }) {
         .where('rc.externalId', 'Error')
         .where('r.deviceId', deviceId)
       if (MODULE_TEMPERATURE_ERROR_CODES.includes(result.errorCode)) {
-        const errorCounts = await deviceErrorQuery
+        const moduleTemperatureSerials = []
+        const modules = await deviceErrorQuery
           .clone()
           .where('r.endedOn', '>=', last30day)
           .whereIn('r.errorCode', MODULE_TEMPERATURE_ERROR_CODES)
+          .select('r.moduleSerial as moduleSerial')
           .count('r.id as errorCount')
           .groupBy('r.moduleSerial')
-        _.forEach(errorCounts, count => {
-          if (count.errorCount > moduleTemperatureMaxErrors) {
+        _.forEach(modules, module => {
+          if (module.errorCount > moduleTemperatureMaxErrors) {
+            moduleTemperatureSerials.push(module.moduleSerial)
             context.resultModuleTemperatureError(deviceId)
           }
         })
+        // Machine temperature query
+        const [{ errorCount }] = await deviceErrorQuery
+          .clone()
+          .where('r.endedOn', '>=', last30day)
+          .whereIn('r.errorCode', MODULE_TEMPERATURE_ERROR_CODES)
+          .whereNotIn('r.moduleSerial', moduleTemperatureSerials)
+          .count('r.id as errorCount')
+        if (errorCount > machineTemperatureMaxErrors) {
+          context.resultMachineTemperatureError(deviceId)
+        }
       } else if (MODULE_POWER_ERROR_CODES.includes(result.errorCode)) {
         const errorCounts = await deviceErrorQuery
           .clone()

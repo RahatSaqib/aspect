@@ -800,6 +800,17 @@ async function seed(knex) {
       },
       auditFields
     ),
+    Object.assign(
+      {
+        name: 'LU Machine Temperature',
+        partnerId,
+        issueTypeId: issueTypes.MachineTemperatureError.id,
+        jobFunctionId: jobFunctionIdLabUser,
+        level: 1,
+        messageTypeId: defaultMessageTypes.MachineTemperatureError.id,
+      },
+      auditFields
+    ),
   ])
 
   // TB Cartridges Consumable Id

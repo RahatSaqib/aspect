@@ -15,6 +15,7 @@ const {
   resultModuleTemperatureError,
   resultModulePowerError,
   resultModuleFailureError,
+  resultMachineTemperatureError,
 } = require('../../../src/result/actions')
 const { waitForIdle, waitForAction } = require('../../utils/mqUtils')
 
@@ -120,6 +121,88 @@ describe('Issue endpoints', () => {
             )
           assert.equal(issues.length, 1)
           assert.equal(issues[0].issueType, 'ModuleTemperatureError')
+          assert.equal(issues[0].deviceId, deviceId)
+          assert.equal(issues[0].issueStatus, 'Active')
+        }
+      }
+    }))
+
+  it('should create a machine temperature issue ', () =>
+    runTest(async knex => {
+      const { now } = context
+      const errorCode = '4010'
+
+      // Post to deviceApi to ensure the device in in Aspect
+      const response = await postToDeviceApi({
+        authHeader: deviceAuth,
+        payload: _.merge({}, basicDevicePayload, {
+          name: deviceName,
+        }),
+      })
+      const deviceId = response.body.device.id
+      for (let i = 0; i < 9; i++) {
+        /* eslint-disable no-await-in-loop */
+        const errorTestResultId = `UNIQUE-ID-WITH-MTEMP-ERROR-${i}`
+        const sampleId = `MTEMP2542552${i}`
+        const moduleSerial = `MTEMP1234${i}`
+        const moduleName = `Module A-${i}`
+        const instrumentSerial = `CEPH-PC-123${i}`
+        const testStartedOn = setMilliseconds(subDays(now, i + 3), 0)
+        const testEndedOn = setMilliseconds(addHours(testStartedOn, i + 2), 0)
+        const payload = _.merge(
+          {},
+          basicDevicePayload,
+          { name: deviceName },
+          basicResultPayload,
+          {
+            result: {
+              id: errorTestResultId,
+              startedOn: testStartedOn,
+              endedOn: testEndedOn,
+              error: {
+                code: errorCode,
+              },
+              sample: { id: sampleId },
+              instrument: {
+                serial: instrumentSerial,
+                module: {
+                  serial: moduleSerial,
+                  name: moduleName,
+                },
+              },
+            },
+          }
+        )
+        if (i < 8) {
+          // Post the result to aspect
+          await postToDeviceApi({
+            authHeader: deviceAuth,
+            payload,
+          })
+        } else {
+          // Should create issue when errors > 8
+          const waitForMachineTemperatureError = waitForAction(
+            resultMachineTemperatureError(deviceId)
+          )
+          await postToDeviceApi({
+            authHeader: deviceAuth,
+            payload,
+          })
+          await waitForMachineTemperatureError
+          await waitForIdle()
+
+          const issues = await knex('Issue as i')
+            .join('IssueType as it', 'i.issueTypeId', 'it.id')
+            .join('IssueStatus as is', 'i.issueStatusId', 'is.id')
+            .where({ 'i.deviceId': deviceId })
+            .select(
+              'i.id',
+              'it.externalId as issueType',
+              'i.deviceId',
+              'is.externalId as issueStatus'
+            )
+          assert.equal(issues.length, 1)
+          assert.equal(issues[0].issueType, 'MachineTemperatureError')
           assert.equal(issues[0].deviceId, deviceId)
           assert.equal(issues[0].issueStatus, 'Active')
         }
