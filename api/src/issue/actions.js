@@ -3,6 +3,7 @@ const types = {
   ISSUE_CREATED: 'ISSUE_CREATED',
   ISSUE_TRIGGERED: 'ISSUE_TRIGGERED',
   ISSUE_ESCALATED: 'ISSUE_ESCALATED',
+  ISSUE_ACKNOWLEDGED: 'ISSUE_ACKNOWLEDGED',
   ISSUE_RESOLVED: 'ISSUE_RESOLVED',
 }
 
@@ -65,6 +66,22 @@ function issueEscalated(issueId, level) {
 
 /**
  * Creates an action to notify the issue with given id
+ * has been acknowledged.
+ *
+ * issueId is required.
+ */
+function issueAcknowledged(issueId) {
+  if (issueId == null) {
+    throw new Error('Must specify issueId')
+  }
+  return {
+    type: types.ISSUE_ACKNOWLEDGED,
+    issueId,
+  }
+}
+
+/**
+ * Creates an action to notify the issue with given id
  * has been resolved.
  *
  * issueId is required.
@@ -84,5 +101,6 @@ module.exports = {
   issueCreated,
   issueTriggered,
   issueEscalated,
+  issueAcknowledged,
   issueResolved,
 }

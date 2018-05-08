@@ -1,4 +1,10 @@
-const { issueCreated, issueTriggered, issueResolved } = require('./actions')
+const {
+  issueCreated,
+  issueTriggered,
+  issueAcknowledged,
+  issueResolved,
+} = require('./actions')
+const { getUser } = require('../auth/service')
 
 function onIssueEventTrigger(issueType) {
   return async (action, { messageContext: context }) => {
@@ -132,6 +138,45 @@ async function createNewIssue(knex, issueType, action) {
   return issue
 }
 
+async function updateIssueStatus(request) {
+  const { auth, params, payload, plugins: { messageContext } } = request
+  const now = new Date()
+  const { issueId } = params
+  const { issueStatusExternalId } = payload
+  const { id: currentUserId } = await getUser(auth.credentials.name)
+
+  messageContext.bindActionCreators({ issueAcknowledged })
+  await messageContext.transact(async knex => {
+    const issueStatusId = await getId(
+      knex,
+      'IssueStatus',
+      issueStatusExternalId
+    )
+    await knex('Issue').update({
+      issueStatusId,
+      updatedOn: now,
+    })
+    await knex('IssueStatusLog').insert({
+      issueId,
+      issueStatusId,
+      createdOn: now,
+      changedOn: now,
+      createdBy: currentUserId,
+    })
+    messageContext.issueAcknowledged(issueId)
+  })
+
+  return {
+    ok: true,
+    data: {
+      issueId,
+      issueStatusExternalId,
+      createdOn: now,
+      changedOn: now,
+    },
+  }
+}
+
 async function getId(knex, table, externalId) {
   const { id } = await knex(table)
     .where({ externalId })
@@ -140,6 +185,7 @@ async function getId(knex, table, externalId) {
 }
 
 module.exports = {
+  updateIssueStatus,
   onIssueEventTrigger,
   onIssueEventResolve,
 }

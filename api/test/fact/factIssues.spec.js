@@ -7,6 +7,7 @@ const {
   deviceOnline,
   deviceNoResults,
 } = require('../../src/device/actions')
+const { issueAcknowledged, issueResolved } = require('../../src/issue/actions')
 const {
   createMessageContext,
   waitForIdle,
@@ -16,6 +17,8 @@ const { factGenerateDeviceConnectivity } = require('../../src/fact/actions')
 
 const server = supertest.agent('http://localhost:8080')
 const { assert } = chai
+const shared = require('../utils/sharedToken')
+
 const context = createTestContext(server, {
   user: 'myanmar_admin',
   partner: 'myanmar',
@@ -23,6 +26,7 @@ const context = createTestContext(server, {
 
 describe('Fact based issues', () => {
   const devicePath = '/device'
+  const issuePath = '/api/issue'
 
   const { runTest } = context
 
@@ -117,6 +121,38 @@ describe('Fact based issues', () => {
       assert.equal(issues[0].issueStatus, 'Active')
       const issueId = issues[0].id
 
+      const waitForAck = waitForAction(issueAcknowledged(issueId))
+      await server
+        .put(`${issuePath}/status/${issueId}`)
+        .set('Authorization', `Bearer${shared.token}`)
+        .send({ issueStatusExternalId: 'Acknowledged' })
+        .then(res => {
+          assert.equal(res.status, 200)
+        })
+      await waitForAck
+      await waitForIdle()
+
+      issues = await knex('Issue as i')
+        .join('IssueType as it', 'i.issueTypeId', 'it.id')
+        .join('IssueStatus as is', 'i.issueStatusId', 'is.id')
+        .join('IssueStatusLog as isl', function() {
+          this.on('isl.issueId', 'i.id').andOn('isl.issueStatusId', 'is.id')
+        })
+        .where({ 'i.deviceId': deviceId })
+        .whereNotNull('isl.changedOn')
+        .whereNotNull('isl.createdOn')
+        .select(
+          'i.id',
+          'it.externalId as issueType',
+          'i.deviceId',
+          'is.externalId as issueStatus'
+        )
+      assert.equal(issues.length, 1)
+      assert.equal(issues[0].issueType, 'DeviceOffline')
+      assert.equal(issues[0].deviceId, deviceId)
+      assert.equal(issues[0].issueStatus, 'Acknowledged')
+
+      const waitForResolve = waitForAction(issueResolved(issueId))
       const waitForOnline = waitForAction(deviceOnline(newDevice.id))
       await server
         .post(devicePath)
@@ -125,7 +161,7 @@ describe('Fact based issues', () => {
         .then(res => {
           assert.equal(res.status, 200)
         })
-      await waitForOnline
+      await Promise.all([waitForOnline, waitForResolve])
       await waitForIdle()
       ;[factDevice] = await knex('FactDeviceFlag').where({ deviceId })
       assert.equal(factDevice.offline, 0)
