@@ -3921,6 +3921,7 @@ describe('Device API routes for GxAlert Device', () => {
                 }
               ),
             })
+            await waitForIdle()
 
             const lastResult = await getLastResult()
             const resultSite = await knex('Site')
