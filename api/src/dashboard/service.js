@@ -8,6 +8,7 @@ const {
   canViewResults,
   canViewInventories,
 } = require('../auth/constraints')
+const { selectInventoryStockAtSite } = require('../inventory/service')
 const addDays = require('date-fns/add_days')
 const isAfter = require('date-fns/is_after')
 const differenceInDays = require('date-fns/difference_in_days')
@@ -1168,15 +1169,28 @@ async function operationalDashboard(request) {
 }
 
 async function actionDashboard(request) {
-  const { query } = request
+  const { auth, query } = request
 
   const now = new Date()
+
+  const user = await getUser(auth.credentials.name)
+  const { jobFunctionName } = await knex('JobFunction as jf')
+    .innerJoin('Job as j', 'j.jobFunctionId', 'jf.id')
+    .innerJoin('Person as ps', 'j.personId', 'ps.id')
+    .where({
+      'ps.userId': user.id,
+      'jf.partnerId': user.partnerId,
+    })
+    .first('jf.name as jobFunctionName')
+  const MOCK_NOTIFICATION_TYPE = jobFunctionName === 'Lab User' ? 'LU' : 'RO'
 
   const allActionByCategory = _.flowRight(
     x => _.groupBy(x, 'issueCategory'),
     query.sortDir === 'desc' ? _.reverse : _.identity,
     x => _.sortBy(x, query.sortCol || _.identity),
-    query.siteId > 0 ? x => _.filter(x, ['siteId', query.siteId]) : _.identity
+    query.siteId > 0
+      ? x => _.filter(x, { siteId: query.siteId, level: 1 })
+      : _.identity
   )([
     {
       issueCategory: 'Device',
@@ -1186,6 +1200,8 @@ async function actionDashboard(request) {
       site: 'Hinthada TBC',
       status: 'Active',
       issue: 'Critical Error on Module 4, Lab Acknowledged',
+      level: 1,
+      notificationType: _.camelCase(`${MOCK_NOTIFICATION_TYPE} Module Failure`),
     },
     {
       issueCategory: 'Device',
@@ -1195,6 +1211,10 @@ async function actionDashboard(request) {
       site: 'Meikhtila TBC',
       status: 'Active',
       issue: 'Machine Temperature',
+      level: 1,
+      notificationType: _.camelCase(
+        `${MOCK_NOTIFICATION_TYPE} Machine Temperature`
+      ),
     },
     {
       issueCategory: 'Device',
@@ -1205,6 +1225,8 @@ async function actionDashboard(request) {
       status: 'Acknowledged',
       issue: 'Critical Error on Module 4, Lab Acknowledged',
       acknowledgedOn: subMinutes(subDays(now, 2), 5),
+      level: 1,
+      notificationType: _.camelCase(`${MOCK_NOTIFICATION_TYPE} Module Failure`),
     },
     {
       issueCategory: 'Device',
@@ -1215,14 +1237,33 @@ async function actionDashboard(request) {
       status: 'Acknowledged',
       issue: 'Machine Temperature Errors',
       acknowledgedOn: subMinutes(subDays(now, 2), 10),
+      level: 1,
+      notificationType: _.camelCase(
+        `${MOCK_NOTIFICATION_TYPE} Machine Temperature`
+      ),
     },
     {
       issueCategory: 'Reagent',
-      siteId: 1116,
-      site: 'Hinthada TBC',
+      siteId: 1117,
+      consumableId: 1,
+      site: 'Maubin TBC',
       status: 'Acknowledged',
       issue: 'Stock-out expected - Contact Regional Officer.',
       acknowledgedOn: subMinutes(subDays(now, 2), 5),
+      level: 1,
+      notificationType: _.camelCase(`${MOCK_NOTIFICATION_TYPE} Stockout`),
+    },
+    {
+      issueCategory: 'Reagent',
+      siteId: 1118,
+      consumableId: 1,
+      site: 'Meikhtila TBC',
+      status: 'Active',
+      issue: 'Stock level: MTB Cartridges',
+      level: 1,
+      notificationType: _.camelCase(
+        `${MOCK_NOTIFICATION_TYPE} Stock Level Update`
+      ),
     },
     {
       issueCategory: 'Connectivity',
@@ -1231,6 +1272,8 @@ async function actionDashboard(request) {
       site: 'Hinthada TBC',
       status: 'Active',
       issue: 'Hinthada TBC no contact for 9 days.',
+      level: 2,
+      notificationType: _.camelCase(`${MOCK_NOTIFICATION_TYPE} Network`),
     },
     {
       issueCategory: 'Connectivity',
@@ -1240,6 +1283,8 @@ async function actionDashboard(request) {
       status: 'Acknowledged',
       issue: 'Meikhtila TBC no contact for 9 days.',
       acknowledgedOn: subMinutes(subDays(now, 1), 5),
+      level: 1,
+      notificationType: _.camelCase(`${MOCK_NOTIFICATION_TYPE} Network`),
     },
     {
       issueCategory: 'Connectivity',
@@ -1249,8 +1294,26 @@ async function actionDashboard(request) {
       status: 'Acknowledged',
       issue: 'Meikhtila TBC no contact for 8 days.',
       acknowledgedOn: subMinutes(subDays(now, 5), 5),
+      level: 1,
+      notificationType: _.camelCase(`${MOCK_NOTIFICATION_TYPE} Network`),
     },
   ])
+
+  await Promise.all(
+    _.map(allActionByCategory.Reagent, async it => {
+      if (it.siteId && it.consumableId) {
+        const { totalInStock } = await selectInventoryStockAtSite(
+          it.siteId,
+          it.consumableId,
+          knex
+        )
+        return Object.assign(it, {
+          totalInStock,
+        })
+      }
+      return it
+    })
+  )
 
   const result = {
     ok: true,

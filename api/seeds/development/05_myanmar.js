@@ -404,6 +404,7 @@ async function seed(knex) {
     },
   }
 
+  const siteDatas = []
   await Promise.all(
     _.map(myanmarSites.sites, async site => {
       const { id: siteGeographyId } = await knex('Geography')
@@ -439,6 +440,7 @@ async function seed(knex) {
       )
       const [siteId] = await knex('Site').insert(siteData)
       siteData.id = siteId
+      siteDatas.push(siteData)
 
       // only create results if in managed regions
       const samples = []
@@ -799,6 +801,31 @@ async function seed(knex) {
       auditFields
     ),
   ])
+
+  // TB Cartridges Consumable Id
+  const { id: consumableGxTbCartridgeId } = await knex('Consumable')
+    .where({ name: 'GeneXpert TB Cartridge' })
+    .first('id')
+  // Insert Inventory Items
+  await Promise.all(
+    _.map(_.range(siteDatas.length), async i => {
+      const siteData = siteDatas[i]
+      const siteId = siteData.id
+      // TB Cartridges
+      if (siteId % 2 === 0) {
+        await knex('InventoryItem').insert(
+          Object.assign(
+            {
+              consumableId: consumableGxTbCartridgeId,
+              siteId,
+              quantityOnHand: _.random(0, 1000),
+            },
+            auditFields
+          )
+        )
+      }
+    })
+  )
 }
 
 function rowsAsObject(knex, table, column = 'name') {

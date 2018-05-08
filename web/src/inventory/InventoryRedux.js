@@ -21,6 +21,9 @@ export const types = {
   RECEIVE_INVENTORY_ITEMS: 'RECEIVE_INVENTORY_ITEMS',
   TOGGLE_GROUP_BY_SITE: 'TOGGLE_GROUP_BY_SITE',
 
+  RECEIVE_UPDATED_SINGLE_INVENTORY_ITEM:
+    'RECEIVE_UPDATED_SINGLE_INVENTORY_ITEM',
+
   SHOW_NEW_INVENTORY_DIALOG: 'SHOW_NEW_INVENTORY_DIALOG',
   SHOW_ADD_INVENTORY_DIALOG: 'SHOW_ADD_INVENTORY_DIALOG',
   SHOW_REMOVE_INVENTORY_DIALOG: 'SHOW_REMOVE_INVENTORY_DIALOG',
@@ -327,6 +330,32 @@ export function receiveInventory(data) {
   }
 }
 
+function receiveUpdatedSingleInventoryItem(item) {
+  return {
+    type: types.RECEIVE_UPDATED_SINGLE_INVENTORY_ITEM,
+    item,
+  }
+}
+
+export function updateStockLevel(siteId, consumableId, data) {
+  return dispatch =>
+    aspectFetch(`/inventory/${siteId}/${consumableId}`, {
+      method: 'PUT',
+      body: JSON.stringify({
+        ...data,
+      }),
+      errorNotifications: {
+        default: errorPleaseTryAgainInAFewMinutes({
+          ...defineMessages({
+            title: {
+              id: 'errorResponseMessages.updateInventory.PUT.default.title',
+              defaultMessage: 'Updating Inventory Failed',
+            },
+          }),
+        }),
+      },
+    }).then(json => dispatch(receiveUpdatedSingleInventoryItem(json.data)))
+}
 /*
  * ---------------- Reducers -----------------
  */

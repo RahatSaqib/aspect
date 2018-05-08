@@ -5,8 +5,8 @@ import FaCircle from 'react-icons/lib/fa/circle'
 import { TableRow, TableCell } from 'react-toolbox/lib/table'
 import { Button } from 'react-toolbox/lib/button'
 import ArrowLeft from 'react-icons/lib/ti/arrow-right'
-import { shortNumericDate } from '../../../shared/utils/dateFormat'
 import requirePermissions from '../../../components/shared/requirePermissions'
+import ActionStatus from './ActionStatus'
 
 const cssClasses = classnames.bind(require('./ActionTableRow.css'))
 
@@ -55,24 +55,8 @@ const ActionTableRow = ({
           {action.get('issue')}
         </span>
         <div className={cssClasses('Issue__Action')}>
-          <div className={cssClasses('Issue__Action_Status')}>
-            {action.get('status') === 'Active' && (
-              <Button
-                inverse
-                className={cssClasses('Button__Acknowledge')}
-                label={intl.formatMessage(messages.Acknowledge)}
-              />
-            )}
-            {action.get('status') === 'Acknowledged' && (
-              <span>
-                {`${intl.formatMessage(messages.Acknowledged)}
-                 ${intl.formatDate(
-                   action.get('acknowledgedOn', new Date()),
-                   shortNumericDate
-                 )}`}
-              </span>
-            )}
-          </div>
+          <ActionStatus intl={intl} messages={messages} action={action} />
+
           <ActionLinkButton
             inverse
             className={cssClasses('Button__Link')}

@@ -221,17 +221,33 @@ export const messages = defineMessages({
     id: 'pages.Status.actionIssue',
     defaultMessage: 'Issue',
   },
-  Acknowledged: {
-    id: 'pages.Status.Acknowledged',
+  acknowledged: {
+    id: 'pages.Status.acknowledged',
     defaultMessage: 'Acknowledged',
   },
-  Acknowledge: {
-    id: 'pages.Status.Acknowledge',
+  acknowledge: {
+    id: 'pages.Status.acknowledge',
     defaultMessage: 'Acknowledge',
+  },
+  update: {
+    id: 'pages.Status.update',
+    defaultMessage: 'Update',
+  },
+  updateStockLevel: {
+    id: 'pages.Status.updateStockLevel',
+    defaultMessage: 'UPDATE STOCK LEVEL:',
+  },
+  stockLevel: {
+    id: 'pages.Status.stockLevel',
+    defaultMessage: 'STOCK LEVEL:',
   },
   noActionsTitle: {
     id: 'pages.Status.noActionsTitle',
     defaultMessage: 'There are no waiting actions!',
+  },
+  stockLevelUpdatedSuccessfully: {
+    id: 'pages.Status.stockLevelUpdatedSuccessfully',
+    defaultMessage: 'Stock levels have been updated successfully',
   },
   reportsTitle: {
     id: 'pages.Status.reportsTitle',
