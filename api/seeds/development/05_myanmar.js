@@ -686,6 +686,7 @@ async function seed(knex) {
         issueTypeId: issueTypes.DeviceOffline.id,
         jobFunctionId: jobFunctionIdLabUser,
         level: 1,
+        canAcknowledge: 1,
         messageTypeId: defaultMessageTypes.DeviceOffline.id,
       },
       auditFields
@@ -697,6 +698,7 @@ async function seed(knex) {
         issueTypeId: issueTypes.DeviceOffline.id,
         jobFunctionId: jobFunctionIdRegionalOfficer,
         level: 2,
+        canAcknowledge: 1,
         messageTypeId: defaultMessageTypes.DeviceOffline.id,
       },
       auditFields
@@ -708,6 +710,7 @@ async function seed(knex) {
         issueTypeId: issueTypes.DeviceOffline.id,
         jobFunctionId: jobFunctionIdRegionalOfficer,
         level: 3,
+        canAcknowledge: 0,
         messageTypeId: defaultMessageTypes.DeviceOffline.id,
       },
       auditFields
@@ -719,6 +722,7 @@ async function seed(knex) {
         issueTypeId: issueTypes.DeviceNoResults.id,
         jobFunctionId: jobFunctionIdLabUser,
         level: 1,
+        canAcknowledge: 1,
         messageTypeId: defaultMessageTypes.DeviceNoResults.id,
       },
       auditFields
@@ -730,6 +734,7 @@ async function seed(knex) {
         issueTypeId: issueTypes.ModuleTemperatureError.id,
         jobFunctionId: jobFunctionIdLabUser,
         level: 1,
+        canAcknowledge: 0,
         messageTypeId: defaultMessageTypes.ModuleTemperatureError.id,
       },
       auditFields
@@ -741,6 +746,7 @@ async function seed(knex) {
         issueTypeId: issueTypes.DeviceNoResults.id,
         jobFunctionId: jobFunctionIdRegionalOfficer,
         level: 2,
+        canAcknowledge: 1,
         messageTypeId: defaultMessageTypes.DeviceNoResults.id,
       },
       auditFields
@@ -752,6 +758,7 @@ async function seed(knex) {
         issueTypeId: issueTypes.ModuleTemperatureError.id,
         jobFunctionId: jobFunctionIdRegionalOfficer,
         level: 2,
+        canAcknowledge: 0,
         messageTypeId: defaultMessageTypes.ModuleTemperatureError.id,
       },
       auditFields
@@ -763,6 +770,7 @@ async function seed(knex) {
         issueTypeId: issueTypes.DeviceNoResults.id,
         jobFunctionId: jobFunctionIdRegionalOfficer,
         level: 3,
+        canAcknowledge: 0,
         messageTypeId: defaultMessageTypes.DeviceNoResults.id,
       },
       auditFields
@@ -774,6 +782,7 @@ async function seed(knex) {
         issueTypeId: issueTypes.ModuleTemperatureError.id,
         jobFunctionId: jobFunctionIdRegionalOfficer,
         level: 3,
+        canAcknowledge: 0,
         messageTypeId: defaultMessageTypes.ModuleTemperatureError.id,
       },
       auditFields
@@ -785,6 +794,7 @@ async function seed(knex) {
         issueTypeId: issueTypes.ModulePowerError.id,
         jobFunctionId: jobFunctionIdLabUser,
         level: 1,
+        canAcknowledge: 1,
         messageTypeId: defaultMessageTypes.ModulePowerError.id,
       },
       auditFields
@@ -796,6 +806,7 @@ async function seed(knex) {
         issueTypeId: issueTypes.ModuleFailureError.id,
         jobFunctionId: jobFunctionIdLabUser,
         level: 1,
+        canAcknowledge: 1,
         messageTypeId: defaultMessageTypes.ModuleFailureError.id,
       },
       auditFields
@@ -807,6 +818,7 @@ async function seed(knex) {
         issueTypeId: issueTypes.MachineTemperatureError.id,
         jobFunctionId: jobFunctionIdLabUser,
         level: 1,
+        canAcknowledge: 1,
         messageTypeId: defaultMessageTypes.MachineTemperatureError.id,
       },
       auditFields

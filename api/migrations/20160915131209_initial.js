@@ -1432,6 +1432,10 @@ async function up(knex) {
       .notNullable()
       .defaultTo(1)
     notificationType
+      .boolean('canAcknowledge')
+      .notNullable()
+      .defaultTo(1)
+    notificationType
       .integer('messageTypeId')
       .unsigned()
       .references('id')
