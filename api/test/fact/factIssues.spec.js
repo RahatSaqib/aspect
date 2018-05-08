@@ -97,7 +97,14 @@ describe('Fact based issues', () => {
       let issues = await knex('Issue as i')
         .join('IssueType as it', 'i.issueTypeId', 'it.id')
         .join('IssueStatus as is', 'i.issueStatusId', 'is.id')
+        .join('IssueStatusLog as isl', function() {
+          // ensures we have a log with the same status as the issue
+          // and we are expecting only one, so issues should not duplicate
+          this.on('isl.issueId', 'i.id').andOn('isl.issueStatusId', 'is.id')
+        })
         .where({ 'i.deviceId': deviceId })
+        .whereNotNull('isl.changedOn')
+        .whereNotNull('isl.createdOn')
         .select(
           'i.id',
           'it.externalId as issueType',

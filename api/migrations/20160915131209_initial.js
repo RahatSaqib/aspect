@@ -1293,6 +1293,33 @@ async function up(knex) {
     issueStatus.charset('utf8')
   })
 
+  await knex.schema.createTable('IssueStatusLog', issueStatusLog => {
+    issueStatusLog.increments('id')
+    issueStatusLog
+      .integer('issueId')
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('Issue')
+      .notNullable()
+      .onDelete('CASCADE')
+    issueStatusLog
+      .integer('issueStatusId')
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('IssueStatus')
+      .notNullable()
+    issueStatusLog.dateTime('changedOn').notNullable()
+    issueStatusLog.dateTime('createdOn').notNullable()
+    issueStatusLog
+      .integer('createdBy')
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('User')
+  })
+
   // Triggered, Resolved
   await knex.schema.createTable('IssueEventStatus', issueStatus => {
     issueStatus.increments('id')
@@ -1845,6 +1872,7 @@ async function down(knex) {
   await knex.schema.dropTableIfExists('Issue')
   await knex.schema.dropTableIfExists('IssueCategory')
   await knex.schema.dropTableIfExists('IssueStatus')
+  await knex.schema.dropTableIfExists('IssueStatusLog')
   await knex.schema.dropTableIfExists('IssueType')
   await knex.schema.dropTableIfExists('SmsMessage')
   await knex.schema.dropTableIfExists('SmsTemplate')

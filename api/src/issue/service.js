@@ -76,8 +76,9 @@ async function findOpenIssue(knex, issueType, action) {
 
 async function createNewIssue(knex, issueType, action) {
   const now = new Date()
+  const issueStatusId = await getId(knex, 'IssueStatus', 'Active')
   const issue = {
-    issueStatusId: await getId(knex, 'IssueStatus', 'Active'),
+    issueStatusId,
     issueTypeId: await getId(knex, 'IssueType', issueType),
     level: 1,
     createdOn: now,
@@ -120,6 +121,14 @@ async function createNewIssue(knex, issueType, action) {
 
   const [issueId] = await knex('Issue').insert(issue)
   issue.id = issueId
+
+  await knex('IssueStatusLog').insert({
+    issueId,
+    issueStatusId,
+    createdOn: now,
+    changedOn: now,
+  })
+
   return issue
 }
 
