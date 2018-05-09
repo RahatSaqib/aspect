@@ -819,28 +819,27 @@ async function onResultLogged({ resultId }, { messageContext }) {
             .count('r.id as moduleResultCount')
           const prcntModuleError = module.errorCount / moduleResultCount * 100
           if (!machineIssueTriggured && prcntModuleError > maxPrcntErrors) {
+            console.log('about to trigger resultModuleGenericError')
             genericModuleIssueTriggured = true
             context.resultModuleGenericError(deviceId)
           }
         })
-        const [{ machineErrorCount }] = await deviceErrorQuery
-          .clone()
-          .where('r.endedOn', '>=', last30day)
-          .whereIn('r.errorCode', GENERIC_ERROR_CODES)
-          .whereNotIn('r.moduleSerial', moduleErrorSerials)
-          .count('r.id as machineErrorCount')
-        const [{ machineResultCount }] = await knex('Result as r')
-          .where('r.endedOn', '>=', last30day)
-          .where('r.deviceId', deviceId)
-          .count('r.id as machineResultCount')
-        const prcntMachineError = machineErrorCount / machineResultCount * 100
+        if (!genericModuleIssueTriggured) {
+          const [{ machineErrorCount }] = await deviceErrorQuery
+            .clone()
+            .where('r.endedOn', '>=', last30day)
+            .whereIn('r.errorCode', GENERIC_ERROR_CODES)
+            .whereNotIn('r.moduleSerial', moduleErrorSerials)
+            .count('r.id as machineErrorCount')
+          const [{ machineResultCount }] = await knex('Result as r')
+            .where('r.endedOn', '>=', last30day)
+            .where('r.deviceId', deviceId)
+            .count('r.id as machineResultCount')
+          const prcntMachineError = machineErrorCount / machineResultCount * 100
 
-        if (
-          !machineIssueTriggured &&
-          !genericModuleIssueTriggured &&
-          prcntMachineError > maxPrcntErrors
-        ) {
-          context.resultMachineGenericError(deviceId)
+          if (!machineIssueTriggured && prcntMachineError > maxPrcntErrors) {
+            context.resultMachineGenericError(deviceId)
+          }
         }
       }
     }
