@@ -16,6 +16,7 @@ const subscriptions = [
         'MachineTemperatureError'
       ),
       RESULT_MODULE_GENERIC_ERROR: onIssueEventTrigger('ModuleGenericError'),
+      RESULT_MACHINE_GENERIC_ERROR: onIssueEventTrigger('MachineGenericError'),
     },
   },
 ]
