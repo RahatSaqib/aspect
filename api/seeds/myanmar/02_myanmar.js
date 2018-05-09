@@ -93,6 +93,19 @@ async function seed(knex) {
     .whereNull('g.lgaId')
     .select('s.id', 's.name', 's.abbreviation')
 
+  // create site for GxAlert device
+  const gxAlertSiteId = await knex('Site').insert(
+    Object.assign({}, auditFields, {
+      name: 'GxAlert Site',
+      shortName: 'GxA Site',
+      externalId: 'gxalert',
+      partnerId,
+      geographyId: myanmarGeographyId,
+      createdOn: new Date(),
+      updatedOn: new Date(),
+    })
+  )
+
   // insert GxAlert device
   const gxAlertDeviceId = await knex('Device').insert(
     Object.assign({}, auditFields, {
@@ -101,6 +114,7 @@ async function seed(knex) {
       deviceStatusId: deviceStatuses.approved.id,
       partnerId,
       geographyId: myanmarGeographyId,
+      siteId: gxAlertSiteId,
       createdOn: new Date(),
       updatedOn: new Date(),
       lastPingOn: new Date(),
