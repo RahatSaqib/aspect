@@ -1207,6 +1207,7 @@ async function actionDashboard(request) {
       'am.resultId',
       'am.message',
       's.name as siteName',
+      'i.id as issueId',
       'is.name as status',
       'is.i18nKey as statusI18nKey',
       'it.name as issueType',

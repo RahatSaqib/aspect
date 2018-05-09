@@ -1,5 +1,4 @@
 import classnames from 'classnames/bind'
-import _ from 'lodash'
 import React from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
@@ -21,8 +20,6 @@ const themes = {
     inputElement: cssClasses('Form_InputElement'),
   },
 }
-
-const enhance = _.identity
 
 const UpdateStockLevelInput = compose(
   pure,
@@ -122,13 +119,34 @@ const UpdateStockLevelInput = compose(
     </div>
   )
 )
-
-export const ActionStatus = ({
-  intl,
-  messages,
-  // --- injected by recompose ---
-  action,
-}) => {
+export const ActionStatus = compose(
+  pure,
+  connect(
+    null,
+    bindActionCreators.bind(null, { acknowledgeIssue, showAcknowledgement })
+  ),
+  withHandlers({
+    onSubmit: ({
+      action,
+      messages,
+      acknowledgeIssue,
+      showAcknowledgement,
+    }) => () =>
+      acknowledgeIssue(action.get('issueId')).then(() => {
+        // FIXME update current row
+        showAcknowledgement({
+          title: messages.issueAcknowledgedSuccessfully,
+        })
+      }),
+  }),
+  recomposeForm({
+    fields: [],
+    validate() {
+      const errors = {}
+      return errors
+    },
+  })
+)(({ intl, messages, action, handleSubmit }) => {
   if (
     action.get('notificationType') === 'luStockLevelUpdate' ||
     action.get('notificationType') === 'roStockLevelUpdate'
@@ -153,6 +171,7 @@ export const ActionStatus = ({
             inverse
             className={cssClasses('Button__Acknowledge')}
             label={intl.formatMessage(messages.acknowledge)}
+            onClick={handleSubmit}
           />
         )}
       </div>
@@ -169,6 +188,6 @@ export const ActionStatus = ({
       </div>
     )
   }
-}
+})
 
-export default enhance(ActionStatus)
+export default ActionStatus
