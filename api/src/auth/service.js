@@ -41,6 +41,7 @@ function getUser(username) {
       'u.name',
       'p.culture',
       'p.timezone',
+      'p.id as personId',
       'p.lastPartnerId as partnerId',
       'p.lastCountryId as countryId'
     )

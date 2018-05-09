@@ -837,6 +837,136 @@ async function seed(knex) {
       }
     })
   )
+
+  // Fill Issue/AlertMessage/Notification table with some mock data
+  const devices = await knex('Device').where({ partnerId })
+  const issueStatusActiveId = await getId(knex, 'IssueStatus', 'Active')
+  const issueStatusAcknowledgedId = await getId(
+    knex,
+    'IssueStatus',
+    'Acknowledged'
+  )
+  const messageStatusSentId = await getId(knex, 'MessageStatus', 'Sent')
+
+  const issue = {
+    level: 1,
+    partnerId,
+    createdOn: now,
+    updatedOn: now,
+  }
+  const issueIds = []
+  const issueTypeIds = [
+    issueTypes.DeviceOffline.id,
+    issueTypes.DeviceNoResults.id,
+    issueTypes.ModulePowerError.id,
+    issueTypes.ModuleFailureError.id,
+  ]
+  const alertMessages = {
+    [issueTypes.DeviceOffline.id]: 'no contact for 9 days.',
+    [issueTypes.DeviceNoResults.id]: 'no results for 12 days.',
+    [issueTypes.ModulePowerError.id]:
+      'Power errors on Module M-1234-1; notify RO',
+    [issueTypes.ModuleFailureError.id]:
+      'Module Module M-1234-3: Critical errors; notify R.O.',
+  }
+
+  const deviceIds = await knex('Device as d')
+    .select('j.personId', 'd.id as deviceId')
+    .join('JobContext as jc', 'jc.siteId', 'd.siteId')
+    .join('Job as j', 'jc.jobId', 'j.id')
+    .where({ jobFunctionId: jobFunctionIdLabUser })
+    .union(function() {
+      this.select('j.personId', 'd.id as deviceId')
+        .from('Device as d')
+        .leftJoin('Geography as g1', 'd.geographyId', 'g1.id')
+        .leftJoin('Geography as g2', 'g2.stateId', 'g1.stateId')
+        .join('JobContext as jc', 'jc.geographyId', 'g2.id')
+        .join('Job as j', 'jc.jobId', 'j.id')
+        .where({ partnerId, jobFunctionId: jobFunctionIdRegionalOfficer })
+    })
+    .orderBy('deviceId')
+    .reduce((memo, row) => {
+      if (!memo[row.deviceId]) {
+        memo[row.deviceId] = {}
+      }
+      memo[row.deviceId][row.personId] = row.deviceId
+      return memo
+    }, {})
+
+  await Promise.all(
+    _.map(devices, async device => {
+      const [issueId] = await knex('Issue').insert(
+        Object.assign(
+          {
+            issueTypeId: issueTypeIds[_.random(3)],
+            issueStatusId:
+              _.random(1) > 0 ? issueStatusActiveId : issueStatusAcknowledgedId,
+            deviceId: device.id,
+            siteId: device.siteId,
+            geographyId: device.geographyId,
+          },
+          issue
+        )
+      )
+      issueIds.push(issueId)
+    })
+  )
+
+  const polices = await knex('NotificationType as nt')
+    .join('MessageType as mt', 'nt.messageTypeId', 'mt.id')
+    .join('Issue as i', 'i.issueTypeId', 'nt.issueTypeId')
+    .join('Job as j', 'j.jobFunctionId', 'nt.jobFunctionId')
+    .join('JobContext as jc', 'jc.jobId', 'j.id')
+    .join('AlertTemplate as at', 'at.id', 'mt.alertTemplateId')
+    .where({ 'nt.partnerId': partnerId })
+    .whereIn('i.id', issueIds)
+    .whereIn('nt.level', [1, 2])
+    .select(
+      'nt.id as notificationTypeId',
+      'nt.jobFunctionId',
+      'j.personId',
+      'i.id as issueId',
+      'i.issueTypeId',
+      'i.siteId',
+      'i.deviceId',
+      'i.resultId',
+      'mt.alertTemplateId'
+    )
+
+  await Promise.all(
+    _.map(polices, async policy => {
+      const deviceId = deviceIds[policy.deviceId][policy.personId]
+      if (deviceId) {
+        const [alertMessageId] = await knex('AlertMessage').insert(
+          Object.assign(
+            {
+              messageStatusId: messageStatusSentId,
+              message: alertMessages[policy.issueTypeId],
+              createdOn: now,
+              updatedOn: now,
+            },
+            _.pick(policy, [
+              'alertTemplateId',
+              'personId',
+              'siteId',
+              'deviceId',
+              'resultId',
+            ])
+          )
+        )
+
+        await knex('Notification').insert(
+          Object.assign(
+            {
+              createdOn: now,
+              alertMessageId,
+            },
+            _.pick(policy, ['notificationTypeId', 'issueId', 'personId'])
+          )
+        )
+      }
+    })
+  )
 }
 
 function rowsAsObject(knex, table, column = 'name') {
@@ -869,4 +999,11 @@ function calculateDateForResult(
     subDays(now, daysToSubtract),
     _.random(randomMillisToAdd)
   )
+}
+
+async function getId(knex, table, externalId) {
+  const { id } = await knex(table)
+    .where({ externalId })
+    .first('id')
+  return id
 }
