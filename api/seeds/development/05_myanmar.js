@@ -5,10 +5,66 @@ const _ = require('lodash')
 
 const config = require('../../src/config')
 const myanmarSites = require('./fixtures/myanmarSites.json')
-const patients = require('./fixtures/patients.json')
+const samplePatients = require('./fixtures/patients.json')
 const dashboardWidget = require('./fixtures/myanmarDashboardWidget.json')
 const { errorCodes } = require('./fixtures/errorCodes.js')
 const { addMilliseconds, addMinutes, subDays } = require('date-fns')
+
+// --------------------------------------------------------------------
+// custom fields for 'patients' array
+// --------------------------------------------------------------------
+// define arrays for Aspect custom fields - values are from 'connect*option' tables in GxAlert db (for Myanmar)
+// Notice that exactly same values should be used for seeding validValues and invalidValues fields in
+// DataCategory table later on in this file
+// --------------
+// standard fields
+// --------------
+const dictHivStatus = 'Positive,Negative,Unknown,Not on Form'.split(',')
+// --------------
+// custom fields
+// --------------
+const dictSampleTypes = 'CSF,Other,Saliva,Pus,Not on Form,Blood,Sputum,Effusion'.split(
+  ','
+)
+const dictMdr = 'On Treatment,Previously Treated,Unknown,Not on Form,No Previous Treatment'.split(
+  ','
+)
+const dictSmear = 'Smear Negative,Not Done,Smear Positive,Not on Form'.split(
+  ','
+)
+const dictOtherReason = 'MDR Contact,Not on Form,Smear Positive Month 2 Treatment,EPTB Suspect,Diabetes mellitus,Smear Positive Month 5 Treatment'.split(
+  ','
+)
+const dictReferralCenter = 'BGL TBC,PSI BGL,Not on Form,MMA BGL,DNB TBC,MMA DNB'.split(
+  ','
+)
+// helper function
+const getRandomValue = (arr, pc = 2) => {
+  // return values ony in 98% of cases
+  if (99 - _.random(99) < pc) return undefined
+  return _.isArray(arr)
+    ? arr[_.random(arr.length - 1)]
+    : `Some string - ${_.random(1000000)}`
+}
+// alter patients
+const patients = _.map(samplePatients, p => {
+  // set random values for 50% of persons
+  p.hiv = getRandomValue(dictHivStatus, 50) // former 'HIV Status'
+  // set values for 98% of persons
+  p.sampleType = getRandomValue(dictSampleTypes)
+  p.mdr = getRandomValue(dictMdr) // former 'Previous TB History'
+  p.smear = getRandomValue(dictSmear) // former 'Microscopy Result'
+  p.otherReason = getRandomValue(dictOtherReason) // Other Reason for Test
+  p.referralCenter = getRandomValue(dictReferralCenter) // Referral Center
+  p.otherNotes = getRandomValue() // Other Notes
+  // -------------------------------
+  // some above fields are used for Data Category Low issue:
+  // hiv, mdr, smear for corresponding data categories,
+  // all other mandatory fields are groupped for category Other
+  // -------------------------------
+  return p
+})
+// --------------------------------------------------------------------
 
 const now = new Date()
 const millisInHour = 1000 * 60 * 60
@@ -55,6 +111,9 @@ async function seed(knex) {
     resultWorkflowStatuses,
     issueTypes,
     defaultMessageTypes,
+    // for seeding DataCategory
+    messageSeverities,
+    issueCategories,
   ] = await Promise.all([
     rowsAsObject(knex, 'PartnerType', 'name'),
     rowsAsObject(knex, 'DeviceType', 'externalId'),
@@ -67,6 +126,8 @@ async function seed(knex) {
     rowsAsObject(knex, 'ResultWorkflowStatus', 'externalId'),
     rowsAsObject(knex, 'IssueType', 'externalId'),
     getDefaultMessageTypes(knex),
+    rowsAsObject(knex, 'MessageSeverity', 'externalId'),
+    rowsAsObject(knex, 'IssueCategory', 'externalId'),
   ])
 
   const [partnerId] = await knex('Partner').insert({
@@ -765,6 +826,138 @@ async function seed(knex) {
       auditFields
     ),
   ])
+
+  // ----------------------------------------------------------------------
+  // seed DataCategory
+  // ----------------------------------------------------------------------
+  await knex('DataCategory').insert([
+    {
+      name: 'HIV+',
+      fieldNames: 'hiv',
+      geographyId: myanmarGeographyId,
+      externalId: 'hiv',
+      i18nKey: 'dataCategoryHiv',
+      validValues: JSON.stringify(
+        dictHivStatus.filter(x => x !== 'Not on Form')
+      ),
+      invalidValues: JSON.stringify(
+        dictHivStatus.filter(x => x === 'Not on Form')
+      ),
+      cutoffPercentage: 98,
+    },
+    {
+      name: 'MDR',
+      fieldNames: 'mdr',
+      geographyId: myanmarGeographyId,
+      externalId: 'mdr',
+      i18nKey: 'dataCategoryMdr',
+      validValues: JSON.stringify(dictMdr.filter(x => x !== 'Not on Form')),
+      invalidValues: JSON.stringify(dictMdr.filter(x => x === 'Not on Form')),
+      cutoffPercentage: 98,
+    },
+    {
+      name: 'Smear+',
+      fieldNames: 'smear',
+      geographyId: myanmarGeographyId,
+      externalId: 'smear',
+      i18nKey: 'dataCategorySmear',
+      validValues: JSON.stringify(
+        dictSmear.filter(x => x === 'Smear Negative' || x === 'Smear Positive')
+      ),
+      invalidValues: JSON.stringify(
+        dictSmear.filter(x => x === 'Not on Form' || x === 'Not Done')
+      ),
+      cutoffPercentage: 98,
+    },
+    {
+      name: 'Other',
+      fieldNames: '["name", "gender", "age"]',
+      geographyId: myanmarGeographyId,
+      externalId: 'other',
+      i18nKey: 'dataCategoryOther',
+      // ----------------------
+      // missing of valid/invalid Values fields here means that if field is in patientData json and is
+      // not undefined, null or empty string - it is considered as valid
+      // ----------------------
+      cutoffPercentage: 98,
+    },
+  ])
+
+  // ----------------------------------------------------------------------
+  // seed IssueType, Email/Sms/AlertTemplate, MessageType for 'Data Category Low' issue
+  // ----------------------------------------------------------------------
+  // helper function
+  const setTemplatesAndIssueType = async ({
+    messageSeverityId,
+    issueCategoryId,
+  }) => {
+    const message = `{{site.name}}: data category '{{categoryName}}' for {{periodName}} is low ({{percentage}}%)`
+    const html = `<em>{{site.name}}:</em> data category '{{categoryName}}' for {{periodName}} is low ({{percentage}}%)`
+
+    const emailTemplateId = await knex('EmailTemplate').insert(
+      {
+        subject: message,
+        body: message,
+        htmlBody: html,
+        ...auditFields,
+      },
+      'id'
+    )
+
+    const alertTemplateId = await knex('AlertTemplate').insert(
+      {
+        message,
+        ...auditFields,
+      },
+      'id'
+    )
+
+    const smsTemplateId = await knex('SmsTemplate').insert(
+      {
+        message,
+        ...auditFields,
+      },
+      'id'
+    )
+
+    const messageTypeId = await knex('MessageType').insert(
+      {
+        messageSeverityId,
+        alertTemplateId,
+        smsTemplateId,
+        emailTemplateId,
+      },
+      'id'
+    )
+
+    const issueTypeId = await knex('IssueType').insert(
+      {
+        name: 'Data Category Low',
+        externalId: 'DataCategoryLow',
+        i18nKey: 'issueDataCategoryLow',
+        issueCategoryId,
+        defaultMessageTypeId: messageTypeId,
+      },
+      'id'
+    )
+
+    return {
+      emailTemplateId,
+      alertTemplateId,
+      smsTemplateId,
+      messageTypeId,
+      issueTypeId,
+    }
+  }
+
+  // ----------------------------------------------------------------------
+  // seed all settings for Data Category Low issue
+  // ----------------------------------------------------------------------
+  const data = {
+    issueCategoryId: issueCategories.DataHealth.id,
+    messageSeverityId: messageSeverities.Alert.id,
+  }
+  await setTemplatesAndIssueType(data)
 }
 
 function rowsAsObject(knex, table, column = 'name') {

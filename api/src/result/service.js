@@ -2,6 +2,13 @@ const Boom = require('boom')
 const _ = require('lodash')
 const dateFormat = require('date-fns/format')
 const subDays = require('date-fns/sub_days')
+const startOfMonth = require('date-fns/start_of_month')
+const endOfMonth = require('date-fns/end_of_month')
+const subMonths = require('date-fns/sub_months')
+const startOfQuarter = require('date-fns/start_of_quarter')
+const endOfQuarter = require('date-fns/end_of_quarter')
+const subQuarters = require('date-fns/sub_quarters')
+const startOfYear = require('date-fns/start_of_year')
 
 const {
   knex,
@@ -22,6 +29,7 @@ const {
   resultModuleTemperatureError,
   resultModulePowerError,
   resultModuleFailureError,
+  resultDataCategoryLow,
 } = require('../result/actions')
 
 const MODULE_TEMPERATURE_ERROR_CODES = [
@@ -753,6 +761,159 @@ async function onResultLogged({ resultId }, { messageContext }) {
   })
 }
 
+async function checkDataCategoriesForLowStatus(action, { messageContext }) {
+  const context = messageContext.bindActionCreators({
+    resultDataCategoryLow,
+  })
+
+  const now = new Date()
+  const addPeriod = (name, dateFrom, dateTo) => ({ name, dateFrom, dateTo })
+  const periods = [
+    addPeriod('Current Month', startOfMonth(now), now),
+    addPeriod(
+      'Last Month',
+      startOfMonth(subMonths(now, 1)),
+      endOfMonth(subMonths(now, 1))
+    ),
+    addPeriod('Current Quarter', startOfQuarter(now), now),
+    addPeriod(
+      'Last Quarter',
+      startOfQuarter(subQuarters(now, 1)),
+      endOfQuarter(subQuarters(now, 1))
+    ),
+    addPeriod('This Year', startOfYear(now), now),
+  ]
+
+  await context.run(async knex => {
+    // read all data categories for all geagraphies
+    const dataCategories = await knex('DataCategory')
+
+    // check data categories for having 'low status'
+    _.map(dataCategories, async dataCategory => {
+      const validValues =
+        dataCategory.validValues && JSON.parse(dataCategory.validValues)
+
+      // get top geography for this data category
+      const { geographyId } = dataCategory
+      const geo = await knex('Geography')
+        .where('id', geographyId)
+        .first()
+
+      // get all sites below top geography
+      const sites = await knex('Site as s')
+        .innerJoin('Geography as g', 's.geographyId', 'g.id')
+        .where(() => {
+          // by default top level scope for each DataCategory is country
+          this.where('g.countryId', geo.countryId)
+          // but if stateId is defined - then fetch all sites from this state only
+          if (geo.stateId) {
+            this.andWhere('g.stateId', geo.stateId)
+          }
+          // and if lgaId is defined - then narrow further to only sites from this lga
+          if (geo.lgaId) {
+            this.andWhere('g.lgaId', geo.lgaId)
+          }
+        })
+        .select('s.id', 's.name', 's.geographyId')
+
+      _.map(periods, period => {
+        _.map(sites, site => {
+          const itemsBase = knex('Result as r')
+            .innerJoin('Device as d', 'r.deviceId', 'd.id')
+            // filter by period
+            .where('r.endedOn', '>=', period.dateFrom)
+            .where('r.endedOn', '<=', period.dateTo)
+            // filter by site
+            .where(() => {
+              // either result is from site's geography
+              this.where(() => {
+                this.whereNotNull('r.geographyId').andWhere(
+                  'r.geographyId',
+                  site.geographyId
+                )
+              })
+              // or device is from site's geography
+              this.orWhere(() => {
+                this.whereNotNull('d.geographyId').andWhere(
+                  'd.geographyId',
+                  site.geographyId
+                )
+              })
+            })
+
+          const totals = itemsBase.countDistinct('r.id')
+          // -------------------------------
+          // notice that because patientData is a stringified JSON - all property names and values are quoted, and
+          // value has leading space, so pattern is "name": "value"
+          // (clarify if it makes sense to distinguish values as string, boolean, date and number here)
+          // -------------------------------
+          const numValid = itemsBase
+            .andWhere(() => {
+              // at least make sure field exists in json
+              this.where(
+                'r.patientData',
+                'like',
+                `%"${dataCategory.externalId}":%`
+              )
+
+              // process 2 main cases - validValues is an array or not
+              if (validValues && _.isArray(validValues)) {
+                this.where(() => {
+                  _.each(validValues, value => {
+                    this.orWhere(
+                      'r.patientData',
+                      'like',
+                      `%"${dataCategory.externalId}": "${value}"%`
+                    )
+                  })
+                })
+              } else {
+                // make sure existing value is not undefined, null, "undefined", "null" or ""
+                this.whereNot(
+                  'r.patientData',
+                  'like',
+                  `%"${dataCategory.externalId}": undefined%`
+                )
+                this.whereNot(
+                  'r.patientData',
+                  'like',
+                  `%"${dataCategory.externalId}": null%`
+                )
+                this.whereNot(
+                  'r.patientData',
+                  'like',
+                  `%"${dataCategory.externalId}": "undefined"%`
+                )
+                this.whereNot(
+                  'r.patientData',
+                  'like',
+                  `%"${dataCategory.externalId}": "null"%`
+                )
+                this.whereNot(
+                  'r.patientData',
+                  'like',
+                  `%"${dataCategory.externalId}": ""%`
+                )
+              }
+            })
+            .countDistinct('r.id')
+
+          const percentage = totals === 0 ? 0 : 100 * (numValid / totals)
+          if (percentage < dataCategory.cutoffPercentage) {
+            const payload = {
+              dataCategoryId: dataCategory.id,
+              periodName: period.name,
+              siteId: site.id,
+              percentage,
+            }
+            context.resultDataCategoryLow(payload)
+          }
+        })
+      })
+    })
+  })
+}
+
 module.exports = {
   listResults,
   showResult,
@@ -765,4 +926,5 @@ module.exports = {
   showDeviceLogs,
   createUniqueIdForResult,
   onResultLogged,
+  checkDataCategoriesForLowStatus,
 }

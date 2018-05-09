@@ -10,6 +10,7 @@ const subscriptions = [
       ),
       RESULT_MODULE_POWER_ERROR: onIssueEventTrigger('ModulePowerError'),
       RESULT_MODULE_FAILURE_ERROR: onIssueEventTrigger('ModuleFailureError'),
+      RESULT_DATA_CATEGORY_IS_LOW: onIssueEventTrigger('DataCategoryLow'),
     },
   },
 ]

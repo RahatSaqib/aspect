@@ -15,6 +15,7 @@ const {
   exportResults,
   showDeviceLogs,
   onResultLogged,
+  checkDataCategoriesForLowStatus,
 } = require('./service')
 const {
   validateAllGeographyFilterParams,
@@ -235,6 +236,7 @@ const subscriptions = [
   {
     actions: {
       RESULT_LOGGED: onResultLogged,
+      RESULT_DATA_CATEGORY_LOW_CHECK: checkDataCategoriesForLowStatus,
     },
   },
 ]

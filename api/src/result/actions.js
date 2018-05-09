@@ -1,3 +1,4 @@
+const isNil = require('lodash/isNil')
 // ----------- Action Types ---------------------
 const types = {
   RESULT_UPDATED: 'RESULT_UPDATED',
@@ -5,6 +6,8 @@ const types = {
   RESULT_MODULE_TEMPERATURE_ERROR: 'RESULT_MODULE_TEMPERATURE_ERROR',
   RESULT_MODULE_POWER_ERROR: 'RESULT_MODULE_POWER_ERROR',
   RESULT_MODULE_FAILURE_ERROR: 'RESULT_MODULE_FAILURE_ERROR',
+  RESULT_DATA_CATEGORY_LOW_CHECK: 'RESULT_DATA_CATEGORY_LOW_CHECK',
+  RESULT_DATA_CATEGORY_IS_LOW: 'RESULT_DATA_CATEGORY_IS_LOW',
 }
 
 // ----------- Action Creators -------------------
@@ -99,6 +102,47 @@ function resultModuleFailureError(deviceId) {
   }
 }
 
+/**
+ * Creates an action to check data categories for 'low percentage' issue
+ * Is called from scheduler
+ */
+function resultDataCategoryLowCheck() {
+  return {
+    type: types.RESULT_DATA_CATEGORY_LOW_CHECK,
+  }
+}
+
+/**
+ * Creates an action to notify the site with given id
+ * has low given data category issue for given period
+ *
+ * dataCategoryId, periodName, siteId, percentage are required.
+ */
+function resultDataCategoryLow({
+  dataCategoryId,
+  periodName,
+  siteId,
+  percentage,
+}) {
+  if (
+    isNil(dataCategoryId) ||
+    isNil(periodName) ||
+    isNil(siteId) ||
+    isNil(percentage)
+  ) {
+    throw new Error(
+      'Must specify each parameter - dataCategoryId, periodName, siteId, percentage - for Data Category Low notification'
+    )
+  }
+  return {
+    type: types.RESULT_DATA_CATEGORY_IS_LOW,
+    dataCategoryId,
+    periodName,
+    siteId,
+    percentage,
+  }
+}
+
 module.exports = {
   types,
   resultUpdated,
@@ -106,4 +150,6 @@ module.exports = {
   resultModuleTemperatureError,
   resultModulePowerError,
   resultModuleFailureError,
+  resultDataCategoryLowCheck,
+  resultDataCategoryLow,
 }
