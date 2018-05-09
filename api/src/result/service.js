@@ -110,6 +110,7 @@ const moduleTemperatureMaxErrors = 4
 const modulePowerMaxErrors = 4
 const moduleFailureMaxErrors = 2
 const machineTemperatureMaxErrors = 8
+const maxPrcntErrors = 5
 const SELECT_LIST_FIELDS = [
   'r.id',
   'r.externalId',
@@ -814,7 +815,7 @@ async function onResultLogged({ resultId }, { messageContext }) {
             .where('r.moduleSerial', module.moduleSerial)
             .count('r.id as moduleResultCount')
           const prcntModuleError = module.errorCount / moduleResultCount * 100
-          if (!machineIssueTriggured && prcntModuleError > 5) {
+          if (!machineIssueTriggured && prcntModuleError > maxPrcntErrors) {
             context.resultModuleGenericError(deviceId)
           }
         })
