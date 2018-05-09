@@ -1,5 +1,8 @@
 module.exports = require('../../src/db').seed(seed)
 
+const ADMIN_PW = '8v5TMxkpzP'
+const RO_PW = 'u4W9wupFBA'
+
 const bcrypt = require('bcrypt')
 const _ = require('lodash')
 
@@ -22,7 +25,7 @@ async function seed(knex) {
   // Create admin user and audit fields
   const [adminId] = await knex('User').insert({
     name: 'myanmar_admin',
-    password: bcrypt.hashSync('@u?MnXZ07$', saltRounds),
+    password: bcrypt.hashSync(ADMIN_PW, saltRounds),
     approved: 1,
     createdOn: now,
     lockedOut: 0,
@@ -134,11 +137,6 @@ async function seed(knex) {
       auditFields
     )
   )
-
-  const statesByAbbreviation = myanmarStates.reduce((memo, state) => {
-    memo[state.abbreviation] = state
-    return memo
-  }, {})
 
   // Permissions for Myanmar Admin
   const [adminPersonId] = await knex('Person').insert(
@@ -299,23 +297,23 @@ async function seed(knex) {
     geographyId: myanmarGeographyId,
   })
 
-  // Regional Officer Jobs and Targets
-  const adminRegions = ['AYY', 'KCN', 'MDY']
+  // Create a regional officer login and targets for every region
   const targetTokens = ['Total', 'MDR', 'Smear', 'HIV', 'Children']
-  let regionNumber = 0
   await Promise.all(
-    _.map(adminRegions, async region => {
-      regionNumber += 1
-      const regionUserName = `myanmar_ro${regionNumber}`
+    _.map(myanmarStates, async state => {
+      const regionUserName = `${state.name
+        .replace(/\W/gi, '')
+        .toLowerCase()
+        .trim()}_ro`
       const { id: regionId } = await knex('Geography')
         .where({
           countryId,
-          stateId: statesByAbbreviation[region].id,
+          stateId: state.id,
         })
         .first()
       const [regionUserId] = await knex('User').insert({
         name: regionUserName,
-        password: bcrypt.hashSync(regionUserName, saltRounds),
+        password: bcrypt.hashSync(RO_PW, saltRounds),
         approved: 1,
         createdOn: now,
         lockedOut: 0,
@@ -325,7 +323,7 @@ async function seed(knex) {
         Object.assign(
           {
             userId: regionUserId,
-            name: `Myanmar Regional Officer ${region}`,
+            name: `Myanmar Regional Officer ${state.name}`,
             lastPartnerId: partnerId,
             lastCountryId: countryId,
             geographyId: myanmarGeographyId,
