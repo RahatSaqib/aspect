@@ -9,6 +9,7 @@ import { compose, lifecycle, pure, withHandlers } from 'recompose'
 
 import { shortNumericDate } from '../../../shared/utils/dateFormat'
 import recomposeForm from '../../../components/recomposeForm'
+import { acknowledgeIssue } from '../../../issue/IssueRedux'
 import { updateStockLevel } from '../../../inventory/InventoryRedux'
 import { showAcknowledgement } from '../../../appNotification/AppNotificationRedux'
 
