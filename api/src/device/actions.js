@@ -3,6 +3,8 @@ const types = {
   DEVICE_SEEN: 'DEVICE_SEEN',
   DEVICE_OFFLINE: 'DEVICE_OFFLINE',
   DEVICE_ONLINE: 'DEVICE_ONLINE',
+  DEVICE_NO_RESULTS: 'DEVICE_NO_RESULTS',
+  DEVICE_HAS_NEW_RESULTS: 'DEVICE_HAS_NEW_RESULTS',
 }
 
 // ----------- Action Creators -------------------
@@ -57,9 +59,44 @@ function deviceOnline(deviceId) {
   }
 }
 
+/**
+ * Creates an action to notify the device has not seen new
+ * results for a period of time within Aspect (e.g. through
+ * the Device API)
+ *
+ * deviceId is required.
+ */
+function deviceNoResults(deviceId) {
+  if (deviceId == null) {
+    throw new Error('Must specify deviceId for notify deviceNoResults')
+  }
+  return {
+    type: types.DEVICE_NO_RESULTS,
+    deviceId,
+  }
+}
+
+/**
+ * Creates an action to notify the device has seen new
+ * results after notifying deviceNoResults
+ *
+ * deviceId is required.
+ */
+function deviceHasNewResults(deviceId) {
+  if (deviceId == null) {
+    throw new Error('Must specify deviceId for notify deviceHasNewResults')
+  }
+  return {
+    type: types.DEVICE_HAS_NEW_RESULTS,
+    deviceId,
+  }
+}
+
 module.exports = {
   types,
   deviceSeen,
   deviceOffline,
   deviceOnline,
+  deviceNoResults,
+  deviceHasNewResults,
 }

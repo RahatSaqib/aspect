@@ -90,6 +90,7 @@ async function seed(knex) {
     partnerTypeId: partnerTypeFundingId,
     deviceLogHistoryDays: 14,
     maxDaysDeviceOffline: 7,
+    maxDaysDeviceNoResults: 14,
   })
 
   const [partnerTwoId] = await knex('Partner').insert({
@@ -97,6 +98,7 @@ async function seed(knex) {
     partnerTypeId: partnerTypeImplementingId,
     deviceLogHistoryDays: 14,
     maxDaysDeviceOffline: 7,
+    maxDaysDeviceNoResults: 14,
   })
 
   // Categories of devices (lab, connectivity...)
@@ -1391,13 +1393,13 @@ async function seed(knex) {
     externalId: 'Discordant',
   })
 
-  await knex('ResultCategory').insert({
+  const [resultCategoryLessThan1000] = await knex('ResultCategory').insert({
     name: 'LessThan1000',
     i18nkey: 'resultCategoryLessThan1000',
     externalId: 'LessThan1000',
   })
 
-  await knex('ResultCategory').insert({
+  const [resultCategoryMoreThan1000] = await knex('ResultCategory').insert({
     name: 'MoreThan1000',
     i18nkey: 'resultCategoryMoreThan1000',
     externalId: 'MoreThan1000',
@@ -1591,6 +1593,16 @@ async function seed(knex) {
   // Daktari HIV Viral Load
   await knex('ResultCategoryAssay').insert({
     resultCategoryId: resultCategoryDetectedId,
+    assayId: assayDaktariHivVlId,
+  })
+
+  await knex('ResultCategoryAssay').insert({
+    resultCategoryId: resultCategoryLessThan1000,
+    assayId: assayDaktariHivVlId,
+  })
+
+  await knex('ResultCategoryAssay').insert({
+    resultCategoryId: resultCategoryMoreThan1000,
     assayId: assayDaktariHivVlId,
   })
 
@@ -3781,7 +3793,108 @@ async function seed(knex) {
         subject: 'Module Failure Errors',
         body: 'Module {{result.moduleName}}: Critical errors; notify R.O.',
         htmlBody:
-          'Module <em>{{result.moduleName}</em>}: Critical errors; notify R.O.',
+          'Module <em>{{result.moduleName}}</em>: Critical errors; notify R.O.',
+      },
+      auditFields
+    )
+  )
+
+  const [deviceNoResultsAlertTemplateId] = await knex('AlertTemplate').insert(
+    Object.assign(
+      {
+        message: '{{site.name}} no results for {{numberOfDays}} days.',
+      },
+      auditFields
+    )
+  )
+
+  const [deviceNoResultsSmsTemplateId] = await knex('SmsTemplate').insert(
+    Object.assign(
+      {
+        message: '{{site.name}} no results for {{numberOfDays}} days.',
+      },
+      auditFields
+    )
+  )
+
+  const [deviceNoResultsEmailTemplateId] = await knex('EmailTemplate').insert(
+    Object.assign(
+      {
+        subject: '{{site.name}} Device No Results',
+        body: '{{site.name}} no results for {{numberOfDays}} days.',
+        htmlBody:
+          '<em>{{site.name}}</em> no results for {{numberOfDays}} days.',
+      },
+      auditFields
+    )
+  )
+
+  // Machine temperature error messages
+  const [machineTemperatureErrorAlertTemplateId] = await knex(
+    'AlertTemplate'
+  ).insert(
+    Object.assign(
+      {
+        message: 'Temperature errors across machine, conduct troubleshooting.',
+      },
+      auditFields
+    )
+  )
+
+  const [machineTemperatureErrorSmsTemplateId] = await knex(
+    'SmsTemplate'
+  ).insert(
+    Object.assign(
+      {
+        message: 'Temperature errors across machine, conduct troubleshooting.',
+      },
+      auditFields
+    )
+  )
+
+  const [machineTemperatureErrorEmailTemplateId] = await knex(
+    'EmailTemplate'
+  ).insert(
+    Object.assign(
+      {
+        subject: 'Machine Temperature Errors',
+        body: 'Temperature errors across machine, conduct troubleshooting.',
+        htmlBody: 'Temperature errors across machine, conduct troubleshooting',
+      },
+      auditFields
+    )
+  )
+
+  // Module Generic issue messages
+  const [moduleGenericErrorAlertTemplateId] = await knex(
+    'AlertTemplate'
+  ).insert(
+    Object.assign(
+      {
+        message: 'Module {{module.moduleName}} errors, conduct troubleshooting',
+      },
+      auditFields
+    )
+  )
+
+  const [moduleGenericErrorSmsTemplateId] = await knex('SmsTemplate').insert(
+    Object.assign(
+      {
+        message: 'Module {{result.moduleName}} errors, conduct troubleshooting',
+      },
+      auditFields
+    )
+  )
+
+  const [moduleGenericErrorEmailTemplateId] = await knex(
+    'EmailTemplate'
+  ).insert(
+    Object.assign(
+      {
+        subject: 'Machine Temperature Errors',
+        body: 'Module {{result.moduleName}} errors, conduct troubleshooting',
+        htmlBody:
+          'Module <em>{{result.moduleName}}</em> errors, conduct troubleshooting',
       },
       auditFields
     )
@@ -3792,6 +3905,13 @@ async function seed(knex) {
     alertTemplateId: deviceOfflineAlertTemplateId,
     smsTemplateId: deviceOfflineSmsTemplateId,
     emailTemplateId: deviceOfflineEmailTemplateId,
+  })
+
+  const [deviceNoResultsMessageTypeId] = await knex('MessageType').insert({
+    messageSeverityId: messageSeverities.Alert.id,
+    alertTemplateId: deviceNoResultsAlertTemplateId,
+    smsTemplateId: deviceNoResultsSmsTemplateId,
+    emailTemplateId: deviceNoResultsEmailTemplateId,
   })
 
   const [moduleTemperatureErrorTypeId] = await knex('MessageType').insert({
@@ -3813,6 +3933,20 @@ async function seed(knex) {
     alertTemplateId: moduleFailureErrorAlertTemplateId,
     smsTemplateId: moduleFailureErrorSmsTemplateId,
     emailTemplateId: moduleFailureErrorEmailTemplateId,
+  })
+
+  const [machineTemperatureErrorTypeId] = await knex('MessageType').insert({
+    messageSeverityId: messageSeverities.Alert.id,
+    alertTemplateId: machineTemperatureErrorAlertTemplateId,
+    smsTemplateId: machineTemperatureErrorSmsTemplateId,
+    emailTemplateId: machineTemperatureErrorEmailTemplateId,
+  })
+
+  const [moduleGenericErrorTypeId] = await knex('MessageType').insert({
+    messageSeverityId: messageSeverities.Alert.id,
+    alertTemplateId: moduleGenericErrorAlertTemplateId,
+    smsTemplateId: moduleGenericErrorSmsTemplateId,
+    emailTemplateId: moduleGenericErrorEmailTemplateId,
   })
 
   // Issues
@@ -3881,6 +4015,13 @@ async function seed(knex) {
       defaultMessageTypeId: deviceOfflineMessageTypeId,
     },
     {
+      name: 'Device No Results',
+      externalId: 'DeviceNoResults',
+      i18nKey: 'issueStatusDeviceNoResults',
+      issueCategoryId: issueCategories.ConnectivityHealth.id,
+      defaultMessageTypeId: deviceNoResultsMessageTypeId,
+    },
+    {
       name: 'Module Temperature Error',
       externalId: 'ModuleTemperatureError',
       i18nKey: 'issueStatusModuleTemperatureError',
@@ -3900,6 +4041,20 @@ async function seed(knex) {
       i18nKey: 'issueStatusModuleFailureError',
       issueCategoryId: issueCategories.DeviceHealth.id,
       defaultMessageTypeId: moduleFailureErrorTypeId,
+    },
+    {
+      name: 'Machine Temperature Error',
+      externalId: 'MachineTemperatureError',
+      i18nKey: 'issueStatusMachineTemperatureError',
+      issueCategoryId: issueCategories.DeviceHealth.id,
+      defaultMessageTypeId: machineTemperatureErrorTypeId,
+    },
+    {
+      name: 'Module Generic Error',
+      externalId: 'ModuleGenericError',
+      i18nKey: 'issueStatusModuleGenericError',
+      issueCategoryId: issueCategories.DeviceHealth.id,
+      defaultMessageTypeId: moduleGenericErrorTypeId,
     },
   ])
 }

@@ -21,7 +21,7 @@
 .TableCell--site {
   font-weight: var(--lato-font-weight-bold);
   color: var(--aspect-color-grey-1);
-  min-width: 150px;
+  min-width: 200px;
 }
 
 .TableCell--issue {
@@ -84,7 +84,7 @@
   justify-content: flex-end;
 }
 
-.Issue__Action_Status {
+.Issue__Action__Status {
   flex-grow: 0;
   flex-shrink: 0;
   margin: auto 5px auto 0;
@@ -92,16 +92,45 @@
   font-size: var(--aspect-font-size-sm);
 }
 
+.Issue__Action__Status--withInput {
+  composes: Issue__Action__Status;
+  flex-grow: 1;
+}
+
 @media screen and (--md-viewport) {
   .Issue__Message {
     flex-basis: auto;
   }
 
-  .Issue__Action_Status {
+  .Issue__Action__Status {
     flex-grow: 0;
     flex-shrink: 0;
     flex-basis: 120px;
     margin: auto 5px auto 0;
     color: var(--aspect-color-grey-4);
   }
+
+  .Issue__Action__Status--withInput {
+    composes: Issue__Action__Status;
+    flex-grow: 1;
+  }
+}
+
+.Issue__Action__Input__Container {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.Issue__Action__Input__Label {
+  margin: auto 5px;
+}
+
+.Form__Input {
+  padding: 0;
+  margin-right: 5px;
+}
+
+.Form_InputElement {
+  width: 80px;
+  text-align: right; 
 }

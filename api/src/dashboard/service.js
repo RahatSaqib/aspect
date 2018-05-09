@@ -8,14 +8,13 @@ const {
   canViewResults,
   canViewInventories,
 } = require('../auth/constraints')
+const { selectInventoryStockAtSite } = require('../inventory/service')
 const addDays = require('date-fns/add_days')
 const isAfter = require('date-fns/is_after')
 const differenceInDays = require('date-fns/difference_in_days')
 const isSameMonth = require('date-fns/is_same_month')
 const isSameQuarter = require('date-fns/is_same_quarter')
 const { getUser } = require('../auth/service')
-const subDays = require('date-fns/sub_days')
-const subMinutes = require('date-fns/sub_minutes')
 
 const i18nKeys = {
   // Dashboard
@@ -237,7 +236,7 @@ async function resultDashboard(request) {
     canViewResults(auth)
       ? [
           canViewSites(auth) ? siteQuery : [],
-          knex('FactResultCountDevice as f')
+          knex('FactResultsDeviceByCategory1 as f')
             .innerJoin('Device as d', 'd.id', 'f.deviceId')
             .innerJoin('Site as s', 's.id', 'd.siteId')
             .innerJoin('Assay as a', 'a.id', 'f.assayId')
@@ -1168,89 +1167,78 @@ async function operationalDashboard(request) {
 }
 
 async function actionDashboard(request) {
-  const { query } = request
+  const { auth, query } = request
+  const user = await getUser(auth.credentials.name)
 
-  const now = new Date()
+  const { jobFunctionName } = await knex('JobFunction as jf')
+    .innerJoin('Job as j', 'j.jobFunctionId', 'jf.id')
+    .innerJoin('Person as ps', 'j.personId', 'ps.id')
+    .where({
+      'ps.userId': user.id,
+      'jf.partnerId': user.partnerId,
+    })
+    .first('jf.name as jobFunctionName')
+  const isAdmin = jobFunctionName === 'Admin'
+
+  const resultQuery = await knex('AlertMessage as am')
+    .innerJoin('MessageStatus as ms', 'am.messageStatusId', 'ms.id')
+    .innerJoin('Notification as n', 'am.id', 'n.alertMessageId')
+    .innerJoin('NotificationType as nt', 'n.notificationTypeId', 'nt.id')
+    .innerJoin('Issue as i', 'n.issueId', 'i.id')
+    .innerJoin('IssueType as it', 'i.issueTypeId', 'it.id')
+    .innerJoin('IssueCategory as ic', 'it.issueCategoryId', 'ic.id')
+    .innerJoin('IssueStatus as is', 'i.issueStatusId', 'is.id')
+    .innerJoin('Site as s', 'am.siteId', 's.id')
+    .where({ 'ms.externalId': 'Sent' })
+    .modify((queryBuilder, query) => {
+      if (!isAdmin) {
+        queryBuilder.where({ 'am.personId': user.personId })
+      }
+      if (query.siteId) {
+        queryBuilder.where({ 'am.siteId': query.siteId })
+      }
+    }, query)
+    .select(
+      'am.id',
+      'am.siteId',
+      'am.deviceId',
+      'am.resultId',
+      'am.message',
+      's.name as siteName',
+      'is.name as status',
+      'is.i18nKey as statusI18nKey',
+      'it.name as issueType',
+      'it.i18nKey as issueTypeI18nKey',
+      'ic.externalId as issueCategory',
+      'ic.i18nKey as issueCategoryI18nKey',
+      'nt.name as notificationType'
+    )
 
   const allActionByCategory = _.flowRight(
     x => _.groupBy(x, 'issueCategory'),
     query.sortDir === 'desc' ? _.reverse : _.identity,
     x => _.sortBy(x, query.sortCol || _.identity),
-    query.siteId > 0 ? x => _.filter(x, ['siteId', query.siteId]) : _.identity
-  )([
-    {
-      issueCategory: 'Device',
-      siteId: 1116,
-      deviceId: 121,
-      resultId: 4441,
-      site: 'Hinthada TBC',
-      status: 'Active',
-      issue: 'Critical Error on Module 4, Lab Acknowledged',
-    },
-    {
-      issueCategory: 'Device',
-      siteId: 1118,
-      deviceId: 123,
-      resultId: 6502,
-      site: 'Meikhtila TBC',
-      status: 'Active',
-      issue: 'Machine Temperature',
-    },
-    {
-      issueCategory: 'Device',
-      siteId: 1116,
-      deviceId: 121,
-      resultId: 4441,
-      site: 'Hinthada TBC',
-      status: 'Acknowledged',
-      issue: 'Critical Error on Module 4, Lab Acknowledged',
-      acknowledgedOn: subMinutes(subDays(now, 2), 5),
-    },
-    {
-      issueCategory: 'Device',
-      siteId: 1118,
-      deviceId: 123,
-      resultId: 6502,
-      site: 'Meikhtila TBC',
-      status: 'Acknowledged',
-      issue: 'Machine Temperature Errors',
-      acknowledgedOn: subMinutes(subDays(now, 2), 10),
-    },
-    {
-      issueCategory: 'Reagent',
-      siteId: 1116,
-      site: 'Hinthada TBC',
-      status: 'Acknowledged',
-      issue: 'Stock-out expected - Contact Regional Officer.',
-      acknowledgedOn: subMinutes(subDays(now, 2), 5),
-    },
-    {
-      issueCategory: 'Connectivity',
-      siteId: 1116,
-      deviceId: 121,
-      site: 'Hinthada TBC',
-      status: 'Active',
-      issue: 'Hinthada TBC no contact for 9 days.',
-    },
-    {
-      issueCategory: 'Connectivity',
-      siteId: 1118,
-      deviceId: 123,
-      site: 'Meikhtila TBC',
-      status: 'Acknowledged',
-      issue: 'Meikhtila TBC no contact for 9 days.',
-      acknowledgedOn: subMinutes(subDays(now, 1), 5),
-    },
-    {
-      issueCategory: 'Connectivity',
-      siteId: 1121,
-      deviceId: 126,
-      site: 'Mohnyin TBC',
-      status: 'Acknowledged',
-      issue: 'Meikhtila TBC no contact for 8 days.',
-      acknowledgedOn: subMinutes(subDays(now, 5), 5),
-    },
-  ])
+    x =>
+      _.map(x, it =>
+        _.set(it, ['notificationType'], _.camelCase(it.notificationType))
+      )
+  )(resultQuery)
+
+  await Promise.all(
+    _.map(allActionByCategory.Reagent, async it => {
+      if (it.siteId && it.consumableId) {
+        const { totalInStock } = await selectInventoryStockAtSite(
+          it.siteId,
+          it.consumableId,
+          knex
+        )
+        return Object.assign(it, {
+          totalInStock,
+        })
+      }
+      return it
+    })
+  )
 
   const result = {
     ok: true,

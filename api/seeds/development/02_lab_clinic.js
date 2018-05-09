@@ -45,6 +45,7 @@ async function seed(knex) {
     autoAcknowledgeOlderThanDays: 28,
     numberToLeaveUnacknowledged: 15,
     maxDaysDeviceOffline: 7,
+    maxDaysDeviceNoResults: 14,
   })
   const deviceTypeCategories = await rowsAsObject(knex, 'DeviceTypeCategory')
 

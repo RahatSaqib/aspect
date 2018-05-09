@@ -14,11 +14,9 @@ describe('Fact tables initial data', () => {
           .count('id as resultCount')
 
         // get result counts in fact tables
-        const [countInFactTable] = await knex('FactResultCountDevice')
+        const [countInFactTable] = await knex('FactResultsDevice')
           .where({ deviceId: minDevice.deviceId })
-          .andWhere('days', null)
-          .andWhere('resultCategory1', null)
-          .andWhere('assayId', null)
+          .andWhere({ days: 9999 })
           .select('resultCount')
 
         // same?

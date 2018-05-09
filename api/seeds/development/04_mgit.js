@@ -39,6 +39,7 @@ async function seed(knex) {
     partnerTypeId: partnerTypes.Operating.id,
     deviceLogHistoryDays: 365,
     maxDaysDeviceOffline: 7,
+    maxDaysDeviceNoResults: 14,
   })
   const deviceTypeCategories = await rowsAsObject(knex, 'DeviceTypeCategory')
   const assayTypes = await rowsAsObject(knex, 'AssayType')
