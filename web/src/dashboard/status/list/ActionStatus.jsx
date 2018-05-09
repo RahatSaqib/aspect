@@ -133,7 +133,6 @@ export const ActionStatus = compose(
       showAcknowledgement,
     }) => () =>
       acknowledgeIssue(action.get('issueId')).then(() => {
-        // FIXME update current row
         showAcknowledgement({
           title: messages.issueAcknowledgedSuccessfully,
         })
