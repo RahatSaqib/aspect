@@ -24,6 +24,7 @@ const {
   resultModuleFailureError,
   resultMachineTemperatureError,
   resultModuleGenericError,
+  resultMachinePowerError,
 } = require('../result/actions')
 
 const MODULE_TEMPERATURE_ERROR_CODES = [
@@ -111,6 +112,7 @@ const modulePowerMaxErrors = 4
 const moduleFailureMaxErrors = 2
 const machineTemperatureMaxErrors = 8
 const maxPrcntErrors = 5
+const machinePowerMaxErrors = 8
 const SELECT_LIST_FIELDS = [
   'r.id',
   'r.externalId',
@@ -732,6 +734,7 @@ async function onResultLogged({ resultId }, { messageContext }) {
     resultModuleFailureError,
     resultMachineTemperatureError,
     resultModuleGenericError,
+    resultMachinePowerError,
   })
   await context.run(async knex => {
     const [result] = await knex('Result as r').where('r.id', resultId)
@@ -785,6 +788,16 @@ async function onResultLogged({ resultId }, { messageContext }) {
             context.resultModulePowerError(deviceId)
           }
         })
+
+        const [{ errorCount }] = await deviceErrorQuery
+          .clone()
+          .where('r.endedOn', '>=', last30day)
+          .whereIn('r.errorCode', MODULE_POWER_ERROR_CODES)
+          .count('r.id as errorCount')
+
+        if (errorCount > machinePowerMaxErrors) {
+          context.resultMachinePowerError(deviceId)
+        }
       } else if (MODULE_FAILURE_ERROR_CODES.includes(result.errorCode)) {
         const modules = await deviceErrorQuery
           .clone()

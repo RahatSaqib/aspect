@@ -48,6 +48,7 @@ const subscriptions = [
       ),
       RESULT_MODULE_GENERIC_ERROR: onIssueEventTrigger('ModuleGenericError'),
       ESCALATE_ISSUES: onEscalateIssues(),
+      RESULT_MACHINE_POWER_ERROR: onIssueEventTrigger('MachinePowerError'),
     },
   },
 ]
