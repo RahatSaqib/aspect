@@ -147,11 +147,13 @@ export const ActionStatus = ({
   if (action.get('status') === 'Active') {
     return (
       <div className={cssClasses('Issue__Action__Status')}>
-        <Button
-          inverse
-          className={cssClasses('Button__Acknowledge')}
-          label={intl.formatMessage(messages.acknowledge)}
-        />
+        {action.get('canAcknowledge') === 1 && (
+          <Button
+            inverse
+            className={cssClasses('Button__Acknowledge')}
+            label={intl.formatMessage(messages.acknowledge)}
+          />
+        )}
       </div>
     )
   }
@@ -161,10 +163,7 @@ export const ActionStatus = ({
       <div className={cssClasses('Issue__Action__Status')}>
         <span>
           {`${intl.formatMessage(messages.acknowledged)}
-     ${intl.formatDate(
-       action.get('acknowledgedOn', new Date()),
-       shortNumericDate
-     )}`}
+     ${intl.formatDate(action.get('statusDate'), shortNumericDate)}`}
         </span>
       </div>
     )
