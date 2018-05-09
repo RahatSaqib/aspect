@@ -263,7 +263,11 @@ class DeviceApiTestContext {
 
       const clientToken = await server
         .post('/api/auth')
-        .send({ name: user, password: 'test07', clientName: 'Mocha/Chai' })
+        .send({
+          name: user,
+          password: _.get(auth, 'password', 'test07'),
+          clientName: 'Mocha/Chai',
+        })
         .then(res => {
           assert.equal(res.status, 200)
           assert.isAbove(res.body.access.length, 100)

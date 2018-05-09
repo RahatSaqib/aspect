@@ -19,8 +19,12 @@ const server = supertest.agent('http://localhost:8080')
 const { assert } = chai
 
 const context = createTestContext(server, {
-  user: 'admin',
-  partner: 'Partner 1',
+  user: 'myanmar_lab1',
+  password: 'myanmar_lab1',
+  // We want to create a new device for this test, so use a type
+  // that is not seeded
+  type: 'GenericRDT',
+  partner: 'Myanmar',
 })
 
 describe('Fact based issues', () => {
@@ -49,8 +53,8 @@ describe('Fact based issues', () => {
         .post(devicePath)
         .set('Authorization', deviceAuth)
         .send({
-          type: { id: 'DaktariVirology' },
-          site: { id: 'Nebraska_5' },
+          type: { id: 'GenericRDT' },
+          site: { id: 'Hinthada TBC' },
         })
         .then(res => {
           assert.equal(res.status, 200)
@@ -213,7 +217,7 @@ describe('Fact based issues', () => {
       const resultPayload = {
         startedOn: now,
         data: { a: 'b' },
-        assay: { id: 'DaktariHcv' },
+        assay: { id: 'GenericRDT' },
         instrument: { serial: '1234567' },
         sample: { id: '76543789' },
       }

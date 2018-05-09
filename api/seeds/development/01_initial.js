@@ -3435,6 +3435,10 @@ async function seed(knex) {
       jobFunctionId: jobFunctionIdAdmin,
       permissionId: modules.notification.admin,
     },
+    {
+      jobFunctionId: jobFunctionIdAdmin,
+      permissionId: modules.issue.admin,
+    },
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.task.admin },
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.report.admin },
 
@@ -4056,22 +4060,6 @@ async function seed(knex) {
       issueCategoryId: issueCategories.DeviceHealth.id,
       defaultMessageTypeId: moduleGenericErrorTypeId,
     },
-  ])
-  const issueTypes = await rowsAsObject(knex, 'IssueType')
-
-  await knex('NotificationType').insert([
-    Object.assign(
-      {
-        name: 'Admin Device OFfline',
-        partnerId: partnerOneId,
-        issueTypeId: issueTypes.DeviceOffline.id,
-        jobFunctionId: jobFunctionIdAdmin,
-        level: 1,
-        canAcknowledge: 1,
-        messageTypeId: deviceOfflineMessageTypeId,
-      },
-      auditFields
-    ),
   ])
 }
 
