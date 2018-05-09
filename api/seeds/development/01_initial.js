@@ -3891,10 +3891,44 @@ async function seed(knex) {
   ).insert(
     Object.assign(
       {
-        subject: 'Machine Temperature Errors',
+        subject: 'Generic Module Errors',
         body: 'Module {{result.moduleName}} errors, conduct troubleshooting',
         htmlBody:
           'Module <em>{{result.moduleName}}</em> errors, conduct troubleshooting',
+      },
+      auditFields
+    )
+  )
+
+  // Machine Generic issue messages
+  const [machineGenericErrorAlertTemplateId] = await knex(
+    'AlertTemplate'
+  ).insert(
+    Object.assign(
+      {
+        message: 'Generic errors accross machine, conduct troubleshooting',
+      },
+      auditFields
+    )
+  )
+
+  const [machineGenericErrorSmsTemplateId] = await knex('SmsTemplate').insert(
+    Object.assign(
+      {
+        message: 'Generic errors accross machine, conduct troubleshooting',
+      },
+      auditFields
+    )
+  )
+
+  const [machineGenericErrorEmailTemplateId] = await knex(
+    'EmailTemplate'
+  ).insert(
+    Object.assign(
+      {
+        subject: 'Generic Machine Errors',
+        body: 'Generic errors accross machine, conduct troubleshooting',
+        htmlBody: 'Generic errors accross machine, conduct troubleshooting',
       },
       auditFields
     )
@@ -3947,6 +3981,13 @@ async function seed(knex) {
     alertTemplateId: moduleGenericErrorAlertTemplateId,
     smsTemplateId: moduleGenericErrorSmsTemplateId,
     emailTemplateId: moduleGenericErrorEmailTemplateId,
+  })
+
+  const [machineGenericErrorTypeId] = await knex('MessageType').insert({
+    messageSeverityId: messageSeverities.Alert.id,
+    alertTemplateId: machineGenericErrorAlertTemplateId,
+    smsTemplateId: machineGenericErrorSmsTemplateId,
+    emailTemplateId: machineGenericErrorEmailTemplateId,
   })
 
   // Issues
@@ -4055,6 +4096,13 @@ async function seed(knex) {
       i18nKey: 'issueStatusModuleGenericError',
       issueCategoryId: issueCategories.DeviceHealth.id,
       defaultMessageTypeId: moduleGenericErrorTypeId,
+    },
+    {
+      name: 'Machine Generic Error',
+      externalId: 'MachineGenericError',
+      i18nKey: 'issueStatusMachineGenericError',
+      issueCategoryId: issueCategories.DeviceHealth.id,
+      defaultMessageTypeId: machineGenericErrorTypeId,
     },
   ])
 }
