@@ -1693,7 +1693,7 @@ async function up(knex) {
   await knex.schema.createTable('DataCategory', x => {
     x.increments('id')
     x.string('name').notNullable()
-    // field 'fieldNames' holds either string with property name of stringified array of strings
+    // field 'fieldNames' holds either string with property name or stringified array of strings
     // with property names in patientData json
     x.string('fieldNames', 1000).notNullable()
     x
