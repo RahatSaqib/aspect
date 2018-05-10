@@ -978,6 +978,33 @@ async function seed(knex) {
       }
     })
   )
+
+  // Issue Escalation Triggers
+  await knex('IssueEscalationTrigger').insert([
+    {
+      issueTypeId: issueTypes.DeviceOffline.id,
+      partnerId,
+      escalateToLevel: 2,
+      escalationConditions: JSON.stringify({
+        evaluationMethod: 'issue-age',
+        evaluationParameter: { days: 30 },
+      }),
+      createdOn: now,
+      updatedOn: now,
+    },
+    {
+      issueTypeId: issueTypes.DeviceOffline.id,
+      partnerId,
+      escalateToLevel: 3,
+      escalationConditions: JSON.stringify({
+        evaluationMethod: 'sql-script',
+        evaluationParameter:
+          './sqlScripts/Myanmar/issues/escalations/deviceOfflineLevel3ROEscalatedNetwork.sql',
+      }),
+      createdOn: now,
+      updatedOn: now,
+    },
+  ])
 }
 
 function rowsAsObject(knex, table, column = 'name') {

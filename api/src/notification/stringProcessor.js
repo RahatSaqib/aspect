@@ -1,4 +1,4 @@
-const handlebars = require('handlebars')
+const { processUsingHandlebarsSyntax } = require('../stringTemplate/service')
 
 // See unit tests for examples
 const processStringTemplate = (
@@ -7,11 +7,7 @@ const processStringTemplate = (
   device = {},
   result = {},
   person = {}
-) => {
-  const data = { site, device, result, person }
-  const template = handlebars.compile(inputString)
-  return template(data)
-}
+) => processUsingHandlebarsSyntax(inputString, { site, device, result, person })
 
 const mergeTemplateData = (inputString, data) => {
   const { site, device, result, person } = data

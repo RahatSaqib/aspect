@@ -1,4 +1,3 @@
-/* eslint-disable */
 const { assert } = require('chai')
 const stringProcessor = require('../../src/notification/stringProcessor')
 const { runTest } = require('../utils/generatorFunctionUtils')
@@ -20,6 +19,7 @@ describe('notification/stringProcessor', () => {
         }
       ))
   })
+
   describe('process', () => {
     const sampleString = 'Hello {{person.name}}'
     const expectedResult = 'Hello '

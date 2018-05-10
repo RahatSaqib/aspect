@@ -1,4 +1,5 @@
 const { onIssueEventTrigger, onIssueEventResolve } = require('./service')
+const { onEscalateIssues } = require('./escalations')
 
 const subscriptions = [
   {
@@ -16,6 +17,7 @@ const subscriptions = [
         'MachineTemperatureError'
       ),
       RESULT_MODULE_GENERIC_ERROR: onIssueEventTrigger('ModuleGenericError'),
+      ESCALATE_ISSUES: onEscalateIssues(),
     },
   },
 ]

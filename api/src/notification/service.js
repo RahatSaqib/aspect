@@ -137,7 +137,6 @@ async function onIssueEscalated({ issueId }, { messageContext: context }) {
   })
   await context.transact(async knex => {
     const now = new Date()
-
     // Find escalation policy for the issue
     const policy = await knex('NotificationType as nt')
       .join('MessageType as mt', 'nt.messageTypeId', 'mt.id')
@@ -163,14 +162,12 @@ async function onIssueEscalated({ issueId }, { messageContext: context }) {
         'mt.alertTemplateId',
         'mt.emailTemplateId',
         'mt.smsTemplateId'
-      )
-
+      ) // TODO: Evaluate - Is this correct? This means that we can only have one notification type per issue type at a certain escalation level
     if (policy) {
       const people = await knex('Job as j')
         .join('JobFunction as jf', 'j.jobFunctionId', 'jf.id')
         .where({ 'jf.id': policy.jobFunctionId })
         .distinct('j.personId as id')
-
       // Issue notification to every person assigned, (subscriber will create as necessary)
       await Promise.all(
         people.map(async person => {
@@ -203,7 +200,6 @@ async function onIssueEscalated({ issueId }, { messageContext: context }) {
               .first()
             if (existingNotification == null) {
               notification.createdOn = now
-
               const { id: messageStatusId } = await knex('MessageStatus')
                 .where({ externalId: 'Initial' })
                 .first('id')
