@@ -1224,16 +1224,22 @@ async function actionDashboard(request) {
       )
   )(resultQuery)
 
+  // TODO: Replace always loading the ID for GeneXpert cartridges by adding consumable ID to the AlertMessage table and adding it to the query above
+  const { id: consumableId } = await knex('Consumable')
+    .where('name', 'GeneXpert TB Cartridge')
+    .first()
+
   await Promise.all(
-    _.map(allActionByCategory.Reagent, async it => {
-      if (it.siteId && it.consumableId) {
+    _.map(allActionByCategory.ReagentHealth, async it => {
+      if (it.siteId) {
         const { totalInStock } = await selectInventoryStockAtSite(
           it.siteId,
-          it.consumableId,
+          consumableId,
           knex
         )
         return Object.assign(it, {
           totalInStock,
+          consumableId,
         })
       }
       return it

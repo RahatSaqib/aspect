@@ -3668,7 +3668,7 @@ async function seed(knex) {
   const [deviceOfflineAlertTemplateId] = await knex('AlertTemplate').insert(
     Object.assign(
       {
-        message: '{{site.name}} no contact for {{numberOfDays}} days.',
+        message: 'Cannot reach network for {{numberOfDays}} days',
       },
       auditFields
     )
@@ -3677,7 +3677,7 @@ async function seed(knex) {
   const [deviceOfflineSmsTemplateId] = await knex('SmsTemplate').insert(
     Object.assign(
       {
-        message: '{{site.name}} no contact for {{numberOfDays}} days.',
+        message: '{{site.name}} cannot reach network for {{numberOfDays}} days',
       },
       auditFields
     )
@@ -3686,22 +3686,22 @@ async function seed(knex) {
   const [deviceOfflineEmailTemplateId] = await knex('EmailTemplate').insert(
     Object.assign(
       {
-        subject: '{{site.name}} Device Offline',
-        body: '{{site.name}} no contact for {{numberOfDays}} days.',
+        subject: '{{site.name}} cannot reach network for {{numberOfDays}} days',
+        body: '{{site.name}} cannot reach network for {{numberOfDays}} days',
         htmlBody:
-          '<em>{{site.name}}</em> no contact for {{numberOfDays}} days.',
+          '<em>{{site.name}}</em> cannot reach network for {{numberOfDays}} days',
       },
       auditFields
     )
   )
-  // Module temperature messages - TODO - Update templates with actual messages
+  // Module temperature messages
   const [moduleTemperatureErrorAlertTemplateId] = await knex(
     'AlertTemplate'
   ).insert(
     Object.assign(
       {
         message:
-          '{{device.name}} had {{numberOfModuleTemperatureErrors}} in the last {{numberOfDays}} days.',
+          'Temperature errors on Module {{result.moduleName}}; notify RO',
       },
       auditFields
     )
@@ -3713,7 +3713,7 @@ async function seed(knex) {
     Object.assign(
       {
         message:
-          '{{device.name}} had {{numberOfModuleTemperatureErrors}} in the last {{numberOfDays}} days.',
+          '{{device.name}} has Temperature errors on Module {{result.moduleName}}; notify RO.',
       },
       auditFields
     )
@@ -3724,17 +3724,18 @@ async function seed(knex) {
   ).insert(
     Object.assign(
       {
-        subject: '{{device.name}} Module Temperature Error',
+        subject:
+          '{{device.name}} has Temperature errors on Module {{result.moduleName}}; notify RO.',
         body:
-          '{{device.name}} had {{numberOfModuleTemperatureErrors}} in the last {{numberOfDays}} days.',
+          '{{device.name}} has Temperature errors on Module {{result.moduleName}}; notify RO.',
         htmlBody:
-          '<em>{{device.name}}</em> had {{numberOfModuleTemperatureErrors}} in the last {{numberOfDays}} days.',
+          '<em>{{device.name}}</em> has Temperature errors on Module {{result.moduleName}}; notify RO.',
       },
       auditFields
     )
   )
 
-  // Module power error messages - TODO - Update templates with actual messages
+  // Module power error messages
   const [modulePowerErrorAlertTemplateId] = await knex('AlertTemplate').insert(
     Object.assign(
       {
@@ -3802,7 +3803,7 @@ async function seed(knex) {
   const [deviceNoResultsAlertTemplateId] = await knex('AlertTemplate').insert(
     Object.assign(
       {
-        message: '{{site.name}} no results for {{numberOfDays}} days.',
+        message: 'No testing for {{numberOfDays}} days.',
       },
       auditFields
     )
@@ -3811,7 +3812,7 @@ async function seed(knex) {
   const [deviceNoResultsSmsTemplateId] = await knex('SmsTemplate').insert(
     Object.assign(
       {
-        message: '{{site.name}} no results for {{numberOfDays}} days.',
+        message: '{{site.name}} no testing for {{numberOfDays}} days.',
       },
       auditFields
     )
@@ -3820,10 +3821,10 @@ async function seed(knex) {
   const [deviceNoResultsEmailTemplateId] = await knex('EmailTemplate').insert(
     Object.assign(
       {
-        subject: '{{site.name}} Device No Results',
-        body: '{{site.name}} no results for {{numberOfDays}} days.',
+        subject: '{{site.name}} No Testing',
+        body: '{{site.name}} no testing {{numberOfDays}} days.',
         htmlBody:
-          '<em>{{site.name}}</em> no results for {{numberOfDays}} days.',
+          '<em>{{site.name}}</em> no testing for {{numberOfDays}} days.',
       },
       auditFields
     )
@@ -3900,6 +3901,164 @@ async function seed(knex) {
     )
   )
 
+  // Machine Power issue templates
+  const [machinePowerErrorAlertTemplateId] = await knex('AlertTemplate').insert(
+    Object.assign(
+      {
+        message: 'Power error across machine, conduct troubleshooting',
+      },
+      auditFields
+    )
+  )
+
+  const [machinePowerErrorSmsTemplateId] = await knex('SmsTemplate').insert(
+    Object.assign(
+      {
+        message: 'Power error across machine, conduct troubleshooting',
+      },
+      auditFields
+    )
+  )
+
+  const [machinePowerErrorEmailTemplateId] = await knex('EmailTemplate').insert(
+    Object.assign(
+      {
+        subject: 'Power error across machine',
+        body: 'Power error across machine, conduct troubleshooting',
+        htmlBody: 'Power error across machine, conduct troubleshooting',
+      },
+      auditFields
+    )
+  )
+
+  // Machine Generic issue templates
+  const [machineGenericErrorAlertTemplateId] = await knex(
+    'AlertTemplate'
+  ).insert(
+    Object.assign(
+      {
+        message: 'Generic errors across machine, conduct troubleshooting',
+      },
+      auditFields
+    )
+  )
+
+  const [machineGenericErrorSmsTemplateId] = await knex('SmsTemplate').insert(
+    Object.assign(
+      {
+        message: 'Generic errors across machine, conduct troubleshooting',
+      },
+      auditFields
+    )
+  )
+
+  const [machineGenericErrorEmailTemplateId] = await knex(
+    'EmailTemplate'
+  ).insert(
+    Object.assign(
+      {
+        subject: 'Generic Errors',
+        body: 'Generic errors across machine, conduct troubleshooting',
+        htmlBody: 'Generic errors across machine, conduct troubleshooting',
+      },
+      auditFields
+    )
+  )
+
+  // Data Category Low issue templates
+  const [dataCategoryLowAlertTemplateId] = await knex('AlertTemplate').insert(
+    Object.assign(
+      {
+        message:
+          '{{dataCategoryName}} collection rate {{dataCategoryCollectionRatePercentage}}',
+      },
+      auditFields
+    )
+  )
+
+  const [dataCategoryLowSmsTemplateId] = await knex('SmsTemplate').insert(
+    Object.assign(
+      {
+        message:
+          '{{dataCategoryName}} collection rate {{dataCategoryCollectionRatePercentage}}',
+      },
+      auditFields
+    )
+  )
+
+  const [dataCategoryLowEmailTemplateId] = await knex('EmailTemplate').insert(
+    Object.assign(
+      {
+        subject: 'Low Collection Rate',
+        body:
+          '{{dataCategoryName}} collection rate {{dataCategoryCollectionRatePercentage}}',
+        htmlBody:
+          '{{dataCategoryName}} collection rate {{dataCategoryCollectionRatePercentage}}',
+      },
+      auditFields
+    )
+  )
+
+  // Stock level update issue templates
+  const [stockLevelUpdateAlertTemplateId] = await knex('AlertTemplate').insert(
+    Object.assign(
+      {
+        message: 'Update Stock Level',
+      },
+      auditFields
+    )
+  )
+
+  const [stockLevelUpdateSmsTemplateId] = await knex('SmsTemplate').insert(
+    Object.assign(
+      {
+        message: '{{site.name}} - Update Stock Level',
+      },
+      auditFields
+    )
+  )
+
+  const [stockLevelUpdateEmailTemplateId] = await knex('EmailTemplate').insert(
+    Object.assign(
+      {
+        subject: '{{site.name}} - Update Stock Level',
+        body: '{{site.name}} - Update Stock Level',
+        htmlBody: '{{site.name}} - Update Stock Level',
+      },
+      auditFields
+    )
+  )
+
+  // Stock level update issue templates
+  const [reagentHealthAlertTemplateId] = await knex('AlertTemplate').insert(
+    Object.assign(
+      {
+        message: 'Cartridge-specific errors exceed 5%',
+      },
+      auditFields
+    )
+  )
+
+  const [reagentHealthSmsTemplateId] = await knex('SmsTemplate').insert(
+    Object.assign(
+      {
+        message: '{{site.name}} - Cartridge-specific errors exceed 5%',
+      },
+      auditFields
+    )
+  )
+
+  const [reagentHealthEmailTemplateId] = await knex('EmailTemplate').insert(
+    Object.assign(
+      {
+        subject: '{{site.name}} - Cartridge-specific errors exceed 5%',
+        body: '{{site.name}} - Cartridge-specific errors exceed 5%',
+        htmlBody: '{{site.name}} - Cartridge-specific errors exceed 5%',
+      },
+      auditFields
+    )
+  )
+
   const [deviceOfflineMessageTypeId] = await knex('MessageType').insert({
     messageSeverityId: messageSeverities.Alert.id,
     alertTemplateId: deviceOfflineAlertTemplateId,
@@ -3912,6 +4071,13 @@ async function seed(knex) {
     alertTemplateId: deviceNoResultsAlertTemplateId,
     smsTemplateId: deviceNoResultsSmsTemplateId,
     emailTemplateId: deviceNoResultsEmailTemplateId,
+  })
+
+  const [moduleFailureErrorTypeId] = await knex('MessageType').insert({
+    messageSeverityId: messageSeverities.Alert.id,
+    alertTemplateId: moduleFailureErrorAlertTemplateId,
+    smsTemplateId: moduleFailureErrorSmsTemplateId,
+    emailTemplateId: moduleFailureErrorEmailTemplateId,
   })
 
   const [moduleTemperatureErrorTypeId] = await knex('MessageType').insert({
@@ -3928,13 +4094,6 @@ async function seed(knex) {
     emailTemplateId: modulePowerErrorEmailTemplateId,
   })
 
-  const [moduleFailureErrorTypeId] = await knex('MessageType').insert({
-    messageSeverityId: messageSeverities.Alert.id,
-    alertTemplateId: moduleFailureErrorAlertTemplateId,
-    smsTemplateId: moduleFailureErrorSmsTemplateId,
-    emailTemplateId: moduleFailureErrorEmailTemplateId,
-  })
-
   const [machineTemperatureErrorTypeId] = await knex('MessageType').insert({
     messageSeverityId: messageSeverities.Alert.id,
     alertTemplateId: machineTemperatureErrorAlertTemplateId,
@@ -3942,11 +4101,46 @@ async function seed(knex) {
     emailTemplateId: machineTemperatureErrorEmailTemplateId,
   })
 
+  const [machinePowerErrorTypeId] = await knex('MessageType').insert({
+    messageSeverityId: messageSeverities.Alert.id,
+    alertTemplateId: machinePowerErrorAlertTemplateId,
+    smsTemplateId: machinePowerErrorSmsTemplateId,
+    emailTemplateId: machinePowerErrorEmailTemplateId,
+  })
+
   const [moduleGenericErrorTypeId] = await knex('MessageType').insert({
     messageSeverityId: messageSeverities.Alert.id,
     alertTemplateId: moduleGenericErrorAlertTemplateId,
     smsTemplateId: moduleGenericErrorSmsTemplateId,
     emailTemplateId: moduleGenericErrorEmailTemplateId,
+  })
+
+  const [machineGenericErrorTypeId] = await knex('MessageType').insert({
+    messageSeverityId: messageSeverities.Alert.id,
+    alertTemplateId: machineGenericErrorAlertTemplateId,
+    smsTemplateId: machineGenericErrorSmsTemplateId,
+    emailTemplateId: machineGenericErrorEmailTemplateId,
+  })
+
+  const [dataCategoryLowTypeId] = await knex('MessageType').insert({
+    messageSeverityId: messageSeverities.Alert.id,
+    alertTemplateId: dataCategoryLowAlertTemplateId,
+    smsTemplateId: dataCategoryLowSmsTemplateId,
+    emailTemplateId: dataCategoryLowEmailTemplateId,
+  })
+
+  const [stockLevelUpdateTypeId] = await knex('MessageType').insert({
+    messageSeverityId: messageSeverities.Recommendation.id,
+    alertTemplateId: stockLevelUpdateAlertTemplateId,
+    smsTemplateId: stockLevelUpdateSmsTemplateId,
+    emailTemplateId: stockLevelUpdateEmailTemplateId,
+  })
+
+  const [reagentHealthTypeId] = await knex('MessageType').insert({
+    messageSeverityId: messageSeverities.Alert.id,
+    alertTemplateId: reagentHealthAlertTemplateId,
+    smsTemplateId: reagentHealthSmsTemplateId,
+    emailTemplateId: reagentHealthEmailTemplateId,
   })
 
   // Issues
@@ -4022,6 +4216,13 @@ async function seed(knex) {
       defaultMessageTypeId: deviceNoResultsMessageTypeId,
     },
     {
+      name: 'Module Failure Error',
+      externalId: 'ModuleFailureError',
+      i18nKey: 'issueStatusModuleFailureError',
+      issueCategoryId: issueCategories.DeviceHealth.id,
+      defaultMessageTypeId: moduleFailureErrorTypeId,
+    },
+    {
       name: 'Module Temperature Error',
       externalId: 'ModuleTemperatureError',
       i18nKey: 'issueStatusModuleTemperatureError',
@@ -4036,13 +4237,6 @@ async function seed(knex) {
       defaultMessageTypeId: modulePowerErrorTypeId,
     },
     {
-      name: 'Module Failure Error',
-      externalId: 'ModuleFailureError',
-      i18nKey: 'issueStatusModuleFailureError',
-      issueCategoryId: issueCategories.DeviceHealth.id,
-      defaultMessageTypeId: moduleFailureErrorTypeId,
-    },
-    {
       name: 'Machine Temperature Error',
       externalId: 'MachineTemperatureError',
       i18nKey: 'issueStatusMachineTemperatureError',
@@ -4050,11 +4244,46 @@ async function seed(knex) {
       defaultMessageTypeId: machineTemperatureErrorTypeId,
     },
     {
+      name: 'Machine Power Error',
+      externalId: 'MachinePowerError',
+      i18nKey: 'issueStatusMachinePowerError',
+      issueCategoryId: issueCategories.DeviceHealth.id,
+      defaultMessageTypeId: machinePowerErrorTypeId,
+    },
+    {
       name: 'Module Generic Error',
       externalId: 'ModuleGenericError',
       i18nKey: 'issueStatusModuleGenericError',
       issueCategoryId: issueCategories.DeviceHealth.id,
       defaultMessageTypeId: moduleGenericErrorTypeId,
+    },
+    {
+      name: 'Machine Generic Error',
+      externalId: 'MachineGenericError',
+      i18nKey: 'issueStatusMachineGenericError',
+      issueCategoryId: issueCategories.DeviceHealth.id,
+      defaultMessageTypeId: machineGenericErrorTypeId,
+    },
+    {
+      name: 'Data Category Low Error',
+      externalId: 'DataCategoryLowError',
+      i18nKey: 'issueStatusMachineGenericError',
+      issueCategoryId: issueCategories.DataHealth.id,
+      defaultMessageTypeId: dataCategoryLowTypeId,
+    },
+    {
+      name: 'Stock Level Update',
+      externalId: 'StockLevelUpdate',
+      i18nKey: 'stockLevelUpdateIssue',
+      issueCategoryId: issueCategories.ReagentHealth.id,
+      defaultMessageTypeId: stockLevelUpdateTypeId,
+    },
+    {
+      name: 'Reagent Health Error',
+      externalId: 'ReagentHealthError',
+      i18nKey: 'reagentHealthError',
+      issueCategoryId: issueCategories.ReagentHealth.id,
+      defaultMessageTypeId: reagentHealthTypeId,
     },
   ])
 }
