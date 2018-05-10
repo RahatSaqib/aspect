@@ -1,3 +1,4 @@
+const _ = require('lodash')
 const { promisify } = require('util')
 const bcrypt = require('bcrypt')
 const {
@@ -33,7 +34,9 @@ function getUser(username, knex) {
       'p.lastCountryId as countryId'
     )
 }
-
+// --------------------------------------------------------------------------------------------
+// validateUserAtGxAlert
+// --------------------------------------------------------------------------------------------
 async function validateUserAtGxAlert(username, password, user) {
   const now = new Date()
 
@@ -158,12 +161,14 @@ async function validateUserAtGxAlert(username, password, user) {
     // insert Job if not exists
     if (jobFunctionId) {
       const d = { personId, jobFunctionId }
-      const job = await knex('Job')
+      let job = await knex('Job')
         .where(d)
         .first()
       if (!job) {
-        await knex('Job').insert(d)
+        job = await knex('Job').insert(d)
       }
+
+      await setJobContext(knex, job.id, gxUser)
     }
 
     // finally return User
@@ -172,6 +177,89 @@ async function validateUserAtGxAlert(username, password, user) {
   })
 }
 
+// --------------------------------------------------------------------------------------------
+// setJobContext - based on list of countries, states, lgas, deployments gxAlert user is linked
+// --------------------------------------------------------------------------------------------
+async function setJobContext(knex, jobId, gxUser) {
+  // helper function
+  const createIfNotExist = async options => {
+    const { id: geographyId } =
+      (await getCreateGeographyIdByGxGeo(knex, options)) || {}
+
+    if (geographyId) {
+      const ctx = await knex('JobContext')
+        .where({ jobId, geographyId })
+        .whereNull('siteId')
+        .first()
+      if (ctx == null) {
+        await knex('JobContext').insert({ jobId, geographyId })
+      }
+    }
+  }
+
+  // countries which gxalert user is bound to
+  if (_.isArray(gxUser.access.countries)) {
+    _.map(gxUser.access.countries, async country => {
+      await createIfNotExist({ countryAbbreviation: country.abbreviation })
+    })
+  }
+
+  // states which gxalert user is bound to
+  if (_.isArray(gxUser.access.states)) {
+    _.map(gxUser.access.states, async state => {
+      await createIfNotExist({
+        countryAbbreviation: state.countryAbbreviation,
+        stateName: state.name,
+        stateAbbreviation: state.abbreviation,
+      })
+    })
+  }
+
+  // lgas which gxalert user is bound to
+  if (_.isArray(gxUser.access.lgas)) {
+    _.map(gxUser.access.lgas, async lga => {
+      await createIfNotExist({
+        countryAbbreviation: lga.countryAbbreviation,
+        stateName: lga.stateName,
+        stateAbbreviation: lga.stateAbbreviation,
+        lgaName: lga.name,
+      })
+    })
+  }
+
+  // deployments
+  if (_.isArray(gxUser.access.deployments)) {
+    _.map(gxUser.access.deployments, async dep => {
+      const options = {
+        countryAbbreviation: dep.countryAbbreviation,
+        stateName: dep.stateName,
+        stateAbbreviation: dep.stateAbbreviation,
+        lgaName: dep.lgaName,
+      }
+      const { id: geographyId } =
+        (await getCreateGeographyIdByGxGeo(knex, options)) || {}
+      const { id: siteId } =
+        (await knex('Site')
+          .where('shortName', dep.hostId)
+          .where({ geographyId })
+          .first()) || {}
+
+      if (geographyId && siteId) {
+        const ctx = await knex('JobContext')
+          .where({ jobId, siteId })
+          .whereNull('geographyId')
+          .first()
+        if (ctx == null) {
+          await knex('JobContext').insert({ jobId, siteId })
+        }
+      }
+    })
+  }
+}
+
+// --------------------------------------------------------------------------------------------
+// updateCreatePerson
+// --------------------------------------------------------------------------------------------
 async function updateCreatePerson(knex, userId, gxUser) {
   const now = new Date()
   // user id for required fields createdBy, updatedBy
@@ -187,13 +275,13 @@ async function updateCreatePerson(knex, userId, gxUser) {
     .first('id')
   let personId = person.id
 
-  const geography = await getCreateGeographyIdByGxGeo(
-    knex, // pass 'knex' for transaction consistency
-    gxUser.country.abbreviation,
-    gxUser.state.name,
-    gxUser.state.abbreviation,
-    gxUser.lga.name
-  )
+  const options = {
+    countryAbbreviation: gxUser.country.abbreviation,
+    stateName: gxUser.state.name,
+    stateAbbreviation: gxUser.state.abbreviation,
+    lgaName: gxUser.lga.name,
+  }
+  const geography = await getCreateGeographyIdByGxGeo(knex, options)
   const { id: geographyId } = geography || {}
 
   const basePersonData = {
@@ -232,6 +320,9 @@ async function updateCreatePerson(knex, userId, gxUser) {
   return personId
 }
 
+// --------------------------------------------------------------------------------------------
+// getCountryIdByAbbr
+// --------------------------------------------------------------------------------------------
 async function getCountryIdByAbbr(countryAbbreviation) {
   const { id: countryId } = await query('Get country id by abbreviation')
     .from('Country')
@@ -241,15 +332,15 @@ async function getCountryIdByAbbr(countryAbbreviation) {
   return countryId
 }
 
+// --------------------------------------------------------------------------------------------
+// getCreateGeographyIdByGxGeo
+// --------------------------------------------------------------------------------------------
 async function getCreateGeographyIdByGxGeo(
   knex,
-  countryAbbreviation,
-  stateName,
-  stateAbbreviation,
-  lgaName
+  { countryAbbreviation, stateName, stateAbbreviation, lgaName }
 ) {
   const countryId = await getCountryIdByAbbr(countryAbbreviation)
-  
+
   // exit if country is unknown
   if (!countryId) {
     return null
