@@ -1264,28 +1264,33 @@ async function actionDashboard(request) {
   })
 
   // Add consumables by site that aren't in issues
-  _.forEach(inventoryItemsBySite, ([inventoryItem]) => {
-    results.push({
-      id: null,
-      siteId: inventoryItem.siteId,
-      deviceId: null,
-      resultId: null,
-      message: 'Stock Level',
-      siteName: inventoryItem.siteName,
-      issueId: null,
-      status: 'OK',
-      statusI18nKey: 'issueStatusOk',
-      issueType: 'Stock Level Update',
-      issueTypeExternalId: 'StockLevelUpdate',
-      issueTypeI18nKey: 'stockLevelUpdateIssue',
-      issueCategory: 'ReagentHealth',
-      issueCategoryI18nKey: 'issueCategoryReagentHealth',
-      notificationType: 'luStockLevelUpdate',
-      canAcknowledge: 0,
-      totalInStock: inventoryItem.totalInStock,
-      consumableId: inventoryItem.consumableId,
-    })
-  })
+  _.forEach(
+    inventoryItemsBySite,
+    ([{ siteId, siteName, totalInStock, consumableId }]) => {
+      results.push({
+        // ID is needed in UI to distinquish table rows
+        id: `stocklevel_${siteId}`,
+        siteId,
+        deviceId: null,
+        resultId: null,
+        message: 'Stock Level',
+        siteName,
+        issueId: null,
+        status: 'OK',
+        statusI18nKey: 'issueStatusOk',
+        statusDate: new Date(),
+        issueType: 'Stock Level Update',
+        issueTypeExternalId: 'StockLevelUpdate',
+        issueTypeI18nKey: 'stockLevelUpdateIssue',
+        issueCategory: 'ReagentHealth',
+        issueCategoryI18nKey: 'issueCategoryReagentHealth',
+        notificationType: 'luStockLevelUpdate',
+        canAcknowledge: 0,
+        totalInStock,
+        consumableId,
+      })
+    }
+  )
 
   const allActionByCategory = _.flowRight(
     x => _.groupBy(x, 'issueCategory'),
