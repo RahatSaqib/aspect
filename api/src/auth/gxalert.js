@@ -98,8 +98,8 @@ async function validateUserAtGxAlert(username, password, user) {
   }
   if (!jobFunction && gxUser.role === 'state') {
     jobFunction =
-      allJobFunctions.find(x => x.name === 'Manager') ||
-      allJobFunctions.find(x => x.name === 'Regional Officer')
+      allJobFunctions.find(x => x.name === 'Regional Officer') ||
+      allJobFunctions.find(x => x.name === 'Manager')
   }
   if (!jobFunction) {
     jobFunction =
