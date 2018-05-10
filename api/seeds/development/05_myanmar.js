@@ -1141,11 +1141,12 @@ async function seed(knex) {
     _.map(devices, async device => {
       await Promise.all(
         _.map(luIssueTypeIds, async issueTypeId => {
-          const issueStatusId = issueTypeId === issueTypes.StockLevelUpdate.id
-                    ? issueStatusOkId
-                    : _.random(9) > 6
-                      ? issueStatusActiveId
-                      : issueStatusAcknowledgedId
+          const issueStatusId =
+            issueTypeId === issueTypes.StockLevelUpdate.id
+              ? issueStatusOkId
+              : _.random(9) > 6
+                ? issueStatusActiveId
+                : issueStatusAcknowledgedId
           const [issueId] = await knex('Issue').insert(
             Object.assign(
               {
