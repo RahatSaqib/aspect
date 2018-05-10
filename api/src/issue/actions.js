@@ -5,6 +5,7 @@ const types = {
   ISSUE_ESCALATED: 'ISSUE_ESCALATED',
   ISSUE_ACKNOWLEDGED: 'ISSUE_ACKNOWLEDGED',
   ISSUE_RESOLVED: 'ISSUE_RESOLVED',
+  ESCALATE_ISSUES: 'ESCALATE_ISSUES',
 }
 
 // ----------- Action Creators -------------------
@@ -96,6 +97,23 @@ function issueResolved(issueId) {
   }
 }
 
+/**
+ * Creates an action to trigger a process that looks up
+ * and escalates issues needing escalation.
+ *
+ * issueId is optional.
+ */
+function escalateIssues(issueId) {
+  return issueId
+    ? {
+        type: types.ESCALATE_ISSUES,
+        issueId,
+      }
+    : {
+        type: types.ESCALATE_ISSUES,
+      }
+}
+
 module.exports = {
   types,
   issueCreated,
@@ -103,4 +121,5 @@ module.exports = {
   issueEscalated,
   issueAcknowledged,
   issueResolved,
+  escalateIssues,
 }

@@ -1385,6 +1385,30 @@ async function up(knex) {
     issue.charset('utf8')
   })
 
+  await knex.schema.createTable(
+    'IssueEscalationTrigger',
+    issueEscalationTrigger => {
+      issueEscalationTrigger.increments('id')
+      issueEscalationTrigger
+        .integer('issueTypeId')
+        .unsigned()
+        .references('id')
+        .inTable('IssueType')
+        .notNullable()
+      issueEscalationTrigger
+        .integer('partnerId')
+        .unsigned()
+        .index()
+        .references('id')
+        .inTable('Partner')
+        .notNullable()
+      issueEscalationTrigger.integer('escalateToLevel').notNullable()
+      issueEscalationTrigger.specificType('escalationConditions', 'JSON')
+      addTimestamps(issueEscalationTrigger)
+      issueEscalationTrigger.charset('utf8')
+    }
+  )
+
   await knex.schema.createTable('IssueEvent', issueEvent => {
     issueEvent.increments('id')
     issueEvent
@@ -1399,6 +1423,7 @@ async function up(knex) {
       .references('id')
       .inTable('Issue')
       .notNullable()
+      .onDelete('CASCADE')
     issueEvent.specificType('data', 'JSON')
     addTimestamps(issueEvent, { update: false })
     issueEvent.charset('utf8')
@@ -1459,7 +1484,7 @@ async function up(knex) {
       .unsigned()
       .references('id')
       .inTable('Issue')
-      .notNullable()
+      .onDelete('SET NULL')
     notification
       .integer('personId')
       .unsigned()
@@ -1471,16 +1496,19 @@ async function up(knex) {
       .unsigned()
       .references('id')
       .inTable('AlertMessage')
+      .onDelete('SET NULL')
     notification
       .integer('emailMessageId')
       .unsigned()
       .references('id')
       .inTable('EmailMessage')
+      .onDelete('SET NULL')
     notification
       .integer('smsMessageId')
       .unsigned()
       .references('id')
       .inTable('SmsMessage')
+      .onDelete('SET NULL')
     addTimestamps(notification, { update: false })
     notification.charset('utf8')
   })
@@ -1873,6 +1901,7 @@ async function down(knex) {
   await knex.schema.dropTableIfExists('NotificationType')
   await knex.schema.dropTableIfExists('IssueEvent')
   await knex.schema.dropTableIfExists('IssueEventStatus')
+  await knex.schema.dropTableIfExists('IssueEscalationTrigger')
   await knex.schema.dropTableIfExists('Issue')
   await knex.schema.dropTableIfExists('IssueCategory')
   await knex.schema.dropTableIfExists('IssueStatus')
