@@ -134,17 +134,12 @@ async function validateUserAtGxAlert(username, password, user) {
     // insert/update fields in 'User' table
     if (!user) {
       // create new user in Aspect
-      userId = await knex
-        .insert(
-          {
-            name: username,
-            approved: 1,
-            createdOn: now,
-            ...baseUserData,
-          },
-          'id'
-        )
-        .into('User')
+      ;[userId] = await knex('User').insert({
+        name: username,
+        approved: 1,
+        createdOn: now,
+        ...baseUserData,
+      })
     } else {
       userId = user.id
 
@@ -161,14 +156,14 @@ async function validateUserAtGxAlert(username, password, user) {
     // insert Job if not exists
     if (jobFunctionId) {
       const d = { personId, jobFunctionId }
-      let job = await knex('Job')
-        .where(d)
-        .first()
-      if (!job) {
-        job = await knex('Job').insert(d)
+      let { id: jobId } =
+        (await knex('Job')
+          .where(d)
+          .first('id')) || {}
+      if (!jobId) {
+        ;[jobId] = await knex('Job').insert(d)
       }
-
-      await setJobContext(knex, job.id, gxUser)
+      await setJobContext(knex, jobId, gxUser)
     }
 
     // finally return User
@@ -182,10 +177,8 @@ async function validateUserAtGxAlert(username, password, user) {
 // --------------------------------------------------------------------------------------------
 async function setJobContext(knex, jobId, gxUser) {
   // helper function
-  const createIfNotExist = async options => {
-    const { id: geographyId } =
-      (await getCreateGeographyIdByGxGeo(knex, options)) || {}
-
+  const createIfNotExist = async (knex, options) => {
+    const geographyId = await getCreateGeographyIdByGxGeo(knex, options)
     if (geographyId) {
       const ctx = await knex('JobContext')
         .where({ jobId, geographyId })
@@ -199,61 +192,70 @@ async function setJobContext(knex, jobId, gxUser) {
 
   // countries which gxalert user is bound to
   if (_.isArray(gxUser.access.countries)) {
-    _.map(gxUser.access.countries, async country => {
-      await createIfNotExist({ countryAbbreviation: country.abbreviation })
-    })
+    await Promise.all(
+      _.map(gxUser.access.countries, async country => {
+        await createIfNotExist(knex, {
+          countryAbbreviation: country.abbreviation,
+        })
+      })
+    )
   }
 
   // states which gxalert user is bound to
   if (_.isArray(gxUser.access.states)) {
-    _.map(gxUser.access.states, async state => {
-      await createIfNotExist({
-        countryAbbreviation: state.countryAbbreviation,
-        stateName: state.name,
-        stateAbbreviation: state.abbreviation,
+    await Promise.all(
+      _.map(gxUser.access.states, async state => {
+        await createIfNotExist(knex, {
+          countryAbbreviation: state.countryAbbreviation,
+          stateName: state.name,
+          stateAbbreviation: state.abbreviation,
+        })
       })
-    })
+    )
   }
 
   // lgas which gxalert user is bound to
   if (_.isArray(gxUser.access.lgas)) {
-    _.map(gxUser.access.lgas, async lga => {
-      await createIfNotExist({
-        countryAbbreviation: lga.countryAbbreviation,
-        stateName: lga.stateName,
-        stateAbbreviation: lga.stateAbbreviation,
-        lgaName: lga.name,
+    await Promise.all(
+      _.map(gxUser.access.lgas, async lga => {
+        await createIfNotExist(knex, {
+          countryAbbreviation: lga.countryAbbreviation,
+          stateName: lga.stateName,
+          stateAbbreviation: lga.stateAbbreviation,
+          lgaName: lga.name,
+        })
       })
-    })
+    )
   }
 
   // deployments
   if (_.isArray(gxUser.access.deployments)) {
-    _.map(gxUser.access.deployments, async dep => {
-      const options = {
-        countryAbbreviation: dep.countryAbbreviation,
-        stateName: dep.stateName,
-        stateAbbreviation: dep.stateAbbreviation,
-        lgaName: dep.lgaName,
-      }
-      const { id: geographyId } =
-        (await getCreateGeographyIdByGxGeo(knex, options)) || {}
-      const { id: siteId } =
-        (await knex('Site')
-          .where('shortName', dep.hostId)
-          .where({ geographyId })
-          .first()) || {}
-
-      if (geographyId && siteId) {
-        const ctx = await knex('JobContext')
-          .where({ jobId, siteId })
-          .whereNull('geographyId')
-          .first()
-        if (ctx == null) {
-          await knex('JobContext').insert({ jobId, siteId })
+    await Promise.all(
+      _.map(gxUser.access.deployments, async dep => {
+        const options = {
+          countryAbbreviation: dep.countryAbbreviation,
+          stateName: dep.stateName,
+          stateAbbreviation: dep.stateAbbreviation,
+          lgaName: dep.lgaName,
         }
-      }
-    })
+        const geographyId = await getCreateGeographyIdByGxGeo(knex, options)
+        const { id: siteId } =
+          (await knex('Site')
+            .where('shortName', dep.hostId)
+            .where({ geographyId })
+            .first()) || {}
+
+        if (geographyId && siteId) {
+          const ctx = await knex('JobContext')
+            .where({ jobId, siteId })
+            .whereNull('geographyId')
+            .first()
+          if (ctx == null) {
+            await knex('JobContext').insert({ jobId, siteId })
+          }
+        }
+      })
+    )
   }
 }
 
@@ -281,8 +283,7 @@ async function updateCreatePerson(knex, userId, gxUser) {
     stateAbbreviation: gxUser.state.abbreviation,
     lgaName: gxUser.lga.name,
   }
-  const geography = await getCreateGeographyIdByGxGeo(knex, options)
-  const { id: geographyId } = geography || {}
+  const geographyId = await getCreateGeographyIdByGxGeo(knex, options)
 
   const basePersonData = {
     // required fields
@@ -302,15 +303,12 @@ async function updateCreatePerson(knex, userId, gxUser) {
 
   // Insert or Update person in our db
   if (!personId) {
-    personId = await knex('Person').insert(
-      {
-        userId,
-        createdOn: now,
-        createdBy: adminId,
-        ...basePersonData,
-      },
-      'id'
-    )
+    ;[personId] = await knex('Person').insert({
+      userId,
+      createdOn: now,
+      createdBy: adminId,
+      ...basePersonData,
+    })
   } else {
     await knex('Person')
       .where({ id: personId })
@@ -347,32 +345,31 @@ async function getCreateGeographyIdByGxGeo(
     return null
   }
 
-  let geography
-
   // check if geography for country exists
   let d = { countryId, stateId: null, lgaId: null }
-  geography = await knex
-    .from('Geography')
-    .where(d)
-    .first('id')
+  let { id: geographyId } =
+    (await knex
+      .from('Geography')
+      .where(d)
+      .first('id')) || {}
   // create if not exist
-  if (!geography) {
-    await knex.insert(d).into('Geography')
+  if (!geographyId) {
+    // we do not need to get geographyId here - will do it after processing state and lga
+    await knex('Geography').insert(d)
   }
 
   // check if geography for state exists
   let stateId = null
   if (stateName) {
     // get state which has Geography - inner join
-    const state = await knex
-      .from('State as s')
+    const state = await knex('State as s')
       .innerJoin('Geography as g', 's.id', 'g.stateId')
-      .where(() =>
+      .where(function() {
         this.where('s.name', stateName).orWhere(
           's.abbreviation',
           stateAbbreviation
         )
-      )
+      })
       .where('g.countryId', countryId) // for this country
       .whereNull('g.lgaId') // lgaId must be null
       .first('s.id')
@@ -381,10 +378,10 @@ async function getCreateGeographyIdByGxGeo(
     } else {
       // insert State
       d = { name: stateName, abbreviation: stateAbbreviation }
-      stateId = await knex.insert(d, 'id').into('State')
+      ;[stateId] = await knex('State').insert(d)
       // insert Geography for this state
       d = { countryId, stateId, lgaId: null }
-      await knex.insert(d).into('Geography')
+      await knex('Geography').insert(d)
     }
   }
 
@@ -402,28 +399,31 @@ async function getCreateGeographyIdByGxGeo(
       lgaId = lga.id
     } else {
       // insert Lga
-      lgaId = await knex.insert({ name: lgaName }, 'id').into('Lga')
+      ;[lgaId] = await knex('Lga').insert({ name: lgaName })
       // insert missing Geography for this lga
       d = { countryId, stateId, lgaId }
-      await knex.insert(d).into('Geography')
+      await knex('Geography').insert(d)
     }
   }
 
   // finally - get geography
-  geography = await knex
+  const geo = await knex
     .from('Geography')
     .where({ countryId, stateId, lgaId })
-    .first()
+    .first('id')
 
   // if not found - create it
-  if (!geography) {
-    geography = await knex // query('Create Geography with provided values')
-      .insert({ countryId, stateId, lgaId })
-      .into('Geography')
-      .returning('*')
+  if (!geo) {
+    ;[geographyId] = await knex('Geography').insert({
+      countryId,
+      stateId,
+      lgaId,
+    })
+  } else {
+    geographyId = geo.id
   }
 
-  return geography
+  return geographyId
 }
 
 module.exports = {
