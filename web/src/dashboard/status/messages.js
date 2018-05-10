@@ -249,6 +249,10 @@ export const messages = defineMessages({
     id: 'pages.Status.stockLevelUpdatedSuccessfully',
     defaultMessage: 'Stock levels have been updated successfully',
   },
+  issueAcknowledgedSuccessfully: {
+    id: 'pages.Status.issueAcknowledgedSuccessfully',
+    defaultMessage: 'The issue has been acknowledged successfully',
+  },
   reportsTitle: {
     id: 'pages.Status.reportsTitle',
     defaultMessage: 'Reports',

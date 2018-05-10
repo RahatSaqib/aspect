@@ -238,6 +238,7 @@ async function seed(knex) {
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.result.admin },
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.site.admin },
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.assay.admin },
+    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.issue.admin },
     {
       jobFunctionId: jobFunctionIdAdmin,
       permissionId: modules.inventory.admin,
@@ -255,6 +256,10 @@ async function seed(knex) {
     {
       jobFunctionId: jobFunctionIdRegionalOfficer,
       permissionId: modules.site.admin,
+    },
+    {
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      permissionId: modules.issue.admin,
     },
     {
       jobFunctionId: jobFunctionIdRegionalOfficer,
@@ -276,6 +281,10 @@ async function seed(knex) {
     {
       jobFunctionId: jobFunctionIdLabUser,
       permissionId: modules.site.admin,
+    },
+    {
+      jobFunctionId: jobFunctionIdLabUser,
+      permissionId: modules.issue.admin,
     },
     {
       jobFunctionId: jobFunctionIdLabUser,
@@ -438,6 +447,7 @@ async function seed(knex) {
         issueTypeId: issueTypes.DeviceOffline.id,
         jobFunctionId: jobFunctionIdLabUser,
         level: 1,
+        canAcknowledge: 1,
         messageTypeId: defaultMessageTypes.DeviceOffline.id,
       },
       auditFields
@@ -449,6 +459,7 @@ async function seed(knex) {
         issueTypeId: issueTypes.DeviceOffline.id,
         jobFunctionId: jobFunctionIdRegionalOfficer,
         level: 2,
+        canAcknowledge: 1,
         messageTypeId: defaultMessageTypes.DeviceOffline.id,
       },
       auditFields
@@ -460,6 +471,7 @@ async function seed(knex) {
         issueTypeId: issueTypes.DeviceOffline.id,
         jobFunctionId: jobFunctionIdRegionalOfficer,
         level: 3,
+        canAcknowledge: 0,
         messageTypeId: defaultMessageTypes.DeviceOffline.id,
       },
       auditFields

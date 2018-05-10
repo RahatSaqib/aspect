@@ -3435,6 +3435,10 @@ async function seed(knex) {
       jobFunctionId: jobFunctionIdAdmin,
       permissionId: modules.notification.admin,
     },
+    {
+      jobFunctionId: jobFunctionIdAdmin,
+      permissionId: modules.issue.admin,
+    },
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.task.admin },
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.report.admin },
 

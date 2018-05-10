@@ -1,4 +1,11 @@
-const { issueCreated, issueTriggered, issueResolved } = require('./actions')
+const {
+  issueCreated,
+  issueTriggered,
+  issueAcknowledged,
+  issueResolved,
+} = require('./actions')
+const { getUser } = require('../auth/service')
+const Boom = require('boom')
 
 function onIssueEventTrigger(issueType) {
   return async (action, { messageContext: context }) => {
@@ -76,8 +83,9 @@ async function findOpenIssue(knex, issueType, action) {
 
 async function createNewIssue(knex, issueType, action) {
   const now = new Date()
+  const issueStatusId = await getId(knex, 'IssueStatus', 'Active')
   const issue = {
-    issueStatusId: await getId(knex, 'IssueStatus', 'Active'),
+    issueStatusId,
     issueTypeId: await getId(knex, 'IssueType', issueType),
     level: 1,
     createdOn: now,
@@ -120,7 +128,76 @@ async function createNewIssue(knex, issueType, action) {
 
   const [issueId] = await knex('Issue').insert(issue)
   issue.id = issueId
+
+  await knex('IssueStatusLog').insert({
+    issueId,
+    issueStatusId,
+    createdOn: now,
+    changedOn: now,
+  })
+
   return issue
+}
+
+async function updateIssueStatus(request) {
+  const { auth, params, payload, plugins: { messageContext } } = request
+  const now = new Date()
+  const { issueId } = params
+  const { issueStatusExternalId } = payload
+  const { id: currentUserId, personId } = await getUser(auth.credentials.name)
+  if (issueStatusExternalId !== 'Acknowledged') {
+    throw Boom.badRequest('Can only acknowledge issue from UI')
+  }
+
+  messageContext.bindActionCreators({ issueAcknowledged })
+  await messageContext.transact(async knex => {
+    // only allow acknowledge if issue active and current user
+    // is a assigned a notification that can acknowledge
+    const notification = await knex('Notification as n')
+      .join('NotificationType as nt', 'nt.id', 'n.notificationTypeId')
+      .join('Issue as i', 'i.id', 'n.issueId')
+      .join('IssueStatus as is', 'is.id', 'i.issueStatusId')
+      .where({
+        'i.id': issueId,
+        'n.personId': personId,
+        'nt.canAcknowledge': 1,
+        'is.externalId': 'Active',
+      })
+      .first('n.id')
+    if (notification == null) {
+      throw Boom.unauthorized('No Active Issue to Acknowledge')
+    }
+
+    const issueStatusId = await getId(
+      knex,
+      'IssueStatus',
+      issueStatusExternalId
+    )
+    await knex('Issue')
+      .where({ id: issueId })
+      .update({
+        issueStatusId,
+        updatedOn: now,
+      })
+    await knex('IssueStatusLog').insert({
+      issueId,
+      issueStatusId,
+      createdOn: now,
+      changedOn: now,
+      createdBy: currentUserId,
+    })
+    messageContext.issueAcknowledged(issueId)
+  })
+
+  return {
+    ok: true,
+    data: {
+      issueId,
+      issueStatusExternalId,
+      createdOn: now,
+      changedOn: now,
+    },
+  }
 }
 
 async function getId(knex, table, externalId) {
@@ -131,6 +208,7 @@ async function getId(knex, table, externalId) {
 }
 
 module.exports = {
+  updateIssueStatus,
   onIssueEventTrigger,
   onIssueEventResolve,
 }

@@ -1170,6 +1170,8 @@ async function actionDashboard(request) {
   const { auth, query } = request
   const user = await getUser(auth.credentials.name)
 
+  // TODO use auth addConstraints instead of hardcoding Myanmar Rules
+  // for dashboard queries
   const { jobFunctionName } = await knex('JobFunction as jf')
     .innerJoin('Job as j', 'j.jobFunctionId', 'jf.id')
     .innerJoin('Person as ps', 'j.personId', 'ps.id')
@@ -1205,15 +1207,24 @@ async function actionDashboard(request) {
       'am.resultId',
       'am.message',
       's.name as siteName',
+      'i.id as issueId',
       'is.name as status',
       'is.i18nKey as statusI18nKey',
       'it.name as issueType',
       'it.i18nKey as issueTypeI18nKey',
       'ic.externalId as issueCategory',
       'ic.i18nKey as issueCategoryI18nKey',
-      'nt.name as notificationType'
+      'nt.name as notificationType',
+      'nt.canAcknowledge',
+      knex('IssueStatusLog as isl')
+        .whereRaw('isl.issueId=i.id')
+        .whereRaw('isl.issueStatusId=is.id')
+        .max('changedOn')
+        .as('statusDate')
     )
 
+  // TODO we should not be using notification type name
+  // as a constant, as it could be user editable in the future
   const allActionByCategory = _.flowRight(
     x => _.groupBy(x, 'issueCategory'),
     query.sortDir === 'desc' ? _.reverse : _.identity,

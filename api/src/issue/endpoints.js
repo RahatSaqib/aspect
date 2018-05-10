@@ -1,5 +1,35 @@
-const { onIssueEventTrigger, onIssueEventResolve } = require('./service')
+const Joi = require('joi')
+const { asyncHandler } = require('../routes')
+const {
+  updateIssueStatus,
+  onIssueEventTrigger,
+  onIssueEventResolve,
+} = require('./service')
 const { onEscalateIssues } = require('./escalations')
+
+const routes = [
+  {
+    method: 'PUT',
+    path: '/issue/status/{issueId}',
+    handler: asyncHandler(updateIssueStatus),
+    config: {
+      description: 'Update Issue Status',
+      notes: 'Update the status of an issue',
+      auth: { scope: ['notification:edit'] },
+      validate: {
+        params: {
+          issueId: Joi.number()
+            .integer()
+            .positive()
+            .description('Issue Id'),
+        },
+        payload: {
+          issueStatusExternalId: Joi.string().allow('Acknowledged'),
+        },
+      },
+    },
+  },
+]
 
 const subscriptions = [
   {
@@ -22,4 +52,4 @@ const subscriptions = [
   },
 ]
 
-module.exports = { subscriptions }
+module.exports = { routes, subscriptions }

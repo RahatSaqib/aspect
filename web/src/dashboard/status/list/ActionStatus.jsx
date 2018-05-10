@@ -1,5 +1,4 @@
 import classnames from 'classnames/bind'
-import _ from 'lodash'
 import React from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
@@ -9,6 +8,7 @@ import { compose, lifecycle, pure, withHandlers } from 'recompose'
 
 import { shortNumericDate } from '../../../shared/utils/dateFormat'
 import recomposeForm from '../../../components/recomposeForm'
+import { acknowledgeIssue } from '../../../issue/IssueRedux'
 import { updateStockLevel } from '../../../inventory/InventoryRedux'
 import { showAcknowledgement } from '../../../appNotification/AppNotificationRedux'
 
@@ -20,8 +20,6 @@ const themes = {
     inputElement: cssClasses('Form_InputElement'),
   },
 }
-
-const enhance = _.identity
 
 const UpdateStockLevelInput = compose(
   pure,
@@ -121,13 +119,33 @@ const UpdateStockLevelInput = compose(
     </div>
   )
 )
-
-export const ActionStatus = ({
-  intl,
-  messages,
-  // --- injected by recompose ---
-  action,
-}) => {
+export const ActionStatus = compose(
+  pure,
+  connect(
+    null,
+    bindActionCreators.bind(null, { acknowledgeIssue, showAcknowledgement })
+  ),
+  withHandlers({
+    onSubmit: ({
+      action,
+      messages,
+      acknowledgeIssue,
+      showAcknowledgement,
+    }) => () =>
+      acknowledgeIssue(action.get('issueId')).then(() => {
+        showAcknowledgement({
+          title: messages.issueAcknowledgedSuccessfully,
+        })
+      }),
+  }),
+  recomposeForm({
+    fields: [],
+    validate() {
+      const errors = {}
+      return errors
+    },
+  })
+)(({ intl, messages, action, handleSubmit }) => {
   if (
     action.get('notificationType') === 'luStockLevelUpdate' ||
     action.get('notificationType') === 'roStockLevelUpdate'
@@ -147,11 +165,14 @@ export const ActionStatus = ({
   if (action.get('status') === 'Active') {
     return (
       <div className={cssClasses('Issue__Action__Status')}>
-        <Button
-          inverse
-          className={cssClasses('Button__Acknowledge')}
-          label={intl.formatMessage(messages.acknowledge)}
-        />
+        {action.get('canAcknowledge') === 1 && (
+          <Button
+            inverse
+            className={cssClasses('Button__Acknowledge')}
+            label={intl.formatMessage(messages.acknowledge)}
+            onClick={handleSubmit}
+          />
+        )}
       </div>
     )
   }
@@ -161,14 +182,11 @@ export const ActionStatus = ({
       <div className={cssClasses('Issue__Action__Status')}>
         <span>
           {`${intl.formatMessage(messages.acknowledged)}
-     ${intl.formatDate(
-       action.get('acknowledgedOn', new Date()),
-       shortNumericDate
-     )}`}
+     ${intl.formatDate(action.get('statusDate'), shortNumericDate)}`}
         </span>
       </div>
     )
   }
-}
+})
 
-export default enhance(ActionStatus)
+export default ActionStatus

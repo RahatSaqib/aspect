@@ -229,6 +229,7 @@ async function seed(knex) {
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.result.admin },
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.site.admin },
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.assay.admin },
+    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.issue.admin },
     {
       jobFunctionId: jobFunctionIdAdmin,
       permissionId: modules.inventory.admin,
@@ -246,6 +247,10 @@ async function seed(knex) {
     {
       jobFunctionId: jobFunctionIdRegionalOfficer,
       permissionId: modules.site.admin,
+    },
+    {
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      permissionId: modules.issue.admin,
     },
     {
       jobFunctionId: jobFunctionIdRegionalOfficer,
@@ -268,6 +273,7 @@ async function seed(knex) {
       jobFunctionId: jobFunctionIdLabUser,
       permissionId: modules.site.admin,
     },
+    { jobFunctionId: jobFunctionIdLabUser, permissionId: modules.issue.admin },
     {
       jobFunctionId: jobFunctionIdLabUser,
       permissionId: modules.inventory.admin,
@@ -686,6 +692,7 @@ async function seed(knex) {
         issueTypeId: issueTypes.DeviceOffline.id,
         jobFunctionId: jobFunctionIdLabUser,
         level: 1,
+        canAcknowledge: 1,
         messageTypeId: defaultMessageTypes.DeviceOffline.id,
       },
       auditFields
@@ -697,6 +704,7 @@ async function seed(knex) {
         issueTypeId: issueTypes.DeviceOffline.id,
         jobFunctionId: jobFunctionIdRegionalOfficer,
         level: 2,
+        canAcknowledge: 1,
         messageTypeId: defaultMessageTypes.DeviceOffline.id,
       },
       auditFields
@@ -708,6 +716,7 @@ async function seed(knex) {
         issueTypeId: issueTypes.DeviceOffline.id,
         jobFunctionId: jobFunctionIdRegionalOfficer,
         level: 3,
+        canAcknowledge: 0,
         messageTypeId: defaultMessageTypes.DeviceOffline.id,
       },
       auditFields
@@ -719,6 +728,7 @@ async function seed(knex) {
         issueTypeId: issueTypes.DeviceNoResults.id,
         jobFunctionId: jobFunctionIdLabUser,
         level: 1,
+        canAcknowledge: 1,
         messageTypeId: defaultMessageTypes.DeviceNoResults.id,
       },
       auditFields
@@ -730,6 +740,7 @@ async function seed(knex) {
         issueTypeId: issueTypes.DeviceNoResults.id,
         jobFunctionId: jobFunctionIdRegionalOfficer,
         level: 2,
+        canAcknowledge: 1,
         messageTypeId: defaultMessageTypes.DeviceNoResults.id,
       },
       auditFields
@@ -741,6 +752,7 @@ async function seed(knex) {
         issueTypeId: issueTypes.DeviceNoResults.id,
         jobFunctionId: jobFunctionIdRegionalOfficer,
         level: 3,
+        canAcknowledge: 0,
         messageTypeId: defaultMessageTypes.DeviceNoResults.id,
       },
       auditFields
@@ -752,6 +764,7 @@ async function seed(knex) {
         issueTypeId: issueTypes.ModuleFailureError.id,
         jobFunctionId: jobFunctionIdLabUser,
         level: 2,
+        canAcknowledge: 1,
         messageTypeId: defaultMessageTypes.ModuleFailureError.id,
       },
       auditFields
@@ -763,6 +776,7 @@ async function seed(knex) {
         issueTypeId: issueTypes.ModuleFailureError.id,
         jobFunctionId: jobFunctionIdLabUser,
         level: 2,
+        canAcknowledge: 0,
         messageTypeId: defaultMessageTypes.ModuleFailureError.id,
       },
       auditFields
@@ -774,6 +788,7 @@ async function seed(knex) {
         issueTypeId: issueTypes.ModuleTemperatureError.id,
         jobFunctionId: jobFunctionIdLabUser,
         level: 1,
+        canAcknowledge: 1,
         messageTypeId: defaultMessageTypes.ModuleTemperatureError.id,
       },
       auditFields
@@ -785,6 +800,7 @@ async function seed(knex) {
         issueTypeId: issueTypes.ModuleTemperatureError.id,
         jobFunctionId: jobFunctionIdLabUser,
         level: 2,
+        canAcknowledge: 0,
         messageTypeId: defaultMessageTypes.ModuleTemperatureError.id,
       },
       auditFields
@@ -796,6 +812,7 @@ async function seed(knex) {
         issueTypeId: issueTypes.ModulePowerError.id,
         jobFunctionId: jobFunctionIdLabUser,
         level: 1,
+        canAcknowledge: 1,
         messageTypeId: defaultMessageTypes.ModulePowerError.id,
       },
       auditFields
@@ -807,6 +824,7 @@ async function seed(knex) {
         issueTypeId: issueTypes.ModulePowerError.id,
         jobFunctionId: jobFunctionIdLabUser,
         level: 2,
+        canAcknowledge: 0,
         messageTypeId: defaultMessageTypes.ModulePowerError.id,
       },
       auditFields
@@ -818,6 +836,7 @@ async function seed(knex) {
         issueTypeId: issueTypes.MachineTemperatureError.id,
         jobFunctionId: jobFunctionIdLabUser,
         level: 1,
+        canAcknowledge: 1,
         messageTypeId: defaultMessageTypes.MachineTemperatureError.id,
       },
       auditFields
@@ -829,6 +848,7 @@ async function seed(knex) {
         issueTypeId: issueTypes.MachineTemperatureError.id,
         jobFunctionId: jobFunctionIdLabUser,
         level: 2,
+        canAcknowledge: 0,
         messageTypeId: defaultMessageTypes.MachineTemperatureError.id,
       },
       auditFields
@@ -840,6 +860,7 @@ async function seed(knex) {
         issueTypeId: issueTypes.MachinePowerError.id,
         jobFunctionId: jobFunctionIdLabUser,
         level: 1,
+        canAcknowledge: 1,
         messageTypeId: defaultMessageTypes.MachinePowerError.id,
       },
       auditFields
@@ -851,6 +872,7 @@ async function seed(knex) {
         issueTypeId: issueTypes.MachinePowerError.id,
         jobFunctionId: jobFunctionIdLabUser,
         level: 2,
+        canAcknowledge: 0,
         messageTypeId: defaultMessageTypes.MachinePowerError.id,
       },
       auditFields
@@ -862,6 +884,7 @@ async function seed(knex) {
         issueTypeId: issueTypes.ModuleGenericError.id,
         jobFunctionId: jobFunctionIdLabUser,
         level: 1,
+        canAcknowledge: 1,
         messageTypeId: defaultMessageTypes.ModuleGenericError.id,
       },
       auditFields
@@ -873,6 +896,7 @@ async function seed(knex) {
         issueTypeId: issueTypes.ModuleGenericError.id,
         jobFunctionId: jobFunctionIdLabUser,
         level: 2,
+        canAcknowledge: 0,
         messageTypeId: defaultMessageTypes.ModuleGenericError.id,
       },
       auditFields
@@ -884,6 +908,7 @@ async function seed(knex) {
         issueTypeId: issueTypes.MachineGenericError.id,
         jobFunctionId: jobFunctionIdLabUser,
         level: 1,
+        canAcknowledge: 1,
         messageTypeId: defaultMessageTypes.MachineGenericError.id,
       },
       auditFields
@@ -895,6 +920,7 @@ async function seed(knex) {
         issueTypeId: issueTypes.MachineGenericError.id,
         jobFunctionId: jobFunctionIdLabUser,
         level: 2,
+        canAcknowledge: 0,
         messageTypeId: defaultMessageTypes.MachineGenericError.id,
       },
       auditFields
@@ -906,6 +932,7 @@ async function seed(knex) {
         issueTypeId: issueTypes.ModuleGenericError.id,
         jobFunctionId: jobFunctionIdRegionalOfficer,
         level: 1,
+        canAcknowledge: 0,
         messageTypeId: defaultMessageTypes.ModuleGenericError.id,
       },
       auditFields
@@ -917,6 +944,7 @@ async function seed(knex) {
         issueTypeId: issueTypes.MachineGenericError.id,
         jobFunctionId: jobFunctionIdRegionalOfficer,
         level: 1,
+        canAcknowledge: 0,
         messageTypeId: defaultMessageTypes.MachineGenericError.id,
       },
       auditFields
@@ -928,6 +956,7 @@ async function seed(knex) {
         issueTypeId: issueTypes.ReagentHealthError.id,
         jobFunctionId: jobFunctionIdLabUser,
         level: 1,
+        canAcknowledge: 1,
         messageTypeId: defaultMessageTypes.ReagentHealthError.id,
       },
       auditFields
@@ -939,6 +968,7 @@ async function seed(knex) {
         issueTypeId: issueTypes.ReagentHealthError.id,
         jobFunctionId: jobFunctionIdLabUser,
         level: 2,
+        canAcknowledge: 0,
         messageTypeId: defaultMessageTypes.ReagentHealthError.id,
       },
       auditFields
@@ -950,6 +980,7 @@ async function seed(knex) {
         issueTypeId: issueTypes.ReagentHealthError.id,
         jobFunctionId: jobFunctionIdRegionalOfficer,
         level: 3,
+        canAcknowledge: 0,
         messageTypeId: defaultMessageTypes.ReagentHealthError.id,
       },
       auditFields
@@ -961,6 +992,7 @@ async function seed(knex) {
         issueTypeId: issueTypes.StockLevelUpdate.id,
         jobFunctionId: jobFunctionIdLabUser,
         level: 1,
+        canAcknowledge: 0,
         messageTypeId: defaultMessageTypes.StockLevelUpdate.id,
       },
       auditFields
@@ -972,6 +1004,7 @@ async function seed(knex) {
         issueTypeId: issueTypes.StockLevelUpdate.id,
         jobFunctionId: jobFunctionIdRegionalOfficer,
         level: 1,
+        canAcknowledge: 0,
         messageTypeId: defaultMessageTypes.StockLevelUpdate.id,
       },
       auditFields
@@ -983,6 +1016,7 @@ async function seed(knex) {
         issueTypeId: issueTypes.DataCategoryLowError.id,
         jobFunctionId: jobFunctionIdLabUser,
         level: 1,
+        canAcknowledge: 1,
         messageTypeId: defaultMessageTypes.DataCategoryLowError.id,
       },
       auditFields
@@ -994,6 +1028,7 @@ async function seed(knex) {
         issueTypeId: issueTypes.DataCategoryLowError.id,
         jobFunctionId: jobFunctionIdRegionalOfficer,
         level: 1,
+        canAcknowledge: 1,
         messageTypeId: defaultMessageTypes.DataCategoryLowError.id,
       },
       auditFields
@@ -1106,16 +1141,17 @@ async function seed(knex) {
     _.map(devices, async device => {
       await Promise.all(
         _.map(luIssueTypeIds, async issueTypeId => {
+          const issueStatusId =
+            issueTypeId === issueTypes.StockLevelUpdate.id
+              ? issueStatusOkId
+              : _.random(9) > 6
+                ? issueStatusActiveId
+                : issueStatusAcknowledgedId
           const [issueId] = await knex('Issue').insert(
             Object.assign(
               {
                 issueTypeId,
-                issueStatusId:
-                  issueTypeId === issueTypes.StockLevelUpdate.id
-                    ? issueStatusOkId
-                    : _.random(9) > 6
-                      ? issueStatusActiveId
-                      : issueStatusAcknowledgedId,
+                issueStatusId,
                 deviceId: device.id,
                 siteId: device.siteId,
                 geographyId: device.geographyId,
@@ -1123,6 +1159,24 @@ async function seed(knex) {
               issue
             )
           )
+          if (issueStatusId === issueStatusAcknowledgedId) {
+            await knex('IssueStatusLog').insert({
+              issueId,
+              issueStatusId: issueStatusActiveId,
+              changedOn: now,
+              createdOn: now,
+              createdBy: adminId,
+            })
+          }
+          if (issueStatusId !== issueStatusActiveId) {
+            await knex('IssueStatusLog').insert({
+              issueId,
+              issueStatusId,
+              changedOn: new Date(+now + millisInHour),
+              createdOn: new Date(+now + millisInHour - 1000),
+              createdBy: adminId,
+            })
+          }
           issueIds.push(issueId)
         })
       )
