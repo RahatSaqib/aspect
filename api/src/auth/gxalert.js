@@ -269,11 +269,11 @@ async function updateCreatePerson(knex, userId, gxUser) {
     .first('id')
 
   // Person Id
-  const person = await knex
-    .from('Person')
-    .where({ userId })
-    .first('id')
-  let personId = person.id
+  let { id: personId } =
+    (await knex
+      .from('Person')
+      .where({ userId })
+      .first('id')) || {}
 
   const options = {
     countryAbbreviation: gxUser.country.abbreviation,
@@ -324,10 +324,11 @@ async function updateCreatePerson(knex, userId, gxUser) {
 // getCountryIdByAbbr
 // --------------------------------------------------------------------------------------------
 async function getCountryIdByAbbr(countryAbbreviation) {
-  const { id: countryId } = await query('Get country id by abbreviation')
-    .from('Country')
-    .where('abbreviation', countryAbbreviation)
-    .first('id')
+  const { id: countryId } =
+    (await query('Get country id by abbreviation')
+      .from('Country')
+      .where('abbreviation', countryAbbreviation)
+      .first('id')) || {}
 
   return countryId
 }
