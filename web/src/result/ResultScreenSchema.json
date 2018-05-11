@@ -229,38 +229,7 @@
       },
       "detail": {
         "title": "Patient",
-        "rows": {
-          "id": {
-            "type": "string",
-            "row": 0,
-            "order": 0,
-            "title": "Patient ID"
-          },
-          "age": {
-            "type": "number",
-            "row": 0,
-            "order": 1,
-            "title": "Age (in years)"
-          },
-          "hiv": {
-            "type": "string",
-            "row": 0,
-            "order": 2,
-            "title": "HIV Status"
-          },
-          "name": {
-            "type": "string",
-            "row": 1,
-            "order": 0,
-            "title": "Name"
-          },
-          "phone": {
-            "type": "string",
-            "row": 1,
-            "order": 1,
-            "title": "Phone"
-          }
-        }
+        "dataSchema": "assay.patientDataSchema"
       }
     },
     "result": {
@@ -297,7 +266,8 @@
             "order": 1,
             "title": "RIF"
           }
-        }
+        },
+        "dataSchema": "assay.resultDataSchema"
       }
     }
   }

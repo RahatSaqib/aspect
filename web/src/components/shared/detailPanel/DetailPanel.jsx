@@ -1,6 +1,8 @@
 import React from 'react'
 import _ from 'lodash'
+import Immutable from 'immutable'
 import classnames from 'classnames/bind'
+import { compose, mapProps } from 'recompose'
 import { Card } from 'react-toolbox/lib/card'
 import MdAssignment from 'react-icons/lib/md/assignment'
 import CardTitle from '../../../components/shared/CardTitle'
@@ -12,6 +14,8 @@ import {
 } from '../../../components/shared/expansionPanel'
 
 const cssClasses = classnames.bind(require('./DetailPanel.css'))
+
+const EMPTY_MAP = Immutable.Map()
 
 const enhance = _.identity
 
@@ -32,7 +36,34 @@ const makeLink = (template, data) => {
   }
 }
 
-const DetailGroup = ({ intl, key, data, rawData, groupSchema }) => (
+export const DetailGroup = compose(
+  mapProps(({ data, rawData, groupSchema, ...restProps }) => {
+    const dataSchemaPath = groupSchema.getIn(['detail', 'dataSchema'])
+    if (dataSchemaPath) {
+      const dataSchema =
+        rawData.getIn(_.split(dataSchemaPath, '.')) || EMPTY_MAP
+      const defaultRow = groupSchema.hasIn(['detail', 'rows']) ? 1 : 0
+      const schema = dataSchema
+        .filter(
+          (value, key) =>
+            key !== 'resultText' && value && value.get('type') !== 'object'
+        )
+        .sortBy(value => value.get('order'))
+        .map(row =>
+          row
+            .set('row', defaultRow + (Math.floor(row.get('order') / 3) || 0))
+            .set('order', row.get('order') || 0)
+        )
+      groupSchema = groupSchema.mergeDeepIn(['detail', 'rows'], schema)
+    }
+    return {
+      data,
+      rawData,
+      groupSchema,
+      ...restProps,
+    }
+  })
+)(({ intl, key, data, rawData, groupSchema }) => (
   <ExpansionPanel expanded={false} key={key}>
     <ExpansionPanelHeader
       label={groupSchema.getIn(['summary', 'title'])}
@@ -42,7 +73,8 @@ const DetailGroup = ({ intl, key, data, rawData, groupSchema }) => (
           className={cssClasses('Field__Container')}
           hideLabel
           fields={groupSchema
-            .getIn(['summary', 'rows'])
+            .getIn(['summary', 'rows'], EMPTY_MAP)
+            .sortBy(value => value.get('order'))
             .entrySeq()
             .map(([key, value]) => ({
               key,
@@ -58,8 +90,9 @@ const DetailGroup = ({ intl, key, data, rawData, groupSchema }) => (
       <ReadOnlyFields
         className={cssClasses('Field__Container')}
         fields={groupSchema
-          .getIn(['detail', 'rows'])
+          .getIn(['detail', 'rows'], EMPTY_MAP)
           .filter(it => it.get('row') === 0)
+          .sortBy(value => value.get('order'))
           .entrySeq()
           .map(([key, value]) => ({
             key,
@@ -71,12 +104,14 @@ const DetailGroup = ({ intl, key, data, rawData, groupSchema }) => (
           .toJSON()}
       />
     </ExpansionPanelHeader>
-    {groupSchema.getIn(['detail', 'rows']).filter(it => it.get('row') > 0)
-      .size > 0 && (
+    {groupSchema
+      .getIn(['detail', 'rows'], EMPTY_MAP)
+      .filter(it => it.get('row') > 0).size > 0 && (
       <ExpansionPanelDetail>
         {groupSchema
-          .getIn(['detail', 'rows'])
+          .getIn(['detail', 'rows'], EMPTY_MAP)
           .filter(it => it.get('row') > 0)
+          .sortBy(value => value.get('order'))
           .groupBy(x => x.get('row'))
           .valueSeq()
           .map(row =>
@@ -98,7 +133,7 @@ const DetailGroup = ({ intl, key, data, rawData, groupSchema }) => (
       </ExpansionPanelDetail>
     )}
   </ExpansionPanel>
-)
+))
 
 export const DetailPanel = ({ intl, data, schema, ...restProps }) => (
   <Card {...restProps}>

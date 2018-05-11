@@ -38,6 +38,8 @@ import styles from './ResultDetail.css'
 
 const cssClasses = classnames.bind(styles)
 
+const EMPTY_MAP = Immutable.Map()
+
 const messages = defineMessages({
   title: {
     id: 'pages.ResultDetail.title',
@@ -211,9 +213,11 @@ export class ResultDetail extends PureComponent {
     }
 
     const { result } = this.props
-    const dataSchema = result
-      .getIn(['assay', 'resultDataSchema'])
+    const dataSchema = (
+      result.getIn(['assay', 'resultDataSchema']) || EMPTY_MAP
+    )
       .delete('resultText')
+      .filter(field => field.get('type') === 'object')
 
     return (
       <JSONSchemaCard
