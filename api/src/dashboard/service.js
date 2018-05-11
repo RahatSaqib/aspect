@@ -1246,12 +1246,20 @@ async function actionDashboard(request) {
       knex.raw('coalesce(sum(ii.quantityOnHand), 0) as totalInStock')
     )
 
+  // FIXME: Replace always loading the ID for GeneXpert cartridges by adding consumable ID to the AlertMessage table and adding it to the query above
+  const { id: defaultConsumableId } = await knex('Consumable')
+    .where('name', 'GeneXpert TB Cartridge')
+    .first()
+
   // set consumable id, totalIn Stock on StockInHand issues
   const inventoryItemsBySite = _.groupBy(inventoryItems, 'siteId')
   const results = _.map(resultQuery, result => {
     // TODO we should not be using notification type name
     // as a constant, as it could be user editable in the future
     result.notificationType = _.camelCase(result.notificationType)
+    if (result.consumableId == null) {
+      result.consumableId = defaultConsumableId
+    }
     if (result.siteId && result.issueTypeExternalId === 'StockLevelUpdate') {
       const [inventoryItem] = inventoryItemsBySite[result.siteId]
       result.totalInStock =
@@ -1287,7 +1295,7 @@ async function actionDashboard(request) {
         notificationType: 'luStockLevelUpdate',
         canAcknowledge: 0,
         totalInStock,
-        consumableId,
+        consumableId: consumableId != null ? consumableId : defaultConsumableId,
       })
     }
   )
