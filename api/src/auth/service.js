@@ -5,14 +5,6 @@ const { promisify } = require('util')
 const Boom = require('boom')
 const _ = require('lodash')
 const bcrypt = require('bcrypt')
-const {
-  createFetch,
-  base,
-  accept,
-  header,
-  method,
-  body,
-} = require('http-client')
 require('isomorphic-fetch')
 const emailUtil = require('../email/emailUtil')
 const templateProcessor = require('../email/templateProcessor')
@@ -22,6 +14,7 @@ const bcryptHash = promisify(bcrypt.hash)
 
 const config = require('../config')
 const { query } = require('../db')
+const { validateUserAtGxAlert } = require('./gxalert')
 
 async function checkAuthentication() {
   return { message: 'Welcome to the API!' }
@@ -41,6 +34,7 @@ function getUser(username) {
       'u.name',
       'p.culture',
       'p.timezone',
+      'p.id as personId',
       'p.lastPartnerId as partnerId',
       'p.lastCountryId as countryId'
     )
@@ -60,6 +54,7 @@ function getUserByPersonId(personId) {
       'u.name',
       'p.culture',
       'p.timezone',
+      'p.id as personId',
       'p.lastPartnerId as partnerId',
       'p.lastCountryId as countryId'
     )
@@ -75,10 +70,16 @@ function getUserId(username) {
 async function authenticate(request) {
   const { payload } = request
 
-  const user = await getUser(payload.name)
+  let user = await getUser(payload.name)
 
   if (!user) {
-    return Boom.unauthorized()
+    // no user with such username in Aspect yet - check it in GxAlert
+    user = await validateUserAtGxAlert(payload.name, payload.password)
+    if (!user) {
+      return Boom.unauthorized('Authentication failed. Wrong password.')
+    }
+  } else if (user.lockedOut === 1) {
+    return Boom.unauthorized('Your account is locked.')
   }
 
   if (user.lockedOut === 1) {
@@ -88,36 +89,9 @@ async function authenticate(request) {
   // if password isn't a bcrypt hash, user was migrated from
   // GxAlert and password wasn't set yet in aspect:
   if (user.password && user.legacyPassword) {
-    // use GxAlert API to check pw
-    const gxFetch = createFetch(
-      method('POST'),
-      base(config.gxAlertApi),
-      accept('application/json'),
-      header('Content-Type', 'application/json'),
-      body(
-        JSON.stringify({ username: payload.name, password: payload.password }),
-        'application/json'
-      )
-    )
-
-    const resp = await gxFetch('/auth')
-
-    if (resp.status === 200) {
-      // we now know that pw is valid. store it in our database:
-      const pw = await bcryptHash(
-        payload.password,
-        parseInt(config.passwordSaltRounds, 10)
-      )
-      await query('Update user password in our database')
-        .from('User')
-        .where({ id: user.id })
-        .update({
-          password: pw,
-          failedPasswordAttempts: 0,
-          legacyPassword: 0,
-          lockedOut: false,
-        })
-    } else {
+    // check login at GxAlert and return created/updated user from Aspect if login match in GxAlert
+    user = await validateUserAtGxAlert(payload.name, payload.password, user)
+    if (!user) {
       return Boom.unauthorized('Authentication failed. Wrong password.')
     }
   } else {

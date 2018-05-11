@@ -185,8 +185,11 @@ class MessageQueue {
         timeoutId = setTimeout(() => {
           if (timeoutId != null) {
             dispose()
-            debug('waitForAction timeout')
-            reject(new Error('waitForAction timeout'))
+            const rejectMessage = _.isPlainObject(predicate)
+              ? `waitForAction timeout ${JSON.stringify(predicate)}`
+              : 'waitForAction timeout'
+            debug(rejectMessage)
+            reject(new Error(rejectMessage))
           }
         }, timeout)
       }

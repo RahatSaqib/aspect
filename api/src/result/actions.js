@@ -5,6 +5,8 @@ const types = {
   RESULT_MODULE_TEMPERATURE_ERROR: 'RESULT_MODULE_TEMPERATURE_ERROR',
   RESULT_MODULE_POWER_ERROR: 'RESULT_MODULE_POWER_ERROR',
   RESULT_MODULE_FAILURE_ERROR: 'RESULT_MODULE_FAILURE_ERROR',
+  RESULT_MACHINE_TEMPERATURE_ERROR: 'RESULT_MACHINE_TEMPERATURE_ERROR',
+  RESULT_MODULE_GENERIC_ERROR: 'RESULT_MODULE_GENERIC_ERROR',
 }
 
 // ----------- Action Creators -------------------
@@ -99,6 +101,40 @@ function resultModuleFailureError(deviceId) {
   }
 }
 
+/**
+ * Creates an action to notify the device with given id
+ * has an active module failure issue
+ *
+ * deviceId is required.
+ */
+function resultMachineTemperatureError(deviceId) {
+  if (deviceId == null) {
+    throw new Error(
+      'Must specify deviceId for notify resultMachineTemperatureError'
+    )
+  }
+  return {
+    type: types.RESULT_MACHINE_TEMPERATURE_ERROR,
+    deviceId,
+  }
+}
+
+/**
+ * Creates an action to notify the device with given id
+ * has an active module failure issue
+ *
+ * deviceId is required.
+ */
+function resultModuleGenericError(deviceId) {
+  if (deviceId == null) {
+    throw new Error('Must specify deviceId for notify resultModuleGenericError')
+  }
+  return {
+    type: types.RESULT_MODULE_GENERIC_ERROR,
+    deviceId,
+  }
+}
+
 module.exports = {
   types,
   resultUpdated,
@@ -106,4 +142,6 @@ module.exports = {
   resultModuleTemperatureError,
   resultModulePowerError,
   resultModuleFailureError,
+  resultMachineTemperatureError,
+  resultModuleGenericError,
 }

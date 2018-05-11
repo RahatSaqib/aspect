@@ -810,6 +810,40 @@ async function receiveInventory(request) {
   }
 }
 
+async function selectInventoryStockAtSite(siteId, consumableId) {
+  return knex('InventoryItem as ii')
+    .innerJoin('Consumable as c', 'ii.consumableId', 'c.id')
+    .innerJoin('Site as s', 'ii.siteId', 's.id')
+    .where({ consumableId, siteId })
+    .first(knex.raw('coalesce(sum(ii.quantityOnHand),0) as totalInStock'))
+}
+
+async function updateInventoryStockLevel(request) {
+  const {
+    auth,
+    params: { siteId, consumableId },
+    payload: { quantity },
+  } = request
+
+  const currentlyLoggedInUser = await getUser(auth.credentials.name)
+  const now = new Date()
+
+  const inventoryItemId = await changeInventoryQuantity({
+    siteId,
+    consumableId,
+    quantity,
+    quantityOnHand: quantity,
+    now,
+    operation: 'update stock',
+    userId: currentlyLoggedInUser.id,
+  })
+
+  return {
+    ok: true,
+    data: await getInventoryItem(inventoryItemId),
+  }
+}
+
 async function decreaseInventory(inventoryAjustment) {
   const inventoryItemId = await changeInventoryQuantity(
     _.merge(inventoryAjustment, { quantity: -inventoryAjustment.quantity })
@@ -1082,4 +1116,6 @@ module.exports = {
   removeInventory,
   transferInventory,
   receiveInventory,
+  selectInventoryStockAtSite,
+  updateInventoryStockLevel,
 }

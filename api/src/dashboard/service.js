@@ -14,8 +14,6 @@ const differenceInDays = require('date-fns/difference_in_days')
 const isSameMonth = require('date-fns/is_same_month')
 const isSameQuarter = require('date-fns/is_same_quarter')
 const { getUser } = require('../auth/service')
-const subDays = require('date-fns/sub_days')
-const subMinutes = require('date-fns/sub_minutes')
 
 const i18nKeys = {
   // Dashboard
@@ -237,7 +235,7 @@ async function resultDashboard(request) {
     canViewResults(auth)
       ? [
           canViewSites(auth) ? siteQuery : [],
-          knex('FactResultCountDevice as f')
+          knex('FactResultsDeviceByCategory1 as f')
             .innerJoin('Device as d', 'd.id', 'f.deviceId')
             .innerJoin('Site as s', 's.id', 'd.siteId')
             .innerJoin('Assay as a', 'a.id', 'f.assayId')
@@ -1168,89 +1166,145 @@ async function operationalDashboard(request) {
 }
 
 async function actionDashboard(request) {
-  const { query } = request
+  const { auth, query } = request
+  const user = await getUser(auth.credentials.name)
+  const dataConstraints = await getConstraints(auth.credentials)
 
-  const now = new Date()
+  // TODO use auth addConstraints instead of hardcoding Myanmar Rules
+  // for dashboard queries
+  const { jobFunctionName } = await knex('JobFunction as jf')
+    .innerJoin('Job as j', 'j.jobFunctionId', 'jf.id')
+    .innerJoin('Person as ps', 'j.personId', 'ps.id')
+    .where({
+      'ps.userId': user.id,
+      'jf.partnerId': user.partnerId,
+    })
+    .first('jf.name as jobFunctionName')
+  const isAdmin = jobFunctionName === 'Admin'
+
+  const resultQuery = await knex('AlertMessage as am')
+    .innerJoin('MessageStatus as ms', 'am.messageStatusId', 'ms.id')
+    .innerJoin('Notification as n', 'am.id', 'n.alertMessageId')
+    .innerJoin('NotificationType as nt', 'n.notificationTypeId', 'nt.id')
+    .innerJoin('Issue as i', 'n.issueId', 'i.id')
+    .innerJoin('IssueType as it', 'i.issueTypeId', 'it.id')
+    .innerJoin('IssueCategory as ic', 'it.issueCategoryId', 'ic.id')
+    .innerJoin('IssueStatus as is', 'i.issueStatusId', 'is.id')
+    .innerJoin('Site as s', 'am.siteId', 's.id')
+    .where({ 'ms.externalId': 'Sent' })
+    .modify((queryBuilder, query) => {
+      if (!isAdmin) {
+        queryBuilder.where({ 'am.personId': user.personId })
+      }
+      if (query.siteId) {
+        queryBuilder.where({ 'am.siteId': query.siteId })
+      }
+    }, query)
+    .select(
+      'am.id',
+      'am.siteId',
+      'am.deviceId',
+      'am.resultId',
+      'am.message',
+      's.name as siteName',
+      'i.id as issueId',
+      'is.name as status',
+      'is.i18nKey as statusI18nKey',
+      'it.name as issueType',
+      'it.externalId as issueTypeExternalId',
+      'it.i18nKey as issueTypeI18nKey',
+      'ic.externalId as issueCategory',
+      'ic.i18nKey as issueCategoryI18nKey',
+      'nt.name as notificationType',
+      'nt.canAcknowledge',
+      knex('IssueStatusLog as isl')
+        .whereRaw('isl.issueId=i.id')
+        .whereRaw('isl.issueStatusId=is.id')
+        .max('changedOn')
+        .as('statusDate')
+    )
+
+  // TODO do not hardcode inventory item lookup
+  // this is here to always show inventory in action
+  // list for all devices assigned to the user, even
+  // if there are currently no triggered errors since
+  // the user can update stock levels at any time
+  const inventoryItems = await knex('Site as s')
+    .leftJoin('InventoryItem as ii', 'ii.siteId', 's.id')
+    .leftJoin('Consumable as c', 'ii.consumableId', 'c.id')
+    .modify(addConstraints, dataConstraints, { site: 's' })
+    .modify(qb => {
+      if (query.siteId) {
+        qb.where({ 's.id': query.siteId })
+      }
+    })
+    .groupBy('s.id', 'c.id')
+    .select(
+      's.id as siteId',
+      's.name as siteName',
+      'c.id as consumableId',
+      knex.raw('coalesce(sum(ii.quantityOnHand), 0) as totalInStock')
+    )
+
+  // FIXME: Replace always loading the ID for GeneXpert cartridges by adding consumable ID to the AlertMessage table and adding it to the query above
+  const { id: defaultConsumableId } = await knex('Consumable')
+    .where('name', 'GeneXpert TB Cartridge')
+    .first()
+
+  // set consumable id, totalIn Stock on StockInHand issues
+  const inventoryItemsBySite = _.groupBy(inventoryItems, 'siteId')
+  const results = _.map(resultQuery, result => {
+    // TODO we should not be using notification type name
+    // as a constant, as it could be user editable in the future
+    result.notificationType = _.camelCase(result.notificationType)
+    if (result.siteId && result.issueTypeExternalId === 'StockLevelUpdate') {
+      const [inventoryItem] = inventoryItemsBySite[result.siteId]
+      result.totalInStock =
+        inventoryItem == null ? 0 : inventoryItem.totalInStock
+      result.consumableId =
+        inventoryItem == null ? null : inventoryItem.consumableId
+      delete inventoryItemsBySite[result.siteId]
+    }
+    if (result.consumableId == null) {
+      result.consumableId = defaultConsumableId
+    }
+    return result
+  })
+
+  // Add consumables by site that aren't in issues
+  _.forEach(
+    inventoryItemsBySite,
+    ([{ siteId, siteName, totalInStock, consumableId }]) => {
+      results.push({
+        // ID is needed in UI to distinquish table rows
+        id: `stocklevel_${siteId}`,
+        siteId,
+        deviceId: null,
+        resultId: null,
+        message: 'Stock Level',
+        siteName,
+        issueId: null,
+        status: 'OK',
+        statusI18nKey: 'issueStatusOk',
+        statusDate: new Date(),
+        issueType: 'Stock Level Update',
+        issueTypeExternalId: 'StockLevelUpdate',
+        issueTypeI18nKey: 'stockLevelUpdateIssue',
+        issueCategory: 'ReagentHealth',
+        issueCategoryI18nKey: 'issueCategoryReagentHealth',
+        notificationType: 'luStockLevelUpdate',
+        canAcknowledge: 0,
+        totalInStock,
+        consumableId: consumableId != null ? consumableId : defaultConsumableId,
+      })
+    }
+  )
 
   const allActionByCategory = _.flowRight(
     x => _.groupBy(x, 'issueCategory'),
     query.sortDir === 'desc' ? _.reverse : _.identity,
-    x => _.sortBy(x, query.sortCol || _.identity),
-    query.siteId > 0 ? x => _.filter(x, ['siteId', query.siteId]) : _.identity
-  )([
-    {
-      issueCategory: 'Device',
-      siteId: 1116,
-      deviceId: 121,
-      resultId: 4441,
-      site: 'Hinthada TBC',
-      status: 'Active',
-      issue: 'Critical Error on Module 4, Lab Acknowledged',
-    },
-    {
-      issueCategory: 'Device',
-      siteId: 1118,
-      deviceId: 123,
-      resultId: 6502,
-      site: 'Meikhtila TBC',
-      status: 'Active',
-      issue: 'Machine Temperature',
-    },
-    {
-      issueCategory: 'Device',
-      siteId: 1116,
-      deviceId: 121,
-      resultId: 4441,
-      site: 'Hinthada TBC',
-      status: 'Acknowledged',
-      issue: 'Critical Error on Module 4, Lab Acknowledged',
-      acknowledgedOn: subMinutes(subDays(now, 2), 5),
-    },
-    {
-      issueCategory: 'Device',
-      siteId: 1118,
-      deviceId: 123,
-      resultId: 6502,
-      site: 'Meikhtila TBC',
-      status: 'Acknowledged',
-      issue: 'Machine Temperature Errors',
-      acknowledgedOn: subMinutes(subDays(now, 2), 10),
-    },
-    {
-      issueCategory: 'Reagent',
-      siteId: 1116,
-      site: 'Hinthada TBC',
-      status: 'Acknowledged',
-      issue: 'Stock-out expected - Contact Regional Officer.',
-      acknowledgedOn: subMinutes(subDays(now, 2), 5),
-    },
-    {
-      issueCategory: 'Connectivity',
-      siteId: 1116,
-      deviceId: 121,
-      site: 'Hinthada TBC',
-      status: 'Active',
-      issue: 'Hinthada TBC no contact for 9 days.',
-    },
-    {
-      issueCategory: 'Connectivity',
-      siteId: 1118,
-      deviceId: 123,
-      site: 'Meikhtila TBC',
-      status: 'Acknowledged',
-      issue: 'Meikhtila TBC no contact for 9 days.',
-      acknowledgedOn: subMinutes(subDays(now, 1), 5),
-    },
-    {
-      issueCategory: 'Connectivity',
-      siteId: 1121,
-      deviceId: 126,
-      site: 'Mohnyin TBC',
-      status: 'Acknowledged',
-      issue: 'Meikhtila TBC no contact for 8 days.',
-      acknowledgedOn: subMinutes(subDays(now, 5), 5),
-    },
-  ])
+    x => _.sortBy(x, query.sortCol || _.identity)
+  )(results)
 
   const result = {
     ok: true,

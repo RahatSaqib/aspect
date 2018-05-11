@@ -18,9 +18,13 @@
     "prettier:write": "npm run prettier -- --write \"{migrations,seeds,src,test}/**/*.js\"",
     "start": "nodemon src/server.js",
     "start:background": "forever start -o out.log -e err.log src/server.js",
+    "start:background:quiet": "forever start src/server.js",
     "stop:background": "forever stop src/server.js",
+    "stop:background:quiet": "forever stop src/server.js",
     "test": "npm-run-all test:unit test:contract",
+    "test:quiet": "npm-run-all test:unit test:contract:quiet",
     "test:contract": "npm-run-all -c start:background mocha:contract stop:background",
+    "test:contract:quiet": "npm-run-all -c start:background:quiet mocha:contract stop:background:quiet",
     "test:unit": "npm-run-all lint mocha:unit:clear:coverage mocha:unit:coverage"
   },
   "nyc": {

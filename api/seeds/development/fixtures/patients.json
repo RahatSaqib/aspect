@@ -9,7 +9,8 @@
 		"phone": "1-369-429-3917",
 		"age": 35,
 		"gender": "",
-		"hiv": ""
+		"hivStatus": "",
+		"microscopyResult": "Smear Positive"
 	},
 	{
 		"id": "27200823-K",
@@ -21,7 +22,8 @@
 		"phone": "407-3736",
 		"age": 2,
 		"gender": "Female",
-		"hiv": "Unknown"
+		"hivStatus": "HIV Unknown",
+		"microscopyResult": "Smear Negative"
 	},
 	{
 		"id": "21481368-8",
@@ -33,7 +35,8 @@
 		"phone": "1-865-855-8848",
 		"age": 16,
 		"gender": "",
-		"hiv": ""
+		"hivStatus": "",
+		"microscopyResult": "Not Done"
 	},
 	{
 		"id": "34396818-3",
@@ -45,7 +48,8 @@
 		"phone": "1-520-290-9900",
 		"age": 76,
 		"gender": "",
-		"hiv": ""
+		"hivStatus": "",
+		"microscopyResult": "Off-site Microscopy"
 	},
 	{
 		"id": "10853807-4",
@@ -57,7 +61,8 @@
 		"phone": "1-315-746-5420",
 		"age": 53,
 		"gender": "",
-		"hiv": "Positive"
+		"hivStatus": "HIV Positive",
+		"microscopyResult": "In Progress"
 	},
 	{
 		"id": "26526138-8",
@@ -69,7 +74,8 @@
 		"phone": "1-106-602-6180",
 		"age": 78,
 		"gender": "",
-		"hiv": "Unknown"
+		"hivStatus": "HIV Unknown",
+		"microscopyResult": ""
 	},
 	{
 		"id": "9897814-3",
@@ -81,7 +87,8 @@
 		"phone": "1-210-940-6886",
 		"age": 88,
 		"gender": "",
-		"hiv": ""
+		"hivStatus": "",
+		"microscopyResult": "In Progress"
 	},
 	{
 		"id": "26175581-5",
@@ -93,7 +100,8 @@
 		"phone": "591-7268",
 		"age": 36,
 		"gender": "Female",
-		"hiv": ""
+		"hivStatus": "",
+		"microscopyResult": ""
 	},
 	{
 		"id": "36352641-1",
@@ -105,7 +113,8 @@
 		"phone": "1-762-703-7121",
 		"age": 58,
 		"gender": "",
-		"hiv": ""
+		"hivStatus": "",
+		"microscopyResult": ""
 	},
 	{
 		"id": "23450441-K",
@@ -117,7 +126,8 @@
 		"phone": "1-421-449-5054",
 		"age": 55,
 		"gender": "Female",
-		"hiv": ""
+		"hivStatus": "",
+		"microscopyResult": ""
 	},
 	{
 		"id": "7097207-7",
@@ -129,7 +139,8 @@
 		"phone": "1-207-836-9569",
 		"age": 76,
 		"gender": "",
-		"hiv": "Unknown"
+		"hivStatus": "HIV Unknown",
+		"microscopyResult": ""
 	},
 	{
 		"id": "49826321-6",
@@ -141,7 +152,8 @@
 		"phone": "1-210-936-8455",
 		"age": 23,
 		"gender": "Female",
-		"hiv": ""
+		"hivStatus": "",
+		"microscopyResult": "Smear Positive"
 	},
 	{
 		"id": "13443208-K",
@@ -153,7 +165,8 @@
 		"phone": "1-194-435-3872",
 		"age": 32,
 		"gender": "Female",
-		"hiv": ""
+		"hivStatus": "",
+		"microscopyResult": "In Progress"
 	},
 	{
 		"id": "46464360-5",
@@ -165,7 +178,8 @@
 		"phone": "886-5876",
 		"age": 41,
 		"gender": "",
-		"hiv": "Positive"
+		"hivStatus": "HIV Positive",
+		"microscopyResult": ""
 	},
 	{
 		"id": "28570878-8",
@@ -177,7 +191,8 @@
 		"phone": "926-2031",
 		"age": 35,
 		"gender": "",
-		"hiv": ""
+		"hivStatus": "",
+		"microscopyResult": ""
 	},
 	{
 		"id": "35476473-3",
@@ -189,7 +204,8 @@
 		"phone": "1-879-253-1200",
 		"age": 20,
 		"gender": "Male",
-		"hiv": "Positive"
+		"hivStatus": "HIV Positive",
+		"microscopyResult": ""
 	},
 	{
 		"id": "43849695-5",
@@ -201,7 +217,8 @@
 		"phone": "1-371-876-8904",
 		"age": 82,
 		"gender": "",
-		"hiv": ""
+		"hivStatus": "",
+		"microscopyResult": "Smear Positive"
 	},
 	{
 		"id": "42385106-6",
@@ -213,7 +230,8 @@
 		"phone": "119-7839",
 		"age": 91,
 		"gender": "",
-		"hiv": ""
+		"hivStatus": "",
+		"microscopyResult": "Smear Positive"
 	},
 	{
 		"id": "36906526-2",
@@ -225,7 +243,8 @@
 		"phone": "844-4248",
 		"age": 86,
 		"gender": "Female",
-		"hiv": ""
+		"hivStatus": "",
+		"microscopyResult": "Smear Negative"
 	},
 	{
 		"id": "39024841-5",
@@ -237,7 +256,8 @@
 		"phone": "1-787-276-7619",
 		"age": 10,
 		"gender": "",
-		"hiv": ""
+		"hivStatus": "",
+		"microscopyResult": ""
 	},
 	{
 		"id": "48606817-5",
@@ -249,7 +269,8 @@
 		"phone": "256-5492",
 		"age": 70,
 		"gender": "",
-		"hiv": "Negative"
+		"hivStatus": "HIV Negative",
+		"microscopyResult": "Smear Positive"
 	},
 	{
 		"id": "11800606-2",
@@ -261,7 +282,8 @@
 		"phone": "478-8942",
 		"age": 34,
 		"gender": "Male",
-		"hiv": ""
+		"hivStatus": "",
+		"microscopyResult": ""
 	},
 	{
 		"id": "5809258-4",
@@ -273,7 +295,8 @@
 		"phone": "928-1110",
 		"age": 18,
 		"gender": "Female",
-		"hiv": ""
+		"hivStatus": "",
+		"microscopyResult": ""
 	},
 	{
 		"id": "6849325-0",
@@ -285,7 +308,8 @@
 		"phone": "1-248-719-3578",
 		"age": 71,
 		"gender": "Female",
-		"hiv": ""
+		"hivStatus": "",
+		"microscopyResult": ""
 	},
 	{
 		"id": "21286204-5",
@@ -297,7 +321,8 @@
 		"phone": "1-899-715-9081",
 		"age": 69,
 		"gender": "Female",
-		"hiv": ""
+		"hivStatus": "",
+		"microscopyResult": ""
 	},
 	{
 		"id": "24173598-2",
@@ -309,7 +334,8 @@
 		"phone": "1-140-414-7907",
 		"age": 35,
 		"gender": "Female",
-		"hiv": "Positive"
+		"hivStatus": "HIV Positive",
+		"microscopyResult": "Smear Positive"
 	},
 	{
 		"id": "48170639-4",
@@ -321,7 +347,8 @@
 		"phone": "1-478-566-4602",
 		"age": 48,
 		"gender": "",
-		"hiv": "Unknown"
+		"hivStatus": "HIV Unknown",
+		"microscopyResult": ""
 	},
 	{
 		"id": "46881390-4",
@@ -333,7 +360,8 @@
 		"phone": "1-490-869-5572",
 		"age": 31,
 		"gender": "",
-		"hiv": ""
+		"hivStatus": "",
+		"microscopyResult": ""
 	},
 	{
 		"id": "10602928-8",
@@ -345,7 +373,8 @@
 		"phone": "1-923-478-4972",
 		"age": 79,
 		"gender": "Male",
-		"hiv": ""
+		"hivStatus": "",
+		"microscopyResult": ""
 	},
 	{
 		"id": "50943394-1",
@@ -357,7 +386,8 @@
 		"phone": "1-137-351-0801",
 		"age": 67,
 		"gender": "",
-		"hiv": ""
+		"hivStatus": "",
+		"microscopyResult": ""
 	},
 	{
 		"id": "27830264-4",
@@ -369,7 +399,8 @@
 		"phone": "1-350-577-7062",
 		"age": 91,
 		"gender": "Female",
-		"hiv": ""
+		"hivStatus": "",
+		"microscopyResult": "Not Done"
 	},
 	{
 		"id": "17900086-5",
@@ -381,7 +412,8 @@
 		"phone": "670-7787",
 		"age": 71,
 		"gender": "Female",
-		"hiv": ""
+		"hivStatus": "",
+		"microscopyResult": ""
 	},
 	{
 		"id": "31841760-1",
@@ -393,7 +425,8 @@
 		"phone": "733-5530",
 		"age": 49,
 		"gender": "Male",
-		"hiv": "Negative"
+		"hivStatus": "HIV Negative",
+		"microscopyResult": ""
 	},
 	{
 		"id": "38241399-7",
@@ -405,7 +438,8 @@
 		"phone": "1-174-793-4819",
 		"age": 21,
 		"gender": "",
-		"hiv": "Negative"
+		"hivStatus": "HIV Negative",
+		"microscopyResult": "Smear Positive"
 	},
 	{
 		"id": "47183249-9",
@@ -417,7 +451,8 @@
 		"phone": "1-401-227-9869",
 		"age": 81,
 		"gender": "",
-		"hiv": "Negative"
+		"hivStatus": "HIV Negative",
+		"microscopyResult": ""
 	},
 	{
 		"id": "21803171-4",
@@ -429,7 +464,8 @@
 		"phone": "598-9804",
 		"age": 74,
 		"gender": "",
-		"hiv": "Positive"
+		"hivStatus": "HIV Positive",
+		"microscopyResult": "Smear Negative"
 	},
 	{
 		"id": "27520794-2",
@@ -441,7 +477,8 @@
 		"phone": "1-985-987-8827",
 		"age": 76,
 		"gender": "Male",
-		"hiv": "Unknown"
+		"hivStatus": "HIV Unknown",
+		"microscopyResult": "Smear Positive"
 	},
 	{
 		"id": "10179032-0",
@@ -453,7 +490,8 @@
 		"phone": "903-6873",
 		"age": 31,
 		"gender": "Male",
-		"hiv": "Positive"
+		"hivStatus": "HIV Positive",
+		"microscopyResult": "In Progress"
 	},
 	{
 		"id": "45114355-7",
@@ -465,7 +503,8 @@
 		"phone": "619-2679",
 		"age": 63,
 		"gender": "Male",
-		"hiv": "Negative"
+		"hivStatus": "HIV Negative",
+		"microscopyResult": ""
 	},
 	{
 		"id": "16618017-1",
@@ -477,7 +516,8 @@
 		"phone": "1-685-215-1455",
 		"age": 93,
 		"gender": "",
-		"hiv": ""
+		"hivStatus": "",
+		"microscopyResult": ""
 	},
 	{
 		"id": "19193172-6",
@@ -489,7 +529,8 @@
 		"phone": "870-9930",
 		"age": 13,
 		"gender": "Female",
-		"hiv": ""
+		"hivStatus": "",
+		"microscopyResult": ""
 	},
 	{
 		"id": "29438477-4",
@@ -501,7 +542,8 @@
 		"phone": "838-3442",
 		"age": 20,
 		"gender": "",
-		"hiv": ""
+		"hivStatus": "",
+		"microscopyResult": ""
 	},
 	{
 		"id": "48673148-6",
@@ -513,7 +555,8 @@
 		"phone": "1-169-409-2527",
 		"age": 100,
 		"gender": "",
-		"hiv": "Unknown"
+		"hivStatus": "HIV Unknown",
+		"microscopyResult": ""
 	},
 	{
 		"id": "18616804-6",
@@ -525,7 +568,8 @@
 		"phone": "1-912-896-3979",
 		"age": 100,
 		"gender": "",
-		"hiv": "Positive"
+		"hivStatus": "HIV Positive",
+		"microscopyResult": "Smear Positive"
 	},
 	{
 		"id": "26083869-5",
@@ -537,7 +581,8 @@
 		"phone": "1-790-960-0465",
 		"age": 46,
 		"gender": "",
-		"hiv": "Negative"
+		"hivStatus": "HIV Negative",
+		"microscopyResult": ""
 	},
 	{
 		"id": "38605777-K",
@@ -549,7 +594,8 @@
 		"phone": "1-927-497-9754",
 		"age": 70,
 		"gender": "Female",
-		"hiv": ""
+		"hivStatus": "",
+		"microscopyResult": ""
 	},
 	{
 		"id": "11422429-4",
@@ -561,7 +607,8 @@
 		"phone": "338-0691",
 		"age": 25,
 		"gender": "",
-		"hiv": "Positive"
+		"hivStatus": "HIV Positive",
+		"microscopyResult": ""
 	},
 	{
 		"id": "12666920-8",
@@ -573,7 +620,8 @@
 		"phone": "1-658-901-9680",
 		"age": 32,
 		"gender": "Female",
-		"hiv": "Unknown"
+		"hivStatus": "HIV Unknown",
+		"microscopyResult": ""
 	},
 	{
 		"id": "23116150-3",
@@ -585,7 +633,8 @@
 		"phone": "945-5544",
 		"age": 78,
 		"gender": "",
-		"hiv": "Unknown"
+		"hivStatus": "HIV Unknown",
+		"microscopyResult": "Smear Positive"
 	},
 	{
 		"id": "6831421-6",
@@ -597,7 +646,8 @@
 		"phone": "1-834-426-7908",
 		"age": 4,
 		"gender": "",
-		"hiv": ""
+		"hivStatus": "",
+		"microscopyResult": ""
 	},
 	{
 		"id": "33904755-3",
@@ -609,7 +659,8 @@
 		"phone": "1-701-430-3447",
 		"age": 11,
 		"gender": "",
-		"hiv": ""
+		"hivStatus": "",
+		"microscopyResult": ""
 	},
 	{
 		"id": "31580238-5",
@@ -621,7 +672,8 @@
 		"phone": "1-807-645-3143",
 		"age": 63,
 		"gender": "",
-		"hiv": ""
+		"hivStatus": "",
+		"microscopyResult": ""
 	},
 	{
 		"id": "22182026-6",
@@ -633,7 +685,8 @@
 		"phone": "1-253-442-7506",
 		"age": 92,
 		"gender": "Female",
-		"hiv": ""
+		"hivStatus": "",
+		"microscopyResult": ""
 	},
 	{
 		"id": "46594196-0",
@@ -645,7 +698,8 @@
 		"phone": "1-787-163-6706",
 		"age": 58,
 		"gender": "",
-		"hiv": ""
+		"hivStatus": "",
+		"microscopyResult": ""
 	},
 	{
 		"id": "38847315-0",
@@ -657,7 +711,8 @@
 		"phone": "1-245-967-0341",
 		"age": 31,
 		"gender": "Female",
-		"hiv": ""
+		"hivStatus": "",
+		"microscopyResult": "Smear Negative"
 	},
 	{
 		"id": "50958649-7",
@@ -669,7 +724,8 @@
 		"phone": "1-946-619-2434",
 		"age": 80,
 		"gender": "",
-		"hiv": "Positive"
+		"hivStatus": "HIV Positive",
+		"microscopyResult": "Smear Positive"
 	},
 	{
 		"id": "19602417-4",
@@ -681,7 +737,8 @@
 		"phone": "1-449-919-1614",
 		"age": 95,
 		"gender": "",
-		"hiv": "Negative"
+		"hivStatus": "HIV Negative",
+		"microscopyResult": ""
 	},
 	{
 		"id": "17172801-0",
@@ -693,7 +750,8 @@
 		"phone": "515-1192",
 		"age": 39,
 		"gender": "Male",
-		"hiv": "Negative"
+		"hivStatus": "HIV Negative",
+		"microscopyResult": "Not on Form"
 	},
 	{
 		"id": "17744641-6",
@@ -705,7 +763,8 @@
 		"phone": "1-805-805-1310",
 		"age": 88,
 		"gender": "",
-		"hiv": ""
+		"hivStatus": "",
+		"microscopyResult": ""
 	},
 	{
 		"id": "11685574-7",
@@ -717,7 +776,8 @@
 		"phone": "1-702-512-4986",
 		"age": 64,
 		"gender": "Male",
-		"hiv": ""
+		"hivStatus": "",
+		"microscopyResult": ""
 	},
 	{
 		"id": "32391211-4",
@@ -729,7 +789,8 @@
 		"phone": "165-0888",
 		"age": 58,
 		"gender": "",
-		"hiv": "Positive"
+		"hivStatus": "HIV Positive",
+		"microscopyResult": ""
 	},
 	{
 		"id": "19222641-4",
@@ -741,7 +802,8 @@
 		"phone": "1-781-179-9834",
 		"age": 27,
 		"gender": "Female",
-		"hiv": "Negative"
+		"hivStatus": "HIV Negative",
+		"microscopyResult": ""
 	},
 	{
 		"id": "40396835-8",
@@ -753,7 +815,8 @@
 		"phone": "891-2638",
 		"age": 69,
 		"gender": "Male",
-		"hiv": "Negative"
+		"hivStatus": "HIV Negative",
+		"microscopyResult": ""
 	},
 	{
 		"id": "41776155-1",
@@ -765,7 +828,8 @@
 		"phone": "1-728-437-8138",
 		"age": 14,
 		"gender": "Female",
-		"hiv": "Positive"
+		"hivStatus": "HIV Positive",
+		"microscopyResult": ""
 	},
 	{
 		"id": "17209694-8",
@@ -777,7 +841,8 @@
 		"phone": "869-8657",
 		"age": 25,
 		"gender": "",
-		"hiv": "Negative"
+		"hivStatus": "HIV Negative",
+		"microscopyResult": "Smear Positive"
 	},
 	{
 		"id": "25697148-8",
@@ -789,7 +854,8 @@
 		"phone": "1-326-997-6501",
 		"age": 82,
 		"gender": "Male",
-		"hiv": "Unknown"
+		"hivStatus": "HIV Unknown",
+		"microscopyResult": "Not Done"
 	},
 	{
 		"id": "41648466-K",
@@ -801,7 +867,8 @@
 		"phone": "559-3749",
 		"age": 83,
 		"gender": "Male",
-		"hiv": "Negative"
+		"hivStatus": "HIV Negative",
+		"microscopyResult": ""
 	},
 	{
 		"id": "23232806-1",
@@ -813,7 +880,8 @@
 		"phone": "742-2020",
 		"age": 11,
 		"gender": "",
-		"hiv": ""
+		"hivStatus": "",
+		"microscopyResult": "Off-site Microscopy"
 	},
 	{
 		"id": "44988043-9",
@@ -825,7 +893,8 @@
 		"phone": "1-411-402-5792",
 		"age": 10,
 		"gender": "Female",
-		"hiv": "Negative"
+		"hivStatus": "HIV Negative",
+		"microscopyResult": ""
 	},
 	{
 		"id": "17611186-0",
@@ -837,7 +906,8 @@
 		"phone": "680-6410",
 		"age": 69,
 		"gender": "Female",
-		"hiv": ""
+		"hivStatus": "",
+		"microscopyResult": ""
 	},
 	{
 		"id": "29344662-8",
@@ -849,7 +919,8 @@
 		"phone": "194-5259",
 		"age": 97,
 		"gender": "Female",
-		"hiv": "Unknown"
+		"hivStatus": "HIV Unknown",
+		"microscopyResult": ""
 	},
 	{
 		"id": "8552825-4",
@@ -861,7 +932,8 @@
 		"phone": "431-0983",
 		"age": 14,
 		"gender": "",
-		"hiv": "Positive"
+		"hivStatus": "HIV Positive",
+		"microscopyResult": "Not on Form"
 	},
 	{
 		"id": "35771497-4",
@@ -873,7 +945,8 @@
 		"phone": "1-779-412-9613",
 		"age": 45,
 		"gender": "",
-		"hiv": ""
+		"hivStatus": "",
+		"microscopyResult": "Smear Positive"
 	},
 	{
 		"id": "41373112-7",
@@ -885,7 +958,8 @@
 		"phone": "955-9328",
 		"age": 35,
 		"gender": "Male",
-		"hiv": "Positive"
+		"hivStatus": "HIV Positive",
+		"microscopyResult": ""
 	},
 	{
 		"id": "35772136-9",
@@ -897,7 +971,8 @@
 		"phone": "1-665-269-2823",
 		"age": 52,
 		"gender": "",
-		"hiv": ""
+		"hivStatus": "",
+		"microscopyResult": ""
 	},
 	{
 		"id": "5337958-3",
@@ -909,7 +984,8 @@
 		"phone": "908-4158",
 		"age": 53,
 		"gender": "",
-		"hiv": "Unknown"
+		"hivStatus": "HIV Unknown",
+		"microscopyResult": "Smear Negative"
 	},
 	{
 		"id": "11168703-K",
@@ -921,7 +997,8 @@
 		"phone": "509-9214",
 		"age": 60,
 		"gender": "Female",
-		"hiv": "Positive"
+		"hivStatus": "HIV Positive",
+		"microscopyResult": ""
 	},
 	{
 		"id": "32636577-7",
@@ -933,7 +1010,8 @@
 		"phone": "313-0967",
 		"age": 81,
 		"gender": "",
-		"hiv": ""
+		"hivStatus": "",
+		"microscopyResult": ""
 	},
 	{
 		"id": "25282187-2",
@@ -945,7 +1023,8 @@
 		"phone": "391-4418",
 		"age": 61,
 		"gender": "",
-		"hiv": ""
+		"hivStatus": "",
+		"microscopyResult": ""
 	},
 	{
 		"id": "50601185-K",
@@ -957,7 +1036,8 @@
 		"phone": "101-6446",
 		"age": 52,
 		"gender": "",
-		"hiv": "Negative"
+		"hivStatus": "HIV Negative",
+		"microscopyResult": ""
 	},
 	{
 		"id": "27887513-K",
@@ -969,7 +1049,8 @@
 		"phone": "843-8039",
 		"age": 6,
 		"gender": "",
-		"hiv": ""
+		"hivStatus": "",
+		"microscopyResult": ""
 	},
 	{
 		"id": "27937092-9",
@@ -981,7 +1062,8 @@
 		"phone": "854-3320",
 		"age": 88,
 		"gender": "Male",
-		"hiv": "Unknown"
+		"hivStatus": "HIV Unknown",
+		"microscopyResult": ""
 	},
 	{
 		"id": "44043454-1",
@@ -993,7 +1075,8 @@
 		"phone": "1-957-346-0244",
 		"age": 78,
 		"gender": "",
-		"hiv": ""
+		"hivStatus": "",
+		"microscopyResult": ""
 	},
 	{
 		"id": "12301765-K",
@@ -1005,7 +1088,8 @@
 		"phone": "1-404-777-4967",
 		"age": 81,
 		"gender": "Male",
-		"hiv": "Negative"
+		"hivStatus": "HIV Negative",
+		"microscopyResult": "Smear Positive"
 	},
 	{
 		"id": "14931966-2",
@@ -1017,7 +1101,8 @@
 		"phone": "1-105-943-6758",
 		"age": 100,
 		"gender": "Female",
-		"hiv": ""
+		"hivStatus": "",
+		"microscopyResult": ""
 	},
 	{
 		"id": "7954806-5",
@@ -1029,7 +1114,8 @@
 		"phone": "1-291-797-3370",
 		"age": 82,
 		"gender": "Male",
-		"hiv": ""
+		"hivStatus": "",
+		"microscopyResult": ""
 	},
 	{
 		"id": "41563185-5",
@@ -1041,7 +1127,8 @@
 		"phone": "1-735-814-6044",
 		"age": 57,
 		"gender": "Male",
-		"hiv": ""
+		"hivStatus": "",
+		"microscopyResult": ""
 	},
 	{
 		"id": "40493455-4",
@@ -1053,7 +1140,8 @@
 		"phone": "1-246-106-3465",
 		"age": 58,
 		"gender": "",
-		"hiv": "Unknown"
+		"hivStatus": "HIV Unknown",
+		"microscopyResult": ""
 	},
 	{
 		"id": "31124873-1",
@@ -1065,7 +1153,8 @@
 		"phone": "119-4032",
 		"age": 55,
 		"gender": "Male",
-		"hiv": "Negative"
+		"hivStatus": "HIV Negative",
+		"microscopyResult": "Not on Form"
 	},
 	{
 		"id": "38026680-6",
@@ -1077,7 +1166,8 @@
 		"phone": "1-600-920-7557",
 		"age": 61,
 		"gender": "Female",
-		"hiv": ""
+		"hivStatus": "",
+		"microscopyResult": ""
 	},
 	{
 		"id": "9034930-9",
@@ -1089,7 +1179,8 @@
 		"phone": "1-830-534-9766",
 		"age": 3,
 		"gender": "",
-		"hiv": ""
+		"hivStatus": "",
+		"microscopyResult": ""
 	},
 	{
 		"id": "32585406-5",
@@ -1101,7 +1192,8 @@
 		"phone": "713-2053",
 		"age": 44,
 		"gender": "Female",
-		"hiv": "Positive"
+		"hivStatus": "HIV Positive",
+		"microscopyResult": "Smear Positive"
 	},
 	{
 		"id": "8388579-3",
@@ -1113,7 +1205,8 @@
 		"phone": "246-2572",
 		"age": 68,
 		"gender": "",
-		"hiv": "Negative"
+		"hivStatus": "HIV Negative",
+		"microscopyResult": ""
 	},
 	{
 		"id": "34303579-9",
@@ -1125,7 +1218,8 @@
 		"phone": "164-3892",
 		"age": 62,
 		"gender": "Female",
-		"hiv": "Negative"
+		"hivStatus": "HIV Negative",
+		"microscopyResult": ""
 	},
 	{
 		"id": "8151197-7",
@@ -1137,7 +1231,8 @@
 		"phone": "1-965-330-4236",
 		"age": 1,
 		"gender": "Male",
-		"hiv": ""
+		"hivStatus": "",
+		"microscopyResult": "Not Done"
 	},
 	{
 		"id": "34501873-5",
@@ -1149,7 +1244,8 @@
 		"phone": "107-1108",
 		"age": 50,
 		"gender": "",
-		"hiv": ""
+		"hivStatus": "",
+		"microscopyResult": "Smear Negative"
 	},
 	{
 		"id": "10537653-7",
@@ -1161,7 +1257,8 @@
 		"phone": "1-331-274-5807",
 		"age": 100,
 		"gender": "Female",
-		"hiv": ""
+		"hivStatus": "",
+		"microscopyResult": ""
 	},
 	{
 		"id": "45056800-7",
@@ -1173,7 +1270,8 @@
 		"phone": "340-0410",
 		"age": 28,
 		"gender": "",
-		"hiv": ""
+		"hivStatus": "HIV Positive",
+		"microscopyResult": "Not on Form"
 	},
 	{
 		"id": "14710402-2",
@@ -1185,7 +1283,8 @@
 		"phone": "1-744-473-5962",
 		"age": 82,
 		"gender": "",
-		"hiv": ""
+		"hivStatus": "",
+		"microscopyResult": "Not Done"
 	},
 	{
 		"id": "48880213-5",
@@ -1197,6 +1296,7 @@
 		"phone": "548-6131",
 		"age": 58,
 		"gender": "",
-		"hiv": ""
+		"hivStatus": "HIV Positive",
+		"microscopyResult": "Off-site Microscopy"
 	}
 ]

@@ -1,5 +1,8 @@
 module.exports = require('../../src/db').seed(seed)
 
+const ADMIN_PW = '8v5TMxkpzP'
+const RO_PW = 'u4W9wupFBA'
+
 const bcrypt = require('bcrypt')
 const _ = require('lodash')
 
@@ -22,7 +25,7 @@ async function seed(knex) {
   // Create admin user and audit fields
   const [adminId] = await knex('User').insert({
     name: 'myanmar_admin',
-    password: bcrypt.hashSync('@u?MnXZ07$', saltRounds),
+    password: bcrypt.hashSync(ADMIN_PW, saltRounds),
     approved: 1,
     createdOn: now,
     lockedOut: 0,
@@ -93,6 +96,19 @@ async function seed(knex) {
     .whereNull('g.lgaId')
     .select('s.id', 's.name', 's.abbreviation')
 
+  // create site for GxAlert device
+  const gxAlertSiteId = await knex('Site').insert(
+    Object.assign({}, auditFields, {
+      name: 'GxAlert Site',
+      shortName: 'GxA Site',
+      externalId: 'gxalert',
+      partnerId,
+      geographyId: myanmarGeographyId,
+      createdOn: new Date(),
+      updatedOn: new Date(),
+    })
+  )
+
   // insert GxAlert device
   const gxAlertDeviceId = await knex('Device').insert(
     Object.assign({}, auditFields, {
@@ -101,6 +117,7 @@ async function seed(knex) {
       deviceStatusId: deviceStatuses.approved.id,
       partnerId,
       geographyId: myanmarGeographyId,
+      siteId: gxAlertSiteId,
       createdOn: new Date(),
       updatedOn: new Date(),
       lastPingOn: new Date(),
@@ -120,11 +137,6 @@ async function seed(knex) {
       auditFields
     )
   )
-
-  const statesByAbbreviation = myanmarStates.reduce((memo, state) => {
-    memo[state.abbreviation] = state
-    return memo
-  }, {})
 
   // Permissions for Myanmar Admin
   const [adminPersonId] = await knex('Person').insert(
@@ -212,6 +224,10 @@ async function seed(knex) {
       jobFunctionId: jobFunctionIdLabUser,
       featureId: featureModules.actionDashboard,
     },
+    {
+      jobFunctionId: jobFunctionIdLabUser,
+      featureId: featureModules.reportDashboard,
+    },
   ])
 
   await knex('JobFunctionPermission').insert([
@@ -226,6 +242,7 @@ async function seed(knex) {
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.result.admin },
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.site.admin },
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.assay.admin },
+    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.issue.admin },
     {
       jobFunctionId: jobFunctionIdAdmin,
       permissionId: modules.inventory.admin,
@@ -243,6 +260,10 @@ async function seed(knex) {
     {
       jobFunctionId: jobFunctionIdRegionalOfficer,
       permissionId: modules.site.admin,
+    },
+    {
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      permissionId: modules.issue.admin,
     },
     {
       jobFunctionId: jobFunctionIdRegionalOfficer,
@@ -267,6 +288,10 @@ async function seed(knex) {
     },
     {
       jobFunctionId: jobFunctionIdLabUser,
+      permissionId: modules.issue.admin,
+    },
+    {
+      jobFunctionId: jobFunctionIdLabUser,
       permissionId: modules.inventory.admin,
     },
     {
@@ -285,23 +310,23 @@ async function seed(knex) {
     geographyId: myanmarGeographyId,
   })
 
-  // Regional Officer Jobs and Targets
-  const adminRegions = ['AYY', 'KCN', 'MDY']
+  // Create a regional officer login and targets for every region
   const targetTokens = ['Total', 'MDR', 'Smear', 'HIV', 'Children']
-  let regionNumber = 0
   await Promise.all(
-    _.map(adminRegions, async region => {
-      regionNumber += 1
-      const regionUserName = `myanmar_ro${regionNumber}`
+    _.map(myanmarStates, async state => {
+      const regionUserName = `${state.name
+        .replace(/\W/gi, '')
+        .toLowerCase()
+        .trim()}_ro`
       const { id: regionId } = await knex('Geography')
         .where({
           countryId,
-          stateId: statesByAbbreviation[region].id,
+          stateId: state.id,
         })
         .first()
       const [regionUserId] = await knex('User').insert({
         name: regionUserName,
-        password: bcrypt.hashSync(regionUserName, saltRounds),
+        password: bcrypt.hashSync(RO_PW, saltRounds),
         approved: 1,
         createdOn: now,
         lockedOut: 0,
@@ -311,7 +336,7 @@ async function seed(knex) {
         Object.assign(
           {
             userId: regionUserId,
-            name: `Myanmar Regional Officer ${region}`,
+            name: `Myanmar Regional Officer ${state.name}`,
             lastPartnerId: partnerId,
             lastCountryId: countryId,
             geographyId: myanmarGeographyId,
@@ -426,6 +451,7 @@ async function seed(knex) {
         issueTypeId: issueTypes.DeviceOffline.id,
         jobFunctionId: jobFunctionIdLabUser,
         level: 1,
+        canAcknowledge: 1,
         messageTypeId: defaultMessageTypes.DeviceOffline.id,
       },
       auditFields
@@ -437,6 +463,7 @@ async function seed(knex) {
         issueTypeId: issueTypes.DeviceOffline.id,
         jobFunctionId: jobFunctionIdRegionalOfficer,
         level: 2,
+        canAcknowledge: 1,
         messageTypeId: defaultMessageTypes.DeviceOffline.id,
       },
       auditFields
@@ -448,10 +475,38 @@ async function seed(knex) {
         issueTypeId: issueTypes.DeviceOffline.id,
         jobFunctionId: jobFunctionIdRegionalOfficer,
         level: 3,
+        canAcknowledge: 0,
         messageTypeId: defaultMessageTypes.DeviceOffline.id,
       },
       auditFields
     ),
+  ])
+
+  // Issue Escalation Triggers
+  await knex('IssueEscalationTrigger').insert([
+    {
+      issueTypeId: issueTypes.DeviceOffline.id,
+      partnerId,
+      escalateToLevel: 2,
+      escalationConditions: JSON.stringify({
+        evaluationMethod: 'issue-age',
+        evaluationParameter: { days: 30 },
+      }),
+      createdOn: now,
+      updatedOn: now,
+    },
+    {
+      issueTypeId: issueTypes.DeviceOffline.id,
+      partnerId,
+      escalateToLevel: 3,
+      escalationConditions: JSON.stringify({
+        evaluationMethod: 'sql-script',
+        evaluationParameter:
+          './sqlScripts/Myanmar/issues/escalations/deviceOfflineLevel3ROEscalatedNetwork.sql',
+      }),
+      createdOn: now,
+      updatedOn: now,
+    },
   ])
 }
 
