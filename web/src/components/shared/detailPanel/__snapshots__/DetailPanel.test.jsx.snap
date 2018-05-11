@@ -1,0 +1,183 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DetailPanel module DetailGroup component should render correctly 1`] = `
+<div
+  className="Container"
+  data-react-toolbox="card"
+>
+  <div
+    className="Header"
+    onClick={[Function]}
+    onKeyDown={undefined}
+    role="button"
+    tabIndex="0"
+  >
+    <div
+      className="Label"
+    >
+      Patient ID
+    </div>
+    <div
+      className="Header__Content"
+    >
+      <div
+        className="Field__Container"
+      >
+        <div
+          className="Container"
+        >
+          <label
+            className="Container__Label Container__Label--hidden"
+            htmlFor="Patient_ID"
+          >
+            Patient ID
+          </label>
+          <div
+            className="Container__Value"
+            id="Patient_ID"
+          >
+            23116150-3
+          </div>
+        </div>
+      </div>
+    </div>
+    <button
+      className=" Header__Icon"
+      data-react-toolbox="button"
+      disabled={false}
+      href={undefined}
+      onMouseDown={[Function]}
+      onMouseLeave={[Function]}
+      onMouseUp={[Function]}
+      onTouchStart={[Function]}
+      type="button"
+    >
+      <svg
+        fill="currentColor"
+        height="1em"
+        preserveAspectRatio="xMidYMid meet"
+        style={
+          Object {
+            "color": undefined,
+            "verticalAlign": "middle",
+          }
+        }
+        viewBox="0 0 40 40"
+        width="1em"
+      >
+        <g>
+          <path
+            d="m27.7 14.3l2.3 2.3-10 10-10-10 2.3-2.3 7.7 7.7z"
+          />
+        </g>
+      </svg>
+    </button>
+  </div>
+</div>
+`;
+
+exports[`DetailPanel module DetailPanel component should render correctly 1`] = `
+<div
+  className=""
+  data-react-toolbox="card"
+>
+  <div
+    className="Title Title"
+  >
+    <svg
+      className="Title__Icon Title__Icon"
+      fill="currentColor"
+      height="1em"
+      preserveAspectRatio="xMidYMid meet"
+      style={
+        Object {
+          "color": undefined,
+          "verticalAlign": "middle",
+        }
+      }
+      viewBox="0 0 40 40"
+      width="1em"
+    >
+      <g>
+        <path
+          d="m28.4 15v-3.4h-16.8v3.4h16.8z m0 6.6v-3.2h-16.8v3.2h16.8z m-5 6.8v-3.4h-11.8v3.4h11.8z m-3.4-23.4c-0.9 0-1.6 0.7-1.6 1.6s0.7 1.8 1.6 1.8 1.6-0.8 1.6-1.8-0.7-1.6-1.6-1.6z m11.6 0c1.8 0 3.4 1.6 3.4 3.4v23.2c0 1.8-1.6 3.4-3.4 3.4h-23.2c-1.8 0-3.4-1.6-3.4-3.4v-23.2c0-1.8 1.6-3.4 3.4-3.4h6.9c0.7-2 2.5-3.4 4.7-3.4s4 1.4 4.7 3.4h6.9z"
+        />
+      </g>
+    </svg>
+    Test Result
+  </div>
+  <div
+    className="Container"
+    data-react-toolbox="card"
+  >
+    <div
+      className="Header"
+      onClick={[Function]}
+      onKeyDown={undefined}
+      role="button"
+      tabIndex="0"
+    >
+      <div
+        className="Label"
+      >
+        Patient ID
+      </div>
+      <div
+        className="Header__Content"
+      >
+        <div
+          className="Field__Container"
+        >
+          <div
+            className="Container"
+          >
+            <label
+              className="Container__Label Container__Label--hidden"
+              htmlFor="Patient_ID"
+            >
+              Patient ID
+            </label>
+            <div
+              className="Container__Value"
+              id="Patient_ID"
+            >
+              23116150-3
+            </div>
+          </div>
+        </div>
+      </div>
+      <button
+        className=" Header__Icon"
+        data-react-toolbox="button"
+        disabled={false}
+        href={undefined}
+        onMouseDown={[Function]}
+        onMouseLeave={[Function]}
+        onMouseUp={[Function]}
+        onTouchStart={[Function]}
+        type="button"
+      >
+        <svg
+          fill="currentColor"
+          height="1em"
+          preserveAspectRatio="xMidYMid meet"
+          style={
+            Object {
+              "color": undefined,
+              "verticalAlign": "middle",
+            }
+          }
+          viewBox="0 0 40 40"
+          width="1em"
+        >
+          <g>
+            <path
+              d="m27.7 14.3l2.3 2.3-10 10-10-10 2.3-2.3 7.7 7.7z"
+            />
+          </g>
+        </svg>
+      </button>
+    </div>
+  </div>
+</div>
+`;
