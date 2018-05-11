@@ -81,13 +81,13 @@ async function validateUserAtGxAlert(username, password, user) {
     return null
   }
 
-  const partner = partners[0]
+  const { id: partnerId } = partners[0]
   // -------------------------------------------
   // calculate jobFunctionId
   // -------------------------------------------
   const allJobFunctions = await query('Get job functions for this partner')
     .from('JobFunction')
-    .where('partnerId', partner.id)
+    .where('partnerId', partnerId)
     .select('id', 'name')
 
   let jobFunction
@@ -150,8 +150,8 @@ async function validateUserAtGxAlert(username, password, user) {
     }
 
     // create/update Person in our db
-    // pass 'knex' for transaction integrity
-    const personId = await updateCreatePerson(knex, userId, gxUser)
+    const personOptions = { userId, partnerId, countryId }
+    const personId = await updateCreatePerson(knex, gxUser, personOptions)
 
     // insert Job if not exists
     if (jobFunctionId) {
@@ -262,7 +262,11 @@ async function setJobContext(knex, jobId, gxUser) {
 // --------------------------------------------------------------------------------------------
 // updateCreatePerson
 // --------------------------------------------------------------------------------------------
-async function updateCreatePerson(knex, userId, gxUser) {
+async function updateCreatePerson(
+  knex,
+  gxUser,
+  { userId, partnerId: lastPartnerId, countryId: lastCountryId }
+) {
   const now = new Date()
   // user id for required fields createdBy, updatedBy
   const { id: adminId } = await knex
@@ -305,6 +309,8 @@ async function updateCreatePerson(knex, userId, gxUser) {
   if (!personId) {
     ;[personId] = await knex('Person').insert({
       userId,
+      lastPartnerId,
+      lastCountryId,
       createdOn: now,
       createdBy: adminId,
       ...basePersonData,
