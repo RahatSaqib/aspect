@@ -31,6 +31,27 @@ const routes = [
       },
     },
   },
+  {
+    method: 'GET',
+    path: '/report/{fileName}',
+    handler: {
+      file(request) {
+        return `./placeholders/${request.params.fileName}`
+      },
+    },
+    config: {
+      description: 'Report Placeholder',
+      notes: 'Returns a static report file as a placeholder',
+      auth: false,
+      validate: {
+        params: {
+          fileName: Joi.string()
+            .description('File name')
+            .required(),
+        },
+      },
+    },
+  },
 ]
 
 module.exports = { routes }
