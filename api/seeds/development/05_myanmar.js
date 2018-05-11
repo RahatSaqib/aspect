@@ -1268,16 +1268,17 @@ async function seed(knex) {
     _.map(devices, async device => {
       await Promise.all(
         _.map(roIssueTypeIds, async issueTypeId => {
+          const issueStatusId =
+            issueTypeId === issueTypes.StockLevelUpdate.id
+              ? issueStatusOkId
+              : _.random(9) > 6
+                ? issueStatusActiveId
+                : issueStatusAcknowledgedId
           const [issueId] = await knex('Issue').insert(
             Object.assign(
               {
                 issueTypeId,
-                issueStatusId:
-                  issueTypeId === issueTypes.StockLevelUpdate.id
-                    ? issueStatusOkId
-                    : _.random(9) > 6
-                      ? issueStatusActiveId
-                      : issueStatusAcknowledgedId,
+                issueStatusId,
                 deviceId: device.id,
                 siteId: device.siteId,
                 geographyId: device.geographyId,
@@ -1285,6 +1286,24 @@ async function seed(knex) {
               issue
             )
           )
+          if (issueStatusId === issueStatusAcknowledgedId) {
+            await knex('IssueStatusLog').insert({
+              issueId,
+              issueStatusId: issueStatusActiveId,
+              changedOn: now,
+              createdOn: now,
+              createdBy: adminId,
+            })
+          }
+          if (issueStatusId !== issueStatusActiveId) {
+            await knex('IssueStatusLog').insert({
+              issueId,
+              issueStatusId,
+              changedOn: new Date(+now + millisInHour),
+              createdOn: new Date(+now + millisInHour - 1000),
+              createdBy: adminId,
+            })
+          }
           issueIds.push(issueId)
         })
       )
