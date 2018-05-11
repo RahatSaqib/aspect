@@ -778,7 +778,7 @@ async function seed(knex) {
       type: 'string',
       order: 6,
     },
-    hiv: {
+    hivStatus: {
       title: 'HIV Status',
       type: 'string',
       order: 7,
@@ -792,6 +792,11 @@ async function seed(knex) {
       title: 'Gender',
       type: 'string',
       order: 9,
+    },
+    microscopyResult: {
+      title: 'Microscopy Result',
+      type: 'string',
+      order: 10,
     },
   })
 
