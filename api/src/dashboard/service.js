@@ -1257,16 +1257,16 @@ async function actionDashboard(request) {
     // TODO we should not be using notification type name
     // as a constant, as it could be user editable in the future
     result.notificationType = _.camelCase(result.notificationType)
-    if (result.consumableId == null) {
-      result.consumableId = defaultConsumableId
-    }
     if (result.siteId && result.issueTypeExternalId === 'StockLevelUpdate') {
       const [inventoryItem] = inventoryItemsBySite[result.siteId]
       result.totalInStock =
         inventoryItem == null ? 0 : inventoryItem.totalInStock
       result.consumableId =
-        inventoryItem == null ? 0 : inventoryItem.consumableId
+        inventoryItem == null ? null : inventoryItem.consumableId
       delete inventoryItemsBySite[result.siteId]
+    }
+    if (result.consumableId == null) {
+      result.consumableId = defaultConsumableId
     }
     return result
   })
