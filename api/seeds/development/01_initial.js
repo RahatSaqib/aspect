@@ -4071,28 +4071,24 @@ async function seed(knex) {
   // ---------------------------------
   // Inventory Stockout Issue
   // ---------------------------------
-  const stockoutAlertTemplateId = await knex('AlertTemplate').insert(
+  const [stockoutAlertTemplateId] = await knex('AlertTemplate').insert(
     /* eslint-disable no-template-curly-in-string */
     Object.assign(
       {
-        message:
-          '{{site.name}} - stock level is projected to run out in under {{numberOfDays}} days.',
+        message: '{{site.name}}: Stock-out expected {{date}} - Order Stock.',
       },
       auditFields
-    ),
-    'id'
+    )
   )
 
   const [stockoutSmsTemplateId] = await knex('SmsTemplate').insert(
     /* eslint-disable no-template-curly-in-string */
     Object.assign(
       {
-        message:
-          '{{site.name}} - stock level is projected to run out in under {{numberOfDays}} days.',
+        message: '{{site.name}}: Stock-out expected {{date}} - Order Stock.',
       },
       auditFields
-    ),
-    'id'
+    )
   )
 
   const [stockoutEmailTemplateId] = await knex('EmailTemplate').insert(
@@ -4100,28 +4096,25 @@ async function seed(knex) {
     Object.assign(
       {
         subject: '{{site.name}} stockout',
-        body:
-          '{{site.name}} - stock level is projected to run out in under {{numberOfDays}} days.',
+        body: '{{site.name}}: Stock-out expected {{date}} - Order Stock.',
         htmlBody:
-          '<em>{{site.name}}</em> - stock level is projected to run out in under {{numberOfDays}} days.',
+          '<em>{{site.name}}:</em> Stock-out expected {{date}} - Order Stock.',
       },
       auditFields
-    ),
-    'id'
+    )
   )
 
   // ---------------------------------
   // Inventory Stock Expiring Issue
   // ---------------------------------
-  const stockExpiringAlertTemplateId = await knex('AlertTemplate').insert(
+  const [stockExpiringAlertTemplateId] = await knex('AlertTemplate').insert(
     /* eslint-disable no-template-curly-in-string */
     Object.assign(
       {
         message: '{{site.name}} - stock will expire in {{numberOfDays}} days.',
       },
       auditFields
-    ),
-    'id'
+    )
   )
 
   const [stockExpiringSmsTemplateId] = await knex('SmsTemplate').insert(
@@ -4131,8 +4124,7 @@ async function seed(knex) {
         message: '{{site.name}} - stock will expire in {{numberOfDays}} days.',
       },
       auditFields
-    ),
-    'id'
+    )
   )
 
   const [stockExpiringEmailTemplateId] = await knex('EmailTemplate').insert(
@@ -4145,8 +4137,7 @@ async function seed(knex) {
           '<em>{{site.name}}</em> - stock will expire in {{numberOfDays}} days.',
       },
       auditFields
-    ),
-    'id'
+    )
   )
 
   const [deviceOfflineMessageTypeId] = await knex('MessageType').insert({
