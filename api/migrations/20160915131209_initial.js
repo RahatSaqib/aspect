@@ -1721,36 +1721,6 @@ async function up(knex) {
     x.dateTime('updatedOn').notNullable()
   })
 
-  // facts-table for inventory counts and flags by site/consumable
-  await knex.schema.createTable('FactInventoryFlag', x => {
-    x.increments('id')
-    x
-      .integer('siteId')
-      .unsigned()
-      .references('id')
-      .inTable('Site')
-      .notNullable()
-      .onDelete('CASCADE')
-    x
-      .integer('consumableId')
-      .unsigned()
-      .notNullable()
-      .references('id')
-      .inTable('Consumable')
-    x
-      .boolean('stockout')
-      .notNullable()
-      .defaultTo(0)
-    x.integer('stockoutIn').unsigned()
-    x
-      .boolean('stockExpiring')
-      .notNullable()
-      .defaultTo(0)
-    x.integer('stockExpiringIn').unsigned()
-    x.dateTime('updatedOn').notNullable()
-    x.unique(['siteId', 'consumableId'], 'factinventoryflag_unique')
-  })
-
   await knex.schema.createTable('Tag', tag => {
     tag.increments('id')
     tag.string('title').notNullable()
