@@ -12,6 +12,23 @@ const {
   deviceHasNewResults,
 } = require('../device/actions')
 
+const DAYS_1 = 1
+const DAYS_7 = 7
+const DAYS_30 = 30
+const DAYS_60 = 60
+const DAYS_90 = 90
+const DAYS_365 = 365
+const DAYS_BIG = 9999
+const daysToCalculate = [
+  DAYS_1,
+  DAYS_7,
+  DAYS_30,
+  DAYS_60,
+  DAYS_90,
+  DAYS_365,
+  DAYS_BIG,
+]
+
 function onFactGenerateDeviceConnectivity({ deviceId }, { messageContext }) {
   const context = messageContext.bindActionCreators({
     deviceOffline,
@@ -155,8 +172,6 @@ function onFactGenerateResultCountsForDevice(
 ) {
   const { assayId, resultCategory1, resultCategory2 } = options
   return messageContext.transact(async knex => {
-    const daysToCalculate = [1, 7, 30, 60, 90, 365, 9999]
-
     const now = new Date()
 
     // query for selecting data for the device
@@ -342,15 +357,20 @@ async function auditInventoryStock(site, dueDays, dispatch) {
     consumableId,
     maxQuantityPerAssay,
     totalInStock,
-    dailyRate,
+    // these after GROUP_CONCAT
+    csvRate,
+    csvDays,
   } = site
-
+  const arrRate = csvRate ? csvRate.split(',') : []
+  const arrDays = csvDays ? csvDays.split(',') : []
+  const index = _.findIndex(arrDays, x => +x === dueDays)
+  const rate = index >= 0 ? arrRate[index] : null
   if (
-    dailyRate && // no sense to project if rate is unknown
-    dailyRate > 0 && // or is 0
+    rate && // skip if no rate
+    rate > 0 && // or rate is 0
     maxQuantityPerAssay > 0 // just in case - check this to not be 0
   ) {
-    const days = totalInStock / (maxQuantityPerAssay * dailyRate)
+    const days = totalInStock / (maxQuantityPerAssay * rate)
     if (days < dueDays) {
       dispatch(siteId, consumableId, days)
     }
@@ -365,8 +385,21 @@ function onFactCheckInventoryStock(action, { messageContext }) {
     inventoryStockout,
     inventoryStockExpiring,
   })
-  // we do not write db here - so use 'run'
-  // (MQ only writes to db)
+  const {
+    inventoryConfig: { daysDue } = { inventoryConfig: { daysDue: {} } },
+  } = require('../config')
+
+  // helper
+  function getDays(value, defaultValue) {
+    return !_.isFinite(value)
+      ? defaultValue
+      : daysToCalculate.includes(value) ? value : defaultValue
+  }
+
+  // normalize
+  daysDue.stockout = getDays(daysDue.stockout, DAYS_30)
+  daysDue.expiring = getDays(daysDue.expiring, DAYS_7)
+
   return context.run(async knex => {
     const now = new Date()
 
@@ -390,12 +423,10 @@ function onFactCheckInventoryStock(action, { messageContext }) {
         'max(ca.quantity) as maxQuantityPerAssay',
         // how many items are on hand
         'sum(ii.quantityOnHand) as totalInStock',
-        // consumption rates
-        'icr.dailyRate',
-        'icr.monthlyRate'
+        // consumption rate
+        knex.raw("GROUP_CONCAT(icr.rate SEPARATOR ',') as csvRate"),
+        knex.raw("GROUP_CONCAT(icr.days SEPARATOR ',') as csvDays")
       )
-
-    const { inventoryConfig: { daysDue } } = require('../config')
 
     // loop all sites and for each check if there are enough inventory items in stock
     _.map(sites, async site => {
@@ -418,6 +449,7 @@ function onFactCheckInventoryStock(action, { messageContext }) {
 }
 
 module.exports = {
+  daysToCalculate,
   onFactGenerateDeviceConnectivity,
   onFactGenerateResultCounts,
   onFactCheckInventoryStock,
