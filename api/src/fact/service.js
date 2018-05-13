@@ -385,20 +385,13 @@ function onFactCheckInventoryStock(action, { messageContext }) {
     inventoryStockout,
     inventoryStockExpiring,
   })
-  const {
-    inventoryConfig: { daysDue } = { inventoryConfig: { daysDue: {} } },
-  } = require('../config')
 
   // helper
-  function getDays(value, defaultValue) {
+  function normalizeDays(value, defaultValue) {
     return !_.isFinite(value)
       ? defaultValue
       : daysToCalculate.includes(value) ? value : defaultValue
   }
-
-  // normalize
-  daysDue.stockout = getDays(daysDue.stockout, DAYS_30)
-  daysDue.expiring = getDays(daysDue.expiring, DAYS_7)
 
   return context.run(async knex => {
     const now = new Date()
@@ -406,6 +399,7 @@ function onFactCheckInventoryStock(action, { messageContext }) {
     // get list of inventory details grouped by site/consumable
     const sites = await knex('InventoryItem as ii')
       .innerJoin('Site as s', 'ii.siteId', 's.id')
+      .innerJoin('Partner as p', 's.partnerId', 'p.id')
       .innerJoin('Consumable as c', 'ii.consumableId', 'c.id')
       .innerJoin('ConsumableAssay as ca', 'c.id', 'ca.consumableId')
       .leftOuterJoin('FactInventoryConsumptionRate as icr', () => {
@@ -419,6 +413,8 @@ function onFactCheckInventoryStock(action, { messageContext }) {
       .select(
         'ii.siteId',
         'ii.consumableId',
+        'max(p.dueDaysInventoryStockout) as dueDaysInventoryStockout',
+        'max(p.dueDaysInventoryStockExpiring) as dueDaysInventoryStockExpiring',
         // take max value of 'consumables per assay' for projection
         'max(ca.quantity) as maxQuantityPerAssay',
         // how many items are on hand
@@ -435,12 +431,12 @@ function onFactCheckInventoryStock(action, { messageContext }) {
       // ----------------
       await auditInventoryStock(
         site,
-        daysDue.stockout,
+        normalizeDays(+site.dueDaysInventoryStockout, DAYS_30),
         context.inventoryStockout
       )
       await auditInventoryStock(
         site,
-        daysDue.expiring,
+        normalizeDays(+site.dueDaysInventoryStockExpiring, DAYS_7),
         context.inventoryStockExpiring
       )
     })

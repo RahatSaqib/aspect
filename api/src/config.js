@@ -28,12 +28,6 @@ module.exports = {
       messagingServiceSid: process.env.twilioMessagingServiceSid,
     },
   },
-  inventory: {
-    daysDue: {
-      stockout: 30, // 'Stock level is projected to run out in under X (30) days'
-      expiring: 7, // Stock will expire in X days
-    },
-  },
   admin: {
     email: process.env['admin.email'],
     cell: process.env['admin.cell'],
