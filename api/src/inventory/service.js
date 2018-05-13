@@ -1085,16 +1085,16 @@ async function refreshConsumptionRates(siteId, consumableId) {
   const updatedOn = new Date()
   const dataUpdate = { dailyRate, monthlyRate, updatedOn }
 
-  const id = await knex('InventoryConsumptionRate')
+  const id = await knex('FactInventoryConsumptionRate')
     .where({ siteId, consumableId })
     .first('id')
   if (id) {
-    await knex('InventoryConsumptionRate')
+    await knex('FactInventoryConsumptionRate')
       .where({ siteId, consumableId })
       .update(dataUpdate)
   } else {
     const dataInsert = { ...dataUpdate, siteId, consumableId }
-    await knex('InventoryConsumptionRate').insert(dataInsert)
+    await knex('FactInventoryConsumptionRate').insert(dataInsert)
   }
 
   const rates = {

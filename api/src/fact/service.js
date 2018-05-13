@@ -375,7 +375,7 @@ function onFactCheckInventoryStock(action, { messageContext }) {
       .innerJoin('Site as s', 'ii.siteId', 's.id')
       .innerJoin('Consumable as c', 'ii.consumableId', 'c.id')
       .innerJoin('ConsumableAssay as ca', 'c.id', 'ca.consumableId')
-      .leftOuterJoin('InventoryConsumptionRate as icr', () => {
+      .leftOuterJoin('FactInventoryConsumptionRate as icr', () => {
         this.on('ii.siteId', 'icr.siteId').on(
           'ii.consumableId',
           'icr.consumableId'

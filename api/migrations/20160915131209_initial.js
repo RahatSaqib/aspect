@@ -989,7 +989,7 @@ async function up(knex) {
     inventoryItem.charset('utf8')
   })
 
-  await knex.schema.createTable('InventoryConsumptionRate', x => {
+  await knex.schema.createTable('FactInventoryConsumptionRate', x => {
     x.increments('id')
     x
       .integer('consumableId')
@@ -1003,10 +1003,13 @@ async function up(knex) {
       .notNullable()
       .references('id')
       .inTable('Site')
+    x.integer('days').unsigned()
+    x.float('rate')
     x.dateTime('updatedOn').notNullable()
-    x.float('dailyRate')
-    x.float('monthlyRate')
-    x.unique(['siteId', 'consumableId'], 'inventoryConsumptionRate_unique')
+    x.unique(
+      ['siteId', 'consumableId', 'days'],
+      'FactInventoryConsumptionRate_unique'
+    )
   })
 
   await knex.schema.createTable('InventoryLog', inventoryLog => {
