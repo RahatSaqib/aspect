@@ -446,6 +446,13 @@ function onFactCheckInventoryStock(action, { messageContext }) {
 
 module.exports = {
   daysToCalculate,
+  DAYS_1,
+  DAYS_7,
+  DAYS_30,
+  DAYS_60,
+  DAYS_90,
+  DAYS_365,
+  DAYS_BIG,
   onFactGenerateDeviceConnectivity,
   onFactGenerateResultCounts,
   onFactCheckInventoryStock,
