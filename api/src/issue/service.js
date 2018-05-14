@@ -117,7 +117,7 @@ async function createNewIssue(knex, issueType, action) {
   } else if (action.siteId) {
     issue.siteId = action.siteId
     const issueContext = await knex('Site')
-      .where({ id: issue.deviceId })
+      .where({ id: issue.siteId })
       .first('geographyId', 'partnerId')
     issue.geographyId = issueContext.geographyId
     issue.partnerId = issueContext.partnerId
