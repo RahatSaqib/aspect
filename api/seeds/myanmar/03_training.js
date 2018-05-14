@@ -1,6 +1,10 @@
 module.exports = require('../../src/db').seed(seed)
 
-// TODO: Remove the following two ESLint ignore-settings when implementing migrations
-/* eslint no-unused-vars: 0 */
-/* eslint no-empty-function: 0 */
-async function seed(knex) {}
+async function seed(knex) {
+  // remove decimals from target data collection
+  await knex('DashboardWidgetTarget').update({
+    sqlForDataCollection: knex.raw(
+      "replace(sqlForDataCollection, '100,2),', '100,0),')"
+    ),
+  })
+}
