@@ -356,32 +356,48 @@ async function seed(knex) {
   )
 
   // every clinic has a site, GxAlert device and MTB/Rif+ and Ultra results
-
   const possibleResults = [
-    {
-      resultText: 'Not Detected',
-      category1: resultCategories.NotDetected.id,
-      category2: null,
-    },
     {
       resultText: 'MTB Detected, Rif Resistance Not Detected',
       category1: resultCategories.Detected.id,
       category2: resultCategories.NotDetected.id,
+      minLikelihood: 0,
+      maxLikelihood: 20,
+    },
+    {
+      resultText: 'MTB Detected, Rif Resistance Detected',
+      category1: resultCategories.Detected.id,
+      category2: resultCategories.Detected.id,
+      minLikelihood: 21,
+      maxLikelihood: 26,
     },
     {
       resultText: 'MTB Detected, Rif Indeterminate',
       category1: resultCategories.Detected.id,
       category2: resultCategories.Indeterminate.id,
+      minLikelihood: 27,
+      maxLikelihood: 28,
     },
     {
       resultText: 'ERROR',
       category1: resultCategories.Error.id,
       category2: null,
+      minLikelihood: 29,
+      maxLikelihood: 34,
     },
     {
       resultText: 'Invalid',
       category1: resultCategories.Invalid.id,
       category2: null,
+      minLikelihood: 35,
+      maxLikelihood: 38,
+    },
+    {
+      resultText: 'Not Detected',
+      category1: resultCategories.NotDetected.id,
+      category2: null,
+      minLikelihood: 39,
+      maxLikelihood: 100,
     },
   ]
 
@@ -503,59 +519,56 @@ async function seed(knex) {
                 6000
               )
 
-              let j = 0
-              await Promise.all(
-                _.map(possibleResults, async result => {
-                  j += 1
-                  if (_.random(4) === 0) {
-                    resultData.resultText = result.resultText
-                    await knex('Result').insert(
-                      Object.assign({}, auditFields, {
-                        externalId: `UQTB-${i}-${j}`,
-                        assayId: assays.GxMtbRif.id,
-                        partnerId,
-                        geographyId: siteData.geographyId,
-                        siteId: siteData.id,
-                        deviceId: device.id,
-                        resultWorkflowStatusId:
-                          resultWorkflowStatuses.Ordered.id,
-                        longitude: siteData.latitude,
-                        latitude: siteData.longitude,
-                        resultSourceId: resultSources.DiagnosticDevice.id,
-                        resultTypeId: resultTypes.Patient.id,
-                        sampleId: sample.id,
-                        sampleRunNumber: `${i % 2 + 1}`,
-                        sampleGroup: `GRP-TB-${i % 5}`,
-                        resultCategory1: result.category1,
-                        resultCategory2: result.category2,
-                        resultData: JSON.stringify(resultData),
-                        assayVersion: '4',
-                        startedOn: randomDate,
-                        endedOn: addMinutes(randomDate, 100),
-                        consumableSerial: `${i}12`,
-                        consumableExpirationDate: new Date(
-                          +now + 200 * i * millisInHour
-                        ),
-                        consumableLot: `Lot ${i % 5}`,
-                        instrumentSerial: `S-1234-${i % 3}`,
-                        moduleName: 'Module A',
-                        moduleSerial: `M-1234-${i % 4}`,
-                        researchId: `R-ID-${i}`,
-                        patientData: JSON.stringify(patients[_.random(99)]),
-                        senderVersion: '4.6b',
-                        senderOperator: 'Marsha',
-                        notes: 'This is a test... result',
-                        errorCode:
-                          result.category1 === resultCategories.Error.id
-                            ? errorCodes[_.random(errorCodes.length)]
-                            : null,
-                        errorNotes:
-                          result.category1 === resultCategories.Error.id
-                            ? 'Exceeded cycle threshold'
-                            : null,
-                      })
-                    )
-                  }
+              const rnd = _.random(0, 100)
+              const result = _.find(
+                possibleResults,
+                r => rnd >= r.minLikelihood && rnd <= r.maxLikelihood
+              )
+
+              resultData.resultText = result.resultText
+              await knex('Result').insert(
+                Object.assign({}, auditFields, {
+                  externalId: `UQTB-${i}`,
+                  assayId: assays.GxMtbRif.id,
+                  partnerId,
+                  geographyId: siteData.geographyId,
+                  siteId: siteData.id,
+                  deviceId: device.id,
+                  resultWorkflowStatusId: resultWorkflowStatuses.Ordered.id,
+                  longitude: siteData.latitude,
+                  latitude: siteData.longitude,
+                  resultSourceId: resultSources.DiagnosticDevice.id,
+                  resultTypeId: resultTypes.Patient.id,
+                  sampleId: sample.id,
+                  sampleRunNumber: `${i % 2 + 1}`,
+                  sampleGroup: `GRP-TB-${i % 5}`,
+                  resultCategory1: result.category1,
+                  resultCategory2: result.category2,
+                  resultData: JSON.stringify(resultData),
+                  assayVersion: '4',
+                  startedOn: randomDate,
+                  endedOn: addMinutes(randomDate, 100),
+                  consumableSerial: `${i}12`,
+                  consumableExpirationDate: new Date(
+                    +now + 200 * i * millisInHour
+                  ),
+                  consumableLot: `Lot ${i % 5}`,
+                  instrumentSerial: `S-1234-${i % 3}`,
+                  moduleName: 'Module A',
+                  moduleSerial: `M-1234-${i % 4}`,
+                  researchId: `R-ID-${i}`,
+                  patientData: JSON.stringify(patients[_.random(99)]),
+                  senderVersion: '4.6b',
+                  senderOperator: 'Marsha',
+                  notes: 'This is a test... result',
+                  errorCode:
+                    result.category1 === resultCategories.Error.id
+                      ? errorCodes[_.random(errorCodes.length)]
+                      : null,
+                  errorNotes:
+                    result.category1 === resultCategories.Error.id
+                      ? 'Exceeded cycle threshold'
+                      : null,
                 })
               )
             })
