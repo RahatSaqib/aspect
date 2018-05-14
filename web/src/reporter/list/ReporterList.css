@@ -1,0 +1,15 @@
+.Container {
+  padding: 10px;
+}
+
+.ReporterDataTable {
+  composes: ComponentDataTable from '../../components/shared/DataTable.css';
+}
+
+.ReporterDataTableHead__Tests--left {
+  text-align: right;
+}
+
+.ReporterDataTableHead__Tests--right {
+  text-align: left;
+}

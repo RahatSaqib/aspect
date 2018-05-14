@@ -1,0 +1,15 @@
+.Container {
+  padding: 10px;
+}
+
+.RouterDataTable {
+  composes: ComponentDataTable from '../../components/shared/DataTable.css';
+}
+
+.RouterDataTableHead__Tests--left {
+  text-align: right;
+}
+
+.RouterDataTableHead__Tests--right {
+  text-align: left;
+}

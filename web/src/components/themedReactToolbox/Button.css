@@ -1,0 +1,60 @@
+@import '../../globals/variables.css';
+
+:root {
+  --aspect-button-accent-color: #084482;
+}
+
+.button {
+  composes: button from 'react-toolbox/lib/button/theme.css'; /* dependency */
+  text-transform: inherit;
+  border-radius: var(--toolbox-button-border-radius);
+}
+
+.raised[disabled] {
+  box-shadow: none;
+}
+.raised {
+  box-shadow: none;
+}
+.raised:focus {
+  box-shadow: none;
+}
+
+/* Neutral */
+.neutral:not([disabled]).flat {
+}
+
+.neutral:not([disabled]).raised {
+  background-color: var(--aspect-color-grey-4);
+  color: #ffffff;
+}
+
+/* Primary */
+.primary:not([disabled]).flat {
+  color: var(--aspect-color-chill-blue-1);
+}
+
+.primary:not([disabled]).flat.inverse {
+  background-color: #ffffff;
+  color: var(--aspect-color-chill-blue-1);
+  border: 1px solid var(--aspect-color-chill-blue-1);
+  line-height: 34px; /* due to border */
+}
+
+.primary:not([disabled]).raised {
+  background-color: var(--aspect-color-chill-blue-1);
+}
+
+.primary:not([disabled]).raised.inverse {
+  background-color: #ffffff;
+  color: var(--aspect-color-chill-blue-1);
+}
+
+/* Accent */
+.accent:not([disabled]).flat {
+  color: var(--aspect-button-accent-color);
+}
+
+.accent:not([disabled]).raised {
+  background-color: var(--aspect-button-accent-color);
+}

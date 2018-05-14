@@ -1,0 +1,134 @@
+import PropTypes from 'prop-types'
+// Imports from packages
+import React, { PureComponent } from 'react'
+import { bindActionCreators } from 'redux'
+import { connect } from 'react-redux'
+import _ from 'lodash'
+import { defineMessages, intlShape } from 'react-intl'
+
+import { Snackbar } from 'react-toolbox'
+
+// Our own imports
+import {
+  showMoreDetails,
+  hideAppNotification,
+  Error,
+} from './AppNotificationRedux'
+
+const genericMessages = defineMessages({
+  title: {
+    id: 'errorResponseMessages.generic.title',
+    defaultMessage: 'Aspect has Encountered a Problem.',
+  },
+  moreDetails: {
+    id: 'errorResponseMessages.inline.moreDetails',
+    defaultMessage: 'Details...',
+  },
+})
+
+const enhance = _.flowRight(connect(mapStateToProps, mapDispatchToProps))
+
+export class AppNotificationSnackBar extends PureComponent {
+  static propTypes = {
+    intl: intlShape.isRequired,
+    appNotification: PropTypes.objectOf(Error),
+    showMoreDetails: PropTypes.func.isRequired,
+    hideAppNotification: PropTypes.func.isRequired,
+  }
+
+  static defaultProps = {
+    appNotification: null,
+  }
+
+  handleShowDetails = () => {
+    this.props.showMoreDetails()
+  }
+
+  handleClose = () => {
+    const onClose = this.props.appNotification.getIn([
+      'notificationOptions',
+      'onClose',
+    ])
+    if (onClose) {
+      onClose()
+    }
+    if (this.props.appNotification.get('hasNotification')) {
+      this.props.hideAppNotification()
+    }
+  }
+
+  render() {
+    const { appNotification, intl: { formatMessage } } = this.props
+
+    const appNotificationMessageOrDefault = (messageKey, fallbackMessage) => {
+      const messageDescriptor = appNotification.getIn([
+        'notificationOptions',
+        messageKey,
+      ])
+      if (messageDescriptor) {
+        return messageDescriptor.toJS()
+      }
+      return fallbackMessage
+    }
+
+    const notificationOptions = appNotification.get('notificationOptions')
+      ? appNotification.get('notificationOptions').toJS()
+      : {}
+    const messageValues = appNotification.get('messageValues')
+
+    const isError =
+      appNotification.getIn(['notificationOptions', 'notificationType']) ===
+      'error'
+    const title = appNotificationMessageOrDefault(
+      'title',
+      isError ? genericMessages.title : undefined
+    )
+    const { showProceed } = notificationOptions
+    const message = appNotificationMessageOrDefault(
+      'message',
+      isError ? genericMessages.message : undefined
+    )
+    const resolution = appNotificationMessageOrDefault(
+      'resolution',
+      isError ? genericMessages.resolution : undefined
+    )
+    const actionText =
+      showProceed || message || resolution
+        ? formatMessage(genericMessages.moreDetails)
+        : undefined
+    const actionTouchTap =
+      showProceed || message || resolution ? this.handleShowDetails : undefined
+
+    const hasNotification = appNotification.get('hasNotification')
+    const showDetails = appNotification.get('showDetails')
+    return (
+      <Snackbar
+        action={actionText ? actionText.toUpperCase() : actionText}
+        active={hasNotification && !showDetails}
+        label={title ? formatMessage(title, messageValues) : ''}
+        timeout={4000}
+        onClick={actionTouchTap}
+        onTimeout={this.handleClose}
+        type={isError ? 'warning' : 'accept'}
+      />
+    )
+  }
+}
+
+function mapStateToProps(state) {
+  return {
+    appNotification: state.get('appNotification'),
+  }
+}
+
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators(
+    {
+      showMoreDetails,
+      hideAppNotification,
+    },
+    dispatch
+  )
+}
+
+export default enhance(AppNotificationSnackBar)

@@ -1,0 +1,64 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ReportTableRow component should shallow render correctly 1`] = `
+<ThemedTableRow
+  className="TableRow"
+  composeTheme="deeply"
+  mapThemrProps={[Function]}
+>
+  <ThemedTableCell
+    className="TableCell"
+    composeTheme="deeply"
+    mapThemrProps={[Function]}
+    numeric={false}
+    tagName="td"
+  >
+    PIH Lilongwe
+  </ThemedTableCell>
+  <ThemedTableCell
+    className="TableCell"
+    composeTheme="deeply"
+    mapThemrProps={[Function]}
+    numeric={false}
+    tagName="td"
+  >
+    998533
+  </ThemedTableCell>
+  <ThemedTableCell
+    className="TableCell"
+    composeTheme="deeply"
+    mapThemrProps={[Function]}
+    numeric={false}
+    tagName="td"
+  >
+    2016-03-12
+  </ThemedTableCell>
+  <ThemedTableCell
+    className="TableCell"
+    composeTheme="deeply"
+    mapThemrProps={[Function]}
+    numeric={false}
+    tagName="td"
+  >
+    401
+  </ThemedTableCell>
+  <ThemedTableCell
+    className="TableCell"
+    composeTheme="deeply"
+    mapThemrProps={[Function]}
+    numeric={false}
+    tagName="td"
+  >
+    2030
+  </ThemedTableCell>
+  <ThemedTableCell
+    className="TableCell"
+    composeTheme="deeply"
+    mapThemrProps={[Function]}
+    numeric={false}
+    tagName="td"
+  >
+    7
+  </ThemedTableCell>
+</ThemedTableRow>
+`;

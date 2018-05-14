@@ -1,9 +1,0 @@
---require babel-register
---require babel-polyfill
---require utils/unit_tests/unitTestSetup
---reporter mocha-multi
---reporter-options spec=-,mocha-bamboo-reporter=-
---ui bdd
---recursive
---env test
-src/**/*.test.js

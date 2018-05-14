@@ -1,0 +1,14 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ChartAlert component should shallow render correctly 1`] = `
+<div>
+  <p
+    className="amber"
+  />
+  <p
+    className="textAlert"
+  >
+    This is an amber alert
+  </p>
+</div>
+`;

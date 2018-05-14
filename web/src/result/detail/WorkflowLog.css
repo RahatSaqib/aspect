@@ -1,0 +1,15 @@
+.CardText {
+  text-align: center;
+}
+
+.CardText > p {
+  padding: 10px;
+}
+
+.WorkflowLogDataTable {
+  composes: ComponentDataTable from '../../components/shared/DataTable.css';
+}
+
+.TablePaginator {
+  padding-bottom: 0;
+}

@@ -1,0 +1,41 @@
+.DS_Store
+
+node_modules/
+
+# IDE Generated Files
+.idea/
+.vscode/
+
+# Runtime data
+pids
+logs
+*.pid
+*.seed
+*.log
+
+# Environment
+.env
+
+# packages/*
+**/coverage/
+mocha.json
+
+# packages/api
+## Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml
+
+# packages/e2e
+**/reports/
+**/screenshots/
+
+# packages/web
+**/dist/assets/
+**/dist/index.html
+
+#nyc output
+.nyc_output/
+
+#Local developer helper scripts
+**/--devutil--*

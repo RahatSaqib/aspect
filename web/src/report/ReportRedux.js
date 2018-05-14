@@ -1,0 +1,116 @@
+import { stringify } from 'querystring'
+import _ from 'lodash'
+import Immutable from 'immutable'
+import { defineMessages } from 'react-intl'
+
+import { aspectFetch } from '../shared/utils/fetch'
+import {
+  filterFieldsRejectedError,
+  errorPleaseTryAgainInAFewMinutes,
+  errorInsufficientScope,
+} from '../error/CommonErrorNotifications'
+import { receiveList, Items } from '../shared/metaReducers/items'
+import {
+  requestTable,
+  receiveTableItems,
+  Table,
+} from '../shared/metaReducers/table'
+
+export const types = {
+  REQUEST_REPORTS: 'REQUEST_REPORTS',
+  RECEIVE_REPORTS: 'RECEIVE_REPORTS',
+}
+//
+
+/*
+ * ---------------- Action Creators -----------------
+ */
+function requestReports(sortCol, sortDir, page, size, filters) {
+  return {
+    type: types.REQUEST_REPORTS,
+    sortCol,
+    sortDir,
+    page,
+    size,
+    filters,
+  }
+}
+
+function receiveReports(json) {
+  return {
+    type: types.RECEIVE_REPORTS,
+    items: json.data,
+    total: json.total,
+  }
+}
+
+export function fetchReports(filtersParams, sortCol, sortDir, page, pageSize) {
+  return dispatch => {
+    const filters = _.fromPairs([...filtersParams.entries()])
+    dispatch(requestReports(sortCol, sortDir, page, pageSize, filters))
+
+    return aspectFetch(
+      `/report?${stringify({
+        sortCol,
+        sortDir,
+        page,
+        size: pageSize,
+        ...filters,
+      })}`,
+      {
+        errorNotifications: {
+          400: filterFieldsRejectedError(
+            defineMessages({
+              title: {
+                id: 'errorResponseMessages.fetchReports.GET.400.title',
+                defaultMessage: 'Searching Reports Failed',
+              },
+            })
+          ),
+          403: errorInsufficientScope(
+            defineMessages({
+              title: {
+                id: 'errorResponseMessages.fetchPersons.GET.403.title',
+                defaultMessage: 'Insufficient Permissions',
+              },
+            })
+          ),
+          default: errorPleaseTryAgainInAFewMinutes(
+            defineMessages({
+              title: {
+                id: 'errorResponseMessages.fetchReports.GET.default.title',
+                defaultMessage: 'Loading Reports Failed',
+              },
+            })
+          ),
+        },
+      }
+    ).then(json => dispatch(receiveReports(json)))
+  }
+}
+/*
+ * ---------------- Reducers -----------------
+ */
+const Report = Immutable.Record({
+  items: new Items(),
+  table: new Table({
+    sortCol: 'deploymentName',
+  }),
+})
+
+const initialState = new Report()
+
+export default function reportReducer(state = initialState, action) {
+  switch (action.type) {
+    case types.REQUEST_REPORTS:
+      return state.set('table', requestTable(state.table, action))
+    case types.RECEIVE_REPORTS:
+      return state.withMutations(mutState => {
+        const immutList = Immutable.fromJS(action.items)
+        mutState.set('items', receiveList(mutState.items, immutList))
+        mutState.set('table', receiveTableItems(mutState.table, action.total))
+      })
+    default:
+      return state
+  }
+}

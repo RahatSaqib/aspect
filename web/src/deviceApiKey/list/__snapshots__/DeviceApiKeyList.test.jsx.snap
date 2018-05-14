@@ -1,0 +1,412 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Device Api Key List module DeviceApiKeyList component should shallow render correctly 1`] = `
+<div
+  className="Container"
+>
+  <HelmetWrapper
+    defer={true}
+    encodeSpecialCharacters={true}
+    title="Device API Keys"
+  />
+  <Connect(lifecycle(Component))
+    title="Device API Keys"
+  />
+  <pure(withProps(withHandlers(Connect(lifecycle(BrowseFilters)))))
+    config={undefined}
+    history={
+      Object {
+        "push": [Function],
+      }
+    }
+    intl={
+      Object {
+        "formatDate": [Function],
+        "formatHTMLMessage": [Function],
+        "formatMessage": [Function],
+        "formatNumber": [Function],
+        "formatPlural": [Function],
+        "formatRelative": [Function],
+        "formatTime": [Function],
+        "now": [Function],
+      }
+    }
+    location={
+      Object {
+        "search": "",
+      }
+    }
+    onClickExport={[Function]}
+  />
+  <div>
+    <FlatButton
+      disabled={false}
+      fullWidth={false}
+      label="Generate"
+      labelPosition="after"
+      labelStyle={Object {}}
+      onKeyboardFocus={[Function]}
+      onMouseEnter={[Function]}
+      onMouseLeave={[Function]}
+      onTouchStart={[Function]}
+      onTouchTap={[Function]}
+      primary={false}
+      secondary={false}
+    />
+    <FlatButton
+      disabled={true}
+      fullWidth={false}
+      label="Assign"
+      labelPosition="after"
+      labelStyle={Object {}}
+      onKeyboardFocus={[Function]}
+      onMouseEnter={[Function]}
+      onMouseLeave={[Function]}
+      onTouchStart={[Function]}
+      onTouchTap={[Function]}
+      primary={false}
+      secondary={false}
+    />
+    <pure(recomposeForm(DeviceApiKeyGeneratorDialogForm))
+      intl={
+        Object {
+          "formatDate": [Function],
+          "formatHTMLMessage": [Function],
+          "formatMessage": [Function],
+          "formatNumber": [Function],
+          "formatPlural": [Function],
+          "formatRelative": [Function],
+          "formatTime": [Function],
+          "now": [Function],
+        }
+      }
+      isDialogOpen={false}
+      onCancel={[Function]}
+      onChange={[Function]}
+      onSubmit={[Function]}
+      values={
+        Object {
+          "count": 1,
+        }
+      }
+    />
+    <pure(recomposeForm(DeviceApiKeyAssignerDialogForm))
+      count={0}
+      intl={
+        Object {
+          "formatDate": [Function],
+          "formatHTMLMessage": [Function],
+          "formatMessage": [Function],
+          "formatNumber": [Function],
+          "formatPlural": [Function],
+          "formatRelative": [Function],
+          "formatTime": [Function],
+          "now": [Function],
+        }
+      }
+      isDialogOpen={false}
+      onCancel={[Function]}
+      onChange={[Function]}
+      onSubmit={[Function]}
+      values={
+        Object {
+          "deviceApiKeyIds": Array [],
+        }
+      }
+    />
+  </div>
+  <DataTableCard>
+    <DataTableProgressBar
+      disabled={true}
+    />
+    <pure(withHandlers(Component))
+      history={
+        Object {
+          "push": [Function],
+        }
+      }
+      intl={
+        Object {
+          "formatDate": [Function],
+          "formatHTMLMessage": [Function],
+          "formatMessage": [Function],
+          "formatNumber": [Function],
+          "formatPlural": [Function],
+          "formatRelative": [Function],
+          "formatTime": [Function],
+          "now": [Function],
+        }
+      }
+      location={
+        Object {
+          "search": "",
+        }
+      }
+    />
+  </DataTableCard>
+</div>
+`;
+
+exports[`Device Api Key List module DeviceApiKeyList component should shallow render with items correctly 1`] = `
+<div
+  className="Container"
+>
+  <HelmetWrapper
+    defer={true}
+    encodeSpecialCharacters={true}
+    title="Device API Keys"
+  />
+  <Connect(lifecycle(Component))
+    title="Device API Keys"
+  />
+  <pure(withProps(withHandlers(Connect(lifecycle(BrowseFilters)))))
+    config={undefined}
+    history={
+      Object {
+        "push": [Function],
+      }
+    }
+    intl={
+      Object {
+        "formatDate": [Function],
+        "formatHTMLMessage": [Function],
+        "formatMessage": [Function],
+        "formatNumber": [Function],
+        "formatPlural": [Function],
+        "formatRelative": [Function],
+        "formatTime": [Function],
+        "now": [Function],
+      }
+    }
+    location={
+      Object {
+        "search": "",
+      }
+    }
+    onClickExport={[Function]}
+  />
+  <div>
+    <FlatButton
+      disabled={false}
+      fullWidth={false}
+      label="Generate"
+      labelPosition="after"
+      labelStyle={Object {}}
+      onKeyboardFocus={[Function]}
+      onMouseEnter={[Function]}
+      onMouseLeave={[Function]}
+      onTouchStart={[Function]}
+      onTouchTap={[Function]}
+      primary={false}
+      secondary={false}
+    />
+    <FlatButton
+      disabled={true}
+      fullWidth={false}
+      label="Assign"
+      labelPosition="after"
+      labelStyle={Object {}}
+      onKeyboardFocus={[Function]}
+      onMouseEnter={[Function]}
+      onMouseLeave={[Function]}
+      onTouchStart={[Function]}
+      onTouchTap={[Function]}
+      primary={false}
+      secondary={false}
+    />
+    <pure(recomposeForm(DeviceApiKeyGeneratorDialogForm))
+      intl={
+        Object {
+          "formatDate": [Function],
+          "formatHTMLMessage": [Function],
+          "formatMessage": [Function],
+          "formatNumber": [Function],
+          "formatPlural": [Function],
+          "formatRelative": [Function],
+          "formatTime": [Function],
+          "now": [Function],
+        }
+      }
+      isDialogOpen={false}
+      onCancel={[Function]}
+      onChange={[Function]}
+      onSubmit={[Function]}
+      values={
+        Object {
+          "count": 1,
+        }
+      }
+    />
+    <pure(recomposeForm(DeviceApiKeyAssignerDialogForm))
+      count={0}
+      intl={
+        Object {
+          "formatDate": [Function],
+          "formatHTMLMessage": [Function],
+          "formatMessage": [Function],
+          "formatNumber": [Function],
+          "formatPlural": [Function],
+          "formatRelative": [Function],
+          "formatTime": [Function],
+          "now": [Function],
+        }
+      }
+      isDialogOpen={false}
+      onCancel={[Function]}
+      onChange={[Function]}
+      onSubmit={[Function]}
+      values={
+        Object {
+          "deviceApiKeyIds": Array [],
+        }
+      }
+    />
+  </div>
+  <DataTableCard>
+    <DataTableProgressBar
+      disabled={true}
+    />
+    <ThemedTable
+      className="DeviceApiKeyDataTable"
+      composeTheme="deeply"
+      mapThemrProps={[Function]}
+      multiSelectable={false}
+      selectable={false}
+    >
+      <pure(withHandlers(withHandlers(DataTableHead)))
+        columns={
+          Array [
+            Object {
+              "key": "id",
+              "label": <ThemedCheckbox
+                checked={true}
+                className=""
+                composeTheme="deeply"
+                disabled={true}
+                mapThemrProps={[Function]}
+                name="selectAll"
+                onChange={[Function]}
+              />,
+            },
+            Object {
+              "key": "createdOn",
+              "label": "Created On",
+              "sortable": true,
+            },
+            Object {
+              "key": "token",
+              "label": "Key",
+              "sortable": true,
+            },
+            Object {
+              "key": "partner",
+              "label": "Partner",
+              "sortable": true,
+            },
+            Object {
+              "key": "country",
+              "label": "Country",
+              "sortable": true,
+            },
+            Object {
+              "key": "site",
+              "label": "Site",
+              "sortable": true,
+            },
+            Object {
+              "key": "device",
+              "label": "Device",
+              "sortable": true,
+            },
+            Object {
+              "key": "revoked",
+              "label": "Revoked",
+              "sortable": true,
+            },
+          ]
+        }
+        history={
+          Object {
+            "push": [Function],
+          }
+        }
+        location={
+          Object {
+            "search": "",
+          }
+        }
+        sortColumnDir="asc"
+        sortColumnKey="createdOn"
+      />
+      Immutable.List [
+        <DeviceApiKeyTableRow
+          checked={false}
+          deviceApiKey={
+            Immutable.Map {
+              "id": "1",
+              "createdOn": 2017-07-14T02:40:00.000Z,
+              "token": "token",
+              "partner": "partner",
+              "country": "country",
+              "site": "site",
+              "device": "device",
+              "revoked": false,
+            }
+          }
+          disabled={true}
+          intl={
+            Object {
+              "formatDate": [Function],
+              "formatHTMLMessage": [Function],
+              "formatMessage": [Function],
+              "formatNumber": [Function],
+              "formatPlural": [Function],
+              "formatRelative": [Function],
+              "formatTime": [Function],
+              "now": [Function],
+            }
+          }
+          onRevokedChange={[Function]}
+          onSelectedChange={[Function]}
+        />,
+      ]
+    </ThemedTable>
+    <pure(withHandlers(withProps(withHandlers(pure(TablePaginator)))))
+      history={
+        Object {
+          "push": [Function],
+        }
+      }
+      intl={
+        Object {
+          "formatDate": [Function],
+          "formatHTMLMessage": [Function],
+          "formatMessage": [Function],
+          "formatNumber": [Function],
+          "formatPlural": [Function],
+          "formatRelative": [Function],
+          "formatTime": [Function],
+          "now": [Function],
+        }
+      }
+      location={
+        Object {
+          "search": "",
+        }
+      }
+      pageAt={0}
+      pageSize={10}
+      paginatorStatus={
+        Object {
+          "defaultMessage": "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural,
+      one {# device API key}
+      other {# device API keys}
+    }",
+          "id": "pages.DeviceApiKeyList.paginatorStatus",
+        }
+      }
+      total={1}
+    />
+  </DataTableCard>
+</div>
+`;

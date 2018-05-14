@@ -1,0 +1,33 @@
+@import './globals/variables.css';
+
+html {
+  box-sizing: border-box;
+}
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+}
+
+/* global styles */
+body {
+  font-family: Lato, sans-serif;
+  padding: 0;
+  margin: 0;
+  background-color: var(--aspect-color-grey-7);
+}
+
+a {
+  color: #4687f4;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/*Get rid of ugly yellow background on Chrome login autocomplete*/
+input:-webkit-autofill {
+  box-shadow: 0 0 0 300px white inset !important;
+  -webkit-box-shadow: 0 0 0 300px white inset !important;
+}

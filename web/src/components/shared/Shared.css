@@ -1,0 +1,42 @@
+/*pre-login background */
+@import '../../globals/variables.css';
+.PreLogin__Background {
+  height: 100%;
+  /*This makes the top half of the screen green and bottom half in gray*/
+  background: var(--aspect-color-grey-7);
+  padding-top: 14%;
+}
+
+/* --- Helper classes --- */
+
+/*Make items with touch event behave like links*/
+.Helper--linky {
+  cursor: pointer !important;
+}
+
+.Form {
+  padding: 20px;
+}
+
+.Form__Content {
+  padding: 0 20px;
+}
+
+/*in forms, show buttons on bottom right*/
+.Form__ActionRow {
+  width: 100%;
+  text-align: right;
+  padding: 30px 0 0 0;
+}
+
+/* xs */
+@media screen and (max-width: 35.438em) {
+  .Form__Field {
+    margin-right: 0;
+  }
+}
+
+.List__Unstyled {
+  list-style: none;
+  padding: 0.5em 1em;
+}

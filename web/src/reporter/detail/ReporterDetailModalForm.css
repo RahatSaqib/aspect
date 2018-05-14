@@ -1,0 +1,19 @@
+.AutoCompleteField {
+  display: inline-block;
+  width: 100%;
+}
+
+.AutoCompleteField__Inner {
+  display: flex;
+}
+
+.AutoCompleteField__Inner__AutoComplete {
+  flex-grow: 1;
+}
+
+.AutoCompleteField__Inner__Link {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}

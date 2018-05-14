@@ -1,0 +1,18 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`App Notification Dialog component should shallow render correctly 1`] = `
+<Dialog
+  actions={Array []}
+  autoDetectWindowHeight={true}
+  autoScrollBodyContent={true}
+  modal={false}
+  onRequestClose={[Function]}
+  open={false}
+  repositionOnUpdate={true}
+  title=""
+>
+  <div
+    className="AppNotificationDialogDialog__ContentContainer"
+  />
+</Dialog>
+`;

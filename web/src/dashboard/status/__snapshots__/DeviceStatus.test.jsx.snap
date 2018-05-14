@@ -1,0 +1,256 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Device Status component should shallow render correctly 1`] = `
+<ThemedCard
+  className={undefined}
+  composeTheme="deeply"
+  mapThemrProps={[Function]}
+>
+  <Unknown
+    icon={
+      <MdDescription
+        className="Title__Icon"
+      />
+    }
+    title="Devices"
+  />
+  <div>
+    <Unknown
+      lg="1-4"
+      sm="1-2"
+    >
+      <CountryWithPoints
+        countryIsoAlpha2Code="US"
+        fill={undefined}
+        points={undefined}
+      />
+    </Unknown>
+    <Unknown
+      lg="1-4"
+      sm="1-2"
+    >
+      <SummaryItemsBlock
+        data-device-ids="[\\"38\\",\\"86\\"]"
+        intl={
+          Object {
+            "defaultFormats": Object {},
+            "defaultLocale": "en",
+            "formatDate": [Function],
+            "formatHTMLMessage": [Function],
+            "formatMessage": [Function],
+            "formatNumber": [Function],
+            "formatPlural": [Function],
+            "formatRelative": [Function],
+            "formatTime": [Function],
+            "formats": Object {},
+            "formatters": Object {
+              "getDateTimeFormat": [Function],
+              "getMessageFormat": [Function],
+              "getNumberFormat": [Function],
+              "getPluralFormat": [Function],
+              "getRelativeFormat": [Function],
+            },
+            "locale": "en",
+            "messages": Object {},
+            "now": [Function],
+            "textComponent": "span",
+          }
+        }
+        items={
+          Array [
+            Object {
+              "count": 2,
+              "key": 0,
+              "subI18nKey": "fullyOperationalStatus",
+              "titleI18nKey": "ofTotalDevicesTitle",
+              "total": 53,
+            },
+          ]
+        }
+        onClick={undefined}
+        onMouseEnter={undefined}
+        onMouseLeave={undefined}
+        title="operational devices"
+      />
+    </Unknown>
+    <Unknown
+      lg="1-4"
+      sm="1-2"
+    >
+      <SummaryItemsBlock
+        data-device-ids="[\\"16\\"]"
+        intl={
+          Object {
+            "defaultFormats": Object {},
+            "defaultLocale": "en",
+            "formatDate": [Function],
+            "formatHTMLMessage": [Function],
+            "formatMessage": [Function],
+            "formatNumber": [Function],
+            "formatPlural": [Function],
+            "formatRelative": [Function],
+            "formatTime": [Function],
+            "formats": Object {},
+            "formatters": Object {
+              "getDateTimeFormat": [Function],
+              "getMessageFormat": [Function],
+              "getNumberFormat": [Function],
+              "getPluralFormat": [Function],
+              "getRelativeFormat": [Function],
+            },
+            "locale": "en",
+            "messages": Object {},
+            "now": [Function],
+            "textComponent": "span",
+          }
+        }
+        items={
+          Array [
+            Object {
+              "count": 16,
+              "key": 0,
+              "subI18nKey": "warrantyExpiringStatus",
+              "titleI18nKey": "devicesTitle",
+            },
+          ]
+        }
+        onClick={undefined}
+        onMouseEnter={undefined}
+        onMouseLeave={undefined}
+        title="warranty expiring"
+      />
+      <SummaryItemsBlock
+        data-device-ids="[\\"20\\"]"
+        intl={
+          Object {
+            "defaultFormats": Object {},
+            "defaultLocale": "en",
+            "formatDate": [Function],
+            "formatHTMLMessage": [Function],
+            "formatMessage": [Function],
+            "formatNumber": [Function],
+            "formatPlural": [Function],
+            "formatRelative": [Function],
+            "formatTime": [Function],
+            "formats": Object {},
+            "formatters": Object {
+              "getDateTimeFormat": [Function],
+              "getMessageFormat": [Function],
+              "getNumberFormat": [Function],
+              "getPluralFormat": [Function],
+              "getRelativeFormat": [Function],
+            },
+            "locale": "en",
+            "messages": Object {},
+            "now": [Function],
+            "textComponent": "span",
+          }
+        }
+        items={
+          Array [
+            Object {
+              "count": 15,
+              "key": 0,
+              "subI18nKey": "needCalibrationStatus",
+              "titleI18nKey": "devicesTitle",
+            },
+          ]
+        }
+        onClick={undefined}
+        onMouseEnter={undefined}
+        onMouseLeave={undefined}
+        title="calibration"
+      />
+    </Unknown>
+    <Unknown
+      lg="1-4"
+      sm="1-2"
+    >
+      <SummaryItemsBlock
+        data-device-ids="[\\"88\\",\\"109\\"]"
+        intl={
+          Object {
+            "defaultFormats": Object {},
+            "defaultLocale": "en",
+            "formatDate": [Function],
+            "formatHTMLMessage": [Function],
+            "formatMessage": [Function],
+            "formatNumber": [Function],
+            "formatPlural": [Function],
+            "formatRelative": [Function],
+            "formatTime": [Function],
+            "formats": Object {},
+            "formatters": Object {
+              "getDateTimeFormat": [Function],
+              "getMessageFormat": [Function],
+              "getNumberFormat": [Function],
+              "getPluralFormat": [Function],
+              "getRelativeFormat": [Function],
+            },
+            "locale": "en",
+            "messages": Object {},
+            "now": [Function],
+            "textComponent": "span",
+          }
+        }
+        items={
+          Array [
+            Object {
+              "count": 50,
+              "key": 0,
+              "subI18nKey": "notReportingStatus",
+              "titleI18nKey": "devicesTitle",
+            },
+          ]
+        }
+        onClick={undefined}
+        onMouseEnter={undefined}
+        onMouseLeave={undefined}
+        title="uploading data"
+      />
+      <SummaryItemsBlock
+        data-device-ids="[\\"37\\"]"
+        intl={
+          Object {
+            "defaultFormats": Object {},
+            "defaultLocale": "en",
+            "formatDate": [Function],
+            "formatHTMLMessage": [Function],
+            "formatMessage": [Function],
+            "formatNumber": [Function],
+            "formatPlural": [Function],
+            "formatRelative": [Function],
+            "formatTime": [Function],
+            "formats": Object {},
+            "formatters": Object {
+              "getDateTimeFormat": [Function],
+              "getMessageFormat": [Function],
+              "getNumberFormat": [Function],
+              "getPluralFormat": [Function],
+              "getRelativeFormat": [Function],
+            },
+            "locale": "en",
+            "messages": Object {},
+            "now": [Function],
+            "textComponent": "span",
+          }
+        }
+        items={
+          Array [
+            Object {
+              "count": 11,
+              "key": 0,
+              "subI18nKey": "highFailuresRatesStatus",
+              "titleI18nKey": "devicesTitle",
+            },
+          ]
+        }
+        onClick={undefined}
+        onMouseEnter={undefined}
+        onMouseLeave={undefined}
+        title="test failures"
+      />
+    </Unknown>
+  </div>
+</ThemedCard>
+`;

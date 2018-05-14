@@ -1,0 +1,17 @@
+@import '../../../globals/variables.css';
+
+.TableRow {
+  composes: TableRow from '../../../task/list/TaskTableRow.css';
+}
+
+.TableCell {
+  composes: TableCell from '../../../task/list/TaskTableRow.css';
+}
+
+.TableCell--hasError {
+  color: var(--aspect-color-mandy);
+}
+
+.FaCircle {
+  composes: FaCircle from '../../../task/list/TaskTableRow.css';
+}

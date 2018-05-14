@@ -1,0 +1,28 @@
+@import '../../globals/variables.css';
+
+.input__disabled > .input__inputElement {
+  border: none;
+}
+
+.input__input {
+  padding: 0;
+}
+
+.input__input::after {
+  border-top-color: #ffffff;
+}
+
+.input__inputElement {
+  border: none;
+  padding: 8px 12px;
+  line-height: 20px;
+  font-size: var(--aspect-font-size-sm);
+  font-weight: var(--lato-font-weight-bold);
+  color: #ffffff;
+  background-color: var(--aspect-color-chill-blue-1);
+  border-radius: var(--toolbox-button-border-radius);
+}
+
+.input__values {
+  font-size: var(--aspect-font-size-sm);
+}

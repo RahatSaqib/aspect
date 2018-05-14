@@ -1,0 +1,1753 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`UserPreferencesForm module UserPreferencesForm component should disable all fields when form is loading 1`] = `
+<form
+  className="Form"
+  onSubmit={[Function]}
+>
+  <div
+    className="Form__Content"
+  >
+    <ThemedDropdown
+      allowBlank={true}
+      auto={true}
+      className=""
+      composeTheme="deeply"
+      disabled={true}
+      label="Time Zone"
+      labelKey="name"
+      mapThemrProps={[Function]}
+      name="timezone"
+      onChange={[Function]}
+      required={false}
+      source={
+        Array [
+          Object {
+            "id": "Dateline Standard Time",
+            "name": "International Date Line West (UTC-12:00)",
+            "timeZone": "Pacific/Wake",
+          },
+          Object {
+            "id": "UTC-11",
+            "name": "Coordinated Universal Time-11 (UTC-11:00)",
+            "timeZone": "Pacific/Niue",
+          },
+          Object {
+            "id": "Hawaiian Standard Time",
+            "name": "Hawaii (UTC-10:00)",
+            "timeZone": "Pacific/Honolulu",
+          },
+          Object {
+            "id": "Alaskan Standard Time",
+            "name": "Alaska (UTC-09:00)",
+            "timeZone": "America/Juneau",
+          },
+          Object {
+            "id": "Pacific Standard Time (Mexico)",
+            "name": "Baja California (UTC-08:00)",
+            "timeZone": "America/Santa_Isabel",
+          },
+          Object {
+            "id": "Pacific Standard Time",
+            "name": "Pacific Time (US & Canada) (UTC-08:00)",
+            "timeZone": "America/Los_Angeles",
+          },
+          Object {
+            "id": "US Mountain Standard Time",
+            "name": "Arizona (UTC-07:00)",
+            "timeZone": "America/Phoenix",
+          },
+          Object {
+            "id": "Mountain Standard Time (Mexico)",
+            "name": "Chihuahua, La Paz, Mazatlan (UTC-07:00)",
+            "timeZone": "America/Chihuahua",
+          },
+          Object {
+            "id": "Mountain Standard Time",
+            "name": "Mountain Time (US & Canada) (UTC-07:00)",
+            "timeZone": "America/Denver",
+          },
+          Object {
+            "id": "Central America Standard Time",
+            "name": "Central America (UTC-06:00)",
+            "timeZone": "America/Chicago",
+          },
+          Object {
+            "id": "Central Standard Time",
+            "name": "Central Time (US & Canada) (UTC-06:00)",
+            "timeZone": "Canada/Central",
+          },
+          Object {
+            "id": "Central Standard Time (Mexico)",
+            "name": "Guadalajara, Mexico City, Monterrey (UTC-06:00)",
+            "timeZone": "America/Mexico_City",
+          },
+          Object {
+            "id": "Canada Central Standard Time",
+            "name": "Saskatchewan (UTC-06:00)",
+            "timeZone": "Canada/Central",
+          },
+          Object {
+            "id": "SA Pacific Standard Time",
+            "name": "Bogota, Lima, Quito (UTC-05:00)",
+            "timeZone": "America/Bogota",
+          },
+          Object {
+            "id": "Eastern Standard Time",
+            "name": "Eastern Time (US & Canada) (UTC-05:00)",
+            "timeZone": "America/New_York",
+          },
+          Object {
+            "id": "US Eastern Standard Time",
+            "name": "Indiana (East) (UTC-05:00)",
+            "timeZone": "America/Indianapolis",
+          },
+          Object {
+            "id": "Venezuela Standard Time",
+            "name": "Caracas (UTC-04:30)",
+            "timeZone": "America/Caracas",
+          },
+          Object {
+            "id": "Paraguay Standard Time",
+            "name": "Asuncion (UTC-04:00)",
+            "timeZone": "America/Asuncion",
+          },
+          Object {
+            "id": "Atlantic Standard Time",
+            "name": "Atlantic Time (Canada) (UTC-04:00)",
+            "timeZone": "Canada/Atlantic",
+          },
+          Object {
+            "id": "Central Brazilian Standard Time",
+            "name": "Cuiaba (UTC-04:00)",
+            "timeZone": "America/Cuiaba",
+          },
+          Object {
+            "id": "SA Western Standard Time",
+            "name": "Georgetown, La Paz, Manaus, San Juan (UTC-04:00)",
+            "timeZone": "America/La_Paz",
+          },
+          Object {
+            "id": "Pacific SA Standard Time",
+            "name": "Santiago (UTC-04:00)",
+            "timeZone": "America/Santiago",
+          },
+          Object {
+            "id": "Newfoundland Standard Time",
+            "name": "Newfoundland (UTC-03:30)",
+            "timeZone": "Canada/Newfoundland",
+          },
+          Object {
+            "id": "E. South America Standard Time",
+            "name": "Brasilia (UTC-03:00)",
+            "timeZone": "Brazil/East",
+          },
+          Object {
+            "id": "Argentina Standard Time",
+            "name": "Buenos Aires (UTC-03:00)",
+            "timeZone": "America/Buenos_Aires",
+          },
+          Object {
+            "id": "SA Eastern Standard Time",
+            "name": "Cayenne, Fortaleza (UTC-03:00)",
+            "timeZone": "America/Cayenne",
+          },
+          Object {
+            "id": "Greenland Standard Time",
+            "name": "Greenland (UTC-03:00)",
+            "timeZone": "America/Godthab",
+          },
+          Object {
+            "id": "Montevideo Standard Time",
+            "name": "Montevideo (UTC-03:00)",
+            "timeZone": "America/Montevideo",
+          },
+          Object {
+            "id": "Bahia Standard Time",
+            "name": "Salvador (UTC-03:00)",
+            "timeZone": "America/Bahia",
+          },
+          Object {
+            "id": "UTC-02",
+            "name": "Coordinated Universal Time-02 (UTC-02:00)",
+            "timeZone": "Atlantic/South_Georgia",
+          },
+          Object {
+            "id": "Mid-Atlantic Standard Time",
+            "name": "Mid-Atlantic (UTC-02:00)",
+            "timeZone": "Atlantic/South_Georgia",
+          },
+          Object {
+            "id": "Azores Standard Time",
+            "name": "Azores (UTC-01:00)",
+            "timeZone": "Atlantic/Azores",
+          },
+          Object {
+            "id": "Cape Verde Standard Time",
+            "name": "Cape Verde Is. (UTC-01:00)",
+            "timeZone": "Atlantic/Cape_Verde",
+          },
+          Object {
+            "id": "Morocco Standard Time",
+            "name": "Casablanca (UTC)",
+            "timeZone": "Africa/Casablanca",
+          },
+          Object {
+            "id": "UTC",
+            "name": "Coordinated Universal Time (UTC)",
+            "timeZone": "UTC",
+          },
+          Object {
+            "id": "GMT Standard Time",
+            "name": "Dublin, Edinburgh, Lisbon, London (UTC)",
+            "timeZone": "Europe/London",
+          },
+          Object {
+            "id": "Greenwich Standard Time",
+            "name": "Monrovia, Reykjavik (UTC)",
+            "timeZone": "Africa/Monrovia",
+          },
+          Object {
+            "id": "W. Europe Standard Time",
+            "name": "Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna (UTC+01:00)",
+            "timeZone": "Europe/Berlin",
+          },
+          Object {
+            "id": "Central Europe Standard Time",
+            "name": "Belgrade, Bratislava, Budapest, Ljubljana, Prague (UTC+01:00)",
+            "timeZone": "Europe/Prague",
+          },
+          Object {
+            "id": "Romance Standard Time",
+            "name": "Brussels, Copenhagen, Madrid, Paris (UTC+01:00)",
+            "timeZone": "Europe/Paris",
+          },
+          Object {
+            "id": "Central European Standard Time",
+            "name": "Sarajevo, Skopje, Warsaw, Zagreb (UTC+01:00)",
+            "timeZone": "Europe/Zagreb",
+          },
+          Object {
+            "id": "W. Central Africa Standard Time",
+            "name": "West Central Africa (UTC+01:00)",
+            "timeZone": "Africa/Lagos",
+          },
+          Object {
+            "id": "Namibia Standard Time",
+            "name": "Windhoek (UTC+01:00)",
+            "timeZone": "Africa/Windhoek",
+          },
+          Object {
+            "id": "Jordan Standard Time",
+            "name": "Amman (UTC+02:00)",
+            "timeZone": "Asia/Amman",
+          },
+          Object {
+            "id": "GTB Standard Time",
+            "name": "Athens, Bucharest (UTC+02:00)",
+            "timeZone": "Europe/Athens",
+          },
+          Object {
+            "id": "Middle East Standard Time",
+            "name": "Beirut (UTC+02:00)",
+            "timeZone": "Asia/Beirut",
+          },
+          Object {
+            "id": "Egypt Standard Time",
+            "name": "Cairo (UTC+02:00)",
+            "timeZone": "Africa/Cairo",
+          },
+          Object {
+            "id": "Syria Standard Time",
+            "name": "Damascus (UTC+02:00)",
+            "timeZone": "Asia/Damascus",
+          },
+          Object {
+            "id": "South Africa Standard Time",
+            "name": "Harare, Pretoria (UTC+02:00)",
+            "timeZone": "Africa/Johannesburg",
+          },
+          Object {
+            "id": "FLE Standard Time",
+            "name": "Helsinki, Kyiv, Riga, Sofia, Tallinn, Vilnius (UTC+02:00)",
+            "timeZone": "Europe/Helsinki",
+          },
+          Object {
+            "id": "Turkey Standard Time",
+            "name": "Istanbul (UTC+02:00)",
+            "timeZone": "Europe/Istanbul",
+          },
+          Object {
+            "id": "Israel Standard Time",
+            "name": "Jerusalem (UTC+02:00)",
+            "timeZone": "Asia/Jerusalem",
+          },
+          Object {
+            "id": "E. Europe Standard Time",
+            "name": "Nicosia (UTC+02:00)",
+            "timeZone": "Asia/Nicosia",
+          },
+          Object {
+            "id": "Arabic Standard Time",
+            "name": "Baghdad (UTC+03:00)",
+            "timeZone": "Asia/Baghdad",
+          },
+          Object {
+            "id": "Kaliningrad Standard Time",
+            "name": "Kaliningrad, Minsk (UTC+03:00)",
+            "timeZone": "Europe/Minsk",
+          },
+          Object {
+            "id": "Arab Standard Time",
+            "name": "Kuwait, Riyadh (UTC+03:00)",
+            "timeZone": "Asia/Kuwait",
+          },
+          Object {
+            "id": "E. Africa Standard Time",
+            "name": "Nairobi (UTC+03:00)",
+            "timeZone": "Africa/Nairobi",
+          },
+          Object {
+            "id": "Iran Standard Time",
+            "name": "Tehran (UTC+03:30)",
+            "timeZone": "Asia/Tehran",
+          },
+          Object {
+            "id": "Arabian Standard Time",
+            "name": "Abu Dhabi, Muscat (UTC+04:00)",
+            "timeZone": "Asia/Muscat",
+          },
+          Object {
+            "id": "Azerbaijan Standard Time",
+            "name": "Baku (UTC+04:00)",
+            "timeZone": "Asia/Baku",
+          },
+          Object {
+            "id": "Russian Standard Time",
+            "name": "Moscow, St. Petersburg, Volgograd (UTC+04:00)",
+            "timeZone": "Europe/Moscow",
+          },
+          Object {
+            "id": "Mauritius Standard Time",
+            "name": "Port Louis (UTC+04:00)",
+            "timeZone": "Indian/Mauritius",
+          },
+          Object {
+            "id": "Georgian Standard Time",
+            "name": "Tbilisi (UTC+04:00)",
+            "timeZone": "Asia/Tbilisi",
+          },
+          Object {
+            "id": "Caucasus Standard Time",
+            "name": "Yerevan (UTC+04:00)",
+            "timeZone": "Asia/Yerevan",
+          },
+          Object {
+            "id": "Afghanistan Standard Time",
+            "name": "Kabul (UTC+04:30)",
+            "timeZone": "Asia/Kabul",
+          },
+          Object {
+            "id": "Pakistan Standard Time",
+            "name": "Islamabad, Karachi (UTC+05:00)",
+            "timeZone": "Asia/Karachi",
+          },
+          Object {
+            "id": "West Asia Standard Time",
+            "name": "Tashkent (UTC+05:00)",
+            "timeZone": "Asia/Tashkent",
+          },
+          Object {
+            "id": "India Standard Time",
+            "name": "Chennai, Kolkata, Mumbai, New Delhi (UTC+05:30)",
+            "timeZone": "Asia/Kolkata",
+          },
+          Object {
+            "id": "Sri Lanka Standard Time",
+            "name": "Sri Jayawardenepura (UTC+05:30)",
+            "timeZone": "Asia/Colombo",
+          },
+          Object {
+            "id": "Nepal Standard Time",
+            "name": "Kathmandu (UTC+05:45)",
+            "timeZone": "Asia/Kathmandu",
+          },
+          Object {
+            "id": "Central Asia Standard Time",
+            "name": "Astana (UTC+06:00)",
+            "timeZone": "Asia/Omsk",
+          },
+          Object {
+            "id": "Bangladesh Standard Time",
+            "name": "Dhaka (UTC+06:00)",
+            "timeZone": "Asia/Dhaka",
+          },
+          Object {
+            "id": "Ekaterinburg Standard Time",
+            "name": "Ekaterinburg (UTC+06:00)",
+            "timeZone": "Asia/Yekaterinburg",
+          },
+          Object {
+            "id": "Myanmar Standard Time",
+            "name": "Yangon (Rangoon) (UTC+06:30)",
+            "timeZone": "Asia/Rangoon",
+          },
+          Object {
+            "id": "SE Asia Standard Time",
+            "name": "Bangkok, Hanoi, Jakarta (UTC+07:00)",
+            "timeZone": "Asia/Bangkok",
+          },
+          Object {
+            "id": "N. Central Asia Standard Time",
+            "name": "Novosibirsk (UTC+07:00)",
+            "timeZone": "Asia/Novosibirsk",
+          },
+          Object {
+            "id": "China Standard Time",
+            "name": "Beijing, Chongqing, Hong Kong, Urumqi (UTC+08:00)",
+            "timeZone": "Asia/Hong_Kong",
+          },
+          Object {
+            "id": "North Asia Standard Time",
+            "name": "Krasnoyarsk (UTC+08:00)",
+            "timeZone": "Asia/Krasnoyarsk",
+          },
+          Object {
+            "id": "Singapore Standard Time",
+            "name": "Kuala Lumpur, Singapore (UTC+08:00)",
+            "timeZone": "Asia/Singapore",
+          },
+          Object {
+            "id": "W. Australia Standard Time",
+            "name": "Perth (UTC+08:00)",
+            "timeZone": "Australia/West",
+          },
+          Object {
+            "id": "Taipei Standard Time",
+            "name": "Taipei (UTC+08:00)",
+            "timeZone": "Asia/Taipei",
+          },
+          Object {
+            "id": "Ulaanbaatar Standard Time",
+            "name": "Ulaanbaatar (UTC+08:00)",
+            "timeZone": "Asia/Ulaanbaatar",
+          },
+          Object {
+            "id": "North Asia East Standard Time",
+            "name": "Irkutsk (UTC+09:00)",
+            "timeZone": "Asia/Irkutsk",
+          },
+          Object {
+            "id": "Tokyo Standard Time",
+            "name": "Osaka, Sapporo, Tokyo (UTC+09:00)",
+            "timeZone": "Asia/Tokyo",
+          },
+          Object {
+            "id": "Korea Standard Time",
+            "name": "Seoul (UTC+09:00)",
+            "timeZone": "Asia/Seoul",
+          },
+          Object {
+            "id": "Cen. Australia Standard Time",
+            "name": "Adelaide (UTC+09:30)",
+            "timeZone": "Australia/South",
+          },
+          Object {
+            "id": "AUS Central Standard Time",
+            "name": "Darwin (UTC+09:30)",
+            "timeZone": "Australia/North",
+          },
+          Object {
+            "id": "E. Australia Standard Time",
+            "name": "Brisbane (UTC+10:00)",
+            "timeZone": "Australia/Queensland",
+          },
+          Object {
+            "id": "AUS Eastern Standard Time",
+            "name": "Canberra, Melbourne, Sydney (UTC+10:00)",
+            "timeZone": "Australia/Canberra",
+          },
+          Object {
+            "id": "West Pacific Standard Time",
+            "name": "Guam, Port Moresby (UTC+10:00)",
+            "timeZone": "Pacific/Guam",
+          },
+          Object {
+            "id": "Tasmania Standard Time",
+            "name": "Hobart (UTC+10:00)",
+            "timeZone": "Australia/Tasmania",
+          },
+          Object {
+            "id": "Yakutsk Standard Time",
+            "name": "Yakutsk (UTC+10:00)",
+            "timeZone": "Asia/Yakutsk",
+          },
+          Object {
+            "id": "Central Pacific Standard Time",
+            "name": "Solomon Is., New Caledonia (UTC+11:00)",
+            "timeZone": "Pacific/Guadalcanal",
+          },
+          Object {
+            "id": "Vladivostok Standard Time",
+            "name": "Vladivostok (UTC+11:00)",
+            "timeZone": "Asia/Vladivostok",
+          },
+          Object {
+            "id": "New Zealand Standard Time",
+            "name": "Auckland, Wellington (UTC+12:00)",
+            "timeZone": "Pacific/Auckland",
+          },
+          Object {
+            "id": "UTC+12",
+            "name": "Coordinated Universal Time+12 (UTC+12:00)",
+            "timeZone": "Pacific/Funafuti",
+          },
+          Object {
+            "id": "Fiji Standard Time",
+            "name": "Fiji (UTC+12:00)",
+            "timeZone": "Pacific/Fiji",
+          },
+          Object {
+            "id": "Magadan Standard Time",
+            "name": "Magadan (UTC+12:00)",
+            "timeZone": "Asia/Magadan",
+          },
+          Object {
+            "id": "Kamchatka Standard Time",
+            "name": "Petropavlovsk-Kamchatsky - Old (UTC+12:00)",
+            "timeZone": "Asia/Kamchatka",
+          },
+          Object {
+            "id": "Tonga Standard Time",
+            "name": "Nuku'alofa (UTC+13:00)",
+            "timeZone": "Pacific/Tongatapu",
+          },
+          Object {
+            "id": "Samoa Standard Time",
+            "name": "Samoa (UTC+13:00)",
+            "timeZone": "Pacific/Samoa",
+          },
+        ]
+      }
+      value={undefined}
+      valueKey="id"
+    />
+    <ThemedDropdown
+      allowBlank={true}
+      auto={true}
+      className=""
+      composeTheme="deeply"
+      disabled={true}
+      label="Language"
+      labelKey="label"
+      mapThemrProps={[Function]}
+      name="culture"
+      onChange={[Function]}
+      required={false}
+      source={
+        Array [
+          Object {
+            "culture": "fr-FR",
+            "iso_alpha2_code": "FR",
+            "language_name": "French (FR)",
+          },
+          Object {
+            "culture": "en-US",
+            "iso_alpha2_code": "US",
+            "language_name": "English (US)",
+          },
+        ]
+      }
+      template={[Function]}
+      value={undefined}
+      valueKey="culture"
+    />
+  </div>
+  <div
+    className="Form__ActionRow"
+  >
+    <ThemedThemed
+      composeTheme="deeply"
+      disabled={true}
+      label="Save"
+      mapThemrProps={[Function]}
+      neutral={true}
+      raised={true}
+      ripple={true}
+      rippleCentered={false}
+      rippleClassName=""
+      rippleMultiple={true}
+      rippleSpread={2}
+      type="submit"
+    />
+  </div>
+</form>
+`;
+
+exports[`UserPreferencesForm module UserPreferencesForm component should enable the submit button when the form is dirty, valid and not submitting 1`] = `
+<form
+  className="Form"
+  onSubmit={[Function]}
+>
+  <div
+    className="Form__Content"
+  >
+    <ThemedDropdown
+      allowBlank={true}
+      auto={true}
+      className=""
+      composeTheme="deeply"
+      disabled={false}
+      label="Time Zone"
+      labelKey="name"
+      mapThemrProps={[Function]}
+      name="timezone"
+      onChange={[Function]}
+      required={false}
+      source={
+        Array [
+          Object {
+            "id": "Dateline Standard Time",
+            "name": "International Date Line West (UTC-12:00)",
+            "timeZone": "Pacific/Wake",
+          },
+          Object {
+            "id": "UTC-11",
+            "name": "Coordinated Universal Time-11 (UTC-11:00)",
+            "timeZone": "Pacific/Niue",
+          },
+          Object {
+            "id": "Hawaiian Standard Time",
+            "name": "Hawaii (UTC-10:00)",
+            "timeZone": "Pacific/Honolulu",
+          },
+          Object {
+            "id": "Alaskan Standard Time",
+            "name": "Alaska (UTC-09:00)",
+            "timeZone": "America/Juneau",
+          },
+          Object {
+            "id": "Pacific Standard Time (Mexico)",
+            "name": "Baja California (UTC-08:00)",
+            "timeZone": "America/Santa_Isabel",
+          },
+          Object {
+            "id": "Pacific Standard Time",
+            "name": "Pacific Time (US & Canada) (UTC-08:00)",
+            "timeZone": "America/Los_Angeles",
+          },
+          Object {
+            "id": "US Mountain Standard Time",
+            "name": "Arizona (UTC-07:00)",
+            "timeZone": "America/Phoenix",
+          },
+          Object {
+            "id": "Mountain Standard Time (Mexico)",
+            "name": "Chihuahua, La Paz, Mazatlan (UTC-07:00)",
+            "timeZone": "America/Chihuahua",
+          },
+          Object {
+            "id": "Mountain Standard Time",
+            "name": "Mountain Time (US & Canada) (UTC-07:00)",
+            "timeZone": "America/Denver",
+          },
+          Object {
+            "id": "Central America Standard Time",
+            "name": "Central America (UTC-06:00)",
+            "timeZone": "America/Chicago",
+          },
+          Object {
+            "id": "Central Standard Time",
+            "name": "Central Time (US & Canada) (UTC-06:00)",
+            "timeZone": "Canada/Central",
+          },
+          Object {
+            "id": "Central Standard Time (Mexico)",
+            "name": "Guadalajara, Mexico City, Monterrey (UTC-06:00)",
+            "timeZone": "America/Mexico_City",
+          },
+          Object {
+            "id": "Canada Central Standard Time",
+            "name": "Saskatchewan (UTC-06:00)",
+            "timeZone": "Canada/Central",
+          },
+          Object {
+            "id": "SA Pacific Standard Time",
+            "name": "Bogota, Lima, Quito (UTC-05:00)",
+            "timeZone": "America/Bogota",
+          },
+          Object {
+            "id": "Eastern Standard Time",
+            "name": "Eastern Time (US & Canada) (UTC-05:00)",
+            "timeZone": "America/New_York",
+          },
+          Object {
+            "id": "US Eastern Standard Time",
+            "name": "Indiana (East) (UTC-05:00)",
+            "timeZone": "America/Indianapolis",
+          },
+          Object {
+            "id": "Venezuela Standard Time",
+            "name": "Caracas (UTC-04:30)",
+            "timeZone": "America/Caracas",
+          },
+          Object {
+            "id": "Paraguay Standard Time",
+            "name": "Asuncion (UTC-04:00)",
+            "timeZone": "America/Asuncion",
+          },
+          Object {
+            "id": "Atlantic Standard Time",
+            "name": "Atlantic Time (Canada) (UTC-04:00)",
+            "timeZone": "Canada/Atlantic",
+          },
+          Object {
+            "id": "Central Brazilian Standard Time",
+            "name": "Cuiaba (UTC-04:00)",
+            "timeZone": "America/Cuiaba",
+          },
+          Object {
+            "id": "SA Western Standard Time",
+            "name": "Georgetown, La Paz, Manaus, San Juan (UTC-04:00)",
+            "timeZone": "America/La_Paz",
+          },
+          Object {
+            "id": "Pacific SA Standard Time",
+            "name": "Santiago (UTC-04:00)",
+            "timeZone": "America/Santiago",
+          },
+          Object {
+            "id": "Newfoundland Standard Time",
+            "name": "Newfoundland (UTC-03:30)",
+            "timeZone": "Canada/Newfoundland",
+          },
+          Object {
+            "id": "E. South America Standard Time",
+            "name": "Brasilia (UTC-03:00)",
+            "timeZone": "Brazil/East",
+          },
+          Object {
+            "id": "Argentina Standard Time",
+            "name": "Buenos Aires (UTC-03:00)",
+            "timeZone": "America/Buenos_Aires",
+          },
+          Object {
+            "id": "SA Eastern Standard Time",
+            "name": "Cayenne, Fortaleza (UTC-03:00)",
+            "timeZone": "America/Cayenne",
+          },
+          Object {
+            "id": "Greenland Standard Time",
+            "name": "Greenland (UTC-03:00)",
+            "timeZone": "America/Godthab",
+          },
+          Object {
+            "id": "Montevideo Standard Time",
+            "name": "Montevideo (UTC-03:00)",
+            "timeZone": "America/Montevideo",
+          },
+          Object {
+            "id": "Bahia Standard Time",
+            "name": "Salvador (UTC-03:00)",
+            "timeZone": "America/Bahia",
+          },
+          Object {
+            "id": "UTC-02",
+            "name": "Coordinated Universal Time-02 (UTC-02:00)",
+            "timeZone": "Atlantic/South_Georgia",
+          },
+          Object {
+            "id": "Mid-Atlantic Standard Time",
+            "name": "Mid-Atlantic (UTC-02:00)",
+            "timeZone": "Atlantic/South_Georgia",
+          },
+          Object {
+            "id": "Azores Standard Time",
+            "name": "Azores (UTC-01:00)",
+            "timeZone": "Atlantic/Azores",
+          },
+          Object {
+            "id": "Cape Verde Standard Time",
+            "name": "Cape Verde Is. (UTC-01:00)",
+            "timeZone": "Atlantic/Cape_Verde",
+          },
+          Object {
+            "id": "Morocco Standard Time",
+            "name": "Casablanca (UTC)",
+            "timeZone": "Africa/Casablanca",
+          },
+          Object {
+            "id": "UTC",
+            "name": "Coordinated Universal Time (UTC)",
+            "timeZone": "UTC",
+          },
+          Object {
+            "id": "GMT Standard Time",
+            "name": "Dublin, Edinburgh, Lisbon, London (UTC)",
+            "timeZone": "Europe/London",
+          },
+          Object {
+            "id": "Greenwich Standard Time",
+            "name": "Monrovia, Reykjavik (UTC)",
+            "timeZone": "Africa/Monrovia",
+          },
+          Object {
+            "id": "W. Europe Standard Time",
+            "name": "Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna (UTC+01:00)",
+            "timeZone": "Europe/Berlin",
+          },
+          Object {
+            "id": "Central Europe Standard Time",
+            "name": "Belgrade, Bratislava, Budapest, Ljubljana, Prague (UTC+01:00)",
+            "timeZone": "Europe/Prague",
+          },
+          Object {
+            "id": "Romance Standard Time",
+            "name": "Brussels, Copenhagen, Madrid, Paris (UTC+01:00)",
+            "timeZone": "Europe/Paris",
+          },
+          Object {
+            "id": "Central European Standard Time",
+            "name": "Sarajevo, Skopje, Warsaw, Zagreb (UTC+01:00)",
+            "timeZone": "Europe/Zagreb",
+          },
+          Object {
+            "id": "W. Central Africa Standard Time",
+            "name": "West Central Africa (UTC+01:00)",
+            "timeZone": "Africa/Lagos",
+          },
+          Object {
+            "id": "Namibia Standard Time",
+            "name": "Windhoek (UTC+01:00)",
+            "timeZone": "Africa/Windhoek",
+          },
+          Object {
+            "id": "Jordan Standard Time",
+            "name": "Amman (UTC+02:00)",
+            "timeZone": "Asia/Amman",
+          },
+          Object {
+            "id": "GTB Standard Time",
+            "name": "Athens, Bucharest (UTC+02:00)",
+            "timeZone": "Europe/Athens",
+          },
+          Object {
+            "id": "Middle East Standard Time",
+            "name": "Beirut (UTC+02:00)",
+            "timeZone": "Asia/Beirut",
+          },
+          Object {
+            "id": "Egypt Standard Time",
+            "name": "Cairo (UTC+02:00)",
+            "timeZone": "Africa/Cairo",
+          },
+          Object {
+            "id": "Syria Standard Time",
+            "name": "Damascus (UTC+02:00)",
+            "timeZone": "Asia/Damascus",
+          },
+          Object {
+            "id": "South Africa Standard Time",
+            "name": "Harare, Pretoria (UTC+02:00)",
+            "timeZone": "Africa/Johannesburg",
+          },
+          Object {
+            "id": "FLE Standard Time",
+            "name": "Helsinki, Kyiv, Riga, Sofia, Tallinn, Vilnius (UTC+02:00)",
+            "timeZone": "Europe/Helsinki",
+          },
+          Object {
+            "id": "Turkey Standard Time",
+            "name": "Istanbul (UTC+02:00)",
+            "timeZone": "Europe/Istanbul",
+          },
+          Object {
+            "id": "Israel Standard Time",
+            "name": "Jerusalem (UTC+02:00)",
+            "timeZone": "Asia/Jerusalem",
+          },
+          Object {
+            "id": "E. Europe Standard Time",
+            "name": "Nicosia (UTC+02:00)",
+            "timeZone": "Asia/Nicosia",
+          },
+          Object {
+            "id": "Arabic Standard Time",
+            "name": "Baghdad (UTC+03:00)",
+            "timeZone": "Asia/Baghdad",
+          },
+          Object {
+            "id": "Kaliningrad Standard Time",
+            "name": "Kaliningrad, Minsk (UTC+03:00)",
+            "timeZone": "Europe/Minsk",
+          },
+          Object {
+            "id": "Arab Standard Time",
+            "name": "Kuwait, Riyadh (UTC+03:00)",
+            "timeZone": "Asia/Kuwait",
+          },
+          Object {
+            "id": "E. Africa Standard Time",
+            "name": "Nairobi (UTC+03:00)",
+            "timeZone": "Africa/Nairobi",
+          },
+          Object {
+            "id": "Iran Standard Time",
+            "name": "Tehran (UTC+03:30)",
+            "timeZone": "Asia/Tehran",
+          },
+          Object {
+            "id": "Arabian Standard Time",
+            "name": "Abu Dhabi, Muscat (UTC+04:00)",
+            "timeZone": "Asia/Muscat",
+          },
+          Object {
+            "id": "Azerbaijan Standard Time",
+            "name": "Baku (UTC+04:00)",
+            "timeZone": "Asia/Baku",
+          },
+          Object {
+            "id": "Russian Standard Time",
+            "name": "Moscow, St. Petersburg, Volgograd (UTC+04:00)",
+            "timeZone": "Europe/Moscow",
+          },
+          Object {
+            "id": "Mauritius Standard Time",
+            "name": "Port Louis (UTC+04:00)",
+            "timeZone": "Indian/Mauritius",
+          },
+          Object {
+            "id": "Georgian Standard Time",
+            "name": "Tbilisi (UTC+04:00)",
+            "timeZone": "Asia/Tbilisi",
+          },
+          Object {
+            "id": "Caucasus Standard Time",
+            "name": "Yerevan (UTC+04:00)",
+            "timeZone": "Asia/Yerevan",
+          },
+          Object {
+            "id": "Afghanistan Standard Time",
+            "name": "Kabul (UTC+04:30)",
+            "timeZone": "Asia/Kabul",
+          },
+          Object {
+            "id": "Pakistan Standard Time",
+            "name": "Islamabad, Karachi (UTC+05:00)",
+            "timeZone": "Asia/Karachi",
+          },
+          Object {
+            "id": "West Asia Standard Time",
+            "name": "Tashkent (UTC+05:00)",
+            "timeZone": "Asia/Tashkent",
+          },
+          Object {
+            "id": "India Standard Time",
+            "name": "Chennai, Kolkata, Mumbai, New Delhi (UTC+05:30)",
+            "timeZone": "Asia/Kolkata",
+          },
+          Object {
+            "id": "Sri Lanka Standard Time",
+            "name": "Sri Jayawardenepura (UTC+05:30)",
+            "timeZone": "Asia/Colombo",
+          },
+          Object {
+            "id": "Nepal Standard Time",
+            "name": "Kathmandu (UTC+05:45)",
+            "timeZone": "Asia/Kathmandu",
+          },
+          Object {
+            "id": "Central Asia Standard Time",
+            "name": "Astana (UTC+06:00)",
+            "timeZone": "Asia/Omsk",
+          },
+          Object {
+            "id": "Bangladesh Standard Time",
+            "name": "Dhaka (UTC+06:00)",
+            "timeZone": "Asia/Dhaka",
+          },
+          Object {
+            "id": "Ekaterinburg Standard Time",
+            "name": "Ekaterinburg (UTC+06:00)",
+            "timeZone": "Asia/Yekaterinburg",
+          },
+          Object {
+            "id": "Myanmar Standard Time",
+            "name": "Yangon (Rangoon) (UTC+06:30)",
+            "timeZone": "Asia/Rangoon",
+          },
+          Object {
+            "id": "SE Asia Standard Time",
+            "name": "Bangkok, Hanoi, Jakarta (UTC+07:00)",
+            "timeZone": "Asia/Bangkok",
+          },
+          Object {
+            "id": "N. Central Asia Standard Time",
+            "name": "Novosibirsk (UTC+07:00)",
+            "timeZone": "Asia/Novosibirsk",
+          },
+          Object {
+            "id": "China Standard Time",
+            "name": "Beijing, Chongqing, Hong Kong, Urumqi (UTC+08:00)",
+            "timeZone": "Asia/Hong_Kong",
+          },
+          Object {
+            "id": "North Asia Standard Time",
+            "name": "Krasnoyarsk (UTC+08:00)",
+            "timeZone": "Asia/Krasnoyarsk",
+          },
+          Object {
+            "id": "Singapore Standard Time",
+            "name": "Kuala Lumpur, Singapore (UTC+08:00)",
+            "timeZone": "Asia/Singapore",
+          },
+          Object {
+            "id": "W. Australia Standard Time",
+            "name": "Perth (UTC+08:00)",
+            "timeZone": "Australia/West",
+          },
+          Object {
+            "id": "Taipei Standard Time",
+            "name": "Taipei (UTC+08:00)",
+            "timeZone": "Asia/Taipei",
+          },
+          Object {
+            "id": "Ulaanbaatar Standard Time",
+            "name": "Ulaanbaatar (UTC+08:00)",
+            "timeZone": "Asia/Ulaanbaatar",
+          },
+          Object {
+            "id": "North Asia East Standard Time",
+            "name": "Irkutsk (UTC+09:00)",
+            "timeZone": "Asia/Irkutsk",
+          },
+          Object {
+            "id": "Tokyo Standard Time",
+            "name": "Osaka, Sapporo, Tokyo (UTC+09:00)",
+            "timeZone": "Asia/Tokyo",
+          },
+          Object {
+            "id": "Korea Standard Time",
+            "name": "Seoul (UTC+09:00)",
+            "timeZone": "Asia/Seoul",
+          },
+          Object {
+            "id": "Cen. Australia Standard Time",
+            "name": "Adelaide (UTC+09:30)",
+            "timeZone": "Australia/South",
+          },
+          Object {
+            "id": "AUS Central Standard Time",
+            "name": "Darwin (UTC+09:30)",
+            "timeZone": "Australia/North",
+          },
+          Object {
+            "id": "E. Australia Standard Time",
+            "name": "Brisbane (UTC+10:00)",
+            "timeZone": "Australia/Queensland",
+          },
+          Object {
+            "id": "AUS Eastern Standard Time",
+            "name": "Canberra, Melbourne, Sydney (UTC+10:00)",
+            "timeZone": "Australia/Canberra",
+          },
+          Object {
+            "id": "West Pacific Standard Time",
+            "name": "Guam, Port Moresby (UTC+10:00)",
+            "timeZone": "Pacific/Guam",
+          },
+          Object {
+            "id": "Tasmania Standard Time",
+            "name": "Hobart (UTC+10:00)",
+            "timeZone": "Australia/Tasmania",
+          },
+          Object {
+            "id": "Yakutsk Standard Time",
+            "name": "Yakutsk (UTC+10:00)",
+            "timeZone": "Asia/Yakutsk",
+          },
+          Object {
+            "id": "Central Pacific Standard Time",
+            "name": "Solomon Is., New Caledonia (UTC+11:00)",
+            "timeZone": "Pacific/Guadalcanal",
+          },
+          Object {
+            "id": "Vladivostok Standard Time",
+            "name": "Vladivostok (UTC+11:00)",
+            "timeZone": "Asia/Vladivostok",
+          },
+          Object {
+            "id": "New Zealand Standard Time",
+            "name": "Auckland, Wellington (UTC+12:00)",
+            "timeZone": "Pacific/Auckland",
+          },
+          Object {
+            "id": "UTC+12",
+            "name": "Coordinated Universal Time+12 (UTC+12:00)",
+            "timeZone": "Pacific/Funafuti",
+          },
+          Object {
+            "id": "Fiji Standard Time",
+            "name": "Fiji (UTC+12:00)",
+            "timeZone": "Pacific/Fiji",
+          },
+          Object {
+            "id": "Magadan Standard Time",
+            "name": "Magadan (UTC+12:00)",
+            "timeZone": "Asia/Magadan",
+          },
+          Object {
+            "id": "Kamchatka Standard Time",
+            "name": "Petropavlovsk-Kamchatsky - Old (UTC+12:00)",
+            "timeZone": "Asia/Kamchatka",
+          },
+          Object {
+            "id": "Tonga Standard Time",
+            "name": "Nuku'alofa (UTC+13:00)",
+            "timeZone": "Pacific/Tongatapu",
+          },
+          Object {
+            "id": "Samoa Standard Time",
+            "name": "Samoa (UTC+13:00)",
+            "timeZone": "Pacific/Samoa",
+          },
+        ]
+      }
+      value={undefined}
+      valueKey="id"
+    />
+    <ThemedDropdown
+      allowBlank={true}
+      auto={true}
+      className=""
+      composeTheme="deeply"
+      disabled={false}
+      label="Language"
+      labelKey="label"
+      mapThemrProps={[Function]}
+      name="culture"
+      onChange={[Function]}
+      required={false}
+      source={
+        Array [
+          Object {
+            "culture": "fr-FR",
+            "iso_alpha2_code": "FR",
+            "language_name": "French (FR)",
+          },
+          Object {
+            "culture": "en-US",
+            "iso_alpha2_code": "US",
+            "language_name": "English (US)",
+          },
+        ]
+      }
+      template={[Function]}
+      value={undefined}
+      valueKey="culture"
+    />
+  </div>
+  <div
+    className="Form__ActionRow"
+  >
+    <ThemedThemed
+      composeTheme="deeply"
+      disabled={false}
+      label="Save"
+      mapThemrProps={[Function]}
+      neutral={true}
+      raised={true}
+      ripple={true}
+      rippleCentered={false}
+      rippleClassName=""
+      rippleMultiple={true}
+      rippleSpread={2}
+      type="submit"
+    />
+  </div>
+</form>
+`;
+
+exports[`UserPreferencesForm module UserPreferencesForm component should shallow render correctly 1`] = `
+<form
+  className="Form"
+  onSubmit={[Function]}
+>
+  <div
+    className="Form__Content"
+  >
+    <ThemedDropdown
+      allowBlank={true}
+      auto={true}
+      className=""
+      composeTheme="deeply"
+      disabled={false}
+      label="Time Zone"
+      labelKey="name"
+      mapThemrProps={[Function]}
+      name="timezone"
+      onChange={[Function]}
+      required={false}
+      source={
+        Array [
+          Object {
+            "id": "Dateline Standard Time",
+            "name": "International Date Line West (UTC-12:00)",
+            "timeZone": "Pacific/Wake",
+          },
+          Object {
+            "id": "UTC-11",
+            "name": "Coordinated Universal Time-11 (UTC-11:00)",
+            "timeZone": "Pacific/Niue",
+          },
+          Object {
+            "id": "Hawaiian Standard Time",
+            "name": "Hawaii (UTC-10:00)",
+            "timeZone": "Pacific/Honolulu",
+          },
+          Object {
+            "id": "Alaskan Standard Time",
+            "name": "Alaska (UTC-09:00)",
+            "timeZone": "America/Juneau",
+          },
+          Object {
+            "id": "Pacific Standard Time (Mexico)",
+            "name": "Baja California (UTC-08:00)",
+            "timeZone": "America/Santa_Isabel",
+          },
+          Object {
+            "id": "Pacific Standard Time",
+            "name": "Pacific Time (US & Canada) (UTC-08:00)",
+            "timeZone": "America/Los_Angeles",
+          },
+          Object {
+            "id": "US Mountain Standard Time",
+            "name": "Arizona (UTC-07:00)",
+            "timeZone": "America/Phoenix",
+          },
+          Object {
+            "id": "Mountain Standard Time (Mexico)",
+            "name": "Chihuahua, La Paz, Mazatlan (UTC-07:00)",
+            "timeZone": "America/Chihuahua",
+          },
+          Object {
+            "id": "Mountain Standard Time",
+            "name": "Mountain Time (US & Canada) (UTC-07:00)",
+            "timeZone": "America/Denver",
+          },
+          Object {
+            "id": "Central America Standard Time",
+            "name": "Central America (UTC-06:00)",
+            "timeZone": "America/Chicago",
+          },
+          Object {
+            "id": "Central Standard Time",
+            "name": "Central Time (US & Canada) (UTC-06:00)",
+            "timeZone": "Canada/Central",
+          },
+          Object {
+            "id": "Central Standard Time (Mexico)",
+            "name": "Guadalajara, Mexico City, Monterrey (UTC-06:00)",
+            "timeZone": "America/Mexico_City",
+          },
+          Object {
+            "id": "Canada Central Standard Time",
+            "name": "Saskatchewan (UTC-06:00)",
+            "timeZone": "Canada/Central",
+          },
+          Object {
+            "id": "SA Pacific Standard Time",
+            "name": "Bogota, Lima, Quito (UTC-05:00)",
+            "timeZone": "America/Bogota",
+          },
+          Object {
+            "id": "Eastern Standard Time",
+            "name": "Eastern Time (US & Canada) (UTC-05:00)",
+            "timeZone": "America/New_York",
+          },
+          Object {
+            "id": "US Eastern Standard Time",
+            "name": "Indiana (East) (UTC-05:00)",
+            "timeZone": "America/Indianapolis",
+          },
+          Object {
+            "id": "Venezuela Standard Time",
+            "name": "Caracas (UTC-04:30)",
+            "timeZone": "America/Caracas",
+          },
+          Object {
+            "id": "Paraguay Standard Time",
+            "name": "Asuncion (UTC-04:00)",
+            "timeZone": "America/Asuncion",
+          },
+          Object {
+            "id": "Atlantic Standard Time",
+            "name": "Atlantic Time (Canada) (UTC-04:00)",
+            "timeZone": "Canada/Atlantic",
+          },
+          Object {
+            "id": "Central Brazilian Standard Time",
+            "name": "Cuiaba (UTC-04:00)",
+            "timeZone": "America/Cuiaba",
+          },
+          Object {
+            "id": "SA Western Standard Time",
+            "name": "Georgetown, La Paz, Manaus, San Juan (UTC-04:00)",
+            "timeZone": "America/La_Paz",
+          },
+          Object {
+            "id": "Pacific SA Standard Time",
+            "name": "Santiago (UTC-04:00)",
+            "timeZone": "America/Santiago",
+          },
+          Object {
+            "id": "Newfoundland Standard Time",
+            "name": "Newfoundland (UTC-03:30)",
+            "timeZone": "Canada/Newfoundland",
+          },
+          Object {
+            "id": "E. South America Standard Time",
+            "name": "Brasilia (UTC-03:00)",
+            "timeZone": "Brazil/East",
+          },
+          Object {
+            "id": "Argentina Standard Time",
+            "name": "Buenos Aires (UTC-03:00)",
+            "timeZone": "America/Buenos_Aires",
+          },
+          Object {
+            "id": "SA Eastern Standard Time",
+            "name": "Cayenne, Fortaleza (UTC-03:00)",
+            "timeZone": "America/Cayenne",
+          },
+          Object {
+            "id": "Greenland Standard Time",
+            "name": "Greenland (UTC-03:00)",
+            "timeZone": "America/Godthab",
+          },
+          Object {
+            "id": "Montevideo Standard Time",
+            "name": "Montevideo (UTC-03:00)",
+            "timeZone": "America/Montevideo",
+          },
+          Object {
+            "id": "Bahia Standard Time",
+            "name": "Salvador (UTC-03:00)",
+            "timeZone": "America/Bahia",
+          },
+          Object {
+            "id": "UTC-02",
+            "name": "Coordinated Universal Time-02 (UTC-02:00)",
+            "timeZone": "Atlantic/South_Georgia",
+          },
+          Object {
+            "id": "Mid-Atlantic Standard Time",
+            "name": "Mid-Atlantic (UTC-02:00)",
+            "timeZone": "Atlantic/South_Georgia",
+          },
+          Object {
+            "id": "Azores Standard Time",
+            "name": "Azores (UTC-01:00)",
+            "timeZone": "Atlantic/Azores",
+          },
+          Object {
+            "id": "Cape Verde Standard Time",
+            "name": "Cape Verde Is. (UTC-01:00)",
+            "timeZone": "Atlantic/Cape_Verde",
+          },
+          Object {
+            "id": "Morocco Standard Time",
+            "name": "Casablanca (UTC)",
+            "timeZone": "Africa/Casablanca",
+          },
+          Object {
+            "id": "UTC",
+            "name": "Coordinated Universal Time (UTC)",
+            "timeZone": "UTC",
+          },
+          Object {
+            "id": "GMT Standard Time",
+            "name": "Dublin, Edinburgh, Lisbon, London (UTC)",
+            "timeZone": "Europe/London",
+          },
+          Object {
+            "id": "Greenwich Standard Time",
+            "name": "Monrovia, Reykjavik (UTC)",
+            "timeZone": "Africa/Monrovia",
+          },
+          Object {
+            "id": "W. Europe Standard Time",
+            "name": "Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna (UTC+01:00)",
+            "timeZone": "Europe/Berlin",
+          },
+          Object {
+            "id": "Central Europe Standard Time",
+            "name": "Belgrade, Bratislava, Budapest, Ljubljana, Prague (UTC+01:00)",
+            "timeZone": "Europe/Prague",
+          },
+          Object {
+            "id": "Romance Standard Time",
+            "name": "Brussels, Copenhagen, Madrid, Paris (UTC+01:00)",
+            "timeZone": "Europe/Paris",
+          },
+          Object {
+            "id": "Central European Standard Time",
+            "name": "Sarajevo, Skopje, Warsaw, Zagreb (UTC+01:00)",
+            "timeZone": "Europe/Zagreb",
+          },
+          Object {
+            "id": "W. Central Africa Standard Time",
+            "name": "West Central Africa (UTC+01:00)",
+            "timeZone": "Africa/Lagos",
+          },
+          Object {
+            "id": "Namibia Standard Time",
+            "name": "Windhoek (UTC+01:00)",
+            "timeZone": "Africa/Windhoek",
+          },
+          Object {
+            "id": "Jordan Standard Time",
+            "name": "Amman (UTC+02:00)",
+            "timeZone": "Asia/Amman",
+          },
+          Object {
+            "id": "GTB Standard Time",
+            "name": "Athens, Bucharest (UTC+02:00)",
+            "timeZone": "Europe/Athens",
+          },
+          Object {
+            "id": "Middle East Standard Time",
+            "name": "Beirut (UTC+02:00)",
+            "timeZone": "Asia/Beirut",
+          },
+          Object {
+            "id": "Egypt Standard Time",
+            "name": "Cairo (UTC+02:00)",
+            "timeZone": "Africa/Cairo",
+          },
+          Object {
+            "id": "Syria Standard Time",
+            "name": "Damascus (UTC+02:00)",
+            "timeZone": "Asia/Damascus",
+          },
+          Object {
+            "id": "South Africa Standard Time",
+            "name": "Harare, Pretoria (UTC+02:00)",
+            "timeZone": "Africa/Johannesburg",
+          },
+          Object {
+            "id": "FLE Standard Time",
+            "name": "Helsinki, Kyiv, Riga, Sofia, Tallinn, Vilnius (UTC+02:00)",
+            "timeZone": "Europe/Helsinki",
+          },
+          Object {
+            "id": "Turkey Standard Time",
+            "name": "Istanbul (UTC+02:00)",
+            "timeZone": "Europe/Istanbul",
+          },
+          Object {
+            "id": "Israel Standard Time",
+            "name": "Jerusalem (UTC+02:00)",
+            "timeZone": "Asia/Jerusalem",
+          },
+          Object {
+            "id": "E. Europe Standard Time",
+            "name": "Nicosia (UTC+02:00)",
+            "timeZone": "Asia/Nicosia",
+          },
+          Object {
+            "id": "Arabic Standard Time",
+            "name": "Baghdad (UTC+03:00)",
+            "timeZone": "Asia/Baghdad",
+          },
+          Object {
+            "id": "Kaliningrad Standard Time",
+            "name": "Kaliningrad, Minsk (UTC+03:00)",
+            "timeZone": "Europe/Minsk",
+          },
+          Object {
+            "id": "Arab Standard Time",
+            "name": "Kuwait, Riyadh (UTC+03:00)",
+            "timeZone": "Asia/Kuwait",
+          },
+          Object {
+            "id": "E. Africa Standard Time",
+            "name": "Nairobi (UTC+03:00)",
+            "timeZone": "Africa/Nairobi",
+          },
+          Object {
+            "id": "Iran Standard Time",
+            "name": "Tehran (UTC+03:30)",
+            "timeZone": "Asia/Tehran",
+          },
+          Object {
+            "id": "Arabian Standard Time",
+            "name": "Abu Dhabi, Muscat (UTC+04:00)",
+            "timeZone": "Asia/Muscat",
+          },
+          Object {
+            "id": "Azerbaijan Standard Time",
+            "name": "Baku (UTC+04:00)",
+            "timeZone": "Asia/Baku",
+          },
+          Object {
+            "id": "Russian Standard Time",
+            "name": "Moscow, St. Petersburg, Volgograd (UTC+04:00)",
+            "timeZone": "Europe/Moscow",
+          },
+          Object {
+            "id": "Mauritius Standard Time",
+            "name": "Port Louis (UTC+04:00)",
+            "timeZone": "Indian/Mauritius",
+          },
+          Object {
+            "id": "Georgian Standard Time",
+            "name": "Tbilisi (UTC+04:00)",
+            "timeZone": "Asia/Tbilisi",
+          },
+          Object {
+            "id": "Caucasus Standard Time",
+            "name": "Yerevan (UTC+04:00)",
+            "timeZone": "Asia/Yerevan",
+          },
+          Object {
+            "id": "Afghanistan Standard Time",
+            "name": "Kabul (UTC+04:30)",
+            "timeZone": "Asia/Kabul",
+          },
+          Object {
+            "id": "Pakistan Standard Time",
+            "name": "Islamabad, Karachi (UTC+05:00)",
+            "timeZone": "Asia/Karachi",
+          },
+          Object {
+            "id": "West Asia Standard Time",
+            "name": "Tashkent (UTC+05:00)",
+            "timeZone": "Asia/Tashkent",
+          },
+          Object {
+            "id": "India Standard Time",
+            "name": "Chennai, Kolkata, Mumbai, New Delhi (UTC+05:30)",
+            "timeZone": "Asia/Kolkata",
+          },
+          Object {
+            "id": "Sri Lanka Standard Time",
+            "name": "Sri Jayawardenepura (UTC+05:30)",
+            "timeZone": "Asia/Colombo",
+          },
+          Object {
+            "id": "Nepal Standard Time",
+            "name": "Kathmandu (UTC+05:45)",
+            "timeZone": "Asia/Kathmandu",
+          },
+          Object {
+            "id": "Central Asia Standard Time",
+            "name": "Astana (UTC+06:00)",
+            "timeZone": "Asia/Omsk",
+          },
+          Object {
+            "id": "Bangladesh Standard Time",
+            "name": "Dhaka (UTC+06:00)",
+            "timeZone": "Asia/Dhaka",
+          },
+          Object {
+            "id": "Ekaterinburg Standard Time",
+            "name": "Ekaterinburg (UTC+06:00)",
+            "timeZone": "Asia/Yekaterinburg",
+          },
+          Object {
+            "id": "Myanmar Standard Time",
+            "name": "Yangon (Rangoon) (UTC+06:30)",
+            "timeZone": "Asia/Rangoon",
+          },
+          Object {
+            "id": "SE Asia Standard Time",
+            "name": "Bangkok, Hanoi, Jakarta (UTC+07:00)",
+            "timeZone": "Asia/Bangkok",
+          },
+          Object {
+            "id": "N. Central Asia Standard Time",
+            "name": "Novosibirsk (UTC+07:00)",
+            "timeZone": "Asia/Novosibirsk",
+          },
+          Object {
+            "id": "China Standard Time",
+            "name": "Beijing, Chongqing, Hong Kong, Urumqi (UTC+08:00)",
+            "timeZone": "Asia/Hong_Kong",
+          },
+          Object {
+            "id": "North Asia Standard Time",
+            "name": "Krasnoyarsk (UTC+08:00)",
+            "timeZone": "Asia/Krasnoyarsk",
+          },
+          Object {
+            "id": "Singapore Standard Time",
+            "name": "Kuala Lumpur, Singapore (UTC+08:00)",
+            "timeZone": "Asia/Singapore",
+          },
+          Object {
+            "id": "W. Australia Standard Time",
+            "name": "Perth (UTC+08:00)",
+            "timeZone": "Australia/West",
+          },
+          Object {
+            "id": "Taipei Standard Time",
+            "name": "Taipei (UTC+08:00)",
+            "timeZone": "Asia/Taipei",
+          },
+          Object {
+            "id": "Ulaanbaatar Standard Time",
+            "name": "Ulaanbaatar (UTC+08:00)",
+            "timeZone": "Asia/Ulaanbaatar",
+          },
+          Object {
+            "id": "North Asia East Standard Time",
+            "name": "Irkutsk (UTC+09:00)",
+            "timeZone": "Asia/Irkutsk",
+          },
+          Object {
+            "id": "Tokyo Standard Time",
+            "name": "Osaka, Sapporo, Tokyo (UTC+09:00)",
+            "timeZone": "Asia/Tokyo",
+          },
+          Object {
+            "id": "Korea Standard Time",
+            "name": "Seoul (UTC+09:00)",
+            "timeZone": "Asia/Seoul",
+          },
+          Object {
+            "id": "Cen. Australia Standard Time",
+            "name": "Adelaide (UTC+09:30)",
+            "timeZone": "Australia/South",
+          },
+          Object {
+            "id": "AUS Central Standard Time",
+            "name": "Darwin (UTC+09:30)",
+            "timeZone": "Australia/North",
+          },
+          Object {
+            "id": "E. Australia Standard Time",
+            "name": "Brisbane (UTC+10:00)",
+            "timeZone": "Australia/Queensland",
+          },
+          Object {
+            "id": "AUS Eastern Standard Time",
+            "name": "Canberra, Melbourne, Sydney (UTC+10:00)",
+            "timeZone": "Australia/Canberra",
+          },
+          Object {
+            "id": "West Pacific Standard Time",
+            "name": "Guam, Port Moresby (UTC+10:00)",
+            "timeZone": "Pacific/Guam",
+          },
+          Object {
+            "id": "Tasmania Standard Time",
+            "name": "Hobart (UTC+10:00)",
+            "timeZone": "Australia/Tasmania",
+          },
+          Object {
+            "id": "Yakutsk Standard Time",
+            "name": "Yakutsk (UTC+10:00)",
+            "timeZone": "Asia/Yakutsk",
+          },
+          Object {
+            "id": "Central Pacific Standard Time",
+            "name": "Solomon Is., New Caledonia (UTC+11:00)",
+            "timeZone": "Pacific/Guadalcanal",
+          },
+          Object {
+            "id": "Vladivostok Standard Time",
+            "name": "Vladivostok (UTC+11:00)",
+            "timeZone": "Asia/Vladivostok",
+          },
+          Object {
+            "id": "New Zealand Standard Time",
+            "name": "Auckland, Wellington (UTC+12:00)",
+            "timeZone": "Pacific/Auckland",
+          },
+          Object {
+            "id": "UTC+12",
+            "name": "Coordinated Universal Time+12 (UTC+12:00)",
+            "timeZone": "Pacific/Funafuti",
+          },
+          Object {
+            "id": "Fiji Standard Time",
+            "name": "Fiji (UTC+12:00)",
+            "timeZone": "Pacific/Fiji",
+          },
+          Object {
+            "id": "Magadan Standard Time",
+            "name": "Magadan (UTC+12:00)",
+            "timeZone": "Asia/Magadan",
+          },
+          Object {
+            "id": "Kamchatka Standard Time",
+            "name": "Petropavlovsk-Kamchatsky - Old (UTC+12:00)",
+            "timeZone": "Asia/Kamchatka",
+          },
+          Object {
+            "id": "Tonga Standard Time",
+            "name": "Nuku'alofa (UTC+13:00)",
+            "timeZone": "Pacific/Tongatapu",
+          },
+          Object {
+            "id": "Samoa Standard Time",
+            "name": "Samoa (UTC+13:00)",
+            "timeZone": "Pacific/Samoa",
+          },
+        ]
+      }
+      value={undefined}
+      valueKey="id"
+    />
+    <ThemedDropdown
+      allowBlank={true}
+      auto={true}
+      className=""
+      composeTheme="deeply"
+      disabled={false}
+      label="Language"
+      labelKey="label"
+      mapThemrProps={[Function]}
+      name="culture"
+      onChange={[Function]}
+      required={false}
+      source={
+        Array [
+          Object {
+            "culture": "fr-FR",
+            "iso_alpha2_code": "FR",
+            "language_name": "French (FR)",
+          },
+          Object {
+            "culture": "en-US",
+            "iso_alpha2_code": "US",
+            "language_name": "English (US)",
+          },
+        ]
+      }
+      template={[Function]}
+      value={undefined}
+      valueKey="culture"
+    />
+  </div>
+  <div
+    className="Form__ActionRow"
+  >
+    <ThemedThemed
+      composeTheme="deeply"
+      disabled={true}
+      label="Save"
+      mapThemrProps={[Function]}
+      neutral={true}
+      raised={true}
+      ripple={true}
+      rippleCentered={false}
+      rippleClassName=""
+      rippleMultiple={true}
+      rippleSpread={2}
+      type="submit"
+    />
+  </div>
+</form>
+`;

@@ -1,0 +1,184 @@
+const { get } = require('lodash')
+
+const postProcessMergeResult = require('./postProcessMergeResult')
+
+const plugins = {
+  default: {
+    preProcessCreateDevice,
+    transformNewDevicePayload,
+    preProcessAddDeviceData,
+    preProcessUpdateDeviceConfiguration,
+    postProcessUpdateDeviceConfiguration,
+    postProcessAddDeviceOperation,
+    preProcessUpdateSite,
+    postProcessUpdateSite,
+    preProcessGetResult,
+    postProcessGetResult,
+    preProcessMergeResult,
+    transformMergeResultPayload,
+    postProcessMergeResult,
+    onResultLogged,
+  },
+  malawi: {
+    transformNewDevicePayload: require('./malawi/transformNewDevicePayload'),
+    preProcessGetResult: require('./malawi/preProcessGetResult'),
+    postProcessMergeResult: require('./malawi/postProcessMergeResult'),
+    postProcessUpdateSite: require('./malawi/postProcessUpdateSite'),
+    onResultLogged: require('./malawi/onResultLogged'),
+  },
+  gxconnect: {
+    preProcessCreateDevice: require('./genexpert/gxconnect_plugin/preProcessCreateDevice'),
+    preProcessAddDeviceData: require('./genexpert/preProcessAddDeviceData'),
+    postProcessUpdateDeviceConfiguration: require('./genexpert/postProcessUpdateDeviceConfiguration'),
+    postProcessAddDeviceOperation: require('./genexpert/postProcessAddDeviceOperation'),
+    transformMergeResultPayload: require('./genexpert/transformMergeResultPayload'),
+    preProcessMergeResult: require('./genexpert/preProcessMergeResult'),
+  },
+  gxalert: {
+    preProcessAddDeviceData: require('./genexpert/gxalert_plugin/preProcessAddDeviceData'),
+    preProcessUpdateDeviceConfiguration: require('./genexpert/gxalert_plugin/preProcessUpdateDeviceConfiguration'),
+    postProcessUpdateDeviceConfiguration: require('./genexpert/gxalert_plugin/postProcessUpdateDeviceConfiguration'),
+    postProcessAddDeviceOperation: require('./genexpert/gxalert_plugin/postProcessAddDeviceOperation'),
+    transformMergeResultPayload: require('./genexpert/transformMergeResultPayload'),
+    preProcessMergeResult: require('./genexpert/preProcessMergeResult'),
+    postProcessMergeResult: require('./genexpert/gxalert_plugin/postProcessMergeResult'),
+  },
+}
+
+/**
+ * Loads a plugin by name and action see documentation for
+ * default plugin in ./default.js for available actions
+ *
+ * Falls back to default plugin if action
+ * with name not registered
+ *
+ */
+async function loadPlugin(pluginName, actionName) {
+  const action = get(plugins, [pluginName, actionName])
+  return action != null ? action : plugins.default[actionName]
+}
+
+/**
+ * Device data is received for an API Key that does not yet have a device
+ * Transform the payload to new payload  to process in format expected by
+ * Device API
+ *
+ * This can be used, for example, to set default device type or name
+ * with rules specific to this plugin.
+ *
+ * Default context.payload
+ */
+async function transformNewDevicePayload({ payload }) {
+  return payload
+}
+
+/**
+ * Device data is received with a new device API key
+ *
+ * This is called after transformNewDevicePayload but before a
+ * new device record is inserted
+ *
+ * This can be used, for example, to perform required checks on
+ * the payload and prevent duplicate devices from being created
+ *
+ * Returns a device object if as new one should not be created
+ */
+async function preProcessCreateDevice(/* request, now */) {
+  return null
+}
+
+/**
+ * A site is being updated, called before any processing
+ * or querying of site.
+ */
+async function preProcessUpdateSite(/* context */) {
+  // nothing to do by default
+}
+
+/**
+ * Device payload has been sent to Aspect, called before
+ * any of this data has been processed
+ */
+async function preProcessAddDeviceData(/* context */) {
+  // nothing to do by default
+}
+
+/**
+ * Device configuration payload has been sent to Aspect,
+ * called before configuration data has been saved
+ */
+async function preProcessUpdateDeviceConfiguration(/* context */) {
+  // nothing to do by default
+}
+
+/**
+ * Device configuration payload has been sent to Aspect,
+ * called after configuration data has been saved
+ */
+async function postProcessUpdateDeviceConfiguration(/* context */) {
+  // nothing to do by default
+  return {}
+}
+
+/**
+ * Device operation payload has been sent to Aspect,
+ * called after operation data has been saved
+ */
+async function postProcessAddDeviceOperation(/* context */) {
+  // nothing to do by default
+  return {}
+}
+
+/**
+ * A site has been updated, called after any processing
+ * or querying of site.
+ */
+async function postProcessUpdateSite(/* context, site, previousSite */) {
+  // nothing to do by default
+}
+
+/**
+ * A result is queried
+ * called prior to any processing of result.
+ */
+async function preProcessGetResult(/* context */) {
+  // nothing to do by default
+}
+
+/**
+ * A result is queried
+ * called after all processing of result.
+ *
+ * Return result to return to client
+ */
+async function postProcessGetResult(context, result) {
+  return result
+}
+
+/**
+ * A new result is received, called prior to any processing of result.
+ */
+async function preProcessMergeResult(/* context */) {
+  // nothing to do by default
+}
+
+/**
+ * A new result is received, transform result payload to new payload
+ * to process in format expected by Device API
+ * Default context.payload
+ */
+async function transformMergeResultPayload(context) {
+  return context.payload
+}
+
+/**
+ * RESULT_LOGGED action has been published referencing
+ * a result handled by this plugin
+ */
+async function onResultLogged(/* context */) {
+  // do nothing by default
+}
+
+module.exports = {
+  loadPlugin,
+}

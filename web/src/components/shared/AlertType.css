@@ -1,0 +1,13 @@
+@import '../../globals/variables.css';
+
+.FaCircle {
+  color: var(--aspect-color-chill-blue-1);
+}
+
+.FaCircleO {
+  color: var(--aspect-color-grey-2);
+}
+
+.FaBellZ {
+  color: var(--aspect-color-supernova);
+}

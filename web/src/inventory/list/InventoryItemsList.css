@@ -1,0 +1,30 @@
+.Container {
+  padding: 10px;
+}
+
+.DataTableCard--action {
+  margin-bottom: 2px;
+  display: flex;
+  flex-flow: row;
+  justify-content: space-between;
+}
+
+.DataTableCard--table {
+  overflow: visible; /* For IconMenu at last row to be visible */
+}
+
+.Checkbox {
+  margin: 9px 0;
+}
+
+.TooltipIconButton__tooltip {
+  min-width: 120px;
+}
+
+.TooltipIconButton__toggle > svg {
+  vertical-align: middle;
+}
+
+.InventoryDataTable {
+  composes: ComponentDataTable from '../../components/shared/DataTable.css';
+}

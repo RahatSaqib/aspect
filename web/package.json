@@ -5,102 +5,264 @@
   "description": "The web client for the aspect API",
   "main": "",
   "scripts": {
-    "start": "webpack-dev-server --open --env=dev",
-    "mocha": "mocha --opts utils/unit_tests/mocha_unit.opts",
-    "run:tests:coverage": "istanbul cover --config utils/unit_tests/istanbul.yml node_modules/mocha/bin/_mocha -- --opts utils/unit_tests/mocha_unit.opts",
-    "check:coverage": "istanbul check-coverage --config utils/unit_tests/istanbul.yml",
+    "styleguide": "styleguidist server",
+    "prestart": "webpack --config cfg/dll.js",
+    "start": "webpack-dev-server --config cfg/src.js --open 'google chrome' --env.ASPECT_TARGET=local",
+    "predist": "webpack --config cfg/dll.js",
+    "dist": "webpack --config cfg/src.js --env.ASPECT_TARGET=dist",
     "pretest": "fsys --task=remove --fileFolder=coverage && fsys --task=remove --fileFolder=mocha.json",
-    "test": "npm-run-all run:tests:coverage check:coverage",
-    "test:watch": "npm run mocha -- --watch",
+    "test": "cross-env ASPECT_TARGET=test BABEL_ENV=test JEST_FILE=mocha.json jest --coverage",
+    "test:snapshot": "npm run test -- -u",
+    "test:watch": "npm run test -- --watch",
     "posttest": "npm run lint",
-    "preupdatemessages:start": "BABEL_ENV=message babel --quiet --out-dir ./i18n/dist ./src",
-    "updatemessages:start": "rip json2pot './i18n/src/**/*.json' -o ./src/i18n/diff.pot",
-    "updatemessages:end": "rip po2json './src/i18n/web.*.po' -m './i18n/src/**/*.json' -o ./src/i18n/translation.json",
-    "postupdatemessages:end": "fsys --task=remove --fileFolder=i18n && fsys --task=remove --fileFolder=src/i18n/diff.pot",
-    "dist": "webpack --config=webpack.config.babel.js --env=dist",
-    "lint": "eslint ./src --ext .js --ext .jsx",
-    "clean": "fsys --task=emptyDir --dir=dist",
+    "preupdatemessages:start": "cross-env BABEL_ENV=message babel --quiet --out-dir ./i18n/dist ./src",
+    "updatemessages:start": "rip json2pot \"./i18n/src/**/*.json\" -o ./src/shared/i18n/diff.pot",
+    "updatemessages:end": "rip po2json \"./src/shared/i18n/web.*.po\" -m \"./i18n/src/**/*.json\" -o ./src/shared/i18n/translation.json",
+    "postupdatemessages:end": "fsys --task=remove --fileFolder=i18n && fsys --task=remove --fileFolder=src/shared/i18n/diff.pot",
+    "prettier": "prettier --no-semi --single-quote --trailing-comma=es5",
+    "prettier:write": "npm run prettier -- --write \"./src/**/*.{js,jsx,css}\"",
+    "lint": "eslint . --ext .js --ext .jsx --ignore-pattern coverage/ --ignore-pattern dist/",
     "release:major": "npm version major && npm publish && git push --follow-tags",
     "release:minor": "npm version minor && npm publish && git push --follow-tags",
-    "release:patch": "npm version patch && npm publish && git push --follow-tags"
+    "release:patch": "npm version patch && npm publish && git push --follow-tags",
+    "precommit": "lint-staged"
+  },
+  "lint-staged": {
+    "linters": {
+      "web/cfg/**/*.js": [
+        "eslint --fix",
+        "git add"
+      ],
+      "web/src/**/*.css": [
+        "prettier --write",
+        "git add"
+      ],
+      "web/src/**/*.js": [
+        "eslint --fix",
+        "git add"
+      ],
+      "web/src/**/*.jsx": [
+        "eslint --fix",
+        "git add"
+      ]
+    }
+  },
+  "jest": {
+    "setupFiles": [
+      "<rootDir>/src/__setup__/polyfills.js",
+      "<rootDir>/src/__setup__/mockDate.js",
+      "<rootDir>/src/__setup__/mockFetch.js",
+      "<rootDir>/src/__setup__/enzyme.js",
+      "<rootDir>/src/__setup__/injectTapEventPlugin.js"
+    ],
+    "moduleNameMapper": {
+      "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/src/__mocks__/fileMock.js",
+      "\\.scss$": "<rootDir>/src/__mocks__/globalStyleMock.js",
+      "\\.css$": "identity-obj-proxy"
+    },
+    "testResultsProcessor": "jest-bamboo-formatter"
+  },
+  "babel": {
+    "env": {
+      "test": {
+        "plugins": [
+          "babel-plugin-dynamic-import-node"
+        ],
+        "presets": [
+          [
+            "env",
+            {
+              "targets": {
+                "node": "current"
+              }
+            }
+          ],
+          "stage-1",
+          "react"
+        ]
+      },
+      "message": {
+        "plugins": [
+          [
+            "babel-plugin-react-intl",
+            {
+              "messagesDir": "./i18n"
+            }
+          ]
+        ],
+        "presets": [
+          [
+            "env",
+            {
+              "targets": {
+                "node": "current"
+              }
+            }
+          ],
+          "stage-1",
+          "react"
+        ]
+      },
+      "webpack": {
+        "plugins": [
+          [
+            "babel-plugin-lodash",
+            {}
+          ],
+          [
+            "react-hot-loader/babel",
+            {}
+          ]
+        ],
+        "presets": [
+          [
+            "env",
+            {
+              "modules": false,
+              "useBuiltIns": true,
+              "targets": {
+                "browsers": [
+                  "last 2 versions"
+                ]
+              }
+            }
+          ],
+          "stage-1",
+          "react"
+        ]
+      }
+    }
   },
   "repository": "",
   "keywords": [],
   "author": "SystemOne",
   "devDependencies": {
-    "babel-cli": "^6.14.0",
-    "babel-core": "^6.13.0",
-    "babel-eslint": "^6.1.0",
-    "babel-loader": "^6.2.0",
-    "babel-plugin-lodash": "^3.2.8",
-    "babel-plugin-react-intl": "^2.2.0",
-    "babel-plugin-webpack-alias": "^1.8.2",
-    "babel-polyfill": "^6.13.0",
-    "babel-preset-es2015": "^6.13.0",
-    "babel-preset-react": "^6.11.0",
-    "babel-preset-stage-1": "^6.13.0",
-    "babel-register": "^6.14.0",
-    "bower-webpack-plugin": "^0.1.9",
-    "chai": "^3.2.0",
-    "chai-immutable": "^1.6.0",
-    "chunk-manifest-webpack-plugin": "^0.1.0",
+    "babel-cli": "^6.24.1",
+    "babel-core": "^6.24.1",
+    "babel-eslint": "^8.0.1",
+    "babel-loader": "^7.0.0-beta.1",
+    "babel-plugin-dynamic-import-node": "^1.1.0",
+    "babel-plugin-lodash": "^3.2.11",
+    "babel-plugin-react-intl": "^2.3.1",
+    "babel-polyfill": "^6.23.0",
+    "babel-preset-env": "^1.4.0",
+    "babel-preset-react": "^6.24.1",
+    "babel-preset-stage-1": "^6.24.1",
+    "babel-register": "^6.24.1",
+    "caniuse-lite": "^1.0.30000697",
+    "case-sensitive-paths-webpack-plugin": "^2.0.0",
+    "chunk-manifest-webpack-plugin": "^1.0.0",
+    "compression-webpack-plugin": "^1.0.0",
     "core-js": "^2.4.0",
-    "css-loader": "^0.23.0",
-    "enzyme": "^2.4.1",
-    "eslint": "^3.3.0",
-    "eslint-loader": "^1.5.0",
-    "eslint-plugin-react": "^6.1.0",
-    "file-loader": "^0.9.0",
+    "cross-env": "^5.0.1",
+    "css-loader": "^0.28.0",
+    "del-webpack-plugin": "^1.0.1",
+    "enzyme": "^3.0.0",
+    "enzyme-adapter-react-15": "^1.0.0",
+    "eslint": "^4.4.1",
+    "eslint-config-airbnb": "^16.0.0",
+    "eslint-config-prettier": "^2.1.1",
+    "eslint-loader": "^1.7.1",
+    "eslint-plugin-import": "^2.5.0",
+    "eslint-plugin-jsx-a11y": "^6.0.2",
+    "eslint-plugin-prettier": "^2.1.1",
+    "eslint-plugin-react": "^7.0.1",
+    "extract-text-webpack-plugin": "^3.0.0",
+    "favicons-webpack-plugin": "^0.0.7",
+    "file-loader": "^1.1.5",
     "fs-extra-cli": "0.0.4",
-    "glob": "^7.0.5",
-    "html-webpack-plugin": "^2.22.0",
-    "html-webpack-plugin-remove": "0.0.2",
-    "isparta-instrumenter-loader": "^1.0.1",
-    "istanbul": "^1.0.0-alpha.2",
-    "jsdom": "^9.4.0",
-    "json-loader": "^0.5.4",
-    "minimist": "^1.2.0",
-    "mocha": "^3.0.0",
-    "mocha-bamboo-reporter": "^1.1.1",
-    "mocha-multi": "^0.9.1",
-    "npm-run-all": "^3.0.0",
+    "glob": "^7.1.2",
+    "html-loader": "^0.5.1",
+    "html-webpack-harddisk-plugin": "^0.1.0",
+    "html-webpack-include-assets-plugin": "^1.0.0",
+    "html-webpack-plugin": "^2.28.0",
+    "husky": "^0.14.0",
+    "identity-obj-proxy": "^3.0.0",
+    "jest": "^21.2.0",
+    "jest-bamboo-formatter": "^1.0.1",
+    "jest-fetch-mock": "^1.4.0",
+    "lint-staged": "^6.0.0",
+    "npm-run-all": "^4.0.2",
     "null-loader": "^0.1.1",
-    "postcss": "^5.1.0",
-    "postcss-loader": "^0.10.0",
-    "react-addons-test-utils": "^15.1.0",
-    "react-hot-loader": "^1.2.9",
-    "react-intl-po": "^1.0.6",
+    "postcss": "^6.0.2",
+    "postcss-cssnext": "^3.0.2",
+    "postcss-import": "^11.0.0",
+    "postcss-loader": "^2.0.6",
+    "postcss-pxtorem": "^4.0.0",
+    "prettier": "^1.5.2",
+    "react-intl-po": "^2.0.2",
+    "react-styleguidist": "^6.0.10",
+    "react-test-renderer": "^15.5.4",
+    "sinon": "^4.0.0",
     "static-loader": "^0.1.8",
-    "style-loader": "^0.13.0",
-    "url-loader": "^0.5.6",
-    "webpack": "^1.13.0",
-    "webpack-dev-server": "^1.12.0",
-    "webpack-manifest-plugin": "^1.0.1"
+    "style-loader": "^0.19.0",
+    "svg-sprite-loader": "^3.7.3",
+    "url-loader": "^0.6.2",
+    "util.promisify": "^1.0.0",
+    "webapp-manifest-plugin": "^0.0.4",
+    "webpack": "^3.3.0",
+    "webpack-bundle-analyzer": "^2.11.1",
+    "webpack-dev-server": "^2.4.2",
+    "why-did-you-update": "^0.1.0"
   },
   "dependencies": {
-    "es6-promise": "^3.2.1",
-    "global": "^4.3.0",
-    "http-client": "^4.1.0",
+    "@vx/axis": "^0.0.147",
+    "@vx/geo": "^0.0.143",
+    "@vx/glyph": "^0.0.143",
+    "@vx/gradient": "^0.0.143",
+    "@vx/grid": "^0.0.147",
+    "@vx/group": "^0.0.143",
+    "@vx/legend": "^0.0.143",
+    "@vx/responsive": "^0.0.149",
+    "@vx/scale": "^0.0.143",
+    "@vx/shape": "^0.0.147",
+    "@vx/tooltip": "^0.0.148",
+    "classnames": "^2.2.5",
+    "d3-array": "^1.2.0",
+    "d3-scale": "^1.0.6",
+    "date-fns": "^2.0.0-alpha.1",
+    "dom-helpers": "^3.2.1",
+    "dotenv-safe": "^4.0.4",
+    "element-resize-detector": "^1.1.12",
+    "email-validator": "^1.0.7",
+    "global": "^4.3.2",
+    "history": "^4.6.1",
+    "http-client": "^4.3.1",
     "immutable": "^3.8.1",
-    "isomorphic-fetch": "^2.2.1",
-    "jwt-decode": "^2.0.1",
-    "lodash": "^4.15.0",
-    "material-ui": "^0.15.0",
-    "moment": "^2.13.0",
-    "raven-js": "^3.7.0",
-    "react": "^15.3.0",
-    "react-dom": "^15.3.0",
-    "react-helmet": "^3.1.0",
-    "react-intl": "^2.1.5",
-    "react-redux": "^4.4.5",
-    "react-router": "^2.7.0",
-    "react-router-scroll": "^0.3.0",
-    "react-sparklines": "^1.5.2",
-    "react-tap-event-plugin": "^1.0.0",
+    "intl": "^1.2.4",
+    "invariant": "^2.2.2",
+    "is-promise": "^2.1.0",
+    "jwt-decode": "^2.2.0",
+    "keycode": "^2.1.8",
+    "lodash": "^4.17.4",
+    "material-ui": "^0.20.0",
+    "piwik-react-router": "^0.12.0",
+    "prop-types": "^15.5.8",
+    "raven-js": "^3.14.2",
+    "react": "^15.5.4",
+    "react-display-name": "^0.2.0",
+    "react-dom": "^15.5.4",
+    "react-google-maps": "^9.4.2",
+    "react-helmet": "^5.0.3",
+    "react-hot-loader": "^3.0.0-beta.6",
+    "react-icons": "^2.2.5",
+    "react-intl": "^2.2.3",
+    "react-loadable": "^5.2.2",
+    "react-redux": "^5.0.4",
+    "react-router": "^4.1.1",
+    "react-router-dom": "^4.1.1",
+    "react-tap-event-plugin": "^2.0.1",
+    "react-toolbox": "^2.0.0-beta.12",
+    "react-transition-group": "^1.1.3",
+    "recompose": "^0.26.0",
     "redux": "^3.5.2",
-    "redux-form": "^6.0.2",
-    "redux-immutable": "^3.0.0",
-    "redux-thunk": "^2.1.0",
-    "whatwg-fetch": "^1.0.0"
+    "redux-form": "^7.0.3",
+    "redux-idle-monitor": "^0.10.2",
+    "redux-immutable": "^4.0.0",
+    "redux-thunk": "^2.2.0",
+    "topojson-client": "^3.0.0",
+    "url-search-params-polyfill": "^2.0.0",
+    "warning": "^3.0.0",
+    "whatwg-fetch": "^2.0.3"
   }
 }

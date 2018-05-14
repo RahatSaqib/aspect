@@ -1,0 +1,37 @@
+@import '../../globals/variables.css';
+
+.TableRow:first-child > .TableCell {
+  border-top-width: 2px;
+}
+
+.TableRow:not(:first-child) > .TableCell {
+  border-top: none;
+}
+
+.TableRow {
+  cursor: pointer;
+}
+
+.TableRow:nth-child(even) {
+  background-color: var(--aspect-color-grey-8);
+}
+
+.TableRow:hover {
+  background-color: var(--aspect-color-grey-6);
+}
+
+.TableCell__small {
+  padding-left: 10px;
+  opacity: 0;
+  transition-duration: 0.28s;
+  transition-property: opacity;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.TableRow:hover .TableCell__small {
+  opacity: 1;
+}
+
+.TableCell--numeric {
+  text-align: right;
+}

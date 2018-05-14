@@ -1,0 +1,94 @@
+@import '../../globals/variables.css';
+
+.Container {
+  padding: 10px;
+}
+
+.Content--loading {
+  opacity: 0.3;
+}
+
+.FiltersGroup {
+  padding: 10px 0;
+  display: flex;
+  justify-content: center;
+}
+
+.FiltersGroup__Child {
+  margin: 0 10px;
+}
+
+.Button {
+  margin: 0 5px;
+}
+
+.Section {
+  padding: 10px 0;
+}
+
+.Section__Content {
+  padding: 20px;
+}
+
+.TitleContainer {
+  display: flex;
+}
+
+.TitleContainer__Title {
+  flex-grow: 1;
+}
+
+.Title__Color--inventory {
+  composes: Title__Color--inventory from '../status/Status.css';
+}
+
+.Title__Color--device {
+  composes: Title__Color--device from '../status/Status.css';
+}
+
+.Title__Color--site {
+  composes: Title__Color--site from '../status/Status.css';
+}
+
+.AbnormalBarChart {
+  padding: 10px;
+  color: var(--aspect-color-grey-2);
+}
+
+.AbnormalBarChart__Title {
+  line-height: 30px;
+  font-size: 18px;
+  font-weight: var(--lato-font-weight-black);
+  text-align: center;
+}
+
+.AbnormalBarChart__Title::first-letter {
+  text-transform: uppercase;
+}
+
+.AbnormalBarChart__Message {
+  display: flex;
+}
+
+.AbnormalBarChart__Message__Icon--abnormal {
+  color: var(--aspect-color-brink);
+}
+
+.AbnormalBarChart__Message__Icon--normal {
+  color: var(--aspect-color-mantis);
+}
+
+.AbnormalBarChart__Message__Text {
+  flex-grow: 1;
+  padding-left: 10px;
+}
+
+.DelayShowingProgressBar--indeterminate[disabled] {
+  display: none;
+}
+
+.DelayShowingProgressBar--indeterminate:not([disabled]) {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+}
