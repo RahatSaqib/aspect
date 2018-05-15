@@ -138,7 +138,7 @@ async function onIssueEscalated({ issueId }, { messageContext: context }) {
   await context.transact(async knex => {
     const now = new Date()
     // Find escalation policy for the issue
-    const policy = await knex('NotificationType as nt')
+    const policies = await knex('NotificationType as nt')
       .join('MessageType as mt', 'nt.messageTypeId', 'mt.id')
       .join('Issue as i', function() {
         // If issue is escalated past configured level, send again
@@ -149,8 +149,9 @@ async function onIssueEscalated({ issueId }, { messageContext: context }) {
       })
       .leftJoin('Geography as g', 'i.geographyId', 'g.id')
       .where({ 'i.id': issueId })
+      .orderBy('nt.jobFunctionId', 'DESC')
       .orderBy('nt.level', 'DESC')
-      .first(
+      .select(
         'nt.id',
         'nt.jobFunctionId',
         'i.siteId',
@@ -162,8 +163,10 @@ async function onIssueEscalated({ issueId }, { messageContext: context }) {
         'mt.alertTemplateId',
         'mt.emailTemplateId',
         'mt.smsTemplateId'
-      ) // TODO: Evaluate - Is this correct? This means that we can only have one notification type per issue type at a certain escalation level
-    if (policy) {
+      )
+    const policiesByJobFunction = _.groupBy(policies, 'jobFunctionId')
+    for (const [policy] of Object.values(policiesByJobFunction)) {
+      /* eslint-disable no-await-in-loop */
       const people = await knex('Job as j')
         .join('JobFunction as jf', 'j.jobFunctionId', 'jf.id')
         .where({ 'jf.id': policy.jobFunctionId })

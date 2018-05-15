@@ -146,10 +146,7 @@ export const ActionStatus = compose(
     },
   })
 )(({ intl, messages, action, handleSubmit }) => {
-  if (
-    action.get('notificationType') === 'luStockLevelUpdate' ||
-    action.get('notificationType') === 'roStockLevelUpdate'
-  ) {
+  if (action.get('issueTypeExternalId') === 'StockLevelUpdate') {
     return (
       <UpdateStockLevelInput
         intl={intl}
