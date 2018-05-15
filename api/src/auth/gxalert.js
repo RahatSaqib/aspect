@@ -400,7 +400,8 @@ async function getCreateGeographyIdByGxGeo(
       .from('Lga as l')
       .innerJoin('Geography as g', 'l.id', 'g.lgaId')
       .where(d)
-      .first('l.id as lgaId')
+      .first('l.id')
+
     if (lga) {
       lgaId = lga.id
     } else {
@@ -417,7 +418,7 @@ async function getCreateGeographyIdByGxGeo(
     .from('Geography')
     .where({ countryId, stateId, lgaId })
     .first('id')
-
+  
   // if not found - create it
   if (!geo) {
     ;[geographyId] = await knex('Geography').insert({
