@@ -1039,7 +1039,7 @@ async function seed(knex) {
     ),
     Object.assign(
       {
-        name: 'LU Network',
+        name: 'LU Network - RO View',
         partnerId,
         issueTypeId: issueTypes.DeviceOffline.id,
         jobFunctionId: jobFunctionIdRegionalOfficer,
@@ -1049,10 +1049,9 @@ async function seed(knex) {
       },
       auditFields
     ),
-    // Notification Types for RO to see LU issues (ASP-765)
     Object.assign(
       {
-        name: 'LU No Testing',
+        name: 'LU No Testing - RO View',
         partnerId,
         issueTypeId: issueTypes.DeviceNoResults.id,
         jobFunctionId: jobFunctionIdRegionalOfficer,
@@ -1064,7 +1063,7 @@ async function seed(knex) {
     ),
     Object.assign(
       {
-        name: 'LU Module Failure',
+        name: 'LU Module Failure - RO View',
         partnerId,
         issueTypeId: issueTypes.ModuleFailureError.id,
         jobFunctionId: jobFunctionIdRegionalOfficer,
@@ -1076,7 +1075,7 @@ async function seed(knex) {
     ),
     Object.assign(
       {
-        name: 'LU Escalated Module Failure',
+        name: 'LU Escalated Module Failure - RO View',
         partnerId,
         issueTypeId: issueTypes.ModuleFailureError.id,
         jobFunctionId: jobFunctionIdRegionalOfficer,
@@ -1088,7 +1087,7 @@ async function seed(knex) {
     ),
     Object.assign(
       {
-        name: 'LU Module Temperature',
+        name: 'LU Module Temperature - RO View',
         partnerId,
         issueTypeId: issueTypes.ModuleTemperatureError.id,
         jobFunctionId: jobFunctionIdRegionalOfficer,
@@ -1100,7 +1099,7 @@ async function seed(knex) {
     ),
     Object.assign(
       {
-        name: 'LU Escalated Module Temperature',
+        name: 'LU Escalated Module Temperature - RO View',
         partnerId,
         issueTypeId: issueTypes.ModuleTemperatureError.id,
         jobFunctionId: jobFunctionIdRegionalOfficer,
@@ -1112,7 +1111,7 @@ async function seed(knex) {
     ),
     Object.assign(
       {
-        name: 'LU Module Power',
+        name: 'LU Module Power - RO View',
         partnerId,
         issueTypeId: issueTypes.ModulePowerError.id,
         jobFunctionId: jobFunctionIdRegionalOfficer,
@@ -1124,7 +1123,7 @@ async function seed(knex) {
     ),
     Object.assign(
       {
-        name: 'LU Escalated Module Power',
+        name: 'LU Escalated Module Power - RO View',
         partnerId,
         issueTypeId: issueTypes.ModulePowerError.id,
         jobFunctionId: jobFunctionIdRegionalOfficer,
@@ -1136,7 +1135,7 @@ async function seed(knex) {
     ),
     Object.assign(
       {
-        name: 'LU Machine Temperature',
+        name: 'LU Machine Temperature - RO View',
         partnerId,
         issueTypeId: issueTypes.MachineTemperatureError.id,
         jobFunctionId: jobFunctionIdRegionalOfficer,
@@ -1148,7 +1147,7 @@ async function seed(knex) {
     ),
     Object.assign(
       {
-        name: 'LU Escalated Machine Temperature',
+        name: 'LU Escalated Machine Temperature - RO View',
         partnerId,
         issueTypeId: issueTypes.MachineTemperatureError.id,
         jobFunctionId: jobFunctionIdRegionalOfficer,
@@ -1160,7 +1159,7 @@ async function seed(knex) {
     ),
     Object.assign(
       {
-        name: 'LU Machine Power',
+        name: 'LU Machine Power - RO View',
         partnerId,
         issueTypeId: issueTypes.MachinePowerError.id,
         jobFunctionId: jobFunctionIdRegionalOfficer,
@@ -1172,7 +1171,7 @@ async function seed(knex) {
     ),
     Object.assign(
       {
-        name: 'LU Escalated Machine Power',
+        name: 'LU Escalated Machine Power - RO View',
         partnerId,
         issueTypeId: issueTypes.MachinePowerError.id,
         jobFunctionId: jobFunctionIdRegionalOfficer,
@@ -1184,7 +1183,7 @@ async function seed(knex) {
     ),
     Object.assign(
       {
-        name: 'LU Module Generic',
+        name: 'LU Module Generic - RO View',
         partnerId,
         issueTypeId: issueTypes.ModuleGenericError.id,
         jobFunctionId: jobFunctionIdRegionalOfficer,
@@ -1196,7 +1195,7 @@ async function seed(knex) {
     ),
     Object.assign(
       {
-        name: 'LU Escalated Module Generic',
+        name: 'LU Escalated Module Generic - RO View',
         partnerId,
         issueTypeId: issueTypes.ModuleGenericError.id,
         jobFunctionId: jobFunctionIdRegionalOfficer,
@@ -1208,7 +1207,7 @@ async function seed(knex) {
     ),
     Object.assign(
       {
-        name: 'LU Machine Generic',
+        name: 'LU Machine Generic - RO View',
         partnerId,
         issueTypeId: issueTypes.MachineGenericError.id,
         jobFunctionId: jobFunctionIdRegionalOfficer,
@@ -1220,7 +1219,7 @@ async function seed(knex) {
     ),
     Object.assign(
       {
-        name: 'LU Escalated Machine Generic',
+        name: 'LU Escalated Machine Generic - RO View',
         partnerId,
         issueTypeId: issueTypes.MachineGenericError.id,
         jobFunctionId: jobFunctionIdRegionalOfficer,
@@ -1232,7 +1231,7 @@ async function seed(knex) {
     ),
     Object.assign(
       {
-        name: 'LU Reagent Health',
+        name: 'LU Reagent Health - RO View',
         partnerId,
         issueTypeId: issueTypes.ReagentHealthError.id,
         jobFunctionId: jobFunctionIdRegionalOfficer,
@@ -1244,7 +1243,7 @@ async function seed(knex) {
     ),
     Object.assign(
       {
-        name: 'LU Escalated Reagent Health',
+        name: 'LU Escalated Reagent Health - RO View',
         partnerId,
         issueTypeId: issueTypes.ReagentHealthError.id,
         jobFunctionId: jobFunctionIdRegionalOfficer,
@@ -1256,7 +1255,7 @@ async function seed(knex) {
     ),
     Object.assign(
       {
-        name: 'LU Stock Level Update',
+        name: 'LU Stock Level Update - RO View',
         partnerId,
         issueTypeId: issueTypes.StockLevelUpdate.id,
         jobFunctionId: jobFunctionIdRegionalOfficer,
@@ -1268,7 +1267,7 @@ async function seed(knex) {
     ),
     Object.assign(
       {
-        name: 'LU Data Category Low',
+        name: 'LU Data Category Low - RO View',
         partnerId,
         issueTypeId: issueTypes.DataCategoryLowError.id,
         jobFunctionId: jobFunctionIdRegionalOfficer,
