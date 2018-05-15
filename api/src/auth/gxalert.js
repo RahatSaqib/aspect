@@ -418,7 +418,7 @@ async function getCreateGeographyIdByGxGeo(
     .from('Geography')
     .where({ countryId, stateId, lgaId })
     .first('id')
-  
+
   // if not found - create it
   if (!geo) {
     ;[geographyId] = await knex('Geography').insert({
