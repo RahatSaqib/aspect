@@ -1568,6 +1568,7 @@ async function seed(knex) {
     .where('nt.jobFunctionId', jobFunctionIdRegionalOfficer)
     .select(
       'nt.id as notificationTypeId',
+      'nt.name as notificationTypeName',
       'nt.jobFunctionId',
       'j.personId',
       'i.id as issueId',
@@ -1582,11 +1583,14 @@ async function seed(knex) {
     _.map(roPolicies, async policy => {
       const deviceId = deviceIds[policy.deviceId][policy.personId]
       if (deviceId) {
+        const message = policy.notificationTypeName.endsWith('RO View')
+          ? luAlertMessages[policy.issueTypeId]
+          : roAlertMessages[policy.issueTypeId]
         const [alertMessageId] = await knex('AlertMessage').insert(
           Object.assign(
             {
               messageStatusId: messageStatusSentId,
-              message: roAlertMessages[policy.issueTypeId],
+              message,
               createdOn: now,
               updatedOn: now,
             },
