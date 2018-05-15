@@ -54,4 +54,9 @@ async function seed(knex) {
       )
     })
   )
+
+  // update ro stock level update to be acknowledgable
+  await knex('NotificationType')
+    .where('name', 'RO Stock Level Update')
+    .update('canAcknowledge', 1)
 }

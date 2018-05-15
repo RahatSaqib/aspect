@@ -1029,7 +1029,7 @@ async function seed(knex) {
         issueTypeId: issueTypes.StockLevelUpdate.id,
         jobFunctionId: jobFunctionIdRegionalOfficer,
         level: 1,
-        canAcknowledge: 0,
+        canAcknowledge: 1,
         messageTypeId: defaultMessageTypes.StockLevelUpdate.id,
       },
       auditFields
