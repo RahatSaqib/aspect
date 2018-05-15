@@ -1169,9 +1169,7 @@ async function seed(knex) {
           const issueStatusId =
             issueTypeId === issueTypes.StockLevelUpdate.id
               ? issueStatusOkId
-              : _.random(9) > 6
-                ? issueStatusActiveId
-                : issueStatusAcknowledgedId
+              : issueStatusActiveId
           const [issueId] = await knex('Issue').insert(
             Object.assign(
               {
@@ -1296,9 +1294,7 @@ async function seed(knex) {
           const issueStatusId =
             issueTypeId === issueTypes.StockLevelUpdate.id
               ? issueStatusOkId
-              : _.random(9) > 6
-                ? issueStatusActiveId
-                : issueStatusAcknowledgedId
+              : issueStatusActiveId
           const [issueId] = await knex('Issue').insert(
             Object.assign(
               {
