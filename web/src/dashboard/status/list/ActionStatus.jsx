@@ -148,7 +148,8 @@ export const ActionStatus = compose(
 )(({ intl, messages, action, handleSubmit }) => {
   if (
     action.get('notificationType') === 'luStockLevelUpdate' ||
-    action.get('notificationType') === 'roStockLevelUpdate'
+    action.get('notificationType') === 'roStockLevelUpdate' ||
+    action.get('notificationType') === 'luStockLevelUpdateRoView'
   ) {
     return (
       <UpdateStockLevelInput
