@@ -75,6 +75,20 @@ export const Reports = ({
           >
             TI Report
           </Button>
+          <Button
+            className={cssClasses('ReportsContainer__Button')}
+            inverse
+            href={`${config.aspectApi}/report/QuarterlyReport.xlsx`}
+          >
+            Quarterly Report
+          </Button>
+          <Button
+            className={cssClasses('ReportsContainer__Button')}
+            inverse
+            href={`${config.aspectApi}/report/FailedTestReport.xlsx`}
+          >
+            Failed Test Report
+          </Button>
         </div>
       </Card>
     )) || (
@@ -97,6 +111,13 @@ export const Reports = ({
           href={`${config.aspectApi}/report/InventoryReport.xlsx`}
         >
           Inventory Report
+        </Button>
+        <Button
+          className={cssClasses('ReportsContainer__Button')}
+          inverse
+          href={`${config.aspectApi}/report/QuarterlyReport.xlsx`}
+        >
+          Quarterly Report
         </Button>
       </div>
     </Card>
