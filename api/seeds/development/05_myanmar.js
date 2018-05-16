@@ -1058,6 +1058,246 @@ async function seed(knex) {
       },
       auditFields
     ),
+    Object.assign(
+      {
+        name: 'LU Network - RO View',
+        partnerId,
+        issueTypeId: issueTypes.DeviceOffline.id,
+        jobFunctionId: jobFunctionIdRegionalOfficer,
+        level: 1,
+        canAcknowledge: 0,
+        messageTypeId: defaultMessageTypes.DeviceOffline.id,
+      },
+      auditFields
+    ),
+    Object.assign(
+      {
+        name: 'LU No Testing - RO View',
+        partnerId,
+        issueTypeId: issueTypes.DeviceNoResults.id,
+        jobFunctionId: jobFunctionIdRegionalOfficer,
+        level: 1,
+        canAcknowledge: 0,
+        messageTypeId: defaultMessageTypes.DeviceNoResults.id,
+      },
+      auditFields
+    ),
+    Object.assign(
+      {
+        name: 'LU Module Failure - RO View',
+        partnerId,
+        issueTypeId: issueTypes.ModuleFailureError.id,
+        jobFunctionId: jobFunctionIdRegionalOfficer,
+        level: 2,
+        canAcknowledge: 0,
+        messageTypeId: defaultMessageTypes.ModuleFailureError.id,
+      },
+      auditFields
+    ),
+    Object.assign(
+      {
+        name: 'LU Escalated Module Failure - RO View',
+        partnerId,
+        issueTypeId: issueTypes.ModuleFailureError.id,
+        jobFunctionId: jobFunctionIdRegionalOfficer,
+        level: 2,
+        canAcknowledge: 0,
+        messageTypeId: defaultMessageTypes.ModuleFailureError.id,
+      },
+      auditFields
+    ),
+    Object.assign(
+      {
+        name: 'LU Module Temperature - RO View',
+        partnerId,
+        issueTypeId: issueTypes.ModuleTemperatureError.id,
+        jobFunctionId: jobFunctionIdRegionalOfficer,
+        level: 1,
+        canAcknowledge: 0,
+        messageTypeId: defaultMessageTypes.ModuleTemperatureError.id,
+      },
+      auditFields
+    ),
+    Object.assign(
+      {
+        name: 'LU Escalated Module Temperature - RO View',
+        partnerId,
+        issueTypeId: issueTypes.ModuleTemperatureError.id,
+        jobFunctionId: jobFunctionIdRegionalOfficer,
+        level: 2,
+        canAcknowledge: 0,
+        messageTypeId: defaultMessageTypes.ModuleTemperatureError.id,
+      },
+      auditFields
+    ),
+    Object.assign(
+      {
+        name: 'LU Module Power - RO View',
+        partnerId,
+        issueTypeId: issueTypes.ModulePowerError.id,
+        jobFunctionId: jobFunctionIdRegionalOfficer,
+        level: 1,
+        canAcknowledge: 0,
+        messageTypeId: defaultMessageTypes.ModulePowerError.id,
+      },
+      auditFields
+    ),
+    Object.assign(
+      {
+        name: 'LU Escalated Module Power - RO View',
+        partnerId,
+        issueTypeId: issueTypes.ModulePowerError.id,
+        jobFunctionId: jobFunctionIdRegionalOfficer,
+        level: 2,
+        canAcknowledge: 0,
+        messageTypeId: defaultMessageTypes.ModulePowerError.id,
+      },
+      auditFields
+    ),
+    Object.assign(
+      {
+        name: 'LU Machine Temperature - RO View',
+        partnerId,
+        issueTypeId: issueTypes.MachineTemperatureError.id,
+        jobFunctionId: jobFunctionIdRegionalOfficer,
+        level: 1,
+        canAcknowledge: 0,
+        messageTypeId: defaultMessageTypes.MachineTemperatureError.id,
+      },
+      auditFields
+    ),
+    Object.assign(
+      {
+        name: 'LU Escalated Machine Temperature - RO View',
+        partnerId,
+        issueTypeId: issueTypes.MachineTemperatureError.id,
+        jobFunctionId: jobFunctionIdRegionalOfficer,
+        level: 2,
+        canAcknowledge: 0,
+        messageTypeId: defaultMessageTypes.MachineTemperatureError.id,
+      },
+      auditFields
+    ),
+    Object.assign(
+      {
+        name: 'LU Machine Power - RO View',
+        partnerId,
+        issueTypeId: issueTypes.MachinePowerError.id,
+        jobFunctionId: jobFunctionIdRegionalOfficer,
+        level: 1,
+        canAcknowledge: 0,
+        messageTypeId: defaultMessageTypes.MachinePowerError.id,
+      },
+      auditFields
+    ),
+    Object.assign(
+      {
+        name: 'LU Escalated Machine Power - RO View',
+        partnerId,
+        issueTypeId: issueTypes.MachinePowerError.id,
+        jobFunctionId: jobFunctionIdRegionalOfficer,
+        level: 2,
+        canAcknowledge: 0,
+        messageTypeId: defaultMessageTypes.MachinePowerError.id,
+      },
+      auditFields
+    ),
+    Object.assign(
+      {
+        name: 'LU Module Generic - RO View',
+        partnerId,
+        issueTypeId: issueTypes.ModuleGenericError.id,
+        jobFunctionId: jobFunctionIdRegionalOfficer,
+        level: 1,
+        canAcknowledge: 0,
+        messageTypeId: defaultMessageTypes.ModuleGenericError.id,
+      },
+      auditFields
+    ),
+    Object.assign(
+      {
+        name: 'LU Escalated Module Generic - RO View',
+        partnerId,
+        issueTypeId: issueTypes.ModuleGenericError.id,
+        jobFunctionId: jobFunctionIdRegionalOfficer,
+        level: 2,
+        canAcknowledge: 0,
+        messageTypeId: defaultMessageTypes.ModuleGenericError.id,
+      },
+      auditFields
+    ),
+    Object.assign(
+      {
+        name: 'LU Machine Generic - RO View',
+        partnerId,
+        issueTypeId: issueTypes.MachineGenericError.id,
+        jobFunctionId: jobFunctionIdRegionalOfficer,
+        level: 1,
+        canAcknowledge: 0,
+        messageTypeId: defaultMessageTypes.MachineGenericError.id,
+      },
+      auditFields
+    ),
+    Object.assign(
+      {
+        name: 'LU Escalated Machine Generic - RO View',
+        partnerId,
+        issueTypeId: issueTypes.MachineGenericError.id,
+        jobFunctionId: jobFunctionIdRegionalOfficer,
+        level: 2,
+        canAcknowledge: 0,
+        messageTypeId: defaultMessageTypes.MachineGenericError.id,
+      },
+      auditFields
+    ),
+    Object.assign(
+      {
+        name: 'LU Reagent Health - RO View',
+        partnerId,
+        issueTypeId: issueTypes.ReagentHealthError.id,
+        jobFunctionId: jobFunctionIdRegionalOfficer,
+        level: 1,
+        canAcknowledge: 0,
+        messageTypeId: defaultMessageTypes.ReagentHealthError.id,
+      },
+      auditFields
+    ),
+    Object.assign(
+      {
+        name: 'LU Escalated Reagent Health - RO View',
+        partnerId,
+        issueTypeId: issueTypes.ReagentHealthError.id,
+        jobFunctionId: jobFunctionIdRegionalOfficer,
+        level: 2,
+        canAcknowledge: 0,
+        messageTypeId: defaultMessageTypes.ReagentHealthError.id,
+      },
+      auditFields
+    ),
+    Object.assign(
+      {
+        name: 'LU Stock Level Update - RO View',
+        partnerId,
+        issueTypeId: issueTypes.StockLevelUpdate.id,
+        jobFunctionId: jobFunctionIdRegionalOfficer,
+        level: 1,
+        canAcknowledge: 0,
+        messageTypeId: defaultMessageTypes.StockLevelUpdate.id,
+      },
+      auditFields
+    ),
+    Object.assign(
+      {
+        name: 'LU Data Category Low - RO View',
+        partnerId,
+        issueTypeId: issueTypes.DataCategoryLowError.id,
+        jobFunctionId: jobFunctionIdRegionalOfficer,
+        level: 1,
+        canAcknowledge: 0,
+        messageTypeId: defaultMessageTypes.DataCategoryLowError.id,
+      },
+      auditFields
+    ),
   ])
 
   // TB Cartridges Consumable Id
@@ -1345,6 +1585,7 @@ async function seed(knex) {
     .where('nt.jobFunctionId', jobFunctionIdRegionalOfficer)
     .select(
       'nt.id as notificationTypeId',
+      'nt.name as notificationTypeName',
       'nt.jobFunctionId',
       'j.personId',
       'i.id as issueId',
@@ -1359,11 +1600,14 @@ async function seed(knex) {
     _.map(roPolicies, async policy => {
       const deviceId = deviceIds[policy.deviceId][policy.personId]
       if (deviceId) {
+        const message = policy.notificationTypeName.endsWith('RO View')
+          ? luAlertMessages[policy.issueTypeId]
+          : roAlertMessages[policy.issueTypeId]
         const [alertMessageId] = await knex('AlertMessage').insert(
           Object.assign(
             {
               messageStatusId: messageStatusSentId,
-              message: roAlertMessages[policy.issueTypeId],
+              message,
               createdOn: now,
               updatedOn: now,
             },
