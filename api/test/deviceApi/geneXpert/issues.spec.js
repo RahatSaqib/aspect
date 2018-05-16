@@ -464,7 +464,6 @@ describe('Issue endpoints', () => {
               'i.deviceId',
               'is.externalId as issueStatus'
             )
-          console.log('issues', issues)
           assert.equal(issues.length, 1)
           assert.equal(issues[0].issueType, 'ModuleGenericError')
           assert.equal(issues[0].deviceId, deviceId)
@@ -473,7 +472,7 @@ describe('Issue endpoints', () => {
       }
     }))
 
-  it.only('should create a generic machine issue ', () =>
+  it.skip('should create a generic machine issue ', () =>
     runTest(async knex => {
       const { now } = context
 
@@ -485,7 +484,7 @@ describe('Issue endpoints', () => {
         }),
       })
       const deviceId = response.body.device.id
-      for (let i = 0; i < 10; i++) {
+      for (let i = 0; i < 21; i++) {
         /* eslint-disable no-await-in-loop */
         const errorTestResultId = `UNIQUE-ID-WITH-GEN-MAC-ERROR-${i}`
         const sampleId = `GENMAC2552${i}`
@@ -508,7 +507,7 @@ describe('Issue endpoints', () => {
             },
           },
         }
-        if (i > 8) {
+        if (i > 19) {
           result = {
             id: errorTestResultId,
             startedOn: testStartedOn,
