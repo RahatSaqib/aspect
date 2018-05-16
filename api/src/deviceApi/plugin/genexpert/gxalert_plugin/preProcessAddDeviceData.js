@@ -83,6 +83,9 @@ async function getOrCreateDevice(knex, payload, gxAlertDevice, now) {
     const lastPingOn = new Date(
       _.get(payload, 'configuration.data.lastPingOn', now)
     )
+    const putInService = new Date(
+      _.get(payload, 'configuration.data.putInService', now)
+    )
     const { device, error } = await createNewDevice(knex, now, {
       deviceTypeExternalId,
       name: deviceName,
@@ -99,7 +102,7 @@ async function getOrCreateDevice(knex, payload, gxAlertDevice, now) {
       configurationData: JSON.stringify(
         _.get(payload, 'configuration.data', '{}')
       ),
-      putInService: _.get(payload, 'configuration.data.putInService', now),
+      putInService,
       lastSeenOn: lastPingOn,
       lastPingOn,
     })
