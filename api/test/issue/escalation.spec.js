@@ -144,28 +144,112 @@ describe('Issue Escalation', () => {
       .first()
   }
 
+  async function createAndTriggerIssue(
+    knex,
+    partnerId,
+    device,
+    issueTypeId,
+    level,
+    dateIssueRaised
+  ) {
+    const activeIssueStatus = await getIssueStatus(knex, 'Active')
+    const triggeredIssueEventStatus = await getIssueEventStatus(
+      knex,
+      'Triggered'
+    )
+    const issueId = await knex('Issue').insert({
+      issueTypeId,
+      issueStatusId: activeIssueStatus.id,
+      partnerId,
+      geographyId: device.geographyId,
+      deviceId: device.id,
+      level,
+      createdOn: dateIssueRaised,
+      updatedOn: dateIssueRaised,
+    })
+    await knex('IssueEvent').insert({
+      issueEventStatusId: triggeredIssueEventStatus.id,
+      issueId,
+      data: JSON.stringify({
+        type: 'DEVICE_OFFLINE',
+        deviceId: device.id,
+      }),
+      createdOn: dateIssueRaised,
+    })
+    return issueId
+  }
+
+  async function createNotification(
+    knex,
+    notificationTypeId,
+    issueId,
+    personId,
+    createdOn
+  ) {
+    return knex('Notification').insert({
+      notificationTypeId,
+      issueId,
+      personId,
+      createdOn,
+    })
+  }
+
+  async function cleanUpIssues(knex, issueIds) {
+    const notifications = await knex('Notification')
+      .whereIn('issueId', issueIds)
+      .select()
+    const alertMessageIds = _.filter(
+      _.uniq(_.map(notifications, 'alertMessageId')),
+      alertMessageId => !_.isNull(alertMessageId)
+    )
+    if (!_.isEmpty(alertMessageIds)) {
+      await knex('AlertMessage')
+        .whereIn('id', alertMessageIds)
+        .del()
+    }
+    const emailMessageIds = _.filter(
+      _.uniq(_.map(notifications, 'emailMessageId')),
+      emailMessageId => !_.isNull(emailMessageId)
+    )
+    if (!_.isEmpty(emailMessageIds)) {
+      await knex('EmailMessage')
+        .whereIn('id', emailMessageIds)
+        .del()
+    }
+    const smsMessageIds = _.filter(
+      _.uniq(_.map(notifications, 'smsMessageId')),
+      smsMessageId => !_.isNull(smsMessageId)
+    )
+    if (!_.isEmpty(smsMessageIds)) {
+      await knex('SmsMessage')
+        .whereIn('id', smsMessageIds)
+        .del()
+    }
+    await knex('Notification')
+      .whereIn('issueId', issueIds)
+      .del()
+    return knex('Issue')
+      .whereIn('id', issueIds)
+      .del()
+  }
+
   describe('For Myanmar', () => {
     const partnerName = 'Myanmar'
     const countryAbbreviation = 'MM'
 
     let partner
-    let deviceOfflineIssueType
-    let activeIssueStatus
-    let triggeredIssueEventStatus
     let messageContext
 
     before(async () =>
       run(async knex => {
         partner = await getPartner(knex, partnerName)
-        deviceOfflineIssueType = await getIssueType(knex, 'DeviceOffline')
-        activeIssueStatus = await getIssueStatus(knex, 'Active')
-        triggeredIssueEventStatus = await getIssueEventStatus(knex, 'Triggered')
         messageContext = await createMessageContext()
         messageContext.bindActionCreators({ escalateIssues })
       })
     )
 
     describe('and DeviceOffline issues exist', () => {
+      let deviceOfflineIssueType
       let device1
       let device1RegionalOfficer
       let device2
@@ -173,6 +257,7 @@ describe('Issue Escalation', () => {
 
       before(async () =>
         run(async knex => {
+          deviceOfflineIssueType = await getIssueType(knex, 'DeviceOffline')
           const device1Details = await getDevice(knex, {
             partnerId: partner.id,
             countryAbbreviation,
@@ -190,73 +275,6 @@ describe('Issue Escalation', () => {
         })
       )
 
-      async function createDeviceOfflineIssue(
-        knex,
-        device,
-        level,
-        dateIssueRaised
-      ) {
-        const deviceOfflineIssueId = await knex('Issue').insert({
-          issueTypeId: deviceOfflineIssueType.id,
-          issueStatusId: activeIssueStatus.id,
-          partnerId: partner.id,
-          geographyId: device.geographyId,
-          deviceId: device.id,
-          level,
-          createdOn: dateIssueRaised,
-          updatedOn: dateIssueRaised,
-        })
-        await knex('IssueEvent').insert({
-          issueEventStatusId: triggeredIssueEventStatus.id,
-          issueId: deviceOfflineIssueId,
-          data: JSON.stringify({
-            type: 'DEVICE_OFFLINE',
-            deviceId: device1.id,
-          }),
-          createdOn: dateIssueRaised,
-        })
-        return deviceOfflineIssueId
-      }
-
-      async function cleanUpIssues(knex, issueIds) {
-        const notifications = await knex('Notification')
-          .whereIn('issueId', issueIds)
-          .select()
-        const alertMessageIds = _.filter(
-          _.uniq(_.map(notifications, 'alertMessageId')),
-          alertMessageId => !_.isNull(alertMessageId)
-        )
-        if (!_.isEmpty(alertMessageIds)) {
-          await knex('AlertMessage')
-            .whereIn('id', alertMessageIds)
-            .del()
-        }
-        const emailMessageIds = _.filter(
-          _.uniq(_.map(notifications, 'emailMessageId')),
-          emailMessageId => !_.isNull(emailMessageId)
-        )
-        if (!_.isEmpty(emailMessageIds)) {
-          await knex('EmailMessage')
-            .whereIn('id', emailMessageIds)
-            .del()
-        }
-        const smsMessageIds = _.filter(
-          _.uniq(_.map(notifications, 'smsMessageId')),
-          smsMessageId => !_.isNull(smsMessageId)
-        )
-        if (!_.isEmpty(smsMessageIds)) {
-          await knex('SmsMessage')
-            .whereIn('id', smsMessageIds)
-            .del()
-        }
-        await knex('Notification')
-          .whereIn('issueId', issueIds)
-          .del()
-        return knex('Issue')
-          .whereIn('id', issueIds)
-          .del()
-      }
-
       describe("which have been open for more than 30 days but haven't been escalated yet", () => {
         const dateIssueRaised = subDays(new Date(), 31)
         let device1OfflineIssueId
@@ -264,15 +282,19 @@ describe('Issue Escalation', () => {
 
         beforeEach(async () =>
           run(async knex => {
-            device1OfflineIssueId = await createDeviceOfflineIssue(
+            device1OfflineIssueId = await createAndTriggerIssue(
               knex,
+              partner.id,
               device1,
+              deviceOfflineIssueType.id,
               1,
               dateIssueRaised
             )
-            device2OfflineIssueId = await createDeviceOfflineIssue(
+            device2OfflineIssueId = await createAndTriggerIssue(
               knex,
+              partner.id,
               device2,
+              deviceOfflineIssueType.id,
               1,
               dateIssueRaised
             )
@@ -390,45 +412,28 @@ describe('Issue Escalation', () => {
         let device1OfflineIssueId
         let device2OfflineIssueId
 
-        async function createNotification(
-          knex,
-          notificationTypeId,
-          issueId,
-          personId,
-          createdOn
-        ) {
-          return knex('Notification').insert({
-            notificationTypeId,
-            issueId,
-            personId,
-            createdOn,
-          })
-        }
-
         beforeEach(async () =>
           run(async knex => {
-            const regionalOfficeJobFunction = await getJobJunction(
+            const regionalOfficerJobFunction = await getJobJunction(
               knex,
               partner.id,
               'Regional Officer'
             )
-            device1OfflineIssueId = await createDeviceOfflineIssue(
-              knex,
-              device1,
-              2,
-              dateIssueRaised
-            )
-            const device1OfflineIssue = await getIssue(
-              knex,
-              device1OfflineIssueId
-            )
             const roNetworkNotificationType = await getNotificationType(
               knex,
               partner.id,
-              device1OfflineIssue.issueTypeId,
-              regionalOfficeJobFunction.id,
+              deviceOfflineIssueType.id,
+              regionalOfficerJobFunction.id,
               2,
               'RO Network'
+            )
+            device1OfflineIssueId = await createAndTriggerIssue(
+              knex,
+              partner.id,
+              device1,
+              deviceOfflineIssueType.id,
+              2,
+              dateIssueRaised
             )
             await createNotification(
               knex,
@@ -437,9 +442,11 @@ describe('Issue Escalation', () => {
               device1RegionalOfficer.id,
               dateIssueEscalated
             )
-            device2OfflineIssueId = await createDeviceOfflineIssue(
+            device2OfflineIssueId = await createAndTriggerIssue(
               knex,
+              partner.id,
               device2,
+              deviceOfflineIssueType.id,
               2,
               dateIssueRaised
             )
@@ -558,9 +565,11 @@ describe('Issue Escalation', () => {
 
         beforeEach(async () =>
           run(async knex => {
-            deviceOfflineIssueId = await createDeviceOfflineIssue(
+            deviceOfflineIssueId = await createAndTriggerIssue(
               knex,
+              partner.id,
               device1,
+              deviceOfflineIssueType.id,
               1,
               dateIssueRaised
             )
