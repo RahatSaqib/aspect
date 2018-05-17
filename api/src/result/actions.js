@@ -7,6 +7,7 @@ const types = {
   RESULT_MODULE_FAILURE_ERROR: 'RESULT_MODULE_FAILURE_ERROR',
   RESULT_MACHINE_TEMPERATURE_ERROR: 'RESULT_MACHINE_TEMPERATURE_ERROR',
   RESULT_MODULE_GENERIC_ERROR: 'RESULT_MODULE_GENERIC_ERROR',
+  RESULT_MACHINE_POWER_ERROR: 'RESULT_MACHINE_POWER_ERROR',
 }
 
 // ----------- Action Creators -------------------
@@ -135,6 +136,21 @@ function resultModuleGenericError(deviceId) {
   }
 }
 
+/**
+ * has a machine power error issue
+ *
+ * deviceId is required.
+ */
+function resultMachinePowerError(deviceId) {
+  if (deviceId == null) {
+    throw new Error('Must specify deviceId for notify resultMachinePowerError')
+  }
+  return {
+    type: types.RESULT_MACHINE_POWER_ERROR,
+    deviceId,
+  }
+}
+
 module.exports = {
   types,
   resultUpdated,
@@ -144,4 +160,5 @@ module.exports = {
   resultModuleFailureError,
   resultMachineTemperatureError,
   resultModuleGenericError,
+  resultMachinePowerError,
 }
