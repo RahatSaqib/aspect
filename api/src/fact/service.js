@@ -444,6 +444,128 @@ function onFactCheckInventoryStock(action, { messageContext }) {
   })
 }
 
+// -------------------------------------------------------------------------------------
+// ---
+// --- functions for Inventory Consumption Rates
+// ---
+// -------------------------------------------------------------------------------------
+
+// ------------------------------
+// is called from scheduler
+function onFactCalculateInventoryConsumptionRates(action, { messageContext }) {
+  return messageContext.run(async knex => {
+    const items = await knex('InventoryItem')
+      .groupBy('siteId', 'consumableId')
+      .select('siteId', 'consumableId')
+
+    // loop through all sites/consumables and refresh rate
+    _.map(items, async item => {
+      refreshConsumptionRates(knex, item.siteId, item.consumableId)
+    })
+  })
+}
+// ------------------------------
+// recalculates rates for provided siteId and consumableId
+async function refreshConsumptionRates(knex, siteId, consumableId) {
+  const rates = []
+  const updatedOn = new Date()
+  const consumedTotals = getConsumedTotals(knex, siteId, consumableId)
+
+  _.map(daysToCalculate.filter(x => x > 1), async days => {
+    // calculate rate
+    const totalItems = consumedTotals[`total${days}`]
+    const rate = totalItems ? totalItems / days : 0
+
+    // insert/update rate in db
+    const whereClause = { siteId, consumableId, days }
+    const dataUpdate = { rate, updatedOn }
+    const item = await knex('FactInventoryConsumptionRate')
+      .where(whereClause)
+      .first()
+    if (item) {
+      await knex('FactInventoryConsumptionRate')
+        .where(whereClause)
+        .update(dataUpdate)
+    } else {
+      const dataInsert = { ...dataUpdate, ...whereClause }
+      await knex('FactInventoryConsumptionRate').insert(dataInsert)
+    }
+
+    rates.push({ days, rate })
+  })
+
+  return rates
+}
+// ------------------------------
+// returns object with numbers of used consumables in format
+// { totalNNN: NUMERIC_VALUE, ... }
+// where NNN is number from array daysToCalculate (see top of this file), i.e
+// {
+//   total7: xxx,
+//   total30: yyy,
+//   total60: zzz,
+//   etc
+// }
+async function getConsumedTotals(knex, siteId, consumableId) {
+  // --------------------
+  // get total consumed items for
+  // most recent 7 days with at least one test
+  // --------------------
+  const lastDaysWithTest = await knex
+    .from(
+      knex('Result as r')
+        .innerJoin('Assay as a', 'r.assayId', 'a.id')
+        .innerJoin('ConsumableAssay as ca', 'a.id', 'ca.assayId')
+        .innerJoin('Device as d', 'r.deviceId', 'd.id')
+        .where('d.siteId', siteId)
+        .where('ca.consumableId', consumableId)
+        .orderBy('r.endedOn')
+        .distinct('date(r.endedOn) as endedOn')
+        .select('date(r.endedOn) as endedOn')
+        .limit(DAYS_7)
+    )
+    .first('min(endedOn) as dateFrom', 'max(endedOn) as dateTo')
+
+  const consumed7 = await knex('Result as r')
+    .innerJoin('Assay as a', 'r.assayId', 'a.id')
+    .innerJoin('ConsumableAssay as ca', 'a.id', 'ca.assayId')
+    .innerJoin('Device as d', 'r.deviceId', 'd.id')
+    .where('date(r.endedOn)', '>=', lastDaysWithTest.dateFrom)
+    .where('date(r.endedOn)', '<=', lastDaysWithTest.dateTo)
+    .where('d.siteId', siteId)
+    .where('ca.consumableId', consumableId)
+    .groupBy('d.siteId', 'ca.consumableId')
+    .sum(`ca.quantity as total${DAYS_7}`)
+
+  // --------------------
+  // get total consumed items for all periods greater than 7 days
+  // --------------------
+  const fields = []
+  _.map(daysToCalculate.filter(x => x > DAYS_7), async days => {
+    let calcField
+    if (days === DAYS_BIG) {
+      calcField = knex.raw(`sum(ca.quantity) as total${days}`)
+    } else {
+      const interval = days === DAYS_365 ? `-1 YEAR` : `-${days} DAY`
+      calcField = knex.raw(
+        `sum(case when r.endedOn >= DATE_ADD(CURDATE(), INTERVAL ${interval}) then ca.quantity else 0 end) as total${days}`
+      )
+    }
+    fields.push(calcField)
+  })
+  const consumedRest = await knex('Result as r')
+    .innerJoin('Assay as a', 'r.assayId', 'a.id')
+    .innerJoin('ConsumableAssay as ca', 'a.id', 'ca.assayId')
+    .innerJoin('Device as d', 'r.deviceId', 'd.id')
+    .where('r.endedOn', '>=', `DATE_ADD(CURDATE(), INTERVAL ${DAYS_BIG})`)
+    .where('d.siteId', siteId)
+    .where('ca.consumableId', consumableId)
+    .groupBy('d.siteId', 'ca.consumableId')
+    .first(...fields)
+
+  return { ...consumed7, ...consumedRest }
+}
+
 module.exports = {
   daysToCalculate,
   DAYS_1,
@@ -456,6 +578,7 @@ module.exports = {
   onFactGenerateDeviceConnectivity,
   onFactGenerateResultCounts,
   onFactCheckInventoryStock,
+  onFactCalculateInventoryConsumptionRates,
   onDeviceSeen,
   onDeviceUpdateFlag,
   onResultLogged,

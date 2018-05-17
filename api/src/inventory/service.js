@@ -15,12 +15,6 @@ const {
 const { findConsumableReason } = require('../consumable/consumableService')
 const { getUser } = require('../auth/service')
 const { getSite } = require('../site/service')
-const {
-  daysToCalculate,
-  DAYS_7,
-  DAYS_365,
-  DAYS_BIG,
-} = require('../fact/service')
 
 const INVENTORY_ITEM_SELECT_LIST_FIELDS = [
   'ii.id',
@@ -562,13 +556,9 @@ async function addInventory(request) {
     userId: currentlyLoggedInUser.id,
   })
 
-  // refresh consumption rates
-  const rates = await refreshConsumptionRates(toSite.id, consumableId)
-
   return {
     ok: true,
     data: await getInventoryItem(inventoryItemId),
-    rates,
   }
 }
 
@@ -617,13 +607,9 @@ async function removeInventory(request) {
     userId: currentlyLoggedInUser.id,
   })
 
-  // refresh consumption rates
-  const rates = await refreshConsumptionRates(fromSite.id, consumableId)
-
   return {
     ok: true,
     data: await getInventoryItem(inventoryItemId),
-    rates,
   }
 }
 
@@ -727,10 +713,6 @@ async function transferInventory(request) {
     data: {
       existingInventoryItem: await getInventoryItem(inventoryItemId),
       newInventoryItem: await getInventoryItem(destinationInventoryItemId),
-    },
-    rates: {
-      existingItem: await refreshConsumptionRates(fromSiteId, consumableId),
-      newItem: await refreshConsumptionRates(toSiteId, consumableId),
     },
   }
 }
@@ -1059,97 +1041,6 @@ async function insertInventoryItem(knex, inventoryItemValues) {
   }
   const newInventoryItem = await knex('InventoryItem').insert(insertValues)
   return newInventoryItem
-}
-
-async function getConsumedTotals(siteId, consumableId) {
-  // --------------------
-  // get total consumed items for
-  // most recent 7 days with at least one test
-  // --------------------
-  const lastDaysWithTest = await knex
-    .from(
-      knex('Result as r')
-        .innerJoin('Assay as a', 'r.assayId', 'a.id')
-        .innerJoin('ConsumableAssay as ca', 'a.id', 'ca.assayId')
-        .innerJoin('Device as d', 'r.deviceId', 'd.id')
-        .where('d.siteId', siteId)
-        .where('ca.consumableId', consumableId)
-        .orderBy('r.endedOn')
-        .distinct('date(r.endedOn) as endedOn')
-        .select('date(r.endedOn) as endedOn')
-        .limit(DAYS_7)
-    )
-    .first('min(endedOn) as dateFrom', 'max(endedOn) as dateTo')
-
-  const consumed7 = await knex('Result as r')
-    .innerJoin('Assay as a', 'r.assayId', 'a.id')
-    .innerJoin('ConsumableAssay as ca', 'a.id', 'ca.assayId')
-    .innerJoin('Device as d', 'r.deviceId', 'd.id')
-    .where('date(r.endedOn)', '>=', lastDaysWithTest.dateFrom)
-    .where('date(r.endedOn)', '<=', lastDaysWithTest.dateTo)
-    .where('d.siteId', siteId)
-    .where('ca.consumableId', consumableId)
-    .groupBy('d.siteId', 'ca.consumableId')
-    .sum(`ca.quantity as total${DAYS_7}`)
-
-  // --------------------
-  // get total consumed items for all periods greater than 7 days
-  // --------------------
-  const fields = []
-  _.map(daysToCalculate.filter(x => x > DAYS_7), async days => {
-    let calcField
-    if (days === DAYS_BIG) {
-      calcField = knex.raw(`sum(ca.quantity) as total${days}`)
-    } else {
-      const interval = days === DAYS_365 ? `-1 YEAR` : `-${days} DAY`
-      calcField = knex.raw(
-        `sum(case when r.endedOn >= DATE_ADD(CURDATE(), INTERVAL ${interval}) then ca.quantity else 0 end) as total${days}`
-      )
-    }
-    fields.push(calcField)
-  })
-  const consumedRest = await knex('Result as r')
-    .innerJoin('Assay as a', 'r.assayId', 'a.id')
-    .innerJoin('ConsumableAssay as ca', 'a.id', 'ca.assayId')
-    .innerJoin('Device as d', 'r.deviceId', 'd.id')
-    .where('r.endedOn', '>=', `DATE_ADD(CURDATE(), INTERVAL ${DAYS_BIG})`)
-    .where('d.siteId', siteId)
-    .where('ca.consumableId', consumableId)
-    .groupBy('d.siteId', 'ca.consumableId')
-    .first(...fields)
-
-  return { ...consumed7, ...consumedRest }
-}
-
-async function refreshConsumptionRates(siteId, consumableId) {
-  const rates = []
-  const updatedOn = new Date()
-  const consumedTotals = getConsumedTotals(siteId, consumableId)
-
-  _.map(daysToCalculate.filter(x => x > 1), async days => {
-    // calculate rate
-    const totalItems = consumedTotals[`total${days}`]
-    const rate = totalItems ? totalItems / days : 0
-
-    // insert/update rate in db
-    const whereClause = { siteId, consumableId, days }
-    const dataUpdate = { rate, updatedOn }
-    const item = await knex('FactInventoryConsumptionRate')
-      .where(whereClause)
-      .first()
-    if (item) {
-      await knex('FactInventoryConsumptionRate')
-        .where(whereClause)
-        .update(dataUpdate)
-    } else {
-      const dataInsert = { ...dataUpdate, ...whereClause }
-      await knex('FactInventoryConsumptionRate').insert(dataInsert)
-    }
-
-    rates.push({ days, rate })
-  })
-
-  return rates
 }
 
 module.exports = {

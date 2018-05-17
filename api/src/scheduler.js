@@ -4,6 +4,7 @@ const {
   factGenerateDeviceConnectivity,
   factGenerateResultCounts,
   factCheckInventoryStock,
+  factCalculateInventoryConsumptionRates,
 } = require('./fact/actions')
 const { escalateIssues } = require('./issue/actions')
 
@@ -13,6 +14,7 @@ function startScheduler(queue) {
     factGenerateResultCounts,
     factCheckInventoryStock,
     factGenerateDeviceConnectivity,
+    factCalculateInventoryConsumptionRates,
     escalateIssues,
   })
   dispatcher.factGenerateResultCounts()
@@ -22,6 +24,11 @@ function startScheduler(queue) {
   cron.schedule('0 * * * *', dispatcher.factGenerateResultCounts) // run every hour as it changes
   cron.schedule('1 * * * *', dispatcher.factGenerateDeviceConnectivity) // run every hour at 1 minute past the hour
   cron.schedule('*/15 * * * *', dispatcher.escalateIssues) // run every 15 minutes
+
+  cron.schedule(
+    '25 */2 * * *', // run every 2 hours at 25th minute past the hour
+    dispatcher.factCalculateInventoryConsumptionRates
+  )
 }
 
 function createActionDispatcher(queue, actionCreators) {
