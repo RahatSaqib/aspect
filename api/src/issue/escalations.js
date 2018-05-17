@@ -104,6 +104,30 @@ async function escalationConditionsMet(knex, issue, escalationConditions) {
     return Promise.resolve(true)
   }
   if (Array.isArray(escalationConditions)) {
+    /*
+    const arrayEscalationCondition = [
+      {
+        operator: 'AND',
+        evaluationMethod: 'inline-sql',
+        evaluationParameter: 'SELECT EXISTS(SELECT * FROM Result WHERE id = {{resultId}}) AS ResultLinkedToIssue',
+      },
+      {
+        operator: 'AND',
+        evaluationMethod: 'inline-sql',
+        evaluationParameter: 'SELECT EXISTS(SELECT * FROM Geography WHERE id = {{geographyId}}) AS GeographyLinkedToIssue',
+      },
+      {
+        operator: 'OR',
+        evaluationMethod: 'inline-sql',
+        evaluationParameter: 'SELECT EXISTS(SELECT * FROM Result WHERE id = {{deviceId}}) AS DeviceLinkedToIssue',
+      },
+      {
+        operator: 'OR',
+        evaluationMethod: 'inline-sql',
+        evaluationParameter: 'SELECT EXISTS(SELECT * FROM Result WHERE id = {{siteId}}) AS SiteLinkedToIssue',
+      },
+    ]
+    */
     return evaluateArrayOfEscalationConditions(
       knex,
       issue,
@@ -114,6 +138,53 @@ async function escalationConditionsMet(knex, issue, escalationConditions) {
     evaluationMethod = null,
     evaluationParameter = null,
   } = escalationConditions
+  /*
+  const inlineSqlEscalationCondition = {
+    evaluationMethod: 'inline-sql',
+    evaluationParameter: 'SELECT EXISTS(SELECT * FROM Result WHERE id = {{resultId}}) AS ResultLinkedToIssue',
+  } // Checks if a result exists for this issue
+
+
+  const sqlScriptEscalationCondition = {
+    evaluationMethod: 'sql-script',
+    evaluationParameter: './sqlScripts/Myanmar/issues/escalations/someFileName.sql',
+  } // Runs the SQL script file specified in the evaluationParameter and checks if the value in the result's
+  //     first row and column evaluates to truthy
+
+
+  const issueAgeEscalationCondition = {
+    evaluationMethod: 'issue-age',
+    evaluationParameter: { days: 30 },
+  } // Evaluates whether the issue was triggered more than 30 days ago
+
+
+  const childCondition = {
+    evaluationMethod: 'child-conditions',
+    evaluationParameter: [
+      {
+        operator: 'AND',
+        evaluationMethod: 'inline-sql',
+        evaluationParameter: 'SELECT EXISTS(SELECT * FROM Result WHERE id = {{resultId}}) AS ResultLinkedToIssue',
+      },
+      {
+        operator: 'OR',
+        evaluationMethod: 'sql-script',
+        evaluationParameter: './sqlScripts/Myanmar/issues/escalations/someFileName.sql',
+      },
+      {
+        operator: 'OR',
+        evaluationMethod: 'issue-age',
+        evaluationParameter: { days: 30 },
+      },
+      {
+        operator: 'OR',
+        evaluationMethod: 'child-conditions',
+        evaluationParameter: [ ...array of child conditions ],
+      },
+    ],
+  } // Evaluates whether the issue has a result linked to it AND either someFileName.sql evaluates
+  //     to something truthy OR the issue was triggered more than 30 days ago
+  */
   const evaluationMethods = {
     'inline-sql': evaluateInlineSql,
     'sql-script': evaluateSqlScript,
@@ -169,6 +240,23 @@ async function evaluateSql(knex, issue, sql) {
   const issueValues = _.omit(issue, 'escalationConditions')
   const parameterPlaceholders = _.mapValues(issueValues, () => '?')
   /*
+  {
+   id: '?',
+   issueTypeId: '?',
+   issueStatusId: '?',
+   partnerId: '?',
+   geographyId: '?',
+   siteId: '?',
+   deviceId: '?',
+   resultId: '?',
+   level: '?',
+   createdOn: '?',
+   updatedOn: '?',
+   escalateToLevel: '?',
+   triggeredOn: '?',
+  */
+
+  /*
   issueValues Schema:
   -------------------
    id int NOT NULL
@@ -185,14 +273,50 @@ async function evaluateSql(knex, issue, sql) {
    escalateToLevel int NOT NULL
    triggeredOn datetime NOT NULL
   */
+
+  /*
+  const inlineSqlEscalationCondition = {
+    evaluationMethod: 'inline-sql',
+    evaluationParameter:
+      'SELECT EXISTS(SELECT * FROM Result WHERE id = {{resultId}} AND partnerId = {{partnerId}}) AS ResultAndPartnerLinkedToIssue',
+  }
+  */
   const parameterisedSqlQuery = processUsingHandlebarsSyntax(
     sql,
     parameterPlaceholders
   )
+  /*
+  Resulting SQL will look like this
+  SELECT EXISTS(SELECT * FROM Result WHERE id = ? AND partnerId = ?) AS ResultAndPartnerLinkedToIssue
+  */
+
   const parameterPlaceHolders = getMustacheTokensInString(sql)
+  /*
+  Resulting Placeholders will look like this
+  [
+    '{{resultId}}',
+    '{{partnerId}}',
+  ]
+
+  if issueValues looks like
+  {
+    id: 1,
+    ...
+    resultId: 5,
+    partnerId: 6,
+    ...
+  }
+  */
   const parameters = _.map(parameterPlaceHolders, parameterPlaceHolder =>
     processUsingHandlebarsSyntax(parameterPlaceHolder, issueValues)
   )
+  /*
+  Resulting Parameters will look like this
+  [
+    '5',
+    '6',
+  ]
+  */
   const evaluatedResult = await knex.raw(parameterisedSqlQuery, parameters)
   return isResultTruthy(evaluatedResult, parameterisedSqlQuery, parameters)
 }
