@@ -400,7 +400,8 @@ async function getCreateGeographyIdByGxGeo(
       .from('Lga as l')
       .innerJoin('Geography as g', 'l.id', 'g.lgaId')
       .where(d)
-      .first('l.id as lgaId')
+      .first('l.id')
+
     if (lga) {
       lgaId = lga.id
     } else {

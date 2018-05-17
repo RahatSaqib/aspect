@@ -1172,6 +1172,7 @@ async function actionDashboard(request) {
 
   // TODO use auth addConstraints instead of hardcoding Myanmar Rules
   // for dashboard queries
+  // TODO Remove hard coded constraints for RO vs LU issues from ASP-765
   const { jobFunctionName } = await knex('JobFunction as jf')
     .innerJoin('Job as j', 'j.jobFunctionId', 'jf.id')
     .innerJoin('Person as ps', 'j.personId', 'ps.id')
@@ -1181,6 +1182,7 @@ async function actionDashboard(request) {
     })
     .first('jf.name as jobFunctionName')
   const isAdmin = jobFunctionName === 'Admin'
+  const isRegionalOfficer = jobFunctionName === 'Regional Officer'
 
   const resultQuery = await knex('AlertMessage as am')
     .innerJoin('MessageStatus as ms', 'am.messageStatusId', 'ms.id')
@@ -1198,6 +1200,14 @@ async function actionDashboard(request) {
       }
       if (query.siteId) {
         queryBuilder.where({ 'am.siteId': query.siteId })
+      }
+      if (isAdmin || isRegionalOfficer) {
+        // If specific lab selected, show LU issues, otherwise show RO
+        queryBuilder.where(
+          'nt.name',
+          query.siteId == null ? 'not like' : 'like',
+          'LU%'
+        )
       }
     }, query)
     .select(
