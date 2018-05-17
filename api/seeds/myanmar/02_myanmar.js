@@ -51,7 +51,7 @@ async function seed(knex) {
     rowsAsObject(knex, 'PartnerType', 'name'),
     rowsAsObject(knex, 'DeviceType', 'externalId'),
     rowsAsObject(knex, 'DeviceStatus', 'token'),
-    rowsAsObject(knex, 'DeviceMaintenaceStatus', 'token'),
+    rowsAsObject(knex, 'DeviceMaintenanceStatus', 'token'),
     rowsAsObject(knex, 'IssueType', 'externalId'),
     getDefaultMessageTypes(knex),
   ])
