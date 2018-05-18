@@ -39,4 +39,8 @@ async function seed(knex) {
   await knex('SmsMessage').update({
     message: knex.raw("replace(message, 'Generic', 'Procedural')"),
   })
+  
+  await knex('Partner')
+    .where({ name: 'Myanmar' })
+    .update({ maxDaysDeviceNoResults: 14 })
 }
