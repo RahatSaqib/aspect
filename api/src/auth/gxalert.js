@@ -107,6 +107,10 @@ async function validateUserAtGxAlert(username, password, user) {
       allJobFunctions.find(x => x.name === 'Lab User')
   }
   const jobFunctionId = jobFunction ? jobFunction.id : null
+  // exit if no jobFunction found
+  if (!jobFunctionId) {
+    return null
+  }
 
   // -------------------------------------------
   // we now know that
@@ -169,24 +173,36 @@ async function validateUserAtGxAlert(username, password, user) {
     // finally return User
     user = await getUser(username, knex)
     return user
-  })
+
+    // catch error from setJobContext() if no site found or JobContext defined
+    // and return null
+  }).catch(() => null)
 }
 
 // --------------------------------------------------------------------------------------------
 // setJobContext - based on list of countries, states, lgas, deployments gxAlert user is linked
 // --------------------------------------------------------------------------------------------
 async function setJobContext(knex, jobId, gxUser) {
+  const assignedJobContext = []
   // helper function
   const createIfNotExist = async (knex, options) => {
     const geographyId = await getCreateGeographyIdByGxGeo(knex, options)
     if (geographyId) {
-      const ctx = await knex('JobContext')
-        .where({ jobId, geographyId })
-        .whereNull('siteId')
-        .first()
-      if (ctx == null) {
-        await knex('JobContext').insert({ jobId, geographyId })
+      // read JobContext item
+      let { id: jobContextId } =
+        (await knex('JobContext')
+          .where({ jobId, geographyId })
+          .whereNull('siteId')
+          .first()) || {}
+      // if not exists - create it
+      if (!jobContextId) {
+        ;[jobContextId] = await knex('JobContext').insert({
+          jobId,
+          geographyId,
+        })
       }
+      // add id to the array to see how wmany JobContext's defined
+      assignedJobContext.push(jobContextId)
     }
   }
 
@@ -245,17 +261,32 @@ async function setJobContext(knex, jobId, gxUser) {
             .where({ geographyId })
             .first()) || {}
 
+        if (!siteId) {
+          throw new Error(
+            `No site with shortName '${
+              dep.hostId
+            }' found for geographyId ${geographyId}`
+          )
+        }
+
         if (geographyId && siteId) {
-          const ctx = await knex('JobContext')
-            .where({ jobId, siteId })
-            .whereNull('geographyId')
-            .first()
-          if (ctx == null) {
-            await knex('JobContext').insert({ jobId, siteId })
+          let { id: jobContextId } =
+            (await knex('JobContext')
+              .where({ jobId, siteId })
+              .whereNull('geographyId')
+              .first()) || {}
+          if (!jobContextId) {
+            ;[jobContextId] = await knex('JobContext').insert({ jobId, siteId })
           }
+          assignedJobContext.push(jobContextId)
         }
       })
     )
+  }
+
+  // throw error if no JobContext defined - it will be caught and handled by transcation promise
+  if (assignedJobContext.lentgh === 0) {
+    throw new Error('No JobContext defined')
   }
 }
 
