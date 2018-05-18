@@ -16,7 +16,7 @@ const {
   resultModulePowerError,
   resultModuleFailureError,
   resultMachineTemperatureError,
-  resultModuleGenericError,
+  resultModuleProceduralError,
   resultMachinePowerError,
 } = require('../../../src/result/actions')
 const { waitForIdle, waitForAction } = require('../../utils/mqUtils')
@@ -373,7 +373,7 @@ describe('Issue endpoints', () => {
       }
     }))
 
-  it('should create a generic module issue ', () =>
+  it('should create a procedural module issue ', () =>
     runTest(async knex => {
       const { now } = context
 
@@ -444,14 +444,14 @@ describe('Issue endpoints', () => {
           })
         } else {
           // Should create issue when errorCode is added
-          const waitForModuleGenericError = waitForAction(
-            resultModuleGenericError(deviceId)
+          const waitForModuleProceduralError = waitForAction(
+            resultModuleProceduralError(deviceId)
           )
           await postToDeviceApi({
             authHeader: deviceAuth,
             payload,
           })
-          await waitForModuleGenericError
+          await waitForModuleProceduralError
           await waitForIdle()
 
           const issues = await knex('Issue as i')
@@ -465,7 +465,7 @@ describe('Issue endpoints', () => {
               'is.externalId as issueStatus'
             )
           assert.equal(issues.length, 1)
-          assert.equal(issues[0].issueType, 'ModuleGenericError')
+          assert.equal(issues[0].issueType, 'ModuleProceduralError')
           assert.equal(issues[0].deviceId, deviceId)
           assert.equal(issues[0].issueStatus, 'Active')
         }
