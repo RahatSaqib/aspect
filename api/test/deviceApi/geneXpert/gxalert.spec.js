@@ -6,6 +6,7 @@ const subDays = require('date-fns/sub_days')
 const addDays = require('date-fns/add_days')
 const addHours = require('date-fns/add_hours')
 const subHours = require('date-fns/sub_hours')
+const addMinutes = require('date-fns/add_minutes')
 const subMinutes = require('date-fns/sub_minutes')
 const addSeconds = require('date-fns/add_seconds')
 const setMilliseconds = require('date-fns/set_milliseconds')
@@ -2731,6 +2732,7 @@ describe('Device API routes for GxAlert Device', () => {
       basicDevicePayload,
       runTest,
       getLastResult,
+      getResult,
       getCurrentGeneXpertDevice,
       afterCleanUp,
     } = context
@@ -2935,6 +2937,7 @@ describe('Device API routes for GxAlert Device', () => {
             basicResultPayload,
             {
               result: {
+                id: dateFormat(new Date(), 'x'),
                 startedOn: now,
                 endedOn: now,
                 instrument: {
@@ -2968,6 +2971,7 @@ describe('Device API routes for GxAlert Device', () => {
             basicResultPayload,
             {
               result: {
+                id: dateFormat(new Date(), 'x'),
                 startedOn: now,
                 endedOn: now,
                 instrument: {
@@ -3004,6 +3008,7 @@ describe('Device API routes for GxAlert Device', () => {
             basicResultPayload,
             {
               result: {
+                id: dateFormat(new Date(), 'x'),
                 startedOn: subMinutes(now, 5),
                 endedOn: now,
                 instrument: {
@@ -3047,6 +3052,7 @@ describe('Device API routes for GxAlert Device', () => {
             basicResultPayload,
             {
               result: {
+                id: dateFormat(new Date(), 'x'),
                 data: { a: 'b', c: 2, d: false, e: { f: 'g' } },
                 type: { id: 'Study' },
                 source: { id: 'EnteredByHand' },
@@ -3472,7 +3478,6 @@ describe('Device API routes for GxAlert Device', () => {
     })
 
     describe('when the assay in the result payload is mapped to a consumable', () => {
-      const deductInventoryTestResultId = 'UNIQUE-ID-TEST-DEDUCT-INVENTORY'
       const initialQuantityOnHand = 100
       let expiryDate
       let inventoryItemId
@@ -3511,7 +3516,7 @@ describe('Device API routes for GxAlert Device', () => {
               basicResultPayload,
               {
                 result: {
-                  id: deductInventoryTestResultId,
+                  id: dateFormat(new Date(), 'x'),
                   startedOn: testStartedOn,
                   endedOn: testEndedOn,
                   sample: { id: 'Existing Sample' },
@@ -3560,6 +3565,7 @@ describe('Device API routes for GxAlert Device', () => {
       describe('when the test already exists in the database', () => {
         it('should NOT reduce inventory levels of the consumable', () =>
           runTest(async knex => {
+            const uniqueTestId = dateFormat(new Date(), 'x')
             const consumableAssays = await knex('ConsumableAssay as ca')
               .join('Assay as a', 'ca.assayId', 'a.id')
               .join('DeviceType as dt', 'a.deviceTypeId', 'dt.id')
@@ -3600,7 +3606,7 @@ describe('Device API routes for GxAlert Device', () => {
                 basicResultPayload,
                 {
                   result: {
-                    id: deductInventoryTestResultId,
+                    id: uniqueTestId,
                     assay: {
                       id: _.head(consumableAssays).assayId,
                       version: '2',
@@ -3691,7 +3697,7 @@ describe('Device API routes for GxAlert Device', () => {
                 basicResultPayload,
                 {
                   result: {
-                    id: deductInventoryTestResultId,
+                    id: uniqueTestId,
                     assay: {
                       id: _.head(consumableAssays).assayId,
                       version: '2',
@@ -3930,6 +3936,104 @@ describe('Device API routes for GxAlert Device', () => {
             assert.notEqual(lastResult.latitude, resultSite.latitude)
             assert.notEqual(lastResult.longitude, resultSite.longitude)
             assert.equal(lastResult.geographyId, geographyId)
+          }))
+      })
+    })
+
+    describe('when the result was previously sent incomplete with no end time', () => {
+      describe('and is sent again with an end time and a result', () => {
+        it("should merge with the existing result, matched by instrument and cartridge serials, and update it's external ID", () =>
+          runTest(async () => {
+            const { deviceAuth, now } = context
+            const instrumentSerial = '803165'
+            const cartridgeSerial = '725194650'
+            const startedOn = setMilliseconds(now, 0)
+
+            const incompleteResultPayload = _.merge(
+              {},
+              basicDevicePayload,
+              { name: deviceName },
+              basicResultPayload,
+              {
+                result: {
+                  startedOn,
+                  endedOn: null,
+                  instrument: {
+                    serial: instrumentSerial,
+                  },
+                  consumable: {
+                    serial: cartridgeSerial,
+                  },
+                  data: { resultText: 'NO RESULT' },
+                },
+              }
+            )
+            delete incompleteResultPayload.result.id
+            // Initial incomplete result details
+            let deviceApiResponse = await postToDeviceApi({
+              authHeader: deviceAuth,
+              payload: incompleteResultPayload,
+              expectedStatusCode: 200,
+            })
+            const {
+              body: {
+                result: {
+                  id: incompleteResultId,
+                  externalId: incompleteResultExternalId,
+                },
+              },
+            } = deviceApiResponse
+
+            const incompleteResult = await getResult(incompleteResultId)
+            expect(incompleteResult).to.containSubset({
+              externalId: incompleteResultExternalId,
+              resultCategory1: 'NoResult',
+              resultCategory2: 'NoResult',
+              startedOn,
+              endedOn: null,
+              resultData: {
+                resultText: 'NO RESULT',
+              },
+            })
+
+            const endedOn = addMinutes(startedOn, 103)
+            const completeResultPayload = _.merge({}, incompleteResultPayload, {
+              result: {
+                endedOn,
+                data: { resultText: 'DETECTED MEDIUM|INDETERMINATE|' },
+              },
+            })
+            // Then complete result details
+            deviceApiResponse = await postToDeviceApi({
+              authHeader: deviceAuth,
+              payload: completeResultPayload,
+              expectedStatusCode: 200,
+            })
+            const {
+              body: {
+                result: {
+                  id: completeResultId,
+                  externalId: completeResultExternalId,
+                },
+              },
+            } = deviceApiResponse
+
+            const completeResult = await getResult(completeResultId)
+            expect(completeResult).to.containSubset({
+              externalId: completeResultExternalId,
+              resultCategory1: 'Detected',
+              resultCategory2: 'Indeterminate',
+              startedOn,
+              endedOn,
+              resultData: {
+                resultText: 'DETECTED MEDIUM|INDETERMINATE|',
+              },
+            })
+            assert.equal(completeResultId, incompleteResultId)
+            assert.notEqual(
+              completeResultExternalId,
+              incompleteResultExternalId
+            )
           }))
       })
     })
