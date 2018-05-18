@@ -64,10 +64,31 @@ async function preProcessMergeResult({ knex, deviceId, payload }) {
   if (!existingResult) {
     // Only assign assay to GxUnknown if result is new
     await assignGxUnknownAssayIfNotExists(knex, payload)
-  } else if (_.get(existingResult, 'externalId') !== generatedExternalId) {
-    await knex('Result')
-      .where('id', existingResult.id)
-      .update({ externalId: generatedExternalId })
+  } else {
+    // Are we setting this result to NO RESULT?
+    if (
+      !_.isEmpty(_.get(payload, 'category', [])) &&
+      _.every(_.get(payload, 'category'), { id: 'NoResult' })
+    ) {
+      // Has the result already been determined?
+      if (
+        _.get(existingResult, 'resultCategory1') !== 'NoResult' ||
+        _.get(existingResult, 'resultCategory2') !== 'NoResult'
+      ) {
+        console.log(
+          _.get(payload, 'category'),
+          existingResult.resultCategory1,
+          existingResult.resultCategory2
+        )
+        // We should never merge an incomplete result over a complete result
+        throw Boom.conflict('A later version of this result already exists')
+      }
+    }
+    if (_.get(existingResult, 'externalId') !== generatedExternalId) {
+      await knex('Result')
+        .where('id', existingResult.id)
+        .update({ externalId: generatedExternalId })
+    }
   }
   payload.id = generatedExternalId
 }

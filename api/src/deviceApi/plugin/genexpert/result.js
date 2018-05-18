@@ -8,8 +8,18 @@ async function findExistingResult(availableResultDetails, knex) {
     cartridgeSerial = null, // GxAlert -> Aspect: result.consumable.serial
     instrumentSerial = null, // GxAlert -> Aspect: result.instrument.serial
   } = availableResultDetails
-  const selectFields = ['r.id', 'r.externalId', 'r.resultData']
-  const queryStart = knex.from('Result as r').where('r.partnerId', partnerId)
+  const selectFields = [
+    'r.id',
+    'r.externalId',
+    'r.resultData',
+    'rc1.externalId as resultCategory1',
+    'rc2.externalId as resultCategory2',
+  ]
+  const queryStart = knex
+    .from('Result as r')
+    .leftJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
+    .leftJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
+    .where('r.partnerId', partnerId)
   let matchingResults = []
   let matchingResult = null
   if (gxAlertUniqueId) {

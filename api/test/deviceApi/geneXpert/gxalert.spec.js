@@ -3940,101 +3940,235 @@ describe('Device API routes for GxAlert Device', () => {
       })
     })
 
-    describe('when the result was previously sent incomplete with no end time', () => {
-      describe('and is sent again with an end time and a result', () => {
-        it("should merge with the existing result, matched by instrument and cartridge serials, and update it's external ID", () =>
-          runTest(async () => {
-            const { deviceAuth, now } = context
-            const instrumentSerial = '803165'
-            const cartridgeSerial = '725194650'
-            const startedOn = setMilliseconds(now, 0)
+    describe('when the result was previously sent', () => {
+      describe('incomplete with no end time', () => {
+        describe('and is sent again with an end time and a result', () => {
+          it("should merge with the existing result, matched by instrument and cartridge serials, and update it's external ID", () =>
+            runTest(async () => {
+              const { deviceAuth, now } = context
+              const instrumentSerial = '803165'
+              const cartridgeSerial = '725194650'
+              const startedOn = setMilliseconds(now, 0)
 
-            const incompleteResultPayload = _.merge(
-              {},
-              basicDevicePayload,
-              { name: deviceName },
-              basicResultPayload,
-              {
-                result: {
-                  startedOn,
-                  endedOn: null,
-                  instrument: {
-                    serial: instrumentSerial,
+              const incompleteResultPayload = _.merge(
+                {},
+                basicDevicePayload,
+                { name: deviceName },
+                basicResultPayload,
+                {
+                  result: {
+                    startedOn,
+                    endedOn: null,
+                    instrument: {
+                      serial: instrumentSerial,
+                    },
+                    consumable: {
+                      serial: cartridgeSerial,
+                    },
+                    data: { resultText: 'NO RESULT' },
                   },
-                  consumable: {
-                    serial: cartridgeSerial,
+                }
+              )
+              delete incompleteResultPayload.result.id
+              // Initial incomplete result details
+              let deviceApiResponse = await postToDeviceApi({
+                authHeader: deviceAuth,
+                payload: incompleteResultPayload,
+                expectedStatusCode: 200,
+              })
+              const {
+                body: {
+                  result: {
+                    id: incompleteResultId,
+                    externalId: incompleteResultExternalId,
                   },
-                  data: { resultText: 'NO RESULT' },
                 },
-              }
-            )
-            delete incompleteResultPayload.result.id
-            // Initial incomplete result details
-            let deviceApiResponse = await postToDeviceApi({
-              authHeader: deviceAuth,
-              payload: incompleteResultPayload,
-              expectedStatusCode: 200,
-            })
-            const {
-              body: {
-                result: {
-                  id: incompleteResultId,
-                  externalId: incompleteResultExternalId,
+              } = deviceApiResponse
+
+              const incompleteResult = await getResult(incompleteResultId)
+              expect(incompleteResult).to.containSubset({
+                externalId: incompleteResultExternalId,
+                resultCategory1: 'NoResult',
+                resultCategory2: 'NoResult',
+                startedOn,
+                endedOn: null,
+                resultData: {
+                  resultText: 'NO RESULT',
                 },
-              },
-            } = deviceApiResponse
+              })
 
-            const incompleteResult = await getResult(incompleteResultId)
-            expect(incompleteResult).to.containSubset({
-              externalId: incompleteResultExternalId,
-              resultCategory1: 'NoResult',
-              resultCategory2: 'NoResult',
-              startedOn,
-              endedOn: null,
-              resultData: {
-                resultText: 'NO RESULT',
-              },
-            })
+              const endedOn = addMinutes(startedOn, 103)
+              const completeResultPayload = _.merge(
+                {},
+                incompleteResultPayload,
+                {
+                  result: {
+                    endedOn,
+                    data: { resultText: 'DETECTED MEDIUM|INDETERMINATE|' },
+                  },
+                }
+              )
+              // Then complete result details
+              deviceApiResponse = await postToDeviceApi({
+                authHeader: deviceAuth,
+                payload: completeResultPayload,
+                expectedStatusCode: 200,
+              })
+              const {
+                body: {
+                  result: {
+                    id: completeResultId,
+                    externalId: completeResultExternalId,
+                  },
+                },
+              } = deviceApiResponse
 
-            const endedOn = addMinutes(startedOn, 103)
-            const completeResultPayload = _.merge({}, incompleteResultPayload, {
-              result: {
+              const completeResult = await getResult(completeResultId)
+              expect(completeResult).to.containSubset({
+                externalId: completeResultExternalId,
+                resultCategory1: 'Detected',
+                resultCategory2: 'Indeterminate',
+                startedOn,
                 endedOn,
-                data: { resultText: 'DETECTED MEDIUM|INDETERMINATE|' },
-              },
-            })
-            // Then complete result details
-            deviceApiResponse = await postToDeviceApi({
-              authHeader: deviceAuth,
-              payload: completeResultPayload,
-              expectedStatusCode: 200,
-            })
-            const {
-              body: {
-                result: {
-                  id: completeResultId,
-                  externalId: completeResultExternalId,
+                resultData: {
+                  resultText: 'DETECTED MEDIUM|INDETERMINATE|',
                 },
-              },
-            } = deviceApiResponse
+              })
+              assert.equal(completeResultId, incompleteResultId)
+              assert.notEqual(
+                completeResultExternalId,
+                incompleteResultExternalId
+              )
+            }))
+        })
+      })
 
-            const completeResult = await getResult(completeResultId)
-            expect(completeResult).to.containSubset({
-              externalId: completeResultExternalId,
-              resultCategory1: 'Detected',
-              resultCategory2: 'Indeterminate',
-              startedOn,
-              endedOn,
-              resultData: {
-                resultText: 'DETECTED MEDIUM|INDETERMINATE|',
-              },
-            })
-            assert.equal(completeResultId, incompleteResultId)
-            assert.notEqual(
-              completeResultExternalId,
-              incompleteResultExternalId
-            )
-          }))
+      describe('complete with result', () => {
+        describe('and is sent again with no result in the result text', () => {
+          it('should ignore the result data that has been sent', () =>
+            runTest(async () => {
+              const { deviceAuth, now } = context
+              const instrumentSerial = '803165'
+              const cartridgeSerial = '725194660'
+              const startedOn = setMilliseconds(now, 0)
+              const endedOn = addMinutes(startedOn, 103)
+              const completeResultPayload = _.merge(
+                {},
+                basicDevicePayload,
+                { name: deviceName },
+                basicResultPayload,
+                {
+                  result: {
+                    startedOn,
+                    endedOn,
+                    instrument: {
+                      serial: instrumentSerial,
+                    },
+                    consumable: {
+                      serial: cartridgeSerial,
+                    },
+                    data: {
+                      resultText:
+                        'MTB DETECTED MEDIUM||RIF Resistance NOT DETECTED',
+                    },
+                  },
+                }
+              )
+              // Initial complete result details
+              const deviceApiResponse = await postToDeviceApi({
+                authHeader: deviceAuth,
+                payload: completeResultPayload,
+                expectedStatusCode: 200,
+              })
+              const {
+                body: {
+                  result: {
+                    id: completeResultId,
+                    externalId: completeResultExternalId,
+                  },
+                },
+              } = deviceApiResponse
+
+              let completeResult = await getResult(completeResultId)
+              expect(completeResult).to.containSubset({
+                externalId: completeResultExternalId,
+                resultCategory1: 'Detected',
+                resultCategory2: 'NotDetected',
+                startedOn,
+                endedOn,
+                resultData: {
+                  resultText:
+                    'MTB DETECTED MEDIUM||RIF Resistance NOT DETECTED',
+                },
+              })
+
+              // Then send NO RESULT
+              await postToDeviceApi({
+                authHeader: deviceAuth,
+                payload: _.merge({}, completeResultPayload, {
+                  result: {
+                    data: { resultText: 'NO RESULT|NO RESULT|' },
+                  },
+                }),
+                expectedStatusCode: 409,
+              })
+              completeResult = await getResult(completeResultId)
+              expect(completeResult).to.containSubset({
+                externalId: completeResultExternalId,
+                resultCategory1: 'Detected',
+                resultCategory2: 'NotDetected',
+                startedOn,
+                endedOn,
+                resultData: {
+                  resultText:
+                    'MTB DETECTED MEDIUM||RIF Resistance NOT DETECTED',
+                },
+              })
+
+              await postToDeviceApi({
+                authHeader: deviceAuth,
+                payload: _.merge({}, completeResultPayload, {
+                  result: {
+                    data: { resultText: 'NO RESULT' },
+                  },
+                }),
+                expectedStatusCode: 409,
+              })
+              completeResult = await getResult(completeResultId)
+              expect(completeResult).to.containSubset({
+                externalId: completeResultExternalId,
+                resultCategory1: 'Detected',
+                resultCategory2: 'NotDetected',
+                startedOn,
+                endedOn,
+                resultData: {
+                  resultText:
+                    'MTB DETECTED MEDIUM||RIF Resistance NOT DETECTED',
+                },
+              })
+
+              await postToDeviceApi({
+                authHeader: deviceAuth,
+                payload: _.merge({}, completeResultPayload, {
+                  result: {
+                    data: { resultText: 'MTB DETECTED MEDIUM|NO RESULT' },
+                  },
+                }),
+                expectedStatusCode: 200,
+              })
+              completeResult = await getResult(completeResultId)
+              expect(completeResult).to.containSubset({
+                externalId: completeResultExternalId,
+                resultCategory1: 'Detected',
+                resultCategory2: 'NoResult',
+                startedOn,
+                endedOn,
+                resultData: {
+                  resultText: 'MTB DETECTED MEDIUM|NO RESULT',
+                },
+              })
+            }))
+        })
       })
     })
   })
