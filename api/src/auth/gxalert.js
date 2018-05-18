@@ -272,17 +272,15 @@ async function setJobContext(knex, jobId, gxUser) {
           lgaName: dep.lgaName,
         }
         const geographyId = await getCreateGeographyIdByGxGeo(knex, options)
+        const shortName = dep.description || dep.hostId
         const { id: siteId } =
           (await knex('Site')
-            .where('shortName', dep.hostId)
-            .where({ geographyId })
+            .where({ shortName, geographyId })
             .first()) || {}
 
         if (!siteId) {
           throw new Error(
-            `No site with shortName '${
-              dep.hostId
-            }' found for geographyId ${geographyId}`
+            `No site with shortName '${shortName}' found for geographyId ${geographyId}`
           )
         }
 
