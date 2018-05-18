@@ -1194,6 +1194,7 @@ async function actionDashboard(request) {
     .innerJoin('IssueStatus as is', 'i.issueStatusId', 'is.id')
     .innerJoin('Site as s', 'am.siteId', 's.id')
     .where({ 'ms.externalId': 'Sent' })
+    .whereNotIn('is.externalId', ['Inactive', 'Resolved'])
     .modify((queryBuilder, query) => {
       if (!isAdmin) {
         queryBuilder.where({ 'am.personId': user.personId })
