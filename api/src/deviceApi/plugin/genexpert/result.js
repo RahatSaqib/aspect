@@ -3,8 +3,10 @@ const _ = require('lodash')
 async function findExistingResult(availableResultDetails, knex) {
   const {
     partnerId,
-    geneXpertTestId, // GxConnect -> GxAlert -> Aspect: result.data.id, GxConnect -> Aspect: result.id
-    gxAlertUniqueId, // GxConnect/Listener -> GxAlert -> Aspect: result.data.gxAlertTestUniqueId
+    geneXpertTestId = null, // GxConnect -> GxAlert -> Aspect: result.data.id, GxConnect -> Aspect: result.id
+    gxAlertUniqueId = null, // GxConnect/Listener -> GxAlert -> Aspect: result.data.gxAlertTestUniqueId
+    cartridgeSerial = null, // GxAlert -> Aspect: result.consumable.serial
+    instrumentSerial = null, // GxAlert -> Aspect: result.instrument.serial
   } = availableResultDetails
   const selectFields = ['r.id', 'r.externalId', 'r.resultData']
   const queryStart = knex.from('Result as r').where('r.partnerId', partnerId)
@@ -62,6 +64,27 @@ async function findExistingResult(availableResultDetails, knex) {
     matchingResults = await queryStart
       .clone()
       .andWhere('r.externalId', geneXpertTestId)
+      .select(selectFields)
+    if (matchingResults.length === 1) {
+      ;[matchingResult] = matchingResults
+    } else if (matchingResults.length > 1) {
+      matchingResults = _.filter(
+        matchingResults,
+        result =>
+          _.get(JSON.parse(result.resultData), 'geneXpertTestId') ===
+          geneXpertTestId
+      )
+      if (matchingResults.length === 1) {
+        ;[matchingResult] = matchingResults
+      }
+    }
+  }
+
+  if (_.isEmpty(matchingResult) && cartridgeSerial && instrumentSerial) {
+    matchingResults = await queryStart
+      .clone()
+      .andWhere('r.consumableSerial', cartridgeSerial)
+      .andWhere('r.instrumentSerial', instrumentSerial)
       .select(selectFields)
     if (matchingResults.length === 1) {
       ;[matchingResult] = matchingResults

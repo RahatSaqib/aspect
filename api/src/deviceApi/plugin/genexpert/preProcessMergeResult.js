@@ -32,7 +32,8 @@ async function preProcessMergeResult({ knex, deviceId, payload }) {
   } else {
     payload.data = {}
   }
-  const instrumentSerial = _.get(payload, 'instrument.serial')
+  const instrumentSerial = _.get(payload, 'instrument.serial', null)
+  const cartridgeSerial = _.get(payload, 'consumable.serial', null)
   const sampleId = _.get(payload, 'sample.id')
 
   if (payload.id) {
@@ -45,15 +46,38 @@ async function preProcessMergeResult({ knex, deviceId, payload }) {
     endedOn,
     sampleId
   )
-  const availableResultDetails = {
-    partnerId: device.partnerId,
-    geneXpertTestId: payload.id || payload.data.id,
-    gxAlertUniqueId: payload.data.gxAlertTestUniqueId || generatedExternalId,
+  const gxAlertUniqueId = _.get(
+    payload,
+    'data.gxAlertTestUniqueId',
+    generatedExternalId
+  )
+  const geneXpertTestId = _.get(payload, 'id') || _.get(payload, 'data.id')
+  let existingResult = await findExistingResult(
+    {
+      partnerId: device.partnerId,
+      geneXpertTestId,
+      gxAlertUniqueId,
+    },
+    knex
+  )
+  if (!existingResult) {
+    // This is needed to match results that were previously uploaded with no test end date
+    // ie. they were not completed before being uploaded the first time
+    existingResult = await findExistingResult(
+      {
+        partnerId: device.partnerId,
+        cartridgeSerial,
+        instrumentSerial,
+      },
+      knex
+    )
+    if (existingResult) {
+      await knex('Result')
+        .where('r.id', existingResult.id)
+        .update({ externalId: generatedExternalId })
+    }
   }
-  const existingResult = await findExistingResult(availableResultDetails, knex)
-  if (existingResult) {
-    payload.id = existingResult.externalId
-  } else {
+  if (!existingResult) {
     // Only assign assay to GxUnknown if result is new
     await assignGxUnknownAssayIfNotExists(knex, payload)
   }
