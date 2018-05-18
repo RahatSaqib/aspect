@@ -23,7 +23,7 @@ const {
   resultModulePowerError,
   resultModuleFailureError,
   resultMachineTemperatureError,
-  resultModuleGenericError,
+  resultModuleProceduralError,
   resultMachinePowerError,
 } = require('../result/actions')
 
@@ -82,7 +82,7 @@ const MODULE_FAILURE_ERROR_CODES = [
   '5015',
   '5016',
 ]
-const MODULE_GENERIC_ERROR_CODES = [
+const MODULE_PROCEDURAL_ERROR_CODES = [
   '1096',
   '1097',
   '1098',
@@ -733,7 +733,7 @@ async function onResultLogged({ resultId }, { messageContext }) {
     resultModulePowerError,
     resultModuleFailureError,
     resultMachineTemperatureError,
-    resultModuleGenericError,
+    resultModuleProceduralError,
     resultMachinePowerError,
   })
   await context.run(async knex => {
@@ -812,11 +812,11 @@ async function onResultLogged({ resultId }, { messageContext }) {
             context.resultModuleFailureError(deviceId)
           }
         })
-      } else if (MODULE_GENERIC_ERROR_CODES.includes(result.errorCode)) {
+      } else if (MODULE_PROCEDURAL_ERROR_CODES.includes(result.errorCode)) {
         const modules = await deviceErrorQuery
           .clone()
           .where('r.endedOn', '>=', last30day)
-          .whereIn('r.errorCode', MODULE_GENERIC_ERROR_CODES)
+          .whereIn('r.errorCode', MODULE_PROCEDURAL_ERROR_CODES)
           .whereNotIn('r.moduleSerial', moduleErrorSerials)
           .select('r.moduleSerial as moduleSerial')
           .count('r.id as errorCount')
@@ -829,7 +829,7 @@ async function onResultLogged({ resultId }, { messageContext }) {
             .count('r.id as moduleResultCount')
           const prcntModuleError = module.errorCount / moduleResultCount * 100
           if (!machineIssueTriggured && prcntModuleError > maxPrcntErrors) {
-            context.resultModuleGenericError(deviceId)
+            context.resultModuleProceduralError(deviceId)
           }
         })
       }

@@ -1,6 +1,26 @@
 module.exports = require('../../src/db').seed(seed)
 
-// TODO: Remove the following two ESLint ignore-settings when implementing migrations
-/* eslint no-unused-vars: 0 */
-/* eslint no-empty-function: 0 */
-async function seed(knex) {}
+async function seed(knex) {
+  // change issue/notification types from "Generic" to "Procedural"
+  await knex('NotificationType').update({
+    name: knex.raw("replace(name, 'Generic', 'Procedural')"),
+  })
+
+  await knex('IssueType').update({
+    name: knex.raw("replace(name, 'Generic', 'Procedural')"),
+  })
+
+  await knex('AlertTemplate').update({
+    message: knex.raw("replace(message, 'Generic', 'Procedural')"),
+  })
+
+  await knex('EmailTemplate').update({
+    subject: knex.raw("replace(subject, 'Generic', 'Procedural')"),
+    body: knex.raw("replace(body, 'Generic', 'Procedural')"),
+    htmlBody: knex.raw("replace(htmlBody, 'Generic', 'Procedural')"),
+  })
+
+  await knex('SmsTemplate').update({
+    message: knex.raw("replace(message, 'Generic', 'Procedural')"),
+  })
+}

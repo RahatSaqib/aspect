@@ -3891,8 +3891,8 @@ async function seed(knex) {
     )
   )
 
-  // Module Generic issue messages
-  const [moduleGenericErrorAlertTemplateId] = await knex(
+  // Module Procedural issue messages
+  const [moduleProceduralErrorAlertTemplateId] = await knex(
     'AlertTemplate'
   ).insert(
     Object.assign(
@@ -3903,7 +3903,7 @@ async function seed(knex) {
     )
   )
 
-  const [moduleGenericErrorSmsTemplateId] = await knex('SmsTemplate').insert(
+  const [moduleProceduralErrorSmsTemplateId] = await knex('SmsTemplate').insert(
     Object.assign(
       {
         message: 'Module {{result.moduleName}} errors, conduct troubleshooting',
@@ -3912,7 +3912,7 @@ async function seed(knex) {
     )
   )
 
-  const [moduleGenericErrorEmailTemplateId] = await knex(
+  const [moduleProceduralErrorEmailTemplateId] = await knex(
     'EmailTemplate'
   ).insert(
     Object.assign(
@@ -3956,35 +3956,37 @@ async function seed(knex) {
     )
   )
 
-  // Machine Generic issue templates
-  const [machineGenericErrorAlertTemplateId] = await knex(
+  // Machine Procedural issue templates
+  const [machineProceduralErrorAlertTemplateId] = await knex(
     'AlertTemplate'
   ).insert(
     Object.assign(
       {
-        message: 'Generic errors across machine, conduct troubleshooting',
+        message: 'Procedural errors across machine, conduct troubleshooting',
       },
       auditFields
     )
   )
 
-  const [machineGenericErrorSmsTemplateId] = await knex('SmsTemplate').insert(
+  const [machineProceduralErrorSmsTemplateId] = await knex(
+    'SmsTemplate'
+  ).insert(
     Object.assign(
       {
-        message: 'Generic errors across machine, conduct troubleshooting',
+        message: 'Procedural errors across machine, conduct troubleshooting',
       },
       auditFields
     )
   )
 
-  const [machineGenericErrorEmailTemplateId] = await knex(
+  const [machineProceduralErrorEmailTemplateId] = await knex(
     'EmailTemplate'
   ).insert(
     Object.assign(
       {
-        subject: 'Generic Errors',
-        body: 'Generic errors across machine, conduct troubleshooting',
-        htmlBody: 'Generic errors across machine, conduct troubleshooting',
+        subject: 'Procedural Errors',
+        body: 'Procedural errors across machine, conduct troubleshooting',
+        htmlBody: 'Procedural errors across machine, conduct troubleshooting',
       },
       auditFields
     )
@@ -4133,18 +4135,18 @@ async function seed(knex) {
     emailTemplateId: machinePowerErrorEmailTemplateId,
   })
 
-  const [moduleGenericErrorTypeId] = await knex('MessageType').insert({
+  const [moduleProceduralErrorTypeId] = await knex('MessageType').insert({
     messageSeverityId: messageSeverities.Alert.id,
-    alertTemplateId: moduleGenericErrorAlertTemplateId,
-    smsTemplateId: moduleGenericErrorSmsTemplateId,
-    emailTemplateId: moduleGenericErrorEmailTemplateId,
+    alertTemplateId: moduleProceduralErrorAlertTemplateId,
+    smsTemplateId: moduleProceduralErrorSmsTemplateId,
+    emailTemplateId: moduleProceduralErrorEmailTemplateId,
   })
 
-  const [machineGenericErrorTypeId] = await knex('MessageType').insert({
+  const [machineProceduralErrorTypeId] = await knex('MessageType').insert({
     messageSeverityId: messageSeverities.Alert.id,
-    alertTemplateId: machineGenericErrorAlertTemplateId,
-    smsTemplateId: machineGenericErrorSmsTemplateId,
-    emailTemplateId: machineGenericErrorEmailTemplateId,
+    alertTemplateId: machineProceduralErrorAlertTemplateId,
+    smsTemplateId: machineProceduralErrorSmsTemplateId,
+    emailTemplateId: machineProceduralErrorEmailTemplateId,
   })
 
   const [dataCategoryLowTypeId] = await knex('MessageType').insert({
@@ -4276,23 +4278,23 @@ async function seed(knex) {
       defaultMessageTypeId: machinePowerErrorTypeId,
     },
     {
-      name: 'Module Generic Error',
-      externalId: 'ModuleGenericError',
-      i18nKey: 'issueStatusModuleGenericError',
+      name: 'Module Procedural Error',
+      externalId: 'ModuleProceduralError',
+      i18nKey: 'issueStatusModuleProceduralError',
       issueCategoryId: issueCategories.DeviceHealth.id,
-      defaultMessageTypeId: moduleGenericErrorTypeId,
+      defaultMessageTypeId: moduleProceduralErrorTypeId,
     },
     {
-      name: 'Machine Generic Error',
-      externalId: 'MachineGenericError',
-      i18nKey: 'issueStatusMachineGenericError',
+      name: 'Machine Procedural Error',
+      externalId: 'MachineProceduralError',
+      i18nKey: 'issueStatusMachineProceduralError',
       issueCategoryId: issueCategories.DeviceHealth.id,
-      defaultMessageTypeId: machineGenericErrorTypeId,
+      defaultMessageTypeId: machineProceduralErrorTypeId,
     },
     {
       name: 'Data Category Low Error',
       externalId: 'DataCategoryLowError',
-      i18nKey: 'issueStatusMachineGenericError',
+      i18nKey: 'issueStatusMachineProceduralError',
       issueCategoryId: issueCategories.DataHealth.id,
       defaultMessageTypeId: dataCategoryLowTypeId,
     },
