@@ -42,13 +42,23 @@ function onFactGenerateDeviceConnectivity({ deviceId }, { messageContext }) {
         lastResultOn,
       }) => {
         const now = new Date()
-        const maxLastDateOffline = subDays(now, maxDaysDeviceOffline)
-        const maxLastDateNoResult = subDays(now, maxDaysDeviceNoResults)
-        if (lastPingOn == null || lastPingOn <= maxLastDateOffline) {
+        const maxLastDateOffline =
+          maxDaysDeviceOffline == null
+            ? null
+            : subDays(now, maxDaysDeviceOffline)
+        const maxLastDateNoResult =
+          maxDaysDeviceNoResults == null
+            ? null
+            : subDays(now, maxDaysDeviceNoResults)
+        if (
+          lastPingOn == null ||
+          (maxLastDateOffline != null && lastPingOn <= maxLastDateOffline)
+        ) {
           context.deviceOffline(id)
         } else if (
-          (lastResultOn != null && lastResultOn <= maxLastDateNoResult) ||
-          (lastResultOn == null && deviceCreatedOn <= maxLastDateNoResult)
+          maxLastDateNoResult != null &&
+          ((lastResultOn != null && lastResultOn <= maxLastDateNoResult) ||
+            (lastResultOn == null && deviceCreatedOn <= maxLastDateNoResult))
         ) {
           context.deviceNoResults(id)
         }
