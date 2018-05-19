@@ -107,6 +107,10 @@ async function validateUserAtGxAlert(username, password, user) {
       allJobFunctions.find(x => x.name === 'Lab User')
   }
   const jobFunctionId = jobFunction ? jobFunction.id : null
+  // exit if no jobFunction found
+  if (!jobFunctionId) {
+    return null
+  }
 
   // -------------------------------------------
   // we now know that
@@ -169,24 +173,35 @@ async function validateUserAtGxAlert(username, password, user) {
     // finally return User
     user = await getUser(username, knex)
     return user
-  })
+
+    // catch error from setJobContext() if no site found or JobContext defined
+    // and return null
+  }).catch(() => null)
 }
 
 // --------------------------------------------------------------------------------------------
 // setJobContext - based on list of countries, states, lgas, deployments gxAlert user is linked
 // --------------------------------------------------------------------------------------------
 async function setJobContext(knex, jobId, gxUser) {
+  let hasJobContext = false
   // helper function
-  const createIfNotExist = async (knex, options) => {
+  const createIfNotExist = async (knex, options, onSuccess) => {
     const geographyId = await getCreateGeographyIdByGxGeo(knex, options)
     if (geographyId) {
-      const ctx = await knex('JobContext')
-        .where({ jobId, geographyId })
-        .whereNull('siteId')
-        .first()
-      if (ctx == null) {
-        await knex('JobContext').insert({ jobId, geographyId })
+      // read JobContext item
+      let { id: jobContextId } =
+        (await knex('JobContext')
+          .where({ jobId, geographyId })
+          .whereNull('siteId')
+          .first()) || {}
+      // if not exists - create it
+      if (!jobContextId) {
+        ;[jobContextId] = await knex('JobContext').insert({
+          jobId,
+          geographyId,
+        })
       }
+      onSuccess()
     }
   }
 
@@ -194,9 +209,15 @@ async function setJobContext(knex, jobId, gxUser) {
   if (_.isArray(gxUser.access.countries)) {
     await Promise.all(
       _.map(gxUser.access.countries, async country => {
-        await createIfNotExist(knex, {
-          countryAbbreviation: country.abbreviation,
-        })
+        await createIfNotExist(
+          knex,
+          {
+            countryAbbreviation: country.abbreviation,
+          },
+          () => {
+            hasJobContext = true
+          }
+        )
       })
     )
   }
@@ -205,11 +226,17 @@ async function setJobContext(knex, jobId, gxUser) {
   if (_.isArray(gxUser.access.states)) {
     await Promise.all(
       _.map(gxUser.access.states, async state => {
-        await createIfNotExist(knex, {
-          countryAbbreviation: state.countryAbbreviation,
-          stateName: state.name,
-          stateAbbreviation: state.abbreviation,
-        })
+        await createIfNotExist(
+          knex,
+          {
+            countryAbbreviation: state.countryAbbreviation,
+            stateName: state.name,
+            stateAbbreviation: state.abbreviation,
+          },
+          () => {
+            hasJobContext = true
+          }
+        )
       })
     )
   }
@@ -218,12 +245,18 @@ async function setJobContext(knex, jobId, gxUser) {
   if (_.isArray(gxUser.access.lgas)) {
     await Promise.all(
       _.map(gxUser.access.lgas, async lga => {
-        await createIfNotExist(knex, {
-          countryAbbreviation: lga.countryAbbreviation,
-          stateName: lga.stateName,
-          stateAbbreviation: lga.stateAbbreviation,
-          lgaName: lga.name,
-        })
+        await createIfNotExist(
+          knex,
+          {
+            countryAbbreviation: lga.countryAbbreviation,
+            stateName: lga.stateName,
+            stateAbbreviation: lga.stateAbbreviation,
+            lgaName: lga.name,
+          },
+          () => {
+            hasJobContext = true
+          }
+        )
       })
     )
   }
@@ -239,23 +272,36 @@ async function setJobContext(knex, jobId, gxUser) {
           lgaName: dep.lgaName,
         }
         const geographyId = await getCreateGeographyIdByGxGeo(knex, options)
+        const shortName = dep.description || dep.hostId
         const { id: siteId } =
           (await knex('Site')
-            .where('shortName', dep.hostId)
-            .where({ geographyId })
+            .where({ shortName, geographyId })
             .first()) || {}
 
+        if (!siteId) {
+          throw new Error(
+            `No site with shortName '${shortName}' found for geographyId ${geographyId}`
+          )
+        }
+
         if (geographyId && siteId) {
-          const ctx = await knex('JobContext')
-            .where({ jobId, siteId })
-            .whereNull('geographyId')
-            .first()
-          if (ctx == null) {
-            await knex('JobContext').insert({ jobId, siteId })
+          let { id: jobContextId } =
+            (await knex('JobContext')
+              .where({ jobId, siteId })
+              .whereNull('geographyId')
+              .first()) || {}
+          if (!jobContextId) {
+            ;[jobContextId] = await knex('JobContext').insert({ jobId, siteId })
           }
+          hasJobContext = true
         }
       })
     )
+  }
+
+  // throw error if no JobContext defined - it will be caught and handled by transaction promise
+  if (!hasJobContext) {
+    throw new Error('No JobContext defined')
   }
 }
 
