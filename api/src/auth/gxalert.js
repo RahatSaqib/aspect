@@ -299,7 +299,7 @@ async function setJobContext(knex, jobId, gxUser) {
     )
   }
 
-  // throw error if no JobContext defined - it will be caught and handled by transcation promise
+  // throw error if no JobContext defined - it will be caught and handled by transaction promise
   if (!hasJobContext) {
     throw new Error('No JobContext defined')
   }
