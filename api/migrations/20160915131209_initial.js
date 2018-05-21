@@ -27,8 +27,6 @@ async function up(knex) {
     partner.integer('numberToLeaveUnacknowledged')
     partner.integer('maxDaysDeviceOffline')
     partner.integer('maxDaysDeviceNoResults')
-    partner.integer('dueDaysInventoryStockout')
-    partner.integer('dueDaysInventoryStockExpiring')
   })
 
   await knex.schema.createTable('User', user => {
