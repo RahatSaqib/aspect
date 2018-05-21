@@ -755,13 +755,15 @@ async function onResultLogged({ resultId }, { messageContext }) {
           .select('r.moduleSerial as moduleSerial')
           .count('r.id as errorCount')
           .groupBy('r.moduleSerial')
-        _.forEach(modules, module => {
-          if (module.errorCount > moduleTemperatureMaxErrors) {
-            moduleTemperatureSerials.push(module.moduleSerial)
-            moduleErrorSerials.push(module.moduleSerial)
-            context.resultModuleTemperatureError(deviceId)
-          }
-        })
+        await Promise.all(
+          _.map(modules, module => {
+            if (module.errorCount > moduleTemperatureMaxErrors) {
+              moduleTemperatureSerials.push(module.moduleSerial)
+              moduleErrorSerials.push(module.moduleSerial)
+              context.resultModuleTemperatureError(deviceId)
+            }
+          })
+        )
         // Machine temperature query
         const [{ errorCount }] = await deviceErrorQuery
           .clone()
@@ -781,12 +783,14 @@ async function onResultLogged({ resultId }, { messageContext }) {
           .select('r.moduleSerial as moduleSerial')
           .count('r.id as errorCount')
           .groupBy('r.moduleSerial')
-        _.forEach(modules, moudle => {
-          if (moudle.errorCount > modulePowerMaxErrors) {
-            moduleErrorSerials.push(module.moduleSerial)
-            context.resultModulePowerError(deviceId)
-          }
-        })
+        await Promise.all(
+          _.map(modules, moudle => {
+            if (moudle.errorCount > modulePowerMaxErrors) {
+              moduleErrorSerials.push(module.moduleSerial)
+              context.resultModulePowerError(deviceId)
+            }
+          })
+        )
       } else if (MODULE_FAILURE_ERROR_CODES.includes(result.errorCode)) {
         const modules = await deviceErrorQuery
           .clone()
@@ -795,15 +799,18 @@ async function onResultLogged({ resultId }, { messageContext }) {
           .select('r.moduleSerial as moduleSerial')
           .count('r.id as errorCount')
           .groupBy('r.moduleSerial')
-        _.forEach(modules, module => {
-          if (module.errorCount > moduleFailureMaxErrors) {
-            moduleErrorSerials.push(module.moduleSerial)
-            context.resultModuleFailureError(deviceId)
-          }
-        })
-      } else if (GENERIC_ERROR_CODES.includes(result.errorCode)) {
-        let genericModuleIssueTriggured = false
-        let genericMachineIssueTriggured = false
+        await Promise.all(
+          _.map(modules, module => {
+            if (module.errorCount > moduleFailureMaxErrors) {
+              moduleErrorSerials.push(module.moduleSerial)
+              context.resultModuleFailureError(deviceId)
+            }
+          })
+        )
+      } else if (
+        GENERIC_ERROR_CODES.includes(result.errorCode) &&
+        !machineIssueTriggured
+      ) {
         const modules = await deviceErrorQuery
           .clone()
           .where('r.endedOn', '>=', last30day)
@@ -812,6 +819,9 @@ async function onResultLogged({ resultId }, { messageContext }) {
           .select('r.moduleSerial as moduleSerial')
           .count('r.id as errorCount')
           .groupBy('r.moduleSerial')
+
+        // Check for machine issue first
+        let allModulesErr = true
         await Promise.all(
           _.map(modules, async module => {
             const [{ moduleResultCount }] = await knex('Result as r')
@@ -819,33 +829,24 @@ async function onResultLogged({ resultId }, { messageContext }) {
               .where('r.moduleSerial', module.moduleSerial)
               .count('r.id as moduleResultCount')
             const prcntModuleError = module.errorCount / moduleResultCount * 100
-            if (
-              !machineIssueTriggured &&
-              !genericMachineIssueTriggured &&
-              prcntModuleError > maxPrcntErrors
-            ) {
-              genericModuleIssueTriggured = true
+            allModulesErr = allModulesErr && prcntModuleError > maxPrcntErrors
+          })
+        )
+        if (allModulesErr) {
+          // Trigger machine generic issue
+          context.resultMachineGenericError(deviceId)
+        } else {
+          // Check for module generic issue
+          _.map(modules, async module => {
+            const [{ moduleResultCount }] = await knex('Result as r')
+              .where('r.endedOn', '>=', last30day)
+              .where('r.moduleSerial', module.moduleSerial)
+              .count('r.id as moduleResultCount')
+            const prcntModuleError = module.errorCount / moduleResultCount * 100
+            if (prcntModuleError > maxPrcntErrors) {
               context.resultModuleGenericError(deviceId)
             }
           })
-        )
-        if (!genericModuleIssueTriggured) {
-          const [{ machineErrorCount }] = await deviceErrorQuery
-            .clone()
-            .where('r.endedOn', '>=', last30day)
-            .whereIn('r.errorCode', GENERIC_ERROR_CODES)
-            .whereNotIn('r.moduleSerial', moduleErrorSerials)
-            .count('r.id as machineErrorCount')
-          const [{ machineResultCount }] = await knex('Result as r')
-            .where('r.endedOn', '>=', last30day)
-            .where('r.deviceId', deviceId)
-            .count('r.id as machineResultCount')
-          const prcntMachineError = machineErrorCount / machineResultCount * 100
-
-          if (!machineIssueTriggured && prcntMachineError > maxPrcntErrors) {
-            genericMachineIssueTriggured = true
-            context.resultMachineGenericError(deviceId)
-          }
         }
       }
     }
