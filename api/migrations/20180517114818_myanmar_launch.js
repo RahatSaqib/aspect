@@ -9,6 +9,29 @@ async function up(knex) {
 
   partner.addColumns(knex)
 
+  await knex.schema.createTable('FactInventoryConsumptionRate', x => {
+    x.increments('id')
+    x
+      .integer('consumableId')
+      .unsigned()
+      .notNullable()
+      .references('id')
+      .inTable('Consumable')
+    x
+      .integer('siteId')
+      .unsigned()
+      .notNullable()
+      .references('id')
+      .inTable('Site')
+    x.integer('days').unsigned()
+    x.float('rate')
+    x.dateTime('updatedOn').notNullable()
+    x.unique(
+      ['siteId', 'consumableId', 'days'],
+      'FactInventoryConsumptionRate_unique'
+    )
+  })
+
   await knex.raw('SET foreign_key_checks = 1')
 }
 async function down(knex) {}
