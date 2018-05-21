@@ -1,5 +1,4 @@
 module.exports = require('../src/db').migration(up, down)
-const partner = require('./fixtures/01_partner')
 
 // TODO: Remove the following two ESLint ignore-settings when implementing migrations
 /* eslint no-unused-vars: 0 */
@@ -7,7 +6,10 @@ const partner = require('./fixtures/01_partner')
 async function up(knex) {
   await knex.raw('SET foreign_key_checks = 0')
 
-  partner.addColumns(knex)
+  await knex.schema.table('Partner', x => {
+    x.integer('dueDaysInventoryStockout')
+    x.integer('dueDaysInventoryStockExpiring')
+  })
 
   await knex.schema.createTable('FactInventoryConsumptionRate', x => {
     x.increments('id')
