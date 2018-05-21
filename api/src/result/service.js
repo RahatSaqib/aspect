@@ -113,6 +113,8 @@ const moduleFailureMaxErrors = 2
 const machineTemperatureMaxErrors = 8
 const maxPrcntErrors = 5
 const machinePowerMaxErrors = 8
+const prcntMachinePowerErr = 3
+
 const SELECT_LIST_FIELDS = [
   'r.id',
   'r.externalId',
@@ -738,11 +740,11 @@ async function onResultLogged({ resultId }, { messageContext }) {
   })
   await context.run(async knex => {
     const [result] = await knex('Result as r').where('r.id', resultId)
+    const { deviceId } = result
+    const last30day = subDays(new Date(), 30)
     if (result.errorCode) {
-      const { deviceId } = result
       const moduleErrorSerials = []
       let machineIssueTriggured = false
-      const last30day = subDays(new Date(), 30)
       const deviceErrorQuery = knex('Result as r')
         .innerJoin('ResultCategory as rc', 'r.resultCategory1', 'rc.id')
         .where('rc.externalId', 'Error')
@@ -794,7 +796,6 @@ async function onResultLogged({ resultId }, { messageContext }) {
           .where('r.endedOn', '>=', last30day)
           .whereIn('r.errorCode', MODULE_POWER_ERROR_CODES)
           .count('r.id as errorCount')
-
         if (errorCount > machinePowerMaxErrors) {
           context.resultMachinePowerError(deviceId)
         }
@@ -833,6 +834,23 @@ async function onResultLogged({ resultId }, { messageContext }) {
           }
         })
       }
+    }
+    // Check for machine power issue triggered by noResult
+    const [{ noResultCount }] = await knex('Result as r')
+      .innerJoin('ResultCategory as rc', 'r.resultCategory1', 'rc.id')
+      .where('r.deviceId', deviceId)
+      .where('r.endedOn', '>=', last30day)
+      .where('rc.externalId', 'NoResult')
+      .count('r.id as noResultCount')
+
+    const [{ machineResultCount }] = await knex('Result as r')
+      .where('r.deviceId', deviceId)
+      .where('r.endedOn', '>=', last30day)
+      .count('r.id as machineResultCount')
+
+    const prcntNoResult = noResultCount / machineResultCount * 100
+    if (prcntNoResult > prcntMachinePowerErr) {
+      context.resultMachinePowerError(deviceId)
     }
   })
 }
