@@ -98,6 +98,37 @@ const enhance = compose(
       }
     },
   }),
+  withStateHandlers(
+    () => ({
+      selectedCategory: 'DeviceHealth',
+    }),
+    {
+      onCategoryClick: (
+        { selectedCategory: prevSelectedCategory },
+        { actionSummaryMap, marginBottom, setMarginBottom }
+      ) => ({ target }) => {
+        const selectedCategory = findKeyInTree(target, 'value')
+        if (selectedCategory !== prevSelectedCategory) {
+          const newRowCount = actionSummaryMap.get(selectedCategory, EMPTY_LIST)
+            .size
+          const oldRowCount = actionSummaryMap.get(
+            prevSelectedCategory,
+            EMPTY_LIST
+          ).size
+          if (newRowCount < oldRowCount) {
+            setMarginBottom((oldRowCount - newRowCount) * 80)
+          } else if (newRowCount === oldRowCount) {
+            setMarginBottom(marginBottom)
+          } else {
+            setMarginBottom(0)
+          }
+        }
+        return {
+          selectedCategory,
+        }
+      },
+    }
+  ),
   lifecycle({
     componentDidMount() {
       this.props.onInitialLoad()
@@ -108,17 +139,7 @@ const enhance = compose(
         this.props.onInitialLoad()
       }
     },
-  }),
-  withStateHandlers(
-    () => ({
-      selectedCategory: 'DeviceHealth',
-    }),
-    {
-      onCategoryClick: () => ({ target }) => ({
-        selectedCategory: findKeyInTree(target, 'value'),
-      }),
-    }
-  )
+  })
 )
 
 export const ActionStatus = ({
