@@ -36,4 +36,11 @@ async function up(knex) {
 
   await knex.raw('SET foreign_key_checks = 1')
 }
-async function down(knex) {}
+async function down(knex) {
+  await knex.raw('SET foreign_key_checks = 0')
+
+  await knex.schema.dropTableIfExists('Partner')
+  await knex.schema.dropTableIfExists('FactInventoryConsumptionRate')
+
+  await knex.raw('SET foreign_key_checks = 1')
+}
