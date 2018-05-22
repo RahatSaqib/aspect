@@ -33,11 +33,15 @@ function deviceSeen(deviceId, dateSeen) {
  *
  * deviceId is required.
  * status is required: the token/externalId of DeviceMaintenanceStatus
- * data the optoinal maintenance data is plain object
- * resolveOn: optional deviceMaintenanceResolveOn date
  *
+ * options:
+ *  data: Optional additional maintenance data to record, plain object
+ *  mergeData: Should specified data merge or replace existing data? default false
+ *  resolveOn: date maintenance status likely to be resolved, default null (unknown)
+ *  changedOn: date maintenance status changed, default now
+ *  lastSeenOn: date the actual device was last seen, default now.
  */
-function deviceMaintenance(deviceId, status, data, resolveOn) {
+function deviceMaintenance(deviceId, status, options) {
   if (deviceId == null) {
     throw new Error('Must specify deviceId for notify deviceMaintenance')
   }
@@ -48,8 +52,7 @@ function deviceMaintenance(deviceId, status, data, resolveOn) {
     type: types.DEVICE_MAINTENANCE,
     deviceId,
     status,
-    data,
-    resolveOn,
+    options,
   }
 }
 

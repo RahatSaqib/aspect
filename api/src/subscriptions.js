@@ -11,6 +11,7 @@ function addSubscriptions(queue) {
   queue.subscribe('email', require('./email/endpoints').subscriptions)
   queue.subscribe('sms', require('./sms/endpoints').subscriptions)
 
+  queue.subscribe('device', require('./device/endpoints').subscriptions)
   queue.subscribe('result', require('./result/endpoints').subscriptions)
 }
 

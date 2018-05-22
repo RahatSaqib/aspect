@@ -2,7 +2,6 @@ const { subDays } = require('date-fns')
 const { factGenerateResultCounts } = require('./actions')
 const {
   deviceOffline,
-  deviceOnline,
   deviceNoResults,
   deviceHasNewResults,
 } = require('../device/actions')
@@ -85,30 +84,6 @@ function onFactGenerateResultCounts(action, context) {
       .where('dtc.hasResults', 1)
       .select('d.id as deviceId')
       .map(({ deviceId }) => messageContext.factGenerateResultCounts(deviceId))
-  })
-}
-
-function onDeviceSeen({ deviceId, dateSeen }, { messageContext }) {
-  const context = messageContext.bindActionCreators({ deviceOnline })
-  return context.run(async knex => {
-    const getDeviceAndFactDeviceFlag = async deviceId =>
-      knex('Device as d')
-        .leftJoin('FactDeviceFlag as fdf', 'd.id', 'fdf.deviceId')
-        .where('d.id', deviceId)
-        .first('d.id', 'fdf.deviceId', 'd.lastSeenOn', 'fdf.offline')
-    let deviceAndFactDeviceFlag = await getDeviceAndFactDeviceFlag(deviceId)
-    if (deviceAndFactDeviceFlag) {
-      if (!deviceAndFactDeviceFlag.deviceId) {
-        await knex('FactDeviceFlag').insert({ deviceId, updatedOn: new Date() })
-        deviceAndFactDeviceFlag = await getDeviceAndFactDeviceFlag(deviceId)
-      }
-      if (
-        deviceAndFactDeviceFlag.offline &&
-        (!dateSeen || deviceAndFactDeviceFlag.lastSeenOn < dateSeen)
-      ) {
-        context.deviceOnline(deviceId)
-      }
-    }
   })
 }
 
@@ -344,7 +319,6 @@ function onFactGenerateResultCountsForDevice(
 module.exports = {
   onFactGenerateDeviceConnectivity,
   onFactGenerateResultCounts,
-  onDeviceSeen,
   onDeviceUpdateFlag,
   onResultLogged,
 }
