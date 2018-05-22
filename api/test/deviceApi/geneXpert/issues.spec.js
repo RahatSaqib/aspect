@@ -564,7 +564,7 @@ describe('Issue endpoints', () => {
         }
       }))
 
-    it('the percantage of results with result category of NoRusult is greater 3% ', () =>
+    it('the percentage of results with result category of NoResult is greater 3% ', () =>
       runTest(async knex => {
         const { now } = context
 

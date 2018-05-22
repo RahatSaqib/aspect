@@ -113,7 +113,7 @@ const moduleFailureMaxErrors = 2
 const machineTemperatureMaxErrors = 8
 const maxPrcntErrors = 5
 const machinePowerMaxErrors = 8
-const prcntMachinePowerErr = 3
+const maxPrcntMachinePowerErrors = 3
 
 const SELECT_LIST_FIELDS = [
   'r.id',
@@ -848,9 +848,11 @@ async function onResultLogged({ resultId }, { messageContext }) {
       .where('r.endedOn', '>=', last30day)
       .count('r.id as machineResultCount')
 
-    const prcntNoResult = noResultCount / machineResultCount * 100
-    if (prcntNoResult > prcntMachinePowerErr) {
-      context.resultMachinePowerError(deviceId)
+    if (noResultCount !== 0 && machineResultCount !== 0) {
+      const prcntNoResult = noResultCount / machineResultCount * 100
+      if (prcntNoResult > maxPrcntMachinePowerErrors) {
+        context.resultMachinePowerError(deviceId)
+      }
     }
   })
 }
