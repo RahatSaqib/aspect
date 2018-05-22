@@ -198,7 +198,8 @@ export const TargetStatus = ({
 
   return (
     isShow &&
-    targetSummaryList.size > 0 && (
+    targetSummaryList.size > 0 &&
+    targetSummaryList.some(v => v.get('target')) && (
       <Card className={className}>
         <div className={cssClasses('TitleContainer')}>
           <Title
