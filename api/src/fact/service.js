@@ -1,14 +1,14 @@
 const { subDays } = require('date-fns')
 const { factGenerateResultCounts } = require('./actions')
 const {
-  deviceOffline,
+  deviceMaintenance,
   deviceNoResults,
   deviceHasNewResults,
 } = require('../device/actions')
 
 function onFactGenerateDeviceConnectivity({ deviceId }, { messageContext }) {
   const context = messageContext.bindActionCreators({
-    deviceOffline,
+    deviceMaintenance,
     deviceNoResults,
   })
   return context.run(async knex => {
@@ -53,7 +53,7 @@ function onFactGenerateDeviceConnectivity({ deviceId }, { messageContext }) {
           lastPingOn == null ||
           (maxLastDateOffline != null && lastPingOn <= maxLastDateOffline)
         ) {
-          context.deviceOffline(id)
+          context.deviceMaintenance(id, 'offline')
         } else if (
           maxLastDateNoResult != null &&
           ((lastResultOn != null && lastResultOn <= maxLastDateNoResult) ||
