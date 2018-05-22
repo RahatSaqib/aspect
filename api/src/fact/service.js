@@ -89,11 +89,16 @@ function onFactGenerateResultCounts(action, context) {
 
 function onDeviceUpdateFlag(updates) {
   return ({ deviceId }, { messageContext }) =>
-    messageContext.run(async knex =>
-      knex('FactDeviceFlag')
+    messageContext.run(async knex => {
+      const updatedRows = await knex('FactDeviceFlag')
         .where({ deviceId })
         .update(updates)
-    )
+      if (updatedRows === 0) {
+        await knex('FactDeviceFlag').insert(
+          Object.assign({ deviceId }, updates)
+        )
+      }
+    })
 }
 
 function onResultLogged({ resultId }, { messageContext }) {
