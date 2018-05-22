@@ -3,11 +3,7 @@ const _ = require('lodash')
 const { knex, transact } = require('../db')
 const { asyncHandler } = require('../routes')
 
-const {
-  resultUpdated,
-  resultLogged,
-  types: { RESULT_UPDATED },
-} = require('../result/actions')
+const { resultUpdated, resultLogged } = require('../result/actions')
 
 const {
   updateDeviceConfiguration,
@@ -17,7 +13,7 @@ const {
   getSite,
   createNewDevice,
 } = require('./device')
-const { deviceSeen } = require('../device/actions')
+const { deviceMaintenance } = require('../device/actions')
 const { mergeResult, getResult } = require('./result')
 const { loadPlugin } = require('./plugin/registration')
 
@@ -114,14 +110,23 @@ function deviceApiHandler(handler, handlerOptions) {
       .where({ id: device.id })
       .update(deviceUpdates)
 
-    // need to ensure device is flagged as online
-    context.messageContext.dispatch(deviceSeen(deviceId))
-
     let response = {}
     await context.messageContext.transact(async knex => {
       context.knex = knex
       context.deviceLogId = deviceLogId
       response = await handler(context)
+
+      // If we don't have a maintenance record already, add online if
+      // we are updating ping
+      if (
+        updatePing &&
+        _.findIndex(
+          this.messageContext.actions,
+          deviceMaintenance(deviceId)
+        ) === -1
+      ) {
+        context.deviceMaintenance(deviceId, 'online')
+      }
 
       // Update DeviceLog with changes added to context when calling handler
       if (deviceLogId !== null) {
@@ -720,16 +725,24 @@ class DeviceApiContext {
     if (this.parent) {
       this.parent.resultUpdated(resultId, deviceLogId)
     } else if (
-      _.findIndex(
-        this.messageContext.actions,
-        existingAction =>
-          existingAction.type === RESULT_UPDATED &&
-          existingAction.resultId === resultId
-      ) === -1
+      _.findIndex(this.messageContext.actions, resultUpdated(resultId)) === -1
     ) {
       // only dispatch result updated action once per result id
       // within this Device API transaction
       this.messageContext.resultUpdated(resultId, deviceLogId)
+    }
+  }
+
+  deviceMaintenance(deviceId, status, options) {
+    if (this.parent) {
+      this.parent.deviceMaintenance(deviceId, status, options)
+    } else if (
+      _.findIndex(this.messageContext.actions, deviceMaintenance(deviceId)) ===
+      -1
+    ) {
+      // only dispatch result updated action once per result id
+      // within this Device API transaction
+      this.messageContext.dispatch(deviceMaintenance(deviceId, status, options))
     }
   }
 }

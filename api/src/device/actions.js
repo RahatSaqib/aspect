@@ -1,6 +1,5 @@
 // ----------- Action Types ---------------------
 const types = {
-  DEVICE_SEEN: 'DEVICE_SEEN',
   DEVICE_OFFLINE: 'DEVICE_OFFLINE',
   DEVICE_ONLINE: 'DEVICE_ONLINE',
   DEVICE_NO_RESULTS: 'DEVICE_NO_RESULTS',
@@ -12,27 +11,15 @@ const types = {
 //
 
 /**
- * Creates an action to notify the device has communicated
- * with Aspect (e.g. through the Device API)
+ * Creates an action to notify the device maintenance status.
  *
  * deviceId is required.
- */
-function deviceSeen(deviceId, dateSeen) {
-  if (deviceId == null) {
-    throw new Error('Must specify deviceId for notify deviceSeen')
-  }
-  const action = {
-    type: types.DEVICE_SEEN,
-    deviceId,
-  }
-  return dateSeen ? Object.assign({}, action, { dateSeen }) : action
-}
-
-/**
- * Creates an action to notify the device is under maintenance
+ * status is required: the token/externalId of DeviceMaintenanceStatus,
+ * e.g. online, offline
  *
- * deviceId is required.
- * status is required: the token/externalId of DeviceMaintenanceStatus
+ * NOTE: this action is debounced to create tasks related to status updates.
+ * most application code should generate deviceMaintenance, but subscribe
+ * to other actions for creating additional logic based on the status.
  *
  * options:
  *  data: Optional additional maintenance data to record, plain object
@@ -123,7 +110,6 @@ function deviceHasNewResults(deviceId) {
 
 module.exports = {
   types,
-  deviceSeen,
   deviceMaintenance,
   deviceOffline,
   deviceOnline,

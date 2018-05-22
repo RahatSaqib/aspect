@@ -11,7 +11,6 @@ const {
   listStatusTypes,
   exportDevices,
   listDevicesForSelectList,
-  onDeviceSeen,
   onDeviceMaintenance,
 } = require('./service')
 const {
@@ -197,7 +196,6 @@ const routes = [
 const subscriptions = [
   {
     actions: {
-      DEVICE_SEEN: onDeviceSeen,
       DEVICE_MAINTENANCE: onDeviceMaintenance,
     },
   },

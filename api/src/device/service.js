@@ -516,10 +516,6 @@ async function getDevice(deviceId) {
   return device
 }
 
-async function onDeviceSeen({ deviceId }, context) {
-  return onDeviceMaintenance({ deviceId, status: 'online' }, context)
-}
-
 async function onDeviceMaintenance(
   { deviceId, status, options = {} },
   { messageContext }
@@ -586,7 +582,7 @@ async function onDeviceMaintenance(
         })
       const action = deviceMaintenanceStatusAction[status]
       if (action != null) {
-        // FIXME deviceSeen / common resolveOn ?
+        // FIXME device lastSeenOn / common resolveOn ?
         // FIXME device not online if lastSeenOn < ?
         messageContext.dispatch(action(deviceId))
       }
@@ -602,6 +598,5 @@ module.exports = {
   exportDevices,
   listDevicesForSelectList,
   getDevice,
-  onDeviceSeen,
   onDeviceMaintenance,
 }
