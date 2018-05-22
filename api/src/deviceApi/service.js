@@ -3,7 +3,11 @@ const _ = require('lodash')
 const { knex, transact } = require('../db')
 const { asyncHandler } = require('../routes')
 
-const { resultUpdated, resultLogged } = require('../result/actions')
+const {
+  resultUpdated,
+  resultLogged,
+  types: { RESULT_UPDATED },
+} = require('../result/actions')
 
 const {
   updateDeviceConfiguration,
@@ -13,7 +17,10 @@ const {
   getSite,
   createNewDevice,
 } = require('./device')
-const { deviceMaintenance } = require('../device/actions')
+const {
+  deviceMaintenance,
+  types: { DEVICE_MAINTENANCE },
+} = require('../device/actions')
 const { mergeResult, getResult } = require('./result')
 const { loadPlugin } = require('./plugin/registration')
 
@@ -120,10 +127,10 @@ function deviceApiHandler(handler, handlerOptions) {
       // we are updating ping
       if (
         updatePing &&
-        _.findIndex(
-          this.messageContext.actions,
-          deviceMaintenance(deviceId)
-        ) === -1
+        _.findIndex(context.messageContext.actions, {
+          type: DEVICE_MAINTENANCE,
+          deviceId,
+        }) === -1
       ) {
         context.deviceMaintenance(deviceId, 'online')
       }
@@ -725,7 +732,10 @@ class DeviceApiContext {
     if (this.parent) {
       this.parent.resultUpdated(resultId, deviceLogId)
     } else if (
-      _.findIndex(this.messageContext.actions, resultUpdated(resultId)) === -1
+      _.findIndex(this.messageContext.actions, {
+        type: RESULT_UPDATED,
+        resultId,
+      }) === -1
     ) {
       // only dispatch result updated action once per result id
       // within this Device API transaction
@@ -736,12 +746,7 @@ class DeviceApiContext {
   deviceMaintenance(deviceId, status, options) {
     if (this.parent) {
       this.parent.deviceMaintenance(deviceId, status, options)
-    } else if (
-      _.findIndex(this.messageContext.actions, deviceMaintenance(deviceId)) ===
-      -1
-    ) {
-      // only dispatch result updated action once per result id
-      // within this Device API transaction
+    } else {
       this.messageContext.dispatch(deviceMaintenance(deviceId, status, options))
     }
   }
