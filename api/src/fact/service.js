@@ -467,7 +467,6 @@ function onFactCalculateInventoryConsumptionRates(action, { messageContext }) {
 // ------------------------------
 // recalculates rates for provided siteId and consumableId
 async function refreshConsumptionRates(knex, siteId, consumableId) {
-  const rates = []
   const updatedOn = new Date()
   const consumedTotals = getConsumedTotals(knex, siteId, consumableId)
 
@@ -477,24 +476,19 @@ async function refreshConsumptionRates(knex, siteId, consumableId) {
     const rate = totalItems ? totalItems / days : 0
 
     // insert/update rate in db
-    const whereClause = { siteId, consumableId, days }
-    const dataUpdate = { rate, updatedOn }
-    const item = await knex('FactInventoryConsumptionRate')
-      .where(whereClause)
-      .first()
-    if (item) {
-      await knex('FactInventoryConsumptionRate')
-        .where(whereClause)
-        .update(dataUpdate)
-    } else {
-      const dataInsert = { ...dataUpdate, ...whereClause }
-      await knex('FactInventoryConsumptionRate').insert(dataInsert)
-    }
-
-    rates.push({ days, rate })
+    await knex.raw(
+      knex('FactInventoryConsumptionRate')
+        .insert({
+          siteId,
+          consumableId,
+          days,
+          rate,
+          updatedOn,
+        })
+        .toString()
+        .replace(/^insert/i, 'replace')
+    )
   })
-
-  return rates
 }
 // ------------------------------
 // returns object with numbers of used consumables in format
