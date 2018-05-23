@@ -41,7 +41,7 @@ async function seed(knex) {
     maxDaysDeviceOffline: 7,
     maxDaysDeviceNoResults: 14,
     dueDaysInventoryStockout: 30,
-    dueDaysInventoryStockExpiring: 7,
+    dueDaysInventoryStockExpiring: 30,
   })
   const deviceTypeCategories = await rowsAsObject(knex, 'DeviceTypeCategory')
   const assayTypes = await rowsAsObject(knex, 'AssayType')

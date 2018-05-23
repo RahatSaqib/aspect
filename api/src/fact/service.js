@@ -12,22 +12,7 @@ const {
   deviceHasNewResults,
 } = require('../device/actions')
 
-const DAYS_1 = 1
-const DAYS_7 = 7
-const DAYS_30 = 30
-const DAYS_60 = 60
-const DAYS_90 = 90
-const DAYS_365 = 365
-const DAYS_BIG = 9999
-const daysToCalculate = [
-  DAYS_1,
-  DAYS_7,
-  DAYS_30,
-  DAYS_60,
-  DAYS_90,
-  DAYS_365,
-  DAYS_BIG,
-]
+const daysToCalculate = [1, 7, 30, 60, 90, 365, 9999]
 
 function onFactGenerateDeviceConnectivity({ deviceId }, { messageContext }) {
   const context = messageContext.bindActionCreators({
@@ -351,57 +336,6 @@ function onFactGenerateResultCountsForDevice(
   })
 }
 
-async function auditInventoryStock(knex, site, dueDays, dispatch) {
-  const { siteId, consumableId } = site
-
-  // get rate for 7 days as more accurate than for 1 day
-  const rateItem = await knex('FactInventoryConsumptionRate')
-    .where({ siteId, consumableId })
-    .where({ days: DAYS_7 })
-    .orderBy('days', 'asc')
-    .first('days', 'rate')
-
-  if (!rateItem) {
-    return
-  }
-
-  // get effective daily rate
-  // notice that both fields (days, rate) are nonNullabe and days is not 0
-  const dailyRate = rateItem.rate / rateItem.days
-
-  if (dailyRate > 0) {
-    // get all un-expired inventory items for provided site/consumable
-    const items = await knex('InventoryItem')
-      .where('expiresOn', '>', 'NOW()') // take only unexpired
-      .where({ siteId, consumableId })
-      .orderBy('expiresOn', 'asc')
-      .select(
-        'quantityOnHand',
-        'expiresOn',
-        knex.raw(
-          `CAST(DATEDIFF(expiresOn, NOW()) AS SIGNED INTEGER) AS expiresInDays`
-        )
-      )
-
-    // take into account expiration dates - calculate how long items last
-    const days = _.reduce(
-      items,
-      (sum, item) => {
-        const lastsInDays = item.quantityOnHand / dailyRate
-        const lastsActual = Math.min(lastsInDays, item.expiresInDays)
-        const daysLeft = lastsActual - sum
-        const cntDays = Math.max(0, daysLeft)
-        return sum + cntDays
-      },
-      0
-    )
-
-    if (days < dueDays) {
-      dispatch(siteId, consumableId, days)
-    }
-  }
-}
-
 // ----------------------------------------------
 // This function is triggered by scheduler, and checks stock for all sites
 // ----------------------------------------------
@@ -410,16 +344,6 @@ function onFactCheckInventoryStock(action, { messageContext }) {
     inventoryStockout,
     inventoryStockExpiring,
   })
-
-  // We store days/rate pairs for limited set of 'days' values
-  // So any other values for 'days' are senseless because we don't know rate
-  // And this function makes sure 'value' is one of 'days' from array daysToCalculate
-  // i.e. one of [1, 7, ...]
-  function normalizeDays(value, defaultValue) {
-    return !_.isFinite(value)
-      ? defaultValue
-      : daysToCalculate.includes(value) ? value : defaultValue
-  }
 
   // loop all sites and audit each consumables
   return context.run(async knex => {
@@ -440,23 +364,113 @@ function onFactCheckInventoryStock(action, { messageContext }) {
 
     // loop all sites and for each check if there are enough inventory items in stock
     _.map(sites, async site => {
-      // ----------------
-      // for each site/consumable - check for how long stock is ok
-      // ----------------
-      await auditInventoryStock(
-        knex,
-        site,
-        normalizeDays(+site.dueDaysInventoryStockout, DAYS_30),
-        context.inventoryStockout
-      )
-      await auditInventoryStock(
-        knex,
-        site,
-        normalizeDays(+site.dueDaysInventoryStockExpiring, DAYS_7),
-        context.inventoryStockExpiring
-      )
+      const { siteId, consumableId } = site
+      const { rate: dailyRate } =
+        (await knex('FactInventoryConsumptionRate')
+          .where({ siteId, consumableId })
+          .where({ days: 1 })
+          .first('days', 'rate')) || {}
+
+      if (dailyRate > 0) {
+        const props = {
+          knex,
+          site,
+          dailyRate,
+        }
+        // Stockout
+        await auditInventoryStockout({
+          ...props,
+          dueDays: site.dueDaysInventoryStockout,
+          dispatch: context.inventoryStockout,
+        })
+        // Stock Expiring
+        await auditInventoryStockExpiring({
+          ...props,
+          dueDays: site.dueDaysInventoryStockExpiring,
+          dispatch: context.inventoryStockExpiring,
+        })
+      }
     })
   })
+}
+
+async function auditInventoryStockout({
+  knex,
+  site: { siteId, consumableId },
+  dailyRate,
+  dueDays,
+  dispatch,
+}) {
+  // get all un-expired inventory items for provided site/consumable
+  const items = await knex('InventoryItem')
+    .where('expiresOn', '>', 'NOW()') // take only unexpired
+    .where({ siteId, consumableId })
+    .orderBy('expiresOn', 'asc')
+    .select(
+      'quantityOnHand',
+      'expiresOn',
+      knex.raw(
+        `CAST(DATEDIFF(expiresOn, NOW()) AS SIGNED INTEGER) AS expiresInDays`
+      )
+    )
+
+  // take into account expiration dates - calculate how long items last
+  const days = _.reduce(
+    items,
+    (sum, item) => {
+      const lastsInDays = item.quantityOnHand / dailyRate
+      const lastsActual = Math.min(lastsInDays, item.expiresInDays)
+      const daysLeft = lastsActual - sum
+      const cntDays = Math.max(0, daysLeft)
+      return sum + cntDays
+    },
+    0
+  )
+
+  if (days < dueDays) {
+    dispatch(siteId, consumableId, days)
+  }
+}
+
+async function auditInventoryStockExpiring({
+  knex,
+  site: { siteId, consumableId },
+  dailyRate,
+  dueDays,
+  dispatch,
+}) {
+  // get all un-expired inventory items for provided site/consumable
+  const items = await knex('InventoryItem')
+    .where({ siteId, consumableId })
+    .select(
+      'quantityOnHand',
+      'expiresOn',
+      knex.raw(
+        `CAST(GREATEST(DATEDIFF(expiresOn, NOW()), 0) AS SIGNED INTEGER) AS expiresInDays`
+      )
+    )
+
+  // take into account expiration dates - calculate how long items last
+  const now = new Date()
+  const totalWasted = _.reduce(
+    items,
+    (sum, item) => {
+      const lastsInDays = item.quantityOnHand / dailyRate
+      const wasted =
+        item.expiresInDays < lastsInDays
+          ? item.expiresOn > now
+            ? dailyRate * (lastsInDays - item.expiresInDays)
+            : item.quantityOnHand
+          : 0
+
+      return sum + wasted
+    },
+    0
+  )
+
+  if (totalWasted > 0) {
+    dispatch(siteId, consumableId, dueDays, totalWasted)
+  }
 }
 
 // -------------------------------------------------------------------------------------
@@ -483,21 +497,15 @@ function onFactCalculateInventoryConsumptionRates(action, { messageContext }) {
 // recalculates rates for provided siteId and consumableId
 async function refreshConsumptionRates(knex, siteId, consumableId) {
   const updatedOn = new Date()
-  const consumedTotals = getConsumedTotals(knex, siteId, consumableId)
-
-  _.map(daysToCalculate.filter(x => x > 1), async days => {
-    // calculate rate
-    const totalItems = consumedTotals[`total${days}`]
-    const rate = totalItems ? totalItems / days : 0
-
-    // insert/update rate in db
+  const rates = getConsumptionRates(knex, siteId, consumableId)
+  _.map(rates, async x => {
     await knex.raw(
       knex('FactInventoryConsumptionRate')
         .insert({
           siteId,
           consumableId,
-          days,
-          rate,
+          days: x.days,
+          rate: x.rate,
           updatedOn,
         })
         .toString()
@@ -505,21 +513,14 @@ async function refreshConsumptionRates(knex, siteId, consumableId) {
     )
   })
 }
-// ------------------------------
-// returns object with numbers of used consumables in format
-// { totalNNN: NUMERIC_VALUE, ... }
-// where NNN is number from array daysToCalculate (see top of this file), i.e
-// {
-//   total7: xxx,
-//   total30: yyy,
-//   total60: zzz,
-//   etc
-// }
-async function getConsumedTotals(knex, siteId, consumableId) {
+
+async function getConsumptionRates(knex, siteId, consumableId) {
+  const rates = []
   // --------------------
-  // get total consumed items for
-  // most recent 7 days with at least one test
+  // daily rate -
+  // use most recent N days with at least one test
   // --------------------
+  const limitItems = 10
   const lastDaysWithTest = await knex
     .from(
       knex('Result as r')
@@ -531,11 +532,10 @@ async function getConsumedTotals(knex, siteId, consumableId) {
         .orderBy('r.endedOn')
         .distinct('date(r.endedOn) as endedOn')
         .select('date(r.endedOn) as endedOn')
-        .limit(DAYS_7)
+        .limit(limitItems)
     )
     .first('min(endedOn) as dateFrom', 'max(endedOn) as dateTo')
-
-  const consumed7 = await knex('Result as r')
+  const consumed = await knex('Result as r')
     .innerJoin('Assay as a', 'r.assayId', 'a.id')
     .innerJoin('ConsumableAssay as ca', 'a.id', 'ca.assayId')
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
@@ -544,46 +544,40 @@ async function getConsumedTotals(knex, siteId, consumableId) {
     .where('d.siteId', siteId)
     .where('ca.consumableId', consumableId)
     .groupBy('d.siteId', 'ca.consumableId')
-    .sum(`ca.quantity as total${DAYS_7}`)
+    .sum(`ca.quantity as total`)
+  rates.push({ days: 1, rate: consumed.total / limitItems })
 
   // --------------------
-  // get total consumed items for all periods greater than 7 days
+  // other rates
   // --------------------
-  const fields = []
-  _.map(daysToCalculate.filter(x => x > DAYS_7), async days => {
-    let calcField
-    if (days === DAYS_BIG) {
-      calcField = knex.raw(`sum(ca.quantity) as total${days}`)
-    } else {
-      const interval = days === DAYS_365 ? `-1 YEAR` : `-${days} DAY`
-      calcField = knex.raw(
-        `sum(case when r.endedOn >= DATE_ADD(CURDATE(), INTERVAL ${interval}) then ca.quantity else 0 end) as total${days}`
-      )
-    }
-    fields.push(calcField)
-  })
-  const consumedRest = await knex('Result as r')
+  const consumedTotals = await knex('Result as r')
     .innerJoin('Assay as a', 'r.assayId', 'a.id')
     .innerJoin('ConsumableAssay as ca', 'a.id', 'ca.assayId')
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
-    .where('r.endedOn', '>=', `DATE_ADD(CURDATE(), INTERVAL ${DAYS_BIG})`)
+    .where('r.endedOn', '>=', `DATE_ADD(CURDATE(), INTERVAL -1 YEAR)`)
     .where('d.siteId', siteId)
     .where('ca.consumableId', consumableId)
     .groupBy('d.siteId', 'ca.consumableId')
-    .first(...fields)
+    .first(
+      'sum(case when r.endedOn >= DATE_ADD(CURDATE(), INTERVAL  -7 DAY) then ca.quantity else 0 end) as total7',
+      'sum(case when r.endedOn >= DATE_ADD(CURDATE(), INTERVAL -30 DAY) then ca.quantity else 0 end) as total30',
+      'sum(case when r.endedOn >= DATE_ADD(CURDATE(), INTERVAL -60 DAY) then ca.quantity else 0 end) as total60',
+      'sum(case when r.endedOn >= DATE_ADD(CURDATE(), INTERVAL -90 DAY) then ca.quantity else 0 end) as total90',
+      'sum(case when r.endedOn >= DATE_ADD(CURDATE(), INTERVAL -1 YEAR) then ca.quantity else 0 end) as total365'
+    )
+  _.map(daysToCalculate.filter(x => x > 1 && x < 9999), days => {
+    const totalItems = consumedTotals[`total${days}`]
+    if (totalItems) {
+      const rate = totalItems ? totalItems / days : 0
+      rates.push({ days, rate })
+    }
+  })
 
-  return { ...consumed7, ...consumedRest }
+  return rates
 }
 
 module.exports = {
   daysToCalculate,
-  DAYS_1,
-  DAYS_7,
-  DAYS_30,
-  DAYS_60,
-  DAYS_90,
-  DAYS_365,
-  DAYS_BIG,
   onFactGenerateDeviceConnectivity,
   onFactGenerateResultCounts,
   onFactCheckInventoryStock,

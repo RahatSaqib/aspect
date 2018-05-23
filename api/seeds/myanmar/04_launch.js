@@ -5,6 +5,6 @@ async function seed(knex) {
     .where({ name: 'Myanmar' })
     .update({
       dueDaysInventoryStockout: 30,
-      dueDaysInventoryStockExpiring: 7,
+      dueDaysInventoryStockExpiring: 30,
     })
 }

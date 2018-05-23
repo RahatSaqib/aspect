@@ -11,7 +11,6 @@ const {
   waitForIdle,
   waitForAction,
 } = require('../utils/mqUtils')
-const { DAYS_7, DAYS_30 } = require('../../src/fact/service')
 
 // action creators
 const {
@@ -66,7 +65,7 @@ describe('Inventory Stock Issues Endpoint', () => {
         siteId,
         consumableId,
         issueEventIds,
-        DAYS_30,
+        30,
         'InventoryStockout',
         messageContext.inventoryStockout,
         inventoryStockout
@@ -81,7 +80,7 @@ describe('Inventory Stock Issues Endpoint', () => {
         siteId,
         consumableId,
         issueEventIds,
-        DAYS_7,
+        30,
         'InventoryStockExpiring',
         messageContext.inventoryStockExpiring,
         inventoryStockExpiring
@@ -102,11 +101,18 @@ async function testIssue(
   dispatch,
   actionCreator
 ) {
-  const action = actionCreator(siteId, consumableId, daysDue)
-  await dispatch(siteId, consumableId, daysDue)
+  let action
+  if (issueType === 'InventoryStockout') {
+    action = actionCreator(siteId, consumableId, daysDue)
+    await dispatch(siteId, consumableId, daysDue)
+  } else {
+    action = actionCreator(siteId, consumableId, daysDue, 100)
+    await dispatch(siteId, consumableId, daysDue, 100)
+  }
   await waitForAction(action)
   await waitForIdle()
   const dateFrom = subMinutes(new Date(), 10)
+
   // get issues for last 10 mins for curent siteId and issueType
   const issues = await knex('Issue as i')
     .innerJoin('IssueType as it', 'i.issueTypeId', 'it.id')
@@ -155,4 +161,13 @@ async function testIssue(
     daysDue,
     `action.daysDue (${daysDue}) does not match daysDue in db (${daysDue2})`
   )
+  if (issueType === 'InventoryStockExpiring') {
+    assert.equal(
+      action2.totalWasted,
+      100,
+      `action.totalWasted (100) does not match totalWasted in db (${
+        action2.totalWasted
+      })`
+    )
+  }
 }
