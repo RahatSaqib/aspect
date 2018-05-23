@@ -351,26 +351,51 @@ function onFactGenerateResultCountsForDevice(
   })
 }
 
-async function auditInventoryStock(site, dueDays, dispatch) {
-  const {
-    siteId,
-    consumableId,
-    maxQuantityPerAssay,
-    totalInStock,
-    // these after GROUP_CONCAT
-    csvRate,
-    csvDays,
-  } = site
-  const arrRate = csvRate ? csvRate.split(',') : []
-  const arrDays = csvDays ? csvDays.split(',') : []
-  const index = _.findIndex(arrDays, x => +x === dueDays)
-  const rate = index >= 0 ? arrRate[index] : null
-  if (
-    rate && // skip if no rate
-    rate > 0 && // or rate is 0
-    maxQuantityPerAssay > 0 // just in case - check this to not be 0
-  ) {
-    const days = totalInStock / (maxQuantityPerAssay * rate)
+async function auditInventoryStock(knex, site, dueDays, dispatch) {
+  const { siteId, consumableId } = site
+
+  // get rate for 7 days as more accurate than for 1 day
+  const rateItem = await knex('FactInventoryConsumptionRate')
+    .where({ siteId, consumableId })
+    .where({ days: DAYS_7 })
+    .orderBy('days', 'asc')
+    .first('days', 'rate')
+
+  if (!rateItem) {
+    return
+  }
+
+  // get effective daily rate
+  // notice that both fields (days, rate) are nonNullabe and days is not 0
+  const dailyRate = rateItem.rate / rateItem.days
+
+  if (dailyRate > 0) {
+    // get all un-expired inventory items for provided site/consumable
+    const items = await knex('InventoryItem')
+      .where('expiresOn', '>', 'NOW()') // take only unexpired
+      .where({ siteId, consumableId })
+      .orderBy('expiresOn', 'asc')
+      .select(
+        'quantityOnHand',
+        'expiresOn',
+        knex.raw(
+          `CAST(DATEDIFF(expiresOn, NOW()) AS SIGNED INTEGER) AS expiresInDays`
+        )
+      )
+
+    // take into account expiration dates - calculate how long items last
+    const days = _.reduce(
+      items,
+      (sum, item) => {
+        const lastsInDays = item.quantityOnHand / dailyRate
+        const lastsActual = Math.min(lastsInDays, item.expiresInDays)
+        const daysLeft = lastsActual - sum
+        const cntDays = Math.max(0, daysLeft)
+        return sum + cntDays
+      },
+      0
+    )
+
     if (days < dueDays) {
       dispatch(siteId, consumableId, days)
     }
@@ -386,13 +411,17 @@ function onFactCheckInventoryStock(action, { messageContext }) {
     inventoryStockExpiring,
   })
 
-  // helper
+  // We store days/rate pairs for limited set of 'days' values
+  // So any other values for 'days' are senseless because we don't know rate
+  // And this function makes sure 'value' is one of 'days' from array daysToCalculate
+  // i.e. one of [1, 7, ...]
   function normalizeDays(value, defaultValue) {
     return !_.isFinite(value)
       ? defaultValue
       : daysToCalculate.includes(value) ? value : defaultValue
   }
 
+  // loop all sites and audit each consumables
   return context.run(async knex => {
     const now = new Date()
 
@@ -400,47 +429,33 @@ function onFactCheckInventoryStock(action, { messageContext }) {
     const sites = await knex('InventoryItem as ii')
       .innerJoin('Site as s', 'ii.siteId', 's.id')
       .innerJoin('Partner as p', 's.partnerId', 'p.id')
-      .innerJoin('Consumable as c', 'ii.consumableId', 'c.id')
-      .innerJoin('ConsumableAssay as ca', 'c.id', 'ca.consumableId')
-      .leftOuterJoin('FactInventoryConsumptionRate as icr', () => {
-        this.on('ii.siteId', 'icr.siteId').on(
-          'ii.consumableId',
-          'icr.consumableId'
-        )
-      })
       .where('ii.expiresOn', '>', now) // take only unexpired
       .groupBy('ii.siteId', 'ii.consumableId')
       .select(
         'ii.siteId',
         'ii.consumableId',
         'max(p.dueDaysInventoryStockout) as dueDaysInventoryStockout',
-        'max(p.dueDaysInventoryStockExpiring) as dueDaysInventoryStockExpiring',
-        // take max value of 'consumables per assay' for projection
-        'max(ca.quantity) as maxQuantityPerAssay',
-        // how many items are on hand
-        'sum(ii.quantityOnHand) as totalInStock',
-        // consumption rate
-        knex.raw("GROUP_CONCAT(icr.rate SEPARATOR ',') as csvRate"),
-        knex.raw("GROUP_CONCAT(icr.days SEPARATOR ',') as csvDays")
+        'max(p.dueDaysInventoryStockExpiring) as dueDaysInventoryStockExpiring'
       )
 
     // loop all sites and for each check if there are enough inventory items in stock
     _.map(sites, async site => {
       // ----------------
-      // for each site/consumable - project for how long stock is okay
+      // for each site/consumable - check for how long stock is ok
       // ----------------
       await auditInventoryStock(
+        knex,
         site,
         normalizeDays(+site.dueDaysInventoryStockout, DAYS_30),
         context.inventoryStockout
       )
       await auditInventoryStock(
+        knex,
         site,
         normalizeDays(+site.dueDaysInventoryStockExpiring, DAYS_7),
         context.inventoryStockExpiring
       )
     })
-    // all set
   })
 }
 
