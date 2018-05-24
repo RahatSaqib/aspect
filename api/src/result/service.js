@@ -133,7 +133,7 @@ const maxPrcntErrors = 5
 const machinePowerMaxErrors = 8
 const maxPrcntMachinePowerErrors = 3
 const maxInvalidResultRatio = 3
-// const maxInvalidResultBatchesRatio = 2
+const invalidResultBatchRatio = 2
 const maxReagentErrorRatio = 3
 const maxInvalidReagentErrorRatio = 4
 
@@ -766,6 +766,7 @@ async function onResultLogged({ resultId }, { messageContext }) {
     const { deviceId, siteId } = result
     const last30day = subDays(new Date(), 30)
     let reagentErrorRatio = 0
+    let invalidReagentErrorRatio = 0
     if (result.errorCode) {
       const moduleErrorSerials = []
       let machineIssueTriggured = false
@@ -858,23 +859,37 @@ async function onResultLogged({ resultId }, { messageContext }) {
           }
         })
       } else if (REAGENT_HEALTH_ERROR_CODES.includes(result.errorCode)) {
-        ;[{ reagentErrorRatio }] = await knex('Result as r')
+        const reagentErrorQuery = knex('Result as r')
           .innerJoin('ResultCategory as rc', 'r.resultCategory1', 'rc.id')
           .where({
             'r.siteId': siteId,
           })
-          .select(
-            (() => {
-              const errorCount =
-                "sum(case when r.errorCode in (?) and rc.externalId='Error' then 1 else 0 end)"
-              const totalCount = 'count(distinct r.id)'
+        ;[{ reagentErrorRatio }] = await reagentErrorQuery.clone().select(
+          (() => {
+            const errorCount =
+              "sum(case when r.errorCode in (?) and rc.externalId='Error' then 1 else 0 end)"
+            const totalCount = 'count(distinct r.id)'
 
-              return knex.raw(
-                `case when count(r.id) = 0 then 0 else ${errorCount} / ${totalCount} * 100 end as reagentErrorRatio`,
-                [REAGENT_HEALTH_ERROR_CODES]
-              )
-            })()
-          )
+            return knex.raw(
+              `case when count(r.id) = 0 then 0 else ${errorCount} / ${totalCount} * 100 end as reagentErrorRatio`,
+              [REAGENT_HEALTH_ERROR_CODES]
+            )
+          })()
+        )
+        ;[
+          { invalidReagentErrorRatio },
+        ] = await reagentErrorQuery.clone().select(
+          (() => {
+            const errorCount =
+              "sum(case when (r.errorCode in (?) and rc.externalId='Error') or (rc.externalId='Invalid') then 1 else 0 end)"
+            const totalCount = 'count(distinct r.id)'
+
+            return knex.raw(
+              `case when count(r.id) = 0 then 0 else ${errorCount} / ${totalCount} * 100 end as invalidReagentErrorRatio`,
+              [REAGENT_HEALTH_ERROR_CODES]
+            )
+          })()
+        )
       }
     }
     // Check for machine power issue triggered by noResult
@@ -903,11 +918,24 @@ async function onResultLogged({ resultId }, { messageContext }) {
 
     let invalidResultRatio = 0
     if (result.resultCategory1 === resultCategoryInvalidId) {
-      ;[{ invalidResultRatio }] = await knex('Result as r')
+      const invalidResultQuery = knex('Result as r')
         .innerJoin('ResultCategory as rc', 'r.resultCategory1', 'rc.id')
         .where({
           'r.siteId': result.siteId,
         })
+      ;[{ invalidResultRatio }] = await invalidResultQuery.clone().select(
+        (() => {
+          const invalidCount =
+            "sum(case when rc.externalId = 'Invalid' then 1 else 0 end)"
+          const totalCount = 'count(distinct r.id)'
+
+          return knex.raw(
+            `case when count(r.id) = 0 then 0 else ${invalidCount} / ${totalCount} * 100 end as invalidResultRatio`
+          )
+        })()
+      )
+      const invalidResultBatchRatios = await invalidResultQuery
+        .clone()
         .select(
           (() => {
             const invalidCount =
@@ -915,28 +943,50 @@ async function onResultLogged({ resultId }, { messageContext }) {
             const totalCount = 'count(distinct r.id)'
 
             return knex.raw(
-              `case when count(r.id) = 0 then 0 else ${invalidCount} / ${totalCount} * 100 end as invalidResultRatio`
+              `r.consumableLot, r.assayId, case when count(r.id) = 0 then 0 else ${invalidCount} / ${totalCount} * 100 end as invalidResultRatio`
             )
           })()
         )
+        .groupBy(['r.consumableLot', 'r.assayId'])
+      _.forEach(invalidResultBatchRatios, ratio => {
+        if (ratio.invalidResultRatio > invalidResultBatchRatio) {
+          createInventoryReagentHealthIssue(
+            result.siteId,
+            result.partnerId,
+            result.assayId,
+            context.inventoryReagentHealth
+          )
+        }
+      })
     }
     if (
       reagentErrorRatio > maxReagentErrorRatio ||
       invalidResultRatio > maxInvalidResultRatio ||
-      reagentErrorRatio + invalidResultRatio > maxInvalidReagentErrorRatio
+      invalidReagentErrorRatio > maxInvalidReagentErrorRatio
     ) {
-      const assayConsumables = await selectAssayConsumables(
-        knex,
+      createInventoryReagentHealthIssue(
+        result.siteId,
         result.partnerId,
-        result.assayId
+        result.assayId,
+        context.inventoryReagentHealth
       )
-      _.map(assayConsumables, async assayConsumable => {
-        context.inventoryReagentHealth(
-          result.siteId,
-          assayConsumable.consumableId
-        )
-      })
     }
+  })
+}
+
+async function createInventoryReagentHealthIssue(
+  siteId,
+  partnerId,
+  assayId,
+  dispatchAction
+) {
+  const assayConsumables = await selectAssayConsumables(
+    knex,
+    partnerId,
+    assayId
+  )
+  _.map(assayConsumables, async assayConsumable => {
+    dispatchAction(siteId, assayConsumable.consumableId)
   })
 }
 
