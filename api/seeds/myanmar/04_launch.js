@@ -1,4 +1,7 @@
 module.exports = require('../../src/db').seed(seed)
+const { rowsAsObject } = require('../utils')
+
+const now = new Date()
 
 async function seed(knex) {
   // change issue/notification types from "Generic" to "Procedural"

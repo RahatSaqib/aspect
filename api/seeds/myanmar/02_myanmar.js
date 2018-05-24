@@ -8,6 +8,7 @@ const _ = require('lodash')
 
 const config = require('../../src/config')
 const dashboardWidget = require('./fixtures/dashboardWidget.json')
+const { rowsAsObject, getDefaultMessageTypes } = require('../utils')
 
 const now = new Date()
 
@@ -819,45 +820,5 @@ async function seed(knex) {
       createdOn: now,
       updatedOn: now,
     },
-    {
-      issueTypeId: issueTypes.DeviceNoResults.id,
-      partnerId,
-      escalateToLevel: 2,
-      escalationConditions: JSON.stringify({
-        evaluationMethod: 'issue-age',
-        evaluationParameter: { days: 7 },
-      }),
-      createdOn: now,
-      updatedOn: now,
-    },
-    {
-      issueTypeId: issueTypes.DeviceNoResults.id,
-      partnerId,
-      escalateToLevel: 3,
-      escalationConditions: JSON.stringify({
-        evaluationMethod: 'sql-script',
-        evaluationParameter:
-          './sqlScripts/Myanmar/issues/escalations/deviceNoResultsLevel3ROEscalatedNoResults.sql',
-      }),
-      createdOn: now,
-      updatedOn: now,
-    },
   ])
-}
-
-function rowsAsObject(knex, table, column = 'name') {
-  return knex(table).reduce((memo, row) => {
-    memo[row[column]] = row
-    return memo
-  }, {})
-}
-
-function getDefaultMessageTypes(knex) {
-  return knex('MessageType as mt')
-    .join('IssueType as it', 'it.defaultMessageTypeId', 'mt.id')
-    .select('it.externalId as issueTypeExternalId', 'mt.*')
-    .reduce((memo, row) => {
-      memo[row.issueTypeExternalId] = row
-      return memo
-    }, {})
 }

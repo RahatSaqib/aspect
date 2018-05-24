@@ -6,6 +6,7 @@ const bcrypt = require('bcrypt')
 const permissions = require('./fixtures/permissions.json')
 const geography = require('./fixtures/geography.json')
 const features = require('./fixtures/features.json')
+const { rowsAsObject } = require('../utils')
 
 const now = new Date()
 
@@ -1862,7 +1863,11 @@ async function seed(knex) {
       i18nKey: 'issueCategoryConnectivityHealth',
     },
   ])
-  const issueCategories = await rowsAsObject(knex, 'IssueCategory')
+  const issueCategories = await rowsAsObject(
+    knex,
+    'IssueCategory',
+    'externalId'
+  )
 
   await knex('IssueStatus').insert([
     {
@@ -1982,11 +1987,4 @@ async function seed(knex) {
       defaultMessageTypeId: reagentHealthTypeId,
     },
   ])
-}
-
-function rowsAsObject(knex, table, column = 'externalId') {
-  return knex(table).reduce((memo, row) => {
-    memo[row[column]] = row
-    return memo
-  }, {})
 }

@@ -75,11 +75,6 @@ async function preProcessMergeResult({ knex, deviceId, payload }) {
         _.get(existingResult, 'resultCategory1') !== 'NoResult' ||
         _.get(existingResult, 'resultCategory2') !== 'NoResult'
       ) {
-        console.log(
-          _.get(payload, 'category'),
-          existingResult.resultCategory1,
-          existingResult.resultCategory2
-        )
         // We should never merge an incomplete result over a complete result
         throw Boom.conflict('A later version of this result already exists')
       }
