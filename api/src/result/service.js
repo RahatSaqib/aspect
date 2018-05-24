@@ -951,7 +951,7 @@ async function onResultLogged({ resultId }, { messageContext }) {
       _.forEach(invalidResultBatchRatios, ratio => {
         if (ratio.invalidResultRatio > invalidResultBatchRatio) {
           createInventoryReagentHealthIssue(
-            result.siteId,
+            result.deviceId,
             result.partnerId,
             result.assayId,
             context.inventoryReagentHealth
@@ -965,7 +965,7 @@ async function onResultLogged({ resultId }, { messageContext }) {
       invalidReagentErrorRatio > maxInvalidReagentErrorRatio
     ) {
       createInventoryReagentHealthIssue(
-        result.siteId,
+        result.deviceId,
         result.partnerId,
         result.assayId,
         context.inventoryReagentHealth
@@ -975,7 +975,7 @@ async function onResultLogged({ resultId }, { messageContext }) {
 }
 
 async function createInventoryReagentHealthIssue(
-  siteId,
+  deviceId,
   partnerId,
   assayId,
   dispatchAction
@@ -986,7 +986,7 @@ async function createInventoryReagentHealthIssue(
     assayId
   )
   _.map(assayConsumables, async assayConsumable => {
-    dispatchAction(siteId, assayConsumable.consumableId)
+    dispatchAction(deviceId, assayConsumable.consumableId)
   })
 }
 

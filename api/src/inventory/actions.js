@@ -11,15 +11,15 @@ const types = {
  * Creates an action to notify the inventory
  * has a reagent health issue
  *
- * siteId, consumableId is required.
+ * deviceId, consumableId is required.
  */
-function inventoryReagentHealth(siteId, consumableId) {
-  if (_.isNil(siteId) || _.isNil(consumableId)) {
-    throw new Error('Must specify siteId, consumableId')
+function inventoryReagentHealth(deviceId, consumableId) {
+  if (_.isNil(deviceId) || _.isNil(consumableId)) {
+    throw new Error('Must specify deviceId, consumableId')
   }
   return {
     type: types.INVENTORY_REAGENT_HEALTH,
-    siteId,
+    deviceId,
     consumableId,
   }
 }
