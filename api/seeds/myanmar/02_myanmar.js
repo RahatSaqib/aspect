@@ -44,14 +44,12 @@ async function seed(knex) {
     partnerTypes,
     deviceTypes,
     deviceStatuses,
-    deviceMaintenanceStatuses,
     issueTypes,
     defaultMessageTypes,
   ] = await Promise.all([
     rowsAsObject(knex, 'PartnerType', 'name'),
     rowsAsObject(knex, 'DeviceType', 'externalId'),
     rowsAsObject(knex, 'DeviceStatus', 'token'),
-    rowsAsObject(knex, 'DeviceMaintenanceStatus', 'token'),
     rowsAsObject(knex, 'IssueType', 'externalId'),
     getDefaultMessageTypes(knex),
   ])
@@ -118,7 +116,6 @@ async function seed(knex) {
       name: 'GxAlert',
       deviceTypeId: deviceTypes.GxAlert.id,
       deviceStatusId: deviceStatuses.approved.id,
-      deviceMaintenanceStatusId: deviceMaintenanceStatuses.online.id,
       partnerId,
       geographyId: myanmarGeographyId,
       siteId: gxAlertSiteId,

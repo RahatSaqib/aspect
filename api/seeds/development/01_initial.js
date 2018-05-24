@@ -382,20 +382,6 @@ async function seed(knex) {
     token: 'decommissioned',
   })
 
-  // DeviceMaintenanceStatus
-  const [deviceMaintenanceStatusOnline] = await knex(
-    'DeviceMaintenanceStatus'
-  ).insert({
-    name: 'Online',
-    i18nKey: 'deviceMaintenanceStatusOnline',
-    token: 'online',
-  })
-  await knex('DeviceMaintenanceStatus').insert({
-    name: 'Offline',
-    i18nKey: 'deviceMaintenanceStatusOffline',
-    token: 'offline',
-  })
-
   // Result source
   const [resultSourceDiagnosticId] = await knex('ResultSource').insert({
     name: 'Diagnostic Device',
@@ -2165,7 +2151,6 @@ async function seed(knex) {
           shortName: `r${i}`,
           deviceTypeId: deviceTypeIdRouter,
           deviceStatusId: deviceStatusApproved,
-          deviceMaintenanceStatusId: deviceMaintenanceStatusOnline,
           partnerId: siteData.partnerId,
           geographyId: siteData.geographyId,
           siteId: siteData.id,
@@ -2203,7 +2188,6 @@ async function seed(knex) {
         deviceTypeId: deviceTypeGeneXpertId,
         deviceStatusId:
           _.random(1) > 0 ? deviceStatusApproved : deviceStatusAssigned,
-        deviceMaintenanceStatusId: deviceMaintenanceStatusOnline,
         configurationData: JSON.stringify({
           requirePrinter: 'no',
           adminPassword: 'pwd123',
@@ -2290,7 +2274,6 @@ async function seed(knex) {
         deviceTypeId: deviceTypeDaktariVirologyId,
         deviceStatusId:
           _.random(1) > 0 ? deviceStatusApproved : deviceStatusAssigned,
-        deviceMaintenanceStatusId: deviceMaintenanceStatusOnline,
         configurationData: JSON.stringify({
           requirePrinter: 'yes',
           adminPassword: 'pwd123',

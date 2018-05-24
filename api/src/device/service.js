@@ -529,57 +529,6 @@ async function onDeviceMaintenance(
     resolveOn: newResolveOn = null,
   } = options
   return messageContext.transact(async knex => {
-    const {
-      lastSeenOn: currentLastSeenOn,
-      deviceMaintenanceStatusId: currentMaintenanceStatusId,
-      deviceMaintenanceData: currentStringData,
-      deviceMaintenanceResolveOn: currentResolveOn,
-      newMaintenanceStatusId,
-    } = await knex('Device as d')
-      .join(
-        'DeviceMaintenanceStatus as dms',
-        'd.deviceMaintenanceStatusId',
-        'dms.id'
-      )
-      .where('d.id', deviceId)
-      .first(
-        'd.deviceMaintenanceStatusId',
-        'd.lastSeenOn',
-        'd.deviceMaintenanceData',
-        'd.deviceMaintenanceResolveOn',
-        knex('DeviceMaintenanceStatus as dmsNew')
-          .where('dmsNew.token', status)
-          .first('dmsNew.id')
-          .as('newMaintenanceStatusId')
-      )
-    const currentMaintenanceData =
-      currentStringData == null ? {} : JSON.parse(currentStringData)
-    if (
-      newMaintenanceStatusId !== currentMaintenanceStatusId ||
-      (lastSeenOn == null || currentLastSeenOn < lastSeenOn) ||
-      !_.isEqual(currentResolveOn, newResolveOn) ||
-      !_.isEqual(currentMaintenanceData, newMaintenanceData)
-    ) {
-      const stringData = JSON.stringify(
-        !mergeData
-          ? newMaintenanceData
-          : _.merge(currentMaintenanceData, newMaintenanceData)
-      )
-      await knex('DeviceMaintenanceStatusLog').insert({
-        deviceId,
-        deviceMaintenanceStatusId: newMaintenanceStatusId,
-        data: stringData,
-        changedOn,
-        createdOn: now,
-      })
-      await knex('Device')
-        .where({ id: deviceId })
-        .update({
-          // lastSeenOn: lastSeenOn != null ? currentLastSeenOn : lastSeenOn,
-          deviceMaintenanceStatusId: newMaintenanceStatusId,
-          deviceMaintenanceData: stringData,
-          deviceMaintenanceResolveOn: now, // FIXME newResolveOn,
-        })
       const action = deviceMaintenanceStatusAction[status]
       if (action != null) {
         // FIXME device lastSeenOn / common resolveOn ?
@@ -587,7 +536,7 @@ async function onDeviceMaintenance(
         messageContext.dispatch(action(deviceId))
       }
     }
-  })
+  )
 }
 
 module.exports = {

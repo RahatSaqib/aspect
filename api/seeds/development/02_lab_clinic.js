@@ -49,11 +49,6 @@ async function seed(knex) {
     maxDaysDeviceNoResults: 14,
   })
   const deviceTypeCategories = await rowsAsObject(knex, 'DeviceTypeCategory')
-  const deviceMaintenanceStatuses = await rowsAsObject(
-    knex,
-    'DeviceMaintenanceStatus',
-    'token'
-  )
 
   /* TODO Add configuration schema once UI supports and we synchronize correctly
   // define configurationData object
@@ -494,8 +489,6 @@ async function seed(knex) {
                   siteId,
                   deviceTypeId,
                   deviceStatusId,
-                  deviceMaintenanceStatusId:
-                    deviceMaintenanceStatuses.online.id,
                   deviceId: device.deviceId,
                   name: device.name,
                   shortName: device.shortName,

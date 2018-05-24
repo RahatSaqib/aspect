@@ -1,54 +1,63 @@
 module.exports = require('../src/db').migration(up, down)
 
 async function up(knex) {
-  await knex.raw('SET foreign_key_checks = 0')
-
-  await knex.schema.table('Device', device => {
-    device
-      .integer('deviceMaintenanceStatusId')
-      .unsigned()
-      .notNullable()
-      .index()
-      .references('id')
-      .inTable('DeviceMaintenanceStatus')
-    device.dateTime('deviceMaintenanceResolveOn')
-    device.specificType('deviceMaintenanceData', 'JSON')
-  })
-  await knex('Device')
-    .whereRaw(
-      '1 = (select fdf.offline from FactDeviceFlag fdf where fdf.deviceId=id)'
-    )
-    .update({
-      deviceMaintenanceStatusId: knex('DeviceMaintenanceStatus')
-        .where({ token: 'offline' })
-        .first('id'),
-    })
-  await knex('Device')
-    .whereRaw(
-      '0 = (select fdf.offline from FactDeviceFlag fdf where fdf.deviceId=id)'
-    )
-    .orWhereRaw(
-      'not exists(select fdf.deviceId from FactDeviceFlag fdf where fdf.deviceId=id)'
-    )
-    .update({
-      deviceMaintenanceStatusId: knex('DeviceMaintenanceStatus')
-        .where({ token: 'online' })
-        .first('id'),
-    })
-
-  await knex.raw('SET foreign_key_checks = 1')
+  // TODO do we need to create issues for existing logs?
+  await knex.schema.dropTableIfExists('DeviceMaintenanceStatusLog')
+  await knex.schema.dropTableIfExists('DeviceMaintenanceStatus')
 }
 
 async function down(knex) {
-  await knex.raw('SET foreign_key_checks = 0')
+  await knex.schema.createTable(
+    'DeviceMaintenanceStatus',
+    maintenanceStatus => {
+      maintenanceStatus.increments('id')
+      maintenanceStatus.string('name').notNullable()
+      maintenanceStatus.string('i18nKey')
+      maintenanceStatus.string('token')
+    }
+  )
 
-  await knex.schema.table('Device', device => {
-    device.dropForeign('deviceMaintenanceStatusId')
-    device.dropIndex('deviceMaintenanceStatusId')
-    device.dropColumn('deviceMaintenanceStatusId')
-    device.dropColumn('deviceMaintenanceResolveOn')
-    device.dropColumn('deviceMaintenanceData')
-  })
+  await knex(
+    'DeviceMaintenanceStatus'
+  ).insert([{
+    name: 'Online',
+    i18nKey: 'deviceMaintenanceStatusOnline',
+    token: 'online',
+    },
+  {
+    name: 'Offline',
+    i18nKey: 'deviceMaintenanceStatusOffline',
+    token: 'offline',
+  }])
 
-  await knex.raw('SET foreign_key_checks = 1')
+  await knex.schema.createTable(
+    'DeviceMaintenanceStatusLog',
+    maintenanceStatusLog => {
+      maintenanceStatusLog.increments('id')
+      maintenanceStatusLog
+        .integer('deviceId')
+        .unsigned()
+        .index()
+        .references('id')
+        .inTable('Device')
+        .onDelete('CASCADE')
+      maintenanceStatusLog
+        .integer('deviceMaintenanceStatusId')
+        .unsigned()
+        .index()
+        .references('id')
+        .inTable('DeviceMaintenanceStatus')
+        .onDelete('SET NULL')
+      maintenanceStatusLog.specificType('data', 'JSON').notNullable()
+      maintenanceStatusLog.dateTime('changedOn')
+      maintenanceStatusLog.dateTime('createdOn')
+      maintenanceStatusLog
+        .integer('createdBy')
+        .unsigned()
+        .index()
+        .references('id')
+        .inTable('User')
+        .onDelete('SET NULL')
+    }
+  )
 }
