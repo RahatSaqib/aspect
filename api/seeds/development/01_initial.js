@@ -10,6 +10,7 @@ const patients = require('./fixtures/patients.json')
 const dashboardWidget = require('./fixtures/dashboardWidget.json')
 const features = require('./fixtures/features.json')
 const { errorCodes } = require('./fixtures/errorCodes.js')
+const { rowsAsObject } = require('../utils')
 const {
   addMilliseconds,
   addMinutes,
@@ -4193,7 +4194,11 @@ async function seed(knex) {
       i18nKey: 'issueCategoryConnectivityHealth',
     },
   ])
-  const issueCategories = await rowsAsObject(knex, 'IssueCategory')
+  const issueCategories = await rowsAsObject(
+    knex,
+    'IssueCategory',
+    'externalId'
+  )
 
   await knex('IssueStatus').insert([
     {
@@ -4313,11 +4318,4 @@ async function seed(knex) {
       defaultMessageTypeId: reagentHealthTypeId,
     },
   ])
-}
-
-function rowsAsObject(knex, table, column = 'externalId') {
-  return knex(table).reduce((memo, row) => {
-    memo[row[column]] = row
-    return memo
-  }, {})
 }

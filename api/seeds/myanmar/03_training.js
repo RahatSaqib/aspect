@@ -1,6 +1,7 @@
 module.exports = require('../../src/db').seed(seed)
 const geography = require('./fixtures/geography.json')
 const _ = require('lodash')
+const { rowsAsObject, getDefaultMessageTypes } = require('../utils')
 
 async function seed(knex) {
   const { id: jobFunctionIdRegionalOfficer, partnerId } = await knex(
@@ -347,21 +348,4 @@ async function seed(knex) {
   await knex('NotificationType')
     .where('name', 'RO Stock Level Update')
     .update('canAcknowledge', 1)
-}
-
-function rowsAsObject(knex, table, column = 'name') {
-  return knex(table).reduce((memo, row) => {
-    memo[row[column]] = row
-    return memo
-  }, {})
-}
-
-function getDefaultMessageTypes(knex) {
-  return knex('MessageType as mt')
-    .join('IssueType as it', 'it.defaultMessageTypeId', 'mt.id')
-    .select('it.externalId as issueTypeExternalId', 'mt.*')
-    .reduce((memo, row) => {
-      memo[row.issueTypeExternalId] = row
-      return memo
-    }, {})
 }
