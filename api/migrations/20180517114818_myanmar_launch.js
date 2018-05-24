@@ -17,18 +17,18 @@ async function down(knex) {
     }
   )
 
-  await knex(
-    'DeviceMaintenanceStatus'
-  ).insert([{
-    name: 'Online',
-    i18nKey: 'deviceMaintenanceStatusOnline',
-    token: 'online',
+  await knex('DeviceMaintenanceStatus').insert([
+    {
+      name: 'Online',
+      i18nKey: 'deviceMaintenanceStatusOnline',
+      token: 'online',
     },
-  {
-    name: 'Offline',
-    i18nKey: 'deviceMaintenanceStatusOffline',
-    token: 'offline',
-  }])
+    {
+      name: 'Offline',
+      i18nKey: 'deviceMaintenanceStatusOffline',
+      token: 'offline',
+    },
+  ])
 
   await knex.schema.createTable(
     'DeviceMaintenanceStatusLog',

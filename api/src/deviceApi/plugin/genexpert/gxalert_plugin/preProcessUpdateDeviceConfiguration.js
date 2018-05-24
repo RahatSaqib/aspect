@@ -3,7 +3,6 @@ const dateFormat = require('date-fns/format')
 
 async function preProcessUpdateDeviceConfiguration(context) {
   const { payload, device: { id: deviceId } } = context
-  const lastPingOn = _.get(payload, 'data.lastPingOn', null)
   const inactive = _.get(payload, 'data.inactive', null)
   if (!_.isNull(inactive)) {
     const blankMaintenanceData = {
@@ -32,11 +31,9 @@ async function preProcessUpdateDeviceConfiguration(context) {
       newMaintenanceData.expectedBackOnline == null
         ? null
         : new Date(newMaintenanceData.expectedBackOnline)
-    context.deviceMaintenance(deviceId, inactive ? 'offline' : 'online', {
+    context.deviceMaintenance(deviceId, {
       data: newMaintenanceData,
-      mergeData: true,
       resolveOn,
-      lastSeenOn: lastPingOn,
     })
   }
 }

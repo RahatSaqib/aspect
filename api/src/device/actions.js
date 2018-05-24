@@ -1,5 +1,6 @@
 // ----------- Action Types ---------------------
 const types = {
+  DEVICE_SEEN: 'DEVICE_SEEN',
   DEVICE_OFFLINE: 'DEVICE_OFFLINE',
   DEVICE_ONLINE: 'DEVICE_ONLINE',
   DEVICE_NO_RESULTS: 'DEVICE_NO_RESULTS',
@@ -11,34 +12,39 @@ const types = {
 //
 
 /**
- * Creates an action to notify the device maintenance status.
+ * Creates an action to notify the device has communicated
+ * with Aspect (e.g. through the Device API)
  *
  * deviceId is required.
- * status is required: the token/externalId of DeviceMaintenanceStatus,
- * e.g. online, offline
+ */
+function deviceSeen(deviceId) {
+  if (deviceId == null) {
+    throw new Error('Must specify deviceId for notify deviceSeen')
+  }
+  return {
+    type: types.DEVICE_SEEN,
+    deviceId,
+  }
+}
+
+/**
+ * Creates an action to notify the device maintenance.
  *
- * NOTE: this action is debounced to create tasks related to status updates.
- * most application code should generate deviceMaintenance, but subscribe
- * to other actions for creating additional logic based on the status.
+ * deviceId is required.
  *
  * options:
  *  data: Optional additional maintenance data to record, plain object
- *  mergeData: Should specified data merge or replace existing data? default false
  *  resolveOn: date maintenance status likely to be resolved, default null (unknown)
  *  changedOn: date maintenance status changed, default now
- *  lastSeenOn: date the actual device was last seen, default now.
+ *  lastSeenOn: date the device was last seen, default now.
  */
-function deviceMaintenance(deviceId, status, options) {
+function deviceMaintenance(deviceId, options) {
   if (deviceId == null) {
     throw new Error('Must specify deviceId for notify deviceMaintenance')
-  }
-  if (status == null) {
-    throw new Error('Must specify status for notify deviceMaintenance')
   }
   return {
     type: types.DEVICE_MAINTENANCE,
     deviceId,
-    status,
     options,
   }
 }
@@ -110,6 +116,7 @@ function deviceHasNewResults(deviceId) {
 
 module.exports = {
   types,
+  deviceSeen,
   deviceMaintenance,
   deviceOffline,
   deviceOnline,

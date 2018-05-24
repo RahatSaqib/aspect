@@ -27,9 +27,6 @@ async function deleteGxAlertDeviceDataAndRefreshTokens(
   await knex('DeviceStatusLog')
     .whereIn('deviceId', deviceIds)
     .delete()
-  await knex('DeviceMaintenanceStatusLog')
-    .whereIn('deviceId', deviceIds)
-    .delete()
   await knex('DeviceLog')
     .whereIn('deviceId', deviceIds)
     .delete()
@@ -117,10 +114,6 @@ async function deleteGeneXpertDeviceSiteDataAndRefreshTokens(
     .pluck('id')
 
   await knex('DeviceStatusLog')
-    .whereIn('deviceId', deviceIds)
-    .delete()
-
-  await knex('DeviceMaintenanceStatusLog')
     .whereIn('deviceId', deviceIds)
     .delete()
 
@@ -266,17 +259,12 @@ class GxAlertApiTestContext {
         .from('DeviceStatus')
         .where('token', 'approved')
         .first()
-      const onlineMaintenanceStatus = await knex
-        .from('DeviceMaintenanceStatus')
-        .where('token', 'online')
-        .first()
       const now = new Date()
       const [deviceId] = await knex('Device').insert({
         partnerId: partner.id,
         geographyId: geography.id,
         deviceTypeId: gxAlertDeviceType.id,
         deviceStatusId: approvedDeviceStatus.id,
-        deviceMaintenanceStatusId: onlineMaintenanceStatus.id,
         name: this.basicDevicePayload.name,
         shortName: this.basicDevicePayload.name,
         configurationData: '{}',

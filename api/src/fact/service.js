@@ -1,14 +1,15 @@
 const { subDays } = require('date-fns')
 const { factGenerateResultCounts } = require('./actions')
 const {
-  deviceMaintenance,
+  deviceOffline,
+  deviceOnline,
   deviceNoResults,
   deviceHasNewResults,
 } = require('../device/actions')
 
 function onFactGenerateDeviceConnectivity({ deviceId }, { messageContext }) {
   const context = messageContext.bindActionCreators({
-    deviceMaintenance,
+    deviceOffline,
     deviceNoResults,
   })
   return context.run(async knex => {
@@ -53,7 +54,7 @@ function onFactGenerateDeviceConnectivity({ deviceId }, { messageContext }) {
           lastPingOn == null ||
           (maxLastDateOffline != null && lastPingOn <= maxLastDateOffline)
         ) {
-          context.deviceMaintenance(id, 'offline')
+          context.deviceOffline(id)
         } else if (
           maxLastDateNoResult != null &&
           ((lastResultOn != null && lastResultOn <= maxLastDateNoResult) ||
@@ -87,6 +88,27 @@ function onFactGenerateResultCounts(action, context) {
   })
 }
 
+function onDeviceSeen({ deviceId }, { messageContext }) {
+  const context = messageContext.bindActionCreators({ deviceOnline })
+  return context.run(async knex => {
+    // Mark device online if seen more recently than offline
+    const offlineDevice = await knex('Device as d')
+      .leftJoin('FactDeviceFlag as fdf', 'd.id', 'fdf.deviceId')
+      .where('d.id', deviceId)
+      .where(function() {
+        // If we don't fact yet, seen for first time, consider this online
+        this.whereNull('fdf.deviceId')
+          // If fact is marked offline and we've seen the device more recently
+          // then the update, we are also online
+          .orWhereRaw('fdf.offline = 1 and (fdf.updatedOn <= d.lastSeenOn)')
+      })
+      .first('d.id')
+    if (offlineDevice != null) {
+      context.deviceOnline(offlineDevice.id)
+    }
+  })
+}
+
 function onDeviceUpdateFlag(updates) {
   return ({ deviceId }, { messageContext }) =>
     messageContext.run(async knex => {
@@ -95,6 +117,7 @@ function onDeviceUpdateFlag(updates) {
         .where({ deviceId })
         .update(flagUpdates)
       if (updatedRows === 0) {
+        // If we don't have a flag for this device yet, create it!
         await knex('FactDeviceFlag').insert(
           Object.assign({ deviceId }, flagUpdates)
         )
@@ -325,6 +348,7 @@ function onFactGenerateResultCountsForDevice(
 module.exports = {
   onFactGenerateDeviceConnectivity,
   onFactGenerateResultCounts,
+  onDeviceSeen,
   onDeviceUpdateFlag,
   onResultLogged,
 }

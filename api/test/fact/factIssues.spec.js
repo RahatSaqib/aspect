@@ -61,6 +61,8 @@ describe('Fact based issues', () => {
         .then(res => {
           assert.equal(res.status, 200)
         })
+      await waitForIdle(1000)
+
       const newDevice = await getDeviceFromApiKey(knex, apiKey)
       assert.isOk(newDevice)
       assert.isOk(newDevice.name)

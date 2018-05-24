@@ -12,7 +12,6 @@ const {
 const {
   operationalDashboard /* FIXME: actual impl */,
 } = require('../dashboard/service')
-const { deviceOnline, deviceOffline } = require('./actions')
 
 const SELECT_LIST_FIELDS = [
   'd.id',
@@ -53,11 +52,6 @@ const SELECT_SHOW_FIELDS = [
   'd.notes',
   'd.serial',
 ]
-
-const deviceMaintenanceStatusAction = {
-  online: deviceOnline,
-  offline: deviceOffline,
-}
 
 // ---------------------------------
 // basic method for reading dataset of devices
@@ -517,26 +511,14 @@ async function getDevice(deviceId) {
 }
 
 async function onDeviceMaintenance(
-  { deviceId, status, options = {} },
+  { deviceId, options = {} },
   { messageContext }
 ) {
   const now = new Date()
-  const {
-    data: newMaintenanceData = {},
-    mergeData = false,
-    changedOn = now,
-    lastSeenOn = now,
-    resolveOn: newResolveOn = null,
-  } = options
   return messageContext.transact(async knex => {
-      const action = deviceMaintenanceStatusAction[status]
-      if (action != null) {
-        // FIXME device lastSeenOn / common resolveOn ?
-        // FIXME device not online if lastSeenOn < ?
-        messageContext.dispatch(action(deviceId))
-      }
-    }
-  )
+    // FIXME device lastSeenOn / common resolveOn ?
+    // FIXME device not online if lastSeenOn < ?
+  })
 }
 
 module.exports = {
