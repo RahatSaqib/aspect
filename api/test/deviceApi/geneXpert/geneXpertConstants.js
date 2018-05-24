@@ -662,7 +662,7 @@ const resultTextToResultCategoryMapping = {
   'MTB Trace DETECTED|RIF Resistance INDETERMINATE': {
     resultId: '816097_934455_be664213',
     assay: 'GxMtbRifUltra',
-    resultCategory1: 'Detected',
+    resultCategory1: 'Trace Detected',
     resultCategory2: 'Indeterminate',
   },
   'MTB ОБНАРУЖЕН ВЫСОКИЙ|Rif Resistance НЕ ОБНАРУЖЕН': {
@@ -818,13 +818,13 @@ const resultTextToResultCategoryMapping = {
   'Trace DETECTED|INDETERMINATE|': {
     resultId: '812438_034539_70686262',
     assay: 'GxMtbRif',
-    resultCategory1: 'Detected',
+    resultCategory1: 'Trace Detected',
     resultCategory2: 'Indeterminate',
   },
   '|MTB Trace DETECTED|RIF Resistance INDETERMINATE': {
     resultId: '816097_516033_4ca9cda7',
     assay: 'GxMtbRifUltra',
-    resultCategory1: 'Detected',
+    resultCategory1: 'Trace Detected',
     resultCategory2: 'Indeterminate',
   },
 }

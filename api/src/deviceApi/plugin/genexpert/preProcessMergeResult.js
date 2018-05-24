@@ -159,7 +159,7 @@ function getResultCategories(payload) {
           erro: 'Error',
           ошибка: 'Error',
           erreur: 'Error',
-          'trace detected': 'Detected',
+          'trace detected': 'Trace Detected',
           'null null': 'Success',
         }
         if (result1CategoryMapping[result1Text]) {
@@ -168,9 +168,14 @@ function getResultCategories(payload) {
       }
       const result1 = _.isEmpty(payloadCategory) ? null : payloadCategory[0].id
       const canHaveSecondResult =
-        ['Detected', 'Error', 'Invalid', 'NoResult', 'Success'].includes(
-          result1
-        ) ||
+        [
+          'Detected',
+          'Trace Detected',
+          'Error',
+          'Invalid',
+          'NoResult',
+          'Success',
+        ].includes(result1) ||
         !_.includes(['GxMtbRif', 'GxMtbRifUltra'], _.get(payload, 'assay.id'))
 
       if (resultTextValues.length > 1) {
