@@ -1299,17 +1299,6 @@ async function seed(knex) {
       },
       auditFields
     ),
-    Object.assign(
-      {
-        name: 'LU Machine Generic',
-        partnerId,
-        issueTypeId: issueTypes.MachineGenericError.id,
-        jobFunctionId: jobFunctionIdLabUser,
-        level: 1,
-        messageTypeId: defaultMessageTypes.MachineGenericError.id,
-      },
-      auditFields
-    ),
   ])
 
   // TB Cartridges Consumable Id

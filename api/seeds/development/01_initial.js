@@ -3990,6 +3990,7 @@ async function seed(knex) {
         htmlBody: 'Procedural errors across machine, conduct troubleshooting',
       },
       auditFields
+    )
   )
 
   // Data Category Low issue templates
@@ -4170,13 +4171,6 @@ async function seed(knex) {
     emailTemplateId: reagentHealthEmailTemplateId,
   })
 
-  const [machineGenericErrorTypeId] = await knex('MessageType').insert({
-    messageSeverityId: messageSeverities.Alert.id,
-    alertTemplateId: machineGenericErrorAlertTemplateId,
-    smsTemplateId: machineGenericErrorSmsTemplateId,
-    emailTemplateId: machineGenericErrorEmailTemplateId,
-  })
-
   // Issues
   await knex('IssueCategory').insert([
     {
@@ -4322,13 +4316,6 @@ async function seed(knex) {
       i18nKey: 'reagentHealthError',
       issueCategoryId: issueCategories.ReagentHealth.id,
       defaultMessageTypeId: reagentHealthTypeId,
-    },
-    {
-      name: 'Machine Generic Error',
-      externalId: 'MachineGenericError',
-      i18nKey: 'issueStatusMachineGenericError',
-      issueCategoryId: issueCategories.DeviceHealth.id,
-      defaultMessageTypeId: machineGenericErrorTypeId,
     },
   ])
 }
