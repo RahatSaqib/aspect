@@ -6,8 +6,8 @@ const types = {
   RESULT_MODULE_POWER_ERROR: 'RESULT_MODULE_POWER_ERROR',
   RESULT_MODULE_FAILURE_ERROR: 'RESULT_MODULE_FAILURE_ERROR',
   RESULT_MACHINE_TEMPERATURE_ERROR: 'RESULT_MACHINE_TEMPERATURE_ERROR',
-  RESULT_MODULE_GENERIC_ERROR: 'RESULT_MODULE_GENERIC_ERROR',
   RESULT_MACHINE_GENERIC_ERROR: 'RESULT_MACHINE_GENERIC_ERROR',
+  RESULT_MACHINE_POWER_ERROR: 'RESULT_MACHINE_POWER_ERROR',
 }
 
 // ----------- Action Creators -------------------
@@ -126,12 +126,29 @@ function resultMachineTemperatureError(deviceId) {
  *
  * deviceId is required.
  */
-function resultModuleGenericError(deviceId) {
+function resultModuleProceduralError(deviceId) {
   if (deviceId == null) {
-    throw new Error('Must specify deviceId for notify resultModuleGenericError')
+    throw new Error(
+      'Must specify deviceId for notify resultModuleProceduralError'
+    )
   }
   return {
-    type: types.RESULT_MODULE_GENERIC_ERROR,
+    type: types.RESULT_MODULE_PROCEDURAL_ERROR,
+    deviceId,
+  }
+}
+
+/**
+ * has a machine power error issue
+ *
+ * deviceId is required.
+ */
+function resultMachinePowerError(deviceId) {
+  if (deviceId == null) {
+    throw new Error('Must specify deviceId for notify resultMachinePowerError')
+  }
+  return {
+    type: types.RESULT_MACHINE_POWER_ERROR,
     deviceId,
   }
 }
@@ -162,6 +179,7 @@ module.exports = {
   resultModulePowerError,
   resultModuleFailureError,
   resultMachineTemperatureError,
-  resultModuleGenericError,
   resultMachineGenericError,
+  resultModuleProceduralError,
+  resultMachinePowerError,
 }

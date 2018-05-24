@@ -16,8 +16,9 @@ const {
   resultModulePowerError,
   resultModuleFailureError,
   resultMachineTemperatureError,
-  resultModuleGenericError,
   resultMachineGenericError,
+  resultModuleProceduralError,
+  resultMachinePowerError,
 } = require('../../../src/result/actions')
 const { waitForIdle, waitForAction } = require('../../utils/mqUtils')
 
@@ -373,7 +374,7 @@ describe('Issue endpoints', () => {
       }
     }))
 
-  it('should create a generic module issue ', () =>
+  it('should create a procedural module issue ', () =>
     runTest(async knex => {
       const { now } = context
 
@@ -615,14 +616,14 @@ describe('Issue endpoints', () => {
           })
         } else {
           // Should create issue when errorCode is added
-          const waitForModuleGenericError = waitForAction(
-            resultModuleGenericError(deviceId)
+          const waitForModuleProceduralError = waitForAction(
+            resultModuleProceduralError(deviceId)
           )
           await postToDeviceApi({
             authHeader: deviceAuth,
             payload,
           })
-          await waitForModuleGenericError
+          await waitForModuleProceduralError
           await waitForIdle()
 
           const issues = await knex('Issue as i')
@@ -636,7 +637,90 @@ describe('Issue endpoints', () => {
               'is.externalId as issueStatus'
             )
           assert.equal(issues.length, 1)
-          assert.equal(issues[0].issueType, 'ModuleGenericError')
+          assert.equal(issues[0].issueType, 'ModuleProceduralError')
+          assert.equal(issues[0].deviceId, deviceId)
+          assert.equal(issues[0].issueStatus, 'Active')
+        }
+      }
+    }))
+
+  it('should create a machine power issue ', () =>
+    runTest(async knex => {
+      const { now } = context
+      const errorCode = '1007'
+
+      // Post to deviceApi to ensure the device in in Aspect
+      const response = await postToDeviceApi({
+        authHeader: deviceAuth,
+        payload: _.merge({}, basicDevicePayload, {
+          name: deviceName,
+        }),
+      })
+      const deviceId = response.body.device.id
+      for (let i = 0; i < 9; i++) {
+        /* eslint-disable no-await-in-loop */
+        const errorTestResultId = `UNIQUE-ID-WITH-MPOWER-ERROR-${i}`
+        const sampleId = `MPOWER2542552${i}`
+        const moduleSerial = `MPOWER1234${i}`
+        const moduleName = `Module A-${i}`
+        const instrumentSerial = `CEPH-PC-123${i}`
+        const testStartedOn = setMilliseconds(subDays(now, i + 3), 0)
+        const testEndedOn = setMilliseconds(addHours(testStartedOn, i + 2), 0)
+
+        const payload = _.merge(
+          {},
+          basicDevicePayload,
+          { name: deviceName },
+          basicResultPayload,
+          {
+            result: {
+              id: errorTestResultId,
+              startedOn: testStartedOn,
+              endedOn: testEndedOn,
+              error: {
+                code: errorCode,
+              },
+              sample: { id: sampleId },
+              instrument: {
+                serial: instrumentSerial,
+                module: {
+                  serial: moduleSerial,
+                  name: moduleName,
+                },
+              },
+            },
+          }
+        )
+        if (i < 8) {
+          // Post the result to aspect
+          await postToDeviceApi({
+            authHeader: deviceAuth,
+            payload,
+          })
+        } else {
+          // Should create issue when errors > 8
+          const waitForMachinePowerError = waitForAction(
+            resultMachinePowerError(deviceId)
+          )
+          await postToDeviceApi({
+            authHeader: deviceAuth,
+            payload,
+          })
+          await waitForMachinePowerError
+          await waitForIdle()
+
+          const issues = await knex('Issue as i')
+            .join('IssueType as it', 'i.issueTypeId', 'it.id')
+            .join('IssueStatus as is', 'i.issueStatusId', 'is.id')
+            .where({ 'i.deviceId': deviceId })
+            .select(
+              'i.id',
+              'it.externalId as issueType',
+              'i.deviceId',
+              'is.externalId as issueStatus'
+            )
+          assert.equal(issues.length, 1)
+          assert.equal(issues[0].issueType, 'MachinePowerError')
           assert.equal(issues[0].deviceId, deviceId)
           assert.equal(issues[0].issueStatus, 'Active')
         }

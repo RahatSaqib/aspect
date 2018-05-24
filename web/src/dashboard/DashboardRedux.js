@@ -10,6 +10,7 @@ import {
 } from '../error/CommonErrorNotifications'
 
 import { types as inventoryTypes } from '../inventory/InventoryRedux'
+import { types as issueTypes } from '../issue/IssueRedux'
 
 export const REQUEST_STAT_DASHBOARD = 'REQUEST_STAT_DASHBOARD'
 export const RECEIVE_STAT_DASHBOARD = 'RECEIVE_STAT_DASHBOARD'
@@ -542,6 +543,25 @@ export default function dashboardReducer(state = initialState, action) {
           return it
         })
         mutState.mergeDeepIn(['actionSummaryMap', 'Reagent'], list)
+      })
+    case issueTypes.RECEIVE_UPDATED_SINGLE_ISSUE:
+      return state.withMutations(mutState => {
+        mutState
+          .get('actionSummaryMap')
+          .keySeq()
+          .forEach(category => {
+            const list = mutState
+              .getIn(['actionSummaryMap', category])
+              .map(it => {
+                if (it.get('issueId') === action.item.issueId) {
+                  return it
+                    .set('status', action.item.issueStatusExternalId)
+                    .set('statusDate', action.item.changedOn)
+                }
+                return it
+              })
+            mutState.mergeDeepIn(['actionSummaryMap', category], list)
+          })
       })
     default:
       return state

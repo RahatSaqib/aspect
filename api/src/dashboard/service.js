@@ -8,12 +8,9 @@ const {
   canViewResults,
   canViewInventories,
 } = require('../auth/constraints')
-const { selectInventoryStockAtSite } = require('../inventory/service')
 const addDays = require('date-fns/add_days')
 const isAfter = require('date-fns/is_after')
 const differenceInDays = require('date-fns/difference_in_days')
-const isSameMonth = require('date-fns/is_same_month')
-const isSameQuarter = require('date-fns/is_same_quarter')
 const { getUser } = require('../auth/service')
 
 const i18nKeys = {
@@ -165,9 +162,12 @@ async function targetDashboard(request) {
   const widgets = await getDashboardWidget(user, 'target')
 
   let targetDivide = 1
-  if (isSameMonth(query.maxDate, query.minDate)) {
+
+  const days = differenceInDays(query.maxDate, query.minDate)
+
+  if (days <= 35) {
     targetDivide = 12
-  } else if (isSameQuarter(query.maxDate, query.minDate)) {
+  } else if (days <= 150) {
     targetDivide = 4
   }
 
@@ -1169,7 +1169,11 @@ async function operationalDashboard(request) {
 async function actionDashboard(request) {
   const { auth, query } = request
   const user = await getUser(auth.credentials.name)
+  const dataConstraints = await getConstraints(auth.credentials)
 
+  // TODO use auth addConstraints instead of hardcoding Myanmar Rules
+  // for dashboard queries
+  // TODO Remove hard coded constraints for RO vs LU issues from ASP-765
   const { jobFunctionName } = await knex('JobFunction as jf')
     .innerJoin('Job as j', 'j.jobFunctionId', 'jf.id')
     .innerJoin('Person as ps', 'j.personId', 'ps.id')
@@ -1179,6 +1183,7 @@ async function actionDashboard(request) {
     })
     .first('jf.name as jobFunctionName')
   const isAdmin = jobFunctionName === 'Admin'
+  const isRegionalOfficer = jobFunctionName === 'Regional Officer'
 
   const resultQuery = await knex('AlertMessage as am')
     .innerJoin('MessageStatus as ms', 'am.messageStatusId', 'ms.id')
@@ -1190,12 +1195,21 @@ async function actionDashboard(request) {
     .innerJoin('IssueStatus as is', 'i.issueStatusId', 'is.id')
     .innerJoin('Site as s', 'am.siteId', 's.id')
     .where({ 'ms.externalId': 'Sent' })
+    .whereNotIn('is.externalId', ['Inactive', 'Resolved'])
     .modify((queryBuilder, query) => {
       if (!isAdmin) {
         queryBuilder.where({ 'am.personId': user.personId })
       }
       if (query.siteId) {
         queryBuilder.where({ 'am.siteId': query.siteId })
+      }
+      if (isAdmin || isRegionalOfficer) {
+        // If specific lab selected, show LU issues, otherwise show RO
+        queryBuilder.where(
+          'nt.name',
+          query.siteId == null ? 'not like' : 'like',
+          'LU%'
+        )
       }
     }, query)
     .select(
@@ -1205,40 +1219,104 @@ async function actionDashboard(request) {
       'am.resultId',
       'am.message',
       's.name as siteName',
+      'i.id as issueId',
       'is.name as status',
       'is.i18nKey as statusI18nKey',
       'it.name as issueType',
+      'it.externalId as issueTypeExternalId',
       'it.i18nKey as issueTypeI18nKey',
       'ic.externalId as issueCategory',
       'ic.i18nKey as issueCategoryI18nKey',
-      'nt.name as notificationType'
+      'nt.name as notificationType',
+      'nt.canAcknowledge',
+      knex('IssueStatusLog as isl')
+        .whereRaw('isl.issueId=i.id')
+        .whereRaw('isl.issueStatusId=is.id')
+        .max('changedOn')
+        .as('statusDate')
     )
+
+  // TODO do not hardcode inventory item lookup
+  // this is here to always show inventory in action
+  // list for all devices assigned to the user, even
+  // if there are currently no triggered errors since
+  // the user can update stock levels at any time
+  const inventoryItems = await knex('Site as s')
+    .leftJoin('InventoryItem as ii', 'ii.siteId', 's.id')
+    .leftJoin('Consumable as c', 'ii.consumableId', 'c.id')
+    .modify(addConstraints, dataConstraints, { site: 's' })
+    .modify(qb => {
+      if (query.siteId) {
+        qb.where({ 's.id': query.siteId })
+      }
+    })
+    .groupBy('s.id', 'c.id')
+    .select(
+      's.id as siteId',
+      's.name as siteName',
+      'c.id as consumableId',
+      knex.raw('coalesce(sum(ii.quantityOnHand), 0) as totalInStock')
+    )
+
+  // FIXME: Replace always loading the ID for GeneXpert cartridges by adding consumable ID to the AlertMessage table and adding it to the query above
+  const { id: defaultConsumableId } = await knex('Consumable')
+    .where('name', 'GeneXpert TB Cartridge')
+    .first()
+
+  // set consumable id, totalIn Stock on StockInHand issues
+  const inventoryItemsBySite = _.groupBy(inventoryItems, 'siteId')
+  const results = _.map(resultQuery, result => {
+    // TODO we should not be using notification type name
+    // as a constant, as it could be user editable in the future
+    result.notificationType = _.camelCase(result.notificationType)
+    if (result.siteId && result.issueTypeExternalId === 'StockLevelUpdate') {
+      const [inventoryItem] = inventoryItemsBySite[result.siteId]
+      result.totalInStock =
+        inventoryItem == null ? 0 : inventoryItem.totalInStock
+      result.consumableId =
+        inventoryItem == null ? null : inventoryItem.consumableId
+      delete inventoryItemsBySite[result.siteId]
+    }
+    if (result.consumableId == null) {
+      result.consumableId = defaultConsumableId
+    }
+    return result
+  })
+
+  // Add consumables by site that aren't in issues
+  _.forEach(
+    inventoryItemsBySite,
+    ([{ siteId, siteName, totalInStock, consumableId }]) => {
+      results.push({
+        // ID is needed in UI to distinquish table rows
+        id: `stocklevel_${siteId}`,
+        siteId,
+        deviceId: null,
+        resultId: null,
+        message: 'Stock Level',
+        siteName,
+        issueId: null,
+        status: 'OK',
+        statusI18nKey: 'issueStatusOk',
+        statusDate: new Date(),
+        issueType: 'Stock Level Update',
+        issueTypeExternalId: 'StockLevelUpdate',
+        issueTypeI18nKey: 'stockLevelUpdateIssue',
+        issueCategory: 'ReagentHealth',
+        issueCategoryI18nKey: 'issueCategoryReagentHealth',
+        notificationType: 'luStockLevelUpdate',
+        canAcknowledge: 0,
+        totalInStock,
+        consumableId: consumableId != null ? consumableId : defaultConsumableId,
+      })
+    }
+  )
 
   const allActionByCategory = _.flowRight(
     x => _.groupBy(x, 'issueCategory'),
     query.sortDir === 'desc' ? _.reverse : _.identity,
-    x => _.sortBy(x, query.sortCol || _.identity),
-    x =>
-      _.map(x, it =>
-        _.set(it, ['notificationType'], _.camelCase(it.notificationType))
-      )
-  )(resultQuery)
-
-  await Promise.all(
-    _.map(allActionByCategory.Reagent, async it => {
-      if (it.siteId && it.consumableId) {
-        const { totalInStock } = await selectInventoryStockAtSite(
-          it.siteId,
-          it.consumableId,
-          knex
-        )
-        return Object.assign(it, {
-          totalInStock,
-        })
-      }
-      return it
-    })
-  )
+    x => _.sortBy(x, query.sortCol || _.identity)
+  )(results)
 
   const result = {
     ok: true,

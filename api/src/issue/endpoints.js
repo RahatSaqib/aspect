@@ -1,4 +1,35 @@
-const { onIssueEventTrigger, onIssueEventResolve } = require('./service')
+const Joi = require('joi')
+const { asyncHandler } = require('../routes')
+const {
+  updateIssueStatus,
+  onIssueEventTrigger,
+  onIssueEventResolve,
+} = require('./service')
+const { onEscalateIssues } = require('./escalations')
+
+const routes = [
+  {
+    method: 'PUT',
+    path: '/issue/status/{issueId}',
+    handler: asyncHandler(updateIssueStatus),
+    config: {
+      description: 'Update Issue Status',
+      notes: 'Update the status of an issue',
+      auth: { scope: ['notification:edit'] },
+      validate: {
+        params: {
+          issueId: Joi.number()
+            .integer()
+            .positive()
+            .description('Issue Id'),
+        },
+        payload: {
+          issueStatusExternalId: Joi.string().allow('Acknowledged'),
+        },
+      },
+    },
+  },
+]
 
 const subscriptions = [
   {
@@ -15,10 +46,14 @@ const subscriptions = [
       RESULT_MACHINE_TEMPERATURE_ERROR: onIssueEventTrigger(
         'MachineTemperatureError'
       ),
-      RESULT_MODULE_GENERIC_ERROR: onIssueEventTrigger('ModuleGenericError'),
       RESULT_MACHINE_GENERIC_ERROR: onIssueEventTrigger('MachineGenericError'),
+      RESULT_MODULE_PROCEDURAL_ERROR: onIssueEventTrigger(
+        'ModuleProceduralError'
+      ),
+      ESCALATE_ISSUES: onEscalateIssues(),
+      RESULT_MACHINE_POWER_ERROR: onIssueEventTrigger('MachinePowerError'),
     },
   },
 ]
 
-module.exports = { subscriptions }
+module.exports = { routes, subscriptions }

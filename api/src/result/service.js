@@ -23,8 +23,9 @@ const {
   resultModulePowerError,
   resultModuleFailureError,
   resultMachineTemperatureError,
-  resultModuleGenericError,
   resultMachineGenericError,
+  resultModuleProceduralError,
+  resultMachinePowerError,
 } = require('../result/actions')
 
 const MODULE_TEMPERATURE_ERROR_CODES = [
@@ -40,7 +41,6 @@ const MODULE_POWER_ERROR_CODES = [
   '1007',
   '2122',
   '2123',
-  '2124',
   '2126',
   '2127',
   '4008',
@@ -82,7 +82,7 @@ const MODULE_FAILURE_ERROR_CODES = [
   '5015',
   '5016',
 ]
-const GENERIC_ERROR_CODES = [
+const MODULE_PROCEDURAL_ERROR_CODES = [
   '1096',
   '1097',
   '1098',
@@ -112,6 +112,7 @@ const modulePowerMaxErrors = 4
 const moduleFailureMaxErrors = 2
 const machineTemperatureMaxErrors = 8
 const maxPrcntErrors = 5
+const machinePowerMaxErrors = 8
 const SELECT_LIST_FIELDS = [
   'r.id',
   'r.externalId',
@@ -732,8 +733,9 @@ async function onResultLogged({ resultId }, { messageContext }) {
     resultModulePowerError,
     resultModuleFailureError,
     resultMachineTemperatureError,
-    resultModuleGenericError,
     resultMachineGenericError,
+    resultModuleProceduralError,
+    resultMachinePowerError,
   })
   await context.run(async knex => {
     const [result] = await knex('Result as r').where('r.id', resultId)
@@ -791,6 +793,15 @@ async function onResultLogged({ resultId }, { messageContext }) {
             }
           })
         )
+        const [{ errorCount }] = await deviceErrorQuery
+          .clone()
+          .where('r.endedOn', '>=', last30day)
+          .whereIn('r.errorCode', MODULE_POWER_ERROR_CODES)
+          .count('r.id as errorCount')
+
+        if (errorCount > machinePowerMaxErrors) {
+          context.resultMachinePowerError(deviceId)
+        }
       } else if (MODULE_FAILURE_ERROR_CODES.includes(result.errorCode)) {
         const modules = await deviceErrorQuery
           .clone()
@@ -808,7 +819,7 @@ async function onResultLogged({ resultId }, { messageContext }) {
           })
         )
       } else if (
-        GENERIC_ERROR_CODES.includes(result.errorCode) &&
+        MODULE_PROCEDURAL_ERROR_CODES.includes(result.errorCode) &&
         !machineIssueTriggured
       ) {
         const modules = await deviceErrorQuery

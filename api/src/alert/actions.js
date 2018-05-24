@@ -1,6 +1,7 @@
 // ----------- Action Types ---------------------
 const types = {
   ALERT_MESSAGE_CREATED: 'ALERT_MESSAGE_CREATED',
+  ALERT_MESSAGE_SENT: 'ALERT_MESSAGE_SENT',
 }
 
 // ----------- Action Creators -------------------
@@ -21,7 +22,24 @@ function alertMessageCreated(alertMessageId) {
   }
 }
 
+/**
+ * Creates an action to notify MQ the email message
+ * has been sent
+ *
+ * emailMessageId is required.
+ */
+function alertMessageSent(alertMessageId) {
+  if (!alertMessageId) {
+    throw new Error('Must specify alertMessageId')
+  }
+  return {
+    type: types.ALERT_MESSAGE_SENT,
+    alertMessageId,
+  }
+}
+
 module.exports = {
   types,
   alertMessageCreated,
+  alertMessageSent,
 }

@@ -1,15 +1,18 @@
 import classnames from 'classnames/bind'
 import _ from 'lodash'
 import React from 'react'
-import { compose, pure, withProps, withStateHandlers } from 'recompose'
+import { connect } from 'react-redux'
+import { compose, pure, withProps } from 'recompose'
 import { Card } from 'react-toolbox/lib/card'
 import { Button } from 'react-toolbox/lib/button'
-import { Dialog } from 'react-toolbox/lib/dialog'
+import config from '../../config'
 
 import Title from './Title'
 import Icon from '../../components/shared/icon/Icon'
-import requirePermissions from '../../components/shared/requirePermissions'
-import messages from './messages'
+import {
+  requirePermissions,
+  isEnabledFeature,
+} from '../../components/shared/requirePermissions'
 
 const cssClasses = classnames.bind(require('./Status.css'))
 
@@ -18,35 +21,77 @@ const enhance = compose(
   requirePermissions({
     features: ['reportDashboard'],
   }),
+  connect(state => ({ userFeatures: state.user.features })),
   withProps(({ location }) => {
     const searchParams = new URLSearchParams(location.search)
     const filtersParams = new URLSearchParams(searchParams.get('filters') || '')
     return {
-      isShow: _.isEmpty(filtersParams.get('siteId')),
+      showHigherLevel: _.isEmpty(filtersParams.get('siteId')),
     }
-  }),
-  withStateHandlers(
-    () => ({
-      isDemoDialogOpen: false,
-    }),
-    {
-      handleToggleDialog: ({ isDemoDialogOpen }) => () => ({
-        isDemoDialogOpen: !isDemoDialogOpen,
-      }),
-    }
-  )
+  })
 )
 
 export const Reports = ({
-  intl,
   className,
   title,
   // --- injected by recompose ---
-  isShow,
-  isDemoDialogOpen,
-  handleToggleDialog,
+  showHigherLevel,
+  userFeatures,
 }) =>
-  isShow && (
+  (showHigherLevel &&
+    isEnabledFeature(userFeatures, ['siteFilterDashboard']) && (
+      <Card className={className}>
+        <div className={cssClasses('TitleContainer')}>
+          <Title
+            title={title}
+            icon={
+              <Icon
+                className={cssClasses('Title__Icon')}
+                type={require('../../components/shared/icon/assets/reports.svg')}
+              />
+            }
+          />
+        </div>
+
+        <div className={cssClasses('ReportsContainer')}>
+          <Button
+            className={cssClasses('ReportsContainer__Button')}
+            inverse
+            href={`${config.aspectApi}/report/RifReport.xlsx`}
+          >
+            Rif Report
+          </Button>
+          <Button
+            className={cssClasses('ReportsContainer__Button')}
+            inverse
+            href={`${config.aspectApi}/report/MtbPlusReport.xlsx`}
+          >
+            MTB+ Report
+          </Button>
+          <Button
+            className={cssClasses('ReportsContainer__Button')}
+            inverse
+            href={`${config.aspectApi}/report/TiReport.xlsx`}
+          >
+            TI Report
+          </Button>
+          <Button
+            className={cssClasses('ReportsContainer__Button')}
+            inverse
+            href={`${config.aspectApi}/report/QuarterlyReport.xlsx`}
+          >
+            Quarterly Report
+          </Button>
+          <Button
+            className={cssClasses('ReportsContainer__Button')}
+            inverse
+            href={`${config.aspectApi}/report/FailedTestReport.xlsx`}
+          >
+            Failed Test Report
+          </Button>
+        </div>
+      </Card>
+    )) || (
     <Card className={className}>
       <div className={cssClasses('TitleContainer')}>
         <Title
@@ -59,44 +104,22 @@ export const Reports = ({
           }
         />
       </div>
-
       <div className={cssClasses('ReportsContainer')}>
         <Button
           className={cssClasses('ReportsContainer__Button')}
           inverse
-          onClick={handleToggleDialog}
+          href={`${config.aspectApi}/report/InventoryReport.xlsx`}
         >
-          {intl.formatMessage(messages.downloadReport)}
+          Inventory Report
         </Button>
         <Button
           className={cssClasses('ReportsContainer__Button')}
           inverse
-          onClick={handleToggleDialog}
+          href={`${config.aspectApi}/report/QuarterlyReport.xlsx`}
         >
-          {intl.formatMessage(messages.downloadReport)}
-        </Button>
-        <Button
-          className={cssClasses('ReportsContainer__Button')}
-          inverse
-          onClick={handleToggleDialog}
-        >
-          {intl.formatMessage(messages.downloadReport)}
-        </Button>
-        <Button
-          className={cssClasses('ReportsContainer__Button')}
-          inverse
-          onClick={handleToggleDialog}
-        >
-          {intl.formatMessage(messages.downloadReport)}
+          Quarterly Report
         </Button>
       </div>
-      <Dialog
-        active={isDemoDialogOpen}
-        onEscKeyDown={handleToggleDialog}
-        onOverlayClick={handleToggleDialog}
-      >
-        Not implemented yet
-      </Dialog>
     </Card>
   )
 

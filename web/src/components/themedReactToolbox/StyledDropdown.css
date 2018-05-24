@@ -1,4 +1,4 @@
-@import '../../globals/variables.css';
+@import "../../globals/variables.css";
 
 .input__disabled > .input__inputElement {
   border: none;
@@ -25,4 +25,20 @@
 
 .input__values {
   font-size: var(--aspect-font-size-sm);
+}
+
+.input__values::-webkit-scrollbar {
+  -webkit-appearance: none;
+  width: 10px;
+}
+
+.input__values::-webkit-scrollbar-track,
+.input__values::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+.input__values::-webkit-scrollbar-thumb {
+  border-radius: 0;
+  background-color: var(--aspect-color-grey-5);
+  border: none;
 }
