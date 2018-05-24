@@ -117,6 +117,7 @@ function getResultCategories(payload) {
           .replace(/mtb/, '')
           .replace(/ebola gp/, '')
           .trim()
+        const assayId = _.get(payload, 'assay.id')
         const result1CategoryMapping = {
           'not detected': 'NotDetected',
           'não detectado': 'NotDetected',
@@ -159,8 +160,10 @@ function getResultCategories(payload) {
           erro: 'Error',
           ошибка: 'Error',
           erreur: 'Error',
-          'trace detected': 'Trace Detected',
           'null null': 'Success',
+        }
+        if (assayId === 'GxMtbRifUltra') {
+          result1CategoryMapping['trace detected'] = 'Trace Detected'
         }
         if (result1CategoryMapping[result1Text]) {
           payloadCategory = [{ id: result1CategoryMapping[result1Text] }]
@@ -176,7 +179,7 @@ function getResultCategories(payload) {
           'NoResult',
           'Success',
         ].includes(result1) ||
-        !_.includes(['GxMtbRif', 'GxMtbRifUltra'], _.get(payload, 'assay.id'))
+        !_.includes(['GxMtbRif', 'GxMtbRifUltra'], assayId)
 
       if (resultTextValues.length > 1) {
         const result2Text = resultTextValues[1]

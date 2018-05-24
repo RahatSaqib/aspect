@@ -817,7 +817,7 @@ const resultTextToResultCategoryMapping = {
   },
   'Trace DETECTED|INDETERMINATE|': {
     resultId: '812438_034539_70686262',
-    assay: 'GxMtbRif',
+    assay: 'GxMtbRifUltra',
     resultCategory1: 'Trace Detected',
     resultCategory2: 'Indeterminate',
   },
