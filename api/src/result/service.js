@@ -848,7 +848,7 @@ async function onResultLogged({ resultId }, { messageContext }) {
       .where('r.endedOn', '>=', last30day)
       .count('r.id as machineResultCount')
 
-    if (noResultCount !== 0 && machineResultCount !== 0) {
+    if (machineResultCount !== 0) {
       const prcntNoResult = noResultCount / machineResultCount * 100
       if (prcntNoResult > maxPrcntMachinePowerErrors) {
         context.resultMachinePowerError(deviceId)
