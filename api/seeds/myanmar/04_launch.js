@@ -43,7 +43,41 @@ async function seed(knex) {
     message: knex.raw("replace(message, 'Generic', 'Procedural')"),
   })
 
-  await knex('Partner')
+  const { id: partnerId } = await knex('Partner')
     .where({ name: 'Myanmar' })
+    .first()
+
+  await knex('Partner')
+    .where({ id: partnerId })
     .update({ maxDaysDeviceNoResults: 14 })
+
+  // Reuse previously seeded "static" data
+  const issueTypes = await rowsAsObject(knex, 'IssueType', 'externalId')
+
+  // Issue Escalation Triggers
+  await knex('IssueEscalationTrigger').insert([
+    {
+      issueTypeId: issueTypes.DeviceNoResults.id,
+      partnerId,
+      escalateToLevel: 2,
+      escalationConditions: JSON.stringify({
+        evaluationMethod: 'issue-age',
+        evaluationParameter: { days: 7 },
+      }),
+      createdOn: now,
+      updatedOn: now,
+    },
+    {
+      issueTypeId: issueTypes.DeviceNoResults.id,
+      partnerId,
+      escalateToLevel: 3,
+      escalationConditions: JSON.stringify({
+        evaluationMethod: 'sql-script',
+        evaluationParameter:
+          './sqlScripts/Myanmar/issues/escalations/deviceNoResultsLevel3ROEscalatedNoResults.sql',
+      }),
+      createdOn: now,
+      updatedOn: now,
+    },
+  ])
 }

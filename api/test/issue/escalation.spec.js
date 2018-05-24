@@ -9,6 +9,7 @@ const {
   waitForAction,
 } = require('../utils/mqUtils')
 const { escalateIssues } = require('../../src/issue/actions')
+const { types: deviceActionTypes } = require('../../src/device/actions')
 
 const { assert, expect } = chai
 
@@ -149,6 +150,7 @@ describe('Issue Escalation', () => {
     partnerId,
     device,
     issueTypeId,
+    actionType,
     level,
     dateIssueRaised
   ) {
@@ -171,7 +173,7 @@ describe('Issue Escalation', () => {
       issueEventStatusId: triggeredIssueEventStatus.id,
       issueId,
       data: JSON.stringify({
-        type: 'DEVICE_OFFLINE',
+        type: actionType,
         deviceId: device.id,
       }),
       createdOn: dateIssueRaised,
@@ -287,6 +289,7 @@ describe('Issue Escalation', () => {
               partner.id,
               device1,
               deviceOfflineIssueType.id,
+              deviceActionTypes.DEVICE_OFFLINE,
               1,
               dateIssueRaised
             )
@@ -295,6 +298,7 @@ describe('Issue Escalation', () => {
               partner.id,
               device2,
               deviceOfflineIssueType.id,
+              deviceActionTypes.DEVICE_OFFLINE,
               1,
               dateIssueRaised
             )
@@ -432,6 +436,7 @@ describe('Issue Escalation', () => {
               partner.id,
               device1,
               deviceOfflineIssueType.id,
+              deviceActionTypes.DEVICE_OFFLINE,
               2,
               dateIssueRaised
             )
@@ -447,6 +452,7 @@ describe('Issue Escalation', () => {
               partner.id,
               device2,
               deviceOfflineIssueType.id,
+              deviceActionTypes.DEVICE_OFFLINE,
               2,
               dateIssueRaised
             )
@@ -570,6 +576,7 @@ describe('Issue Escalation', () => {
               partner.id,
               device1,
               deviceOfflineIssueType.id,
+              deviceActionTypes.DEVICE_OFFLINE,
               1,
               dateIssueRaised
             )
@@ -640,6 +647,7 @@ describe('Issue Escalation', () => {
               partner.id,
               device1,
               deviceNoResultsIssueType.id,
+              deviceActionTypes.DEVICE_NO_RESULTS,
               1,
               dateIssueRaised
             )
@@ -648,6 +656,7 @@ describe('Issue Escalation', () => {
               partner.id,
               device2,
               deviceNoResultsIssueType.id,
+              deviceActionTypes.DEVICE_NO_RESULTS,
               1,
               dateIssueRaised
             )
@@ -785,6 +794,7 @@ describe('Issue Escalation', () => {
               partner.id,
               device1,
               deviceNoResultsIssueType.id,
+              deviceActionTypes.DEVICE_NO_RESULTS,
               2,
               dateIssueRaised
             )
@@ -800,6 +810,7 @@ describe('Issue Escalation', () => {
               partner.id,
               device2,
               deviceNoResultsIssueType.id,
+              deviceActionTypes.DEVICE_NO_RESULTS,
               2,
               dateIssueRaised
             )
@@ -923,6 +934,7 @@ describe('Issue Escalation', () => {
               partner.id,
               device1,
               deviceNoResultsIssueType.id,
+              deviceActionTypes.DEVICE_NO_RESULTS,
               1,
               dateIssueRaised
             )
