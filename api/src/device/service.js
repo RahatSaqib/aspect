@@ -510,17 +510,6 @@ async function getDevice(deviceId) {
   return device
 }
 
-async function onDeviceMaintenance(
-  { deviceId, options = {} },
-  { messageContext }
-) {
-  const now = new Date()
-  return messageContext.transact(async knex => {
-    // FIXME device lastSeenOn / common resolveOn ?
-    // FIXME device not online if lastSeenOn < ?
-  })
-}
-
 module.exports = {
   listDevices,
   showDevice,
@@ -529,5 +518,4 @@ module.exports = {
   exportDevices,
   listDevicesForSelectList,
   getDevice,
-  onDeviceMaintenance,
 }

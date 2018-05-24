@@ -38,6 +38,8 @@ const subscriptions = [
       DEVICE_ONLINE: onIssueEventResolve('DeviceOffline'),
       DEVICE_NO_RESULTS: onIssueEventTrigger('DeviceNoResults'),
       DEVICE_HAS_NEW_RESULTS: onIssueEventResolve('DeviceNoResults'),
+      DEVICE_MAINTENANCE: onIssueEventTrigger('DeviceMaintenance'),
+      DEVICE_MAINTENANCE_RESOLVED: onIssueEventResolve('DeviceMaintenance'),
       RESULT_MODULE_TEMPERATURE_ERROR: onIssueEventTrigger(
         'ModuleTemperatureError'
       ),

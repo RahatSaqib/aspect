@@ -6,6 +6,7 @@ const types = {
   DEVICE_NO_RESULTS: 'DEVICE_NO_RESULTS',
   DEVICE_HAS_NEW_RESULTS: 'DEVICE_HAS_NEW_RESULTS',
   DEVICE_MAINTENANCE: 'DEVICE_MAINTENANCE',
+  DEVICE_MAINTENANCE_RESOLVED: 'DEVICE_MAINTENANCE_RESOLVED',
 }
 
 // ----------- Action Creators -------------------
@@ -33,10 +34,8 @@ function deviceSeen(deviceId) {
  * deviceId is required.
  *
  * options:
- *  data: Optional additional maintenance data to record, plain object
  *  resolveOn: date maintenance status likely to be resolved, default null (unknown)
- *  changedOn: date maintenance status changed, default now
- *  lastSeenOn: date the device was last seen, default now.
+ *  data: Optional additional maintenance data to record, plain object
  */
 function deviceMaintenance(deviceId, options) {
   if (deviceId == null) {
@@ -46,6 +45,23 @@ function deviceMaintenance(deviceId, options) {
     type: types.DEVICE_MAINTENANCE,
     deviceId,
     options,
+  }
+}
+
+/**
+ * Creates an action to notify the device maintenance has been resolved.
+ *
+ * deviceId is required.
+ */
+function deviceMaintenanceResolved(deviceId) {
+  if (deviceId == null) {
+    throw new Error(
+      'Must specify deviceId for notify deviceMaintenanceResolved'
+    )
+  }
+  return {
+    type: types.DEVICE_MAINTENANCE_RESOLVED,
+    deviceId,
   }
 }
 
@@ -118,6 +134,7 @@ module.exports = {
   types,
   deviceSeen,
   deviceMaintenance,
+  deviceMaintenanceResolved,
   deviceOffline,
   deviceOnline,
   deviceNoResults,

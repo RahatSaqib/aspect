@@ -17,7 +17,7 @@ const {
   getSite,
   createNewDevice,
 } = require('./device')
-const { deviceSeen, deviceMaintenance } = require('../device/actions')
+const { deviceSeen } = require('../device/actions')
 const { mergeResult, getResult } = require('./result')
 const { loadPlugin } = require('./plugin/registration')
 
@@ -755,14 +755,6 @@ class DeviceApiContext {
       // only dispatch result updated action once per result id
       // within this Device API transaction
       this.messageContext.resultUpdated(resultId, deviceLogId)
-    }
-  }
-
-  deviceMaintenance(deviceId, status, options) {
-    if (this.parent) {
-      this.parent.deviceMaintenance(deviceId, status, options)
-    } else {
-      this.messageContext.dispatch(deviceMaintenance(deviceId, status, options))
     }
   }
 }

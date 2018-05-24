@@ -6,6 +6,8 @@ const {
   deviceOffline,
   deviceOnline,
   deviceNoResults,
+  deviceMaintenance,
+  deviceMaintenanceResolved,
 } = require('../../src/device/actions')
 const { issueAcknowledged, issueResolved } = require('../../src/issue/actions')
 const {
@@ -48,6 +50,8 @@ describe('Fact based issues', () => {
       messageContext.bindActionCreators({
         deviceOffline,
         deviceOnline,
+        deviceMaintenance,
+        deviceMaintenanceResolved,
         factGenerateDeviceConnectivity,
       })
 
@@ -309,5 +313,55 @@ describe('Fact based issues', () => {
       assert.equal(issues[1].issueType, 'DeviceNoResults')
       assert.equal(issues[1].deviceId, deviceId)
       assert.equal(issues[1].issueStatus, 'Resolved')
+
+      messageContext.deviceMaintenance(deviceId)
+      await waitForIdle()
+      issues = await knex('Issue as i')
+        .join('IssueType as it', 'i.issueTypeId', 'it.id')
+        .join('IssueStatus as is', 'i.issueStatusId', 'is.id')
+        .where({ 'i.deviceId': deviceId })
+        .select(
+          'i.id',
+          'it.externalId as issueType',
+          'i.deviceId',
+          'is.externalId as issueStatus'
+        )
+        .orderBy('id', 'ASC')
+      assert.equal(issues.length, 3)
+      assert.equal(issues[0].id, issueId)
+      assert.equal(issues[0].issueType, 'DeviceOffline')
+      assert.equal(issues[0].deviceId, deviceId)
+      assert.equal(issues[0].issueStatus, 'Resolved')
+      assert.equal(issues[1].issueType, 'DeviceNoResults')
+      assert.equal(issues[1].deviceId, deviceId)
+      assert.equal(issues[1].issueStatus, 'Resolved')
+      assert.equal(issues[2].issueType, 'DeviceMaintenance')
+      assert.equal(issues[2].deviceId, deviceId)
+      assert.equal(issues[2].issueStatus, 'Active')
+
+      messageContext.deviceMaintenanceResolved(deviceId)
+      await waitForIdle()
+      issues = await knex('Issue as i')
+        .join('IssueType as it', 'i.issueTypeId', 'it.id')
+        .join('IssueStatus as is', 'i.issueStatusId', 'is.id')
+        .where({ 'i.deviceId': deviceId })
+        .select(
+          'i.id',
+          'it.externalId as issueType',
+          'i.deviceId',
+          'is.externalId as issueStatus'
+        )
+        .orderBy('id', 'ASC')
+      assert.equal(issues.length, 3)
+      assert.equal(issues[0].id, issueId)
+      assert.equal(issues[0].issueType, 'DeviceOffline')
+      assert.equal(issues[0].deviceId, deviceId)
+      assert.equal(issues[0].issueStatus, 'Resolved')
+      assert.equal(issues[1].issueType, 'DeviceNoResults')
+      assert.equal(issues[1].deviceId, deviceId)
+      assert.equal(issues[1].issueStatus, 'Resolved')
+      assert.equal(issues[2].issueType, 'DeviceMaintenance')
+      assert.equal(issues[2].deviceId, deviceId)
+      assert.equal(issues[2].issueStatus, 'Resolved')
     }))
 })

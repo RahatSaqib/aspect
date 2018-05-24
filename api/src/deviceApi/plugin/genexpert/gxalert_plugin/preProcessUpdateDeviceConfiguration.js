@@ -1,8 +1,12 @@
 const _ = require('lodash')
 const dateFormat = require('date-fns/format')
+const {
+  deviceMaintenance,
+  deviceMaintenanceResolved,
+} = require('../../../../device/actions')
 
 async function preProcessUpdateDeviceConfiguration(context) {
-  const { payload, device: { id: deviceId } } = context
+  const { payload, device: { id: deviceId }, messageContext } = context
   const inactive = _.get(payload, 'data.inactive', null)
   if (!_.isNull(inactive)) {
     const blankMaintenanceData = {
@@ -31,10 +35,16 @@ async function preProcessUpdateDeviceConfiguration(context) {
       newMaintenanceData.expectedBackOnline == null
         ? null
         : new Date(newMaintenanceData.expectedBackOnline)
-    context.deviceMaintenance(deviceId, {
-      data: newMaintenanceData,
-      resolveOn,
-    })
+    if (inactive) {
+      messageContext.dispatch(
+        deviceMaintenance(deviceId, {
+          data: newMaintenanceData,
+          resolveOn,
+        })
+      )
+    } else {
+      messageContext.dispatch(deviceMaintenanceResolved(deviceId))
+    }
   }
 }
 
