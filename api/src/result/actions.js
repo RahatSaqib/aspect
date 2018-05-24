@@ -7,7 +7,7 @@ const types = {
   RESULT_MODULE_FAILURE_ERROR: 'RESULT_MODULE_FAILURE_ERROR',
   RESULT_MACHINE_TEMPERATURE_ERROR: 'RESULT_MACHINE_TEMPERATURE_ERROR',
   RESULT_MODULE_PROCEDURAL_ERROR: 'RESULT_MODULE_PROCEDURAL_ERROR',
-  RESULT_MACHINE_GENERIC_ERROR: 'RESULT_MACHINE_GENERIC_ERROR',
+  RESULT_MACHINE_PROCEDURAL_ERROR: 'RESULT_MACHINE_PROCEDURAL_ERROR',
   RESULT_MACHINE_POWER_ERROR: 'RESULT_MACHINE_POWER_ERROR',
 }
 
@@ -123,7 +123,7 @@ function resultMachineTemperatureError(deviceId) {
 
 /**
  * Creates an action to notify the device with given id
- * has an active module generic issue
+ * has an active module procedural issue
  *
  * deviceId is required.
  */
@@ -156,18 +156,18 @@ function resultMachinePowerError(deviceId) {
 
 /**
  * Creates an action to notify the device with given id
- * has an active machine generic issue
+ * has an active machine procedural issue
  *
  * deviceId is required.
  */
-function resultMachineGenericError(deviceId) {
+function resultMachineProceduralError(deviceId) {
   if (deviceId == null) {
     throw new Error(
-      'Must specify deviceId for notify resultMachineGenericError'
+      'Must specify deviceId for notify resultMachineProceduralError'
     )
   }
   return {
-    type: types.RESULT_MACHINE_GENERIC_ERROR,
+    type: types.RESULT_MACHINE_PROCEDURAL_ERROR,
     deviceId,
   }
 }
@@ -180,7 +180,7 @@ module.exports = {
   resultModulePowerError,
   resultModuleFailureError,
   resultMachineTemperatureError,
-  resultMachineGenericError,
+  resultMachineProceduralError,
   resultModuleProceduralError,
   resultMachinePowerError,
 }
