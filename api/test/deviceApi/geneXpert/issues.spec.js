@@ -386,12 +386,59 @@ describe('Issue endpoints', () => {
         }),
       })
       const deviceId = response.body.device.id
+
+      // This won't create any issue since (1/20 * 100)% <= 5%
+      for (let i = 0; i < 21; i++) {
+        /* eslint-disable no-await-in-loop */
+        const errorTestResultId = `UNIQUE-ID-WITH-GEN-MAC-ERROR-${i}`
+        const sampleId = `GENMAC2552${i}`
+        const moduleSerial = `GENMAC123A`
+        const instrumentSerial = `CEPH-PC-123`
+        const testStartedOn = setMilliseconds(subDays(now, i + 3), 0)
+        const testEndedOn = setMilliseconds(addHours(testStartedOn, i + 2), 0)
+
+        // Post the first few results without an error code
+        const result = {
+          id: errorTestResultId,
+          startedOn: testStartedOn,
+          endedOn: testEndedOn,
+          sample: { id: sampleId },
+          instrument: {
+            serial: instrumentSerial,
+            module: {
+              serial: moduleSerial,
+              name: 'A1',
+            },
+          },
+        }
+        if (i > 19) {
+          result.error = {
+            code: '1096',
+          }
+        }
+
+        const payload = _.merge(
+          {},
+          basicDevicePayload,
+          { name: deviceName },
+          basicResultPayload,
+          {
+            result,
+          }
+        )
+        await postToDeviceApi({
+          authHeader: deviceAuth,
+          payload,
+        })
+      }
+
+      // Should now create a procedural module issue
       for (let i = 0; i < 10; i++) {
         /* eslint-disable no-await-in-loop */
         const errorTestResultId = `UNIQUE-ID-WITH-GEN-MOD-ERROR-${i}`
         const sampleId = `GENMOD2552${i}`
         const moduleSerial = `GENMOD1234`
-        const instrumentSerial = `CEPH-PC-123${i}`
+        const instrumentSerial = `CEPH-PC-123`
         const testStartedOn = setMilliseconds(subDays(now, i + 3), 0)
         const testEndedOn = setMilliseconds(addHours(testStartedOn, i + 2), 0)
 
