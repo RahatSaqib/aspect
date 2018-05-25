@@ -103,9 +103,14 @@ async function createNewIssue(knex, issueType, action) {
     issue.partnerId = issueContext.partnerId
   } else if (action.deviceId) {
     issue.deviceId = action.deviceId
-    const issueContext = await knex('Device')
-      .where({ id: issue.deviceId })
-      .first('siteId', 'geographyId', 'partnerId')
+    const issueContext = await knex('Device as d')
+      .leftJoin('Site as s', 's.id', 'd.siteId')
+      .where({ 'd.id': issue.deviceId })
+      .first(
+        'd.partnerId',
+        'd.siteId',
+        knex.raw('coalesce(d.geographyId, s.geographyId) as geographyId')
+      )
     issue.siteId = issueContext.siteId
     issue.geographyId = issueContext.geographyId
     issue.partnerId = issueContext.partnerId

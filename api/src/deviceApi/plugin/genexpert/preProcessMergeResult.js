@@ -32,30 +32,58 @@ async function preProcessMergeResult({ knex, deviceId, payload }) {
   } else {
     payload.data = {}
   }
-  const instrumentSerial = _.get(payload, 'instrument.serial')
+  const instrumentSerial = _.get(payload, 'instrument.serial', null)
+  const cartridgeSerial = _.get(payload, 'consumable[0].serial', null)
   const sampleId = _.get(payload, 'sample.id')
 
   if (payload.id) {
     payload.data.geneXpertTestId = payload.id
   }
-
   const generatedExternalId = createUniqueIdForResult(
     instrumentSerial,
     startedOn,
     endedOn,
     sampleId
   )
-  const availableResultDetails = {
-    partnerId: device.partnerId,
-    geneXpertTestId: payload.id || payload.data.id,
-    gxAlertUniqueId: payload.data.gxAlertTestUniqueId || generatedExternalId,
-  }
-  const existingResult = await findExistingResult(availableResultDetails, knex)
-  if (existingResult) {
-    payload.id = existingResult.externalId
-  } else {
+  const gxAlertUniqueId = _.get(
+    payload,
+    'data.gxAlertTestUniqueId',
+    generatedExternalId
+  )
+  const geneXpertTestId = _.get(payload, 'id') || _.get(payload, 'data.id')
+  const existingResult = await findExistingResult(
+    {
+      partnerId: device.partnerId,
+      geneXpertTestId,
+      gxAlertUniqueId,
+      cartridgeSerial,
+      instrumentSerial,
+    },
+    knex
+  )
+  if (!existingResult) {
     // Only assign assay to GxUnknown if result is new
     await assignGxUnknownAssayIfNotExists(knex, payload)
+  } else {
+    // Are we setting this result to NO RESULT?
+    if (
+      !_.isEmpty(_.get(payload, 'category', [])) &&
+      _.every(_.get(payload, 'category'), { id: 'NoResult' })
+    ) {
+      // Has the result already been determined?
+      if (
+        _.get(existingResult, 'resultCategory1') !== 'NoResult' ||
+        _.get(existingResult, 'resultCategory2') !== 'NoResult'
+      ) {
+        // We should never merge an incomplete result over a complete result
+        throw Boom.conflict('A later version of this result already exists')
+      }
+    }
+    if (_.get(existingResult, 'externalId') !== generatedExternalId) {
+      await knex('Result')
+        .where('id', existingResult.id)
+        .update({ externalId: generatedExternalId })
+    }
   }
   payload.id = generatedExternalId
 }

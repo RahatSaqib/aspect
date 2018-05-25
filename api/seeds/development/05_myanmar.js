@@ -9,6 +9,7 @@ const patients = require('./fixtures/patients.json')
 const dashboardWidget = require('./fixtures/myanmarDashboardWidget.json')
 const { errorCodes } = require('./fixtures/errorCodes.js')
 const { addMilliseconds, addMinutes, subDays } = require('date-fns')
+const { rowsAsObject, getDefaultMessageTypes } = require('../utils')
 
 const now = new Date()
 const millisInHour = 1000 * 60 * 60
@@ -302,7 +303,7 @@ async function seed(knex) {
 
   // Regional Officer Jobs and Targets
   const adminRegions = ['AYY', 'KCN', 'MDY']
-  const targetTokens = ['Total', 'MDR', 'Smear', 'HIV', 'Children']
+  const targetTokens = ['MDR', 'Smear', 'HIV', 'Children', 'Total']
   let regionNumber = 0
   await Promise.all(
     _.map(adminRegions, async region => {
@@ -344,9 +345,17 @@ async function seed(knex) {
         jobId: jobIdRegion,
         geographyId: regionId,
       })
+      let targetTotal = 0
       await Promise.all(
         _.map(targetTokens, async token => {
-          const targetValue = 850 + Math.floor(Math.random() * 200 - 100)
+          let targetValue = 850 + Math.floor(Math.random() * 200 - 100)
+
+          if (token === 'Total') {
+            targetValue = targetTotal + Math.floor(Math.random() * 200)
+          } else {
+            targetTotal += targetValue
+          }
+
           await knex('Target').insert({
             geographyId: regionId,
             targetToken: token,
@@ -358,32 +367,48 @@ async function seed(knex) {
   )
 
   // every clinic has a site, GxAlert device and MTB/Rif+ and Ultra results
-
   const possibleResults = [
-    {
-      resultText: 'Not Detected',
-      category1: resultCategories.NotDetected.id,
-      category2: null,
-    },
     {
       resultText: 'MTB Detected, Rif Resistance Not Detected',
       category1: resultCategories.Detected.id,
       category2: resultCategories.NotDetected.id,
+      minLikelihood: 0,
+      maxLikelihood: 20,
+    },
+    {
+      resultText: 'MTB Detected, Rif Resistance Detected',
+      category1: resultCategories.Detected.id,
+      category2: resultCategories.Detected.id,
+      minLikelihood: 21,
+      maxLikelihood: 26,
     },
     {
       resultText: 'MTB Detected, Rif Indeterminate',
       category1: resultCategories.Detected.id,
       category2: resultCategories.Indeterminate.id,
+      minLikelihood: 27,
+      maxLikelihood: 28,
     },
     {
       resultText: 'ERROR',
       category1: resultCategories.Error.id,
       category2: null,
+      minLikelihood: 29,
+      maxLikelihood: 34,
     },
     {
       resultText: 'Invalid',
       category1: resultCategories.Invalid.id,
       category2: null,
+      minLikelihood: 35,
+      maxLikelihood: 38,
+    },
+    {
+      resultText: 'Not Detected',
+      category1: resultCategories.NotDetected.id,
+      category2: null,
+      minLikelihood: 39,
+      maxLikelihood: 100,
     },
   ]
 
@@ -505,59 +530,56 @@ async function seed(knex) {
                 6000
               )
 
-              let j = 0
-              await Promise.all(
-                _.map(possibleResults, async result => {
-                  j += 1
-                  if (_.random(4) === 0) {
-                    resultData.resultText = result.resultText
-                    await knex('Result').insert(
-                      Object.assign({}, auditFields, {
-                        externalId: `UQTB-${i}-${j}`,
-                        assayId: assays.GxMtbRif.id,
-                        partnerId,
-                        geographyId: siteData.geographyId,
-                        siteId: siteData.id,
-                        deviceId: device.id,
-                        resultWorkflowStatusId:
-                          resultWorkflowStatuses.Ordered.id,
-                        longitude: siteData.latitude,
-                        latitude: siteData.longitude,
-                        resultSourceId: resultSources.DiagnosticDevice.id,
-                        resultTypeId: resultTypes.Patient.id,
-                        sampleId: sample.id,
-                        sampleRunNumber: `${i % 2 + 1}`,
-                        sampleGroup: `GRP-TB-${i % 5}`,
-                        resultCategory1: result.category1,
-                        resultCategory2: result.category2,
-                        resultData: JSON.stringify(resultData),
-                        assayVersion: '4',
-                        startedOn: randomDate,
-                        endedOn: addMinutes(randomDate, 100),
-                        consumableSerial: `${i}12`,
-                        consumableExpirationDate: new Date(
-                          +now + 200 * i * millisInHour
-                        ),
-                        consumableLot: `Lot ${i % 5}`,
-                        instrumentSerial: `S-1234-${i % 3}`,
-                        moduleName: 'Module A',
-                        moduleSerial: `M-1234-${i % 4}`,
-                        researchId: `R-ID-${i}`,
-                        patientData: JSON.stringify(patients[_.random(99)]),
-                        senderVersion: '4.6b',
-                        senderOperator: 'Marsha',
-                        notes: 'This is a test... result',
-                        errorCode:
-                          result.category1 === resultCategories.Error.id
-                            ? errorCodes[_.random(errorCodes.length)]
-                            : null,
-                        errorNotes:
-                          result.category1 === resultCategories.Error.id
-                            ? 'Exceeded cycle threshold'
-                            : null,
-                      })
-                    )
-                  }
+              const rnd = _.random(0, 100)
+              const result = _.find(
+                possibleResults,
+                r => rnd >= r.minLikelihood && rnd <= r.maxLikelihood
+              )
+
+              resultData.resultText = result.resultText
+              await knex('Result').insert(
+                Object.assign({}, auditFields, {
+                  externalId: `UQTB-${i}`,
+                  assayId: assays.GxMtbRif.id,
+                  partnerId,
+                  geographyId: siteData.geographyId,
+                  siteId: siteData.id,
+                  deviceId: device.id,
+                  resultWorkflowStatusId: resultWorkflowStatuses.Ordered.id,
+                  longitude: siteData.latitude,
+                  latitude: siteData.longitude,
+                  resultSourceId: resultSources.DiagnosticDevice.id,
+                  resultTypeId: resultTypes.Patient.id,
+                  sampleId: sample.id,
+                  sampleRunNumber: `${i % 2 + 1}`,
+                  sampleGroup: `GRP-TB-${i % 5}`,
+                  resultCategory1: result.category1,
+                  resultCategory2: result.category2,
+                  resultData: JSON.stringify(resultData),
+                  assayVersion: '4',
+                  startedOn: randomDate,
+                  endedOn: addMinutes(randomDate, 100),
+                  consumableSerial: `${i}12`,
+                  consumableExpirationDate: new Date(
+                    +now + 200 * i * millisInHour
+                  ),
+                  consumableLot: `Lot ${i % 5}`,
+                  instrumentSerial: `S-1234-${i % 3}`,
+                  moduleName: 'Module A',
+                  moduleSerial: `M-1234-${i % 4}`,
+                  researchId: `R-ID-${i}`,
+                  patientData: JSON.stringify(patients[_.random(99)]),
+                  senderVersion: '4.6b',
+                  senderOperator: 'Marsha',
+                  notes: 'This is a test... result',
+                  errorCode:
+                    result.category1 === resultCategories.Error.id
+                      ? errorCodes[_.random(errorCodes.length)]
+                      : null,
+                  errorNotes:
+                    result.category1 === resultCategories.Error.id
+                      ? 'Exceeded cycle threshold'
+                      : null,
                 })
               )
             })
@@ -885,49 +907,49 @@ async function seed(knex) {
     ),
     Object.assign(
       {
-        name: 'LU Module Generic',
+        name: 'LU Module Procedural',
         partnerId,
-        issueTypeId: issueTypes.ModuleGenericError.id,
+        issueTypeId: issueTypes.ModuleProceduralError.id,
         jobFunctionId: jobFunctionIdLabUser,
         level: 1,
         canAcknowledge: 1,
-        messageTypeId: defaultMessageTypes.ModuleGenericError.id,
+        messageTypeId: defaultMessageTypes.ModuleProceduralError.id,
       },
       auditFields
     ),
     Object.assign(
       {
-        name: 'LU Escalated Module Generic',
+        name: 'LU Escalated Module Procedural',
         partnerId,
-        issueTypeId: issueTypes.ModuleGenericError.id,
+        issueTypeId: issueTypes.ModuleProceduralError.id,
         jobFunctionId: jobFunctionIdLabUser,
         level: 2,
         canAcknowledge: 0,
-        messageTypeId: defaultMessageTypes.ModuleGenericError.id,
+        messageTypeId: defaultMessageTypes.ModuleProceduralError.id,
       },
       auditFields
     ),
     Object.assign(
       {
-        name: 'LU Machine Generic',
+        name: 'LU Machine Procedural',
         partnerId,
-        issueTypeId: issueTypes.MachineGenericError.id,
+        issueTypeId: issueTypes.MachineProceduralError.id,
         jobFunctionId: jobFunctionIdLabUser,
         level: 1,
         canAcknowledge: 1,
-        messageTypeId: defaultMessageTypes.MachineGenericError.id,
+        messageTypeId: defaultMessageTypes.MachineProceduralError.id,
       },
       auditFields
     ),
     Object.assign(
       {
-        name: 'LU Escalated Machine Generic',
+        name: 'LU Escalated Machine Procedural',
         partnerId,
-        issueTypeId: issueTypes.MachineGenericError.id,
+        issueTypeId: issueTypes.MachineProceduralError.id,
         jobFunctionId: jobFunctionIdLabUser,
         level: 2,
         canAcknowledge: 0,
-        messageTypeId: defaultMessageTypes.MachineGenericError.id,
+        messageTypeId: defaultMessageTypes.MachineProceduralError.id,
       },
       auditFields
     ),
@@ -935,11 +957,11 @@ async function seed(knex) {
       {
         name: 'RO Module',
         partnerId,
-        issueTypeId: issueTypes.ModuleGenericError.id,
+        issueTypeId: issueTypes.ModuleProceduralError.id,
         jobFunctionId: jobFunctionIdRegionalOfficer,
         level: 1,
         canAcknowledge: 0,
-        messageTypeId: defaultMessageTypes.ModuleGenericError.id,
+        messageTypeId: defaultMessageTypes.ModuleProceduralError.id,
       },
       auditFields
     ),
@@ -947,11 +969,11 @@ async function seed(knex) {
       {
         name: 'RO Machine',
         partnerId,
-        issueTypeId: issueTypes.MachineGenericError.id,
+        issueTypeId: issueTypes.MachineProceduralError.id,
         jobFunctionId: jobFunctionIdRegionalOfficer,
         level: 1,
         canAcknowledge: 0,
-        messageTypeId: defaultMessageTypes.MachineGenericError.id,
+        messageTypeId: defaultMessageTypes.MachineProceduralError.id,
       },
       auditFields
     ),
@@ -1010,7 +1032,7 @@ async function seed(knex) {
         issueTypeId: issueTypes.StockLevelUpdate.id,
         jobFunctionId: jobFunctionIdRegionalOfficer,
         level: 1,
-        canAcknowledge: 0,
+        canAcknowledge: 1,
         messageTypeId: defaultMessageTypes.StockLevelUpdate.id,
       },
       auditFields
@@ -1035,6 +1057,246 @@ async function seed(knex) {
         jobFunctionId: jobFunctionIdRegionalOfficer,
         level: 1,
         canAcknowledge: 1,
+        messageTypeId: defaultMessageTypes.DataCategoryLowError.id,
+      },
+      auditFields
+    ),
+    Object.assign(
+      {
+        name: 'LU Network - RO View',
+        partnerId,
+        issueTypeId: issueTypes.DeviceOffline.id,
+        jobFunctionId: jobFunctionIdRegionalOfficer,
+        level: 1,
+        canAcknowledge: 0,
+        messageTypeId: defaultMessageTypes.DeviceOffline.id,
+      },
+      auditFields
+    ),
+    Object.assign(
+      {
+        name: 'LU No Testing - RO View',
+        partnerId,
+        issueTypeId: issueTypes.DeviceNoResults.id,
+        jobFunctionId: jobFunctionIdRegionalOfficer,
+        level: 1,
+        canAcknowledge: 0,
+        messageTypeId: defaultMessageTypes.DeviceNoResults.id,
+      },
+      auditFields
+    ),
+    Object.assign(
+      {
+        name: 'LU Module Failure - RO View',
+        partnerId,
+        issueTypeId: issueTypes.ModuleFailureError.id,
+        jobFunctionId: jobFunctionIdRegionalOfficer,
+        level: 2,
+        canAcknowledge: 0,
+        messageTypeId: defaultMessageTypes.ModuleFailureError.id,
+      },
+      auditFields
+    ),
+    Object.assign(
+      {
+        name: 'LU Escalated Module Failure - RO View',
+        partnerId,
+        issueTypeId: issueTypes.ModuleFailureError.id,
+        jobFunctionId: jobFunctionIdRegionalOfficer,
+        level: 2,
+        canAcknowledge: 0,
+        messageTypeId: defaultMessageTypes.ModuleFailureError.id,
+      },
+      auditFields
+    ),
+    Object.assign(
+      {
+        name: 'LU Module Temperature - RO View',
+        partnerId,
+        issueTypeId: issueTypes.ModuleTemperatureError.id,
+        jobFunctionId: jobFunctionIdRegionalOfficer,
+        level: 1,
+        canAcknowledge: 0,
+        messageTypeId: defaultMessageTypes.ModuleTemperatureError.id,
+      },
+      auditFields
+    ),
+    Object.assign(
+      {
+        name: 'LU Escalated Module Temperature - RO View',
+        partnerId,
+        issueTypeId: issueTypes.ModuleTemperatureError.id,
+        jobFunctionId: jobFunctionIdRegionalOfficer,
+        level: 2,
+        canAcknowledge: 0,
+        messageTypeId: defaultMessageTypes.ModuleTemperatureError.id,
+      },
+      auditFields
+    ),
+    Object.assign(
+      {
+        name: 'LU Module Power - RO View',
+        partnerId,
+        issueTypeId: issueTypes.ModulePowerError.id,
+        jobFunctionId: jobFunctionIdRegionalOfficer,
+        level: 1,
+        canAcknowledge: 0,
+        messageTypeId: defaultMessageTypes.ModulePowerError.id,
+      },
+      auditFields
+    ),
+    Object.assign(
+      {
+        name: 'LU Escalated Module Power - RO View',
+        partnerId,
+        issueTypeId: issueTypes.ModulePowerError.id,
+        jobFunctionId: jobFunctionIdRegionalOfficer,
+        level: 2,
+        canAcknowledge: 0,
+        messageTypeId: defaultMessageTypes.ModulePowerError.id,
+      },
+      auditFields
+    ),
+    Object.assign(
+      {
+        name: 'LU Machine Temperature - RO View',
+        partnerId,
+        issueTypeId: issueTypes.MachineTemperatureError.id,
+        jobFunctionId: jobFunctionIdRegionalOfficer,
+        level: 1,
+        canAcknowledge: 0,
+        messageTypeId: defaultMessageTypes.MachineTemperatureError.id,
+      },
+      auditFields
+    ),
+    Object.assign(
+      {
+        name: 'LU Escalated Machine Temperature - RO View',
+        partnerId,
+        issueTypeId: issueTypes.MachineTemperatureError.id,
+        jobFunctionId: jobFunctionIdRegionalOfficer,
+        level: 2,
+        canAcknowledge: 0,
+        messageTypeId: defaultMessageTypes.MachineTemperatureError.id,
+      },
+      auditFields
+    ),
+    Object.assign(
+      {
+        name: 'LU Machine Power - RO View',
+        partnerId,
+        issueTypeId: issueTypes.MachinePowerError.id,
+        jobFunctionId: jobFunctionIdRegionalOfficer,
+        level: 1,
+        canAcknowledge: 0,
+        messageTypeId: defaultMessageTypes.MachinePowerError.id,
+      },
+      auditFields
+    ),
+    Object.assign(
+      {
+        name: 'LU Escalated Machine Power - RO View',
+        partnerId,
+        issueTypeId: issueTypes.MachinePowerError.id,
+        jobFunctionId: jobFunctionIdRegionalOfficer,
+        level: 2,
+        canAcknowledge: 0,
+        messageTypeId: defaultMessageTypes.MachinePowerError.id,
+      },
+      auditFields
+    ),
+    Object.assign(
+      {
+        name: 'LU Module Procedural - RO View',
+        partnerId,
+        issueTypeId: issueTypes.ModuleProceduralError.id,
+        jobFunctionId: jobFunctionIdRegionalOfficer,
+        level: 1,
+        canAcknowledge: 0,
+        messageTypeId: defaultMessageTypes.ModuleProceduralError.id,
+      },
+      auditFields
+    ),
+    Object.assign(
+      {
+        name: 'LU Escalated Module Procedural - RO View',
+        partnerId,
+        issueTypeId: issueTypes.ModuleProceduralError.id,
+        jobFunctionId: jobFunctionIdRegionalOfficer,
+        level: 2,
+        canAcknowledge: 0,
+        messageTypeId: defaultMessageTypes.ModuleProceduralError.id,
+      },
+      auditFields
+    ),
+    Object.assign(
+      {
+        name: 'LU Machine Procedural - RO View',
+        partnerId,
+        issueTypeId: issueTypes.MachineProceduralError.id,
+        jobFunctionId: jobFunctionIdRegionalOfficer,
+        level: 1,
+        canAcknowledge: 0,
+        messageTypeId: defaultMessageTypes.MachineProceduralError.id,
+      },
+      auditFields
+    ),
+    Object.assign(
+      {
+        name: 'LU Escalated Machine Procedural - RO View',
+        partnerId,
+        issueTypeId: issueTypes.MachineProceduralError.id,
+        jobFunctionId: jobFunctionIdRegionalOfficer,
+        level: 2,
+        canAcknowledge: 0,
+        messageTypeId: defaultMessageTypes.MachineProceduralError.id,
+      },
+      auditFields
+    ),
+    Object.assign(
+      {
+        name: 'LU Reagent Health - RO View',
+        partnerId,
+        issueTypeId: issueTypes.ReagentHealthError.id,
+        jobFunctionId: jobFunctionIdRegionalOfficer,
+        level: 1,
+        canAcknowledge: 0,
+        messageTypeId: defaultMessageTypes.ReagentHealthError.id,
+      },
+      auditFields
+    ),
+    Object.assign(
+      {
+        name: 'LU Escalated Reagent Health - RO View',
+        partnerId,
+        issueTypeId: issueTypes.ReagentHealthError.id,
+        jobFunctionId: jobFunctionIdRegionalOfficer,
+        level: 2,
+        canAcknowledge: 0,
+        messageTypeId: defaultMessageTypes.ReagentHealthError.id,
+      },
+      auditFields
+    ),
+    Object.assign(
+      {
+        name: 'LU Stock Level Update - RO View',
+        partnerId,
+        issueTypeId: issueTypes.StockLevelUpdate.id,
+        jobFunctionId: jobFunctionIdRegionalOfficer,
+        level: 1,
+        canAcknowledge: 0,
+        messageTypeId: defaultMessageTypes.StockLevelUpdate.id,
+      },
+      auditFields
+    ),
+    Object.assign(
+      {
+        name: 'LU Data Category Low - RO View',
+        partnerId,
+        issueTypeId: issueTypes.DataCategoryLowError.id,
+        jobFunctionId: jobFunctionIdRegionalOfficer,
+        level: 1,
+        canAcknowledge: 0,
         messageTypeId: defaultMessageTypes.DataCategoryLowError.id,
       },
       auditFields
@@ -1092,8 +1354,8 @@ async function seed(knex) {
     issueTypes.ModulePowerError.id,
     issueTypes.MachineTemperatureError.id,
     issueTypes.MachinePowerError.id,
-    issueTypes.ModuleGenericError.id,
-    issueTypes.MachineGenericError.id,
+    issueTypes.ModuleProceduralError.id,
+    issueTypes.MachineProceduralError.id,
     issueTypes.DataCategoryLowError.id,
     issueTypes.StockLevelUpdate.id,
     issueTypes.ReagentHealthError.id,
@@ -1111,10 +1373,10 @@ async function seed(knex) {
       'Temperature errors across machine, conduct troubleshooting',
     [issueTypes.MachinePowerError.id]:
       'Power errors across machine, conduct troubleshooting',
-    [issueTypes.ModuleGenericError.id]:
+    [issueTypes.ModuleProceduralError.id]:
       'Module A2 errors, conduct troubleshooting',
-    [issueTypes.MachineGenericError.id]:
-      'Generic errors across machine, conduct troubleshooting',
+    [issueTypes.MachineProceduralError.id]:
+      'Procedural errors across machine, conduct troubleshooting',
     [issueTypes.DataCategoryLowError.id]: 'HIV Status collection rate 89%',
     [issueTypes.StockLevelUpdate.id]: 'Stock Level',
     [issueTypes.ReagentHealthError.id]: 'Cartridge-specific errors exceed 5%',
@@ -1150,9 +1412,7 @@ async function seed(knex) {
           const issueStatusId =
             issueTypeId === issueTypes.StockLevelUpdate.id
               ? issueStatusOkId
-              : _.random(9) > 6
-                ? issueStatusActiveId
-                : issueStatusAcknowledgedId
+              : issueStatusActiveId
           const [issueId] = await knex('Issue').insert(
             Object.assign(
               {
@@ -1250,8 +1510,8 @@ async function seed(knex) {
   const roIssueTypeIds = [
     issueTypes.DeviceOffline.id,
     issueTypes.DeviceNoResults.id,
-    issueTypes.ModuleGenericError.id,
-    issueTypes.MachineGenericError.id,
+    issueTypes.ModuleProceduralError.id,
+    issueTypes.MachineProceduralError.id,
     issueTypes.StockLevelUpdate.id,
     issueTypes.DataCategoryLowError.id,
     issueTypes.ReagentHealthError.id,
@@ -1261,8 +1521,9 @@ async function seed(knex) {
     [issueTypes.DeviceOffline.id]:
       'No contact for 12 days. If there is a reason for being inactive, add the reason',
     [issueTypes.DeviceNoResults.id]: 'No testing for 9 days',
-    [issueTypes.ModuleGenericError.id]: 'Module Temperature Issue for 2 days',
-    [issueTypes.MachineGenericError.id]: 'Machine Power Issue for 7 days',
+    [issueTypes.ModuleProceduralError.id]:
+      'Module Temperature Issue for 2 days',
+    [issueTypes.MachineProceduralError.id]: 'Machine Power Issue for 7 days',
     [issueTypes.StockLevelUpdate.id]: 'Stock Level',
     [issueTypes.DataCategoryLowError.id]: 'HIV Status collection rate 92%',
     [issueTypes.ReagentHealthError.id]: 'Cartridge-specific errors exceed 5%',
@@ -1277,9 +1538,7 @@ async function seed(knex) {
           const issueStatusId =
             issueTypeId === issueTypes.StockLevelUpdate.id
               ? issueStatusOkId
-              : _.random(9) > 6
-                ? issueStatusActiveId
-                : issueStatusAcknowledgedId
+              : issueStatusActiveId
           const [issueId] = await knex('Issue').insert(
             Object.assign(
               {
@@ -1330,6 +1589,7 @@ async function seed(knex) {
     .where('nt.jobFunctionId', jobFunctionIdRegionalOfficer)
     .select(
       'nt.id as notificationTypeId',
+      'nt.name as notificationTypeName',
       'nt.jobFunctionId',
       'j.personId',
       'i.id as issueId',
@@ -1344,11 +1604,14 @@ async function seed(knex) {
     _.map(roPolicies, async policy => {
       const deviceId = deviceIds[policy.deviceId][policy.personId]
       if (deviceId) {
+        const message = policy.notificationTypeName.endsWith('RO View')
+          ? luAlertMessages[policy.issueTypeId]
+          : roAlertMessages[policy.issueTypeId]
         const [alertMessageId] = await knex('AlertMessage').insert(
           Object.assign(
             {
               messageStatusId: messageStatusSentId,
-              message: roAlertMessages[policy.issueTypeId],
+              message,
               createdOn: now,
               updatedOn: now,
             },
@@ -1400,24 +1663,30 @@ async function seed(knex) {
       createdOn: now,
       updatedOn: now,
     },
+    {
+      issueTypeId: issueTypes.DeviceNoResults.id,
+      partnerId,
+      escalateToLevel: 2,
+      escalationConditions: JSON.stringify({
+        evaluationMethod: 'issue-age',
+        evaluationParameter: { days: 7 },
+      }),
+      createdOn: now,
+      updatedOn: now,
+    },
+    {
+      issueTypeId: issueTypes.DeviceNoResults.id,
+      partnerId,
+      escalateToLevel: 3,
+      escalationConditions: JSON.stringify({
+        evaluationMethod: 'sql-script',
+        evaluationParameter:
+          './sqlScripts/Myanmar/issues/escalations/deviceNoResultsLevel3ROEscalatedNoResults.sql',
+      }),
+      createdOn: now,
+      updatedOn: now,
+    },
   ])
-}
-
-function rowsAsObject(knex, table, column = 'name') {
-  return knex(table).reduce((memo, row) => {
-    memo[row[column]] = row
-    return memo
-  }, {})
-}
-
-function getDefaultMessageTypes(knex) {
-  return knex('MessageType as mt')
-    .join('IssueType as it', 'it.defaultMessageTypeId', 'mt.id')
-    .select('it.externalId as issueTypeExternalId', 'mt.*')
-    .reduce((memo, row) => {
-      memo[row.issueTypeExternalId] = row
-      return memo
-    }, {})
 }
 
 function calculateDateForResult(
