@@ -173,10 +173,10 @@ async function updateDeviceTimestamps(
 
 async function addDeviceDataWithContext(context) {
   let response = {}
-  const { pluginName: plugin } = context
+  const { pluginNames: plugins } = context
 
   const preProcessAddDeviceData = await loadPlugin(
-    plugin,
+    plugins,
     'preProcessAddDeviceData'
   )
   await preProcessAddDeviceData(context)
@@ -301,12 +301,12 @@ async function addDeviceOperationWithContext(context) {
     payload,
     device: { id: deviceId },
     now,
-    pluginName: plugin,
+    pluginNames: plugins,
   } = context
   const op = await addDeviceOperation(knex, deviceId, payload, now)
   context.addDeviceLogUpdate('deviceOperationId', op.id)
 
-  const postProcess = await loadPlugin(plugin, 'postProcessAddDeviceOperation')
+  const postProcess = await loadPlugin(plugins, 'postProcessAddDeviceOperation')
   const postProcessResult = await postProcess(context)
   return postProcessResult
 }
@@ -317,11 +317,11 @@ async function updateDeviceConfigurationWithContext(context) {
     payload,
     device: { id: deviceId },
     now,
-    pluginName: plugin,
+    pluginNames: plugins,
   } = context
 
   const preProcess = await loadPlugin(
-    plugin,
+    plugins,
     'preProcessUpdateDeviceConfiguration'
   )
   await preProcess(context)
@@ -329,7 +329,7 @@ async function updateDeviceConfigurationWithContext(context) {
   await updateDeviceConfiguration(knex, deviceId, payload, now)
   context.addDeviceLogUpdate('deviceConfigurationUpdated', true)
   const postProcess = await loadPlugin(
-    plugin,
+    plugins,
     'postProcessUpdateDeviceConfiguration'
   )
   const postProcessResult = await postProcess(context)
@@ -343,7 +343,7 @@ async function getDeviceOperationWithContext(context) {
 }
 
 async function updateSiteWithContext(context) {
-  const { knex, actions, device, payload, now, pluginName: plugin } = context
+  const { knex, actions, device, payload, now, pluginNames: plugins } = context
 
   const pluginContext = {
     knex,
@@ -354,7 +354,7 @@ async function updateSiteWithContext(context) {
     deviceId: device.id,
   }
 
-  const preProcessUpdateSite = await loadPlugin(plugin, 'preProcessUpdateSite')
+  const preProcessUpdateSite = await loadPlugin(plugins, 'preProcessUpdateSite')
   await preProcessUpdateSite(pluginContext)
 
   const siteExternalId = payload.id || null
@@ -412,7 +412,7 @@ async function updateSiteWithContext(context) {
   }
 
   const postProcessUpdateSite = await loadPlugin(
-    plugin,
+    plugins,
     'postProcessUpdateSite'
   )
   await postProcessUpdateSite(
@@ -427,7 +427,7 @@ async function mergeResultWithContext(context) {
     knex,
     actions,
     device: { id: deviceId, deviceType },
-    pluginName: plugin,
+    pluginNames: plugins,
     payload,
     now,
   } = context
@@ -441,11 +441,11 @@ async function mergeResultWithContext(context) {
     now,
   }
 
-  const preProcess = await loadPlugin(plugin, 'preProcessMergeResult')
+  const preProcess = await loadPlugin(plugins, 'preProcessMergeResult')
   await preProcess(pluginContext)
 
   const transformPayload = await loadPlugin(
-    plugin,
+    plugins,
     'transformMergeResultPayload'
   )
   const transformedPayload = await transformPayload(pluginContext)
@@ -457,7 +457,7 @@ async function mergeResultWithContext(context) {
 
   context.addDeviceLogUpdate('resultId', result.id)
 
-  const postProcess = await loadPlugin(plugin, 'postProcessMergeResult')
+  const postProcess = await loadPlugin(plugins, 'postProcessMergeResult')
   const postProcessResult = await postProcess(
     pluginContext,
     result,
@@ -471,19 +471,19 @@ async function getResultWithContext(context) {
     knex,
     actions,
     deviceLog: { resultId },
-    pluginName: plugin,
+    pluginNames: plugins,
     query,
     now,
   } = context
 
   const pluginContext = { knex, actions, resultId, query, now }
 
-  const preProcess = await loadPlugin(plugin, 'preProcessGetResult')
+  const preProcess = await loadPlugin(plugins, 'preProcessGetResult')
   await preProcess(pluginContext)
 
   const result = await getResult(knex, resultId)
 
-  const postProcess = await loadPlugin(plugin, 'postProcessGetResult')
+  const postProcess = await loadPlugin(plugins, 'postProcessGetResult')
 
   const postProcessResult = await postProcess(pluginContext, result)
   return postProcessResult
@@ -552,7 +552,7 @@ async function createDeviceApiContext(request, handlerOptions) {
     }),
     deviceLogType,
     partnerId: partner.id,
-    pluginName: partner.partnerPluginName || device.deviceTypePluginName,
+    pluginNames: [partner.partnerPluginName, device.deviceTypePluginName],
   })
 
   // Add Device Log if requested
@@ -668,13 +668,15 @@ function createNewDeviceFromRequest(request, now) {
       .where({ 'dt.externalId': _.get(request, 'payload.type.id') })
       .first('dt.plugin')
     const apiKey = _.assign({}, partnerApiKey, {
-      plugin:
-        _.get(partnerApiKey, 'plugin') || _.get(deviceTypePlugin, 'plugin'),
+      plugins: [
+        _.get(partnerApiKey, 'plugin'),
+        _.get(deviceTypePlugin, 'plugin'),
+      ],
     })
 
     // Require Device Type when creating device
     const transformNewDevicePayload = await loadPlugin(
-      apiKey.plugin,
+      apiKey.plugins,
       'transformNewDevicePayload'
     )
     const payload = await transformNewDevicePayload({
@@ -682,7 +684,7 @@ function createNewDeviceFromRequest(request, now) {
     })
 
     const preProcessCreateDevice = await loadPlugin(
-      apiKey.plugin,
+      apiKey.plugins,
       'preProcessCreateDevice'
     )
     const existingDevice = await preProcessCreateDevice(request, now)
@@ -930,13 +932,21 @@ function onResultUpdated({ resultId, deviceLogId }, { messageContext }) {
 function onResultLogged({ resultId }, { messageContext }) {
   const context = messageContext.bindActionCreators({ resultUpdated })
   return context.transact(async knex => {
-    const { plugin } = await knex('Result as r')
+    const { partnerPluginName, deviceTypePluginName } = await knex(
+      'Result as r'
+    )
       .leftJoin('Partner as p', 'r.partnerId', 'p.id')
       .leftJoin('Device as d', 'r.deviceId', 'd.id')
       .leftJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
       .where({ 'r.id': resultId })
-      .first(knex.raw('coalesce(p.plugin, dt.plugin) as plugin'))
-    const onResultLogged = await loadPlugin(plugin, 'onResultLogged')
+      .first(
+        'p.plugin as partnerPluginName',
+        'dt.plugin as deviceTypePluginName'
+      )
+    const onResultLogged = await loadPlugin(
+      [partnerPluginName, deviceTypePluginName],
+      'onResultLogged'
+    )
     const now = new Date()
 
     const pluginContext = {
