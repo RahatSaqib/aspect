@@ -47,6 +47,9 @@ const plugins = {
     preProcessMergeResult: require('./genexpert/preProcessMergeResult'),
     postProcessMergeResult: require('./genexpert/gxalert_plugin/postProcessMergeResult'),
   },
+  myanmar: {
+    transformMergeResultPayload: require('./myanmar/transformMergeResultPayload'),
+  },
 }
 
 /**

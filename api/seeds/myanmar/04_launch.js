@@ -74,7 +74,10 @@ async function seed(knex) {
 
   await knex('Partner')
     .where({ id: partnerId })
-    .update({ maxDaysDeviceNoResults: 14 })
+    .update({
+      maxDaysDeviceNoResults: 14,
+      plugin: 'myanmar',
+    })
 
   // Issue Escalation Triggers
   await knex('IssueEscalationTrigger').insert([
