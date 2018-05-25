@@ -31,15 +31,15 @@ async function preProcessUpdateDeviceConfiguration(context) {
           ? null
           : dateFormat(expectedBackOnlineInData, 'YYYY-MM-DD'),
     })
-    const resolveOn =
+    const dueOn =
       newMaintenanceData.expectedBackOnline == null
         ? null
         : new Date(newMaintenanceData.expectedBackOnline)
     if (inactive) {
       messageContext.dispatch(
         deviceMaintenance(deviceId, {
+          dueOn,
           data: newMaintenanceData,
-          resolveOn,
         })
       )
     } else {

@@ -34,7 +34,7 @@ function deviceSeen(deviceId) {
  * deviceId is required.
  *
  * options:
- *  resolveOn: date maintenance status likely to be resolved, default null (unknown)
+ *  dueOn: date maintenance status likely to be resolved, default null (unknown)
  *  data: Optional additional maintenance data to record, plain object
  */
 function deviceMaintenance(deviceId, options) {

@@ -78,12 +78,16 @@ describe('Fact based issues', () => {
       let [factDevice] = await knex('FactDeviceFlag').where({ deviceId })
       assert.equal(factDevice.offline, 0)
       assert.equal(factDevice.noResults, 0)
+      assert.equal(factDevice.maintenance, 0)
+      assert.isNotOk(factDevice.maintenanceDueOn)
 
       messageContext.factGenerateDeviceConnectivity(newDevice.id)
       await waitForIdle()
       ;[factDevice] = await knex('FactDeviceFlag').where({ deviceId })
       assert.equal(factDevice.offline, 0)
       assert.equal(factDevice.noResults, 0)
+      assert.equal(factDevice.maintenance, 0)
+      assert.isNotOk(factDevice.maintenanceDueOn)
 
       const { maxDaysDeviceOffline, maxDaysDeviceNoResults } = await knex(
         'Partner'
@@ -108,6 +112,8 @@ describe('Fact based issues', () => {
       ;[factDevice] = await knex('FactDeviceFlag').where({ deviceId })
       assert.equal(factDevice.offline, 1)
       assert.equal(factDevice.noResults, 0)
+      assert.equal(factDevice.maintenance, 0)
+      assert.isNotOk(factDevice.maintenanceDueOn)
 
       let issues = await knex('Issue as i')
         .join('IssueType as it', 'i.issueTypeId', 'it.id')
@@ -203,6 +209,8 @@ describe('Fact based issues', () => {
       ;[factDevice] = await knex('FactDeviceFlag').where({ deviceId })
       assert.equal(factDevice.offline, 0)
       assert.equal(factDevice.noResults, 0)
+      assert.equal(factDevice.maintenance, 0)
+      assert.isNotOk(factDevice.maintenanceDueOn)
 
       issues = await knex('Issue as i')
         .join('IssueType as it', 'i.issueTypeId', 'it.id')
@@ -227,6 +235,8 @@ describe('Fact based issues', () => {
       ;[factDevice] = await knex('FactDeviceFlag').where({ deviceId })
       assert.equal(factDevice.offline, 0)
       assert.equal(factDevice.noResults, 1)
+      assert.equal(factDevice.maintenance, 0)
+      assert.isNotOk(factDevice.maintenanceDueOn)
 
       issues = await knex('Issue as i')
         .join('IssueType as it', 'i.issueTypeId', 'it.id')
@@ -293,6 +303,8 @@ describe('Fact based issues', () => {
       ;[factDevice] = await knex('FactDeviceFlag').where({ deviceId })
       assert.equal(factDevice.offline, 0)
       assert.equal(factDevice.noResults, 0)
+      assert.equal(factDevice.maintenance, 0)
+      assert.isNotOk(factDevice.maintenanceDueOn)
 
       issues = await knex('Issue as i')
         .join('IssueType as it', 'i.issueTypeId', 'it.id')
@@ -314,8 +326,14 @@ describe('Fact based issues', () => {
       assert.equal(issues[1].deviceId, deviceId)
       assert.equal(issues[1].issueStatus, 'Resolved')
 
-      messageContext.deviceMaintenance(deviceId)
+      const dueOn = new Date(+new Date() + 72000000)
+      messageContext.deviceMaintenance(deviceId, { dueOn })
       await waitForIdle()
+      ;[factDevice] = await knex('FactDeviceFlag').where({ deviceId })
+      assert.equal(factDevice.offline, 0)
+      assert.equal(factDevice.noResults, 0)
+      assert.equal(factDevice.maintenance, 1)
+      assert.approximately(+factDevice.maintenanceDueOn, +dueOn, 3000)
       issues = await knex('Issue as i')
         .join('IssueType as it', 'i.issueTypeId', 'it.id')
         .join('IssueStatus as is', 'i.issueStatusId', 'is.id')
@@ -341,6 +359,11 @@ describe('Fact based issues', () => {
 
       messageContext.deviceMaintenanceResolved(deviceId)
       await waitForIdle()
+      ;[factDevice] = await knex('FactDeviceFlag').where({ deviceId })
+      assert.equal(factDevice.offline, 0)
+      assert.equal(factDevice.noResults, 0)
+      assert.equal(factDevice.maintenance, 0)
+      assert.isNotOk(factDevice.maintenanceDueOn)
       issues = await knex('Issue as i')
         .join('IssueType as it', 'i.issueTypeId', 'it.id')
         .join('IssueStatus as is', 'i.issueStatusId', 'is.id')

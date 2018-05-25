@@ -110,9 +110,20 @@ function onDeviceSeen({ deviceId }, { messageContext }) {
 }
 
 function onDeviceUpdateFlag(updates) {
-  return ({ deviceId }, { messageContext }) =>
+  return ({ deviceId, options }, { messageContext }) =>
     messageContext.run(async knex => {
       const flagUpdates = Object.assign({ updatedOn: new Date() }, updates)
+
+      if (
+        updates.maintenance === 1 &&
+        options != null &&
+        options.dueOn != null
+      ) {
+        flagUpdates.maintenanceDueOn = new Date(options.dueOn)
+      } else if (updates.maintenance === 0) {
+        flagUpdates.maintenanceDueOn = null
+      }
+
       const updatedRows = await knex('FactDeviceFlag')
         .where({ deviceId })
         .update(flagUpdates)
