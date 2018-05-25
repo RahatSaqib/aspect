@@ -1,11 +1,11 @@
 const _ = require('lodash')
-const { loadPlugin } = require('../registration')
 
 async function transformMergeResultPayload(context) {
   const { knex, deviceType } = context
   const { plugin } = await knex('DeviceType')
     .where('externalId', deviceType)
     .first('plugin')
+  const { loadPlugin } = require('../registration')
   const deviceTypeTransformMergeResultPayload = await loadPlugin(
     [plugin],
     'transformMergeResultPayload'
@@ -92,9 +92,10 @@ function parseNotes(payload) {
 
   let phoneNumber = null
   if (!_.isEmpty(phoneNumberMatches)) {
-    phoneNumber = phoneNumberMatches.length === 1
-      ? phoneNumberMatches[0].toLowerCase().trim()
-      : phoneNumberMatches[1].toLowerCase().trim()
+    phoneNumber =
+      phoneNumberMatches.length === 1
+        ? phoneNumberMatches[0].toLowerCase().trim()
+        : phoneNumberMatches[1].toLowerCase().trim()
     cleanedNotes = cleanedNotes.replace(phoneNumberRegex, '')
   }
   if (phoneNumber) {
