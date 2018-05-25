@@ -327,7 +327,10 @@ describe('Fact based issues', () => {
       assert.equal(issues[1].issueStatus, 'Resolved')
 
       const dueOn = new Date(+new Date() + 72000000)
-      messageContext.deviceMaintenance(deviceId, { dueOn })
+      messageContext.deviceMaintenance(deviceId, {
+        dueOn,
+        data: { a: 1, hi: 'world' },
+      })
       await waitForIdle()
       ;[factDevice] = await knex('FactDeviceFlag').where({ deviceId })
       assert.equal(factDevice.offline, 0)
@@ -342,7 +345,9 @@ describe('Fact based issues', () => {
           'i.id',
           'it.externalId as issueType',
           'i.deviceId',
-          'is.externalId as issueStatus'
+          'is.externalId as issueStatus',
+          'i.data',
+          'i.dueOn'
         )
         .orderBy('id', 'ASC')
       assert.equal(issues.length, 3)
@@ -356,6 +361,48 @@ describe('Fact based issues', () => {
       assert.equal(issues[2].issueType, 'DeviceMaintenance')
       assert.equal(issues[2].deviceId, deviceId)
       assert.equal(issues[2].issueStatus, 'Active')
+      assert.approximately(+issues[2].dueOn, +dueOn, 3000)
+      assert.deepEqual(JSON.parse(issues[2].data), { a: 1, hi: 'world' })
+
+      messageContext.deviceMaintenance(deviceId, {
+        data: { b: 2, hi: 'universe' },
+      })
+      await waitForIdle()
+      ;[factDevice] = await knex('FactDeviceFlag').where({ deviceId })
+      assert.equal(factDevice.offline, 0)
+      assert.equal(factDevice.noResults, 0)
+      assert.equal(factDevice.maintenance, 1)
+      assert.approximately(+factDevice.maintenanceDueOn, +dueOn, 3000)
+      issues = await knex('Issue as i')
+        .join('IssueType as it', 'i.issueTypeId', 'it.id')
+        .join('IssueStatus as is', 'i.issueStatusId', 'is.id')
+        .where({ 'i.deviceId': deviceId })
+        .select(
+          'i.id',
+          'it.externalId as issueType',
+          'i.deviceId',
+          'is.externalId as issueStatus',
+          'i.data',
+          'i.dueOn'
+        )
+        .orderBy('id', 'ASC')
+      assert.equal(issues.length, 3)
+      assert.equal(issues[0].id, issueId)
+      assert.equal(issues[0].issueType, 'DeviceOffline')
+      assert.equal(issues[0].deviceId, deviceId)
+      assert.equal(issues[0].issueStatus, 'Resolved')
+      assert.equal(issues[1].issueType, 'DeviceNoResults')
+      assert.equal(issues[1].deviceId, deviceId)
+      assert.equal(issues[1].issueStatus, 'Resolved')
+      assert.equal(issues[2].issueType, 'DeviceMaintenance')
+      assert.equal(issues[2].deviceId, deviceId)
+      assert.equal(issues[2].issueStatus, 'Active')
+      assert.approximately(+issues[2].dueOn, +dueOn, 3000)
+      assert.deepEqual(JSON.parse(issues[2].data), {
+        a: 1,
+        b: 2,
+        hi: 'universe',
+      })
 
       messageContext.deviceMaintenanceResolved(deviceId)
       await waitForIdle()

@@ -4,12 +4,18 @@ async function up(knex) {
   // TODO do we need to create issues for existing logs?
   await knex.schema.dropTableIfExists('DeviceMaintenanceStatusLog')
   await knex.schema.dropTableIfExists('DeviceMaintenanceStatus')
+
   await knex.schema.table('FactDeviceFlag', flag => {
     flag
       .boolean('maintenance')
       .notNullable()
       .defaultTo(0)
     flag.dateTime('maintenanceDueOn')
+  })
+
+  await knex.schema.table('Issue', issue => {
+    issue.dateTime('dueOn')
+    issue.specificType('data', 'JSON')
   })
 }
 
@@ -67,7 +73,12 @@ async function down(knex) {
         .onDelete('SET NULL')
     }
   )
+
   await knex.schema.table('FactDeviceFlag', flag => {
     flag.dropColumns('maintenance', 'maintenanceDueOn')
+  })
+
+  await knex.schema.table('Issue', issue => {
+    issue.dropColumns('dueOn', 'data')
   })
 }
