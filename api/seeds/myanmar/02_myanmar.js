@@ -8,7 +8,6 @@ const _ = require('lodash')
 
 const config = require('../../src/config')
 const dashboardWidget = require('./fixtures/dashboardWidget.json')
-const { seedDataCategory } = require('../myanmar/fixtures/dataCategoryLow')
 
 const now = new Date()
 
@@ -46,17 +45,12 @@ async function seed(knex) {
     deviceStatuses,
     issueTypes,
     defaultMessageTypes,
-    // for seeding DataCategory
-    messageSeverities,
-    issueCategories,
   ] = await Promise.all([
     rowsAsObject(knex, 'PartnerType', 'name'),
     rowsAsObject(knex, 'DeviceType', 'externalId'),
     rowsAsObject(knex, 'DeviceStatus', 'token'),
     rowsAsObject(knex, 'IssueType', 'externalId'),
     getDefaultMessageTypes(knex),
-    rowsAsObject(knex, 'MessageSeverity', 'externalId'),
-    rowsAsObject(knex, 'IssueCategory', 'externalId'),
   ])
 
   const [partnerId] = await knex('Partner').insert({
@@ -471,14 +465,6 @@ async function seed(knex) {
       auditFields
     ),
   ])
-
-  // Data Category
-  await seedDataCategory(knex, {
-    auditFields,
-    myanmarGeographyId,
-    issueCategoryId: issueCategories.DataHealth.id,
-    messageSeverityId: messageSeverities.Alert.id,
-  })
 }
 
 function rowsAsObject(knex, table, column = 'name') {
