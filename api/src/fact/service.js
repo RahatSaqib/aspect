@@ -1,5 +1,8 @@
-const { subDays } = require('date-fns')
-const { factGenerateResultCounts } = require('./actions')
+const { addDays, subDays } = require('date-fns')
+const {
+  factGenerateDeviceConnectivity,
+  factGenerateResultCounts,
+} = require('./actions')
 const {
   deviceOffline,
   deviceOnline,
@@ -16,13 +19,17 @@ function onFactGenerateDeviceConnectivity({ deviceId }, { messageContext }) {
     const devicesQ = knex('Device as d')
       .join('FactDeviceFlag as f', 'f.deviceId', 'd.id')
       .join('Partner as p', 'd.partnerId', 'p.id')
+      // if already have connectivity flag, no reason to calculate again
       .where({ 'f.offline': 0, 'f.noResults': 0 })
       .select(
         'd.id',
         'p.maxDaysDeviceOffline',
         'p.maxDaysDeviceNoResults',
         'd.lastPingOn',
+        'd.lastSeenOn',
         'd.createdOn as deviceCreatedOn',
+        'f.maintenance',
+        'f.maintenanceDueOn',
         knex('DeviceLog as dl')
           .whereRaw('dl.deviceId = d.id')
           .whereNotNull('dl.resultId')
@@ -30,6 +37,8 @@ function onFactGenerateDeviceConnectivity({ deviceId }, { messageContext }) {
           .as('lastResultOn')
       )
     if (deviceId != null) {
+      // constrain by single device specified by action, or query all
+      // devices on schedule
       devicesQ.where({ 'd.id': deviceId })
     }
     await devicesQ.map(
@@ -38,8 +47,11 @@ function onFactGenerateDeviceConnectivity({ deviceId }, { messageContext }) {
         maxDaysDeviceOffline,
         maxDaysDeviceNoResults,
         lastPingOn,
+        lastSeenOn,
         deviceCreatedOn,
         lastResultOn,
+        maintenance,
+        maintenanceDueOn,
       }) => {
         const now = new Date()
         const maxLastDateOffline =
@@ -50,16 +62,35 @@ function onFactGenerateDeviceConnectivity({ deviceId }, { messageContext }) {
           maxDaysDeviceNoResults == null
             ? null
             : subDays(now, maxDaysDeviceNoResults)
+        // TODO move #days to partner config
+        const maxMaintenanceDateNoResult = addDays(lastSeenOn, 30)
         if (
           lastPingOn == null ||
           (maxLastDateOffline != null && lastPingOn <= maxLastDateOffline)
         ) {
+          // Number of days of "heartbeat" > X days
           context.deviceOffline(id)
         } else if (
           maxLastDateNoResult != null &&
           ((lastResultOn != null && lastResultOn <= maxLastDateNoResult) ||
             (lastResultOn == null && deviceCreatedOn <= maxLastDateNoResult))
         ) {
+          // OR no tests run > Y days
+          context.deviceNoResults(id)
+        } else if (
+          maintenance === 1 &&
+          maintenanceDueOn != null &&
+          maxMaintenanceDateNoResult != null &&
+          maintenanceDueOn >= maxMaintenanceDateNoResult
+        ) {
+          // OR inactive - expected back date > Z days
+          context.deviceNoResults(id)
+        } else if (
+          maintenance === 1 &&
+          maintenanceDueOn != null &&
+          now > maintenanceDueOn
+        ) {
+          // OR date passes expected back date
           context.deviceNoResults(id)
         }
         return id // for lint
@@ -110,8 +141,11 @@ function onDeviceSeen({ deviceId }, { messageContext }) {
 }
 
 function onDeviceUpdateFlag(updates) {
-  return ({ deviceId, options }, { messageContext }) =>
-    messageContext.run(async knex => {
+  return ({ deviceId, options }, { messageContext }) => {
+    const context = messageContext.bindActionCreators({
+      factGenerateDeviceConnectivity,
+    })
+    return context.run(async knex => {
       const flagUpdates = Object.assign({ updatedOn: new Date() }, updates)
 
       if (
@@ -133,7 +167,12 @@ function onDeviceUpdateFlag(updates) {
           Object.assign({ deviceId }, flagUpdates)
         )
       }
+
+      // flags have been updated, check connectivity again for this device with
+      // updated flags in case resolved updates triggered different issue conditions
+      context.factGenerateDeviceConnectivity(deviceId)
     })
+  }
 }
 
 function onResultLogged({ resultId }, { messageContext }) {

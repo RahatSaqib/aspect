@@ -197,6 +197,7 @@ describe('Fact based issues', () => {
 
       const waitForResolve = waitForAction(issueResolved(issueId))
       const waitForOnline = waitForAction(deviceOnline(newDevice.id))
+      const waitForNoResults = waitForAction(deviceNoResults(newDevice.id))
       await server
         .post(devicePath)
         .set('Authorization', deviceAuth)
@@ -204,33 +205,7 @@ describe('Fact based issues', () => {
         .then(res => {
           assert.equal(res.status, 200)
         })
-      await Promise.all([waitForOnline, waitForResolve])
-      await waitForIdle()
-      ;[factDevice] = await knex('FactDeviceFlag').where({ deviceId })
-      assert.equal(factDevice.offline, 0)
-      assert.equal(factDevice.noResults, 0)
-      assert.equal(factDevice.maintenance, 0)
-      assert.isNotOk(factDevice.maintenanceDueOn)
-
-      issues = await knex('Issue as i')
-        .join('IssueType as it', 'i.issueTypeId', 'it.id')
-        .join('IssueStatus as is', 'i.issueStatusId', 'is.id')
-        .where({ 'i.deviceId': deviceId })
-        .select(
-          'i.id',
-          'it.externalId as issueType',
-          'i.deviceId',
-          'is.externalId as issueStatus'
-        )
-      assert.equal(issues.length, 1)
-      assert.equal(issues[0].id, issueId)
-      assert.equal(issues[0].issueType, 'DeviceOffline')
-      assert.equal(issues[0].deviceId, deviceId)
-      assert.equal(issues[0].issueStatus, 'Resolved')
-
-      const waitForNoResults = waitForAction(deviceNoResults(newDevice.id))
-      messageContext.factGenerateDeviceConnectivity(newDevice.id)
-      await waitForNoResults
+      await Promise.all([waitForOnline, waitForResolve, waitForNoResults])
       await waitForIdle()
       ;[factDevice] = await knex('FactDeviceFlag').where({ deviceId })
       assert.equal(factDevice.offline, 0)
