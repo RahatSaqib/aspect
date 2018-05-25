@@ -111,13 +111,13 @@ function getResultCategories(payload) {
     const payloadResultText = _.get(payload, 'data.resultText')
     if (payloadResultText) {
       const resultTextValues = _.compact(payloadResultText.split('|'))
+      const assayId = _.get(payload, 'assay.id')
       if (resultTextValues.length > 0) {
         const result1Text = resultTextValues[0]
           .toLowerCase()
           .replace(/mtb/, '')
           .replace(/ebola gp/, '')
           .trim()
-        const assayId = _.get(payload, 'assay.id')
         const result1CategoryMapping = {
           'not detected': 'NotDetected',
           'não detectado': 'NotDetected',
