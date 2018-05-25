@@ -110,11 +110,18 @@ function deviceApiHandler(handler, handlerOptions) {
       context.knex = knex
       context.deviceLogId = deviceLogId
 
-      // update timestamps as necessary
+      // update timestamps as necessary for original device
+      const originalDeviceId = context.device.id
       await updateDeviceTimestamps(context, handlerOptions, remoteAddress)
 
       // invoke delegate handler
       response = await handler(context)
+
+      // If handler changes device (e.g. GxAlert plugin), update timestamps
+      // for new device as necessary
+      if (context.device.id !== originalDeviceId) {
+        await updateDeviceTimestamps(context, handlerOptions, remoteAddress)
+      }
 
       // Update DeviceLog with changes added to context when calling handler
       if (deviceLogId !== null) {

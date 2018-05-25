@@ -16,6 +16,22 @@ function onFactGenerateDeviceConnectivity({ deviceId }, { messageContext }) {
     deviceNoResults,
   })
   return context.run(async knex => {
+    // If we don't have facts yet for devices we care about, generate them
+    // with defaults values
+    const now = new Date()
+    const deviceNoFactsQ = knex('Device as d')
+      .leftJoin('FactDeviceFlag as f', 'f.deviceId', 'd.id')
+      .whereNull('f.deviceId')
+      .select('d.id')
+    if (deviceId != null) {
+      deviceNoFactsQ.where({ 'd.id': deviceId })
+    }
+    const noFactDevices = await deviceNoFactsQ.map(d => ({
+      deviceId: d.id,
+      updatedOn: now,
+    }))
+    await knex.batchInsert('FactDeviceFlag', noFactDevices, 25)
+
     const devicesQ = knex('Device as d')
       .join('FactDeviceFlag as f', 'f.deviceId', 'd.id')
       .join('Partner as p', 'd.partnerId', 'p.id')
@@ -53,7 +69,6 @@ function onFactGenerateDeviceConnectivity({ deviceId }, { messageContext }) {
         maintenance,
         maintenanceDueOn,
       }) => {
-        const now = new Date()
         const maxLastDateOffline =
           maxDaysDeviceOffline == null
             ? null
