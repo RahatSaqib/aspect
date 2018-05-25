@@ -318,10 +318,10 @@ const resultPayload = {
     microscopyResult: Joi.string()
       .allow('', null)
       .description("Patient's microscopy result"),
-    drSuspect: Joi.boolean()
+    drSuspect: Joi.string()
       .allow('', null)
       .description('Suspected Drug Resistance'),
-    previouslyTreated: Joi.boolean()
+    previouslyTreated: Joi.string()
       .allow('', null)
       .description('Has patient been previously treated?'),
   }),
