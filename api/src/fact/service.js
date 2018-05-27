@@ -550,6 +550,10 @@ async function getConsumptionRates(knex, siteId, consumableId) {
       knex.raw('max(endedOn) as dateTo')
     )
 
+  if (!lastDaysWithTest) {
+    return rates
+  }
+
   const [consumed = { total: 0 }] =
     (await knex('Result as r')
       .innerJoin('Assay as a', 'r.assayId', 'a.id')
@@ -594,7 +598,7 @@ async function getConsumptionRates(knex, siteId, consumableId) {
     )
 
   _.map(daysToCalculate.filter(x => x > 1 && x < 9999), days => {
-    const totalItems = consumedTotals[`total${days}`]
+    const totalItems = consumedTotals && consumedTotals[`total${days}`]
     if (_.isNumber(totalItems)) {
       const rate = totalItems ? totalItems / days : 0
       rates.push({ days, rate })
