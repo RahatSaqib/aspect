@@ -18,6 +18,8 @@ const {
   inventoryStockExpiring,
 } = require('../../src/inventory/actions')
 
+const { refreshConsumptionRates } = require('../../src/fact/service')
+
 describe('Inventory Stock Issues Endpoint', () => {
   let siteId
   let consumableId
@@ -56,6 +58,34 @@ describe('Inventory Stock Issues Endpoint', () => {
       await queuePurge()
     })
   )
+
+  it('just calculated consumption rates should match rates in db for all periods', () => {
+    runTestWithKnex(async knex => {
+      // calculate rates
+      const rates = await refreshConsumptionRates(knex, siteId, consumableId)
+
+      // read from db
+      const ratesDb = await knex('FactInventoryConsumptionRate')
+        .where({ siteId, consumableId })
+        .select('days', 'rate')
+
+      rates.forEach(justCalculated => {
+        const fromDb = ratesDb.find(x => x.days === justCalculated.days)
+
+        assert.exists(
+          fromDb,
+          `No rate entry in db for period ${justCalculated.days} days`
+        )
+
+        // 2 decimals only
+        assert.equal(
+          Math.floor(justCalculated.rate * 100) / 100,
+          Math.floor(fromDb.rate * 100) / 100,
+          `Rates do not match for period ${justCalculated.days} days`
+        )
+      })
+    })
+  })
 
   // Stockout
   it('should create Stockout issue', () =>

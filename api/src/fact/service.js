@@ -499,7 +499,7 @@ function onFactCalculateInventoryConsumptionRates(action, { messageContext }) {
 
     // loop through all sites/consumables and refresh rate
     _.map(items, async item => {
-      refreshConsumptionRates(knex, item.siteId, item.consumableId)
+      await refreshConsumptionRates(knex, item.siteId, item.consumableId)
     })
   })
 }
@@ -507,7 +507,7 @@ function onFactCalculateInventoryConsumptionRates(action, { messageContext }) {
 // recalculates rates for provided siteId and consumableId
 async function refreshConsumptionRates(knex, siteId, consumableId) {
   const updatedOn = new Date()
-  const rates = getConsumptionRates(knex, siteId, consumableId)
+  const rates = await getConsumptionRates(knex, siteId, consumableId)
   _.map(rates, async x => {
     await knex.raw(
       knex('FactInventoryConsumptionRate')
@@ -522,6 +522,7 @@ async function refreshConsumptionRates(knex, siteId, consumableId) {
         .replace(/^insert/i, 'replace')
     )
   })
+  return rates
 }
 
 async function getConsumptionRates(knex, siteId, consumableId) {
@@ -532,29 +533,35 @@ async function getConsumptionRates(knex, siteId, consumableId) {
   // --------------------
   const limitItems = 10
   const lastDaysWithTest = await knex
-    .from(
-      knex('Result as r')
+    .from(function() {
+      this.from('Result as r')
         .innerJoin('Assay as a', 'r.assayId', 'a.id')
         .innerJoin('ConsumableAssay as ca', 'a.id', 'ca.assayId')
         .innerJoin('Device as d', 'r.deviceId', 'd.id')
         .where('d.siteId', siteId)
         .where('ca.consumableId', consumableId)
+        .distinct(knex.raw('date(r.endedOn) as endedOn'))
         .orderBy('r.endedOn')
-        .distinct('date(r.endedOn) as endedOn')
-        .select('date(r.endedOn) as endedOn')
         .limit(limitItems)
+        .as('t1')
+    })
+    .first(
+      knex.raw('min(endedOn) as dateFrom'),
+      knex.raw('max(endedOn) as dateTo')
     )
-    .first('min(endedOn) as dateFrom', 'max(endedOn) as dateTo')
-  const consumed = await knex('Result as r')
-    .innerJoin('Assay as a', 'r.assayId', 'a.id')
-    .innerJoin('ConsumableAssay as ca', 'a.id', 'ca.assayId')
-    .innerJoin('Device as d', 'r.deviceId', 'd.id')
-    .where('date(r.endedOn)', '>=', lastDaysWithTest.dateFrom)
-    .where('date(r.endedOn)', '<=', lastDaysWithTest.dateTo)
-    .where('d.siteId', siteId)
-    .where('ca.consumableId', consumableId)
-    .groupBy('d.siteId', 'ca.consumableId')
-    .sum(`ca.quantity as total`)
+
+  const [consumed = { total: 0 }] =
+    (await knex('Result as r')
+      .innerJoin('Assay as a', 'r.assayId', 'a.id')
+      .innerJoin('ConsumableAssay as ca', 'a.id', 'ca.assayId')
+      .innerJoin('Device as d', 'r.deviceId', 'd.id')
+      .whereRaw('date(r.endedOn) >= ?', [lastDaysWithTest.dateFrom])
+      .whereRaw('date(r.endedOn) <= ?', [lastDaysWithTest.dateTo])
+      .where('d.siteId', siteId)
+      .where('ca.consumableId', consumableId)
+      .sum('ca.quantity as total')
+      .groupBy('d.siteId', 'ca.consumableId')) || []
+
   rates.push({ days: 1, rate: consumed.total / limitItems })
 
   // --------------------
@@ -564,20 +571,31 @@ async function getConsumptionRates(knex, siteId, consumableId) {
     .innerJoin('Assay as a', 'r.assayId', 'a.id')
     .innerJoin('ConsumableAssay as ca', 'a.id', 'ca.assayId')
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
-    .where('r.endedOn', '>=', `DATE_ADD(CURDATE(), INTERVAL -1 YEAR)`)
+    .whereRaw('r.endedOn >= DATE_ADD(CURDATE(), INTERVAL -1 YEAR)')
     .where('d.siteId', siteId)
     .where('ca.consumableId', consumableId)
     .groupBy('d.siteId', 'ca.consumableId')
     .first(
-      'sum(case when r.endedOn >= DATE_ADD(CURDATE(), INTERVAL  -7 DAY) then ca.quantity else 0 end) as total7',
-      'sum(case when r.endedOn >= DATE_ADD(CURDATE(), INTERVAL -30 DAY) then ca.quantity else 0 end) as total30',
-      'sum(case when r.endedOn >= DATE_ADD(CURDATE(), INTERVAL -60 DAY) then ca.quantity else 0 end) as total60',
-      'sum(case when r.endedOn >= DATE_ADD(CURDATE(), INTERVAL -90 DAY) then ca.quantity else 0 end) as total90',
-      'sum(case when r.endedOn >= DATE_ADD(CURDATE(), INTERVAL -1 YEAR) then ca.quantity else 0 end) as total365'
+      knex.raw(
+        'sum(case when r.endedOn >= DATE_ADD(CURDATE(), INTERVAL  -7 DAY) then ca.quantity else 0 end) as total7'
+      ),
+      knex.raw(
+        'sum(case when r.endedOn >= DATE_ADD(CURDATE(), INTERVAL -30 DAY) then ca.quantity else 0 end) as total30'
+      ),
+      knex.raw(
+        'sum(case when r.endedOn >= DATE_ADD(CURDATE(), INTERVAL -60 DAY) then ca.quantity else 0 end) as total60'
+      ),
+      knex.raw(
+        'sum(case when r.endedOn >= DATE_ADD(CURDATE(), INTERVAL -90 DAY) then ca.quantity else 0 end) as total90'
+      ),
+      knex.raw(
+        'sum(case when r.endedOn >= DATE_ADD(CURDATE(), INTERVAL -1 YEAR) then ca.quantity else 0 end) as total365'
+      )
     )
+
   _.map(daysToCalculate.filter(x => x > 1 && x < 9999), days => {
     const totalItems = consumedTotals[`total${days}`]
-    if (totalItems) {
+    if (_.isNumber(totalItems)) {
       const rate = totalItems ? totalItems / days : 0
       rates.push({ days, rate })
     }
@@ -595,4 +613,5 @@ module.exports = {
   onDeviceSeen,
   onDeviceUpdateFlag,
   onResultLogged,
+  refreshConsumptionRates,
 }
