@@ -54,7 +54,8 @@ function parseNotes(payload) {
     return
   }
 
-  if (!_.isEmpty(hivStatusMatches)) {
+  const existingHivStatus = _.get(payload, 'patient.hivStatus')
+  if (!_.isEmpty(hivStatusMatches) && !existingHivStatus) {
     const capturedHivStatus = hivStatusMatches[2].toLowerCase().trim()
     if (capturedHivStatus === 'hiv+') {
       _.set(payload, 'patient.hivStatus', 'HIV Positive')
@@ -67,16 +68,18 @@ function parseNotes(payload) {
   }
 
   let ageInYears = null
+  const existingAgeInYears = _.get(payload, 'patient.age')
   if (!_.isEmpty(ageInYearsMatches)) {
     const capturedAgeInYears = ageInYearsMatches[2].toLowerCase().trim()
     ageInYears = parseInt(capturedAgeInYears, 10)
     cleanedNotes = cleanedNotes.replace(ageInYearsRegex, '')
   }
-  if (ageInYears) {
+  if (ageInYears && !existingAgeInYears) {
     _.set(payload, 'patient.age', ageInYears)
   }
 
-  if (!_.isEmpty(genderMatches)) {
+  const existingGender = _.get(payload, 'patient.gender')
+  if (!_.isEmpty(genderMatches) && !existingGender) {
     const capturedGender = genderMatches[2].toLowerCase().trim()
     if (capturedGender === 'm') {
       _.set(payload, 'patient.gender', 'Male')
@@ -88,34 +91,45 @@ function parseNotes(payload) {
 
   const phoneNumberRegex = /([(0)]*\+?(?:95)?)(\d{7,10})/i
   const phoneNumberMatches = cleanedNotes.match(phoneNumberRegex) || []
+  const existingPhoneNumber = _.get(payload, 'patient.phone')
   if (
     !_.isEmpty(phoneNumberMatches) &&
     phoneNumberMatches.length > 2 &&
-    phoneNumberMatches[2].trim().length > 0
+    phoneNumberMatches[2].trim().length > 0 &&
+    !existingPhoneNumber
   ) {
     _.set(payload, 'patient.phone', phoneNumberMatches[2].trim())
   }
 
-  if (cleanedNotes.toLowerCase().indexOf('yes') > -1) {
-    _.set(payload, 'patient.previouslyTreated', 'Yes')
-  } else if (cleanedNotes.toLowerCase().indexOf('no') > -1) {
-    _.set(payload, 'patient.previouslyTreated', 'No')
-  } else if (cleanedNotes.toLowerCase().indexOf('unk') > -1) {
-    _.set(payload, 'patient.previouslyTreated', 'Unknown')
+  const existingPreviouslyTreated = _.get(payload, 'patient.previouslyTreated')
+  if (!existingPreviouslyTreated) {
+    if (cleanedNotes.toLowerCase().indexOf('yes') > -1) {
+      _.set(payload, 'patient.previouslyTreated', 'Yes')
+    } else if (cleanedNotes.toLowerCase().indexOf('no') > -1) {
+      _.set(payload, 'patient.previouslyTreated', 'No')
+    } else if (cleanedNotes.toLowerCase().indexOf('unk') > -1) {
+      _.set(payload, 'patient.previouslyTreated', 'Unknown')
+    }
   }
 
-  if (cleanedNotes.toLowerCase().indexOf('pos') > -1) {
-    _.set(payload, 'patient.microscopyResult', 'Positive')
-  } else if (cleanedNotes.toLowerCase().indexOf('neg') > -1) {
-    _.set(payload, 'patient.microscopyResult', 'Negative')
-  } else if (cleanedNotes.toLowerCase().indexOf('nd') > -1) {
-    _.set(payload, 'patient.microscopyResult', 'Not Done')
+  const existingMicroscopyResult = _.get(payload, 'patient.microscopyResult')
+  if (!existingMicroscopyResult) {
+    if (cleanedNotes.toLowerCase().indexOf('pos') > -1) {
+      _.set(payload, 'patient.microscopyResult', 'Positive')
+    } else if (cleanedNotes.toLowerCase().indexOf('neg') > -1) {
+      _.set(payload, 'patient.microscopyResult', 'Negative')
+    } else if (cleanedNotes.toLowerCase().indexOf('nd') > -1) {
+      _.set(payload, 'patient.microscopyResult', 'Not Done')
+    }
   }
 
-  const testReasonRegex = /(Dx|Fu|Na)/i
-  const testReasonMatches = cleanedNotes.match(testReasonRegex) || []
-  if (!_.isEmpty(testReasonMatches)) {
-    _.set(payload, 'data.testReasonShortName', testReasonMatches[1])
+  const existingTestReasonShortName = _.get(payload, 'data.testReasonShortName')
+  if (!existingTestReasonShortName) {
+    const testReasonRegex = /(Dx|Fu|Na)/i
+    const testReasonMatches = cleanedNotes.match(testReasonRegex) || []
+    if (!_.isEmpty(testReasonMatches)) {
+      _.set(payload, 'data.testReasonShortName', testReasonMatches[1])
+    }
   }
 }
 
@@ -125,9 +139,12 @@ function parsePatientId(payload) {
   if (!patientId || indexOfFirstSeparator <= 0) {
     return
   }
-  const city = patientId.substr(indexOfFirstSeparator + 1).trim()
-  _.set(payload, 'patient.city', city)
-  _.set(payload, 'patient.id', patientId.substr(0, indexOfFirstSeparator))
+  const existingCity = _.get(payload, 'patient.city')
+  if (!existingCity) {
+    const city = patientId.substr(indexOfFirstSeparator + 1).trim()
+    _.set(payload, 'patient.city', city)
+    _.set(payload, 'patient.id', patientId.substr(0, indexOfFirstSeparator))
+  }
 }
 
 module.exports = transformMergeResultPayload

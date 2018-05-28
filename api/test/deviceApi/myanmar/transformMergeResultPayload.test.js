@@ -66,7 +66,7 @@ describe('transformMergeResultPayload for Myanmar', () => {
       )
     }))
 
-  describe('when request comes from GxConnect', () => {
+  describe('when request comes from from a GeneXpert', () => {
     it('should parse notes and patient ID', async () => {
       const expectations = [
         {
@@ -270,40 +270,118 @@ describe('transformMergeResultPayload for Myanmar', () => {
         )
       })
     })
+
+    describe('and the notes have already been parsed', () => {
+      it('should NOT set the fields that have already been set', async () => {
+        const expectations = [
+          {
+            initialPayload: getPayload({
+              patient: {
+                id: 'Bryan Richards,Johannesburg',
+                city: 'New York, New York',
+                age: 99,
+                gender: 'Female',
+                previouslyTreated: 'No',
+                hivStatus: 'HIV Unknown',
+                microscopyResult: 'Not Done',
+              },
+              data: {
+                testReasonShortName: 'Fu',
+              },
+              notes: '34,M,Yes,HIV+,Neg,',
+            }),
+            transformedPayload: {
+              patient: {
+                id: 'Bryan Richards,Johannesburg',
+                city: 'New York, New York',
+                age: 99,
+                gender: 'Female',
+                previouslyTreated: 'No',
+                hivStatus: 'HIV Unknown',
+                microscopyResult: 'Not Done',
+              },
+              data: {
+                testReasonShortName: 'Fu',
+              },
+              notes: '34,M,Yes,HIV+,Neg,',
+            },
+          },
+          {
+            initialPayload: {
+              patient: {
+                id: 'Cho Mar,Myaungmya',
+                city: 'Greenfields',
+                age: 66,
+                gender: 'Male',
+              },
+              notes: '30,F,No,HIv-,Dx,Pos,',
+            },
+            transformedPayload: {
+              patient: {
+                id: 'Cho Mar,Myaungmya',
+                city: 'Greenfields',
+                age: 66,
+                gender: 'Male',
+                previouslyTreated: 'No',
+                hivStatus: 'HIV Negative',
+                microscopyResult: 'Positive',
+              },
+              data: {
+                testReasonShortName: 'Dx',
+              },
+              notes: '30,F,No,HIv-,Dx,Pos,',
+            },
+          },
+        ]
+        await Promise.each(
+          expectations,
+          async ({ initialPayload, transformedPayload }) => {
+            initialisePluginAndPayload(initialPayload)
+            return runTest(transformMergeResultPayload, [
+              gxConnectPluginContext,
+            ])(actualTransformedPayload => {
+              expect(actualTransformedPayload).to.containSubset(
+                transformedPayload
+              )
+            })
+          }
+        )
+      })
+    })
   })
 
-  describe('when request comes from GxAlert', () => {
-    let gxAlertPluginContext
+  describe('when request does NOT come from a GeneXpert', () => {
+    let otherDeviceTypePluginContext
 
     before(() => {
-      gxAlertPluginContext = {
+      otherDeviceTypePluginContext = {
         payload: getPayload(),
         knex() {
           return {
             where() {
               return {
                 async first() {
-                  return Promise.resolve({ plugin: 'gxalert' })
+                  return Promise.resolve({ plugin: null })
                 },
               }
             },
           }
         },
-        deviceType: 'GxAlert',
+        deviceType: 'm2000',
       }
     })
 
-    it('should NOT parse notes and patient ID because GxAlert would have already done this', async () => {
-      await runTest(transformMergeResultPayload, [gxAlertPluginContext])(
-        transformedPayload => {
-          expect(transformedPayload).to.containSubset({
-            patient: {
-              id: 'Bryan Richards,Johannesburg',
-            },
-            notes: '34,M,Yes,HIV+,Neg,',
-          })
-        }
-      )
+    it('should NOT parse notes and patient ID ', async () => {
+      await runTest(transformMergeResultPayload, [
+        otherDeviceTypePluginContext,
+      ])(transformedPayload => {
+        expect(transformedPayload).to.containSubset({
+          patient: {
+            id: 'Bryan Richards,Johannesburg',
+          },
+          notes: '34,M,Yes,HIV+,Neg,',
+        })
+      })
     })
   })
 })
