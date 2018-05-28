@@ -377,9 +377,8 @@ function onFactCheckInventoryStock(action, { messageContext }) {
       const { siteId, consumableId } = site
       const { rate: dailyRate } =
         (await knex('FactInventoryConsumptionRate')
-          .where({ siteId, consumableId })
-          .where({ days: 1 })
-          .first('days', 'rate')) || {}
+          .where({ siteId, consumableId, days: 1 })
+          .first('rate')) || {}
 
       if (dailyRate > 0) {
         const props = {
@@ -571,6 +570,13 @@ async function getConsumptionRates(knex, siteId, consumableId) {
   // --------------------
   // other rates
   // --------------------
+  const daysToRate = daysToCalculate.filter(x => x > 1 && x < 9999)
+  const fields = _.map(daysToRate, days =>
+    knex.raw(
+      `sum(case when r.endedOn >= DATE_ADD(CURDATE(), INTERVAL  -${days} DAY) then ca.quantity else 0 end) as total${days}`
+    )
+  )
+
   const consumedTotals = await knex('Result as r')
     .innerJoin('Assay as a', 'r.assayId', 'a.id')
     .innerJoin('ConsumableAssay as ca', 'a.id', 'ca.assayId')
@@ -580,29 +586,13 @@ async function getConsumptionRates(knex, siteId, consumableId) {
     .where('ca.consumableId', consumableId)
     .groupBy('d.siteId', 'ca.consumableId')
     .first(
-      knex.raw(
-        'sum(case when r.endedOn >= DATE_ADD(CURDATE(), INTERVAL  -7 DAY) then ca.quantity else 0 end) as total7'
-      ),
-      knex.raw(
-        'sum(case when r.endedOn >= DATE_ADD(CURDATE(), INTERVAL -30 DAY) then ca.quantity else 0 end) as total30'
-      ),
-      knex.raw(
-        'sum(case when r.endedOn >= DATE_ADD(CURDATE(), INTERVAL -60 DAY) then ca.quantity else 0 end) as total60'
-      ),
-      knex.raw(
-        'sum(case when r.endedOn >= DATE_ADD(CURDATE(), INTERVAL -90 DAY) then ca.quantity else 0 end) as total90'
-      ),
-      knex.raw(
-        'sum(case when r.endedOn >= DATE_ADD(CURDATE(), INTERVAL -1 YEAR) then ca.quantity else 0 end) as total365'
-      )
+      ...fields
     )
 
-  _.map(daysToCalculate.filter(x => x > 1 && x < 9999), days => {
+  _.map(daysToRate, days => {
     const totalItems = consumedTotals && consumedTotals[`total${days}`]
-    if (_.isNumber(totalItems)) {
-      const rate = totalItems ? totalItems / days : 0
-      rates.push({ days, rate })
-    }
+    const rate = _.isNumber(totalItems) ? totalItems / days : 0
+    rates.push({ days, rate })
   })
 
   return rates

@@ -19,7 +19,7 @@ function startScheduler(queue) {
   })
   dispatcher.factGenerateResultCounts()
   dispatcher.factGenerateDeviceConnectivity()
-  // dispatcher.factCalculateInventoryConsumptionRates()
+  dispatcher.factCalculateInventoryConsumptionRates()
 
   cron.schedule('0 1 * * *', dispatcher.factCheckInventoryStock) // daily at 1 am
   cron.schedule('0 * * * *', dispatcher.factGenerateResultCounts) // run every hour as it changes

@@ -7,13 +7,6 @@ async function up(knex) {
   })
 
   await knex.schema.createTable('FactInventoryConsumptionRate', x => {
-    x.increments('id')
-    x
-      .integer('consumableId')
-      .unsigned()
-      .notNullable()
-      .references('id')
-      .inTable('Consumable')
     x
       .integer('siteId')
       .unsigned()
@@ -21,15 +14,18 @@ async function up(knex) {
       .references('id')
       .inTable('Site')
     x
+      .integer('consumableId')
+      .unsigned()
+      .notNullable()
+      .references('id')
+      .inTable('Consumable')
+    x
       .integer('days')
       .unsigned()
       .notNullable()
     x.float('rate').notNullable()
     x.dateTime('updatedOn').notNullable()
-    x.unique(
-      ['siteId', 'consumableId', 'days'],
-      'FactInventoryConsumptionRate_unique'
-    )
+    x.primary(['siteId', 'consumableId', 'days'])
   })
 }
 async function down(knex) {
