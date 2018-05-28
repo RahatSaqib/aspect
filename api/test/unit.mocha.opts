@@ -2,4 +2,5 @@
 --reporter-options spec=-,mocha-bamboo-reporter=-
 --ui bdd
 --recursive
+test/utils/unitTestSetup.js
 test/**/*.test.js*

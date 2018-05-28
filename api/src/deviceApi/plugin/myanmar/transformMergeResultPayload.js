@@ -24,10 +24,10 @@ function parseNotes(payload) {
   let notes = _.get(payload, 'notes')
   if (
     !notes ||
-    notes.indexOf('operation terminated error') < 0 ||
-    notes.indexOf('Post-run analysis error') < 0 ||
-    notes.indexOf('error occurred') < 0 ||
-    notes.indexOf('nomadic project') < 0
+    notes.indexOf('operation terminated error') >= 0 ||
+    notes.indexOf('Post-run analysis error') >= 0 ||
+    notes.indexOf('error occurred') >= 0 ||
+    notes.indexOf('nomadic project') >= 0
   ) {
     return
   }
@@ -39,13 +39,12 @@ function parseNotes(payload) {
   }
   let cleanedNotes = notes
   const hivStatusRegex = /(^|\s|,)(hiv([+]|[-]|[?])),?($|\s|,)/i
-  const hivStatusMatches = hivStatusRegex.match(notes) || []
+  const hivStatusMatches = notes.match(hivStatusRegex) || []
 
   const ageInYearsRegex = /(^|\s|,)([1]?[0-9]{1,2}),?($|\s|,)/i
-  const ageInYearsMatches = ageInYearsRegex.match(notes) || []
-
+  const ageInYearsMatches = notes.match(ageInYearsRegex) || []
   const genderRegex = /(^|\s|,)([m]|[f]),?($|\s|,)/i
-  const genderMatches = genderRegex.match(notes) || []
+  const genderMatches = notes.match(genderRegex) || []
 
   if (
     _.isEmpty(hivStatusMatches) &&
@@ -56,7 +55,7 @@ function parseNotes(payload) {
   }
 
   if (!_.isEmpty(hivStatusMatches)) {
-    const capturedHivStatus = hivStatusMatches[1].toLowerCase().trim()
+    const capturedHivStatus = hivStatusMatches[2].toLowerCase().trim()
     if (capturedHivStatus === 'hiv+') {
       _.set(payload, 'patient.hivStatus', 'HIV Positive')
     } else if (capturedHivStatus === 'hiv-') {
@@ -69,7 +68,7 @@ function parseNotes(payload) {
 
   let ageInYears = null
   if (!_.isEmpty(ageInYearsMatches)) {
-    const capturedAgeInYears = ageInYearsMatches[1].toLowerCase().trim()
+    const capturedAgeInYears = ageInYearsMatches[2].toLowerCase().trim()
     ageInYears = parseInt(capturedAgeInYears, 10)
     cleanedNotes = cleanedNotes.replace(ageInYearsRegex, '')
   }
@@ -78,7 +77,7 @@ function parseNotes(payload) {
   }
 
   if (!_.isEmpty(genderMatches)) {
-    const capturedGender = genderMatches[1].toLowerCase().trim()
+    const capturedGender = genderMatches[2].toLowerCase().trim()
     if (capturedGender === 'm') {
       _.set(payload, 'patient.gender', 'Male')
     } else if (capturedGender === 'f') {
@@ -87,39 +86,34 @@ function parseNotes(payload) {
     cleanedNotes = cleanedNotes.replace(genderRegex, '')
   }
 
-  const phoneNumberRegex = /[(0)]*\+?(?:95)?(\d{7,10})/i
-  const phoneNumberMatches = phoneNumberRegex.match(cleanedNotes) || []
-
-  let phoneNumber = null
-  if (!_.isEmpty(phoneNumberMatches)) {
-    phoneNumber =
-      phoneNumberMatches.length === 1
-        ? phoneNumberMatches[0].toLowerCase().trim()
-        : phoneNumberMatches[1].toLowerCase().trim()
-    cleanedNotes = cleanedNotes.replace(phoneNumberRegex, '')
-  }
-  if (phoneNumber) {
-    _.set(payload, 'patient.phone', phoneNumber)
+  const phoneNumberRegex = /([(0)]*\+?(?:95)?)(\d{7,10})/i
+  const phoneNumberMatches = cleanedNotes.match(phoneNumberRegex) || []
+  if (
+    !_.isEmpty(phoneNumberMatches) &&
+    phoneNumberMatches.length > 2 &&
+    phoneNumberMatches[2].trim().length > 0
+  ) {
+    _.set(payload, 'patient.phone', phoneNumberMatches[2].trim())
   }
 
-  if (cleanedNotes.toLowerCase().indexOf('yes')) {
+  if (cleanedNotes.toLowerCase().indexOf('yes') > -1) {
     _.set(payload, 'patient.previouslyTreated', 'Yes')
-  } else if (cleanedNotes.toLowerCase().indexOf('no')) {
+  } else if (cleanedNotes.toLowerCase().indexOf('no') > -1) {
     _.set(payload, 'patient.previouslyTreated', 'No')
-  } else if (cleanedNotes.toLowerCase().indexOf('unk')) {
+  } else if (cleanedNotes.toLowerCase().indexOf('unk') > -1) {
     _.set(payload, 'patient.previouslyTreated', 'Unknown')
   }
 
-  if (cleanedNotes.toLowerCase().indexOf('pos')) {
+  if (cleanedNotes.toLowerCase().indexOf('pos') > -1) {
     _.set(payload, 'patient.microscopyResult', 'Positive')
-  } else if (cleanedNotes.toLowerCase().indexOf('neg')) {
+  } else if (cleanedNotes.toLowerCase().indexOf('neg') > -1) {
     _.set(payload, 'patient.microscopyResult', 'Negative')
-  } else if (cleanedNotes.toLowerCase().indexOf('nd')) {
+  } else if (cleanedNotes.toLowerCase().indexOf('nd') > -1) {
     _.set(payload, 'patient.microscopyResult', 'Not Done')
   }
 
   const testReasonRegex = /(Dx|Fu|Na)/i
-  const testReasonMatches = testReasonRegex.match(cleanedNotes) || []
+  const testReasonMatches = cleanedNotes.match(testReasonRegex) || []
   if (!_.isEmpty(testReasonMatches)) {
     _.set(payload, 'data.testReasonShortName', testReasonMatches[1])
   }
