@@ -14,7 +14,7 @@ const { types: resultActionTypes } = require('../../src/result/actions')
 
 const { assert, expect } = chai
 
-describe.only('Issue Escalation', () => {
+describe('Issue Escalation', () => {
   function ensureMySqlBeforeNestedTablesOptions(knex) {
     assert.equal(
       knex.client.config.client,
