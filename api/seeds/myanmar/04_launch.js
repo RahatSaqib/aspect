@@ -117,6 +117,39 @@ async function seed(knex) {
     },
   ])
 
+  await knex('SampleType').insert([
+    {
+      name: 'Sputum',
+      i18nKey: 'sampleTypeSputum',
+      externalId: 'Sputum',
+    },
+    {
+      name: 'Saliva',
+      i18nKey: 'sampleTypeSaliva',
+      externalId: 'Saliva',
+    },
+    {
+      name: 'Blood',
+      i18nKey: 'sampleTypeBlood',
+      externalId: 'Blood',
+    },
+    {
+      name: 'CSF',
+      i18nKey: 'sampleTypeCSF',
+      externalId: 'CSF',
+    },
+    {
+      name: 'Effusion',
+      i18nKey: 'sampleTypeEffusion',
+      externalId: 'Effusion',
+    },
+    {
+      name: 'Pus',
+      i18nKey: 'sampleTypePus',
+      externalId: 'Pus',
+    },
+  ])
+
   // Add Device Maintenance issue (no notifications for Myanmar, only issue generation)
   const [deviceMaintenanceAlertTemplateId] = await knex('AlertTemplate').insert(
     Object.assign(

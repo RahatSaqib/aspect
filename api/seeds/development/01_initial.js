@@ -2413,11 +2413,43 @@ async function seed(knex) {
     externalId: 'Plasma',
   })
 
-  await knex('SampleType').insert({
-    name: 'Other',
-    i18nKey: 'sampleTypeOther',
-    externalId: 'Other',
-  })
+  await knex('SampleType').insert([
+    {
+      name: 'Other',
+      i18nKey: 'sampleTypeOther',
+      externalId: 'Other',
+    },
+    {
+      name: 'Sputum',
+      i18nKey: 'sampleTypeSputum',
+      externalId: 'Sputum',
+    },
+    {
+      name: 'Saliva',
+      i18nKey: 'sampleTypeSaliva',
+      externalId: 'Saliva',
+    },
+    {
+      name: 'Blood',
+      i18nKey: 'sampleTypeBlood',
+      externalId: 'Blood',
+    },
+    {
+      name: 'CSF',
+      i18nKey: 'sampleTypeCSF',
+      externalId: 'CSF',
+    },
+    {
+      name: 'Effusion',
+      i18nKey: 'sampleTypeEffusion',
+      externalId: 'Effusion',
+    },
+    {
+      name: 'Pus',
+      i18nKey: 'sampleTypePus',
+      externalId: 'Pus',
+    },
+  ])
 
   // some TB samples:
   let samples = []
