@@ -1,6 +1,6 @@
 const supertest = require('supertest')
 const chai = require('chai')
-const subDays = require('date-fns/sub_days')
+const { addDays, subDays } = require('date-fns')
 const { createTestContext, getDeviceFromApiKey } = require('../deviceApi/utils')
 const {
   deviceOffline,
@@ -40,7 +40,7 @@ describe('Fact based issues', () => {
   beforeEach(context.beforeEach)
   afterEach(context.afterEach)
 
-  it('should create issues when Device Offline and No Results', () =>
+  it('should create issues when Device Offline and No Results > max days no results', () =>
     runTest(async knex => {
       const now = new Date()
       const { apiKey, deviceAuth, clientAuth } = context
@@ -409,4 +409,203 @@ describe('Fact based issues', () => {
       assert.equal(issues[2].deviceId, deviceId)
       assert.equal(issues[2].issueStatus, 'Resolved')
     }))
+
+  it('should create no result issue maintenance expected back > Y days', () =>
+    runTest(async knex => {
+      const now = new Date()
+      const { apiKey, deviceAuth } = context
+      assert.isOk(apiKey)
+
+      const messageContext = await createMessageContext()
+      messageContext.bindActionCreators({
+        deviceOffline,
+        deviceOnline,
+        deviceMaintenance,
+        deviceMaintenanceResolved,
+        factGenerateDeviceConnectivity,
+      })
+
+      await server
+        .post(devicePath)
+        .set('Authorization', deviceAuth)
+        .send({
+          type: { id: 'GenericRDT' },
+          site: { id: 'Hinthada TBC' },
+        })
+        .then(res => {
+          assert.equal(res.status, 200)
+        })
+      await waitForIdle(1000)
+
+      const newDevice = await getDeviceFromApiKey(knex, apiKey)
+      assert.isOk(newDevice)
+      assert.isOk(newDevice.name)
+      assert.isOk(newDevice.id)
+      assert.isOk(newDevice.partnerId)
+
+      const { id: deviceId } = newDevice
+
+      messageContext.factGenerateDeviceConnectivity(newDevice.id)
+      await waitForIdle()
+      let [factDevice] = await knex('FactDeviceFlag').where({ deviceId })
+      assert.equal(factDevice.offline, 0)
+      assert.equal(factDevice.noResults, 0)
+      assert.equal(factDevice.maintenance, 0)
+      assert.isNotOk(factDevice.maintenanceDueOn)
+
+      const { maxDaysDeviceOffline, maxDaysDeviceNoResults } = await knex(
+        'Partner'
+      )
+        .where({ id: newDevice.partnerId })
+        .first()
+      assert.isOk(maxDaysDeviceOffline > 1)
+      assert.isOk(maxDaysDeviceNoResults > maxDaysDeviceOffline)
+      const deviceOfflineDate = subDays(now, maxDaysDeviceOffline - 2)
+      const deviceNoResultsDate = subDays(now, maxDaysDeviceNoResults - 2)
+      const maintenanceDueOn = addDays(now, 30 + 2)
+      await knex('Device as d')
+        .where('d.id', newDevice.id)
+        .update({
+          createdOn: deviceNoResultsDate,
+          lastPingOn: deviceOfflineDate,
+        })
+
+      messageContext.factGenerateDeviceConnectivity(newDevice.id)
+      await waitForIdle()
+      ;[factDevice] = await knex('FactDeviceFlag').where({ deviceId })
+      assert.equal(factDevice.offline, 0)
+      assert.equal(factDevice.noResults, 0)
+      assert.equal(factDevice.maintenance, 0)
+      assert.isNotOk(factDevice.maintenanceDueOn)
+
+      let issues = await knex('Issue as i')
+        .join('IssueType as it', 'i.issueTypeId', 'it.id')
+        .join('IssueStatus as is', 'i.issueStatusId', 'is.id')
+        .join('IssueStatusLog as isl', function() {
+          // ensures we have a log with the same status as the issue
+          // and we are expecting only one, so issues should not duplicate
+          this.on('isl.issueId', 'i.id').andOn('isl.issueStatusId', 'is.id')
+        })
+        .where({ 'i.deviceId': deviceId })
+        .whereNotNull('isl.changedOn')
+        .whereNotNull('isl.createdOn')
+        .select(
+          'i.id',
+          'it.externalId as issueType',
+          'i.deviceId',
+          'is.externalId as issueStatus',
+          'i.level'
+        )
+      assert.equal(issues.length, 0)
+
+      messageContext.deviceMaintenance(deviceId, {
+        dueOn: maintenanceDueOn,
+        data: { a: 1, hi: 'world' },
+      })
+      await waitForIdle()
+      ;[factDevice] = await knex('FactDeviceFlag').where({ deviceId })
+      assert.equal(factDevice.offline, 0)
+      assert.equal(factDevice.noResults, 1)
+      assert.equal(factDevice.maintenance, 1)
+      assert.approximately(
+        +factDevice.maintenanceDueOn,
+        +maintenanceDueOn,
+        3000
+      )
+      issues = await knex('Issue as i')
+        .join('IssueType as it', 'i.issueTypeId', 'it.id')
+        .join('IssueStatus as is', 'i.issueStatusId', 'is.id')
+        .where({ 'i.deviceId': deviceId })
+        .select(
+          'i.id',
+          'it.externalId as issueType',
+          'i.deviceId',
+          'is.externalId as issueStatus',
+          'i.data',
+          'i.dueOn'
+        )
+        .orderBy('id', 'ASC')
+      assert.equal(issues.length, 2)
+      assert.equal(issues[0].issueType, 'DeviceMaintenance')
+      assert.equal(issues[0].deviceId, deviceId)
+      assert.equal(issues[0].issueStatus, 'Active')
+      assert.equal(issues[1].issueType, 'DeviceNoResults')
+      assert.equal(issues[1].deviceId, deviceId)
+      assert.equal(issues[1].issueStatus, 'Active')
+      assert.approximately(+issues[0].dueOn, +maintenanceDueOn, 3000)
+      assert.deepEqual(JSON.parse(issues[0].data), { a: 1, hi: 'world' })
+
+      messageContext.deviceMaintenanceResolved(deviceId)
+      await waitForIdle()
+      ;[factDevice] = await knex('FactDeviceFlag').where({ deviceId })
+      assert.equal(factDevice.offline, 0)
+      assert.equal(factDevice.noResults, 1)
+      assert.equal(factDevice.maintenance, 0)
+      assert.isNotOk(factDevice.maintenanceDueOn)
+      issues = await knex('Issue as i')
+        .join('IssueType as it', 'i.issueTypeId', 'it.id')
+        .join('IssueStatus as is', 'i.issueStatusId', 'is.id')
+        .where({ 'i.deviceId': deviceId })
+        .select(
+          'i.id',
+          'it.externalId as issueType',
+          'i.deviceId',
+          'is.externalId as issueStatus'
+        )
+        .orderBy('id', 'ASC')
+      assert.equal(issues.length, 2)
+      assert.equal(issues[0].issueType, 'DeviceMaintenance')
+      assert.equal(issues[0].deviceId, deviceId)
+      assert.equal(issues[0].issueStatus, 'Resolved')
+      assert.equal(issues[1].issueType, 'DeviceNoResults')
+      assert.equal(issues[1].deviceId, deviceId)
+      assert.equal(issues[1].issueStatus, 'Active')
+
+      const resultPayload = {
+        startedOn: now,
+        data: { a: 'b' },
+        assay: { id: 'GenericRDT' },
+        instrument: { serial: '1234567' },
+        sample: { id: '76543789' },
+      }
+      await server
+        .post(devicePath)
+        .set('Authorization', deviceAuth)
+        .send({ result: resultPayload })
+        .then(res => {
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+        })
+      await waitForIdle()
+      ;[factDevice] = await knex('FactDeviceFlag').where({ deviceId })
+      assert.equal(factDevice.offline, 0)
+      assert.equal(factDevice.noResults, 0)
+      assert.equal(factDevice.maintenance, 0)
+      assert.isNotOk(factDevice.maintenanceDueOn)
+
+      issues = await knex('Issue as i')
+        .join('IssueType as it', 'i.issueTypeId', 'it.id')
+        .join('IssueStatus as is', 'i.issueStatusId', 'is.id')
+        .where({ 'i.deviceId': deviceId })
+        .select(
+          'i.id',
+          'it.externalId as issueType',
+          'i.deviceId',
+          'is.externalId as issueStatus'
+        )
+        .orderBy('id', 'ASC')
+      assert.equal(issues.length, 2)
+      assert.equal(issues[0].issueType, 'DeviceMaintenance')
+      assert.equal(issues[0].deviceId, deviceId)
+      assert.equal(issues[0].issueStatus, 'Resolved')
+      assert.equal(issues[1].issueType, 'DeviceNoResults')
+      assert.equal(issues[1].deviceId, deviceId)
+      assert.equal(issues[1].issueStatus, 'Resolved')
+    }))
+
+  it('should NOT create no result issue maintenance expected back < Y days', () =>
+    runTest(async knex => {}))
+
+  it('should create no result issue maintenance expected back < Y days but date passes expected back', () =>
+    runTest(async knex => {}))
 })
