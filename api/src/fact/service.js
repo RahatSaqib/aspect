@@ -585,9 +585,7 @@ async function getConsumptionRates(knex, siteId, consumableId) {
     .where('d.siteId', siteId)
     .where('ca.consumableId', consumableId)
     .groupBy('d.siteId', 'ca.consumableId')
-    .first(
-      ...fields
-    )
+    .first(...fields)
 
   _.map(daysToRate, days => {
     const totalItems = consumedTotals && consumedTotals[`total${days}`]
