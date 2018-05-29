@@ -162,10 +162,17 @@ async function mergeActionData(knex, issue, action) {
     if (action.options.dueOn != null) {
       issueUpdates.dueOn = new Date(action.options.dueOn)
     }
-    if (action.options.data != null) {
+
+    // include any keys in options in issue data that is not recorded elsewhere,
+    // with preference to keys in data plain object
+    const additionalOptions = _.merge(
+      _.omit(action.options, ['dueOn', 'data']),
+      action.options.data
+    )
+    if (!_.isEmpty(additionalOptions)) {
       const existingData = issue.data == null ? {} : JSON.parse(issue.data)
       issueUpdates.data = JSON.stringify(
-        _.merge(existingData, action.options.data)
+        _.merge(existingData, additionalOptions)
       )
     }
   }
