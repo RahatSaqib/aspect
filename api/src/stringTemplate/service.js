@@ -12,19 +12,7 @@ function getMustacheTokensInString(inputString) {
   return inputString.match(/{{\s*[\w.[\]\s]+\s*}}/g)
 }
 
-// See unit tests for examples
-const processStringTemplate = (
-  inputString,
-  site = {},
-  device = {},
-  result = {},
-  person = {}
-) => processUsingHandlebarsSyntax(inputString, { site, device, result, person })
-
-const mergeTemplateData = (inputString, data) => {
-  const { site, device, result, person } = data
-  return processStringTemplate(inputString, site, device, result, person)
-}
+const mergeTemplateData = processUsingHandlebarsSyntax
 
 function getBaseDataSource(data) {
   const d = data || {}
@@ -59,7 +47,6 @@ function numberOfDays(date) {
 module.exports = {
   processUsingHandlebarsSyntax,
   getMustacheTokensInString,
-  processStringTemplate,
   mergeTemplateData,
   getBaseDataSource,
 }

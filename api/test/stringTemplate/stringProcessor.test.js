@@ -1,8 +1,8 @@
 const { assert } = require('chai')
-const stringProcessor = require('../../src/notification/stringProcessor')
+const { mergeTemplateData } = require('../../src/stringTemplate/service')
 const { runTest } = require('../utils/generatorFunctionUtils')
 
-describe('notification/stringProcessor', () => {
+describe('stringTemplate/mergeTemplateData', () => {
   describe('process', () => {
     const sampleString =
       'Device in {{site.state}}, {{site.country}} is currently offline'
@@ -13,11 +13,9 @@ describe('notification/stringProcessor', () => {
       country: 'United States',
     }
     it('should replace matching words in the template string', () =>
-      runTest(stringProcessor.processStringTemplate, [sampleString, site])(
-        resultString => {
-          assert.deepEqual(resultString, expectedResult)
-        }
-      ))
+      runTest(mergeTemplateData, [sampleString, { site }])(resultString => {
+        assert.deepEqual(resultString, expectedResult)
+      }))
   })
 
   describe('process', () => {
@@ -31,10 +29,7 @@ describe('notification/stringProcessor', () => {
       },
     }
     it('should handle missing word replacements in input inputObject', () =>
-      runTest(stringProcessor.processStringTemplate, [
-        sampleString,
-        inputObject,
-      ])(resultString => {
+      runTest(mergeTemplateData, [sampleString, inputObject])(resultString => {
         assert.deepEqual(resultString, expectedResult)
       }))
   })
@@ -48,10 +43,7 @@ describe('notification/stringProcessor', () => {
       },
     }
     it('should handle missing value in the input object', () =>
-      runTest(stringProcessor.processStringTemplate, [
-        sampleString,
-        inputObject,
-      ])(resultString => {
+      runTest(mergeTemplateData, [sampleString, inputObject])(resultString => {
         assert.deepEqual(resultString, expectedResult)
       }))
   })
@@ -76,13 +68,10 @@ describe('notification/stringProcessor', () => {
     }
 
     it('should handle multiple objects in the input object', () =>
-      runTest(stringProcessor.processStringTemplate, [
-        sampleString,
-        site,
-        device,
-        result,
-      ])(resultString => {
-        assert.deepEqual(resultString, expectedResult)
-      }))
+      runTest(mergeTemplateData, [sampleString, { site, device, result }])(
+        resultString => {
+          assert.deepEqual(resultString, expectedResult)
+        }
+      ))
   })
 })
