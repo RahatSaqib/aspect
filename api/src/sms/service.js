@@ -1,9 +1,6 @@
 const { smsMessageReadyForSending, smsMessageSent } = require('./actions')
 const dictionary = require('../shared/dictionary')
-const {
-  getBaseDataSource,
-  mergeTemplateData,
-} = require('../stringTemplate/service')
+const { createSmsMessageFromTemplate } = require('../stringTemplate/service')
 
 // -----------------------------
 // onSmsMessageCreated - event handler for action SMS_MESSAGE_CREATED
@@ -23,29 +20,7 @@ function onSmsMessageCreated({ smsMessageId }, { messageContext }) {
 // prepareSmsMessageForSending
 // -----------------------------
 async function prepareSmsMessageForSending(context, knex, smsMessageId) {
-  const data = await knex('SmsMessage as m')
-    .innerJoin('SmsTemplate as tmpl', 'm.smsTemplateId', 'tmpl.id')
-    .innerJoin('Person as p', 'm.personId', 'p.id')
-    .leftJoin('Site as s', 'm.siteId', 's.id')
-    .leftJoin('Device as d', 'm.deviceId', 'd.id')
-    .leftJoin('Result as r', 'm.resultId', 'r.id')
-    .where({ 'm.id': smsMessageId })
-    .first(
-      'tmpl.message as messageTemplate',
-      'm.personId',
-      'm.siteId',
-      'm.deviceId',
-      'm.resultId',
-      's.name as siteName',
-      's.shortName as siteShortName',
-      'p.name as personName'
-    )
-
-  const { messageTemplate = '' } = data || {}
-
-  // merge template with data
-  const message = mergeTemplateData(messageTemplate, getBaseDataSource(data))
-
+  const message = await createSmsMessageFromTemplate(knex, smsMessageId)
   const messageStatusId = (await dictionary.messageStatusToId()).Pending
 
   // store generated sms message into the same record and set messageStatusId

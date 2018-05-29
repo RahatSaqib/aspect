@@ -1,8 +1,10 @@
 const { assert } = require('chai')
-const { mergeTemplateData } = require('../../src/stringTemplate/service')
+const {
+  processUsingHandlebarsSyntax,
+} = require('../../src/stringTemplate/service')
 const { runTest } = require('../utils/generatorFunctionUtils')
 
-describe('stringTemplate/mergeTemplateData', () => {
+describe('stringTemplate/processUsingHandlebarsSyntax', () => {
   describe('process', () => {
     const sampleString =
       'Device in {{site.state}}, {{site.country}} is currently offline'
@@ -13,9 +15,11 @@ describe('stringTemplate/mergeTemplateData', () => {
       country: 'United States',
     }
     it('should replace matching words in the template string', () =>
-      runTest(mergeTemplateData, [sampleString, { site }])(resultString => {
-        assert.deepEqual(resultString, expectedResult)
-      }))
+      runTest(processUsingHandlebarsSyntax, [sampleString, { site }])(
+        resultString => {
+          assert.deepEqual(resultString, expectedResult)
+        }
+      ))
   })
 
   describe('process', () => {
@@ -29,9 +33,11 @@ describe('stringTemplate/mergeTemplateData', () => {
       },
     }
     it('should handle missing word replacements in input inputObject', () =>
-      runTest(mergeTemplateData, [sampleString, inputObject])(resultString => {
-        assert.deepEqual(resultString, expectedResult)
-      }))
+      runTest(processUsingHandlebarsSyntax, [sampleString, inputObject])(
+        resultString => {
+          assert.deepEqual(resultString, expectedResult)
+        }
+      ))
   })
   describe('process', () => {
     const sampleString = 'Device {{device.shortName}} is offline'
@@ -43,9 +49,11 @@ describe('stringTemplate/mergeTemplateData', () => {
       },
     }
     it('should handle missing value in the input object', () =>
-      runTest(mergeTemplateData, [sampleString, inputObject])(resultString => {
-        assert.deepEqual(resultString, expectedResult)
-      }))
+      runTest(processUsingHandlebarsSyntax, [sampleString, inputObject])(
+        resultString => {
+          assert.deepEqual(resultString, expectedResult)
+        }
+      ))
   })
   describe('process', () => {
     const sampleString =
@@ -68,10 +76,11 @@ describe('stringTemplate/mergeTemplateData', () => {
     }
 
     it('should handle multiple objects in the input object', () =>
-      runTest(mergeTemplateData, [sampleString, { site, device, result }])(
-        resultString => {
-          assert.deepEqual(resultString, expectedResult)
-        }
-      ))
+      runTest(processUsingHandlebarsSyntax, [
+        sampleString,
+        { site, device, result },
+      ])(resultString => {
+        assert.deepEqual(resultString, expectedResult)
+      }))
   })
 })

@@ -1,9 +1,6 @@
 const { emailMessageReadyForSending, emailMessageSent } = require('./actions')
 const dictionary = require('../shared/dictionary')
-const {
-  getBaseDataSource,
-  mergeTemplateData,
-} = require('../stringTemplate/service')
+const { createEmailFieldsFromTemplate } = require('../stringTemplate/service')
 
 // -----------------------------
 // onEmailMessageCreated - event handler for action EMAIL_MESSAGE_CREATED
@@ -23,35 +20,10 @@ function onEmailMessageCreated({ emailMessageId }, { messageContext }) {
 // prepareEmailMessageForSending
 // -----------------------------
 async function prepareEmailMessageForSending(context, knex, emailMessageId) {
-  const data = await knex('EmailMessage as m')
-    .innerJoin('EmailTemplate as tmpl', 'm.emailTemplateId', 'tmpl.id')
-    .innerJoin('Person as p', 'm.personId', 'p.id')
-    .leftJoin('Site as s', 'm.siteId', 's.id')
-    .leftJoin('Device as d', 'm.deviceId', 'd.id')
-    .leftJoin('Result as r', 'm.resultId', 'r.id')
-    .where({ 'm.id': emailMessageId })
-    .first(
-      'tmpl.subject as subjectTemplate',
-      'tmpl.body as bodyTemplate',
-      'tmpl.htmlBody as htmlBodyTemplate',
-      'm.personId',
-      'm.siteId',
-      'm.deviceId',
-      'm.resultId',
-      's.name as siteName',
-      's.shortName as siteShortName',
-      'p.name as personName'
-    )
-
-  const { subjectTemplate = '', bodyTemplate = '', htmlBodyTemplate = '' } =
-    data || {}
-
-  // merge template with data
-  const ds = getBaseDataSource(data)
-  const subject = mergeTemplateData(subjectTemplate, ds)
-  const body = mergeTemplateData(bodyTemplate, ds)
-  const htmlBody = mergeTemplateData(htmlBodyTemplate, ds)
-
+  const { subject, body, htmlBody } = await createEmailFieldsFromTemplate(
+    knex,
+    emailMessageId
+  )
   const messageStatusId = (await dictionary.messageStatusToId()).Pending
 
   // store generated email message into the same record and set messageStatusId
