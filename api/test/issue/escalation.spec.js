@@ -10,10 +10,11 @@ const {
 } = require('../utils/mqUtils')
 const { escalateIssues } = require('../../src/issue/actions')
 const { types: deviceActionTypes } = require('../../src/device/actions')
+const { types: resultActionTypes } = require('../../src/result/actions')
 
 const { assert, expect } = chai
 
-describe('Issue Escalation', () => {
+describe.only('Issue Escalation', () => {
   function ensureMySqlBeforeNestedTablesOptions(knex) {
     assert.equal(
       knex.client.config.client,
@@ -961,6 +962,368 @@ describe('Issue Escalation', () => {
               )
 
               assert.equal(deviceNoResultsIssue.level, 1)
+            }))
+        })
+      })
+    })
+
+    describe('and ModulePowerError issues exist', () => {
+      let modulePowerErrorIssueType
+      let device1
+      let device1RegionalOfficer
+      let device2
+      let device2RegionalOfficer
+
+      before(async () =>
+        run(async knex => {
+          modulePowerErrorIssueType = await getIssueType(
+            knex,
+            'ModulePowerError'
+          )
+          const device1Details = await getDevice(knex, {
+            partnerId: partner.id,
+            countryAbbreviation,
+          })
+          device1 = device1Details.d
+          device1RegionalOfficer = device1Details.regionalOfficer
+
+          const device2Details = await getDevice(knex, {
+            partnerId: partner.id,
+            countryAbbreviation,
+            notIn: [device1.id],
+          })
+          device2 = device2Details.d
+          device2RegionalOfficer = device2Details.regionalOfficer
+        })
+      )
+
+      describe("which have been open for more than 30 days but haven't been escalated yet", () => {
+        const dateIssueRaised = subDays(new Date(), 31)
+        let device1ModulePowerErrorIssueId
+        let device2ModulePowerErrorIssueId
+
+        beforeEach(async () =>
+          run(async knex => {
+            device1ModulePowerErrorIssueId = await createAndTriggerIssue(
+              knex,
+              partner.id,
+              device1,
+              modulePowerErrorIssueType.id,
+              resultActionTypes.RESULT_MODULE_POWER_ERROR,
+              1,
+              dateIssueRaised
+            )
+            device2ModulePowerErrorIssueId = await createAndTriggerIssue(
+              knex,
+              partner.id,
+              device2,
+              modulePowerErrorIssueType.id,
+              resultActionTypes.RESULT_MODULE_POWER_ERROR,
+              1,
+              dateIssueRaised
+            )
+          })
+        )
+
+        afterEach(async () =>
+          run(async knex => {
+            await cleanUpIssues(knex, [
+              device1ModulePowerErrorIssueId,
+              device2ModulePowerErrorIssueId,
+            ])
+          })
+        )
+
+        describe('then ESCALATE_ISSUES is dispatched with no issue ID', () => {
+          it('all the issues should be escalated', () =>
+            runTestWithKnex(async knex => {
+              const waitForEscalateIssues = waitForAction(escalateIssues())
+              messageContext.escalateIssues()
+              await waitForEscalateIssues
+              await waitForIdle()
+
+              const device1ModulePowerErrorIssue = await getIssue(
+                knex,
+                device1ModulePowerErrorIssueId
+              )
+              const device2ModulePowerErrorIssue = await getIssue(
+                knex,
+                device2ModulePowerErrorIssueId
+              )
+
+              assert.equal(device1ModulePowerErrorIssue.level, 2)
+              assert.equal(device2ModulePowerErrorIssue.level, 2)
+            }))
+
+          it('notifications should be created for the level that the issue has been escalated to', () =>
+            runTestWithKnex(async knex => {
+              let notificationsForDevice1Issue = await getIssueNotifications(
+                knex,
+                device1ModulePowerErrorIssueId
+              )
+              assert.isEmpty(notificationsForDevice1Issue)
+              let notificationsForDevice2Issue = await getIssueNotifications(
+                knex,
+                device2ModulePowerErrorIssueId
+              )
+              assert.isEmpty(notificationsForDevice2Issue)
+
+              const waitForEscalateIssues = waitForAction(escalateIssues())
+              messageContext.escalateIssues()
+              await waitForEscalateIssues
+              await waitForIdle()
+
+              notificationsForDevice1Issue = await getIssueNotifications(
+                knex,
+                device1ModulePowerErrorIssueId
+              )
+              expect(notificationsForDevice1Issue).to.containSubset([
+                {
+                  NotificationType: {
+                    level: 2,
+                  },
+                  Notification: {
+                    personId: device1RegionalOfficer.id,
+                  },
+                },
+              ])
+
+              notificationsForDevice2Issue = await getIssueNotifications(
+                knex,
+                device2ModulePowerErrorIssueId
+              )
+              expect(notificationsForDevice2Issue).to.containSubset([
+                {
+                  NotificationType: {
+                    level: 2,
+                  },
+                  Notification: {
+                    personId: device2RegionalOfficer.id,
+                  },
+                },
+              ])
+            }))
+        })
+
+        describe("then ESCALATE_ISSUES is dispatched with one of the issue's ID", () => {
+          it('that one issue should be escalated', () =>
+            runTestWithKnex(async knex => {
+              const waitForEscalateIssues = waitForAction(
+                escalateIssues(device1ModulePowerErrorIssueId)
+              )
+              messageContext.escalateIssues(device1ModulePowerErrorIssueId)
+              await waitForEscalateIssues
+              await waitForIdle()
+
+              const device1ModulePowerErrorIssue = await getIssue(
+                knex,
+                device1ModulePowerErrorIssueId
+              )
+              const device2ModulePowerErrorIssue = await getIssue(
+                knex,
+                device2ModulePowerErrorIssueId
+              )
+
+              assert.equal(device1ModulePowerErrorIssue.level, 2)
+              assert.equal(device2ModulePowerErrorIssue.level, 1)
+            }))
+        })
+      })
+
+      describe('which have been escalated once, more than 30 days ago', () => {
+        const dateIssueRaised = subDays(new Date(), 61)
+        const dateIssueEscalated = subDays(new Date(), 31)
+        let device1ModulePowerErrorIssueId
+        let device2ModulePowerErrorIssueId
+
+        beforeEach(async () =>
+          run(async knex => {
+            const regionalOfficerJobFunction = await getJobJunction(
+              knex,
+              partner.id,
+              'Regional Officer'
+            )
+            // TODO - Add 'Ro Module Power' NotificationType
+            const roModulePowerErrorNotificationType = await getNotificationType(
+              knex,
+              partner.id,
+              modulePowerErrorIssueType.id,
+              regionalOfficerJobFunction.id,
+              2,
+              'RO Module Power'
+            )
+            device1ModulePowerErrorIssueId = await createAndTriggerIssue(
+              knex,
+              partner.id,
+              device1,
+              modulePowerErrorIssueType.id,
+              resultActionTypes.RESULT_MODULE_POWER_ERROR,
+              2,
+              dateIssueRaised
+            )
+            await createNotification(
+              knex,
+              roModulePowerErrorNotificationType.id,
+              device1ModulePowerErrorIssueId,
+              device1RegionalOfficer.id,
+              dateIssueEscalated
+            )
+            device2ModulePowerErrorIssueId = await createAndTriggerIssue(
+              knex,
+              partner.id,
+              device2,
+              modulePowerErrorIssueType.id,
+              resultActionTypes.RESULT_MODULE_POWER_ERROR,
+              2,
+              dateIssueRaised
+            )
+            await createNotification(
+              knex,
+              roModulePowerErrorNotificationType.id,
+              device2ModulePowerErrorIssueId,
+              device2RegionalOfficer.id,
+              dateIssueEscalated
+            )
+          })
+        )
+
+        afterEach(async () =>
+          run(async knex => {
+            await cleanUpIssues(knex, [
+              device1ModulePowerErrorIssueId,
+              device2ModulePowerErrorIssueId,
+            ])
+          })
+        )
+
+        describe('then ESCALATE_ISSUES is dispatched with no issue ID', () => {
+          it('all the issues should be escalated to the next level', () =>
+            runTestWithKnex(async knex => {
+              const waitForEscalateIssues = waitForAction(escalateIssues())
+              messageContext.escalateIssues()
+              await waitForEscalateIssues
+              await waitForIdle()
+
+              const device1ModulePowerErrorIssue = await getIssue(
+                knex,
+                device1ModulePowerErrorIssueId
+              )
+              const device2ModulePowerErrorIssue = await getIssue(
+                knex,
+                device2ModulePowerErrorIssueId
+              )
+
+              assert.equal(device1ModulePowerErrorIssue.level, 3)
+              assert.equal(device2ModulePowerErrorIssue.level, 3)
+            }))
+
+          it('a notifications should be created for the level that the issue has been escalated to', () =>
+            runTestWithKnex(async knex => {
+              let notificationsForDevice1Issue = await getIssueNotifications(
+                knex,
+                device1ModulePowerErrorIssueId
+              )
+              expect(notificationsForDevice1Issue).to.containSubset([
+                {
+                  NotificationType: {
+                    level: 2,
+                  },
+                  Notification: {
+                    personId: device1RegionalOfficer.id,
+                  },
+                },
+              ])
+              let notificationsForDevice2Issue = await getIssueNotifications(
+                knex,
+                device2ModulePowerErrorIssueId
+              )
+              expect(notificationsForDevice2Issue).to.containSubset([
+                {
+                  NotificationType: {
+                    level: 2,
+                  },
+                  Notification: {
+                    personId: device2RegionalOfficer.id,
+                  },
+                },
+              ])
+
+              const waitForEscalateIssues = waitForAction(escalateIssues())
+              messageContext.escalateIssues()
+              await waitForEscalateIssues
+              await waitForIdle()
+
+              notificationsForDevice1Issue = await getIssueNotifications(
+                knex,
+                device1ModulePowerErrorIssueId
+              )
+              expect(notificationsForDevice1Issue).to.containSubset([
+                {
+                  NotificationType: {
+                    level: 3,
+                  },
+                  Notification: {
+                    personId: device1RegionalOfficer.id,
+                  },
+                },
+              ])
+
+              notificationsForDevice2Issue = await getIssueNotifications(
+                knex,
+                device2ModulePowerErrorIssueId
+              )
+              expect(notificationsForDevice2Issue).to.containSubset([
+                {
+                  NotificationType: {
+                    level: 3,
+                  },
+                  Notification: {
+                    personId: device2RegionalOfficer.id,
+                  },
+                },
+              ])
+            }))
+        })
+      })
+
+      describe('which have been open for less than 7 days', () => {
+        const dateIssueRaised = subDays(new Date(), 6)
+        let modulePowerErrorIssueId
+
+        beforeEach(async () =>
+          run(async knex => {
+            modulePowerErrorIssueId = await createAndTriggerIssue(
+              knex,
+              partner.id,
+              device1,
+              modulePowerErrorIssueType.id,
+              resultActionTypes.RESULT_MODULE_POWER_ERROR,
+              1,
+              dateIssueRaised
+            )
+          })
+        )
+
+        afterEach(async () =>
+          run(async knex => {
+            await cleanUpIssues(knex, [modulePowerErrorIssueId])
+          })
+        )
+
+        describe('then ESCALATE_ISSUES is dispatched', () => {
+          it('the issues should NOT be escalated', () =>
+            runTestWithKnex(async knex => {
+              const waitForEscalateIssues = waitForAction(escalateIssues())
+              messageContext.escalateIssues()
+              await waitForEscalateIssues
+              await waitForIdle()
+
+              const modulePowerErrorIssue = await getIssue(
+                knex,
+                modulePowerErrorIssueId
+              )
+
+              assert.equal(modulePowerErrorIssue.level, 1)
             }))
         })
       })
