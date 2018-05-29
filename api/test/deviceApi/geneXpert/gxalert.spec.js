@@ -1728,13 +1728,7 @@ describe('Device API routes for GxAlert Device', () => {
             'it.externalId': 'DeviceMaintenance',
           })
           .orderByRaw('i.updatedOn DESC, i.id DESC')
-          .first(
-            'i.data',
-            'i.id',
-            'i.createdOn',
-            'i.updatedOn',
-            'is.externalId as status'
-          )
+          .first('i.data', 'i.id', 'i.createdOn', 'is.externalId as status')
         if (_.isEmpty(logEntry)) {
           return logEntry
         }
