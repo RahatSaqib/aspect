@@ -1,7 +1,9 @@
 const { alertMessageSent } = require('./actions')
 const dictionary = require('../shared/dictionary')
-const dataSources = require('../shared/dataSources')
-const stringProcessor = require('../notification/stringProcessor')
+const {
+  getBaseDataSource,
+  mergeTemplateData,
+} = require('../stringTemplate/service')
 
 function onAlertMessageCreated({ alertMessageId }, { messageContext }) {
   const context = messageContext.bindActionCreators({ alertMessageSent })
@@ -26,8 +28,8 @@ function onAlertMessageCreated({ alertMessageId }, { messageContext }) {
       )
 
     // merge template with data
-    const ds = dataSources.getBaseDataSource(data)
-    const message = stringProcessor.mergeTemplateData(data.messageTemplate, ds)
+    const ds = getBaseDataSource(data)
+    const message = mergeTemplateData(data.messageTemplate, ds)
     const messageStatusId = (await dictionary.messageStatusToId()).Sent
 
     await knex('AlertMessage')

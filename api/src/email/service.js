@@ -1,7 +1,9 @@
 const { emailMessageReadyForSending, emailMessageSent } = require('./actions')
 const dictionary = require('../shared/dictionary')
-const dataSources = require('../shared/dataSources')
-const stringProcessor = require('../notification/stringProcessor')
+const {
+  getBaseDataSource,
+  mergeTemplateData,
+} = require('../stringTemplate/service')
 
 // -----------------------------
 // onEmailMessageCreated - event handler for action EMAIL_MESSAGE_CREATED
@@ -45,10 +47,10 @@ async function prepareEmailMessageForSending(context, knex, emailMessageId) {
     data || {}
 
   // merge template with data
-  const ds = dataSources.getBaseDataSource(data)
-  const subject = stringProcessor.mergeTemplateData(subjectTemplate, ds)
-  const body = stringProcessor.mergeTemplateData(bodyTemplate, ds)
-  const htmlBody = stringProcessor.mergeTemplateData(htmlBodyTemplate, ds)
+  const ds = getBaseDataSource(data)
+  const subject = mergeTemplateData(subjectTemplate, ds)
+  const body = mergeTemplateData(bodyTemplate, ds)
+  const htmlBody = mergeTemplateData(htmlBodyTemplate, ds)
 
   const messageStatusId = (await dictionary.messageStatusToId()).Pending
 

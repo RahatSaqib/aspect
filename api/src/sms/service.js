@@ -1,7 +1,9 @@
 const { smsMessageReadyForSending, smsMessageSent } = require('./actions')
 const dictionary = require('../shared/dictionary')
-const dataSources = require('../shared/dataSources')
-const stringProcessor = require('../notification/stringProcessor')
+const {
+  getBaseDataSource,
+  mergeTemplateData,
+} = require('../stringTemplate/service')
 
 // -----------------------------
 // onSmsMessageCreated - event handler for action SMS_MESSAGE_CREATED
@@ -42,10 +44,7 @@ async function prepareSmsMessageForSending(context, knex, smsMessageId) {
   const { messageTemplate = '' } = data || {}
 
   // merge template with data
-  const message = stringProcessor.mergeTemplateData(
-    messageTemplate,
-    dataSources.getBaseDataSource(data)
-  )
+  const message = mergeTemplateData(messageTemplate, getBaseDataSource(data))
 
   const messageStatusId = (await dictionary.messageStatusToId()).Pending
 
