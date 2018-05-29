@@ -1,4 +1,5 @@
 const _ = require('lodash')
+const Promise = require('bluebird')
 
 async function transformMergeResultPayload(context) {
   const { knex, deviceType } = context
@@ -16,6 +17,7 @@ async function transformMergeResultPayload(context) {
   if (deviceType === 'CepheidGeneXpert') {
     parseNotes(transformedPayload)
     parsePatientId(transformedPayload)
+    await parseCustomFields(transformedPayload, knex)
   }
   return transformedPayload
 }
@@ -145,6 +147,156 @@ function parsePatientId(payload) {
     _.set(payload, 'patient.city', city)
     _.set(payload, 'patient.id', patientId.substr(0, indexOfFirstSeparator))
   }
+}
+
+async function parseCustomFields(payload, knex) {
+  const customFieldData = _.get(payload, 'data.customFieldData')
+  if (_.isEmpty(customFieldData)) {
+    return
+  }
+  const customFieldMappings = {
+    'PatientName (enter 99 if not on form)': 'patientName',
+    'Patient Age (enter 99 if not on form)': 'patientAge',
+    Sex: 'patientGender',
+    'Sample Type': 'sampleType',
+    'HIV Status': 'patientHivStatus',
+    'Microscopy Result': 'patientMicroscopyResult',
+    'Previous Treatment History': 'patientPreviouslyTreated',
+    'Other Reason for Test': 'otherReasonForTest',
+    'Patient Township': 'patientCity',
+    'Referral Center': 'referralCenter',
+    'Other Notes': 'otherNotes',
+  }
+  const customFieldValues = _.reduce(
+    _.filter(_.values(customFieldData), {
+      notAvailable: false,
+    }),
+    (customFieldValues, customFieldValue) => {
+      const mappedCustomFieldValue = {}
+      if (Object.keys(customFieldMappings).includes(customFieldValue.label)) {
+        mappedCustomFieldValue[customFieldMappings[customFieldValue.label]] =
+          customFieldValue.value
+      }
+      return _.assign({}, customFieldValues, mappedCustomFieldValue)
+    },
+    {}
+  )
+  if (customFieldValues.patientName) {
+    if (customFieldValues.patientName.trim().lastIndexOf(' ') > 0) {
+      _.set(
+        payload,
+        'patient.name',
+        customFieldValues.patientName
+          .trim()
+          .substr(0, customFieldValues.patientName.trim().lastIndexOf(' '))
+      )
+      _.set(
+        payload,
+        'patient.surname',
+        customFieldValues.patientName
+          .trim()
+          .substr(customFieldValues.patientName.trim().lastIndexOf(' ') + 1)
+      )
+    } else {
+      _.set(payload, 'patient.name', customFieldValues.patientName.trim())
+    }
+  }
+  if (customFieldValues.patientAge) {
+    const ageInYears = parseInt(customFieldValues.patientAge, 10)
+    if (ageInYears) {
+      _.set(payload, 'patient.age', ageInYears)
+    }
+  }
+  if (customFieldValues.patientGender) {
+    if (customFieldValues.patientGender === 'M') {
+      _.set(payload, 'patient.gender', 'Male')
+    } else if (customFieldValues.patientGender === 'F') {
+      _.set(payload, 'patient.gender', 'Female')
+    }
+  }
+  if (customFieldValues.patientHivStatus) {
+    if (customFieldValues.patientHivStatus === 'Positive') {
+      _.set(payload, 'patient.hivStatus', 'HIV Positive')
+    } else if (customFieldValues.patientHivStatus === 'Negative') {
+      _.set(payload, 'patient.hivStatus', 'HIV Negative')
+    } else if (customFieldValues.patientHivStatus === 'Unknown') {
+      _.set(payload, 'patient.hivStatus', 'HIV Unknown')
+    } else {
+      const existingHivStatus = _.get(payload, 'patient.hivStatus')
+      if (!existingHivStatus) {
+        _.set(payload, 'patient.hivStatus', customFieldValues.patientHivStatus)
+      }
+    }
+  }
+  if (customFieldValues.patientMicroscopyResult) {
+    if (customFieldValues.patientMicroscopyResult === 'Smear Positive') {
+      _.set(payload, 'patient.microscopyResult', 'Positive')
+    } else if (customFieldValues.patientMicroscopyResult === 'Smear Negative') {
+      _.set(payload, 'patient.microscopyResult', 'Negative')
+    } else {
+      const existingMicroscopyResult = _.get(
+        payload,
+        'patient.microscopyResult'
+      )
+      if (!existingMicroscopyResult) {
+        _.set(
+          payload,
+          'patient.microscopyResult',
+          customFieldValues.patientMicroscopyResult
+        )
+      }
+    }
+  }
+  if (customFieldValues.patientPreviouslyTreated) {
+    if (customFieldValues.patientPreviouslyTreated === 'Previously Treated') {
+      _.set(payload, 'patient.previouslyTreated', 'Yes')
+    } else if (
+      customFieldValues.patientPreviouslyTreated === 'No Previous Treatment'
+    ) {
+      _.set(payload, 'patient.previouslyTreated', 'No')
+    } else {
+      const existingPreviouslyTreated = _.get(
+        payload,
+        'patient.previouslyTreated'
+      )
+      if (!existingPreviouslyTreated) {
+        _.set(
+          payload,
+          'patient.previouslyTreated',
+          customFieldValues.patientPreviouslyTreated
+        )
+      }
+    }
+  }
+  if (customFieldValues.sampleType) {
+    const existingSampleType = _.get(payload, 'sample.type')
+    if (!existingSampleType) {
+      const sampleTypes = await knex('SampleType').pluck('externalId')
+      if (sampleTypes.includes(customFieldValues.sampleType)) {
+        _.set(payload, 'sample.type.id', customFieldValues.sampleType)
+      }
+    }
+  }
+  if (customFieldValues.patientCity) {
+    const existingPatientCity = _.get(payload, 'patient.city')
+    if (!existingPatientCity) {
+      _.set(payload, 'patient.city', customFieldValues.patientCity)
+    }
+  }
+  if (customFieldValues.otherReasonForTest) {
+    _.set(
+      payload,
+      'data.otherReasonForTest',
+      customFieldValues.otherReasonForTest
+    )
+  }
+  if (customFieldValues.referralCenter) {
+    _.set(payload, 'data.referralCenter', customFieldValues.referralCenter)
+  }
+  if (customFieldValues.otherNotes) {
+    _.set(payload, 'data.otherNotes', customFieldValues.otherNotes)
+  }
+  return Promise.resolve()
 }
 
 module.exports = transformMergeResultPayload

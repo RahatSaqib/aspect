@@ -30,6 +30,19 @@ describe('transformMergeResultPayload for Myanmar', () => {
             },
           }
         },
+        pluck() {
+          return Promise.resolve([
+            'DBS',
+            'Plasma',
+            'Sputum',
+            'Saliva',
+            'Blood',
+            'CSF',
+            'Effusion',
+            'Pus',
+            'Other',
+          ])
+        },
       }
     },
     deviceType: 'CepheidGeneXpert',
@@ -330,6 +343,546 @@ describe('transformMergeResultPayload for Myanmar', () => {
                 testReasonShortName: 'Dx',
               },
               notes: '30,F,No,HIv-,Dx,Pos,',
+            },
+          },
+        ]
+        await Promise.each(
+          expectations,
+          async ({ initialPayload, transformedPayload }) => {
+            initialisePluginAndPayload(initialPayload)
+            return runTest(transformMergeResultPayload, [
+              gxConnectPluginContext,
+            ])(actualTransformedPayload => {
+              expect(actualTransformedPayload).to.containSubset(
+                transformedPayload
+              )
+            })
+          }
+        )
+      })
+    })
+
+    describe('and the custom fields have been filled out', () => {
+      it('should set properties inside the payload', async () => {
+        const expectations = [
+          {
+            initialPayload: getPayload({
+              patient: {
+                id: 'Bryan Richards,Johannesburg',
+              },
+              data: {
+                customFieldData: {
+                  31: {
+                    notAvailable: false,
+                    value: 'Bradford Edmund Cunningham',
+                    label: 'PatientName (enter 99 if not on form)',
+                  },
+                  32: {
+                    notAvailable: false,
+                    value: '22',
+                    label: 'Patient Age (enter 99 if not on form)',
+                  },
+                  33: {
+                    notAvailable: false,
+                    value: 'M',
+                    label: 'Sex',
+                  },
+                  34: {
+                    notAvailable: false,
+                    value: 'Blood',
+                    label: 'Sample Type',
+                  },
+                  35: {
+                    notAvailable: false,
+                    value: 'Positive',
+                    label: 'HIV Status',
+                  },
+                  36: {
+                    notAvailable: false,
+                    value: 'Smear Negative',
+                    label: 'Microscopy Result',
+                  },
+                  37: {
+                    notAvailable: false,
+                    value: 'Previously Treated',
+                    label: 'Previous Treatment History',
+                  },
+                  38: {
+                    notAvailable: false,
+                    value: null,
+                    label: 'Other Reason for Test',
+                  },
+                  39: {
+                    notAvailable: false,
+                    value: 'Hkamti',
+                    label: 'Patient Township',
+                  },
+                  40: {
+                    notAvailable: false,
+                    value: 'ALN TBC',
+                    label: 'Referral Center',
+                  },
+                  41: {
+                    notAvailable: false,
+                    value: 'Not sure what to add here',
+                    label: 'Other Notes',
+                  },
+                },
+              },
+              notes: '34,M,Yes,HIV+,Neg,',
+            }),
+            transformedPayload: {
+              patient: {
+                id: 'Bryan Richards',
+                name: 'Bradford Edmund',
+                surname: 'Cunningham',
+                city: 'Johannesburg',
+                age: 22,
+                gender: 'Male',
+                previouslyTreated: 'Yes',
+                hivStatus: 'HIV Positive',
+                microscopyResult: 'Negative',
+              },
+              sample: {
+                type: {
+                  id: 'Blood',
+                },
+              },
+              data: {
+                otherNotes: 'Not sure what to add here',
+                referralCenter: 'ALN TBC',
+                customFieldData: {
+                  31: {
+                    notAvailable: false,
+                    value: 'Bradford Edmund Cunningham',
+                    label: 'PatientName (enter 99 if not on form)',
+                  },
+                  32: {
+                    notAvailable: false,
+                    value: '22',
+                    label: 'Patient Age (enter 99 if not on form)',
+                  },
+                  33: {
+                    notAvailable: false,
+                    value: 'M',
+                    label: 'Sex',
+                  },
+                  34: {
+                    notAvailable: false,
+                    value: 'Blood',
+                    label: 'Sample Type',
+                  },
+                  35: {
+                    notAvailable: false,
+                    value: 'Positive',
+                    label: 'HIV Status',
+                  },
+                  36: {
+                    notAvailable: false,
+                    value: 'Smear Negative',
+                    label: 'Microscopy Result',
+                  },
+                  37: {
+                    notAvailable: false,
+                    value: 'Previously Treated',
+                    label: 'Previous Treatment History',
+                  },
+                  38: {
+                    notAvailable: false,
+                    value: null,
+                    label: 'Other Reason for Test',
+                  },
+                  39: {
+                    notAvailable: false,
+                    value: 'Hkamti',
+                    label: 'Patient Township',
+                  },
+                  40: {
+                    notAvailable: false,
+                    value: 'ALN TBC',
+                    label: 'Referral Center',
+                  },
+                  41: {
+                    notAvailable: false,
+                    value: 'Not sure what to add here',
+                    label: 'Other Notes',
+                  },
+                },
+              },
+              notes: '34,M,Yes,HIV+,Neg,',
+            },
+          },
+          {
+            initialPayload: getPayload({
+              patient: {
+                id: 'Lee Nicaise',
+              },
+              data: {
+                customFieldData: {
+                  31: {
+                    notAvailable: false,
+                    value: 'LeeNicaise',
+                    label: 'PatientName (enter 99 if not on form)',
+                  },
+                  33: {
+                    notAvailable: false,
+                    value: 'F',
+                    label: 'Sex',
+                  },
+                  34: {
+                    notAvailable: false,
+                    value: 'Not on Form',
+                    label: 'Sample Type',
+                  },
+                  35: {
+                    notAvailable: false,
+                    value: 'Negative',
+                    label: 'HIV Status',
+                  },
+                  36: {
+                    notAvailable: false,
+                    value: 'Smear Positive',
+                    label: 'Microscopy Result',
+                  },
+                  37: {
+                    notAvailable: false,
+                    value: 'No Previous Treatment',
+                    label: 'Previous Treatment History',
+                  },
+                  38: {
+                    notAvailable: false,
+                    value: 'EPTB Suspect',
+                    label: 'Other Reason for Test',
+                  },
+                  39: {
+                    notAvailable: false,
+                    value: 'Cape Town',
+                    label: 'Patient Township',
+                  },
+                  40: {
+                    notAvailable: false,
+                    value: 'Some random value',
+                    label: 'Some Unknown Field',
+                  },
+                },
+              },
+              notes: '88,M,Yes,HIV+,Neg,',
+            }),
+            transformedPayload: {
+              patient: {
+                id: 'Lee Nicaise',
+                name: 'LeeNicaise',
+                city: 'Cape Town',
+                age: 88,
+                gender: 'Female',
+                previouslyTreated: 'No',
+                hivStatus: 'HIV Negative',
+                microscopyResult: 'Positive',
+              },
+              data: {
+                customFieldData: {
+                  31: {
+                    notAvailable: false,
+                    value: 'LeeNicaise',
+                    label: 'PatientName (enter 99 if not on form)',
+                  },
+                  33: {
+                    notAvailable: false,
+                    value: 'F',
+                    label: 'Sex',
+                  },
+                  34: {
+                    notAvailable: false,
+                    value: 'Not on Form',
+                    label: 'Sample Type',
+                  },
+                  35: {
+                    notAvailable: false,
+                    value: 'Negative',
+                    label: 'HIV Status',
+                  },
+                  36: {
+                    notAvailable: false,
+                    value: 'Smear Positive',
+                    label: 'Microscopy Result',
+                  },
+                  37: {
+                    notAvailable: false,
+                    value: 'No Previous Treatment',
+                    label: 'Previous Treatment History',
+                  },
+                  38: {
+                    notAvailable: false,
+                    value: 'EPTB Suspect',
+                    label: 'Other Reason for Test',
+                  },
+                  39: {
+                    notAvailable: false,
+                    value: 'Cape Town',
+                    label: 'Patient Township',
+                  },
+                  40: {
+                    notAvailable: false,
+                    value: 'Some random value',
+                    label: 'Some Unknown Field',
+                  },
+                },
+              },
+              notes: '88,M,Yes,HIV+,Neg,',
+            },
+          },
+          {
+            initialPayload: getPayload({
+              patient: {
+                id: 'James May,Brighton',
+              },
+              data: {
+                customFieldData: {
+                  31: {
+                    notAvailable: true,
+                    value: null,
+                    label: 'PatientName (enter 99 if not on form)',
+                  },
+                  32: {
+                    notAvailable: false,
+                    value: '0',
+                    label: 'Patient Age (enter 99 if not on form)',
+                  },
+                  34: {
+                    notAvailable: true,
+                    value: null,
+                    label: 'Sample Type',
+                  },
+                  35: {
+                    notAvailable: false,
+                    value: 'Unknown',
+                    label: 'HIV Status',
+                  },
+                  36: {
+                    notAvailable: true,
+                    value: null,
+                    label: 'Microscopy Result',
+                  },
+                  37: {
+                    notAvailable: true,
+                    value: null,
+                    label: 'Previous Treatment History',
+                  },
+                  38: {
+                    notAvailable: false,
+                    value: 'EPTB Suspect',
+                    label: 'Other Reason for Test',
+                  },
+                  39: {
+                    notAvailable: true,
+                    value: null,
+                    label: 'Patient Township',
+                  },
+                },
+              },
+              notes: '16,F,No,HIV?,Pos,',
+            }),
+            transformedPayload: {
+              patient: {
+                id: 'James May',
+                city: 'Brighton',
+                age: 16,
+                gender: 'Female',
+                previouslyTreated: 'No',
+                hivStatus: 'HIV Unknown',
+                microscopyResult: 'Positive',
+              },
+              data: {
+                customFieldData: {
+                  31: {
+                    notAvailable: true,
+                    value: null,
+                    label: 'PatientName (enter 99 if not on form)',
+                  },
+                  32: {
+                    notAvailable: false,
+                    value: '0',
+                    label: 'Patient Age (enter 99 if not on form)',
+                  },
+                  34: {
+                    notAvailable: true,
+                    value: null,
+                    label: 'Sample Type',
+                  },
+                  35: {
+                    notAvailable: false,
+                    value: 'Unknown',
+                    label: 'HIV Status',
+                  },
+                  36: {
+                    notAvailable: true,
+                    value: null,
+                    label: 'Microscopy Result',
+                  },
+                  37: {
+                    notAvailable: true,
+                    value: null,
+                    label: 'Previous Treatment History',
+                  },
+                  38: {
+                    notAvailable: false,
+                    value: 'EPTB Suspect',
+                    label: 'Other Reason for Test',
+                  },
+                  39: {
+                    notAvailable: true,
+                    value: null,
+                    label: 'Patient Township',
+                  },
+                },
+              },
+              notes: '16,F,No,HIV?,Pos,',
+            },
+          },
+          {
+            initialPayload: getPayload({
+              patient: {
+                id: 'Cher,Las Vegas',
+              },
+              sample: {
+                type: {
+                  id: 'Pus',
+                },
+              },
+              data: {
+                customFieldData: {
+                  34: {
+                    notAvailable: false,
+                    value: 'CSF',
+                    label: 'Sample Type',
+                  },
+                  35: {
+                    notAvailable: false,
+                    value: 'Not On Form',
+                    label: 'HIV Status',
+                  },
+                  36: {
+                    notAvailable: false,
+                    value: 'Off-site Microscopy',
+                    label: 'Microscopy Result',
+                  },
+                  37: {
+                    notAvailable: false,
+                    value: 'On Treatment',
+                    label: 'Previous Treatment History',
+                  },
+                },
+              },
+              notes: '119,F,',
+            }),
+            transformedPayload: {
+              patient: {
+                id: 'Cher',
+                city: 'Las Vegas',
+                age: 119,
+                gender: 'Female',
+                previouslyTreated: 'On Treatment',
+                hivStatus: 'Not On Form',
+                microscopyResult: 'Off-site Microscopy',
+              },
+              sample: {
+                type: {
+                  id: 'Pus',
+                },
+              },
+              data: {
+                customFieldData: {
+                  34: {
+                    notAvailable: false,
+                    value: 'CSF',
+                    label: 'Sample Type',
+                  },
+                  35: {
+                    notAvailable: false,
+                    value: 'Not On Form',
+                    label: 'HIV Status',
+                  },
+                  36: {
+                    notAvailable: false,
+                    value: 'Off-site Microscopy',
+                    label: 'Microscopy Result',
+                  },
+                  37: {
+                    notAvailable: false,
+                    value: 'On Treatment',
+                    label: 'Previous Treatment History',
+                  },
+                },
+              },
+              notes: '119,F,',
+            },
+          },
+          {
+            initialPayload: getPayload({
+              patient: {
+                id: 'Mike Myers,Boston',
+              },
+              data: {
+                customFieldData: {
+                  34: {
+                    notAvailable: false,
+                    value: 'CSF',
+                    label: 'Sample Type',
+                  },
+                  35: {
+                    notAvailable: false,
+                    value: 'Not On Form',
+                    label: 'HIV Status',
+                  },
+                  36: {
+                    notAvailable: false,
+                    value: 'Off-site Microscopy',
+                    label: 'Microscopy Result',
+                  },
+                  37: {
+                    notAvailable: false,
+                    value: 'On Treatment',
+                    label: 'Previous Treatment History',
+                  },
+                },
+              },
+              notes: '56,M,HIV?,Nd,Yes,',
+            }),
+            transformedPayload: {
+              patient: {
+                id: 'Mike Myers',
+                city: 'Boston',
+                age: 56,
+                gender: 'Male',
+                previouslyTreated: 'Yes',
+                hivStatus: 'HIV Unknown',
+                microscopyResult: 'Not Done',
+              },
+              data: {
+                customFieldData: {
+                  34: {
+                    notAvailable: false,
+                    value: 'CSF',
+                    label: 'Sample Type',
+                  },
+                  35: {
+                    notAvailable: false,
+                    value: 'Not On Form',
+                    label: 'HIV Status',
+                  },
+                  36: {
+                    notAvailable: false,
+                    value: 'Off-site Microscopy',
+                    label: 'Microscopy Result',
+                  },
+                  37: {
+                    notAvailable: false,
+                    value: 'On Treatment',
+                    label: 'Previous Treatment History',
+                  },
+                },
+              },
+              notes: '56,M,HIV?,Nd,Yes,',
             },
           },
         ]
