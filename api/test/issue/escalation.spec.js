@@ -1130,8 +1130,8 @@ describe('Issue Escalation', () => {
         })
       })
 
-      describe('which have been open for less than 7 days', () => {
-        const dateIssueRaised = subDays(new Date(), 6)
+      describe('which have been open for less than 30 days', () => {
+        const dateIssueRaised = subDays(new Date(), 29)
         let modulePowerErrorIssueId
 
         beforeEach(async () =>
