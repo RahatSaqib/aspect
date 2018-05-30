@@ -90,10 +90,12 @@ async function doSendSmsMessage(context, knex, smsMessageId) {
   // dispatch SMS_MESSAGE_SENT to MQ
   context.smsMessageSent(smsMessageId)
 }
+
 async function createSmsMessageFromTemplate(knex, smsMessageId) {
   const data = await knex('SmsMessage as m')
     .innerJoin('SmsTemplate as tmpl', 'm.smsTemplateId', 'tmpl.id')
-    .modify(addDataSourceToQuery, { message: 'm' })
+    .leftJoin('Notification as n', 'n.smsMessageId', 'm.id')
+    .modify(addDataSourceToQuery, { message: 'm', notification: 'n' })
     .where({ 'm.id': smsMessageId })
     .first('tmpl.message as messageTemplate')
   const { message } = processUsingDataSourceQuery(data, ['messageTemplate'])

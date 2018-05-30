@@ -108,14 +108,17 @@ function deviceOnline(deviceId) {
  * the Device API)
  *
  * deviceId is required.
+ * options:
+ *    lastResultOn: date of last result for device
  */
-function deviceNoResults(deviceId) {
+function deviceNoResults(deviceId, options) {
   if (deviceId == null) {
     throw new Error('Must specify deviceId for notify deviceNoResults')
   }
   return {
     type: types.DEVICE_NO_RESULTS,
     deviceId,
+    options,
   }
 }
 

@@ -99,7 +99,8 @@ async function doSendEmailMessage(context, knex, emailMessageId) {
 async function createEmailFieldsFromTemplate(knex, emailMessageId) {
   const data = await knex('EmailMessage as m')
     .innerJoin('EmailTemplate as tmpl', 'm.emailTemplateId', 'tmpl.id')
-    .modify(addDataSourceToQuery, { message: 'm' })
+    .leftJoin('Notification as n', 'n.emailMessageId', 'm.id')
+    .modify(addDataSourceToQuery, { message: 'm', notification: 'n' })
     .where({ 'm.id': emailMessageId })
     .first(
       'tmpl.subject as subjectTemplate',

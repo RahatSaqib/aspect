@@ -3821,7 +3821,8 @@ async function seed(knex) {
   const [deviceNoResultsAlertTemplateId] = await knex('AlertTemplate').insert(
     Object.assign(
       {
-        message: 'No testing for {{numberOfDays device.lastPingOn}} days.',
+        message:
+          'No testing for {{numberOfDays issue.data.lastResultOn}} days.',
       },
       auditFields
     )
@@ -3831,7 +3832,7 @@ async function seed(knex) {
     Object.assign(
       {
         message:
-          '{{site.name}} no testing for {{numberOfDays device.lastPingOn}} days.',
+          '{{site.name}} no testing for {{numberOfDays issue.data.lastResultOn}} days.',
       },
       auditFields
     )
@@ -3842,9 +3843,9 @@ async function seed(knex) {
       {
         subject: '{{site.name}} No Testing',
         body:
-          '{{site.name}} no testing {{numberOfDays device.lastPingOn}} days.',
+          '{{site.name}} no testing {{numberOfDays issue.data.lastResultOn}} days.',
         htmlBody:
-          '<em>{{site.name}}</em> no testing for {{numberOfDays device.lastPingOn}} days.',
+          '<em>{{site.name}}</em> no testing for {{numberOfDays issue.data.lastResultOn}} days.',
       },
       auditFields
     )
@@ -3853,8 +3854,7 @@ async function seed(knex) {
   const [deviceMaintenanceAlertTemplateId] = await knex('AlertTemplate').insert(
     Object.assign(
       {
-        message:
-          'Device Maintenance for {{numberOfDays device.lastPingOn}} days.',
+        message: 'Under Maintenance',
       },
       auditFields
     )
@@ -3863,8 +3863,7 @@ async function seed(knex) {
   const [deviceMaintenanceSmsTemplateId] = await knex('SmsTemplate').insert(
     Object.assign(
       {
-        message:
-          '{{site.name}} maintenance for {{numberOfDays device.lastPingOn}} days.',
+        message: '{{site.name}} under maintenance.',
       },
       auditFields
     )
@@ -3874,10 +3873,8 @@ async function seed(knex) {
     Object.assign(
       {
         subject: '{{site.name}} Maintenance',
-        body:
-          '{{site.name}} maintenance {{numberOfDays device.lastPingOn}} days.',
-        htmlBody:
-          '<em>{{site.name}}</em> maintenance for {{numberOfDays device.lastPingOn}} days.',
+        body: '{{site.name}} under maintenance.',
+        htmlBody: '<em>{{site.name}}</em> maintenance',
       },
       auditFields
     )

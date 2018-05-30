@@ -15,23 +15,30 @@ function getMustacheTokensInString(inputString) {
 function addDataSourceToQuery(qb, aliases) {
   // TODO generalize to other aliases and make joined tables and field names unique
   // similar to auth/constraints
-  const { message } = aliases
+  const { message, notification } = aliases
+
+  if (message != null) {
+    qb
+      .innerJoin('Person as p', `${message}.personId`, 'p.id')
+      .leftJoin('Site as s', `${message}.siteId`, 's.id')
+      .leftJoin('Device as d', `${message}.deviceId`, 'd.id')
+      .leftJoin('Result as r', `${message}.resultId`, 'r.id')
+      .select(
+        's.name as siteName',
+        's.shortName as siteShortName',
+        'p.name as personName',
+        'd.lastPingOn as deviceLastPingOn',
+        'd.lastSeenOn as deviceLastSeenOn'
+      )
+  }
+
+  if (notification != null) {
+    qb
+      .leftJoin('Issue as i', `${notification}.issueId`, 'i.id')
+      .select('i.dueOn as issueDueOn', 'i.data as issueData')
+  }
+
   return qb
-    .innerJoin('Person as p', `${message}.personId`, 'p.id')
-    .leftJoin('Site as s', `${message}.siteId`, 's.id')
-    .leftJoin('Device as d', `${message}.deviceId`, 'd.id')
-    .leftJoin('Result as r', `${message}.resultId`, 'r.id')
-    .select(
-      'm.personId',
-      'm.siteId',
-      'm.deviceId',
-      'm.resultId',
-      's.name as siteName',
-      's.shortName as siteShortName',
-      'p.name as personName',
-      'd.lastPingOn as deviceLastPingOn',
-      'd.lastSeenOn as deviceLastSeenOn'
-    )
 }
 
 function processUsingDataSourceQuery(data, templateFields) {
@@ -63,6 +70,10 @@ function getBaseDataSource(data) {
     },
     person: {
       name: d.personName,
+    },
+    issue: {
+      dueOn: d.issueDueOn,
+      data: d.issueData == null ? {} : JSON.parse(d.issueData),
     },
   }
 }

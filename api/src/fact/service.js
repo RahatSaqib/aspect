@@ -90,7 +90,7 @@ function onFactGenerateDeviceConnectivity({ deviceId }, { messageContext }) {
             (lastResultOn == null && deviceCreatedOn <= maxLastDateNoResult))
         ) {
           // OR no tests run > Y days
-          context.deviceNoResults(id)
+          context.deviceNoResults(id, { lastResultOn })
         } else if (
           maintenance === 1 &&
           maintenanceDueOn != null &&
@@ -98,14 +98,14 @@ function onFactGenerateDeviceConnectivity({ deviceId }, { messageContext }) {
           maintenanceDueOn >= maxMaintenanceDateNoResult
         ) {
           // OR inactive - expected back date > Z days
-          context.deviceNoResults(id)
+          context.deviceNoResults(id, { lastResultOn })
         } else if (
           maintenance === 1 &&
           maintenanceDueOn != null &&
           now > maintenanceDueOn
         ) {
           // OR date passes expected back date
-          context.deviceNoResults(id)
+          context.deviceNoResults(id, { lastResultOn })
         }
         return id // for lint
       }

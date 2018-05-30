@@ -27,7 +27,8 @@ function onAlertMessageCreated({ alertMessageId }, { messageContext }) {
 async function createAlertMessageFromTemplate(knex, alertMessageId) {
   const data = await knex('AlertMessage as m')
     .innerJoin('AlertTemplate as tmpl', 'm.alertTemplateId', 'tmpl.id')
-    .modify(addDataSourceToQuery, { message: 'm' })
+    .leftJoin('Notification as n', 'n.alertMessageId', 'm.id')
+    .modify(addDataSourceToQuery, { message: 'm', notification: 'n' })
     .where({ 'm.id': alertMessageId })
     .first('tmpl.message as messageTemplate')
   const { message } = processUsingDataSourceQuery(data, ['messageTemplate'])
