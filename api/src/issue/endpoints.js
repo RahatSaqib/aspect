@@ -49,6 +49,7 @@ const subscriptions = [
       RESULT_MODULE_PROCEDURAL_ERROR: onIssueEventTrigger(
         'ModuleProceduralError'
       ),
+      INVENTORY_REAGENT_HEALTH: onIssueEventTrigger('ReagentHealthError'),
       ESCALATE_ISSUES: onEscalateIssues(),
       RESULT_MACHINE_POWER_ERROR: onIssueEventTrigger('MachinePowerError'),
     },
