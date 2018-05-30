@@ -1,6 +1,9 @@
 const { emailMessageReadyForSending, emailMessageSent } = require('./actions')
 const dictionary = require('../shared/dictionary')
-const { createEmailFieldsFromTemplate } = require('../stringTemplate/service')
+const {
+  addDataSourceToQuery,
+  processUsingDataSourceQuery,
+} = require('../stringTemplate/service')
 
 // -----------------------------
 // onEmailMessageCreated - event handler for action EMAIL_MESSAGE_CREATED
@@ -91,6 +94,23 @@ async function doSendEmailMessage(context, knex, emailMessageId) {
 
   // dispatch EMAIL_MESSAGE_SENT to MQ
   context.emailMessageSent(emailMessageId)
+}
+
+async function createEmailFieldsFromTemplate(knex, emailMessageId) {
+  const data = await knex('EmailMessage as m')
+    .innerJoin('EmailTemplate as tmpl', 'm.emailTemplateId', 'tmpl.id')
+    .modify(addDataSourceToQuery, { message: 'm' })
+    .where({ 'm.id': emailMessageId })
+    .first(
+      'tmpl.subject as subjectTemplate',
+      'tmpl.body as bodyTemplate',
+      'tmpl.htmlBody as htmlBodyTemplate'
+    )
+  return processUsingDataSourceQuery(data, [
+    'subjectTemplate',
+    'bodyTemplate',
+    'htmlBodyTemplate',
+  ])
 }
 
 module.exports = {

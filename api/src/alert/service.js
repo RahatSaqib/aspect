@@ -1,6 +1,9 @@
 const { alertMessageSent } = require('./actions')
 const dictionary = require('../shared/dictionary')
-const { createAlertMessageFromTemplate } = require('../stringTemplate/service')
+const {
+  addDataSourceToQuery,
+  processUsingDataSourceQuery,
+} = require('../stringTemplate/service')
 
 function onAlertMessageCreated({ alertMessageId }, { messageContext }) {
   const context = messageContext.bindActionCreators({ alertMessageSent })
@@ -19,6 +22,16 @@ function onAlertMessageCreated({ alertMessageId }, { messageContext }) {
 
     context.alertMessageSent(alertMessageId)
   })
+}
+
+async function createAlertMessageFromTemplate(knex, alertMessageId) {
+  const data = await knex('AlertMessage as m')
+    .innerJoin('AlertTemplate as tmpl', 'm.alertTemplateId', 'tmpl.id')
+    .modify(addDataSourceToQuery, { message: 'm' })
+    .where({ 'm.id': alertMessageId })
+    .first('tmpl.message as messageTemplate')
+  const { message } = processUsingDataSourceQuery(data, ['messageTemplate'])
+  return message
 }
 
 module.exports = {
