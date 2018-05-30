@@ -106,6 +106,7 @@ function getResultCategories(payload) {
     const payloadResultText = _.get(payload, 'data.resultText')
     if (payloadResultText) {
       const resultTextValues = _.compact(payloadResultText.split('|'))
+      const assayId = _.get(payload, 'assay.id')
       if (resultTextValues.length > 0) {
         const result1Text = resultTextValues[0]
           .toLowerCase()
@@ -154,8 +155,10 @@ function getResultCategories(payload) {
           erro: 'Error',
           ошибка: 'Error',
           erreur: 'Error',
-          'trace detected': 'Detected',
           'null null': 'Success',
+        }
+        if (assayId === 'GxMtbRifUltra') {
+          result1CategoryMapping['trace detected'] = 'Trace Detected'
         }
         if (result1CategoryMapping[result1Text]) {
           payloadCategory = [{ id: result1CategoryMapping[result1Text] }]
@@ -163,10 +166,15 @@ function getResultCategories(payload) {
       }
       const result1 = _.isEmpty(payloadCategory) ? null : payloadCategory[0].id
       const canHaveSecondResult =
-        ['Detected', 'Error', 'Invalid', 'NoResult', 'Success'].includes(
-          result1
-        ) ||
-        !_.includes(['GxMtbRif', 'GxMtbRifUltra'], _.get(payload, 'assay.id'))
+        [
+          'Detected',
+          'Trace Detected',
+          'Error',
+          'Invalid',
+          'NoResult',
+          'Success',
+        ].includes(result1) ||
+        !_.includes(['GxMtbRif', 'GxMtbRifUltra'], assayId)
 
       if (resultTextValues.length > 1) {
         const result2Text = resultTextValues[1]
