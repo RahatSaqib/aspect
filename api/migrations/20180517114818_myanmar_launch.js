@@ -1,7 +1,6 @@
 module.exports = require('../src/db').migration(up, down)
 
 async function up(knex) {
-  // TODO do we need to create issues for existing logs?
   await knex.schema.dropTableIfExists('DeviceMaintenanceStatusLog')
   await knex.schema.dropTableIfExists('DeviceMaintenanceStatus')
 
