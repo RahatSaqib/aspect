@@ -1,3 +1,4 @@
+const { distanceInWordsStrict } = require('date-fns')
 const handlebars = require('handlebars')
 
 handlebars.registerHelper('numberOfDays', numberOfDays)
@@ -83,7 +84,7 @@ function numberOfDays(date) {
   if (date == null) {
     return ''
   }
-  return new Date(date).toLocaleString()
+  return distanceInWordsStrict(new Date(), date, { unit: 'd' })
 }
 
 module.exports = {

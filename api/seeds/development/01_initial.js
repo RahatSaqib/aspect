@@ -3682,8 +3682,7 @@ async function seed(knex) {
   const [deviceOfflineAlertTemplateId] = await knex('AlertTemplate').insert(
     Object.assign(
       {
-        message:
-          'Cannot reach network for {{numberOfDays device.lastPingOn}} days',
+        message: 'Cannot reach network for {{numberOfDays device.lastPingOn}}',
       },
       auditFields
     )
@@ -3693,7 +3692,7 @@ async function seed(knex) {
     Object.assign(
       {
         message:
-          '{{site.name}} cannot reach network for {{numberOfDays device.lastPingOn}} days',
+          '{{site.name}} cannot reach network for {{numberOfDays device.lastPingOn}}',
       },
       auditFields
     )
@@ -3703,11 +3702,11 @@ async function seed(knex) {
     Object.assign(
       {
         subject:
-          '{{site.name}} cannot reach network for {{numberOfDays device.lastPingOn}} days',
+          '{{site.name}} cannot reach network for {{numberOfDays device.lastPingOn}}',
         body:
-          '{{site.name}} cannot reach network for {{numberOfDays device.lastPingOn}} days',
+          '{{site.name}} cannot reach network for {{numberOfDays device.lastPingOn}}',
         htmlBody:
-          '<em>{{site.name}}</em> cannot reach network for {{numberOfDays device.lastPingOn}} days',
+          '<em>{{site.name}}</em> cannot reach network for {{numberOfDays device.lastPingOn}}',
       },
       auditFields
     )
@@ -3821,8 +3820,7 @@ async function seed(knex) {
   const [deviceNoResultsAlertTemplateId] = await knex('AlertTemplate').insert(
     Object.assign(
       {
-        message:
-          'No testing for {{numberOfDays issue.data.lastResultOn}} days.',
+        message: 'No testing for {{numberOfDays issue.data.lastResultOn}}',
       },
       auditFields
     )
@@ -3832,7 +3830,7 @@ async function seed(knex) {
     Object.assign(
       {
         message:
-          '{{site.name}} no testing for {{numberOfDays issue.data.lastResultOn}} days.',
+          '{{site.name}} no testing for {{numberOfDays issue.data.lastResultOn}}',
       },
       auditFields
     )
@@ -3843,9 +3841,9 @@ async function seed(knex) {
       {
         subject: '{{site.name}} No Testing',
         body:
-          '{{site.name}} no testing {{numberOfDays issue.data.lastResultOn}} days.',
+          '{{site.name}} no testing {{numberOfDays issue.data.lastResultOn}}',
         htmlBody:
-          '<em>{{site.name}}</em> no testing for {{numberOfDays issue.data.lastResultOn}} days.',
+          '<em>{{site.name}}</em> no testing for {{numberOfDays issue.data.lastResultOn}}',
       },
       auditFields
     )
