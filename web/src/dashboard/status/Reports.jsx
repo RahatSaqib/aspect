@@ -2,10 +2,10 @@ import classnames from 'classnames/bind'
 import _ from 'lodash'
 import React from 'react'
 import { connect } from 'react-redux'
-import { compose, pure, withProps } from 'recompose'
+import { compose, pure, withProps, withStateHandlers } from 'recompose'
 import { Card } from 'react-toolbox/lib/card'
 import { Button } from 'react-toolbox/lib/button'
-import config from '../../config'
+import { Dialog } from 'react-toolbox/lib/dialog'
 
 import Title from './Title'
 import Icon from '../../components/shared/icon/Icon'
@@ -28,7 +28,17 @@ const enhance = compose(
     return {
       showHigherLevel: _.isEmpty(filtersParams.get('siteId')),
     }
-  })
+  }),
+  withStateHandlers(
+    () => ({
+      isDemoDialogOpen: false,
+    }),
+    {
+      handleToggleDialog: ({ isDemoDialogOpen }) => () => ({
+        isDemoDialogOpen: !isDemoDialogOpen,
+      }),
+    }
+  )
 )
 
 export const Reports = ({
@@ -37,6 +47,8 @@ export const Reports = ({
   // --- injected by recompose ---
   showHigherLevel,
   userFeatures,
+  isDemoDialogOpen,
+  handleToggleDialog,
 }) =>
   (showHigherLevel &&
     isEnabledFeature(userFeatures, ['siteFilterDashboard']) && (
@@ -52,44 +64,50 @@ export const Reports = ({
             }
           />
         </div>
-
         <div className={cssClasses('ReportsContainer')}>
           <Button
             className={cssClasses('ReportsContainer__Button')}
             inverse
-            href={`${config.aspectApi}/report/RifReport.xlsx`}
+            onClick={handleToggleDialog}
           >
             Rif Report
           </Button>
           <Button
             className={cssClasses('ReportsContainer__Button')}
             inverse
-            href={`${config.aspectApi}/report/MtbPlusReport.xlsx`}
+            onClick={handleToggleDialog}
           >
             MTB+ Report
           </Button>
           <Button
             className={cssClasses('ReportsContainer__Button')}
             inverse
-            href={`${config.aspectApi}/report/TiReport.xlsx`}
+            onClick={handleToggleDialog}
           >
             TI Report
           </Button>
           <Button
             className={cssClasses('ReportsContainer__Button')}
             inverse
-            href={`${config.aspectApi}/report/QuarterlyReport.xlsx`}
+            onClick={handleToggleDialog}
           >
             Quarterly Report
           </Button>
           <Button
             className={cssClasses('ReportsContainer__Button')}
             inverse
-            href={`${config.aspectApi}/report/FailedTestReport.xlsx`}
+            onClick={handleToggleDialog}
           >
             Failed Test Report
           </Button>
         </div>
+        <Dialog
+          active={isDemoDialogOpen}
+          onEscKeyDown={handleToggleDialog}
+          onOverlayClick={handleToggleDialog}
+        >
+          Regional Officer reports not implemented yet
+        </Dialog>
       </Card>
     )) || (
     <Card className={className}>
@@ -108,18 +126,25 @@ export const Reports = ({
         <Button
           className={cssClasses('ReportsContainer__Button')}
           inverse
-          href={`${config.aspectApi}/report/InventoryReport.xlsx`}
+          onClick={handleToggleDialog}
         >
           Inventory Report
         </Button>
         <Button
           className={cssClasses('ReportsContainer__Button')}
           inverse
-          href={`${config.aspectApi}/report/QuarterlyReport.xlsx`}
+          onClick={handleToggleDialog}
         >
           Quarterly Report
         </Button>
       </div>
+      <Dialog
+        active={isDemoDialogOpen}
+        onEscKeyDown={handleToggleDialog}
+        onOverlayClick={handleToggleDialog}
+      >
+        Lab User reports not implemented yet
+      </Dialog>
     </Card>
   )
 
