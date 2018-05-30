@@ -2449,6 +2449,11 @@ async function seed(knex) {
       i18nKey: 'sampleTypePus',
       externalId: 'Pus',
     },
+    {
+      name: 'Gastric Lavage',
+      i18nKey: 'sampleTypeGastricLavage',
+      externalId: 'Gastric Lavage',
+    },
   ])
 
   // some TB samples:

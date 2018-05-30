@@ -40,6 +40,7 @@ describe('transformMergeResultPayload for Myanmar', () => {
             'CSF',
             'Effusion',
             'Pus',
+            'Gastric Lavage',
             'Other',
           ])
         },
