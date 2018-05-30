@@ -1,3 +1,5 @@
+import React from 'react'
+import classnames from 'classnames/bind'
 import Immutable from 'immutable'
 import { compose, lifecycle, withHandlers, withProps } from 'recompose'
 import { connect } from 'react-redux'
@@ -7,6 +9,8 @@ import StyledDropdown from '../../components/themedReactToolbox/StyledDropdown'
 import { fetchSitesForSelectList } from '../../site/SiteRedux'
 import { mergeToFiltersParams } from '../../filter/utils'
 import requirePermissions from '../../components/shared/requirePermissions'
+
+const cssClasses = classnames.bind(require('./BrowseSiteDropdown.css'))
 
 const messages = defineMessages({
   allSites: {
@@ -52,6 +56,8 @@ const enhance = compose(
 
     return {
       theme,
+      isSingleSite:
+        sitesSelectList.items.size === 1 && !sitesSelectList.stateName,
       source: sitesSelectList.items
         .map(item => ({
           value: item.get('id'),
@@ -75,4 +81,12 @@ const enhance = compose(
   })
 )
 
-export default enhance(StyledDropdown)
+const SiteDropdown = ({ isSingleSite, source, ...restProps }) =>
+  source.length > 1 &&
+  (isSingleSite ? (
+    <div className={cssClasses('SiteDropdown__Label')}>{source[1].label}</div>
+  ) : (
+    <StyledDropdown source={source} {...restProps} />
+  ))
+
+export default enhance(SiteDropdown)

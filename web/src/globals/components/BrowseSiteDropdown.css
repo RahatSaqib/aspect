@@ -1,0 +1,8 @@
+@import "../../globals/variables.css";
+
+.SiteDropdown__Label {
+  line-height: 20px;
+  font-size: var(--aspect-font-size-md);
+  font-weight: var(--lato-font-weight-bold);
+  color: var(--aspect-color-chill-blue-1);
+}
