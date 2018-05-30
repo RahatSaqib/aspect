@@ -19,9 +19,8 @@ async function createSmsMessageFromTemplate(knex, smsMessageId) {
     .where({ 'm.id': smsMessageId })
     .first('tmpl.message as messageTemplate')
 
-  // merge template with data
-  const { messageTemplate = '' } = data || {}
-  return processUsingHandlebarsSyntax(messageTemplate, getBaseDataSource(data))
+  const { message } = processUsingDataSourceQuery(data, ['messageTemplate'])
+  return message
 }
 
 async function createAlertMessageFromTemplate(knex, alertMessageId) {
@@ -30,10 +29,8 @@ async function createAlertMessageFromTemplate(knex, alertMessageId) {
     .modify(addDataSourceToQuery, { message: 'm' })
     .where({ 'm.id': alertMessageId })
     .first('tmpl.message as messageTemplate')
-
-  // merge template with data
-  const { messageTemplate = '' } = data || {}
-  return processUsingHandlebarsSyntax(messageTemplate, getBaseDataSource(data))
+  const { message } = processUsingDataSourceQuery(data, ['messageTemplate'])
+  return message
 }
 
 async function createEmailFieldsFromTemplate(knex, emailMessageId) {
@@ -46,17 +43,11 @@ async function createEmailFieldsFromTemplate(knex, emailMessageId) {
       'tmpl.body as bodyTemplate',
       'tmpl.htmlBody as htmlBodyTemplate'
     )
-
-  const { subjectTemplate = '', bodyTemplate = '', htmlBodyTemplate = '' } =
-    data || {}
-
-  // merge template with data
-  const ds = getBaseDataSource(data)
-  const subject = processUsingHandlebarsSyntax(subjectTemplate, ds)
-  const body = processUsingHandlebarsSyntax(bodyTemplate, ds)
-  const htmlBody = processUsingHandlebarsSyntax(htmlBodyTemplate, ds)
-
-  return { subject, body, htmlBody }
+  return processUsingDataSourceQuery(data, [
+    'subjectTemplate',
+    'bodyTemplate',
+    'htmlBodyTemplate',
+  ])
 }
 
 function addDataSourceToQuery(qb, aliases) {
@@ -77,6 +68,16 @@ function addDataSourceToQuery(qb, aliases) {
       's.shortName as siteShortName',
       'p.name as personName'
     )
+}
+
+function processUsingDataSourceQuery(data, templateFields) {
+  const ds = getBaseDataSource(data)
+  return templateFields.reduce((memo, field) => {
+    const template = (data && data[field]) || ''
+    const fieldName = field.replace(/template/i, '')
+    memo[fieldName] = processUsingHandlebarsSyntax(template, ds)
+    return memo
+  }, {})
 }
 
 function getBaseDataSource(data) {
