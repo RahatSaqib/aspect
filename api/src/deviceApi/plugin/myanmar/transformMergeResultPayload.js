@@ -163,7 +163,6 @@ async function parseCustomFields(payload, knex) {
     'Microscopy Result': 'patientMicroscopyResult',
     'Previous Treatment History': 'patientPreviouslyTreated',
     'Other Reason for Test': 'otherReasonForTest',
-    'Patient Township': 'patientCity',
     'Referral Center': 'referralCenter',
     'Other Notes': 'otherNotes',
   }
@@ -275,12 +274,6 @@ async function parseCustomFields(payload, knex) {
       if (sampleTypes.includes(customFieldValues.sampleType)) {
         _.set(payload, 'sample.type.id', customFieldValues.sampleType)
       }
-    }
-  }
-  if (customFieldValues.patientCity) {
-    const existingPatientCity = _.get(payload, 'patient.city')
-    if (!existingPatientCity) {
-      _.set(payload, 'patient.city', customFieldValues.patientCity)
     }
   }
   if (customFieldValues.otherReasonForTest) {
