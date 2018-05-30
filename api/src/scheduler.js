@@ -7,7 +7,6 @@ const {
 const { escalateIssues } = require('./issue/actions')
 
 function startScheduler(queue) {
-  if (true) return
   // run hourly tasks on startup and cron every hour
   const dispatcher = createActionDispatcher(queue, {
     factGenerateResultCounts,
