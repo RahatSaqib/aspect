@@ -80,4 +80,17 @@ async function seed(knex) {
       updatedOn: now,
     },
   ])
+
+  const { id: jobFunctionIdLabUser } = await knex('JobFunction')
+    .where({ name: 'Lab User', partnerId })
+    .first('id')
+
+  const { id: featureIdSiteFilterDashboard } = await knex('Feature')
+    .where({ module: 'siteFilterDashboard' })
+    .first('id')
+
+  await knex('JobFunctionFeature').insert({
+    jobFunctionId: jobFunctionIdLabUser,
+    featureId: featureIdSiteFilterDashboard,
+  })
 }
