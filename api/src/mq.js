@@ -171,6 +171,12 @@ class MessageQueue {
   async waitForAction(predicate, timeout = null) {
     await this.subscribeEmitActions()
     return new Promise((resolve, reject) => {
+      if (_.isPlainObject(predicate)) {
+        // Only constrain on values that are defined
+        // This allows action creator with optional
+        // values to pass iteratee test
+        predicate = _.omitBy(predicate, _.isUndefined)
+      }
       const check = _.iteratee(predicate)
       const checkedListener = action => {
         if (check(action)) {

@@ -382,18 +382,6 @@ async function seed(knex) {
     token: 'decommissioned',
   })
 
-  // DeviceMaintenanceStatus
-  await knex('DeviceMaintenanceStatus').insert({
-    name: 'Online',
-    i18nKey: 'deviceMaintenanceStatusOnline',
-    token: 'online',
-  })
-  await knex('DeviceMaintenanceStatus').insert({
-    name: 'Offline',
-    i18nKey: 'deviceMaintenanceStatusOffline',
-    token: 'offline',
-  })
-
   // Result source
   const [resultSourceDiagnosticId] = await knex('ResultSource').insert({
     name: 'Diagnostic Device',
@@ -3856,6 +3844,36 @@ async function seed(knex) {
     )
   )
 
+  const [deviceMaintenanceAlertTemplateId] = await knex('AlertTemplate').insert(
+    Object.assign(
+      {
+        message: 'Device Maintenance for {{numberOfDays}} days.',
+      },
+      auditFields
+    )
+  )
+
+  const [deviceMaintenanceSmsTemplateId] = await knex('SmsTemplate').insert(
+    Object.assign(
+      {
+        message: '{{site.name}} maintenance for {{numberOfDays}} days.',
+      },
+      auditFields
+    )
+  )
+
+  const [deviceMaintenanceEmailTemplateId] = await knex('EmailTemplate').insert(
+    Object.assign(
+      {
+        subject: '{{site.name}} Maintenance',
+        body: '{{site.name}} maintenance {{numberOfDays}} days.',
+        htmlBody:
+          '<em>{{site.name}}</em> maintenance for {{numberOfDays}} days.',
+      },
+      auditFields
+    )
+  )
+
   // Machine temperature error messages
   const [machineTemperatureErrorAlertTemplateId] = await knex(
     'AlertTemplate'
@@ -4101,6 +4119,13 @@ async function seed(knex) {
     emailTemplateId: deviceNoResultsEmailTemplateId,
   })
 
+  const [deviceMaintenanceMessageTypeId] = await knex('MessageType').insert({
+    messageSeverityId: messageSeverities.Recommendation.id,
+    alertTemplateId: deviceMaintenanceAlertTemplateId,
+    smsTemplateId: deviceMaintenanceSmsTemplateId,
+    emailTemplateId: deviceMaintenanceEmailTemplateId,
+  })
+
   const [moduleFailureErrorTypeId] = await knex('MessageType').insert({
     messageSeverityId: messageSeverities.Alert.id,
     alertTemplateId: moduleFailureErrorAlertTemplateId,
@@ -4246,6 +4271,13 @@ async function seed(knex) {
       i18nKey: 'issueStatusDeviceNoResults',
       issueCategoryId: issueCategories.ConnectivityHealth.id,
       defaultMessageTypeId: deviceNoResultsMessageTypeId,
+    },
+    {
+      name: 'Device Maintenance',
+      externalId: 'DeviceMaintenance',
+      i18nKey: 'issueTypeDeviceMaintenance',
+      issueCategoryId: issueCategories.DeviceHealth.id,
+      defaultMessageTypeId: deviceMaintenanceMessageTypeId,
     },
     {
       name: 'Module Failure Error',

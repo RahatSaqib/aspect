@@ -199,8 +199,6 @@ async function createNewDevice(
     createdBy: null,
   })
 
-  // add device into FactDeviceFlag
-  await knex('FactDeviceFlag').insert({ deviceId, updatedOn: now })
   const device = await knex('Device as d')
     .join('DeviceStatus as ds', 'd.deviceStatusId', 'ds.id')
     .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')

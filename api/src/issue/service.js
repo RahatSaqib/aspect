@@ -1,3 +1,6 @@
+const _ = require('lodash')
+const Boom = require('boom')
+
 const {
   issueCreated,
   issueTriggered,
@@ -5,7 +8,6 @@ const {
   issueResolved,
 } = require('./actions')
 const { getUser } = require('../auth/service')
-const Boom = require('boom')
 
 function onIssueEventTrigger(issueType) {
   return async (action, { messageContext: context }) => {
@@ -16,7 +18,7 @@ function onIssueEventTrigger(issueType) {
 
       let issue = null
       if (openIssue != null) {
-        issue = openIssue
+        issue = await mergeActionData(knex, openIssue, action)
       } else {
         issue = await createNewIssue(knex, issueType, action)
         context.issueCreated(issue.id)
@@ -47,6 +49,7 @@ function onIssueEventResolve(issueType) {
           .where({ id: issue.id })
           .update({
             issueStatusId: await getId(knex, 'IssueStatus', 'Resolved'),
+            updatedOn: now,
           })
         context.issueResolved(issue.id)
         await knex('IssueEvent').insert({
@@ -78,7 +81,7 @@ async function findOpenIssue(knex, issueType, action) {
     findOpenIssue.where({ 'i.partnerId': action.partnerId })
   }
 
-  return findOpenIssue.first('i.id')
+  return findOpenIssue.first('i.id', 'i.data')
 }
 
 async function createNewIssue(knex, issueType, action) {
@@ -131,6 +134,15 @@ async function createNewIssue(knex, issueType, action) {
     issue.partnerId = action.partnerId
   }
 
+  if (action.options) {
+    if (action.options.dueOn != null) {
+      issue.dueOn = new Date(action.options.dueOn)
+    }
+    if (action.options.data != null) {
+      issue.data = JSON.stringify(action.options.data)
+    }
+  }
+
   const [issueId] = await knex('Issue').insert(issue)
   issue.id = issueId
 
@@ -142,6 +154,29 @@ async function createNewIssue(knex, issueType, action) {
   })
 
   return issue
+}
+
+async function mergeActionData(knex, issue, action) {
+  const issueUpdates = {}
+  if (action.options) {
+    if (action.options.dueOn != null) {
+      issueUpdates.dueOn = new Date(action.options.dueOn)
+    }
+    if (action.options.data != null) {
+      const existingData = issue.data == null ? {} : JSON.parse(issue.data)
+      issueUpdates.data = JSON.stringify(
+        _.merge(existingData, action.options.data)
+      )
+    }
+  }
+
+  if (!_.isEmpty(issueUpdates)) {
+    issueUpdates.updatedOn = new Date()
+    await knex('Issue')
+      .where({ id: issue.id })
+      .update(issueUpdates)
+  }
+  return _.merge({}, issue, issueUpdates)
 }
 
 async function updateIssueStatus(request) {
