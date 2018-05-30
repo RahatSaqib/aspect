@@ -26,6 +26,10 @@ const {
   resultModuleProceduralError,
   resultMachinePowerError,
 } = require('../result/actions')
+const {
+  selectAssayConsumables,
+} = require('../consumable/assayConsumableService')
+const { inventoryReagentHealth } = require('../inventory/actions')
 
 const MODULE_TEMPERATURE_ERROR_CODES = [
   '1001',
@@ -107,12 +111,32 @@ const MODULE_PROCEDURAL_ERROR_CODES = [
   '2003',
 ]
 
+const REAGENT_HEALTH_ERROR_CODES = [
+  '2037',
+  '5001',
+  '5002',
+  '5003',
+  '5004',
+  '5005',
+  '5011',
+  '5017',
+  '5018',
+  '5019',
+  '2025',
+]
+
 const moduleTemperatureMaxErrors = 4
 const modulePowerMaxErrors = 4
 const moduleFailureMaxErrors = 2
 const machineTemperatureMaxErrors = 8
 const maxPrcntErrors = 5
 const machinePowerMaxErrors = 8
+const maxPrcntMachinePowerErrors = 3
+const maxInvalidResultRatio = 3
+const invalidResultBatchRatio = 2
+const maxReagentErrorRatio = 3
+const maxInvalidReagentErrorRatio = 4
+
 const SELECT_LIST_FIELDS = [
   'r.id',
   'r.externalId',
@@ -735,14 +759,17 @@ async function onResultLogged({ resultId }, { messageContext }) {
     resultMachineTemperatureError,
     resultModuleProceduralError,
     resultMachinePowerError,
+    inventoryReagentHealth,
   })
   await context.run(async knex => {
     const [result] = await knex('Result as r').where('r.id', resultId)
+    const { deviceId, siteId } = result
+    const last30day = subDays(new Date(), 30)
+    let reagentErrorRatio = 0
+    let invalidReagentErrorRatio = 0
     if (result.errorCode) {
-      const { deviceId } = result
       const moduleErrorSerials = []
       let machineIssueTriggured = false
-      const last30day = subDays(new Date(), 30)
       const deviceErrorQuery = knex('Result as r')
         .innerJoin('ResultCategory as rc', 'r.resultCategory1', 'rc.id')
         .where('rc.externalId', 'Error')
@@ -794,7 +821,6 @@ async function onResultLogged({ resultId }, { messageContext }) {
           .where('r.endedOn', '>=', last30day)
           .whereIn('r.errorCode', MODULE_POWER_ERROR_CODES)
           .count('r.id as errorCount')
-
         if (errorCount > machinePowerMaxErrors) {
           context.resultMachinePowerError(deviceId)
         }
@@ -832,8 +858,135 @@ async function onResultLogged({ resultId }, { messageContext }) {
             context.resultModuleProceduralError(deviceId)
           }
         })
+      } else if (REAGENT_HEALTH_ERROR_CODES.includes(result.errorCode)) {
+        const reagentErrorQuery = knex('Result as r')
+          .innerJoin('ResultCategory as rc', 'r.resultCategory1', 'rc.id')
+          .where({
+            'r.siteId': siteId,
+          })
+        ;[{ reagentErrorRatio }] = await reagentErrorQuery.clone().select(
+          (() => {
+            const errorCount =
+              "sum(case when r.errorCode in (?) and rc.externalId='Error' then 1 else 0 end)"
+            const totalCount = 'count(distinct r.id)'
+
+            return knex.raw(
+              `case when count(r.id) = 0 then 0 else ${errorCount} / ${totalCount} * 100 end as reagentErrorRatio`,
+              [REAGENT_HEALTH_ERROR_CODES]
+            )
+          })()
+        )
+        ;[
+          { invalidReagentErrorRatio },
+        ] = await reagentErrorQuery.clone().select(
+          (() => {
+            const errorCount =
+              "sum(case when (r.errorCode in (?) and rc.externalId='Error') or (rc.externalId='Invalid') then 1 else 0 end)"
+            const totalCount = 'count(distinct r.id)'
+
+            return knex.raw(
+              `case when count(r.id) = 0 then 0 else ${errorCount} / ${totalCount} * 100 end as invalidReagentErrorRatio`,
+              [REAGENT_HEALTH_ERROR_CODES]
+            )
+          })()
+        )
       }
     }
+    // Check for machine power issue triggered by noResult
+    const [{ noResultCount }] = await knex('Result as r')
+      .innerJoin('ResultCategory as rc', 'r.resultCategory1', 'rc.id')
+      .where('r.deviceId', deviceId)
+      .where('r.endedOn', '>=', last30day)
+      .where('rc.externalId', 'NoResult')
+      .count('r.id as noResultCount')
+
+    const [{ machineResultCount }] = await knex('Result as r')
+      .where('r.deviceId', deviceId)
+      .where('r.endedOn', '>=', last30day)
+      .count('r.id as machineResultCount')
+
+    if (machineResultCount !== 0) {
+      const prcntNoResult = noResultCount / machineResultCount * 100
+      if (prcntNoResult > maxPrcntMachinePowerErrors) {
+        context.resultMachinePowerError(deviceId)
+      }
+    }
+
+    const { id: resultCategoryInvalidId } = await knex('ResultCategory as rc')
+      .where({ externalId: 'Invalid' })
+      .first('id')
+
+    let invalidResultRatio = 0
+    if (result.resultCategory1 === resultCategoryInvalidId) {
+      const invalidResultQuery = knex('Result as r')
+        .innerJoin('ResultCategory as rc', 'r.resultCategory1', 'rc.id')
+        .where({
+          'r.siteId': result.siteId,
+        })
+      ;[{ invalidResultRatio }] = await invalidResultQuery.clone().select(
+        (() => {
+          const invalidCount =
+            "sum(case when rc.externalId = 'Invalid' then 1 else 0 end)"
+          const totalCount = 'count(distinct r.id)'
+
+          return knex.raw(
+            `case when count(r.id) = 0 then 0 else ${invalidCount} / ${totalCount} * 100 end as invalidResultRatio`
+          )
+        })()
+      )
+      const invalidResultBatchRatios = await invalidResultQuery
+        .clone()
+        .select(
+          (() => {
+            const invalidCount =
+              "sum(case when rc.externalId = 'Invalid' then 1 else 0 end)"
+            const totalCount = 'count(distinct r.id)'
+
+            return knex.raw(
+              `r.consumableLot, r.assayId, case when count(r.id) = 0 then 0 else ${invalidCount} / ${totalCount} * 100 end as invalidResultRatio`
+            )
+          })()
+        )
+        .groupBy(['r.consumableLot', 'r.assayId'])
+      _.forEach(invalidResultBatchRatios, ratio => {
+        if (ratio.invalidResultRatio > invalidResultBatchRatio) {
+          createInventoryReagentHealthIssue(
+            result.deviceId,
+            result.partnerId,
+            result.assayId,
+            context.inventoryReagentHealth
+          )
+        }
+      })
+    }
+    if (
+      reagentErrorRatio > maxReagentErrorRatio ||
+      invalidResultRatio > maxInvalidResultRatio ||
+      invalidReagentErrorRatio > maxInvalidReagentErrorRatio
+    ) {
+      createInventoryReagentHealthIssue(
+        result.deviceId,
+        result.partnerId,
+        result.assayId,
+        context.inventoryReagentHealth
+      )
+    }
+  })
+}
+
+async function createInventoryReagentHealthIssue(
+  deviceId,
+  partnerId,
+  assayId,
+  dispatchAction
+) {
+  const assayConsumables = await selectAssayConsumables(
+    knex,
+    partnerId,
+    assayId
+  )
+  _.map(assayConsumables, async assayConsumable => {
+    dispatchAction(deviceId, assayConsumable.consumableId)
   })
 }
 

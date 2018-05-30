@@ -220,6 +220,10 @@ async function seed(knex) {
       jobFunctionId: jobFunctionIdLabUser,
       featureId: featureModules.reportDashboard,
     },
+    {
+      jobFunctionId: jobFunctionIdLabUser,
+      featureId: featureModules.siteFilterDashboard,
+    },
   ])
 
   await knex('JobFunctionPermission').insert([

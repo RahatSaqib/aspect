@@ -107,7 +107,7 @@ async function seed(knex) {
   const [deviceMaintenanceAlertTemplateId] = await knex('AlertTemplate').insert(
     Object.assign(
       {
-        message: 'Device Maintenance for {{numberOfDays}} days.',
+        message: 'Device Maintenance',
       },
       auditFields
     )
@@ -116,7 +116,7 @@ async function seed(knex) {
   const [deviceMaintenanceSmsTemplateId] = await knex('SmsTemplate').insert(
     Object.assign(
       {
-        message: '{{site.name}} maintenance for {{numberOfDays}} days.',
+        message: '{{site.name}} maintenance',
       },
       auditFields
     )
@@ -126,9 +126,8 @@ async function seed(knex) {
     Object.assign(
       {
         subject: '{{site.name}} Maintenance',
-        body: '{{site.name}} maintenance {{numberOfDays}} days.',
-        htmlBody:
-          '<em>{{site.name}}</em> maintenance for {{numberOfDays}} days.',
+        body: '{{site.name}} maintenance',
+        htmlBody: '{{site.name}} maintenance',
       },
       auditFields
     )
@@ -147,5 +146,18 @@ async function seed(knex) {
     i18nKey: 'issueTypeDeviceMaintenance',
     issueCategoryId: issueCategories.DeviceHealth.id,
     defaultMessageTypeId: deviceMaintenanceMessageTypeId,
+  })
+
+  const { id: jobFunctionIdLabUser } = await knex('JobFunction')
+    .where({ name: 'Lab User', partnerId })
+    .first('id')
+
+  const { id: featureIdSiteFilterDashboard } = await knex('Feature')
+    .where({ module: 'siteFilterDashboard' })
+    .first('id')
+
+  await knex('JobFunctionFeature').insert({
+    jobFunctionId: jobFunctionIdLabUser,
+    featureId: featureIdSiteFilterDashboard,
   })
 }
