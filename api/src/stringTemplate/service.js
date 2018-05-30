@@ -13,7 +13,7 @@ function getMustacheTokensInString(inputString) {
 }
 
 function addDataSourceToQuery(qb, aliases) {
-  // TODO generalize to other aliases and make joined aliases unique
+  // TODO generalize to other aliases and make joined tables and field names unique
   // similar to auth/constraints
   const { message } = aliases
   return qb
@@ -28,7 +28,9 @@ function addDataSourceToQuery(qb, aliases) {
       'm.resultId',
       's.name as siteName',
       's.shortName as siteShortName',
-      'p.name as personName'
+      'p.name as personName',
+      'd.lastPingOn as deviceLastPingOn',
+      'd.lastSeenOn as deviceLastSeenOn'
     )
 }
 
@@ -53,7 +55,8 @@ function getBaseDataSource(data) {
     device: {
       id: d.deviceId,
       name: d.deviceName,
-      lastPingOn: '2018-05-29',
+      lastSeenOn: d.deviceLastSeenOn,
+      lastPingOn: d.deviceLastPingOn,
     },
     result: {
       externalId: d.externalId,
