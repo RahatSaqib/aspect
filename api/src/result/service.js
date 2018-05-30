@@ -23,6 +23,7 @@ const {
   resultModulePowerError,
   resultModuleFailureError,
   resultMachineTemperatureError,
+  resultMachineProceduralError,
   resultModuleProceduralError,
   resultMachinePowerError,
 } = require('../result/actions')
@@ -44,7 +45,6 @@ const MODULE_POWER_ERROR_CODES = [
   '1007',
   '2122',
   '2123',
-  '2124',
   '2126',
   '2127',
   '4008',
@@ -86,7 +86,7 @@ const MODULE_FAILURE_ERROR_CODES = [
   '5015',
   '5016',
 ]
-const MODULE_PROCEDURAL_ERROR_CODES = [
+const PROCEDURAL_ERROR_CODES = [
   '1096',
   '1097',
   '1098',
@@ -757,6 +757,7 @@ async function onResultLogged({ resultId }, { messageContext }) {
     resultModulePowerError,
     resultModuleFailureError,
     resultMachineTemperatureError,
+    resultMachineProceduralError,
     resultModuleProceduralError,
     resultMachinePowerError,
     inventoryReagentHealth,
@@ -783,13 +784,15 @@ async function onResultLogged({ resultId }, { messageContext }) {
           .select('r.moduleSerial as moduleSerial')
           .count('r.id as errorCount')
           .groupBy('r.moduleSerial')
-        _.forEach(modules, module => {
-          if (module.errorCount > moduleTemperatureMaxErrors) {
-            moduleTemperatureSerials.push(module.moduleSerial)
-            moduleErrorSerials.push(module.moduleSerial)
-            context.resultModuleTemperatureError(deviceId)
-          }
-        })
+        await Promise.all(
+          _.map(modules, module => {
+            if (module.errorCount > moduleTemperatureMaxErrors) {
+              moduleTemperatureSerials.push(module.moduleSerial)
+              moduleErrorSerials.push(module.moduleSerial)
+              context.resultModuleTemperatureError(deviceId)
+            }
+          })
+        )
         // Machine temperature query
         const [{ errorCount }] = await deviceErrorQuery
           .clone()
@@ -809,13 +812,14 @@ async function onResultLogged({ resultId }, { messageContext }) {
           .select('r.moduleSerial as moduleSerial')
           .count('r.id as errorCount')
           .groupBy('r.moduleSerial')
-        _.forEach(modules, moudle => {
-          if (moudle.errorCount > modulePowerMaxErrors) {
-            moduleErrorSerials.push(module.moduleSerial)
-            context.resultModulePowerError(deviceId)
-          }
-        })
-
+        await Promise.all(
+          _.map(modules, module => {
+            if (module.errorCount > modulePowerMaxErrors) {
+              moduleErrorSerials.push(module.moduleSerial)
+              context.resultModulePowerError(deviceId)
+            }
+          })
+        )
         const [{ errorCount }] = await deviceErrorQuery
           .clone()
           .where('r.endedOn', '>=', last30day)
@@ -832,32 +836,55 @@ async function onResultLogged({ resultId }, { messageContext }) {
           .select('r.moduleSerial as moduleSerial')
           .count('r.id as errorCount')
           .groupBy('r.moduleSerial')
-        _.forEach(modules, module => {
-          if (module.errorCount > moduleFailureMaxErrors) {
-            moduleErrorSerials.push(module.moduleSerial)
-            context.resultModuleFailureError(deviceId)
-          }
-        })
-      } else if (MODULE_PROCEDURAL_ERROR_CODES.includes(result.errorCode)) {
+        await Promise.all(
+          _.map(modules, module => {
+            if (module.errorCount > moduleFailureMaxErrors) {
+              moduleErrorSerials.push(module.moduleSerial)
+              context.resultModuleFailureError(deviceId)
+            }
+          })
+        )
+      } else if (
+        PROCEDURAL_ERROR_CODES.includes(result.errorCode) &&
+        !machineIssueTriggured
+      ) {
         const modules = await deviceErrorQuery
           .clone()
           .where('r.endedOn', '>=', last30day)
-          .whereIn('r.errorCode', MODULE_PROCEDURAL_ERROR_CODES)
+          .whereIn('r.errorCode', PROCEDURAL_ERROR_CODES)
           .whereNotIn('r.moduleSerial', moduleErrorSerials)
           .select('r.moduleSerial as moduleSerial')
           .count('r.id as errorCount')
           .groupBy('r.moduleSerial')
 
-        _.forEach(modules, async module => {
-          const [{ moduleResultCount }] = await knex('Result as r')
-            .where('r.endedOn', '>=', last30day)
-            .where('r.moduleSerial', module.moduleSerial)
-            .count('r.id as moduleResultCount')
-          const prcntModuleError = module.errorCount / moduleResultCount * 100
-          if (!machineIssueTriggured && prcntModuleError > maxPrcntErrors) {
-            context.resultModuleProceduralError(deviceId)
-          }
-        })
+        // Check for machine issue first
+        let allModulesErr = true
+        await Promise.all(
+          _.map(modules, async module => {
+            const [{ moduleResultCount }] = await knex('Result as r')
+              .where('r.endedOn', '>=', last30day)
+              .where('r.moduleSerial', module.moduleSerial)
+              .count('r.id as moduleResultCount')
+            const prcntModuleError = module.errorCount / moduleResultCount * 100
+            allModulesErr = allModulesErr && prcntModuleError > maxPrcntErrors
+          })
+        )
+        if (allModulesErr) {
+          // Trigger machine procedural issue
+          context.resultMachineProceduralError(deviceId)
+        } else {
+          // Check for module procedural issue
+          _.map(modules, async module => {
+            const [{ moduleResultCount }] = await knex('Result as r')
+              .where('r.endedOn', '>=', last30day)
+              .where('r.moduleSerial', module.moduleSerial)
+              .count('r.id as moduleResultCount')
+            const prcntModuleError = module.errorCount / moduleResultCount * 100
+            if (prcntModuleError > maxPrcntErrors) {
+              context.resultModuleProceduralError(deviceId)
+            }
+          })
+        }
       } else if (REAGENT_HEALTH_ERROR_CODES.includes(result.errorCode)) {
         const reagentErrorQuery = knex('Result as r')
           .innerJoin('ResultCategory as rc', 'r.resultCategory1', 'rc.id')

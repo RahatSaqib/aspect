@@ -3918,7 +3918,7 @@ async function seed(knex) {
   ).insert(
     Object.assign(
       {
-        subject: 'Machine Temperature Errors',
+        subject: 'Procedural Module Errors',
         body: 'Module {{result.moduleName}} errors, conduct troubleshooting',
         htmlBody:
           'Module <em>{{result.moduleName}}</em> errors, conduct troubleshooting',
