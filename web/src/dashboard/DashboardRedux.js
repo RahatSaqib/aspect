@@ -531,18 +531,20 @@ export default function dashboardReducer(state = initialState, action) {
       })
     case inventoryTypes.RECEIVE_UPDATED_SINGLE_INVENTORY_ITEM:
       return state.withMutations(mutState => {
-        const list = mutState.getIn(['actionSummaryMap', 'Reagent']).map(it => {
-          if (
-            it.get('siteId') === action.item.siteId &&
-            it.get('consumableId') === action.item.consumableId
-          ) {
+        const list = mutState
+          .getIn(['actionSummaryMap', 'ReagentHealth'])
+          .map(it => {
+            if (
+              it.get('siteId') === action.item.siteId &&
+              it.get('consumableId') === action.item.consumableId
+            ) {
+              return it
+                .set('totalInStock', action.item.quantityOnHand)
+                .set('status', 'OK')
+            }
             return it
-              .set('totalInStock', action.item.quantityOnHand)
-              .set('status', 'OK')
-          }
-          return it
-        })
-        mutState.mergeDeepIn(['actionSummaryMap', 'Reagent'], list)
+          })
+        mutState.mergeDeepIn(['actionSummaryMap', 'ReagentHealth'], list)
       })
     case issueTypes.RECEIVE_UPDATED_SINGLE_ISSUE:
       return state.withMutations(mutState => {
