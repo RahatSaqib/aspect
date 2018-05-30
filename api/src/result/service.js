@@ -813,8 +813,8 @@ async function onResultLogged({ resultId }, { messageContext }) {
           .count('r.id as errorCount')
           .groupBy('r.moduleSerial')
         await Promise.all(
-          _.map(modules, moudle => {
-            if (moudle.errorCount > modulePowerMaxErrors) {
+          _.map(modules, module => {
+            if (module.errorCount > modulePowerMaxErrors) {
               moduleErrorSerials.push(module.moduleSerial)
               context.resultModulePowerError(deviceId)
             }
