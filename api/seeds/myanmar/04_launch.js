@@ -213,8 +213,6 @@ async function seed(knex) {
     },
   ])
 
-
-
   const geneXpertResultDataSchema = {
     resultText: {
       title: 'Result Text',

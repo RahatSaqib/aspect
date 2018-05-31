@@ -413,6 +413,11 @@ describe('transformMergeResultPayload for Myanmar', () => {
                     value: null,
                     label: 'Other Reason for Test',
                   },
+                  39: {
+                    notAvailable: false,
+                    value: 'Hkamti',
+                    label: 'Patient Township',
+                  },
                   40: {
                     notAvailable: false,
                     value: 'ALN TBC',
@@ -488,6 +493,11 @@ describe('transformMergeResultPayload for Myanmar', () => {
                     value: null,
                     label: 'Other Reason for Test',
                   },
+                  39: {
+                    notAvailable: false,
+                    value: 'Hkamti',
+                    label: 'Patient Township',
+                  },
                   40: {
                     notAvailable: false,
                     value: 'ALN TBC',
@@ -545,6 +555,11 @@ describe('transformMergeResultPayload for Myanmar', () => {
                     value: 'EPTB Suspect',
                     label: 'Other Reason for Test',
                   },
+                  39: {
+                    notAvailable: false,
+                    value: 'Cape Town',
+                    label: 'Patient Township',
+                  },
                   40: {
                     notAvailable: false,
                     value: 'Some random value',
@@ -558,6 +573,7 @@ describe('transformMergeResultPayload for Myanmar', () => {
               patient: {
                 id: 'Lee Nicaise',
                 name: 'LeeNicaise',
+                city: 'Cape Town',
                 age: 88,
                 gender: 'Female',
                 previouslyTreated: 'No',
@@ -600,6 +616,11 @@ describe('transformMergeResultPayload for Myanmar', () => {
                     notAvailable: false,
                     value: 'EPTB Suspect',
                     label: 'Other Reason for Test',
+                  },
+                  39: {
+                    notAvailable: false,
+                    value: 'Cape Town',
+                    label: 'Patient Township',
                   },
                   40: {
                     notAvailable: false,
@@ -653,6 +674,11 @@ describe('transformMergeResultPayload for Myanmar', () => {
                     value: 'EPTB Suspect',
                     label: 'Other Reason for Test',
                   },
+                  39: {
+                    notAvailable: true,
+                    value: null,
+                    label: 'Patient Township',
+                  },
                 },
               },
               notes: '16,F,No,HIV?,Pos,',
@@ -703,6 +729,11 @@ describe('transformMergeResultPayload for Myanmar', () => {
                     notAvailable: false,
                     value: 'EPTB Suspect',
                     label: 'Other Reason for Test',
+                  },
+                  39: {
+                    notAvailable: true,
+                    value: null,
+                    label: 'Patient Township',
                   },
                 },
               },
