@@ -451,6 +451,7 @@ describe('transformMergeResultPayload for Myanmar', () => {
               },
               data: {
                 otherNotes: 'Not sure what to add here',
+                patientTownship: 'Hkamti',
                 referralCenter: 'ALN TBC',
                 customFieldData: {
                   31: {
@@ -573,7 +574,6 @@ describe('transformMergeResultPayload for Myanmar', () => {
               patient: {
                 id: 'Lee Nicaise',
                 name: 'LeeNicaise',
-                city: 'Cape Town',
                 age: 88,
                 gender: 'Female',
                 previouslyTreated: 'No',
@@ -581,6 +581,7 @@ describe('transformMergeResultPayload for Myanmar', () => {
                 microscopyResult: 'Positive',
               },
               data: {
+                patientTownship: 'Cape Town',
                 customFieldData: {
                   31: {
                     notAvailable: false,

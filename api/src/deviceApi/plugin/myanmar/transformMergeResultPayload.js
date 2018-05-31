@@ -163,7 +163,7 @@ async function parseCustomFields(payload, knex) {
     'Microscopy Result': 'patientMicroscopyResult',
     'Previous Treatment History': 'patientPreviouslyTreated',
     'Other Reason for Test': 'otherReasonForTest',
-    'Patient Township': 'patientCity',
+    'Patient Township': 'patientTownship',
     'Referral Center': 'referralCenter',
     'Other Notes': 'otherNotes',
   }
@@ -277,11 +277,8 @@ async function parseCustomFields(payload, knex) {
       }
     }
   }
-  if (customFieldValues.patientCity) {
-    const existingPatientCity = _.get(payload, 'patient.city')
-    if (!existingPatientCity) {
-      _.set(payload, 'patient.city', customFieldValues.patientCity)
-    }
+  if (customFieldValues.patientTownship) {
+    _.set(payload, 'data.patientTownship', customFieldValues.patientTownship)
   }
   if (customFieldValues.otherReasonForTest) {
     _.set(
