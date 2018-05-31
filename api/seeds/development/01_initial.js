@@ -3920,7 +3920,7 @@ async function seed(knex) {
   ).insert(
     Object.assign(
       {
-        message: 'Module {{module.moduleName}} errors, conduct troubleshooting',
+        message: 'Module {{result.moduleName}} errors, conduct troubleshooting',
       },
       auditFields
     )

@@ -29,14 +29,28 @@ function addDataSourceToQuery(qb, aliases) {
         's.shortName as siteShortName',
         'p.name as personName',
         'd.lastPingOn as deviceLastPingOn',
-        'd.lastSeenOn as deviceLastSeenOn'
+        'd.lastSeenOn as deviceLastSeenOn',
+        'r.moduleName as resultModuleName',
+        'r.moduleSerial as resultModuleSerial',
+        'r.errorCode as resultErrorCode',
+        'r.errorNotes as resultErrorNotes'
       )
   }
 
   if (notification != null) {
     qb
       .leftJoin('Issue as i', `${notification}.issueId`, 'i.id')
-      .select('i.dueOn as issueDueOn', 'i.data as issueData')
+      .leftJoin(
+        'NotificationType as nt',
+        `${notification}.notificationTypeId`,
+        'nt.id'
+      )
+      .select(
+        'i.createdOn as issueCreatedOn',
+        'i.dueOn as issueDueOn',
+        'i.data as issueData',
+        'nt.name as notificationTypeName'
+      )
   }
 
   return qb
@@ -56,25 +70,30 @@ function getBaseDataSource(data) {
   const d = data || {}
   return {
     site: {
-      id: d.siteId,
       name: d.siteName,
       shortName: d.siteShortName,
     },
     device: {
-      id: d.deviceId,
       name: d.deviceName,
       lastSeenOn: d.deviceLastSeenOn,
       lastPingOn: d.deviceLastPingOn,
     },
     result: {
-      externalId: d.externalId,
+      moduleName: d.resultModuleName,
+      moduleSerial: d.resultModuleSerial,
+      errorCode: d.resultErrorCode,
+      errorNotes: d.resultErrorNotes,
     },
     person: {
       name: d.personName,
     },
     issue: {
+      createdOn: d.issueCreatedOn,
       dueOn: d.issueDueOn,
       data: d.issueData == null ? {} : JSON.parse(d.issueData),
+    },
+    notification: {
+      type: d.notificationTypeName,
     },
   }
 }
