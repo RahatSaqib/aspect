@@ -127,7 +127,6 @@ function processUsingDynamicHelpers(template, ds) {
 }
 
 function numberOfDays(date) {
-  console.log({ numberOfDays: date })
   if (date == null || date === '') {
     return 'days'
   }
