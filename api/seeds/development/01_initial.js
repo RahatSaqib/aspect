@@ -10,6 +10,7 @@ const patients = require('./fixtures/patients.json')
 const dashboardWidget = require('./fixtures/dashboardWidget.json')
 const features = require('./fixtures/features.json')
 const { errorCodes } = require('./fixtures/errorCodes.js')
+const { rowsAsObject } = require('../utils')
 const {
   addMilliseconds,
   addMinutes,
@@ -379,18 +380,6 @@ async function seed(knex) {
     name: 'Decommissioned',
     i18nKey: 'deviceStatusDecommissioned',
     token: 'decommissioned',
-  })
-
-  // DeviceMaintenanceStatus
-  await knex('DeviceMaintenanceStatus').insert({
-    name: 'Online',
-    i18nKey: 'deviceMaintenanceStatusOnline',
-    token: 'online',
-  })
-  await knex('DeviceMaintenanceStatus').insert({
-    name: 'Offline',
-    i18nKey: 'deviceMaintenanceStatusOffline',
-    token: 'offline',
   })
 
   // Result source
@@ -3855,6 +3844,36 @@ async function seed(knex) {
     )
   )
 
+  const [deviceMaintenanceAlertTemplateId] = await knex('AlertTemplate').insert(
+    Object.assign(
+      {
+        message: 'Device Maintenance for {{numberOfDays}} days.',
+      },
+      auditFields
+    )
+  )
+
+  const [deviceMaintenanceSmsTemplateId] = await knex('SmsTemplate').insert(
+    Object.assign(
+      {
+        message: '{{site.name}} maintenance for {{numberOfDays}} days.',
+      },
+      auditFields
+    )
+  )
+
+  const [deviceMaintenanceEmailTemplateId] = await knex('EmailTemplate').insert(
+    Object.assign(
+      {
+        subject: '{{site.name}} Maintenance',
+        body: '{{site.name}} maintenance {{numberOfDays}} days.',
+        htmlBody:
+          '<em>{{site.name}}</em> maintenance for {{numberOfDays}} days.',
+      },
+      auditFields
+    )
+  )
+
   // Machine temperature error messages
   const [machineTemperatureErrorAlertTemplateId] = await knex(
     'AlertTemplate'
@@ -3891,8 +3910,8 @@ async function seed(knex) {
     )
   )
 
-  // Module Generic issue messages
-  const [moduleGenericErrorAlertTemplateId] = await knex(
+  // Module Procedural issue messages
+  const [moduleProceduralErrorAlertTemplateId] = await knex(
     'AlertTemplate'
   ).insert(
     Object.assign(
@@ -3903,7 +3922,7 @@ async function seed(knex) {
     )
   )
 
-  const [moduleGenericErrorSmsTemplateId] = await knex('SmsTemplate').insert(
+  const [moduleProceduralErrorSmsTemplateId] = await knex('SmsTemplate').insert(
     Object.assign(
       {
         message: 'Module {{result.moduleName}} errors, conduct troubleshooting',
@@ -3912,12 +3931,12 @@ async function seed(knex) {
     )
   )
 
-  const [moduleGenericErrorEmailTemplateId] = await knex(
+  const [moduleProceduralErrorEmailTemplateId] = await knex(
     'EmailTemplate'
   ).insert(
     Object.assign(
       {
-        subject: 'Machine Temperature Errors',
+        subject: 'Procedural Module Errors',
         body: 'Module {{result.moduleName}} errors, conduct troubleshooting',
         htmlBody:
           'Module <em>{{result.moduleName}}</em> errors, conduct troubleshooting',
@@ -3956,35 +3975,37 @@ async function seed(knex) {
     )
   )
 
-  // Machine Generic issue templates
-  const [machineGenericErrorAlertTemplateId] = await knex(
+  // Machine Procedural issue templates
+  const [machineProceduralErrorAlertTemplateId] = await knex(
     'AlertTemplate'
   ).insert(
     Object.assign(
       {
-        message: 'Generic errors across machine, conduct troubleshooting',
+        message: 'Procedural errors across machine, conduct troubleshooting',
       },
       auditFields
     )
   )
 
-  const [machineGenericErrorSmsTemplateId] = await knex('SmsTemplate').insert(
+  const [machineProceduralErrorSmsTemplateId] = await knex(
+    'SmsTemplate'
+  ).insert(
     Object.assign(
       {
-        message: 'Generic errors across machine, conduct troubleshooting',
+        message: 'Procedural errors across machine, conduct troubleshooting',
       },
       auditFields
     )
   )
 
-  const [machineGenericErrorEmailTemplateId] = await knex(
+  const [machineProceduralErrorEmailTemplateId] = await knex(
     'EmailTemplate'
   ).insert(
     Object.assign(
       {
-        subject: 'Generic Errors',
-        body: 'Generic errors across machine, conduct troubleshooting',
-        htmlBody: 'Generic errors across machine, conduct troubleshooting',
+        subject: 'Procedural Errors',
+        body: 'Procedural errors across machine, conduct troubleshooting',
+        htmlBody: 'Procedural errors across machine, conduct troubleshooting',
       },
       auditFields
     )
@@ -4098,6 +4119,13 @@ async function seed(knex) {
     emailTemplateId: deviceNoResultsEmailTemplateId,
   })
 
+  const [deviceMaintenanceMessageTypeId] = await knex('MessageType').insert({
+    messageSeverityId: messageSeverities.Recommendation.id,
+    alertTemplateId: deviceMaintenanceAlertTemplateId,
+    smsTemplateId: deviceMaintenanceSmsTemplateId,
+    emailTemplateId: deviceMaintenanceEmailTemplateId,
+  })
+
   const [moduleFailureErrorTypeId] = await knex('MessageType').insert({
     messageSeverityId: messageSeverities.Alert.id,
     alertTemplateId: moduleFailureErrorAlertTemplateId,
@@ -4133,18 +4161,18 @@ async function seed(knex) {
     emailTemplateId: machinePowerErrorEmailTemplateId,
   })
 
-  const [moduleGenericErrorTypeId] = await knex('MessageType').insert({
+  const [moduleProceduralErrorTypeId] = await knex('MessageType').insert({
     messageSeverityId: messageSeverities.Alert.id,
-    alertTemplateId: moduleGenericErrorAlertTemplateId,
-    smsTemplateId: moduleGenericErrorSmsTemplateId,
-    emailTemplateId: moduleGenericErrorEmailTemplateId,
+    alertTemplateId: moduleProceduralErrorAlertTemplateId,
+    smsTemplateId: moduleProceduralErrorSmsTemplateId,
+    emailTemplateId: moduleProceduralErrorEmailTemplateId,
   })
 
-  const [machineGenericErrorTypeId] = await knex('MessageType').insert({
+  const [machineProceduralErrorTypeId] = await knex('MessageType').insert({
     messageSeverityId: messageSeverities.Alert.id,
-    alertTemplateId: machineGenericErrorAlertTemplateId,
-    smsTemplateId: machineGenericErrorSmsTemplateId,
-    emailTemplateId: machineGenericErrorEmailTemplateId,
+    alertTemplateId: machineProceduralErrorAlertTemplateId,
+    smsTemplateId: machineProceduralErrorSmsTemplateId,
+    emailTemplateId: machineProceduralErrorEmailTemplateId,
   })
 
   const [dataCategoryLowTypeId] = await knex('MessageType').insert({
@@ -4191,7 +4219,11 @@ async function seed(knex) {
       i18nKey: 'issueCategoryConnectivityHealth',
     },
   ])
-  const issueCategories = await rowsAsObject(knex, 'IssueCategory')
+  const issueCategories = await rowsAsObject(
+    knex,
+    'IssueCategory',
+    'externalId'
+  )
 
   await knex('IssueStatus').insert([
     {
@@ -4241,6 +4273,13 @@ async function seed(knex) {
       defaultMessageTypeId: deviceNoResultsMessageTypeId,
     },
     {
+      name: 'Device Maintenance',
+      externalId: 'DeviceMaintenance',
+      i18nKey: 'issueTypeDeviceMaintenance',
+      issueCategoryId: issueCategories.DeviceHealth.id,
+      defaultMessageTypeId: deviceMaintenanceMessageTypeId,
+    },
+    {
       name: 'Module Failure Error',
       externalId: 'ModuleFailureError',
       i18nKey: 'issueStatusModuleFailureError',
@@ -4276,23 +4315,23 @@ async function seed(knex) {
       defaultMessageTypeId: machinePowerErrorTypeId,
     },
     {
-      name: 'Module Generic Error',
-      externalId: 'ModuleGenericError',
-      i18nKey: 'issueStatusModuleGenericError',
+      name: 'Module Procedural Error',
+      externalId: 'ModuleProceduralError',
+      i18nKey: 'issueStatusModuleProceduralError',
       issueCategoryId: issueCategories.DeviceHealth.id,
-      defaultMessageTypeId: moduleGenericErrorTypeId,
+      defaultMessageTypeId: moduleProceduralErrorTypeId,
     },
     {
-      name: 'Machine Generic Error',
-      externalId: 'MachineGenericError',
-      i18nKey: 'issueStatusMachineGenericError',
+      name: 'Machine Procedural Error',
+      externalId: 'MachineProceduralError',
+      i18nKey: 'issueStatusMachineProceduralError',
       issueCategoryId: issueCategories.DeviceHealth.id,
-      defaultMessageTypeId: machineGenericErrorTypeId,
+      defaultMessageTypeId: machineProceduralErrorTypeId,
     },
     {
       name: 'Data Category Low Error',
       externalId: 'DataCategoryLowError',
-      i18nKey: 'issueStatusMachineGenericError',
+      i18nKey: 'issueStatusMachineProceduralError',
       issueCategoryId: issueCategories.DataHealth.id,
       defaultMessageTypeId: dataCategoryLowTypeId,
     },
@@ -4311,11 +4350,4 @@ async function seed(knex) {
       defaultMessageTypeId: reagentHealthTypeId,
     },
   ])
-}
-
-function rowsAsObject(knex, table, column = 'externalId') {
-  return knex(table).reduce((memo, row) => {
-    memo[row[column]] = row
-    return memo
-  }, {})
 }

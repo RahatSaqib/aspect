@@ -319,18 +319,9 @@ export function fetchFeatures() {
   return dispatch => {
     dispatch(requestFeatures())
 
-    return aspectFetch('/auth/features', {
-      errorNotifications: {
-        default: errorPleaseTryAgainInAFewMinutes(
-          defineMessages({
-            title: {
-              id: 'errorResponseMessages.fetchSingleSite.GET.default.title',
-              defaultMessage: 'Error Loading Site Details',
-            },
-          })
-        ),
-      },
-    }).then(json => dispatch(receiveFeatures(json.data)))
+    return aspectFetch('/auth/features').then(json =>
+      dispatch(receiveFeatures(json.data))
+    )
   }
 }
 

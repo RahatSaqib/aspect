@@ -11,8 +11,6 @@ const {
 const addDays = require('date-fns/add_days')
 const isAfter = require('date-fns/is_after')
 const differenceInDays = require('date-fns/difference_in_days')
-const isSameMonth = require('date-fns/is_same_month')
-const isSameQuarter = require('date-fns/is_same_quarter')
 const { getUser } = require('../auth/service')
 
 const i18nKeys = {
@@ -164,9 +162,12 @@ async function targetDashboard(request) {
   const widgets = await getDashboardWidget(user, 'target')
 
   let targetDivide = 1
-  if (isSameMonth(query.maxDate, query.minDate)) {
+
+  const days = differenceInDays(query.maxDate, query.minDate)
+
+  if (days <= 35) {
     targetDivide = 12
-  } else if (isSameQuarter(query.maxDate, query.minDate)) {
+  } else if (days <= 150) {
     targetDivide = 4
   }
 
@@ -1194,6 +1195,7 @@ async function actionDashboard(request) {
     .innerJoin('IssueStatus as is', 'i.issueStatusId', 'is.id')
     .innerJoin('Site as s', 'am.siteId', 's.id')
     .where({ 'ms.externalId': 'Sent' })
+    .whereNotIn('is.externalId', ['Inactive', 'Resolved'])
     .modify((queryBuilder, query) => {
       if (!isAdmin) {
         queryBuilder.where({ 'am.personId': user.personId })

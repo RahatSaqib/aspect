@@ -12,7 +12,6 @@ import startOfQuarter from 'date-fns/startOfQuarter'
 import subtractQuarters from 'date-fns/subQuarters'
 import endOfYear from 'date-fns/endOfYear'
 import startOfYear from 'date-fns/startOfYear'
-import subtractYears from 'date-fns/subYears'
 
 import { bindActionCreators } from 'redux'
 import { compose, lifecycle, pure, withHandlers, withProps } from 'recompose'
@@ -71,9 +70,6 @@ const enhance = compose(
     const lastMonth = subtractMonths(now, 1)
     const lastMonthStart = startOfMonth(lastMonth)
     const lastMonthEnd = endOfMonth(lastMonth)
-    const lastYear = subtractYears(now, 1)
-    const lastYearStart = startOfYear(lastYear)
-    const lastYearnEnd = endOfYear(lastYear)
     const lastQuarter = subtractQuarters(now, 1)
     const lastQuarterStart = startOfQuarter(lastQuarter)
     const lastQuarterEnd = endOfQuarter(lastQuarter)
@@ -84,12 +80,6 @@ const enhance = compose(
         label: `${formatMessage(messages.thisYear)}`,
         minDate: thisYearStart,
         maxDate: thisYearEnd,
-      },
-      {
-        value: 'lastYear',
-        label: `${formatMessage(messages.lastYear)}`,
-        minDate: lastYearStart,
-        maxDate: lastYearnEnd,
       },
       {
         value: 'thisQuarter',
@@ -198,7 +188,8 @@ export const TargetStatus = ({
 
   return (
     isShow &&
-    targetSummaryList.size > 0 && (
+    targetSummaryList.size > 0 &&
+    targetSummaryList.some(v => v.get('target')) && (
       <Card className={className}>
         <div className={cssClasses('TitleContainer')}>
           <Title

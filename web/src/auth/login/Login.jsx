@@ -65,9 +65,13 @@ const enhance = compose(
         { history, location, loginStart, loggedOutReason }
       ) => data => {
         loginStart(data).then(() => {
-          const referrer = _.get(location, 'state.referrer', {
-            pathname: '/dashboard',
-          })
+          const referrer = _.flowRight(
+            x => _.omit(x, 'search'),
+            x =>
+              _.get(x, 'state.referrer', {
+                pathname: '/dashboard',
+              })
+          )(location)
           if (loggedOutReason === reasonTypes.idle) {
             history.replace(referrer)
           } else {

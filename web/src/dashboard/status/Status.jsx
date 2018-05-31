@@ -1,6 +1,6 @@
 import classnames from 'classnames/bind'
 import React from 'react'
-import { compose, lifecycle } from 'recompose'
+import { compose, lifecycle, withState } from 'recompose'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
@@ -39,11 +39,12 @@ const enhance = compose(
         })
       }
     },
-  })
+  }),
+  withState('marginBottom', 'setMarginBottom', 0)
 )
 
-const Status = ({ history, location, intl }) => (
-  <div className={cssClasses('Container')}>
+const Status = ({ history, location, intl, marginBottom, setMarginBottom }) => (
+  <div className={cssClasses('Container')} style={{ marginBottom }}>
     <Helmet title="Status" />
     <div className={cssClasses('FiltersGroup')}>
       <BrowseSiteDropdown intl={intl} history={history} location={location} />
@@ -69,6 +70,8 @@ const Status = ({ history, location, intl }) => (
       location={location}
       className={cssClasses('Section--withDropdown')}
       title={intl.formatMessage(messages.actionTitle)}
+      marginBottom={marginBottom}
+      setMarginBottom={setMarginBottom}
     />
 
     <ResultStatus

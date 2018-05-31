@@ -9,6 +9,7 @@ const patients = require('./fixtures/patients.json')
 const dashboardWidget = require('./fixtures/myanmarDashboardWidget.json')
 const { errorCodes } = require('./fixtures/errorCodes.js')
 const { addMilliseconds, addMinutes, subDays } = require('date-fns')
+const { rowsAsObject, getDefaultMessageTypes } = require('../utils')
 
 const now = new Date()
 const millisInHour = 1000 * 60 * 60
@@ -218,6 +219,10 @@ async function seed(knex) {
     {
       jobFunctionId: jobFunctionIdLabUser,
       featureId: featureModules.reportDashboard,
+    },
+    {
+      jobFunctionId: jobFunctionIdLabUser,
+      featureId: featureModules.siteFilterDashboard,
     },
   ])
 
@@ -904,49 +909,49 @@ async function seed(knex) {
     ),
     Object.assign(
       {
-        name: 'LU Module Generic',
+        name: 'LU Module Procedural',
         partnerId,
-        issueTypeId: issueTypes.ModuleGenericError.id,
+        issueTypeId: issueTypes.ModuleProceduralError.id,
         jobFunctionId: jobFunctionIdLabUser,
         level: 1,
         canAcknowledge: 1,
-        messageTypeId: defaultMessageTypes.ModuleGenericError.id,
+        messageTypeId: defaultMessageTypes.ModuleProceduralError.id,
       },
       auditFields
     ),
     Object.assign(
       {
-        name: 'LU Escalated Module Generic',
+        name: 'LU Escalated Module Procedural',
         partnerId,
-        issueTypeId: issueTypes.ModuleGenericError.id,
+        issueTypeId: issueTypes.ModuleProceduralError.id,
         jobFunctionId: jobFunctionIdLabUser,
         level: 2,
         canAcknowledge: 0,
-        messageTypeId: defaultMessageTypes.ModuleGenericError.id,
+        messageTypeId: defaultMessageTypes.ModuleProceduralError.id,
       },
       auditFields
     ),
     Object.assign(
       {
-        name: 'LU Machine Generic',
+        name: 'LU Machine Procedural',
         partnerId,
-        issueTypeId: issueTypes.MachineGenericError.id,
+        issueTypeId: issueTypes.MachineProceduralError.id,
         jobFunctionId: jobFunctionIdLabUser,
         level: 1,
         canAcknowledge: 1,
-        messageTypeId: defaultMessageTypes.MachineGenericError.id,
+        messageTypeId: defaultMessageTypes.MachineProceduralError.id,
       },
       auditFields
     ),
     Object.assign(
       {
-        name: 'LU Escalated Machine Generic',
+        name: 'LU Escalated Machine Procedural',
         partnerId,
-        issueTypeId: issueTypes.MachineGenericError.id,
+        issueTypeId: issueTypes.MachineProceduralError.id,
         jobFunctionId: jobFunctionIdLabUser,
         level: 2,
         canAcknowledge: 0,
-        messageTypeId: defaultMessageTypes.MachineGenericError.id,
+        messageTypeId: defaultMessageTypes.MachineProceduralError.id,
       },
       auditFields
     ),
@@ -954,11 +959,11 @@ async function seed(knex) {
       {
         name: 'RO Module',
         partnerId,
-        issueTypeId: issueTypes.ModuleGenericError.id,
+        issueTypeId: issueTypes.ModuleProceduralError.id,
         jobFunctionId: jobFunctionIdRegionalOfficer,
         level: 1,
         canAcknowledge: 0,
-        messageTypeId: defaultMessageTypes.ModuleGenericError.id,
+        messageTypeId: defaultMessageTypes.ModuleProceduralError.id,
       },
       auditFields
     ),
@@ -966,11 +971,11 @@ async function seed(knex) {
       {
         name: 'RO Machine',
         partnerId,
-        issueTypeId: issueTypes.MachineGenericError.id,
+        issueTypeId: issueTypes.MachineProceduralError.id,
         jobFunctionId: jobFunctionIdRegionalOfficer,
         level: 1,
         canAcknowledge: 0,
-        messageTypeId: defaultMessageTypes.MachineGenericError.id,
+        messageTypeId: defaultMessageTypes.MachineProceduralError.id,
       },
       auditFields
     ),
@@ -1204,49 +1209,49 @@ async function seed(knex) {
     ),
     Object.assign(
       {
-        name: 'LU Module Generic - RO View',
+        name: 'LU Module Procedural - RO View',
         partnerId,
-        issueTypeId: issueTypes.ModuleGenericError.id,
+        issueTypeId: issueTypes.ModuleProceduralError.id,
         jobFunctionId: jobFunctionIdRegionalOfficer,
         level: 1,
         canAcknowledge: 0,
-        messageTypeId: defaultMessageTypes.ModuleGenericError.id,
+        messageTypeId: defaultMessageTypes.ModuleProceduralError.id,
       },
       auditFields
     ),
     Object.assign(
       {
-        name: 'LU Escalated Module Generic - RO View',
+        name: 'LU Escalated Module Procedural - RO View',
         partnerId,
-        issueTypeId: issueTypes.ModuleGenericError.id,
+        issueTypeId: issueTypes.ModuleProceduralError.id,
         jobFunctionId: jobFunctionIdRegionalOfficer,
         level: 2,
         canAcknowledge: 0,
-        messageTypeId: defaultMessageTypes.ModuleGenericError.id,
+        messageTypeId: defaultMessageTypes.ModuleProceduralError.id,
       },
       auditFields
     ),
     Object.assign(
       {
-        name: 'LU Machine Generic - RO View',
+        name: 'LU Machine Procedural - RO View',
         partnerId,
-        issueTypeId: issueTypes.MachineGenericError.id,
+        issueTypeId: issueTypes.MachineProceduralError.id,
         jobFunctionId: jobFunctionIdRegionalOfficer,
         level: 1,
         canAcknowledge: 0,
-        messageTypeId: defaultMessageTypes.MachineGenericError.id,
+        messageTypeId: defaultMessageTypes.MachineProceduralError.id,
       },
       auditFields
     ),
     Object.assign(
       {
-        name: 'LU Escalated Machine Generic - RO View',
+        name: 'LU Escalated Machine Procedural - RO View',
         partnerId,
-        issueTypeId: issueTypes.MachineGenericError.id,
+        issueTypeId: issueTypes.MachineProceduralError.id,
         jobFunctionId: jobFunctionIdRegionalOfficer,
         level: 2,
         canAcknowledge: 0,
-        messageTypeId: defaultMessageTypes.MachineGenericError.id,
+        messageTypeId: defaultMessageTypes.MachineProceduralError.id,
       },
       auditFields
     ),
@@ -1351,8 +1356,8 @@ async function seed(knex) {
     issueTypes.ModulePowerError.id,
     issueTypes.MachineTemperatureError.id,
     issueTypes.MachinePowerError.id,
-    issueTypes.ModuleGenericError.id,
-    issueTypes.MachineGenericError.id,
+    issueTypes.ModuleProceduralError.id,
+    issueTypes.MachineProceduralError.id,
     issueTypes.DataCategoryLowError.id,
     issueTypes.StockLevelUpdate.id,
     issueTypes.ReagentHealthError.id,
@@ -1370,10 +1375,10 @@ async function seed(knex) {
       'Temperature errors across machine, conduct troubleshooting',
     [issueTypes.MachinePowerError.id]:
       'Power errors across machine, conduct troubleshooting',
-    [issueTypes.ModuleGenericError.id]:
+    [issueTypes.ModuleProceduralError.id]:
       'Module A2 errors, conduct troubleshooting',
-    [issueTypes.MachineGenericError.id]:
-      'Generic errors across machine, conduct troubleshooting',
+    [issueTypes.MachineProceduralError.id]:
+      'Procedural errors across machine, conduct troubleshooting',
     [issueTypes.DataCategoryLowError.id]: 'HIV Status collection rate 89%',
     [issueTypes.StockLevelUpdate.id]: 'Stock Level',
     [issueTypes.ReagentHealthError.id]: 'Cartridge-specific errors exceed 5%',
@@ -1507,8 +1512,8 @@ async function seed(knex) {
   const roIssueTypeIds = [
     issueTypes.DeviceOffline.id,
     issueTypes.DeviceNoResults.id,
-    issueTypes.ModuleGenericError.id,
-    issueTypes.MachineGenericError.id,
+    issueTypes.ModuleProceduralError.id,
+    issueTypes.MachineProceduralError.id,
     issueTypes.StockLevelUpdate.id,
     issueTypes.DataCategoryLowError.id,
     issueTypes.ReagentHealthError.id,
@@ -1518,8 +1523,9 @@ async function seed(knex) {
     [issueTypes.DeviceOffline.id]:
       'No contact for 12 days. If there is a reason for being inactive, add the reason',
     [issueTypes.DeviceNoResults.id]: 'No testing for 9 days',
-    [issueTypes.ModuleGenericError.id]: 'Module Temperature Issue for 2 days',
-    [issueTypes.MachineGenericError.id]: 'Machine Power Issue for 7 days',
+    [issueTypes.ModuleProceduralError.id]:
+      'Module Temperature Issue for 2 days',
+    [issueTypes.MachineProceduralError.id]: 'Machine Power Issue for 7 days',
     [issueTypes.StockLevelUpdate.id]: 'Stock Level',
     [issueTypes.DataCategoryLowError.id]: 'HIV Status collection rate 92%',
     [issueTypes.ReagentHealthError.id]: 'Cartridge-specific errors exceed 5%',
@@ -1659,24 +1665,41 @@ async function seed(knex) {
       createdOn: now,
       updatedOn: now,
     },
+    {
+      issueTypeId: issueTypes.DeviceNoResults.id,
+      partnerId,
+      escalateToLevel: 2,
+      escalationConditions: JSON.stringify({
+        evaluationMethod: 'issue-age',
+        evaluationParameter: { days: 7 },
+      }),
+      createdOn: now,
+      updatedOn: now,
+    },
+    {
+      issueTypeId: issueTypes.DeviceNoResults.id,
+      partnerId,
+      escalateToLevel: 3,
+      escalationConditions: JSON.stringify({
+        evaluationMethod: 'sql-script',
+        evaluationParameter:
+          './sqlScripts/Myanmar/issues/escalations/deviceNoResultsLevel3ROEscalatedNoResults.sql',
+      }),
+      createdOn: now,
+      updatedOn: now,
+    },
+    {
+      issueTypeId: issueTypes.ModulePowerError.id,
+      partnerId,
+      escalateToLevel: 2,
+      escalationConditions: JSON.stringify({
+        evaluationMethod: 'issue-age',
+        evaluationParameter: { days: 30 },
+      }),
+      createdOn: now,
+      updatedOn: now,
+    },
   ])
-}
-
-function rowsAsObject(knex, table, column = 'name') {
-  return knex(table).reduce((memo, row) => {
-    memo[row[column]] = row
-    return memo
-  }, {})
-}
-
-function getDefaultMessageTypes(knex) {
-  return knex('MessageType as mt')
-    .join('IssueType as it', 'it.defaultMessageTypeId', 'mt.id')
-    .select('it.externalId as issueTypeExternalId', 'mt.*')
-    .reduce((memo, row) => {
-      memo[row.issueTypeExternalId] = row
-      return memo
-    }, {})
 }
 
 function calculateDateForResult(

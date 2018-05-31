@@ -184,6 +184,7 @@ export const ActionStatus = compose(
       </div>
     )
   }
+  return <div />
 })
 
 export default ActionStatus

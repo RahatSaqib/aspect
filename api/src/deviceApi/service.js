@@ -73,7 +73,7 @@ function deviceApiHandler(handler, handlerOptions) {
       request,
       handlerOptions
     )
-    const { updatePing = false, updateDeviceLog = false } = handlerOptions
+    const { updateDeviceLog = false } = handlerOptions
     if (error) {
       await updateLogs(request)
       return error
@@ -105,23 +105,23 @@ function deviceApiHandler(handler, handlerOptions) {
       })
     }
 
-    const deviceUpdates = { lastSeenOn: now }
-    if (updatePing) {
-      deviceUpdates.lastPingOn = now
-      deviceUpdates.lastPingFromIp = remoteAddress
-    }
-    await knex('Device')
-      .where({ id: device.id })
-      .update(deviceUpdates)
-
-    // need to ensure device is flagged as online
-    context.messageContext.dispatch(deviceSeen(deviceId))
-
     let response = {}
     await context.messageContext.transact(async knex => {
       context.knex = knex
       context.deviceLogId = deviceLogId
+
+      // update timestamps as necessary for original device
+      const originalDeviceId = context.device.id
+      await updateDeviceTimestamps(context, handlerOptions, remoteAddress)
+
+      // invoke delegate handler
       response = await handler(context)
+
+      // If handler changes device (e.g. GxAlert plugin), update timestamps
+      // for new device as necessary
+      if (context.device.id !== originalDeviceId) {
+        await updateDeviceTimestamps(context, handlerOptions, remoteAddress)
+      }
 
       // Update DeviceLog with changes added to context when calling handler
       if (deviceLogId !== null) {
@@ -135,6 +135,40 @@ function deviceApiHandler(handler, handlerOptions) {
     })
     return response
   })
+}
+
+async function updateDeviceTimestamps(
+  context,
+  handlerOptions = {},
+  remoteAddress
+) {
+  const { knex, pluginName: plugin, device } = context
+  const { updatePing = false } = handlerOptions
+
+  const deviceUpdates = {}
+
+  const getDeviceSeenOn = await loadPlugin(plugin, 'getDeviceSeenOn')
+  const deviceSeenOn = await getDeviceSeenOn(context)
+  if (deviceSeenOn != null) {
+    // flag as seen even if handler fails
+    deviceUpdates.lastSeenOn = deviceSeenOn
+    context.messageContext.dispatch(deviceSeen(device.id))
+  }
+
+  if (updatePing) {
+    const getDevicePingOn = await loadPlugin(plugin, 'getDevicePingOn')
+    const devicePingOn = await getDevicePingOn(context)
+    if (devicePingOn != null) {
+      deviceUpdates.lastPingOn = devicePingOn
+      deviceUpdates.lastPingFromIp = remoteAddress
+    }
+  }
+
+  if (!_.isEmpty(deviceUpdates)) {
+    await knex('Device')
+      .where({ id: device.id })
+      .update(deviceUpdates)
+  }
 }
 
 async function addDeviceDataWithContext(context) {
@@ -720,12 +754,10 @@ class DeviceApiContext {
     if (this.parent) {
       this.parent.resultUpdated(resultId, deviceLogId)
     } else if (
-      _.findIndex(
-        this.messageContext.actions,
-        existingAction =>
-          existingAction.type === RESULT_UPDATED &&
-          existingAction.resultId === resultId
-      ) === -1
+      _.findIndex(this.messageContext.actions, {
+        type: RESULT_UPDATED,
+        resultId,
+      }) === -1
     ) {
       // only dispatch result updated action once per result id
       // within this Device API transaction

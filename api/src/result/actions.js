@@ -6,7 +6,8 @@ const types = {
   RESULT_MODULE_POWER_ERROR: 'RESULT_MODULE_POWER_ERROR',
   RESULT_MODULE_FAILURE_ERROR: 'RESULT_MODULE_FAILURE_ERROR',
   RESULT_MACHINE_TEMPERATURE_ERROR: 'RESULT_MACHINE_TEMPERATURE_ERROR',
-  RESULT_MODULE_GENERIC_ERROR: 'RESULT_MODULE_GENERIC_ERROR',
+  RESULT_MODULE_PROCEDURAL_ERROR: 'RESULT_MODULE_PROCEDURAL_ERROR',
+  RESULT_MACHINE_PROCEDURAL_ERROR: 'RESULT_MACHINE_PROCEDURAL_ERROR',
   RESULT_MACHINE_POWER_ERROR: 'RESULT_MACHINE_POWER_ERROR',
 }
 
@@ -104,7 +105,7 @@ function resultModuleFailureError(deviceId) {
 
 /**
  * Creates an action to notify the device with given id
- * has an active module failure issue
+ * has an active machine temperature issue
  *
  * deviceId is required.
  */
@@ -122,16 +123,18 @@ function resultMachineTemperatureError(deviceId) {
 
 /**
  * Creates an action to notify the device with given id
- * has an active module failure issue
+ * has an active module procedural issue
  *
  * deviceId is required.
  */
-function resultModuleGenericError(deviceId) {
+function resultModuleProceduralError(deviceId) {
   if (deviceId == null) {
-    throw new Error('Must specify deviceId for notify resultModuleGenericError')
+    throw new Error(
+      'Must specify deviceId for notify resultModuleProceduralError'
+    )
   }
   return {
-    type: types.RESULT_MODULE_GENERIC_ERROR,
+    type: types.RESULT_MODULE_PROCEDURAL_ERROR,
     deviceId,
   }
 }
@@ -151,6 +154,24 @@ function resultMachinePowerError(deviceId) {
   }
 }
 
+/**
+ * Creates an action to notify the device with given id
+ * has an active machine procedural issue
+ *
+ * deviceId is required.
+ */
+function resultMachineProceduralError(deviceId) {
+  if (deviceId == null) {
+    throw new Error(
+      'Must specify deviceId for notify resultMachineProceduralError'
+    )
+  }
+  return {
+    type: types.RESULT_MACHINE_PROCEDURAL_ERROR,
+    deviceId,
+  }
+}
+
 module.exports = {
   types,
   resultUpdated,
@@ -159,6 +180,7 @@ module.exports = {
   resultModulePowerError,
   resultModuleFailureError,
   resultMachineTemperatureError,
-  resultModuleGenericError,
+  resultMachineProceduralError,
+  resultModuleProceduralError,
   resultMachinePowerError,
 }
