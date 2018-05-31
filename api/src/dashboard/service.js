@@ -12,6 +12,7 @@ const addDays = require('date-fns/add_days')
 const isAfter = require('date-fns/is_after')
 const differenceInDays = require('date-fns/difference_in_days')
 const { getUser } = require('../auth/service')
+const { processDynamicMessage } = require('../stringTemplate/service')
 
 const i18nKeys = {
   // Dashboard
@@ -1266,6 +1267,7 @@ async function actionDashboard(request) {
   // set consumable id, totalIn Stock on StockInHand issues
   const inventoryItemsBySite = _.groupBy(inventoryItems, 'siteId')
   const results = _.map(resultQuery, result => {
+    result.message = processDynamicMessage(result.message)
     // TODO we should not be using notification type name
     // as a constant, as it could be user editable in the future
     result.notificationType = _.camelCase(result.notificationType)

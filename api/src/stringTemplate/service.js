@@ -1,7 +1,8 @@
-const { distanceInWordsStrict } = require('date-fns')
+const { parse: parseDate, distanceInWordsStrict } = require('date-fns')
 const handlebars = require('handlebars')
 
 handlebars.registerHelper('numberOfDays', numberOfDays)
+handlebars.registerHelper('isoDate', isoDate)
 
 // See unit tests for examples
 function processUsingHandlebarsSyntax(inputString, data = {}) {
@@ -56,12 +57,18 @@ function addDataSourceToQuery(qb, aliases) {
   return qb
 }
 
-function processUsingDataSourceQuery(data, templateFields) {
+function processUsingDataSourceQuery(data, templateFields, options = {}) {
   const ds = getBaseDataSource(data)
   return templateFields.reduce((memo, field) => {
-    const template = (data && data[field]) || ''
     const fieldName = field.replace(/template/i, '')
-    memo[fieldName] = processUsingHandlebarsSyntax(template, ds)
+    const template = (data && data[field]) || ''
+    let message
+    if (options.dynamic) {
+      message = processUsingDynamicHelpers(template, ds)
+    } else {
+      message = processUsingHandlebarsSyntax(template, ds)
+    }
+    memo[fieldName] = message
     return memo
   }, {})
 }
@@ -98,12 +105,40 @@ function getBaseDataSource(data) {
   }
 }
 
+function processDynamicMessage(message) {
+  // See processUsingDyanamicHelpers, and
+  // processUsingDataSourceQuery with { dyanmic: true }
+  // currently no additional processing is needed but aliased
+  // in case that changes so users can signify intent
+  return processUsingHandlebarsSyntax(message, {})
+}
+
 // helpers
+function processUsingDynamicHelpers(template, ds) {
+  const dynamicTemplate = template.replace(
+    /{{\s*numberOfDays\s+(\S+)\s*}}/g,
+    (str, match) =>
+      `\${openMustaches}numberOfDays "{{isoDate ${match}}}"\${closeMustaches}`
+  )
+  const message = processUsingHandlebarsSyntax(dynamicTemplate, ds)
+  return message
+    .replace(/\${openMustaches}/g, '{{')
+    .replace(/\${closeMustaches}/g, '}}')
+}
+
 function numberOfDays(date) {
-  if (date == null) {
-    return ''
+  console.log({ numberOfDays: date })
+  if (date == null || date === '') {
+    return 'days'
   }
   return distanceInWordsStrict(new Date(), date, { unit: 'd' })
+}
+
+function isoDate(date) {
+  if (date == null) {
+    return null
+  }
+  return parseDate(date).toISOString()
 }
 
 module.exports = {
@@ -111,4 +146,5 @@ module.exports = {
   getMustacheTokensInString,
   addDataSourceToQuery,
   processUsingDataSourceQuery,
+  processDynamicMessage,
 }
