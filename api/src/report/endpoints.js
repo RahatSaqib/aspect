@@ -67,11 +67,11 @@ const routes = [
             .required(),
         },
         query: {
-          siteId: Joi.number()
+          siteId: Joi.string()
             .allow('')
             .description('Filter for site ID'),
-          dateFrom: Joi.string(),
-          dateTo: Joi.string(),
+          dateFrom: Joi.string().allow(''),
+          dateTo: Joi.string().allow(''),
         },
       },
     },

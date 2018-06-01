@@ -167,8 +167,8 @@ async function proxyGxReportAsync(request) {
       state: 'st',
     })
     .distinct('st.name as stateName', 's.name as siteName')
-  if (siteId != null) {
-    sitesQ.where('s.id', siteId)
+  if (siteId != null && siteId !== '' && siteId !== 'null') {
+    sitesQ.where('s.id', parseInt(siteId, 10))
   }
   const sites = await sitesQ
 

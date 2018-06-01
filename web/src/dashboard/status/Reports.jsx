@@ -30,6 +30,9 @@ const enhance = compose(
     return {
       showHigherLevel: _.isEmpty(filtersParams.get('siteId')),
       token: getAspectAccess(),
+      siteId: filtersParams.get('siteId'),
+      dateFrom: filtersParams.get('minDate'),
+      dateTo: filtersParams.get('maxDate'),
     }
   }),
   withStateHandlers(
@@ -47,6 +50,9 @@ const enhance = compose(
 export const Reports = ({
   className,
   title,
+  siteId,
+  dateFrom,
+  dateTo,
   // --- injected by recompose ---
   showHigherLevel,
   userFeatures,
@@ -74,7 +80,7 @@ export const Reports = ({
             inverse
             href={`${
               config.aspectApi
-            }/report/gx/RifResistanceRateExportExcel.xlsx?dateFrom=null&dateTo=null&token=${token}`}
+            }/report/gx/RifResistanceRateExportExcel.xlsx?siteId=${siteId}&dateFrom=${dateFrom}&dateTo=${dateTo}&token=${token}`}
           >
             Rif Report
           </Button>
