@@ -174,7 +174,7 @@ async function proxyGxReportAsync(request) {
   }
 
   const baseUrl = config.gxAlertApi.replace(/\/api.*$/, '/remotereport/')
-  const pw = 'TOKEN'
+  const pw = 'u50GUh3u3bA5jr3IHLJrmG2l'
 
   const gxParams = {
     pw,

@@ -6,6 +6,8 @@ import { compose, pure, withProps, withStateHandlers } from 'recompose'
 import { Card } from 'react-toolbox/lib/card'
 import { Button } from 'react-toolbox/lib/button'
 import { Dialog } from 'react-toolbox/lib/dialog'
+import config from '../../config'
+import { getAspectAccess } from '../../globals/sideEffects/LocalStorage'
 
 import Title from './Title'
 import Icon from '../../components/shared/icon/Icon'
@@ -27,6 +29,7 @@ const enhance = compose(
     const filtersParams = new URLSearchParams(searchParams.get('filters') || '')
     return {
       showHigherLevel: _.isEmpty(filtersParams.get('siteId')),
+      token: getAspectAccess(),
     }
   }),
   withStateHandlers(
@@ -49,6 +52,7 @@ export const Reports = ({
   userFeatures,
   isDemoDialogOpen,
   handleToggleDialog,
+  token,
 }) =>
   (showHigherLevel &&
     isEnabledFeature(userFeatures, ['siteFilterDashboard']) && (
@@ -68,7 +72,9 @@ export const Reports = ({
           <Button
             className={cssClasses('ReportsContainer__Button')}
             inverse
-            onClick={handleToggleDialog}
+            href={`${
+              config.aspectApi
+            }/report/gx/RifResistanceRateExportExcel?stateName=Ayeyarwady&dateFrom=null&dateTo=null&token=${token}`}
           >
             Rif Report
           </Button>

@@ -59,6 +59,7 @@ const routes = [
     config: {
       description: 'Gx Alert Reports',
       notes: 'Proxies reports from GxAlert',
+      auth: { scope: ['site', 'device'] },
       validate: {
         params: {
           reportName: Joi.string()
