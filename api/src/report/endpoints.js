@@ -57,9 +57,8 @@ const routes = [
     path: '/report/gx/{reportName}',
     handler: proxyGxReport,
     config: {
-      description: 'Report Placeholder',
-      notes: 'Returns a static report file as a placeholder',
-      auth: false,
+      description: 'Gx Alert Reports',
+      notes: 'Proxies reports from GxAlert',
       validate: {
         params: {
           reportName: Joi.string()
@@ -67,7 +66,7 @@ const routes = [
             .required(),
         },
         query: {
-          stateName: Joi.string(),
+          stateName: Joi.string().required(),
           deviceName: Joi.string(),
           dateFrom: Joi.string(),
           dateTo: Joi.string(),

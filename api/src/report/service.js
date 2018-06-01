@@ -1,8 +1,11 @@
 const _ = require('lodash')
+const Boom = require('boom')
 const { createFetch, base, method, params } = require('http-client')
 require('isomorphic-fetch')
 
 const config = require('../config')
+const { knex } = require('../db')
+const { getConstraints, addConstraints } = require('../auth/constraints')
 
 async function listReports(request) {
   const { query } = request
@@ -138,8 +141,37 @@ async function listReports(request) {
 }
 
 function proxyGxReport(request, reply) {
+  return proxyGxReportAsync(request)
+    .then(resp => reply(resp.body))
+    .catch(err => reply(err))
+}
+
+async function proxyGxReportAsync(request) {
+  const { auth } = request
   const { reportName } = request.params
   const { stateName, deviceName, dateFrom, dateTo } = request.query
+
+  const dataConstraints = await getConstraints(auth.credentials)
+  if (stateName == null) {
+    throw new Boom.badRequest('State name is required')
+  }
+
+  const hasStateAccess = await knex('Geography as g')
+    .join('State as st', 'g.stateId', 'st.id')
+    .modify(addConstraints, dataConstraints, { geography: 'g', state: 'st' })
+  if (hasStateAccess == null) {
+    throw Boom.unauthorized(`Cannot access state ${stateName}`)
+  }
+
+  if (deviceName != null) {
+    const hasDeviceAccess = await knex('Device as d')
+      .modify(addConstraints, dataConstraints, { device: 'd' })
+      .where({ 'd.name': deviceName })
+      .first('d.id')
+    if (hasDeviceAccess == null) {
+      throw Boom.unauthorized(`Cannot access device ${deviceName}`)
+    }
+  }
 
   const baseUrl = config.gxAlertApi.replace(/\/api.*$/, '/remotereport/')
   const pw = 'TOKEN'
@@ -152,7 +184,7 @@ function proxyGxReport(request, reply) {
     dateTo,
   }
   const gxFetch = createFetch(method('GET'), base(baseUrl), params(gxParams))
-  gxFetch(reportName).then(resp => reply(resp.body))
+  return gxFetch(reportName)
 }
 
 module.exports = {
