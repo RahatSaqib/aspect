@@ -397,7 +397,7 @@
 .ReportsContainer {
   display: flex;
   justify-content: center;
-  padding: 10px 0 0 0;
+  padding: 10px 0;
 }
 
 .ReportsContainer__Button {
@@ -405,6 +405,7 @@
   background-color: var(--aspect-color-grey-5);
   white-space: normal;
   height: auto;
+  width: 250px;
 }
 
 .ReportsContainer__Button {

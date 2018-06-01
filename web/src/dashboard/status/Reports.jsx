@@ -6,6 +6,10 @@ import { compose, pure, withProps, withStateHandlers } from 'recompose'
 import { Card } from 'react-toolbox/lib/card'
 import { Button } from 'react-toolbox/lib/button'
 import { Dialog } from 'react-toolbox/lib/dialog'
+import subtractDays from 'date-fns/subDays'
+import formatDate from 'date-fns/format'
+import config from '../../config'
+import { getAspectAccess } from '../../globals/sideEffects/LocalStorage'
 
 import Title from './Title'
 import Icon from '../../components/shared/icon/Icon'
@@ -25,8 +29,15 @@ const enhance = compose(
   withProps(({ location }) => {
     const searchParams = new URLSearchParams(location.search)
     const filtersParams = new URLSearchParams(searchParams.get('filters') || '')
+    const now = new Date()
+    const last7Days = formatDate(subtractDays(now, 7), 'YYYY-MM-DD')
+    const last30Days = formatDate(subtractDays(now, 30), 'YYYY-MM-DD')
     return {
       showHigherLevel: _.isEmpty(filtersParams.get('siteId')),
+      token: getAspectAccess(),
+      siteId: filtersParams.get('siteId'),
+      last7Days,
+      last30Days,
     }
   }),
   withStateHandlers(
@@ -44,14 +55,18 @@ const enhance = compose(
 export const Reports = ({
   className,
   title,
+  siteId,
+  last7Days,
+  last30Days,
   // --- injected by recompose ---
   showHigherLevel,
   userFeatures,
   isDemoDialogOpen,
   handleToggleDialog,
+  token,
 }) =>
   (showHigherLevel &&
-    isEnabledFeature(userFeatures, ['siteFilterDashboard']) && (
+    isEnabledFeature(userFeatures, ['targetDashboard']) && (
       <Card className={className}>
         <div className={cssClasses('TitleContainer')}>
           <Title
@@ -68,24 +83,79 @@ export const Reports = ({
           <Button
             className={cssClasses('ReportsContainer__Button')}
             inverse
-            onClick={handleToggleDialog}
+            href={`${
+              config.aspectApi
+            }/report/gx/RifResistanceRateExportExcel.xlsx?dateFrom=${last7Days}&token=${token}`}
           >
-            Rif Report
+            Rif Report (last 7 days)
           </Button>
           <Button
             className={cssClasses('ReportsContainer__Button')}
             inverse
-            onClick={handleToggleDialog}
+            href={`${
+              config.aspectApi
+            }/report/gx/MtbPositiveRateExportExcel.xlsx?dateFrom=${last7Days}&token=${token}`}
           >
-            MTB+ Report
+            MTB+ Report (last 7 days)
           </Button>
           <Button
             className={cssClasses('ReportsContainer__Button')}
             inverse
-            onClick={handleToggleDialog}
+            href={`${
+              config.aspectApi
+            }/report/gx/IndeterminateRateExportExcel.xlsx?dateFrom=${last7Days}&token=${token}`}
           >
-            TI Report
+            TI Report (last 7 days)
           </Button>
+          <Button
+            className={cssClasses('ReportsContainer__Button')}
+            inverse
+            href={`${
+              config.aspectApi
+            }/report/gx/FailedTestsReportExcel.xlsx?dateFrom=${last7Days}&token=${token}`}
+          >
+            Failed Test Report (last 7 days)
+          </Button>
+        </div>
+        <div className={cssClasses('ReportsContainer')}>
+          <Button
+            className={cssClasses('ReportsContainer__Button')}
+            inverse
+            href={`${
+              config.aspectApi
+            }/report/gx/RifResistanceRateExportExcel.xlsx?dateFrom=${last30Days}&token=${token}`}
+          >
+            Rif Report (last 30 days)
+          </Button>
+          <Button
+            className={cssClasses('ReportsContainer__Button')}
+            inverse
+            href={`${
+              config.aspectApi
+            }/report/gx/MtbPositiveRateExportExcel.xlsx?dateFrom=${last30Days}&token=${token}`}
+          >
+            MTB+ Report (last 30 days)
+          </Button>
+          <Button
+            className={cssClasses('ReportsContainer__Button')}
+            inverse
+            href={`${
+              config.aspectApi
+            }/report/gx/IndeterminateRateExportExcel.xlsx?dateFrom=${last30Days}&token=${token}`}
+          >
+            TI Report (last 30 days)
+          </Button>
+          <Button
+            className={cssClasses('ReportsContainer__Button')}
+            inverse
+            href={`${
+              config.aspectApi
+            }/report/gx/FailedTestsReportExcel.xlsx?dateFrom=${last30Days}&token=${token}`}
+          >
+            Failed Test Report (last 30 days)
+          </Button>
+        </div>
+        <div className={cssClasses('ReportsContainer')}>
           <Button
             className={cssClasses('ReportsContainer__Button')}
             inverse
@@ -93,20 +163,13 @@ export const Reports = ({
           >
             Quarterly Report
           </Button>
-          <Button
-            className={cssClasses('ReportsContainer__Button')}
-            inverse
-            onClick={handleToggleDialog}
-          >
-            Failed Test Report
-          </Button>
         </div>
         <Dialog
           active={isDemoDialogOpen}
           onEscKeyDown={handleToggleDialog}
           onOverlayClick={handleToggleDialog}
         >
-          Regional Officer reports not implemented yet
+          Report not implemented yet
         </Dialog>
       </Card>
     )) || (
@@ -126,7 +189,9 @@ export const Reports = ({
         <Button
           className={cssClasses('ReportsContainer__Button')}
           inverse
-          onClick={handleToggleDialog}
+          href={`${
+            config.aspectApi
+          }/report/gx/LogsExportExcel.xlsx?dateFrom=${last30Days}&siteId=${siteId}&token=${token}`}
         >
           Inventory Report
         </Button>
@@ -143,7 +208,7 @@ export const Reports = ({
         onEscKeyDown={handleToggleDialog}
         onOverlayClick={handleToggleDialog}
       >
-        Lab User reports not implemented yet
+        Report not implemented yet
       </Dialog>
     </Card>
   )
