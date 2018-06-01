@@ -140,7 +140,8 @@ async function listReports(request) {
 function proxyGxReport(request, reply) {
   const { reportName } = request.params
   const { stateName, deviceName, dateFrom, dateTo } = request.query
-  const baseUrl = 'http://localhost:8080/api/report/'
+
+  const baseUrl = config.gxAlertApi.replace(/\/api.*$/, '/remotereport/')
   const pw = 'TOKEN'
 
   const gxParams = {
