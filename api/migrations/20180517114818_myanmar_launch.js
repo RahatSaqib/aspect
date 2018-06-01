@@ -16,7 +16,7 @@ async function up(knex) {
     issue.dateTime('dueOn')
     issue.specificType('data', 'JSON')
   })
-  
+
   await knex.schema.table('Partner', x => {
     x.integer('dueDaysInventoryStockout')
     x.integer('dueDaysInventoryStockExpiring')
