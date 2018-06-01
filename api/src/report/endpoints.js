@@ -54,7 +54,7 @@ const routes = [
   },
   {
     method: 'GET',
-    path: '/report/gx/{reportName}',
+    path: '/report/gx/{reportName}.xlsx',
     handler: proxyGxReport,
     config: {
       description: 'Gx Alert Reports',

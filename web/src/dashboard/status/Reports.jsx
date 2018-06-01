@@ -74,7 +74,7 @@ export const Reports = ({
             inverse
             href={`${
               config.aspectApi
-            }/report/gx/RifResistanceRateExportExcel?stateName=Ayeyarwady&dateFrom=null&dateTo=null&token=${token}`}
+            }/report/gx/RifResistanceRateExportExcel.xlsx?stateName=Ayeyarwady&dateFrom=null&dateTo=null&token=${token}`}
           >
             Rif Report
           </Button>
