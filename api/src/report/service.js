@@ -138,15 +138,20 @@ async function listReports(request) {
 }
 
 function proxyGxReport(request, reply) {
-  const { fileName } = request.params
-  const gxFetch = createFetch(
-    method('GET'),
-    base('http://localhost:8080/api/report/'),
-    params({ hi: 'world' })
-  )
-  gxFetch(fileName).then(resp => {
-    reply(resp.body)
-  })
+  const { reportName } = request.params
+  const { stateName, deviceName, dateFrom, dateTo } = request.query
+  const baseUrl = 'http://localhost:8080/api/report/'
+  const pw = 'TOKEN'
+
+  const gxParams = {
+    pw,
+    stateName,
+    deviceName,
+    dateFrom,
+    dateTo,
+  }
+  const gxFetch = createFetch(method('GET'), base(baseUrl), params(gxParams))
+  gxFetch(reportName).then(resp => reply(resp.body))
 }
 
 module.exports = {

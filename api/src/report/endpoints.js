@@ -54,7 +54,7 @@ const routes = [
   },
   {
     method: 'GET',
-    path: '/report/gx/{fileName}',
+    path: '/report/gx/{reportName}',
     handler: proxyGxReport,
     config: {
       description: 'Report Placeholder',
@@ -62,9 +62,15 @@ const routes = [
       auth: false,
       validate: {
         params: {
-          fileName: Joi.string()
-            .description('File name')
+          reportName: Joi.string()
+            .description('Report name')
             .required(),
+        },
+        query: {
+          stateName: Joi.string(),
+          deviceName: Joi.string(),
+          dateFrom: Joi.string(),
+          dateTo: Joi.string(),
         },
       },
     },
