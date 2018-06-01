@@ -106,7 +106,7 @@ function getBaseDataSource(data) {
 }
 
 function processDynamicMessage(message) {
-  // See processUsingDyanamicHelpers, and
+  // See processUsingDynamicHelpers, and
   // processUsingDataSourceQuery with { dyanmic: true }
   // currently no additional processing is needed but aliased
   // in case that changes so users can signify intent
@@ -116,7 +116,7 @@ function processDynamicMessage(message) {
 // helpers
 function processUsingDynamicHelpers(template, ds) {
   const dynamicTemplate = template.replace(
-    /{{\s*numberOfDays\s+(\S+)\s*}}/g,
+    /{{\s*numberOfDays\s+([\w.[\]\s]+)\s*}}/g,
     (str, match) =>
       `\${openMustaches}numberOfDays "{{isoDate ${match}}}"\${closeMustaches}`
   )
@@ -134,7 +134,7 @@ function numberOfDays(date) {
 }
 
 function isoDate(date) {
-  if (date == null) {
+  if (date == null || date === '') {
     return null
   }
   return parseDate(date).toISOString()
