@@ -1315,7 +1315,21 @@ async function actionDashboard(request) {
   const allActionByCategory = _.flowRight(
     x => _.groupBy(x, 'issueCategory'),
     query.sortDir === 'desc' ? _.reverse : _.identity,
-    x => _.sortBy(x, query.sortCol || _.identity)
+    x => _.sortBy(x, query.sortCol || _.identity),
+    x =>
+      _.map(x, result => {
+        // TODO remove quick patch for StockLevelUpdate status
+        if (result.issueTypeExternalId === 'StockLevelUpdate') {
+          if (result.totalInStock <= 0) {
+            result.status = 'Active'
+            result.statusI18nKey = 'issueStatusActive'
+          } else {
+            result.status = 'OK'
+            result.statusI18nKey = 'issueStatusOk'
+          }
+        }
+        return result
+      })
   )(results)
 
   const result = {
