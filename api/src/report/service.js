@@ -1,4 +1,8 @@
 const _ = require('lodash')
+const { createFetch, base, method, params } = require('http-client')
+require('isomorphic-fetch')
+
+const config = require('../config')
 
 async function listReports(request) {
   const { query } = request
@@ -133,6 +137,19 @@ async function listReports(request) {
   return result
 }
 
+function proxyGxReport(request, reply) {
+  const { fileName } = request.params
+  const gxFetch = createFetch(
+    method('GET'),
+    base('http://localhost:8080/api/report/'),
+    params({ hi: 'world' })
+  )
+  gxFetch(fileName).then(resp => {
+    reply(resp.body)
+  })
+}
+
 module.exports = {
   listReports,
+  proxyGxReport,
 }
