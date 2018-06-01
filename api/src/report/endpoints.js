@@ -67,8 +67,9 @@ const routes = [
             .required(),
         },
         query: {
-          stateName: Joi.string().required(),
-          deviceName: Joi.string(),
+          siteId: Joi.number()
+            .allow('')
+            .description('Filter for site ID'),
           dateFrom: Joi.string(),
           dateTo: Joi.string(),
         },

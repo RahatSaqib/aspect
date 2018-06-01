@@ -143,38 +143,45 @@ async function listReports(request) {
 function proxyGxReport(request, reply) {
   return proxyGxReportAsync(request)
     .then(resp => reply(resp.body))
-    .catch(err => reply(err))
+    .catch(err => {
+      console.error(err) // eslint-disable-line no-console
+      reply(err)
+    })
 }
 
 async function proxyGxReportAsync(request) {
   const { auth } = request
   const { reportName } = request.params
-  const { stateName, deviceName, dateFrom, dateTo } = request.query
-
-  const dataConstraints = await getConstraints(auth.credentials)
-  if (stateName == null) {
-    throw new Boom.badRequest('State name is required')
-  }
-
-  const hasStateAccess = await knex('Geography as g')
-    .join('State as st', 'g.stateId', 'st.id')
-    .modify(addConstraints, dataConstraints, { geography: 'g', state: 'st' })
-  if (hasStateAccess == null) {
-    throw Boom.unauthorized(`Cannot access state ${stateName}`)
-  }
-
-  if (deviceName != null) {
-    const hasDeviceAccess = await knex('Device as d')
-      .modify(addConstraints, dataConstraints, { device: 'd' })
-      .where({ 'd.name': deviceName })
-      .first('d.id')
-    if (hasDeviceAccess == null) {
-      throw Boom.unauthorized(`Cannot access device ${deviceName}`)
-    }
-  }
+  const { siteId, dateFrom, dateTo } = request.query
 
   const baseUrl = config.gxAlertApi.replace(/\/api.*$/, '/remotereport/')
   const pw = 'u50GUh3u3bA5jr3IHLJrmG2l'
+
+  const dataConstraints = await getConstraints(auth.credentials)
+  const sitesQ = await knex('Site as s')
+    .join('Geography as g', 's.geographyId', 'g.id')
+    .join('State as st', 'g.stateId', 'st.id')
+    .modify(addConstraints, dataConstraints, {
+      site: 's',
+      geography: 'g',
+      state: 'st',
+    })
+    .distinct('st.name as stateName', 's.name as siteName')
+  if (siteId != null) {
+    sitesQ.where('s.id', siteId)
+  }
+  const sites = await sitesQ
+
+  const stateNames = _.uniq(_.map(sites, 'stateName'))
+  const siteNames = _.uniq(_.map(sites, 'siteName'))
+  if (stateNames.length !== 1) {
+    throw Boom.badRequest(
+      'Cannot find single assigned state for logged in user'
+    )
+  }
+  const [stateName] = stateNames
+  // Current siteName == deviceName in GxAlert so pass through
+  const [deviceName] = siteNames.length === 1 ? siteNames : []
 
   const gxParams = {
     pw,
