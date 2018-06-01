@@ -158,7 +158,7 @@ async function proxyGxReportAsync(request) {
   const pw = 'u50GUh3u3bA5jr3IHLJrmG2l'
 
   const dataConstraints = await getConstraints(auth.credentials)
-  const sitesQ = await knex('Site as s')
+  const sitesQ = knex('Site as s')
     .join('Geography as g', 's.geographyId', 'g.id')
     .join('State as st', 'g.stateId', 'st.id')
     .modify(addConstraints, dataConstraints, {
