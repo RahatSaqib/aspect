@@ -27,9 +27,6 @@ async function deleteGxAlertDeviceDataAndRefreshTokens(
   await knex('DeviceStatusLog')
     .whereIn('deviceId', deviceIds)
     .delete()
-  await knex('DeviceMaintenanceStatusLog')
-    .whereIn('deviceId', deviceIds)
-    .delete()
   await knex('DeviceLog')
     .whereIn('deviceId', deviceIds)
     .delete()
@@ -117,10 +114,6 @@ async function deleteGeneXpertDeviceSiteDataAndRefreshTokens(
     .pluck('id')
 
   await knex('DeviceStatusLog')
-    .whereIn('deviceId', deviceIds)
-    .delete()
-
-  await knex('DeviceMaintenanceStatusLog')
     .whereIn('deviceId', deviceIds)
     .delete()
 

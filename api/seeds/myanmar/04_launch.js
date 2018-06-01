@@ -4,6 +4,35 @@ const { rowsAsObject } = require('../utils')
 const now = new Date()
 
 async function seed(knex) {
+  const issueTypeDeviceMaintenance = await knex('IssueType')
+    .where({ externalId: 'DeviceMaintenance' })
+    .first('id')
+  if (issueTypeDeviceMaintenance != null) {
+    return
+  }
+
+  const { id: partnerId } = await knex('Partner')
+    .where({ name: 'Myanmar' })
+    .first()
+
+  const { id: adminId } = await knex('User as u')
+    .where({ 'u.name': 'myanmar_admin' })
+    .first('u.id')
+
+  const auditFields = {
+    createdOn: now,
+    createdBy: adminId,
+    updatedOn: now,
+    updatedBy: adminId,
+  }
+
+  // Reuse previously seeded "static" data
+  const [issueTypes, issueCategories, messageSeverities] = await Promise.all([
+    rowsAsObject(knex, 'IssueType', 'externalId'),
+    rowsAsObject(knex, 'IssueCategory', 'externalId'),
+    rowsAsObject(knex, 'MessageSeverity', 'externalId'),
+  ])
+
   // change issue/notification types from "Generic" to "Procedural"
   await knex('NotificationType').update({
     name: knex.raw("replace(name, 'Generic', 'Procedural')"),
@@ -43,10 +72,6 @@ async function seed(knex) {
     message: knex.raw("replace(message, 'Generic', 'Procedural')"),
   })
 
-  const { id: partnerId } = await knex('Partner')
-    .where({ name: 'Myanmar' })
-    .first()
-
   await knex('Partner')
     .where({ id: partnerId })
     .update({
@@ -54,9 +79,6 @@ async function seed(knex) {
       dueDaysInventoryStockout: 30,
       dueDaysInventoryStockExpiring: 30,
     })
-
-  // Reuse previously seeded "static" data
-  const issueTypes = await rowsAsObject(knex, 'IssueType', 'externalId')
 
   // Issue Escalation Triggers
   await knex('IssueEscalationTrigger').insert([
@@ -130,5 +152,74 @@ async function seed(knex) {
       createdOn: now,
       updatedOn: now,
     },
+    {
+      issueTypeId: issueTypes.ModulePowerError.id,
+      partnerId,
+      escalateToLevel: 2,
+      escalationConditions: JSON.stringify({
+        evaluationMethod: 'issue-age',
+        evaluationParameter: { days: 30 },
+      }),
+      createdOn: now,
+      updatedOn: now,
+    },
   ])
+
+  // Add Device Maintenance issue (no notifications for Myanmar, only issue generation)
+  const [deviceMaintenanceAlertTemplateId] = await knex('AlertTemplate').insert(
+    Object.assign(
+      {
+        message: 'Device Maintenance',
+      },
+      auditFields
+    )
+  )
+
+  const [deviceMaintenanceSmsTemplateId] = await knex('SmsTemplate').insert(
+    Object.assign(
+      {
+        message: '{{site.name}} maintenance',
+      },
+      auditFields
+    )
+  )
+
+  const [deviceMaintenanceEmailTemplateId] = await knex('EmailTemplate').insert(
+    Object.assign(
+      {
+        subject: '{{site.name}} Maintenance',
+        body: '{{site.name}} maintenance',
+        htmlBody: '{{site.name}} maintenance',
+      },
+      auditFields
+    )
+  )
+
+  const [deviceMaintenanceMessageTypeId] = await knex('MessageType').insert({
+    messageSeverityId: messageSeverities.Recommendation.id,
+    alertTemplateId: deviceMaintenanceAlertTemplateId,
+    smsTemplateId: deviceMaintenanceSmsTemplateId,
+    emailTemplateId: deviceMaintenanceEmailTemplateId,
+  })
+
+  await knex('IssueType').insert({
+    name: 'Device Maintenance',
+    externalId: 'DeviceMaintenance',
+    i18nKey: 'issueTypeDeviceMaintenance',
+    issueCategoryId: issueCategories.DeviceHealth.id,
+    defaultMessageTypeId: deviceMaintenanceMessageTypeId,
+  })
+
+  const { id: jobFunctionIdLabUser } = await knex('JobFunction')
+    .where({ name: 'Lab User', partnerId })
+    .first('id')
+
+  const { id: featureIdSiteFilterDashboard } = await knex('Feature')
+    .where({ module: 'siteFilterDashboard' })
+    .first('id')
+
+  await knex('JobFunctionFeature').insert({
+    jobFunctionId: jobFunctionIdLabUser,
+    featureId: featureIdSiteFilterDashboard,
+  })
 }

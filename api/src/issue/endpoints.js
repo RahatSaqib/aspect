@@ -41,6 +41,8 @@ const subscriptions = [
       INVENTORY_STOCK_EXPIRING: onIssueEventTrigger('InventoryStockExpiring'),
       DEVICE_NO_RESULTS: onIssueEventTrigger('DeviceNoResults'),
       DEVICE_HAS_NEW_RESULTS: onIssueEventResolve('DeviceNoResults'),
+      DEVICE_MAINTENANCE: onIssueEventTrigger('DeviceMaintenance'),
+      DEVICE_MAINTENANCE_RESOLVED: onIssueEventResolve('DeviceMaintenance'),
       RESULT_MODULE_TEMPERATURE_ERROR: onIssueEventTrigger(
         'ModuleTemperatureError'
       ),
@@ -49,9 +51,13 @@ const subscriptions = [
       RESULT_MACHINE_TEMPERATURE_ERROR: onIssueEventTrigger(
         'MachineTemperatureError'
       ),
+      RESULT_MACHINE_PROCEDURAL_ERROR: onIssueEventTrigger(
+        'MachineProceduralError'
+      ),
       RESULT_MODULE_PROCEDURAL_ERROR: onIssueEventTrigger(
         'ModuleProceduralError'
       ),
+      INVENTORY_REAGENT_HEALTH: onIssueEventTrigger('ReagentHealthError'),
       ESCALATE_ISSUES: onEscalateIssues(),
       RESULT_MACHINE_POWER_ERROR: onIssueEventTrigger('MachinePowerError'),
     },

@@ -16,9 +16,11 @@ const {
   resultModulePowerError,
   resultModuleFailureError,
   resultMachineTemperatureError,
+  resultMachineProceduralError,
   resultModuleProceduralError,
   resultMachinePowerError,
 } = require('../../../src/result/actions')
+const { inventoryReagentHealth } = require('../../../src/inventory/actions')
 const { waitForIdle, waitForAction } = require('../../utils/mqUtils')
 
 describe('Issue endpoints', () => {
@@ -385,12 +387,59 @@ describe('Issue endpoints', () => {
         }),
       })
       const deviceId = response.body.device.id
+
+      // This won't create any issue since (1/20 * 100)% <= 5%
+      for (let i = 0; i < 21; i++) {
+        /* eslint-disable no-await-in-loop */
+        const errorTestResultId = `UNIQUE-ID-WITH-GEN-MAC-ERROR-${i}`
+        const sampleId = `GENMAC2552${i}`
+        const moduleSerial = `GENMAC123A`
+        const instrumentSerial = `CEPH-PC-123`
+        const testStartedOn = setMilliseconds(subDays(now, i + 3), 0)
+        const testEndedOn = setMilliseconds(addHours(testStartedOn, i + 2), 0)
+
+        // Post the first few results without an error code
+        const result = {
+          id: errorTestResultId,
+          startedOn: testStartedOn,
+          endedOn: testEndedOn,
+          sample: { id: sampleId },
+          instrument: {
+            serial: instrumentSerial,
+            module: {
+              serial: moduleSerial,
+              name: 'A1',
+            },
+          },
+        }
+        if (i > 19) {
+          result.error = {
+            code: '1096',
+          }
+        }
+
+        const payload = _.merge(
+          {},
+          basicDevicePayload,
+          { name: deviceName },
+          basicResultPayload,
+          {
+            result,
+          }
+        )
+        await postToDeviceApi({
+          authHeader: deviceAuth,
+          payload,
+        })
+      }
+
+      // Should now create a procedural module issue
       for (let i = 0; i < 10; i++) {
         /* eslint-disable no-await-in-loop */
         const errorTestResultId = `UNIQUE-ID-WITH-GEN-MOD-ERROR-${i}`
         const sampleId = `GENMOD2552${i}`
         const moduleSerial = `GENMOD1234`
-        const instrumentSerial = `CEPH-PC-123${i}`
+        const instrumentSerial = `CEPH-PC-123`
         const testStartedOn = setMilliseconds(subDays(now, i + 3), 0)
         const testEndedOn = setMilliseconds(addHours(testStartedOn, i + 2), 0)
 
@@ -471,6 +520,198 @@ describe('Issue endpoints', () => {
         }
       }
     }))
+
+  it('should create a procedural machine issue ', () =>
+    runTest(async knex => {
+      const { now } = context
+
+      // Post to deviceApi to ensure the device in in Aspect
+      const response = await postToDeviceApi({
+        authHeader: deviceAuth,
+        payload: _.merge({}, basicDevicePayload, {
+          name: deviceName,
+        }),
+      })
+      const deviceId = response.body.device.id
+
+      // Module A: This won't create any issue since (1/20 * 100)% !> 5%
+      for (let i = 0; i < 21; i++) {
+        /* eslint-disable no-await-in-loop */
+        const errorTestResultId = `UNIQUE-ID-WITH-GEN-MAC-ERROR-${i}`
+        const sampleId = `GENMAC2552${i}`
+        const moduleSerial = `GENMAC123A`
+        const instrumentSerial = `CEPH-PC-123`
+        const testStartedOn = setMilliseconds(subDays(now, i + 3), 0)
+        const testEndedOn = setMilliseconds(addHours(testStartedOn, i + 2), 0)
+
+        // Post the first few results without an error code
+        const result = {
+          id: errorTestResultId,
+          startedOn: testStartedOn,
+          endedOn: testEndedOn,
+          sample: { id: sampleId },
+          instrument: {
+            serial: instrumentSerial,
+            module: {
+              serial: moduleSerial,
+              name: 'A1',
+            },
+          },
+        }
+        if (i > 19) {
+          result.error = {
+            code: '1096',
+          }
+        }
+
+        const payload = _.merge(
+          {},
+          basicDevicePayload,
+          { name: deviceName },
+          basicResultPayload,
+          {
+            result,
+          }
+        )
+        await postToDeviceApi({
+          authHeader: deviceAuth,
+          payload,
+        })
+      }
+
+      // Module B: should create a module procedural issue (1/10 * 100)% > 5%
+      for (let i = 0; i < 10; i++) {
+        /* eslint-disable no-await-in-loop */
+        const errorTestResultId = `UNIQUE-ID-WITH-GEN-MAC-B-ERR-${i}`
+        const sampleId = `GENMAC25B${i}`
+        const moduleSerial = `GENMAC123B`
+        const instrumentSerial = `CEPH-PC-456`
+        const testStartedOn = setMilliseconds(subDays(now, i + 3), 0)
+        const testEndedOn = setMilliseconds(addHours(testStartedOn, i + 2), 0)
+
+        // Post the first few results without an error code
+        const result = {
+          id: errorTestResultId,
+          startedOn: testStartedOn,
+          endedOn: testEndedOn,
+          sample: { id: sampleId },
+          instrument: {
+            serial: instrumentSerial,
+            module: {
+              serial: moduleSerial,
+              name: 'A1',
+            },
+          },
+        }
+        if (i === 9) {
+          result.error = {
+            code: '1096',
+          }
+        }
+
+        const payload = _.merge(
+          {},
+          basicDevicePayload,
+          { name: deviceName },
+          basicResultPayload,
+          {
+            result,
+          }
+        )
+        if (i < 9) {
+          // Post the result to aspect
+          await postToDeviceApi({
+            authHeader: deviceAuth,
+            payload,
+          })
+        } else {
+          // Should create issue when errorCode is added
+          const waitForModuleProceduralError = waitForAction(
+            resultModuleProceduralError(deviceId)
+          )
+          await postToDeviceApi({
+            authHeader: deviceAuth,
+            payload,
+          })
+          await waitForModuleProceduralError
+          await waitForIdle()
+
+          const issues = await knex('Issue as i')
+            .join('IssueType as it', 'i.issueTypeId', 'it.id')
+            .join('IssueStatus as is', 'i.issueStatusId', 'is.id')
+            .where({ 'i.deviceId': deviceId })
+            .select(
+              'i.id',
+              'it.externalId as issueType',
+              'i.deviceId',
+              'is.externalId as issueStatus'
+            )
+          assert.equal(issues.length, 1)
+          assert.equal(issues[0].issueType, 'ModuleProceduralError')
+          assert.equal(issues[0].deviceId, deviceId)
+          assert.equal(issues[0].issueStatus, 'Active')
+        }
+      }
+
+      // Post an additional result with procedural error to to module A
+      const testStartedOn = setMilliseconds(subDays(now, 22 + 3), 0)
+      const result = {
+        id: 'UNIQUE-ID-WITH-GEN-MAC-ERROR-22',
+        startedOn: testStartedOn,
+        endedOn: setMilliseconds(addHours(testStartedOn, 22 + 2), 0),
+        sample: { id: 'GENMODB55222' },
+        error: {
+          code: '1096',
+        },
+        instrument: {
+          serial: 'CEPH-PC-123',
+          module: {
+            serial: 'GENMAC123A',
+            name: 'A1',
+          },
+        },
+      }
+      const payload = _.merge(
+        {},
+        basicDevicePayload,
+        { name: deviceName },
+        basicResultPayload,
+        {
+          result,
+        }
+      )
+      // Should create issue when errorCode is added
+      const waitForMachineProceduralError = waitForAction(
+        resultMachineProceduralError(deviceId)
+      )
+      await postToDeviceApi({
+        authHeader: deviceAuth,
+        payload,
+      })
+      await waitForMachineProceduralError
+      await waitForIdle()
+
+      const issues = await knex('Issue as i')
+        .join('IssueType as it', 'i.issueTypeId', 'it.id')
+        .join('IssueStatus as is', 'i.issueStatusId', 'is.id')
+        .where({ 'i.deviceId': deviceId })
+        .select(
+          'i.id',
+          'it.externalId as issueType',
+          'i.deviceId',
+          'is.externalId as issueStatus'
+        )
+      assert.equal(issues.length, 2)
+      issues.forEach(issue => {
+        if (issue.issueType === 'MachineProceduralError') {
+          assert.equal(issue.deviceId, deviceId)
+          assert.equal(issue.issueStatus, 'Active')
+        }
+      })
+      // TOD0 - Add tests to ensure the the module issue is removed when
+      // the procedural machine issue is created
+    }))
+
   describe('should create a machine power issue when ', () => {
     beforeEach(async () =>
       run(async () => {
@@ -481,7 +722,7 @@ describe('Issue endpoints', () => {
     )
     afterEach(afterCleanUp)
 
-    it('the number of power-specific errors accross all modules is greater than 8 ', () =>
+    it('the number of power-specific errors across all modules is greater than 8 ', () =>
       runTest(async knex => {
         const { now } = context
         const errorCode = '1007'
@@ -651,4 +892,303 @@ describe('Issue endpoints', () => {
         }
       }))
   })
+
+  it('should create a reagent health issue when errors exceed', () =>
+    runTest(async knex => {
+      const { now } = context
+
+      // Post to deviceApi to ensure the device in in Aspect
+      const response = await postToDeviceApi({
+        authHeader: deviceAuth,
+        payload: _.merge({}, basicDevicePayload, {
+          name: deviceName,
+        }),
+      })
+      const deviceId = response.body.device.id
+      for (let i = 0; i < 10; i++) {
+        /* eslint-disable no-await-in-loop */
+        const errorTestResultId = `UNIQUE-ID-WITH-REAGENT-HEALTH-ERROR-${i}`
+        const sampleId = `REAGENT2552${i}`
+        const moduleSerial = `REAGENT1234`
+        const instrumentSerial = `CEPH-PC-123${i}`
+        const testStartedOn = setMilliseconds(subDays(now, i + 3), 0)
+        const testEndedOn = setMilliseconds(addHours(testStartedOn, i + 2), 0)
+
+        // Post the first few results without an error code
+        let result = {
+          id: errorTestResultId,
+          startedOn: testStartedOn,
+          endedOn: testEndedOn,
+          sample: { id: sampleId },
+          instrument: {
+            serial: instrumentSerial,
+            module: {
+              serial: moduleSerial,
+              name: 'A1',
+            },
+          },
+        }
+        if (i > 8) {
+          result = {
+            id: errorTestResultId,
+            startedOn: testStartedOn,
+            endedOn: testEndedOn,
+            error: {
+              code: '2037',
+            },
+            sample: { id: sampleId },
+            instrument: {
+              serial: instrumentSerial,
+              module: {
+                serial: moduleSerial,
+                name: 'A1',
+              },
+            },
+          }
+        }
+
+        const payload = _.merge(
+          {},
+          basicDevicePayload,
+          { name: deviceName },
+          basicResultPayload,
+          {
+            result,
+          }
+        )
+        if (i < 9) {
+          // Post the result to aspect
+          await postToDeviceApi({
+            authHeader: deviceAuth,
+            payload,
+          })
+        } else {
+          // Should create issue when errorCode is added
+          const waitForModuleGenericError = waitForAction(
+            inventoryReagentHealth(deviceId, 2)
+          )
+          await postToDeviceApi({
+            authHeader: deviceAuth,
+            payload,
+          })
+          await waitForModuleGenericError
+          await waitForIdle()
+
+          const issues = await knex('Issue as i')
+            .join('IssueType as it', 'i.issueTypeId', 'it.id')
+            .join('IssueStatus as is', 'i.issueStatusId', 'is.id')
+            .where({ 'i.deviceId': deviceId })
+            .select(
+              'i.id',
+              'it.externalId as issueType',
+              'i.deviceId',
+              'is.externalId as issueStatus'
+            )
+          assert.equal(issues.length, 1)
+          assert.equal(issues[0].issueType, 'ReagentHealthError')
+          assert.equal(issues[0].deviceId, deviceId)
+          assert.equal(issues[0].issueStatus, 'Active')
+        }
+      }
+    }))
+
+  it('should create a reagent health issue when invalid result exceed', () =>
+    runTest(async knex => {
+      const { now } = context
+
+      // Post to deviceApi to ensure the device in in Aspect
+      const response = await postToDeviceApi({
+        authHeader: deviceAuth,
+        payload: _.merge({}, basicDevicePayload, {
+          name: deviceName,
+        }),
+      })
+      const deviceId = response.body.device.id
+      for (let i = 0; i < 10; i++) {
+        /* eslint-disable no-await-in-loop */
+        const errorTestResultId = `UNIQUE-ID-WITH-REAGENT-HEALTH-ERROR-${i}`
+        const sampleId = `REAGENT2552${i}`
+        const moduleSerial = `REAGENT1234`
+        const instrumentSerial = `CEPH-PC-123${i}`
+        const testStartedOn = setMilliseconds(subDays(now, i + 3), 0)
+        const testEndedOn = setMilliseconds(addHours(testStartedOn, i + 2), 0)
+
+        // Post the first few valid results
+        let result = {
+          id: errorTestResultId,
+          startedOn: testStartedOn,
+          endedOn: testEndedOn,
+          sample: { id: sampleId },
+          instrument: {
+            serial: instrumentSerial,
+            module: {
+              serial: moduleSerial,
+              name: 'A1',
+            },
+          },
+        }
+        if (i > 8) {
+          result = {
+            id: errorTestResultId,
+            startedOn: testStartedOn,
+            endedOn: testEndedOn,
+            category: [{ id: 'Invalid' }],
+            sample: { id: sampleId },
+            instrument: {
+              serial: instrumentSerial,
+              module: {
+                serial: moduleSerial,
+                name: 'A1',
+              },
+            },
+          }
+        }
+
+        const payload = _.merge(
+          {},
+          basicDevicePayload,
+          { name: deviceName },
+          basicResultPayload,
+          {
+            result,
+          }
+        )
+        if (i < 9) {
+          // Post the result to aspect
+          await postToDeviceApi({
+            authHeader: deviceAuth,
+            payload,
+          })
+        } else {
+          // Should create issue when errorCode is added
+          const waitForModuleGenericError = waitForAction(
+            inventoryReagentHealth(deviceId, 2)
+          )
+          await postToDeviceApi({
+            authHeader: deviceAuth,
+            payload,
+          })
+          await waitForModuleGenericError
+          await waitForIdle()
+
+          const issues = await knex('Issue as i')
+            .join('IssueType as it', 'i.issueTypeId', 'it.id')
+            .join('IssueStatus as is', 'i.issueStatusId', 'is.id')
+            .where({ 'i.deviceId': deviceId })
+            .select(
+              'i.id',
+              'it.externalId as issueType',
+              'i.deviceId',
+              'is.externalId as issueStatus'
+            )
+          assert.equal(issues.length, 1)
+          assert.equal(issues[0].issueType, 'ReagentHealthError')
+          assert.equal(issues[0].deviceId, deviceId)
+          assert.equal(issues[0].issueStatus, 'Active')
+        }
+      }
+    }))
+
+  it('should create a reagent health issue when a single batch invalid result exceed', () =>
+    runTest(async knex => {
+      const { now } = context
+
+      // Post to deviceApi to ensure the device in in Aspect
+      const response = await postToDeviceApi({
+        authHeader: deviceAuth,
+        payload: _.merge({}, basicDevicePayload, {
+          name: deviceName,
+        }),
+      })
+      const deviceId = response.body.device.id
+      for (let i = 0; i < 10; i++) {
+        /* eslint-disable no-await-in-loop */
+        const errorTestResultId = `UNIQUE-ID-WITH-REAGENT-HEALTH-ERROR-${i}`
+        const sampleId = `REAGENT2552${i}`
+        const moduleSerial = `REAGENT1234`
+        const instrumentSerial = `CEPH-PC-123${i}`
+        const testStartedOn = setMilliseconds(subDays(now, i + 3), 0)
+        const testEndedOn = setMilliseconds(addHours(testStartedOn, i + 2), 0)
+
+        // Post the first few valid results
+        let result = {
+          id: errorTestResultId,
+          startedOn: testStartedOn,
+          endedOn: testEndedOn,
+          sample: { id: sampleId },
+          instrument: {
+            serial: instrumentSerial,
+            module: {
+              serial: moduleSerial,
+              name: 'A1',
+            },
+          },
+          consumable: {
+            lot: 'Lot A',
+          },
+        }
+        if (i > 8) {
+          result = {
+            id: errorTestResultId,
+            startedOn: testStartedOn,
+            endedOn: testEndedOn,
+            category: [{ id: 'Invalid' }],
+            sample: { id: sampleId },
+            instrument: {
+              serial: instrumentSerial,
+              module: {
+                serial: moduleSerial,
+                name: 'A1',
+              },
+            },
+            consumable: {
+              lot: 'Lot A',
+            },
+          }
+        }
+
+        const payload = _.merge(
+          {},
+          basicDevicePayload,
+          { name: deviceName },
+          basicResultPayload,
+          {
+            result,
+          }
+        )
+        if (i < 9) {
+          // Post the result to aspect
+          await postToDeviceApi({
+            authHeader: deviceAuth,
+            payload,
+          })
+        } else {
+          // Should create issue when errorCode is added
+          const waitForModuleGenericError = waitForAction(
+            inventoryReagentHealth(deviceId, 2)
+          )
+          await postToDeviceApi({
+            authHeader: deviceAuth,
+            payload,
+          })
+          await waitForModuleGenericError
+          await waitForIdle()
+
+          const issues = await knex('Issue as i')
+            .join('IssueType as it', 'i.issueTypeId', 'it.id')
+            .join('IssueStatus as is', 'i.issueStatusId', 'is.id')
+            .where({ 'i.deviceId': deviceId })
+            .select(
+              'i.id',
+              'it.externalId as issueType',
+              'i.deviceId',
+              'is.externalId as issueStatus'
+            )
+          assert.equal(issues.length, 1)
+          assert.equal(issues[0].issueType, 'ReagentHealthError')
+          assert.equal(issues[0].deviceId, deviceId)
+          assert.equal(issues[0].issueStatus, 'Active')
+        }
+      }
+    }))
 })

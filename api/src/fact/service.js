@@ -1,10 +1,14 @@
-const { subDays } = require('date-fns')
+const { addDays, subDays } = require('date-fns')
 const _ = require('lodash')
 const {
   inventoryStockout,
   inventoryStockExpiring,
 } = require('../inventory/actions')
-const { factGenerateResultCounts } = require('./actions')
+const {
+  factGenerateDeviceConnectivity,
+  factGenerateResultCounts,
+} = require('./actions')
+
 const {
   deviceOffline,
   deviceOnline,
@@ -20,23 +24,44 @@ function onFactGenerateDeviceConnectivity({ deviceId }, { messageContext }) {
     deviceNoResults,
   })
   return context.run(async knex => {
+    // If we don't have facts yet for devices we care about, generate them
+    // with defaults values
+    const now = new Date()
+    const deviceNoFactsQ = knex('Device as d')
+      .leftJoin('FactDeviceFlag as f', 'f.deviceId', 'd.id')
+      .whereNull('f.deviceId')
+      .select('d.id')
+    if (deviceId != null) {
+      deviceNoFactsQ.where({ 'd.id': deviceId })
+    }
+    const noFactDevices = await deviceNoFactsQ.map(d => ({
+      deviceId: d.id,
+      updatedOn: now,
+    }))
+    await knex.batchInsert('FactDeviceFlag', noFactDevices, 25)
+
     const devicesQ = knex('Device as d')
       .join('FactDeviceFlag as f', 'f.deviceId', 'd.id')
       .join('Partner as p', 'd.partnerId', 'p.id')
+      // if already have connectivity flag, no reason to calculate again
       .where({ 'f.offline': 0, 'f.noResults': 0 })
       .select(
         'd.id',
         'p.maxDaysDeviceOffline',
         'p.maxDaysDeviceNoResults',
         'd.lastPingOn',
+        'd.lastSeenOn',
         'd.createdOn as deviceCreatedOn',
-        knex('DeviceLog as dl')
-          .whereRaw('dl.deviceId = d.id')
-          .whereNotNull('dl.resultId')
-          .max('dl.createdOn')
+        'f.maintenance',
+        'f.maintenanceDueOn',
+        knex('Result as r')
+          .whereRaw('r.deviceId = d.id')
+          .max('r.updatedOn')
           .as('lastResultOn')
       )
     if (deviceId != null) {
+      // constrain by single device specified by action, or query all
+      // devices on schedule
       devicesQ.where({ 'd.id': deviceId })
     }
     await devicesQ.map(
@@ -45,10 +70,12 @@ function onFactGenerateDeviceConnectivity({ deviceId }, { messageContext }) {
         maxDaysDeviceOffline,
         maxDaysDeviceNoResults,
         lastPingOn,
+        lastSeenOn,
         deviceCreatedOn,
         lastResultOn,
+        maintenance,
+        maintenanceDueOn,
       }) => {
-        const now = new Date()
         const maxLastDateOffline =
           maxDaysDeviceOffline == null
             ? null
@@ -57,16 +84,35 @@ function onFactGenerateDeviceConnectivity({ deviceId }, { messageContext }) {
           maxDaysDeviceNoResults == null
             ? null
             : subDays(now, maxDaysDeviceNoResults)
+        // TODO move #days to partner config
+        const maxMaintenanceDateNoResult = addDays(lastSeenOn, 30)
         if (
           lastPingOn == null ||
           (maxLastDateOffline != null && lastPingOn <= maxLastDateOffline)
         ) {
+          // Number of days of "heartbeat" > X days
           context.deviceOffline(id)
         } else if (
           maxLastDateNoResult != null &&
           ((lastResultOn != null && lastResultOn <= maxLastDateNoResult) ||
             (lastResultOn == null && deviceCreatedOn <= maxLastDateNoResult))
         ) {
+          // OR no tests run > Y days
+          context.deviceNoResults(id)
+        } else if (
+          maintenance === 1 &&
+          maintenanceDueOn != null &&
+          maxMaintenanceDateNoResult != null &&
+          maintenanceDueOn >= maxMaintenanceDateNoResult
+        ) {
+          // OR inactive - expected back date > Z days
+          context.deviceNoResults(id)
+        } else if (
+          maintenance === 1 &&
+          maintenanceDueOn != null &&
+          now > maintenanceDueOn
+        ) {
+          // OR date passes expected back date
           context.deviceNoResults(id)
         }
         return id // for lint
@@ -95,37 +141,60 @@ function onFactGenerateResultCounts(action, context) {
   })
 }
 
-function onDeviceSeen({ deviceId, dateSeen }, { messageContext }) {
+function onDeviceSeen({ deviceId }, { messageContext }) {
   const context = messageContext.bindActionCreators({ deviceOnline })
   return context.run(async knex => {
-    const getDeviceAndFactDeviceFlag = async deviceId =>
-      knex('Device as d')
-        .leftJoin('FactDeviceFlag as fdf', 'd.id', 'fdf.deviceId')
-        .where('d.id', deviceId)
-        .first('d.id', 'fdf.deviceId', 'd.lastSeenOn', 'fdf.offline')
-    let deviceAndFactDeviceFlag = await getDeviceAndFactDeviceFlag(deviceId)
-    if (deviceAndFactDeviceFlag) {
-      if (!deviceAndFactDeviceFlag.deviceId) {
-        await knex('FactDeviceFlag').insert({ deviceId, updatedOn: new Date() })
-        deviceAndFactDeviceFlag = await getDeviceAndFactDeviceFlag(deviceId)
-      }
-      if (
-        deviceAndFactDeviceFlag.offline &&
-        (!dateSeen || deviceAndFactDeviceFlag.lastSeenOn < dateSeen)
-      ) {
-        context.deviceOnline(deviceId)
-      }
+    // Mark device online if seen more recently than offline
+    const offlineDevice = await knex('Device as d')
+      .leftJoin('FactDeviceFlag as fdf', 'd.id', 'fdf.deviceId')
+      .where('d.id', deviceId)
+      .where(function() {
+        // If we don't fact yet, seen for first time, consider this online
+        this.whereNull('fdf.deviceId')
+          // If fact is marked offline and we've seen the device more recently
+          // then the update, we are also online
+          .orWhereRaw('fdf.offline = 1 and (fdf.updatedOn <= d.lastSeenOn)')
+      })
+      .first('d.id')
+    if (offlineDevice != null) {
+      context.deviceOnline(offlineDevice.id)
     }
   })
 }
 
 function onDeviceUpdateFlag(updates) {
-  return ({ deviceId }, { messageContext }) =>
-    messageContext.run(async knex =>
-      knex('FactDeviceFlag')
+  return ({ deviceId, options }, { messageContext }) => {
+    const context = messageContext.bindActionCreators({
+      factGenerateDeviceConnectivity,
+    })
+    return context.run(async knex => {
+      const flagUpdates = Object.assign({ updatedOn: new Date() }, updates)
+
+      if (
+        updates.maintenance === 1 &&
+        options != null &&
+        options.dueOn != null
+      ) {
+        flagUpdates.maintenanceDueOn = new Date(options.dueOn)
+      } else if (updates.maintenance === 0) {
+        flagUpdates.maintenanceDueOn = null
+      }
+
+      const updatedRows = await knex('FactDeviceFlag')
         .where({ deviceId })
-        .update(updates)
-    )
+        .update(flagUpdates)
+      if (updatedRows === 0) {
+        // If we don't have a flag for this device yet, create it!
+        await knex('FactDeviceFlag').insert(
+          Object.assign({ deviceId }, flagUpdates)
+        )
+      }
+
+      // flags have been updated, check connectivity again for this device with
+      // updated flags in case resolved updates triggered different issue conditions
+      context.factGenerateDeviceConnectivity(deviceId)
+    })
+  }
 }
 
 function onResultLogged({ resultId }, { messageContext }) {

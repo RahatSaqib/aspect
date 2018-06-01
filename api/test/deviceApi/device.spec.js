@@ -314,6 +314,8 @@ describe('Device API routes', () => {
           .then(res => {
             assert.equal(res.status, 200)
           })
+        await waitForIdle()
+
         const newDevice = await getDeviceFromApiKey(knex, apiKey)
         assert.isOk(newDevice)
         assert.isOk(newDevice.name)
@@ -326,6 +328,7 @@ describe('Device API routes', () => {
         assert.isOk(deviceLogs)
         assert.propertyVal(newDevice, 'id', deviceLogs[0].deviceId)
         assert.isAtLeast(deviceLogs.length, 1)
+        await waitForIdle()
 
         // ensure device exists on FactDeviceFlag table
         const factDevice = await knex('FactDeviceFlag as fdf')

@@ -4,6 +4,8 @@ const postProcessMergeResult = require('./postProcessMergeResult')
 
 const plugins = {
   default: {
+    getDeviceSeenOn,
+    getDevicePingOn,
     preProcessCreateDevice,
     transformNewDevicePayload,
     preProcessAddDeviceData,
@@ -35,6 +37,8 @@ const plugins = {
     preProcessMergeResult: require('./genexpert/preProcessMergeResult'),
   },
   gxalert: {
+    getDeviceSeenOn: require('./genexpert/gxalert_plugin/getDeviceSeenOn'),
+    getDevicePingOn: require('./genexpert/gxalert_plugin/getDevicePingOn'),
     preProcessAddDeviceData: require('./genexpert/gxalert_plugin/preProcessAddDeviceData'),
     preProcessUpdateDeviceConfiguration: require('./genexpert/gxalert_plugin/preProcessUpdateDeviceConfiguration'),
     postProcessUpdateDeviceConfiguration: require('./genexpert/gxalert_plugin/postProcessUpdateDeviceConfiguration'),
@@ -56,6 +60,28 @@ const plugins = {
 async function loadPlugin(pluginName, actionName) {
   const action = get(plugins, [pluginName, actionName])
   return action != null ? action : plugins.default[actionName]
+}
+
+/**
+ * Device API has been invoked for a given device. Return the
+ * lastSeenOn date given this update, or null if this update
+ * should not be considered device seen
+ *
+ * Default now
+ */
+async function getDeviceSeenOn({ now }) {
+  return now
+}
+
+/**
+ * Device API has been invoked with a call to update data for a
+ * given device. Return the lastPingOn date given this update,
+ * or null if this update should not be considered device ping
+ *
+ * Default now
+ */
+async function getDevicePingOn({ now }) {
+  return now
 }
 
 /**

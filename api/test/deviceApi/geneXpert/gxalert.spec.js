@@ -26,7 +26,7 @@ const {
 const { run } = require('../../../src/db')
 const { waitForApproximately } = require('../../utils/generatorFunctionUtils')
 const { waitForIdle, waitForAction } = require('../../utils/mqUtils')
-const { deviceSeen, deviceOffline } = require('../../../src/device/actions')
+const { deviceSeen, deviceMaintenance } = require('../../../src/device/actions')
 
 const server = supertest.agent('http://localhost:8080')
 const { assert, expect } = chai
@@ -1719,21 +1719,16 @@ describe('Device API routes for GxAlert Device', () => {
       let standardDevicePayload
 
       async function getLatestDeviceMaintenanceStatusLog(knex) {
-        const logEntry = await knex('DeviceMaintenanceStatusLog as dmsl')
-          .innerJoin(
-            'DeviceMaintenanceStatus as dms',
-            'dmsl.deviceMaintenanceStatusId',
-            'dms.id'
-          )
-          .where('dmsl.deviceId', deviceId)
-          .orderByRaw('dmsl.changedOn DESC, dmsl.id DESC')
-          .first(
-            'dms.token',
-            'dmsl.data',
-            'dmsl.id',
-            'dmsl.changedOn',
-            'dmsl.createdOn'
-          )
+        await waitForIdle()
+        const logEntry = await knex('Issue as i')
+          .join('IssueType as it', 'it.id', 'i.issueTypeId')
+          .join('IssueStatus as is', 'is.id', 'i.issueStatusId')
+          .where({
+            'i.deviceId': deviceId,
+            'it.externalId': 'DeviceMaintenance',
+          })
+          .orderByRaw('i.updatedOn DESC, i.id DESC')
+          .first('i.data', 'i.id', 'i.createdOn', 'is.externalId as status')
         if (_.isEmpty(logEntry)) {
           return logEntry
         }
@@ -1831,20 +1826,7 @@ describe('Device API routes for GxAlert Device', () => {
               })
             )
             await waitForDeviceSeen
-
-            const deviceMaintenanceLogAfterFirstMaintenanceUpdate = await getLatestDeviceMaintenanceStatusLog(
-              knex
-            )
-            expect(
-              deviceMaintenanceLogAfterFirstMaintenanceUpdate
-            ).to.containSubset({
-              token: 'online',
-              data: {
-                reason: null,
-                note: null,
-                expectedBackOnline: null,
-              },
-            })
+            assert.isUndefined(deviceMaintenanceLogBeforeMaintenanceUpdate)
 
             const inactiveMaintenanceReason =
               'Connectivity issues, router cannot connect'
@@ -1853,7 +1835,9 @@ describe('Device API routes for GxAlert Device', () => {
               addDays(now, 15),
               'YYYY-MM-DD'
             )
-            const waitForDeviceOffline = waitForAction(deviceOffline(deviceId))
+            const waitForDeviceMaintenance = waitForAction(
+              deviceMaintenance(deviceId)
+            )
             await postToDeviceApi(
               _.merge(standardDevicePayload, {
                 payload: {
@@ -1868,14 +1852,14 @@ describe('Device API routes for GxAlert Device', () => {
                 },
               })
             )
-            await waitForDeviceOffline
+            await waitForDeviceMaintenance
             const deviceMaintenanceLogAfterSecondMaintenanceUpdate = await getLatestDeviceMaintenanceStatusLog(
               knex
             )
             expect(
               deviceMaintenanceLogAfterSecondMaintenanceUpdate
             ).to.containSubset({
-              token: 'offline',
+              status: 'Active',
               data: {
                 reason: inactiveMaintenanceReason,
                 note: inactiveMaintenanceNote,
@@ -1895,8 +1879,8 @@ describe('Device API routes for GxAlert Device', () => {
                 addDays(now, 23),
                 'YYYY-MM-DD'
               )
-              const waitForDeviceOffline = waitForAction(
-                deviceOffline(deviceId)
+              const waitForDeviceMaintenance = waitForAction(
+                deviceMaintenance(deviceId)
               )
               await postToDeviceApi(
                 _.merge(standardDevicePayload, {
@@ -1912,14 +1896,14 @@ describe('Device API routes for GxAlert Device', () => {
                   },
                 })
               )
-              await waitForDeviceOffline
+              await waitForDeviceMaintenance
               const deviceMaintenanceLogAfterInactiveMaintenanceUpdate = await getLatestDeviceMaintenanceStatusLog(
                 knex
               )
               expect(
                 deviceMaintenanceLogAfterInactiveMaintenanceUpdate
               ).to.containSubset({
-                token: 'offline',
+                status: 'Active',
                 data: {
                   reason: inactiveMaintenanceReason,
                   note: inactiveMaintenanceNote,
@@ -1957,12 +1941,7 @@ describe('Device API routes for GxAlert Device', () => {
               expect(
                 deviceMaintenanceLogAfterActiveMaintenanceUpdate
               ).to.containSubset({
-                token: 'online',
-                data: {
-                  reason: null,
-                  note: null,
-                  expectedBackOnline: null,
-                },
+                status: 'Resolved',
               })
             }))
 
@@ -2031,21 +2010,21 @@ describe('Device API routes for GxAlert Device', () => {
         })
 
         describe('which includes {... inactive: true... }', () => {
-          it('should eventually set device flag: offline to true', () =>
+          it('should eventually set device flag: maintenance to true', () =>
             runTest(async knex => {
               const { now } = context
               const { id: deviceId } = await getCurrentGeneXpertDevice()
 
               await knex('FactDeviceFlag')
                 .where({ deviceId })
-                .update({ offline: 0 })
+                .update({ maintenance: 0, maintenanceDueOn: null })
               let deviceFacts = await knex('FactDeviceFlag')
                 .where({ deviceId })
                 .first()
-              assert.notOk(deviceFacts.offline)
+              assert.notOk(deviceFacts.maintenance)
 
-              const waitForDeviceOffline = waitForAction(
-                deviceOffline(deviceId)
+              const waitForMaintenance = waitForAction(
+                deviceMaintenance(deviceId)
               )
 
               const inactiveMaintenanceReason = 'Connectivity Problems'
@@ -2070,13 +2049,13 @@ describe('Device API routes for GxAlert Device', () => {
               )
               assert.equal(response.body.device.id, deviceId)
 
-              await waitForDeviceOffline
+              await waitForMaintenance
               await waitForIdle()
 
               deviceFacts = await knex('FactDeviceFlag')
                 .where({ deviceId })
                 .first()
-              assert.ok(deviceFacts.offline)
+              assert.ok(deviceFacts.maintenance)
             }))
         })
       })
@@ -2112,7 +2091,7 @@ describe('Device API routes for GxAlert Device', () => {
               knex
             )
             expect(deviceMaintenanceLogAfterInactiveUpdate).to.containSubset({
-              token: 'offline',
+              status: 'Active',
               data: {
                 reason: inactiveMaintenanceReason,
                 note: inactiveMaintenanceNote,

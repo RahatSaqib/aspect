@@ -188,18 +188,6 @@ async function seed(knex) {
     token: 'decommissioned',
   })
 
-  // DeviceMaintenanceStatus
-  await knex('DeviceMaintenanceStatus').insert({
-    name: 'Online',
-    i18nKey: 'deviceMaintenanceStatusOnline',
-    token: 'online',
-  })
-  await knex('DeviceMaintenanceStatus').insert({
-    name: 'Offline',
-    i18nKey: 'deviceMaintenanceStatusOffline',
-    token: 'offline',
-  })
-
   // Result source
   const [resultSourceDiagnosticId] = await knex('ResultSource').insert({
     name: 'Diagnostic Device',

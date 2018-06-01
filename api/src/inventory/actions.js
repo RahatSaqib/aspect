@@ -3,6 +3,7 @@ const isNil = require('lodash/isNil')
 const types = {
   INVENTORY_STOCKOUT: 'INVENTORY_STOCKOUT',
   INVENTORY_STOCK_EXPIRING: 'INVENTORY_STOCK_EXPIRING',
+  INVENTORY_REAGENT_HEALTH: 'INVENTORY_REAGENT_HEALTH',
 }
 
 // ----------- Action Creators -------------------
@@ -45,10 +46,26 @@ function inventoryStockExpiring(siteId, consumableId, daysDue, totalWasted) {
   }
 }
 
-// -----------------------------------------------
+/**
+ * Creates an action to notify the inventory
+ * has a reagent health issue
+ *
+ * deviceId, consumableId is required.
+ */
+function inventoryReagentHealth(deviceId, consumableId) {
+  if (isNil(deviceId) || isNil(consumableId)) {
+    throw new Error('Must specify deviceId, consumableId')
+  }
+  return {
+    type: types.INVENTORY_REAGENT_HEALTH,
+    deviceId,
+    consumableId,
+  }
+}
 
 module.exports = {
   types,
   inventoryStockout,
   inventoryStockExpiring,
+  inventoryReagentHealth,
 }

@@ -222,6 +222,10 @@ async function seed(knex) {
       jobFunctionId: jobFunctionIdLabUser,
       featureId: featureModules.reportDashboard,
     },
+    {
+      jobFunctionId: jobFunctionIdLabUser,
+      featureId: featureModules.siteFilterDashboard,
+    },
   ])
 
   await knex('JobFunctionPermission').insert([
@@ -1682,6 +1686,17 @@ async function seed(knex) {
         evaluationMethod: 'sql-script',
         evaluationParameter:
           './sqlScripts/Myanmar/issues/escalations/deviceNoResultsLevel3ROEscalatedNoResults.sql',
+      }),
+      createdOn: now,
+      updatedOn: now,
+    },
+    {
+      issueTypeId: issueTypes.ModulePowerError.id,
+      partnerId,
+      escalateToLevel: 2,
+      escalationConditions: JSON.stringify({
+        evaluationMethod: 'issue-age',
+        evaluationParameter: { days: 30 },
       }),
       createdOn: now,
       updatedOn: now,
