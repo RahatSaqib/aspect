@@ -78,6 +78,12 @@ function onFactGenerateDeviceConnectivity({ deviceId }, { messageContext }) {
             : subDays(now, maxDaysDeviceNoResults)
         // TODO move #days to partner config
         const maxMaintenanceDateNoResult = addDays(lastSeenOn, 30)
+
+        // If we haven't seen a result, use deviceCreatedOn for checks
+        if (lastResultOn == null) {
+          lastResultOn = deviceCreatedOn
+        }
+
         if (
           lastPingOn == null ||
           (maxLastDateOffline != null && lastPingOn <= maxLastDateOffline)
@@ -86,8 +92,7 @@ function onFactGenerateDeviceConnectivity({ deviceId }, { messageContext }) {
           context.deviceOffline(id, { lastSeenOn, lastPingOn })
         } else if (
           maxLastDateNoResult != null &&
-          ((lastResultOn != null && lastResultOn <= maxLastDateNoResult) ||
-            (lastResultOn == null && deviceCreatedOn <= maxLastDateNoResult))
+          lastResultOn <= maxLastDateNoResult
         ) {
           // OR no tests run > Y days
           context.deviceNoResults(id, { lastResultOn })

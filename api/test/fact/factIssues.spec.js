@@ -11,6 +11,10 @@ const {
 } = require('../../src/device/actions')
 const { issueAcknowledged, issueResolved } = require('../../src/issue/actions')
 const {
+  processDynamicMessage,
+  numberOfDays,
+} = require('../../src/stringTemplate/service')
+const {
   createMessageContext,
   waitForIdle,
   waitForAction,
@@ -98,6 +102,10 @@ describe('Fact based issues', () => {
       assert.isOk(maxDaysDeviceNoResults > maxDaysDeviceOffline)
       const deviceOfflineDate = subDays(now, maxDaysDeviceOffline + 1)
       const deviceNoResultsDate = subDays(now, maxDaysDeviceNoResults + 1)
+      const numberOfDaysOffline = numberOfDays(deviceOfflineDate)
+      const numberOfDaysNoResults = numberOfDays(deviceNoResultsDate)
+      assert.equal(numberOfDaysOffline, `${maxDaysDeviceOffline + 1} days`)
+      assert.equal(numberOfDaysNoResults, `${maxDaysDeviceNoResults + 1} days`)
       await knex('Device as d')
         .where('d.id', newDevice.id)
         .update({
@@ -144,13 +152,15 @@ describe('Fact based issues', () => {
         .join('JobFunction as jf', 'jf.id', 'nt.jobFunctionId')
         .join('Person as p', 'p.id', 'n.personId')
         .join('User as u', 'u.id', 'p.userId')
+        .join('AlertMessage as am', 'am.id', 'n.alertMessageId')
         .where({ 'n.issueId': issueId })
         .orderBy('jf.name')
         .select(
           'u.name as userName',
           'jf.name as jobFunction',
           'nt.level',
-          'nt.canAcknowledge'
+          'nt.canAcknowledge',
+          'am.message as alertMessage'
         )
 
       assert.equal(notifications.length, 2)
@@ -163,6 +173,10 @@ describe('Fact based issues', () => {
       assert.equal(notificationRO.jobFunction, 'Regional Officer')
       assert.equal(notificationRO.level, issues[0].level)
       assert.equal(notificationRO.canAcknowledge, 0)
+      assert.equal(
+        processDynamicMessage(notificationRO.alertMessage),
+        `Cannot reach network for ${numberOfDaysOffline}`
+      )
 
       const waitForAck = waitForAction(issueAcknowledged(issueId))
       await server
@@ -239,25 +253,31 @@ describe('Fact based issues', () => {
         .join('JobFunction as jf', 'jf.id', 'nt.jobFunctionId')
         .join('Person as p', 'p.id', 'n.personId')
         .join('User as u', 'u.id', 'p.userId')
-        .where({ 'n.issueId': issueId })
+        .join('AlertMessage as am', 'am.id', 'n.alertMessageId')
+        .where({ 'n.issueId': issues[1].id })
         .orderBy('jf.name')
         .select(
           'u.name as userName',
           'jf.name as jobFunction',
           'nt.level',
-          'nt.canAcknowledge'
+          'nt.canAcknowledge',
+          'am.message as alertMessage'
         )
 
       assert.equal(notifications.length, 2)
       ;[notificationLU, notificationRO] = notifications
       assert.equal(notificationLU.userName, USER_LU)
       assert.equal(notificationLU.jobFunction, 'Lab User')
-      assert.equal(notificationLU.level, issues[0].level)
+      assert.equal(notificationLU.level, issues[1].level)
       assert.equal(notificationLU.canAcknowledge, 1)
       assert.equal(notificationRO.userName, USER_RO)
       assert.equal(notificationRO.jobFunction, 'Regional Officer')
-      assert.equal(notificationRO.level, issues[0].level)
+      assert.equal(notificationRO.level, issues[1].level)
       assert.equal(notificationRO.canAcknowledge, 0)
+      assert.equal(
+        processDynamicMessage(notificationRO.alertMessage),
+        `No testing for ${numberOfDaysNoResults}`
+      )
 
       const resultPayload = {
         startedOn: now,

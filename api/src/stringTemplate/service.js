@@ -146,4 +146,6 @@ module.exports = {
   addDataSourceToQuery,
   processUsingDataSourceQuery,
   processDynamicMessage,
+  numberOfDays,
+  isoDate,
 }
