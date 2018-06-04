@@ -85,7 +85,7 @@ export const Reports = ({
             inverse
             href={`${
               config.aspectApi
-            }/report/gx/RifResistanceRateExportExcel.xlsx?dateFrom=${last7Days}&token=${token}`}
+            }/report/gx/RifResistanceExportExcel.xlsx?dateFrom=${last7Days}&token=${token}`}
           >
             Rif Report (last 7 days)
           </Button>
@@ -94,7 +94,7 @@ export const Reports = ({
             inverse
             href={`${
               config.aspectApi
-            }/report/gx/MtbPositiveRateExportExcel.xlsx?dateFrom=${last7Days}&token=${token}`}
+            }/report/gx/MtbPositiveExportExcel.xlsx?dateFrom=${last7Days}&token=${token}`}
           >
             MTB+ Report (last 7 days)
           </Button>
@@ -103,7 +103,7 @@ export const Reports = ({
             inverse
             href={`${
               config.aspectApi
-            }/report/gx/IndeterminateRateExportExcel.xlsx?dateFrom=${last7Days}&token=${token}`}
+            }/report/gx/IndeterminateExportExcel.xlsx?dateFrom=${last7Days}&token=${token}`}
           >
             TI Report (last 7 days)
           </Button>
@@ -123,7 +123,7 @@ export const Reports = ({
             inverse
             href={`${
               config.aspectApi
-            }/report/gx/RifResistanceRateExportExcel.xlsx?dateFrom=${last30Days}&token=${token}`}
+            }/report/gx/RifResistanceExportExcel.xlsx?dateFrom=${last30Days}&token=${token}`}
           >
             Rif Report (last 30 days)
           </Button>
@@ -132,7 +132,7 @@ export const Reports = ({
             inverse
             href={`${
               config.aspectApi
-            }/report/gx/MtbPositiveRateExportExcel.xlsx?dateFrom=${last30Days}&token=${token}`}
+            }/report/gx/MtbPositiveExportExcel.xlsx?dateFrom=${last30Days}&token=${token}`}
           >
             MTB+ Report (last 30 days)
           </Button>
@@ -141,7 +141,7 @@ export const Reports = ({
             inverse
             href={`${
               config.aspectApi
-            }/report/gx/IndeterminateRateExportExcel.xlsx?dateFrom=${last30Days}&token=${token}`}
+            }/report/gx/IndeterminateExportExcel.xlsx?dateFrom=${last30Days}&token=${token}`}
           >
             TI Report (last 30 days)
           </Button>
