@@ -70,14 +70,19 @@ function deviceMaintenanceResolved(deviceId) {
  * has been marked offline.
  *
  * deviceId is required.
+ *
+ * options:
+ *    lastSeenOn: date device last seen
+ *    lastPingOn: date device last ping
  */
-function deviceOffline(deviceId) {
+function deviceOffline(deviceId, options) {
   if (deviceId == null) {
     throw new Error('Must specify deviceId for notify deviceOffline')
   }
   return {
     type: types.DEVICE_OFFLINE,
     deviceId,
+    options,
   }
 }
 
@@ -103,14 +108,17 @@ function deviceOnline(deviceId) {
  * the Device API)
  *
  * deviceId is required.
+ * options:
+ *    lastResultOn: date of last result for device
  */
-function deviceNoResults(deviceId) {
+function deviceNoResults(deviceId, options) {
   if (deviceId == null) {
     throw new Error('Must specify deviceId for notify deviceNoResults')
   }
   return {
     type: types.DEVICE_NO_RESULTS,
     deviceId,
+    options,
   }
 }
 
