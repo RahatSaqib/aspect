@@ -1,3 +1,4 @@
+const { knex } = require('../db')
 const { parse: parseDate, distanceInWordsStrict } = require('date-fns')
 const handlebars = require('handlebars')
 
@@ -31,7 +32,7 @@ function addDataSourceToQuery(qb, aliases) {
         'p.name as personName',
         'd.lastPingOn as deviceLastPingOn',
         'd.lastSeenOn as deviceLastSeenOn',
-        'r.moduleName as resultModuleName',
+        knex.raw('coalesce(r.moduleName, r.moduleSerial) as resultModuleName'),
         'r.moduleSerial as resultModuleSerial',
         'r.errorCode as resultErrorCode',
         'r.errorNotes as resultErrorNotes'
