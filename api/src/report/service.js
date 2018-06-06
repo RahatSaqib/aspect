@@ -142,7 +142,17 @@ async function listReports(request) {
 
 function proxyGxReport(request, reply) {
   return proxyGxReportAsync(request)
-    .then(resp => reply(resp.body))
+    .then(resp =>
+      reply(resp.body)
+        .header(
+          'Content-Type',
+          'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        )
+        .header(
+          'Content-Disposition',
+          `attachment; filename="${request.params.reportName}.xlsx"`
+        )
+    )
     .catch(err => {
       console.error(err) // eslint-disable-line no-console
       reply(err)
