@@ -27,14 +27,18 @@ function addAuthHeaderMiddleware(fetch, input, options = {}) {
 class APIApplicationError extends Error {
   constructor(...args) {
     super(...args)
-    Error.captureStackTrace(this, APIApplicationError)
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, APIApplicationError)
+    }
   }
 }
 
 class ConnectionError extends Error {
   constructor(...args) {
     super(...args)
-    Error.captureStackTrace(this, ConnectionError)
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, ConnectionError)
+    }
     this.statusCode = 0
   }
 }

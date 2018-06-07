@@ -207,12 +207,6 @@ describe('ResetPassword module', () => {
             'supportEmail'
           )
         ).toBe(true)
-        expect(
-          {}.hasOwnProperty.call(
-            adminHelpDialog.children().props().values,
-            'supportTelephone'
-          )
-        ).toBe(true)
       })
 
       it('should show a dialog when user requests help', () => {
