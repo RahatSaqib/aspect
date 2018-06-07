@@ -27,14 +27,18 @@ function addAuthHeaderMiddleware(fetch, input, options = {}) {
 class APIApplicationError extends Error {
   constructor(...args) {
     super(...args)
-    Error.captureStackTrace(this, APIApplicationError)
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, APIApplicationError)
+    }
   }
 }
 
 class ConnectionError extends Error {
   constructor(...args) {
     super(...args)
-    Error.captureStackTrace(this, ConnectionError)
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, ConnectionError)
+    }
     this.statusCode = 0
   }
 }
@@ -58,11 +62,15 @@ function handleFetchResponseOrError(fetch, input, options = {}) {
       () => Promise.reject(new ConnectionError('Connection Error'))
     )
     .catch(err => {
+      console.log(err)
+
       let errorNotification = _.get(
         options,
         `errorNotifications.${err.statusCode}`,
         _.get(options, 'errorNotifications.default')
       )
+
+      console.log(errorNotification)
 
       if (errorNotification) {
         if (errorNotification[err.message]) {
