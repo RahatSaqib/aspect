@@ -274,7 +274,7 @@ async function setJobContext(knex, jobId, gxUser) {
         const geographyId = await getCreateGeographyIdByGxGeo(knex, options)
         const shortName = dep.description || dep.hostId
 
-        const { id: siteId } =
+        const { siteId } =
           (await knex('Device')
             .where({ geographyId })
             .where(function() {
