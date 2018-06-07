@@ -3,9 +3,12 @@ const { getDefaultMessageTypes } = require('../utils')
 
 async function seed(knex) {
   const defaultMessageTypes = await getDefaultMessageTypes(knex)
-  const { id: partnerId } = await knex('Partner')
+  const { id: partnerId, plugin: existingPluginName } = await knex('Partner')
     .where({ name: 'Myanmar' })
     .first()
+  if (existingPluginName === 'myanmar') {
+    return
+  }
 
   await knex('AlertTemplate')
     .where({ id: defaultMessageTypes.DeviceOffline.alertTemplateId })
