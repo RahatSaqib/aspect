@@ -142,12 +142,12 @@ async function updateDeviceTimestamps(
   handlerOptions = {},
   remoteAddress
 ) {
-  const { knex, pluginName: plugin, device } = context
+  const { knex, pluginNames: plugins, device } = context
   const { updatePing = false } = handlerOptions
 
   const deviceUpdates = {}
 
-  const getDeviceSeenOn = await loadPlugin(plugin, 'getDeviceSeenOn')
+  const getDeviceSeenOn = await loadPlugin(plugins, 'getDeviceSeenOn')
   const deviceSeenOn = await getDeviceSeenOn(context)
   if (deviceSeenOn != null) {
     // flag as seen even if handler fails
@@ -156,7 +156,7 @@ async function updateDeviceTimestamps(
   }
 
   if (updatePing) {
-    const getDevicePingOn = await loadPlugin(plugin, 'getDevicePingOn')
+    const getDevicePingOn = await loadPlugin(plugins, 'getDevicePingOn')
     const devicePingOn = await getDevicePingOn(context)
     if (devicePingOn != null) {
       deviceUpdates.lastPingOn = devicePingOn
