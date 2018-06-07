@@ -69,4 +69,10 @@ async function seed(knex) {
     .update({
       message: 'Module {{result.moduleName}} errors, conduct troubleshooting',
     })
+
+  // turn off email/sms temporarily
+  await knex('MessageType').update({
+    emailTemplateId: null,
+    smsTemplateId: null,
+  })
 }
