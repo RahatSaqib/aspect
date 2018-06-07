@@ -62,15 +62,11 @@ function handleFetchResponseOrError(fetch, input, options = {}) {
       () => Promise.reject(new ConnectionError('Connection Error'))
     )
     .catch(err => {
-      console.log(err)
-
       let errorNotification = _.get(
         options,
         `errorNotifications.${err.statusCode}`,
         _.get(options, 'errorNotifications.default')
       )
-
-      console.log(errorNotification)
 
       if (errorNotification) {
         if (errorNotification[err.message]) {
