@@ -30,10 +30,11 @@ import messages from './messages'
 
 const cssClasses = classnames.bind(require('./Status.css'))
 
-const DEFAULT_DATE_RANGE = {
-  minDate: startOfYear(new Date()).toJSON(),
-  maxDate: endOfYear(new Date()).toJSON(),
-}
+const DEFAULT_DATE_RANGE_VALUE = 'lastMonth'
+const DEFAULT_DATE_RANGE = _fp.mapValues(
+  d => d.toJSON(),
+  recaculateDateRanges()[DEFAULT_DATE_RANGE_VALUE]
+)
 
 const defaultFilters = rawFiltersParams =>
   rawFiltersParams.has('minDate')
@@ -44,6 +45,45 @@ const filtersFromLocation = _fp.flowRight(
   defaultFilters,
   searchParams => new URLSearchParams(searchParams.get('filters') || '')
 )
+
+function recaculateDateRanges(now = new Date()) {
+  const thisMonthStart = startOfMonth(now)
+  const thisMonthEnd = endOfMonth(now)
+  const thisYearStart = startOfYear(now)
+  const thisYearEnd = endOfYear(now)
+  const thisQuarterStart = startOfQuarter(now)
+  const thisQuarterEnd = endOfQuarter(now)
+
+  const lastMonth = subtractMonths(now, 1)
+  const lastMonthStart = startOfMonth(lastMonth)
+  const lastMonthEnd = endOfMonth(lastMonth)
+  const lastQuarter = subtractQuarters(now, 1)
+  const lastQuarterStart = startOfQuarter(lastQuarter)
+  const lastQuarterEnd = endOfQuarter(lastQuarter)
+
+  return {
+    thisYear: {
+      minDate: thisYearStart,
+      maxDate: thisYearEnd,
+    },
+    thisQuarter: {
+      minDate: thisQuarterStart,
+      maxDate: thisQuarterEnd,
+    },
+    lastQuarter: {
+      minDate: lastQuarterStart,
+      maxDate: lastQuarterEnd,
+    },
+    thisMonth: {
+      minDate: thisMonthStart,
+      maxDate: thisMonthEnd,
+    },
+    lastMonth: {
+      minDate: startOfDay(lastMonthStart),
+      maxDate: endOfDay(lastMonthEnd),
+    },
+  }
+}
 
 const enhance = compose(
   pure,
@@ -59,53 +99,19 @@ const enhance = compose(
     })
   ),
   withProps(({ intl: { formatMessage }, location }) => {
-    const now = new Date()
-    const thisMonthStart = startOfMonth(now)
-    const thisMonthEnd = endOfMonth(now)
-    const thisYearStart = startOfYear(now)
-    const thisYearEnd = endOfYear(now)
-    const thisQuarterStart = startOfQuarter(now)
-    const thisQuarterEnd = endOfQuarter(now)
-
-    const lastMonth = subtractMonths(now, 1)
-    const lastMonthStart = startOfMonth(lastMonth)
-    const lastMonthEnd = endOfMonth(lastMonth)
-    const lastQuarter = subtractQuarters(now, 1)
-    const lastQuarterStart = startOfQuarter(lastQuarter)
-    const lastQuarterEnd = endOfQuarter(lastQuarter)
-
+    const dateRanges = recaculateDateRanges()
     const dateRangeList = [
-      {
-        value: 'thisYear',
-        label: `${formatMessage(messages.thisYear)}`,
-        minDate: thisYearStart,
-        maxDate: thisYearEnd,
-      },
-      {
-        value: 'thisQuarter',
-        label: `${formatMessage(messages.thisQuarter)}`,
-        minDate: thisQuarterStart,
-        maxDate: thisQuarterEnd,
-      },
-      {
-        value: 'lastQuarter',
-        label: `${formatMessage(messages.lastQuarter)}`,
-        minDate: lastQuarterStart,
-        maxDate: lastQuarterEnd,
-      },
-      {
-        value: 'thisMonth',
-        label: `${formatMessage(messages.thisMonth)}`,
-        minDate: thisMonthStart,
-        maxDate: thisMonthEnd,
-      },
-      {
-        value: 'lastMonth',
-        label: `${formatMessage(messages.lastMonth)}`,
-        minDate: startOfDay(lastMonthStart),
-        maxDate: endOfDay(lastMonthEnd),
-      },
-    ]
+      'thisYear',
+      'thisQuarter',
+      'lastQuarter',
+      'thisMonth',
+      'lastMonth',
+    ].map(range => ({
+      value: range,
+      label: `${formatMessage(messages[range])}`,
+      minDate: dateRanges[range].minDate,
+      maxDate: dateRanges[range].maxDate,
+    }))
     const searchParams = new URLSearchParams(location.search)
     const filtersParams = filtersFromLocation(searchParams)
 
@@ -119,7 +125,7 @@ const enhance = compose(
 
     return {
       isShow: _fp.isEmpty(filtersParams.get('siteId')),
-      dateRange: !dateRange ? 'thisYear' : dateRange.value,
+      dateRange: !dateRange ? DEFAULT_DATE_RANGE_VALUE : dateRange.value,
       dateRangeList,
     }
   }),

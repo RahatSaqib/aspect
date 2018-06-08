@@ -134,14 +134,10 @@ async function createNewIssue(knex, issueType, action) {
     issue.partnerId = action.partnerId
   }
 
-  if (action.options) {
-    if (action.options.dueOn != null) {
-      issue.dueOn = new Date(action.options.dueOn)
-    }
-    if (action.options.data != null) {
-      issue.data = JSON.stringify(action.options.data)
-    }
+  if (_.get(action, 'options.dueOn') != null) {
+    issue.dueOn = new Date(action.options.dueOn)
   }
+  issue.data = JSON.stringify(getActionData(action))
 
   const [issueId] = await knex('Issue').insert(issue)
   issue.id = issueId
@@ -158,16 +154,14 @@ async function createNewIssue(knex, issueType, action) {
 
 async function mergeActionData(knex, issue, action) {
   const issueUpdates = {}
-  if (action.options) {
-    if (action.options.dueOn != null) {
-      issueUpdates.dueOn = new Date(action.options.dueOn)
-    }
-    if (action.options.data != null) {
-      const existingData = issue.data == null ? {} : JSON.parse(issue.data)
-      issueUpdates.data = JSON.stringify(
-        _.merge(existingData, action.options.data)
-      )
-    }
+  if (_.get(action, 'options.dueOn') != null) {
+    issueUpdates.dueOn = new Date(action.options.dueOn)
+  }
+
+  const actionData = getActionData(action)
+  if (!_.isEmpty(actionData)) {
+    const existingData = issue.data == null ? {} : JSON.parse(issue.data)
+    issueUpdates.data = JSON.stringify(_.merge(existingData, actionData))
   }
 
   if (!_.isEmpty(issueUpdates)) {
@@ -177,6 +171,20 @@ async function mergeActionData(knex, issue, action) {
       .update(issueUpdates)
   }
   return _.merge({}, issue, issueUpdates)
+}
+
+function getActionData(action) {
+  const actionData = {}
+  if (action.options != null) {
+    // include any keys in options in issue data that is not recorded elsewhere,
+    // with preference to keys in data plain object
+    _.merge(
+      actionData,
+      _.omit(action.options, ['dueOn', 'data']),
+      action.options.data
+    )
+  }
+  return actionData
 }
 
 async function updateIssueStatus(request) {

@@ -104,7 +104,6 @@ export class ResetPassword extends PureComponent {
       message: messages.generateTokenFailedMessage,
       resolution: messages.generateTokenFailedResolution,
       messageValues: {
-        supportTelephone: config.supportTelephone,
         supportEmail: config.supportEmail,
       },
     })
@@ -146,7 +145,6 @@ export class ResetPassword extends PureComponent {
       message: messages.passwordUpdateFailedMessage,
       resolution: messages.passwordUpdateFailedResolution,
       messageValues: {
-        supportTelephone: config.supportTelephone,
         supportEmail: config.supportEmail,
       },
     })
@@ -375,7 +373,6 @@ export class ResetPassword extends PureComponent {
           <FormattedHTMLMessage
             {...messages.adminHelpContent}
             values={{
-              supportTelephone: config.supportTelephone,
               supportEmail: config.supportEmail,
             }}
           />

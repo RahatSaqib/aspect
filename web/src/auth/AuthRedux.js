@@ -117,11 +117,10 @@ export function loginStart({ user, password }) {
                 id:
                   'errorResponseMessages.loginStart.POST.401.accountLocked.resolution',
                 defaultMessage:
-                  'You can contact us to unlock your account for you, either by email ({supportEmail}) or by telephone ({supportTelephone})',
+                  'You can contact us to unlock your account for you by email ({supportEmail})',
               },
             }),
             messageValues: {
-              supportTelephone: config.supportTelephone,
               supportEmail: config.supportEmail,
             },
           },

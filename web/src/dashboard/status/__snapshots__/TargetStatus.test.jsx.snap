@@ -16,7 +16,7 @@ exports[`Target Status component should shallow render correctly 1`] = `
           type="test-file-stub"
         />
       }
-      title="Testing Targets"
+      title="Progress Indicators"
     />
     <div
       className="FiltersGroup__Child FiltersGroup__Child--dropdown"

@@ -2413,11 +2413,48 @@ async function seed(knex) {
     externalId: 'Plasma',
   })
 
-  await knex('SampleType').insert({
-    name: 'Other',
-    i18nKey: 'sampleTypeOther',
-    externalId: 'Other',
-  })
+  await knex('SampleType').insert([
+    {
+      name: 'Other',
+      i18nKey: 'sampleTypeOther',
+      externalId: 'Other',
+    },
+    {
+      name: 'Sputum',
+      i18nKey: 'sampleTypeSputum',
+      externalId: 'Sputum',
+    },
+    {
+      name: 'Saliva',
+      i18nKey: 'sampleTypeSaliva',
+      externalId: 'Saliva',
+    },
+    {
+      name: 'Blood',
+      i18nKey: 'sampleTypeBlood',
+      externalId: 'Blood',
+    },
+    {
+      name: 'CSF',
+      i18nKey: 'sampleTypeCSF',
+      externalId: 'CSF',
+    },
+    {
+      name: 'Effusion',
+      i18nKey: 'sampleTypeEffusion',
+      externalId: 'Effusion',
+    },
+    {
+      name: 'Pus',
+      i18nKey: 'sampleTypePus',
+      externalId: 'Pus',
+    },
+    {
+      name: 'Gastric Lavage',
+      i18nKey: 'sampleTypeGastricLavage',
+      externalId: 'Gastric Lavage',
+    },
+  ])
 
   // some TB samples:
   let samples = []
@@ -3682,7 +3719,7 @@ async function seed(knex) {
   const [deviceOfflineAlertTemplateId] = await knex('AlertTemplate').insert(
     Object.assign(
       {
-        message: 'Cannot reach network for {{numberOfDays}} days',
+        message: 'Cannot reach network for {{numberOfDays device.lastPingOn}}',
       },
       auditFields
     )
@@ -3691,7 +3728,8 @@ async function seed(knex) {
   const [deviceOfflineSmsTemplateId] = await knex('SmsTemplate').insert(
     Object.assign(
       {
-        message: '{{site.name}} cannot reach network for {{numberOfDays}} days',
+        message:
+          '{{site.name}} cannot reach network for {{numberOfDays device.lastPingOn}}',
       },
       auditFields
     )
@@ -3700,10 +3738,12 @@ async function seed(knex) {
   const [deviceOfflineEmailTemplateId] = await knex('EmailTemplate').insert(
     Object.assign(
       {
-        subject: '{{site.name}} cannot reach network for {{numberOfDays}} days',
-        body: '{{site.name}} cannot reach network for {{numberOfDays}} days',
+        subject:
+          '{{site.name}} cannot reach network for {{numberOfDays device.lastPingOn}}',
+        body:
+          '{{site.name}} cannot reach network for {{numberOfDays device.lastPingOn}}',
         htmlBody:
-          '<em>{{site.name}}</em> cannot reach network for {{numberOfDays}} days',
+          '<em>{{site.name}}</em> cannot reach network for {{numberOfDays device.lastPingOn}}',
       },
       auditFields
     )
@@ -3817,7 +3857,7 @@ async function seed(knex) {
   const [deviceNoResultsAlertTemplateId] = await knex('AlertTemplate').insert(
     Object.assign(
       {
-        message: 'No testing for {{numberOfDays}} days.',
+        message: 'No testing for {{numberOfDays issue.data.lastResultOn}}',
       },
       auditFields
     )
@@ -3826,7 +3866,8 @@ async function seed(knex) {
   const [deviceNoResultsSmsTemplateId] = await knex('SmsTemplate').insert(
     Object.assign(
       {
-        message: '{{site.name}} no testing for {{numberOfDays}} days.',
+        message:
+          '{{site.name}} no testing for {{numberOfDays issue.data.lastResultOn}}',
       },
       auditFields
     )
@@ -3836,9 +3877,10 @@ async function seed(knex) {
     Object.assign(
       {
         subject: '{{site.name}} No Testing',
-        body: '{{site.name}} no testing {{numberOfDays}} days.',
+        body:
+          '{{site.name}} no testing {{numberOfDays issue.data.lastResultOn}}',
         htmlBody:
-          '<em>{{site.name}}</em> no testing for {{numberOfDays}} days.',
+          '<em>{{site.name}}</em> no testing for {{numberOfDays issue.data.lastResultOn}}',
       },
       auditFields
     )
@@ -3847,7 +3889,7 @@ async function seed(knex) {
   const [deviceMaintenanceAlertTemplateId] = await knex('AlertTemplate').insert(
     Object.assign(
       {
-        message: 'Device Maintenance for {{numberOfDays}} days.',
+        message: 'Under Maintenance',
       },
       auditFields
     )
@@ -3856,7 +3898,7 @@ async function seed(knex) {
   const [deviceMaintenanceSmsTemplateId] = await knex('SmsTemplate').insert(
     Object.assign(
       {
-        message: '{{site.name}} maintenance for {{numberOfDays}} days.',
+        message: '{{site.name}} under maintenance.',
       },
       auditFields
     )
@@ -3866,9 +3908,8 @@ async function seed(knex) {
     Object.assign(
       {
         subject: '{{site.name}} Maintenance',
-        body: '{{site.name}} maintenance {{numberOfDays}} days.',
-        htmlBody:
-          '<em>{{site.name}}</em> maintenance for {{numberOfDays}} days.',
+        body: '{{site.name}} under maintenance.',
+        htmlBody: '<em>{{site.name}}</em> maintenance',
       },
       auditFields
     )
@@ -3916,7 +3957,7 @@ async function seed(knex) {
   ).insert(
     Object.assign(
       {
-        message: 'Module {{module.moduleName}} errors, conduct troubleshooting',
+        message: 'Module {{result.moduleName}} errors, conduct troubleshooting',
       },
       auditFields
     )

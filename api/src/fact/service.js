@@ -46,10 +46,9 @@ function onFactGenerateDeviceConnectivity({ deviceId }, { messageContext }) {
         'd.createdOn as deviceCreatedOn',
         'f.maintenance',
         'f.maintenanceDueOn',
-        knex('DeviceLog as dl')
-          .whereRaw('dl.deviceId = d.id')
-          .whereNotNull('dl.resultId')
-          .max('dl.createdOn')
+        knex('Result as r')
+          .whereRaw('r.deviceId = d.id')
+          .max('r.updatedOn')
           .as('lastResultOn')
       )
     if (deviceId != null) {
@@ -79,19 +78,24 @@ function onFactGenerateDeviceConnectivity({ deviceId }, { messageContext }) {
             : subDays(now, maxDaysDeviceNoResults)
         // TODO move #days to partner config
         const maxMaintenanceDateNoResult = addDays(lastSeenOn, 30)
+
+        // If we haven't seen a result, use deviceCreatedOn for checks
+        if (lastResultOn == null) {
+          lastResultOn = deviceCreatedOn
+        }
+
         if (
           lastPingOn == null ||
           (maxLastDateOffline != null && lastPingOn <= maxLastDateOffline)
         ) {
           // Number of days of "heartbeat" > X days
-          context.deviceOffline(id)
+          context.deviceOffline(id, { lastSeenOn, lastPingOn })
         } else if (
           maxLastDateNoResult != null &&
-          ((lastResultOn != null && lastResultOn <= maxLastDateNoResult) ||
-            (lastResultOn == null && deviceCreatedOn <= maxLastDateNoResult))
+          lastResultOn <= maxLastDateNoResult
         ) {
           // OR no tests run > Y days
-          context.deviceNoResults(id)
+          context.deviceNoResults(id, { lastResultOn })
         } else if (
           maintenance === 1 &&
           maintenanceDueOn != null &&
@@ -99,14 +103,14 @@ function onFactGenerateDeviceConnectivity({ deviceId }, { messageContext }) {
           maintenanceDueOn >= maxMaintenanceDateNoResult
         ) {
           // OR inactive - expected back date > Z days
-          context.deviceNoResults(id)
+          context.deviceNoResults(id, { lastResultOn })
         } else if (
           maintenance === 1 &&
           maintenanceDueOn != null &&
           now > maintenanceDueOn
         ) {
           // OR date passes expected back date
-          context.deviceNoResults(id)
+          context.deviceNoResults(id, { lastResultOn })
         }
         return id // for lint
       }

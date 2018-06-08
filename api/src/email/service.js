@@ -1,7 +1,9 @@
 const { emailMessageReadyForSending, emailMessageSent } = require('./actions')
 const dictionary = require('../shared/dictionary')
-const dataSources = require('../shared/dataSources')
-const stringProcessor = require('../notification/stringProcessor')
+const {
+  addDataSourceToQuery,
+  processUsingDataSourceQuery,
+} = require('../stringTemplate/service')
 
 // -----------------------------
 // onEmailMessageCreated - event handler for action EMAIL_MESSAGE_CREATED
@@ -21,35 +23,10 @@ function onEmailMessageCreated({ emailMessageId }, { messageContext }) {
 // prepareEmailMessageForSending
 // -----------------------------
 async function prepareEmailMessageForSending(context, knex, emailMessageId) {
-  const data = await knex('EmailMessage as m')
-    .innerJoin('EmailTemplate as tmpl', 'm.emailTemplateId', 'tmpl.id')
-    .innerJoin('Person as p', 'm.personId', 'p.id')
-    .leftJoin('Site as s', 'm.siteId', 's.id')
-    .leftJoin('Device as d', 'm.deviceId', 'd.id')
-    .leftJoin('Result as r', 'm.resultId', 'r.id')
-    .where({ 'm.id': emailMessageId })
-    .first(
-      'tmpl.subject as subjectTemplate',
-      'tmpl.body as bodyTemplate',
-      'tmpl.htmlBody as htmlBodyTemplate',
-      'm.personId',
-      'm.siteId',
-      'm.deviceId',
-      'm.resultId',
-      's.name as siteName',
-      's.shortName as siteShortName',
-      'p.name as personName'
-    )
-
-  const { subjectTemplate = '', bodyTemplate = '', htmlBodyTemplate = '' } =
-    data || {}
-
-  // merge template with data
-  const ds = dataSources.getBaseDataSource(data)
-  const subject = stringProcessor.mergeTemplateData(subjectTemplate, ds)
-  const body = stringProcessor.mergeTemplateData(bodyTemplate, ds)
-  const htmlBody = stringProcessor.mergeTemplateData(htmlBodyTemplate, ds)
-
+  const { subject, body, htmlBody } = await createEmailFieldsFromTemplate(
+    knex,
+    emailMessageId
+  )
   const messageStatusId = (await dictionary.messageStatusToId()).Pending
 
   // store generated email message into the same record and set messageStatusId
@@ -117,6 +94,24 @@ async function doSendEmailMessage(context, knex, emailMessageId) {
 
   // dispatch EMAIL_MESSAGE_SENT to MQ
   context.emailMessageSent(emailMessageId)
+}
+
+async function createEmailFieldsFromTemplate(knex, emailMessageId) {
+  const data = await knex('EmailMessage as m')
+    .innerJoin('EmailTemplate as tmpl', 'm.emailTemplateId', 'tmpl.id')
+    .leftJoin('Notification as n', 'n.emailMessageId', 'm.id')
+    .modify(addDataSourceToQuery, { message: 'm', notification: 'n' })
+    .where({ 'm.id': emailMessageId })
+    .first(
+      'tmpl.subject as subjectTemplate',
+      'tmpl.body as bodyTemplate',
+      'tmpl.htmlBody as htmlBodyTemplate'
+    )
+  return processUsingDataSourceQuery(data, [
+    'subjectTemplate',
+    'bodyTemplate',
+    'htmlBodyTemplate',
+  ])
 }
 
 module.exports = {
