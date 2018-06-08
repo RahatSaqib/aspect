@@ -142,7 +142,7 @@ function parsePatientId(payload) {
     return
 
   const indexOfFirstSeparator = patientId.indexOf(',')
-  if (!patientId || indexOfFirstSeparator <= 0) {
+  if (indexOfFirstSeparator <= 0) {
     return
   }
   const existingCity = _.get(payload, 'patient.city')
