@@ -138,8 +138,7 @@ function parseNotes(payload) {
 function parsePatientId(payload) {
   const patientId = _.get(payload, 'patient.id')
 
-  if (!patientId)
-    return
+  if (!patientId) return
 
   const indexOfFirstSeparator = patientId.indexOf(',')
   if (indexOfFirstSeparator <= 0) {
