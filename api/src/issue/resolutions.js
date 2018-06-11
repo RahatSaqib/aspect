@@ -64,7 +64,7 @@ async function findOpenIssuesToCheckForResolution(knex, issueId) {
     .andWhere(function() {
       this.whereNull('resolvedIssueEvent.id')
     })
-    .groupBy('i.id', 'iet.id')
+    .groupBy('i.id', 'irt.id')
     .orderBy(['i.createdOn'], 'asc')
     .select(
       'i.*',
