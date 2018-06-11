@@ -124,12 +124,12 @@ function escalateIssues(issueId) {
 function resolveIssues(issueId) {
   return issueId
     ? {
-      type: types.RESOLVE_ISSUES,
-      issueId,
-    }
+        type: types.RESOLVE_ISSUES,
+        issueId,
+      }
     : {
-      type: types.RESOLVE_ISSUES,
-    }
+        type: types.RESOLVE_ISSUES,
+      }
 }
 
 module.exports = {
