@@ -8,6 +8,7 @@ const {
   issueResolved,
 } = require('./actions')
 const { getUser } = require('../auth/service')
+const { parseDateOrDefault } = require('../shared/date')
 
 function onIssueEventTrigger(issueType) {
   return async (action, { messageContext: context }) => {
@@ -135,7 +136,7 @@ async function createNewIssue(knex, issueType, action) {
   }
 
   if (_.get(action, 'options.dueOn') != null) {
-    issue.dueOn = new Date(action.options.dueOn)
+    issue.dueOn = parseDateOrDefault(action.options.dueOn)
   }
   issue.data = JSON.stringify(getActionData(action))
 
@@ -155,7 +156,7 @@ async function createNewIssue(knex, issueType, action) {
 async function mergeActionData(knex, issue, action) {
   const issueUpdates = {}
   if (_.get(action, 'options.dueOn') != null) {
-    issueUpdates.dueOn = new Date(action.options.dueOn)
+    issueUpdates.dueOn = parseDateOrDefault(action.options.dueOn)
   }
 
   const actionData = getActionData(action)
