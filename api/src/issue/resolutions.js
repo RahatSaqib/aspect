@@ -11,6 +11,12 @@ function onResolveIssues() {
         knex,
         action.issueId
       )
+      const { id: resolvedIssueStatusId } = await knex('IssueStatus')
+        .where('externalId', 'Resolved')
+        .first('id')
+      const { id: resolvedIssueEventStatusId } = await knex('IssueEventStatus')
+        .where('externalId', 'Resolved')
+        .first('id')
       if (_.isEmpty(openIssuesToCheck)) {
         return Promise.resolve()
       }
@@ -21,7 +27,20 @@ function onResolveIssues() {
           issueResolutionTrigger.conditions
         )
         if (shouldResolve) {
+          const now = new Date()
+          await knex('Issue')
+            .where({ id: issueResolutionTrigger.id })
+            .update({
+              issueStatusId: resolvedIssueStatusId,
+              updatedOn: now,
+            })
           context.issueResolved(issueResolutionTrigger.id)
+          await knex('IssueEvent').insert({
+            issueId: issueResolutionTrigger.id,
+            issueEventStatusId: resolvedIssueEventStatusId,
+            data: JSON.stringify(action),
+            createdOn: now,
+          })
         }
       })
     })
