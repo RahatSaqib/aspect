@@ -995,7 +995,7 @@ async function updateInventoryItem(knex, inventoryItemId, inventoryItemValues) {
     updateValues.siteId = inventoryItemValues.siteId
   }
   if (typeof inventoryItemValues.quantityOnHand !== 'undefined') {
-    updateValues.quantityOnHand = _.max([inventoryItemValues.quantityOnHand, 0])
+    updateValues.quantityOnHand = inventoryItemValues.quantityOnHand
   }
   if (typeof inventoryItemValues.updatedOn !== 'undefined') {
     updateValues.updatedOn = inventoryItemValues.updatedOn
@@ -1028,7 +1028,7 @@ async function insertInventoryItem(knex, inventoryItemValues) {
       : null
   }
   if (typeof inventoryItemValues.quantityOnHand !== 'undefined') {
-    insertValues.quantityOnHand = _.max([inventoryItemValues.quantityOnHand, 0])
+    insertValues.quantityOnHand = inventoryItemValues.quantityOnHand
   }
   if (typeof inventoryItemValues.updatedOn !== 'undefined') {
     insertValues.updatedOn = inventoryItemValues.updatedOn
