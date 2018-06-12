@@ -15,6 +15,14 @@ const {
 } = require('../stringTemplate/service')
 const { readTextFile } = require('../shared/io')
 
+const evaluationMethods = {
+  'inline-sql': evaluateInlineSql,
+  'sql-script': evaluateSqlScript,
+  'issue-age': triggeredEventOlderThan,
+  'child-condition': conditionsMet,
+  'child-conditions': conditionsMet,
+}
+
 async function conditionsMet(knex, issue, conditions) {
   if (_.isEmpty(conditions)) {
     return Promise.resolve(true)
@@ -23,13 +31,6 @@ async function conditionsMet(knex, issue, conditions) {
     return evaluateArrayOfConditions(knex, issue, conditions)
   }
   const { evaluationMethod = null, evaluationParameter = null } = conditions
-  const evaluationMethods = {
-    'inline-sql': evaluateInlineSql,
-    'sql-script': evaluateSqlScript,
-    'issue-age': triggeredEventOlderThan,
-    'child-condition': conditionsMet,
-    'child-conditions': conditionsMet,
-  }
   if (!evaluationMethods[evaluationMethod]) {
     throw new Error(
       `Unrecognised evaluation method in condition ${evaluationMethod}`
@@ -39,23 +40,47 @@ async function conditionsMet(knex, issue, conditions) {
 }
 
 async function evaluateArrayOfConditions(knex, issue, conditions) {
+  const invalidConditions = _.filter(
+    conditions,
+    ({ evaluationMethod = null }) => !evaluationMethods[evaluationMethod]
+  )
+  if (!_.isEmpty(invalidConditions)) {
+    const invalidMethods = _.orderBy(
+      _.uniq(
+        _.filter(
+          _.map(invalidConditions, 'evaluationMethod'),
+          evaluationMethod => !!evaluationMethod
+        )
+      )
+    ).join()
+    throw new Error(
+      `Unrecognised evaluation method(s) in condition ${invalidMethods}`.trim()
+    )
+  }
   const andConditions = _.filter(
     conditions,
     condition => !condition.operator || condition.operator === 'AND'
   )
-  const andConditionsMet = await Promise.spread(
-    andConditions,
-    async condition => conditionsMet(knex, issue, condition)
-  )
-  if (_.some(andConditionsMet, andConditionMet => !andConditionMet)) {
-    return false
+  if (!_.isEmpty(andConditions)) {
+    const andConditionsMet = await Promise.all(
+      _.map(andConditions, async condition =>
+        conditionsMet(knex, issue, condition)
+      )
+    )
+    if (_.some(andConditionsMet, andConditionMet => !andConditionMet)) {
+      return false
+    }
   }
   const orConditions = _.filter(conditions, { operator: 'OR' })
-  const orConditionsMet = await Promise.spread(orConditions, async condition =>
-    conditionsMet(knex, issue, condition)
-  )
-  if (_.every(orConditionsMet, orConditionMet => !orConditionMet)) {
-    return false
+  if (!_.isEmpty(orConditions)) {
+    const orConditionsMet = await Promise.all(
+      _.map(orConditions, async condition =>
+        conditionsMet(knex, issue, condition)
+      )
+    )
+    if (_.every(orConditionsMet, orConditionMet => !orConditionMet)) {
+      return false
+    }
   }
   return true
 }
@@ -105,10 +130,9 @@ async function evaluateSql(knex, issue, sql) {
 
 function isResultTruthy(result, parameterisedSqlQuery, parameters) {
   const noResultException = Error(
-    `Inline SQL '${parameterisedSqlQuery}' with ${parameters.join()} produced no result`
-  )
-  const manyResultsException = Error(
-    `Inline SQL '${parameterisedSqlQuery}' with ${parameters.join()} produced multiple results`
+    `Inline SQL '${parameterisedSqlQuery}'${
+      _.isEmpty(parameters) ? '' : ` with ${parameters.join()}`
+    } produced no result`
   )
   if (_.isUndefined(result)) {
     throw noResultException
@@ -117,17 +141,8 @@ function isResultTruthy(result, parameterisedSqlQuery, parameters) {
   const rowAndFieldObjects = JSON.parse(JSON.stringify(result))
   if (_.isArray(rowAndFieldObjects)) {
     if (rowAndFieldObjects.length > 0) {
-      const queryResults = rowAndFieldObjects[0]
-      if (queryResults.length > 1) {
-        throw manyResultsException
-      } else if (_.isEmpty(queryResults)) {
-        throw noResultException
-      }
-      return isResultTruthy(
-        _.head(queryResults),
-        parameterisedSqlQuery,
-        parameters
-      )
+      const queryResult = _.head(rowAndFieldObjects)
+      return isResultTruthy(queryResult, parameterisedSqlQuery, parameters)
     }
     throw noResultException
   }

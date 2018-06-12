@@ -4,10 +4,7 @@ const {
   factGenerateDeviceConnectivity,
   factGenerateResultCounts,
 } = require('./fact/actions')
-const {
-  escalateIssues,
-  resolveIssues,
-} = require('./issue/actions')
+const { escalateIssues, resolveIssues } = require('./issue/actions')
 
 function startScheduler(queue) {
   // run hourly tasks on startup and cron every hour
