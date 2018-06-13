@@ -781,7 +781,12 @@ async function onResultLogged({ resultId }, { messageContext }) {
           .clone()
           .where('r.endedOn', '>=', last30day)
           .whereIn('r.errorCode', MODULE_TEMPERATURE_ERROR_CODES)
-          .select('r.moduleSerial as moduleSerial')
+          .select(
+            'r.moduleSerial as moduleSerial',
+            knex.raw(
+              'coalesce(min(r.moduleName), r.moduleSerial) as moduleName'
+            )
+          )
           .count('r.id as errorCount')
           .groupBy('r.moduleSerial')
         await Promise.all(
@@ -789,7 +794,7 @@ async function onResultLogged({ resultId }, { messageContext }) {
             if (module.errorCount > moduleTemperatureMaxErrors) {
               moduleTemperatureSerials.push(module.moduleSerial)
               moduleErrorSerials.push(module.moduleSerial)
-              context.resultModuleTemperatureError(deviceId)
+              context.resultModuleTemperatureError(deviceId, module)
             }
           })
         )
@@ -809,14 +814,19 @@ async function onResultLogged({ resultId }, { messageContext }) {
           .clone()
           .where('r.endedOn', '>=', last30day)
           .whereIn('r.errorCode', MODULE_POWER_ERROR_CODES)
-          .select('r.moduleSerial as moduleSerial')
+          .select(
+            'r.moduleSerial as moduleSerial',
+            knex.raw(
+              'coalesce(min(r.moduleName), r.moduleSerial) as moduleName'
+            )
+          )
           .count('r.id as errorCount')
           .groupBy('r.moduleSerial')
         await Promise.all(
           _.map(modules, module => {
             if (module.errorCount > modulePowerMaxErrors) {
               moduleErrorSerials.push(module.moduleSerial)
-              context.resultModulePowerError(deviceId)
+              context.resultModulePowerError(deviceId, module)
             }
           })
         )
@@ -833,14 +843,19 @@ async function onResultLogged({ resultId }, { messageContext }) {
           .clone()
           .where('r.endedOn', '>=', last30day)
           .whereIn('r.errorCode', MODULE_FAILURE_ERROR_CODES)
-          .select('r.moduleSerial as moduleSerial')
+          .select(
+            'r.moduleSerial as moduleSerial',
+            knex.raw(
+              'coalesce(r.moduleName, r.moduleSerial) as resultModuleName'
+            )
+          )
           .count('r.id as errorCount')
           .groupBy('r.moduleSerial')
         await Promise.all(
           _.map(modules, module => {
             if (module.errorCount > moduleFailureMaxErrors) {
               moduleErrorSerials.push(module.moduleSerial)
-              context.resultModuleFailureError(deviceId)
+              context.resultModuleFailureError(deviceId, module)
             }
           })
         )
@@ -853,7 +868,12 @@ async function onResultLogged({ resultId }, { messageContext }) {
           .where('r.endedOn', '>=', last30day)
           .whereIn('r.errorCode', PROCEDURAL_ERROR_CODES)
           .whereNotIn('r.moduleSerial', moduleErrorSerials)
-          .select('r.moduleSerial as moduleSerial')
+          .select(
+            'r.moduleSerial as moduleSerial',
+            knex.raw(
+              'coalesce(min(r.moduleName), r.moduleSerial) as moduleName'
+            )
+          )
           .count('r.id as errorCount')
           .groupBy('r.moduleSerial')
 
@@ -881,7 +901,7 @@ async function onResultLogged({ resultId }, { messageContext }) {
               .count('r.id as moduleResultCount')
             const prcntModuleError = module.errorCount / moduleResultCount * 100
             if (prcntModuleError > maxPrcntErrors) {
-              context.resultModuleProceduralError(deviceId)
+              context.resultModuleProceduralError(deviceId, module)
             }
           })
         }
