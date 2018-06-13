@@ -1,0 +1,28 @@
+@import '../../globals/variables.css';
+
+:root {
+  --margin: 5px;
+}
+
+.FiltersBtnGroup {
+  margin: -var(--margin);
+}
+
+.FiltersBtnGroup__Child {
+  margin: var(--margin);
+}
+
+.Button {
+  composes: FiltersBtnGroup__Child;
+  font-weight: var(--lato-font-weight-bold);
+  text-transform: none;
+}
+
+.Button::first-letter {
+  text-transform: uppercase;
+}
+
+.Button > .Button__icon {
+  margin-left: 5px;
+  margin-right: 0;
+}

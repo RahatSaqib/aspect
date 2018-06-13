@@ -1,0 +1,55 @@
+@import '../../globals/variables.css';
+
+:root {
+  --button-height: 36px;
+  --bordered-button-line-height: 34px;
+}
+
+.Container {
+  display: flex;
+  padding: 20px 0 0 0;
+}
+
+.Container__Content {
+  width: 0;
+  display: flex;
+}
+
+.Left {
+  composes: Container__Content;
+  flex-grow: 1;
+}
+
+.Left__Status {
+  line-height: var(--button-height);
+  padding: 0 20px;
+}
+
+.Left__Button {
+  margin: 0 5px;
+}
+
+.Left__Button--next > svg {
+  margin-left: 5px;
+  margin-right: 0;
+}
+
+.Right {
+  composes: Container__Content;
+  flex-grow: 0;
+  justify-content: flex-end;
+}
+
+.Right__Button {
+  margin: 0 10px;
+  padding: 0;
+  min-width: 40px;
+  background-color: var(--aspect-color-grey-7);
+  font-weight: var(--lato-font-weight-bold);
+  text-align: center;
+  text-transform: capitalize;
+}
+
+.Right__Button:last-child {
+  margin-right: 0;
+}

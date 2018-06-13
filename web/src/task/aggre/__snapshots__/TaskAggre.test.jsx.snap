@@ -1,0 +1,157 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`TaskAggre module TaskAggre component should render correctly 1`] = `
+<div>
+  <HelmetWrapper
+    defer={true}
+    encodeSpecialCharacters={true}
+    title="Task"
+  />
+  <Unknown
+    history={undefined}
+    location={
+      Object {
+        "search": "",
+      }
+    }
+    match={undefined}
+    onBackClick={undefined}
+    title="TB positive results"
+  />
+  <section
+    className="Section"
+  >
+    <Unknown
+      lg="1-4"
+    >
+      <legend
+        className="Summary__Legend"
+      >
+        Site
+      </legend>
+      <div>
+        <span
+          className="Summary__Item"
+        >
+          Kampala Lab
+          <Link
+            className="Summary__Item__Link"
+            replace={false}
+            to="/browse/site"
+          >
+            <FaArrowUp
+              className="Summary__Item__Link__FaArrowUp"
+            />
+          </Link>
+        </span>
+      </div>
+    </Unknown>
+    <Unknown
+      lg="1-2"
+    >
+      <legend
+        className="Summary__Legend"
+      >
+        Devices
+      </legend>
+      <div>
+        <span
+          className="Summary__Item"
+        >
+          TB Device Kampala 1
+          <Link
+            className="Summary__Item__Link"
+            replace={false}
+            to="/browse/device"
+          >
+            <FaArrowUp
+              className="Summary__Item__Link__FaArrowUp"
+            />
+          </Link>
+        </span>
+        <span
+          className="Summary__Item"
+        >
+          TB Device Kampala 2
+          <Link
+            className="Summary__Item__Link"
+            replace={false}
+            to="/browse/device"
+          >
+            <FaArrowUp
+              className="Summary__Item__Link__FaArrowUp"
+            />
+          </Link>
+        </span>
+      </div>
+    </Unknown>
+    <Unknown
+      lg="1-4"
+    >
+      <legend
+        className="Summary__Legend"
+      >
+        More
+      </legend>
+      <div>
+        <span
+          className="Summary__Item"
+        >
+          Alert settings
+          <Link
+            className="Summary__Item__Link"
+            replace={false}
+            to="/task/detail"
+          >
+            <FaArrowUp
+              className="Summary__Item__Link__FaArrowUp"
+            />
+          </Link>
+        </span>
+      </div>
+    </Unknown>
+  </section>
+  <section
+    className="Section"
+  >
+    <DataTableCard>
+      <DataTableProgressBar
+        disabled={true}
+      />
+      <pure(withHandlers(Component))
+        history={undefined}
+        intl={
+          Object {
+            "defaultFormats": Object {},
+            "defaultLocale": "en",
+            "formatDate": [Function],
+            "formatHTMLMessage": [Function],
+            "formatMessage": [Function],
+            "formatNumber": [Function],
+            "formatPlural": [Function],
+            "formatRelative": [Function],
+            "formatTime": [Function],
+            "formats": Object {},
+            "formatters": Object {
+              "getDateTimeFormat": [Function],
+              "getMessageFormat": [Function],
+              "getNumberFormat": [Function],
+              "getPluralFormat": [Function],
+              "getRelativeFormat": [Function],
+            },
+            "locale": "en",
+            "messages": Object {},
+            "now": [Function],
+            "textComponent": "span",
+          }
+        }
+        location={
+          Object {
+            "search": "",
+          }
+        }
+      />
+    </DataTableCard>
+  </section>
+</div>
+`;

@@ -1,0 +1,13 @@
+.DateRangeSelector {
+  display: flex;
+  flex-flow: row wrap;
+}
+
+.DateRangeSelector__DatePickerContainer {
+  display: flex;
+  flex-flow: row wrap;
+}
+
+.DateRangeSelector__RangeModeSelector div div div {
+  text-transform: uppercase;
+}

@@ -1,15 +1,18 @@
+import PropTypes from 'prop-types'
 // Imports from packages
-import React, {Component, PropTypes} from 'react'
-import {List, MakeSelectable} from 'material-ui/List'
+import React, { Component } from 'react'
+import { List, makeSelectable } from 'material-ui/List'
 
-let SelectableList = MakeSelectable(List)
+const SelectableListWithoutState = makeSelectable(List)
 
 function wrapState(ComposedComponent) {
   return class SelectableList extends Component {
     static propTypes = {
       children: PropTypes.node.isRequired,
-      pathname: PropTypes.string.isRequired
-    };
+      pathname: PropTypes.string.isRequired,
+      desktop: PropTypes.bool.isRequired,
+      handleClose: PropTypes.func.isRequired,
+    }
 
     handleRequestChange = () => {
       // if we're not on the desktop and
@@ -21,7 +24,10 @@ function wrapState(ComposedComponent) {
 
     render() {
       return (
-        <ComposedComponent value={this.props.pathname} onChange={this.handleRequestChange}>
+        <ComposedComponent
+          value={this.props.pathname}
+          onChange={this.handleRequestChange}
+        >
           {this.props.children}
         </ComposedComponent>
       )
@@ -29,6 +35,6 @@ function wrapState(ComposedComponent) {
   }
 }
 
-SelectableList = wrapState(SelectableList)
+const SelectableList = wrapState(SelectableListWithoutState)
 
 export default SelectableList

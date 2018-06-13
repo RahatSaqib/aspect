@@ -1,0 +1,75 @@
+@import "../../globals/variables.css";
+
+:root {
+  --input-padding: 0;
+  --autocomplete-padding: 8px;
+  --chip-padding: 20px;
+  --chip-remove-size: 24px;
+  --chip-remove-margin: 4px;
+}
+
+.autocomplete {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 0;
+  width: 100%;
+}
+
+.input {
+  display: inline-block;
+  flex-grow: 1;
+  padding: var(--input-padding);
+  vertical-align: middle;
+}
+
+.values {
+  display: inline-block;
+  padding: var(--input-padding);
+  vertical-align: middle;
+}
+
+.suggestions {
+  width: calc(100% - 2 * var(--autocomplete-padding));
+}
+
+.suggestions:not(.up) {
+  margin-top: calc(-1 * var(--input-padding));
+}
+
+.chip {
+  background-color: var(--aspect-color-chill-blue-1);
+  border-radius: var(--toolbox-button-border-radius);
+  color: #ffffff;
+  vertical-align: middle;
+  padding: 0 var(--chip-padding);
+}
+
+.chip__deleteIcon {
+  background: transparent;
+}
+
+.chip__deletable {
+  padding-right: calc(var(--chip-remove-size) + 2 * var(--chip-remove-margin));
+}
+
+.chip__delete:hover .chip__deleteIcon {
+  background: transparent;
+}
+
+.autocomplete_disabled .chip__delete {
+  cursor: default;
+}
+
+.autocomplete_disabled .chip__deletable {
+  padding-right: var(--chip-padding);
+  cursor: default;
+}
+
+.autocomplete_disabled .chip__deleteIcon {
+  opacity: 0;
+  cursor: default;
+}
+
+.autocomplete_disabled .input {
+  opacity: 0;
+}

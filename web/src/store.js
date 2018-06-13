@@ -1,25 +1,24 @@
 import thunk from 'redux-thunk'
-import {createStore, compose, applyMiddleware} from 'redux'
+import { createStore, compose, applyMiddleware } from 'redux'
 
-import rootReducer from './reducers/index'
-import { browserHistory } from 'react-router'
+import rootReducer from './rootReducer'
 
-let middleware = [thunk]
+import { middleware as idleMiddleware } from './idle/IdleRedux'
+
+const middleware = [thunk, idleMiddleware]
 
 // our redux store with dev tools
 const createStoreWithDevTools = compose(
   applyMiddleware(...middleware),
-  window.devToolsExtension ? window.devToolsExtension() : f => f,
+  window.devToolsExtension ? window.devToolsExtension() : f => f
 )(createStore)
 
 const store = createStoreWithDevTools(rootReducer)
 
-export const history = browserHistory
-
 // enable hot reload for reducers
-if (module.hot){
-  module.hot.accept('./reducers/', () => {
-    const nextRootReducer = require('./reducers/index').default
+if (module.hot) {
+  module.hot.accept('./rootReducer', () => {
+    const nextRootReducer = require('./rootReducer').default
     store.replaceReducer(nextRootReducer)
   })
 }

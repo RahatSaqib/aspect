@@ -1,0 +1,4 @@
+.Field__quantity--status {
+  display: flex;
+  justify-content: space-between;
+}

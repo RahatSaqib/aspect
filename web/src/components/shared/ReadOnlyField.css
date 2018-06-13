@@ -1,0 +1,20 @@
+.Container {
+  width: 97%;
+  padding: 12px 12px 12px 0;
+  font-size: 1rem;
+}
+
+.Container--large {
+  font-size: 1.15rem;
+}
+
+.Container__Label {
+  font-size: 0.75em;
+  color: #9e9e9e;
+  display: block;
+  padding: 0 0 2px 0;
+}
+
+.Container__Value {
+  word-break: break-all;
+}

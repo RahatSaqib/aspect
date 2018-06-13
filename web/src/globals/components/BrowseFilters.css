@@ -1,0 +1,26 @@
+.Container {
+  display: flex;
+  flex-flow: column;
+  padding-bottom: 10px;
+}
+
+/* pure-hidden-sm */
+@media screen and (min-width: 35.5em) {
+  .Container {
+    flex-flow: row wrap;
+    align-items: baseline;
+  }
+
+  .FiltersBtnGroup {
+    width: 0;
+    flex-grow: 1;
+    order: inherit;
+    display: flex;
+    flex-flow: row wrap;
+    align-items: baseline;
+  }
+
+  .FiltersPanel {
+    flex-grow: 0;
+  }
+}

@@ -1,0 +1,20 @@
+:root {
+  --lato-font-weight-regular: 400;
+  --lato-font-weight-bold: 700;
+  --lato-font-weight-black: 900;
+
+  --z-index-overlay: 80;
+  --z-index-dialog: 85;
+  --z-index-popover: 90;
+  /* Upper limit: 100; Because react-toolbox/NavDrawer has a 100 z-index */
+
+  --toolbox-button-border-radius: 3px;
+
+  /* Layouts */
+  --aspect-detail-horizontal-padding: 20px;
+
+  /* Media Query */
+  @custom-media --sm-viewport (min-width: 35.5em);
+  @custom-media --md-viewport (min-width: 48em);
+  @custom-media --lg-viewport (min-width: 64em);
+}

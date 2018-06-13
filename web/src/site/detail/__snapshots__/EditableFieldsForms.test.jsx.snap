@@ -1,0 +1,39 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`EditableFieldsForm Component should shallow render correctly 1`] = `
+<ReduxForm
+  handlesubmit={[Function]}
+  initialValues={
+    Immutable.Map {
+      "lgaId": "13",
+      "zip": "12345-13",
+      "lga": "Cuyahoga",
+      "externalId": "Ohio_2",
+      "shortName": "Cuyahoga, OH #2",
+      "city": "Cuyahoga City",
+      "name": "Cuyahoga County Ohio #2",
+      "stateId": "67",
+      "state": "Ohio",
+      "countryId": "3",
+      "address": "13 Main Street",
+      "country": "United States",
+      "timezone": "",
+      "address2": "",
+    }
+  }
+  labels={
+    Object {
+      "address": "Address",
+      "address2": "Address 2",
+      "city": "City",
+      "externalId": "Facility Code",
+      "name": "Name",
+      "shortName": "ShortName",
+      "timezone": "Time Zone",
+      "zip": "Zip",
+    }
+  }
+  presitine={false}
+  submiting={false}
+/>
+`;

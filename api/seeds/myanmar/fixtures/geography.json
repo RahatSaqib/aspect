@@ -1,0 +1,355 @@
+{
+  "countries": [
+    {
+      "abbreviation": "MM",
+      "name": "Myanmar",
+      "a3": "MMR",
+      "culture": "en",
+      "countryCode": "95",
+      "stateLabel": "State/Region",
+      "lgaLabel": "District",
+      "timezone": "Myanmar Standard Time",
+      "portNumber": 2952,
+      "exportColumns": "DeploymentDescription|TestEndedOn|AssayName|AssayVersion|User|Result1|Result2|ReagentLotID|ExpirationDate|CartridgeSerial|ModuleSerial|SoftwareVersion|ErrorCode|ErrorCategory|ErrorDescription|SampleId|PatientId|PatientAge|PatientGender|PatientCity|Hiv|PreviouslyTreated|MicroscopyResult|Notes|TestReason|Tag",
+      "inventoryDaysThreshold": 21,
+      "monthStartsOnDay": 1,
+      "states": [
+        {
+          "name": "Ayeyarwady",
+          "abbreviation": "AYY",
+          "lgas": [
+            { "name": "Hinthada" },
+            { "name": "Labutta" },
+            { "name": "Maubin" },
+            { "name": "Myaungmya" },
+            { "name": "Pathein" },
+            { "name": "Pyapon" }
+          ],
+          "targets": {
+            "Total": 10925,
+            "Children": 646,
+            "Smear": 4060,
+            "MDR": 3456,
+            "HIV": 1229
+          }
+        },
+        {
+          "name": "Bago",
+          "abbreviation": "BGO",
+          "lgas": [
+            { "name": "Bago" },
+            { "name": "Pyay" },
+            { "name": "Taungoo" },
+            { "name": "Thayarwady" }
+          ],
+          "targets": {
+            "Total": 8045,
+            "Children": 561,
+            "Smear": 2558,
+            "MDR": 3666,
+            "HIV": 603
+          }
+        },
+        {
+          "name": "Chin",
+          "abbreviation": "CHN",
+          "lgas": [
+            { "name": "Falam" },
+            { "name": "Hakha" },
+            { "name": "Mindat" }
+          ],
+          "targets": {
+            "Total": 283,
+            "Children": 34,
+            "Smear": 51,
+            "MDR": 104,
+            "HIV": 10
+          }
+        },
+        {
+          "name": "Kachin",
+          "abbreviation": "KCN",
+          "lgas": [
+            { "name": "Bhamo" },
+            { "name": "Mohnyin" },
+            { "name": "Myitkyina" },
+            { "name": "Puta-O" }
+          ],
+          "targets": {
+            "Total": 6783,
+            "Children": 547,
+            "Smear": 1352,
+            "MDR": 2014,
+            "HIV": 2552
+          }
+        },
+        {
+          "name": "Kayah",
+          "abbreviation": "KYH",
+          "lgas": [
+            { "name": "Bawlake" },
+            { "name": "Loikaw" }
+          ],
+          "targets": {
+            "Total": 1058,
+            "Children": 101,
+            "Smear": 177,
+            "MDR": 339,
+            "HIV": 48
+          }
+        },
+        {
+          "name": "Kayin",
+          "abbreviation": "KYN",
+          "lgas": [
+            { "name": "Hpa-An" },
+            { "name": "Hpapun" },
+            { "name": "Kawkareik" },
+            { "name": "Myawaddy" }
+          ],
+          "targets": {
+            "Total": 2454,
+            "Children": 152,
+            "Smear": 777,
+            "MDR": 806,
+            "HIV": 138
+          }
+        },
+        {
+          "name": "Magway",
+          "abbreviation": "MGY",
+          "lgas": [
+            { "name": "Gangaw" },
+            { "name": "Magway" },
+            { "name": "Minbu" },
+            { "name": "Pakokku" },
+            { "name": "Thayet" }
+          ],
+          "targets": {
+            "Total": 3664,
+            "Children": 259,
+            "Smear": 1532,
+            "MDR": 1380,
+            "HIV": 339
+          }
+        },
+        {
+          "name": "Mandalay",
+          "abbreviation": "MDY",
+          "lgas": [
+            { "name": "Kyaukse" },
+            { "name": "Mandalay" },
+            { "name": "Meiktila" },
+            { "name": "Myingyan" },
+            { "name": "Nyaung-U" },
+            { "name": "Pyinoolwin" },
+            { "name": "Yamethin" }
+          ],
+          "targets": {
+            "Total": 15353,
+            "Children": 1818,
+            "Smear": 3541,
+            "MDR": 5084,
+            "HIV": 2083
+          }
+        },
+        {
+          "name": "Mon",
+          "abbreviation": "MON",
+          "lgas": [
+            { "name": "Mawlamyine" },
+            { "name": "Thaton" }
+          ],
+          "targets": {
+            "Total": 4819,
+            "Children": 317,
+            "Smear": 2026,
+            "MDR": 1725,
+            "HIV": 688
+          }
+        },
+        {
+          "name": "Naypyitaw",
+          "abbreviation": "NPW",
+          "lgas": [
+            { "name": "Detkhina" },
+            { "name": "Oketara" }
+          ],
+          "targets": {
+            "Total": 2454,
+            "Children": 173,
+            "Smear": 439,
+            "MDR": 831,
+            "HIV": 416
+          }
+        },
+        {
+          "name": "Rakhine",
+          "abbreviation": "RKE",
+          "lgas": [
+            { "name": "Kyaukpyu" },
+            { "name": "Maungdaw" },
+            { "name": "Mrauk-U" },
+            { "name": "Sittwe" },
+            { "name": "Thandwe" }
+          ],
+          "targets": {
+            "Total": 2259,
+            "Children": 157,
+            "Smear": 1026,
+            "MDR": 915,
+            "HIV": 85
+          }
+        },
+        {
+          "name": "Sagaing",
+          "abbreviation": "SGG",
+          "lgas": [
+            { "name": "Hkamti" },
+            { "name": "Kale" },
+            { "name": "Katha" },
+            { "name": "Mawlaik" },
+            { "name": "Monywa" },
+            { "name": "Sagaing" },
+            { "name": "Shwebo" },
+            { "name": "Tamu" },
+            { "name": "Yinmarbin" }
+          ],
+          "targets": {
+            "Total": 5016,
+            "Children": 350,
+            "Smear": 1585,
+            "MDR": 1551,
+            "HIV": 485
+          }
+        },
+        {
+          "name": "Shan (East)",
+          "abbreviation": "SHN",
+          "lgas": [
+            { "name": "Hopang" },
+            { "name": "Kengtung" },
+            { "name": "Kunlong" },
+            { "name": "Kyaukme" },
+            { "name": "Langkho" },
+            { "name": "Lashio" },
+            { "name": "Laukkaing" },
+            { "name": "Laukkaing (Kokang SAZ)" },
+            { "name": "Loilen" },
+            { "name": "Matman" },
+            { "name": "Mong Maw (Wa SAD)" },
+            { "name": "Mong Pawk (Wa SAD)" },
+            { "name": "Monghpyak" },
+            { "name": "Monghsat" },
+            { "name": "Muse" },
+            { "name": "Tachileik" },
+            { "name": "Taunggyi" },
+            { "name": "Wein Kawng (Wein Kao) (Wa SAD)" }
+          ],
+          "targets": {
+            "Total": 1474,
+            "Children": 127,
+            "Smear": 553,
+            "MDR": 555,
+            "HIV": 236
+          }
+        },
+        {
+          "name": "Shan (North)",
+          "abbreviation": "SHN",
+          "lgas": [
+            { "name": "Hopang" },
+            { "name": "Kengtung" },
+            { "name": "Kunlong" },
+            { "name": "Kyaukme" },
+            { "name": "Langkho" },
+            { "name": "Lashio" },
+            { "name": "Laukkaing" },
+            { "name": "Laukkaing (Kokang SAZ)" },
+            { "name": "Loilen" },
+            { "name": "Matman" },
+            { "name": "Mong Maw (Wa SAD)" },
+            { "name": "Mong Pawk (Wa SAD)" },
+            { "name": "Monghpyak" },
+            { "name": "Monghsat" },
+            { "name": "Muse" },
+            { "name": "Tachileik" },
+            { "name": "Taunggyi" },
+            { "name": "Wein Kawng (Wein Kao) (Wa SAD)" }
+          ],
+          "targets": {
+            "Total": 4039,
+            "Children": 345,
+            "Smear": 1175,
+            "MDR": 1464,
+            "HIV": 765
+          }
+        },
+        {
+          "name": "Shan (South)",
+          "abbreviation": "SHN",
+          "lgas": [
+            { "name": "Hopang" },
+            { "name": "Kengtung" },
+            { "name": "Kunlong" },
+            { "name": "Kyaukme" },
+            { "name": "Langkho" },
+            { "name": "Lashio" },
+            { "name": "Laukkaing" },
+            { "name": "Laukkaing (Kokang SAZ)" },
+            { "name": "Loilen" },
+            { "name": "Matman" },
+            { "name": "Mong Maw (Wa SAD)" },
+            { "name": "Mong Pawk (Wa SAD)" },
+            { "name": "Monghpyak" },
+            { "name": "Monghsat" },
+            { "name": "Muse" },
+            { "name": "Tachileik" },
+            { "name": "Taunggyi" },
+            { "name": "Wein Kawng (Wein Kao) (Wa SAD)" }
+          ],
+          "targets": {
+            "Total": 3441,
+            "Children": 251,
+            "Smear": 789,
+            "MDR": 692,
+            "HIV": 429
+          }
+        },
+        {
+          "name": "Tanintharyi",
+          "abbreviation": "TNI",
+          "lgas": [
+            { "name": "Dawei" },
+            { "name": "Kawthoung" },
+            { "name": "Myeik" }
+          ],
+          "targets": {
+            "Total": 3029,
+            "Children": 238,
+            "Smear": 761,
+            "MDR": 1224,
+            "HIV": 262
+          }
+        },
+        {
+          "name": "Yangon",
+          "abbreviation": "YGN",
+          "lgas": [
+            { "name": "Yangon (East)" },
+            { "name": "Yangon (North)" },
+            { "name": "Yangon (South)" },
+            { "name": "Yangon (West)" }
+          ],
+          "targets": {
+            "Total": 45434,
+            "Children": 5590,
+            "Smear": 8029,
+            "MDR": 11932,
+            "HIV": 4043
+          }
+        }
+      ]
+    }
+  ]
+}

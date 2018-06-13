@@ -1,8 +1,0 @@
-{
-  "generator-react-webpack": {
-    "appName": "aspect-web",
-    "style": "css",
-    "postcss": true,
-    "generatedWithVersion": 3
-  }
-}

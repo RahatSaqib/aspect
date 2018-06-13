@@ -1,0 +1,65 @@
+@import '../../globals/variables.css';
+
+:root {
+  --notification-icon-size: 36px;
+}
+
+.TableRow {
+  composes: TableRow from '../../components/shared/DataTableRow.css';
+}
+
+.TableCell {
+  composes: TableCell from '../../components/shared/DataTableRow.css';
+  color: var(--aspect-color-grey-4);
+}
+
+.TableCell--notificationCount {
+  position: relative;
+  font-size: var(--notification-icon-size);
+}
+
+.ColoredButton {
+  min-width: 120px;
+  text-transform: capitalize;
+}
+
+.Message {
+  display: flex;
+  align-items: center;
+}
+
+.Message__Subject {
+  padding-left: 10px;
+  line-height: 36px;
+}
+
+.Message__Text {
+  padding-left: 10px;
+  line-height: 18px;
+  color: var(--aspect-color-grey-2);
+  font-weight: var(--lato-font-weight-bold);
+}
+
+.Message__Alert {
+  color: var(--aspect-color-mandy);
+  font-weight: var(--lato-font-weight-bold);
+}
+
+.FaExclamationTriangle {
+  margin: 0 10px;
+}
+
+.MdModeComment {
+  position: absolute;
+  color: var(--aspect-color-grey-4);
+}
+
+.NotificationCount {
+  position: relative;
+  display: block;
+  width: var(--notification-icon-size);
+  line-height: 30px;
+  font-size: 16px;
+  color: #ffffff;
+  text-align: center;
+}

@@ -1,0 +1,11 @@
+.TableRow {
+  composes: TableRow from '../../components/shared/DataTableRow.css';
+}
+
+.TableCell {
+  composes: TableCell from '../../components/shared/DataTableRow.css';
+}
+
+.Checkbox__field {
+  margin-bottom: 0;
+}

@@ -1,0 +1,28 @@
+@import '../../globals/variables.css';
+
+.Container {
+  padding: 10px;
+}
+
+.FiltersGroup {
+  padding: 20px;
+  text-align: center;
+}
+
+.FiltersGroup__Child {
+  vertical-align: middle;
+  display: inline-block;
+  margin: 0 5px;
+}
+
+.FiltersGroup__Child--dropdown {
+  text-align: left;
+}
+
+.Button--mini {
+  min-width: 40px;
+}
+
+.TaskDataTable {
+  composes: ComponentDataTable from '../../components/shared/DataTable.css';
+}

@@ -1,0 +1,64 @@
+const Joi = require('joi')
+const { asyncHandler } = require('../routes')
+const {
+  updateIssueStatus,
+  onIssueEventTrigger,
+  onIssueEventResolve,
+} = require('./service')
+const { onEscalateIssues } = require('./escalations')
+
+const routes = [
+  {
+    method: 'PUT',
+    path: '/issue/status/{issueId}',
+    handler: asyncHandler(updateIssueStatus),
+    config: {
+      description: 'Update Issue Status',
+      notes: 'Update the status of an issue',
+      auth: { scope: ['notification:edit'] },
+      validate: {
+        params: {
+          issueId: Joi.number()
+            .integer()
+            .positive()
+            .description('Issue Id'),
+        },
+        payload: {
+          issueStatusExternalId: Joi.string().allow('Acknowledged'),
+        },
+      },
+    },
+  },
+]
+
+const subscriptions = [
+  {
+    actions: {
+      DEVICE_OFFLINE: onIssueEventTrigger('DeviceOffline'),
+      DEVICE_ONLINE: onIssueEventResolve('DeviceOffline'),
+      DEVICE_NO_RESULTS: onIssueEventTrigger('DeviceNoResults'),
+      DEVICE_HAS_NEW_RESULTS: onIssueEventResolve('DeviceNoResults'),
+      DEVICE_MAINTENANCE: onIssueEventTrigger('DeviceMaintenance'),
+      DEVICE_MAINTENANCE_RESOLVED: onIssueEventResolve('DeviceMaintenance'),
+      RESULT_MODULE_TEMPERATURE_ERROR: onIssueEventTrigger(
+        'ModuleTemperatureError'
+      ),
+      RESULT_MODULE_POWER_ERROR: onIssueEventTrigger('ModulePowerError'),
+      RESULT_MODULE_FAILURE_ERROR: onIssueEventTrigger('ModuleFailureError'),
+      RESULT_MACHINE_TEMPERATURE_ERROR: onIssueEventTrigger(
+        'MachineTemperatureError'
+      ),
+      RESULT_MACHINE_PROCEDURAL_ERROR: onIssueEventTrigger(
+        'MachineProceduralError'
+      ),
+      RESULT_MODULE_PROCEDURAL_ERROR: onIssueEventTrigger(
+        'ModuleProceduralError'
+      ),
+      INVENTORY_REAGENT_HEALTH: onIssueEventTrigger('ReagentHealthError'),
+      ESCALATE_ISSUES: onEscalateIssues(),
+      RESULT_MACHINE_POWER_ERROR: onIssueEventTrigger('MachinePowerError'),
+    },
+  },
+]
+
+module.exports = { routes, subscriptions }

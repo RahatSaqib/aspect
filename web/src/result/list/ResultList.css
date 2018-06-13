@@ -1,0 +1,7 @@
+.Container {
+  padding: 10px;
+}
+
+.ResultDataTable {
+  composes: ComponentDataTable from '../../components/shared/DataTable.css';
+}

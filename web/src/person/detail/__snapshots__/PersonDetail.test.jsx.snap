@@ -1,0 +1,22 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`PersonDetail module Person Detail component should render correctly 1`] = `
+<div
+  className="Container"
+>
+  <HelmetWrapper
+    defer={true}
+    encodeSpecialCharacters={true}
+    title="Person Detail"
+  />
+  <Connect(lifecycle(Component))
+    title="Person Detail"
+  />
+  <Paper
+    circle={false}
+    rounded={true}
+    transitionEnabled={true}
+    zDepth={1}
+  />
+</div>
+`;

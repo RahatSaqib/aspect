@@ -1,0 +1,31 @@
+.Container {
+  padding: 10px;
+}
+
+.Name {
+  margin: 0 0 10px;
+  font-weight: normal;
+  font-size: 24px;
+}
+
+.Site {
+  font-size: 16px;
+}
+
+.StatusText {
+  padding: 5px 0;
+  font-size: 14px;
+}
+
+.Contact {
+  padding: 0 5px;
+}
+
+.CardText {
+  font-size: 14px;
+}
+
+.DemoLink {
+  text-decoration: none;
+  color: #ccc;
+}

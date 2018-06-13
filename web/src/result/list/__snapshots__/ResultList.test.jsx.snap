@@ -1,0 +1,90 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Result List component should shallow render correctly 1`] = `
+<div
+  className="Container"
+>
+  <HelmetWrapper
+    defer={true}
+    encodeSpecialCharacters={true}
+    title="Results"
+  />
+  <Connect(lifecycle(Component))
+    title="Results"
+  />
+  <pure(withProps(withHandlers(Connect(lifecycle(BrowseFilters)))))
+    askConfirmationForExport={false}
+    config={undefined}
+    history={undefined}
+    intl={
+      Object {
+        "defaultFormats": Object {},
+        "defaultLocale": "en",
+        "formatDate": [Function],
+        "formatHTMLMessage": [Function],
+        "formatMessage": [Function],
+        "formatNumber": [Function],
+        "formatPlural": [Function],
+        "formatRelative": [Function],
+        "formatTime": [Function],
+        "formats": Object {},
+        "formatters": Object {
+          "getDateTimeFormat": [Function],
+          "getMessageFormat": [Function],
+          "getNumberFormat": [Function],
+          "getPluralFormat": [Function],
+          "getRelativeFormat": [Function],
+        },
+        "locale": "en",
+        "messages": Object {},
+        "now": [Function],
+        "textComponent": "span",
+      }
+    }
+    location={
+      Object {
+        "search": "?filters=assayType%3DTB",
+      }
+    }
+    onClickExport={undefined}
+  />
+  <DataTableCard>
+    <DataTableProgressBar
+      disabled={true}
+    />
+    <pure(withHandlers(Component))
+      history={undefined}
+      intl={
+        Object {
+          "defaultFormats": Object {},
+          "defaultLocale": "en",
+          "formatDate": [Function],
+          "formatHTMLMessage": [Function],
+          "formatMessage": [Function],
+          "formatNumber": [Function],
+          "formatPlural": [Function],
+          "formatRelative": [Function],
+          "formatTime": [Function],
+          "formats": Object {},
+          "formatters": Object {
+            "getDateTimeFormat": [Function],
+            "getMessageFormat": [Function],
+            "getNumberFormat": [Function],
+            "getPluralFormat": [Function],
+            "getRelativeFormat": [Function],
+          },
+          "locale": "en",
+          "messages": Object {},
+          "now": [Function],
+          "textComponent": "span",
+        }
+      }
+      location={
+        Object {
+          "search": "?filters=assayType%3DTB",
+        }
+      }
+    />
+  </DataTableCard>
+</div>
+`;
