@@ -47,6 +47,10 @@
     {
       "name": "report",
       "activities": ["view", "edit", "admin"]
+    },
+    {
+      "name": "browse",
+      "activities": ["admin"]
     }
   ]
 }

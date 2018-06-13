@@ -66,7 +66,7 @@ export const LinkNavigation = ({
       {
         href: '/browse',
         label: 'Browse',
-        requiredPermissions: [],
+        requiredPermissions: ['browse:admin'],
         requiredFeatures: [
           'device',
           'result',
