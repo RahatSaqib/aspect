@@ -50,7 +50,7 @@
     },
     {
       "name": "browse",
-      "activities": ["admin"]
+      "activities": ["view"]
     }
   ]
 }
