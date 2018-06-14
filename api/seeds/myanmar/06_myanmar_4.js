@@ -116,7 +116,7 @@ async function seed(knex) {
     module: 'browse',
     activity: 'view',
   })
-  
+
   await seedStockIssues(knex)
 }
 
