@@ -15,7 +15,7 @@ const {
   addDeviceLog,
   onResultUpdated,
   onResultLogged,
-  tempCommcareHandler,
+  addPluginData,
 } = require('./service')
 
 const errorPayload = Joi.object()
@@ -613,10 +613,17 @@ const routes = [
   },
   {
     method: 'POST',
-    path: '/commcaretemp',
-    handler: tempCommcareHandler,
+    path: '/plugin/{pluginName}',
+    handler: addPluginData,
     config: {
-      description: 'TEMP endpoint for commcare testing',
+      description: 'Deliver data in custom plugin format',
+      validate: {
+        params: {
+          pluginName: Joi.string()
+            .description('Name of Plugin')
+            .required(),
+        },
+      },
     },
   },
 ]

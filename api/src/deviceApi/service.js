@@ -68,8 +68,13 @@ const mergeResultHandler = deviceApiHandler(mergeResultWithContext, {
   updateDeviceLog: true,
 })
 
-function tempCommcareHandler(request, reply) {
-  const { payload } = request
+function addPluginData(request, reply) {
+  const { payload, params: { pluginName } } = request
+  // FIXME load plugin by name for transform payload handler,
+  // call if found, bad request if not, move this implementation to plugin folder
+  if (pluginName !== 'commcareGatesRdt') {
+    throw Boom.badRequest(`Unknown plugin ${pluginName}`)
+  }
 
   if (_.get(payload, 'form.@name') !== 'RDT Assay') {
     throw Boom.badRequest('Expecting RDT Assay Form')
@@ -1036,7 +1041,7 @@ async function updateLogs(request) {
 }
 
 module.exports = {
-  tempCommcareHandler,
+  addPluginData,
   getDeviceDataHandler,
   getDeviceOperationHandler,
   getResultHandler,
