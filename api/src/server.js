@@ -8,6 +8,7 @@ const { addClientRoutes, addDeviceRoutes } = require('./routes')
 const { createMessageQueue } = require('./mq')
 const { addSubscriptions } = require('./subscriptions')
 const { startScheduler } = require('./scheduler')
+const deviceApiKeyPlugin = require('./deviceApi/deviceApiKeyPlugin')
 const Hapi = require('hapi')
 
 const server = new Hapi.Server()
@@ -33,7 +34,10 @@ const plugins = [
   require('hapi-auth-jwt2'),
 
   // API Key in Device API
-  require('./deviceApi/deviceApiKeyPlugin'),
+  deviceApiKeyPlugin,
+
+  // Basic authentication in Device API
+  require('hapi-auth-basic'),
 
   // SwaggerUI and documentation
   {
@@ -169,7 +173,12 @@ server.register(plugins, err => {
 // ================================================
 // use config: { auth: false } on route definition to disable authentication
 // Device API uses API Keys
-server.auth.strategy('deviceApi', 'deviceApiKey')
+server.auth.strategy('deviceApiKey', 'deviceApiKey')
+server.auth.strategy('deviceApiBasic', 'basic', {
+  allowEmptyUsername: true,
+  validateFunc: deviceApiKeyPlugin.validateApiKeyAuthBasic,
+})
+
 // Client API uses JWT
 server.auth.strategy('clientApi', 'jwt', {
   key: config.secret,

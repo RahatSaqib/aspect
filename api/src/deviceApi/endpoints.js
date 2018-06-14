@@ -617,7 +617,6 @@ const routes = [
     handler: tempCommcareHandler,
     config: {
       description: 'TEMP endpoint for commcare testing',
-      auth: false,
     },
   },
 ]

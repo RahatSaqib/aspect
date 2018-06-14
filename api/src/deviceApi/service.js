@@ -69,10 +69,9 @@ const mergeResultHandler = deviceApiHandler(mergeResultWithContext, {
 
 const tempCommcareHandler = asyncHandler(async request => {
   const { payload } = request
-  console.log(request.payload)
 
   if (_.get(payload, 'form.@name') !== 'RDT Assay') {
-    throw Boom.badRequest()
+    throw Boom.badRequest('Expecting RDT Assay Form')
   }
 
   const attachments = _.get(payload, 'attachments', {})
