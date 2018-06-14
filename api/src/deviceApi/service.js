@@ -2,6 +2,7 @@ const Boom = require('boom')
 const _ = require('lodash')
 const { knex, transact } = require('../db')
 const { asyncHandler } = require('../routes')
+const { getDateOrDefault } = require('../shared/date')
 
 const {
   resultUpdated,
@@ -67,7 +68,7 @@ const mergeResultHandler = deviceApiHandler(mergeResultWithContext, {
   updateDeviceLog: true,
 })
 
-const tempCommcareHandler = asyncHandler(async request => {
+function tempCommcareHandler(request, reply) {
   const { payload } = request
 
   if (_.get(payload, 'form.@name') !== 'RDT Assay') {
@@ -86,8 +87,8 @@ const tempCommcareHandler = asyncHandler(async request => {
         id: 'GenericRDT',
         version: String(_.get(payload, 'metadata.app_build_version')),
       },
-      startedOn: _.get(payload, 'form.meta.timeStart'),
-      endedOn: _.get(payload, 'form.meta.timeEnd'),
+      startedOn: getDateOrDefault(payload, 'form.meta.timeStart'),
+      endedOn: getDateOrDefault(payload, 'form.meta.timeEnd'),
       data: {
         resultText: _.get(payload, 'form.rdt_result'),
         urlPicture: pictureUrl,
@@ -102,7 +103,7 @@ const tempCommcareHandler = asyncHandler(async request => {
       ],
       patient: {
         id: _.get(payload, 'form.study_id'),
-        dateOfBirth: _.get(payload, 'form.date_of_birth'),
+        age: _.get(payload, 'form.age'),
         gender: _.get(payload, 'form.gender'),
       },
       sample: {
@@ -114,8 +115,9 @@ const tempCommcareHandler = asyncHandler(async request => {
       rawData: payload,
     },
   }
-  return aspectPayload
-})
+  request.payload = aspectPayload
+  return addDeviceDataHandler(request, reply)
+}
 
 function deviceApiHandler(handler, handlerOptions) {
   return asyncHandler(async request => {
