@@ -437,13 +437,18 @@ function onFactCheckInventoryStock(action, { messageContext }) {
     const sites = await knex('InventoryItem as ii')
       .innerJoin('Site as s', 'ii.siteId', 's.id')
       .innerJoin('Partner as p', 's.partnerId', 'p.id')
-      .where('ii.expiresOn', '>', now) // take only unexpired
+      .where(function() {
+        this.whereNull('ii.expiresOn') // if is null
+          .orWhere('ii.expiresOn', '>', now) // or unexpired
+      })
       .groupBy('ii.siteId', 'ii.consumableId')
       .select(
         'ii.siteId',
         'ii.consumableId',
-        'max(p.dueDaysInventoryStockout) as dueDaysInventoryStockout',
-        'max(p.dueDaysInventoryStockExpiring) as dueDaysInventoryStockExpiring'
+        knex.raw('MAX(p.dueDaysInventoryStockout) as dueDaysInventoryStockout'),
+        knex.raw(
+          'MAX(p.dueDaysInventoryStockExpiring) as dueDaysInventoryStockExpiring'
+        )
       )
 
     // loop all sites and for each check if there are enough inventory items in stock
@@ -489,7 +494,10 @@ async function auditInventoryStockout({
 }) {
   // get all un-expired inventory items for provided site/consumable
   const items = await knex('InventoryItem')
-    .where('expiresOn', '>', 'NOW()') // take only unexpired
+    .where(function() {
+      this.whereNull('expiresOn') // if is null
+        .orWhere('expiresOn', '>', new Date()) // or unexpired
+    })
     .where({ siteId, consumableId })
     .orderBy('expiresOn', 'asc')
     .select(
@@ -528,6 +536,8 @@ async function auditInventoryStockExpiring({
   // get all un-expired inventory items for provided site/consumable
   const items = await knex('InventoryItem')
     .where({ siteId, consumableId })
+    .whereNotNull('expiresOn') // or if is NOT null
+    .where('expiresOn', '>', new Date()) // and unexpired
     .select(
       'quantityOnHand',
       'expiresOn',
