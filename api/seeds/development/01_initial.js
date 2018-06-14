@@ -4116,7 +4116,7 @@ async function seed(knex) {
     /* eslint-disable no-template-curly-in-string */
     Object.assign(
       {
-        message: '{{site.name}}: Stock-out expected {{date}} - Order Stock.',
+        message: 'Stock-out expected {{date}} - Order Stock.',
       },
       auditFields
     )
@@ -4149,7 +4149,7 @@ async function seed(knex) {
   // Inventory Stock Expiring Issue
   // ---------------------------------
   const messageStockExpiring =
-    '{{totalWasted}} consumables likely to expire at {{site.name}} in {{numberOfDays}} days.'
+    '{{totalWasted}} consumables likely to expire in {{numberOfDays}} days.'
   const [stockExpiringAlertTemplateId] = await knex('AlertTemplate').insert({
     message: messageStockExpiring,
     ...auditFields,

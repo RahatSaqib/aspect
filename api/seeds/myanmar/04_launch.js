@@ -74,11 +74,7 @@ async function seed(knex) {
 
   await knex('Partner')
     .where({ id: partnerId })
-    .update({
-      maxDaysDeviceNoResults: 14,
-      dueDaysInventoryStockout: 30,
-      dueDaysInventoryStockExpiring: 30,
-    })
+    .update({ maxDaysDeviceNoResults: 14 })
 
   // Issue Escalation Triggers
   await knex('IssueEscalationTrigger').insert([
@@ -101,53 +97,6 @@ async function seed(knex) {
         evaluationMethod: 'sql-script',
         evaluationParameter:
           './sqlScripts/Myanmar/issues/escalations/deviceNoResultsLevel3ROEscalatedNoResults.sql',
-      }),
-      createdOn: now,
-      updatedOn: now,
-    },
-
-    // Inventory Stockout escalation
-    {
-      issueTypeId: issueTypes.InventoryStockout.id,
-      partnerId,
-      escalateToLevel: 2,
-      escalationConditions: JSON.stringify({
-        evaluationMethod: 'issue-age',
-        evaluationParameter: { days: 10 }, // in 10 days after issue started
-      }),
-      createdOn: now,
-      updatedOn: now,
-    },
-    {
-      issueTypeId: issueTypes.InventoryStockout.id,
-      partnerId,
-      escalateToLevel: 3,
-      escalationConditions: JSON.stringify({
-        evaluationMethod: 'issue-age',
-        evaluationParameter: { days: 20 }, // in 20 days after issue started
-      }),
-      createdOn: now,
-      updatedOn: now,
-    },
-    // Inventory Stock Expiring escalation
-    {
-      issueTypeId: issueTypes.InventoryStockExpiring.id,
-      partnerId,
-      escalateToLevel: 2,
-      escalationConditions: JSON.stringify({
-        evaluationMethod: 'issue-age',
-        evaluationParameter: { days: 10 }, // in 10 days after issue started
-      }),
-      createdOn: now,
-      updatedOn: now,
-    },
-    {
-      issueTypeId: issueTypes.InventoryStockExpiring.id,
-      partnerId,
-      escalateToLevel: 3,
-      escalationConditions: JSON.stringify({
-        evaluationMethod: 'issue-age',
-        evaluationParameter: { days: 20 }, // in 20 days after issue started
       }),
       createdOn: now,
       updatedOn: now,

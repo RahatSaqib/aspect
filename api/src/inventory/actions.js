@@ -1,4 +1,3 @@
-const isNil = require('lodash/isNil')
 // ----------- Action Types ---------------------
 const types = {
   INVENTORY_STOCKOUT: 'INVENTORY_STOCKOUT',
@@ -12,7 +11,7 @@ const types = {
  * Is called when inventory if going out-of-stock in [daysDue]
  */
 function inventoryStockout(siteId, consumableId, daysDue) {
-  if (isNil(siteId) || isNil(consumableId) || isNil(daysDue)) {
+  if (!siteId || !consumableId || daysDue == null) {
     throw new Error('Must specify siteId, consumableId, daysDue')
   }
 
@@ -28,12 +27,7 @@ function inventoryStockout(siteId, consumableId, daysDue) {
  * Is called when inventory stock is expiring in [daysDue] with [totalWasted] wasted items
  */
 function inventoryStockExpiring(siteId, consumableId, daysDue, totalWasted) {
-  if (
-    isNil(siteId) ||
-    isNil(consumableId) ||
-    isNil(daysDue) ||
-    isNil(totalWasted)
-  ) {
+  if (!siteId || !consumableId || daysDue == null || totalWasted == null) {
     throw new Error('Must specify siteId, consumableId, daysDue, totalWasted')
   }
 
@@ -53,7 +47,7 @@ function inventoryStockExpiring(siteId, consumableId, daysDue, totalWasted) {
  * deviceId, consumableId is required.
  */
 function inventoryReagentHealth(deviceId, consumableId) {
-  if (isNil(deviceId) || isNil(consumableId)) {
+  if (!deviceId || !consumableId) {
     throw new Error('Must specify deviceId, consumableId')
   }
   return {

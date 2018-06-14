@@ -95,14 +95,14 @@ describe('Inventory Stock Issues Endpoint', () => {
   it('calculated consumption rates should match rates in db for all periods', () => {
     runTestWithKnex(async knex => {
       // calculate rates
-      const rates = await refreshConsumptionRates(knex, siteId, consumableId)
+      const totals = await refreshConsumptionRates(knex, siteId, consumableId)
 
       // read from db
       const ratesDb = await knex('FactInventoryConsumptionRate')
         .where({ siteId, consumableId })
         .select('days', 'rate')
 
-      rates.forEach(justCalculated => {
+      totals.forEach(justCalculated => {
         const fromDb = ratesDb.find(x => x.days === justCalculated.days)
 
         assert.exists(
@@ -110,10 +110,9 @@ describe('Inventory Stock Issues Endpoint', () => {
           `No rate entry in db for period ${justCalculated.days} days`
         )
 
-        // 2 decimals only
         assert.equal(
-          Math.round(justCalculated.rate * 100) / 100,
-          fromDb.rate, // db float format is (8.2)
+          justCalculated.total,
+          fromDb.rate,
           `Rates do not match for period ${justCalculated.days} days`
         )
       })

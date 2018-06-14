@@ -444,6 +444,9 @@ function onFactCheckInventoryStock(action, { messageContext }) {
     // loop all sites and for each check if there are enough inventory items in stock
     _.map(sites, async site => {
       const { siteId, consumableId } = site
+      // notice that 'rate' field in table FactInventoryConsumptionRate stores total number of
+      // tests during corresponding 'days'. So for actual rate you should do rate/days, but
+      // for days=1 use 'rate' as-is
       const { rate: dailyRate } =
         (await knex('FactInventoryConsumptionRate')
           .where({ siteId, consumableId, days: 1 })
@@ -575,26 +578,28 @@ function onFactCalculateInventoryConsumptionRates(action, { messageContext }) {
 // recalculates rates for provided siteId and consumableId
 async function refreshConsumptionRates(knex, siteId, consumableId) {
   const updatedOn = new Date()
-  const rates = await getConsumptionRates(knex, siteId, consumableId)
-  _.map(rates, async x => {
+  const totals = await getConsumptions(knex, siteId, consumableId)
+  _.map(totals, async x => {
     await knex.raw(
       knex('FactInventoryConsumptionRate')
         .insert({
           siteId,
           consumableId,
           days: x.days,
-          rate: x.rate,
+          // in GxAlert we stored totals in field 'rate', so same here.
+          // to get actual rate - do rate/days
+          rate: x.total,
           updatedOn,
         })
         .toString()
         .replace(/^insert/i, 'replace')
     )
   })
-  return rates
+  return totals
 }
 
-async function getConsumptionRates(knex, siteId, consumableId) {
-  const rates = []
+async function getConsumptions(knex, siteId, consumableId) {
+  const totals = []
   // --------------------
   // daily rate -
   // use most recent N days with at least one test
@@ -609,7 +614,7 @@ async function getConsumptionRates(knex, siteId, consumableId) {
         .where('d.siteId', siteId)
         .where('ca.consumableId', consumableId)
         .distinct(knex.raw('date(r.endedOn) as endedOn'))
-        .orderBy('r.endedOn')
+        .orderBy('r.endedOn', 'desc')
         .limit(limitItems)
         .as('t1')
     })
@@ -619,7 +624,7 @@ async function getConsumptionRates(knex, siteId, consumableId) {
     )
 
   if (!lastDaysWithTest) {
-    return rates
+    return totals
   }
 
   const [consumed = { total: 0 }] =
@@ -634,7 +639,7 @@ async function getConsumptionRates(knex, siteId, consumableId) {
       .sum('ca.quantity as total')
       .groupBy('d.siteId', 'ca.consumableId')) || []
 
-  rates.push({ days: 1, rate: consumed.total / limitItems })
+  totals.push({ days: 1, total: consumed.total / limitItems })
 
   // --------------------
   // other rates
@@ -658,11 +663,11 @@ async function getConsumptionRates(knex, siteId, consumableId) {
 
   _.map(daysToRate, days => {
     const totalItems = consumedTotals && consumedTotals[`total${days}`]
-    const rate = _.isNumber(totalItems) ? totalItems / days : 0
-    rates.push({ days, rate })
+    const total = _.isNumber(totalItems) ? totalItems : 0
+    totals.push({ days, total })
   })
 
-  return rates
+  return totals
 }
 
 module.exports = {

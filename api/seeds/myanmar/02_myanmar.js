@@ -61,8 +61,6 @@ async function seed(knex) {
     autoAcknowledgeOlderThanDays: 28,
     numberToLeaveUnacknowledged: 15,
     maxDaysDeviceOffline: 7,
-    dueDaysInventoryStockout: 30,
-    dueDaysInventoryStockExpiring: 30,
   })
 
   const modules = await knex('Permission').reduce((memo, row) => {
