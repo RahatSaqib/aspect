@@ -15,6 +15,7 @@ const {
   addDeviceLog,
   onResultUpdated,
   onResultLogged,
+  tempCommcareHandler,
 } = require('./service')
 
 const errorPayload = Joi.object()
@@ -608,6 +609,15 @@ const routes = [
           error: errorPayload,
         },
       },
+    },
+  },
+  {
+    method: 'POST',
+    path: '/commcaretemp',
+    handler: tempCommcareHandler,
+    config: {
+      description: 'TEMP endpoint for commcare testing',
+      auth: false,
     },
   },
 ]

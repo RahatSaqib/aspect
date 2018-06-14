@@ -67,6 +67,57 @@ const mergeResultHandler = deviceApiHandler(mergeResultWithContext, {
   updateDeviceLog: true,
 })
 
+const tempCommcareHandler = asyncHandler(async request => {
+  const { payload } = request
+  console.log(request.payload)
+
+  if (_.get(payload, 'form.@name') !== 'RDT Assay') {
+    throw Boom.badRequest()
+  }
+
+  const attachments = _.get(payload, 'attachments', {})
+  const rdtPicture = _.get(payload, 'form.rdt_picture')
+  const pictureUrl = _.get(attachments[rdtPicture], 'url', '')
+
+  const aspectPayload = {
+    name: 'HIV RDT App',
+    type: { id: 'GenericRDT' },
+    result: {
+      assay: {
+        id: 'GenericRDT',
+        version: String(_.get(payload, 'metadata.app_build_version')),
+      },
+      startedOn: _.get(payload, 'form.meta.timeStart'),
+      endedOn: _.get(payload, 'form.meta.timeEnd'),
+      data: {
+        resultText: _.get(payload, 'form.rdt_result'),
+        urlPicture: pictureUrl,
+      },
+      category: [
+        {
+          id:
+            _.get(payload, 'form.rdt_result') === 'positive'
+              ? 'Detected'
+              : 'NotDetected',
+        },
+      ],
+      patient: {
+        id: _.get(payload, 'form.study_id'),
+        dateOfBirth: _.get(payload, 'form.date_of_birth'),
+        gender: _.get(payload, 'form.gender'),
+      },
+      sample: {
+        id: _.get(payload, 'form.study_id'),
+      },
+      sender: {
+        operator: _.get(payload, 'metadata.username'),
+      },
+      rawData: payload,
+    },
+  }
+  return aspectPayload
+})
+
 function deviceApiHandler(handler, handlerOptions) {
   return asyncHandler(async request => {
     const { error, context } = await createDeviceApiContext(
@@ -984,6 +1035,7 @@ async function updateLogs(request) {
 }
 
 module.exports = {
+  tempCommcareHandler,
   getDeviceDataHandler,
   getDeviceOperationHandler,
   getResultHandler,
