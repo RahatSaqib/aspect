@@ -110,4 +110,9 @@ async function seed(knex) {
       htmlBody:
         'Module <em>{{issue.data.moduleName}}</em> errors, conduct troubleshooting',
     })
+
+  await knex('Permission').insert({
+    module: 'browse',
+    activity: 'view',
+  })
 }
