@@ -81,10 +81,10 @@ function tempCommcareHandler(request, reply) {
 
   const aspectPayload = {
     name: 'HIV RDT App',
-    type: { id: 'GenericRDT' },
+    type: { id: 'CommCareGatesRDT' },
     result: {
       assay: {
-        id: 'GenericRDT',
+        id: 'CommCareGatesRDT',
         version: String(_.get(payload, 'metadata.app_build_version')),
       },
       startedOn: getDateOrDefault(payload, 'form.meta.timeStart'),
