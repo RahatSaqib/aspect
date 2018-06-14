@@ -1,6 +1,8 @@
 const _ = require('lodash')
 const Boom = require('boom')
 const { getOrCreateSite } = require('./site')
+const { parseDateOrDefault } = require('../../../shared/date')
+
 /*
 The purpose of this plugin is to ensure that results are captured
 even when the site is unknown to Aspect
@@ -14,7 +16,7 @@ async function preProcessAddDeviceData({ knex, device, payload, now }) {
   const configurationData = _.get(payload, 'configuration.data') || {}
   const site = await getOrCreateSite(knex, device, payload, now)
   const deviceDetails = {
-    lastSeenOn: new Date(configurationData.lastPingOn || now),
+    lastSeenOn: parseDateOrDefault(configurationData.lastPingOn, now),
     updatedOn: now,
     updatedBy: null,
   }
@@ -41,7 +43,10 @@ async function preProcessAddDeviceData({ knex, device, payload, now }) {
       ].includes(configurationDataKey)
     )
   ) {
-    deviceDetails.lastPingOn = new Date(configurationData.lastPingOn || now)
+    deviceDetails.lastPingOn = parseDateOrDefault(
+      configurationData.lastPingOn,
+      now
+    )
   }
   await knex
     .from('Device')

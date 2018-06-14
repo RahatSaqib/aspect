@@ -12,6 +12,7 @@ const addDays = require('date-fns/add_days')
 const isAfter = require('date-fns/is_after')
 const differenceInDays = require('date-fns/difference_in_days')
 const { getUser } = require('../auth/service')
+const { processDynamicMessage } = require('../stringTemplate/service')
 
 const i18nKeys = {
   // Dashboard
@@ -1266,6 +1267,7 @@ async function actionDashboard(request) {
   // set consumable id, totalIn Stock on StockInHand issues
   const inventoryItemsBySite = _.groupBy(inventoryItems, 'siteId')
   const results = _.map(resultQuery, result => {
+    result.message = processDynamicMessage(result.message)
     // TODO we should not be using notification type name
     // as a constant, as it could be user editable in the future
     result.notificationType = _.camelCase(result.notificationType)
@@ -1315,7 +1317,21 @@ async function actionDashboard(request) {
   const allActionByCategory = _.flowRight(
     x => _.groupBy(x, 'issueCategory'),
     query.sortDir === 'desc' ? _.reverse : _.identity,
-    x => _.sortBy(x, query.sortCol || _.identity)
+    x => _.sortBy(x, query.sortCol || _.identity),
+    x =>
+      _.map(x, result => {
+        // TODO remove quick patch for StockLevelUpdate status
+        if (result.issueTypeExternalId === 'StockLevelUpdate') {
+          if (result.totalInStock <= 0) {
+            result.status = 'Active'
+            result.statusI18nKey = 'issueStatusActive'
+          } else {
+            result.status = 'OK'
+            result.statusI18nKey = 'issueStatusOk'
+          }
+        }
+        return result
+      })
   )(results)
 
   const result = {

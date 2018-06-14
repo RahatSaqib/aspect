@@ -47,6 +47,9 @@ const plugins = {
     preProcessMergeResult: require('./genexpert/preProcessMergeResult'),
     postProcessMergeResult: require('./genexpert/gxalert_plugin/postProcessMergeResult'),
   },
+  myanmar: {
+    transformMergeResultPayload: require('./myanmar/transformMergeResultPayload'),
+  },
 }
 
 /**
@@ -57,9 +60,15 @@ const plugins = {
  * with name not registered
  *
  */
-async function loadPlugin(pluginName, actionName) {
-  const action = get(plugins, [pluginName, actionName])
-  return action != null ? action : plugins.default[actionName]
+async function loadPlugin(pluginNames, actionName) {
+  pluginNames = pluginNames || []
+  for (let i = 0; i < pluginNames.length; i++) {
+    const pluginAction = get(plugins, [pluginNames[i], actionName])
+    if (pluginAction) {
+      return pluginAction
+    }
+  }
+  return plugins.default[actionName]
 }
 
 /**

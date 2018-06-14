@@ -10,14 +10,14 @@ const {
   decreaseInventory,
 } = require('../../../inventory/service')
 const { getDevice } = require('../../../device/service')
+const { parseDateOrDefault } = require('../../../shared/date')
 
 async function postProcessAddDeviceOperation({ device, payload, now }) {
   let inventoryItemIds = []
   const inventoryChanges = _.get(payload, 'data.inventoryChanges')
   if (!_.isEmpty(inventoryChanges)) {
-    const sortedInventoryChanges = _.sortBy(
-      inventoryChanges,
-      inventoryChange => new Date(inventoryChange.dateChanged)
+    const sortedInventoryChanges = _.sortBy(inventoryChanges, inventoryChange =>
+      parseDateOrDefault(inventoryChange.dateChanged)
     )
     inventoryItemIds = await Promise.all(
       _.map(sortedInventoryChanges, async inventoryChange => {
@@ -50,14 +50,15 @@ async function postProcessAddDeviceOperation({ device, payload, now }) {
             const changeParameters = {
               siteId: device.siteId,
               consumableId: matchingConsumable.id,
-              expiresOn: inventoryChange.expirationDate
-                ? new Date(inventoryChange.expirationDate)
-                : null,
+              expiresOn: parseDateOrDefault(inventoryChange.expirationDate),
               quantity: absoluteQuantity,
               quantityOnHand: inventoryChange.resultingQuantityOnHand,
               reasonId: matchingConsumableReason.id,
               dateAdjustedFrom: inventoryChange.dateChanged
-                ? setMilliseconds(new Date(inventoryChange.dateChanged), 0)
+                ? setMilliseconds(
+                    parseDateOrDefault(inventoryChange.dateChanged),
+                    0
+                  )
                 : null,
               now,
             }

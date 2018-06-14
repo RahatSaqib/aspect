@@ -16,6 +16,7 @@ const {
   alertMessageSent,
 } = require('../../src/alert/actions')
 const dictionary = require('../../src/shared/dictionary')
+const { processDynamicMessage } = require('../../src/stringTemplate/service')
 
 describe('Sending Alert via Message Queue', () => {
   const { runTest } = context
@@ -50,8 +51,9 @@ describe('Sending Alert via Message Queue', () => {
         .first()
       assert.equal(msg.messageStatusId, messageStatusIdSent)
       // make sure generated message does not have unprocessed curly braces {{ }}
+      const message = processDynamicMessage(msg.message)
       assert(
-        !msg.message.includes('{{') && !msg.message.includes('}}'),
+        !message.includes('{{') && !message.includes('}}'),
         'Alert message template has not been parsed well'
       )
     }))

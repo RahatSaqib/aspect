@@ -164,9 +164,22 @@ async function onIssueEscalated({ issueId }, { messageContext: context }) {
         'mt.emailTemplateId',
         'mt.smsTemplateId'
       )
-    const policiesByJobFunction = _.groupBy(policies, 'jobFunctionId')
-    for (const [policy] of Object.values(policiesByJobFunction)) {
+
+    // for each job function, find all policies with maximum constrained level,
+    // since we are ordered by, max level at first position and filter all with same
+    let jobFunctionId = null
+    let jobFunctionLevel = null
+    for (const policy of policies) {
       /* eslint-disable no-await-in-loop */
+      if (policy.jobFunctionId !== jobFunctionId) {
+        ;({ jobFunctionId, level: jobFunctionLevel } = policy)
+      } else if (policy.level !== jobFunctionLevel) {
+        // This is a lower level for this particular job function
+        // continue until we get to end of list or new job function
+        /* eslint-disable no-continue */
+        continue
+      }
+
       const people = await knex('Job as j')
         .join('JobFunction as jf', 'j.jobFunctionId', 'jf.id')
         .where({ 'jf.id': policy.jobFunctionId })

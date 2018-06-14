@@ -1,4 +1,5 @@
 const _ = require('lodash')
+const { getDateOrDefault } = require('../../../../shared/date')
 
 async function getDeviceSeenOn({ payload, now, device: { deviceType } }) {
   if (deviceType === 'CepheidGeneXpert') {
@@ -11,7 +12,7 @@ async function getDeviceSeenOn({ payload, now, device: { deviceType } }) {
     }
     // If ping contained in configuration payload, use it as last seen
     // for GeneXpert device otherwise use default "now"
-    return new Date(_.get(payload, 'configuration.data.lastPingOn', now))
+    return getDateOrDefault(payload, 'configuration.data.lastPingOn', now)
   }
 
   // Always use now for GxAlert device (and any others)
