@@ -3756,7 +3756,7 @@ async function seed(knex) {
     Object.assign(
       {
         message:
-          'Temperature errors on Module {{result.moduleName}}; notify RO',
+          'Temperature errors on Module {{issue.data.moduleName}}; notify RO',
       },
       auditFields
     )
@@ -3768,7 +3768,7 @@ async function seed(knex) {
     Object.assign(
       {
         message:
-          '{{device.name}} has Temperature errors on Module {{result.moduleName}}; notify RO.',
+          '{{device.name}} has Temperature errors on Module {{issue.data.moduleName}}; notify RO.',
       },
       auditFields
     )
@@ -3780,11 +3780,11 @@ async function seed(knex) {
     Object.assign(
       {
         subject:
-          '{{device.name}} has Temperature errors on Module {{result.moduleName}}; notify RO.',
+          '{{device.name}} has Temperature errors on Module {{issue.data.moduleName}}; notify RO.',
         body:
-          '{{device.name}} has Temperature errors on Module {{result.moduleName}}; notify RO.',
+          '{{device.name}} has Temperature errors on Module {{issue.data.moduleName}}; notify RO.',
         htmlBody:
-          '<em>{{device.name}}</em> has Temperature errors on Module {{result.moduleName}}; notify RO.',
+          '<em>{{device.name}}</em> has Temperature errors on Module {{issue.data.moduleName}}; notify RO.',
       },
       auditFields
     )
@@ -3794,7 +3794,7 @@ async function seed(knex) {
   const [modulePowerErrorAlertTemplateId] = await knex('AlertTemplate').insert(
     Object.assign(
       {
-        message: 'Power errors on Module {{result.moduleName}}; notify RO',
+        message: 'Power errors on Module {{issue.data.moduleName}}; notify RO',
       },
       auditFields
     )
@@ -3803,7 +3803,7 @@ async function seed(knex) {
   const [modulePowerErrorSmsTemplateId] = await knex('SmsTemplate').insert(
     Object.assign(
       {
-        message: 'Power errors on Module {{result.moduleName}}; notify RO',
+        message: 'Power errors on Module {{issue.data.moduleName}}; notify RO',
       },
       auditFields
     )
@@ -3812,9 +3812,10 @@ async function seed(knex) {
   const [modulePowerErrorEmailTemplateId] = await knex('EmailTemplate').insert(
     Object.assign(
       {
-        subject: '{{result.moduleName}} Power Errors',
-        body: 'Power errors on Module {{result.moduleName}}; notify RO',
-        htmlBody: 'Power errors on <em>{{result.moduleName}}</em> notify RO',
+        subject: '{{issue.data.moduleName}} Power Errors',
+        body: 'Power errors on Module {{issue.data.moduleName}}; notify RO',
+        htmlBody:
+          'Power errors on <em>{{issue.data.moduleName}}</em> notify RO',
       },
       auditFields
     )
@@ -3826,7 +3827,8 @@ async function seed(knex) {
   ).insert(
     Object.assign(
       {
-        message: 'Module {{result.moduleName}}: Critical errors; notify R.O.',
+        message:
+          'Module {{issue.data.moduleName}}: Critical errors; notify R.O.',
       },
       auditFields
     )
@@ -3835,7 +3837,8 @@ async function seed(knex) {
   const [moduleFailureErrorSmsTemplateId] = await knex('SmsTemplate').insert(
     Object.assign(
       {
-        message: 'Module {{result.moduleName}}: Critical errors; notify R.O.',
+        message:
+          'Module {{issue.data.moduleName}}: Critical errors; notify R.O.',
       },
       auditFields
     )
@@ -3847,9 +3850,9 @@ async function seed(knex) {
     Object.assign(
       {
         subject: 'Module Failure Errors',
-        body: 'Module {{result.moduleName}}: Critical errors; notify R.O.',
+        body: 'Module {{issue.data.moduleName}}: Critical errors; notify R.O.',
         htmlBody:
-          'Module <em>{{result.moduleName}}</em>: Critical errors; notify R.O.',
+          'Module <em>{{issue.data.moduleName}}</em>: Critical errors; notify R.O.',
       },
       auditFields
     )
@@ -3958,7 +3961,8 @@ async function seed(knex) {
   ).insert(
     Object.assign(
       {
-        message: 'Module {{result.moduleName}} errors, conduct troubleshooting',
+        message:
+          'Module {{issue.data.moduleName}} errors, conduct troubleshooting',
       },
       auditFields
     )
@@ -3967,7 +3971,8 @@ async function seed(knex) {
   const [moduleProceduralErrorSmsTemplateId] = await knex('SmsTemplate').insert(
     Object.assign(
       {
-        message: 'Module {{result.moduleName}} errors, conduct troubleshooting',
+        message:
+          'Module {{issue.data.moduleName}} errors, conduct troubleshooting',
       },
       auditFields
     )
@@ -3979,9 +3984,10 @@ async function seed(knex) {
     Object.assign(
       {
         subject: 'Procedural Module Errors',
-        body: 'Module {{result.moduleName}} errors, conduct troubleshooting',
+        body:
+          'Module {{issue.data.moduleName}} errors, conduct troubleshooting',
         htmlBody:
-          'Module <em>{{result.moduleName}}</em> errors, conduct troubleshooting',
+          'Module <em>{{issue.data.moduleName}}</em> errors, conduct troubleshooting',
       },
       auditFields
     )

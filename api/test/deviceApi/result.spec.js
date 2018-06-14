@@ -1580,8 +1580,11 @@ describe('Device Result API routes', () => {
                   if (inventoryItemBefore) {
                     assert.equal(
                       inventoryItemAfter.quantityOnHand,
-                      inventoryItemBefore.quantityOnHand -
-                        assayConsumable.quantity
+                      _.max([
+                        0,
+                        inventoryItemBefore.quantityOnHand -
+                          assayConsumable.quantity,
+                      ])
                     )
                   }
                 })
@@ -1669,7 +1672,10 @@ describe('Device Result API routes', () => {
 
           assert.equal(
             cartridgeAtSiteAfter.quantityOnHand,
-            cartridgeAtSiteBefore.quantityOnHand - inventoryConsumedByTest
+            _.max([
+              0,
+              cartridgeAtSiteBefore.quantityOnHand - inventoryConsumedByTest,
+            ])
           )
 
           resultDetails = {
@@ -1728,7 +1734,10 @@ describe('Device Result API routes', () => {
 
           assert.equal(
             cartridgeAtSiteAfter.quantityOnHand,
-            cartridgeAtSiteBefore.quantityOnHand - inventoryConsumedByTest
+            _.max([
+              0,
+              cartridgeAtSiteBefore.quantityOnHand - inventoryConsumedByTest,
+            ])
           )
 
           resultDetails = {
@@ -1805,7 +1814,10 @@ describe('Device Result API routes', () => {
 
           assert.equal(
             cartridgeAtSiteAfter.quantityOnHand,
-            cartridgeAtSiteBefore.quantityOnHand - inventoryConsumedByTest
+            _.max([
+              0,
+              cartridgeAtSiteBefore.quantityOnHand - inventoryConsumedByTest,
+            ])
           )
         }))
 
@@ -1930,8 +1942,11 @@ describe('Device Result API routes', () => {
 
           assert.equal(
             matchingExpirationDateCartridgeAtSiteAfter.quantityOnHand,
-            matchingExpirationDateCartridgeAtSiteBefore.quantityOnHand -
-              inventoryConsumedByTest
+            _.max([
+              0,
+              matchingExpirationDateCartridgeAtSiteBefore.quantityOnHand -
+                inventoryConsumedByTest,
+            ])
           )
         }))
 

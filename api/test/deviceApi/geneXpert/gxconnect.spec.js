@@ -1437,7 +1437,7 @@ describe('Device API routes for GxConnect Devices', () => {
             .first()
           assert.equal(
             inventoryItem.quantityOnHand,
-            initialQuantityOnHand - consumableAssay.quantity
+            _.max([0, initialQuantityOnHand - consumableAssay.quantity])
           )
 
           const inventoryLogs = await knex('InventoryLog as il')
@@ -1554,8 +1554,11 @@ describe('Device API routes for GxConnect Devices', () => {
               .first()
             assert.equal(
               inventoryItemAfterFirstRequest.quantityOnHand,
-              inventoryItemBeforeFirstRequest.quantityOnHand -
-                consumableAssay.quantity
+              _.max([
+                0,
+                inventoryItemBeforeFirstRequest.quantityOnHand -
+                  consumableAssay.quantity,
+              ])
             )
 
             await waitForApproximately(2, 'seconds')
@@ -2196,7 +2199,7 @@ describe('Device API routes for GxConnect Devices', () => {
               inTransitFromSiteId: null,
               lotNumber: null,
               expiresOn: expirationDate,
-              quantityOnHand: initialQuantity + quantity,
+              quantityOnHand: _.max([0, initialQuantity + quantity]),
             },
           ]
         )
@@ -2508,8 +2511,10 @@ describe('Device API routes for GxConnect Devices', () => {
               inTransitFromSiteId: null,
               lotNumber: null,
               expiresOn: inventoryItemAtSiteBefore.expiresOn,
-              quantityOnHand:
+              quantityOnHand: _.max([
+                0,
                 inventoryItemAtSiteBefore.quantityOnHand + quantity,
+              ]),
             },
           ]
         )
@@ -2622,8 +2627,10 @@ describe('Device API routes for GxConnect Devices', () => {
               inTransitFromSiteId: null,
               lotNumber: null,
               expiresOn: inventoryItemAtSiteBefore.expiresOn,
-              quantityOnHand:
+              quantityOnHand: _.max([
+                0,
                 inventoryItemAtSiteBefore.quantityOnHand + quantity,
+              ]),
             },
           ]
         )
@@ -3017,8 +3024,10 @@ describe('Device API routes for GxConnect Devices', () => {
           inTransitFromSiteId: null,
           lotNumber: null,
           expiresOn: lot1.expirationDate,
-          quantityOnHand:
+          quantityOnHand: _.max([
+            0,
             lot1InventoryItem.quantityOnHand + updateToLot1.quantity,
+          ]),
         })
         assert.deepEqual(lot2InventoryItemAfterAdjustment1, {
           consumableName: lot2.consumableName,
@@ -3082,16 +3091,20 @@ describe('Device API routes for GxConnect Devices', () => {
           inTransitFromSiteId: null,
           lotNumber: null,
           expiresOn: lot1.expirationDate,
-          quantityOnHand:
+          quantityOnHand: _.max([
+            0,
             lot1InventoryItem.quantityOnHand + updateToLot1.quantity,
+          ]),
         })
         assert.deepEqual(lot2InventoryItemAfterAdjustment2, {
           consumableName: lot2.consumableName,
           inTransitFromSiteId: null,
           lotNumber: null,
           expiresOn: lot2.expirationDate,
-          quantityOnHand:
+          quantityOnHand: _.max([
+            0,
             lot2InventoryItem.quantityOnHand + updateToLot2.quantity,
+          ]),
         })
         const inventoryLogsForLot1And2 = await knex('InventoryLog as il')
           .join('ConsumableReason as cr', 'il.consumableReasonId', 'cr.id')
@@ -3441,8 +3454,10 @@ describe('Device API routes for GxConnect Devices', () => {
                 inTransitFromSiteId: null,
                 lotNumber: null,
                 expiresOn: inventoryLost.expirationDate,
-                quantityOnHand:
+                quantityOnHand: _.max([
+                  0,
                   initialLotCaptured.quantity + inventoryLost.quantity,
+                ]),
               },
             ]
           )
