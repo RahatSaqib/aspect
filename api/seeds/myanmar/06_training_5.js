@@ -23,4 +23,17 @@ async function seed(knex) {
       updatedOn: now,
     },
   ])
+
+  // Assign ULTRA assay to TB cartridge consumable:
+  const { id: assayIdUltra } = await knex('Assay')
+    .where('externalId', 'GxMtbRifUltra')
+    .first()
+
+  const { id: consumableIdTb } = await knex('Consumable')
+    .where('name', 'GeneXpert TB Cartridge')
+    .first()
+
+  await knex('ConsumableAssay')
+    .where('assayId', assayIdUltra)
+    .update('consumableId', consumableIdTb)
 }
