@@ -13,7 +13,7 @@ async function transformInitialPayload({ payload }) {
 
   const aspectPayload = {
     name: 'HIV RDT App',
-    type: { id: 'CommCareGatesRDT' },
+    type: { id: 'CommCareApp' },
     result: {
       assay: {
         id: 'CommCareGatesRDT',
