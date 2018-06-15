@@ -1748,6 +1748,21 @@ async function seed(knex) {
       updatedOn: now,
     },
   ])
+
+  // Issue Resolution Triggers
+  await knex('IssueResolutionTrigger').insert([
+    {
+      issueTypeId: issueTypes.DeviceOffline.id,
+      partnerId,
+      resolutionConditions: JSON.stringify({
+        evaluationMethod: 'sql-script',
+        evaluationParameter:
+          './sqlScripts/Myanmar/issues/resolutions/deviceOfflineLUNetwork.sql',
+      }),
+      createdOn: now,
+      updatedOn: now,
+    },
+  ])
 }
 
 function calculateDateForResult(
