@@ -87,17 +87,19 @@ async function postProcessUpdateDeviceConfiguration({
           newStateId !== currentDeviceGeography.stateId ||
           newLgaId !== currentDeviceGeography.lgaId
         ) {
-          const { id: newGeographyId } = await knex('Geography as g')
+          const newGeography = await knex('Geography as g')
             .where({
               countryId: currentDeviceGeography.countryId,
               stateId: newStateId,
               lgaId: newLgaId,
             })
             .first('g.id')
-          if (currentDeviceGeography.siteId) {
-            siteUpdateDetails.geographyId = newGeographyId
+          if (newGeography) {
+            if (currentDeviceGeography.siteId) {
+              siteUpdateDetails.geographyId = newGeography.id
+            }
+            deviceDetails.geographyId = newGeography.id
           }
-          deviceDetails.geographyId = newGeographyId
         }
         if (
           !_.isUndefined(latitude) &&
