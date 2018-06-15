@@ -9,13 +9,13 @@ const {
   getDeviceOperationHandler,
   getResultHandler,
   addDeviceDataHandler,
+  addPluginDeviceDataHandler,
   addDeviceOperationHandler,
   updateDeviceConfigurationHandler,
   mergeResultHandler,
   addDeviceLog,
   onResultUpdated,
   onResultLogged,
-  addPluginData,
 } = require('./service')
 
 const errorPayload = Joi.object()
@@ -451,6 +451,21 @@ const routes = [
     },
   },
   {
+    method: 'POST',
+    path: '/plugin/{pluginName}',
+    handler: addPluginDeviceDataHandler,
+    config: {
+      description: 'Deliver data in custom plugin format',
+      validate: {
+        params: {
+          pluginName: Joi.string()
+            .description('Name of Plugin')
+            .required(),
+        },
+      },
+    },
+  },
+  {
     // POST /device/configuration
     method: 'POST',
     path: '/configuration',
@@ -607,21 +622,6 @@ const routes = [
         },
         schema: {
           error: errorPayload,
-        },
-      },
-    },
-  },
-  {
-    method: 'POST',
-    path: '/plugin/{pluginName}',
-    handler: addPluginData,
-    config: {
-      description: 'Deliver data in custom plugin format',
-      validate: {
-        params: {
-          pluginName: Joi.string()
-            .description('Name of Plugin')
-            .required(),
         },
       },
     },
