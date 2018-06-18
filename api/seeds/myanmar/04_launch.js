@@ -1,21 +1,9 @@
 module.exports = require('../../src/db').seed(seed)
 const { rowsAsObject } = require('../utils')
 
-const { seedDataCategory } = require('./fixtures/dataCategoryLow')
-
 const now = new Date()
 
 async function seed(knex) {
-  const [myanmarCountry] = await knex('Country as c')
-    .where({ 'c.a3': 'MMR' })
-    .select('c.id', 'c.culture', 'c.timezone')
-  const countryId = myanmarCountry.id
-
-  const { id: myanmarGeographyId } = await knex('Geography')
-    .where({ countryId })
-    .whereNull('stateId', 'lgaId')
-    .first()
-
   const issueTypeDeviceMaintenance = await knex('IssueType')
     .where({ externalId: 'DeviceMaintenance' })
     .first('id')
@@ -182,13 +170,5 @@ async function seed(knex) {
   await knex('JobFunctionFeature').insert({
     jobFunctionId: jobFunctionIdLabUser,
     featureId: featureIdSiteFilterDashboard,
-  })
-  
-  // Data Category
-  await seedDataCategory(knex, {
-    auditFields,
-    myanmarGeographyId,
-    issueCategoryId: issueCategories.DataHealth.id,
-    messageSeverityId: messageSeverities.Alert.id,
   })
 }
