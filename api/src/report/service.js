@@ -1,4 +1,11 @@
 const _ = require('lodash')
+const Boom = require('boom')
+const { createFetch, base, method, params } = require('http-client')
+require('isomorphic-fetch')
+
+const config = require('../config')
+const { knex } = require('../db')
+const { getConstraints, addConstraints } = require('../auth/constraints')
 
 async function listReports(request) {
   const { query } = request
@@ -133,6 +140,71 @@ async function listReports(request) {
   return result
 }
 
+function proxyGxReport(request, reply) {
+  return proxyGxReportAsync(request)
+    .then(resp =>
+      reply(resp.body)
+        .header(
+          'Content-Type',
+          'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        )
+        .header(
+          'Content-Disposition',
+          `attachment; filename="${request.params.reportName}.xlsx"`
+        )
+    )
+    .catch(err => {
+      console.error(err) // eslint-disable-line no-console
+      reply(err)
+    })
+}
+
+async function proxyGxReportAsync(request) {
+  const { auth } = request
+  const { reportName } = request.params
+  const { siteId, dateFrom, dateTo } = request.query
+
+  const baseUrl = config.gxAlertApi.replace(/\/api.*$/, '/remotereport/')
+  const pw = 'u50GUh3u3bA5jr3IHLJrmG2l'
+
+  const dataConstraints = await getConstraints(auth.credentials)
+  const sitesQ = knex('Site as s')
+    .join('Geography as g', 's.geographyId', 'g.id')
+    .join('State as st', 'g.stateId', 'st.id')
+    .modify(addConstraints, dataConstraints, {
+      site: 's',
+      geography: 'g',
+      state: 'st',
+    })
+    .distinct('st.name as stateName', 's.name as siteName')
+  if (siteId != null && siteId !== '' && siteId !== 'null') {
+    sitesQ.where('s.id', parseInt(siteId, 10))
+  }
+  const sites = await sitesQ
+
+  const stateNames = _.uniq(_.map(sites, 'stateName'))
+  const siteNames = _.uniq(_.map(sites, 'siteName'))
+  if (stateNames.length !== 1) {
+    throw Boom.badRequest(
+      'Cannot find single assigned state for logged in user'
+    )
+  }
+  const [stateName] = stateNames
+  // Current siteName == deviceName in GxAlert so pass through
+  const [deviceName] = siteNames.length === 1 ? siteNames : []
+
+  const gxParams = {
+    pw,
+    stateName,
+    deviceName,
+    dateFrom,
+    dateTo,
+  }
+  const gxFetch = createFetch(method('GET'), base(baseUrl), params(gxParams))
+  return gxFetch(reportName)
+}
+
 module.exports = {
   listReports,
+  proxyGxReport,
 }

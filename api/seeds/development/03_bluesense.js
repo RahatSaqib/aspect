@@ -3,6 +3,7 @@ module.exports = require('../../src/db').seed(seed)
 const config = require('../../src/config')
 const bcrypt = require('bcrypt')
 const _ = require('lodash')
+const { rowsAsObject } = require('../utils')
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 
@@ -206,11 +207,4 @@ async function seed(knex) {
     sites.push(knex('Site').insert(siteData))
   }
   await Promise.all(sites)
-}
-
-function rowsAsObject(knex, table, column = 'name') {
-  return knex(table).reduce((memo, row) => {
-    memo[row[column]] = row
-    return memo
-  }, {})
 }

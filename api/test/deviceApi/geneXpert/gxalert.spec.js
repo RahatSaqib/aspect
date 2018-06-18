@@ -6,6 +6,7 @@ const subDays = require('date-fns/sub_days')
 const addDays = require('date-fns/add_days')
 const addHours = require('date-fns/add_hours')
 const subHours = require('date-fns/sub_hours')
+const addMinutes = require('date-fns/add_minutes')
 const subMinutes = require('date-fns/sub_minutes')
 const addSeconds = require('date-fns/add_seconds')
 const setMilliseconds = require('date-fns/set_milliseconds')
@@ -25,7 +26,7 @@ const {
 const { run } = require('../../../src/db')
 const { waitForApproximately } = require('../../utils/generatorFunctionUtils')
 const { waitForIdle, waitForAction } = require('../../utils/mqUtils')
-const { deviceSeen, deviceOffline } = require('../../../src/device/actions')
+const { deviceSeen, deviceMaintenance } = require('../../../src/device/actions')
 
 const server = supertest.agent('http://localhost:8080')
 const { assert, expect } = chai
@@ -1718,21 +1719,16 @@ describe('Device API routes for GxAlert Device', () => {
       let standardDevicePayload
 
       async function getLatestDeviceMaintenanceStatusLog(knex) {
-        const logEntry = await knex('DeviceMaintenanceStatusLog as dmsl')
-          .innerJoin(
-            'DeviceMaintenanceStatus as dms',
-            'dmsl.deviceMaintenanceStatusId',
-            'dms.id'
-          )
-          .where('dmsl.deviceId', deviceId)
-          .orderByRaw('dmsl.changedOn DESC, dmsl.id DESC')
-          .first(
-            'dms.token',
-            'dmsl.data',
-            'dmsl.id',
-            'dmsl.changedOn',
-            'dmsl.createdOn'
-          )
+        await waitForIdle()
+        const logEntry = await knex('Issue as i')
+          .join('IssueType as it', 'it.id', 'i.issueTypeId')
+          .join('IssueStatus as is', 'is.id', 'i.issueStatusId')
+          .where({
+            'i.deviceId': deviceId,
+            'it.externalId': 'DeviceMaintenance',
+          })
+          .orderByRaw('i.updatedOn DESC, i.id DESC')
+          .first('i.data', 'i.id', 'i.createdOn', 'is.externalId as status')
         if (_.isEmpty(logEntry)) {
           return logEntry
         }
@@ -1830,20 +1826,7 @@ describe('Device API routes for GxAlert Device', () => {
               })
             )
             await waitForDeviceSeen
-
-            const deviceMaintenanceLogAfterFirstMaintenanceUpdate = await getLatestDeviceMaintenanceStatusLog(
-              knex
-            )
-            expect(
-              deviceMaintenanceLogAfterFirstMaintenanceUpdate
-            ).to.containSubset({
-              token: 'online',
-              data: {
-                reason: null,
-                note: null,
-                expectedBackOnline: null,
-              },
-            })
+            assert.isUndefined(deviceMaintenanceLogBeforeMaintenanceUpdate)
 
             const inactiveMaintenanceReason =
               'Connectivity issues, router cannot connect'
@@ -1852,7 +1835,9 @@ describe('Device API routes for GxAlert Device', () => {
               addDays(now, 15),
               'YYYY-MM-DD'
             )
-            const waitForDeviceOffline = waitForAction(deviceOffline(deviceId))
+            const waitForDeviceMaintenance = waitForAction(
+              deviceMaintenance(deviceId)
+            )
             await postToDeviceApi(
               _.merge(standardDevicePayload, {
                 payload: {
@@ -1867,14 +1852,14 @@ describe('Device API routes for GxAlert Device', () => {
                 },
               })
             )
-            await waitForDeviceOffline
+            await waitForDeviceMaintenance
             const deviceMaintenanceLogAfterSecondMaintenanceUpdate = await getLatestDeviceMaintenanceStatusLog(
               knex
             )
             expect(
               deviceMaintenanceLogAfterSecondMaintenanceUpdate
             ).to.containSubset({
-              token: 'offline',
+              status: 'Active',
               data: {
                 reason: inactiveMaintenanceReason,
                 note: inactiveMaintenanceNote,
@@ -1894,8 +1879,8 @@ describe('Device API routes for GxAlert Device', () => {
                 addDays(now, 23),
                 'YYYY-MM-DD'
               )
-              const waitForDeviceOffline = waitForAction(
-                deviceOffline(deviceId)
+              const waitForDeviceMaintenance = waitForAction(
+                deviceMaintenance(deviceId)
               )
               await postToDeviceApi(
                 _.merge(standardDevicePayload, {
@@ -1911,14 +1896,14 @@ describe('Device API routes for GxAlert Device', () => {
                   },
                 })
               )
-              await waitForDeviceOffline
+              await waitForDeviceMaintenance
               const deviceMaintenanceLogAfterInactiveMaintenanceUpdate = await getLatestDeviceMaintenanceStatusLog(
                 knex
               )
               expect(
                 deviceMaintenanceLogAfterInactiveMaintenanceUpdate
               ).to.containSubset({
-                token: 'offline',
+                status: 'Active',
                 data: {
                   reason: inactiveMaintenanceReason,
                   note: inactiveMaintenanceNote,
@@ -1956,12 +1941,7 @@ describe('Device API routes for GxAlert Device', () => {
               expect(
                 deviceMaintenanceLogAfterActiveMaintenanceUpdate
               ).to.containSubset({
-                token: 'online',
-                data: {
-                  reason: null,
-                  note: null,
-                  expectedBackOnline: null,
-                },
+                status: 'Resolved',
               })
             }))
 
@@ -2030,21 +2010,21 @@ describe('Device API routes for GxAlert Device', () => {
         })
 
         describe('which includes {... inactive: true... }', () => {
-          it('should eventually set device flag: offline to true', () =>
+          it('should eventually set device flag: maintenance to true', () =>
             runTest(async knex => {
               const { now } = context
               const { id: deviceId } = await getCurrentGeneXpertDevice()
 
               await knex('FactDeviceFlag')
                 .where({ deviceId })
-                .update({ offline: 0 })
+                .update({ maintenance: 0, maintenanceDueOn: null })
               let deviceFacts = await knex('FactDeviceFlag')
                 .where({ deviceId })
                 .first()
-              assert.notOk(deviceFacts.offline)
+              assert.notOk(deviceFacts.maintenance)
 
-              const waitForDeviceOffline = waitForAction(
-                deviceOffline(deviceId)
+              const waitForMaintenance = waitForAction(
+                deviceMaintenance(deviceId)
               )
 
               const inactiveMaintenanceReason = 'Connectivity Problems'
@@ -2069,13 +2049,13 @@ describe('Device API routes for GxAlert Device', () => {
               )
               assert.equal(response.body.device.id, deviceId)
 
-              await waitForDeviceOffline
+              await waitForMaintenance
               await waitForIdle()
 
               deviceFacts = await knex('FactDeviceFlag')
                 .where({ deviceId })
                 .first()
-              assert.ok(deviceFacts.offline)
+              assert.ok(deviceFacts.maintenance)
             }))
         })
       })
@@ -2111,7 +2091,7 @@ describe('Device API routes for GxAlert Device', () => {
               knex
             )
             expect(deviceMaintenanceLogAfterInactiveUpdate).to.containSubset({
-              token: 'offline',
+              status: 'Active',
               data: {
                 reason: inactiveMaintenanceReason,
                 note: inactiveMaintenanceNote,
@@ -2731,6 +2711,7 @@ describe('Device API routes for GxAlert Device', () => {
       basicDevicePayload,
       runTest,
       getLastResult,
+      getResult,
       getCurrentGeneXpertDevice,
       afterCleanUp,
     } = context
@@ -2935,6 +2916,7 @@ describe('Device API routes for GxAlert Device', () => {
             basicResultPayload,
             {
               result: {
+                id: dateFormat(new Date(), 'x'),
                 startedOn: now,
                 endedOn: now,
                 instrument: {
@@ -2968,6 +2950,7 @@ describe('Device API routes for GxAlert Device', () => {
             basicResultPayload,
             {
               result: {
+                id: dateFormat(new Date(), 'x'),
                 startedOn: now,
                 endedOn: now,
                 instrument: {
@@ -3004,6 +2987,7 @@ describe('Device API routes for GxAlert Device', () => {
             basicResultPayload,
             {
               result: {
+                id: dateFormat(new Date(), 'x'),
                 startedOn: subMinutes(now, 5),
                 endedOn: now,
                 instrument: {
@@ -3047,6 +3031,7 @@ describe('Device API routes for GxAlert Device', () => {
             basicResultPayload,
             {
               result: {
+                id: dateFormat(new Date(), 'x'),
                 data: { a: 'b', c: 2, d: false, e: { f: 'g' } },
                 type: { id: 'Study' },
                 source: { id: 'EnteredByHand' },
@@ -3472,7 +3457,6 @@ describe('Device API routes for GxAlert Device', () => {
     })
 
     describe('when the assay in the result payload is mapped to a consumable', () => {
-      const deductInventoryTestResultId = 'UNIQUE-ID-TEST-DEDUCT-INVENTORY'
       const initialQuantityOnHand = 100
       let expiryDate
       let inventoryItemId
@@ -3511,7 +3495,7 @@ describe('Device API routes for GxAlert Device', () => {
               basicResultPayload,
               {
                 result: {
-                  id: deductInventoryTestResultId,
+                  id: dateFormat(new Date(), 'x'),
                   startedOn: testStartedOn,
                   endedOn: testEndedOn,
                   sample: { id: 'Existing Sample' },
@@ -3533,7 +3517,7 @@ describe('Device API routes for GxAlert Device', () => {
             .first()
           assert.equal(
             inventoryItem.quantityOnHand,
-            initialQuantityOnHand - consumableAssay.quantity
+            _.max([0, initialQuantityOnHand - consumableAssay.quantity])
           )
 
           const inventoryLogs = await knex('InventoryLog as il')
@@ -3560,6 +3544,7 @@ describe('Device API routes for GxAlert Device', () => {
       describe('when the test already exists in the database', () => {
         it('should NOT reduce inventory levels of the consumable', () =>
           runTest(async knex => {
+            const uniqueTestId = dateFormat(new Date(), 'x')
             const consumableAssays = await knex('ConsumableAssay as ca')
               .join('Assay as a', 'ca.assayId', 'a.id')
               .join('DeviceType as dt', 'a.deviceTypeId', 'dt.id')
@@ -3600,7 +3585,7 @@ describe('Device API routes for GxAlert Device', () => {
                 basicResultPayload,
                 {
                   result: {
-                    id: deductInventoryTestResultId,
+                    id: uniqueTestId,
                     assay: {
                       id: _.head(consumableAssays).assayId,
                       version: '2',
@@ -3691,7 +3676,7 @@ describe('Device API routes for GxAlert Device', () => {
                 basicResultPayload,
                 {
                   result: {
-                    id: deductInventoryTestResultId,
+                    id: uniqueTestId,
                     assay: {
                       id: _.head(consumableAssays).assayId,
                       version: '2',
@@ -3921,6 +3906,7 @@ describe('Device API routes for GxAlert Device', () => {
                 }
               ),
             })
+            await waitForIdle()
 
             const lastResult = await getLastResult()
             const resultSite = await knex('Site')
@@ -3930,6 +3916,238 @@ describe('Device API routes for GxAlert Device', () => {
             assert.notEqual(lastResult.longitude, resultSite.longitude)
             assert.equal(lastResult.geographyId, geographyId)
           }))
+      })
+    })
+
+    describe('when the result was previously sent', () => {
+      describe('incomplete with no end time', () => {
+        describe('and is sent again with an end time and a result', () => {
+          it("should merge with the existing result, matched by instrument and cartridge serials, and update it's external ID", () =>
+            runTest(async () => {
+              const { deviceAuth, now } = context
+              const instrumentSerial = '803165'
+              const cartridgeSerial = '725194650'
+              const startedOn = setMilliseconds(now, 0)
+
+              const incompleteResultPayload = _.merge(
+                {},
+                basicDevicePayload,
+                { name: deviceName },
+                basicResultPayload,
+                {
+                  result: {
+                    startedOn,
+                    endedOn: null,
+                    instrument: {
+                      serial: instrumentSerial,
+                    },
+                    consumable: {
+                      serial: cartridgeSerial,
+                    },
+                    data: { resultText: 'NO RESULT' },
+                  },
+                }
+              )
+              delete incompleteResultPayload.result.id
+              // Initial incomplete result details
+              let deviceApiResponse = await postToDeviceApi({
+                authHeader: deviceAuth,
+                payload: incompleteResultPayload,
+                expectedStatusCode: 200,
+              })
+              const {
+                body: {
+                  result: {
+                    id: incompleteResultId,
+                    externalId: incompleteResultExternalId,
+                  },
+                },
+              } = deviceApiResponse
+
+              const incompleteResult = await getResult(incompleteResultId)
+              expect(incompleteResult).to.containSubset({
+                externalId: incompleteResultExternalId,
+                resultCategory1: 'NoResult',
+                resultCategory2: 'NoResult',
+                startedOn,
+                endedOn: null,
+                resultData: {
+                  resultText: 'NO RESULT',
+                },
+              })
+
+              const endedOn = addMinutes(startedOn, 103)
+              const completeResultPayload = _.merge(
+                {},
+                incompleteResultPayload,
+                {
+                  result: {
+                    endedOn,
+                    data: { resultText: 'DETECTED MEDIUM|INDETERMINATE|' },
+                  },
+                }
+              )
+              // Then complete result details
+              deviceApiResponse = await postToDeviceApi({
+                authHeader: deviceAuth,
+                payload: completeResultPayload,
+                expectedStatusCode: 200,
+              })
+              const {
+                body: {
+                  result: {
+                    id: completeResultId,
+                    externalId: completeResultExternalId,
+                  },
+                },
+              } = deviceApiResponse
+
+              const completeResult = await getResult(completeResultId)
+              expect(completeResult).to.containSubset({
+                externalId: completeResultExternalId,
+                resultCategory1: 'Detected',
+                resultCategory2: 'Indeterminate',
+                startedOn,
+                endedOn,
+                resultData: {
+                  resultText: 'DETECTED MEDIUM|INDETERMINATE|',
+                },
+              })
+              assert.equal(completeResultId, incompleteResultId)
+              assert.notEqual(
+                completeResultExternalId,
+                incompleteResultExternalId
+              )
+            }))
+        })
+      })
+
+      describe('complete with result', () => {
+        describe('and is sent again with no result in the result text', () => {
+          it('should ignore the result data that has been sent', () =>
+            runTest(async () => {
+              const { deviceAuth, now } = context
+              const instrumentSerial = '803165'
+              const cartridgeSerial = '725194660'
+              const startedOn = setMilliseconds(now, 0)
+              const endedOn = addMinutes(startedOn, 103)
+              const completeResultPayload = _.merge(
+                {},
+                basicDevicePayload,
+                { name: deviceName },
+                basicResultPayload,
+                {
+                  result: {
+                    startedOn,
+                    endedOn,
+                    instrument: {
+                      serial: instrumentSerial,
+                    },
+                    consumable: {
+                      serial: cartridgeSerial,
+                    },
+                    data: {
+                      resultText:
+                        'MTB DETECTED MEDIUM||RIF Resistance NOT DETECTED',
+                    },
+                  },
+                }
+              )
+              // Initial complete result details
+              const deviceApiResponse = await postToDeviceApi({
+                authHeader: deviceAuth,
+                payload: completeResultPayload,
+                expectedStatusCode: 200,
+              })
+              const {
+                body: {
+                  result: {
+                    id: completeResultId,
+                    externalId: completeResultExternalId,
+                  },
+                },
+              } = deviceApiResponse
+
+              let completeResult = await getResult(completeResultId)
+              expect(completeResult).to.containSubset({
+                externalId: completeResultExternalId,
+                resultCategory1: 'Detected',
+                resultCategory2: 'NotDetected',
+                startedOn,
+                endedOn,
+                resultData: {
+                  resultText:
+                    'MTB DETECTED MEDIUM||RIF Resistance NOT DETECTED',
+                },
+              })
+
+              // Then send NO RESULT
+              await postToDeviceApi({
+                authHeader: deviceAuth,
+                payload: _.merge({}, completeResultPayload, {
+                  result: {
+                    data: { resultText: 'NO RESULT|NO RESULT|' },
+                  },
+                }),
+                expectedStatusCode: 409,
+              })
+              completeResult = await getResult(completeResultId)
+              expect(completeResult).to.containSubset({
+                externalId: completeResultExternalId,
+                resultCategory1: 'Detected',
+                resultCategory2: 'NotDetected',
+                startedOn,
+                endedOn,
+                resultData: {
+                  resultText:
+                    'MTB DETECTED MEDIUM||RIF Resistance NOT DETECTED',
+                },
+              })
+
+              await postToDeviceApi({
+                authHeader: deviceAuth,
+                payload: _.merge({}, completeResultPayload, {
+                  result: {
+                    data: { resultText: 'NO RESULT' },
+                  },
+                }),
+                expectedStatusCode: 409,
+              })
+              completeResult = await getResult(completeResultId)
+              expect(completeResult).to.containSubset({
+                externalId: completeResultExternalId,
+                resultCategory1: 'Detected',
+                resultCategory2: 'NotDetected',
+                startedOn,
+                endedOn,
+                resultData: {
+                  resultText:
+                    'MTB DETECTED MEDIUM||RIF Resistance NOT DETECTED',
+                },
+              })
+
+              await postToDeviceApi({
+                authHeader: deviceAuth,
+                payload: _.merge({}, completeResultPayload, {
+                  result: {
+                    data: { resultText: 'MTB DETECTED MEDIUM|NO RESULT' },
+                  },
+                }),
+                expectedStatusCode: 200,
+              })
+              completeResult = await getResult(completeResultId)
+              expect(completeResult).to.containSubset({
+                externalId: completeResultExternalId,
+                resultCategory1: 'Detected',
+                resultCategory2: 'NoResult',
+                startedOn,
+                endedOn,
+                resultData: {
+                  resultText: 'MTB DETECTED MEDIUM|NO RESULT',
+                },
+              })
+            }))
+        })
       })
     })
   })
@@ -4019,7 +4237,7 @@ describe('Device API routes for GxAlert Device', () => {
             inTransitFromSiteId: null,
             lotNumber: null,
             expiresOn: expirationDate,
-            quantityOnHand: initialQuantity + quantity,
+            quantityOnHand: _.max([0, initialQuantity + quantity]),
           },
         ])
 
@@ -4094,7 +4312,7 @@ describe('Device API routes for GxAlert Device', () => {
         expect(response.body.inventoryItems).to.containSubset([
           {
             consumableName,
-            quantityOnHand: initialQuantity + quantity,
+            quantityOnHand: _.max([0, initialQuantity + quantity]),
             expiresOn: expirationDate.toJSON(),
           },
         ])
@@ -4336,7 +4554,10 @@ describe('Device API routes for GxAlert Device', () => {
             inTransitFromSiteId: null,
             lotNumber: null,
             expiresOn: inventoryItemAtSiteBefore.expiresOn,
-            quantityOnHand: inventoryItemAtSiteBefore.quantityOnHand + quantity,
+            quantityOnHand: _.max([
+              0,
+              inventoryItemAtSiteBefore.quantityOnHand + quantity,
+            ]),
           },
         ])
 
@@ -4438,7 +4659,10 @@ describe('Device API routes for GxAlert Device', () => {
             inTransitFromSiteId: null,
             lotNumber: null,
             expiresOn: inventoryItemAtSiteBefore.expiresOn,
-            quantityOnHand: inventoryItemAtSiteBefore.quantityOnHand + quantity,
+            quantityOnHand: _.max([
+              0,
+              inventoryItemAtSiteBefore.quantityOnHand + quantity,
+            ]),
           },
         ])
 
@@ -4778,8 +5002,10 @@ describe('Device API routes for GxAlert Device', () => {
           inTransitFromSiteId: null,
           lotNumber: null,
           expiresOn: lot1.expirationDate,
-          quantityOnHand:
+          quantityOnHand: _.max([
+            0,
             lot1InventoryItem.quantityOnHand + updateToLot1.quantity,
+          ]),
         })
         assert.deepEqual(lot2InventoryItemAfterAdjustment1, {
           consumableName: lot2.consumableName,
@@ -4837,16 +5063,20 @@ describe('Device API routes for GxAlert Device', () => {
           inTransitFromSiteId: null,
           lotNumber: null,
           expiresOn: lot1.expirationDate,
-          quantityOnHand:
+          quantityOnHand: _.max([
+            0,
             lot1InventoryItem.quantityOnHand + updateToLot1.quantity,
+          ]),
         })
         assert.deepEqual(lot2InventoryItemAfterAdjustment2, {
           consumableName: lot2.consumableName,
           inTransitFromSiteId: null,
           lotNumber: null,
           expiresOn: lot2.expirationDate,
-          quantityOnHand:
+          quantityOnHand: _.max([
+            0,
             lot2InventoryItem.quantityOnHand + updateToLot2.quantity,
+          ]),
         })
         const inventoryLogsForLot1And2 = await knex('InventoryLog as il')
           .join('ConsumableReason as cr', 'il.consumableReasonId', 'cr.id')
@@ -5129,8 +5359,10 @@ describe('Device API routes for GxAlert Device', () => {
               inTransitFromSiteId: null,
               lotNumber: null,
               expiresOn: inventoryLost.expirationDate,
-              quantityOnHand:
+              quantityOnHand: _.max([
+                0,
                 initialLotCaptured.quantity + inventoryLost.quantity,
+              ]),
             },
           ])
         }))

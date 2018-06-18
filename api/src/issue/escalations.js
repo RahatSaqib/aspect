@@ -1,0 +1,89 @@
+const Promise = require('bluebird')
+const _ = require('lodash')
+const { issueEscalated } = require('./actions')
+const { conditionsMet } = require('./evaluation')
+
+function onEscalateIssues() {
+  return async (action, { messageContext: context }) => {
+    context.bindActionCreators({ issueEscalated })
+    context.transact(async knex => {
+      const openIssuesToCheck = await findOpenIssuesToCheckForEscalation(
+        knex,
+        action.issueId
+      )
+      if (_.isEmpty(openIssuesToCheck)) {
+        return Promise.resolve()
+      }
+      return Promise.each(openIssuesToCheck, async issueEscalationTrigger => {
+        const shouldEscalate = await conditionsMet(
+          knex,
+          issueEscalationTrigger,
+          issueEscalationTrigger.conditions
+        )
+        if (shouldEscalate) {
+          await knex('Issue')
+            .where('id', issueEscalationTrigger.id)
+            .update({ level: issueEscalationTrigger.escalateToLevel })
+          context.issueEscalated(
+            issueEscalationTrigger.id,
+            issueEscalationTrigger.escalateToLevel
+          )
+        }
+      })
+    })
+  }
+}
+
+async function findOpenIssuesToCheckForEscalation(knex, issueId) {
+  const resolvedIssueEventStatus = await knex('IssueEventStatus')
+    .where('externalId', 'Resolved')
+    .first()
+  const triggeredIssueEventStatus = await knex('IssueEventStatus')
+    .where('externalId', 'Triggered')
+    .first()
+  return knex('Issue as i')
+    .leftJoin('IssueEvent as resolvedIssueEvent', function() {
+      this.on('i.id', 'resolvedIssueEvent.issueId').on(
+        'resolvedIssueEvent.issueEventStatusId',
+        knex.raw(resolvedIssueEventStatus.id)
+      )
+    })
+    .join('IssueEvent as triggeredIssueEvent', function() {
+      this.on('i.id', 'triggeredIssueEvent.issueId').on(
+        'triggeredIssueEvent.issueEventStatusId',
+        knex.raw(triggeredIssueEventStatus.id)
+      )
+    })
+    .join('IssueEscalationTrigger as iet', function() {
+      this.on('i.issueTypeId', 'iet.issueTypeId')
+        .on('i.partnerId', 'iet.partnerId')
+        .on('i.level', '<', 'iet.escalateToLevel')
+    })
+    .join('IssueStatus as is', 'i.issueStatusId', 'is.id')
+    .where(function() {
+      this.whereNotIn('is.externalId', ['Inactive', 'Resolved'])
+      if (issueId) {
+        this.andWhere('i.id', issueId)
+      }
+    })
+    .andWhere(function() {
+      this.whereNull('resolvedIssueEvent.id')
+    })
+    .groupBy('i.id', 'iet.id')
+    .orderBy(['i.createdOn', 'iet.escalateToLevel'], 'asc')
+    .select(
+      'i.*',
+      'iet.escalateToLevel',
+      'iet.escalationConditions as conditions',
+      knex.raw('max(triggeredIssueEvent.createdOn) as triggeredOn')
+    )
+    .map(issueEscalationTrigger =>
+      Object.assign({}, issueEscalationTrigger, {
+        conditions: JSON.parse(issueEscalationTrigger.conditions),
+      })
+    )
+}
+
+module.exports = {
+  onEscalateIssues,
+}

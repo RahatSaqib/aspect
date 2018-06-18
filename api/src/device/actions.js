@@ -5,6 +5,8 @@ const types = {
   DEVICE_ONLINE: 'DEVICE_ONLINE',
   DEVICE_NO_RESULTS: 'DEVICE_NO_RESULTS',
   DEVICE_HAS_NEW_RESULTS: 'DEVICE_HAS_NEW_RESULTS',
+  DEVICE_MAINTENANCE: 'DEVICE_MAINTENANCE',
+  DEVICE_MAINTENANCE_RESOLVED: 'DEVICE_MAINTENANCE_RESOLVED',
 }
 
 // ----------- Action Creators -------------------
@@ -16,15 +18,51 @@ const types = {
  *
  * deviceId is required.
  */
-function deviceSeen(deviceId, dateSeen) {
+function deviceSeen(deviceId) {
   if (deviceId == null) {
     throw new Error('Must specify deviceId for notify deviceSeen')
   }
-  const action = {
+  return {
     type: types.DEVICE_SEEN,
     deviceId,
   }
-  return dateSeen ? Object.assign({}, action, { dateSeen }) : action
+}
+
+/**
+ * Creates an action to notify the device maintenance.
+ *
+ * deviceId is required.
+ *
+ * options:
+ *  dueOn: date maintenance status likely to be resolved, default null (unknown)
+ *  data: Optional additional maintenance data to record, plain object
+ */
+function deviceMaintenance(deviceId, options) {
+  if (deviceId == null) {
+    throw new Error('Must specify deviceId for notify deviceMaintenance')
+  }
+  return {
+    type: types.DEVICE_MAINTENANCE,
+    deviceId,
+    options,
+  }
+}
+
+/**
+ * Creates an action to notify the device maintenance has been resolved.
+ *
+ * deviceId is required.
+ */
+function deviceMaintenanceResolved(deviceId) {
+  if (deviceId == null) {
+    throw new Error(
+      'Must specify deviceId for notify deviceMaintenanceResolved'
+    )
+  }
+  return {
+    type: types.DEVICE_MAINTENANCE_RESOLVED,
+    deviceId,
+  }
 }
 
 /**
@@ -32,14 +70,19 @@ function deviceSeen(deviceId, dateSeen) {
  * has been marked offline.
  *
  * deviceId is required.
+ *
+ * options:
+ *    lastSeenOn: date device last seen
+ *    lastPingOn: date device last ping
  */
-function deviceOffline(deviceId) {
+function deviceOffline(deviceId, options) {
   if (deviceId == null) {
     throw new Error('Must specify deviceId for notify deviceOffline')
   }
   return {
     type: types.DEVICE_OFFLINE,
     deviceId,
+    options,
   }
 }
 
@@ -65,14 +108,17 @@ function deviceOnline(deviceId) {
  * the Device API)
  *
  * deviceId is required.
+ * options:
+ *    lastResultOn: date of last result for device
  */
-function deviceNoResults(deviceId) {
+function deviceNoResults(deviceId, options) {
   if (deviceId == null) {
     throw new Error('Must specify deviceId for notify deviceNoResults')
   }
   return {
     type: types.DEVICE_NO_RESULTS,
     deviceId,
+    options,
   }
 }
 
@@ -95,6 +141,8 @@ function deviceHasNewResults(deviceId) {
 module.exports = {
   types,
   deviceSeen,
+  deviceMaintenance,
+  deviceMaintenanceResolved,
   deviceOffline,
   deviceOnline,
   deviceNoResults,

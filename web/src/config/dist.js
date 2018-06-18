@@ -1,17 +1,7 @@
 import baseConfig from './base'
 
-const hostname = window && window.location && window.location.hostname
-
-let aspectApi = 'https://dev.aspect.id/api/api'
-let siteId = 1
-
-if (hostname === 'malawi.aspect.id') {
-  aspectApi = 'https://malawi.aspect.id/api/api'
-  siteId = 2
-} else if (hostname === 'myanmar.aspect.id') {
-  aspectApi = 'https://myanmar.aspect.id/api/api'
-  siteId = 3
-}
+const aspectApi = 'https://dev.aspect.id/api/api'
+const siteId = 1
 
 const config = {
   appEnv: 'dist',

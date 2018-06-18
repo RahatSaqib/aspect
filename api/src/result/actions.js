@@ -9,7 +9,9 @@ const types = {
   RESULT_DATA_CATEGORY_LOW_CHECK: 'RESULT_DATA_CATEGORY_LOW_CHECK',
   RESULT_DATA_CATEGORY_IS_LOW: 'RESULT_DATA_CATEGORY_IS_LOW',
   RESULT_MACHINE_TEMPERATURE_ERROR: 'RESULT_MACHINE_TEMPERATURE_ERROR',
-  RESULT_MODULE_GENERIC_ERROR: 'RESULT_MODULE_GENERIC_ERROR',
+  RESULT_MODULE_PROCEDURAL_ERROR: 'RESULT_MODULE_PROCEDURAL_ERROR',
+  RESULT_MACHINE_PROCEDURAL_ERROR: 'RESULT_MACHINE_PROCEDURAL_ERROR',
+  RESULT_MACHINE_POWER_ERROR: 'RESULT_MACHINE_POWER_ERROR',
 }
 
 // ----------- Action Creators -------------------
@@ -59,8 +61,11 @@ function resultLogged(resultId, deviceLogId) {
  * has a module temperature error issue
  *
  * deviceId is required.
+ * options:
+ *   moduleName
+ *   moduleSerial
  */
-function resultModuleTemperatureError(deviceId) {
+function resultModuleTemperatureError(deviceId, options) {
   if (deviceId == null) {
     throw new Error(
       'Must specify deviceId for notify resultModuleTemperatureError'
@@ -69,6 +74,7 @@ function resultModuleTemperatureError(deviceId) {
   return {
     type: types.RESULT_MODULE_TEMPERATURE_ERROR,
     deviceId,
+    options,
   }
 }
 
@@ -77,14 +83,18 @@ function resultModuleTemperatureError(deviceId) {
  * has a module power error issue
  *
  * deviceId is required.
+ * options:
+ *   moduleName
+ *   moduleSerial
  */
-function resultModulePowerError(deviceId) {
+function resultModulePowerError(deviceId, options) {
   if (deviceId == null) {
     throw new Error('Must specify deviceId for notify resultModulePowerError')
   }
   return {
     type: types.RESULT_MODULE_POWER_ERROR,
     deviceId,
+    options,
   }
 }
 
@@ -93,20 +103,24 @@ function resultModulePowerError(deviceId) {
  * has an active module failure issue
  *
  * deviceId is required.
+ * options:
+ *   moduleName
+ *   moduleSerial
  */
-function resultModuleFailureError(deviceId) {
+function resultModuleFailureError(deviceId, options) {
   if (deviceId == null) {
     throw new Error('Must specify deviceId for notify resultModuleFailureError')
   }
   return {
     type: types.RESULT_MODULE_FAILURE_ERROR,
     deviceId,
+    options,
   }
 }
 
 /**
  * Creates an action to notify the device with given id
- * has an active module failure issue
+ * has an active machine temperature issue
  *
  * deviceId is required.
  */
@@ -165,16 +179,55 @@ function resultDataCategoryLow({
 
 /**
  * Creates an action to notify the device with given id
- * has an active module failure issue
+ * has an active module procedural issue
+ *
+ * deviceId is required.
+ * options:
+ *   moduleName
+ *   moduleSerial
+ */
+function resultModuleProceduralError(deviceId, options) {
+  if (deviceId == null) {
+    throw new Error(
+      'Must specify deviceId for notify resultModuleProceduralError'
+    )
+  }
+  return {
+    type: types.RESULT_MODULE_PROCEDURAL_ERROR,
+    deviceId,
+    options,
+  }
+}
+
+/**
+ * has a machine power error issue
  *
  * deviceId is required.
  */
-function resultModuleGenericError(deviceId) {
+function resultMachinePowerError(deviceId) {
   if (deviceId == null) {
-    throw new Error('Must specify deviceId for notify resultModuleGenericError')
+    throw new Error('Must specify deviceId for notify resultMachinePowerError')
   }
   return {
-    type: types.RESULT_MODULE_GENERIC_ERROR,
+    type: types.RESULT_MACHINE_POWER_ERROR,
+    deviceId,
+  }
+}
+
+/**
+ * Creates an action to notify the device with given id
+ * has an active machine procedural issue
+ *
+ * deviceId is required.
+ */
+function resultMachineProceduralError(deviceId) {
+  if (deviceId == null) {
+    throw new Error(
+      'Must specify deviceId for notify resultMachineProceduralError'
+    )
+  }
+  return {
+    type: types.RESULT_MACHINE_PROCEDURAL_ERROR,
     deviceId,
   }
 }
@@ -189,5 +242,7 @@ module.exports = {
   resultDataCategoryLowCheck,
   resultDataCategoryLow,
   resultMachineTemperatureError,
-  resultModuleGenericError,
+  resultMachineProceduralError,
+  resultModuleProceduralError,
+  resultMachinePowerError,
 }

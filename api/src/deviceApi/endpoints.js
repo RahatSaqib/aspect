@@ -237,6 +237,7 @@ const resultPayload = {
             'Lot Number of inventory item consumed during completion of this test'
           ),
         expirationDate: Joi.date()
+          .allow(null)
           .iso()
           .description(
             'Expiration Date of inventory item consumed during completion of this test'
@@ -297,9 +298,33 @@ const resultPayload = {
     address: Joi.string()
       .allow('', null)
       .description('Patient address'),
+    street: Joi.string()
+      .allow('', null)
+      .description('Patient street'),
+    city: Joi.string()
+      .allow('', null)
+      .description('Patient city'),
+    state: Joi.string()
+      .allow('', null)
+      .description('Patient state'),
+    zip: Joi.string()
+      .allow('', null)
+      .description('Patient ZIP/Postal code'),
     phone: Joi.string()
       .allow('', null)
       .description('Patient phone number'),
+    hivStatus: Joi.string()
+      .allow('', null)
+      .description("Patient's HIV Status"),
+    microscopyResult: Joi.string()
+      .allow('', null)
+      .description("Patient's microscopy result"),
+    drSuspect: Joi.string()
+      .allow('', null)
+      .description('Suspected Drug Resistance'),
+    previouslyTreated: Joi.string()
+      .allow('', null)
+      .description('Has patient been previously treated?'),
   }),
   sender: Joi.object().keys({
     version: Joi.string()

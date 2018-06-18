@@ -117,11 +117,10 @@ export function loginStart({ user, password }) {
                 id:
                   'errorResponseMessages.loginStart.POST.401.accountLocked.resolution',
                 defaultMessage:
-                  'You can contact us to unlock your account for you, either by email ({supportEmail}) or by telephone ({supportTelephone})',
+                  'You can contact us to unlock your account for you by email ({supportEmail})',
               },
             }),
             messageValues: {
-              supportTelephone: config.supportTelephone,
               supportEmail: config.supportEmail,
             },
           },
@@ -319,18 +318,9 @@ export function fetchFeatures() {
   return dispatch => {
     dispatch(requestFeatures())
 
-    return aspectFetch('/auth/features', {
-      errorNotifications: {
-        default: errorPleaseTryAgainInAFewMinutes(
-          defineMessages({
-            title: {
-              id: 'errorResponseMessages.fetchSingleSite.GET.default.title',
-              defaultMessage: 'Error Loading Site Details',
-            },
-          })
-        ),
-      },
-    }).then(json => dispatch(receiveFeatures(json.data)))
+    return aspectFetch('/auth/features').then(json =>
+      dispatch(receiveFeatures(json.data))
+    )
   }
 }
 

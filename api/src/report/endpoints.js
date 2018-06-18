@@ -1,6 +1,6 @@
 const Joi = require('joi')
 const { asyncHandler, validateSortPageParams } = require('../routes')
-const { listReports } = require('./service')
+const { listReports, proxyGxReport } = require('./service')
 
 const routes = [
   {
@@ -28,6 +28,51 @@ const routes = [
             'totalErrors'
           )
         ),
+      },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/report/{fileName}',
+    handler: {
+      file(request) {
+        return `./placeholders/${request.params.fileName}`
+      },
+    },
+    config: {
+      description: 'Report Placeholder',
+      notes: 'Returns a static report file as a placeholder',
+      auth: false,
+      validate: {
+        params: {
+          fileName: Joi.string()
+            .description('File name')
+            .required(),
+        },
+      },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/report/gx/{reportName}.xlsx',
+    handler: proxyGxReport,
+    config: {
+      description: 'Gx Alert Reports',
+      notes: 'Proxies reports from GxAlert',
+      auth: { scope: ['site', 'device'] },
+      validate: {
+        params: {
+          reportName: Joi.string()
+            .description('Report name')
+            .required(),
+        },
+        query: {
+          siteId: Joi.string()
+            .allow('')
+            .description('Filter for site ID'),
+          dateFrom: Joi.string().allow(''),
+          dateTo: Joi.string().allow(''),
+        },
       },
     },
   },

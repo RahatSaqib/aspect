@@ -33,7 +33,7 @@ export default defineMessages({
   generateTokenFailedResolution: {
     id: 'pages.ResetPassword.generateTokenFailedResolution',
     defaultMessage:
-      'You can request further help by sending an email to {supportEmail} or calling us on {supportTelephone}',
+      'You can request further help by sending an email to {supportEmail}',
   },
   iDontHaveAnEmailAddress: {
     id: 'pages.ResetPassword.iDontHaveAnEmailAddress',
@@ -75,7 +75,7 @@ export default defineMessages({
   adminHelpContent: {
     id: 'pages.ResetPassword.adminHelpContent',
     defaultMessage:
-      'If you you need help to recover you login details, please contact us so that we may assist you. You can request our help by sending an email to {supportEmail} or calling us on {supportTelephone}',
+      'If you you need help to recover you login details, please contact us so that we may assist you. You can request our help by sending an email to {supportEmail}',
   },
   adminHelpClose: {
     id: 'pages.ResetPassword.adminHelpClose',
@@ -133,7 +133,7 @@ export default defineMessages({
   passwordUpdateFailedResolution: {
     id: 'pages.ResetPassword.passwordUpdateFailedResolution',
     defaultMessage:
-      'You can request further help by sending an email to {supportEmail} or calling us on {supportTelephone}',
+      'You can request further help by sending an email to {supportEmail}',
   },
   finish: {
     id: 'pages.ResetPassword.finish',

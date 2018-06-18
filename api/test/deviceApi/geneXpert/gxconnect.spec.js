@@ -5,9 +5,11 @@ const addYears = require('date-fns/add_years')
 const subDays = require('date-fns/sub_days')
 const addHours = require('date-fns/add_hours')
 const subHours = require('date-fns/sub_hours')
+const addMinutes = require('date-fns/add_minutes')
 const subMinutes = require('date-fns/sub_minutes')
 const addSeconds = require('date-fns/add_seconds')
 const setMilliseconds = require('date-fns/set_milliseconds')
+const dateFormat = require('date-fns/format')
 const Promise = require('bluebird')
 const { createGxConnectTestContext } = require('./gxconnect_utils')
 const { getLastResultId } = require('../utils')
@@ -908,6 +910,7 @@ describe('Device API routes for GxConnect Devices', () => {
             basicResultPayload,
             {
               result: {
+                id: dateFormat(new Date(), 'x'),
                 startedOn: now,
                 endedOn: now,
                 instrument: {
@@ -942,6 +945,7 @@ describe('Device API routes for GxConnect Devices', () => {
             basicResultPayload,
             {
               result: {
+                id: dateFormat(new Date(), 'x'),
                 startedOn: now,
                 endedOn: now,
                 instrument: {
@@ -979,6 +983,7 @@ describe('Device API routes for GxConnect Devices', () => {
             basicResultPayload,
             {
               result: {
+                id: dateFormat(new Date(), 'x'),
                 startedOn: subMinutes(now, 5),
                 endedOn: now,
                 instrument: {
@@ -1022,6 +1027,7 @@ describe('Device API routes for GxConnect Devices', () => {
             basicResultPayload,
             {
               result: {
+                id: dateFormat(new Date(), 'x'),
                 data: { a: 'b', c: 2, d: false, e: { f: 'g' } },
                 type: { id: 'Study' },
                 source: { id: 'EnteredByHand' },
@@ -1369,7 +1375,6 @@ describe('Device API routes for GxConnect Devices', () => {
     })
 
     describe('when the assay in the result payload is mapped to a consumable', () => {
-      const deductInventoryTestResultId = 'UNIQUE-ID-TEST-DEDUCT-INVENTORY'
       const initialQuantityOnHand = 100
       let expiryDate
       let inventoryItemId
@@ -1407,7 +1412,7 @@ describe('Device API routes for GxConnect Devices', () => {
                 _.assign({}, basicDevicePayload, basicResultPayload),
                 {
                   result: _.assign({}, basicResultPayload.result, {
-                    id: deductInventoryTestResultId,
+                    id: dateFormat(new Date(), 'x'),
                     startedOn: testStartedOn,
                     endedOn: testEndedOn,
                     sample: { id: 'Existing Sample' },
@@ -1432,7 +1437,7 @@ describe('Device API routes for GxConnect Devices', () => {
             .first()
           assert.equal(
             inventoryItem.quantityOnHand,
-            initialQuantityOnHand - consumableAssay.quantity
+            _.max([0, initialQuantityOnHand - consumableAssay.quantity])
           )
 
           const inventoryLogs = await knex('InventoryLog as il')
@@ -1460,6 +1465,7 @@ describe('Device API routes for GxConnect Devices', () => {
         it('should NOT reduce inventory levels of the consumable', () =>
           runTest(async knex => {
             const { basicDevicePayload, deviceAuth, site, now } = context
+            const uniqueTestId = dateFormat(new Date(), 'x')
 
             const consumableAssays = await knex('ConsumableAssay as ca')
               .join('Assay as a', 'ca.assayId', 'a.id')
@@ -1505,7 +1511,7 @@ describe('Device API routes for GxConnect Devices', () => {
                   _.assign({}, basicDevicePayload, basicResultPayload),
                   {
                     result: _.assign({}, basicResultPayload.result, {
-                      id: deductInventoryTestResultId,
+                      id: uniqueTestId,
                       assay: {
                         id: consumableAssay.assayId,
                         version: '2',
@@ -1548,8 +1554,11 @@ describe('Device API routes for GxConnect Devices', () => {
               .first()
             assert.equal(
               inventoryItemAfterFirstRequest.quantityOnHand,
-              inventoryItemBeforeFirstRequest.quantityOnHand -
-                consumableAssay.quantity
+              _.max([
+                0,
+                inventoryItemBeforeFirstRequest.quantityOnHand -
+                  consumableAssay.quantity,
+              ])
             )
 
             await waitForApproximately(2, 'seconds')
@@ -1578,7 +1587,7 @@ describe('Device API routes for GxConnect Devices', () => {
                   _.assign({}, basicDevicePayload, basicResultPayload),
                   {
                     result: _.assign({}, basicResultPayload.result, {
-                      id: deductInventoryTestResultId,
+                      id: uniqueTestId,
                       assay: {
                         id: consumableAssay.assayId,
                         version: '2',
@@ -1881,6 +1890,234 @@ describe('Device API routes for GxConnect Devices', () => {
           }))
       })
     })
+
+    describe('when the result was previously sent', () => {
+      describe('incomplete with no end time', () => {
+        describe('and is sent again with an end time and a result', () => {
+          it("should merge with the existing result, matched by instrument and cartridge serials, and update it's external ID", () =>
+            runTest(async () => {
+              const { deviceAuth, now } = context
+              const instrumentSerial = '803165'
+              const cartridgeSerial = '725194650'
+              const startedOn = setMilliseconds(now, 0)
+
+              const incompleteResultPayload = _.merge(
+                {},
+                basicDevicePayload,
+                { name: deviceName },
+                basicResultPayload,
+                {
+                  result: {
+                    startedOn,
+                    endedOn: null,
+                    instrument: {
+                      serial: instrumentSerial,
+                    },
+                    consumable: {
+                      serial: cartridgeSerial,
+                    },
+                    data: { resultText: 'NO RESULT' },
+                  },
+                }
+              )
+              delete incompleteResultPayload.result.id
+              // Initial incomplete result details
+              await server
+                .post('/device')
+                .set('Authorization', deviceAuth)
+                .send(incompleteResultPayload)
+                .then(res => {
+                  assert.equal(res.status, 200)
+                })
+                .catch(assert.fail)
+
+              const incompleteResult = await getLastResult()
+              expect(incompleteResult).to.containSubset({
+                resultCategory1: 'NoResult',
+                resultCategory2: 'NoResult',
+                startedOn,
+                endedOn: null,
+                resultData: {
+                  resultText: 'NO RESULT',
+                },
+              })
+
+              const endedOn = addMinutes(startedOn, 103)
+              const completeResultPayload = _.merge(
+                {},
+                incompleteResultPayload,
+                {
+                  result: {
+                    endedOn,
+                    data: { resultText: 'DETECTED MEDIUM|INDETERMINATE|' },
+                  },
+                }
+              )
+              // Then complete result details
+              await server
+                .post('/device')
+                .set('Authorization', deviceAuth)
+                .send(completeResultPayload)
+                .then(res => {
+                  assert.equal(res.status, 200)
+                })
+                .catch(assert.fail)
+
+              const completeResult = await getLastResult()
+              expect(completeResult).to.containSubset({
+                resultCategory1: 'Detected',
+                resultCategory2: 'Indeterminate',
+                startedOn,
+                endedOn,
+                resultData: {
+                  resultText: 'DETECTED MEDIUM|INDETERMINATE|',
+                },
+              })
+              assert.equal(completeResult.id, incompleteResult.id)
+              assert.notEqual(
+                completeResult.externalId,
+                incompleteResult.externalId
+              )
+            }))
+        })
+      })
+
+      describe('complete with result', () => {
+        describe('and is sent again with no result in the result text', () => {
+          it('should ignore the result data that has been sent', () =>
+            runTest(async () => {
+              const { deviceAuth, now } = context
+              const instrumentSerial = '803165'
+              const cartridgeSerial = '725194660'
+              const startedOn = setMilliseconds(now, 0)
+              const endedOn = addMinutes(startedOn, 103)
+              const completeResultPayload = _.merge(
+                {},
+                basicDevicePayload,
+                { name: deviceName },
+                basicResultPayload,
+                {
+                  result: {
+                    startedOn,
+                    endedOn,
+                    instrument: {
+                      serial: instrumentSerial,
+                    },
+                    consumable: {
+                      serial: cartridgeSerial,
+                    },
+                    data: {
+                      resultText:
+                        'MTB DETECTED MEDIUM||RIF Resistance NOT DETECTED',
+                    },
+                  },
+                }
+              )
+              // Initial complete result details
+              await server
+                .post('/device')
+                .set('Authorization', deviceAuth)
+                .send(completeResultPayload)
+                .then(res => {
+                  assert.equal(res.status, 200)
+                })
+                .catch(assert.fail)
+              const result1 = await getLastResult()
+              expect(result1).to.containSubset({
+                resultCategory1: 'Detected',
+                resultCategory2: 'NotDetected',
+                startedOn,
+                endedOn,
+                resultData: {
+                  resultText:
+                    'MTB DETECTED MEDIUM||RIF Resistance NOT DETECTED',
+                },
+              })
+
+              // Then send NO RESULT
+              await server
+                .post('/device')
+                .set('Authorization', deviceAuth)
+                .send(
+                  _.merge({}, completeResultPayload, {
+                    result: {
+                      data: { resultText: 'NO RESULT|NO RESULT|' },
+                    },
+                  })
+                )
+                .then(res => {
+                  assert.equal(res.status, 409)
+                })
+                .catch(assert.fail)
+              const result2 = await getLastResult()
+              expect(result2).to.containSubset({
+                resultCategory1: 'Detected',
+                resultCategory2: 'NotDetected',
+                startedOn,
+                endedOn,
+                resultData: {
+                  resultText:
+                    'MTB DETECTED MEDIUM||RIF Resistance NOT DETECTED',
+                },
+              })
+              assert.equal(result2.id, result1.id)
+
+              await server
+                .post('/device')
+                .set('Authorization', deviceAuth)
+                .send(
+                  _.merge({}, completeResultPayload, {
+                    result: {
+                      data: { resultText: 'NO RESULT' },
+                    },
+                  })
+                )
+                .then(res => {
+                  assert.equal(res.status, 409)
+                })
+                .catch(assert.fail)
+              const result3 = await getLastResult()
+              expect(result3).to.containSubset({
+                resultCategory1: 'Detected',
+                resultCategory2: 'NotDetected',
+                startedOn,
+                endedOn,
+                resultData: {
+                  resultText:
+                    'MTB DETECTED MEDIUM||RIF Resistance NOT DETECTED',
+                },
+              })
+              assert.equal(result3.id, result1.id)
+
+              await server
+                .post('/device')
+                .set('Authorization', deviceAuth)
+                .send(
+                  _.merge({}, completeResultPayload, {
+                    result: {
+                      data: { resultText: 'MTB DETECTED MEDIUM|NO RESULT' },
+                    },
+                  })
+                )
+                .then(res => {
+                  assert.equal(res.status, 200)
+                })
+                .catch(assert.fail)
+              const result4 = await getLastResult()
+              expect(result4).to.containSubset({
+                resultCategory1: 'Detected',
+                resultCategory2: 'NoResult',
+                startedOn,
+                endedOn,
+                resultData: {
+                  resultText: 'MTB DETECTED MEDIUM|NO RESULT',
+                },
+              })
+              assert.equal(result4.id, result1.id)
+            }))
+        })
+      })
+    })
   })
 
   describe('inventory changes', () => {
@@ -1962,7 +2199,7 @@ describe('Device API routes for GxConnect Devices', () => {
               inTransitFromSiteId: null,
               lotNumber: null,
               expiresOn: expirationDate,
-              quantityOnHand: initialQuantity + quantity,
+              quantityOnHand: _.max([0, initialQuantity + quantity]),
             },
           ]
         )
@@ -2274,8 +2511,10 @@ describe('Device API routes for GxConnect Devices', () => {
               inTransitFromSiteId: null,
               lotNumber: null,
               expiresOn: inventoryItemAtSiteBefore.expiresOn,
-              quantityOnHand:
+              quantityOnHand: _.max([
+                0,
                 inventoryItemAtSiteBefore.quantityOnHand + quantity,
+              ]),
             },
           ]
         )
@@ -2388,8 +2627,10 @@ describe('Device API routes for GxConnect Devices', () => {
               inTransitFromSiteId: null,
               lotNumber: null,
               expiresOn: inventoryItemAtSiteBefore.expiresOn,
-              quantityOnHand:
+              quantityOnHand: _.max([
+                0,
                 inventoryItemAtSiteBefore.quantityOnHand + quantity,
+              ]),
             },
           ]
         )
@@ -2783,8 +3024,10 @@ describe('Device API routes for GxConnect Devices', () => {
           inTransitFromSiteId: null,
           lotNumber: null,
           expiresOn: lot1.expirationDate,
-          quantityOnHand:
+          quantityOnHand: _.max([
+            0,
             lot1InventoryItem.quantityOnHand + updateToLot1.quantity,
+          ]),
         })
         assert.deepEqual(lot2InventoryItemAfterAdjustment1, {
           consumableName: lot2.consumableName,
@@ -2848,16 +3091,20 @@ describe('Device API routes for GxConnect Devices', () => {
           inTransitFromSiteId: null,
           lotNumber: null,
           expiresOn: lot1.expirationDate,
-          quantityOnHand:
+          quantityOnHand: _.max([
+            0,
             lot1InventoryItem.quantityOnHand + updateToLot1.quantity,
+          ]),
         })
         assert.deepEqual(lot2InventoryItemAfterAdjustment2, {
           consumableName: lot2.consumableName,
           inTransitFromSiteId: null,
           lotNumber: null,
           expiresOn: lot2.expirationDate,
-          quantityOnHand:
+          quantityOnHand: _.max([
+            0,
             lot2InventoryItem.quantityOnHand + updateToLot2.quantity,
+          ]),
         })
         const inventoryLogsForLot1And2 = await knex('InventoryLog as il')
           .join('ConsumableReason as cr', 'il.consumableReasonId', 'cr.id')
@@ -3207,8 +3454,10 @@ describe('Device API routes for GxConnect Devices', () => {
                 inTransitFromSiteId: null,
                 lotNumber: null,
                 expiresOn: inventoryLost.expirationDate,
-                quantityOnHand:
+                quantityOnHand: _.max([
+                  0,
                   initialLotCaptured.quantity + inventoryLost.quantity,
+                ]),
               },
             ]
           )

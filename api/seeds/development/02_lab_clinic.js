@@ -6,6 +6,7 @@ const _ = require('lodash')
 const config = require('../../src/config')
 const { randomToken } = require('../../src/deviceApi/apiKey')
 const labClinic = require('./fixtures/labClinic.json')
+const { rowsAsObject } = require('../utils')
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 
@@ -526,11 +527,4 @@ async function seed(knex) {
       }
     })
   )
-}
-
-function rowsAsObject(knex, table, column = 'name') {
-  return knex(table).reduce((memo, row) => {
-    memo[row[column]] = row
-    return memo
-  }, {})
 }

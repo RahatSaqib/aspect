@@ -32,30 +32,58 @@ async function preProcessMergeResult({ knex, deviceId, payload }) {
   } else {
     payload.data = {}
   }
-  const instrumentSerial = _.get(payload, 'instrument.serial')
+  const instrumentSerial = _.get(payload, 'instrument.serial', null)
+  const cartridgeSerial = _.get(payload, 'consumable[0].serial', null)
   const sampleId = _.get(payload, 'sample.id')
 
   if (payload.id) {
     payload.data.geneXpertTestId = payload.id
   }
-
   const generatedExternalId = createUniqueIdForResult(
     instrumentSerial,
     startedOn,
     endedOn,
     sampleId
   )
-  const availableResultDetails = {
-    partnerId: device.partnerId,
-    geneXpertTestId: payload.id || payload.data.id,
-    gxAlertUniqueId: payload.data.gxAlertTestUniqueId || generatedExternalId,
-  }
-  const existingResult = await findExistingResult(availableResultDetails, knex)
-  if (existingResult) {
-    payload.id = existingResult.externalId
-  } else {
+  const gxAlertUniqueId = _.get(
+    payload,
+    'data.gxAlertTestUniqueId',
+    generatedExternalId
+  )
+  const geneXpertTestId = _.get(payload, 'id') || _.get(payload, 'data.id')
+  const existingResult = await findExistingResult(
+    {
+      partnerId: device.partnerId,
+      geneXpertTestId,
+      gxAlertUniqueId,
+      cartridgeSerial,
+      instrumentSerial,
+    },
+    knex
+  )
+  if (!existingResult) {
     // Only assign assay to GxUnknown if result is new
     await assignGxUnknownAssayIfNotExists(knex, payload)
+  } else {
+    // Are we setting this result to NO RESULT?
+    if (
+      !_.isEmpty(_.get(payload, 'category', [])) &&
+      _.every(_.get(payload, 'category'), { id: 'NoResult' })
+    ) {
+      // Has the result already been determined?
+      if (
+        _.get(existingResult, 'resultCategory1') !== 'NoResult' ||
+        _.get(existingResult, 'resultCategory2') !== 'NoResult'
+      ) {
+        // We should never merge an incomplete result over a complete result
+        throw Boom.conflict('A later version of this result already exists')
+      }
+    }
+    if (_.get(existingResult, 'externalId') !== generatedExternalId) {
+      await knex('Result')
+        .where('id', existingResult.id)
+        .update({ externalId: generatedExternalId })
+    }
   }
   payload.id = generatedExternalId
 }
@@ -78,6 +106,7 @@ function getResultCategories(payload) {
     const payloadResultText = _.get(payload, 'data.resultText')
     if (payloadResultText) {
       const resultTextValues = _.compact(payloadResultText.split('|'))
+      const assayId = _.get(payload, 'assay.id')
       if (resultTextValues.length > 0) {
         const result1Text = resultTextValues[0]
           .toLowerCase()
@@ -126,8 +155,10 @@ function getResultCategories(payload) {
           erro: 'Error',
           ошибка: 'Error',
           erreur: 'Error',
-          'trace detected': 'Detected',
           'null null': 'Success',
+        }
+        if (assayId === 'GxMtbRifUltra') {
+          result1CategoryMapping['trace detected'] = 'Trace Detected'
         }
         if (result1CategoryMapping[result1Text]) {
           payloadCategory = [{ id: result1CategoryMapping[result1Text] }]
@@ -135,10 +166,15 @@ function getResultCategories(payload) {
       }
       const result1 = _.isEmpty(payloadCategory) ? null : payloadCategory[0].id
       const canHaveSecondResult =
-        ['Detected', 'Error', 'Invalid', 'NoResult', 'Success'].includes(
-          result1
-        ) ||
-        !_.includes(['GxMtbRif', 'GxMtbRifUltra'], _.get(payload, 'assay.id'))
+        [
+          'Detected',
+          'Trace Detected',
+          'Error',
+          'Invalid',
+          'NoResult',
+          'Success',
+        ].includes(result1) ||
+        !_.includes(['GxMtbRif', 'GxMtbRifUltra'], assayId)
 
       if (resultTextValues.length > 1) {
         const result2Text = resultTextValues[1]

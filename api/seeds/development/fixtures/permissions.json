@@ -33,6 +33,10 @@
       "activities": ["view", "edit", "admin"]
     },
     {
+      "name": "issue",
+      "activities": ["view", "edit", "admin"]
+    },
+    {
       "name": "notification",
       "activities": ["view", "edit", "admin"]
     },
@@ -43,6 +47,10 @@
     {
       "name": "report",
       "activities": ["view", "edit", "admin"]
+    },
+    {
+      "name": "browse",
+      "activities": ["view"]
     }
   ]
 }

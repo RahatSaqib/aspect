@@ -8,6 +8,7 @@ const _ = require('lodash')
 
 const config = require('../../src/config')
 const dashboardWidget = require('./fixtures/dashboardWidget.json')
+const { rowsAsObject, getDefaultMessageTypes } = require('../utils')
 
 const now = new Date()
 
@@ -224,6 +225,10 @@ async function seed(knex) {
       jobFunctionId: jobFunctionIdLabUser,
       featureId: featureModules.actionDashboard,
     },
+    {
+      jobFunctionId: jobFunctionIdLabUser,
+      featureId: featureModules.reportDashboard,
+    },
   ])
 
   await knex('JobFunctionPermission').insert([
@@ -238,6 +243,7 @@ async function seed(knex) {
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.result.admin },
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.site.admin },
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.assay.admin },
+    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.issue.admin },
     {
       jobFunctionId: jobFunctionIdAdmin,
       permissionId: modules.inventory.admin,
@@ -255,6 +261,10 @@ async function seed(knex) {
     {
       jobFunctionId: jobFunctionIdRegionalOfficer,
       permissionId: modules.site.admin,
+    },
+    {
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      permissionId: modules.issue.admin,
     },
     {
       jobFunctionId: jobFunctionIdRegionalOfficer,
@@ -276,6 +286,10 @@ async function seed(knex) {
     {
       jobFunctionId: jobFunctionIdLabUser,
       permissionId: modules.site.admin,
+    },
+    {
+      jobFunctionId: jobFunctionIdLabUser,
+      permissionId: modules.issue.admin,
     },
     {
       jobFunctionId: jobFunctionIdLabUser,
@@ -438,6 +452,7 @@ async function seed(knex) {
         issueTypeId: issueTypes.DeviceOffline.id,
         jobFunctionId: jobFunctionIdLabUser,
         level: 1,
+        canAcknowledge: 1,
         messageTypeId: defaultMessageTypes.DeviceOffline.id,
       },
       auditFields
@@ -449,6 +464,7 @@ async function seed(knex) {
         issueTypeId: issueTypes.DeviceOffline.id,
         jobFunctionId: jobFunctionIdRegionalOfficer,
         level: 2,
+        canAcknowledge: 1,
         messageTypeId: defaultMessageTypes.DeviceOffline.id,
       },
       auditFields
@@ -460,26 +476,349 @@ async function seed(knex) {
         issueTypeId: issueTypes.DeviceOffline.id,
         jobFunctionId: jobFunctionIdRegionalOfficer,
         level: 3,
+        canAcknowledge: 0,
         messageTypeId: defaultMessageTypes.DeviceOffline.id,
       },
       auditFields
     ),
+    Object.assign(
+      {
+        name: 'LU No Testing',
+        partnerId,
+        issueTypeId: issueTypes.DeviceNoResults.id,
+        jobFunctionId: jobFunctionIdLabUser,
+        level: 1,
+        canAcknowledge: 1,
+        messageTypeId: defaultMessageTypes.DeviceNoResults.id,
+      },
+      auditFields
+    ),
+    Object.assign(
+      {
+        name: 'RO No Testing',
+        partnerId,
+        issueTypeId: issueTypes.DeviceNoResults.id,
+        jobFunctionId: jobFunctionIdRegionalOfficer,
+        level: 2,
+        canAcknowledge: 1,
+        messageTypeId: defaultMessageTypes.DeviceNoResults.id,
+      },
+      auditFields
+    ),
+    Object.assign(
+      {
+        name: 'RO Escalated No Testing',
+        partnerId,
+        issueTypeId: issueTypes.DeviceNoResults.id,
+        jobFunctionId: jobFunctionIdRegionalOfficer,
+        level: 3,
+        canAcknowledge: 0,
+        messageTypeId: defaultMessageTypes.DeviceNoResults.id,
+      },
+      auditFields
+    ),
+    Object.assign(
+      {
+        name: 'LU Module Failure',
+        partnerId,
+        issueTypeId: issueTypes.ModuleFailureError.id,
+        jobFunctionId: jobFunctionIdLabUser,
+        level: 2,
+        canAcknowledge: 1,
+        messageTypeId: defaultMessageTypes.ModuleFailureError.id,
+      },
+      auditFields
+    ),
+    Object.assign(
+      {
+        name: 'LU Escalated Module Failure',
+        partnerId,
+        issueTypeId: issueTypes.ModuleFailureError.id,
+        jobFunctionId: jobFunctionIdLabUser,
+        level: 2,
+        canAcknowledge: 0,
+        messageTypeId: defaultMessageTypes.ModuleFailureError.id,
+      },
+      auditFields
+    ),
+    Object.assign(
+      {
+        name: 'LU Module Temperature',
+        partnerId,
+        issueTypeId: issueTypes.ModuleTemperatureError.id,
+        jobFunctionId: jobFunctionIdLabUser,
+        level: 1,
+        canAcknowledge: 1,
+        messageTypeId: defaultMessageTypes.ModuleTemperatureError.id,
+      },
+      auditFields
+    ),
+    Object.assign(
+      {
+        name: 'LU Escalated Module Temperature',
+        partnerId,
+        issueTypeId: issueTypes.ModuleTemperatureError.id,
+        jobFunctionId: jobFunctionIdLabUser,
+        level: 2,
+        canAcknowledge: 0,
+        messageTypeId: defaultMessageTypes.ModuleTemperatureError.id,
+      },
+      auditFields
+    ),
+    Object.assign(
+      {
+        name: 'LU Module Power',
+        partnerId,
+        issueTypeId: issueTypes.ModulePowerError.id,
+        jobFunctionId: jobFunctionIdLabUser,
+        level: 1,
+        canAcknowledge: 1,
+        messageTypeId: defaultMessageTypes.ModulePowerError.id,
+      },
+      auditFields
+    ),
+    Object.assign(
+      {
+        name: 'LU Escalated Module Power',
+        partnerId,
+        issueTypeId: issueTypes.ModulePowerError.id,
+        jobFunctionId: jobFunctionIdLabUser,
+        level: 2,
+        canAcknowledge: 0,
+        messageTypeId: defaultMessageTypes.ModulePowerError.id,
+      },
+      auditFields
+    ),
+    Object.assign(
+      {
+        name: 'LU Machine Temperature',
+        partnerId,
+        issueTypeId: issueTypes.MachineTemperatureError.id,
+        jobFunctionId: jobFunctionIdLabUser,
+        level: 1,
+        canAcknowledge: 1,
+        messageTypeId: defaultMessageTypes.MachineTemperatureError.id,
+      },
+      auditFields
+    ),
+    Object.assign(
+      {
+        name: 'LU Escalated Machine Temperature',
+        partnerId,
+        issueTypeId: issueTypes.MachineTemperatureError.id,
+        jobFunctionId: jobFunctionIdLabUser,
+        level: 2,
+        canAcknowledge: 0,
+        messageTypeId: defaultMessageTypes.MachineTemperatureError.id,
+      },
+      auditFields
+    ),
+    Object.assign(
+      {
+        name: 'LU Machine Power',
+        partnerId,
+        issueTypeId: issueTypes.MachinePowerError.id,
+        jobFunctionId: jobFunctionIdLabUser,
+        level: 1,
+        canAcknowledge: 1,
+        messageTypeId: defaultMessageTypes.MachinePowerError.id,
+      },
+      auditFields
+    ),
+    Object.assign(
+      {
+        name: 'LU Escalated Machine Power',
+        partnerId,
+        issueTypeId: issueTypes.MachinePowerError.id,
+        jobFunctionId: jobFunctionIdLabUser,
+        level: 2,
+        canAcknowledge: 0,
+        messageTypeId: defaultMessageTypes.MachinePowerError.id,
+      },
+      auditFields
+    ),
+    Object.assign(
+      {
+        name: 'LU Module Generic',
+        partnerId,
+        issueTypeId: issueTypes.ModuleGenericError.id,
+        jobFunctionId: jobFunctionIdLabUser,
+        level: 1,
+        canAcknowledge: 1,
+        messageTypeId: defaultMessageTypes.ModuleGenericError.id,
+      },
+      auditFields
+    ),
+    Object.assign(
+      {
+        name: 'LU Escalated Module Generic',
+        partnerId,
+        issueTypeId: issueTypes.ModuleGenericError.id,
+        jobFunctionId: jobFunctionIdLabUser,
+        level: 2,
+        canAcknowledge: 0,
+        messageTypeId: defaultMessageTypes.ModuleGenericError.id,
+      },
+      auditFields
+    ),
+    Object.assign(
+      {
+        name: 'LU Machine Generic',
+        partnerId,
+        issueTypeId: issueTypes.MachineGenericError.id,
+        jobFunctionId: jobFunctionIdLabUser,
+        level: 1,
+        canAcknowledge: 1,
+        messageTypeId: defaultMessageTypes.MachineGenericError.id,
+      },
+      auditFields
+    ),
+    Object.assign(
+      {
+        name: 'LU Escalated Machine Generic',
+        partnerId,
+        issueTypeId: issueTypes.MachineGenericError.id,
+        jobFunctionId: jobFunctionIdLabUser,
+        level: 2,
+        canAcknowledge: 0,
+        messageTypeId: defaultMessageTypes.MachineGenericError.id,
+      },
+      auditFields
+    ),
+    Object.assign(
+      {
+        name: 'RO Module',
+        partnerId,
+        issueTypeId: issueTypes.ModuleGenericError.id,
+        jobFunctionId: jobFunctionIdRegionalOfficer,
+        level: 1,
+        canAcknowledge: 0,
+        messageTypeId: defaultMessageTypes.ModuleGenericError.id,
+      },
+      auditFields
+    ),
+    Object.assign(
+      {
+        name: 'RO Machine',
+        partnerId,
+        issueTypeId: issueTypes.MachineGenericError.id,
+        jobFunctionId: jobFunctionIdRegionalOfficer,
+        level: 1,
+        canAcknowledge: 0,
+        messageTypeId: defaultMessageTypes.MachineGenericError.id,
+      },
+      auditFields
+    ),
+    Object.assign(
+      {
+        name: 'LU Reagent Health',
+        partnerId,
+        issueTypeId: issueTypes.ReagentHealthError.id,
+        jobFunctionId: jobFunctionIdLabUser,
+        level: 1,
+        canAcknowledge: 1,
+        messageTypeId: defaultMessageTypes.ReagentHealthError.id,
+      },
+      auditFields
+    ),
+    Object.assign(
+      {
+        name: 'LU Escalated Reagent Health',
+        partnerId,
+        issueTypeId: issueTypes.ReagentHealthError.id,
+        jobFunctionId: jobFunctionIdLabUser,
+        level: 2,
+        canAcknowledge: 0,
+        messageTypeId: defaultMessageTypes.ReagentHealthError.id,
+      },
+      auditFields
+    ),
+    Object.assign(
+      {
+        name: 'RO Reagent Health',
+        partnerId,
+        issueTypeId: issueTypes.ReagentHealthError.id,
+        jobFunctionId: jobFunctionIdRegionalOfficer,
+        level: 3,
+        canAcknowledge: 0,
+        messageTypeId: defaultMessageTypes.ReagentHealthError.id,
+      },
+      auditFields
+    ),
+    Object.assign(
+      {
+        name: 'LU Stock Level Update',
+        partnerId,
+        issueTypeId: issueTypes.StockLevelUpdate.id,
+        jobFunctionId: jobFunctionIdLabUser,
+        level: 1,
+        canAcknowledge: 0,
+        messageTypeId: defaultMessageTypes.StockLevelUpdate.id,
+      },
+      auditFields
+    ),
+    Object.assign(
+      {
+        name: 'RO Stock Level Update',
+        partnerId,
+        issueTypeId: issueTypes.StockLevelUpdate.id,
+        jobFunctionId: jobFunctionIdRegionalOfficer,
+        level: 1,
+        canAcknowledge: 0,
+        messageTypeId: defaultMessageTypes.StockLevelUpdate.id,
+      },
+      auditFields
+    ),
+    Object.assign(
+      {
+        name: 'LU Data Category Low',
+        partnerId,
+        issueTypeId: issueTypes.DataCategoryLowError.id,
+        jobFunctionId: jobFunctionIdLabUser,
+        level: 1,
+        canAcknowledge: 1,
+        messageTypeId: defaultMessageTypes.DataCategoryLowError.id,
+      },
+      auditFields
+    ),
+    Object.assign(
+      {
+        name: 'RO Data Category Low',
+        partnerId,
+        issueTypeId: issueTypes.DataCategoryLowError.id,
+        jobFunctionId: jobFunctionIdRegionalOfficer,
+        level: 1,
+        canAcknowledge: 1,
+        messageTypeId: defaultMessageTypes.DataCategoryLowError.id,
+      },
+      auditFields
+    ),
   ])
-}
 
-function rowsAsObject(knex, table, column = 'name') {
-  return knex(table).reduce((memo, row) => {
-    memo[row[column]] = row
-    return memo
-  }, {})
-}
-
-function getDefaultMessageTypes(knex) {
-  return knex('MessageType as mt')
-    .join('IssueType as it', 'it.defaultMessageTypeId', 'mt.id')
-    .select('it.externalId as issueTypeExternalId', 'mt.*')
-    .reduce((memo, row) => {
-      memo[row.issueTypeExternalId] = row
-      return memo
-    }, {})
+  // Issue Escalation Triggers
+  await knex('IssueEscalationTrigger').insert([
+    {
+      issueTypeId: issueTypes.DeviceOffline.id,
+      partnerId,
+      escalateToLevel: 2,
+      escalationConditions: JSON.stringify({
+        evaluationMethod: 'issue-age',
+        evaluationParameter: { days: 30 },
+      }),
+      createdOn: now,
+      updatedOn: now,
+    },
+    {
+      issueTypeId: issueTypes.DeviceOffline.id,
+      partnerId,
+      escalateToLevel: 3,
+      escalationConditions: JSON.stringify({
+        evaluationMethod: 'sql-script',
+        evaluationParameter:
+          './sqlScripts/Myanmar/issues/escalations/deviceOfflineLevel3ROEscalatedNetwork.sql',
+      }),
+      createdOn: now,
+      updatedOn: now,
+    },
+  ])
 }

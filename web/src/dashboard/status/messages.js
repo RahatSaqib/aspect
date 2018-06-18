@@ -147,7 +147,7 @@ export const messages = defineMessages({
   },
   targetsTitle: {
     id: 'pages.Status.targetsTitle',
-    defaultMessage: 'Regional Testing Targets',
+    defaultMessage: 'Regional Progress Indicators',
   },
   thisYear: {
     id: 'pages.Status.thisYear',
@@ -248,6 +248,10 @@ export const messages = defineMessages({
   stockLevelUpdatedSuccessfully: {
     id: 'pages.Status.stockLevelUpdatedSuccessfully',
     defaultMessage: 'Stock levels have been updated successfully',
+  },
+  issueAcknowledgedSuccessfully: {
+    id: 'pages.Status.issueAcknowledgedSuccessfully',
+    defaultMessage: 'The issue has been acknowledged successfully',
   },
   reportsTitle: {
     id: 'pages.Status.reportsTitle',

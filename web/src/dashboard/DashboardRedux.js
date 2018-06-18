@@ -10,6 +10,7 @@ import {
 } from '../error/CommonErrorNotifications'
 
 import { types as inventoryTypes } from '../inventory/InventoryRedux'
+import { types as issueTypes } from '../issue/IssueRedux'
 
 export const REQUEST_STAT_DASHBOARD = 'REQUEST_STAT_DASHBOARD'
 export const RECEIVE_STAT_DASHBOARD = 'RECEIVE_STAT_DASHBOARD'
@@ -530,18 +531,39 @@ export default function dashboardReducer(state = initialState, action) {
       })
     case inventoryTypes.RECEIVE_UPDATED_SINGLE_INVENTORY_ITEM:
       return state.withMutations(mutState => {
-        const list = mutState.getIn(['actionSummaryMap', 'Reagent']).map(it => {
-          if (
-            it.get('siteId') === action.item.siteId &&
-            it.get('consumableId') === action.item.consumableId
-          ) {
+        const list = mutState
+          .getIn(['actionSummaryMap', 'ReagentHealth'])
+          .map(it => {
+            if (
+              it.get('siteId') === action.item.siteId &&
+              it.get('consumableId') === action.item.consumableId
+            ) {
+              return it
+                .set('totalInStock', action.item.quantityOnHand)
+                .set('status', 'OK')
+            }
             return it
-              .set('totalInStock', action.item.quantityOnHand)
-              .set('status', 'OK')
-          }
-          return it
-        })
-        mutState.mergeDeepIn(['actionSummaryMap', 'Reagent'], list)
+          })
+        mutState.mergeDeepIn(['actionSummaryMap', 'ReagentHealth'], list)
+      })
+    case issueTypes.RECEIVE_UPDATED_SINGLE_ISSUE:
+      return state.withMutations(mutState => {
+        mutState
+          .get('actionSummaryMap')
+          .keySeq()
+          .forEach(category => {
+            const list = mutState
+              .getIn(['actionSummaryMap', category])
+              .map(it => {
+                if (it.get('issueId') === action.item.issueId) {
+                  return it
+                    .set('status', action.item.issueStatusExternalId)
+                    .set('statusDate', action.item.changedOn)
+                }
+                return it
+              })
+            mutState.mergeDeepIn(['actionSummaryMap', category], list)
+          })
       })
     default:
       return state
