@@ -55,20 +55,10 @@ async function seed(knex) {
     .where('assayId', assayIdUltra)
     .update('consumableId', consumableIdTb)
 
-  const [myanmarCountry] = await knex('Country as c')
-    .where({ 'c.a3': 'MMR' })
-    .select('c.id', 'c.culture', 'c.timezone')
-  const countryId = myanmarCountry.id
-
-  const { id: myanmarGeographyId } = await knex('Geography')
-    .where({ countryId })
-    .whereNull('stateId', 'lgaId')
-    .first()
-
   // Data Category
   await seedDataCategory(knex, {
     auditFields,
-    myanmarGeographyId,
+    partnerId,
     issueCategoryId: issueCategories.DataHealth.id,
     messageSeverityId: messageSeverities.Alert.id,
   })

@@ -29,7 +29,7 @@ const dictReferralCenter = 'BGL TBC,PSI BGL,Not on Form,MMA BGL,DNB TBC,MMA DNB'
 
 const seedDataCategory = async (
   knex,
-  { auditFields, myanmarGeographyId, issueCategoryId, messageSeverityId }
+  { auditFields, partnerId, issueCategoryId, messageSeverityId }
 ) => {
   // ----------------------------------------------------------------------
   // seed DataCategory
@@ -38,7 +38,7 @@ const seedDataCategory = async (
     {
       name: 'HIV+',
       fieldNames: 'hiv',
-      geographyId: myanmarGeographyId,
+      partnerId,
       externalId: 'hiv',
       i18nKey: 'dataCategoryHiv',
       validValues: JSON.stringify(
@@ -52,7 +52,7 @@ const seedDataCategory = async (
     {
       name: 'MDR',
       fieldNames: 'mdr',
-      geographyId: myanmarGeographyId,
+      partnerId,
       externalId: 'mdr',
       i18nKey: 'dataCategoryMdr',
       validValues: JSON.stringify(dictMdr.filter(x => x !== 'Not on Form')),
@@ -62,7 +62,7 @@ const seedDataCategory = async (
     {
       name: 'Smear+',
       fieldNames: 'smear',
-      geographyId: myanmarGeographyId,
+      partnerId,
       externalId: 'smear',
       i18nKey: 'dataCategorySmear',
       validValues: JSON.stringify(
@@ -76,7 +76,7 @@ const seedDataCategory = async (
     {
       name: 'Other',
       fieldNames: '["name", "gender", "age"]',
-      geographyId: myanmarGeographyId,
+      partnerId,
       externalId: 'other',
       i18nKey: 'dataCategoryOther',
       // ----------------------
@@ -95,7 +95,8 @@ const seedDataCategory = async (
     messageSeverityId,
     issueCategoryId,
   }) => {
-    const message = `{{site.name}}: data category '{{categoryName}}' for {{periodName}} is low ({{percentage}}%)`
+    const messageBase = `data category '{{categoryName}}' for {{periodName}} is low ({{percentage}}%)`
+    const message = `{{site.name}}: ${messageBase}`
     const html = `<em>{{site.name}}:</em> data category '{{categoryName}}' for {{periodName}} is low ({{percentage}}%)`
 
     const emailTemplateId = await knex('EmailTemplate').insert(
@@ -110,7 +111,7 @@ const seedDataCategory = async (
 
     const alertTemplateId = await knex('AlertTemplate').insert(
       {
-        message,
+        message: messageBase,
         ...auditFields,
       },
       'id'

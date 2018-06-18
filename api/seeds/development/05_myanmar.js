@@ -1351,7 +1351,7 @@ async function seed(knex) {
   // Data Category
   await seedDataCategory(knex, {
     auditFields,
-    myanmarGeographyId,
+    partnerId,
     issueCategoryId: issueCategories.DataHealth.id,
     messageSeverityId: messageSeverities.Alert.id,
   })

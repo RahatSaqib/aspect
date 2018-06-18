@@ -33,11 +33,12 @@ async function up(knex) {
     // with property names in patientData json
     x.string('fieldNames', 1000).notNullable()
     x
-      .integer('geographyId')
+      .integer('partnerId')
       .unsigned()
       .index()
       .references('id')
-      .inTable('Geography')
+      .inTable('Partner')
+      .notNullable()
     x.string('i18nKey')
     x.string('externalId').notNullable()
     // stringified arrays of strings with values
