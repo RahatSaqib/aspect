@@ -15,7 +15,18 @@ async function getDefaultMessageTypes(knex) {
     }, {})
 }
 
+async function getPermissionModules(knex) {
+  return knex('Permission').reduce((memo, row) => {
+    if (!memo[row.module]) {
+      memo[row.module] = {}
+    }
+    memo[row.module][row.activity] = row.id
+    return memo
+  }, {})
+}
+
 module.exports = {
   rowsAsObject,
   getDefaultMessageTypes,
+  getPermissionModules,
 }

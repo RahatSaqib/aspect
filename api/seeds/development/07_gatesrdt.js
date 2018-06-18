@@ -1,20 +1,62 @@
 module.exports = require('../../src/db').seed(seed)
 
-const { rowsAsObject } = require('../utils')
+const config = require('../../src/config')
+const bcrypt = require('bcrypt')
+const { randomToken } = require('../../src/deviceApi/apiKey')
+const { rowsAsObject, getPermissionModules } = require('../utils')
+
+const saltRounds = parseInt(config.passwordSaltRounds, 10)
 
 async function seed(knex) {
-  const existingAssay = await knex('Assay')
-    .where({ externalId: 'CommCareGatesRDT' })
+  // Skip this seed file if we already have an admin user
+  const existingAdminUser = await knex('User')
+    .where({ name: 'gates_rdt' })
     .first('id')
-  if (existingAssay) {
+  if (existingAdminUser) {
     return
   }
 
-  const [deviceTypes, resultSources, assayTypes] = await Promise.all([
+  // Create admin user and audit fields
+  const now = new Date()
+  const [adminId] = await knex('User').insert({
+    name: 'gates_rdt',
+    password: bcrypt.hashSync('gates2018', saltRounds),
+    approved: 1,
+    createdOn: now,
+    lockedOut: 0,
+    failedPasswordAttempts: 0,
+  })
+  const auditFields = {
+    createdOn: now,
+    createdBy: adminId,
+    updatedOn: now,
+    updatedBy: adminId,
+  }
+
+  // Reuse previously seeded "static" data
+  const [
+    partnerTypes,
+    deviceTypes,
+    resultSources,
+    assayTypes,
+    modules,
+    features,
+  ] = await Promise.all([
+    rowsAsObject(knex, 'PartnerType', 'name'),
     rowsAsObject(knex, 'DeviceType', 'externalId'),
     rowsAsObject(knex, 'ResultSource', 'externalId'),
     rowsAsObject(knex, 'AssayType', 'name'),
+    getPermissionModules(knex),
+    rowsAsObject(knex, 'Feature', 'module'),
   ])
+
+  const [partnerId] = await knex('Partner').insert({
+    name: 'GatesRDT',
+    partnerTypeId: partnerTypes.Operating.id,
+    deviceLogHistoryDays: 365,
+    maxDaysDeviceOffline: 7,
+    maxDaysDeviceNoResults: 14,
+  })
 
   await knex('Assay').insert({
     name: 'CommCare Gates RDT',
@@ -49,4 +91,79 @@ async function seed(knex) {
       previousTesting: { type: 'string', order: 6, title: 'Previous Testing' },
     }),
   })
+
+  const [usCountry] = await knex('Country as c')
+    .where({ 'c.a3': 'USA' })
+    .select('c.id', 'c.culture', 'c.timezone')
+  const { culture, timezone, id: countryId } = usCountry
+  const { id: geographyId } = await knex('Geography')
+    .where({ countryId })
+    .whereNull('stateId')
+    .whereNull('lgaId')
+    .first()
+
+  // Assign all features and admin permissions to Admin user
+  const [adminPersonId] = await knex('Person').insert(
+    Object.assign(
+      {
+        userId: adminId,
+        name: 'Gates RDT Admin',
+        lastPartnerId: partnerId,
+        lastCountryId: countryId,
+        geographyId,
+        culture,
+        timezone,
+      },
+      auditFields
+    )
+  )
+
+  const [jobFunctionIdAdmin] = await knex('JobFunction').insert({
+    name: 'Admin',
+    partnerId,
+  })
+  await knex('JobFunctionPermission').insert([
+    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.browse.view },
+    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.result.admin },
+    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.device.admin },
+    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.site.admin },
+    {
+      jobFunctionId: jobFunctionIdAdmin,
+      permissionId: modules.deviceApiKey.admin,
+    },
+  ])
+  await knex('JobFunctionFeature').insert([
+    { jobFunctionId: jobFunctionIdAdmin, featureId: features.device.id },
+    { jobFunctionId: jobFunctionIdAdmin, featureId: features.result.id },
+    { jobFunctionId: jobFunctionIdAdmin, featureId: features.site.id },
+    { jobFunctionId: jobFunctionIdAdmin, featureId: features.deviceApiKey.id },
+  ])
+
+  const [jobIdAdmin] = await knex('Job').insert([
+    { personId: adminPersonId, jobFunctionId: jobFunctionIdAdmin },
+  ])
+  await knex('JobContext').insert({ jobId: jobIdAdmin, geographyId })
+
+  // Create initial DeviceAPI Key for CommCare which requires site.
+  const commcareSiteId = await knex('Site').insert(
+    Object.assign({}, auditFields, {
+      name: 'CommCare Site',
+      shortName: 'CommCare Site',
+      externalId: 'commcare',
+      partnerId,
+      geographyId,
+    })
+  )
+  await knex('DeviceApiKey').insert(
+    Object.assign(
+      {
+        token: randomToken(),
+        revoked: 0,
+        partnerId,
+        geographyId,
+        siteId: commcareSiteId,
+      },
+      auditFields
+    )
+  )
 }
