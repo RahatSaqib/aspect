@@ -37,5 +37,10 @@ async function seed(knex) {
     .where('assayId', assayIdUltra)
     .update('consumableId', consumableIdTb)
 
+  // update external ID of HCV assay
+  await knex('Assay')
+    .where('externalId', 'GeneXpertHcv')
+    .update('externalId', 'GxHcv')
+
   await seedStockIssues(knex)
 }
