@@ -42,7 +42,6 @@ async function seedStockIssues(knex) {
 
   // Reuse previously seeded "static" data
   const [issueCategories, messageSeverities] = await Promise.all([
-    // rowsAsObject(knex, 'IssueType', 'externalId'),
     rowsAsObject(knex, 'IssueCategory', 'externalId'),
     rowsAsObject(knex, 'MessageSeverity', 'externalId'),
   ])
@@ -51,7 +50,6 @@ async function seedStockIssues(knex) {
   // Inventory Stockout Issue
   // ---------------------------------
   const [stockoutAlertTemplateId] = await knex('AlertTemplate').insert(
-    /* eslint-disable no-template-curly-in-string */
     Object.assign(
       {
         message: 'Stock-out expected {{date}} - Order Stock.',
@@ -61,7 +59,6 @@ async function seedStockIssues(knex) {
   )
 
   const [stockoutSmsTemplateId] = await knex('SmsTemplate').insert(
-    /* eslint-disable no-template-curly-in-string */
     Object.assign(
       {
         message: '{{site.name}}: Stock-out expected {{date}} - Order Stock.',
@@ -71,7 +68,6 @@ async function seedStockIssues(knex) {
   )
 
   const [stockoutEmailTemplateId] = await knex('EmailTemplate').insert(
-    /* eslint-disable no-template-curly-in-string */
     Object.assign(
       {
         subject: '{{site.name}} stockout',
