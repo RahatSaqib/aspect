@@ -1,7 +1,5 @@
 module.exports = require('../../src/db').seed(seed)
 
-const { seedStockIssues } = require('../utils')
-
 async function seed(knex) {
   // Skip this seed file if generic RDT device is already set up
   const existingGenericRdtDeviceType = await knex('DeviceType')
@@ -51,6 +49,4 @@ async function seed(knex) {
       gender: { type: 'string', order: 3, title: 'Gender' },
     }),
   })
-
-  await seedStockIssues(knex)
 }
