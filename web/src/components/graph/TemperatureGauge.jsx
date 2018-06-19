@@ -39,11 +39,12 @@ const TemperatureGauge = ({
     domain: [0, 10],
   })
 
-  const tubeFillY = fillScale(Math.min(value / goal * 10, 10))
+  const percentComplete = value / goal
+  const tubeFillY = fillScale(Math.min(percentComplete * 10, 10))
 
   const fillColor = hasError
     ? errorColor
-    : value >= goal ? achievedColor : normalColor
+    : Math.round(percentComplete * 100) >= 100 ? achievedColor : normalColor
 
   return (
     <svg width={width} height={height}>
