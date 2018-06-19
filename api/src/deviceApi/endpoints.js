@@ -237,6 +237,7 @@ const resultPayload = {
             'Lot Number of inventory item consumed during completion of this test'
           ),
         expirationDate: Joi.date()
+          .allow(null)
           .iso()
           .description(
             'Expiration Date of inventory item consumed during completion of this test'

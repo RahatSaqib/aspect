@@ -264,7 +264,7 @@ async function consumeInventoryForResult(
         if (matchingInventoryOnHand.id) {
           await updateInventoryItem(knex, matchingInventoryOnHand.id, {
             quantityOnHand: knex.raw(
-              `quantityOnHand - ${assayConsumable.quantity}`
+              `GREATEST(quantityOnHand - ${assayConsumable.quantity}, 0)`
             ),
             updatedBy: null,
             updatedOn: now,
@@ -702,7 +702,7 @@ async function transferInventory(request) {
         expiresOn,
         lotNumber,
         siteId: fromSiteId,
-        quantityOnHand: knex.raw(`quantityOnHand - ${quantity}`),
+        quantityOnHand: knex.raw(`GREATEST(quantityOnHand - ${quantity}, 0)`),
         updatedOn: now,
         updatedBy: currentlyLoggedInUser.id,
       })
@@ -956,7 +956,10 @@ async function upsertInventoryItem({
       siteId,
       lotNumber,
       expiresOn,
-      quantityOnHand: _.isUndefined(quantityOnHand) ? quantity : quantityOnHand,
+      quantityOnHand: _.max([
+        _.isUndefined(quantityOnHand) ? quantity : quantityOnHand,
+        0,
+      ]),
       updatedOn: now,
       updatedBy: userId,
       createdOn: now,
@@ -969,8 +972,8 @@ async function upsertInventoryItem({
       lotNumber,
       siteId,
       quantityOnHand: _.isUndefined(quantityOnHand)
-        ? knex.raw(`quantityOnHand + (${quantity})`)
-        : quantityOnHand,
+        ? knex.raw(`GREATEST(quantityOnHand + (${quantity}), 0)`)
+        : _.max([quantityOnHand, 0]),
       updatedOn: now,
       updatedBy: userId,
     })

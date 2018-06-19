@@ -4,6 +4,7 @@ const { getOrCreateSite } = require('../site')
 const genexpertPreProcessAddDeviceData = require('../preProcessAddDeviceData')
 const { findDevices } = require('../device')
 const { createNewDevice } = require('../../../device')
+const { getDateOrDefault } = require('../../../../shared/date')
 
 async function preProcessAddDeviceData(context) {
   const { device, payload, knex, now } = context
@@ -74,11 +75,15 @@ async function getOrCreateDevice(knex, payload, gxAlertDevice, now) {
       deviceName,
       true
     )
-    const lastPingOn = new Date(
-      _.get(payload, 'configuration.data.lastPingOn', now)
+    const lastPingOn = getDateOrDefault(
+      payload,
+      'configuration.data.lastPingOn',
+      now
     )
-    const putInService = new Date(
-      _.get(payload, 'configuration.data.putInService', now)
+    const putInService = getDateOrDefault(
+      payload,
+      'configuration.data.putInService',
+      now
     )
     const { device, error } = await createNewDevice(knex, now, {
       deviceTypeExternalId,

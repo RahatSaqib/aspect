@@ -78,15 +78,16 @@ async function getOrCreateSite(
       if (_.isEmpty(sites)) {
         // If we cannot determine the site by name, external ID or device
         // create a new site
-        const [{ countryId }] = await knex
+        const country = await knex
           .from('Country as c')
           .where({ abbreviation: countryCode })
-          .select('c.id as countryId')
-        if (!countryId) {
+          .first('c.id')
+        if (country == null) {
           throw Boom.notFound(
             `Cannot determine the country from ${countryCode}.`
           )
         }
+        const { id: countryId } = country
         const [geography] = await knex
           .from('Geography as g')
           .where({ 'g.countryId': countryId })

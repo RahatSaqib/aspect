@@ -58,8 +58,11 @@ function resultLogged(resultId, deviceLogId) {
  * has a module temperature error issue
  *
  * deviceId is required.
+ * options:
+ *   moduleName
+ *   moduleSerial
  */
-function resultModuleTemperatureError(deviceId) {
+function resultModuleTemperatureError(deviceId, options) {
   if (deviceId == null) {
     throw new Error(
       'Must specify deviceId for notify resultModuleTemperatureError'
@@ -68,6 +71,7 @@ function resultModuleTemperatureError(deviceId) {
   return {
     type: types.RESULT_MODULE_TEMPERATURE_ERROR,
     deviceId,
+    options,
   }
 }
 
@@ -76,14 +80,18 @@ function resultModuleTemperatureError(deviceId) {
  * has a module power error issue
  *
  * deviceId is required.
+ * options:
+ *   moduleName
+ *   moduleSerial
  */
-function resultModulePowerError(deviceId) {
+function resultModulePowerError(deviceId, options) {
   if (deviceId == null) {
     throw new Error('Must specify deviceId for notify resultModulePowerError')
   }
   return {
     type: types.RESULT_MODULE_POWER_ERROR,
     deviceId,
+    options,
   }
 }
 
@@ -92,14 +100,18 @@ function resultModulePowerError(deviceId) {
  * has an active module failure issue
  *
  * deviceId is required.
+ * options:
+ *   moduleName
+ *   moduleSerial
  */
-function resultModuleFailureError(deviceId) {
+function resultModuleFailureError(deviceId, options) {
   if (deviceId == null) {
     throw new Error('Must specify deviceId for notify resultModuleFailureError')
   }
   return {
     type: types.RESULT_MODULE_FAILURE_ERROR,
     deviceId,
+    options,
   }
 }
 
@@ -126,8 +138,11 @@ function resultMachineTemperatureError(deviceId) {
  * has an active module procedural issue
  *
  * deviceId is required.
+ * options:
+ *   moduleName
+ *   moduleSerial
  */
-function resultModuleProceduralError(deviceId) {
+function resultModuleProceduralError(deviceId, options) {
   if (deviceId == null) {
     throw new Error(
       'Must specify deviceId for notify resultModuleProceduralError'
@@ -136,6 +151,7 @@ function resultModuleProceduralError(deviceId) {
   return {
     type: types.RESULT_MODULE_PROCEDURAL_ERROR,
     deviceId,
+    options,
   }
 }
 

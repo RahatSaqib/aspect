@@ -1,5 +1,6 @@
 const { knex } = require('../db')
-const { parse: parseDate, distanceInWordsStrict } = require('date-fns')
+const { distanceInWordsStrict } = require('date-fns')
+const { parseDateOrDefault } = require('../shared/date')
 const handlebars = require('handlebars')
 
 handlebars.registerHelper('numberOfDays', numberOfDays)
@@ -138,7 +139,8 @@ function isoDate(date) {
   if (date == null || date === '') {
     return null
   }
-  return parseDate(date).toISOString()
+  const parsed = parseDateOrDefault(date)
+  return parsed == null ? null : parsed.toISOString()
 }
 
 module.exports = {

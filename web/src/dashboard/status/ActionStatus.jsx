@@ -63,7 +63,7 @@ const enhance = compose(
   withProps(
     makeSortPageSelector({
       sortCol: 'status',
-      sortDir: 'desc',
+      sortDir: 'asc',
     })
   ),
   connect(
