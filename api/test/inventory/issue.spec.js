@@ -1,4 +1,4 @@
-const { addMonths, subMinutes, addDays } = require('date-fns')
+const { addMonths, subMinutes, addDays, format } = require('date-fns')
 const { assert, expect } = require('chai')
 
 const { queuePurge } = require('../utils/mqUtils')
@@ -227,7 +227,6 @@ async function triggerInitialIssue({
   await waitForAction(action)
   await waitForIdle()
   const dateFrom = subMinutes(new Date(), 5)
-  const dateDue = addDays(new Date(), daysDue)
 
   // get issues for last 10 mins for curent siteId and issueType
   const issue = await knex('Issue as i')
@@ -280,17 +279,20 @@ async function triggerInitialIssue({
   assert.equal(notificationLU.jobFunction, 'Lab User')
   assert.equal(notificationLU.level, issue.level)
   assert.equal(notificationLU.canAcknowledge, 1)
-  const date = dateDue.toString()
+  const date = format(addDays(new Date(), daysDue), 'YYYY-MM-DD')
   if (issueType === 'InventoryStockout') {
     assert.equal(
       processUsingHandlebarsSyntax(notificationLU.alertMessage, { date }),
-      `Stock-out expected ${date} - Order Stock`
+      `Stock-out expected ${date} - Order Stock.`
     )
   }
   assert.equal(notificationRO.userName, USER_RO)
   assert.equal(notificationRO.jobFunction, 'Regional Officer')
   assert.equal(notificationRO.level, issue.level)
-  assert.equal(notificationRO.canAcknowledge, 0)
+  assert.equal(
+    notificationRO.canAcknowledge,
+    issueType === 'InventoryStockout' ? 1 : 0
+  )
 
   //
   const action2 = JSON.parse(issue.data)

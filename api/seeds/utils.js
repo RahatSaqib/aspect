@@ -52,7 +52,7 @@ async function seedStockIssues(knex) {
   const [stockoutAlertTemplateId] = await knex('AlertTemplate').insert(
     Object.assign(
       {
-        message: 'Stock-out expected {{date}} - Order Stock.',
+        message: 'Stock-out expected {{issue.data.date}} - Order Stock.',
       },
       auditFields
     )
@@ -61,7 +61,8 @@ async function seedStockIssues(knex) {
   const [stockoutSmsTemplateId] = await knex('SmsTemplate').insert(
     Object.assign(
       {
-        message: '{{site.name}}: Stock-out expected {{date}} - Order Stock.',
+        message:
+          '{{site.name}}: Stock-out expected {{issue.data.date}} - Order Stock.',
       },
       auditFields
     )
@@ -71,9 +72,10 @@ async function seedStockIssues(knex) {
     Object.assign(
       {
         subject: '{{site.name}} stockout',
-        body: '{{site.name}}: Stock-out expected {{date}} - Order Stock.',
+        body:
+          '{{site.name}}: Stock-out expected {{issue.data.date}} - Order Stock.',
         htmlBody:
-          '<em>{{site.name}}:</em> Stock-out expected {{date}} - Order Stock.',
+          '<em>{{site.name}}:</em> Stock-out expected {{issue.data.date}} - Order Stock.',
       },
       auditFields
     )
@@ -83,7 +85,7 @@ async function seedStockIssues(knex) {
   // Inventory Stock Expiring Issue
   // ---------------------------------
   const messageStockExpiring =
-    '{{totalWasted}} consumables likely to expire in {{numberOfDays}} days.'
+    '{{issue.data.totalWasted}} consumables likely to expire in {{issue.data.daysDue}} days.'
   const [stockExpiringAlertTemplateId] = await knex('AlertTemplate').insert({
     message: messageStockExpiring,
     ...auditFields,
@@ -180,7 +182,7 @@ async function seedStockIssues(knex) {
         name: 'LU Escalated Stockout',
         partnerId,
         issueTypeId: issueTypes.InventoryStockout.id,
-        jobFunctionId: jobFunctionIdRegionalOfficer,
+        jobFunctionId: jobFunctionIdLabUser,
         level: 2,
         canAcknowledge: 0,
         messageTypeId: defaultMessageTypes.InventoryStockout.id,
@@ -219,7 +221,7 @@ async function seedStockIssues(knex) {
         name: 'LU Escalated Stock Expiring',
         partnerId,
         issueTypeId: issueTypes.InventoryStockExpiring.id,
-        jobFunctionId: jobFunctionIdRegionalOfficer,
+        jobFunctionId: jobFunctionIdLabUser,
         level: 2,
         canAcknowledge: 0,
         messageTypeId: defaultMessageTypes.InventoryStockExpiring.id,
