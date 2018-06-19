@@ -15,7 +15,15 @@ async function getDefaultMessageTypes(knex) {
     }, {})
 }
 
+// -------------------------------------------------------
+// seedStockIssues
+// -------------------------------------------------------
 async function seedStockIssues(knex) {
+  await knex('Partner').update({
+    dueDaysInventoryStockout: 30,
+    dueDaysInventoryStockExpiring: 30,
+  })
+
   const { id: partnerId } = await knex('Partner')
     .where({ name: 'Myanmar' })
     .first()
@@ -132,13 +140,6 @@ async function seedStockIssues(knex) {
       defaultMessageTypeId: stockExpiringMessageTypeId,
     },
   ])
-
-  await knex('Partner')
-    .where({ id: partnerId })
-    .update({
-      dueDaysInventoryStockout: 30,
-      dueDaysInventoryStockExpiring: 30,
-    })
 
   const [issueTypes, defaultMessageTypes] = await Promise.all([
     rowsAsObject(knex, 'IssueType', 'externalId'),

@@ -92,8 +92,6 @@ async function seed(knex) {
     deviceLogHistoryDays: 14,
     maxDaysDeviceOffline: 7,
     maxDaysDeviceNoResults: 14,
-    dueDaysInventoryStockout: 30,
-    dueDaysInventoryStockExpiring: 30,
   })
 
   const [partnerTwoId] = await knex('Partner').insert({
@@ -102,8 +100,6 @@ async function seed(knex) {
     deviceLogHistoryDays: 14,
     maxDaysDeviceOffline: 7,
     maxDaysDeviceNoResults: 14,
-    dueDaysInventoryStockout: 30,
-    dueDaysInventoryStockExpiring: 30,
   })
 
   // Categories of devices (lab, connectivity...)
@@ -4317,20 +4313,6 @@ async function seed(knex) {
       issueCategoryId: issueCategories.ConnectivityHealth.id,
       defaultMessageTypeId: deviceOfflineMessageTypeId,
     },
-    // {
-    //   name: 'Inventory Stockout',
-    //   externalId: 'InventoryStockout',
-    //   i18nKey: 'issueStatusInventoryStockout',
-    //   issueCategoryId: issueCategories.ReagentHealth.id,
-    //   defaultMessageTypeId: stockoutMessageTypeId,
-    // },
-    // {
-    //   name: 'Inventory Stock Expiring',
-    //   externalId: 'InventoryStockExpiring',
-    //   i18nKey: 'issueStatusInventoryStockExpiring',
-    //   issueCategoryId: issueCategories.ReagentHealth.id,
-    //   defaultMessageTypeId: stockExpiringMessageTypeId,
-    // },
     {
       name: 'Device No Results',
       externalId: 'DeviceNoResults',
