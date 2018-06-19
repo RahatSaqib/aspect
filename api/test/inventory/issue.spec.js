@@ -1,4 +1,4 @@
-const { addMonths, subMinutes } = require('date-fns')
+const { addMonths, subMinutes, addDays } = require('date-fns')
 const { assert, expect } = require('chai')
 
 const { queuePurge } = require('../utils/mqUtils')
@@ -9,7 +9,9 @@ const {
   waitForIdle,
   waitForAction,
 } = require('../utils/mqUtils')
-
+const {
+  processUsingHandlebarsSyntax,
+} = require('../../src/stringTemplate/service')
 // action creators
 const {
   inventoryStockout,
@@ -24,6 +26,9 @@ const {
   getIssueNotifications,
   cleanUpIssues,
 } = require('../utils/issueUtils')
+
+const USER_LU = 'myanmar_lab1'
+const USER_RO = 'myanmar_ro1'
 
 describe('Inventory Stock Issues Endpoint', () => {
   const partnerName = 'Myanmar'
@@ -222,6 +227,7 @@ async function triggerInitialIssue({
   await waitForAction(action)
   await waitForIdle()
   const dateFrom = subMinutes(new Date(), 5)
+  const dateDue = addDays(new Date(), daysDue)
 
   // get issues for last 10 mins for curent siteId and issueType
   const issue = await knex('Issue as i')
@@ -232,6 +238,7 @@ async function triggerInitialIssue({
     .where('ie.createdOn', '>', dateFrom)
     .first(
       'i.id',
+      'i.level',
       'ie.id as isuueEventId',
       'ie.data',
       'it.externalId as issueType',
@@ -251,6 +258,41 @@ async function triggerInitialIssue({
     `issueStatus (${issue.issueStatus}) is not Active`
   )
 
+  const notifications = await knex('Notification as n')
+    .join('NotificationType as nt', 'nt.id', 'n.notificationTypeId')
+    .join('JobFunction as jf', 'jf.id', 'nt.jobFunctionId')
+    .join('Person as p', 'p.id', 'n.personId')
+    .join('User as u', 'u.id', 'p.userId')
+    .join('AlertMessage as am', 'am.id', 'n.alertMessageId')
+    .where({ 'n.issueId': issue.id })
+    .orderBy('jf.name')
+    .select(
+      'u.name as userName',
+      'jf.name as jobFunction',
+      'nt.level',
+      'nt.canAcknowledge',
+      'am.message as alertMessage'
+    )
+
+  assert.equal(notifications.length, 2)
+  const [notificationLU, notificationRO] = notifications
+  assert.equal(notificationLU.userName, USER_LU)
+  assert.equal(notificationLU.jobFunction, 'Lab User')
+  assert.equal(notificationLU.level, issue.level)
+  assert.equal(notificationLU.canAcknowledge, 1)
+  const date = dateDue.toString()
+  if (issueType === 'InventoryStockout') {
+    assert.equal(
+      processUsingHandlebarsSyntax(notificationLU.alertMessage, { date }),
+      `Stock-out expected ${date} - Order Stock`
+    )
+  }
+  assert.equal(notificationRO.userName, USER_RO)
+  assert.equal(notificationRO.jobFunction, 'Regional Officer')
+  assert.equal(notificationRO.level, issue.level)
+  assert.equal(notificationRO.canAcknowledge, 0)
+
+  //
   const action2 = JSON.parse(issue.data)
   const consumableId2 = action2.consumableId
   const daysDue2 = action2.daysDue

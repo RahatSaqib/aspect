@@ -142,15 +142,19 @@ async function seedStockIssues(knex) {
     getDefaultMessageTypes(knex),
   ])
 
-  const [jobFunctionIdRegionalOfficer] = await knex('JobFunction').insert({
-    name: 'Regional Officer',
-    partnerId,
-  })
+  const { id: jobFunctionIdRegionalOfficer } = await knex('JobFunction')
+    .where({
+      name: 'Regional Officer',
+      partnerId,
+    })
+    .first()
 
-  const [jobFunctionIdLabUser] = await knex('JobFunction').insert({
-    name: 'Lab User',
-    partnerId,
-  })
+  const { id: jobFunctionIdLabUser } = await knex('JobFunction')
+    .where({
+      name: 'Lab User',
+      partnerId,
+    })
+    .first()
 
   // -------------------------------------------
   // Notifications
