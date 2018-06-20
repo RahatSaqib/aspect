@@ -99,8 +99,19 @@ function findInventoryItemMatchingConsumableInResultData(
   consumablesInResultData,
   inventoryItems
 ) {
+  const items = _.compact(
+    _.map(inventoryItems, item => {
+      if (item.inTransitFromSiteId != null) {
+        // Do not consider inventory items in transit
+        // TODO should transit check bubble up or included in query?
+        return null
+      }
+      return item
+    })
+  )
+
   // 1. Exact match of expire on and lot number
-  for (const inventoryItem of inventoryItems) {
+  for (const inventoryItem of items) {
     for (const consumableInResult of consumablesInResultData) {
       const resultExpirationDate = consumableInResult.expirationDate
         ? new Date(
@@ -116,9 +127,8 @@ function findInventoryItemMatchingConsumableInResultData(
         : null
 
       const matchExpiresAndLotNumber =
-        inventoryItem.inTransitFromSiteId === null &&
-        (_.isEqual(resultExpirationDate, inventoryItemExpirationDate) &&
-          _.isEqual(resultLotNumber, inventoryItemLotNumber))
+        _.isEqual(resultExpirationDate, inventoryItemExpirationDate) &&
+        _.isEqual(resultLotNumber, inventoryItemLotNumber)
       if (matchExpiresAndLotNumber) {
         return inventoryItem
       }
@@ -134,9 +144,10 @@ function findInventoryItemMatchingConsumableInResultData(
           )
         : null
       const inventoryItemExpirationDate = inventoryItem.expiresOn
-      const matchExpires =
-        inventoryItem.inTransitFromSiteId === null &&
-        _.isEqual(resultExpirationDate, inventoryItemExpirationDate)
+      const matchExpires = _.isEqual(
+        resultExpirationDate,
+        inventoryItemExpirationDate
+      )
       if (matchExpires) {
         return inventoryItem
       }
@@ -153,9 +164,7 @@ function findInventoryItemMatchingConsumableInResultData(
         ? inventoryItem.lotNumber
         : null
 
-      const matchLot =
-        inventoryItem.inTransitFromSiteId === null &&
-        _.isEqual(resultLotNumber, inventoryItemLotNumber)
+      const matchLot = _.isEqual(resultLotNumber, inventoryItemLotNumber)
       if (matchLot) {
         return inventoryItem
       }
