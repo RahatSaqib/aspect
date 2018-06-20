@@ -95,46 +95,57 @@ function compareConsumableInResultWithInventoryItem(
   )
 }
 
-function inventoryItemExistsInResultData(
-  consumablesInResultData,
-  inventoryItem,
-  mustMatchExpirationDate,
-  mustMatchLotNumber
-) {
-  return _.some(consumablesInResultData, consumableInResultData =>
-    compareConsumableInResultWithInventoryItem(
-      consumableInResultData,
-      inventoryItem,
-      mustMatchExpirationDate,
-      mustMatchLotNumber
-    )
-  )
-}
-
 function findInventoryItemMatchingConsumableInResultData(
   consumablesInResultData,
   inventoryItems
 ) {
-  return (
-    _.find(inventoryItems, inventoryItems =>
-      inventoryItemExistsInResultData(
-        consumablesInResultData,
-        inventoryItems,
+  // 1. Exact match of expire on and lot number
+  for (const inventoryItem of inventoryItems) {
+    for (const consumable of consumablesInResultData) {
+      const matchExpiresAndLotNumber = compareConsumableInResultWithInventoryItem(
+        consumable,
+        inventoryItem,
         true,
         true
       )
-    ) ||
-    _.find(inventoryItems, inventoryItem =>
-      inventoryItemExistsInResultData(
-        consumablesInResultData,
+      if (matchExpiresAndLotNumber) {
+        return inventoryItem
+      }
+    }
+  }
+
+  // 2. Exact match of expiration date
+  for (const inventoryItem of inventoryItems) {
+    for (const consumable of consumablesInResultData) {
+      const matchExpires = compareConsumableInResultWithInventoryItem(
+        consumable,
         inventoryItem,
-        true
+        true,
+        false
       )
-    ) ||
-    _.find(inventoryItems, inventoryItem =>
-      inventoryItemExistsInResultData(consumablesInResultData, inventoryItem)
-    )
-  )
+      if (matchExpires) {
+        return inventoryItem
+      }
+    }
+  }
+
+  // 3. Exact match of lot number
+  for (const inventoryItem of inventoryItems) {
+    for (const consumable of consumablesInResultData) {
+      const matchLot = compareConsumableInResultWithInventoryItem(
+        consumable,
+        inventoryItem,
+        false,
+        false
+      )
+      if (matchLot) {
+        return inventoryItem
+      }
+    }
+  }
+
+  // Cannot find anything
+  return null
 }
 
 async function consumeInventoryForResult(
@@ -223,6 +234,8 @@ async function consumeInventoryForResult(
             consumablesInResultData,
             matchingInventoryItems
           ) ||
+          // TODO are these following cases dead now that we allow null and
+          // close expiresOn in findInventoryItemMatchingConsumableInResultData ?
           (firstUnknownConsumableInResult
             ? {
                 id: null,
