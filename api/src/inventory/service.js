@@ -101,13 +101,29 @@ function findInventoryItemMatchingConsumableInResultData(
 ) {
   // 1. Exact match of expire on and lot number
   for (const inventoryItem of inventoryItems) {
-    for (const consumable of consumablesInResultData) {
-      const matchExpiresAndLotNumber = compareConsumableInResultWithInventoryItem(
-        consumable,
-        inventoryItem,
-        true,
-        true
-      )
+    for (const consumableInResult of consumablesInResultData) {
+      const resultExpirationDate = consumableInResult.expirationDate
+        ? new Date(
+            new Date(consumableInResult.expirationDate).setHours(0, 0, 0, 0)
+          )
+        : null
+      const inventoryItemExpirationDate = inventoryItem.expiresOn
+      const resultLotNumber = consumableInResult.lot
+        ? consumableInResult.lot
+        : null
+      const inventoryItemLotNumber = inventoryItem.lotNumber
+        ? inventoryItem.lotNumber
+        : null
+
+      const mustMatchExpirationDate = true
+      const mustMatchLotNumber = true
+      const matchExpiresAndLotNumber =
+        inventoryItem.inTransitFromSiteId === null &&
+        ((_.isEqual(resultExpirationDate, inventoryItemExpirationDate) &&
+          (!mustMatchLotNumber ||
+            _.isEqual(resultLotNumber, inventoryItemLotNumber))) ||
+          (!mustMatchExpirationDate &&
+            _.isEqual(resultLotNumber, inventoryItemLotNumber)))
       if (matchExpiresAndLotNumber) {
         return inventoryItem
       }
@@ -116,13 +132,29 @@ function findInventoryItemMatchingConsumableInResultData(
 
   // 2. Exact match of expiration date
   for (const inventoryItem of inventoryItems) {
-    for (const consumable of consumablesInResultData) {
-      const matchExpires = compareConsumableInResultWithInventoryItem(
-        consumable,
-        inventoryItem,
-        true,
-        false
-      )
+    for (const consumableInResult of consumablesInResultData) {
+      const resultExpirationDate = consumableInResult.expirationDate
+        ? new Date(
+            new Date(consumableInResult.expirationDate).setHours(0, 0, 0, 0)
+          )
+        : null
+      const inventoryItemExpirationDate = inventoryItem.expiresOn
+      const resultLotNumber = consumableInResult.lot
+        ? consumableInResult.lot
+        : null
+      const inventoryItemLotNumber = inventoryItem.lotNumber
+        ? inventoryItem.lotNumber
+        : null
+
+      const mustMatchExpirationDate = true
+      const mustMatchLotNumber = false
+      const matchExpires =
+        inventoryItem.inTransitFromSiteId === null &&
+        ((_.isEqual(resultExpirationDate, inventoryItemExpirationDate) &&
+          (!mustMatchLotNumber ||
+            _.isEqual(resultLotNumber, inventoryItemLotNumber))) ||
+          (!mustMatchExpirationDate &&
+            _.isEqual(resultLotNumber, inventoryItemLotNumber)))
       if (matchExpires) {
         return inventoryItem
       }
@@ -131,13 +163,29 @@ function findInventoryItemMatchingConsumableInResultData(
 
   // 3. Exact match of lot number
   for (const inventoryItem of inventoryItems) {
-    for (const consumable of consumablesInResultData) {
-      const matchLot = compareConsumableInResultWithInventoryItem(
-        consumable,
-        inventoryItem,
-        false,
-        false
-      )
+    for (const consumableInResult of consumablesInResultData) {
+      const resultExpirationDate = consumableInResult.expirationDate
+        ? new Date(
+            new Date(consumableInResult.expirationDate).setHours(0, 0, 0, 0)
+          )
+        : null
+      const inventoryItemExpirationDate = inventoryItem.expiresOn
+      const resultLotNumber = consumableInResult.lot
+        ? consumableInResult.lot
+        : null
+      const inventoryItemLotNumber = inventoryItem.lotNumber
+        ? inventoryItem.lotNumber
+        : null
+
+      const mustMatchExpirationDate = false
+      const mustMatchLotNumber = false
+      const matchLot =
+        inventoryItem.inTransitFromSiteId === null &&
+        ((_.isEqual(resultExpirationDate, inventoryItemExpirationDate) &&
+          (!mustMatchLotNumber ||
+            _.isEqual(resultLotNumber, inventoryItemLotNumber))) ||
+          (!mustMatchExpirationDate &&
+            _.isEqual(resultLotNumber, inventoryItemLotNumber)))
       if (matchLot) {
         return inventoryItem
       }
