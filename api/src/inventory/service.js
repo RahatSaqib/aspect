@@ -106,67 +106,49 @@ function findInventoryItemMatchingConsumableInResultData(
         // TODO should transit check bubble up or included in query?
         return null
       }
-      return item
+      return {
+        inventoryItem: item,
+        expiresOn: item.expiresOn,
+        lot: item.lotNumber ? item.lotNumber : null,
+      }
     })
   )
 
-  // 1. Exact match of expire on and lot number
-  for (const inventoryItem of items) {
-    for (const consumableInResult of consumablesInResultData) {
-      const resultExpirationDate = consumableInResult.expirationDate
-        ? new Date(
-            new Date(consumableInResult.expirationDate).setHours(0, 0, 0, 0)
-          )
-        : null
-      const inventoryItemExpirationDate = inventoryItem.expiresOn
-      const resultLotNumber = consumableInResult.lot
-        ? consumableInResult.lot
-        : null
-      const inventoryItemLotNumber = inventoryItem.lotNumber
-        ? inventoryItem.lotNumber
-        : null
+  const consumables = _.map(consumablesInResultData, consumable => ({
+    expiresOn: consumable.expirationDate
+      ? new Date(new Date(consumable.expirationDate).setHours(0, 0, 0, 0))
+      : null,
+    lot: consumable.lot ? consumable.lot : null,
+  }))
 
+  // 1. Exact match of expire on and lot number
+  for (const item of items) {
+    for (const consumable of consumables) {
       const matchExpiresAndLotNumber =
-        _.isEqual(resultExpirationDate, inventoryItemExpirationDate) &&
-        _.isEqual(resultLotNumber, inventoryItemLotNumber)
+        _.isEqual(consumable.expiresOn, item.expiresOn) &&
+        _.isEqual(consumable.lot, item.lot)
       if (matchExpiresAndLotNumber) {
-        return inventoryItem
+        return item.inventoryItem
       }
     }
   }
 
   // 2. Exact match of expiration date
-  for (const inventoryItem of inventoryItems) {
-    for (const consumableInResult of consumablesInResultData) {
-      const resultExpirationDate = consumableInResult.expirationDate
-        ? new Date(
-            new Date(consumableInResult.expirationDate).setHours(0, 0, 0, 0)
-          )
-        : null
-      const inventoryItemExpirationDate = inventoryItem.expiresOn
-      const matchExpires = _.isEqual(
-        resultExpirationDate,
-        inventoryItemExpirationDate
-      )
+  for (const item of items) {
+    for (const consumable of consumables) {
+      const matchExpires = _.isEqual(consumable.expiresOn, item.expiresOn)
       if (matchExpires) {
-        return inventoryItem
+        return item.inventoryItem
       }
     }
   }
 
   // 3. Exact match of lot number
-  for (const inventoryItem of inventoryItems) {
-    for (const consumableInResult of consumablesInResultData) {
-      const resultLotNumber = consumableInResult.lot
-        ? consumableInResult.lot
-        : null
-      const inventoryItemLotNumber = inventoryItem.lotNumber
-        ? inventoryItem.lotNumber
-        : null
-
-      const matchLot = _.isEqual(resultLotNumber, inventoryItemLotNumber)
+  for (const item of items) {
+    for (const consumable of consumables) {
+      const matchLot = _.isEqual(consumable.lot, item.lot)
       if (matchLot) {
-        return inventoryItem
+        return item.inventoryItem
       }
     }
   }
