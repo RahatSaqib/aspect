@@ -68,33 +68,6 @@ function selectInventoryItemsAtSite(siteId, knex) {
     .select()
 }
 
-function compareConsumableInResultWithInventoryItem(
-  consumableInResult,
-  inventoryItem,
-  mustMatchExpirationDate,
-  mustMatchLotNumber
-) {
-  const resultExpirationDate = consumableInResult.expirationDate
-    ? new Date(new Date(consumableInResult.expirationDate).setHours(0, 0, 0, 0))
-    : null
-  const inventoryItemExpirationDate = inventoryItem.expiresOn
-  const resultLotNumber = consumableInResult.lot ? consumableInResult.lot : null
-  const inventoryItemLotNumber = inventoryItem.lotNumber
-    ? inventoryItem.lotNumber
-    : null
-
-  /* TODO: If we can't match on expiration date and lot number,
-     we need to find the item with the nearest expiration date */
-  return (
-    inventoryItem.inTransitFromSiteId === null &&
-    ((_.isEqual(resultExpirationDate, inventoryItemExpirationDate) &&
-      (!mustMatchLotNumber ||
-        _.isEqual(resultLotNumber, inventoryItemLotNumber))) ||
-      (!mustMatchExpirationDate &&
-        _.isEqual(resultLotNumber, inventoryItemLotNumber)))
-  )
-}
-
 function findInventoryItemMatchingConsumableInResultData(
   consumablesInResultData,
   inventoryItems
@@ -179,22 +152,6 @@ async function consumeInventoryForResult(
     'Test Conducted'
   )
 
-  const firstUnknownConsumableInResult =
-    _.find(
-      consumablesInResultData,
-      consumableInResultData =>
-        !_.some(
-          inventoryItemsAtSite,
-          inventoryItem =>
-            !compareConsumableInResultWithInventoryItem(
-              consumableInResultData,
-              inventoryItem
-            )
-        )
-    ) || _.isEmpty(consumablesInResultData)
-      ? null
-      : consumablesInResultData[0]
-
   await Promise.all(
     _.map(assayConsumables, async assayConsumable => {
       const existingInventoryLog = await knex('InventoryLog as il')
@@ -243,31 +200,17 @@ async function consumeInventoryForResult(
             consumablesInResultData,
             matchingInventoryItems
           ) ||
-          // TODO are these following cases dead now that we allow null and
-          // close expiresOn in findInventoryItemMatchingConsumableInResultData ?
-          (firstUnknownConsumableInResult
-            ? {
-                id: null,
-                lotNumber: firstUnknownConsumableInResult.lot,
-                expiresOn: firstUnknownConsumableInResult.expirationDate
-                  ? new Date(
-                      new Date(
-                        firstUnknownConsumableInResult.expirationDate
-                      ).setHours(0, 0, 0, 0)
-                    )
-                  : null,
-              }
-            : _.find(
-                _.sortBy(matchingInventoryItems, 'expiresOn'),
-                inventoryItemAtSite =>
-                  inventoryItemAtSite.consumableId ===
-                    assayConsumable.consumableId &&
-                  inventoryItemAtSite.expiresOn >=
-                    new Date((testStartedOn || now).setHours(0, 0, 0, 0))
-              ) ||
-              _.find(_.sortBy(matchingInventoryItems, 'expiresOn'), {
-                consumableId: assayConsumable.consumableId,
-              }))
+          (_.find(
+            _.sortBy(matchingInventoryItems, 'expiresOn'),
+            inventoryItemAtSite =>
+              inventoryItemAtSite.consumableId ===
+                assayConsumable.consumableId &&
+              inventoryItemAtSite.expiresOn >=
+                new Date((testStartedOn || now).setHours(0, 0, 0, 0))
+          ) ||
+            _.find(_.sortBy(matchingInventoryItems, 'expiresOn'), {
+              consumableId: assayConsumable.consumableId,
+            }))
         await logInventoryChange({
           knex,
           inventoryItemId: matchingInventoryOnHand.id,
