@@ -81,6 +81,11 @@ async function consumeInventoryForResult(
 
   const inventoryItemsAtSite = await knex('InventoryItem')
     .where({ siteId })
+    .whereNull('inTransitFromSiteId')
+    // Order by expiresOn asc nulls last, createdOn desc
+    .orderByRaw('expiresOn is null')
+    .orderBy('expiresOn', 'asc')
+    .orderBy('createdOn', 'desc')
     .select()
 
   const { id: testRunConsumableReasonId } = await findConsumableReason(
@@ -132,15 +137,15 @@ async function consumeInventoryForResult(
           adjustedTo: testEndedOn,
           createdOn: now,
         })
-        if (matchingInventoryOnHand.id) {
-          await updateInventoryItem(knex, matchingInventoryOnHand.id, {
-            quantityOnHand: knex.raw(
-              `GREATEST(quantityOnHand - ${assayConsumable.quantity}, 0)`
-            ),
-            updatedBy: null,
-            updatedOn: now,
-          })
-        }
+
+        // Update quantity on hand
+        await updateInventoryItem(knex, matchingInventoryOnHand.id, {
+          quantityOnHand: knex.raw(
+            `GREATEST(quantityOnHand - ${assayConsumable.quantity}, 0)`
+          ),
+          updatedBy: null,
+          updatedOn: now,
+        })
       }
     })
   )
@@ -189,20 +194,11 @@ function findInventoryItemMatchingConsumableInResultData(
   itemCutoffDate
 ) {
   // Normalize input data for comparisons below
-  const items = _.compact(
-    _.map(_.sortBy(inventoryItems, ['expiresOn', 'createdOn']), item => {
-      if (item.inTransitFromSiteId != null) {
-        // Do not consider inventory items in transit
-        // TODO should transit check bubble up or included in query?
-        return null
-      }
-      return {
-        inventoryItem: item,
-        expiresOn: item.expiresOn,
-        lot: item.lotNumber ? item.lotNumber : null,
-      }
-    })
-  )
+  const items = _.map(inventoryItems, item => ({
+    inventoryItem: item,
+    expiresOn: item.expiresOn,
+    lot: item.lotNumber ? item.lotNumber : null,
+  }))
 
   const consumables = _.map(consumablesInResultData, consumable => ({
     expiresOn: consumable.expirationDate
