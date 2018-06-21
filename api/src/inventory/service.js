@@ -289,19 +289,41 @@ function findInventoryItemMatchingConsumableInResultData(
     }
 
     // Closest expiration date
-    /*
     if (hasItemExpiresOn && hasConsumableExpiresOn) {
-      const previousItemExpiresOn = items[0].expiresOn
-      for (const item of items.slice(1)) {
-        if (item.expiresOn == null) {
-          break
-        }
+      let bestItemMatch = null
+      let bestItemAbsDiff = null
+      for (const consumable of consumables) {
+        if (consumable.expiresOn != null) {
+          const consumableTime = consumable.expiresOn.getTime()
+          for (const item of items) {
+            if (item.expiresOn == null) {
+              // ordered by expiresOn null last, so we have no more to check
+              break
+            }
 
-        for (const consumable of consumables) {
+            // TODO do we want to skip items that expired before consumable date?
+            const currentDiff = item.expiresOn.getTime() - consumableTime
+            const currentAbsDiff = Math.abs(currentDiff)
+            if (bestItemAbsDiff == null || currentAbsDiff < bestItemAbsDiff) {
+              // if we don't have a current best, or abs diff is smaller,
+              // then this is the best so far
+              bestItemMatch = item
+              bestItemAbsDiff = currentAbsDiff
+            }
+
+            if (currentDiff >= 0) {
+              // we've crossed threshold for this consumable since we are
+              // ordered by item expiresOn. The best match is either this
+              // or previous item, depending on absolate value
+              break
+            }
+          }
         }
       }
+      if (bestItemMatch != null) {
+        return bestItemMatch.inventoryItem
+      }
     }
-    */
   }
 
   // Find Least recent inventory item that expires after test started
