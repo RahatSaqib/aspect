@@ -62,10 +62,125 @@ const INVENTORY_ITEM_FILTER_FIELDS = {
 
 const INVENTORY_ITEM_DATA_CONSTRAINT_ALIASES = { geography: 'g', site: 's' }
 
-function selectInventoryItemsAtSite(siteId, knex) {
-  return knex('InventoryItem')
+async function consumeInventoryForResult(
+  resultId,
+  assayId,
+  siteId,
+  consumablesInResultData,
+  partnerId,
+  testStartedOn,
+  testEndedOn,
+  knex
+) {
+  const now = new Date()
+  const assayConsumables = await selectAssayConsumables(
+    knex,
+    partnerId,
+    assayId
+  )
+
+  const inventoryItemsAtSite = await knex('InventoryItem')
     .where({ siteId })
     .select()
+
+  const { id: testRunConsumableReasonId } = await findConsumableReason(
+    'Test Conducted'
+  )
+
+  await Promise.all(
+    _.map(assayConsumables, async assayConsumable => {
+      const existingInventoryLog = await knex('InventoryLog as il')
+        .join('InventoryItem as ii', 'il.inventoryItemId', 'ii.id')
+        .where({
+          'il.resultId': resultId,
+          'ii.consumableId': assayConsumable.consumableId,
+        })
+        .first('ii.id')
+      // Don't double deduct inventory for the same result
+      if (_.isEmpty(existingInventoryLog)) {
+        // Find Inventory on hand where lot number and expiry date match
+        const matchingInventoryItems = await findOrCreateMatchingInventoryItems(
+          knex,
+          siteId,
+          inventoryItemsAtSite,
+          assayConsumable,
+          consumablesInResultData,
+          now
+        )
+        const testCutoffDate = new Date(
+          (testStartedOn || testEndedOn || now).setHours(0, 0, 0, 0)
+        )
+        const matchingInventoryOnHand = findInventoryItemMatchingConsumableInResultData(
+          consumablesInResultData,
+          matchingInventoryItems,
+          testCutoffDate
+        )
+
+        // Log change
+        await logInventoryChange({
+          knex,
+          inventoryItemId: matchingInventoryOnHand.id,
+          consumableId: assayConsumable.consumableId,
+          siteId,
+          consumableReasonId: testRunConsumableReasonId,
+          resultId,
+          lotNumber: matchingInventoryOnHand.lotNumber,
+          expiresOn: matchingInventoryOnHand.expiresOn,
+          quantity: assayConsumable.quantity,
+          operation: 'result',
+          adjustedFrom: testStartedOn,
+          adjustedTo: testEndedOn,
+          createdOn: now,
+        })
+        if (matchingInventoryOnHand.id) {
+          await updateInventoryItem(knex, matchingInventoryOnHand.id, {
+            quantityOnHand: knex.raw(
+              `GREATEST(quantityOnHand - ${assayConsumable.quantity}, 0)`
+            ),
+            updatedBy: null,
+            updatedOn: now,
+          })
+        }
+      }
+    })
+  )
+}
+
+async function findOrCreateMatchingInventoryItems(
+  knex,
+  siteId,
+  inventoryItemsAtSite,
+  assayConsumable,
+  consumablesInResultData,
+  now
+) {
+  const matchingInventoryItems = _.filter(inventoryItemsAtSite, {
+    consumableId: assayConsumable.consumableId,
+  })
+  if (_.isEmpty(matchingInventoryItems)) {
+    const lotNumberInResultData = _.get(consumablesInResultData, '[0].lot')
+    const expirationDateInResultData = _.get(
+      consumablesInResultData,
+      '[0].expirationDate'
+    )
+    const newInventoryItemId = await upsertInventoryItem({
+      knex,
+      consumableId: assayConsumable.consumableId,
+      siteId,
+      lotNumber: lotNumberInResultData,
+      expiresOn: expirationDateInResultData
+        ? new Date(new Date(expirationDateInResultData).setHours(0, 0, 0, 0))
+        : undefined,
+      quantity: 0,
+      now,
+    })
+    matchingInventoryItems.push(
+      await knex('InventoryItem')
+        .where({ id: newInventoryItemId })
+        .first()
+    )
+  }
+  return matchingInventoryItems
 }
 
 function findInventoryItemMatchingConsumableInResultData(
@@ -141,108 +256,6 @@ function findInventoryItemMatchingConsumableInResultData(
   //  Note we should always have at least one item since we create
   //  if does not exist per AssayConsumable
   return items[0].inventoryItem
-}
-
-async function consumeInventoryForResult(
-  resultId,
-  assayId,
-  siteId,
-  consumablesInResultData,
-  partnerId,
-  testStartedOn,
-  testEndedOn,
-  knex
-) {
-  const now = new Date()
-  const assayConsumables = await selectAssayConsumables(
-    knex,
-    partnerId,
-    assayId
-  )
-
-  const inventoryItemsAtSite = await selectInventoryItemsAtSite(siteId, knex)
-  const { id: testRunConsumableReasonId } = await findConsumableReason(
-    'Test Conducted'
-  )
-
-  await Promise.all(
-    _.map(assayConsumables, async assayConsumable => {
-      const existingInventoryLog = await knex('InventoryLog as il')
-        .join('InventoryItem as ii', 'il.inventoryItemId', 'ii.id')
-        .where({
-          'il.resultId': resultId,
-          'ii.consumableId': assayConsumable.consumableId,
-        })
-        .first('ii.id')
-      // Don't double deduct inventory for the same result
-      if (_.isEmpty(existingInventoryLog)) {
-        // Find Inventory on hand where lot number and expiry date match
-        const matchingInventoryItems = _.filter(inventoryItemsAtSite, {
-          consumableId: assayConsumable.consumableId,
-        })
-        if (_.isEmpty(matchingInventoryItems)) {
-          const lotNumberInResultData = _.get(
-            consumablesInResultData,
-            '[0].lot'
-          )
-          const expirationDateInResultData = _.get(
-            consumablesInResultData,
-            '[0].expirationDate'
-          )
-          const newInventoryItemId = await upsertInventoryItem({
-            knex,
-            consumableId: assayConsumable.consumableId,
-            siteId,
-            lotNumber: lotNumberInResultData,
-            expiresOn: expirationDateInResultData
-              ? new Date(
-                  new Date(expirationDateInResultData).setHours(0, 0, 0, 0)
-                )
-              : undefined,
-            quantity: 0,
-            now,
-          })
-          matchingInventoryItems.push(
-            await knex('InventoryItem')
-              .where({ id: newInventoryItemId })
-              .first()
-          )
-        }
-        const testCutoffDate = new Date(
-          (testStartedOn || testEndedOn || now).setHours(0, 0, 0, 0)
-        )
-        const matchingInventoryOnHand = findInventoryItemMatchingConsumableInResultData(
-          consumablesInResultData,
-          matchingInventoryItems,
-          testCutoffDate
-        )
-        await logInventoryChange({
-          knex,
-          inventoryItemId: matchingInventoryOnHand.id,
-          consumableId: assayConsumable.consumableId,
-          siteId,
-          consumableReasonId: testRunConsumableReasonId,
-          resultId,
-          lotNumber: matchingInventoryOnHand.lotNumber,
-          expiresOn: matchingInventoryOnHand.expiresOn,
-          quantity: assayConsumable.quantity,
-          operation: 'result',
-          adjustedFrom: testStartedOn,
-          adjustedTo: testEndedOn,
-          createdOn: now,
-        })
-        if (matchingInventoryOnHand.id) {
-          await updateInventoryItem(knex, matchingInventoryOnHand.id, {
-            quantityOnHand: knex.raw(
-              `GREATEST(quantityOnHand - ${assayConsumable.quantity}, 0)`
-            ),
-            updatedBy: null,
-            updatedOn: now,
-          })
-        }
-      }
-    })
-  )
 }
 
 async function listInventoryItems(request) {
