@@ -200,67 +200,122 @@ function findInventoryItemMatchingConsumableInResultData(
   }
 
   // Normalize input data for comparisons below
-  const items = _.map(inventoryItems, item => ({
-    inventoryItem: item,
-    expiresOn: item.expiresOn,
-    lot: item.lotNumber ? item.lotNumber : null,
-  }))
+  let hasItemExpiresOn = false
+  let hasItemLot = false
+  let hasConsumable = false
+  let hasConsumableExpiresOn = false
+  let hasConsumableLot = false
+
+  const items = _.map(inventoryItems, item => {
+    const normalizedItem = {
+      inventoryItem: item,
+      expiresOn: item.expiresOn,
+      lot: item.lotNumber ? item.lotNumber : null,
+    }
+    hasItemExpiresOn = hasItemExpiresOn || normalizedItem.expiresOn != null
+    hasItemLot = hasItemLot || normalizedItem.lot != null
+    return normalizedItem
+  })
 
   const consumables = _.map(consumablesInResultData, consumable => {
     const consumableExpirationDate = parseDateOrDefault(
       consumable.expirationDate
     )
-    return {
+    const normalizedConsumable = {
       expiresOn: consumableExpirationDate
         ? startOfDay(consumableExpirationDate)
         : null,
       lot: consumable.lot ? consumable.lot : null,
     }
+    hasConsumable = true
+    hasConsumableExpiresOn =
+      hasConsumableExpiresOn || normalizedConsumable.expiresOn != null
+    hasConsumableLot = hasConsumableLot || normalizedConsumable.lot != null
+    return normalizedConsumable
   })
 
-  // 1. Exact match of expire on and lot number
-  for (const item of items) {
-    for (const consumable of consumables) {
-      const matchExpiresAndLotNumber =
-        item.expiresOn != null &&
-        item.lot != null &&
-        _.isEqual(consumable.expiresOn, item.expiresOn) &&
-        _.isEqual(consumable.lot, item.lot)
-      if (matchExpiresAndLotNumber) {
-        return item.inventoryItem
+  if (hasConsumable) {
+    // Exact match of expire on and lot number
+    if (
+      hasItemExpiresOn &&
+      hasItemLot &&
+      hasConsumableExpiresOn &&
+      hasConsumableLot
+    ) {
+      for (const item of items) {
+        if (item.expiresOn == null) {
+          break // Ordered by expiresOn, nulls last
+        }
+
+        for (const consumable of consumables) {
+          const matchExpiresAndLotNumber =
+            item.lot != null &&
+            _.isEqual(consumable.expiresOn, item.expiresOn) &&
+            _.isEqual(consumable.lot, item.lot)
+          if (matchExpiresAndLotNumber) {
+            return item.inventoryItem
+          }
+        }
       }
     }
+
+    // Exact match of expiration date
+    if (hasItemExpiresOn && hasConsumableExpiresOn) {
+      for (const item of items) {
+        if (item.expiresOn == null) {
+          break
+        }
+
+        for (const consumable of consumables) {
+          const matchExpires = _.isEqual(consumable.expiresOn, item.expiresOn)
+          if (matchExpires) {
+            return item.inventoryItem
+          }
+        }
+      }
+    }
+
+    // Exact match of lot number
+    if (hasItemLot && hasConsumableLot) {
+      for (const item of items) {
+        for (const consumable of consumables) {
+          const matchLot =
+            item.lot != null && _.isEqual(consumable.lot, item.lot)
+          if (matchLot) {
+            return item.inventoryItem
+          }
+        }
+      }
+    }
+
+    // Closest expiration date
+    /*
+    if (hasItemExpiresOn && hasConsumableExpiresOn) {
+      const previousItemExpiresOn = items[0].expiresOn
+      for (const item of items.slice(1)) {
+        if (item.expiresOn == null) {
+          break
+        }
+
+        for (const consumable of consumables) {
+        }
+      }
+    }
+    */
   }
 
-  // 2. Exact match of expiration date
-  for (const item of items) {
-    for (const consumable of consumables) {
-      const matchExpires =
-        item.expiresOn != null &&
-        _.isEqual(consumable.expiresOn, item.expiresOn)
-      if (matchExpires) {
-        return item.inventoryItem
-      }
-    }
-  }
-
-  // 3. Exact match of lot number
-  for (const item of items) {
-    for (const consumable of consumables) {
-      const matchLot = item.lot != null && _.isEqual(consumable.lot, item.lot)
-      if (matchLot) {
-        return item.inventoryItem
-      }
-    }
-  }
   // Find Least recent inventory item that expires after test started
-  const itemCutoffDate = startOfDay(testedOn || now)
-  const firstItemAfterTest = _.find(
-    items,
-    item => item.expiresOn != null && item.expiresOn >= itemCutoffDate
-  )
-  if (firstItemAfterTest != null) {
-    return firstItemAfterTest.inventoryItem
+  if (hasItemExpiresOn) {
+    const itemCutoffDate = startOfDay(testedOn || now)
+    for (const item of items) {
+      if (item.expiresOn == null) {
+        break
+      }
+      const itemExpireAfterTest = item.expiresOn >= itemCutoffDate
+      if (itemExpireAfterTest) {
+        return item.inventoryItem
+      }
+    }
   }
 
   //  If all else fails, use first match, due to order of query,
