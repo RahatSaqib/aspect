@@ -327,11 +327,14 @@ function findInventoryItemMatchingConsumableInResultData(
   }
 
   // Find Least recent inventory item that expires after test started
+  // -or- most recently created item with null expires on
   if (hasItemExpiresOn) {
     const itemCutoffDate = startOfDay(testedOn || now)
     for (const item of items) {
       if (item.expiresOn == null) {
-        break
+        // most recently created item with null expires on
+        // ordered by nulls last, so will prefer next check
+        return item.inventoryItem
       }
       const itemExpireAfterTest = item.expiresOn >= itemCutoffDate
       if (itemExpireAfterTest) {
@@ -340,8 +343,8 @@ function findInventoryItemMatchingConsumableInResultData(
     }
   }
 
-  //  If all else fails, use first match, due to order of query,
-  //  this is the least recent expiresOn, then the most recent createdOn
+  //  If all else fails, use first match, due to order of query, and
+  //  previous checks, this is the least recent expiresOn
   //  Note we should always have at least one item since we create
   //  if does not exist per AssayConsumable
   return items[0].inventoryItem
