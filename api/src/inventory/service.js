@@ -104,10 +104,11 @@ async function consumeInventoryForResult(
           consumablesInResultData,
           now
         )
+        const testedOn = testStartedOn || testEndedOn
         const matchingInventoryOnHand = findInventoryItemMatchingConsumableInResultData(
           consumablesInResultData,
           matchingInventoryItems,
-          testStartedOn || testEndedOn,
+          testedOn,
           now
         )
 
@@ -128,14 +129,17 @@ async function consumeInventoryForResult(
           createdOn: now,
         })
 
-        // Update quantity on hand
-        await updateInventoryItem(knex, matchingInventoryOnHand.id, {
-          quantityOnHand: knex.raw(
-            `GREATEST(quantityOnHand - ${assayConsumable.quantity}, 0)`
-          ),
-          updatedBy: null,
-          updatedOn: now,
-        })
+        // Update quantity on hand, but result completed after
+        // item was updated, to avoid double counting.
+        if (matchingInventoryOnHand.updatedOn < (testedOn || now)) {
+          // TODO Do we want to bump updatedOn here? I don't think so
+          // because of the double count check protecting this update
+          await updateInventoryItem(knex, matchingInventoryOnHand.id, {
+            quantityOnHand: knex.raw(
+              `GREATEST(quantityOnHand - ${assayConsumable.quantity}, 0)`
+            ),
+          })
+        }
       }
     })
   )

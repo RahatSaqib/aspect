@@ -1596,6 +1596,7 @@ describe('Device Result API routes', () => {
       it('should try to deduct the correct inventory item based on expiration date and lot number', () =>
         runTest(async knex => {
           const { deviceId, deviceAuth, now } = context
+          const past = new Date(+now - 36000)
           const { siteId } = await knex('Device')
             .where({ id: deviceId })
             .first('siteId')
@@ -1621,9 +1622,9 @@ describe('Device Result API routes', () => {
             expiresOn: new Date(resultDetails.expirationDate),
             quantityOnHand: 20,
             createdBy: adminId,
-            createdOn: now,
+            createdOn: past,
             updatedBy: adminId,
-            updatedOn: now,
+            updatedOn: past,
           })
 
           const inventoryConsumedByTest = (await knex('ConsumableAssay as ca')
@@ -1690,9 +1691,9 @@ describe('Device Result API routes', () => {
             expiresOn: randomExpiryDate,
             quantityOnHand: 30,
             createdBy: adminId,
-            createdOn: now,
+            createdOn: past,
             updatedBy: adminId,
-            updatedOn: now,
+            updatedOn: past,
           })
           cartridgeAtSiteBefore = _.find(
             await getInventoryItemsAtSite(knex, siteId),
@@ -1754,9 +1755,9 @@ describe('Device Result API routes', () => {
             expiresOn: new Date(resultDetails.expirationDate),
             quantityOnHand: 45,
             createdBy: adminId,
-            createdOn: now,
+            createdOn: past,
             updatedBy: adminId,
-            updatedOn: now,
+            updatedOn: past,
           })
           cartridgeAtSiteBefore = _.find(
             await getInventoryItemsAtSite(knex, siteId),
@@ -1824,6 +1825,7 @@ describe('Device Result API routes', () => {
       it('should try to deduct the correct inventory item based on expiration date over lot number', () =>
         runTest(async knex => {
           const { deviceId, deviceAuth, now, auth: { user } } = context
+          const past = new Date(+now - 36000)
           const { siteId } = await knex('Device')
             .where({ id: deviceId })
             .first('siteId')
@@ -1852,9 +1854,9 @@ describe('Device Result API routes', () => {
             expiresOn: randomExpiryDate,
             quantityOnHand: 30,
             createdBy: adminId,
-            createdOn: now,
+            createdOn: past,
             updatedBy: adminId,
-            updatedOn: now,
+            updatedOn: past,
           })
           const randomLotNumber = 'SOME-LOT-NUMBER'
           const [onlyExpirationDateMatches] = await knex(
@@ -1866,9 +1868,9 @@ describe('Device Result API routes', () => {
             expiresOn: new Date(resultDetails.expirationDate),
             quantityOnHand: 45,
             createdBy: adminId,
-            createdOn: now,
+            createdOn: past,
             updatedBy: adminId,
-            updatedOn: now,
+            updatedOn: past,
           })
           const inventoryItemsBefore = await getInventoryItemsAtSite(
             knex,
