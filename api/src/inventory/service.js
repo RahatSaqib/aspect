@@ -79,15 +79,6 @@ async function consumeInventoryForResult(
     assayId
   )
 
-  const inventoryItemsAtSite = await knex('InventoryItem')
-    .where({ siteId })
-    .whereNull('inTransitFromSiteId')
-    // Order by expiresOn asc nulls last, createdOn desc
-    .orderByRaw('expiresOn is null')
-    .orderBy('expiresOn', 'asc')
-    .orderBy('createdOn', 'desc')
-    .select()
-
   const { id: testRunConsumableReasonId } = await findConsumableReason(
     'Test Conducted'
   )
@@ -107,7 +98,6 @@ async function consumeInventoryForResult(
         const matchingInventoryItems = await findOrCreateMatchingInventoryItems(
           knex,
           siteId,
-          inventoryItemsAtSite,
           assayConsumable,
           consumablesInResultData,
           now
@@ -154,38 +144,46 @@ async function consumeInventoryForResult(
 async function findOrCreateMatchingInventoryItems(
   knex,
   siteId,
-  inventoryItemsAtSite,
   assayConsumable,
   consumablesInResultData,
   now
 ) {
-  const matchingInventoryItems = _.filter(inventoryItemsAtSite, {
-    consumableId: assayConsumable.consumableId,
-  })
-  if (_.isEmpty(matchingInventoryItems)) {
-    const lotNumberInResultData = _.get(consumablesInResultData, '[0].lot')
-    const expirationDateInResultData = _.get(
-      consumablesInResultData,
-      '[0].expirationDate'
-    )
-    const newInventoryItemId = await upsertInventoryItem({
-      knex,
-      consumableId: assayConsumable.consumableId,
-      siteId,
-      lotNumber: lotNumberInResultData,
-      expiresOn: expirationDateInResultData
-        ? new Date(new Date(expirationDateInResultData).setHours(0, 0, 0, 0))
-        : undefined,
-      quantity: 0,
-      now,
-    })
-    matchingInventoryItems.push(
-      await knex('InventoryItem')
-        .where({ id: newInventoryItemId })
-        .first()
-    )
+  const { consumableId } = assayConsumable
+  const existingItems = await knex('InventoryItem')
+    .where({ siteId, consumableId })
+    .whereNull('inTransitFromSiteId')
+    // Order by expiresOn asc nulls last, createdOn desc
+    .orderByRaw('expiresOn is null')
+    .orderBy('expiresOn', 'asc')
+    .orderBy('createdOn', 'desc')
+    .select()
+  if (existingItems.length > 0) {
+    return existingItems
   }
-  return matchingInventoryItems
+
+  // TODO should we create a new item for each consumable in result data?
+  // instead of just the first
+  const lotNumberInResultData = _.get(consumablesInResultData, '[0].lot')
+  const expirationDateInResultData = _.get(
+    consumablesInResultData,
+    '[0].expirationDate'
+  )
+  const newInventoryItemId = await upsertInventoryItem({
+    knex,
+    consumableId,
+    siteId,
+    lotNumber: lotNumberInResultData,
+    expiresOn: expirationDateInResultData
+      ? new Date(new Date(expirationDateInResultData).setHours(0, 0, 0, 0))
+      : undefined,
+    quantity: 0,
+    now,
+  })
+
+  const newItem = await knex('InventoryItem')
+    .where({ id: newInventoryItemId })
+    .first()
+  return [newItem]
 }
 
 function findInventoryItemMatchingConsumableInResultData(
