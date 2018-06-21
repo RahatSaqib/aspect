@@ -105,7 +105,10 @@ async function consumeInventoryForResult(
           now
         )
         const testedOn = testStartedOn || testEndedOn
-        const matchingInventoryOnHand = findInventoryItemMatchingConsumableInResultData(
+        const {
+          inventoryItem: matchingInventoryOnHand,
+          consumable: matchingConsumable,
+        } = findInventoryItemMatchingConsumableInResultData(
           consumablesInResultData,
           matchingInventoryItems,
           testedOn,
@@ -129,16 +132,40 @@ async function consumeInventoryForResult(
           createdOn: now,
         })
 
+        const inventoryItemUpdates = {}
+
         // Update quantity on hand, but result completed after
         // item was updated, to avoid double counting.
         if (matchingInventoryOnHand.updatedOn < (testedOn || now)) {
           // TODO Do we want to bump updatedOn here? I don't think so
           // because of the double count check protecting this update
-          await updateInventoryItem(knex, matchingInventoryOnHand.id, {
-            quantityOnHand: knex.raw(
-              `GREATEST(quantityOnHand - ${assayConsumable.quantity}, 0)`
-            ),
-          })
+          inventoryItemUpdates.quantityOnHand = knex.raw(
+            `GREATEST(quantityOnHand - ${assayConsumable.quantity}, 0)`
+          )
+        }
+
+        // if we had an exact match on consumable date, and we don't have
+        // a lot number for inventory item, but we do for matching consumable,
+        // copy it over
+        if (
+          matchingConsumable != null &&
+          matchingInventoryOnHand.lotNumber == null &&
+          matchingConsumable.lot != null &&
+          matchingInventoryOnHand.expiresOn != null &&
+          _.isEqual(
+            matchingInventoryOnHand.expiresOn,
+            parseDateOrDefault(matchingConsumable.expirationDate)
+          )
+        ) {
+          inventoryItemUpdates.lotNumber = matchingConsumable.lot
+        }
+
+        if (!_.isEmpty(inventoryItemUpdates)) {
+          await updateInventoryItem(
+            knex,
+            matchingInventoryOnHand.id,
+            inventoryItemUpdates
+          )
         }
       }
     })
@@ -198,7 +225,7 @@ function findInventoryItemMatchingConsumableInResultData(
 ) {
   if (inventoryItems.length === 1) {
     // If we only have one candidate, use it!
-    return inventoryItems[0]
+    return { inventoryItem: inventoryItems[0], consumable: null }
   } else if (inventoryItems.length < 2) {
     throw new Error('We should always have at least one candidate item.')
   }
@@ -226,6 +253,7 @@ function findInventoryItemMatchingConsumableInResultData(
       consumable.expirationDate
     )
     const normalizedConsumable = {
+      consumable,
       expiresOn: consumableExpirationDate
         ? startOfDay(consumableExpirationDate)
         : null,
@@ -236,6 +264,11 @@ function findInventoryItemMatchingConsumableInResultData(
       hasConsumableExpiresOn || normalizedConsumable.expiresOn != null
     hasConsumableLot = hasConsumableLot || normalizedConsumable.lot != null
     return normalizedConsumable
+  })
+  const unpack = (normalizedItem, normalizedConsumable) => ({
+    inventoryItem: normalizedItem.inventoryItem,
+    consumable:
+      normalizedConsumable == null ? null : normalizedConsumable.consumable,
   })
 
   if (hasConsumable) {
@@ -257,7 +290,7 @@ function findInventoryItemMatchingConsumableInResultData(
             _.isEqual(consumable.expiresOn, item.expiresOn) &&
             _.isEqual(consumable.lot, item.lot)
           if (matchExpiresAndLotNumber) {
-            return item.inventoryItem
+            return unpack(item, consumable)
           }
         }
       }
@@ -273,7 +306,7 @@ function findInventoryItemMatchingConsumableInResultData(
         for (const consumable of consumables) {
           const matchExpires = _.isEqual(consumable.expiresOn, item.expiresOn)
           if (matchExpires) {
-            return item.inventoryItem
+            return unpack(item, consumable)
           }
         }
       }
@@ -286,7 +319,7 @@ function findInventoryItemMatchingConsumableInResultData(
           const matchLot =
             item.lot != null && _.isEqual(consumable.lot, item.lot)
           if (matchLot) {
-            return item.inventoryItem
+            return unpack(item, consumable)
           }
         }
       }
@@ -295,6 +328,7 @@ function findInventoryItemMatchingConsumableInResultData(
     // Closest expiration date
     if (hasItemExpiresOn && hasConsumableExpiresOn) {
       let bestItemMatch = null
+      let bestConsumableMatch = null
       let bestItemAbsDiff = null
       for (const consumable of consumables) {
         if (consumable.expiresOn != null) {
@@ -312,6 +346,7 @@ function findInventoryItemMatchingConsumableInResultData(
               // if we don't have a current best, or abs diff is smaller,
               // then this is the best so far
               bestItemMatch = item
+              bestConsumableMatch = consumable
               bestItemAbsDiff = currentAbsDiff
             }
 
@@ -325,7 +360,7 @@ function findInventoryItemMatchingConsumableInResultData(
         }
       }
       if (bestItemMatch != null) {
-        return bestItemMatch.inventoryItem
+        return unpack(bestItemMatch, bestConsumableMatch)
       }
     }
   }
@@ -338,11 +373,11 @@ function findInventoryItemMatchingConsumableInResultData(
       if (item.expiresOn == null) {
         // most recently created item with null expires on
         // ordered by nulls last, so will prefer next check
-        return item.inventoryItem
+        return unpack(item, null)
       }
       const itemExpireAfterTest = item.expiresOn >= itemCutoffDate
       if (itemExpireAfterTest) {
-        return item.inventoryItem
+        return unpack(item, null)
       }
     }
   }
@@ -351,7 +386,7 @@ function findInventoryItemMatchingConsumableInResultData(
   //  previous checks, this is the least recent expiresOn
   //  Note we should always have at least one item since we create
   //  if does not exist per AssayConsumable
-  return items[0].inventoryItem
+  return unpack(items[0], null)
 }
 
 async function listInventoryItems(request) {
