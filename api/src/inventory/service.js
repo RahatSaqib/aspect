@@ -211,6 +211,8 @@ function findInventoryItemMatchingConsumableInResultData(
   for (const item of items) {
     for (const consumable of consumables) {
       const matchExpiresAndLotNumber =
+        item.expiresOn != null &&
+        item.lot != null &&
         _.isEqual(consumable.expiresOn, item.expiresOn) &&
         _.isEqual(consumable.lot, item.lot)
       if (matchExpiresAndLotNumber) {
@@ -222,7 +224,9 @@ function findInventoryItemMatchingConsumableInResultData(
   // 2. Exact match of expiration date
   for (const item of items) {
     for (const consumable of consumables) {
-      const matchExpires = _.isEqual(consumable.expiresOn, item.expiresOn)
+      const matchExpires =
+        item.expiresOn != null &&
+        _.isEqual(consumable.expiresOn, item.expiresOn)
       if (matchExpires) {
         return item.inventoryItem
       }
@@ -232,7 +236,7 @@ function findInventoryItemMatchingConsumableInResultData(
   // 3. Exact match of lot number
   for (const item of items) {
     for (const consumable of consumables) {
-      const matchLot = _.isEqual(consumable.lot, item.lot)
+      const matchLot = item.lot != null && _.isEqual(consumable.lot, item.lot)
       if (matchLot) {
         return item.inventoryItem
       }
@@ -242,13 +246,14 @@ function findInventoryItemMatchingConsumableInResultData(
   // Find Least recent inventory item that expires after test started
   const firstItemAfterTest = _.find(
     items,
-    item => item.expiresOn >= itemCutoffDate
+    item => item.expiresOn != null && item.expiresOn >= itemCutoffDate
   )
   if (firstItemAfterTest != null) {
     return firstItemAfterTest.inventoryItem
   }
 
-  //  If all else fails, use first match
+  //  If all else fails, use first match, due to order of query,
+  //  this is the least recent expiresOn, then the most recent createdOn
   //  Note we should always have at least one item since we create
   //  if does not exist per AssayConsumable
   return items[0].inventoryItem
