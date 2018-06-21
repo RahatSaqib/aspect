@@ -102,13 +102,11 @@ async function consumeInventoryForResult(
           consumablesInResultData,
           now
         )
-        const testCutoffDate = new Date(
-          (testStartedOn || testEndedOn || now).setHours(0, 0, 0, 0)
-        )
         const matchingInventoryOnHand = findInventoryItemMatchingConsumableInResultData(
           consumablesInResultData,
           matchingInventoryItems,
-          testCutoffDate
+          testStartedOn || testEndedOn,
+          now
         )
 
         // Log change
@@ -189,8 +187,16 @@ async function findOrCreateMatchingInventoryItems(
 function findInventoryItemMatchingConsumableInResultData(
   consumablesInResultData,
   inventoryItems,
-  itemCutoffDate
+  testedOn,
+  now
 ) {
+  if (inventoryItems.length === 1) {
+    // If we only have one candidate, use it!
+    return inventoryItems[0]
+  } else if (inventoryItems.length < 2) {
+    throw new Error('We should always have at least one candidate item.')
+  }
+
   // Normalize input data for comparisons below
   const items = _.map(inventoryItems, item => ({
     inventoryItem: item,
@@ -240,8 +246,8 @@ function findInventoryItemMatchingConsumableInResultData(
       }
     }
   }
-
   // Find Least recent inventory item that expires after test started
+  const itemCutoffDate = new Date((testedOn || now).setHours(0, 0, 0, 0))
   const firstItemAfterTest = _.find(
     items,
     item => item.expiresOn != null && item.expiresOn >= itemCutoffDate
