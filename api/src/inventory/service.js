@@ -70,10 +70,12 @@ function selectInventoryItemsAtSite(siteId, knex) {
 
 function findInventoryItemMatchingConsumableInResultData(
   consumablesInResultData,
-  inventoryItems
+  inventoryItems,
+  itemCutoffDate
 ) {
+  // Normalize input data for comparisons below
   const items = _.compact(
-    _.map(inventoryItems, item => {
+    _.map(_.sortBy(inventoryItems, ['expiresOn', 'createdOn']), item => {
       if (item.inTransitFromSiteId != null) {
         // Do not consider inventory items in transit
         // TODO should transit check bubble up or included in query?
@@ -126,8 +128,19 @@ function findInventoryItemMatchingConsumableInResultData(
     }
   }
 
-  // Cannot find anything
-  return null
+  // Find Least recent inventory item that expires after test started
+  const firstItemAfterTest = _.find(
+    items,
+    item => item.expiresOn >= itemCutoffDate
+  )
+  if (firstItemAfterTest != null) {
+    return firstItemAfterTest.inventoryItem
+  }
+
+  //  If all else fails, use first match
+  //  Note we should always have at least one item since we create
+  //  if does not exist per AssayConsumable
+  return items[0].inventoryItem
 }
 
 async function consumeInventoryForResult(
@@ -195,22 +208,14 @@ async function consumeInventoryForResult(
               .first()
           )
         }
-        const matchingInventoryOnHand =
-          findInventoryItemMatchingConsumableInResultData(
-            consumablesInResultData,
-            matchingInventoryItems
-          ) ||
-          (_.find(
-            _.sortBy(matchingInventoryItems, 'expiresOn'),
-            inventoryItemAtSite =>
-              inventoryItemAtSite.consumableId ===
-                assayConsumable.consumableId &&
-              inventoryItemAtSite.expiresOn >=
-                new Date((testStartedOn || now).setHours(0, 0, 0, 0))
-          ) ||
-            _.find(_.sortBy(matchingInventoryItems, 'expiresOn'), {
-              consumableId: assayConsumable.consumableId,
-            }))
+        const testCutoffDate = new Date(
+          (testStartedOn || testEndedOn || now).setHours(0, 0, 0, 0)
+        )
+        const matchingInventoryOnHand = findInventoryItemMatchingConsumableInResultData(
+          consumablesInResultData,
+          matchingInventoryItems,
+          testCutoffDate
+        )
         await logInventoryChange({
           knex,
           inventoryItemId: matchingInventoryOnHand.id,
