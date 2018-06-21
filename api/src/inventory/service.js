@@ -1,5 +1,7 @@
 const _ = require('lodash')
 const Boom = require('boom')
+const { startOfDay } = require('date-fns')
+const { getDateOrDefault, parseDateOrDefault } = require('../shared/date')
 const {
   knex,
   transact,
@@ -162,7 +164,7 @@ async function findOrCreateMatchingInventoryItems(
   // TODO should we create a new item for each consumable in result data?
   // instead of just the first
   const lotNumberInResultData = _.get(consumablesInResultData, '[0].lot')
-  const expirationDateInResultData = _.get(
+  const expirationDateInResultData = getDateOrDefault(
     consumablesInResultData,
     '[0].expirationDate'
   )
@@ -172,7 +174,7 @@ async function findOrCreateMatchingInventoryItems(
     siteId,
     lotNumber: lotNumberInResultData,
     expiresOn: expirationDateInResultData
-      ? new Date(new Date(expirationDateInResultData).setHours(0, 0, 0, 0))
+      ? startOfDay(expirationDateInResultData)
       : undefined,
     quantity: 0,
     now,
@@ -204,12 +206,17 @@ function findInventoryItemMatchingConsumableInResultData(
     lot: item.lotNumber ? item.lotNumber : null,
   }))
 
-  const consumables = _.map(consumablesInResultData, consumable => ({
-    expiresOn: consumable.expirationDate
-      ? new Date(new Date(consumable.expirationDate).setHours(0, 0, 0, 0))
-      : null,
-    lot: consumable.lot ? consumable.lot : null,
-  }))
+  const consumables = _.map(consumablesInResultData, consumable => {
+    const consumableExpirationDate = parseDateOrDefault(
+      consumable.expirationDate
+    )
+    return {
+      expiresOn: consumableExpirationDate
+        ? startOfDay(consumableExpirationDate)
+        : null,
+      lot: consumable.lot ? consumable.lot : null,
+    }
+  })
 
   // 1. Exact match of expire on and lot number
   for (const item of items) {
@@ -247,7 +254,7 @@ function findInventoryItemMatchingConsumableInResultData(
     }
   }
   // Find Least recent inventory item that expires after test started
-  const itemCutoffDate = new Date((testedOn || now).setHours(0, 0, 0, 0))
+  const itemCutoffDate = startOfDay(testedOn || now)
   const firstItemAfterTest = _.find(
     items,
     item => item.expiresOn != null && item.expiresOn >= itemCutoffDate
@@ -912,7 +919,7 @@ async function logInventoryChange({
     consumableReasonId,
     resultId,
     lotNumber,
-    expiresOn: expiresOn ? new Date(expiresOn.setHours(0, 0, 0, 0)) : null,
+    expiresOn: expiresOn ? startOfDay(expiresOn) : null,
     quantity,
     operation,
     notes,
@@ -973,7 +980,7 @@ async function updateInventoryItem(knex, inventoryItemId, inventoryItemValues) {
   const updateValues = {}
   if (typeof inventoryItemValues.expiresOn !== 'undefined') {
     updateValues.expiresOn = inventoryItemValues.expiresOn
-      ? new Date(inventoryItemValues.expiresOn.setHours(0, 0, 0, 0))
+      ? startOfDay(inventoryItemValues.expiresOn)
       : null
   }
   if (typeof inventoryItemValues.lotNumber !== 'undefined') {
@@ -1012,7 +1019,7 @@ async function insertInventoryItem(knex, inventoryItemValues) {
   }
   if (typeof inventoryItemValues.expiresOn !== 'undefined') {
     insertValues.expiresOn = inventoryItemValues.expiresOn
-      ? new Date(inventoryItemValues.expiresOn.setHours(0, 0, 0, 0))
+      ? startOfDay(inventoryItemValues.expiresOn)
       : null
   }
   if (typeof inventoryItemValues.quantityOnHand !== 'undefined') {
