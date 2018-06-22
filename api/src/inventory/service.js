@@ -223,10 +223,7 @@ function findInventoryItemMatchingConsumableInResultData(
   testedOn,
   now
 ) {
-  if (inventoryItems.length === 1) {
-    // If we only have one candidate, use it!
-    return { inventoryItem: inventoryItems[0], consumable: null }
-  } else if (inventoryItems.length < 2) {
+  if (inventoryItems.length === 0) {
     throw new Error('We should always have at least one candidate item.')
   }
 
