@@ -1,7 +1,9 @@
 const supertest = require('supertest')
 const chai = require('chai')
 const _ = require('lodash')
-const { format, subDays, subMinutes } = require('date-fns')
+const { format, subDays, subMinutes, addDays, startOfDay } = require('date-fns')
+const { parseDateOrDefault } = require('../../src/shared/date')
+const { getResult } = require('../../src/deviceApi/result')
 const {
   createTestContext,
   getDeviceConfigurationData,
@@ -1507,10 +1509,17 @@ describe('Device Result API routes', () => {
         return _.map(
           await knex('InventoryItem')
             .where({ siteId })
-            .select('consumableId', 'lotNumber', 'expiresOn', 'quantityOnHand'),
+            .select(
+              'id',
+              'consumableId',
+              'lotNumber',
+              'expiresOn',
+              'quantityOnHand'
+            )
+            .orderBy('id'),
           inventoryItem =>
             _.assign({}, inventoryItem, {
-              expiresOn: new Date(inventoryItem.expiresOn),
+              expiresOn: parseDateOrDefault(inventoryItem.expiresOn),
             })
         )
       }
@@ -1539,9 +1548,11 @@ describe('Device Result API routes', () => {
                 knex,
                 siteId
               )
-              const firstCartridgeConsumable = _.find(inventoryItemsBefore, {
-                consumableId: cartridgeId,
-              })
+              const firstCartridgeConsumable = _.find(
+                inventoryItemsBefore,
+                item =>
+                  item.consumableId === cartridgeId && item.expiresOn != null
+              )
               if (firstCartridgeConsumable) {
                 const assayConsumables = await knex('ConsumableAssay as ca')
                   .join('Assay as a', 'ca.assayId', 'a.id')
@@ -1950,6 +1961,135 @@ describe('Device Result API routes', () => {
                 inventoryConsumedByTest,
             ])
           )
+        }))
+
+      it('should deduct inventory item with null lot number and expiresOn', () =>
+        runTest(async knex => {
+          const { deviceId, deviceAuth, now, auth: { user } } = context
+          const { siteId } = await knex('Device')
+            .where({ id: deviceId })
+            .first('siteId')
+          const { id: adminId } = await knex('User')
+            .where({ name: user })
+            .first('id')
+
+          const past = subDays(now, 1)
+          const future = addDays(now, 7)
+
+          const assayExternalId = 'DaktariHivVl'
+          const { id: daktariHivVlCartridgeId } = await knex('Consumable as c')
+            .where('c.name', 'Daktari HIV-VL Cartridge')
+            .first('c.id')
+
+          // Remove inventory item if it already exists
+          await knex('InventoryItem')
+            .where({ consumableId: daktariHivVlCartridgeId, siteId })
+            .del()
+
+          const [inventoryItemId] = await knex('InventoryItem').insert({
+            consumableId: daktariHivVlCartridgeId,
+            siteId,
+            lotNumber: null,
+            expiresOn: null,
+            quantityOnHand: 50,
+            createdBy: adminId,
+            createdOn: past,
+            updatedBy: adminId,
+            updatedOn: past,
+          })
+
+          const { quantity: inventoryConsumedByTest } = await knex(
+            'ConsumableAssay as ca'
+          )
+            .join('Assay as a', 'ca.assayId', 'a.id')
+            .where('a.externalId', assayExternalId)
+            .andWhere('ca.consumableId', daktariHivVlCartridgeId)
+            .first('ca.quantity')
+
+          const resultDetails = {
+            lotNumber: 'HIV582',
+            expirationDate: startOfDay(future).toISOString(),
+          }
+
+          const inventoryItemsBefore = await getInventoryItemsAtSite(
+            knex,
+            siteId
+          )
+          const inventoryItemBefore = _.find(inventoryItemsBefore, {
+            id: inventoryItemId,
+          })
+          assert.isOk(inventoryItemBefore)
+          assert.isNotOk(inventoryItemBefore.lotNumber)
+          assert.isNotOk(inventoryItemBefore.expiresOn)
+          assert.equal(inventoryItemBefore.quantityOnHand, 50)
+
+          const inventoryLogsBefore = await knex('InventoryLog')
+            .where({ inventoryItemId })
+            .select('id')
+          assert.equal(inventoryLogsBefore.length, 0)
+
+          await server
+            .post(devicePostResultPath)
+            .set('Authorization', deviceAuth)
+            .send({
+              startedOn: now,
+              data: { b: 'c' },
+              assay: { id: assayExternalId },
+              sample: { id: 'New Test Deduct From Null Item' },
+              instrument: { serial: '123456789' },
+              consumable: {
+                lot: resultDetails.lotNumber,
+                expirationDate: resultDetails.expirationDate,
+              },
+            })
+            .then(res => {
+              assert.equal(res.status, 200)
+            })
+
+          const inventoryItemsAfter = await getInventoryItemsAtSite(
+            knex,
+            siteId
+          )
+          assert.deepEqual(
+            _.map(inventoryItemsBefore, 'id'),
+            _.map(inventoryItemsAfter, 'id')
+          )
+          const inventoryItemAfter = _.find(inventoryItemsAfter, {
+            id: inventoryItemId,
+          })
+          assert.isNotOk(inventoryItemAfter.lotNumber)
+          assert.isNotOk(inventoryItemAfter.expiresOn)
+          assert.equal(
+            inventoryItemAfter.quantityOnHand,
+            inventoryItemBefore.quantityOnHand - inventoryConsumedByTest
+          )
+
+          const inventoryLogsAfter = await knex('InventoryLog')
+            .where({ inventoryItemId })
+            .select()
+          assert.equal(inventoryLogsAfter.length, 1)
+
+          const inventoryLog = inventoryLogsAfter[0]
+          assert.equal(inventoryLog.inventoryItemId, inventoryItemId)
+          assert.isOk(inventoryLog.resultId)
+
+          const result = await getResult(knex, inventoryLog.resultId)
+          assert.equal(result.sample.id, 'New Test Deduct From Null Item')
+          assert.equal(result.consumable[0].lot, resultDetails.lotNumber)
+          assert.equal(
+            parseDateOrDefault(
+              result.consumable[0].expirationDate
+            ).toISOString(),
+            parseDateOrDefault(resultDetails.expirationDate).toISOString()
+          )
+
+          await knex('InventoryLog')
+            .where({ inventoryItemId })
+            .del()
+
+          await knex('InventoryItem')
+            .where({ id: inventoryItemId })
+            .del()
         }))
 
       it('should log inventory consumption, even when no inventory item exists for site', () =>
