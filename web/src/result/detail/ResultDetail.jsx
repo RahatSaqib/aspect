@@ -74,10 +74,6 @@ const messages = defineMessages({
     id: 'pages.ResultDetail.confirmed',
     defaultMessage: 'Confirmed',
   },
-  probes: {
-    id: 'pages.ResultDetail.probes',
-    defaultMessage: 'Probes',
-  },
   noLogsHelp: {
     id: 'pages.ResultDetail.noLogsHelp',
     defaultMessage: 'No log entries found for this result',

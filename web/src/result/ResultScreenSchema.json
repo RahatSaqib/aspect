@@ -232,7 +232,7 @@
         "dataSchema": "assay.patientDataSchema"
       }
     },
-    "result": {
+    "resultData": {
       "order": 5,
       "summary": {
         "title": "Result",
