@@ -9,6 +9,7 @@ const {
   getDeviceOperationHandler,
   getResultHandler,
   addDeviceDataHandler,
+  addPluginDeviceDataHandler,
   addDeviceOperationHandler,
   updateDeviceConfigurationHandler,
   mergeResultHandler,
@@ -446,6 +447,21 @@ const routes = [
         },
         schema: {
           error: errorPayload,
+        },
+      },
+    },
+  },
+  {
+    method: 'POST',
+    path: '/plugin/{pluginName}',
+    handler: addPluginDeviceDataHandler,
+    config: {
+      description: 'Deliver data in custom plugin format',
+      validate: {
+        params: {
+          pluginName: Joi.string()
+            .description('Name of Plugin')
+            .required(),
         },
       },
     },

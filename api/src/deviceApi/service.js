@@ -40,11 +40,24 @@ const getResultHandler = deviceApiHandler(getDeviceDataWithContext, {
   deviceLogType: DEVICE_LOG_TYPE_RESULT,
 })
 
-const addDeviceDataHandler = deviceApiHandler(addDeviceDataWithContext, {
+const addDeviceDataHandlerOptions = {
   createDevice: true,
   updatePing: true,
   updateDeviceLog: true,
-})
+}
+const addDeviceDataHandler = deviceApiHandler(
+  addDeviceDataWithContext,
+  addDeviceDataHandlerOptions
+)
+const addPluginDeviceDataHandler = deviceApiHandler(
+  addDeviceDataWithContext,
+  Object.assign(
+    {
+      transformInitialPayload: true,
+    },
+    addDeviceDataHandlerOptions
+  )
+)
 
 const updateDeviceConfigurationHandler = deviceApiHandler(
   updateDeviceConfigurationWithContext,
@@ -89,7 +102,7 @@ function deviceApiHandler(handler, handlerOptions) {
     let deviceLogId = null
     let deviceLogRawMessage = null
     if (updateDeviceLog) {
-      const checkpoint = request.payload && request.payload.checkpoint
+      const checkpoint = context.payload && context.payload.checkpoint
 
       // TODO DeviceLog handle non-JSON payloads
       deviceLogRawMessage = JSON.stringify(request.plugins.rawPayload)
@@ -98,7 +111,7 @@ function deviceApiHandler(handler, handlerOptions) {
       ;[deviceLogId] = await knex('DeviceLog').insert({
         deviceId,
         checkpoint,
-        source: _.get(request.payload, 'log.source', ''),
+        source: _.get(context.payload, 'log.source', ''),
         createdOn: now,
         senderIp: remoteAddress,
         rawMessage: deviceLogRawMessage,
@@ -489,11 +502,32 @@ async function getResultWithContext(context) {
   return postProcessResult
 }
 
-async function createDeviceApiContext(request, handlerOptions) {
+async function createDeviceApiContext(originalRequest, handlerOptions) {
+  const request = {
+    auth: originalRequest.auth,
+    params: originalRequest.params,
+    payload: originalRequest.payload,
+    query: originalRequest.query,
+  }
   const {
     createDevice = false,
     deviceLogType = DEVICE_LOG_TYPE_NONE,
   } = handlerOptions
+
+  const messageContext = originalRequest.plugins.messageContext.bindActionCreators(
+    {
+      resultUpdated,
+    }
+  )
+
+  if (handlerOptions.transformInitialPayload && request.params.pluginName) {
+    const transformInitialPayload = await loadPlugin(
+      [request.params.pluginName],
+      'transformInitialPayload'
+    )
+    request.payload = await transformInitialPayload(originalRequest)
+  }
+
   const { auth } = request
   const now = new Date()
   const existingDeviceAndData = await knex('DeviceApiKey as dak')
@@ -547,9 +581,7 @@ async function createDeviceApiContext(request, handlerOptions) {
     device,
     payload: request.payload,
     query: request.query,
-    messageContext: request.plugins.messageContext.bindActionCreators({
-      resultUpdated,
-    }),
+    messageContext,
     deviceLogType,
     partnerId: partner.id,
     pluginNames: [partner.partnerPluginName, device.deviceTypePluginName],
@@ -979,7 +1011,7 @@ async function updateLogs(request) {
     source: _.get(request.payload, 'log.source', ''),
     createdOn: new Date(),
     senderIp: (request.info && request.info.remoteAddress) || '',
-    rawMessage: JSON.stringify(request.payload),
+    rawMessage: JSON.stringify(request.plugins.rawPayload),
   })
 }
 
@@ -988,6 +1020,7 @@ module.exports = {
   getDeviceOperationHandler,
   getResultHandler,
   addDeviceDataHandler,
+  addPluginDeviceDataHandler,
   updateDeviceConfigurationHandler,
   addDeviceOperationHandler,
   mergeResultHandler,

@@ -13,6 +13,7 @@ const {
   rowsAsObject,
   getDefaultMessageTypes,
   seedStockIssues,
+  getPermissionModules,
 } = require('../utils')
 
 const now = new Date()
@@ -85,13 +86,7 @@ async function seed(knex) {
     maxDaysDeviceNoResults: 14,
   })
 
-  const modules = await knex('Permission').reduce((memo, row) => {
-    if (!memo[row.module]) {
-      memo[row.module] = {}
-    }
-    memo[row.module][row.activity] = row.id
-    return memo
-  }, {})
+  const modules = await getPermissionModules(knex)
 
   await knex('Feature').insert({ module: 'targetDashboard' })
   await knex('Feature').insert({ module: 'actionDashboard' })

@@ -85,6 +85,7 @@
     "good-squeeze": "^5.0.2",
     "handlebars": "^4.0.11",
     "hapi": "^16.5.2",
+    "hapi-auth-basic": "^4.2.0",
     "hapi-auth-jwt2": "^7.3.0",
     "hapi-raven": "^6.0.0",
     "hapi-swagger": "^7.7.1",

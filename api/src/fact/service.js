@@ -56,7 +56,9 @@ function onFactGenerateDeviceConnectivity({ deviceId }, { messageContext }) {
         'f.maintenanceDueOn',
         knex('Result as r')
           .whereRaw('r.deviceId = d.id')
-          .max('r.updatedOn')
+          .select(
+            knex.raw('max(coalesce(r.endedOn, r.startedOn, r.updatedOn))')
+          )
           .as('lastResultOn')
       )
     if (deviceId != null) {
