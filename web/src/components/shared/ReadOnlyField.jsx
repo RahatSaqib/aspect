@@ -27,28 +27,29 @@ export const ReadOnlyField = ({
   to,
   format = _.identity,
   nullText = '-',
-}) => (
-  <div className={cssClasses('Container', { 'Container--large': lg })}>
-    <label
-      htmlFor={label.replace(' ', '_')}
-      className={cssClasses('Container__Label', {
-        'Container__Label--hidden': hideLabel,
-      })}
-    >
-      {label}
-    </label>
-    <div
-      id={label.replace(' ', '_')}
-      className={cssClasses('Container__Value')}
-    >
-      {!value ? nullText : format ? format(value) : value}
-      {to && (
-        <Link to={to} className={cssClasses('Container__Link')}>
-          <FaExternalLink />
-        </Link>
-      )}
+}) =>
+  label && (
+    <div className={cssClasses('Container', { 'Container--large': lg })}>
+      <label
+        htmlFor={label.replace(' ', '_')}
+        className={cssClasses('Container__Label', {
+          'Container__Label--hidden': hideLabel,
+        })}
+      >
+        {label}
+      </label>
+      <div
+        id={label.replace(' ', '_')}
+        className={cssClasses('Container__Value')}
+      >
+        {!value ? nullText : format ? format(value) : value}
+        {to && (
+          <Link to={to} className={cssClasses('Container__Link')}>
+            <FaExternalLink />
+          </Link>
+        )}
+      </div>
     </div>
-  </div>
-)
+  )
 
 export default enhance(ReadOnlyField)

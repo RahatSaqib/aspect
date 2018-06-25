@@ -241,13 +241,15 @@
             "type": "string",
             "row": 0,
             "order": 0,
-            "title": "MTB"
+            "title": "MTB",
+            "titleAssayDefinition": "resultCategory1Label"
           },
           "resultCategory2Name": {
             "type": "string",
             "row": 0,
             "order": 1,
-            "title": "RIF"
+            "title": "RIF",
+            "titleAssayDefinition": "resultCategory2Label"
           }
         }
       },
@@ -258,13 +260,15 @@
             "type": "string",
             "row": 0,
             "order": 0,
-            "title": "MTB"
+            "title": "MTB",
+            "titleAssayDefinition": "resultCategory1Label"
           },
           "resultCategory2Name": {
             "type": "string",
             "row": 0,
             "order": 1,
-            "title": "RIF"
+            "title": "RIF",
+            "titleAssayDefinition": "resultCategory2Label"
           }
         },
         "dataSchema": "assay.resultDataSchema"

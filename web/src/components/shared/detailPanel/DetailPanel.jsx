@@ -44,10 +44,7 @@ export const DetailGroup = compose(
         rawData.getIn(_.split(dataSchemaPath, '.')) || EMPTY_MAP
       const defaultRow = groupSchema.hasIn(['detail', 'rows']) ? 1 : 0
       const schema = dataSchema
-        .filter(
-          (value, key) =>
-            key !== 'resultText' && value && value.get('type') !== 'object'
-        )
+        .filter(value => value && value.get('type') !== 'object')
         .sortBy(value => value.get('order'))
         .map(row =>
           row
@@ -78,7 +75,9 @@ export const DetailGroup = compose(
             .entrySeq()
             .map(([key, value]) => ({
               key,
-              label: value.get('title'),
+              label: value.get('titleAssayDefinition')
+                ? rawData.getIn(['assay', value.get('titleAssayDefinition')])
+                : value.get('title'),
               value: (data && data.get(key)) || rawData.get(key) || '',
               format: format(value.get('type'), intl),
               to: value.get('link') && makeLink(value.get('link'), rawData),
@@ -96,7 +95,9 @@ export const DetailGroup = compose(
           .entrySeq()
           .map(([key, value]) => ({
             key,
-            label: value.get('title'),
+            label: value.get('titleAssayDefinition')
+              ? rawData.getIn(['assay', value.get('titleAssayDefinition')])
+              : value.get('title'),
             value: (data && data.get(key)) || rawData.get(key) || '',
             format: format(value.get('type'), intl),
             to: value.get('link') && makeLink(value.get('link'), rawData),
