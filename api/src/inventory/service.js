@@ -140,9 +140,8 @@ async function consumeInventoryForResult(
 
           // Update quantity on hand, but result completed after
           // item was updated, to avoid double counting.
+          // Do not bump updatedOn here because of the double count check
           if (matchingInventoryOnHand.updatedOn < (testedOn || now)) {
-            // TODO Do we want to bump updatedOn here? I don't think so
-            // because of the double count check protecting this update
             inventoryItemUpdates.quantityOnHand = knex.raw(
               `GREATEST(quantityOnHand - ${assayConsumable.quantity}, 0)`
             )
@@ -172,7 +171,7 @@ async function consumeInventoryForResult(
             )
           }
 
-          // TODO do not use same inventory item for next consumable
+          // TODO ASP-811 do not use same inventory item for next consumable
           // matchingInventoryItems = _.reject(matchingInventoryItems => {
           //  matchingInventoryItemOnHand.id
           // })
@@ -203,7 +202,7 @@ async function findOrCreateMatchingInventoryItems(
     return existingItems
   }
 
-  // FIXME should create a new item for each consumable in result data
+  // TODO ASP-811 should create a new item for each consumable in result data
   // should always have at least consumableInResultData.length items
   // We can likely do this by moving the Or Create prior to the match function
   // if candidate items are empty!
@@ -313,8 +312,6 @@ function findInventoryItemMatchingConsumableInResultData(
           // ordered by expiresOn null last, so we have no more to check
           break
         }
-
-        // TODO do we want to skip items that expired before consumable date?
         const currentDiff =
           item.expiresOn.getTime() - consumableExpiresOn.getTime()
         const currentAbsDiff = Math.abs(currentDiff)
@@ -324,7 +321,6 @@ function findInventoryItemMatchingConsumableInResultData(
           bestItemMatch = item
           bestItemAbsDiff = currentAbsDiff
         }
-
         if (currentDiff >= 0) {
           // we've crossed threshold for this consumable since we are
           // ordered by item expiresOn. The best match is either this
