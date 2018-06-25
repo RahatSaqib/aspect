@@ -3,7 +3,7 @@ module.exports = require('../../src/db').seed(seed)
 const config = require('../../src/config')
 const bcrypt = require('bcrypt')
 const _ = require('lodash')
-const { rowsAsObject } = require('../utils')
+const { rowsAsObject, getPermissionModules } = require('../utils')
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 
@@ -105,14 +105,7 @@ async function seed(knex) {
     patientDataSchema: JSON.stringify({}),
   })
 
-  const modules = await knex('Permission').reduce((memo, row) => {
-    if (!memo[row.module]) {
-      memo[row.module] = {}
-    }
-    memo[row.module][row.activity] = row.id
-    return memo
-  }, {})
-
+  const modules = await getPermissionModules(knex)
   const featureModules = await knex('Feature').select('id')
 
   const [usCountry] = await knex('Country as c')

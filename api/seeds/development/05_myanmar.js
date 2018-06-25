@@ -9,7 +9,11 @@ const patients = require('./fixtures/patients.json')
 const dashboardWidget = require('./fixtures/myanmarDashboardWidget.json')
 const { errorCodes } = require('./fixtures/errorCodes.js')
 const { addMilliseconds, addMinutes, subDays } = require('date-fns')
-const { rowsAsObject, getDefaultMessageTypes } = require('../utils')
+const {
+  rowsAsObject,
+  getDefaultMessageTypes,
+  getPermissionModules,
+} = require('../utils')
 
 const now = new Date()
 const millisInHour = 1000 * 60 * 60
@@ -81,13 +85,7 @@ async function seed(knex) {
     maxDaysDeviceNoResults: 14,
   })
 
-  const modules = await knex('Permission').reduce((memo, row) => {
-    if (!memo[row.module]) {
-      memo[row.module] = {}
-    }
-    memo[row.module][row.activity] = row.id
-    return memo
-  }, {})
+  const modules = await getPermissionModules(knex)
 
   await knex('Feature').insert({ module: 'targetDashboard' })
   await knex('Feature').insert({ module: 'actionDashboard' })

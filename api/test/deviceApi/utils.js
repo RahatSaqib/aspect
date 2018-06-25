@@ -347,15 +347,16 @@ class DeviceApiTestContext {
 
   async createApiKey(knex, siteName = null) {
     let site = null
-    if (siteName === null) {
+    if (siteName != null) {
       site = await knex('Site')
         .where({ externalId: siteName, partnerId: this.partnerId })
         .first('id', 'partnerId', 'geographyId')
+      assert.isOk(
+        site,
+        `Cannot find site ${siteName} partner ${this.partnerId}`
+      )
     }
 
-    if (siteName != null && site == null) {
-      assert.isOk(siteName, `Cannot find site ${siteName}`)
-    }
     const apiKey = { token: randomToken() }
     await knex('DeviceApiKey').insert({
       token: apiKey.token,
