@@ -18,3 +18,8 @@ Large Single-field Container
 ```
 <ReadOnlyField lg label="Name" value="hello" />
 ```
+
+Standard Single-field Container with a hidden Label
+```
+<ReadOnlyField hideLabel label="Name" value="hello" />
+```

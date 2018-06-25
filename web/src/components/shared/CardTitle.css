@@ -1,0 +1,12 @@
+
+.Title {
+  display: flex;
+  text-transform: capitalize;
+  font-size: 24px;
+  color: var(--aspect-color-grey-2);
+  flex: 1;
+}
+
+.Title__Icon {
+  font-size: 28px;
+}
