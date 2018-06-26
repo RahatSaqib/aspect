@@ -631,7 +631,7 @@ async function getConsumptions(knex, siteId, consumableId) {
         .where('d.siteId', siteId)
         .where('ca.consumableId', consumableId)
         .distinct(knex.raw('date(r.endedOn) as endedOn'))
-        .orderBy('r.endedOn', 'desc')
+        .orderBy('endedOn', 'desc')
         .limit(limitItems)
         .as('t1')
     })

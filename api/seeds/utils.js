@@ -85,7 +85,7 @@ async function seedStockIssues(knex) {
   // Inventory Stock Expiring Issue
   // ---------------------------------
   const messageStockExpiring =
-    '{{issue.data.totalWasted}} consumables likely to expire in {{issue.data.daysDue}} days.'
+    '{{issue.data.totalWasted}} consumables likely to expire.'
   const [stockExpiringAlertTemplateId] = await knex('AlertTemplate').insert({
     message: messageStockExpiring,
     ...auditFields,
