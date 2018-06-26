@@ -1194,6 +1194,11 @@ async function actionDashboard(request) {
     .innerJoin('IssueType as it', 'i.issueTypeId', 'it.id')
     .innerJoin('IssueCategory as ic', 'it.issueCategoryId', 'ic.id')
     .innerJoin('IssueStatus as is', 'i.issueStatusId', 'is.id')
+    .innerJoin(
+      'IssueStatusSeverity as iss',
+      'is.issueStatusSeverityId',
+      'iss.id'
+    )
     .innerJoin('Site as s', 'am.siteId', 's.id')
     .where({ 'ms.externalId': 'Sent' })
     .whereNotIn('is.externalId', ['Inactive', 'Resolved'])
@@ -1223,6 +1228,8 @@ async function actionDashboard(request) {
       'i.id as issueId',
       'is.name as status',
       'is.i18nKey as statusI18nKey',
+      'is.order as issueStatusOrder',
+      'iss.externalId as issueStatusSeverityExternalId',
       'it.name as issueType',
       'it.externalId as issueTypeExternalId',
       'it.i18nKey as issueTypeI18nKey',
@@ -1300,6 +1307,8 @@ async function actionDashboard(request) {
         issueId: null,
         status: 'OK',
         statusI18nKey: 'issueStatusOk',
+        issueStatusOrder: 5,
+        issueStatusSeverityExternalId: 'Low',
         statusDate: new Date(),
         issueType: 'Stock Level Update',
         issueTypeExternalId: 'StockLevelUpdate',
@@ -1325,9 +1334,13 @@ async function actionDashboard(request) {
           if (result.totalInStock <= 0) {
             result.status = 'Active'
             result.statusI18nKey = 'issueStatusActive'
+            result.issueStatusOrder = 0
+            result.issueStatusSeverityExternalId = 'High'
           } else {
             result.status = 'OK'
             result.statusI18nKey = 'issueStatusOk'
+            result.issueStatusOrder = 5
+            result.issueStatusSeverityExternalId = 'Low'
           }
         }
         return result
