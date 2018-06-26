@@ -51,7 +51,7 @@ async function up(knex) {
       .notNullable()
       .index()
       .references('id')
-      .inTable('FileRefernce')
+      .inTable('FileReference')
     resultAttachment.string('name')
     resultAttachment.string('contentType')
     addCreateFieldsNullable(resultAttachment)
@@ -141,7 +141,7 @@ async function up(knex) {
       .unsigned()
       .index()
       .references('id')
-      .inTable('FileRefernce')
+      .inTable('FileReference')
     // Full URL with template vars replaced and query string appended
     webhookMessage.string('url')
     webhookMessage.specificType('headers', 'JSON')
@@ -149,9 +149,35 @@ async function up(knex) {
     addTimestamps(webhookMessage)
     webhookMessage.charset('utf8')
   })
+
+  await knex.schema.table('MessageType', messageType => {
+    messageType
+      .integer('webhookTemplateId')
+      .unsigned()
+      .references('id')
+      .inTable('WebhookTemplate')
+  })
+
+  await knex.schema.table('Notification', notification => {
+    notification
+      .integer('webhookMessageId')
+      .unsigned()
+      .references('id')
+      .inTable('WebhookMessage')
+  })
 }
 
 async function down(knex) {
+  await knex.schema.table('MessageType', messageType => {
+    messageType
+      .dropForeign('webhookTemplateId')
+      .dropColumn('webhookTemplateId')
+  })
+  await knex.schema.table('Notification', notification => {
+    notification
+      .dropForeign('webhookMessageId')
+      .dropColumn('webhookMessageId')
+  })
   await knex.schema.dropTableIfExists('WebhookMessage')
   await knex.schema.dropTableIfExists('WebhookTemplate')
   await knex.schema.dropTableIfExists('WebhookCredentials')

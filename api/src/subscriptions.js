@@ -10,6 +10,7 @@ function addSubscriptions(queue) {
   queue.subscribe('alert', require('./alert/endpoints').subscriptions)
   queue.subscribe('email', require('./email/endpoints').subscriptions)
   queue.subscribe('sms', require('./sms/endpoints').subscriptions)
+  queue.subscribe('webhook', require('./webhook/endpoints').subscriptions)
 
   queue.subscribe('result', require('./result/endpoints').subscriptions)
 }
