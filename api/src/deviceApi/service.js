@@ -1,6 +1,6 @@
 const Boom = require('boom')
 const _ = require('lodash')
-const { knex, transact } = require('../db')
+const { knex, transact, run } = require('../db')
 const { asyncHandler } = require('../routes')
 
 const {
@@ -961,16 +961,15 @@ function onResultUpdated({ resultId, deviceLogId }, { messageContext }) {
   }
 }
 
-function onResultLogged({ resultId }, { messageContext }) {
-  const context = messageContext.bindActionCreators({ resultUpdated })
-  return context.transact(async knex => {
+function onResultLogged(action, context) {
+  return run(async knex => {
     const { partnerPluginName, deviceTypePluginName } = await knex(
       'Result as r'
     )
       .leftJoin('Partner as p', 'r.partnerId', 'p.id')
       .leftJoin('Device as d', 'r.deviceId', 'd.id')
       .leftJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
-      .where({ 'r.id': resultId })
+      .where({ 'r.id': action.resultId })
       .first(
         'p.plugin as partnerPluginName',
         'dt.plugin as deviceTypePluginName'
@@ -979,15 +978,7 @@ function onResultLogged({ resultId }, { messageContext }) {
       [partnerPluginName, deviceTypePluginName],
       'onResultLogged'
     )
-    const now = new Date()
-
-    const pluginContext = {
-      knex,
-      now,
-      resultId,
-      actions: { resultUpdated: context.resultUpdated },
-    }
-    await onResultLogged(pluginContext)
+    onResultLogged(action, context)
   })
 }
 

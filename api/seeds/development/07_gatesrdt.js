@@ -166,4 +166,22 @@ async function seed(knex) {
       auditFields
     )
   )
+
+  // Create WebhookTemplate for downloading images
+  await knex('WebhookTemplate').insert(
+    Object.assign(
+      {
+        externalId: 'commcareDownloadImage',
+        method: 'POST',
+        url: '{{ result.data.urlPicture }}',
+        headers: JSON.stringify({
+          // TODO setup API user and move API Key somewhere?
+          Authorization:
+            'ApiKey kbeaty@systemone.id:50792502494c2eccd695c7cf75200a46feb74905',
+        }),
+        responseHandler: JSON.stringify({ action: 'addResultAttachment' }),
+      },
+      auditFields
+    )
+  )
 }

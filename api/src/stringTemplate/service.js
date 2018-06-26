@@ -23,7 +23,7 @@ function addDataSourceToQuery(qb, aliases) {
 
   if (message != null) {
     qb
-      .innerJoin('Person as p', `${message}.personId`, 'p.id')
+      .leftJoin('Person as p', `${message}.personId`, 'p.id')
       .leftJoin('Site as s', `${message}.siteId`, 's.id')
       .leftJoin('Device as d', `${message}.deviceId`, 'd.id')
       .leftJoin('Result as r', `${message}.resultId`, 'r.id')
@@ -33,6 +33,7 @@ function addDataSourceToQuery(qb, aliases) {
         'p.name as personName',
         'd.lastPingOn as deviceLastPingOn',
         'd.lastSeenOn as deviceLastSeenOn',
+        'r.resultData',
         knex.raw('coalesce(r.moduleName, r.moduleSerial) as resultModuleName'),
         'r.moduleSerial as resultModuleSerial',
         'r.errorCode as resultErrorCode',
@@ -88,6 +89,7 @@ function getBaseDataSource(data) {
       lastPingOn: d.deviceLastPingOn,
     },
     result: {
+      data: d.resultData == null ? {} : JSON.parse(d.resultData),
       moduleName: d.resultModuleName,
       moduleSerial: d.resultModuleSerial,
       errorCode: d.resultErrorCode,

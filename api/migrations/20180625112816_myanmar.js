@@ -59,40 +59,22 @@ async function up(knex) {
     resultAttachment.charset('utf8')
   })
 
-  await knex.schema.createTable('WebhookCredentials', webhookCredentials => {
-    webhookCredentials.increments('id')
-    // null | { user: '', password: ''}
-    webhookCredentials.specificType('authBasic', 'JSON')
-    // null | { 'Authorization': 'Token 123' }
-    webhookCredentials.specificType('headers', 'JSON')
-    // null | { 'token': 'Token234' }
-    webhookCredentials.specificType('query', 'JSON')
-    addCreateFieldsNullable(webhookCredentials)
-    addUpdateFieldsNullable(webhookCredentials)
-    webhookCredentials.charset('utf8')
-  })
-
   await knex.schema.createTable('WebhookTemplate', webhookTemplate => {
     webhookTemplate.increments('id')
+    webhookTemplate.string('externalId')
     // GET | PUT | POST
     webhookTemplate.string('method').notNullable()
     // https://endpoint.com/path add query string to query
     webhookTemplate.string('url').notNullable()
-    // any additional headers, if Authorization, prefer adding to WebhookCredentials
+    // Query string values as { 'queryName': 'queryValue')
     webhookTemplate.specificType('query', 'JSON')
-    // any additional headers, if Authorization, prefer adding to WebhookCredentials
+    // headers as { 'headerName': 'headerValue'}
     webhookTemplate.specificType('headers', 'JSON')
     // Payload template null | templateData
     webhookTemplate.text('payload')
     // Configuration of response handler
     // null | { action: 'addResultAttachment' }
     webhookTemplate.specificType('responseHandler', 'JSON')
-    // Credentials for this template, nullable
-    webhookTemplate
-      .integer('webhookCredentialsId')
-      .unsigned()
-      .references('id')
-      .inTable('WebhookCredentials')
     addCreateFieldsNullable(webhookTemplate)
     addUpdateFieldsNullable(webhookTemplate)
     webhookTemplate.charset('utf8')
@@ -117,7 +99,6 @@ async function up(knex) {
       .unsigned()
       .references('id')
       .inTable('Person')
-      .notNullable()
     webhookMessage
       .integer('siteId')
       .unsigned()
@@ -169,18 +150,13 @@ async function up(knex) {
 
 async function down(knex) {
   await knex.schema.table('MessageType', messageType => {
-    messageType
-      .dropForeign('webhookTemplateId')
-      .dropColumn('webhookTemplateId')
+    messageType.dropForeign('webhookTemplateId').dropColumn('webhookTemplateId')
   })
   await knex.schema.table('Notification', notification => {
-    notification
-      .dropForeign('webhookMessageId')
-      .dropColumn('webhookMessageId')
+    notification.dropForeign('webhookMessageId').dropColumn('webhookMessageId')
   })
   await knex.schema.dropTableIfExists('WebhookMessage')
   await knex.schema.dropTableIfExists('WebhookTemplate')
-  await knex.schema.dropTableIfExists('WebhookCredentials')
   await knex.schema.dropTableIfExists('ResultAttachment')
   await knex.schema.dropTableIfExists('FileReference')
   await knex.schema.dropTableIfExists('FileContentType')

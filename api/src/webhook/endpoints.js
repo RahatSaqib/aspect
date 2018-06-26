@@ -1,8 +1,9 @@
-const { onWebhookMessageCreated } = require('./service')
+const { onWebhookTrigger, onWebhookMessageCreated } = require('./service')
 
 const subscriptions = [
   {
     actions: {
+      WEBHOOK_TRIGGER: onWebhookTrigger,
       WEBHOOK_MESSAGE_CREATED: onWebhookMessageCreated,
     },
   },
