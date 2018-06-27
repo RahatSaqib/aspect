@@ -4,6 +4,15 @@ const { createWriteStream } = require('fs')
 const { ensureFile } = require('fs-extra')
 
 async function createStreamFromFileReference(knex, fileReferenceId) {
+  const refPath = await getPathFromFileReferenceId(knex, fileReferenceId)
+  if (refPath != null) {
+    await ensureFile(refPath)
+    return createWriteStream(refPath)
+  }
+  return null
+}
+
+async function getPathFromFileReferenceId(knex, fileReferenceId) {
   const ref = await knex('FileReference')
     .where({ id: fileReferenceId })
     .first('name')
@@ -13,12 +22,12 @@ async function createStreamFromFileReference(knex, fileReferenceId) {
       String(fileReferenceId),
       ref.name
     )
-    await ensureFile(refPath)
-    return createWriteStream(refPath)
+    return refPath
   }
   return null
 }
 
 module.exports = {
   createStreamFromFileReference,
+  getPathFromFileReferenceId,
 }

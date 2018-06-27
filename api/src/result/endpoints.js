@@ -15,6 +15,7 @@ const {
   exportResults,
   showDeviceLogs,
   showFileReferences,
+  downloadFile,
   onResultLogged,
 } = require('./service')
 const {
@@ -136,6 +137,26 @@ const routes = [
         params: {
           resultId: Joi.string()
             .description('Result ID')
+            .required(),
+        },
+      },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/result/file/{resultId}/{fileName}',
+    handler: downloadFile,
+    config: {
+      description: 'Download file',
+      notes: 'Downloads the last file for the result with given name',
+      auth: { scope: ['result:view', 'result:edit'] },
+      validate: {
+        params: {
+          resultId: Joi.string()
+            .description('Result ID')
+            .required(),
+          fileName: Joi.string()
+            .description('FileName')
             .required(),
         },
       },

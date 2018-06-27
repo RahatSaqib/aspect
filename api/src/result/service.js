@@ -31,6 +31,7 @@ const {
   selectAssayConsumables,
 } = require('../consumable/assayConsumableService')
 const { inventoryReagentHealth } = require('../inventory/actions')
+const { getPathFromFileReferenceId } = require('../file/service')
 
 const MODULE_TEMPERATURE_ERROR_CODES = [
   '1001',
@@ -420,6 +421,35 @@ async function showFileReferences(request) {
       'fct.mimeSubtype'
     )
   return { data: fileReferences }
+}
+
+function downloadFile(request, reply) {
+  return downloadFileAsync(request)
+    .then(path => {
+      reply.file(path)
+    })
+    .catch(err => {
+      console.error(err) // eslint-disable-line no-console
+      reply(err)
+    })
+}
+
+async function downloadFileAsync(request) {
+  const { params: { resultId, fileName }, auth } = request
+  const dataConstraints = await getConstraints(auth.credentials)
+  const fileReference = await knex('ResultFileReference as rf')
+    .join('FileReference as f', 'f.id', 'rf.fileReferenceId')
+    .join('Result as r', 'r.id', 'rf.resultId')
+    .join('FileContentType as fct', 'f.fileContentTypeId', 'fct.id')
+    .join('Device as d', 'r.deviceId', 'd.id')
+    .where({ 'rf.resultId': resultId, 'f.name': fileName })
+    .orderBy('f.id', 'desc')
+    .modify(addConstraints, dataConstraints, { device: 'd' })
+    .first('f.id')
+  if (fileReference == null) {
+    throw Boom.notFound('Cannot find file')
+  }
+  return getPathFromFileReferenceId(knex, fileReference.id)
 }
 
 async function getResultByResultId(request, fields = SELECT_SHOW_FIELDS) {
@@ -1069,6 +1099,7 @@ module.exports = {
   exportResults,
   showDeviceLogs,
   showFileReferences,
+  downloadFile,
   createUniqueIdForResult,
   onResultLogged,
 }
