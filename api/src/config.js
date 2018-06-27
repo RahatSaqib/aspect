@@ -32,6 +32,7 @@ module.exports = {
     email: process.env['admin.email'],
     cell: process.env['admin.cell'],
   },
+  plugin: {},
 }
 
 configureOptional(module.exports)
@@ -54,5 +55,12 @@ function configureOptional(config) {
   const seedsDirectory = process.env['seeds.directory']
   if (seedsDirectory) {
     config.seeds = { directory: seedsDirectory }
+  }
+
+  // plugin data
+  // TODO load plugin config in plugins
+  const commcareApiKey = process.env['plugin.commcare.apiKey']
+  if (commcareApiKey) {
+    config.plugin.commcare = { apiKey: commcareApiKey }
   }
 }

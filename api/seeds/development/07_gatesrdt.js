@@ -1,5 +1,6 @@
 module.exports = require('../../src/db').seed(seed)
 
+const _ = require('lodash')
 const config = require('../../src/config')
 const bcrypt = require('bcrypt')
 const { randomToken } = require('../../src/deviceApi/apiKey')
@@ -170,18 +171,17 @@ async function seed(knex) {
   )
 
   // Create WebhookTemplate for downloading images
+  const commcareApiKey = _.get(config, 'plugin.commcare.apiKey', '')
   await knex('WebhookTemplate').insert(
     Object.assign(
       {
         externalId: 'commcareDownloadImage',
-        method: 'POST',
+        method: 'GET',
         url: '{{ result.data.resultImageUrl }}',
         fileName: '{{ result.data.resultImageFileName }}',
         fileContentTypeId: fileContentTypes.imageJpg.id,
         headers: JSON.stringify({
-          // TODO setup API user and move API Key somewhere?
-          Authorization:
-            'ApiKey kbeaty@systemone.id:50792502494c2eccd695c7cf75200a46feb74905',
+          Authorization: `ApiKey ${commcareApiKey}`,
         }),
       },
       auditFields

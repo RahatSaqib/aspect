@@ -81,13 +81,18 @@ async function up(knex) {
     webhookTemplate.string('externalId')
     // GET | PUT | POST
     webhookTemplate.string('method').notNullable()
-    // https://endpoint.com/path add query string to query
+    // Prepend all templated URLs with base, can be null to use URL only
+    webhookTemplate.string('urlBase')
+    // https://endpoint.com/path add query string to params
+    // relative to base if non null
     webhookTemplate.string('url').notNullable()
-    // Query string values as { 'queryName': 'queryValue')
-    webhookTemplate.specificType('query', 'JSON')
     // headers as { 'headerName': 'headerValue'}
     webhookTemplate.specificType('headers', 'JSON')
-    // Payload template null | templateData
+    // If method=GET Query string values as { 'queryName': 'queryValue')
+    // If method=POST|PUT string values as post data
+    webhookTemplate.specificType('params', 'JSON')
+    // Payload template for POST|PUT null | templateData
+    // Should not set both payload and params
     webhookTemplate.text('payload')
     webhookTemplate
       .integer('fileContentTypeId')
@@ -146,9 +151,10 @@ async function up(knex) {
       .index()
       .references('id')
       .inTable('FileReference')
-    // Full URL with template vars replaced and query string appended
+    // Full URL with template vars replaced
     webhookMessage.string('url')
     webhookMessage.specificType('headers', 'JSON')
+    webhookMessage.specificType('params', 'JSON')
     webhookMessage.text('payload')
     addTimestamps(webhookMessage)
     webhookMessage.charset('utf8')

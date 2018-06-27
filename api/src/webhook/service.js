@@ -1,5 +1,13 @@
 const _ = require('lodash')
 const {
+  createFetch,
+  base,
+  method,
+  params,
+  header,
+  body,
+} = require('http-client')
+const {
   webhookMessageCreated,
   webhookMessagePending,
   webhookMessageSent,
@@ -63,16 +71,21 @@ function onWebhookMessageCreated({ webhookMessageId }, { messageContext }) {
   const context = messageContext.bindActionCreators({ webhookMessagePending })
 
   return context.transact(async knex => {
-    const { payload, url, fileName } = await createWebhookMessageFromTemplate(
-      knex,
-      webhookMessageId
-    )
+    const {
+      payload,
+      url,
+      headers,
+      params,
+      fileName,
+    } = await createWebhookMessageFromTemplate(knex, webhookMessageId)
     const now = new Date()
     const messageStatusId = await messageStatusToId('Pending')
 
     const messageUpdates = {
       url,
       payload,
+      headers,
+      params,
       messageStatusId,
       updatedOn: now,
     }
@@ -103,13 +116,45 @@ function onWebhookMessageCreated({ webhookMessageId }, { messageContext }) {
 
 function onWebhookMessagePending({ webhookMessageId }, { messageContext }) {
   const context = messageContext.bindActionCreators({ webhookMessageSent })
-
-  return context.transact(async knex => {
+  return context.run(async knex => {
     // TODO If filename is set, download response to
     // /someconfiguredpath/filereference/{id}/{filename}
     // TODO If filename and resultId add ResultFileReference join
+    const message = await knex('WebhookMessage as m')
+      .join('WebhookTemplate as tmpl', 'm.webhookTemplateId', 'tmpl.id')
+      .join('FileContentType as fct', 'tmpl.fileContentTypeId', 'fct.id')
+      .first(
+        'tmpl.method',
+        'tmpl.urlBase',
+        'm.url',
+        'm.headers',
+        'm.params',
+        'm.payload',
+        'm.fileReferenceId',
+        'fct.mimeType',
+        'fct.mimeSubType'
+      )
 
-    const messageStatusId = await messageStatusToId('Sent')
+    const contentType = `${message.mimeType}/${message.mimeSubType}`
+    const fetchArgs = [method(message.method)]
+    if (message.urlBase != null) {
+      fetchArgs.push(base(message.urlBase))
+    }
+    if (message.headers != null) {
+      _.forEach(JSON.parse(message.headers), (value, key) =>
+        fetchArgs.push(header(key, value))
+      )
+    }
+    if (message.params != null) {
+      fetchArgs.push(params(JSON.parse(message.params)))
+    }
+    if (message.payload != null && message.payload !== '') {
+      fetchArgs.push(body(message.payload, contentType))
+    }
+    const fetch = createFetch(...fetchArgs)
+    const resp = await fetch(message.url)
+
+    const messageStatusId = await messageStatusToId(resp.ok ? 'Sent' : 'Error')
     await knex('WebhookMessage')
       .where({ id: webhookMessageId })
       .update({
@@ -129,14 +174,20 @@ async function createWebhookMessageFromTemplate(knex, webhookMessageId) {
     .first(
       'tmpl.payload as payloadTemplate',
       'tmpl.url as urlTemplate',
-      'tmpl.fileName as fileNameTemplate'
+      'tmpl.fileName as fileNameTemplate',
+      'tmpl.headers as headersTemplate',
+      'tmpl.params as paramsTemplate'
     )
 
-  return processUsingDataSourceQuery(data, [
+  const message = processUsingDataSourceQuery(data, [
     'payloadTemplate',
     'urlTemplate',
     'fileNameTemplate',
   ])
+  // TODO replace template values of header/params
+  message.headers = data.headersTemplate
+  message.params = data.paramsTemplate
+  return message
 }
 
 module.exports = {
