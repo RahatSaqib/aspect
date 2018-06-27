@@ -25,8 +25,23 @@ async function getPermissionModules(knex) {
   }, {})
 }
 
+async function seedFileContentTypes(knex) {
+  const { contentTypes } = require('./fixtures/fileContentTypes')
+  await Promise.all(
+    contentTypes.map(async contentType => {
+      const existingContentType = await knex('FileContentType')
+        .where({ externalId: contentType.externalId })
+        .first('id')
+      if (existingContentType == null) {
+        await knex('FileContentType').insert(contentType)
+      }
+    })
+  )
+}
+
 module.exports = {
   rowsAsObject,
   getDefaultMessageTypes,
   getPermissionModules,
+  seedFileContentTypes,
 }

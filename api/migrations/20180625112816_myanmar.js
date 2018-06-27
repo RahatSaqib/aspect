@@ -10,13 +10,15 @@ async function up(knex) {
   await knex.schema.createTable('FileContentType', fileContentType => {
     fileContentType.increments('id')
     fileContentType.string('name').notNullable()
-    fileContentType.string('externalId').notNullable()
-    fileContentType.string('mimeType').notNullable()
     fileContentType
-      .boolean('isImage')
+      .string('externalId')
       .notNullable()
-      .defaultTo(0)
-    addTimestamps(fileContentType)
+      .index()
+      .unique()
+    // text | image | audio | video | application
+    fileContentType.string('mimeType')
+    // plain html | png jpeg | mpeg | webm | json octet-stream
+    fileContentType.string('mimeSubtype')
     fileContentType.charset('utf8')
   })
 
@@ -36,27 +38,23 @@ async function up(knex) {
     fileReference.charset('utf8')
   })
 
-  await knex.schema.createTable('ResultAttachment', resultAttachment => {
-    resultAttachment.increments('id')
-    resultAttachment
+  await knex.schema.createTable('ResultFileReference', resultFileReference => {
+    resultFileReference
       .integer('resultId')
       .unsigned()
       .notNullable()
       .index()
       .references('id')
       .inTable('Result')
-    resultAttachment
+    resultFileReference
       .integer('fileReferenceId')
       .unsigned()
       .notNullable()
       .index()
       .references('id')
       .inTable('FileReference')
-    resultAttachment.string('name')
-    resultAttachment.string('contentType')
-    addCreateFieldsNullable(resultAttachment)
-    addUpdateFieldsNullable(resultAttachment)
-    resultAttachment.charset('utf8')
+    resultFileReference.primary(['resultId', 'fileReferenceId'])
+    resultFileReference.charset('utf8')
   })
 
   await knex.schema.createTable('WebhookTemplate', webhookTemplate => {
@@ -72,9 +70,15 @@ async function up(knex) {
     webhookTemplate.specificType('headers', 'JSON')
     // Payload template null | templateData
     webhookTemplate.text('payload')
-    // Configuration of response handler
-    // null | { action: 'addResultAttachment' }
-    webhookTemplate.specificType('responseHandler', 'JSON')
+    webhookTemplate
+      .integer('fileContentTypeId')
+      .unsigned()
+      .notNullable()
+      .index()
+      .references('id')
+      .inTable('FileContentType')
+    // set file name if we should download response and create file reference
+    webhookTemplate.string('fileName')
     addCreateFieldsNullable(webhookTemplate)
     addUpdateFieldsNullable(webhookTemplate)
     webhookTemplate.charset('utf8')
@@ -157,7 +161,7 @@ async function down(knex) {
   })
   await knex.schema.dropTableIfExists('WebhookMessage')
   await knex.schema.dropTableIfExists('WebhookTemplate')
-  await knex.schema.dropTableIfExists('ResultAttachment')
+  await knex.schema.dropTableIfExists('ResultFileReference')
   await knex.schema.dropTableIfExists('FileReference')
   await knex.schema.dropTableIfExists('FileContentType')
 }

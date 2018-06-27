@@ -1,0 +1,202 @@
+{
+  "contentTypes": [
+    {
+      "name": "Plain Text",
+      "externalId": "textPlain",
+      "mimeType": "text",
+      "mimeSubtype": "plain"
+    },
+    {
+      "name": "XML Text",
+      "externalId": "textXml",
+      "mimeType": "text",
+      "mimeSubtype": "xml"
+    },
+    {
+      "name": "HTML",
+      "externalId": "textHtml",
+      "mimeType": "text",
+      "mimeSubtype": "html"
+    },
+    {
+      "name": "CSS",
+      "externalId": "textCss",
+      "mimeType": "text",
+      "mimeSubtype": "css"
+    },
+    {
+      "name": "CSV",
+      "externalId": "textCsv",
+      "mimeType": "text",
+      "mimeSubtype": "csv"
+    },
+    {
+      "name": "iCalendar",
+      "externalId": "textCalendar",
+      "mimeType": "text",
+      "mimeSubtype": "calendar"
+    },
+    {
+      "name": "JavaScript",
+      "externalId": "textJavaScript",
+      "mimeType": "text",
+      "mimeSubtype": "javascript"
+    },
+    {
+      "name": "GIF",
+      "externalId": "imageGif",
+      "mimeType": "image",
+      "mimeSubtype": "gif"
+    },
+    {
+      "name": "PNG",
+      "externalId": "imagePng",
+      "mimeType": "image",
+      "mimeSubtype": "png"
+    },
+    {
+      "name": "JPEG",
+      "externalId": "imageJpg",
+      "mimeType": "image",
+      "mimeSubtype": "jpeg"
+    },
+    {
+      "name": "SVG",
+      "externalId": "imageSvg",
+      "mimeType": "image",
+      "mimeSubtype": "svg+xml"
+    },
+    {
+      "name": "TIFF",
+      "externalId": "imageTiff",
+      "mimeType": "image",
+      "mimeSubtype": "tiff"
+    },
+    {
+      "name": "Bitmap",
+      "externalId": "imageBmp",
+      "mimeType": "image",
+      "mimeSubtype": "bmp"
+    },
+    {
+      "name": "WebP",
+      "externalId": "imageWebp",
+      "mimeType": "image",
+      "mimeSubtype": "webp"
+    },
+    {
+      "name": "MIDI",
+      "externalId": "audioMidi",
+      "mimeType": "audio",
+      "mimeSubtype": "midi"
+    },
+    {
+      "name": "MPEG Audio",
+      "externalId": "audioMpeg",
+      "mimeType": "audio",
+      "mimeSubtype": "mpeg"
+    },
+    {
+      "name": "WebM Audio",
+      "externalId": "audioWebm",
+      "mimeType": "audio",
+      "mimeSubtype": "webm"
+    },
+    {
+      "name": "Ogg Audio",
+      "externalId": "audioOgg",
+      "mimeType": "audio",
+      "mimeSubtype": "ogg"
+    },
+    {
+      "name": "WAV",
+      "externalId": "audioWav",
+      "mimeType": "audio",
+      "mimeSubtype": "wav"
+    },
+    {
+      "name": "WebM Video",
+      "externalId": "videoWebm",
+      "mimeType": "video",
+      "mimeSubtype": "webm"
+    },
+    {
+      "name": "Ogg Video",
+      "externalId": "videoOgg",
+      "mimeType": "video",
+      "mimeSubtype": "ogg"
+    },
+    {
+      "name": "Multipart Form Data",
+      "externalId": "multipartFormData",
+      "mimeType": "multipart",
+      "mimeSubtype": "form-data"
+    },
+    {
+      "name": "Binary",
+      "externalId": "applicationOctetStream",
+      "mimeType": "application",
+      "mimeSubtype": "octet-stream"
+    },
+    {
+      "name": "JSON",
+      "externalId": "applicationJson",
+      "mimeType": "application",
+      "mimeSubtype": "json"
+    },
+    {
+      "name": "XHTML",
+      "externalId": "applicationXhtml",
+      "mimeType": "application",
+      "mimeSubtype": "xhtml+xml"
+    },
+    {
+      "name": "XML",
+      "externalId": "applicationXml",
+      "mimeType": "application",
+      "mimeSubtype": "xml"
+    },
+    {
+      "name": "PDF",
+      "externalId": "applicationPdf",
+      "mimeType": "application",
+      "mimeSubtype": "pdf"
+    },
+    {
+      "name": "Microsoft Excel (OpenXML)",
+      "externalId": "applicationOpenXmlSheet",
+      "mimeType": "application",
+      "mimeSubtype": "vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    },
+    {
+      "name": "Microsoft Word (OpenXML)",
+      "externalId": "applicationOpenXmlDocument",
+      "mimeType": "application",
+      "mimeSubtype": "vnd.openxmlformats-officedocument.wordprocessingml.document"
+    },
+    {
+      "name": "Microsoft PowerPoint (OpenXML)",
+      "externalId": "applicationOpenXmlPresentation",
+      "mimeType": "application",
+      "mimeSubtype": "vnd.openxmlformats-officedocument.presentationml.presentation"
+    },
+    {
+      "name": "TAR",
+      "externalId": "applicationTar",
+      "mimeType": "application",
+      "mimeSubtype": "x-tar"
+    },
+    {
+      "name": "ZIP",
+      "externalId": "applicationZip",
+      "mimeType": "application",
+      "mimeSubtype": "zip"
+    },
+    {
+      "name": "7-zip",
+      "externalId": "application7Zip",
+      "mimeType": "application",
+      "mimeSubtype": "x-7z-compressed"
+    }
+  ]
+}

@@ -10,7 +10,7 @@ const patients = require('./fixtures/patients.json')
 const dashboardWidget = require('./fixtures/dashboardWidget.json')
 const features = require('./fixtures/features.json')
 const { errorCodes } = require('./fixtures/errorCodes.js')
-const { rowsAsObject } = require('../utils')
+const { rowsAsObject, seedFileContentTypes } = require('../utils')
 const {
   addMilliseconds,
   addMinutes,
@@ -101,6 +101,9 @@ async function seed(knex) {
     maxDaysDeviceOffline: 7,
     maxDaysDeviceNoResults: 14,
   })
+
+  // static data
+  await seedFileContentTypes(knex)
 
   // Categories of devices (lab, connectivity...)
   const [deviceTypeCategoryLab] = await knex('DeviceTypeCategory').insert({
