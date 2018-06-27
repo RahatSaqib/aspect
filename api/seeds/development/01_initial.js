@@ -347,6 +347,7 @@ async function seed(knex) {
     externalId: 'CommCareApp',
     name: 'CommCare App',
     manufacturer: 'CommCare',
+    plugin: 'commcare',
     deviceTypeCategoryId: deviceTypeCategoryLab,
     configurationDataSchema: commCareConfigurationDataSchema,
     deviceOperationSchema: commCareDeviceOperationSchema,
@@ -928,7 +929,7 @@ async function seed(knex) {
   const [assayGeneXpertHcvId] = await knex('Assay').insert({
     name: 'GeneXpert HCV',
     i18nKey: 'assayGeneXpertHcv',
-    externalId: 'GeneXpertHcv',
+    externalId: 'GxHcv',
     assayTypeId: assayTypeHcvId,
     deviceTypeId: deviceTypeGeneXpertId,
     resultSourceId: resultSourceDiagnosticId,

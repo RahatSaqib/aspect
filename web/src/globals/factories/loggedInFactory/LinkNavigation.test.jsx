@@ -11,7 +11,7 @@ describe('LinkNavigation component', () => {
 
   const props = {
     intl,
-    userPermissions: Immutable.Set(['device:view']),
+    userPermissions: Immutable.Set(['browse:view']),
   }
 
   it('should shallow render correctly', () => {

@@ -94,7 +94,7 @@ function decorateClientAPI(module) {
 function decorateDeviceAPI() {
   // must always be authenticated using Device JWT
   const scope = ['+deviceApi']
-  const strategies = ['deviceApi']
+  const strategies = ['deviceApiBasic', 'deviceApiKey']
   return decorateAPI({ scope, strategies })
 }
 

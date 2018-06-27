@@ -19,3 +19,9 @@ Large Multi-fields Container
 ```
 <ReadOnlyFields fields={[{lg: true, label: 'Name', value: 'hello'}, {lg: true, label: 'API Key', value: 'goodbye'}]} />
 ```
+
+Standard Multi-fields Container  with a hidden Label
+
+```
+<ReadOnlyFields hideLabel fields={[{label: 'Name', value: 'hello'}]} />
+```

@@ -177,6 +177,7 @@ const SELECT_SHOW_FIELDS = [
   'r.endedOn',
   'r.deviceId',
   'd.name as deviceName',
+  'd.serial as deviceSerial',
   'c.name as countryName',
   'st.name as stateName',
   'lg.name as lgaName',

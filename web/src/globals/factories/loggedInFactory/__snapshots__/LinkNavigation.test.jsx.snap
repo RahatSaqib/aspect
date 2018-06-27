@@ -51,21 +51,6 @@ exports[`LinkNavigation component should see browse link when having browse feat
     }
     title="Home"
   />
-  <withHandlers(pure(Link))
-    history={undefined}
-    href="/browse/device"
-    label="Browse"
-    location={undefined}
-    onClick={undefined}
-    theme={
-      Object {
-        "active": "Link__active",
-        "icon": "Link__icon",
-        "link": "Link__link",
-      }
-    }
-    title="Browse"
-  />
 </ThemedNavigation>
 `;
 

@@ -37,6 +37,9 @@ const subscriptions = [
     actions: {
       DEVICE_OFFLINE: onIssueEventTrigger('DeviceOffline'),
       DEVICE_ONLINE: onIssueEventResolve('DeviceOffline'),
+      // passed string values should match externalId in table IssueType
+      INVENTORY_STOCKOUT: onIssueEventTrigger('InventoryStockout'),
+      INVENTORY_STOCK_EXPIRING: onIssueEventTrigger('InventoryStockExpiring'),
       DEVICE_NO_RESULTS: onIssueEventTrigger('DeviceNoResults'),
       DEVICE_HAS_NEW_RESULTS: onIssueEventResolve('DeviceNoResults'),
       DEVICE_MAINTENANCE: onIssueEventTrigger('DeviceMaintenance'),
