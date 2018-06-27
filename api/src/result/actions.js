@@ -150,30 +150,36 @@ function resultDataCategoryLowCheck() {
  * Creates an action to notify the site with given id
  * has low given data category issue for given period
  *
- * dataCategoryId, periodName, siteId, percentage are required.
+ * dataCategoryId, categoryName, periodName, siteId, percentage are required.
  */
 function resultDataCategoryLow({
   dataCategoryId,
+  categoryName,
   periodName,
   siteId,
   percentage,
 }) {
   if (
-    isNil(dataCategoryId) ||
-    isNil(periodName) ||
-    isNil(siteId) ||
+    !dataCategoryId ||
+    !categoryName ||
+    !periodName ||
+    !siteId ||
     isNil(percentage)
   ) {
     throw new Error(
-      'Must specify each parameter - dataCategoryId, periodName, siteId, percentage - for Data Category Low notification'
+      'Must specify each parameter - dataCategoryId, categoryName, periodName, siteId, percentage - for Data Category Low notification'
     )
   }
   return {
     type: types.RESULT_DATA_CATEGORY_IS_LOW,
-    dataCategoryId,
-    periodName,
     siteId,
-    percentage,
+    options: {
+      dataCategoryId,
+      categoryName,
+      periodName,
+      siteId,
+      percentage,
+    },
   }
 }
 

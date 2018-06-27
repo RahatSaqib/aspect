@@ -4,7 +4,7 @@ const {
   factGenerateDeviceConnectivity,
   factGenerateResultCounts,
 } = require('./fact/actions')
-const { resultDataCategoryLowCheck } = require('../result/actions')
+const { resultDataCategoryLowCheck } = require('./result/actions')
 const { escalateIssues, resolveIssues } = require('./issue/actions')
 
 function startScheduler(queue) {
@@ -18,7 +18,7 @@ function startScheduler(queue) {
   })
   dispatcher.factGenerateResultCounts()
   dispatcher.factGenerateDeviceConnectivity()
-  dispatcher.resultDataCategoryLow()
+  dispatcher.resultDataCategoryLowCheck()
 
   cron.schedule('0 * * * *', dispatcher.factGenerateResultCounts) // run every hour as it changes
   cron.schedule('1 * * * *', dispatcher.factGenerateDeviceConnectivity) // run every hour at 1 minute past the hour

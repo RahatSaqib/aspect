@@ -1077,28 +1077,12 @@ async function checkDataCategoriesForLowStatus(action, { messageContext }) {
       const validValues =
         dataCategory.validValues && JSON.parse(dataCategory.validValues)
 
-      // get top geography for this data category
-      const { geographyId } = dataCategory
-      const geo = await knex('Geography')
-        .where('id', geographyId)
-        .first()
+      const { partnerId } = dataCategory
 
-      // get all sites below top geography
-      const sites = await knex('Site as s')
-        .innerJoin('Geography as g', 's.geographyId', 'g.id')
-        .where(() => {
-          // by default top level scope for each DataCategory is country
-          this.where('g.countryId', geo.countryId)
-          // but if stateId is defined - then fetch all sites from this state only
-          if (geo.stateId) {
-            this.andWhere('g.stateId', geo.stateId)
-          }
-          // and if lgaId is defined - then narrow further to only sites from this lga
-          if (geo.lgaId) {
-            this.andWhere('g.lgaId', geo.lgaId)
-          }
-        })
-        .select('s.id', 's.name', 's.geographyId')
+      // get all sites for current partnerId
+      const sites = await knex('Site')
+        .where({ partnerId })
+        .select('id', 'name', 'geographyId')
 
       _.map(periods, period => {
         _.map(sites, site => {
@@ -1108,20 +1092,19 @@ async function checkDataCategoriesForLowStatus(action, { messageContext }) {
             .where('r.endedOn', '>=', period.dateFrom)
             .where('r.endedOn', '<=', period.dateTo)
             // filter by site
-            .where(() => {
+            .where(function() {
               // either result is from site's geography
-              this.where(() => {
+              this.where(function() {
                 this.whereNotNull('r.geographyId').andWhere(
                   'r.geographyId',
                   site.geographyId
                 )
               })
               // or device is from site's geography
-              this.orWhere(() => {
-                this.whereNotNull('d.geographyId').andWhere(
-                  'd.geographyId',
-                  site.geographyId
-                )
+              this.orWhere(function() {
+                this.whereNotNull('d.geographyId')
+                  .andWhereRaw(`${site.geographyId || -1} > 0`)
+                  .andWhere('d.geographyId', site.geographyId)
               })
             })
 
@@ -1132,7 +1115,7 @@ async function checkDataCategoriesForLowStatus(action, { messageContext }) {
           // (clarify if it makes sense to distinguish values as string, boolean, date and number here)
           // -------------------------------
           const numValid = itemsBase
-            .andWhere(() => {
+            .andWhere(function() {
               // at least make sure field exists in json
               this.where(
                 'r.patientData',
@@ -1142,7 +1125,7 @@ async function checkDataCategoriesForLowStatus(action, { messageContext }) {
 
               // process 2 main cases - validValues is an array or not
               if (validValues && _.isArray(validValues)) {
-                this.where(() => {
+                this.where(function() {
                   _.each(validValues, value => {
                     this.orWhere(
                       'r.patientData',
@@ -1186,6 +1169,7 @@ async function checkDataCategoriesForLowStatus(action, { messageContext }) {
           if (percentage < dataCategory.cutoffPercentage) {
             const payload = {
               dataCategoryId: dataCategory.id,
+              categoryName: dataCategory.name,
               periodName: period.name,
               siteId: site.id,
               percentage,

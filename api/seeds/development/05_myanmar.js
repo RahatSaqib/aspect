@@ -5,49 +5,21 @@ const _ = require('lodash')
 
 const config = require('../../src/config')
 const myanmarSites = require('./fixtures/myanmarSites.json')
-const samplePatients = require('./fixtures/patients.json')
+let patients = require('./fixtures/patients.json')
 const dashboardWidget = require('./fixtures/myanmarDashboardWidget.json')
 const { errorCodes } = require('./fixtures/errorCodes.js')
 const { addMilliseconds, addMinutes, subDays } = require('date-fns')
-
-const {
-  seedDataCategory,
-  dictHivStatus,
-  dictSampleTypes,
-  dictMdr,
-  dictSmear,
-  dictOtherReason,
-  dictReferralCenter,
-} = require('../myanmar/fixtures/dataCategoryLow')
-
-// helper function
-const getRandomValue = (arr, pc = 2) => {
-  // return values ony in 98% of cases
-  if (99 - _.random(99) < pc) return undefined
-  return _.isArray(arr)
-    ? arr[_.random(arr.length - 1)]
-    : `Some string - ${_.random(1000000)}`
-}
-// alter patients
-const patients = _.map(samplePatients, p => {
-  // set random values for 50% of persons
-  p.hiv = getRandomValue(dictHivStatus, 50) // former 'HIV Status'
-  // set values for 98% of persons
-  p.sampleType = getRandomValue(dictSampleTypes)
-  p.mdr = getRandomValue(dictMdr) // former 'Previous TB History'
-  p.smear = getRandomValue(dictSmear) // former 'Microscopy Result'
-  p.otherReason = getRandomValue(dictOtherReason) // Other Reason for Test
-  p.referralCenter = getRandomValue(dictReferralCenter) // Referral Center
-  p.otherNotes = getRandomValue() // Other Notes
-  // -------------------------------
-  // some above fields are used for Data Category Low issue:
-  // hiv, mdr, smear for corresponding data categories,
-  // all other mandatory fields are groupped for category Other
-  // -------------------------------
-  return p
-})
-// --------------------------------------------------------------------
 const { rowsAsObject, getDefaultMessageTypes } = require('../utils')
+
+// --------------------------------
+const {
+  addDataCategoryFields,
+  seedDataCategory,
+} = require('../dataCategoryLow')
+
+// add and randomely populate DataCategory fields
+patients = addDataCategoryFields(patients)
+// --------------------------------
 
 const now = new Date()
 const millisInHour = 1000 * 60 * 60
@@ -94,9 +66,6 @@ async function seed(knex) {
     resultWorkflowStatuses,
     issueTypes,
     defaultMessageTypes,
-    // for seeding DataCategory
-    messageSeverities,
-    issueCategories,
   ] = await Promise.all([
     rowsAsObject(knex, 'PartnerType', 'name'),
     rowsAsObject(knex, 'DeviceType', 'externalId'),
@@ -109,8 +78,6 @@ async function seed(knex) {
     rowsAsObject(knex, 'ResultWorkflowStatus', 'externalId'),
     rowsAsObject(knex, 'IssueType', 'externalId'),
     getDefaultMessageTypes(knex),
-    rowsAsObject(knex, 'MessageSeverity', 'externalId'),
-    rowsAsObject(knex, 'IssueCategory', 'externalId'),
   ])
 
   const [partnerId] = await knex('Partner').insert({
@@ -1348,14 +1315,6 @@ async function seed(knex) {
     ),
   ])
 
-  // Data Category
-  await seedDataCategory(knex, {
-    auditFields,
-    partnerId,
-    issueCategoryId: issueCategories.DataHealth.id,
-    messageSeverityId: messageSeverities.Alert.id,
-  })
-
   // TB Cartridges Consumable Id
   const { id: consumableGxTbCartridgeId } = await knex('Consumable')
     .where({ name: 'GeneXpert TB Cartridge' })
@@ -1766,6 +1725,9 @@ async function seed(knex) {
       updatedOn: now,
     },
   ])
+
+  // Data Category
+  await seedDataCategory(knex, 'Myanmar')
 }
 
 function calculateDateForResult(
