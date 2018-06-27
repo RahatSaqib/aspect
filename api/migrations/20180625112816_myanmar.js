@@ -22,27 +22,8 @@ async function up(knex) {
     fileContentType.charset('utf8')
   })
 
-  // Initial, Pending, Active, Missing, Error
-  await knex.schema.createTable('FileStatus', fileStatus => {
-    fileStatus.increments('id')
-    fileStatus.string('name').notNullable()
-    fileStatus
-      .string('externalId')
-      .notNullable()
-      .index()
-      .unique()
-    fileStatus.charset('utf8')
-  })
-
   await knex.schema.createTable('FileReference', fileReference => {
     fileReference.increments('id')
-    fileReference
-      .integer('fileStatusId')
-      .unsigned()
-      .notNullable()
-      .index()
-      .references('id')
-      .inTable('FileStatus')
     fileReference
       .integer('fileContentTypeId')
       .unsigned()
@@ -188,6 +169,5 @@ async function down(knex) {
   await knex.schema.dropTableIfExists('WebhookTemplate')
   await knex.schema.dropTableIfExists('ResultFileReference')
   await knex.schema.dropTableIfExists('FileReference')
-  await knex.schema.dropTableIfExists('FileStatus')
   await knex.schema.dropTableIfExists('FileContentType')
 }

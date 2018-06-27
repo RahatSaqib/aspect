@@ -12,7 +12,7 @@ const {
   webhookMessagePending,
   webhookMessageSent,
 } = require('./actions')
-const { messageStatusToId, fileStatusToId } = require('../shared/dictionary')
+const { messageStatusToId } = require('../shared/dictionary')
 const {
   addDataSourceToQuery,
   processUsingDataSourceQuery,
@@ -92,13 +92,11 @@ function onWebhookMessageCreated({ webhookMessageId }, { messageContext }) {
     }
 
     if (fileName !== null && fileName !== '') {
-      const fileStatusId = await fileStatusToId('Initial')
       const { fileContentTypeId } = await knex('WebhookMessage as m')
         .join('WebhookTemplate as tmpl', 'm.webhookTemplateId', 'tmpl.id')
         .first('tmpl.fileContentTypeId')
 
       const [fileReferenceId] = await knex('FileReference').insert({
-        fileStatusId,
         fileContentTypeId,
         name: fileName,
         createdOn: now,
@@ -130,6 +128,7 @@ function onWebhookMessagePending({ webhookMessageId }, { messageContext }) {
         'm.params',
         'm.payload',
         'm.fileReferenceId',
+        'm.resultId',
         'fct.mimeType',
         'fct.mimeSubType'
       )
@@ -169,20 +168,29 @@ function onWebhookMessagePending({ webhookMessageId }, { messageContext }) {
       if (fileStream != null) {
         resp.body.pipe(fileStream)
       }
-      webhookError = resp.ok
+      webhookError = !resp.ok
     }
 
-    const messageStatusId = await messageStatusToId(
-      webhookError ? 'Error' : 'Sent'
-    )
+    const now = new Date()
+    const messageStatusIds = await messageStatusToId()
+    const messageUpdates = { updatedOn: now }
+
+    if (webhookError) {
+      messageUpdates.messageStatusId = messageStatusIds.Error
+    } else {
+      messageUpdates.messageStatusId = messageStatusIds.Sent
+      if (message.fileReferenceId != null && message.resultId != null) {
+        await knex('ResultFileReference').insert({
+          resultId: message.resultId,
+          fileReferenceId: message.fileReferenceId,
+        })
+      }
+    }
     await knex('WebhookMessage')
       .where({ id: webhookMessageId })
-      .update({
-        messageStatusId,
-        updatedOn: new Date(),
-      })
+      .update(messageUpdates)
 
-    if (!webhookError) {
+    if (messageUpdates.messageStatusId === messageStatusIds.Sent) {
       context.webhookMessageSent(webhookMessageId)
     }
   })
