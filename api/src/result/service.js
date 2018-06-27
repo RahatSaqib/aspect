@@ -402,6 +402,26 @@ async function getDeviceLogsByResultId(request) {
   return { data: deviceLogs }
 }
 
+async function showFileReferences(request) {
+  const { params, auth } = request
+  const dataConstraints = await getConstraints(auth.credentials)
+  const fileReferences = await knex('ResultFileReference as rf')
+    .join('FileReference as f', 'f.id', 'rf.fileReferenceId')
+    .join('Result as r', 'r.id', 'rf.resultId')
+    .join('FileContentType as fct', 'f.fileContentTypeId', 'fct.id')
+    .join('Device as d', 'r.deviceId', 'd.id')
+    .where('rf.resultId', params.resultId)
+    .orderBy('f.id', 'asc')
+    .modify(addConstraints, dataConstraints, { device: 'd' })
+    .select(
+      'f.name',
+      'fct.externalId as fileContentType',
+      'fct.mimeType',
+      'fct.mimeSubtype'
+    )
+  return { data: fileReferences }
+}
+
 async function getResultByResultId(request, fields = SELECT_SHOW_FIELDS) {
   const { auth, params } = request
   const dataConstraints = await getConstraints(auth.credentials)
@@ -1048,6 +1068,7 @@ module.exports = {
   listWorkflowStatusLog,
   exportResults,
   showDeviceLogs,
+  showFileReferences,
   createUniqueIdForResult,
   onResultLogged,
 }

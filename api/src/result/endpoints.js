@@ -14,6 +14,7 @@ const {
   listWorkflowStatusLog,
   exportResults,
   showDeviceLogs,
+  showFileReferences,
   onResultLogged,
 } = require('./service')
 const {
@@ -113,6 +114,23 @@ const routes = [
     config: {
       description: 'Device Logs',
       notes: 'Device Logs by result id',
+      auth: { scope: ['result:view', 'result:edit'] },
+      validate: {
+        params: {
+          resultId: Joi.string()
+            .description('Result ID')
+            .required(),
+        },
+      },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/result/files/{resultId}',
+    handler: asyncHandler(showFileReferences),
+    config: {
+      description: 'File References',
+      notes: 'File References by result id',
       auth: { scope: ['result:view', 'result:edit'] },
       validate: {
         params: {
