@@ -1,3 +1,5 @@
+const { readJson } = require('fs-extra')
+
 async function rowsAsObject(knex, table, column = 'name') {
   return knex(table).reduce((memo, row) => {
     memo[row[column]] = row
@@ -29,8 +31,7 @@ async function seedStaticData(knex) {
   const tables = ['FileStatus', 'FileContentType']
   await Promise.all(
     tables.map(async table => {
-      // eslint-disable-next-line import/no-dynamic-require
-      const { data } = require(`./fixtures/${table}`)
+      const { data } = await readJson(`./seeds/fixtures/${table}.json`)
       await Promise.all(
         data.map(async datum => {
           const existingDatum = await knex(table)

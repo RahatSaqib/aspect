@@ -14,6 +14,11 @@ module.exports = {
     database: process.env['db.databaseName'],
     debug: process.env['db.debug'] === 'true',
   },
+  file: {
+    reference: {
+      directory: process.env['file.reference.directory'],
+    },
+  },
   amqp: {
     url: process.env['amqp.url'],
   },

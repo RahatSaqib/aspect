@@ -17,6 +17,7 @@ const {
   addDataSourceToQuery,
   processUsingDataSourceQuery,
 } = require('../stringTemplate/service')
+const { createStreamFromFileReference } = require('../file/service')
 
 function onWebhookTrigger(
   { webhookTemplateExternalId, options },
@@ -117,8 +118,6 @@ function onWebhookMessageCreated({ webhookMessageId }, { messageContext }) {
 function onWebhookMessagePending({ webhookMessageId }, { messageContext }) {
   const context = messageContext.bindActionCreators({ webhookMessageSent })
   return context.run(async knex => {
-    // TODO If filename is set, download response to
-    // /someconfiguredpath/filereference/{id}/{filename}
     // TODO If filename and resultId add ResultFileReference join
     const message = await knex('WebhookMessage as m')
       .join('WebhookTemplate as tmpl', 'm.webhookTemplateId', 'tmpl.id')
@@ -151,17 +150,41 @@ function onWebhookMessagePending({ webhookMessageId }, { messageContext }) {
     if (message.payload != null && message.payload !== '') {
       fetchArgs.push(body(message.payload, contentType))
     }
-    const fetch = createFetch(...fetchArgs)
-    const resp = await fetch(message.url)
 
-    const messageStatusId = await messageStatusToId(resp.ok ? 'Sent' : 'Error')
+    let webhookError = false
+    let fileStream = null
+    if (message.fileReferenceId != null) {
+      fileStream = await createStreamFromFileReference(
+        knex,
+        message.fileReferenceId
+      )
+      if (fileStream == null) {
+        webhookError = true
+      }
+    }
+
+    if (!webhookError) {
+      const fetch = createFetch(...fetchArgs)
+      const resp = await fetch(message.url)
+      if (fileStream != null) {
+        resp.body.pipe(fileStream)
+      }
+      webhookError = resp.ok
+    }
+
+    const messageStatusId = await messageStatusToId(
+      webhookError ? 'Error' : 'Sent'
+    )
     await knex('WebhookMessage')
       .where({ id: webhookMessageId })
       .update({
         messageStatusId,
         updatedOn: new Date(),
       })
-    context.webhookMessageSent(webhookMessageId)
+
+    if (!webhookError) {
+      context.webhookMessageSent(webhookMessageId)
+    }
   })
 }
 
