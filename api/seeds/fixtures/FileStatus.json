@@ -1,0 +1,24 @@
+{
+  "data": [
+    {
+      "name": "Initial",
+      "externalId": "Initial"
+    },
+    {
+      "name": "Pending",
+      "externalId": "Pending"
+    },
+    {
+      "name": "Active",
+      "externalId": "Active"
+    },
+    {
+      "name": "Missing",
+      "externalId": "Missing"
+    },
+    {
+      "name": "Error",
+      "externalId": "Error"
+    }
+  ]
+}

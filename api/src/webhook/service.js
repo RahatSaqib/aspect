@@ -1,6 +1,10 @@
 const _ = require('lodash')
-const { webhookMessageCreated, webhookMessagePending } = require('./actions')
-const dictionary = require('../shared/dictionary')
+const {
+  webhookMessageCreated,
+  webhookMessagePending,
+  webhookMessageSent,
+} = require('./actions')
+const { messageStatusToId, fileStatusToId } = require('../shared/dictionary')
 const {
   addDataSourceToQuery,
   processUsingDataSourceQuery,
@@ -13,9 +17,10 @@ function onWebhookTrigger(
   const context = messageContext.bindActionCreators({ webhookMessageCreated })
   return context.transact(async knex => {
     const now = new Date()
-    const messageStatusIds = await dictionary.messageStatusToId()
+    const messageStatusIds = await messageStatusToId()
     const optionalConstraints = ['personId', 'siteId', 'deviceId', 'resultId']
 
+    // TODO Do not retrigger for same results with filereference of same constraints/filename
     // Do we already have a message in pending or initial state?
     const webhookTemplate = await knex('WebhookTemplate as tmpl')
       .where({ 'tmpl.externalId': webhookTemplateExternalId })
@@ -58,22 +63,60 @@ function onWebhookMessageCreated({ webhookMessageId }, { messageContext }) {
   const context = messageContext.bindActionCreators({ webhookMessagePending })
 
   return context.transact(async knex => {
-    const { payload, url } = await createWebhookMessageFromTemplate(
+    const { payload, url, fileName } = await createWebhookMessageFromTemplate(
       knex,
       webhookMessageId
     )
-    const messageStatusId = (await dictionary.messageStatusToId()).Pending
+    const now = new Date()
+    const messageStatusId = await messageStatusToId('Pending')
+
+    const messageUpdates = {
+      url,
+      payload,
+      messageStatusId,
+      updatedOn: now,
+    }
+
+    if (fileName !== null && fileName !== '') {
+      const fileStatusId = await fileStatusToId('Initial')
+      const { fileContentTypeId } = await knex('WebhookMessage as m')
+        .join('WebhookTemplate as tmpl', 'm.webhookTemplateId', 'tmpl.id')
+        .first('tmpl.fileContentTypeId')
+
+      const [fileReferenceId] = await knex('FileReference').insert({
+        fileStatusId,
+        fileContentTypeId,
+        name: fileName,
+        createdOn: now,
+        updatedOn: now,
+      })
+      messageUpdates.fileReferenceId = fileReferenceId
+    }
 
     await knex('WebhookMessage')
       .where({ id: webhookMessageId })
+      .update(messageUpdates)
+
+    context.webhookMessagePending(webhookMessageId)
+  })
+}
+
+function onWebhookMessagePending({ webhookMessageId }, { messageContext }) {
+  const context = messageContext.bindActionCreators({ webhookMessageSent })
+
+  return context.transact(async knex => {
+    // TODO If filename is set, download response to
+    // /someconfiguredpath/filereference/{id}/{filename}
+    // TODO If filename and resultId add ResultFileReference join
+
+    const messageStatusId = await messageStatusToId('Sent')
+    await knex('WebhookMessage')
+      .where({ id: webhookMessageId })
       .update({
-        url,
-        payload,
         messageStatusId,
         updatedOn: new Date(),
       })
-
-    context.webhookMessagePending(webhookMessageId)
+    context.webhookMessageSent(webhookMessageId)
   })
 }
 
@@ -83,12 +126,21 @@ async function createWebhookMessageFromTemplate(knex, webhookMessageId) {
     .leftJoin('Notification as n', 'n.webhookMessageId', 'm.id')
     .modify(addDataSourceToQuery, { message: 'm', notification: 'n' })
     .where({ 'm.id': webhookMessageId })
-    .first('tmpl.payload as payloadTemplate', 'tmpl.url as urlTemplate')
+    .first(
+      'tmpl.payload as payloadTemplate',
+      'tmpl.url as urlTemplate',
+      'tmpl.fileName as fileNameTemplate'
+    )
 
-  return processUsingDataSourceQuery(data, ['payloadTemplate', 'urlTemplate'])
+  return processUsingDataSourceQuery(data, [
+    'payloadTemplate',
+    'urlTemplate',
+    'fileNameTemplate',
+  ])
 }
 
 module.exports = {
   onWebhookTrigger,
   onWebhookMessageCreated,
+  onWebhookMessagePending,
 }

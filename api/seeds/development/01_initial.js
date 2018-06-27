@@ -10,7 +10,7 @@ const patients = require('./fixtures/patients.json')
 const dashboardWidget = require('./fixtures/dashboardWidget.json')
 const features = require('./fixtures/features.json')
 const { errorCodes } = require('./fixtures/errorCodes.js')
-const { rowsAsObject, seedFileContentTypes } = require('../utils')
+const { rowsAsObject, seedStaticData } = require('../utils')
 const {
   addMilliseconds,
   addMinutes,
@@ -57,6 +57,8 @@ async function seed(knex) {
     return
   }
 
+  await seedStaticData(knex)
+
   // Create admin user and audit fields
   const [adminId] = await knex('User').insert({
     name: 'admin',
@@ -101,9 +103,6 @@ async function seed(knex) {
     maxDaysDeviceOffline: 7,
     maxDaysDeviceNoResults: 14,
   })
-
-  // static data
-  await seedFileContentTypes(knex)
 
   // Categories of devices (lab, connectivity...)
   const [deviceTypeCategoryLab] = await knex('DeviceTypeCategory').insert({

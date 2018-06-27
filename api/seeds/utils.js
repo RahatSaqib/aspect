@@ -25,16 +25,22 @@ async function getPermissionModules(knex) {
   }, {})
 }
 
-async function seedFileContentTypes(knex) {
-  const { contentTypes } = require('./fixtures/fileContentTypes')
+async function seedStaticData(knex) {
+  const tables = ['FileStatus', 'FileContentType']
   await Promise.all(
-    contentTypes.map(async contentType => {
-      const existingContentType = await knex('FileContentType')
-        .where({ externalId: contentType.externalId })
-        .first('id')
-      if (existingContentType == null) {
-        await knex('FileContentType').insert(contentType)
-      }
+    tables.map(async table => {
+      // eslint-disable-next-line import/no-dynamic-require
+      const { data } = require(`./fixtures/${table}`)
+      await Promise.all(
+        data.map(async datum => {
+          const existingDatum = await knex(table)
+            .where({ externalId: datum.externalId })
+            .first('id')
+          if (existingDatum == null) {
+            await knex(table).insert(datum)
+          }
+        })
+      )
     })
   )
 }
@@ -43,5 +49,5 @@ module.exports = {
   rowsAsObject,
   getDefaultMessageTypes,
   getPermissionModules,
-  seedFileContentTypes,
+  seedStaticData,
 }
