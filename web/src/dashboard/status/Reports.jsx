@@ -2,10 +2,9 @@ import classnames from 'classnames/bind'
 import _ from 'lodash'
 import React from 'react'
 import { connect } from 'react-redux'
-import { compose, pure, withProps, withStateHandlers } from 'recompose'
+import { compose, pure, withProps } from 'recompose'
 import { Card } from 'react-toolbox/lib/card'
 import { Button } from 'react-toolbox/lib/button'
-import { Dialog } from 'react-toolbox/lib/dialog'
 import subtractDays from 'date-fns/subDays'
 import formatDate from 'date-fns/format'
 import config from '../../config'
@@ -32,24 +31,19 @@ const enhance = compose(
     const now = new Date()
     const last7Days = formatDate(subtractDays(now, 7), 'YYYY-MM-DD')
     const last30Days = formatDate(subtractDays(now, 30), 'YYYY-MM-DD')
+    const beginningOfYear = formatDate(
+      new Date(new Date().getFullYear(), 0, 1),
+      'YYYY-MM-DD'
+    )
     return {
       showHigherLevel: _.isEmpty(filtersParams.get('siteId')),
       token: getAspectAccess(),
       siteId: filtersParams.get('siteId'),
       last7Days,
       last30Days,
+      beginningOfYear,
     }
-  }),
-  withStateHandlers(
-    () => ({
-      isDemoDialogOpen: false,
-    }),
-    {
-      handleToggleDialog: ({ isDemoDialogOpen }) => () => ({
-        isDemoDialogOpen: !isDemoDialogOpen,
-      }),
-    }
-  )
+  })
 )
 
 export const Reports = ({
@@ -58,11 +52,10 @@ export const Reports = ({
   siteId,
   last7Days,
   last30Days,
+  beginningOfYear,
   // --- injected by recompose ---
   showHigherLevel,
   userFeatures,
-  isDemoDialogOpen,
-  handleToggleDialog,
   token,
 }) =>
   (showHigherLevel &&
@@ -159,18 +152,13 @@ export const Reports = ({
           <Button
             className={cssClasses('ReportsContainer__Button')}
             inverse
-            onClick={handleToggleDialog}
+            href={`${
+              config.aspectApi
+            }/report/gx/QuarterlyReportExcel.xlsx?dateFrom=${beginningOfYear}&token=${token}`}
           >
             Quarterly Report
           </Button>
         </div>
-        <Dialog
-          active={isDemoDialogOpen}
-          onEscKeyDown={handleToggleDialog}
-          onOverlayClick={handleToggleDialog}
-        >
-          Report not implemented yet
-        </Dialog>
       </Card>
     )) || (
     <Card className={className}>
@@ -198,18 +186,13 @@ export const Reports = ({
         <Button
           className={cssClasses('ReportsContainer__Button')}
           inverse
-          onClick={handleToggleDialog}
+          href={`${
+            config.aspectApi
+          }/report/gx/QuarterlyReportExcel.xlsx?dateFrom=${beginningOfYear}&siteId=${siteId}&token=${token}`}
         >
           Quarterly Report
         </Button>
       </div>
-      <Dialog
-        active={isDemoDialogOpen}
-        onEscKeyDown={handleToggleDialog}
-        onOverlayClick={handleToggleDialog}
-      >
-        Report not implemented yet
-      </Dialog>
     </Card>
   )
 
