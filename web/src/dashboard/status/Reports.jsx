@@ -6,6 +6,7 @@ import { compose, pure, withProps } from 'recompose'
 import { Card } from 'react-toolbox/lib/card'
 import { Button } from 'react-toolbox/lib/button'
 import subtractDays from 'date-fns/subDays'
+import startOfYear from 'date-fns/startOfYear'
 import formatDate from 'date-fns/format'
 import config from '../../config'
 import { getAspectAccess } from '../../globals/sideEffects/LocalStorage'
@@ -31,10 +32,7 @@ const enhance = compose(
     const now = new Date()
     const last7Days = formatDate(subtractDays(now, 7), 'YYYY-MM-DD')
     const last30Days = formatDate(subtractDays(now, 30), 'YYYY-MM-DD')
-    const beginningOfYear = formatDate(
-      new Date(new Date().getFullYear(), 0, 1),
-      'YYYY-MM-DD'
-    )
+    const beginningOfYear = formatDate(startOfYear(now), 'YYYY-MM-DD')
     return {
       showHigherLevel: _.isEmpty(filtersParams.get('siteId')),
       token: getAspectAccess(),
