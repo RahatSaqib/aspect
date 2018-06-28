@@ -16,6 +16,7 @@ const {
   showDeviceLogs,
   showFileReferences,
   downloadFile,
+  downloadFirstImage,
   onResultLogged,
 } = require('./service')
 const {
@@ -160,6 +161,23 @@ const routes = [
             .required(),
           fileName: Joi.string()
             .description('FileName')
+            .required(),
+        },
+      },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/result/image/{resultId}',
+    handler: downloadFirstImage,
+    config: {
+      description: 'Download first image',
+      notes: 'Downloads the first image for the result',
+      auth: { scope: ['result:view', 'result:edit'] },
+      validate: {
+        params: {
+          resultId: Joi.string()
+            .description('File Reference ID')
             .required(),
         },
       },

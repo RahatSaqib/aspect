@@ -439,21 +439,40 @@ function downloadFile(request, reply) {
     })
 }
 
-async function downloadFileAsync(request) {
-  const { params: { resultId, fileReferenceId, fileName }, auth } = request
+function downloadFirstImage(request, reply) {
+  const { auth, params: { resultId } } = request
+  return downloadFileAsync({ auth, params: { resultId, mimeType: 'image' } })
+    .then(path => {
+      reply.file(path)
+    })
+    .catch(err => {
+      console.error(err) // eslint-disable-line no-console
+      reply(err)
+    })
+}
+
+async function downloadFileAsync({ auth, params }) {
+  const { resultId, fileReferenceId, fileName, mimeType } = params
   const dataConstraints = await getConstraints(auth.credentials)
   const fileReference = await knex('ResultFileReference as rf')
     .join('FileReference as f', 'f.id', 'rf.fileReferenceId')
     .join('Result as r', 'r.id', 'rf.resultId')
     .join('FileContentType as fct', 'f.fileContentTypeId', 'fct.id')
     .join('Device as d', 'r.deviceId', 'd.id')
-    .where({
-      'rf.resultId': resultId,
-      'f.id': fileReferenceId,
-      'f.name': fileName,
+    .modify(addConstraints, dataConstraints, { device: 'd' })
+    .where('rf.resultId', resultId)
+    .modify(qb => {
+      if (fileReferenceId != null) {
+        qb.where('f.id', fileReferenceId)
+      }
+      if (fileName != null) {
+        qb.where('f.name', fileName)
+      }
+      if (mimeType != null) {
+        qb.where('fct.mimeType', mimeType)
+      }
     })
     .orderBy('f.id', 'desc')
-    .modify(addConstraints, dataConstraints, { device: 'd' })
     .first('f.id')
   if (fileReference == null) {
     throw Boom.notFound('Cannot find file')
@@ -1109,6 +1128,7 @@ module.exports = {
   showDeviceLogs,
   showFileReferences,
   downloadFile,
+  downloadFirstImage,
   createUniqueIdForResult,
   onResultLogged,
 }
