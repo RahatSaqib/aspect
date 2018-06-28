@@ -120,6 +120,7 @@ function onWebhookMessagePending({ webhookMessageId }, { messageContext }) {
     const message = await knex('WebhookMessage as m')
       .join('WebhookTemplate as tmpl', 'm.webhookTemplateId', 'tmpl.id')
       .join('FileContentType as fct', 'tmpl.fileContentTypeId', 'fct.id')
+      .where({ 'm.id': webhookMessageId })
       .first(
         'tmpl.method',
         'tmpl.urlBase',
