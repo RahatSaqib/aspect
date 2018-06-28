@@ -144,7 +144,7 @@ const routes = [
   },
   {
     method: 'GET',
-    path: '/result/file/{resultId}/{fileName}',
+    path: '/result/file/{resultId}/{fileReferenceId}/{fileName}',
     handler: downloadFile,
     config: {
       description: 'Download file',
@@ -153,7 +153,10 @@ const routes = [
       validate: {
         params: {
           resultId: Joi.string()
-            .description('Result ID')
+            .description('File Reference ID')
+            .required(),
+          fileReferenceId: Joi.string()
+            .description('File Reference ID')
             .required(),
           fileName: Joi.string()
             .description('FileName')

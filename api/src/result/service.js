@@ -404,22 +404,27 @@ async function getDeviceLogsByResultId(request) {
 }
 
 async function showFileReferences(request) {
-  const { params, auth } = request
+  const { params: { resultId }, auth } = request
   const dataConstraints = await getConstraints(auth.credentials)
   const fileReferences = await knex('ResultFileReference as rf')
     .join('FileReference as f', 'f.id', 'rf.fileReferenceId')
     .join('Result as r', 'r.id', 'rf.resultId')
     .join('FileContentType as fct', 'f.fileContentTypeId', 'fct.id')
     .join('Device as d', 'r.deviceId', 'd.id')
-    .where('rf.resultId', params.resultId)
+    .where('rf.resultId', resultId)
     .orderBy('f.id', 'asc')
     .modify(addConstraints, dataConstraints, { device: 'd' })
     .select(
+      'f.id',
       'f.name',
       'fct.externalId as fileContentType',
       'fct.mimeType',
       'fct.mimeSubtype'
     )
+    .map(ref => {
+      ref.url = `/result/file/${resultId}/${ref.id}/${ref.name}`
+      return ref
+    })
   return { data: fileReferences }
 }
 
@@ -435,14 +440,18 @@ function downloadFile(request, reply) {
 }
 
 async function downloadFileAsync(request) {
-  const { params: { resultId, fileName }, auth } = request
+  const { params: { resultId, fileReferenceId, fileName }, auth } = request
   const dataConstraints = await getConstraints(auth.credentials)
   const fileReference = await knex('ResultFileReference as rf')
     .join('FileReference as f', 'f.id', 'rf.fileReferenceId')
     .join('Result as r', 'r.id', 'rf.resultId')
     .join('FileContentType as fct', 'f.fileContentTypeId', 'fct.id')
     .join('Device as d', 'r.deviceId', 'd.id')
-    .where({ 'rf.resultId': resultId, 'f.name': fileName })
+    .where({
+      'rf.resultId': resultId,
+      'f.id': fileReferenceId,
+      'f.name': fileName,
+    })
     .orderBy('f.id', 'desc')
     .modify(addConstraints, dataConstraints, { device: 'd' })
     .first('f.id')
