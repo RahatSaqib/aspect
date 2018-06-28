@@ -97,7 +97,7 @@ describe('Inventory Stock Issues Endpoint', () => {
     })
   )
 
-  it('calculated consumption rates should match rates in db for all periods', () => {
+  it('makes sure that calculated consumption rates match rates in db for all periods', () => {
     runTestWithKnex(async knex => {
       // calculate rates
       const totals = await refreshConsumptionRates(knex, siteId, consumableId)
@@ -216,19 +216,22 @@ async function triggerInitialIssue({
   actionCreator,
 }) {
   const TO_BE_WASTED = 100
-  let action
-  if (issueType === 'InventoryStockout') {
-    action = actionCreator(siteId, consumableId, daysDue)
-    await dispatch(siteId, consumableId, daysDue)
-  } else {
-    action = actionCreator(siteId, consumableId, daysDue, TO_BE_WASTED)
-    await dispatch(siteId, consumableId, daysDue, TO_BE_WASTED)
+
+  // array with values
+  const values = [siteId, consumableId, daysDue]
+  if (issueType === 'InventoryStockExpiring') {
+    values.push(TO_BE_WASTED)
   }
+
+  // dispatch action
+  const action = actionCreator(...values)
+  dispatch(...values)
+
   await waitForAction(action)
   await waitForIdle()
   const dateFrom = subMinutes(new Date(), 5)
 
-  // get issues for last 10 mins for curent siteId and issueType
+  // get issues for last 5 mins for curent siteId and issueType
   const issue = await knex('Issue as i')
     .innerJoin('IssueType as it', 'i.issueTypeId', 'it.id')
     .innerJoin('IssueStatus as is', 'i.issueStatusId', 'is.id')
@@ -238,12 +241,12 @@ async function triggerInitialIssue({
     .first(
       'i.id',
       'i.level',
-      'ie.id as isuueEventId',
+      'ie.id as issueEventId',
       'ie.data',
       'it.externalId as issueType',
       'is.externalId as issueStatus'
     )
-  issueEventIds.push(issue.isuueEventId)
+  issueEventIds.push(issue.issueEventId)
 
   assert.equal(
     issue.issueType,
