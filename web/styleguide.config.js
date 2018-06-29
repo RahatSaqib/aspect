@@ -3,7 +3,7 @@ const glob = require('glob')
 const _ = require('lodash')
 
 const partialConfig = _.pick(
-  require('./cfg/src.js').default({ ASPECT_TARGET: 'local' }),
+  require('./cfg/src.js')({ ASPECT_TARGET: 'local' }),
   ['resolve', 'module', 'plugins']
 )
 
@@ -23,6 +23,7 @@ module.exports = {
       'src/components/graph/@(BarGraph|ColumnGraph|LineGraph|CountryMap).{js,jsx}'
     ),
     ...glob.sync('src/components/shared/flagIcon/@(FlagIcon).{js,jsx}'),
+    ...glob.sync('src/components/shared/expansionPanel/!(index).{js,jsx}'),
   ],
   styleguideComponents: {
     Wrapper: path.join(

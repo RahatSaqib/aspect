@@ -1,6 +1,7 @@
 const _ = require('lodash')
 const { addResultWorkflowLogIfChanged } = require('../common')
 const { mergeResult, getResult } = require('../../result')
+const { resultUpdated } = require('../../../result/actions')
 
 const DEVICE_TYPE_CHAI = 'CHAILIMS'
 const DEVICE_TYPE_REPORTER = 'AspectReporter'
@@ -25,7 +26,20 @@ const MERGEABLE_REPORTABLE_IDS = [
   ERROR_EXTERNALID,
 ]
 
-async function onResultLogged({ knex, actions, resultId, now }) {
+function onResultLogged({ resultId }, { messageContext }) {
+  const context = messageContext.bindActionCreators({ resultUpdated })
+  return context.transact(async knex => {
+    const now = new Date()
+    await mergeResults({
+      knex,
+      now,
+      resultId,
+      actions: { resultUpdated: context.resultUpdated },
+    })
+  })
+}
+
+async function mergeResults({ knex, actions, resultId, now }) {
   const qcResult = await knex('Result as r')
     .join('ResultWorkflowStatus as rws', 'r.resultWorkflowStatusId', 'rws.id')
     .join('Device as d', 'r.deviceId', 'd.id')

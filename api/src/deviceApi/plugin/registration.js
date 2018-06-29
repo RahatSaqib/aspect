@@ -1,9 +1,11 @@
 const { get } = require('lodash')
+const Boom = require('boom')
 
 const postProcessMergeResult = require('./postProcessMergeResult')
 
 const plugins = {
   default: {
+    transformInitialPayload,
     getDeviceSeenOn,
     getDevicePingOn,
     preProcessCreateDevice,
@@ -20,6 +22,10 @@ const plugins = {
     transformMergeResultPayload,
     postProcessMergeResult,
     onResultLogged,
+  },
+  commcare: {
+    transformInitialPayload: require('./commcare/transformInitialPayload'),
+    onResultLogged: require('./commcare/onResultLogged'),
   },
   malawi: {
     transformNewDevicePayload: require('./malawi/transformNewDevicePayload'),
@@ -69,6 +75,25 @@ async function loadPlugin(pluginNames, actionName) {
     }
   }
   return plugins.default[actionName]
+}
+
+/**
+ * Transforms a plugin specific payload to Aspect format
+ * suitable to posting to standard add device data endpoint.
+ *
+ * Unlike most other plugins, this will only be executed for
+ * data posted to the plugin endpoint with plugin identified
+ * by name. This is a low level hook and it is preferable
+ * to use other hooks if possible. The returned payload will
+ * not be validated and should be transformed to format after
+ * Hapi.js validation, e.g. dates should be parsed, numbers
+ * should be numbers, etc.
+ *
+ * Default throws Boom.notFound() (404 error) to encourage
+ * use of other endpoint unless plugin specifically implements
+ */
+async function transformInitialPayload(/* original request */) {
+  throw Boom.notFound('Cannot find plugin.')
 }
 
 /**
@@ -210,7 +235,7 @@ async function transformMergeResultPayload(context) {
  * RESULT_LOGGED action has been published referencing
  * a result handled by this plugin
  */
-async function onResultLogged(/* context */) {
+function onResultLogged(/* { resultId }, { messageContext } */) {
   // do nothing by default
 }
 

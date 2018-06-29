@@ -1,0 +1,325 @@
+const { addMonths, subMinutes, addDays, format } = require('date-fns')
+const { assert, expect } = require('chai')
+
+const { queuePurge } = require('../utils/mqUtils')
+const { run } = require('../../src/db')
+const { runTestWithKnex } = require('../utils/generatorFunctionUtils')
+const {
+  createMessageContext,
+  waitForIdle,
+  waitForAction,
+} = require('../utils/mqUtils')
+const {
+  processUsingHandlebarsSyntax,
+} = require('../../src/stringTemplate/service')
+// action creators
+const {
+  inventoryStockout,
+  inventoryStockExpiring,
+} = require('../../src/inventory/actions')
+const { escalateIssues } = require('../../src/issue/actions')
+const { refreshConsumptionRates } = require('../../src/fact/service')
+const {
+  getPartner,
+  getSite,
+  getIssue,
+  getIssueNotifications,
+  cleanUpIssues,
+} = require('../utils/issueUtils')
+
+const USER_LU = 'myanmar_lab1'
+const USER_RO = 'myanmar_ro1'
+
+describe('Inventory Stock Issues Endpoint', () => {
+  const partnerName = 'Myanmar'
+  const countryAbbreviation = 'MM'
+
+  let partner
+  let site
+  let siteRegionalOfficer
+  let siteId
+  let consumableId
+  let issueEventIds
+  let messageContext
+  let baseProps
+  const issueIds = []
+
+  before(async () =>
+    run(async knex => {
+      partner = await getPartner(knex, partnerName)
+      const siteDetails = await getSite(knex, {
+        partnerId: partner.id,
+        countryAbbreviation,
+      })
+      site = siteDetails.s
+      siteRegionalOfficer = siteDetails.regionalOfficer
+
+      // take consumable of 1st inventory item
+      const inventoryItem = await knex('InventoryItem as ii')
+        .where('ii.siteId', site.id)
+        .first('ii.consumableId as cid')
+
+      siteId = site.id
+      consumableId = inventoryItem.cid
+
+      issueEventIds = []
+      messageContext = await createMessageContext()
+      messageContext.bindActionCreators({
+        inventoryStockout,
+        inventoryStockExpiring,
+        escalateIssues,
+      })
+
+      baseProps = {
+        siteId,
+        consumableId,
+        issueEventIds,
+        daysDue: 30,
+      }
+    })
+  )
+
+  after(async () =>
+    run(async knex => {
+      await waitForIdle()
+
+      if (issueEventIds.length > 0) {
+        await knex('IssueEvent')
+          .whereIn('id', issueEventIds)
+          .delete()
+      }
+
+      issueEventIds = []
+
+      await cleanUpIssues(knex, issueIds)
+
+      await queuePurge()
+    })
+  )
+
+  it('makes sure that calculated consumption rates match rates in db for all periods', () => {
+    runTestWithKnex(async knex => {
+      // calculate rates
+      const totals = await refreshConsumptionRates(knex, siteId, consumableId)
+
+      // read from db
+      const ratesDb = await knex('FactInventoryConsumptionRate')
+        .where({ siteId, consumableId })
+        .select('days', 'rate')
+
+      totals.forEach(justCalculated => {
+        const fromDb = ratesDb.find(x => x.days === justCalculated.days)
+
+        assert.exists(
+          fromDb,
+          `No rate entry in db for period ${justCalculated.days} days`
+        )
+
+        assert.equal(
+          justCalculated.total,
+          fromDb.rate,
+          `Rates do not match for period ${justCalculated.days} days`
+        )
+      })
+    })
+  })
+
+  // ---------------------------------------------------------------------------
+  // trigger base issues
+  // ---------------------------------------------------------------------------
+  // Stockout
+  it('should create Stockout issue', () => {
+    runTestWithKnex(async knex => {
+      const issueId = await triggerInitialIssue({
+        knex,
+        ...baseProps, // i.e. siteId, consumableId, issueEventIds, daysDue
+        issueType: 'InventoryStockout',
+        dispatch: messageContext.inventoryStockout,
+        actionCreator: inventoryStockout,
+      })
+      issueIds.push(issueId)
+    })
+  })
+
+  // StockExpiring
+  it('should create StockExpiring issue', () => {
+    runTestWithKnex(async knex => {
+      const issueId = await triggerInitialIssue({
+        knex,
+        ...baseProps, // i.e. siteId, consumableId, issueEventIds, daysDue
+        issueType: 'InventoryStockExpiring',
+        dispatch: messageContext.inventoryStockExpiring,
+        actionCreator: inventoryStockExpiring,
+      })
+      issueIds.push(issueId)
+    })
+  })
+
+  // ---------------------------------------------------------------------------
+  // escalate issues
+  // ---------------------------------------------------------------------------
+  describe("dispatch ESCALATE_ISSUES with created issues ID's", () => {
+    it('Stockout and StockExpiring issues should be escalated', () =>
+      runTestWithKnex(async knex => {
+        // change dates of these issues to 1 month back to meet escalation conditions
+        const monthAgo = addMonths(new Date(), -1)
+        await knex('Issue')
+          .update({
+            createdOn: monthAgo,
+            updatedOn: monthAgo,
+          })
+          .whereIn('issueId', issueIds)
+
+        // escalate
+        issueIds.map(async issueId => {
+          const action = escalateIssues(issueId)
+          await messageContext.escalateIssues(issueId)
+          await waitForAction(action)
+          await waitForIdle()
+
+          const issue = await getIssue(knex, issueId)
+          assert.equal(issue.level, 2)
+        })
+      }))
+
+    it('notifications should be created for the level that the issue has been escalated to', () =>
+      runTestWithKnex(async knex => {
+        issueIds.map(async issueId => {
+          const notificationsIssue = await getIssueNotifications(knex, issueId)
+          expect(notificationsIssue).to.containSubset([
+            {
+              NotificationType: {
+                level: 2,
+              },
+              Notification: {
+                issueId,
+                personId: siteRegionalOfficer.id,
+              },
+            },
+          ])
+        })
+      }))
+  })
+})
+
+// -----------------------------------
+// helper functions
+// -----------------------------------
+async function triggerInitialIssue({
+  knex,
+  siteId,
+  consumableId,
+  issueEventIds,
+  daysDue,
+  issueType,
+  dispatch,
+  actionCreator,
+}) {
+  const TO_BE_WASTED = 100
+
+  // array with values
+  const values = [siteId, consumableId, daysDue]
+  if (issueType === 'InventoryStockExpiring') {
+    values.push(TO_BE_WASTED)
+  }
+
+  // dispatch action
+  const action = actionCreator(...values)
+  dispatch(...values)
+
+  await waitForAction(action)
+  await waitForIdle()
+  const dateFrom = subMinutes(new Date(), 5)
+
+  // get issues for last 5 mins for curent siteId and issueType
+  const issue = await knex('Issue as i')
+    .innerJoin('IssueType as it', 'i.issueTypeId', 'it.id')
+    .innerJoin('IssueStatus as is', 'i.issueStatusId', 'is.id')
+    .innerJoin('IssueEvent as ie', 'i.id', 'ie.issueId')
+    .where({ 'i.siteId': siteId, 'it.externalId': issueType })
+    .where('ie.createdOn', '>', dateFrom)
+    .first(
+      'i.id',
+      'i.level',
+      'ie.id as issueEventId',
+      'ie.data',
+      'it.externalId as issueType',
+      'is.externalId as issueStatus'
+    )
+  issueEventIds.push(issue.issueEventId)
+
+  assert.equal(
+    issue.issueType,
+    issueType,
+    `issue types do not match - ${issueType} and ${issue.issueType}`
+  )
+
+  assert.equal(
+    issue.issueStatus,
+    'Active',
+    `issueStatus (${issue.issueStatus}) is not Active`
+  )
+
+  const notifications = await knex('Notification as n')
+    .join('NotificationType as nt', 'nt.id', 'n.notificationTypeId')
+    .join('JobFunction as jf', 'jf.id', 'nt.jobFunctionId')
+    .join('Person as p', 'p.id', 'n.personId')
+    .join('User as u', 'u.id', 'p.userId')
+    .join('AlertMessage as am', 'am.id', 'n.alertMessageId')
+    .where({ 'n.issueId': issue.id })
+    .orderBy('jf.name')
+    .select(
+      'u.name as userName',
+      'jf.name as jobFunction',
+      'nt.level',
+      'nt.canAcknowledge',
+      'am.message as alertMessage'
+    )
+
+  assert.equal(notifications.length, 2)
+  const [notificationLU, notificationRO] = notifications
+  assert.equal(notificationLU.userName, USER_LU)
+  assert.equal(notificationLU.jobFunction, 'Lab User')
+  assert.equal(notificationLU.level, issue.level)
+  assert.equal(notificationLU.canAcknowledge, 1)
+  const date = format(addDays(new Date(), daysDue), 'YYYY-MM-DD')
+  if (issueType === 'InventoryStockout') {
+    assert.equal(
+      processUsingHandlebarsSyntax(notificationLU.alertMessage, { date }),
+      `Stock-out expected ${date} - Order Stock.`
+    )
+  }
+  assert.equal(notificationRO.userName, USER_RO)
+  assert.equal(notificationRO.jobFunction, 'Regional Officer')
+  assert.equal(notificationRO.level, issue.level)
+  assert.equal(
+    notificationRO.canAcknowledge,
+    issueType === 'InventoryStockout' ? 1 : 0
+  )
+
+  //
+  const action2 = JSON.parse(issue.data)
+  const consumableId2 = action2.consumableId
+  const daysDue2 = action2.daysDue
+  assert.equal(
+    action2.consumableId,
+    consumableId,
+    `consumableId from action (${consumableId}) does not match consumableId in db (${consumableId2})`
+  )
+  assert.equal(
+    action2.daysDue,
+    daysDue,
+    `action.daysDue (${daysDue}) does not match daysDue in db (${daysDue2})`
+  )
+  if (issueType === 'InventoryStockExpiring') {
+    assert.equal(
+      action2.totalWasted,
+      TO_BE_WASTED,
+      `action.totalWasted (${TO_BE_WASTED}) does not match totalWasted in db (${
+        action2.totalWasted
+      })`
+    )
+  }
+
+  return issue.id
+}
