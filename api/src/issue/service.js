@@ -22,7 +22,9 @@ function onIssueEventTrigger(issueType) {
         issue = await mergeActionData(knex, openIssue, action)
       } else {
         issue = await createNewIssue(knex, issueType, action)
-        context.issueCreated(issue.id)
+        if (issue != null) {
+          context.issueCreated(issue.id)
+        }
       }
 
       await knex('IssueEvent').insert({
@@ -31,7 +33,10 @@ function onIssueEventTrigger(issueType) {
         data: JSON.stringify(action),
         createdOn: now,
       })
-      context.issueTriggered(issue.id)
+
+      if (issue != null) {
+        context.issueTriggered(issue.id)
+      }
     })
   }
 }
@@ -87,10 +92,16 @@ async function findOpenIssue(knex, issueType, action) {
 
 async function createNewIssue(knex, issueType, action) {
   const now = new Date()
+  const issueTypeId = await getId(knex, 'IssueType', issueType)
+  if (issueTypeId == null) {
+    // Issue not configured for this deployment
+    return null
+  }
+
   const issueStatusId = await getId(knex, 'IssueStatus', 'Active')
   const issue = {
     issueStatusId,
-    issueTypeId: await getId(knex, 'IssueType', issueType),
+    issueTypeId,
     level: 1,
     createdOn: now,
     updatedOn: now,
@@ -273,10 +284,10 @@ async function updateIssueStatus(request) {
 }
 
 async function getId(knex, table, externalId) {
-  const { id } = await knex(table)
+  const val = await knex(table)
     .where({ externalId })
     .first('id')
-  return id
+  return val == null ? null : val.id
 }
 
 module.exports = {
