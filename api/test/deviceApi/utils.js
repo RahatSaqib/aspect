@@ -73,7 +73,7 @@ async function deleteDeviceAndTestData(knex, apiKeys) {
     .whereIn('deviceId', deviceIds)
     .map(op => op.id)
 
-  await deleteIssues(knex, { deviceIds })
+  await deleteIssues(knex, { deviceIds, resultIds })
   await knex('DeviceStatusLog')
     .whereIn('deviceId', deviceIds)
     .delete()
@@ -119,11 +119,14 @@ async function deleteDeviceAndTestData(knex, apiKeys) {
 
 async function deleteIssues(knex, { deviceIds, resultIds }) {
   const issueIdQ = knex('Issue as i')
+  const webhookMessageQ = knex('WebhookMessage')
   if (deviceIds != null && deviceIds.length > 0) {
     issueIdQ.orWhereIn('i.deviceId', deviceIds)
+    webhookMessageQ.orWhereIn('deviceId', deviceIds)
   }
   if (resultIds != null && resultIds.length > 0) {
     issueIdQ.orWhereIn('i.resultId', resultIds)
+    webhookMessageQ.orWhereIn('resultId', resultIds)
   }
 
   const issueIds = await issueIdQ.select('i.id').pluck('id')
@@ -131,9 +134,10 @@ async function deleteIssues(knex, { deviceIds, resultIds }) {
     .whereIn('issueId', issueIds)
     .select('id', 'alertMessageId', 'emailMessageId', 'smsMessageId')
   const notificationIds = _.map(notifications, 'id')
-  const alertMessageIds = _.map(notifications, 'alertMessageId')
-  const emailMessageIds = _.map(notifications, 'emailMessageId')
-  const smsMessageIds = _.map(notifications, 'smsMessageId')
+  const alertMessageIds = _.compact(_.map(notifications, 'alertMessageId'))
+  const emailMessageIds = _.compact(_.map(notifications, 'emailMessageId'))
+  const smsMessageIds = _.compact(_.map(notifications, 'smsMessageId'))
+  const webhookMessageIds = _.compact(_.map(notifications, 'webhookMessageId'))
 
   await knex('Notification')
     .whereIn('id', notificationIds)
@@ -147,6 +151,7 @@ async function deleteIssues(knex, { deviceIds, resultIds }) {
   await knex('SmsMessage')
     .whereIn('id', smsMessageIds)
     .delete()
+  await webhookMessageQ.orWhereIn('id', webhookMessageIds).delete()
   await knex('IssueEvent')
     .whereIn('issueId', issueIds)
     .delete()

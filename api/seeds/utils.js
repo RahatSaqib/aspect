@@ -1,3 +1,5 @@
+const { readJson } = require('fs-extra')
+
 async function rowsAsObject(knex, table, column = 'name') {
   return knex(table).reduce((memo, row) => {
     memo[row[column]] = row
@@ -309,9 +311,29 @@ async function getPermissionModules(knex) {
   }, {})
 }
 
+async function seedStaticData(knex) {
+  const tables = ['FileContentType']
+  await Promise.all(
+    tables.map(async table => {
+      const { data } = await readJson(`./seeds/fixtures/${table}.json`)
+      await Promise.all(
+        data.map(async datum => {
+          const existingDatum = await knex(table)
+            .where({ externalId: datum.externalId })
+            .first('id')
+          if (existingDatum == null) {
+            await knex(table).insert(datum)
+          }
+        })
+      )
+    })
+  )
+}
+
 module.exports = {
   rowsAsObject,
   getDefaultMessageTypes,
   seedStockIssues,
   getPermissionModules,
+  seedStaticData,
 }

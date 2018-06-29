@@ -14,6 +14,11 @@ module.exports = {
     database: process.env['db.databaseName'],
     debug: process.env['db.debug'] === 'true',
   },
+  file: {
+    reference: {
+      directory: process.env['file.reference.directory'],
+    },
+  },
   amqp: {
     url: process.env['amqp.url'],
   },
@@ -32,6 +37,7 @@ module.exports = {
     email: process.env['admin.email'],
     cell: process.env['admin.cell'],
   },
+  plugin: {},
 }
 
 configureOptional(module.exports)
@@ -54,5 +60,12 @@ function configureOptional(config) {
   const seedsDirectory = process.env['seeds.directory']
   if (seedsDirectory) {
     config.seeds = { directory: seedsDirectory }
+  }
+
+  // plugin data
+  // TODO load plugin config in plugins
+  const commcareApiKey = process.env['plugin.commcare.apiKey']
+  if (commcareApiKey) {
+    config.plugin.commcare = { apiKey: commcareApiKey }
   }
 }

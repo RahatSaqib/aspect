@@ -32,7 +32,8 @@ async function transformInitialPayload({ payload }) {
       location: parseLocation(_.get(metadata, 'location')),
       data: {
         resultText: _.get(form, 'rdt_result'),
-        urlPicture: pictureUrl,
+        resultImageUrl: pictureUrl,
+        resultImageFileName: rdtPicture,
         // TODO should HCW results be additional categories?
         hcwResult: _.get(form, 'hcw_rdt_result'),
         hcwConfirmatoryResult: _.get(form, 'hcw_confirmatory_result'),

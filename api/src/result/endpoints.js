@@ -14,6 +14,9 @@ const {
   listWorkflowStatusLog,
   exportResults,
   showDeviceLogs,
+  showFileReferences,
+  downloadFile,
+  downloadFirstImage,
   onResultLogged,
 } = require('./service')
 const {
@@ -118,6 +121,63 @@ const routes = [
         params: {
           resultId: Joi.string()
             .description('Result ID')
+            .required(),
+        },
+      },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/result/files/{resultId}',
+    handler: asyncHandler(showFileReferences),
+    config: {
+      description: 'File References',
+      notes: 'File References by result id',
+      auth: { scope: ['result:view', 'result:edit'] },
+      validate: {
+        params: {
+          resultId: Joi.string()
+            .description('Result ID')
+            .required(),
+        },
+      },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/result/file/{resultId}/{fileReferenceId}/{fileName}',
+    handler: downloadFile,
+    config: {
+      description: 'Download file',
+      notes: 'Downloads the last file for the result with given name',
+      auth: { scope: ['result:view', 'result:edit'] },
+      validate: {
+        params: {
+          resultId: Joi.string()
+            .description('File Reference ID')
+            .required(),
+          fileReferenceId: Joi.string()
+            .description('File Reference ID')
+            .required(),
+          fileName: Joi.string()
+            .description('FileName')
+            .required(),
+        },
+      },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/result/image/{resultId}',
+    handler: downloadFirstImage,
+    config: {
+      description: 'Download first image',
+      notes: 'Downloads the first image for the result',
+      auth: { scope: ['result:view', 'result:edit'] },
+      validate: {
+        params: {
+          resultId: Joi.string()
+            .description('File Reference ID')
             .required(),
         },
       },

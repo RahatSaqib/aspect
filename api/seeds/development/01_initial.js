@@ -10,7 +10,7 @@ const patients = require('./fixtures/patients.json')
 const dashboardWidget = require('./fixtures/dashboardWidget.json')
 const features = require('./fixtures/features.json')
 const { errorCodes } = require('./fixtures/errorCodes.js')
-const { rowsAsObject } = require('../utils')
+const { rowsAsObject, seedStaticData } = require('../utils')
 const {
   addMilliseconds,
   addMinutes,
@@ -56,6 +56,8 @@ async function seed(knex) {
   if (existingAdminUser) {
     return
   }
+
+  await seedStaticData(knex)
 
   // Create admin user and audit fields
   const [adminId] = await knex('User').insert({
