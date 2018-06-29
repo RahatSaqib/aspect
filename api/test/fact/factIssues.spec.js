@@ -169,14 +169,14 @@ describe('Fact based issues', () => {
       assert.equal(notificationLU.jobFunction, 'Lab User')
       assert.equal(notificationLU.level, issues[0].level)
       assert.equal(notificationLU.canAcknowledge, 1)
+      assert.equal(
+        processDynamicMessage(notificationLU.alertMessage),
+        `Cannot reach network for ${numberOfDaysOffline}`
+      )
       assert.equal(notificationRO.userName, USER_RO)
       assert.equal(notificationRO.jobFunction, 'Regional Officer')
       assert.equal(notificationRO.level, issues[0].level)
       assert.equal(notificationRO.canAcknowledge, 0)
-      assert.equal(
-        processDynamicMessage(notificationRO.alertMessage),
-        `Cannot reach network for ${numberOfDaysOffline}`
-      )
 
       const waitForAck = waitForAction(issueAcknowledged(issueId))
       await server

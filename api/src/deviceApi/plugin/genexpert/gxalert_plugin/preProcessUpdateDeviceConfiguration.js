@@ -4,6 +4,7 @@ const {
   deviceMaintenance,
   deviceMaintenanceResolved,
 } = require('../../../../device/actions')
+const { parseDateOrDefault } = require('../../../../shared/date')
 
 async function preProcessUpdateDeviceConfiguration(context) {
   const { payload, device: { id: deviceId }, messageContext } = context
@@ -31,10 +32,7 @@ async function preProcessUpdateDeviceConfiguration(context) {
           ? null
           : dateFormat(expectedBackOnlineInData, 'YYYY-MM-DD'),
     })
-    const dueOn =
-      newMaintenanceData.expectedBackOnline == null
-        ? null
-        : new Date(newMaintenanceData.expectedBackOnline)
+    const dueOn = parseDateOrDefault(newMaintenanceData.expectedBackOnline)
     if (inactive) {
       messageContext.dispatch(
         deviceMaintenance(deviceId, {

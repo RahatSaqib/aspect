@@ -1,6 +1,7 @@
 const _ = require('lodash')
 const { updateDeviceDetails } = require('../../device')
 const { macAddressValid } = require('./requestValidation')
+const { parseDateOrDefault } = require('../../../shared/date')
 
 async function postProcessUpdateDeviceConfiguration({
   knex,
@@ -28,13 +29,13 @@ async function postProcessUpdateDeviceConfiguration({
       hostId,
       culture,
       timezone,
-      lastSeenOn: new Date(lastPingOn || now),
+      lastSeenOn: parseDateOrDefault(lastPingOn, now),
     }
     if (macAddress && macAddressValid(macAddress)) {
       deviceDetails.macAddress = macAddress
     }
     if (lastPingOn) {
-      deviceDetails.lastPingOn = new Date(lastPingOn)
+      deviceDetails.lastPingOn = parseDateOrDefault(lastPingOn)
     }
     if (deviceSerialNumber) {
       deviceDetails.serial = deviceSerialNumber
@@ -86,17 +87,19 @@ async function postProcessUpdateDeviceConfiguration({
           newStateId !== currentDeviceGeography.stateId ||
           newLgaId !== currentDeviceGeography.lgaId
         ) {
-          const { id: newGeographyId } = await knex('Geography as g')
+          const newGeography = await knex('Geography as g')
             .where({
               countryId: currentDeviceGeography.countryId,
               stateId: newStateId,
               lgaId: newLgaId,
             })
             .first('g.id')
-          if (currentDeviceGeography.siteId) {
-            siteUpdateDetails.geographyId = newGeographyId
+          if (newGeography) {
+            if (currentDeviceGeography.siteId) {
+              siteUpdateDetails.geographyId = newGeography.id
+            }
+            deviceDetails.geographyId = newGeography.id
           }
-          deviceDetails.geographyId = newGeographyId
         }
         if (
           !_.isUndefined(latitude) &&

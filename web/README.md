@@ -101,3 +101,11 @@ To view styleguides, visit http://localhost:6060/.
 yarn styleguide
 ```
 
+## Updating snapshots
+
+When you have failed tests which use  ```expect(element).toMatchSnapshot()``` and you know something has changed in the 
+code but test should pass, then probably you have to update snapshot.
+
+Run command ```yarn run test:snapshot``` which regenerates snapshot artifacts in ```__snapshots__``` folders
+
+Another possible way to update snapshots is running ```jest --updateSnapshot``` (make sure ```jest``` is globally installed)
