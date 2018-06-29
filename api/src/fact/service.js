@@ -501,12 +501,21 @@ async function auditInventoryStockout({
         .orWhere('expiresOn', '>', new Date()) // or unexpired
     })
     .where({ siteId, consumableId })
-    .orderBy('expiresOn', 'asc')
     .select(
       'quantityOnHand',
       'expiresOn',
       knex.raw(
-        `CAST(DATEDIFF(expiresOn, NOW()) AS SIGNED INTEGER) AS expiresInDays`
+        `CAST(
+          DATEDIFF(
+            IFNULL(
+              expiresOn,
+              DATE_ADD(NOW(), INTERVAL ? DAY)
+            ), 
+            NOW()
+          ) 
+          AS SIGNED INTEGER
+        ) AS expiresInDays`,
+        [dueDays + 1]
       )
     )
 
@@ -538,7 +547,7 @@ async function auditInventoryStockExpiring({
   // get all un-expired inventory items for provided site/consumable
   const items = await knex('InventoryItem')
     .where({ siteId, consumableId })
-    .whereNotNull('expiresOn') // or if is NOT null
+    .whereNotNull('expiresOn') // is NOT null
     .where('expiresOn', '>', new Date()) // and unexpired
     .select(
       'quantityOnHand',
