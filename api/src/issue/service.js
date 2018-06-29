@@ -120,9 +120,22 @@ async function createNewIssue(knex, issueType, action) {
     issue.partnerId = issueContext.partnerId
   } else if (action.siteId) {
     issue.siteId = action.siteId
-    const issueContext = await knex('Site')
-      .where({ id: issue.siteId })
-      .first('geographyId', 'partnerId')
+    let issueContext
+    if (action.consumableId != null) {
+      issueContext = await knex('InventoryItem as ii')
+        .innerJoin('Site as s', 'ii.siteId', 's.id')
+        .innerJoin('Consumable as c', 'ii.consumableId', 'c.id')
+        .where('s.id', issue.siteId)
+        .where('ii.consumableId', action.consumableId)
+        .first(
+          's.geographyId',
+          knex.raw('COALESCE(c.partnerId, s.partnerId) as partnerId')
+        )
+    } else {
+      issueContext = await knex('Site')
+        .where({ id: issue.siteId })
+        .first('geographyId', 'partnerId')
+    }
     issue.geographyId = issueContext.geographyId
     issue.partnerId = issueContext.partnerId
   }
@@ -194,6 +207,9 @@ async function updateIssueStatus(request) {
   const { issueId } = params
   const { issueStatusExternalId } = payload
   const { id: currentUserId, personId } = await getUser(auth.credentials.name)
+  let issueStatusId = null
+  let issueStatusSeverityExternalId = 'High'
+
   if (issueStatusExternalId !== 'Acknowledged') {
     throw Boom.badRequest('Can only acknowledge issue from UI')
   }
@@ -217,17 +233,23 @@ async function updateIssueStatus(request) {
       throw Boom.unauthorized('No Active Issue to Acknowledge')
     }
 
-    const issueStatusId = await getId(
-      knex,
-      'IssueStatus',
-      issueStatusExternalId
+    ;({ issueStatusId, issueStatusSeverityExternalId } = await knex(
+      'IssueStatus as is'
     )
+      .join('IssueStatusSeverity as iss', 'is.issueStatusSeverityId', 'iss.id')
+      .where('is.externalId', issueStatusExternalId)
+      .first(
+        'is.id as issueStatusId',
+        'iss.externalId as issueStatusSeverityExternalId'
+      ))
+
     await knex('Issue')
       .where({ id: issueId })
       .update({
         issueStatusId,
         updatedOn: now,
       })
+
     await knex('IssueStatusLog').insert({
       issueId,
       issueStatusId,
@@ -243,6 +265,7 @@ async function updateIssueStatus(request) {
     data: {
       issueId,
       issueStatusExternalId,
+      issueStatusSeverityExternalId,
       createdOn: now,
       changedOn: now,
     },

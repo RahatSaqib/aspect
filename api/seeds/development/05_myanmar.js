@@ -12,6 +12,7 @@ const { addMilliseconds, addMinutes, subDays } = require('date-fns')
 const {
   rowsAsObject,
   getDefaultMessageTypes,
+  seedStockIssues,
   getPermissionModules,
 } = require('../utils')
 
@@ -1713,6 +1714,8 @@ async function seed(knex) {
       updatedOn: now,
     },
   ])
+
+  await seedStockIssues(knex)
 }
 
 function calculateDateForResult(

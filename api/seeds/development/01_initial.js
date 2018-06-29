@@ -4276,26 +4276,74 @@ async function seed(knex) {
     'externalId'
   )
 
+  const { id: issueStatusSeverityIdLow } = await knex('IssueStatusSeverity')
+    .where('externalId', 'Low')
+    .first()
+
+  const { id: issueStatusSeverityIdMedium } = await knex('IssueStatusSeverity')
+    .where('externalId', 'Medium')
+    .first()
+
+  const { id: issueStatusSeverityIdHigh } = await knex('IssueStatusSeverity')
+    .where('externalId', 'High')
+    .first()
+
   await knex('IssueStatus').insert([
     {
       name: 'Inactive',
       externalId: 'Inactive',
       i18nKey: 'issueStatusInactive',
+      issueStatusSeverityId: issueStatusSeverityIdLow,
+      sortOrder: 5,
     },
-    { name: 'Active', externalId: 'Active', i18nKey: 'issueStatusActive' },
+    {
+      name: 'Active',
+      externalId: 'Active',
+      i18nKey: 'issueStatusActive',
+      issueStatusSeverityId: issueStatusSeverityIdHigh,
+      sortOrder: 0,
+    },
     {
       name: 'Acknowledged',
       externalId: 'Acknowledged',
       i18nKey: 'issueStatusAcknowledged',
+      issueStatusSeverityId: issueStatusSeverityIdMedium,
+      sortOrder: 4,
     },
-    { name: 'OK', externalId: 'OK', i18nKey: 'issueStatusOK' },
-    { name: 'Due Soon', externalId: 'DueSoon', i18nKey: 'issueStatusDueSoon' },
-    { name: 'Due Now', externalId: 'DueNow', i18nKey: 'issueStatusDueNow' },
-    { name: 'Overdue', externalId: 'Overdue', i18nKey: 'issueStatusOverdue' },
+    {
+      name: 'OK',
+      externalId: 'OK',
+      i18nKey: 'issueStatusOK',
+      issueStatusSeverityId: issueStatusSeverityIdLow,
+      sortOrder: 5,
+    },
+    {
+      name: 'Due Soon',
+      externalId: 'DueSoon',
+      i18nKey: 'issueStatusDueSoon',
+      issueStatusSeverityId: issueStatusSeverityIdMedium,
+      sortOrder: 3,
+    },
+    {
+      name: 'Due Now',
+      externalId: 'DueNow',
+      i18nKey: 'issueStatusDueNow',
+      issueStatusSeverityId: issueStatusSeverityIdHigh,
+      sortOrder: 2,
+    },
+    {
+      name: 'Overdue',
+      externalId: 'Overdue',
+      i18nKey: 'issueStatusOverdue',
+      issueStatusSeverityId: issueStatusSeverityIdHigh,
+      sortOrder: 1,
+    },
     {
       name: 'Resolved',
       externalId: 'Resolved',
       i18nKey: 'issueStatusResolved',
+      issueStatusSeverityId: issueStatusSeverityIdLow,
+      sortOrder: 5,
     },
   ])
 
