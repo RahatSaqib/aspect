@@ -558,6 +558,10 @@ export default function dashboardReducer(state = initialState, action) {
                 if (it.get('issueId') === action.item.issueId) {
                   return it
                     .set('status', action.item.issueStatusExternalId)
+                    .set(
+                      'issueStatusSeverityExternalId',
+                      action.item.issueStatusSeverityExternalId
+                    )
                     .set('statusDate', action.item.changedOn)
                 }
                 return it
