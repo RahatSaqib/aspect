@@ -1,4 +1,5 @@
 module.exports = require('../../src/db').seed(seed)
+const { seedStockIssues } = require('../utils')
 
 async function seed(knex) {
   // check if this seed already ran
@@ -78,4 +79,5 @@ async function seed(knex) {
         issueStatusSeverityId: issueStatusSeverityIdLow,
       }),
   ])
+  await seedStockIssues(knex)
 }

@@ -6,7 +6,7 @@ const _ = require('lodash')
 const config = require('../../src/config')
 const { randomToken } = require('../../src/deviceApi/apiKey')
 const labClinic = require('./fixtures/labClinic.json')
-const { rowsAsObject } = require('../utils')
+const { rowsAsObject, getPermissionModules } = require('../utils')
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 
@@ -292,14 +292,7 @@ async function seed(knex) {
     }),
   })
 
-  const modules = await knex('Permission').reduce((memo, row) => {
-    if (!memo[row.module]) {
-      memo[row.module] = {}
-    }
-    memo[row.module][row.activity] = row.id
-    return memo
-  }, {})
-
+  const modules = await getPermissionModules(knex)
   const featureModules = await knex('Feature').select('id')
 
   // Create clinics for every state in Malawi

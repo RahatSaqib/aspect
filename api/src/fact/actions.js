@@ -2,6 +2,9 @@
 const types = {
   FACT_GENERATE_DEVICE_CONNECTIVITY: 'FACT_GENERATE_DEVICE_CONNECTIVITY',
   FACT_GENERATE_RESULT_COUNTS: 'FACT_GENERATE_RESULT_COUNTS',
+  FACT_CHECK_INVENTORY_STOCK: 'FACT_CHECK_INVENTORY_STOCK',
+  FACT_CALCULATE_INVENTORY_CONSUMPTION_RATES:
+    'FACT_CALCULATE_INVENTORY_CONSUMPTION_RATES',
 }
 
 /**
@@ -38,8 +41,30 @@ function factGenerateResultCounts(deviceId, options) {
   }
 }
 
+/**
+ * Requests facts to be regenerated. Will be called on
+ * schedule to run fact ETL
+ */
+function factCheckInventoryStock() {
+  return {
+    type: types.FACT_CHECK_INVENTORY_STOCK,
+  }
+}
+
+/**
+ * Requests facts to be regenerated. Will be called on
+ * schedule to run fact ETL
+ */
+function factCalculateInventoryConsumptionRates() {
+  return {
+    type: types.FACT_CALCULATE_INVENTORY_CONSUMPTION_RATES,
+  }
+}
+
 module.exports = {
   types,
   factGenerateDeviceConnectivity,
   factGenerateResultCounts,
+  factCheckInventoryStock,
+  factCalculateInventoryConsumptionRates,
 }

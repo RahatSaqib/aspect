@@ -347,6 +347,7 @@ async function seed(knex) {
     externalId: 'CommCareApp',
     name: 'CommCare App',
     manufacturer: 'CommCare',
+    plugin: 'commcare',
     deviceTypeCategoryId: deviceTypeCategoryLab,
     configurationDataSchema: commCareConfigurationDataSchema,
     deviceOperationSchema: commCareDeviceOperationSchema,
