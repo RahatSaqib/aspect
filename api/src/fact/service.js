@@ -509,12 +509,13 @@ async function auditInventoryStockout({
           DATEDIFF(
             IFNULL(
               expiresOn,
-              DATE_ADD(NOW(), INTERVAL ${dueDays + 1} DAY)
+              DATE_ADD(NOW(), INTERVAL ? DAY)
             ), 
             NOW()
           ) 
           AS SIGNED INTEGER
-        ) AS expiresInDays`
+        ) AS expiresInDays`,
+        [dueDays + 1]
       )
     )
 
