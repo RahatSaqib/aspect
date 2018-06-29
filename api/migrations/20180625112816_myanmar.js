@@ -7,7 +7,7 @@ async function up(knex) {
     issueStatusSeverity.string('i18nKey').notNullable()
     issueStatusSeverity.string('externalId').notNullable()
     issueStatusSeverity
-      .integer('order')
+      .integer('sortOrder')
       .unsigned()
       .notNullable()
     issueStatusSeverity.charset('utf8')
@@ -17,21 +17,21 @@ async function up(knex) {
     name: 'High',
     i18nKey: 'issueStatusSeverityHigh',
     externalId: 'High',
-    order: 0,
+    sortOrder: 0,
   })
 
   await knex('IssueStatusSeverity').insert({
     name: 'Medium',
     i18nKey: 'issueStatusSeverityMedium',
     externalId: 'Medium',
-    order: 1,
+    sortOrder: 1,
   })
 
   const [issueStatusSeverityIdLow] = await knex('IssueStatusSeverity').insert({
     name: 'Low',
     i18nKey: 'issueStatusSeverityLow',
     externalId: 'Low',
-    order: 2,
+    sortOrder: 2,
   })
 
   await knex.schema.table('IssueStatus', issueStatus => {
@@ -43,7 +43,7 @@ async function up(knex) {
       .references('id')
       .inTable('IssueStatusSeverity')
     issueStatus
-      .integer('order')
+      .integer('sortOrder')
       .unsigned()
       .notNullable()
       .defaultTo(0)
@@ -54,7 +54,7 @@ async function down(knex) {
   await knex.schema.table('IssueStatus', issueStatus => {
     issueStatus.dropForeign('issueStatusSeverityId')
     issueStatus.dropColumns('issueStatusSeverityId')
-    issueStatus.dropColumns('order')
+    issueStatus.dropColumns('sortOrder')
   })
 
   await knex.schema.dropTableIfExists('IssueStatusSeverity')

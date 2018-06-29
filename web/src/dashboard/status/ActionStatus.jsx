@@ -44,7 +44,7 @@ const FILTERS_CONFIG = {
 }
 
 export const searchSanitizer = makeSearchParamsSanitizer({
-  availableSortCol: ['issueStatusOrder', 'siteName', 'message'],
+  availableSortCol: ['issueStatusSortOrder', 'siteName', 'message'],
 })
 export const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
 export const filtersFromLocation = composeSanitizer(
@@ -62,7 +62,7 @@ const enhance = compose(
   }),
   withProps(
     makeSortPageSelector({
-      sortCol: 'issueStatusOrder',
+      sortCol: 'issueStatusSortOrder',
       sortDir: 'asc',
     })
   ),
@@ -201,7 +201,7 @@ export const ActionStatus = ({
           sortColumnDir={sortDir}
           columns={[
             {
-              key: 'issueStatusOrder',
+              key: 'issueStatusSortOrder',
               label: intl.formatMessage(messages.actionStatus),
               className: cssClasses('ActionDataTable__TableHead__Status'),
               sortable: true,
