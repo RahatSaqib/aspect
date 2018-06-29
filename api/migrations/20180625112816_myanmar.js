@@ -1,7 +1,6 @@
 module.exports = require('../src/db').migration(up, down)
 
 async function up(knex) {
-  
   await knex.schema.table('Partner', x => {
     x.integer('dueDaysInventoryStockout')
     x.integer('dueDaysInventoryStockExpiring')
@@ -29,7 +28,7 @@ async function up(knex) {
     x.dateTime('updatedOn').notNullable()
     x.primary(['siteId', 'consumableId', 'days'])
   })
-  
+
   await knex.schema.createTable('IssueStatusSeverity', issueStatusSeverity => {
     issueStatusSeverity.increments('id')
     issueStatusSeverity.string('name').notNullable()
@@ -80,13 +79,12 @@ async function up(knex) {
 }
 
 async function down(knex) {
-  
   await knex.schema.table('Partner', x => {
     x.dropColumns('dueDaysInventoryStockout', 'dueDaysInventoryStockExpiring')
   })
 
   await knex.schema.dropTableIfExists('FactInventoryConsumptionRate')
-  
+
   await knex.schema.table('IssueStatus', issueStatus => {
     issueStatus.dropForeign('issueStatusSeverityId')
     issueStatus.dropColumns('issueStatusSeverityId')
