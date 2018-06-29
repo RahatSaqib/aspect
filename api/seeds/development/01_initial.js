@@ -735,57 +735,57 @@ async function seed(knex) {
     id: {
       title: 'Patient ID',
       type: 'string',
-      sortOrder: 0,
+      order: 0,
     },
     name: {
       title: 'Name',
       type: 'string',
-      sortOrder: 1,
+      order: 1,
     },
     street: {
       title: 'Street',
       type: 'string',
-      sortOrder: 2,
+      order: 2,
     },
     city: {
       title: 'City',
       type: 'string',
-      sortOrder: 3,
+      order: 3,
     },
     state: {
       title: 'State',
       type: 'string',
-      sortOrder: 4,
+      order: 4,
     },
     zip: {
       title: 'Zip',
       type: 'string',
-      sortOrder: 5,
+      order: 5,
     },
     phone: {
       title: 'Phone',
       type: 'string',
-      sortOrder: 6,
+      order: 6,
     },
     hivStatus: {
       title: 'HIV Status',
       type: 'string',
-      sortOrder: 7,
+      order: 7,
     },
     age: {
       title: 'Age (in years)',
       type: 'number',
-      sortOrder: 8,
+      order: 8,
     },
     gender: {
       title: 'Gender',
       type: 'string',
-      sortOrder: 9,
+      order: 9,
     },
     microscopyResult: {
       title: 'Microscopy Result',
       type: 'string',
-      sortOrder: 10,
+      order: 10,
     },
   })
 
