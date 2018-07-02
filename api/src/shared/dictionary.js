@@ -20,5 +20,8 @@ function keyToId(table, keyColumn = 'externalId') {
 
 module.exports = {
   fileContentTypeToId: keyToId('FileContentType'),
+  issueEventStatusToId: keyToId('IssueEventStatus'),
+  issueStatusToId: keyToId('IssueStatus'),
+  issueTypeToId: keyToId('IssueType'),
   messageStatusToId: keyToId('MessageStatus'),
 }

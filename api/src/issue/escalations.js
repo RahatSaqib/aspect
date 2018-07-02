@@ -3,6 +3,8 @@ const _ = require('lodash')
 const { issueEscalated } = require('./actions')
 const { conditionsMet } = require('./evaluation')
 
+const { issueEventStatusToId } = require('../shared/dictionary')
+
 function onEscalateIssues() {
   return async (action, { messageContext: context }) => {
     context.bindActionCreators({ issueEscalated })
@@ -35,23 +37,19 @@ function onEscalateIssues() {
 }
 
 async function findOpenIssuesToCheckForEscalation(knex, issueId) {
-  const resolvedIssueEventStatus = await knex('IssueEventStatus')
-    .where('externalId', 'Resolved')
-    .first()
-  const triggeredIssueEventStatus = await knex('IssueEventStatus')
-    .where('externalId', 'Triggered')
-    .first()
+  const resolvedIssueEventStatusId = await issueEventStatusToId('Resolved')
+  const triggeredIssueEventStatusId = await issueEventStatusToId('Triggered')
   return knex('Issue as i')
     .leftJoin('IssueEvent as resolvedIssueEvent', function() {
       this.on('i.id', 'resolvedIssueEvent.issueId').on(
         'resolvedIssueEvent.issueEventStatusId',
-        knex.raw(resolvedIssueEventStatus.id)
+        knex.raw(resolvedIssueEventStatusId)
       )
     })
     .join('IssueEvent as triggeredIssueEvent', function() {
       this.on('i.id', 'triggeredIssueEvent.issueId').on(
         'triggeredIssueEvent.issueEventStatusId',
-        knex.raw(triggeredIssueEventStatus.id)
+        knex.raw(triggeredIssueEventStatusId)
       )
     })
     .join('IssueEscalationTrigger as iet', function() {

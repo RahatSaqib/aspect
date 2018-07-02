@@ -2,6 +2,10 @@ const Promise = require('bluebird')
 const _ = require('lodash')
 const { issueResolved } = require('./actions')
 const { conditionsMet } = require('./evaluation')
+const {
+  issueStatusToId,
+  issueEventStatusToId,
+} = require('../shared/dictionary')
 
 function onResolveIssues() {
   return async (action, { messageContext: context }) => {
@@ -11,12 +15,8 @@ function onResolveIssues() {
         knex,
         action.issueId
       )
-      const { id: resolvedIssueStatusId } = await knex('IssueStatus')
-        .where('externalId', 'Resolved')
-        .first('id')
-      const { id: resolvedIssueEventStatusId } = await knex('IssueEventStatus')
-        .where('externalId', 'Resolved')
-        .first('id')
+      const resolvedIssueStatusId = await issueStatusToId('Resolved')
+      const resolvedIssueEventStatusId = await issueEventStatusToId('Resolved')
       if (_.isEmpty(openIssuesToCheck)) {
         return Promise.resolve()
       }
@@ -48,23 +48,19 @@ function onResolveIssues() {
 }
 
 async function findOpenIssuesToCheckForResolution(knex, issueId) {
-  const resolvedIssueEventStatus = await knex('IssueEventStatus')
-    .where('externalId', 'Resolved')
-    .first()
-  const triggeredIssueEventStatus = await knex('IssueEventStatus')
-    .where('externalId', 'Triggered')
-    .first()
+  const resolvedIssueEventStatusId = await issueEventStatusToId('Resolved')
+  const triggeredIssueEventStatusId = await issueEventStatusToId('Triggered')
   return knex('Issue as i')
     .leftJoin('IssueEvent as resolvedIssueEvent', function() {
       this.on('i.id', 'resolvedIssueEvent.issueId').on(
         'resolvedIssueEvent.issueEventStatusId',
-        knex.raw(resolvedIssueEventStatus.id)
+        knex.raw(resolvedIssueEventStatusId)
       )
     })
     .join('IssueEvent as triggeredIssueEvent', function() {
       this.on('i.id', 'triggeredIssueEvent.issueId').on(
         'triggeredIssueEvent.issueEventStatusId',
-        knex.raw(triggeredIssueEventStatus.id)
+        knex.raw(triggeredIssueEventStatusId)
       )
     })
     .join('IssueResolutionTrigger as irt', function() {
