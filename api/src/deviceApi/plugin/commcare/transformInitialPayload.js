@@ -18,6 +18,37 @@ async function transformInitialPayload({ payload }) {
   const attachments = _.get(payload, 'attachments', {})
   const pictureUrl = _.get(attachments[rdtPicture], 'url', '')
 
+  const resultText = _.get(form, 'rdt_result')
+  const hcwResult = _.get(form, 'hcw_rdt_result')
+  const hcwConfirmatoryResult = _.get(form, 'hcw_confirmatory_result')
+  const hcwTiebreakerResult = _.get(form, 'hcw_tiebreak_result')
+
+  // Category 1 is from patient
+  let resultCategory1
+  if (resultText === 'positive') {
+    resultCategory1 = 'Detected'
+  } else if (resultText === 'negative') {
+    resultCategory1 = 'NotDetected'
+  } else {
+    resultCategory1 = 'Invalid'
+  }
+
+  // Category 2 is HCW preference to tiebreaker, then confirmatory
+  let resultCategory2
+  if (hcwTiebreakerResult === 'positive') {
+    resultCategory2 = 'Detected'
+  } else if (hcwTiebreakerResult === 'negative') {
+    resultCategory2 = 'NotDetected'
+  } else if (hcwTiebreakerResult === 'invalid') {
+    resultCategory2 = 'Invalid'
+  } else if (hcwConfirmatoryResult === 'positive') {
+    resultCategory2 = 'Detected'
+  } else if (hcwConfirmatoryResult === 'negative') {
+    resultCategory2 = 'NotDetected'
+  } else {
+    resultCategory2 = 'Invalid'
+  }
+
   const aspectPayload = {
     name: 'HIV RDT App',
     type: { id: 'CommCareApp' },
@@ -31,20 +62,19 @@ async function transformInitialPayload({ payload }) {
       endedOn: getDateOrDefault(formMeta, 'timeEnd'),
       location: parseLocation(_.get(metadata, 'location')),
       data: {
-        resultText: _.get(form, 'rdt_result'),
+        resultText,
         resultImageUrl: pictureUrl,
         resultImageFileName: rdtPicture,
-        // TODO should HCW results be additional categories?
-        hcwResult: _.get(form, 'hcw_rdt_result'),
-        hcwConfirmatoryResult: _.get(form, 'hcw_confirmatory_result'),
-        hcwTiebreakerResult: _.get(form, 'hcw_tiebreak_result'),
+        hcwResult,
+        hcwConfirmatoryResult,
+        hcwTiebreakerResult,
       },
       category: [
         {
-          id:
-            _.get(form, 'rdt_result') === 'positive'
-              ? 'Detected'
-              : 'NotDetected',
+          id: resultCategory1,
+        },
+        {
+          id: resultCategory2,
         },
       ],
       patient: {
