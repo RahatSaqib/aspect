@@ -13,6 +13,7 @@ import Helmet from 'react-helmet'
 import Checkbox from 'material-ui/Checkbox'
 
 // Our own imports
+import config from '../../config'
 import DelayShowingProgressBar from '../../components/shared/DelayShowingProgressBar'
 import JSONSchemaCard from '../../components/shared/JSONSchemaCard'
 import NavTitle from '../../globals/components/NavTitle'
@@ -78,6 +79,18 @@ const messages = defineMessages({
     id: 'pages.ResultDetail.noLogsHelp',
     defaultMessage: 'No log entries found for this result',
   },
+  attachments: {
+    id: 'pages.ResultDetail.attachments',
+    defaultMessage: 'Attachments',
+  },
+  noFilesHelp: {
+    id: 'pages.ResultDetail.noFilesHelp',
+    defaultMessage: 'No files attached for this result',
+  },
+  totalFilesLabel: {
+    id: 'pages.ResultDetail.totalFilesLabel',
+    defaultMessage: 'Total files: {totalFiles}',
+  },
 })
 
 const enhance = compose(
@@ -102,6 +115,7 @@ const enhance = compose(
         deviceLogs: state.result.deviceLogs,
         resultTags,
         editable: isEditable(state.user, result),
+        token: state.user.access,
       }
     },
     dispatch =>
@@ -224,6 +238,49 @@ export class ResultDetail extends PureComponent {
     )
   }
 
+  renderAttachmentSection() {
+    const { intl: { formatMessage }, result, token } = this.props
+    const files = result.get('files').toJS()
+    const resultId = result.get('id')
+
+    return (
+      <ExpansionPanel>
+        <ExpansionPanelHeader label={formatMessage(messages.attachments)}>
+          {_.isEmpty(files) && (
+            <div className={cssClasses('HelpBlock')}>
+              {formatMessage(messages.noFilesHelp)}
+            </div>
+          )}
+          {!_.isEmpty(files) && (
+            <div>
+              {formatMessage(messages.totalFilesLabel, {
+                totalFiles: files.length,
+              })}
+            </div>
+          )}
+        </ExpansionPanelHeader>
+        {!_.isEmpty(files) && (
+          <ExpansionPanelDetail>
+            {files.map(file => {
+              const { id, name } = file
+              const path = `/result/file/${resultId}/${id}/${name}?token=${token}`
+              return (
+                <ReadOnlyField
+                  label={file.name}
+                  value={
+                    <div>
+                      <img alt="" src={`${config.aspectApi}${path}`} />
+                    </div>
+                  }
+                />
+              )
+            })}
+          </ExpansionPanelDetail>
+        )}
+      </ExpansionPanel>
+    )
+  }
+
   renderContent() {
     const { result, screenSchema, resultTags, editable, intl } = this.props
 
@@ -273,6 +330,9 @@ export class ResultDetail extends PureComponent {
           {this.renderLowerLevelSchemaSections()}
           {/* Render Raw Result sections */}
           {this.renderRawResult()}
+
+          {/* Render files attachment */}
+          {this.renderAttachmentSection()}
         </DetailPanel>
       </div>
     )
