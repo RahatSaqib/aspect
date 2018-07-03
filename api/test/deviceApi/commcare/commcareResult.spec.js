@@ -1,4 +1,5 @@
 const supertest = require('supertest')
+const config = require('../../../src/config')
 const chai = require('chai')
 const {
   createTestContext,
@@ -142,7 +143,7 @@ function getCommCarePayload(resultText, { age, gender }) {
         userID: 'f7d6a38e36474c57be6c9e31c93c0dce',
         username: 'testuser',
       },
-      phone_number: '0834122269',
+      phone_number: config.admin.cell,
       previous_testing: 'yes',
       rdt_picture: '1528890813120.jpg',
       rdt_result: resultText,
