@@ -156,6 +156,7 @@ async function onIssueEscalated({ issueId }, { messageContext: context }) {
       .select(
         'nt.id',
         'nt.jobFunctionId',
+        'nt.level',
         'i.siteId',
         'i.deviceId',
         'i.resultId',
