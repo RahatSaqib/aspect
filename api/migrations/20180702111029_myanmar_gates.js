@@ -17,6 +17,15 @@ async function up(knex) {
       .whereRaw('p.id = personId')
       .select('cell'),
   })
+
+  // allow nullable issueId on IssueEvent
+  await knex.schema.table('IssueEvent', issueEvent => {
+    issueEvent
+      .integer('issueId')
+      .unsigned()
+      .nullable()
+      .alter()
+  })
 }
 
 async function down(knex) {
@@ -26,5 +35,16 @@ async function down(knex) {
 
   await knex.schema.table('SmsMessage', smsMessage => {
     smsMessage.dropColumn('phoneNumber')
+  })
+
+  await knex('IssueEvent')
+    .whereNull('issueId')
+    .delete()
+  await knex.schema.table('IssueEvent', issueEvent => {
+    issueEvent
+      .integer('issueId')
+      .unsigned()
+      .notNullable()
+      .alter()
   })
 }
