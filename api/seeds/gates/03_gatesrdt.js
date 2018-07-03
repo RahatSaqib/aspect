@@ -36,6 +36,7 @@ async function seed(knex) {
   const [resultPositiveSmsTemplateId] = await knex('SmsTemplate').insert(
     Object.assign(
       {
+        phoneNumber: '{{ result.patient.phone }}',
         message:
           'Dear participant ID #{{ result.patient.id }}: An HIV self-test is a screening test. Please visit your nearest clinic as your test MUST be confirmed by a healthcare worker as soon as possible',
       },
@@ -45,6 +46,7 @@ async function seed(knex) {
   const [resultNegativeSmsTemplateId] = await knex('SmsTemplate').insert(
     Object.assign(
       {
+        phoneNumber: '{{ result.patient.phone }}',
         message:
           'Dear participant ID #{{ result.patient.id }}: An HIV self-test is a screening test. Please ensure you re-test in 3 months.',
       },

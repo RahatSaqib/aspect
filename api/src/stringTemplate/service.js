@@ -31,6 +31,7 @@ function addDataSourceToQuery(qb, aliases) {
         's.name as siteName',
         's.shortName as siteShortName',
         'p.name as personName',
+        'p.cell as personCell',
         'd.lastPingOn as deviceLastPingOn',
         'd.lastSeenOn as deviceLastSeenOn',
         'r.resultData',
@@ -100,6 +101,7 @@ function getBaseDataSource(data) {
     },
     person: {
       name: d.personName,
+      cell: d.personCell,
     },
     issue: {
       createdOn: d.issueCreatedOn,
