@@ -6,6 +6,7 @@ const {
   issueTriggered,
   issueAcknowledged,
   issueResolved,
+  escalateIssues,
 } = require('./actions')
 const { getUser } = require('../auth/service')
 const { parseDateOrDefault } = require('../shared/date')
@@ -17,7 +18,7 @@ const {
 
 function onIssueEventTrigger(issueType) {
   return async (action, { messageContext: context }) => {
-    context.bindActionCreators({ issueCreated, issueTriggered })
+    context.bindActionCreators({ issueCreated, issueTriggered, escalateIssues })
     return context.transact(async knex => {
       const now = new Date()
       const openIssue = await findOpenIssue(knex, issueType, action)
@@ -41,6 +42,7 @@ function onIssueEventTrigger(issueType) {
 
       if (issue != null) {
         context.issueTriggered(issue.id)
+        context.escalateIssues(issue.id)
       }
     })
   }
