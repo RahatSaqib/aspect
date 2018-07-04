@@ -193,6 +193,30 @@ async function seedStockIssues(knex) {
     ),
     Object.assign(
       {
+        name: 'LU Stockout - RO View',
+        partnerId,
+        issueTypeId: issueTypes.InventoryStockout.id,
+        jobFunctionId: jobFunctionIdRegionalOfficer,
+        level: 1,
+        canAcknowledge: 0,
+        messageTypeId: defaultMessageTypes.InventoryStockout.id,
+      },
+      auditFields
+    ),
+    Object.assign(
+      {
+        name: 'LU Escalated Stockout - RO View',
+        partnerId,
+        issueTypeId: issueTypes.InventoryStockout.id,
+        jobFunctionId: jobFunctionIdRegionalOfficer,
+        level: 2,
+        canAcknowledge: 0,
+        messageTypeId: defaultMessageTypes.InventoryStockout.id,
+      },
+      auditFields
+    ),
+    Object.assign(
+      {
         name: 'RO Stockout',
         partnerId,
         issueTypeId: issueTypes.InventoryStockout.id,
@@ -224,6 +248,30 @@ async function seedStockIssues(knex) {
         partnerId,
         issueTypeId: issueTypes.InventoryStockExpiring.id,
         jobFunctionId: jobFunctionIdLabUser,
+        level: 2,
+        canAcknowledge: 0,
+        messageTypeId: defaultMessageTypes.InventoryStockExpiring.id,
+      },
+      auditFields
+    ),
+    Object.assign(
+      {
+        name: 'LU Stock Expiring - RO View',
+        partnerId,
+        issueTypeId: issueTypes.InventoryStockExpiring.id,
+        jobFunctionId: jobFunctionIdRegionalOfficer,
+        level: 1,
+        canAcknowledge: 0,
+        messageTypeId: defaultMessageTypes.InventoryStockExpiring.id,
+      },
+      auditFields
+    ),
+    Object.assign(
+      {
+        name: 'LU Escalated Stock Expiring - RO View',
+        partnerId,
+        issueTypeId: issueTypes.InventoryStockExpiring.id,
+        jobFunctionId: jobFunctionIdRegionalOfficer,
         level: 2,
         canAcknowledge: 0,
         messageTypeId: defaultMessageTypes.InventoryStockExpiring.id,
