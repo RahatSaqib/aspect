@@ -97,25 +97,31 @@
           "instrumentSerial": {
             "type": "string",
             "row": 1,
-            "order": 0,
+            "order": 4,
             "title": "Instrument Serial"
           },
           "moduleSerial": {
             "type": "string",
             "row": 1,
-            "order": 1,
+            "order": 5,
             "title": "Module Serial"
+          },
+          "moduleName": {
+            "type": "string",
+            "row": 1,
+            "order": 6,
+            "title": "Module Slot"
           },
           "senderOperator": {
             "type": "string",
-            "row": 1,
-            "order": 2,
+            "row": 2,
+            "order": 7,
             "title": "Operator"
           },
           "notes": {
             "type": "string",
             "row": 2,
-            "order": 0,
+            "order": 8,
             "title": "Reason For Test"
           }
         }
