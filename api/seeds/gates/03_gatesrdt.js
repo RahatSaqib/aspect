@@ -4,10 +4,16 @@ const { rowsAsObject } = require('../utils')
 
 async function seed(knex) {
   // Skip this seed file if we already have an  Issue
-  const [issueTypes, issueCategories, messageSeverities] = await Promise.all([
+  const [
+    issueTypes,
+    issueCategories,
+    messageSeverities,
+    webhookTemplates,
+  ] = await Promise.all([
     rowsAsObject(knex, 'IssueType', 'externalId'),
     rowsAsObject(knex, 'IssueCategory', 'externalId'),
     rowsAsObject(knex, 'MessageSeverity', 'externalId'),
+    rowsAsObject(knex, 'WebhookTemplate', 'externalId'),
   ])
   if (issueTypes.ResultReceived) {
     return
@@ -56,23 +62,17 @@ async function seed(knex) {
 
   const [resultReceivedMessageTypeId] = await knex('MessageType').insert({
     messageSeverityId: messageSeverities.Alert.id,
-    alertTemplateId: null,
-    smsTemplateId: null,
-    emailTemplateId: null,
+    webhookTemplateId: webhookTemplates.commcareDownloadImage.id,
   })
 
   const [resultPositiveMessageTypeId] = await knex('MessageType').insert({
     messageSeverityId: messageSeverities.Alert.id,
-    alertTemplateId: null,
     smsTemplateId: resultPositiveSmsTemplateId,
-    emailTemplateId: null,
   })
 
   const [resultNegativeMessageTypeId] = await knex('MessageType').insert({
     messageSeverityId: messageSeverities.Alert.id,
-    alertTemplateId: null,
     smsTemplateId: resultNegativeSmsTemplateId,
-    emailTemplateId: null,
   })
 
   const [issueTypeResultReceivedId] = await knex('IssueType').insert({

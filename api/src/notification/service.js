@@ -165,7 +165,8 @@ async function onIssueEscalated({ issueId }, { messageContext: context }) {
         'g.lgaId',
         'mt.alertTemplateId',
         'mt.emailTemplateId',
-        'mt.smsTemplateId'
+        'mt.smsTemplateId',
+        'mt.webhookTemplateId'
       )
 
     // for each job function, find all policies with maximum constrained level,

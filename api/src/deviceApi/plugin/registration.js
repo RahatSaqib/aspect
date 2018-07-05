@@ -25,7 +25,6 @@ const plugins = {
   },
   commcare: {
     transformInitialPayload: require('./commcare/transformInitialPayload'),
-    onResultLogged: require('./commcare/onResultLogged'),
   },
   malawi: {
     transformNewDevicePayload: require('./malawi/transformNewDevicePayload'),
