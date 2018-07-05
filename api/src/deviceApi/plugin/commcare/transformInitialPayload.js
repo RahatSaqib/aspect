@@ -81,7 +81,7 @@ async function transformInitialPayload({ payload }) {
         id: _.get(form, 'study_id'),
         age: _.get(form, 'age'),
         gender: _.get(form, 'gender'),
-        phone: _.get(form, 'phone_number'),
+        phone: normalizePhoneNumber(_.get(form, 'phone_number')),
         educationLevel: _.get(form, 'education_level'),
         previousTesting: _.get(form, 'previous_testing'),
       },
@@ -113,6 +113,23 @@ function parseLocation(locationText) {
     }
   }
   return location
+}
+
+function normalizePhoneNumber(phoneNumber) {
+  // strip to digits only
+  phoneNumber = phoneNumber.replace(/[^\d]/g, '')
+
+  // strip off leading 0 if ten digits
+  if (phoneNumber.length === 10 && phoneNumber.startsWith('0')) {
+    phoneNumber = phoneNumber.substring(1)
+  }
+
+  // Prepend country code if specified and does not already start with it
+  if (phoneNumber.length === 9 && !phoneNumber.startsWith('27')) {
+    phoneNumber = `27${phoneNumber}`
+  }
+
+  return phoneNumber
 }
 
 module.exports = transformInitialPayload
