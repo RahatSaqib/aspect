@@ -23,7 +23,7 @@ export const ExpansionPanelHeader = ({
 }) => (
   <div
     className={cssClasses(className, 'Header')}
-    onClick={handleExpandToggle}
+    onClick={() => (disabled ? null : handleExpandToggle())}
     onKeyDown={handleKeyDown}
     role="button"
     tabIndex="0"

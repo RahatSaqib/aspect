@@ -11,6 +11,9 @@ import Helmet from 'react-helmet'
 
 // Material-UI
 import Checkbox from 'material-ui/Checkbox'
+import MdChevronLeft from 'react-icons/lib/md/chevron-left'
+import MdChevronRight from 'react-icons/lib/md/chevron-right'
+import MdClose from 'react-icons/lib/md/clear'
 
 // Our own imports
 import config from '../../config'
@@ -142,7 +145,16 @@ const enhance = compose(
   })
 )
 
+const THUMBNAIL_MODE_NORMAL = 'THUMBNAIL_MODE_NORMAL'
+const THUMBNAIL_MODE_PREVIEW = 'THUMBNAIL_MODE_PREVIEW'
+
 export class ResultDetail extends PureComponent {
+  state = {
+    resultId: undefined,
+    thumbnailMode: THUMBNAIL_MODE_NORMAL,
+    imageIndex: 0,
+  }
+
   componentDidMount() {
     this.handleFetchResult()
   }
@@ -163,6 +175,13 @@ export class ResultDetail extends PureComponent {
     this.props.updateTags(qryId, qryType, tags.join(','))
   }
 
+  clickThumbnail(imageIndex) {
+    this.setState({
+      thumbnailMode: THUMBNAIL_MODE_PREVIEW,
+      imageIndex,
+    })
+  }
+
   handleToggle() {
     this.setState({ isShown: !this.state.isShown })
   }
@@ -180,6 +199,43 @@ export class ResultDetail extends PureComponent {
     return result && result.has('assay')
   }
 
+  drawIconPrev = isFirst => (
+    <div className={cssClasses('ButPreview')}>
+      <MdChevronLeft
+        className={cssClasses({
+          disabled: isFirst,
+        })}
+        onClick={() => this.switchImage(-1, { isFirst })}
+      />
+    </div>
+  )
+  drawIconNext = isLast => (
+    <div className={cssClasses('ButPreview')}>
+      <MdChevronRight
+        className={cssClasses({
+          disabled: isLast,
+        })}
+        onClick={() => this.switchImage(1, { isLast })}
+      />
+    </div>
+  )
+  drawIconClose = () => (
+    <div className={cssClasses('ButPreview', 'Close')}>
+      <MdClose
+        className={cssClasses('ClosePreview')}
+        onClick={() => {
+          this.setState({ thumbnailMode: THUMBNAIL_MODE_NORMAL })
+        }}
+      />
+    </div>
+  )
+
+  switchImage = (dir, { isFirst, isLast }) => {
+    let { imageIndex } = this.state
+    imageIndex += (!isFirst && dir === -1) || (!isLast && dir === 1) ? dir : 0
+    this.setState({ imageIndex })
+  }
+
   renderProgress() {
     return <DelayShowingProgressBar type="linear" mode="indeterminate" />
   }
@@ -189,7 +245,7 @@ export class ResultDetail extends PureComponent {
     const logs = deviceLogs.toJS()
 
     return (
-      <ExpansionPanel>
+      <ExpansionPanel disabled={_.isEmpty(logs)}>
         <ExpansionPanelHeader label={formatMessage(messages.fieldRawData)}>
           {_.isEmpty(logs) && (
             <div className={cssClasses('HelpBlock')}>
@@ -240,41 +296,97 @@ export class ResultDetail extends PureComponent {
 
   renderAttachmentSection() {
     const { intl: { formatMessage }, result, token } = this.props
+
     const files = result.get('files').toJS()
+    const totalFiles = files.length
     const resultId = result.get('id')
+    // if new result item - reset local state
+    if (resultId !== this.state.resultId) {
+      this.setState({
+        resultId,
+        imageIndex: 0,
+        thumbnailMode: THUMBNAIL_MODE_NORMAL,
+      })
+    }
+    const { imageIndex, thumbnailMode } = this.state
+    const isFirst = imageIndex === 0
+    const isLast = imageIndex === files.length - 1
+    const isPreview = thumbnailMode === THUMBNAIL_MODE_PREVIEW
+    const path = ({ id, name }) =>
+      `/result/file/${resultId}/${id}/${name}?token=${token}`
 
     return (
-      <ExpansionPanel>
-        <ExpansionPanelHeader label={formatMessage(messages.attachments)}>
+      <ExpansionPanel disabled={_.isEmpty(files)}>
+        <ExpansionPanelHeader
+          // Left side - labels for expanded and collapsed modes
+          label={formatMessage(messages.attachments)}
+          expandedLabel={`${formatMessage(
+            messages.attachments
+          )} (${totalFiles})`}
+          // Right side - text only for collapsed mode when list is not empty
+          collapsedChildren={
+            !_.isEmpty(files) && (
+              <div>
+                {formatMessage(messages.totalFilesLabel, { totalFiles })}
+              </div>
+            )
+          }
+        >
+          {/* text to show when list is empty */}
           {_.isEmpty(files) && (
             <div className={cssClasses('HelpBlock')}>
               {formatMessage(messages.noFilesHelp)}
             </div>
           )}
-          {!_.isEmpty(files) && (
-            <div>
-              {formatMessage(messages.totalFilesLabel, {
-                totalFiles: files.length,
-              })}
-            </div>
-          )}
         </ExpansionPanelHeader>
         {!_.isEmpty(files) && (
           <ExpansionPanelDetail>
-            {files.map(file => {
-              const { id, name } = file
-              const path = `/result/file/${resultId}/${id}/${name}?token=${token}`
-              return (
-                <ReadOnlyField
-                  label={file.name}
-                  value={
-                    <div>
-                      <img alt="" src={`${config.aspectApi}${path}`} />
+            <div
+              className={cssClasses('FilesContainer', { Preview: isPreview })}
+            >
+              <div className={cssClasses('AllThumbnails')}>
+                {files.map((file, index) => {
+                  return (
+                    <div className={cssClasses('ThumbnailContainer')}>
+                      <div
+                        className={cssClasses('ThumbnailImageContainer', {
+                          selected: isPreview && imageIndex === index,
+                        })}
+                        role="button"
+                        tabIndex={index}
+                        onKeyDown={() => {}}
+                        onClick={() => this.clickThumbnail(index, isPreview)}
+                      >
+                        <img
+                          title="Click to preview"
+                          alt={file.name}
+                          className={cssClasses('ThumbnailImage')}
+                          src={`${config.aspectApi}${path(file)}`}
+                        />
+                      </div>
+                      <div className={cssClasses('ThumbnailFilename')}>
+                        {file.name}
+                      </div>
                     </div>
-                  }
-                />
-              )
-            })}
+                  )
+                })}
+              </div>
+              <div className={cssClasses('PreviewContainer')}>
+                <div>{this.drawIconPrev(isFirst)}</div>
+                <div className={cssClasses('ImageContainer')}>
+                  <img
+                    title="Click to preview"
+                    alt={files[imageIndex].name}
+                    className={cssClasses('Image')}
+                    src={`${config.aspectApi}${path(files[imageIndex])}`}
+                  />
+                </div>
+                <div>
+                  {this.drawIconClose()}
+                  {this.drawIconNext(isLast)}
+                </div>
+              </div>
+            </div>
           </ExpansionPanelDetail>
         )}
       </ExpansionPanel>
