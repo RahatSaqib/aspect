@@ -130,9 +130,8 @@ async function seed(knex) {
       partnerId,
       escalateToLevel: 2,
       escalationConditions: JSON.stringify({
-        evaluationMethod: 'sql-script',
-        evaluationParameter:
-          './sqlScripts/gates/issues/escalations/resultCategoryNegative.sql',
+        evaluationMethod: 'result-category',
+        evaluationParameter: { index: 2, externalId: 'NotDetected' },
       }),
       createdOn: now,
       updatedOn: now,
@@ -142,9 +141,8 @@ async function seed(knex) {
       partnerId,
       escalateToLevel: 3,
       escalationConditions: JSON.stringify({
-        evaluationMethod: 'sql-script',
-        evaluationParameter:
-          './sqlScripts/gates/issues/escalations/resultCategoryPositive.sql',
+        evaluationMethod: 'result-category',
+        evaluationParameter: { index: 2, externalId: 'Detected' },
       }),
       createdOn: now,
       updatedOn: now,
