@@ -125,10 +125,6 @@ async function listNotifications(request) {
   return result
 }
 
-async function onIssueTriggered({ issueId }, context) {
-  await onIssueEscalated({ issueId }, context)
-}
-
 async function onIssueEscalated({ issueId }, { messageContext: context }) {
   context.bindActionCreators({
     notificationCreated,
@@ -300,6 +296,5 @@ async function onIssueEscalated({ issueId }, { messageContext: context }) {
 
 module.exports = {
   listNotifications,
-  onIssueTriggered,
   onIssueEscalated,
 }
