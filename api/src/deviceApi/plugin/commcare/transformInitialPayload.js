@@ -126,7 +126,7 @@ function normalizePhoneNumber(phoneNumber) {
 
   // Prepend country code if specified and does not already start with it
   if (phoneNumber.length === 9 && !phoneNumber.startsWith('27')) {
-    phoneNumber = `27${phoneNumber}`
+    phoneNumber = `+27${phoneNumber}`
   }
 
   return phoneNumber
