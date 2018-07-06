@@ -148,4 +148,24 @@ async function seed(knex) {
       updatedOn: now,
     },
   ])
+
+  // show patient ID in expanded view:
+  await knex('Assay')
+    .where('externalId', 'CommCareGatesRDT')
+    .update(
+      'patientDataSchema',
+      JSON.stringify({
+        id: { type: 'string', order: 0, title: 'Patient ID' },
+        name: { type: 'string', order: 1, title: 'Client Name' },
+        age: { type: 'int', order: 2, title: 'Age' },
+        gender: { type: 'string', order: 3, title: 'Gender' },
+        phone: { type: 'string', order: 4, title: 'Phone Number' },
+        educationLevel: { type: 'string', order: 5, title: 'Education Level' },
+        previousTesting: {
+          type: 'string',
+          order: 6,
+          title: 'Previous Testing',
+        },
+      })
+    )
 }

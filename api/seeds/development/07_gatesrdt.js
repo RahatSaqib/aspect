@@ -86,6 +86,7 @@ async function seed(knex) {
       },
     }),
     patientDataSchema: JSON.stringify({
+      id: { type: 'string', order: 0, title: 'Patient ID' },
       name: { type: 'string', order: 1, title: 'Client Name' },
       age: { type: 'int', order: 2, title: 'Age' },
       gender: { type: 'string', order: 3, title: 'Gender' },
