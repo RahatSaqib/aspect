@@ -4,12 +4,17 @@ const { getDefaultMessageTypes } = require('../utils')
 const { rowsAsObject } = require('../utils')
 
 async function seed(knex) {
+  const [issueTypes, defaultMessageTypes] = await Promise.all([
+    rowsAsObject(knex, 'IssueType', 'externalId'),
+    getDefaultMessageTypes(knex),
+  ])
+
   // check if this seed already ran
-  const notificationType = await knex('NotificationType')
-    .where('name', 'LU Stockout - RO View')
+  const issueEscalationTrigger = await knex('IssueEscalationTrigger')
+    .where('issueTypeId', issueTypes.ModuleTemperatureError.id)
     .first()
 
-  if (notificationType) {
+  if (issueEscalationTrigger) {
     return
   }
 
@@ -24,11 +29,6 @@ async function seed(knex) {
     updatedOn: now,
     updatedBy: adminId,
   }
-
-  const [issueTypes, defaultMessageTypes] = await Promise.all([
-    rowsAsObject(knex, 'IssueType', 'externalId'),
-    getDefaultMessageTypes(knex),
-  ])
 
   const { id: partnerId } = await knex('Partner')
     .where({ name: 'Myanmar' })
@@ -90,5 +90,20 @@ async function seed(knex) {
       },
       auditFields
     ),
+  ])
+
+  // set up escalations
+  await knex('IssueEscalationTrigger').insert([
+    {
+      issueTypeId: issueTypes.ModuleTemperatureError.id,
+      partnerId,
+      escalateToLevel: 2,
+      escalationConditions: JSON.stringify({
+        evaluationMethod: 'issue-age',
+        evaluationParameter: { days: 90 },
+      }),
+      createdOn: now,
+      updatedOn: now,
+    },
   ])
 }
