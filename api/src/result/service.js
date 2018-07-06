@@ -417,6 +417,8 @@ async function showFileReferences(request) {
     .select(
       'f.id',
       'f.name',
+      'f.length',
+      'f.createdOn',
       'fct.externalId as fileContentType',
       'fct.mimeType',
       'fct.mimeSubtype'
@@ -517,6 +519,10 @@ async function getResultByResultId(request, fields = SELECT_SHOW_FIELDS) {
 
     data.assay.resultDataSchema = JSON.parse(data.assay.resultDataSchema)
     data.assay.patientDataSchema = JSON.parse(data.assay.patientDataSchema)
+
+    // select files attached to this result
+    const { data: files } = await showFileReferences(request)
+    data.files = files
   }
 
   return { ok: results.length === 1, data }
