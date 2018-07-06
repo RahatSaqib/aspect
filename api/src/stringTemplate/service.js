@@ -31,9 +31,11 @@ function addDataSourceToQuery(qb, aliases) {
         's.name as siteName',
         's.shortName as siteShortName',
         'p.name as personName',
+        'p.cell as personCell',
         'd.lastPingOn as deviceLastPingOn',
         'd.lastSeenOn as deviceLastSeenOn',
         'r.resultData',
+        'r.patientData as resultPatientData',
         knex.raw('coalesce(r.moduleName, r.moduleSerial) as resultModuleName'),
         'r.moduleSerial as resultModuleSerial',
         'r.errorCode as resultErrorCode',
@@ -90,6 +92,8 @@ function getBaseDataSource(data) {
     },
     result: {
       data: d.resultData == null ? {} : JSON.parse(d.resultData),
+      patient:
+        d.resultPatientData == null ? {} : JSON.parse(d.resultPatientData),
       moduleName: d.resultModuleName,
       moduleSerial: d.resultModuleSerial,
       errorCode: d.resultErrorCode,
@@ -97,6 +101,7 @@ function getBaseDataSource(data) {
     },
     person: {
       name: d.personName,
+      cell: d.personCell,
     },
     issue: {
       createdOn: d.issueCreatedOn,

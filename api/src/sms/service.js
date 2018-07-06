@@ -23,14 +23,18 @@ function onSmsMessageCreated({ smsMessageId }, { messageContext }) {
 // prepareSmsMessageForSending
 // -----------------------------
 async function prepareSmsMessageForSending(context, knex, smsMessageId) {
-  const message = await createSmsMessageFromTemplate(knex, smsMessageId)
-  const messageStatusId = (await dictionary.messageStatusToId()).Pending
+  const { message, phoneNumber } = await createSmsMessageFromTemplate(
+    knex,
+    smsMessageId
+  )
+  const messageStatusId = await dictionary.messageStatusToId('Pending')
 
   // store generated sms message into the same record and set messageStatusId
   await knex('SmsMessage')
     .where({ id: smsMessageId })
     .update({
       message,
+      phoneNumber,
       messageStatusId,
       updatedOn: new Date(),
     })
@@ -58,9 +62,8 @@ function onSmsMessageReadyForSending({ smsMessageId }, { messageContext }) {
 async function doSendSmsMessage(context, knex, smsMessageId) {
   // get message and cell phone
   const d = await knex('SmsMessage as sm')
-    .leftJoin('Person as p', 'sm.personId', 'p.id')
     .where({ 'sm.id': smsMessageId })
-    .first('sm.message', 'p.cell')
+    .first('sm.message', 'sm.phoneNumber as cell')
 
   const { cell, message } = d || {}
 
@@ -97,9 +100,14 @@ async function createSmsMessageFromTemplate(knex, smsMessageId) {
     .leftJoin('Notification as n', 'n.smsMessageId', 'm.id')
     .modify(addDataSourceToQuery, { message: 'm', notification: 'n' })
     .where({ 'm.id': smsMessageId })
-    .first('tmpl.message as messageTemplate')
-  const { message } = processUsingDataSourceQuery(data, ['messageTemplate'])
-  return message
+    .first(
+      'tmpl.message as messageTemplate',
+      'tmpl.phoneNumber as phoneNumberTemplate'
+    )
+  return processUsingDataSourceQuery(data, [
+    'messageTemplate',
+    'phoneNumberTemplate',
+  ])
 }
 
 module.exports = {

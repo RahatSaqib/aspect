@@ -125,10 +125,6 @@ async function listNotifications(request) {
   return result
 }
 
-async function onIssueTriggered({ issueId }, context) {
-  await onIssueEscalated({ issueId }, context)
-}
-
 async function onIssueEscalated({ issueId }, { messageContext: context }) {
   context.bindActionCreators({
     notificationCreated,
@@ -156,6 +152,7 @@ async function onIssueEscalated({ issueId }, { messageContext: context }) {
       .select(
         'nt.id',
         'nt.jobFunctionId',
+        'nt.level',
         'i.siteId',
         'i.deviceId',
         'i.resultId',
@@ -164,7 +161,8 @@ async function onIssueEscalated({ issueId }, { messageContext: context }) {
         'g.lgaId',
         'mt.alertTemplateId',
         'mt.emailTemplateId',
-        'mt.smsTemplateId'
+        'mt.smsTemplateId',
+        'mt.webhookTemplateId'
       )
 
     // for each job function, find all policies with maximum constrained level,
@@ -298,6 +296,5 @@ async function onIssueEscalated({ issueId }, { messageContext: context }) {
 
 module.exports = {
   listNotifications,
-  onIssueTriggered,
   onIssueEscalated,
 }

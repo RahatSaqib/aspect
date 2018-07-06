@@ -1,10 +1,6 @@
 const Joi = require('joi')
 const { asyncHandler, validateSortPageParams } = require('../routes')
-const {
-  listNotifications,
-  onIssueTriggered,
-  onIssueEscalated,
-} = require('./service')
+const { listNotifications, onIssueEscalated } = require('./service')
 
 const routes = [
   {
@@ -38,7 +34,6 @@ const routes = [
 const subscriptions = [
   {
     actions: {
-      ISSUE_TRIGGERED: onIssueTriggered,
       ISSUE_ESCALATED: onIssueEscalated,
     },
   },
