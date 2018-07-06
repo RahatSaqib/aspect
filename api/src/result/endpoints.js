@@ -17,7 +17,6 @@ const {
   showFileReferences,
   downloadFile,
   downloadFirstImage,
-  onResultLogged,
 } = require('./service')
 const {
   validateAllGeographyFilterParams,
@@ -291,12 +290,4 @@ const routes = [
   },
 ]
 
-const subscriptions = [
-  {
-    actions: {
-      RESULT_LOGGED: onResultLogged,
-    },
-  },
-]
-
-module.exports = { routes, subscriptions }
+module.exports = { routes }
