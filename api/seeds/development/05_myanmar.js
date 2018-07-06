@@ -1698,6 +1698,17 @@ async function seed(knex) {
       createdOn: now,
       updatedOn: now,
     },
+    {
+      issueTypeId: issueTypes.ModuleTemperatureError.id,
+      partnerId,
+      escalateToLevel: 2,
+      escalationConditions: JSON.stringify({
+        evaluationMethod: 'issue-age',
+        evaluationParameter: { days: 90 },
+      }),
+      createdOn: now,
+      updatedOn: now,
+    },
   ])
 
   // Issue Resolution Triggers
