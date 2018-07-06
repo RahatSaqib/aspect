@@ -172,4 +172,10 @@ async function seed(knex) {
       updatedOn: now,
     },
   ])
+
+  // RO reagent health already exists, but has to be changed slightly
+  // so it shows up on the RO's dashboard as soon as the LU issues is triggered
+  await knex('NotificationType')
+    .update('level', 1)
+    .where('name', 'RO Reagent Health')
 }

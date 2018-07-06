@@ -1008,7 +1008,7 @@ async function seed(knex) {
         partnerId,
         issueTypeId: issueTypes.ReagentHealthError.id,
         jobFunctionId: jobFunctionIdRegionalOfficer,
-        level: 3,
+        level: 1,
         canAcknowledge: 0,
         messageTypeId: defaultMessageTypes.ReagentHealthError.id,
       },
