@@ -297,8 +297,8 @@ export class ResultDetail extends PureComponent {
   renderAttachmentSection() {
     const { intl: { formatMessage }, result, token } = this.props
 
-    const files = result.get('files').toJS()
-    const totalFiles = files.length
+    const files = result.get('files') || Immutable.List()
+    const totalFiles = files.count()
     const resultId = result.get('id')
     // if new result item - reset local state
     if (resultId !== this.state.resultId) {
@@ -310,13 +310,13 @@ export class ResultDetail extends PureComponent {
     }
     const { imageIndex, thumbnailMode } = this.state
     const isFirst = imageIndex === 0
-    const isLast = imageIndex === files.length - 1
+    const isLast = imageIndex === totalFiles - 1
     const isPreview = thumbnailMode === THUMBNAIL_MODE_PREVIEW
-    const path = ({ id, name }) =>
-      `/result/file/${resultId}/${id}/${name}?token=${token}`
+    const path = file => `${config.aspectApi}${file.get('url')}?token=${token}`
+    const selectedFile = totalFiles > 0 && files.get(imageIndex)
 
     return (
-      <ExpansionPanel disabled={_.isEmpty(files)}>
+      <ExpansionPanel disabled={totalFiles === 0}>
         <ExpansionPanelHeader
           // Left side - labels for expanded and collapsed modes
           label={formatMessage(messages.attachments)}
@@ -325,7 +325,7 @@ export class ResultDetail extends PureComponent {
           )} (${totalFiles})`}
           // Right side - text only for collapsed mode when list is not empty
           collapsedChildren={
-            !_.isEmpty(files) && (
+            totalFiles > 0 && (
               <div>
                 {formatMessage(messages.totalFilesLabel, { totalFiles })}
               </div>
@@ -333,52 +333,50 @@ export class ResultDetail extends PureComponent {
           }
         >
           {/* text to show when list is empty */}
-          {_.isEmpty(files) && (
+          {totalFiles === 0 && (
             <div className={cssClasses('HelpBlock')}>
               {formatMessage(messages.noFilesHelp)}
             </div>
           )}
         </ExpansionPanelHeader>
-        {!_.isEmpty(files) && (
+        {totalFiles > 0 && (
           <ExpansionPanelDetail>
             <div
               className={cssClasses('FilesContainer', { Preview: isPreview })}
             >
               <div className={cssClasses('AllThumbnails')}>
-                {files.map((file, index) => {
-                  return (
-                    <div className={cssClasses('ThumbnailContainer')}>
-                      <div
-                        className={cssClasses('ThumbnailImageContainer', {
-                          selected: isPreview && imageIndex === index,
-                        })}
-                        role="button"
-                        tabIndex={index}
-                        onKeyDown={() => {}}
-                        onClick={() => this.clickThumbnail(index, isPreview)}
-                      >
-                        <img
-                          title="Click to preview"
-                          alt={file.name}
-                          className={cssClasses('ThumbnailImage')}
-                          src={`${config.aspectApi}${path(file)}`}
-                        />
-                      </div>
-                      <div className={cssClasses('ThumbnailFilename')}>
-                        {file.name}
-                      </div>
+                {files.map((file, index) => (
+                  <div className={cssClasses('ThumbnailContainer')}>
+                    <div
+                      className={cssClasses('ThumbnailImageContainer', {
+                        selected: isPreview && imageIndex === index,
+                      })}
+                      role="button"
+                      tabIndex={index}
+                      onKeyDown={() => {}}
+                      onClick={() => this.clickThumbnail(index, isPreview)}
+                    >
+                      <img
+                        title="Click to preview"
+                        alt={file.get('name')}
+                        className={cssClasses('ThumbnailImage')}
+                        src={path(file)}
+                      />
                     </div>
-                  )
-                })}
+                    <div className={cssClasses('ThumbnailFilename')}>
+                      {file.get('name')}
+                    </div>
+                  </div>
+                ))}
               </div>
               <div className={cssClasses('PreviewContainer')}>
                 <div>{this.drawIconPrev(isFirst)}</div>
                 <div className={cssClasses('ImageContainer')}>
                   <img
                     title="Click to preview"
-                    alt={files[imageIndex].name}
+                    alt={selectedFile.get('name')}
                     className={cssClasses('Image')}
-                    src={`${config.aspectApi}${path(files[imageIndex])}`}
+                    src={path(selectedFile)}
                   />
                 </div>
                 <div>

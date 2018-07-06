@@ -417,6 +417,8 @@ async function showFileReferences(request) {
     .select(
       'f.id',
       'f.name',
+      'f.length',
+      'f.createdOn',
       'fct.externalId as fileContentType',
       'fct.mimeType',
       'fct.mimeSubtype'
@@ -519,22 +521,7 @@ async function getResultByResultId(request, fields = SELECT_SHOW_FIELDS) {
     data.assay.patientDataSchema = JSON.parse(data.assay.patientDataSchema)
 
     // select files attached to this result
-    const files = await knex('ResultFileReference as rfr')
-      .join('FileReference as fr', 'rfr.fileReferenceId', 'fr.id')
-      .join('FileContentType as fct', 'fr.fileContentTypeId', 'fct.id')
-      .join('Result as r', 'r.id', 'rfr.resultId')
-      .join('Device as d', 'r.deviceId', 'd.id')
-      .modify(addConstraints, dataConstraints, { device: 'd' })
-      .where('rfr.resultId', data.id)
-      .where('fct.mimeType', 'image') // select only images for ASP-787
-      .select([
-        'fr.id',
-        'fr.name',
-        'fr.length',
-        'fr.createdOn',
-        'fct.mimeType',
-        'fct.mimeSubtype',
-      ])
+    const { data: files } = await showFileReferences(request)
     data.files = files
   }
 
