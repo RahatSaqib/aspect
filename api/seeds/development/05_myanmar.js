@@ -1720,6 +1720,17 @@ async function seed(knex) {
       createdOn: now,
       updatedOn: now,
     },
+    {
+      issueTypeId: issueTypes.MachinePowerError.id,
+      partnerId,
+      escalateToLevel: 2,
+      escalationConditions: JSON.stringify({
+        evaluationMethod: 'issue-age',
+        evaluationParameter: { days: 30 },
+      }),
+      createdOn: now,
+      updatedOn: now,
+    },
   ])
 
   // Issue Resolution Triggers
