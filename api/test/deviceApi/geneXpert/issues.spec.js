@@ -23,7 +23,7 @@ const {
 const { inventoryReagentHealth } = require('../../../src/inventory/actions')
 const { waitForIdle, waitForAction } = require('../../utils/mqUtils')
 
-describe('Issue endpoints', () => {
+describe('Myanmar Issue endpoints', () => {
   function createContext() {
     return createGxAlertTestContext(server)
   }
@@ -41,7 +41,10 @@ describe('Issue endpoints', () => {
   let { deviceAuth } = context
   beforeEach(async () =>
     run(async () => {
-      await beforeCreateGxAlertApiKey()
+      await beforeCreateGxAlertApiKey({
+        countryAbbreviation: 'MM',
+        partnerName: 'Myanmar',
+      })
       useGxAlertDeviceId(gxAlertDeviceId)
       ;({ deviceAuth } = context)
     })
@@ -715,7 +718,10 @@ describe('Issue endpoints', () => {
   describe('should create a machine power issue when ', () => {
     beforeEach(async () =>
       run(async () => {
-        await beforeCreateGxAlertApiKey()
+        await beforeCreateGxAlertApiKey({
+          countryAbbreviation: 'MM',
+          partnerName: 'Myanmar',
+        })
         useGxAlertDeviceId(gxAlertDeviceId)
         ;({ deviceAuth } = context)
       })
