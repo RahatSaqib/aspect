@@ -1,7 +1,6 @@
 module.exports = require('../../src/db').seed(seed)
 
 const { rowsAsObject } = require('../utils')
-const { seedDataCategory } = require('../dataCategoryLow')
 
 async function seed(knex) {
   // Skip this seed file if we already have an  Issue
@@ -168,6 +167,4 @@ async function seed(knex) {
         },
       })
     )
-
-  await seedDataCategory(knex, 'GatesRDT')
 }
