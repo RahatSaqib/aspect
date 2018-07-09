@@ -39,6 +39,7 @@ const {
   selectAssayConsumables,
 } = require('../consumable/assayConsumableService')
 const { inventoryReagentHealth } = require('../inventory/actions')
+const { getPathFromFileReferenceId } = require('../file/service')
 
 const MODULE_TEMPERATURE_ERROR_CODES = [
   '1001',
@@ -410,6 +411,85 @@ async function getDeviceLogsByResultId(request) {
   return { data: deviceLogs }
 }
 
+async function showFileReferences(request) {
+  const { params: { resultId }, auth } = request
+  const dataConstraints = await getConstraints(auth.credentials)
+  const fileReferences = await knex('ResultFileReference as rf')
+    .join('FileReference as f', 'f.id', 'rf.fileReferenceId')
+    .join('Result as r', 'r.id', 'rf.resultId')
+    .join('FileContentType as fct', 'f.fileContentTypeId', 'fct.id')
+    .join('Device as d', 'r.deviceId', 'd.id')
+    .where('rf.resultId', resultId)
+    .orderBy('f.id', 'asc')
+    .modify(addConstraints, dataConstraints, { device: 'd' })
+    .select(
+      'f.id',
+      'f.name',
+      'f.length',
+      'f.createdOn',
+      'fct.externalId as fileContentType',
+      'fct.mimeType',
+      'fct.mimeSubtype'
+    )
+    .map(ref => {
+      ref.url = `/result/file/${resultId}/${ref.id}/${ref.name}`
+      return ref
+    })
+  return { data: fileReferences }
+}
+
+function downloadFile(request, reply) {
+  return downloadFileAsync(request)
+    .then(path => {
+      reply.file(path)
+    })
+    .catch(err => {
+      console.error(err) // eslint-disable-line no-console
+      reply(err)
+    })
+}
+
+function downloadFirstImage(request, reply) {
+  const { auth, params: { resultId } } = request
+  return downloadFileAsync({ auth, params: { resultId, mimeType: 'image' } })
+    .then(path => {
+      reply.file(path)
+    })
+    .catch(err => {
+      console.error(err) // eslint-disable-line no-console
+      reply(err)
+    })
+}
+
+async function downloadFileAsync({ auth, params }) {
+  const { resultId, fileReferenceId, fileName, mimeType } = params
+  const dataConstraints = await getConstraints(auth.credentials)
+  const fileReference = await knex('ResultFileReference as rf')
+    .join('FileReference as f', 'f.id', 'rf.fileReferenceId')
+    .join('Result as r', 'r.id', 'rf.resultId')
+    .join('FileContentType as fct', 'f.fileContentTypeId', 'fct.id')
+    .join('Device as d', 'r.deviceId', 'd.id')
+    .modify(addConstraints, dataConstraints, { device: 'd' })
+    .where('rf.resultId', resultId)
+    .modify(qb => {
+      if (fileReferenceId != null) {
+        qb.where('f.id', fileReferenceId)
+      }
+      if (fileName != null) {
+        qb.where('f.name', fileName)
+      }
+      if (mimeType != null) {
+        qb.where('fct.mimeType', mimeType)
+      }
+    })
+    .orderBy('f.id', 'desc')
+    .first('f.id')
+  if (fileReference == null) {
+    throw Boom.notFound('Cannot find file')
+  }
+  return getPathFromFileReferenceId(knex, fileReference.id)
+}
+
 async function getResultByResultId(request, fields = SELECT_SHOW_FIELDS) {
   const { auth, params } = request
   const dataConstraints = await getConstraints(auth.credentials)
@@ -447,6 +527,10 @@ async function getResultByResultId(request, fields = SELECT_SHOW_FIELDS) {
 
     data.assay.resultDataSchema = JSON.parse(data.assay.resultDataSchema)
     data.assay.patientDataSchema = JSON.parse(data.assay.patientDataSchema)
+
+    // select files attached to this result
+    const { data: files } = await showFileReferences(request)
+    data.files = files
   }
 
   return { ok: results.length === 1, data }
@@ -1193,6 +1277,9 @@ module.exports = {
   listWorkflowStatusLog,
   exportResults,
   showDeviceLogs,
+  showFileReferences,
+  downloadFile,
+  downloadFirstImage,
   createUniqueIdForResult,
   onResultLogged,
   checkDataCategoriesForLowStatus,

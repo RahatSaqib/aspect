@@ -1,5 +1,6 @@
 module.exports = require('../../src/db').seed(seed)
 
+const _ = require('lodash')
 const config = require('../../src/config')
 const bcrypt = require('bcrypt')
 const { randomToken } = require('../../src/deviceApi/apiKey')
@@ -41,6 +42,7 @@ async function seed(knex) {
     assayTypes,
     modules,
     features,
+    fileContentTypes,
   ] = await Promise.all([
     rowsAsObject(knex, 'PartnerType', 'name'),
     rowsAsObject(knex, 'DeviceType', 'externalId'),
@@ -48,6 +50,7 @@ async function seed(knex) {
     rowsAsObject(knex, 'AssayType', 'name'),
     getPermissionModules(knex),
     rowsAsObject(knex, 'Feature', 'module'),
+    rowsAsObject(knex, 'FileContentType', 'externalId'),
   ])
 
   const [partnerId] = await knex('Partner').insert({
@@ -162,6 +165,24 @@ async function seed(knex) {
         partnerId,
         geographyId,
         siteId: commcareSiteId,
+      },
+      auditFields
+    )
+  )
+
+  // Create WebhookTemplate for downloading images
+  const commcareApiKey = _.get(config, 'plugin.commcare.apiKey', '')
+  await knex('WebhookTemplate').insert(
+    Object.assign(
+      {
+        externalId: 'commcareDownloadImage',
+        method: 'GET',
+        url: '{{ result.data.resultImageUrl }}',
+        fileName: '{{ result.data.resultImageFileName }}',
+        fileContentTypeId: fileContentTypes.imageJpg.id,
+        headers: JSON.stringify({
+          Authorization: `ApiKey ${commcareApiKey}`,
+        }),
       },
       auditFields
     )

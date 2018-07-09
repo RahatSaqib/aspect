@@ -5,7 +5,11 @@ const {
   onIssueEventTrigger,
   onIssueEventResolve,
 } = require('./service')
-const { onEscalateIssues } = require('./escalations')
+const {
+  onIssueCreated,
+  onIssueTriggered,
+  onEscalateIssues,
+} = require('./escalations')
 const { onResolveIssues } = require('./resolutions')
 
 const routes = [
@@ -47,6 +51,7 @@ const subscriptions = [
       RESULT_MODULE_TEMPERATURE_ERROR: onIssueEventTrigger(
         'ModuleTemperatureError'
       ),
+      RESULT_LOGGED: onIssueEventTrigger('ResultReceived'),
       RESULT_MODULE_POWER_ERROR: onIssueEventTrigger('ModulePowerError'),
       RESULT_MODULE_FAILURE_ERROR: onIssueEventTrigger('ModuleFailureError'),
       RESULT_DATA_CATEGORY_IS_LOW: onIssueEventTrigger('DataCategoryLow'),
@@ -61,6 +66,8 @@ const subscriptions = [
       ),
       INVENTORY_REAGENT_HEALTH: onIssueEventTrigger('ReagentHealthError'),
       RESULT_MACHINE_POWER_ERROR: onIssueEventTrigger('MachinePowerError'),
+      ISSUE_CREATED: onIssueCreated,
+      ISSUE_TRIGGERED: onIssueTriggered,
       ESCALATE_ISSUES: onEscalateIssues(),
       RESOLVE_ISSUES: onResolveIssues(),
     },

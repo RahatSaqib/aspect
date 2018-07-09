@@ -11,8 +11,12 @@ import Helmet from 'react-helmet'
 
 // Material-UI
 import Checkbox from 'material-ui/Checkbox'
+import MdChevronLeft from 'react-icons/lib/md/chevron-left'
+import MdChevronRight from 'react-icons/lib/md/chevron-right'
+import MdClose from 'react-icons/lib/md/clear'
 
 // Our own imports
+import config from '../../config'
 import DelayShowingProgressBar from '../../components/shared/DelayShowingProgressBar'
 import JSONSchemaCard from '../../components/shared/JSONSchemaCard'
 import NavTitle from '../../globals/components/NavTitle'
@@ -78,6 +82,18 @@ const messages = defineMessages({
     id: 'pages.ResultDetail.noLogsHelp',
     defaultMessage: 'No log entries found for this result',
   },
+  attachments: {
+    id: 'pages.ResultDetail.attachments',
+    defaultMessage: 'Attachments',
+  },
+  noFilesHelp: {
+    id: 'pages.ResultDetail.noFilesHelp',
+    defaultMessage: 'No files attached for this result',
+  },
+  totalFilesLabel: {
+    id: 'pages.ResultDetail.totalFilesLabel',
+    defaultMessage: 'Total files: {totalFiles}',
+  },
 })
 
 const enhance = compose(
@@ -102,6 +118,7 @@ const enhance = compose(
         deviceLogs: state.result.deviceLogs,
         resultTags,
         editable: isEditable(state.user, result),
+        token: state.user.access,
       }
     },
     dispatch =>
@@ -128,7 +145,16 @@ const enhance = compose(
   })
 )
 
+const THUMBNAIL_MODE_NORMAL = 'THUMBNAIL_MODE_NORMAL'
+const THUMBNAIL_MODE_PREVIEW = 'THUMBNAIL_MODE_PREVIEW'
+
 export class ResultDetail extends PureComponent {
+  state = {
+    resultId: undefined,
+    thumbnailMode: THUMBNAIL_MODE_NORMAL,
+    imageIndex: 0,
+  }
+
   componentDidMount() {
     this.handleFetchResult()
   }
@@ -149,6 +175,13 @@ export class ResultDetail extends PureComponent {
     this.props.updateTags(qryId, qryType, tags.join(','))
   }
 
+  clickThumbnail(imageIndex) {
+    this.setState({
+      thumbnailMode: THUMBNAIL_MODE_PREVIEW,
+      imageIndex,
+    })
+  }
+
   handleToggle() {
     this.setState({ isShown: !this.state.isShown })
   }
@@ -166,6 +199,43 @@ export class ResultDetail extends PureComponent {
     return result && result.has('assay')
   }
 
+  drawIconPrev = isFirst => (
+    <div className={cssClasses('ButPreview')}>
+      <MdChevronLeft
+        className={cssClasses({
+          disabled: isFirst,
+        })}
+        onClick={() => this.switchImage(-1, { isFirst })}
+      />
+    </div>
+  )
+  drawIconNext = isLast => (
+    <div className={cssClasses('ButPreview')}>
+      <MdChevronRight
+        className={cssClasses({
+          disabled: isLast,
+        })}
+        onClick={() => this.switchImage(1, { isLast })}
+      />
+    </div>
+  )
+  drawIconClose = () => (
+    <div className={cssClasses('ButPreview', 'Close')}>
+      <MdClose
+        className={cssClasses('ClosePreview')}
+        onClick={() => {
+          this.setState({ thumbnailMode: THUMBNAIL_MODE_NORMAL })
+        }}
+      />
+    </div>
+  )
+
+  switchImage = (dir, { isFirst, isLast }) => {
+    let { imageIndex } = this.state
+    imageIndex += (!isFirst && dir === -1) || (!isLast && dir === 1) ? dir : 0
+    this.setState({ imageIndex })
+  }
+
   renderProgress() {
     return <DelayShowingProgressBar type="linear" mode="indeterminate" />
   }
@@ -175,7 +245,7 @@ export class ResultDetail extends PureComponent {
     const logs = deviceLogs.toJS()
 
     return (
-      <ExpansionPanel>
+      <ExpansionPanel disabled={_.isEmpty(logs)}>
         <ExpansionPanelHeader label={formatMessage(messages.fieldRawData)}>
           {_.isEmpty(logs) && (
             <div className={cssClasses('HelpBlock')}>
@@ -221,6 +291,103 @@ export class ResultDetail extends PureComponent {
         dataSchema={dataSchema}
         data={result.get('resultData')}
       />
+    )
+  }
+
+  renderAttachmentSection() {
+    const { intl: { formatMessage }, result, token } = this.props
+
+    const files = result.get('files') || Immutable.List()
+    const totalFiles = files.count()
+    const resultId = result.get('id')
+    // if new result item - reset local state
+    if (resultId !== this.state.resultId) {
+      this.setState({
+        resultId,
+        imageIndex: 0,
+        thumbnailMode: THUMBNAIL_MODE_NORMAL,
+      })
+    }
+    const { imageIndex, thumbnailMode } = this.state
+    const isFirst = imageIndex === 0
+    const isLast = imageIndex === totalFiles - 1
+    const isPreview = thumbnailMode === THUMBNAIL_MODE_PREVIEW
+    const path = file => `${config.aspectApi}${file.get('url')}?token=${token}`
+    const selectedFile = totalFiles > 0 && files.get(imageIndex)
+
+    return (
+      <ExpansionPanel disabled={totalFiles === 0}>
+        <ExpansionPanelHeader
+          // Left side - labels for expanded and collapsed modes
+          label={formatMessage(messages.attachments)}
+          expandedLabel={`${formatMessage(
+            messages.attachments
+          )} (${totalFiles})`}
+          // Right side - text only for collapsed mode when list is not empty
+          collapsedChildren={
+            totalFiles > 0 && (
+              <div>
+                {formatMessage(messages.totalFilesLabel, { totalFiles })}
+              </div>
+            )
+          }
+        >
+          {/* text to show when list is empty */}
+          {totalFiles === 0 && (
+            <div className={cssClasses('HelpBlock')}>
+              {formatMessage(messages.noFilesHelp)}
+            </div>
+          )}
+        </ExpansionPanelHeader>
+        {totalFiles > 0 && (
+          <ExpansionPanelDetail>
+            <div
+              className={cssClasses('FilesContainer', { Preview: isPreview })}
+            >
+              <div className={cssClasses('AllThumbnails')}>
+                {files.map((file, index) => (
+                  <div className={cssClasses('ThumbnailContainer')}>
+                    <div
+                      className={cssClasses('ThumbnailImageContainer', {
+                        selected: isPreview && imageIndex === index,
+                      })}
+                      role="button"
+                      tabIndex={index}
+                      onKeyDown={() => {}}
+                      onClick={() => this.clickThumbnail(index, isPreview)}
+                    >
+                      <img
+                        title="Click to preview"
+                        alt={file.get('name')}
+                        className={cssClasses('ThumbnailImage')}
+                        src={path(file)}
+                      />
+                    </div>
+                    <div className={cssClasses('ThumbnailFilename')}>
+                      {file.get('name')}
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div className={cssClasses('PreviewContainer')}>
+                <div>{this.drawIconPrev(isFirst)}</div>
+                <div className={cssClasses('ImageContainer')}>
+                  <img
+                    title="Click to preview"
+                    alt={selectedFile.get('name')}
+                    className={cssClasses('Image')}
+                    src={path(selectedFile)}
+                  />
+                </div>
+                <div>
+                  {this.drawIconClose()}
+                  {this.drawIconNext(isLast)}
+                </div>
+              </div>
+            </div>
+          </ExpansionPanelDetail>
+        )}
+      </ExpansionPanel>
     )
   }
 
@@ -273,6 +440,9 @@ export class ResultDetail extends PureComponent {
           {this.renderLowerLevelSchemaSections()}
           {/* Render Raw Result sections */}
           {this.renderRawResult()}
+
+          {/* Render files attachment */}
+          {this.renderAttachmentSection()}
         </DetailPanel>
       </div>
     )

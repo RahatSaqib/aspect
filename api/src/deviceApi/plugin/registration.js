@@ -234,7 +234,7 @@ async function transformMergeResultPayload(context) {
  * RESULT_LOGGED action has been published referencing
  * a result handled by this plugin
  */
-async function onResultLogged(/* context */) {
+function onResultLogged(/* { resultId }, { messageContext } */) {
   // do nothing by default
 }
 

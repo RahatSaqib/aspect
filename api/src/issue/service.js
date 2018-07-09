@@ -9,6 +9,11 @@ const {
 } = require('./actions')
 const { getUser } = require('../auth/service')
 const { parseDateOrDefault } = require('../shared/date')
+const {
+  issueTypeToId,
+  issueStatusToId,
+  issueEventStatusToId,
+} = require('../shared/dictionary')
 
 function onIssueEventTrigger(issueType) {
   return async (action, { messageContext: context }) => {
@@ -22,16 +27,21 @@ function onIssueEventTrigger(issueType) {
         issue = await mergeActionData(knex, openIssue, action)
       } else {
         issue = await createNewIssue(knex, issueType, action)
-        context.issueCreated(issue.id)
+        if (issue != null) {
+          context.issueCreated(issue.id)
+        }
       }
 
       await knex('IssueEvent').insert({
         issueId: issue == null ? null : issue.id,
-        issueEventStatusId: await getId(knex, 'IssueEventStatus', 'Triggered'),
+        issueEventStatusId: await issueEventStatusToId('Triggered'),
         data: JSON.stringify(action),
         createdOn: now,
       })
-      context.issueTriggered(issue.id)
+
+      if (issue != null) {
+        context.issueTriggered(issue.id)
+      }
     })
   }
 }
@@ -49,13 +59,13 @@ function onIssueEventResolve(issueType) {
         await knex('Issue')
           .where({ id: issue.id })
           .update({
-            issueStatusId: await getId(knex, 'IssueStatus', 'Resolved'),
+            issueStatusId: await issueStatusToId('Resolved'),
             updatedOn: now,
           })
         context.issueResolved(issue.id)
         await knex('IssueEvent').insert({
           issueId: issue.id,
-          issueEventStatusId: await getId(knex, 'IssueEventStatus', 'Resolved'),
+          issueEventStatusId: await issueEventStatusToId('Resolved'),
           data: JSON.stringify(action),
           createdOn: now,
         })
@@ -72,7 +82,9 @@ async function findOpenIssue(knex, issueType, action) {
     .whereNotIn('is.externalId', ['Inactive', 'Resolved'])
     .orderBy('i.updatedOn', 'desc')
 
-  if (action.deviceId) {
+  if (action.resultId) {
+    findOpenIssue.where({ 'i.resultId': action.resultId })
+  } else if (action.deviceId) {
     findOpenIssue.where({ 'i.deviceId': action.deviceId })
   } else if (action.siteId) {
     findOpenIssue.where({ 'i.siteId': action.siteId })
@@ -87,10 +99,16 @@ async function findOpenIssue(knex, issueType, action) {
 
 async function createNewIssue(knex, issueType, action) {
   const now = new Date()
-  const issueStatusId = await getId(knex, 'IssueStatus', 'Active')
+  const issueTypeId = await issueTypeToId(issueType)
+  if (issueTypeId == null) {
+    // Issue not configured for this deployment
+    return null
+  }
+
+  const issueStatusId = await issueStatusToId('Active')
   const issue = {
     issueStatusId,
-    issueTypeId: await getId(knex, 'IssueType', issueType),
+    issueTypeId,
     level: 1,
     createdOn: now,
     updatedOn: now,
@@ -207,6 +225,9 @@ async function updateIssueStatus(request) {
   const { issueId } = params
   const { issueStatusExternalId } = payload
   const { id: currentUserId, personId } = await getUser(auth.credentials.name)
+  let issueStatusId = null
+  let issueStatusSeverityExternalId = 'High'
+
   if (issueStatusExternalId !== 'Acknowledged') {
     throw Boom.badRequest('Can only acknowledge issue from UI')
   }
@@ -230,17 +251,23 @@ async function updateIssueStatus(request) {
       throw Boom.unauthorized('No Active Issue to Acknowledge')
     }
 
-    const issueStatusId = await getId(
-      knex,
-      'IssueStatus',
-      issueStatusExternalId
+    ;({ issueStatusId, issueStatusSeverityExternalId } = await knex(
+      'IssueStatus as is'
     )
+      .join('IssueStatusSeverity as iss', 'is.issueStatusSeverityId', 'iss.id')
+      .where('is.externalId', issueStatusExternalId)
+      .first(
+        'is.id as issueStatusId',
+        'iss.externalId as issueStatusSeverityExternalId'
+      ))
+
     await knex('Issue')
       .where({ id: issueId })
       .update({
         issueStatusId,
         updatedOn: now,
       })
+
     await knex('IssueStatusLog').insert({
       issueId,
       issueStatusId,
@@ -256,17 +283,11 @@ async function updateIssueStatus(request) {
     data: {
       issueId,
       issueStatusExternalId,
+      issueStatusSeverityExternalId,
       createdOn: now,
       changedOn: now,
     },
   }
-}
-
-async function getId(knex, table, externalId) {
-  const { id } = await knex(table)
-    .where({ externalId })
-    .first('id')
-  return id
 }
 
 module.exports = {

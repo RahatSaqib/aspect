@@ -19,6 +19,7 @@ const evaluationMethods = {
   'inline-sql': evaluateInlineSql,
   'sql-script': evaluateSqlScript,
   'issue-age': triggeredEventOlderThan,
+  'result-category': checkResultCategory,
   'child-condition': conditionsMet,
   'child-conditions': conditionsMet,
 }
@@ -191,6 +192,19 @@ async function triggeredEventOlderThan(knex, issue, issueAge) {
     issueAgeSpec.years
   )
   return Promise.resolve(issueTriggeredOnPlusAge < new Date())
+}
+
+async function checkResultCategory(knex, issue, category) {
+  if (category.index !== 1 && category.index !== 2) {
+    // currently only support two categories in data model
+    return false
+  }
+  const result = await knex('Result as r')
+    .join('ResultCategory as rc', 'rc.id', `r.resultCategory${category.index}`)
+    .join('Issue as i', 'i.resultId', 'r.id')
+    .where({ 'i.id': issue.id, 'rc.externalId': category.externalId })
+    .first('r.id')
+  return result != null
 }
 
 module.exports = {

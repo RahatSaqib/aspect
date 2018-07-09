@@ -29,17 +29,17 @@
   color: var(--aspect-color-grey-1);
 }
 
-.ActionType--active {
+.ActionType--high {
   color: var(--aspect-color-brink);
   font-size: var(--aspect-font-size-md);
 }
 
-.ActionType--acknowledged {
+.ActionType--medium {
   color: var(--aspect-color-supernova);
   font-size: var(--aspect-font-size-md);
 }
 
-.ActionType--ok {
+.ActionType--low {
   color: var(--aspect-color-mantis);
   font-size: var(--aspect-font-size-md);
 }
@@ -132,5 +132,5 @@
 
 .Form_InputElement {
   width: 80px;
-  text-align: right; 
+  text-align: right;
 }

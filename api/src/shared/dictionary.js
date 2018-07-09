@@ -1,23 +1,28 @@
-const _ = require('lodash')
 const { knex } = require('../db')
 
-let messageStatuses = null
-async function messageStatusToId() {
-  if (!messageStatuses) {
-    messageStatuses = {}
+const cacheKeyToId = {}
 
-    // read all items from table MessageStatus
-    const items = await knex('MessageStatus').select('id', 'externalId')
-
-    // loop all and set id's for needed status tokens
-    _.forEach(items, x => {
-      messageStatuses[x.externalId] = x.id
-    })
+function keyToId(table, keyColumn = 'externalId') {
+  return async (key = null) => {
+    let cache = cacheKeyToId[table]
+    if (cache == null) {
+      cache = await knex(table)
+        .select('id', keyColumn)
+        .reduce((memo, row) => {
+          memo[row[keyColumn]] = row.id
+          return memo
+        }, {})
+      cacheKeyToId[table] = cache
+    }
+    return key == null ? cache : cache[key]
   }
-
-  return messageStatuses
 }
 
 module.exports = {
-  messageStatusToId,
+  fileContentTypeToId: keyToId('FileContentType'),
+  issueEventStatusToId: keyToId('IssueEventStatus'),
+  issueStatusToId: keyToId('IssueStatus'),
+  issueTypeToId: keyToId('IssueType'),
+  messageStatusToId: keyToId('MessageStatus'),
+  resultCategoryToId: keyToId('ResultCategory'),
 }

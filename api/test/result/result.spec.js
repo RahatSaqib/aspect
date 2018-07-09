@@ -144,6 +144,7 @@ describe('Result routes', () => {
           assert.property(res.body.data.assay, 'resultCategory2i18nKey')
           assert.property(res.body.data.assay, 'resultDataSchema')
           assert.typeOf(res.body.data.assay.resultDataSchema, 'Object')
+          assert.property(res.body.data, 'files')
           done()
         })
     })
