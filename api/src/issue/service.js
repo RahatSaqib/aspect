@@ -54,7 +54,10 @@ function onIssueEventResolve(issueType) {
       const openIssue = await findOpenIssue(knex, issueType, action)
 
       let issue = null
-      if (openIssue != null) {
+      if (
+        openIssue != null &&
+        hasIssueEventTrigger(knex, openIssue.partnerId, issueType, 'Resolved')
+      ) {
         issue = openIssue
         await knex('Issue')
           .where({ id: issue.id })
@@ -94,7 +97,7 @@ async function findOpenIssue(knex, issueType, action) {
     findOpenIssue.where({ 'i.partnerId': action.partnerId })
   }
 
-  return findOpenIssue.first('i.id', 'i.data')
+  return findOpenIssue.first('i.id', 'i.partnerId', 'i.data')
 }
 
 async function createNewIssue(knex, issueType, action) {
@@ -114,6 +117,7 @@ async function createNewIssue(knex, issueType, action) {
     updatedOn: now,
   }
 
+  // populate context from action data
   if (action.resultId) {
     issue.resultId = action.resultId
     const issueContext = await knex('Result')
@@ -166,11 +170,18 @@ async function createNewIssue(knex, issueType, action) {
     issue.partnerId = action.partnerId
   }
 
+  // Now that we know partnerId, check to see if we have a trigger
+  if (!hasIssueEventTrigger(knex, issue.partnerId, issueType, 'Triggered')) {
+    return null
+  }
+
+  // populate remaining fields
   if (_.get(action, 'options.dueOn') != null) {
     issue.dueOn = parseDateOrDefault(action.options.dueOn)
   }
   issue.data = JSON.stringify(getActionData(action))
 
+  // Everything is fine, create new issue
   const [issueId] = await knex('Issue').insert(issue)
   issue.id = issueId
 
@@ -182,6 +193,21 @@ async function createNewIssue(knex, issueType, action) {
   })
 
   return issue
+}
+
+async function hasIssueEventTrigger(
+  knex,
+  partnerId,
+  issueType,
+  issueEventStatus
+) {
+  const issueTypeId = await issueTypeToId(issueType)
+  const issueEventStatusId = await issueEventStatusToId(issueEventStatus)
+
+  const issueEventTrigger = await knex('IssueEventTrigger')
+    .where({ partnerId, issueTypeId, issueEventStatusId })
+    .first('id')
+  return issueEventTrigger != null
 }
 
 async function mergeActionData(knex, issue, action) {

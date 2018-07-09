@@ -187,4 +187,16 @@ async function seed(knex) {
       auditFields
     )
   )
+
+  // FIXME remove this Insert triggers for every issue type that has a notification type configured
+  const issueEventTriggers = await knex('NotificationType as nt')
+    .crossJoin('IssueEventStatus as iet')
+    .orderBy('nt.partnerId', 'nt.issueTypeId', 'iet.id')
+    .distinct('nt.partnerId', 'nt.issueTypeId', 'iet.id as issueEventStatusId')
+    .map(row => {
+      row.createdOn = now
+      row.updatedOn = now
+      return row
+    })
+  await knex('IssueEventTrigger').insert(issueEventTriggers)
 }
