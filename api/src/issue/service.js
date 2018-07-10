@@ -15,6 +15,44 @@ const {
   issueEventStatusToId,
 } = require('../shared/dictionary')
 
+async function getIssueEventTriggerSubscriptions() {
+  return {
+    // TODO add action name to IssueEventTrigger conditions? simple column?
+    // query all issue event triggers for any plugin and add mapping
+    // Is this an IssueCreationTrigger now?
+    // Add ensureTriggersForPartner or similar for conveiences and update seeds
+    // convenience could contain standard action names
+    actions: {
+      DEVICE_OFFLINE: onIssueEventTrigger('DeviceOffline'),
+      DEVICE_ONLINE: onIssueEventResolve('DeviceOffline'),
+      // passed string values should match externalId in table IssueType
+      INVENTORY_STOCKOUT: onIssueEventTrigger('InventoryStockout'),
+      INVENTORY_STOCK_EXPIRING: onIssueEventTrigger('InventoryStockExpiring'),
+      DEVICE_NO_RESULTS: onIssueEventTrigger('DeviceNoResults'),
+      DEVICE_HAS_NEW_RESULTS: onIssueEventResolve('DeviceNoResults'),
+      DEVICE_MAINTENANCE: onIssueEventTrigger('DeviceMaintenance'),
+      DEVICE_MAINTENANCE_RESOLVED: onIssueEventResolve('DeviceMaintenance'),
+      RESULT_MODULE_TEMPERATURE_ERROR: onIssueEventTrigger(
+        'ModuleTemperatureError'
+      ),
+      RESULT_LOGGED: onIssueEventTrigger('ResultReceived'),
+      RESULT_MODULE_POWER_ERROR: onIssueEventTrigger('ModulePowerError'),
+      RESULT_MODULE_FAILURE_ERROR: onIssueEventTrigger('ModuleFailureError'),
+      RESULT_MACHINE_TEMPERATURE_ERROR: onIssueEventTrigger(
+        'MachineTemperatureError'
+      ),
+      RESULT_MACHINE_PROCEDURAL_ERROR: onIssueEventTrigger(
+        'MachineProceduralError'
+      ),
+      RESULT_MODULE_PROCEDURAL_ERROR: onIssueEventTrigger(
+        'ModuleProceduralError'
+      ),
+      INVENTORY_REAGENT_HEALTH: onIssueEventTrigger('ReagentHealthError'),
+      RESULT_MACHINE_POWER_ERROR: onIssueEventTrigger('MachinePowerError'),
+    },
+  }
+}
+
 function onIssueEventTrigger(issueType) {
   return async (action, { messageContext: context }) => {
     context.bindActionCreators({ issueCreated, issueTriggered })
@@ -318,6 +356,5 @@ async function updateIssueStatus(request) {
 
 module.exports = {
   updateIssueStatus,
-  onIssueEventTrigger,
-  onIssueEventResolve,
+  getIssueEventTriggerSubscriptions,
 }

@@ -76,8 +76,11 @@ class MessageQueue {
   /**
    * Subscribes to messages with the named service.
    *
-   * Accepts array of subscriptions, each with the following
-   * properties:
+   * This can be a single subscription, an array, a function,
+   * or a promise, or some combination of the obove (e.g an
+   * async function returning an array to allow dynamic loading).
+   *
+   * Eventually accepts an object, with the following properties:
    *
    * actions: map Action Type name to listener function that
    *   accepts incoming actions of that type.
@@ -88,11 +91,20 @@ class MessageQueue {
    *   Can specify multiple action types per subscription.
    */
   subscribe(name, subscriptions) {
-    _.each(subscriptions, ({ actions }, subscriptionIndex) => {
-      _.each(actions, (listener, type) => {
+    if (_.isFunction(subscriptions)) {
+      this.subscribe(name, subscriptions())
+    } else if (_.isFunction(subscriptions.then)) {
+      subscriptions.then(subs => this.subscribe(name, subs))
+    } else if (_.isArray(subscriptions)) {
+      _.each(subscriptions, (subscription, subscriptionIndex) => {
+        this.subscribe(`${name}_${subscriptionIndex}`, subscription)
+      })
+    } else {
+      _.each(subscriptions.actions, (listener, type) => {
         const { channel, name: queueName } = this
-        const subscribeName = `${queueName}_${name}_${subscriptionIndex}_actions_${type}`
+        const subscribeName = `${queueName}_${name}_actions_${type}`
         const topic = `aspect.actions.${type}`
+        debug(`subscribe ${subscribeName} ${topic}`)
         const { queue } = channel.assertQueue(subscribeName, this.queueOptions)
         this.queues.push(queue)
         channel.bindQueue(queue, exchange, topic)
@@ -116,7 +128,7 @@ class MessageQueue {
             })
         })
       })
-    })
+    }
   }
 
   async subscribeEmitActions() {
