@@ -1794,7 +1794,9 @@ async function seed(knex) {
   ])
 
   await seedStockIssues(knex)
-  await seedIssueEventTriggersForPartner(knex, partnerId)
+  await seedIssueEventTriggersForPartner(knex, partnerId, {
+    issueTypeWhitelist: ['DeviceMaintenance'],
+  })
 }
 
 function calculateDateForResult(

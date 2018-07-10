@@ -4358,6 +4358,12 @@ async function seed(knex) {
 
   await knex('IssueType').insert([
     {
+      name: 'Result Received',
+      externalId: 'ResultReceived',
+      i18nKey: 'issueTypeResultReceived',
+      issueCategoryId: issueCategories.DataHealth.id,
+    },
+    {
       name: 'Device Offline',
       externalId: 'DeviceOffline',
       i18nKey: 'issueStatusDeviceOffline',

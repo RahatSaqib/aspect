@@ -47,6 +47,8 @@ async function seed(knex) {
     modules,
     features,
     fileContentTypes,
+    issueTypes,
+    messageSeverities,
   ] = await Promise.all([
     rowsAsObject(knex, 'PartnerType', 'name'),
     rowsAsObject(knex, 'DeviceType', 'externalId'),
@@ -55,6 +57,8 @@ async function seed(knex) {
     getPermissionModules(knex),
     rowsAsObject(knex, 'Feature', 'module'),
     rowsAsObject(knex, 'FileContentType', 'externalId'),
+    rowsAsObject(knex, 'IssueType', 'externalId'),
+    rowsAsObject(knex, 'MessageSeverity', 'externalId'),
   ])
 
   const [partnerId] = await knex('Partner').insert({
@@ -176,7 +180,7 @@ async function seed(knex) {
 
   // Create WebhookTemplate for downloading images
   const commcareApiKey = _.get(config, 'plugin.commcare.apiKey', '')
-  await knex('WebhookTemplate').insert(
+  const [webhookTemplateId] = await knex('WebhookTemplate').insert(
     Object.assign(
       {
         externalId: 'commcareDownloadImage',
@@ -192,7 +196,107 @@ async function seed(knex) {
     )
   )
 
-  await seedIssueEventTriggersForPartner(knex, partnerId, {
-    issueTypeWhitelist: ['DeviceMaintenance'],
+  const [resultPositiveSmsTemplateId] = await knex('SmsTemplate').insert(
+    Object.assign(
+      {
+        phoneNumber: '{{ result.patient.phone }}',
+        message:
+          'Dear participant ID #{{ result.patient.id }}: An HIV self-test is a screening test. Please visit your nearest clinic as your test MUST be confirmed by a healthcare worker as soon as possible',
+      },
+      auditFields
+    )
+  )
+  const [resultNegativeSmsTemplateId] = await knex('SmsTemplate').insert(
+    Object.assign(
+      {
+        phoneNumber: '{{ result.patient.phone }}',
+        message:
+          'Dear participant ID #{{ result.patient.id }}: An HIV self-test is a screening test. Please ensure you re-test in 3 months.',
+      },
+      auditFields
+    )
+  )
+
+  const [resultReceivedMessageTypeId] = await knex('MessageType').insert({
+    messageSeverityId: messageSeverities.Alert.id,
+    webhookTemplateId,
   })
+
+  const [resultPositiveMessageTypeId] = await knex('MessageType').insert({
+    messageSeverityId: messageSeverities.Alert.id,
+    smsTemplateId: resultPositiveSmsTemplateId,
+  })
+
+  const [resultNegativeMessageTypeId] = await knex('MessageType').insert({
+    messageSeverityId: messageSeverities.Alert.id,
+    smsTemplateId: resultNegativeSmsTemplateId,
+  })
+
+  // Notifications
+  await knex('NotificationType').insert([
+    Object.assign(
+      {
+        name: 'Result Received',
+        partnerId,
+        issueTypeId: issueTypes.ResultReceived.id,
+        jobFunctionId: jobFunctionIdAdmin,
+        level: 1,
+        canAcknowledge: 0,
+        messageTypeId: resultReceivedMessageTypeId,
+      },
+      auditFields
+    ),
+    Object.assign(
+      {
+        name: 'Result Negative',
+        partnerId,
+        issueTypeId: issueTypes.ResultReceived.id,
+        jobFunctionId: jobFunctionIdAdmin,
+        level: 2,
+        canAcknowledge: 0,
+        messageTypeId: resultNegativeMessageTypeId,
+      },
+      auditFields
+    ),
+    Object.assign(
+      {
+        name: 'Result Positive',
+        partnerId,
+        issueTypeId: issueTypes.ResultReceived.id,
+        jobFunctionId: jobFunctionIdAdmin,
+        level: 3,
+        canAcknowledge: 0,
+        messageTypeId: resultPositiveMessageTypeId,
+      },
+      auditFields
+    ),
+  ])
+
+  // Issue Escalation Triggers
+  await knex('IssueEscalationTrigger').insert([
+    {
+      issueTypeId: issueTypes.ResultReceived.id,
+      partnerId,
+      escalateToLevel: 2,
+      escalationConditions: JSON.stringify({
+        evaluationMethod: 'result-category',
+        evaluationParameter: { index: 2, externalId: 'NotDetected' },
+      }),
+      createdOn: now,
+      updatedOn: now,
+    },
+    {
+      issueTypeId: issueTypes.ResultReceived.id,
+      partnerId,
+      escalateToLevel: 3,
+      escalationConditions: JSON.stringify({
+        evaluationMethod: 'result-category',
+        evaluationParameter: { index: 2, externalId: 'Detected' },
+      }),
+      createdOn: now,
+      updatedOn: now,
+    },
+  ])
+
+  await seedIssueEventTriggersForPartner(knex, partnerId)
 }

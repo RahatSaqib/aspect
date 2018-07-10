@@ -76,19 +76,16 @@ function onIssueEventResolve(issueType) {
     context.bindActionCreators({ issueResolved })
     context.transact(async knex => {
       const now = new Date()
-      const openIssue = await findOpenIssue(knex, issueType, action)
-
-      let issue = null
-      if (
-        openIssue != null &&
-        hasIssueEventTrigger(knex, {
-          partnerId: openIssue.partnerId,
+      const issue = await findOpenIssue(knex, issueType, action)
+      const hasTrigger =
+        issue != null &&
+        (await hasIssueEventTrigger(knex, {
+          partnerId: issue.partnerId,
           issueType,
           action,
           issueEventStatus: 'Resolved',
-        })
-      ) {
-        issue = openIssue
+        }))
+      if (hasTrigger) {
         await knex('Issue')
           .where({ id: issue.id })
           .update({
@@ -201,14 +198,13 @@ async function createNewIssue(knex, issueType, action) {
   }
 
   // Now that we know partnerId, check to see if we have a trigger
-  if (
-    !hasIssueEventTrigger(knex, {
-      partnerId: issue.partnerId,
-      issueType,
-      action,
-      issueEventStatus: 'Triggered',
-    })
-  ) {
+  const hasTrigger = await hasIssueEventTrigger(knex, {
+    partnerId: issue.partnerId,
+    issueType,
+    action,
+    issueEventStatus: 'Triggered',
+  })
+  if (!hasTrigger) {
     return null
   }
 
@@ -241,8 +237,12 @@ async function hasIssueEventTrigger(
 
   const issueEventTrigger = await knex('IssueEventTrigger')
     .where({ partnerId, issueTypeId, issueEventStatusId })
-    .first('id')
-  return issueEventTrigger != null && issueEventTrigger.action === action.type
+    .first('triggerConditions')
+  if (issueEventTrigger == null) {
+    return false
+  }
+  const conditions = JSON.parse(issueEventTrigger.triggerConditions)
+  return conditions.action === action.type
 }
 
 async function mergeActionData(knex, issue, action) {
