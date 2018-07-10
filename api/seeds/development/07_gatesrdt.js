@@ -4,7 +4,11 @@ const _ = require('lodash')
 const config = require('../../src/config')
 const bcrypt = require('bcrypt')
 const { randomToken } = require('../../src/deviceApi/apiKey')
-const { rowsAsObject, getPermissionModules } = require('../utils')
+const {
+  rowsAsObject,
+  getPermissionModules,
+  seedIssueEventTriggersForPartner,
+} = require('../utils')
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 
@@ -188,15 +192,7 @@ async function seed(knex) {
     )
   )
 
-  // FIXME remove this Insert triggers for every issue type that has a notification type configured
-  const issueEventTriggers = await knex('NotificationType as nt')
-    .crossJoin('IssueEventStatus as iet')
-    .orderBy('nt.partnerId', 'nt.issueTypeId', 'iet.id')
-    .distinct('nt.partnerId', 'nt.issueTypeId', 'iet.id as issueEventStatusId')
-    .map(row => {
-      row.createdOn = now
-      row.updatedOn = now
-      return row
-    })
-  await knex('IssueEventTrigger').insert(issueEventTriggers)
+  await seedIssueEventTriggersForPartner(knex, partnerId, {
+    issueTypeWhitelist: ['DeviceMaintenance'],
+  })
 }

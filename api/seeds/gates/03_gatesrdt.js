@@ -1,6 +1,6 @@
 module.exports = require('../../src/db').seed(seed)
 
-const { rowsAsObject } = require('../utils')
+const { rowsAsObject, seedIssueEventTriggersForPartner } = require('../utils')
 
 async function seed(knex) {
   // Skip this seed file if we already have an  Issue
@@ -167,4 +167,6 @@ async function seed(knex) {
         },
       })
     )
+
+  await seedIssueEventTriggersForPartner(knex, partnerId)
 }

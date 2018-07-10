@@ -32,6 +32,13 @@ async function up(knex) {
   await knex.schema.createTable('IssueEventTrigger', issueEventTrigger => {
     issueEventTrigger.increments('id')
     issueEventTrigger
+      .integer('partnerId')
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('Partner')
+      .notNullable()
+    issueEventTrigger
       .integer('issueTypeId')
       .unsigned()
       .references('id')
@@ -43,28 +50,14 @@ async function up(knex) {
       .references('id')
       .inTable('IssueEventStatus')
       .notNullable()
-    issueEventTrigger
-      .integer('partnerId')
-      .unsigned()
-      .index()
-      .references('id')
-      .inTable('Partner')
-      .notNullable()
+    issueEventTrigger.specificType('triggerConditions', 'JSON').notNullable()
     addTimestamps(issueEventTrigger)
+    issueEventTrigger.unique(
+      ['partnerId', 'issueTypeId', 'issueEventStatusId'],
+      'issueEventTrigger_unique'
+    )
     issueEventTrigger.charset('utf8')
   })
-  // Insert triggers for every issue type that has a notification type configured
-  const now = new Date()
-  const issueEventTriggers = await knex('NotificationType as nt')
-    .crossJoin('IssueEventStatus as iet')
-    .orderBy('nt.partnerId', 'nt.issueTypeId', 'iet.id')
-    .distinct('nt.partnerId', 'nt.issueTypeId', 'iet.id as issueEventStatusId')
-    .map(row => {
-      row.createdOn = now
-      row.updatedOn = now
-      return row
-    })
-  await knex('IssueEventTrigger').insert(issueEventTriggers)
 }
 
 async function down(knex) {

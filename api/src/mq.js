@@ -92,7 +92,9 @@ class MessageQueue {
    */
   subscribe(name, subscriptions) {
     if (_.isFunction(subscriptions)) {
-      this.subscribe(name, subscriptions())
+      const subscribeName = `${this.name}_${name}_subscribe`
+      const messageContext = this.createMessageContext(subscribeName)
+      this.subscribe(name, subscriptions({ messageContext }))
     } else if (_.isFunction(subscriptions.then)) {
       subscriptions.then(subs => this.subscribe(name, subs))
     } else if (_.isArray(subscriptions)) {

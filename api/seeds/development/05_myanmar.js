@@ -14,6 +14,7 @@ const {
   getDefaultMessageTypes,
   seedStockIssues,
   getPermissionModules,
+  seedIssueEventTriggersForPartner,
 } = require('../utils')
 
 const now = new Date()
@@ -1793,6 +1794,7 @@ async function seed(knex) {
   ])
 
   await seedStockIssues(knex)
+  await seedIssueEventTriggersForPartner(knex, partnerId)
 }
 
 function calculateDateForResult(

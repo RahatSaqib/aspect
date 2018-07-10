@@ -15,42 +15,29 @@ const {
   issueEventStatusToId,
 } = require('../shared/dictionary')
 
-async function getIssueEventTriggerSubscriptions() {
-  return {
-    // TODO add action name to IssueEventTrigger conditions? simple column?
-    // query all issue event triggers for any plugin and add mapping
-    // Is this an IssueCreationTrigger now?
-    // Add ensureTriggersForPartner or similar for conveiences and update seeds
-    // convenience could contain standard action names
-    actions: {
-      DEVICE_OFFLINE: onIssueEventTrigger('DeviceOffline'),
-      DEVICE_ONLINE: onIssueEventResolve('DeviceOffline'),
-      // passed string values should match externalId in table IssueType
-      INVENTORY_STOCKOUT: onIssueEventTrigger('InventoryStockout'),
-      INVENTORY_STOCK_EXPIRING: onIssueEventTrigger('InventoryStockExpiring'),
-      DEVICE_NO_RESULTS: onIssueEventTrigger('DeviceNoResults'),
-      DEVICE_HAS_NEW_RESULTS: onIssueEventResolve('DeviceNoResults'),
-      DEVICE_MAINTENANCE: onIssueEventTrigger('DeviceMaintenance'),
-      DEVICE_MAINTENANCE_RESOLVED: onIssueEventResolve('DeviceMaintenance'),
-      RESULT_MODULE_TEMPERATURE_ERROR: onIssueEventTrigger(
-        'ModuleTemperatureError'
-      ),
-      RESULT_LOGGED: onIssueEventTrigger('ResultReceived'),
-      RESULT_MODULE_POWER_ERROR: onIssueEventTrigger('ModulePowerError'),
-      RESULT_MODULE_FAILURE_ERROR: onIssueEventTrigger('ModuleFailureError'),
-      RESULT_MACHINE_TEMPERATURE_ERROR: onIssueEventTrigger(
-        'MachineTemperatureError'
-      ),
-      RESULT_MACHINE_PROCEDURAL_ERROR: onIssueEventTrigger(
-        'MachineProceduralError'
-      ),
-      RESULT_MODULE_PROCEDURAL_ERROR: onIssueEventTrigger(
-        'ModuleProceduralError'
-      ),
-      INVENTORY_REAGENT_HEALTH: onIssueEventTrigger('ReagentHealthError'),
-      RESULT_MACHINE_POWER_ERROR: onIssueEventTrigger('MachinePowerError'),
-    },
-  }
+async function getIssueEventTriggerSubscriptions({ messageContext }) {
+  return messageContext.run(async knex => {
+    const actions = await knex('IssueEventTrigger as iet')
+      .join('IssueType as it', 'it.id', 'iet.issueTypeId')
+      .join('IssueEventStatus as ies', 'ies.id', 'iet.issueEventStatusId')
+      .distinct(
+        'it.externalId as issueType',
+        'ies.externalId as issueEventStatus',
+        'iet.triggerConditions'
+      )
+      .reduce((memo, { issueType, issueEventStatus, triggerConditions }) => {
+        const { action } = JSON.parse(triggerConditions)
+        if (action != null) {
+          if (issueEventStatus === 'Triggered') {
+            memo[action] = onIssueEventTrigger(issueType)
+          } else if (issueEventStatus === 'Resolved') {
+            memo[action] = onIssueEventResolve(issueType)
+          }
+        }
+        return memo
+      }, {})
+    return { actions }
+  })
 }
 
 function onIssueEventTrigger(issueType) {
@@ -94,7 +81,12 @@ function onIssueEventResolve(issueType) {
       let issue = null
       if (
         openIssue != null &&
-        hasIssueEventTrigger(knex, openIssue.partnerId, issueType, 'Resolved')
+        hasIssueEventTrigger(knex, {
+          partnerId: openIssue.partnerId,
+          issueType,
+          action,
+          issueEventStatus: 'Resolved',
+        })
       ) {
         issue = openIssue
         await knex('Issue')
@@ -209,7 +201,14 @@ async function createNewIssue(knex, issueType, action) {
   }
 
   // Now that we know partnerId, check to see if we have a trigger
-  if (!hasIssueEventTrigger(knex, issue.partnerId, issueType, 'Triggered')) {
+  if (
+    !hasIssueEventTrigger(knex, {
+      partnerId: issue.partnerId,
+      issueType,
+      action,
+      issueEventStatus: 'Triggered',
+    })
+  ) {
     return null
   }
 
@@ -235,9 +234,7 @@ async function createNewIssue(knex, issueType, action) {
 
 async function hasIssueEventTrigger(
   knex,
-  partnerId,
-  issueType,
-  issueEventStatus
+  { partnerId, issueType, issueEventStatus, action }
 ) {
   const issueTypeId = await issueTypeToId(issueType)
   const issueEventStatusId = await issueEventStatusToId(issueEventStatus)
@@ -245,7 +242,7 @@ async function hasIssueEventTrigger(
   const issueEventTrigger = await knex('IssueEventTrigger')
     .where({ partnerId, issueTypeId, issueEventStatusId })
     .first('id')
-  return issueEventTrigger != null
+  return issueEventTrigger != null && issueEventTrigger.action === action.type
 }
 
 async function mergeActionData(knex, issue, action) {

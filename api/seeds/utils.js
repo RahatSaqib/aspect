@@ -378,10 +378,69 @@ async function seedStaticData(knex) {
   )
 }
 
+// Ensures all common triggers for the given partner are set based on notification
+// types triggered for that partner. This will only seed for triggers that do
+// not already exist for given partner, issue type, and issue event status, so
+// it can be called multiple times, and can be called after seeding custom triggers
+// Issue types in optional blacklist will never be included (unless in whitelist)
+// Issue types in optional whitelist will always be included.
+async function seedIssueEventTriggersForPartner(
+  knex,
+  partnerId,
+  { issueTypeBlacklist = [], issueTypeWhitelist = [] } = {}
+) {
+  const now = new Date()
+  const { data } = await readJson('./seeds/fixtures/IssueEventTrigger.json')
+  const [issueTypes, issueEventStatuses] = await Promise.all([
+    rowsAsObject(knex, 'IssueType', 'externalId'),
+    rowsAsObject(knex, 'IssueEventStatus', 'externalId'),
+  ])
+
+  const issueTypeConfigured = await knex('NotificationType as nt')
+    .join('IssueType as it', 'it.id', 'nt.issueTypeId')
+    .where({ 'nt.partnerId': partnerId })
+    .orderBy('it.externalId')
+    .distinct('it.externalId as issueType')
+    .reduce((memo, { issueType }) => {
+      if (!issueTypeBlacklist.includes(issueType)) {
+        memo[issueType] = true
+      }
+      return memo
+    }, {})
+  issueTypeWhitelist.forEach(issueType => {
+    issueTypeConfigured[issueType] = true
+  })
+
+  await Promise.all(
+    data.map(async ({ issueType, issueEventStatus, triggerConditions }) => {
+      if (issueTypeConfigured[issueType]) {
+        const triggerData = {
+          partnerId,
+          issueTypeId: issueTypes[issueType].id,
+          issueEventStatusId: issueEventStatuses[issueEventStatus].id,
+        }
+        const existingTrigger = await knex('IssueEventTrigger')
+          .where(triggerData)
+          .first('id')
+        if (existingTrigger == null) {
+          await knex('IssueEventTrigger').insert(
+            Object.assign({}, triggerData, {
+              triggerConditions: JSON.stringify(triggerConditions),
+              createdOn: now,
+              updatedOn: now,
+            })
+          )
+        }
+      }
+    })
+  )
+}
+
 module.exports = {
   rowsAsObject,
   getDefaultMessageTypes,
   seedStockIssues,
   getPermissionModules,
   seedStaticData,
+  seedIssueEventTriggersForPartner,
 }
