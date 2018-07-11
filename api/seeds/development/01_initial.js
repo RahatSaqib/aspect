@@ -386,35 +386,9 @@ async function seed(knex) {
   })
 
   // Result source
-  const [resultSourceDiagnosticId] = await knex('ResultSource').insert({
-    name: 'Diagnostic Device',
-    i18nKey: 'resultSourceDiagnostic',
-    externalId: 'DiagnosticDevice',
-  })
-
-  const [resultSourceLIMSId] = await knex('ResultSource').insert({
-    name: 'LIMS',
-    i18nKey: 'resultSourceLims',
-    externalId: 'LIMS',
-  })
-
-  await knex('ResultSource').insert({
-    name: 'Other System',
-    i18nKey: 'resultSourceOtherSystem',
-    externalId: 'OtherSystem',
-  })
-
-  await knex('ResultSource').insert({
-    name: 'Entered by Hand',
-    i18nKey: 'resultSourceEnteredByHand',
-    externalId: 'EnteredByHand',
-  })
-
-  await knex('ResultSource').insert({
-    name: 'Generated',
-    i18nKey: 'resultSourceGenerated',
-    externalId: 'Generated',
-  })
+  const resultSources = await rowsAsObject(knex, 'ResultSource', 'externalId')
+  const resultSourceDiagnosticId = resultSources.DiagnosticDevice.id
+  const resultSourceLIMSId = resultSources.LIMS.id
 
   // Assays and AssayTypes
   const [assayTypeMTBRifId] = await knex('AssayType').insert({
@@ -1299,126 +1273,24 @@ async function seed(knex) {
   })
 
   // Result types
-  const [resultTypePatientId] = await knex('ResultType').insert({
-    name: 'Patient',
-    i18nKey: 'resultTypePatient',
-    externalId: 'Patient',
-  })
-
-  await knex('ResultType').insert({
-    name: 'EQA',
-    i18nKey: 'resultTypeEqa',
-    externalId: 'EQA',
-  })
-
-  await knex('ResultType').insert({
-    name: 'Training',
-    i18nKey: 'resultTypeTraining',
-    externalId: 'Training',
-  })
-
-  await knex('ResultType').insert({
-    name: 'Calibration',
-    i18nKey: 'resultTypeCalibration',
-    externalId: 'Calibration',
-  })
-
-  await knex('ResultType').insert({
-    name: 'Study/Research',
-    i18nKey: 'resultTypeStudy',
-    externalId: 'Study',
-  })
+  const resultTypes = await rowsAsObject(knex, 'ResultType', 'externalId')
+  const resultTypePatientId = resultTypes.Patient.id
 
   // result categories
-  const [resultCategoryDetectedId] = await knex('ResultCategory').insert({
-    name: 'Detected',
-    i18nKey: 'ResultCategoryDetected',
-    externalId: 'Detected',
-  })
-
-  const [resultCategoryTraceDetectedId] = await knex('ResultCategory').insert({
-    name: 'Trace Detected',
-    i18nKey: 'ResultCategoryTraceDetected',
-    externalId: 'Trace Detected',
-  })
-
-  const [resultCategoryNotDetectedId] = await knex('ResultCategory').insert({
-    name: 'Not Detected',
-    i18nKey: 'resultCategoryNotDetected',
-    externalId: 'NotDetected',
-  })
-
-  const [resultCategoryIndeterminateId] = await knex('ResultCategory').insert({
-    name: 'Indeterminate',
-    i18nKey: 'resultCategoryIndeterminate',
-    externalId: 'Indeterminate',
-  })
-
-  const [resultCategoryInvalidId] = await knex('ResultCategory').insert({
-    name: 'Invalid',
-    i18nKey: 'resultCategoryInvalid',
-    externalId: 'Invalid',
-  })
-
-  const [resultCategoryNoResultId] = await knex('ResultCategory').insert({
-    name: 'No Result',
-    i18nKey: 'resultCategoryNoResult',
-    externalId: 'NoResult',
-  })
-
-  const [resultCategoryErrorId] = await knex('ResultCategory').insert({
-    name: 'Error',
-    i18nKey: 'resultCategoryError',
-    externalId: 'Error',
-  })
-
-  await knex('ResultCategory').insert({
-    name: 'Success',
-    i18nKey: 'resultCategorySuccess',
-    externalId: 'Success',
-  })
-
-  await knex('ResultCategory').insert({
-    name: 'Collect New Sample',
-    i18nkey: 'resultCategoryCollectNewSample',
-    externalId: 'CollectNewSample',
-  })
-
-  await knex('ResultCategory').insert({
-    name: 'Discordant',
-    i18nkey: 'resultCategoryDiscordant',
-    externalId: 'Discordant',
-  })
-
-  const [resultCategoryLessThan1000] = await knex('ResultCategory').insert({
-    name: 'LessThan1000',
-    i18nkey: 'resultCategoryLessThan1000',
-    externalId: 'LessThan1000',
-  })
-
-  const [resultCategoryMoreThan1000] = await knex('ResultCategory').insert({
-    name: 'MoreThan1000',
-    i18nkey: 'resultCategoryMoreThan1000',
-    externalId: 'MoreThan1000',
-  })
-
-  await knex('ResultCategory').insert({
-    name: 'Rejected',
-    i18nkey: 'resultCategoryRejected',
-    externalId: 'Rejected',
-  })
-
-  await knex('ResultCategory').insert({
-    name: 'Missing',
-    i18nkey: 'resultCategoryMissing',
-    externalId: 'Missing',
-  })
-
-  await knex('ResultCategory').insert({
-    name: 'Unknown',
-    i18nkey: 'resultCategoryUnknown',
-    externalId: 'Unknown',
-  })
+  const resultCategories = await rowsAsObject(
+    knex,
+    'ResultCategory',
+    'externalId'
+  )
+  const resultCategoryDetectedId = resultCategories.Detected.id
+  const resultCategoryTraceDetectedId = resultCategories['Trace Detected'].id
+  const resultCategoryNotDetectedId = resultCategories.NotDetected.id
+  const resultCategoryIndeterminateId = resultCategories.Indeterminate.id
+  const resultCategoryInvalidId = resultCategories.Invalid.id
+  const resultCategoryNoResultId = resultCategories.NoResult.id
+  const resultCategoryErrorId = resultCategories.Error.id
+  const resultCategoryLessThan1000 = resultCategories.LessThan1000.id
+  const resultCategoryMoreThan1000 = resultCategories.MoreThan1000.id
 
   // assign categories to Assays
   // GeneXpert MTB/Rif
@@ -1885,63 +1757,16 @@ async function seed(knex) {
   })
 
   // Result Workflow Status
-  await knex('ResultWorkflowStatus').insert({
-    name: 'OK',
-    i18nkey: 'ResultWorkflowStatusOK',
-    externalId: 'OK',
-  })
-  await knex('ResultWorkflowStatus').insert({
-    name: 'Error',
-    i18nkey: 'ResultWorkflowStatusError',
-    externalId: 'Error',
-  })
-  const [ordered] = await knex('ResultWorkflowStatus').insert({
-    name: 'Ordered',
-    i18nkey: 'ResultWorkflowStatusOrdered',
-    externalId: 'Ordered',
-  })
-  await knex('ResultWorkflowStatus').insert({
-    name: 'In Progress',
-    i18nkey: 'ResultWorkflowStatusInProgress',
-    externalId: 'InProgress',
-  })
-  const [processed] = await knex('ResultWorkflowStatus').insert({
-    name: 'Processed',
-    i18nkey: 'ResultWorkflowStatusProcessed',
-    externalId: 'Processed',
-  })
-  const [validated] = await knex('ResultWorkflowStatus').insert({
-    name: 'Validated',
-    i18nkey: 'ResultWorkflowStatusValidated',
-    externalId: 'Validated',
-  })
-  const [deliverable] = await knex('ResultWorkflowStatus').insert({
-    name: 'Ready for delivery',
-    i18nkey: 'ResultWorkflowStatusDeliverable',
-    externalId: 'Deliverable',
-  })
-  await knex('ResultWorkflowStatus').insert({
-    name: 'Delivered',
-    i18nkey: 'ResultWorkflowStatusDelivered',
-    externalId: 'Delivered',
-  })
-  const [acknowledged] = await knex('ResultWorkflowStatus').insert({
-    name: 'Acknowledged',
-    i18nkey: 'ResultWorkflowStatusAcknowledged',
-    externalId: 'Acknowledged',
-  })
-
-  await knex('ResultWorkflowStatus').insert({
-    name: 'Flagged',
-    i18nkey: 'ResultWorkflowStatusFlagged',
-    externalId: 'Flagged',
-  })
-
-  await knex('ResultWorkflowStatus').insert({
-    name: 'Purged',
-    i18nkey: 'ResultWorkflowStatusPurged',
-    externalId: 'Purged',
-  })
+  const resultWorkflowStatuses = await rowsAsObject(
+    knex,
+    'ResultWorkflowStatus',
+    'externalId'
+  )
+  const ordered = resultWorkflowStatuses.Ordered.id
+  const processed = resultWorkflowStatuses.Processed.id
+  const validated = resultWorkflowStatuses.Validated.id
+  const deliverable = resultWorkflowStatuses.Deliverable.id
+  const acknowledged = resultWorkflowStatuses.Acknowledged.id
 
   // Create permissions
   const modules = {}
@@ -2404,60 +2229,9 @@ async function seed(knex) {
     })
   )
 
-  const [sampleTypeDBSId] = await knex('SampleType').insert({
-    name: 'DBS',
-    i18nKey: 'sampleTypeDBS',
-    externalId: 'DBS',
-  })
-
-  const [sampleTypePlasmaId] = await knex('SampleType').insert({
-    name: 'Plasma',
-    i18nKey: 'sampleTypePlasma',
-    externalId: 'Plasma',
-  })
-
-  await knex('SampleType').insert([
-    {
-      name: 'Other',
-      i18nKey: 'sampleTypeOther',
-      externalId: 'Other',
-    },
-    {
-      name: 'Sputum',
-      i18nKey: 'sampleTypeSputum',
-      externalId: 'Sputum',
-    },
-    {
-      name: 'Saliva',
-      i18nKey: 'sampleTypeSaliva',
-      externalId: 'Saliva',
-    },
-    {
-      name: 'Blood',
-      i18nKey: 'sampleTypeBlood',
-      externalId: 'Blood',
-    },
-    {
-      name: 'CSF',
-      i18nKey: 'sampleTypeCSF',
-      externalId: 'CSF',
-    },
-    {
-      name: 'Effusion',
-      i18nKey: 'sampleTypeEffusion',
-      externalId: 'Effusion',
-    },
-    {
-      name: 'Pus',
-      i18nKey: 'sampleTypePus',
-      externalId: 'Pus',
-    },
-    {
-      name: 'Gastric Lavage',
-      i18nKey: 'sampleTypeGastricLavage',
-      externalId: 'Gastric Lavage',
-    },
-  ])
+  const sampleTypes = await rowsAsObject(knex, 'SampleType', 'externalId')
+  const sampleTypeDBSId = sampleTypes.DBS.id
+  const sampleTypePlasmaId = sampleTypes.Plasma.id
 
   // some TB samples:
   let samples = []
@@ -3683,41 +3457,6 @@ async function seed(knex) {
   ])
 
   // Messages
-  await knex('MessageStatus').insert([
-    {
-      name: 'Initial',
-      externalId: 'Initial',
-      i18nKey: 'messageStatusInitial',
-    },
-    {
-      name: 'Pending',
-      externalId: 'Pending',
-      i18nKey: 'messageStatusPending',
-    },
-    {
-      name: 'Sent',
-      externalId: 'Sent',
-      i18nKey: 'messageStatusSent',
-    },
-    {
-      name: 'Error',
-      externalId: 'Error',
-      i18nKey: 'messageStatusError',
-    },
-  ])
-
-  await knex('MessageSeverity').insert([
-    {
-      name: 'Alert',
-      externalId: 'Alert',
-      i18nKey: 'messageSeverityAlert',
-    },
-    {
-      name: 'Recommendation',
-      externalId: 'Recommendation',
-      i18nKey: 'messageSeverityRecommendation',
-    },
-  ])
   const messageSeverities = await rowsAsObject(knex, 'MessageSeverity')
 
   const [deviceOfflineAlertTemplateId] = await knex('AlertTemplate').insert(
@@ -4248,28 +3987,6 @@ async function seed(knex) {
   })
 
   // Issues
-  await knex('IssueCategory').insert([
-    {
-      name: 'Device Health',
-      externalId: 'DeviceHealth',
-      i18nKey: 'issueCategoryDeviceHealth',
-    },
-    {
-      name: 'Reagent Health',
-      externalId: 'ReagentHealth',
-      i18nKey: 'issueCategoryReagentHealth',
-    },
-    {
-      name: 'Data Health',
-      externalId: 'DataHealth',
-      i18nKey: 'issueCategoryDataHealth',
-    },
-    {
-      name: 'Connectivity Health',
-      externalId: 'ConnectivityHealth',
-      i18nKey: 'issueCategoryConnectivityHealth',
-    },
-  ])
   const issueCategories = await rowsAsObject(
     knex,
     'IssueCategory',
@@ -4344,15 +4061,6 @@ async function seed(knex) {
       i18nKey: 'issueStatusResolved',
       issueStatusSeverityId: issueStatusSeverityIdLow,
       sortOrder: 5,
-    },
-  ])
-
-  await knex('IssueEventStatus').insert([
-    {
-      externalId: 'Triggered',
-    },
-    {
-      externalId: 'Resolved',
     },
   ])
 

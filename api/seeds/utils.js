@@ -360,7 +360,19 @@ async function getPermissionModules(knex) {
 }
 
 async function seedStaticData(knex) {
-  const tables = ['FileContentType']
+  const tables = [
+    'FileContentType',
+    'IssueCategory',
+    'IssueEventStatus',
+    'IssueStatusSeverity',
+    'MessageStatus',
+    'MessageSeverity',
+    'ResultCategory',
+    'ResultSource',
+    'ResultType',
+    'ResultWorkflowStatus',
+    'SampleType',
+  ]
   await Promise.all(
     tables.map(async table => {
       const { data } = await readJson(`./seeds/fixtures/${table}.json`)
