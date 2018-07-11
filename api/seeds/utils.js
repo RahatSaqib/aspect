@@ -1,3 +1,4 @@
+const _ = require('lodash')
 const { readJson } = require('fs-extra')
 
 async function rowsAsObject(knex, table, column = 'name') {
@@ -372,14 +373,23 @@ async function seedStaticData(knex) {
     'ResultType',
     'ResultWorkflowStatus',
     'SampleType',
+    // TODO ASP-757 Standardize static data key on externalId
+    ['AssayType', 'name'],
+    ['ConsumableReason', 'name'],
+    ['DeviceStatus', 'token'],
+    ['PartnerType', 'name'],
+    ['DeviceTypeCategory', 'name'],
+    ['Unit', 'name'],
   ]
   await Promise.all(
-    tables.map(async table => {
+    tables.map(async tableItem => {
+      const table = _.isArray(tableItem) ? tableItem[0] : tableItem
+      const keyColumn = _.isArray(tableItem) ? tableItem[1] : 'externalId'
       const { data } = await readJson(`./seeds/fixtures/${table}.json`)
       await Promise.all(
         data.map(async datum => {
           const existingDatum = await knex(table)
-            .where({ externalId: datum.externalId })
+            .where(keyColumn, datum[keyColumn])
             .first('id')
           if (existingDatum == null) {
             await knex(table).insert(datum)

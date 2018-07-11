@@ -76,16 +76,9 @@ async function seed(knex) {
   }
 
   // Create partner types
-  const partnerTypeFundingId = await knex('PartnerType').insert({
-    name: 'Funding',
-  })
-  const partnerTypeImplementingId = await knex('PartnerType').insert({
-    name: 'Implementing',
-  })
-
-  await knex('PartnerType').insert({
-    name: 'Operating',
-  })
+  const partnerTypes = await rowsAsObject(knex, 'PartnerType', 'name')
+  const partnerTypeFundingId = partnerTypes.Funding.id
+  const partnerTypeImplementingId = partnerTypes.Implementing.id
 
   // Create partners
   const [partnerOneId] = await knex('Partner').insert({
@@ -105,39 +98,15 @@ async function seed(knex) {
   })
 
   // Categories of devices (lab, connectivity...)
-  const [deviceTypeCategoryLab] = await knex('DeviceTypeCategory').insert({
-    name: 'Lab',
-    hasConnectivity: 0,
-    hasResults: 1,
-  })
-
-  const [deviceTypeCategoryConnectivity] = await knex(
-    'DeviceTypeCategory'
-  ).insert({
-    name: 'Router',
-    hasConnectivity: 1,
-    hasResults: 0,
-  })
-
-  await knex('DeviceTypeCategory').insert({
-    name: 'Integrated',
-    hasConnectivity: 1,
-    hasResults: 1,
-  })
-
-  await knex('DeviceTypeCategory').insert({
-    name: 'Client',
-    hasConnectivity: 0,
-    hasResults: 0,
-  })
-
-  const [deviceTypeCategoryInformationSystem] = await knex(
-    'DeviceTypeCategory'
-  ).insert({
-    name: 'Information System',
-    hasConnectivity: 0,
-    hasResults: 1,
-  })
+  const deviceTypeCategories = await rowsAsObject(
+    knex,
+    'DeviceTypeCategory',
+    'name'
+  )
+  const deviceTypeCategoryLab = deviceTypeCategories.Lab.id
+  const deviceTypeCategoryConnectivity = deviceTypeCategories.Router.id
+  const deviceTypeCategoryInformationSystem =
+    deviceTypeCategories['Information System'].id
 
   // define configurationData object
   const geneXpertConfigurationDataSchema = JSON.stringify({
@@ -364,26 +333,9 @@ async function seed(knex) {
   })
 
   // DeviceStatus
-  await knex('DeviceStatus').insert({
-    name: 'Provisioned',
-    i18nKey: 'deviceStatusProvisioned',
-    token: 'provisioned',
-  })
-  const [deviceStatusAssigned] = await knex('DeviceStatus').insert({
-    name: 'Assigned',
-    i18nKey: 'deviceStatusAssigned',
-    token: 'assigned',
-  })
-  const [deviceStatusApproved] = await knex('DeviceStatus').insert({
-    name: 'Approved',
-    i18nKey: 'deviceStatusApproved',
-    token: 'approved',
-  })
-  await knex('DeviceStatus').insert({
-    name: 'Decommissioned',
-    i18nKey: 'deviceStatusDecommissioned',
-    token: 'decommissioned',
-  })
+  const deviceStatuses = await rowsAsObject(knex, 'DeviceStatus', 'token')
+  const deviceStatusAssigned = deviceStatuses.assigned.id
+  const deviceStatusApproved = deviceStatuses.approved.id
 
   // Result source
   const resultSources = await rowsAsObject(knex, 'ResultSource', 'externalId')
@@ -391,70 +343,16 @@ async function seed(knex) {
   const resultSourceLIMSId = resultSources.LIMS.id
 
   // Assays and AssayTypes
-  const [assayTypeMTBRifId] = await knex('AssayType').insert({
-    name: 'MTB/Rif',
-    i18nKey: 'assayTypeMtbRif',
-  })
-
-  const [assayTypeEbolaId] = await knex('AssayType').insert({
-    name: 'Ebola',
-    i18nKey: 'assayTypeEbola',
-  })
-
-  const [assayTypeHivVlId] = await knex('AssayType').insert({
-    name: 'HIV VL',
-    i18nKey: 'assayTypeHivVl',
-  })
-
-  const [assayTypeHivQualId] = await knex('AssayType').insert({
-    name: 'HIV Qual',
-    i18nKey: 'assayTypeHivQual',
-  })
-
-  const [assayTypeCD4Id] = await knex('AssayType').insert({
-    name: 'CD4 Count',
-    i18nKey: 'assayTypeCD4',
-  })
-
-  const [assayTypeEid] = await knex('AssayType').insert({
-    name: 'EID',
-    i18nKey: 'assayTypeEid',
-  })
-
-  const [assayTypeHcvId] = await knex('AssayType').insert({
-    name: 'HCV',
-    i18nKey: 'assayTypeHcv',
-  })
-
-  const [assayTypeLipidPanelId] = await knex('AssayType').insert({
-    name: 'Lipid Panel',
-    i18nKey: 'assayTypeLipidPanel',
-  })
-
-  await knex('AssayType').insert({
-    name: 'Zika',
-    i18nKey: 'assayTypeZika',
-  })
-
-  await knex('AssayType').insert({
-    name: 'Dengue',
-    i18nKey: 'assayTypeDengue',
-  })
-
-  await knex('AssayType').insert({
-    name: 'TB AST',
-    i18nKey: 'assayTypeTbAst',
-  })
-
-  await knex('AssayType').insert({
-    name: 'TB G&D',
-    i18nKey: 'assayTypeTbGnd',
-  })
-
-  const [assayTypeUnknownId] = await knex('AssayType').insert({
-    name: 'Unknown',
-    i18nKey: 'assayTypeUnknown',
-  })
+  const assayTypes = await rowsAsObject(knex, 'AssayType', 'name')
+  const assayTypeMTBRifId = assayTypes['MTB/Rif'].id
+  const assayTypeEbolaId = assayTypes.Ebola.id
+  const assayTypeHivVlId = assayTypes['HIV VL'].id
+  const assayTypeHivQualId = assayTypes['HIV Qual'].id
+  const assayTypeCD4Id = assayTypes['CD4 Count'].id
+  const assayTypeEid = assayTypes.EID.id
+  const assayTypeHcvId = assayTypes.HCV.id
+  const assayTypeLipidPanelId = assayTypes['Lipid Panel'].id
+  const assayTypeUnknownId = assayTypes.Unknown.id
 
   // define resultData object
   const geneXpertResultDataSchema = JSON.stringify({
@@ -1549,40 +1447,8 @@ async function seed(knex) {
   })
 
   // Units
-  const [piece] = await knex('Unit').insert({
-    name: 'Piece',
-    shortName: 'pc',
-  })
-
-  await knex('Unit').insert({
-    name: 'Liter',
-    shortName: 'l',
-  })
-
-  await knex('Unit').insert({
-    name: 'Milliliter',
-    shortName: 'ml',
-  })
-
-  await knex('Unit').insert({
-    name: 'Milligram',
-    shortName: 'mg',
-  })
-
-  await knex('Unit').insert({
-    name: 'Gram',
-    shortName: 'g',
-  })
-
-  await knex('Unit').insert({
-    name: 'Kilogram',
-    shortName: 'kg',
-  })
-
-  await knex('Unit').insert({
-    name: 'Ounce',
-    shortName: 'oz',
-  })
+  const units = await rowsAsObject(knex, 'Unit', 'name')
+  const piece = units.Piece.id
 
   // Consumable types
   const [consumableGxTbCartridgeId] = await knex('Consumable').insert({
@@ -1690,70 +1556,6 @@ async function seed(knex) {
     consumableId: consumableDaktariHivVlCartridgeId,
     assayId: assayDaktariHivVlId,
     quantity: 1,
-  })
-
-  // Consumable Reasons
-  await knex('ConsumableReason').insert({
-    name: 'Asserted Zero Inventory',
-    i18nKey: 'ConsumableReason_AssertedZeroInventory',
-    decrease: 0,
-    reset: 1,
-  })
-
-  await knex('ConsumableReason').insert({
-    name: 'Test Conducted',
-    i18nKey: 'ConsumableReason_TestConducted',
-    decrease: 1,
-    reset: 0,
-  })
-
-  await knex('ConsumableReason').insert({
-    name: 'Transfer Sent',
-    i18nKey: 'ConsumableReason_TransferSent',
-    decrease: 1,
-    reset: 0,
-  })
-
-  await knex('ConsumableReason').insert({
-    name: 'Transfer Received',
-    i18nKey: 'ConsumableReason_TransferReceived',
-    decrease: 0,
-    reset: 0,
-  })
-
-  await knex('ConsumableReason').insert({
-    name: 'Expired',
-    i18nKey: 'ConsumableReason_Expired',
-    decrease: 1,
-    reset: 0,
-  })
-
-  await knex('ConsumableReason').insert({
-    name: 'Imported',
-    i18nKey: 'ConsumableReason_Imported',
-    decrease: 0,
-    reset: 1,
-  })
-
-  await knex('ConsumableReason').insert({
-    name: 'Stolen',
-    i18nKey: 'ConsumableReason_Stolen',
-    decrease: 1,
-    reset: 0,
-  })
-
-  await knex('ConsumableReason').insert({
-    name: 'Lost',
-    i18nKey: 'ConsumableReason_Lost',
-    decrease: 1,
-    reset: 0,
-  })
-
-  await knex('ConsumableReason').insert({
-    name: 'Captured',
-    i18nKey: 'ConsumableReason_Captured',
-    decrease: 0,
-    reset: 1,
   })
 
   // Result Workflow Status

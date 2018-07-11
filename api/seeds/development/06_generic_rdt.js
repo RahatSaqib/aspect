@@ -1,4 +1,5 @@
 module.exports = require('../../src/db').seed(seed)
+const { rowsAsObject } = require('../utils')
 
 async function seed(knex) {
   // Skip this seed file if generic RDT device is already set up
@@ -26,10 +27,8 @@ async function seed(knex) {
   })
 
   // Generic RDT Assay Type
-  const [assayTypeId] = await knex('AssayType').insert({
-    name: 'Generic RDT',
-    i18nKey: 'genericRDT',
-  })
+  const assayTypes = await rowsAsObject(knex, 'AssayType', 'name')
+  const assayTypeId = assayTypes['Generic RDT'].id
 
   // Generic RDT Assay
   await knex('Assay').insert({

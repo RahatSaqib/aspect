@@ -6,7 +6,7 @@ const bcrypt = require('bcrypt')
 const permissions = require('./fixtures/permissions.json')
 const geography = require('./fixtures/geography.json')
 const features = require('./fixtures/features.json')
-const { seedStaticData } = require('../utils')
+const { seedStaticData, rowsAsObject } = require('../utils')
 
 const now = new Date()
 
@@ -39,70 +39,13 @@ async function seed(knex) {
     updatedBy: adminId,
   }
 
-  // Create partner types
-  await knex('PartnerType').insert({
-    name: 'Funding',
-  })
-  await knex('PartnerType').insert({
-    name: 'Implementing',
-  })
-
-  await knex('PartnerType').insert({
-    name: 'Operating',
-  })
-
   // Categories of devices (lab, connectivity...)
-  const [deviceTypeCategoryLab] = await knex('DeviceTypeCategory').insert({
-    name: 'Lab',
-    hasConnectivity: 0,
-    hasResults: 1,
-  })
-
-  await knex('DeviceTypeCategory').insert({
-    name: 'Router',
-    hasConnectivity: 1,
-    hasResults: 0,
-  })
-
-  await knex('DeviceTypeCategory').insert({
-    name: 'Integrated',
-    hasConnectivity: 1,
-    hasResults: 1,
-  })
-
-  await knex('DeviceTypeCategory').insert({
-    name: 'Client',
-    hasConnectivity: 0,
-    hasResults: 0,
-  })
-
-  await knex('DeviceTypeCategory').insert({
-    name: 'Information System',
-    hasConnectivity: 0,
-    hasResults: 1,
-  })
-
-  // DeviceStatus
-  await knex('DeviceStatus').insert({
-    name: 'Provisioned',
-    i18nKey: 'deviceStatusProvisioned',
-    token: 'provisioned',
-  })
-  await knex('DeviceStatus').insert({
-    name: 'Assigned',
-    i18nKey: 'deviceStatusAssigned',
-    token: 'assigned',
-  })
-  await knex('DeviceStatus').insert({
-    name: 'Approved',
-    i18nKey: 'deviceStatusApproved',
-    token: 'approved',
-  })
-  await knex('DeviceStatus').insert({
-    name: 'Decommissioned',
-    i18nKey: 'deviceStatusDecommissioned',
-    token: 'decommissioned',
-  })
+  const deviceTypeCategories = await rowsAsObject(
+    knex,
+    'DeviceTypeCategory',
+    'name'
+  )
+  const deviceTypeCategoryLab = deviceTypeCategories.Lab.id
 
   // Device Types
   const commCareConfigurationDataSchema = JSON.stringify({
@@ -141,112 +84,6 @@ async function seed(knex) {
     deviceTypeCategoryId: deviceTypeCategoryLab,
     configurationDataSchema: commCareConfigurationDataSchema,
     deviceOperationSchema: commCareDeviceOperationSchema,
-  })
-
-  // Assay Types
-  await knex('AssayType').insert({
-    name: 'HIV Qual',
-    i18nKey: 'assayTypeHivQual',
-  })
-
-  // Units
-  await knex('Unit').insert({
-    name: 'Piece',
-    shortName: 'pc',
-  })
-
-  await knex('Unit').insert({
-    name: 'Liter',
-    shortName: 'l',
-  })
-
-  await knex('Unit').insert({
-    name: 'Milliliter',
-    shortName: 'ml',
-  })
-
-  await knex('Unit').insert({
-    name: 'Milligram',
-    shortName: 'mg',
-  })
-
-  await knex('Unit').insert({
-    name: 'Gram',
-    shortName: 'g',
-  })
-
-  await knex('Unit').insert({
-    name: 'Kilogram',
-    shortName: 'kg',
-  })
-
-  await knex('Unit').insert({
-    name: 'Ounce',
-    shortName: 'oz',
-  })
-
-  // Consumable Reasons
-  await knex('ConsumableReason').insert({
-    name: 'Asserted Zero Inventory',
-    i18nKey: 'ConsumableReason_AssertedZeroInventory',
-    decrease: 0,
-    reset: 1,
-  })
-
-  await knex('ConsumableReason').insert({
-    name: 'Test Conducted',
-    i18nKey: 'ConsumableReason_TestConducted',
-    decrease: 1,
-    reset: 0,
-  })
-
-  await knex('ConsumableReason').insert({
-    name: 'Transfer Sent',
-    i18nKey: 'ConsumableReason_TransferSent',
-    decrease: 1,
-    reset: 0,
-  })
-
-  await knex('ConsumableReason').insert({
-    name: 'Transfer Received',
-    i18nKey: 'ConsumableReason_TransferReceived',
-    decrease: 0,
-    reset: 0,
-  })
-
-  await knex('ConsumableReason').insert({
-    name: 'Expired',
-    i18nKey: 'ConsumableReason_Expired',
-    decrease: 1,
-    reset: 0,
-  })
-
-  await knex('ConsumableReason').insert({
-    name: 'Imported',
-    i18nKey: 'ConsumableReason_Imported',
-    decrease: 0,
-    reset: 1,
-  })
-
-  await knex('ConsumableReason').insert({
-    name: 'Stolen',
-    i18nKey: 'ConsumableReason_Stolen',
-    decrease: 1,
-    reset: 0,
-  })
-
-  await knex('ConsumableReason').insert({
-    name: 'Lost',
-    i18nKey: 'ConsumableReason_Lost',
-    decrease: 1,
-    reset: 0,
-  })
-
-  await knex('ConsumableReason').insert({
-    name: 'Captured',
-    i18nKey: 'ConsumableReason_Captured',
-    decrease: 0,
-    reset: 1,
   })
 
   // Create permissions
