@@ -251,6 +251,7 @@ async function updateIssueStatus(request) {
       throw Boom.unauthorized('No Active Issue to Acknowledge')
     }
 
+    // TODO cache keyToId IssueStatus, IssueStatus to IssueStatusSeverity
     ;({ issueStatusId, issueStatusSeverityExternalId } = await knex(
       'IssueStatus as is'
     )

@@ -19,10 +19,29 @@ function keyToId(table, keyColumn = 'externalId') {
 }
 
 module.exports = {
+  // TODO cache AssayType externalId
+  assayTypeToId: keyToId('AssayType', 'name'),
+  // TODO cache ConsumableReason externalId
+  consumableReasonToId: keyToId('ConsumableReason', 'name'),
+  // TODO cache DeviceStatus externalId
+  deviceStatusToId: keyToId('DeviceStatus', 'token'),
+  deviceTypeToId: keyToId('DeviceType'),
+  // TODO cache DeviceTypeCategory externalId
+  deviceTypeCategoryToId: keyToId('DeviceTypeCategory', 'name'),
   fileContentTypeToId: keyToId('FileContentType'),
+  featureToId: keyToId('Feature', 'module'),
+  issueCategoryToId: keyToId('IssueCategory'),
   issueEventStatusToId: keyToId('IssueEventStatus'),
   issueStatusToId: keyToId('IssueStatus'),
+  issueStatusSeverityToId: keyToId('IssueStatusSeverity'),
   issueTypeToId: keyToId('IssueType'),
   messageStatusToId: keyToId('MessageStatus'),
+  messageSeverityToId: keyToId('MessageSeverity'),
+  // TODO cache PartnerType externalId
+  partnerTypeToId: keyToId('PartnerType', 'name'),
   resultCategoryToId: keyToId('ResultCategory'),
+  resultSourceToId: keyToId('ResultSource'),
+  resultTypeToId: keyToId('ResultType'),
+  resultWorkflowStatusToId: keyToId('ResultWorkflowStatus'),
+  sampleTypeToId: keyToId('SampleType'),
 }
