@@ -1,5 +1,5 @@
 const { smsMessageReadyForSending, smsMessageSent } = require('./actions')
-const dictionary = require('../shared/dictionary')
+const { messageStatusToId } = require('../shared/dictionary')
 const {
   addDataSourceToQuery,
   processUsingDataSourceQuery,
@@ -27,7 +27,7 @@ async function prepareSmsMessageForSending(context, knex, smsMessageId) {
     knex,
     smsMessageId
   )
-  const messageStatusId = await dictionary.messageStatusToId('Pending')
+  const messageStatusId = await messageStatusToId('Pending')
 
   // store generated sms message into the same record and set messageStatusId
   await knex('SmsMessage')
@@ -70,16 +70,14 @@ async function doSendSmsMessage(context, knex, smsMessageId) {
   // sms handler
   const { sendSms } = require('./smsUtil')
 
-  // get name-id map of message statuses
-  const messageStatusIdFor = await dictionary.messageStatusToId()
-
   // assume status is 'Sent'
-  let messageStatusId = messageStatusIdFor.Sent
+  let messageStatusId = await messageStatusToId('Sent')
+  const messageStatusIdError = await messageStatusToId('Error')
 
   // send sms
   await sendSms(cell, message).catch(() => {
     // set status to 'Error'
-    messageStatusId = messageStatusIdFor.Error
+    messageStatusId = messageStatusIdError
   })
 
   // store status in db

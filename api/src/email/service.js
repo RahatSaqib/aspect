@@ -1,5 +1,5 @@
 const { emailMessageReadyForSending, emailMessageSent } = require('./actions')
-const dictionary = require('../shared/dictionary')
+const { messageStatusToId } = require('../shared/dictionary')
 const {
   addDataSourceToQuery,
   processUsingDataSourceQuery,
@@ -27,7 +27,7 @@ async function prepareEmailMessageForSending(context, knex, emailMessageId) {
     knex,
     emailMessageId
   )
-  const messageStatusId = (await dictionary.messageStatusToId()).Pending
+  const messageStatusId = await messageStatusToId('Pending')
 
   // store generated email message into the same record and set messageStatusId
   await knex('EmailMessage')
@@ -72,16 +72,14 @@ async function doSendEmailMessage(context, knex, emailMessageId) {
   // email handler
   const { sendEmail } = require('./emailUtil')
 
-  // get name-id map of message statuses
-  const messageStatusIdFor = await dictionary.messageStatusToId()
-
   // assume status is 'Sent'
-  let messageStatusId = messageStatusIdFor.Sent
+  let messageStatusId = await messageStatusToId('Sent')
+  const messageStatusIdError = await messageStatusToId('Error')
 
   // send email
   await sendEmail(email, subject, htmlBody, body).catch(() => {
     // set status to 'Error'
-    messageStatusId = messageStatusIdFor.Error
+    messageStatusId = messageStatusIdError
   })
 
   // store status in db

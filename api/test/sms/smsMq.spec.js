@@ -16,7 +16,7 @@ const {
   smsMessageReadyForSending,
   smsMessageSent,
 } = require('../../src/sms/actions')
-const dictionary = require('../../src/shared/dictionary')
+const { messageStatusToId } = require('../../src/shared/dictionary')
 
 describe('Sending SMS via Message Queue', () => {
   const { runTest } = context
@@ -52,7 +52,7 @@ describe('Sending SMS via Message Queue', () => {
 
       await waitForIdle()
 
-      const messageStatusIdSent = (await dictionary.messageStatusToId()).Sent
+      const messageStatusIdSent = await messageStatusToId('Sent')
       const msg = await knex('SmsMessage')
         .where('id', messageId)
         .first()

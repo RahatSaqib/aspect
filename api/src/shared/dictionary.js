@@ -3,7 +3,7 @@ const { knex } = require('../db')
 const cacheKeyToId = {}
 
 function keyToId(table, keyColumn = 'externalId') {
-  return async (key = null) => {
+  return async key => {
     let cache = cacheKeyToId[table]
     if (cache == null) {
       cache = await knex(table)
@@ -14,7 +14,7 @@ function keyToId(table, keyColumn = 'externalId') {
         }, {})
       cacheKeyToId[table] = cache
     }
-    return key == null ? cache : cache[key]
+    return cache[key]
   }
 }
 
