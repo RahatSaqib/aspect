@@ -58,6 +58,33 @@ async function seed(knex) {
   }
 
   await seedStaticData(knex)
+  const [
+    partnerTypes,
+    deviceTypeCategories,
+    deviceStatuses,
+    resultSources,
+    assayTypes,
+    resultTypes,
+    resultCategories,
+    units,
+    resultWorkflowStatuses,
+    sampleTypes,
+    messageSeverities,
+    issueCategories,
+  ] = await Promise.all([
+    rowsAsObject(knex, 'PartnerType', 'name'),
+    rowsAsObject(knex, 'DeviceTypeCategory', 'name'),
+    rowsAsObject(knex, 'DeviceStatus', 'token'),
+    rowsAsObject(knex, 'ResultSource', 'externalId'),
+    rowsAsObject(knex, 'AssayType', 'name'),
+    rowsAsObject(knex, 'ResultType', 'externalId'),
+    rowsAsObject(knex, 'ResultCategory', 'externalId'),
+    rowsAsObject(knex, 'Unit', 'name'),
+    rowsAsObject(knex, 'ResultWorkflowStatus', 'externalId'),
+    rowsAsObject(knex, 'SampleType', 'externalId'),
+    rowsAsObject(knex, 'MessageSeverity', 'externalId'),
+    rowsAsObject(knex, 'IssueCategory', 'externalId'),
+  ])
 
   // Create admin user and audit fields
   const [adminId] = await knex('User').insert({
@@ -76,7 +103,6 @@ async function seed(knex) {
   }
 
   // Create partner types
-  const partnerTypes = await rowsAsObject(knex, 'PartnerType', 'name')
   const partnerTypeFundingId = partnerTypes.Funding.id
   const partnerTypeImplementingId = partnerTypes.Implementing.id
 
@@ -98,11 +124,6 @@ async function seed(knex) {
   })
 
   // Categories of devices (lab, connectivity...)
-  const deviceTypeCategories = await rowsAsObject(
-    knex,
-    'DeviceTypeCategory',
-    'name'
-  )
   const deviceTypeCategoryLab = deviceTypeCategories.Lab.id
   const deviceTypeCategoryConnectivity = deviceTypeCategories.Router.id
   const deviceTypeCategoryInformationSystem =
@@ -333,17 +354,14 @@ async function seed(knex) {
   })
 
   // DeviceStatus
-  const deviceStatuses = await rowsAsObject(knex, 'DeviceStatus', 'token')
   const deviceStatusAssigned = deviceStatuses.assigned.id
   const deviceStatusApproved = deviceStatuses.approved.id
 
   // Result source
-  const resultSources = await rowsAsObject(knex, 'ResultSource', 'externalId')
   const resultSourceDiagnosticId = resultSources.DiagnosticDevice.id
   const resultSourceLIMSId = resultSources.LIMS.id
 
   // Assays and AssayTypes
-  const assayTypes = await rowsAsObject(knex, 'AssayType', 'name')
   const assayTypeMTBRifId = assayTypes['MTB/Rif'].id
   const assayTypeEbolaId = assayTypes.Ebola.id
   const assayTypeHivVlId = assayTypes['HIV VL'].id
@@ -1171,15 +1189,9 @@ async function seed(knex) {
   })
 
   // Result types
-  const resultTypes = await rowsAsObject(knex, 'ResultType', 'externalId')
   const resultTypePatientId = resultTypes.Patient.id
 
   // result categories
-  const resultCategories = await rowsAsObject(
-    knex,
-    'ResultCategory',
-    'externalId'
-  )
   const resultCategoryDetectedId = resultCategories.Detected.id
   const resultCategoryTraceDetectedId = resultCategories['Trace Detected'].id
   const resultCategoryNotDetectedId = resultCategories.NotDetected.id
@@ -1447,7 +1459,6 @@ async function seed(knex) {
   })
 
   // Units
-  const units = await rowsAsObject(knex, 'Unit', 'name')
   const piece = units.Piece.id
 
   // Consumable types
@@ -1559,11 +1570,6 @@ async function seed(knex) {
   })
 
   // Result Workflow Status
-  const resultWorkflowStatuses = await rowsAsObject(
-    knex,
-    'ResultWorkflowStatus',
-    'externalId'
-  )
   const ordered = resultWorkflowStatuses.Ordered.id
   const processed = resultWorkflowStatuses.Processed.id
   const validated = resultWorkflowStatuses.Validated.id
@@ -2031,7 +2037,6 @@ async function seed(knex) {
     })
   )
 
-  const sampleTypes = await rowsAsObject(knex, 'SampleType', 'externalId')
   const sampleTypeDBSId = sampleTypes.DBS.id
   const sampleTypePlasmaId = sampleTypes.Plasma.id
 
@@ -3259,8 +3264,6 @@ async function seed(knex) {
   ])
 
   // Messages
-  const messageSeverities = await rowsAsObject(knex, 'MessageSeverity')
-
   const [deviceOfflineAlertTemplateId] = await knex('AlertTemplate').insert(
     Object.assign(
       {
@@ -3789,12 +3792,6 @@ async function seed(knex) {
   })
 
   // Issues
-  const issueCategories = await rowsAsObject(
-    knex,
-    'IssueCategory',
-    'externalId'
-  )
-
   const { id: issueStatusSeverityIdLow } = await knex('IssueStatusSeverity')
     .where('externalId', 'Low')
     .first()

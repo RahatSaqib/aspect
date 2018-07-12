@@ -22,6 +22,9 @@ async function seed(knex) {
   }
 
   await seedStaticData(knex)
+  const [deviceTypeCategories] = await Promise.all([
+    rowsAsObject(knex, 'DeviceTypeCategory', 'name'),
+  ])
 
   // Create admin user and audit fields
   const [adminId] = await knex('User').insert({
@@ -40,11 +43,6 @@ async function seed(knex) {
   }
 
   // Categories of devices (lab, connectivity...)
-  const deviceTypeCategories = await rowsAsObject(
-    knex,
-    'DeviceTypeCategory',
-    'name'
-  )
   const deviceTypeCategoryLab = deviceTypeCategories.Lab.id
 
   // Device Types

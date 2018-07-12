@@ -9,35 +9,28 @@ async function seed(knex) {
   if (existingGenericRdtDeviceType) {
     return
   }
-
-  const deviceTypeCategoryLab = await knex('DeviceTypeCategory')
-    .where({ name: 'Lab' })
-    .first('id')
-
-  const resultSourceDiagnosticDevice = await knex('ResultSource')
-    .where({ externalId: 'DiagnosticDevice' })
-    .first('id')
+  const [deviceTypeCategories, resultSources, assayTypes] = await Promise.all([
+    rowsAsObject(knex, 'DeviceTypeCategory', 'name'),
+    rowsAsObject(knex, 'ResultSource', 'externalId'),
+    rowsAsObject(knex, 'AssayType', 'name'),
+  ])
 
   // Generic RDT Device Type
   const [deviceTypeId] = await knex('DeviceType').insert({
     externalId: 'GenericRDT',
     name: 'Generic RDT Reader',
     manufacturer: 'Generic Readers, Inc',
-    deviceTypeCategoryId: deviceTypeCategoryLab.id,
+    deviceTypeCategoryId: deviceTypeCategories.Lab.id,
   })
-
-  // Generic RDT Assay Type
-  const assayTypes = await rowsAsObject(knex, 'AssayType', 'name')
-  const assayTypeId = assayTypes['Generic RDT'].id
 
   // Generic RDT Assay
   await knex('Assay').insert({
     name: 'Generic RDT',
     i18nKey: 'genericRdt',
     externalId: 'GenericRDT',
-    assayTypeId,
+    assayTypeId: assayTypes['Generic RDT'].id,
     deviceTypeId,
-    resultSourceId: resultSourceDiagnosticDevice.id,
+    resultSourceId: resultSources.DiagnosticDevice.id,
     resultCategory1Label: 'Status',
     resultDataSchema: JSON.stringify({
       resultText: { list: true, type: 'string', title: 'Result' },

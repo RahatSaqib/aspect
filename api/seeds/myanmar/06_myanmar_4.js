@@ -13,8 +13,10 @@ async function seed(knex) {
   if (assayHcv) {
     return
   }
-
-  const defaultMessageTypes = await getDefaultMessageTypes(knex)
+  const [issueTypes, defaultMessageTypes] = await Promise.all([
+    rowsAsObject(knex, 'IssueType', 'externalId'),
+    getDefaultMessageTypes(knex),
+  ])
 
   await knex('AlertTemplate')
     .where({ id: defaultMessageTypes.ModuleTemperatureError.alertTemplateId })
@@ -131,7 +133,6 @@ async function seed(knex) {
   const { id: partnerId } = await knex('Partner')
     .where({ name: 'Myanmar' })
     .first()
-  const issueTypes = await rowsAsObject(knex, 'IssueType', 'externalId')
 
   // Issue Resolution Triggers
   await knex('IssueResolutionTrigger').insert([

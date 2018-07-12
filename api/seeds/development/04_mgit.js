@@ -16,6 +16,18 @@ async function seed(knex) {
     return
   }
 
+  const [
+    partnerTypes,
+    deviceTypeCategories,
+    resultSources,
+    assayTypes,
+  ] = await Promise.all([
+    rowsAsObject(knex, 'PartnerType', 'name'),
+    rowsAsObject(knex, 'DeviceTypeCategory', 'name'),
+    rowsAsObject(knex, 'ResultSource', 'externalId'),
+    rowsAsObject(knex, 'AssayType', 'name'),
+  ])
+
   // Create admin user and audit fields
   const now = new Date()
   const [adminId] = await knex('User').insert({
@@ -34,7 +46,6 @@ async function seed(knex) {
   }
 
   // Reuse previously seeded "static" data
-  const partnerTypes = await rowsAsObject(knex, 'PartnerType')
   const [partnerId] = await knex('Partner').insert({
     name: 'MGIT',
     partnerTypeId: partnerTypes.Operating.id,
@@ -42,9 +53,6 @@ async function seed(knex) {
     maxDaysDeviceOffline: 7,
     maxDaysDeviceNoResults: 14,
   })
-  const deviceTypeCategories = await rowsAsObject(knex, 'DeviceTypeCategory')
-  const assayTypes = await rowsAsObject(knex, 'AssayType')
-  const resultSources = await rowsAsObject(knex, 'ResultSource', 'externalId')
 
   // MGIT Device Type
   const [deviceTypeId] = await knex('DeviceType').insert({
