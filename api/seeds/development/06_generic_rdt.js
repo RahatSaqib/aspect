@@ -1,5 +1,9 @@
-module.exports = require('../../src/db').seed(seed)
-const { rowsAsObject } = require('../utils')
+module.exports = require('../utils').seed(seed)
+const {
+  assayTypeToId,
+  deviceTypeCategoryToId,
+  resultSourceToId,
+} = require('../../src/shared/dictionary')
 
 async function seed(knex) {
   // Skip this seed file if generic RDT device is already set up
@@ -9,18 +13,17 @@ async function seed(knex) {
   if (existingGenericRdtDeviceType) {
     return
   }
-  const [deviceTypeCategories, resultSources, assayTypes] = await Promise.all([
-    rowsAsObject(knex, 'DeviceTypeCategory', 'name'),
-    rowsAsObject(knex, 'ResultSource', 'externalId'),
-    rowsAsObject(knex, 'AssayType', 'name'),
-  ])
+
+  const deviceTypeCategoryId = await deviceTypeCategoryToId('Lab')
+  const assayTypeId = await assayTypeToId('Generic RDT')
+  const resultSourceId = await resultSourceToId('DiagnosticDevice')
 
   // Generic RDT Device Type
   const [deviceTypeId] = await knex('DeviceType').insert({
     externalId: 'GenericRDT',
     name: 'Generic RDT Reader',
     manufacturer: 'Generic Readers, Inc',
-    deviceTypeCategoryId: deviceTypeCategories.Lab.id,
+    deviceTypeCategoryId,
   })
 
   // Generic RDT Assay
@@ -28,9 +31,9 @@ async function seed(knex) {
     name: 'Generic RDT',
     i18nKey: 'genericRdt',
     externalId: 'GenericRDT',
-    assayTypeId: assayTypes['Generic RDT'].id,
+    assayTypeId,
     deviceTypeId,
-    resultSourceId: resultSources.DiagnosticDevice.id,
+    resultSourceId,
     resultCategory1Label: 'Status',
     resultDataSchema: JSON.stringify({
       resultText: { list: true, type: 'string', title: 'Result' },

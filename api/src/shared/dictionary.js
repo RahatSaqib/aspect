@@ -30,7 +30,7 @@ const cacheConfig = {
   IssueStatusSeverity: {},
   IssueType: {},
   MessageStatus: {},
-  MessageStatusSeverity: {},
+  MessageSeverity: {},
   PartnerType: {
     keyColumn: 'name',
   },
@@ -44,29 +44,51 @@ const cacheConfig = {
   },
 }
 
-async function rowsAsObject(table) {
+async function rowsByColumn(table) {
   let cache = tableCache[table]
   if (cache == null) {
     const { keyColumn = 'externalId', additionalColumns = [] } = cacheConfig[
       table
     ]
-    cache = await knex(table)
-      .select('id', keyColumn, ...additionalColumns)
+
+    // this gives us { [key1]: {[col1]: row1[col1], [col2]: row2[col2]...
+    const columns = ['id', ...additionalColumns]
+    const rowsAsObject = await knex(table)
+      .select(keyColumn, ...columns)
       .reduce((memo, row) => {
         const key = row[keyColumn]
         memo[key] = row
         return memo
       }, {})
+
+    // we want { [col1]: { [key1]: row1[col1], [key2]: row2[col1]...
+    cache = _.reduce(
+      columns,
+      (memo, column) => {
+        memo[column] = _.mapValues(rowsAsObject, column)
+        return memo
+      },
+      {}
+    )
+
     tableCache[table] = cache
   }
   return cache
 }
 
+async function lookupKeyByColumn(table, column) {
+  const cache = await rowsByColumn(table)
+  return cache[column]
+}
+
+function keyToObject(table, column) {
+  return async () => lookupKeyByColumn(table, column)
+}
+
 function keyToValue(table, column) {
   return async key => {
-    const cache = await rowsAsObject(table)
-    const row = cache[key]
-    return row == null ? null : row[column]
+    const cache = await lookupKeyByColumn(table, column)
+    return cache == null ? null : cache[key]
   }
 }
 
@@ -78,7 +100,9 @@ _.each(cacheConfig, (config, table) => {
   const columns = ['id', ...additionalColumns]
   _.each(columns, column => {
     const columnName = _.upperFirst(column)
-    const functionName = `${name}To${columnName}`
-    exports[functionName] = keyToValue(table, column)
+    const lookupSingleItem = `${name}To${columnName}`
+    const lookupDictionary = `all${table}To${columnName}`
+    exports[lookupSingleItem] = keyToValue(table, column)
+    exports[lookupDictionary] = keyToObject(table, column)
   })
 })

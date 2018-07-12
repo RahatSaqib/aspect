@@ -1,6 +1,5 @@
-module.exports = require('../../src/db').seed(seed)
-const { getDefaultMessageTypes } = require('../utils')
-const { rowsAsObject } = require('../utils')
+module.exports = require('../utils').seed(seed)
+const { rowsAsObject, getDefaultMessageTypes } = require('../utils')
 
 const now = new Date()
 

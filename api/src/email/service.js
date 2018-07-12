@@ -1,5 +1,8 @@
 const { emailMessageReadyForSending, emailMessageSent } = require('./actions')
-const { messageStatusToId } = require('../shared/dictionary')
+const {
+  allMessageStatusToId,
+  messageStatusToId,
+} = require('../shared/dictionary')
 const {
   addDataSourceToQuery,
   processUsingDataSourceQuery,
@@ -73,8 +76,11 @@ async function doSendEmailMessage(context, knex, emailMessageId) {
   const { sendEmail } = require('./emailUtil')
 
   // assume status is 'Sent'
-  let messageStatusId = await messageStatusToId('Sent')
-  const messageStatusIdError = await messageStatusToId('Error')
+  const {
+    Sent: messageStatusIdSent,
+    Error: messageStatusIdError,
+  } = await allMessageStatusToId()
+  let messageStatusId = messageStatusIdSent
 
   // send email
   await sendEmail(email, subject, htmlBody, body).catch(() => {

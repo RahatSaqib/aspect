@@ -1,4 +1,4 @@
-module.exports = require('../../src/db').seed(seed)
+module.exports = require('../utils').seed(seed)
 
 const config = require('../../src/config')
 const _ = require('lodash')
@@ -6,7 +6,7 @@ const bcrypt = require('bcrypt')
 const permissions = require('./fixtures/permissions.json')
 const geography = require('./fixtures/geography.json')
 const features = require('./fixtures/features.json')
-const { seedStaticData, rowsAsObject } = require('../utils')
+const { deviceTypeCategoryToId } = require('../../src/shared/dictionary')
 
 const now = new Date()
 
@@ -20,11 +20,6 @@ async function seed(knex) {
   if (existingAdminUser) {
     return
   }
-
-  await seedStaticData(knex)
-  const [deviceTypeCategories] = await Promise.all([
-    rowsAsObject(knex, 'DeviceTypeCategory', 'name'),
-  ])
 
   // Create admin user and audit fields
   const [adminId] = await knex('User').insert({
@@ -43,7 +38,7 @@ async function seed(knex) {
   }
 
   // Categories of devices (lab, connectivity...)
-  const deviceTypeCategoryLab = deviceTypeCategories.Lab.id
+  const deviceTypeCategoryLab = await deviceTypeCategoryToId('Lab')
 
   // Device Types
   const commCareConfigurationDataSchema = JSON.stringify({

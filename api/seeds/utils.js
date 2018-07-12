@@ -1,6 +1,26 @@
 const _ = require('lodash')
 const { readJson } = require('fs-extra')
 
+// Helper for seeed files. Ru
+let hasSeededStaticData = false
+function seed(seed) {
+  return {
+    seed(knex) {
+      return runSeed(seed, knex).catch(err => {
+        console.error(err) // eslint-disable-line no-console
+        throw err
+      })
+    },
+  }
+}
+async function runSeed(seed, knex) {
+  if (!hasSeededStaticData) {
+    await seedStaticData(knex)
+    hasSeededStaticData = true
+  }
+  return seed(knex)
+}
+
 async function rowsAsObject(knex, table, column = 'name') {
   return knex(table).reduce((memo, row) => {
     memo[row[column]] = row
@@ -401,9 +421,9 @@ async function seedStaticData(knex) {
 }
 
 module.exports = {
+  seed,
   rowsAsObject,
   getDefaultMessageTypes,
   seedStockIssues,
   getPermissionModules,
-  seedStaticData,
 }

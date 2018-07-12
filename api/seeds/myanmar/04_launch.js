@@ -1,5 +1,9 @@
-module.exports = require('../../src/db').seed(seed)
+module.exports = require('../utils').seed(seed)
 const { rowsAsObject } = require('../utils')
+const {
+  issueCategoryToId,
+  messageSeverityToId,
+} = require('../../src/shared/dictionary')
 
 const now = new Date()
 
@@ -27,11 +31,7 @@ async function seed(knex) {
   }
 
   // Reuse previously seeded "static" data
-  const [issueTypes, issueCategories, messageSeverities] = await Promise.all([
-    rowsAsObject(knex, 'IssueType', 'externalId'),
-    rowsAsObject(knex, 'IssueCategory', 'externalId'),
-    rowsAsObject(knex, 'MessageSeverity', 'externalId'),
-  ])
+  const issueTypes = await rowsAsObject(knex, 'IssueType', 'externalId')
 
   // change issue/notification types from "Generic" to "Procedural"
   await knex('NotificationType').update({
@@ -145,7 +145,7 @@ async function seed(knex) {
   )
 
   const [deviceMaintenanceMessageTypeId] = await knex('MessageType').insert({
-    messageSeverityId: messageSeverities.Recommendation.id,
+    messageSeverityId: await messageSeverityToId('Recommendation'),
     alertTemplateId: deviceMaintenanceAlertTemplateId,
     smsTemplateId: deviceMaintenanceSmsTemplateId,
     emailTemplateId: deviceMaintenanceEmailTemplateId,
@@ -155,7 +155,7 @@ async function seed(knex) {
     name: 'Device Maintenance',
     externalId: 'DeviceMaintenance',
     i18nKey: 'issueTypeDeviceMaintenance',
-    issueCategoryId: issueCategories.DeviceHealth.id,
+    issueCategoryId: await issueCategoryToId('DeviceHealth'),
     defaultMessageTypeId: deviceMaintenanceMessageTypeId,
   })
 

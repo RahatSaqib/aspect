@@ -1,6 +1,21 @@
-module.exports = require('../../src/db').seed(seed)
+module.exports = require('../utils').seed(seed)
 
 const config = require('../../src/config')
+const {
+  allAssayTypeToId,
+  allDeviceStatusToId,
+  allDeviceTypeCategoryToId,
+  allIssueCategoryToId,
+  allIssueStatusSeverityToId,
+  allMessageSeverityToId,
+  allPartnerTypeToId,
+  allResultCategoryToId,
+  allResultSourceToId,
+  allResultWorkflowStatusToId,
+  allSampleTypeToId,
+  resultTypeToId,
+  unitToId,
+} = require('../../src/shared/dictionary')
 const _ = require('lodash')
 const bcrypt = require('bcrypt')
 const { randomToken } = require('../../src/deviceApi/apiKey')
@@ -10,7 +25,6 @@ const patients = require('./fixtures/patients.json')
 const dashboardWidget = require('./fixtures/dashboardWidget.json')
 const features = require('./fixtures/features.json')
 const { errorCodes } = require('./fixtures/errorCodes.js')
-const { rowsAsObject, seedStaticData } = require('../utils')
 const {
   addMilliseconds,
   addMinutes,
@@ -57,35 +71,6 @@ async function seed(knex) {
     return
   }
 
-  await seedStaticData(knex)
-  const [
-    partnerTypes,
-    deviceTypeCategories,
-    deviceStatuses,
-    resultSources,
-    assayTypes,
-    resultTypes,
-    resultCategories,
-    units,
-    resultWorkflowStatuses,
-    sampleTypes,
-    messageSeverities,
-    issueCategories,
-  ] = await Promise.all([
-    rowsAsObject(knex, 'PartnerType', 'name'),
-    rowsAsObject(knex, 'DeviceTypeCategory', 'name'),
-    rowsAsObject(knex, 'DeviceStatus', 'token'),
-    rowsAsObject(knex, 'ResultSource', 'externalId'),
-    rowsAsObject(knex, 'AssayType', 'name'),
-    rowsAsObject(knex, 'ResultType', 'externalId'),
-    rowsAsObject(knex, 'ResultCategory', 'externalId'),
-    rowsAsObject(knex, 'Unit', 'name'),
-    rowsAsObject(knex, 'ResultWorkflowStatus', 'externalId'),
-    rowsAsObject(knex, 'SampleType', 'externalId'),
-    rowsAsObject(knex, 'MessageSeverity', 'externalId'),
-    rowsAsObject(knex, 'IssueCategory', 'externalId'),
-  ])
-
   // Create admin user and audit fields
   const [adminId] = await knex('User').insert({
     name: 'admin',
@@ -103,8 +88,10 @@ async function seed(knex) {
   }
 
   // Create partner types
-  const partnerTypeFundingId = partnerTypes.Funding.id
-  const partnerTypeImplementingId = partnerTypes.Implementing.id
+  const {
+    Funding: partnerTypeFundingId,
+    Implementing: partnerTypeImplementingId,
+  } = await allPartnerTypeToId()
 
   // Create partners
   const [partnerOneId] = await knex('Partner').insert({
@@ -124,10 +111,11 @@ async function seed(knex) {
   })
 
   // Categories of devices (lab, connectivity...)
-  const deviceTypeCategoryLab = deviceTypeCategories.Lab.id
-  const deviceTypeCategoryConnectivity = deviceTypeCategories.Router.id
-  const deviceTypeCategoryInformationSystem =
-    deviceTypeCategories['Information System'].id
+  const {
+    Lab: deviceTypeCategoryLab,
+    Router: deviceTypeCategoryConnectivity,
+    'Information System': deviceTypeCategoryInformationSystem,
+  } = await allDeviceTypeCategoryToId()
 
   // define configurationData object
   const geneXpertConfigurationDataSchema = JSON.stringify({
@@ -354,23 +342,29 @@ async function seed(knex) {
   })
 
   // DeviceStatus
-  const deviceStatusAssigned = deviceStatuses.assigned.id
-  const deviceStatusApproved = deviceStatuses.approved.id
+  const {
+    assigned: deviceStatusAssigned,
+    approved: deviceStatusApproved,
+  } = await allDeviceStatusToId()
 
   // Result source
-  const resultSourceDiagnosticId = resultSources.DiagnosticDevice.id
-  const resultSourceLIMSId = resultSources.LIMS.id
+  const {
+    DiagnosticDevice: resultSourceDiagnosticId,
+    LIMS: resultSourceLIMSId,
+  } = await allResultSourceToId()
 
   // Assays and AssayTypes
-  const assayTypeMTBRifId = assayTypes['MTB/Rif'].id
-  const assayTypeEbolaId = assayTypes.Ebola.id
-  const assayTypeHivVlId = assayTypes['HIV VL'].id
-  const assayTypeHivQualId = assayTypes['HIV Qual'].id
-  const assayTypeCD4Id = assayTypes['CD4 Count'].id
-  const assayTypeEid = assayTypes.EID.id
-  const assayTypeHcvId = assayTypes.HCV.id
-  const assayTypeLipidPanelId = assayTypes['Lipid Panel'].id
-  const assayTypeUnknownId = assayTypes.Unknown.id
+  const {
+    'MTB/Rif': assayTypeMTBRifId,
+    Ebola: assayTypeEbolaId,
+    'HIV VL': assayTypeHivVlId,
+    'HIV Qual': assayTypeHivQualId,
+    'CD4 Count': assayTypeCD4Id,
+    EID: assayTypeEid,
+    HCV: assayTypeHcvId,
+    'Lipid Panel': assayTypeLipidPanelId,
+    Unknown: assayTypeUnknownId,
+  } = await allAssayTypeToId()
 
   // define resultData object
   const geneXpertResultDataSchema = JSON.stringify({
@@ -1189,18 +1183,20 @@ async function seed(knex) {
   })
 
   // Result types
-  const resultTypePatientId = resultTypes.Patient.id
+  const resultTypePatientId = await resultTypeToId('Patient')
 
   // result categories
-  const resultCategoryDetectedId = resultCategories.Detected.id
-  const resultCategoryTraceDetectedId = resultCategories['Trace Detected'].id
-  const resultCategoryNotDetectedId = resultCategories.NotDetected.id
-  const resultCategoryIndeterminateId = resultCategories.Indeterminate.id
-  const resultCategoryInvalidId = resultCategories.Invalid.id
-  const resultCategoryNoResultId = resultCategories.NoResult.id
-  const resultCategoryErrorId = resultCategories.Error.id
-  const resultCategoryLessThan1000 = resultCategories.LessThan1000.id
-  const resultCategoryMoreThan1000 = resultCategories.MoreThan1000.id
+  const {
+    Detected: resultCategoryDetectedId,
+    'Trace Detected': resultCategoryTraceDetectedId,
+    NotDetected: resultCategoryNotDetectedId,
+    Indeterminate: resultCategoryIndeterminateId,
+    Invalid: resultCategoryInvalidId,
+    NoResult: resultCategoryNoResultId,
+    Error: resultCategoryErrorId,
+    LessThan1000: resultCategoryLessThan1000,
+    MoreThan1000: resultCategoryMoreThan1000,
+  } = await allResultCategoryToId()
 
   // assign categories to Assays
   // GeneXpert MTB/Rif
@@ -1459,7 +1455,7 @@ async function seed(knex) {
   })
 
   // Units
-  const piece = units.Piece.id
+  const piece = await unitToId('Piece')
 
   // Consumable types
   const [consumableGxTbCartridgeId] = await knex('Consumable').insert({
@@ -1570,11 +1566,13 @@ async function seed(knex) {
   })
 
   // Result Workflow Status
-  const ordered = resultWorkflowStatuses.Ordered.id
-  const processed = resultWorkflowStatuses.Processed.id
-  const validated = resultWorkflowStatuses.Validated.id
-  const deliverable = resultWorkflowStatuses.Deliverable.id
-  const acknowledged = resultWorkflowStatuses.Acknowledged.id
+  const {
+    Ordered: ordered,
+    Processed: processed,
+    Validated: validated,
+    Deliverable: deliverable,
+    Acknowledged: acknowledged,
+  } = await allResultWorkflowStatusToId()
 
   // Create permissions
   const modules = {}
@@ -2037,8 +2035,10 @@ async function seed(knex) {
     })
   )
 
-  const sampleTypeDBSId = sampleTypes.DBS.id
-  const sampleTypePlasmaId = sampleTypes.Plasma.id
+  const {
+    DBS: sampleTypeDBSId,
+    Plasma: sampleTypePlasmaId,
+  } = await allSampleTypeToId()
 
   // some TB samples:
   let samples = []
@@ -3700,109 +3700,105 @@ async function seed(knex) {
     )
   )
 
+  const messageSeverities = await allMessageSeverityToId()
+
   const [deviceOfflineMessageTypeId] = await knex('MessageType').insert({
-    messageSeverityId: messageSeverities.Alert.id,
+    messageSeverityId: messageSeverities.Alert,
     alertTemplateId: deviceOfflineAlertTemplateId,
     smsTemplateId: deviceOfflineSmsTemplateId,
     emailTemplateId: deviceOfflineEmailTemplateId,
   })
 
   const [deviceNoResultsMessageTypeId] = await knex('MessageType').insert({
-    messageSeverityId: messageSeverities.Alert.id,
+    messageSeverityId: messageSeverities.Alert,
     alertTemplateId: deviceNoResultsAlertTemplateId,
     smsTemplateId: deviceNoResultsSmsTemplateId,
     emailTemplateId: deviceNoResultsEmailTemplateId,
   })
 
   const [deviceMaintenanceMessageTypeId] = await knex('MessageType').insert({
-    messageSeverityId: messageSeverities.Recommendation.id,
+    messageSeverityId: messageSeverities.Recommendation,
     alertTemplateId: deviceMaintenanceAlertTemplateId,
     smsTemplateId: deviceMaintenanceSmsTemplateId,
     emailTemplateId: deviceMaintenanceEmailTemplateId,
   })
 
   const [moduleFailureErrorTypeId] = await knex('MessageType').insert({
-    messageSeverityId: messageSeverities.Alert.id,
+    messageSeverityId: messageSeverities.Alert,
     alertTemplateId: moduleFailureErrorAlertTemplateId,
     smsTemplateId: moduleFailureErrorSmsTemplateId,
     emailTemplateId: moduleFailureErrorEmailTemplateId,
   })
 
   const [moduleTemperatureErrorTypeId] = await knex('MessageType').insert({
-    messageSeverityId: messageSeverities.Alert.id,
+    messageSeverityId: messageSeverities.Alert,
     alertTemplateId: moduleTemperatureErrorAlertTemplateId,
     smsTemplateId: moduleTemperatureErrorSmsTemplateId,
     emailTemplateId: moduleTemperatureErrorEmailTemplateId,
   })
 
   const [modulePowerErrorTypeId] = await knex('MessageType').insert({
-    messageSeverityId: messageSeverities.Alert.id,
+    messageSeverityId: messageSeverities.Alert,
     alertTemplateId: modulePowerErrorAlertTemplateId,
     smsTemplateId: modulePowerErrorSmsTemplateId,
     emailTemplateId: modulePowerErrorEmailTemplateId,
   })
 
   const [machineTemperatureErrorTypeId] = await knex('MessageType').insert({
-    messageSeverityId: messageSeverities.Alert.id,
+    messageSeverityId: messageSeverities.Alert,
     alertTemplateId: machineTemperatureErrorAlertTemplateId,
     smsTemplateId: machineTemperatureErrorSmsTemplateId,
     emailTemplateId: machineTemperatureErrorEmailTemplateId,
   })
 
   const [machinePowerErrorTypeId] = await knex('MessageType').insert({
-    messageSeverityId: messageSeverities.Alert.id,
+    messageSeverityId: messageSeverities.Alert,
     alertTemplateId: machinePowerErrorAlertTemplateId,
     smsTemplateId: machinePowerErrorSmsTemplateId,
     emailTemplateId: machinePowerErrorEmailTemplateId,
   })
 
   const [moduleProceduralErrorTypeId] = await knex('MessageType').insert({
-    messageSeverityId: messageSeverities.Alert.id,
+    messageSeverityId: messageSeverities.Alert,
     alertTemplateId: moduleProceduralErrorAlertTemplateId,
     smsTemplateId: moduleProceduralErrorSmsTemplateId,
     emailTemplateId: moduleProceduralErrorEmailTemplateId,
   })
 
   const [machineProceduralErrorTypeId] = await knex('MessageType').insert({
-    messageSeverityId: messageSeverities.Alert.id,
+    messageSeverityId: messageSeverities.Alert,
     alertTemplateId: machineProceduralErrorAlertTemplateId,
     smsTemplateId: machineProceduralErrorSmsTemplateId,
     emailTemplateId: machineProceduralErrorEmailTemplateId,
   })
 
   const [dataCategoryLowTypeId] = await knex('MessageType').insert({
-    messageSeverityId: messageSeverities.Alert.id,
+    messageSeverityId: messageSeverities.Alert,
     alertTemplateId: dataCategoryLowAlertTemplateId,
     smsTemplateId: dataCategoryLowSmsTemplateId,
     emailTemplateId: dataCategoryLowEmailTemplateId,
   })
 
   const [stockLevelUpdateTypeId] = await knex('MessageType').insert({
-    messageSeverityId: messageSeverities.Recommendation.id,
+    messageSeverityId: messageSeverities.Recommendation,
     alertTemplateId: stockLevelUpdateAlertTemplateId,
     smsTemplateId: stockLevelUpdateSmsTemplateId,
     emailTemplateId: stockLevelUpdateEmailTemplateId,
   })
 
   const [reagentHealthTypeId] = await knex('MessageType').insert({
-    messageSeverityId: messageSeverities.Alert.id,
+    messageSeverityId: messageSeverities.Alert,
     alertTemplateId: reagentHealthAlertTemplateId,
     smsTemplateId: reagentHealthSmsTemplateId,
     emailTemplateId: reagentHealthEmailTemplateId,
   })
 
   // Issues
-  const { id: issueStatusSeverityIdLow } = await knex('IssueStatusSeverity')
-    .where('externalId', 'Low')
-    .first()
-
-  const { id: issueStatusSeverityIdMedium } = await knex('IssueStatusSeverity')
-    .where('externalId', 'Medium')
-    .first()
-
-  const { id: issueStatusSeverityIdHigh } = await knex('IssueStatusSeverity')
-    .where('externalId', 'High')
-    .first()
+  const {
+    Low: issueStatusSeverityIdLow,
+    Medium: issueStatusSeverityIdMedium,
+    High: issueStatusSeverityIdHigh,
+  } = await allIssueStatusSeverityToId()
 
   await knex('IssueStatus').insert([
     {
@@ -3863,96 +3859,97 @@ async function seed(knex) {
     },
   ])
 
+  const issueCategories = await allIssueCategoryToId()
   await knex('IssueType').insert([
     {
       name: 'Device Offline',
       externalId: 'DeviceOffline',
       i18nKey: 'issueStatusDeviceOffline',
-      issueCategoryId: issueCategories.ConnectivityHealth.id,
+      issueCategoryId: issueCategories.ConnectivityHealth,
       defaultMessageTypeId: deviceOfflineMessageTypeId,
     },
     {
       name: 'Device No Results',
       externalId: 'DeviceNoResults',
       i18nKey: 'issueStatusDeviceNoResults',
-      issueCategoryId: issueCategories.ConnectivityHealth.id,
+      issueCategoryId: issueCategories.ConnectivityHealth,
       defaultMessageTypeId: deviceNoResultsMessageTypeId,
     },
     {
       name: 'Device Maintenance',
       externalId: 'DeviceMaintenance',
       i18nKey: 'issueTypeDeviceMaintenance',
-      issueCategoryId: issueCategories.DeviceHealth.id,
+      issueCategoryId: issueCategories.DeviceHealth,
       defaultMessageTypeId: deviceMaintenanceMessageTypeId,
     },
     {
       name: 'Module Failure Error',
       externalId: 'ModuleFailureError',
       i18nKey: 'issueStatusModuleFailureError',
-      issueCategoryId: issueCategories.DeviceHealth.id,
+      issueCategoryId: issueCategories.DeviceHealth,
       defaultMessageTypeId: moduleFailureErrorTypeId,
     },
     {
       name: 'Module Temperature Error',
       externalId: 'ModuleTemperatureError',
       i18nKey: 'issueStatusModuleTemperatureError',
-      issueCategoryId: issueCategories.DeviceHealth.id,
+      issueCategoryId: issueCategories.DeviceHealth,
       defaultMessageTypeId: moduleTemperatureErrorTypeId,
     },
     {
       name: 'Module Power Error',
       externalId: 'ModulePowerError',
       i18nKey: 'issueStatusModulePowerError',
-      issueCategoryId: issueCategories.DeviceHealth.id,
+      issueCategoryId: issueCategories.DeviceHealth,
       defaultMessageTypeId: modulePowerErrorTypeId,
     },
     {
       name: 'Machine Temperature Error',
       externalId: 'MachineTemperatureError',
       i18nKey: 'issueStatusMachineTemperatureError',
-      issueCategoryId: issueCategories.DeviceHealth.id,
+      issueCategoryId: issueCategories.DeviceHealth,
       defaultMessageTypeId: machineTemperatureErrorTypeId,
     },
     {
       name: 'Machine Power Error',
       externalId: 'MachinePowerError',
       i18nKey: 'issueStatusMachinePowerError',
-      issueCategoryId: issueCategories.DeviceHealth.id,
+      issueCategoryId: issueCategories.DeviceHealth,
       defaultMessageTypeId: machinePowerErrorTypeId,
     },
     {
       name: 'Module Procedural Error',
       externalId: 'ModuleProceduralError',
       i18nKey: 'issueStatusModuleProceduralError',
-      issueCategoryId: issueCategories.DeviceHealth.id,
+      issueCategoryId: issueCategories.DeviceHealth,
       defaultMessageTypeId: moduleProceduralErrorTypeId,
     },
     {
       name: 'Machine Procedural Error',
       externalId: 'MachineProceduralError',
       i18nKey: 'issueStatusMachineProceduralError',
-      issueCategoryId: issueCategories.DeviceHealth.id,
+      issueCategoryId: issueCategories.DeviceHealth,
       defaultMessageTypeId: machineProceduralErrorTypeId,
     },
     {
       name: 'Data Category Low Error',
       externalId: 'DataCategoryLowError',
       i18nKey: 'issueStatusMachineProceduralError',
-      issueCategoryId: issueCategories.DataHealth.id,
+      issueCategoryId: issueCategories.DataHealth,
       defaultMessageTypeId: dataCategoryLowTypeId,
     },
     {
       name: 'Stock Level Update',
       externalId: 'StockLevelUpdate',
       i18nKey: 'stockLevelUpdateIssue',
-      issueCategoryId: issueCategories.ReagentHealth.id,
+      issueCategoryId: issueCategories.ReagentHealth,
       defaultMessageTypeId: stockLevelUpdateTypeId,
     },
     {
       name: 'Reagent Health Error',
       externalId: 'ReagentHealthError',
       i18nKey: 'reagentHealthError',
-      issueCategoryId: issueCategories.ReagentHealth.id,
+      issueCategoryId: issueCategories.ReagentHealth,
       defaultMessageTypeId: reagentHealthTypeId,
     },
   ])

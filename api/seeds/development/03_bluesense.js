@@ -1,9 +1,15 @@
-module.exports = require('../../src/db').seed(seed)
+module.exports = require('../utils').seed(seed)
 
 const config = require('../../src/config')
 const bcrypt = require('bcrypt')
 const _ = require('lodash')
-const { rowsAsObject, getPermissionModules } = require('../utils')
+const { getPermissionModules } = require('../utils')
+const {
+  allAssayTypeToId,
+  partnerTypeToId,
+  deviceTypeCategoryToId,
+  resultSourceToId,
+} = require('../../src/shared/dictionary')
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 
@@ -15,18 +21,6 @@ async function seed(knex) {
   if (existingAdminUser) {
     return
   }
-
-  const [
-    partnerTypes,
-    deviceTypeCategories,
-    resultSources,
-    assayTypes,
-  ] = await Promise.all([
-    rowsAsObject(knex, 'PartnerType', 'name'),
-    rowsAsObject(knex, 'DeviceTypeCategory', 'name'),
-    rowsAsObject(knex, 'ResultSource', 'externalId'),
-    rowsAsObject(knex, 'AssayType', 'name'),
-  ])
 
   // Create admin user and audit fields
   const now = new Date()
@@ -48,7 +42,7 @@ async function seed(knex) {
   // Reuse previously seeded "static" data
   const [partnerId] = await knex('Partner').insert({
     name: 'BluSense',
-    partnerTypeId: partnerTypes.Operating.id,
+    partnerTypeId: await partnerTypeToId('Operating'),
     deviceLogHistoryDays: 365,
     maxDaysDeviceOffline: 7,
     maxDaysDeviceNoResults: 14,
@@ -59,16 +53,22 @@ async function seed(knex) {
     externalId: 'BluSenseBluBox',
     name: 'BluBox',
     manufacturer: 'BluSense',
-    deviceTypeCategoryId: deviceTypeCategories.Lab.id,
+    deviceTypeCategoryId: await deviceTypeCategoryToId('Lab'),
   })
+
+  const {
+    Dengue: assayTypeDengueId,
+    Zika: assayTypeZikaId,
+  } = await allAssayTypeToId()
+  const resultSourceDiagnosticId = await resultSourceToId('DiagnosticDevice')
 
   await knex('Assay').insert({
     name: 'BluSense Dengue',
     i18nKey: 'assayBlusenseDengue',
     externalId: 'Dengue',
-    assayTypeId: assayTypes.Dengue.id,
+    assayTypeId: assayTypeDengueId,
     deviceTypeId,
-    resultSourceId: resultSources.DiagnosticDevice.id,
+    resultSourceId: resultSourceDiagnosticId,
     resultCategory1Label: 'Status',
     resultDataSchema: JSON.stringify({
       resultText: {
@@ -99,9 +99,9 @@ async function seed(knex) {
     name: 'BluSense Zika',
     i18nKey: 'assayBlusenseZika',
     externalId: 'Zika',
-    assayTypeId: assayTypes.Zika.id,
+    assayTypeId: assayTypeZikaId,
     deviceTypeId,
-    resultSourceId: resultSources.DiagnosticDevice.id,
+    resultSourceId: resultSourceDiagnosticId,
     resultCategory1Label: 'Status',
     resultDataSchema: JSON.stringify({
       resultText: {

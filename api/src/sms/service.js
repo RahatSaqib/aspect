@@ -1,5 +1,8 @@
 const { smsMessageReadyForSending, smsMessageSent } = require('./actions')
-const { messageStatusToId } = require('../shared/dictionary')
+const {
+  allMessageStatusToId,
+  messageStatusToId,
+} = require('../shared/dictionary')
 const {
   addDataSourceToQuery,
   processUsingDataSourceQuery,
@@ -71,8 +74,11 @@ async function doSendSmsMessage(context, knex, smsMessageId) {
   const { sendSms } = require('./smsUtil')
 
   // assume status is 'Sent'
-  let messageStatusId = await messageStatusToId('Sent')
-  const messageStatusIdError = await messageStatusToId('Error')
+  const {
+    Sent: messageStatusIdSent,
+    Error: messageStatusIdError,
+  } = await allMessageStatusToId()
+  let messageStatusId = messageStatusIdSent
 
   // send sms
   await sendSms(cell, message).catch(() => {
