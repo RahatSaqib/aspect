@@ -21,7 +21,6 @@ async function postProcessMergeResult(context, result, previousResult) {
     now
   )
 
-  // TODO cache DevicType idToKey
   const deviceTypeExternalId = (await knex('Device as d')
     .where('d.id', deviceId)
     .join('DeviceType as dt', 'd.deviceTypeid', 'dt.id')
@@ -96,7 +95,6 @@ async function checkResultDeliverable(context, result) {
   // Now's a good time to see if the result is in the
   // status "Validated" and can be promoted to "Deliverable" base on patient data
   if (patientData && patientDataIsComplete(JSON.parse(patientData))) {
-    // TODO cache idToKey ResultWorkflowStatus
     const resultWorkflowExternalId = (await knex('Result as r')
       .where('r.id', resultId)
       .join('ResultWorkflowStatus as rw', 'r.resultWorkflowStatusId', 'rw.id')

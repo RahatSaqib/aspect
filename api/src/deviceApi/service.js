@@ -2,7 +2,7 @@ const Boom = require('boom')
 const _ = require('lodash')
 const { knex, transact, run } = require('../db')
 const { asyncHandler } = require('../routes')
-const { deviceStatusToId } = require('../shared/dictionary')
+const { deviceStatusToId, deviceTypeToPlugin } = require('../shared/dictionary')
 
 const {
   resultUpdated,
@@ -694,15 +694,11 @@ function createNewDeviceFromRequest(request, now) {
         ),
       }
     }
-    // TODO cache DeviceType keyToRow
-    const deviceTypePlugin = await knex('DeviceType as dt')
-      .where({ 'dt.externalId': _.get(request, 'payload.type.id') })
-      .first('dt.plugin')
+    const deviceTypePlugin = await deviceTypeToPlugin(
+      _.get(request, 'payload.type.id')
+    )
     const apiKey = _.assign({}, partnerApiKey, {
-      plugins: [
-        _.get(partnerApiKey, 'plugin'),
-        _.get(deviceTypePlugin, 'plugin'),
-      ],
+      plugins: [_.get(partnerApiKey, 'plugin'), deviceTypePlugin],
     })
 
     // Require Device Type when creating device

@@ -31,7 +31,6 @@ async function updateResultWorkflowStatusOnGetResult(
   offset,
   now = new Date()
 ) {
-  // TODO cache idToKey ResultWorkflowStatus
   const row = await knex('Result as r')
     .leftJoin('ResultWorkflowStatus as rs', 'r.resultWorkflowStatusId', 'rs.id')
     .where('r.id', resultId)

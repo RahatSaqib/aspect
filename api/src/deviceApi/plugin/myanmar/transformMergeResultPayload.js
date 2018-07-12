@@ -1,13 +1,13 @@
 const _ = require('lodash')
 const Promise = require('bluebird')
-const { sampleTypeToId } = require('../../../shared/dictionary')
+const {
+  sampleTypeToId,
+  deviceTypeToPlugin,
+} = require('../../../shared/dictionary')
 
 async function transformMergeResultPayload(context) {
   const { knex, deviceType } = context
-  // TODO cache DeviceType keyToRow
-  const { plugin } = await knex('DeviceType')
-    .where('externalId', deviceType)
-    .first('plugin')
+  const plugin = await deviceTypeToPlugin(deviceType)
   const { loadPlugin } = require('../registration')
   const deviceTypeTransformMergeResultPayload = await loadPlugin(
     [plugin],

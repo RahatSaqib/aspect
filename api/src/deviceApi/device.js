@@ -143,7 +143,6 @@ async function createNewDevice(
     lastPingOn,
   }
 ) {
-  // TODO cache deviceTypeToRow
   const deviceType = await knex('DeviceType')
     .where({ externalId: deviceTypeExternalId })
     .first('id', 'name', 'plugin')
