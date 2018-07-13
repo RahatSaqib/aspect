@@ -2,6 +2,7 @@ module.exports = require('../../src/db').seed(seed)
 
 const { getDefaultMessageTypes } = require('../utils')
 const { rowsAsObject } = require('../utils')
+const { seedUnknownErrorsIssue } = require('../seedUnknownErrorsIssue')
 
 async function seed(knex) {
   const [issueTypes, defaultMessageTypes] = await Promise.all([
@@ -178,4 +179,6 @@ async function seed(knex) {
   await knex('NotificationType')
     .update('level', 1)
     .where('name', 'RO Reagent Health')
+
+  await seedUnknownErrorsIssue(knex, 'Myanmar', 'myanmar_admin')
 }

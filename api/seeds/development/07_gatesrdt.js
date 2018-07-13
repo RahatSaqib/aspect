@@ -5,6 +5,10 @@ const config = require('../../src/config')
 const bcrypt = require('bcrypt')
 const { randomToken } = require('../../src/deviceApi/apiKey')
 const { rowsAsObject, getPermissionModules } = require('../utils')
+const {
+  seedUnknownErrorsIssue,
+  seedSampleDataForUnknownErrorsIssue,
+} = require('../seedUnknownErrorsIssue')
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 
@@ -187,4 +191,9 @@ async function seed(knex) {
       auditFields
     )
   )
+
+  // create all types/templates
+  await seedUnknownErrorsIssue(knex, 'Myanmar', 'myanmar_admin')
+  // generate sample results for testing
+  await seedSampleDataForUnknownErrorsIssue(knex, 'Myanmar', 'myanmar_admin')
 }

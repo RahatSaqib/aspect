@@ -9,6 +9,8 @@ const {
   resultMachineProceduralError,
   resultModuleProceduralError,
   resultMachinePowerError,
+  resultModuleUnknownError,
+  resultMachineUnknownError,
 } = require('../../../result/actions')
 const {
   selectAssayConsumables,
@@ -120,6 +122,9 @@ const invalidResultBatchRatio = 2
 const maxReagentErrorRatio = 3
 const maxInvalidReagentErrorRatio = 4
 
+const moduleMaxUnknownErrors = 8
+const machineMaxUnknownErrors = 8
+
 // check for error codes when a result is logged
 async function onResultLogged({ resultId }, { messageContext }) {
   const context = messageContext.bindActionCreators({
@@ -131,6 +136,8 @@ async function onResultLogged({ resultId }, { messageContext }) {
     resultModuleProceduralError,
     resultMachinePowerError,
     inventoryReagentHealth,
+    resultModuleUnknownError,
+    resultMachineUnknownError,
   })
   await context.run(async knex => {
     const [result] = await knex('Result as r').where('r.id', resultId)
@@ -138,13 +145,16 @@ async function onResultLogged({ resultId }, { messageContext }) {
     const last30day = subDays(new Date(), 30)
     let reagentErrorRatio = 0
     let invalidReagentErrorRatio = 0
+
+    // prepare query for device results
+    const deviceErrorQuery = knex('Result as r')
+      .innerJoin('ResultCategory as rc', 'r.resultCategory1', 'rc.id')
+      .where('rc.externalId', 'Error')
+      .where('r.deviceId', deviceId)
+
     if (result.errorCode) {
       const moduleErrorSerials = []
       let machineIssueTriggured = false
-      const deviceErrorQuery = knex('Result as r')
-        .innerJoin('ResultCategory as rc', 'r.resultCategory1', 'rc.id')
-        .where('rc.externalId', 'Error')
-        .where('r.deviceId', deviceId)
       if (MODULE_TEMPERATURE_ERROR_CODES.includes(result.errorCode)) {
         const moduleTemperatureSerials = []
         const modules = await deviceErrorQuery
@@ -308,7 +318,54 @@ async function onResultLogged({ resultId }, { messageContext }) {
           })()
         )
       }
+    } else {
+      // -----------
+      // here we know that errorCode is not specified, so
+      // next - check if result is actual Error
+      // -----------
+      // read result category
+      const resultCategory = await knex('ResultCategory as rc')
+        .where({ id: result.resultCategory1 })
+        .first('id', 'externalId')
+
+      // result is actual Error
+      if (resultCategory.externalId === 'Error') {
+        // check how many such cases occured during last 30 days for each module
+        const modules = await deviceErrorQuery
+          .clone()
+          .where('r.endedOn', '>=', last30day)
+          .whereNull('r.errorCode')
+          .where('r.resultCategory1', resultCategory.id)
+          .select(
+            'r.moduleSerial as moduleSerial',
+            knex.raw(
+              'coalesce(min(r.moduleName), r.moduleSerial) as moduleName'
+            )
+          )
+          .count('r.id as errorCount')
+          .groupBy('r.moduleSerial')
+        await Promise.all(
+          _.map(modules, module => {
+            // trigger 'UnknownError' issue for this module if greater than threshold
+            if (module.errorCount > moduleMaxUnknownErrors) {
+              context.resultModuleUnknownError(deviceId, module)
+            }
+          })
+        )
+        // ... and for device itself
+        const [{ errorCount }] = await deviceErrorQuery
+          .clone()
+          .where('r.endedOn', '>=', last30day)
+          .whereNull('r.errorCode')
+          .where('r.resultCategory1q', resultCategory.id)
+          .count('r.id as errorCount')
+        // trigger 'UnknownError' issue for device if greater than threshold
+        if (errorCount > machineMaxUnknownErrors) {
+          context.resultMachineUnknownError(deviceId)
+        }
+      }
     }
+
     // Check for machine power issue triggered by noResult
     const [{ noResultCount }] = await knex('Result as r')
       .innerJoin('ResultCategory as rc', 'r.resultCategory1', 'rc.id')

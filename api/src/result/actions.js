@@ -9,6 +9,8 @@ const types = {
   RESULT_MODULE_PROCEDURAL_ERROR: 'RESULT_MODULE_PROCEDURAL_ERROR',
   RESULT_MACHINE_PROCEDURAL_ERROR: 'RESULT_MACHINE_PROCEDURAL_ERROR',
   RESULT_MACHINE_POWER_ERROR: 'RESULT_MACHINE_POWER_ERROR',
+  RESULT_MODULE_UNKNOWN_ERROR: 'RESULT_MODULE_UNKNOWN_ERROR',
+  RESULT_MACHINE_UNKNOWN_ERROR: 'RESULT_MACHINE_UNKNOWN_ERROR',
 }
 
 // ----------- Action Creators -------------------
@@ -188,6 +190,44 @@ function resultMachineProceduralError(deviceId) {
   }
 }
 
+/**
+ * Creates an action to notify the device with given id
+ * has a module issue with unknown error
+ *
+ * deviceId is required.
+ * options:
+ *   moduleName
+ *   moduleSerial
+ */
+function resultModuleUnknownError(deviceId, options) {
+  if (deviceId == null) {
+    throw new Error('Must specify deviceId for notify resultModuleUnknownError')
+  }
+  return {
+    type: types.RESULT_MODULE_UNKBOWN_ERROR,
+    deviceId,
+    options,
+  }
+}
+
+/**
+ * Creates an action to notify the device with given id
+ * has issue(s) with unknown error code
+ *
+ * deviceId is required.
+ */
+function resultMachineUnknownError(deviceId) {
+  if (deviceId == null) {
+    throw new Error(
+      'Must specify deviceId for notify resultMachineProceduralError'
+    )
+  }
+  return {
+    type: types.RESULT_MACHINE_UNKNOWN_ERROR,
+    deviceId,
+  }
+}
+
 module.exports = {
   types,
   resultUpdated,
@@ -199,4 +239,6 @@ module.exports = {
   resultMachineProceduralError,
   resultModuleProceduralError,
   resultMachinePowerError,
+  resultModuleUnknownError,
+  resultMachineUnknownError,
 }
