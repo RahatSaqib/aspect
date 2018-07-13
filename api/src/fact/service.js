@@ -1,4 +1,4 @@
-const { addDays, subDays } = require('date-fns')
+const { addDays, subDays, startOfDay } = require('date-fns')
 const _ = require('lodash')
 const {
   inventoryStockout,
@@ -261,7 +261,7 @@ function onFactGenerateResultCountsForDevice(
 
     for (const days of daysToCalculate) {
       /* eslint-disable no-await-in-loop */
-      const endedOn = subDays(now, days)
+      const endedOn = startOfDay(subDays(now, days))
 
       // query for selecting data for the device
       const query = knex('Result as r').whereRaw(
@@ -510,9 +510,9 @@ async function auditInventoryStockout({
             IFNULL(
               expiresOn,
               DATE_ADD(NOW(), INTERVAL ? DAY)
-            ), 
+            ),
             NOW()
-          ) 
+          )
           AS SIGNED INTEGER
         ) AS expiresInDays`,
         [dueDays + 1]
