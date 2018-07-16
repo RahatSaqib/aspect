@@ -17,7 +17,6 @@ const {
   showFileReferences,
   downloadFile,
   downloadFirstImage,
-  onResultLogged,
   checkDataCategoriesForLowStatus,
 } = require('./service')
 const {
@@ -295,7 +294,6 @@ const routes = [
 const subscriptions = [
   {
     actions: {
-      RESULT_LOGGED: onResultLogged,
       RESULT_DATA_CATEGORY_LOW_CHECK: checkDataCategoriesForLowStatus,
     },
   },
