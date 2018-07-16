@@ -62,6 +62,7 @@ const SELECT_SHOW_FIELDS = [
   'rs.name as resultWorkflowStatus',
   'rs.externalId as resultWorkflowStatusExternalId',
   'r.resultData',
+  'r.formData',
   'r.siteId',
   'si.name as siteName',
   'r.assayVersion',
