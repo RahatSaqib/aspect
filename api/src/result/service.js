@@ -2,7 +2,6 @@ const Boom = require('boom')
 const _ = require('lodash')
 const dateFormat = require('date-fns/format')
 
-const subDays = require('date-fns/sub_days')
 const startOfMonth = require('date-fns/start_of_month')
 const endOfMonth = require('date-fns/end_of_month')
 const subMonths = require('date-fns/sub_months')
@@ -27,6 +26,7 @@ const {
 } = require('../shared/io')
 const { oneDirectionalMd5Hash } = require('../shared/encryption')
 const { getPathFromFileReferenceId } = require('../file/service')
+const { resultDataCategoryLow } = require('../result/actions')
 
 const SELECT_LIST_FIELDS = [
   'r.id',
