@@ -3,6 +3,7 @@ const chai = require('chai')
 const { run } = require('../../src/db')
 const { getConstraints, addConstraints } = require('../../src/auth/constraints')
 const { randomToken } = require('../../src/deviceApi/apiKey')
+const { getResult } = require('../../src/deviceApi/result')
 const { queuePurge } = require('../utils/mqUtils')
 
 const { assert } = chai
@@ -169,11 +170,10 @@ async function getDeviceConfigurationData(knex, deviceId) {
 }
 
 async function getDeviceFromApiKey(knex, apiKey) {
-  const device = await knex('Device as d')
+  return knex('Device as d')
     .innerJoin('DeviceApiKey as dak', 'd.id', 'dak.deviceId')
     .where('dak.token', apiKey.token)
     .first('d.*')
-  return device
 }
 
 async function getSiteFromDeviceId(knex, deviceId) {
@@ -217,6 +217,11 @@ async function getLastResultId(knex, deviceId) {
     .orderBy('dl.id', 'desc')
     .first('dl.resultId')
   return result && result.resultId
+}
+
+async function getLastResult(knex, deviceId) {
+  const resultId = await getLastResultId(knex, deviceId)
+  return getResult(knex, resultId)
 }
 
 function createTestContext(server, auth) {
@@ -419,4 +424,5 @@ module.exports = {
   getLastDeviceOperationData,
   getLastDeviceOperationId,
   getLastResultId,
+  getLastResult,
 }

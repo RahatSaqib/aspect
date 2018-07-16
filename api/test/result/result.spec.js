@@ -3,10 +3,18 @@ const chai = require('chai')
 const _ = require('lodash')
 
 const shared = require('../utils/sharedToken')
+const { run } = require('../../src/db')
 const { runTestWithKnex } = require('../utils/generatorFunctionUtils')
 
 const server = supertest.agent('http://localhost:8080')
 const { assert } = chai
+
+const { getCommCarePayload } = require('../deviceApi/commcare/commcare_utils')
+const {
+  createTestContext,
+  getDeviceFromApiKey,
+  getLastResult,
+} = require('../deviceApi/utils')
 
 describe('Result routes', () => {
   const path = '/api/result'
