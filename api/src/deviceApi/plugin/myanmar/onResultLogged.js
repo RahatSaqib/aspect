@@ -268,7 +268,7 @@ async function onResultLogged({ resultId }, { messageContext }) {
         if (
           allModulesErr &&
           // LU Generic Machine: Minimum of 8 errors
-          allModulesTotalErrors > minErrorsForLUGenericMachineIssue
+          allModulesTotalErrors >= minErrorsForLUGenericMachineIssue
         ) {
           // Trigger machine procedural issue
           context.resultMachineProceduralError(deviceId)
@@ -283,7 +283,7 @@ async function onResultLogged({ resultId }, { messageContext }) {
             if (
               prcntModuleError > maxPrcntErrors &&
               // LU Generic Module: Minimum of 6 errors
-              module.errorCount > minErrorsForLUGenericModuleIssue
+              module.errorCount >= minErrorsForLUGenericModuleIssue
             ) {
               context.resultModuleProceduralError(deviceId, module)
             }
