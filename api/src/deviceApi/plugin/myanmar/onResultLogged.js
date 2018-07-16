@@ -330,12 +330,12 @@ async function onResultLogged({ resultId }, { messageContext }) {
 
       // result is actual Error
       if (resultCategory.externalId === 'Error') {
-        // check how many such cases occured during last 30 days for each module
+        let machineErrorCount = 0
+        // check how many such cases occured during last 30 days for each module...
         const modules = await deviceErrorQuery
           .clone()
           .where('r.endedOn', '>=', last30day)
           .whereNull('r.errorCode')
-          .where('r.resultCategory1', resultCategory.id)
           .select(
             'r.moduleSerial as moduleSerial',
             knex.raw(
@@ -350,17 +350,12 @@ async function onResultLogged({ resultId }, { messageContext }) {
             if (module.errorCount > moduleMaxUnknownErrors) {
               context.resultModuleUnknownError(deviceId, module)
             }
+            machineErrorCount += module.errorCount
           })
         )
-        // ... and for device itself
-        const [{ errorCount }] = await deviceErrorQuery
-          .clone()
-          .where('r.endedOn', '>=', last30day)
-          .whereNull('r.errorCode')
-          .where('r.resultCategory1q', resultCategory.id)
-          .count('r.id as errorCount')
+
         // trigger 'UnknownError' issue for device if greater than threshold
-        if (errorCount > machineMaxUnknownErrors) {
+        if (machineErrorCount > machineMaxUnknownErrors) {
           context.resultMachineUnknownError(deviceId)
         }
       }

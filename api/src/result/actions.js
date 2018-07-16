@@ -204,7 +204,7 @@ function resultModuleUnknownError(deviceId, options) {
     throw new Error('Must specify deviceId for notify resultModuleUnknownError')
   }
   return {
-    type: types.RESULT_MODULE_UNKBOWN_ERROR,
+    type: types.RESULT_MODULE_UNKNOWN_ERROR,
     deviceId,
     options,
   }
