@@ -54,6 +54,7 @@ const plugins = {
   },
   myanmar: {
     transformMergeResultPayload: require('./myanmar/transformMergeResultPayload'),
+    onResultLogged: require('./myanmar/onResultLogged'),
   },
 }
 

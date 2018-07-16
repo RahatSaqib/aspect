@@ -4,9 +4,9 @@ const chai = require('chai')
 const subDays = require('date-fns/sub_days')
 const addHours = require('date-fns/add_hours')
 const setMilliseconds = require('date-fns/set_milliseconds')
-const { createGxAlertTestContext } = require('./gxalert_utils')
-const { postToDeviceApi } = require('./utils')
-const { basicResultPayload } = require('./geneXpertConstants')
+const { createGxAlertTestContext } = require('../geneXpert/gxalert_utils')
+const { postToDeviceApi } = require('../geneXpert/utils')
+const { basicResultPayload } = require('../geneXpert/geneXpertConstants')
 const { run } = require('../../../src/db')
 
 const server = supertest.agent('http://localhost:8080')
@@ -23,7 +23,7 @@ const {
 const { inventoryReagentHealth } = require('../../../src/inventory/actions')
 const { waitForIdle, waitForAction } = require('../../utils/mqUtils')
 
-describe('Issue endpoints', () => {
+describe('Myanmar Issue endpoints', () => {
   function createContext() {
     return createGxAlertTestContext(server)
   }
@@ -41,7 +41,10 @@ describe('Issue endpoints', () => {
   let { deviceAuth } = context
   beforeEach(async () =>
     run(async () => {
-      await beforeCreateGxAlertApiKey()
+      await beforeCreateGxAlertApiKey({
+        countryAbbreviation: 'MM',
+        partnerName: 'Myanmar',
+      })
       useGxAlertDeviceId(gxAlertDeviceId)
       ;({ deviceAuth } = context)
     })
@@ -715,7 +718,10 @@ describe('Issue endpoints', () => {
   describe('should create a machine power issue when ', () => {
     beforeEach(async () =>
       run(async () => {
-        await beforeCreateGxAlertApiKey()
+        await beforeCreateGxAlertApiKey({
+          countryAbbreviation: 'MM',
+          partnerName: 'Myanmar',
+        })
         useGxAlertDeviceId(gxAlertDeviceId)
         ;({ deviceAuth } = context)
       })
