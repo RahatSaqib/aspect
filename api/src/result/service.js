@@ -393,16 +393,22 @@ async function getResultByResultId(request, fields = SELECT_SHOW_FIELDS) {
   // if selecting the result was successful
   if (results.length === 1) {
     ;[data] = results
-    data.resultData = JSON.parse(data.resultData)
-    data.patientData = JSON.parse(data.patientData)
-
-    data.assay = await knex('Assay as a')
-      .where('a.id', data.assayId)
-      .first()
-
-    data.assay.resultDataSchema = JSON.parse(data.assay.resultDataSchema)
-    data.assay.patientDataSchema = JSON.parse(data.assay.patientDataSchema)
-
+    if (data.resultData) {
+      data.resultData = JSON.parse(data.resultData)
+    }
+    if (data.formData) {
+      data.formData = JSON.parse(data.formData)
+    }
+    if (data.patientData) {
+      data.patientData = JSON.parse(data.patientData)
+    }
+    if (data.assayId) {
+      data.assay = await knex('Assay as a')
+        .where('a.id', data.assayId)
+        .first()
+      data.assay.resultDataSchema = JSON.parse(data.assay.resultDataSchema)
+      data.assay.patientDataSchema = JSON.parse(data.assay.patientDataSchema)
+    }
     // select files attached to this result
     const { data: files } = await showFileReferences(request)
     data.files = files
@@ -623,96 +629,101 @@ async function updateFormData(request) {
   const now = new Date()
   const { resultId } = params
 
-  const result = await getResultByResultId(request)
+  const result = await getResultByResultId(request, [
+    'r.assayId',
+    'r.partnerId',
+    'r.formData',
+  ])
   if (!result.ok) {
     return Boom.notFound()
   }
   const existingFormData = _.get(result, 'formData', {})
   const mergedFormData = _.merge({}, existingFormData, payload)
-  if (_.isEqual(existingFormData, mergedFormData)) {
-    return result
-  }
+  if (!_.isEqual(existingFormData, mergedFormData)) {
+    const resultForm = await knex('ResultForm')
+      .where({
+        partnerId: result.data.partnerId,
+        assayId: result.data.assayId,
+      })
+      .first('formSchema')
 
-  const assayFormSchema = await knex('ResultForm')
-    .where({
-      partnerId: result.partnerId,
-      assayId: result.assayId,
-    })
-    .first('formSchema')
-
-  if (_.isEmpty(assayFormSchema)) {
-    return Boom.badRequest(
-      'This result cannot accept form data because no form schema is defined.'
-    )
-  }
-  const formSchema = JSON.parse(assayFormSchema)
-  const unrecognisedFields = _.difference(
-    Object.keys(payload),
-    Object.keys(formSchema)
-  )
-  if (!_.isEmpty(unrecognisedFields)) {
-    return Boom.badRequest(
-      `This result cannot accept the following fields in it's form data: [${unrecognisedFields.join()}] because they are not defined in the forms schema.`
-    )
-  }
-  const fieldValidationErrors = []
-  _.each(Object.keys(payload), formFieldKey => {
-    const formFieldValue = _.get(payload, formFieldKey)
-    const formFieldSchema = _.get(formSchema, formFieldKey)
-    if (!_.isNil(formFieldValue)) {
-      const allowMultipleSelection = _.get(
-        formFieldSchema,
-        'control.allowMultipleSelection',
-        true
+    if (!resultForm || _.isEmpty(resultForm.formSchema)) {
+      return Boom.badRequest(
+        'This result cannot accept form data because no form schema is defined.'
       )
-      const formFieldOptions = _.get(formFieldSchema, 'control.options')
-      if (formFieldOptions) {
-        const allowedValues = _.map(formFieldOptions, 'value')
-        if (_.isArray(formFieldValue)) {
-          if (!allowMultipleSelection && formFieldValue.length > 1) {
+    }
+    const formSchema = JSON.parse(resultForm.formSchema)
+    const unrecognisedFields = _.difference(
+      Object.keys(payload),
+      Object.keys(formSchema)
+    )
+    if (!_.isEmpty(unrecognisedFields)) {
+      const undefinedFieldMessage =
+        unrecognisedFields.length > 1
+          ? `This result cannot accept the following fields in it's form data: [${unrecognisedFields.join()}] because they are not defined in the forms schema.`
+          : `This result cannot accept the following field in it's form data: ${
+              unrecognisedFields[0]
+            } because it is not defined in the forms schema.`
+      return Boom.badRequest(undefinedFieldMessage)
+    }
+    const fieldValidationErrors = []
+    _.each(Object.keys(payload), formFieldKey => {
+      const formFieldValue = _.get(payload, formFieldKey)
+      const formFieldSchema = _.get(formSchema, formFieldKey)
+      if (!_.isNil(formFieldValue)) {
+        const allowMultipleSelection = _.get(
+          formFieldSchema,
+          'control.allowMultipleSelection',
+          true
+        )
+        const formFieldOptions = _.get(formFieldSchema, 'control.options')
+        if (formFieldOptions) {
+          const allowedValues = _.map(formFieldOptions, 'value')
+          if (_.isArray(formFieldValue)) {
+            if (!allowMultipleSelection && formFieldValue.length > 1) {
+              fieldValidationErrors.push(
+                `[${formFieldValue.join()}] is invalid for ${formFieldKey} because the field does not allow multiple values.`
+              )
+            }
+            const illegalValuesEntered = _.difference(
+              formFieldValue,
+              allowedValues
+            )
+            if (!_.isEmpty(illegalValuesEntered)) {
+              const validationMessage =
+                illegalValuesEntered.length === 1
+                  ? `${
+                      illegalValuesEntered[0]
+                    } is invalid for ${formFieldKey} because it is not present in the options configured for the field.`
+                  : `[${illegalValuesEntered.join()}] are invalid for ${formFieldKey} because they are not present in the options configured for the field.`
+              fieldValidationErrors.push(validationMessage)
+            }
+          } else if (!allowedValues.includes(formFieldValue)) {
             fieldValidationErrors.push(
-              `[${formFieldValue.join()}] is invalid for ${formFieldKey} because the field does not allow multiple values.`
+              `${formFieldValue} is invalid for ${formFieldKey} because it is not present in the options configured for the field.`
             )
           }
-          const illegalValuesEntered = _.difference(
-            formFieldValue,
-            allowedValues
-          )
-          if (!_.isEmpty(illegalValuesEntered)) {
-            const validationMessage =
-              illegalValuesEntered.length === 1
-                ? `${
-                    illegalValuesEntered[0]
-                  } is invalid for ${formFieldKey} because it is not present in the options configured for the field.`
-                : `[${illegalValuesEntered.join()}] are invalid for ${formFieldKey} because they are not present in the options configured for the field.`
-            fieldValidationErrors.push(validationMessage)
-          }
-        } else if (!allowedValues.includes(formFieldValue)) {
-          fieldValidationErrors.push(
-            `${formFieldValue} is invalid for ${formFieldKey} because it is not present in the options configured for the field.`
-          )
         }
       }
+    })
+    if (!_.isEmpty(fieldValidationErrors)) {
+      return Boom.badRequest(fieldValidationErrors.join('\n'))
     }
-  })
-  if (!_.isEmpty(fieldValidationErrors)) {
-    return Boom.badRequest(fieldValidationErrors.join('\n'))
+    messageContext.bindActionCreators({
+      resultUpdated,
+    })
+    const { id: currentUserId } = await getUser(auth.credentials.name)
+    await messageContext.transact(async knex => {
+      await knex('Result')
+        .where('id', resultId)
+        .update({
+          formData: JSON.stringify(mergedFormData),
+          updatedBy: currentUserId,
+          updatedOn: now,
+        })
+      messageContext.resultUpdated(resultId)
+    })
   }
-  messageContext.bindActionCreators({
-    resultUpdated,
-  })
-  const { id: currentUserId } = await getUser(auth.credentials.name)
-  await messageContext.transact(async knex => {
-    await knex('Result')
-      .where('id', resultId)
-      .update({
-        formData: JSON.stringify(mergedFormData),
-        updatedBy: currentUserId,
-        updatedOn: now,
-      })
-    messageContext.resultUpdated(resultId)
-  })
-
   const response = await showResult(request)
   return response
 }

@@ -253,8 +253,8 @@ const routes = [
     path: '/result/form-data/{resultId}',
     handler: asyncHandler(updateFormData),
     config: {
-      description: 'Update QC Check Flag',
-      notes: 'Update the QC Check flag of a result',
+      description: 'Update form data for the result',
+      notes: 'Update form data for the result',
       auth: { scope: ['result:edit'] },
       validate: {
         params: {

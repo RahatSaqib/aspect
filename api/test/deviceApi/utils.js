@@ -425,4 +425,5 @@ module.exports = {
   getLastDeviceOperationId,
   getLastResultId,
   getLastResult,
+  deleteDeviceAndTestData,
 }

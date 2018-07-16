@@ -161,38 +161,59 @@ describe('result/service', () => {
       )
     })
 
-    it('should return a 400 response when form data is submitted with fields that are not defined in the form schema', () => {
+    it('should return a 400 response when form data is submitted with fields that are not defined in the form schema', async () => {
       const resultService = resultServiceWithFakes({
         getResultByResultId: basicResult({
           formData: null,
         }),
         assay: basicAssay(),
-        assayForm: JSON.stringify({
-          definedField: {
-            order: 10,
-            control: {
-              type: 'ButtonGroup',
-              options: [
-                {
-                  order: 10,
-                  value: 'Yes',
-                  i18nText: 'yes',
-                },
-                {
-                  order: 20,
-                  value: 'No',
-                  i18nText: 'no',
-                },
-              ],
+        assayForm: {
+          formSchema: JSON.stringify({
+            definedField: {
+              order: 10,
+              control: {
+                type: 'ButtonGroup',
+                options: [
+                  {
+                    order: 10,
+                    value: 'Yes',
+                    i18nText: 'yes',
+                  },
+                  {
+                    order: 20,
+                    value: 'No',
+                    i18nText: 'no',
+                  },
+                ],
+              },
+              i18nLabel: 'defineFieldLabel',
             },
-            i18nLabel: 'defineFieldLabel',
-          },
-        }),
+          }),
+        },
       })
-      const requestWithResultFormData = _.merge(
+      let requestWithResultFormData = _.merge(
         {},
         basicRequest({
           payload: { someUndefinedField: 'A value for the field' },
+        })
+      )
+      await runTest(resultService.updateFormData, [requestWithResultFormData])(
+        response => {
+          assert.equal(response.output.statusCode, 400)
+          assert.equal(
+            response.output.payload.message,
+            "This result cannot accept the following field in it's form data: someUndefinedField because it is not defined in the forms schema."
+          )
+        }
+      )
+
+      requestWithResultFormData = _.merge(
+        {},
+        basicRequest({
+          payload: {
+            someUndefinedField: 'A value for the field',
+            anotherUndefinedField: 'A value for the field',
+          },
         })
       )
       return runTest(resultService.updateFormData, [requestWithResultFormData])(
@@ -200,7 +221,7 @@ describe('result/service', () => {
           assert.equal(response.output.statusCode, 400)
           assert.equal(
             response.output.payload.message,
-            "This result cannot accept the following fields in it's form data: [someUndefinedField] because they are not defined in the forms schema."
+            "This result cannot accept the following fields in it's form data: [someUndefinedField,anotherUndefinedField] because they are not defined in the forms schema."
           )
         }
       )
@@ -212,22 +233,24 @@ describe('result/service', () => {
           formData: null,
         }),
         assay: basicAssay(),
-        assayForm: JSON.stringify({
-          customField1: {
-            order: 10,
-            control: {
-              type: 'TextBox',
+        assayForm: {
+          formSchema: JSON.stringify({
+            customField1: {
+              order: 10,
+              control: {
+                type: 'TextBox',
+              },
+              i18nLabel: 'fieldLabel1',
             },
-            i18nLabel: 'fieldLabel1',
-          },
-          customField2: {
-            order: 10,
-            control: {
-              type: 'CheckBox',
+            customField2: {
+              order: 10,
+              control: {
+                type: 'CheckBox',
+              },
+              i18nLabel: 'fieldLabel2',
             },
-            i18nLabel: 'fieldLabel2',
-          },
-        }),
+          }),
+        },
       })
       const requestWithResultFormData = _.merge(
         {},
@@ -254,22 +277,24 @@ describe('result/service', () => {
           formData: null,
         }),
         assay: basicAssay(),
-        assayForm: JSON.stringify({
-          customField1: {
-            order: 10,
-            control: {
-              type: 'TextBox',
+        assayForm: {
+          formSchema: JSON.stringify({
+            customField1: {
+              order: 10,
+              control: {
+                type: 'TextBox',
+              },
+              i18nLabel: 'fieldLabel1',
             },
-            i18nLabel: 'fieldLabel1',
-          },
-          customField2: {
-            order: 10,
-            control: {
-              type: 'CheckBox',
+            customField2: {
+              order: 10,
+              control: {
+                type: 'CheckBox',
+              },
+              i18nLabel: 'fieldLabel2',
             },
-            i18nLabel: 'fieldLabel2',
-          },
-        }),
+          }),
+        },
       })
       const requestWithResultFormData = _.merge(
         {},
@@ -295,28 +320,30 @@ describe('result/service', () => {
         const resultService = resultServiceWithFakes({
           getResultByResultId: basicResult(),
           assay: basicAssay(),
-          assayForm: JSON.stringify({
-            singleSelectionField: {
-              order: 10,
-              control: {
-                type: 'ButtonGroup',
-                options: [
-                  {
-                    order: 10,
-                    value: 'Yes',
-                    i18nText: 'yes',
-                  },
-                  {
-                    order: 20,
-                    value: 'No',
-                    i18nText: 'no',
-                  },
-                ],
-                allowMultipleSelection: false,
+          assayForm: {
+            formSchema: JSON.stringify({
+              singleSelectionField: {
+                order: 10,
+                control: {
+                  type: 'ButtonGroup',
+                  options: [
+                    {
+                      order: 10,
+                      value: 'Yes',
+                      i18nText: 'yes',
+                    },
+                    {
+                      order: 20,
+                      value: 'No',
+                      i18nText: 'no',
+                    },
+                  ],
+                  allowMultipleSelection: false,
+                },
+                i18nLabel: 'singleSelectionFieldLabel',
               },
-              i18nLabel: 'singleSelectionFieldLabel',
-            },
-          }),
+            }),
+          },
         })
         const requestWithResultFormData = _.merge(
           {},
@@ -341,27 +368,29 @@ describe('result/service', () => {
         const resultService = resultServiceWithFakes({
           getResultByResultId: basicResult(),
           assay: basicAssay(),
-          assayForm: JSON.stringify({
-            singleSelectionField: {
-              order: 10,
-              control: {
-                type: 'ButtonGroup',
-                options: [
-                  {
-                    order: 10,
-                    value: 'Yes',
-                    i18nText: 'yes',
-                  },
-                  {
-                    order: 20,
-                    value: 'No',
-                    i18nText: 'no',
-                  },
-                ],
+          assayForm: {
+            formSchema: JSON.stringify({
+              singleSelectionField: {
+                order: 10,
+                control: {
+                  type: 'ButtonGroup',
+                  options: [
+                    {
+                      order: 10,
+                      value: 'Yes',
+                      i18nText: 'yes',
+                    },
+                    {
+                      order: 20,
+                      value: 'No',
+                      i18nText: 'no',
+                    },
+                  ],
+                },
+                i18nLabel: 'singleSelectionFieldLabel',
               },
-              i18nLabel: 'singleSelectionFieldLabel',
-            },
-          }),
+            }),
+          },
         })
         const requestWithResultFormDataValuesInArray = _.merge(
           {},
@@ -420,32 +449,34 @@ describe('result/service', () => {
         const resultService = resultServiceWithFakes({
           getResultByResultId: basicResult(),
           assay: basicAssay(),
-          assayForm: JSON.stringify({
-            singleSelectionField: {
-              order: 10,
-              control: {
-                type: 'ButtonGroup',
-                options: [
-                  {
-                    order: 10,
-                    value: 'Yes',
-                    i18nText: 'yes',
-                  },
-                  {
-                    order: 20,
-                    value: 'No',
-                    i18nText: 'no',
-                  },
-                  {
-                    order: 30,
-                    value: '',
-                    i18nText: 'unknown',
-                  },
-                ],
+          assayForm: {
+            formSchema: JSON.stringify({
+              singleSelectionField: {
+                order: 10,
+                control: {
+                  type: 'ButtonGroup',
+                  options: [
+                    {
+                      order: 10,
+                      value: 'Yes',
+                      i18nText: 'yes',
+                    },
+                    {
+                      order: 20,
+                      value: 'No',
+                      i18nText: 'no',
+                    },
+                    {
+                      order: 30,
+                      value: '',
+                      i18nText: 'unknown',
+                    },
+                  ],
+                },
+                i18nLabel: 'singleSelectionFieldLabel',
               },
-              i18nLabel: 'singleSelectionFieldLabel',
-            },
-          }),
+            }),
+          },
         })
         const requestWithBlankResultFormData = _.merge(
           {},
