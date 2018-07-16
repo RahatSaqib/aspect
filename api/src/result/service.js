@@ -618,6 +618,105 @@ async function updateQcCheck(request) {
   return response
 }
 
+async function updateFormData(request) {
+  const { auth, params, payload, plugins: { messageContext } } = request
+  const now = new Date()
+  const { resultId } = params
+
+  const result = await getResultByResultId(request)
+  if (!result.ok) {
+    return Boom.notFound()
+  }
+  const existingFormData = _.get(result, 'formData', {})
+  const mergedFormData = _.merge({}, existingFormData, payload)
+  if (_.isEqual(existingFormData, mergedFormData)) {
+    return result
+  }
+
+  const assayFormSchema = await knex('ResultForm')
+    .where({
+      partnerId: result.partnerId,
+      assayId: result.assayId,
+    })
+    .first('formSchema')
+
+  if (_.isEmpty(assayFormSchema)) {
+    return Boom.badRequest(
+      'This result cannot accept form data because no form schema is defined.'
+    )
+  }
+  const formSchema = JSON.parse(assayFormSchema)
+  const unrecognisedFields = _.difference(
+    Object.keys(payload),
+    Object.keys(formSchema)
+  )
+  if (!_.isEmpty(unrecognisedFields)) {
+    return Boom.badRequest(
+      `This result cannot accept the following fields in it's form data: [${unrecognisedFields.join()}] because they are not defined in the forms schema.`
+    )
+  }
+  const fieldValidationErrors = []
+  _.each(Object.keys(payload), formFieldKey => {
+    const formFieldValue = _.get(payload, formFieldKey)
+    const formFieldSchema = _.get(formSchema, formFieldKey)
+    if (!_.isNil(formFieldValue)) {
+      const allowMultipleSelection = _.get(
+        formFieldSchema,
+        'control.allowMultipleSelection',
+        true
+      )
+      const formFieldOptions = _.get(formFieldSchema, 'control.options')
+      if (formFieldOptions) {
+        const allowedValues = _.map(formFieldOptions, 'value')
+        if (_.isArray(formFieldValue)) {
+          if (!allowMultipleSelection && formFieldValue.length > 1) {
+            fieldValidationErrors.push(
+              `[${formFieldValue.join()}] is invalid for ${formFieldKey} because the field does not allow multiple values.`
+            )
+          }
+          const illegalValuesEntered = _.difference(
+            formFieldValue,
+            allowedValues
+          )
+          if (!_.isEmpty(illegalValuesEntered)) {
+            const validationMessage =
+              illegalValuesEntered.length === 1
+                ? `${
+                    illegalValuesEntered[0]
+                  } is invalid for ${formFieldKey} because it is not present in the options configured for the field.`
+                : `[${illegalValuesEntered.join()}] are invalid for ${formFieldKey} because they are not present in the options configured for the field.`
+            fieldValidationErrors.push(validationMessage)
+          }
+        } else if (!allowedValues.includes(formFieldValue)) {
+          fieldValidationErrors.push(
+            `${formFieldValue} is invalid for ${formFieldKey} because it is not present in the options configured for the field.`
+          )
+        }
+      }
+    }
+  })
+  if (!_.isEmpty(fieldValidationErrors)) {
+    return Boom.badRequest(fieldValidationErrors.join('\n'))
+  }
+  messageContext.bindActionCreators({
+    resultUpdated,
+  })
+  const { id: currentUserId } = await getUser(auth.credentials.name)
+  await messageContext.transact(async knex => {
+    await knex('Result')
+      .where('id', resultId)
+      .update({
+        formData: JSON.stringify(mergedFormData),
+        updatedBy: currentUserId,
+        updatedOn: now,
+      })
+    messageContext.resultUpdated(resultId)
+  })
+
+  const response = await showResult(request)
+  return response
+}
+
 async function listWorkflowStatusTypes() {
   const resultQuery = knex('ResultWorkflowStatus as rs')
 
@@ -719,6 +818,7 @@ module.exports = {
   listResultTypes,
   updateWorkflowStatus,
   updateQcCheck,
+  updateFormData,
   listWorkflowStatusTypes,
   listWorkflowStatusLog,
   exportResults,
