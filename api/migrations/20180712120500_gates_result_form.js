@@ -2,7 +2,6 @@ module.exports = require('../src/db').migration(up, down)
 
 async function up(knex) {
   await knex.schema.createTable('ResultForm', resultForm => {
-    resultForm.increments('id')
     resultForm
       .integer('partnerId')
       .unsigned()
@@ -16,6 +15,7 @@ async function up(knex) {
       .references('id')
       .inTable('Assay')
     resultForm.specificType('formSchema', 'JSON')
+    resultForm.primary(['partnerId', 'assayId'])
     resultForm.charset('utf8')
   })
 
