@@ -393,7 +393,6 @@ export class ResultDetail extends PureComponent {
 
   renderContent() {
     const { result, screenSchema, resultTags, editable, intl } = this.props
-
     return (
       <div>
         <DetailPanel

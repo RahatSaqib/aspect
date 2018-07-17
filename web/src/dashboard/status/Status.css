@@ -1,4 +1,4 @@
-@import "../../globals/variables.css";
+@import '../../globals/variables.css';
 
 .Container {
   padding: 0 10px;
@@ -63,7 +63,7 @@
 }
 
 .Summary__Card__Title--sub:before {
-  content: "\00a0";
+  content: '\00a0';
 }
 
 .Summary__Card__Content {
@@ -123,7 +123,7 @@
 
 .TitleContainer::after {
   display: block;
-  content: "D";
+  content: 'D';
   visibility: hidden;
 }
 
@@ -363,7 +363,7 @@
 }
 
 .ActionDataTable {
-  composes: ComponentDataTable from "../../components/shared/DataTable.css";
+  composes: ComponentDataTable from '../../components/shared/DataTable.css';
 }
 
 .ActionDataTable__TableHead {
@@ -416,7 +416,7 @@
 }
 
 @media screen and (--sm-viewport) {
-  .ReportsContainer__Button  {
+  .ReportsContainer__Button {
     margin: 0 20px;
   }
 }
