@@ -351,7 +351,7 @@ export class ResultDetail extends PureComponent {
             const fieldType = fieldSchema.getIn(['control', 'type'])
             const fieldLabel =
               fieldKeys.length > 1
-                ? formatMessage(fieldSchema.get('i18nLabel'))
+                ? formatMessage(messages[fieldSchema.get('i18nLabel')])
                 : ''
             const fieldValue = formData.get(formFieldKey) || null
             if (fieldType === 'ButtonGroup') {
