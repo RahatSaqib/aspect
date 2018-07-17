@@ -122,7 +122,8 @@ const invalidResultBatchRatio = 2
 const maxReagentErrorRatio = 3
 const maxInvalidReagentErrorRatio = 4
 
-const moduleMaxUnknownErrors = 8
+const minPrcntModuleUnknownErrors = 5
+const moduleMaxUnknownErrors = 6
 const machineMaxUnknownErrors = 8
 
 // check for error codes when a result is logged
@@ -330,12 +331,12 @@ async function onResultLogged({ resultId }, { messageContext }) {
 
       // result is actual Error
       if (resultCategory.externalId === 'Error') {
-        let machineErrorCount = 0
+        const totalResults = {}
         // check how many such cases occured during last 30 days for each module...
         const modules = await deviceErrorQuery
           .clone()
           .where('r.endedOn', '>=', last30day)
-          .whereNull('r.errorCode')
+          .whereNull('r.errorCode') // must be null
           .select(
             'r.moduleSerial as moduleSerial',
             knex.raw(
@@ -344,19 +345,43 @@ async function onResultLogged({ resultId }, { messageContext }) {
           )
           .count('r.id as errorCount')
           .groupBy('r.moduleSerial')
+        // Check for machine issue first
+        let allModulesErr = true
+        let allModulesTotalErrors = 0
         await Promise.all(
-          _.map(modules, module => {
-            // trigger 'UnknownError' issue for this module if greater than threshold
-            if (module.errorCount > moduleMaxUnknownErrors) {
-              context.resultModuleUnknownError(deviceId, module)
-            }
-            machineErrorCount += module.errorCount
+          _.map(modules, async module => {
+            const [{ moduleResultCount }] = await knex('Result as r')
+              .where('r.endedOn', '>=', last30day)
+              .where('r.moduleSerial', module.moduleSerial)
+              .count('r.id as moduleResultCount')
+            const prcntModuleError = module.errorCount / moduleResultCount * 100
+            allModulesErr =
+              allModulesErr && prcntModuleError > minPrcntModuleUnknownErrors
+            totalResults[module.moduleSerial] = moduleResultCount
+            allModulesTotalErrors += module.errorCount
           })
         )
 
-        // trigger 'UnknownError' issue for device if greater than threshold
-        if (machineErrorCount > machineMaxUnknownErrors) {
+        if (
+          allModulesErr &&
+          // LU Machine Unknown Error: Minimum of 8 errors
+          allModulesTotalErrors >= machineMaxUnknownErrors
+        ) {
+          // Trigger machine UnknownError issue
           context.resultMachineUnknownError(deviceId)
+        } else {
+          // Check for module issue
+          _.map(modules, async module => {
+            const moduleResultCount = totalResults[module.moduleSerial]
+            const prcntModuleError = module.errorCount / moduleResultCount * 100
+            if (
+              prcntModuleError > maxPrcntErrors &&
+              // LU Module Unknown Error: Minimum of 6 errors
+              module.errorCount >= moduleMaxUnknownErrors
+            ) {
+              context.resultModuleUnknownError(deviceId, module)
+            }
+          })
         }
       }
     }
