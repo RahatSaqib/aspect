@@ -49,7 +49,6 @@ async function seed(knex) {
             },
           ],
         },
-        order: 10,
       },
     }),
   })

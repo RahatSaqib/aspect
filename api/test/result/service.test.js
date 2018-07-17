@@ -170,12 +170,10 @@ describe('result/service', () => {
         assayForm: {
           formSchema: JSON.stringify({
             definedField: {
-              order: 10,
               control: {
                 type: 'ButtonGroup',
                 options: [
                   {
-                    order: 10,
                     value: 'Yes',
                     i18nText: 'yes',
                   },
@@ -236,14 +234,12 @@ describe('result/service', () => {
         assayForm: {
           formSchema: JSON.stringify({
             customField1: {
-              order: 10,
               control: {
                 type: 'TextBox',
               },
               i18nLabel: 'fieldLabel1',
             },
             customField2: {
-              order: 10,
               control: {
                 type: 'CheckBox',
               },
@@ -280,14 +276,12 @@ describe('result/service', () => {
         assayForm: {
           formSchema: JSON.stringify({
             customField1: {
-              order: 10,
               control: {
                 type: 'TextBox',
               },
               i18nLabel: 'fieldLabel1',
             },
             customField2: {
-              order: 10,
               control: {
                 type: 'CheckBox',
               },
@@ -323,7 +317,6 @@ describe('result/service', () => {
           assayForm: {
             formSchema: JSON.stringify({
               singleSelectionField: {
-                order: 10,
                 control: {
                   type: 'ButtonGroup',
                   options: [
@@ -371,7 +364,6 @@ describe('result/service', () => {
           assayForm: {
             formSchema: JSON.stringify({
               singleSelectionField: {
-                order: 10,
                 control: {
                   type: 'ButtonGroup',
                   options: [
@@ -452,7 +444,6 @@ describe('result/service', () => {
           assayForm: {
             formSchema: JSON.stringify({
               singleSelectionField: {
-                order: 10,
                 control: {
                   type: 'ButtonGroup',
                   options: [

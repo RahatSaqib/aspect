@@ -90,6 +90,7 @@ const SELECT_SHOW_FIELDS = [
   knex.raw('JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id")) as patientId'),
   'r.patientData',
   'r.qcCheck',
+  'rf.formSchema',
 ]
 
 const SORT_FIELDS = [
@@ -383,6 +384,9 @@ async function getResultByResultId(request, fields = SELECT_SHOW_FIELDS) {
     .leftJoin('SampleType as stp', 'sp.sampleTypeId', 'stp.id')
     .leftJoin('Site as so', 'sp.originSiteId', 'so.id')
     .leftJoin('ResultWorkflowStatus as rs', 'r.resultWorkflowStatusId', 'rs.id')
+    .leftJoin('ResultForm as rf', function() {
+      this.on('r.assayId', 'rf.assayId').andOn('r.partnerId', 'rf.partnerId')
+    })
     .where('r.id', +params.resultId)
     .modify(addConstraints, dataConstraints, { device: 'd' })
     .select(fields)
@@ -395,6 +399,9 @@ async function getResultByResultId(request, fields = SELECT_SHOW_FIELDS) {
     ;[data] = results
     if (data.resultData) {
       data.resultData = JSON.parse(data.resultData)
+    }
+    if (data.formSchema) {
+      data.formSchema = JSON.parse(data.formSchema)
     }
     if (data.formData) {
       data.formData = JSON.parse(data.formData)
