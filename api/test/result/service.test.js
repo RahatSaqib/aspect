@@ -178,7 +178,6 @@ describe('result/service', () => {
                     i18nText: 'yes',
                   },
                   {
-                    order: 20,
                     value: 'No',
                     i18nText: 'no',
                   },
@@ -321,12 +320,10 @@ describe('result/service', () => {
                   type: 'ButtonGroup',
                   options: [
                     {
-                      order: 10,
                       value: 'Yes',
                       i18nText: 'yes',
                     },
                     {
-                      order: 20,
                       value: 'No',
                       i18nText: 'no',
                     },
@@ -368,12 +365,10 @@ describe('result/service', () => {
                   type: 'ButtonGroup',
                   options: [
                     {
-                      order: 10,
                       value: 'Yes',
                       i18nText: 'yes',
                     },
                     {
-                      order: 20,
                       value: 'No',
                       i18nText: 'no',
                     },
@@ -448,17 +443,14 @@ describe('result/service', () => {
                   type: 'ButtonGroup',
                   options: [
                     {
-                      order: 10,
                       value: 'Yes',
                       i18nText: 'yes',
                     },
                     {
-                      order: 20,
                       value: 'No',
                       i18nText: 'no',
                     },
                     {
-                      order: 30,
                       value: '',
                       i18nText: 'unknown',
                     },

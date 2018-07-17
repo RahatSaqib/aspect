@@ -30,22 +30,18 @@ async function seed(knex) {
             {
               i18nText: 'none',
               value: null,
-              order: 10,
             },
             {
               i18nText: 'negative',
               value: 'negative',
-              order: 20,
             },
             {
               i18nText: 'positive',
               value: 'positive',
-              order: 30,
             },
             {
               i18nText: 'uninterpretable',
               value: 'uninterpretable',
-              order: 40,
             },
           ],
         },
