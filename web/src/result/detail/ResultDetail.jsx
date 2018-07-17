@@ -216,11 +216,12 @@ export class ResultDetail extends PureComponent {
   }
 
   handleFetchResult = () => {
-    this.props.fetchSingleResult(this.props.match.params.resultId)
+    const { match: { params: { resultId } } } = this.props
+    this.props.fetchSingleResult(resultId)
 
-    this.props.fetchResultLog(this.props.match.params.resultId)
+    this.props.fetchResultLog(resultId)
 
-    this.props.fetchTags(this.props.match.params.resultId, 'result')
+    this.props.fetchTags(resultId, 'result')
   }
 
   hasResultWithAssay() {
@@ -263,13 +264,6 @@ export class ResultDetail extends PureComponent {
     let { imageIndex } = this.state
     imageIndex += (!isFirst && dir === -1) || (!isLast && dir === 1) ? dir : 0
     this.setState({ imageIndex })
-  }
-
-  changeFormValue(formFieldKey, value) {
-    const { result, updateResultFormData } = this.props
-    return () => {
-      updateResultFormData(result.get('id'), formFieldKey, value)
-    }
   }
 
   renderProgress() {
@@ -332,49 +326,8 @@ export class ResultDetail extends PureComponent {
     )
   }
 
-  renderFormDataControl(formFieldKey, fieldSchema, fieldValue, renderLabel) {
-    const { intl: { formatMessage } } = this.props
-    const fieldType = fieldSchema.getIn(['control', 'type'])
-    const fieldLabel = renderLabel
-      ? formatMessage(fieldSchema.get('i18nLabel'))
-      : ''
-    if (fieldValue === undefined) {
-      fieldValue = null
-    }
-    if (fieldType === 'ButtonGroup') {
-      if (fieldSchema.getIn(['control', 'allowMultipleSelection'])) {
-        // TODO: Implement multi-select button group
-        return false
-      }
-      return (
-        <FormGroup label={fieldLabel}>
-          <ButtonGroup isolated>
-            {fieldSchema
-              .getIn(['control', 'options'])
-              .map(option => (
-                <Button
-                  key={option.get('value') || 'null'}
-                  primary
-                  raised
-                  inverse={option.get('value') !== fieldValue}
-                  label={formatMessage(messages[option.get('i18nText')])}
-                  data-value={option.get('value')}
-                  onClick={this.changeFormValue(
-                    formFieldKey,
-                    option.get('value')
-                  )}
-                />
-              ))}
-          </ButtonGroup>
-        </FormGroup>
-      )
-    }
-    // TODO: Implement other control types here
-    return false
-  }
-
   renderFormData() {
-    const { intl: { formatMessage }, result } = this.props
+    const { intl: { formatMessage }, result, updateResultFormData } = this.props
     if (!result || !result.has('formSchema')) {
       return false
     }
@@ -392,14 +345,51 @@ export class ResultDetail extends PureComponent {
     return (
       <ExpansionPanel className={cssClasses('FieldsContainer')} disabled>
         <ExpansionPanelHeader label={sectionLabel}>
-          {fieldKeys.map(formFieldKey =>
-            this.renderFormDataControl(
-              formFieldKey,
-              result.getIn(['formSchema', formFieldKey]),
-              formData.get(formFieldKey),
+          {fieldKeys.map(formFieldKey => {
+            const { intl: { formatMessage } } = this.props
+            const fieldSchema = result.getIn(['formSchema', formFieldKey])
+            const fieldType = fieldSchema.getIn(['control', 'type'])
+            const fieldLabel =
               fieldKeys.length > 1
-            )
-          )}
+                ? formatMessage(fieldSchema.get('i18nLabel'))
+                : ''
+            const fieldValue = formData.get(formFieldKey) || null
+            if (fieldType === 'ButtonGroup') {
+              if (fieldSchema.getIn(['control', 'allowMultipleSelection'])) {
+                // TODO: Implement multi-select button group
+                return false
+              }
+              return (
+                <FormGroup label={fieldLabel} key={formFieldKey}>
+                  <ButtonGroup isolated>
+                    {fieldSchema
+                      .getIn(['control', 'options'])
+                      .map(option => (
+                        <Button
+                          key={option.get('value') || 'null'}
+                          primary
+                          raised
+                          inverse={option.get('value') !== fieldValue}
+                          label={formatMessage(
+                            messages[option.get('i18nText')]
+                          )}
+                          data-value={option.get('value')}
+                          onClick={() =>
+                            updateResultFormData(
+                              result.get('id'),
+                              formFieldKey,
+                              option.get('value')
+                            )
+                          }
+                        />
+                      ))}
+                  </ButtonGroup>
+                </FormGroup>
+              )
+            }
+            // TODO: Implement other control types here
+            return false
+          })}
         </ExpansionPanelHeader>
       </ExpansionPanel>
     )
@@ -571,8 +561,7 @@ export class ResultDetail extends PureComponent {
   }
 
   render() {
-    const { intl } = this.props
-    const { formatMessage } = intl
+    const { intl: { formatMessage } } = this.props
 
     return (
       <div className={cssClasses('Container')}>
