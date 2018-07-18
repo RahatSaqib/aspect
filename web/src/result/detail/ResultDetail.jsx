@@ -328,7 +328,7 @@ export class ResultDetail extends PureComponent {
 
   renderFormData() {
     const { intl: { formatMessage }, result, updateResultFormData } = this.props
-    if (!result || !result.has('formSchema')) {
+    if (!result || !result.has('formSchema') || !result.get('formSchema')) {
       return false
     }
     const [...fieldKeys] = result.get('formSchema').keys()
