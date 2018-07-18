@@ -19,7 +19,7 @@ const {
   emailMessageReadyForSending,
   emailMessageSent,
 } = require('../../src/email/actions')
-const dictionary = require('../../src/shared/dictionary')
+const { messageStatusToId } = require('../../src/shared/dictionary')
 
 describe('Sending Email via Message Queue', () => {
   const { runTest } = context
@@ -54,7 +54,7 @@ describe('Sending Email via Message Queue', () => {
 
       await waitForIdle()
 
-      const messageStatusIdSent = (await dictionary.messageStatusToId()).Sent
+      const messageStatusIdSent = await messageStatusToId('Sent')
       const msg = await knex('EmailMessage')
         .where('id', messageId)
         .first()

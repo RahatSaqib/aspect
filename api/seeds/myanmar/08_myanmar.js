@@ -1,8 +1,7 @@
-module.exports = require('../../src/db').seed(seed)
+module.exports = require('../utils').seed(seed)
 
-const { getDefaultMessageTypes } = require('../utils')
-const { rowsAsObject } = require('../utils')
 const { seedUnknownErrorsIssue } = require('../seedUnknownErrorsIssue')
+const { getDefaultMessageTypes, rowsAsObject } = require('../utils')
 
 async function seed(knex) {
   const [issueTypes, defaultMessageTypes] = await Promise.all([

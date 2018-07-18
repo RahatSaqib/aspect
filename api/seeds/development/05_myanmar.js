@@ -1,4 +1,4 @@
-module.exports = require('../../src/db').seed(seed)
+module.exports = require('../utils').seed(seed)
 
 const bcrypt = require('bcrypt')
 const _ = require('lodash')
@@ -15,6 +15,15 @@ const {
   seedStockIssues,
   getPermissionModules,
 } = require('../utils')
+const {
+  allResultCategoryToId,
+  deviceStatusToId,
+  partnerTypeToId,
+  resultSourceToId,
+  resultTypeToId,
+  resultWorkflowStatusToId,
+  sampleTypeToId,
+} = require('../../src/shared/dictionary')
 
 const { seedUnknownErrorsIssue } = require('../seedUnknownErrorsIssue')
 
@@ -52,34 +61,20 @@ async function seed(knex) {
 
   // Reuse previously seeded "static" data
   const [
-    partnerTypes,
     deviceTypes,
-    deviceStatuses,
     assays,
-    sampleTypes,
-    resultCategories,
-    resultSources,
-    resultTypes,
-    resultWorkflowStatuses,
     issueTypes,
     defaultMessageTypes,
   ] = await Promise.all([
-    rowsAsObject(knex, 'PartnerType', 'name'),
     rowsAsObject(knex, 'DeviceType', 'externalId'),
-    rowsAsObject(knex, 'DeviceStatus', 'token'),
     rowsAsObject(knex, 'Assay', 'externalId'),
-    rowsAsObject(knex, 'SampleType', 'externalId'),
-    rowsAsObject(knex, 'ResultCategory', 'externalId'),
-    rowsAsObject(knex, 'ResultSource', 'externalId'),
-    rowsAsObject(knex, 'ResultType', 'externalId'),
-    rowsAsObject(knex, 'ResultWorkflowStatus', 'externalId'),
     rowsAsObject(knex, 'IssueType', 'externalId'),
     getDefaultMessageTypes(knex),
   ])
 
   const [partnerId] = await knex('Partner').insert({
     name: 'Myanmar',
-    partnerTypeId: partnerTypes.Operating.id,
+    partnerTypeId: await partnerTypeToId('Operating'),
     plugin: 'myanmar',
     deviceLogHistoryDays: 365,
     autoAcknowledgeOlderThanDays: 28,
@@ -370,45 +365,57 @@ async function seed(knex) {
   )
 
   // every clinic has a site, GxAlert device and MTB/Rif+ and Ultra results
+  const {
+    Detected: resultCategoryDetectedId,
+    NotDetected: resultCategoryNotDetectedId,
+    Indeterminate: resultCategoryIndeterminateId,
+    Invalid: resultCategoryInvalidId,
+    Error: resultCategoryErrorId,
+  } = await allResultCategoryToId()
+
+  const resultWorkflowStatusId = await resultWorkflowStatusToId('Ordered')
+  const resultSourceId = await resultSourceToId('DiagnosticDevice')
+  const resultTypeId = await resultTypeToId('Patient')
+
   const possibleResults = [
     {
       resultText: 'MTB Detected, Rif Resistance Not Detected',
-      category1: resultCategories.Detected.id,
-      category2: resultCategories.NotDetected.id,
+      category1: resultCategoryDetectedId,
+      category2: resultCategoryNotDetectedId,
       minLikelihood: 0,
       maxLikelihood: 20,
     },
     {
       resultText: 'MTB Detected, Rif Resistance Detected',
-      category1: resultCategories.Detected.id,
-      category2: resultCategories.Detected.id,
+      category1: resultCategoryDetectedId,
+      category2: resultCategoryDetectedId,
       minLikelihood: 21,
       maxLikelihood: 26,
     },
     {
       resultText: 'MTB Detected, Rif Indeterminate',
-      category1: resultCategories.Detected.id,
-      category2: resultCategories.Indeterminate.id,
+      category1: resultCategoryDetectedId,
+      category2: resultCategoryIndeterminateId,
       minLikelihood: 27,
       maxLikelihood: 28,
     },
     {
       resultText: 'ERROR',
-      category1: resultCategories.Error.id,
+      category1: resultCategoryErrorId,
       category2: null,
       minLikelihood: 29,
       maxLikelihood: 34,
     },
     {
       resultText: 'Invalid',
-      category1: resultCategories.Invalid.id,
+      category1: resultCategoryInvalidId,
       category2: null,
       minLikelihood: 35,
       maxLikelihood: 38,
     },
     {
       resultText: 'Not Detected',
-      category1: resultCategories.NotDetected.id,
+      category1: resultCategoryNotDetectedId,
       category2: null,
       minLikelihood: 39,
       maxLikelihood: 100,
@@ -483,6 +490,7 @@ async function seed(knex) {
       siteDatas.push(siteData)
 
       // only create results if in managed regions
+      const sampleTypeDBSId = await sampleTypeToId('DBS')
       const samples = []
       await Promise.all(
         _.map(_.range(500), async i => {
@@ -491,7 +499,7 @@ async function seed(knex) {
             {
               externalId: `SMP-TB-${i}`,
               collectedOn: calculateDateForResult(i, 500, millisInMinute),
-              sampleTypeId: sampleTypes.DBS.id,
+              sampleTypeId: sampleTypeDBSId,
               originSiteId: siteData.id,
             }
           )
@@ -508,7 +516,7 @@ async function seed(knex) {
             geographyId: siteGeographyId,
             siteId,
             deviceTypeId: deviceTypes.CepheidGeneXpert.id,
-            deviceStatusId: deviceStatuses.approved.id,
+            deviceStatusId: await deviceStatusToId('approved'),
             name: deviceSeed.name,
             shortName: deviceSeed.shortName,
             macAddress: deviceSeed.macAddress,
@@ -548,11 +556,11 @@ async function seed(knex) {
                   geographyId: siteData.geographyId,
                   siteId: siteData.id,
                   deviceId: device.id,
-                  resultWorkflowStatusId: resultWorkflowStatuses.Ordered.id,
+                  resultWorkflowStatusId,
                   longitude: siteData.latitude,
                   latitude: siteData.longitude,
-                  resultSourceId: resultSources.DiagnosticDevice.id,
-                  resultTypeId: resultTypes.Patient.id,
+                  resultSourceId,
+                  resultTypeId,
                   sampleId: sample.id,
                   sampleRunNumber: `${i % 2 + 1}`,
                   sampleGroup: `GRP-TB-${i % 5}`,
@@ -576,11 +584,11 @@ async function seed(knex) {
                   senderOperator: 'Marsha',
                   notes: 'This is a test... result',
                   errorCode:
-                    result.category1 === resultCategories.Error.id
+                    result.category1 === resultCategoryErrorId
                       ? errorCodes[_.random(errorCodes.length)]
                       : null,
                   errorNotes:
-                    result.category1 === resultCategories.Error.id
+                    result.category1 === resultCategoryErrorId
                       ? 'Exceeded cycle threshold'
                       : null,
                 })

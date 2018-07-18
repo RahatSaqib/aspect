@@ -1,18 +1,15 @@
-module.exports = require('../../src/db').seed(seed)
+module.exports = require('../utils').seed(seed)
 
 const { rowsAsObject } = require('../utils')
+const {
+  issueCategoryToId,
+  messageSeverityToId,
+} = require('../../src/shared/dictionary')
 
 async function seed(knex) {
   // Skip this seed file if we already have an  Issue
-  const [
-    issueTypes,
-    issueCategories,
-    messageSeverities,
-    webhookTemplates,
-  ] = await Promise.all([
+  const [issueTypes, webhookTemplates] = await Promise.all([
     rowsAsObject(knex, 'IssueType', 'externalId'),
-    rowsAsObject(knex, 'IssueCategory', 'externalId'),
-    rowsAsObject(knex, 'MessageSeverity', 'externalId'),
     rowsAsObject(knex, 'WebhookTemplate', 'externalId'),
   ])
   if (issueTypes.ResultReceived) {
@@ -60,26 +57,28 @@ async function seed(knex) {
     )
   )
 
+  const messageSeverityAlertId = await messageSeverityToId('Alert')
   const [resultReceivedMessageTypeId] = await knex('MessageType').insert({
-    messageSeverityId: messageSeverities.Alert.id,
+    messageSeverityId: messageSeverityAlertId,
     webhookTemplateId: webhookTemplates.commcareDownloadImage.id,
   })
 
   const [resultPositiveMessageTypeId] = await knex('MessageType').insert({
-    messageSeverityId: messageSeverities.Alert.id,
+    messageSeverityId: messageSeverityAlertId,
     smsTemplateId: resultPositiveSmsTemplateId,
   })
 
   const [resultNegativeMessageTypeId] = await knex('MessageType').insert({
-    messageSeverityId: messageSeverities.Alert.id,
+    messageSeverityId: messageSeverityAlertId,
     smsTemplateId: resultNegativeSmsTemplateId,
   })
 
+  const issueCategoryDataHealthId = await issueCategoryToId('DataHealth')
   const [issueTypeResultReceivedId] = await knex('IssueType').insert({
     name: 'Result Received',
     externalId: 'ResultReceived',
     i18nKey: 'issueTypeResultReceived',
-    issueCategoryId: issueCategories.DataHealth.id,
+    issueCategoryId: issueCategoryDataHealthId,
     defaultMessageTypeId: resultReceivedMessageTypeId,
   })
 

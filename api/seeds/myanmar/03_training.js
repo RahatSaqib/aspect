@@ -1,4 +1,4 @@
-module.exports = require('../../src/db').seed(seed)
+module.exports = require('../utils').seed(seed)
 const geography = require('./fixtures/geography.json')
 const _ = require('lodash')
 const { rowsAsObject, getDefaultMessageTypes } = require('../utils')

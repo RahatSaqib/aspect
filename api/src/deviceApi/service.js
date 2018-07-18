@@ -2,6 +2,7 @@ const Boom = require('boom')
 const _ = require('lodash')
 const { knex, transact, run } = require('../db')
 const { asyncHandler } = require('../routes')
+const { deviceStatusToId, deviceTypeToPlugin } = require('../shared/dictionary')
 
 const {
   resultUpdated,
@@ -390,21 +391,18 @@ async function updateSiteWithContext(context) {
 
   if (device.siteId !== site.id) {
     const status = device.siteId == null ? 'approved' : 'assigned'
+    const deviceStatusId = await deviceStatusToId(status)
 
     await knex('Device')
       .where({ id: device.id })
       .update({
         siteId: site.id,
-        deviceStatusId: knex('DeviceStatus')
-          .where({ token: status })
-          .select('id'),
+        deviceStatusId,
       })
 
     await knex('DeviceStatusLog').insert({
       deviceId: device.id,
-      deviceStatusId: knex('DeviceStatus')
-        .where({ token: status })
-        .select('id'),
+      deviceStatusId,
       changedOn: now,
       createdOn: now,
       createdBy: null,
@@ -696,14 +694,11 @@ function createNewDeviceFromRequest(request, now) {
         ),
       }
     }
-    const deviceTypePlugin = await knex('DeviceType as dt')
-      .where({ 'dt.externalId': _.get(request, 'payload.type.id') })
-      .first('dt.plugin')
+    const deviceTypePlugin = await deviceTypeToPlugin(
+      _.get(request, 'payload.type.id')
+    )
     const apiKey = _.assign({}, partnerApiKey, {
-      plugins: [
-        _.get(partnerApiKey, 'plugin'),
-        _.get(deviceTypePlugin, 'plugin'),
-      ],
+      plugins: [_.get(partnerApiKey, 'plugin'), deviceTypePlugin],
     })
 
     // Require Device Type when creating device

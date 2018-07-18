@@ -1,0 +1,79 @@
+{
+  "data": [
+    {
+      "name": "Detected",
+      "externalId": "Detected",
+      "i18nKey": "ResultCategoryDetected"
+    },
+    {
+      "name": "Trace Detected",
+      "externalId": "Trace Detected",
+      "i18nKey": "ResultCategoryTraceDetected"
+    },
+    {
+      "name": "Not Detected",
+      "externalId": "NotDetected",
+      "i18nKey": "resultCategoryNotDetected"
+    },
+    {
+      "name": "Indeterminate",
+      "externalId": "Indeterminate",
+      "i18nKey": "resultCategoryIndeterminate"
+    },
+    {
+      "name": "Invalid",
+      "externalId": "Invalid",
+      "i18nKey": "resultCategoryInvalid"
+    },
+    {
+      "name": "No Result",
+      "externalId": "NoResult",
+      "i18nKey": "resultCategoryNoResult"
+    },
+    {
+      "name": "Error",
+      "externalId": "Error",
+      "i18nKey": "resultCategoryError"
+    },
+    {
+      "name": "Success",
+      "externalId": "Success",
+      "i18nKey": "resultCategorySuccess"
+    },
+    {
+      "name": "Collect New Sample",
+      "externalId": "CollectNewSample",
+      "i18nKey": "resultCategoryCollectNewSample"
+    },
+    {
+      "name": "Discordant",
+      "externalId": "Discordant",
+      "i18nKey": "resultCategoryDiscordant"
+    },
+    {
+      "name": "LessThan1000",
+      "externalId": "LessThan1000",
+      "i18nKey": "resultCategoryLessThan1000"
+    },
+    {
+      "name": "MoreThan1000",
+      "externalId": "MoreThan1000",
+      "i18nKey": "resultCategoryMoreThan1000"
+    },
+    {
+      "name": "Rejected",
+      "externalId": "Rejected",
+      "i18nKey": "resultCategoryRejected"
+    },
+    {
+      "name": "Missing",
+      "externalId": "Missing",
+      "i18nKey": "resultCategoryMissing"
+    },
+    {
+      "name": "Unknown",
+      "externalId": "Unknown",
+      "i18nKey": "resultCategoryUnknown"
+    }
+  ]
+}

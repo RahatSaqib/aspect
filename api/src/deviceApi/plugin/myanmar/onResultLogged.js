@@ -16,6 +16,7 @@ const {
   selectAssayConsumables,
 } = require('../../../consumable/assayConsumableService')
 const { inventoryReagentHealth } = require('../../../inventory/actions')
+const { resultCategoryToId } = require('../../../shared/dictionary')
 
 const MODULE_TEMPERATURE_ERROR_CODES = [
   '1001',
@@ -406,10 +407,7 @@ async function onResultLogged({ resultId }, { messageContext }) {
       }
     }
 
-    const { id: resultCategoryInvalidId } = await knex('ResultCategory as rc')
-      .where({ externalId: 'Invalid' })
-      .first('id')
-
+    const resultCategoryInvalidId = await resultCategoryToId('Invalid')
     let invalidResultRatio = 0
     if (result.resultCategory1 === resultCategoryInvalidId) {
       const invalidResultQuery = knex('Result as r')

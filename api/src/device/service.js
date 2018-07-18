@@ -4,6 +4,7 @@ const Boom = require('boom')
 
 const { knex, filterParams, sortPageParams } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
+const { deviceStatusToId } = require('../shared/dictionary')
 const {
   getCellsByValue,
   generateExcelFile,
@@ -350,9 +351,7 @@ async function updateDevice(request) {
     _.has(payload, 'statusToken') &&
     device.statusToken !== payload.statusToken
   ) {
-    ;({ id: deviceStatusId } = await knex('DeviceStatus as ds')
-      .where('ds.token', payload.statusToken)
-      .first('ds.id'))
+    deviceStatusId = await deviceStatusToId(payload.statusToken)
   }
 
   // update item

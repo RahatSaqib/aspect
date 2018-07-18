@@ -1,0 +1,59 @@
+{
+  "data": [
+    {
+      "name": "OK",
+      "externalId": "OK",
+      "i18nKey": "ResultWorkflowStatusOK"
+    },
+    {
+      "name": "Error",
+      "externalId": "Error",
+      "i18nKey": "ResultWorkflowStatusError"
+    },
+    {
+      "name": "Ordered",
+      "externalId": "Ordered",
+      "i18nKey": "ResultWorkflowStatusOrdered"
+    },
+    {
+      "name": "In Progress",
+      "externalId": "InProgress",
+      "i18nKey": "ResultWorkflowStatusInProgress"
+    },
+    {
+      "name": "Processed",
+      "externalId": "Processed",
+      "i18nKey": "ResultWorkflowStatusProcessed"
+    },
+    {
+      "name": "Validated",
+      "externalId": "Validated",
+      "i18nKey": "ResultWorkflowStatusValidated"
+    },
+    {
+      "name": "Ready for delivery",
+      "externalId": "Deliverable",
+      "i18nKey": "ResultWorkflowStatusDeliverable"
+    },
+    {
+      "name": "Delivered",
+      "externalId": "Delivered",
+      "i18nKey": "ResultWorkflowStatusDelivered"
+    },
+    {
+      "name": "Acknowledged",
+      "externalId": "Acknowledged",
+      "i18nKey": "ResultWorkflowStatusAcknowledged"
+    },
+    {
+      "name": "Flagged",
+      "externalId": "Flagged",
+      "i18nKey": "ResultWorkflowStatusFlagged"
+    },
+    {
+      "name": "Purged",
+      "externalId": "Purged",
+      "i18nKey": "ResultWorkflowStatusPurged"
+    }
+  ]
+}

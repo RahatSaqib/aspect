@@ -15,7 +15,7 @@ const {
   alertMessageCreated,
   alertMessageSent,
 } = require('../../src/alert/actions')
-const dictionary = require('../../src/shared/dictionary')
+const { messageStatusToId } = require('../../src/shared/dictionary')
 const { processDynamicMessage } = require('../../src/stringTemplate/service')
 
 describe('Sending Alert via Message Queue', () => {
@@ -45,7 +45,7 @@ describe('Sending Alert via Message Queue', () => {
       await waitForSent
       await waitForIdle()
 
-      const messageStatusIdSent = (await dictionary.messageStatusToId()).Sent
+      const messageStatusIdSent = await messageStatusToId('Sent')
       const msg = await knex('AlertMessage')
         .where('id', messageId)
         .first()
