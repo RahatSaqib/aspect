@@ -1,6 +1,8 @@
 module.exports = require('../src/db').migration(up, down)
 
 async function up(knex) {
+  await knex.raw('SET foreign_key_checks = 0')
+
   await knex.schema.createTable('ResultForm', resultForm => {
     resultForm
       .integer('partnerId')
@@ -22,6 +24,8 @@ async function up(knex) {
   await knex.schema.table('Result', result => {
     result.specificType('formData', 'JSON')
   })
+
+  await knex.raw('SET foreign_key_checks = 1')
 }
 
 async function down(knex) {
