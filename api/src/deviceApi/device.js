@@ -1,5 +1,6 @@
 const Boom = require('boom')
 const _ = require('lodash')
+const { deviceStatusToId } = require('../shared/dictionary')
 
 async function updateDeviceConfiguration(knex, deviceId, payload, now) {
   const previousConfig = await getDeviceConfiguration(knex, deviceId)
@@ -167,14 +168,13 @@ async function createNewDevice(
       name = `${deviceType.name} #${deviceCount.cnt + 1}`
     }
   }
+  const deviceStatusId = await deviceStatusToId(status)
   const [deviceId] = await knex('Device').insert({
     partnerId,
     geographyId,
     siteId,
     deviceTypeId: deviceType.id,
-    deviceStatusId: knex('DeviceStatus')
-      .where({ token: status })
-      .select('id'),
+    deviceStatusId,
     name,
     serial,
     shortName,
@@ -191,9 +191,7 @@ async function createNewDevice(
   })
   await knex('DeviceStatusLog').insert({
     deviceId,
-    deviceStatusId: knex('DeviceStatus')
-      .where({ token: status })
-      .select('id'),
+    deviceStatusId,
     changedOn: now,
     createdOn: now,
     createdBy: null,

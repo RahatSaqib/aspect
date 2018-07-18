@@ -70,6 +70,8 @@ const subscriptions = [
       ISSUE_TRIGGERED: onIssueTriggered,
       ESCALATE_ISSUES: onEscalateIssues(),
       RESOLVE_ISSUES: onResolveIssues(),
+      RESULT_MODULE_UNKNOWN_ERROR: onIssueEventTrigger('ModuleUnknownError'),
+      RESULT_MACHINE_UNKNOWN_ERROR: onIssueEventTrigger('MachineUnknownError'),
     },
   },
 ]

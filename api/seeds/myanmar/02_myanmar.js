@@ -1,4 +1,4 @@
-module.exports = require('../../src/db').seed(seed)
+module.exports = require('../utils').seed(seed)
 
 const ADMIN_PW = '8v5TMxkpzP'
 const RO_PW = 'u4W9wupFBA'
@@ -9,6 +9,11 @@ const _ = require('lodash')
 const config = require('../../src/config')
 const dashboardWidget = require('./fixtures/dashboardWidget.json')
 const { rowsAsObject, getDefaultMessageTypes } = require('../utils')
+const {
+  deviceStatusToId,
+  deviceTypeToId,
+  partnerTypeToId,
+} = require('../../src/shared/dictionary')
 
 const now = new Date()
 
@@ -40,23 +45,14 @@ async function seed(knex) {
   }
 
   // Reuse previously seeded "static" data
-  const [
-    partnerTypes,
-    deviceTypes,
-    deviceStatuses,
-    issueTypes,
-    defaultMessageTypes,
-  ] = await Promise.all([
-    rowsAsObject(knex, 'PartnerType', 'name'),
-    rowsAsObject(knex, 'DeviceType', 'externalId'),
-    rowsAsObject(knex, 'DeviceStatus', 'token'),
+  const [issueTypes, defaultMessageTypes] = await Promise.all([
     rowsAsObject(knex, 'IssueType', 'externalId'),
     getDefaultMessageTypes(knex),
   ])
 
   const [partnerId] = await knex('Partner').insert({
     name: 'Myanmar',
-    partnerTypeId: partnerTypes.Operating.id,
+    partnerTypeId: await partnerTypeToId('Operating'),
     deviceLogHistoryDays: 365,
     autoAcknowledgeOlderThanDays: 28,
     numberToLeaveUnacknowledged: 15,
@@ -114,8 +110,8 @@ async function seed(knex) {
   const gxAlertDeviceId = await knex('Device').insert(
     Object.assign({}, auditFields, {
       name: 'GxAlert',
-      deviceTypeId: deviceTypes.GxAlert.id,
-      deviceStatusId: deviceStatuses.approved.id,
+      deviceTypeId: await deviceTypeToId('GxAlert'),
+      deviceStatusId: await deviceStatusToId('approved'),
       partnerId,
       geographyId: myanmarGeographyId,
       siteId: gxAlertSiteId,

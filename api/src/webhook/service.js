@@ -120,13 +120,13 @@ function onWebhookMessagePending({ webhookMessageId }, { messageContext }) {
     }
 
     const now = new Date()
-    const messageStatusIds = await messageStatusToId()
     const messageUpdates = { updatedOn: now }
 
+    const messageStatusIdSent = await messageStatusToId('Sent')
     if (webhookError) {
-      messageUpdates.messageStatusId = messageStatusIds.Error
+      messageUpdates.messageStatusId = await messageStatusToId('Error')
     } else {
-      messageUpdates.messageStatusId = messageStatusIds.Sent
+      messageUpdates.messageStatusId = messageStatusIdSent
       if (message.fileReferenceId != null && message.resultId != null) {
         await knex('ResultFileReference').insert({
           resultId: message.resultId,
@@ -138,7 +138,7 @@ function onWebhookMessagePending({ webhookMessageId }, { messageContext }) {
       .where({ id: webhookMessageId })
       .update(messageUpdates)
 
-    if (messageUpdates.messageStatusId === messageStatusIds.Sent) {
+    if (messageUpdates.messageStatusId === messageStatusIdSent) {
       context.webhookMessageSent(webhookMessageId)
     }
   })

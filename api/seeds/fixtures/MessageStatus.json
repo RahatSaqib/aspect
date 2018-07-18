@@ -1,0 +1,24 @@
+{
+  "data": [
+    {
+      "name": "Initial",
+      "externalId": "Initial",
+      "i18nKey": "messageStatusInitial"
+    },
+    {
+      "name": "Pending",
+      "externalId": "Pending",
+      "i18nKey": "messageStatusPending"
+    },
+    {
+      "name": "Sent",
+      "externalId": "Sent",
+      "i18nKey": "messageStatusSent"
+    },
+    {
+      "name": "Error",
+      "externalId": "Error",
+      "i18nKey": "messageStatusError"
+    }
+  ]
+}

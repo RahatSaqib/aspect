@@ -1,9 +1,15 @@
-module.exports = require('../../src/db').seed(seed)
+module.exports = require('../utils').seed(seed)
 
 const config = require('../../src/config')
 const bcrypt = require('bcrypt')
 const _ = require('lodash')
-const { rowsAsObject, getPermissionModules } = require('../utils')
+const { getPermissionModules } = require('../utils')
+const {
+  allAssayTypeToId,
+  partnerTypeToId,
+  deviceTypeCategoryToId,
+  resultSourceToId,
+} = require('../../src/shared/dictionary')
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 
@@ -34,33 +40,35 @@ async function seed(knex) {
   }
 
   // Reuse previously seeded "static" data
-  const partnerTypes = await rowsAsObject(knex, 'PartnerType')
   const [partnerId] = await knex('Partner').insert({
     name: 'MGIT',
-    partnerTypeId: partnerTypes.Operating.id,
+    partnerTypeId: await partnerTypeToId('Operating'),
     deviceLogHistoryDays: 365,
     maxDaysDeviceOffline: 7,
     maxDaysDeviceNoResults: 14,
   })
-  const deviceTypeCategories = await rowsAsObject(knex, 'DeviceTypeCategory')
-  const assayTypes = await rowsAsObject(knex, 'AssayType')
-  const resultSources = await rowsAsObject(knex, 'ResultSource', 'externalId')
 
   // MGIT Device Type
   const [deviceTypeId] = await knex('DeviceType').insert({
     externalId: 'BDMGIT',
     name: 'MGIT',
     manufacturer: 'Becton Dickinson',
-    deviceTypeCategoryId: deviceTypeCategories.Lab.id,
+    deviceTypeCategoryId: await deviceTypeCategoryToId('Lab'),
   })
+
+  const {
+    'TB G&D': assayTypeTBGNDId,
+    'TB AST': assayTypeTBASTId,
+  } = await allAssayTypeToId()
+  const resultSourceDiagnosticId = await resultSourceToId('DiagnosticDevice')
 
   await knex('Assay').insert({
     name: 'MGIT G&D',
     i18nKey: 'assayBDMGITBND',
     externalId: 'GND',
-    assayTypeId: assayTypes['TB G&D'].id,
+    assayTypeId: assayTypeTBGNDId,
     deviceTypeId,
-    resultSourceId: resultSources.DiagnosticDevice.id,
+    resultSourceId: resultSourceDiagnosticId,
     resultCategory1Label: 'Status',
     resultDataSchema: JSON.stringify({
       growthUnits: {
@@ -81,9 +89,9 @@ async function seed(knex) {
     name: 'MGIT AST',
     i18nKey: 'assayBDMGITAST',
     externalId: 'AST',
-    assayTypeId: assayTypes['TB AST'].id,
+    assayTypeId: assayTypeTBASTId,
     deviceTypeId,
-    resultSourceId: resultSources.DiagnosticDevice.id,
+    resultSourceId: resultSourceDiagnosticId,
     resultCategory1Label: 'Status',
     resultDataSchema: JSON.stringify({
       growthUnits: {

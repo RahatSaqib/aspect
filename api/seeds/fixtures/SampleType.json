@@ -1,0 +1,54 @@
+{
+  "data": [
+    {
+      "name": "DBS",
+      "externalId": "DBS",
+      "i18nKey": "sampleTypeDBS"
+    },
+    {
+      "name": "Plasma",
+      "externalId": "Plasma",
+      "i18nKey": "sampleTypePlasma"
+    },
+    {
+      "name": "Other",
+      "externalId": "Other",
+      "i18nKey": "sampleTypeOther"
+    },
+    {
+      "name": "Sputum",
+      "externalId": "Sputum",
+      "i18nKey": "sampleTypeSputum"
+    },
+    {
+      "name": "Saliva",
+      "externalId": "Saliva",
+      "i18nKey": "sampleTypeSaliva"
+    },
+    {
+      "name": "Blood",
+      "externalId": "Blood",
+      "i18nKey": "sampleTypeBlood"
+    },
+    {
+      "name": "CSF",
+      "externalId": "CSF",
+      "i18nKey": "sampleTypeCSF"
+    },
+    {
+      "name": "Effusion",
+      "externalId": "Effusion",
+      "i18nKey": "sampleTypeEffusion"
+    },
+    {
+      "name": "Pus",
+      "externalId": "Pus",
+      "i18nKey": "sampleTypePus"
+    },
+    {
+      "name": "Gastric Lavage",
+      "externalId": "Gastric Lavage",
+      "i18nKey": "sampleTypeGastricLavage"
+    }
+  ]
+}

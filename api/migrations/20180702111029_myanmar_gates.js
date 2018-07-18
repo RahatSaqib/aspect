@@ -51,6 +51,8 @@ async function up(knex) {
 }
 
 async function down(knex) {
+  await knex.raw('SET foreign_key_checks = 0')
+
   await knex.schema.table('SmsTemplate', smsTemplate => {
     smsTemplate.dropColumn('phoneNumber')
   })
@@ -71,4 +73,6 @@ async function down(knex) {
   })
 
   await knex.schema.dropTableIfExists('DataCategory')
+
+  await knex.raw('SET foreign_key_checks = 1')
 }

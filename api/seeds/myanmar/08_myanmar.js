@@ -1,8 +1,8 @@
-module.exports = require('../../src/db').seed(seed)
+module.exports = require('../utils').seed(seed)
 
-const { getDefaultMessageTypes } = require('../utils')
-const { rowsAsObject } = require('../utils')
 const { seedDataCategory } = require('../dataCategoryLow')
+const { seedUnknownErrorsIssue } = require('../seedUnknownErrorsIssue')
+const { getDefaultMessageTypes, rowsAsObject } = require('../utils')
 
 async function seed(knex) {
   const [issueTypes, defaultMessageTypes] = await Promise.all([
@@ -181,4 +181,5 @@ async function seed(knex) {
     .where('name', 'RO Reagent Health')
 
   await seedDataCategory(knex, 'Myanmar')
+  await seedUnknownErrorsIssue(knex, 'Myanmar', 'myanmar_admin')
 }

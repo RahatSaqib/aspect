@@ -1,0 +1,32 @@
+{
+  "data": [
+    {
+      "name": "Piece",
+      "shortName": "pc"
+    },
+    {
+      "name": "Liter",
+      "shortName": "l"
+    },
+    {
+      "name": "Milliliter",
+      "shortName": "ml"
+    },
+    {
+      "name": "Milligram",
+      "shortName": "mg"
+    },
+    {
+      "name": "Gram",
+      "shortName": "g"
+    },
+    {
+      "name": "Kilogram",
+      "shortName": "kg"
+    },
+    {
+      "name": "Ounce",
+      "shortName": "oz"
+    }
+  ]
+}

@@ -1,10 +1,17 @@
-module.exports = require('../../src/db').seed(seed)
+module.exports = require('../utils').seed(seed)
 
 const _ = require('lodash')
 const config = require('../../src/config')
 const bcrypt = require('bcrypt')
 const { randomToken } = require('../../src/deviceApi/apiKey')
 const { rowsAsObject, getPermissionModules } = require('../utils')
+const {
+  allFeatureToId,
+  assayTypeToId,
+  partnerTypeToId,
+  resultSourceToId,
+  fileContentTypeToId,
+} = require('../../src/shared/dictionary')
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 
@@ -35,27 +42,15 @@ async function seed(knex) {
   }
 
   // Reuse previously seeded "static" data
-  const [
-    partnerTypes,
-    deviceTypes,
-    resultSources,
-    assayTypes,
-    modules,
-    features,
-    fileContentTypes,
-  ] = await Promise.all([
-    rowsAsObject(knex, 'PartnerType', 'name'),
+  const [deviceTypes, modules, features] = await Promise.all([
     rowsAsObject(knex, 'DeviceType', 'externalId'),
-    rowsAsObject(knex, 'ResultSource', 'externalId'),
-    rowsAsObject(knex, 'AssayType', 'name'),
     getPermissionModules(knex),
-    rowsAsObject(knex, 'Feature', 'module'),
-    rowsAsObject(knex, 'FileContentType', 'externalId'),
+    allFeatureToId(),
   ])
 
   const [partnerId] = await knex('Partner').insert({
     name: 'GatesRDT',
-    partnerTypeId: partnerTypes.Operating.id,
+    partnerTypeId: await partnerTypeToId('Operating'),
     deviceLogHistoryDays: 365,
     maxDaysDeviceOffline: 7,
     maxDaysDeviceNoResults: 14,
@@ -65,9 +60,9 @@ async function seed(knex) {
     name: 'CommCare Gates RDT',
     i18nKey: 'assayCommCareGatesRDT',
     externalId: 'CommCareGatesRDT',
-    assayTypeId: assayTypes['HIV Qual'].id,
+    assayTypeId: await assayTypeToId('HIV Qual'),
     deviceTypeId: deviceTypes.CommCareApp.id,
-    resultSourceId: resultSources.DiagnosticDevice.id,
+    resultSourceId: await resultSourceToId('DiagnosticDevice'),
     resultCategory1Label: 'Status',
     resultDataSchema: JSON.stringify({
       resultText: { list: true, order: 1, type: 'string', title: 'Result' },
@@ -136,10 +131,10 @@ async function seed(knex) {
     },
   ])
   await knex('JobFunctionFeature').insert([
-    { jobFunctionId: jobFunctionIdAdmin, featureId: features.device.id },
-    { jobFunctionId: jobFunctionIdAdmin, featureId: features.result.id },
-    { jobFunctionId: jobFunctionIdAdmin, featureId: features.site.id },
-    { jobFunctionId: jobFunctionIdAdmin, featureId: features.deviceApiKey.id },
+    { jobFunctionId: jobFunctionIdAdmin, featureId: features.device },
+    { jobFunctionId: jobFunctionIdAdmin, featureId: features.result },
+    { jobFunctionId: jobFunctionIdAdmin, featureId: features.site },
+    { jobFunctionId: jobFunctionIdAdmin, featureId: features.deviceApiKey },
   ])
 
   const [jobIdAdmin] = await knex('Job').insert([
@@ -179,7 +174,7 @@ async function seed(knex) {
         method: 'GET',
         url: '{{ result.data.resultImageUrl }}',
         fileName: '{{ result.data.resultImageFileName }}',
-        fileContentTypeId: fileContentTypes.imageJpg.id,
+        fileContentTypeId: await fileContentTypeToId('imageJpg'),
         headers: JSON.stringify({
           Authorization: `ApiKey ${commcareApiKey}`,
         }),

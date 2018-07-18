@@ -1,6 +1,6 @@
 const _ = require('lodash')
 const chai = require('chai')
-const dictionary = require('../../src/shared/dictionary')
+const { messageStatusToId } = require('../../src/shared/dictionary')
 const { run } = require('../../src/db')
 const { queuePurge } = require('../utils/mqUtils')
 
@@ -41,7 +41,7 @@ class SmsTestContext {
         'deviceId'
       )
 
-      const messageStatusId = (await dictionary.messageStatusToId()).Initial
+      const messageStatusId = await messageStatusToId('Initial')
 
       // add sample sms message
       const now = new Date()

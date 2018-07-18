@@ -9,11 +9,14 @@ const {
   resultMachineProceduralError,
   resultModuleProceduralError,
   resultMachinePowerError,
+  resultModuleUnknownError,
+  resultMachineUnknownError,
 } = require('../../../result/actions')
 const {
   selectAssayConsumables,
 } = require('../../../consumable/assayConsumableService')
 const { inventoryReagentHealth } = require('../../../inventory/actions')
+const { resultCategoryToId } = require('../../../shared/dictionary')
 
 const MODULE_TEMPERATURE_ERROR_CODES = [
   '1001',
@@ -114,11 +117,18 @@ const moduleFailureMaxErrors = 2
 const machineTemperatureMaxErrors = 8
 const maxPrcntErrors = 5
 const machinePowerMaxErrors = 8
+const machinePowerMinNoResults = 8
 const maxPrcntMachinePowerErrors = 3
 const maxInvalidResultRatio = 3
 const invalidResultBatchRatio = 2
 const maxReagentErrorRatio = 3
 const maxInvalidReagentErrorRatio = 4
+const minErrorsForLUGenericModuleIssue = 6
+const minErrorsForLUGenericMachineIssue = 8
+
+const minPrcntModuleUnknownErrors = 5
+const moduleMaxUnknownErrors = 6
+const machineMaxUnknownErrors = 8
 
 // check for error codes when a result is logged
 async function onResultLogged({ resultId }, { messageContext }) {
@@ -131,6 +141,8 @@ async function onResultLogged({ resultId }, { messageContext }) {
     resultModuleProceduralError,
     resultMachinePowerError,
     inventoryReagentHealth,
+    resultModuleUnknownError,
+    resultMachineUnknownError,
   })
   await context.run(async knex => {
     const [result] = await knex('Result as r').where('r.id', resultId)
@@ -138,13 +150,16 @@ async function onResultLogged({ resultId }, { messageContext }) {
     const last30day = subDays(new Date(), 30)
     let reagentErrorRatio = 0
     let invalidReagentErrorRatio = 0
+
+    // prepare query for device results
+    const deviceErrorQuery = knex('Result as r')
+      .innerJoin('ResultCategory as rc', 'r.resultCategory1', 'rc.id')
+      .where('rc.externalId', 'Error')
+      .where('r.deviceId', deviceId)
+
     if (result.errorCode) {
       const moduleErrorSerials = []
       let machineIssueTriggured = false
-      const deviceErrorQuery = knex('Result as r')
-        .innerJoin('ResultCategory as rc', 'r.resultCategory1', 'rc.id')
-        .where('rc.externalId', 'Error')
-        .where('r.deviceId', deviceId)
       if (MODULE_TEMPERATURE_ERROR_CODES.includes(result.errorCode)) {
         const moduleTemperatureSerials = []
         const modules = await deviceErrorQuery
@@ -249,6 +264,7 @@ async function onResultLogged({ resultId }, { messageContext }) {
 
         // Check for machine issue first
         let allModulesErr = true
+        let allModulesTotalErrors = 0
         await Promise.all(
           _.map(modules, async module => {
             const [{ moduleResultCount }] = await knex('Result as r')
@@ -257,9 +273,15 @@ async function onResultLogged({ resultId }, { messageContext }) {
               .count('r.id as moduleResultCount')
             const prcntModuleError = module.errorCount / moduleResultCount * 100
             allModulesErr = allModulesErr && prcntModuleError > maxPrcntErrors
+            // count errors from all modules
+            allModulesTotalErrors += module.errorCount
           })
         )
-        if (allModulesErr) {
+        if (
+          allModulesErr &&
+          // LU Generic Machine: Minimum of 8 errors
+          allModulesTotalErrors >= minErrorsForLUGenericMachineIssue
+        ) {
           // Trigger machine procedural issue
           context.resultMachineProceduralError(deviceId)
         } else {
@@ -270,7 +292,11 @@ async function onResultLogged({ resultId }, { messageContext }) {
               .where('r.moduleSerial', module.moduleSerial)
               .count('r.id as moduleResultCount')
             const prcntModuleError = module.errorCount / moduleResultCount * 100
-            if (prcntModuleError > maxPrcntErrors) {
+            if (
+              prcntModuleError > maxPrcntErrors &&
+              // LU Generic Module: Minimum of 6 errors
+              module.errorCount >= minErrorsForLUGenericModuleIssue
+            ) {
               context.resultModuleProceduralError(deviceId, module)
             }
           })
@@ -308,7 +334,73 @@ async function onResultLogged({ resultId }, { messageContext }) {
           })()
         )
       }
+    } else {
+      // -----------
+      // here we know that errorCode is not specified, so
+      // next - check if result is actual Error
+      // -----------
+      // read result category
+      const resultCategory = await knex('ResultCategory as rc')
+        .where({ id: result.resultCategory1 })
+        .first('id', 'externalId')
+
+      // result is actual Error
+      if (resultCategory.externalId === 'Error') {
+        const totalResults = {}
+        // check how many such cases occured during last 30 days for each module...
+        const modules = await deviceErrorQuery
+          .clone()
+          .where('r.endedOn', '>=', last30day)
+          .whereNull('r.errorCode') // must be null
+          .select(
+            'r.moduleSerial as moduleSerial',
+            knex.raw(
+              'coalesce(min(r.moduleName), r.moduleSerial) as moduleName'
+            )
+          )
+          .count('r.id as errorCount')
+          .groupBy('r.moduleSerial')
+        // Check for machine issue first
+        let allModulesErr = true
+        let allModulesTotalErrors = 0
+        await Promise.all(
+          _.map(modules, async module => {
+            const [{ moduleResultCount }] = await knex('Result as r')
+              .where('r.endedOn', '>=', last30day)
+              .where('r.moduleSerial', module.moduleSerial)
+              .count('r.id as moduleResultCount')
+            const prcntModuleError = module.errorCount / moduleResultCount * 100
+            allModulesErr =
+              allModulesErr && prcntModuleError > minPrcntModuleUnknownErrors
+            totalResults[module.moduleSerial] = moduleResultCount
+            allModulesTotalErrors += module.errorCount
+          })
+        )
+
+        if (
+          allModulesErr &&
+          // LU Machine Unknown Error: Minimum of 8 errors
+          allModulesTotalErrors >= machineMaxUnknownErrors
+        ) {
+          // Trigger machine UnknownError issue
+          context.resultMachineUnknownError(deviceId)
+        } else {
+          // Check for module issue
+          _.map(modules, async module => {
+            const moduleResultCount = totalResults[module.moduleSerial]
+            const prcntModuleError = module.errorCount / moduleResultCount * 100
+            if (
+              prcntModuleError > maxPrcntErrors &&
+              // LU Module Unknown Error: Minimum of 6 errors
+              module.errorCount >= moduleMaxUnknownErrors
+            ) {
+              context.resultModuleUnknownError(deviceId, module)
+            }
+          })
+        }
+      }
     }
+
     // Check for machine power issue triggered by noResult
     const [{ noResultCount }] = await knex('Result as r')
       .innerJoin('ResultCategory as rc', 'r.resultCategory1', 'rc.id')
@@ -324,15 +416,16 @@ async function onResultLogged({ resultId }, { messageContext }) {
 
     if (machineResultCount !== 0) {
       const prcntNoResult = noResultCount / machineResultCount * 100
-      if (prcntNoResult > maxPrcntMachinePowerErrors) {
+      if (
+        prcntNoResult > maxPrcntMachinePowerErrors &&
+        // LU Machine Power: minimum of 8 "No Results"
+        noResultCount >= machinePowerMinNoResults
+      ) {
         context.resultMachinePowerError(deviceId)
       }
     }
 
-    const { id: resultCategoryInvalidId } = await knex('ResultCategory as rc')
-      .where({ externalId: 'Invalid' })
-      .first('id')
-
+    const resultCategoryInvalidId = await resultCategoryToId('Invalid')
     let invalidResultRatio = 0
     if (result.resultCategory1 === resultCategoryInvalidId) {
       const invalidResultQuery = knex('Result as r')

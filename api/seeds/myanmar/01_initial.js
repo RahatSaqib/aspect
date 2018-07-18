@@ -1,4 +1,4 @@
-module.exports = require('../../src/db').seed(seed)
+module.exports = require('../utils').seed(seed)
 
 const config = require('../../src/config')
 const _ = require('lodash')
@@ -6,7 +6,15 @@ const bcrypt = require('bcrypt')
 const permissions = require('./fixtures/permissions.json')
 const geography = require('./fixtures/geography.json')
 const features = require('./fixtures/features.json')
-const { rowsAsObject } = require('../utils')
+const {
+  allAssayTypeToId,
+  allDeviceTypeCategoryToId,
+  allResultCategoryToId,
+  allMessageSeverityToId,
+  allIssueCategoryToId,
+  resultSourceToId,
+  unitToId,
+} = require('../../src/shared/dictionary')
 
 const now = new Date()
 
@@ -37,52 +45,12 @@ async function seed(knex) {
     updatedBy: adminId,
   }
 
-  // Create partner types
-  await knex('PartnerType').insert({
-    name: 'Funding',
-  })
-  await knex('PartnerType').insert({
-    name: 'Implementing',
-  })
-
-  await knex('PartnerType').insert({
-    name: 'Operating',
-  })
-
   // Categories of devices (lab, connectivity...)
-  const [deviceTypeCategoryLab] = await knex('DeviceTypeCategory').insert({
-    name: 'Lab',
-    hasConnectivity: 0,
-    hasResults: 1,
-  })
-
-  const [deviceTypeCategoryConnectivity] = await knex(
-    'DeviceTypeCategory'
-  ).insert({
-    name: 'Router',
-    hasConnectivity: 1,
-    hasResults: 0,
-  })
-
-  await knex('DeviceTypeCategory').insert({
-    name: 'Integrated',
-    hasConnectivity: 1,
-    hasResults: 1,
-  })
-
-  await knex('DeviceTypeCategory').insert({
-    name: 'Client',
-    hasConnectivity: 0,
-    hasResults: 0,
-  })
-
-  const [deviceTypeCategoryInformationSystem] = await knex(
-    'DeviceTypeCategory'
-  ).insert({
-    name: 'Information System',
-    hasConnectivity: 0,
-    hasResults: 1,
-  })
+  const {
+    Lab: deviceTypeCategoryLab,
+    Router: deviceTypeCategoryConnectivity,
+    'Information System': deviceTypeCategoryInformationSystem,
+  } = await allDeviceTypeCategoryToId()
 
   // define configurationData object
   const geneXpertConfigurationDataSchema = JSON.stringify({
@@ -166,83 +134,18 @@ async function seed(knex) {
     deviceTypeCategoryId: deviceTypeCategoryInformationSystem,
   })
 
-  // DeviceStatus
-  await knex('DeviceStatus').insert({
-    name: 'Provisioned',
-    i18nKey: 'deviceStatusProvisioned',
-    token: 'provisioned',
-  })
-  await knex('DeviceStatus').insert({
-    name: 'Assigned',
-    i18nKey: 'deviceStatusAssigned',
-    token: 'assigned',
-  })
-  await knex('DeviceStatus').insert({
-    name: 'Approved',
-    i18nKey: 'deviceStatusApproved',
-    token: 'approved',
-  })
-  await knex('DeviceStatus').insert({
-    name: 'Decommissioned',
-    i18nKey: 'deviceStatusDecommissioned',
-    token: 'decommissioned',
-  })
-
   // Result source
-  const [resultSourceDiagnosticId] = await knex('ResultSource').insert({
-    name: 'Diagnostic Device',
-    i18nKey: 'resultSourceDiagnostic',
-    externalId: 'DiagnosticDevice',
-  })
-
-  await knex('ResultSource').insert({
-    name: 'Other System',
-    i18nKey: 'resultSourceOtherSystem',
-    externalId: 'OtherSystem',
-  })
-
-  await knex('ResultSource').insert({
-    name: 'Entered by Hand',
-    i18nKey: 'resultSourceEnteredByHand',
-    externalId: 'EnteredByHand',
-  })
-
-  await knex('ResultSource').insert({
-    name: 'Generated',
-    i18nKey: 'resultSourceGenerated',
-    externalId: 'Generated',
-  })
+  const resultSourceDiagnosticId = await resultSourceToId('DiagnosticDevice')
 
   // Assays and AssayTypes
-  const [assayTypeMTBRifId] = await knex('AssayType').insert({
-    name: 'MTB/Rif',
-    i18nKey: 'assayTypeMtbRif',
-  })
-
-  const [assayTypeEbolaId] = await knex('AssayType').insert({
-    name: 'Ebola',
-    i18nKey: 'assayTypeEbola',
-  })
-
-  const [assayTypeHivVlId] = await knex('AssayType').insert({
-    name: 'HIV VL',
-    i18nKey: 'assayTypeHivVl',
-  })
-
-  const [assayTypeHivQualId] = await knex('AssayType').insert({
-    name: 'HIV Qual',
-    i18nKey: 'assayTypeHivQual',
-  })
-
-  const [assayTypeHcvId] = await knex('AssayType').insert({
-    name: 'HCV',
-    i18nKey: 'assayTypeHcv',
-  })
-
-  const [assayTypeUnknownId] = await knex('AssayType').insert({
-    name: 'Unknown',
-    i18nKey: 'assayTypeUnknown',
-  })
+  const {
+    'MTB/Rif': assayTypeMTBRifId,
+    Ebola: assayTypeEbolaId,
+    'HIV VL': assayTypeHivVlId,
+    'HIV Qual': assayTypeHivQualId,
+    HCV: assayTypeHcvId,
+    Unknown: assayTypeUnknownId,
+  } = await allAssayTypeToId()
 
   // define resultData object
   const geneXpertResultDataSchema = JSON.stringify({
@@ -654,127 +557,16 @@ async function seed(knex) {
     patientDataSchema: geneXpertPatientDataSchema,
   })
 
-  // Result types
-  await knex('ResultType').insert({
-    name: 'Patient',
-    i18nKey: 'resultTypePatient',
-    externalId: 'Patient',
-  })
-
-  await knex('ResultType').insert({
-    name: 'EQA',
-    i18nKey: 'resultTypeEqa',
-    externalId: 'EQA',
-  })
-
-  await knex('ResultType').insert({
-    name: 'Training',
-    i18nKey: 'resultTypeTraining',
-    externalId: 'Training',
-  })
-
-  await knex('ResultType').insert({
-    name: 'Calibration',
-    i18nKey: 'resultTypeCalibration',
-    externalId: 'Calibration',
-  })
-
-  await knex('ResultType').insert({
-    name: 'Study/Research',
-    i18nKey: 'resultTypeStudy',
-    externalId: 'Study',
-  })
-
   // result categories
-  const [resultCategoryDetectedId] = await knex('ResultCategory').insert({
-    name: 'Detected',
-    i18nKey: 'ResultCategoryDetected',
-    externalId: 'Detected',
-  })
-
-  const [resultCategoryTraceDetectedId] = await knex('ResultCategory').insert({
-    name: 'Trace Detected',
-    i18nKey: 'ResultCategoryTraceDetected',
-    externalId: 'Trace Detected',
-  })
-
-  const [resultCategoryNotDetectedId] = await knex('ResultCategory').insert({
-    name: 'Not Detected',
-    i18nKey: 'resultCategoryNotDetected',
-    externalId: 'NotDetected',
-  })
-
-  const [resultCategoryIndeterminateId] = await knex('ResultCategory').insert({
-    name: 'Indeterminate',
-    i18nKey: 'resultCategoryIndeterminate',
-    externalId: 'Indeterminate',
-  })
-
-  const [resultCategoryInvalidId] = await knex('ResultCategory').insert({
-    name: 'Invalid',
-    i18nKey: 'resultCategoryInvalid',
-    externalId: 'Invalid',
-  })
-
-  const [resultCategoryNoResultId] = await knex('ResultCategory').insert({
-    name: 'No Result',
-    i18nKey: 'resultCategoryNoResult',
-    externalId: 'NoResult',
-  })
-
-  const [resultCategoryErrorId] = await knex('ResultCategory').insert({
-    name: 'Error',
-    i18nKey: 'resultCategoryError',
-    externalId: 'Error',
-  })
-
-  await knex('ResultCategory').insert({
-    name: 'Success',
-    i18nKey: 'resultCategorySuccess',
-    externalId: 'Success',
-  })
-
-  await knex('ResultCategory').insert({
-    name: 'Collect New Sample',
-    i18nkey: 'resultCategoryCollectNewSample',
-    externalId: 'CollectNewSample',
-  })
-
-  await knex('ResultCategory').insert({
-    name: 'Discordant',
-    i18nkey: 'resultCategoryDiscordant',
-    externalId: 'Discordant',
-  })
-
-  await knex('ResultCategory').insert({
-    name: 'LessThan1000',
-    i18nkey: 'resultCategoryLessThan1000',
-    externalId: 'LessThan1000',
-  })
-
-  await knex('ResultCategory').insert({
-    name: 'MoreThan1000',
-    i18nkey: 'resultCategoryMoreThan1000',
-    externalId: 'MoreThan1000',
-  })
-
-  await knex('ResultCategory').insert({
-    name: 'Rejected',
-    i18nkey: 'resultCategoryRejected',
-    externalId: 'Rejected',
-  })
-
-  await knex('ResultCategory').insert({
-    name: 'Missing',
-    i18nkey: 'resultCategoryMissing',
-    externalId: 'Missing',
-  })
-
-  await knex('ResultCategory').insert({
-    name: 'Unknown',
-    i18nkey: 'resultCategoryUnknown',
-    externalId: 'Unknown',
-  })
+  const {
+    Detected: resultCategoryDetectedId,
+    'Trace Detected': resultCategoryTraceDetectedId,
+    NotDetected: resultCategoryNotDetectedId,
+    Indeterminate: resultCategoryIndeterminateId,
+    Invalid: resultCategoryInvalidId,
+    NoResult: resultCategoryNoResultId,
+    Error: resultCategoryErrorId,
+  } = await allResultCategoryToId()
 
   // assign categories to Assays
   // GeneXpert MTB/Rif
@@ -944,40 +736,7 @@ async function seed(knex) {
   })
 
   // Units
-  const [piece] = await knex('Unit').insert({
-    name: 'Piece',
-    shortName: 'pc',
-  })
-
-  await knex('Unit').insert({
-    name: 'Liter',
-    shortName: 'l',
-  })
-
-  await knex('Unit').insert({
-    name: 'Milliliter',
-    shortName: 'ml',
-  })
-
-  await knex('Unit').insert({
-    name: 'Milligram',
-    shortName: 'mg',
-  })
-
-  await knex('Unit').insert({
-    name: 'Gram',
-    shortName: 'g',
-  })
-
-  await knex('Unit').insert({
-    name: 'Kilogram',
-    shortName: 'kg',
-  })
-
-  await knex('Unit').insert({
-    name: 'Ounce',
-    shortName: 'oz',
-  })
+  const piece = await unitToId('Piece')
 
   // Consumable types
   const [consumableGxTbCartridgeId] = await knex('Consumable').insert({
@@ -1063,129 +822,6 @@ async function seed(knex) {
     consumableId: consumableGxHiv1QualCartridgeId,
     assayId: assayGeneXpertHiv1QualId,
     quantity: 1,
-  })
-
-  // Consumable Reasons
-  await knex('ConsumableReason').insert({
-    name: 'Asserted Zero Inventory',
-    i18nKey: 'ConsumableReason_AssertedZeroInventory',
-    decrease: 0,
-    reset: 1,
-  })
-
-  await knex('ConsumableReason').insert({
-    name: 'Test Conducted',
-    i18nKey: 'ConsumableReason_TestConducted',
-    decrease: 1,
-    reset: 0,
-  })
-
-  await knex('ConsumableReason').insert({
-    name: 'Transfer Sent',
-    i18nKey: 'ConsumableReason_TransferSent',
-    decrease: 1,
-    reset: 0,
-  })
-
-  await knex('ConsumableReason').insert({
-    name: 'Transfer Received',
-    i18nKey: 'ConsumableReason_TransferReceived',
-    decrease: 0,
-    reset: 0,
-  })
-
-  await knex('ConsumableReason').insert({
-    name: 'Expired',
-    i18nKey: 'ConsumableReason_Expired',
-    decrease: 1,
-    reset: 0,
-  })
-
-  await knex('ConsumableReason').insert({
-    name: 'Imported',
-    i18nKey: 'ConsumableReason_Imported',
-    decrease: 0,
-    reset: 1,
-  })
-
-  await knex('ConsumableReason').insert({
-    name: 'Stolen',
-    i18nKey: 'ConsumableReason_Stolen',
-    decrease: 1,
-    reset: 0,
-  })
-
-  await knex('ConsumableReason').insert({
-    name: 'Lost',
-    i18nKey: 'ConsumableReason_Lost',
-    decrease: 1,
-    reset: 0,
-  })
-
-  await knex('ConsumableReason').insert({
-    name: 'Captured',
-    i18nKey: 'ConsumableReason_Captured',
-    decrease: 0,
-    reset: 1,
-  })
-
-  // Result Workflow Status
-  await knex('ResultWorkflowStatus').insert({
-    name: 'OK',
-    i18nkey: 'ResultWorkflowStatusOK',
-    externalId: 'OK',
-  })
-  await knex('ResultWorkflowStatus').insert({
-    name: 'Error',
-    i18nkey: 'ResultWorkflowStatusError',
-    externalId: 'Error',
-  })
-  await knex('ResultWorkflowStatus').insert({
-    name: 'Ordered',
-    i18nkey: 'ResultWorkflowStatusOrdered',
-    externalId: 'Ordered',
-  })
-  await knex('ResultWorkflowStatus').insert({
-    name: 'In Progress',
-    i18nkey: 'ResultWorkflowStatusInProgress',
-    externalId: 'InProgress',
-  })
-  await knex('ResultWorkflowStatus').insert({
-    name: 'Processed',
-    i18nkey: 'ResultWorkflowStatusProcessed',
-    externalId: 'Processed',
-  })
-  await knex('ResultWorkflowStatus').insert({
-    name: 'Validated',
-    i18nkey: 'ResultWorkflowStatusValidated',
-    externalId: 'Validated',
-  })
-  await knex('ResultWorkflowStatus').insert({
-    name: 'Ready for delivery',
-    i18nkey: 'ResultWorkflowStatusDeliverable',
-    externalId: 'Deliverable',
-  })
-  await knex('ResultWorkflowStatus').insert({
-    name: 'Delivered',
-    i18nkey: 'ResultWorkflowStatusDelivered',
-    externalId: 'Delivered',
-  })
-  await knex('ResultWorkflowStatus').insert({
-    name: 'Acknowledged',
-    i18nkey: 'ResultWorkflowStatusAcknowledged',
-    externalId: 'Acknowledged',
-  })
-
-  await knex('ResultWorkflowStatus').insert({
-    name: 'Flagged',
-    i18nkey: 'ResultWorkflowStatusFlagged',
-    externalId: 'Flagged',
-  })
-
-  await knex('ResultWorkflowStatus').insert({
-    name: 'Purged',
-    i18nkey: 'ResultWorkflowStatusPurged',
-    externalId: 'Purged',
   })
 
   // Create permissions
@@ -1294,62 +930,7 @@ async function seed(knex) {
   )
   personIds[adminName.toLowerCase()] = personId
 
-  await knex('SampleType').insert({
-    name: 'DBS',
-    i18nKey: 'sampleTypeDBS',
-    externalId: 'DBS',
-  })
-
-  await knex('SampleType').insert({
-    name: 'Plasma',
-    i18nKey: 'sampleTypePlasma',
-    externalId: 'Plasma',
-  })
-
-  await knex('SampleType').insert({
-    name: 'Other',
-    i18nKey: 'sampleTypeOther',
-    externalId: 'Other',
-  })
-
   // Messages
-  await knex('MessageStatus').insert([
-    {
-      name: 'Initial',
-      externalId: 'Initial',
-      i18nKey: 'messageStatusInitial',
-    },
-    {
-      name: 'Pending',
-      externalId: 'Pending',
-      i18nKey: 'messageStatusPending',
-    },
-    {
-      name: 'Sent',
-      externalId: 'Sent',
-      i18nKey: 'messageStatusSent',
-    },
-    {
-      name: 'Error',
-      externalId: 'Error',
-      i18nKey: 'messageStatusError',
-    },
-  ])
-
-  await knex('MessageSeverity').insert([
-    {
-      name: 'Alert',
-      externalId: 'Alert',
-      i18nKey: 'messageSeverityAlert',
-    },
-    {
-      name: 'Recommendation',
-      externalId: 'Recommendation',
-      i18nKey: 'messageSeverityRecommendation',
-    },
-  ])
-  const messageSeverities = await rowsAsObject(knex, 'MessageSeverity')
-
   const [deviceOfflineAlertTemplateId] = await knex('AlertTemplate').insert(
     Object.assign(
       {
@@ -1744,119 +1325,93 @@ async function seed(knex) {
     )
   )
 
+  const messageSeverities = await allMessageSeverityToId()
+
   const [deviceOfflineMessageTypeId] = await knex('MessageType').insert({
-    messageSeverityId: messageSeverities.Alert.id,
+    messageSeverityId: messageSeverities.Alert,
     alertTemplateId: deviceOfflineAlertTemplateId,
     smsTemplateId: deviceOfflineSmsTemplateId,
     emailTemplateId: deviceOfflineEmailTemplateId,
   })
 
   const [deviceNoResultsMessageTypeId] = await knex('MessageType').insert({
-    messageSeverityId: messageSeverities.Alert.id,
+    messageSeverityId: messageSeverities.Alert,
     alertTemplateId: deviceNoResultsAlertTemplateId,
     smsTemplateId: deviceNoResultsSmsTemplateId,
     emailTemplateId: deviceNoResultsEmailTemplateId,
   })
 
   const [moduleFailureErrorTypeId] = await knex('MessageType').insert({
-    messageSeverityId: messageSeverities.Alert.id,
+    messageSeverityId: messageSeverities.Alert,
     alertTemplateId: moduleFailureErrorAlertTemplateId,
     smsTemplateId: moduleFailureErrorSmsTemplateId,
     emailTemplateId: moduleFailureErrorEmailTemplateId,
   })
 
   const [moduleTemperatureErrorTypeId] = await knex('MessageType').insert({
-    messageSeverityId: messageSeverities.Alert.id,
+    messageSeverityId: messageSeverities.Alert,
     alertTemplateId: moduleTemperatureErrorAlertTemplateId,
     smsTemplateId: moduleTemperatureErrorSmsTemplateId,
     emailTemplateId: moduleTemperatureErrorEmailTemplateId,
   })
 
   const [modulePowerErrorTypeId] = await knex('MessageType').insert({
-    messageSeverityId: messageSeverities.Alert.id,
+    messageSeverityId: messageSeverities.Alert,
     alertTemplateId: modulePowerErrorAlertTemplateId,
     smsTemplateId: modulePowerErrorSmsTemplateId,
     emailTemplateId: modulePowerErrorEmailTemplateId,
   })
 
   const [machineTemperatureErrorTypeId] = await knex('MessageType').insert({
-    messageSeverityId: messageSeverities.Alert.id,
+    messageSeverityId: messageSeverities.Alert,
     alertTemplateId: machineTemperatureErrorAlertTemplateId,
     smsTemplateId: machineTemperatureErrorSmsTemplateId,
     emailTemplateId: machineTemperatureErrorEmailTemplateId,
   })
 
   const [machinePowerErrorTypeId] = await knex('MessageType').insert({
-    messageSeverityId: messageSeverities.Alert.id,
+    messageSeverityId: messageSeverities.Alert,
     alertTemplateId: machinePowerErrorAlertTemplateId,
     smsTemplateId: machinePowerErrorSmsTemplateId,
     emailTemplateId: machinePowerErrorEmailTemplateId,
   })
 
   const [moduleGenericErrorTypeId] = await knex('MessageType').insert({
-    messageSeverityId: messageSeverities.Alert.id,
+    messageSeverityId: messageSeverities.Alert,
     alertTemplateId: moduleGenericErrorAlertTemplateId,
     smsTemplateId: moduleGenericErrorSmsTemplateId,
     emailTemplateId: moduleGenericErrorEmailTemplateId,
   })
 
   const [machineGenericErrorTypeId] = await knex('MessageType').insert({
-    messageSeverityId: messageSeverities.Alert.id,
+    messageSeverityId: messageSeverities.Alert,
     alertTemplateId: machineGenericErrorAlertTemplateId,
     smsTemplateId: machineGenericErrorSmsTemplateId,
     emailTemplateId: machineGenericErrorEmailTemplateId,
   })
 
   const [dataCategoryLowTypeId] = await knex('MessageType').insert({
-    messageSeverityId: messageSeverities.Alert.id,
+    messageSeverityId: messageSeverities.Alert,
     alertTemplateId: dataCategoryLowAlertTemplateId,
     smsTemplateId: dataCategoryLowSmsTemplateId,
     emailTemplateId: dataCategoryLowEmailTemplateId,
   })
 
   const [stockLevelUpdateTypeId] = await knex('MessageType').insert({
-    messageSeverityId: messageSeverities.Recommendation.id,
+    messageSeverityId: messageSeverities.Recommendation,
     alertTemplateId: stockLevelUpdateAlertTemplateId,
     smsTemplateId: stockLevelUpdateSmsTemplateId,
     emailTemplateId: stockLevelUpdateEmailTemplateId,
   })
 
   const [reagentHealthTypeId] = await knex('MessageType').insert({
-    messageSeverityId: messageSeverities.Alert.id,
+    messageSeverityId: messageSeverities.Alert,
     alertTemplateId: reagentHealthAlertTemplateId,
     smsTemplateId: reagentHealthSmsTemplateId,
     emailTemplateId: reagentHealthEmailTemplateId,
   })
 
   // Issues
-  await knex('IssueCategory').insert([
-    {
-      name: 'Device Health',
-      externalId: 'DeviceHealth',
-      i18nKey: 'issueCategoryDeviceHealth',
-    },
-    {
-      name: 'Reagent Health',
-      externalId: 'ReagentHealth',
-      i18nKey: 'issueCategoryReagentHealth',
-    },
-    {
-      name: 'Data Health',
-      externalId: 'DataHealth',
-      i18nKey: 'issueCategoryDataHealth',
-    },
-    {
-      name: 'Connectivity Health',
-      externalId: 'ConnectivityHealth',
-      i18nKey: 'issueCategoryConnectivityHealth',
-    },
-  ])
-  const issueCategories = await rowsAsObject(
-    knex,
-    'IssueCategory',
-    'externalId'
-  )
-
   const { id: issueStatusSeverityIdLow } = await knex('IssueStatusSeverity')
     .where('externalId', 'Low')
     .first()
@@ -1928,98 +1483,91 @@ async function seed(knex) {
     },
   ])
 
-  await knex('IssueEventStatus').insert([
-    {
-      externalId: 'Triggered',
-    },
-    {
-      externalId: 'Resolved',
-    },
-  ])
+  const issueCategories = await allIssueCategoryToId()
 
   await knex('IssueType').insert([
     {
       name: 'Device Offline',
       externalId: 'DeviceOffline',
       i18nKey: 'issueStatusDeviceOffline',
-      issueCategoryId: issueCategories.ConnectivityHealth.id,
+      issueCategoryId: issueCategories.ConnectivityHealth,
       defaultMessageTypeId: deviceOfflineMessageTypeId,
     },
     {
       name: 'Device No Results',
       externalId: 'DeviceNoResults',
       i18nKey: 'issueStatusDeviceNoResults',
-      issueCategoryId: issueCategories.ConnectivityHealth.id,
+      issueCategoryId: issueCategories.ConnectivityHealth,
       defaultMessageTypeId: deviceNoResultsMessageTypeId,
     },
     {
       name: 'Module Failure Error',
       externalId: 'ModuleFailureError',
       i18nKey: 'issueStatusModuleFailureError',
-      issueCategoryId: issueCategories.DeviceHealth.id,
+      issueCategoryId: issueCategories.DeviceHealth,
       defaultMessageTypeId: moduleFailureErrorTypeId,
     },
     {
       name: 'Module Temperature Error',
       externalId: 'ModuleTemperatureError',
       i18nKey: 'issueStatusModuleTemperatureError',
-      issueCategoryId: issueCategories.DeviceHealth.id,
+      issueCategoryId: issueCategories.DeviceHealth,
       defaultMessageTypeId: moduleTemperatureErrorTypeId,
     },
     {
       name: 'Module Power Error',
       externalId: 'ModulePowerError',
       i18nKey: 'issueStatusModulePowerError',
-      issueCategoryId: issueCategories.DeviceHealth.id,
+      issueCategoryId: issueCategories.DeviceHealth,
       defaultMessageTypeId: modulePowerErrorTypeId,
     },
     {
       name: 'Machine Temperature Error',
       externalId: 'MachineTemperatureError',
       i18nKey: 'issueStatusMachineTemperatureError',
-      issueCategoryId: issueCategories.DeviceHealth.id,
+      issueCategoryId: issueCategories.DeviceHealth,
       defaultMessageTypeId: machineTemperatureErrorTypeId,
     },
     {
       name: 'Machine Power Error',
       externalId: 'MachinePowerError',
       i18nKey: 'issueStatusMachinePowerError',
-      issueCategoryId: issueCategories.DeviceHealth.id,
+      issueCategoryId: issueCategories.DeviceHealth,
       defaultMessageTypeId: machinePowerErrorTypeId,
     },
     {
       name: 'Module Generic Error',
       externalId: 'ModuleGenericError',
       i18nKey: 'issueStatusModuleGenericError',
-      issueCategoryId: issueCategories.DeviceHealth.id,
+      issueCategoryId: issueCategories.DeviceHealth,
       defaultMessageTypeId: moduleGenericErrorTypeId,
     },
     {
       name: 'Machine Generic Error',
       externalId: 'MachineGenericError',
       i18nKey: 'issueStatusMachineGenericError',
-      issueCategoryId: issueCategories.DeviceHealth.id,
+      issueCategoryId: issueCategories.DeviceHealth,
       defaultMessageTypeId: machineGenericErrorTypeId,
     },
     {
       name: 'Data Category Low Error',
       externalId: 'DataCategoryLowError',
       i18nKey: 'issueStatusMachineGenericError',
-      issueCategoryId: issueCategories.DataHealth.id,
+      issueCategoryId: issueCategories.DataHealth,
       defaultMessageTypeId: dataCategoryLowTypeId,
     },
     {
       name: 'Stock Level Update',
       externalId: 'StockLevelUpdate',
       i18nKey: 'stockLevelUpdateIssue',
-      issueCategoryId: issueCategories.ReagentHealth.id,
+      issueCategoryId: issueCategories.ReagentHealth,
       defaultMessageTypeId: stockLevelUpdateTypeId,
     },
     {
       name: 'Reagent Health Error',
       externalId: 'ReagentHealthError',
       i18nKey: 'reagentHealthError',
-      issueCategoryId: issueCategories.ReagentHealth.id,
+      issueCategoryId: issueCategories.ReagentHealth,
       defaultMessageTypeId: reagentHealthTypeId,
     },
   ])
