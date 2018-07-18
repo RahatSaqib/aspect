@@ -16,6 +16,7 @@ const {
   generateExcelFile,
   generateCsvFile,
 } = require('../shared/io')
+const { resultWorkflowStatusToId } = require('../shared/dictionary')
 const { oneDirectionalMd5Hash } = require('../shared/encryption')
 const { getPathFromFileReferenceId } = require('../file/service')
 
@@ -540,12 +541,7 @@ async function updateWorkflowStatus(request) {
   let { resultWorkflowStatusId } = payload
   // check if a externalId is provided
   if (payload.externalId) {
-    ;[resultWorkflowStatusId] = await knex('ResultWorkflowStatus as rs')
-      .where('rs.externalId', payload.externalId)
-      .select('rs.id')
-      .limit(1)
-      .map(row => row.id)
-
+    resultWorkflowStatusId = await resultWorkflowStatusToId(payload.externalId)
     if (!resultWorkflowStatusId) {
       return Boom.badRequest('Invalid ResultWorkflowStatus ID')
     }

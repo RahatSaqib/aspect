@@ -1,5 +1,6 @@
 const _ = require('lodash')
 const inventory = require('../../inventory/service')
+const { resultWorkflowStatusToId } = require('../../shared/dictionary')
 
 /**
  * Consumes inventory for the new result
@@ -70,11 +71,10 @@ async function updateResultWorkflowStatus(
   now = new Date()
 ) {
   // get internal workflow status id based on the external id we got
-  const workflowStatusRow = await knex('ResultWorkflowStatus')
-    .where('externalId', workflowStatusExternalId)
-    .select('id')
-    .first()
-  if (workflowStatusRow === null) {
+  const resultWorkflowStatusId = await resultWorkflowStatusToId(
+    workflowStatusExternalId
+  )
+  if (resultWorkflowStatusId === null) {
     throw new Error(
       `Workflow status with external ID "${workflowStatusExternalId}" not found`
     )
@@ -83,14 +83,14 @@ async function updateResultWorkflowStatus(
   // update result
   const rows = await knex('Result as r')
     .where('r.id', resultId)
-    .update('resultWorkflowStatusId', workflowStatusRow.id)
+    .update({ resultWorkflowStatusId })
 
   // keep log if update was successful. don't need to check permission again because
   // rows would be 0 if no permission in query above
   if (rows) {
     await knex('ResultWorkflowLog').insert({
       resultId,
-      resultWorkflowStatusId: workflowStatusRow.id,
+      resultWorkflowStatusId,
       reason,
       changedOn: now,
       createdOn: now,

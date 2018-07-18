@@ -1,0 +1,60 @@
+{
+  "data": [
+    {
+      "name": "MTB/Rif",
+      "i18nKey": "assayTypeMtbRif"
+    },
+    {
+      "name": "Ebola",
+      "i18nKey": "assayTypeEbola"
+    },
+    {
+      "name": "HIV VL",
+      "i18nKey": "assayTypeHivVl"
+    },
+    {
+      "name": "HIV Qual",
+      "i18nKey": "assayTypeHivQual"
+    },
+    {
+      "name": "CD4 Count",
+      "i18nKey": "assayTypeCD4"
+    },
+    {
+      "name": "EID",
+      "i18nKey": "assayTypeEid"
+    },
+    {
+      "name": "HCV",
+      "i18nKey": "assayTypeHcv"
+    },
+    {
+      "name": "Lipid Panel",
+      "i18nKey": "assayTypeLipidPanel"
+    },
+    {
+      "name": "Zika",
+      "i18nKey": "assayTypeZika"
+    },
+    {
+      "name": "Dengue",
+      "i18nKey": "assayTypeDengue"
+    },
+    {
+      "name": "TB AST",
+      "i18nKey": "assayTypeTbAst"
+    },
+    {
+      "name": "TB G&D",
+      "i18nKey": "assayTypeTbGnd"
+    },
+    {
+      "name": "Unknown",
+      "i18nKey": "assayTypeUnknown"
+    },
+    {
+      "name": "Generic RDT",
+      "i18nKey": "genericRDT"
+    }
+  ]
+}

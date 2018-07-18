@@ -1,4 +1,4 @@
-module.exports = require('../../src/db').seed(seed)
+module.exports = require('../utils').seed(seed)
 
 const bcrypt = require('bcrypt')
 const _ = require('lodash')
@@ -6,7 +6,13 @@ const _ = require('lodash')
 const config = require('../../src/config')
 const { randomToken } = require('../../src/deviceApi/apiKey')
 const labClinic = require('./fixtures/labClinic.json')
-const { rowsAsObject, getPermissionModules } = require('../utils')
+const { getPermissionModules } = require('../utils')
+const {
+  assayTypeToId,
+  partnerTypeToId,
+  deviceTypeCategoryToId,
+  resultSourceToId,
+} = require('../../src/shared/dictionary')
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 
@@ -37,10 +43,9 @@ async function seed(knex) {
   }
 
   // Reuse previously seeded "static" data
-  const partnerTypes = await rowsAsObject(knex, 'PartnerType')
   const [partnerId] = await knex('Partner').insert({
     name: 'RRT',
-    partnerTypeId: partnerTypes.Operating.id,
+    partnerTypeId: await partnerTypeToId('Operating'),
     plugin: 'malawi',
     deviceLogHistoryDays: 365,
     autoAcknowledgeOlderThanDays: 28,
@@ -48,7 +53,6 @@ async function seed(knex) {
     maxDaysDeviceOffline: 7,
     maxDaysDeviceNoResults: 14,
   })
-  const deviceTypeCategories = await rowsAsObject(knex, 'DeviceTypeCategory')
 
   /* TODO Add configuration schema once UI supports and we synchronize correctly
   // define configurationData object
@@ -147,25 +151,24 @@ async function seed(knex) {
   })
 */
 
-  const assayTypes = await rowsAsObject(knex, 'AssayType')
-  const resultSources = await rowsAsObject(knex, 'ResultSource')
-
   // RRT Device Type
   const [deviceTypeReporterId] = await knex('DeviceType').insert({
     externalId: 'AspectReporter',
     name: 'Aspect Reporter',
     manufacturer: 'SystemOne',
-    deviceTypeCategoryId: deviceTypeCategories.Client.id,
+    deviceTypeCategoryId: await deviceTypeCategoryToId('Client'),
     // configurationDataSchema: rrtConfigurationDataSchema
   })
+
+  const resultSourceGeneratedId = await resultSourceToId('Generated')
 
   await knex('Assay').insert({
     name: 'Reporter HIV VL',
     i18nKey: 'AssayReporterHivVl',
     externalId: 'HivVl',
-    assayTypeId: assayTypes['HIV VL'].id,
+    assayTypeId: await assayTypeToId('HIV VL'),
     deviceTypeId: deviceTypeReporterId,
-    resultSourceId: resultSources.Generated.id,
+    resultSourceId: resultSourceGeneratedId,
     resultCategory1Label: 'HIV',
     resultCategory1i18nKey: 'resultCategoryHivVl',
     resultDataSchema: JSON.stringify({
@@ -227,9 +230,9 @@ async function seed(knex) {
     name: 'Reporter EID',
     i18nKey: 'AssayReporterEid',
     externalId: 'EID',
-    assayTypeId: assayTypes.EID.id,
+    assayTypeId: await assayTypeToId('EID'),
     deviceTypeId: deviceTypeReporterId,
-    resultSourceId: resultSources.Generated.id,
+    resultSourceId: resultSourceGeneratedId,
     resultCategory1Label: 'EID',
     resultCategory1i18nKey: 'resultCategoryEid',
     resultDataSchema: JSON.stringify({

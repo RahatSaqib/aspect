@@ -1,4 +1,25 @@
+const _ = require('lodash')
 const { readJson } = require('fs-extra')
+
+// Helper for seeed files. Ru
+let hasSeededStaticData = false
+function seed(seed) {
+  return {
+    seed(knex) {
+      return runSeed(seed, knex).catch(err => {
+        console.error(err) // eslint-disable-line no-console
+        throw err
+      })
+    },
+  }
+}
+async function runSeed(seed, knex) {
+  if (!hasSeededStaticData) {
+    await seedStaticData(knex)
+    hasSeededStaticData = true
+  }
+  return seed(knex)
+}
 
 async function rowsAsObject(knex, table, column = 'name') {
   return knex(table).reduce((memo, row) => {
@@ -360,14 +381,35 @@ async function getPermissionModules(knex) {
 }
 
 async function seedStaticData(knex) {
-  const tables = ['FileContentType']
+  const tables = [
+    'FileContentType',
+    'IssueCategory',
+    'IssueEventStatus',
+    'IssueStatusSeverity',
+    'MessageStatus',
+    'MessageSeverity',
+    'ResultCategory',
+    'ResultSource',
+    'ResultType',
+    'ResultWorkflowStatus',
+    'SampleType',
+    // TODO ASP-757 Standardize static data key on externalId
+    ['AssayType', 'name'],
+    ['ConsumableReason', 'name'],
+    ['DeviceStatus', 'token'],
+    ['PartnerType', 'name'],
+    ['DeviceTypeCategory', 'name'],
+    ['Unit', 'name'],
+  ]
   await Promise.all(
-    tables.map(async table => {
+    tables.map(async tableItem => {
+      const table = _.isArray(tableItem) ? tableItem[0] : tableItem
+      const keyColumn = _.isArray(tableItem) ? tableItem[1] : 'externalId'
       const { data } = await readJson(`./seeds/fixtures/${table}.json`)
       await Promise.all(
         data.map(async datum => {
           const existingDatum = await knex(table)
-            .where({ externalId: datum.externalId })
+            .where(keyColumn, datum[keyColumn])
             .first('id')
           if (existingDatum == null) {
             await knex(table).insert(datum)
@@ -437,10 +479,10 @@ async function seedIssueEventTriggersForPartner(
 }
 
 module.exports = {
+  seed,
   rowsAsObject,
   getDefaultMessageTypes,
   seedStockIssues,
   getPermissionModules,
-  seedStaticData,
   seedIssueEventTriggersForPartner,
 }

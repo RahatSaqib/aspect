@@ -1,0 +1,29 @@
+{
+  "data": [
+    {
+      "name": "Diagnostic Device",
+      "externalId": "DiagnosticDevice",
+      "i18nKey": "resultSourceDiagnostic"
+    },
+    {
+      "name": "LIMS",
+      "externalId": "LIMS",
+      "i18nKey": "resultSourceLims"
+    },
+    {
+      "name": "Other System",
+      "externalId": "OtherSystem",
+      "i18nKey": "resultSourceOtherSystem"
+    },
+    {
+      "name": "Entered by Hand",
+      "externalId": "EnteredByHand",
+      "i18nKey": "resultSourceEnteredByHand"
+    },
+    {
+      "name": "Generated",
+      "externalId": "Generated",
+      "i18nKey": "resultSourceGenerated"
+    }
+  ]
+}

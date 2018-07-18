@@ -1,11 +1,13 @@
 const _ = require('lodash')
 const Promise = require('bluebird')
+const {
+  sampleTypeToId,
+  deviceTypeToPlugin,
+} = require('../../../shared/dictionary')
 
 async function transformMergeResultPayload(context) {
   const { knex, deviceType } = context
-  const { plugin } = await knex('DeviceType')
-    .where('externalId', deviceType)
-    .first('plugin')
+  const plugin = await deviceTypeToPlugin(deviceType)
   const { loadPlugin } = require('../registration')
   const deviceTypeTransformMergeResultPayload = await loadPlugin(
     [plugin],
@@ -152,7 +154,7 @@ function parsePatientId(payload) {
   }
 }
 
-async function parseCustomFields(payload, knex) {
+async function parseCustomFields(payload /* , knex */) {
   const customFieldData = _.get(payload, 'data.customFieldData')
   if (_.isEmpty(customFieldData)) {
     return
@@ -274,8 +276,10 @@ async function parseCustomFields(payload, knex) {
   if (customFieldValues.sampleType) {
     const existingSampleType = _.get(payload, 'sample.type')
     if (!existingSampleType) {
-      const sampleTypes = await knex('SampleType').pluck('externalId')
-      if (sampleTypes.includes(customFieldValues.sampleType)) {
+      const customSampleTypeId = await sampleTypeToId(
+        _.get(customFieldValues, 'sampleType', '')
+      )
+      if (customSampleTypeId != null) {
         _.set(payload, 'sample.type.id', customFieldValues.sampleType)
       }
     }

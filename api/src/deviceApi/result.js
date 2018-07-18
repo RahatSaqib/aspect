@@ -2,6 +2,13 @@ const Boom = require('boom')
 const _ = require('lodash')
 
 const { isJson, deepMerge } = require('../shared/json')
+const {
+  resultSourceToId,
+  resultCategoryToId,
+  resultTypeToId,
+  resultWorkflowStatusToId,
+  sampleTypeToId,
+} = require('../shared/dictionary')
 
 async function mergeResult(
   knex,
@@ -43,90 +50,70 @@ async function mergeResult(
     .first('s.id', 's.partnerId', 's.geographyId', 's.latitude', 's.longitude')
 
   // Select ResultType if specified, otherwise Patient
-  const resultTypeQ = knex('ResultType as rt').first('rt.id')
+  let resultTypeId = null
   if (_.has(payload, 'type.id')) {
-    resultTypeQ.where({ 'rt.externalId': _.get(payload, 'type.id') })
+    resultTypeId = await resultTypeToId(_.get(payload, 'type.id'))
   } else if (existingResult) {
-    resultTypeQ.where({ 'rt.id': existingResult.resultTypeId })
+    ;({ resultTypeId } = existingResult)
   } else {
-    resultTypeQ.where({ 'rt.externalId': 'Patient' })
+    resultTypeId = await resultTypeToId('Patient')
   }
 
   // Select Workflow Status if specified, otherwise Error or OK depending on error payload
-  const resultWorkflowStatusQ = knex('ResultWorkflowStatus as rs').first(
-    'rs.id'
-  )
+  let resultWorkflowStatusId = null
   if (_.has(payload, 'workflow.status.id')) {
-    resultWorkflowStatusQ.where({
-      'rs.externalId': _.get(payload, 'workflow.status.id'),
-    })
+    resultWorkflowStatusId = await resultWorkflowStatusToId(
+      _.get(payload, 'workflow.status.id', '')
+    )
   } else if (payload.error) {
-    resultWorkflowStatusQ.where({ 'rs.externalId': 'Error' })
+    resultWorkflowStatusId = await resultWorkflowStatusToId('Error')
   } else if (existingResult) {
-    resultWorkflowStatusQ.where({
-      'rs.id': existingResult.resultWorkflowStatusId,
-    })
+    ;({ resultWorkflowStatusId } = existingResult)
   } else {
-    resultWorkflowStatusQ.where({ 'rs.externalId': 'OK' })
+    resultWorkflowStatusId = await resultWorkflowStatusToId('OK')
   }
 
   // Categories if specified, otherwise Error or Success depending on error payload
   const categoryIds = _.map(payload.category, 'id')
-  const category1Q = knex('ResultCategory as rc').first('rc.id')
+  let resultCategory1 = null
+  let resultCategory2 = null
   if (categoryIds.length > 0 && categoryIds[0]) {
-    category1Q.where({ 'rc.externalId': categoryIds[0] })
+    resultCategory1 = await resultCategoryToId(categoryIds[0])
   } else if (payload.error) {
-    category1Q.where({ 'rc.externalId': 'Error' })
+    resultCategory1 = await resultCategoryToId('Error')
   } else if (existingResult && existingResult.resultCategory1) {
-    category1Q.where({ 'rc.id': existingResult.resultCategory1 })
+    ;({ resultCategory1 } = existingResult)
   } else {
-    category1Q.where({ 'rc.externalId': 'Success' })
+    resultCategory1 = await resultCategoryToId('Success')
   }
-  const category2Q = knex('ResultCategory as rc').first('rc.id')
   if (categoryIds.length > 1 && categoryIds[1]) {
-    category2Q.where({ 'rc.externalId': categoryIds[1] })
+    resultCategory2 = await resultCategoryToId(categoryIds[1])
   } else if (existingResult && existingResult.resultCategory2) {
-    category2Q.where({ 'rc.id': existingResult.resultCategory2 })
-  } else {
-    category2Q.limit(0)
+    ;({ resultCategory2 } = existingResult)
   }
 
-  const [
-    assays,
-    site,
-    resultType,
-    resultWorkflowStatus,
-    category1,
-    category2,
-  ] = await Promise.all([
-    assayQ,
-    siteQ,
-    resultTypeQ,
-    resultWorkflowStatusQ,
-    category1Q,
-    category2Q,
-  ])
+  const [assays, site] = await Promise.all([assayQ, siteQ])
 
   if (
     !site ||
-    !resultType ||
-    !resultWorkflowStatus ||
-    _.isEmpty(category1) ||
+    !resultTypeId ||
+    !resultWorkflowStatusId ||
+    !resultCategory1 ||
     assays.length !== 1
   ) {
     const requestErrors = []
     if (!site) {
       requestErrors.push('assigned site for device')
     }
-    if (!resultType) {
+    if (!resultTypeId) {
       requestErrors.push(`result type with id ${_.get(payload, 'type.id')}`)
     }
-    if (!resultWorkflowStatus) {
+    if (!resultWorkflowStatusId) {
       requestErrors.push(
         `result workflow status id ${_.get(payload, 'workflow.status.id')}`
       )
     }
-    if (_.isEmpty(category1)) {
+    if (!resultCategory1) {
       requestErrors.push(`result categories with ids ${categoryIds.join(' ')}`)
     }
     if (assays.length !== 1) {
@@ -138,32 +125,27 @@ async function mergeResult(
   const assay = assays[0]
 
   // Select ResultSource if specified, otherwise from Assay
-  let resultSource
+  let resultSourceId = null
   if (_.has(payload, 'source.id')) {
-    resultSource = await knex('ResultSource as rs')
-      .where({ 'rs.externalId': _.get(payload, 'source.id') })
-      .first('rs.id')
-    if (!resultSource) {
+    resultSourceId = await resultSourceToId(_.get(payload, 'source.id', ''))
+    if (!resultSourceId) {
       throw Boom.badRequest(
         `Cannot find result source with id ${_.get(payload, 'source.id')}`
       )
     }
   } else if (existingResult) {
-    resultSource = { id: existingResult.resultSourceId }
+    ;({ resultSourceId } = existingResult)
   } else {
-    resultSource = { id: assay.resultSourceId }
+    ;({ resultSourceId } = assay)
   }
 
   let sampleTypeId = null
   const payloadSampleTypeId = _.get(payload, 'sample.type.id', false)
   if (payloadSampleTypeId) {
-    const sampleType = await knex('SampleType')
-      .where({ externalId: payloadSampleTypeId })
-      .first('id')
-    if (sampleType == null) {
+    sampleTypeId = await sampleTypeToId(payloadSampleTypeId)
+    if (sampleTypeId == null) {
       throw Boom.badRequest(`Cannot find sample type ${payloadSampleTypeId}`)
     }
-    sampleTypeId = sampleType.id
   }
 
   let sampleOriginSiteId = site.id
@@ -256,9 +238,9 @@ async function mergeResult(
       'assay.version',
       _.get(existingResult, 'assayVersion', null)
     ),
-    resultTypeId: resultType.id,
-    resultSourceId: resultSource.id,
-    resultWorkflowStatusId: resultWorkflowStatus.id,
+    resultTypeId,
+    resultSourceId,
+    resultWorkflowStatusId,
     sampleId,
     sampleRunNumber: _.get(
       payload,
@@ -270,8 +252,8 @@ async function mergeResult(
       'sample.group',
       _.get(existingResult, 'sampleGroup', null)
     ),
-    resultCategory1: _.get(category1, 'id', null),
-    resultCategory2: _.get(category2, 'id', null),
+    resultCategory1,
+    resultCategory2,
     resultData,
     startedOn: _.get(
       payload,
