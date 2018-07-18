@@ -19,6 +19,8 @@ const {
   resultMachineProceduralError,
   resultModuleProceduralError,
   resultMachinePowerError,
+  resultModuleUnknownError,
+  resultMachineUnknownError,
 } = require('../../../src/result/actions')
 const { inventoryReagentHealth } = require('../../../src/inventory/actions')
 const { waitForIdle, waitForAction } = require('../../utils/mqUtils')
@@ -1203,5 +1205,194 @@ describe('Myanmar Issue endpoints', () => {
           assert.equal(issues[0].issueStatus, 'Active')
         }
       }
+    }))
+
+  it('should create a module and machine "Unknown Error" issues', () =>
+    runTest(async knex => {
+      const { now } = context
+
+      // Post to deviceApi to ensure the device in in Aspect
+      const response = await postToDeviceApi({
+        authHeader: deviceAuth,
+        payload: _.merge({}, basicDevicePayload, {
+          name: deviceName,
+        }),
+      })
+      const deviceId = response.body.device.id
+
+      // Module A: This won't create any issue since (1/20 * 100)% !> 5%
+      for (let i = 0; i < 21; i++) {
+        /* eslint-disable no-await-in-loop */
+        const errorTestResultId = `UNIQUE-ID-WITH-GEN-MAC-ERROR-${i}`
+        const sampleId = `GENMAC2552${i}`
+        const moduleSerial = `GENMAC123A`
+        const instrumentSerial = `CEPH-PC-123`
+        const testStartedOn = setMilliseconds(subDays(now, i + 3), 0)
+        const testEndedOn = setMilliseconds(addHours(testStartedOn, i + 2), 0)
+
+        // Post the first few results without an error code
+        const result = {
+          id: errorTestResultId,
+          startedOn: testStartedOn,
+          endedOn: testEndedOn,
+          sample: { id: sampleId },
+          instrument: {
+            serial: instrumentSerial,
+            module: {
+              serial: moduleSerial,
+              name: 'A1',
+            },
+          },
+        }
+        if (i > 19) {
+          result.data = {
+            resultText: 'ERROR',
+          }
+        }
+
+        const payload = _.merge(
+          {},
+          basicDevicePayload,
+          { name: deviceName },
+          basicResultPayload,
+          {
+            result,
+          }
+        )
+        await postToDeviceApi({
+          authHeader: deviceAuth,
+          payload,
+        })
+      }
+
+      // Module B: should create a module UnknownError issue (1/10 * 100)% > 5%
+      for (let i = 0; i < 10; i++) {
+        /* eslint-disable no-await-in-loop */
+        const errorTestResultId = `UNIQUE-ID-WITH-GEN-MAC-B-ERR-${i}`
+        const sampleId = `GENMAC25B${i}`
+        const moduleSerial = `GENMAC123B`
+        const instrumentSerial = `CEPH-PC-456`
+        const testStartedOn = setMilliseconds(subDays(now, i + 3), 0)
+        const testEndedOn = setMilliseconds(addHours(testStartedOn, i + 2), 0)
+
+        // Post the first few results without an error code
+        const result = {
+          id: errorTestResultId,
+          startedOn: testStartedOn,
+          endedOn: testEndedOn,
+          sample: { id: sampleId },
+          instrument: {
+            serial: instrumentSerial,
+            module: {
+              serial: moduleSerial,
+              name: 'A1',
+            },
+          },
+        }
+        if (i > 3) {
+          result.data = {
+            resultText: 'ERROR',
+          }
+        }
+
+        const payload = _.merge(
+          {},
+          basicDevicePayload,
+          { name: deviceName },
+          basicResultPayload,
+          {
+            result,
+          }
+        )
+        if (i < 9) {
+          // Post the result to aspect
+          await postToDeviceApi({
+            authHeader: deviceAuth,
+            payload,
+          })
+        } else {
+          // Should create issue
+          const waitForModuleUnknownError = waitForAction(
+            resultModuleUnknownError(deviceId)
+          )
+          await postToDeviceApi({
+            authHeader: deviceAuth,
+            payload,
+          })
+          await waitForModuleUnknownError
+          await waitForIdle()
+
+          const issues = await knex('Issue as i')
+            .join('IssueType as it', 'i.issueTypeId', 'it.id')
+            .join('IssueStatus as is', 'i.issueStatusId', 'is.id')
+            .where({ 'i.deviceId': deviceId })
+            .select(
+              'i.id',
+              'it.externalId as issueType',
+              'i.deviceId',
+              'is.externalId as issueStatus'
+            )
+          assert.equal(issues.length, 1)
+          assert.equal(issues[0].issueType, 'ModuleUnknownError')
+          assert.equal(issues[0].deviceId, deviceId)
+          assert.equal(issues[0].issueStatus, 'Active')
+        }
+      }
+
+      // Post an additional result with procedural error to to module A
+      const testStartedOn = setMilliseconds(subDays(now, 22 + 3), 0)
+      const result = {
+        id: 'UNIQUE-ID-WITH-GEN-MAC-ERROR-22',
+        startedOn: testStartedOn,
+        endedOn: setMilliseconds(addHours(testStartedOn, 22 + 2), 0),
+        sample: { id: 'GENMODB55222' },
+        data: {
+          resultText: 'ERROR',
+        },
+        instrument: {
+          serial: 'CEPH-PC-123',
+          module: {
+            serial: 'GENMAC123A',
+            name: 'A1',
+          },
+        },
+      }
+      const payload = _.merge(
+        {},
+        basicDevicePayload,
+        { name: deviceName },
+        basicResultPayload,
+        {
+          result,
+        }
+      )
+      // Should create issue when errorCode is added
+      const waitForMachineUnknownError = waitForAction(
+        resultMachineUnknownError(deviceId)
+      )
+      await postToDeviceApi({
+        authHeader: deviceAuth,
+        payload,
+      })
+      await waitForMachineUnknownError
+      await waitForIdle()
+
+      const issues = await knex('Issue as i')
+        .join('IssueType as it', 'i.issueTypeId', 'it.id')
+        .join('IssueStatus as is', 'i.issueStatusId', 'is.id')
+        .where({ 'i.deviceId': deviceId })
+        .select(
+          'i.id',
+          'it.externalId as issueType',
+          'i.deviceId',
+          'is.externalId as issueStatus'
+        )
+      assert.equal(issues.length, 2)
+      issues.forEach(issue => {
+        if (issue.issueType === 'MachineUnknownError') {
+          assert.equal(issue.deviceId, deviceId)
+          assert.equal(issue.issueStatus, 'Active')
+        }
+      })
     }))
 })
