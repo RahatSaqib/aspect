@@ -6,6 +6,7 @@ const { alertMessageCreated } = require('../alert/actions')
 const { emailMessageCreated } = require('../email/actions')
 const { smsMessageCreated } = require('../sms/actions')
 const { webhookMessageCreated } = require('../webhook/actions')
+const { messageStatusToId } = require('../shared/dictionary')
 
 async function listNotifications(request) {
   const { query } = request
@@ -216,10 +217,7 @@ async function onIssueEscalated({ issueId }, { messageContext: context }) {
               .first()
             if (existingNotification == null) {
               notification.createdOn = now
-              const { id: messageStatusId } = await knex('MessageStatus')
-                .where({ externalId: 'Initial' })
-                .first('id')
-
+              const messageStatusId = await messageStatusToId('Initial')
               const sharedMessageProperties = {
                 messageStatusId,
                 personId: person.id,

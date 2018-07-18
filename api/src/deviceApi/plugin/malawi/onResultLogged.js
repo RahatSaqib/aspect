@@ -2,6 +2,7 @@ const _ = require('lodash')
 const { addResultWorkflowLogIfChanged } = require('../common')
 const { mergeResult, getResult } = require('../../result')
 const { resultUpdated } = require('../../../result/actions')
+const { resultWorkflowStatusToId } = require('../../../shared/dictionary')
 
 const DEVICE_TYPE_CHAI = 'CHAILIMS'
 const DEVICE_TYPE_REPORTER = 'AspectReporter'
@@ -128,9 +129,9 @@ async function mergeChaiResultToReporters(
       if (!existingResult) {
         // auto QC Check new result and mark as deliverable, but do
         // not change workflow status otherwise
-        const { id: deliverableId } = await knex('ResultWorkflowStatus')
-          .where({ externalId: DELIVERABLE_EXTERNALID })
-          .first('id')
+        const deliverableId = await resultWorkflowStatusToId(
+          DELIVERABLE_EXTERNALID
+        )
         await knex('Result')
           .where({ id: processedResult.id })
           .update({

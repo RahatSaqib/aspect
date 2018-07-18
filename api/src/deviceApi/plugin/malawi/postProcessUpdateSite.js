@@ -1,6 +1,7 @@
 const _ = require('lodash')
 const { mergeResult, getResult } = require('../../result')
 const { addResultWorkflowLogIfChanged } = require('../common')
+const { resultWorkflowStatusToId } = require('../../../shared/dictionary')
 
 const DEVICE_TYPE_CHAI = 'CHAILIMS'
 const DEVICE_TYPE_REPORTER = 'AspectReporter'
@@ -31,9 +32,7 @@ async function postProcessUpdateSite(context, site, previousSite) {
 }
 
 async function purgePreviousResults(knex, actions, deviceId, now) {
-  const { id: purgedStatusId } = await knex('ResultWorkflowStatus')
-    .where({ externalId: PURGED_EXTERNALID })
-    .first('id')
+  const purgedStatusId = await resultWorkflowStatusToId(PURGED_EXTERNALID)
   await knex('Result')
     .where({ deviceId })
     .update({ resultWorkflowStatusId: purgedStatusId })
@@ -117,9 +116,9 @@ async function generateHistoricalResults(
   const autoAcknowledgeMaxIndex =
     sourceResults.length - numberToLeaveUnacknowledged
 
-  const { id: acknowledgedStatusId } = await knex('ResultWorkflowStatus')
-    .where({ externalId: ACKNOWLEDGED_EXTERNALID })
-    .first('id')
+  const acknowledgedStatusId = await resultWorkflowStatusToId(
+    ACKNOWLEDGED_EXTERNALID
+  )
 
   let index = -1
 
