@@ -490,7 +490,8 @@ describe('Result routes', () => {
             .post(commcarePluginPath)
             .auth('commcare_test', apiKey.token)
             .send(
-              getCommCarePayload('negative', {
+              getCommCarePayload({
+                resultText: 'negative',
                 age: 28,
                 gender: 'male',
               })

@@ -1,6 +1,13 @@
 const config = require('../../../src/config')
 
-function getCommCarePayload(resultText, { age, gender }) {
+function getCommCarePayload({
+  id = '422',
+  resultText = 'positive',
+  hcwResult = 'positive',
+  hcwTiebreakResult = 'not_needed',
+  age = '32',
+  gender = 'male',
+}) {
   return {
     app_id: '3f69970af4258aee673c6348cd3a395e',
     archived: false,
@@ -32,9 +39,9 @@ function getCommCarePayload(resultText, { age, gender }) {
       age,
       education_level: '8_to_matriculation',
       gender,
-      hcw_confirmatory_result: 'positive',
-      hcw_rdt_result: 'positive',
-      hcw_tiebreak_result: 'not_needed',
+      hcw_confirmatory_result: hcwResult,
+      hcw_rdt_result: resultText,
+      hcw_tiebreak_result: hcwTiebreakResult,
       ignore0: 'OK',
       ignore1: 'OK',
       ignore10: 'OK',
@@ -70,9 +77,9 @@ function getCommCarePayload(resultText, { age, gender }) {
       previous_testing: 'yes',
       rdt_picture: '1528890813120.jpg',
       rdt_result: resultText,
-      study_id: '86422',
+      study_id: `study-${id}`,
     },
-    id: 'cb4f3814-1304-4b7a-ba61-39cd7c0bd3c6',
+    id,
     initial_processing_complete: true,
     is_phone_submission: true,
     metadata: {

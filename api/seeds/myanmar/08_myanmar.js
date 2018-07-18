@@ -1,7 +1,11 @@
 module.exports = require('../utils').seed(seed)
 
+const {
+  rowsAsObject,
+  getDefaultMessageTypes,
+  seedIssueEventTriggersForPartner,
+} = require('../utils')
 const { seedUnknownErrorsIssue } = require('../seedUnknownErrorsIssue')
-const { getDefaultMessageTypes, rowsAsObject } = require('../utils')
 
 async function seed(knex) {
   const [issueTypes, defaultMessageTypes] = await Promise.all([
@@ -180,4 +184,8 @@ async function seed(knex) {
     .where('name', 'RO Reagent Health')
 
   await seedUnknownErrorsIssue(knex, 'Myanmar', 'myanmar_admin')
+
+  await seedIssueEventTriggersForPartner(knex, partnerId, {
+    issueTypeWhitelist: ['DeviceMaintenance'],
+  })
 }

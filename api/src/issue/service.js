@@ -15,6 +15,31 @@ const {
   issueEventStatusToId,
 } = require('../shared/dictionary')
 
+async function getIssueEventTriggerSubscriptions({ messageContext }) {
+  return messageContext.run(async knex => {
+    const actions = await knex('IssueEventTrigger as iet')
+      .join('IssueType as it', 'it.id', 'iet.issueTypeId')
+      .join('IssueEventStatus as ies', 'ies.id', 'iet.issueEventStatusId')
+      .distinct(
+        'it.externalId as issueType',
+        'ies.externalId as issueEventStatus',
+        'iet.triggerConditions'
+      )
+      .reduce((memo, { issueType, issueEventStatus, triggerConditions }) => {
+        const { action } = JSON.parse(triggerConditions)
+        if (action != null) {
+          if (issueEventStatus === 'Triggered') {
+            memo[action] = onIssueEventTrigger(issueType)
+          } else if (issueEventStatus === 'Resolved') {
+            memo[action] = onIssueEventResolve(issueType)
+          }
+        }
+        return memo
+      }, {})
+    return { actions }
+  })
+}
+
 function onIssueEventTrigger(issueType) {
   return async (action, { messageContext: context }) => {
     context.bindActionCreators({ issueCreated, issueTriggered })
@@ -51,11 +76,16 @@ function onIssueEventResolve(issueType) {
     context.bindActionCreators({ issueResolved })
     context.transact(async knex => {
       const now = new Date()
-      const openIssue = await findOpenIssue(knex, issueType, action)
-
-      let issue = null
-      if (openIssue != null) {
-        issue = openIssue
+      const issue = await findOpenIssue(knex, issueType, action)
+      const hasTrigger =
+        issue != null &&
+        (await hasIssueEventTrigger(knex, {
+          partnerId: issue.partnerId,
+          issueType,
+          action,
+          issueEventStatus: 'Resolved',
+        }))
+      if (hasTrigger) {
         await knex('Issue')
           .where({ id: issue.id })
           .update({
@@ -94,7 +124,7 @@ async function findOpenIssue(knex, issueType, action) {
     findOpenIssue.where({ 'i.partnerId': action.partnerId })
   }
 
-  return findOpenIssue.first('i.id', 'i.data')
+  return findOpenIssue.first('i.id', 'i.partnerId', 'i.data')
 }
 
 async function createNewIssue(knex, issueType, action) {
@@ -114,6 +144,7 @@ async function createNewIssue(knex, issueType, action) {
     updatedOn: now,
   }
 
+  // populate context from action data
   if (action.resultId) {
     issue.resultId = action.resultId
     const issueContext = await knex('Result')
@@ -166,11 +197,24 @@ async function createNewIssue(knex, issueType, action) {
     issue.partnerId = action.partnerId
   }
 
+  // Now that we know partnerId, check to see if we have a trigger
+  const hasTrigger = await hasIssueEventTrigger(knex, {
+    partnerId: issue.partnerId,
+    issueType,
+    action,
+    issueEventStatus: 'Triggered',
+  })
+  if (!hasTrigger) {
+    return null
+  }
+
+  // populate remaining fields
   if (_.get(action, 'options.dueOn') != null) {
     issue.dueOn = parseDateOrDefault(action.options.dueOn)
   }
   issue.data = JSON.stringify(getActionData(action))
 
+  // Everything is fine, create new issue
   const [issueId] = await knex('Issue').insert(issue)
   issue.id = issueId
 
@@ -182,6 +226,23 @@ async function createNewIssue(knex, issueType, action) {
   })
 
   return issue
+}
+
+async function hasIssueEventTrigger(
+  knex,
+  { partnerId, issueType, issueEventStatus, action }
+) {
+  const issueTypeId = await issueTypeToId(issueType)
+  const issueEventStatusId = await issueEventStatusToId(issueEventStatus)
+
+  const issueEventTrigger = await knex('IssueEventTrigger')
+    .where({ partnerId, issueTypeId, issueEventStatusId })
+    .first('triggerConditions')
+  if (issueEventTrigger == null) {
+    return false
+  }
+  const conditions = JSON.parse(issueEventTrigger.triggerConditions)
+  return conditions.action === action.type
 }
 
 async function mergeActionData(knex, issue, action) {
@@ -292,6 +353,5 @@ async function updateIssueStatus(request) {
 
 module.exports = {
   updateIssueStatus,
-  onIssueEventTrigger,
-  onIssueEventResolve,
+  getIssueEventTriggerSubscriptions,
 }
