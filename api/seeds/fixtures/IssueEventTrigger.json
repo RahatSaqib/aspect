@@ -118,6 +118,20 @@
       "triggerConditions": {
         "action": "RESULT_MODULE_TEMPERATURE_ERROR"
       }
+    },
+    {
+      "issueType": "ModuleUnknownError",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "RESULT_MODULE_UNKNOWN_ERROR"
+      }
+    },
+    {
+      "issueType": "MachineUnknownError",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "RESULT_MACHINE_UNKNOWN_ERROR"
+      }
     }
   ]
 }

@@ -3865,7 +3865,7 @@ async function seed(knex) {
       name: 'Result Received',
       externalId: 'ResultReceived',
       i18nKey: 'issueTypeResultReceived',
-      issueCategoryId: issueCategories.DataHealth.id,
+      issueCategoryId: issueCategories.DataHealth,
     },
     {
       name: 'Device Offline',
