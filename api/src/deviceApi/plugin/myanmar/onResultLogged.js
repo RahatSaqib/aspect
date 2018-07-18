@@ -115,11 +115,14 @@ const moduleFailureMaxErrors = 2
 const machineTemperatureMaxErrors = 8
 const maxPrcntErrors = 5
 const machinePowerMaxErrors = 8
+const machinePowerMinNoResults = 8
 const maxPrcntMachinePowerErrors = 3
 const maxInvalidResultRatio = 3
 const invalidResultBatchRatio = 2
 const maxReagentErrorRatio = 3
 const maxInvalidReagentErrorRatio = 4
+const minErrorsForLUGenericModuleIssue = 6
+const minErrorsForLUGenericMachineIssue = 8
 
 // check for error codes when a result is logged
 async function onResultLogged({ resultId }, { messageContext }) {
@@ -250,6 +253,7 @@ async function onResultLogged({ resultId }, { messageContext }) {
 
         // Check for machine issue first
         let allModulesErr = true
+        let allModulesTotalErrors = 0
         await Promise.all(
           _.map(modules, async module => {
             const [{ moduleResultCount }] = await knex('Result as r')
@@ -258,9 +262,15 @@ async function onResultLogged({ resultId }, { messageContext }) {
               .count('r.id as moduleResultCount')
             const prcntModuleError = module.errorCount / moduleResultCount * 100
             allModulesErr = allModulesErr && prcntModuleError > maxPrcntErrors
+            // count errors from all modules
+            allModulesTotalErrors += module.errorCount
           })
         )
-        if (allModulesErr) {
+        if (
+          allModulesErr &&
+          // LU Generic Machine: Minimum of 8 errors
+          allModulesTotalErrors >= minErrorsForLUGenericMachineIssue
+        ) {
           // Trigger machine procedural issue
           context.resultMachineProceduralError(deviceId)
         } else {
@@ -271,7 +281,11 @@ async function onResultLogged({ resultId }, { messageContext }) {
               .where('r.moduleSerial', module.moduleSerial)
               .count('r.id as moduleResultCount')
             const prcntModuleError = module.errorCount / moduleResultCount * 100
-            if (prcntModuleError > maxPrcntErrors) {
+            if (
+              prcntModuleError > maxPrcntErrors &&
+              // LU Generic Module: Minimum of 6 errors
+              module.errorCount >= minErrorsForLUGenericModuleIssue
+            ) {
               context.resultModuleProceduralError(deviceId, module)
             }
           })
@@ -325,7 +339,11 @@ async function onResultLogged({ resultId }, { messageContext }) {
 
     if (machineResultCount !== 0) {
       const prcntNoResult = noResultCount / machineResultCount * 100
-      if (prcntNoResult > maxPrcntMachinePowerErrors) {
+      if (
+        prcntNoResult > maxPrcntMachinePowerErrors &&
+        // LU Machine Power: minimum of 8 "No Results"
+        noResultCount >= machinePowerMinNoResults
+      ) {
         context.resultMachinePowerError(deviceId)
       }
     }

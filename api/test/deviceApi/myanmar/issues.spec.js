@@ -460,7 +460,8 @@ describe('Myanmar Issue endpoints', () => {
             },
           },
         }
-        if (i > 8) {
+        // 6 errors (i=4..9)
+        if (i > 3) {
           result = {
             id: errorTestResultId,
             startedOn: testStartedOn,
@@ -488,8 +489,9 @@ describe('Myanmar Issue endpoints', () => {
             result,
           }
         )
+        // minErrorsForLUGenericModuleIssue = 6, see src/deviceApi/plugins/myanmar/onResultLogged.js,
         if (i < 9) {
-          // Post the result to aspect
+          // Post the result to aspect - 5 error results (i=4..8) do not trigger Module issue
           await postToDeviceApi({
             authHeader: deviceAuth,
             payload,
@@ -499,6 +501,7 @@ describe('Myanmar Issue endpoints', () => {
           const waitForModuleProceduralError = waitForAction(
             resultModuleProceduralError(deviceId)
           )
+          // 6-th error result (i=9) will trigger Module issue
           await postToDeviceApi({
             authHeader: deviceAuth,
             payload,
@@ -606,7 +609,8 @@ describe('Myanmar Issue endpoints', () => {
             },
           },
         }
-        if (i === 9) {
+        // 6 errors (i=4..9)
+        if (i > 3) {
           result.error = {
             code: '1096',
           }
@@ -622,7 +626,7 @@ describe('Myanmar Issue endpoints', () => {
           }
         )
         if (i < 9) {
-          // Post the result to aspect
+          // Post the result to aspect - 5 error results (i=4..8) do not trigger Module issue
           await postToDeviceApi({
             authHeader: deviceAuth,
             payload,
@@ -632,6 +636,7 @@ describe('Myanmar Issue endpoints', () => {
           const waitForModuleProceduralError = waitForAction(
             resultModuleProceduralError(deviceId)
           )
+          // 6-th error result (i=9) will trigger Module issue
           await postToDeviceApi({
             authHeader: deviceAuth,
             payload,
@@ -687,6 +692,8 @@ describe('Myanmar Issue endpoints', () => {
       const waitForMachineProceduralError = waitForAction(
         resultMachineProceduralError(deviceId)
       )
+      // so, there are 6 errors in previous (2nd) module,
+      // and here we add 2nd error to the 1st module - totally we have now 8 errors - this triggers Machine issue
       await postToDeviceApi({
         authHeader: deviceAuth,
         payload,
@@ -846,8 +853,8 @@ describe('Myanmar Issue endpoints', () => {
               },
             },
           }
-
-          if (i > 9) {
+          // 8 NoResult entries (i=3..10)
+          if (i > 2) {
             result.data = {
               resultText: 'NO RESULT',
             }
@@ -869,7 +876,7 @@ describe('Myanmar Issue endpoints', () => {
               payload,
             })
           } else {
-            // Should create issue when errors > 8
+            // Should create issue when errors >= 8
             const waitForMachinePowerError = waitForAction(
               resultMachinePowerError(deviceId)
             )
