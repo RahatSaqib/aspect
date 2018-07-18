@@ -1,4 +1,4 @@
-module.exports = require('../../src/db').seed(seed)
+module.exports = require('../utils').seed(seed)
 
 async function seed(knex) {
   const { id: partnerId } = await knex('Partner')

@@ -413,8 +413,12 @@ async function getResultByResultId(request, fields = SELECT_SHOW_FIELDS) {
       data.assay = await knex('Assay as a')
         .where('a.id', data.assayId)
         .first()
-      data.assay.resultDataSchema = JSON.parse(data.assay.resultDataSchema)
-      data.assay.patientDataSchema = JSON.parse(data.assay.patientDataSchema)
+      if (data.assay.resultDataSchema) {
+        data.assay.resultDataSchema = JSON.parse(data.assay.resultDataSchema)
+      }
+      if (data.assay.patientDataSchema) {
+        data.assay.patientDataSchema = JSON.parse(data.assay.patientDataSchema)
+      }
     }
     // select files attached to this result
     const { data: files } = await showFileReferences(request)
