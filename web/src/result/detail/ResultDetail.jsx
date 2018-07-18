@@ -8,6 +8,7 @@ import { defineMessages } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
+import { Button } from 'react-toolbox/lib/button'
 
 // Material-UI
 import Checkbox from 'material-ui/Checkbox'
@@ -17,6 +18,8 @@ import MdClose from 'react-icons/lib/md/clear'
 
 // Our own imports
 import config from '../../config'
+import FormGroup from '../../components/themedReactToolbox/FormGroup'
+import ButtonGroup from '../../components/themedReactToolbox/ButtonGroup'
 import DelayShowingProgressBar from '../../components/shared/DelayShowingProgressBar'
 import JSONSchemaCard from '../../components/shared/JSONSchemaCard'
 import NavTitle from '../../globals/components/NavTitle'
@@ -24,6 +27,7 @@ import {
   fetchSingleResult,
   fetchResultLog,
   updateResultQcCheck,
+  updateResultFormData,
   Result,
 } from '../ResultRedux'
 import ConnectedTagInput from '../../tag/ConnectedTagInput'
@@ -94,6 +98,30 @@ const messages = defineMessages({
     id: 'pages.ResultDetail.totalFilesLabel',
     defaultMessage: 'Total files: {totalFiles}',
   },
+  additionalResultDetails: {
+    id: 'pages.ResultDetail.additionalResultDetails',
+    defaultMessage: 'Additional Result Details',
+  },
+  confirmedInterpretationOfResult: {
+    id: 'pages.ResultDetail.formFields.confirmedInterpretationOfResult',
+    defaultMessage: 'Confirmed Interpretation of Result',
+  },
+  none: {
+    id: 'pages.ResultDetail.formOptions.none',
+    defaultMessage: 'None',
+  },
+  negative: {
+    id: 'pages.ResultDetail.formOptions.negative',
+    defaultMessage: 'Negative',
+  },
+  positive: {
+    id: 'pages.ResultDetail.formOptions.positive',
+    defaultMessage: 'Positive',
+  },
+  uninterpretable: {
+    id: 'pages.ResultDetail.formOptions.uninterpretable',
+    defaultMessage: 'Uninterpretable',
+  },
 })
 
 const enhance = compose(
@@ -127,6 +155,7 @@ const enhance = compose(
           fetchSingleResult,
           fetchResultLog,
           updateResultQcCheck,
+          updateResultFormData,
           fetchTags,
           updateTags,
         },
@@ -187,11 +216,12 @@ export class ResultDetail extends PureComponent {
   }
 
   handleFetchResult = () => {
-    this.props.fetchSingleResult(this.props.match.params.resultId)
+    const { match: { params: { resultId } } } = this.props
+    this.props.fetchSingleResult(resultId)
 
-    this.props.fetchResultLog(this.props.match.params.resultId)
+    this.props.fetchResultLog(resultId)
 
-    this.props.fetchTags(this.props.match.params.resultId, 'result')
+    this.props.fetchTags(resultId, 'result')
   }
 
   hasResultWithAssay() {
@@ -257,7 +287,9 @@ export class ResultDetail extends PureComponent {
           <ExpansionPanelDetail>
             {logs.map(log => {
               const createdOn = new Date(log.createdOn)
-              const rawMessage = JSON.parse(log.rawMessage)
+              const rawMessage = log.rawMessage
+                ? JSON.parse(log.rawMessage)
+                : ''
               return (
                 <ReadOnlyField
                   label={formatMessage(messages.createdOnLabel, {
@@ -291,6 +323,75 @@ export class ResultDetail extends PureComponent {
         dataSchema={dataSchema}
         data={result.get('resultData')}
       />
+    )
+  }
+
+  renderFormData() {
+    const { intl: { formatMessage }, result, updateResultFormData } = this.props
+    if (!result || !result.has('formSchema') || !result.get('formSchema')) {
+      return false
+    }
+    const [...fieldKeys] = result.get('formSchema').keys()
+    if (_.isEmpty(fieldKeys)) {
+      return false
+    }
+    const sectionLabel =
+      fieldKeys.length === 1
+        ? formatMessage(
+            messages[result.getIn(['formSchema', fieldKeys[0], 'i18nLabel'])]
+          )
+        : formatMessage(messages.additionalResultDetails)
+    const formData = result.get('formData') || Immutable.Map({})
+    return (
+      <ExpansionPanel className={cssClasses('FieldsContainer')} disabled>
+        <ExpansionPanelHeader label={sectionLabel}>
+          {fieldKeys.map(formFieldKey => {
+            const { intl: { formatMessage } } = this.props
+            const fieldSchema = result.getIn(['formSchema', formFieldKey])
+            const fieldType = fieldSchema.getIn(['control', 'type'])
+            const fieldLabel =
+              fieldKeys.length > 1
+                ? formatMessage(messages[fieldSchema.get('i18nLabel')])
+                : ''
+            const fieldValue = formData.get(formFieldKey) || null
+            if (fieldType === 'ButtonGroup') {
+              if (fieldSchema.getIn(['control', 'allowMultipleSelection'])) {
+                // TODO: Implement multi-select button group
+                return false
+              }
+              return (
+                <FormGroup label={fieldLabel} key={formFieldKey}>
+                  <ButtonGroup isolated>
+                    {fieldSchema
+                      .getIn(['control', 'options'])
+                      .map(option => (
+                        <Button
+                          key={option.get('value') || 'null'}
+                          primary
+                          raised
+                          inverse={option.get('value') !== fieldValue}
+                          label={formatMessage(
+                            messages[option.get('i18nText')]
+                          )}
+                          data-value={option.get('value')}
+                          onClick={() =>
+                            updateResultFormData(
+                              result.get('id'),
+                              formFieldKey,
+                              option.get('value')
+                            )
+                          }
+                        />
+                      ))}
+                  </ButtonGroup>
+                </FormGroup>
+              )
+            }
+            // TODO: Implement other control types here
+            return false
+          })}
+        </ExpansionPanelHeader>
+      </ExpansionPanel>
     )
   }
 
@@ -393,7 +494,6 @@ export class ResultDetail extends PureComponent {
 
   renderContent() {
     const { result, screenSchema, resultTags, editable, intl } = this.props
-
     return (
       <div>
         <DetailPanel
@@ -402,6 +502,8 @@ export class ResultDetail extends PureComponent {
           schema={screenSchema}
           className={cssClasses('FieldsContainer')}
         >
+          {/* Render lower-level sections in assay schema in cards */}
+          {this.renderFormData()}
           <ExpansionPanel className={cssClasses('FieldsContainer')}>
             <ExpansionPanelHeader
               label={intl.formatMessage(messages.fieldFollowup)}
@@ -459,8 +561,7 @@ export class ResultDetail extends PureComponent {
   }
 
   render() {
-    const { intl } = this.props
-    const { formatMessage } = intl
+    const { intl: { formatMessage } } = this.props
 
     return (
       <div className={cssClasses('Container')}>
