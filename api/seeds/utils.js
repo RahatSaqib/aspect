@@ -406,16 +406,16 @@ async function seedStaticData(knex) {
       const table = _.isArray(tableItem) ? tableItem[0] : tableItem
       const keyColumn = _.isArray(tableItem) ? tableItem[1] : 'externalId'
       const { data } = await readJson(`./seeds/fixtures/${table}.json`)
-      await Promise.all(
-        data.map(async datum => {
-          const existingDatum = await knex(table)
-            .where(keyColumn, datum[keyColumn])
-            .first('id')
-          if (existingDatum == null) {
-            await knex(table).insert(datum)
-          }
-        })
-      )
+      for (const datum of data) {
+        /* eslint-disable no-await-in-loop */
+        // Need to add in order since some old code relies on hardcoded Ids
+        const existingDatum = await knex(table)
+          .where(keyColumn, datum[keyColumn])
+          .first('id')
+        if (existingDatum == null) {
+          await knex(table).insert(datum)
+        }
+      }
     })
   )
 }
