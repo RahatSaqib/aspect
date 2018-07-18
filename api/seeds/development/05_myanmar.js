@@ -26,6 +26,8 @@ const {
   sampleTypeToId,
 } = require('../../src/shared/dictionary')
 
+const { seedUnknownErrorsIssue } = require('../seedUnknownErrorsIssue')
+
 const now = new Date()
 const millisInHour = 1000 * 60 * 60
 const millisInMinute = 1000 * 60
@@ -1802,6 +1804,7 @@ async function seed(knex) {
   ])
 
   await seedStockIssues(knex)
+  await seedUnknownErrorsIssue(knex, 'Myanmar', 'myanmar_admin')
   await seedIssueEventTriggersForPartner(knex, partnerId, {
     issueTypeWhitelist: ['DeviceMaintenance'],
   })

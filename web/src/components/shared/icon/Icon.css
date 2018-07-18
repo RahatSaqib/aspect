@@ -1,4 +1,4 @@
-@import "../../../globals/variables.css";
+@import '../../../globals/variables.css';
 
 .Icon {
   fill: var(--aspect-color-grey-4);

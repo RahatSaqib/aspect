@@ -15,5 +15,5 @@
 
 .Field__Container > * {
   flex-basis: 25%;
-  white-space:nowrap;
+  white-space: nowrap;
 }

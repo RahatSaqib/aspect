@@ -10,6 +10,7 @@ const {
   listResultTypes,
   updateWorkflowStatus,
   updateQcCheck,
+  updateFormData,
   listWorkflowStatusTypes,
   listWorkflowStatusLog,
   exportResults,
@@ -244,6 +245,25 @@ const routes = [
         payload: {
           qcCheck: Joi.boolean(),
         },
+      },
+    },
+  },
+  {
+    method: 'PUT',
+    path: '/result/form-data/{resultId}',
+    handler: asyncHandler(updateFormData),
+    config: {
+      description: 'Update form data for the result',
+      notes: 'Update form data for the result',
+      auth: { scope: ['result:edit'] },
+      validate: {
+        params: {
+          resultId: Joi.number()
+            .integer()
+            .positive()
+            .description('Result Id'),
+        },
+        payload: Joi.object(),
       },
     },
   },
