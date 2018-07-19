@@ -743,7 +743,7 @@ async function checkDataCategoriesForLowStatus(action, { messageContext }) {
       const validValues =
         dataCategory.validValues && JSON.parse(dataCategory.validValues)
 
-      const { partnerId } = dataCategory
+      const { partnerId, externalId: category } = dataCategory
 
       // get all sites for current partnerId
       const sites = await knex('Site')
@@ -776,57 +776,35 @@ async function checkDataCategoriesForLowStatus(action, { messageContext }) {
             })
 
           const totals = itemsBase.countDistinct('r.id')
-          // -------------------------------
-          // notice that because patientData is a stringified JSON - all property names and values are quoted, and
-          // value has leading space, so pattern is "name": "value"
-          // (clarify if it makes sense to distinguish values as string, boolean, date and number here)
-          // -------------------------------
           const numValid = itemsBase
             .andWhere(function() {
-              // at least make sure field exists in json
-              this.where(
-                'r.patientData',
-                'like',
-                `%"${dataCategory.externalId}":%`
-              )
+              // field exists in json
+              this.whereRaw('r.patientData like ?', [`%"${category}":%`])
 
               // process 2 main cases - validValues is an array or not
               if (validValues && _.isArray(validValues)) {
                 this.where(function() {
                   _.each(validValues, value => {
-                    this.orWhere(
-                      'r.patientData',
-                      'like',
-                      `%"${dataCategory.externalId}": "${value}"%`
+                    this.orWhereRaw(
+                      `JSON_EXTRACT(r.patientData, "$.${category}") = ?`,
+                      [value]
                     )
                   })
                 })
               } else {
                 // make sure existing value is not undefined, null, "undefined", "null" or ""
-                this.whereNot(
-                  'r.patientData',
-                  'like',
-                  `%"${dataCategory.externalId}": undefined%`
-                )
-                this.whereNot(
-                  'r.patientData',
-                  'like',
-                  `%"${dataCategory.externalId}": null%`
-                )
-                this.whereNot(
-                  'r.patientData',
-                  'like',
-                  `%"${dataCategory.externalId}": "undefined"%`
-                )
-                this.whereNot(
-                  'r.patientData',
-                  'like',
-                  `%"${dataCategory.externalId}": "null"%`
-                )
-                this.whereNot(
-                  'r.patientData',
-                  'like',
-                  `%"${dataCategory.externalId}": ""%`
+                this.whereRaw(
+                  `
+                  JSON_EXTRACT(r.patientData, "$.${category}") != undefined
+                  and
+                  JSON_EXTRACT(r.patientData, "$.${category}") != null
+                  and
+                  JSON_EXTRACT(r.patientData, "$.${category}") != "undefined"
+                  and
+                  JSON_EXTRACT(r.patientData, "$.${category}") != "null"
+                  and
+                  JSON_EXTRACT(r.patientData, "$.${category}") != ""
+                  `
                 )
               }
             })
