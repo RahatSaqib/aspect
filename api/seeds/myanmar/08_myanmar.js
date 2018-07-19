@@ -1,8 +1,13 @@
 module.exports = require('../utils').seed(seed)
 
 const { seedDataCategory } = require('../dataCategoryLow')
+const {
+  rowsAsObject,
+  getDefaultMessageTypes,
+  seedIssueEventTriggersForPartner,
+} = require('../utils')
+
 const { seedUnknownErrorsIssue } = require('../seedUnknownErrorsIssue')
-const { getDefaultMessageTypes, rowsAsObject } = require('../utils')
 
 async function seed(knex) {
   const [issueTypes, defaultMessageTypes] = await Promise.all([
@@ -182,4 +187,8 @@ async function seed(knex) {
 
   await seedDataCategory(knex, 'Myanmar')
   await seedUnknownErrorsIssue(knex, 'Myanmar', 'myanmar_admin')
+
+  await seedIssueEventTriggersForPartner(knex, partnerId, {
+    issueTypeWhitelist: ['DeviceMaintenance'],
+  })
 }

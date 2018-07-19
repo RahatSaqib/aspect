@@ -3,6 +3,7 @@ const chai = require('chai')
 const { run } = require('../../src/db')
 const { getConstraints, addConstraints } = require('../../src/auth/constraints')
 const { randomToken } = require('../../src/deviceApi/apiKey')
+const { getResult } = require('../../src/deviceApi/result')
 const { queuePurge } = require('../utils/mqUtils')
 
 const { assert } = chai
@@ -45,6 +46,9 @@ async function deleteTestDataFromCheckpoint(knex, checkpoint, deviceIds) {
     .delete()
   await knex('ResultGeneratedResult')
     .whereIn('sourceResultId', resultIds)
+    .delete()
+  await knex('ResultFileReference')
+    .whereIn('resultId', resultIds)
     .delete()
   await knex('Result')
     .whereIn('id', resultIds)
@@ -100,6 +104,9 @@ async function deleteDeviceAndTestData(knex, apiKeys) {
     .whereIn('sourceResultId', resultIds)
     .orWhereIn('generatedResultId', resultIds)
     .delete()
+  await knex('ResultFileReference')
+    .whereIn('resultId', resultIds)
+    .delete()
   await knex('Result')
     .whereIn('id', resultIds)
     .delete()
@@ -138,6 +145,9 @@ async function deleteIssues(knex, { deviceIds, resultIds }) {
   const emailMessageIds = _.compact(_.map(notifications, 'emailMessageId'))
   const smsMessageIds = _.compact(_.map(notifications, 'smsMessageId'))
   const webhookMessageIds = _.compact(_.map(notifications, 'webhookMessageId'))
+  const fileReferenceIds = await knex('WebhookMessage')
+    .whereIn('id', webhookMessageIds)
+    .select('fileReferenceId')
 
   await knex('Notification')
     .whereIn('id', notificationIds)
@@ -152,6 +162,12 @@ async function deleteIssues(knex, { deviceIds, resultIds }) {
     .whereIn('id', smsMessageIds)
     .delete()
   await webhookMessageQ.orWhereIn('id', webhookMessageIds).delete()
+  await knex('ResultFileReference')
+    .whereIn('fileReferenceId', fileReferenceIds)
+    .delete()
+  await knex('FileReference')
+    .whereIn('id', fileReferenceIds)
+    .delete()
   await knex('IssueEvent')
     .whereIn('issueId', issueIds)
     .delete()
@@ -169,11 +185,10 @@ async function getDeviceConfigurationData(knex, deviceId) {
 }
 
 async function getDeviceFromApiKey(knex, apiKey) {
-  const device = await knex('Device as d')
+  return knex('Device as d')
     .innerJoin('DeviceApiKey as dak', 'd.id', 'dak.deviceId')
     .where('dak.token', apiKey.token)
     .first('d.*')
-  return device
 }
 
 async function getSiteFromDeviceId(knex, deviceId) {
@@ -217,6 +232,11 @@ async function getLastResultId(knex, deviceId) {
     .orderBy('dl.id', 'desc')
     .first('dl.resultId')
   return result && result.resultId
+}
+
+async function getLastResult(knex, deviceId) {
+  const resultId = await getLastResultId(knex, deviceId)
+  return getResult(knex, resultId)
 }
 
 function createTestContext(server, auth) {
@@ -419,4 +439,6 @@ module.exports = {
   getLastDeviceOperationData,
   getLastDeviceOperationId,
   getLastResultId,
+  getLastResult,
+  deleteDeviceAndTestData,
 }

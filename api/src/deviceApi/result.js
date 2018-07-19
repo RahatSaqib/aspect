@@ -368,6 +368,7 @@ async function getResult(knex, resultId) {
     .first(
       'r.externalId as resultExternalId',
       'r.resultData',
+      'r.formData',
       'r.patientData',
       'r.oemData',
       'r.startedOn',
@@ -415,7 +416,7 @@ async function getResult(knex, resultId) {
     .orderBy('id', 'desc')
     .first('operator', 'changedOn')
 
-  const result = {}
+  const result = { formData: null }
 
   if (row.resultExternalId != null) {
     result.id = row.resultExternalId
@@ -476,6 +477,9 @@ async function getResult(knex, resultId) {
   }
 
   result.data = JSON.parse(row.resultData)
+  if (row.formData != null) {
+    result.formData = JSON.parse(row.formData)
+  }
 
   if (row.startedOn != null) {
     result.startedOn = row.startedOn

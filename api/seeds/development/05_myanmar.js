@@ -14,6 +14,7 @@ const {
   getDefaultMessageTypes,
   seedStockIssues,
   getPermissionModules,
+  seedIssueEventTriggersForPartner,
 } = require('../utils')
 const {
   allResultCategoryToId,
@@ -1814,6 +1815,9 @@ async function seed(knex) {
 
   await seedStockIssues(knex)
   await seedUnknownErrorsIssue(knex, 'Myanmar', 'myanmar_admin')
+  await seedIssueEventTriggersForPartner(knex, partnerId, {
+    issueTypeWhitelist: ['DeviceMaintenance'],
+  })
   await seedDataCategory(knex, 'Myanmar')
 }
 

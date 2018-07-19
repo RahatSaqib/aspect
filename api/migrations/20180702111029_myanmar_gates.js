@@ -1,3 +1,5 @@
+const { addTimestamps } = require('./utils/index')
+
 module.exports = require('../src/db').migration(up, down)
 
 async function up(knex) {
@@ -48,6 +50,36 @@ async function up(knex) {
     x.integer('cutoffPercentage').notNullable()
     x.charset('utf8')
   })
+
+  await knex.schema.createTable('IssueEventTrigger', issueEventTrigger => {
+    issueEventTrigger.increments('id')
+    issueEventTrigger
+      .integer('partnerId')
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('Partner')
+      .notNullable()
+    issueEventTrigger
+      .integer('issueTypeId')
+      .unsigned()
+      .references('id')
+      .inTable('IssueType')
+      .notNullable()
+    issueEventTrigger
+      .integer('issueEventStatusId')
+      .unsigned()
+      .references('id')
+      .inTable('IssueEventStatus')
+      .notNullable()
+    issueEventTrigger.specificType('triggerConditions', 'JSON').notNullable()
+    addTimestamps(issueEventTrigger)
+    issueEventTrigger.unique(
+      ['partnerId', 'issueTypeId', 'issueEventStatusId'],
+      'issueEventTrigger_unique'
+    )
+    issueEventTrigger.charset('utf8')
+  })
 }
 
 async function down(knex) {
@@ -73,6 +105,7 @@ async function down(knex) {
   })
 
   await knex.schema.dropTableIfExists('DataCategory')
+  await knex.schema.dropTableIfExists('IssueEventTrigger')
 
   await knex.raw('SET foreign_key_checks = 1')
 }

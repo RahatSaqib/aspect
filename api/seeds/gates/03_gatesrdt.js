@@ -1,6 +1,6 @@
 module.exports = require('../utils').seed(seed)
 
-const { rowsAsObject } = require('../utils')
+const { rowsAsObject, seedIssueEventTriggersForPartner } = require('../utils')
 const {
   issueCategoryToId,
   messageSeverityToId,
@@ -166,4 +166,6 @@ async function seed(knex) {
         },
       })
     )
+
+  await seedIssueEventTriggersForPartner(knex, partnerId)
 }
