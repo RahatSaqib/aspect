@@ -13,21 +13,45 @@ const dictHivStatus = 'Positive,Negative,Unknown,Not on Form'.split(',')
 // --------------
 // custom fields
 // --------------
-const dictSampleTypes = 'CSF,Other,Saliva,Pus,Not on Form,Blood,Sputum,Effusion'.split(
-  ','
-)
-const dictMdr = 'On Treatment,Previously Treated,Unknown,Not on Form,No Previous Treatment'.split(
-  ','
-)
-const dictSmear = 'Smear Negative,Not Done,Smear Positive,Not on Form'.split(
-  ','
-)
-const dictOtherReason = 'MDR Contact,Not on Form,Smear Positive Month 2 Treatment,EPTB Suspect,Diabetes mellitus,Smear Positive Month 5 Treatment'.split(
-  ','
-)
-const dictReferralCenter = 'BGL TBC,PSI BGL,Not on Form,MMA BGL,DNB TBC,MMA DNB'.split(
-  ','
-)
+const dictSampleTypes = [
+  'CSF',
+  'Other',
+  'Saliva',
+  'Pus',
+  'Not on Form',
+  'Blood',
+  'Sputum',
+  'Effusion',
+]
+const dictMdr = [
+  'On Treatment',
+  'Previously Treated',
+  'Unknown',
+  'Not on Form',
+  'No Previous Treatment',
+]
+const dictSmear = [
+  'Smear Negative',
+  'Not Done',
+  'Smear Positive',
+  'Not on Form',
+]
+const dictOtherReason = [
+  'MDR Contact',
+  'Not on Form',
+  'Smear Positive Month 2 Treatment',
+  'EPTB Suspect',
+  'Diabetes mellitus',
+  'Smear Positive Month 5 Treatment',
+]
+const dictReferralCenter = [
+  'BGL TBC',
+  'PSI BGL',
+  'Not on Form',
+  'MMA BGL',
+  'DNB TBC',
+  'MMA DNB',
+]
 
 // helper function
 function getRandomValue(arr, pc = 2) {

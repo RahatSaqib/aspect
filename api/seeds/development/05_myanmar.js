@@ -34,7 +34,7 @@ const {
   seedDataCategory,
 } = require('../dataCategoryLow')
 
-// add and randomely populate DataCategory fields
+// add and randomly populate DataCategory fields
 patients = addDataCategoryFields(patients)
 // --------------------------------
 
