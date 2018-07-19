@@ -132,6 +132,13 @@
       "triggerConditions": {
         "action": "RESULT_MACHINE_UNKNOWN_ERROR"
       }
+    },
+    {
+      "issueType": "DataCategoryLow",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "FACT_DATA_CATEGORY_IS_LOW"
+      }
     }
   ]
 }

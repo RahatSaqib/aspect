@@ -1,4 +1,3 @@
-const isNil = require('lodash/isNil')
 // ----------- Action Types ---------------------
 const types = {
   RESULT_UPDATED: 'RESULT_UPDATED',
@@ -6,8 +5,6 @@ const types = {
   RESULT_MODULE_TEMPERATURE_ERROR: 'RESULT_MODULE_TEMPERATURE_ERROR',
   RESULT_MODULE_POWER_ERROR: 'RESULT_MODULE_POWER_ERROR',
   RESULT_MODULE_FAILURE_ERROR: 'RESULT_MODULE_FAILURE_ERROR',
-  RESULT_DATA_CATEGORY_LOW_CHECK: 'RESULT_DATA_CATEGORY_LOW_CHECK',
-  RESULT_DATA_CATEGORY_IS_LOW: 'RESULT_DATA_CATEGORY_IS_LOW',
   RESULT_MACHINE_TEMPERATURE_ERROR: 'RESULT_MACHINE_TEMPERATURE_ERROR',
   RESULT_MODULE_PROCEDURAL_ERROR: 'RESULT_MODULE_PROCEDURAL_ERROR',
   RESULT_MACHINE_PROCEDURAL_ERROR: 'RESULT_MACHINE_PROCEDURAL_ERROR',
@@ -139,53 +136,6 @@ function resultMachineTemperatureError(deviceId) {
 }
 
 /**
- * Creates an action to check data categories for 'low percentage' issue
- * Is called from scheduler
- */
-function resultDataCategoryLowCheck() {
-  return {
-    type: types.RESULT_DATA_CATEGORY_LOW_CHECK,
-  }
-}
-
-/**
- * Creates an action to notify the site with given id
- * has low given data category issue for given period
- *
- * dataCategoryId, categoryName, periodName, siteId, percentage are required.
- */
-function resultDataCategoryLow({
-  dataCategoryId,
-  categoryName,
-  periodName,
-  siteId,
-  percentage,
-}) {
-  if (
-    !dataCategoryId ||
-    !categoryName ||
-    !periodName ||
-    !siteId ||
-    isNil(percentage)
-  ) {
-    throw new Error(
-      'Must specify each parameter - dataCategoryId, categoryName, periodName, siteId, percentage - for Data Category Low notification'
-    )
-  }
-  return {
-    type: types.RESULT_DATA_CATEGORY_IS_LOW,
-    siteId,
-    options: {
-      dataCategoryId,
-      categoryName,
-      periodName,
-      siteId,
-      percentage,
-    },
-  }
-}
-
-/**
  * Creates an action to notify the device with given id
  * has an active module procedural issue
  *
@@ -285,8 +235,6 @@ module.exports = {
   resultModuleTemperatureError,
   resultModulePowerError,
   resultModuleFailureError,
-  resultDataCategoryLowCheck,
-  resultDataCategoryLow,
   resultMachineTemperatureError,
   resultMachineProceduralError,
   resultModuleProceduralError,

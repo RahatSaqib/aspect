@@ -1,3 +1,4 @@
+const isNil = require('lodash/isNil')
 // ----------- Action Types ---------------------
 const types = {
   FACT_GENERATE_DEVICE_CONNECTIVITY: 'FACT_GENERATE_DEVICE_CONNECTIVITY',
@@ -5,6 +6,8 @@ const types = {
   FACT_CHECK_INVENTORY_STOCK: 'FACT_CHECK_INVENTORY_STOCK',
   FACT_CALCULATE_INVENTORY_CONSUMPTION_RATES:
     'FACT_CALCULATE_INVENTORY_CONSUMPTION_RATES',
+  FACT_DATA_CATEGORY_LOW_CHECK: 'FACT_DATA_CATEGORY_LOW_CHECK',
+  FACT_DATA_CATEGORY_IS_LOW: 'FACT_DATA_CATEGORY_IS_LOW',
 }
 
 /**
@@ -61,10 +64,59 @@ function factCalculateInventoryConsumptionRates() {
   }
 }
 
+/**
+ * Creates an action to check data categories for 'low percentage' issue
+ * Is called from scheduler
+ */
+function factDataCategoryLowCheck() {
+  return {
+    type: types.FACT_DATA_CATEGORY_LOW_CHECK,
+  }
+}
+
+/**
+ * Creates an action to notify the site with given id
+ * has low given data category issue for given period
+ *
+ * dataCategoryId, categoryName, periodName, siteId, percentage are required.
+ */
+function factDataCategoryLow({
+  dataCategoryId,
+  categoryName,
+  periodName,
+  siteId,
+  percentage,
+}) {
+  if (
+    !dataCategoryId ||
+    !categoryName ||
+    !periodName ||
+    !siteId ||
+    isNil(percentage)
+  ) {
+    throw new Error(
+      'Must specify each parameter - dataCategoryId, categoryName, periodName, siteId, percentage - for Data Category Low notification'
+    )
+  }
+  return {
+    type: types.FACT_DATA_CATEGORY_IS_LOW,
+    siteId,
+    options: {
+      dataCategoryId,
+      categoryName,
+      periodName,
+      siteId,
+      percentage,
+    },
+  }
+}
+
 module.exports = {
   types,
   factGenerateDeviceConnectivity,
   factGenerateResultCounts,
   factCheckInventoryStock,
   factCalculateInventoryConsumptionRates,
+  factDataCategoryLowCheck,
+  factDataCategoryLow,
 }

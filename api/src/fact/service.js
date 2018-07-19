@@ -16,6 +16,16 @@ const {
   deviceHasNewResults,
 } = require('../device/actions')
 
+const { factDataCategoryLow } = require('../actions')
+
+const startOfMonth = require('date-fns/start_of_month')
+const endOfMonth = require('date-fns/end_of_month')
+const subMonths = require('date-fns/sub_months')
+const startOfQuarter = require('date-fns/start_of_quarter')
+const endOfQuarter = require('date-fns/end_of_quarter')
+const subQuarters = require('date-fns/sub_quarters')
+const startOfYear = require('date-fns/start_of_year')
+
 const daysToCalculate = [1, 7, 30, 60, 90, 365, 9999]
 
 function onFactGenerateDeviceConnectivity({ deviceId }, { messageContext }) {
@@ -696,6 +706,150 @@ async function getConsumptions(knex, siteId, consumableId) {
   return totals
 }
 
+// -------------------------------------------------------------------------------------
+// ---
+// --- Data Category Low
+// ---
+// -------------------------------------------------------------------------------------
+async function checkDataCategoriesForLowStatus(action, { messageContext }) {
+  const context = messageContext.bindActionCreators({
+    factDataCategoryLow,
+  })
+
+  const now = new Date()
+  const addPeriod = (name, dateFrom, dateTo) => ({ name, dateFrom, dateTo })
+  const periods = [
+    addPeriod('Current Month', startOfMonth(now), now),
+    addPeriod(
+      'Last Month',
+      startOfMonth(subMonths(now, 1)),
+      endOfMonth(subMonths(now, 1))
+    ),
+    addPeriod('Current Quarter', startOfQuarter(now), now),
+    addPeriod(
+      'Last Quarter',
+      startOfQuarter(subQuarters(now, 1)),
+      endOfQuarter(subQuarters(now, 1))
+    ),
+    addPeriod('This Year', startOfYear(now), now),
+  ]
+
+  await context.run(async knex => {
+    // read all data categories for all partners
+    const dataCategories = await knex('DataCategory')
+
+    // check data categories for having 'low status'
+    _.map(dataCategories, async dataCategory => {
+      const validValues =
+        dataCategory.validValues && JSON.parse(dataCategory.validValues)
+
+      const { partnerId } = dataCategory
+
+      // get all sites for current partnerId
+      const sites = await knex('Site')
+        .where({ partnerId })
+        .select('id', 'name', 'geographyId')
+
+      let alreadyTriggered = false
+      _.map(periods, period => {
+        _.map(sites, site => {
+          const itemsBase = knex('Result as r')
+            .innerJoin('Device as d', 'r.deviceId', 'd.id')
+            // filter by period
+            .where('r.endedOn', '>=', period.dateFrom)
+            .where('r.endedOn', '<=', period.dateTo)
+            // filter by site
+            .where(function() {
+              // either result is from site's geography
+              this.where(function() {
+                this.whereNotNull('r.geographyId').andWhere(
+                  'r.geographyId',
+                  site.geographyId
+                )
+              })
+              // or device is from site's geography
+              this.orWhere(function() {
+                this.whereNotNull('d.geographyId')
+                  .andWhereRaw(`${site.geographyId || -1} > 0`)
+                  .andWhere('d.geographyId', site.geographyId)
+              })
+            })
+
+          const totals = itemsBase.countDistinct('r.id')
+          // -------------------------------
+          // notice that because patientData is a stringified JSON - all property names and values are quoted, and
+          // value has leading space, so pattern is "name": "value"
+          // (clarify if it makes sense to distinguish values as string, boolean, date and number here)
+          // -------------------------------
+          const numValid = itemsBase
+            .andWhere(function() {
+              // at least make sure field exists in json
+              this.where(
+                'r.patientData',
+                'like',
+                `%"${dataCategory.externalId}":%`
+              )
+
+              // process 2 main cases - validValues is an array or not
+              if (validValues && _.isArray(validValues)) {
+                this.where(function() {
+                  _.each(validValues, value => {
+                    this.orWhere(
+                      'r.patientData',
+                      'like',
+                      `%"${dataCategory.externalId}": "${value}"%`
+                    )
+                  })
+                })
+              } else {
+                // make sure existing value is not undefined, null, "undefined", "null" or ""
+                this.whereNot(
+                  'r.patientData',
+                  'like',
+                  `%"${dataCategory.externalId}": undefined%`
+                )
+                this.whereNot(
+                  'r.patientData',
+                  'like',
+                  `%"${dataCategory.externalId}": null%`
+                )
+                this.whereNot(
+                  'r.patientData',
+                  'like',
+                  `%"${dataCategory.externalId}": "undefined"%`
+                )
+                this.whereNot(
+                  'r.patientData',
+                  'like',
+                  `%"${dataCategory.externalId}": "null"%`
+                )
+                this.whereNot(
+                  'r.patientData',
+                  'like',
+                  `%"${dataCategory.externalId}": ""%`
+                )
+              }
+            })
+            .countDistinct('r.id')
+
+          const percentage = totals === 0 ? 0 : 100 * (numValid / totals)
+          if (!alreadyTriggered && percentage < dataCategory.cutoffPercentage) {
+            const payload = {
+              dataCategoryId: dataCategory.id,
+              categoryName: dataCategory.name,
+              periodName: period.name,
+              siteId: site.id,
+              percentage,
+            }
+            context.factDataCategoryLow(payload)
+            alreadyTriggered = true
+          }
+        })
+      })
+    })
+  })
+}
+
 module.exports = {
   daysToCalculate,
   onFactGenerateDeviceConnectivity,
@@ -706,4 +860,5 @@ module.exports = {
   onDeviceUpdateFlag,
   onResultLogged,
   refreshConsumptionRates,
+  checkDataCategoriesForLowStatus,
 }

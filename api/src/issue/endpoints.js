@@ -43,7 +43,6 @@ const subscriptions = [
       ISSUE_TRIGGERED: onIssueTriggered,
       ESCALATE_ISSUES: onEscalateIssues(),
       RESOLVE_ISSUES: onResolveIssues(),
-      RESULT_DATA_CATEGORY_IS_LOW: onIssueEventTrigger('DataCategoryLow'),
     },
   },
 ]

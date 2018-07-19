@@ -5,8 +5,8 @@ const {
   factGenerateResultCounts,
   factCheckInventoryStock,
   factCalculateInventoryConsumptionRates,
+  factDataCategoryLowCheck,
 } = require('./fact/actions')
-const { resultDataCategoryLowCheck } = require('./result/actions')
 const { escalateIssues, resolveIssues } = require('./issue/actions')
 
 function startScheduler(queue) {
@@ -15,20 +15,20 @@ function startScheduler(queue) {
     factGenerateResultCounts,
     factCheckInventoryStock,
     factGenerateDeviceConnectivity,
-    resultDataCategoryLowCheck,
+    factDataCategoryLowCheck,
     factCalculateInventoryConsumptionRates,
     escalateIssues,
     resolveIssues,
   })
   dispatcher.factGenerateResultCounts()
   dispatcher.factGenerateDeviceConnectivity()
-  dispatcher.resultDataCategoryLowCheck()
+  dispatcher.factDataCategoryLowCheck()
   dispatcher.factCalculateInventoryConsumptionRates()
 
   cron.schedule('0 1 * * *', dispatcher.factCheckInventoryStock) // daily at 1 am
   cron.schedule('0 * * * *', dispatcher.factGenerateResultCounts) // run every hour as it changes
   cron.schedule('1 * * * *', dispatcher.factGenerateDeviceConnectivity) // run every hour at 1 minute past the hour
-  cron.schedule('15 * * * *', dispatcher.resultDataCategoryLowCheck) // every hour at 15th minute
+  cron.schedule('15 * * * *', dispatcher.factDataCategoryLowCheck) // every hour at 15th minute
   cron.schedule('*/15 * * * *', dispatcher.escalateIssues) // run every 15 minutes
   cron.schedule(
     '25 */2 * * *', // run every 2 hours at 25th minute past the hour

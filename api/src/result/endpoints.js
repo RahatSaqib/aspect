@@ -18,7 +18,6 @@ const {
   showFileReferences,
   downloadFile,
   downloadFirstImage,
-  checkDataCategoriesForLowStatus,
 } = require('./service')
 const {
   validateAllGeographyFilterParams,
@@ -311,12 +310,4 @@ const routes = [
   },
 ]
 
-const subscriptions = [
-  {
-    actions: {
-      RESULT_DATA_CATEGORY_LOW_CHECK: checkDataCategoriesForLowStatus,
-    },
-  },
-]
-
-module.exports = { routes, subscriptions }
+module.exports = { routes }
