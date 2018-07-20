@@ -25,6 +25,14 @@ const {
 const { inventoryReagentHealth } = require('../../../src/inventory/actions')
 const { waitForIdle, waitForAction } = require('../../utils/mqUtils')
 
+const startOfMonth = require('date-fns/start_of_month')
+const endOfMonth = require('date-fns/end_of_month')
+const subMonths = require('date-fns/sub_months')
+const startOfQuarter = require('date-fns/start_of_quarter')
+const endOfQuarter = require('date-fns/end_of_quarter')
+const subQuarters = require('date-fns/sub_quarters')
+const startOfYear = require('date-fns/start_of_year')
+
 describe('Myanmar Issue endpoints', () => {
   function createContext() {
     return createGxAlertTestContext(server)
@@ -1394,5 +1402,136 @@ describe('Myanmar Issue endpoints', () => {
           assert.equal(issue.issueStatus, 'Active')
         }
       })
+    }))
+
+  it('should create a DataCategoryLow issue ', () =>
+    runTest(async knex => {
+      const now = new Date()
+      const addPeriod = (name, dateFrom, dateTo) => ({ name, dateFrom, dateTo })
+      const periods = [
+        addPeriod('Current Month', startOfMonth(now), now),
+        addPeriod(
+          'Last Month',
+          startOfMonth(subMonths(now, 1)),
+          endOfMonth(subMonths(now, 1))
+        ),
+        addPeriod('Current Quarter', startOfQuarter(now), now),
+        addPeriod(
+          'Last Quarter',
+          startOfQuarter(subQuarters(now, 1)),
+          endOfQuarter(subQuarters(now, 1))
+        ),
+        addPeriod('This Year', startOfYear(now), now),
+      ]
+
+      const { id: partnerId } = await knex('Partner')
+        .where({ name: 'Myanmar' })
+        .first()
+      // read all data categories for current partner
+      const dataCategories = await knex('DataCategory').where({ partnerId })
+
+      // check data categories for having 'low status'
+      await Promise.all(
+        _.map(dataCategories, async dataCategory => {
+          const validValues =
+            dataCategory.validValues && JSON.parse(dataCategory.validValues)
+
+          const { partnerId, externalId: category } = dataCategory
+
+          // get all sites for current partnerId
+          const sites = await knex('Site')
+            .where({ partnerId })
+            .select('id', 'name', 'geographyId')
+
+          let alreadyTriggered = false
+          await Promise.all(
+            _.map(periods, async period => {
+              await Promise.all(
+                _.map(sites, async site => {
+                  const itemsBase = knex('Result as r')
+                    .innerJoin('Device as d', 'r.deviceId', 'd.id')
+                    // filter by period
+                    .where('r.endedOn', '>=', period.dateFrom)
+                    .where('r.endedOn', '<=', period.dateTo)
+                    // filter by site
+                    .where(function() {
+                      // either result is from site's geography
+                      this.where(function() {
+                        this.whereNotNull('r.geographyId').andWhere(
+                          'r.geographyId',
+                          site.geographyId
+                        )
+                      })
+                      // or device is from site's geography
+                      this.orWhere(function() {
+                        this.whereNotNull('d.geographyId')
+                          .andWhereRaw(`${site.geographyId || -1} > 0`)
+                          .andWhere('d.geographyId', site.geographyId)
+                      })
+                    })
+
+                  const totals = await itemsBase
+                    .clone()
+                    .countDistinct('r.id as count')
+                  const numValid = await itemsBase
+                    .clone()
+                    .andWhere(function() {
+                      // process 2 main cases - validValues is an array or not
+                      if (validValues && _.isArray(validValues)) {
+                        // field exists in json
+                        this.whereRaw('r.patientData like ?', [
+                          `%"${category}":%`,
+                        ])
+                        this.where(function() {
+                          _.each(validValues, value => {
+                            this.orWhereRaw(
+                              `JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.${category}")) = ?`,
+                              [value]
+                            )
+                          })
+                        })
+                      } else {
+                        const fieldNames = JSON.parse(dataCategory.fieldNames)
+                        _.map(fieldNames, field => {
+                          // make sure existing value is not undefined, null, "undefined", "null" or ""
+                          this.whereRaw(
+                            `
+                            JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.${field}")) != "undefined"
+                            and
+                            JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.${field}")) != "null"
+                            and
+                            JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.${field}")) != ""
+                            `
+                          )
+                        })
+                      }
+                    })
+                    .countDistinct('r.id as count')
+
+                  const percentage =
+                    totals[0].count === 0
+                      ? 0
+                      : 100 * (numValid[0].count / totals[0].count)
+console.log('category =', category, 'period =', period.name, 'site =', site.name,'percentage =', percentage, 'valid =', numValid[0].count, 'totals =', totals[0].count)
+                  if (
+                    !alreadyTriggered &&
+                    percentage < dataCategory.cutoffPercentage
+                  ) {
+                    const payload = {
+                      dataCategoryId: dataCategory.id,
+                      categoryName: dataCategory.name,
+                      periodName: period.name,
+                      siteId: site.id,
+                      percentage,
+                    }
+                    // context.factDataCategoryLow(payload)
+                    alreadyTriggered = true
+                  }
+                })
+              )
+            })
+          )
+        })
+      )
     }))
 })

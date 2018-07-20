@@ -7,6 +7,7 @@ const {
 const {
   factGenerateDeviceConnectivity,
   factGenerateResultCounts,
+  factDataCategoryLow,
 } = require('./actions')
 
 const {
@@ -15,8 +16,6 @@ const {
   deviceNoResults,
   deviceHasNewResults,
 } = require('../device/actions')
-
-const { factDataCategoryLow } = require('../actions')
 
 const startOfMonth = require('date-fns/start_of_month')
 const endOfMonth = require('date-fns/end_of_month')
@@ -738,93 +737,107 @@ async function checkDataCategoriesForLowStatus(action, { messageContext }) {
     // read all data categories for all partners
     const dataCategories = await knex('DataCategory')
 
-    // check data categories for having 'low status'
-    _.map(dataCategories, async dataCategory => {
-      const validValues =
-        dataCategory.validValues && JSON.parse(dataCategory.validValues)
+    // check data categories for 'low status'
+    await Promise.all(
+      _.map(dataCategories, async dataCategory => {
+        const validValues =
+          dataCategory.validValues && JSON.parse(dataCategory.validValues)
 
-      const { partnerId, externalId: category } = dataCategory
+        const { partnerId, externalId: category } = dataCategory
 
-      // get all sites for current partnerId
-      const sites = await knex('Site')
-        .where({ partnerId })
-        .select('id', 'name', 'geographyId')
+        // get all sites for current partnerId
+        const sites = await knex('Site')
+          .where({ partnerId })
+          .select('id', 'name', 'geographyId')
 
-      let alreadyTriggered = false
-      _.map(periods, period => {
-        _.map(sites, site => {
-          const itemsBase = knex('Result as r')
-            .innerJoin('Device as d', 'r.deviceId', 'd.id')
-            // filter by period
-            .where('r.endedOn', '>=', period.dateFrom)
-            .where('r.endedOn', '<=', period.dateTo)
-            // filter by site
-            .where(function() {
-              // either result is from site's geography
-              this.where(function() {
-                this.whereNotNull('r.geographyId').andWhere(
-                  'r.geographyId',
-                  site.geographyId
-                )
-              })
-              // or device is from site's geography
-              this.orWhere(function() {
-                this.whereNotNull('d.geographyId')
-                  .andWhereRaw(`${site.geographyId || -1} > 0`)
-                  .andWhere('d.geographyId', site.geographyId)
-              })
-            })
-
-          const totals = itemsBase.countDistinct('r.id')
-          const numValid = itemsBase
-            .andWhere(function() {
-              // field exists in json
-              this.whereRaw('r.patientData like ?', [`%"${category}":%`])
-
-              // process 2 main cases - validValues is an array or not
-              if (validValues && _.isArray(validValues)) {
-                this.where(function() {
-                  _.each(validValues, value => {
-                    this.orWhereRaw(
-                      `JSON_EXTRACT(r.patientData, "$.${category}") = ?`,
-                      [value]
-                    )
+        let alreadyTriggered = false
+        await Promise.all(
+          _.map(periods, async period => {
+            await Promise.all(
+              _.map(sites, async site => {
+                const itemsBase = knex('Result as r')
+                  .innerJoin('Device as d', 'r.deviceId', 'd.id')
+                  // filter by period
+                  .where('r.endedOn', '>=', period.dateFrom)
+                  .where('r.endedOn', '<=', period.dateTo)
+                  // filter by site
+                  .where(function() {
+                    // either result is from site's geography
+                    this.where(function() {
+                      this.whereNotNull('r.geographyId').andWhere(
+                        'r.geographyId',
+                        site.geographyId
+                      )
+                    })
+                    // or device is from site's geography
+                    this.orWhere(function() {
+                      this.whereNotNull('d.geographyId')
+                        .andWhereRaw(`${site.geographyId || -1} > 0`)
+                        .andWhere('d.geographyId', site.geographyId)
+                    })
                   })
-                })
-              } else {
-                // make sure existing value is not undefined, null, "undefined", "null" or ""
-                this.whereRaw(
-                  `
-                  JSON_EXTRACT(r.patientData, "$.${category}") != undefined
-                  and
-                  JSON_EXTRACT(r.patientData, "$.${category}") != null
-                  and
-                  JSON_EXTRACT(r.patientData, "$.${category}") != "undefined"
-                  and
-                  JSON_EXTRACT(r.patientData, "$.${category}") != "null"
-                  and
-                  JSON_EXTRACT(r.patientData, "$.${category}") != ""
-                  `
-                )
-              }
-            })
-            .countDistinct('r.id')
 
-          const percentage = totals === 0 ? 0 : 100 * (numValid / totals)
-          if (!alreadyTriggered && percentage < dataCategory.cutoffPercentage) {
-            const payload = {
-              dataCategoryId: dataCategory.id,
-              categoryName: dataCategory.name,
-              periodName: period.name,
-              siteId: site.id,
-              percentage,
-            }
-            context.factDataCategoryLow(payload)
-            alreadyTriggered = true
-          }
-        })
+                const totals = await itemsBase
+                  .clone()
+                  .countDistinct('r.id as count')
+                const numValid = await itemsBase
+                  .clone()
+                  .andWhere(function() {
+                    // process 2 main cases - validValues is an array or not
+                    if (validValues && _.isArray(validValues)) {
+                      // field exists in json
+                      this.whereRaw('r.patientData like ?', [
+                        `%"${category}":%`,
+                      ])
+                      this.where(function() {
+                        _.each(validValues, value => {
+                          this.orWhereRaw(
+                            `JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.${category}")) = ?`,
+                            [value]
+                          )
+                        })
+                      })
+                    } else {
+                      const fieldNames = JSON.parse(dataCategory.fieldNames)
+                      _.map(fieldNames, field => {
+                        // make sure existing value is not undefined, null, "undefined", "null" or ""
+                        this.whereRaw(
+                          `
+                          JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.${field}")) != "undefined"
+                          and
+                          JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.${field}")) != "null"
+                          and
+                          JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.${field}")) != ""
+                          `
+                        )
+                      })
+                    }
+                  })
+                  .countDistinct('r.id as count')
+
+                const percentage =
+                  totals[0].count === 0
+                    ? 0
+                    : 100 * (numValid[0].count / totals[0].count)
+                if (
+                  !alreadyTriggered &&
+                  percentage < dataCategory.cutoffPercentage
+                ) {
+                  const payload = {
+                    dataCategoryId: dataCategory.id,
+                    categoryName: dataCategory.name,
+                    periodName: period.name,
+                    siteId: site.id,
+                    percentage,
+                  }
+                  context.factDataCategoryLow(payload)
+                  alreadyTriggered = true
+                }
+              }))
+          })
+        )
       })
-    })
+    )
   })
 }
 
