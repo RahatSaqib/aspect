@@ -20,7 +20,7 @@ exports[`Device Status component should shallow render correctly 1`] = `
       sm="1-2"
     >
       <CountryWithPoints
-        countryIsoAlpha2Code="US"
+        countryIsoAlpha2Code={undefined}
         fill={undefined}
         points={undefined}
       />
