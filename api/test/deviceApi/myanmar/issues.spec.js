@@ -1429,6 +1429,7 @@ describe('Myanmar Issue endpoints', () => {
         .first()
       // read all data categories for current partner
       const dataCategories = await knex('DataCategory').where({ partnerId })
+      const triggeredBySiteOnThisRound = {}
 
       // check data categories for having 'low status'
       await Promise.all(
@@ -1443,11 +1444,17 @@ describe('Myanmar Issue endpoints', () => {
             .where({ partnerId })
             .select('id', 'name', 'geographyId')
 
-          let alreadyTriggered = false
           await Promise.all(
             _.map(periods, async period => {
               await Promise.all(
                 _.map(sites, async site => {
+                  // if issue has already been triggered for current site then exit
+                  // this includes all categories - so, if any category triggered an issue then exit and skip
+                  // checking other categories
+                  if (triggeredBySiteOnThisRound[site.id]) {
+                    return
+                  }
+
                   const itemsBase = knex('Result as r')
                     .innerJoin('Device as d', 'r.deviceId', 'd.id')
                     // filter by period
@@ -1513,10 +1520,7 @@ describe('Myanmar Issue endpoints', () => {
                       ? 0
                       : 100 * (numValid[0].count / totals[0].count)
 console.log('category =', category, 'period =', period.name, 'site =', site.name,'percentage =', percentage, 'valid =', numValid[0].count, 'totals =', totals[0].count)
-                  if (
-                    !alreadyTriggered &&
-                    percentage < dataCategory.cutoffPercentage
-                  ) {
+                  if (percentage < dataCategory.cutoffPercentage) {
                     const payload = {
                       dataCategoryId: dataCategory.id,
                       categoryName: dataCategory.name,
@@ -1525,7 +1529,7 @@ console.log('category =', category, 'period =', period.name, 'site =', site.name
                       percentage,
                     }
                     // context.factDataCategoryLow(payload)
-                    alreadyTriggered = true
+                    triggeredBySiteOnThisRound[site.id] = true
                   }
                 })
               )

@@ -736,6 +736,7 @@ async function checkDataCategoriesForLowStatus(action, { messageContext }) {
   await context.run(async knex => {
     // read all data categories for all partners
     const dataCategories = await knex('DataCategory')
+    const triggeredBySiteOnThisRound = {}
 
     // check data categories for 'low status'
     await Promise.all(
@@ -750,11 +751,17 @@ async function checkDataCategoriesForLowStatus(action, { messageContext }) {
           .where({ partnerId })
           .select('id', 'name', 'geographyId')
 
-        let alreadyTriggered = false
         await Promise.all(
           _.map(periods, async period => {
             await Promise.all(
               _.map(sites, async site => {
+                // if issue has already been triggered for current site then exit
+                // this includes all categories - so, if any category triggered an issue then exit and skip
+                // checking other categories
+                if (triggeredBySiteOnThisRound[site.id]) {
+                  return
+                }
+
                 const itemsBase = knex('Result as r')
                   .innerJoin('Device as d', 'r.deviceId', 'd.id')
                   // filter by period
@@ -819,10 +826,7 @@ async function checkDataCategoriesForLowStatus(action, { messageContext }) {
                   totals[0].count === 0
                     ? 0
                     : 100 * (numValid[0].count / totals[0].count)
-                if (
-                  !alreadyTriggered &&
-                  percentage < dataCategory.cutoffPercentage
-                ) {
+                if (percentage < dataCategory.cutoffPercentage) {
                   const payload = {
                     dataCategoryId: dataCategory.id,
                     categoryName: dataCategory.name,
@@ -831,9 +835,10 @@ async function checkDataCategoriesForLowStatus(action, { messageContext }) {
                     percentage,
                   }
                   context.factDataCategoryLow(payload)
-                  alreadyTriggered = true
+                  triggeredBySiteOnThisRound[site.id] = true
                 }
-              }))
+              })
+            )
           })
         )
       })
