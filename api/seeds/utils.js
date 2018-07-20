@@ -386,6 +386,7 @@ async function seedStaticData(knex) {
     'IssueCategory',
     'IssueEventStatus',
     'IssueStatusSeverity',
+    ['IssueStatus', seedStaticDataIssueStatus],
     'MessageStatus',
     'MessageSeverity',
     'ResultCategory',
@@ -403,18 +404,16 @@ async function seedStaticData(knex) {
     ['Feature', 'module'],
     ['Permission', seedStaticDataPermission],
   ]
-  await Promise.all(
-    tables.map(async tableItem => {
-      const table = _.isArray(tableItem) ? tableItem[0] : tableItem
-      const keyColumn = _.isArray(tableItem) ? tableItem[1] : 'externalId'
-      const fixture = await readJson(`./seeds/fixtures/${table}.json`)
-      if (_.isFunction(keyColumn)) {
-        return keyColumn(knex, fixture)
-      }
-
+  for (const tableItem of tables) {
+    /* eslint-disable no-await-in-loop */
+    // Need to add in order since some old code relies on hardcoded Ids
+    const table = _.isArray(tableItem) ? tableItem[0] : tableItem
+    const keyColumn = _.isArray(tableItem) ? tableItem[1] : 'externalId'
+    const fixture = await readJson(`./seeds/fixtures/${table}.json`)
+    if (_.isFunction(keyColumn)) {
+      await keyColumn(knex, fixture)
+    } else {
       for (const datum of fixture.data) {
-        /* eslint-disable no-await-in-loop */
-        // Need to add in order since some old code relies on hardcoded Ids
         const existingDatum = await knex(table)
           .where(keyColumn, datum[keyColumn])
           .first('id')
@@ -422,8 +421,29 @@ async function seedStaticData(knex) {
           await knex(table).insert(datum)
         }
       }
-    })
+    }
+  }
+}
+
+async function seedStaticDataIssueStatus(knex, { data }) {
+  const severities = await rowsAsObject(
+    knex,
+    'IssueStatusSeverity',
+    'externalId'
   )
+  for (const status of data) {
+    /* eslint-disable no-await-in-loop */
+    const existingStatus = await knex('IssueStatus')
+      .where('externalId', status.externalId)
+      .first('id')
+    if (existingStatus == null) {
+      await knex('IssueStatus').insert(
+        Object.assign({}, _.omit(status, ['issueStatusSeverity']), {
+          issueStatusSeverityId: severities[status.issueStatusSeverity].id,
+        })
+      )
+    }
+  }
 }
 
 async function seedStaticDataPermission(knex, { modules }) {

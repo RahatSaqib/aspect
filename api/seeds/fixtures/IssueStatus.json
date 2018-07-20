@@ -1,0 +1,60 @@
+{
+  "data": [
+    {
+      "name": "Inactive",
+      "externalId": "Inactive",
+      "i18nKey": "issueStatusInactive",
+      "sortOrder": 5,
+      "issueStatusSeverity": "Low"
+    },
+    {
+      "name": "Active",
+      "externalId": "Active",
+      "i18nKey": "issueStatusActive",
+      "sortOrder": 0,
+      "issueStatusSeverity": "High"
+    },
+    {
+      "name": "Acknowledged",
+      "externalId": "Acknowledged",
+      "i18nKey": "issueStatusAcknowledged",
+      "sortOrder": 4,
+      "issueStatusSeverity": "Medium"
+    },
+    {
+      "name": "OK",
+      "externalId": "OK",
+      "i18nKey": "issueStatusOK",
+      "sortOrder": 5,
+      "issueStatusSeverity": "Low"
+    },
+    {
+      "name": "Due Soon",
+      "externalId": "DueSoon",
+      "i18nKey": "issueStatusDueSoon",
+      "sortOrder": 3,
+      "issueStatusSeverity": "Medium"
+    },
+    {
+      "name": "Due Now",
+      "externalId": "DueNow",
+      "i18nKey": "issueStatusDueNow",
+      "sortOrder": 2,
+      "issueStatusSeverity": "High"
+    },
+    {
+      "name": "Overdue",
+      "externalId": "Overdue",
+      "i18nKey": "issueStatusOverdue",
+      "sortOrder": 1,
+      "issueStatusSeverity": "High"
+    },
+    {
+      "name": "Resolved",
+      "externalId": "Resolved",
+      "i18nKey": "issueStatusResolved",
+      "sortOrder": 5,
+      "issueStatusSeverity": "Low"
+    }
+  ]
+}
