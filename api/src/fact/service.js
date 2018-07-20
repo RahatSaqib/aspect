@@ -782,14 +782,14 @@ async function checkDataCategoriesForLowStatus(action, { messageContext }) {
                   .countDistinct('r.id as count')
                 const numValid = await itemsBase
                   .clone()
-                  .andWhere(function() {
+                  .where(function() {
                     // process 2 main cases - validValues is an array or not
                     if (validValues && _.isArray(validValues)) {
                       // field exists in json
                       this.whereRaw('r.patientData like ?', [
                         `%"${category}":%`,
                       ])
-                      this.where(function() {
+                      this.andWhere(function() {
                         _.each(validValues, value => {
                           this.orWhereRaw(
                             `JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.${category}")) = ?`,

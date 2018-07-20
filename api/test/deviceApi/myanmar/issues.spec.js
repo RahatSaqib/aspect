@@ -1475,14 +1475,14 @@ describe('Myanmar Issue endpoints', () => {
                     .countDistinct('r.id as count')
                   const numValid = await itemsBase
                     .clone()
-                    .andWhere(function() {
+                    .where(function() {
                       // process 2 main cases - validValues is an array or not
                       if (validValues && _.isArray(validValues)) {
                         // field exists in json
                         this.whereRaw('r.patientData like ?', [
                           `%"${category}":%`,
                         ])
-                        this.where(function() {
+                        this.andWhere(function() {
                           _.each(validValues, value => {
                             this.orWhereRaw(
                               `JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.${category}")) = ?`,
@@ -1493,7 +1493,7 @@ describe('Myanmar Issue endpoints', () => {
                       } else {
                         const fieldNames = JSON.parse(dataCategory.fieldNames)
                         _.map(fieldNames, field => {
-                          // make sure existing value is not undefined, null, "undefined", "null" or ""
+                          // make sure existing value is not "undefined", "null" or ""
                           this.whereRaw(
                             `
                             JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.${field}")) != "undefined"
