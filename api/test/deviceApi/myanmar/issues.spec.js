@@ -25,14 +25,6 @@ const {
 const { inventoryReagentHealth } = require('../../../src/inventory/actions')
 const { waitForIdle, waitForAction } = require('../../utils/mqUtils')
 
-const startOfMonth = require('date-fns/start_of_month')
-const endOfMonth = require('date-fns/end_of_month')
-const subMonths = require('date-fns/sub_months')
-const startOfQuarter = require('date-fns/start_of_quarter')
-const endOfQuarter = require('date-fns/end_of_quarter')
-const subQuarters = require('date-fns/sub_quarters')
-const startOfYear = require('date-fns/start_of_year')
-
 describe('Myanmar Issue endpoints', () => {
   function createContext() {
     return createGxAlertTestContext(server)
