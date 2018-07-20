@@ -401,13 +401,18 @@ async function seedStaticData(knex) {
     ['DeviceTypeCategory', 'name'],
     ['Unit', 'name'],
     ['Feature', 'module'],
+    ['Permission', seedStaticDataPermission],
   ]
   await Promise.all(
     tables.map(async tableItem => {
       const table = _.isArray(tableItem) ? tableItem[0] : tableItem
       const keyColumn = _.isArray(tableItem) ? tableItem[1] : 'externalId'
-      const { data } = await readJson(`./seeds/fixtures/${table}.json`)
-      for (const datum of data) {
+      const fixture = await readJson(`./seeds/fixtures/${table}.json`)
+      if (_.isFunction(keyColumn)) {
+        return keyColumn(knex, fixture)
+      }
+
+      for (const datum of fixture.data) {
         /* eslint-disable no-await-in-loop */
         // Need to add in order since some old code relies on hardcoded Ids
         const existingDatum = await knex(table)
@@ -419,6 +424,21 @@ async function seedStaticData(knex) {
       }
     })
   )
+}
+
+async function seedStaticDataPermission(knex, { modules }) {
+  for (const { name: module, activities } of modules) {
+    /* eslint-disable no-await-in-loop */
+    for (const activity of activities) {
+      const permission = { module, activity }
+      const existingPermission = await knex('Permission')
+        .where(permission)
+        .first('id')
+      if (existingPermission == null) {
+        await knex('Permission').insert(permission)
+      }
+    }
+  }
 }
 
 // Ensures all common triggers for the given partner are set based on notification

@@ -8,7 +8,11 @@ const _ = require('lodash')
 
 const config = require('../../src/config')
 const dashboardWidget = require('./fixtures/dashboardWidget.json')
-const { rowsAsObject, getDefaultMessageTypes } = require('../utils')
+const {
+  rowsAsObject,
+  getDefaultMessageTypes,
+  getPermissionModules,
+} = require('../utils')
 const {
   allFeatureToId,
   deviceStatusToId,
@@ -59,14 +63,6 @@ async function seed(knex) {
     numberToLeaveUnacknowledged: 15,
     maxDaysDeviceOffline: 7,
   })
-
-  const modules = await knex('Permission').reduce((memo, row) => {
-    if (!memo[row.module]) {
-      memo[row.module] = {}
-    }
-    memo[row.module][row.activity] = row.id
-    return memo
-  }, {})
 
   const [myanmarCountry] = await knex('Country as c')
     .where({ 'c.a3': 'MMR' })
@@ -219,6 +215,7 @@ async function seed(knex) {
     },
   ])
 
+  const modules = await getPermissionModules(knex)
   await knex('JobFunctionPermission').insert([
     // Admin Permissions
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.demo.admin },

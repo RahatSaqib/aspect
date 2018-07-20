@@ -1,6 +1,7 @@
 module.exports = require('../utils').seed(seed)
 
 const config = require('../../src/config')
+const { getPermissionModules } = require('../utils')
 const {
   allAssayTypeToId,
   allDeviceStatusToId,
@@ -20,7 +21,6 @@ const {
 const _ = require('lodash')
 const bcrypt = require('bcrypt')
 const { randomToken } = require('../../src/deviceApi/apiKey')
-const permissions = require('./fixtures/permissions.json')
 const geography = require('./fixtures/geography.json')
 const patients = require('./fixtures/patients.json')
 const dashboardWidget = require('./fixtures/dashboardWidget.json')
@@ -1574,23 +1574,6 @@ async function seed(knex) {
     Acknowledged: acknowledged,
   } = await allResultWorkflowStatusToId()
 
-  // Create permissions
-  const modules = {}
-
-  await Promise.all(
-    _.map(permissions.modules, module => {
-      const moduleData = {}
-      modules[module.name] = moduleData
-      _.map(module.activities, async activity => {
-        const [permissionId] = await knex('Permission').insert({
-          module: module.name,
-          activity,
-        })
-        moduleData[activity] = permissionId
-      })
-    })
-  )
-
   // Create geographic hierarchy
   const countries = {}
   const geographies = []
@@ -3040,6 +3023,7 @@ async function seed(knex) {
   )
 
   // assign permissions to job functions
+  const modules = await getPermissionModules(knex)
   await knex('JobFunctionPermission').insert([
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.demo.admin },
     {

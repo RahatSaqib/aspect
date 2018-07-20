@@ -3,7 +3,6 @@ module.exports = require('../utils').seed(seed)
 const config = require('../../src/config')
 const _ = require('lodash')
 const bcrypt = require('bcrypt')
-const permissions = require('./fixtures/permissions.json')
 const geography = require('./fixtures/geography.json')
 const { deviceTypeCategoryToId } = require('../../src/shared/dictionary')
 
@@ -77,23 +76,6 @@ async function seed(knex) {
     configurationDataSchema: commCareConfigurationDataSchema,
     deviceOperationSchema: commCareDeviceOperationSchema,
   })
-
-  // Create permissions
-  const modules = {}
-
-  await Promise.all(
-    _.map(permissions.modules, module => {
-      const moduleData = {}
-      modules[module.name] = moduleData
-      _.map(module.activities, async activity => {
-        const [permissionId] = await knex('Permission').insert({
-          module: module.name,
-          activity,
-        })
-        moduleData[activity] = permissionId
-      })
-    })
-  )
 
   // Create geographic hierarchy
   const countries = {}
