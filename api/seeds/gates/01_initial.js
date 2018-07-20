@@ -5,7 +5,6 @@ const _ = require('lodash')
 const bcrypt = require('bcrypt')
 const permissions = require('./fixtures/permissions.json')
 const geography = require('./fixtures/geography.json')
-const features = require('./fixtures/features.json')
 const { deviceTypeCategoryToId } = require('../../src/shared/dictionary')
 
 const now = new Date()
@@ -94,12 +93,6 @@ async function seed(knex) {
         moduleData[activity] = permissionId
       })
     })
-  )
-
-  await Promise.all(
-    _.map(features.modules, feature =>
-      knex('Feature').insert({ module: feature.name })
-    )
   )
 
   // Create geographic hierarchy

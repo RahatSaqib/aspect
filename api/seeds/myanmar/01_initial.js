@@ -5,7 +5,6 @@ const _ = require('lodash')
 const bcrypt = require('bcrypt')
 const permissions = require('./fixtures/permissions.json')
 const geography = require('./fixtures/geography.json')
-const features = require('./fixtures/features.json')
 const {
   allAssayTypeToId,
   allDeviceTypeCategoryToId,
@@ -838,14 +837,6 @@ async function seed(knex) {
         })
         moduleData[activity] = permissionId
       })
-    })
-  )
-
-  const featureModules = []
-  await Promise.all(
-    _.map(features.modules, async feature => {
-      const [featureId] = await knex('Feature').insert({ module: feature.name })
-      featureModules.push(featureId)
     })
   )
 

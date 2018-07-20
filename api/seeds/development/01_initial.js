@@ -13,6 +13,7 @@ const {
   allResultSourceToId,
   allResultWorkflowStatusToId,
   allSampleTypeToId,
+  allFeatureToId,
   resultTypeToId,
   unitToId,
 } = require('../../src/shared/dictionary')
@@ -23,7 +24,6 @@ const permissions = require('./fixtures/permissions.json')
 const geography = require('./fixtures/geography.json')
 const patients = require('./fixtures/patients.json')
 const dashboardWidget = require('./fixtures/dashboardWidget.json')
-const features = require('./fixtures/features.json')
 const { errorCodes } = require('./fixtures/errorCodes.js')
 const {
   addMilliseconds,
@@ -1591,14 +1591,6 @@ async function seed(knex) {
     })
   )
 
-  const featureModules = []
-  await Promise.all(
-    _.map(features.modules, async feature => {
-      const [featureId] = await knex('Feature').insert({ module: feature.name })
-      featureModules.push(featureId)
-    })
-  )
-
   // Create geographic hierarchy
   const countries = {}
   const geographies = []
@@ -3023,8 +3015,9 @@ async function seed(knex) {
   })
 
   // assign features to JobFeatures
+  const features = await allFeatureToId()
   await Promise.all(
-    _.map(featureModules, async featureId => {
+    _.map(features, async featureId => {
       await knex('JobFunctionFeature').insert([
         {
           jobFunctionId: jobFunctionIdAdmin,

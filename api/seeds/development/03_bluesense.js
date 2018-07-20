@@ -6,6 +6,7 @@ const _ = require('lodash')
 const { getPermissionModules } = require('../utils')
 const {
   allAssayTypeToId,
+  allFeatureToId,
   partnerTypeToId,
   deviceTypeCategoryToId,
   resultSourceToId,
@@ -129,7 +130,6 @@ async function seed(knex) {
   })
 
   const modules = await getPermissionModules(knex)
-  const featureModules = await knex('Feature').select('id')
 
   // Create clinics for every state in Malawi
   const [usCountry] = await knex('Country as c')
@@ -165,8 +165,9 @@ async function seed(knex) {
     partnerId,
   })
 
+  const features = await allFeatureToId()
   await Promise.all(
-    _.map(featureModules, async ({ id: featureId }) => {
+    _.map(features, async featureId => {
       await knex('JobFunctionFeature').insert([
         {
           jobFunctionId: jobFunctionIdAdmin,

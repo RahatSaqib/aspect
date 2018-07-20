@@ -400,6 +400,7 @@ async function seedStaticData(knex) {
     ['PartnerType', 'name'],
     ['DeviceTypeCategory', 'name'],
     ['Unit', 'name'],
+    ['Feature', 'module'],
   ]
   await Promise.all(
     tables.map(async tableItem => {
