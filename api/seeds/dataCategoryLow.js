@@ -9,7 +9,7 @@ const _ = require('lodash')
 // --------------
 // standard fields
 // --------------
-const dictHivStatus = 'Positive,Negative,Unknown,Not on Form'.split(',')
+const dictHivStatus = ['Positive', 'Negative', 'Unknown', 'Not on Form']
 // --------------
 // custom fields
 // --------------
