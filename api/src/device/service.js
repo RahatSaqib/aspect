@@ -61,6 +61,10 @@ async function getListDevices(query, auth) {
   // get data constraints
   const dataConstraints = await getConstraints(auth.credentials)
 
+  const { id: resultCategoryErrorId } = await knex('ResultCategory')
+    .where('externalId', 'Error')
+    .first()
+
   const deviceQuery = knex('Device as d')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .innerJoin('DeviceStatus as ds', 'd.deviceStatusId', 'ds.id')
@@ -130,6 +134,12 @@ async function getListDevices(query, auth) {
         .countDistinct('r.id')
         .as('thisMonth'),
       knex('Result as r')
+        .whereRaw('r.deviceId = d.id')
+        .where('r.endedOn', '>=', last30Day)
+        .where('r.resultCategory1', '=', resultCategoryErrorId)
+        .countDistinct('r.id')
+        .as('thisMonthErrors'),
+      knex('Result as r')
         .innerJoin('Sample as s', 'r.sampleId', 's.id')
         .innerJoin('ResultWorkflowLog as rl', 'r.id', 'rl.resultId')
         .innerJoin(
@@ -196,12 +206,12 @@ async function getListDevices(query, auth) {
   data.forEach(it => {
     // FIXME: Use actual data instead
     it.availability = {
-      count: _.random(1, 20),
-      total: 20,
+      count: _.random(25, 30),
+      total: 30,
     }
     it.error = {
-      count: _.random(1, 875),
-      total: 875,
+      count: it.thisMonthErrors,
+      total: it.thisMonth,
     }
     it.alerts = [
       {
@@ -212,9 +222,6 @@ async function getListDevices(query, auth) {
       },
       {
         type: 'quality-control',
-      },
-      {
-        type: 'connectivity',
       },
     ].filter(() => _.random(0, 10) > 7)
   })
