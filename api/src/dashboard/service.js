@@ -1186,7 +1186,7 @@ async function actionDashboard(request) {
   const isAdmin = jobFunctionName === 'Admin'
   const isRegionalOfficer = jobFunctionName === 'Regional Officer'
 
-  const resultQuery = await knex('AlertMessage as am')
+  const alertMessages = await knex('AlertMessage as am')
     .innerJoin('MessageStatus as ms', 'am.messageStatusId', 'ms.id')
     .innerJoin('Notification as n', 'am.id', 'n.alertMessageId')
     .innerJoin('NotificationType as nt', 'n.notificationTypeId', 'nt.id')
@@ -1236,6 +1236,7 @@ async function actionDashboard(request) {
       'ic.externalId as issueCategory',
       'ic.i18nKey as issueCategoryI18nKey',
       'nt.name as notificationType',
+      'nt.level as notificationTypeLevel',
       'nt.canAcknowledge',
       knex('IssueStatusLog as isl')
         .whereRaw('isl.issueId=i.id')
@@ -1243,6 +1244,11 @@ async function actionDashboard(request) {
         .max('changedOn')
         .as('statusDate')
     )
+  const alertMessagesByIssue = _.map(
+    _.values(_.groupBy(alertMessages, 'issueId')),
+    issueMessages =>
+      _.head(_.orderBy(issueMessages, 'notificationTypeLevel', 'desc'))
+  )
 
   // TODO do not hardcode inventory item lookup
   // this is here to always show inventory in action
@@ -1253,11 +1259,11 @@ async function actionDashboard(request) {
     .leftJoin('InventoryItem as ii', 'ii.siteId', 's.id')
     .leftJoin('Consumable as c', 'ii.consumableId', 'c.id')
     .modify(addConstraints, dataConstraints, { site: 's' })
-    .modify(qb => {
+    .modify((queryBuilder, query) => {
       if (query.siteId) {
-        qb.where({ 's.id': query.siteId })
+        queryBuilder.where({ 's.id': query.siteId })
       }
-    })
+    }, query)
     .groupBy('s.id', 'c.id')
     .select(
       's.id as siteId',
@@ -1273,23 +1279,27 @@ async function actionDashboard(request) {
 
   // set consumable id, totalIn Stock on StockInHand issues
   const inventoryItemsBySite = _.groupBy(inventoryItems, 'siteId')
-  const results = _.map(resultQuery, result => {
-    result.message = processDynamicMessage(result.message)
+  const results = _.map(alertMessagesByIssue, alertMessage => {
+    alertMessage.message = processDynamicMessage(alertMessage.message)
     // TODO we should not be using notification type name
     // as a constant, as it could be user editable in the future
-    result.notificationType = _.camelCase(result.notificationType)
-    if (result.siteId && result.issueTypeExternalId === 'StockLevelUpdate') {
-      const [inventoryItem] = inventoryItemsBySite[result.siteId]
-      result.totalInStock =
+    alertMessage.notificationType = _.camelCase(alertMessage.notificationType)
+    if (
+      alertMessage.siteId &&
+      alertMessage.issueTypeExternalId === 'StockLevelUpdate' &&
+      inventoryItemsBySite[alertMessage.siteId]
+    ) {
+      const [inventoryItem] = inventoryItemsBySite[alertMessage.siteId]
+      alertMessage.totalInStock =
         inventoryItem == null ? 0 : inventoryItem.totalInStock
-      result.consumableId =
+      alertMessage.consumableId =
         inventoryItem == null ? null : inventoryItem.consumableId
-      delete inventoryItemsBySite[result.siteId]
+      delete inventoryItemsBySite[alertMessage.siteId]
     }
-    if (result.consumableId == null) {
-      result.consumableId = defaultConsumableId
+    if (alertMessage.consumableId == null) {
+      alertMessage.consumableId = defaultConsumableId
     }
-    return result
+    return alertMessage
   })
 
   // Add consumables by site that aren't in issues
