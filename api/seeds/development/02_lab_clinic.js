@@ -509,6 +509,8 @@ async function seed(knex) {
           name: clinic.name,
           shortName: clinic.shortName,
           externalId: clinic.externalId,
+          latitude: clinic.latitude,
+          longitude: clinic.longitude,
         },
         auditFields
       )
@@ -586,6 +588,8 @@ async function seed(knex) {
           name: lab.name,
           shortName: lab.shortName,
           externalId: lab.externalId,
+          latitude: lab.latitude,
+          longitude: lab.longitude,
         },
         auditFields
       )
@@ -830,8 +834,8 @@ async function seed(knex) {
         siteId: siteData.id,
         deviceId: device.id,
         resultWorkflowStatusId: deliverable,
-        longitude: -81.581222,
-        latitude: 28.419348,
+        longitude: -33.78725,
+        latitude: -13.96692,
         resultSourceId: resultSourceLimsId,
         resultTypeId: resultTypePatientId,
         sampleId: sample.id,
@@ -975,8 +979,8 @@ async function seed(knex) {
         siteId: siteData.id,
         deviceId: device.id,
         resultWorkflowStatusId: deliverable,
-        longitude: -81.581222,
-        latitude: 28.419348,
+        longitude: -33.78725,
+        latitude: -13.96692,
         resultSourceId: resultSourceLimsId,
         resultTypeId: resultTypePatientId,
         sampleId: sample.id,

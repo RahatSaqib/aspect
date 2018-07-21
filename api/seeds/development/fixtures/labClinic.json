@@ -59,7 +59,9 @@
       "name": "Mponela Rural Hospital",
       "shortName": "Mponela Rural Hospital",
       "stateName": "Dowa",
-      "hasReporter": true
+      "hasReporter": true,
+      "latitude": -13.53194,
+      "longitude": 33.74008
     },
     {
       "externalId": "1420",
@@ -150,7 +152,9 @@
       "name": "Chankhungu Health Centre",
       "shortName": "Chankhungu Health Centre",
       "stateName": "Dowa",
-      "hasReporter": true
+      "hasReporter": true,
+      "latitude": -15.786111,
+      "longitude": 35.005833
     },
     {
       "externalId": "1103",
@@ -175,7 +179,9 @@
       "name": "Chikuse Health Centre",
       "shortName": "Chikuse Health Centre",
       "stateName": "Dedza",
-      "hasReporter": true
+      "hasReporter": true,
+      "latitude": -15.786111,
+      "longitude": 35.005833
     },
     {
       "externalId": "1505",
@@ -254,7 +260,9 @@
       "name": "Chitedze Health Center",
       "shortName": "Chitedze Health Center",
       "stateName": "Lilongwe",
-      "hasReporter": true
+      "hasReporter": true,
+      "latitude": -13.9815,
+      "longitude": 33.6372
     },
     {
       "externalId": "1705",
@@ -333,7 +341,9 @@
       "name": "Dzoole Health Centre",
       "shortName": "Dzoole Health Centre",
       "stateName": "Dowa",
-      "hasReporter": true
+      "hasReporter": true,
+      "latitude": -14.0333,
+      "longitude": 33.4833
     },
     {
       "externalId": "1808",
@@ -545,7 +555,9 @@
       "name": "Lobi Health Centre",
       "shortName": "Lobi Health Centre",
       "stateName": "Dedza",
-      "hasReporter": true
+      "hasReporter": true,
+      "latitude": -15.786111,
+      "longitude": 35.005833
     },
     {
       "externalId": "1608",
@@ -570,7 +582,9 @@
       "name": "Malingunde Health Center",
       "shortName": "Malingunde Health Center",
       "stateName": "Lilongwe",
-      "hasReporter": true
+      "hasReporter": true,
+      "latitude": -15.786111,
+      "longitude": 35.005833
     },
     {
       "externalId": "1116",
@@ -625,7 +639,9 @@
       "name": "Mayani Health Centre",
       "shortName": "Mayani Health Centre",
       "stateName": "Dedza",
-      "hasReporter": true
+      "hasReporter": true,
+      "latitude": -13.6634,
+      "longitude": 34.1052
     },
     {
       "externalId": "1312",
@@ -1016,7 +1032,9 @@
       "name": "Daeyang Luke Hospital",
       "shortName": "Daeyang Luke Hospital",
       "stateName": "Lilongwe",
-      "hasReporter": true
+      "hasReporter": true,
+      "latitude": -13.9626,
+      "longitude": 33.7741
     },
     {
       "externalId": "1423",
@@ -1623,7 +1641,9 @@
       "name": "Chileka Health Center",
       "shortName": "Chileka Health Center",
       "stateName": "Blantyre",
-      "hasReporter": true
+      "hasReporter": true,
+      "latitude": -15.6813,
+      "longitude": 34.9717
     },
     {
       "externalId": "2923",
@@ -4313,6 +4333,8 @@
       "externalId": "PIH",
       "name": "Partners In Hope",
       "shortName": "PIH",
+      "latitude": -13.96692,
+      "longitude": 33.78725,
       "devices": [
         {
           "name": "PIH M2000",
@@ -4333,6 +4355,8 @@
       "externalId": "KCH",
       "name": "Kamuzu Central Hospital",
       "shortName": "Kamuzu",
+      "latitude": -13.96692,
+      "longitude": 33.78725,
       "devices": [
         {
           "name": "KCH M2000",
