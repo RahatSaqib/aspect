@@ -288,8 +288,9 @@ describe('Device API routes', () => {
 
   describe('add new device', () => {
     const newDeviceContext = createTestContext(server, {
-      user: 'rrt_admin',
-      partner: 'RRT',
+      user: 'reporter_admin',
+      partner: 'Reporter',
+      type: 'DaktariInSight',
     })
     const { runTest } = newDeviceContext
 
