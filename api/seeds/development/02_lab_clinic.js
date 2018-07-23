@@ -807,7 +807,7 @@ async function seed(knex) {
     },
   ]
 
-  const devicesM2000 = await knex('device')
+  const devicesM2000 = await knex('Device')
     .where('deviceTypeId', deviceTypeIdChai)
     .select('id', 'siteId')
 
