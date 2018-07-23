@@ -35,6 +35,7 @@ const resultMultiplier = process.env['seeds.resultMultiplier'] || 100
 const resultEidNumber = 8 * resultMultiplier
 const resultHivVlNumber = 70 * resultMultiplier
 const now = new Date()
+const patientNumber = patients.length - 1
 
 function calculateDateForResult(
   currentResult,
@@ -823,7 +824,7 @@ async function seed(knex) {
       possibleResultsEid,
       r => rnd >= r.minLikelihood && rnd <= r.maxLikelihood
     )
-    const patient = patients[_.random(499)]
+    const patient = patients[_.random(patientNumber)]
     const resultData = { resultText: result.resultText }
     const resultId = await knex('Result').insert(
       Object.assign({}, auditFields, {
@@ -954,7 +955,7 @@ async function seed(knex) {
       possibleResultsHivVl,
       r => rnd >= r.minLikelihood && rnd <= r.maxLikelihood
     )
-    const patient = patients[_.random(499)]
+    const patient = patients[_.random(patientNumber)]
 
     let copies = null
     if (result.resultText.indexOf('X Copies') !== -1) {

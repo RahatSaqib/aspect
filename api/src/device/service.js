@@ -4,7 +4,7 @@ const Boom = require('boom')
 
 const { knex, filterParams, sortPageParams } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
-const { deviceStatusToId } = require('../shared/dictionary')
+const { deviceStatusToId, resultCategoryToId } = require('../shared/dictionary')
 const {
   getCellsByValue,
   generateExcelFile,
@@ -61,9 +61,7 @@ async function getListDevices(query, auth) {
   // get data constraints
   const dataConstraints = await getConstraints(auth.credentials)
 
-  const { id: resultCategoryErrorId } = await knex('ResultCategory')
-    .where('externalId', 'Error')
-    .first()
+  const resultCategoryErrorId = await resultCategoryToId('Error')
 
   const deviceQuery = knex('Device as d')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')

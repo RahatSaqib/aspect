@@ -45,6 +45,7 @@ const resultEbolaNumber = 0.5 * resultMultiplier
 const resultHivVlNumber = 0.5 * resultMultiplier
 const resultHcvNumber = 0.5 * resultMultiplier
 const now = new Date()
+const patientNumber = patients.length - 1
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 
@@ -2183,7 +2184,7 @@ async function seed(knex) {
         moduleName: 'Module A',
         moduleSerial: `M-1234-${i % 4}`,
         researchId: `R-ID-${i}`,
-        patientData: JSON.stringify(patients[_.random(499)]),
+        patientData: JSON.stringify(patients[_.random(patientNumber)]),
         senderVersion: '4.6b',
         senderOperator: 'Marsha',
         notes: 'This is a test... result',
@@ -2267,7 +2268,7 @@ async function seed(knex) {
               moduleName: 'Module A',
               moduleSerial: `M-1234-${i % 4}`,
               researchId: `R-ID-${i}`,
-              patientData: patients[_.random(499)],
+              patientData: patients[_.random(patientNumber)],
               senderVersion: '4.6b',
               senderOperator: 'Marsha',
               notes: 'This is a test... result',
@@ -2413,7 +2414,7 @@ async function seed(knex) {
               moduleName: 'Module A',
               moduleSerial: `M-1234-${i % 4}`,
               researchId: `R-ID-${i}`,
-              patientData: JSON.stringify(patients[_.random(499)]),
+              patientData: JSON.stringify(patients[_.random(patientNumber)]),
               senderVersion: '4.7a',
               senderOperator: 'Marsha',
               notes: 'This is an Ebola test result',
@@ -2574,7 +2575,7 @@ async function seed(knex) {
               moduleName: 'Module A',
               moduleSerial: `M-1234-${i % 4}`,
               researchId: `R-ID-${i}`,
-              patientData: JSON.stringify(patients[_.random(499)]),
+              patientData: JSON.stringify(patients[_.random(patientNumber)]),
               senderVersion: '4.4',
               senderOperator: 'Marsha',
               notes: 'This is an HIV test result',
@@ -2700,7 +2701,7 @@ async function seed(knex) {
               moduleName: 'Module A',
               moduleSerial: `M-1234-${i % 4}`,
               researchId: `R-ID-${i}`,
-              patientData: JSON.stringify(patients[_.random(499)]),
+              patientData: JSON.stringify(patients[_.random(patientNumber)]),
               senderVersion: '4.7b',
               senderOperator: 'Gene Hackman',
               notes: 'This is an HCV test result',
@@ -2837,7 +2838,7 @@ async function seed(knex) {
               moduleName: 'Module A',
               moduleSerial: `M-1234-${i % 4}`,
               researchId: `R-ID-${i}`,
-              patientData: JSON.stringify(patients[_.random(499)]),
+              patientData: JSON.stringify(patients[_.random(patientNumber)]),
               senderVersion: '4.4',
               senderOperator: 'Aaron',
               notes: 'This is an HIV test result',
@@ -2974,7 +2975,7 @@ async function seed(knex) {
               moduleName: 'Module A',
               moduleSerial: `M-1234-${i % 4}`,
               researchId: `R-ID-${i}`,
-              patientData: JSON.stringify(patients[_.random(499)]),
+              patientData: JSON.stringify(patients[_.random(patientNumber)]),
               senderVersion: '4.4',
               senderOperator: 'Aaron',
               notes: 'This is an HCV test result',
