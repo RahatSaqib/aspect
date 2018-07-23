@@ -101,6 +101,7 @@ export const ResultStatus = ({
   domain,
   zScale,
   resultSummaryList,
+  countryIsoAlpha2Code,
 }) => (
   <Card className={className}>
     <Title
@@ -110,7 +111,7 @@ export const ResultStatus = ({
     <div>
       <Unit md="1-2" lg="1-3">
         <CountryWithPoints
-          countryIsoAlpha2Code="US"
+          countryIsoAlpha2Code={countryIsoAlpha2Code}
           fill={fill}
           points={points}
           onMouseEnterPoint={_.noop}

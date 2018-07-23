@@ -84,6 +84,10 @@ export const messages = defineMessages({
     id: 'pages.DeviceList.reportingForDays',
     defaultMessage: 'For {period}',
   },
+  noTests: {
+    id: 'pages.DeviceList.reportingForDays',
+    defaultMessage: 'No Tests',
+  },
 })
 
 export default messages

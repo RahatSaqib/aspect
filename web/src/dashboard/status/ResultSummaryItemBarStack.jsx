@@ -17,6 +17,9 @@ export const colorByResultCategoryExternalId = {
   Invalid: process.env['--aspect-color-supernova'],
   NoResult: process.env['--aspect-color-grey-3'],
   Error: process.env['--aspect-color-mandy'],
+  LessThan1000: process.env['--aspect-color-mantis'],
+  MoreThan1000: process.env['--aspect-color-shakespeare'],
+  CollectNewSample: process.env['--aspect-color-mountain'],
 }
 
 const enhance = compose(
@@ -141,8 +144,9 @@ const ResultSummaryItemBarStack = ({
         tickLabelProps={() => ({
           fill: axisLeftTickLabelFill,
           textAnchor: 'end',
-          fontSize: 20,
+          fontSize: 12,
           dy: '0.25em',
+          dx: '-0.1em',
         })}
       />
       <CustomizedAxisBottom

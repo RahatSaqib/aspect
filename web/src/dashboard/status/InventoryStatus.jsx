@@ -127,6 +127,7 @@ export const InventoryStatus = ({
   onSummaryItemClick,
   onMouseEnter,
   onMouseLeave,
+  countryIsoAlpha2Code,
 }) => (
   <Card className={className}>
     <Title
@@ -136,7 +137,7 @@ export const InventoryStatus = ({
     <div>
       <Unit sm="1-2" lg="1-4">
         <CountryWithPoints
-          countryIsoAlpha2Code="US"
+          countryIsoAlpha2Code={countryIsoAlpha2Code}
           fill={fill}
           points={points}
         />
