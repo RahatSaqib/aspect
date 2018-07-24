@@ -256,22 +256,50 @@ describe('Dashboard routes', () => {
 
         const actionDashboardData = await server
           .get(actionDashboardPath)
+          .query(query)
           .set('Authorization', `Bearer ${authAccessToken}`)
           .then(res => res.body.data)
 
         expect(actionDashboardData).to.containSubset(userActionByCategory)
-        expect(actionDashboardData.ConnectivityHealth).to.have.lengthOf(
-          userActionByCategory.ConnectivityHealth.length
+        expect(
+          _.get(actionDashboardData, 'ConnectivityHealth', [])
+        ).to.have.lengthOf(
+          _.get(userActionByCategory, 'ConnectivityHealth', []).length
         )
-        expect(actionDashboardData.DeviceHealth).to.have.lengthOf(
-          userActionByCategory.DeviceHealth.length
+        expect(_.get(actionDashboardData, 'DeviceHealth', [])).to.have.lengthOf(
+          _.get(userActionByCategory, 'DeviceHealth', []).length
         )
-        expect(actionDashboardData.ReagentHealth).to.have.lengthOf(
-          userActionByCategory.ReagentHealth.length
+        expect(
+          _.get(actionDashboardData, 'ReagentHealth', [])
+        ).to.have.lengthOf(
+          _.get(userActionByCategory, 'ReagentHealth', []).length
         )
-        expect(actionDashboardData.DataHealth).to.have.lengthOf(
-          userActionByCategory.DataHealth.length
+        expect(_.get(actionDashboardData, 'DataHealth', [])).to.have.lengthOf(
+          _.get(userActionByCategory, 'DataHealth', []).length
         )
+        if (query.siteId) {
+          _.get(actionDashboardData, 'ConnectivityHealth', []).forEach(alert =>
+            expect(alert.siteId).to.equal(query.siteId)
+          )
+          _.get(actionDashboardData, 'DeviceHealth', []).forEach(alert =>
+            expect(alert.siteId).to.equal(query.siteId)
+          )
+          _.get(actionDashboardData, 'ReagentHealth', []).forEach(alert =>
+            expect(alert.siteId).to.equal(query.siteId)
+          )
+          _.get(actionDashboardData, 'DataHealth', []).forEach(alert =>
+            expect(alert.siteId).to.equal(query.siteId)
+          )
+        }
+      }
+
+      async function getSitesUnderUser(username, password) {
+        const authAccessToken = await getAccessToken(username, password)
+
+        return server
+          .get('/api/site')
+          .set('Authorization', `Bearer ${authAccessToken}`)
+          .then(res => res.body.data)
       }
 
       describe('for Admin', () => {
@@ -283,6 +311,20 @@ describe('Dashboard routes', () => {
               knex
             )
           ))
+
+        it('should return the highest level notification for the selected lab', async () =>
+          runTestWithKnex(async knex => {
+            const sites = await getSitesUnderUser('myanmar_admin', 'test07')
+
+            return Promise.each(sites, site =>
+              lookUpUserActionsAndCheckThatTheyMatchActionDashboardResponse(
+                'myanmar_admin',
+                'test07',
+                knex,
+                { siteId: site.id }
+              )
+            )
+          }))
       })
 
       describe('for Regional Officer', () => {
@@ -296,6 +338,28 @@ describe('Dashboard routes', () => {
                   regionalOfficerName,
                   knex
                 )
+            )
+          ))
+
+        it('should return the highest level notification for the selected lab', async () =>
+          runTestWithKnex(async knex =>
+            Promise.each(
+              ['myanmar_ro1', 'myanmar_ro2', 'myanmar_ro3'],
+              async regionalOfficerName => {
+                const sites = await getSitesUnderUser(
+                  regionalOfficerName,
+                  regionalOfficerName
+                )
+
+                return Promise.each(sites, site =>
+                  lookUpUserActionsAndCheckThatTheyMatchActionDashboardResponse(
+                    'myanmar_admin',
+                    'test07',
+                    knex,
+                    { siteId: site.id }
+                  )
+                )
+              }
             )
           ))
       })
