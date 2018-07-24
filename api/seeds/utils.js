@@ -1,4 +1,25 @@
+const _ = require('lodash')
 const { readJson } = require('fs-extra')
+
+// Helper for seeed files. Ru
+let hasSeededStaticData = false
+function seed(seed) {
+  return {
+    seed(knex) {
+      return runSeed(seed, knex).catch(err => {
+        console.error(err) // eslint-disable-line no-console
+        throw err
+      })
+    },
+  }
+}
+async function runSeed(seed, knex) {
+  if (!hasSeededStaticData) {
+    await seedStaticData(knex)
+    hasSeededStaticData = true
+  }
+  return seed(knex)
+}
 
 async function rowsAsObject(knex, table, column = 'name') {
   return knex(table).reduce((memo, row) => {
@@ -193,6 +214,30 @@ async function seedStockIssues(knex) {
     ),
     Object.assign(
       {
+        name: 'LU Stockout - RO View',
+        partnerId,
+        issueTypeId: issueTypes.InventoryStockout.id,
+        jobFunctionId: jobFunctionIdRegionalOfficer,
+        level: 1,
+        canAcknowledge: 0,
+        messageTypeId: defaultMessageTypes.InventoryStockout.id,
+      },
+      auditFields
+    ),
+    Object.assign(
+      {
+        name: 'LU Escalated Stockout - RO View',
+        partnerId,
+        issueTypeId: issueTypes.InventoryStockout.id,
+        jobFunctionId: jobFunctionIdRegionalOfficer,
+        level: 2,
+        canAcknowledge: 0,
+        messageTypeId: defaultMessageTypes.InventoryStockout.id,
+      },
+      auditFields
+    ),
+    Object.assign(
+      {
         name: 'RO Stockout',
         partnerId,
         issueTypeId: issueTypes.InventoryStockout.id,
@@ -224,6 +269,30 @@ async function seedStockIssues(knex) {
         partnerId,
         issueTypeId: issueTypes.InventoryStockExpiring.id,
         jobFunctionId: jobFunctionIdLabUser,
+        level: 2,
+        canAcknowledge: 0,
+        messageTypeId: defaultMessageTypes.InventoryStockExpiring.id,
+      },
+      auditFields
+    ),
+    Object.assign(
+      {
+        name: 'LU Stock Expiring - RO View',
+        partnerId,
+        issueTypeId: issueTypes.InventoryStockExpiring.id,
+        jobFunctionId: jobFunctionIdRegionalOfficer,
+        level: 1,
+        canAcknowledge: 0,
+        messageTypeId: defaultMessageTypes.InventoryStockExpiring.id,
+      },
+      auditFields
+    ),
+    Object.assign(
+      {
+        name: 'LU Escalated Stock Expiring - RO View',
+        partnerId,
+        issueTypeId: issueTypes.InventoryStockExpiring.id,
+        jobFunctionId: jobFunctionIdRegionalOfficer,
         level: 2,
         canAcknowledge: 0,
         messageTypeId: defaultMessageTypes.InventoryStockExpiring.id,
@@ -312,28 +381,108 @@ async function getPermissionModules(knex) {
 }
 
 async function seedStaticData(knex) {
-  const tables = ['FileContentType']
+  const tables = [
+    'FileContentType',
+    'IssueCategory',
+    'IssueEventStatus',
+    'IssueStatusSeverity',
+    'MessageStatus',
+    'MessageSeverity',
+    'ResultCategory',
+    'ResultSource',
+    'ResultType',
+    'ResultWorkflowStatus',
+    'SampleType',
+    // TODO ASP-757 Standardize static data key on externalId
+    ['AssayType', 'name'],
+    ['ConsumableReason', 'name'],
+    ['DeviceStatus', 'token'],
+    ['PartnerType', 'name'],
+    ['DeviceTypeCategory', 'name'],
+    ['Unit', 'name'],
+  ]
   await Promise.all(
-    tables.map(async table => {
+    tables.map(async tableItem => {
+      const table = _.isArray(tableItem) ? tableItem[0] : tableItem
+      const keyColumn = _.isArray(tableItem) ? tableItem[1] : 'externalId'
       const { data } = await readJson(`./seeds/fixtures/${table}.json`)
-      await Promise.all(
-        data.map(async datum => {
-          const existingDatum = await knex(table)
-            .where({ externalId: datum.externalId })
-            .first('id')
-          if (existingDatum == null) {
-            await knex(table).insert(datum)
-          }
-        })
-      )
+      for (const datum of data) {
+        /* eslint-disable no-await-in-loop */
+        // Need to add in order since some old code relies on hardcoded Ids
+        const existingDatum = await knex(table)
+          .where(keyColumn, datum[keyColumn])
+          .first('id')
+        if (existingDatum == null) {
+          await knex(table).insert(datum)
+        }
+      }
+    })
+  )
+}
+
+// Ensures all common triggers for the given partner are set based on notification
+// types triggered for that partner. This will only seed for triggers that do
+// not already exist for given partner, issue type, and issue event status, so
+// it can be called multiple times, and can be called after seeding custom triggers
+// Issue types in optional blacklist will never be included (unless in whitelist)
+// Issue types in optional whitelist will always be included.
+async function seedIssueEventTriggersForPartner(
+  knex,
+  partnerId,
+  { issueTypeBlacklist = [], issueTypeWhitelist = [] } = {}
+) {
+  const now = new Date()
+  const { data } = await readJson('./seeds/fixtures/IssueEventTrigger.json')
+  const [issueTypes, issueEventStatuses] = await Promise.all([
+    rowsAsObject(knex, 'IssueType', 'externalId'),
+    rowsAsObject(knex, 'IssueEventStatus', 'externalId'),
+  ])
+
+  const issueTypeConfigured = await knex('NotificationType as nt')
+    .join('IssueType as it', 'it.id', 'nt.issueTypeId')
+    .where({ 'nt.partnerId': partnerId })
+    .orderBy('it.externalId')
+    .distinct('it.externalId as issueType')
+    .reduce((memo, { issueType }) => {
+      if (!issueTypeBlacklist.includes(issueType)) {
+        memo[issueType] = true
+      }
+      return memo
+    }, {})
+  issueTypeWhitelist.forEach(issueType => {
+    issueTypeConfigured[issueType] = true
+  })
+
+  await Promise.all(
+    data.map(async ({ issueType, issueEventStatus, triggerConditions }) => {
+      if (issueTypeConfigured[issueType]) {
+        const triggerData = {
+          partnerId,
+          issueTypeId: issueTypes[issueType].id,
+          issueEventStatusId: issueEventStatuses[issueEventStatus].id,
+        }
+        const existingTrigger = await knex('IssueEventTrigger')
+          .where(triggerData)
+          .first('id')
+        if (existingTrigger == null) {
+          await knex('IssueEventTrigger').insert(
+            Object.assign({}, triggerData, {
+              triggerConditions: JSON.stringify(triggerConditions),
+              createdOn: now,
+              updatedOn: now,
+            })
+          )
+        }
+      }
     })
   )
 }
 
 module.exports = {
+  seed,
   rowsAsObject,
   getDefaultMessageTypes,
   seedStockIssues,
   getPermissionModules,
-  seedStaticData,
+  seedIssueEventTriggersForPartner,
 }

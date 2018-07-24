@@ -1,0 +1,24 @@
+{
+  "data": [
+    {
+      "name": "Provisioned",
+      "token": "provisioned",
+      "i18nKey": "deviceStatusProvisioned"
+    },
+    {
+      "name": "Assigned",
+      "token": "assigned",
+      "i18nKey": "deviceStatusAssigned"
+    },
+    {
+      "name": "Approved",
+      "token": "approved",
+      "i18nKey": "deviceStatusApproved"
+    },
+    {
+      "name": "Decommissioned",
+      "token": "decommissioned",
+      "i18nKey": "deviceStatusDecommissioned"
+    }
+  ]
+}

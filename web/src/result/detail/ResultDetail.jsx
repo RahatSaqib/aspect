@@ -8,11 +8,18 @@ import { defineMessages } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
+import { Button } from 'react-toolbox/lib/button'
 
 // Material-UI
 import Checkbox from 'material-ui/Checkbox'
+import MdChevronLeft from 'react-icons/lib/md/chevron-left'
+import MdChevronRight from 'react-icons/lib/md/chevron-right'
+import MdClose from 'react-icons/lib/md/clear'
 
 // Our own imports
+import config from '../../config'
+import FormGroup from '../../components/themedReactToolbox/FormGroup'
+import ButtonGroup from '../../components/themedReactToolbox/ButtonGroup'
 import DelayShowingProgressBar from '../../components/shared/DelayShowingProgressBar'
 import JSONSchemaCard from '../../components/shared/JSONSchemaCard'
 import NavTitle from '../../globals/components/NavTitle'
@@ -20,6 +27,7 @@ import {
   fetchSingleResult,
   fetchResultLog,
   updateResultQcCheck,
+  updateResultFormData,
   Result,
 } from '../ResultRedux'
 import ConnectedTagInput from '../../tag/ConnectedTagInput'
@@ -78,6 +86,42 @@ const messages = defineMessages({
     id: 'pages.ResultDetail.noLogsHelp',
     defaultMessage: 'No log entries found for this result',
   },
+  attachments: {
+    id: 'pages.ResultDetail.attachments',
+    defaultMessage: 'Attachments',
+  },
+  noFilesHelp: {
+    id: 'pages.ResultDetail.noFilesHelp',
+    defaultMessage: 'No files attached for this result',
+  },
+  totalFilesLabel: {
+    id: 'pages.ResultDetail.totalFilesLabel',
+    defaultMessage: 'Total files: {totalFiles}',
+  },
+  additionalResultDetails: {
+    id: 'pages.ResultDetail.additionalResultDetails',
+    defaultMessage: 'Additional Result Details',
+  },
+  confirmedInterpretationOfResult: {
+    id: 'pages.ResultDetail.formFields.confirmedInterpretationOfResult',
+    defaultMessage: 'Confirmed Interpretation of Result',
+  },
+  none: {
+    id: 'pages.ResultDetail.formOptions.none',
+    defaultMessage: 'None',
+  },
+  negative: {
+    id: 'pages.ResultDetail.formOptions.negative',
+    defaultMessage: 'Negative',
+  },
+  positive: {
+    id: 'pages.ResultDetail.formOptions.positive',
+    defaultMessage: 'Positive',
+  },
+  uninterpretable: {
+    id: 'pages.ResultDetail.formOptions.uninterpretable',
+    defaultMessage: 'Uninterpretable',
+  },
 })
 
 const enhance = compose(
@@ -102,6 +146,7 @@ const enhance = compose(
         deviceLogs: state.result.deviceLogs,
         resultTags,
         editable: isEditable(state.user, result),
+        token: state.user.access,
       }
     },
     dispatch =>
@@ -110,6 +155,7 @@ const enhance = compose(
           fetchSingleResult,
           fetchResultLog,
           updateResultQcCheck,
+          updateResultFormData,
           fetchTags,
           updateTags,
         },
@@ -128,7 +174,16 @@ const enhance = compose(
   })
 )
 
+const THUMBNAIL_MODE_NORMAL = 'THUMBNAIL_MODE_NORMAL'
+const THUMBNAIL_MODE_PREVIEW = 'THUMBNAIL_MODE_PREVIEW'
+
 export class ResultDetail extends PureComponent {
+  state = {
+    resultId: undefined,
+    thumbnailMode: THUMBNAIL_MODE_NORMAL,
+    imageIndex: 0,
+  }
+
   componentDidMount() {
     this.handleFetchResult()
   }
@@ -149,21 +204,66 @@ export class ResultDetail extends PureComponent {
     this.props.updateTags(qryId, qryType, tags.join(','))
   }
 
+  clickThumbnail(imageIndex) {
+    this.setState({
+      thumbnailMode: THUMBNAIL_MODE_PREVIEW,
+      imageIndex,
+    })
+  }
+
   handleToggle() {
     this.setState({ isShown: !this.state.isShown })
   }
 
   handleFetchResult = () => {
-    this.props.fetchSingleResult(this.props.match.params.resultId)
+    const { match: { params: { resultId } } } = this.props
+    this.props.fetchSingleResult(resultId)
 
-    this.props.fetchResultLog(this.props.match.params.resultId)
+    this.props.fetchResultLog(resultId)
 
-    this.props.fetchTags(this.props.match.params.resultId, 'result')
+    this.props.fetchTags(resultId, 'result')
   }
 
   hasResultWithAssay() {
     const { result } = this.props
     return result && result.has('assay')
+  }
+
+  drawIconPrev = isFirst => (
+    <div className={cssClasses('ButPreview')}>
+      <MdChevronLeft
+        className={cssClasses({
+          disabled: isFirst,
+        })}
+        onClick={() => this.switchImage(-1, { isFirst })}
+      />
+    </div>
+  )
+  drawIconNext = isLast => (
+    <div className={cssClasses('ButPreview')}>
+      <MdChevronRight
+        className={cssClasses({
+          disabled: isLast,
+        })}
+        onClick={() => this.switchImage(1, { isLast })}
+      />
+    </div>
+  )
+  drawIconClose = () => (
+    <div className={cssClasses('ButPreview', 'Close')}>
+      <MdClose
+        className={cssClasses('ClosePreview')}
+        onClick={() => {
+          this.setState({ thumbnailMode: THUMBNAIL_MODE_NORMAL })
+        }}
+      />
+    </div>
+  )
+
+  switchImage = (dir, { isFirst, isLast }) => {
+    let { imageIndex } = this.state
+    imageIndex += (!isFirst && dir === -1) || (!isLast && dir === 1) ? dir : 0
+    this.setState({ imageIndex })
   }
 
   renderProgress() {
@@ -175,7 +275,7 @@ export class ResultDetail extends PureComponent {
     const logs = deviceLogs.toJS()
 
     return (
-      <ExpansionPanel>
+      <ExpansionPanel disabled={_.isEmpty(logs)}>
         <ExpansionPanelHeader label={formatMessage(messages.fieldRawData)}>
           {_.isEmpty(logs) && (
             <div className={cssClasses('HelpBlock')}>
@@ -187,7 +287,9 @@ export class ResultDetail extends PureComponent {
           <ExpansionPanelDetail>
             {logs.map(log => {
               const createdOn = new Date(log.createdOn)
-              const rawMessage = JSON.parse(log.rawMessage)
+              const rawMessage = log.rawMessage
+                ? JSON.parse(log.rawMessage)
+                : ''
               return (
                 <ReadOnlyField
                   label={formatMessage(messages.createdOnLabel, {
@@ -224,9 +326,174 @@ export class ResultDetail extends PureComponent {
     )
   }
 
+  renderFormData() {
+    const { intl: { formatMessage }, result, updateResultFormData } = this.props
+    if (!result || !result.has('formSchema') || !result.get('formSchema')) {
+      return false
+    }
+    const [...fieldKeys] = result.get('formSchema').keys()
+    if (_.isEmpty(fieldKeys)) {
+      return false
+    }
+    const sectionLabel =
+      fieldKeys.length === 1
+        ? formatMessage(
+            messages[result.getIn(['formSchema', fieldKeys[0], 'i18nLabel'])]
+          )
+        : formatMessage(messages.additionalResultDetails)
+    const formData = result.get('formData') || Immutable.Map({})
+    return (
+      <ExpansionPanel className={cssClasses('FieldsContainer')} disabled>
+        <ExpansionPanelHeader label={sectionLabel}>
+          {fieldKeys.map(formFieldKey => {
+            const { intl: { formatMessage } } = this.props
+            const fieldSchema = result.getIn(['formSchema', formFieldKey])
+            const fieldType = fieldSchema.getIn(['control', 'type'])
+            const fieldLabel =
+              fieldKeys.length > 1
+                ? formatMessage(messages[fieldSchema.get('i18nLabel')])
+                : ''
+            const fieldValue = formData.get(formFieldKey) || null
+            if (fieldType === 'ButtonGroup') {
+              if (fieldSchema.getIn(['control', 'allowMultipleSelection'])) {
+                // TODO: Implement multi-select button group
+                return false
+              }
+              return (
+                <FormGroup label={fieldLabel} key={formFieldKey}>
+                  <ButtonGroup isolated>
+                    {fieldSchema
+                      .getIn(['control', 'options'])
+                      .map(option => (
+                        <Button
+                          key={option.get('value') || 'null'}
+                          primary
+                          raised
+                          inverse={option.get('value') !== fieldValue}
+                          label={formatMessage(
+                            messages[option.get('i18nText')]
+                          )}
+                          data-value={option.get('value')}
+                          onClick={() =>
+                            updateResultFormData(
+                              result.get('id'),
+                              formFieldKey,
+                              option.get('value')
+                            )
+                          }
+                        />
+                      ))}
+                  </ButtonGroup>
+                </FormGroup>
+              )
+            }
+            // TODO: Implement other control types here
+            return false
+          })}
+        </ExpansionPanelHeader>
+      </ExpansionPanel>
+    )
+  }
+
+  renderAttachmentSection() {
+    const { intl: { formatMessage }, result, token } = this.props
+
+    const files = result.get('files') || Immutable.List()
+    const totalFiles = files.count()
+    const resultId = result.get('id')
+    // if new result item - reset local state
+    if (resultId !== this.state.resultId) {
+      this.setState({
+        resultId,
+        imageIndex: 0,
+        thumbnailMode: THUMBNAIL_MODE_NORMAL,
+      })
+    }
+    const { imageIndex, thumbnailMode } = this.state
+    const isFirst = imageIndex === 0
+    const isLast = imageIndex === totalFiles - 1
+    const isPreview = thumbnailMode === THUMBNAIL_MODE_PREVIEW
+    const path = file => `${config.aspectApi}${file.get('url')}?token=${token}`
+    const selectedFile = totalFiles > 0 && files.get(imageIndex)
+
+    return (
+      <ExpansionPanel disabled={totalFiles === 0}>
+        <ExpansionPanelHeader
+          // Left side - labels for expanded and collapsed modes
+          label={formatMessage(messages.attachments)}
+          expandedLabel={`${formatMessage(
+            messages.attachments
+          )} (${totalFiles})`}
+          // Right side - text only for collapsed mode when list is not empty
+          collapsedChildren={
+            totalFiles > 0 && (
+              <div>
+                {formatMessage(messages.totalFilesLabel, { totalFiles })}
+              </div>
+            )
+          }
+        >
+          {/* text to show when list is empty */}
+          {totalFiles === 0 && (
+            <div className={cssClasses('HelpBlock')}>
+              {formatMessage(messages.noFilesHelp)}
+            </div>
+          )}
+        </ExpansionPanelHeader>
+        {totalFiles > 0 && (
+          <ExpansionPanelDetail>
+            <div
+              className={cssClasses('FilesContainer', { Preview: isPreview })}
+            >
+              <div className={cssClasses('AllThumbnails')}>
+                {files.map((file, index) => (
+                  <div className={cssClasses('ThumbnailContainer')}>
+                    <div
+                      className={cssClasses('ThumbnailImageContainer', {
+                        selected: isPreview && imageIndex === index,
+                      })}
+                      role="button"
+                      tabIndex={index}
+                      onKeyDown={() => {}}
+                      onClick={() => this.clickThumbnail(index, isPreview)}
+                    >
+                      <img
+                        title="Click to preview"
+                        alt={file.get('name')}
+                        className={cssClasses('ThumbnailImage')}
+                        src={path(file)}
+                      />
+                    </div>
+                    <div className={cssClasses('ThumbnailFilename')}>
+                      {file.get('name')}
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div className={cssClasses('PreviewContainer')}>
+                <div>{this.drawIconPrev(isFirst)}</div>
+                <div className={cssClasses('ImageContainer')}>
+                  <img
+                    title="Click to preview"
+                    alt={selectedFile.get('name')}
+                    className={cssClasses('Image')}
+                    src={path(selectedFile)}
+                  />
+                </div>
+                <div>
+                  {this.drawIconClose()}
+                  {this.drawIconNext(isLast)}
+                </div>
+              </div>
+            </div>
+          </ExpansionPanelDetail>
+        )}
+      </ExpansionPanel>
+    )
+  }
+
   renderContent() {
     const { result, screenSchema, resultTags, editable, intl } = this.props
-
     return (
       <div>
         <DetailPanel
@@ -235,6 +502,8 @@ export class ResultDetail extends PureComponent {
           schema={screenSchema}
           className={cssClasses('FieldsContainer')}
         >
+          {/* Render lower-level sections in assay schema in cards */}
+          {this.renderFormData()}
           <ExpansionPanel className={cssClasses('FieldsContainer')}>
             <ExpansionPanelHeader
               label={intl.formatMessage(messages.fieldFollowup)}
@@ -273,6 +542,9 @@ export class ResultDetail extends PureComponent {
           {this.renderLowerLevelSchemaSections()}
           {/* Render Raw Result sections */}
           {this.renderRawResult()}
+
+          {/* Render files attachment */}
+          {this.renderAttachmentSection()}
         </DetailPanel>
       </div>
     )
@@ -289,8 +561,7 @@ export class ResultDetail extends PureComponent {
   }
 
   render() {
-    const { intl } = this.props
-    const { formatMessage } = intl
+    const { intl: { formatMessage } } = this.props
 
     return (
       <div className={cssClasses('Container')}>

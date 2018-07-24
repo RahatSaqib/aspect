@@ -10,6 +10,7 @@ const {
   listResultTypes,
   updateWorkflowStatus,
   updateQcCheck,
+  updateFormData,
   listWorkflowStatusTypes,
   listWorkflowStatusLog,
   exportResults,
@@ -17,7 +18,6 @@ const {
   showFileReferences,
   downloadFile,
   downloadFirstImage,
-  onResultLogged,
 } = require('./service')
 const {
   validateAllGeographyFilterParams,
@@ -249,6 +249,25 @@ const routes = [
     },
   },
   {
+    method: 'PUT',
+    path: '/result/form-data/{resultId}',
+    handler: asyncHandler(updateFormData),
+    config: {
+      description: 'Update form data for the result',
+      notes: 'Update form data for the result',
+      auth: { scope: ['result:edit'] },
+      validate: {
+        params: {
+          resultId: Joi.number()
+            .integer()
+            .positive()
+            .description('Result Id'),
+        },
+        payload: Joi.object(),
+      },
+    },
+  },
+  {
     method: 'GET',
     path: '/result/workflow-status-types',
     handler: asyncHandler(listWorkflowStatusTypes),
@@ -291,12 +310,4 @@ const routes = [
   },
 ]
 
-const subscriptions = [
-  {
-    actions: {
-      RESULT_LOGGED: onResultLogged,
-    },
-  },
-]
-
-module.exports = { routes, subscriptions }
+module.exports = { routes }

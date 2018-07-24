@@ -1,5 +1,6 @@
 const _ = require('lodash')
 const { addResultWorkflowLogIfChanged } = require('../common')
+const { resultWorkflowStatusToId } = require('../../../shared/dictionary')
 
 const VALIDATED_EXTERNALID = 'Validated'
 const DELIVERABLE_EXTERNALID = 'Deliverable'
@@ -103,9 +104,9 @@ async function checkResultDeliverable(context, result) {
     // status, it hasn't been delivered yet,
     // and it is now in the status "Validated"
     if (resultWorkflowExternalId === VALIDATED_EXTERNALID) {
-      const resultWorkflowDeliverableId = (await knex('ResultWorkflowStatus')
-        .where('externalId', DELIVERABLE_EXTERNALID)
-        .first('id')).id
+      const resultWorkflowDeliverableId = await resultWorkflowStatusToId(
+        DELIVERABLE_EXTERNALID
+      )
 
       await knex('Result')
         .where('id', resultId)

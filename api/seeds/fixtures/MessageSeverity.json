@@ -1,0 +1,14 @@
+{
+  "data": [
+    {
+      "name": "Alert",
+      "externalId": "Alert",
+      "i18nKey": "messageSeverityAlert"
+    },
+    {
+      "name": "Recommendation",
+      "externalId": "Recommendation",
+      "i18nKey": "messageSeverityRecommendation"
+    }
+  ]
+}

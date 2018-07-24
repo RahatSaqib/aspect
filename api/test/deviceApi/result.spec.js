@@ -312,24 +312,14 @@ describe('Device Result API routes', () => {
             assert.typeOf(lastResult.workflow.status, 'Object')
             assert.property(lastResult.workflow, 'changedOn')
 
-            assert.deepEqual(
-              _.omit(
-                lastResult,
-                'id',
-                'sample',
-                'workflow',
-                'location',
-                'startedOn'
-              ),
-              {
-                data: resultPayload.data,
-                assay: resultPayload.assay,
-                category: [{ id: 'Success' }],
-                type: { id: 'Patient' },
-                source: { id: 'DiagnosticDevice' },
-                instrument: resultPayload.instrument,
-              }
-            )
+            expect(lastResult).to.containSubset({
+              data: resultPayload.data,
+              assay: resultPayload.assay,
+              category: [{ id: 'Success' }],
+              type: { id: 'Patient' },
+              source: { id: 'DiagnosticDevice' },
+              instrument: resultPayload.instrument,
+            })
           })
 
         const result2SampleSite = await knex('Site as s')
@@ -720,7 +710,7 @@ describe('Device Result API routes', () => {
               0.000001
             )
             assert.equal(lastResult.workflow.status.id, 'Deliverable')
-            assert.deepEqual(_.omit(lastResult, 'id', 'location', 'workflow'), {
+            expect(lastResult).to.containSubset({
               data: { a: 'b', c: 2, d: false, e: { f: 'g' } },
               assay: {
                 id: 'DaktariHivVl',
@@ -2999,10 +2989,11 @@ describe('Device Result API routes', () => {
     })
   })
 
-  describe('RRT Lab/Clinic Tests', () => {
+  describe('Reporter Lab/Clinic Tests', () => {
     const context = createTestContext(server, {
-      user: 'rrt_admin',
-      partner: 'RRT',
+      user: 'reporter_admin',
+      partner: 'Reporter',
+      type: 'DaktariInSight',
     })
 
     const { runTest } = context
@@ -3244,28 +3235,25 @@ describe('Device Result API routes', () => {
             assert.property(lastResult.workflow, 'changedOn')
             assert.equal(lastResult.workflow.status.id, 'Delivered')
 
-            assert.deepEqual(
-              _.omit(lastResult, 'sample', 'workflow', 'location'),
-              {
-                id: device1315ExternalId,
-                data: {
-                  resultText: '454112',
-                  copies: 454112,
-                },
-                patient: {
-                  name: 'Bob',
-                  surname: 'Hope',
-                  age: 312,
-                  gender: 'M',
-                  artNumber: '1341kjkj',
-                },
-                assay: { id: 'HivVl' },
-                category: [{ id: 'MoreThan1000' }],
-                type: { id: 'Patient' },
-                source: { id: 'LIMS' },
-                notes: '454,112 Copies / mL',
-              }
-            )
+            expect(lastResult).to.containSubset({
+              id: device1315ExternalId,
+              data: {
+                resultText: '454112',
+                copies: 454112,
+              },
+              patient: {
+                name: 'Bob',
+                surname: 'Hope',
+                age: 312,
+                gender: 'M',
+                artNumber: '1341kjkj',
+              },
+              assay: { id: 'HivVl' },
+              category: [{ id: 'MoreThan1000' }],
+              type: { id: 'Patient' },
+              source: { id: 'LIMS' },
+              notes: '454,112 Copies / mL',
+            })
           })
 
         await server
@@ -3282,7 +3270,7 @@ describe('Device Result API routes', () => {
             assert.property(lastResult.workflow, 'changedOn')
             assert.equal(lastResult.workflow.status.id, 'Delivered')
 
-            assert.deepEqual(_.omit(lastResult, 'sample', 'workflow'), {
+            expect(lastResult).to.containSubset({
               id: device1315ExternalId,
               data: {
                 resultText: '454112',
@@ -3316,27 +3304,24 @@ describe('Device Result API routes', () => {
             assert.equal(lastResult.sample.originSite.id, '1315')
             assert.property(lastResult.workflow, 'changedOn')
 
-            assert.deepEqual(
-              _.omit(lastResult, 'sample', 'workflow', 'location'),
-              {
-                id: device1315ExternalId,
-                data: {
-                  resultText: '454112',
-                  copies: 454112,
-                },
-                patient: {
-                  name: 'Bob',
-                  surname: 'Hope',
-                  age: 312,
-                  gender: 'M',
-                  artNumber: '1341kjkj',
-                },
-                assay: { id: 'HivVl' },
-                category: [{ id: 'Success' }],
-                type: { id: 'Patient' },
-                source: { id: 'Generated' },
-              }
-            )
+            expect(lastResult).to.containSubset({
+              id: device1315ExternalId,
+              data: {
+                resultText: '454112',
+                copies: 454112,
+              },
+              patient: {
+                name: 'Bob',
+                surname: 'Hope',
+                age: 312,
+                gender: 'M',
+                artNumber: '1341kjkj',
+              },
+              assay: { id: 'HivVl' },
+              category: [{ id: 'Success' }],
+              type: { id: 'Patient' },
+              source: { id: 'Generated' },
+            })
           })
 
         await server
@@ -3401,27 +3386,24 @@ describe('Device Result API routes', () => {
             assert.equal(lastResult.sample.originSite.id, '1723')
             assert.property(lastResult.workflow, 'changedOn')
 
-            assert.deepEqual(
-              _.omit(lastResult, 'sample', 'workflow', 'location'),
-              {
-                id: device1723ExternalId,
-                data: {
-                  resultText: '154112',
-                  copies: 154112,
-                },
-                patient: {
-                  name: 'Fran',
-                  surname: 'Love',
-                  age: 231,
-                  gender: 'F',
-                  artNumber: '2341sfkj',
-                },
-                assay: { id: 'HivVl' },
-                category: [{ id: 'Success' }],
-                type: { id: 'Patient' },
-                source: { id: 'Generated' },
-              }
-            )
+            expect(lastResult).to.containSubset({
+              id: device1723ExternalId,
+              data: {
+                resultText: '154112',
+                copies: 154112,
+              },
+              patient: {
+                name: 'Fran',
+                surname: 'Love',
+                age: 231,
+                gender: 'F',
+                artNumber: '2341sfkj',
+              },
+              assay: { id: 'HivVl' },
+              category: [{ id: 'Success' }],
+              type: { id: 'Patient' },
+              source: { id: 'Generated' },
+            })
           })
 
         await waitAsyncComplete()
@@ -3449,28 +3431,25 @@ describe('Device Result API routes', () => {
             assert.property(lastResult.workflow, 'changedOn')
             assert.equal(lastResult.workflow.status.id, 'Delivered')
 
-            assert.deepEqual(
-              _.omit(lastResult, 'sample', 'workflow', 'location'),
-              {
-                id: device1723ExternalId,
-                data: {
-                  resultText: '154112',
-                  copies: 154112,
-                },
-                patient: {
-                  name: 'Fran',
-                  surname: 'Love',
-                  age: 231,
-                  gender: 'F',
-                  artNumber: '2341sfkj',
-                },
-                assay: { id: 'HivVl' },
-                category: [{ id: 'MoreThan1000' }],
-                type: { id: 'Patient' },
-                source: { id: 'LIMS' },
-                notes: '154,112 Copies / mL',
-              }
-            )
+            expect(lastResult).to.containSubset({
+              id: device1723ExternalId,
+              data: {
+                resultText: '154112',
+                copies: 154112,
+              },
+              patient: {
+                name: 'Fran',
+                surname: 'Love',
+                age: 231,
+                gender: 'F',
+                artNumber: '2341sfkj',
+              },
+              assay: { id: 'HivVl' },
+              category: [{ id: 'MoreThan1000' }],
+              type: { id: 'Patient' },
+              source: { id: 'LIMS' },
+              notes: '154,112 Copies / mL',
+            })
           })
 
         await server
@@ -3486,28 +3465,25 @@ describe('Device Result API routes', () => {
             assert.equal(lastResult.sample.originSite.id, '1723')
             assert.property(lastResult.workflow, 'changedOn')
 
-            assert.deepEqual(
-              _.omit(lastResult, 'sample', 'workflow', 'location'),
-              {
-                id: device1723ExternalId,
-                data: {
-                  resultText: '154112',
-                  copies: 154112,
-                },
-                patient: {
-                  name: 'Fran',
-                  surname: 'Love',
-                  age: 231,
-                  gender: 'F',
-                  artNumber: '2341sfkj',
-                },
-                assay: { id: 'HivVl' },
-                category: [{ id: 'MoreThan1000' }],
-                type: { id: 'Patient' },
-                source: { id: 'LIMS' },
-                notes: '154,112 Copies / mL',
-              }
-            )
+            expect(lastResult).to.containSubset({
+              id: device1723ExternalId,
+              data: {
+                resultText: '154112',
+                copies: 154112,
+              },
+              patient: {
+                name: 'Fran',
+                surname: 'Love',
+                age: 231,
+                gender: 'F',
+                artNumber: '2341sfkj',
+              },
+              assay: { id: 'HivVl' },
+              category: [{ id: 'MoreThan1000' }],
+              type: { id: 'Patient' },
+              source: { id: 'LIMS' },
+              notes: '154,112 Copies / mL',
+            })
           })
 
         await server
@@ -3523,28 +3499,25 @@ describe('Device Result API routes', () => {
             assert.equal(lastResult.sample.originSite.id, '1723')
             assert.property(lastResult.workflow, 'changedOn')
 
-            assert.deepEqual(
-              _.omit(lastResult, 'sample', 'workflow', 'location'),
-              {
-                id: device1723ExternalId,
-                data: {
-                  resultText: '154112',
-                  copies: 154112,
-                },
-                patient: {
-                  name: 'Fran',
-                  surname: 'Love',
-                  age: 231,
-                  gender: 'F',
-                  artNumber: '2341sfkj',
-                },
-                assay: { id: 'HivVl' },
-                category: [{ id: 'MoreThan1000' }],
-                type: { id: 'Patient' },
-                source: { id: 'LIMS' },
-                notes: '154,112 Copies / mL',
-              }
-            )
+            expect(lastResult).to.containSubset({
+              id: device1723ExternalId,
+              data: {
+                resultText: '154112',
+                copies: 154112,
+              },
+              patient: {
+                name: 'Fran',
+                surname: 'Love',
+                age: 231,
+                gender: 'F',
+                artNumber: '2341sfkj',
+              },
+              assay: { id: 'HivVl' },
+              category: [{ id: 'MoreThan1000' }],
+              type: { id: 'Patient' },
+              source: { id: 'LIMS' },
+              notes: '154,112 Copies / mL',
+            })
           })
 
         await server
@@ -3560,28 +3533,25 @@ describe('Device Result API routes', () => {
             assert.equal(lastResult.sample.originSite.id, '1315')
             assert.property(lastResult.workflow, 'changedOn')
 
-            assert.deepEqual(
-              _.omit(lastResult, 'sample', 'workflow', 'location'),
-              {
-                id: device1315ExternalId,
-                data: {
-                  resultText: '454112',
-                  copies: 454112,
-                },
-                patient: {
-                  name: 'Bob',
-                  surname: 'Hope',
-                  age: 312,
-                  gender: 'M',
-                  artNumber: '1341kjkj',
-                },
-                assay: { id: 'HivVl' },
-                category: [{ id: 'MoreThan1000' }],
-                type: { id: 'Patient' },
-                source: { id: 'LIMS' },
-                notes: '454,112 Copies / mL',
-              }
-            )
+            expect(lastResult).to.containSubset({
+              id: device1315ExternalId,
+              data: {
+                resultText: '454112',
+                copies: 454112,
+              },
+              patient: {
+                name: 'Bob',
+                surname: 'Hope',
+                age: 312,
+                gender: 'M',
+                artNumber: '1341kjkj',
+              },
+              assay: { id: 'HivVl' },
+              category: [{ id: 'MoreThan1000' }],
+              type: { id: 'Patient' },
+              source: { id: 'LIMS' },
+              notes: '454,112 Copies / mL',
+            })
           })
 
         await server
@@ -3597,27 +3567,24 @@ describe('Device Result API routes', () => {
             assert.equal(lastResult.sample.originSite.id, '1315')
             assert.property(lastResult.workflow, 'changedOn')
 
-            assert.deepEqual(
-              _.omit(lastResult, 'sample', 'workflow', 'location'),
-              {
-                id: device1315ExternalId,
-                data: {
-                  resultText: '454112',
-                  copies: 454112,
-                },
-                patient: {
-                  name: 'Bob',
-                  surname: 'Hope',
-                  age: 312,
-                  gender: 'M',
-                  artNumber: '1341kjkj',
-                },
-                assay: { id: 'HivVl' },
-                category: [{ id: 'Success' }],
-                type: { id: 'Patient' },
-                source: { id: 'Generated' },
-              }
-            )
+            expect(lastResult).to.containSubset({
+              id: device1315ExternalId,
+              data: {
+                resultText: '454112',
+                copies: 454112,
+              },
+              patient: {
+                name: 'Bob',
+                surname: 'Hope',
+                age: 312,
+                gender: 'M',
+                artNumber: '1341kjkj',
+              },
+              assay: { id: 'HivVl' },
+              category: [{ id: 'Success' }],
+              type: { id: 'Patient' },
+              source: { id: 'Generated' },
+            })
           })
 
         await server
@@ -3669,28 +3636,25 @@ describe('Device Result API routes', () => {
             assert.equal(lastResult.workflow.status.id, 'Acknowledged')
             assert.property(lastResult.workflow, 'changedOn')
 
-            assert.deepEqual(
-              _.omit(lastResult, 'sample', 'workflow', 'location'),
-              {
-                id: device1723ExternalId,
-                data: {
-                  resultText: '154112',
-                  copies: 154112,
-                },
-                patient: {
-                  name: 'Fran',
-                  surname: 'Love',
-                  age: 231,
-                  gender: 'F',
-                  artNumber: '2341sfkj',
-                },
-                assay: { id: 'HivVl' },
-                category: [{ id: 'MoreThan1000' }],
-                type: { id: 'Patient' },
-                source: { id: 'LIMS' },
-                notes: '154,112 Copies / mL',
-              }
-            )
+            expect(lastResult).to.containSubset({
+              id: device1723ExternalId,
+              data: {
+                resultText: '154112',
+                copies: 154112,
+              },
+              patient: {
+                name: 'Fran',
+                surname: 'Love',
+                age: 231,
+                gender: 'F',
+                artNumber: '2341sfkj',
+              },
+              assay: { id: 'HivVl' },
+              category: [{ id: 'MoreThan1000' }],
+              type: { id: 'Patient' },
+              source: { id: 'LIMS' },
+              notes: '154,112 Copies / mL',
+            })
           })
 
         await server
@@ -3707,27 +3671,24 @@ describe('Device Result API routes', () => {
             assert.equal(lastResult.workflow.status.id, 'Acknowledged')
             assert.property(lastResult.workflow, 'changedOn')
 
-            assert.deepEqual(
-              _.omit(lastResult, 'sample', 'workflow', 'location'),
-              {
-                id: device1723ExternalId,
-                data: {
-                  resultText: '154112',
-                  copies: 154112,
-                },
-                patient: {
-                  name: 'Fran',
-                  surname: 'Love',
-                  age: 231,
-                  gender: 'F',
-                  artNumber: '2341sfkj',
-                },
-                assay: { id: 'HivVl' },
-                category: [{ id: 'Success' }],
-                type: { id: 'Patient' },
-                source: { id: 'Generated' },
-              }
-            )
+            expect(lastResult).to.containSubset({
+              id: device1723ExternalId,
+              data: {
+                resultText: '154112',
+                copies: 154112,
+              },
+              patient: {
+                name: 'Fran',
+                surname: 'Love',
+                age: 231,
+                gender: 'F',
+                artNumber: '2341sfkj',
+              },
+              assay: { id: 'HivVl' },
+              category: [{ id: 'Success' }],
+              type: { id: 'Patient' },
+              source: { id: 'Generated' },
+            })
           })
 
         await server
@@ -3744,27 +3705,24 @@ describe('Device Result API routes', () => {
             assert.equal(lastResult.workflow.status.id, 'Acknowledged')
             assert.property(lastResult.workflow, 'changedOn')
 
-            assert.deepEqual(
-              _.omit(lastResult, 'sample', 'workflow', 'location'),
-              {
-                id: device1723ExternalId,
-                data: {
-                  resultText: '154112',
-                  copies: 154112,
-                },
-                patient: {
-                  name: 'Fran',
-                  surname: 'Love',
-                  age: 231,
-                  gender: 'F',
-                  artNumber: '2341sfkj',
-                },
-                assay: { id: 'HivVl' },
-                category: [{ id: 'Success' }],
-                type: { id: 'Patient' },
-                source: { id: 'Generated' },
-              }
-            )
+            expect(lastResult).to.containSubset({
+              id: device1723ExternalId,
+              data: {
+                resultText: '154112',
+                copies: 154112,
+              },
+              patient: {
+                name: 'Fran',
+                surname: 'Love',
+                age: 231,
+                gender: 'F',
+                artNumber: '2341sfkj',
+              },
+              assay: { id: 'HivVl' },
+              category: [{ id: 'Success' }],
+              type: { id: 'Patient' },
+              source: { id: 'Generated' },
+            })
           })
 
         await server
@@ -3822,28 +3780,25 @@ describe('Device Result API routes', () => {
             assert.equal(lastResult.workflow.status.id, 'Acknowledged')
             assert.property(lastResult.workflow, 'changedOn')
 
-            assert.deepEqual(
-              _.omit(lastResult, 'sample', 'workflow', 'location'),
-              {
-                id: device1723ExternalId,
-                data: {
-                  resultText: '154112',
-                  copies: 154112,
-                },
-                patient: {
-                  name: 'Fran',
-                  surname: 'Love',
-                  age: 231,
-                  gender: 'F',
-                  artNumber: '2341sfkj',
-                },
-                assay: { id: 'HivVl' },
-                category: [{ id: 'MoreThan1000' }],
-                type: { id: 'Patient' },
-                source: { id: 'LIMS' },
-                notes: '154,112 Copies / mL',
-              }
-            )
+            expect(lastResult).to.containSubset({
+              id: device1723ExternalId,
+              data: {
+                resultText: '154112',
+                copies: 154112,
+              },
+              patient: {
+                name: 'Fran',
+                surname: 'Love',
+                age: 231,
+                gender: 'F',
+                artNumber: '2341sfkj',
+              },
+              assay: { id: 'HivVl' },
+              category: [{ id: 'MoreThan1000' }],
+              type: { id: 'Patient' },
+              source: { id: 'LIMS' },
+              notes: '154,112 Copies / mL',
+            })
           })
 
         await server
@@ -3859,27 +3814,24 @@ describe('Device Result API routes', () => {
             assert.equal(lastResult.workflow.status.id, 'Delivered')
             assert.property(lastResult.workflow, 'changedOn')
 
-            assert.deepEqual(
-              _.omit(lastResult, 'sample', 'workflow', 'location'),
-              {
-                data: {
-                  resultText: '155115',
-                  copies: 155115,
-                },
-                patient: {
-                  name: 'Frank',
-                  surname: 'Nice',
-                  age: 931,
-                  gender: 'M',
-                  artNumber: '320113j',
-                },
-                assay: { id: 'HivVl' },
-                category: [{ id: 'MoreThan1000' }],
-                type: { id: 'Patient' },
-                source: { id: 'LIMS' },
-                notes: '155,115 Copies / mL',
-              }
-            )
+            expect(lastResult).to.containSubset({
+              data: {
+                resultText: '155115',
+                copies: 155115,
+              },
+              patient: {
+                name: 'Frank',
+                surname: 'Nice',
+                age: 931,
+                gender: 'M',
+                artNumber: '320113j',
+              },
+              assay: { id: 'HivVl' },
+              category: [{ id: 'MoreThan1000' }],
+              type: { id: 'Patient' },
+              source: { id: 'LIMS' },
+              notes: '155,115 Copies / mL',
+            })
           })
 
         await server
@@ -3895,28 +3847,25 @@ describe('Device Result API routes', () => {
             assert.equal(lastResult.workflow.status.id, 'Acknowledged')
             assert.property(lastResult.workflow, 'changedOn')
 
-            assert.deepEqual(
-              _.omit(lastResult, 'sample', 'workflow', 'location'),
-              {
-                id: device1723ExternalId,
-                data: {
-                  resultText: '154112',
-                  copies: 154112,
-                },
-                patient: {
-                  name: 'Fran',
-                  surname: 'Love',
-                  age: 231,
-                  gender: 'F',
-                  artNumber: '2341sfkj',
-                },
-                assay: { id: 'HivVl' },
-                category: [{ id: 'MoreThan1000' }],
-                type: { id: 'Patient' },
-                source: { id: 'LIMS' },
-                notes: '154,112 Copies / mL',
-              }
-            )
+            expect(lastResult).to.containSubset({
+              id: device1723ExternalId,
+              data: {
+                resultText: '154112',
+                copies: 154112,
+              },
+              patient: {
+                name: 'Fran',
+                surname: 'Love',
+                age: 231,
+                gender: 'F',
+                artNumber: '2341sfkj',
+              },
+              assay: { id: 'HivVl' },
+              category: [{ id: 'MoreThan1000' }],
+              type: { id: 'Patient' },
+              source: { id: 'LIMS' },
+              notes: '154,112 Copies / mL',
+            })
           })
 
         await server
@@ -3932,28 +3881,25 @@ describe('Device Result API routes', () => {
             assert.equal(lastResult.workflow.status.id, 'Acknowledged')
             assert.property(lastResult.workflow, 'changedOn')
 
-            assert.deepEqual(
-              _.omit(lastResult, 'sample', 'workflow', 'location'),
-              {
-                id: device1723ExternalId,
-                data: {
-                  resultText: '154112',
-                  copies: 154112,
-                },
-                patient: {
-                  name: 'Fran',
-                  surname: 'Love',
-                  age: 231,
-                  gender: 'F',
-                  artNumber: '2341sfkj',
-                },
-                assay: { id: 'HivVl' },
-                category: [{ id: 'MoreThan1000' }],
-                type: { id: 'Patient' },
-                source: { id: 'LIMS' },
-                notes: '154,112 Copies / mL',
-              }
-            )
+            expect(lastResult).to.containSubset({
+              id: device1723ExternalId,
+              data: {
+                resultText: '154112',
+                copies: 154112,
+              },
+              patient: {
+                name: 'Fran',
+                surname: 'Love',
+                age: 231,
+                gender: 'F',
+                artNumber: '2341sfkj',
+              },
+              assay: { id: 'HivVl' },
+              category: [{ id: 'MoreThan1000' }],
+              type: { id: 'Patient' },
+              source: { id: 'LIMS' },
+              notes: '154,112 Copies / mL',
+            })
           })
 
         await server
@@ -3968,28 +3914,25 @@ describe('Device Result API routes', () => {
             assert.equal(lastResult.sample.originSite.id, '1315')
             assert.property(lastResult.workflow, 'changedOn')
 
-            assert.deepEqual(
-              _.omit(lastResult, 'sample', 'workflow', 'location'),
-              {
-                id: device1315ExternalId,
-                data: {
-                  resultText: '454112',
-                  copies: 454112,
-                },
-                patient: {
-                  name: 'Bob',
-                  surname: 'Hope',
-                  age: 312,
-                  gender: 'M',
-                  artNumber: '1341kjkj',
-                },
-                assay: { id: 'HivVl' },
-                category: [{ id: 'MoreThan1000' }],
-                type: { id: 'Patient' },
-                source: { id: 'LIMS' },
-                notes: '454,112 Copies / mL',
-              }
-            )
+            expect(lastResult).to.containSubset({
+              id: device1315ExternalId,
+              data: {
+                resultText: '454112',
+                copies: 454112,
+              },
+              patient: {
+                name: 'Bob',
+                surname: 'Hope',
+                age: 312,
+                gender: 'M',
+                artNumber: '1341kjkj',
+              },
+              assay: { id: 'HivVl' },
+              category: [{ id: 'MoreThan1000' }],
+              type: { id: 'Patient' },
+              source: { id: 'LIMS' },
+              notes: '454,112 Copies / mL',
+            })
           })
 
         await server
@@ -4004,28 +3947,25 @@ describe('Device Result API routes', () => {
             assert.equal(lastResult.sample.originSite.id, '1315')
             assert.property(lastResult.workflow, 'changedOn')
 
-            assert.deepEqual(
-              _.omit(lastResult, 'sample', 'workflow', 'location'),
-              {
-                id: device1315ExternalId,
-                data: {
-                  resultText: '454112',
-                  copies: 454112,
-                },
-                patient: {
-                  name: 'Bob',
-                  surname: 'Hope',
-                  age: 312,
-                  gender: 'M',
-                  artNumber: '1341kjkj',
-                },
-                assay: { id: 'HivVl' },
-                category: [{ id: 'MoreThan1000' }],
-                type: { id: 'Patient' },
-                source: { id: 'LIMS' },
-                notes: '454,112 Copies / mL',
-              }
-            )
+            expect(lastResult).to.containSubset({
+              id: device1315ExternalId,
+              data: {
+                resultText: '454112',
+                copies: 454112,
+              },
+              patient: {
+                name: 'Bob',
+                surname: 'Hope',
+                age: 312,
+                gender: 'M',
+                artNumber: '1341kjkj',
+              },
+              assay: { id: 'HivVl' },
+              category: [{ id: 'MoreThan1000' }],
+              type: { id: 'Patient' },
+              source: { id: 'LIMS' },
+              notes: '454,112 Copies / mL',
+            })
           })
 
         await waitAsyncComplete()

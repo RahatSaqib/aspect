@@ -1,4 +1,4 @@
-module.exports = require('../../src/db').seed(seed)
+module.exports = require('../utils').seed(seed)
 const { seedStockIssues } = require('../utils')
 
 async function seed(knex) {

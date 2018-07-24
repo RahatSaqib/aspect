@@ -1172,5 +1172,213 @@ describe('Issue Escalation', () => {
         })
       })
     })
+
+    describe('and ModuleTemperatureError issues exist', () => {
+      let moduleTemperatureErrorIssueType
+      let device1
+      let device1RegionalOfficer
+      let device2
+      let device2RegionalOfficer
+
+      before(async () =>
+        run(async knex => {
+          moduleTemperatureErrorIssueType = await getIssueType(
+            knex,
+            'ModuleTemperatureError'
+          )
+          const device1Details = await getDevice(knex, {
+            partnerId: partner.id,
+            countryAbbreviation,
+          })
+          device1 = device1Details.d
+          device1RegionalOfficer = device1Details.regionalOfficer
+
+          const device2Details = await getDevice(knex, {
+            partnerId: partner.id,
+            countryAbbreviation,
+            notIn: [device1.id],
+          })
+          device2 = device2Details.d
+          device2RegionalOfficer = device2Details.regionalOfficer
+        })
+      )
+
+      describe("which have been open for more than 90 days but haven't been escalated yet", () => {
+        const dateIssueRaised = subDays(new Date(), 91)
+        let device1ModuleTemperatureErrorIssueId
+        let device2ModuleTemperatureErrorIssueId
+
+        beforeEach(async () =>
+          run(async knex => {
+            device1ModuleTemperatureErrorIssueId = await createAndTriggerIssue(
+              knex,
+              partner.id,
+              device1,
+              moduleTemperatureErrorIssueType.id,
+              resultActionTypes.RESULT_MODULE_TEMPERATURE_ERROR,
+              1,
+              dateIssueRaised
+            )
+            device2ModuleTemperatureErrorIssueId = await createAndTriggerIssue(
+              knex,
+              partner.id,
+              device2,
+              moduleTemperatureErrorIssueType.id,
+              resultActionTypes.RESULT_MODULE_TEMPERATURE_ERROR,
+              1,
+              dateIssueRaised
+            )
+          })
+        )
+
+        afterEach(async () =>
+          run(async knex => {
+            await cleanUpIssues(knex, [
+              device1ModuleTemperatureErrorIssueId,
+              device2ModuleTemperatureErrorIssueId,
+            ])
+          })
+        )
+
+        describe('then ESCALATE_ISSUES is dispatched with no issue ID', () => {
+          it('all the issues should be escalated', () =>
+            runTestWithKnex(async knex => {
+              const waitForEscalateIssues = waitForAction(escalateIssues())
+              messageContext.escalateIssues()
+              await waitForEscalateIssues
+              await waitForIdle()
+
+              const device1ModuleTemperatureErrorIssue = await getIssue(
+                knex,
+                device1ModuleTemperatureErrorIssueId
+              )
+              const device2ModuleTemperatureErrorIssue = await getIssue(
+                knex,
+                device2ModuleTemperatureErrorIssueId
+              )
+
+              assert.equal(device1ModuleTemperatureErrorIssue.level, 2)
+              assert.equal(device2ModuleTemperatureErrorIssue.level, 2)
+            }))
+
+          it('notifications should be created for the level that the issue has been escalated to', () =>
+            runTestWithKnex(async knex => {
+              let notificationsForDevice1Issue = await getIssueNotifications(
+                knex,
+                device1ModuleTemperatureErrorIssueId
+              )
+              assert.isEmpty(notificationsForDevice1Issue)
+              let notificationsForDevice2Issue = await getIssueNotifications(
+                knex,
+                device2ModuleTemperatureErrorIssueId
+              )
+              assert.isEmpty(notificationsForDevice2Issue)
+
+              const waitForEscalateIssues = waitForAction(escalateIssues())
+              messageContext.escalateIssues()
+              await waitForEscalateIssues
+              await waitForIdle()
+
+              notificationsForDevice1Issue = await getIssueNotifications(
+                knex,
+                device1ModuleTemperatureErrorIssueId
+              )
+              expect(notificationsForDevice1Issue).to.containSubset([
+                {
+                  NotificationType: {
+                    level: 2,
+                  },
+                  Notification: {
+                    personId: device1RegionalOfficer.id,
+                  },
+                },
+              ])
+
+              notificationsForDevice2Issue = await getIssueNotifications(
+                knex,
+                device2ModuleTemperatureErrorIssueId
+              )
+              expect(notificationsForDevice2Issue).to.containSubset([
+                {
+                  NotificationType: {
+                    level: 2,
+                  },
+                  Notification: {
+                    personId: device2RegionalOfficer.id,
+                  },
+                },
+              ])
+            }))
+        })
+
+        describe("then ESCALATE_ISSUES is dispatched with one of the issue's ID", () => {
+          it('that one issue should be escalated', () =>
+            runTestWithKnex(async knex => {
+              const waitForEscalateIssues = waitForAction(
+                escalateIssues(device1ModuleTemperatureErrorIssueId)
+              )
+              messageContext.escalateIssues(
+                device1ModuleTemperatureErrorIssueId
+              )
+              await waitForEscalateIssues
+              await waitForIdle()
+
+              const device1ModuleTemperatureErrorIssue = await getIssue(
+                knex,
+                device1ModuleTemperatureErrorIssueId
+              )
+              const device2ModuleTemperatureErrorIssue = await getIssue(
+                knex,
+                device2ModuleTemperatureErrorIssueId
+              )
+
+              assert.equal(device1ModuleTemperatureErrorIssue.level, 2)
+              assert.equal(device2ModuleTemperatureErrorIssue.level, 1)
+            }))
+        })
+      })
+
+      describe('which have been open for less than 90 days', () => {
+        const dateIssueRaised = subDays(new Date(), 89)
+        let moduleTemperatureErrorIssueId
+
+        beforeEach(async () =>
+          run(async knex => {
+            moduleTemperatureErrorIssueId = await createAndTriggerIssue(
+              knex,
+              partner.id,
+              device1,
+              moduleTemperatureErrorIssueType.id,
+              resultActionTypes.RESULT_MODULE_TEMPERATURE_ERROR,
+              1,
+              dateIssueRaised
+            )
+          })
+        )
+
+        afterEach(async () =>
+          run(async knex => {
+            await cleanUpIssues(knex, [moduleTemperatureErrorIssueId])
+          })
+        )
+
+        describe('then ESCALATE_ISSUES is dispatched', () => {
+          it('the issues should NOT be escalated', () =>
+            runTestWithKnex(async knex => {
+              const waitForEscalateIssues = waitForAction(escalateIssues())
+              messageContext.escalateIssues()
+              await waitForEscalateIssues
+              await waitForIdle()
+
+              const moduleTemperatureErrorIssue = await getIssue(
+                knex,
+                moduleTemperatureErrorIssueId
+              )
+
+              assert.equal(moduleTemperatureErrorIssue.level, 1)
+            }))
+        })
+      })
+    })
   })
 })

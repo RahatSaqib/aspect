@@ -1,0 +1,29 @@
+{
+  "data": [
+    {
+      "name": "Lab",
+      "hasConnectivity": 0,
+      "hasResults": 1
+    },
+    {
+      "name": "Router",
+      "hasConnectivity": 1,
+      "hasResults": 0
+    },
+    {
+      "name": "Integrated",
+      "hasConnectivity": 1,
+      "hasResults": 1
+    },
+    {
+      "name": "Client",
+      "hasConnectivity": 0,
+      "hasResults": 0
+    },
+    {
+      "name": "Information System",
+      "hasConnectivity": 0,
+      "hasResults": 1
+    }
+  ]
+}

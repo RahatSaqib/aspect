@@ -1,0 +1,22 @@
+{
+  "data": [
+    {
+      "name": "High",
+      "externalId": "High",
+      "i18nKey": "issueStatusSeverityHigh",
+      "sortOrder": 0
+    },
+    {
+      "name": "Medium",
+      "externalId": "Medium",
+      "i18nKey": "issueStatusSeverityMedium",
+      "sortOrder": 1
+    },
+    {
+      "name": "Low",
+      "externalId": "Low",
+      "i18nKey": "issueStatusSeverityLow",
+      "sortOrder": 2
+    }
+  ]
+}
