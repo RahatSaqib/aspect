@@ -813,7 +813,7 @@ async function seed(knex) {
 
   _.map(_.range(resultEidNumber), async i => {
     const device = devicesM2000[i % devicesM2000.length]
-    const siteData = await knex('site')
+    const siteData = await knex('Site')
       .where('id', device.siteId)
       .first('id')
     const sample = samples[i % samples.length]
@@ -944,7 +944,7 @@ async function seed(knex) {
 
   _.map(_.range(resultHivVlNumber), async i => {
     const device = devicesM2000[i % devicesM2000.length]
-    const siteData = await knex('site')
+    const siteData = await knex('Site')
       .where('id', device.siteId)
       .first('id')
     const sample = samples[i % samples.length]
