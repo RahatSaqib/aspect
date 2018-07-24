@@ -1242,7 +1242,8 @@ async function actionDashboard(request) {
         .whereRaw('isl.issueId=i.id')
         .whereRaw('isl.issueStatusId=is.id')
         .max('changedOn')
-        .as('statusDate')
+        .as('statusDate'),
+      'i.consumableId'
     )
   const alertMessagesByIssue = _.map(
     _.values(_.groupBy(alertMessages, 'issueId')),
@@ -1250,14 +1251,28 @@ async function actionDashboard(request) {
       _.head(_.orderBy(issueMessages, 'notificationTypeLevel', 'desc'))
   )
 
-  // TODO do not hardcode inventory item lookup
-  // this is here to always show inventory in action
-  // list for all devices assigned to the user, even
-  // if there are currently no triggered errors since
-  // the user can update stock levels at any time
+  const { partnerSettingsString = '{}' } = await knex('Partner as p')
+    .where('p.id', user.partnerId)
+    .first('p.partnerSettings as partnerSettingsString')
+  const partnerSettings = JSON.parse(partnerSettingsString)
+  if (!partnerSettings['dashboard.action.allowStockUpdateForConsumableIds']) {
+    partnerSettings[
+      'dashboard.action.allowStockUpdateForConsumableIds'
+    ] = await knex('Consumable as c')
+      .where(function() {
+        this.whereNull('c.partnerId').orWhere('c.partnerId', user.partnerId)
+      })
+      .pluck('c.id')
+  }
+
   const inventoryItems = await knex('Site as s')
-    .leftJoin('InventoryItem as ii', 'ii.siteId', 's.id')
-    .leftJoin('Consumable as c', 'ii.consumableId', 'c.id')
+    .join('Device as d', 'd.siteId', 's.id')
+    .join('Assay as a', 'a.deviceTypeId', 'd.deviceTypeId')
+    .join('ConsumableAssay as ca', 'ca.assayId', 'a.id')
+    .join('Consumable as c', 'c.id', 'ca.consumableId')
+    .leftJoin('InventoryItem as ii', function() {
+      this.on('ii.siteId', 's.id').andOn('ii.consumableId', 'c.id')
+    })
     .modify(addConstraints, dataConstraints, { site: 's' })
     .modify((queryBuilder, query) => {
       if (query.siteId) {
@@ -1265,17 +1280,12 @@ async function actionDashboard(request) {
       }
     }, query)
     .groupBy('s.id', 'c.id')
-    .select(
+    .distinct(
       's.id as siteId',
       's.name as siteName',
       'c.id as consumableId',
-      knex.raw('coalesce(sum(ii.quantityOnHand), 0) as totalInStock')
+      knex.raw('sum(coalesce(ii.quantityOnHand, 0)) as totalInStock')
     )
-
-  // FIXME: Replace always loading the ID for GeneXpert cartridges by adding consumable ID to the AlertMessage table and adding it to the query above
-  const { id: defaultConsumableId } = await knex('Consumable')
-    .where('name', 'GeneXpert TB Cartridge')
-    .first()
 
   // set consumable id, totalIn Stock on StockInHand issues
   const inventoryItemsBySite = _.groupBy(inventoryItems, 'siteId')
@@ -1295,9 +1305,6 @@ async function actionDashboard(request) {
       alertMessage.consumableId =
         inventoryItem == null ? null : inventoryItem.consumableId
       delete inventoryItemsBySite[alertMessage.siteId]
-    }
-    if (alertMessage.consumableId == null) {
-      alertMessage.consumableId = defaultConsumableId
     }
     return alertMessage
   })
@@ -1328,7 +1335,7 @@ async function actionDashboard(request) {
         notificationType: 'luStockLevelUpdate',
         canAcknowledge: 0,
         totalInStock,
-        consumableId: consumableId != null ? consumableId : defaultConsumableId,
+        consumableId,
       })
     }
   )

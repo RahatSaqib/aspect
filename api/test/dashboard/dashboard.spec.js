@@ -137,6 +137,7 @@ describe('Dashboard routes', () => {
         // if there are currently no triggered errors since
         // the user can update stock levels at any time
         const inventoryItems = await knex('Site as s')
+          .join('Device as d', 's.id', 'd.siteId')
           .leftJoin('InventoryItem as ii', 'ii.siteId', 's.id')
           .leftJoin('Consumable as c', 'ii.consumableId', 'c.id')
           .modify(addConstraints, dataConstraints, { site: 's' })
@@ -179,7 +180,10 @@ describe('Dashboard routes', () => {
               inventoryItem == null ? null : inventoryItem.consumableId
             delete inventoryItemsBySite[alertMessage.siteId]
           }
-          if (alertMessage.consumableId == null) {
+          if (
+            alertMessage.consumableId == null &&
+            alertMessage.issueCategory === 'ReagentHealth'
+          ) {
             alertMessage.consumableId = defaultConsumableId
           }
           return alertMessage

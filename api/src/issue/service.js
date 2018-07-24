@@ -134,11 +134,13 @@ async function createNewIssue(knex, issueType, action) {
     // Issue not configured for this deployment
     return null
   }
-
   const issueStatusId = await issueStatusToId('Active')
+  const { consumableId = null } = action
+
   const issue = {
     issueStatusId,
     issueTypeId,
+    consumableId,
     level: 1,
     createdOn: now,
     updatedOn: now,

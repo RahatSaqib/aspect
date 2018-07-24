@@ -9,10 +9,21 @@ async function up(knex) {
       .references('id')
       .inTable('Consumable')
   })
+
+  await knex.schema.table('Partner', partner => {
+    // TODO: Migrate and seed deviceLogHistoryDays, autoAcknowledgeOlderThanDays, numberToLeaveUnacknowledged,
+    // maxDaysDeviceOffline, maxDaysDeviceNoResults, dueDaysInventoryStockout and dueDaysInventoryStockExpiring
+    // to this JSON field
+    partner.specificType('partnerSettings', 'JSON')
+  })
 }
 
 async function down(knex) {
   await knex.schema.table('Issue', issue => {
-    issue.dropColumns('Consumable')
+    issue.dropColumns('consumableId')
+  })
+
+  await knex.schema.table('Partner', issue => {
+    issue.dropColumns('partnerSettings')
   })
 }
