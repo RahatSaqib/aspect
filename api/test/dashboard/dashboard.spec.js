@@ -61,6 +61,9 @@ describe('Dashboard routes', () => {
         const user = await getUser(username)
         const dataConstraints = await getConstraints({ name: username })
 
+        // TODO use auth addConstraints instead of hardcoding Myanmar Rules
+        // for dashboard queries
+        // TODO Remove hard coded constraints for RO vs LU issues from ASP-765
         const { jobFunctionName } = await knex('JobFunction as jf')
           .innerJoin('Job as j', 'j.jobFunctionId', 'jf.id')
           .innerJoin('Person as ps', 'j.personId', 'ps.id')
@@ -141,11 +144,11 @@ describe('Dashboard routes', () => {
           .leftJoin('InventoryItem as ii', 'ii.siteId', 's.id')
           .leftJoin('Consumable as c', 'ii.consumableId', 'c.id')
           .modify(addConstraints, dataConstraints, { site: 's' })
-          .modify((queryBuilder, query) => {
+          .modify(qb => {
             if (query.siteId) {
-              queryBuilder.where({ 's.id': query.siteId })
+              qb.where({ 's.id': query.siteId })
             }
-          }, query)
+          })
           .groupBy('s.id', 'c.id')
           .select(
             's.id as siteId',
@@ -245,7 +248,7 @@ describe('Dashboard routes', () => {
         )(results)
       }
 
-      async function lookUpUserActionsAndCheckThatTheyMatchActionDashboardResponse(
+      async function checkThatUserActionsMatchActionDashboardResponse(
         username,
         password,
         knex,
@@ -265,33 +268,65 @@ describe('Dashboard routes', () => {
           .then(res => res.body.data)
 
         expect(actionDashboardData).to.containSubset(userActionByCategory)
-        expect(
-          _.get(actionDashboardData, 'ConnectivityHealth', [])
-        ).to.have.lengthOf(
-          _.get(userActionByCategory, 'ConnectivityHealth', []).length
+        const actualConnectivityHealth = _.get(
+          actionDashboardData,
+          'ConnectivityHealth',
+          []
         )
-        expect(_.get(actionDashboardData, 'DeviceHealth', [])).to.have.lengthOf(
-          _.get(userActionByCategory, 'DeviceHealth', []).length
+        const expectedConnectivityHealth = _.get(
+          userActionByCategory,
+          'ConnectivityHealth',
+          []
         )
-        expect(
-          _.get(actionDashboardData, 'ReagentHealth', [])
-        ).to.have.lengthOf(
-          _.get(userActionByCategory, 'ReagentHealth', []).length
+        expect(actualConnectivityHealth).to.have.lengthOf(
+          expectedConnectivityHealth.length
         )
-        expect(_.get(actionDashboardData, 'DataHealth', [])).to.have.lengthOf(
-          _.get(userActionByCategory, 'DataHealth', []).length
+
+        const actualDeviceHealth = _.get(
+          actionDashboardData,
+          'DeviceHealth',
+          []
         )
+        const expectedDeviceHealth = _.get(
+          userActionByCategory,
+          'DeviceHealth',
+          []
+        )
+        expect(actualDeviceHealth).to.have.lengthOf(expectedDeviceHealth.length)
+
+        const actualReagentHealth = _.get(
+          actionDashboardData,
+          'ReagentHealth',
+          []
+        )
+        const expectedReagentHealth = _.get(
+          userActionByCategory,
+          'ReagentHealth',
+          []
+        )
+        expect(actualReagentHealth).to.have.lengthOf(
+          expectedReagentHealth.length
+        )
+
+        const actualDataHealth = _.get(
+          actionDashboardData,
+          'DataHealth',
+          []
+        )
+        const expectedDataHealth = _.get(userActionByCategory, 'DataHealth', [])
+        expect(actualDataHealth).to.have.lengthOf(expectedDataHealth.length)
+
         if (query.siteId) {
-          _.get(actionDashboardData, 'ConnectivityHealth', []).forEach(alert =>
+          actualConnectivityHealth.forEach(alert =>
             expect(alert.siteId).to.equal(query.siteId)
           )
-          _.get(actionDashboardData, 'DeviceHealth', []).forEach(alert =>
+          actualDeviceHealth.forEach(alert =>
             expect(alert.siteId).to.equal(query.siteId)
           )
-          _.get(actionDashboardData, 'ReagentHealth', []).forEach(alert =>
+          actualReagentHealth.forEach(alert =>
             expect(alert.siteId).to.equal(query.siteId)
           )
-          _.get(actionDashboardData, 'DataHealth', []).forEach(alert =>
+          actualDataHealth.forEach(alert =>
             expect(alert.siteId).to.equal(query.siteId)
           )
         }
@@ -309,7 +344,7 @@ describe('Dashboard routes', () => {
       describe('for Admin', () => {
         it("should return the highest level notification for all labs under admin's jurisdiction", async () =>
           runTestWithKnex(async knex =>
-            lookUpUserActionsAndCheckThatTheyMatchActionDashboardResponse(
+            checkThatUserActionsMatchActionDashboardResponse(
               'myanmar_admin',
               'test07',
               knex
@@ -321,7 +356,7 @@ describe('Dashboard routes', () => {
             const sites = await getSitesUnderUser('myanmar_admin', 'test07')
 
             return Promise.each(sites, site =>
-              lookUpUserActionsAndCheckThatTheyMatchActionDashboardResponse(
+              checkThatUserActionsMatchActionDashboardResponse(
                 'myanmar_admin',
                 'test07',
                 knex,
@@ -337,7 +372,7 @@ describe('Dashboard routes', () => {
             Promise.each(
               ['myanmar_ro1', 'myanmar_ro2', 'myanmar_ro3'],
               async regionalOfficerName =>
-                lookUpUserActionsAndCheckThatTheyMatchActionDashboardResponse(
+                checkThatUserActionsMatchActionDashboardResponse(
                   regionalOfficerName,
                   regionalOfficerName,
                   knex
@@ -356,7 +391,7 @@ describe('Dashboard routes', () => {
                 )
 
                 return Promise.each(sites, site =>
-                  lookUpUserActionsAndCheckThatTheyMatchActionDashboardResponse(
+                  checkThatUserActionsMatchActionDashboardResponse(
                     'myanmar_admin',
                     'test07',
                     knex,
@@ -374,7 +409,7 @@ describe('Dashboard routes', () => {
             Promise.each(
               ['myanmar_lab1', 'myanmar_lab2', 'myanmar_lab3'],
               async labUserName =>
-                lookUpUserActionsAndCheckThatTheyMatchActionDashboardResponse(
+                checkThatUserActionsMatchActionDashboardResponse(
                   labUserName,
                   labUserName,
                   knex
