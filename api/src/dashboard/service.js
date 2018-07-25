@@ -1172,19 +1172,55 @@ async function actionDashboard(request) {
   const user = await getUser(auth.credentials.name)
   const dataConstraints = await getConstraints(auth.credentials)
 
-  // TODO use auth addConstraints instead of hardcoding Myanmar Rules
-  // for dashboard queries
-  // TODO Remove hard coded constraints for RO vs LU issues from ASP-765
-  const { jobFunctionName } = await knex('JobFunction as jf')
-    .innerJoin('Job as j', 'j.jobFunctionId', 'jf.id')
-    .innerJoin('Person as ps', 'j.personId', 'ps.id')
-    .where({
-      'ps.userId': user.id,
-      'jf.partnerId': user.partnerId,
+  const userJobContexts = await knex('User as u')
+    .join('Person as p', 'u.id', 'p.userId')
+    .join('Job as j', 'p.id', 'j.personId')
+    .join('JobContext as jc', 'j.id', 'jc.jobId')
+    .join('JobFunction as jf', 'j.jobFunctionId', 'jf.id')
+    .leftJoin('Geography as g', 'jc.geographyId', 'g.id')
+    .leftJoin('Geography as subG', function() {
+      this.on('subG.countryId', 'g.countryId')
+        .andOn(function() {
+          this.onNull('g.stateId').orOn('subG.stateId', 'g.stateId')
+        })
+        .andOn(function() {
+          this.onNull('g.lgaId').orOn('subG.lgaId', 'g.lgaId')
+        })
     })
-    .first('jf.name as jobFunctionName')
-  const isAdmin = jobFunctionName === 'Admin'
-  const isRegionalOfficer = jobFunctionName === 'Regional Officer'
+    .where('u.id', user.id)
+    .distinct(
+      'subG.id as geographyId',
+      'jc.siteId',
+      'j.jobFunctionId',
+      'jf.isAdmin'
+    )
+  const geographyIds = _.uniq(
+    _.map(
+      _.filter(
+        userJobContexts,
+        jobContext => !_.isNull(jobContext.geographyId)
+      ),
+      'geographyId'
+    )
+  )
+  const geographyIdsWhereAdmin = _.filter(geographyIds, geographyId =>
+    _.some(
+      userJobContexts,
+      jobContext => jobContext.geographyId === geographyId && jobContext.isAdmin
+    )
+  )
+  const siteIds = _.uniq(
+    _.map(
+      _.filter(userJobContexts, jobContext => !_.isNull(jobContext.siteId)),
+      'siteId'
+    )
+  )
+  const siteIdsWhereAdmin = _.filter(siteIds, siteId =>
+    _.some(
+      userJobContexts,
+      jobContext => jobContext.siteId === siteId && jobContext.isAdmin
+    )
+  )
 
   const alertMessages = await knex('AlertMessage as am')
     .innerJoin('MessageStatus as ms', 'am.messageStatusId', 'ms.id')
@@ -1202,20 +1238,30 @@ async function actionDashboard(request) {
     .innerJoin('Site as s', 'am.siteId', 's.id')
     .where({ 'ms.externalId': 'Sent' })
     .whereNotIn('is.externalId', ['Inactive', 'Resolved'])
+    .andWhere(function() {
+      this.where(function() {
+        this.whereIn('am.siteId', siteIdsWhereAdmin).orWhereIn(
+          's.geographyId',
+          geographyIdsWhereAdmin
+        )
+      }).orWhere({ 'am.personId': user.personId })
+    })
+    .andWhere(function() {
+      this.where(function() {
+        this.whereNotIn('am.siteId', siteIds)
+          // TODO: Add property to notificationType to filter this
+          .andWhere(
+            'nt.name',
+            query.siteId == null ? 'not like' : 'like',
+            'LU%'
+          )
+      }).orWhere(function() {
+        this.whereIn('am.siteId', siteIds)
+      })
+    })
     .modify((queryBuilder, query) => {
-      if (!isAdmin) {
-        queryBuilder.where({ 'am.personId': user.personId })
-      }
       if (query.siteId) {
         queryBuilder.where({ 'am.siteId': query.siteId })
-      }
-      if (isAdmin || isRegionalOfficer) {
-        // If specific lab selected, show LU issues, otherwise show RO
-        queryBuilder.where(
-          'nt.name',
-          query.siteId == null ? 'not like' : 'like',
-          'LU%'
-        )
       }
     }, query)
     .select(
