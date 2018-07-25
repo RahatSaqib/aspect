@@ -2989,10 +2989,11 @@ describe('Device Result API routes', () => {
     })
   })
 
-  describe('RRT Lab/Clinic Tests', () => {
+  describe('Reporter Lab/Clinic Tests', () => {
     const context = createTestContext(server, {
-      user: 'rrt_admin',
-      partner: 'RRT',
+      user: 'reporter_admin',
+      partner: 'Reporter',
+      type: 'DaktariInSight',
     })
 
     const { runTest } = context

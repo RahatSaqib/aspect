@@ -51,12 +51,12 @@
       "i18nKey": "resultCategoryDiscordant"
     },
     {
-      "name": "LessThan1000",
+      "name": "< 1000",
       "externalId": "LessThan1000",
       "i18nKey": "resultCategoryLessThan1000"
     },
     {
-      "name": "MoreThan1000",
+      "name": ">= 1000",
       "externalId": "MoreThan1000",
       "i18nKey": "resultCategoryMoreThan1000"
     },
