@@ -1,6 +1,8 @@
 const _ = require('lodash')
 const { readJson } = require('fs-extra')
 
+const { allFeatureToId } = require('../src/shared/dictionary')
+
 // Helper for seeed files. Ru
 let hasSeededStaticData = false
 function seed(seed) {
@@ -519,6 +521,33 @@ async function seedIssueEventTriggersForPartner(
   )
 }
 
+async function assignAllFeaturesToJobFunctionIds(
+  knex,
+  jobFunctionIds,
+  featureBlacklist = [
+    // These are currently hardcoded to Myanmar, so skip by default
+    'targetDashboard',
+    'actionDashboard',
+    'reportDashboard',
+    'siteFilterDashboard',
+  ]
+) {
+  const features = _.filter(
+    await allFeatureToId(),
+    (val, key) => !_.includes(featureBlacklist, key)
+  )
+  await Promise.all(
+    _.map(features, async featureId => {
+      await knex('JobFunctionFeature').insert(
+        _.map(jobFunctionIds, jobFunctionId => ({
+          featureId,
+          jobFunctionId,
+        }))
+      )
+    })
+  )
+}
+
 module.exports = {
   seed,
   rowsAsObject,
@@ -526,4 +555,5 @@ module.exports = {
   seedStockIssues,
   getPermissionModules,
   seedIssueEventTriggersForPartner,
+  assignAllFeaturesToJobFunctionIds,
 }

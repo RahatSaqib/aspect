@@ -2,11 +2,12 @@ module.exports = require('../utils').seed(seed)
 
 const config = require('../../src/config')
 const bcrypt = require('bcrypt')
-const _ = require('lodash')
-const { getPermissionModules } = require('../utils')
+const {
+  getPermissionModules,
+  assignAllFeaturesToJobFunctionIds,
+} = require('../utils')
 const {
   allAssayTypeToId,
-  allFeatureToId,
   partnerTypeToId,
   deviceTypeCategoryToId,
   resultSourceToId,
@@ -165,17 +166,8 @@ async function seed(knex) {
     partnerId,
   })
 
-  const features = await allFeatureToId()
-  await Promise.all(
-    _.map(features, async featureId => {
-      await knex('JobFunctionFeature').insert([
-        {
-          jobFunctionId: jobFunctionIdAdmin,
-          featureId,
-        },
-      ])
-    })
-  )
+  await assignAllFeaturesToJobFunctionIds(knex, [jobFunctionIdAdmin])
+
   await knex('JobFunctionPermission').insert([
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.demo.admin },
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.device.admin },

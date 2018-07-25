@@ -1,7 +1,10 @@
 module.exports = require('../utils').seed(seed)
 
 const config = require('../../src/config')
-const { getPermissionModules } = require('../utils')
+const {
+  getPermissionModules,
+  assignAllFeaturesToJobFunctionIds,
+} = require('../utils')
 const {
   allAssayTypeToId,
   allDeviceStatusToId,
@@ -13,7 +16,6 @@ const {
   allResultSourceToId,
   allResultWorkflowStatusToId,
   allSampleTypeToId,
-  allFeatureToId,
   resultTypeToId,
   unitToId,
 } = require('../../src/shared/dictionary')
@@ -2999,29 +3001,12 @@ async function seed(knex) {
   })
 
   // assign features to JobFeatures
-  const features = await allFeatureToId()
-  await Promise.all(
-    _.map(features, async featureId => {
-      await knex('JobFunctionFeature').insert([
-        {
-          jobFunctionId: jobFunctionIdAdmin,
-          featureId,
-        },
-        {
-          jobFunctionId: jobFunctionIdManager,
-          featureId,
-        },
-        {
-          jobFunctionId: jobFunctionIdPartnerTwo,
-          featureId,
-        },
-        {
-          jobFunctionId: jobFunctionIdClinician,
-          featureId,
-        },
-      ])
-    })
-  )
+  await assignAllFeaturesToJobFunctionIds(knex, [
+    jobFunctionIdAdmin,
+    jobFunctionIdManager,
+    jobFunctionIdPartnerTwo,
+    jobFunctionIdClinician,
+  ])
 
   // assign permissions to job functions
   const modules = await getPermissionModules(knex)
