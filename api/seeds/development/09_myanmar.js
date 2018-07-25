@@ -30,4 +30,11 @@ async function seed(knex) {
         'dashboard.action.allowStockUpdateForConsumableIds': [consumableIdTb],
       }),
     })
+
+  await knex('JobFunction')
+    .where({
+      name: 'Admin',
+      partnerId,
+    })
+    .update({ isAdmin: true })
 }

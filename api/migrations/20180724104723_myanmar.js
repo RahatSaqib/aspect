@@ -16,6 +16,13 @@ async function up(knex) {
     // to this JSON field
     partner.specificType('partnerSettings', 'JSON')
   })
+
+  await knex.schema.table('JobFunction', jobContext => {
+    jobContext
+      .boolean('isAdmin')
+      .notNullable()
+      .defaultTo(0)
+  })
 }
 
 async function down(knex) {
@@ -25,5 +32,9 @@ async function down(knex) {
 
   await knex.schema.table('Partner', issue => {
     issue.dropColumns('partnerSettings')
+  })
+
+  await knex.schema.table('JobFunction', issue => {
+    issue.dropColumns('isAdmin')
   })
 }

@@ -166,10 +166,9 @@ async function seed(knex) {
   const myanmarConsumableIssues = await knex('IssueCategory as ic')
     .join('IssueType as it', 'ic.id', 'it.issueCategoryId')
     .join('Issue as i', 'it.id', 'i.issueTypeId')
-    .join('Partner as p', 'i.partnerId', 'p.id')
     .where(function() {
       this.whereNull('i.consumableId')
-        .andWhere('p.name', 'Myanmar')
+        .andWhere('i.partnerId', partnerId)
         .andWhere('ic.name', 'Reagent Health')
     })
     .pluck('i.id')
@@ -181,4 +180,19 @@ async function seed(knex) {
   await knex('Issue')
     .whereIn('id', myanmarConsumableIssues)
     .update({ consumableId: consumableIdTb })
+
+  await knex('Partner')
+    .where('id', partnerId)
+    .update({
+      partnerSettings: JSON.stringify({
+        'dashboard.action.allowStockUpdateForConsumableIds': [consumableIdTb],
+      }),
+    })
+
+  await knex('JobFunction')
+    .where({
+      name: 'Admin',
+      partnerId,
+    })
+    .update({ isAdmin: true })
 }
