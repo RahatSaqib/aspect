@@ -17,14 +17,17 @@ const patients = require('./fixtures/patients.json')
 const config = require('../../src/config')
 const { randomToken } = require('../../src/deviceApi/apiKey')
 const labClinic = require('./fixtures/labClinic.json')
-const { getPermissionModules } = require('../utils')
+const {
+  getPermissionModules,
+  assignAllFeaturesToJobFunctionIds,
+} = require('../utils')
 const {
   allResultCategoryToId,
+  allResultWorkflowStatusToId,
   assayTypeToId,
   partnerTypeToId,
   deviceTypeCategoryToId,
   resultSourceToId,
-  allResultWorkflowStatusToId,
   resultTypeToId,
 } = require('../../src/shared/dictionary')
 
@@ -330,7 +333,6 @@ async function seed(knex) {
   })
 
   const modules = await getPermissionModules(knex)
-  const featureModules = await knex('Feature').select('id')
 
   // Create clinics for every state in Malawi
   const [malawiCountry] = await knex('Country as c')
@@ -374,20 +376,10 @@ async function seed(knex) {
     partnerId,
   })
 
-  await Promise.all(
-    _.map(featureModules, async ({ id: featureId }) => {
-      await knex('JobFunctionFeature').insert([
-        {
-          jobFunctionId: jobFunctionIdLabAdmin,
-          featureId,
-        },
-        {
-          jobFunctionId: jobFunctionIdAdmin,
-          featureId,
-        },
-      ])
-    })
-  )
+  await assignAllFeaturesToJobFunctionIds(knex, [
+    jobFunctionIdLabAdmin,
+    jobFunctionIdAdmin,
+  ])
 
   await knex('JobFunctionPermission').insert([
     {

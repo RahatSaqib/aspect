@@ -1,0 +1,82 @@
+{
+  "data": [
+    {
+      "module": "account"
+    },
+    {
+      "module": "task"
+    },
+    {
+      "module": "reports"
+    },
+    {
+      "module": "operationalData"
+    },
+    {
+      "module": "manage"
+    },
+    {
+      "module": "clinicalIndicators"
+    },
+    {
+      "module": "device"
+    },
+    {
+      "module": "deviceDemo"
+    },
+    {
+      "module": "result"
+    },
+    {
+      "module": "person"
+    },
+    {
+      "module": "site"
+    },
+    {
+      "module": "inventory"
+    },
+    {
+      "module": "router"
+    },
+    {
+      "module": "reporter"
+    },
+    {
+      "module": "notification"
+    },
+    {
+      "module": "report"
+    },
+    {
+      "module": "deviceApiKey"
+    },
+    {
+      "module": "summaryDashboard"
+    },
+    {
+      "module": "siteDashboard"
+    },
+    {
+      "module": "inventoryDashboard"
+    },
+    {
+      "module": "deviceDashboard"
+    },
+    {
+      "module": "resultDashboard"
+    },
+    {
+      "module": "targetDashboard"
+    },
+    {
+      "module": "actionDashboard"
+    },
+    {
+      "module": "reportDashboard"
+    },
+    {
+      "module": "siteFilterDashboard"
+    }
+  ]
+}
