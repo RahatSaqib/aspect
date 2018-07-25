@@ -1236,6 +1236,7 @@ async function actionDashboard(request) {
       'iss.id'
     )
     .innerJoin('Site as s', 'am.siteId', 's.id')
+    .leftJoin('AlertTemplate as at', 'am.alertTemplateId', 'at.id')
     .where({ 'ms.externalId': 'Sent' })
     .whereNotIn('is.externalId', ['Inactive', 'Resolved'])
     .andWhere(function() {

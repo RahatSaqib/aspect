@@ -224,7 +224,7 @@ async function seed(knex) {
     .whereIn('id', roAlertTemplateIds)
     .update({
       templateSettings: JSON.stringify({
-        onlyShowWhenSiteFilterIsNotSelected: true,
+        hideWhenSiteFilterIsSelected: true,
       }),
       updatedOn: now,
       updatedBy: myanmarAdminId,
@@ -253,7 +253,7 @@ async function seed(knex) {
     const alertTemplateId = await knex('AlertTemplate').insert({
       message: luRoViewAlertTemplate.message,
       templateSettings: JSON.stringify({
-        onlyShowWhenSiteFilterIsSelected: true,
+        showWhenSiteFilterIsSelected: true,
       }),
       createdOn: now,
       createdBy: myanmarAdminId,
