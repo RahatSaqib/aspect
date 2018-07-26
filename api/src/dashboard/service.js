@@ -1226,6 +1226,7 @@ async function actionDashboard(request) {
     .innerJoin('MessageStatus as ms', 'am.messageStatusId', 'ms.id')
     .innerJoin('Notification as n', 'am.id', 'n.alertMessageId')
     .innerJoin('NotificationType as nt', 'n.notificationTypeId', 'nt.id')
+    .innerJoin('JobFunction as jf', 'nt.jobFunctionId', 'jf.id')
     .innerJoin('Issue as i', 'n.issueId', 'i.id')
     .innerJoin('IssueType as it', 'i.issueTypeId', 'it.id')
     .innerJoin('IssueCategory as ic', 'it.issueCategoryId', 'ic.id')
@@ -1239,6 +1240,7 @@ async function actionDashboard(request) {
     .leftJoin('AlertTemplate as at', 'am.alertTemplateId', 'at.id')
     .where({ 'ms.externalId': 'Sent' })
     .whereNotIn('is.externalId', ['Inactive', 'Resolved'])
+    .modify(addConstraints, dataConstraints, { site: 's', jobFunction: 'jf' })
     .andWhere(function() {
       this.where(function() {
         this.whereIn('am.siteId', siteIdsWhereAdmin).orWhereIn(
@@ -1249,13 +1251,11 @@ async function actionDashboard(request) {
     })
     .andWhere(function() {
       this.where(function() {
-        this.whereNotIn('am.siteId', siteIds)
-          // TODO: Add property to notificationType to filter this
-          .andWhere(
-            'nt.name',
-            query.siteId == null ? 'not like' : 'like',
-            'LU%'
-          )
+        this.whereNotIn('am.siteId', siteIds).andWhereRaw(
+          query.siteId
+            ? `COALESCE(at.templateSettings->>"$.hideWhenSiteFilterIsSelected", 'false') <> 'true'`
+            : `COALESCE(at.templateSettings->>"$.hideWhenSiteFilterIsNotSelected", 'false') <> 'true'`
+        )
       }).orWhere(function() {
         this.whereIn('am.siteId', siteIds)
       })
@@ -1290,8 +1290,10 @@ async function actionDashboard(request) {
         .whereRaw('isl.issueStatusId=is.id')
         .max('changedOn')
         .as('statusDate'),
-      'i.consumableId'
+      'i.consumableId',
+      'at.templateSettings'
     )
+
   const alertMessagesByIssue = _.map(
     _.values(_.groupBy(alertMessages, 'issueId')),
     issueMessages =>

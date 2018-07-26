@@ -308,11 +308,7 @@ describe('Dashboard routes', () => {
           expectedReagentHealth.length
         )
 
-        const actualDataHealth = _.get(
-          actionDashboardData,
-          'DataHealth',
-          []
-        )
+        const actualDataHealth = _.get(actionDashboardData, 'DataHealth', [])
         const expectedDataHealth = _.get(userActionByCategory, 'DataHealth', [])
         expect(actualDataHealth).to.have.lengthOf(expectedDataHealth.length)
 

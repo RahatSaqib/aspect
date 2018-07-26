@@ -29,7 +29,13 @@ async function getConstraints(credentials) {
       'ps.userId': user.id,
       'jf.partnerId': user.partnerId,
     })
-    .select('jc.siteId', 'g.countryId', 'g.stateId', 'g.lgaId')
+    .select(
+      'g.countryId',
+      'g.stateId',
+      'g.lgaId',
+      'jc.siteId',
+      'j.jobFunctionId'
+    )
 
   const filterConstraints = jobContexts.map(getJobContextConstraint)
   if (filterConstraints.length) {
@@ -51,10 +57,11 @@ async function getJobConstraints(personId, jobFunctionId) {
     })
     .select(
       'jf.partnerId',
-      's.id as siteId',
       'g.countryId',
       'g.stateId',
-      'g.lgaId'
+      'g.lgaId',
+      's.id as siteId',
+      'jf.jobFunctionId'
     )
 
   if (jobContexts.length === 0) {
@@ -86,12 +93,17 @@ function getJobContextConstraint(context) {
   } else if (context.countryId != null) {
     constraint.geography = { countryId: context.countryId }
   }
+
+  if (context.jobFunctionId) {
+    constraint.jobFunction = { id: context.jobFunctionId }
+  }
+
   return constraint
 }
 
 function addConstraints(queryBuilder, constraints, aliases) {
   let { partner, geography, site } = aliases
-  const { device, sample } = aliases
+  const { device, sample, jobFunction } = aliases
 
   if (constraints == null) {
     queryBuilder.whereRaw('0 = 1')
@@ -163,6 +175,12 @@ function addConstraints(queryBuilder, constraints, aliases) {
 
         if (sample && constraint.sample) {
           this.orWhere(_.mapKeys(constraint.sample, (v, k) => `${sample}.${k}`))
+        }
+
+        if (jobFunction && constraint.jobFunction) {
+          this.orWhere(
+            _.mapKeys(constraint.jobFunction, (v, k) => `${jobFunction}.${k}`)
+          )
         }
       }
     })
