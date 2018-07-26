@@ -1238,6 +1238,10 @@ async function actionDashboard(request) {
     )
     .innerJoin('Site as s', 'am.siteId', 's.id')
     .leftJoin('AlertTemplate as at', 'am.alertTemplateId', 'at.id')
+    .leftJoin('IssueStatusLog as isl', function() {
+      this.on('i.id', 'isl.issueId')
+        .andOn('is.id', 'isl.issueStatusId')
+    })
     .where({ 'ms.externalId': 'Sent' })
     .whereNotIn('is.externalId', ['Inactive', 'Resolved'])
     .modify(addConstraints, dataConstraints, { site: 's', jobFunction: 'jf' })
@@ -1265,6 +1269,7 @@ async function actionDashboard(request) {
         queryBuilder.where({ 'am.siteId': query.siteId })
       }
     }, query)
+    .groupBy('am.id')
     .select(
       'am.id',
       'am.siteId',
@@ -1285,13 +1290,8 @@ async function actionDashboard(request) {
       'nt.name as notificationType',
       'nt.level as notificationTypeLevel',
       'nt.canAcknowledge',
-      knex('IssueStatusLog as isl')
-        .whereRaw('isl.issueId=i.id')
-        .whereRaw('isl.issueStatusId=is.id')
-        .max('changedOn')
-        .as('statusDate'),
-      'i.consumableId',
-      'at.templateSettings'
+      knex.raw('max(isl.changedOn) as statusDate'),
+      'i.consumableId'
     )
 
   const alertMessagesByIssue = _.map(

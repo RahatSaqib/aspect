@@ -61,7 +61,7 @@ async function getJobConstraints(personId, jobFunctionId) {
       'g.stateId',
       'g.lgaId',
       's.id as siteId',
-      'jf.jobFunctionId'
+      'j.jobFunctionId'
     )
 
   if (jobContexts.length === 0) {
