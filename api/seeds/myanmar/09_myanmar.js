@@ -202,49 +202,15 @@ async function seed(knex) {
     .where('u.name', 'myanmar_admin')
     .first('u.id')
 
-  const roAlertTemplateIds = await knex('NotificationType as nt')
+  const roAlertTemplates = await knex('NotificationType as nt')
     .join('MessageType as mt', 'nt.messageTypeId', 'mt.id')
     .join('AlertTemplate as at', 'at.id', 'mt.alertTemplateId')
-    .where('nt.partnerId', partnerId)
+    .join('JobFunction as jf', 'nt.jobFunctionId', 'jf.id')
+    .where({
+      'nt.partnerId': partnerId,
+      'jf.name': 'Regional Officer',
+    })
     .andWhere('nt.name', 'like', 'RO %')
-    .distinct('at.id')
-    .pluck('at.id')
-
-  await knex('AlertTemplate')
-    .whereIn('id', roAlertTemplateIds)
-    .update({
-      templateSettings: JSON.stringify({
-        hideWhenSiteFilterIsSelected: true,
-      }),
-      updatedOn: now,
-      updatedBy: myanmarAdminId,
-    })
-
-  const luAlertTemplateIds = await knex('NotificationType as nt')
-    .join('MessageType as mt', 'nt.messageTypeId', 'mt.id')
-    .join('AlertTemplate as at', 'at.id', 'mt.alertTemplateId')
-    .whereNotIn('at.id', roAlertTemplateIds)
-    .andWhere('nt.partnerId', partnerId)
-    .andWhere('nt.name', 'like', 'LU %')
-    .distinct('at.id')
-    .pluck('at.id')
-
-  await knex('AlertTemplate')
-    .whereIn('id', luAlertTemplateIds)
-    .update({
-      templateSettings: JSON.stringify({
-        hideWhenSiteFilterIsNotSelected: true,
-      }),
-      updatedOn: now,
-      updatedBy: myanmarAdminId,
-    })
-
-  const luAlertTemplatesToReassign = await knex('NotificationType as nt')
-    .join('MessageType as mt', 'nt.messageTypeId', 'mt.id')
-    .join('AlertTemplate as at', 'at.id', 'mt.alertTemplateId')
-    .whereIn('at.id', roAlertTemplateIds)
-    .andWhere('nt.partnerId', partnerId)
-    .andWhere('nt.name', 'like', 'LU %')
     .distinct(
       'nt.id as notificationTypeId',
       'mt.messageSeverityId',
@@ -255,50 +221,126 @@ async function seed(knex) {
       'at.message'
     )
 
-  await Promise.each(
-    luAlertTemplatesToReassign,
-    async luAlertTemplateToReassign => {
-      const newLuAlertTemplateId = await knex('AlertTemplate').insert({
-        message: luAlertTemplateToReassign.message,
-        templateSettings: JSON.stringify({
-          hideWhenSiteFilterIsNotSelected: true,
-        }),
-        createdOn: now,
-        createdBy: myanmarAdminId,
-        updatedOn: now,
-        updatedBy: myanmarAdminId,
+  await Promise.each(roAlertTemplates, async roAlertTemplate => {
+    const newRoAlertTemplateId = await knex('AlertTemplate').insert({
+      message: roAlertTemplate.message,
+      templateSettings: JSON.stringify({
+        hideWhenSiteFilterIsSelected: true,
+      }),
+      createdOn: now,
+      createdBy: myanmarAdminId,
+      updatedOn: now,
+      updatedBy: myanmarAdminId,
+    })
+
+    const alertMessageIdsToUpdate = await knex('Notification as n')
+      .join('AlertMessage as am', 'n.alertMessageId', 'am.id')
+      .join('NotificationType as nt', 'n.notificationTypeId', 'nt.id')
+      .join('MessageType as mt', 'nt.messageTypeId', 'mt.id')
+      .join('JobFunction as jf', 'nt.jobFunctionId', 'jf.id')
+      .where({
+        'mt.alertTemplateId': roAlertTemplate.alertTemplateId,
+        'nt.partnerId': partnerId,
+        'jf.name': 'Regional Officer',
       })
+      .andWhere('nt.name', 'like', 'RO %')
+      .distinct('am.id')
+      .pluck('am.id')
 
-      const alertMessageIdsToUpdate = await knex('Notification as n')
-        .join('AlertMessage as am', 'n.alertMessageId', 'am.id')
-        .join('NotificationType as nt', 'n.notificationTypeId', 'nt.id')
-        .join('MessageType as mt', 'nt.messageTypeId', 'mt.id')
-        .where('mt.alertTemplateId', luAlertTemplateToReassign.alertTemplateId)
-        .andWhere('nt.name', 'like', 'LU %')
-        .distinct('am.id')
-        .pluck('am.id')
+    await knex('AlertMessage')
+      .whereIn('id', alertMessageIdsToUpdate)
+      .update({ alertTemplateId: newRoAlertTemplateId })
 
-      await knex('AlertMessage')
-        .whereIn('id', alertMessageIdsToUpdate)
-        .update({ alertTemplateId: newLuAlertTemplateId })
+    const {
+      notificationTypeId,
+      messageSeverityId,
+      emailTemplateId,
+      smsTemplateId,
+      webhookTemplateId,
+    } = roAlertTemplate
 
-      const {
-        notificationTypeId,
-        messageSeverityId,
-        emailTemplateId,
-        smsTemplateId,
-        webhookTemplateId,
-      } = luAlertTemplateToReassign
-      const newMessageTypeId = await knex('MessageType').insert({
-        messageSeverityId,
-        alertTemplateId: newLuAlertTemplateId,
-        emailTemplateId,
-        smsTemplateId,
-        webhookTemplateId,
+    const newMessageTypeId = await knex('MessageType').insert({
+      messageSeverityId,
+      alertTemplateId: newRoAlertTemplateId,
+      emailTemplateId,
+      smsTemplateId,
+      webhookTemplateId,
+    })
+
+    await knex('NotificationType')
+      .where({ id: notificationTypeId })
+      .update({ messageTypeId: newMessageTypeId })
+  })
+
+  const roLuViewAlertTemplates = await knex('NotificationType as nt')
+    .join('MessageType as mt', 'nt.messageTypeId', 'mt.id')
+    .join('AlertTemplate as at', 'at.id', 'mt.alertTemplateId')
+    .join('JobFunction as jf', 'nt.jobFunctionId', 'jf.id')
+    .where({
+      'nt.partnerId': partnerId,
+      'jf.name': 'Regional Officer',
+    })
+    .andWhere('nt.name', 'like', 'LU %')
+    .andWhere('nt.name', 'like', '% - RO View')
+    .distinct(
+      'nt.id as notificationTypeId',
+      'mt.messageSeverityId',
+      'mt.alertTemplateId',
+      'mt.emailTemplateId',
+      'mt.smsTemplateId',
+      'mt.webhookTemplateId',
+      'at.message'
+    )
+
+  await Promise.each(roLuViewAlertTemplates, async luRoViewAlertTemplate => {
+    const newRoLuViewAlertTemplateId = await knex('AlertTemplate').insert({
+      message: luRoViewAlertTemplate.message,
+      templateSettings: JSON.stringify({
+        hideWhenSiteFilterIsNotSelected: true,
+      }),
+      createdOn: now,
+      createdBy: myanmarAdminId,
+      updatedOn: now,
+      updatedBy: myanmarAdminId,
+    })
+
+    const alertMessageIdsToUpdate = await knex('Notification as n')
+      .join('AlertMessage as am', 'n.alertMessageId', 'am.id')
+      .join('NotificationType as nt', 'n.notificationTypeId', 'nt.id')
+      .join('MessageType as mt', 'nt.messageTypeId', 'mt.id')
+      .join('JobFunction as jf', 'nt.jobFunctionId', 'jf.id')
+      .where({
+        'mt.alertTemplateId': luRoViewAlertTemplate.alertTemplateId,
+        'nt.partnerId': partnerId,
+        'jf.name': 'Regional Officer',
       })
-      await knex('NotificationType')
-        .where({ id: notificationTypeId })
-        .update({ messageTypeId: newMessageTypeId })
-    }
-  )
+      .andWhere('nt.name', 'like', 'LU %')
+      .andWhere('nt.name', 'like', '% - RO View')
+      .distinct('am.id')
+      .pluck('am.id')
+
+    await knex('AlertMessage')
+      .whereIn('id', alertMessageIdsToUpdate)
+      .update({ alertTemplateId: newRoLuViewAlertTemplateId })
+
+    const {
+      notificationTypeId,
+      messageSeverityId,
+      emailTemplateId,
+      smsTemplateId,
+      webhookTemplateId,
+    } = luRoViewAlertTemplate
+
+    const newMessageTypeId = await knex('MessageType').insert({
+      messageSeverityId,
+      alertTemplateId: newRoLuViewAlertTemplateId,
+      emailTemplateId,
+      smsTemplateId,
+      webhookTemplateId,
+    })
+
+    await knex('NotificationType')
+      .where({ id: notificationTypeId })
+      .update({ messageTypeId: newMessageTypeId })
+  })
 }

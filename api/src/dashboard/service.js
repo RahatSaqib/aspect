@@ -1171,58 +1171,16 @@ async function actionDashboard(request) {
   const { auth, query } = request
   const user = await getUser(auth.credentials.name)
   const dataConstraints = await getConstraints(auth.credentials)
-
-  const userJobContexts = await knex('User as u')
-    .join('Person as p', 'u.id', 'p.userId')
-    .join('Job as j', 'p.id', 'j.personId')
-    .join('JobContext as jc', 'j.id', 'jc.jobId')
-    .join('JobFunction as jf', 'j.jobFunctionId', 'jf.id')
-    .leftJoin('Geography as g', 'jc.geographyId', 'g.id')
-    .leftJoin('Geography as subG', function() {
-      this.on('subG.countryId', 'g.countryId')
-        .andOn(function() {
-          this.onNull('g.stateId').orOn('subG.stateId', 'g.stateId')
-        })
-        .andOn(function() {
-          this.onNull('g.lgaId').orOn('subG.lgaId', 'g.lgaId')
-        })
+  const { jobFunctionName } = await knex('JobFunction as jf')
+    .innerJoin('Job as j', 'j.jobFunctionId', 'jf.id')
+    .innerJoin('Person as ps', 'j.personId', 'ps.id')
+    .where({
+      'ps.userId': user.id,
+      'jf.partnerId': user.partnerId,
     })
-    .where('u.id', user.id)
-    .distinct(
-      'subG.id as geographyId',
-      'jc.siteId',
-      'j.jobFunctionId',
-      'jf.isAdmin'
-    )
-  const geographyIds = _.uniq(
-    _.map(
-      _.filter(
-        userJobContexts,
-        jobContext => !_.isNull(jobContext.geographyId)
-      ),
-      'geographyId'
-    )
-  )
-  const geographyIdsWhereAdmin = _.filter(geographyIds, geographyId =>
-    _.some(
-      userJobContexts,
-      jobContext => jobContext.geographyId === geographyId && jobContext.isAdmin
-    )
-  )
-  const siteIds = _.uniq(
-    _.map(
-      _.filter(userJobContexts, jobContext => !_.isNull(jobContext.siteId)),
-      'siteId'
-    )
-  )
-  const siteIdsWhereAdmin = _.filter(siteIds, siteId =>
-    _.some(
-      userJobContexts,
-      jobContext => jobContext.siteId === siteId && jobContext.isAdmin
-    )
-  )
-
-  const alertMessages = await knex('AlertMessage as am')
+    .first('jf.name as jobFunctionName')
+  const isAdmin = jobFunctionName === 'Admin'
+  const alertMessagesQuery = knex('AlertMessage as am')
     .innerJoin('MessageStatus as ms', 'am.messageStatusId', 'ms.id')
     .innerJoin('Notification as n', 'am.id', 'n.alertMessageId')
     .innerJoin('NotificationType as nt', 'n.notificationTypeId', 'nt.id')
@@ -1241,33 +1199,38 @@ async function actionDashboard(request) {
     .leftJoin('IssueStatusLog as isl', function() {
       this.on('i.id', 'isl.issueId').andOn('is.id', 'isl.issueStatusId')
     })
-    .where({ 'ms.externalId': 'Sent' })
     .whereNotIn('is.externalId', ['Inactive', 'Resolved'])
-    .modify(addConstraints, dataConstraints, { site: 's', jobFunction: 'jf' })
-    .andWhere(function() {
-      this.where(function() {
-        this.whereIn('am.siteId', siteIdsWhereAdmin).orWhereIn(
-          's.geographyId',
-          geographyIdsWhereAdmin
-        )
-      }).orWhere({ 'am.personId': user.personId })
+    .andWhere('ms.externalId', 'Sent')
+    .modify(addConstraints, dataConstraints, {
+      site: 's',
+      jobFunction: 'jf',
+      allowAdminThrough: true,
     })
     .andWhere(function() {
       this.where(function() {
-        this.whereNotIn('am.siteId', siteIds).andWhereRaw(
+        this.whereRaw(
           query.siteId
             ? `COALESCE(at.templateSettings->>"$.hideWhenSiteFilterIsSelected", 'false') <> 'true'`
             : `COALESCE(at.templateSettings->>"$.hideWhenSiteFilterIsNotSelected", 'false') <> 'true'`
         )
-      }).orWhere(function() {
-        this.whereIn('am.siteId', siteIds)
       })
     })
-    .modify((queryBuilder, query) => {
+    .modify(queryBuilder => {
+      if (!isAdmin) {
+        queryBuilder.where({ 'am.personId': user.personId })
+      }
       if (query.siteId) {
         queryBuilder.where({ 'am.siteId': query.siteId })
       }
-    }, query)
+      if (isAdmin) {
+        // If specific lab selected, show LU issues, otherwise show RO
+        queryBuilder.where(
+          'nt.name',
+          query.siteId == null ? 'not like' : 'like',
+          'LU%'
+        )
+      }
+    })
     .groupBy('am.id')
     .select(
       'am.id',
@@ -1275,6 +1238,7 @@ async function actionDashboard(request) {
       'am.deviceId',
       'am.resultId',
       'am.message',
+      'am.personId',
       's.name as siteName',
       'i.id as issueId',
       'is.name as status',
@@ -1292,7 +1256,8 @@ async function actionDashboard(request) {
       knex.raw('max(isl.changedOn) as statusDate'),
       'i.consumableId'
     )
-
+  console.log(alertMessagesQuery.toString())
+  const alertMessages = await alertMessagesQuery
   const alertMessagesByIssue = _.map(
     _.values(_.groupBy(alertMessages, 'issueId')),
     issueMessages =>
@@ -1350,6 +1315,12 @@ async function actionDashboard(request) {
       alertMessage.consumableId =
         inventoryItem == null ? null : inventoryItem.consumableId
       delete inventoryItemsBySite[alertMessage.siteId]
+    }
+    if (
+      alertMessage.canAcknowledge &&
+      alertMessage.personId !== user.personId
+    ) {
+      alertMessage.canAcknowledge = 0
     }
     return alertMessage
   })

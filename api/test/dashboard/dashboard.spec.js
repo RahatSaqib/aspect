@@ -91,7 +91,7 @@ describe('Dashboard routes', () => {
           .innerJoin('Site as s', 'am.siteId', 's.id')
           .where({ 'ms.externalId': 'Sent' })
           .whereNotIn('is.externalId', ['Inactive', 'Resolved'])
-          .modify((queryBuilder, query) => {
+          .modify(queryBuilder => {
             if (!isAdmin) {
               queryBuilder.where({ 'am.personId': user.personId })
             }
@@ -106,13 +106,14 @@ describe('Dashboard routes', () => {
                 'LU%'
               )
             }
-          }, query)
+          })
           .select(
             'am.id',
             'am.siteId',
             'am.deviceId',
             'am.resultId',
             'am.message',
+            'am.personId',
             's.name as siteName',
             'i.id as issueId',
             'is.name as status',
@@ -183,6 +184,12 @@ describe('Dashboard routes', () => {
             alertMessage.issueCategory === 'ReagentHealth'
           ) {
             alertMessage.consumableId = defaultConsumableId
+          }
+          if (
+            alertMessage.canAcknowledge &&
+            alertMessage.personId !== user.personId
+          ) {
+            alertMessage.canAcknowledge = 0
           }
           return alertMessage
         })

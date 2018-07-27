@@ -34,7 +34,8 @@ async function getConstraints(credentials) {
       'g.stateId',
       'g.lgaId',
       'jc.siteId',
-      'j.jobFunctionId'
+      'j.jobFunctionId',
+      'jf.isAdmin'
     )
 
   const filterConstraints = jobContexts.map(getJobContextConstraint)
@@ -61,7 +62,8 @@ async function getJobConstraints(personId, jobFunctionId) {
       'g.stateId',
       'g.lgaId',
       's.id as siteId',
-      'j.jobFunctionId'
+      'j.jobFunctionId',
+      'jf.isAdmin'
     )
 
   if (jobContexts.length === 0) {
@@ -95,7 +97,10 @@ function getJobContextConstraint(context) {
   }
 
   if (context.jobFunctionId) {
-    constraint.jobFunction = { id: context.jobFunctionId }
+    constraint.jobFunction = {
+      id: context.jobFunctionId,
+      isAdmin: context.isAdmin,
+    }
   }
 
   return constraint
@@ -103,24 +108,22 @@ function getJobContextConstraint(context) {
 
 function addConstraints(queryBuilder, constraints, aliases) {
   let { partner, geography, site } = aliases
-  const { device, sample, jobFunction } = aliases
+  const { device, sample, jobFunction, allowAdminThrough = false } = aliases
 
-  if (constraints == null) {
+  if (_.isEmpty(constraints)) {
     queryBuilder.whereRaw('0 = 1')
     return
   }
 
   // TODO generalize constraint building
   // TODO only join queries if needed within constraints or required by unspecified aliases
-  if (device) {
-    if (!site) {
-      site = alias('Site')
-      queryBuilder.leftOuterJoin(
-        `Site as ${site}`,
-        `${device}.siteId`,
-        `${site}.id`
-      )
-    }
+  if (device && !site) {
+    site = alias('Site')
+    queryBuilder.leftOuterJoin(
+      `Site as ${site}`,
+      `${device}.siteId`,
+      `${site}.id`
+    )
   }
 
   if (site) {
@@ -159,36 +162,74 @@ function addConstraints(queryBuilder, constraints, aliases) {
   if (constraints.$or && constraints.$or.length) {
     queryBuilder.where(function() {
       for (const constraint of constraints.$or) {
-        if (geography && constraint.geography) {
-          this.orWhere(
-            _.mapKeys(constraint.geography, (v, k) => `${geography}.${k}`)
-          )
-        }
-
-        if (site && constraint.site) {
-          this.orWhere(_.mapKeys(constraint.site, (v, k) => `${site}.${k}`))
-        }
-
-        if (device && constraint.device) {
-          this.orWhere(_.mapKeys(constraint.device, (v, k) => `${device}.${k}`))
-        }
-
-        if (sample && constraint.sample) {
-          this.orWhere(_.mapKeys(constraint.sample, (v, k) => `${sample}.${k}`))
-        }
-
-        if (jobFunction && constraint.jobFunction) {
-          this.orWhere(
-            _.mapKeys(constraint.jobFunction, (v, k) => `${jobFunction}.${k}`)
-          )
-        }
+        addConstraintWithJobFunction(
+          this,
+          geography,
+          constraint.geography,
+          jobFunction,
+          constraint.jobFunction,
+          allowAdminThrough
+        )
+        addConstraintWithJobFunction(
+          this,
+          site,
+          constraint.site,
+          jobFunction,
+          constraint.jobFunction,
+          allowAdminThrough
+        )
+        addConstraintWithJobFunction(
+          this,
+          device,
+          constraint.device,
+          jobFunction,
+          constraint.jobFunction,
+          allowAdminThrough
+        )
+        addConstraintWithJobFunction(
+          this,
+          sample,
+          constraint.sample,
+          jobFunction,
+          constraint.jobFunction,
+          allowAdminThrough
+        )
       }
     })
   }
 }
 
-// check for user permissions, pass in auth
+function addConstraintWithJobFunction(
+  queryBuilder,
+  alias,
+  subConstraint,
+  jobFunctionAlias,
+  jobFunctionSubConstraint,
+  allowAdminThrough
+) {
+  if (alias && subConstraint) {
+    if (
+      jobFunctionAlias &&
+      jobFunctionSubConstraint &&
+      !(jobFunctionSubConstraint.isAdmin && allowAdminThrough)
+    ) {
+      queryBuilder.orWhere(function() {
+        this.where(
+          _.mapKeys(subConstraint, (v, k) => `${alias}.${k}`)
+        ).andWhere(
+          _.mapKeys(
+            jobFunctionSubConstraint,
+            (v, k) => `${jobFunctionAlias}.${k}`
+          )
+        )
+      })
+    } else {
+      queryBuilder.orWhere(_.mapKeys(subConstraint, (v, k) => `${alias}.${k}`))
+    }
+  }
+}
 
+// check for user permissions, pass in auth
 function canView(auth, flag) {
   return _.some(
     auth.credentials.permissions,
