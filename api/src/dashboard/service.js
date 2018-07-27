@@ -1239,8 +1239,7 @@ async function actionDashboard(request) {
     .innerJoin('Site as s', 'am.siteId', 's.id')
     .leftJoin('AlertTemplate as at', 'am.alertTemplateId', 'at.id')
     .leftJoin('IssueStatusLog as isl', function() {
-      this.on('i.id', 'isl.issueId')
-        .andOn('is.id', 'isl.issueStatusId')
+      this.on('i.id', 'isl.issueId').andOn('is.id', 'isl.issueStatusId')
     })
     .where({ 'ms.externalId': 'Sent' })
     .whereNotIn('is.externalId', ['Inactive', 'Resolved'])
@@ -1340,9 +1339,6 @@ async function actionDashboard(request) {
   const inventoryItemsBySite = _.groupBy(inventoryItems, 'siteId')
   const results = _.map(alertMessagesByIssue, alertMessage => {
     alertMessage.message = processDynamicMessage(alertMessage.message)
-    // TODO we should not be using notification type name
-    // as a constant, as it could be user editable in the future
-    alertMessage.notificationType = _.camelCase(alertMessage.notificationType)
     if (
       alertMessage.siteId &&
       alertMessage.issueTypeExternalId === 'StockLevelUpdate' &&
@@ -1363,7 +1359,7 @@ async function actionDashboard(request) {
     inventoryItemsBySite,
     ([{ siteId, siteName, totalInStock, consumableId }]) => {
       results.push({
-        // ID is needed in UI to distinquish table rows
+        // ID is needed in UI to distinguish table rows
         id: `stocklevel_${siteId}`,
         siteId,
         deviceId: null,
@@ -1381,7 +1377,6 @@ async function actionDashboard(request) {
         issueTypeI18nKey: 'stockLevelUpdateIssue',
         issueCategory: 'ReagentHealth',
         issueCategoryI18nKey: 'issueCategoryReagentHealth',
-        notificationType: 'luStockLevelUpdate',
         canAcknowledge: 0,
         totalInStock,
         consumableId,

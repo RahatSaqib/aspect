@@ -153,7 +153,7 @@ export const ActionStatus = compose(
         messages={messages}
         action={action}
         forceEdit={
-          action.get('notificationType') === 'luStockLevelUpdate' &&
+          action.get('issueTypeExternalId') === 'StockLevelUpdate' &&
           action.get('status') === 'Active'
         }
       />

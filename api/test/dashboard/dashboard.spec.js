@@ -166,11 +166,6 @@ describe('Dashboard routes', () => {
         const inventoryItemsBySite = _.groupBy(inventoryItems, 'siteId')
         const results = _.map(alertMessagesByIssue, alertMessage => {
           alertMessage.message = processDynamicMessage(alertMessage.message)
-          // TODO we should not be using notification type name
-          // as a constant, as it could be user editable in the future
-          alertMessage.notificationType = _.camelCase(
-            alertMessage.notificationType
-          )
           if (
             alertMessage.siteId &&
             alertMessage.issueTypeExternalId === 'StockLevelUpdate' &&
@@ -214,7 +209,6 @@ describe('Dashboard routes', () => {
               issueTypeI18nKey: 'stockLevelUpdateIssue',
               issueCategory: 'ReagentHealth',
               issueCategoryI18nKey: 'issueCategoryReagentHealth',
-              notificationType: 'luStockLevelUpdate',
               canAcknowledge: 0,
               totalInStock,
               consumableId:
