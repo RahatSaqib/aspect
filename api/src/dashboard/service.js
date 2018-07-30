@@ -1326,20 +1326,28 @@ async function enhanceActionDashboardWithInventoryLevels(
     // set consumable id, totalIn Stock on StockInHand issues
     const inventoryItemsBySite = _.groupBy(inventoryItems, 'siteId')
     _.forEach(alertMessagesByIssue, alertMessage => {
-      alertMessage.canEdit =
-        alertMessage.issueTypeExternalId === 'StockLevelUpdate' &&
-        userCanEditInventory
-      if (
-        alertMessage.siteId &&
-        alertMessage.issueTypeExternalId === 'StockLevelUpdate' &&
-        inventoryItemsBySite[alertMessage.siteId]
-      ) {
-        const [inventoryItem] = inventoryItemsBySite[alertMessage.siteId]
-        alertMessage.totalInStock =
-          inventoryItem == null ? 0 : inventoryItem.totalInStock
-        alertMessage.consumableId =
-          inventoryItem == null ? null : inventoryItem.consumableId
-        delete inventoryItemsBySite[alertMessage.siteId]
+      alertMessage.canEdit = false
+      if (alertMessage.issueTypeExternalId === 'StockLevelUpdate') {
+        alertMessage.canEdit = userCanEditInventory
+        if (alertMessage.siteId && inventoryItemsBySite[alertMessage.siteId]) {
+          const [inventoryItem] = inventoryItemsBySite[alertMessage.siteId]
+          alertMessage.totalInStock =
+            inventoryItem == null ? 0 : inventoryItem.totalInStock
+          alertMessage.consumableId =
+            inventoryItem == null ? null : inventoryItem.consumableId
+          delete inventoryItemsBySite[alertMessage.siteId]
+        }
+        if (alertMessage.totalInStock <= 0) {
+          alertMessage.status = 'Active'
+          alertMessage.statusI18nKey = 'issueStatusActive'
+          alertMessage.issueStatusSortOrder = 0
+          alertMessage.issueStatusSeverityExternalId = 'High'
+        } else {
+          alertMessage.status = 'OK'
+          alertMessage.statusI18nKey = 'issueStatusOk'
+          alertMessage.issueStatusSortOrder = 5
+          alertMessage.issueStatusSeverityExternalId = 'Low'
+        }
       }
     })
 
@@ -1356,10 +1364,11 @@ async function enhanceActionDashboardWithInventoryLevels(
           message: 'Stock Level',
           siteName,
           issueId: null,
-          status: 'OK',
-          statusI18nKey: 'issueStatusOk',
-          issueStatusSortOrder: 5,
-          issueStatusSeverityExternalId: 'Low',
+          status: totalInStock <= 0 ? 'Active' : 'OK',
+          statusI18nKey:
+            totalInStock <= 0 ? 'issueStatusActive' : 'issueStatusOk',
+          issueStatusSortOrder: totalInStock <= 0 ? 0 : 5,
+          issueStatusSeverityExternalId: totalInStock <= 0 ? 'High' : 'Low',
           statusDate: new Date(),
           issueType: 'Stock Level Update',
           issueTypeExternalId: 'StockLevelUpdate',
@@ -1374,23 +1383,6 @@ async function enhanceActionDashboardWithInventoryLevels(
         })
       }
     )
-
-    _.forEach(alertMessagesByIssue, alertMessage => {
-      if (alertMessage.issueTypeExternalId === 'StockLevelUpdate') {
-        // TODO remove quick patch for StockLevelUpdate status
-        if (alertMessage.totalInStock <= 0) {
-          alertMessage.status = 'Active'
-          alertMessage.statusI18nKey = 'issueStatusActive'
-          alertMessage.issueStatusSortOrder = 0
-          alertMessage.issueStatusSeverityExternalId = 'High'
-        } else {
-          alertMessage.status = 'OK'
-          alertMessage.statusI18nKey = 'issueStatusOk'
-          alertMessage.issueStatusSortOrder = 5
-          alertMessage.issueStatusSeverityExternalId = 'Low'
-        }
-      }
-    })
   }
 }
 
