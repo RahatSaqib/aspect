@@ -43,6 +43,9 @@ module.exports = {
     cell: process.env['admin.cell'],
   },
   plugin: {},
+  scheduler: {
+    enabled: process.env['scheduler.enabled'],
+  },
 }
 
 configureOptional(module.exports)
