@@ -12,7 +12,7 @@ const {
 const addDays = require('date-fns/add_days')
 const isAfter = require('date-fns/is_after')
 const differenceInDays = require('date-fns/difference_in_days')
-const { getUser } = require('../auth/service')
+const { getUser, hasFeature } = require('../auth/service')
 const { processDynamicMessage } = require('../stringTemplate/service')
 
 const i18nKeys = {
@@ -1172,7 +1172,7 @@ async function actionDashboard(request) {
   const { auth, query } = request
   const user = await getUser(auth.credentials.name)
   const dataConstraints = await getConstraints(auth.credentials)
-  const alertMessagesQuery = knex('AlertMessage as am')
+  const alertMessages = await knex('AlertMessage as am')
     .join('MessageStatus as ms', 'am.messageStatusId', 'ms.id')
     .join('Notification as n', 'am.id', 'n.alertMessageId')
     .join('NotificationType as nt', 'n.notificationTypeId', 'nt.id')
@@ -1230,137 +1230,39 @@ async function actionDashboard(request) {
       knex.raw('max(isl.changedOn) as statusDate'),
       'i.consumableId'
     )
-  const alertMessages = await alertMessagesQuery
-  const userCanEditInventory = canEditInventories(auth)
+
   const alertMessagesByIssue = _.map(
     _.values(_.groupBy(alertMessages, 'issueId')),
     issueMessages => {
       const highestLevelMessage = _.head(
         _.orderBy(issueMessages, 'notificationTypeLevel', 'desc')
       )
-      highestLevelMessage.canEdit =
-        highestLevelMessage.issueTypeExternalId === 'StockLevelUpdate' &&
-        userCanEditInventory
+      highestLevelMessage.message = processDynamicMessage(
+        highestLevelMessage.message
+      )
+      if (
+        highestLevelMessage.canAcknowledge &&
+        highestLevelMessage.personId !== user.personId
+      ) {
+        highestLevelMessage.canAcknowledge = 0
+      }
       return highestLevelMessage
     }
   )
 
-  const { partnerSettingsString = '{}' } = await knex('Partner as p')
-    .where('p.id', user.partnerId)
-    .first('p.partnerSettings as partnerSettingsString')
-  const partnerSettings = JSON.parse(partnerSettingsString)
-  if (!partnerSettings['dashboard.action.allowStockUpdateForConsumableIds']) {
-    partnerSettings[
-      'dashboard.action.allowStockUpdateForConsumableIds'
-    ] = await knex('Consumable as c')
-      .where(function() {
-        this.whereNull('c.partnerId').orWhere('c.partnerId', user.partnerId)
-      })
-      .pluck('c.id')
-  }
-
-  const inventoryItems = await knex('Site as s')
-    .join('Device as d', 'd.siteId', 's.id')
-    .join('Assay as a', 'a.deviceTypeId', 'd.deviceTypeId')
-    .join('ConsumableAssay as ca', 'ca.assayId', 'a.id')
-    .join('Consumable as c', 'c.id', 'ca.consumableId')
-    .leftJoin('InventoryItem as ii', function() {
-      this.on('ii.siteId', 's.id').andOn('ii.consumableId', 'c.id')
-    })
-    .modify(addConstraints, dataConstraints, { site: 's' })
-    .modify((queryBuilder, query) => {
-      if (query.siteId) {
-        queryBuilder.where({ 's.id': query.siteId })
-      }
-    }, query)
-    .groupBy('s.id', 'c.id')
-    .distinct(
-      's.id as siteId',
-      's.name as siteName',
-      'c.id as consumableId',
-      knex.raw('sum(coalesce(ii.quantityOnHand, 0)) as totalInStock')
-    )
-
-  // set consumable id, totalIn Stock on StockInHand issues
-  const inventoryItemsBySite = _.groupBy(inventoryItems, 'siteId')
-  const results = _.map(alertMessagesByIssue, alertMessage => {
-    alertMessage.message = processDynamicMessage(alertMessage.message)
-    if (
-      alertMessage.siteId &&
-      alertMessage.issueTypeExternalId === 'StockLevelUpdate' &&
-      inventoryItemsBySite[alertMessage.siteId]
-    ) {
-      const [inventoryItem] = inventoryItemsBySite[alertMessage.siteId]
-      alertMessage.totalInStock =
-        inventoryItem == null ? 0 : inventoryItem.totalInStock
-      alertMessage.consumableId =
-        inventoryItem == null ? null : inventoryItem.consumableId
-      delete inventoryItemsBySite[alertMessage.siteId]
-    }
-    if (
-      alertMessage.canAcknowledge &&
-      alertMessage.personId !== user.personId
-    ) {
-      alertMessage.canAcknowledge = 0
-    }
-    return alertMessage
-  })
-
-  // Add consumables by site that aren't in issues
-  _.forEach(
-    inventoryItemsBySite,
-    ([{ siteId, siteName, totalInStock, consumableId }]) => {
-      results.push({
-        // ID is needed in UI to distinguish table rows
-        id: `stocklevel_${siteId}`,
-        siteId,
-        deviceId: null,
-        resultId: null,
-        message: 'Stock Level',
-        siteName,
-        issueId: null,
-        status: 'OK',
-        statusI18nKey: 'issueStatusOk',
-        issueStatusSortOrder: 5,
-        issueStatusSeverityExternalId: 'Low',
-        statusDate: new Date(),
-        issueType: 'Stock Level Update',
-        issueTypeExternalId: 'StockLevelUpdate',
-        issueTypeI18nKey: 'stockLevelUpdateIssue',
-        issueCategory: 'ReagentHealth',
-        issueCategoryI18nKey: 'issueCategoryReagentHealth',
-        canAcknowledge: 0,
-        canEdit: userCanEditInventory,
-        totalInStock,
-        consumableId,
-        personId: user.personId,
-      })
-    }
+  await enhanceActionDashboardWithInventoryLevels(
+    user,
+    auth,
+    dataConstraints,
+    query,
+    alertMessagesByIssue
   )
 
   const allActionByCategory = _.flowRight(
     x => _.groupBy(x, 'issueCategory'),
     query.sortDir === 'desc' ? _.reverse : _.identity,
-    x => _.sortBy(x, query.sortCol || _.identity),
-    x =>
-      _.map(x, result => {
-        // TODO remove quick patch for StockLevelUpdate status
-        if (result.issueTypeExternalId === 'StockLevelUpdate') {
-          if (result.totalInStock <= 0) {
-            result.status = 'Active'
-            result.statusI18nKey = 'issueStatusActive'
-            result.issueStatusSortOrder = 0
-            result.issueStatusSeverityExternalId = 'High'
-          } else {
-            result.status = 'OK'
-            result.statusI18nKey = 'issueStatusOk'
-            result.issueStatusSortOrder = 5
-            result.issueStatusSeverityExternalId = 'Low'
-          }
-        }
-        return result
-      })
-  )(results)
+    x => _.sortBy(x, query.sortCol || _.identity)
+  )(alertMessagesByIssue)
 
   const result = {
     ok: true,
@@ -1368,6 +1270,128 @@ async function actionDashboard(request) {
   }
 
   return result
+}
+
+async function enhanceActionDashboardWithInventoryLevels(
+  user,
+  auth,
+  dataConstraints,
+  query,
+  alertMessagesByIssue
+) {
+  const allowInventoryUpdatesOnActionDashboard = await hasFeature(
+    user.id,
+    user.partnerId,
+    'actionDashboardInventoryLevelUpdate'
+  )
+  const userCanEditInventory =
+    allowInventoryUpdatesOnActionDashboard && canEditInventories(auth)
+  if (userCanEditInventory) {
+    const { partnerSettingsString = '{}' } = await knex('Partner as p')
+      .where('p.id', user.partnerId)
+      .first('p.partnerSettings as partnerSettingsString')
+    const partnerSettings = JSON.parse(partnerSettingsString)
+    if (!partnerSettings['dashboard.action.allowStockUpdateForConsumableIds']) {
+      partnerSettings[
+        'dashboard.action.allowStockUpdateForConsumableIds'
+      ] = await knex('Consumable as c')
+        .where(function() {
+          this.whereNull('c.partnerId').orWhere('c.partnerId', user.partnerId)
+        })
+        .pluck('c.id')
+    }
+
+    const inventoryItems = await knex('Site as s')
+      .join('Device as d', 'd.siteId', 's.id')
+      .join('Assay as a', 'a.deviceTypeId', 'd.deviceTypeId')
+      .join('ConsumableAssay as ca', 'ca.assayId', 'a.id')
+      .join('Consumable as c', 'c.id', 'ca.consumableId')
+      .leftJoin('InventoryItem as ii', function() {
+        this.on('ii.siteId', 's.id').andOn('ii.consumableId', 'c.id')
+      })
+      .modify(addConstraints, dataConstraints, { site: 's' })
+      .modify((queryBuilder, query) => {
+        if (query.siteId) {
+          queryBuilder.where({ 's.id': query.siteId })
+        }
+      }, query)
+      .groupBy('s.id', 'c.id')
+      .distinct(
+        's.id as siteId',
+        's.name as siteName',
+        'c.id as consumableId',
+        knex.raw('sum(coalesce(ii.quantityOnHand, 0)) as totalInStock')
+      )
+
+    // set consumable id, totalIn Stock on StockInHand issues
+    const inventoryItemsBySite = _.groupBy(inventoryItems, 'siteId')
+    _.forEach(alertMessagesByIssue, alertMessage => {
+      alertMessage.canEdit =
+        alertMessage.issueTypeExternalId === 'StockLevelUpdate' &&
+        userCanEditInventory
+      if (
+        alertMessage.siteId &&
+        alertMessage.issueTypeExternalId === 'StockLevelUpdate' &&
+        inventoryItemsBySite[alertMessage.siteId]
+      ) {
+        const [inventoryItem] = inventoryItemsBySite[alertMessage.siteId]
+        alertMessage.totalInStock =
+          inventoryItem == null ? 0 : inventoryItem.totalInStock
+        alertMessage.consumableId =
+          inventoryItem == null ? null : inventoryItem.consumableId
+        delete inventoryItemsBySite[alertMessage.siteId]
+      }
+    })
+
+    // Add consumables by site that aren't in issues
+    _.forEach(
+      inventoryItemsBySite,
+      ([{ siteId, siteName, totalInStock, consumableId }]) => {
+        alertMessagesByIssue.push({
+          // ID is needed in UI to distinguish table rows
+          id: `stocklevel_${siteId}`,
+          siteId,
+          deviceId: null,
+          resultId: null,
+          message: 'Stock Level',
+          siteName,
+          issueId: null,
+          status: 'OK',
+          statusI18nKey: 'issueStatusOk',
+          issueStatusSortOrder: 5,
+          issueStatusSeverityExternalId: 'Low',
+          statusDate: new Date(),
+          issueType: 'Stock Level Update',
+          issueTypeExternalId: 'StockLevelUpdate',
+          issueTypeI18nKey: 'stockLevelUpdateIssue',
+          issueCategory: 'ReagentHealth',
+          issueCategoryI18nKey: 'issueCategoryReagentHealth',
+          canAcknowledge: 0,
+          canEdit: userCanEditInventory,
+          totalInStock,
+          consumableId,
+          personId: user.personId,
+        })
+      }
+    )
+
+    _.forEach(alertMessagesByIssue, alertMessage => {
+      if (alertMessage.issueTypeExternalId === 'StockLevelUpdate') {
+        // TODO remove quick patch for StockLevelUpdate status
+        if (alertMessage.totalInStock <= 0) {
+          alertMessage.status = 'Active'
+          alertMessage.statusI18nKey = 'issueStatusActive'
+          alertMessage.issueStatusSortOrder = 0
+          alertMessage.issueStatusSeverityExternalId = 'High'
+        } else {
+          alertMessage.status = 'OK'
+          alertMessage.statusI18nKey = 'issueStatusOk'
+          alertMessage.issueStatusSortOrder = 5
+          alertMessage.issueStatusSeverityExternalId = 'Low'
+        }
+      }
+    })
+  }
 }
 
 module.exports = {

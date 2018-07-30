@@ -343,4 +343,19 @@ async function seed(knex) {
       .where({ id: notificationTypeId })
       .update({ messageTypeId: newMessageTypeId })
   })
+
+  const [actionDashboardInventoryLevelUpdateFeatureId] = await knex(
+    'Feature'
+  ).insert({ module: 'actionDashboardInventoryLevelUpdate' })
+
+  const myanmarJobFunctionIds = await knex('JobFunction as jf')
+    .where('jf.partnerId', partnerId)
+    .pluck('jf.id')
+
+  await Promise.each(myanmarJobFunctionIds, async myanmarJobFunctionId => {
+    await knex('JobFunctionFeature').insert({
+      jobFunctionId: myanmarJobFunctionId,
+      featureId: actionDashboardInventoryLevelUpdateFeatureId,
+    })
+  })
 }
