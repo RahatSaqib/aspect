@@ -302,6 +302,10 @@ function canEdit(auth, flag) {
   )
 }
 
+function canEditInventories(auth) {
+  return canEdit(auth, 'inventory:')
+}
+
 module.exports = {
   getConstraints,
   getJobConstraints,
@@ -312,4 +316,5 @@ module.exports = {
   canViewResults,
   canViewInventories,
   canEdit,
+  canEditInventories,
 }

@@ -7,6 +7,7 @@ const {
   canViewDevices,
   canViewResults,
   canViewInventories,
+  canEditInventories,
 } = require('../auth/constraints')
 const addDays = require('date-fns/add_days')
 const isAfter = require('date-fns/is_after')
@@ -1230,10 +1231,18 @@ async function actionDashboard(request) {
       'i.consumableId'
     )
   const alertMessages = await alertMessagesQuery
+  const userCanEditInventory = canEditInventories(auth)
   const alertMessagesByIssue = _.map(
     _.values(_.groupBy(alertMessages, 'issueId')),
-    issueMessages =>
-      _.head(_.orderBy(issueMessages, 'notificationTypeLevel', 'desc'))
+    issueMessages => {
+      const highestLevelMessage = _.head(
+        _.orderBy(issueMessages, 'notificationTypeLevel', 'desc')
+      )
+      highestLevelMessage.canEdit =
+        highestLevelMessage.issueTypeExternalId === 'StockLevelUpdate' &&
+        userCanEditInventory
+      return highestLevelMessage
+    }
   )
 
   const { partnerSettingsString = '{}' } = await knex('Partner as p')
@@ -1321,6 +1330,7 @@ async function actionDashboard(request) {
         issueCategory: 'ReagentHealth',
         issueCategoryI18nKey: 'issueCategoryReagentHealth',
         canAcknowledge: 0,
+        canEdit: userCanEditInventory,
         totalInStock,
         consumableId,
         personId: user.personId,
