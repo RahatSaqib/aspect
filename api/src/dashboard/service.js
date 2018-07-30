@@ -1171,16 +1171,6 @@ async function actionDashboard(request) {
   const { auth, query } = request
   const user = await getUser(auth.credentials.name)
   const dataConstraints = await getConstraints(auth.credentials)
-  const adminJobFunction = await knex('JobFunction as jf')
-    .innerJoin('Job as j', 'j.jobFunctionId', 'jf.id')
-    .innerJoin('Person as ps', 'j.personId', 'ps.id')
-    .where({
-      'ps.userId': user.id,
-      'jf.partnerId': user.partnerId,
-      'jf.isAdmin': true,
-    })
-    .first('jf.name as jobFunctionName')
-  const isAdmin = !_.isNil(adminJobFunction)
   const alertMessagesQuery = knex('AlertMessage as am')
     .join('MessageStatus as ms', 'am.messageStatusId', 'ms.id')
     .join('Notification as n', 'am.id', 'n.alertMessageId')
@@ -1200,7 +1190,7 @@ async function actionDashboard(request) {
     .andWhere('ms.externalId', 'Sent')
     .modify(addConstraints, dataConstraints, {
       site: 's',
-      person: isAdmin ? undefined : 'am',
+      person: 'am',
       jobFunction: 'jf',
       allowAdminThrough: true,
     })

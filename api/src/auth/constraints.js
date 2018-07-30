@@ -166,86 +166,108 @@ function addConstraints(queryBuilder, constraints, aliases) {
   if (geography && constraints.country) {
     queryBuilder.where({ [`${geography}.countryId`]: constraints.country.id })
   }
-  if (person && constraints.person) {
+  if (
+    person &&
+    constraints.person &&
+    (_.isEmpty(constraints) || !allowAdminThrough)
+  ) {
     queryBuilder.where({ [`${person}.personId`]: constraints.person.id })
   }
 
   // data filter constraints are ORed
-  if (constraints.$or && constraints.$or.length) {
+  if (!_.isEmpty(constraints)) {
     queryBuilder.where(function() {
       for (const constraint of constraints.$or) {
-        addConstraintWithJobFunction(
-          this,
-          geography,
-          constraint.geography,
-          jobFunction,
-          constraint.jobFunction,
-          allowAdminThrough
-        )
-        addConstraintWithJobFunction(
-          this,
-          site,
-          constraint.site,
-          jobFunction,
-          constraint.jobFunction,
-          allowAdminThrough
-        )
-        addConstraintWithJobFunction(
-          this,
-          device,
-          constraint.device,
-          jobFunction,
-          constraint.jobFunction,
-          allowAdminThrough
-        )
-        addConstraintWithJobFunction(
-          this,
-          sample,
-          constraint.sample,
-          jobFunction,
-          constraint.jobFunction,
-          allowAdminThrough
-        )
-        addConstraintWithJobFunction(
-          this,
-          person,
-          constraint.person,
-          jobFunction,
-          constraint.jobFunction,
-          allowAdminThrough
-        )
+        addConstraintWithJobFunction({
+          queryBuilder: this,
+          alias: geography,
+          constraint: constraint.geography,
+          jobFunctionAlias: jobFunction,
+          jobFunctionConstraint: constraint.jobFunction,
+          personAlias: person,
+          personConstraint: constraint.person,
+          allowAdminThrough,
+        })
+        addConstraintWithJobFunction({
+          queryBuilder: this,
+          alias: site,
+          constraint: constraint.site,
+          jobFunctionAlias: jobFunction,
+          jobFunctionConstraint: constraint.jobFunction,
+          personAlias: person,
+          personConstraint: constraint.person,
+          allowAdminThrough,
+        })
+        addConstraintWithJobFunction({
+          queryBuilder: this,
+          alias: device,
+          constraint: constraint.device,
+          jobFunctionAlias: jobFunction,
+          jobFunctionConstraint: constraint.jobFunction,
+          personAlias: person,
+          personConstraint: constraint.person,
+          allowAdminThrough,
+        })
+        addConstraintWithJobFunction({
+          queryBuilder: this,
+          alias: sample,
+          constraint: constraint.sample,
+          jobFunctionAlias: jobFunction,
+          jobFunctionConstraint: constraint.jobFunction,
+          personAlias: person,
+          personConstraint: constraint.person,
+          allowAdminThrough,
+        })
+        addConstraintWithJobFunction({
+          queryBuilder: this,
+          alias: person,
+          constraint: constraint.person,
+          jobFunctionAlias: jobFunction,
+          jobFunctionConstraint: constraint.jobFunction,
+          personAlias: person,
+          personConstraint: constraint.person,
+          allowAdminThrough,
+        })
       }
     })
   }
 }
 
-function addConstraintWithJobFunction(
+function addConstraintWithJobFunction({
   queryBuilder,
   alias,
-  subConstraint,
+  constraint,
   jobFunctionAlias,
-  jobFunctionSubConstraint,
-  allowAdminThrough
-) {
-  if (alias && subConstraint) {
-    if (
-      jobFunctionAlias &&
-      jobFunctionSubConstraint &&
-      (!jobFunctionSubConstraint.isAdmin || !allowAdminThrough)
-    ) {
-      queryBuilder.orWhere(function() {
-        this.where(
-          _.mapKeys(subConstraint, (v, k) => `${alias}.${k}`)
-        ).andWhere(
+  jobFunctionConstraint,
+  personAlias,
+  personConstraint,
+  allowAdminThrough = false,
+}) {
+  if (alias && constraint) {
+    queryBuilder.orWhere(function() {
+      if (
+        jobFunctionAlias &&
+        jobFunctionConstraint &&
+        (!jobFunctionConstraint.isAdmin || !allowAdminThrough)
+      ) {
+        this.where(_.mapKeys(constraint, (v, k) => `${alias}.${k}`)).andWhere(
           _.mapKeys(
-            _.omit(jobFunctionSubConstraint, 'isAdmin'),
+            _.omit(jobFunctionConstraint, 'isAdmin'),
             (v, k) => `${jobFunctionAlias}.${k}`
           )
         )
-      })
-    } else {
-      queryBuilder.orWhere(_.mapKeys(subConstraint, (v, k) => `${alias}.${k}`))
-    }
+      } else {
+        this.where(_.mapKeys(constraint, (v, k) => `${alias}.${k}`))
+      }
+      if (personAlias && personConstraint) {
+        this.andWhere(
+          _.mapKeys(personConstraint, (v, k) => `${personAlias}.${k}`)
+        )
+        if (allowAdminThrough) {
+          this.orWhere(`${jobFunctionAlias}.isAdmin`, true)
+        }
+      }
+    })
   }
 }
 
