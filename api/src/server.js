@@ -75,7 +75,9 @@ function messageQueuePlugin(server, options, next) {
     .then(queue => {
       addLoggers(server, queue)
       addSubscriptions(queue)
-      startScheduler(queue)
+      if (config.scheduler.enabled) {
+        startScheduler(queue)
+      }
       server.ext('onPreHandler', (request, reply) => {
         request.plugins.messageContext = queue.createMessageContext(
           'aspect_request'
