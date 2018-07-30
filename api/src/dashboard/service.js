@@ -1171,30 +1171,27 @@ async function actionDashboard(request) {
   const { auth, query } = request
   const user = await getUser(auth.credentials.name)
   const dataConstraints = await getConstraints(auth.credentials)
-  const { jobFunctionName } = await knex('JobFunction as jf')
+  const adminJobFunction = await knex('JobFunction as jf')
     .innerJoin('Job as j', 'j.jobFunctionId', 'jf.id')
     .innerJoin('Person as ps', 'j.personId', 'ps.id')
     .where({
       'ps.userId': user.id,
       'jf.partnerId': user.partnerId,
+      'jf.isAdmin': true,
     })
     .first('jf.name as jobFunctionName')
-  const isAdmin = jobFunctionName === 'Admin'
+  const isAdmin = !_.isNil(adminJobFunction)
   const alertMessagesQuery = knex('AlertMessage as am')
-    .innerJoin('MessageStatus as ms', 'am.messageStatusId', 'ms.id')
-    .innerJoin('Notification as n', 'am.id', 'n.alertMessageId')
-    .innerJoin('NotificationType as nt', 'n.notificationTypeId', 'nt.id')
-    .innerJoin('JobFunction as jf', 'nt.jobFunctionId', 'jf.id')
-    .innerJoin('Issue as i', 'n.issueId', 'i.id')
-    .innerJoin('IssueType as it', 'i.issueTypeId', 'it.id')
-    .innerJoin('IssueCategory as ic', 'it.issueCategoryId', 'ic.id')
-    .innerJoin('IssueStatus as is', 'i.issueStatusId', 'is.id')
-    .innerJoin(
-      'IssueStatusSeverity as iss',
-      'is.issueStatusSeverityId',
-      'iss.id'
-    )
-    .innerJoin('Site as s', 'am.siteId', 's.id')
+    .join('MessageStatus as ms', 'am.messageStatusId', 'ms.id')
+    .join('Notification as n', 'am.id', 'n.alertMessageId')
+    .join('NotificationType as nt', 'n.notificationTypeId', 'nt.id')
+    .join('JobFunction as jf', 'nt.jobFunctionId', 'jf.id')
+    .join('Issue as i', 'n.issueId', 'i.id')
+    .join('IssueType as it', 'i.issueTypeId', 'it.id')
+    .join('IssueCategory as ic', 'it.issueCategoryId', 'ic.id')
+    .join('IssueStatus as is', 'i.issueStatusId', 'is.id')
+    .join('IssueStatusSeverity as iss', 'is.issueStatusSeverityId', 'iss.id')
+    .join('Site as s', 'am.siteId', 's.id')
     .leftJoin('AlertTemplate as at', 'am.alertTemplateId', 'at.id')
     .leftJoin('IssueStatusLog as isl', function() {
       this.on('i.id', 'isl.issueId').andOn('is.id', 'isl.issueStatusId')
@@ -1203,32 +1200,18 @@ async function actionDashboard(request) {
     .andWhere('ms.externalId', 'Sent')
     .modify(addConstraints, dataConstraints, {
       site: 's',
+      person: isAdmin ? undefined : 'am',
       jobFunction: 'jf',
       allowAdminThrough: true,
     })
     .andWhere(function() {
-      this.where(function() {
-        this.whereRaw(
-          query.siteId
-            ? `COALESCE(at.templateSettings->>"$.hideWhenSiteFilterIsSelected", 'false') <> 'true'`
-            : `COALESCE(at.templateSettings->>"$.hideWhenSiteFilterIsNotSelected", 'false') <> 'true'`
-        )
-      })
-    })
-    .modify(queryBuilder => {
-      if (!isAdmin) {
-        queryBuilder.where({ 'am.personId': user.personId })
-      }
+      this.whereRaw(
+        query.siteId
+          ? `COALESCE(at.templateSettings->>"$.hideWhenSiteFilterIsSelected", 'false') <> 'true'`
+          : `COALESCE(at.templateSettings->>"$.hideWhenSiteFilterIsNotSelected", 'false') <> 'true'`
+      )
       if (query.siteId) {
-        queryBuilder.where({ 'am.siteId': query.siteId })
-      }
-      if (isAdmin) {
-        // If specific lab selected, show LU issues, otherwise show RO
-        queryBuilder.where(
-          'nt.name',
-          query.siteId == null ? 'not like' : 'like',
-          'LU%'
-        )
+        this.andWhere({ 'am.siteId': query.siteId })
       }
     })
     .groupBy('am.id')
@@ -1256,7 +1239,6 @@ async function actionDashboard(request) {
       knex.raw('max(isl.changedOn) as statusDate'),
       'i.consumableId'
     )
-  console.log(alertMessagesQuery.toString())
   const alertMessages = await alertMessagesQuery
   const alertMessagesByIssue = _.map(
     _.values(_.groupBy(alertMessages, 'issueId')),
@@ -1351,6 +1333,7 @@ async function actionDashboard(request) {
         canAcknowledge: 0,
         totalInStock,
         consumableId,
+        personId: user.personId,
       })
     }
   )

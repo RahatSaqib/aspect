@@ -18,6 +18,9 @@ async function getConstraints(credentials) {
     country: {
       id: user.countryId,
     },
+    person: {
+      id: user.personId,
+    },
   }
 
   const jobContexts = await knex('JobContext as jc')
@@ -108,7 +111,13 @@ function getJobContextConstraint(context) {
 
 function addConstraints(queryBuilder, constraints, aliases) {
   let { partner, geography, site } = aliases
-  const { device, sample, jobFunction, allowAdminThrough = false } = aliases
+  const {
+    device,
+    sample,
+    person,
+    jobFunction,
+    allowAdminThrough = false,
+  } = aliases
 
   if (_.isEmpty(constraints)) {
     queryBuilder.whereRaw('0 = 1')
@@ -157,6 +166,9 @@ function addConstraints(queryBuilder, constraints, aliases) {
   if (geography && constraints.country) {
     queryBuilder.where({ [`${geography}.countryId`]: constraints.country.id })
   }
+  if (person && constraints.person) {
+    queryBuilder.where({ [`${person}.personId`]: constraints.person.id })
+  }
 
   // data filter constraints are ORed
   if (constraints.$or && constraints.$or.length) {
@@ -194,6 +206,14 @@ function addConstraints(queryBuilder, constraints, aliases) {
           constraint.jobFunction,
           allowAdminThrough
         )
+        addConstraintWithJobFunction(
+          this,
+          person,
+          constraint.person,
+          jobFunction,
+          constraint.jobFunction,
+          allowAdminThrough
+        )
       }
     })
   }
@@ -211,14 +231,14 @@ function addConstraintWithJobFunction(
     if (
       jobFunctionAlias &&
       jobFunctionSubConstraint &&
-      !(jobFunctionSubConstraint.isAdmin && allowAdminThrough)
+      (!jobFunctionSubConstraint.isAdmin || !allowAdminThrough)
     ) {
       queryBuilder.orWhere(function() {
         this.where(
           _.mapKeys(subConstraint, (v, k) => `${alias}.${k}`)
         ).andWhere(
           _.mapKeys(
-            jobFunctionSubConstraint,
+            _.omit(jobFunctionSubConstraint, 'isAdmin'),
             (v, k) => `${jobFunctionAlias}.${k}`
           )
         )

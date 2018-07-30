@@ -57,7 +57,7 @@ describe('Dashboard routes', () => {
     describe('/dashboard/action', () => {
       const actionDashboardPath = '/api/dashboard/action'
 
-      async function lookUpUserActions(username, knex, query = {}) {
+      async function lookUpUserActions({ username, knex, query = {} }) {
         const user = await getUser(username)
         const dataConstraints = await getConstraints({ name: username })
 
@@ -74,11 +74,11 @@ describe('Dashboard routes', () => {
           .first('jf.name as jobFunctionName')
         const isAdmin = jobFunctionName === 'Admin'
         const isRegionalOfficer = jobFunctionName === 'Regional Officer'
-
         const alertMessages = await knex('AlertMessage as am')
           .innerJoin('MessageStatus as ms', 'am.messageStatusId', 'ms.id')
           .innerJoin('Notification as n', 'am.id', 'n.alertMessageId')
           .innerJoin('NotificationType as nt', 'n.notificationTypeId', 'nt.id')
+          .innerJoin('JobFunction as jf', 'nt.jobFunctionId', 'jf.id')
           .innerJoin('Issue as i', 'n.issueId', 'i.id')
           .innerJoin('IssueType as it', 'i.issueTypeId', 'it.id')
           .innerJoin('IssueCategory as ic', 'it.issueCategoryId', 'ic.id')
@@ -98,13 +98,15 @@ describe('Dashboard routes', () => {
             if (query.siteId) {
               queryBuilder.where({ 'am.siteId': query.siteId })
             }
-            if (isAdmin || isRegionalOfficer) {
+            if (isRegionalOfficer || (isAdmin && query.siteId)) {
               // If specific lab selected, show LU issues, otherwise show RO
               queryBuilder.where(
                 'nt.name',
                 query.siteId == null ? 'not like' : 'like',
                 'LU%'
               )
+            } else if (isAdmin) {
+              queryBuilder.where('nt.name', 'not like', '% - RO View')
             }
           })
           .select(
@@ -249,17 +251,18 @@ describe('Dashboard routes', () => {
         )(results)
       }
 
-      async function checkThatUserActionsMatchActionDashboardResponse(
+      async function checkThatUserActionsMatchActionDashboardResponse({
         username,
         password,
         knex,
-        query = {}
-      ) {
-        const userActionByCategory = await lookUpUserActions(
+        query = {},
+        checkPersonIdMatches = true,
+      }) {
+        const userActionByCategory = await lookUpUserActions({
           username,
           knex,
-          query
-        )
+          query,
+        })
         const authAccessToken = await getAccessToken(username, password)
 
         const actionDashboardData = await server
@@ -327,6 +330,24 @@ describe('Dashboard routes', () => {
             expect(alert.siteId).to.equal(query.siteId)
           )
         }
+        if (checkPersonIdMatches) {
+          const { id: personId } = await knex('User as u')
+            .join('Person as p', 'u.id', 'p.userId')
+            .where('u.name', username)
+            .first('p.id')
+          actualConnectivityHealth.forEach(alert =>
+            expect(alert.personId).to.equal(personId)
+          )
+          actualDeviceHealth.forEach(alert =>
+            expect(alert.personId).to.equal(personId)
+          )
+          actualReagentHealth.forEach(alert =>
+            expect(alert.personId).to.equal(personId)
+          )
+          actualDataHealth.forEach(alert =>
+            expect(alert.personId).to.equal(personId)
+          )
+        }
       }
 
       async function getSitesUnderUser(username, password) {
@@ -341,11 +362,12 @@ describe('Dashboard routes', () => {
       describe('for Admin', () => {
         it("should return the highest level notification for all labs under admin's jurisdiction", async () =>
           runTestWithKnex(async knex =>
-            checkThatUserActionsMatchActionDashboardResponse(
-              'myanmar_admin',
-              'test07',
-              knex
-            )
+            checkThatUserActionsMatchActionDashboardResponse({
+              username: 'myanmar_admin',
+              password: 'test07',
+              knex,
+              checkPersonIdMatches: false,
+            })
           ))
 
         it('should return the highest level notification for the selected lab', async () =>
@@ -353,12 +375,15 @@ describe('Dashboard routes', () => {
             const sites = await getSitesUnderUser('myanmar_admin', 'test07')
 
             return Promise.each(sites, site =>
-              checkThatUserActionsMatchActionDashboardResponse(
-                'myanmar_admin',
-                'test07',
+              checkThatUserActionsMatchActionDashboardResponse({
+                username: 'myanmar_admin',
+                password: 'test07',
                 knex,
-                { siteId: site.id }
-              )
+                query: {
+                  siteId: site.id,
+                },
+                checkPersonIdMatches: false,
+              })
             )
           }))
       })
@@ -369,11 +394,11 @@ describe('Dashboard routes', () => {
             Promise.each(
               ['myanmar_ro1', 'myanmar_ro2', 'myanmar_ro3'],
               async regionalOfficerName =>
-                checkThatUserActionsMatchActionDashboardResponse(
-                  regionalOfficerName,
-                  regionalOfficerName,
-                  knex
-                )
+                checkThatUserActionsMatchActionDashboardResponse({
+                  username: regionalOfficerName,
+                  password: regionalOfficerName,
+                  knex,
+                })
             )
           ))
 
@@ -388,12 +413,12 @@ describe('Dashboard routes', () => {
                 )
 
                 return Promise.each(sites, site =>
-                  checkThatUserActionsMatchActionDashboardResponse(
-                    'myanmar_admin',
-                    'test07',
+                  checkThatUserActionsMatchActionDashboardResponse({
+                    username: regionalOfficerName,
+                    password: regionalOfficerName,
                     knex,
-                    { siteId: site.id }
-                  )
+                    query: { siteId: site.id },
+                  })
                 )
               }
             )
@@ -406,11 +431,11 @@ describe('Dashboard routes', () => {
             Promise.each(
               ['myanmar_lab1', 'myanmar_lab2', 'myanmar_lab3'],
               async labUserName =>
-                checkThatUserActionsMatchActionDashboardResponse(
-                  labUserName,
-                  labUserName,
-                  knex
-                )
+                checkThatUserActionsMatchActionDashboardResponse({
+                  username: labUserName,
+                  password: labUserName,
+                  knex,
+                })
             )
           ))
       })
