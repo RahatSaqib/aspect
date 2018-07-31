@@ -25,13 +25,11 @@ async function seed(knex) {
     .whereIn('id', myanmarConsumableIssues)
     .update({ consumableId: consumableIdTb })
 
-  await knex('Partner')
-    .where('id', partnerId)
-    .update({
-      partnerSettings: JSON.stringify({
-        'dashboard.action.allowStockUpdateForConsumableIds': [consumableIdTb],
-      }),
-    })
+  await knex('PartnerConsumable').insert({
+    partnerId,
+    consumableId: consumableIdTb,
+    allowStockUpdateFromActionDashboard: true,
+  })
 
   await knex('JobFunction')
     .where({

@@ -8,7 +8,7 @@ const SELECT_LIST_FIELDS = [
   'u.shortName as unitShortName',
   'c.canExpire',
   'c.manufacturer',
-  'c.autoInclude',
+  knex.raw('coalesce(pc.autoInclude, 0) as autoInclude'),
 ]
 async function listConsumableTypes(request) {
   const { query, auth } = request
@@ -17,9 +17,13 @@ async function listConsumableTypes(request) {
 
   const consumableQuery = knex('Consumable as c')
     .leftJoin('Unit as u', 'c.unit', 'u.id')
-    .leftJoin('Partner as p', 'c.partnerId', 'p.id')
-    .whereNull('c.partnerId')
-    .orWhere({ 'p.id': dataConstraints.partner.id })
+    .leftJoin('PartnerConsumable as pc', function() {
+      this.on('c.id', 'pc.consumableId').andOn(
+        'pc.partnerId',
+        knex.raw(dataConstraints.partner.id)
+      )
+    })
+    .leftJoin('Partner as p', 'pc.partnerId', 'p.id')
     .modify(filterParams, query, { name: 'c.name' })
 
   // get total count for paging

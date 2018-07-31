@@ -176,11 +176,17 @@ async function createNewIssue(knex, issueType, action) {
       issueContext = await knex('InventoryItem as ii')
         .innerJoin('Site as s', 'ii.siteId', 's.id')
         .innerJoin('Consumable as c', 'ii.consumableId', 'c.id')
+        .leftJoin('PartnerConsumable as pc', function() {
+          this.on('pc.consumableId', 'c.id').andOn(
+            'pc.partnerId',
+            's.partnerId'
+          )
+        })
         .where('s.id', issue.siteId)
         .where('ii.consumableId', action.consumableId)
         .first(
           's.geographyId',
-          knex.raw('COALESCE(c.partnerId, s.partnerId) as partnerId')
+          knex.raw('COALESCE(pc.partnerId, s.partnerId) as partnerId')
         )
     } else {
       issueContext = await knex('Site')

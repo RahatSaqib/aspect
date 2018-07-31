@@ -1284,28 +1284,12 @@ async function addStockLevelUpdateActions(
   siteId = null
 ) {
   if (canViewInventories(auth)) {
-    const { partnerSettingsString = '{}' } = await knex('Partner as p')
-      .where('p.id', dataConstraints.partner.id)
-      .first('p.partnerSettings as partnerSettingsString')
-    const partnerSettings = JSON.parse(partnerSettingsString)
-    if (!partnerSettings['dashboard.action.allowStockUpdateForConsumableIds']) {
-      partnerSettings[
-        'dashboard.action.allowStockUpdateForConsumableIds'
-      ] = await knex('Consumable as c')
-        .where(function() {
-          this.whereNull('c.partnerId').orWhere(
-            'c.partnerId',
-            dataConstraints.partner.id
-          )
-        })
-        .pluck('c.id')
-    }
-
     const inventoryItems = await knex('Site as s')
       .join('Device as d', 'd.siteId', 's.id')
       .join('Assay as a', 'a.deviceTypeId', 'd.deviceTypeId')
       .join('ConsumableAssay as ca', 'ca.assayId', 'a.id')
       .join('Consumable as c', 'c.id', 'ca.consumableId')
+      .join('PartnerConsumable as pc', 'ca.consumableId', 'pc.consumableId')
       .leftJoin('InventoryItem as ii', function() {
         this.on('ii.siteId', 's.id').andOn('ii.consumableId', 'c.id')
       })
@@ -1314,6 +1298,10 @@ async function addStockLevelUpdateActions(
         if (siteId) {
           queryBuilder.where({ 's.id': siteId })
         }
+      })
+      .where({
+        'pc.partnerId': dataConstraints.partner.id,
+        'pc.allowStockUpdateFromActionDashboard': true,
       })
       .groupBy('s.id', 'c.id')
       .distinct(
