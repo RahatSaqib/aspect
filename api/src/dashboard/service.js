@@ -1196,13 +1196,12 @@ async function actionDashboard(request) {
       allowAdminThrough: true,
     })
     .andWhere(function() {
-      this.whereRaw(
-        query.siteId
-          ? `COALESCE(at.templateSettings->>"$.hideWhenSiteFilterIsSelected", 'false') <> 'true'`
-          : `COALESCE(at.templateSettings->>"$.hideWhenSiteFilterIsNotSelected", 'false') <> 'true'`
-      )
       if (query.siteId) {
-        this.andWhere({ 'am.siteId': query.siteId })
+        this.where('hideWhenSiteFilterIsSelected', false).andWhere({
+          'am.siteId': query.siteId,
+        })
+      } else {
+        this.where('hideWhenSiteFilterIsNotSelected', false)
       }
     })
     .groupBy('am.id')
@@ -1294,7 +1293,10 @@ async function addStockLevelUpdateActions(
         'dashboard.action.allowStockUpdateForConsumableIds'
       ] = await knex('Consumable as c')
         .where(function() {
-          this.whereNull('c.partnerId').orWhere('c.partnerId', dataConstraints.partner.id)
+          this.whereNull('c.partnerId').orWhere(
+            'c.partnerId',
+            dataConstraints.partner.id
+          )
         })
         .pluck('c.id')
     }

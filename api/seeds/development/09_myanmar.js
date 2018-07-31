@@ -67,9 +67,7 @@ async function seed(knex) {
   await Promise.each(roAlertTemplates, async roAlertTemplate => {
     const newRoAlertTemplateId = await knex('AlertTemplate').insert({
       message: roAlertTemplate.message,
-      templateSettings: JSON.stringify({
-        hideWhenSiteFilterIsSelected: true,
-      }),
+      hideWhenSiteFilterIsSelected: true,
       createdOn: now,
       createdBy: myanmarAdminId,
       updatedOn: now,
@@ -138,9 +136,7 @@ async function seed(knex) {
   await Promise.each(roLuViewAlertTemplates, async luRoViewAlertTemplate => {
     const newRoLuViewAlertTemplateId = await knex('AlertTemplate').insert({
       message: luRoViewAlertTemplate.message,
-      templateSettings: JSON.stringify({
-        hideWhenSiteFilterIsNotSelected: true,
-      }),
+      hideWhenSiteFilterIsNotSelected: true,
       createdOn: now,
       createdBy: myanmarAdminId,
       updatedOn: now,

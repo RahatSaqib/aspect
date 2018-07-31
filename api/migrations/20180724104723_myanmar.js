@@ -25,7 +25,14 @@ async function up(knex) {
   })
 
   await knex.schema.table('AlertTemplate', alertTemplate => {
-    alertTemplate.specificType('templateSettings', 'JSON')
+    alertTemplate
+      .boolean('hideWhenSiteFilterIsSelected')
+      .notNullable()
+      .defaultTo(0)
+    alertTemplate
+      .boolean('hideWhenSiteFilterIsNotSelected')
+      .notNullable()
+      .defaultTo(0)
   })
 }
 
@@ -34,15 +41,18 @@ async function down(knex) {
     issue.dropColumns('consumableId')
   })
 
-  await knex.schema.table('Partner', issue => {
-    issue.dropColumns('partnerSettings')
+  await knex.schema.table('Partner', partner => {
+    partner.dropColumns('partnerSettings')
   })
 
-  await knex.schema.table('JobFunction', issue => {
-    issue.dropColumns('isAdmin')
+  await knex.schema.table('JobFunction', jobFunction => {
+    jobFunction.dropColumns('isAdmin')
   })
 
-  await knex.schema.table('AlertTemplate', issue => {
-    issue.dropColumns('templateSettings')
+  await knex.schema.table('AlertTemplate', alertTemplate => {
+    alertTemplate.dropColumns(
+      'hideWhenSiteFilterIsSelected',
+      'hideWhenSiteFilterIsNotSelected'
+    )
   })
 }

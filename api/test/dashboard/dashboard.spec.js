@@ -200,7 +200,8 @@ describe('Dashboard routes', () => {
         _.forEach(
           inventoryItemsBySite,
           ([{ siteId, siteName, totalInStock, consumableId }]) => {
-            consumableId = consumableId != null ? consumableId : defaultConsumableId
+            consumableId =
+              consumableId != null ? consumableId : defaultConsumableId
             results.push({
               // ID is needed in UI to distinquish table rows
               id: `inventoryLevelUpdate_${consumableId}_${siteId}`,
