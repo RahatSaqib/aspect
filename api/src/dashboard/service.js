@@ -1250,13 +1250,19 @@ async function actionDashboard(request) {
     }
   )
 
-  await enhanceActionDashboardWithInventoryLevels(
-    user,
-    auth,
-    dataConstraints,
-    query,
-    alertMessagesByIssue
+  const shouldAddStockLevelUpdateActions = await hasFeature(
+    user.id,
+    user.partnerId,
+    'actionDashboardInventoryLevelUpdate'
   )
+  if (shouldAddStockLevelUpdateActions) {
+    await addStockLevelUpdateActions(
+      auth,
+      dataConstraints,
+      alertMessagesByIssue,
+      query.siteId
+    )
+  }
 
   const allActionByCategory = _.flowRight(
     x => _.groupBy(x, 'issueCategory'),
@@ -1272,23 +1278,15 @@ async function actionDashboard(request) {
   return result
 }
 
-async function enhanceActionDashboardWithInventoryLevels(
-  user,
+async function addStockLevelUpdateActions(
   auth,
   dataConstraints,
-  query,
-  alertMessagesByIssue
+  actionDashboardAlertMessages,
+  siteId = null
 ) {
-  const allowInventoryUpdatesOnActionDashboard = await hasFeature(
-    user.id,
-    user.partnerId,
-    'actionDashboardInventoryLevelUpdate'
-  )
-  const userCanEditInventory =
-    allowInventoryUpdatesOnActionDashboard && canEditInventories(auth)
-  if (userCanEditInventory) {
+  if (canViewInventories(auth)) {
     const { partnerSettingsString = '{}' } = await knex('Partner as p')
-      .where('p.id', user.partnerId)
+      .where('p.id', dataConstraints.partner.id)
       .first('p.partnerSettings as partnerSettingsString')
     const partnerSettings = JSON.parse(partnerSettingsString)
     if (!partnerSettings['dashboard.action.allowStockUpdateForConsumableIds']) {
@@ -1296,7 +1294,7 @@ async function enhanceActionDashboardWithInventoryLevels(
         'dashboard.action.allowStockUpdateForConsumableIds'
       ] = await knex('Consumable as c')
         .where(function() {
-          this.whereNull('c.partnerId').orWhere('c.partnerId', user.partnerId)
+          this.whereNull('c.partnerId').orWhere('c.partnerId', dataConstraints.partner.id)
         })
         .pluck('c.id')
     }
@@ -1309,12 +1307,12 @@ async function enhanceActionDashboardWithInventoryLevels(
       .leftJoin('InventoryItem as ii', function() {
         this.on('ii.siteId', 's.id').andOn('ii.consumableId', 'c.id')
       })
-      .modify(addConstraints, dataConstraints, { site: 's' })
-      .modify((queryBuilder, query) => {
-        if (query.siteId) {
-          queryBuilder.where({ 's.id': query.siteId })
+      .modify(queryBuilder => {
+        addConstraints(queryBuilder, dataConstraints, { site: 's' })
+        if (siteId) {
+          queryBuilder.where({ 's.id': siteId })
         }
-      }, query)
+      })
       .groupBy('s.id', 'c.id')
       .distinct(
         's.id as siteId',
@@ -1325,10 +1323,10 @@ async function enhanceActionDashboardWithInventoryLevels(
 
     // set consumable id, totalIn Stock on StockInHand issues
     const inventoryItemsBySite = _.groupBy(inventoryItems, 'siteId')
-    _.forEach(alertMessagesByIssue, alertMessage => {
+    _.forEach(actionDashboardAlertMessages, alertMessage => {
       alertMessage.canEdit = false
       if (alertMessage.issueTypeExternalId === 'StockLevelUpdate') {
-        alertMessage.canEdit = userCanEditInventory
+        alertMessage.canEdit = canEditInventories(auth)
         if (alertMessage.siteId && inventoryItemsBySite[alertMessage.siteId]) {
           const [inventoryItem] = inventoryItemsBySite[alertMessage.siteId]
           alertMessage.totalInStock =
@@ -1355,13 +1353,13 @@ async function enhanceActionDashboardWithInventoryLevels(
     _.forEach(
       inventoryItemsBySite,
       ([{ siteId, siteName, totalInStock, consumableId }]) => {
-        alertMessagesByIssue.push({
+        actionDashboardAlertMessages.push({
           // ID is needed in UI to distinguish table rows
-          id: `stocklevel_${siteId}`,
+          id: `inventoryLevelUpdate_${consumableId}_${siteId}`,
           siteId,
           deviceId: null,
           resultId: null,
-          message: 'Stock Level',
+          message: 'Stock Level', // TODO: i18n this message
           siteName,
           issueId: null,
           status: totalInStock <= 0 ? 'Active' : 'OK',
@@ -1376,10 +1374,10 @@ async function enhanceActionDashboardWithInventoryLevels(
           issueCategory: 'ReagentHealth',
           issueCategoryI18nKey: 'issueCategoryReagentHealth',
           canAcknowledge: 0,
-          canEdit: userCanEditInventory,
+          canEdit: canEditInventories(auth),
           totalInStock,
           consumableId,
-          personId: user.personId,
+          personId: dataConstraints.person.id,
         })
       }
     )

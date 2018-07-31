@@ -200,9 +200,10 @@ describe('Dashboard routes', () => {
         _.forEach(
           inventoryItemsBySite,
           ([{ siteId, siteName, totalInStock, consumableId }]) => {
+            consumableId = consumableId != null ? consumableId : defaultConsumableId
             results.push({
               // ID is needed in UI to distinquish table rows
-              id: `stocklevel_${siteId}`,
+              id: `inventoryLevelUpdate_${consumableId}_${siteId}`,
               siteId,
               deviceId: null,
               resultId: null,
@@ -220,8 +221,7 @@ describe('Dashboard routes', () => {
               issueCategoryI18nKey: 'issueCategoryReagentHealth',
               canAcknowledge: 0,
               totalInStock,
-              consumableId:
-                consumableId != null ? consumableId : defaultConsumableId,
+              consumableId,
             })
           }
         )
