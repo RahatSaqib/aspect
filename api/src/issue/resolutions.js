@@ -11,40 +11,52 @@ function onResolveIssues() {
   return async (action, { messageContext: context }) => {
     context.bindActionCreators({ issueResolved })
     context.transact(async knex => {
-      const openIssuesToCheck = await findOpenIssuesToCheckForResolution(
+      await tryResolveIssue({
         knex,
-        action.issueId
-      )
-      const resolvedIssueStatusId = await issueStatusToId('Resolved')
-      const resolvedIssueEventStatusId = await issueEventStatusToId('Resolved')
-      if (_.isEmpty(openIssuesToCheck)) {
-        return Promise.resolve()
-      }
-      return Promise.each(openIssuesToCheck, async issueResolutionTrigger => {
-        const shouldResolve = await conditionsMet(
-          knex,
-          issueResolutionTrigger,
-          issueResolutionTrigger.conditions
-        )
-        if (shouldResolve) {
-          const now = new Date()
-          await knex('Issue')
-            .where({ id: issueResolutionTrigger.id })
-            .update({
-              issueStatusId: resolvedIssueStatusId,
-              updatedOn: now,
-            })
-          context.issueResolved(issueResolutionTrigger.id)
-          await knex('IssueEvent').insert({
-            issueId: issueResolutionTrigger.id,
-            issueEventStatusId: resolvedIssueEventStatusId,
-            data: JSON.stringify(action),
-            createdOn: now,
-          })
-        }
+        issueId: action.issueId,
+        dispatch: context.issueResolved,
+        data: action,
       })
     })
   }
+}
+
+async function tryResolveIssue({ knex, issueId, dispatch, data }) {
+  const openIssuesToCheck = await findOpenIssuesToCheckForResolution(
+    knex,
+    issueId
+  )
+  const resolvedIssueStatusId = await issueStatusToId('Resolved')
+  const resolvedIssueEventStatusId = await issueEventStatusToId('Resolved')
+  if (_.isEmpty(openIssuesToCheck)) {
+    return Promise.resolve()
+  }
+  return Promise.each(openIssuesToCheck, async issueResolutionTrigger => {
+    const shouldResolve = await conditionsMet(
+      knex,
+      issueResolutionTrigger,
+      issueResolutionTrigger.conditions
+    )
+    if (shouldResolve) {
+      const now = new Date()
+      await knex('Issue')
+        .where({ id: issueResolutionTrigger.id })
+        .update({
+          issueStatusId: resolvedIssueStatusId,
+          updatedOn: now,
+        })
+
+      // dispatch an action if passed in (i.e. 'dispatch' is context.issueResolved)
+      if (dispatch) dispatch(issueResolutionTrigger.id)
+
+      await knex('IssueEvent').insert({
+        issueId: issueResolutionTrigger.id,
+        issueEventStatusId: resolvedIssueEventStatusId,
+        data: JSON.stringify(data),
+        createdOn: now,
+      })
+    }
+  })
 }
 
 async function findOpenIssuesToCheckForResolution(knex, issueId) {
@@ -95,4 +107,5 @@ async function findOpenIssuesToCheckForResolution(knex, issueId) {
 
 module.exports = {
   onResolveIssues,
+  tryResolveIssue,
 }

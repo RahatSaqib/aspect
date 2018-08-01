@@ -17,6 +17,13 @@ const {
 const { findConsumableReason } = require('../consumable/consumableService')
 const { getUser } = require('../auth/service')
 const { getSite } = require('../site/service')
+const { issueTypeToId } = require('../shared/dictionary')
+const { tryResolveIssue } = require('../issue/resolutions')
+const { inventoryStockout, inventoryStockExpiring } = require('./actions')
+const {
+  totalDaysUnexpiredInventoryItemsLast,
+  totalWastedInventoryItems,
+} = require('../fact/service')
 
 const INVENTORY_ITEM_SELECT_LIST_FIELDS = [
   'ii.id',
@@ -978,9 +985,149 @@ async function changeInventoryQuantity({
       createdOn: now,
       createdBy: userId,
     })
+
+    await checkOpenedStockIssues({
+      knex,
+      siteId,
+      consumableId,
+      now,
+    })
   })
 
   return inventoryItemId
+}
+
+async function checkOpenedStockIssues({ knex, siteId, consumableId, now }) {
+  // same query as in onFactCheckInventoryStock() in /src/inventory/service.js, but with additional 'where' for ii.siteId and ii.consumableId
+  const [site] = await knex('InventoryItem as ii')
+    .innerJoin('Site as s', 'ii.siteId', 's.id')
+    .innerJoin('Partner as p', 's.partnerId', 'p.id')
+    .where('ii.siteId', siteId)
+    .where('ii.consumableId', consumableId)
+    .where(function() {
+      this.whereNull('ii.expiresOn') // if is null
+        .orWhere('ii.expiresOn', '>', now) // or unexpired
+    })
+    .groupBy('ii.siteId', 'ii.consumableId')
+    .select(
+      'ii.siteId',
+      'ii.consumableId',
+      knex.raw('MAX(p.dueDaysInventoryStockout) as dueDaysInventoryStockout'),
+      knex.raw(
+        'MAX(p.dueDaysInventoryStockExpiring) as dueDaysInventoryStockExpiring'
+      )
+    )
+  // notice that 'rate' field in table FactInventoryConsumptionRate stores total number of
+  // tests during corresponding 'days'. So for actual rate you should do rate/days, but
+  // for days=1 use 'rate' as-is
+  const { rate: dailyRate } = (await knex('FactInventoryConsumptionRate')
+    .where({ siteId, consumableId, days: 1 })
+    .first('rate')) || { rate: 0 }
+
+  if (dailyRate > 0) {
+    // try to resolve Stockout/StockExpiring issues, if any opened for this site/consumable
+    const props = {
+      knex,
+      siteId,
+      consumableId,
+      dailyRate,
+    }
+
+    await checkStockoutIssues({
+      issueType: 'InventoryStockout',
+      dueDays: site.dueDaysInventoryStockout,
+      ...props,
+    })
+
+    await checkStockExpiringIssues({
+      issueType: 'InventoryStockExpiring',
+      dueDays: site.dueDaysInventoryStockExpiring,
+      ...props,
+    })
+  }
+}
+
+async function checkStockoutIssues({
+  knex,
+  siteId,
+  consumableId,
+  dailyRate,
+  dueDays,
+  issueType,
+}) {
+  // get 'days' - same func as in auditInventoryStockout() in fact/service.js
+  const days = await totalDaysUnexpiredInventoryItemsLast({
+    knex,
+    siteId,
+    consumableId,
+    dailyRate,
+    dueDays,
+  })
+
+  // notice that we do not check "if (days < dueDays)" as in auditInventoryStockout()
+  // because we need 'days' for this action creator only
+  const action = inventoryStockout(siteId, consumableId, days)
+
+  await handleResolution({
+    knex,
+    siteId,
+    issueType,
+    action,
+  })
+}
+
+async function checkStockExpiringIssues({
+  knex,
+  siteId,
+  consumableId,
+  dailyRate,
+  dueDays,
+  issueType,
+}) {
+  const totalWasted = await totalWastedInventoryItems({
+    knex,
+    siteId,
+    consumableId,
+    dailyRate,
+  })
+
+  // notice that we do not check "if (totalWasted > 0)" as in auditInventoryStockExpiring()
+  // because we need 'totalWasted' for this action creator only
+  const action = inventoryStockExpiring(
+    siteId,
+    consumableId,
+    dueDays,
+    totalWasted
+  )
+
+  await handleResolution({
+    knex,
+    siteId,
+    issueType,
+    action,
+  })
+}
+
+async function handleResolution({ knex, siteId, issueType, action }) {
+  // get all issues of this type for current siteId
+  const issueTypeId = await issueTypeToId(issueType)
+  const issues = await knex('Issue')
+    .where({ siteId, issueTypeId })
+    .select('id')
+
+  // run same func as in /issue/resolution.js to try to resolve issue after changing Stock Level on Reagent dashboard
+  await Promise.all(
+    _.map(issues, async ({ id: issueId }) => {
+      await tryResolveIssue({
+        knex,
+        issueId,
+        // we do not use MQ context here because need all processing done in this thread,
+        // and because 'issueResolved' action creator (type = ISSUE_RESOLVED) is not in use now
+        // // dispatch: context.issueResolved,
+        data: action,
+      })
+    })
+  )
 }
 
 async function logInventoryChange({
