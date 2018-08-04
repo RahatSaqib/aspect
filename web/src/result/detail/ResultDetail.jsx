@@ -86,13 +86,13 @@ const messages = defineMessages({
     id: 'pages.ResultDetail.noLogsHelp',
     defaultMessage: 'No log entries found for this result',
   },
-  attachments: {
-    id: 'pages.ResultDetail.attachments',
-    defaultMessage: 'Attachments',
+  images: {
+    id: 'pages.ResultDetail.images',
+    defaultMessage: 'Images',
   },
-  noFilesHelp: {
-    id: 'pages.ResultDetail.noFilesHelp',
-    defaultMessage: 'No files attached for this result',
+  noImagesHelp: {
+    id: 'pages.ResultDetail.noImagesHelp',
+    defaultMessage: 'No images attached for this result',
   },
   totalFilesLabel: {
     id: 'pages.ResultDetail.totalFilesLabel',
@@ -395,7 +395,7 @@ export class ResultDetail extends PureComponent {
     )
   }
 
-  renderAttachmentSection() {
+  renderImagesSection() {
     const { intl: { formatMessage }, result, token } = this.props
 
     const files = result.get('files') || Immutable.List()
@@ -420,10 +420,8 @@ export class ResultDetail extends PureComponent {
       <ExpansionPanel disabled={totalFiles === 0}>
         <ExpansionPanelHeader
           // Left side - labels for expanded and collapsed modes
-          label={formatMessage(messages.attachments)}
-          expandedLabel={`${formatMessage(
-            messages.attachments
-          )} (${totalFiles})`}
+          label={formatMessage(messages.images)}
+          expandedLabel={`${formatMessage(messages.images)} (${totalFiles})`}
           // Right side - text only for collapsed mode when list is not empty
           collapsedChildren={
             totalFiles > 0 && (
@@ -436,7 +434,7 @@ export class ResultDetail extends PureComponent {
           {/* text to show when list is empty */}
           {totalFiles === 0 && (
             <div className={cssClasses('HelpBlock')}>
-              {formatMessage(messages.noFilesHelp)}
+              {formatMessage(messages.noImagesHelp)}
             </div>
           )}
         </ExpansionPanelHeader>
@@ -504,6 +502,10 @@ export class ResultDetail extends PureComponent {
         >
           {/* Render lower-level sections in assay schema in cards */}
           {this.renderFormData()}
+
+          {/* Render images attachment */}
+          {this.renderImagesSection()}
+
           <ExpansionPanel className={cssClasses('FieldsContainer')}>
             <ExpansionPanelHeader
               label={intl.formatMessage(messages.fieldFollowup)}
@@ -542,9 +544,6 @@ export class ResultDetail extends PureComponent {
           {this.renderLowerLevelSchemaSections()}
           {/* Render Raw Result sections */}
           {this.renderRawResult()}
-
-          {/* Render files attachment */}
-          {this.renderAttachmentSection()}
         </DetailPanel>
       </div>
     )
