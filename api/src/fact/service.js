@@ -18,12 +18,6 @@ const {
 } = require('../device/actions')
 
 const startOfMonth = require('date-fns/start_of_month')
-const endOfMonth = require('date-fns/end_of_month')
-const subMonths = require('date-fns/sub_months')
-const startOfQuarter = require('date-fns/start_of_quarter')
-const endOfQuarter = require('date-fns/end_of_quarter')
-const subQuarters = require('date-fns/sub_quarters')
-const startOfYear = require('date-fns/start_of_year')
 
 const daysToCalculate = [1, 7, 30, 60, 90, 365, 9999]
 const MIN_RESULTS_TO_TRIGGER_DATA_CATEGORY_LOW = 10
