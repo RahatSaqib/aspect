@@ -1,12 +1,10 @@
 module.exports = require('../utils').seed(seed)
 
-const { seedDataCategory } = require('../dataCategoryLow')
 const {
   rowsAsObject,
   getDefaultMessageTypes,
   seedIssueEventTriggersForPartner,
 } = require('../utils')
-
 const { seedUnknownErrorsIssue } = require('../seedUnknownErrorsIssue')
 
 async function seed(knex) {
@@ -185,7 +183,6 @@ async function seed(knex) {
     .update('level', 1)
     .where('name', 'RO Reagent Health')
 
-  await seedDataCategory(knex, 'Myanmar')
   await seedUnknownErrorsIssue(knex, 'Myanmar', 'myanmar_admin')
 
   await seedIssueEventTriggersForPartner(knex, partnerId, {
