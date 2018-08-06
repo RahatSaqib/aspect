@@ -500,11 +500,11 @@ export class ResultDetail extends PureComponent {
           schema={screenSchema}
           className={cssClasses('FieldsContainer')}
         >
-          {/* Render lower-level sections in assay schema in cards */}
-          {this.renderFormData()}
-
           {/* Render images attachment */}
           {this.renderImagesSection()}
+
+          {/* Render lower-level sections in assay schema in cards */}
+          {this.renderFormData()}
 
           <ExpansionPanel className={cssClasses('FieldsContainer')}>
             <ExpansionPanelHeader
