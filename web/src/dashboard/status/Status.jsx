@@ -22,6 +22,7 @@ const enhance = compose(
   connect(
     state => ({
       userName: state.user.jwt.name,
+      countryIsoAlpha2Code: state.user.culture.substring(3, 5),
     }),
     bindActionCreators.bind(null, {
       showAcknowledgement,
@@ -43,7 +44,14 @@ const enhance = compose(
   withState('marginBottom', 'setMarginBottom', 0)
 )
 
-const Status = ({ history, location, intl, marginBottom, setMarginBottom }) => (
+const Status = ({
+  history,
+  location,
+  intl,
+  marginBottom,
+  setMarginBottom,
+  countryIsoAlpha2Code,
+}) => (
   <div className={cssClasses('Container')} style={{ marginBottom }}>
     <Helmet title="Status" />
     <div className={cssClasses('FiltersGroup')}>
@@ -76,6 +84,7 @@ const Status = ({ history, location, intl, marginBottom, setMarginBottom }) => (
 
     <ResultStatus
       intl={intl}
+      countryIsoAlpha2Code={countryIsoAlpha2Code}
       className={cssClasses('Section--withStatus')}
       title={intl.formatMessage(messages.clinicalTitle)}
     />
@@ -83,6 +92,7 @@ const Status = ({ history, location, intl, marginBottom, setMarginBottom }) => (
     <InventoryStatus
       history={history}
       intl={intl}
+      countryIsoAlpha2Code={countryIsoAlpha2Code}
       className={cssClasses('Section--withStatus')}
       title={intl.formatMessage(messages.consumableTitle)}
     />
@@ -90,6 +100,7 @@ const Status = ({ history, location, intl, marginBottom, setMarginBottom }) => (
     <DeviceStatus
       history={history}
       intl={intl}
+      countryIsoAlpha2Code={countryIsoAlpha2Code}
       className={cssClasses('Section--withStatus')}
       title={intl.formatMessage(messages.devicesTitle)}
     />
@@ -97,6 +108,7 @@ const Status = ({ history, location, intl, marginBottom, setMarginBottom }) => (
     <SiteStatus
       history={history}
       intl={intl}
+      countryIsoAlpha2Code={countryIsoAlpha2Code}
       className={cssClasses('Section--withStatus')}
       title={intl.formatMessage(messages.sitesTitle)}
     />

@@ -12,7 +12,9 @@ const enhance = _.identity
 
 const Rate = ({ intl, it, messageId }) => (
   <span>
-    {intl.formatNumber(it.count / it.total, { style: 'percent' })}
+    {it.total === 0
+      ? intl.formatMessage(messages.noTests)
+      : intl.formatNumber(it.count / it.total, { style: 'percent' })}
     <span className={cssClasses('Rate__hover')}>
       {intl.formatMessage(messageId, it)}
     </span>

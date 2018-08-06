@@ -3,9 +3,7 @@ module.exports = require('../utils').seed(seed)
 const config = require('../../src/config')
 const _ = require('lodash')
 const bcrypt = require('bcrypt')
-const permissions = require('./fixtures/permissions.json')
 const geography = require('./fixtures/geography.json')
-const features = require('./fixtures/features.json')
 const {
   allAssayTypeToId,
   allDeviceTypeCategoryToId,
@@ -824,31 +822,6 @@ async function seed(knex) {
     quantity: 1,
   })
 
-  // Create permissions
-  const modules = {}
-
-  await Promise.all(
-    _.map(permissions.modules, module => {
-      const moduleData = {}
-      modules[module.name] = moduleData
-      _.map(module.activities, async activity => {
-        const [permissionId] = await knex('Permission').insert({
-          module: module.name,
-          activity,
-        })
-        moduleData[activity] = permissionId
-      })
-    })
-  )
-
-  const featureModules = []
-  await Promise.all(
-    _.map(features.modules, async feature => {
-      const [featureId] = await knex('Feature').insert({ module: feature.name })
-      featureModules.push(featureId)
-    })
-  )
-
   // Create geographic hierarchy
   const countries = {}
   const geographies = []
@@ -1412,79 +1385,7 @@ async function seed(knex) {
   })
 
   // Issues
-  const { id: issueStatusSeverityIdLow } = await knex('IssueStatusSeverity')
-    .where('externalId', 'Low')
-    .first()
-
-  const { id: issueStatusSeverityIdMedium } = await knex('IssueStatusSeverity')
-    .where('externalId', 'Medium')
-    .first()
-
-  const { id: issueStatusSeverityIdHigh } = await knex('IssueStatusSeverity')
-    .where('externalId', 'High')
-    .first()
-
-  await knex('IssueStatus').insert([
-    {
-      name: 'Inactive',
-      externalId: 'Inactive',
-      i18nKey: 'issueStatusInactive',
-      issueStatusSeverityId: issueStatusSeverityIdLow,
-      sortOrder: 0,
-    },
-    {
-      name: 'Active',
-      externalId: 'Active',
-      i18nKey: 'issueStatusActive',
-      issueStatusSeverityId: issueStatusSeverityIdHigh,
-      sortOrder: 0,
-    },
-    {
-      name: 'Acknowledged',
-      externalId: 'Acknowledged',
-      i18nKey: 'issueStatusAcknowledged',
-      issueStatusSeverityId: issueStatusSeverityIdMedium,
-      sortOrder: 0,
-    },
-    {
-      name: 'OK',
-      externalId: 'OK',
-      i18nKey: 'issueStatusOK',
-      issueStatusSeverityId: issueStatusSeverityIdLow,
-      sortOrder: 0,
-    },
-    {
-      name: 'Due Soon',
-      externalId: 'DueSoon',
-      i18nKey: 'issueStatusDueSoon',
-      issueStatusSeverityId: issueStatusSeverityIdMedium,
-      sortOrder: 0,
-    },
-    {
-      name: 'Due Now',
-      externalId: 'DueNow',
-      i18nKey: 'issueStatusDueNow',
-      issueStatusSeverityId: issueStatusSeverityIdHigh,
-      sortOrder: 0,
-    },
-    {
-      name: 'Overdue',
-      externalId: 'Overdue',
-      i18nKey: 'issueStatusOverdue',
-      issueStatusSeverityId: issueStatusSeverityIdHigh,
-      sortOrder: 0,
-    },
-    {
-      name: 'Resolved',
-      externalId: 'Resolved',
-      i18nKey: 'issueStatusResolved',
-      issueStatusSeverityId: issueStatusSeverityIdLow,
-      sortOrder: 0,
-    },
-  ])
-
   const issueCategories = await allIssueCategoryToId()
-
   await knex('IssueType').insert([
     {
       name: 'Device Offline',

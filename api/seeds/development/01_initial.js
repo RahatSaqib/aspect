@@ -2,11 +2,14 @@ module.exports = require('../utils').seed(seed)
 
 const config = require('../../src/config')
 const {
+  getPermissionModules,
+  assignAllFeaturesToJobFunctionIds,
+} = require('../utils')
+const {
   allAssayTypeToId,
   allDeviceStatusToId,
   allDeviceTypeCategoryToId,
   allIssueCategoryToId,
-  allIssueStatusSeverityToId,
   allMessageSeverityToId,
   allPartnerTypeToId,
   allResultCategoryToId,
@@ -19,11 +22,9 @@ const {
 const _ = require('lodash')
 const bcrypt = require('bcrypt')
 const { randomToken } = require('../../src/deviceApi/apiKey')
-const permissions = require('./fixtures/permissions.json')
 const geography = require('./fixtures/geography.json')
 const patients = require('./fixtures/patients.json')
 const dashboardWidget = require('./fixtures/dashboardWidget.json')
-const features = require('./fixtures/features.json')
 const { errorCodes } = require('./fixtures/errorCodes.js')
 const {
   addMilliseconds,
@@ -39,11 +40,13 @@ const millisInNormalYear = 1000 * 60 * 60 * 24 * 365
 const resultTimeFrameInDays = 365
 const deviceNumber = 50
 const routerNumber = 20
-const resultMtbNumber = 1000
-const resultEbolaNumber = 500
-const resultHivVlNumber = 500
-const resultHcvNumber = 500
+const resultMultiplier = process.env['seeds.resultMultiplier'] || 100
+const resultMtbNumber = 1 * resultMultiplier
+const resultEbolaNumber = 0.5 * resultMultiplier
+const resultHivVlNumber = 0.5 * resultMultiplier
+const resultHcvNumber = 0.5 * resultMultiplier
 const now = new Date()
+const patientNumber = patients.length - 1
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 
@@ -1574,31 +1577,6 @@ async function seed(knex) {
     Acknowledged: acknowledged,
   } = await allResultWorkflowStatusToId()
 
-  // Create permissions
-  const modules = {}
-
-  await Promise.all(
-    _.map(permissions.modules, module => {
-      const moduleData = {}
-      modules[module.name] = moduleData
-      _.map(module.activities, async activity => {
-        const [permissionId] = await knex('Permission').insert({
-          module: module.name,
-          activity,
-        })
-        moduleData[activity] = permissionId
-      })
-    })
-  )
-
-  const featureModules = []
-  await Promise.all(
-    _.map(features.modules, async feature => {
-      const [featureId] = await knex('Feature').insert({ module: feature.name })
-      featureModules.push(featureId)
-    })
-  )
-
   // Create geographic hierarchy
   const countries = {}
   const geographies = []
@@ -2182,7 +2160,7 @@ async function seed(knex) {
         moduleName: 'Module A',
         moduleSerial: `M-1234-${i % 4}`,
         researchId: `R-ID-${i}`,
-        patientData: JSON.stringify(patients[_.random(99)]),
+        patientData: JSON.stringify(patients[_.random(patientNumber)]),
         senderVersion: '4.6b',
         senderOperator: 'Marsha',
         notes: 'This is a test... result',
@@ -2266,7 +2244,7 @@ async function seed(knex) {
               moduleName: 'Module A',
               moduleSerial: `M-1234-${i % 4}`,
               researchId: `R-ID-${i}`,
-              patientData: patients[_.random(99)],
+              patientData: patients[_.random(patientNumber)],
               senderVersion: '4.6b',
               senderOperator: 'Marsha',
               notes: 'This is a test... result',
@@ -2412,7 +2390,7 @@ async function seed(knex) {
               moduleName: 'Module A',
               moduleSerial: `M-1234-${i % 4}`,
               researchId: `R-ID-${i}`,
-              patientData: JSON.stringify(patients[_.random(99)]),
+              patientData: JSON.stringify(patients[_.random(patientNumber)]),
               senderVersion: '4.7a',
               senderOperator: 'Marsha',
               notes: 'This is an Ebola test result',
@@ -2573,7 +2551,7 @@ async function seed(knex) {
               moduleName: 'Module A',
               moduleSerial: `M-1234-${i % 4}`,
               researchId: `R-ID-${i}`,
-              patientData: JSON.stringify(patients[_.random(99)]),
+              patientData: JSON.stringify(patients[_.random(patientNumber)]),
               senderVersion: '4.4',
               senderOperator: 'Marsha',
               notes: 'This is an HIV test result',
@@ -2699,7 +2677,7 @@ async function seed(knex) {
               moduleName: 'Module A',
               moduleSerial: `M-1234-${i % 4}`,
               researchId: `R-ID-${i}`,
-              patientData: JSON.stringify(patients[_.random(99)]),
+              patientData: JSON.stringify(patients[_.random(patientNumber)]),
               senderVersion: '4.7b',
               senderOperator: 'Gene Hackman',
               notes: 'This is an HCV test result',
@@ -2836,7 +2814,7 @@ async function seed(knex) {
               moduleName: 'Module A',
               moduleSerial: `M-1234-${i % 4}`,
               researchId: `R-ID-${i}`,
-              patientData: JSON.stringify(patients[_.random(99)]),
+              patientData: JSON.stringify(patients[_.random(patientNumber)]),
               senderVersion: '4.4',
               senderOperator: 'Aaron',
               notes: 'This is an HIV test result',
@@ -2973,7 +2951,7 @@ async function seed(knex) {
               moduleName: 'Module A',
               moduleSerial: `M-1234-${i % 4}`,
               researchId: `R-ID-${i}`,
-              patientData: JSON.stringify(patients[_.random(99)]),
+              patientData: JSON.stringify(patients[_.random(patientNumber)]),
               senderVersion: '4.4',
               senderOperator: 'Aaron',
               notes: 'This is an HCV test result',
@@ -3023,30 +3001,15 @@ async function seed(knex) {
   })
 
   // assign features to JobFeatures
-  await Promise.all(
-    _.map(featureModules, async featureId => {
-      await knex('JobFunctionFeature').insert([
-        {
-          jobFunctionId: jobFunctionIdAdmin,
-          featureId,
-        },
-        {
-          jobFunctionId: jobFunctionIdManager,
-          featureId,
-        },
-        {
-          jobFunctionId: jobFunctionIdPartnerTwo,
-          featureId,
-        },
-        {
-          jobFunctionId: jobFunctionIdClinician,
-          featureId,
-        },
-      ])
-    })
-  )
+  await assignAllFeaturesToJobFunctionIds(knex, [
+    jobFunctionIdAdmin,
+    jobFunctionIdManager,
+    jobFunctionIdPartnerTwo,
+    jobFunctionIdClinician,
+  ])
 
   // assign permissions to job functions
+  const modules = await getPermissionModules(knex)
   await knex('JobFunctionPermission').insert([
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.demo.admin },
     {
@@ -3794,71 +3757,6 @@ async function seed(knex) {
   })
 
   // Issues
-  const {
-    Low: issueStatusSeverityIdLow,
-    Medium: issueStatusSeverityIdMedium,
-    High: issueStatusSeverityIdHigh,
-  } = await allIssueStatusSeverityToId()
-
-  await knex('IssueStatus').insert([
-    {
-      name: 'Inactive',
-      externalId: 'Inactive',
-      i18nKey: 'issueStatusInactive',
-      issueStatusSeverityId: issueStatusSeverityIdLow,
-      sortOrder: 5,
-    },
-    {
-      name: 'Active',
-      externalId: 'Active',
-      i18nKey: 'issueStatusActive',
-      issueStatusSeverityId: issueStatusSeverityIdHigh,
-      sortOrder: 0,
-    },
-    {
-      name: 'Acknowledged',
-      externalId: 'Acknowledged',
-      i18nKey: 'issueStatusAcknowledged',
-      issueStatusSeverityId: issueStatusSeverityIdMedium,
-      sortOrder: 4,
-    },
-    {
-      name: 'OK',
-      externalId: 'OK',
-      i18nKey: 'issueStatusOK',
-      issueStatusSeverityId: issueStatusSeverityIdLow,
-      sortOrder: 5,
-    },
-    {
-      name: 'Due Soon',
-      externalId: 'DueSoon',
-      i18nKey: 'issueStatusDueSoon',
-      issueStatusSeverityId: issueStatusSeverityIdMedium,
-      sortOrder: 3,
-    },
-    {
-      name: 'Due Now',
-      externalId: 'DueNow',
-      i18nKey: 'issueStatusDueNow',
-      issueStatusSeverityId: issueStatusSeverityIdHigh,
-      sortOrder: 2,
-    },
-    {
-      name: 'Overdue',
-      externalId: 'Overdue',
-      i18nKey: 'issueStatusOverdue',
-      issueStatusSeverityId: issueStatusSeverityIdHigh,
-      sortOrder: 1,
-    },
-    {
-      name: 'Resolved',
-      externalId: 'Resolved',
-      i18nKey: 'issueStatusResolved',
-      issueStatusSeverityId: issueStatusSeverityIdLow,
-      sortOrder: 5,
-    },
-  ])
-
   const issueCategories = await allIssueCategoryToId()
   await knex('IssueType').insert([
     {

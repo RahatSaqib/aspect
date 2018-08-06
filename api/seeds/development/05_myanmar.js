@@ -17,6 +17,7 @@ const {
   seedIssueEventTriggersForPartner,
 } = require('../utils')
 const {
+  allFeatureToId,
   allResultCategoryToId,
   deviceStatusToId,
   partnerTypeToId,
@@ -96,16 +97,6 @@ async function seed(knex) {
 
   const modules = await getPermissionModules(knex)
 
-  await knex('Feature').insert({ module: 'targetDashboard' })
-  await knex('Feature').insert({ module: 'actionDashboard' })
-  await knex('Feature').insert({ module: 'reportDashboard' })
-  await knex('Feature').insert({ module: 'siteFilterDashboard' })
-
-  const featureModules = await knex('Feature').reduce((memo, row) => {
-    memo[row.module] = row.id
-    return memo
-  }, {})
-
   const [myanmarCountry] = await knex('Country as c')
     .where({ 'c.a3': 'MMR' })
     .select('c.id', 'c.culture', 'c.timezone')
@@ -168,6 +159,7 @@ async function seed(knex) {
     partnerId,
   })
 
+  const featureModules = await allFeatureToId()
   await knex('JobFunctionFeature').insert([
     // Admin Permissions
     { jobFunctionId: jobFunctionIdAdmin, featureId: featureModules.site },
