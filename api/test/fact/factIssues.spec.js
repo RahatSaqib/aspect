@@ -104,8 +104,8 @@ describe('Fact based issues', () => {
       const deviceNoResultsDate = subDays(now, maxDaysDeviceNoResults + 1)
       const numberOfDaysOffline = numberOfDays(deviceOfflineDate)
       const numberOfDaysNoResults = numberOfDays(deviceNoResultsDate)
-      assert.equal(numberOfDaysOffline, `${maxDaysDeviceOffline + 1} days`)
-      assert.equal(numberOfDaysNoResults, `${maxDaysDeviceNoResults + 1} days`)
+      assert.equal(numberOfDaysOffline, `${maxDaysDeviceOffline + 2} days`)
+      assert.equal(numberOfDaysNoResults, `${maxDaysDeviceNoResults + 2} days`)
       await knex('Device as d')
         .where('d.id', newDevice.id)
         .update({
