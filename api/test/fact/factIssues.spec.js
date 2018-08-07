@@ -221,7 +221,7 @@ describe('Fact based issues', () => {
       expect(issues).to.containSubset([
         {
           issueType: 'DeviceOffline',
-          deviceId: deviceId,
+          deviceId,
           issueStatus: 'Acknowledged',
         },
       ])
