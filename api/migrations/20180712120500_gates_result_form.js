@@ -25,6 +25,10 @@ async function up(knex) {
     result.specificType('formData', 'JSON')
   })
 
+  await knex.schema.table('Person', person => {
+    person.string('dateFormat')
+  })
+
   await knex.raw('SET foreign_key_checks = 1')
 }
 
@@ -35,6 +39,10 @@ async function down(knex) {
 
   await knex.schema.table('Result', result => {
     result.dropColumn('formData')
+  })
+
+  await knex.schema.table('Person', person => {
+    person.dropColumn('dateFormat')
   })
 
   await knex.raw('SET foreign_key_checks = 1')

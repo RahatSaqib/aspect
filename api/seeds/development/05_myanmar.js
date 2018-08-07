@@ -119,6 +119,7 @@ async function seed(knex) {
   }, {})
 
   // Permissions for Myanmar Admin
+  const dateFormat = 'D/M/YYYY'
   const [adminPersonId] = await knex('Person').insert(
     Object.assign(
       {
@@ -129,6 +130,7 @@ async function seed(knex) {
         geographyId: myanmarGeographyId,
         culture: myanmarCountry.culture,
         timezone: myanmarCountry.timezone,
+        dateFormat,
       },
       auditFields
     )
@@ -324,6 +326,7 @@ async function seed(knex) {
             geographyId: myanmarGeographyId,
             culture: myanmarCountry.culture,
             timezone: myanmarCountry.timezone,
+            dateFormat,
           },
           auditFields
         )
@@ -625,6 +628,7 @@ async function seed(knex) {
             geographyId,
             culture: myanmarCountry.culture,
             timezone: myanmarCountry.timezone,
+            dateFormat,
           },
           auditFields
         )
