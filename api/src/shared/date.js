@@ -1,5 +1,12 @@
 const _ = require('lodash')
-const { parse: parseDate, isValid: isValidDate } = require('date-fns')
+const dateFns = require('date-fns')
+
+const { DateTimeFormat: intlFormat } = Intl
+const shortNumericDateFormat = {
+  year: 'numeric',
+  month: 'numeric',
+  day: 'numeric',
+}
 
 function getDateOrDefault(object, propertyPath, defaultValue) {
   const date = _.get(object, propertyPath)
@@ -10,11 +17,27 @@ function parseDateOrDefault(date, defaultValue = null) {
   if (date == null || date === '') {
     return defaultValue
   }
-  const parsed = parseDate(date)
-  return isValidDate(parsed) ? parsed : defaultValue
+  const parsed = dateFns.parse(date)
+  return dateFns.isValid(parsed) ? parsed : defaultValue
+}
+
+function formatDate(date, { culture, dateFormat } = {}) {
+  if (date == null || date === '') {
+    return ''
+  }
+  if (dateFormat != null) {
+    return dateFns.format(date, dateFormat)
+  } else if (
+    culture != null &&
+    intlFormat.supportedLocalesOf(culture).length > 0
+  ) {
+    return intlFormat(culture).format(date, shortNumericDateFormat)
+  }
+  return dateFns.format(date, 'YYYY-MM-DD')
 }
 
 module.exports = {
   getDateOrDefault,
   parseDateOrDefault,
+  formatDate,
 }
