@@ -33,11 +33,15 @@ function addDataSourceToQuery(qb, aliases) {
       .leftJoin('Site as s', `${message}.siteId`, 's.id')
       .leftJoin('Device as d', `${message}.deviceId`, 'd.id')
       .leftJoin('Result as r', `${message}.resultId`, 'r.id')
+      .leftJoin('Geography as pg', 'p.geographyId', 'pg.id')
+      .leftJoin('Country as pc', 'pg.countryId', 'pc.id')
       .select(
         's.name as siteName',
         's.shortName as siteShortName',
         'p.name as personName',
         'p.cell as personCell',
+        'p.dateFormat as personDateFormat',
+        'pc.culture as personCulture',
         'd.lastPingOn as deviceLastPingOn',
         'd.lastSeenOn as deviceLastSeenOn',
         'r.resultData',
@@ -116,6 +120,10 @@ function getBaseDataSource(data) {
     },
     notification: {
       type: d.notificationTypeName,
+    },
+    options: {
+      culture: d.personCulture,
+      dateFormat: d.personDateFormat,
     },
   }
 }
