@@ -2,6 +2,7 @@ const _ = require('lodash')
 const dateFns = require('date-fns')
 
 const { DateTimeFormat: intlFormat } = require('intl')
+
 const shortNumericDateFormat = {
   year: 'numeric',
   month: 'numeric',
@@ -21,18 +22,20 @@ function parseDateOrDefault(date, defaultValue = null) {
   return dateFns.isValid(parsed) ? parsed : defaultValue
 }
 
-function formatDate(date, { culture, dateFormat } = {}) {
-  if (date == null || date === '') {
-    return ''
+function formatDate(date, { culture, dateFormat, defaultValue = null } = {}) {
+  date = parseDateOrDefault(date)
+  if (date == null) {
+    return defaultValue
   }
+
   if (dateFormat != null) {
     return dateFns.format(date, dateFormat)
-  } else if (
-    culture != null &&
-    intlFormat.supportedLocalesOf(culture).length > 0
-  ) {
+  }
+
+  if (culture != null && intlFormat.supportedLocalesOf(culture).length > 0) {
     return intlFormat(culture).format(date, shortNumericDateFormat)
   }
+
   return dateFns.format(date, 'YYYY-MM-DD')
 }
 

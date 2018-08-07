@@ -1,12 +1,18 @@
 const { knex } = require('../db')
 const { distanceInWordsStrict } = require('date-fns')
-const { parseDateOrDefault } = require('../shared/date')
+const {
+  parseDateOrDefault,
+  formatDate: formatDateOrDefault,
+} = require('../shared/date')
 const handlebars = require('handlebars')
 
 handlebars.registerHelper('numberOfDays', numberOfDays)
 handlebars.registerHelper('isoDate', isoDate)
+handlebars.registerHelper('formatDate', formatDate)
 
 // See unit tests for examples
+// Can include options in data to process, including
+//   dateFormat, culture
 function processUsingHandlebarsSyntax(inputString, data = {}) {
   const template = handlebars.compile(inputString)
   return template(data)
@@ -146,11 +152,12 @@ function numberOfDays(date) {
 }
 
 function isoDate(date) {
-  if (date == null || date === '') {
-    return null
-  }
   const parsed = parseDateOrDefault(date)
   return parsed == null ? null : parsed.toISOString()
+}
+
+function formatDate(date) {
+  return formatDateOrDefault(date, this.options)
 }
 
 module.exports = {
@@ -161,4 +168,5 @@ module.exports = {
   processDynamicMessage,
   numberOfDays,
   isoDate,
+  formatDate,
 }
