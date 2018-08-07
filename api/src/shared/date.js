@@ -1,7 +1,7 @@
 const _ = require('lodash')
 const dateFns = require('date-fns')
 
-const { DateTimeFormat: intlFormat } = Intl
+const { DateTimeFormat: intlFormat } = require('intl')
 const shortNumericDateFormat = {
   year: 'numeric',
   month: 'numeric',
