@@ -47,6 +47,7 @@ async function up(knex) {
   }
 
   await knex.schema.table('Consumable', consumable => {
+    consumable.dropForeign('partnerId')
     consumable.dropColumns('partnerId', 'autoInclude')
   })
 
