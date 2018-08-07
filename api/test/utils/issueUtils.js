@@ -54,6 +54,7 @@ async function getSite(knex, { countryAbbreviation, partnerId }) {
       'regionalOfficerJob.personId',
       'regionalOfficer.id'
     )
+    .join('InventoryItem as ii', 's.id', 'ii.siteId')
     .where('c.abbreviation', countryAbbreviation)
     .andWhere(function() {
       this.where('s.partnerId', partnerId)
