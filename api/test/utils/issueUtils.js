@@ -17,7 +17,10 @@ async function getPartner(knex, partnerName) {
     .first()
 }
 
-async function getSite(knex, { countryAbbreviation, partnerId }) {
+async function getSite(
+  knex,
+  { countryAbbreviation, partnerId, requireInventory = false }
+) {
   ensureMySqlBeforeNestedTablesOptions(knex)
   return knex('Site as s')
     .join('Geography as lgaGeography', 's.geographyId', 'lgaGeography.id')
@@ -54,12 +57,15 @@ async function getSite(knex, { countryAbbreviation, partnerId }) {
       'regionalOfficerJob.personId',
       'regionalOfficer.id'
     )
-    .join('InventoryItem as ii', 's.id', 'ii.siteId')
+    .leftJoin('InventoryItem as ii', 's.id', 'ii.siteId')
     .where('c.abbreviation', countryAbbreviation)
     .andWhere(function() {
       this.where('s.partnerId', partnerId)
         .andWhere('labUserJobFunction.name', 'Lab User')
         .andWhere('regionalOfficerJobFunction.name', 'Regional Officer')
+      if (requireInventory) {
+        this.whereNotNull('ii.id')
+      }
     })
     .options({ nestTables: true })
     .first()
