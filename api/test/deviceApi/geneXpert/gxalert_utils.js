@@ -354,7 +354,12 @@ class GxAlertApiTestContext {
     })
   }
 
-  getLastResult() {
+  async getLastResult() {
+    if (!this.device || !this.device.id) {
+      throw new Error(
+        'GxAlertApiTestContext does not have a valid device with an ID. Cannot get the last result from an unknown device.'
+      )
+    }
     return run(async knex => {
       const resultDetails = await knex('Device as d')
         .join('DeviceLog as dl', 'd.id', 'dl.deviceId')

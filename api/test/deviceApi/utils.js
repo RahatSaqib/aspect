@@ -226,6 +226,9 @@ async function getLastDeviceOperationId(knex, deviceId) {
 }
 
 async function getLastResultId(knex, deviceId) {
+  if (!deviceId) {
+    throw new Error('Cannot get the last result ID from an unknown device id.')
+  }
   const result = await knex('DeviceLog as dl')
     .where('dl.deviceId', deviceId)
     .whereNotNull('dl.resultId')

@@ -139,7 +139,10 @@ function numberOfDays(date) {
   if (date == null || date === '') {
     return 'days'
   }
-  return distanceInWordsStrict(new Date(), date, { unit: 'd' })
+  return distanceInWordsStrict(new Date(), date, {
+    unit: 'd',
+    partialMethod: 'ceil',
+  })
 }
 
 function isoDate(date) {

@@ -50,6 +50,7 @@ describe('Inventory Stock Issues Endpoint', () => {
       const siteDetails = await getSite(knex, {
         partnerId: partner.id,
         countryAbbreviation,
+        requireInventory: true,
       })
       site = siteDetails.s
       siteRegionalOfficer = siteDetails.regionalOfficer
