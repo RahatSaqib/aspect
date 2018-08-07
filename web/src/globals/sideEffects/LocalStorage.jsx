@@ -9,6 +9,7 @@ const AS_REFRESH = 'asRefresh'
 const AS_CLIENT_ID = 'asClientId'
 const AS_CULTURE = 'asCulture'
 const AS_TIMEZONE = 'asTimezoneId'
+const AS_DATE_FORMAT = 'asDateFormat'
 const AS_DRAWER_OPEN = 'asDrawerOpen'
 
 export const getAspectHydrateData = () => {
@@ -29,6 +30,7 @@ export const getAspectHydrateData = () => {
 }
 
 export const getAspectAccess = () => localStorage.getItem(AS_ACCESS)
+export const getAspectDateFormat = () => localStorage.getItem(AS_DATE_FORMAT)
 
 const storageMappings = [
   {
@@ -50,6 +52,10 @@ const storageMappings = [
   {
     storageKey: AS_TIMEZONE,
     propsKey: 'timezoneId',
+  },
+  {
+    storageKey: AS_DATE_FORMAT,
+    propsKey: 'dateFormat',
   },
   {
     storageKey: AS_DRAWER_OPEN,

@@ -164,6 +164,7 @@ export function loginStart({ user, password }) {
             clientId: json.clientId,
             culture: json.culture,
             timezoneId: json.timezone,
+            dateFormat: json.dateFormat,
           })
         )
       )
@@ -342,6 +343,7 @@ const User = Immutable.Record({
   clientId: undefined,
   culture: 'en-US',
   timezoneId: 'Eastern Standard Time',
+  dateFormat: undefined,
   drawerOpen: false,
   loggedOutReason: '',
   features: Immutable.Set(),

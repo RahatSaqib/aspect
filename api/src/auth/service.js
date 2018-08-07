@@ -34,6 +34,7 @@ function getUser(username) {
       'u.name',
       'p.culture',
       'p.timezone',
+      'p.dateFormat',
       'p.id as personId',
       'p.lastPartnerId as partnerId',
       'p.lastCountryId as countryId'
@@ -145,6 +146,7 @@ async function authenticate(request) {
     clientId,
     culture: user.culture || 'en-US',
     timezone: user.timezone || 'Eastern Standard Time',
+    dateFormat: user.dateFormat,
   }
 }
 
