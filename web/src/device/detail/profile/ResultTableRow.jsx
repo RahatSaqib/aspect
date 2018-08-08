@@ -2,6 +2,7 @@ import _ from 'lodash'
 import classnames from 'classnames/bind'
 import React from 'react'
 import { TableRow, TableCell } from 'react-toolbox/lib/table'
+import { formatDate } from '../../../shared/utils/dateFormat'
 
 const cssClasses = classnames.bind(
   require('../../../components/shared/DataTableRow.css')
@@ -15,7 +16,7 @@ const ResultTableRow = ({ intl, result, ...restProps }) => (
     className={cssClasses(restProps.className, 'TableRow')}
   >
     <TableCell className={cssClasses('TableCell')}>
-      {intl.formatDate(result.get('endedOn'))}
+      {formatDate(result.get('endedOn'))}
     </TableCell>
     <TableCell className={cssClasses('TableCell')}>
       {result.get('sampleOriginSiteName')}

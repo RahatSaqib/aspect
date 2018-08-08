@@ -179,7 +179,7 @@ export const ActionStatus = compose(
       <div className={cssClasses('Issue__Action__Status')}>
         <span>
           {`${intl.formatMessage(messages.acknowledged)}
-     ${formatDate(action.get('statusDate'), { intl })}`}
+     ${formatDate(action.get('statusDate'))}`}
         </span>
       </div>
     )

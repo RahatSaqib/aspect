@@ -1,9 +1,6 @@
 const { knex } = require('../db')
 const { distanceInWordsStrict } = require('date-fns')
-const {
-  parseDateOrDefault,
-  formatDate: formatDateOrDefault,
-} = require('../shared/date')
+const { parseDateOrDefault, formatDateOrDefault } = require('../shared/date')
 const handlebars = require('handlebars')
 
 handlebars.registerHelper('numberOfDays', numberOfDays)
@@ -163,7 +160,8 @@ function isoDate(date) {
 }
 
 function formatDate(date) {
-  return formatDateOrDefault(date, this.options)
+  const { dateFormat } = this.options || {}
+  return formatDateOrDefault(date, dateFormat)
 }
 
 module.exports = {

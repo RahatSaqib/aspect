@@ -16,6 +16,7 @@ import IconButton from 'material-ui/IconButton'
 import ModeEdit from 'material-ui/svg-icons/editor/mode-edit'
 
 // Our own imports
+import { formatDate } from '../../shared/utils/dateFormat'
 import { Unit } from '../../components/pureGrids'
 import isEditable from '../../shared/selectors/device'
 import { fetchSingleReporter, updateSingleReporter } from '../ReporterRedux'
@@ -277,7 +278,7 @@ export class ReporterDetail extends PureComponent {
 
   renderContent() {
     const { reporter, intl } = this.props
-    const { formatMessage, formatDate, formatRelative } = intl
+    const { formatMessage, formatRelative } = intl
 
     if (!reporter || !reporter.has('deviceType')) {
       return false
