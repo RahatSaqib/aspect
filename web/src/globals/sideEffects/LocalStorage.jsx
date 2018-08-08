@@ -21,7 +21,8 @@ const DEFAULT_DISPLAY_PREFERENCES = {
 
 export const getAspectAccess = () => localStorage.getItem(AS_ACCESS)
 
-let displayPreferences = Immutable.Map(DEFAULT_DISPLAY_PREFERENCES)
+const INITIAL_DISPLAY_PREFERENCES = Immutable.Map(DEFAULT_DISPLAY_PREFERENCES)
+let displayPreferences = INITIAL_DISPLAY_PREFERENCES
 export const getAspectDisplayPreferences = () => displayPreferences
 
 export const getAspectHydrateData = () => {
@@ -72,7 +73,7 @@ const storageMappings = [
     propsKey: 'displayPreferences',
     load: it => Immutable.Map(JSON.parse(it)),
     update: it => {
-      displayPreferences = displayPreferences.merge(it)
+      displayPreferences = INITIAL_DISPLAY_PREFERENCES.merge(it)
       return JSON.stringify(displayPreferences.toJS())
     },
   },
