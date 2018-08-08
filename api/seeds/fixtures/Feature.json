@@ -73,6 +73,9 @@
       "module": "actionDashboard"
     },
     {
+      "module": "actionDashboardInventoryLevelUpdate"
+    },
+    {
       "module": "reportDashboard"
     },
     {
