@@ -1171,7 +1171,10 @@ async function operationalDashboard(request) {
 async function actionDashboard(request) {
   const { auth, query } = request
   const user = await getUser(auth.credentials.name)
-  const dataConstraints = await getConstraints(auth.credentials)
+  const dataConstraints = await getConstraints(
+    auth.credentials,
+    'actionDashboard'
+  )
   const alertMessages = await knex('AlertMessage as am')
     .join('MessageStatus as ms', 'am.messageStatusId', 'ms.id')
     .join('Notification as n', 'am.id', 'n.alertMessageId')

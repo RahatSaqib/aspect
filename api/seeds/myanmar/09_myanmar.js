@@ -1,4 +1,5 @@
 const { rowsAsObject } = require('../utils')
+const { getPermissionModules } = require('../utils')
 
 module.exports = require('../utils').seed(seed)
 
@@ -7,7 +8,14 @@ const _ = require('lodash')
 const Promise = require('bluebird')
 
 async function seed(knex) {
-  // TODO: Check if seed file already ran
+  const alertTemplateWithHideFlag = await knex('AlertTemplate')
+    .where('hideWhenSiteFilterIsSelected', 1)
+    .orWhere('hideWhenSiteFilterIsNotSelected', 1)
+    .first()
+
+  if (alertTemplateWithHideFlag) {
+    return
+  }
 
   await knex('AlertTemplate')
     .where({
@@ -41,6 +49,10 @@ async function seed(knex) {
         'Possible module failure on module <em>{{issue.data.moduleName}}</em> contact engineer',
     })
 
+  const { id: partnerId } = await knex('Partner')
+    .where({ name: 'Myanmar' })
+    .first()
+
   await knex('IssueEscalationTrigger')
     .update({
       escalationConditions: JSON.stringify({
@@ -52,10 +64,7 @@ async function seed(knex) {
     .whereRaw(
       'escalationConditions->>"$.evaluationParameter" LIKE "%/deviceOfflineLevel3ROEscalatedNetwork.sql"'
     )
-
-  const { id: partnerId } = await knex('Partner')
-    .where({ name: 'Myanmar' })
-    .first()
+    .andWhere('partnerId', partnerId)
 
   await knex('IssueEscalationTrigger')
     .update({
@@ -187,13 +196,6 @@ async function seed(knex) {
     consumableId: consumableIdTb,
     allowStockUpdateFromActionDashboard: true,
   })
-
-  await knex('JobFunction')
-    .where({
-      name: 'Admin',
-      partnerId,
-    })
-    .update({ isAdmin: true })
 
   const now = new Date()
   const { id: myanmarAdminId } = await knex('User as u')
@@ -344,14 +346,23 @@ async function seed(knex) {
     .where('f.module', 'actionDashboardInventoryLevelUpdate')
     .first()
 
-  const myanmarJobFunctionIds = await knex('JobFunction as jf')
+  const myanmarJobFunctions = await knex('JobFunction as jf')
     .where('jf.partnerId', partnerId)
-    .pluck('jf.id')
+    .select()
 
-  await Promise.each(myanmarJobFunctionIds, async myanmarJobFunctionId => {
+  const modules = await getPermissionModules(knex)
+
+  await Promise.each(myanmarJobFunctions, async myanmarJobFunction => {
     await knex('JobFunctionFeature').insert({
-      jobFunctionId: myanmarJobFunctionId,
+      jobFunctionId: myanmarJobFunction.id,
       featureId: actionDashboardInventoryLevelUpdateFeatureId,
+    })
+    await knex('JobFunctionPermission').insert({
+      jobFunctionId: myanmarJobFunction.id,
+      permissionId:
+        myanmarJobFunction.name === 'Admin'
+          ? modules.actionDashboard.admin
+          : modules.actionDashboard.edit,
     })
   })
 }

@@ -51,6 +51,10 @@
     {
       "name": "browse",
       "activities": ["view"]
+    },
+    {
+      "name": "actionDashboard",
+      "activities": ["view", "edit", "admin"]
     }
   ]
 }

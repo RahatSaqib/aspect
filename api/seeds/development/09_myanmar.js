@@ -1,8 +1,19 @@
 const Promise = require('bluebird')
 
+const { getPermissionModules } = require('../utils')
+
 module.exports = require('../utils').seed(seed)
 
 async function seed(knex) {
+  const alertTemplateWithHideFlag = await knex('AlertTemplate')
+    .where('hideWhenSiteFilterIsSelected', 1)
+    .orWhere('hideWhenSiteFilterIsNotSelected', 1)
+    .first()
+
+  if (alertTemplateWithHideFlag) {
+    return
+  }
+
   const { id: partnerId } = await knex('Partner')
     .where('name', 'Myanmar')
     .first('id')
@@ -30,13 +41,6 @@ async function seed(knex) {
     consumableId: consumableIdTb,
     allowStockUpdateFromActionDashboard: true,
   })
-
-  await knex('JobFunction')
-    .where({
-      name: 'Admin',
-      partnerId,
-    })
-    .update({ isAdmin: true })
 
   const now = new Date()
   const { id: myanmarAdminId } = await knex('User as u')
@@ -187,14 +191,23 @@ async function seed(knex) {
     .where('f.module', 'actionDashboardInventoryLevelUpdate')
     .first()
 
-  const myanmarJobFunctionIds = await knex('JobFunction as jf')
+  const myanmarJobFunctions = await knex('JobFunction as jf')
     .where('jf.partnerId', partnerId)
-    .pluck('jf.id')
+    .select()
 
-  await Promise.each(myanmarJobFunctionIds, async myanmarJobFunctionId => {
+  const modules = await getPermissionModules(knex)
+
+  await Promise.each(myanmarJobFunctions, async myanmarJobFunction => {
     await knex('JobFunctionFeature').insert({
-      jobFunctionId: myanmarJobFunctionId,
+      jobFunctionId: myanmarJobFunction.id,
       featureId: actionDashboardInventoryLevelUpdateFeatureId,
+    })
+    await knex('JobFunctionPermission').insert({
+      jobFunctionId: myanmarJobFunction.id,
+      permissionId:
+        myanmarJobFunction.name === 'Admin'
+          ? modules.actionDashboard.admin
+          : modules.actionDashboard.edit,
     })
   })
 }

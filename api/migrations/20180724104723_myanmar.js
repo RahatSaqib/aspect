@@ -51,13 +51,6 @@ async function up(knex) {
     consumable.dropColumns('partnerId', 'autoInclude')
   })
 
-  await knex.schema.table('JobFunction', jobFunction => {
-    jobFunction
-      .boolean('isAdmin')
-      .notNullable()
-      .defaultTo(0)
-  })
-
   await knex.schema.table('AlertTemplate', alertTemplate => {
     alertTemplate
       .boolean('hideWhenSiteFilterIsSelected')
@@ -104,10 +97,6 @@ async function down(knex) {
   )
 
   await knex.schema.dropTableIfExists('PartnerConsumable')
-
-  await knex.schema.table('JobFunction', jobFunction => {
-    jobFunction.dropColumns('isAdmin')
-  })
 
   await knex.schema.table('AlertTemplate', alertTemplate => {
     alertTemplate.dropColumns(
