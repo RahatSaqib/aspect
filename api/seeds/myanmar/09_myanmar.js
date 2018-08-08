@@ -2,7 +2,7 @@ module.exports = require('../../src/db').seed(seed)
 
 async function seed(knex) {
   const displayPreferencesUpdated = await knex('Partner')
-    .whereNotNull('displayPrefernces')
+    .whereNotNull('displayPreferences')
     .first()
   if (displayPreferencesUpdated != null) {
     return
