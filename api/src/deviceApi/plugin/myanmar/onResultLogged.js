@@ -129,6 +129,7 @@ const minErrorsForLUGenericMachineIssue = 8
 const minPrcntModuleUnknownErrors = 5
 const moduleMaxUnknownErrors = 6
 const machineMaxUnknownErrors = 8
+const minErrorsInvalidsForReagentHealthIssue = 8
 
 // check for error codes when a result is logged
 async function onResultLogged({ resultId }, { messageContext }) {
@@ -150,6 +151,7 @@ async function onResultLogged({ resultId }, { messageContext }) {
     const last30day = subDays(new Date(), 30)
     let reagentErrorRatio = 0
     let invalidReagentErrorRatio = 0
+    let invalidReagentErrorCount = 0
 
     // prepare query for device results
     const deviceErrorQuery = knex('Result as r')
@@ -320,17 +322,22 @@ async function onResultLogged({ resultId }, { messageContext }) {
           })()
         )
         ;[
-          { invalidReagentErrorRatio },
+          { invalidReagentErrorRatio, invalidReagentErrorCount },
         ] = await reagentErrorQuery.clone().select(
           (() => {
             const errorCount =
               "sum(case when (r.errorCode in (?) and rc.externalId='Error') or (rc.externalId='Invalid') then 1 else 0 end)"
             const totalCount = 'count(distinct r.id)'
 
-            return knex.raw(
-              `case when count(r.id) = 0 then 0 else ${errorCount} / ${totalCount} * 100 end as invalidReagentErrorRatio`,
-              [REAGENT_HEALTH_ERROR_CODES]
-            )
+            return [
+              knex.raw(
+                `case when count(r.id) = 0 then 0 else ${errorCount} / ${totalCount} * 100 end as invalidReagentErrorRatio`,
+                [REAGENT_HEALTH_ERROR_CODES]
+              ),
+              knex.raw(`${errorCount} as invalidReagentErrorCount`, [
+                REAGENT_HEALTH_ERROR_CODES,
+              ]),
+            ]
           })()
         )
       }
@@ -471,9 +478,10 @@ async function onResultLogged({ resultId }, { messageContext }) {
       })
     }
     if (
-      reagentErrorRatio > maxReagentErrorRatio ||
-      invalidResultRatio > maxInvalidResultRatio ||
-      invalidReagentErrorRatio > maxInvalidReagentErrorRatio
+      (reagentErrorRatio > maxReagentErrorRatio ||
+        invalidResultRatio > maxInvalidResultRatio ||
+        invalidReagentErrorRatio > maxInvalidReagentErrorRatio) &&
+      invalidReagentErrorCount >= minErrorsInvalidsForReagentHealthIssue
     ) {
       createInventoryReagentHealthIssue(
         knex,
