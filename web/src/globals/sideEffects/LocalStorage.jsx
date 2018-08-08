@@ -1,5 +1,6 @@
 import window from 'global/window'
 import _ from 'lodash'
+import Immutable from 'immutable'
 import { compose, pure, lifecycle } from 'recompose'
 
 const { localStorage } = window
@@ -9,15 +10,26 @@ const AS_REFRESH = 'asRefresh'
 const AS_CLIENT_ID = 'asClientId'
 const AS_CULTURE = 'asCulture'
 const AS_TIMEZONE = 'asTimezoneId'
-const AS_DATE_FORMAT = 'asDateFormat'
 const AS_DRAWER_OPEN = 'asDrawerOpen'
+const AS_DISPLAY_PREFERENCES = 'asDisplayPreferences'
+
+const DEFAULT_DISPLAY_PREFERENCES = {
+  dateFormat: 'M/D/YYYY', // YYYY-MM-DD
+  timeFormat: 'h:mm:ss A', // HH:mm:ss
+  dateTimeFormat: 'M/D/YYYY, h:mm:ss A', // YYYY-MM-DD HH:mm:ss
+}
+
+export const getAspectAccess = () => localStorage.getItem(AS_ACCESS)
+
+let displayPreferences = Immutable.Map(DEFAULT_DISPLAY_PREFERENCES)
+export const getAspectDisplayPreferences = () => displayPreferences
 
 export const getAspectHydrateData = () => {
   const { result, data } = storageMappings.reduce(
-    (acc, { storageKey, propsKey, parse = _.identity }) => {
+    (acc, { storageKey, propsKey, load = _.identity }) => {
       const value = localStorage.getItem(storageKey)
       if (_.isString(value)) {
-        acc.data[propsKey] = parse(value)
+        acc.data[propsKey] = load(value)
       } else {
         acc.result = false
       }
@@ -28,9 +40,6 @@ export const getAspectHydrateData = () => {
 
   return result && data
 }
-
-export const getAspectAccess = () => localStorage.getItem(AS_ACCESS)
-export const getAspectDateFormat = () => localStorage.getItem(AS_DATE_FORMAT)
 
 const storageMappings = [
   {
@@ -54,13 +63,18 @@ const storageMappings = [
     propsKey: 'timezoneId',
   },
   {
-    storageKey: AS_DATE_FORMAT,
-    propsKey: 'dateFormat',
-  },
-  {
     storageKey: AS_DRAWER_OPEN,
     propsKey: 'drawerOpen',
-    parse: it => it === 'true',
+    load: it => it === 'true',
+  },
+  {
+    storageKey: AS_DISPLAY_PREFERENCES,
+    propsKey: 'displayPreferences',
+    load: it => Immutable.Map(JSON.parse(it)),
+    update: it => {
+      displayPreferences = displayPreferences.merge(it)
+      return JSON.stringify(displayPreferences.toJS())
+    },
   },
 ]
 
@@ -68,14 +82,16 @@ const enhance = compose(
   pure,
   lifecycle({
     handleStorage(props) {
-      storageMappings.forEach(({ storageKey, propsKey }) => {
-        const value = props[propsKey]
-        if (_.isUndefined(value)) {
-          localStorage.removeItem(storageKey)
-        } else {
-          localStorage.setItem(storageKey, value)
+      storageMappings.forEach(
+        ({ storageKey, propsKey, update = _.identity }) => {
+          const value = props[propsKey]
+          if (_.isUndefined(value)) {
+            localStorage.removeItem(storageKey)
+          } else {
+            localStorage.setItem(storageKey, update(value))
+          }
         }
-      })
+      )
     },
 
     componentDidMount() {

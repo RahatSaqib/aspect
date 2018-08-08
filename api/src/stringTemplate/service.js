@@ -1,3 +1,4 @@
+const _ = require('lodash')
 const { knex } = require('../db')
 const { distanceInWordsStrict } = require('date-fns')
 const { parseDateOrDefault, formatDateOrDefault } = require('../shared/date')
@@ -8,8 +9,7 @@ handlebars.registerHelper('isoDate', isoDate)
 handlebars.registerHelper('formatDate', formatDate)
 
 // See unit tests for examples
-// Can include options in data to process, including
-//   dateFormat, culture
+// Can include displayPreferences
 function processUsingHandlebarsSyntax(inputString, data = {}) {
   const template = handlebars.compile(inputString)
   return template(data)
@@ -30,13 +30,13 @@ function addDataSourceToQuery(qb, aliases) {
       .leftJoin('Site as s', `${message}.siteId`, 's.id')
       .leftJoin('Device as d', `${message}.deviceId`, 'd.id')
       .leftJoin('Result as r', `${message}.resultId`, 'r.id')
+      .leftJoin('Partner as pu', 'pu.id', 'p.lastPartnerId')
       .select(
         's.name as siteName',
         's.shortName as siteShortName',
         'p.name as personName',
         'p.cell as personCell',
-        'p.culture as personCulture',
-        'p.dateFormat as personDateFormat',
+        'pu.displayPreferences as personDisplayPreferences',
         'd.lastPingOn as deviceLastPingOn',
         'd.lastSeenOn as deviceLastSeenOn',
         'r.resultData',
@@ -85,6 +85,10 @@ function processUsingDataSourceQuery(data, templateFields, options = {}) {
 
 function getBaseDataSource(data) {
   const d = data || {}
+  const displayPreferences =
+    d.personDisplayPreferences == null
+      ? {}
+      : JSON.parse(d.personDisplayPreferences)
   return {
     site: {
       name: d.siteName,
@@ -116,10 +120,7 @@ function getBaseDataSource(data) {
     notification: {
       type: d.notificationTypeName,
     },
-    options: {
-      culture: d.personCulture,
-      dateFormat: d.personDateFormat,
-    },
+    displayPreferences,
   }
 }
 
@@ -160,7 +161,7 @@ function isoDate(date) {
 }
 
 function formatDate(date) {
-  const { dateFormat } = this.options || {}
+  const dateFormat = _.get(this, 'displayPreferences.dateFormat', 'M/D/YYYY')
   return formatDateOrDefault(date, dateFormat)
 }
 

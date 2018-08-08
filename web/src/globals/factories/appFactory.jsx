@@ -73,7 +73,7 @@ const mapStateToProps = state => {
     access: state.user.access,
     refresh: state.user.refresh,
     clientId: state.user.clientId,
-    dateFormat: state.user.dateFormat,
+    displayPreferences: state.user.displayPreferences,
     drawerOpen: state.user.drawerOpen,
     // For render()
     isLoggedOut,
@@ -104,7 +104,7 @@ export const appFactory = compose(
       access,
       refresh,
       clientId,
-      dateFormat,
+      displayPreferences,
       drawerOpen,
       refreshStart,
       idleStart,
@@ -131,7 +131,7 @@ export const appFactory = compose(
             clientId={clientId}
             culture={culture}
             timezoneId={timezoneId}
-            dateFormat={dateFormat}
+            displayPreferences={displayPreferences}
             drawerOpen={drawerOpen}
           />
           {render(restProps)}

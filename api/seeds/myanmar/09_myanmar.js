@@ -1,14 +1,22 @@
 module.exports = require('../../src/db').seed(seed)
 
 async function seed(knex) {
-  const dateFormatUpdated = await knex('Person')
-    .whereNotNull('dateFormat')
+  const displayPreferencesUpdated = await knex('Partner')
+    .whereNotNull('displayPrefernces')
     .first()
-  if (dateFormatUpdated != null) {
+  if (displayPreferencesUpdated != null) {
     return
   }
 
-  await knex('Person').update({ dateFormat: 'D/M/YYYY' })
+  await knex('Partner')
+    .where({ name: 'Myanmar' })
+    .update({
+      displayPreferences: JSON.stringify({
+        dateFormat: 'D/M/YYYY',
+        timeFormat: 'HH:mm:ss',
+        dateTimeFormat: 'D/M/YYYY HH:mm:ss',
+      }),
+    })
 
   await knex('AlertTemplate')
     .where({

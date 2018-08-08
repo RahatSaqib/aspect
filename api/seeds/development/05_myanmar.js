@@ -83,6 +83,11 @@ async function seed(knex) {
     numberToLeaveUnacknowledged: 15,
     maxDaysDeviceOffline: 7,
     maxDaysDeviceNoResults: 14,
+    displayPreferences: JSON.stringify({
+      dateFormat: 'D/M/YYYY',
+      timeFormat: 'HH:mm:ss',
+      dateTimeFormat: 'D/M/YYYY HH:mm:ss',
+    }),
   })
 
   const modules = await getPermissionModules(knex)
@@ -119,7 +124,6 @@ async function seed(knex) {
   }, {})
 
   // Permissions for Myanmar Admin
-  const dateFormat = 'D/M/YYYY'
   const [adminPersonId] = await knex('Person').insert(
     Object.assign(
       {
@@ -130,7 +134,6 @@ async function seed(knex) {
         geographyId: myanmarGeographyId,
         culture: myanmarCountry.culture,
         timezone: myanmarCountry.timezone,
-        dateFormat,
       },
       auditFields
     )
@@ -326,7 +329,6 @@ async function seed(knex) {
             geographyId: myanmarGeographyId,
             culture: myanmarCountry.culture,
             timezone: myanmarCountry.timezone,
-            dateFormat,
           },
           auditFields
         )
@@ -628,7 +630,6 @@ async function seed(knex) {
             geographyId,
             culture: myanmarCountry.culture,
             timezone: myanmarCountry.timezone,
-            dateFormat,
           },
           auditFields
         )

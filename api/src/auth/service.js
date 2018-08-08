@@ -34,7 +34,6 @@ function getUser(username) {
       'u.name',
       'p.culture',
       'p.timezone',
-      'p.dateFormat',
       'p.id as personId',
       'p.lastPartnerId as partnerId',
       'p.lastCountryId as countryId'
@@ -138,15 +137,15 @@ async function authenticate(request) {
       lastActive: now,
     })
 
-  // finally, return the access token...
   const accessToken = await getAccessToken(user)
+  const displayPreferences = await getDisplayPreferences(user)
   return {
     access: accessToken,
     refresh: refreshToken,
     clientId,
     culture: user.culture || 'en-US',
     timezone: user.timezone || 'Eastern Standard Time',
-    dateFormat: user.dateFormat,
+    displayPreferences,
   }
 }
 
@@ -258,6 +257,17 @@ function getAccessToken({ id, name, partnerId }) {
 
       return token
     })
+}
+
+async function getDisplayPreferences({ partnerId }) {
+  // TODO add user preferences that override partner
+  const prefs = await query('Get display preferences for user and partner')
+    .from('Partner as p')
+    .where({ 'p.id': partnerId })
+    .first('p.displayPreferences as partnerPrefs')
+  return _.get(prefs, 'partnerPrefs') == null
+    ? {}
+    : JSON.parse(prefs.partnerPrefs)
 }
 
 function updateUser(userId, changedFields) {

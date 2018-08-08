@@ -1,22 +1,20 @@
 import { format as dateFnFormat } from 'date-fns'
-import { getAspectDateFormat } from '../../globals/sideEffects/LocalStorage'
+import { getAspectDisplayPreferences } from '../../globals/sideEffects/LocalStorage'
 
-const defaultDateFormat = 'M/D/YYYY' // YYYY-MM-DD
-const defaultTimeFormat = 'h:mm:ss A' // HH:mm:ss
-const defaultDateTimeFormat = `${defaultDateFormat}, ${defaultTimeFormat}`
-
-function format(date, dateFormat) {
+function format(date, displayPreferenceKey) {
+  const prefs = getAspectDisplayPreferences()
+  const dateFormat = prefs.get(displayPreferenceKey, 'YYYY-MM-DD')
   return date == null ? '' : dateFnFormat(date, dateFormat)
 }
 
 export function formatDate(date) {
-  return format(date, getAspectDateFormat() || defaultDateFormat)
+  return format(date, 'dateFormat')
 }
 
 export function formatTime(date) {
-  return format(date, defaultTimeFormat)
+  return format(date, 'timeFormat')
 }
 
 export function formatDateTime(date) {
-  return format(date, defaultDateTimeFormat)
+  return format(date, 'dateTimeFormat')
 }
