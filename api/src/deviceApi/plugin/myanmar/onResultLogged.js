@@ -481,7 +481,7 @@ async function onResultLogged({ resultId }, { messageContext }) {
       (reagentErrorRatio > maxReagentErrorRatio ||
         invalidResultRatio > maxInvalidResultRatio ||
         invalidReagentErrorRatio > maxInvalidReagentErrorRatio) &&
-      invalidReagentErrorCount > minErrorsInvalidsForReagentHealthIssue
+      invalidReagentErrorCount >= minErrorsInvalidsForReagentHealthIssue
     ) {
       createInventoryReagentHealthIssue(
         knex,
