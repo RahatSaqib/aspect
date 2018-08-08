@@ -166,11 +166,7 @@ function addConstraints(queryBuilder, constraints, aliases) {
   if (geography && constraints.country) {
     queryBuilder.where({ [`${geography}.countryId`]: constraints.country.id })
   }
-  if (
-    person &&
-    constraints.person &&
-    (_.isEmpty(constraints) || !allowAdminThrough)
-  ) {
+  if (person && constraints.person && !allowAdminThrough) {
     queryBuilder.where({ [`${person}.personId`]: constraints.person.id })
   }
 
