@@ -19,17 +19,12 @@ async function mergeResult(
   // Look up existing result matching external id if specified
   let existingResult = null
   if (payload.id) {
-    const existingResults = await knex('Result as r')
+    existingResult = await knex('Result as r')
       .where({
         'r.externalId': payload.id,
         'r.deviceId': deviceId,
       })
-      .distinct('r.*')
-      .limit(2)
-    if (existingResults.length > 1) {
-      throw Boom.badRequest(`Cannot find unique result with id ${payload.id}`)
-    }
-    ;[existingResult] = existingResults
+      .first()
   }
 
   const assayQ = knex('Assay as a')
