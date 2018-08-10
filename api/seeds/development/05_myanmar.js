@@ -8,7 +8,12 @@ const myanmarSites = require('./fixtures/myanmarSites.json')
 const patients = require('./fixtures/patients.json')
 const dashboardWidget = require('./fixtures/myanmarDashboardWidget.json')
 const { errorCodes } = require('./fixtures/errorCodes.js')
-const { addMilliseconds, addMinutes, subDays } = require('date-fns')
+const {
+  addMilliseconds,
+  addMinutes,
+  subDays,
+  differenceInDays,
+} = require('date-fns')
 const {
   rowsAsObject,
   getDefaultMessageTypes,
@@ -74,6 +79,7 @@ async function seed(knex) {
     getDefaultMessageTypes(knex),
   ])
 
+  const maxDaysDeviceNoResults = 14
   const [partnerId] = await knex('Partner').insert({
     name: 'Myanmar',
     partnerTypeId: await partnerTypeToId('Operating'),
@@ -82,7 +88,7 @@ async function seed(knex) {
     autoAcknowledgeOlderThanDays: 28,
     numberToLeaveUnacknowledged: 15,
     maxDaysDeviceOffline: 7,
-    maxDaysDeviceNoResults: 14,
+    maxDaysDeviceNoResults,
   })
 
   const modules = await getPermissionModules(knex)
@@ -528,11 +534,16 @@ async function seed(knex) {
           await Promise.all(
             _.map(_.range(resultMtbNumber), async i => {
               const sample = samples[i % samples.length]
-              const randomDate = calculateDateForResult(
-                i,
-                resultMtbNumber,
-                6000
-              )
+              let randomDate = calculateDateForResult(i, resultMtbNumber, 6000)
+
+              // Leave some devices as being quiet, with results, for a while
+              if (
+                deviceId % 3 === 0 &&
+                Math.abs(differenceInDays(now, randomDate)) <
+                  maxDaysDeviceNoResults + 3
+              ) {
+                randomDate = subDays(randomDate, maxDaysDeviceNoResults + 3)
+              }
 
               const rnd = _.random(0, 100)
               const result = _.find(
