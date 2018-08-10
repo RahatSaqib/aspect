@@ -1,7 +1,7 @@
 const { get } = require('lodash')
 const Boom = require('boom')
 
-const postProcessMergeResult = require('./postProcessMergeResult')
+const { postProcessMergeResult } = require('../deviceApi/result')
 
 const plugins = {
   default: {

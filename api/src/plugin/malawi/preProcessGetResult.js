@@ -1,5 +1,5 @@
 const _ = require('lodash')
-const { updateResultWorkflowStatus } = require('../common')
+const { updateResultWorkflowStatus } = require('../../deviceApi/result')
 
 const DELIVERED_EXTERNALID = 'Delivered'
 const ACKNOWLEDGED_EXTERNALID = 'Acknowledged'
