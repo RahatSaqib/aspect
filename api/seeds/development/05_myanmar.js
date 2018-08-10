@@ -1662,7 +1662,7 @@ async function seed(knex) {
       escalationConditions: JSON.stringify({
         evaluationMethod: 'sql-script',
         evaluationParameter:
-          './sqlScripts/Myanmar/issues/escalations/deviceOfflineLevel3ROEscalatedNetwork.sql',
+          './src/plugin/partner/myanmar/sqlScripts/deviceOfflineLevel3ROEscalatedNetwork.sql',
       }),
       createdOn: now,
       updatedOn: now,
@@ -1685,7 +1685,7 @@ async function seed(knex) {
       escalationConditions: JSON.stringify({
         evaluationMethod: 'sql-script',
         evaluationParameter:
-          './sqlScripts/Myanmar/issues/escalations/deviceNoResultsLevel3ROEscalatedNoResults.sql',
+          './src/plugin/partner/myanmar/sqlScripts/deviceNoResultsLevel3ROEscalatedNoResults.sql',
       }),
       createdOn: now,
       updatedOn: now,
@@ -1788,7 +1788,7 @@ async function seed(knex) {
       resolutionConditions: JSON.stringify({
         evaluationMethod: 'sql-script',
         evaluationParameter:
-          './sqlScripts/Myanmar/issues/resolutions/deviceOfflineLUNetwork.sql',
+          './src/plugin/partner/myanmar/sqlScripts/deviceOfflineResolveLUNetwork.sql',
       }),
       createdOn: now,
       updatedOn: now,

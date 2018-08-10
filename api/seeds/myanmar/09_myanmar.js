@@ -1,7 +1,41 @@
-module.exports = require('../../src/db').seed(seed)
-// TODO: Remove the following two ESLint ignore-settings when implementing seeds
-/* eslint no-unused-vars: 0 */
-/* eslint no-empty-function: 0 */
+module.exports = require('../utils').seed(seed)
+
 async function seed(knex) {
   // TODO: Check if seed file already ran
+
+  await knex('IssueEscalationTrigger')
+    .update({
+      escalationConditions: JSON.stringify({
+        evaluationMethod: 'sql-script',
+        evaluationParameter:
+          './src/plugin/partner/myanmar/sqlScripts/deviceOfflineLevel3ROEscalatedNetwork.sql',
+      }),
+    })
+    .whereRaw(
+      'escalationConditions->>"$.evaluationParameter" = "./sqlScripts/Myanmar/issues/escalations/deviceOfflineLevel3ROEscalatedNetwork.sql"'
+    )
+
+  await knex('IssueEscalationTrigger')
+    .update({
+      escalationConditions: JSON.stringify({
+        evaluationMethod: 'sql-script',
+        evaluationParameter:
+          './src/plugin/partner/myanmar/sqlScripts/deviceNoResultsLevel3ROEscalatedNoResults.sql',
+      }),
+    })
+    .whereRaw(
+      'escalationConditions->>"$.evaluationParameter" = "./sqlScripts/Myanmar/issues/escalations/deviceNoResultsLevel3ROEscalatedNoResults.sql"'
+    )
+
+  await knex('IssueResolutionTrigger')
+    .update({
+      resolutionConditions: JSON.stringify({
+        evaluationMethod: 'sql-script',
+        evaluationParameter:
+          './src/plugin/partner/myanmar/sqlScripts/deviceOfflineResolveLUNetwork.sql',
+      }),
+    })
+    .whereRaw(
+      'resolutionConditions->>"$.evaluationParameter" = "./sqlScripts/Myanmar/issues/resolutions/deviceOfflineLUNetwork.sql"'
+    )
 }
