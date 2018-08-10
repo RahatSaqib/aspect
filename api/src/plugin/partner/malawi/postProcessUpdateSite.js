@@ -1,5 +1,9 @@
 const _ = require('lodash')
-const { mergeResult, getResult, addResultWorkflowLogIfChanged } = require('../../deviceApi/result')
+const {
+  mergeResult,
+  getResult,
+  addResultWorkflowLogIfChanged,
+} = require('../../../deviceApi/result')
 const { resultWorkflowStatusToId } = require('../../../shared/dictionary')
 
 const DEVICE_TYPE_CHAI = 'CHAILIMS'

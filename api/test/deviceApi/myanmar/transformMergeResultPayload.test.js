@@ -57,9 +57,9 @@ describe('transformMergeResultPayload for Myanmar', () => {
       .stub()
       .resolves(getPayload(payload))
     transformMergeResultPayload = proxyquire(
-      '../../../src/deviceApi/plugin/myanmar/transformMergeResultPayload',
+      '../../../src/plugin/partner/myanmar/transformMergeResultPayload',
       {
-        '../registration': {
+        '../../service': {
           async loadPlugin() {
             return deviceTypeTransformMergeResultPayload
           },

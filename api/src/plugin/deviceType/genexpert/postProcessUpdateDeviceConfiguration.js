@@ -1,5 +1,5 @@
 const _ = require('lodash')
-const { updateDeviceDetails } = require('../../device')
+const { updateDeviceDetails } = require('../../../deviceApi/device')
 const { macAddressValid } = require('./requestValidation')
 const { parseDateOrDefault } = require('../../../shared/date')
 

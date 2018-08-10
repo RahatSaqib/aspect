@@ -1,7 +1,11 @@
 const _ = require('lodash')
-const { mergeResult, getResult, addResultWorkflowLogIfChanged } = require('../../deviceApi/result')
-const { resultUpdated } = require('../../result/actions')
-const { resultWorkflowStatusToId } = require('../../shared/dictionary')
+const {
+  mergeResult,
+  getResult,
+  addResultWorkflowLogIfChanged,
+} = require('../../../deviceApi/result')
+const { resultUpdated } = require('../../../result/actions')
+const { resultWorkflowStatusToId } = require('../../../shared/dictionary')
 
 const DEVICE_TYPE_CHAI = 'CHAILIMS'
 const DEVICE_TYPE_REPORTER = 'AspectReporter'

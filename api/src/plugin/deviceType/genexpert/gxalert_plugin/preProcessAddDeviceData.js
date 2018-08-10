@@ -3,7 +3,7 @@ const Boom = require('boom')
 const { getOrCreateSite } = require('../site')
 const genexpertPreProcessAddDeviceData = require('../preProcessAddDeviceData')
 const { findDevices } = require('../device')
-const { createNewDevice } = require('../../../device')
+const { createNewDevice } = require('../../../../deviceApi/device')
 const { getDateOrDefault } = require('../../../../shared/date')
 
 async function preProcessAddDeviceData(context) {

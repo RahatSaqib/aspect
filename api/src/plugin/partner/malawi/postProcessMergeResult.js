@@ -1,6 +1,6 @@
 const _ = require('lodash')
-const { addResultWorkflowLogIfChanged } = require('../../deviceApi/result')
-const { resultWorkflowStatusToId } = require('../../shared/dictionary')
+const { addResultWorkflowLogIfChanged } = require('../../../deviceApi/result')
+const { resultWorkflowStatusToId } = require('../../../shared/dictionary')
 
 const VALIDATED_EXTERNALID = 'Validated'
 const DELIVERABLE_EXTERNALID = 'Deliverable'
