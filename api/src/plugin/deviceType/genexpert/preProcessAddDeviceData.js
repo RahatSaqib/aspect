@@ -1,6 +1,6 @@
 const _ = require('lodash')
 const Boom = require('boom')
-const { getOrCreateSite } = require('./site')
+const { getOrCreateSite } = require('./gxUtils')
 const { parseDateOrDefault } = require('../../../shared/date')
 
 /*

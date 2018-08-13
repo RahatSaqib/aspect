@@ -1,8 +1,7 @@
 const _ = require('lodash')
 const Boom = require('boom')
-const { getOrCreateSite } = require('../site')
 const genexpertPreProcessAddDeviceData = require('../preProcessAddDeviceData')
-const { findDevices } = require('../device')
+const { getOrCreateSite, findDevices } = require('../gxUtils')
 const { createNewDevice } = require('../../../../deviceApi/device')
 const { getDateOrDefault } = require('../../../../shared/date')
 

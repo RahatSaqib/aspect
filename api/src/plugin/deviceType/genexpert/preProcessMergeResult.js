@@ -1,7 +1,7 @@
 const _ = require('lodash')
 const Boom = require('boom')
 const { createUniqueIdForResult } = require('../../../result/service')
-const { findExistingResult } = require('./result')
+const { findExistingResult } = require('./gxUtils')
 
 /*
 The purpose of this plugin is to ensure that results are captured
