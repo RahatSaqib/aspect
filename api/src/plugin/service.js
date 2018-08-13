@@ -38,7 +38,7 @@ const plugins = {
     preProcessAddDeviceData: require('./deviceType/genexpert/gxconnect_plugin/preProcessAddDeviceData'),
     postProcessUpdateDeviceConfiguration: require('./deviceType/genexpert/gxconnect_plugin/postProcessUpdateDeviceConfiguration'),
     postProcessAddDeviceOperation: require('./deviceType/genexpert/gxconnect_plugin/postProcessAddDeviceOperation'),
-    transformMergeResultPayload: require('./deviceType/genexpert/transformMergeResultPayload'),
+    transformMergeResultPayload: require('./deviceType/genexpert/gxconnect_plugin/transformMergeResultPayload'),
     preProcessMergeResult: require('./deviceType/genexpert/gxconnect_plugin/preProcessMergeResult'),
   },
   gxalert: {
@@ -48,7 +48,7 @@ const plugins = {
     preProcessUpdateDeviceConfiguration: require('./deviceType/genexpert/gxalert_plugin/preProcessUpdateDeviceConfiguration'),
     postProcessUpdateDeviceConfiguration: require('./deviceType/genexpert/gxalert_plugin/postProcessUpdateDeviceConfiguration'),
     postProcessAddDeviceOperation: require('./deviceType/genexpert/gxalert_plugin/postProcessAddDeviceOperation'),
-    transformMergeResultPayload: require('./deviceType/genexpert/transformMergeResultPayload'),
+    transformMergeResultPayload: require('./deviceType/genexpert/gxalert_plugin/transformMergeResultPayload'),
     preProcessMergeResult: require('./deviceType/genexpert/gxalert_plugin/preProcessMergeResult'),
     postProcessMergeResult: require('./deviceType/genexpert/gxalert_plugin/postProcessMergeResult'),
   },
