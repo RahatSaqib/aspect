@@ -491,7 +491,7 @@ describe('Myanmar Issue endpoints', () => {
             result,
           }
         )
-        // minErrorsForLUGenericModuleIssue = 6, see src/deviceApi/plugins/myanmar/onResultLogged.js,
+        // minErrorsForLUGenericModuleIssue = 6, see src/plugin/partner/Myanmar/onResultLogged.js,
         if (i < 9) {
           // Post the result to aspect - 5 error results (i=4..8) do not trigger Module issue
           await postToDeviceApi({

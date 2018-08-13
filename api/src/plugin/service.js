@@ -27,11 +27,11 @@ const plugins = {
     transformInitialPayload: require('./deviceType/CommCareApp/transformInitialPayload'),
   },
   malawi: {
-    transformNewDevicePayload: require('./partner/malawi/transformNewDevicePayload'),
-    preProcessGetResult: require('./partner/malawi/preProcessGetResult'),
-    postProcessMergeResult: require('./partner/malawi/postProcessMergeResult'),
-    postProcessUpdateSite: require('./partner/malawi/postProcessUpdateSite'),
-    onResultLogged: require('./partner/malawi/onResultLogged'),
+    transformNewDevicePayload: require('./partner/Malawi/transformNewDevicePayload'),
+    preProcessGetResult: require('./partner/Malawi/preProcessGetResult'),
+    postProcessMergeResult: require('./partner/Malawi/postProcessMergeResult'),
+    postProcessUpdateSite: require('./partner/Malawi/postProcessUpdateSite'),
+    onResultLogged: require('./partner/Malawi/onResultLogged'),
   },
   gxconnect: {
     preProcessCreateDevice: require('./deviceType/CepheidGeneXpert/preProcessCreateDevice'),
@@ -53,8 +53,8 @@ const plugins = {
     postProcessMergeResult: require('./deviceType/GxAlert/postProcessMergeResult'),
   },
   myanmar: {
-    transformMergeResultPayload: require('./partner/myanmar/transformMergeResultPayload'),
-    onResultLogged: require('./partner/myanmar/onResultLogged'),
+    transformMergeResultPayload: require('./partner/Myanmar/transformMergeResultPayload'),
+    onResultLogged: require('./partner/Myanmar/onResultLogged'),
   },
 }
 
