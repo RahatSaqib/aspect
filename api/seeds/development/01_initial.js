@@ -3472,7 +3472,7 @@ async function seed(knex) {
     Object.assign(
       {
         message:
-          'Module {{issue.data.moduleName}} errors, conduct troubleshooting',
+          'Possible module failure on module {{issue.data.moduleName}} contact engineer',
       },
       auditFields
     )
@@ -3482,7 +3482,7 @@ async function seed(knex) {
     Object.assign(
       {
         message:
-          'Module {{issue.data.moduleName}} errors, conduct troubleshooting',
+          'Possible module failure on module {{issue.data.moduleName}} contact engineer',
       },
       auditFields
     )
@@ -3493,11 +3493,11 @@ async function seed(knex) {
   ).insert(
     Object.assign(
       {
-        subject: 'Procedural Module Errors',
+        subject: 'Possible module failure',
         body:
-          'Module {{issue.data.moduleName}} errors, conduct troubleshooting',
+          'Possible module failure on module {{issue.data.moduleName}} contact engineer',
         htmlBody:
-          'Module <em>{{issue.data.moduleName}}</em> errors, conduct troubleshooting',
+          'Possible module failure on module <em>{{issue.data.moduleName}}</em> contact engineer',
       },
       auditFields
     )
