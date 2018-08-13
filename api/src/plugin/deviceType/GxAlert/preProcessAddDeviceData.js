@@ -5,8 +5,8 @@ const {
   findDevices,
   preProcessAddDeviceData: genexpertPreProcessAddDeviceData,
 } = require('../gxUtils')
-const { createNewDevice } = require('../../../../deviceApi/device')
-const { getDateOrDefault } = require('../../../../shared/date')
+const { createNewDevice } = require('../../../deviceApi/device')
+const { getDateOrDefault } = require('../../../shared/date')
 
 async function preProcessAddDeviceData(context) {
   const { device, payload, knex, now } = context

@@ -1,4 +1,4 @@
-const { getDateOrDefault } = require('../../../../shared/date')
+const { getDateOrDefault } = require('../../../shared/date')
 
 async function getDevicePingOn({ payload, now, device: { deviceType } }) {
   if (deviceType === 'CepheidGeneXpert') {

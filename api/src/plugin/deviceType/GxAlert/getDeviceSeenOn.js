@@ -1,5 +1,5 @@
 const _ = require('lodash')
-const { getDateOrDefault } = require('../../../../shared/date')
+const { getDateOrDefault } = require('../../../shared/date')
 
 async function getDeviceSeenOn({ payload, now, device: { deviceType } }) {
   if (deviceType === 'CepheidGeneXpert') {

@@ -1,6 +1,6 @@
 const {
   postProcessMergeResult: defaultPostProcessMergeResult,
-} = require('../../../../deviceApi/result')
+} = require('../../../deviceApi/result')
 
 async function postProcessMergeResult(context, result, previousResult) {
   const response = await defaultPostProcessMergeResult(

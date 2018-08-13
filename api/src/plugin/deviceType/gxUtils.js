@@ -5,15 +5,15 @@ const setMilliseconds = require('date-fns/set_milliseconds')
 const {
   findConsumables,
   findConsumableReason,
-} = require('../../../consumable/consumableService')
+} = require('../../consumable/consumableService')
 const {
   increaseInventory,
   decreaseInventory,
-} = require('../../../inventory/service')
-const { getDevice } = require('../../../device/service')
-const { createUniqueIdForResult } = require('../../../result/service')
-const { parseDateOrDefault } = require('../../../shared/date')
-const { updateDeviceDetails } = require('../../../deviceApi/device')
+} = require('../../inventory/service')
+const { getDevice } = require('../../device/service')
+const { createUniqueIdForResult } = require('../../result/service')
+const { parseDateOrDefault } = require('../../shared/date')
+const { updateDeviceDetails } = require('../../deviceApi/device')
 
 /*
 The purpose of this plugin is to ensure that results are captured

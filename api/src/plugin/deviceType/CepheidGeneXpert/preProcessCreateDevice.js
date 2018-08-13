@@ -1,6 +1,6 @@
 const _ = require('lodash')
 const Boom = require('boom')
-const { transact } = require('../../../../db')
+const { transact } = require('../../../db')
 const { findDevices } = require('../gxUtils')
 
 /*

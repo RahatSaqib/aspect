@@ -3,8 +3,8 @@ const dateFormat = require('date-fns/format')
 const {
   deviceMaintenance,
   deviceMaintenanceResolved,
-} = require('../../../../device/actions')
-const { parseDateOrDefault } = require('../../../../shared/date')
+} = require('../../../device/actions')
+const { parseDateOrDefault } = require('../../../shared/date')
 
 async function preProcessUpdateDeviceConfiguration(context) {
   const { payload, device: { id: deviceId }, messageContext } = context
