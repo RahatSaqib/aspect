@@ -13,7 +13,6 @@ const { getDevice } = require('../../../device/service')
 const { createUniqueIdForResult } = require('../../../result/service')
 const { parseDateOrDefault } = require('../../../shared/date')
 const { updateDeviceDetails } = require('../../../deviceApi/device')
-const { macAddressValid } = require('./requestValidation')
 
 async function findDevices(availableDeviceDetails, knex) {
   const {
@@ -779,6 +778,15 @@ async function postProcessUpdateDeviceConfiguration({
     )
   }
   return { device }
+}
+
+function macAddressValid(macAddress) {
+  return (
+    !_.isEmpty(macAddress) &&
+    macAddress.indexOf('MAC') === 0 &&
+    macAddress.trim().length > 3 &&
+    macAddress !== 'MAC005345000000'
+  )
 }
 
 module.exports = {
