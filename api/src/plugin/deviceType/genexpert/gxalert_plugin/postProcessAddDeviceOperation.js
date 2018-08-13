@@ -1,4 +1,6 @@
-const geneXpertPostProcessAddDeviceOperation = require('../postProcessAddDeviceOperation')
+const {
+  postProcessAddDeviceOperation: geneXpertPostProcessAddDeviceOperation,
+} = require('../gxUtils')
 const { getInventoryItems } = require('../../../../inventory/service')
 
 async function postProcessAddDeviceOperation(context) {
