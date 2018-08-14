@@ -8,7 +8,7 @@ const {
 async function transformMergeResultPayload(context) {
   const { knex, deviceType } = context
   const plugin = await deviceTypeToPlugin(deviceType)
-  const { loadPlugin } = require('../../service')
+  const { loadPlugin } = require('../../registration')
   const deviceTypeTransformMergeResultPayload = await loadPlugin(
     [plugin],
     'transformMergeResultPayload'
