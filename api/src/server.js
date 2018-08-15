@@ -8,6 +8,7 @@ const { addClientRoutes, addDeviceRoutes } = require('./routes')
 const { createMessageQueue } = require('./mq')
 const { addSubscriptions } = require('./subscriptions')
 const { startScheduler } = require('./scheduler')
+const { logRequest } = require('./logger')
 const deviceApiKeyPlugin = require('./deviceApi/deviceApiKeyPlugin')
 const Hapi = require('hapi')
 
@@ -22,6 +23,7 @@ server.connection({
     cors: true,
   },
 })
+server.on('response', logRequest)
 
 const plugins = [
   // static file handling (hapi-swagger dependency)
@@ -228,17 +230,4 @@ server.start(err => {
     throw err
   }
   console.log(`Magic happens at http://localhost:${port}`) // eslint-disable-line no-console
-})
-
-server.on('response', request => {
-  const { info, auth, method, url, response } = request
-  const { remoteAddress } = info
-  const { path } = url
-  const { statusCode } = response
-
-  const user = auth.isAuthenticated ? auth.credentials.name : ''
-  const time = new Date().toISOString()
-  const requestLog = `"${method.toUpperCase()} ${path}" ${statusCode}`
-  const message = `${remoteAddress} - ${user}  [${time}] ${requestLog}`
-  console.log(message) // eslint-disable-line no-console
 })
