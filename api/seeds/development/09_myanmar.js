@@ -1,6 +1,3 @@
-const Promise = require('bluebird')
-const _ = require('lodash')
-
 const { rowsAsObject } = require('../utils')
 
 module.exports = require('../utils').seed(seed)
@@ -45,36 +42,42 @@ async function seed(knex) {
       escalationConditions: JSON.stringify({
         evaluationMethod: 'sql-script',
         evaluationParameter:
-          './src/plugin/partner/Myanmar/sqlScripts/deviceOfflineLevel3ROEscalatedNetwork.sql',
+          './src/plugin/partner/Myanmar/sqlScripts/shouldEscalateL2NotificationAfter30Days.sql',
       }),
     })
     .whereRaw(
-      'escalationConditions->>"$.evaluationParameter" = "./sqlScripts/Myanmar/issues/escalations/deviceOfflineLevel3ROEscalatedNetwork.sql"'
+      'escalationConditions->>"$.evaluationParameter" LIKE "%/deviceOfflineLevel3ROEscalatedNetwork.sql"'
     )
+
+  const { id: partnerId } = await knex('Partner')
+    .where({ name: 'Myanmar' })
+    .first()
 
   await knex('IssueEscalationTrigger')
     .update({
       escalationConditions: JSON.stringify({
         evaluationMethod: 'sql-script',
         evaluationParameter:
-          './src/plugin/partner/Myanmar/sqlScripts/deviceNoResultsLevel3ROEscalatedNoResults.sql',
+          './src/plugin/partner/Myanmar/sqlScripts/shouldEscalateL2NotificationAfter7Days.sql',
       }),
     })
     .whereRaw(
-      'escalationConditions->>"$.evaluationParameter" = "./sqlScripts/Myanmar/issues/escalations/deviceNoResultsLevel3ROEscalatedNoResults.sql"'
+      'escalationConditions->>"$.evaluationParameter" LIKE "%/deviceNoResultsLevel3ROEscalatedNoResults.sql"'
     )
+    .andWhere('partnerId', partnerId)
 
   await knex('IssueResolutionTrigger')
     .update({
       resolutionConditions: JSON.stringify({
         evaluationMethod: 'sql-script',
         evaluationParameter:
-          './src/plugin/partner/Myanmar/sqlScripts/deviceOffline.sql',
+          './src/plugin/partner/Myanmar/sqlScripts/shouldResolveDeviceOffline.sql',
       }),
     })
     .whereRaw(
-      'resolutionConditions->>"$.evaluationParameter" = "./sqlScripts/Myanmar/issues/resolutions/deviceOfflineLUNetwork.sql"'
+      'resolutionConditions->>"$.evaluationParameter" LIKE "%deviceOfflineResolveLUNetwork.sql"'
     )
+    .andWhere('partnerId', partnerId)
 
   const deviceNoResultsIssueResolutionTrigger = await knex(
     'IssueResolutionTrigger as irt'
@@ -82,7 +85,7 @@ async function seed(knex) {
     .join('Partner as p', 'irt.partnerId', 'p.id')
     .join('IssueType as it', 'irt.issueTypeId', 'it.id')
     .whereRaw(
-      `irt.resolutionConditions->"$.evaluationParameter" = './sqlScripts/Myanmar/issues/resolutions/deviceNoResults.sql'`
+      `irt.resolutionConditions->"$.evaluationParameter" = './src/plugin/partner/Myanmar/sqlScripts/shouldResolveDeviceNoResults.sql'`
     )
     .andWhere({
       'p.name': 'Myanmar',
@@ -90,9 +93,6 @@ async function seed(knex) {
     })
     .first()
   if (!deviceNoResultsIssueResolutionTrigger) {
-    const { id: partnerId } = await knex('Partner')
-      .where({ name: 'Myanmar' })
-      .first()
     const issueTypes = await rowsAsObject(knex, 'IssueType', 'externalId')
     const now = new Date()
 
@@ -102,7 +102,7 @@ async function seed(knex) {
       resolutionConditions: JSON.stringify({
         evaluationMethod: 'sql-script',
         evaluationParameter:
-          './sqlScripts/Myanmar/issues/resolutions/deviceNoResults.sql',
+          './src/plugin/partner/Myanmar/sqlScripts/shouldResolveDeviceNoResults.sql',
       }),
       createdOn: now,
       updatedOn: now,
