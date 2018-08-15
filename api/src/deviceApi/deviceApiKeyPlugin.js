@@ -44,16 +44,17 @@ async function authToken(token) {
   }
 
   // lookup single non-revoked API Key
-  const [keys] = await knex('DeviceApiKey')
-    .where({ token, revoked: false })
-    .count('id as cnt')
+  const key = await knex('DeviceApiKey as k')
+    .leftJoin('Device as d', 'd.id', 'k.deviceId')
+    .where({ 'k.token': token, 'k.revoked': false })
+    .first('k.id as keyId', 'd.name')
 
-  if (keys.cnt !== 1) {
+  if (key == null) {
     throw Boom.unauthorized('Cannot authorize API Key')
   }
 
   const scope = ['deviceApi']
-  const credentials = { token, scope }
+  const credentials = { token, scope, name: key.name || '' }
   return credentials
 }
 
