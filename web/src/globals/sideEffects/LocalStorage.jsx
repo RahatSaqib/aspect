@@ -14,9 +14,9 @@ const AS_DRAWER_OPEN = 'asDrawerOpen'
 const AS_DISPLAY_PREFERENCES = 'asDisplayPreferences'
 
 const DEFAULT_DISPLAY_PREFERENCES = {
-  dateFormat: 'M/D/YYYY', // YYYY-MM-DD
-  timeFormat: 'h:mm:ss A', // HH:mm:ss
-  dateTimeFormat: 'M/D/YYYY h:mm:ss A', // YYYY-MM-DD HH:mm:ss
+  dateFormat: 'YYYY-MM-DD',
+  timeFormat: 'HH:mm:ss',
+  dateTimeFormat: 'YYYY-MM-DD HH:mm:ss',
 }
 
 export const getAspectAccess = () => localStorage.getItem(AS_ACCESS)
