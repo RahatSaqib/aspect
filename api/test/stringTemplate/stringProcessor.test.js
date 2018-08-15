@@ -86,7 +86,7 @@ describe('stringTemplate/processUsingHandlebarsSyntax', () => {
     it('should format date without display preferences', () => {
       const sampleString =
         'Device {{device.shortName}} is offline since {{formatDate data.offlineOn }}'
-      const expectedResult = 'Device  is offline since 8/1/2018'
+      const expectedResult = 'Device  is offline since 2018-08-01'
       const inputObject = {
         device: {
           state: 'Ohio',

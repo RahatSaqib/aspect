@@ -2,6 +2,7 @@ const _ = require('lodash')
 const { knex } = require('../db')
 const { distanceInWordsStrict } = require('date-fns')
 const { parseDateOrDefault, formatDateOrDefault } = require('../shared/date')
+const { loadPlugin } = require('../plugin/registration')
 const handlebars = require('handlebars')
 
 handlebars.registerHelper('numberOfDays', numberOfDays)
@@ -36,7 +37,7 @@ function addDataSourceToQuery(qb, aliases) {
         's.shortName as siteShortName',
         'p.name as personName',
         'p.cell as personCell',
-        'pu.displayPreferences as personDisplayPreferences',
+        'pu.plugin as partnerPlugin',
         'd.lastPingOn as deviceLastPingOn',
         'd.lastSeenOn as deviceLastSeenOn',
         'r.resultData',
@@ -67,8 +68,8 @@ function addDataSourceToQuery(qb, aliases) {
   return qb
 }
 
-function processUsingDataSourceQuery(data, templateFields, options = {}) {
-  const ds = getBaseDataSource(data)
+async function processUsingDataSourceQuery(data, templateFields, options = {}) {
+  const ds = await getBaseDataSource(data)
   return templateFields.reduce((memo, field) => {
     const fieldName = field.replace(/template/i, '')
     const template = (data && data[field]) || ''
@@ -83,12 +84,12 @@ function processUsingDataSourceQuery(data, templateFields, options = {}) {
   }, {})
 }
 
-function getBaseDataSource(data) {
+async function getBaseDataSource(data) {
   const d = data || {}
-  const displayPreferences =
-    d.personDisplayPreferences == null
-      ? {}
-      : JSON.parse(d.personDisplayPreferences)
+  const { displayPreferences = {} } = await loadPlugin(
+    [d.partnerPlugin],
+    'settings'
+  )
   return {
     site: {
       name: d.siteName,
@@ -161,7 +162,7 @@ function isoDate(date) {
 }
 
 function formatDate(date) {
-  const dateFormat = _.get(this, 'displayPreferences.dateFormat', 'M/D/YYYY')
+  const dateFormat = _.get(this, 'displayPreferences.dateFormat', 'YYYY-MM-DD')
   return formatDateOrDefault(date, dateFormat)
 }
 

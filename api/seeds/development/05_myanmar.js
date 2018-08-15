@@ -83,11 +83,6 @@ async function seed(knex) {
     numberToLeaveUnacknowledged: 15,
     maxDaysDeviceOffline: 7,
     maxDaysDeviceNoResults: 14,
-    displayPreferences: JSON.stringify({
-      dateFormat: 'D/M/YYYY',
-      timeFormat: 'HH:mm:ss',
-      dateTimeFormat: 'D/M/YYYY HH:mm:ss',
-    }),
   })
 
   const modules = await getPermissionModules(knex)

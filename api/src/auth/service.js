@@ -264,10 +264,15 @@ async function getDisplayPreferences({ partnerId }) {
   const prefs = await query('Get display preferences for user and partner')
     .from('Partner as p')
     .where({ 'p.id': partnerId })
-    .first('p.displayPreferences as partnerPrefs')
-  return _.get(prefs, 'partnerPrefs') == null
-    ? {}
-    : JSON.parse(prefs.partnerPrefs)
+    .first('p.plugin')
+  // If we require onload we get a cycle. This is cached so is safe
+  // But it likely could be replaced if we dynamically register plugins
+  const { loadPlugin } = require('../plugin/registration')
+  const { displayPreferences = {} } = await loadPlugin(
+    [_.get(prefs, 'plugin', null)],
+    'settings'
+  )
+  return displayPreferences
 }
 
 function updateUser(userId, changedFields) {

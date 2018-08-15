@@ -4,22 +4,7 @@ const geography = require('./fixtures/geography.json')
 const _ = require('lodash')
 
 async function seed(knex) {
-  const displayPreferencesUpdated = await knex('Partner')
-    .whereNotNull('displayPreferences')
-    .first()
-  if (displayPreferencesUpdated != null) {
-    return
-  }
-
-  await knex('Partner')
-    .where({ name: 'Myanmar' })
-    .update({
-      displayPreferences: JSON.stringify({
-        dateFormat: 'D/M/YYYY',
-        timeFormat: 'HH:mm:ss',
-        dateTimeFormat: 'D/M/YYYY HH:mm:ss',
-      }),
-    })
+  // TODO: Check if seed file already ran
 
   await knex('AlertTemplate')
     .where({

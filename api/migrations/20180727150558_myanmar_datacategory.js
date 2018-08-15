@@ -1,13 +1,6 @@
 module.exports = require('../src/db').migration(up, down)
-
-async function up(knex) {
-  await knex.schema.table('Partner', partner => {
-    partner.specificType('displayPreferences', 'JSON')
-  })
-}
-
-async function down(knex) {
-  await knex.schema.table('Partner', partner => {
-    partner.dropColumn('displayPreferences')
-  })
-}
+// TODO: Remove the following two ESLint ignore-settings when implementing migrations
+/* eslint no-unused-vars: 0 */
+/* eslint no-empty-function: 0 */
+async function up(knex) {}
+async function down(knex) {}
