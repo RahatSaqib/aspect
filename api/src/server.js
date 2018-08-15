@@ -61,12 +61,14 @@ const plugins = [
   },
 
   // log responses to console using good
+  /*
   {
     register: require('good'),
     options: {
       reporters: loadGoodReporter(),
     },
   },
+  */
 
   // Set payload prior to validation transformation
   rawPayloadPlugin,
@@ -276,4 +278,17 @@ server.start(err => {
     throw err
   }
   console.log(`Magic happens at http://localhost:${port}`) // eslint-disable-line no-console
+})
+
+server.on('response', request => {
+  const { info, auth, method, url, response } = request
+  const { remoteAddress } = info
+  const { path } = url
+  const { statusCode } = response
+
+  const user = auth.isAuthenticated ? auth.credentials.name : ''
+  const time = new Date().toISOString()
+  const requestLog = `"${method.toUpperCase()} ${path}" ${statusCode}`
+  const message = `${remoteAddress} - ${user}  [${time}] ${requestLog}`
+  console.log(message) // eslint-disable-line no-console
 })
