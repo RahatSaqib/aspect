@@ -694,6 +694,22 @@ async function seed(knex) {
 
   let samples = []
 
+  async function createUniqueSampleIdForSite(prefix, siteId) {
+    const randomId = prefix
+      ? `${prefix}-${_.random(200000, 888888)}`
+      : _.random(200000, 888888).toString()
+    const existingSamplesWithId = await knex('Sample as s')
+      .where('externalId', randomId)
+      .select()
+    if (
+      (siteId && _.some(existingSamplesWithId, { originSiteId: siteId })) ||
+      !_.isEmpty(existingSamplesWithId)
+    ) {
+      return createUniqueSampleIdForSite(prefix, siteId)
+    }
+    return randomId
+  }
+
   async function createSampleEid(i) {
     const clinic = clinicsWithReporters[i % clinicsWithReporters.length]
 
@@ -701,10 +717,11 @@ async function seed(knex) {
       .where('externalId', clinic.externalId)
       .first()
 
+    const externalId = await createUniqueSampleIdForSite('PREID', siteId)
     const sample = Object.assign(
       {},
       {
-        externalId: `PREID-${_.random(200000, 888888)}`,
+        externalId,
         collectedOn: calculateDateForResult(i, resultEidNumber, millisInMinute),
         sampleTypeId: sampleTypeDBSId,
         originSiteId: siteId,
@@ -802,6 +819,30 @@ async function seed(knex) {
     .where('deviceTypeId', deviceTypeIdChai)
     .select('id', 'siteId')
 
+  async function createUniqueResultIdForDevice(
+    candidateId,
+    deviceId,
+    tryNumber
+  ) {
+    const existingResultsWithId = await knex('Result as r')
+      .where(
+        'externalId',
+        tryNumber ? `${candidateId}-${tryNumber}` : candidateId
+      )
+      .select()
+    if (
+      (deviceId && _.some(existingResultsWithId, { deviceId })) ||
+      !_.isEmpty(existingResultsWithId)
+    ) {
+      return createUniqueResultIdForDevice(
+        candidateId,
+        deviceId,
+        (tryNumber || 0) + 1
+      )
+    }
+    return tryNumber ? `${candidateId}-${tryNumber}` : candidateId
+  }
+
   async function createResultEid(i) {
     const device = devicesM2000[i % devicesM2000.length]
     const siteData = await knex('Site')
@@ -817,9 +858,13 @@ async function seed(knex) {
     )
     const patient = patients[_.random(patientNumber)]
     const resultData = { resultText: result.resultText }
+    const resultExternalId = await createUniqueResultIdForDevice(
+      sample.externalId,
+      device.id
+    )
     const resultId = await knex('Result').insert(
       Object.assign({}, auditFields, {
-        externalId: sample.externalId,
+        externalId: resultExternalId,
         assayId: assayIdEid,
         partnerId,
         geographyId: siteData.geographyId,
@@ -946,10 +991,11 @@ async function seed(knex) {
       .where('externalId', clinic.externalId)
       .first()
 
+    const externalId = await createUniqueSampleIdForSite('PRHIVVL', siteId)
     const sample = Object.assign(
       {},
       {
-        externalId: `PRHIVVL-${_.random(200000, 888888)}`,
+        externalId,
         collectedOn: calculateDateForResult(
           i,
           resultHivVlNumber,
@@ -998,9 +1044,13 @@ async function seed(knex) {
         ? result.resultText.replace('X', copies)
         : result.resultText,
     }
+    const resultExternalId = await createUniqueResultIdForDevice(
+      sample.externalId,
+      device.id
+    )
     const resultId = await knex('Result').insert(
       Object.assign({}, auditFields, {
-        externalId: sample.externalId,
+        externalId: resultExternalId,
         assayId: assayIdHivVl,
         partnerId,
         geographyId: siteData.geographyId,
