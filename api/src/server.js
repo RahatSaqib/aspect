@@ -60,16 +60,6 @@ const plugins = [
     },
   },
 
-  // log responses to console using good
-  /*
-  {
-    register: require('good'),
-    options: {
-      reporters: loadGoodReporter(),
-    },
-  },
-  */
-
   // Set payload prior to validation transformation
   rawPayloadPlugin,
 
@@ -97,46 +87,6 @@ function messageQueuePlugin(server, options, next) {
 messageQueuePlugin.attributes = {
   name: 'messageQueue',
   version,
-}
-
-// load and return the good logging configuration
-function loadGoodReporter() {
-  const { logstash } = config
-
-  if (logstash) {
-    // Forward to logstash if configured
-    return {
-      logstash: [
-        {
-          // Only show response log, and request.log events
-          module: 'good-squeeze',
-          name: 'Squeeze',
-          args: [{ response: '*' }],
-        },
-        // send to logstash
-        {
-          module: 'good-logstash',
-          args: [logstash.endpoint],
-        },
-      ],
-    }
-  }
-
-  // Logs to console by default.
-  return {
-    console: [
-      {
-        // Only show response log, and request.log events
-        module: 'good-squeeze',
-        name: 'Squeeze',
-        args: [{ log: '*', response: '*', request: '*' }],
-      },
-      // format as string for console
-      { module: 'good-console' },
-      // write to std out
-      'stdout',
-    ],
-  }
 }
 
 // Loads Raven (Sentry) plugin if configured
