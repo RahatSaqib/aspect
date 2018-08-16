@@ -77,7 +77,8 @@ async function seedStockIssues(knex) {
   const [stockoutAlertTemplateId] = await knex('AlertTemplate').insert(
     Object.assign(
       {
-        message: 'Stock-out expected {{issue.data.date}} - Order Stock.',
+        message:
+          'Stock-out expected {{formatDate issue.data.date}} - Order Stock.',
       },
       auditFields
     )
@@ -87,7 +88,7 @@ async function seedStockIssues(knex) {
     Object.assign(
       {
         message:
-          '{{site.name}}: Stock-out expected {{issue.data.date}} - Order Stock.',
+          '{{site.name}}: Stock-out expected {{formatDate issue.data.date}} - Order Stock.',
       },
       auditFields
     )
@@ -98,9 +99,9 @@ async function seedStockIssues(knex) {
       {
         subject: '{{site.name}} stockout',
         body:
-          '{{site.name}}: Stock-out expected {{issue.data.date}} - Order Stock.',
+          '{{site.name}}: Stock-out expected {{formatDate issue.data.date}} - Order Stock.',
         htmlBody:
-          '<em>{{site.name}}:</em> Stock-out expected {{issue.data.date}} - Order Stock.',
+          '<em>{{site.name}}:</em> Stock-out expected {{formatDate issue.data.date}} - Order Stock.',
       },
       auditFields
     )

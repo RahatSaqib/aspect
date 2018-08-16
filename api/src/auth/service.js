@@ -137,14 +137,15 @@ async function authenticate(request) {
       lastActive: now,
     })
 
-  // finally, return the access token...
   const accessToken = await getAccessToken(user)
+  const displayPreferences = await getDisplayPreferences(user)
   return {
     access: accessToken,
     refresh: refreshToken,
     clientId,
     culture: user.culture || 'en-US',
     timezone: user.timezone || 'Eastern Standard Time',
+    displayPreferences,
   }
 }
 
@@ -256,6 +257,22 @@ function getAccessToken({ id, name, partnerId }) {
 
       return token
     })
+}
+
+async function getDisplayPreferences({ partnerId }) {
+  // TODO add user preferences that override partner
+  const prefs = await query('Get display preferences for user and partner')
+    .from('Partner as p')
+    .where({ 'p.id': partnerId })
+    .first('p.plugin')
+  // If we require onload we get a cycle. This is cached so is safe
+  // But it likely could be replaced if we dynamically register plugins
+  const { loadPlugin } = require('../plugin/registration')
+  const { displayPreferences = {} } = await loadPlugin(
+    [_.get(prefs, 'plugin', null)],
+    'settings'
+  )
+  return displayPreferences
 }
 
 function updateUser(userId, changedFields) {

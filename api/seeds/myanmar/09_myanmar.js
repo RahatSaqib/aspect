@@ -95,4 +95,33 @@ async function seed(knex) {
       )
     })
   )
+
+  // SD-589 Format Issue Dates
+  await knex('AlertTemplate')
+    .where({
+      message: 'Stock-out expected {{issue.data.date}} - Order Stock.',
+    })
+    .update({
+      message:
+        'Stock-out expected {{formatDate issue.data.date}} - Order Stock.',
+    })
+
+  await knex('SmsTemplate')
+    .where({
+      message: 'Stock-out expected {{issue.data.date}} - Order Stock.',
+    })
+    .update({
+      message:
+        'Stock-out expected {{formatDate issue.data.date}} - Order Stock.',
+    })
+
+  await knex('EmailTemplate')
+    .where({
+      body: 'Stock-out expected {{issue.data.date}} - Order Stock.',
+    })
+    .update({
+      body: 'Stock-out expected {{formatDate issue.data.date}} - Order Stock.',
+      htmlBody:
+        '<em>{{site.name}}:</em> Stock-out expected {{formatDate issue.data.date}} - Order Stock.',
+    })
 }

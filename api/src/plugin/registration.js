@@ -3,8 +3,17 @@ const Boom = require('boom')
 
 const { postProcessMergeResult } = require('../deviceApi/result')
 
+const DEFAULT_SETTINGS = {
+  displayPreferences: {
+    dateFormat: 'YYYY-MM-DD',
+    timeFormat: 'HH:mm:ss',
+    dateTimeFormat: 'YYYY-MM-DD HH:mm:ss',
+  },
+}
+
 const plugins = {
   default: {
+    settings: DEFAULT_SETTINGS,
     transformInitialPayload,
     getDeviceSeenOn,
     getDevicePingOn,
@@ -53,6 +62,7 @@ const plugins = {
     postProcessMergeResult: require('./deviceType/GxAlert/postProcessMergeResult'),
   },
   myanmar: {
+    settings: require('./partner/Myanmar/settings'),
     transformMergeResultPayload: require('./partner/Myanmar/transformMergeResultPayload'),
     onResultLogged: require('./partner/Myanmar/onResultLogged'),
   },
