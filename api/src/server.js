@@ -8,7 +8,7 @@ const { addClientRoutes, addDeviceRoutes } = require('./routes')
 const { createMessageQueue } = require('./mq')
 const { addSubscriptions } = require('./subscriptions')
 const { startScheduler } = require('./scheduler')
-const { logRequest } = require('./logger')
+const { logRequest } = require('./logger/service')
 const deviceApiKeyPlugin = require('./deviceApi/deviceApiKeyPlugin')
 const Hapi = require('hapi')
 
