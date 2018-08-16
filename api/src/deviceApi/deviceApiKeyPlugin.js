@@ -47,14 +47,15 @@ async function authToken(token) {
   const key = await knex('DeviceApiKey as k')
     .leftJoin('Device as d', 'd.id', 'k.deviceId')
     .where({ 'k.token': token, 'k.revoked': false })
-    .first('k.id as keyId', 'd.name')
+    .first('k.id as keyId', 'd.name as deviceName')
 
   if (key == null) {
     throw Boom.unauthorized('Cannot authorize API Key')
   }
 
   const scope = ['deviceApi']
-  const credentials = { token, scope, name: key.name || '' }
+  const name = `(${key.keyId}) ${key.deviceName || ''}`.trim()
+  const credentials = { token, scope, name }
   return credentials
 }
 
