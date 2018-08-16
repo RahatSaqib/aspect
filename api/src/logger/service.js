@@ -1,3 +1,4 @@
+const config = require('../config')
 const { parseDateOrDefault } = require('../shared/date')
 const { logCreated } = require('./actions')
 
@@ -10,10 +11,14 @@ function addLoggers(server, queue) {
 }
 
 function getLoggerSubscriptions() {
-  return [
-    subscribeOnLogCreated(onLogConsole),
-    subscribeOnLogCreated(onLogDatabase),
-  ]
+  const subscriptions = []
+  if (config.log.console.enabled) {
+    subscriptions.push(subscribeOnLogCreated(onLogConsole))
+  }
+  if (config.log.db.enabled) {
+    subscriptions.push(subscribeOnLogCreated(onLogDatabase))
+  }
+  return subscriptions
 }
 
 function subscribeOnLogCreated(handler) {
