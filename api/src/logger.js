@@ -6,8 +6,9 @@ function logRequest(request) {
 
   const user = auth.isAuthenticated ? auth.credentials.name : ''
   const time = new Date().toISOString()
+  const timeElapsed = info.responded - info.received
   const requestLog = `"${method.toUpperCase()} ${path}" ${statusCode}`
-  const message = `${remoteAddress} - ${user} [${time}] ${requestLog}`
+  const message = `${remoteAddress} - ${user} [${time}] ${timeElapsed} ${requestLog}`
   console.log(message) // eslint-disable-line no-console
 }
 
