@@ -8,7 +8,7 @@ const { addClientRoutes, addDeviceRoutes } = require('./routes')
 const { createMessageQueue } = require('./mq')
 const { addSubscriptions } = require('./subscriptions')
 const { startScheduler } = require('./scheduler')
-const { logRequest } = require('./logger/service')
+const { addLoggers } = require('./logger/service')
 const deviceApiKeyPlugin = require('./deviceApi/deviceApiKeyPlugin')
 const Hapi = require('hapi')
 
@@ -23,7 +23,6 @@ server.connection({
     cors: true,
   },
 })
-server.on('response', logRequest)
 
 const plugins = [
   // static file handling (hapi-swagger dependency)
@@ -74,6 +73,7 @@ addRavenPlugin(plugins)
 function messageQueuePlugin(server, options, next) {
   createMessageQueue('aspect')
     .then(queue => {
+      addLoggers(server, queue)
       addSubscriptions(queue)
       startScheduler(queue)
       server.ext('onPreHandler', (request, reply) => {
