@@ -1,5 +1,9 @@
 const { logCreated } = require('./actions')
 
+const logConsoleDataKeys = {
+  request: ['remoteAddress', 'method', 'path', 'statusCode', 'timeElapsed'],
+}
+
 function addLoggers(server, queue) {
   server.on('response', request => logRequest(queue, request))
 }
@@ -21,24 +25,28 @@ function logRequest(queue, request) {
   const { path } = url
   const { statusCode } = response
 
-  const user = auth.isAuthenticated ? auth.credentials.name : ''
-  const time = new Date().toISOString()
+  const userName = auth.isAuthenticated ? auth.credentials.name : ''
   const timeElapsed = info.responded - info.received
-  const requestLog = `"${method.toUpperCase()} ${path}" ${statusCode}`
-  const message = `${remoteAddress} - ${user} [${time}] ${timeElapsed} ${requestLog}`
+
+  // TODO warn if timeElapsed > some constant?
   const severity = statusCode >= 400 && statusCode <= 599 ? 'error' : 'info'
   const data = {
+    method: method.toUpperCase(),
     path,
     statusCode,
     timeElapsed,
     remoteAddress,
   }
 
-  queue.dispatch(logCreated('request', severity, message, user, data))
+  queue.dispatch(logCreated('request', severity, data, userName))
 }
 
-function onLogConsole({ message }) {
-  console.log(message) // eslint-disable-line no-console
+function onLogConsole({ logKey, severity, data, userName, createdOn }) {
+  const dataKeys = logConsoleDataKeys[logKey] || []
+  const message = dataKeys.map(key => data[key] || '').join(' ')
+  const logMessage = `${logKey} ${severity} ${message} ${userName ||
+    ''} [${createdOn}]`
+  console.log(logMessage) // eslint-disable-line no-console
 }
 
 module.exports = {

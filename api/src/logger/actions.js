@@ -9,13 +9,12 @@ const types = {
  * Creates an action to notify the log has been
  * created.
  *
- * logKey: What is being logged? e.g. "request"
- * severity: e.g. "info", "warn", "error"
- * message: Log Message
+ * logKey: What is being logged? e.g. 'request'
+ * severity: e.g. 'info', 'warn', 'error'
+ * data: log specific data as JSON
  * userName: Authenticated user / device, or null if unknown
- * data: log specific data as JSON, or null if no additional context available
  */
-function logCreated(logKey, severity, message, userName = null, data = {}) {
+function logCreated(logKey, severity, data, userName = null) {
   if (logKey == null) {
     throw new Error('Must specify logKey')
   }
@@ -23,9 +22,8 @@ function logCreated(logKey, severity, message, userName = null, data = {}) {
     type: types.LOG_CREATED,
     logKey,
     severity,
-    message,
-    userName,
     data,
+    userName,
     createdOn: new Date().toISOString(),
   }
 }
