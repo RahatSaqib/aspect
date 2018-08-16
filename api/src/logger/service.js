@@ -1,3 +1,4 @@
+const { parseDateOrDefault } = require('../shared/date')
 const { logCreated } = require('./actions')
 
 const logConsoleDataKeys = {
@@ -10,12 +11,17 @@ function addLoggers(server, queue) {
 
 function getLoggerSubscriptions() {
   return [
-    {
-      actions: {
-        LOG_CREATED: onLogConsole,
-      },
-    },
+    subscribeOnLogCreated(onLogConsole),
+    subscribeOnLogCreated(onLogDatabase),
   ]
+}
+
+function subscribeOnLogCreated(handler) {
+  return {
+    actions: {
+      LOG_CREATED: handler,
+    },
+  }
 }
 
 function logRequest(queue, request) {
@@ -47,6 +53,21 @@ function onLogConsole({ logKey, severity, data, userName, createdOn }) {
   const logMessage = `${logKey} ${severity} ${message} ${userName ||
     ''} [${createdOn}]`
   console.log(logMessage) // eslint-disable-line no-console
+}
+
+async function onLogDatabase(
+  { logKey, severity, data, userName, createdOn },
+  { messageContext }
+) {
+  return messageContext.run(knex =>
+    knex('AuditLog').insert({
+      logKey,
+      severity,
+      data: JSON.stringify(data),
+      userName,
+      createdOn: parseDateOrDefault(createdOn, new Date()),
+    })
+  )
 }
 
 module.exports = {
