@@ -14,6 +14,11 @@ module.exports = {
     database: process.env['db.databaseName'],
     debug: process.env['db.debug'] === 'true',
   },
+  log: {
+    db: {
+      enabled: getBooleanOrDefault('log.db.enabled', false),
+    },
+  },
   file: {
     reference: {
       directory: process.env['file.reference.directory'],
@@ -68,4 +73,12 @@ function configureOptional(config) {
   if (commcareApiKey) {
     config.plugin.commcare = { apiKey: commcareApiKey }
   }
+}
+
+function getBooleanOrDefault(key, defaultValue) {
+  const value = process.env[key]
+  if (value == null) {
+    return defaultValue
+  }
+  return value === 'true'
 }
