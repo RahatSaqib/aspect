@@ -15,9 +15,6 @@ module.exports = {
     debug: process.env['db.debug'] === 'true',
   },
   log: {
-    console: {
-      enabled: getBooleanOrDefault('log.console.enabled', true),
-    },
     db: {
       enabled: getBooleanOrDefault('log.db.enabled', false),
     },
