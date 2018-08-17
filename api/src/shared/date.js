@@ -1,5 +1,5 @@
 const _ = require('lodash')
-const { parse: parseDate, isValid: isValidDate } = require('date-fns')
+const dateFns = require('date-fns')
 
 function getDateOrDefault(object, propertyPath, defaultValue) {
   const date = _.get(object, propertyPath)
@@ -10,11 +10,25 @@ function parseDateOrDefault(date, defaultValue = null) {
   if (date == null || date === '') {
     return defaultValue
   }
-  const parsed = parseDate(date)
-  return isValidDate(parsed) ? parsed : defaultValue
+  const parsed = dateFns.parse(date)
+  return dateFns.isValid(parsed) ? parsed : defaultValue
+}
+
+function formatDateOrDefault(date, dateFormat, defaultValue = null) {
+  date = parseDateOrDefault(date)
+  if (date == null) {
+    return defaultValue
+  }
+
+  if (dateFormat != null) {
+    return dateFns.format(date, dateFormat)
+  }
+
+  return dateFns.format(date, 'YYYY-MM-DD')
 }
 
 module.exports = {
   getDateOrDefault,
   parseDateOrDefault,
+  formatDateOrDefault,
 }

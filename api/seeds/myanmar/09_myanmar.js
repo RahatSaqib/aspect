@@ -2,6 +2,9 @@ const { rowsAsObject } = require('../utils')
 
 module.exports = require('../utils').seed(seed)
 
+const geography = require('./fixtures/geography.json')
+const _ = require('lodash')
+
 async function seed(knex) {
   // TODO: Check if seed file already ran
 
@@ -108,4 +111,55 @@ async function seed(knex) {
       updatedOn: now,
     })
   }
+
+  // SD-621 Ensure targets have updated values
+  // TODO move Target updates to static utils
+  await Promise.all(
+    _.map(geography.countries[0].states, async state => {
+      const geography = await knex('Geography')
+        .join('State', 'Geography.stateId', 'State.id')
+        .whereNotNull('stateId')
+        .whereNull('lgaId')
+        .where('State.name', state.name)
+        .first('Geography.id')
+
+      await Promise.all(
+        _.map(state.targets, async (value, key) => {
+          await knex('Target')
+            .where({ geographyId: geography.id })
+            .where({ targetToken: key })
+            .update({ targetValue: value })
+        })
+      )
+    })
+  )
+
+  // SD-589 Format Issue Dates
+  await knex('AlertTemplate')
+    .where({
+      message: 'Stock-out expected {{issue.data.date}} - Order Stock.',
+    })
+    .update({
+      message:
+        'Stock-out expected {{formatDate issue.data.date}} - Order Stock.',
+    })
+
+  await knex('SmsTemplate')
+    .where({
+      message: 'Stock-out expected {{issue.data.date}} - Order Stock.',
+    })
+    .update({
+      message:
+        'Stock-out expected {{formatDate issue.data.date}} - Order Stock.',
+    })
+
+  await knex('EmailTemplate')
+    .where({
+      body: 'Stock-out expected {{issue.data.date}} - Order Stock.',
+    })
+    .update({
+      body: 'Stock-out expected {{formatDate issue.data.date}} - Order Stock.',
+      htmlBody:
+        '<em>{{site.name}}:</em> Stock-out expected {{formatDate issue.data.date}} - Order Stock.',
+    })
 }

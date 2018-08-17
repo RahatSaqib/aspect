@@ -5,6 +5,7 @@ import classnames from 'classnames/bind'
 import { compose, mapProps } from 'recompose'
 import { Card } from 'react-toolbox/lib/card'
 import MdAssignment from 'react-icons/lib/md/assignment'
+import { formatDate, formatDateTime } from '../../../shared/utils/dateFormat'
 import CardTitle from '../../../components/shared/CardTitle'
 import ReadOnlyFields from '../../../components/shared/ReadOnlyFields'
 import {
@@ -22,11 +23,7 @@ const enhance = _.identity
 const format = (type, intl) =>
   type === 'number'
     ? intl.formatNumber
-    : type === 'date'
-      ? intl.formatDate
-      : type === 'time'
-        ? v => `${intl.formatDate(v)} ${intl.formatTime(v)}`
-        : null
+    : type === 'date' ? formatDate : type === 'time' ? formatDateTime : null
 
 const makeLink = (template, data) => {
   try {

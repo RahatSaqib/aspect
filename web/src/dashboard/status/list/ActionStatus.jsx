@@ -6,7 +6,7 @@ import { Button } from 'react-toolbox/lib/button'
 import { Input } from 'react-toolbox/lib/input'
 import { compose, lifecycle, pure, withHandlers } from 'recompose'
 
-import { shortNumericDate } from '../../../shared/utils/dateFormat'
+import { formatDate } from '../../../shared/utils/dateFormat'
 import recomposeForm from '../../../components/recomposeForm'
 import { acknowledgeIssue } from '../../../issue/IssueRedux'
 import { updateStockLevel } from '../../../inventory/InventoryRedux'
@@ -179,7 +179,7 @@ export const ActionStatus = compose(
       <div className={cssClasses('Issue__Action__Status')}>
         <span>
           {`${intl.formatMessage(messages.acknowledged)}
-     ${intl.formatDate(action.get('statusDate'), shortNumericDate)}`}
+     ${formatDate(action.get('statusDate'))}`}
         </span>
       </div>
     )
