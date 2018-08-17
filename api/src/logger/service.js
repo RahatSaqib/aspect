@@ -12,9 +12,6 @@ function addLoggers(server, queue) {
 
 function getLoggerSubscriptions() {
   const subscriptions = []
-  if (config.log.console.enabled) {
-    subscriptions.push(subscribeOnLogCreated(onLogConsole))
-  }
   if (config.log.db.enabled) {
     subscriptions.push(subscribeOnLogCreated(onLogDatabase))
   }
@@ -49,10 +46,17 @@ function logRequest(queue, request) {
     remoteAddress,
   }
 
-  queue.dispatch(logCreated('request', severity, data, userName))
+  logAction(logCreated('request', severity, data, userName), queue)
 }
 
-function onLogConsole({ logKey, severity, data, userName, createdOn }) {
+function logAction(action, dispatcher = null) {
+  logConsole(action)
+  if (dispatcher != null) {
+    dispatcher.dispatch(action)
+  }
+}
+
+function logConsole({ logKey, severity, data, userName, createdOn }) {
   const dataKeys = logConsoleDataKeys[logKey] || []
   const message = dataKeys.map(key => data[key] || '').join(' ')
   const logMessage = `${logKey} ${severity} ${message} ${userName ||
