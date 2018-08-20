@@ -65,6 +65,7 @@ async function up(knex) {
 
 async function down(knex) {
   await knex.schema.table('Issue', issue => {
+    issue.dropForeign('consumableId')
     issue.dropColumns('consumableId')
   })
 
