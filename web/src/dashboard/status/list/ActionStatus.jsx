@@ -147,16 +147,23 @@ export const ActionStatus = compose(
   })
 )(({ intl, messages, action, handleSubmit }) => {
   if (action.get('issueTypeExternalId') === 'StockLevelUpdate') {
+    if (action.get('canEdit')) {
+      return (
+        <UpdateStockLevelInput
+          intl={intl}
+          messages={messages}
+          action={action}
+          forceEdit={
+            action.get('issueTypeExternalId') === 'StockLevelUpdate' &&
+            action.get('status') === 'Active'
+          }
+        />
+      )
+    }
     return (
-      <UpdateStockLevelInput
-        intl={intl}
-        messages={messages}
-        action={action}
-        forceEdit={
-          action.get('notificationType') === 'luStockLevelUpdate' &&
-          action.get('status') === 'Active'
-        }
-      />
+      <div className={cssClasses('Issue__Action__Status')}>
+        <span>{`${action.get('totalInStock', 0)}`}</span>
+      </div>
     )
   }
   if (action.get('status') === 'Active') {

@@ -742,7 +742,6 @@ async function seed(knex) {
     unit: piece,
     canExpire: 1,
     manufacturer: 'Cepheid',
-    autoInclude: 0,
   })
 
   const [consumableGxTbUltraCartridgeId] = await knex('Consumable').insert({
@@ -750,7 +749,6 @@ async function seed(knex) {
     unit: piece,
     canExpire: 1,
     manufacturer: 'Cepheid',
-    autoInclude: 0,
   })
 
   const [consumableGxEbolaCartridgeId] = await knex('Consumable').insert({
@@ -758,7 +756,6 @@ async function seed(knex) {
     unit: piece,
     canExpire: 1,
     manufacturer: 'Cepheid',
-    autoInclude: 0,
   })
 
   const [consumableGxHiv1VlCartridgeId] = await knex('Consumable').insert({
@@ -766,7 +763,6 @@ async function seed(knex) {
     unit: piece,
     canExpire: 1,
     manufacturer: 'Cepheid',
-    autoInclude: 0,
   })
 
   const [consumableGxHcvVlCartridgeId] = await knex('Consumable').insert({
@@ -774,7 +770,6 @@ async function seed(knex) {
     unit: piece,
     canExpire: 1,
     manufacturer: 'Cepheid',
-    autoInclude: 0,
   })
 
   const [consumableGxHiv1QualCartridgeId] = await knex('Consumable').insert({
@@ -782,7 +777,6 @@ async function seed(knex) {
     unit: piece,
     canExpire: 1,
     manufacturer: 'Cepheid',
-    autoInclude: 0,
   })
 
   // Assay Consumables
