@@ -365,4 +365,10 @@ async function seed(knex) {
           : modules.actionDashboard.edit,
     })
   })
+
+  // turn off email/sms
+  await knex('MessageType').update({
+    emailTemplateId: null,
+    smsTemplateId: null,
+  })
 }
