@@ -5,6 +5,7 @@ const {
   MODULE_POWER_ERROR_CODES,
   MODULE_TEMPERATURE_ERROR_CODES,
   machineTemperatureMaxErrors,
+  machinePowerMaxErrors,
   moduleFailureMaxErrors,
   modulePowerMaxErrors,
   moduleTemperatureMaxErrors,
@@ -87,7 +88,15 @@ async function resolveModulePowerError(knex, issue) {
 }
 
 async function resolveMachinePowerError(knex, issue) {
-  return false
+  const last30day = subDays(new Date(), 30)
+  const [machine] = await knex('Result as r')
+    .innerJoin('ResultCategory as rc', 'r.resultCategory1', 'rc.id')
+    .where('rc.externalId', 'Error')
+    .where('r.deviceId', issue.deviceId)
+    .where('r.endedOn', '>=', last30day)
+    .whereIn('r.errorCode', MODULE_POWER_ERROR_CODES)
+    .count('r.id as errorCount')
+  return machine != null && machine.errorCount > machinePowerMaxErrors
 }
 
 async function resolveModuleProceduralError(knex, issue) {
