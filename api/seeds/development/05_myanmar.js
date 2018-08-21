@@ -67,17 +67,12 @@ async function seed(knex) {
   }
 
   // Reuse previously seeded "static" data
-  const [
-    deviceTypes,
-    assays,
-    issueTypes,
-    defaultMessageTypes,
-  ] = await Promise.all([
+  const [deviceTypes, assays, defaultMessageTypes] = await Promise.all([
     rowsAsObject(knex, 'DeviceType', 'externalId'),
     rowsAsObject(knex, 'Assay', 'externalId'),
-    rowsAsObject(knex, 'IssueType', 'externalId'),
     getDefaultMessageTypes(knex),
   ])
+  let issueTypes = await rowsAsObject(knex, 'IssueType', 'externalId')
 
   const maxDaysDeviceNoResults = 14
   const [partnerId] = await knex('Partner').insert({
@@ -1653,6 +1648,13 @@ async function seed(knex) {
     })
   )
 
+  await seedStockIssues(knex)
+  await seedUnknownErrorsIssue(knex, 'Myanmar', 'myanmar_admin')
+  await seedIssueEventTriggersForPartner(knex, partnerId, {
+    issueTypeWhitelist: ['DeviceMaintenance'],
+  })
+  issueTypes = await rowsAsObject(knex, 'IssueType', 'externalId')
+
   // Issue Escalation Triggers
   await knex('IssueEscalationTrigger').insert([
     {
@@ -1825,13 +1827,87 @@ async function seed(knex) {
       createdOn: now,
       updatedOn: now,
     },
+    {
+      issueTypeId: issueTypes.ModuleTemperatureError.id,
+      partnerId,
+      resolutionConditions: JSON.stringify({
+        evaluationMethod: 'plugin-function',
+        evaluationParameter: 'resolveModuleTemperatureError',
+      }),
+      createdOn: now,
+      updatedOn: now,
+    },
+    {
+      issueTypeId: issueTypes.MachineTemperatureError.id,
+      partnerId,
+      resolutionConditions: JSON.stringify({
+        evaluationMethod: 'plugin-function',
+        evaluationParameter: 'resolveMachineTemperatureError',
+      }),
+      createdOn: now,
+      updatedOn: now,
+    },
+    {
+      issueTypeId: issueTypes.ModulePowerError.id,
+      partnerId,
+      resolutionConditions: JSON.stringify({
+        evaluationMethod: 'plugin-function',
+        evaluationParameter: 'resolveModulePowerError',
+      }),
+      createdOn: now,
+      updatedOn: now,
+    },
+    {
+      issueTypeId: issueTypes.MachinePowerError.id,
+      partnerId,
+      resolutionConditions: JSON.stringify({
+        evaluationMethod: 'plugin-function',
+        evaluationParameter: 'resolveMachinePowerError',
+      }),
+      createdOn: now,
+      updatedOn: now,
+    },
+    {
+      issueTypeId: issueTypes.ModuleProceduralError.id,
+      partnerId,
+      resolutionConditions: JSON.stringify({
+        evaluationMethod: 'plugin-function',
+        evaluationParameter: 'resolveModuleProceduralError',
+      }),
+      createdOn: now,
+      updatedOn: now,
+    },
+    {
+      issueTypeId: issueTypes.MachineProceduralError.id,
+      partnerId,
+      resolutionConditions: JSON.stringify({
+        evaluationMethod: 'plugin-function',
+        evaluationParameter: 'resolveMachineProceduralError',
+      }),
+      createdOn: now,
+      updatedOn: now,
+    },
+    {
+      issueTypeId: issueTypes.ModuleUnknownError.id,
+      partnerId,
+      resolutionConditions: JSON.stringify({
+        evaluationMethod: 'plugin-function',
+        evaluationParameter: 'resolveModuleUnknownError',
+      }),
+      createdOn: now,
+      updatedOn: now,
+    },
+    {
+      issueTypeId: issueTypes.MachineUnknownError.id,
+      partnerId,
+      resolutionConditions: JSON.stringify({
+        evaluationMethod: 'plugin-function',
+        evaluationParameter: 'resolveMachineUnknownError',
+      }),
+      createdOn: now,
+      updatedOn: now,
+    },
   ])
-
-  await seedStockIssues(knex)
-  await seedUnknownErrorsIssue(knex, 'Myanmar', 'myanmar_admin')
-  await seedIssueEventTriggersForPartner(knex, partnerId, {
-    issueTypeWhitelist: ['DeviceMaintenance'],
-  })
 }
 
 function calculateDateForResult(

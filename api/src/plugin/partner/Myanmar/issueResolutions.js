@@ -26,6 +26,46 @@ async function resolveModuleFailureError(knex, issue) {
   return module != null && module.errorCount <= moduleFailureMaxErrors
 }
 
+async function resolveModuleTemperatureError(knex, issue) {
+  return false
+}
+
+async function resolveMachineTemperatureError(knex, issue) {
+  return false
+}
+
+async function resolveModulePowerError(knex, issue) {
+  return false
+}
+
+async function resolveMachinePowerError(knex, issue) {
+  return false
+}
+
+async function resolveModuleProceduralError(knex, issue) {
+  return false
+}
+
+async function resolveMachineProceduralError(knex, issue) {
+  return false
+}
+
+async function resolveModuleUnknownError(knex, issue) {
+  return false
+}
+
+async function resolveMachineUnknownError(knex, issue) {
+  return false
+}
+
 module.exports = {
   resolveModuleFailureError,
+  resolveModuleTemperatureError,
+  resolveMachineTemperatureError,
+  resolveModulePowerError,
+  resolveMachinePowerError,
+  resolveModuleProceduralError,
+  resolveMachineProceduralError,
+  resolveModuleUnknownError,
+  resolveMachineUnknownError,
 }
