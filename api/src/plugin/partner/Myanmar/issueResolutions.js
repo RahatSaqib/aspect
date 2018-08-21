@@ -2,7 +2,9 @@ const subDays = require('date-fns/sub_days')
 
 const {
   MODULE_FAILURE_ERROR_CODES,
+  MODULE_TEMPERATURE_ERROR_CODES,
   moduleFailureMaxErrors,
+  moduleTemperatureMaxErrors,
 } = require('./errors')
 
 async function resolveModuleFailureError(knex, issue) {
@@ -27,7 +29,24 @@ async function resolveModuleFailureError(knex, issue) {
 }
 
 async function resolveModuleTemperatureError(knex, issue) {
-  return false
+  const last30day = subDays(new Date(), 30)
+  const issueData = JSON.parse(issue.data) || {}
+  const modules = await knex('Result as r')
+    .innerJoin('ResultCategory as rc', 'r.resultCategory1', 'rc.id')
+    .where('rc.externalId', 'Error')
+    .where('r.deviceId', issue.deviceId)
+    .where('r.endedOn', '>=', last30day)
+    .whereIn('r.errorCode', MODULE_TEMPERATURE_ERROR_CODES)
+    .select(
+      'r.moduleSerial as moduleSerial',
+      knex.raw('coalesce(min(r.moduleName), r.moduleSerial) as moduleName')
+    )
+    .count('r.id as errorCount')
+    .groupBy('r.moduleSerial')
+  const [module] = modules.filter(
+    mod => mod.moduleName === issueData.moduleName
+  )
+  return module != null && module.errorCount <= moduleTemperatureMaxErrors
 }
 
 async function resolveMachineTemperatureError(knex, issue) {
