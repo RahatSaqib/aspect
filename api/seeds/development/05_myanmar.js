@@ -1815,6 +1815,16 @@ async function seed(knex) {
       createdOn: now,
       updatedOn: now,
     },
+    {
+      issueTypeId: issueTypes.ModuleFailureError.id,
+      partnerId,
+      resolutionConditions: JSON.stringify({
+        evaluationMethod: 'plugin-function',
+        evaluationParameter: 'resolveModuleFailureError',
+      }),
+      createdOn: now,
+      updatedOn: now,
+    },
   ])
 
   await seedStockIssues(knex)
