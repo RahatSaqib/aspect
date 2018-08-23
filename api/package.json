@@ -5,7 +5,11 @@
   "description": "The API for aspect clients",
   "main": "server.js",
   "scripts": {
+    "db:recreate": "node ./migrations/utils/recreateDB",
+    "db:reseed": "npm-run-all db:recreate knex:migrate:latest knex:seed:run",
     "knex": "knex",
+    "knex:migrate:latest": "knex migrate:latest",
+    "knex:seed:run": "knex seed:run",
     "lint": "eslint ./src ./test ./migrations ./seeds ./knexfile.js --ext .js",
     "mocha:contract": "mocha --opts test/contract.mocha.opts",
     "mocha:unit": "mocha --opts test/unit.mocha.opts",
