@@ -110,13 +110,6 @@ aspectUrl=http://dev.aspect.id
 amqp.url=amqp://localhost
 ```
 
-Logs requests to console by default, to forward to Logstash, set the endpoint.
-
-```
-logstash.endpoint=udp://localhost:9001
-
-```
-
 Optionally, configure the Raven DSN to ship errors to Sentry:
 
 ```

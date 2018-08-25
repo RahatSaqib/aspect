@@ -158,7 +158,7 @@ async function createWebhookMessageFromTemplate(knex, webhookMessageId) {
       'tmpl.params as paramsTemplate'
     )
 
-  const message = processUsingDataSourceQuery(data, [
+  const message = await processUsingDataSourceQuery(data, [
     'payloadTemplate',
     'urlTemplate',
     'fileNameTemplate',

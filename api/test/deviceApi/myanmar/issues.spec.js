@@ -491,7 +491,7 @@ describe('Myanmar Issue endpoints', () => {
             result,
           }
         )
-        // minErrorsForLUGenericModuleIssue = 6, see src/deviceApi/plugins/myanmar/onResultLogged.js,
+        // minErrorsForLUGenericModuleIssue = 6, see src/plugin/partner/Myanmar/onResultLogged.js,
         if (i < 9) {
           // Post the result to aspect - 5 error results (i=4..8) do not trigger Module issue
           await postToDeviceApi({
@@ -920,7 +920,7 @@ describe('Myanmar Issue endpoints', () => {
         }),
       })
       const deviceId = response.body.device.id
-      for (let i = 0; i < 10; i++) {
+      for (let i = 0; i < 8; i++) {
         /* eslint-disable no-await-in-loop */
         const errorTestResultId = `UNIQUE-ID-WITH-REAGENT-HEALTH-ERROR-${i}`
         const sampleId = `REAGENT2552${i}`
@@ -929,11 +929,14 @@ describe('Myanmar Issue endpoints', () => {
         const testStartedOn = setMilliseconds(subDays(now, i + 3), 0)
         const testEndedOn = setMilliseconds(addHours(testStartedOn, i + 2), 0)
 
-        // Post the first few results without an error code
-        let result = {
+        // Post 8 results with error code
+        const result = {
           id: errorTestResultId,
           startedOn: testStartedOn,
           endedOn: testEndedOn,
+          error: {
+            code: '2037',
+          },
           sample: { id: sampleId },
           instrument: {
             serial: instrumentSerial,
@@ -942,24 +945,6 @@ describe('Myanmar Issue endpoints', () => {
               name: 'A1',
             },
           },
-        }
-        if (i > 8) {
-          result = {
-            id: errorTestResultId,
-            startedOn: testStartedOn,
-            endedOn: testEndedOn,
-            error: {
-              code: '2037',
-            },
-            sample: { id: sampleId },
-            instrument: {
-              serial: instrumentSerial,
-              module: {
-                serial: moduleSerial,
-                name: 'A1',
-              },
-            },
-          }
         }
 
         const payload = _.merge(
@@ -971,14 +956,14 @@ describe('Myanmar Issue endpoints', () => {
             result,
           }
         )
-        if (i < 9) {
-          // Post the result to aspect
+        if (i < 7) {
+          // Post first 7 results to aspect
           await postToDeviceApi({
             authHeader: deviceAuth,
             payload,
           })
         } else {
-          // Should create issue when errorCode is added
+          // 8th error result should create issue
           const waitForModuleGenericError = waitForAction(
             inventoryReagentHealth(deviceId, 2)
           )

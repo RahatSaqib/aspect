@@ -3,7 +3,7 @@ import classnames from 'classnames/bind'
 import React from 'react'
 import { TableRow, TableCell } from 'react-toolbox/lib/table'
 import FaCircle from 'react-icons/lib/fa/circle'
-import { longNumericFormat } from '../../../shared/utils/dateFormat'
+import { formatDateTime } from '../../../shared/utils/dateFormat'
 
 const cssClasses = classnames.bind(require('./NotificationHistoryTableRow.css'))
 
@@ -24,7 +24,7 @@ const NotificationHistoryTableRow = ({ intl, delivery, ...restProps }) => (
       )}
     </TableCell>
     <TableCell className={cssClasses('TableCell')}>
-      {intl.formatDate(delivery.date, longNumericFormat)}
+      {formatDateTime(delivery.date)}
     </TableCell>
     <TableCell className={cssClasses('TableCell')}>
       {delivery.webCount}

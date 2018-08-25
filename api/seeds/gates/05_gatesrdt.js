@@ -1,4 +1,4 @@
-module.exports = require('../../src/db').seed(seed)
+module.exports = require('../utils').seed(seed)
 // TODO: Remove the following two ESLint ignore-settings when implementing seeds
 /* eslint no-unused-vars: 0 */
 /* eslint no-empty-function: 0 */

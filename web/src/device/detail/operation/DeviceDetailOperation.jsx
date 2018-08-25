@@ -14,7 +14,7 @@ import {
   makeSearchParamsSanitizer,
   composeSanitizer,
 } from '../../../shared/selectors/searchParams'
-import { shortNumericDate } from '../../../shared/utils/dateFormat'
+import { formatDate } from '../../../shared/utils/dateFormat'
 import DataTableProgressBar from '../../../components/shared/DataTableProgressBar'
 import BrowseTablePaginator from '../../../globals/components/BrowseTablePaginator'
 import BrowseEmptyList from '../../../globals/components/BrowseEmptyList'
@@ -197,9 +197,8 @@ export const DeviceDetailOperation = ({
           />
           <Summary
             title={intl.formatMessage(messages.firstApproved)}
-            description={`${device.get('approvedBy')} (${intl.formatDate(
-              device.get('approvedOn', EMPTY_DATE),
-              shortNumericDate
+            description={`${device.get('approvedBy')} (${formatDate(
+              device.get('approvedOn', EMPTY_DATE)
             )})`}
           />
         </div>
