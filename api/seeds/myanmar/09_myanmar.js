@@ -10,7 +10,7 @@ const Promise = require('bluebird')
 
 async function seed(knex) {
   await seedDataCategory(knex, 'Myanmar')
-  
+
   const alertTemplateWithHideFlag = await knex('AlertTemplate')
     .where('hideWhenSiteFilterIsSelected', 1)
     .orWhere('hideWhenSiteFilterIsNotSelected', 1)
