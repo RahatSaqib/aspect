@@ -95,7 +95,7 @@ async function resolveMachinePowerError(knex, issue) {
     .where('r.endedOn', '>=', last30day)
     .whereIn('r.errorCode', MODULE_POWER_ERROR_CODES)
     .count('r.id as errorCount')
-  return machine != null && machine.errorCount > machinePowerMaxErrors
+  return machine != null && machine.errorCount <= machinePowerMaxErrors
 }
 
 async function resolveModuleProceduralError(/* knex, issue */) {
