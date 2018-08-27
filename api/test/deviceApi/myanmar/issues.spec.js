@@ -174,6 +174,7 @@ describe('Myanmar Issue endpoints', () => {
         }),
       })
       const deviceId = response.body.device.id
+      let machineTempErrorIssueId = null
       for (let i = 0; i < 9; i++) {
         /* eslint-disable no-await-in-loop */
         const errorTestResultId = `UNIQUE-ID-WITH-MTEMP-ERROR-${i}`
@@ -225,22 +226,41 @@ describe('Myanmar Issue endpoints', () => {
           await waitForMachineTemperatureError
           await waitForIdle()
 
-          const issues = await knex('Issue as i')
-            .join('IssueType as it', 'i.issueTypeId', 'it.id')
-            .join('IssueStatus as is', 'i.issueStatusId', 'is.id')
-            .where({ 'i.deviceId': deviceId })
-            .select(
-              'i.id',
-              'it.externalId as issueType',
-              'i.deviceId',
-              'is.externalId as issueStatus'
-            )
+          const issues = await getIssuesByDeviceId(knex, deviceId)
           assert.equal(issues.length, 1)
           assert.equal(issues[0].issueType, 'MachineTemperatureError')
           assert.equal(issues[0].deviceId, deviceId)
           assert.equal(issues[0].issueStatus, 'Active')
+          machineTempErrorIssueId = issues[0].id
         }
       }
+
+      await dispatchAndWaitForAction(resolveIssues(machineTempErrorIssueId))
+      assert.equal(
+        'Active',
+        await getIssueStatusByIssueId(knex, machineTempErrorIssueId)
+      )
+
+      // Update ended on for initial issue to past so module failure issue is resolved
+      const errorTestResultId = 'UNIQUE-ID-WITH-MTEMP-ERROR-0'
+      const testStartedOn = setMilliseconds(subDays(now, 35), 0)
+      const testEndedOn = setMilliseconds(addHours(testStartedOn, 2), 0)
+      const payload = _.merge({}, basicDevicePayload, basicResultPayload, {
+        result: {
+          id: errorTestResultId,
+          startedOn: testStartedOn,
+          endedOn: testEndedOn,
+        },
+      })
+      await postToDeviceApi({
+        authHeader: deviceAuth,
+        payload,
+      })
+      await dispatchAndWaitForAction(resolveIssues(machineTempErrorIssueId))
+      assert.equal(
+        'Resolved',
+        await getIssueStatusByIssueId(knex, machineTempErrorIssueId)
+      )
     }))
 
   it('should create a module power issue ', () =>

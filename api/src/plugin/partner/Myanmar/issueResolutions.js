@@ -55,13 +55,12 @@ async function resolveModuleTemperatureError(knex, issue) {
 
 async function resolveMachineTemperatureError(knex, issue) {
   const last30day = subDays(new Date(), 30)
-  const machine = await knex('Result as r')
+  const [machine] = await knex('Result as r')
     .innerJoin('ResultCategory as rc', 'r.resultCategory1', 'rc.id')
     .where('rc.externalId', 'Error')
     .where('r.deviceId', issue.deviceId)
     .where('r.endedOn', '>=', last30day)
     .whereIn('r.errorCode', MODULE_TEMPERATURE_ERROR_CODES)
-    // TODO .whereNotIn('r.moduleSerial', moduleTemperatureSerials)
     .count('r.id as errorCount')
   return machine != null && machine.errorCount <= machineTemperatureMaxErrors
 }
@@ -99,19 +98,19 @@ async function resolveMachinePowerError(knex, issue) {
   return machine != null && machine.errorCount > machinePowerMaxErrors
 }
 
-async function resolveModuleProceduralError(knex, issue) {
+async function resolveModuleProceduralError(/* knex, issue */) {
   return false
 }
 
-async function resolveMachineProceduralError(knex, issue) {
+async function resolveMachineProceduralError(/* knex, issue */) {
   return false
 }
 
-async function resolveModuleUnknownError(knex, issue) {
+async function resolveModuleUnknownError(/* knex, issue */) {
   return false
 }
 
-async function resolveMachineUnknownError(knex, issue) {
+async function resolveMachineUnknownError(/* knex, issue */) {
   return false
 }
 
