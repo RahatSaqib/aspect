@@ -16,6 +16,11 @@ const {
   deviceNoResults,
   deviceHasNewResults,
 } = require('../device/actions')
+const {
+  issueTypeToId,
+  issueStatusToId,
+  issueEventStatusToId,
+} = require('../shared/dictionary')
 
 const startOfMonth = require('date-fns/start_of_month')
 
@@ -711,27 +716,20 @@ async function checkDataCategoriesForLowStatus(action, { messageContext }) {
   })
 
   const now = new Date()
-  const addPeriod = (name, dateFrom, dateTo) => ({ name, dateFrom, dateTo })
-  const periods = [
-    addPeriod('Current Month', startOfMonth(now), now),
-    // addPeriod(
-    //   'Last Month',
-    //   startOfMonth(subMonths(now, 1)),
-    //   endOfMonth(subMonths(now, 1))
-    // ),
-    // addPeriod('Current Quarter', startOfQuarter(now), now),
-    // addPeriod(
-    //   'Last Quarter',
-    //   startOfQuarter(subQuarters(now, 1)),
-    //   endOfQuarter(subQuarters(now, 1))
-    // ),
-    // addPeriod('This Year', startOfYear(now), now),
-  ]
+  // calculate only for current month
+  const period = {
+    name: 'Current Month',
+    dateFrom: startOfMonth(now),
+    dateTo: now,
+  }
+
+  const issueTypeId = await issueTypeToId('DataCategoryLow')
+  const issueStatusId = await issueStatusToId('Active')
+  const triggeredIssueEventStatusId = await issueEventStatusToId('Triggered')
 
   await context.run(async knex => {
     // read all data categories for all partners
     const dataCategories = await knex('DataCategory')
-    const triggeredBySiteOnThisRound = {}
 
     // check data categories for 'low status'
     await Promise.all(
@@ -746,105 +744,118 @@ async function checkDataCategoriesForLowStatus(action, { messageContext }) {
           .where({ partnerId })
           .select('id', 'name', 'geographyId')
 
-        await Promise.all(
-          _.map(periods, async period => {
-            await Promise.all(
-              // for each site
-              _.map(sites, async site => {
-                // ----------------------------
-                // trigger only one issue of this type per site
-                // ----------------------------
-                // if issue has already been triggered for current site then exit
-                // this includes all categories - so, if any category triggered an issue then exit and skip
-                // checking other categories
-                if (triggeredBySiteOnThisRound[site.id]) {
-                  return
-                }
+        // for each site
+        _.map(sites, async site => {
+          // ----------------------------
+          // trigger only one issue of this type per site-category
+          // ----------------------------
 
-                const itemsBase = knex('Result as r')
-                  .innerJoin('Device as d', 'r.deviceId', 'd.id')
-                  // filter by period
-                  .where('r.endedOn', '>=', period.dateFrom)
-                  .where('r.endedOn', '<=', period.dateTo)
-                  // filter by site
-                  .where(function() {
-                    // either result is from site's geography
-                    this.where(function() {
-                      this.whereNotNull('r.geographyId').andWhere(
-                        'r.geographyId',
-                        site.geographyId
-                      )
-                    })
-                    // or device is from site's geography
-                    this.orWhere(function() {
-                      this.whereNotNull('d.geographyId')
-                        .andWhereRaw(`${site.geographyId || -1} > 0`)
-                        .andWhere('d.geographyId', site.geographyId)
-                    })
-                  })
-
-                const [
-                  { count: totals },
-                ] = await itemsBase.clone().countDistinct('r.id as count')
-
-                // ----------------------------
-                // trigger only if site has more than 10 results for the period
-                // ----------------------------
-                if (totals < MIN_RESULTS_TO_TRIGGER_DATA_CATEGORY_LOW) {
-                  return
-                }
-
-                const [{ count: numValid }] = await itemsBase
-                  .clone()
-                  .where(function() {
-                    // process 2 main cases - validValues is an array or not
-                    if (validValues && _.isArray(validValues)) {
-                      // field exists in json
-                      this.whereRaw('r.patientData like ?', [
-                        `%"${category}":%`,
-                      ])
-                      this.andWhere(function() {
-                        _.each(validValues, value => {
-                          this.orWhereRaw(
-                            `JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.${category}")) = ?`,
-                            [value]
-                          )
-                        })
-                      })
-                    } else {
-                      const fieldNames = JSON.parse(dataCategory.fieldNames)
-                      _.map(fieldNames, field => {
-                        // make sure existing value is not undefined, null, "undefined", "null" or ""
-                        this.whereRaw(
-                          `
-                          JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.${field}")) != "undefined"
-                          and
-                          JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.${field}")) != "null"
-                          and
-                          JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.${field}")) != ""
-                          `
-                        )
-                      })
-                    }
-                  })
-                  .countDistinct('r.id as count')
-
-                const percentage = totals === 0 ? 0 : 100 * (numValid / totals)
-                if (percentage < dataCategory.cutoffPercentage) {
-                  const payload = {
-                    dataCategoryId: dataCategory.id,
-                    categoryName: dataCategory.name,
-                    periodName: period.name,
-                    siteId: site.id,
-                    percentage,
-                  }
-                  context.factDataCategoryLow(payload)
-                  triggeredBySiteOnThisRound[site.id] = true
-                }
-              })
+          // check if this type of IssueEvent has already been triggered and is Active
+          const triggeredIssue = await knex('Issue as i')
+            .innerJoin('IssueEvent as ie', 'i.id', 'ie.issueId')
+            .where('i.siteId', site.id)
+            .where('i.partnerId', partnerId)
+            .where('i.level', 1)
+            .where('i.issueTypeId', issueTypeId) // issue type 'DataCategoryLow'
+            .where('i.issueStatusId', issueStatusId) // is Active
+            .where('ie.issueEventStatusId', triggeredIssueEventStatusId)
+            .whereRaw(
+              `(ie.data ->> '$.options.dataCategoryId') = ${dataCategory.id}` // current category
             )
-          })
-        )
+            .first()
+          // if issue has already been triggered for current site-category then exit
+          if (triggeredIssue) {
+            return
+          }
+
+          // base query for getting counts - totals and number of valid results
+          const itemsBase = knex('Result as r')
+            .innerJoin('Device as d', 'r.deviceId', 'd.id')
+            // filter by period
+            .where('r.endedOn', '>=', period.dateFrom)
+            .where('r.endedOn', '<=', period.dateTo)
+            // filter by site's geography
+            .whereRaw(`${site.geographyId || -1} > 0`)
+            .where(function() {
+              // either result is from site's geography
+              this.where(function() {
+                this.whereNotNull('r.geographyId').andWhere(
+                  'r.geographyId',
+                  site.geographyId
+                )
+              })
+              // or device is from site's geography
+              this.orWhere(function() {
+                this.whereNotNull('d.geographyId').andWhere(
+                  'd.geographyId',
+                  site.geographyId
+                )
+              })
+            })
+
+          // get totals
+          const [{ count: totals }] = await itemsBase
+            .clone()
+            .countDistinct('r.id as count')
+
+          // ----------------------------
+          // trigger only if site has more than 10 results for the period
+          // ----------------------------
+          if (totals < MIN_RESULTS_TO_TRIGGER_DATA_CATEGORY_LOW) {
+            return
+          }
+
+          // get number of valid results
+          const [{ count: numValid }] = await itemsBase
+            .clone()
+            .where(function() {
+              // process 2 main cases - validValues is an array (all categories except Other) or not (category Other)
+              if (validValues && _.isArray(validValues)) {
+                // field exists in json
+                this.whereRaw(`(r.patientData ->> '$.${category}') is not null`)
+                this.andWhere(function() {
+                  // check if category is one of valid values
+                  _.each(validValues, value => {
+                    this.orWhereRaw(`(r.patientData ->> '$.${category}') = ?`, [
+                      value,
+                    ])
+                  })
+                })
+              } else {
+                // get all fields for 'Other' category (i.e. "name", "gender", "age")
+                const fieldNames = JSON.parse(dataCategory.fieldNames)
+                _.map(fieldNames, field => {
+                  // field value is not null (when field is missing), "undefined", "null" or ""
+                  this.whereRaw(
+                    `
+                    (r.patientData ->> '$.${field}') is not null
+                    and
+                    (r.patientData ->> '$.${field}') != 'undefined'
+                    and
+                    (r.patientData ->> '$.${field}') != 'null'
+                    and
+                    (r.patientData ->> '$.${field}') != ''
+                    `
+                  )
+                  // ^^^ notice that we require ALL fields (i.e. name, gender, age) have value to count result as valid
+                  // if need at least one field to have value then use this.orWhereRaw above
+                })
+              }
+            })
+            .countDistinct('r.id as count')
+
+          const percentage = totals === 0 ? 0 : 100 * (numValid / totals)
+          if (percentage < dataCategory.cutoffPercentage) {
+            const payload = {
+              dataCategoryId: dataCategory.id,
+              categoryName: dataCategory.name,
+              periodName: period.name,
+              siteId: site.id,
+              percentage,
+            }
+            context.factDataCategoryLow(payload)
+          }
+        })
       })
     )
   })
