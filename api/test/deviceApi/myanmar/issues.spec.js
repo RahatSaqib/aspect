@@ -23,7 +23,12 @@ const {
   resultMachineUnknownError,
 } = require('../../../src/result/actions')
 const { inventoryReagentHealth } = require('../../../src/inventory/actions')
-const { waitForIdle, waitForAction } = require('../../utils/mqUtils')
+const { resolveIssues } = require('../../../src/issue/actions')
+const {
+  waitForIdle,
+  waitForAction,
+  dispatchAndWaitForAction,
+} = require('../../utils/mqUtils')
 
 describe('Myanmar Issue endpoints', () => {
   function createContext() {
@@ -312,6 +317,7 @@ describe('Myanmar Issue endpoints', () => {
         }),
       })
       const deviceId = response.body.device.id
+      let moduleFailureIssueId = null
       for (let i = 0; i < 3; i++) {
         /* eslint-disable no-await-in-loop */
         const errorTestResultId = `UNIQUE-ID-WITH-FAILURE-ERROR-${i}`
@@ -362,22 +368,41 @@ describe('Myanmar Issue endpoints', () => {
           await waitForModuleFailureError
           await waitForIdle()
 
-          const issues = await knex('Issue as i')
-            .join('IssueType as it', 'i.issueTypeId', 'it.id')
-            .join('IssueStatus as is', 'i.issueStatusId', 'is.id')
-            .where({ 'i.deviceId': deviceId })
-            .select(
-              'i.id',
-              'it.externalId as issueType',
-              'i.deviceId',
-              'is.externalId as issueStatus'
-            )
+          const issues = await getIssuesByDeviceId(knex, deviceId)
           assert.equal(issues.length, 1)
           assert.equal(issues[0].issueType, 'ModuleFailureError')
           assert.equal(issues[0].deviceId, deviceId)
           assert.equal(issues[0].issueStatus, 'Active')
+          moduleFailureIssueId = issues[0].id
         }
       }
+
+      await dispatchAndWaitForAction(resolveIssues(moduleFailureIssueId))
+      assert.equal(
+        'Active',
+        await getIssueStatusByIssueId(knex, moduleFailureIssueId)
+      )
+
+      // Update ended on for initial issue to past so module failure issue is resolved
+      const errorTestResultId = 'UNIQUE-ID-WITH-FAILURE-ERROR-0'
+      const testStartedOn = setMilliseconds(subDays(now, 33), 0)
+      const testEndedOn = setMilliseconds(addHours(testStartedOn, 2), 0)
+      const payload = _.merge({}, basicDevicePayload, basicResultPayload, {
+        result: {
+          id: errorTestResultId,
+          startedOn: testStartedOn,
+          endedOn: testEndedOn,
+        },
+      })
+      await postToDeviceApi({
+        authHeader: deviceAuth,
+        payload,
+      })
+      await dispatchAndWaitForAction(resolveIssues(moduleFailureIssueId))
+      assert.equal(
+        'Resolved',
+        await getIssueStatusByIssueId(knex, moduleFailureIssueId)
+      )
     }))
 
   it('should create a procedural module issue ', () =>
@@ -1381,3 +1406,27 @@ describe('Myanmar Issue endpoints', () => {
       })
     }))
 })
+
+async function getIssuesByDeviceId(knex, deviceId) {
+  return knex('Issue as i')
+    .join('IssueType as it', 'i.issueTypeId', 'it.id')
+    .join('IssueStatus as is', 'i.issueStatusId', 'is.id')
+    .where({ 'i.deviceId': deviceId })
+    .select(
+      'i.id',
+      'it.externalId as issueType',
+      'i.deviceId',
+      'is.externalId as issueStatus'
+    )
+}
+
+async function getIssueStatusByIssueId(knex, issueId) {
+  assert.isOk(issueId)
+  const issue = await knex('Issue as i')
+    .join('IssueStatus as is', 'i.issueStatusId', 'is.id')
+    .where({ 'i.id': issueId })
+    .first('is.externalId as issueStatus')
+  assert.isOk(issue)
+  assert.isOk(issue.issueStatus)
+  return issue.issueStatus
+}
