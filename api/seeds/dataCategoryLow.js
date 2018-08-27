@@ -1,4 +1,5 @@
 const _ = require('lodash')
+const { seedIssueEventTriggersForPartner } = require('./utils')
 
 // --------------------------------------------------------------------
 // custom fields for 'patients' array
@@ -231,6 +232,11 @@ async function seedDataCategory(knex, partnerName) {
       cutoffPercentage: 98,
     },
   ])
+
+  // make sure table IssueEventTrigger is up-to-date after latest changes in IssueEventTrigger.json
+  await seedIssueEventTriggersForPartner(knex, partnerId, {
+    issueTypeWhitelist: ['DeviceMaintenance'],
+  })
 }
 
 module.exports = {
