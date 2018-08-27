@@ -256,6 +256,7 @@ describe('Myanmar Issue endpoints', () => {
         }),
       })
       const deviceId = response.body.device.id
+      let modulePowerErrorIssueId = null
       for (let i = 0; i < 5; i++) {
         /* eslint-disable no-await-in-loop */
         const errorTestResultId = `UNIQUE-ID-WITH-POWER-ERROR-${i}`
@@ -306,22 +307,41 @@ describe('Myanmar Issue endpoints', () => {
           await waitForModulePowerError
           await waitForIdle()
 
-          const issues = await knex('Issue as i')
-            .join('IssueType as it', 'i.issueTypeId', 'it.id')
-            .join('IssueStatus as is', 'i.issueStatusId', 'is.id')
-            .where({ 'i.deviceId': deviceId })
-            .select(
-              'i.id',
-              'it.externalId as issueType',
-              'i.deviceId',
-              'is.externalId as issueStatus'
-            )
+          const issues = await getIssuesByDeviceId(knex, deviceId)
           assert.equal(issues.length, 1)
           assert.equal(issues[0].issueType, 'ModulePowerError')
           assert.equal(issues[0].deviceId, deviceId)
           assert.equal(issues[0].issueStatus, 'Active')
+          modulePowerErrorIssueId = issues[0].id
         }
       }
+
+      await dispatchAndWaitForAction(resolveIssues(modulePowerErrorIssueId))
+      assert.equal(
+        'Active',
+        await getIssueStatusByIssueId(knex, modulePowerErrorIssueId)
+      )
+
+      // Update ended on for initial issue to past so module power issue is resolved
+      const errorTestResultId = 'UNIQUE-ID-WITH-POWER-ERROR-0'
+      const testStartedOn = setMilliseconds(subDays(now, 33), 0)
+      const testEndedOn = setMilliseconds(addHours(testStartedOn, 2), 0)
+      const payload = _.merge({}, basicDevicePayload, basicResultPayload, {
+        result: {
+          id: errorTestResultId,
+          startedOn: testStartedOn,
+          endedOn: testEndedOn,
+        },
+      })
+      await postToDeviceApi({
+        authHeader: deviceAuth,
+        payload,
+      })
+      await dispatchAndWaitForAction(resolveIssues(modulePowerErrorIssueId))
+      assert.equal(
+        'Resolved',
+        await getIssueStatusByIssueId(knex, modulePowerErrorIssueId)
+      )
     }))
 
   it('should create a module failure issue ', () =>
