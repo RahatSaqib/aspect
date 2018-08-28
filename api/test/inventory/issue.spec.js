@@ -1,4 +1,4 @@
-const { addMonths, subMinutes, addDays, format } = require('date-fns')
+const { addMonths, addDays } = require('date-fns')
 const { assert, expect } = require('chai')
 
 const { queuePurge } = require('../utils/mqUtils')
@@ -26,9 +26,10 @@ const {
   getIssueNotifications,
   cleanUpIssues,
 } = require('../utils/issueUtils')
+const { loadPlugin } = require('../../src/plugin/registration')
 
-const USER_LU = 'myanmar_lab1'
-const USER_RO = 'myanmar_ro1'
+const USER_LU = 'myanmar_lab'
+const USER_RO = 'myanmar_ro'
 
 describe('Inventory Stock Issues Endpoint', () => {
   const partnerName = 'Myanmar'
@@ -44,8 +45,8 @@ describe('Inventory Stock Issues Endpoint', () => {
   let baseProps
   const issueIds = []
 
-  before(async () =>
-    run(async knex => {
+  before(async () => {
+    await run(async knex => {
       partner = await getPartner(knex, partnerName)
       const siteDetails = await getSite(knex, {
         partnerId: partner.id,
@@ -71,17 +72,23 @@ describe('Inventory Stock Issues Endpoint', () => {
         escalateIssues,
       })
 
+      const { displayPreferences = {} } = await loadPlugin(
+        [partner.plugin],
+        'settings'
+      )
+
       baseProps = {
         siteId,
         consumableId,
         issueEventIds,
         daysDue: 30,
+        displayPreferences,
       }
     })
-  )
+  })
 
-  after(async () =>
-    run(async knex => {
+  after(async () => {
+    await run(async knex => {
       await waitForIdle()
 
       if (issueEventIds.length > 0) {
@@ -96,10 +103,10 @@ describe('Inventory Stock Issues Endpoint', () => {
 
       await queuePurge()
     })
-  )
+  })
 
-  it('makes sure that calculated consumption rates match rates in db for all periods', () => {
-    runTestWithKnex(async knex => {
+  it('makes sure that calculated consumption rates match rates in db for all periods', async () => {
+    await runTestWithKnex(async knex => {
       // calculate rates
       const totals = await refreshConsumptionRates(knex, siteId, consumableId)
 
@@ -129,8 +136,8 @@ describe('Inventory Stock Issues Endpoint', () => {
   // trigger base issues
   // ---------------------------------------------------------------------------
   // Stockout
-  it('should create Stockout issue', () => {
-    runTestWithKnex(async knex => {
+  it('should create Stockout issue', async () => {
+    await runTestWithKnex(async knex => {
       const issueId = await triggerInitialIssue({
         knex,
         ...baseProps, // i.e. siteId, consumableId, issueEventIds, daysDue
@@ -143,8 +150,8 @@ describe('Inventory Stock Issues Endpoint', () => {
   })
 
   // StockExpiring
-  it('should create StockExpiring issue', () => {
-    runTestWithKnex(async knex => {
+  it('should create StockExpiring issue', async () => {
+    await runTestWithKnex(async knex => {
       const issueId = await triggerInitialIssue({
         knex,
         ...baseProps, // i.e. siteId, consumableId, issueEventIds, daysDue
@@ -160,8 +167,8 @@ describe('Inventory Stock Issues Endpoint', () => {
   // escalate issues
   // ---------------------------------------------------------------------------
   describe("dispatch ESCALATE_ISSUES with created issues ID's", () => {
-    it('Stockout and StockExpiring issues should be escalated', () =>
-      runTestWithKnex(async knex => {
+    it('Stockout and StockExpiring issues should be escalated', async () => {
+      await runTestWithKnex(async knex => {
         // change dates of these issues to 1 month back to meet escalation conditions
         const monthAgo = addMonths(new Date(), -1)
         await knex('Issue')
@@ -181,10 +188,11 @@ describe('Inventory Stock Issues Endpoint', () => {
           const issue = await getIssue(knex, issueId)
           assert.equal(issue.level, 2)
         })
-      }))
+      })
+    })
 
-    it('notifications should be created for the level that the issue has been escalated to', () =>
-      runTestWithKnex(async knex => {
+    it('notifications should be created for the level that the issue has been escalated to', async () => {
+      await runTestWithKnex(async knex => {
         issueIds.map(async issueId => {
           const notificationsIssue = await getIssueNotifications(knex, issueId)
           expect(notificationsIssue).to.containSubset([
@@ -199,7 +207,8 @@ describe('Inventory Stock Issues Endpoint', () => {
             },
           ])
         })
-      }))
+      })
+    })
   })
 })
 
@@ -215,6 +224,7 @@ async function triggerInitialIssue({
   issueType,
   dispatch,
   actionCreator,
+  displayPreferences,
 }) {
   const TO_BE_WASTED = 100
 
@@ -230,15 +240,14 @@ async function triggerInitialIssue({
 
   await waitForAction(action)
   await waitForIdle()
-  const dateFrom = subMinutes(new Date(), 5)
 
-  // get issues for last 5 mins for curent siteId and issueType
+  // get latest issue for curent siteId and issueType
   const issue = await knex('Issue as i')
     .innerJoin('IssueType as it', 'i.issueTypeId', 'it.id')
     .innerJoin('IssueStatus as is', 'i.issueStatusId', 'is.id')
     .innerJoin('IssueEvent as ie', 'i.id', 'ie.issueId')
     .where({ 'i.siteId': siteId, 'it.externalId': issueType })
-    .where('ie.createdOn', '>', dateFrom)
+    .orderBy('ie.createdOn', 'desc')
     .first(
       'i.id',
       'i.level',
@@ -277,26 +286,29 @@ async function triggerInitialIssue({
       'am.message as alertMessage'
     )
 
-  assert.equal(notifications.length, 2)
+  // should have minimum 2 entries - for LU and RO, but may be one LU and 2 RO's
+  expect(notifications.length).to.be.at.least(2)
   const [notificationLU, notificationRO] = notifications
-  assert.equal(notificationLU.userName, USER_LU)
+
+  expect(notificationLU.userName).to.include(USER_LU)
   assert.equal(notificationLU.jobFunction, 'Lab User')
   assert.equal(notificationLU.level, issue.level)
   assert.equal(notificationLU.canAcknowledge, 1)
-  const date = format(addDays(new Date(), daysDue), 'YYYY-MM-DD')
+
+  const date = addDays(new Date(), daysDue)
   if (issueType === 'InventoryStockout') {
     assert.equal(
-      processUsingHandlebarsSyntax(notificationLU.alertMessage, { date }),
-      `Stock-out expected ${date} - Order Stock.`
+      notificationLU.alertMessage,
+      processUsingHandlebarsSyntax(
+        `Stock-out expected {{formatDate date}} - Order Stock.`,
+        { date, displayPreferences }
+      )
     )
   }
-  assert.equal(notificationRO.userName, USER_RO)
+  expect(notificationRO.userName).to.include(USER_RO)
   assert.equal(notificationRO.jobFunction, 'Regional Officer')
   assert.equal(notificationRO.level, issue.level)
-  assert.equal(
-    notificationRO.canAcknowledge,
-    issueType === 'InventoryStockout' ? 1 : 0
-  )
+  assert.equal(notificationRO.canAcknowledge, 0)
 
   //
   const action2 = JSON.parse(issue.data)
