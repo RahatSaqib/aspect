@@ -86,6 +86,7 @@ async function resolveMachineTemperatureError(knex, issue) {
 }
 
 async function resolveModulePowerError(knex, issue) {
+  // TC Not met
   const last30day = subDays(new Date(), 30)
   const issueData = JSON.parse(issue.data) || {}
   const modules = await knex('Result as r')
@@ -103,7 +104,24 @@ async function resolveModulePowerError(knex, issue) {
   const [module] = modules.filter(
     mod => mod.moduleName === issueData.moduleName
   )
-  return module != null && module.errorCount <= modulePowerMaxErrors
+  if (module != null && module.errorCount <= modulePowerMaxErrors) {
+    return true
+  }
+
+  // TODO test - OR - Machine power error active or ack
+  const machinePowerIssueTypeId = await issueTypeToId('MachinePowerError')
+  const openIssueStatusIds = await Promise.all([
+    issueStatusToId('Active'),
+    issueStatusToId('Acknowledged'),
+  ])
+  const machinePowerError = await knex('Issue')
+    .where({
+      deviceId: issue.deviceId,
+      issueTypeId: machinePowerIssueTypeId,
+    })
+    .whereIn('issueStatusId', openIssueStatusIds)
+    .first('id')
+  return machinePowerError != null
 }
 
 async function resolveMachinePowerError(knex, issue) {
