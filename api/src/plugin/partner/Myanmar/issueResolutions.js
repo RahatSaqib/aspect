@@ -11,6 +11,8 @@ const {
   moduleTemperatureMaxErrors,
 } = require('./errors')
 
+const { issueStatusToId, issueTypeToId } = require('../../../shared/dictionary')
+
 async function resolveModuleFailureError(knex, issue) {
   const last30day = subDays(new Date(), 30)
   const issueData = JSON.parse(issue.data) || {}
@@ -33,6 +35,7 @@ async function resolveModuleFailureError(knex, issue) {
 }
 
 async function resolveModuleTemperatureError(knex, issue) {
+  // TC Not met
   const last30day = subDays(new Date(), 30)
   const issueData = JSON.parse(issue.data) || {}
   const modules = await knex('Result as r')
@@ -50,7 +53,24 @@ async function resolveModuleTemperatureError(knex, issue) {
   const [module] = modules.filter(
     mod => mod.moduleName === issueData.moduleName
   )
-  return module != null && module.errorCount <= moduleTemperatureMaxErrors
+  if (module != null && module.errorCount <= moduleTemperatureMaxErrors) {
+    return true
+  }
+
+  // TODO test - OR - Machine temperature error active or ack
+  const machineTempIssueTypeId = await issueTypeToId('MachineTemperatureError')
+  const openIssueStatusIds = await Promise.all([
+    issueStatusToId('Active'),
+    issueStatusToId('Acknowledged'),
+  ])
+  const machineTempError = await knex('Issue')
+    .where({
+      deviceId: issue.deviceId,
+      issueTypeId: machineTempIssueTypeId,
+    })
+    .whereIn('issueStatusId', openIssueStatusIds)
+    .first('id')
+  return machineTempError != null
 }
 
 async function resolveMachineTemperatureError(knex, issue) {
