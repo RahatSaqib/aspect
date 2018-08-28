@@ -176,7 +176,7 @@ describe('Inventory Stock Issues Endpoint', () => {
             createdOn: monthAgo,
             updatedOn: monthAgo,
           })
-          .whereIn('issueId', issueIds)
+          .whereIn('id', issueIds)
 
         // escalate
         issueIds.map(async issueId => {
