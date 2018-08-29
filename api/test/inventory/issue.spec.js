@@ -167,7 +167,7 @@ describe('Inventory Stock Issues Endpoint', () => {
   // escalate issues
   // ---------------------------------------------------------------------------
   describe("dispatch ESCALATE_ISSUES with created issues ID's", () => {
-    it('escalate to level 2 Stockout and StockExpiring issues', async () => {
+    it('escalate triggered Stockout and StockExpiring issues to level 2', async () => {
       await runTestWithKnex(async knex => {
         // see seed/utils.js - search for 'knex('IssueEscalationTrigger').insert' -
         // level 2 - evaluationMethod: 'issue-age' and evaluationParameter: { days: 10 }
