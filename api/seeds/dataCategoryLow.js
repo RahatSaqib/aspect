@@ -90,7 +90,7 @@ async function addDataCategoryFields(samplePatients) {
 // correctOutdated
 // -------------------------------------------------------
 async function correctOutdated(knex, issueCategoryId) {
-  const messageBase = `data category '{{issue.data.categoryName}}' for {{issue.data.periodName}} is low ({{issue.data.percentage}}%)`
+  const messageBase = `Data category '{{issue.data.categoryName}}' for {{issue.data.periodName}} is low ({{issue.data.percentage}}%)`
   const message = `{{site.name}}: ${messageBase}`
   const html = `<em>{{site.name}}:</em> data category '{{issue.data.categoryName}}' for {{issue.data.periodName}} is low ({{issue.data.percentage}}%)`
 

@@ -718,7 +718,7 @@ async function checkDataCategoriesForLowStatus(action, { messageContext }) {
   const now = new Date()
   // calculate only for current month
   const period = {
-    name: 'Current Month',
+    name: 'current month',
     dateFrom: startOfMonth(now),
     dateTo: now,
   }
@@ -771,27 +771,9 @@ async function checkDataCategoriesForLowStatus(action, { messageContext }) {
           // base query for getting counts - totals and number of valid results
           const itemsBase = knex('Result as r')
             .innerJoin('Device as d', 'r.deviceId', 'd.id')
-            // filter by period
             .where('r.endedOn', '>=', period.dateFrom)
             .where('r.endedOn', '<=', period.dateTo)
-            // filter by site's geography
-            .whereRaw(`${site.geographyId || -1} > 0`)
-            .where(function() {
-              // either result is from site's geography
-              this.where(function() {
-                this.whereNotNull('r.geographyId').andWhere(
-                  'r.geographyId',
-                  site.geographyId
-                )
-              })
-              // or device is from site's geography
-              this.orWhere(function() {
-                this.whereNotNull('d.geographyId').andWhere(
-                  'd.geographyId',
-                  site.geographyId
-                )
-              })
-            })
+            .where(`d.siteId`, site.id)
 
           // get totals
           const [{ count: totals }] = await itemsBase
@@ -808,6 +790,7 @@ async function checkDataCategoriesForLowStatus(action, { messageContext }) {
           // get number of valid results
           const [{ count: numValid }] = await itemsBase
             .clone()
+            .whereNotNull('r.patientData')
             .where(function() {
               // process 2 main cases - validValues is an array (all categories except Other) or not (category Other)
               if (validValues && _.isArray(validValues)) {
@@ -844,8 +827,13 @@ async function checkDataCategoriesForLowStatus(action, { messageContext }) {
             })
             .countDistinct('r.id as count')
 
-          const percentage = totals === 0 ? 0 : 100 * (numValid / totals)
+          let percentage = totals === 0 ? 0 : 100 * (numValid / totals)
           if (percentage < dataCategory.cutoffPercentage) {
+            percentage =
+              percentage < 10
+                ? Math.round(10 * percentage) / 10 // ##.#
+                : Math.round(percentage) // ##
+
             const payload = {
               dataCategoryId: dataCategory.id,
               categoryName: dataCategory.name,
