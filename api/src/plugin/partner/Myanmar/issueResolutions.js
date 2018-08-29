@@ -108,7 +108,7 @@ async function resolveModulePowerError(knex, issue) {
     return true
   }
 
-  // TODO test - OR - Machine power error active or ack
+  // - OR - Machine power error active or ack
   const machinePowerIssueTypeId = await issueTypeToId('MachinePowerError')
   const openIssueStatusIds = await Promise.all([
     issueStatusToId('Active'),

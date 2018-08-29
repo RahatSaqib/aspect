@@ -421,7 +421,7 @@ describe('Myanmar Issue endpoints', () => {
       )
     }))
 
-  it('should create a module power issue ', () =>
+  it('should create a module power issue and resolve when TC no longer met', () =>
     runTest(async knex => {
       const { now } = context
       const errorCode = '1007'
@@ -515,6 +515,161 @@ describe('Myanmar Issue endpoints', () => {
         authHeader: deviceAuth,
         payload,
       })
+      await dispatchAndWaitForAction(resolveIssues(modulePowerErrorIssueId))
+      assert.equal(
+        'Resolved',
+        await getIssueStatusByIssueId(knex, modulePowerErrorIssueId)
+      )
+    }))
+
+  it('should create a module power issue and resolve when Machine power issue', () =>
+    runTest(async knex => {
+      const { now } = context
+      const errorCode = '1007'
+
+      // Post to deviceApi to ensure the device in in Aspect
+      const response = await postToDeviceApi({
+        authHeader: deviceAuth,
+        payload: _.merge({}, basicDevicePayload, {
+          name: deviceName,
+        }),
+      })
+      const deviceId = response.body.device.id
+      let modulePowerErrorIssueId = null
+      for (let i = 0; i < 5; i++) {
+        /* eslint-disable no-await-in-loop */
+        const errorTestResultId = `UNIQUE-ID-WITH-POWER-ERROR-${i}`
+        const sampleId = `POW2542552${i}`
+        const moduleSerial = `POW12345`
+        const instrumentSerial = `CEPH-PC-123${i}`
+        const testStartedOn = setMilliseconds(subDays(now, i + 3), 0)
+        const testEndedOn = setMilliseconds(addHours(testStartedOn, i + 2), 0)
+        const payload = _.merge(
+          {},
+          basicDevicePayload,
+          { name: deviceName },
+          basicResultPayload,
+          {
+            result: {
+              id: errorTestResultId,
+              startedOn: testStartedOn,
+              endedOn: testEndedOn,
+              error: {
+                code: errorCode,
+              },
+              sample: { id: sampleId },
+              instrument: {
+                serial: instrumentSerial,
+                module: {
+                  serial: moduleSerial,
+                  name: 'A1',
+                },
+              },
+            },
+          }
+        )
+        if (i < 4) {
+          // Post the result to aspect
+          await postToDeviceApi({
+            authHeader: deviceAuth,
+            payload,
+          })
+        } else {
+          // Should create issue when errors > 4
+          const waitForModulePowerError = waitForAction(
+            resultModulePowerError(deviceId)
+          )
+          await postToDeviceApi({
+            authHeader: deviceAuth,
+            payload,
+          })
+          await waitForModulePowerError
+          await waitForIdle()
+
+          const issues = await getIssuesByDeviceId(knex, deviceId)
+          assert.equal(issues.length, 1)
+          assert.equal(issues[0].issueType, 'ModulePowerError')
+          assert.equal(issues[0].deviceId, deviceId)
+          assert.equal(issues[0].issueStatus, 'Active')
+          modulePowerErrorIssueId = issues[0].id
+        }
+      }
+
+      await dispatchAndWaitForAction(resolveIssues(modulePowerErrorIssueId))
+      assert.equal(
+        'Active',
+        await getIssueStatusByIssueId(knex, modulePowerErrorIssueId)
+      )
+
+      let machinePowerErrorIssueId = null
+      for (let i = 0; i < 9; i++) {
+        /* eslint-disable no-await-in-loop */
+        const errorTestResultId = `UNIQUE-ID-WITH-MPOWER-ERROR-${i}`
+        const sampleId = `MPOWER2542552${i}`
+        const moduleSerial = `MPOWER1234${i}`
+        const moduleName = `Module A-${i}`
+        const instrumentSerial = `CEPH-PC-123${i}`
+        const testStartedOn = setMilliseconds(subDays(now, i + 3), 0)
+        const testEndedOn = setMilliseconds(addHours(testStartedOn, i + 2), 0)
+
+        const payload = _.merge(
+          {},
+          basicDevicePayload,
+          { name: deviceName },
+          basicResultPayload,
+          {
+            result: {
+              id: errorTestResultId,
+              startedOn: testStartedOn,
+              endedOn: testEndedOn,
+              error: {
+                code: errorCode,
+              },
+              sample: { id: sampleId },
+              instrument: {
+                serial: instrumentSerial,
+                module: {
+                  serial: moduleSerial,
+                  name: moduleName,
+                },
+              },
+            },
+          }
+        )
+        if (i < 8) {
+          // Post the result to aspect
+          await postToDeviceApi({
+            authHeader: deviceAuth,
+            payload,
+          })
+        } else {
+          // Should create issue when errors > 8
+          const waitForMachinePowerError = waitForAction(
+            resultMachinePowerError(deviceId)
+          )
+          await postToDeviceApi({
+            authHeader: deviceAuth,
+            payload,
+          })
+          await waitForMachinePowerError
+          await waitForIdle()
+
+          const issues = await getIssuesByDeviceId(knex, deviceId)
+          assert.equal(issues.length, 2)
+          assert.equal(issues[0].issueType, 'ModulePowerError')
+          assert.equal(issues[0].deviceId, deviceId)
+          assert.equal(issues[0].issueStatus, 'Active')
+          assert.equal(issues[1].issueType, 'MachinePowerError')
+          assert.equal(issues[1].deviceId, deviceId)
+          assert.equal(issues[1].issueStatus, 'Active')
+          machinePowerErrorIssueId = issues[1].id
+        }
+      }
+      await dispatchAndWaitForAction(resolveIssues(machinePowerErrorIssueId))
+      assert.equal(
+        'Active',
+        await getIssueStatusByIssueId(knex, machinePowerErrorIssueId)
+      )
       await dispatchAndWaitForAction(resolveIssues(modulePowerErrorIssueId))
       assert.equal(
         'Resolved',
