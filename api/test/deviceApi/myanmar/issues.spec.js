@@ -319,7 +319,7 @@ describe('Myanmar Issue endpoints', () => {
       )
     }))
 
-  it('should create a machine temperature issue ', () =>
+  it('should create a machine temperature issue and resolve when under percent', () =>
     runTest(async knex => {
       const { now } = context
       const errorCode = '4010'
@@ -333,7 +333,7 @@ describe('Myanmar Issue endpoints', () => {
       })
       const deviceId = response.body.device.id
       let machineTempErrorIssueId = null
-      for (let i = 0; i < 9; i++) {
+      for (let i = 0; i < 12; i++) {
         /* eslint-disable no-await-in-loop */
         const errorTestResultId = `UNIQUE-ID-WITH-MTEMP-ERROR-${i}`
         const sampleId = `MTEMP2542552${i}`
@@ -366,14 +366,8 @@ describe('Myanmar Issue endpoints', () => {
             },
           }
         )
-        if (i < 8) {
-          // Post the result to aspect
-          await postToDeviceApi({
-            authHeader: deviceAuth,
-            payload,
-          })
-        } else {
-          // Should create issue when errors > 8
+        if (i === 8) {
+          // Should create issue when errors === 8
           const waitForMachineTemperatureError = waitForAction(
             resultMachineTemperatureError(deviceId)
           )
@@ -383,8 +377,20 @@ describe('Myanmar Issue endpoints', () => {
           })
           await waitForMachineTemperatureError
           await waitForIdle()
+        } else {
+          // Post the result to aspect
+          await postToDeviceApi({
+            authHeader: deviceAuth,
+            payload,
+          })
+        }
 
-          const issues = await getIssuesByDeviceId(knex, deviceId)
+        const issues = await getIssuesByDeviceId(knex, deviceId)
+        if (i < 8) {
+          // should not have issue prior to temp error
+          assert.equal(issues.length, 0)
+        } else {
+          // should have only one active issue after 8
           assert.equal(issues.length, 1)
           assert.equal(issues[0].issueType, 'MachineTemperatureError')
           assert.equal(issues[0].deviceId, deviceId)
@@ -393,32 +399,28 @@ describe('Myanmar Issue endpoints', () => {
         }
       }
 
-      await dispatchAndWaitForAction(resolveIssues(machineTempErrorIssueId))
-      assert.equal(
-        'Active',
-        await getIssueStatusByIssueId(knex, machineTempErrorIssueId)
-      )
+      const last30day = subDays(now, 30)
+      for (let i = 0; i < 12; i++) {
+        /* eslint-disable no-await-in-loop */
+        // Update ended on for initial issue to past so module failure issue is resolved
+        const results = await knex('Result as r')
+          .where('r.deviceId', deviceId)
+          .where('r.endedOn', '>=', last30day)
+          .whereNotNull('r.errorCode')
+          .orderBy('r.id')
+          .select('r.id')
+        assert.equal(results.length, 12 - i)
+        await knex('Result')
+          .where({ id: results[0].id })
+          .update({ errorCode: null })
 
-      // Update ended on for initial issue to past so module failure issue is resolved
-      const errorTestResultId = 'UNIQUE-ID-WITH-MTEMP-ERROR-0'
-      const testStartedOn = setMilliseconds(subDays(now, 35), 0)
-      const testEndedOn = setMilliseconds(addHours(testStartedOn, 2), 0)
-      const payload = _.merge({}, basicDevicePayload, basicResultPayload, {
-        result: {
-          id: errorTestResultId,
-          startedOn: testStartedOn,
-          endedOn: testEndedOn,
-        },
-      })
-      await postToDeviceApi({
-        authHeader: deviceAuth,
-        payload,
-      })
-      await dispatchAndWaitForAction(resolveIssues(machineTempErrorIssueId))
-      assert.equal(
-        'Resolved',
-        await getIssueStatusByIssueId(knex, machineTempErrorIssueId)
-      )
+        // Should resolve when result count under 1%
+        await dispatchAndWaitForAction(resolveIssues(machineTempErrorIssueId))
+        assert.equal(
+          i < 11 ? 'Active' : 'Resolved',
+          await getIssueStatusByIssueId(knex, machineTempErrorIssueId)
+        )
+      }
     }))
 
   it('should create a module power issue and resolve when TC no longer met', () =>
@@ -1122,7 +1124,7 @@ describe('Myanmar Issue endpoints', () => {
       // the procedural machine issue is created
     }))
 
-  describe('should create a machine power issue when ', () => {
+  describe('should create a machine power issue and resolve when under percent', () => {
     beforeEach(async () =>
       run(async () => {
         await beforeCreateGxAlertApiKey({
@@ -1149,7 +1151,7 @@ describe('Myanmar Issue endpoints', () => {
         })
         const deviceId = response.body.device.id
         let machinePowerErrorIssueId = null
-        for (let i = 0; i < 9; i++) {
+        for (let i = 0; i < 12; i++) {
           /* eslint-disable no-await-in-loop */
           const errorTestResultId = `UNIQUE-ID-WITH-MPOWER-ERROR-${i}`
           const sampleId = `MPOWER2542552${i}`
@@ -1183,14 +1185,9 @@ describe('Myanmar Issue endpoints', () => {
               },
             }
           )
-          if (i < 8) {
-            // Post the result to aspect
-            await postToDeviceApi({
-              authHeader: deviceAuth,
-              payload,
-            })
-          } else {
-            // Should create issue when errors > 8
+
+          if (i === 8) {
+            // Should create issue when errors === 8
             const waitForMachinePowerError = waitForAction(
               resultMachinePowerError(deviceId)
             )
@@ -1200,8 +1197,20 @@ describe('Myanmar Issue endpoints', () => {
             })
             await waitForMachinePowerError
             await waitForIdle()
+          } else {
+            // Post the result to aspect
+            await postToDeviceApi({
+              authHeader: deviceAuth,
+              payload,
+            })
+          }
 
-            const issues = await getIssuesByDeviceId(knex, deviceId)
+          const issues = await getIssuesByDeviceId(knex, deviceId)
+          if (i < 8) {
+            // should not have issue prior to temp error
+            assert.equal(issues.length, 0)
+          } else {
+            // should have only one active issue after 8
             assert.equal(issues.length, 1)
             assert.equal(issues[0].issueType, 'MachinePowerError')
             assert.equal(issues[0].deviceId, deviceId)
@@ -1209,32 +1218,37 @@ describe('Myanmar Issue endpoints', () => {
             machinePowerErrorIssueId = issues[0].id
           }
         }
+
         await dispatchAndWaitForAction(resolveIssues(machinePowerErrorIssueId))
         assert.equal(
           'Active',
           await getIssueStatusByIssueId(knex, machinePowerErrorIssueId)
         )
 
-        // Update ended on for initial issue to past so module failure issue is resolved
-        const errorTestResultId = 'UNIQUE-ID-WITH-MPOWER-ERROR-0'
-        const testStartedOn = setMilliseconds(subDays(now, 35), 0)
-        const testEndedOn = setMilliseconds(addHours(testStartedOn, 2), 0)
-        const payload = _.merge({}, basicDevicePayload, basicResultPayload, {
-          result: {
-            id: errorTestResultId,
-            startedOn: testStartedOn,
-            endedOn: testEndedOn,
-          },
-        })
-        await postToDeviceApi({
-          authHeader: deviceAuth,
-          payload,
-        })
-        await dispatchAndWaitForAction(resolveIssues(machinePowerErrorIssueId))
-        assert.equal(
-          'Resolved',
-          await getIssueStatusByIssueId(knex, machinePowerErrorIssueId)
-        )
+        const last30day = subDays(now, 30)
+        for (let i = 0; i < 12; i++) {
+          /* eslint-disable no-await-in-loop */
+          // Update ended on for initial issue to past so module failure issue is resolved
+          const results = await knex('Result as r')
+            .where('r.deviceId', deviceId)
+            .where('r.endedOn', '>=', last30day)
+            .whereNotNull('r.errorCode')
+            .orderBy('r.id')
+            .select('r.id')
+          assert.equal(results.length, 12 - i)
+          await knex('Result')
+            .where({ id: results[0].id })
+            .update({ errorCode: null })
+
+          // Should resolve when result count under 1%
+          await dispatchAndWaitForAction(
+            resolveIssues(machinePowerErrorIssueId)
+          )
+          assert.equal(
+            i < 11 ? 'Active' : 'Resolved',
+            await getIssueStatusByIssueId(knex, machinePowerErrorIssueId)
+          )
+        }
       }))
 
     it('the percentage of results with result category of NoResult is greater 3% ', () =>
