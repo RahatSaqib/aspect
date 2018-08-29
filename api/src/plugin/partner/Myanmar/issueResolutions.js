@@ -57,7 +57,7 @@ async function resolveModuleTemperatureError(knex, issue) {
     return true
   }
 
-  // TODO test - OR - Machine temperature error active or ack
+  // - OR - Machine temperature error active or ack
   const machineTempIssueTypeId = await issueTypeToId('MachineTemperatureError')
   const openIssueStatusIds = await Promise.all([
     issueStatusToId('Active'),

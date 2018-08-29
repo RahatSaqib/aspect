@@ -58,7 +58,7 @@ describe('Myanmar Issue endpoints', () => {
   )
   afterEach(afterCleanUp)
 
-  it('should create a module temperature issue', () =>
+  it('should create a module temperature issue and resolve on TC Not met', () =>
     runTest(async knex => {
       const { now } = context
       const errorCode = '4010'
@@ -158,6 +158,164 @@ describe('Myanmar Issue endpoints', () => {
       assert.equal(
         'Resolved',
         await getIssueStatusByIssueId(knex, moduleTempErrorIssueId)
+      )
+    }))
+
+  it('should create a module temperature issue and resolve on Machine temp error', () =>
+    runTest(async knex => {
+      const { now } = context
+      const errorCode = '4010'
+
+      // Post to deviceApi to ensure the device in in Aspect
+      const response = await postToDeviceApi({
+        authHeader: deviceAuth,
+        payload: _.merge({}, basicDevicePayload, {
+          name: deviceName,
+        }),
+      })
+      const deviceId = response.body.device.id
+
+      let moduleTempErrorIssueId = null
+      for (let i = 0; i < 5; i++) {
+        /* eslint-disable no-await-in-loop */
+        const errorTestResultId = `UNIQUE-ID-WITH-TEMP-ERROR-${i}`
+        const sampleId = `TEM2542552${i}`
+        const moduleSerial = `MOD98765`
+        const instrumentSerial = `CEPH-PC-123${i}`
+        const testStartedOn = setMilliseconds(subDays(now, i + 3), 0)
+        const testEndedOn = setMilliseconds(addHours(testStartedOn, i + 2), 0)
+        const payload = _.merge(
+          {},
+          basicDevicePayload,
+          { name: deviceName },
+          basicResultPayload,
+          {
+            result: {
+              id: errorTestResultId,
+              startedOn: testStartedOn,
+              endedOn: testEndedOn,
+              error: {
+                code: errorCode,
+              },
+              sample: { id: sampleId },
+              instrument: {
+                serial: instrumentSerial,
+                module: {
+                  serial: moduleSerial,
+                  name: 'A1',
+                },
+              },
+            },
+          }
+        )
+
+        if (i < 4) {
+          // Post the result to aspect
+          await postToDeviceApi({
+            authHeader: deviceAuth,
+            payload,
+          })
+        } else {
+          // Should create issue when errors > 4
+          const waitForModuleTemperatureError = waitForAction(
+            resultModuleTemperatureError(deviceId)
+          )
+          await postToDeviceApi({
+            authHeader: deviceAuth,
+            payload,
+          })
+          await waitForModuleTemperatureError
+          await waitForIdle()
+
+          const issues = await getIssuesByDeviceId(knex, deviceId)
+          assert.equal(issues.length, 1)
+          assert.equal(issues[0].issueType, 'ModuleTemperatureError')
+          assert.equal(issues[0].deviceId, deviceId)
+          assert.equal(issues[0].issueStatus, 'Active')
+          moduleTempErrorIssueId = issues[0].id
+        }
+      }
+
+      await dispatchAndWaitForAction(resolveIssues(moduleTempErrorIssueId))
+      assert.equal(
+        'Active',
+        await getIssueStatusByIssueId(knex, moduleTempErrorIssueId)
+      )
+
+      let machineTempErrorIssueId = null
+      for (let i = 0; i < 9; i++) {
+        /* eslint-disable no-await-in-loop */
+        const errorTestResultId = `UNIQUE-ID-WITH-MTEMP-ERROR-${i}`
+        const sampleId = `MTEMP2542552${i}`
+        const moduleSerial = `MTEMP1234${i}`
+        const moduleName = `Module A-${i}`
+        const instrumentSerial = `CEPH-PC-123${i}`
+        const testStartedOn = setMilliseconds(subDays(now, i + 3), 0)
+        const testEndedOn = setMilliseconds(addHours(testStartedOn, i + 2), 0)
+        const payload = _.merge(
+          {},
+          basicDevicePayload,
+          { name: deviceName },
+          basicResultPayload,
+          {
+            result: {
+              id: errorTestResultId,
+              startedOn: testStartedOn,
+              endedOn: testEndedOn,
+              error: {
+                code: errorCode,
+              },
+              sample: { id: sampleId },
+              instrument: {
+                serial: instrumentSerial,
+                module: {
+                  serial: moduleSerial,
+                  name: moduleName,
+                },
+              },
+            },
+          }
+        )
+        if (i < 8) {
+          // Post the result to aspect
+          await postToDeviceApi({
+            authHeader: deviceAuth,
+            payload,
+          })
+        } else {
+          // Should create issue when errors > 8
+          const waitForMachineTemperatureError = waitForAction(
+            resultMachineTemperatureError(deviceId)
+          )
+          await postToDeviceApi({
+            authHeader: deviceAuth,
+            payload,
+          })
+          await waitForMachineTemperatureError
+          await waitForIdle()
+
+          const issues = await getIssuesByDeviceId(knex, deviceId)
+          assert.equal(issues.length, 2)
+          assert.equal(issues[0].issueType, 'ModuleTemperatureError')
+          assert.equal(issues[0].deviceId, deviceId)
+          assert.equal(issues[0].issueStatus, 'Active')
+          assert.equal(issues[1].issueType, 'MachineTemperatureError')
+          assert.equal(issues[1].deviceId, deviceId)
+          assert.equal(issues[1].issueStatus, 'Active')
+          machineTempErrorIssueId = issues[1].id
+        }
+      }
+
+      await dispatchAndWaitForAction(resolveIssues(moduleTempErrorIssueId))
+      assert.equal(
+        'Resolved',
+        await getIssueStatusByIssueId(knex, moduleTempErrorIssueId)
+      )
+
+      await dispatchAndWaitForAction(resolveIssues(machineTempErrorIssueId))
+      assert.equal(
+        'Active',
+        await getIssueStatusByIssueId(knex, machineTempErrorIssueId)
       )
     }))
 
@@ -1491,6 +1649,7 @@ async function getIssuesByDeviceId(knex, deviceId) {
     .join('IssueType as it', 'i.issueTypeId', 'it.id')
     .join('IssueStatus as is', 'i.issueStatusId', 'is.id')
     .where({ 'i.deviceId': deviceId })
+    .orderBy('i.id')
     .select(
       'i.id',
       'it.externalId as issueType',
