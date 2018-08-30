@@ -8,9 +8,12 @@ const { seedIssueEventTriggersForPartner } = require('./utils')
 // Notice that exactly same values should be used for seeding validValues and invalidValues fields in
 // DataCategory table (see seedDataCategory() in this file)
 // --------------
-// standard fields
+// values for data category fields
 // --------------
-const dictHivStatus = ['Positive', 'Negative', 'Unknown', 'Not on Form']
+const dictHivStatus = ["Positive", "Negative", "Unknown", "HIV Positive", "HIV Negative", "HIV Unknown", "Not on Form"]
+const dictMdr = ["On Treatment", "Previously Treated", "Unknown", "No Previous Treatment", "No", "Yes", "false", "true", "Not on Form"]
+const dictSmear = ["Smear Negative", "Smear Positive", "Negative", "Positive", "Not Done", "Not on Form"]
+
 // --------------
 // custom fields
 // --------------
@@ -23,19 +26,6 @@ const dictSampleTypes = [
   'Blood',
   'Sputum',
   'Effusion',
-]
-const dictMdr = [
-  'On Treatment',
-  'Previously Treated',
-  'Unknown',
-  'Not on Form',
-  'No Previous Treatment',
-]
-const dictSmear = [
-  'Smear Negative',
-  'Not Done',
-  'Smear Positive',
-  'Not on Form',
 ]
 const dictOtherReason = [
   'MDR Contact',
@@ -68,20 +58,20 @@ function getRandomValue(arr, pc = 2) {
 // -------------------------------------------------------
 async function addDataCategoryFields(samplePatients) {
   return _.map(samplePatients, p => {
-    // set random values for 50% of persons
-    p.hiv = getRandomValue(dictHivStatus, 50) // former 'HIV Status'
-    // set values for 98% of persons
+    // -------------------------------
+    // fields DataCategoryLow issue
+    // -------------------------------
+    p.hivStatus = getRandomValue(dictHivStatus, 50) // data category 'HIV+'
+    p.previouslyTreated = getRandomValue(dictMdr) // data category 'MDR' (Previous TB History)
+    p.microscopyResult = getRandomValue(dictSmear) // data category 'Smear+' (Microscopy Result)
+    // -------------------------------
+    // other mandatory fields
+    // -------------------------------
     p.sampleType = getRandomValue(dictSampleTypes)
-    p.mdr = getRandomValue(dictMdr) // former 'Previous TB History'
-    p.smear = getRandomValue(dictSmear) // former 'Microscopy Result'
     p.otherReason = getRandomValue(dictOtherReason) // Other Reason for Test
     p.referralCenter = getRandomValue(dictReferralCenter) // Referral Center
     p.otherNotes = getRandomValue() // Other Notes
-    // -------------------------------
-    // some above fields are used for Data Category Low issue:
-    // hiv, mdr, smear for corresponding data categories,
-    // all other mandatory fields are groupped for category Other
-    // -------------------------------
+
     return p
   })
 }
@@ -183,9 +173,9 @@ async function seedDataCategory(knex, partnerName) {
   await knex('DataCategory').insert([
     {
       name: 'HIV+',
-      fieldNames: 'hiv',
+      fieldNames: 'hivStatus',
       partnerId,
-      externalId: 'hiv',
+      externalId: 'hivStatus',
       i18nKey: 'dataCategoryHiv',
       validValues: JSON.stringify(
         dictHivStatus.filter(x => x !== 'Not on Form')
@@ -197,9 +187,9 @@ async function seedDataCategory(knex, partnerName) {
     },
     {
       name: 'MDR',
-      fieldNames: 'mdr',
+      fieldNames: 'previouslyTreated',
       partnerId,
-      externalId: 'mdr',
+      externalId: 'previouslyTreated',
       i18nKey: 'dataCategoryMdr',
       validValues: JSON.stringify(dictMdr.filter(x => x !== 'Not on Form')),
       invalidValues: JSON.stringify(dictMdr.filter(x => x === 'Not on Form')),
@@ -207,12 +197,12 @@ async function seedDataCategory(knex, partnerName) {
     },
     {
       name: 'Smear+',
-      fieldNames: 'smear',
+      fieldNames: 'microscopyResult',
       partnerId,
-      externalId: 'smear',
+      externalId: 'microscopyResult',
       i18nKey: 'dataCategorySmear',
       validValues: JSON.stringify(
-        dictSmear.filter(x => x === 'Smear Negative' || x === 'Smear Positive')
+        dictSmear.filter(x => x !== 'Not on Form' && x !== 'Not Done')
       ),
       invalidValues: JSON.stringify(
         dictSmear.filter(x => x === 'Not on Form' || x === 'Not Done')
