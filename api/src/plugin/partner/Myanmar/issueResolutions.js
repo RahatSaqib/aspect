@@ -4,11 +4,13 @@ const {
   MODULE_FAILURE_ERROR_CODES,
   MODULE_POWER_ERROR_CODES,
   MODULE_TEMPERATURE_ERROR_CODES,
+  PROCEDURAL_ERROR_CODES,
   moduleFailureMaxErrors,
   modulePowerMaxErrors,
   minPrcntMachinePowerResolve,
   moduleTemperatureMaxErrors,
   minPrcntMachineTemperatureResolve,
+  minPrcntMachineProceduralResolve,
 } = require('./errors')
 
 const { issueStatusToId, issueTypeToId } = require('../../../shared/dictionary')
@@ -155,8 +157,24 @@ async function resolveModuleProceduralError(/* knex, issue */) {
   return false
 }
 
-async function resolveMachineProceduralError(/* knex, issue */) {
-  return false
+async function resolveMachineProceduralError(knex, issue) {
+  const last30day = subDays(new Date(), 30)
+  const [machine] = await knex('Result as r')
+    .innerJoin('ResultCategory as rc', 'r.resultCategory1', 'rc.id')
+    .where('rc.externalId', 'Error')
+    .where('r.deviceId', issue.deviceId)
+    .where('r.endedOn', '>=', last30day)
+    .whereIn('r.errorCode', PROCEDURAL_ERROR_CODES)
+    .count('r.id as errorCount')
+  const [total] = await knex('Result as r')
+    .where('r.deviceId', issue.deviceId)
+    .where('r.endedOn', '>=', last30day)
+    .count('r.id as resultCount')
+  return (
+    machine != null &&
+    100 * machine.errorCount / total.resultCount <
+      minPrcntMachineProceduralResolve
+  )
 }
 
 async function resolveModuleUnknownError(/* knex, issue */) {
