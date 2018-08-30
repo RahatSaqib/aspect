@@ -1,12 +1,16 @@
+const _ = require('lodash')
 const { knex } = require('../db')
 const { distanceInWordsStrict } = require('date-fns')
-const { parseDateOrDefault } = require('../shared/date')
+const { parseDateOrDefault, formatDateOrDefault } = require('../shared/date')
+const { loadPlugin } = require('../plugin/registration')
 const handlebars = require('handlebars')
 
 handlebars.registerHelper('numberOfDays', numberOfDays)
 handlebars.registerHelper('isoDate', isoDate)
+handlebars.registerHelper('formatDate', formatDate)
 
 // See unit tests for examples
+// Can include displayPreferences
 function processUsingHandlebarsSyntax(inputString, data = {}) {
   const template = handlebars.compile(inputString)
   return template(data)
@@ -27,11 +31,13 @@ function addDataSourceToQuery(qb, aliases) {
       .leftJoin('Site as s', `${message}.siteId`, 's.id')
       .leftJoin('Device as d', `${message}.deviceId`, 'd.id')
       .leftJoin('Result as r', `${message}.resultId`, 'r.id')
+      .leftJoin('Partner as pu', 'pu.id', 'p.lastPartnerId')
       .select(
         's.name as siteName',
         's.shortName as siteShortName',
         'p.name as personName',
         'p.cell as personCell',
+        'pu.plugin as partnerPlugin',
         'd.lastPingOn as deviceLastPingOn',
         'd.lastSeenOn as deviceLastSeenOn',
         'r.resultData',
@@ -62,8 +68,8 @@ function addDataSourceToQuery(qb, aliases) {
   return qb
 }
 
-function processUsingDataSourceQuery(data, templateFields, options = {}) {
-  const ds = getBaseDataSource(data)
+async function processUsingDataSourceQuery(data, templateFields, options = {}) {
+  const ds = await getBaseDataSource(data)
   return templateFields.reduce((memo, field) => {
     const fieldName = field.replace(/template/i, '')
     const template = (data && data[field]) || ''
@@ -78,8 +84,12 @@ function processUsingDataSourceQuery(data, templateFields, options = {}) {
   }, {})
 }
 
-function getBaseDataSource(data) {
+async function getBaseDataSource(data) {
   const d = data || {}
+  const { displayPreferences = {} } = await loadPlugin(
+    [d.partnerPlugin],
+    'settings'
+  )
   return {
     site: {
       name: d.siteName,
@@ -111,6 +121,7 @@ function getBaseDataSource(data) {
     notification: {
       type: d.notificationTypeName,
     },
+    displayPreferences,
   }
 }
 
@@ -139,15 +150,20 @@ function numberOfDays(date) {
   if (date == null || date === '') {
     return 'days'
   }
-  return distanceInWordsStrict(new Date(), date, { unit: 'd' })
+  return distanceInWordsStrict(new Date(), date, {
+    unit: 'd',
+    partialMethod: 'ceil',
+  })
 }
 
 function isoDate(date) {
-  if (date == null || date === '') {
-    return null
-  }
   const parsed = parseDateOrDefault(date)
   return parsed == null ? null : parsed.toISOString()
+}
+
+function formatDate(date) {
+  const dateFormat = _.get(this, 'displayPreferences.dateFormat', 'YYYY-MM-DD')
+  return formatDateOrDefault(date, dateFormat)
 }
 
 module.exports = {
@@ -158,4 +174,5 @@ module.exports = {
   processDynamicMessage,
   numberOfDays,
   isoDate,
+  formatDate,
 }

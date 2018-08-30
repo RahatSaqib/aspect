@@ -10,6 +10,8 @@ const {
   sampleTypeToId,
 } = require('../shared/dictionary')
 
+const inventory = require('../inventory/service')
+
 async function mergeResult(
   knex,
   deviceId,
@@ -19,17 +21,12 @@ async function mergeResult(
   // Look up existing result matching external id if specified
   let existingResult = null
   if (payload.id) {
-    const existingResults = await knex('Result as r')
+    existingResult = await knex('Result as r')
       .where({
         'r.externalId': payload.id,
         'r.deviceId': deviceId,
       })
-      .distinct('r.*')
-      .limit(2)
-    if (existingResults.length > 1) {
-      throw Boom.badRequest(`Cannot find unique result with id ${payload.id}`)
-    }
-    ;[existingResult] = existingResults
+      .first()
   }
 
   const assayQ = knex('Assay as a')
@@ -545,7 +542,134 @@ async function getResult(knex, resultId) {
   return result
 }
 
+async function postProcessMergeResult(context, result, previousResult) {
+  const { knex, payload, now } = context
+  await addResultWorkflowLogIfChanged(
+    knex,
+    payload,
+    result,
+    previousResult,
+    'Device API Update',
+    now
+  )
+  // // TODO ASP-355 consume inventory using a message listener instead
+  // // of within plugin/same transaction
+  await consumeInventoryForResult(knex, payload, result)
+  return {}
+}
+
+/**
+ * Consumes inventory for the new result
+ */
+async function consumeInventoryForResult(knex, payload, result) {
+  // TODO ASP-355 Move consumeInventory for Result to listener
+  // Update Inventory Levels at Site
+  const consumablesInResultData = _.isEmpty(payload.consumable)
+    ? []
+    : payload.consumable
+  await inventory.consumeInventoryForResult(
+    result.id,
+    result.assayId,
+    result.siteId,
+    consumablesInResultData,
+    result.partnerId,
+    result.startedOn,
+    result.endedOn,
+    knex
+  )
+}
+
+async function addResultWorkflowLogIfChanged(
+  knex,
+  payload,
+  result,
+  previousResult,
+  reason,
+  now = new Date()
+) {
+  // Log Result Workflow Update if any field changed
+  let resultWorkflowChanged =
+    !previousResult ||
+    previousResult.resultWorkflowStatusId !== result.resultWorkflowStatusId
+  if (
+    !resultWorkflowChanged &&
+    (_.has(payload, 'workflow.operator') ||
+      _.has(payload, 'workflow.changedOn'))
+  ) {
+    // check to see if operator or changedOn is different from latest log
+    const resultWorkflowLog = await getLatestResultWorkflowLog(knex, result.id)
+    resultWorkflowChanged =
+      !resultWorkflowLog ||
+      _.get(payload, 'workflow.operator', null) !==
+        resultWorkflowLog.operator ||
+      +_.get(payload, 'workflow.changedOn', NaN) !==
+        +resultWorkflowLog.changedOn
+  }
+
+  if (resultWorkflowChanged) {
+    await knex('ResultWorkflowLog').insert({
+      resultId: result.id,
+      resultWorkflowStatusId: result.resultWorkflowStatusId,
+      reason,
+      operator: _.get(payload, 'workflow.operator', null),
+      changedOn: _.get(payload, 'workflow.changedOn', now),
+      createdOn: now,
+    })
+  }
+  return resultWorkflowChanged
+}
+
+async function updateResultWorkflowStatus(
+  knex,
+  resultId,
+  workflowStatusExternalId,
+  reason,
+  now = new Date()
+) {
+  // get internal workflow status id based on the external id we got
+  const resultWorkflowStatusId = await resultWorkflowStatusToId(
+    workflowStatusExternalId
+  )
+  if (resultWorkflowStatusId === null) {
+    throw new Error(
+      `Workflow status with external ID "${workflowStatusExternalId}" not found`
+    )
+  }
+
+  // update result
+  const rows = await knex('Result as r')
+    .where('r.id', resultId)
+    .update({ resultWorkflowStatusId })
+
+  // keep log if update was successful. don't need to check permission again because
+  // rows would be 0 if no permission in query above
+  if (rows) {
+    await knex('ResultWorkflowLog').insert({
+      resultId,
+      resultWorkflowStatusId,
+      reason,
+      changedOn: now,
+      createdOn: now,
+    })
+  }
+
+  return {}
+}
+
+async function getLatestResultWorkflowLog(knex, resultId) {
+  const latestResultWorkFlowLog = await knex('ResultWorkflowLog')
+    .where({ resultId })
+    .orderBy('createdOn', 'desc')
+    .orderBy('id', 'desc')
+    .first('operator', 'changedOn')
+  return latestResultWorkFlowLog
+}
+
 module.exports = {
   mergeResult,
   getResult,
+  postProcessMergeResult,
+  consumeInventoryForResult,
+  addResultWorkflowLogIfChanged,
+  updateResultWorkflowStatus,
 }

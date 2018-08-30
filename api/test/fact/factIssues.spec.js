@@ -22,7 +22,7 @@ const {
 const { factGenerateDeviceConnectivity } = require('../../src/fact/actions')
 
 const server = supertest.agent('http://localhost:8080')
-const { assert } = chai
+const { assert, expect } = chai
 const USER_LU = 'myanmar_lab1'
 const USER_RO = 'myanmar_ro1'
 
@@ -80,12 +80,14 @@ describe('Fact based issues', () => {
       const { id: deviceId } = newDevice
 
       let [factDevice] = await knex('FactDeviceFlag').where({ deviceId })
-      assert.equal(factDevice.offline, 0)
-      assert.equal(factDevice.noResults, 0)
-      assert.equal(factDevice.maintenance, 0)
+      expect(factDevice).to.containSubset({
+        offline: 0,
+        noResults: 0,
+        maintenance: 0,
+      })
       assert.isNotOk(factDevice.maintenanceDueOn)
 
-      messageContext.factGenerateDeviceConnectivity(newDevice.id)
+      await messageContext.factGenerateDeviceConnectivity(newDevice.id)
       await waitForIdle()
       ;[factDevice] = await knex('FactDeviceFlag').where({ deviceId })
       assert.equal(factDevice.offline, 0)
@@ -98,14 +100,14 @@ describe('Fact based issues', () => {
       )
         .where({ id: newDevice.partnerId })
         .first()
-      assert.isOk(maxDaysDeviceOffline > 1)
-      assert.isOk(maxDaysDeviceNoResults > maxDaysDeviceOffline)
+      expect(maxDaysDeviceOffline).to.be.above(1)
+      expect(maxDaysDeviceNoResults).to.be.above(maxDaysDeviceOffline)
       const deviceOfflineDate = subDays(now, maxDaysDeviceOffline + 1)
       const deviceNoResultsDate = subDays(now, maxDaysDeviceNoResults + 1)
       const numberOfDaysOffline = numberOfDays(deviceOfflineDate)
       const numberOfDaysNoResults = numberOfDays(deviceNoResultsDate)
-      assert.equal(numberOfDaysOffline, `${maxDaysDeviceOffline + 1} days`)
-      assert.equal(numberOfDaysNoResults, `${maxDaysDeviceNoResults + 1} days`)
+      assert.equal(numberOfDaysOffline, `${maxDaysDeviceOffline + 2} days`)
+      assert.equal(numberOfDaysNoResults, `${maxDaysDeviceNoResults + 2} days`)
       await knex('Device as d')
         .where('d.id', newDevice.id)
         .update({
@@ -114,13 +116,17 @@ describe('Fact based issues', () => {
         })
 
       const waitForOffline = waitForAction(deviceOffline(newDevice.id))
-      messageContext.factGenerateDeviceConnectivity(newDevice.id)
+      await messageContext.factGenerateDeviceConnectivity(newDevice.id)
       await waitForOffline
       await waitForIdle()
-      ;[factDevice] = await knex('FactDeviceFlag').where({ deviceId })
-      assert.equal(factDevice.offline, 1)
-      assert.equal(factDevice.noResults, 0)
-      assert.equal(factDevice.maintenance, 0)
+      ;[factDevice] = await knex('FactDeviceFlag')
+        .where({ deviceId })
+        .select()
+      expect(factDevice).to.containSubset({
+        offline: 1,
+        noResults: 0,
+        maintenance: 0,
+      })
       assert.isNotOk(factDevice.maintenanceDueOn)
 
       let issues = await knex('Issue as i')
@@ -141,10 +147,14 @@ describe('Fact based issues', () => {
           'is.externalId as issueStatus',
           'i.level'
         )
-      assert.equal(issues.length, 1)
-      assert.equal(issues[0].issueType, 'DeviceOffline')
-      assert.equal(issues[0].deviceId, deviceId)
-      assert.equal(issues[0].issueStatus, 'Active')
+      expect(issues).to.have.length(1)
+      expect(issues).to.containSubset([
+        {
+          issueType: 'DeviceOffline',
+          deviceId,
+          issueStatus: 'Active',
+        },
+      ])
       const issueId = issues[0].id
 
       let notifications = await knex('Notification as n')
@@ -163,21 +173,24 @@ describe('Fact based issues', () => {
           'am.message as alertMessage'
         )
 
-      assert.equal(notifications.length, 2)
+      expect(notifications).to.have.length(2)
       let [notificationLU, notificationRO] = notifications
-      assert.equal(notificationLU.userName, USER_LU)
-      assert.equal(notificationLU.jobFunction, 'Lab User')
-      assert.equal(notificationLU.level, issues[0].level)
-      assert.equal(notificationLU.canAcknowledge, 1)
+      expect(notificationLU).to.containSubset({
+        userName: USER_LU,
+        jobFunction: 'Lab User',
+        level: issues[0].level,
+        canAcknowledge: 1,
+      })
       assert.equal(
         processDynamicMessage(notificationLU.alertMessage),
         `Cannot reach network for ${numberOfDaysOffline}`
       )
-      assert.equal(notificationRO.userName, USER_RO)
-      assert.equal(notificationRO.jobFunction, 'Regional Officer')
-      assert.equal(notificationRO.level, issues[0].level)
-      assert.equal(notificationRO.canAcknowledge, 0)
-
+      expect(notificationRO).to.containSubset({
+        userName: USER_RO,
+        jobFunction: 'Regional Officer',
+        level: issues[0].level,
+        canAcknowledge: 0,
+      })
       const waitForAck = waitForAction(issueAcknowledged(issueId))
       await server
         .put(`${issuePath}/status/${issueId}`)
@@ -204,10 +217,14 @@ describe('Fact based issues', () => {
           'i.deviceId',
           'is.externalId as issueStatus'
         )
-      assert.equal(issues.length, 1)
-      assert.equal(issues[0].issueType, 'DeviceOffline')
-      assert.equal(issues[0].deviceId, deviceId)
-      assert.equal(issues[0].issueStatus, 'Acknowledged')
+      expect(issues).to.have.length(1)
+      expect(issues).to.containSubset([
+        {
+          issueType: 'DeviceOffline',
+          deviceId,
+          issueStatus: 'Acknowledged',
+        },
+      ])
 
       const waitForResolve = waitForAction(issueResolved(issueId))
       const waitForOnline = waitForAction(deviceOnline(newDevice.id))
@@ -221,10 +238,14 @@ describe('Fact based issues', () => {
         })
       await Promise.all([waitForOnline, waitForResolve, waitForNoResults])
       await waitForIdle()
-      ;[factDevice] = await knex('FactDeviceFlag').where({ deviceId })
-      assert.equal(factDevice.offline, 0)
-      assert.equal(factDevice.noResults, 1)
-      assert.equal(factDevice.maintenance, 0)
+      ;[factDevice] = await knex('FactDeviceFlag')
+        .where({ deviceId })
+        .select()
+      expect(factDevice).to.containSubset({
+        offline: 0,
+        noResults: 1,
+        maintenance: 0,
+      })
       assert.isNotOk(factDevice.maintenanceDueOn)
 
       issues = await knex('Issue as i')
@@ -239,14 +260,20 @@ describe('Fact based issues', () => {
           'i.level'
         )
         .orderBy('id', 'ASC')
-      assert.equal(issues.length, 2)
-      assert.equal(issues[0].id, issueId)
-      assert.equal(issues[0].issueType, 'DeviceOffline')
-      assert.equal(issues[0].deviceId, deviceId)
-      assert.equal(issues[0].issueStatus, 'Resolved')
-      assert.equal(issues[1].issueType, 'DeviceNoResults')
-      assert.equal(issues[1].deviceId, deviceId)
-      assert.equal(issues[1].issueStatus, 'Active')
+      expect(issues).to.have.length(2)
+      expect(issues).to.containSubset([
+        {
+          id: issueId,
+          issueType: 'DeviceOffline',
+          deviceId,
+          issueStatus: 'Resolved',
+        },
+        {
+          issueType: 'DeviceNoResults',
+          deviceId,
+          issueStatus: 'Active',
+        },
+      ])
 
       notifications = await knex('Notification as n')
         .join('NotificationType as nt', 'nt.id', 'n.notificationTypeId')
@@ -264,16 +291,20 @@ describe('Fact based issues', () => {
           'am.message as alertMessage'
         )
 
-      assert.equal(notifications.length, 2)
+      expect(notifications).to.have.length(2)
       ;[notificationLU, notificationRO] = notifications
-      assert.equal(notificationLU.userName, USER_LU)
-      assert.equal(notificationLU.jobFunction, 'Lab User')
-      assert.equal(notificationLU.level, issues[1].level)
-      assert.equal(notificationLU.canAcknowledge, 1)
-      assert.equal(notificationRO.userName, USER_RO)
-      assert.equal(notificationRO.jobFunction, 'Regional Officer')
-      assert.equal(notificationRO.level, issues[1].level)
-      assert.equal(notificationRO.canAcknowledge, 0)
+      expect(notificationLU).to.containSubset({
+        userName: USER_LU,
+        jobFunction: 'Lab User',
+        level: issues[1].level,
+        canAcknowledge: 1,
+      })
+      expect(notificationRO).to.containSubset({
+        userName: USER_RO,
+        jobFunction: 'Regional Officer',
+        level: issues[1].level,
+        canAcknowledge: 0,
+      })
       assert.equal(
         processDynamicMessage(notificationRO.alertMessage),
         `No testing for ${numberOfDaysNoResults}`
@@ -295,10 +326,14 @@ describe('Fact based issues', () => {
           assert.typeOf(res.body, 'Object')
         })
       await waitForIdle()
-      ;[factDevice] = await knex('FactDeviceFlag').where({ deviceId })
-      assert.equal(factDevice.offline, 0)
-      assert.equal(factDevice.noResults, 0)
-      assert.equal(factDevice.maintenance, 0)
+      ;[factDevice] = await knex('FactDeviceFlag')
+        .where({ deviceId })
+        .select()
+      expect(factDevice).to.containSubset({
+        offline: 0,
+        noResults: 0,
+        maintenance: 0,
+      })
       assert.isNotOk(factDevice.maintenanceDueOn)
 
       issues = await knex('Issue as i')
@@ -312,14 +347,20 @@ describe('Fact based issues', () => {
           'is.externalId as issueStatus'
         )
         .orderBy('id', 'ASC')
-      assert.equal(issues.length, 2)
-      assert.equal(issues[0].id, issueId)
-      assert.equal(issues[0].issueType, 'DeviceOffline')
-      assert.equal(issues[0].deviceId, deviceId)
-      assert.equal(issues[0].issueStatus, 'Resolved')
-      assert.equal(issues[1].issueType, 'DeviceNoResults')
-      assert.equal(issues[1].deviceId, deviceId)
-      assert.equal(issues[1].issueStatus, 'Resolved')
+      expect(issues).to.have.length(2)
+      expect(issues).to.containSubset([
+        {
+          id: issueId,
+          issueType: 'DeviceOffline',
+          deviceId,
+          issueStatus: 'Resolved',
+        },
+        {
+          issueType: 'DeviceNoResults',
+          deviceId,
+          issueStatus: 'Resolved',
+        },
+      ])
 
       const dueOn = new Date(+new Date() + 72000000)
       messageContext.deviceMaintenance(deviceId, {
@@ -327,10 +368,14 @@ describe('Fact based issues', () => {
         data: { a: 1, hi: 'world' },
       })
       await waitForIdle()
-      ;[factDevice] = await knex('FactDeviceFlag').where({ deviceId })
-      assert.equal(factDevice.offline, 0)
-      assert.equal(factDevice.noResults, 0)
-      assert.equal(factDevice.maintenance, 1)
+      ;[factDevice] = await knex('FactDeviceFlag')
+        .where({ deviceId })
+        .select()
+      expect(factDevice).to.containSubset({
+        offline: 0,
+        noResults: 0,
+        maintenance: 1,
+      })
       assert.approximately(+factDevice.maintenanceDueOn, +dueOn, 3000)
       issues = await knex('Issue as i')
         .join('IssueType as it', 'i.issueTypeId', 'it.id')
@@ -345,28 +390,40 @@ describe('Fact based issues', () => {
           'i.dueOn'
         )
         .orderBy('id', 'ASC')
-      assert.equal(issues.length, 3)
-      assert.equal(issues[0].id, issueId)
-      assert.equal(issues[0].issueType, 'DeviceOffline')
-      assert.equal(issues[0].deviceId, deviceId)
-      assert.equal(issues[0].issueStatus, 'Resolved')
-      assert.equal(issues[1].issueType, 'DeviceNoResults')
-      assert.equal(issues[1].deviceId, deviceId)
-      assert.equal(issues[1].issueStatus, 'Resolved')
-      assert.equal(issues[2].issueType, 'DeviceMaintenance')
-      assert.equal(issues[2].deviceId, deviceId)
-      assert.equal(issues[2].issueStatus, 'Active')
+      expect(issues).to.have.length(3)
+      expect(issues).to.containSubset([
+        {
+          id: issueId,
+          issueType: 'DeviceOffline',
+          deviceId,
+          issueStatus: 'Resolved',
+        },
+        {
+          issueType: 'DeviceNoResults',
+          deviceId,
+          issueStatus: 'Resolved',
+        },
+        {
+          issueType: 'DeviceMaintenance',
+          deviceId,
+          issueStatus: 'Active',
+        },
+      ])
       assert.approximately(+issues[2].dueOn, +dueOn, 3000)
       assert.deepEqual(JSON.parse(issues[2].data), { a: 1, hi: 'world' })
 
-      messageContext.deviceMaintenance(deviceId, {
+      await messageContext.deviceMaintenance(deviceId, {
         data: { b: 2, hi: 'universe' },
       })
       await waitForIdle()
-      ;[factDevice] = await knex('FactDeviceFlag').where({ deviceId })
-      assert.equal(factDevice.offline, 0)
-      assert.equal(factDevice.noResults, 0)
-      assert.equal(factDevice.maintenance, 1)
+      ;[factDevice] = await knex('FactDeviceFlag')
+        .where({ deviceId })
+        .select()
+      expect(factDevice).to.containSubset({
+        offline: 0,
+        noResults: 0,
+        maintenance: 1,
+      })
       assert.approximately(+factDevice.maintenanceDueOn, +dueOn, 3000)
       issues = await knex('Issue as i')
         .join('IssueType as it', 'i.issueTypeId', 'it.id')
@@ -381,17 +438,25 @@ describe('Fact based issues', () => {
           'i.dueOn'
         )
         .orderBy('id', 'ASC')
-      assert.equal(issues.length, 3)
-      assert.equal(issues[0].id, issueId)
-      assert.equal(issues[0].issueType, 'DeviceOffline')
-      assert.equal(issues[0].deviceId, deviceId)
-      assert.equal(issues[0].issueStatus, 'Resolved')
-      assert.equal(issues[1].issueType, 'DeviceNoResults')
-      assert.equal(issues[1].deviceId, deviceId)
-      assert.equal(issues[1].issueStatus, 'Resolved')
-      assert.equal(issues[2].issueType, 'DeviceMaintenance')
-      assert.equal(issues[2].deviceId, deviceId)
-      assert.equal(issues[2].issueStatus, 'Active')
+      expect(issues).to.have.length(3)
+      expect(issues).to.containSubset([
+        {
+          id: issueId,
+          issueType: 'DeviceOffline',
+          deviceId,
+          issueStatus: 'Resolved',
+        },
+        {
+          issueType: 'DeviceNoResults',
+          deviceId,
+          issueStatus: 'Resolved',
+        },
+        {
+          issueType: 'DeviceMaintenance',
+          deviceId,
+          issueStatus: 'Active',
+        },
+      ])
       assert.approximately(+issues[2].dueOn, +dueOn, 3000)
       assert.deepEqual(JSON.parse(issues[2].data), {
         a: 1,
@@ -399,12 +464,14 @@ describe('Fact based issues', () => {
         hi: 'universe',
       })
 
-      messageContext.deviceMaintenanceResolved(deviceId)
+      await messageContext.deviceMaintenanceResolved(deviceId)
       await waitForIdle()
       ;[factDevice] = await knex('FactDeviceFlag').where({ deviceId })
-      assert.equal(factDevice.offline, 0)
-      assert.equal(factDevice.noResults, 0)
-      assert.equal(factDevice.maintenance, 0)
+      expect(factDevice).to.containSubset({
+        offline: 0,
+        noResults: 0,
+        maintenance: 0,
+      })
       assert.isNotOk(factDevice.maintenanceDueOn)
       issues = await knex('Issue as i')
         .join('IssueType as it', 'i.issueTypeId', 'it.id')
@@ -417,17 +484,25 @@ describe('Fact based issues', () => {
           'is.externalId as issueStatus'
         )
         .orderBy('id', 'ASC')
-      assert.equal(issues.length, 3)
-      assert.equal(issues[0].id, issueId)
-      assert.equal(issues[0].issueType, 'DeviceOffline')
-      assert.equal(issues[0].deviceId, deviceId)
-      assert.equal(issues[0].issueStatus, 'Resolved')
-      assert.equal(issues[1].issueType, 'DeviceNoResults')
-      assert.equal(issues[1].deviceId, deviceId)
-      assert.equal(issues[1].issueStatus, 'Resolved')
-      assert.equal(issues[2].issueType, 'DeviceMaintenance')
-      assert.equal(issues[2].deviceId, deviceId)
-      assert.equal(issues[2].issueStatus, 'Resolved')
+      expect(issues).to.have.length(3)
+      expect(issues).to.containSubset([
+        {
+          id: issueId,
+          issueType: 'DeviceOffline',
+          deviceId,
+          issueStatus: 'Resolved',
+        },
+        {
+          issueType: 'DeviceNoResults',
+          deviceId,
+          issueStatus: 'Resolved',
+        },
+        {
+          issueType: 'DeviceMaintenance',
+          deviceId,
+          issueStatus: 'Resolved',
+        },
+      ])
     }))
 
   it('should create no result issue maintenance expected back > Y days', () =>

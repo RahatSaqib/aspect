@@ -3,6 +3,7 @@ import classnames from 'classnames/bind'
 import React from 'react'
 import { TableRow, TableCell } from 'react-toolbox/lib/table'
 import { Checkbox } from 'react-toolbox/lib/checkbox'
+import { formatDate } from '../../shared/utils/dateFormat'
 
 const cssClasses = classnames.bind(require('./DeviceApiKeyTableRow.css'))
 
@@ -36,7 +37,7 @@ const DeviceApiKeyTableRow = ({
       />
     </TableCell>
     <TableCell className={cssClasses('TableCell')}>
-      {intl.formatDate(deviceApiKey.get('createdOn'))}
+      {formatDate(deviceApiKey.get('createdOn'))}
     </TableCell>
     <TableCell className={cssClasses('TableCell')}>
       {deviceApiKey.get('token')}

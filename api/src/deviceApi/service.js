@@ -20,7 +20,7 @@ const {
 } = require('./device')
 const { deviceSeen } = require('../device/actions')
 const { mergeResult, getResult } = require('./result')
-const { loadPlugin } = require('./plugin/registration')
+const { loadPlugin } = require('../plugin/registration')
 
 const millisInDay = 1000 * 60 * 60 * 24
 

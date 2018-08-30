@@ -8,7 +8,12 @@ const myanmarSites = require('./fixtures/myanmarSites.json')
 const patients = require('./fixtures/patients.json')
 const dashboardWidget = require('./fixtures/myanmarDashboardWidget.json')
 const { errorCodes } = require('./fixtures/errorCodes.js')
-const { addMilliseconds, addMinutes, subDays } = require('date-fns')
+const {
+  addMilliseconds,
+  addMinutes,
+  subDays,
+  differenceInDays,
+} = require('date-fns')
 const {
   rowsAsObject,
   getDefaultMessageTypes,
@@ -17,6 +22,7 @@ const {
   seedIssueEventTriggersForPartner,
 } = require('../utils')
 const {
+  allFeatureToId,
   allResultCategoryToId,
   deviceStatusToId,
   partnerTypeToId,
@@ -73,6 +79,7 @@ async function seed(knex) {
     getDefaultMessageTypes(knex),
   ])
 
+  const maxDaysDeviceNoResults = 14
   const [partnerId] = await knex('Partner').insert({
     name: 'Myanmar',
     partnerTypeId: await partnerTypeToId('Operating'),
@@ -81,20 +88,10 @@ async function seed(knex) {
     autoAcknowledgeOlderThanDays: 28,
     numberToLeaveUnacknowledged: 15,
     maxDaysDeviceOffline: 7,
-    maxDaysDeviceNoResults: 14,
+    maxDaysDeviceNoResults,
   })
 
   const modules = await getPermissionModules(knex)
-
-  await knex('Feature').insert({ module: 'targetDashboard' })
-  await knex('Feature').insert({ module: 'actionDashboard' })
-  await knex('Feature').insert({ module: 'reportDashboard' })
-  await knex('Feature').insert({ module: 'siteFilterDashboard' })
-
-  const featureModules = await knex('Feature').reduce((memo, row) => {
-    memo[row.module] = row.id
-    return memo
-  }, {})
 
   const [myanmarCountry] = await knex('Country as c')
     .where({ 'c.a3': 'MMR' })
@@ -158,6 +155,7 @@ async function seed(knex) {
     partnerId,
   })
 
+  const featureModules = await allFeatureToId()
   await knex('JobFunctionFeature').insert([
     // Admin Permissions
     { jobFunctionId: jobFunctionIdAdmin, featureId: featureModules.site },
@@ -536,11 +534,16 @@ async function seed(knex) {
           await Promise.all(
             _.map(_.range(resultMtbNumber), async i => {
               const sample = samples[i % samples.length]
-              const randomDate = calculateDateForResult(
-                i,
-                resultMtbNumber,
-                6000
-              )
+              let randomDate = calculateDateForResult(i, resultMtbNumber, 6000)
+
+              // Leave some devices as being quiet, with results, for a while
+              if (
+                deviceId % 3 === 0 &&
+                Math.abs(differenceInDays(now, randomDate)) <
+                  maxDaysDeviceNoResults + 3
+              ) {
+                randomDate = subDays(randomDate, maxDaysDeviceNoResults + 3)
+              }
 
               const rnd = _.random(0, 100)
               const result = _.find(
@@ -1670,7 +1673,7 @@ async function seed(knex) {
       escalationConditions: JSON.stringify({
         evaluationMethod: 'sql-script',
         evaluationParameter:
-          './sqlScripts/Myanmar/issues/escalations/deviceOfflineLevel3ROEscalatedNetwork.sql',
+          './src/plugin/partner/Myanmar/sqlScripts/shouldEscalateL2NotificationAfter30Days.sql',
       }),
       createdOn: now,
       updatedOn: now,
@@ -1693,7 +1696,7 @@ async function seed(knex) {
       escalationConditions: JSON.stringify({
         evaluationMethod: 'sql-script',
         evaluationParameter:
-          './sqlScripts/Myanmar/issues/escalations/deviceNoResultsLevel3ROEscalatedNoResults.sql',
+          './src/plugin/partner/Myanmar/sqlScripts/shouldEscalateL2NotificationAfter7Days.sql',
       }),
       createdOn: now,
       updatedOn: now,
@@ -1796,7 +1799,18 @@ async function seed(knex) {
       resolutionConditions: JSON.stringify({
         evaluationMethod: 'sql-script',
         evaluationParameter:
-          './sqlScripts/Myanmar/issues/resolutions/deviceOfflineLUNetwork.sql',
+          './src/plugin/partner/Myanmar/sqlScripts/shouldResolveDeviceOffline.sql',
+      }),
+      createdOn: now,
+      updatedOn: now,
+    },
+    {
+      issueTypeId: issueTypes.DeviceNoResults.id,
+      partnerId,
+      resolutionConditions: JSON.stringify({
+        evaluationMethod: 'sql-script',
+        evaluationParameter:
+          './src/plugin/partner/Myanmar/sqlScripts/shouldResolveDeviceNoResults.sql',
       }),
       createdOn: now,
       updatedOn: now,
