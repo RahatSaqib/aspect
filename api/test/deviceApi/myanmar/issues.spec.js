@@ -839,6 +839,7 @@ describe('Myanmar Issue endpoints', () => {
       }
 
       // Should now create a procedural module issue
+      let moduleProceduralErrorIssueId = null
       for (let i = 0; i < 10; i++) {
         /* eslint-disable no-await-in-loop */
         const errorTestResultId = `UNIQUE-ID-WITH-GEN-MOD-ERROR-${i}`
@@ -925,7 +926,33 @@ describe('Myanmar Issue endpoints', () => {
           assert.equal(issues[0].issueType, 'ModuleProceduralError')
           assert.equal(issues[0].deviceId, deviceId)
           assert.equal(issues[0].issueStatus, 'Active')
+          moduleProceduralErrorIssueId = issues[0].id
         }
+      }
+
+      const last30day = subDays(now, 30)
+      for (let i = 0; i < 7; i++) {
+        /* eslint-disable no-await-in-loop */
+        // Update ended on for initial issue to past so module failure issue is resolved
+        const results = await knex('Result as r')
+          .where('r.deviceId', deviceId)
+          .where('r.endedOn', '>=', last30day)
+          .whereNotNull('r.errorCode')
+          .orderBy('r.id')
+          .select('r.id')
+        assert.equal(results.length, 7 - i)
+        await knex('Result')
+          .where({ id: results[0].id })
+          .update({ errorCode: null })
+
+        // Should resolve when result count under 3%
+        await dispatchAndWaitForAction(
+          resolveIssues(moduleProceduralErrorIssueId)
+        )
+        assert.equal(
+          i < 6 ? 'Active' : 'Resolved',
+          await getIssueStatusByIssueId(knex, moduleProceduralErrorIssueId)
+        )
       }
     }))
 
@@ -1124,7 +1151,7 @@ describe('Myanmar Issue endpoints', () => {
       // the procedural machine issue is created
     }))
 
-  it.only('should create a machine procedural issue and resolve when under percent', () =>
+  it('should create a machine procedural issue and resolve when under percent', () =>
     runTest(async knex => {
       const { now } = context
       const errorCode = '1098'
