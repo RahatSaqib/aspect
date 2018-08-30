@@ -1,5 +1,6 @@
-const { addMonths, subMinutes, addDays, format } = require('date-fns')
+const { addDays, subDays } = require('date-fns')
 const { assert, expect } = require('chai')
+const Promise = require('bluebird')
 
 const { queuePurge } = require('../utils/mqUtils')
 const { run } = require('../../src/db')
@@ -26,9 +27,10 @@ const {
   getIssueNotifications,
   cleanUpIssues,
 } = require('../utils/issueUtils')
+const { loadPlugin } = require('../../src/plugin/registration')
 
-const USER_LU = 'myanmar_lab1'
-const USER_RO = 'myanmar_ro1'
+const USER_LU_NAME_PREFIX = 'myanmar_lab'
+const USER_RO_NAME_PREFIX = 'myanmar_ro'
 
 describe('Inventory Stock Issues Endpoint', () => {
   const partnerName = 'Myanmar'
@@ -71,18 +73,24 @@ describe('Inventory Stock Issues Endpoint', () => {
         escalateIssues,
       })
 
+      const { displayPreferences = {} } = await loadPlugin(
+        [partner.plugin],
+        'settings'
+      )
+
       baseProps = {
         siteId,
         consumableId,
         issueEventIds,
         daysDue: 30,
+        displayPreferences,
       }
     })
   )
 
   after(async () =>
     run(async knex => {
-      await waitForIdle()
+      await waitForIdle(2000)
 
       if (issueEventIds.length > 0) {
         await knex('IssueEvent')
@@ -98,8 +106,8 @@ describe('Inventory Stock Issues Endpoint', () => {
     })
   )
 
-  it('makes sure that calculated consumption rates match rates in db for all periods', () => {
-    runTestWithKnex(async knex => {
+  it('makes sure that calculated consumption rates match rates in db for all periods', async () => {
+    await runTestWithKnex(async knex => {
       // calculate rates
       const totals = await refreshConsumptionRates(knex, siteId, consumableId)
 
@@ -129,7 +137,7 @@ describe('Inventory Stock Issues Endpoint', () => {
   // trigger base issues
   // ---------------------------------------------------------------------------
   // Stockout
-  it('should create Stockout issue', () => {
+  it('should create Stockout issue', async () =>
     runTestWithKnex(async knex => {
       const issueId = await triggerInitialIssue({
         knex,
@@ -139,11 +147,10 @@ describe('Inventory Stock Issues Endpoint', () => {
         actionCreator: inventoryStockout,
       })
       issueIds.push(issueId)
-    })
-  })
+    }))
 
   // StockExpiring
-  it('should create StockExpiring issue', () => {
+  it('should create StockExpiring issue', async () =>
     runTestWithKnex(async knex => {
       const issueId = await triggerInitialIssue({
         knex,
@@ -153,37 +160,38 @@ describe('Inventory Stock Issues Endpoint', () => {
         actionCreator: inventoryStockExpiring,
       })
       issueIds.push(issueId)
-    })
-  })
+    }))
 
   // ---------------------------------------------------------------------------
   // escalate issues
   // ---------------------------------------------------------------------------
   describe("dispatch ESCALATE_ISSUES with created issues ID's", () => {
-    it('Stockout and StockExpiring issues should be escalated', () =>
+    it('escalate triggered Stockout and StockExpiring issues to level 2', async () =>
       runTestWithKnex(async knex => {
-        // change dates of these issues to 1 month back to meet escalation conditions
-        const monthAgo = addMonths(new Date(), -1)
-        await knex('Issue')
+        // see seed/utils.js - search for 'knex('IssueEscalationTrigger').insert' -
+        // level 2 - evaluationMethod: 'issue-age' and evaluationParameter: { days: 10 }
+        // level 3 - evaluationMethod: 'issue-age' and evaluationParameter: { days: 20 }
+        // So, change dates of these issues to 15 days back to meet escalation conditions
+        const pastTime = subDays(new Date(), 15)
+        await knex('IssueEvent')
           .update({
-            createdOn: monthAgo,
-            updatedOn: monthAgo,
+            createdOn: pastTime,
           })
           .whereIn('issueId', issueIds)
 
         // escalate
-        issueIds.map(async issueId => {
+        await Promise.each(issueIds, async issueId => {
           const action = escalateIssues(issueId)
           await messageContext.escalateIssues(issueId)
           await waitForAction(action)
-          await waitForIdle()
+          await waitForIdle(1000)
 
           const issue = await getIssue(knex, issueId)
           assert.equal(issue.level, 2)
         })
       }))
 
-    it('notifications should be created for the level that the issue has been escalated to', () =>
+    it('notifications should be created for the level that the issue has been escalated to', async () =>
       runTestWithKnex(async knex => {
         issueIds.map(async issueId => {
           const notificationsIssue = await getIssueNotifications(knex, issueId)
@@ -215,10 +223,11 @@ async function triggerInitialIssue({
   issueType,
   dispatch,
   actionCreator,
+  displayPreferences,
 }) {
   const TO_BE_WASTED = 100
 
-  // array with values
+  // array with values in same order as in action creators
   const values = [siteId, consumableId, daysDue]
   if (issueType === 'InventoryStockExpiring') {
     values.push(TO_BE_WASTED)
@@ -228,17 +237,20 @@ async function triggerInitialIssue({
   const action = actionCreator(...values)
   dispatch(...values)
 
+  // wait for MQ to handle
   await waitForAction(action)
-  await waitForIdle()
-  const dateFrom = subMinutes(new Date(), 5)
+  await waitForIdle(2000) // 2sec to let MQ handle all and save 1 LU and 2 RO's notifications
 
-  // get issues for last 5 mins for curent siteId and issueType
+  // get latest issue for curent (siteId, issueType)
   const issue = await knex('Issue as i')
     .innerJoin('IssueType as it', 'i.issueTypeId', 'it.id')
     .innerJoin('IssueStatus as is', 'i.issueStatusId', 'is.id')
     .innerJoin('IssueEvent as ie', 'i.id', 'ie.issueId')
-    .where({ 'i.siteId': siteId, 'it.externalId': issueType })
-    .where('ie.createdOn', '>', dateFrom)
+    .where({
+      'i.siteId': siteId,
+      'it.externalId': issueType,
+    })
+    .orderBy('ie.createdOn', 'desc')
     .first(
       'i.id',
       'i.level',
@@ -249,26 +261,30 @@ async function triggerInitialIssue({
     )
   issueEventIds.push(issue.issueEventId)
 
+  // compare requested issueType with saved in db
   assert.equal(
     issue.issueType,
     issueType,
     `issue types do not match - ${issueType} and ${issue.issueType}`
   )
 
+  // issue should have status Active
   assert.equal(
     issue.issueStatus,
     'Active',
     `issueStatus (${issue.issueStatus}) is not Active`
   )
 
+  // get issue notifications sorted by Job Function
   const notifications = await knex('Notification as n')
     .join('NotificationType as nt', 'nt.id', 'n.notificationTypeId')
     .join('JobFunction as jf', 'jf.id', 'nt.jobFunctionId')
     .join('Person as p', 'p.id', 'n.personId')
     .join('User as u', 'u.id', 'p.userId')
     .join('AlertMessage as am', 'am.id', 'n.alertMessageId')
-    .where({ 'n.issueId': issue.id })
-    .orderBy('jf.name')
+    .where('n.issueId', issue.id)
+    .orderBy('jf.name') // Lab User, Regional Officer
+    .orderBy('nt.createdOn') // items are in same order as they happen
     .select(
       'u.name as userName',
       'jf.name as jobFunction',
@@ -277,26 +293,40 @@ async function triggerInitialIssue({
       'am.message as alertMessage'
     )
 
-  assert.equal(notifications.length, 2)
-  const [notificationLU, notificationRO] = notifications
-  assert.equal(notificationLU.userName, USER_LU)
-  assert.equal(notificationLU.jobFunction, 'Lab User')
-  assert.equal(notificationLU.level, issue.level)
-  assert.equal(notificationLU.canAcknowledge, 1)
-  const date = format(addDays(new Date(), daysDue), 'YYYY-MM-DD')
+  // should have 3 entries - 1 LU and 2 RO's
+  expect(notifications.length).to.equal(3)
+  const [notifLU, notifRO1, notifRO2] = notifications
+
+  // helper func for asserting similar things for each notification
+  const assertNotification = (
+    notification,
+    userNamePrefix,
+    jobFunction,
+    level,
+    canAcknowledge
+  ) => {
+    expect(notification.userName).to.include(userNamePrefix)
+    assert.equal(notification.jobFunction, jobFunction)
+    assert.equal(notification.level, level)
+    assert.equal(notification.canAcknowledge, canAcknowledge)
+  }
+
+  assertNotification(notifLU, USER_LU_NAME_PREFIX, 'Lab User', 1, 1)
+  assertNotification(notifRO1, USER_RO_NAME_PREFIX, 'Regional Officer', 1, 0)
+  const ack = issueType === 'InventoryStockout' ? 1 : 0
+  assertNotification(notifRO2, USER_RO_NAME_PREFIX, 'Regional Officer', 1, ack)
+
+  // check alert message
   if (issueType === 'InventoryStockout') {
+    const date = addDays(new Date(), daysDue)
     assert.equal(
-      processUsingHandlebarsSyntax(notificationLU.alertMessage, { date }),
-      `Stock-out expected ${date} - Order Stock.`
+      notifLU.alertMessage,
+      processUsingHandlebarsSyntax(
+        `Stock-out expected {{formatDate date}} - Order Stock.`,
+        { date, displayPreferences }
+      )
     )
   }
-  assert.equal(notificationRO.userName, USER_RO)
-  assert.equal(notificationRO.jobFunction, 'Regional Officer')
-  assert.equal(notificationRO.level, issue.level)
-  assert.equal(
-    notificationRO.canAcknowledge,
-    issueType === 'InventoryStockout' ? 1 : 0
-  )
 
   //
   const action2 = JSON.parse(issue.data)
