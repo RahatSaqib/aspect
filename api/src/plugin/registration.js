@@ -16,6 +16,7 @@ const plugins = {
     settings: DEFAULT_SETTINGS,
     issueResolutions: {},
     issueEscalations: {},
+    dataCategories: {},
     transformInitialPayload,
     getDeviceSeenOn,
     getDevicePingOn,
@@ -33,7 +34,6 @@ const plugins = {
     transformMergeResultPayload,
     postProcessMergeResult,
     onResultLogged,
-    dataCategories: {},
   },
   commcare: {
     transformInitialPayload: require('./deviceType/CommCareApp/transformInitialPayload'),
@@ -68,9 +68,9 @@ const plugins = {
     settings: require('./partner/Myanmar/settings'),
     issueResolutions: require('./partner/Myanmar/issueResolutions'),
     issueEscalations: require('./partner/Myanmar/issueEscalations'),
+    dataCategories: require('./partner/Myanmar/dataCategories'),
     transformMergeResultPayload: require('./partner/Myanmar/transformMergeResultPayload'),
     onResultLogged: require('./partner/Myanmar/onResultLogged'),
-    dataCategories: require('./partner/Myanmar/dataCategories'),
   },
 }
 

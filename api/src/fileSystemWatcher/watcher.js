@@ -18,7 +18,6 @@ function start(queue) {
     watcher.on('add', path => {
       messageContext.dispatch(newFileDetected(path))
     })
-    console.log(`watching: ${directory} for changes`)
   }
 }
 
