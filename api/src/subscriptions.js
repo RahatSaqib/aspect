@@ -12,6 +12,10 @@ function addSubscriptions(queue) {
   queue.subscribe('email', require('./email/endpoints').subscriptions)
   queue.subscribe('sms', require('./sms/endpoints').subscriptions)
   queue.subscribe('webhook', require('./webhook/endpoints').subscriptions)
+  queue.subscribe(
+    'fileSystemWatcher',
+    require('./fileSystemWatcher/endpoints').subscriptions
+  )
 }
 
 module.exports = { addSubscriptions }

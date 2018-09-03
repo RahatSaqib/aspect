@@ -8,7 +8,7 @@ const { addClientRoutes, addDeviceRoutes } = require('./routes')
 const { createMessageQueue } = require('./mq')
 const { addSubscriptions } = require('./subscriptions')
 const { startScheduler } = require('./scheduler')
-const { start: startFileSystemWatcher } = require('./fileSystemWatcher')
+const { start: startFileSystemWatcher } = require('./fileSystemWatcher/watcher')
 const { addLoggers } = require('./logger/service')
 const deviceApiKeyPlugin = require('./deviceApi/deviceApiKeyPlugin')
 const Hapi = require('hapi')
@@ -67,9 +67,6 @@ const plugins = [
 
   // Set message queue
   messageQueuePlugin,
-
-  // Watch directory
-  fileSystemWatcherPlugin,
 ]
 
 addRavenPlugin(plugins)
@@ -82,6 +79,7 @@ function messageQueuePlugin(server, options, next) {
       if (config.scheduler.enabled) {
         startScheduler(queue)
       }
+      startFileSystemWatcher(queue)
       server.ext('onPreHandler', (request, reply) => {
         request.plugins.messageContext = queue.createMessageContext(
           'aspect_request'
@@ -118,15 +116,6 @@ function rawPayloadPlugin(server, options, next) {
 }
 rawPayloadPlugin.attributes = {
   name: 'rawPayload',
-  version,
-}
-
-function fileSystemWatcherPlugin(server, options, next) {
-  startFileSystemWatcher(config.file.watcher.directory)
-  next()
-}
-fileSystemWatcherPlugin.attributes = {
-  name: 'fileSystemWatcher',
   version,
 }
 
