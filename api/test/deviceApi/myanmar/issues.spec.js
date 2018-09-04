@@ -839,6 +839,7 @@ describe('Myanmar Issue endpoints', () => {
       }
 
       // Should now create a procedural module issue
+      let moduleProceduralErrorIssueId = null
       for (let i = 0; i < 10; i++) {
         /* eslint-disable no-await-in-loop */
         const errorTestResultId = `UNIQUE-ID-WITH-GEN-MOD-ERROR-${i}`
@@ -925,7 +926,33 @@ describe('Myanmar Issue endpoints', () => {
           assert.equal(issues[0].issueType, 'ModuleProceduralError')
           assert.equal(issues[0].deviceId, deviceId)
           assert.equal(issues[0].issueStatus, 'Active')
+          moduleProceduralErrorIssueId = issues[0].id
         }
+      }
+
+      const last30day = subDays(now, 30)
+      for (let i = 0; i < 7; i++) {
+        /* eslint-disable no-await-in-loop */
+        // Update ended on for initial issue to past so module failure issue is resolved
+        const results = await knex('Result as r')
+          .where('r.deviceId', deviceId)
+          .where('r.endedOn', '>=', last30day)
+          .whereNotNull('r.errorCode')
+          .orderBy('r.id')
+          .select('r.id')
+        assert.equal(results.length, 7 - i)
+        await knex('Result')
+          .where({ id: results[0].id })
+          .update({ errorCode: null })
+
+        // Should resolve when result count under 3%
+        await dispatchAndWaitForAction(
+          resolveIssues(moduleProceduralErrorIssueId)
+        )
+        assert.equal(
+          i < 6 ? 'Active' : 'Resolved',
+          await getIssueStatusByIssueId(knex, moduleProceduralErrorIssueId)
+        )
       }
     }))
 
@@ -1122,6 +1149,112 @@ describe('Myanmar Issue endpoints', () => {
       })
       // TOD0 - Add tests to ensure the the module issue is removed when
       // the procedural machine issue is created
+    }))
+
+  it('should create a machine procedural issue and resolve when under 3 percent', () =>
+    runTest(async knex => {
+      const { now } = context
+      const errorCode = '1098'
+
+      // Post to deviceApi to ensure the device in in Aspect
+      const response = await postToDeviceApi({
+        authHeader: deviceAuth,
+        payload: _.merge({}, basicDevicePayload, {
+          name: deviceName,
+        }),
+      })
+      const deviceId = response.body.device.id
+      let machineProceduralErrorIssueId = null
+      for (let i = 0; i < 12; i++) {
+        /* eslint-disable no-await-in-loop */
+        const errorTestResultId = `UNIQUE-ID-WITH-MPROC-ERROR-${i}`
+        const sampleId = `MPROC2542552${i}`
+        const moduleSerial = `MPROC1234${i}`
+        const moduleName = `Module A-${i}`
+        const instrumentSerial = `CEPH-PC-397${i}`
+        const testStartedOn = setMilliseconds(subDays(now, i + 3), 0)
+        const testEndedOn = setMilliseconds(addHours(testStartedOn, i + 2), 0)
+        const payload = _.merge(
+          {},
+          basicDevicePayload,
+          { name: deviceName },
+          basicResultPayload,
+          {
+            result: {
+              id: errorTestResultId,
+              startedOn: testStartedOn,
+              endedOn: testEndedOn,
+              error: {
+                code: errorCode,
+              },
+              sample: { id: sampleId },
+              instrument: {
+                serial: instrumentSerial,
+                module: {
+                  serial: moduleSerial,
+                  name: moduleName,
+                },
+              },
+            },
+          }
+        )
+        if (i === 8) {
+          // Should create issue when errors === 8
+          const waitForMachineProceduralError = waitForAction(
+            resultMachineProceduralError(deviceId)
+          )
+          await postToDeviceApi({
+            authHeader: deviceAuth,
+            payload,
+          })
+          await waitForMachineProceduralError
+          await waitForIdle()
+        } else {
+          // Post the result to aspect
+          await postToDeviceApi({
+            authHeader: deviceAuth,
+            payload,
+          })
+        }
+
+        const issues = await getIssuesByDeviceId(knex, deviceId)
+        if (i < 8) {
+          // should not have issue prior to temp error
+          assert.equal(issues.length, 0)
+        } else {
+          // should have only one active issue after 8
+          assert.equal(issues.length, 1)
+          assert.equal(issues[0].issueType, 'MachineProceduralError')
+          assert.equal(issues[0].deviceId, deviceId)
+          assert.equal(issues[0].issueStatus, 'Active')
+          machineProceduralErrorIssueId = issues[0].id
+        }
+      }
+
+      const last30day = subDays(now, 30)
+      for (let i = 0; i < 12; i++) {
+        /* eslint-disable no-await-in-loop */
+        // Update ended on for initial issue to past so module failure issue is resolved
+        const results = await knex('Result as r')
+          .where('r.deviceId', deviceId)
+          .where('r.endedOn', '>=', last30day)
+          .whereNotNull('r.errorCode')
+          .orderBy('r.id')
+          .select('r.id')
+        assert.equal(results.length, 12 - i)
+        await knex('Result')
+          .where({ id: results[0].id })
+          .update({ errorCode: null })
+
+        // Should resolve when result count under 3%
+        await dispatchAndWaitForAction(
+          resolveIssues(machineProceduralErrorIssueId)
+        )
+        assert.equal(
+          i < 11 ? 'Active' : 'Resolved',
+          await getIssueStatusByIssueId(knex, machineProceduralErrorIssueId)
+        )
+      }
     }))
 
   describe('should create a machine power issue and resolve when under percent', () => {
