@@ -43,7 +43,7 @@ async function onNewFileDetected({ filePath }, { messageContext }) {
     }
     const { loadPlugin } = require('../plugin/registration')
     const onNewFileDetected = await loadPlugin(pluginNames, 'onNewFileDetected')
-    await onNewFileDetected({ filePath }, messageContext)
+    await onNewFileDetected({ filePath }, { messageContext })
   })
 }
 
