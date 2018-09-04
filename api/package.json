@@ -107,6 +107,7 @@
     "sendgrid": "^5.2.2",
     "shx": "^0.2.2",
     "twilio": "^3.13.1",
+    "unzip2": "^0.2.5",
     "vision": "^4.1.1"
   },
   "devDependencies": {
