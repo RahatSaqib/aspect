@@ -20,17 +20,21 @@ const cacheConfig = {
   DeviceTypeCategory: {
     keyColumn: 'name',
   },
-  FileContentType: {},
   Feature: {
     keyColumn: 'module',
+  },
+  FileContentType: {},
+  FileSystemWatcher: {
+    keyColumn: 'pathMatchRegex',
+    additionalColumns: ['id'],
   },
   IssueCategory: {},
   IssueEventStatus: {},
   IssueStatus: {},
   IssueStatusSeverity: {},
   IssueType: {},
-  MessageStatus: {},
   MessageSeverity: {},
+  MessageStatus: {},
   PartnerType: {
     keyColumn: 'name',
   },
