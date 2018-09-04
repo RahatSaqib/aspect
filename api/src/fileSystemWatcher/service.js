@@ -18,8 +18,9 @@ async function onNewFileDetected({ filePath }, { messageContext }) {
     const pluginNames = []
     let partnerId
     let deviceTypeId
+    let fileSystemWatcherId
     if (matchingRegex) {
-      const fileSystemWatcherId = await fileSystemWatcherToId(matchingRegex)
+      fileSystemWatcherId = await fileSystemWatcherToId(matchingRegex)
       const fileSystemWatcherSettings = await knex('FileSystemWatcher as fsw')
         .leftJoin('Partner as p', 'fsw.partnerId', 'p.id')
         .leftJoin('DeviceType as dt', 'fsw.deviceTypeId', 'dt.id')
@@ -41,7 +42,7 @@ async function onNewFileDetected({ filePath }, { messageContext }) {
     const { loadPlugin } = require('../plugin/registration')
     const onNewFileDetected = await loadPlugin(pluginNames, 'onNewFileDetected')
     await onNewFileDetected(
-      { filePath, partnerId, deviceTypeId },
+      { filePath, partnerId, deviceTypeId, fileSystemWatcherId },
       { messageContext }
     )
   })
