@@ -1151,7 +1151,7 @@ describe('Myanmar Issue endpoints', () => {
       // the procedural machine issue is created
     }))
 
-  it('should create a machine procedural issue and resolve when under percent', () =>
+  it('should create a machine procedural issue and resolve when under 3 percent', () =>
     runTest(async knex => {
       const { now } = context
       const errorCode = '1098'
