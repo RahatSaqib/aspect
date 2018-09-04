@@ -171,9 +171,15 @@ async function mergeResult(
       ;({ sampleId } = existingResult)
     }
     if (_.has(payload, 'sample')) {
-      const existingSample = await knex('Sample')
-        .where({ id: sampleId })
-        .first('externalId', 'collectedOn', 'sampleTypeId', 'originSiteId')
+      const existingSample =
+        (await knex('Sample')
+          .where({ id: sampleId })
+          .first(
+            'externalId',
+            'collectedOn',
+            'sampleTypeId',
+            'originSiteId'
+          )) || {}
       await knex('Sample')
         .where({ id: sampleId })
         .update({

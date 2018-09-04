@@ -10,6 +10,7 @@ const {
   assayTypeToId,
   partnerTypeToId,
   resultSourceToId,
+  unitToId,
 } = require('../../src/shared/dictionary')
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
@@ -103,10 +104,10 @@ async function seed(knex) {
   ])
   await knex('JobContext').insert({ jobId: jobIdAdmin, geographyId })
 
-  await knex('Assay').insert({
-    name: 'Alere Q HIV Qual',
-    i18nKey: 'assayAlereQHivQual',
-    externalId: 'assayAlereQHivQual',
+  const [alereQHiv12DetectAssayId] = await knex('Assay').insert({
+    name: 'Alere q HIV-1/2 Detect',
+    i18nKey: 'assayAlereQHiv12Detect',
+    externalId: 'assayAlereQHiv12Detect',
     assayTypeId: await assayTypeToId('HIV Qual'),
     deviceTypeId: deviceTypes.AlereQ.id,
     resultSourceId: await resultSourceToId('DiagnosticDevice'),
@@ -170,7 +171,26 @@ async function seed(knex) {
         type: 'string',
         title: 'Device Software Version',
       },
+      sourceFile: {
+        list: false,
+        order: 19,
+        type: 'string',
+        title: 'Source File',
+      },
     }),
+  })
+
+  const piece = await unitToId('Piece')
+  const [alereQHiv12DetectCartridgeId] = await knex('Consumable').insert({
+    name: 'Alere q HIV-1/2 Detect Cartridge',
+    unit: piece,
+    canExpire: 1,
+    manufacturer: 'Alere',
+  })
+
+  await knex('ConsumableAssay').insert({
+    assayId: alereQHiv12DetectAssayId,
+    consumableId: alereQHiv12DetectCartridgeId,
   })
 
   await knex('FileSystemWatcher').insert({

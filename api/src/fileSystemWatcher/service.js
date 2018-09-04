@@ -16,26 +16,34 @@ async function onNewFileDetected({ filePath }, { messageContext }) {
       }
     )
     const pluginNames = []
+    let partnerId
+    let deviceTypeId
     if (matchingRegex) {
       const fileSystemWatcherId = await fileSystemWatcherToId(matchingRegex)
-      const fileSystemWatcherPlugins = await knex('FileSystemWatcher as fsw')
+      const fileSystemWatcherSettings = await knex('FileSystemWatcher as fsw')
         .leftJoin('Partner as p', 'fsw.partnerId', 'p.id')
         .leftJoin('DeviceType as dt', 'fsw.deviceTypeId', 'dt.id')
         .where('fsw.id', fileSystemWatcherId)
         .first(
+          'fsw.partnerId',
+          'fsw.deviceTypeId',
           'p.plugin as partnerPluginName',
           'dt.plugin as deviceTypePluginName'
         )
-      if (fileSystemWatcherPlugins.partnerPluginName) {
-        pluginNames.push(fileSystemWatcherPlugins.partnerPluginName)
+      ;({ partnerId, deviceTypeId } = fileSystemWatcherSettings)
+      if (fileSystemWatcherSettings.partnerPluginName) {
+        pluginNames.push(fileSystemWatcherSettings.partnerPluginName)
       }
-      if (fileSystemWatcherPlugins.deviceTypePluginName) {
-        pluginNames.push(fileSystemWatcherPlugins.deviceTypePluginName)
+      if (fileSystemWatcherSettings.deviceTypePluginName) {
+        pluginNames.push(fileSystemWatcherSettings.deviceTypePluginName)
       }
     }
     const { loadPlugin } = require('../plugin/registration')
     const onNewFileDetected = await loadPlugin(pluginNames, 'onNewFileDetected')
-    await onNewFileDetected({ filePath }, { messageContext })
+    await onNewFileDetected(
+      { filePath, partnerId, deviceTypeId },
+      { messageContext }
+    )
   })
 }
 
