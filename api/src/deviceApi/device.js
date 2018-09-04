@@ -209,7 +209,7 @@ async function getSingleDevice(knex, constraints = {}) {
     .join('DeviceStatus as ds', 'd.deviceStatusId', 'ds.id')
     .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .where(
-      _.mapKeys(constraints, (v, k) => (k.indexOf('.') == -1 ? `d.${k}` : k))
+      _.mapKeys(constraints, (v, k) => (k.indexOf('.') === -1 ? `d.${k}` : k))
     )
     .select(
       'd.id',

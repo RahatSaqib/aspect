@@ -66,6 +66,34 @@ async function processAlereQResults(
   ) {
     const columnDelimitter = records[0].split('=')[1].trim()
     const columnHeaders = records[1].trim().split(columnDelimitter)
+    if (
+      !_.isEqual(columnHeaders, [
+        'Result No',
+        'Device Serial',
+        'Test Name',
+        'Cartridge ID',
+        'Sample ID',
+        'HIV-1 M/N',
+        'HIV-1 O',
+        'HIV-2',
+        'Error Code',
+        'Operator',
+        'Timestamp',
+        'Sample Detection',
+        'Device',
+        'HIV-1 Positive Control',
+        'HIV-2 Positive Control',
+        'Negative Control',
+        'Analysis',
+        'Device Software',
+      ])
+    ) {
+      throw new Error(
+        `Incompatible file format for AlereQ results. Column headers detected were ${JSON.stringify(
+          columnHeaders
+        )}`
+      )
+    }
     const results = []
     for (let r = 2; r < records.length; r++) {
       const values = records[r].trim().split(columnDelimitter)
@@ -119,6 +147,10 @@ async function processAlereQResults(
       messageContext.bindActionCreators({ resultUpdated })
       const devices = {}
       const now = new Date()
+      const testNameAssayIdMap = {
+        'Alere q HIV-1/2 Detect': 'assayAlereQHiv12Detect',
+        // TODO: Add Alere Q HIV-VL Assay when we know what it looks like
+      }
       await Promise.each(results, async result => {
         const resultNo = result['Result No']
         const deviceSerial = result['Device Serial']
@@ -139,6 +171,13 @@ async function processAlereQResults(
         const analysisCheck = result.Analysis
         const softwareVersion = result['Device Software']
 
+        if (!testNameAssayIdMap[testName]) {
+          const logMessage = `Encountered new, unknown assay in Alere q test file: ${JSON.stringify(
+            result
+          )}. Skipping record.`
+          console.log(logMessage) // eslint-disable-line no-console
+          return Promise.resolve()
+        }
         let device = devices[deviceSerial]
         if (!device) {
           device = await getSingleDevice(knex, {
@@ -237,7 +276,7 @@ async function processAlereQResults(
           },
         }
 
-        resultPayload.assay = { id: 'assayAlereQHiv12Detect' } // TODO: Determine Alere Q HIV-VL Assay when we know how to
+        resultPayload.assay = { id: 'assayAlereQHiv12Detect' }
 
         if (errorCode && errorCode !== '0') {
           resultPayload.error = {
