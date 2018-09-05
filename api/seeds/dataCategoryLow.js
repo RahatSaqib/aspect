@@ -10,9 +10,34 @@ const { seedIssueEventTriggersForPartner } = require('./utils')
 // --------------
 // values for data category fields
 // --------------
-const dictHivStatus = ["Positive", "Negative", "Unknown", "HIV Positive", "HIV Negative", "HIV Unknown", "Not on Form"]
-const dictMdr = ["On Treatment", "Previously Treated", "Unknown", "No Previous Treatment", "No", "Yes", "false", "true", "Not on Form"]
-const dictSmear = ["Smear Negative", "Smear Positive", "Negative", "Positive", "Not Done", "Not on Form"]
+const dictHivStatus = [
+  'Positive',
+  'Negative',
+  'Unknown',
+  'HIV Positive',
+  'HIV Negative',
+  'HIV Unknown',
+  'Not on Form',
+]
+const dictMdr = [
+  'On Treatment',
+  'Previously Treated',
+  'Unknown',
+  'No Previous Treatment',
+  'No',
+  'Yes',
+  'false',
+  'true',
+  'Not on Form',
+]
+const dictSmear = [
+  'Smear Negative',
+  'Smear Positive',
+  'Negative',
+  'Positive',
+  'Not Done',
+  'Not on Form',
+]
 
 // --------------
 // custom fields
@@ -56,23 +81,15 @@ function getRandomValue(arr, pc = 2) {
 // -------------------------------------------------------
 // getPatients
 // -------------------------------------------------------
-async function addDataCategoryFields(samplePatients) {
-  return _.map(samplePatients, p => {
-    // -------------------------------
-    // fields DataCategoryLow issue
-    // -------------------------------
-    p.hivStatus = getRandomValue(dictHivStatus, 50) // data category 'HIV+'
-    p.previouslyTreated = getRandomValue(dictMdr) // data category 'MDR' (Previous TB History)
-    p.microscopyResult = getRandomValue(dictSmear) // data category 'Smear+' (Microscopy Result)
-    // -------------------------------
-    // other mandatory fields
-    // -------------------------------
-    p.sampleType = getRandomValue(dictSampleTypes)
-    p.otherReason = getRandomValue(dictOtherReason) // Other Reason for Test
-    p.referralCenter = getRandomValue(dictReferralCenter) // Referral Center
-    p.otherNotes = getRandomValue() // Other Notes
-
-    return p
+function addDataCategoryFields(samplePatients) {
+  return _.each(samplePatients, p => {
+    _.set(p, 'hivStatus', getRandomValue(dictHivStatus, 50))
+    _.set(p, 'previouslyTreated', getRandomValue(dictMdr))
+    _.set(p, 'microscopyResult', getRandomValue(dictSmear))
+    _.set(p, 'sampleType', getRandomValue(dictSampleTypes))
+    _.set(p, 'otherReason', getRandomValue(dictOtherReason))
+    _.set(p, 'referralCenter', getRandomValue(dictReferralCenter))
+    _.set(p, 'otherNotes', getRandomValue())
   })
 }
 
@@ -130,8 +147,6 @@ async function correctOutdated(knex, issueCategoryId) {
   const { id: messageTypeId } = await knex('MessageType')
     .where({
       alertTemplateId,
-      smsTemplateId,
-      emailTemplateId,
     })
     .first('id')
 
