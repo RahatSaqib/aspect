@@ -1,3 +1,4 @@
+const Promise = require('bluebird')
 const _ = require('lodash')
 const Boom = require('boom')
 const { startOfDay } = require('date-fns')
@@ -17,12 +18,12 @@ const {
 const { findConsumableReason } = require('../consumable/consumableService')
 const { getUser } = require('../auth/service')
 const { getSite } = require('../site/service')
-const { issueTypeToId } = require('../shared/dictionary')
-const { tryResolveIssue } = require('../issue/resolutions')
+const { issueTypeToId, issueStatusToId } = require('../shared/dictionary')
+const { resolveIssues } = require('../issue/actions')
 const { inventoryStockout, inventoryStockExpiring } = require('./actions')
 const {
-  totalDaysUnexpiredInventoryItemsLast,
-  totalWastedInventoryItems,
+  auditInventoryStockout,
+  auditInventoryStockExpiring,
 } = require('../fact/service')
 
 const INVENTORY_ITEM_SELECT_LIST_FIELDS = [
@@ -905,6 +906,13 @@ async function updateInventoryStockLevel(request) {
   const currentlyLoggedInUser = await getUser(auth.credentials.name)
   const now = new Date()
 
+  // get MQ context and bind few action creators
+  const messageContext = request.plugins.messageContext.bindActionCreators({
+    inventoryStockout,
+    inventoryStockExpiring,
+    resolveIssues,
+  })
+
   const inventoryItemId = await changeInventoryQuantity({
     siteId,
     consumableId,
@@ -913,6 +921,7 @@ async function updateInventoryStockLevel(request) {
     now,
     operation: 'update stock',
     userId: currentlyLoggedInUser.id,
+    messageContext,
   })
 
   return {
@@ -947,6 +956,7 @@ async function changeInventoryQuantity({
   now,
   operation,
   userId,
+  messageContext,
 }) {
   const inventoryItem = await findInventoryItem(
     siteId,
@@ -991,13 +1001,20 @@ async function changeInventoryQuantity({
       siteId,
       consumableId,
       now,
+      messageContext,
     })
   })
 
   return inventoryItemId
 }
 
-async function checkOpenedStockIssues({ knex, siteId, consumableId, now }) {
+async function checkOpenedStockIssues({
+  knex,
+  siteId,
+  consumableId,
+  now,
+  messageContext,
+}) {
   // same query as in onFactCheckInventoryStock() in /src/inventory/service.js, but with additional 'where' for ii.siteId and ii.consumableId
   const [site] = await knex('InventoryItem as ii')
     .innerJoin('Site as s', 'ii.siteId', 's.id')
@@ -1031,6 +1048,7 @@ async function checkOpenedStockIssues({ knex, siteId, consumableId, now }) {
       siteId,
       consumableId,
       dailyRate,
+      messageContext,
     }
 
     await checkStockoutIssues({
@@ -1054,25 +1072,22 @@ async function checkStockoutIssues({
   dailyRate,
   dueDays,
   issueType,
+  messageContext,
 }) {
-  // get 'days' - same func as in auditInventoryStockout() in fact/service.js
-  const days = await totalDaysUnexpiredInventoryItemsLast({
+  // see if need to trigger issue - call same func as scheduler runs
+  await auditInventoryStockout({
     knex,
-    siteId,
-    consumableId,
+    site: { siteId, consumableId },
     dailyRate,
     dueDays,
+    dispatch: messageContext.inventoryStockout,
   })
-
-  // notice that we do not check "if (days < dueDays)" as in auditInventoryStockout()
-  // because we need 'days' for this action creator only
-  const action = inventoryStockout(siteId, consumableId, days)
-
+  // see if need to resolve issue
   await handleResolution({
     knex,
     siteId,
     issueType,
-    action,
+    messageContext,
   })
 }
 
@@ -1083,51 +1098,43 @@ async function checkStockExpiringIssues({
   dailyRate,
   dueDays,
   issueType,
+  messageContext,
 }) {
-  const totalWasted = await totalWastedInventoryItems({
+  // see if need to trigger issue - call same func as scheduler runs
+  await auditInventoryStockExpiring({
     knex,
-    siteId,
-    consumableId,
+    site: { siteId, consumableId },
     dailyRate,
-  })
-
-  // notice that we do not check "if (totalWasted > 0)" as in auditInventoryStockExpiring()
-  // because we need 'totalWasted' for this action creator only
-  const action = inventoryStockExpiring(
-    siteId,
-    consumableId,
     dueDays,
-    totalWasted
-  )
-
+    dispatch: messageContext.inventoryStockExpiring,
+  })
+  // see if need to resolve issue
   await handleResolution({
     knex,
     siteId,
     issueType,
-    action,
+    messageContext,
   })
 }
 
-async function handleResolution({ knex, siteId, issueType, action }) {
-  // get all issues of this type for current siteId
+async function handleResolution({ knex, siteId, issueType, messageContext }) {
+  // get all Active issues of this type for current siteId
   const issueTypeId = await issueTypeToId(issueType)
+  const issueStatusId = await issueStatusToId('Active')
   const issues = await knex('Issue')
-    .where({ siteId, issueTypeId })
+    .where({ siteId, issueTypeId, issueStatusId })
     .select('id')
 
-  // run same func as in /issue/resolution.js to try to resolve issue after changing Stock Level on Reagent dashboard
-  await Promise.all(
-    _.map(issues, async ({ id: issueId }) => {
-      await tryResolveIssue({
-        knex,
-        issueId,
-        // we do not use MQ context here because need all processing done in this thread,
-        // and because 'issueResolved' action creator (type = ISSUE_RESOLVED) is not in use now
-        // // dispatch: context.issueResolved,
-        data: action,
-      })
-    })
-  )
+  // loop through all issues and
+  await Promise.each(issues, async ({ id: issueId }) => {
+    // try to resolve y dispatching 'resolveIssues' into MQ
+    await messageContext.resolveIssues(issueId)
+
+    // wait for MQ to handle
+    // await waitForAction(resolveIssues(issueId), 1000)
+    // await waitForIdle()
+  })
+  // await waitForIdle(1000)
 }
 
 async function logInventoryChange({

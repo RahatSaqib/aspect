@@ -752,4 +752,6 @@ module.exports = {
   refreshConsumptionRates,
   totalDaysUnexpiredInventoryItemsLast,
   totalWastedInventoryItems,
+  auditInventoryStockout,
+  auditInventoryStockExpiring,
 }

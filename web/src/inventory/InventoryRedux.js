@@ -330,15 +330,15 @@ export function receiveInventory(data) {
   }
 }
 
-function receiveUpdatedSingleInventoryItem(item) {
-  return {
-    type: types.RECEIVE_UPDATED_SINGLE_INVENTORY_ITEM,
-    item,
-  }
-}
+// function receiveUpdatedSingleInventoryItem(item) {
+//   return {
+//     type: types.RECEIVE_UPDATED_SINGLE_INVENTORY_ITEM,
+//     item,
+//   }
+// }
 
 export function updateStockLevel(siteId, consumableId, data) {
-  return dispatch =>
+  return () =>
     aspectFetch(`/inventory/${siteId}/${consumableId}`, {
       method: 'PUT',
       body: JSON.stringify({
@@ -354,7 +354,8 @@ export function updateStockLevel(siteId, consumableId, data) {
           }),
         }),
       },
-    }).then(json => dispatch(receiveUpdatedSingleInventoryItem(json.data)))
+    })
+  /* .then(json => dispatch(receiveUpdatedSingleInventoryItem(json.data))) */
 }
 /*
  * ---------------- Reducers -----------------

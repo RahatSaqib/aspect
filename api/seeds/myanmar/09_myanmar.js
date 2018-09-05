@@ -464,5 +464,25 @@ async function seed(knex) {
       createdOn: now,
       updatedOn: now,
     },
+    {
+      issueTypeId: issueTypes.issueStatusInventoryStockout.id,
+      partnerId,
+      resolutionConditions: JSON.stringify({
+        evaluationMethod: 'plugin-function',
+        evaluationParameter: 'resolveIssueStockout',
+      }),
+      createdOn: now,
+      updatedOn: now,
+    },
+    {
+      issueTypeId: issueTypes.issueStatusInventoryStockExpiring.id,
+      partnerId,
+      resolutionConditions: JSON.stringify({
+        evaluationMethod: 'plugin-function',
+        evaluationParameter: 'resolveIssueStockExpiring',
+      }),
+      createdOn: now,
+      updatedOn: now,
+    },
   ])
 }
