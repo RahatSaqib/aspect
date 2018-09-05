@@ -32,10 +32,19 @@ async function waitForIdle(idleTime = QUEUE_IDLE_TIME) {
   return queue.waitForIdle(idleTime)
 }
 
+async function dispatchAndWaitForAction(action, timeout = QUEUE_TIMEOUT_TIME) {
+  const queue = await queueConnect()
+  const waitForIt = waitForAction(action, timeout)
+  queue.dispatch(action)
+  await waitForIt
+  return waitForIdle()
+}
+
 module.exports = {
   queueConnect,
   queuePurge,
   createMessageContext,
   waitForAction,
   waitForIdle,
+  dispatchAndWaitForAction,
 }

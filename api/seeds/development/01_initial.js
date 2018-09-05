@@ -2,11 +2,14 @@ module.exports = require('../utils').seed(seed)
 
 const config = require('../../src/config')
 const {
+  getPermissionModules,
+  assignAllFeaturesToJobFunctionIds,
+} = require('../utils')
+const {
   allAssayTypeToId,
   allDeviceStatusToId,
   allDeviceTypeCategoryToId,
   allIssueCategoryToId,
-  allIssueStatusSeverityToId,
   allMessageSeverityToId,
   allPartnerTypeToId,
   allResultCategoryToId,
@@ -19,11 +22,9 @@ const {
 const _ = require('lodash')
 const bcrypt = require('bcrypt')
 const { randomToken } = require('../../src/deviceApi/apiKey')
-const permissions = require('./fixtures/permissions.json')
 const geography = require('./fixtures/geography.json')
 const patients = require('./fixtures/patients.json')
 const dashboardWidget = require('./fixtures/dashboardWidget.json')
-const features = require('./fixtures/features.json')
 const { errorCodes } = require('./fixtures/errorCodes.js')
 const {
   addMilliseconds,
@@ -1465,7 +1466,6 @@ async function seed(knex) {
     unit: piece,
     canExpire: 1,
     manufacturer: 'Cepheid',
-    autoInclude: 0,
   })
 
   const [consumableGxTbUltraCartridgeId] = await knex('Consumable').insert({
@@ -1473,7 +1473,6 @@ async function seed(knex) {
     unit: piece,
     canExpire: 1,
     manufacturer: 'Cepheid',
-    autoInclude: 0,
   })
 
   const [consumableGxEbolaCartridgeId] = await knex('Consumable').insert({
@@ -1481,7 +1480,6 @@ async function seed(knex) {
     unit: piece,
     canExpire: 1,
     manufacturer: 'Cepheid',
-    autoInclude: 0,
   })
 
   const [consumableGxHiv1VlCartridgeId] = await knex('Consumable').insert({
@@ -1489,7 +1487,6 @@ async function seed(knex) {
     unit: piece,
     canExpire: 1,
     manufacturer: 'Cepheid',
-    autoInclude: 0,
   })
 
   const [consumableGxHcvVlCartridgeId] = await knex('Consumable').insert({
@@ -1497,7 +1494,6 @@ async function seed(knex) {
     unit: piece,
     canExpire: 1,
     manufacturer: 'Cepheid',
-    autoInclude: 0,
   })
 
   const [consumableGxHiv1QualCartridgeId] = await knex('Consumable').insert({
@@ -1505,7 +1501,6 @@ async function seed(knex) {
     unit: piece,
     canExpire: 1,
     manufacturer: 'Cepheid',
-    autoInclude: 0,
   })
 
   await knex('Consumable').insert({
@@ -1513,7 +1508,6 @@ async function seed(knex) {
     unit: piece,
     canExpire: 1,
     manufacturer: 'Daktari',
-    autoInclude: 0,
   })
 
   const [consumableDaktariHivVlCartridgeId] = await knex('Consumable').insert({
@@ -1521,7 +1515,6 @@ async function seed(knex) {
     unit: piece,
     canExpire: 1,
     manufacturer: 'Daktari',
-    autoInclude: 0,
   })
 
   // Assay Consumables
@@ -1575,31 +1568,6 @@ async function seed(knex) {
     Deliverable: deliverable,
     Acknowledged: acknowledged,
   } = await allResultWorkflowStatusToId()
-
-  // Create permissions
-  const modules = {}
-
-  await Promise.all(
-    _.map(permissions.modules, module => {
-      const moduleData = {}
-      modules[module.name] = moduleData
-      _.map(module.activities, async activity => {
-        const [permissionId] = await knex('Permission').insert({
-          module: module.name,
-          activity,
-        })
-        moduleData[activity] = permissionId
-      })
-    })
-  )
-
-  const featureModules = []
-  await Promise.all(
-    _.map(features.modules, async feature => {
-      const [featureId] = await knex('Feature').insert({ module: feature.name })
-      featureModules.push(featureId)
-    })
-  )
 
   // Create geographic hierarchy
   const countries = {}
@@ -3025,30 +2993,15 @@ async function seed(knex) {
   })
 
   // assign features to JobFeatures
-  await Promise.all(
-    _.map(featureModules, async featureId => {
-      await knex('JobFunctionFeature').insert([
-        {
-          jobFunctionId: jobFunctionIdAdmin,
-          featureId,
-        },
-        {
-          jobFunctionId: jobFunctionIdManager,
-          featureId,
-        },
-        {
-          jobFunctionId: jobFunctionIdPartnerTwo,
-          featureId,
-        },
-        {
-          jobFunctionId: jobFunctionIdClinician,
-          featureId,
-        },
-      ])
-    })
-  )
+  await assignAllFeaturesToJobFunctionIds(knex, [
+    jobFunctionIdAdmin,
+    jobFunctionIdManager,
+    jobFunctionIdPartnerTwo,
+    jobFunctionIdClinician,
+  ])
 
   // assign permissions to job functions
+  const modules = await getPermissionModules(knex)
   await knex('JobFunctionPermission').insert([
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.demo.admin },
     {
@@ -3511,7 +3464,7 @@ async function seed(knex) {
     Object.assign(
       {
         message:
-          'Module {{issue.data.moduleName}} errors, conduct troubleshooting',
+          'Possible module failure on module {{issue.data.moduleName}} contact engineer',
       },
       auditFields
     )
@@ -3521,7 +3474,7 @@ async function seed(knex) {
     Object.assign(
       {
         message:
-          'Module {{issue.data.moduleName}} errors, conduct troubleshooting',
+          'Possible module failure on module {{issue.data.moduleName}} contact engineer',
       },
       auditFields
     )
@@ -3532,11 +3485,11 @@ async function seed(knex) {
   ).insert(
     Object.assign(
       {
-        subject: 'Procedural Module Errors',
+        subject: 'Possible module failure',
         body:
-          'Module {{issue.data.moduleName}} errors, conduct troubleshooting',
+          'Possible module failure on module {{issue.data.moduleName}} contact engineer',
         htmlBody:
-          'Module <em>{{issue.data.moduleName}}</em> errors, conduct troubleshooting',
+          'Possible module failure on module <em>{{issue.data.moduleName}}</em> contact engineer',
       },
       auditFields
     )
@@ -3796,71 +3749,6 @@ async function seed(knex) {
   })
 
   // Issues
-  const {
-    Low: issueStatusSeverityIdLow,
-    Medium: issueStatusSeverityIdMedium,
-    High: issueStatusSeverityIdHigh,
-  } = await allIssueStatusSeverityToId()
-
-  await knex('IssueStatus').insert([
-    {
-      name: 'Inactive',
-      externalId: 'Inactive',
-      i18nKey: 'issueStatusInactive',
-      issueStatusSeverityId: issueStatusSeverityIdLow,
-      sortOrder: 5,
-    },
-    {
-      name: 'Active',
-      externalId: 'Active',
-      i18nKey: 'issueStatusActive',
-      issueStatusSeverityId: issueStatusSeverityIdHigh,
-      sortOrder: 0,
-    },
-    {
-      name: 'Acknowledged',
-      externalId: 'Acknowledged',
-      i18nKey: 'issueStatusAcknowledged',
-      issueStatusSeverityId: issueStatusSeverityIdMedium,
-      sortOrder: 4,
-    },
-    {
-      name: 'OK',
-      externalId: 'OK',
-      i18nKey: 'issueStatusOK',
-      issueStatusSeverityId: issueStatusSeverityIdLow,
-      sortOrder: 5,
-    },
-    {
-      name: 'Due Soon',
-      externalId: 'DueSoon',
-      i18nKey: 'issueStatusDueSoon',
-      issueStatusSeverityId: issueStatusSeverityIdMedium,
-      sortOrder: 3,
-    },
-    {
-      name: 'Due Now',
-      externalId: 'DueNow',
-      i18nKey: 'issueStatusDueNow',
-      issueStatusSeverityId: issueStatusSeverityIdHigh,
-      sortOrder: 2,
-    },
-    {
-      name: 'Overdue',
-      externalId: 'Overdue',
-      i18nKey: 'issueStatusOverdue',
-      issueStatusSeverityId: issueStatusSeverityIdHigh,
-      sortOrder: 1,
-    },
-    {
-      name: 'Resolved',
-      externalId: 'Resolved',
-      i18nKey: 'issueStatusResolved',
-      issueStatusSeverityId: issueStatusSeverityIdLow,
-      sortOrder: 5,
-    },
-  ])
-
   const issueCategories = await allIssueCategoryToId()
   await knex('IssueType').insert([
     {

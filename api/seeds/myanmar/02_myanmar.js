@@ -8,8 +8,13 @@ const _ = require('lodash')
 
 const config = require('../../src/config')
 const dashboardWidget = require('./fixtures/dashboardWidget.json')
-const { rowsAsObject, getDefaultMessageTypes } = require('../utils')
 const {
+  rowsAsObject,
+  getDefaultMessageTypes,
+  getPermissionModules,
+} = require('../utils')
+const {
+  allFeatureToId,
   deviceStatusToId,
   deviceTypeToId,
   partnerTypeToId,
@@ -58,24 +63,6 @@ async function seed(knex) {
     numberToLeaveUnacknowledged: 15,
     maxDaysDeviceOffline: 7,
   })
-
-  const modules = await knex('Permission').reduce((memo, row) => {
-    if (!memo[row.module]) {
-      memo[row.module] = {}
-    }
-    memo[row.module][row.activity] = row.id
-    return memo
-  }, {})
-
-  await knex('Feature').insert({ module: 'targetDashboard' })
-  await knex('Feature').insert({ module: 'actionDashboard' })
-  await knex('Feature').insert({ module: 'reportDashboard' })
-  await knex('Feature').insert({ module: 'siteFilterDashboard' })
-
-  const featureModules = await knex('Feature').reduce((memo, row) => {
-    memo[row.module] = row.id
-    return memo
-  }, {})
 
   const [myanmarCountry] = await knex('Country as c')
     .where({ 'c.a3': 'MMR' })
@@ -166,6 +153,7 @@ async function seed(knex) {
     partnerId,
   })
 
+  const featureModules = await allFeatureToId()
   await knex('JobFunctionFeature').insert([
     // Admin Permissions
     { jobFunctionId: jobFunctionIdAdmin, featureId: featureModules.site },
@@ -227,6 +215,7 @@ async function seed(knex) {
     },
   ])
 
+  const modules = await getPermissionModules(knex)
   await knex('JobFunctionPermission').insert([
     // Admin Permissions
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.demo.admin },

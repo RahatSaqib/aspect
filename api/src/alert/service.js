@@ -32,9 +32,13 @@ async function createAlertMessageFromTemplate(knex, alertMessageId) {
     .where({ 'm.id': alertMessageId })
     .first('tmpl.message as messageTemplate')
 
-  const { message } = processUsingDataSourceQuery(data, ['messageTemplate'], {
-    dynamic: true,
-  })
+  const { message } = await processUsingDataSourceQuery(
+    data,
+    ['messageTemplate'],
+    {
+      dynamic: true,
+    }
+  )
   return message
 }
 

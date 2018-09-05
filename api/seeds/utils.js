@@ -1,6 +1,8 @@
 const _ = require('lodash')
 const { readJson } = require('fs-extra')
 
+const { allFeatureToId } = require('../src/shared/dictionary')
+
 // Helper for seeed files. Ru
 let hasSeededStaticData = false
 function seed(seed) {
@@ -75,7 +77,8 @@ async function seedStockIssues(knex) {
   const [stockoutAlertTemplateId] = await knex('AlertTemplate').insert(
     Object.assign(
       {
-        message: 'Stock-out expected {{issue.data.date}} - Order Stock.',
+        message:
+          'Stock-out expected {{formatDate issue.data.date}} - Order Stock.',
       },
       auditFields
     )
@@ -85,7 +88,7 @@ async function seedStockIssues(knex) {
     Object.assign(
       {
         message:
-          '{{site.name}}: Stock-out expected {{issue.data.date}} - Order Stock.',
+          '{{site.name}}: Stock-out expected {{formatDate issue.data.date}} - Order Stock.',
       },
       auditFields
     )
@@ -96,9 +99,9 @@ async function seedStockIssues(knex) {
       {
         subject: '{{site.name}} stockout',
         body:
-          '{{site.name}}: Stock-out expected {{issue.data.date}} - Order Stock.',
+          '{{site.name}}: Stock-out expected {{formatDate issue.data.date}} - Order Stock.',
         htmlBody:
-          '<em>{{site.name}}:</em> Stock-out expected {{issue.data.date}} - Order Stock.',
+          '<em>{{site.name}}:</em> Stock-out expected {{formatDate issue.data.date}} - Order Stock.',
       },
       auditFields
     )
@@ -386,6 +389,7 @@ async function seedStaticData(knex) {
     'IssueCategory',
     'IssueEventStatus',
     'IssueStatusSeverity',
+    ['IssueStatus', seedStaticDataIssueStatus],
     'MessageStatus',
     'MessageSeverity',
     'ResultCategory',
@@ -400,15 +404,19 @@ async function seedStaticData(knex) {
     ['PartnerType', 'name'],
     ['DeviceTypeCategory', 'name'],
     ['Unit', 'name'],
+    ['Feature', 'module'],
+    ['Permission', seedStaticDataPermission],
   ]
-  await Promise.all(
-    tables.map(async tableItem => {
-      const table = _.isArray(tableItem) ? tableItem[0] : tableItem
-      const keyColumn = _.isArray(tableItem) ? tableItem[1] : 'externalId'
-      const { data } = await readJson(`./seeds/fixtures/${table}.json`)
-      for (const datum of data) {
-        /* eslint-disable no-await-in-loop */
-        // Need to add in order since some old code relies on hardcoded Ids
+  for (const tableItem of tables) {
+    /* eslint-disable no-await-in-loop */
+    // Need to add in order since some old code relies on hardcoded Ids
+    const table = _.isArray(tableItem) ? tableItem[0] : tableItem
+    const keyColumn = _.isArray(tableItem) ? tableItem[1] : 'externalId'
+    const fixture = await readJson(`./seeds/fixtures/${table}.json`)
+    if (_.isFunction(keyColumn)) {
+      await keyColumn(knex, fixture)
+    } else {
+      for (const datum of fixture.data) {
         const existingDatum = await knex(table)
           .where(keyColumn, datum[keyColumn])
           .first('id')
@@ -416,8 +424,44 @@ async function seedStaticData(knex) {
           await knex(table).insert(datum)
         }
       }
-    })
+    }
+  }
+}
+
+async function seedStaticDataIssueStatus(knex, { data }) {
+  const severities = await rowsAsObject(
+    knex,
+    'IssueStatusSeverity',
+    'externalId'
   )
+  for (const status of data) {
+    /* eslint-disable no-await-in-loop */
+    const existingStatus = await knex('IssueStatus')
+      .where('externalId', status.externalId)
+      .first('id')
+    if (existingStatus == null) {
+      await knex('IssueStatus').insert(
+        Object.assign({}, _.omit(status, ['issueStatusSeverity']), {
+          issueStatusSeverityId: severities[status.issueStatusSeverity].id,
+        })
+      )
+    }
+  }
+}
+
+async function seedStaticDataPermission(knex, { modules }) {
+  for (const { name: module, activities } of modules) {
+    /* eslint-disable no-await-in-loop */
+    for (const activity of activities) {
+      const permission = { module, activity }
+      const existingPermission = await knex('Permission')
+        .where(permission)
+        .first('id')
+      if (existingPermission == null) {
+        await knex('Permission').insert(permission)
+      }
+    }
+  }
 }
 
 // Ensures all common triggers for the given partner are set based on notification
@@ -478,6 +522,33 @@ async function seedIssueEventTriggersForPartner(
   )
 }
 
+async function assignAllFeaturesToJobFunctionIds(
+  knex,
+  jobFunctionIds,
+  featureBlacklist = [
+    // These are currently hardcoded to Myanmar, so skip by default
+    'targetDashboard',
+    'actionDashboard',
+    'reportDashboard',
+    'siteFilterDashboard',
+  ]
+) {
+  const features = _.filter(
+    await allFeatureToId(),
+    (val, key) => !_.includes(featureBlacklist, key)
+  )
+  await Promise.all(
+    _.map(features, async featureId => {
+      await knex('JobFunctionFeature').insert(
+        _.map(jobFunctionIds, jobFunctionId => ({
+          featureId,
+          jobFunctionId,
+        }))
+      )
+    })
+  )
+}
+
 module.exports = {
   seed,
   rowsAsObject,
@@ -485,4 +556,5 @@ module.exports = {
   seedStockIssues,
   getPermissionModules,
   seedIssueEventTriggersForPartner,
+  assignAllFeaturesToJobFunctionIds,
 }

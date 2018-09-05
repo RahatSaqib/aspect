@@ -6,6 +6,7 @@ import { defineMessages } from 'react-intl'
 import { connect } from 'react-redux'
 import { Button } from 'react-toolbox/lib/button'
 import MdClose from 'react-icons/lib/md/close'
+import { formatDate } from '../../shared/utils/dateFormat'
 
 const cssClasses = classnames.bind(require('./FiltersBtnGroup.css'))
 
@@ -161,10 +162,10 @@ const buttonBy = {
       .get('name')
   ),
   minDate: makeButton(({ intl }, date) =>
-    intl.formatMessage(messages.dateFrom, { date: intl.formatDate(date) })
+    intl.formatMessage(messages.dateFrom, { date: formatDate(date) })
   ),
   maxDate: makeButton(({ intl }, date) =>
-    intl.formatMessage(messages.dateTo, { date: intl.formatDate(date) })
+    intl.formatMessage(messages.dateTo, { date: formatDate(date) })
   ),
   partnerId: makeButton(({ intl, partnerItems }, partnerId) =>
     intl.formatMessage(messages.partnerId, {

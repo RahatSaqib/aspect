@@ -23,7 +23,12 @@ const {
   resultMachineUnknownError,
 } = require('../../../src/result/actions')
 const { inventoryReagentHealth } = require('../../../src/inventory/actions')
-const { waitForIdle, waitForAction } = require('../../utils/mqUtils')
+const { resolveIssues } = require('../../../src/issue/actions')
+const {
+  waitForIdle,
+  waitForAction,
+  dispatchAndWaitForAction,
+} = require('../../utils/mqUtils')
 
 describe('Myanmar Issue endpoints', () => {
   function createContext() {
@@ -53,7 +58,7 @@ describe('Myanmar Issue endpoints', () => {
   )
   afterEach(afterCleanUp)
 
-  it('should create a module temperature issue', () =>
+  it('should create a module temperature issue and resolve on TC Not met', () =>
     runTest(async knex => {
       const { now } = context
       const errorCode = '4010'
@@ -67,6 +72,7 @@ describe('Myanmar Issue endpoints', () => {
       })
       const deviceId = response.body.device.id
 
+      let moduleTempErrorIssueId = null
       for (let i = 0; i < 5; i++) {
         /* eslint-disable no-await-in-loop */
         const errorTestResultId = `UNIQUE-ID-WITH-TEMP-ERROR-${i}`
@@ -118,25 +124,44 @@ describe('Myanmar Issue endpoints', () => {
           await waitForModuleTemperatureError
           await waitForIdle()
 
-          const issues = await knex('Issue as i')
-            .join('IssueType as it', 'i.issueTypeId', 'it.id')
-            .join('IssueStatus as is', 'i.issueStatusId', 'is.id')
-            .where({ 'i.deviceId': deviceId })
-            .select(
-              'i.id',
-              'it.externalId as issueType',
-              'i.deviceId',
-              'is.externalId as issueStatus'
-            )
+          const issues = await getIssuesByDeviceId(knex, deviceId)
           assert.equal(issues.length, 1)
           assert.equal(issues[0].issueType, 'ModuleTemperatureError')
           assert.equal(issues[0].deviceId, deviceId)
           assert.equal(issues[0].issueStatus, 'Active')
+          moduleTempErrorIssueId = issues[0].id
         }
       }
+
+      await dispatchAndWaitForAction(resolveIssues(moduleTempErrorIssueId))
+      assert.equal(
+        'Active',
+        await getIssueStatusByIssueId(knex, moduleTempErrorIssueId)
+      )
+
+      // Update ended on for initial issue to past so module failure issue is resolved
+      const errorTestResultId = 'UNIQUE-ID-WITH-TEMP-ERROR-0'
+      const testStartedOn = setMilliseconds(subDays(now, 33), 0)
+      const testEndedOn = setMilliseconds(addHours(testStartedOn, 2), 0)
+      const payload = _.merge({}, basicDevicePayload, basicResultPayload, {
+        result: {
+          id: errorTestResultId,
+          startedOn: testStartedOn,
+          endedOn: testEndedOn,
+        },
+      })
+      await postToDeviceApi({
+        authHeader: deviceAuth,
+        payload,
+      })
+      await dispatchAndWaitForAction(resolveIssues(moduleTempErrorIssueId))
+      assert.equal(
+        'Resolved',
+        await getIssueStatusByIssueId(knex, moduleTempErrorIssueId)
+      )
     }))
 
-  it('should create a machine temperature issue ', () =>
+  it('should create a module temperature issue and resolve on Machine temp error', () =>
     runTest(async knex => {
       const { now } = context
       const errorCode = '4010'
@@ -149,6 +174,75 @@ describe('Myanmar Issue endpoints', () => {
         }),
       })
       const deviceId = response.body.device.id
+
+      let moduleTempErrorIssueId = null
+      for (let i = 0; i < 5; i++) {
+        /* eslint-disable no-await-in-loop */
+        const errorTestResultId = `UNIQUE-ID-WITH-TEMP-ERROR-${i}`
+        const sampleId = `TEM2542552${i}`
+        const moduleSerial = `MOD98765`
+        const instrumentSerial = `CEPH-PC-123${i}`
+        const testStartedOn = setMilliseconds(subDays(now, i + 3), 0)
+        const testEndedOn = setMilliseconds(addHours(testStartedOn, i + 2), 0)
+        const payload = _.merge(
+          {},
+          basicDevicePayload,
+          { name: deviceName },
+          basicResultPayload,
+          {
+            result: {
+              id: errorTestResultId,
+              startedOn: testStartedOn,
+              endedOn: testEndedOn,
+              error: {
+                code: errorCode,
+              },
+              sample: { id: sampleId },
+              instrument: {
+                serial: instrumentSerial,
+                module: {
+                  serial: moduleSerial,
+                  name: 'A1',
+                },
+              },
+            },
+          }
+        )
+
+        if (i < 4) {
+          // Post the result to aspect
+          await postToDeviceApi({
+            authHeader: deviceAuth,
+            payload,
+          })
+        } else {
+          // Should create issue when errors > 4
+          const waitForModuleTemperatureError = waitForAction(
+            resultModuleTemperatureError(deviceId)
+          )
+          await postToDeviceApi({
+            authHeader: deviceAuth,
+            payload,
+          })
+          await waitForModuleTemperatureError
+          await waitForIdle()
+
+          const issues = await getIssuesByDeviceId(knex, deviceId)
+          assert.equal(issues.length, 1)
+          assert.equal(issues[0].issueType, 'ModuleTemperatureError')
+          assert.equal(issues[0].deviceId, deviceId)
+          assert.equal(issues[0].issueStatus, 'Active')
+          moduleTempErrorIssueId = issues[0].id
+        }
+      }
+
+      await dispatchAndWaitForAction(resolveIssues(moduleTempErrorIssueId))
+      assert.equal(
+        'Active',
+        await getIssueStatusByIssueId(knex, moduleTempErrorIssueId)
+      )
+
+      let machineTempErrorIssueId = null
       for (let i = 0; i < 9; i++) {
         /* eslint-disable no-await-in-loop */
         const errorTestResultId = `UNIQUE-ID-WITH-MTEMP-ERROR-${i}`
@@ -200,25 +294,136 @@ describe('Myanmar Issue endpoints', () => {
           await waitForMachineTemperatureError
           await waitForIdle()
 
-          const issues = await knex('Issue as i')
-            .join('IssueType as it', 'i.issueTypeId', 'it.id')
-            .join('IssueStatus as is', 'i.issueStatusId', 'is.id')
-            .where({ 'i.deviceId': deviceId })
-            .select(
-              'i.id',
-              'it.externalId as issueType',
-              'i.deviceId',
-              'is.externalId as issueStatus'
-            )
+          const issues = await getIssuesByDeviceId(knex, deviceId)
+          assert.equal(issues.length, 2)
+          assert.equal(issues[0].issueType, 'ModuleTemperatureError')
+          assert.equal(issues[0].deviceId, deviceId)
+          assert.equal(issues[0].issueStatus, 'Active')
+          assert.equal(issues[1].issueType, 'MachineTemperatureError')
+          assert.equal(issues[1].deviceId, deviceId)
+          assert.equal(issues[1].issueStatus, 'Active')
+          machineTempErrorIssueId = issues[1].id
+        }
+      }
+
+      await dispatchAndWaitForAction(resolveIssues(moduleTempErrorIssueId))
+      assert.equal(
+        'Resolved',
+        await getIssueStatusByIssueId(knex, moduleTempErrorIssueId)
+      )
+
+      await dispatchAndWaitForAction(resolveIssues(machineTempErrorIssueId))
+      assert.equal(
+        'Active',
+        await getIssueStatusByIssueId(knex, machineTempErrorIssueId)
+      )
+    }))
+
+  it('should create a machine temperature issue and resolve when under percent', () =>
+    runTest(async knex => {
+      const { now } = context
+      const errorCode = '4010'
+
+      // Post to deviceApi to ensure the device in in Aspect
+      const response = await postToDeviceApi({
+        authHeader: deviceAuth,
+        payload: _.merge({}, basicDevicePayload, {
+          name: deviceName,
+        }),
+      })
+      const deviceId = response.body.device.id
+      let machineTempErrorIssueId = null
+      for (let i = 0; i < 12; i++) {
+        /* eslint-disable no-await-in-loop */
+        const errorTestResultId = `UNIQUE-ID-WITH-MTEMP-ERROR-${i}`
+        const sampleId = `MTEMP2542552${i}`
+        const moduleSerial = `MTEMP1234${i}`
+        const moduleName = `Module A-${i}`
+        const instrumentSerial = `CEPH-PC-123${i}`
+        const testStartedOn = setMilliseconds(subDays(now, i + 3), 0)
+        const testEndedOn = setMilliseconds(addHours(testStartedOn, i + 2), 0)
+        const payload = _.merge(
+          {},
+          basicDevicePayload,
+          { name: deviceName },
+          basicResultPayload,
+          {
+            result: {
+              id: errorTestResultId,
+              startedOn: testStartedOn,
+              endedOn: testEndedOn,
+              error: {
+                code: errorCode,
+              },
+              sample: { id: sampleId },
+              instrument: {
+                serial: instrumentSerial,
+                module: {
+                  serial: moduleSerial,
+                  name: moduleName,
+                },
+              },
+            },
+          }
+        )
+        if (i === 8) {
+          // Should create issue when errors === 8
+          const waitForMachineTemperatureError = waitForAction(
+            resultMachineTemperatureError(deviceId)
+          )
+          await postToDeviceApi({
+            authHeader: deviceAuth,
+            payload,
+          })
+          await waitForMachineTemperatureError
+          await waitForIdle()
+        } else {
+          // Post the result to aspect
+          await postToDeviceApi({
+            authHeader: deviceAuth,
+            payload,
+          })
+        }
+
+        const issues = await getIssuesByDeviceId(knex, deviceId)
+        if (i < 8) {
+          // should not have issue prior to temp error
+          assert.equal(issues.length, 0)
+        } else {
+          // should have only one active issue after 8
           assert.equal(issues.length, 1)
           assert.equal(issues[0].issueType, 'MachineTemperatureError')
           assert.equal(issues[0].deviceId, deviceId)
           assert.equal(issues[0].issueStatus, 'Active')
+          machineTempErrorIssueId = issues[0].id
         }
+      }
+
+      const last30day = subDays(now, 30)
+      for (let i = 0; i < 12; i++) {
+        /* eslint-disable no-await-in-loop */
+        // Update ended on for initial issue to past so module failure issue is resolved
+        const results = await knex('Result as r')
+          .where('r.deviceId', deviceId)
+          .where('r.endedOn', '>=', last30day)
+          .whereNotNull('r.errorCode')
+          .orderBy('r.id')
+          .select('r.id')
+        assert.equal(results.length, 12 - i)
+        await knex('Result')
+          .where({ id: results[0].id })
+          .update({ errorCode: null })
+
+        // Should resolve when result count under 1%
+        await dispatchAndWaitForAction(resolveIssues(machineTempErrorIssueId))
+        assert.equal(
+          i < 11 ? 'Active' : 'Resolved',
+          await getIssueStatusByIssueId(knex, machineTempErrorIssueId)
+        )
       }
     }))
 
-  it('should create a module power issue ', () =>
+  it('should create a module power issue and resolve when TC no longer met', () =>
     runTest(async knex => {
       const { now } = context
       const errorCode = '1007'
@@ -231,6 +436,7 @@ describe('Myanmar Issue endpoints', () => {
         }),
       })
       const deviceId = response.body.device.id
+      let modulePowerErrorIssueId = null
       for (let i = 0; i < 5; i++) {
         /* eslint-disable no-await-in-loop */
         const errorTestResultId = `UNIQUE-ID-WITH-POWER-ERROR-${i}`
@@ -281,22 +487,196 @@ describe('Myanmar Issue endpoints', () => {
           await waitForModulePowerError
           await waitForIdle()
 
-          const issues = await knex('Issue as i')
-            .join('IssueType as it', 'i.issueTypeId', 'it.id')
-            .join('IssueStatus as is', 'i.issueStatusId', 'is.id')
-            .where({ 'i.deviceId': deviceId })
-            .select(
-              'i.id',
-              'it.externalId as issueType',
-              'i.deviceId',
-              'is.externalId as issueStatus'
-            )
+          const issues = await getIssuesByDeviceId(knex, deviceId)
           assert.equal(issues.length, 1)
           assert.equal(issues[0].issueType, 'ModulePowerError')
           assert.equal(issues[0].deviceId, deviceId)
           assert.equal(issues[0].issueStatus, 'Active')
+          modulePowerErrorIssueId = issues[0].id
         }
       }
+
+      await dispatchAndWaitForAction(resolveIssues(modulePowerErrorIssueId))
+      assert.equal(
+        'Active',
+        await getIssueStatusByIssueId(knex, modulePowerErrorIssueId)
+      )
+
+      // Update ended on for initial issue to past so module power issue is resolved
+      const errorTestResultId = 'UNIQUE-ID-WITH-POWER-ERROR-0'
+      const testStartedOn = setMilliseconds(subDays(now, 33), 0)
+      const testEndedOn = setMilliseconds(addHours(testStartedOn, 2), 0)
+      const payload = _.merge({}, basicDevicePayload, basicResultPayload, {
+        result: {
+          id: errorTestResultId,
+          startedOn: testStartedOn,
+          endedOn: testEndedOn,
+        },
+      })
+      await postToDeviceApi({
+        authHeader: deviceAuth,
+        payload,
+      })
+      await dispatchAndWaitForAction(resolveIssues(modulePowerErrorIssueId))
+      assert.equal(
+        'Resolved',
+        await getIssueStatusByIssueId(knex, modulePowerErrorIssueId)
+      )
+    }))
+
+  it('should create a module power issue and resolve when Machine power issue', () =>
+    runTest(async knex => {
+      const { now } = context
+      const errorCode = '1007'
+
+      // Post to deviceApi to ensure the device in in Aspect
+      const response = await postToDeviceApi({
+        authHeader: deviceAuth,
+        payload: _.merge({}, basicDevicePayload, {
+          name: deviceName,
+        }),
+      })
+      const deviceId = response.body.device.id
+      let modulePowerErrorIssueId = null
+      for (let i = 0; i < 5; i++) {
+        /* eslint-disable no-await-in-loop */
+        const errorTestResultId = `UNIQUE-ID-WITH-POWER-ERROR-${i}`
+        const sampleId = `POW2542552${i}`
+        const moduleSerial = `POW12345`
+        const instrumentSerial = `CEPH-PC-123${i}`
+        const testStartedOn = setMilliseconds(subDays(now, i + 3), 0)
+        const testEndedOn = setMilliseconds(addHours(testStartedOn, i + 2), 0)
+        const payload = _.merge(
+          {},
+          basicDevicePayload,
+          { name: deviceName },
+          basicResultPayload,
+          {
+            result: {
+              id: errorTestResultId,
+              startedOn: testStartedOn,
+              endedOn: testEndedOn,
+              error: {
+                code: errorCode,
+              },
+              sample: { id: sampleId },
+              instrument: {
+                serial: instrumentSerial,
+                module: {
+                  serial: moduleSerial,
+                  name: 'A1',
+                },
+              },
+            },
+          }
+        )
+        if (i < 4) {
+          // Post the result to aspect
+          await postToDeviceApi({
+            authHeader: deviceAuth,
+            payload,
+          })
+        } else {
+          // Should create issue when errors > 4
+          const waitForModulePowerError = waitForAction(
+            resultModulePowerError(deviceId)
+          )
+          await postToDeviceApi({
+            authHeader: deviceAuth,
+            payload,
+          })
+          await waitForModulePowerError
+          await waitForIdle()
+
+          const issues = await getIssuesByDeviceId(knex, deviceId)
+          assert.equal(issues.length, 1)
+          assert.equal(issues[0].issueType, 'ModulePowerError')
+          assert.equal(issues[0].deviceId, deviceId)
+          assert.equal(issues[0].issueStatus, 'Active')
+          modulePowerErrorIssueId = issues[0].id
+        }
+      }
+
+      await dispatchAndWaitForAction(resolveIssues(modulePowerErrorIssueId))
+      assert.equal(
+        'Active',
+        await getIssueStatusByIssueId(knex, modulePowerErrorIssueId)
+      )
+
+      let machinePowerErrorIssueId = null
+      for (let i = 0; i < 9; i++) {
+        /* eslint-disable no-await-in-loop */
+        const errorTestResultId = `UNIQUE-ID-WITH-MPOWER-ERROR-${i}`
+        const sampleId = `MPOWER2542552${i}`
+        const moduleSerial = `MPOWER1234${i}`
+        const moduleName = `Module A-${i}`
+        const instrumentSerial = `CEPH-PC-123${i}`
+        const testStartedOn = setMilliseconds(subDays(now, i + 3), 0)
+        const testEndedOn = setMilliseconds(addHours(testStartedOn, i + 2), 0)
+
+        const payload = _.merge(
+          {},
+          basicDevicePayload,
+          { name: deviceName },
+          basicResultPayload,
+          {
+            result: {
+              id: errorTestResultId,
+              startedOn: testStartedOn,
+              endedOn: testEndedOn,
+              error: {
+                code: errorCode,
+              },
+              sample: { id: sampleId },
+              instrument: {
+                serial: instrumentSerial,
+                module: {
+                  serial: moduleSerial,
+                  name: moduleName,
+                },
+              },
+            },
+          }
+        )
+        if (i < 8) {
+          // Post the result to aspect
+          await postToDeviceApi({
+            authHeader: deviceAuth,
+            payload,
+          })
+        } else {
+          // Should create issue when errors > 8
+          const waitForMachinePowerError = waitForAction(
+            resultMachinePowerError(deviceId)
+          )
+          await postToDeviceApi({
+            authHeader: deviceAuth,
+            payload,
+          })
+          await waitForMachinePowerError
+          await waitForIdle()
+
+          const issues = await getIssuesByDeviceId(knex, deviceId)
+          assert.equal(issues.length, 2)
+          assert.equal(issues[0].issueType, 'ModulePowerError')
+          assert.equal(issues[0].deviceId, deviceId)
+          assert.equal(issues[0].issueStatus, 'Active')
+          assert.equal(issues[1].issueType, 'MachinePowerError')
+          assert.equal(issues[1].deviceId, deviceId)
+          assert.equal(issues[1].issueStatus, 'Active')
+          machinePowerErrorIssueId = issues[1].id
+        }
+      }
+      await dispatchAndWaitForAction(resolveIssues(machinePowerErrorIssueId))
+      assert.equal(
+        'Active',
+        await getIssueStatusByIssueId(knex, machinePowerErrorIssueId)
+      )
+      await dispatchAndWaitForAction(resolveIssues(modulePowerErrorIssueId))
+      assert.equal(
+        'Resolved',
+        await getIssueStatusByIssueId(knex, modulePowerErrorIssueId)
+      )
     }))
 
   it('should create a module failure issue ', () =>
@@ -312,6 +692,7 @@ describe('Myanmar Issue endpoints', () => {
         }),
       })
       const deviceId = response.body.device.id
+      let moduleFailureIssueId = null
       for (let i = 0; i < 3; i++) {
         /* eslint-disable no-await-in-loop */
         const errorTestResultId = `UNIQUE-ID-WITH-FAILURE-ERROR-${i}`
@@ -362,22 +743,41 @@ describe('Myanmar Issue endpoints', () => {
           await waitForModuleFailureError
           await waitForIdle()
 
-          const issues = await knex('Issue as i')
-            .join('IssueType as it', 'i.issueTypeId', 'it.id')
-            .join('IssueStatus as is', 'i.issueStatusId', 'is.id')
-            .where({ 'i.deviceId': deviceId })
-            .select(
-              'i.id',
-              'it.externalId as issueType',
-              'i.deviceId',
-              'is.externalId as issueStatus'
-            )
+          const issues = await getIssuesByDeviceId(knex, deviceId)
           assert.equal(issues.length, 1)
           assert.equal(issues[0].issueType, 'ModuleFailureError')
           assert.equal(issues[0].deviceId, deviceId)
           assert.equal(issues[0].issueStatus, 'Active')
+          moduleFailureIssueId = issues[0].id
         }
       }
+
+      await dispatchAndWaitForAction(resolveIssues(moduleFailureIssueId))
+      assert.equal(
+        'Active',
+        await getIssueStatusByIssueId(knex, moduleFailureIssueId)
+      )
+
+      // Update ended on for initial issue to past so module failure issue is resolved
+      const errorTestResultId = 'UNIQUE-ID-WITH-FAILURE-ERROR-0'
+      const testStartedOn = setMilliseconds(subDays(now, 33), 0)
+      const testEndedOn = setMilliseconds(addHours(testStartedOn, 2), 0)
+      const payload = _.merge({}, basicDevicePayload, basicResultPayload, {
+        result: {
+          id: errorTestResultId,
+          startedOn: testStartedOn,
+          endedOn: testEndedOn,
+        },
+      })
+      await postToDeviceApi({
+        authHeader: deviceAuth,
+        payload,
+      })
+      await dispatchAndWaitForAction(resolveIssues(moduleFailureIssueId))
+      assert.equal(
+        'Resolved',
+        await getIssueStatusByIssueId(knex, moduleFailureIssueId)
+      )
     }))
 
   it('should create a procedural module issue ', () =>
@@ -439,6 +839,7 @@ describe('Myanmar Issue endpoints', () => {
       }
 
       // Should now create a procedural module issue
+      let moduleProceduralErrorIssueId = null
       for (let i = 0; i < 10; i++) {
         /* eslint-disable no-await-in-loop */
         const errorTestResultId = `UNIQUE-ID-WITH-GEN-MOD-ERROR-${i}`
@@ -491,7 +892,7 @@ describe('Myanmar Issue endpoints', () => {
             result,
           }
         )
-        // minErrorsForLUGenericModuleIssue = 6, see src/deviceApi/plugins/myanmar/onResultLogged.js,
+        // minErrorsForLUGenericModuleIssue = 6, see src/plugin/partner/Myanmar/onResultLogged.js,
         if (i < 9) {
           // Post the result to aspect - 5 error results (i=4..8) do not trigger Module issue
           await postToDeviceApi({
@@ -525,7 +926,33 @@ describe('Myanmar Issue endpoints', () => {
           assert.equal(issues[0].issueType, 'ModuleProceduralError')
           assert.equal(issues[0].deviceId, deviceId)
           assert.equal(issues[0].issueStatus, 'Active')
+          moduleProceduralErrorIssueId = issues[0].id
         }
+      }
+
+      const last30day = subDays(now, 30)
+      for (let i = 0; i < 7; i++) {
+        /* eslint-disable no-await-in-loop */
+        // Update ended on for initial issue to past so module failure issue is resolved
+        const results = await knex('Result as r')
+          .where('r.deviceId', deviceId)
+          .where('r.endedOn', '>=', last30day)
+          .whereNotNull('r.errorCode')
+          .orderBy('r.id')
+          .select('r.id')
+        assert.equal(results.length, 7 - i)
+        await knex('Result')
+          .where({ id: results[0].id })
+          .update({ errorCode: null })
+
+        // Should resolve when result count under 3%
+        await dispatchAndWaitForAction(
+          resolveIssues(moduleProceduralErrorIssueId)
+        )
+        assert.equal(
+          i < 6 ? 'Active' : 'Resolved',
+          await getIssueStatusByIssueId(knex, moduleProceduralErrorIssueId)
+        )
       }
     }))
 
@@ -724,7 +1151,113 @@ describe('Myanmar Issue endpoints', () => {
       // the procedural machine issue is created
     }))
 
-  describe('should create a machine power issue when ', () => {
+  it('should create a machine procedural issue and resolve when under 3 percent', () =>
+    runTest(async knex => {
+      const { now } = context
+      const errorCode = '1098'
+
+      // Post to deviceApi to ensure the device in in Aspect
+      const response = await postToDeviceApi({
+        authHeader: deviceAuth,
+        payload: _.merge({}, basicDevicePayload, {
+          name: deviceName,
+        }),
+      })
+      const deviceId = response.body.device.id
+      let machineProceduralErrorIssueId = null
+      for (let i = 0; i < 12; i++) {
+        /* eslint-disable no-await-in-loop */
+        const errorTestResultId = `UNIQUE-ID-WITH-MPROC-ERROR-${i}`
+        const sampleId = `MPROC2542552${i}`
+        const moduleSerial = `MPROC1234${i}`
+        const moduleName = `Module A-${i}`
+        const instrumentSerial = `CEPH-PC-397${i}`
+        const testStartedOn = setMilliseconds(subDays(now, i + 3), 0)
+        const testEndedOn = setMilliseconds(addHours(testStartedOn, i + 2), 0)
+        const payload = _.merge(
+          {},
+          basicDevicePayload,
+          { name: deviceName },
+          basicResultPayload,
+          {
+            result: {
+              id: errorTestResultId,
+              startedOn: testStartedOn,
+              endedOn: testEndedOn,
+              error: {
+                code: errorCode,
+              },
+              sample: { id: sampleId },
+              instrument: {
+                serial: instrumentSerial,
+                module: {
+                  serial: moduleSerial,
+                  name: moduleName,
+                },
+              },
+            },
+          }
+        )
+        if (i === 8) {
+          // Should create issue when errors === 8
+          const waitForMachineProceduralError = waitForAction(
+            resultMachineProceduralError(deviceId)
+          )
+          await postToDeviceApi({
+            authHeader: deviceAuth,
+            payload,
+          })
+          await waitForMachineProceduralError
+          await waitForIdle()
+        } else {
+          // Post the result to aspect
+          await postToDeviceApi({
+            authHeader: deviceAuth,
+            payload,
+          })
+        }
+
+        const issues = await getIssuesByDeviceId(knex, deviceId)
+        if (i < 8) {
+          // should not have issue prior to temp error
+          assert.equal(issues.length, 0)
+        } else {
+          // should have only one active issue after 8
+          assert.equal(issues.length, 1)
+          assert.equal(issues[0].issueType, 'MachineProceduralError')
+          assert.equal(issues[0].deviceId, deviceId)
+          assert.equal(issues[0].issueStatus, 'Active')
+          machineProceduralErrorIssueId = issues[0].id
+        }
+      }
+
+      const last30day = subDays(now, 30)
+      for (let i = 0; i < 12; i++) {
+        /* eslint-disable no-await-in-loop */
+        // Update ended on for initial issue to past so module failure issue is resolved
+        const results = await knex('Result as r')
+          .where('r.deviceId', deviceId)
+          .where('r.endedOn', '>=', last30day)
+          .whereNotNull('r.errorCode')
+          .orderBy('r.id')
+          .select('r.id')
+        assert.equal(results.length, 12 - i)
+        await knex('Result')
+          .where({ id: results[0].id })
+          .update({ errorCode: null })
+
+        // Should resolve when result count under 3%
+        await dispatchAndWaitForAction(
+          resolveIssues(machineProceduralErrorIssueId)
+        )
+        assert.equal(
+          i < 11 ? 'Active' : 'Resolved',
+          await getIssueStatusByIssueId(knex, machineProceduralErrorIssueId)
+        )
+      }
+    }))
+
+  describe('should create a machine power issue and resolve when under percent', () => {
     beforeEach(async () =>
       run(async () => {
         await beforeCreateGxAlertApiKey({
@@ -750,7 +1283,8 @@ describe('Myanmar Issue endpoints', () => {
           }),
         })
         const deviceId = response.body.device.id
-        for (let i = 0; i < 9; i++) {
+        let machinePowerErrorIssueId = null
+        for (let i = 0; i < 12; i++) {
           /* eslint-disable no-await-in-loop */
           const errorTestResultId = `UNIQUE-ID-WITH-MPOWER-ERROR-${i}`
           const sampleId = `MPOWER2542552${i}`
@@ -784,14 +1318,9 @@ describe('Myanmar Issue endpoints', () => {
               },
             }
           )
-          if (i < 8) {
-            // Post the result to aspect
-            await postToDeviceApi({
-              authHeader: deviceAuth,
-              payload,
-            })
-          } else {
-            // Should create issue when errors > 8
+
+          if (i === 8) {
+            // Should create issue when errors === 8
             const waitForMachinePowerError = waitForAction(
               resultMachinePowerError(deviceId)
             )
@@ -801,22 +1330,57 @@ describe('Myanmar Issue endpoints', () => {
             })
             await waitForMachinePowerError
             await waitForIdle()
+          } else {
+            // Post the result to aspect
+            await postToDeviceApi({
+              authHeader: deviceAuth,
+              payload,
+            })
+          }
 
-            const issues = await knex('Issue as i')
-              .join('IssueType as it', 'i.issueTypeId', 'it.id')
-              .join('IssueStatus as is', 'i.issueStatusId', 'is.id')
-              .where({ 'i.deviceId': deviceId })
-              .select(
-                'i.id',
-                'it.externalId as issueType',
-                'i.deviceId',
-                'is.externalId as issueStatus'
-              )
+          const issues = await getIssuesByDeviceId(knex, deviceId)
+          if (i < 8) {
+            // should not have issue prior to temp error
+            assert.equal(issues.length, 0)
+          } else {
+            // should have only one active issue after 8
             assert.equal(issues.length, 1)
             assert.equal(issues[0].issueType, 'MachinePowerError')
             assert.equal(issues[0].deviceId, deviceId)
             assert.equal(issues[0].issueStatus, 'Active')
+            machinePowerErrorIssueId = issues[0].id
           }
+        }
+
+        await dispatchAndWaitForAction(resolveIssues(machinePowerErrorIssueId))
+        assert.equal(
+          'Active',
+          await getIssueStatusByIssueId(knex, machinePowerErrorIssueId)
+        )
+
+        const last30day = subDays(now, 30)
+        for (let i = 0; i < 12; i++) {
+          /* eslint-disable no-await-in-loop */
+          // Update ended on for initial issue to past so module failure issue is resolved
+          const results = await knex('Result as r')
+            .where('r.deviceId', deviceId)
+            .where('r.endedOn', '>=', last30day)
+            .whereNotNull('r.errorCode')
+            .orderBy('r.id')
+            .select('r.id')
+          assert.equal(results.length, 12 - i)
+          await knex('Result')
+            .where({ id: results[0].id })
+            .update({ errorCode: null })
+
+          // Should resolve when result count under 1%
+          await dispatchAndWaitForAction(
+            resolveIssues(machinePowerErrorIssueId)
+          )
+          assert.equal(
+            i < 11 ? 'Active' : 'Resolved',
+            await getIssueStatusByIssueId(knex, machinePowerErrorIssueId)
+          )
         }
       }))
 
@@ -920,7 +1484,7 @@ describe('Myanmar Issue endpoints', () => {
         }),
       })
       const deviceId = response.body.device.id
-      for (let i = 0; i < 10; i++) {
+      for (let i = 0; i < 8; i++) {
         /* eslint-disable no-await-in-loop */
         const errorTestResultId = `UNIQUE-ID-WITH-REAGENT-HEALTH-ERROR-${i}`
         const sampleId = `REAGENT2552${i}`
@@ -929,11 +1493,14 @@ describe('Myanmar Issue endpoints', () => {
         const testStartedOn = setMilliseconds(subDays(now, i + 3), 0)
         const testEndedOn = setMilliseconds(addHours(testStartedOn, i + 2), 0)
 
-        // Post the first few results without an error code
-        let result = {
+        // Post 8 results with error code
+        const result = {
           id: errorTestResultId,
           startedOn: testStartedOn,
           endedOn: testEndedOn,
+          error: {
+            code: '2037',
+          },
           sample: { id: sampleId },
           instrument: {
             serial: instrumentSerial,
@@ -942,24 +1509,6 @@ describe('Myanmar Issue endpoints', () => {
               name: 'A1',
             },
           },
-        }
-        if (i > 8) {
-          result = {
-            id: errorTestResultId,
-            startedOn: testStartedOn,
-            endedOn: testEndedOn,
-            error: {
-              code: '2037',
-            },
-            sample: { id: sampleId },
-            instrument: {
-              serial: instrumentSerial,
-              module: {
-                serial: moduleSerial,
-                name: 'A1',
-              },
-            },
-          }
         }
 
         const payload = _.merge(
@@ -971,14 +1520,14 @@ describe('Myanmar Issue endpoints', () => {
             result,
           }
         )
-        if (i < 9) {
-          // Post the result to aspect
+        if (i < 7) {
+          // Post first 7 results to aspect
           await postToDeviceApi({
             authHeader: deviceAuth,
             payload,
           })
         } else {
-          // Should create issue when errorCode is added
+          // 8th error result should create issue
           const waitForModuleGenericError = waitForAction(
             inventoryReagentHealth(deviceId, 2)
           )
@@ -1396,3 +1945,28 @@ describe('Myanmar Issue endpoints', () => {
       })
     }))
 })
+
+async function getIssuesByDeviceId(knex, deviceId) {
+  return knex('Issue as i')
+    .join('IssueType as it', 'i.issueTypeId', 'it.id')
+    .join('IssueStatus as is', 'i.issueStatusId', 'is.id')
+    .where({ 'i.deviceId': deviceId })
+    .orderBy('i.id')
+    .select(
+      'i.id',
+      'it.externalId as issueType',
+      'i.deviceId',
+      'is.externalId as issueStatus'
+    )
+}
+
+async function getIssueStatusByIssueId(knex, issueId) {
+  assert.isOk(issueId)
+  const issue = await knex('Issue as i')
+    .join('IssueStatus as is', 'i.issueStatusId', 'is.id')
+    .where({ 'i.id': issueId })
+    .first('is.externalId as issueStatus')
+  assert.isOk(issue)
+  assert.isOk(issue.issueStatus)
+  return issue.issueStatus
+}

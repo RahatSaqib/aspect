@@ -82,5 +82,48 @@ describe('stringTemplate/processUsingHandlebarsSyntax', () => {
         assert.deepEqual(resultString, expectedResult)
       })
     })
+
+    it('should format date without display preferences', () => {
+      const sampleString =
+        'Device {{device.shortName}} is offline since {{formatDate data.offlineOn }}'
+      const expectedResult = 'Device  is offline since 2018-08-01'
+      const inputObject = {
+        device: {
+          state: 'Ohio',
+          country: 'United States',
+        },
+        data: {
+          offlineOn: '2018-08-01',
+        },
+      }
+      return runTest(processUsingHandlebarsSyntax, [sampleString, inputObject])(
+        resultString => {
+          assert.deepEqual(resultString, expectedResult)
+        }
+      )
+    })
+
+    it('should format date with display preferences', () => {
+      const sampleString =
+        'Device {{device.shortName}} is offline since {{formatDate data.offlineOn }}'
+      const expectedResult = 'Device  is offline since 1/8/2018'
+      const inputObject = {
+        device: {
+          state: 'Ohio',
+          country: 'United States',
+        },
+        data: {
+          offlineOn: '2018-08-01',
+        },
+        displayPreferences: {
+          dateFormat: 'D/M/YYYY',
+        },
+      }
+      return runTest(processUsingHandlebarsSyntax, [sampleString, inputObject])(
+        resultString => {
+          assert.deepEqual(resultString, expectedResult)
+        }
+      )
+    })
   })
 })

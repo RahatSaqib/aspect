@@ -1,3 +1,4 @@
+/* eslint no-await-in-loop: 0 */
 module.exports = require('../utils').seed(seed)
 
 const bcrypt = require('bcrypt')
@@ -16,14 +17,17 @@ const patients = require('./fixtures/patients.json')
 const config = require('../../src/config')
 const { randomToken } = require('../../src/deviceApi/apiKey')
 const labClinic = require('./fixtures/labClinic.json')
-const { getPermissionModules } = require('../utils')
+const {
+  getPermissionModules,
+  assignAllFeaturesToJobFunctionIds,
+} = require('../utils')
 const {
   allResultCategoryToId,
+  allResultWorkflowStatusToId,
   assayTypeToId,
   partnerTypeToId,
   deviceTypeCategoryToId,
   resultSourceToId,
-  allResultWorkflowStatusToId,
   resultTypeToId,
 } = require('../../src/shared/dictionary')
 
@@ -329,7 +333,6 @@ async function seed(knex) {
   })
 
   const modules = await getPermissionModules(knex)
-  const featureModules = await knex('Feature').select('id')
 
   // Create clinics for every state in Malawi
   const [malawiCountry] = await knex('Country as c')
@@ -373,20 +376,10 @@ async function seed(knex) {
     partnerId,
   })
 
-  await Promise.all(
-    _.map(featureModules, async ({ id: featureId }) => {
-      await knex('JobFunctionFeature').insert([
-        {
-          jobFunctionId: jobFunctionIdLabAdmin,
-          featureId,
-        },
-        {
-          jobFunctionId: jobFunctionIdAdmin,
-          featureId,
-        },
-      ])
-    })
-  )
+  await assignAllFeaturesToJobFunctionIds(knex, [
+    jobFunctionIdLabAdmin,
+    jobFunctionIdAdmin,
+  ])
 
   await knex('JobFunctionPermission').insert([
     {
@@ -699,35 +692,50 @@ async function seed(knex) {
     hasReporter: true,
   })
 
-  const samples = []
+  let samples = []
 
-  await Promise.all(
-    _.map(_.range(resultEidNumber / 2), async i => {
-      const clinic = clinicsWithReporters[i % clinicsWithReporters.length]
+  async function createUniqueSampleIdForSite(prefix, siteId) {
+    const randomId = prefix
+      ? `${prefix}-${_.random(200000, 888888)}`
+      : _.random(200000, 888888).toString()
+    const existingSamplesWithId = await knex('Sample as s')
+      .where('externalId', randomId)
+      .select()
+    if (
+      (siteId && _.some(existingSamplesWithId, { originSiteId: siteId })) ||
+      !_.isEmpty(existingSamplesWithId)
+    ) {
+      return createUniqueSampleIdForSite(prefix, siteId)
+    }
+    return randomId
+  }
 
-      const { id: siteId } = await knex('Site')
-        .where('externalId', clinic.externalId)
-        .first()
+  async function createSampleEid(i) {
+    const clinic = clinicsWithReporters[i % clinicsWithReporters.length]
 
-      const sample = Object.assign(
-        {},
-        {
-          externalId: `PRHB-${_.random(200000, 888888)}`,
-          collectedOn: calculateDateForResult(
-            i,
-            resultEidNumber,
-            millisInMinute
-          ),
-          sampleTypeId: sampleTypeDBSId,
-          originSiteId: siteId,
-        }
-      )
+    const { id: siteId } = await knex('Site')
+      .where('externalId', clinic.externalId)
+      .first()
 
-      sample.id = await knex('Sample').insert(sample)
+    const externalId = await createUniqueSampleIdForSite('PREID', siteId)
+    const sample = Object.assign(
+      {},
+      {
+        externalId,
+        collectedOn: calculateDateForResult(i, resultEidNumber, millisInMinute),
+        sampleTypeId: sampleTypeDBSId,
+        originSiteId: siteId,
+      }
+    )
 
-      samples.push(sample)
-    })
-  )
+    sample.id = await knex('Sample').insert(sample)
+
+    samples.push(sample)
+  }
+
+  for (const i of _.range(resultEidNumber / 2)) {
+    await createSampleEid(i)
+  }
 
   // Results section
   const {
@@ -811,7 +819,31 @@ async function seed(knex) {
     .where('deviceTypeId', deviceTypeIdChai)
     .select('id', 'siteId')
 
-  _.map(_.range(resultEidNumber), async i => {
+  async function createUniqueResultIdForDevice(
+    candidateId,
+    deviceId,
+    tryNumber
+  ) {
+    const existingResultsWithId = await knex('Result as r')
+      .where(
+        'externalId',
+        tryNumber ? `${candidateId}-${tryNumber}` : candidateId
+      )
+      .select()
+    if (
+      (deviceId && _.some(existingResultsWithId, { deviceId })) ||
+      !_.isEmpty(existingResultsWithId)
+    ) {
+      return createUniqueResultIdForDevice(
+        candidateId,
+        deviceId,
+        (tryNumber || 0) + 1
+      )
+    }
+    return tryNumber ? `${candidateId}-${tryNumber}` : candidateId
+  }
+
+  async function createResultEid(i) {
     const device = devicesM2000[i % devicesM2000.length]
     const siteData = await knex('Site')
       .where('id', device.siteId)
@@ -826,9 +858,13 @@ async function seed(knex) {
     )
     const patient = patients[_.random(patientNumber)]
     const resultData = { resultText: result.resultText }
+    const resultExternalId = await createUniqueResultIdForDevice(
+      sample.externalId,
+      device.id
+    )
     const resultId = await knex('Result').insert(
       Object.assign({}, auditFields, {
-        externalId: sample.externalId,
+        externalId: resultExternalId,
         assayId: assayIdEid,
         partnerId,
         geographyId: siteData.geographyId,
@@ -885,7 +921,11 @@ async function seed(knex) {
       createdOn: addHours(randomDate, 1),
       createdBy: adminId,
     })
-  })
+  }
+
+  for (const i of _.range(resultEidNumber)) {
+    await createResultEid(i)
+  }
 
   // HIV VL results:
   // assign categories to assay
@@ -942,7 +982,40 @@ async function seed(knex) {
     },
   ]
 
-  _.map(_.range(resultHivVlNumber), async i => {
+  samples = []
+
+  async function createSampleHiv(i) {
+    const clinic = clinicsWithReporters[i % clinicsWithReporters.length]
+
+    const { id: siteId } = await knex('Site')
+      .where('externalId', clinic.externalId)
+      .first()
+
+    const externalId = await createUniqueSampleIdForSite('PRHIVVL', siteId)
+    const sample = Object.assign(
+      {},
+      {
+        externalId,
+        collectedOn: calculateDateForResult(
+          i,
+          resultHivVlNumber,
+          millisInMinute
+        ),
+        sampleTypeId: sampleTypeDBSId,
+        originSiteId: siteId,
+      }
+    )
+
+    sample.id = await knex('Sample').insert(sample)
+
+    samples.push(sample)
+  }
+
+  for (const i of _.range(resultHivVlNumber / 2)) {
+    await createSampleHiv(i)
+  }
+
+  async function createResultHiv(i) {
     const device = devicesM2000[i % devicesM2000.length]
     const siteData = await knex('Site')
       .where('id', device.siteId)
@@ -971,9 +1044,13 @@ async function seed(knex) {
         ? result.resultText.replace('X', copies)
         : result.resultText,
     }
+    const resultExternalId = await createUniqueResultIdForDevice(
+      sample.externalId,
+      device.id
+    )
     const resultId = await knex('Result').insert(
       Object.assign({}, auditFields, {
-        externalId: sample.externalId,
+        externalId: resultExternalId,
         assayId: assayIdHivVl,
         partnerId,
         geographyId: siteData.geographyId,
@@ -1027,5 +1104,9 @@ async function seed(knex) {
       createdOn: addHours(randomDate, 1),
       createdBy: adminId,
     })
-  })
+  }
+
+  for (const i of _.range(resultHivVlNumber)) {
+    await createResultHiv(i)
+  }
 }

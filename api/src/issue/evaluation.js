@@ -14,10 +14,12 @@ const {
   getMustacheTokensInString,
 } = require('../stringTemplate/service')
 const { readTextFile } = require('../shared/io')
+const { loadPlugin } = require('../plugin/registration')
 
 const evaluationMethods = {
   'inline-sql': evaluateInlineSql,
   'sql-script': evaluateSqlScript,
+  'plugin-function': evaluatePluginFunction,
   'issue-age': triggeredEventOlderThan,
   'result-category': checkResultCategory,
   'child-condition': conditionsMet,
@@ -84,6 +86,18 @@ async function evaluateArrayOfConditions(knex, issue, conditions) {
     }
   }
   return true
+}
+
+async function evaluatePluginFunction(knex, issue, functionName) {
+  const partner = await knex('Partner')
+    .where({ id: issue.partnerId })
+    .first('plugin')
+  if (partner == null) {
+    return false
+  }
+  const resolutions = await loadPlugin([partner.plugin], 'issueResolutions')
+  const func = resolutions[functionName]
+  return func != null && func(knex, issue)
 }
 
 async function evaluateInlineSql(knex, issue, inlineSql) {
