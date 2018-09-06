@@ -510,7 +510,7 @@ async function auditInventoryStockout({
 }
 
 // -----------------------------
-// totalDaysUnexpiredInventoryItemsLast - is used also in /inventory/service.js
+// totalDaysUnexpiredInventoryItemsLast - is used also in plugin Myanmar/issueResolutions.js
 // -----------------------------
 async function totalDaysUnexpiredInventoryItemsLast({
   knex,
@@ -582,7 +582,7 @@ async function auditInventoryStockExpiring({
   }
 }
 // -----------------------------
-// totalWastedInventoryItems - is used also in /inventory/service.js
+// totalWastedInventoryItems - is used also in plugin Myanmar/issueResolutions.js
 // -----------------------------
 async function totalWastedInventoryItems({
   knex,
