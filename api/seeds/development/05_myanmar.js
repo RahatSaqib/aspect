@@ -1908,7 +1908,7 @@ async function seed(knex) {
       updatedOn: now,
     },
     {
-      issueTypeId: issueTypes.issueStatusInventoryStockout.id,
+      issueTypeId: issueTypes.InventoryStockout.id,
       partnerId,
       resolutionConditions: JSON.stringify({
         evaluationMethod: 'plugin-function',
@@ -1918,7 +1918,7 @@ async function seed(knex) {
       updatedOn: now,
     },
     {
-      issueTypeId: issueTypes.issueStatusInventoryStockExpiring.id,
+      issueTypeId: issueTypes.InventoryStockExpiring.id,
       partnerId,
       resolutionConditions: JSON.stringify({
         evaluationMethod: 'plugin-function',

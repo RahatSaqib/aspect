@@ -55,6 +55,10 @@ async function seed(knex) {
     .where({ name: 'Myanmar' })
     .first()
 
+  await knex('Partner')
+    .update({ maxDaysDeviceNoResults: 7 })
+    .where({ id: partnerId })
+
   await knex('IssueEscalationTrigger')
     .update({
       escalationConditions: JSON.stringify({
@@ -460,26 +464,6 @@ async function seed(knex) {
       resolutionConditions: JSON.stringify({
         evaluationMethod: 'plugin-function',
         evaluationParameter: 'resolveMachineUnknownError',
-      }),
-      createdOn: now,
-      updatedOn: now,
-    },
-    {
-      issueTypeId: issueTypes.issueStatusInventoryStockout.id,
-      partnerId,
-      resolutionConditions: JSON.stringify({
-        evaluationMethod: 'plugin-function',
-        evaluationParameter: 'resolveIssueStockout',
-      }),
-      createdOn: now,
-      updatedOn: now,
-    },
-    {
-      issueTypeId: issueTypes.issueStatusInventoryStockExpiring.id,
-      partnerId,
-      resolutionConditions: JSON.stringify({
-        evaluationMethod: 'plugin-function',
-        evaluationParameter: 'resolveIssueStockExpiring',
       }),
       createdOn: now,
       updatedOn: now,
