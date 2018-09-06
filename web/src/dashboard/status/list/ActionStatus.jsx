@@ -70,10 +70,12 @@ const UpdateStockLevelInput = compose(
             title: messages.stockLevelUpdatedSuccessfully,
           })
         })
-        // get new dataset - changed stock level may affect other items on a ppage
+        // get new dataset - run in few seconds to let MessageQueue on server side to resolve or trigger corresponding issues, if any
         .then(() => {
-          const { filtersParams, sortCol, sortDir } = sortingProps
-          fetchActionDashboard(filtersParams, sortCol, sortDir)
+          setTimeout(() => {
+            const { filtersParams, sortCol, sortDir } = sortingProps
+            fetchActionDashboard(filtersParams, sortCol, sortDir)
+          }, 3000)
         }),
   }),
   recomposeForm({
