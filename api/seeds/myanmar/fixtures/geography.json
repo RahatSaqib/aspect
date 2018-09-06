@@ -27,9 +27,9 @@
           ],
           "targets": {
             "Total": 10925,
-            "Children": 646,
-            "Smear": 4060,
-            "MDR": 3456,
+            "Children": 552,
+            "Smear": 5520,
+            "MDR": 1764,
             "HIV": 1229
           }
         },
@@ -43,11 +43,11 @@
             { "name": "Thayarwady" }
           ],
           "targets": {
-            "Total": 8045,
-            "Children": 561,
-            "Smear": 2558,
-            "MDR": 3666,
-            "HIV": 603
+            "Total": 9960,
+            "Children": 408,
+            "Smear": 5772,
+            "MDR": 2640,
+            "HIV": 900
           }
         },
         {
@@ -59,11 +59,11 @@
             { "name": "Mindat" }
           ],
           "targets": {
-            "Total": 283,
+            "Total": 612,
             "Children": 34,
             "Smear": 51,
-            "MDR": 104,
-            "HIV": 10
+            "MDR": 60,
+            "HIV": 48
           }
         },
         {
@@ -78,8 +78,8 @@
           "targets": {
             "Total": 6783,
             "Children": 547,
-            "Smear": 1352,
-            "MDR": 2014,
+            "Smear": 2256,
+            "MDR": 1188,
             "HIV": 2552
           }
         },
@@ -92,10 +92,10 @@
           ],
           "targets": {
             "Total": 1058,
-            "Children": 101,
-            "Smear": 177,
-            "MDR": 339,
-            "HIV": 48
+            "Children": 48,
+            "Smear": 252,
+            "MDR": 120,
+            "HIV": 84
           }
         },
         {
@@ -109,10 +109,10 @@
           ],
           "targets": {
             "Total": 2454,
-            "Children": 152,
-            "Smear": 777,
+            "Children": 216,
+            "Smear": 1920,
             "MDR": 806,
-            "HIV": 138
+            "HIV": 324
           }
         },
         {
@@ -127,9 +127,9 @@
           ],
           "targets": {
             "Total": 3664,
-            "Children": 259,
-            "Smear": 1532,
-            "MDR": 1380,
+            "Children": 180,
+            "Smear": 2088,
+            "MDR": 480,
             "HIV": 339
           }
         },
@@ -148,7 +148,7 @@
           "targets": {
             "Total": 15353,
             "Children": 1818,
-            "Smear": 3541,
+            "Smear": 7176,
             "MDR": 5084,
             "HIV": 2083
           }
@@ -162,14 +162,14 @@
           ],
           "targets": {
             "Total": 4819,
-            "Children": 317,
-            "Smear": 2026,
-            "MDR": 1725,
+            "Children": 240,
+            "Smear": 3156,
+            "MDR": 852,
             "HIV": 688
           }
         },
         {
-          "name": "Naypyitaw",
+          "name": "Naypyitaw Union Territoriality",
           "abbreviation": "NPW",
           "lgas": [
             { "name": "Detkhina" },
@@ -177,8 +177,8 @@
           ],
           "targets": {
             "Total": 2454,
-            "Children": 173,
-            "Smear": 439,
+            "Children": 120,
+            "Smear": 1164,
             "MDR": 831,
             "HIV": 416
           }
@@ -195,10 +195,10 @@
           ],
           "targets": {
             "Total": 2259,
-            "Children": 157,
-            "Smear": 1026,
-            "MDR": 915,
-            "HIV": 85
+            "Children": 516,
+            "Smear": 1788,
+            "MDR": 612,
+            "HIV": 168
           }
         },
         {
@@ -218,9 +218,9 @@
           "targets": {
             "Total": 5016,
             "Children": 350,
-            "Smear": 1585,
+            "Smear": 2460,
             "MDR": 1551,
-            "HIV": 485
+            "HIV": 636
           }
         },
         {
@@ -247,10 +247,10 @@
             { "name": "Wein Kawng (Wein Kao) (Wa SAD)" }
           ],
           "targets": {
-            "Total": 1474,
-            "Children": 127,
+            "Total": 1908,
+            "Children": 72,
             "Smear": 553,
-            "MDR": 555,
+            "MDR": 276,
             "HIV": 236
           }
         },
@@ -279,9 +279,9 @@
           ],
           "targets": {
             "Total": 4039,
-            "Children": 345,
-            "Smear": 1175,
-            "MDR": 1464,
+            "Children": 204,
+            "Smear": 1764,
+            "MDR": 672,
             "HIV": 765
           }
         },
@@ -311,9 +311,9 @@
           "targets": {
             "Total": 3441,
             "Children": 251,
-            "Smear": 789,
-            "MDR": 692,
-            "HIV": 429
+            "Smear": 1416,
+            "MDR": 552,
+            "HIV": 696
           }
         },
         {
@@ -326,10 +326,10 @@
           ],
           "targets": {
             "Total": 3029,
-            "Children": 238,
-            "Smear": 761,
-            "MDR": 1224,
-            "HIV": 262
+            "Children": 156,
+            "Smear": 1044,
+            "MDR": 624,
+            "HIV": 492
           }
         },
         {
@@ -343,10 +343,10 @@
           ],
           "targets": {
             "Total": 45434,
-            "Children": 5590,
-            "Smear": 8029,
+            "Children": 4536,
+            "Smear": 13740,
             "MDR": 11932,
-            "HIV": 4043
+            "HIV": 7560
           }
         }
       ]

@@ -1,7 +1,6 @@
 const Boom = require('boom')
 const _ = require('lodash')
 const dateFormat = require('date-fns/format')
-const subDays = require('date-fns/sub_days')
 
 const {
   knex,
@@ -17,125 +16,9 @@ const {
   generateExcelFile,
   generateCsvFile,
 } = require('../shared/io')
+const { resultWorkflowStatusToId } = require('../shared/dictionary')
 const { oneDirectionalMd5Hash } = require('../shared/encryption')
-const {
-  resultModuleTemperatureError,
-  resultModulePowerError,
-  resultModuleFailureError,
-  resultMachineTemperatureError,
-  resultMachineProceduralError,
-  resultModuleProceduralError,
-  resultMachinePowerError,
-} = require('../result/actions')
-const {
-  selectAssayConsumables,
-} = require('../consumable/assayConsumableService')
-const { inventoryReagentHealth } = require('../inventory/actions')
-
-const MODULE_TEMPERATURE_ERROR_CODES = [
-  '1001',
-  '1004',
-  '1017',
-  '2014',
-  '2022',
-  '4009',
-  '4010',
-]
-const MODULE_POWER_ERROR_CODES = [
-  '1007',
-  '2122',
-  '2123',
-  '2126',
-  '2127',
-  '4008',
-]
-
-const MODULE_FAILURE_ERROR_CODES = [
-  '1002',
-  '1005',
-  '1006',
-  '1018',
-  '2011',
-  '2012',
-  '2016',
-  '2017',
-  '2018',
-  '2021',
-  '2023',
-  '2024',
-  '2026',
-  '2032',
-  '2034',
-  '2035',
-  '3000',
-  '4001',
-  '4002',
-  '4003',
-  '4004',
-  '4006',
-  '4011',
-  '4012',
-  '4013',
-  '4014',
-  '4015',
-  '4016',
-  '4017',
-  '4019',
-  '5013',
-  '5014',
-  '5015',
-  '5016',
-]
-const PROCEDURAL_ERROR_CODES = [
-  '1096',
-  '1097',
-  '1098',
-  '1099',
-  '1100',
-  '2096',
-  '2097',
-  '2098',
-  '2099',
-  '2100',
-  '2125',
-  '1125',
-  '2005',
-  '2006',
-  '2008',
-  '2009',
-  '5006',
-  '5007',
-  '5008',
-  '5009',
-  '5010',
-  '2003',
-]
-
-const REAGENT_HEALTH_ERROR_CODES = [
-  '2037',
-  '5001',
-  '5002',
-  '5003',
-  '5004',
-  '5005',
-  '5011',
-  '5017',
-  '5018',
-  '5019',
-  '2025',
-]
-
-const moduleTemperatureMaxErrors = 4
-const modulePowerMaxErrors = 4
-const moduleFailureMaxErrors = 2
-const machineTemperatureMaxErrors = 8
-const maxPrcntErrors = 5
-const machinePowerMaxErrors = 8
-const maxPrcntMachinePowerErrors = 3
-const maxInvalidResultRatio = 3
-const invalidResultBatchRatio = 2
-const maxReagentErrorRatio = 3
-const maxInvalidReagentErrorRatio = 4
+const { getPathFromFileReferenceId } = require('../file/service')
 
 const SELECT_LIST_FIELDS = [
   'r.id',
@@ -169,6 +52,7 @@ const SELECT_SHOW_FIELDS = [
   'r.endedOn',
   'r.deviceId',
   'd.name as deviceName',
+  'd.serial as deviceSerial',
   'c.name as countryName',
   'st.name as stateName',
   'lg.name as lgaName',
@@ -178,6 +62,7 @@ const SELECT_SHOW_FIELDS = [
   'rs.name as resultWorkflowStatus',
   'rs.externalId as resultWorkflowStatusExternalId',
   'r.resultData',
+  'r.formData',
   'r.siteId',
   'si.name as siteName',
   'r.assayVersion',
@@ -205,6 +90,7 @@ const SELECT_SHOW_FIELDS = [
   knex.raw('JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id")) as patientId'),
   'r.patientData',
   'r.qcCheck',
+  'rf.formSchema',
 ]
 
 const SORT_FIELDS = [
@@ -401,6 +287,85 @@ async function getDeviceLogsByResultId(request) {
   return { data: deviceLogs }
 }
 
+async function showFileReferences(request) {
+  const { params: { resultId }, auth } = request
+  const dataConstraints = await getConstraints(auth.credentials)
+  const fileReferences = await knex('ResultFileReference as rf')
+    .join('FileReference as f', 'f.id', 'rf.fileReferenceId')
+    .join('Result as r', 'r.id', 'rf.resultId')
+    .join('FileContentType as fct', 'f.fileContentTypeId', 'fct.id')
+    .join('Device as d', 'r.deviceId', 'd.id')
+    .where('rf.resultId', resultId)
+    .orderBy('f.id', 'asc')
+    .modify(addConstraints, dataConstraints, { device: 'd' })
+    .select(
+      'f.id',
+      'f.name',
+      'f.length',
+      'f.createdOn',
+      'fct.externalId as fileContentType',
+      'fct.mimeType',
+      'fct.mimeSubtype'
+    )
+    .map(ref => {
+      ref.url = `/result/file/${resultId}/${ref.id}/${ref.name}`
+      return ref
+    })
+  return { data: fileReferences }
+}
+
+function downloadFile(request, reply) {
+  return downloadFileAsync(request)
+    .then(path => {
+      reply.file(path)
+    })
+    .catch(err => {
+      console.error(err) // eslint-disable-line no-console
+      reply(err)
+    })
+}
+
+function downloadFirstImage(request, reply) {
+  const { auth, params: { resultId } } = request
+  return downloadFileAsync({ auth, params: { resultId, mimeType: 'image' } })
+    .then(path => {
+      reply.file(path)
+    })
+    .catch(err => {
+      console.error(err) // eslint-disable-line no-console
+      reply(err)
+    })
+}
+
+async function downloadFileAsync({ auth, params }) {
+  const { resultId, fileReferenceId, fileName, mimeType } = params
+  const dataConstraints = await getConstraints(auth.credentials)
+  const fileReference = await knex('ResultFileReference as rf')
+    .join('FileReference as f', 'f.id', 'rf.fileReferenceId')
+    .join('Result as r', 'r.id', 'rf.resultId')
+    .join('FileContentType as fct', 'f.fileContentTypeId', 'fct.id')
+    .join('Device as d', 'r.deviceId', 'd.id')
+    .modify(addConstraints, dataConstraints, { device: 'd' })
+    .where('rf.resultId', resultId)
+    .modify(qb => {
+      if (fileReferenceId != null) {
+        qb.where('f.id', fileReferenceId)
+      }
+      if (fileName != null) {
+        qb.where('f.name', fileName)
+      }
+      if (mimeType != null) {
+        qb.where('fct.mimeType', mimeType)
+      }
+    })
+    .orderBy('f.id', 'desc')
+    .first('f.id')
+  if (fileReference == null) {
+    throw Boom.notFound('Cannot find file')
+  }
+  return getPathFromFileReferenceId(knex, fileReference.id)
+}
+
 async function getResultByResultId(request, fields = SELECT_SHOW_FIELDS) {
   const { auth, params } = request
   const dataConstraints = await getConstraints(auth.credentials)
@@ -419,6 +384,9 @@ async function getResultByResultId(request, fields = SELECT_SHOW_FIELDS) {
     .leftJoin('SampleType as stp', 'sp.sampleTypeId', 'stp.id')
     .leftJoin('Site as so', 'sp.originSiteId', 'so.id')
     .leftJoin('ResultWorkflowStatus as rs', 'r.resultWorkflowStatusId', 'rs.id')
+    .leftJoin('ResultForm as rf', function() {
+      this.on('r.assayId', 'rf.assayId').andOn('r.partnerId', 'rf.partnerId')
+    })
     .where('r.id', +params.resultId)
     .modify(addConstraints, dataConstraints, { device: 'd' })
     .select(fields)
@@ -429,15 +397,32 @@ async function getResultByResultId(request, fields = SELECT_SHOW_FIELDS) {
   // if selecting the result was successful
   if (results.length === 1) {
     ;[data] = results
-    data.resultData = JSON.parse(data.resultData)
-    data.patientData = JSON.parse(data.patientData)
-
-    data.assay = await knex('Assay as a')
-      .where('a.id', data.assayId)
-      .first()
-
-    data.assay.resultDataSchema = JSON.parse(data.assay.resultDataSchema)
-    data.assay.patientDataSchema = JSON.parse(data.assay.patientDataSchema)
+    if (data.resultData) {
+      data.resultData = JSON.parse(data.resultData)
+    }
+    if (data.formSchema) {
+      data.formSchema = JSON.parse(data.formSchema)
+    }
+    if (data.formData) {
+      data.formData = JSON.parse(data.formData)
+    }
+    if (data.patientData) {
+      data.patientData = JSON.parse(data.patientData)
+    }
+    if (data.assayId) {
+      data.assay = await knex('Assay as a')
+        .where('a.id', data.assayId)
+        .first()
+      if (data.assay.resultDataSchema) {
+        data.assay.resultDataSchema = JSON.parse(data.assay.resultDataSchema)
+      }
+      if (data.assay.patientDataSchema) {
+        data.assay.patientDataSchema = JSON.parse(data.assay.patientDataSchema)
+      }
+    }
+    // select files attached to this result
+    const { data: files } = await showFileReferences(request)
+    data.files = files
   }
 
   return { ok: results.length === 1, data }
@@ -574,12 +559,7 @@ async function updateWorkflowStatus(request) {
   let { resultWorkflowStatusId } = payload
   // check if a externalId is provided
   if (payload.externalId) {
-    ;[resultWorkflowStatusId] = await knex('ResultWorkflowStatus as rs')
-      .where('rs.externalId', payload.externalId)
-      .select('rs.id')
-      .limit(1)
-      .map(row => row.id)
-
+    resultWorkflowStatusId = await resultWorkflowStatusToId(payload.externalId)
     if (!resultWorkflowStatusId) {
       return Boom.badRequest('Invalid ResultWorkflowStatus ID')
     }
@@ -651,6 +631,110 @@ async function updateQcCheck(request) {
     messageContext.resultUpdated(resultId)
   })
 
+  const response = await showResult(request)
+  return response
+}
+
+async function updateFormData(request) {
+  const { auth, params, payload, plugins: { messageContext } } = request
+  const now = new Date()
+  const { resultId } = params
+
+  const result = await getResultByResultId(request, [
+    'r.assayId',
+    'r.partnerId',
+    'r.formData',
+  ])
+  if (!result.ok) {
+    return Boom.notFound()
+  }
+  const existingFormData = _.get(result, 'formData', {})
+  const mergedFormData = _.merge({}, existingFormData, payload)
+  if (!_.isEqual(existingFormData, mergedFormData)) {
+    const resultForm = await knex('ResultForm')
+      .where({
+        partnerId: result.data.partnerId,
+        assayId: result.data.assayId,
+      })
+      .first('formSchema')
+
+    if (!resultForm || _.isEmpty(resultForm.formSchema)) {
+      return Boom.badRequest(
+        'This result cannot accept form data because no form schema is defined.'
+      )
+    }
+    const formSchema = JSON.parse(resultForm.formSchema)
+    const unrecognisedFields = _.difference(
+      Object.keys(payload),
+      Object.keys(formSchema)
+    )
+    if (!_.isEmpty(unrecognisedFields)) {
+      const undefinedFieldMessage =
+        unrecognisedFields.length > 1
+          ? `This result cannot accept the following fields in it's form data: [${unrecognisedFields.join()}] because they are not defined in the forms schema.`
+          : `This result cannot accept the following field in it's form data: ${
+              unrecognisedFields[0]
+            } because it is not defined in the forms schema.`
+      return Boom.badRequest(undefinedFieldMessage)
+    }
+    const fieldValidationErrors = []
+    _.each(Object.keys(payload), formFieldKey => {
+      const formFieldValue = _.get(payload, formFieldKey)
+      const formFieldSchema = _.get(formSchema, formFieldKey)
+      if (!_.isNil(formFieldValue)) {
+        const allowMultipleSelection = _.get(
+          formFieldSchema,
+          'control.allowMultipleSelection',
+          true
+        )
+        const formFieldOptions = _.get(formFieldSchema, 'control.options')
+        if (formFieldOptions) {
+          const allowedValues = _.map(formFieldOptions, 'value')
+          if (_.isArray(formFieldValue)) {
+            if (!allowMultipleSelection && formFieldValue.length > 1) {
+              fieldValidationErrors.push(
+                `[${formFieldValue.join()}] is invalid for ${formFieldKey} because the field does not allow multiple values.`
+              )
+            }
+            const illegalValuesEntered = _.difference(
+              formFieldValue,
+              allowedValues
+            )
+            if (!_.isEmpty(illegalValuesEntered)) {
+              const validationMessage =
+                illegalValuesEntered.length === 1
+                  ? `${
+                      illegalValuesEntered[0]
+                    } is invalid for ${formFieldKey} because it is not present in the options configured for the field.`
+                  : `[${illegalValuesEntered.join()}] are invalid for ${formFieldKey} because they are not present in the options configured for the field.`
+              fieldValidationErrors.push(validationMessage)
+            }
+          } else if (!allowedValues.includes(formFieldValue)) {
+            fieldValidationErrors.push(
+              `${formFieldValue} is invalid for ${formFieldKey} because it is not present in the options configured for the field.`
+            )
+          }
+        }
+      }
+    })
+    if (!_.isEmpty(fieldValidationErrors)) {
+      return Boom.badRequest(fieldValidationErrors.join('\n'))
+    }
+    messageContext.bindActionCreators({
+      resultUpdated,
+    })
+    const { id: currentUserId } = await getUser(auth.credentials.name)
+    await messageContext.transact(async knex => {
+      await knex('Result')
+        .where('id', resultId)
+        .update({
+          formData: JSON.stringify(mergedFormData),
+          updatedBy: currentUserId,
+          updatedOn: now,
+        })
+      messageContext.resultUpdated(resultId)
+    })
+  }
   const response = await showResult(request)
   return response
 }
@@ -750,303 +834,19 @@ function createUniqueIdForResult(
   return uniqueId
 }
 
-// check for error codes when a result is logged
-async function onResultLogged({ resultId }, { messageContext }) {
-  const context = messageContext.bindActionCreators({
-    resultModuleTemperatureError,
-    resultModulePowerError,
-    resultModuleFailureError,
-    resultMachineTemperatureError,
-    resultMachineProceduralError,
-    resultModuleProceduralError,
-    resultMachinePowerError,
-    inventoryReagentHealth,
-  })
-  await context.run(async knex => {
-    const [result] = await knex('Result as r').where('r.id', resultId)
-    const { deviceId, siteId } = result
-    const last30day = subDays(new Date(), 30)
-    let reagentErrorRatio = 0
-    let invalidReagentErrorRatio = 0
-    if (result.errorCode) {
-      const moduleErrorSerials = []
-      let machineIssueTriggured = false
-      const deviceErrorQuery = knex('Result as r')
-        .innerJoin('ResultCategory as rc', 'r.resultCategory1', 'rc.id')
-        .where('rc.externalId', 'Error')
-        .where('r.deviceId', deviceId)
-      if (MODULE_TEMPERATURE_ERROR_CODES.includes(result.errorCode)) {
-        const moduleTemperatureSerials = []
-        const modules = await deviceErrorQuery
-          .clone()
-          .where('r.endedOn', '>=', last30day)
-          .whereIn('r.errorCode', MODULE_TEMPERATURE_ERROR_CODES)
-          .select(
-            'r.moduleSerial as moduleSerial',
-            knex.raw(
-              'coalesce(min(r.moduleName), r.moduleSerial) as moduleName'
-            )
-          )
-          .count('r.id as errorCount')
-          .groupBy('r.moduleSerial')
-        await Promise.all(
-          _.map(modules, module => {
-            if (module.errorCount > moduleTemperatureMaxErrors) {
-              moduleTemperatureSerials.push(module.moduleSerial)
-              moduleErrorSerials.push(module.moduleSerial)
-              context.resultModuleTemperatureError(deviceId, module)
-            }
-          })
-        )
-        // Machine temperature query
-        const [{ errorCount }] = await deviceErrorQuery
-          .clone()
-          .where('r.endedOn', '>=', last30day)
-          .whereIn('r.errorCode', MODULE_TEMPERATURE_ERROR_CODES)
-          .whereNotIn('r.moduleSerial', moduleTemperatureSerials)
-          .count('r.id as errorCount')
-        if (errorCount > machineTemperatureMaxErrors) {
-          machineIssueTriggured = true
-          context.resultMachineTemperatureError(deviceId)
-        }
-      } else if (MODULE_POWER_ERROR_CODES.includes(result.errorCode)) {
-        const modules = await deviceErrorQuery
-          .clone()
-          .where('r.endedOn', '>=', last30day)
-          .whereIn('r.errorCode', MODULE_POWER_ERROR_CODES)
-          .select(
-            'r.moduleSerial as moduleSerial',
-            knex.raw(
-              'coalesce(min(r.moduleName), r.moduleSerial) as moduleName'
-            )
-          )
-          .count('r.id as errorCount')
-          .groupBy('r.moduleSerial')
-        await Promise.all(
-          _.map(modules, module => {
-            if (module.errorCount > modulePowerMaxErrors) {
-              moduleErrorSerials.push(module.moduleSerial)
-              context.resultModulePowerError(deviceId, module)
-            }
-          })
-        )
-        const [{ errorCount }] = await deviceErrorQuery
-          .clone()
-          .where('r.endedOn', '>=', last30day)
-          .whereIn('r.errorCode', MODULE_POWER_ERROR_CODES)
-          .count('r.id as errorCount')
-        if (errorCount > machinePowerMaxErrors) {
-          context.resultMachinePowerError(deviceId)
-        }
-      } else if (MODULE_FAILURE_ERROR_CODES.includes(result.errorCode)) {
-        const modules = await deviceErrorQuery
-          .clone()
-          .where('r.endedOn', '>=', last30day)
-          .whereIn('r.errorCode', MODULE_FAILURE_ERROR_CODES)
-          .select(
-            'r.moduleSerial as moduleSerial',
-            knex.raw(
-              'coalesce(r.moduleName, r.moduleSerial) as resultModuleName'
-            )
-          )
-          .count('r.id as errorCount')
-          .groupBy('r.moduleSerial')
-        await Promise.all(
-          _.map(modules, module => {
-            if (module.errorCount > moduleFailureMaxErrors) {
-              moduleErrorSerials.push(module.moduleSerial)
-              context.resultModuleFailureError(deviceId, module)
-            }
-          })
-        )
-      } else if (
-        PROCEDURAL_ERROR_CODES.includes(result.errorCode) &&
-        !machineIssueTriggured
-      ) {
-        const modules = await deviceErrorQuery
-          .clone()
-          .where('r.endedOn', '>=', last30day)
-          .whereIn('r.errorCode', PROCEDURAL_ERROR_CODES)
-          .whereNotIn('r.moduleSerial', moduleErrorSerials)
-          .select(
-            'r.moduleSerial as moduleSerial',
-            knex.raw(
-              'coalesce(min(r.moduleName), r.moduleSerial) as moduleName'
-            )
-          )
-          .count('r.id as errorCount')
-          .groupBy('r.moduleSerial')
-
-        // Check for machine issue first
-        let allModulesErr = true
-        await Promise.all(
-          _.map(modules, async module => {
-            const [{ moduleResultCount }] = await knex('Result as r')
-              .where('r.endedOn', '>=', last30day)
-              .where('r.moduleSerial', module.moduleSerial)
-              .count('r.id as moduleResultCount')
-            const prcntModuleError = module.errorCount / moduleResultCount * 100
-            allModulesErr = allModulesErr && prcntModuleError > maxPrcntErrors
-          })
-        )
-        if (allModulesErr) {
-          // Trigger machine procedural issue
-          context.resultMachineProceduralError(deviceId)
-        } else {
-          // Check for module procedural issue
-          _.map(modules, async module => {
-            const [{ moduleResultCount }] = await knex('Result as r')
-              .where('r.endedOn', '>=', last30day)
-              .where('r.moduleSerial', module.moduleSerial)
-              .count('r.id as moduleResultCount')
-            const prcntModuleError = module.errorCount / moduleResultCount * 100
-            if (prcntModuleError > maxPrcntErrors) {
-              context.resultModuleProceduralError(deviceId, module)
-            }
-          })
-        }
-      } else if (REAGENT_HEALTH_ERROR_CODES.includes(result.errorCode)) {
-        const reagentErrorQuery = knex('Result as r')
-          .innerJoin('ResultCategory as rc', 'r.resultCategory1', 'rc.id')
-          .where({
-            'r.siteId': siteId,
-          })
-        ;[{ reagentErrorRatio }] = await reagentErrorQuery.clone().select(
-          (() => {
-            const errorCount =
-              "sum(case when r.errorCode in (?) and rc.externalId='Error' then 1 else 0 end)"
-            const totalCount = 'count(distinct r.id)'
-
-            return knex.raw(
-              `case when count(r.id) = 0 then 0 else ${errorCount} / ${totalCount} * 100 end as reagentErrorRatio`,
-              [REAGENT_HEALTH_ERROR_CODES]
-            )
-          })()
-        )
-        ;[
-          { invalidReagentErrorRatio },
-        ] = await reagentErrorQuery.clone().select(
-          (() => {
-            const errorCount =
-              "sum(case when (r.errorCode in (?) and rc.externalId='Error') or (rc.externalId='Invalid') then 1 else 0 end)"
-            const totalCount = 'count(distinct r.id)'
-
-            return knex.raw(
-              `case when count(r.id) = 0 then 0 else ${errorCount} / ${totalCount} * 100 end as invalidReagentErrorRatio`,
-              [REAGENT_HEALTH_ERROR_CODES]
-            )
-          })()
-        )
-      }
-    }
-    // Check for machine power issue triggered by noResult
-    const [{ noResultCount }] = await knex('Result as r')
-      .innerJoin('ResultCategory as rc', 'r.resultCategory1', 'rc.id')
-      .where('r.deviceId', deviceId)
-      .where('r.endedOn', '>=', last30day)
-      .where('rc.externalId', 'NoResult')
-      .count('r.id as noResultCount')
-
-    const [{ machineResultCount }] = await knex('Result as r')
-      .where('r.deviceId', deviceId)
-      .where('r.endedOn', '>=', last30day)
-      .count('r.id as machineResultCount')
-
-    if (machineResultCount !== 0) {
-      const prcntNoResult = noResultCount / machineResultCount * 100
-      if (prcntNoResult > maxPrcntMachinePowerErrors) {
-        context.resultMachinePowerError(deviceId)
-      }
-    }
-
-    const { id: resultCategoryInvalidId } = await knex('ResultCategory as rc')
-      .where({ externalId: 'Invalid' })
-      .first('id')
-
-    let invalidResultRatio = 0
-    if (result.resultCategory1 === resultCategoryInvalidId) {
-      const invalidResultQuery = knex('Result as r')
-        .innerJoin('ResultCategory as rc', 'r.resultCategory1', 'rc.id')
-        .where({
-          'r.siteId': result.siteId,
-        })
-      ;[{ invalidResultRatio }] = await invalidResultQuery.clone().select(
-        (() => {
-          const invalidCount =
-            "sum(case when rc.externalId = 'Invalid' then 1 else 0 end)"
-          const totalCount = 'count(distinct r.id)'
-
-          return knex.raw(
-            `case when count(r.id) = 0 then 0 else ${invalidCount} / ${totalCount} * 100 end as invalidResultRatio`
-          )
-        })()
-      )
-      const invalidResultBatchRatios = await invalidResultQuery
-        .clone()
-        .select(
-          (() => {
-            const invalidCount =
-              "sum(case when rc.externalId = 'Invalid' then 1 else 0 end)"
-            const totalCount = 'count(distinct r.id)'
-
-            return knex.raw(
-              `r.consumableLot, r.assayId, case when count(r.id) = 0 then 0 else ${invalidCount} / ${totalCount} * 100 end as invalidResultRatio`
-            )
-          })()
-        )
-        .groupBy(['r.consumableLot', 'r.assayId'])
-      _.forEach(invalidResultBatchRatios, ratio => {
-        if (ratio.invalidResultRatio > invalidResultBatchRatio) {
-          createInventoryReagentHealthIssue(
-            result.deviceId,
-            result.partnerId,
-            result.assayId,
-            context.inventoryReagentHealth
-          )
-        }
-      })
-    }
-    if (
-      reagentErrorRatio > maxReagentErrorRatio ||
-      invalidResultRatio > maxInvalidResultRatio ||
-      invalidReagentErrorRatio > maxInvalidReagentErrorRatio
-    ) {
-      createInventoryReagentHealthIssue(
-        result.deviceId,
-        result.partnerId,
-        result.assayId,
-        context.inventoryReagentHealth
-      )
-    }
-  })
-}
-
-async function createInventoryReagentHealthIssue(
-  deviceId,
-  partnerId,
-  assayId,
-  dispatchAction
-) {
-  const assayConsumables = await selectAssayConsumables(
-    knex,
-    partnerId,
-    assayId
-  )
-  _.map(assayConsumables, async assayConsumable => {
-    dispatchAction(deviceId, assayConsumable.consumableId)
-  })
-}
-
 module.exports = {
   listResults,
   showResult,
   listResultTypes,
   updateWorkflowStatus,
   updateQcCheck,
+  updateFormData,
   listWorkflowStatusTypes,
   listWorkflowStatusLog,
   exportResults,
   showDeviceLogs,
+  showFileReferences,
+  downloadFile,
+  downloadFirstImage,
   createUniqueIdForResult,
-  onResultLogged,
 }

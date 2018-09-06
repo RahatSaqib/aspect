@@ -47,7 +47,9 @@ function issueTriggered(issueId) {
 
 /**
  * Creates an action to notify the issue with given id
- * has been escalated.
+ * has been escalated. This will be sent when issue is
+ * created with level 1 and every additional level after
+ * that.
  *
  * issueId is required.
  * level is required

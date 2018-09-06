@@ -8,6 +8,8 @@ const { addClientRoutes, addDeviceRoutes } = require('./routes')
 const { createMessageQueue } = require('./mq')
 const { addSubscriptions } = require('./subscriptions')
 const { startScheduler } = require('./scheduler')
+const { addLoggers } = require('./logger/service')
+const deviceApiKeyPlugin = require('./deviceApi/deviceApiKeyPlugin')
 const Hapi = require('hapi')
 
 const server = new Hapi.Server()
@@ -33,7 +35,10 @@ const plugins = [
   require('hapi-auth-jwt2'),
 
   // API Key in Device API
-  require('./deviceApi/deviceApiKeyPlugin'),
+  deviceApiKeyPlugin,
+
+  // Basic authentication in Device API
+  require('hapi-auth-basic'),
 
   // SwaggerUI and documentation
   {
@@ -56,14 +61,6 @@ const plugins = [
     },
   },
 
-  // log responses to console using good
-  {
-    register: require('good'),
-    options: {
-      reporters: loadGoodReporter(),
-    },
-  },
-
   // Set payload prior to validation transformation
   rawPayloadPlugin,
 
@@ -76,8 +73,11 @@ addRavenPlugin(plugins)
 function messageQueuePlugin(server, options, next) {
   createMessageQueue('aspect')
     .then(queue => {
+      addLoggers(server, queue)
       addSubscriptions(queue)
-      startScheduler(queue)
+      if (config.scheduler.enabled) {
+        startScheduler(queue)
+      }
       server.ext('onPreHandler', (request, reply) => {
         request.plugins.messageContext = queue.createMessageContext(
           'aspect_request'
@@ -91,46 +91,6 @@ function messageQueuePlugin(server, options, next) {
 messageQueuePlugin.attributes = {
   name: 'messageQueue',
   version,
-}
-
-// load and return the good logging configuration
-function loadGoodReporter() {
-  const { logstash } = config
-
-  if (logstash) {
-    // Forward to logstash if configured
-    return {
-      logstash: [
-        {
-          // Only show response log, and request.log events
-          module: 'good-squeeze',
-          name: 'Squeeze',
-          args: [{ response: '*' }],
-        },
-        // send to logstash
-        {
-          module: 'good-logstash',
-          args: [logstash.endpoint],
-        },
-      ],
-    }
-  }
-
-  // Logs to console by default.
-  return {
-    console: [
-      {
-        // Only show response log, and request.log events
-        module: 'good-squeeze',
-        name: 'Squeeze',
-        args: [{ log: '*', response: '*', request: '*' }],
-      },
-      // format as string for console
-      { module: 'good-console' },
-      // write to std out
-      'stdout',
-    ],
-  }
 }
 
 // Loads Raven (Sentry) plugin if configured
@@ -169,7 +129,12 @@ server.register(plugins, err => {
 // ================================================
 // use config: { auth: false } on route definition to disable authentication
 // Device API uses API Keys
-server.auth.strategy('deviceApi', 'deviceApiKey')
+server.auth.strategy('deviceApiKey', 'deviceApiKey')
+server.auth.strategy('deviceApiBasic', 'basic', {
+  allowEmptyUsername: true,
+  validateFunc: deviceApiKeyPlugin.validateApiKeyAuthBasic,
+})
+
 // Client API uses JWT
 server.auth.strategy('clientApi', 'jwt', {
   key: config.secret,

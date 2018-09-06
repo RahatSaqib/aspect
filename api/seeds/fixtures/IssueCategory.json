@@ -1,0 +1,24 @@
+{
+  "data": [
+    {
+      "name": "Device Health",
+      "externalId": "DeviceHealth",
+      "i18nKey": "issueCategoryDeviceHealth"
+    },
+    {
+      "name": "Reagent Health",
+      "externalId": "ReagentHealth",
+      "i18nKey": "issueCategoryReagentHealth"
+    },
+    {
+      "name": "Data Health",
+      "externalId": "DataHealth",
+      "i18nKey": "issueCategoryDataHealth"
+    },
+    {
+      "name": "Connectivity Health",
+      "externalId": "ConnectivityHealth",
+      "i18nKey": "issueCategoryConnectivityHealth"
+    }
+  ]
+}

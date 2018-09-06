@@ -1,23 +1,20 @@
-// https://github.com/yahoo/react-intl/wiki/API#formatdate
-// formatDate(value, options) => options
+import { format as dateFnFormat } from 'date-fns'
+import { getAspectDisplayPreferences } from '../../globals/sideEffects/LocalStorage'
 
-export const longNumericFormat = {
-  year: 'numeric',
-  month: 'numeric',
-  day: 'numeric',
-  hour: 'numeric',
-  minute: 'numeric',
-  second: 'numeric',
+function format(date, displayPreferenceKey) {
+  const prefs = getAspectDisplayPreferences()
+  const dateFormat = prefs.get(displayPreferenceKey, 'YYYY-MM-DD')
+  return date == null ? '' : dateFnFormat(date, dateFormat)
 }
 
-export const shortNumericDate = {
-  year: 'numeric',
-  month: 'numeric',
-  day: 'numeric',
+export function formatDate(date) {
+  return format(date, 'dateFormat')
 }
 
-export const shortNumericTime = {
-  hour: 'numeric',
-  minute: 'numeric',
-  second: 'numeric',
+export function formatTime(date) {
+  return format(date, 'timeFormat')
+}
+
+export function formatDateTime(date) {
+  return format(date, 'dateTimeFormat')
 }

@@ -1,0 +1,58 @@
+{
+  "data": [
+    {
+      "name": "Asserted Zero Inventory",
+      "i18nKey": "ConsumableReason_AssertedZeroInventory",
+      "decrease": 0,
+      "reset": 1
+    },
+    {
+      "name": "Test Conducted",
+      "i18nKey": "ConsumableReason_TestConducted",
+      "decrease": 1,
+      "reset": 0
+    },
+    {
+      "name": "Transfer Sent",
+      "i18nKey": "ConsumableReason_TransferSent",
+      "decrease": 1,
+      "reset": 0
+    },
+    {
+      "name": "Transfer Received",
+      "i18nKey": "ConsumableReason_TransferReceived",
+      "decrease": 0,
+      "reset": 0
+    },
+    {
+      "name": "Expired",
+      "i18nKey": "ConsumableReason_Expired",
+      "decrease": 1,
+      "reset": 0
+    },
+    {
+      "name": "Imported",
+      "i18nKey": "ConsumableReason_Imported",
+      "decrease": 0,
+      "reset": 1
+    },
+    {
+      "name": "Stolen",
+      "i18nKey": "ConsumableReason_Stolen",
+      "decrease": 1,
+      "reset": 0
+    },
+    {
+      "name": "Lost",
+      "i18nKey": "ConsumableReason_Lost",
+      "decrease": 1,
+      "reset": 0
+    },
+    {
+      "name": "Captured",
+      "i18nKey": "ConsumableReason_Captured",
+      "decrease": 0,
+      "reset": 1
+    }
+  ]
+}

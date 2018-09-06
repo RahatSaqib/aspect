@@ -5,6 +5,8 @@ const { notificationCreated } = require('./actions')
 const { alertMessageCreated } = require('../alert/actions')
 const { emailMessageCreated } = require('../email/actions')
 const { smsMessageCreated } = require('../sms/actions')
+const { webhookMessageCreated } = require('../webhook/actions')
+const { messageStatusToId } = require('../shared/dictionary')
 
 async function listNotifications(request) {
   const { query } = request
@@ -29,90 +31,74 @@ async function listNotifications(request) {
     },
     {
       alertType: 'normal',
-      alertName: 'Alert name',
-      lastTriggeredOn: subMinutes(now, 1),
+      alertName: 'New HIV+ Case',
+      lastTriggeredOn: subMinutes(now, 60),
       recipientsCount: 14,
       triggersCount: 7,
       errorsCount: 0,
     },
     {
       alertType: 'normal',
-      alertName: 'Alert name',
-      lastTriggeredOn: subMinutes(now, 2),
+      alertName: 'Inventory about to expire',
+      lastTriggeredOn: subMinutes(now, 200),
       recipientsCount: 3,
       triggersCount: 1,
       errorsCount: 0,
     },
     {
       alertType: 'normal',
-      alertName: 'Alert name',
-      lastTriggeredOn: subMinutes(now, 3),
+      alertName: 'New HIV+ Case',
+      lastTriggeredOn: subMinutes(now, 345),
       recipientsCount: 7,
       triggersCount: 3,
       errorsCount: 0,
     },
     {
       alertType: 'mine',
-      alertName: 'Alert name',
-      lastTriggeredOn: subMinutes(now, 4),
+      alertName: 'Module swapped',
+      lastTriggeredOn: subMinutes(now, 800),
       recipientsCount: 14,
       triggersCount: 7,
       errorsCount: 5,
     },
     {
       alertType: 'mine',
-      alertName: 'Alert name',
-      lastTriggeredOn: subMinutes(now, 5),
+      alertName: 'TB MTB+ Rif+ in Western Region',
+      lastTriggeredOn: subMinutes(now, 1202),
       recipientsCount: 3,
       triggersCount: 1,
       errorsCount: 23,
     },
     {
       alertType: 'normal',
-      alertName: 'Alert name',
-      lastTriggeredOn: subMinutes(now, 6),
+      alertName: 'New HIV+ Case',
+      lastTriggeredOn: subMinutes(now, 1634),
       recipientsCount: 7,
       triggersCount: 3,
       errorsCount: 0,
     },
     {
       alertType: 'normal',
-      alertName: 'Alert name',
-      lastTriggeredOn: subMinutes(now, 7),
+      alertName: 'Device Offline',
+      lastTriggeredOn: subMinutes(now, 1645),
       recipientsCount: 14,
       triggersCount: 7,
       errorsCount: 0,
     },
     {
       alertType: 'normal',
-      alertName: 'Alert name',
-      lastTriggeredOn: subMinutes(now, 8),
+      alertName: 'TB MTB+ Rif+ in Southern Region',
+      lastTriggeredOn: subMinutes(now, 2346),
       recipientsCount: 3,
       triggersCount: 1,
       errorsCount: 0,
     },
     {
       alertType: 'normal',
-      alertName: 'Alert name',
-      lastTriggeredOn: subMinutes(now, 9),
+      alertName: 'New HIV+ Case',
+      lastTriggeredOn: subMinutes(now, 13457),
       recipientsCount: 7,
       triggersCount: 3,
-      errorsCount: 0,
-    },
-    {
-      alertType: 'normal',
-      alertName: 'Alert name',
-      lastTriggeredOn: subMinutes(now, 10),
-      recipientsCount: 14,
-      triggersCount: 7,
-      errorsCount: 0,
-    },
-    {
-      alertType: 'normal',
-      alertName: 'Alert name',
-      lastTriggeredOn: subMinutes(now, 11),
-      recipientsCount: 3,
-      triggersCount: 1,
       errorsCount: 0,
     },
   ])
@@ -124,16 +110,13 @@ async function listNotifications(request) {
   return result
 }
 
-async function onIssueTriggered({ issueId }, context) {
-  await onIssueEscalated({ issueId }, context)
-}
-
 async function onIssueEscalated({ issueId }, { messageContext: context }) {
   context.bindActionCreators({
     notificationCreated,
     alertMessageCreated,
     emailMessageCreated,
     smsMessageCreated,
+    webhookMessageCreated,
   })
   await context.transact(async knex => {
     const now = new Date()
@@ -154,6 +137,7 @@ async function onIssueEscalated({ issueId }, { messageContext: context }) {
       .select(
         'nt.id',
         'nt.jobFunctionId',
+        'nt.level',
         'i.siteId',
         'i.deviceId',
         'i.resultId',
@@ -162,7 +146,8 @@ async function onIssueEscalated({ issueId }, { messageContext: context }) {
         'g.lgaId',
         'mt.alertTemplateId',
         'mt.emailTemplateId',
-        'mt.smsTemplateId'
+        'mt.smsTemplateId',
+        'mt.webhookTemplateId'
       )
 
     // for each job function, find all policies with maximum constrained level,
@@ -216,10 +201,7 @@ async function onIssueEscalated({ issueId }, { messageContext: context }) {
               .first()
             if (existingNotification == null) {
               notification.createdOn = now
-              const { id: messageStatusId } = await knex('MessageStatus')
-                .where({ externalId: 'Initial' })
-                .first('id')
-
+              const messageStatusId = await messageStatusToId('Initial')
               const sharedMessageProperties = {
                 messageStatusId,
                 personId: person.id,
@@ -269,6 +251,19 @@ async function onIssueEscalated({ issueId }, { messageContext: context }) {
                 context.smsMessageCreated(smsMessageId)
               }
 
+              if (policy.webhookTemplateId != null) {
+                const [webhookMessageId] = await knex('WebhookMessage').insert(
+                  Object.assign(
+                    {
+                      webhookTemplateId: policy.webhookTemplateId,
+                    },
+                    sharedMessageProperties
+                  )
+                )
+                notification.webhookMessageId = webhookMessageId
+                context.webhookMessageCreated(webhookMessageId)
+              }
+
               const [notificationId] = await knex('Notification').insert(
                 notification
               )
@@ -283,6 +278,5 @@ async function onIssueEscalated({ issueId }, { messageContext: context }) {
 
 module.exports = {
   listNotifications,
-  onIssueTriggered,
   onIssueEscalated,
 }

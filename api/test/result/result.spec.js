@@ -8,6 +8,15 @@ const { runTestWithKnex } = require('../utils/generatorFunctionUtils')
 const server = supertest.agent('http://localhost:8080')
 const { assert } = chai
 
+const { getCommCarePayload } = require('../deviceApi/commcare/commcare_utils')
+const {
+  createTestContext,
+  getDeviceFromApiKey,
+  getLastResultId,
+  getLastResult,
+  deleteDeviceAndTestData,
+} = require('../deviceApi/utils')
+
 describe('Result routes', () => {
   const path = '/api/result'
   let resultId = 1
@@ -144,6 +153,7 @@ describe('Result routes', () => {
           assert.property(res.body.data.assay, 'resultCategory2i18nKey')
           assert.property(res.body.data.assay, 'resultDataSchema')
           assert.typeOf(res.body.data.assay.resultDataSchema, 'Object')
+          assert.property(res.body.data, 'files')
           done()
         })
     })
@@ -455,6 +465,158 @@ describe('Result routes', () => {
                 })
             })
         })
+    })
+
+    describe('Form data', () => {
+      const context = createTestContext(server, {
+        user: 'gates_rdt',
+        password: 'gates2018',
+        type: 'CommCareApp',
+        partner: 'GatesRDT',
+        site: 'commcare',
+      })
+      const { runTest } = context
+      let resultId
+      let result
+      let apiKey
+
+      beforeEach(async () => {
+        const commcarePluginPath = '/device/plugin/commcare'
+        await context.beforeEach()
+
+        return runTest(async knex => {
+          apiKey = context.apiKey // eslint-disable-line prefer-destructuring
+          await server
+            .post(commcarePluginPath)
+            .auth('commcare_test', apiKey.token)
+            .send(
+              getCommCarePayload({
+                resultText: 'negative',
+                age: 28,
+                gender: 'male',
+              })
+            )
+            .then(res => {
+              assert.equal(res.status, 200)
+              assert.typeOf(res.body, 'Object')
+            })
+          const device = await getDeviceFromApiKey(knex, apiKey)
+          resultId = await getLastResultId(knex, device.id)
+          result = await getLastResult(knex, device.id)
+          assert.isNull(result.formData)
+        })
+      })
+
+      afterEach(async () => {
+        await runTest(async knex =>
+          deleteDeviceAndTestData(knex, [apiKey, context.apiKey])
+        )
+        return context.afterEach()
+      })
+
+      it('Should save values to the formData field in the result', async () =>
+        runTestWithKnex(async knex => {
+          let response = await server
+            .put(`${path}/form-data/${resultId}`)
+            .send({
+              expertInterpretation: 'positive',
+            })
+            .set('Authorization', context.clientAuth)
+          assert.deepEqual(response.body.data.formData, {
+            expertInterpretation: 'positive',
+          })
+          assert.equal(response.body.data.id, resultId)
+          let resultFromDatabase = await knex('Result')
+            .where('id', resultId)
+            .first('formData')
+          assert.deepEqual(
+            response.body.data.formData,
+            JSON.parse(resultFromDatabase.formData)
+          )
+
+          response = await server
+            .put(`${path}/form-data/${resultId}`)
+            .send({
+              expertInterpretation: null,
+            })
+            .set('Authorization', context.clientAuth)
+          assert.deepEqual(response.body.data.formData, {
+            expertInterpretation: null,
+          })
+          assert.equal(response.body.data.id, resultId)
+          resultFromDatabase = await knex('Result')
+            .where('id', resultId)
+            .first('formData')
+          assert.deepEqual(
+            response.body.data.formData,
+            JSON.parse(resultFromDatabase.formData)
+          )
+
+          response = await server
+            .put(`${path}/form-data/${resultId}`)
+            .send({
+              expertInterpretation: 'negative',
+            })
+            .set('Authorization', context.clientAuth)
+          assert.deepEqual(response.body.data.formData, {
+            expertInterpretation: 'negative',
+          })
+          assert.equal(response.body.data.id, resultId)
+          resultFromDatabase = await knex('Result')
+            .where('id', resultId)
+            .first('formData')
+          assert.deepEqual(
+            response.body.data.formData,
+            JSON.parse(resultFromDatabase.formData)
+          )
+
+          response = await server
+            .put(`${path}/form-data/${resultId}`)
+            .send({})
+            .set('Authorization', context.clientAuth)
+          assert.deepEqual(response.body.data.formData, {
+            expertInterpretation: 'negative',
+          })
+          assert.equal(response.body.data.id, resultId)
+          resultFromDatabase = await knex('Result')
+            .where('id', resultId)
+            .first('formData')
+          assert.deepEqual(
+            response.body.data.formData,
+            JSON.parse(resultFromDatabase.formData)
+          )
+        }))
+
+      it("Should NOT save values to the formData field in the result when field sent is not in the assay's form schema", async () =>
+        runTestWithKnex(async knex => {
+          const response = await server
+            .put(`${path}/form-data/${resultId}`)
+            .send({
+              someUndefinedField: 'positive',
+              anotherUndefinedField: 'another value',
+            })
+            .set('Authorization', context.clientAuth)
+          assert.equal(response.statusCode, 400)
+          const resultFromDatabase = await knex('Result')
+            .where('id', resultId)
+            .first('formData')
+          assert.isNull(resultFromDatabase.formData)
+        }))
+
+      it("Should NOT save values to the formData field in the result when value is not in the selector field's options list", async () =>
+        runTestWithKnex(async knex => {
+          const response = await server
+            .put(`${path}/form-data/${resultId}`)
+            .send({
+              expertInterpretation: 'unknown option',
+            })
+            .set('Authorization', context.clientAuth)
+          assert.equal(response.statusCode, 400)
+          const resultFromDatabase = await knex('Result')
+            .where('id', resultId)
+            .first('formData')
+          assert.isNull(resultFromDatabase.formData)
+        }))
     })
   })
 })

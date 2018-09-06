@@ -4,6 +4,7 @@ const Boom = require('boom')
 
 const { knex, filterParams, sortPageParams } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
+const { deviceStatusToId, resultCategoryToId } = require('../shared/dictionary')
 const {
   getCellsByValue,
   generateExcelFile,
@@ -59,6 +60,8 @@ const SELECT_SHOW_FIELDS = [
 async function getListDevices(query, auth) {
   // get data constraints
   const dataConstraints = await getConstraints(auth.credentials)
+
+  const resultCategoryErrorId = await resultCategoryToId('Error')
 
   const deviceQuery = knex('Device as d')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
@@ -129,6 +132,12 @@ async function getListDevices(query, auth) {
         .countDistinct('r.id')
         .as('thisMonth'),
       knex('Result as r')
+        .whereRaw('r.deviceId = d.id')
+        .where('r.endedOn', '>=', last30Day)
+        .where('r.resultCategory1', '=', resultCategoryErrorId)
+        .countDistinct('r.id')
+        .as('thisMonthErrors'),
+      knex('Result as r')
         .innerJoin('Sample as s', 'r.sampleId', 's.id')
         .innerJoin('ResultWorkflowLog as rl', 'r.id', 'rl.resultId')
         .innerJoin(
@@ -195,12 +204,12 @@ async function getListDevices(query, auth) {
   data.forEach(it => {
     // FIXME: Use actual data instead
     it.availability = {
-      count: _.random(1, 20),
-      total: 20,
+      count: _.random(25, 30),
+      total: 30,
     }
     it.error = {
-      count: _.random(1, 875),
-      total: 875,
+      count: it.thisMonthErrors,
+      total: it.thisMonth,
     }
     it.alerts = [
       {
@@ -211,9 +220,6 @@ async function getListDevices(query, auth) {
       },
       {
         type: 'quality-control',
-      },
-      {
-        type: 'connectivity',
       },
     ].filter(() => _.random(0, 10) > 7)
   })
@@ -350,9 +356,7 @@ async function updateDevice(request) {
     _.has(payload, 'statusToken') &&
     device.statusToken !== payload.statusToken
   ) {
-    ;({ id: deviceStatusId } = await knex('DeviceStatus as ds')
-      .where('ds.token', payload.statusToken)
-      .first('ds.id'))
+    deviceStatusId = await deviceStatusToId(payload.statusToken)
   }
 
   // update item

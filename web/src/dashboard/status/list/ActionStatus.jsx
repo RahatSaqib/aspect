@@ -6,7 +6,7 @@ import { Button } from 'react-toolbox/lib/button'
 import { Input } from 'react-toolbox/lib/input'
 import { compose, lifecycle, pure, withHandlers } from 'recompose'
 
-import { shortNumericDate } from '../../../shared/utils/dateFormat'
+import { formatDate } from '../../../shared/utils/dateFormat'
 import recomposeForm from '../../../components/recomposeForm'
 import { acknowledgeIssue } from '../../../issue/IssueRedux'
 import { updateStockLevel } from '../../../inventory/InventoryRedux'
@@ -147,16 +147,23 @@ export const ActionStatus = compose(
   })
 )(({ intl, messages, action, handleSubmit }) => {
   if (action.get('issueTypeExternalId') === 'StockLevelUpdate') {
+    if (action.get('canEdit')) {
+      return (
+        <UpdateStockLevelInput
+          intl={intl}
+          messages={messages}
+          action={action}
+          forceEdit={
+            action.get('issueTypeExternalId') === 'StockLevelUpdate' &&
+            action.get('status') === 'Active'
+          }
+        />
+      )
+    }
     return (
-      <UpdateStockLevelInput
-        intl={intl}
-        messages={messages}
-        action={action}
-        forceEdit={
-          action.get('notificationType') === 'luStockLevelUpdate' &&
-          action.get('status') === 'Active'
-        }
-      />
+      <div className={cssClasses('Issue__Action__Status')}>
+        <span>{`${action.get('totalInStock', 0)}`}</span>
+      </div>
     )
   }
   if (action.get('status') === 'Active') {
@@ -179,7 +186,7 @@ export const ActionStatus = compose(
       <div className={cssClasses('Issue__Action__Status')}>
         <span>
           {`${intl.formatMessage(messages.acknowledged)}
-     ${intl.formatDate(action.get('statusDate'), shortNumericDate)}`}
+     ${formatDate(action.get('statusDate'))}`}
         </span>
       </div>
     )

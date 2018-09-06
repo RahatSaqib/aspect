@@ -23,31 +23,43 @@ function authenticate(request, reply) {
     // Remove Bearer from Authorization header
     token = headers.authorization.replace(/Bearer/gi, '')
   }
+  authToken(token)
+    .then(credentials => reply.continue({ credentials }))
+    .catch(err => reply(err))
+}
 
+function validateApiKeyAuthBasic(request, username, password, callback) {
+  authToken(password)
+    .then(credentials => callback(null, true, credentials))
+    .catch(err => callback(err, false, null))
+}
+
+async function authToken(token) {
   // Remove whitespace and dashes
   token = normalizeToken(token)
 
   if (!token) {
     // token not specified
-    reply(Boom.unauthorized('Invalid API Key'))
-  } else {
-    // lookup single non-revoked API Key
-    knex('DeviceApiKey')
-      .where({ token, revoked: false })
-      .count('id as cnt')
-      .then(([keys]) => {
-        if (keys.cnt !== 1) {
-          reply(Boom.unauthorized())
-        } else {
-          const scope = ['deviceApi']
-          const credentials = { token, scope }
-          reply.continue({ credentials })
-        }
-      })
-      .catch(() => reply(Boom.unauthorized('Cannot authorize API Key')))
+    throw Boom.unauthorized('Invalid API Key')
   }
+
+  // lookup single non-revoked API Key
+  const key = await knex('DeviceApiKey as k')
+    .leftJoin('Device as d', 'd.id', 'k.deviceId')
+    .where({ 'k.token': token, 'k.revoked': false })
+    .first('k.id as keyId', 'd.name as deviceName')
+
+  if (key == null) {
+    throw Boom.unauthorized('Cannot authorize API Key')
+  }
+
+  const scope = ['deviceApi']
+  const name = `(${key.keyId}) ${key.deviceName || ''}`.trim()
+  const credentials = { token, scope, name }
+  return credentials
 }
 
 module.exports = {
   register,
+  validateApiKeyAuthBasic,
 }

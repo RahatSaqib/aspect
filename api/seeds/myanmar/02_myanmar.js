@@ -1,4 +1,4 @@
-module.exports = require('../../src/db').seed(seed)
+module.exports = require('../utils').seed(seed)
 
 const ADMIN_PW = '8v5TMxkpzP'
 const RO_PW = 'u4W9wupFBA'
@@ -8,7 +8,17 @@ const _ = require('lodash')
 
 const config = require('../../src/config')
 const dashboardWidget = require('./fixtures/dashboardWidget.json')
-const { rowsAsObject, getDefaultMessageTypes } = require('../utils')
+const {
+  rowsAsObject,
+  getDefaultMessageTypes,
+  getPermissionModules,
+} = require('../utils')
+const {
+  allFeatureToId,
+  deviceStatusToId,
+  deviceTypeToId,
+  partnerTypeToId,
+} = require('../../src/shared/dictionary')
 
 const now = new Date()
 
@@ -40,46 +50,19 @@ async function seed(knex) {
   }
 
   // Reuse previously seeded "static" data
-  const [
-    partnerTypes,
-    deviceTypes,
-    deviceStatuses,
-    issueTypes,
-    defaultMessageTypes,
-  ] = await Promise.all([
-    rowsAsObject(knex, 'PartnerType', 'name'),
-    rowsAsObject(knex, 'DeviceType', 'externalId'),
-    rowsAsObject(knex, 'DeviceStatus', 'token'),
+  const [issueTypes, defaultMessageTypes] = await Promise.all([
     rowsAsObject(knex, 'IssueType', 'externalId'),
     getDefaultMessageTypes(knex),
   ])
 
   const [partnerId] = await knex('Partner').insert({
     name: 'Myanmar',
-    partnerTypeId: partnerTypes.Operating.id,
+    partnerTypeId: await partnerTypeToId('Operating'),
     deviceLogHistoryDays: 365,
     autoAcknowledgeOlderThanDays: 28,
     numberToLeaveUnacknowledged: 15,
     maxDaysDeviceOffline: 7,
   })
-
-  const modules = await knex('Permission').reduce((memo, row) => {
-    if (!memo[row.module]) {
-      memo[row.module] = {}
-    }
-    memo[row.module][row.activity] = row.id
-    return memo
-  }, {})
-
-  await knex('Feature').insert({ module: 'targetDashboard' })
-  await knex('Feature').insert({ module: 'actionDashboard' })
-  await knex('Feature').insert({ module: 'reportDashboard' })
-  await knex('Feature').insert({ module: 'siteFilterDashboard' })
-
-  const featureModules = await knex('Feature').reduce((memo, row) => {
-    memo[row.module] = row.id
-    return memo
-  }, {})
 
   const [myanmarCountry] = await knex('Country as c')
     .where({ 'c.a3': 'MMR' })
@@ -114,8 +97,8 @@ async function seed(knex) {
   const gxAlertDeviceId = await knex('Device').insert(
     Object.assign({}, auditFields, {
       name: 'GxAlert',
-      deviceTypeId: deviceTypes.GxAlert.id,
-      deviceStatusId: deviceStatuses.approved.id,
+      deviceTypeId: await deviceTypeToId('GxAlert'),
+      deviceStatusId: await deviceStatusToId('approved'),
       partnerId,
       geographyId: myanmarGeographyId,
       siteId: gxAlertSiteId,
@@ -170,6 +153,7 @@ async function seed(knex) {
     partnerId,
   })
 
+  const featureModules = await allFeatureToId()
   await knex('JobFunctionFeature').insert([
     // Admin Permissions
     { jobFunctionId: jobFunctionIdAdmin, featureId: featureModules.site },
@@ -231,6 +215,7 @@ async function seed(knex) {
     },
   ])
 
+  const modules = await getPermissionModules(knex)
   await knex('JobFunctionPermission').insert([
     // Admin Permissions
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.demo.admin },

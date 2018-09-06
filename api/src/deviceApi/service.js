@@ -1,7 +1,8 @@
 const Boom = require('boom')
 const _ = require('lodash')
-const { knex, transact } = require('../db')
+const { knex, transact, run } = require('../db')
 const { asyncHandler } = require('../routes')
+const { deviceStatusToId, deviceTypeToPlugin } = require('../shared/dictionary')
 
 const {
   resultUpdated,
@@ -19,7 +20,7 @@ const {
 } = require('./device')
 const { deviceSeen } = require('../device/actions')
 const { mergeResult, getResult } = require('./result')
-const { loadPlugin } = require('./plugin/registration')
+const { loadPlugin } = require('../plugin/registration')
 
 const millisInDay = 1000 * 60 * 60 * 24
 
@@ -40,11 +41,24 @@ const getResultHandler = deviceApiHandler(getDeviceDataWithContext, {
   deviceLogType: DEVICE_LOG_TYPE_RESULT,
 })
 
-const addDeviceDataHandler = deviceApiHandler(addDeviceDataWithContext, {
+const addDeviceDataHandlerOptions = {
   createDevice: true,
   updatePing: true,
   updateDeviceLog: true,
-})
+}
+const addDeviceDataHandler = deviceApiHandler(
+  addDeviceDataWithContext,
+  addDeviceDataHandlerOptions
+)
+const addPluginDeviceDataHandler = deviceApiHandler(
+  addDeviceDataWithContext,
+  Object.assign(
+    {
+      transformInitialPayload: true,
+    },
+    addDeviceDataHandlerOptions
+  )
+)
 
 const updateDeviceConfigurationHandler = deviceApiHandler(
   updateDeviceConfigurationWithContext,
@@ -89,7 +103,7 @@ function deviceApiHandler(handler, handlerOptions) {
     let deviceLogId = null
     let deviceLogRawMessage = null
     if (updateDeviceLog) {
-      const checkpoint = request.payload && request.payload.checkpoint
+      const checkpoint = context.payload && context.payload.checkpoint
 
       // TODO DeviceLog handle non-JSON payloads
       deviceLogRawMessage = JSON.stringify(request.plugins.rawPayload)
@@ -98,7 +112,7 @@ function deviceApiHandler(handler, handlerOptions) {
       ;[deviceLogId] = await knex('DeviceLog').insert({
         deviceId,
         checkpoint,
-        source: _.get(request.payload, 'log.source', ''),
+        source: _.get(context.payload, 'log.source', ''),
         createdOn: now,
         senderIp: remoteAddress,
         rawMessage: deviceLogRawMessage,
@@ -377,21 +391,18 @@ async function updateSiteWithContext(context) {
 
   if (device.siteId !== site.id) {
     const status = device.siteId == null ? 'approved' : 'assigned'
+    const deviceStatusId = await deviceStatusToId(status)
 
     await knex('Device')
       .where({ id: device.id })
       .update({
         siteId: site.id,
-        deviceStatusId: knex('DeviceStatus')
-          .where({ token: status })
-          .select('id'),
+        deviceStatusId,
       })
 
     await knex('DeviceStatusLog').insert({
       deviceId: device.id,
-      deviceStatusId: knex('DeviceStatus')
-        .where({ token: status })
-        .select('id'),
+      deviceStatusId,
       changedOn: now,
       createdOn: now,
       createdBy: null,
@@ -489,11 +500,32 @@ async function getResultWithContext(context) {
   return postProcessResult
 }
 
-async function createDeviceApiContext(request, handlerOptions) {
+async function createDeviceApiContext(originalRequest, handlerOptions) {
+  const request = {
+    auth: originalRequest.auth,
+    params: originalRequest.params,
+    payload: originalRequest.payload,
+    query: originalRequest.query,
+  }
   const {
     createDevice = false,
     deviceLogType = DEVICE_LOG_TYPE_NONE,
   } = handlerOptions
+
+  const messageContext = originalRequest.plugins.messageContext.bindActionCreators(
+    {
+      resultUpdated,
+    }
+  )
+
+  if (handlerOptions.transformInitialPayload && request.params.pluginName) {
+    const transformInitialPayload = await loadPlugin(
+      [request.params.pluginName],
+      'transformInitialPayload'
+    )
+    request.payload = await transformInitialPayload(originalRequest)
+  }
+
   const { auth } = request
   const now = new Date()
   const existingDeviceAndData = await knex('DeviceApiKey as dak')
@@ -547,9 +579,7 @@ async function createDeviceApiContext(request, handlerOptions) {
     device,
     payload: request.payload,
     query: request.query,
-    messageContext: request.plugins.messageContext.bindActionCreators({
-      resultUpdated,
-    }),
+    messageContext,
     deviceLogType,
     partnerId: partner.id,
     pluginNames: [partner.partnerPluginName, device.deviceTypePluginName],
@@ -664,14 +694,11 @@ function createNewDeviceFromRequest(request, now) {
         ),
       }
     }
-    const deviceTypePlugin = await knex('DeviceType as dt')
-      .where({ 'dt.externalId': _.get(request, 'payload.type.id') })
-      .first('dt.plugin')
+    const deviceTypePlugin = await deviceTypeToPlugin(
+      _.get(request, 'payload.type.id')
+    )
     const apiKey = _.assign({}, partnerApiKey, {
-      plugins: [
-        _.get(partnerApiKey, 'plugin'),
-        _.get(deviceTypePlugin, 'plugin'),
-      ],
+      plugins: [_.get(partnerApiKey, 'plugin'), deviceTypePlugin],
     })
 
     // Require Device Type when creating device
@@ -929,16 +956,15 @@ function onResultUpdated({ resultId, deviceLogId }, { messageContext }) {
   }
 }
 
-function onResultLogged({ resultId }, { messageContext }) {
-  const context = messageContext.bindActionCreators({ resultUpdated })
-  return context.transact(async knex => {
+function onResultLogged(action, context) {
+  return run(async knex => {
     const { partnerPluginName, deviceTypePluginName } = await knex(
       'Result as r'
     )
       .leftJoin('Partner as p', 'r.partnerId', 'p.id')
       .leftJoin('Device as d', 'r.deviceId', 'd.id')
       .leftJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
-      .where({ 'r.id': resultId })
+      .where({ 'r.id': action.resultId })
       .first(
         'p.plugin as partnerPluginName',
         'dt.plugin as deviceTypePluginName'
@@ -947,15 +973,7 @@ function onResultLogged({ resultId }, { messageContext }) {
       [partnerPluginName, deviceTypePluginName],
       'onResultLogged'
     )
-    const now = new Date()
-
-    const pluginContext = {
-      knex,
-      now,
-      resultId,
-      actions: { resultUpdated: context.resultUpdated },
-    }
-    await onResultLogged(pluginContext)
+    onResultLogged(action, context)
   })
 }
 
@@ -979,7 +997,7 @@ async function updateLogs(request) {
     source: _.get(request.payload, 'log.source', ''),
     createdOn: new Date(),
     senderIp: (request.info && request.info.remoteAddress) || '',
-    rawMessage: JSON.stringify(request.payload),
+    rawMessage: JSON.stringify(request.plugins.rawPayload),
   })
 }
 
@@ -988,6 +1006,7 @@ module.exports = {
   getDeviceOperationHandler,
   getResultHandler,
   addDeviceDataHandler,
+  addPluginDeviceDataHandler,
   updateDeviceConfigurationHandler,
   addDeviceOperationHandler,
   mergeResultHandler,

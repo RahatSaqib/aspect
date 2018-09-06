@@ -4,6 +4,8 @@ import React from 'react'
 import { defineMessages } from 'react-intl'
 import { TableRow, TableCell } from 'react-toolbox/lib/table'
 
+import { formatDate } from '../../shared/utils/dateFormat'
+
 const cssClasses = classnames.bind(
   require('../../components/shared/DataTableRow.css')
 )
@@ -70,9 +72,7 @@ const InventoryTableRow = ({ intl, inventoryItem, children, ...restProps }) => (
         rowSpan={inventoryItem.getIn(['rowSpans', 'expiresOn'])}
       >
         {inventoryItem.get('expiresOn')
-          ? intl.formatDate(inventoryItem.get('expiresOn'), {
-              format: 'user-timezone',
-            })
+          ? formatDate(inventoryItem.get('expiresOn'))
           : 'N/A'}
       </TableCell>
     )}

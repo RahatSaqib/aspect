@@ -2,10 +2,13 @@ const Joi = require('joi')
 const { asyncHandler } = require('../routes')
 const {
   updateIssueStatus,
-  onIssueEventTrigger,
-  onIssueEventResolve,
+  getIssueEventTriggerSubscriptions,
 } = require('./service')
-const { onEscalateIssues } = require('./escalations')
+const {
+  onIssueCreated,
+  onIssueTriggered,
+  onEscalateIssues,
+} = require('./escalations')
 const { onResolveIssues } = require('./resolutions')
 
 const routes = [
@@ -33,30 +36,11 @@ const routes = [
 ]
 
 const subscriptions = [
+  getIssueEventTriggerSubscriptions,
   {
     actions: {
-      DEVICE_OFFLINE: onIssueEventTrigger('DeviceOffline'),
-      DEVICE_ONLINE: onIssueEventResolve('DeviceOffline'),
-      DEVICE_NO_RESULTS: onIssueEventTrigger('DeviceNoResults'),
-      DEVICE_HAS_NEW_RESULTS: onIssueEventResolve('DeviceNoResults'),
-      DEVICE_MAINTENANCE: onIssueEventTrigger('DeviceMaintenance'),
-      DEVICE_MAINTENANCE_RESOLVED: onIssueEventResolve('DeviceMaintenance'),
-      RESULT_MODULE_TEMPERATURE_ERROR: onIssueEventTrigger(
-        'ModuleTemperatureError'
-      ),
-      RESULT_MODULE_POWER_ERROR: onIssueEventTrigger('ModulePowerError'),
-      RESULT_MODULE_FAILURE_ERROR: onIssueEventTrigger('ModuleFailureError'),
-      RESULT_MACHINE_TEMPERATURE_ERROR: onIssueEventTrigger(
-        'MachineTemperatureError'
-      ),
-      RESULT_MACHINE_PROCEDURAL_ERROR: onIssueEventTrigger(
-        'MachineProceduralError'
-      ),
-      RESULT_MODULE_PROCEDURAL_ERROR: onIssueEventTrigger(
-        'ModuleProceduralError'
-      ),
-      INVENTORY_REAGENT_HEALTH: onIssueEventTrigger('ReagentHealthError'),
-      RESULT_MACHINE_POWER_ERROR: onIssueEventTrigger('MachinePowerError'),
+      ISSUE_CREATED: onIssueCreated,
+      ISSUE_TRIGGERED: onIssueTriggered,
       ESCALATE_ISSUES: onEscalateIssues(),
       RESOLVE_ISSUES: onResolveIssues(),
     },

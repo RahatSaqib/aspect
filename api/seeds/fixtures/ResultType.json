@@ -1,0 +1,29 @@
+{
+  "data": [
+    {
+      "name": "Patient",
+      "externalId": "Patient",
+      "i18nKey": "resultTypePatient"
+    },
+    {
+      "name": "EQA",
+      "externalId": "EQA",
+      "i18nKey": "resultTypeEqa"
+    },
+    {
+      "name": "Training",
+      "externalId": "Training",
+      "i18nKey": "resultTypeTraining"
+    },
+    {
+      "name": "Calibration",
+      "externalId": "Calibration",
+      "i18nKey": "resultTypeCalibration"
+    },
+    {
+      "name": "Study/Research",
+      "externalId": "Study",
+      "i18nKey": "resultTypeStudy"
+    }
+  ]
+}

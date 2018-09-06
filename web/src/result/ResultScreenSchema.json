@@ -1,0 +1,284 @@
+{
+  "title": "Test Result",
+  "icon": "document",
+  "groups": {
+    "site": {
+      "order": 0,
+      "summary": {
+        "title": "Lab",
+        "rows": {
+          "siteName": {
+            "type": "string",
+            "row": 0,
+            "order": 0,
+            "title": "Deployment Full Name"
+          }
+        }
+      },
+      "detail": {
+        "title": "Lab",
+        "rows": {
+          "siteName": {
+            "type": "string",
+            "row": 0,
+            "order": 0,
+            "title": "Deployment Full Name",
+            "link": "/browse/site/<%= siteId %>"
+          },
+          "deviceSerial": {
+            "type": "string",
+            "row": 0,
+            "order": 1,
+            "title": "Device Serial",
+            "link": "/browse/device/<%= deviceId %>"
+          },
+          "countryName": {
+            "type": "string",
+            "row": 1,
+            "order": 0,
+            "title": "Country"
+          },
+          "stateName": {
+            "type": "string",
+            "row": 1,
+            "order": 1,
+            "title": "State"
+          },
+          "lgaName": {
+            "type": "string",
+            "row": 1,
+            "order": 2,
+            "title": "City"
+          }
+        }
+      }
+    },
+
+    "assay": {
+      "order": 1,
+      "summary": {
+        "title": "Assay Type",
+        "rows": {
+          "name": {
+            "type": "string",
+            "row": 0,
+            "order": 0,
+            "title": "Assay Type"
+          }
+        }
+      },
+      "detail": {
+        "title": "Assay",
+        "rows": {
+          "name": {
+            "type": "string",
+            "row": 0,
+            "order": 0,
+            "title": "Assay Type"
+          },
+          "consumableLot": {
+            "type": "string",
+            "row": 0,
+            "order": 1,
+            "title": "Reagent Lot ID"
+          },
+          "consumableSerial": {
+            "type": "string",
+            "row": 0,
+            "order": 2,
+            "title": "Cartridge Serial"
+          },
+          "consumableExpirationDate": {
+            "type": "date",
+            "row": 0,
+            "order": 3,
+            "title": "Expiration Date"
+          },
+          "instrumentSerial": {
+            "type": "string",
+            "row": 1,
+            "order": 4,
+            "title": "Instrument Serial"
+          },
+          "moduleSerial": {
+            "type": "string",
+            "row": 1,
+            "order": 5,
+            "title": "Module Serial"
+          },
+          "moduleName": {
+            "type": "string",
+            "row": 1,
+            "order": 6,
+            "title": "Module Slot"
+          },
+          "senderOperator": {
+            "type": "string",
+            "row": 2,
+            "order": 7,
+            "title": "Operator"
+          },
+          "notes": {
+            "type": "string",
+            "row": 2,
+            "order": 8,
+            "title": "Reason For Test"
+          }
+        }
+      }
+    },
+    "date": {
+      "order": 2,
+      "summary": {
+        "title": "Start Date",
+        "rows": {
+          "startedOn": {
+            "type": "time",
+            "row": 0,
+            "order": 0,
+            "title": "Start Date"
+          }
+        }
+      },
+      "detail": {
+        "title": "Date",
+        "rows": {
+          "startedOn": {
+            "type": "time",
+            "row": 0,
+            "order": 0,
+            "title": "Start Date"
+          },
+          "endedOn": {
+            "type": "time",
+            "row": 0,
+            "order": 1,
+            "title": "End Date"
+          },
+          "createdOn": {
+            "type": "time",
+            "row": 1,
+            "order": 0,
+            "title": "Added"
+          },
+          "updatedOn": {
+            "type": "time",
+            "row": 1,
+            "order": 1,
+            "title": "Last Update"
+          }
+        }
+      }
+    },
+    "sample": {
+      "order": 3,
+      "summary": {
+        "title": "Sample ID",
+        "rows": {
+          "sampleId": {
+            "type": "string",
+            "row": 0,
+            "order": 0,
+            "title": "Sample ID"
+          }
+        }
+      },
+      "detail": {
+        "title": "Sample",
+        "rows": {
+          "sampleId": {
+            "type": "string",
+            "row": 0,
+            "order": 0,
+            "title": "Sample ID"
+          },
+          "sampleTypeName": {
+            "type": "string",
+            "row": 0,
+            "order": 1,
+            "title": "Sample Type"
+          },
+          "sampleCollectedOn": {
+            "type": "time",
+            "row": 0,
+            "order": 2,
+            "title": "Sample Collection Date"
+          },
+          "sampleOriginSiteName": {
+            "type": "string",
+            "row": 1,
+            "order": 0,
+            "title": "Sample Collection Site",
+            "link": "/browse/site/<%= sampleOriginSiteId %>"
+          },
+          "sampleCollectedBy": {
+            "type": "time",
+            "row": 1,
+            "order": 1,
+            "title": "Collected By"
+          }
+        }
+      }
+    },
+    "patientData": {
+      "order": 4,
+      "summary": {
+        "title": "Patient ID",
+        "rows": {
+          "id": {
+            "type": "string",
+            "row": 0,
+            "order": 0,
+            "title": "Patient ID"
+          }
+        }
+      },
+      "detail": {
+        "title": "Patient",
+        "dataSchema": "assay.patientDataSchema"
+      }
+    },
+    "resultData": {
+      "order": 5,
+      "summary": {
+        "title": "Result",
+        "rows": {
+          "resultCategory1Name": {
+            "type": "string",
+            "row": 0,
+            "order": 0,
+            "title": "MTB",
+            "titleAssayDefinition": "resultCategory1Label"
+          },
+          "resultCategory2Name": {
+            "type": "string",
+            "row": 0,
+            "order": 1,
+            "title": "RIF",
+            "titleAssayDefinition": "resultCategory2Label"
+          }
+        }
+      },
+      "detail": {
+        "title": "Result",
+        "rows": {
+          "resultCategory1Name": {
+            "type": "string",
+            "row": 0,
+            "order": 0,
+            "title": "MTB",
+            "titleAssayDefinition": "resultCategory1Label"
+          },
+          "resultCategory2Name": {
+            "type": "string",
+            "row": 0,
+            "order": 1,
+            "title": "RIF",
+            "titleAssayDefinition": "resultCategory2Label"
+          }
+        },
+        "dataSchema": "assay.resultDataSchema"
+      }
+    }
+  }
+}

@@ -14,11 +14,14 @@ const {
   getMustacheTokensInString,
 } = require('../stringTemplate/service')
 const { readTextFile } = require('../shared/io')
+const { loadPlugin } = require('../plugin/registration')
 
 const evaluationMethods = {
   'inline-sql': evaluateInlineSql,
   'sql-script': evaluateSqlScript,
+  'plugin-function': evaluatePluginFunction,
   'issue-age': triggeredEventOlderThan,
+  'result-category': checkResultCategory,
   'child-condition': conditionsMet,
   'child-conditions': conditionsMet,
 }
@@ -83,6 +86,18 @@ async function evaluateArrayOfConditions(knex, issue, conditions) {
     }
   }
   return true
+}
+
+async function evaluatePluginFunction(knex, issue, functionName) {
+  const partner = await knex('Partner')
+    .where({ id: issue.partnerId })
+    .first('plugin')
+  if (partner == null) {
+    return false
+  }
+  const resolutions = await loadPlugin([partner.plugin], 'issueResolutions')
+  const func = resolutions[functionName]
+  return func != null && func(knex, issue)
 }
 
 async function evaluateInlineSql(knex, issue, inlineSql) {
@@ -191,6 +206,19 @@ async function triggeredEventOlderThan(knex, issue, issueAge) {
     issueAgeSpec.years
   )
   return Promise.resolve(issueTriggeredOnPlusAge < new Date())
+}
+
+async function checkResultCategory(knex, issue, category) {
+  if (category.index !== 1 && category.index !== 2) {
+    // currently only support two categories in data model
+    return false
+  }
+  const result = await knex('Result as r')
+    .join('ResultCategory as rc', 'rc.id', `r.resultCategory${category.index}`)
+    .join('Issue as i', 'i.resultId', 'r.id')
+    .where({ 'i.id': issue.id, 'rc.externalId': category.externalId })
+    .first('r.id')
+  return result != null
 }
 
 module.exports = {

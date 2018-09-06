@@ -3,6 +3,7 @@ const chai = require('chai')
 const { run } = require('../../src/db')
 const { getConstraints, addConstraints } = require('../../src/auth/constraints')
 const { randomToken } = require('../../src/deviceApi/apiKey')
+const { getResult } = require('../../src/deviceApi/result')
 const { queuePurge } = require('../utils/mqUtils')
 
 const { assert } = chai
@@ -46,6 +47,9 @@ async function deleteTestDataFromCheckpoint(knex, checkpoint, deviceIds) {
   await knex('ResultGeneratedResult')
     .whereIn('sourceResultId', resultIds)
     .delete()
+  await knex('ResultFileReference')
+    .whereIn('resultId', resultIds)
+    .delete()
   await knex('Result')
     .whereIn('id', resultIds)
     .delete()
@@ -73,7 +77,7 @@ async function deleteDeviceAndTestData(knex, apiKeys) {
     .whereIn('deviceId', deviceIds)
     .map(op => op.id)
 
-  await deleteIssues(knex, { deviceIds })
+  await deleteIssues(knex, { deviceIds, resultIds })
   await knex('DeviceStatusLog')
     .whereIn('deviceId', deviceIds)
     .delete()
@@ -100,6 +104,9 @@ async function deleteDeviceAndTestData(knex, apiKeys) {
     .whereIn('sourceResultId', resultIds)
     .orWhereIn('generatedResultId', resultIds)
     .delete()
+  await knex('ResultFileReference')
+    .whereIn('resultId', resultIds)
+    .delete()
   await knex('Result')
     .whereIn('id', resultIds)
     .delete()
@@ -119,11 +126,14 @@ async function deleteDeviceAndTestData(knex, apiKeys) {
 
 async function deleteIssues(knex, { deviceIds, resultIds }) {
   const issueIdQ = knex('Issue as i')
+  const webhookMessageQ = knex('WebhookMessage')
   if (deviceIds != null && deviceIds.length > 0) {
     issueIdQ.orWhereIn('i.deviceId', deviceIds)
+    webhookMessageQ.orWhereIn('deviceId', deviceIds)
   }
   if (resultIds != null && resultIds.length > 0) {
     issueIdQ.orWhereIn('i.resultId', resultIds)
+    webhookMessageQ.orWhereIn('resultId', resultIds)
   }
 
   const issueIds = await issueIdQ.select('i.id').pluck('id')
@@ -131,9 +141,13 @@ async function deleteIssues(knex, { deviceIds, resultIds }) {
     .whereIn('issueId', issueIds)
     .select('id', 'alertMessageId', 'emailMessageId', 'smsMessageId')
   const notificationIds = _.map(notifications, 'id')
-  const alertMessageIds = _.map(notifications, 'alertMessageId')
-  const emailMessageIds = _.map(notifications, 'emailMessageId')
-  const smsMessageIds = _.map(notifications, 'smsMessageId')
+  const alertMessageIds = _.compact(_.map(notifications, 'alertMessageId'))
+  const emailMessageIds = _.compact(_.map(notifications, 'emailMessageId'))
+  const smsMessageIds = _.compact(_.map(notifications, 'smsMessageId'))
+  const webhookMessageIds = _.compact(_.map(notifications, 'webhookMessageId'))
+  const fileReferenceIds = await knex('WebhookMessage')
+    .whereIn('id', webhookMessageIds)
+    .select('fileReferenceId')
 
   await knex('Notification')
     .whereIn('id', notificationIds)
@@ -146,6 +160,13 @@ async function deleteIssues(knex, { deviceIds, resultIds }) {
     .delete()
   await knex('SmsMessage')
     .whereIn('id', smsMessageIds)
+    .delete()
+  await webhookMessageQ.orWhereIn('id', webhookMessageIds).delete()
+  await knex('ResultFileReference')
+    .whereIn('fileReferenceId', fileReferenceIds)
+    .delete()
+  await knex('FileReference')
+    .whereIn('id', fileReferenceIds)
     .delete()
   await knex('IssueEvent')
     .whereIn('issueId', issueIds)
@@ -164,11 +185,10 @@ async function getDeviceConfigurationData(knex, deviceId) {
 }
 
 async function getDeviceFromApiKey(knex, apiKey) {
-  const device = await knex('Device as d')
+  return knex('Device as d')
     .innerJoin('DeviceApiKey as dak', 'd.id', 'dak.deviceId')
     .where('dak.token', apiKey.token)
     .first('d.*')
-  return device
 }
 
 async function getSiteFromDeviceId(knex, deviceId) {
@@ -206,12 +226,20 @@ async function getLastDeviceOperationId(knex, deviceId) {
 }
 
 async function getLastResultId(knex, deviceId) {
+  if (!deviceId) {
+    throw new Error('Cannot get the last result ID from an unknown device id.')
+  }
   const result = await knex('DeviceLog as dl')
     .where('dl.deviceId', deviceId)
     .whereNotNull('dl.resultId')
     .orderBy('dl.id', 'desc')
     .first('dl.resultId')
   return result && result.resultId
+}
+
+async function getLastResult(knex, deviceId) {
+  const resultId = await getLastResultId(knex, deviceId)
+  return getResult(knex, resultId)
 }
 
 function createTestContext(server, auth) {
@@ -347,15 +375,16 @@ class DeviceApiTestContext {
 
   async createApiKey(knex, siteName = null) {
     let site = null
-    if (siteName === null) {
+    if (siteName != null) {
       site = await knex('Site')
         .where({ externalId: siteName, partnerId: this.partnerId })
         .first('id', 'partnerId', 'geographyId')
+      assert.isOk(
+        site,
+        `Cannot find site ${siteName} partner ${this.partnerId}`
+      )
     }
 
-    if (siteName != null && site == null) {
-      assert.isOk(siteName, `Cannot find site ${siteName}`)
-    }
     const apiKey = { token: randomToken() }
     await knex('DeviceApiKey').insert({
       token: apiKey.token,
@@ -413,4 +442,6 @@ module.exports = {
   getLastDeviceOperationData,
   getLastDeviceOperationId,
   getLastResultId,
+  getLastResult,
+  deleteDeviceAndTestData,
 }

@@ -1,7 +1,7 @@
 const _ = require('lodash')
 const Boom = require('boom')
 const { getConstraints } = require('../auth/constraints')
-const { query } = require('../db')
+const { knex, query } = require('../db')
 
 const SELECT_LIST_FIELDS = [
   'ca.consumableId',
@@ -24,12 +24,13 @@ async function getConsumableAssays(request) {
     .join('Consumable as c', 'ca.consumableId', 'c.id')
     .join('Unit as u', 'c.unit', 'u.id')
     .join('Assay as a', 'ca.assayId', 'a.id')
-    .where('ca.consumableId', consumableId)
-    .andWhere(function() {
-      this.whereNull('c.partnerId').orWhere({
-        'c.partnerId': dataConstraints.partner.id,
-      })
+    .leftJoin('PartnerConsumable as pc', function() {
+      this.on('ca.consumableId', 'pc.consumableId').andOn(
+        'pc.partnerId',
+        knex.raw(dataConstraints.partner.id)
+      )
     })
+    .where('ca.consumableId', consumableId)
     .select(SELECT_LIST_FIELDS)
 
   return { ok: true, data: assayConsumables }
@@ -41,6 +42,12 @@ function selectAssayConsumables(knex, partnerId, assayId, consumableId) {
       .join('Consumable as c', 'ca.consumableId', 'c.id')
       .join('Unit as u', 'c.unit', 'u.id')
       .join('Assay as a', 'ca.assayId', 'a.id')
+      .leftJoin('PartnerConsumable as pc', function() {
+        this.on('ca.consumableId', 'pc.consumableId').andOn(
+          'pc.partnerId',
+          knex.raw(partnerId)
+        )
+      })
       .where(function() {
         this.where('ca.assayId', assayId)
         if (consumableId) {
@@ -49,9 +56,9 @@ function selectAssayConsumables(knex, partnerId, assayId, consumableId) {
       })
       // TODO: Revisit once permissions system allows the use of partnerId only in addConstraints
       .andWhere(function() {
-        this.whereNull('c.partnerId')
+        this.whereNull('pc.partnerId')
         if (partnerId) {
-          this.orWhere({ 'c.partnerId': partnerId })
+          this.orWhere({ 'pc.partnerId': partnerId })
         }
       })
       .select(SELECT_LIST_FIELDS)

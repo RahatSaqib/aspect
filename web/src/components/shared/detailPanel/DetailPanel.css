@@ -1,0 +1,19 @@
+.Title {
+  font-size: 16px;
+  padding: 16px;
+}
+
+.Title__Icon {
+  font-size: 18px;
+}
+
+.Field__Container {
+  display: flex;
+  flex-grow: 1;
+  flex-wrap: wrap;
+}
+
+.Field__Container > * {
+  flex-basis: 25%;
+  white-space: nowrap;
+}

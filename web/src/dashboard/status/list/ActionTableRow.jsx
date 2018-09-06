@@ -13,7 +13,7 @@ const cssClasses = classnames.bind(require('./ActionTableRow.css'))
 const enhance = _.identity
 
 const ActionLinkButton = requirePermissions({
-  permissions: [],
+  permissions: ['browse:view'],
   features: [
     'device',
     'result',
@@ -42,7 +42,9 @@ const ActionTableRow = ({
     <TableCell className={cssClasses('TableCell', 'TableCell--actionType')}>
       <FaCircle
         className={cssClasses(
-          `ActionType--${_.lowerCase(action.get('status'))}`
+          `ActionType--${_.lowerCase(
+            action.get('issueStatusSeverityExternalId')
+          )}`
         )}
       />
     </TableCell>

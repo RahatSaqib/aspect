@@ -14,6 +14,16 @@ module.exports = {
     database: process.env['db.databaseName'],
     debug: process.env['db.debug'] === 'true',
   },
+  log: {
+    db: {
+      enabled: getBooleanOrDefault('log.db.enabled', false),
+    },
+  },
+  file: {
+    reference: {
+      directory: process.env['file.reference.directory'],
+    },
+  },
   amqp: {
     url: process.env['amqp.url'],
   },
@@ -31,6 +41,10 @@ module.exports = {
   admin: {
     email: process.env['admin.email'],
     cell: process.env['admin.cell'],
+  },
+  plugin: {},
+  scheduler: {
+    enabled: process.env['scheduler.enabled'],
   },
 }
 
@@ -55,4 +69,19 @@ function configureOptional(config) {
   if (seedsDirectory) {
     config.seeds = { directory: seedsDirectory }
   }
+
+  // plugin data
+  // TODO load plugin config in plugins
+  const commcareApiKey = process.env['plugin.commcare.apiKey']
+  if (commcareApiKey) {
+    config.plugin.commcare = { apiKey: commcareApiKey }
+  }
+}
+
+function getBooleanOrDefault(key, defaultValue) {
+  const value = process.env[key]
+  if (value == null) {
+    return defaultValue
+  }
+  return value === 'true'
 }

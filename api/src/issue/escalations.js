@@ -1,7 +1,27 @@
 const Promise = require('bluebird')
 const _ = require('lodash')
-const { issueEscalated } = require('./actions')
+const { issueEscalated, escalateIssues } = require('./actions')
 const { conditionsMet } = require('./evaluation')
+
+const { issueEventStatusToId } = require('../shared/dictionary')
+
+async function onIssueCreated({ issueId }, { messageContext: context }) {
+  // Trigger escalation logic for level 1 as soon as issue is created,
+  // higher levels handled in escalateIssues in escalations.js
+  // escalation should be idempotent (as should response to other actions)
+  // so it's OK if this is "at least once"
+  // This also allows one message listener between created and escalated
+  // if logic is shared and avoids potential race condition.
+  context.bindActionCreators({ issueEscalated })
+  context.issueEscalated(issueId, 1)
+}
+
+async function onIssueTriggered({ issueId }, { messageContext: context }) {
+  // Check issue escalation logic for specific issue when triggered so we
+  // do not need to wait for for next scheduled check.
+  context.bindActionCreators({ escalateIssues })
+  context.escalateIssues(issueId)
+}
 
 function onEscalateIssues() {
   return async (action, { messageContext: context }) => {
@@ -35,23 +55,19 @@ function onEscalateIssues() {
 }
 
 async function findOpenIssuesToCheckForEscalation(knex, issueId) {
-  const resolvedIssueEventStatus = await knex('IssueEventStatus')
-    .where('externalId', 'Resolved')
-    .first()
-  const triggeredIssueEventStatus = await knex('IssueEventStatus')
-    .where('externalId', 'Triggered')
-    .first()
+  const resolvedIssueEventStatusId = await issueEventStatusToId('Resolved')
+  const triggeredIssueEventStatusId = await issueEventStatusToId('Triggered')
   return knex('Issue as i')
     .leftJoin('IssueEvent as resolvedIssueEvent', function() {
       this.on('i.id', 'resolvedIssueEvent.issueId').on(
         'resolvedIssueEvent.issueEventStatusId',
-        knex.raw(resolvedIssueEventStatus.id)
+        knex.raw(resolvedIssueEventStatusId)
       )
     })
     .join('IssueEvent as triggeredIssueEvent', function() {
       this.on('i.id', 'triggeredIssueEvent.issueId').on(
         'triggeredIssueEvent.issueEventStatusId',
-        knex.raw(triggeredIssueEventStatus.id)
+        knex.raw(triggeredIssueEventStatusId)
       )
     })
     .join('IssueEscalationTrigger as iet', function() {
@@ -85,5 +101,7 @@ async function findOpenIssuesToCheckForEscalation(knex, issueId) {
 }
 
 module.exports = {
+  onIssueCreated,
+  onIssueTriggered,
   onEscalateIssues,
 }

@@ -17,6 +17,7 @@ import {
   Table,
 } from '../shared/metaReducers/table'
 import { receivedExportResponse } from '../filter/FilterRedux'
+import screenSchema from './ResultScreenSchema.json'
 
 export const types = {
   REQUEST_RESULTS: 'REQUEST_RESULTS',
@@ -264,6 +265,15 @@ function updateSingleResultQcCheck(resultId, qcCheck) {
   }
 }
 
+function updateSingleResultFormData(resultId, formFieldKey, value) {
+  return {
+    type: types.REQUEST_SINGLE_RESULT,
+    resultId,
+    formFieldKey,
+    value,
+  }
+}
+
 export function updateResultQcCheck(resultId, qcCheck) {
   return dispatch => {
     dispatch(updateSingleResultQcCheck(resultId, qcCheck))
@@ -277,7 +287,31 @@ export function updateResultQcCheck(resultId, qcCheck) {
             title: {
               id: 'errorResponseMessages.updateResultQcCheck.PUT.default.title',
               defaultMessage:
-                'An Error Occurred When Trying to update the "QC Check" flag.',
+                'An error occurred when trying to update the "QC Check" flag.',
+            },
+          })
+        ),
+      },
+    }).then(json => dispatch(receiveUpdatedSingleResult(json.data)))
+  }
+}
+
+export function updateResultFormData(resultId, formFieldKey, value) {
+  return dispatch => {
+    dispatch(updateSingleResultFormData(resultId, formFieldKey, value))
+    const formData = {}
+    formData[formFieldKey] = value
+    return aspectFetch(`/result/form-data/${resultId}`, {
+      method: 'PUT',
+      body: JSON.stringify(formData),
+      errorNotifications: {
+        default: errorPleaseTryAgainInAFewMinutes(
+          defineMessages({
+            title: {
+              id:
+                'errorResponseMessages.updateResultFormData.PUT.default.title',
+              defaultMessage:
+                'An error occurred when trying to update the result.',
             },
           })
         ),
@@ -422,6 +456,7 @@ export const Result = Immutable.Record({
   }),
   workflowLog: new WorkflowLogModel(),
   deviceLogs: new Immutable.List(),
+  screenSchema: new Immutable.fromJS(screenSchema),
   loading: true,
 })
 
