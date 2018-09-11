@@ -214,6 +214,8 @@ async function resolveMachineUnknownError(/* knex, issue */) {
 }
 
 async function resolveReagentHealthError(knex, { deviceId }) {
+  // FIXME should reagent health queries be time constrained? (Fix in onResultLogged too)
+  // FIXME should these be constrained by issue consumableId?
   const reagentErrorQuery = knex('Result as r')
     .innerJoin('ResultCategory as rc', 'r.resultCategory1', 'rc.id')
     .where({
@@ -265,6 +267,15 @@ async function resolveReagentHealthError(knex, { deviceId }) {
       )
     })()
   )
+  if (
+    (reagentErrorRatio > maxReagentErrorRatio ||
+      invalidResultRatio > maxInvalidResultRatio ||
+      invalidReagentErrorRatio > maxInvalidReagentErrorRatio) &&
+    invalidReagentErrorCount >= minErrorsInvalidsForReagentHealthIssue
+  ) {
+    return false
+  }
+
   const invalidResultBatchRatios = await invalidResultQuery
     .clone()
     .select(
@@ -279,21 +290,16 @@ async function resolveReagentHealthError(knex, { deviceId }) {
       })()
     )
     .groupBy(['r.consumableLot', 'r.assayId'])
-  let shouldResolve = true
-  _.forEach(invalidResultBatchRatios, ratio => {
-    if (ratio.invalidResultRatio > invalidResultBatchRatio) {
-      shouldResolve = false
-    }
-  })
   if (
-    (reagentErrorRatio > maxReagentErrorRatio ||
-      invalidResultRatio > maxInvalidResultRatio ||
-      invalidReagentErrorRatio > maxInvalidReagentErrorRatio) &&
-    invalidReagentErrorCount >= minErrorsInvalidsForReagentHealthIssue
+    _.find(
+      invalidResultBatchRatios,
+      ratio => ratio.invalidResultRatio > invalidResultBatchRatio
+    ) != null
   ) {
-    shouldResolve = false
+    return false
   }
-  return shouldResolve
+
+  return true
 }
 
 module.exports = {
