@@ -56,6 +56,10 @@ async function seed(knex) {
     .where({ name: 'Myanmar' })
     .first()
 
+  await knex('Partner')
+    .update({ maxDaysDeviceNoResults: 7 })
+    .where({ id: partnerId })
+
   await knex('IssueEscalationTrigger')
     .update({
       escalationConditions: JSON.stringify({

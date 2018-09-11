@@ -107,6 +107,8 @@ const maxReagentErrorRatio = 3
 const maxInvalidReagentErrorRatio = 4
 const minErrorsForLUGenericModuleIssue = 6
 const minErrorsForLUGenericMachineIssue = 8
+const minPrcntMachineProceduralResolve = 3
+const minPrcntModuleProceduralResolve = 3
 
 const minPrcntModuleUnknownErrors = 5
 const moduleMaxUnknownErrors = 6
@@ -135,6 +137,8 @@ module.exports = {
   maxInvalidReagentErrorRatio,
   minErrorsForLUGenericModuleIssue,
   minErrorsForLUGenericMachineIssue,
+  minPrcntMachineProceduralResolve,
+  minPrcntModuleProceduralResolve,
   minPrcntModuleUnknownErrors,
   moduleMaxUnknownErrors,
   machineMaxUnknownErrors,
