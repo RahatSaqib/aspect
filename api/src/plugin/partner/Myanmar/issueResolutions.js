@@ -206,6 +206,10 @@ async function resolveMachineUnknownError(/* knex, issue */) {
   return false
 }
 
+async function resolveReagentHealthError(/* knex, issue */) {
+  return false
+}
+
 module.exports = {
   resolveModuleFailureError,
   resolveModuleTemperatureError,
@@ -216,4 +220,5 @@ module.exports = {
   resolveMachineProceduralError,
   resolveModuleUnknownError,
   resolveMachineUnknownError,
+  resolveReagentHealthError,
 }

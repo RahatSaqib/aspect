@@ -1,7 +1,33 @@
 module.exports = require('../utils').seed(seed)
-// TODO: Remove the following two ESLint ignore-settings when implementing seeds
-/* eslint no-unused-vars: 0 */
-/* eslint no-empty-function: 0 */
+
+const { rowsAsObject } = require('../utils')
+
 async function seed(knex) {
-  // TODO: Check if seed file already ran
+  const issueTypes = await rowsAsObject(knex, 'IssueType', 'externalId')
+
+  const reagentHealthResolution = await knex('IssueResolutionTrigger')
+    .where({
+      issueTypeId: issueTypes.ReagentHealthError.id,
+    })
+    .first()
+
+  if (reagentHealthResolution != null) {
+    return
+  }
+
+  const now = new Date()
+  const { id: partnerId } = await knex('Partner')
+    .where({ name: 'Myanmar' })
+    .first()
+
+  await knex('IssueResolutionTrigger').insert({
+    issueTypeId: issueTypes.ReagentHealthError.id,
+    partnerId,
+    resolutionConditions: JSON.stringify({
+      evaluationMethod: 'plugin-function',
+      evaluationParameter: 'resolveReagentHealthError',
+    }),
+    createdOn: now,
+    updatedOn: now,
+  })
 }

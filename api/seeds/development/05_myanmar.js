@@ -1907,6 +1907,16 @@ async function seed(knex) {
       createdOn: now,
       updatedOn: now,
     },
+    {
+      issueTypeId: issueTypes.ReagentHealthError.id,
+      partnerId,
+      resolutionConditions: JSON.stringify({
+        evaluationMethod: 'plugin-function',
+        evaluationParameter: 'resolveReagentHealthError',
+      }),
+      createdOn: now,
+      updatedOn: now,
+    },
   ])
 }
 
