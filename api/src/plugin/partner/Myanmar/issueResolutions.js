@@ -1,4 +1,5 @@
 const subDays = require('date-fns/sub_days')
+const Promise = require('bluebird')
 
 const {
   MODULE_FAILURE_ERROR_CODES,
@@ -155,7 +156,7 @@ async function resolveMachinePowerError(knex, issue) {
 }
 
 async function resolveModuleProceduralError(knex, issue) {
-  const { moduleSerial } = JSON.parse(issue.data) || {}
+  const { moduleSerial = null } = JSON.parse(issue.data) || {}
   const last30day = subDays(new Date(), 30)
   const [module] = await knex('Result as r')
     .innerJoin('ResultCategory as rc', 'r.resultCategory1', 'rc.id')
