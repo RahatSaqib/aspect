@@ -1,3 +1,4 @@
+const Promise = require('bluebird')
 const _ = require('lodash')
 const { readJson } = require('fs-extra')
 
@@ -497,9 +498,10 @@ async function seedIssueEventTriggersForPartner(
     issueTypeConfigured[issueType] = true
   })
 
-  await Promise.all(
-    data.map(async ({ issueType, issueEventStatus, triggerConditions }) => {
-      if (issueTypeConfigured[issueType]) {
+  await Promise.each(
+    data,
+    async ({ issueType, issueEventStatus, triggerConditions }) => {
+      if (issueTypeConfigured[issueType] && issueTypes[issueType]) {
         const triggerData = {
           partnerId,
           issueTypeId: issueTypes[issueType].id,
@@ -518,7 +520,7 @@ async function seedIssueEventTriggersForPartner(
           )
         }
       }
-    })
+    }
   )
 }
 

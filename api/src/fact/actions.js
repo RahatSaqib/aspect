@@ -6,8 +6,14 @@ const types = {
   FACT_CHECK_INVENTORY_STOCK: 'FACT_CHECK_INVENTORY_STOCK',
   FACT_CALCULATE_INVENTORY_CONSUMPTION_RATES:
     'FACT_CALCULATE_INVENTORY_CONSUMPTION_RATES',
+  // for DataCategoryLow issue types
   FACT_DATA_CATEGORY_LOW_CHECK: 'FACT_DATA_CATEGORY_LOW_CHECK',
-  FACT_DATA_CATEGORY_IS_LOW: 'FACT_DATA_CATEGORY_IS_LOW',
+  FACT_DATA_CATEGORY_IS_LOW_HIVSTATUS: 'FACT_DATA_CATEGORY_IS_LOW_HIVSTATUS',
+  FACT_DATA_CATEGORY_IS_LOW_PREVIOUSLYTREATED:
+    'FACT_DATA_CATEGORY_IS_LOW_PREVIOUSLYTREATED',
+  FACT_DATA_CATEGORY_IS_LOW_MICROSCOPYRESULT:
+    'FACT_DATA_CATEGORY_IS_LOW_MICROSCOPYRESULT',
+  FACT_DATA_CATEGORY_IS_LOW_OTHER: 'FACT_DATA_CATEGORY_IS_LOW_OTHER',
 }
 
 /**
@@ -82,6 +88,7 @@ function factDataCategoryLowCheck() {
  */
 function factDataCategoryLow({
   dataCategoryId,
+  categoryToken,
   categoryName,
   periodName,
   siteId,
@@ -89,17 +96,18 @@ function factDataCategoryLow({
 }) {
   if (
     !dataCategoryId ||
+    !categoryToken ||
     !categoryName ||
     !periodName ||
     !siteId ||
     isNil(percentage)
   ) {
     throw new Error(
-      'Must specify each parameter - dataCategoryId, categoryName, periodName, siteId, percentage - for Data Category Low notification'
+      'Must specify each parameter - dataCategoryId, categoryToken, categoryName, periodName, siteId, percentage - for Data Category Low notification'
     )
   }
   return {
-    type: types.FACT_DATA_CATEGORY_IS_LOW,
+    type: types[`FACT_DATA_CATEGORY_IS_LOW_${categoryToken.toUpperCase()}`],
     siteId,
     options: {
       dataCategoryId,

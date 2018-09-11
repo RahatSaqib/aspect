@@ -724,7 +724,6 @@ async function checkDataCategoriesForLowStatus(action, { messageContext }) {
     dateTo: now,
   }
 
-  const issueTypeId = await issueTypeToId('DataCategoryLow')
   const issueStatusId = await issueStatusToId('Active')
   const triggeredIssueEventStatusId = await issueEventStatusToId('Triggered')
 
@@ -734,10 +733,10 @@ async function checkDataCategoriesForLowStatus(action, { messageContext }) {
 
     // check data categories for 'low status'
     await Promise.each(dataCategories, async dataCategory => {
-      const validValues =
-        dataCategory.validValues && JSON.parse(dataCategory.validValues)
-
-      const { partnerId, externalId: category } = dataCategory
+      const { partnerId, externalId: categoryToken } = dataCategory
+      const issueTypeId = await issueTypeToId(
+        `DataCategoryLowFor${categoryToken}`
+      )
 
       // get all sites for current partnerId
       const sites = await knex('Site')
@@ -746,6 +745,7 @@ async function checkDataCategoriesForLowStatus(action, { messageContext }) {
 
       // for each site
       _.map(sites, async site => {
+        const siteId = site.id
         // ----------------------------
         // trigger only one issue of this type per site-category
         // ----------------------------
@@ -753,7 +753,7 @@ async function checkDataCategoriesForLowStatus(action, { messageContext }) {
         // check if this type of IssueEvent has already been triggered and is Active
         const triggeredIssue = await knex('Issue as i')
           .innerJoin('IssueEvent as ie', 'i.id', 'ie.issueId')
-          .where('i.siteId', site.id)
+          .where('i.siteId', siteId)
           .where('i.partnerId', partnerId)
           .where('i.level', 1)
           .where('i.issueTypeId', issueTypeId) // issue type 'DataCategoryLow'
@@ -768,66 +768,19 @@ async function checkDataCategoriesForLowStatus(action, { messageContext }) {
           return
         }
 
-        // base query for getting counts - totals and number of valid results
-        const itemsBase = knex('Result as r')
-          .innerJoin('Device as d', 'r.deviceId', 'd.id')
-          .where('r.endedOn', '>=', period.dateFrom)
-          .where('r.endedOn', '<=', period.dateTo)
-          .where(`d.siteId`, site.id)
-
-        // get totals
-        const [{ count: totals }] = await itemsBase
-          .clone()
-          .countDistinct('r.id as count')
+        const props = { period, siteId, dataCategory }
+        const categoryStatus = await getDataCategoryStatus(knex, props)
+        const { totals } = categoryStatus
 
         // ----------------------------
-        // trigger only if site has more than 10 results for the period
+        // trigger only if
         // ----------------------------
+        // site has more than N results for the period
         if (totals < MIN_RESULTS_TO_TRIGGER_DATA_CATEGORY_LOW) {
           return
         }
-
-        // get number of valid results
-        const [{ count: numValid }] = await itemsBase
-          .clone()
-          .whereNotNull('r.patientData')
-          .where(function() {
-            // process 2 main cases - validValues is an array (all categories except Other) or not (category Other)
-            if (validValues && _.isArray(validValues)) {
-              // field exists in json
-              this.whereRaw(`(r.patientData ->> '$.${category}') is not null`)
-              this.andWhere(function() {
-                // check if category is one of valid values
-                _.each(validValues, value => {
-                  this.orWhereRaw(`(r.patientData ->> '$.${category}') = ?`, [
-                    value,
-                  ])
-                })
-              })
-            } else {
-              // get all fields for 'Other' category (i.e. "name", "gender", "age")
-              const fieldNames = JSON.parse(dataCategory.fieldNames)
-              _.map(fieldNames, field => {
-                // field value is not null (when field is missing), "undefined", "null" or ""
-                this.whereRaw(
-                  `
-                  (r.patientData ->> '$.${field}') is not null
-                  and
-                  (r.patientData ->> '$.${field}') != 'undefined'
-                  and
-                  (r.patientData ->> '$.${field}') != 'null'
-                  and
-                  (r.patientData ->> '$.${field}') != ''
-                  `
-                )
-                // ^^^ notice that we require ALL fields (i.e. name, gender, age) have value to count result as valid
-                // if need at least one field to have value then use this.orWhereRaw above
-              })
-            }
-          })
-          .countDistinct('r.id as count')
-
-        let percentage = totals === 0 ? 0 : 100 * (numValid / totals)
+        // and percentage is less than threshold
+        let { percentage } = categoryStatus
         if (percentage < dataCategory.cutoffPercentage) {
           percentage =
             percentage < 10
@@ -836,16 +789,92 @@ async function checkDataCategoriesForLowStatus(action, { messageContext }) {
 
           const payload = {
             dataCategoryId: dataCategory.id,
+            categoryToken,
             categoryName: dataCategory.name,
             periodName: period.name,
             siteId: site.id,
             percentage,
           }
+
           context.factDataCategoryLow(payload)
         }
       })
     })
   })
+}
+
+// helper function for getting Data Category Low status
+async function getDataCategoryStatus(
+  knex,
+  { period: { dateFrom, dateTo }, siteId, dataCategory }
+) {
+  const validValues =
+    dataCategory.validValues && JSON.parse(dataCategory.validValues)
+  // lower 1st character because props in patientData follow cammel-case naming convention
+  const { externalId } = dataCategory
+  const categoryToken = externalId[0].toLowerCase() + externalId.substring(1)
+
+  // base query for getting counts - totals and number of valid results
+  const itemsBase = knex('Result as r')
+    .innerJoin('Device as d', 'r.deviceId', 'd.id')
+    .where('r.endedOn', '>=', dateFrom)
+    .where('r.endedOn', '<=', dateTo)
+    .where(`d.siteId`, siteId)
+
+  // get totals
+  const [{ count: totals }] = await itemsBase
+    .clone()
+    .countDistinct('r.id as count')
+
+  let percentage = 0
+  if (totals > 0) {
+    // get number of valid results
+    const [{ count: numValid }] = await itemsBase
+      .clone()
+      .whereNotNull('r.patientData')
+      .where(function() {
+        // process 2 main cases - validValues is an array (all categories except Other) or not (category Other)
+        if (validValues && _.isArray(validValues)) {
+          // field exists in json
+          this.whereRaw(`(r.patientData ->> '$.${categoryToken}') is not null`)
+          this.andWhere(function() {
+            // check if category is one of valid values
+            _.each(validValues, value => {
+              this.orWhereRaw(`(r.patientData ->> '$.${categoryToken}') = ?`, [
+                value,
+              ])
+            })
+          })
+        } else {
+          // get all fields for 'Other' category (i.e. "name", "gender", "age")
+          const fieldNames = JSON.parse(dataCategory.fieldNames)
+          _.map(fieldNames, field => {
+            // field value is not null (when field is missing), "undefined", "null" or ""
+            this.whereRaw(
+              `
+              (r.patientData ->> '$.${field}') is not null
+              and
+              (r.patientData ->> '$.${field}') != 'undefined'
+              and
+              (r.patientData ->> '$.${field}') != 'null'
+              and
+              (r.patientData ->> '$.${field}') != ''
+              `
+            )
+            // ^^^ notice that we require ALL fields (i.e. name, gender, age) have value to count result as valid
+            // if need at least one field to have value then use this.orWhereRaw above
+          })
+        }
+      })
+      .countDistinct('r.id as count')
+
+    percentage = 100 * (numValid / totals)
+  }
+
+  return {
+    totals,
+    percentage,
+  }
 }
 
 module.exports = {
@@ -859,4 +888,6 @@ module.exports = {
   onResultLogged,
   refreshConsumptionRates,
   checkDataCategoriesForLowStatus,
+  getDataCategoryStatus,
+  MIN_RESULTS_TO_TRIGGER_DATA_CATEGORY_LOW,
 }

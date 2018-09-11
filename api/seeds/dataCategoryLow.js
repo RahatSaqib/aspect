@@ -1,6 +1,11 @@
+const Promise = require('bluebird')
 const _ = require('lodash')
 const { seedIssueEventTriggersForPartner } = require('./utils')
-
+const {
+  allIssueCategoryToId,
+  allMessageSeverityToId,
+} = require('../src/shared/dictionary')
+const { cleanUpIssues } = require('../test/utils/issueUtils')
 // --------------------------------------------------------------------
 // custom fields for 'patients' array
 // --------------------------------------------------------------------
@@ -68,6 +73,7 @@ const dictReferralCenter = [
   'DNB TBC',
   'MMA DNB',
 ]
+const now = new Date()
 
 // helper function
 function getRandomValue(arr, pc = 2) {
@@ -94,103 +100,144 @@ function addDataCategoryFields(samplePatients) {
 }
 
 // -------------------------------------------------------
-// correctOutdated
+// removeOld
 // -------------------------------------------------------
-async function correctOutdated(knex, issueCategoryId) {
-  const messageBase = `Data category '{{issue.data.categoryName}}' for {{issue.data.periodName}} is low ({{issue.data.percentage}}%)`
-  const message = `{{site.name}}: ${messageBase}`
-  const html = `<em>{{site.name}}:</em> data category '{{issue.data.categoryName}}' for {{issue.data.periodName}} is low ({{issue.data.percentage}}%)`
-
-  const changeItem = async (tableName, whereClause, updateClause) => {
-    const { id } = await knex(tableName)
-      .where(whereClause)
-      .first('id')
-
-    await knex(tableName)
-      .where({ id })
-      .update(updateClause)
-
-    return id
-  }
-
-  const alertTemplateId = await changeItem(
-    'AlertTemplate',
-    {
-      message:
-        '{{dataCategoryName}} collection rate {{dataCategoryCollectionRatePercentage}}',
-    },
-    { message: messageBase }
-  )
-
-  const smsTemplateId = await changeItem(
-    'SmsTemplate',
-    {
-      message:
-        '{{dataCategoryName}} collection rate {{dataCategoryCollectionRatePercentage}}',
-    },
-    { message }
-  )
-
-  const emailTemplateId = await changeItem(
-    'EmailTemplate',
-    {
-      body:
-        '{{dataCategoryName}} collection rate {{dataCategoryCollectionRatePercentage}}',
-    },
-    {
-      subject: message,
-      body: message,
-      htmlBody: html,
-    }
-  )
-
-  const { id: messageTypeId } = await knex('MessageType')
+async function removeOld(knex) {
+  const { id: issueTypeId } = await knex('IssueType')
     .where({
-      alertTemplateId,
+      externalId: 'DataCategoryLowError',
     })
     .first('id')
 
-  const issueTypeId = await changeItem(
-    'IssueType',
-    {
-      externalId: 'DataCategoryLowError',
-    },
-    {
-      name: 'Data Category Low', // was 'Data Category Low Error'
-      externalId: 'DataCategoryLow', // was 'DataCategoryLowError'
-      i18nKey: 'issueDataCategoryLow', // was 'issueStatusMachineGenericError'
-      issueCategoryId,
-      defaultMessageTypeId: messageTypeId,
-    }
-  )
+  const issues = await knex('Issue')
+    .where({
+      issueTypeId,
+    })
+    .select('id')
 
-  return {
-    alertTemplateId,
-    smsTemplateId,
-    emailTemplateId,
-    messageTypeId,
-    issueTypeId,
-  }
+  const issueIds = _.filter(_.uniq(_.map(issues, 'id')), id => !_.isNull(id))
+
+  await cleanUpIssues(knex, issueIds)
+
+  const { id: alertTemplateId } = await knex('AlertTemplate')
+    .where({
+      message:
+        '{{dataCategoryName}} collection rate {{dataCategoryCollectionRatePercentage}}',
+    })
+    .first()
+
+  await knex('NotificationType')
+    .where('id', '>', 0)
+    .where({
+      issueTypeId,
+    })
+    .del()
+
+  await knex('IssueType')
+    .where('id', '>', 0)
+    .where({
+      externalId: 'DataCategoryLowError',
+    })
+    .del()
+
+  await knex('MessageType')
+    .where('id', '>', 0)
+    .where({
+      alertTemplateId,
+    })
+    .del()
+
+  await knex('AlertTemplate')
+    .where('id', '>', 0)
+    .where({
+      message:
+        '{{dataCategoryName}} collection rate {{dataCategoryCollectionRatePercentage}}',
+    })
+    .del()
+
+  await knex('SmsTemplate')
+    .where('id', '>', 0)
+    .where({
+      message:
+        '{{dataCategoryName}} collection rate {{dataCategoryCollectionRatePercentage}}',
+    })
+    .del()
+
+  await knex('EmailTemplate')
+    .where('id', '>', 0)
+    .where({
+      body:
+        '{{dataCategoryName}} collection rate {{dataCategoryCollectionRatePercentage}}',
+    })
+    .del()
 }
+
 // -------------------------------------------------------
 // seedDataCategory
 // -------------------------------------------------------
 async function seedDataCategory(knex, partnerName) {
-  await correctOutdated(knex)
+  // remove old data seeded in previous seed files
+  await removeOld(knex)
 
+  // get partnerId and adminId
   const { id: partnerId } = await knex('Partner')
     .where({ name: partnerName })
     .first()
+  const { id: adminId } = await knex('User')
+    .where({ name: 'admin' })
+    .first()
+  const auditFields = {
+    createdOn: now,
+    createdBy: adminId,
+    updatedOn: now,
+    updatedBy: adminId,
+  }
+
+  // --------------------
+  // helper function
+  const insert = async (tableName, whereClause, insertClause, index) => {
+    let item = knex(tableName).where(whereClause)
+    item = _.isNil(index)
+      ? await item.first()
+      : await item
+          .limit(1)
+          .offset(index)
+          .first()
+
+    if (!item) {
+      const [id] = await knex(tableName).insert(insertClause || whereClause)
+      item = await knex(tableName)
+        .where({ id })
+        .first()
+    }
+    return item
+  }
 
   // ----------------------------------------------------------------------
-  // seed DataCategory
+  // JobFunction
   // ----------------------------------------------------------------------
-  await knex('DataCategory').insert([
+  const { id: jobFunctionIdRegionalOfficer } = await insert('JobFunction', {
+    name: 'Regional Officer',
+    partnerId,
+  })
+  const { id: jobFunctionIdLabUser } = await insert('JobFunction', {
+    name: 'Lab User',
+    partnerId,
+  })
+
+  // ----------------------------------------------------------------------
+  // seed DataCategory table
+  // ----------------------------------------------------------------------
+  await insert(
+    'DataCategory',
+    {
+      externalId: 'HivStatus',
+    },
     {
       name: 'HIV+',
       fieldNames: 'hivStatus',
       partnerId,
-      externalId: 'hivStatus',
+      externalId: 'HivStatus',
       i18nKey: 'dataCategoryHiv',
       validValues: JSON.stringify(
         dictHivStatus.filter(x => x !== 'Not on Form')
@@ -199,22 +246,34 @@ async function seedDataCategory(knex, partnerName) {
         dictHivStatus.filter(x => x === 'Not on Form')
       ),
       cutoffPercentage: 98,
+    }
+  )
+  await insert(
+    'DataCategory',
+    {
+      externalId: 'PreviouslyTreated',
     },
     {
       name: 'MDR',
       fieldNames: 'previouslyTreated',
       partnerId,
-      externalId: 'previouslyTreated',
+      externalId: 'PreviouslyTreated',
       i18nKey: 'dataCategoryMdr',
       validValues: JSON.stringify(dictMdr.filter(x => x !== 'Not on Form')),
       invalidValues: JSON.stringify(dictMdr.filter(x => x === 'Not on Form')),
       cutoffPercentage: 98,
+    }
+  )
+  await insert(
+    'DataCategory',
+    {
+      externalId: 'MicroscopyResult',
     },
     {
       name: 'Smear+',
       fieldNames: 'microscopyResult',
       partnerId,
-      externalId: 'microscopyResult',
+      externalId: 'MicroscopyResult',
       i18nKey: 'dataCategorySmear',
       validValues: JSON.stringify(
         dictSmear.filter(x => x !== 'Not on Form' && x !== 'Not Done')
@@ -223,22 +282,192 @@ async function seedDataCategory(knex, partnerName) {
         dictSmear.filter(x => x === 'Not on Form' || x === 'Not Done')
       ),
       cutoffPercentage: 98,
+    }
+  )
+  await insert(
+    'DataCategory',
+    {
+      externalId: 'Other',
     },
     {
       name: 'Other',
       fieldNames: '["name", "gender", "age"]',
       partnerId,
-      externalId: 'other',
+      externalId: 'Other',
       i18nKey: 'dataCategoryOther',
       // ----------------------
       // missing of valid/invalidValues here means that if field is in patientData json and is
       // not undefined, null or empty string - it is considered as valid
       // ----------------------
       cutoffPercentage: 98,
-    },
-  ])
+    }
+  )
+  const dataCategories = await knex('DataCategory')
 
-  // make sure table IssueEventTrigger is up-to-date after latest changes in IssueEventTrigger.json
+  const issueCategories = await allIssueCategoryToId()
+  // ----------------------------------------------------------------------
+  // process each data category
+  // ----------------------------------------------------------------------
+  await Promise.each(
+    dataCategories,
+    // for each category seed all tables from issue workflow
+    async ({ externalId: categoryToken }, index) => {
+      // -------------------------------
+      // message templates
+      // -------------------------------
+      const messageBase = `Data category '{{issue.data.categoryName}}' for {{issue.data.periodName}} is low ({{issue.data.percentage}}%)`
+      const message = `{{site.name}}: ${messageBase}`
+      const html = `<em>{{site.name}}:</em> data category '{{issue.data.categoryName}}' for {{issue.data.periodName}} is low ({{issue.data.percentage}}%)`
+      const messageSeverities = await allMessageSeverityToId()
+      // insert templates
+      const { id: alertTemplateId } = await insert(
+        'AlertTemplate',
+        {
+          message: messageBase,
+        },
+        {
+          message: messageBase,
+          ...auditFields,
+        },
+        index
+      )
+      const { id: smsTemplateId } = await insert(
+        'SmsTemplate',
+        {
+          message,
+        },
+        {
+          message,
+          ...auditFields,
+        },
+        index
+      )
+      const { id: emailTemplateId } = await insert(
+        'EmailTemplate',
+        {
+          subject: message,
+        },
+        {
+          subject: message,
+          body: message,
+          htmlBody: html,
+          ...auditFields,
+        },
+        index
+      )
+      // -------------------------------
+      // MessageType
+      // -------------------------------
+      const { id: defaultMessageTypeId } = await insert('MessageType', {
+        messageSeverityId: messageSeverities.Alert,
+        alertTemplateId,
+        smsTemplateId,
+        emailTemplateId,
+      })
+      // -------------------------------
+      // IssueType
+      // -------------------------------
+      const { id: issueTypeId } = await insert(
+        'IssueType',
+        {
+          externalId: `DataCategoryLowFor${categoryToken}`,
+        },
+        {
+          name: `Data Category Low for ${categoryToken}`,
+          externalId: `DataCategoryLowFor${categoryToken}`,
+          i18nKey: `issueDataCategoryLowFor${categoryToken}`,
+          issueCategoryId: issueCategories.DataHealth,
+          defaultMessageTypeId,
+        }
+      )
+
+      // common
+      const commonProps = {
+        partnerId,
+        issueTypeId,
+        createdOn: now,
+        updatedOn: now,
+      }
+      // -------------------------------
+      // NotificationType
+      // -------------------------------
+      const messageTypeId = defaultMessageTypeId
+      // helper function
+      const addNotificationType = async props => {
+        await insert('NotificationType', props, {
+          ...commonProps,
+          ...auditFields,
+          ...props,
+        })
+      }
+      // add 3 notification types
+      await addNotificationType({
+        name: `LU Data Category '${categoryToken}' Low`,
+        jobFunctionId: jobFunctionIdLabUser,
+        level: 1,
+        canAcknowledge: 1,
+        messageTypeId,
+      })
+      await addNotificationType({
+        name: `RO Data Category '${categoryToken}' Low`,
+        jobFunctionId: jobFunctionIdRegionalOfficer,
+        level: 1,
+        canAcknowledge: 1,
+        messageTypeId,
+      })
+      await addNotificationType({
+        name: `LU Data Category '${categoryToken}' Low - RO View`,
+        jobFunctionId: jobFunctionIdRegionalOfficer,
+        level: 1,
+        canAcknowledge: 0,
+        messageTypeId,
+      })
+      // -------------------------------
+      // IssueEscalationTrigger
+      // -------------------------------
+      await insert(
+        'IssueEscalationTrigger',
+        {
+          escalateToLevel: 2,
+          escalationConditions: JSON.stringify({
+            evaluationMethod: 'issue-age',
+            evaluationParameter: { days: 30 },
+          }),
+        },
+        {
+          ...commonProps,
+          escalateToLevel: 2,
+          escalationConditions: JSON.stringify({
+            evaluationMethod: 'issue-age',
+            evaluationParameter: { days: 30 },
+          }),
+        }
+      )
+      // -------------------------------
+      // IssueResolutionTrigger
+      // -------------------------------
+      await insert(
+        'IssueResolutionTrigger',
+        {
+          resolutionConditions: JSON.stringify({
+            evaluationMethod: 'plugin-function',
+            evaluationParameter: 'resolveDataCategoryLow',
+          }),
+        },
+        {
+          ...commonProps,
+          resolutionConditions: JSON.stringify({
+            evaluationMethod: 'plugin-function',
+            evaluationParameter: 'resolveDataCategoryLow',
+          }),
+        }
+      )
+    }
+  )
+
+  // ----------------------------------------------------------------------
+  // IssueEventTrigger - make sure table is up-to-date after latest changes in IssueEventTrigger.json
+  // ----------------------------------------------------------------------
   await seedIssueEventTriggersForPartner(knex, partnerId, {
     issueTypeWhitelist: ['DeviceMaintenance'],
   })

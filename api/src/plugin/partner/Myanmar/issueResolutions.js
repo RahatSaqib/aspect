@@ -1,4 +1,5 @@
 const subDays = require('date-fns/sub_days')
+const startOfMonth = require('date-fns/start_of_month')
 
 const {
   MODULE_FAILURE_ERROR_CODES,
@@ -10,6 +11,10 @@ const {
   moduleTemperatureMaxErrors,
   minPrcntMachineTemperatureResolve,
 } = require('./errors')
+const {
+  getDataCategoryStatus,
+  MIN_RESULTS_TO_TRIGGER_DATA_CATEGORY_LOW,
+} = require('../../../fact/service')
 
 const { issueStatusToId, issueTypeToId } = require('../../../shared/dictionary')
 
@@ -167,6 +172,28 @@ async function resolveMachineUnknownError(/* knex, issue */) {
   return false
 }
 
+async function resolveDataCategoryLow(knex, issue) {
+  // issue.data is [action].options
+  const issueData = JSON.parse(issue.data) || {}
+  const { dataCategoryId, siteId } = issueData
+  const dataCategory = await knex('DataCategory')
+    .where({ id: dataCategoryId })
+    .first()
+  const now = new Date()
+  const period = {
+    dateFrom: startOfMonth(now),
+    dateTo: now,
+  }
+
+  const props = { period, siteId, dataCategory }
+  const { totals, percentage } = await getDataCategoryStatus(knex, props)
+
+  return (
+    totals < MIN_RESULTS_TO_TRIGGER_DATA_CATEGORY_LOW ||
+    percentage >= dataCategory.cutoffPercentage
+  )
+}
+
 module.exports = {
   resolveModuleFailureError,
   resolveModuleTemperatureError,
@@ -177,4 +204,5 @@ module.exports = {
   resolveMachineProceduralError,
   resolveModuleUnknownError,
   resolveMachineUnknownError,
+  resolveDataCategoryLow,
 }
