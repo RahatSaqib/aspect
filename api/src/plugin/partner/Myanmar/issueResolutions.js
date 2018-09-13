@@ -214,10 +214,12 @@ async function resolveMachineUnknownError(/* knex, issue */) {
 }
 
 async function resolveReagentHealthError(knex, { deviceId }) {
-  // FIXME should reagent health queries be time constrained? (Fix in onResultLogged too)
+  const last30day = subDays(new Date(), 30)
+
   // FIXME should these be constrained by issue consumableId?
   const reagentErrorQuery = knex('Result as r')
     .innerJoin('ResultCategory as rc', 'r.resultCategory1', 'rc.id')
+    .where('r.endedOn', '>=', last30day)
     .where({
       'r.deviceId': deviceId,
     })
@@ -253,6 +255,7 @@ async function resolveReagentHealthError(knex, { deviceId }) {
   )
   const invalidResultQuery = knex('Result as r')
     .innerJoin('ResultCategory as rc', 'r.resultCategory1', 'rc.id')
+    .where('r.endedOn', '>=', last30day)
     .where({
       'r.deviceId': deviceId,
     })
