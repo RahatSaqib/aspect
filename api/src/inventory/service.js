@@ -623,6 +623,13 @@ async function addInventory(request) {
     },
   } = request
 
+  // get MQ context and bind few action creators
+  const messageContext = request.plugins.messageContext.bindActionCreators({
+    inventoryStockout,
+    inventoryStockExpiring,
+    resolveIssues,
+  })
+
   const dataConstraints = await getConstraints(auth.credentials)
 
   const toSite = await getSite(toSiteId, dataConstraints)
@@ -645,6 +652,7 @@ async function addInventory(request) {
     now,
     operation: 'add',
     userId: currentlyLoggedInUser.id,
+    messageContext,
   })
 
   return {
@@ -669,6 +677,13 @@ async function removeInventory(request) {
       notes,
     },
   } = request
+
+  // get MQ context and bind few action creators
+  const messageContext = request.plugins.messageContext.bindActionCreators({
+    inventoryStockout,
+    inventoryStockExpiring,
+    resolveIssues,
+  })
 
   const dataConstraints = await getConstraints(auth.credentials)
 
@@ -696,6 +711,7 @@ async function removeInventory(request) {
     now,
     operation: 'remove',
     userId: currentlyLoggedInUser.id,
+    messageContext,
   })
 
   return {
@@ -719,6 +735,13 @@ async function transferInventory(request) {
     },
     params: { inventoryItemId },
   } = request
+
+  // get MQ context and bind few action creators
+  const messageContext = request.plugins.messageContext.bindActionCreators({
+    inventoryStockout,
+    inventoryStockExpiring,
+    resolveIssues,
+  })
 
   const dataConstraints = await getConstraints(auth.credentials)
 
@@ -797,6 +820,16 @@ async function transferInventory(request) {
         updatedOn: now,
         updatedBy: currentlyLoggedInUser.id,
       })
+
+    // check both sites for Stockout/StockExpiring issues
+    const props = {
+      knex,
+      consumableId,
+      now,
+      messageContext,
+    }
+    await checkOpenedStockIssues({ ...props, siteId: fromSiteId })
+    await checkOpenedStockIssues({ ...props, siteId: toSiteId })
   })
 
   return {
@@ -1041,7 +1074,7 @@ async function checkOpenedStockIssues({
     .where({ siteId, consumableId, days: 1 })
     .first('rate')) || { rate: 0 }
 
-  if (dailyRate > 0) {
+  if (site && dailyRate > 0) {
     // try to resolve Stockout/StockExpiring issues, if any opened for this site/consumable
     const props = {
       knex,

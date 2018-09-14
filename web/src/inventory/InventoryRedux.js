@@ -330,13 +330,6 @@ export function receiveInventory(data) {
   }
 }
 
-// function receiveUpdatedSingleInventoryItem(item) {
-//   return {
-//     type: types.RECEIVE_UPDATED_SINGLE_INVENTORY_ITEM,
-//     item,
-//   }
-// }
-
 export function updateStockLevel(siteId, consumableId, data) {
   return () =>
     aspectFetch(`/inventory/${siteId}/${consumableId}`, {
@@ -355,7 +348,6 @@ export function updateStockLevel(siteId, consumableId, data) {
         }),
       },
     })
-  /* .then(json => dispatch(receiveUpdatedSingleInventoryItem(json.data))) */
 }
 /*
  * ---------------- Reducers -----------------

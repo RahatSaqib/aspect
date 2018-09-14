@@ -44,6 +44,14 @@ async function getDefaultMessageTypes(knex) {
 // seedStockIssues
 // -------------------------------------------------------
 async function seedStockIssues(knex) {
+  // check if this seed already ran
+  const notificationType = await knex('NotificationType')
+    .where({ name: 'LU Stockout' })
+    .first()
+  if (notificationType) {
+    return
+  }
+
   await knex('Partner').update({
     dueDaysInventoryStockout: 30,
     dueDaysInventoryStockExpiring: 30,
