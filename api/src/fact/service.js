@@ -459,10 +459,9 @@ function onFactCheckInventoryStock(action, { messageContext }) {
       // notice that 'rate' field in table FactInventoryConsumptionRate stores total number of
       // tests during corresponding 'days'. So for actual rate you should do rate/days, but
       // for days=1 use 'rate' as-is
-      const { rate: dailyRate } =
-        (await knex('FactInventoryConsumptionRate')
-          .where({ siteId, consumableId, days: 1 })
-          .first('rate')) || {}
+      const { rate: dailyRate } = (await knex('FactInventoryConsumptionRate')
+        .where({ siteId, consumableId, days: 1 })
+        .first('rate')) || { rate: 0 }
 
       if (dailyRate > 0) {
         const props = {
@@ -487,12 +486,38 @@ function onFactCheckInventoryStock(action, { messageContext }) {
   })
 }
 
+// -----------------------------
+// auditInventoryStockout
+// -----------------------------
 async function auditInventoryStockout({
   knex,
   site: { siteId, consumableId },
   dailyRate,
   dueDays,
   dispatch,
+}) {
+  const days = await totalDaysUnexpiredInventoryItemsLast({
+    knex,
+    siteId,
+    consumableId,
+    dailyRate,
+    dueDays,
+  })
+
+  if (days < dueDays) {
+    dispatch(siteId, consumableId, days)
+  }
+}
+
+// -----------------------------
+// totalDaysUnexpiredInventoryItemsLast - is used also in plugin Myanmar/issueResolutions.js
+// -----------------------------
+async function totalDaysUnexpiredInventoryItemsLast({
+  knex,
+  siteId,
+  consumableId,
+  dailyRate,
+  dueDays,
 }) {
   // get all un-expired inventory items for provided site/consumable
   const items = await knex('InventoryItem')
@@ -532,17 +557,38 @@ async function auditInventoryStockout({
     0
   )
 
-  if (days < dueDays) {
-    dispatch(siteId, consumableId, days)
-  }
+  return days
 }
 
+// -----------------------------
+// auditInventoryStockExpiring
+// -----------------------------
 async function auditInventoryStockExpiring({
   knex,
   site: { siteId, consumableId },
   dailyRate,
   dueDays,
   dispatch,
+}) {
+  const totalWasted = await totalWastedInventoryItems({
+    knex,
+    siteId,
+    consumableId,
+    dailyRate,
+  })
+
+  if (totalWasted > 0) {
+    dispatch(siteId, consumableId, dueDays, totalWasted)
+  }
+}
+// -----------------------------
+// totalWastedInventoryItems - is used also in plugin Myanmar/issueResolutions.js
+// -----------------------------
+async function totalWastedInventoryItems({
+  knex,
+  siteId,
+  consumableId,
+  dailyRate,
 }) {
   // get all un-expired inventory items for provided site/consumable
   const items = await knex('InventoryItem')
@@ -575,9 +621,7 @@ async function auditInventoryStockExpiring({
     0
   )
 
-  if (totalWasted > 0) {
-    dispatch(siteId, consumableId, dueDays, totalWasted)
-  }
+  return totalWasted
 }
 
 // -------------------------------------------------------------------------------------
@@ -706,4 +750,8 @@ module.exports = {
   onDeviceUpdateFlag,
   onResultLogged,
   refreshConsumptionRates,
+  totalDaysUnexpiredInventoryItemsLast,
+  totalWastedInventoryItems,
+  auditInventoryStockout,
+  auditInventoryStockExpiring,
 }
