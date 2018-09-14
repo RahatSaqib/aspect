@@ -3,8 +3,13 @@ module.exports = require('../utils').seed(seed)
 const { rowsAsObject } = require('../utils')
 
 async function seed(knex) {
+  const { id: partnerId } = await knex('Partner')
+    .where({ name: 'Myanmar' })
+    .first()
+
   // check if this seed already ran
   const issueResolutionTrigger = await knex('IssueResolutionTrigger')
+    .where({ partnerId })
     .whereRaw(
       'resolutionConditions->>"$.evaluationParameter" = "resolveIssueStockout"'
     )
@@ -15,10 +20,6 @@ async function seed(knex) {
 
   const now = new Date()
   const issueTypes = await rowsAsObject(knex, 'IssueType', 'externalId')
-
-  const { id: partnerId } = await knex('Partner')
-    .where({ name: 'Myanmar' })
-    .first()
 
   // ----------------------------------
   // add records into IssueResolutionTrigger for Stockout and StockExpiring issue types
