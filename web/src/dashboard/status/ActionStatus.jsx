@@ -155,90 +155,97 @@ export const ActionStatus = ({
   selectedCategory,
   onCategoryClick,
   onActionListClick,
-}) => (
-  <Card className={className}>
-    <div className={cssClasses('TitleContainer')}>
-      <Title
-        title={title}
-        icon={
-          <Icon
-            className={cssClasses('Title__Icon')}
-            type={require('../../components/shared/icon/assets/action.svg')}
-          />
-        }
-      />
-    </div>
+}) => {
+  // build 'sortingProps' to pass to ActionDataTableRow for Update button for stock level
+  const { value: filtersParams } = filtersFromLocation(location)
+  const sortingProps = { location, sortCol, sortDir, filtersParams }
 
-    <div className={cssClasses('ActionFilter')}>
-      {[
-        'DeviceHealth',
-        'ReagentHealth',
-        'ConnectivityHealth',
-        'DataHealth',
-      ].map(category => (
-        <Unit xs="1-4" sm="1-4">
-          <ActionFilterButton
-            intl={intl}
-            selected={selectedCategory === category}
-            title={intl.formatMessage(messages[`issueCategory${category}`])}
-            category={category}
-            data-value={category}
-            actions={actionSummaryMap.get(category, EMPTY_LIST)}
-            onClick={onCategoryClick}
-          />
-        </Unit>
-      ))}
-    </div>
-    <div>
-      <ActionDataTable
-        selectable={false}
-        className={cssClasses('ActionDataTable')}
-      >
-        <ActionDataTableHead
-          history={history}
-          location={location}
-          sortColumnKey={sortCol}
-          sortColumnDir={sortDir}
-          columns={[
-            {
-              key: 'issueStatusSortOrder',
-              label: intl.formatMessage(messages.actionStatus),
-              className: cssClasses('ActionDataTable__TableHead__Status'),
-              sortable: true,
-            },
-            {
-              key: 'siteName',
-              label: intl.formatMessage(messages.actionLab),
-              className: cssClasses('ActionDataTable__TableHead__Lab'),
-              sortable: true,
-            },
-            {
-              key: 'message',
-              label: intl.formatMessage(messages.actionIssue),
-              className: cssClasses('ActionDataTable__TableHead__Issue'),
-              sortable: true,
-            },
-          ]}
-        />
-        {actionSummaryMap
-          .get(selectedCategory, EMPTY_LIST)
-          .map(action => (
-            <ActionDataTableRow
-              key={action.get('id')}
-              intl={intl}
-              messages={messages}
-              action={action}
-              onActionListClick={onActionListClick}
+  return (
+    <Card className={className}>
+      <div className={cssClasses('TitleContainer')}>
+        <Title
+          title={title}
+          icon={
+            <Icon
+              className={cssClasses('Title__Icon')}
+              type={require('../../components/shared/icon/assets/action.svg')}
             />
-          ))}
-      </ActionDataTable>
-      {!actionSummaryMap.has(selectedCategory) && (
-        <div className={cssClasses('ActionDataTable--empty')}>
-          <p>{intl.formatMessage(messages.noActionsTitle)}</p>
-        </div>
-      )}
-    </div>
-  </Card>
-)
+          }
+        />
+      </div>
+
+      <div className={cssClasses('ActionFilter')}>
+        {[
+          'DeviceHealth',
+          'ReagentHealth',
+          'ConnectivityHealth',
+          'DataHealth',
+        ].map(category => (
+          <Unit xs="1-4" sm="1-4">
+            <ActionFilterButton
+              intl={intl}
+              selected={selectedCategory === category}
+              title={intl.formatMessage(messages[`issueCategory${category}`])}
+              category={category}
+              data-value={category}
+              actions={actionSummaryMap.get(category, EMPTY_LIST)}
+              onClick={onCategoryClick}
+            />
+          </Unit>
+        ))}
+      </div>
+      <div>
+        <ActionDataTable
+          selectable={false}
+          className={cssClasses('ActionDataTable')}
+        >
+          <ActionDataTableHead
+            history={history}
+            location={location}
+            sortColumnKey={sortCol}
+            sortColumnDir={sortDir}
+            columns={[
+              {
+                key: 'issueStatusSortOrder',
+                label: intl.formatMessage(messages.actionStatus),
+                className: cssClasses('ActionDataTable__TableHead__Status'),
+                sortable: true,
+              },
+              {
+                key: 'siteName',
+                label: intl.formatMessage(messages.actionLab),
+                className: cssClasses('ActionDataTable__TableHead__Lab'),
+                sortable: true,
+              },
+              {
+                key: 'message',
+                label: intl.formatMessage(messages.actionIssue),
+                className: cssClasses('ActionDataTable__TableHead__Issue'),
+                sortable: true,
+              },
+            ]}
+          />
+          {actionSummaryMap
+            .get(selectedCategory, EMPTY_LIST)
+            .map(action => (
+              <ActionDataTableRow
+                key={action.get('id')}
+                intl={intl}
+                messages={messages}
+                action={action}
+                onActionListClick={onActionListClick}
+                sortingProps={sortingProps}
+              />
+            ))}
+        </ActionDataTable>
+        {!actionSummaryMap.has(selectedCategory) && (
+          <div className={cssClasses('ActionDataTable--empty')}>
+            <p>{intl.formatMessage(messages.noActionsTitle)}</p>
+          </div>
+        )}
+      </div>
+    </Card>
+  )
+}
 
 export default enhance(ActionStatus)

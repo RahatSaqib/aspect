@@ -1,3 +1,4 @@
+const Promise = require('bluebird')
 const _ = require('lodash')
 const Boom = require('boom')
 const { startOfDay } = require('date-fns')
@@ -17,6 +18,13 @@ const {
 const { findConsumableReason } = require('../consumable/consumableService')
 const { getUser } = require('../auth/service')
 const { getSite } = require('../site/service')
+const { issueTypeToId, issueStatusToId } = require('../shared/dictionary')
+const { resolveIssues } = require('../issue/actions')
+const { inventoryStockout, inventoryStockExpiring } = require('./actions')
+const {
+  auditInventoryStockout,
+  auditInventoryStockExpiring,
+} = require('../fact/service')
 
 const INVENTORY_ITEM_SELECT_LIST_FIELDS = [
   'ii.id',
@@ -615,6 +623,13 @@ async function addInventory(request) {
     },
   } = request
 
+  // get MQ context and bind few action creators
+  const messageContext = request.plugins.messageContext.bindActionCreators({
+    inventoryStockout,
+    inventoryStockExpiring,
+    resolveIssues,
+  })
+
   const dataConstraints = await getConstraints(auth.credentials)
 
   const toSite = await getSite(toSiteId, dataConstraints)
@@ -637,6 +652,7 @@ async function addInventory(request) {
     now,
     operation: 'add',
     userId: currentlyLoggedInUser.id,
+    messageContext,
   })
 
   return {
@@ -661,6 +677,13 @@ async function removeInventory(request) {
       notes,
     },
   } = request
+
+  // get MQ context and bind few action creators
+  const messageContext = request.plugins.messageContext.bindActionCreators({
+    inventoryStockout,
+    inventoryStockExpiring,
+    resolveIssues,
+  })
 
   const dataConstraints = await getConstraints(auth.credentials)
 
@@ -688,6 +711,7 @@ async function removeInventory(request) {
     now,
     operation: 'remove',
     userId: currentlyLoggedInUser.id,
+    messageContext,
   })
 
   return {
@@ -711,6 +735,13 @@ async function transferInventory(request) {
     },
     params: { inventoryItemId },
   } = request
+
+  // get MQ context and bind few action creators
+  const messageContext = request.plugins.messageContext.bindActionCreators({
+    inventoryStockout,
+    inventoryStockExpiring,
+    resolveIssues,
+  })
 
   const dataConstraints = await getConstraints(auth.credentials)
 
@@ -789,6 +820,16 @@ async function transferInventory(request) {
         updatedOn: now,
         updatedBy: currentlyLoggedInUser.id,
       })
+
+    // check both sites for Stockout/StockExpiring issues
+    const props = {
+      knex,
+      consumableId,
+      now,
+      messageContext,
+    }
+    await checkOpenedStockIssues({ ...props, siteId: fromSiteId })
+    await checkOpenedStockIssues({ ...props, siteId: toSiteId })
   })
 
   return {
@@ -898,6 +939,13 @@ async function updateInventoryStockLevel(request) {
   const currentlyLoggedInUser = await getUser(auth.credentials.name)
   const now = new Date()
 
+  // get MQ context and bind few action creators
+  const messageContext = request.plugins.messageContext.bindActionCreators({
+    inventoryStockout,
+    inventoryStockExpiring,
+    resolveIssues,
+  })
+
   const inventoryItemId = await changeInventoryQuantity({
     siteId,
     consumableId,
@@ -906,6 +954,7 @@ async function updateInventoryStockLevel(request) {
     now,
     operation: 'update stock',
     userId: currentlyLoggedInUser.id,
+    messageContext,
   })
 
   return {
@@ -940,6 +989,7 @@ async function changeInventoryQuantity({
   now,
   operation,
   userId,
+  messageContext,
 }) {
   const inventoryItem = await findInventoryItem(
     siteId,
@@ -978,9 +1028,144 @@ async function changeInventoryQuantity({
       createdOn: now,
       createdBy: userId,
     })
+
+    await checkOpenedStockIssues({
+      knex,
+      siteId,
+      consumableId,
+      now,
+      messageContext,
+    })
   })
 
   return inventoryItemId
+}
+
+async function checkOpenedStockIssues({
+  knex,
+  siteId,
+  consumableId,
+  now,
+  messageContext,
+}) {
+  // same query as in onFactCheckInventoryStock() in /src/inventory/service.js, but with additional 'where' for ii.siteId and ii.consumableId
+  // this is just for getting dueDaysInventoryStockout and dueDaysInventoryStockExpiring values
+  const [site] = await knex('InventoryItem as ii')
+    .innerJoin('Site as s', 'ii.siteId', 's.id')
+    .innerJoin('Partner as p', 's.partnerId', 'p.id')
+    .where('ii.siteId', siteId)
+    .where('ii.consumableId', consumableId)
+    .where(function() {
+      this.whereNull('ii.expiresOn') // if is null
+        .orWhere('ii.expiresOn', '>', now) // or unexpired
+    })
+    .groupBy('ii.siteId', 'ii.consumableId')
+    .select(
+      'ii.siteId',
+      'ii.consumableId',
+      knex.raw('MAX(p.dueDaysInventoryStockout) as dueDaysInventoryStockout'),
+      knex.raw(
+        'MAX(p.dueDaysInventoryStockExpiring) as dueDaysInventoryStockExpiring'
+      )
+    )
+  // notice that 'rate' field in table FactInventoryConsumptionRate stores total number of
+  // tests during corresponding 'days'. So for actual rate you should do rate/days, but
+  // for days=1 use 'rate' as-is
+  const { rate: dailyRate } = (await knex('FactInventoryConsumptionRate')
+    .where({ siteId, consumableId, days: 1 })
+    .first('rate')) || { rate: 0 }
+
+  // 'dailyRate' should be always>0 if there is at least one result
+  // 'site' may be undefinied if InventoryItem.expiresOn is less than today
+  if (site && dailyRate > 0) {
+    // try to resolve Stockout/StockExpiring issues, if any opened for this site/consumable
+    const props = {
+      knex,
+      siteId,
+      consumableId,
+      dailyRate,
+      messageContext,
+    }
+
+    await checkStockoutIssues({
+      issueType: 'InventoryStockout',
+      dueDays: site.dueDaysInventoryStockout,
+      ...props,
+    })
+
+    await checkStockExpiringIssues({
+      issueType: 'InventoryStockExpiring',
+      dueDays: site.dueDaysInventoryStockExpiring,
+      ...props,
+    })
+  }
+}
+
+async function checkStockoutIssues({
+  knex,
+  siteId,
+  consumableId,
+  dailyRate,
+  dueDays,
+  issueType,
+  messageContext,
+}) {
+  // see if need to trigger issue - call same func as scheduler runs
+  await auditInventoryStockout({
+    knex,
+    site: { siteId, consumableId },
+    dailyRate,
+    dueDays,
+    dispatch: messageContext.inventoryStockout,
+  })
+  // see if need to resolve issue
+  await handleResolution({
+    knex,
+    siteId,
+    issueType,
+    messageContext,
+  })
+}
+
+async function checkStockExpiringIssues({
+  knex,
+  siteId,
+  consumableId,
+  dailyRate,
+  dueDays,
+  issueType,
+  messageContext,
+}) {
+  // see if need to trigger issue - call same func as scheduler runs
+  await auditInventoryStockExpiring({
+    knex,
+    site: { siteId, consumableId },
+    dailyRate,
+    dueDays,
+    dispatch: messageContext.inventoryStockExpiring,
+  })
+  // see if need to resolve issue
+  await handleResolution({
+    knex,
+    siteId,
+    issueType,
+    messageContext,
+  })
+}
+
+async function handleResolution({ knex, siteId, issueType, messageContext }) {
+  // get all Active issues of this type for current siteId
+  const issueTypeId = await issueTypeToId(issueType)
+  const issueStatusId = await issueStatusToId('Active')
+  const issues = await knex('Issue')
+    .where({ siteId, issueTypeId, issueStatusId })
+    .select('id')
+
+  // loop through all issues and
+  await Promise.each(issues, async ({ id: issueId }) => {
+    // try to resolve by dispatching 'resolveIssues' into MQ
+    await messageContext.resolveIssues(issueId)
+  })
 }
 
 async function logInventoryChange({

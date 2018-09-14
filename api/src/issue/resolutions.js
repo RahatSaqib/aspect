@@ -34,6 +34,12 @@ function onResolveIssues() {
               issueStatusId: resolvedIssueStatusId,
               updatedOn: now,
             })
+          await knex('IssueStatusLog').insert({
+            issueId: issueResolutionTrigger.id,
+            issueStatusId: resolvedIssueStatusId,
+            changedOn: now,
+            createdOn: now,
+          })
           context.issueResolved(issueResolutionTrigger.id)
           await knex('IssueEvent').insert({
             issueId: issueResolutionTrigger.id,
