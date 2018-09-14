@@ -1049,6 +1049,7 @@ async function checkOpenedStockIssues({
   messageContext,
 }) {
   // same query as in onFactCheckInventoryStock() in /src/inventory/service.js, but with additional 'where' for ii.siteId and ii.consumableId
+  // this is just for getting dueDaysInventoryStockout and dueDaysInventoryStockExpiring values
   const [site] = await knex('InventoryItem as ii')
     .innerJoin('Site as s', 'ii.siteId', 's.id')
     .innerJoin('Partner as p', 's.partnerId', 'p.id')
@@ -1074,6 +1075,8 @@ async function checkOpenedStockIssues({
     .where({ siteId, consumableId, days: 1 })
     .first('rate')) || { rate: 0 }
 
+  // 'dailyRate' should be always>0 if there is at least one result
+  // 'site' may be undefinied if InventoryItem.expiresOn is less than today
   if (site && dailyRate > 0) {
     // try to resolve Stockout/StockExpiring issues, if any opened for this site/consumable
     const props = {
