@@ -33,6 +33,7 @@ const ActionTableRow = ({
   messages,
   action,
   onActionListClick,
+  sortingProps,
   ...restProps
 }) => (
   <TableRow
@@ -57,7 +58,12 @@ const ActionTableRow = ({
           {action.get('message')}
         </span>
         <div className={cssClasses('Issue__Action')}>
-          <ActionStatus intl={intl} messages={messages} action={action} />
+          <ActionStatus
+            intl={intl}
+            messages={messages}
+            action={action}
+            sortingProps={sortingProps}
+          />
 
           <ActionLinkButton
             inverse
