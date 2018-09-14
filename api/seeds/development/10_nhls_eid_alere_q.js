@@ -6,11 +6,13 @@ const bcrypt = require('bcrypt')
 const { rowsAsObject, getPermissionModules } = require('../utils')
 
 const {
+  deviceTypeCategoryToId,
   allFeatureToId,
   assayTypeToId,
   partnerTypeToId,
   resultSourceToId,
   unitToId,
+  deviceStatusToId,
 } = require('../../src/shared/dictionary')
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
@@ -41,12 +43,27 @@ async function seed(knex) {
     updatedBy: adminId,
   }
 
+  const deviceTypeCategoryConnector = await deviceTypeCategoryToId('Connector')
+
+  await knex('DeviceType').insert({
+    externalId: 'AlereQConnector',
+    name: 'Alere Q Connector',
+    manufacturer: 'SystemOne',
+    plugin: 'alereqconnector',
+    deviceTypeCategoryId: deviceTypeCategoryConnector,
+  })
+
   // Reuse previously seeded "static" data
-  const [deviceTypes, modules, features] = await Promise.all([
+  const [
+    deviceTypes,
+    modules,
+    features,
+    approvedDeviceStatusId,
+  ] = await Promise.all([
     rowsAsObject(knex, 'DeviceType', 'externalId'),
     getPermissionModules(knex),
     allFeatureToId(),
-    rowsAsObject(knex, 'IssueType', 'externalId'),
+    deviceStatusToId('approved'),
   ])
 
   const [partnerId] = await knex('Partner').insert({
@@ -58,15 +75,59 @@ async function seed(knex) {
     maxDaysDeviceNoResults: 14,
   })
 
-  const [zaCountry] = await knex('Country as c')
+  const [southAfricaCountry] = await knex('Country as c')
     .where({ 'c.a3': 'ZAF' })
     .select('c.id', 'c.culture', 'c.timezone')
-  const { culture, timezone, id: countryId } = zaCountry
-  const { id: geographyId } = await knex('Geography')
+  const { culture, timezone, id: countryId } = southAfricaCountry
+  const { id: southAfricaGeographyId } = await knex('Geography')
     .where({ countryId })
     .whereNull('stateId')
     .whereNull('lgaId')
     .first()
+
+  // create site for Alere Q Connector device
+  const [southAfricaNhlsAlereQConnectorSiteId] = await knex('Site').insert(
+    Object.assign(
+      {
+        name: 'Alere Q Connector Site',
+        shortName: 'SA NHLS AQC',
+        externalId: 'sa_nhls_alereq_ca',
+        partnerId,
+        geographyId: southAfricaGeographyId,
+      },
+      auditFields
+    )
+  )
+
+  // insert Alere Q Connector device
+  const [southAfricaNhlsAlereQConnectorDeviceId] = await knex('Device').insert(
+    Object.assign(
+      {
+        name: 'South Africa NHLS Alere Q Connector',
+        deviceTypeId: deviceTypes.AlereQConnector.id,
+        deviceStatusId: approvedDeviceStatusId,
+        partnerId,
+        geographyId: southAfricaGeographyId,
+        siteId: southAfricaNhlsAlereQConnectorSiteId,
+        lastPingOn: now,
+        lastSeenOn: now,
+      },
+      auditFields
+    )
+  )
+
+  await knex('DeviceApiKey').insert(
+    Object.assign(
+      {
+        token: 'aqcajk92773test4dv01',
+        revoked: 0,
+        partnerId,
+        geographyId: southAfricaGeographyId,
+        deviceId: southAfricaNhlsAlereQConnectorDeviceId,
+      },
+      auditFields
+    )
+  )
 
   const [adminPersonId] = await knex('Person').insert(
     Object.assign(
@@ -75,7 +136,7 @@ async function seed(knex) {
         name: 'NHLS EID Admin',
         lastPartnerId: partnerId,
         lastCountryId: countryId,
-        geographyId,
+        geographyId: southAfricaGeographyId,
         culture,
         timezone,
       },
@@ -102,7 +163,10 @@ async function seed(knex) {
   const [jobIdAdmin] = await knex('Job').insert([
     { personId: adminPersonId, jobFunctionId: jobFunctionIdAdmin },
   ])
-  await knex('JobContext').insert({ jobId: jobIdAdmin, geographyId })
+  await knex('JobContext').insert({
+    jobId: jobIdAdmin,
+    geographyId: southAfricaGeographyId,
+  })
 
   const [alereQHiv12DetectAssayId, alereQHiv12VLPlasmaAssayId] = await knex(
     'Assay'

@@ -72,6 +72,9 @@ const plugins = {
     transformMergeResultPayload: require('./partner/Myanmar/transformMergeResultPayload'),
     onResultLogged: require('./partner/Myanmar/onResultLogged'),
   },
+  alereqconnector: {
+    transformMergeResultPayload: require('./deviceType/AlereQConnector/transformMergeResultPayload'),
+  },
 }
 
 /**
