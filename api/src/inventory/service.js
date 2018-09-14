@@ -1163,14 +1163,9 @@ async function handleResolution({ knex, siteId, issueType, messageContext }) {
 
   // loop through all issues and
   await Promise.each(issues, async ({ id: issueId }) => {
-    // try to resolve y dispatching 'resolveIssues' into MQ
+    // try to resolve by dispatching 'resolveIssues' into MQ
     await messageContext.resolveIssues(issueId)
-
-    // wait for MQ to handle
-    // await waitForAction(resolveIssues(issueId), 1000)
-    // await waitForIdle()
   })
-  // await waitForIdle(1000)
 }
 
 async function logInventoryChange({
