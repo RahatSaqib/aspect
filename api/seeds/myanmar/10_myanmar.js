@@ -29,7 +29,7 @@ async function seed(knex) {
       .first()
 
     if (!item) {
-      await knex('IssueResolutionTrigger').insert(item)
+      await knex('IssueResolutionTrigger').insert(data)
     }
   }
   // resolution trigger for Stockout
