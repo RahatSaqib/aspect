@@ -3,6 +3,14 @@ module.exports = require('../utils').seed(seed)
 const { rowsAsObject } = require('../utils')
 
 async function seed(knex) {
+  // check if this seed already ran
+  const issueResolutionTrigger = await knex('IssueResolutionTrigger').whereRaw(
+    'resolutionConditions->>"$.evaluationParameter" = "resolveIssueStockout"'
+  )
+  if (issueResolutionTrigger) {
+    return
+  }
+
   const now = new Date()
   const issueTypes = await rowsAsObject(knex, 'IssueType', 'externalId')
 
