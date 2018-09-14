@@ -4,9 +4,11 @@ const { rowsAsObject } = require('../utils')
 
 async function seed(knex) {
   // check if this seed already ran
-  const issueResolutionTrigger = await knex('IssueResolutionTrigger').whereRaw(
-    'resolutionConditions->>"$.evaluationParameter" = "resolveIssueStockout"'
-  )
+  const issueResolutionTrigger = await knex('IssueResolutionTrigger')
+    .whereRaw(
+      'resolutionConditions->>"$.evaluationParameter" = "resolveIssueStockout"'
+    )
+    .first()
   if (issueResolutionTrigger) {
     return
   }
