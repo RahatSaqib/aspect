@@ -6,6 +6,8 @@ const {
   allMessageSeverityToId,
 } = require('../src/shared/dictionary')
 const { cleanUpIssues } = require('../test/utils/issueUtils')
+const { loadPlugin } = require('../src/plugin/registration')
+
 // --------------------------------------------------------------------
 // custom fields for 'patients' array
 // --------------------------------------------------------------------
@@ -226,83 +228,11 @@ async function seedDataCategory(knex, partnerName) {
   })
 
   // ----------------------------------------------------------------------
-  // seed DataCategory table
+  // reed dataCategories
   // ----------------------------------------------------------------------
-  await insert(
-    'DataCategory',
-    {
-      externalId: 'HivStatus',
-    },
-    {
-      name: 'HIV+',
-      fieldNames: 'hivStatus',
-      partnerId,
-      externalId: 'HivStatus',
-      i18nKey: 'dataCategoryHiv',
-      validValues: JSON.stringify(
-        dictHivStatus.filter(x => x !== 'Not on Form')
-      ),
-      invalidValues: JSON.stringify(
-        dictHivStatus.filter(x => x === 'Not on Form')
-      ),
-      cutoffPercentage: 98,
-    }
-  )
-  await insert(
-    'DataCategory',
-    {
-      externalId: 'PreviouslyTreated',
-    },
-    {
-      name: 'MDR',
-      fieldNames: 'previouslyTreated',
-      partnerId,
-      externalId: 'PreviouslyTreated',
-      i18nKey: 'dataCategoryMdr',
-      validValues: JSON.stringify(dictMdr.filter(x => x !== 'Not on Form')),
-      invalidValues: JSON.stringify(dictMdr.filter(x => x === 'Not on Form')),
-      cutoffPercentage: 98,
-    }
-  )
-  await insert(
-    'DataCategory',
-    {
-      externalId: 'MicroscopyResult',
-    },
-    {
-      name: 'Smear+',
-      fieldNames: 'microscopyResult',
-      partnerId,
-      externalId: 'MicroscopyResult',
-      i18nKey: 'dataCategorySmear',
-      validValues: JSON.stringify(
-        dictSmear.filter(x => x !== 'Not on Form' && x !== 'Not Done')
-      ),
-      invalidValues: JSON.stringify(
-        dictSmear.filter(x => x === 'Not on Form' || x === 'Not Done')
-      ),
-      cutoffPercentage: 98,
-    }
-  )
-  await insert(
-    'DataCategory',
-    {
-      externalId: 'Other',
-    },
-    {
-      name: 'Other',
-      fieldNames: '["name", "gender", "age"]',
-      partnerId,
-      externalId: 'Other',
-      i18nKey: 'dataCategoryOther',
-      // ----------------------
-      // missing of valid/invalidValues here means that if field is in patientData json and is
-      // not undefined, null or empty string - it is considered as valid
-      // ----------------------
-      cutoffPercentage: 98,
-    }
-  )
-  const dataCategories = await knex('DataCategory')
+  const pluginName = partnerName.toLowerCase()
+  const plugin = await loadPlugin([pluginName], 'dataCategories')
+  const { dataCategories = [] } = plugin
 
   const issueCategories = await allIssueCategoryToId()
   // ----------------------------------------------------------------------
