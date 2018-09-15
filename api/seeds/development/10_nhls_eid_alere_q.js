@@ -208,7 +208,7 @@ async function seed(knex) {
         timeStamp: {
           list: true,
           order: 11,
-          type: 'string',
+          type: 'time',
           title: 'Timestamp',
         },
         sampleDetection: {
@@ -259,12 +259,18 @@ async function seed(knex) {
           type: 'string',
           title: 'Source File',
         },
+        pickedUpOn: {
+          list: false,
+          order: 20,
+          type: 'time',
+          title: 'Picked Up On',
+        },
       }),
     },
     {
       name: 'Alere q HIV-1/2 VL plasma',
-      i18nKey: 'assayAlereQHiv1212VLPlasma',
-      externalId: 'assayAlereQHiv1212VLPlasma',
+      i18nKey: 'assayAlereQHiv12VLPlasma',
+      externalId: 'assayAlereQHiv12VLPlasma',
       assayTypeId: await assayTypeToId('HIV VL'),
       deviceTypeId: deviceTypes.AlereQ.id,
       resultSourceId: await resultSourceToId('DiagnosticDevice'),
@@ -303,7 +309,7 @@ async function seed(knex) {
         timeStamp: {
           list: true,
           order: 11,
-          type: 'string',
+          type: 'time',
           title: 'Timestamp',
         },
         sampleDetection: {
@@ -365,6 +371,12 @@ async function seed(knex) {
           order: 21,
           type: 'string',
           title: 'Source File',
+        },
+        pickedUpOn: {
+          list: false,
+          order: 22,
+          type: 'time',
+          title: 'Picked Up On',
         },
       }),
     },
