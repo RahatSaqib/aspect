@@ -24,10 +24,6 @@ const cacheConfig = {
     keyColumn: 'module',
   },
   FileContentType: {},
-  FileSystemWatcher: {
-    keyColumn: 'pathMatchRegex',
-    additionalColumns: ['id'],
-  },
   IssueCategory: {},
   IssueEventStatus: {},
   IssueStatus: {},

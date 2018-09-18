@@ -23,9 +23,6 @@ module.exports = {
     reference: {
       directory: process.env['file.reference.directory'],
     },
-    watcher: {
-      directory: process.env['file.watcher.directory'],
-    },
   },
   amqp: {
     url: process.env['amqp.url'],

@@ -78,7 +78,6 @@
     "base32": "^0.0.6",
     "bcrypt": "^1.0.3",
     "boom": "^5.2.0",
-    "chokidar": "^2.0.4",
     "date-fns": "^1.28.5",
     "debug": "^3.1.0",
     "dotenv-safe": "^4.0.4",
@@ -107,7 +106,6 @@
     "sendgrid": "^5.2.2",
     "shx": "^0.2.2",
     "twilio": "^3.13.1",
-    "unzip2": "^0.2.5",
     "vision": "^4.1.1"
   },
   "devDependencies": {
