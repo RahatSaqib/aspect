@@ -34,15 +34,8 @@ const {
 
 const { seedUnknownErrorsIssue } = require('../seedUnknownErrorsIssue')
 
-// --------------------------------
-const {
-  addDataCategoryFields,
-  seedDataCategory,
-} = require('../dataCategoryLow')
-
-// add and randomly populate DataCategory fields
-patients = addDataCategoryFields(patients)
-// --------------------------------
+const { loadPlugin } = require('../../src/plugin/registration')
+const { seedDataCategory } = require('../dataCategoryLow')
 
 const now = new Date()
 const millisInHour = 1000 * 60 * 60
@@ -95,6 +88,16 @@ async function seed(knex) {
     maxDaysDeviceOffline: 7,
     maxDaysDeviceNoResults,
   })
+
+  // -------------------------
+  // add and randomly populate DataCategory fields
+  const pluginName = 'myanmar'
+  const plugin = await loadPlugin([pluginName], 'dataCategories')
+  const { addDataCategoryFields } = plugin
+  if (addDataCategoryFields) {
+    patients = addDataCategoryFields(patients)
+  }
+  // -------------------------
 
   const modules = await getPermissionModules(knex)
 

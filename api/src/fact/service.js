@@ -715,7 +715,7 @@ async function checkDataCategoriesForLowStatus(action, { messageContext }) {
   const context = messageContext.bindActionCreators({
     factDataCategoryLow,
   })
-
+  const { loadPlugin } = require('../plugin/registration')
   const now = new Date()
   // calculate only for current month
   const period = {
@@ -728,76 +728,77 @@ async function checkDataCategoriesForLowStatus(action, { messageContext }) {
   const triggeredIssueEventStatusId = await issueEventStatusToId('Triggered')
 
   await context.run(async knex => {
-    // read all data categories for all partners
-    const dataCategories = await knex('DataCategory')
+    // get all partners with defined plugin
+    const partners = await knex('Partner')
+      .whereNotNull('plugin')
+      .select('id', 'plugin')
 
-    // check data categories for 'low status'
-    await Promise.each(dataCategories, async dataCategory => {
-      const { partnerId, externalId: categoryToken } = dataCategory
-      const issueTypeId = await issueTypeToId(
-        `DataCategoryLowFor${categoryToken}`
+    // loop all partners
+    await Promise.each(partners, async ({ id: partnerId, plugin }) => {
+      const { dataCategories = [] } = await loadPlugin(
+        [plugin],
+        'dataCategories'
       )
+      // check data categories for 'low status'
+      await Promise.each(dataCategories, async dataCategory => {
+        const { externalId: categoryToken } = dataCategory
+        const issueTypeId = await issueTypeToId(
+          `DataCategoryLowFor${categoryToken}`
+        )
 
-      // get all sites for current partnerId
-      const sites = await knex('Site')
-        .where({ partnerId })
-        .select('id', 'name', 'geographyId')
+        // get all sites for current partnerId
+        const sites = await knex('Site')
+          .where({ partnerId })
+          .select('id', 'name')
 
-      // for each site
-      _.map(sites, async site => {
-        const siteId = site.id
-        // ----------------------------
-        // trigger only one issue of this type per site-category
-        // ----------------------------
-
-        // check if this type of IssueEvent has already been triggered and is Active
-        const triggeredIssue = await knex('Issue as i')
-          .innerJoin('IssueEvent as ie', 'i.id', 'ie.issueId')
-          .where('i.siteId', siteId)
-          .where('i.partnerId', partnerId)
-          .where('i.level', 1)
-          .where('i.issueTypeId', issueTypeId) // issue type 'DataCategoryLow'
-          .where('i.issueStatusId', issueStatusId) // is Active
-          .where('ie.issueEventStatusId', triggeredIssueEventStatusId)
-          .whereRaw(
-            `(ie.data ->> '$.options.dataCategoryId') = ${dataCategory.id}` // current category
-          )
-          .first()
-        // if issue has already been triggered for current site-category then exit
-        if (triggeredIssue) {
-          return
-        }
-
-        const props = { period, siteId, dataCategory }
-        const categoryStatus = await getDataCategoryStatus(knex, props)
-        const { totals } = categoryStatus
-
-        // ----------------------------
-        // trigger only if
-        // ----------------------------
-        // site has more than N results for the period
-        if (totals < MIN_RESULTS_TO_TRIGGER_DATA_CATEGORY_LOW) {
-          return
-        }
-        // and percentage is less than threshold
-        let { percentage } = categoryStatus
-        if (percentage < dataCategory.cutoffPercentage) {
-          percentage =
-            percentage < 10
-              ? Math.round(10 * percentage) / 10 // ##.#
-              : Math.round(percentage) // ##
-
-          const payload = {
-            dataCategoryId: dataCategory.id,
-            categoryToken,
-            categoryName: dataCategory.name,
-            periodName: period.name,
-            siteId: site.id,
-            percentage,
+        // for each site
+        _.map(sites, async site => {
+          const siteId = site.id
+          // check if this type of IssueEvent has already been triggered and is Active
+          const triggeredIssue = await knex('Issue as i')
+            .innerJoin('IssueEvent as ie', 'i.id', 'ie.issueId')
+            .where('i.siteId', siteId)
+            .where('i.partnerId', partnerId)
+            .where('i.level', 1)
+            .where('i.issueTypeId', issueTypeId) // issue type 'DataCategoryLowFor*'
+            .where('i.issueStatusId', issueStatusId) // is Active
+            .where('ie.issueEventStatusId', triggeredIssueEventStatusId)
+            .first()
+          // if issue has already been triggered for current site and is Active then exit
+          if (triggeredIssue) {
+            return
           }
 
-          context.factDataCategoryLow(payload)
-        }
+          const props = { period, siteId, dataCategory }
+          const categoryStatus = await getDataCategoryStatus(knex, props)
+          const { totals } = categoryStatus
+
+          // ----------------------------
+          // trigger only if
+          // ----------------------------
+          // site has more than N results for the period
+          if (totals < MIN_RESULTS_TO_TRIGGER_DATA_CATEGORY_LOW) {
+            return
+          }
+          // and percentage is less than threshold
+          let { percentage } = categoryStatus
+          if (percentage < dataCategory.cutoffPercentage) {
+            percentage =
+              percentage < 10
+                ? Math.round(10 * percentage) / 10 // ##.#
+                : Math.round(percentage) // ##
+
+            const payload = {
+              categoryToken,
+              categoryName: dataCategory.name,
+              periodName: period.name,
+              siteId: site.id,
+              percentage,
+            }
+
+            context.factDataCategoryLow(payload)
+          }
+        })
       })
     })
   })

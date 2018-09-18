@@ -1,6 +1,7 @@
 const subDays = require('date-fns/sub_days')
 const startOfMonth = require('date-fns/start_of_month')
 const Promise = require('bluebird')
+const _ = require('lodash')
 
 const {
   MODULE_FAILURE_ERROR_CODES,
@@ -212,25 +213,37 @@ async function resolveMachineUnknownError(/* knex, issue */) {
 }
 
 async function resolveDataCategoryLow(knex, issue) {
-  // issue.data is [action].options
+  // notice that issue.data is [action].options
   const issueData = JSON.parse(issue.data) || {}
-  const { dataCategoryId, siteId } = issueData
-  const dataCategory = await knex('DataCategory')
-    .where({ id: dataCategoryId })
-    .first()
-  const now = new Date()
-  const period = {
-    dateFrom: startOfMonth(now),
-    dateTo: now,
-  }
-
-  const props = { period, siteId, dataCategory }
-  const { totals, percentage } = await getDataCategoryStatus(knex, props)
-
-  return (
-    totals < MIN_RESULTS_TO_TRIGGER_DATA_CATEGORY_LOW ||
-    percentage >= dataCategory.cutoffPercentage
+  // get needed props from [action].options (see factDataCategoryLow() in /fact/action.js)
+  const { siteId, categoryToken } = issueData
+  const { plugin } =
+    (await knex('Site as s')
+      .innerJoin('Partner as p', 's.partnerId', 'p.id')
+      .where('s.id', siteId)
+      .first('p.plugin')) || {}
+  const { loadPlugin } = require('../../../plugin/registration')
+  const { dataCategories = [] } = await loadPlugin([plugin], 'dataCategories')
+  const dataCategory = _.find(
+    dataCategories,
+    category => category.externalId === categoryToken
   )
+
+  if (dataCategory) {
+    const now = new Date()
+    const period = {
+      dateFrom: startOfMonth(now),
+      dateTo: now,
+    }
+    const props = { period, siteId, dataCategory }
+    const { totals, percentage } = await getDataCategoryStatus(knex, props)
+
+    return (
+      totals < MIN_RESULTS_TO_TRIGGER_DATA_CATEGORY_LOW ||
+      percentage >= dataCategory.cutoffPercentage
+    )
+  }
+  return false
 }
 
 module.exports = {

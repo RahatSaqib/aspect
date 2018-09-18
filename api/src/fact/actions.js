@@ -84,10 +84,9 @@ function factDataCategoryLowCheck() {
  * Creates an action to notify the site with given id
  * has low given data category issue for given period
  *
- * dataCategoryId, categoryName, periodName, siteId, percentage are required.
+ * categoryToken, categoryName, periodName, siteId, percentage are required.
  */
 function factDataCategoryLow({
-  dataCategoryId,
   categoryToken,
   categoryName,
   periodName,
@@ -95,7 +94,6 @@ function factDataCategoryLow({
   percentage,
 }) {
   if (
-    !dataCategoryId ||
     !categoryToken ||
     !categoryName ||
     !periodName ||
@@ -103,14 +101,14 @@ function factDataCategoryLow({
     isNil(percentage)
   ) {
     throw new Error(
-      'Must specify each parameter - dataCategoryId, categoryToken, categoryName, periodName, siteId, percentage - for Data Category Low notification'
+      'Must specify each parameter - categoryToken, categoryName, periodName, siteId, percentage - for Data Category Low notification'
     )
   }
   return {
     type: types[`FACT_DATA_CATEGORY_IS_LOW_${categoryToken.toUpperCase()}`],
     siteId,
     options: {
-      dataCategoryId,
+      categoryToken,
       categoryName,
       periodName,
       siteId,

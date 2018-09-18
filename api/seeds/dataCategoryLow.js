@@ -8,98 +8,7 @@ const {
 const { cleanUpIssues } = require('../test/utils/issueUtils')
 const { loadPlugin } = require('../src/plugin/registration')
 
-// --------------------------------------------------------------------
-// custom fields for 'patients' array
-// --------------------------------------------------------------------
-// values are from 'connect*option' tables in GxAlert db (for Myanmar)
-// Notice that exactly same values should be used for seeding validValues and invalidValues fields in
-// DataCategory table (see seedDataCategory() in this file)
-// --------------
-// values for data category fields
-// --------------
-const dictHivStatus = [
-  'Positive',
-  'Negative',
-  'Unknown',
-  'HIV Positive',
-  'HIV Negative',
-  'HIV Unknown',
-  'Not on Form',
-]
-const dictMdr = [
-  'On Treatment',
-  'Previously Treated',
-  'Unknown',
-  'No Previous Treatment',
-  'No',
-  'Yes',
-  'false',
-  'true',
-  'Not on Form',
-]
-const dictSmear = [
-  'Smear Negative',
-  'Smear Positive',
-  'Negative',
-  'Positive',
-  'Not Done',
-  'Not on Form',
-]
-
-// --------------
-// custom fields
-// --------------
-const dictSampleTypes = [
-  'CSF',
-  'Other',
-  'Saliva',
-  'Pus',
-  'Not on Form',
-  'Blood',
-  'Sputum',
-  'Effusion',
-]
-const dictOtherReason = [
-  'MDR Contact',
-  'Not on Form',
-  'Smear Positive Month 2 Treatment',
-  'EPTB Suspect',
-  'Diabetes mellitus',
-  'Smear Positive Month 5 Treatment',
-]
-const dictReferralCenter = [
-  'BGL TBC',
-  'PSI BGL',
-  'Not on Form',
-  'MMA BGL',
-  'DNB TBC',
-  'MMA DNB',
-]
 const now = new Date()
-
-// helper function
-function getRandomValue(arr, pc = 2) {
-  // return values ony in 98% of cases
-  if (99 - _.random(99) < pc) return undefined
-  return _.isArray(arr)
-    ? arr[_.random(arr.length - 1)]
-    : `Some string - ${_.random(1000000)}`
-}
-
-// -------------------------------------------------------
-// getPatients
-// -------------------------------------------------------
-function addDataCategoryFields(samplePatients) {
-  return _.each(samplePatients, p => {
-    _.set(p, 'hivStatus', getRandomValue(dictHivStatus, 50))
-    _.set(p, 'previouslyTreated', getRandomValue(dictMdr))
-    _.set(p, 'microscopyResult', getRandomValue(dictSmear))
-    _.set(p, 'sampleType', getRandomValue(dictSampleTypes))
-    _.set(p, 'otherReason', getRandomValue(dictOtherReason))
-    _.set(p, 'referralCenter', getRandomValue(dictReferralCenter))
-    _.set(p, 'otherNotes', getRandomValue())
-  })
-}
 
 // -------------------------------------------------------
 // removeOld
@@ -405,5 +314,4 @@ async function seedDataCategory(knex, partnerName) {
 
 module.exports = {
   seedDataCategory,
-  addDataCategoryFields,
 }
