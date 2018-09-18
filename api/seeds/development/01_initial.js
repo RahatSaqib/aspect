@@ -280,6 +280,7 @@ async function seed(knex) {
     externalId: 'AlereQ',
     name: 'Q',
     manufacturer: 'Alere',
+    plugin: 'alereq',
     deviceTypeCategoryId: deviceTypeCategoryLab,
   })
 

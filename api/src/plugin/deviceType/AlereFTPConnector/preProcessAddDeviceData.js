@@ -2,6 +2,7 @@ const _ = require('lodash')
 const Boom = require('boom')
 const { createNewDevice } = require('../../../deviceApi/device')
 const { getDateOrDefault } = require('../../../shared/date')
+const { getFirstTestDate } = require('./alereUtils')
 
 async function preProcessAddDeviceData(context) {
   const { device, payload, knex, now } = context
@@ -24,10 +25,22 @@ async function preProcessAddDeviceData(context) {
     { deviceId: alereDevice.id, serial: alereDevice.serial },
     now
   )
-  if (device.siteId !== site.id || device.geographyId !== site.geographyId) {
-    await knex.from('Device')
+  const firstTestDate = await getFirstTestDate(knex, alereDevice.id)
+  if (
+    device.siteId !== site.id ||
+    device.geographyId !== site.geographyId ||
+    device.putInService !== firstTestDate
+  ) {
+    await knex
+      .from('Device')
       .where({ id: device.id })
-      .update({ siteId: site.id, geographyId: site.geographyId, updatedOn: now, updatedBy: null })
+      .update({
+        siteId: site.id,
+        geographyId: site.geographyId,
+        putInService: firstTestDate,
+        updatedOn: now,
+        updatedBy: null,
+      })
   }
 }
 
@@ -35,14 +48,16 @@ async function getOrCreateDevice(knex, payload, alereFTPConnectorDevice, now) {
   const { partnerId } = alereFTPConnectorDevice
   const deviceTypeExternalId = _.get(payload, 'type.id', null)
   if (!deviceTypeExternalId) {
-    throw Boom.badRequest('Must specify device type for data from an Alere FTP Connector')
+    throw Boom.badRequest(
+      'Must specify device type for data from an Alere FTP Connector'
+    )
   }
-  const deviceSerialNumber = _.get(
-    payload,
-    'result.instrument.serial',
-    null
-  )
-  const deviceDetails = { partnerId, serial: deviceSerialNumber, deviceTypeExternalId }
+  const deviceSerialNumber = _.get(payload, 'result.instrument.serial', null)
+  const deviceDetails = {
+    partnerId,
+    serial: deviceSerialNumber,
+    deviceTypeExternalId,
+  }
   let matchingDevices = await findDevices(deviceDetails, knex)
 
   if (_.isEmpty(matchingDevices)) {
@@ -61,9 +76,10 @@ async function getOrCreateDevice(knex, payload, alereFTPConnectorDevice, now) {
       geographyId: site.geographyId,
       status: 'assigned',
       lastSeenOn,
+      lastPingOn: lastSeenOn,
+      putInService: lastSeenOn,
       culture: alereFTPConnectorDevice.culture,
       timezone: alereFTPConnectorDevice.timezone,
-      putInService: lastSeenOn,
     })
     if (error) {
       throw error
@@ -78,7 +94,10 @@ async function getOrCreateDevice(knex, payload, alereFTPConnectorDevice, now) {
   return matchingDevice
 }
 
-async function findDevices({ deviceId, partnerId, serial, deviceTypeExternalId }, knex) {
+async function findDevices(
+  { deviceId, partnerId, serial, deviceTypeExternalId },
+  knex
+) {
   return knex
     .from('Device as d')
     .leftJoin('DeviceStatus as ds', 'd.deviceStatusId', 'ds.id')
@@ -106,6 +125,7 @@ async function findDevices({ deviceId, partnerId, serial, deviceTypeExternalId }
       'd.macAddress',
       'd.configurationData',
       'd.lastSeenOn',
+      'd.putInService',
       'ds.token as status',
       'dt.externalId as deviceType',
       'dt.plugin as deviceTypePluginName',

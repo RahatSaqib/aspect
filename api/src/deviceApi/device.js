@@ -197,21 +197,11 @@ async function createNewDevice(
     createdBy: null,
   })
 
-  const device = await getSingleDevice(knex, { id: deviceId })
-  return { device }
-}
-
-async function getSingleDevice(knex, constraints = {}) {
-  if (_.isEmpty(constraints)) {
-    return null
-  }
-  const foundDevices = await knex('Device as d')
+  const device = await knex('Device as d')
     .join('DeviceStatus as ds', 'd.deviceStatusId', 'ds.id')
     .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
-    .where(
-      _.mapKeys(constraints, (v, k) => (k.indexOf('.') === -1 ? `d.${k}` : k))
-    )
-    .select(
+    .where('d.id', deviceId)
+    .first(
       'd.id',
       'd.partnerId',
       'd.siteId',
@@ -222,11 +212,7 @@ async function getSingleDevice(knex, constraints = {}) {
       'dt.externalId as deviceType',
       'dt.plugin as deviceTypePluginName'
     )
-    .limit(2)
-  if (foundDevices.length === 1) {
-    return foundDevices[0]
-  }
-  return null
+  return { device }
 }
 
 module.exports = {
@@ -237,6 +223,5 @@ module.exports = {
   getDeviceOperation,
   addDeviceOperation,
   getSite,
-  getSingleDevice,
   createNewDevice,
 }

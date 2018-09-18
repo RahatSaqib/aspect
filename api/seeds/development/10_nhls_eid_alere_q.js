@@ -99,7 +99,9 @@ async function seed(knex) {
   )
 
   // insert SA NHLS Alere q Connector device
-  const [southAfricaNhlsAlereFTPConnectorDeviceId] = await knex('Device').insert(
+  const [southAfricaNhlsAlereFTPConnectorDeviceId] = await knex(
+    'Device'
+  ).insert(
     Object.assign(
       {
         name: 'South Africa NHLS Alere FTP Connector',

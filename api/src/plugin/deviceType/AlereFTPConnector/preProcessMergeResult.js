@@ -14,26 +14,14 @@ async function preProcessMergeResult({ knex, deviceId, payload }) {
   if (_.isEmpty(device)) {
     throw Boom.notFound(`Cannot find device ${deviceId}`)
   }
-  const instrumentSerial = _.get(
-    payload,
-    'instrument.serial',
-    null
-  )
-  const startedOn = getDateOrDefault(
-    payload,
-    'startedOn',
-    null
-  )
+  const instrumentSerial = _.get(payload, 'instrument.serial', null)
+  const startedOn = getDateOrDefault(payload, 'startedOn', null)
   if (!startedOn) {
     throw Boom.badRequest(
       'Start date is required for a result from an Alere device'
     )
   }
-  const sampleId = _.get(
-    payload,
-    'sample.id',
-    null
-  )
+  const sampleId = _.get(payload, 'sample.id', null)
   const resultExternalId = createUniqueIdForResult(
     instrumentSerial,
     startedOn,

@@ -73,8 +73,14 @@ const plugins = {
     onResultLogged: require('./partner/Myanmar/onResultLogged'),
   },
   alereftpconnector: {
+    getDeviceSeenOn: require('./deviceType/AlereFTPConnector/getDeviceSeenOn'),
+    getDevicePingOn: require('./deviceType/AlereFTPConnector/getDevicePingOn'),
     preProcessAddDeviceData: require('./deviceType/AlereFTPConnector/preProcessAddDeviceData'),
     preProcessMergeResult: require('./deviceType/AlereFTPConnector/preProcessMergeResult'),
+  },
+  alereq: {
+    getDeviceSeenOn: require('./deviceType/AlereFTPConnector/getDeviceSeenOn'),
+    getDevicePingOn: require('./deviceType/AlereFTPConnector/getDevicePingOn'),
   },
 }
 
