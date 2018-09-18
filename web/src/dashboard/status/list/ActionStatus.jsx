@@ -11,6 +11,7 @@ import recomposeForm from '../../../components/recomposeForm'
 import { acknowledgeIssue } from '../../../issue/IssueRedux'
 import { updateStockLevel } from '../../../inventory/InventoryRedux'
 import { showAcknowledgement } from '../../../appNotification/AppNotificationRedux'
+import { fetchActionDashboard } from '../../DashboardRedux'
 
 const cssClasses = classnames.bind(require('./ActionTableRow.css'))
 
@@ -25,7 +26,11 @@ const UpdateStockLevelInput = compose(
   pure,
   connect(
     null,
-    bindActionCreators.bind(null, { updateStockLevel, showAcknowledgement })
+    bindActionCreators.bind(null, {
+      updateStockLevel,
+      showAcknowledgement,
+      fetchActionDashboard,
+    })
   ),
   lifecycle({
     componentWillMount() {
@@ -56,16 +61,22 @@ const UpdateStockLevelInput = compose(
       messages,
       updateStockLevel,
       showAcknowledgement,
+      sortingProps, // props of current sorting/filtering params
+      fetchActionDashboard, // action creator
     }) => values =>
-      updateStockLevel(
-        action.get('siteId'),
-        action.get('consumableId'),
-        values
-      ).then(() => {
-        showAcknowledgement({
-          title: messages.stockLevelUpdatedSuccessfully,
+      updateStockLevel(action.get('siteId'), action.get('consumableId'), values)
+        .then(() => {
+          showAcknowledgement({
+            title: messages.stockLevelUpdatedSuccessfully,
+          })
         })
-      }),
+        // get new dataset - run in few seconds to let MessageQueue on server side to resolve or trigger corresponding issues, if any
+        .then(() => {
+          setTimeout(() => {
+            const { filtersParams, sortCol, sortDir } = sortingProps
+            fetchActionDashboard(filtersParams, sortCol, sortDir)
+          }, 3000)
+        }),
   }),
   recomposeForm({
     fields: [
@@ -145,7 +156,7 @@ export const ActionStatus = compose(
       return errors
     },
   })
-)(({ intl, messages, action, handleSubmit }) => {
+)(({ intl, messages, action, handleSubmit, sortingProps }) => {
   if (action.get('issueTypeExternalId') === 'StockLevelUpdate') {
     if (action.get('canEdit')) {
       return (
@@ -157,6 +168,7 @@ export const ActionStatus = compose(
             action.get('issueTypeExternalId') === 'StockLevelUpdate' &&
             action.get('status') === 'Active'
           }
+          sortingProps={sortingProps}
         />
       )
     }

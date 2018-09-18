@@ -21,6 +21,11 @@ const {
   MIN_RESULTS_TO_TRIGGER_DATA_CATEGORY_LOW,
 } = require('../../../fact/service')
 
+const {
+  totalDaysUnexpiredInventoryItemsLast,
+  totalWastedInventoryItems,
+} = require('../../../fact/service')
+
 const { issueStatusToId, issueTypeToId } = require('../../../shared/dictionary')
 
 async function resolveModuleFailureError(knex, issue) {
@@ -246,6 +251,53 @@ async function resolveDataCategoryLow(knex, issue) {
   return false
 }
 
+async function resolveIssueStockout(knex, issue) {
+  // ---------------------------------------
+  // see auditInventoryStockout() in /fact/service.js for triggering issue - here we check opposite
+  // ---------------------------------------
+  const { partnerId, siteId, consumableId } = issue
+  const { rate: dailyRate } = (await knex('FactInventoryConsumptionRate')
+    .where({ siteId, consumableId, days: 1 })
+    .first('rate')) || { rate: 0 }
+  // read threshold
+  const { dueDaysInventoryStockout: dueDays } = await knex('Partner')
+    .where({ id: partnerId })
+    .first()
+
+  // use same func as when checking to trigger issue
+  const days = await totalDaysUnexpiredInventoryItemsLast({
+    knex,
+    siteId,
+    consumableId,
+    dailyRate,
+    dueDays,
+  })
+
+  // consider issue resolved if number of days to use consumables if greater than threshold
+  return days >= dueDays
+}
+
+async function resolveIssueStockExpiring(knex, issue) {
+  // ---------------------------------------
+  // see auditInventoryStockExpiring() in /fact/service.js for triggering issue - here we check opposite
+  // ---------------------------------------
+  const { siteId, consumableId } = issue
+  const { rate: dailyRate } = (await knex('FactInventoryConsumptionRate')
+    .where({ siteId, consumableId, days: 1 })
+    .first('rate')) || { rate: 0 }
+
+  // use same func as when checking to trigger issue
+  const totalWasted = await totalWastedInventoryItems({
+    knex,
+    siteId,
+    consumableId,
+    dailyRate,
+  })
+
+  // consider issue resolved if totalWasted is 0 (issue is triggering if totalWasted > 0)
+  return totalWasted === 0
+}
+
 module.exports = {
   resolveModuleFailureError,
   resolveModuleTemperatureError,
@@ -257,4 +309,6 @@ module.exports = {
   resolveModuleUnknownError,
   resolveMachineUnknownError,
   resolveDataCategoryLow,
+  resolveIssueStockout,
+  resolveIssueStockExpiring,
 }
