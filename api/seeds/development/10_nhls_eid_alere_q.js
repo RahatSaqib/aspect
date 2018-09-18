@@ -410,10 +410,4 @@ async function seed(knex) {
       consumableId: alereQHiv12VLPlasmaCartridgeId,
     },
   ])
-
-  await knex('FileSystemWatcher').insert({
-    pathMatchRegex: '/nhls\\/alereQ\\/.*\\.csv.*/g',
-    partnerId,
-    deviceTypeId: deviceTypes.AlereQ.id,
-  })
 }

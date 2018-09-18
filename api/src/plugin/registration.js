@@ -72,8 +72,9 @@ const plugins = {
     transformMergeResultPayload: require('./partner/Myanmar/transformMergeResultPayload'),
     onResultLogged: require('./partner/Myanmar/onResultLogged'),
   },
-  alereqconnector: {
-    transformMergeResultPayload: require('./deviceType/AlereFTPConnector/transformMergeResultPayload'),
+  alereftpconnector: {
+    preProcessAddDeviceData: require('./deviceType/AlereFTPConnector/preProcessAddDeviceData'),
+    preProcessMergeResult: require('./deviceType/AlereFTPConnector/preProcessMergeResult'),
   },
 }
 
