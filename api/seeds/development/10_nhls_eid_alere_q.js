@@ -46,10 +46,10 @@ async function seed(knex) {
   const deviceTypeCategoryConnector = await deviceTypeCategoryToId('Connector')
 
   await knex('DeviceType').insert({
-    externalId: 'AlereQConnector',
-    name: 'Alere Q Connector',
+    externalId: 'AlereFTPConnector',
+    name: 'Alere FTP Connector',
     manufacturer: 'SystemOne',
-    plugin: 'alereqconnector',
+    plugin: 'alereftpconnector',
     deviceTypeCategoryId: deviceTypeCategoryConnector,
   })
 
@@ -68,7 +68,6 @@ async function seed(knex) {
 
   const [partnerId] = await knex('Partner').insert({
     name: 'South Africa NHLS',
-    plugin: 'south_africa_nhls',
     partnerTypeId: await partnerTypeToId('Operating'),
     deviceLogHistoryDays: 365,
     maxDaysDeviceOffline: 7,
@@ -85,13 +84,13 @@ async function seed(knex) {
     .whereNull('lgaId')
     .first()
 
-  // create site for Alere Q Connector device
-  const [southAfricaNhlsAlereQConnectorSiteId] = await knex('Site').insert(
+  // create site for Alere FTP Connector device
+  const [southAfricaNhlsAlereFTPConnectorSiteId] = await knex('Site').insert(
     Object.assign(
       {
-        name: 'Alere Q Connector Site',
-        shortName: 'SA NHLS AQC',
-        externalId: 'sa_nhls_alereq_ca',
+        name: 'SA NHLS Alere FTP Connector Site',
+        shortName: 'SA NHLS Alere',
+        externalId: 'sa_nhls_alere_ftp',
         partnerId,
         geographyId: southAfricaGeographyId,
       },
@@ -99,16 +98,16 @@ async function seed(knex) {
     )
   )
 
-  // insert Alere Q Connector device
-  const [southAfricaNhlsAlereQConnectorDeviceId] = await knex('Device').insert(
+  // insert SA NHLS Alere q Connector device
+  const [southAfricaNhlsAlereFTPConnectorDeviceId] = await knex('Device').insert(
     Object.assign(
       {
-        name: 'South Africa NHLS Alere Q Connector',
-        deviceTypeId: deviceTypes.AlereQConnector.id,
+        name: 'South Africa NHLS Alere FTP Connector',
+        deviceTypeId: deviceTypes.AlereFTPConnector.id,
         deviceStatusId: approvedDeviceStatusId,
         partnerId,
         geographyId: southAfricaGeographyId,
-        siteId: southAfricaNhlsAlereQConnectorSiteId,
+        siteId: southAfricaNhlsAlereFTPConnectorSiteId,
         lastPingOn: now,
         lastSeenOn: now,
       },
@@ -123,7 +122,7 @@ async function seed(knex) {
         revoked: 0,
         partnerId,
         geographyId: southAfricaGeographyId,
-        deviceId: southAfricaNhlsAlereQConnectorDeviceId,
+        deviceId: southAfricaNhlsAlereFTPConnectorDeviceId,
       },
       auditFields
     )
