@@ -213,16 +213,21 @@ async function resolveMachineUnknownError(/* knex, issue */) {
   return false
 }
 
-async function resolveReagentHealthError(knex, { deviceId }) {
+async function resolveReagentHealthError(knex, { deviceId, consumableId }) {
   const last30day = subDays(new Date(), 30)
 
-  // FIXME should these be constrained by issue consumableId?
   const reagentErrorQuery = knex('Result as r')
     .innerJoin('ResultCategory as rc', 'r.resultCategory1', 'rc.id')
     .where('r.endedOn', '>=', last30day)
     .where({
       'r.deviceId': deviceId,
     })
+    .whereIn(
+      'r.assayId',
+      knex('AssayConsumable as ac')
+        .where({ 'ac.consumableId': consumableId })
+        .select('ac.assayId')
+    )
   const [{ reagentErrorRatio }] = await reagentErrorQuery.clone().select(
     (() => {
       const errorCount =
@@ -259,6 +264,12 @@ async function resolveReagentHealthError(knex, { deviceId }) {
     .where({
       'r.deviceId': deviceId,
     })
+    .whereIn(
+      'r.assayId',
+      knex('AssayConsumable as ac')
+        .where({ 'ac.consumableId': consumableId })
+        .select('ac.assayId')
+    )
   const [{ invalidResultRatio }] = await invalidResultQuery.clone().select(
     (() => {
       const invalidCount =
