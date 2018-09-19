@@ -1,7 +1,7 @@
 const _ = require('lodash')
 const Boom = require('boom')
-const { getDateOrDefault } = require('../../../shared/date')
-const { createUniqueIdForResult } = require('../../../result/service')
+const { getDateOrDefault } = require('../../../../shared/date')
+const { createUniqueIdForResult } = require('../../../../result/service')
 
 async function preProcessMergeResult({ knex, deviceId, payload }) {
   if (!deviceId) {

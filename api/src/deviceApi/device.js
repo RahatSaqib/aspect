@@ -184,8 +184,8 @@ async function createNewDevice(
     timezone,
     configurationData,
     putInService: putInService || now,
-    lastSeenOn: lastSeenOn || now,
-    lastPingOn: lastPingOn || now,
+    lastSeenOn: lastSeenOn || knex.raw('FROM_UNIXTIME(0)'),
+    lastPingOn,
     createdOn: now,
     updatedOn: now,
   })

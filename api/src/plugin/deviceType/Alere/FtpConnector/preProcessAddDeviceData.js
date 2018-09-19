@@ -1,8 +1,8 @@
 const _ = require('lodash')
 const Boom = require('boom')
-const { createNewDevice } = require('../../../deviceApi/device')
-const { getDateOrDefault } = require('../../../shared/date')
-const { getFirstTestDate } = require('./alereUtils')
+const { createNewDevice } = require('../../../../deviceApi/device')
+const { getDateOrDefault } = require('../../../../shared/date')
+const { getFirstTestDate } = require('../alereUtils')
 
 async function preProcessAddDeviceData(context) {
   const { device, payload, knex, now } = context
@@ -44,8 +44,8 @@ async function preProcessAddDeviceData(context) {
   }
 }
 
-async function getOrCreateDevice(knex, payload, alereFTPConnectorDevice, now) {
-  const { partnerId } = alereFTPConnectorDevice
+async function getOrCreateDevice(knex, payload, alereFtpConnectorDevice, now) {
+  const { partnerId } = alereFtpConnectorDevice
   const deviceTypeExternalId = _.get(payload, 'type.id', null)
   if (!deviceTypeExternalId) {
     throw Boom.badRequest(
@@ -63,7 +63,7 @@ async function getOrCreateDevice(knex, payload, alereFTPConnectorDevice, now) {
   if (_.isEmpty(matchingDevices)) {
     const site = await getOrCreateSite(
       knex,
-      alereFTPConnectorDevice,
+      alereFtpConnectorDevice,
       { serial: deviceSerialNumber },
       now
     )
@@ -78,8 +78,8 @@ async function getOrCreateDevice(knex, payload, alereFTPConnectorDevice, now) {
       lastSeenOn,
       lastPingOn: lastSeenOn,
       putInService: lastSeenOn,
-      culture: alereFTPConnectorDevice.culture,
-      timezone: alereFTPConnectorDevice.timezone,
+      culture: alereFtpConnectorDevice.culture,
+      timezone: alereFtpConnectorDevice.timezone,
     })
     if (error) {
       throw error
@@ -135,12 +135,12 @@ async function findDevices(
 
 async function getOrCreateSite(
   knex,
-  alereFTPConnectorDevice,
+  alereFtpConnectorDevice,
   deviceDetails,
   now
 ) {
   const { deviceId, serial } = deviceDetails
-  const { partnerId } = alereFTPConnectorDevice
+  const { partnerId } = alereFtpConnectorDevice
   let matchingSites = []
   if (deviceId) {
     matchingSites = await knex

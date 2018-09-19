@@ -1,4 +1,4 @@
-const { get } = require('lodash')
+const { get, merge } = require('lodash')
 const Boom = require('boom')
 
 const { postProcessMergeResult } = require('../deviceApi/result')
@@ -11,9 +11,30 @@ const DEFAULT_SETTINGS = {
   },
 }
 
+const DEFAULT_HANDLER_OPTIONS = {
+  addDeviceDataWithContext: {
+    createDevice: true,
+    updatePing: true,
+    updateDeviceLog: true,
+  },
+  updateDeviceConfigurationWithContext: {
+    updatePing: true,
+    updateDeviceLog: true,
+  },
+  addDeviceOperationWithContext: {
+    updatePing: true,
+    updateDeviceLog: true,
+  },
+  mergeResultWithContext: {
+    updatePing: true,
+    updateDeviceLog: true,
+  },
+}
+
 const plugins = {
   default: {
     settings: DEFAULT_SETTINGS,
+    handlerOptions: DEFAULT_HANDLER_OPTIONS,
     issueResolutions: {},
     issueEscalations: {},
     dataCategories: {},
@@ -73,14 +94,23 @@ const plugins = {
     onResultLogged: require('./partner/Myanmar/onResultLogged'),
   },
   alereftpconnector: {
-    getDeviceSeenOn: require('./deviceType/AlereFTPConnector/getDeviceSeenOn'),
-    getDevicePingOn: require('./deviceType/AlereFTPConnector/getDevicePingOn'),
-    preProcessAddDeviceData: require('./deviceType/AlereFTPConnector/preProcessAddDeviceData'),
-    preProcessMergeResult: require('./deviceType/AlereFTPConnector/preProcessMergeResult'),
+    handlerOptions: merge(
+      {},
+      DEFAULT_HANDLER_OPTIONS,
+      require('./deviceType/Alere/handlerOptions')
+    ),
+    getDevicePingOn: require('./deviceType/Alere/getDevicePingOn'),
+    preProcessAddDeviceData: require('./deviceType/Alere/FtpConnector/preProcessAddDeviceData'),
+    preProcessMergeResult: require('./deviceType/Alere/FtpConnector/preProcessMergeResult'),
   },
   alereq: {
-    getDeviceSeenOn: require('./deviceType/AlereFTPConnector/getDeviceSeenOn'),
-    getDevicePingOn: require('./deviceType/AlereFTPConnector/getDevicePingOn'),
+    handlerOptions: merge(
+      {},
+      DEFAULT_HANDLER_OPTIONS,
+      require('./deviceType/Alere/handlerOptions')
+    ),
+    getDeviceSeenOn: require('./deviceType/Alere/q/getDeviceSeenOn'),
+    getDevicePingOn: require('./deviceType/Alere/getDevicePingOn'),
   },
 }
 

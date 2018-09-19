@@ -46,7 +46,7 @@ async function seed(knex) {
   const deviceTypeCategoryConnector = await deviceTypeCategoryToId('Connector')
 
   await knex('DeviceType').insert({
-    externalId: 'AlereFTPConnector',
+    externalId: 'AlereFtpConnector',
     name: 'Alere FTP Connector',
     manufacturer: 'SystemOne',
     plugin: 'alereftpconnector',
@@ -85,7 +85,7 @@ async function seed(knex) {
     .first()
 
   // create site for Alere FTP Connector device
-  const [southAfricaNhlsAlereFTPConnectorSiteId] = await knex('Site').insert(
+  const [southAfricaNhlsAlereFtpConnectorSiteId] = await knex('Site').insert(
     Object.assign(
       {
         name: 'SA NHLS Alere FTP Connector Site',
@@ -99,19 +99,18 @@ async function seed(knex) {
   )
 
   // insert SA NHLS Alere q Connector device
-  const [southAfricaNhlsAlereFTPConnectorDeviceId] = await knex(
+  const [southAfricaNhlsAlereFtpConnectorDeviceId] = await knex(
     'Device'
   ).insert(
     Object.assign(
       {
         name: 'South Africa NHLS Alere FTP Connector',
-        deviceTypeId: deviceTypes.AlereFTPConnector.id,
+        deviceTypeId: deviceTypes.AlereFtpConnector.id,
         deviceStatusId: approvedDeviceStatusId,
         partnerId,
         geographyId: southAfricaGeographyId,
-        siteId: southAfricaNhlsAlereFTPConnectorSiteId,
-        lastPingOn: now,
-        lastSeenOn: now,
+        siteId: southAfricaNhlsAlereFtpConnectorSiteId,
+        lastSeenOn: knex.raw('FROM_UNIXTIME(0)'),
       },
       auditFields
     )
@@ -124,7 +123,7 @@ async function seed(knex) {
         revoked: 0,
         partnerId,
         geographyId: southAfricaGeographyId,
-        deviceId: southAfricaNhlsAlereFTPConnectorDeviceId,
+        deviceId: southAfricaNhlsAlereFtpConnectorDeviceId,
       },
       auditFields
     )
