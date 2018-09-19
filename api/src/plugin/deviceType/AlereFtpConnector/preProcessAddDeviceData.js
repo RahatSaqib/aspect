@@ -1,8 +1,6 @@
 const _ = require('lodash')
 const Boom = require('boom')
-const { createNewDevice } = require('../../../../deviceApi/device')
-const { getDateOrDefault } = require('../../../../shared/date')
-const { getFirstTestDate } = require('../alereUtils')
+const { createNewDevice } = require('../../../deviceApi/device')
 
 async function preProcessAddDeviceData(context) {
   const { device, payload, knex, now } = context
@@ -25,15 +23,19 @@ async function preProcessAddDeviceData(context) {
     { deviceId: alereDevice.id, serial: alereDevice.serial },
     now
   )
-  const firstTestDate = await getFirstTestDate(knex, alereDevice.id)
+  const { startedOn: firstTestDate } = (await knex
+    .from('Result')
+    .where('deviceId', alereDevice.id)
+    .orderBy('startedOn', 'desc')
+    .first('startedOn')) || { startedOn: null }
   if (
-    device.siteId !== site.id ||
-    device.geographyId !== site.geographyId ||
-    device.putInService !== firstTestDate
+    alereDevice.siteId !== site.id ||
+    alereDevice.geographyId !== site.geographyId ||
+    alereDevice.putInService !== firstTestDate
   ) {
     await knex
       .from('Device')
-      .where({ id: device.id })
+      .where({ id: alereDevice.id })
       .update({
         siteId: site.id,
         geographyId: site.geographyId,
@@ -67,7 +69,6 @@ async function getOrCreateDevice(knex, payload, alereFtpConnectorDevice, now) {
       { serial: deviceSerialNumber },
       now
     )
-    const lastSeenOn = getDateOrDefault(payload, 'result.startedOn', now)
     const { device, error } = await createNewDevice(knex, now, {
       deviceTypeExternalId,
       serial: deviceSerialNumber,
@@ -75,9 +76,6 @@ async function getOrCreateDevice(knex, payload, alereFtpConnectorDevice, now) {
       siteId: site.id,
       geographyId: site.geographyId,
       status: 'assigned',
-      lastSeenOn,
-      lastPingOn: lastSeenOn,
-      putInService: lastSeenOn,
       culture: alereFtpConnectorDevice.culture,
       timezone: alereFtpConnectorDevice.timezone,
     })
@@ -120,6 +118,7 @@ async function findDevices(
       'd.id',
       'd.partnerId',
       'd.siteId',
+      'd.geographyId',
       'd.name',
       'd.serial',
       'd.macAddress',

@@ -126,7 +126,7 @@ function deviceApiHandler(handler, defaultHandlerOptions = {}) {
       await updateLogs(request)
       return error
     }
-    const handlerOptions = await getHandlerOptionsFromContext(
+    let handlerOptions = await getHandlerOptionsFromContext(
       handler,
       context,
       defaultHandlerOptions
@@ -173,6 +173,11 @@ function deviceApiHandler(handler, defaultHandlerOptions = {}) {
       // If handler changes device (e.g. GxAlert plugin), update timestamps
       // for new device as necessary
       if (context.device.id !== originalDeviceId) {
+        handlerOptions = await getHandlerOptionsFromContext(
+          handler,
+          context,
+          defaultHandlerOptions
+        )
         await updateDeviceTimestamps(context, handlerOptions, remoteAddress)
       }
 

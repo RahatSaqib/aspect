@@ -97,20 +97,11 @@ const plugins = {
     handlerOptions: merge(
       {},
       DEFAULT_HANDLER_OPTIONS,
-      require('./deviceType/Alere/handlerOptions')
+      require('./deviceType/AlereFtpConnector/handlerOptions')
     ),
-    getDevicePingOn: require('./deviceType/Alere/getDevicePingOn'),
-    preProcessAddDeviceData: require('./deviceType/Alere/FtpConnector/preProcessAddDeviceData'),
-    preProcessMergeResult: require('./deviceType/Alere/FtpConnector/preProcessMergeResult'),
-  },
-  alereq: {
-    handlerOptions: merge(
-      {},
-      DEFAULT_HANDLER_OPTIONS,
-      require('./deviceType/Alere/handlerOptions')
-    ),
-    getDeviceSeenOn: require('./deviceType/Alere/q/getDeviceSeenOn'),
-    getDevicePingOn: require('./deviceType/Alere/getDevicePingOn'),
+    getDeviceSeenOn: require('./deviceType/AlereFtpConnector/getDeviceSeenOn'),
+    preProcessAddDeviceData: require('./deviceType/AlereFtpConnector/preProcessAddDeviceData'),
+    preProcessMergeResult: require('./deviceType/AlereFtpConnector/preProcessMergeResult'),
   },
 }
 
