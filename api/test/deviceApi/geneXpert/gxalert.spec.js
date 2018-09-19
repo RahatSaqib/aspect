@@ -18,7 +18,7 @@ const {
   getMaxDeviceId,
   getDeviceType,
   getDevicesWithIdLargerThan,
-} = require('./utils')
+} = require('../utils')
 const {
   resultTextToResultCategoryMapping,
   basicResultPayload,
