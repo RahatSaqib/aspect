@@ -3,6 +3,10 @@ module.exports = require('../utils').seed(seed)
 const { rowsAsObject } = require('../utils')
 
 async function seed(knex) {
+  await seedReagentHealthResolution(knex)
+}
+
+async function seedReagentHealthResolution(knex) {
   const issueTypes = await rowsAsObject(knex, 'IssueType', 'externalId')
 
   const reagentHealthResolution = await knex('IssueResolutionTrigger')
