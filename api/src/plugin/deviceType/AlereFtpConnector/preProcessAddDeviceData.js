@@ -139,7 +139,7 @@ async function getOrCreateSite(
   now
 ) {
   const { deviceId, serial } = deviceDetails
-  const { partnerId } = alereFtpConnectorDevice
+  const { partnerId, geographyId } = alereFtpConnectorDevice
   let matchingSites = []
   if (deviceId) {
     matchingSites = await knex
@@ -167,6 +167,7 @@ async function getOrCreateSite(
       shortName: serial,
       externalId: serial,
       partnerId,
+      geographyId,
       createdOn: now,
       updatedOn: now,
     }
