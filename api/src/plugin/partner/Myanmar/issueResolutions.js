@@ -229,7 +229,7 @@ async function resolveReagentHealthError(knex, { deviceId, consumableId }) {
     })
     .whereIn(
       'r.assayId',
-      knex('AssayConsumable as ac')
+      knex('ConsumableAssay as ac')
         .where({ 'ac.consumableId': consumableId })
         .select('ac.assayId')
     )
@@ -271,7 +271,7 @@ async function resolveReagentHealthError(knex, { deviceId, consumableId }) {
     })
     .whereIn(
       'r.assayId',
-      knex('AssayConsumable as ac')
+      knex('ConsumableAssay as ac')
         .where({ 'ac.consumableId': consumableId })
         .select('ac.assayId')
     )

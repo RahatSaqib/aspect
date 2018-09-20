@@ -1484,6 +1484,7 @@ describe('Myanmar Issue endpoints', () => {
         }),
       })
       const deviceId = response.body.device.id
+      let reagentHealthIssueId = null
       for (let i = 0; i < 8; i++) {
         /* eslint-disable no-await-in-loop */
         const errorTestResultId = `UNIQUE-ID-WITH-REAGENT-HEALTH-ERROR-${i}`
@@ -1538,22 +1539,38 @@ describe('Myanmar Issue endpoints', () => {
           await waitForModuleGenericError
           await waitForIdle()
 
-          const issues = await knex('Issue as i')
-            .join('IssueType as it', 'i.issueTypeId', 'it.id')
-            .join('IssueStatus as is', 'i.issueStatusId', 'is.id')
-            .where({ 'i.deviceId': deviceId })
-            .select(
-              'i.id',
-              'it.externalId as issueType',
-              'i.deviceId',
-              'is.externalId as issueStatus'
-            )
+          const issues = await getIssuesByDeviceId(knex, deviceId)
           assert.equal(issues.length, 1)
           assert.equal(issues[0].issueType, 'ReagentHealthError')
           assert.equal(issues[0].deviceId, deviceId)
           assert.equal(issues[0].issueStatus, 'Active')
+          reagentHealthIssueId = issues[0].id
         }
       }
+      await dispatchAndWaitForAction(resolveIssues(reagentHealthIssueId))
+      assert.equal(
+        'Active',
+        await getIssueStatusByIssueId(knex, reagentHealthIssueId)
+      )
+
+      const { errorResultId } = await knex('Result as r')
+        .where('r.errorCode', '2037')
+        .orderBy('r.id', 'desc')
+        .first('r.id as errorResultId')
+      assert.isOk(errorResultId)
+      await knex('Result')
+        .where({
+          id: errorResultId,
+        })
+        .update({
+          errorCode: null,
+        })
+
+      await dispatchAndWaitForAction(resolveIssues(reagentHealthIssueId))
+      assert.equal(
+        'Resolved',
+        await getIssueStatusByIssueId(knex, reagentHealthIssueId)
+      )
     }))
 
   it('should create a reagent health issue when invalid result exceed', () =>
@@ -1568,6 +1585,7 @@ describe('Myanmar Issue endpoints', () => {
         }),
       })
       const deviceId = response.body.device.id
+      let reagentHealthIssueId = null
       for (let i = 0; i < 10; i++) {
         /* eslint-disable no-await-in-loop */
         const errorTestResultId = `UNIQUE-ID-WITH-REAGENT-HEALTH-ERROR-${i}`
@@ -1635,22 +1653,41 @@ describe('Myanmar Issue endpoints', () => {
           await waitForModuleGenericError
           await waitForIdle()
 
-          const issues = await knex('Issue as i')
-            .join('IssueType as it', 'i.issueTypeId', 'it.id')
-            .join('IssueStatus as is', 'i.issueStatusId', 'is.id')
-            .where({ 'i.deviceId': deviceId })
-            .select(
-              'i.id',
-              'it.externalId as issueType',
-              'i.deviceId',
-              'is.externalId as issueStatus'
-            )
+          const issues = await getIssuesByDeviceId(knex, deviceId)
           assert.equal(issues.length, 1)
           assert.equal(issues[0].issueType, 'ReagentHealthError')
           assert.equal(issues[0].deviceId, deviceId)
           assert.equal(issues[0].issueStatus, 'Active')
+          reagentHealthIssueId = issues[0].id
         }
       }
+      await dispatchAndWaitForAction(resolveIssues(reagentHealthIssueId))
+      assert.equal(
+        'Active',
+        await getIssueStatusByIssueId(knex, reagentHealthIssueId)
+      )
+
+      const { invalidResultId } = await knex('Result as r')
+        .join('ResultCategory as rc', 'r.resultCategory1', 'rc.id')
+        .where('rc.externalId', 'Invalid')
+        .orderBy('r.id', 'desc')
+        .first('r.id as invalidResultId')
+      assert.isOk(invalidResultId)
+      await knex('Result')
+        .where({
+          id: invalidResultId,
+        })
+        .update({
+          resultCategory1: knex('ResultCategory')
+            .where({ externalId: 'Success' })
+            .first('id'),
+        })
+
+      await dispatchAndWaitForAction(resolveIssues(reagentHealthIssueId))
+      assert.equal(
+        'Resolved',
+        await getIssueStatusByIssueId(knex, reagentHealthIssueId)
+      )
     }))
 
   it('should create a reagent health issue when a single batch invalid result exceed', () =>
@@ -1665,6 +1702,7 @@ describe('Myanmar Issue endpoints', () => {
         }),
       })
       const deviceId = response.body.device.id
+      let reagentHealthIssueId = null
       for (let i = 0; i < 10; i++) {
         /* eslint-disable no-await-in-loop */
         const errorTestResultId = `UNIQUE-ID-WITH-REAGENT-HEALTH-ERROR-${i}`
@@ -1738,22 +1776,41 @@ describe('Myanmar Issue endpoints', () => {
           await waitForModuleGenericError
           await waitForIdle()
 
-          const issues = await knex('Issue as i')
-            .join('IssueType as it', 'i.issueTypeId', 'it.id')
-            .join('IssueStatus as is', 'i.issueStatusId', 'is.id')
-            .where({ 'i.deviceId': deviceId })
-            .select(
-              'i.id',
-              'it.externalId as issueType',
-              'i.deviceId',
-              'is.externalId as issueStatus'
-            )
+          const issues = await getIssuesByDeviceId(knex, deviceId)
           assert.equal(issues.length, 1)
           assert.equal(issues[0].issueType, 'ReagentHealthError')
           assert.equal(issues[0].deviceId, deviceId)
           assert.equal(issues[0].issueStatus, 'Active')
+          reagentHealthIssueId = issues[0].id
         }
       }
+      await dispatchAndWaitForAction(resolveIssues(reagentHealthIssueId))
+      assert.equal(
+        'Active',
+        await getIssueStatusByIssueId(knex, reagentHealthIssueId)
+      )
+
+      const { invalidResultId } = await knex('Result as r')
+        .join('ResultCategory as rc', 'r.resultCategory1', 'rc.id')
+        .where('rc.externalId', 'Invalid')
+        .orderBy('r.id', 'desc')
+        .first('r.id as invalidResultId')
+      assert.isOk(invalidResultId)
+      await knex('Result')
+        .where({
+          id: invalidResultId,
+        })
+        .update({
+          resultCategory1: knex('ResultCategory')
+            .where({ externalId: 'Success' })
+            .first('id'),
+        })
+
+      await dispatchAndWaitForAction(resolveIssues(reagentHealthIssueId))
+      assert.equal(
+        'Resolved',
+        await getIssueStatusByIssueId(knex, reagentHealthIssueId)
+      )
     }))
 
   it('should create a module and machine "Unknown Error" issues', () =>
