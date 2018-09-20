@@ -437,11 +437,11 @@ class DeviceApiTestContext {
 }
 
 async function postToDeviceApi({
-                                 authHeader,
-                                 payload,
-                                 expectedStatusCode,
-                                 expectedResponseBody,
-                               }) {
+  authHeader,
+  payload,
+  expectedStatusCode,
+  expectedResponseBody,
+}) {
   return server
     .post('/device')
     .set('Authorization', authHeader)
