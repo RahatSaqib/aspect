@@ -9,12 +9,7 @@ const {
   addMonths,
   addYears,
 } = require('date-fns')
-const {
-  processUsingHandlebarsSyntax,
-  getMustacheTokensInString,
-} = require('../stringTemplate/service')
 const { readTextFile } = require('../shared/io')
-const { loadPlugin } = require('../plugin/registration')
 
 const evaluationMethods = {
   'inline-sql': evaluateInlineSql,
@@ -95,6 +90,7 @@ async function evaluatePluginFunction(knex, issue, functionName) {
   if (partner == null) {
     return false
   }
+  const { loadPlugin } = require('../plugin/registration')
   const resolutions = await loadPlugin([partner.plugin], 'issueResolutions')
   const func = resolutions[functionName]
   return func != null && func(knex, issue)
@@ -110,6 +106,11 @@ async function evaluateSqlScript(knex, issue, pathToSqlScript) {
 }
 
 async function evaluateSql(knex, issue, sql) {
+  const {
+    processUsingHandlebarsSyntax,
+    getMustacheTokensInString,
+  } = require('../stringTemplate/service')
+
   const issueValues = _.omit(issue, 'conditions')
   const parameterPlaceholders = _.mapValues(issueValues, () => '?')
   /*

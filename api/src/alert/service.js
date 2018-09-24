@@ -44,4 +44,5 @@ async function createAlertMessageFromTemplate(knex, alertMessageId) {
 
 module.exports = {
   onAlertMessageCreated,
+  createAlertMessageFromTemplate,
 }

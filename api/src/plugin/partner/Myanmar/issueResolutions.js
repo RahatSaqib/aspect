@@ -212,9 +212,17 @@ async function resolveMachineUnknownError(/* knex, issue */) {
 }
 
 async function resolveIssueStockout(knex, issue) {
-  // ---------------------------------------
-  // see auditInventoryStockout() in /fact/service.js for triggering issue - here we check opposite
-  // ---------------------------------------
+  const status = await getEscalateOrResolveStatusForIssueStockout(knex, issue)
+  return status.isResolved
+}
+async function escalateIssueStockout(knex, issue) {
+  const status = await getEscalateOrResolveStatusForIssueStockout(knex, issue)
+  return status.isEscalated
+}
+// ---------------------------------------
+// getEscalateOrResolveStatusForIssueStockout
+// ---------------------------------------
+async function getEscalateOrResolveStatusForIssueStockout(knex, issue) {
   const { partnerId, siteId, consumableId } = issue
   const { rate: dailyRate } = (await knex('FactInventoryConsumptionRate')
     .where({ siteId, consumableId, days: 1 })
@@ -223,7 +231,6 @@ async function resolveIssueStockout(knex, issue) {
   const { dueDaysInventoryStockout: dueDays } = await knex('Partner')
     .where({ id: partnerId })
     .first()
-
   // use same func as when checking to trigger issue
   const days = await totalDaysUnexpiredInventoryItemsLast({
     knex,
@@ -232,9 +239,11 @@ async function resolveIssueStockout(knex, issue) {
     dailyRate,
     dueDays,
   })
-
-  // consider issue resolved if number of days to use consumables if greater than threshold
-  return days >= dueDays
+  return {
+    level: days < 14 ? 2 : days < dueDays ? 1 : undefined,
+    isEscalated: days < 14, // escalate issue if number of days to use consumables is less than 14
+    isResolved: days >= dueDays, // consider issue resolved if number of days to use consumables if greater than threshold
+  }
 }
 
 async function resolveIssueStockExpiring(knex, issue) {
@@ -270,4 +279,5 @@ module.exports = {
   resolveMachineUnknownError,
   resolveIssueStockout,
   resolveIssueStockExpiring,
+  escalateIssueStockout,
 }
