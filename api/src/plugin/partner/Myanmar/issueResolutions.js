@@ -1,3 +1,4 @@
+const _ = require('lodash')
 const subDays = require('date-fns/sub_days')
 const Promise = require('bluebird')
 
@@ -7,6 +8,7 @@ const {
   MODULE_TEMPERATURE_ERROR_CODES,
   PROCEDURAL_ERROR_CODES,
   maxPrcntErrors,
+  machineMaxUnknownErrors,
   moduleFailureMaxErrors,
   modulePowerMaxErrors,
   moduleMaxUnknownErrors,
@@ -14,6 +16,7 @@ const {
   moduleTemperatureMaxErrors,
   minPrcntMachineTemperatureResolve,
   minPrcntMachineProceduralResolve,
+  minPrcntModuleUnknownErrors,
   minPrcntModuleProceduralResolve,
 } = require('./errors')
 
@@ -230,6 +233,7 @@ async function resolveModuleUnknownError(knex, issue) {
   const [{ moduleResultCount }] = await knex('Result as r')
     .where('r.endedOn', '>=', last30day)
     .where('r.moduleSerial', module.moduleSerial)
+    .where('r.deviceId', issue.deviceId)
     .count('r.id as moduleResultCount')
   return (
     prcntModuleError <= maxPrcntErrors ||
@@ -237,8 +241,38 @@ async function resolveModuleUnknownError(knex, issue) {
   )
 }
 
-async function resolveMachineUnknownError(/* knex, issue */) {
-  return false
+async function resolveMachineUnknownError(knex, issue) {
+  const last30day = subDays(new Date(), 30)
+  const modules = await knex('Result as r')
+    .innerJoin('ResultCategory as rc', 'r.resultCategory1', 'rc.id')
+    .where('rc.externalId', 'Error')
+    .whereNull('r.errorCode')
+    .where('r.deviceId', issue.deviceId)
+    .where('r.endedOn', '>=', last30day)
+    .select(
+      'r.moduleSerial as moduleSerial',
+      knex.raw('coalesce(r.moduleName, r.moduleSerial) as resultModuleName')
+    )
+    .count('r.id as errorCount')
+    .groupBy('r.moduleSerial')
+
+  // Check for machine issue first
+  let allModulesErr = true
+  let allModulesTotalErrors = 0
+  await Promise.each(
+    _.map(modules, async module => {
+      const [{ moduleResultCount }] = await knex('Result as r')
+        .where('r.endedOn', '>=', last30day)
+        .where('r.deviceId', issue.deviceId)
+        .where('r.moduleSerial', module.moduleSerial)
+        .count('r.id as moduleResultCount')
+      const prcntModuleError = module.errorCount / moduleResultCount * 100
+      allModulesErr =
+        allModulesErr && prcntModuleError > minPrcntModuleUnknownErrors
+      allModulesTotalErrors += module.errorCount
+    })
+  )
+  return !allModulesErr || allModulesTotalErrors < machineMaxUnknownErrors
 }
 
 async function resolveIssueStockout(knex, issue) {
