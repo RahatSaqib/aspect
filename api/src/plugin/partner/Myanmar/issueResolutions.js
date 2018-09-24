@@ -1,4 +1,3 @@
-const _ = require('lodash')
 const subDays = require('date-fns/sub_days')
 const Promise = require('bluebird')
 
@@ -219,22 +218,23 @@ async function resolveModuleUnknownError(knex, issue) {
     .where('r.endedOn', '>=', last30day)
     .select(
       'r.moduleSerial as moduleSerial',
-      knex.raw('coalesce(r.moduleName, r.moduleSerial) as resultModuleName')
+      knex.raw('coalesce(r.moduleName, r.moduleSerial) as moduleName')
     )
     .count('r.id as errorCount')
     .groupBy('r.moduleSerial')
+
   const [module] = modules.filter(
-    mod => mod.resultModuleName === issueData.moduleName
+    mod => mod.moduleName === issueData.moduleName
   )
   if (module == null) {
     return false
   }
-  const prcntModuleError = module.errorCount / moduleResultCount * 100
   const [{ moduleResultCount }] = await knex('Result as r')
     .where('r.endedOn', '>=', last30day)
     .where('r.moduleSerial', module.moduleSerial)
     .where('r.deviceId', issue.deviceId)
     .count('r.id as moduleResultCount')
+  const prcntModuleError = module.errorCount / moduleResultCount * 100
   return (
     prcntModuleError <= maxPrcntErrors ||
     module.errorCount < moduleMaxUnknownErrors
@@ -259,19 +259,18 @@ async function resolveMachineUnknownError(knex, issue) {
   // Check for machine issue first
   let allModulesErr = true
   let allModulesTotalErrors = 0
-  await Promise.each(
-    _.map(modules, async module => {
-      const [{ moduleResultCount }] = await knex('Result as r')
-        .where('r.endedOn', '>=', last30day)
-        .where('r.deviceId', issue.deviceId)
-        .where('r.moduleSerial', module.moduleSerial)
-        .count('r.id as moduleResultCount')
-      const prcntModuleError = module.errorCount / moduleResultCount * 100
-      allModulesErr =
-        allModulesErr && prcntModuleError > minPrcntModuleUnknownErrors
-      allModulesTotalErrors += module.errorCount
-    })
-  )
+  for (const module of modules) {
+    /* eslint-disable no-await-in-loop */
+    const [{ moduleResultCount }] = await knex('Result as r')
+      .where('r.endedOn', '>=', last30day)
+      .where('r.deviceId', issue.deviceId)
+      .where('r.moduleSerial', module.moduleSerial)
+      .count('r.id as moduleResultCount')
+    const prcntModuleError = module.errorCount / moduleResultCount * 100
+    allModulesErr =
+      allModulesErr && prcntModuleError > minPrcntModuleUnknownErrors
+    allModulesTotalErrors += module.errorCount
+  }
   return !allModulesErr || allModulesTotalErrors < machineMaxUnknownErrors
 }
 

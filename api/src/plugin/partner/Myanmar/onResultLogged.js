@@ -286,6 +286,7 @@ async function onResultLogged({ resultId }, { messageContext }) {
         await Promise.all(
           _.map(modules, async module => {
             const [{ moduleResultCount }] = await knex('Result as r')
+              .where('r.deviceId', deviceId)
               .where('r.endedOn', '>=', last30day)
               .where('r.moduleSerial', module.moduleSerial)
               .count('r.id as moduleResultCount')
