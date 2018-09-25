@@ -219,6 +219,7 @@ async function onResultLogged({ resultId }, { messageContext }) {
       } else if (REAGENT_HEALTH_ERROR_CODES.includes(result.errorCode)) {
         const reagentErrorQuery = knex('Result as r')
           .innerJoin('ResultCategory as rc', 'r.resultCategory1', 'rc.id')
+          .where('r.endedOn', '>=', last30day)
           .where({
             'r.siteId': siteId,
           })
@@ -351,6 +352,7 @@ async function onResultLogged({ resultId }, { messageContext }) {
     if (result.resultCategory1 === resultCategoryInvalidId) {
       const invalidResultQuery = knex('Result as r')
         .innerJoin('ResultCategory as rc', 'r.resultCategory1', 'rc.id')
+        .where('r.endedOn', '>=', last30day)
         .where({
           'r.siteId': result.siteId,
         })
