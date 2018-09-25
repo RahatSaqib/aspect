@@ -8,13 +8,17 @@ const {
   MODULE_TEMPERATURE_ERROR_CODES,
   PROCEDURAL_ERROR_CODES,
   REAGENT_HEALTH_ERROR_CODES,
+  maxPrcntErrors,
+  machineMaxUnknownErrors,
   maxReagentErrorRatio,
   moduleFailureMaxErrors,
   modulePowerMaxErrors,
+  moduleMaxUnknownErrors,
   minPrcntMachinePowerResolve,
   moduleTemperatureMaxErrors,
   minPrcntMachineTemperatureResolve,
   minPrcntMachineProceduralResolve,
+  minPrcntModuleUnknownErrors,
   minPrcntModuleProceduralResolve,
   minErrorsInvalidsForReagentHealthIssue,
   maxInvalidResultRatio,
@@ -210,12 +214,71 @@ async function resolveMachineProceduralError(knex, issue) {
   )
 }
 
-async function resolveModuleUnknownError(/* knex, issue */) {
-  return false
+async function resolveModuleUnknownError(knex, issue) {
+  const last30day = subDays(new Date(), 30)
+  const issueData = JSON.parse(issue.data) || {}
+  const modules = await knex('Result as r')
+    .innerJoin('ResultCategory as rc', 'r.resultCategory1', 'rc.id')
+    .where('rc.externalId', 'Error')
+    .whereNull('r.errorCode')
+    .where('r.deviceId', issue.deviceId)
+    .where('r.endedOn', '>=', last30day)
+    .select(
+      'r.moduleSerial as moduleSerial',
+      knex.raw('coalesce(r.moduleName, r.moduleSerial) as moduleName')
+    )
+    .count('r.id as errorCount')
+    .groupBy('r.moduleSerial')
+
+  const [module] = modules.filter(
+    mod => mod.moduleName === issueData.moduleName
+  )
+  if (module == null) {
+    return false
+  }
+  const [{ moduleResultCount }] = await knex('Result as r')
+    .where('r.endedOn', '>=', last30day)
+    .where('r.moduleSerial', module.moduleSerial)
+    .where('r.deviceId', issue.deviceId)
+    .count('r.id as moduleResultCount')
+  const prcntModuleError = module.errorCount / moduleResultCount * 100
+  return (
+    prcntModuleError <= maxPrcntErrors ||
+    module.errorCount < moduleMaxUnknownErrors
+  )
 }
 
-async function resolveMachineUnknownError(/* knex, issue */) {
-  return false
+async function resolveMachineUnknownError(knex, issue) {
+  const last30day = subDays(new Date(), 30)
+  const modules = await knex('Result as r')
+    .innerJoin('ResultCategory as rc', 'r.resultCategory1', 'rc.id')
+    .where('rc.externalId', 'Error')
+    .whereNull('r.errorCode')
+    .where('r.deviceId', issue.deviceId)
+    .where('r.endedOn', '>=', last30day)
+    .select(
+      'r.moduleSerial as moduleSerial',
+      knex.raw('coalesce(r.moduleName, r.moduleSerial) as resultModuleName')
+    )
+    .count('r.id as errorCount')
+    .groupBy('r.moduleSerial')
+
+  // Check for machine issue first
+  let allModulesErr = true
+  let allModulesTotalErrors = 0
+  for (const module of modules) {
+    /* eslint-disable no-await-in-loop */
+    const [{ moduleResultCount }] = await knex('Result as r')
+      .where('r.endedOn', '>=', last30day)
+      .where('r.deviceId', issue.deviceId)
+      .where('r.moduleSerial', module.moduleSerial)
+      .count('r.id as moduleResultCount')
+    const prcntModuleError = module.errorCount / moduleResultCount * 100
+    allModulesErr =
+      allModulesErr && prcntModuleError > minPrcntModuleUnknownErrors
+    allModulesTotalErrors += module.errorCount
+  }
+  return !allModulesErr || allModulesTotalErrors < machineMaxUnknownErrors
 }
 
 async function resolveReagentHealthError(knex, { deviceId, consumableId }) {
