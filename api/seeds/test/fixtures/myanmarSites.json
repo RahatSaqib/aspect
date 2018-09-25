@@ -1,0 +1,329 @@
+{
+  "sites": [
+    {
+      "city": "Hinthada", 
+      "devices": [
+        {
+          "culture": null, 
+          "hostId": "HostId-397", 
+          "macAddress": null, 
+          "name": "Hinthada GeneXpert", 
+          "notes": null, 
+          "serial": "DevSerial-397", 
+          "shortName": "",
+          "timezone": null
+        }
+      ], 
+      "externalId": "Hinthada TBC", 
+      "hoursEnd": null, 
+      "hoursStart": null, 
+      "latitude": 95.0, 
+      "lgaName": "Hinthada", 
+      "longitude": 17.0, 
+      "name": "Hinthada TBC", 
+      "shortName": "Hinthada TBC",
+      "stateAbbreviation": "AYY", 
+      "street1": null, 
+      "street2": null, 
+      "timezoneId": "Myanmar Standard Time", 
+      "zip": null
+    }, 
+    {
+      "city": "Maubin", 
+      "devices": [
+        {
+          "culture": null, 
+          "hostId": "HostId-399", 
+          "macAddress": null, 
+          "name": "Maubin GeneXpert", 
+          "notes": "theintun@250320871", 
+          "serial": "DevSerial-399", 
+          "shortName": "",
+          "timezone": null
+        }
+      ], 
+      "externalId": "Maubin TBC", 
+      "hoursEnd": null, 
+      "hoursStart": null, 
+      "latitude": 95.0, 
+      "lgaName": "Maubin", 
+      "longitude": 17.0, 
+      "name": "Maubin TBC", 
+      "shortName": "Maubin TBC",
+      "stateAbbreviation": "AYY", 
+      "street1": null, 
+      "street2": null, 
+      "timezoneId": "Myanmar Standard Time", 
+      "zip": null
+    }, 
+    {
+      "city": "Meikthila", 
+      "devices": [
+        {
+          "culture": "en-US", 
+          "hostId": "HostId-609", 
+          "macAddress": "MAC609609", 
+          "name": "Meikthila GeneXpert", 
+          "notes": null, 
+          "serial": "DevSerial-609", 
+          "shortName": "",
+          "timezone": "Pacific Standard Time"
+        }
+      ], 
+      "externalId": "Meikhtila TBC", 
+      "hoursEnd": 1020, 
+      "hoursStart": 540, 
+      "latitude": 96.522003, 
+      "lgaName": "Meiktila", 
+      "longitude": 20.33, 
+      "name": "Meikhtila TBC", 
+      "shortName": "Meikhtila TBC",
+      "stateAbbreviation": "MDY", 
+      "street1": null, 
+      "street2": null, 
+      "timezoneId": "Myanmar Standard Time", 
+      "zip": null
+    }, 
+    {
+      "city": "Chanayethazan", 
+      "devices": [
+        {
+          "culture": null, 
+          "hostId": "HostId-278", 
+          "macAddress": null, 
+          "name": "Chanayethazan 1 GeneXpert", 
+          "notes": null, 
+          "serial": "DevSerial-278", 
+          "shortName": "",
+          "timezone": null
+        }
+      ], 
+      "externalId": "MGH TB OPD-1", 
+      "hoursEnd": null, 
+      "hoursStart": null, 
+      "latitude": null, 
+      "lgaName": "Mandalay", 
+      "longitude": null, 
+      "name": "MGH TB OPD-1", 
+      "shortName": "MGH TB OPD-1",
+      "stateAbbreviation": "MDY", 
+      "street1": null, 
+      "street2": null, 
+      "timezoneId": "Myanmar Standard Time", 
+      "zip": null
+    }, 
+    {
+      "city": "Chanayethazan", 
+      "devices": [
+        {
+          "culture": null, 
+          "hostId": "HostId-279", 
+          "macAddress": null, 
+          "name": "Chanayethazan 2 GeneXpert", 
+          "notes": null, 
+          "serial": "DevSerial-279", 
+          "shortName": "",
+          "timezone": null
+        }
+      ], 
+      "externalId": "MGH TB OPD-2", 
+      "hoursEnd": null, 
+      "hoursStart": null, 
+      "latitude": null, 
+      "lgaName": "Mandalay", 
+      "longitude": null, 
+      "name": "MGH TB OPD-2", 
+      "shortName": "MGH TB OPD-2",
+      "stateAbbreviation": "MDY", 
+      "street1": null, 
+      "street2": null, 
+      "timezoneId": "Myanmar Standard Time", 
+      "zip": null
+    }, 
+    {
+      "city": "Mohnyin", 
+      "devices": [
+        {
+          "culture": "en-US", 
+          "hostId": "HostId-1047", 
+          "macAddress": "MAC10471047", 
+          "name": "Mohnyin GeneXpert", 
+          "notes": null, 
+          "serial": "DevSerial-1047", 
+          "shortName": "",
+          "timezone": "Pacific Standard Time"
+        }
+      ], 
+      "externalId": "Mohnyin TBC", 
+      "hoursEnd": 1020, 
+      "hoursStart": 540, 
+      "latitude": 24.774839, 
+      "lgaName": "Mohnyin", 
+      "longitude": 96.365585, 
+      "name": "Mohnyin TBC", 
+      "shortName": "Mohnyin TBC",
+      "stateAbbreviation": "KCN", 
+      "street1": null, 
+      "street2": null, 
+      "timezoneId": "Myanmar Standard Time", 
+      "zip": null
+    }, 
+    {
+      "city": "Myaungmya", 
+      "devices": [
+        {
+          "culture": null, 
+          "hostId": "HostId-395", 
+          "macAddress": null, 
+          "name": "Myaungmya GeneXpert", 
+          "notes": "thetwai@401527645", 
+          "serial": "DevSerial-395", 
+          "shortName": "",
+          "timezone": null
+        }
+      ], 
+      "externalId": "Myaungmya TBC", 
+      "hoursEnd": null, 
+      "hoursStart": null, 
+      "latitude": 95.0, 
+      "lgaName": "Myaungmya", 
+      "longitude": 17.0, 
+      "name": "Myaungmya TBC", 
+      "shortName": "Myaungmya TBC",
+      "stateAbbreviation": "AYY", 
+      "street1": null, 
+      "street2": null, 
+      "timezoneId": "Myanmar Standard Time", 
+      "zip": null
+    }, 
+    {
+      "city": "Myingyan", 
+      "devices": [
+        {
+          "culture": null, 
+          "hostId": "HostId-360", 
+          "macAddress": null, 
+          "name": "Myingyan GeneXpert", 
+          "notes": null, 
+          "serial": "DevSerial-360", 
+          "shortName": "",
+          "timezone": null
+        }
+      ], 
+      "externalId": "Myingyan TBC", 
+      "hoursEnd": null, 
+      "hoursStart": null, 
+      "latitude": 96.52182, 
+      "lgaName": "Myingyan", 
+      "longitude": 20.330139, 
+      "name": "Myingyan TBC", 
+      "shortName": "Myingyan TBC",
+      "stateAbbreviation": "MDY", 
+      "street1": null, 
+      "street2": null, 
+      "timezoneId": "Myanmar Standard Time", 
+      "zip": null
+    }, 
+    {
+      "city": "Pathein", 
+      "devices": [
+        {
+          "culture": null, 
+          "hostId": "HostId-394", 
+          "macAddress": null, 
+          "name": "Pathein GeneXpert", 
+          "notes": null, 
+          "serial": "DevSerial-394", 
+          "shortName": "",
+          "timezone": null
+        }
+      ], 
+      "externalId": "Pathein TBC", 
+      "hoursEnd": null, 
+      "hoursStart": null, 
+      "latitude": -68.446999, 
+      "lgaName": "Pathein", 
+      "longitude": 45.999001, 
+      "name": "Pathein TBC", 
+      "shortName": "Pathein TBC",
+      "stateAbbreviation": "AYY", 
+      "street1": "Min Gyi Road", 
+      "street2": "Mingalar Street", 
+      "timezoneId": "Myanmar Standard Time", 
+      "zip": null
+    }, 
+    {
+      "city": "Patheingyi", 
+      "devices": [
+        {
+          "culture": null, 
+          "hostId": "HostId-359", 
+          "macAddress": null, 
+          "name": "Patheingyi 1 GeneXpert", 
+          "notes": null, 
+          "serial": "DevSerial-359", 
+          "shortName": "",
+          "timezone": null
+        }
+      ], 
+      "externalId": "Patheingyi TBH", 
+      "hoursEnd": null, 
+      "hoursStart": null, 
+      "latitude": 121.400002, 
+      "lgaName": "Mandalay", 
+      "longitude": 12.52, 
+      "name": "Patheingyi TBH", 
+      "shortName": "Patheingyi TBH",
+      "stateAbbreviation": "MDY", 
+      "street1": null, 
+      "street2": null, 
+      "timezoneId": "Myanmar Standard Time", 
+      "zip": null
+    }, 
+    {
+      "city": "Patheingyi", 
+      "devices": [], 
+      "externalId": "UM Laboratory Sub-Main Store (UMTBC)", 
+      "hoursEnd": null, 
+      "hoursStart": null, 
+      "latitude": null, 
+      "lgaName": "Mandalay", 
+      "longitude": null, 
+      "name": "UM Laboratory Sub-Main Store (UMTBC)", 
+      "shortName": null,
+      "stateAbbreviation": "MDY", 
+      "street1": null, 
+      "street2": null, 
+      "timezoneId": null, 
+      "zip": null
+    }, 
+    {
+      "city": "Patheingyi", 
+      "devices": [
+        {
+          "culture": null, 
+          "hostId": "HostId-277", 
+          "macAddress": null, 
+          "name": "Patheingyi 2 GeneXpert", 
+          "notes": null, 
+          "serial": "DevSerial-277", 
+          "shortName": "",
+          "timezone": null
+        }
+      ], 
+      "externalId": "UMTBC", 
+      "hoursEnd": null, 
+      "hoursStart": null, 
+      "latitude": 96.522003, 
+      "lgaName": "Mandalay", 
+      "longitude": 20.33, 
+      "name": "UMTBC", 
+      "shortName": "UMTBC",
+      "stateAbbreviation": "MDY", 
+      "street1": null, 
+      "street2": null, 
+      "timezoneId": "Myanmar Standard Time", 
+      "zip": null
+    }
+  ]
+}
