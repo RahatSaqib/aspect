@@ -1166,7 +1166,7 @@ async function resolveEscalate({ knex, siteId, issueType, messageContext }) {
     .select('id')
 
   // loop through all active issues and
-  await Promise.each(issues, async ({ id: issueId }) => {
+  _.each(issues, ({ id: issueId }) => {
     // try to resolve issue (i.e. for Myanmar it runs function in /plugin/partner/Myanmar/issueResolutions.js)
     messageContext.resolveIssues(issueId)
 
