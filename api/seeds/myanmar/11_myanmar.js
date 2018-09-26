@@ -3,10 +3,7 @@ module.exports = require('../utils').seed(seed)
 const { rowsAsObject } = require('../utils')
 
 async function seed(knex) {
-  await seedReagentHealthResolution(knex)
-}
-
-async function seedReagentHealthResolution(knex) {
+  // check if seed already ran:
   const issueTypes = await rowsAsObject(knex, 'IssueType', 'externalId')
 
   const reagentHealthResolution = await knex('IssueResolutionTrigger')
@@ -18,6 +15,13 @@ async function seedReagentHealthResolution(knex) {
   if (reagentHealthResolution != null) {
     return
   }
+
+  await seedReagentHealthResolution(knex)
+  await updateDashboardWidgetToIncludeTrace(knex)
+}
+
+async function seedReagentHealthResolution(knex) {
+  const issueTypes = await rowsAsObject(knex, 'IssueType', 'externalId')
 
   const now = new Date()
   const { id: partnerId } = await knex('Partner')
@@ -34,8 +38,9 @@ async function seedReagentHealthResolution(knex) {
     createdOn: now,
     updatedOn: now,
   })
+}
 
-  // include MTB Trace (ULTRA) in dashboard calculations
+async function updateDashboardWidgetToIncludeTrace(knex) {
   await knex('DashboardWidget')
     .where({ title: 'RR Rate' })
     .update({
