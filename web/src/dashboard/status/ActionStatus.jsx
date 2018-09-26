@@ -218,6 +218,12 @@ export const ActionStatus = ({
                 sortable: true,
               },
               {
+                key: 'deviceName',
+                label: intl.formatMessage(messages.actionDevice),
+                className: cssClasses('ActionDataTable__TableHead__Device'),
+                sortable: true,
+              },
+              {
                 key: 'message',
                 label: intl.formatMessage(messages.actionIssue),
                 className: cssClasses('ActionDataTable__TableHead__Issue'),
