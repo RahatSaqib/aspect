@@ -58,7 +58,7 @@ async function seedStockIssuesUpdate(knex, partnerName) {
     .update({
       escalationConditions: JSON.stringify({
         evaluationMethod: 'plugin-function',
-        evaluationParameter: 'escalateIssueStockout',
+        evaluationParameter: 'escalateIssueStockout', // see /plugin/partner/Myanmar/issueEscalations.js
       }),
       updatedOn: now,
     })

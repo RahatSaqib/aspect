@@ -15,10 +15,8 @@ const {
   minPrcntModuleProceduralResolve,
 } = require('./errors')
 
-const {
-  totalDaysUnexpiredInventoryItemsLast,
-  totalWastedInventoryItems,
-} = require('../../../fact/service')
+const { totalWastedInventoryItems } = require('../../../fact/service')
+const { getEscalateOrResolveStatusForIssueStockout } = require('./utils')
 
 const { issueStatusToId, issueTypeToId } = require('../../../shared/dictionary')
 
@@ -97,7 +95,7 @@ async function resolveMachineTemperatureError(knex, issue) {
     .count('r.id as resultCount')
   return (
     machine != null &&
-    100 * machine.errorCount / total.resultCount <
+    (100 * machine.errorCount) / total.resultCount <
       minPrcntMachineTemperatureResolve
   )
 }
@@ -156,7 +154,7 @@ async function resolveMachinePowerError(knex, issue) {
     .count('r.id as resultCount')
   return (
     machine != null &&
-    100 * machine.errorCount / total.resultCount < minPrcntMachinePowerResolve
+    (100 * machine.errorCount) / total.resultCount < minPrcntMachinePowerResolve
   )
 }
 
@@ -178,7 +176,7 @@ async function resolveModuleProceduralError(knex, issue) {
     .count('r.id as resultCount')
   return (
     module != null &&
-    100 * module.errorCount / total.resultCount <
+    (100 * module.errorCount) / total.resultCount <
       minPrcntModuleProceduralResolve
   )
 }
@@ -198,7 +196,7 @@ async function resolveMachineProceduralError(knex, issue) {
     .count('r.id as resultCount')
   return (
     machine != null &&
-    100 * machine.errorCount / total.resultCount <
+    (100 * machine.errorCount) / total.resultCount <
       minPrcntMachineProceduralResolve
   )
 }
@@ -214,36 +212,6 @@ async function resolveMachineUnknownError(/* knex, issue */) {
 async function resolveIssueStockout(knex, issue) {
   const status = await getEscalateOrResolveStatusForIssueStockout(knex, issue)
   return status.isResolved
-}
-async function escalateIssueStockout(knex, issue) {
-  const status = await getEscalateOrResolveStatusForIssueStockout(knex, issue)
-  return status.isEscalated
-}
-// ---------------------------------------
-// getEscalateOrResolveStatusForIssueStockout
-// ---------------------------------------
-async function getEscalateOrResolveStatusForIssueStockout(knex, issue) {
-  const { partnerId, siteId, consumableId } = issue
-  const { rate: dailyRate } = (await knex('FactInventoryConsumptionRate')
-    .where({ siteId, consumableId, days: 1 })
-    .first('rate')) || { rate: 0 }
-  // read threshold
-  const { dueDaysInventoryStockout: dueDays } = await knex('Partner')
-    .where({ id: partnerId })
-    .first()
-  // use same func as when checking to trigger issue
-  const days = await totalDaysUnexpiredInventoryItemsLast({
-    knex,
-    siteId,
-    consumableId,
-    dailyRate,
-    dueDays,
-  })
-  return {
-    level: days < 14 ? 2 : days < dueDays ? 1 : undefined,
-    isEscalated: days < 14, // escalate issue if number of days to use consumables is less than 14
-    isResolved: days >= dueDays, // consider issue resolved if number of days to use consumables if greater than threshold
-  }
 }
 
 async function resolveIssueStockExpiring(knex, issue) {
@@ -279,5 +247,4 @@ module.exports = {
   resolveMachineUnknownError,
   resolveIssueStockout,
   resolveIssueStockExpiring,
-  escalateIssueStockout,
 }

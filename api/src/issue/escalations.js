@@ -2,12 +2,8 @@ const Promise = require('bluebird')
 const _ = require('lodash')
 const { issueEscalated, escalateIssues } = require('./actions')
 const { conditionsMet } = require('./evaluation')
-const {
-  issueEventStatusToId,
-  issueTypeToId,
-  messageStatusToId,
-} = require('../shared/dictionary')
-const { createAlertMessageFromTemplate } = require('../alert/service')
+const { issueEventStatusToId } = require('../shared/dictionary')
+const { alertMessageUpdateAfterIssueDataChanged } = require('../alert/actions')
 
 async function onIssueCreated({ issueId }, { messageContext: context }) {
   // Trigger escalation logic for level 1 as soon as issue is created,
@@ -29,7 +25,10 @@ async function onIssueTriggered({ issueId }, { messageContext: context }) {
 
 function onEscalateIssues() {
   return async (action, { messageContext: context }) => {
-    context.bindActionCreators({ issueEscalated })
+    context.bindActionCreators({
+      issueEscalated,
+      alertMessageUpdateAfterIssueDataChanged,
+    })
     context.transact(async knex => {
       const openIssuesToCheck = await findOpenIssuesToCheckForEscalation(
         knex,
@@ -53,41 +52,13 @@ function onEscalateIssues() {
             issueEscalationTrigger.escalateToLevel
           )
         } else {
-          // update alert messages for some issue types
-          const { id: issueId, issueTypeId, siteId } = issueEscalationTrigger
-          await updateAlertMessages(knex, { issueId, issueTypeId, siteId })
+          context.alertMessageUpdateAfterIssueDataChanged(
+            issueEscalationTrigger.id
+          )
         }
       })
     })
   }
-}
-
-async function updateAlertMessages(knex, { issueId, issueTypeId }) {
-  // if issueType does not need to update alert message - exit
-  // (later add here condition for DataCategoryLow* issue types which should update percentage in alert message)
-  const issueTypeIdStockout = await issueTypeToId('InventoryStockout')
-  if (issueTypeId !== issueTypeIdStockout) {
-    return
-  }
-
-  const messageStatusId = await messageStatusToId('Sent')
-
-  await knex('Notification as n')
-    .innerJoin('NotificationType as nt', 'n.notificationTypeId', 'nt.id')
-    .where('nt.issueTypeId', issueTypeId)
-    .where('n.issueId', issueId)
-    .select('n.alertMessageId')
-    .map(async ({ alertMessageId }) => {
-      // generate actual message
-      const message = await createAlertMessageFromTemplate(knex, alertMessageId)
-      await knex('AlertMessage')
-        .where({ id: alertMessageId, messageStatusId }) // update only for Sent message status
-        .whereNot('message', message) // update only if message text changed
-        .update({
-          message,
-          updatedOn: new Date(),
-        })
-    })
 }
 
 async function findOpenIssuesToCheckForEscalation(knex, issueId) {
