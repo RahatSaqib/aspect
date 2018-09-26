@@ -1,7 +1,5 @@
-
 const {
   totalDaysUnexpiredInventoryItemsLast,
-  // totalWastedInventoryItems,
 } = require('../../../fact/service')
 
 async function getEscalateOrResolveStatusForIssueStockout(knex, issue) {
