@@ -1,9 +1,11 @@
 module.exports = require('../utils').seed(seed)
 
 const { rowsAsObject } = require('../utils')
+const { seedDataCategory } = require('../dataCategoryLow')
 
 async function seed(knex) {
   await seedReagentHealthResolution(knex)
+  await seedDataCategory(knex, 'Myanmar')
 }
 
 async function seedReagentHealthResolution(knex) {
