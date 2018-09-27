@@ -1,6 +1,5 @@
 const { rowsAsObject } = require('../utils')
 const { getPermissionModules } = require('../utils')
-const { seedDataCategory } = require('../dataCategoryLow')
 
 module.exports = require('../utils').seed(seed)
 
@@ -470,6 +469,4 @@ async function seed(knex) {
       updatedOn: now,
     },
   ])
-
-  await seedDataCategory(knex, 'Myanmar')
 }
