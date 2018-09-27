@@ -2,7 +2,6 @@ const _ = require('lodash')
 const subDays = require('date-fns/sub_days')
 const startOfMonth = require('date-fns/start_of_month')
 const Promise = require('bluebird')
-const _ = require('lodash')
 
 const {
   MODULE_FAILURE_ERROR_CODES,
