@@ -14,22 +14,25 @@ const now = new Date()
 // removeOld
 // -------------------------------------------------------
 async function removeOld(knex) {
+  // we added issue type DataCategoryLowError before, so here we need to remove all it's related data from db
+  // i.e. from NotificationType, IssueType, etc
   const { id: issueTypeId } = await knex('IssueType')
     .where({
       externalId: 'DataCategoryLowError',
     })
     .first('id')
 
+  // there is data in db seeded in previous seed-files for this issueTypeId -
+  // in Notification, [Alert/Email/Sms]Message, Issue tables, so need to delete it
   const issues = await knex('Issue')
     .where({
       issueTypeId,
     })
     .select('id')
-
   const issueIds = _.filter(_.uniq(_.map(issues, 'id')), id => !_.isNull(id))
-
   await cleanUpIssues(knex, issueIds)
 
+  // alertTemplateId for this issue type to delete MessageType (see below)
   const { id: alertTemplateId } = await knex('AlertTemplate')
     .where({
       message:
@@ -37,6 +40,7 @@ async function removeOld(knex) {
     })
     .first()
 
+  // delete corresponding data from [Notification/Issue/Message]Type tables
   await knex('NotificationType')
     .where('id', '>', 0)
     .where({
@@ -59,11 +63,7 @@ async function removeOld(knex) {
     .del()
 
   await knex('AlertTemplate')
-    .where('id', '>', 0)
-    .where({
-      message:
-        '{{dataCategoryName}} collection rate {{dataCategoryCollectionRatePercentage}}',
-    })
+    .where('id', alertTemplateId)
     .del()
 
   await knex('SmsTemplate')
