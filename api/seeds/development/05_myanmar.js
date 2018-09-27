@@ -1400,8 +1400,7 @@ async function seed(knex) {
       'Module A2 errors, conduct troubleshooting',
     [issueTypes.MachineProceduralError.id]:
       'Procedural errors across machine, conduct troubleshooting',
-    [issueTypes.DataCategoryLowError.id]:
-      "Data category 'HIV+' for current month is low (89%)",
+    [issueTypes.DataCategoryLowError.id]: 'HIV Status collection rate 89%',
     [issueTypes.StockLevelUpdate.id]: 'Stock Level',
     [issueTypes.ReagentHealthError.id]: 'Cartridge-specific errors exceed 5%',
   }
@@ -1549,8 +1548,7 @@ async function seed(knex) {
       'Module Temperature Issue for 2 days',
     [issueTypes.MachineProceduralError.id]: 'Machine Power Issue for 7 days',
     [issueTypes.StockLevelUpdate.id]: 'Stock Level',
-    [issueTypes.DataCategoryLowError.id]:
-      "Data category 'HIV+' for current month is low (92%)",
+    [issueTypes.DataCategoryLowError.id]: 'HIV Status collection rate 92%',
     [issueTypes.ReagentHealthError.id]: 'Cartridge-specific errors exceed 5%',
   }
 
