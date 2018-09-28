@@ -862,6 +862,7 @@ async function getDataCategoryStatus(
   // base query for getting counts - totals and number of valid results
   const itemsBase = knex('Result as r')
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
+    .leftOuterJoin('Sample as smp', 'r.sampleId', 'smp.id')
     .where('r.endedOn', '>=', dateFrom)
     .where('r.endedOn', '<=', dateTo)
     .where(`d.siteId`, siteId)
@@ -894,18 +895,22 @@ async function getDataCategoryStatus(
           // get all fields for 'Other' category (i.e. "name", "gender", "age")
           const fieldNames = JSON.parse(dataCategory.fieldNames)
           _.map(fieldNames, field => {
-            // field value is not null (when field is missing), "undefined", "null" or ""
-            this.whereRaw(
-              `
-              (r.patientData ->> '$.${field}') is not null
-              and
-              (r.patientData ->> '$.${field}') != 'undefined'
-              and
-              (r.patientData ->> '$.${field}') != 'null'
-              and
-              (r.patientData ->> '$.${field}') != ''
-              `
-            )
+            if (field === 'sampleType') {
+              this.whereNotNull('r.sampleId').whereNotNull('smp.sampleTypeId')
+            } else {
+              // field value is not null (when field is missing), "undefined", "null" or ""
+              this.whereRaw(
+                `
+                (r.patientData ->> '$.${field}') is not null
+                and
+                (r.patientData ->> '$.${field}') != 'undefined'
+                and
+                (r.patientData ->> '$.${field}') != 'null'
+                and
+                (r.patientData ->> '$.${field}') != ''
+                `
+              )
+            }
             // ^^^ notice that we require ALL fields (i.e. name, gender, age) have value to count result as valid
             // if need at least one field to have value then use this.orWhereRaw above
           })

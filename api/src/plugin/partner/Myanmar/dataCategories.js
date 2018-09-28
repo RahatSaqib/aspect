@@ -100,13 +100,17 @@ const dataCategories = [
   },
   {
     name: 'Other',
-    fieldNames: '["name", "gender", "age"]',
+    fieldNames: '["city", "gender", "age", "sampleType"]',
     // partnerId,
     externalId: 'Other',
     i18nKey: 'dataCategoryOther',
     // ----------------------
     // missing of valid/invalidValues here means that if field is in patientData json and is
     // not undefined, null or empty string - it is considered as valid
+    // Notice: field 'sampleType' means 'sampleTypeId' in Sample table - for 'Other' category
+    // be valid field Sample.sampleTypeId should  NOT be null.
+    // ----------------------
+    // see func getDataCategoryStatus( in /fact/service.js
     // ----------------------
     cutoffPercentage: 98,
   },
