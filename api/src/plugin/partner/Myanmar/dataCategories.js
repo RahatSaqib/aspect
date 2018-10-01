@@ -96,7 +96,7 @@ const dataCategories = [
     invalidValues: JSON.stringify(
       dictSmear.filter(x => x === 'Not on Form' || x === 'Not Done')
     ),
-    cutoffPercentage: 98,
+    cutoffPercentage: 95,
   },
   {
     name: 'Other',
