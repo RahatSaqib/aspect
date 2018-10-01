@@ -45,6 +45,9 @@ describe('Inventory Stock Issues Endpoint', () => {
   let messageContext
   let baseProps
   const issueIds = []
+  let stockoutIssueId
+  let stockExpiringIssueId
+  let inventoryQuantityOnHand
 
   before(async () =>
     run(async knex => {
@@ -92,6 +95,17 @@ describe('Inventory Stock Issues Endpoint', () => {
     run(async knex => {
       await waitForIdle(2000)
 
+      // restore initial value for quantityOnHand
+      const { siteId, consumableId } = await knex('Issue')
+        .where('id', stockoutIssueId)
+        .first()
+      await knex('InventoryItem')
+        .update({
+          quantityOnHand: inventoryQuantityOnHand,
+        })
+        .where({ siteId, consumableId })
+
+      // clean IssueEvent if any items added
       if (issueEventIds.length > 0) {
         await knex('IssueEvent')
           .whereIn('id', issueEventIds)
@@ -139,35 +153,97 @@ describe('Inventory Stock Issues Endpoint', () => {
   // Stockout
   it('should create Stockout issue', async () =>
     runTestWithKnex(async knex => {
-      const issueId = await triggerInitialIssue({
+      stockoutIssueId = await triggerInitialIssue({
         knex,
         ...baseProps, // i.e. siteId, consumableId, issueEventIds, daysDue
         issueType: 'InventoryStockout',
         dispatch: messageContext.inventoryStockout,
         actionCreator: inventoryStockout,
       })
-      issueIds.push(issueId)
+      issueIds.push(stockoutIssueId)
     }))
 
   // StockExpiring
   it('should create StockExpiring issue', async () =>
     runTestWithKnex(async knex => {
-      const issueId = await triggerInitialIssue({
+      stockExpiringIssueId = await triggerInitialIssue({
         knex,
         ...baseProps, // i.e. siteId, consumableId, issueEventIds, daysDue
         issueType: 'InventoryStockExpiring',
         dispatch: messageContext.inventoryStockExpiring,
         actionCreator: inventoryStockExpiring,
       })
-      issueIds.push(issueId)
+      issueIds.push(stockExpiringIssueId)
     }))
 
   // ---------------------------------------------------------------------------
   // escalate issues
   // ---------------------------------------------------------------------------
-  describe("dispatch ESCALATE_ISSUES with created issues ID's", () => {
-    it('escalate triggered Stockout and StockExpiring issues to level 2', async () =>
+  describe('Escalate to level 2 of just triggered Stockout issue', () => {
+    it('change stock level to make stock lasts for less than 14 days and dispatch escalate issue action', async () =>
       runTestWithKnex(async knex => {
+        const issueId = stockoutIssueId
+        const { siteId, consumableId } = await knex('Issue')
+          .where('id', issueId)
+          .first()
+        // get dailyRate
+        const { rate: dailyRate } = (await knex('FactInventoryConsumptionRate')
+          .where({ siteId, consumableId, days: 1 })
+          .first('rate')) || { rate: 0 }
+
+        // no need to read dueDaysInventoryStockout threshold from Partner table -
+        // because we store threshold for level 1 only (for triggering issue).
+        // It's equal 14 days for escalating to level 2
+        const dueDays = 14
+
+        // keep initial quantityOnHand to restore it after this test ends
+        const inventoryItem = await knex('InventoryItem')
+          .where({ siteId, consumableId })
+          .first('quantityOnHand')
+        inventoryQuantityOnHand = inventoryItem.quantityOnHand
+
+        // estimate quantity to let stock last for 2 days less than threshold
+        const quantityOnHand = dailyRate * (dueDays - 2)
+
+        // update InventoryItem assuming there are no lots defined
+        await knex('InventoryItem')
+          .update({
+            quantityOnHand,
+          })
+          .where({ siteId, consumableId })
+
+        // escalate
+        const action = escalateIssues(issueId)
+        await messageContext.escalateIssues(issueId)
+        await waitForAction(action)
+        await waitForIdle(1000)
+
+        const issue = await getIssue(knex, issueId)
+        assert.equal(issue.level, 2)
+      }))
+
+    it('notifications should be created for the level that the issue has been escalated to', async () =>
+      runTestWithKnex(async knex => {
+        const issueId = stockoutIssueId
+        const notificationsIssue = await getIssueNotifications(knex, issueId)
+        expect(notificationsIssue).to.containSubset([
+          {
+            NotificationType: {
+              level: 2,
+            },
+            Notification: {
+              issueId,
+              personId: siteRegionalOfficer.id,
+            },
+          },
+        ])
+      }))
+  })
+
+  describe('Escalate to level 2 of just triggered Stock Expiring issue', () => {
+    it('change createdOn value for just triggered Stock Expiring issue and dispatch escalate issue action', async () =>
+      runTestWithKnex(async knex => {
+        const issueId = stockExpiringIssueId
         // see seed/utils.js - search for 'knex('IssueEscalationTrigger').insert' -
         // level 2 - evaluationMethod: 'issue-age' and evaluationParameter: { days: 10 }
         // level 3 - evaluationMethod: 'issue-age' and evaluationParameter: { days: 20 }
@@ -177,36 +253,33 @@ describe('Inventory Stock Issues Endpoint', () => {
           .update({
             createdOn: pastTime,
           })
-          .whereIn('issueId', issueIds)
+          .where({ issueId })
 
         // escalate
-        await Promise.each(issueIds, async issueId => {
-          const action = escalateIssues(issueId)
-          await messageContext.escalateIssues(issueId)
-          await waitForAction(action)
-          await waitForIdle(1000)
+        const action = escalateIssues(issueId)
+        await messageContext.escalateIssues(issueId)
+        await waitForAction(action)
+        await waitForIdle(1000)
 
-          const issue = await getIssue(knex, issueId)
-          assert.equal(issue.level, 2)
-        })
+        const issue = await getIssue(knex, issueId)
+        assert.equal(issue.level, 2)
       }))
 
     it('notifications should be created for the level that the issue has been escalated to', async () =>
       runTestWithKnex(async knex => {
-        issueIds.map(async issueId => {
-          const notificationsIssue = await getIssueNotifications(knex, issueId)
-          expect(notificationsIssue).to.containSubset([
-            {
-              NotificationType: {
-                level: 2,
-              },
-              Notification: {
-                issueId,
-                personId: siteRegionalOfficer.id,
-              },
+        const issueId = stockExpiringIssueId
+        const notificationsIssue = await getIssueNotifications(knex, issueId)
+        expect(notificationsIssue).to.containSubset([
+          {
+            NotificationType: {
+              level: 2,
             },
-          ])
-        })
+            Notification: {
+              issueId,
+              personId: siteRegionalOfficer.id,
+            },
+          },
+        ])
       }))
   })
 })
