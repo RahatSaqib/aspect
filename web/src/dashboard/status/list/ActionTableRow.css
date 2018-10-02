@@ -24,6 +24,12 @@
   min-width: 200px;
 }
 
+.TableCell--device {
+  font-weight: var(--lato-font-weight-bold);
+  color: var(--aspect-color-grey-1);
+  min-width: 200px;
+}
+
 .TableCell--issue {
   width: 80%;
   color: var(--aspect-color-grey-1);
