@@ -334,32 +334,32 @@ async function updateUnknownErrorOnModuleMessage(knex) {
   await knex('AlertTemplate')
     .where({
       message:
-        'Possible module failure on module {{issue.data.moduleName}} contact engineer',
+        'Errors without code on module {{issue.data.moduleName}}, conduct troubleshooting.',
     })
     .update({
       message:
-        'Possible module failure on module {{issue.data.moduleName}} - unknown error - contact engineer',
+        'Possible failure on module {{issue.data.moduleName}} - unknown error - contact engineer',
     })
 
   await knex('SmsTemplate')
     .where({
       message:
-        'Possible module failure on module {{issue.data.moduleName}} contact engineer',
+        '{{device.name}}: Errors without code on module {{issue.data.moduleName}}, conduct troubleshooting.',
     })
     .update({
       message:
-        'Possible module failure on module {{issue.data.moduleName}} - unknown error - contact engineer',
+        '{{device.name}}: Possible failure on module {{issue.data.moduleName}} - unknown error - contact engineer',
     })
 
   await knex('EmailTemplate')
     .where({
-      subject: 'Possible module failure',
+      subject: '{{device.name}}: Errors without code on module {{issue.data.moduleName}}',
     })
     .update({
       body:
-        'Possible module failure on module {{issue.data.moduleName}} - unknown error - contact engineer',
+        '{{device.name}}: Possible failure on module {{issue.data.moduleName}} - unknown error - contact engineer',
       htmlBody:
-        'Possible module failure on module <em>{{issue.data.moduleName}}</em> - unknown error - contact engineer',
+        '{{device.name}}: Possible failure on module <em>{{issue.data.moduleName}}</em> - unknown error - contact engineer',
     })
 }
 
