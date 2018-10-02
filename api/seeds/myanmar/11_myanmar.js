@@ -1,6 +1,9 @@
 module.exports = require('../utils').seed(seed)
 
 const { rowsAsObject } = require('../utils')
+const {
+  updateUnknownErrorOnModuleMessage,
+} = require('../seedUnknownErrorsIssue')
 
 async function seed(knex) {
   // check if seed already ran:
@@ -18,6 +21,7 @@ async function seed(knex) {
 
   await seedReagentHealthResolution(knex)
   await updateDashboardWidgetToIncludeTrace(knex)
+  await updateUnknownErrorOnModuleMessage(knex)
 }
 
 async function seedReagentHealthResolution(knex) {
