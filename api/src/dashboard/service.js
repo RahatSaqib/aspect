@@ -1186,6 +1186,13 @@ async function actionDashboard(request) {
     .join('IssueStatus as is', 'i.issueStatusId', 'is.id')
     .join('IssueStatusSeverity as iss', 'is.issueStatusSeverityId', 'iss.id')
     .join('Site as s', 'am.siteId', 's.id')
+    .leftJoin('Device as d', function() {
+      this.on('am.deviceId', '=', 'd.id').onNotIn('it.externalId', [
+        'StockLevelUpdate',
+        'InventoryStockout',
+        'InventoryStockExpiring',
+      ])
+    })
     .leftJoin('AlertTemplate as at', 'am.alertTemplateId', 'at.id')
     .leftJoin('IssueStatusLog as isl', function() {
       this.on('i.id', 'isl.issueId').andOn('is.id', 'isl.issueStatusId')
@@ -1216,6 +1223,7 @@ async function actionDashboard(request) {
       'am.message',
       'am.personId',
       's.name as siteName',
+      'd.name as deviceName',
       'i.id as issueId',
       'is.name as status',
       'is.i18nKey as statusI18nKey',
@@ -1354,6 +1362,7 @@ async function addStockLevelUpdateActions(
           resultId: null,
           message: 'Stock Level', // TODO: i18n this message
           siteName,
+          deviceName: null,
           issueId: null,
           status: totalInStock <= 0 ? 'Active' : 'OK',
           statusI18nKey:
