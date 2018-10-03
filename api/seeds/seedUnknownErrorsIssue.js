@@ -330,6 +330,40 @@ async function seedUnknownErrorsIssue(knex, partnerName, adminName) {
   ])
 }
 
+async function updateUnknownErrorOnModuleMessage(knex) {
+  await knex('AlertTemplate')
+    .where({
+      message:
+        'Errors without code on module {{issue.data.moduleName}}, conduct troubleshooting.',
+    })
+    .update({
+      message:
+        'Possible failure on module {{issue.data.moduleName}} - unknown error - contact engineer',
+    })
+
+  await knex('SmsTemplate')
+    .where({
+      message:
+        '{{device.name}}: Errors without code on module {{issue.data.moduleName}}, conduct troubleshooting.',
+    })
+    .update({
+      message:
+        '{{device.name}}: Possible failure on module {{issue.data.moduleName}} - unknown error - contact engineer',
+    })
+
+  await knex('EmailTemplate')
+    .where({
+      subject: '{{device.name}}: Errors without code on module {{issue.data.moduleName}}',
+    })
+    .update({
+      body:
+        '{{device.name}}: Possible failure on module {{issue.data.moduleName}} - unknown error - contact engineer',
+      htmlBody:
+        '{{device.name}}: Possible failure on module <em>{{issue.data.moduleName}}</em> - unknown error - contact engineer',
+    })
+}
+
 module.exports = {
   seedUnknownErrorsIssue,
+  updateUnknownErrorOnModuleMessage,
 }

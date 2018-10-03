@@ -6,6 +6,9 @@ module.exports = require('../utils').seed(seed)
 const geography = require('./fixtures/geography.json')
 const _ = require('lodash')
 const Promise = require('bluebird')
+const {
+  updateUnknownErrorOnModuleMessage,
+} = require('../seedUnknownErrorsIssue')
 
 async function seed(knex) {
   const alertTemplateWithHideFlag = await knex('AlertTemplate')
@@ -365,4 +368,6 @@ async function seed(knex) {
           : modules.actionDashboard.edit,
     })
   })
+
+  await updateUnknownErrorOnModuleMessage(knex)
 }
