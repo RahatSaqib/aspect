@@ -836,7 +836,7 @@ async function checkDataCategoriesForLowStatus(action, { messageContext }) {
               categoryToken,
               categoryName: dataCategory.name,
               periodName: period.name,
-              siteId: site.id,
+              siteId,
               percentage,
             }
 
@@ -873,9 +873,10 @@ async function getDataCategoryStatus(
     .countDistinct('r.id as count')
 
   let percentage = 0
+  let numValid = 0
   if (totals > 0) {
     // get number of valid results
-    const [{ count: numValid }] = await itemsBase
+    ;[{ count: numValid }] = await itemsBase
       .clone()
       .whereNotNull('r.patientData')
       .where(function() {
@@ -923,6 +924,7 @@ async function getDataCategoryStatus(
 
   return {
     totals,
+    numValid,
     percentage,
   }
 }
