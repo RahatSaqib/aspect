@@ -1,5 +1,6 @@
 const _ = require('lodash')
 const subDays = require('date-fns/sub_days')
+const startOfMonth = require('date-fns/start_of_month')
 const Promise = require('bluebird')
 
 const {
@@ -25,6 +26,10 @@ const {
   maxInvalidReagentErrorRatio,
   invalidResultBatchRatio,
 } = require('./errors')
+const {
+  getDataCategoryStatus,
+  MIN_RESULTS_TO_TRIGGER_DATA_CATEGORY_LOW,
+} = require('../../../fact/service')
 
 const { totalWastedInventoryItems } = require('../../../fact/service')
 const { getEscalateOrResolveStatusForIssueStockout } = require('./utils')
@@ -382,6 +387,40 @@ async function resolveReagentHealthError(knex, { deviceId, consumableId }) {
   return true
 }
 
+async function resolveDataCategoryLow(knex, issue) {
+  // notice that issue.data is [action].options
+  const issueData = JSON.parse(issue.data) || {}
+  // get needed props from [action].options (see factDataCategoryLow() in /fact/action.js)
+  const { siteId, categoryToken } = issueData
+  const { plugin } =
+    (await knex('Site as s')
+      .innerJoin('Partner as p', 's.partnerId', 'p.id')
+      .where('s.id', siteId)
+      .first('p.plugin')) || {}
+  const { loadPlugin } = require('../../../plugin/registration')
+  const { dataCategories = [] } = await loadPlugin([plugin], 'dataCategories')
+  const dataCategory = _.find(
+    dataCategories,
+    category => category.externalId === categoryToken
+  )
+
+  if (dataCategory) {
+    const now = new Date()
+    const period = {
+      dateFrom: startOfMonth(now),
+      dateTo: now,
+    }
+    const props = { period, siteId, dataCategory }
+    const { totals, percentage } = await getDataCategoryStatus(knex, props)
+
+    return (
+      totals < MIN_RESULTS_TO_TRIGGER_DATA_CATEGORY_LOW ||
+      percentage >= dataCategory.cutoffPercentage
+    )
+  }
+  return false
+}
+
 async function resolveIssueStockout(knex, issue) {
   const status = await getEscalateOrResolveStatusForIssueStockout(knex, issue)
   return status.isResolved
@@ -418,6 +457,7 @@ module.exports = {
   resolveMachineProceduralError,
   resolveModuleUnknownError,
   resolveMachineUnknownError,
+  resolveDataCategoryLow,
   resolveReagentHealthError,
   resolveIssueStockout,
   resolveIssueStockExpiring,

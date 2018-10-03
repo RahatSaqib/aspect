@@ -33,6 +33,7 @@ const plugins = {
     transformMergeResultPayload,
     postProcessMergeResult,
     onResultLogged,
+    dataCategories: {},
   },
   commcare: {
     transformInitialPayload: require('./deviceType/CommCareApp/transformInitialPayload'),
@@ -69,6 +70,7 @@ const plugins = {
     issueEscalations: require('./partner/Myanmar/issueEscalations'),
     transformMergeResultPayload: require('./partner/Myanmar/transformMergeResultPayload'),
     onResultLogged: require('./partner/Myanmar/onResultLogged'),
+    dataCategories: require('./partner/Myanmar/dataCategories'),
   },
 }
 

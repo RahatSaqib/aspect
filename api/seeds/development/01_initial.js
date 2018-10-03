@@ -2236,7 +2236,7 @@ async function seed(knex) {
               moduleName: 'Module A',
               moduleSerial: `M-1234-${i % 4}`,
               researchId: `R-ID-${i}`,
-              patientData: patients[_.random(patientNumber)],
+              patientData: JSON.stringify(patients[_.random(patientNumber)]),
               senderVersion: '4.6b',
               senderOperator: 'Marsha',
               notes: 'This is a test... result',
