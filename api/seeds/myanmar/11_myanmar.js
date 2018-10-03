@@ -2,6 +2,9 @@ module.exports = require('../utils').seed(seed)
 
 const { rowsAsObject } = require('../utils')
 const { seedDataCategory } = require('../dataCategoryLow')
+const {
+  updateUnknownErrorOnModuleMessage,
+} = require('../seedUnknownErrorsIssue')
 
 async function seed(knex) {
   // check if seed already ran:
@@ -21,6 +24,7 @@ async function seed(knex) {
   await updateTemplatesToIncludeDeviceName(knex)
   await updateDashboardWidgetToIncludeTrace(knex)
   await seedDataCategory(knex, 'Myanmar')
+  await updateUnknownErrorOnModuleMessage(knex)
 }
 
 async function seedReagentHealthResolution(knex) {
