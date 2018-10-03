@@ -5,7 +5,7 @@ const _ = require('lodash')
 
 const config = require('../../src/config')
 const myanmarSites = require('./fixtures/myanmarSites.json')
-const patients = require('./fixtures/patients.json')
+let patients = require('./fixtures/patients.json')
 const dashboardWidget = require('./fixtures/myanmarDashboardWidget.json')
 const { errorCodes } = require('./fixtures/errorCodes.js')
 const {
@@ -18,6 +18,7 @@ const {
   rowsAsObject,
   getDefaultMessageTypes,
   seedStockIssues,
+  seedStockIssuesUpdate,
   getPermissionModules,
   seedIssueEventTriggersForPartner,
 } = require('../utils')
@@ -33,6 +34,9 @@ const {
 } = require('../../src/shared/dictionary')
 
 const { seedUnknownErrorsIssue } = require('../seedUnknownErrorsIssue')
+
+const { loadPlugin } = require('../../src/plugin/registration')
+const { seedDataCategory } = require('../dataCategoryLow')
 
 const now = new Date()
 const millisInHour = 1000 * 60 * 60
@@ -85,6 +89,16 @@ async function seed(knex) {
     maxDaysDeviceOffline: 7,
     maxDaysDeviceNoResults,
   })
+
+  // -------------------------
+  // add and randomly populate DataCategory fields
+  const pluginName = 'myanmar'
+  const plugin = await loadPlugin([pluginName], 'dataCategories')
+  const { addDataCategoryFields } = plugin
+  if (addDataCategoryFields) {
+    patients = addDataCategoryFields(patients)
+  }
+  // -------------------------
 
   const modules = await getPermissionModules(knex)
 
@@ -1649,6 +1663,7 @@ async function seed(knex) {
   )
 
   await seedStockIssues(knex)
+  await seedStockIssuesUpdate(knex, 'Myanmar')
   await seedUnknownErrorsIssue(knex, 'Myanmar', 'myanmar_admin')
   await seedIssueEventTriggersForPartner(knex, partnerId, {
     issueTypeWhitelist: ['DeviceMaintenance'],
@@ -1908,6 +1923,16 @@ async function seed(knex) {
       updatedOn: now,
     },
     {
+      issueTypeId: issueTypes.ReagentHealthError.id,
+      partnerId,
+      resolutionConditions: JSON.stringify({
+        evaluationMethod: 'plugin-function',
+        evaluationParameter: 'resolveReagentHealthError',
+      }),
+      createdOn: now,
+      updatedOn: now,
+    },
+    {
       issueTypeId: issueTypes.InventoryStockout.id,
       partnerId,
       resolutionConditions: JSON.stringify({
@@ -1928,6 +1953,8 @@ async function seed(knex) {
       updatedOn: now,
     },
   ])
+
+  await seedDataCategory(knex, 'Myanmar')
 }
 
 function calculateDateForResult(

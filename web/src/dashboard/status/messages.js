@@ -217,6 +217,10 @@ export const messages = defineMessages({
     id: 'pages.Status.actionLab',
     defaultMessage: 'Lab',
   },
+  actionDevice: {
+    id: 'pages.Status.actionDevice',
+    defaultMessage: 'Device',
+  },
   actionIssue: {
     id: 'pages.Status.actionIssue',
     defaultMessage: 'Issue',
