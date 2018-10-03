@@ -383,9 +383,14 @@
   width: 10%;
 }
 
+.ActionDataTable__TableHead__Device {
+  composes: ActionDataTable__TableHead;
+  width: 15%;
+}
+
 .ActionDataTable__TableHead__Issue {
   composes: ActionDataTable__TableHead;
-  width: 80%;
+  width: 65%;
 }
 
 .ActionDataTable--empty {
