@@ -1,6 +1,6 @@
 module.exports = require('../utils').seed(seed)
 
-const { rowsAsObject } = require('../utils')
+const { rowsAsObject, seedStockIssuesUpdate } = require('../utils')
 const {
   updateUnknownErrorOnModuleMessage,
 } = require('../seedUnknownErrorsIssue')
@@ -19,6 +19,7 @@ async function seed(knex) {
     return
   }
 
+  await seedStockIssuesUpdate(knex, 'Myanmar')
   await seedReagentHealthResolution(knex)
   await updateTemplatesToIncludeDeviceName(knex)
   await updateDashboardWidgetToIncludeTrace(knex)

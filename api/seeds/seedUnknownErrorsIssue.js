@@ -353,7 +353,8 @@ async function updateUnknownErrorOnModuleMessage(knex) {
 
   await knex('EmailTemplate')
     .where({
-      subject: '{{device.name}}: Errors without code on module {{issue.data.moduleName}}',
+      subject:
+        '{{device.name}}: Errors without code on module {{issue.data.moduleName}}',
     })
     .update({
       body:
