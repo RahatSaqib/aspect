@@ -106,7 +106,7 @@ async function resolveMachineTemperatureError(knex, issue) {
     .count('r.id as resultCount')
   return (
     machine != null &&
-    (100 * machine.errorCount) / total.resultCount <
+    100 * machine.errorCount / total.resultCount <
       minPrcntMachineTemperatureResolve
   )
 }
@@ -165,7 +165,7 @@ async function resolveMachinePowerError(knex, issue) {
     .count('r.id as resultCount')
   return (
     machine != null &&
-    (100 * machine.errorCount) / total.resultCount < minPrcntMachinePowerResolve
+    100 * machine.errorCount / total.resultCount < minPrcntMachinePowerResolve
   )
 }
 
@@ -187,7 +187,7 @@ async function resolveModuleProceduralError(knex, issue) {
     .count('r.id as resultCount')
   return (
     module != null &&
-    (100 * module.errorCount) / total.resultCount <
+    100 * module.errorCount / total.resultCount <
       minPrcntModuleProceduralResolve
   )
 }
@@ -207,7 +207,7 @@ async function resolveMachineProceduralError(knex, issue) {
     .count('r.id as resultCount')
   return (
     machine != null &&
-    (100 * machine.errorCount) / total.resultCount <
+    100 * machine.errorCount / total.resultCount <
       minPrcntMachineProceduralResolve
   )
 }

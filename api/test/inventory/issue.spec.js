@@ -1,6 +1,5 @@
 const { addDays, subDays } = require('date-fns')
 const { assert, expect } = require('chai')
-const Promise = require('bluebird')
 
 const { queuePurge } = require('../utils/mqUtils')
 const { run } = require('../../src/db')
