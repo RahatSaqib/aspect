@@ -1,6 +1,5 @@
 const _ = require('lodash')
 const {
-  addDays,
   subDays,
   addMilliseconds,
   startOfMonth,
@@ -39,7 +38,10 @@ const patients = require('../../seeds/test/fixtures/patients.json')
 
 const totalPatients = patients.length
 
+const USER_LU_NAME_PREFIX = 'myanmar_lab'
 const USER_RO_NAME_PREFIX = 'myanmar_ro'
+const USER_LU_NAME = 'myanmar_lab1'
+const USER_RO_NAME = 'myanmar_ro1'
 
 const now = new Date()
 const millisInMinute = 1000 * 60
@@ -59,6 +61,60 @@ function calculateDateForResult(
   )
 }
 
+async function initUserAndJobs(knex, partnerId, siteId) {
+  const init = async ({ jobFunctionName, userName }) => {
+    // get JobFunction
+    const { id: jobFunctionId } = await knex('JobFunction')
+      .where({
+        name: jobFunctionName,
+        partnerId,
+      })
+      .first()
+    // get User
+    const { id: userId } = await knex('User')
+      .where({ name: userName })
+      .first()
+    // get Person
+    const { id: personId } = await knex('Person')
+      .where({ userId })
+      .first()
+    // get (insert) Job
+    let jobId
+    const job = await knex('Job')
+      .where({
+        personId,
+        jobFunctionId,
+      })
+      .first()
+    if (job) {
+      jobId = job.id
+    } else {
+      ;[jobId] = await knex('Job').insert({
+        personId,
+        jobFunctionId,
+      })
+    }
+    // insert JobContext for new site
+    const [jobContextId] = await knex('JobContext').insert({
+      jobId,
+      siteId,
+    })
+    return jobContextId
+  }
+
+  const jobContextIds = [
+    await init({
+      jobFunctionName: 'Regional Officer',
+      userName: USER_RO_NAME,
+    }),
+    await init({
+      jobFunctionName: 'Lab User',
+      userName: USER_LU_NAME,
+    }),
+  ]
+  return jobContextIds
+}
+
 describe('DataCategoryLow Issues Endpoint', () => {
   const partnerName = 'Myanmar'
   const countryAbbreviation = 'MM'
@@ -68,12 +124,12 @@ describe('DataCategoryLow Issues Endpoint', () => {
   let partnerId
   let siteId
   let deviceId
-  let consumableId
   let totalValid = 0
   let issueEventIds
   let messageContext
   let samples = []
   let resultIds = []
+  let jobContextIds = []
   const issueIds = []
   const categoryTokenWithIssue = 'PreviouslyTreated'
   const issueType = `DataCategoryLowFor${categoryTokenWithIssue}`
@@ -83,11 +139,14 @@ describe('DataCategoryLow Issues Endpoint', () => {
       // get dataCategory definitions
       const pluginName = partnerName.toLowerCase()
       const plugin = (await loadPlugin([pluginName], 'dataCategories')) || {}
-      ;[{ dataCategories = [] }] = [plugin]
+      ;({ dataCategories = [] } = plugin)
 
       // get partnerId
       partner = await getPartner(knex, partnerName)
       partnerId = partner.id
+      const { id: myanmarAdminId } = await knex('User as u')
+        .where('u.name', 'myanmar_admin')
+        .first('u.id')
 
       // get 1st site for current partner
       const { s: { geographyId } } = await getSite(knex, {
@@ -97,7 +156,7 @@ describe('DataCategoryLow Issues Endpoint', () => {
       })
 
       // create new site for same partner and same geography
-      siteId = await knex('Site').insert({
+      ;[siteId] = await knex('Site').insert({
         name: 'Test Site',
         shortName: 'Test Site',
         externalId: `Test Site ${new Date().getTime()}`,
@@ -105,7 +164,7 @@ describe('DataCategoryLow Issues Endpoint', () => {
         geographyId,
       })
       // for new site - create new device
-      deviceId = await knex('Device').insert({
+      ;[deviceId] = await knex('Device').insert({
         partnerId,
         geographyId,
         siteId, // new site id
@@ -128,25 +187,10 @@ describe('DataCategoryLow Issues Endpoint', () => {
       const { id: assayGeneXpertMtbRifId } = await knex('Assay')
         .where({ externalId: 'GxMtbRif' })
         .first()
-      const { consumableId: assayConsumableId } = await knex('ConsumableAssay')
-        .where({ assayId: assayGeneXpertMtbRifId })
-        .first()
-      consumableId = assayConsumableId
-
-      await knex('InventoryItem').insert({
-        consumableId,
-        siteId,
-        lotNumber: 'Test Lot',
-        expiresOn: addDays(now, 100),
-        quantityOnHand: 1000,
-        createdOn: now,
-        createdBy: 1,
-        updatedOn: now,
-        updatedBy: 1,
-      })
 
       samples = []
       resultIds = []
+      jobContextIds = await initUserAndJobs(knex, partnerId, siteId)
 
       // some MTB samples:
       await Promise.all(
@@ -222,6 +266,9 @@ describe('DataCategoryLow Issues Endpoint', () => {
             startedOn: subMinutes(now, 10),
             endedOn: subMinutes(now, 5),
             createdOn: now,
+            createdBy: myanmarAdminId,
+            updatedOn: now,
+            updatedBy: myanmarAdminId,
           })
           resultIds.push(resultId)
         })
@@ -261,9 +308,8 @@ describe('DataCategoryLow Issues Endpoint', () => {
       await knex('Device')
         .where('id', deviceId)
         .delete()
-      await knex('InventoryItem')
-        .where({ siteId })
-        .where('id', '>', 0)
+      await knex('JobContext')
+        .whereIn('id', jobContextIds)
         .delete()
       await knex('Site')
         .where('id', siteId)
@@ -371,8 +417,8 @@ describe('DataCategoryLow Issues Endpoint', () => {
           'am.message as alertMessage'
         )
 
-      expect(notifications.length).to.equal(2)
-      const [notifRO1, notifRO2] = notifications
+      expect(notifications.length).to.equal(3)
+      const [notifLU, notifRO1, notifRO2] = notifications
 
       // helper func for asserting similar things for each notification
       const assertNotif = (
@@ -388,6 +434,7 @@ describe('DataCategoryLow Issues Endpoint', () => {
         assert.equal(notification.canAcknowledge, canAcknowledge)
       }
       // see /seeds/dataCategory.js for NotificationType items
+      assertNotif(notifLU, USER_LU_NAME_PREFIX, 'Lab User', 1, 1)
       assertNotif(notifRO1, USER_RO_NAME_PREFIX, 'Regional Officer', 1, 1)
       assertNotif(notifRO2, USER_RO_NAME_PREFIX, 'Regional Officer', 1, 0)
 
