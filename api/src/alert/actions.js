@@ -2,6 +2,7 @@
 const types = {
   ALERT_MESSAGE_CREATED: 'ALERT_MESSAGE_CREATED',
   ALERT_MESSAGE_SENT: 'ALERT_MESSAGE_SENT',
+  ALERT_ISSUE_DATA_CHANGED: 'ALERT_ISSUE_DATA_CHANGED',
 }
 
 // ----------- Action Creators -------------------
@@ -38,8 +39,25 @@ function alertMessageSent(alertMessageId) {
   }
 }
 
+/**
+ * Creates an action to notify MQ the data that triggered the issue has changed
+ * and action handler need to update alert message
+ *
+ * issueId is required.
+ */
+function alertMessageUpdateAfterIssueDataChanged(issueId) {
+  if (!issueId) {
+    throw new Error('Must specify issueId')
+  }
+  return {
+    type: types.ALERT_ISSUE_DATA_CHANGED,
+    issueId,
+  }
+}
+
 module.exports = {
   types,
   alertMessageCreated,
   alertMessageSent,
+  alertMessageUpdateAfterIssueDataChanged,
 }

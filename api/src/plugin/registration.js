@@ -15,6 +15,7 @@ const plugins = {
   default: {
     settings: DEFAULT_SETTINGS,
     issueResolutions: {},
+    issueEscalations: {},
     transformInitialPayload,
     getDeviceSeenOn,
     getDevicePingOn,
@@ -66,6 +67,7 @@ const plugins = {
   myanmar: {
     settings: require('./partner/Myanmar/settings'),
     issueResolutions: require('./partner/Myanmar/issueResolutions'),
+    issueEscalations: require('./partner/Myanmar/issueEscalations'),
     transformMergeResultPayload: require('./partner/Myanmar/transformMergeResultPayload'),
     onResultLogged: require('./partner/Myanmar/onResultLogged'),
     dataCategories: require('./partner/Myanmar/dataCategories'),

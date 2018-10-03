@@ -18,6 +18,7 @@ const {
   rowsAsObject,
   getDefaultMessageTypes,
   seedStockIssues,
+  seedStockIssuesUpdate,
   getPermissionModules,
   seedIssueEventTriggersForPartner,
 } = require('../utils')
@@ -1662,6 +1663,7 @@ async function seed(knex) {
   )
 
   await seedStockIssues(knex)
+  await seedStockIssuesUpdate(knex, 'Myanmar')
   await seedUnknownErrorsIssue(knex, 'Myanmar', 'myanmar_admin')
   await seedIssueEventTriggersForPartner(knex, partnerId, {
     issueTypeWhitelist: ['DeviceMaintenance'],

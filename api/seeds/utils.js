@@ -42,6 +42,36 @@ async function getDefaultMessageTypes(knex) {
 }
 
 // -------------------------------------------------------
+// seedStockIssuesUpdate
+// -------------------------------------------------------
+async function seedStockIssuesUpdate(knex, partnerName) {
+  const { id: partnerId } = await knex('Partner')
+    .where({ name: partnerName })
+    .first()
+
+  const now = new Date()
+  const issueTypes = await rowsAsObject(knex, 'IssueType', 'externalId')
+
+  // -------------------------------------------
+  // Issue Escalation Triggers
+  // -------------------------------------------
+  await knex('IssueEscalationTrigger')
+    .update({
+      escalationConditions: JSON.stringify({
+        evaluationMethod: 'plugin-function',
+        evaluationParameter: 'escalateIssueStockout', // see /plugin/partner/Myanmar/issueEscalations.js
+      }),
+      updatedOn: now,
+    })
+    .where({
+      issueTypeId: issueTypes.InventoryStockout.id,
+      partnerId,
+      escalateToLevel: 2,
+    })
+    .whereRaw('escalationConditions->>"$.evaluationMethod" = "issue-age"')
+}
+
+// -------------------------------------------------------
 // seedStockIssues
 // -------------------------------------------------------
 async function seedStockIssues(knex) {
@@ -556,6 +586,7 @@ module.exports = {
   rowsAsObject,
   getDefaultMessageTypes,
   seedStockIssues,
+  seedStockIssuesUpdate,
   getPermissionModules,
   seedIssueEventTriggersForPartner,
   assignAllFeaturesToJobFunctionIds,

@@ -1,5 +1,5 @@
 const { alertMessageSent } = require('./actions')
-const { messageStatusToId } = require('../shared/dictionary')
+const { messageStatusToId, issueTypeToId } = require('../shared/dictionary')
 const {
   addDataSourceToQuery,
   processUsingDataSourceQuery,
@@ -24,6 +24,50 @@ function onAlertMessageCreated({ alertMessageId }, { messageContext }) {
   })
 }
 
+function onAlertMessageUpdateAfterIssueDataChanged(
+  { issueId },
+  { messageContext }
+) {
+  return messageContext.transact(async knex => {
+    const { issueTypeId } = await knex('Issue')
+      .where('id', issueId)
+      .first('issueTypeId')
+
+    // if issueType does not need to update alert message - exit
+    // (later add here condition for DataCategoryLow* issue types which should update percentage in alert message)
+    const issueTypeIdStockout = await issueTypeToId('InventoryStockout')
+    if (issueTypeId !== issueTypeIdStockout) {
+      return
+    }
+
+    const messageStatusId = await messageStatusToId('Sent')
+
+    await knex('Notification as n')
+      .innerJoin('NotificationType as nt', 'n.notificationTypeId', 'nt.id')
+      .where('nt.issueTypeId', issueTypeId)
+      .where('n.issueId', issueId)
+      .select('n.alertMessageId')
+      .map(async ({ alertMessageId }) => {
+        // generate actual message
+        const message = await createAlertMessageFromTemplate(
+          knex,
+          alertMessageId
+        )
+        // update
+        await knex('AlertMessage')
+          .where({ id: alertMessageId, messageStatusId }) // update only for Sent message status
+          .whereNot('message', message) // update only if message text changed
+          .update({
+            message,
+            updatedOn: new Date(),
+          })
+      })
+  })
+}
+
+// --------------------------------------
+// helper functions
+// --------------------------------------
 async function createAlertMessageFromTemplate(knex, alertMessageId) {
   const data = await knex('AlertMessage as m')
     .innerJoin('AlertTemplate as tmpl', 'm.alertTemplateId', 'tmpl.id')
@@ -44,4 +88,5 @@ async function createAlertMessageFromTemplate(knex, alertMessageId) {
 
 module.exports = {
   onAlertMessageCreated,
+  onAlertMessageUpdateAfterIssueDataChanged,
 }

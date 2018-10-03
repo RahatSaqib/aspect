@@ -31,10 +31,8 @@ const {
   MIN_RESULTS_TO_TRIGGER_DATA_CATEGORY_LOW,
 } = require('../../../fact/service')
 
-const {
-  totalDaysUnexpiredInventoryItemsLast,
-  totalWastedInventoryItems,
-} = require('../../../fact/service')
+const { totalWastedInventoryItems } = require('../../../fact/service')
+const { getEscalateOrResolveStatusForIssueStockout } = require('./utils')
 
 const { issueStatusToId, issueTypeToId } = require('../../../shared/dictionary')
 
@@ -424,29 +422,8 @@ async function resolveDataCategoryLow(knex, issue) {
 }
 
 async function resolveIssueStockout(knex, issue) {
-  // ---------------------------------------
-  // see auditInventoryStockout() in /fact/service.js for triggering issue - here we check opposite
-  // ---------------------------------------
-  const { partnerId, siteId, consumableId } = issue
-  const { rate: dailyRate } = (await knex('FactInventoryConsumptionRate')
-    .where({ siteId, consumableId, days: 1 })
-    .first('rate')) || { rate: 0 }
-  // read threshold
-  const { dueDaysInventoryStockout: dueDays } = await knex('Partner')
-    .where({ id: partnerId })
-    .first()
-
-  // use same func as when checking to trigger issue
-  const days = await totalDaysUnexpiredInventoryItemsLast({
-    knex,
-    siteId,
-    consumableId,
-    dailyRate,
-    dueDays,
-  })
-
-  // consider issue resolved if number of days to use consumables if greater than threshold
-  return days >= dueDays
+  const status = await getEscalateOrResolveStatusForIssueStockout(knex, issue)
+  return status.isResolved
 }
 
 async function resolveIssueStockExpiring(knex, issue) {
