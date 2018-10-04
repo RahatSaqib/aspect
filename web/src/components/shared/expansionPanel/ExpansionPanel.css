@@ -2,6 +2,7 @@
 
 .Container {
   border-radius: 0;
+  overflow: visible;
 }
 
 .Header {
