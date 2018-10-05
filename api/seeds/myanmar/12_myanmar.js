@@ -1,7 +1,34 @@
 module.exports = require('../utils').seed(seed)
-// TODO: Remove the following two ESLint ignore-settings when implementing seeds
-/* eslint no-unused-vars: 0 */
-/* eslint no-empty-function: 0 */
+
 async function seed(knex) {
-  // TODO: Check if seed file already ran
+  const widget = await knex('DashboardWidget')
+    .where('title', 'children')
+    .first('id')
+
+  if (widget == null) {
+    return
+  }
+  await removeChildrenDashboardTarget(knex)
+}
+
+async function removeChildrenDashboardTarget(knex) {
+  const { id: childrenWidgetId } = await knex('DashboardWidget')
+    .where('title', 'Children')
+    .first('id')
+
+  await knex('JobFunctionDashboardWidget')
+    .where('widgetId', childrenWidgetId)
+    .delete()
+
+  await knex('DashboardWidgetTarget')
+    .where('targetToken', 'Children')
+    .delete()
+
+  await knex('DashboardWidget')
+    .where('id', childrenWidgetId)
+    .delete()
+
+  await knex('Target')
+    .where('targetToken', 'Children')
+    .delete()
 }
