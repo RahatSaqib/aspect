@@ -37,7 +37,7 @@ const SHOW_MODE = {
   TIME: { next: 'CLOSE' },
 }
 
-const enhance = compose(
+export const enhance = compose(
   withStateHandlers(
     ({ value }) => ({
       dateTime: value,
@@ -51,6 +51,7 @@ const enhance = compose(
       onSelectTime: ({ showMode }, { onChange }) => value => {
         if (_.isDate(value) && onChange) {
           value.setSeconds(0)
+          value.setMilliseconds(0)
           onChange(value)
         }
         return {

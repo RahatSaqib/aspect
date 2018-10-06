@@ -29,7 +29,7 @@ import {
 import ConnectedTagInput from '../../tag/ConnectedTagInput'
 import { fetchTags, updateTags } from '../../tag/TagRedux'
 import isEditable from '../../shared/selectors/result'
-
+import { Unit } from '../../components/pureGrids'
 import { ReadOnlyField } from '../../components/shared/ReadOnlyFields'
 import DetailPanel from '../../components/shared/detailPanel/DetailPanel'
 import {
@@ -316,7 +316,10 @@ export class ResultDetail extends PureComponent {
     if (!result || !result.has('formSchema') || !result.get('formSchema')) {
       return false
     }
-    const [...fieldKeys] = result.get('formSchema').keys()
+    const [...fieldKeys] = result
+      .get('formSchema')
+      .sortBy(value => value.get('order'))
+      .keys()
     if (_.isEmpty(fieldKeys)) {
       return false
     }
@@ -327,27 +330,29 @@ export class ResultDetail extends PureComponent {
           )
         : formatMessage(messages.additionalResultDetails)
     const formData = result.get('formData') || Immutable.Map({})
+    const isMultiField = fieldKeys.length > 1
     return (
       <ExpansionPanel className={cssClasses('FieldsContainer')} disabled>
         <ExpansionPanelHeader label={sectionLabel}>
-          {fieldKeys.map(formFieldKey => {
-            const { intl: { formatMessage } } = this.props
-            const fieldSchema = result.getIn(['formSchema', formFieldKey])
-            const fieldType = fieldSchema.getIn(['control', 'type'])
-            const isMultiField = fieldKeys.length > 1
-            return (
-              <CustomField
-                resultId={result.get('id')}
-                fieldType={fieldType}
-                formFieldKey={formFieldKey}
-                fieldSchema={fieldSchema}
-                formData={formData}
-                formatMessage={formatMessage}
-                isMultiField={isMultiField}
-                updateFormData={updateResultFormData}
-              />
-            )
-          })}
+          <div className={cssClasses('FormDataContainer')}>
+            {fieldKeys.map(formFieldKey => {
+              const { intl: { formatMessage } } = this.props
+              const fieldSchema = result.getIn(['formSchema', formFieldKey])
+              return (
+                <Unit key={formFieldKey} xs="1-3" sm="1-3">
+                  <CustomField
+                    resultId={result.get('id')}
+                    formFieldKey={formFieldKey}
+                    fieldSchema={fieldSchema}
+                    formData={formData}
+                    formatMessage={formatMessage}
+                    isMultiField={isMultiField}
+                    updateFormData={updateResultFormData}
+                  />
+                </Unit>
+              )
+            })}
+          </div>
         </ExpansionPanelHeader>
       </ExpansionPanel>
     )

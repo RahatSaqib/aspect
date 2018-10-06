@@ -1,10 +1,15 @@
 import React, { PureComponent } from 'react'
+import classnames from 'classnames/bind'
 import { defineMessages } from 'react-intl'
+import isValid from 'date-fns/isValid'
 import { Button } from 'react-toolbox/lib/button'
 import { Input } from 'react-toolbox/lib/input'
 import FormGroup from '../../components/themedReactToolbox/FormGroup'
 import ButtonGroup from '../../components/themedReactToolbox/ButtonGroup'
 import StyledDropdown from '../../components/themedReactToolbox/StyledDropdown'
+import DateTimePicker from '../../components/themedReactToolbox/DateTimePicker'
+
+const cssClasses = classnames.bind(require('./CustomField.css'))
 
 const messages = defineMessages({
   confirmedInterpretationOfResult: {
@@ -27,32 +32,94 @@ const messages = defineMessages({
     id: 'pages.ResultDetail.formOptions.uninterpretable',
     defaultMessage: 'Uninterpretable',
   },
+  default: {
+    id: 'pages.ResultDetail.formOptions.default',
+    defaultMessage: '',
+  },
+  patientTownship: {
+    id: 'pages.ResultDetail.formFields.patientTownship',
+    defaultMessage: 'Patient Township',
+  },
+  physicianCell: {
+    id: 'pages.ResultDetail.formFields.physicianCell',
+    defaultMessage: 'Physician Cell',
+  },
+  microscopyResult: {
+    id: 'pages.ResultDetail.formFields.microscopyResult',
+    defaultMessage: 'Microscopy Result',
+  },
+  smearPositive: {
+    id: 'pages.ResultDetail.formOptions.smearPositive',
+    defaultMessage: 'Smear Positive',
+  },
+  smearNegative: {
+    id: 'pages.ResultDetail.formOptions.smearNegative',
+    defaultMessage: 'Smear Negative',
+  },
+  notDone: {
+    id: 'pages.ResultDetail.formOptions.notDone',
+    defaultMessage: 'Not Done',
+  },
+  offSite: {
+    id: 'pages.ResultDetail.formOptions.offSite',
+    defaultMessage: 'Off Site',
+  },
+  unknown: {
+    id: 'pages.ResultDetail.formOptions.unknown',
+    defaultMessage: 'Unknown',
+  },
+  sampleType: {
+    id: 'pages.ResultDetail.formFields.sampleType',
+    defaultMessage: 'Sample Type',
+  },
+  sputum: {
+    id: 'pages.ResultDetail.formOptions.sputum',
+    defaultMessage: 'Sputum',
+  },
+  saliva: {
+    id: 'pages.ResultDetail.formOptions.saliva',
+    defaultMessage: 'Saliva',
+  },
+  blood: {
+    id: 'pages.ResultDetail.formOptions.blood',
+    defaultMessage: 'Blood',
+  },
+  effusion: {
+    id: 'pages.ResultDetail.formOptions.effusion',
+    defaultMessage: 'Effusion',
+  },
+  sampleCollectedOn: {
+    id: 'pages.ResultDetail.formFields.sampleCollectedOn',
+    defaultMessage: 'Sample Collected On',
+  },
 })
 
 export default class CustomField extends PureComponent {
   onButtonGroupClick = ({ target: { dataset: { value } } }) => {
-    this.onUpdateDate(value || null)
+    this.onUpdateData(value || null)
   }
 
-  onUpdateDate = value => {
+  onUpdateData = value => {
     const { resultId, formFieldKey, updateFormData } = this.props
     updateFormData(resultId, formFieldKey, value)
   }
 
   render() {
     const {
-      fieldType,
       formFieldKey,
       fieldSchema,
       formData,
       formatMessage,
-      isMultiField,
+      isMultiField = false,
     } = this.props
 
+    const fieldType = fieldSchema.getIn(['control', 'type'])
     const fieldLabel = isMultiField
-      ? formatMessage(messages[fieldSchema.get('i18nLabel')])
+      ? formatMessage(
+          messages[fieldSchema.get('i18nLabel')] || messages.default
+        )
       : ''
-    const fieldValue = formData.get(formFieldKey) || null
+    const fieldValue = formData ? formData.get(formFieldKey, null) : null
 
     if (fieldType === 'ButtonGroup') {
       if (fieldSchema.getIn(['control', 'allowMultipleSelection'])) {
@@ -60,7 +127,11 @@ export default class CustomField extends PureComponent {
         return false
       }
       return (
-        <FormGroup label={fieldLabel} key={formFieldKey}>
+        <FormGroup
+          className={cssClasses('Container')}
+          label={fieldLabel}
+          key={formFieldKey}
+        >
           <ButtonGroup isolated>
             {fieldSchema
               .getIn(['control', 'options'])
@@ -80,19 +151,29 @@ export default class CustomField extends PureComponent {
       )
     } else if (fieldType === 'TextBox') {
       return (
-        <FormGroup label={fieldLabel} key={formFieldKey}>
+        <FormGroup
+          className={cssClasses('Container')}
+          label={fieldLabel}
+          key={formFieldKey}
+        >
           <Input
             type="text"
+            multiline={fieldSchema.getIn(['control', 'multipleLine'], false)}
             name={formFieldKey}
             value={fieldValue}
-            onChange={this.onUpdateDate}
+            onChange={this.onUpdateData}
           />
         </FormGroup>
       )
-    } else if (fieldType === 'Dropdown') {
+    } else if (fieldType === 'DropDown') {
       return (
-        <FormGroup label={fieldLabel} key={formFieldKey}>
+        <FormGroup
+          className={cssClasses('Container')}
+          label={fieldLabel}
+          key={formFieldKey}
+        >
           <StyledDropdown
+            className={cssClasses('DropDown')}
             source={fieldSchema
               .getIn(['control', 'options'])
               .map(option => ({
@@ -101,8 +182,21 @@ export default class CustomField extends PureComponent {
               }))
               .toJS()}
             value={fieldValue}
-            onChange={this.onUpdateDate}
+            onChange={this.onUpdateData}
           />
+        </FormGroup>
+      )
+    } else if (fieldType === 'DateTime') {
+      const fieldDateTime = isValid(fieldValue)
+        ? new Date(fieldValue)
+        : undefined
+      return (
+        <FormGroup
+          className={cssClasses('Container')}
+          label={fieldLabel}
+          key={formFieldKey}
+        >
+          <DateTimePicker value={fieldDateTime} onChange={this.onUpdateData} />
         </FormGroup>
       )
     }
