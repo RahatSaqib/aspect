@@ -9,6 +9,7 @@ const Promise = require('bluebird')
 const {
   updateUnknownErrorOnModuleMessage,
 } = require('../seedUnknownErrorsIssue')
+const { updateDashboardWidgetQueries } = require('../utils')
 
 async function seed(knex) {
   const alertTemplateWithHideFlag = await knex('AlertTemplate')
@@ -370,4 +371,7 @@ async function seed(knex) {
   })
 
   await updateUnknownErrorOnModuleMessage(knex)
+
+  // see explanation details in calling function
+  await updateDashboardWidgetQueries(knex)
 }
