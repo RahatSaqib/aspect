@@ -31,10 +31,10 @@ const TimePickerDialog = themr(TIME_PICKER, timeTheme)(
   timePickerDialogFactory(InjectDialog, Calendar)
 )
 
-const SHOW_MODE = {
-  CLOSE: { next: 'DATE' },
-  DATE: { next: 'TIME' },
-  TIME: { next: 'CLOSE' },
+export const SHOW_MODE = {
+  CLOSE: { name: 'CLOSE', next: 'DATE' },
+  DATE: { name: 'DATE', next: 'TIME' },
+  TIME: { name: 'TIME', next: 'CLOSE' },
 }
 
 export const enhance = compose(
@@ -82,7 +82,7 @@ export const DateTimePicker = ({
   return (
     <div>
       <DatePickerDialog
-        active={showMode === SHOW_MODE.DATE}
+        active={showMode.name === SHOW_MODE.DATE.name}
         onDismiss={onCancel}
         onEscKeyDown={onCancel}
         onOverlayClick={onCancel}
@@ -93,7 +93,7 @@ export const DateTimePicker = ({
         {...restProps}
       />
       <TimePickerDialog
-        active={showMode === SHOW_MODE.TIME}
+        active={showMode.name === SHOW_MODE.TIME.name}
         onDismiss={onCancel}
         onEscKeyDown={onCancel}
         onOverlayClick={onCancel}
