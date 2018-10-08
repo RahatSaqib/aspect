@@ -55,19 +55,6 @@ describe('Target Status component', () => {
         target: 1200,
         dataCollection: '75%',
       },
-      {
-        id: 20,
-        layout: 'target',
-        icon: 'assignment',
-        title: 'Children',
-        titleI18nKey: 'dashboardWidgetTitleChildren',
-        lowerThanThreshold: 0,
-        thresholdPercentageDataCollection: 50,
-        link: '/browse/result',
-        count: 986,
-        target: 2190,
-        dataCollection: '55%',
-      },
     ]),
   }
 
