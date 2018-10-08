@@ -1,5 +1,7 @@
 module.exports = require('../utils').seed(seed)
 
+const { updateDashboardWidgetQueries } = require('../utils')
+
 async function seed(knex) {
   const widget = await knex('DashboardWidget')
     .where('title', 'children')
@@ -9,6 +11,7 @@ async function seed(knex) {
     return
   }
   await removeChildrenDashboardTarget(knex)
+  await updateDashboardWidgetQueries(knex)
 }
 
 async function removeChildrenDashboardTarget(knex) {
