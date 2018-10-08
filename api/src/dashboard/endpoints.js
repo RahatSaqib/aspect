@@ -121,7 +121,12 @@ const routes = [
               .allow('')
               .description('Filter for Site ID'),
           },
-          validateSortPageParams('issueStatusSortOrder', 'siteName', 'message')
+          validateSortPageParams(
+            'issueStatusSortOrder',
+            'siteName',
+            'deviceName',
+            'message'
+          )
         ),
       },
     },

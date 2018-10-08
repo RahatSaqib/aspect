@@ -1,5 +1,6 @@
 const { addDays, subDays, startOfDay } = require('date-fns')
 const _ = require('lodash')
+const Promise = require('bluebird')
 const {
   inventoryStockout,
   inventoryStockExpiring,
@@ -7,6 +8,7 @@ const {
 const {
   factGenerateDeviceConnectivity,
   factGenerateResultCounts,
+  factDataCategoryLow,
 } = require('./actions')
 
 const {
@@ -15,8 +17,16 @@ const {
   deviceNoResults,
   deviceHasNewResults,
 } = require('../device/actions')
+const {
+  issueTypeToId,
+  issueStatusToId,
+  issueEventStatusToId,
+} = require('../shared/dictionary')
+
+const startOfMonth = require('date-fns/start_of_month')
 
 const daysToCalculate = [1, 7, 30, 60, 90, 365, 9999]
+const MIN_RESULTS_TO_TRIGGER_DATA_CATEGORY_LOW = 10
 
 function onFactGenerateDeviceConnectivity({ deviceId }, { messageContext }) {
   const context = messageContext.bindActionCreators({
@@ -740,6 +750,185 @@ async function getConsumptions(knex, siteId, consumableId) {
   return totals
 }
 
+// -------------------------------------------------------------------------------------
+// ---
+// --- Data Category Low
+// ---
+// -------------------------------------------------------------------------------------
+async function checkDataCategoriesForLowStatus(action, { messageContext }) {
+  const context = messageContext.bindActionCreators({
+    factDataCategoryLow,
+  })
+  const { loadPlugin } = require('../plugin/registration')
+  const now = new Date()
+  // calculate only for current month
+  const period = {
+    name: 'current month',
+    dateFrom: startOfMonth(now),
+    dateTo: now,
+  }
+
+  const issueStatusId = await issueStatusToId('Active')
+  const triggeredIssueEventStatusId = await issueEventStatusToId('Triggered')
+
+  await context.run(async knex => {
+    // get all partners with defined plugin
+    const partners = await knex('Partner')
+      .whereNotNull('plugin')
+      .select('id', 'plugin')
+
+    // loop all partners
+    await Promise.each(partners, async ({ id: partnerId, plugin }) => {
+      const { dataCategories = [] } = await loadPlugin(
+        [plugin],
+        'dataCategories'
+      )
+      // check data categories for 'low status'
+      await Promise.each(dataCategories, async dataCategory => {
+        const { externalId: categoryToken } = dataCategory
+        const issueTypeId = await issueTypeToId(
+          `DataCategoryLowFor${categoryToken}`
+        )
+
+        // get all sites for current partnerId
+        const sites = await knex('Site')
+          .where({ partnerId })
+          .select('id', 'name')
+
+        // for each site
+        _.map(sites, async site => {
+          const siteId = site.id
+          // check if this type of IssueEvent has already been triggered and is Active
+          const triggeredIssue = await knex('Issue as i')
+            .innerJoin('IssueEvent as ie', 'i.id', 'ie.issueId')
+            .where('i.siteId', siteId)
+            .where('i.partnerId', partnerId)
+            .where('i.level', 1)
+            .where('i.issueTypeId', issueTypeId) // issue type 'DataCategoryLowFor*'
+            .where('i.issueStatusId', issueStatusId) // is Active
+            .where('ie.issueEventStatusId', triggeredIssueEventStatusId)
+            .first()
+          // if issue has already been triggered for current site and is Active then exit
+          if (triggeredIssue) {
+            return
+          }
+
+          const props = { period, siteId, dataCategory }
+          const categoryStatus = await getDataCategoryStatus(knex, props)
+          const { totals } = categoryStatus
+
+          // ----------------------------
+          // trigger only if
+          // ----------------------------
+          // site has more than N results for the period
+          if (totals < MIN_RESULTS_TO_TRIGGER_DATA_CATEGORY_LOW) {
+            return
+          }
+          // and percentage is less than threshold
+          let { percentage } = categoryStatus
+          if (percentage < dataCategory.cutoffPercentage) {
+            percentage =
+              percentage < 10
+                ? Math.round(10 * percentage) / 10 // ##.#
+                : Math.round(percentage) // ##
+
+            const payload = {
+              categoryToken,
+              categoryName: dataCategory.name,
+              periodName: period.name,
+              siteId,
+              percentage,
+            }
+
+            context.factDataCategoryLow(payload)
+          }
+        })
+      })
+    })
+  })
+}
+
+// helper function for getting Data Category Low status
+async function getDataCategoryStatus(
+  knex,
+  { period: { dateFrom, dateTo }, siteId, dataCategory }
+) {
+  const validValues =
+    dataCategory.validValues && JSON.parse(dataCategory.validValues)
+  // lower 1st character because props in patientData follow cammel-case naming convention
+  const { externalId } = dataCategory
+  const categoryToken = externalId[0].toLowerCase() + externalId.substring(1)
+
+  // base query for getting counts - totals and number of valid results
+  const itemsBase = knex('Result as r')
+    .innerJoin('Device as d', 'r.deviceId', 'd.id')
+    .leftOuterJoin('Sample as smp', 'r.sampleId', 'smp.id')
+    .where('r.endedOn', '>=', dateFrom)
+    .where('r.endedOn', '<=', dateTo)
+    .where(`d.siteId`, siteId)
+
+  // get totals
+  const [{ count: totals }] = await itemsBase
+    .clone()
+    .countDistinct('r.id as count')
+
+  let percentage = 0
+  let numValid = 0
+  if (totals > 0) {
+    // get number of valid results
+    ;[{ count: numValid }] = await itemsBase
+      .clone()
+      .whereNotNull('r.patientData')
+      .where(function() {
+        // process 2 main cases - validValues is an array (all categories except Other) or not (category Other)
+        if (validValues && _.isArray(validValues)) {
+          // field exists in json
+          this.whereRaw(`(r.patientData ->> '$.${categoryToken}') is not null`)
+          this.andWhere(function() {
+            // check if category is one of valid values
+            _.each(validValues, value => {
+              this.orWhereRaw(`(r.patientData ->> '$.${categoryToken}') = ?`, [
+                value,
+              ])
+            })
+          })
+        } else {
+          // get all fields for 'Other' category (i.e. "name", "gender", "age")
+          const fieldNames = JSON.parse(dataCategory.fieldNames)
+          _.map(fieldNames, field => {
+            if (field === 'sampleType') {
+              this.whereNotNull('r.sampleId').whereNotNull('smp.sampleTypeId')
+            } else {
+              // field value is not null (when field is missing), "undefined", "null" or ""
+              this.whereRaw(
+                `
+                (r.patientData ->> '$.${field}') is not null
+                and
+                (r.patientData ->> '$.${field}') != 'undefined'
+                and
+                (r.patientData ->> '$.${field}') != 'null'
+                and
+                (r.patientData ->> '$.${field}') != ''
+                `
+              )
+            }
+            // ^^^ notice that we require ALL fields (i.e. name, gender, age) have value to count result as valid
+            // if need at least one field to have value then use this.orWhereRaw above
+          })
+        }
+      })
+      .countDistinct('r.id as count')
+
+    percentage = 100 * (numValid / totals)
+  }
+
+  return {
+    totals,
+    numValid,
+    percentage,
+  }
+}
+
 module.exports = {
   daysToCalculate,
   onFactGenerateDeviceConnectivity,
@@ -754,4 +943,7 @@ module.exports = {
   totalWastedInventoryItems,
   auditInventoryStockout,
   auditInventoryStockExpiring,
+  checkDataCategoriesForLowStatus,
+  getDataCategoryStatus,
+  MIN_RESULTS_TO_TRIGGER_DATA_CATEGORY_LOW,
 }

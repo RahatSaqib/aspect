@@ -1,3 +1,4 @@
+const Promise = require('bluebird')
 const _ = require('lodash')
 const { readJson } = require('fs-extra')
 
@@ -38,6 +39,36 @@ async function getDefaultMessageTypes(knex) {
       memo[row.issueTypeExternalId] = row
       return memo
     }, {})
+}
+
+// -------------------------------------------------------
+// seedStockIssuesUpdate
+// -------------------------------------------------------
+async function seedStockIssuesUpdate(knex, partnerName) {
+  const { id: partnerId } = await knex('Partner')
+    .where({ name: partnerName })
+    .first()
+
+  const now = new Date()
+  const issueTypes = await rowsAsObject(knex, 'IssueType', 'externalId')
+
+  // -------------------------------------------
+  // Issue Escalation Triggers
+  // -------------------------------------------
+  await knex('IssueEscalationTrigger')
+    .update({
+      escalationConditions: JSON.stringify({
+        evaluationMethod: 'plugin-function',
+        evaluationParameter: 'escalateIssueStockout', // see /plugin/partner/Myanmar/issueEscalations.js
+      }),
+      updatedOn: now,
+    })
+    .where({
+      issueTypeId: issueTypes.InventoryStockout.id,
+      partnerId,
+      escalateToLevel: 2,
+    })
+    .whereRaw('escalationConditions->>"$.evaluationMethod" = "issue-age"')
 }
 
 // -------------------------------------------------------
@@ -497,9 +528,10 @@ async function seedIssueEventTriggersForPartner(
     issueTypeConfigured[issueType] = true
   })
 
-  await Promise.all(
-    data.map(async ({ issueType, issueEventStatus, triggerConditions }) => {
-      if (issueTypeConfigured[issueType]) {
+  await Promise.each(
+    data,
+    async ({ issueType, issueEventStatus, triggerConditions }) => {
+      if (issueTypeConfigured[issueType] && issueTypes[issueType]) {
         const triggerData = {
           partnerId,
           issueTypeId: issueTypes[issueType].id,
@@ -518,7 +550,7 @@ async function seedIssueEventTriggersForPartner(
           )
         }
       }
-    })
+    }
   )
 }
 
@@ -554,6 +586,7 @@ module.exports = {
   rowsAsObject,
   getDefaultMessageTypes,
   seedStockIssues,
+  seedStockIssuesUpdate,
   getPermissionModules,
   seedIssueEventTriggersForPartner,
   assignAllFeaturesToJobFunctionIds,

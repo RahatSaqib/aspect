@@ -52,6 +52,9 @@ const ActionTableRow = ({
     <TableCell className={cssClasses('TableCell', 'TableCell--site')}>
       {action.get('siteName')}
     </TableCell>
+    <TableCell className={cssClasses('TableCell', 'TableCell--device')}>
+      {action.get('deviceName')}
+    </TableCell>
     <TableCell className={cssClasses('TableCell', 'TableCell--issue')}>
       <div className={cssClasses('Issue')}>
         <span className={cssClasses('Issue__Message')}>

@@ -2236,7 +2236,7 @@ async function seed(knex) {
               moduleName: 'Module A',
               moduleSerial: `M-1234-${i % 4}`,
               researchId: `R-ID-${i}`,
-              patientData: patients[_.random(patientNumber)],
+              patientData: JSON.stringify(patients[_.random(patientNumber)]),
               senderVersion: '4.6b',
               senderOperator: 'Marsha',
               notes: 'This is a test... result',
@@ -3270,7 +3270,7 @@ async function seed(knex) {
     Object.assign(
       {
         message:
-          '{{device.name}} has Temperature errors on Module {{issue.data.moduleName}}; notify RO.',
+          '{{device.name}} has Temperature errors on Module {{issue.data.moduleName}}; notify RO',
       },
       auditFields
     )
@@ -3282,7 +3282,7 @@ async function seed(knex) {
     Object.assign(
       {
         subject:
-          '{{device.name}} has Temperature errors on Module {{issue.data.moduleName}}; notify RO.',
+          '{{device.name}} has Temperature errors on Module {{issue.data.moduleName}}',
         body:
           '{{device.name}} has Temperature errors on Module {{issue.data.moduleName}}; notify RO.',
         htmlBody:
@@ -3305,7 +3305,8 @@ async function seed(knex) {
   const [modulePowerErrorSmsTemplateId] = await knex('SmsTemplate').insert(
     Object.assign(
       {
-        message: 'Power errors on Module {{issue.data.moduleName}}; notify RO',
+        message:
+          '{{device.name}} has power errors on Module {{issue.data.moduleName}}; notify RO',
       },
       auditFields
     )
@@ -3314,10 +3315,12 @@ async function seed(knex) {
   const [modulePowerErrorEmailTemplateId] = await knex('EmailTemplate').insert(
     Object.assign(
       {
-        subject: '{{issue.data.moduleName}} Power Errors',
-        body: 'Power errors on Module {{issue.data.moduleName}}; notify RO',
+        subject:
+          '{{device.name}} has power errors on module {{issue.data.moduleName}}',
+        body:
+          '{{device.name}} has power errors on module {{issue.data.moduleName}}; notify RO',
         htmlBody:
-          'Power errors on <em>{{issue.data.moduleName}}</em> notify RO',
+          '{{device.name}} has power errors on module <em>{{issue.data.moduleName}}</em>; notify RO',
       },
       auditFields
     )
@@ -3340,7 +3343,7 @@ async function seed(knex) {
     Object.assign(
       {
         message:
-          'Module {{issue.data.moduleName}}: Critical errors; notify R.O.',
+          'Module {{issue.data.moduleName}} in {{device.name}}: Critical errors; notify RO',
       },
       auditFields
     )
@@ -3351,10 +3354,11 @@ async function seed(knex) {
   ).insert(
     Object.assign(
       {
-        subject: 'Module Failure Errors',
-        body: 'Module {{issue.data.moduleName}}: Critical errors; notify R.O.',
+        subject: '{{device.name}}: Critical Module Errors',
+        body:
+          'Module {{issue.data.moduleName}} in {{device.name}}: Critical errors; notify RO',
         htmlBody:
-          'Module <em>{{issue.data.moduleName}}</em>: Critical errors; notify R.O.',
+          'Module <em>{{issue.data.moduleName}}</em> in {{device.name}}: Critical errors; notify RO',
       },
       auditFields
     )
@@ -3373,7 +3377,7 @@ async function seed(knex) {
     Object.assign(
       {
         message:
-          '{{site.name}} no testing for {{numberOfDays issue.data.lastResultOn}}',
+          '{{device.name}} no testing for {{numberOfDays issue.data.lastResultOn}}',
       },
       auditFields
     )
@@ -3382,11 +3386,11 @@ async function seed(knex) {
   const [deviceNoResultsEmailTemplateId] = await knex('EmailTemplate').insert(
     Object.assign(
       {
-        subject: '{{site.name}} No Testing',
+        subject: '{{device.name}}: No Testing',
         body:
-          '{{site.name}} no testing {{numberOfDays issue.data.lastResultOn}}',
+          '{{device.name}} no testing {{numberOfDays issue.data.lastResultOn}}',
         htmlBody:
-          '<em>{{site.name}}</em> no testing for {{numberOfDays issue.data.lastResultOn}}',
+          '<em>{{device.name}}</em> no testing for {{numberOfDays issue.data.lastResultOn}}',
       },
       auditFields
     )
@@ -3438,7 +3442,8 @@ async function seed(knex) {
   ).insert(
     Object.assign(
       {
-        message: 'Temperature errors across machine, conduct troubleshooting.',
+        message:
+          '{{device.name}}: Temperature errors across machine, conduct troubleshooting',
       },
       auditFields
     )
@@ -3449,9 +3454,11 @@ async function seed(knex) {
   ).insert(
     Object.assign(
       {
-        subject: 'Machine Temperature Errors',
-        body: 'Temperature errors across machine, conduct troubleshooting.',
-        htmlBody: 'Temperature errors across machine, conduct troubleshooting',
+        subject: '{{device.name}}: Machine Temperature Errors',
+        body:
+          '{{device.name}}: Temperature errors across machine, conduct troubleshooting.',
+        htmlBody:
+          '<em>{{device.name}}</em>: Temperature errors across machine, conduct troubleshooting.',
       },
       auditFields
     )
@@ -3474,7 +3481,7 @@ async function seed(knex) {
     Object.assign(
       {
         message:
-          'Possible module failure on module {{issue.data.moduleName}} contact engineer',
+          '{{device.name}}: Possible module failure on module {{issue.data.moduleName}} contact engineer',
       },
       auditFields
     )
@@ -3485,11 +3492,11 @@ async function seed(knex) {
   ).insert(
     Object.assign(
       {
-        subject: 'Possible module failure',
+        subject: '{{device.name}}: Possible module failure',
         body:
-          'Possible module failure on module {{issue.data.moduleName}} contact engineer',
+          '{{device.name}}: Possible module failure on module {{issue.data.moduleName}} contact engineer',
         htmlBody:
-          'Possible module failure on module <em>{{issue.data.moduleName}}</em> contact engineer',
+          '{{device.name}}: Possible module failure on module <em>{{issue.data.moduleName}}</em> contact engineer',
       },
       auditFields
     )
@@ -3508,7 +3515,8 @@ async function seed(knex) {
   const [machinePowerErrorSmsTemplateId] = await knex('SmsTemplate').insert(
     Object.assign(
       {
-        message: 'Power error across machine, conduct troubleshooting',
+        message:
+          '{{device.name}}: Power error across machine, conduct troubleshooting.',
       },
       auditFields
     )
@@ -3517,9 +3525,11 @@ async function seed(knex) {
   const [machinePowerErrorEmailTemplateId] = await knex('EmailTemplate').insert(
     Object.assign(
       {
-        subject: 'Power error across machine',
-        body: 'Power error across machine, conduct troubleshooting',
-        htmlBody: 'Power error across machine, conduct troubleshooting',
+        subject: '{{device.name}}: Power error across machine',
+        body:
+          '{{device.name}}: Power error across machine, conduct troubleshooting.',
+        htmlBody:
+          '<em>{{device.name}}</em>: Power error across machine, conduct troubleshooting.',
       },
       auditFields
     )
@@ -3542,7 +3552,8 @@ async function seed(knex) {
   ).insert(
     Object.assign(
       {
-        message: 'Procedural errors across machine, conduct troubleshooting',
+        message:
+          '{{device.name}}: Procedural errors across machine, conduct troubleshooting',
       },
       auditFields
     )
@@ -3553,9 +3564,11 @@ async function seed(knex) {
   ).insert(
     Object.assign(
       {
-        subject: 'Procedural Errors',
-        body: 'Procedural errors across machine, conduct troubleshooting',
-        htmlBody: 'Procedural errors across machine, conduct troubleshooting',
+        subject: '{{device.name}}: Procedural Errors',
+        body:
+          '{{device.name}}: Procedural errors across machine, conduct troubleshooting.',
+        htmlBody:
+          '<em>{{device.name}}</em>: Procedural errors across machine, conduct troubleshooting.',
       },
       auditFields
     )
@@ -3638,7 +3651,7 @@ async function seed(knex) {
   const [reagentHealthSmsTemplateId] = await knex('SmsTemplate').insert(
     Object.assign(
       {
-        message: '{{site.name}} - Cartridge-specific errors exceed 5%',
+        message: '{{device.name}} - Cartridge-specific errors exceed 5%',
       },
       auditFields
     )
@@ -3647,9 +3660,9 @@ async function seed(knex) {
   const [reagentHealthEmailTemplateId] = await knex('EmailTemplate').insert(
     Object.assign(
       {
-        subject: '{{site.name}} - Cartridge-specific errors exceed 5%',
-        body: '{{site.name}} - Cartridge-specific errors exceed 5%',
-        htmlBody: '{{site.name}} - Cartridge-specific errors exceed 5%',
+        subject: '{{device.name}} - Cartridge-specific errors exceed 5%',
+        body: '{{device.name}} - Cartridge-specific errors exceed 5%',
+        htmlBody: '{{device.name}} - Cartridge-specific errors exceed 5%',
       },
       auditFields
     )

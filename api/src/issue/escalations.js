@@ -2,8 +2,8 @@ const Promise = require('bluebird')
 const _ = require('lodash')
 const { issueEscalated, escalateIssues } = require('./actions')
 const { conditionsMet } = require('./evaluation')
-
 const { issueEventStatusToId } = require('../shared/dictionary')
+const { alertMessageUpdateAfterIssueDataChanged } = require('../alert/actions')
 
 async function onIssueCreated({ issueId }, { messageContext: context }) {
   // Trigger escalation logic for level 1 as soon as issue is created,
@@ -25,7 +25,10 @@ async function onIssueTriggered({ issueId }, { messageContext: context }) {
 
 function onEscalateIssues() {
   return async (action, { messageContext: context }) => {
-    context.bindActionCreators({ issueEscalated })
+    context.bindActionCreators({
+      issueEscalated,
+      alertMessageUpdateAfterIssueDataChanged,
+    })
     context.transact(async knex => {
       const openIssuesToCheck = await findOpenIssuesToCheckForEscalation(
         knex,
@@ -47,6 +50,10 @@ function onEscalateIssues() {
           context.issueEscalated(
             issueEscalationTrigger.id,
             issueEscalationTrigger.escalateToLevel
+          )
+        } else {
+          context.alertMessageUpdateAfterIssueDataChanged(
+            issueEscalationTrigger.id
           )
         }
       })

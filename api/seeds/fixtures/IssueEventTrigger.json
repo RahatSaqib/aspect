@@ -132,6 +132,34 @@
       "triggerConditions": {
         "action": "RESULT_MACHINE_UNKNOWN_ERROR"
       }
+    },
+    {
+      "issueType": "DataCategoryLowForHivStatus",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "FACT_DATA_CATEGORY_IS_LOW_HIVSTATUS"
+      }
+    },
+    {
+      "issueType": "DataCategoryLowForPreviouslyTreated",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "FACT_DATA_CATEGORY_IS_LOW_PREVIOUSLYTREATED"
+      }
+    },
+    {
+      "issueType": "DataCategoryLowForMicroscopyResult",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "FACT_DATA_CATEGORY_IS_LOW_MICROSCOPYRESULT"
+      }
+    },
+    {
+      "issueType": "DataCategoryLowForOther",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "FACT_DATA_CATEGORY_IS_LOW_OTHER"
+      }
     }
   ]
 }

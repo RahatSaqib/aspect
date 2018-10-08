@@ -56,7 +56,7 @@ async function seedUnknownErrorsIssue(knex, partnerName, adminName) {
     Object.assign(
       {
         message:
-          'Errors without code on module {{issue.data.moduleName}}, conduct troubleshooting.',
+          '{{device.name}}: Errors without code on module {{issue.data.moduleName}}, conduct troubleshooting.',
       },
       auditFields
     )
@@ -65,11 +65,12 @@ async function seedUnknownErrorsIssue(knex, partnerName, adminName) {
   const [moduleEmailTemplateId] = await knex('EmailTemplate').insert(
     Object.assign(
       {
-        subject: '{{issue.data.moduleName}} Errors without code',
+        subject:
+          '{{device.name}}: Errors without code on module {{issue.data.moduleName}}',
         body:
-          'Errors without code on module {{issue.data.moduleName}}, conduct troubleshooting.',
+          '{{device.name}}: Errors without code on module {{issue.data.moduleName}}, conduct troubleshooting.',
         htmlBody:
-          'Errors without code on <em>{{issue.data.moduleName}}</em>, conduct troubleshooting.',
+          '{{device.name}}: Errors without code on module <em>{{issue.data.moduleName}}</em>, conduct troubleshooting.',
       },
       auditFields
     )
@@ -90,7 +91,8 @@ async function seedUnknownErrorsIssue(knex, partnerName, adminName) {
   const [machineSmsTemplateId] = await knex('SmsTemplate').insert(
     Object.assign(
       {
-        message: 'Errors without code across machine, conduct troubleshooting',
+        message:
+          '{{device.name}}: Errors without code across machine, conduct troubleshooting.',
       },
       auditFields
     )
@@ -99,9 +101,11 @@ async function seedUnknownErrorsIssue(knex, partnerName, adminName) {
   const [machineEmailTemplateId] = await knex('EmailTemplate').insert(
     Object.assign(
       {
-        subject: 'Errors without code across machine',
-        body: 'Errors without code across machine, conduct troubleshooting',
-        htmlBody: 'Errors without code across machine, conduct troubleshooting',
+        subject: '{{device.name}}: Errors without code across machine',
+        body:
+          '{{device.name}}: Errors without code across machine, conduct troubleshooting.',
+        htmlBody:
+          '{{device.name}}: Errors without code across machine, conduct troubleshooting.',
       },
       auditFields
     )
@@ -326,6 +330,41 @@ async function seedUnknownErrorsIssue(knex, partnerName, adminName) {
   ])
 }
 
+async function updateUnknownErrorOnModuleMessage(knex) {
+  await knex('AlertTemplate')
+    .where({
+      message:
+        'Errors without code on module {{issue.data.moduleName}}, conduct troubleshooting.',
+    })
+    .update({
+      message:
+        'Possible failure on module {{issue.data.moduleName}} - unknown error - contact engineer',
+    })
+
+  await knex('SmsTemplate')
+    .where({
+      message:
+        '{{device.name}}: Errors without code on module {{issue.data.moduleName}}, conduct troubleshooting.',
+    })
+    .update({
+      message:
+        '{{device.name}}: Possible failure on module {{issue.data.moduleName}} - unknown error - contact engineer',
+    })
+
+  await knex('EmailTemplate')
+    .where({
+      subject:
+        '{{device.name}}: Errors without code on module {{issue.data.moduleName}}',
+    })
+    .update({
+      body:
+        '{{device.name}}: Possible failure on module {{issue.data.moduleName}} - unknown error - contact engineer',
+      htmlBody:
+        '{{device.name}}: Possible failure on module <em>{{issue.data.moduleName}}</em> - unknown error - contact engineer',
+    })
+}
+
 module.exports = {
   seedUnknownErrorsIssue,
+  updateUnknownErrorOnModuleMessage,
 }
