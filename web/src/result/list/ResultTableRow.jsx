@@ -27,10 +27,10 @@ const ResultTableRow = ({ intl, extraColumns, result, ...restProps }) => (
     <TableCell className={cssClasses('TableCell')}>
       {formatDate(result.get('endedOn'))}
     </TableCell>
-    <TableCell className={cssClasses('TableCell')}>
+    <TableCell className={cssClasses('TableCell', 'TableCell--lg')}>
       {result.get('deviceName')}
     </TableCell>
-    <TableCell className={cssClasses('TableCell')}>
+    <TableCell className={cssClasses('TableCell', 'TableCell--lg')}>
       {result.get('sampleOriginSiteName')}
     </TableCell>
     <TableCell className={cssClasses('TableCell')}>
@@ -39,13 +39,13 @@ const ResultTableRow = ({ intl, extraColumns, result, ...restProps }) => (
     <TableCell className={cssClasses('TableCell')}>
       {result.get('sampleGroup')}
     </TableCell>
-    <TableCell className={cssClasses('TableCell')}>
+    <TableCell className={cssClasses('TableCell', 'TableCell--lg')}>
       {result.get('resultText')}
     </TableCell>
     <TableCell className={cssClasses('TableCell')}>
       {result.get('resultWorkflowStatus')}
     </TableCell>
-    <TableCell className={cssClasses('TableCell')}>
+    <TableCell className={cssClasses('TableCell', 'TableCell--md')}>
       {result.get('patientId')}
     </TableCell>
     {extraColumns.map(column => (

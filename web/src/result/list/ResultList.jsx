@@ -28,7 +28,7 @@ import DataTableCard from '../../components/shared/DataTableCard'
 import DataTableProgressBar from '../../components/shared/DataTableProgressBar'
 import { fetchResults, exportResults } from '../ResultRedux'
 import {
-  ResultDataTable,
+  ResponsiveResultDataTable as ResultDataTable,
   ResultDataTableHead,
   ResultDataTableRow,
 } from './ResultDataTable'

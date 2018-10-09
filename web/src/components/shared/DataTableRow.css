@@ -35,3 +35,15 @@
 .TableCell--numeric {
   text-align: right;
 }
+
+.TableCell {
+  min-width: 120px;
+}
+
+.TableCell--md {
+  min-width: 180px;
+}
+
+.TableCell--lg {
+  min-width: 220px;
+}
