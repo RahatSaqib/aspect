@@ -7,12 +7,15 @@
 
 .Container {
   display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   padding: 20px 0 0 0;
+  margin-bottom: -10px;
 }
 
 .Container__Content {
-  width: 0;
   display: flex;
+  margin-bottom: 10px;
 }
 
 .Left {
@@ -27,6 +30,19 @@
 
 .Left__Button {
   margin: 0 5px;
+  font-size: 0;
+  min-width: 0;
+}
+
+@media screen and (--md-viewport) {
+  .Left__Button {
+    font-size: inherit;
+    min-width: 90px;
+  }
+}
+
+.Left__Button > svg {
+  font-size: medium;
 }
 
 .Left__Button--next > svg {
