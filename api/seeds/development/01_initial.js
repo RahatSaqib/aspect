@@ -3862,4 +3862,81 @@ async function seed(knex) {
       defaultMessageTypeId: reagentHealthTypeId,
     },
   ])
+
+  const geneXpertHiv1VlFormSchema = JSON.stringify({
+    hospitalNumber: {
+      i18nLabel: 'hospitalNumber',
+      control: {
+        type: 'TextBox',
+      },
+      order: 1,
+    },
+    studyID: {
+      i18nLabel: 'studyID',
+      control: {
+        type: 'TextBox',
+      },
+      order: 2,
+    },
+    nameOfPatient: {
+      i18nLabel: 'nameOfPatient',
+      control: {
+        type: 'TextBox',
+      },
+      order: 3,
+    },
+    surnameOfPatient: {
+      i18nLabel: 'surnameOfPatient',
+      control: {
+        type: 'TextBox',
+      },
+      order: 4,
+    },
+    ward: {
+      i18nLabel: 'ward',
+      control: {
+        type: 'TextBox',
+      },
+      order: 5,
+    },
+    timeSampleTaken: {
+      i18nLabel: 'timeSampleTaken',
+      control: {
+        type: 'DateTime',
+      },
+      order: 6,
+    },
+    sampleType: {
+      i18nLabel: 'sampleType',
+      control: {
+        type: 'DropDown',
+        options: [
+          {
+            i18nText: 'studyOfSampleType',
+            value: 'study',
+          },
+          {
+            i18nText: 'EQAOfSampleType',
+            value: 'EQA',
+          },
+          {
+            i18nText: 'miscOfSampleType',
+            value: 'misc',
+          },
+        ],
+      },
+      order: 7,
+    },
+  })
+
+  await knex('ResultForm').insert({
+    partnerId: partnerOneId,
+    assayId: assayGeneXpertHiv1VlId,
+    formSchema: geneXpertHiv1VlFormSchema,
+  })
+  await knex('ResultForm').insert({
+    partnerId: partnerOneId,
+    assayId: assayGeneXpertHiv1QualId,
+    formSchema: geneXpertHiv1VlFormSchema,
+  })
 }

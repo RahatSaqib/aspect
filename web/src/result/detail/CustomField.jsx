@@ -33,64 +33,52 @@ const messages = defineMessages({
     defaultMessage: 'Uninterpretable',
   },
   default: {
-    id: 'pages.ResultDetail.formOptions.default',
+    id: 'pages.ResultDetail.formFields.default',
     defaultMessage: '',
   },
-  patientTownship: {
-    id: 'pages.ResultDetail.formFields.patientTownship',
-    defaultMessage: 'Patient Township',
+  hospitalNumber: {
+    id: 'pages.ResultDetail.formFields.hospitalNumber',
+    defaultMessage: 'Hospital Number',
   },
-  physicianCell: {
-    id: 'pages.ResultDetail.formFields.physicianCell',
-    defaultMessage: 'Physician Cell',
+  studyID: {
+    id: 'pages.ResultDetail.formFields.studyID',
+    defaultMessage: 'Study ID',
   },
-  microscopyResult: {
-    id: 'pages.ResultDetail.formFields.microscopyResult',
-    defaultMessage: 'Microscopy Result',
+  nameOfPatient: {
+    id: 'pages.ResultDetail.formFields.nameOfPatient',
+    defaultMessage: 'Name',
   },
-  smearPositive: {
-    id: 'pages.ResultDetail.formOptions.smearPositive',
-    defaultMessage: 'Smear Positive',
+  surnameOfPatient: {
+    id: 'pages.ResultDetail.formFields.surnameOfPatient',
+    defaultMessage: 'Surname',
   },
-  smearNegative: {
-    id: 'pages.ResultDetail.formOptions.smearNegative',
-    defaultMessage: 'Smear Negative',
+  ward: {
+    id: 'pages.ResultDetail.formFields.ward',
+    defaultMessage: 'Ward',
   },
-  notDone: {
-    id: 'pages.ResultDetail.formOptions.notDone',
-    defaultMessage: 'Not Done',
-  },
-  offSite: {
-    id: 'pages.ResultDetail.formOptions.offSite',
-    defaultMessage: 'Off Site',
-  },
-  unknown: {
-    id: 'pages.ResultDetail.formOptions.unknown',
-    defaultMessage: 'Unknown',
+  timeSampleTaken: {
+    id: 'pages.ResultDetail.formFields.timeSampleTaken',
+    defaultMessage: 'Time Sample Taken',
   },
   sampleType: {
-    id: 'pages.ResultDetail.formFields.sampleType',
+    id: 'pages.ResultDetail.formFields.hospitalNumber',
     defaultMessage: 'Sample Type',
   },
-  sputum: {
-    id: 'pages.ResultDetail.formOptions.sputum',
-    defaultMessage: 'Sputum',
+  studyOfSampleType: {
+    id: 'pages.ResultDetail.formOptions.studyOfSampleType',
+    defaultMessage: 'Study',
   },
-  saliva: {
-    id: 'pages.ResultDetail.formOptions.saliva',
-    defaultMessage: 'Saliva',
+  EQAOfSampleType: {
+    id: 'pages.ResultDetail.formOptions.EQAOfSampleType',
+    defaultMessage: 'EQA',
   },
-  blood: {
-    id: 'pages.ResultDetail.formOptions.blood',
-    defaultMessage: 'Blood',
+  miscOfSampleType: {
+    id: 'pages.ResultDetail.formOptions.miscOfSampleType',
+    defaultMessage: 'Misc.',
   },
-  effusion: {
-    id: 'pages.ResultDetail.formOptions.effusion',
-    defaultMessage: 'Effusion',
-  },
-  sampleCollectedOn: {
-    id: 'pages.ResultDetail.formFields.sampleCollectedOn',
-    defaultMessage: 'Sample Collected On',
+  timeInstrumentResulted: {
+    id: 'pages.ResultDetail.formFields.hospitalNumber',
+    defaultMessage: 'Time Instrument Resulted',
   },
 })
 

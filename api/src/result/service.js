@@ -648,7 +648,7 @@ async function updateFormData(request) {
   if (!result.ok) {
     return Boom.notFound()
   }
-  const existingFormData = _.get(result, 'formData', {})
+  const existingFormData = _.get(result.data, 'formData', {})
   const mergedFormData = _.merge({}, existingFormData, payload)
   if (!_.isEqual(existingFormData, mergedFormData)) {
     const resultForm = await knex('ResultForm')
