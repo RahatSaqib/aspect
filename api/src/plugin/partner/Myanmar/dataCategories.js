@@ -100,7 +100,7 @@ const dataCategories = [
   },
   {
     name: 'Other',
-    fieldNames: '["city", "gender", "age", "sampleType"]',
+    fieldNames: '["city", "gender", "age", "id"]',
     // partnerId,
     externalId: 'Other',
     i18nKey: 'dataCategoryOther',
