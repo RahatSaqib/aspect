@@ -181,13 +181,20 @@ export const ActionStatus = compose(
   if (action.get('status') === 'Active') {
     return (
       <div className={cssClasses('Issue__Action__Status')}>
-        {action.get('canAcknowledge') === 1 && (
+        {action.get('canAcknowledge') === 1 ? (
           <Button
             inverse
             className={cssClasses('Button__Acknowledge')}
             label={intl.formatMessage(messages.acknowledge)}
             onClick={handleSubmit}
           />
+        ) : (
+          <div className={cssClasses('Issue__Action__Status')}>
+            <span>
+              {`${intl.formatMessage(messages.activeSince)}
+     ${formatDate(action.get('statusDate'))}`}
+            </span>
+          </div>
         )}
       </div>
     )

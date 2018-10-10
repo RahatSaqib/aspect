@@ -265,6 +265,10 @@ export const messages = defineMessages({
     id: 'pages.Status.downloadReport',
     defaultMessage: 'Download Report',
   },
+  activeSince: {
+    id: 'pages.Status.activeSince',
+    defaultMessage: 'Active since',
+  },
 })
 
 export default messages
