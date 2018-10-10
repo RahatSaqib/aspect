@@ -295,7 +295,11 @@ export class ResultDetail extends PureComponent {
                   label={formatMessage(messages.createdOnLabel, {
                     date: createdOn.toUTCString(),
                   })}
-                  value={<pre>{JSON.stringify(rawMessage, null, 1)}</pre>}
+                  value={
+                    <pre className={cssClasses('RawResultContainer')}>
+                      {JSON.stringify(rawMessage, null, 1)}
+                    </pre>
+                  }
                 />
               )
             })}
