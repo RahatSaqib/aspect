@@ -4,6 +4,7 @@ import { defineMessages } from 'react-intl'
 import isValid from 'date-fns/isValid'
 import { Button } from 'react-toolbox/lib/button'
 import { Input } from 'react-toolbox/lib/input'
+import FocusBlurTextField from '../../components/shared/FocusBlurTextField'
 import FormGroup from '../../components/themedReactToolbox/FormGroup'
 import ButtonGroup from '../../components/themedReactToolbox/ButtonGroup'
 import StyledDropdown from '../../components/themedReactToolbox/StyledDropdown'
@@ -87,6 +88,10 @@ export default class CustomField extends PureComponent {
     this.onUpdateData(value || null)
   }
 
+  onTextBoxCommitValue = ({ target: { value } }) => {
+    this.onUpdateData(value || null)
+  }
+
   onUpdateData = value => {
     const { resultId, formFieldKey, updateFormData } = this.props
     updateFormData(resultId, formFieldKey, value)
@@ -144,12 +149,12 @@ export default class CustomField extends PureComponent {
           label={fieldLabel}
           key={formFieldKey}
         >
-          <Input
-            type="text"
-            multiline={fieldSchema.getIn(['control', 'multipleLine'], false)}
-            name={formFieldKey}
+          <FocusBlurTextField
+            component={Input}
+            name="formFieldKey"
             value={fieldValue}
-            onChange={this.onUpdateData}
+            onCommitValue={this.onTextBoxCommitValue}
+            floatingLabelFixe
           />
         </FormGroup>
       )
