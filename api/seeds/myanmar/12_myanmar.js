@@ -12,6 +12,7 @@ async function seed(knex) {
   }
   await removeChildrenDashboardTarget(knex)
   await updateDashboardWidgetQueries(knex)
+  await turnOffEmailSms(knex)
 }
 
 async function removeChildrenDashboardTarget(knex) {
@@ -34,4 +35,12 @@ async function removeChildrenDashboardTarget(knex) {
   await knex('Target')
     .where('targetToken', 'Children')
     .delete()
+}
+
+async function turnOffEmailSms(knex) {
+  // turn off email/sms
+  await knex('MessageType').update({
+    emailTemplateId: null,
+    smsTemplateId: null,
+  })
 }
