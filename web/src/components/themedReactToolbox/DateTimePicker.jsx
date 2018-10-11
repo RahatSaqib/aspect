@@ -1,6 +1,5 @@
 import React from 'react'
 import _ from 'lodash'
-import { format as dateFnFormat } from 'date-fns'
 import { compose, withStateHandlers } from 'recompose'
 import { themr } from 'react-css-themr'
 import { BUTTON, DATE_PICKER, TIME_PICKER } from 'react-toolbox/lib/identifiers'
@@ -16,6 +15,7 @@ import dateTheme from 'react-toolbox/lib/date_picker/theme.css'
 import timeTheme from 'react-toolbox/lib/time_picker/theme.css'
 import buttonTheme from 'react-toolbox/lib/button/theme.css'
 import rippletheme from 'react-toolbox/lib/ripple/theme.css'
+import { formatDateTime } from '../../shared/utils/dateFormat'
 
 const InjectIconButton = themr(BUTTON, buttonTheme)(
   iconButtonFactory(
@@ -44,10 +44,16 @@ export const enhance = compose(
       showMode: SHOW_MODE.CLOSE,
     }),
     {
-      onSelectDate: ({ dateTime, showMode }) => value => ({
-        showMode: SHOW_MODE[showMode.next],
-        dateTime: _.isDate(value) ? value : dateTime,
-      }),
+      onSelectDate: ({ dateTime, showMode }) => value => {
+        if (_.isDate(value)) {
+          value.setSeconds(0)
+          value.setMilliseconds(0)
+        }
+        return {
+          showMode: SHOW_MODE[showMode.next],
+          dateTime: _.isDate(value) ? value : dateTime,
+        }
+      },
       onSelectTime: ({ showMode }, { onChange }) => value => {
         if (_.isDate(value) && onChange) {
           value.setSeconds(0)
@@ -77,8 +83,7 @@ export const DateTimePicker = ({
   ...restProps
 }) => {
   const showDate = _.isDate(dateTime) ? dateTime : undefined
-  const formattedDate =
-    showDate === undefined ? '' : dateFnFormat(dateTime, 'YYYY-MM-DD HH:mm')
+  const formattedDate = showDate === undefined ? '' : formatDateTime(dateTime)
   return (
     <div>
       <DatePickerDialog
