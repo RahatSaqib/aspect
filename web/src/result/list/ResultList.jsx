@@ -28,7 +28,7 @@ import DataTableCard from '../../components/shared/DataTableCard'
 import DataTableProgressBar from '../../components/shared/DataTableProgressBar'
 import { fetchResults, exportResults } from '../ResultRedux'
 import {
-  ResponsiveResultDataTable as ResultDataTable,
+  ResultDataTable,
   ResultDataTableHead,
   ResultDataTableRow,
 } from './ResultDataTable'
@@ -293,11 +293,13 @@ export const ResultList = ({
                 key: 'deviceName',
                 label: intl.formatMessage(messages.deviceName),
                 sortable: true,
+                hiddenOn: 'sm',
               },
               {
                 key: 'sampleOriginSiteName',
                 label: intl.formatMessage(messages.sampleOriginSiteName),
                 sortable: true,
+                hiddenOn: 'md',
               },
               {
                 key: 'sampleId',
@@ -308,6 +310,8 @@ export const ResultList = ({
                 key: 'sampleGroup',
                 label: intl.formatMessage(messages.sampleGroup),
                 sortable: true,
+                hiddenOnMobile: true,
+                hiddenOn: 'lg',
               },
               {
                 key: 'resultText',
@@ -318,6 +322,8 @@ export const ResultList = ({
                 key: 'resultWorkflowStatus',
                 label: intl.formatMessage(messages.resultWorkflowStatus),
                 sortable: true,
+                hiddenOnMobile: true,
+                hiddenOn: 'md',
               },
               {
                 key: 'patientId',
@@ -332,6 +338,7 @@ export const ResultList = ({
                   intl
                 ),
                 sortable: true,
+                hiddenOn: 'lg',
               }))
             )}
           />

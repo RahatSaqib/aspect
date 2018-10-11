@@ -36,14 +36,38 @@
   text-align: right;
 }
 
-.TableCell {
-  min-width: 120px;
+.TableCell--sm {
+  display: none;
+  visibility: hidden;
 }
 
 .TableCell--md {
-  min-width: 180px;
+  display: none;
+  visibility: hidden;
 }
 
 .TableCell--lg {
-  min-width: 220px;
+  display: none;
+  visibility: hidden;
+}
+
+@media screen and (--sm-viewport) {
+  .TableCell--sm {
+    display: table-cell;
+    visibility: visible;
+  }
+}
+
+@media screen and (--md-viewport) {
+  .TableCell--md {
+    display: table-cell;
+    visibility: visible;
+  }
+}
+
+@media screen and (--lg-viewport) {
+  .TableCell--lg {
+    display: table-cell;
+    visibility: visible;
+  }
 }
