@@ -76,6 +76,7 @@ export const enhance = compose(
 export const DateTimePicker = ({
   dateTime,
   value,
+  theme = {},
   showMode = SHOW_MODE.CLOSE,
   onSelectDate,
   onSelectTime,
@@ -106,7 +107,12 @@ export const DateTimePicker = ({
         value={showDate}
         {...restProps}
       />
-      <Input value={formattedDate} onFocus={onSelectDate} readOnly />
+      <Input
+        value={formattedDate}
+        theme={theme.Input}
+        onFocus={onSelectDate}
+        readOnly
+      />
     </div>
   )
 }

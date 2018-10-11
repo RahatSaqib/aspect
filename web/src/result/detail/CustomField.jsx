@@ -12,6 +12,12 @@ import DateTimePicker from '../../components/themedReactToolbox/DateTimePicker'
 
 const cssClasses = classnames.bind(require('./CustomField.css'))
 
+const THEME = {
+  Input: {
+    input: cssClasses('TextBox__Input'),
+  },
+}
+
 const messages = defineMessages({
   confirmedInterpretationOfResult: {
     id: 'pages.ResultDetail.formFields.confirmedInterpretationOfResult',
@@ -155,6 +161,7 @@ export default class CustomField extends PureComponent {
             value={fieldValue}
             onCommitValue={this.onTextBoxCommitValue}
             floatingLabelFixe
+            theme={THEME.Input}
           />
         </FormGroup>
       )
@@ -187,7 +194,11 @@ export default class CustomField extends PureComponent {
           label={fieldLabel}
           key={formFieldKey}
         >
-          <DateTimePicker value={fieldDateTime} onChange={this.onUpdateData} />
+          <DateTimePicker
+            value={fieldDateTime}
+            theme={THEME}
+            onChange={this.onUpdateData}
+          />
         </FormGroup>
       )
     }

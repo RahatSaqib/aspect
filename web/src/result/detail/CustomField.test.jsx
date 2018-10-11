@@ -5,11 +5,11 @@ import sinon from 'sinon'
 import Immutable from 'immutable'
 import _ from 'lodash'
 import { Button } from 'react-toolbox/lib/button'
-import { Input } from 'react-toolbox/lib/input'
 import FormGroup from '../../components/themedReactToolbox/FormGroup'
 import CustomField from './CustomField'
 import StyledDropdown from '../../components/themedReactToolbox/StyledDropdown'
 import DateTimePicker from '../../components/themedReactToolbox/DateTimePicker'
+import FocusBlurTextField from '../../components/shared/FocusBlurTextField'
 
 describe('CustomField component', () => {
   function renderCustomerField(props) {
@@ -125,7 +125,7 @@ describe('CustomField component', () => {
 
     it('should show empty field when form data has not been set', () => {
       const customField = renderCustomerField(props)
-      const input = customField.find(Input).first()
+      const input = customField.find(FocusBlurTextField).first()
       expect(input.prop('value')).toBeNull()
     })
 
@@ -134,18 +134,18 @@ describe('CustomField component', () => {
         formData: Immutable.Map({ expertInterpretation: 'positive' }),
       })
       const customField = renderCustomerField(propsWithValue)
-      const input = customField.find(Input).first()
+      const input = customField.find(FocusBlurTextField).first()
       expect(input.prop('value')).toEqual('positive')
     })
 
     it('should call onUpdateDate event when the user change input value', () => {
       const customField = renderCustomerField(props)
-      const input = customField.find(Input).first()
+      const input = customField.find(FocusBlurTextField).first()
 
       const { updateFormData } = props
       expect(updateFormData.callCount).toBe(0)
 
-      input.simulate('change', 'positive')
+      input.simulate('commitValue', { target: { value: 'positive' } })
 
       expect(updateFormData.callCount).toBe(1)
       expect(updateFormData.lastCall.args[2]).toEqual('positive')

@@ -50,7 +50,7 @@ export class FocusBlurTextField extends PureComponent {
   }
 
   handleChange = event => {
-    const { value } = event.target
+    const { value } = event.target || { value: event }
     this.setState({ pendingValue: value })
   }
 

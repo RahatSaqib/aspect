@@ -19,7 +19,7 @@ exports[`DateTimePicker component should shallow render correctly 1`] = `
       required={false}
       role="input"
       type="text"
-      value="2018-11-05 15:30"
+      value="2018-11-05 15:30:00"
     />
     <span
       className={undefined}

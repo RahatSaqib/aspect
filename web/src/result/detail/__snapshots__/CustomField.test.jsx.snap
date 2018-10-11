@@ -102,7 +102,7 @@ exports[`CustomField component When field type is DateTime should shallow render
   >
     <div>
       <div
-        className=""
+        className="TextBox__Input"
         data-react-toolbox="input"
       >
         <input
@@ -231,17 +231,22 @@ exports[`CustomField component When field type is TextBox should shallow render 
     }
   >
     <div
-      className=""
+      className="TextBox__Input"
       data-react-toolbox="input"
     >
       <input
         className=""
+        component={[Function]}
         defaultValue={undefined}
         disabled={false}
+        floatingLabelFixe={true}
         maxLength={undefined}
-        name="expertInterpretation"
+        name="formFieldKey"
+        onBlur={[Function]}
         onChange={[Function]}
+        onFocus={[Function]}
         onKeyPress={undefined}
+        onKeyUp={[Function]}
         required={false}
         role="input"
         type="text"

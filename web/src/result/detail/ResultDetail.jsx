@@ -339,7 +339,7 @@ export class ResultDetail extends PureComponent {
               const { intl: { formatMessage } } = this.props
               const fieldSchema = result.getIn(['formSchema', formFieldKey])
               return (
-                <Unit key={formFieldKey} xs="1-3" sm="1-3">
+                <Unit key={formFieldKey} xs="1-2" sm="1-3">
                   <CustomField
                     resultId={result.get('id')}
                     formFieldKey={formFieldKey}
