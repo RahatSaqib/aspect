@@ -293,7 +293,7 @@ export const ResultList = ({
                 key: 'deviceName',
                 label: intl.formatMessage(messages.deviceName),
                 sortable: true,
-                hiddenOn: 'sm',
+                hiddenOn: 'md',
               },
               {
                 key: 'sampleOriginSiteName',
@@ -310,7 +310,6 @@ export const ResultList = ({
                 key: 'sampleGroup',
                 label: intl.formatMessage(messages.sampleGroup),
                 sortable: true,
-                hiddenOnMobile: true,
                 hiddenOn: 'lg',
               },
               {
@@ -322,13 +321,13 @@ export const ResultList = ({
                 key: 'resultWorkflowStatus',
                 label: intl.formatMessage(messages.resultWorkflowStatus),
                 sortable: true,
-                hiddenOnMobile: true,
                 hiddenOn: 'md',
               },
               {
                 key: 'patientId',
                 label: intl.formatMessage(messages.patiendId),
                 sortable: true,
+                hiddenOn: 'xs',
               },
             ]).concat(
               table.extraColumns.map(column => ({

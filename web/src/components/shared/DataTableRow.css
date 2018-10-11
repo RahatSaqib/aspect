@@ -41,6 +41,11 @@
   visibility: hidden;
 }
 
+.TableCell--xs {
+  display: none;
+  visibility: hidden;
+}
+
 .TableCell--md {
   display: none;
   visibility: hidden;
@@ -49,6 +54,13 @@
 .TableCell--lg {
   display: none;
   visibility: hidden;
+}
+
+@media screen and (--xs-viewport) {
+  .TableCell--xs {
+    display: table-cell;
+    visibility: visible;
+  }
 }
 
 @media screen and (--sm-viewport) {

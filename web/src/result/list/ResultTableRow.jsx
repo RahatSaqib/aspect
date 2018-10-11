@@ -27,7 +27,7 @@ const ResultTableRow = ({ intl, extraColumns, result, ...restProps }) => (
     <TableCell className={cssClasses('TableCell')}>
       {formatDate(result.get('endedOn'))}
     </TableCell>
-    <TableCell className={cssClasses('TableCell', 'TableCell--sm')}>
+    <TableCell className={cssClasses('TableCell', 'TableCell--md')}>
       {result.get('deviceName')}
     </TableCell>
     <TableCell className={cssClasses('TableCell', 'TableCell--md')}>
@@ -45,7 +45,7 @@ const ResultTableRow = ({ intl, extraColumns, result, ...restProps }) => (
     <TableCell className={cssClasses('TableCell', 'TableCell--md')}>
       {result.get('resultWorkflowStatus')}
     </TableCell>
-    <TableCell className={cssClasses('TableCell')}>
+    <TableCell className={cssClasses('TableCell', 'TableCell--xs')}>
       {result.get('patientId')}
     </TableCell>
     {extraColumns.map(column => (
