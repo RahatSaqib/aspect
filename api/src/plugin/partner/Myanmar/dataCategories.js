@@ -97,8 +97,7 @@ const dataCategories = [
   },
   {
     name: 'Other',
-    // all fields are props in patientData json, if need to include fields from another tables, then also
-    // modify function getDataCategoryStatus in fact/service.js - see there commented code with >>> symbols
+    // all fields are props in patientData json
     fieldNames: '["city", "gender", "age", "id"]',
     externalId: 'Other',
     i18nKey: 'dataCategoryOther',
