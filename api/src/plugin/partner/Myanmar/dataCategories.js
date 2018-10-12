@@ -65,7 +65,6 @@ const dataCategories = [
   {
     name: 'HIV+',
     fieldNames: 'hivStatus',
-    // partnerId,
     externalId: 'HivStatus',
     i18nKey: 'dataCategoryHiv',
     validValues: JSON.stringify(dictHivStatus.filter(x => x !== 'Not on Form')),
@@ -77,7 +76,6 @@ const dataCategories = [
   {
     name: 'MDR',
     fieldNames: 'previouslyTreated',
-    // partnerId,
     externalId: 'PreviouslyTreated',
     i18nKey: 'dataCategoryMdr',
     validValues: JSON.stringify(dictMdr.filter(x => x !== 'Not on Form')),
@@ -87,7 +85,6 @@ const dataCategories = [
   {
     name: 'Smear+',
     fieldNames: 'microscopyResult',
-    // partnerId,
     externalId: 'MicroscopyResult',
     i18nKey: 'dataCategorySmear',
     validValues: JSON.stringify(
@@ -100,8 +97,9 @@ const dataCategories = [
   },
   {
     name: 'Other',
+    // all fields are props in patientData json, if need to include fields from another tables, then also
+    // modify function getDataCategoryStatus in fact/service.js - see there commented code with >>> symbols
     fieldNames: '["city", "gender", "age", "id"]',
-    // partnerId,
     externalId: 'Other',
     i18nKey: 'dataCategoryOther',
     // ----------------------
