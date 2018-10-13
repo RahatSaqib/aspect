@@ -65,7 +65,6 @@ const dataCategories = [
   {
     name: 'HIV+',
     fieldNames: 'hivStatus',
-    // partnerId,
     externalId: 'HivStatus',
     i18nKey: 'dataCategoryHiv',
     validValues: JSON.stringify(dictHivStatus.filter(x => x !== 'Not on Form')),
@@ -77,7 +76,6 @@ const dataCategories = [
   {
     name: 'MDR',
     fieldNames: 'previouslyTreated',
-    // partnerId,
     externalId: 'PreviouslyTreated',
     i18nKey: 'dataCategoryMdr',
     validValues: JSON.stringify(dictMdr.filter(x => x !== 'Not on Form')),
@@ -87,7 +85,6 @@ const dataCategories = [
   {
     name: 'Smear+',
     fieldNames: 'microscopyResult',
-    // partnerId,
     externalId: 'MicroscopyResult',
     i18nKey: 'dataCategorySmear',
     validValues: JSON.stringify(
@@ -100,8 +97,8 @@ const dataCategories = [
   },
   {
     name: 'Other',
-    fieldNames: '["city", "gender", "age", "sampleType"]',
-    // partnerId,
+    // all fields are props in patientData json
+    fieldNames: '["city", "gender", "age", "id"]',
     externalId: 'Other',
     i18nKey: 'dataCategoryOther',
     // ----------------------
