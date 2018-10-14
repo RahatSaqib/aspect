@@ -173,6 +173,13 @@ async function deleteIssues(knex, { deviceIds, resultIds }) {
     .delete()
   await knex('IssueEvent')
     .whereIn('issueId', issueIds)
+    .orWhere(function() {
+      if (resultIds != null && resultIds.length > 0) {
+        this.whereRaw(
+          `JSON_EXTRACT(data, "$.resultId") IN (${resultIds.join(',')})`
+        )
+      }
+    })
     .delete()
   await knex('Issue')
     .whereIn('id', issueIds)

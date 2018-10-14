@@ -7,8 +7,15 @@ const server = supertest.agent('http://localhost:8080')
 const { assert } = chai
 
 describe('/account-details', () => {
-  let accountDetails
-
+  async function getAccountDetails() {
+    const path = '/api/account-details/current'
+    const response = await server
+      .get(path)
+      .set('Authorization', `Bearer ${shared.token}`)
+      .send()
+      .then(res => res.body.data)
+    return response
+  }
   describe('/account-details/current', () => {
     describe('GET', () => {
       const path = '/api/account-details/current'
@@ -19,8 +26,6 @@ describe('/account-details', () => {
           .get(path)
           .set('Authorization', `Bearer ${shared.token}`)
           .end((err, res) => {
-            // We need this for the next tests
-            accountDetails = res.body.data
             assert.equal(res.status, 200)
             assert.typeOf(res.body, 'Object')
             assert.property(res.body, 'data')
@@ -53,6 +58,11 @@ describe('/account-details', () => {
   describe('/account-details/current-contact', () => {
     describe('PUT', () => {
       const path = '/api/account-details/current-contact'
+
+      let accountDetails
+      beforeEach(async () => {
+        accountDetails = await getAccountDetails()
+      })
 
       it('should update account details for the currently logged in user and return them', done => {
         const originalTitle = accountDetails.title
@@ -133,6 +143,11 @@ describe('/account-details', () => {
   describe('/account-details/current-preferences', () => {
     describe('PUT', () => {
       const path = '/api/account-details/current-preferences'
+
+      let accountDetails
+      beforeEach(async () => {
+        accountDetails = await getAccountDetails()
+      })
 
       it('should update user preferences for the currently logged in user and return them', done => {
         const originalTimezone = accountDetails.timezone

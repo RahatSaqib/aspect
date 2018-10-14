@@ -2,6 +2,7 @@ const _ = require('lodash')
 const supertest = require('supertest')
 const chai = require('chai')
 const shared = require('../utils/sharedToken')
+const { run } = require('../../src/db')
 
 const server = supertest.agent('http://localhost:8080')
 const { assert } = chai
@@ -174,94 +175,127 @@ describe('Assay Consumable Routes', () => {
 
     describe('/assay-consumable', () => {
       const path = '/api/assay-consumable'
-      let daktariCD4AssayId
-      let daktariCD4CartridgeId
+      let assayId
+      let consumableId
+      let partnerId
       const initialQuantity = 0.32
       const updatedQuantity = 5.68
 
+      before(async () =>
+        run(async knex => {
+          const { id: assayTypeId } = await knex('AssayType')
+            .where('name', 'Unknown')
+            .first('id')
+          const { id: deviceTypeId } = await knex('DeviceType')
+            .where('externalId', 'CepheidGeneXpert')
+            .first('id')
+          const { id: resultSourceId } = await knex('ResultSource')
+            .where('externalId', 'DiagnosticDevice')
+            .first('id')
+          const partner = await knex('Partner')
+            .where('name', 'Partner One')
+            .first('id')
+          partnerId = partner.id
+          ;[assayId] = await knex('Assay').insert({
+            name: 'Test Assay',
+            i18nKey: 'assayTest',
+            externalId: 'assayTest',
+            assayTypeId,
+            deviceTypeId,
+            resultSourceId,
+          })
+          ;[consumableId] = await knex('Consumable').insert({
+            name: 'Test Cartridge',
+            unit: 1,
+            canExpire: 1,
+            manufacturer: 'Daktari',
+          })
+          await knex('PartnerConsumable').insert({
+            partnerId,
+            consumableId,
+            allowStockUpdateFromActionDashboard: true,
+          })
+        })
+      )
+
+      after(async () =>
+        run(async knex => {
+          await knex('PartnerConsumable')
+            .where({ consumableId, partnerId })
+            .delete()
+          await knex('Assay')
+            .where({ id: assayId })
+            .delete()
+          await knex('Consumable')
+            .where({ id: consumableId })
+            .delete()
+        })
+      )
+
       describe('POST', () => {
+        afterEach(async () =>
+          run(async knex => {
+            await knex('ConsumableAssay')
+              .where({ consumableId, assayId })
+              .delete()
+          })
+        )
         it('should return a newly created assay consumable when using valid token, consumable id and an assay id', done => {
           server
-            .get('/api/assay')
+            .post(path)
+            .send({
+              assayId,
+              consumableId,
+              quantity: initialQuantity,
+            })
             .set('Authorization', `Bearer ${shared.token}`)
             .end((err, res) => {
-              const daktariCD4Assay = _.find(res.body.data, {
-                name: 'Daktari CD4',
-              })
-              daktariCD4AssayId = daktariCD4Assay.id
+              assert.equal(res.status, 200)
+              assert.typeOf(res.body, 'Object')
+              assert.isTrue(res.body.ok)
+              assert.property(res.body, 'data')
+              assert.typeOf(res.body.data, 'Object')
+              assert.equal(res.body.data.consumableId, consumableId)
+              assert.equal(res.body.data.assayId, assayId)
+              assert.equal(res.body.data.quantity, initialQuantity)
+              assert.property(res.body.data, 'consumableName')
+              assert.property(res.body.data, 'unitName')
+              assert.property(res.body.data, 'unitShortName')
+              assert.property(res.body.data, 'assayName')
+              assert.property(res.body.data, 'assayI18nKey')
 
               server
-                .get('/api/inventory/consumable-types')
+                .post(path)
+                .set('Authorization', `Bearer ${shared.token}`)
+                .send({
+                  assayId,
+                  consumableId,
+                  quantity: updatedQuantity,
+                })
                 .set('Authorization', `Bearer ${shared.token}`)
                 .end((err, res) => {
-                  const daktariCD4Cartridge = _.find(res.body.data, {
-                    name: 'Daktari CD4 Cartridge',
+                  assert.equal(
+                    res.status,
+                    409,
+                    'We should not be able to post a duplicate assay consumable'
+                  )
+                  assert.deepEqual(res.body, {
+                    statusCode: 409,
+                    error: 'Conflict',
+                    message:
+                      'There is already an record for this assay and consumable',
                   })
-                  daktariCD4CartridgeId = daktariCD4Cartridge.id
 
                   server
-                    .post(path)
-                    .send({
-                      assayId: daktariCD4AssayId,
-                      consumableId: daktariCD4CartridgeId,
-                      quantity: initialQuantity,
-                    })
+                    .get(`/api/assay-consumables/${assayId}`)
                     .set('Authorization', `Bearer ${shared.token}`)
                     .end((err, res) => {
-                      assert.equal(res.status, 200)
-                      assert.typeOf(res.body, 'Object')
-                      assert.isTrue(res.body.ok)
-                      assert.property(res.body, 'data')
-                      assert.typeOf(res.body.data, 'Object')
-                      assert.equal(
-                        res.body.data.consumableId,
-                        daktariCD4CartridgeId
-                      )
-                      assert.equal(res.body.data.assayId, daktariCD4AssayId)
-                      assert.equal(res.body.data.quantity, initialQuantity)
-                      assert.property(res.body.data, 'consumableName')
-                      assert.property(res.body.data, 'unitName')
-                      assert.property(res.body.data, 'unitShortName')
-                      assert.property(res.body.data, 'assayName')
-                      assert.property(res.body.data, 'assayI18nKey')
-
-                      server
-                        .post(path)
-                        .set('Authorization', `Bearer ${shared.token}`)
-                        .send({
-                          assayId: daktariCD4AssayId,
-                          consumableId: daktariCD4CartridgeId,
-                          quantity: updatedQuantity,
-                        })
-                        .set('Authorization', `Bearer ${shared.token}`)
-                        .end((err, res) => {
-                          assert.equal(
-                            res.status,
-                            409,
-                            'We should not be able to post a duplicate assay consumable'
-                          )
-                          assert.deepEqual(res.body, {
-                            statusCode: 409,
-                            error: 'Conflict',
-                            message:
-                              'There is already an record for this assay and consumable',
-                          })
-
-                          server
-                            .get(`/api/assay-consumables/${daktariCD4AssayId}`)
-                            .set('Authorization', `Bearer ${shared.token}`)
-                            .end((err, res) => {
-                              const newAssayConsumable = _.find(res.body.data, {
-                                assayId: daktariCD4AssayId,
-                                consumableId: daktariCD4CartridgeId,
-                              })
-                              assert.equal(
-                                newAssayConsumable.quantity,
-                                initialQuantity
-                              )
-                              done()
-                            })
-                        })
+                      const newAssayConsumable = _.find(res.body.data, {
+                        assayId,
+                        consumableId,
+                      })
+                      assert.equal(newAssayConsumable.quantity, initialQuantity)
+                      done()
                     })
                 })
             })
@@ -269,9 +303,25 @@ describe('Assay Consumable Routes', () => {
       })
 
       describe('PUT', () => {
+        beforeEach(async () =>
+          run(async knex => {
+            await knex('ConsumableAssay').insert({
+              consumableId,
+              assayId,
+              quantity: initialQuantity,
+            })
+          })
+        )
+        afterEach(async () =>
+          run(async knex => {
+            await knex('ConsumableAssay')
+              .where({ consumableId, assayId })
+              .delete()
+          })
+        )
         it('should return the updated assay consumable when using valid token, consumable id and an assay id', done => {
           server
-            .put(`${path}/${daktariCD4AssayId}/${daktariCD4CartridgeId}`)
+            .put(`${path}/${assayId}/${consumableId}`)
             .send({ quantity: updatedQuantity })
             .set('Authorization', `Bearer ${shared.token}`)
             .end((err, res) => {
@@ -280,8 +330,8 @@ describe('Assay Consumable Routes', () => {
               assert.isTrue(res.body.ok)
               assert.property(res.body, 'data')
               assert.typeOf(res.body.data, 'Object')
-              assert.equal(res.body.data.consumableId, daktariCD4CartridgeId)
-              assert.equal(res.body.data.assayId, daktariCD4AssayId)
+              assert.equal(res.body.data.consumableId, consumableId)
+              assert.equal(res.body.data.assayId, assayId)
               assert.equal(res.body.data.quantity, updatedQuantity)
               assert.property(res.body.data, 'consumableName')
               assert.property(res.body.data, 'unitName')
@@ -290,12 +340,12 @@ describe('Assay Consumable Routes', () => {
               assert.property(res.body.data, 'assayI18nKey')
 
               server
-                .get(`/api/assay-consumables/${daktariCD4AssayId}`)
+                .get(`/api/assay-consumables/${assayId}`)
                 .set('Authorization', `Bearer ${shared.token}`)
                 .end((err, res) => {
                   const newAssayConsumable = _.find(res.body.data, {
-                    assayId: daktariCD4AssayId,
-                    consumableId: daktariCD4CartridgeId,
+                    assayId,
+                    consumableId,
                   })
                   assert.equal(newAssayConsumable.quantity, updatedQuantity)
                   done()
@@ -305,21 +355,37 @@ describe('Assay Consumable Routes', () => {
       })
 
       describe('DELETE', () => {
+        beforeEach(async () =>
+          run(async knex => {
+            await knex('ConsumableAssay').insert({
+              consumableId,
+              assayId,
+              quantity: 1,
+            })
+          })
+        )
+        afterEach(async () =>
+          run(async knex => {
+            await knex('ConsumableAssay')
+              .where({ consumableId, assayId })
+              .delete()
+          })
+        )
         it('should remove the assay consumable from the system', done => {
           server
-            .delete(`${path}/${daktariCD4AssayId}/${daktariCD4CartridgeId}`)
+            .delete(`${path}/${assayId}/${consumableId}`)
             .set('Authorization', `Bearer ${shared.token}`)
             .end((err, res) => {
               assert.equal(res.status, 200)
               assert.isTrue(res.body.ok)
 
               server
-                .get(`/api/assay-consumables/${daktariCD4AssayId}`)
+                .get(`/api/assay-consumables/${assayId}`)
                 .set('Authorization', `Bearer ${shared.token}`)
                 .end((err, res) => {
                   const deletedAssayConsumable = _.find(res.body.data, {
-                    assayId: daktariCD4AssayId,
-                    consumableId: daktariCD4CartridgeId,
+                    assayId,
+                    consumableId,
                   })
                   assert.isTrue(_.isEmpty(deletedAssayConsumable))
                   done()
