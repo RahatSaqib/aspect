@@ -7,6 +7,7 @@ import { Button } from 'react-toolbox/lib/button'
 import { ResultDetail } from './ResultDetail'
 import FormGroup from '../../components/themedReactToolbox/FormGroup'
 import { ExpansionPanelHeader } from '../../components/shared/expansionPanel'
+import CustomField from './CustomField'
 
 describe('Result Detail screen', () => {
   const defaultProps = {
@@ -108,8 +109,8 @@ describe('Result Detail screen', () => {
             propsWithFormSchemaInResult
           )
           const positiveOption = resultDetailsScreen
-            .find(ExpansionPanelHeader)
-            .filter({ label: 'Confirmed Interpretation of Result' })
+            .find(CustomField)
+            .dive()
             .find(Button)
             .filter({ 'data-value': 'positive' })
             .first()
@@ -117,7 +118,9 @@ describe('Result Detail screen', () => {
           const { updateResultFormData, result } = propsWithFormSchemaInResult
           expect(updateResultFormData.callCount).toBe(0)
 
-          positiveOption.simulate('click')
+          positiveOption.simulate('click', {
+            target: { dataset: { value: 'positive' } },
+          })
 
           expect(updateResultFormData.callCount).toBe(1)
           expect(updateResultFormData.lastCall.args).toEqual([
@@ -197,7 +200,7 @@ describe('Result Detail screen', () => {
           .find(ExpansionPanelHeader)
           .filter({ label: 'Additional Result Details' })
         expect(formDataSection.length).toEqual(1)
-        const fields = formDataSection.find(FormGroup)
+        const fields = formDataSection.find(CustomField)
         expect(fields.length).toEqual(2)
       })
     })
@@ -276,10 +279,12 @@ describe('Result Detail screen', () => {
           .find(ExpansionPanelHeader)
           .filter({ label: 'Additional Result Details' })
         expect(formDataSection.length).toEqual(1)
-        const fields = formDataSection.find(FormGroup)
-        expect(fields.length).toEqual(2)
-        expect(fields.get(0).props.label).toEqual('Tags')
-        expect(fields.get(1).props.label).toEqual('Followup')
+        const fields = formDataSection.find(CustomField)
+
+        const notEmptyFields = fields.filterWhere(
+          field => field.dive().find(FormGroup).length > 0
+        )
+        expect(notEmptyFields.length).toEqual(2)
       })
     })
 

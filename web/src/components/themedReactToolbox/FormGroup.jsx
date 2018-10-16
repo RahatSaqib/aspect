@@ -7,8 +7,8 @@ import { INPUT } from 'react-toolbox/lib/identifiers'
 
 const enhance = compose(themr(INPUT, theme))
 
-const FormGroup = ({ theme, label, htmlFor, children }) => (
-  <div className={theme.input}>
+const FormGroup = ({ theme, className, label, htmlFor, children }) => (
+  <div className={classnames(theme.input, className)}>
     <div
       id={htmlFor}
       className={classnames(theme.inputElement, theme.filled)}

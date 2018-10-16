@@ -142,5 +142,9 @@
 
 .RawResultContainer {
   white-space: pre-wrap;
-  word-wrap: break-word; 
+  word-wrap: break-word;
+}
+
+.FormDataContainer {
+  display: block;
 }

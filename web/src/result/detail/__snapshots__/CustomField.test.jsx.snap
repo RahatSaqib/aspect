@@ -1,0 +1,267 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`CustomField component When field type is ButtonGroup should shallow render correctly 1`] = `
+<div
+  className="Container"
+>
+  <div
+    className=""
+    id={undefined}
+    style={
+      Object {
+        "borderBottom": "none",
+      }
+    }
+  >
+    <div
+      className="ButtonGroup ButtonGroup--isolated"
+    >
+      <button
+        className=""
+        data-react-toolbox="button"
+        data-value={null}
+        disabled={false}
+        href={undefined}
+        onClick={[Function]}
+        onMouseDown={[Function]}
+        onMouseLeave={[Function]}
+        onMouseUp={[Function]}
+        onTouchStart={[Function]}
+        type="button"
+      >
+        None
+      </button>
+      <button
+        className=" undefined"
+        data-react-toolbox="button"
+        data-value="negative"
+        disabled={false}
+        href={undefined}
+        onClick={[Function]}
+        onMouseDown={[Function]}
+        onMouseLeave={[Function]}
+        onMouseUp={[Function]}
+        onTouchStart={[Function]}
+        type="button"
+      >
+        Negative
+      </button>
+      <button
+        className=" undefined"
+        data-react-toolbox="button"
+        data-value="positive"
+        disabled={false}
+        href={undefined}
+        onClick={[Function]}
+        onMouseDown={[Function]}
+        onMouseLeave={[Function]}
+        onMouseUp={[Function]}
+        onTouchStart={[Function]}
+        type="button"
+      >
+        Positive
+      </button>
+      <button
+        className=" undefined"
+        data-react-toolbox="button"
+        data-value="uninterpretable"
+        disabled={false}
+        href={undefined}
+        onClick={[Function]}
+        onMouseDown={[Function]}
+        onMouseLeave={[Function]}
+        onMouseUp={[Function]}
+        onTouchStart={[Function]}
+        type="button"
+      >
+        Uninterpretable
+      </button>
+    </div>
+  </div>
+  <label
+    className={undefined}
+    htmlFor={undefined}
+  >
+    
+  </label>
+</div>
+`;
+
+exports[`CustomField component When field type is DateTime should shallow render correctly 1`] = `
+<div
+  className="Container"
+>
+  <div
+    className=""
+    id={undefined}
+    style={
+      Object {
+        "borderBottom": "none",
+      }
+    }
+  >
+    <div>
+      <div
+        className="TextBox__Input"
+        data-react-toolbox="input"
+      >
+        <input
+          className=""
+          defaultValue={undefined}
+          disabled={false}
+          maxLength={undefined}
+          name={undefined}
+          onChange={[Function]}
+          onFocus={[Function]}
+          onKeyPress={undefined}
+          readOnly={true}
+          required={false}
+          role="input"
+          type="text"
+          value=""
+        />
+        <span
+          className={undefined}
+        />
+      </div>
+    </div>
+  </div>
+  <label
+    className={undefined}
+    htmlFor={undefined}
+  >
+    
+  </label>
+</div>
+`;
+
+exports[`CustomField component When field type is DropDown should shallow render correctly 1`] = `
+<div
+  className="Container"
+>
+  <div
+    className=""
+    id={undefined}
+    style={
+      Object {
+        "borderBottom": "none",
+      }
+    }
+  >
+    <div
+      className="DropDown"
+      data-react-toolbox="dropdown"
+      onBlur={[Function]}
+      onFocus={[Function]}
+    >
+      <div
+        className="input__input"
+        data-react-toolbox="input"
+      >
+        <input
+          className="input__inputElement undefined"
+          defaultValue={undefined}
+          disabled={false}
+          maxLength={undefined}
+          name={undefined}
+          onChange={[Function]}
+          onClick={[Function]}
+          onKeyPress={undefined}
+          readOnly={true}
+          required={false}
+          role="input"
+          tabIndex="0"
+          type={null}
+          value="None"
+        />
+        <span
+          className={undefined}
+        />
+      </div>
+      <ul
+        className="input__values"
+      >
+        <li
+          className=""
+          onClick={[Function]}
+        >
+          None
+        </li>
+        <li
+          className=""
+          onClick={[Function]}
+        >
+          Negative
+        </li>
+        <li
+          className=""
+          onClick={[Function]}
+        >
+          Positive
+        </li>
+        <li
+          className=""
+          onClick={[Function]}
+        >
+          Uninterpretable
+        </li>
+      </ul>
+    </div>
+  </div>
+  <label
+    className={undefined}
+    htmlFor={undefined}
+  >
+    
+  </label>
+</div>
+`;
+
+exports[`CustomField component When field type is TextBox should shallow render correctly 1`] = `
+<div
+  className="Container"
+>
+  <div
+    className=""
+    id={undefined}
+    style={
+      Object {
+        "borderBottom": "none",
+      }
+    }
+  >
+    <div
+      className="TextBox__Input"
+      data-react-toolbox="input"
+    >
+      <input
+        className=""
+        component={[Function]}
+        defaultValue={undefined}
+        disabled={false}
+        floatingLabelFixe={true}
+        maxLength={undefined}
+        name="formFieldKey"
+        onBlur={[Function]}
+        onChange={[Function]}
+        onFocus={[Function]}
+        onKeyPress={undefined}
+        onKeyUp={[Function]}
+        required={false}
+        role="input"
+        type="text"
+        value={null}
+      />
+      <span
+        className={undefined}
+      />
+    </div>
+  </div>
+  <label
+    className={undefined}
+    htmlFor={undefined}
+  >
+    
+  </label>
+</div>
+`;
