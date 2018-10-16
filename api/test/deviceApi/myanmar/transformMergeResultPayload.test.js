@@ -82,13 +82,15 @@ describe('transformMergeResultPayload for Myanmar', () => {
 
   describe('when request comes from from a GeneXpert', () => {
     it('should parse notes and patient ID', async () => {
+      const initialPayload = getPayload()
+      const patientId = initialPayload.patient.id
       const expectations = [
         {
-          initialPayload: getPayload(),
+          initialPayload,
           transformedPayload: {
             patient: {
-              id: 'Bryan Richards',
-              city: 'Johannesburg',
+              id: patientId.substr(0, patientId.indexOf(',')).trim(),
+              city: patientId.substr(patientId.indexOf(',') + 1).trim(),
               age: 34,
               gender: 'Male',
               previouslyTreated: 'Yes',
@@ -451,7 +453,6 @@ describe('transformMergeResultPayload for Myanmar', () => {
               },
               data: {
                 otherNotes: 'Not sure what to add here',
-                patientTownship: 'Hkamti',
                 referralCenter: 'ALN TBC',
                 customFieldData: {
                   31: {
@@ -581,7 +582,6 @@ describe('transformMergeResultPayload for Myanmar', () => {
                 microscopyResult: 'Positive',
               },
               data: {
-                patientTownship: 'Cape Town',
                 customFieldData: {
                   31: {
                     notAvailable: false,
