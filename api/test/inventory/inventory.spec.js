@@ -155,6 +155,7 @@ describe('Inventory Routes', () => {
     const receiveInventoryPath = '/api/inventory/receive'
     let inventoryItem
     let destinationSite
+    let siteId
     let transitItem
 
     beforeEach(async () =>
@@ -163,32 +164,7 @@ describe('Inventory Routes', () => {
           .where('name', consumableName)
           .first('id')
         const dataConstraints = await getConstraints({ name: 'admin' })
-        const { id: siteId } = await knex('Site as s')
-          .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
-          .leftOuterJoin('State as st', 'g.stateId', 'st.id')
-          .leftOuterJoin('Country as ct', 'g.countryId', 'ct.id')
-          .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
-          .modify(addConstraints, dataConstraints, {
-            site: 's',
-            geography: 'g',
-          })
-          .first('s.id')
-
-        const expiryDate = new Date(
-          addYears(new Date(), 1).setHours(0, 0, 0, 0)
-        )
-        const inventoryItemId = await knex('InventoryItem').insert({
-          consumableId,
-          siteId,
-          lotNumber: testLotNumber,
-          expiresOn: expiryDate,
-          quantityOnHand: initialQuantityOnHand,
-        })
-        inventoryItem = await knex('InventoryItem')
-          .where({ id: inventoryItemId })
-          .first()
-
-        const sites = await knex('Site as s')
+        ;[{ id: siteId }, destinationSite] = await knex('Site as s')
           .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
           .leftOuterJoin('State as st', 'g.stateId', 'st.id')
           .leftOuterJoin('Country as ct', 'g.countryId', 'ct.id')
@@ -198,10 +174,20 @@ describe('Inventory Routes', () => {
             geography: 'g',
           })
           .select('s.id')
-        destinationSite = _.find(
-          sites,
-          site => site.id !== inventoryItem.siteId
+
+        const expiryDate = new Date(
+          addYears(new Date(), 1).setHours(0, 0, 0, 0)
         )
+        const [inventoryItemId] = await knex('InventoryItem').insert({
+          consumableId,
+          siteId,
+          lotNumber: testLotNumber,
+          expiresOn: expiryDate,
+          quantityOnHand: initialQuantityOnHand,
+        })
+        inventoryItem = await knex('InventoryItem')
+          .where({ id: inventoryItemId })
+          .first()
         assert.isOk(destinationSite, `Cannot find destinationSite`)
       })
     )

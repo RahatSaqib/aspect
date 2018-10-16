@@ -5,7 +5,7 @@ const shared = require('../utils/sharedToken')
 const { run } = require('../../src/db')
 
 const server = supertest.agent('http://localhost:8080')
-const { assert } = chai
+const { assert, expect } = chai
 
 describe('Assay Consumable Routes', () => {
   describe('Consumable Type Route', () => {
@@ -177,58 +177,19 @@ describe('Assay Consumable Routes', () => {
       const path = '/api/assay-consumable'
       let assayId
       let consumableId
-      let partnerId
       const initialQuantity = 0.32
       const updatedQuantity = 5.68
 
       before(async () =>
         run(async knex => {
-          const { id: assayTypeId } = await knex('AssayType')
-            .where('name', 'Unknown')
-            .first('id')
-          const { id: deviceTypeId } = await knex('DeviceType')
-            .where('externalId', 'CepheidGeneXpert')
-            .first('id')
-          const { id: resultSourceId } = await knex('ResultSource')
-            .where('externalId', 'DiagnosticDevice')
-            .first('id')
-          const partner = await knex('Partner')
-            .where('name', 'Partner One')
-            .first('id')
-          partnerId = partner.id
-          ;[assayId] = await knex('Assay').insert({
-            name: 'Test Assay',
-            i18nKey: 'assayTest',
-            externalId: 'assayTest',
-            assayTypeId,
-            deviceTypeId,
-            resultSourceId,
-          })
-          ;[consumableId] = await knex('Consumable').insert({
-            name: 'Test Cartridge',
-            unit: 1,
-            canExpire: 1,
-            manufacturer: 'Daktari',
-          })
-          await knex('PartnerConsumable').insert({
-            partnerId,
-            consumableId,
-            allowStockUpdateFromActionDashboard: true,
-          })
+          assayId = await getTestAssayId(knex)
+          consumableId = await createTestConsumable(knex)
         })
       )
 
       after(async () =>
         run(async knex => {
-          await knex('PartnerConsumable')
-            .where({ consumableId, partnerId })
-            .delete()
-          await knex('Assay')
-            .where({ id: assayId })
-            .delete()
-          await knex('Consumable')
-            .where({ id: consumableId })
-            .delete()
+          await cleanUpTestConsumable(knex, consumableId)
         })
       )
 
@@ -255,9 +216,11 @@ describe('Assay Consumable Routes', () => {
               assert.isTrue(res.body.ok)
               assert.property(res.body, 'data')
               assert.typeOf(res.body.data, 'Object')
-              assert.equal(res.body.data.consumableId, consumableId)
-              assert.equal(res.body.data.assayId, assayId)
-              assert.equal(res.body.data.quantity, initialQuantity)
+              expect(res.body.data).to.containSubset({
+                consumableId,
+                assayId,
+                quantity: initialQuantity,
+              })
               assert.property(res.body.data, 'consumableName')
               assert.property(res.body.data, 'unitName')
               assert.property(res.body.data, 'unitShortName')
@@ -330,9 +293,11 @@ describe('Assay Consumable Routes', () => {
               assert.isTrue(res.body.ok)
               assert.property(res.body, 'data')
               assert.typeOf(res.body.data, 'Object')
-              assert.equal(res.body.data.consumableId, consumableId)
-              assert.equal(res.body.data.assayId, assayId)
-              assert.equal(res.body.data.quantity, updatedQuantity)
+              expect(res.body.data).to.containSubset({
+                consumableId,
+                assayId,
+                quantity: updatedQuantity,
+              })
               assert.property(res.body.data, 'consumableName')
               assert.property(res.body.data, 'unitName')
               assert.property(res.body.data, 'unitShortName')
@@ -396,3 +361,42 @@ describe('Assay Consumable Routes', () => {
     })
   })
 })
+
+// -----------------------------------
+// helper functions
+// -----------------------------------
+async function getTestAssayId(knex) {
+  const { id: assayId } = await knex('Assay')
+    .where({ externalId: 'GxMtbRif' })
+    .first('id')
+  return assayId
+}
+
+async function createTestConsumable(knex) {
+  const { id: partnerId } = await knex('Partner')
+    .where('name', 'Partner One')
+    .first('id')
+
+  const [consumableId] = await knex('Consumable').insert({
+    name: 'Test Cartridge',
+    unit: 1,
+    canExpire: 1,
+    manufacturer: 'Daktari',
+  })
+
+  await knex('PartnerConsumable').insert({
+    partnerId,
+    consumableId,
+    allowStockUpdateFromActionDashboard: true,
+  })
+  return consumableId
+}
+
+async function cleanUpTestConsumable(knex, consumableId) {
+  await knex('PartnerConsumable')
+    .where({ consumableId })
+    .delete()
+  await knex('Consumable')
+    .where({ id: consumableId })
+    .delete()
+}
