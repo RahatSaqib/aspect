@@ -15,6 +15,7 @@ const cssClasses = classnames.bind(require('./CustomField.css'))
 const THEME = {
   Input: {
     input: cssClasses('TextBox__Input'),
+    inputElement: cssClasses('TextBox__InputElement'),
   },
 }
 

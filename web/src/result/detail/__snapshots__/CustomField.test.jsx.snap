@@ -106,7 +106,7 @@ exports[`CustomField component When field type is DateTime should shallow render
         data-react-toolbox="input"
       >
         <input
-          className=""
+          className="TextBox__InputElement"
           defaultValue={undefined}
           disabled={false}
           maxLength={undefined}
@@ -235,7 +235,7 @@ exports[`CustomField component When field type is TextBox should shallow render 
       data-react-toolbox="input"
     >
       <input
-        className=""
+        className="TextBox__InputElement"
         component={[Function]}
         defaultValue={undefined}
         disabled={false}

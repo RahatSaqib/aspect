@@ -15,9 +15,5 @@
 
 .Field__Container > * {
   flex-basis: 25%;
-  white-space: nowrap;
-}
-
-.Field__Container label {
-  padding-bottom: 6px;
+  white-space: nowrap;  
 }
