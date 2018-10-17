@@ -137,13 +137,12 @@ describe('Dashboard routes', () => {
             _.head(_.orderBy(issueMessages, 'notificationTypeLevel', 'desc'))
         )
 
-        // TODO do not hardcode inventory item lookup
         // this is here to always show inventory in action
         // list for all devices assigned to the user, even
         // if there are currently no triggered errors since
         // the user can update stock levels at any time
         const inventoryItems = await knex('Site as s')
-          .join('Device as d', 's.id', 'd.siteId')
+          .leftJoin('Device as d', 's.id', 'd.siteId')
           .leftJoin('InventoryItem as ii', 'ii.siteId', 's.id')
           .leftJoin('Consumable as c', 'ii.consumableId', 'c.id')
           .modify(addConstraints, dataConstraints, { site: 's' })
