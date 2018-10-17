@@ -256,7 +256,28 @@ describe('Dashboard routes', () => {
         password,
         knex,
         query = {},
-        checkPersonIdMatches = true,
+        fieldsThatMustMatch = [
+          'canAcknowledge',
+          'deviceId',
+          'id',
+          'issueCategory',
+          'issueCategoryI18nKey',
+          'issueId',
+          'issueStatusSeverityExternalId',
+          'issueStatusSortOrder',
+          'issueType',
+          'issueTypeExternalId',
+          'issueTypeI18nKey',
+          'message',
+          'notificationType',
+          'notificationTypeLevel',
+          'personId',
+          'resultId',
+          'siteId',
+          'siteName',
+          'status',
+          'statusI18nKey',
+        ],
       }) {
         const userActionByCategory = await lookUpUserActions({
           username,
@@ -271,7 +292,13 @@ describe('Dashboard routes', () => {
           .set('Authorization', `Bearer ${authAccessToken}`)
           .then(res => res.body.data)
 
-        expect(actionDashboardData).to.containSubset(userActionByCategory)
+        expect(actionDashboardData).to.containSubset(
+          _.mapValues(userActionByCategory, categoryActions =>
+            _.map(categoryActions, action =>
+              _.pick(action, fieldsThatMustMatch)
+            )
+          )
+        )
         const actualConnectivityHealth = _.get(
           actionDashboardData,
           'ConnectivityHealth',
@@ -330,7 +357,7 @@ describe('Dashboard routes', () => {
             expect(alert.siteId).to.equal(query.siteId)
           )
         }
-        if (checkPersonIdMatches) {
+        if (fieldsThatMustMatch.includes('personId')) {
           const { id: personId } = await knex('User as u')
             .join('Person as p', 'u.id', 'p.userId')
             .where('u.name', username)
@@ -366,7 +393,25 @@ describe('Dashboard routes', () => {
               username: 'myanmar_admin',
               password: 'test07',
               knex,
-              checkPersonIdMatches: false,
+              fieldsThatMustMatch: [
+                'canAcknowledge',
+                'deviceId',
+                'issueCategory',
+                'issueCategoryI18nKey',
+                'issueId',
+                'issueStatusSeverityExternalId',
+                'issueStatusSortOrder',
+                'issueType',
+                'issueTypeExternalId',
+                'issueTypeI18nKey',
+                'message',
+                'notificationTypeLevel',
+                'resultId',
+                'siteId',
+                'siteName',
+                'status',
+                'statusI18nKey',
+              ],
             })
           ))
 
@@ -382,7 +427,25 @@ describe('Dashboard routes', () => {
                 query: {
                   siteId: site.id,
                 },
-                checkPersonIdMatches: false,
+                fieldsThatMustMatch: [
+                  'canAcknowledge',
+                  'deviceId',
+                  'issueCategory',
+                  'issueCategoryI18nKey',
+                  'issueId',
+                  'issueStatusSeverityExternalId',
+                  'issueStatusSortOrder',
+                  'issueType',
+                  'issueTypeExternalId',
+                  'issueTypeI18nKey',
+                  'message',
+                  'notificationTypeLevel',
+                  'resultId',
+                  'siteId',
+                  'siteName',
+                  'status',
+                  'statusI18nKey',
+                ],
               })
             )
           }))
