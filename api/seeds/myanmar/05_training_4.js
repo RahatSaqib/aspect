@@ -198,20 +198,15 @@ async function seed(knex) {
       type: 'string',
       order: 2,
     },
-    patientTownship: {
-      title: 'Patient Township',
-      type: 'string',
-      order: 3,
-    },
     referralCenter: {
       title: 'Referral Center',
       type: 'string',
-      order: 4,
+      order: 3,
     },
     otherNotes: {
       title: 'Other Notes',
       type: 'string',
-      order: 5,
+      order: 4,
     },
   }
 

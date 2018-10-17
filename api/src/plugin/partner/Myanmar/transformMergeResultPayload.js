@@ -149,7 +149,9 @@ function parsePatientId(payload) {
   const existingCity = _.get(payload, 'patient.city')
   if (!existingCity) {
     const city = patientId.substr(indexOfFirstSeparator + 1).trim()
-    _.set(payload, 'patient.city', city)
+    if (city) {
+      _.set(payload, 'patient.city', city)
+    }
     _.set(payload, 'patient.id', patientId.substr(0, indexOfFirstSeparator))
   }
 }
@@ -219,6 +221,9 @@ async function parseCustomFields(payload /* , knex */) {
       _.set(payload, 'patient.gender', 'Female')
     }
   }
+  if (customFieldValues.patientTownship) {
+    _.set(payload, 'patient.city', customFieldValues.patientTownship)
+  }
   if (customFieldValues.patientHivStatus) {
     if (customFieldValues.patientHivStatus === 'Positive') {
       _.set(payload, 'patient.hivStatus', 'HIV Positive')
@@ -283,9 +288,6 @@ async function parseCustomFields(payload /* , knex */) {
         _.set(payload, 'sample.type.id', customFieldValues.sampleType)
       }
     }
-  }
-  if (customFieldValues.patientTownship) {
-    _.set(payload, 'data.patientTownship', customFieldValues.patientTownship)
   }
   if (customFieldValues.otherReasonForTest) {
     _.set(
