@@ -11,5 +11,9 @@
 }
 
 .TextBox__Input {
-  padding: 2px 0;
+  padding: 0;
+}
+
+.TextBox__InputElement {
+  padding: 6px 0;
 }
