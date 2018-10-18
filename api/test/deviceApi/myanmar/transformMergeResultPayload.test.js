@@ -417,7 +417,7 @@ describe('transformMergeResultPayload for Myanmar', () => {
                   },
                   39: {
                     notAvailable: false,
-                    value: 'Hkamti',
+                    value: 'Johannesburg',
                     label: 'Patient Township',
                   },
                   40: {
@@ -497,7 +497,7 @@ describe('transformMergeResultPayload for Myanmar', () => {
                   },
                   39: {
                     notAvailable: false,
-                    value: 'Hkamti',
+                    value: 'Johannesburg',
                     label: 'Patient Township',
                   },
                   40: {

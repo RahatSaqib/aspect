@@ -34,6 +34,7 @@ const {
 } = require('../../src/shared/dictionary')
 
 const { seedUnknownErrorsIssue } = require('../seedUnknownErrorsIssue')
+const { seedDataCategory } = require('../dataCategoryLow')
 
 const now = new Date()
 const millisInHour = 1000 * 60 * 60
@@ -1940,6 +1941,8 @@ async function seed(knex) {
       updatedOn: now,
     },
   ])
+
+  await seedDataCategory(knex, 'Myanmar')
 }
 
 function calculateDateForResult(
