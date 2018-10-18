@@ -27,6 +27,7 @@ const { run } = require('../../../src/db')
 const { waitForApproximately } = require('../../utils/generatorFunctionUtils')
 const { waitForIdle, waitForAction } = require('../../utils/mqUtils')
 const { deviceSeen, deviceMaintenance } = require('../../../src/device/actions')
+const { factGenerateDeviceConnectivity } = require('../../../src/fact/actions')
 
 const server = supertest.agent('http://localhost:8080')
 const { assert, expect } = chai
@@ -98,14 +99,14 @@ describe('Device API routes for GxAlert Device', () => {
             afterCleanUp,
           } = context
 
-          before(async () =>
+          beforeEach(async () =>
             run(async knex => {
               maxDeviceIdBefore = await getMaxDeviceId(knex)
               await beforeCreateGxAlertApiKey()
               useGxAlertDeviceId(gxAlertDeviceId)
             })
           )
-          after(afterCleanUp)
+          afterEach(afterCleanUp)
 
           it('should respond with OK and create a new GeneXpert device', () =>
             runTest(async knex => {
@@ -387,7 +388,7 @@ describe('Device API routes for GxAlert Device', () => {
         afterCleanUp,
       } = context
 
-      before(async () =>
+      beforeEach(async () =>
         run(async knex => {
           maxDeviceIdBefore = await getMaxDeviceId(knex)
           await beforeCreateGxAlertApiKey()
@@ -406,7 +407,7 @@ describe('Device API routes for GxAlert Device', () => {
           })
         })
       )
-      after(afterCleanUp)
+      afterEach(afterCleanUp)
 
       describe('and gxAlertDeviceId changes', () => {
         it('should create a new device', () =>
@@ -528,14 +529,6 @@ describe('Device API routes for GxAlert Device', () => {
                   macAddress: firstMacAddress,
                 },
               },
-              {
-                name: deviceName,
-                deviceTypeId: geneXpertDeviceType.id,
-                macAddress: secondMacAddress,
-                configurationData: {
-                  macAddress: secondMacAddress,
-                },
-              },
             ])
 
             const { deviceAuth, basicDevicePayload } = context
@@ -580,18 +573,10 @@ describe('Device API routes for GxAlert Device', () => {
               {
                 name: deviceName,
                 deviceTypeId: geneXpertDeviceType.id,
-                macAddress: firstMacAddress,
-                configurationData: {
-                  gxAlertDeviceId: firstGxAlertDeviceId,
-                  macAddress: firstMacAddress,
-                },
-              },
-              {
-                name: deviceName,
-                deviceTypeId: geneXpertDeviceType.id,
                 macAddress: thirdMacAddress,
                 configurationData: {
                   macAddress: thirdMacAddress,
+                  gxAlertDeviceId: firstGxAlertDeviceId,
                 },
               },
             ])
@@ -626,17 +611,9 @@ describe('Device API routes for GxAlert Device', () => {
                   macAddress: firstMacAddress,
                 },
               },
-              {
-                name: deviceName,
-                deviceTypeId: geneXpertDeviceType.id,
-                macAddress: thirdMacAddress,
-                configurationData: {
-                  gxAlertDeviceId: secondGxAlertDeviceId,
-                  macAddress: thirdMacAddress,
-                },
-              },
             ])
 
+            useGxAlertDeviceId(secondGxAlertDeviceId)
             const { deviceAuth, basicDevicePayload } = context
             const response = await postToDeviceApi({
               authHeader: deviceAuth,
@@ -797,7 +774,7 @@ describe('Device API routes for GxAlert Device', () => {
         afterCleanUp,
       } = context
 
-      before(async () =>
+      beforeEach(async () =>
         run(async knex => {
           maxDeviceIdBefore = await getMaxDeviceId(knex)
           await beforeCreateGxAlertApiKey()
@@ -816,7 +793,7 @@ describe('Device API routes for GxAlert Device', () => {
           })
         })
       )
-      after(afterCleanUp)
+      afterEach(afterCleanUp)
 
       describe('and gxAlertDeviceId changes', () => {
         it('should create a new device', () =>
@@ -939,15 +916,6 @@ describe('Device API routes for GxAlert Device', () => {
                   deviceSerialNumber: firstDeviceSerial,
                 },
               },
-              {
-                name: deviceName,
-                deviceTypeId: geneXpertDeviceType.id,
-                serial: secondDeviceSerial,
-                configurationData: {
-                  gxAlertDeviceId: secondGxAlertDeviceId,
-                  deviceSerialNumber: secondDeviceSerial,
-                },
-              },
             ])
 
             const { deviceAuth, basicDevicePayload } = context
@@ -992,18 +960,10 @@ describe('Device API routes for GxAlert Device', () => {
               {
                 name: deviceName,
                 deviceTypeId: geneXpertDeviceType.id,
-                serial: firstDeviceSerial,
-                configurationData: {
-                  gxAlertDeviceId: firstGxAlertDeviceId,
-                  deviceSerialNumber: firstDeviceSerial,
-                },
-              },
-              {
-                name: deviceName,
-                deviceTypeId: geneXpertDeviceType.id,
                 serial: thirdDeviceSerial,
                 configurationData: {
                   deviceSerialNumber: thirdDeviceSerial,
+                  gxAlertDeviceId: firstGxAlertDeviceId,
                 },
               },
             ])
@@ -1038,17 +998,9 @@ describe('Device API routes for GxAlert Device', () => {
                   deviceSerialNumber: firstDeviceSerial,
                 },
               },
-              {
-                name: deviceName,
-                deviceTypeId: geneXpertDeviceType.id,
-                serial: thirdDeviceSerial,
-                configurationData: {
-                  gxAlertDeviceId: secondGxAlertDeviceId,
-                  deviceSerialNumber: thirdDeviceSerial,
-                },
-              },
             ])
 
+            useGxAlertDeviceId(secondGxAlertDeviceId)
             const { deviceAuth, basicDevicePayload } = context
             const response = await postToDeviceApi({
               authHeader: deviceAuth,
@@ -1194,7 +1146,7 @@ describe('Device API routes for GxAlert Device', () => {
         afterCleanUp,
       } = context
 
-      before(async () =>
+      beforeEach(async () =>
         run(async knex => {
           maxDeviceIdBefore = await getMaxDeviceId(knex)
           await beforeCreateGxAlertApiKey()
@@ -1213,7 +1165,7 @@ describe('Device API routes for GxAlert Device', () => {
           })
         })
       )
-      after(afterCleanUp)
+      afterEach(afterCleanUp)
 
       describe('and gxAlertDeviceId changes', () => {
         it('should create a new device', () =>
@@ -1319,6 +1271,7 @@ describe('Device API routes for GxAlert Device', () => {
               maxDeviceIdBefore,
               knex
             )
+
             expect(devicesCreatedDuringTestBefore).to.containSubset([
               {
                 name: gxAlertDeviceName,
@@ -1333,14 +1286,6 @@ describe('Device API routes for GxAlert Device', () => {
                 configurationData: {
                   gxAlertDeviceId: firstGxAlertDeviceId,
                   hostId: firstHostId,
-                },
-              },
-              {
-                name: deviceName,
-                deviceTypeId: geneXpertDeviceType.id,
-                hostId: secondHostId,
-                configurationData: {
-                  hostId: secondHostId,
                 },
               },
             ])
@@ -1387,18 +1332,10 @@ describe('Device API routes for GxAlert Device', () => {
               {
                 name: deviceName,
                 deviceTypeId: geneXpertDeviceType.id,
-                hostId: firstHostId,
-                configurationData: {
-                  gxAlertDeviceId: firstGxAlertDeviceId,
-                  hostId: firstHostId,
-                },
-              },
-              {
-                name: deviceName,
-                deviceTypeId: geneXpertDeviceType.id,
                 hostId: thirdHostId,
                 configurationData: {
                   hostId: thirdHostId,
+                  gxAlertDeviceId: firstGxAlertDeviceId,
                 },
               },
             ])
@@ -1433,17 +1370,9 @@ describe('Device API routes for GxAlert Device', () => {
                   hostId: firstHostId,
                 },
               },
-              {
-                name: deviceName,
-                deviceTypeId: geneXpertDeviceType.id,
-                hostId: thirdHostId,
-                configurationData: {
-                  gxAlertDeviceId: secondGxAlertDeviceId,
-                  hostId: thirdHostId,
-                },
-              },
             ])
 
+            useGxAlertDeviceId(secondGxAlertDeviceId)
             const { deviceAuth, basicDevicePayload } = context
             const response = await postToDeviceApi({
               authHeader: deviceAuth,
@@ -1735,7 +1664,7 @@ describe('Device API routes for GxAlert Device', () => {
         return _.merge(logEntry, { data: JSON.parse(logEntry.data) })
       }
 
-      before(async () =>
+      beforeEach(async () =>
         run(async () => {
           await beforeCreateGxAlertApiKey({
             countryAbbreviation: country,
@@ -1801,7 +1730,7 @@ describe('Device API routes for GxAlert Device', () => {
           deviceId = response.body.device.id
         })
       )
-      after(afterCleanUp)
+      afterEach(afterCleanUp)
 
       describe('which has been updated since the device configuration was last updated', () => {
         it('should create an entry in the device maintenance status log', () =>
@@ -2015,6 +1944,11 @@ describe('Device API routes for GxAlert Device', () => {
               const { now } = context
               const { id: deviceId } = await getCurrentGeneXpertDevice()
 
+              const waitForFactGenerateDeviceConnectivity = waitForAction(
+                factGenerateDeviceConnectivity(deviceId)
+              )
+              await waitForFactGenerateDeviceConnectivity
+
               await knex('FactDeviceFlag')
                 .where({ deviceId })
                 .update({ maintenance: 0, maintenanceDueOn: null })
@@ -2209,7 +2143,7 @@ describe('Device API routes for GxAlert Device', () => {
 
       let standardDevicePayload
 
-      before(async () =>
+      beforeEach(async () =>
         run(async () => {
           await beforeCreateGxAlertApiKey({
             countryAbbreviation: country,
@@ -2275,7 +2209,7 @@ describe('Device API routes for GxAlert Device', () => {
           await waitForIdle()
         })
       )
-      after(afterCleanUp)
+      afterEach(afterCleanUp)
 
       describe('and state as well as LGA belong to the country that the device is in', () => {
         it('should update the device and site to the location that was specified', () =>
@@ -2542,6 +2476,7 @@ describe('Device API routes for GxAlert Device', () => {
                 payload: {
                   configuration: {
                     data: {
+                      state: null,
                       latitude,
                       longitude,
                     },
@@ -2608,7 +2543,7 @@ describe('Device API routes for GxAlert Device', () => {
     } = context
     let { deviceAuth, basicDevicePayload } = context
 
-    before(async () =>
+    beforeEach(async () =>
       run(async () => {
         await beforeCreateGxAlertApiKey()
         useGxAlertDeviceId(deviceIdFromGxAlert)
@@ -2624,7 +2559,7 @@ describe('Device API routes for GxAlert Device', () => {
         })
       })
     )
-    after(afterCleanUp)
+    afterEach(afterCleanUp)
 
     it('should update the last seen and last ping time', () =>
       runTest(async () => {
@@ -2662,6 +2597,12 @@ describe('Device API routes for GxAlert Device', () => {
     it('should eventually update the device fact offline status to false', () =>
       runTest(async knex => {
         const { id: deviceId } = await getCurrentGeneXpertDevice()
+
+        const waitForFactGenerateDeviceConnectivity = waitForAction(
+          factGenerateDeviceConnectivity(deviceId)
+        )
+        await waitForFactGenerateDeviceConnectivity
+
         await knex('FactDeviceFlag')
           .where({ deviceId })
           .update({ offline: 1 })
@@ -2716,14 +2657,14 @@ describe('Device API routes for GxAlert Device', () => {
       afterCleanUp,
     } = context
     let { deviceAuth, device: gxAlertDevice } = context
-    before(async () =>
+    beforeEach(async () =>
       run(async () => {
         await beforeCreateGxAlertApiKey()
         useGxAlertDeviceId(gxAlertDeviceId)
         ;({ deviceAuth, device: gxAlertDevice } = context)
       })
     )
-    after(afterCleanUp)
+    afterEach(afterCleanUp)
 
     it('should reject a result without a start or end date', () =>
       runTest(async () => {
@@ -3458,12 +3399,21 @@ describe('Device API routes for GxAlert Device', () => {
 
     describe('when the assay in the result payload is mapped to a consumable', () => {
       const initialQuantityOnHand = 100
-      let expiryDate
-      let inventoryItemId
-
+      beforeEach(async () =>
+        run(async () => {
+          const { deviceAuth, basicDevicePayload } = context
+          await postToDeviceApi({
+            authHeader: deviceAuth,
+            payload: _.merge({}, basicDevicePayload, {
+              name: deviceName,
+            }),
+          })
+        })
+      )
       it('should reduce inventory levels of that consumable appropriately', () =>
         runTest(async knex => {
           const { now } = context
+
           const consumableAssay = await knex('ConsumableAssay as ca')
             .join('Assay as a', 'ca.assayId', 'a.id')
             .join('DeviceType as dt', 'a.deviceTypeId', 'dt.id')
@@ -3475,8 +3425,8 @@ describe('Device API routes for GxAlert Device', () => {
           assert.isAbove(consumableAssay.quantity, 0)
 
           const geneXpertDevice = await getCurrentGeneXpertDevice()
-          expiryDate = new Date(addYears(now, 1).setHours(0, 0, 0, 0))
-          ;[inventoryItemId] = await knex('InventoryItem').insert({
+          const expiryDate = new Date(addYears(now, 1).setHours(0, 0, 0, 0))
+          const [inventoryItemId] = await knex('InventoryItem').insert({
             consumableId: consumableAssay.consumableId,
             siteId: geneXpertDevice.siteId,
             expiresOn: expiryDate,
@@ -3559,11 +3509,20 @@ describe('Device API routes for GxAlert Device', () => {
             assert.isNotEmpty(consumableAssays)
             assert.isAbove(_.sumBy(consumableAssays, 'quantity'), 0)
 
+            const { now } = context
+            const geneXpertDevice = await getCurrentGeneXpertDevice()
+            const expiryDate = new Date(addYears(now, 1).setHours(0, 0, 0, 0))
+            const [inventoryItemId] = await knex('InventoryItem').insert({
+              consumableId: _.head(consumableAssays).consumableId,
+              siteId: geneXpertDevice.siteId,
+              expiresOn: expiryDate,
+              quantityOnHand: initialQuantityOnHand,
+            })
+
             const inventoryItemBefore = await knex('InventoryItem')
               .where({ id: inventoryItemId })
               .first()
 
-            const { now } = context
             const testStartedOn = setMilliseconds(
               subMinutes(
                 subHours(now, Math.floor(Math.random() * 24)),
@@ -3791,6 +3750,17 @@ describe('Device API routes for GxAlert Device', () => {
     })
 
     describe('when the result comes from a site that has location data saved', () => {
+      beforeEach(async () =>
+        run(async () => {
+          const { deviceAuth, basicDevicePayload } = context
+          await postToDeviceApi({
+            authHeader: deviceAuth,
+            payload: _.merge({}, basicDevicePayload, {
+              name: deviceName,
+            }),
+          })
+        })
+      )
       describe('and the result has NO coordinates specified in the payload', () => {
         it('should set the the GPS coordinates and geography of the result to those of the site/device', () =>
           runTest(async knex => {
@@ -4154,6 +4124,7 @@ describe('Device API routes for GxAlert Device', () => {
 
   describe('inventory changes', () => {
     const gxAlertDeviceId = 4412
+    const initialQuantityOnHand = 100
     const deviceName = 'GeneXpert Device with Inventory Changes'
     const context = createContext()
     const {
@@ -4165,7 +4136,7 @@ describe('Device API routes for GxAlert Device', () => {
     } = context
     let { deviceAuth, basicDevicePayload } = context
     let geneXpertDevice
-    before(async () =>
+    beforeEach(async () =>
       run(async () => {
         await beforeCreateGxAlertApiKey()
         useGxAlertDeviceId(gxAlertDeviceId)
@@ -4179,7 +4150,7 @@ describe('Device API routes for GxAlert Device', () => {
         geneXpertDevice = await getCurrentGeneXpertDevice()
       })
     )
-    after(afterCleanUp)
+    afterEach(afterCleanUp)
 
     it('should create inventory items that do not exist', () =>
       runTest(async knex => {
@@ -4276,429 +4247,466 @@ describe('Device API routes for GxAlert Device', () => {
         ])
       }))
 
-    it('should respond the inventory items that have been updated', () =>
-      runTest(async () => {
-        const { now } = context
-        const startedOn = subHours(subDays(now, 1), 2)
-        const endedOn = subHours(now, 2)
-        const expirationDate = new Date(addYears(now, 1).setHours(0, 0, 0, 0))
-        const consumableName = 'Xpert HIV-1 Qual Cartridge'
-        const consumableReason = 'Captured'
-        const initialQuantity = 100
-        const quantity = 5
+    describe('inventory update', () => {
+      beforeEach(async () =>
+        run(async knex => {
+          const consumableAssay = await knex('ConsumableAssay as ca')
+            .join('Assay as a', 'ca.assayId', 'a.id')
+            .join('DeviceType as dt', 'a.deviceTypeId', 'dt.id')
+            .where({ 'dt.externalId': basicDevicePayload.type.id })
+            .andWhere('ca.quantity', '>', 0)
+            .first('ca.consumableId', 'ca.quantity', 'a.externalId as assayId')
 
-        const response = await postToDeviceApi({
-          authHeader: deviceAuth,
-          payload: _.merge({}, basicDevicePayload, {
-            name: deviceName,
-            operation: {
-              startedOn,
-              endedOn,
-              data: {
-                inventoryChanges: [
-                  {
-                    consumableName,
-                    consumableReasonName: consumableReason,
-                    quantity,
-                    resultingQuantityOnHand: initialQuantity + quantity,
-                    dateChanged: startedOn,
-                    expirationDate,
-                  },
-                ],
-              },
-            },
-          }),
-        })
-        expect(response.body.inventoryItems).to.containSubset([
-          {
-            consumableName,
-            quantityOnHand: _.max([0, initialQuantity + quantity]),
-            expiresOn: expirationDate.toJSON(),
-          },
-        ])
-      }))
+          assert.isNotEmpty(consumableAssay)
+          assert.isAbove(consumableAssay.quantity, 0)
 
-    it('should ignore changes for consumables that are unknown', () =>
-      runTest(async knex => {
-        const { now } = context
-        const inventoryItemsAtSiteBefore = await knex('InventoryItem')
-          .where({ siteId: geneXpertDevice.siteId })
-          .select()
-
-        const startedOn = subHours(subDays(now, 1), 2)
-        const endedOn = subHours(now, 2)
-        const expirationDate = new Date(addYears(now, 1).setHours(0, 0, 0, 0))
-
-        await postToDeviceApi({
-          authHeader: deviceAuth,
-          payload: _.merge({}, basicDevicePayload, {
-            name: deviceName,
-            operation: {
-              startedOn,
-              endedOn,
-              data: {
-                inventoryChanges: [
-                  {
-                    consumableName: 'Unknown consumable type',
-                    consumableReasonName: 'Captured',
-                    quantity: 12,
-                    resultingQuantityOnHand: 112,
-                    dateChanged: startedOn,
-                    expirationDate,
-                  },
-                ],
-              },
-            },
-          }),
-        })
-
-        const inventoryItemsAtSiteAfter = await knex('InventoryItem')
-          .where({ siteId: geneXpertDevice.siteId })
-          .select()
-        assert.deepEqual(inventoryItemsAtSiteBefore, inventoryItemsAtSiteAfter)
-      }))
-
-    it('should accept all types of GeneXpert cartridges', () =>
-      runTest(async knex => {
-        const { now } = context
-        const inventoryItemsAtSiteBefore = await knex('InventoryItem')
-          .where({ siteId: geneXpertDevice.siteId })
-          .pluck('id')
-
-        const startedOn = subHours(subDays(now, 1), 2)
-        const endedOn = subHours(now, 2)
-        const consumableReason = 'Captured'
-
-        const inventoryChanges = [
-          {
-            consumableName: 'GeneXpert TB Cartridge',
-            consumableReasonName: consumableReason,
-            quantity: 13,
-            resultingQuantityOnHand: 86,
-            dateChanged: addHours(startedOn, 1),
-            expirationDate: new Date(
-              subDays(addYears(now, 1), 1).setHours(0, 0, 0, 0)
-            ),
-          },
-          {
-            consumableName: 'GeneXpert Ebola Cartridge',
-            consumableReasonName: consumableReason,
-            quantity: 3,
-            resultingQuantityOnHand: 21,
-            dateChanged: addHours(startedOn, 2),
-            expirationDate: new Date(
-              subDays(addYears(now, 1), 3).setHours(0, 0, 0, 0)
-            ),
-          },
-          {
-            consumableName: 'Xpert HIV-1 Qual Cartridge',
-            consumableReasonName: consumableReason,
-            quantity: 44,
-            resultingQuantityOnHand: 50,
-            dateChanged: addHours(startedOn, 3),
-            expirationDate: new Date(
-              subDays(addYears(now, 1), 3).setHours(0, 0, 0, 0)
-            ),
-          },
-          {
-            consumableName: 'Xpert HIV-1 Viral Load Cartridge',
-            consumableReasonName: consumableReason,
-            quantity: 1,
-            resultingQuantityOnHand: 13,
-            dateChanged: addHours(startedOn, 4),
-            expirationDate: new Date(
-              subDays(addYears(now, 1), 4).setHours(0, 0, 0, 0)
-            ),
-          },
-          {
-            consumableName: 'GeneXpert TB Ultra Cartridge',
-            consumableReasonName: consumableReason,
-            quantity: 26,
-            resultingQuantityOnHand: 41,
-            dateChanged: addHours(startedOn, 5),
-            expirationDate: new Date(
-              subDays(addYears(now, 1), 8).setHours(0, 0, 0, 0)
-            ),
-          },
-        ]
-
-        await postToDeviceApi({
-          authHeader: deviceAuth,
-          payload: _.merge({}, basicDevicePayload, {
-            name: deviceName,
-            operation: {
-              startedOn,
-              endedOn,
-              data: { inventoryChanges },
-            },
-          }),
-        })
-
-        const inventoryItemsAtSiteAfter = await knex('InventoryItem as ii')
-          .join('Consumable as c', 'ii.consumableId', 'c.id')
-          .where({ siteId: geneXpertDevice.siteId })
-          .whereNotIn('ii.id', inventoryItemsAtSiteBefore)
-          .select(
-            'ii.id',
-            'c.name as consumableName',
-            'ii.inTransitFromSiteId',
-            'ii.lotNumber',
-            'ii.expiresOn',
-            'ii.quantityOnHand'
+          const expiryDate = new Date(
+            addYears(new Date(), 1).setHours(0, 0, 0, 0)
           )
-        expect(inventoryItemsAtSiteAfter).to.containSubset(
-          _.map(inventoryChanges, inventoryChange => ({
-            consumableName: inventoryChange.consumableName,
-            inTransitFromSiteId: null,
-            lotNumber: null,
-            expiresOn: inventoryChange.expirationDate,
-            quantityOnHand: inventoryChange.resultingQuantityOnHand,
-          }))
-        )
+          await knex('InventoryItem').insert({
+            consumableId: consumableAssay.consumableId,
+            siteId: geneXpertDevice.siteId,
+            expiresOn: expiryDate,
+            quantityOnHand: initialQuantityOnHand,
+          })
+        })
+      )
+      it('should respond the inventory items that have been updated', () =>
+        runTest(async () => {
+          const { now } = context
+          const startedOn = subHours(subDays(now, 1), 2)
+          const endedOn = subHours(now, 2)
+          const expirationDate = new Date(addYears(now, 1).setHours(0, 0, 0, 0))
+          const consumableName = 'Xpert HIV-1 Qual Cartridge'
+          const consumableReason = 'Captured'
+          const initialQuantity = 100
+          const quantity = 5
 
-        const inventoryLog = await knex('InventoryLog as il')
-          .join('ConsumableReason as cr', 'il.consumableReasonId', 'cr.id')
-          .join('Consumable as c', 'il.consumableId', 'c.id')
-          .whereIn('il.inventoryItemId', _.map(inventoryItemsAtSiteAfter, 'id'))
-          .select(
-            'c.name as consumableName',
-            'il.siteId',
-            'cr.name as consumableReason',
-            'il.resultId',
-            'il.operation',
-            'il.lotNumber',
-            'il.expiresOn',
-            'il.quantity',
-            'il.notes',
-            'il.adjustedFrom',
-            'il.adjustedTo'
+          const response = await postToDeviceApi({
+            authHeader: deviceAuth,
+            payload: _.merge({}, basicDevicePayload, {
+              name: deviceName,
+              operation: {
+                startedOn,
+                endedOn,
+                data: {
+                  inventoryChanges: [
+                    {
+                      consumableName,
+                      consumableReasonName: consumableReason,
+                      quantity,
+                      resultingQuantityOnHand: initialQuantity + quantity,
+                      dateChanged: startedOn,
+                      expirationDate,
+                    },
+                  ],
+                },
+              },
+            }),
+          })
+          expect(response.body.inventoryItems).to.containSubset([
+            {
+              consumableName,
+              quantityOnHand: _.max([0, initialQuantity + quantity]),
+              expiresOn: expirationDate.toJSON(),
+            },
+          ])
+        }))
+
+      it('should ignore changes for consumables that are unknown', () =>
+        runTest(async knex => {
+          const { now } = context
+          const inventoryItemsAtSiteBefore = await knex('InventoryItem')
+            .where({ siteId: geneXpertDevice.siteId })
+            .select()
+
+          const startedOn = subHours(subDays(now, 1), 2)
+          const endedOn = subHours(now, 2)
+          const expirationDate = new Date(addYears(now, 1).setHours(0, 0, 0, 0))
+
+          await postToDeviceApi({
+            authHeader: deviceAuth,
+            payload: _.merge({}, basicDevicePayload, {
+              name: deviceName,
+              operation: {
+                startedOn,
+                endedOn,
+                data: {
+                  inventoryChanges: [
+                    {
+                      consumableName: 'Unknown consumable type',
+                      consumableReasonName: 'Captured',
+                      quantity: 12,
+                      resultingQuantityOnHand: 112,
+                      dateChanged: startedOn,
+                      expirationDate,
+                    },
+                  ],
+                },
+              },
+            }),
+          })
+
+          const inventoryItemsAtSiteAfter = await knex('InventoryItem')
+            .where({ siteId: geneXpertDevice.siteId })
+            .select()
+          assert.deepEqual(
+            inventoryItemsAtSiteBefore,
+            inventoryItemsAtSiteAfter
+          )
+        }))
+
+      it('should accept all types of GeneXpert cartridges', () =>
+        runTest(async knex => {
+          const { now } = context
+          const inventoryItemsAtSiteBefore = await knex('InventoryItem')
+            .where({ siteId: geneXpertDevice.siteId })
+            .pluck('id')
+
+          const startedOn = subHours(subDays(now, 1), 2)
+          const endedOn = subHours(now, 2)
+          const consumableReason = 'Captured'
+
+          const inventoryChanges = [
+            {
+              consumableName: 'GeneXpert TB Cartridge',
+              consumableReasonName: consumableReason,
+              quantity: 13,
+              resultingQuantityOnHand: 86,
+              dateChanged: addHours(startedOn, 1),
+              expirationDate: new Date(
+                subDays(addYears(now, 1), 1).setHours(0, 0, 0, 0)
+              ),
+            },
+            {
+              consumableName: 'GeneXpert Ebola Cartridge',
+              consumableReasonName: consumableReason,
+              quantity: 3,
+              resultingQuantityOnHand: 21,
+              dateChanged: addHours(startedOn, 2),
+              expirationDate: new Date(
+                subDays(addYears(now, 1), 3).setHours(0, 0, 0, 0)
+              ),
+            },
+            {
+              consumableName: 'Xpert HIV-1 Qual Cartridge',
+              consumableReasonName: consumableReason,
+              quantity: 44,
+              resultingQuantityOnHand: 50,
+              dateChanged: addHours(startedOn, 3),
+              expirationDate: new Date(
+                subDays(addYears(now, 1), 3).setHours(0, 0, 0, 0)
+              ),
+            },
+            {
+              consumableName: 'Xpert HIV-1 Viral Load Cartridge',
+              consumableReasonName: consumableReason,
+              quantity: 1,
+              resultingQuantityOnHand: 13,
+              dateChanged: addHours(startedOn, 4),
+              expirationDate: new Date(
+                subDays(addYears(now, 1), 4).setHours(0, 0, 0, 0)
+              ),
+            },
+            {
+              consumableName: 'GeneXpert TB Ultra Cartridge',
+              consumableReasonName: consumableReason,
+              quantity: 26,
+              resultingQuantityOnHand: 41,
+              dateChanged: addHours(startedOn, 5),
+              expirationDate: new Date(
+                subDays(addYears(now, 1), 8).setHours(0, 0, 0, 0)
+              ),
+            },
+          ]
+
+          await postToDeviceApi({
+            authHeader: deviceAuth,
+            payload: _.merge({}, basicDevicePayload, {
+              name: deviceName,
+              operation: {
+                startedOn,
+                endedOn,
+                data: { inventoryChanges },
+              },
+            }),
+          })
+
+          const inventoryItemsAtSiteAfter = await knex('InventoryItem as ii')
+            .join('Consumable as c', 'ii.consumableId', 'c.id')
+            .where({ siteId: geneXpertDevice.siteId })
+            .whereNotIn('ii.id', inventoryItemsAtSiteBefore)
+            .select(
+              'ii.id',
+              'c.name as consumableName',
+              'ii.inTransitFromSiteId',
+              'ii.lotNumber',
+              'ii.expiresOn',
+              'ii.quantityOnHand'
+            )
+          expect(inventoryItemsAtSiteAfter).to.containSubset(
+            _.map(inventoryChanges, inventoryChange => ({
+              consumableName: inventoryChange.consumableName,
+              inTransitFromSiteId: null,
+              lotNumber: null,
+              expiresOn: inventoryChange.expirationDate,
+              quantityOnHand: inventoryChange.resultingQuantityOnHand,
+            }))
           )
 
-        expect(inventoryLog).to.containSubset(
-          _.map(inventoryChanges, inventoryChange => ({
-            consumableName: inventoryChange.consumableName,
+          const inventoryLog = await knex('InventoryLog as il')
+            .join('ConsumableReason as cr', 'il.consumableReasonId', 'cr.id')
+            .join('Consumable as c', 'il.consumableId', 'c.id')
+            .whereIn(
+              'il.inventoryItemId',
+              _.map(inventoryItemsAtSiteAfter, 'id')
+            )
+            .select(
+              'c.name as consumableName',
+              'il.siteId',
+              'cr.name as consumableReason',
+              'il.resultId',
+              'il.operation',
+              'il.lotNumber',
+              'il.expiresOn',
+              'il.quantity',
+              'il.notes',
+              'il.adjustedFrom',
+              'il.adjustedTo'
+            )
+
+          expect(inventoryLog).to.containSubset(
+            _.map(inventoryChanges, inventoryChange => ({
+              consumableName: inventoryChange.consumableName,
+              siteId: geneXpertDevice.siteId,
+              consumableReason,
+              resultId: null,
+              operation: 'add from GxConnect',
+              lotNumber: null,
+              expiresOn: inventoryChange.expirationDate,
+              quantity: Math.abs(inventoryChange.quantity),
+              notes: null,
+              adjustedFrom: setMilliseconds(inventoryChange.dateChanged, 0),
+              adjustedTo: null,
+            }))
+          )
+        }))
+
+      it('should increase the quantity inventory items that do exist', () =>
+        runTest(async knex => {
+          const { now } = context
+          const inventoryItemAtSiteBefore = await knex('InventoryItem as ii')
+            .join('Consumable as c', 'ii.consumableId', 'c.id')
+            .where({ siteId: geneXpertDevice.siteId })
+            .orderBy(['ii.createdOn', 'ii.id'])
+            .first(
+              'ii.id',
+              'c.name as consumableName',
+              'ii.inTransitFromSiteId',
+              'ii.lotNumber',
+              'ii.expiresOn',
+              'ii.quantityOnHand'
+            )
+          assert.isNotEmpty(inventoryItemAtSiteBefore)
+
+          const startedOn = subHours(subDays(now, 1), 2)
+          const endedOn = subHours(now, 2)
+          const consumableReason = 'Captured'
+          const quantity = 13
+
+          await postToDeviceApi({
+            authHeader: deviceAuth,
+            payload: _.merge({}, basicDevicePayload, {
+              name: deviceName,
+              operation: {
+                startedOn,
+                endedOn,
+                data: {
+                  inventoryChanges: [
+                    {
+                      consumableName: inventoryItemAtSiteBefore.consumableName,
+                      consumableReasonName: consumableReason,
+                      quantity,
+                      resultingQuantityOnHand:
+                        inventoryItemAtSiteBefore.quantityOnHand + quantity,
+                      dateChanged: startedOn,
+                      expirationDate: inventoryItemAtSiteBefore.expiresOn,
+                    },
+                  ],
+                },
+              },
+            }),
+          })
+
+          const inventoryItemsAtSiteAfter = await knex('InventoryItem as ii')
+            .join('Consumable as c', 'ii.consumableId', 'c.id')
+            .where({ 'ii.id': inventoryItemAtSiteBefore.id })
+            .select(
+              'ii.id',
+              'c.name as consumableName',
+              'ii.inTransitFromSiteId',
+              'ii.lotNumber',
+              'ii.expiresOn',
+              'ii.quantityOnHand'
+            )
+          expect(inventoryItemsAtSiteAfter).to.containSubset([
+            {
+              consumableName: inventoryItemAtSiteBefore.consumableName,
+              inTransitFromSiteId: null,
+              lotNumber: null,
+              expiresOn: inventoryItemAtSiteBefore.expiresOn,
+              quantityOnHand: _.max([
+                0,
+                inventoryItemAtSiteBefore.quantityOnHand + quantity,
+              ]),
+            },
+          ])
+
+          const inventoryLog = await knex('InventoryLog as il')
+            .join('ConsumableReason as cr', 'il.consumableReasonId', 'cr.id')
+            .join('Consumable as c', 'il.consumableId', 'c.id')
+            .whereIn(
+              'il.inventoryItemId',
+              _.map(inventoryItemsAtSiteAfter, 'id')
+            )
+            .orderBy('il.id', 'desc')
+            .first(
+              'c.name as consumableName',
+              'il.siteId',
+              'cr.name as consumableReason',
+              'il.resultId',
+              'il.operation',
+              'il.lotNumber',
+              'il.expiresOn',
+              'il.quantity',
+              'il.notes',
+              'il.adjustedFrom',
+              'il.adjustedTo'
+            )
+
+          expect(inventoryLog).to.containSubset({
+            consumableName: inventoryItemAtSiteBefore.consumableName,
             siteId: geneXpertDevice.siteId,
             consumableReason,
             resultId: null,
             operation: 'add from GxConnect',
             lotNumber: null,
-            expiresOn: inventoryChange.expirationDate,
-            quantity: Math.abs(inventoryChange.quantity),
+            expiresOn: inventoryItemAtSiteBefore.expiresOn,
+            quantity,
             notes: null,
-            adjustedFrom: setMilliseconds(inventoryChange.dateChanged, 0),
+            adjustedFrom: setMilliseconds(startedOn, 0),
             adjustedTo: null,
-          }))
-        )
-      }))
+          })
+        }))
 
-    it('should increase the quantity inventory items that do exist', () =>
-      runTest(async knex => {
-        const { now } = context
-        const inventoryItemAtSiteBefore = await knex('InventoryItem as ii')
-          .join('Consumable as c', 'ii.consumableId', 'c.id')
-          .where({ siteId: geneXpertDevice.siteId })
-          .orderBy(['ii.createdOn', 'ii.id'])
-          .first(
-            'ii.id',
-            'c.name as consumableName',
-            'ii.inTransitFromSiteId',
-            'ii.lotNumber',
-            'ii.expiresOn',
-            'ii.quantityOnHand'
-          )
-        assert.isNotEmpty(inventoryItemAtSiteBefore)
+      it('should decrease the quantity on hand of existing inventory items', () =>
+        runTest(async knex => {
+          const { now } = context
+          const inventoryItemAtSiteBefore = await knex('InventoryItem as ii')
+            .join('Consumable as c', 'ii.consumableId', 'c.id')
+            .where({ siteId: geneXpertDevice.siteId })
+            .orderBy(['ii.createdOn', 'ii.id'])
+            .first(
+              'ii.id',
+              'c.name as consumableName',
+              'ii.inTransitFromSiteId',
+              'ii.lotNumber',
+              'ii.expiresOn',
+              'ii.quantityOnHand'
+            )
+          assert.isNotEmpty(inventoryItemAtSiteBefore)
 
-        const startedOn = subHours(subDays(now, 1), 2)
-        const endedOn = subHours(now, 2)
-        const consumableReason = 'Captured'
-        const quantity = 13
+          const startedOn = subHours(subDays(now, 1), 2)
+          const endedOn = subHours(now, 2)
+          const consumableReason = 'Captured'
+          const quantity = -3
 
-        await postToDeviceApi({
-          authHeader: deviceAuth,
-          payload: _.merge({}, basicDevicePayload, {
-            name: deviceName,
-            operation: {
-              startedOn,
-              endedOn,
-              data: {
-                inventoryChanges: [
-                  {
-                    consumableName: inventoryItemAtSiteBefore.consumableName,
-                    consumableReasonName: consumableReason,
-                    quantity,
-                    resultingQuantityOnHand:
-                      inventoryItemAtSiteBefore.quantityOnHand + quantity,
-                    dateChanged: startedOn,
-                    expirationDate: inventoryItemAtSiteBefore.expiresOn,
-                  },
-                ],
+          await postToDeviceApi({
+            authHeader: deviceAuth,
+            payload: _.merge({}, basicDevicePayload, {
+              name: deviceName,
+              operation: {
+                startedOn,
+                endedOn,
+                data: {
+                  inventoryChanges: [
+                    {
+                      consumableName: inventoryItemAtSiteBefore.consumableName,
+                      consumableReasonName: consumableReason,
+                      quantity,
+                      resultingQuantityOnHand:
+                        inventoryItemAtSiteBefore.quantityOnHand + quantity,
+                      dateChanged: startedOn,
+                      expirationDate: inventoryItemAtSiteBefore.expiresOn,
+                    },
+                  ],
+                },
               },
-            },
-          }),
-        })
+            }),
+          })
 
-        const inventoryItemsAtSiteAfter = await knex('InventoryItem as ii')
-          .join('Consumable as c', 'ii.consumableId', 'c.id')
-          .where({ 'ii.id': inventoryItemAtSiteBefore.id })
-          .select(
-            'ii.id',
-            'c.name as consumableName',
-            'ii.inTransitFromSiteId',
-            'ii.lotNumber',
-            'ii.expiresOn',
-            'ii.quantityOnHand'
-          )
-        expect(inventoryItemsAtSiteAfter).to.containSubset([
-          {
+          const inventoryItemsAtSiteAfter = await knex('InventoryItem as ii')
+            .join('Consumable as c', 'ii.consumableId', 'c.id')
+            .where({ 'ii.id': inventoryItemAtSiteBefore.id })
+            .select(
+              'ii.id',
+              'c.name as consumableName',
+              'ii.inTransitFromSiteId',
+              'ii.lotNumber',
+              'ii.expiresOn',
+              'ii.quantityOnHand'
+            )
+
+          expect(inventoryItemsAtSiteAfter).to.containSubset([
+            {
+              consumableName: inventoryItemAtSiteBefore.consumableName,
+              inTransitFromSiteId: null,
+              lotNumber: null,
+              expiresOn: inventoryItemAtSiteBefore.expiresOn,
+              quantityOnHand: _.max([
+                0,
+                inventoryItemAtSiteBefore.quantityOnHand + quantity,
+              ]),
+            },
+          ])
+
+          const inventoryLog = await knex('InventoryLog as il')
+            .join('ConsumableReason as cr', 'il.consumableReasonId', 'cr.id')
+            .join('Consumable as c', 'il.consumableId', 'c.id')
+            .whereIn(
+              'il.inventoryItemId',
+              _.map(inventoryItemsAtSiteAfter, 'id')
+            )
+            .orderBy('il.id', 'desc')
+            .first(
+              'c.name as consumableName',
+              'il.siteId',
+              'cr.name as consumableReason',
+              'il.resultId',
+              'il.operation',
+              'il.lotNumber',
+              'il.expiresOn',
+              'il.quantity',
+              'il.notes',
+              'il.adjustedFrom',
+              'il.adjustedTo'
+            )
+
+          expect(inventoryLog).to.containSubset({
             consumableName: inventoryItemAtSiteBefore.consumableName,
-            inTransitFromSiteId: null,
+            siteId: geneXpertDevice.siteId,
+            consumableReason,
+            resultId: null,
+            operation: 'remove from GxConnect',
             lotNumber: null,
             expiresOn: inventoryItemAtSiteBefore.expiresOn,
-            quantityOnHand: _.max([
-              0,
-              inventoryItemAtSiteBefore.quantityOnHand + quantity,
-            ]),
-          },
-        ])
-
-        const inventoryLog = await knex('InventoryLog as il')
-          .join('ConsumableReason as cr', 'il.consumableReasonId', 'cr.id')
-          .join('Consumable as c', 'il.consumableId', 'c.id')
-          .whereIn('il.inventoryItemId', _.map(inventoryItemsAtSiteAfter, 'id'))
-          .orderBy('il.id', 'desc')
-          .first(
-            'c.name as consumableName',
-            'il.siteId',
-            'cr.name as consumableReason',
-            'il.resultId',
-            'il.operation',
-            'il.lotNumber',
-            'il.expiresOn',
-            'il.quantity',
-            'il.notes',
-            'il.adjustedFrom',
-            'il.adjustedTo'
-          )
-
-        expect(inventoryLog).to.containSubset({
-          consumableName: inventoryItemAtSiteBefore.consumableName,
-          siteId: geneXpertDevice.siteId,
-          consumableReason,
-          resultId: null,
-          operation: 'add from GxConnect',
-          lotNumber: null,
-          expiresOn: inventoryItemAtSiteBefore.expiresOn,
-          quantity,
-          notes: null,
-          adjustedFrom: setMilliseconds(startedOn, 0),
-          adjustedTo: null,
-        })
-      }))
-
-    it('should decrease the quantity on hand of existing inventory items', () =>
-      runTest(async knex => {
-        const { now } = context
-        const inventoryItemAtSiteBefore = await knex('InventoryItem as ii')
-          .join('Consumable as c', 'ii.consumableId', 'c.id')
-          .where({ siteId: geneXpertDevice.siteId })
-          .orderBy(['ii.createdOn', 'ii.id'])
-          .first(
-            'ii.id',
-            'c.name as consumableName',
-            'ii.inTransitFromSiteId',
-            'ii.lotNumber',
-            'ii.expiresOn',
-            'ii.quantityOnHand'
-          )
-        assert.isNotEmpty(inventoryItemAtSiteBefore)
-
-        const startedOn = subHours(subDays(now, 1), 2)
-        const endedOn = subHours(now, 2)
-        const consumableReason = 'Captured'
-        const quantity = -3
-
-        await postToDeviceApi({
-          authHeader: deviceAuth,
-          payload: _.merge({}, basicDevicePayload, {
-            name: deviceName,
-            operation: {
-              startedOn,
-              endedOn,
-              data: {
-                inventoryChanges: [
-                  {
-                    consumableName: inventoryItemAtSiteBefore.consumableName,
-                    consumableReasonName: consumableReason,
-                    quantity,
-                    resultingQuantityOnHand:
-                      inventoryItemAtSiteBefore.quantityOnHand + quantity,
-                    dateChanged: startedOn,
-                    expirationDate: inventoryItemAtSiteBefore.expiresOn,
-                  },
-                ],
-              },
-            },
-          }),
-        })
-
-        const inventoryItemsAtSiteAfter = await knex('InventoryItem as ii')
-          .join('Consumable as c', 'ii.consumableId', 'c.id')
-          .where({ 'ii.id': inventoryItemAtSiteBefore.id })
-          .select(
-            'ii.id',
-            'c.name as consumableName',
-            'ii.inTransitFromSiteId',
-            'ii.lotNumber',
-            'ii.expiresOn',
-            'ii.quantityOnHand'
-          )
-
-        expect(inventoryItemsAtSiteAfter).to.containSubset([
-          {
-            consumableName: inventoryItemAtSiteBefore.consumableName,
-            inTransitFromSiteId: null,
-            lotNumber: null,
-            expiresOn: inventoryItemAtSiteBefore.expiresOn,
-            quantityOnHand: _.max([
-              0,
-              inventoryItemAtSiteBefore.quantityOnHand + quantity,
-            ]),
-          },
-        ])
-
-        const inventoryLog = await knex('InventoryLog as il')
-          .join('ConsumableReason as cr', 'il.consumableReasonId', 'cr.id')
-          .join('Consumable as c', 'il.consumableId', 'c.id')
-          .whereIn('il.inventoryItemId', _.map(inventoryItemsAtSiteAfter, 'id'))
-          .orderBy('il.id', 'desc')
-          .first(
-            'c.name as consumableName',
-            'il.siteId',
-            'cr.name as consumableReason',
-            'il.resultId',
-            'il.operation',
-            'il.lotNumber',
-            'il.expiresOn',
-            'il.quantity',
-            'il.notes',
-            'il.adjustedFrom',
-            'il.adjustedTo'
-          )
-
-        expect(inventoryLog).to.containSubset({
-          consumableName: inventoryItemAtSiteBefore.consumableName,
-          siteId: geneXpertDevice.siteId,
-          consumableReason,
-          resultId: null,
-          operation: 'remove from GxConnect',
-          lotNumber: null,
-          expiresOn: inventoryItemAtSiteBefore.expiresOn,
-          quantity: Math.abs(quantity),
-          notes: null,
-          adjustedFrom: setMilliseconds(startedOn, 0),
-          adjustedTo: null,
-        })
-      }))
+            quantity: Math.abs(quantity),
+            notes: null,
+            adjustedFrom: setMilliseconds(startedOn, 0),
+            adjustedTo: null,
+          })
+        }))
+    })
 
     it('should accept different reasons', () =>
       runTest(async knex => {
