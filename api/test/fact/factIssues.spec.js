@@ -464,8 +464,17 @@ describe('Fact based issues', () => {
         hi: 'universe',
       })
 
+      const waitForFactGenerateDeviceConnectivity = waitForAction(
+        factGenerateDeviceConnectivity(deviceId)
+      )
+      const waitForIssueResolve = waitForAction(issueResolved(issues[2].id))
+
       await messageContext.deviceMaintenanceResolved(deviceId)
-      await waitForIdle()
+
+      await Promise.all([
+        waitForFactGenerateDeviceConnectivity,
+        waitForIssueResolve,
+      ])
       ;[factDevice] = await knex('FactDeviceFlag').where({ deviceId })
       expect(factDevice).to.containSubset({
         offline: 0,
@@ -630,8 +639,17 @@ describe('Fact based issues', () => {
       assert.approximately(+issues[0].dueOn, +maintenanceDueOn, 3000)
       assert.deepEqual(JSON.parse(issues[0].data), { a: 1, hi: 'world' })
 
-      messageContext.deviceMaintenanceResolved(deviceId)
-      await waitForIdle()
+      const waitForFactGenerateDeviceConnectivity = waitForAction(
+        factGenerateDeviceConnectivity(deviceId)
+      )
+      const waitForIssueResolve = waitForAction(issueResolved(issues[0].id))
+
+      await messageContext.deviceMaintenanceResolved(deviceId)
+
+      await Promise.all([
+        waitForFactGenerateDeviceConnectivity,
+        waitForIssueResolve,
+      ])
       ;[factDevice] = await knex('FactDeviceFlag').where({ deviceId })
       assert.equal(factDevice.offline, 0)
       assert.equal(factDevice.noResults, 1)
@@ -820,8 +838,17 @@ describe('Fact based issues', () => {
       assert.approximately(+issues[0].dueOn, +maintenanceDueOn, 3000)
       assert.deepEqual(JSON.parse(issues[0].data), { a: 1, hi: 'world' })
 
-      messageContext.deviceMaintenanceResolved(deviceId)
-      await waitForIdle()
+      const waitForFactGenerateDeviceConnectivity = waitForAction(
+        factGenerateDeviceConnectivity(deviceId)
+      )
+      const waitForIssueResolve = waitForAction(issueResolved(issues[0].id))
+
+      await messageContext.deviceMaintenanceResolved(deviceId)
+
+      await Promise.all([
+        waitForFactGenerateDeviceConnectivity,
+        waitForIssueResolve,
+      ])
       ;[factDevice] = await knex('FactDeviceFlag').where({ deviceId })
       assert.equal(factDevice.offline, 0)
       assert.equal(factDevice.noResults, 0)
@@ -969,8 +996,17 @@ describe('Fact based issues', () => {
       assert.approximately(+issues[0].dueOn, +maintenanceDueOn, 3000)
       assert.deepEqual(JSON.parse(issues[0].data), { a: 1, hi: 'world' })
 
-      messageContext.deviceMaintenanceResolved(deviceId)
-      await waitForIdle()
+      const waitForFactGenerateDeviceConnectivity = waitForAction(
+        factGenerateDeviceConnectivity(deviceId)
+      )
+      const waitForIssueResolve = waitForAction(issueResolved(issues[0].id))
+
+      await messageContext.deviceMaintenanceResolved(deviceId)
+
+      await Promise.all([
+        waitForFactGenerateDeviceConnectivity,
+        waitForIssueResolve,
+      ])
       ;[factDevice] = await knex('FactDeviceFlag').where({ deviceId })
       assert.equal(factDevice.offline, 0)
       assert.equal(factDevice.noResults, 1)

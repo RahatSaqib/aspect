@@ -110,15 +110,15 @@ async function deleteDeviceSiteDataAndRefreshTokens(knex, apiKeys, clientId) {
     .pluck('id')
 
   await knex('IssueEvent')
-  .whereIn('issueId', issueIds)
-  .orWhere(function() {
-    if (resultIds != null && resultIds.length > 0) {
-      this.whereRaw(
-        `JSON_EXTRACT(data, "$.resultId") IN (${resultIds.join(',')})`
-      )
-    }
-  })
-  .delete()
+    .whereIn('issueId', issueIds)
+    .orWhere(function() {
+      if (resultIds != null && resultIds.length > 0) {
+        this.whereRaw(
+          `JSON_EXTRACT(data, "$.resultId") IN (${resultIds.join(',')})`
+        )
+      }
+    })
+    .delete()
 
   await knex('InventoryLog')
     .whereIn('resultId', resultIds)
