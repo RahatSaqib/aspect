@@ -6,6 +6,10 @@ const { getConstraints, addConstraints } = require('../../src/auth/constraints')
 const { randomToken } = require('../../src/deviceApi/apiKey')
 const { getResult } = require('../../src/deviceApi/result')
 const { queuePurge } = require('../utils/mqUtils')
+const {
+  deviceTypeToId,
+  deviceStatusToId,
+} = require('../../src/shared/dictionary')
 
 const { assert } = chai
 
@@ -130,6 +134,8 @@ async function deleteDeviceAndTestData(knex, apiKeys) {
 async function deleteIssues(knex, { deviceIds, resultIds }) {
   const issueIdQ = knex('Issue as i')
   const webhookMessageQ = knex('WebhookMessage')
+  resultIds = _.without(resultIds, null)
+
   if (deviceIds != null && deviceIds.length > 0) {
     issueIdQ.orWhereIn('i.deviceId', deviceIds)
     webhookMessageQ.orWhereIn('deviceId', deviceIds)
@@ -290,7 +296,13 @@ class DeviceApiTestContext {
 
       // Authenticates device and user from auth setup
       const { server, auth } = this
-      const { user, type, status = 'approved' } = auth
+      const {
+        user,
+        type,
+        status = 'approved',
+        createDevice = false,
+        baseConfig = {},
+      } = auth
       const now = new Date()
       this.now = now
       const { userId } = await knex('User')
@@ -315,7 +327,7 @@ class DeviceApiTestContext {
         })
       const dataConstraints = await getConstraints({ name: user })
 
-      const device = await knex('Device as d')
+      let device = await knex('Device as d')
         .innerJoin('DeviceApiKey as dak', 'dak.deviceId', 'd.id')
         .innerJoin('DeviceType as dt', 'dt.id', 'd.deviceTypeId')
         .innerJoin('DeviceStatus as ds', 'ds.id', 'd.deviceStatusId')
@@ -347,6 +359,34 @@ class DeviceApiTestContext {
         assert.isOk(partner, `Cannot find partner ${auth.partner}`)
         this.partnerId = partner.id
         apiKey = await this.createApiKey(knex, auth.site || null)
+
+        if (createDevice) {
+          const { id: siteId, geographyId } = await knex('Site as s')
+            .where({ partnerId: this.partnerId })
+            .modify(addConstraints, dataConstraints, { site: 's' })
+            .first('s.id', 's.geographyId')
+
+          const [deviceId] = await knex('Device').insert({
+            partnerId: this.partnerId,
+            geographyId,
+            siteId,
+            deviceTypeId: await deviceTypeToId('DaktariVirology'),
+            deviceStatusId: await deviceStatusToId(status),
+            configurationData: JSON.stringify(baseConfig),
+            name: 'Test Device',
+            shortName: 'Test Device',
+            lastSeenOn: now,
+          })
+
+          await knex('DeviceApiKey')
+            .where({ token: apiKey.token })
+            .update({ deviceId })
+
+          device = await knex('Device as d')
+            .innerJoin('DeviceApiKey as dak', 'dak.deviceId', 'd.id')
+            .where({ 'd.id': deviceId })
+            .first('dak.token', 'd.id')
+        }
       }
       assert.isOk(apiKey)
 
