@@ -110,7 +110,6 @@ async function seed(knex) {
         partnerId,
         geographyId: southAfricaGeographyId,
         siteId: southAfricaNhlsAlereFtpConnectorSiteId,
-        lastSeenOn: knex.raw('FROM_UNIXTIME(0)'),
       },
       auditFields
     )
