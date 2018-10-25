@@ -593,10 +593,15 @@ async function createDeviceApiContext(
     })
     .first(
       'd.id',
-      'd.name',
-      'd.serial',
       'd.partnerId',
       'd.siteId',
+      'd.geographyId',
+      'd.name',
+      'd.serial',
+      'd.macAddress',
+      'd.configurationData',
+      'd.lastSeenOn',
+      'd.putInService',
       'ds.token as status',
       'dt.externalId as deviceType',
       'dt.plugin as deviceTypePluginName',

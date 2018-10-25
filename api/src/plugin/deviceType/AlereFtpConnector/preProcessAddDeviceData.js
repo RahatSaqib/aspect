@@ -101,6 +101,7 @@ async function findDevices(
     .leftJoin('DeviceStatus as ds', 'd.deviceStatusId', 'ds.id')
     .leftJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .leftJoin('DeviceTypeCategory as dtc', 'dtc.id', 'dt.deviceTypeCategoryId')
+    .leftJoin('Partner as p', 'd.partnerId', 'p.id')
     .where(function() {
       if (deviceId) {
         this.where('d.id', deviceId)
@@ -128,6 +129,7 @@ async function findDevices(
       'ds.token as status',
       'dt.externalId as deviceType',
       'dt.plugin as deviceTypePluginName',
+      'p.plugin as partnerPluginName',
       'dtc.name as deviceTypeCategory'
     )
 }
