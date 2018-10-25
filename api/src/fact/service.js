@@ -661,22 +661,24 @@ function onFactCalculateInventoryConsumptionRates(action, { messageContext }) {
 async function refreshConsumptionRates(knex, siteId, consumableId) {
   const updatedOn = new Date()
   const totals = await getConsumptions(knex, siteId, consumableId)
-  _.map(totals, async x => {
-    await knex.raw(
-      knex('FactInventoryConsumptionRate')
-        .insert({
-          siteId,
-          consumableId,
-          days: x.days,
-          // in GxAlert we stored totals in field 'rate', so same here.
-          // to get actual rate - do rate/days
-          rate: x.total,
-          updatedOn,
-        })
-        .toString()
-        .replace(/^insert/i, 'replace')
-    )
-  })
+  await Promise.all(
+    _.map(totals, async x => {
+      await knex.raw(
+        knex('FactInventoryConsumptionRate')
+          .insert({
+            siteId,
+            consumableId,
+            days: x.days,
+            // in GxAlert we stored totals in field 'rate', so same here.
+            // to get actual rate - do rate/days
+            rate: x.total,
+            updatedOn,
+          })
+          .toString()
+          .replace(/^insert/i, 'replace')
+      )
+    })
+  )
   return totals
 }
 

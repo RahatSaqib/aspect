@@ -1791,7 +1791,7 @@ async function seed(knex) {
         shortName: `GeneXpert #${i}`,
         deviceTypeId: deviceTypeGeneXpertId,
         deviceStatusId:
-          _.random(1) > 0 ? deviceStatusApproved : deviceStatusAssigned,
+          i % 3 === 0 ? deviceStatusApproved : deviceStatusAssigned,
         configurationData: JSON.stringify({
           requirePrinter: 'no',
           adminPassword: 'pwd123',
