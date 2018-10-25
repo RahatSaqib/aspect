@@ -191,7 +191,12 @@ async function seed(knex) {
         title: 'Cartridge ID',
       },
       sampleId: { list: true, order: 5, type: 'string', title: 'Sample ID' },
-      hiv1MnResult: { list: true, order: 6, type: 'string', title: 'HIV-1 M/N' },
+      hiv1MnResult: {
+        list: true,
+        order: 6,
+        type: 'string',
+        title: 'HIV-1 M/N',
+      },
       hiv1OResult: { list: true, order: 7, type: 'string', title: 'HIV-1 O' },
       hiv2Result: { list: true, order: 8, type: 'string', title: 'HIV-2' },
       errorCode: {
@@ -293,8 +298,18 @@ async function seed(knex) {
         type: 'string',
         title: 'HIV-1 M/N cp/mL',
       },
-      hiv1OResult: { list: true, order: 7, type: 'string', title: 'HIV-1 O cp/mL' },
-      hiv2Result: { list: true, order: 8, type: 'string', title: 'HIV-2 cp/mL' },
+      hiv1OResult: {
+        list: true,
+        order: 7,
+        type: 'string',
+        title: 'HIV-1 O cp/mL',
+      },
+      hiv2Result: {
+        list: true,
+        order: 8,
+        type: 'string',
+        title: 'HIV-2 cp/mL',
+      },
       errorCode: {
         list: true,
         order: 9,

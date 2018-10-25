@@ -23,6 +23,7 @@ async function preProcessMergeResult({ knex, deviceId, payload, now }) {
     )
   }
   const sampleId = _.get(payload, 'sample.id', null)
+
   const resultExternalId = createUniqueIdForResult(
     instrumentSerial,
     startedOn,
@@ -47,7 +48,7 @@ async function preProcessMergeResult({ knex, deviceId, payload, now }) {
       'rc1.externalId as resultCategory1',
       'rc2.externalId as resultCategory2'
     )
-
+  const pickedUpOn = getDateOrDefault(payload, 'data.pickedUpOn', null)
   if (existingResult) {
     // Are we setting this result to NO RESULT?
     if (
@@ -63,18 +64,25 @@ async function preProcessMergeResult({ knex, deviceId, payload, now }) {
         throw Boom.conflict('A later version of this result already exists')
       }
     }
-    const pickedUpOn = getDateOrDefault(payload, 'data.pickedUpOn', null)
-    if (pickedUpOn) {
-      const existingResultEndedOn = getDateOrDefault(payload, 'endedOn', now)
-      if (
-        (existingResultEndedOn === startedOn ||
-          existingResultEndedOn > pickedUpOn) &&
-        differenceInHours(existingResultEndedOn, pickedUpOn) <= 5
-      ) {
-        payload.endedOn = pickedUpOn
-      } else if (!_.get(payload, 'endedOn')) {
-        payload.endedOn = startedOn
+    if (!_.get(payload, 'endedOn')) {
+      if (pickedUpOn) {
+        const existingResultEndedOn = getDateOrDefault(payload, 'endedOn', now)
+        if (
+          (existingResultEndedOn === startedOn ||
+            existingResultEndedOn > pickedUpOn) &&
+          differenceInHours(pickedUpOn, startedOn) < 5
+        ) {
+          payload.endedOn = pickedUpOn
+        } else {
+          payload.endedOn = startedOn
+        }
       }
+    }
+  } else if (pickedUpOn && !_.get(payload, 'endedOn')) {
+    if (differenceInHours(pickedUpOn, startedOn) < 5) {
+      payload.endedOn = pickedUpOn
+    } else {
+      payload.endedOn = startedOn
     }
   }
 }
