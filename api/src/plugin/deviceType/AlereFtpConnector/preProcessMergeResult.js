@@ -1,9 +1,10 @@
 const _ = require('lodash')
 const Boom = require('boom')
+const differenceInHours = require('date-fns/difference_in_hours')
 const { getDateOrDefault } = require('../../../shared/date')
 const { createUniqueIdForResult } = require('../../../result/service')
 
-async function preProcessMergeResult({ knex, deviceId, payload }) {
+async function preProcessMergeResult({ knex, deviceId, payload, now }) {
   if (!deviceId) {
     throw Boom.notFound('Cannot find device')
   }
@@ -41,6 +42,7 @@ async function preProcessMergeResult({ knex, deviceId, payload }) {
     .first(
       'r.id',
       'r.externalId',
+      'r.endedOn',
       'r.resultData',
       'rc1.externalId as resultCategory1',
       'rc2.externalId as resultCategory2'
@@ -59,6 +61,19 @@ async function preProcessMergeResult({ knex, deviceId, payload }) {
       ) {
         // We should never merge an incomplete result over a complete result
         throw Boom.conflict('A later version of this result already exists')
+      }
+    }
+    const pickedUpOn = getDateOrDefault(payload, 'data.pickedUpOn', null)
+    if (pickedUpOn) {
+      const existingResultEndedOn = getDateOrDefault(payload, 'endedOn', now)
+      if (
+        (existingResultEndedOn === startedOn ||
+          existingResultEndedOn > pickedUpOn) &&
+        differenceInHours(existingResultEndedOn, pickedUpOn) <= 5
+      ) {
+        payload.endedOn = pickedUpOn
+      } else if (!_.get(payload, 'endedOn')) {
+        payload.endedOn = startedOn
       }
     }
   }
