@@ -389,7 +389,7 @@ async function findDevices(availableDeviceDetails, knex) {
     'dt.externalId as deviceType',
     'dt.plugin as deviceTypePluginName',
     'p.plugin as partnerPluginName',
-    'dtc.name as deviceTypeCategory'
+    'dtc.name as deviceTypeCategory',
   ]
   const deviceQuery = knex
     .from('Device as d')

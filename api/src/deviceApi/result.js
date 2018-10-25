@@ -617,7 +617,9 @@ async function addResultWorkflowLogIfChanged(
       resultId: result.id,
       resultWorkflowStatusId: result.resultWorkflowStatusId,
       reason,
-      operator: _.get(payload, 'workflow.operator', null),
+      operator:
+        _.get(payload, 'workflow.operator', null) ||
+        _.get(payload, 'sender.operator', null),
       changedOn: _.get(payload, 'workflow.changedOn', now),
       createdOn: now,
     })
