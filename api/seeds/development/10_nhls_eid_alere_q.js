@@ -191,9 +191,9 @@ async function seed(knex) {
         title: 'Cartridge ID',
       },
       sampleId: { list: true, order: 5, type: 'string', title: 'Sample ID' },
-      hiv1Mn: { list: true, order: 6, type: 'string', title: 'HIV-1 M/N' },
-      hiv1O: { list: true, order: 7, type: 'string', title: 'HIV-1 O' },
-      hiv2: { list: true, order: 8, type: 'string', title: 'HIV-2' },
+      hiv1MnResult: { list: true, order: 6, type: 'string', title: 'HIV-1 M/N' },
+      hiv1OResult: { list: true, order: 7, type: 'string', title: 'HIV-1 O' },
+      hiv2Result: { list: true, order: 8, type: 'string', title: 'HIV-2' },
       errorCode: {
         list: true,
         order: 9,
@@ -213,7 +213,7 @@ async function seed(knex) {
         type: 'string',
         title: 'Sample Detection Check',
       },
-      device: {
+      deviceCheck: {
         list: false,
         order: 13,
         type: 'string',
@@ -237,13 +237,13 @@ async function seed(knex) {
         type: 'string',
         title: 'Negative Control',
       },
-      analysis: {
+      analysisCheck: {
         list: false,
         order: 17,
         type: 'string',
         title: 'Analysis Check',
       },
-      deviceSoftware: {
+      softwareVersion: {
         list: false,
         order: 18,
         type: 'string',
@@ -287,14 +287,14 @@ async function seed(knex) {
         title: 'Cartridge ID',
       },
       sampleId: { list: true, order: 5, type: 'string', title: 'Sample ID' },
-      hiv1Mn: {
+      hiv1MNResult: {
         list: true,
         order: 6,
         type: 'string',
         title: 'HIV-1 M/N cp/mL',
       },
-      hiv1O: { list: true, order: 7, type: 'string', title: 'HIV-1 O cp/mL' },
-      hiv2: { list: true, order: 8, type: 'string', title: 'HIV-2 cp/mL' },
+      hiv1OResult: { list: true, order: 7, type: 'string', title: 'HIV-1 O cp/mL' },
+      hiv2Result: { list: true, order: 8, type: 'string', title: 'HIV-2 cp/mL' },
       errorCode: {
         list: true,
         order: 9,
@@ -314,7 +314,7 @@ async function seed(knex) {
         type: 'string',
         title: 'Sample Detection Check',
       },
-      device: {
+      deviceCheck: {
         list: false,
         order: 13,
         type: 'string',
@@ -338,13 +338,13 @@ async function seed(knex) {
         type: 'string',
         title: 'Negative Control',
       },
-      analysis: {
+      analysisCheck: {
         list: false,
         order: 17,
         type: 'string',
         title: 'Analysis Check',
       },
-      deviceSoftware: {
+      softwareVersion: {
         list: false,
         order: 18,
         type: 'string',
