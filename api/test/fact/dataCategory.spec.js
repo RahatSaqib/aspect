@@ -148,11 +148,16 @@ describe('DataCategoryLow Issues Endpoint', () => {
         .where('u.name', 'myanmar_admin')
         .first('u.id')
 
-      // get 1st site for current partner
+      const { id: labUserId } = await knex('User')
+        .where({ name: USER_LU_NAME })
+        .first()
+
+      // get 1st site for current partner and labUser
       const { s: { geographyId } } = await getSite(knex, {
         partnerId,
         countryAbbreviation,
         requireInventory: true,
+        userId: labUserId,
       })
 
       // create new site for same partner and same geography

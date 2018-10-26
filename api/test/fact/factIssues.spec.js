@@ -1,6 +1,7 @@
 const supertest = require('supertest')
 const chai = require('chai')
 const { addDays, subDays } = require('date-fns')
+const { run } = require('../../src/db')
 const { createTestContext, getDeviceFromApiKey } = require('../deviceApi/utils')
 const {
   deviceOffline,
@@ -38,9 +39,23 @@ const context = createTestContext(server, {
 describe('Fact based issues', () => {
   const devicePath = '/device'
   const issuePath = '/api/issue'
+  let siteName
 
   const { runTest } = context
-
+  before(async () =>
+    run(async knex => {
+      const { siteId } = await knex('JobContext as jc')
+        .innerJoin('Job as j', 'jc.jobId', 'j.id')
+        .innerJoin('Person as p', 'j.personId', 'p.id')
+        .innerJoin('User as u', 'p.userId', 'u.id')
+        .where('u.name', USER_LU)
+        .first('jc.siteId')
+      const site = await knex('Site')
+        .where({ id: siteId })
+        .first('name')
+      siteName = site.name
+    })
+  )
   beforeEach(context.beforeEach)
   afterEach(context.afterEach)
 
@@ -64,7 +79,7 @@ describe('Fact based issues', () => {
         .set('Authorization', deviceAuth)
         .send({
           type: { id: 'GenericRDT' },
-          site: { id: 'Hinthada TBC' },
+          site: { id: siteName },
         })
         .then(res => {
           assert.equal(res.status, 200)
@@ -534,7 +549,7 @@ describe('Fact based issues', () => {
         .set('Authorization', deviceAuth)
         .send({
           type: { id: 'GenericRDT' },
-          site: { id: 'Hinthada TBC' },
+          site: { id: siteName },
         })
         .then(res => {
           assert.equal(res.status, 200)
@@ -736,7 +751,7 @@ describe('Fact based issues', () => {
         .set('Authorization', deviceAuth)
         .send({
           type: { id: 'GenericRDT' },
-          site: { id: 'Hinthada TBC' },
+          site: { id: siteName },
         })
         .then(res => {
           assert.equal(res.status, 200)
@@ -891,7 +906,7 @@ describe('Fact based issues', () => {
         .set('Authorization', deviceAuth)
         .send({
           type: { id: 'GenericRDT' },
-          site: { id: 'Hinthada TBC' },
+          site: { id: siteName },
         })
         .then(res => {
           assert.equal(res.status, 200)

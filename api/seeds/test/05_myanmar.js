@@ -614,7 +614,6 @@ async function seed(knex) {
           'g.countryId': countryId,
           'g.stateId': statesByAbbreviation[region].id,
         })
-        .orderBy('s.name')
         .first('s.id as siteId', 'g.id as geographyId')
       const [labUserId] = await knex('User').insert({
         name: labUserName,

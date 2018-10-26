@@ -93,7 +93,7 @@ describe('Issue Resolution', () => {
         }
       })
       .options({ nestTables: true })
-      .first()        
+      .first()
   }
 
   async function getSite(knex, { countryAbbreviation, partnerId }) {
@@ -233,7 +233,10 @@ describe('Issue Resolution', () => {
     return knex('IssueEvent').insert(issueEvent)
   }
 
-  async function createDeviceNoResult(knex, { countryAbbreviation, partnerId }) {
+  async function createDeviceNoResult(
+    knex,
+    { countryAbbreviation, partnerId }
+  ) {
     // get 1st site for current partner
     const { s: { id: siteId, geographyId } } = await getSite(knex, {
       countryAbbreviation,
@@ -1002,18 +1005,18 @@ describe('Issue Resolution', () => {
       }
 
       before(async () =>
-        run(async knex => {          
+        run(async knex => {
           const testDeviceId1 = await createDeviceNoResult(knex, {
             partnerId: partner.id,
             countryAbbreviation,
-          })          
+          })
           const testDeviceId2 = await createDeviceNoResult(knex, {
             partnerId: partner.id,
             countryAbbreviation,
           })
           deviceIdsToRemove.push(testDeviceId1)
           deviceIdsToRemove.push(testDeviceId2)
-          
+
           deviceNoResultsIssueType = await getIssueType(knex, 'DeviceNoResults')
           const noResultsSince = subDays(
             new Date(),
@@ -1023,7 +1026,7 @@ describe('Issue Resolution', () => {
             partnerId: partner.id,
             countryAbbreviation,
             noResultsSince,
-          })              
+          })
           device1 = device1Details.d
           if (!_.get(device1Details, 'fdf.noResults')) {
             if (!_.get(device1Details, 'fdf.deviceId')) {
@@ -1039,7 +1042,7 @@ describe('Issue Resolution', () => {
                 .update({ noResults: 1 })
               devicesToResetNoResults.push(device1.id)
             }
-          }          
+          }
 
           const device2Details = await getDevice(knex, {
             partnerId: partner.id,
