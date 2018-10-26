@@ -616,7 +616,10 @@ async function addResultWorkflowLogIfChanged(
   if (!resultWorkflowChanged && changedOn) {
     // check to see if specified changedOn is different from latest log
     if (!latestResultWorkflowLog) {
-      latestResultWorkflowLog = await getLatestResultWorkflowLog(knex, result.id)
+      latestResultWorkflowLog = await getLatestResultWorkflowLog(
+        knex,
+        result.id
+      )
     }
     resultWorkflowChanged =
       !latestResultWorkflowLog ||
