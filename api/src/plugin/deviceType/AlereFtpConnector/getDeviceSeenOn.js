@@ -6,12 +6,13 @@ async function getDeviceSeenOn({
   if (deviceType === 'AlereFtpConnector') {
     return now
   }
-  const { startedOn } = (await knex
-    .from('Result')
-    .where('deviceId', deviceId)
-    .orderBy('startedOn', 'desc')
-    .first('startedOn')) || { startedOn: null }
-  return startedOn
+  const { changedOn } = (await knex
+    .from('Result as r')
+    .join('ResultWorkflowLog as rwl', 'r.id', 'rwl.resultId')
+    .where('r.deviceId', deviceId)
+    .orderBy('rwl.changedOn', 'desc')
+    .first('rwl.changedOn')) || { changedOn: null }
+  return changedOn
 }
 
 module.exports = getDeviceSeenOn

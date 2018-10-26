@@ -102,6 +102,7 @@ const plugins = {
     getDeviceSeenOn: require('./deviceType/AlereFtpConnector/getDeviceSeenOn'),
     preProcessAddDeviceData: require('./deviceType/AlereFtpConnector/preProcessAddDeviceData'),
     preProcessMergeResult: require('./deviceType/AlereFtpConnector/preProcessMergeResult'),
+    postProcessMergeResult: require('./deviceType/AlereFtpConnector/postProcessMergeResult'),
   },
 }
 

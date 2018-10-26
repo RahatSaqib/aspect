@@ -591,25 +591,36 @@ async function addResultWorkflowLogIfChanged(
   result,
   previousResult,
   reason,
-  now = new Date()
+  now = new Date(),
+  changedOn
 ) {
   // Log Result Workflow Update if any field changed
   let resultWorkflowChanged =
     !previousResult ||
     previousResult.resultWorkflowStatusId !== result.resultWorkflowStatusId
+  let latestResultWorkflowLog
   if (
     !resultWorkflowChanged &&
     (_.has(payload, 'workflow.operator') ||
       _.has(payload, 'workflow.changedOn'))
   ) {
     // check to see if operator or changedOn is different from latest log
-    const resultWorkflowLog = await getLatestResultWorkflowLog(knex, result.id)
+    latestResultWorkflowLog = await getLatestResultWorkflowLog(knex, result.id)
     resultWorkflowChanged =
-      !resultWorkflowLog ||
+      !latestResultWorkflowLog ||
       _.get(payload, 'workflow.operator', null) !==
-        resultWorkflowLog.operator ||
+        latestResultWorkflowLog.operator ||
       +_.get(payload, 'workflow.changedOn', NaN) !==
-        +resultWorkflowLog.changedOn
+        +latestResultWorkflowLog.changedOn
+  }
+  if (!resultWorkflowChanged && changedOn) {
+    // check to see if specified changedOn is different from latest log
+    if (!latestResultWorkflowLog) {
+      latestResultWorkflowLog = await getLatestResultWorkflowLog(knex, result.id)
+    }
+    resultWorkflowChanged =
+      !latestResultWorkflowLog ||
+      +changedOn !== +latestResultWorkflowLog.changedOn
   }
 
   if (resultWorkflowChanged) {
@@ -620,7 +631,7 @@ async function addResultWorkflowLogIfChanged(
       operator:
         _.get(payload, 'workflow.operator', null) ||
         _.get(payload, 'sender.operator', null),
-      changedOn: _.get(payload, 'workflow.changedOn', now),
+      changedOn: _.get(payload, 'workflow.changedOn', changedOn || now),
       createdOn: now,
     })
   }
