@@ -18,7 +18,7 @@ const {
   getMaxDeviceId,
   getDeviceType,
   getDevicesWithIdLargerThan,
-} = require('./utils')
+} = require('../utils')
 const {
   resultTextToResultCategoryMapping,
   basicResultPayload,
@@ -2725,7 +2725,7 @@ describe('Device API routes for GxAlert Device', () => {
     )
     after(afterCleanUp)
 
-    it('should reject a result without a start or end date date', () =>
+    it('should reject a result without a start or end date', () =>
       runTest(async () => {
         const beforeResultDetails = await getLastResult()
 
@@ -3360,7 +3360,7 @@ describe('Device API routes for GxAlert Device', () => {
         assert.deepEqual(deviceIdsInDeviceLogsForResult, [gxAlertDevice.id])
       }))
 
-    it('should respond the result that has been updated', () =>
+    it('should respond with the result that has been updated', () =>
       runTest(async () => {
         const { now } = context
         const resultId = 'A_RESULT_ID'

@@ -107,6 +107,7 @@ const SORT_FIELDS = [
   'resultCategory2Name',
   'patientId',
 ]
+
 async function getListResults(query, auth) {
   const selectFields = _.clone(SELECT_LIST_FIELDS)
   const sortableFields = _.clone(SORT_FIELDS)

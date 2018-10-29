@@ -12,8 +12,7 @@ const setMilliseconds = require('date-fns/set_milliseconds')
 const dateFormat = require('date-fns/format')
 const Promise = require('bluebird')
 const { createGxConnectTestContext } = require('./gxconnect_utils')
-const { getLastResultId } = require('../utils')
-const { postToDeviceApi } = require('./utils')
+const { getLastResultId, postToDeviceApi } = require('../utils')
 const {
   resultTextToResultCategoryMapping,
   basicResultPayload,
