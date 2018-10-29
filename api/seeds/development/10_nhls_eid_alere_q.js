@@ -418,4 +418,114 @@ async function seed(knex) {
       quantity: 1,
     },
   ])
+
+  const geneXpertHiv1VlFormSchema = {
+    hospitalNumber: {
+      i18nLabel: 'hospitalNumber',
+      control: {
+        type: 'TextBox',
+      },
+      order: 1,
+    },
+    studyID: {
+      i18nLabel: 'studyID',
+      control: {
+        type: 'TextBox',
+      },
+      order: 2,
+    },
+    nameOfPatient: {
+      i18nLabel: 'nameOfPatient',
+      control: {
+        type: 'TextBox',
+      },
+      order: 3,
+    },
+    surnameOfPatient: {
+      i18nLabel: 'surnameOfPatient',
+      control: {
+        type: 'TextBox',
+      },
+      order: 4,
+    },
+    ward: {
+      i18nLabel: 'ward',
+      control: {
+        type: 'TextBox',
+      },
+      order: 5,
+    },
+    timeSampleTaken: {
+      i18nLabel: 'timeSampleTaken',
+      control: {
+        type: 'DateTime',
+      },
+      order: 6,
+    },
+    sampleType: {
+      i18nLabel: 'sampleType',
+      control: {
+        type: 'DropDown',
+        options: [
+          {
+            i18nText: 'studyOfSampleType',
+            value: 'study',
+          },
+          {
+            i18nText: 'EQAOfSampleType',
+            value: 'EQA',
+          },
+          {
+            i18nText: 'miscOfSampleType',
+            value: 'misc',
+          },
+        ],
+      },
+      order: 7,
+    },
+  }
+
+  const assayAlereQHiv12FormSchema = Object.assign(
+    {},
+    geneXpertHiv1VlFormSchema,
+    {
+      timeInstrumentResulted: {
+        i18nLabel: 'timeInstrumentResulted',
+        control: {
+          type: 'DateTime',
+        },
+        order: 8,
+      },
+    }
+  )
+
+  const { id: assayGeneXpertHiv1VlId } = await knex('Assay')
+    .where({ externalId: 'GxHiv1Vl' })
+    .first('id')
+  const { id: assayGeneXpertHiv1QualId } = await knex('Assay')
+    .where({ externalId: 'GxHiv1Qual' })
+    .first('id')
+
+  await knex('ResultForm').insert([
+    {
+      partnerId,
+      assayId: assayGeneXpertHiv1VlId,
+      formSchema: JSON.stringify(geneXpertHiv1VlFormSchema),
+    },
+    {
+      partnerId,
+      assayId: assayGeneXpertHiv1QualId,
+      formSchema: JSON.stringify(geneXpertHiv1VlFormSchema),
+    },
+    {
+      partnerId,
+      assayId: alereQHiv12VLPlasmaAssayId,
+      formSchema: JSON.stringify(assayAlereQHiv12FormSchema),
+    },
+    {
+      partnerId,
+      assayId: alereQHiv12DetectAssayId,
+      formSchema: JSON.stringify(assayAlereQHiv12FormSchema),
+    },
+  ])
 }
