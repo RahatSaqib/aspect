@@ -1652,6 +1652,7 @@ async function seed(knex) {
                   )
                   const [siteId] = await knex('Site').insert(siteData)
                   siteData.id = siteId
+                  siteData.abbreviation = countryData.abbreviation
                   siteDatas.push(siteData)
                 })
               )
@@ -1744,11 +1745,21 @@ async function seed(knex) {
       cell: config.admin.cell,
     })
 
+  const siteDatasForDevice = _.concat(
+    _.take(
+      _.filter(siteDatas, site => site.abbreviation === 'US'),
+      deviceNumber / 2
+    ),
+    _.take(
+      _.filter(siteDatas, site => site.abbreviation === 'NG'),
+      deviceNumber / 2
+    )
+  )
   // insert some routers with sims:
   const routerIds = []
   await Promise.all(
     _.map(_.range(routerNumber), async i => {
-      const siteData = siteDatas[i % siteDatas.length]
+      const siteData = siteDatasForDevice[i % siteDatasForDevice.length]
       const [routerId] = await knex('Device').insert(
         Object.assign({}, auditFields, {
           name: `Router at ${i} ${siteData.shortName}`,
@@ -1784,7 +1795,7 @@ async function seed(knex) {
   const devicesGeneXpert = []
   await Promise.all(
     _.map(_.range(deviceNumber), async i => {
-      const siteData = siteDatas[i % siteDatas.length]
+      const siteData = siteDatasForDevice[i % siteDatasForDevice.length]
       const routerId = routerIds[i]
       const device = Object.assign({}, auditFields, {
         name: `GeneXpert #${i} ${siteData.shortName}`,
@@ -1870,7 +1881,7 @@ async function seed(knex) {
   const devicesDaktari = []
   await Promise.all(
     _.map(_.range(deviceNumber), async i => {
-      const siteData = siteDatas[i % siteDatas.length]
+      const siteData = siteDatasForDevice[i % siteDatasForDevice.length]
       const routerId = routerIds[i]
       const device = Object.assign({}, auditFields, {
         name: `Daktari #${i} ${siteData.shortName}`,
@@ -2014,7 +2025,7 @@ async function seed(knex) {
   let samples = []
   await Promise.all(
     _.map(_.range(resultMtbNumber / 2), async i => {
-      const siteData = siteDatas[i % siteDatas.length]
+      const siteData = siteDatasForDevice[i % siteDatasForDevice.length]
       const sample = Object.assign(
         {},
         {
@@ -2261,7 +2272,7 @@ async function seed(knex) {
   samples = []
   await Promise.all(
     _.map(_.range(resultEbolaNumber / 2), async i => {
-      const siteData = siteDatas[i % siteDatas.length]
+      const siteData = siteDatasForDevice[i % siteDatasForDevice.length]
       const sample = Object.assign(
         {},
         {
@@ -2432,7 +2443,7 @@ async function seed(knex) {
   samples = []
   await Promise.all(
     _.map(_.range(resultHivVlNumber / 2), async i => {
-      const siteData = siteDatas[i % siteDatas.length]
+      const siteData = siteDatasForDevice[i % siteDatasForDevice.length]
       const sample = Object.assign(
         {},
         {
@@ -2701,7 +2712,7 @@ async function seed(knex) {
   samples = []
   await Promise.all(
     _.map(_.range(resultHivVlNumber), async i => {
-      const siteData = siteDatas[i % siteDatas.length]
+      const siteData = siteDatasForDevice[i % siteDatasForDevice.length]
       const sample = Object.assign(
         {},
         {
@@ -2838,7 +2849,7 @@ async function seed(knex) {
   samples = []
   await Promise.all(
     _.map(_.range(resultHcvNumber / 2), async i => {
-      const siteData = siteDatas[i % siteDatas.length]
+      const siteData = siteDatasForDevice[i % siteDatasForDevice.length]
       const sample = Object.assign(
         {},
         {

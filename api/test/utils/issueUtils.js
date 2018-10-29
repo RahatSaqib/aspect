@@ -67,7 +67,7 @@ async function getSite(
         this.whereNotNull('ii.id')
       }
       if (userId) {
-        this.andWhere('labUser.userid', userId)
+        this.andWhere('labUser.userId', userId)
       }
     })
     .options({ nestTables: true })

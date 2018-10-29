@@ -1,6 +1,7 @@
 const _ = require('lodash')
 const chai = require('chai')
 const supertest = require('supertest')
+const { subHours } = require('date-fns')
 const { run } = require('../../src/db')
 const { getConstraints, addConstraints } = require('../../src/auth/constraints')
 const { randomToken } = require('../../src/deviceApi/apiKey')
@@ -9,6 +10,11 @@ const { queuePurge } = require('../utils/mqUtils')
 const {
   deviceTypeToId,
   deviceStatusToId,
+  resultCategoryToId,
+  resultSourceToId,
+  resultTypeToId,
+  resultWorkflowStatusToId,
+  sampleTypeToId,
 } = require('../../src/shared/dictionary')
 
 const { assert } = chai
@@ -268,6 +274,7 @@ class DeviceApiTestContext {
 
     this.server = server
     this.checkpoint = null
+    this.siteId = null
     this.deviceIds = []
     this.initialConfigurationData = {}
     this.apiKeysWithoutDevice = []
@@ -278,6 +285,7 @@ class DeviceApiTestContext {
   beforeEach() {
     return run(async () => {
       this.checkpoint = null
+      this.siteId = null
       this.deviceIds.splice(0)
       this.initialConfigurationData = {}
       this.apiKeysWithoutDevice.splice(0)
@@ -353,18 +361,33 @@ class DeviceApiTestContext {
           `Cannot find device with status ${auth.status}`
         )
         assert.isOk(auth.partner, 'Must specify partner')
-        const partner = await knex('Partner')
+        const { id: partnerId } = await knex('Partner')
           .where({ name: auth.partner })
           .first('id')
-        assert.isOk(partner, `Cannot find partner ${auth.partner}`)
-        this.partnerId = partner.id
+        assert.isOk(partnerId, `Cannot find partner ${auth.partner}`)
+        this.partnerId = partnerId
         apiKey = await this.createApiKey(knex, auth.site || null)
 
         if (createDevice) {
-          const { id: siteId, geographyId } = await knex('Site as s')
-            .where({ partnerId: this.partnerId })
-            .modify(addConstraints, dataConstraints, { site: 's' })
-            .first('s.id', 's.geographyId')
+          // find geography for current user
+          const { id: geographyId } = await knex('Geography as g')
+            .join('JobContext as jc', 'g.id', 'jc.geographyId')
+            .join('Job as j', 'jc.jobId', 'j.id')
+            .join('Person as p', 'j.personId', 'p.id')
+            .join('User as u', 'p.userId', 'u.id')
+            .where('p.lastPartnerId', partnerId)
+            .andWhere('u.name', user)
+            .first('g.id')
+
+          // create new site
+          const [siteId] = await knex('Site').insert({
+            name: 'Test Site',
+            shortName: 'Test Site',
+            externalId: `Test Site ${new Date().getTime()}`,
+            partnerId,
+            geographyId,
+          })
+          this.siteId = siteId
 
           const [deviceId] = await knex('Device').insert({
             partnerId: this.partnerId,
@@ -386,6 +409,38 @@ class DeviceApiTestContext {
             .innerJoin('DeviceApiKey as dak', 'dak.deviceId', 'd.id')
             .where({ 'd.id': deviceId })
             .first('dak.token', 'd.id')
+
+          const [sampleId] = await knex('Sample').insert({
+            externalId: `NEW SAMPLE ${new Date().getTime()}`,
+            collectedOn: now,
+            sampleTypeId: await sampleTypeToId('DBS'),
+            originSiteId: siteId,
+          })
+
+          const { id: daktariHivVlId } = await knex('Assay')
+            .where({ externalId: 'DaktariHivVl' })
+            .first()
+
+          await knex('Result').insert({
+            createdOn: now,
+            createdBy: this.userId,
+            updatedOn: now,
+            updatedBy: this.userId,
+            externalId: `NEW RESULT ${new Date().getTime()}`,
+            assayId: daktariHivVlId,
+            partnerId,
+            geographyId,
+            siteId,
+            deviceId: device.id,
+            resultWorkflowStatusId: await resultWorkflowStatusToId('OK'),
+            resultSourceId: await resultSourceToId('Generated'),
+            resultTypeId: await resultTypeToId('Patient'),
+            sampleId,
+            resultCategory1: await resultCategoryToId('NoResult'),
+            resultData: JSON.stringify({}),
+            startedOn: subHours(now, 2),
+            endedOn: now,
+          })
         }
       }
       assert.isOk(apiKey)
@@ -478,6 +533,18 @@ class DeviceApiTestContext {
 
       if (this.apiKeysWithoutDevice.length > 0) {
         await deleteDeviceAndTestData(knex, this.apiKeysWithoutDevice)
+      }
+
+      if (this.siteId) {
+        await knex('Sample')
+          .where({ originSiteId: this.siteId })
+          .delete()
+        await knex('InventoryItem')
+          .where({ siteId: this.siteId })
+          .delete()
+        await knex('Site')
+          .where({ id: this.siteId })
+          .delete()
       }
     })
   }
