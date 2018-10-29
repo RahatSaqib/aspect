@@ -1,5 +1,6 @@
 module.exports = require('../utils').seed(seed)
 
+const _ = require('lodash')
 const config = require('../../src/config')
 const bcrypt = require('bcrypt')
 
@@ -166,6 +167,71 @@ async function seed(knex) {
     jobId: jobIdAdmin,
     geographyId: southAfricaGeographyId,
   })
+
+  const [jobFunctionIdLabUser] = await knex('JobFunction').insert({
+    name: 'Lab User',
+    partnerId,
+  })
+  await knex('JobFunctionPermission').insert([
+    { jobFunctionId: jobFunctionIdLabUser, permissionId: modules.browse.view },
+    { jobFunctionId: jobFunctionIdLabUser, permissionId: modules.result.admin },
+  ])
+  await knex('JobFunctionFeature').insert([
+    { jobFunctionId: jobFunctionIdLabUser, featureId: features.result },
+    {
+      jobFunctionId: jobFunctionIdLabUser,
+      featureId: features.resultDashboard,
+    },
+  ])
+
+  // create site for lab user
+  await Promise.all(
+    _.map(['1', '2', '3'], async siteNum => {
+      const [siteId] = await knex('Site').insert(
+        Object.assign(
+          {
+            partnerId,
+            geographyId: southAfricaGeographyId,
+            name: `SA NHLS Site ${siteNum}`,
+            shortName: `SA NHLS Site ${siteNum}`,
+            externalId: `sa_nhls_site${siteNum}`,
+          },
+          auditFields
+        )
+      )
+      const labUserName = `nhls_lab${siteNum}`
+      const [labUserId] = await knex('User').insert({
+        name: labUserName,
+        password: bcrypt.hashSync(labUserName, saltRounds),
+        approved: 1,
+        createdOn: now,
+        lockedOut: 0,
+        failedPasswordAttempts: 0,
+      })
+      const [labPersonId] = await knex('Person').insert(
+        Object.assign(
+          {
+            userId: labUserId,
+            name: `NHLS Lab User ${siteNum}`,
+            lastPartnerId: partnerId,
+            lastCountryId: countryId,
+            geographyId: southAfricaGeographyId,
+            culture,
+            timezone,
+          },
+          auditFields
+        )
+      )
+      const [jobIdLab] = await knex('Job').insert({
+        personId: labPersonId,
+        jobFunctionId: jobFunctionIdLabUser,
+      })
+      await knex('JobContext').insert({
+        jobId: jobIdLab,
+        siteId,
+      })
+    })
+  )
 
   const [alereQHiv12DetectAssayId] = await knex('Assay').insert({
     name: 'Alere q HIV-1/2 Detect',
