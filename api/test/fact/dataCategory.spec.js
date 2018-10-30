@@ -423,29 +423,35 @@ describe('DataCategoryLow Issues Endpoint', () => {
         )
 
       expect(notifications.length).to.equal(3)
-      const [notifLU, notifRO1, notifRO2] = notifications
+      const notifLU = _.find(notifications, { jobFunction: 'Lab User' })
+      const notifRO = _.find(notifications, {
+        jobFunction: 'Regional Officer',
+        canAcknowledge: 1,
+      })
+      const notifLUROView = _.find(notifications, {
+        jobFunction: 'Regional Officer',
+        canAcknowledge: 0,
+      })
 
       // helper func for asserting similar things for each notification
       const assertNotif = (
         notification,
         userNamePrefix,
         jobFunction,
-        level,
-        canAcknowledge
+        level
       ) => {
         expect(notification.userName).to.include(userNamePrefix)
         assert.equal(notification.jobFunction, jobFunction)
         assert.equal(notification.level, level)
-        assert.equal(notification.canAcknowledge, canAcknowledge)
       }
       // see /seeds/dataCategory.js for NotificationType items
-      assertNotif(notifLU, USER_LU_NAME_PREFIX, 'Lab User', 1, 1)
-      assertNotif(notifRO1, USER_RO_NAME_PREFIX, 'Regional Officer', 1, 1)
-      assertNotif(notifRO2, USER_RO_NAME_PREFIX, 'Regional Officer', 1, 0)
+      assertNotif(notifLU, USER_LU_NAME_PREFIX, 'Lab User', 1)
+      assertNotif(notifRO, USER_RO_NAME_PREFIX, 'Regional Officer', 1)
+      assertNotif(notifLUROView, USER_RO_NAME_PREFIX, 'Regional Officer', 1)
 
       // check alert message
       assert.equal(
-        notifRO1.alertMessage,
+        notifRO.alertMessage,
         processUsingHandlebarsSyntax(
           `Data category '{{issue.data.categoryName}}' for {{issue.data.periodName}} is low ({{issue.data.percentage}}%)`,
           {
