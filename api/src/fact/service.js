@@ -171,7 +171,7 @@ function onDeviceSeen({ deviceId }, { messageContext }) {
           // If fact is marked offline and we've seen the device more recently
           // then the update, we are also online
           .orWhereRaw(
-            "fdf.offline = 1 and (fdf.updatedOn <= IFNULL(d.lastSeenOn, '1900-01-01'))"
+            'fdf.offline = 1 and (fdf.updatedOn <= IFNULL(d.lastSeenOn, fdf.updatedOn))'
           )
       })
       .first('d.id')
