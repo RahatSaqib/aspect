@@ -498,6 +498,9 @@ describe('Device API routes for GxAlert Device', () => {
                 },
               },
             ])
+            expect(devicesCreatedDuringTestAfter).to.have.length(
+              devicesCreatedDuringTestBefore.length + 1
+            )
           }))
       })
 
@@ -580,6 +583,9 @@ describe('Device API routes for GxAlert Device', () => {
                 },
               },
             ])
+            expect(devicesCreatedDuringTestAfter).to.have.length(
+              devicesCreatedDuringTestBefore.length
+            )
           }))
       })
 
@@ -612,10 +618,75 @@ describe('Device API routes for GxAlert Device', () => {
                 },
               },
             ])
+            expect(devicesCreatedDuringTestBefore).to.have.length(2)
 
             useGxAlertDeviceId(secondGxAlertDeviceId)
             const { deviceAuth, basicDevicePayload } = context
-            const response = await postToDeviceApi({
+            const responseForSecondDevice = await postToDeviceApi({
+              authHeader: deviceAuth,
+              payload: _.merge({}, basicDevicePayload, {
+                name: deviceName,
+                configuration: {
+                  data: {
+                    macAddress: secondMacAddress,
+                  },
+                },
+              }),
+            })
+            expect(
+              Object.assign({}, responseForSecondDevice.body.device, {
+                configurationData: JSON.parse(
+                  responseForSecondDevice.body.device.configurationData
+                ),
+              })
+            ).to.containSubset({
+              name: deviceName,
+              deviceTypeId: geneXpertDeviceType.id,
+              macAddress: secondMacAddress,
+              configurationData: {
+                gxAlertDeviceId: secondGxAlertDeviceId,
+                macAddress: secondMacAddress,
+              },
+            })
+
+            const devicesCreatedDuringTestAfterSecondMacAddress = await getDevicesWithIdLargerThan(
+              maxDeviceIdBefore,
+              knex
+            )
+            expect(
+              devicesCreatedDuringTestAfterSecondMacAddress
+            ).to.have.length(devicesCreatedDuringTestBefore.length + 1)
+
+            expect(
+              devicesCreatedDuringTestAfterSecondMacAddress
+            ).to.containSubset([
+              {
+                name: gxAlertDeviceName,
+                deviceTypeId: gxAlertDeviceType.id,
+                macAddress: null,
+                configurationData: {},
+              },
+              {
+                name: deviceName,
+                deviceTypeId: geneXpertDeviceType.id,
+                macAddress: firstMacAddress,
+                configurationData: {
+                  gxAlertDeviceId: firstGxAlertDeviceId,
+                  macAddress: firstMacAddress,
+                },
+              },
+              {
+                name: deviceName,
+                deviceTypeId: geneXpertDeviceType.id,
+                macAddress: secondMacAddress,
+                configurationData: {
+                  gxAlertDeviceId: secondGxAlertDeviceId,
+                  macAddress: secondMacAddress,
+                },
+              },
+            ])
+
+            const responseAfterSecondDeviceUpdate = await postToDeviceApi({
               authHeader: deviceAuth,
               payload: _.merge({}, basicDevicePayload, {
                 name: deviceName,
@@ -627,9 +698,9 @@ describe('Device API routes for GxAlert Device', () => {
               }),
             })
             expect(
-              Object.assign({}, response.body.device, {
+              Object.assign({}, responseAfterSecondDeviceUpdate.body.device, {
                 configurationData: JSON.parse(
-                  response.body.device.configurationData
+                  responseAfterSecondDeviceUpdate.body.device.configurationData
                 ),
               })
             ).to.containSubset({
@@ -646,7 +717,6 @@ describe('Device API routes for GxAlert Device', () => {
               maxDeviceIdBefore,
               knex
             )
-
             expect(devicesCreatedDuringTestAfter).to.containSubset([
               {
                 name: gxAlertDeviceName,
@@ -673,6 +743,9 @@ describe('Device API routes for GxAlert Device', () => {
                 },
               },
             ])
+            expect(devicesCreatedDuringTestAfter).to.have.length(
+              devicesCreatedDuringTestAfterSecondMacAddress.length
+            )
           }))
       })
 
@@ -885,6 +958,9 @@ describe('Device API routes for GxAlert Device', () => {
                 },
               },
             ])
+            expect(devicesCreatedDuringTestAfter).to.have.length(
+              devicesCreatedDuringTestBefore.length + 1
+            )
           }))
       })
 
@@ -967,6 +1043,9 @@ describe('Device API routes for GxAlert Device', () => {
                 },
               },
             ])
+            expect(devicesCreatedDuringTestAfter).to.have.length(
+              devicesCreatedDuringTestBefore.length
+            )
           }))
       })
 
@@ -999,10 +1078,75 @@ describe('Device API routes for GxAlert Device', () => {
                 },
               },
             ])
+            expect(devicesCreatedDuringTestBefore).to.have.length(2)
 
             useGxAlertDeviceId(secondGxAlertDeviceId)
             const { deviceAuth, basicDevicePayload } = context
-            const response = await postToDeviceApi({
+            const responseForSecondDevice = await postToDeviceApi({
+              authHeader: deviceAuth,
+              payload: _.merge({}, basicDevicePayload, {
+                name: deviceName,
+                configuration: {
+                  data: {
+                    deviceSerialNumber: secondDeviceSerial,
+                  },
+                },
+              }),
+            })
+            expect(
+              Object.assign({}, responseForSecondDevice.body.device, {
+                configurationData: JSON.parse(
+                  responseForSecondDevice.body.device.configurationData
+                ),
+              })
+            ).to.containSubset({
+              name: deviceName,
+              deviceTypeId: geneXpertDeviceType.id,
+              serial: secondDeviceSerial,
+              configurationData: {
+                gxAlertDeviceId: secondGxAlertDeviceId,
+                deviceSerialNumber: secondDeviceSerial,
+              },
+            })
+
+            const devicesCreatedDuringTestAfterSecondDeviceSerial = await getDevicesWithIdLargerThan(
+              maxDeviceIdBefore,
+              knex
+            )
+
+            expect(
+              devicesCreatedDuringTestAfterSecondDeviceSerial
+            ).to.have.length(devicesCreatedDuringTestBefore.length + 1)
+            expect(
+              devicesCreatedDuringTestAfterSecondDeviceSerial
+            ).to.containSubset([
+              {
+                name: gxAlertDeviceName,
+                deviceTypeId: gxAlertDeviceType.id,
+                serial: null,
+                configurationData: {},
+              },
+              {
+                name: deviceName,
+                deviceTypeId: geneXpertDeviceType.id,
+                serial: firstDeviceSerial,
+                configurationData: {
+                  gxAlertDeviceId: firstGxAlertDeviceId,
+                  deviceSerialNumber: firstDeviceSerial,
+                },
+              },
+              {
+                name: deviceName,
+                deviceTypeId: geneXpertDeviceType.id,
+                serial: secondDeviceSerial,
+                configurationData: {
+                  gxAlertDeviceId: secondGxAlertDeviceId,
+                  deviceSerialNumber: secondDeviceSerial,
+                },
+              },
+            ])
+
+            const responseAfterSecondDeviceUpdate = await postToDeviceApi({
               authHeader: deviceAuth,
               payload: _.merge({}, basicDevicePayload, {
                 name: deviceName,
@@ -1014,9 +1158,9 @@ describe('Device API routes for GxAlert Device', () => {
               }),
             })
             expect(
-              Object.assign({}, response.body.device, {
+              Object.assign({}, responseAfterSecondDeviceUpdate.body.device, {
                 configurationData: JSON.parse(
-                  response.body.device.configurationData
+                  responseAfterSecondDeviceUpdate.body.device.configurationData
                 ),
               })
             ).to.containSubset({
@@ -1033,7 +1177,6 @@ describe('Device API routes for GxAlert Device', () => {
               maxDeviceIdBefore,
               knex
             )
-
             expect(devicesCreatedDuringTestAfter).to.containSubset([
               {
                 name: gxAlertDeviceName,
@@ -1060,6 +1203,9 @@ describe('Device API routes for GxAlert Device', () => {
                 },
               },
             ])
+            expect(devicesCreatedDuringTestAfter).to.have.length(
+              devicesCreatedDuringTestAfterSecondDeviceSerial.length
+            )
           }))
       })
 
@@ -1256,6 +1402,9 @@ describe('Device API routes for GxAlert Device', () => {
                 },
               },
             ])
+            expect(devicesCreatedDuringTestAfter).to.have.length(
+              devicesCreatedDuringTestBefore.length + 1
+            )
           }))
       })
 
@@ -1339,6 +1488,9 @@ describe('Device API routes for GxAlert Device', () => {
                 },
               },
             ])
+            expect(devicesCreatedDuringTestAfter).to.have.length(
+              devicesCreatedDuringTestBefore.length
+            )
           }))
       })
 
@@ -1371,10 +1523,72 @@ describe('Device API routes for GxAlert Device', () => {
                 },
               },
             ])
+            expect(devicesCreatedDuringTestBefore).to.have.length(2)
 
             useGxAlertDeviceId(secondGxAlertDeviceId)
             const { deviceAuth, basicDevicePayload } = context
-            const response = await postToDeviceApi({
+            const responseForSecondDevice = await postToDeviceApi({
+              authHeader: deviceAuth,
+              payload: _.merge({}, basicDevicePayload, {
+                name: deviceName,
+                configuration: {
+                  data: {
+                    hostId: secondHostId,
+                  },
+                },
+              }),
+            })
+            expect(
+              Object.assign({}, responseForSecondDevice.body.device, {
+                configurationData: JSON.parse(
+                  responseForSecondDevice.body.device.configurationData
+                ),
+              })
+            ).to.containSubset({
+              name: deviceName,
+              deviceTypeId: geneXpertDeviceType.id,
+              hostId: secondHostId,
+              configurationData: {
+                gxAlertDeviceId: secondGxAlertDeviceId,
+                hostId: secondHostId,
+              },
+            })
+
+            const devicesCreatedDuringTestAfterSecondHostId = await getDevicesWithIdLargerThan(
+              maxDeviceIdBefore,
+              knex
+            )
+            expect(devicesCreatedDuringTestAfterSecondHostId).to.have.length(
+              devicesCreatedDuringTestBefore.length + 1
+            )
+            expect(devicesCreatedDuringTestAfterSecondHostId).to.containSubset([
+              {
+                name: gxAlertDeviceName,
+                deviceTypeId: gxAlertDeviceType.id,
+                hostId: null,
+                configurationData: {},
+              },
+              {
+                name: deviceName,
+                deviceTypeId: geneXpertDeviceType.id,
+                hostId: firstHostId,
+                configurationData: {
+                  gxAlertDeviceId: firstGxAlertDeviceId,
+                  hostId: firstHostId,
+                },
+              },
+              {
+                name: deviceName,
+                deviceTypeId: geneXpertDeviceType.id,
+                hostId: secondHostId,
+                configurationData: {
+                  gxAlertDeviceId: secondGxAlertDeviceId,
+                  hostId: secondHostId,
+                },
+              },
+            ])
+
+            const responseAfterSecondDeviceUpdate = await postToDeviceApi({
               authHeader: deviceAuth,
               payload: _.merge({}, basicDevicePayload, {
                 name: deviceName,
@@ -1386,9 +1600,9 @@ describe('Device API routes for GxAlert Device', () => {
               }),
             })
             expect(
-              Object.assign({}, response.body.device, {
+              Object.assign({}, responseAfterSecondDeviceUpdate.body.device, {
                 configurationData: JSON.parse(
-                  response.body.device.configurationData
+                  responseAfterSecondDeviceUpdate.body.device.configurationData
                 ),
               })
             ).to.containSubset({
@@ -1405,12 +1619,11 @@ describe('Device API routes for GxAlert Device', () => {
               maxDeviceIdBefore,
               knex
             )
-
             expect(devicesCreatedDuringTestAfter).to.containSubset([
               {
                 name: gxAlertDeviceName,
                 deviceTypeId: gxAlertDeviceType.id,
-                hostId: null,
+                serial: null,
                 configurationData: {},
               },
               {
@@ -1432,6 +1645,9 @@ describe('Device API routes for GxAlert Device', () => {
                 },
               },
             ])
+            expect(devicesCreatedDuringTestAfter).to.have.length(
+              devicesCreatedDuringTestAfterSecondHostId.length
+            )
           }))
       })
 
