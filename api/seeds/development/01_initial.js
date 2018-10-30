@@ -3861,6 +3861,12 @@ async function seed(knex) {
       issueCategoryId: issueCategories.ReagentHealth,
       defaultMessageTypeId: reagentHealthTypeId,
     },
+    {
+      name: 'Module Replaced',
+      externalId: 'ModuleReplaced',
+      i18nKey: 'issueTypeModuleReplaced',
+      issueCategoryId: issueCategories.DeviceHealth,
+    },
   ])
 
   const geneXpertHiv1VlFormSchema = JSON.stringify({

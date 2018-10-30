@@ -5,6 +5,8 @@ const {
   updateDataCategoryNotificationTypeForRO,
 } = require('../dataCategoryLow')
 
+const { issueCategoryToId } = require('../../src/shared/dictionary')
+
 async function seed(knex) {
   const widget = await knex('DashboardWidget')
     .where('title', 'children')
@@ -46,5 +48,15 @@ async function turnOffEmailSms(knex) {
   await knex('MessageType').update({
     emailTemplateId: null,
     smsTemplateId: null,
+  })
+}
+
+async function insertModuleReplacedIssue(knex) {
+  const issueCategoryDeviceHealthId = await issueCategoryToId('DeviceHealth')
+  await knex('IssueType').insert({
+    name: 'Module Replaced',
+    externalId: 'ModuleReplaced',
+    i18nKey: 'issueTypeModuleReplaced',
+    issueCategoryId: issueCategoryDeviceHealthId,
   })
 }
