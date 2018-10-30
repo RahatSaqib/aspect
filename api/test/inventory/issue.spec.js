@@ -277,6 +277,7 @@ describe('Inventory Stock Issues Endpoint', () => {
         issueIds.push(issueId)
       })
     )
+
     it('change createdOn value for just triggered Stock Expiring issue and dispatch escalate issue action', async () =>
       run(async knex => {
         // see seed/utils.js - search for 'knex('IssueEscalationTrigger').insert' -
@@ -340,7 +341,7 @@ async function triggerInitialIssue({
 
   // dispatch action
   const action = actionCreator(...values)
-  dispatch(...values)
+  await dispatch(...values)
 
   // wait for MQ to handle
   await waitForAction(action)
@@ -387,10 +388,14 @@ async function triggerInitialIssue({
     .join('Person as p', 'p.id', 'n.personId')
     .join('User as u', 'u.id', 'p.userId')
     .join('AlertMessage as am', 'am.id', 'n.alertMessageId')
-    .where('n.issueId', issue.id)
+    .where({
+      'n.issueId': issue.id,
+      'nt.level': 1,
+    })
     .orderBy('jf.name') // Lab User, Regional Officer
     .orderBy('nt.createdOn') // items are in same order as they happen
     .select(
+      'nt.name as notificationTypeName',
       'u.name as userName',
       'jf.name as jobFunction',
       'nt.level',
@@ -400,7 +405,19 @@ async function triggerInitialIssue({
 
   // should have 3 entries - 1 LU and 2 RO's
   expect(notifications.length).to.equal(3)
-  const [notifLU, notifRO1, notifRO2] = notifications
+  const notifLU = _.find(notifications, { jobFunction: 'Lab User' })
+  const notifRO = _.find(
+    notifications,
+    notification =>
+      notification.notificationTypeName.indexOf('RO View') === -1 &&
+      notification.jobFunction === 'Regional Officer'
+  )
+  const notifLUROView = _.find(
+    notifications,
+    notification =>
+      notification.notificationTypeName.indexOf('RO View') > 0 &&
+      notification.jobFunction === 'Regional Officer'
+  )
 
   // helper func for asserting similar things for each notification
   const assertNotification = (
@@ -417,9 +434,15 @@ async function triggerInitialIssue({
   }
 
   assertNotification(notifLU, USER_LU_NAME_PREFIX, 'Lab User', 1, 1)
-  assertNotification(notifRO1, USER_RO_NAME_PREFIX, 'Regional Officer', 1, 0)
   const ack = issueType === 'InventoryStockout' ? 1 : 0
-  assertNotification(notifRO2, USER_RO_NAME_PREFIX, 'Regional Officer', 1, ack)
+  assertNotification(notifRO, USER_RO_NAME_PREFIX, 'Regional Officer', 1, ack)
+  assertNotification(
+    notifLUROView,
+    USER_RO_NAME_PREFIX,
+    'Regional Officer',
+    1,
+    0
+  )
 
   // check alert message
   if (issueType === 'InventoryStockout') {
@@ -459,6 +482,7 @@ async function triggerInitialIssue({
 
   return issue.id
 }
+
 async function deleteConsumableTestData(knex, consumableId) {
   const inventoryItems = await knex('InventoryItem')
     .where({ consumableId })
