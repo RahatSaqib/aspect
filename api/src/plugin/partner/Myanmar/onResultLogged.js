@@ -11,6 +11,7 @@ const {
   resultMachinePowerError,
   resultModuleUnknownError,
   resultMachineUnknownError,
+  resultModuleReplaced,
 } = require('../../../result/actions')
 const {
   selectAssayConsumables,
@@ -66,6 +67,44 @@ async function onResultLogged({ resultId }, { messageContext }) {
     let invalidReagentErrorRatio = 0
     let invalidReagentErrorCount = 0
 
+    // get all modules that were replaced so we can ignore them in the queries below:
+    const replacedModuleSerials = await knex('Issue as i')
+      .join('IssueType as it', 'it.id', 'i.issueTypeId')
+      .where('it.externalId', 'ModuleReplaced')
+      .where('i.deviceId', deviceId)
+      .select('data->>"$.moduleSerial"')
+
+    console.log(replacedModuleSerials)
+
+    // check if a module was just now replaced and trigger replacement-issue if it was
+    if (
+      result.moduleName &&
+      result.moduleSerial &&
+      result.createdOn === result.updatedOn
+    ) {
+      // get the most recent result from the same module as the current result:
+      const [previousResultOnModule] = await knex('Result')
+        .where('deviceId', result.deviceId)
+        .where('moduleName', result.moduleName)
+        .whereNotNull('moduleSerial')
+        .whereNot('id', resultId)
+        .whereRaw('endedOn < ?', [result.endedOn])
+        .orderBy('endedOn', 'desc')
+        .first()
+
+      console.log('Checking for replaced module')
+      if (
+        previousResultOnModule &&
+        previousResultOnModule.moduleSerial !== result.moduleSerial
+      ) {
+        console.log('MODULE replaced!!!')
+        resultModuleReplaced(resultId, result.moduleName, result.moduleSerial)
+        replacedModuleSerials.push(result.moduleSerial)
+      }
+    }
+
+    console.log(replacedModuleSerials)
+
     // prepare query for device results
     const deviceErrorQuery = knex('Result as r')
       .innerJoin('ResultCategory as rc', 'r.resultCategory1', 'rc.id')
@@ -81,6 +120,7 @@ async function onResultLogged({ resultId }, { messageContext }) {
           .clone()
           .where('r.endedOn', '>=', last30day)
           .whereIn('r.errorCode', MODULE_TEMPERATURE_ERROR_CODES)
+          .whereNotIn('r.moduleSerial', replacedModuleSerials)
           .select(
             'r.moduleSerial as moduleSerial',
             knex.raw(
@@ -103,6 +143,7 @@ async function onResultLogged({ resultId }, { messageContext }) {
           .clone()
           .where('r.endedOn', '>=', last30day)
           .whereIn('r.errorCode', MODULE_TEMPERATURE_ERROR_CODES)
+          .whereNotIn('r.moduleSerial', replacedModuleSerials)
           .whereNotIn('r.moduleSerial', moduleTemperatureSerials)
           .count('r.id as errorCount')
         if (errorCount > machineTemperatureMaxErrors) {
@@ -114,6 +155,7 @@ async function onResultLogged({ resultId }, { messageContext }) {
           .clone()
           .where('r.endedOn', '>=', last30day)
           .whereIn('r.errorCode', MODULE_POWER_ERROR_CODES)
+          .whereNotIn('r.moduleSerial', replacedModuleSerials)
           .select(
             'r.moduleSerial as moduleSerial',
             knex.raw(
@@ -134,6 +176,7 @@ async function onResultLogged({ resultId }, { messageContext }) {
           .clone()
           .where('r.endedOn', '>=', last30day)
           .whereIn('r.errorCode', MODULE_POWER_ERROR_CODES)
+          .whereNotIn('r.moduleSerial', replacedModuleSerials)
           .count('r.id as errorCount')
         if (errorCount > machinePowerMaxErrors) {
           context.resultMachinePowerError(deviceId)
@@ -143,6 +186,7 @@ async function onResultLogged({ resultId }, { messageContext }) {
           .clone()
           .where('r.endedOn', '>=', last30day)
           .whereIn('r.errorCode', MODULE_FAILURE_ERROR_CODES)
+          .whereNotIn('r.moduleSerial', replacedModuleSerials)
           .select(
             'r.moduleSerial as moduleSerial',
             knex.raw(
@@ -167,6 +211,7 @@ async function onResultLogged({ resultId }, { messageContext }) {
           .clone()
           .where('r.endedOn', '>=', last30day)
           .whereIn('r.errorCode', PROCEDURAL_ERROR_CODES)
+          .whereNotIn('r.moduleSerial', replacedModuleSerials)
           .whereNotIn('r.moduleSerial', moduleErrorSerials)
           .select(
             'r.moduleSerial as moduleSerial',
@@ -185,6 +230,7 @@ async function onResultLogged({ resultId }, { messageContext }) {
             const [{ moduleResultCount }] = await knex('Result as r')
               .where('r.endedOn', '>=', last30day)
               .where('r.moduleSerial', module.moduleSerial)
+              .whereNotIn('r.moduleSerial', replacedModuleSerials)
               .count('r.id as moduleResultCount')
             const prcntModuleError = module.errorCount / moduleResultCount * 100
             allModulesErr = allModulesErr && prcntModuleError > maxPrcntErrors
@@ -205,6 +251,7 @@ async function onResultLogged({ resultId }, { messageContext }) {
             const [{ moduleResultCount }] = await knex('Result as r')
               .where('r.endedOn', '>=', last30day)
               .where('r.moduleSerial', module.moduleSerial)
+              .whereNotIn('r.moduleSerial', replacedModuleSerials)
               .count('r.id as moduleResultCount')
             const prcntModuleError = module.errorCount / moduleResultCount * 100
             if (
@@ -220,6 +267,7 @@ async function onResultLogged({ resultId }, { messageContext }) {
         const reagentErrorQuery = knex('Result as r')
           .innerJoin('ResultCategory as rc', 'r.resultCategory1', 'rc.id')
           .where('r.endedOn', '>=', last30day)
+          .whereNotIn('r.moduleSerial', replacedModuleSerials)
           .where({
             'r.siteId': siteId,
           })
@@ -272,6 +320,7 @@ async function onResultLogged({ resultId }, { messageContext }) {
         const modules = await deviceErrorQuery
           .clone()
           .where('r.endedOn', '>=', last30day)
+          .whereNotIn('r.moduleSerial', replacedModuleSerials)
           .whereNull('r.errorCode') // must be null
           .select(
             'r.moduleSerial as moduleSerial',
@@ -329,11 +378,13 @@ async function onResultLogged({ resultId }, { messageContext }) {
       .where('r.deviceId', deviceId)
       .where('r.endedOn', '>=', last30day)
       .where('rc.externalId', 'NoResult')
+      .whereNotIn('r.moduleSerial', replacedModuleSerials)
       .count('r.id as noResultCount')
 
     const [{ machineResultCount }] = await knex('Result as r')
       .where('r.deviceId', deviceId)
       .where('r.endedOn', '>=', last30day)
+      .whereNotIn('r.moduleSerial', replacedModuleSerials)
       .count('r.id as machineResultCount')
 
     if (machineResultCount !== 0) {
