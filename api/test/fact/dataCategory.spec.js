@@ -1,10 +1,5 @@
 const _ = require('lodash')
-const {
-  subDays,
-  addMilliseconds,
-  startOfMonth,
-  subMinutes,
-} = require('date-fns')
+const { subDays, addMilliseconds, subMinutes } = require('date-fns')
 const { assert, expect } = require('chai')
 const Promise = require('bluebird')
 
@@ -321,10 +316,10 @@ describe('DataCategoryLow Issues Endpoint', () => {
 
   it('trigger DataCategoryLow issue for testing site', async () => {
     await runTestWithKnex(async knex => {
-      // current month
+      // last 30 days
       const period = {
-        name: 'current month',
-        dateFrom: startOfMonth(now),
+        name: 'last 30 days',
+        dateFrom: subDays(now, 30),
         dateTo: now,
       }
       // get item for our testing category

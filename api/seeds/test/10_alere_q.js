@@ -1,6 +1,9 @@
 module.exports = require('../utils').seed(seed)
 
 const { rowsAsObject } = require('../utils')
+const {
+  updateDataCategoryNotificationTypeForRO,
+} = require('../dataCategoryLow')
 
 const {
   deviceTypeCategoryToId,
@@ -282,4 +285,6 @@ async function seed(knex) {
       quantity: 1,
     },
   ])
+
+  await updateDataCategoryNotificationTypeForRO(knex, 'Myanmar')
 }
