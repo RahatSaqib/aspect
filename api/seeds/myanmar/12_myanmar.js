@@ -16,7 +16,6 @@ async function seed(knex) {
   await removeChildrenDashboardTarget(knex)
   await updateDashboardWidgetQueries(knex)
   await turnOffEmailSms(knex)
-
   await updateDataCategoryNotificationTypeForRO(knex, 'Myanmar')
 }
 

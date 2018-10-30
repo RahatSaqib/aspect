@@ -4,9 +4,6 @@ const config = require('../../src/config')
 const bcrypt = require('bcrypt')
 
 const { rowsAsObject, getPermissionModules } = require('../utils')
-const {
-  updateDataCategoryNotificationTypeForRO,
-} = require('../dataCategoryLow')
 
 const {
   deviceTypeCategoryToId,
@@ -421,6 +418,4 @@ async function seed(knex) {
       quantity: 1,
     },
   ])
-
-  await updateDataCategoryNotificationTypeForRO(knex, 'Myanmar')
 }

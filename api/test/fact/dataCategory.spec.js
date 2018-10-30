@@ -412,8 +412,8 @@ describe('DataCategoryLow Issues Endpoint', () => {
           'am.message as alertMessage'
         )
 
-      expect(notifications.length).to.equal(3)
-      const [notifLU, notifRO1, notifRO2] = notifications
+      expect(notifications.length).to.equal(2)
+      const [notifLU, notifRO1] = notifications
 
       // helper func for asserting similar things for each notification
       const assertNotif = (
@@ -430,8 +430,7 @@ describe('DataCategoryLow Issues Endpoint', () => {
       }
       // see /seeds/dataCategory.js for NotificationType items
       assertNotif(notifLU, USER_LU_NAME_PREFIX, 'Lab User', 1, 1)
-      assertNotif(notifRO1, USER_RO_NAME_PREFIX, 'Regional Officer', 1, 1)
-      assertNotif(notifRO2, USER_RO_NAME_PREFIX, 'Regional Officer', 1, 0)
+      assertNotif(notifRO1, USER_RO_NAME_PREFIX, 'Regional Officer', 1, 0)
 
       // check alert message
       assert.equal(

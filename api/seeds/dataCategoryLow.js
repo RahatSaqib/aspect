@@ -137,7 +137,7 @@ async function seedDataCategory(knex, partnerName) {
   })
 
   // ----------------------------------------------------------------------
-  // reed dataCategories
+  // read dataCategories
   // ----------------------------------------------------------------------
   const pluginName = partnerName.toLowerCase()
   const plugin = await loadPlugin([pluginName], 'dataCategories')
@@ -329,7 +329,7 @@ async function updateDataCategoryNotificationTypeForRO(knex, partnerName) {
     .first('id')
 
   // ----------------------------------------------------------------------
-  // reed dataCategories
+  // read dataCategories
   // ----------------------------------------------------------------------
   const pluginName = partnerName.toLowerCase()
   const plugin = await loadPlugin([pluginName], 'dataCategories')
