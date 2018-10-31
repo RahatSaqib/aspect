@@ -9,6 +9,8 @@ import signedOutFactory from './signedOutFactory'
 import loggedInFactory from './loggedInFactory'
 import loggedInDetailFactory from './loggedInFactory/detailFactory'
 import { isEnabledFeature } from '../../components/shared/requirePermissions'
+import { reduceNavLinks } from '../../filter/utils'
+import { navigations } from '../../globals/components/BrowseFilters'
 
 // "Pages"
 import LoadableLogin from '../../auth/login/LoadableLogin'
@@ -61,10 +63,12 @@ const renderRedirectToLoginOr = props =>
   props.isLoggedOut &&
   makeRenderRedirectToLoginWithReason(props.loggedOutReason)
 
-const renderRedirectToDashboard = ({ location }) => (
+const renderRedirectToDashboard = ({ features }) => ({ location }) => (
   <Redirect
     to={{
-      pathname: '/dashboard',
+      pathname: isEnabledFeature(features, ['summaryDashboard'])
+        ? '/dashboard'
+        : '/browse',
       state: { referrer: location },
     }}
   />
@@ -73,6 +77,11 @@ const renderRedirectToDashboard = ({ location }) => (
 const renderRedirectToNotFound = (props, requiredFeature) => {
   const t = !isEnabledFeature(props.features, requiredFeature)
   if (t) return renderNotFound
+}
+
+const renderRedirectToBrowse = ({ features, permissions }) => () => {
+  const reducedNav = reduceNavLinks(navigations, permissions, features)
+  return <Redirect to={_.head(reducedNav).value || '/browse/device'} />
 }
 
 const renderLoadableLogin = signedOutFactory(LoadableLogin)
@@ -116,7 +125,9 @@ export const routerFactory = () => props => (
       <Route
         exact
         path="/"
-        render={renderRedirectToLoginOr(props) || renderRedirectToDashboard}
+        render={
+          renderRedirectToLoginOr(props) || renderRedirectToDashboard(props)
+        }
       />
 
       <Route path="/login" render={renderLoadableLogin} />
@@ -205,7 +216,7 @@ export const routerFactory = () => props => (
         }
       />
 
-      <Redirect exact path="/browse" to="/browse/device" />
+      <Route exact path="/browse" render={renderRedirectToBrowse(props)} />
 
       <Route
         exact
