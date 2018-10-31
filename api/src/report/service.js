@@ -168,6 +168,18 @@ async function proxyGxReportAsync(request) {
   const pw = 'u50GUh3u3bA5jr3IHLJrmG2l'
 
   const dataConstraints = await getConstraints(auth.credentials)
+
+  // check if user is admin and they should be able to download report even if assigned to more than one state
+  const { jobFunctionName } = await knex('JobFunction as jf')
+    .innerJoin('Job as j', 'j.jobFunctionId', 'jf.id')
+    .innerJoin('Person as ps', 'j.personId', 'ps.id')
+    .where({
+      'ps.id': dataConstraints.person.id,
+      'jf.partnerId': dataConstraints.partner.id,
+    })
+    .first('jf.name as jobFunctionName')
+  const isAdmin = jobFunctionName === 'Admin'
+
   const sitesQ = knex('Site as s')
     .join('Geography as g', 's.geographyId', 'g.id')
     .join('State as st', 'g.stateId', 'st.id')
@@ -184,13 +196,12 @@ async function proxyGxReportAsync(request) {
 
   const stateNames = _.uniq(_.map(sites, 'stateName'))
   const siteNames = _.uniq(_.map(sites, 'siteName'))
-  if (stateNames.length !== 1) {
+  if (stateNames.length !== 1 && !isAdmin) {
     throw Boom.badRequest(
       'Cannot find single assigned state for logged in user'
     )
   }
-  const [stateName] = stateNames
-  // Current siteName == deviceName in GxAlert so pass through
+  const [stateName] = stateNames.length === 1 ? stateNames : []
   const [deviceName] = siteNames.length === 1 ? siteNames : []
 
   const gxParams = {
