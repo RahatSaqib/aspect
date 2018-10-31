@@ -23,8 +23,6 @@ const {
   issueEventStatusToId,
 } = require('../shared/dictionary')
 
-const startOfMonth = require('date-fns/start_of_month')
-
 const daysToCalculate = [1, 7, 30, 60, 90, 365, 9999]
 const MIN_RESULTS_TO_TRIGGER_DATA_CATEGORY_LOW = 10
 
@@ -765,10 +763,10 @@ async function checkDataCategoriesForLowStatus(action, { messageContext }) {
   })
   const { loadPlugin } = require('../plugin/registration')
   const now = new Date()
-  // calculate only for current month
+  // calculate only for last 30 days
   const period = {
-    name: 'current month',
-    dateFrom: startOfMonth(now),
+    name: 'last 30 days',
+    dateFrom: subDays(now, 30),
     dateTo: now,
   }
 

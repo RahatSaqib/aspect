@@ -71,7 +71,7 @@ const dataCategories = [
     invalidValues: JSON.stringify(
       dictHivStatus.filter(x => x === 'Not on Form')
     ),
-    cutoffPercentage: 98,
+    cutoffPercentage: 95,
   },
   {
     name: 'MDR',
@@ -80,7 +80,7 @@ const dataCategories = [
     i18nKey: 'dataCategoryMdr',
     validValues: JSON.stringify(dictMdr.filter(x => x !== 'Not on Form')),
     invalidValues: JSON.stringify(dictMdr.filter(x => x === 'Not on Form')),
-    cutoffPercentage: 98,
+    cutoffPercentage: 95,
   },
   {
     name: 'Smear+',
@@ -109,7 +109,7 @@ const dataCategories = [
     // ----------------------
     // see func getDataCategoryStatus( in /fact/service.js
     // ----------------------
-    cutoffPercentage: 98,
+    cutoffPercentage: 95,
   },
 ]
 
