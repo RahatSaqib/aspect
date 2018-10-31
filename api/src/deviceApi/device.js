@@ -183,9 +183,9 @@ async function createNewDevice(
     culture,
     timezone,
     configurationData,
-    putInService: putInService || now,
-    lastSeenOn: lastSeenOn || now,
-    lastPingOn: lastPingOn || now,
+    putInService,
+    lastSeenOn,
+    lastPingOn,
     createdOn: now,
     updatedOn: now,
   })
@@ -200,17 +200,25 @@ async function createNewDevice(
   const device = await knex('Device as d')
     .join('DeviceStatus as ds', 'd.deviceStatusId', 'ds.id')
     .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
+    .leftJoin('DeviceTypeCategory as dtc', 'dtc.id', 'dt.deviceTypeCategoryId')
+    .leftJoin('Partner as p', 'd.partnerId', 'p.id')
     .where('d.id', deviceId)
     .first(
       'd.id',
       'd.partnerId',
       'd.siteId',
+      'd.geographyId',
       'd.name',
       'd.serial',
+      'd.macAddress',
+      'd.configurationData',
       'd.lastSeenOn',
+      'd.putInService',
       'ds.token as status',
       'dt.externalId as deviceType',
-      'dt.plugin as deviceTypePluginName'
+      'dt.plugin as deviceTypePluginName',
+      'p.plugin as partnerPluginName',
+      'dtc.name as deviceTypeCategory'
     )
   return { device }
 }

@@ -378,14 +378,17 @@ async function findDevices(availableDeviceDetails, knex) {
     'd.id',
     'd.partnerId',
     'd.siteId',
+    'd.geographyId',
     'd.name',
     'd.serial',
     'd.macAddress',
     'd.configurationData',
     'd.lastSeenOn',
+    'd.putInService',
     'ds.token as status',
     'dt.externalId as deviceType',
     'dt.plugin as deviceTypePluginName',
+    'p.plugin as partnerPluginName',
     'dtc.name as deviceTypeCategory',
   ]
   const deviceQuery = knex
@@ -398,6 +401,7 @@ async function findDevices(availableDeviceDetails, knex) {
     .leftJoin('DeviceStatus as ds', 'd.deviceStatusId', 'ds.id')
     .leftJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .leftJoin('DeviceTypeCategory as dtc', 'dtc.id', 'dt.deviceTypeCategoryId')
+    .leftJoin('Partner as p', 'd.partnerId', 'p.id')
   if (deviceId) {
     return deviceQuery
       .clone()

@@ -8,8 +8,6 @@ import { defineMessages } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
-import { Button } from 'react-toolbox/lib/button'
-
 // Material-UI
 import Checkbox from 'material-ui/Checkbox'
 import MdChevronLeft from 'react-icons/lib/md/chevron-left'
@@ -18,8 +16,6 @@ import MdClose from 'react-icons/lib/md/clear'
 
 // Our own imports
 import config from '../../config'
-import FormGroup from '../../components/themedReactToolbox/FormGroup'
-import ButtonGroup from '../../components/themedReactToolbox/ButtonGroup'
 import DelayShowingProgressBar from '../../components/shared/DelayShowingProgressBar'
 import JSONSchemaCard from '../../components/shared/JSONSchemaCard'
 import NavTitle from '../../globals/components/NavTitle'
@@ -33,7 +29,7 @@ import {
 import ConnectedTagInput from '../../tag/ConnectedTagInput'
 import { fetchTags, updateTags } from '../../tag/TagRedux'
 import isEditable from '../../shared/selectors/result'
-
+import { Unit } from '../../components/pureGrids'
 import { ReadOnlyField } from '../../components/shared/ReadOnlyFields'
 import DetailPanel from '../../components/shared/detailPanel/DetailPanel'
 import {
@@ -41,6 +37,7 @@ import {
   ExpansionPanelHeader,
   ExpansionPanelDetail,
 } from '../../components/shared/expansionPanel'
+import CustomField from './CustomField'
 
 import styles from './ResultDetail.css'
 
@@ -105,22 +102,6 @@ const messages = defineMessages({
   confirmedInterpretationOfResult: {
     id: 'pages.ResultDetail.formFields.confirmedInterpretationOfResult',
     defaultMessage: 'Confirmed Interpretation of Result',
-  },
-  none: {
-    id: 'pages.ResultDetail.formOptions.none',
-    defaultMessage: 'None',
-  },
-  negative: {
-    id: 'pages.ResultDetail.formOptions.negative',
-    defaultMessage: 'Negative',
-  },
-  positive: {
-    id: 'pages.ResultDetail.formOptions.positive',
-    defaultMessage: 'Positive',
-  },
-  uninterpretable: {
-    id: 'pages.ResultDetail.formOptions.uninterpretable',
-    defaultMessage: 'Uninterpretable',
   },
 })
 
@@ -295,7 +276,11 @@ export class ResultDetail extends PureComponent {
                   label={formatMessage(messages.createdOnLabel, {
                     date: createdOn.toUTCString(),
                   })}
-                  value={<pre>{JSON.stringify(rawMessage, null, 1)}</pre>}
+                  value={
+                    <pre className={cssClasses('RawResultContainer')}>
+                      {JSON.stringify(rawMessage, null, 1)}
+                    </pre>
+                  }
                 />
               )
             })}
@@ -331,7 +316,10 @@ export class ResultDetail extends PureComponent {
     if (!result || !result.has('formSchema') || !result.get('formSchema')) {
       return false
     }
-    const [...fieldKeys] = result.get('formSchema').keys()
+    const [...fieldKeys] = result
+      .get('formSchema')
+      .sortBy(value => value.get('order'))
+      .keys()
     if (_.isEmpty(fieldKeys)) {
       return false
     }
@@ -342,54 +330,29 @@ export class ResultDetail extends PureComponent {
           )
         : formatMessage(messages.additionalResultDetails)
     const formData = result.get('formData') || Immutable.Map({})
+    const isMultiField = fieldKeys.length > 1
     return (
       <ExpansionPanel className={cssClasses('FieldsContainer')} disabled>
         <ExpansionPanelHeader label={sectionLabel}>
-          {fieldKeys.map(formFieldKey => {
-            const { intl: { formatMessage } } = this.props
-            const fieldSchema = result.getIn(['formSchema', formFieldKey])
-            const fieldType = fieldSchema.getIn(['control', 'type'])
-            const fieldLabel =
-              fieldKeys.length > 1
-                ? formatMessage(messages[fieldSchema.get('i18nLabel')])
-                : ''
-            const fieldValue = formData.get(formFieldKey) || null
-            if (fieldType === 'ButtonGroup') {
-              if (fieldSchema.getIn(['control', 'allowMultipleSelection'])) {
-                // TODO: Implement multi-select button group
-                return false
-              }
+          <div className={cssClasses('FormDataContainer')}>
+            {fieldKeys.map(formFieldKey => {
+              const { intl: { formatMessage } } = this.props
+              const fieldSchema = result.getIn(['formSchema', formFieldKey])
               return (
-                <FormGroup label={fieldLabel} key={formFieldKey}>
-                  <ButtonGroup isolated>
-                    {fieldSchema
-                      .getIn(['control', 'options'])
-                      .map(option => (
-                        <Button
-                          key={option.get('value') || 'null'}
-                          primary
-                          raised
-                          inverse={option.get('value') !== fieldValue}
-                          label={formatMessage(
-                            messages[option.get('i18nText')]
-                          )}
-                          data-value={option.get('value')}
-                          onClick={() =>
-                            updateResultFormData(
-                              result.get('id'),
-                              formFieldKey,
-                              option.get('value')
-                            )
-                          }
-                        />
-                      ))}
-                  </ButtonGroup>
-                </FormGroup>
+                <Unit key={formFieldKey} xs="1-2" sm="1-3">
+                  <CustomField
+                    resultId={result.get('id')}
+                    formFieldKey={formFieldKey}
+                    fieldSchema={fieldSchema}
+                    formData={formData}
+                    formatMessage={formatMessage}
+                    isMultiField={isMultiField}
+                    updateFormData={updateResultFormData}
+                  />
+                </Unit>
               )
-            }
-            // TODO: Implement other control types here
-            return false
-          })}
+            })}
+          </div>
         </ExpansionPanelHeader>
       </ExpansionPanel>
     )

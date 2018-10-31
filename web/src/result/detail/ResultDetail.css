@@ -139,3 +139,13 @@
 .FilesContainer.Preview .ThumbnailFilename {
   display: none;
 }
+
+.RawResultContainer {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.FormDataContainer {
+  display: block;
+  padding-top: 6px;
+}

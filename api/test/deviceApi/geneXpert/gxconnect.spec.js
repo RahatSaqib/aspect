@@ -12,8 +12,7 @@ const setMilliseconds = require('date-fns/set_milliseconds')
 const dateFormat = require('date-fns/format')
 const Promise = require('bluebird')
 const { createGxConnectTestContext } = require('./gxconnect_utils')
-const { getLastResultId } = require('../utils')
-const { postToDeviceApi } = require('./utils')
+const { getLastResultId, postToDeviceApi } = require('../utils')
 const {
   resultTextToResultCategoryMapping,
   basicResultPayload,
@@ -118,9 +117,9 @@ describe('Device API routes for GxConnect Devices', () => {
             macAddress,
           })
 
-          before(context.beforeRegisterAndSetDevice)
+          beforeEach(context.beforeRegisterAndSetDevice)
           const { runTest } = context
-          after(context.afterCleanUp)
+          afterEach(context.afterCleanUp)
 
           it('should respond with OK', () =>
             runTest(async () => {
@@ -631,9 +630,9 @@ describe('Device API routes for GxConnect Devices', () => {
       macAddress,
       deviceSerialNumber,
     })
-    before(context.beforeRegisterAndSetDevice)
+    beforeEach(context.beforeRegisterAndSetDevice)
     const { runTest } = context
-    after(context.afterCleanUp)
+    afterEach(context.afterCleanUp)
 
     it('should update the last seen and last ping time', () =>
       runTest(async knex => {
@@ -711,9 +710,9 @@ describe('Device API routes for GxConnect Devices', () => {
       macAddress,
       deviceSerialNumber,
     })
-    before(context.beforeRegisterAndSetDevice)
+    beforeEach(context.beforeRegisterAndSetDevice)
     const { runTest, getLastResult, basicDevicePayload } = context
-    after(context.afterCleanUp)
+    afterEach(context.afterCleanUp)
 
     it('should reject a result without a start or end date date', () =>
       runTest(async () => {
@@ -1376,8 +1375,6 @@ describe('Device API routes for GxConnect Devices', () => {
 
     describe('when the assay in the result payload is mapped to a consumable', () => {
       const initialQuantityOnHand = 100
-      let expiryDate
-      let inventoryItemId
 
       it('should reduce inventory levels of that consumable appropriately', () =>
         runTest(async knex => {
@@ -1393,8 +1390,8 @@ describe('Device API routes for GxConnect Devices', () => {
           assert.isNotEmpty(consumableAssay)
           assert.isAbove(consumableAssay.quantity, 0)
 
-          expiryDate = new Date(addYears(now, 1).setHours(0, 0, 0, 0))
-          inventoryItemId = await knex('InventoryItem').insert({
+          const expiryDate = new Date(addYears(now, 1).setHours(0, 0, 0, 0))
+          const [inventoryItemId] = await knex('InventoryItem').insert({
             consumableId: consumableAssay.consumableId,
             siteId: site.id,
             expiresOn: expiryDate,
@@ -1481,6 +1478,14 @@ describe('Device API routes for GxConnect Devices', () => {
             assert.isNotEmpty(consumableAssays)
             const [consumableAssay] = consumableAssays
             assert.isAbove(consumableAssay.quantity, 0)
+
+            const expiryDate = new Date(addYears(now, 1).setHours(0, 0, 0, 0))
+            const [inventoryItemId] = await knex('InventoryItem').insert({
+              consumableId: consumableAssay.consumableId,
+              siteId: site.id,
+              expiresOn: expiryDate,
+              quantityOnHand: initialQuantityOnHand,
+            })
 
             const inventoryItemBeforeFirstRequest = await knex('InventoryItem')
               .where({
@@ -2129,9 +2134,9 @@ describe('Device API routes for GxConnect Devices', () => {
       macAddress,
       deviceSerialNumber,
     })
-    before(context.beforeRegisterAndSetDevice)
+    beforeEach(context.beforeRegisterAndSetDevice)
     const { runTest } = context
-    after(context.afterCleanUp)
+    afterEach(context.afterCleanUp)
 
     it('should create inventory items that do not exist', () =>
       runTest(async knex => {
@@ -2239,435 +2244,476 @@ describe('Device API routes for GxConnect Devices', () => {
         ])
       }))
 
-    it('should ignore changes for consumables that are unknown', () =>
-      runTest(async knex => {
-        const { basicDevicePayload, deviceAuth, site, now } = context
-        const inventoryItemsAtSiteBefore = await knex('InventoryItem')
-          .where({ siteId: site.id })
-          .select()
+    describe('inventory update', () => {
+      const initialQuantityOnHand = 100
+      beforeEach(async () =>
+        run(async knex => {
+          const { basicDevicePayload, site: { id: siteId } } = context
+          const consumableAssay = await knex('ConsumableAssay as ca')
+            .join('Assay as a', 'ca.assayId', 'a.id')
+            .join('DeviceType as dt', 'a.deviceTypeId', 'dt.id')
+            .where({ 'dt.externalId': basicDevicePayload.type.id })
+            .andWhere('ca.quantity', '>', 0)
+            .first('ca.consumableId', 'ca.quantity', 'a.externalId as assayId')
 
-        const startedOn = subHours(subDays(now, 1), 2)
-        const endedOn = subHours(now, 2)
-        const expirationDate = new Date(addYears(now, 1).setHours(0, 0, 0, 0))
+          assert.isNotEmpty(consumableAssay)
+          assert.isAbove(consumableAssay.quantity, 0)
 
-        await server
-          .post('/device')
-          .set('Authorization', deviceAuth)
-          .send(
-            _.assign({}, basicDevicePayload, {
-              operation: {
-                startedOn,
-                endedOn,
-                data: {
-                  inventoryChanges: [
-                    {
-                      consumableName: 'Unknown consumable type',
-                      consumableReasonName: 'Captured',
-                      quantity: 12,
-                      resultingQuantityOnHand: 112,
-                      dateChanged: startedOn,
-                      expirationDate,
-                    },
-                  ],
+          const expiryDate = new Date(
+            addYears(new Date(), 1).setHours(0, 0, 0, 0)
+          )
+          await knex('InventoryItem').insert({
+            consumableId: consumableAssay.consumableId,
+            siteId,
+            expiresOn: expiryDate,
+            quantityOnHand: initialQuantityOnHand,
+          })
+        })
+      )
+      it('should ignore changes for consumables that are unknown', () =>
+        runTest(async knex => {
+          const { basicDevicePayload, deviceAuth, site, now } = context
+          const inventoryItemsAtSiteBefore = await knex('InventoryItem')
+            .where({ siteId: site.id })
+            .select()
+
+          const startedOn = subHours(subDays(now, 1), 2)
+          const endedOn = subHours(now, 2)
+          const expirationDate = new Date(addYears(now, 1).setHours(0, 0, 0, 0))
+
+          await server
+            .post('/device')
+            .set('Authorization', deviceAuth)
+            .send(
+              _.assign({}, basicDevicePayload, {
+                operation: {
+                  startedOn,
+                  endedOn,
+                  data: {
+                    inventoryChanges: [
+                      {
+                        consumableName: 'Unknown consumable type',
+                        consumableReasonName: 'Captured',
+                        quantity: 12,
+                        resultingQuantityOnHand: 112,
+                        dateChanged: startedOn,
+                        expirationDate,
+                      },
+                    ],
+                  },
                 },
-              },
+              })
+            )
+            .then(res => {
+              assert.equal(res.status, 200, res.text)
+              assert.typeOf(res.body, 'Object')
             })
+            .catch(assert.fail)
+
+          const inventoryItemsAtSiteAfter = await knex('InventoryItem')
+            .where({ siteId: site.id })
+            .select()
+          assert.deepEqual(
+            inventoryItemsAtSiteBefore,
+            inventoryItemsAtSiteAfter
           )
-          .then(res => {
-            assert.equal(res.status, 200, res.text)
-            assert.typeOf(res.body, 'Object')
-          })
-          .catch(assert.fail)
+        }))
 
-        const inventoryItemsAtSiteAfter = await knex('InventoryItem')
-          .where({ siteId: site.id })
-          .select()
-        assert.deepEqual(inventoryItemsAtSiteBefore, inventoryItemsAtSiteAfter)
-      }))
+      it('should accept all types of GeneXpert cartridges', () =>
+        runTest(async knex => {
+          const { basicDevicePayload, deviceAuth, site, now } = context
 
-    it('should accept all types of GeneXpert cartridges', () =>
-      runTest(async knex => {
-        const { basicDevicePayload, deviceAuth, site, now } = context
+          const inventoryItemsAtSiteBefore = await knex('InventoryItem')
+            .where({ siteId: site.id })
+            .pluck('id')
 
-        const inventoryItemsAtSiteBefore = await knex('InventoryItem')
-          .where({ siteId: site.id })
-          .pluck('id')
+          const startedOn = subHours(subDays(now, 1), 2)
+          const endedOn = subHours(now, 2)
+          const consumableReason = 'Captured'
 
-        const startedOn = subHours(subDays(now, 1), 2)
-        const endedOn = subHours(now, 2)
-        const consumableReason = 'Captured'
+          const inventoryChanges = [
+            {
+              consumableName: 'GeneXpert TB Cartridge',
+              consumableReasonName: consumableReason,
+              quantity: 13,
+              resultingQuantityOnHand: 86,
+              dateChanged: addHours(startedOn, 1),
+              expirationDate: new Date(
+                subDays(addYears(now, 1), 1).setHours(0, 0, 0, 0)
+              ),
+            },
+            {
+              consumableName: 'GeneXpert Ebola Cartridge',
+              consumableReasonName: consumableReason,
+              quantity: 3,
+              resultingQuantityOnHand: 21,
+              dateChanged: addHours(startedOn, 2),
+              expirationDate: new Date(
+                subDays(addYears(now, 1), 3).setHours(0, 0, 0, 0)
+              ),
+            },
+            {
+              consumableName: 'Xpert HIV-1 Qual Cartridge',
+              consumableReasonName: consumableReason,
+              quantity: 44,
+              resultingQuantityOnHand: 50,
+              dateChanged: addHours(startedOn, 3),
+              expirationDate: new Date(
+                subDays(addYears(now, 1), 3).setHours(0, 0, 0, 0)
+              ),
+            },
+            {
+              consumableName: 'Xpert HIV-1 Viral Load Cartridge',
+              consumableReasonName: consumableReason,
+              quantity: 1,
+              resultingQuantityOnHand: 13,
+              dateChanged: addHours(startedOn, 4),
+              expirationDate: new Date(
+                subDays(addYears(now, 1), 4).setHours(0, 0, 0, 0)
+              ),
+            },
+            {
+              consumableName: 'GeneXpert TB Ultra Cartridge',
+              consumableReasonName: consumableReason,
+              quantity: 26,
+              resultingQuantityOnHand: 41,
+              dateChanged: addHours(startedOn, 5),
+              expirationDate: new Date(
+                subDays(addYears(now, 1), 8).setHours(0, 0, 0, 0)
+              ),
+            },
+          ]
 
-        const inventoryChanges = [
-          {
-            consumableName: 'GeneXpert TB Cartridge',
-            consumableReasonName: consumableReason,
-            quantity: 13,
-            resultingQuantityOnHand: 86,
-            dateChanged: addHours(startedOn, 1),
-            expirationDate: new Date(
-              subDays(addYears(now, 1), 1).setHours(0, 0, 0, 0)
-            ),
-          },
-          {
-            consumableName: 'GeneXpert Ebola Cartridge',
-            consumableReasonName: consumableReason,
-            quantity: 3,
-            resultingQuantityOnHand: 21,
-            dateChanged: addHours(startedOn, 2),
-            expirationDate: new Date(
-              subDays(addYears(now, 1), 3).setHours(0, 0, 0, 0)
-            ),
-          },
-          {
-            consumableName: 'Xpert HIV-1 Qual Cartridge',
-            consumableReasonName: consumableReason,
-            quantity: 44,
-            resultingQuantityOnHand: 50,
-            dateChanged: addHours(startedOn, 3),
-            expirationDate: new Date(
-              subDays(addYears(now, 1), 3).setHours(0, 0, 0, 0)
-            ),
-          },
-          {
-            consumableName: 'Xpert HIV-1 Viral Load Cartridge',
-            consumableReasonName: consumableReason,
-            quantity: 1,
-            resultingQuantityOnHand: 13,
-            dateChanged: addHours(startedOn, 4),
-            expirationDate: new Date(
-              subDays(addYears(now, 1), 4).setHours(0, 0, 0, 0)
-            ),
-          },
-          {
-            consumableName: 'GeneXpert TB Ultra Cartridge',
-            consumableReasonName: consumableReason,
-            quantity: 26,
-            resultingQuantityOnHand: 41,
-            dateChanged: addHours(startedOn, 5),
-            expirationDate: new Date(
-              subDays(addYears(now, 1), 8).setHours(0, 0, 0, 0)
-            ),
-          },
-        ]
-
-        await server
-          .post('/device')
-          .set('Authorization', deviceAuth)
-          .send(
-            _.assign({}, basicDevicePayload, {
-              operation: {
-                startedOn,
-                endedOn,
-                data: { inventoryChanges },
-              },
+          await server
+            .post('/device')
+            .set('Authorization', deviceAuth)
+            .send(
+              _.assign({}, basicDevicePayload, {
+                operation: {
+                  startedOn,
+                  endedOn,
+                  data: { inventoryChanges },
+                },
+              })
+            )
+            .then(res => {
+              assert.equal(res.status, 200, res.text)
+              assert.typeOf(res.body, 'Object')
             })
-          )
-          .then(res => {
-            assert.equal(res.status, 200, res.text)
-            assert.typeOf(res.body, 'Object')
-          })
-          .catch(assert.fail)
+            .catch(assert.fail)
 
-        const inventoryItemsAtSiteAfter = await knex('InventoryItem as ii')
-          .join('Consumable as c', 'ii.consumableId', 'c.id')
-          .where({ siteId: site.id })
-          .whereNotIn('ii.id', inventoryItemsAtSiteBefore)
-          .select(
-            'ii.id',
-            'c.name as consumableName',
-            'ii.inTransitFromSiteId',
-            'ii.lotNumber',
-            'ii.expiresOn',
-            'ii.quantityOnHand'
+          const inventoryItemsAtSiteAfter = await knex('InventoryItem as ii')
+            .join('Consumable as c', 'ii.consumableId', 'c.id')
+            .where({ siteId: site.id })
+            .whereNotIn('ii.id', inventoryItemsAtSiteBefore)
+            .select(
+              'ii.id',
+              'c.name as consumableName',
+              'ii.inTransitFromSiteId',
+              'ii.lotNumber',
+              'ii.expiresOn',
+              'ii.quantityOnHand'
+            )
+          assert.deepEqual(
+            _.sortBy(
+              _.map(inventoryItemsAtSiteAfter, inventoryItem =>
+                _.omit(inventoryItem, 'id')
+              ),
+              'consumableName'
+            ),
+            _.sortBy(
+              _.map(inventoryChanges, inventoryChange => ({
+                consumableName: inventoryChange.consumableName,
+                inTransitFromSiteId: null,
+                lotNumber: null,
+                expiresOn: inventoryChange.expirationDate,
+                quantityOnHand: inventoryChange.resultingQuantityOnHand,
+              })),
+              'consumableName'
+            )
           )
-        assert.deepEqual(
-          _.sortBy(
+
+          const inventoryLog = await knex('InventoryLog as il')
+            .join('ConsumableReason as cr', 'il.consumableReasonId', 'cr.id')
+            .join('Consumable as c', 'il.consumableId', 'c.id')
+            .whereIn(
+              'il.inventoryItemId',
+              _.map(inventoryItemsAtSiteAfter, 'id')
+            )
+            .select(
+              'c.name as consumableName',
+              'il.siteId',
+              'cr.name as consumableReason',
+              'il.resultId',
+              'il.operation',
+              'il.lotNumber',
+              'il.expiresOn',
+              'il.quantity',
+              'il.notes',
+              'il.adjustedFrom',
+              'il.adjustedTo'
+            )
+
+          assert.deepEqual(
+            _.sortBy(inventoryLog, ['consumableName', 'consumableReason']),
+            _.sortBy(
+              _.map(inventoryChanges, inventoryChange => ({
+                consumableName: inventoryChange.consumableName,
+                siteId: site.id,
+                consumableReason,
+                resultId: null,
+                operation: 'add from GxConnect',
+                lotNumber: null,
+                expiresOn: inventoryChange.expirationDate,
+                quantity: Math.abs(inventoryChange.quantity),
+                notes: null,
+                adjustedFrom: setMilliseconds(inventoryChange.dateChanged, 0),
+                adjustedTo: null,
+              })),
+              ['consumableName', 'consumableReason']
+            )
+          )
+        }))
+
+      it('should increase the quantity inventory items that do exist', () =>
+        runTest(async knex => {
+          const { basicDevicePayload, deviceAuth, site, now } = context
+          const inventoryItemAtSiteBefore = await knex('InventoryItem as ii')
+            .join('Consumable as c', 'ii.consumableId', 'c.id')
+            .where({ siteId: site.id })
+            .orderBy(['ii.createdOn', 'ii.id'])
+            .first(
+              'ii.id',
+              'c.name as consumableName',
+              'ii.inTransitFromSiteId',
+              'ii.lotNumber',
+              'ii.expiresOn',
+              'ii.quantityOnHand'
+            )
+          assert.isNotEmpty(inventoryItemAtSiteBefore)
+
+          const startedOn = subHours(subDays(now, 1), 2)
+          const endedOn = subHours(now, 2)
+          const consumableReason = 'Captured'
+          const quantity = 13
+
+          await server
+            .post('/device')
+            .set('Authorization', deviceAuth)
+            .send(
+              _.assign({}, basicDevicePayload, {
+                operation: {
+                  startedOn,
+                  endedOn,
+                  data: {
+                    inventoryChanges: [
+                      {
+                        consumableName:
+                          inventoryItemAtSiteBefore.consumableName,
+                        consumableReasonName: consumableReason,
+                        quantity,
+                        resultingQuantityOnHand:
+                          inventoryItemAtSiteBefore.quantityOnHand + quantity,
+                        dateChanged: startedOn,
+                        expirationDate: inventoryItemAtSiteBefore.expiresOn,
+                      },
+                    ],
+                  },
+                },
+              })
+            )
+            .then(res => {
+              assert.equal(res.status, 200, res.text)
+              assert.typeOf(res.body, 'Object')
+            })
+            .catch(assert.fail)
+
+          const inventoryItemsAtSiteAfter = await knex('InventoryItem as ii')
+            .join('Consumable as c', 'ii.consumableId', 'c.id')
+            .where({ 'ii.id': inventoryItemAtSiteBefore.id })
+            .select(
+              'ii.id',
+              'c.name as consumableName',
+              'ii.inTransitFromSiteId',
+              'ii.lotNumber',
+              'ii.expiresOn',
+              'ii.quantityOnHand'
+            )
+          assert.deepEqual(
             _.map(inventoryItemsAtSiteAfter, inventoryItem =>
               _.omit(inventoryItem, 'id')
             ),
-            'consumableName'
-          ),
-          _.sortBy(
-            _.map(inventoryChanges, inventoryChange => ({
-              consumableName: inventoryChange.consumableName,
-              inTransitFromSiteId: null,
-              lotNumber: null,
-              expiresOn: inventoryChange.expirationDate,
-              quantityOnHand: inventoryChange.resultingQuantityOnHand,
-            })),
-            'consumableName'
-          )
-        )
-
-        const inventoryLog = await knex('InventoryLog as il')
-          .join('ConsumableReason as cr', 'il.consumableReasonId', 'cr.id')
-          .join('Consumable as c', 'il.consumableId', 'c.id')
-          .whereIn('il.inventoryItemId', _.map(inventoryItemsAtSiteAfter, 'id'))
-          .select(
-            'c.name as consumableName',
-            'il.siteId',
-            'cr.name as consumableReason',
-            'il.resultId',
-            'il.operation',
-            'il.lotNumber',
-            'il.expiresOn',
-            'il.quantity',
-            'il.notes',
-            'il.adjustedFrom',
-            'il.adjustedTo'
-          )
-
-        assert.deepEqual(
-          _.sortBy(inventoryLog, ['consumableName', 'consumableReason']),
-          _.sortBy(
-            _.map(inventoryChanges, inventoryChange => ({
-              consumableName: inventoryChange.consumableName,
-              siteId: site.id,
-              consumableReason,
-              resultId: null,
-              operation: 'add from GxConnect',
-              lotNumber: null,
-              expiresOn: inventoryChange.expirationDate,
-              quantity: Math.abs(inventoryChange.quantity),
-              notes: null,
-              adjustedFrom: setMilliseconds(inventoryChange.dateChanged, 0),
-              adjustedTo: null,
-            })),
-            ['consumableName', 'consumableReason']
-          )
-        )
-      }))
-
-    it('should increase the quantity inventory items that do exist', () =>
-      runTest(async knex => {
-        const { basicDevicePayload, deviceAuth, site, now } = context
-        const inventoryItemAtSiteBefore = await knex('InventoryItem as ii')
-          .join('Consumable as c', 'ii.consumableId', 'c.id')
-          .where({ siteId: site.id })
-          .orderBy(['ii.createdOn', 'ii.id'])
-          .first(
-            'ii.id',
-            'c.name as consumableName',
-            'ii.inTransitFromSiteId',
-            'ii.lotNumber',
-            'ii.expiresOn',
-            'ii.quantityOnHand'
-          )
-        assert.isNotEmpty(inventoryItemAtSiteBefore)
-
-        const startedOn = subHours(subDays(now, 1), 2)
-        const endedOn = subHours(now, 2)
-        const consumableReason = 'Captured'
-        const quantity = 13
-
-        await server
-          .post('/device')
-          .set('Authorization', deviceAuth)
-          .send(
-            _.assign({}, basicDevicePayload, {
-              operation: {
-                startedOn,
-                endedOn,
-                data: {
-                  inventoryChanges: [
-                    {
-                      consumableName: inventoryItemAtSiteBefore.consumableName,
-                      consumableReasonName: consumableReason,
-                      quantity,
-                      resultingQuantityOnHand:
-                        inventoryItemAtSiteBefore.quantityOnHand + quantity,
-                      dateChanged: startedOn,
-                      expirationDate: inventoryItemAtSiteBefore.expiresOn,
-                    },
-                  ],
-                },
+            [
+              {
+                consumableName: inventoryItemAtSiteBefore.consumableName,
+                inTransitFromSiteId: null,
+                lotNumber: null,
+                expiresOn: inventoryItemAtSiteBefore.expiresOn,
+                quantityOnHand: _.max([
+                  0,
+                  inventoryItemAtSiteBefore.quantityOnHand + quantity,
+                ]),
               },
-            })
+            ]
           )
-          .then(res => {
-            assert.equal(res.status, 200, res.text)
-            assert.typeOf(res.body, 'Object')
+
+          const inventoryLog = await knex('InventoryLog as il')
+            .join('ConsumableReason as cr', 'il.consumableReasonId', 'cr.id')
+            .join('Consumable as c', 'il.consumableId', 'c.id')
+            .whereIn(
+              'il.inventoryItemId',
+              _.map(inventoryItemsAtSiteAfter, 'id')
+            )
+            .orderBy('il.id', 'desc')
+            .first(
+              'c.name as consumableName',
+              'il.siteId',
+              'cr.name as consumableReason',
+              'il.resultId',
+              'il.operation',
+              'il.lotNumber',
+              'il.expiresOn',
+              'il.quantity',
+              'il.notes',
+              'il.adjustedFrom',
+              'il.adjustedTo'
+            )
+
+          assert.deepEqual(inventoryLog, {
+            consumableName: inventoryItemAtSiteBefore.consumableName,
+            siteId: site.id,
+            consumableReason,
+            resultId: null,
+            operation: 'add from GxConnect',
+            lotNumber: null,
+            expiresOn: inventoryItemAtSiteBefore.expiresOn,
+            quantity,
+            notes: null,
+            adjustedFrom: setMilliseconds(startedOn, 0),
+            adjustedTo: null,
           })
-          .catch(assert.fail)
+        }))
 
-        const inventoryItemsAtSiteAfter = await knex('InventoryItem as ii')
-          .join('Consumable as c', 'ii.consumableId', 'c.id')
-          .where({ 'ii.id': inventoryItemAtSiteBefore.id })
-          .select(
-            'ii.id',
-            'c.name as consumableName',
-            'ii.inTransitFromSiteId',
-            'ii.lotNumber',
-            'ii.expiresOn',
-            'ii.quantityOnHand'
-          )
-        assert.deepEqual(
-          _.map(inventoryItemsAtSiteAfter, inventoryItem =>
-            _.omit(inventoryItem, 'id')
-          ),
-          [
-            {
-              consumableName: inventoryItemAtSiteBefore.consumableName,
-              inTransitFromSiteId: null,
-              lotNumber: null,
-              expiresOn: inventoryItemAtSiteBefore.expiresOn,
-              quantityOnHand: _.max([
-                0,
-                inventoryItemAtSiteBefore.quantityOnHand + quantity,
-              ]),
-            },
-          ]
-        )
+      it('should decrease the quantity on hand of existing inventory items', () =>
+        runTest(async knex => {
+          const { basicDevicePayload, deviceAuth, site, now } = context
+          const inventoryItemAtSiteBefore = await knex('InventoryItem as ii')
+            .join('Consumable as c', 'ii.consumableId', 'c.id')
+            .where({ siteId: site.id })
+            .orderBy(['ii.createdOn', 'ii.id'])
+            .first(
+              'ii.id',
+              'c.name as consumableName',
+              'ii.inTransitFromSiteId',
+              'ii.lotNumber',
+              'ii.expiresOn',
+              'ii.quantityOnHand'
+            )
+          assert.isNotEmpty(inventoryItemAtSiteBefore)
 
-        const inventoryLog = await knex('InventoryLog as il')
-          .join('ConsumableReason as cr', 'il.consumableReasonId', 'cr.id')
-          .join('Consumable as c', 'il.consumableId', 'c.id')
-          .whereIn('il.inventoryItemId', _.map(inventoryItemsAtSiteAfter, 'id'))
-          .orderBy('il.id', 'desc')
-          .first(
-            'c.name as consumableName',
-            'il.siteId',
-            'cr.name as consumableReason',
-            'il.resultId',
-            'il.operation',
-            'il.lotNumber',
-            'il.expiresOn',
-            'il.quantity',
-            'il.notes',
-            'il.adjustedFrom',
-            'il.adjustedTo'
-          )
+          const startedOn = subHours(subDays(now, 1), 2)
+          const endedOn = subHours(now, 2)
+          const consumableReason = 'Captured'
+          const quantity = -3
 
-        assert.deepEqual(inventoryLog, {
-          consumableName: inventoryItemAtSiteBefore.consumableName,
-          siteId: site.id,
-          consumableReason,
-          resultId: null,
-          operation: 'add from GxConnect',
-          lotNumber: null,
-          expiresOn: inventoryItemAtSiteBefore.expiresOn,
-          quantity,
-          notes: null,
-          adjustedFrom: setMilliseconds(startedOn, 0),
-          adjustedTo: null,
-        })
-      }))
-
-    it('should decrease the quantity on hand of existing inventory items', () =>
-      runTest(async knex => {
-        const { basicDevicePayload, deviceAuth, site, now } = context
-        const inventoryItemAtSiteBefore = await knex('InventoryItem as ii')
-          .join('Consumable as c', 'ii.consumableId', 'c.id')
-          .where({ siteId: site.id })
-          .orderBy(['ii.createdOn', 'ii.id'])
-          .first(
-            'ii.id',
-            'c.name as consumableName',
-            'ii.inTransitFromSiteId',
-            'ii.lotNumber',
-            'ii.expiresOn',
-            'ii.quantityOnHand'
-          )
-        assert.isNotEmpty(inventoryItemAtSiteBefore)
-
-        const startedOn = subHours(subDays(now, 1), 2)
-        const endedOn = subHours(now, 2)
-        const consumableReason = 'Captured'
-        const quantity = -3
-
-        await server
-          .post('/device')
-          .set('Authorization', deviceAuth)
-          .send(
-            _.assign({}, basicDevicePayload, {
-              operation: {
-                startedOn,
-                endedOn,
-                data: {
-                  inventoryChanges: [
-                    {
-                      consumableName: inventoryItemAtSiteBefore.consumableName,
-                      consumableReasonName: consumableReason,
-                      quantity,
-                      resultingQuantityOnHand:
-                        inventoryItemAtSiteBefore.quantityOnHand + quantity,
-                      dateChanged: startedOn,
-                      expirationDate: inventoryItemAtSiteBefore.expiresOn,
-                    },
-                  ],
+          await server
+            .post('/device')
+            .set('Authorization', deviceAuth)
+            .send(
+              _.assign({}, basicDevicePayload, {
+                operation: {
+                  startedOn,
+                  endedOn,
+                  data: {
+                    inventoryChanges: [
+                      {
+                        consumableName:
+                          inventoryItemAtSiteBefore.consumableName,
+                        consumableReasonName: consumableReason,
+                        quantity,
+                        resultingQuantityOnHand:
+                          inventoryItemAtSiteBefore.quantityOnHand + quantity,
+                        dateChanged: startedOn,
+                        expirationDate: inventoryItemAtSiteBefore.expiresOn,
+                      },
+                    ],
+                  },
                 },
-              },
+              })
+            )
+            .then(res => {
+              assert.equal(res.status, 200, res.text)
+              assert.typeOf(res.body, 'Object')
             })
+            .catch(assert.fail)
+
+          const inventoryItemsAtSiteAfter = await knex('InventoryItem as ii')
+            .join('Consumable as c', 'ii.consumableId', 'c.id')
+            .where({ 'ii.id': inventoryItemAtSiteBefore.id })
+            .select(
+              'ii.id',
+              'c.name as consumableName',
+              'ii.inTransitFromSiteId',
+              'ii.lotNumber',
+              'ii.expiresOn',
+              'ii.quantityOnHand'
+            )
+
+          assert.deepEqual(
+            _.map(inventoryItemsAtSiteAfter, inventoryItem =>
+              _.omit(inventoryItem, 'id')
+            ),
+            [
+              {
+                consumableName: inventoryItemAtSiteBefore.consumableName,
+                inTransitFromSiteId: null,
+                lotNumber: null,
+                expiresOn: inventoryItemAtSiteBefore.expiresOn,
+                quantityOnHand: _.max([
+                  0,
+                  inventoryItemAtSiteBefore.quantityOnHand + quantity,
+                ]),
+              },
+            ]
           )
-          .then(res => {
-            assert.equal(res.status, 200, res.text)
-            assert.typeOf(res.body, 'Object')
+
+          const inventoryLog = await knex('InventoryLog as il')
+            .join('ConsumableReason as cr', 'il.consumableReasonId', 'cr.id')
+            .join('Consumable as c', 'il.consumableId', 'c.id')
+            .whereIn(
+              'il.inventoryItemId',
+              _.map(inventoryItemsAtSiteAfter, 'id')
+            )
+            .orderBy('il.id', 'desc')
+            .first(
+              'c.name as consumableName',
+              'il.siteId',
+              'cr.name as consumableReason',
+              'il.resultId',
+              'il.operation',
+              'il.lotNumber',
+              'il.expiresOn',
+              'il.quantity',
+              'il.notes',
+              'il.adjustedFrom',
+              'il.adjustedTo'
+            )
+
+          assert.deepEqual(inventoryLog, {
+            consumableName: inventoryItemAtSiteBefore.consumableName,
+            siteId: site.id,
+            consumableReason,
+            resultId: null,
+            operation: 'remove from GxConnect',
+            lotNumber: null,
+            expiresOn: inventoryItemAtSiteBefore.expiresOn,
+            quantity: Math.abs(quantity),
+            notes: null,
+            adjustedFrom: setMilliseconds(startedOn, 0),
+            adjustedTo: null,
           })
-          .catch(assert.fail)
-
-        const inventoryItemsAtSiteAfter = await knex('InventoryItem as ii')
-          .join('Consumable as c', 'ii.consumableId', 'c.id')
-          .where({ 'ii.id': inventoryItemAtSiteBefore.id })
-          .select(
-            'ii.id',
-            'c.name as consumableName',
-            'ii.inTransitFromSiteId',
-            'ii.lotNumber',
-            'ii.expiresOn',
-            'ii.quantityOnHand'
-          )
-
-        assert.deepEqual(
-          _.map(inventoryItemsAtSiteAfter, inventoryItem =>
-            _.omit(inventoryItem, 'id')
-          ),
-          [
-            {
-              consumableName: inventoryItemAtSiteBefore.consumableName,
-              inTransitFromSiteId: null,
-              lotNumber: null,
-              expiresOn: inventoryItemAtSiteBefore.expiresOn,
-              quantityOnHand: _.max([
-                0,
-                inventoryItemAtSiteBefore.quantityOnHand + quantity,
-              ]),
-            },
-          ]
-        )
-
-        const inventoryLog = await knex('InventoryLog as il')
-          .join('ConsumableReason as cr', 'il.consumableReasonId', 'cr.id')
-          .join('Consumable as c', 'il.consumableId', 'c.id')
-          .whereIn('il.inventoryItemId', _.map(inventoryItemsAtSiteAfter, 'id'))
-          .orderBy('il.id', 'desc')
-          .first(
-            'c.name as consumableName',
-            'il.siteId',
-            'cr.name as consumableReason',
-            'il.resultId',
-            'il.operation',
-            'il.lotNumber',
-            'il.expiresOn',
-            'il.quantity',
-            'il.notes',
-            'il.adjustedFrom',
-            'il.adjustedTo'
-          )
-
-        assert.deepEqual(inventoryLog, {
-          consumableName: inventoryItemAtSiteBefore.consumableName,
-          siteId: site.id,
-          consumableReason,
-          resultId: null,
-          operation: 'remove from GxConnect',
-          lotNumber: null,
-          expiresOn: inventoryItemAtSiteBefore.expiresOn,
-          quantity: Math.abs(quantity),
-          notes: null,
-          adjustedFrom: setMilliseconds(startedOn, 0),
-          adjustedTo: null,
-        })
-      }))
+        }))
+    })
 
     it('should accept different reasons', () =>
       runTest(async knex => {

@@ -37,8 +37,8 @@ exports[`Target Status component should shallow render correctly 1`] = `
       Immutable.List [
         <Unknown
           className="TargetItemBlock"
-          sm="1-5"
-          xs="1-5"
+          sm="1-4"
+          xs="1-4"
         >
           <div
             className="TargetItemBlock__Title"
@@ -83,8 +83,8 @@ exports[`Target Status component should shallow render correctly 1`] = `
         </Unknown>,
         <Unknown
           className="TargetItemBlock"
-          sm="1-5"
-          xs="1-5"
+          sm="1-4"
+          xs="1-4"
         >
           <div
             className="TargetItemBlock__Title"
@@ -129,8 +129,8 @@ exports[`Target Status component should shallow render correctly 1`] = `
         </Unknown>,
         <Unknown
           className="TargetItemBlock"
-          sm="1-5"
-          xs="1-5"
+          sm="1-4"
+          xs="1-4"
         >
           <div
             className="TargetItemBlock__Title"
@@ -152,7 +152,7 @@ exports[`Target Status component should shallow render correctly 1`] = `
           >
             <WrappedComponent
               goal={1200}
-              hasError={false}
+              hasError={true}
               value={1220}
               windowResizeDebounceTime={300}
             />
@@ -169,51 +169,9 @@ exports[`Target Status component should shallow render correctly 1`] = `
           </div>
           <div
             className="TargetItemBlock__Label--error"
-          />
-        </Unknown>,
-        <Unknown
-          className="TargetItemBlock"
-          sm="1-5"
-          xs="1-5"
-        >
-          <div
-            className="TargetItemBlock__Title"
           >
-            Children
+            Patient Data Collection 75%
           </div>
-          <div
-            className="TargetItemBlock__Label"
-          >
-            <span
-              className="TargetItemBlock__Label--sub"
-            >
-              Target:
-            </span>
-            2190
-          </div>
-          <div
-            className="TargetItemBlock__Graph"
-          >
-            <WrappedComponent
-              goal={2190}
-              hasError={false}
-              value={986}
-              windowResizeDebounceTime={300}
-            />
-          </div>
-          <div
-            className="TargetItemBlock__Label"
-          >
-            <span
-              className="TargetItemBlock__Label--sub"
-            >
-              Progress:
-            </span>
-            45%
-          </div>
-          <div
-            className="TargetItemBlock__Label--error"
-          />
         </Unknown>,
       ]
     </div>

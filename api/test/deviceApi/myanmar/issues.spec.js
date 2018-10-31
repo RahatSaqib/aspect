@@ -5,7 +5,7 @@ const subDays = require('date-fns/sub_days')
 const addHours = require('date-fns/add_hours')
 const setMilliseconds = require('date-fns/set_milliseconds')
 const { createGxAlertTestContext } = require('../geneXpert/gxalert_utils')
-const { postToDeviceApi } = require('../geneXpert/utils')
+const { postToDeviceApi } = require('../utils')
 const { basicResultPayload } = require('../geneXpert/geneXpertConstants')
 const { run } = require('../../../src/db')
 

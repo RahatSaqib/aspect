@@ -1,6 +1,7 @@
 const supertest = require('supertest')
 const chai = require('chai')
 const { addDays, subDays } = require('date-fns')
+const { run } = require('../../src/db')
 const { createTestContext, getDeviceFromApiKey } = require('../deviceApi/utils')
 const {
   deviceOffline,
@@ -38,9 +39,23 @@ const context = createTestContext(server, {
 describe('Fact based issues', () => {
   const devicePath = '/device'
   const issuePath = '/api/issue'
+  let siteName
 
   const { runTest } = context
-
+  before(async () =>
+    run(async knex => {
+      const { siteId } = await knex('JobContext as jc')
+        .innerJoin('Job as j', 'jc.jobId', 'j.id')
+        .innerJoin('Person as p', 'j.personId', 'p.id')
+        .innerJoin('User as u', 'p.userId', 'u.id')
+        .where('u.name', USER_LU)
+        .first('jc.siteId')
+      const site = await knex('Site')
+        .where({ id: siteId })
+        .first('name')
+      siteName = site.name
+    })
+  )
   beforeEach(context.beforeEach)
   afterEach(context.afterEach)
 
@@ -64,7 +79,7 @@ describe('Fact based issues', () => {
         .set('Authorization', deviceAuth)
         .send({
           type: { id: 'GenericRDT' },
-          site: { id: 'Hinthada TBC' },
+          site: { id: siteName },
         })
         .then(res => {
           assert.equal(res.status, 200)
@@ -464,8 +479,17 @@ describe('Fact based issues', () => {
         hi: 'universe',
       })
 
+      const waitForFactGenerateDeviceConnectivity = waitForAction(
+        factGenerateDeviceConnectivity(deviceId)
+      )
+      const waitForIssueResolve = waitForAction(issueResolved(issues[2].id))
+
       await messageContext.deviceMaintenanceResolved(deviceId)
-      await waitForIdle()
+
+      await Promise.all([
+        waitForFactGenerateDeviceConnectivity,
+        waitForIssueResolve,
+      ])
       ;[factDevice] = await knex('FactDeviceFlag').where({ deviceId })
       expect(factDevice).to.containSubset({
         offline: 0,
@@ -525,7 +549,7 @@ describe('Fact based issues', () => {
         .set('Authorization', deviceAuth)
         .send({
           type: { id: 'GenericRDT' },
-          site: { id: 'Hinthada TBC' },
+          site: { id: siteName },
         })
         .then(res => {
           assert.equal(res.status, 200)
@@ -630,8 +654,17 @@ describe('Fact based issues', () => {
       assert.approximately(+issues[0].dueOn, +maintenanceDueOn, 3000)
       assert.deepEqual(JSON.parse(issues[0].data), { a: 1, hi: 'world' })
 
-      messageContext.deviceMaintenanceResolved(deviceId)
-      await waitForIdle()
+      const waitForFactGenerateDeviceConnectivity = waitForAction(
+        factGenerateDeviceConnectivity(deviceId)
+      )
+      const waitForIssueResolve = waitForAction(issueResolved(issues[0].id))
+
+      await messageContext.deviceMaintenanceResolved(deviceId)
+
+      await Promise.all([
+        waitForFactGenerateDeviceConnectivity,
+        waitForIssueResolve,
+      ])
       ;[factDevice] = await knex('FactDeviceFlag').where({ deviceId })
       assert.equal(factDevice.offline, 0)
       assert.equal(factDevice.noResults, 1)
@@ -718,7 +751,7 @@ describe('Fact based issues', () => {
         .set('Authorization', deviceAuth)
         .send({
           type: { id: 'GenericRDT' },
-          site: { id: 'Hinthada TBC' },
+          site: { id: siteName },
         })
         .then(res => {
           assert.equal(res.status, 200)
@@ -820,8 +853,17 @@ describe('Fact based issues', () => {
       assert.approximately(+issues[0].dueOn, +maintenanceDueOn, 3000)
       assert.deepEqual(JSON.parse(issues[0].data), { a: 1, hi: 'world' })
 
-      messageContext.deviceMaintenanceResolved(deviceId)
-      await waitForIdle()
+      const waitForFactGenerateDeviceConnectivity = waitForAction(
+        factGenerateDeviceConnectivity(deviceId)
+      )
+      const waitForIssueResolve = waitForAction(issueResolved(issues[0].id))
+
+      await messageContext.deviceMaintenanceResolved(deviceId)
+
+      await Promise.all([
+        waitForFactGenerateDeviceConnectivity,
+        waitForIssueResolve,
+      ])
       ;[factDevice] = await knex('FactDeviceFlag').where({ deviceId })
       assert.equal(factDevice.offline, 0)
       assert.equal(factDevice.noResults, 0)
@@ -864,7 +906,7 @@ describe('Fact based issues', () => {
         .set('Authorization', deviceAuth)
         .send({
           type: { id: 'GenericRDT' },
-          site: { id: 'Hinthada TBC' },
+          site: { id: siteName },
         })
         .then(res => {
           assert.equal(res.status, 200)
@@ -969,8 +1011,17 @@ describe('Fact based issues', () => {
       assert.approximately(+issues[0].dueOn, +maintenanceDueOn, 3000)
       assert.deepEqual(JSON.parse(issues[0].data), { a: 1, hi: 'world' })
 
-      messageContext.deviceMaintenanceResolved(deviceId)
-      await waitForIdle()
+      const waitForFactGenerateDeviceConnectivity = waitForAction(
+        factGenerateDeviceConnectivity(deviceId)
+      )
+      const waitForIssueResolve = waitForAction(issueResolved(issues[0].id))
+
+      await messageContext.deviceMaintenanceResolved(deviceId)
+
+      await Promise.all([
+        waitForFactGenerateDeviceConnectivity,
+        waitForIssueResolve,
+      ])
       ;[factDevice] = await knex('FactDeviceFlag').where({ deviceId })
       assert.equal(factDevice.offline, 0)
       assert.equal(factDevice.noResults, 1)

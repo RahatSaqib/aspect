@@ -41,58 +41,97 @@ const getResultHandler = deviceApiHandler(getDeviceDataWithContext, {
   deviceLogType: DEVICE_LOG_TYPE_RESULT,
 })
 
-const addDeviceDataHandlerOptions = {
-  createDevice: true,
-  updatePing: true,
-  updateDeviceLog: true,
-}
-const addDeviceDataHandler = deviceApiHandler(
-  addDeviceDataWithContext,
-  addDeviceDataHandlerOptions
-)
-const addPluginDeviceDataHandler = deviceApiHandler(
-  addDeviceDataWithContext,
-  Object.assign(
-    {
-      transformInitialPayload: true,
-    },
-    addDeviceDataHandlerOptions
-  )
-)
+const addDeviceDataHandler = deviceApiHandler(addDeviceDataWithContext)
+
+const addPluginDeviceDataHandler = deviceApiHandler(addDeviceDataWithContext, {
+  transformInitialPayload: true,
+})
 
 const updateDeviceConfigurationHandler = deviceApiHandler(
-  updateDeviceConfigurationWithContext,
-  {
-    updatePing: true,
-    updateDeviceLog: true,
-  }
+  updateDeviceConfigurationWithContext
 )
 
 const addDeviceOperationHandler = deviceApiHandler(
-  addDeviceOperationWithContext,
-  {
-    updatePing: true,
-    updateDeviceLog: true,
-  }
+  addDeviceOperationWithContext
 )
 
-const mergeResultHandler = deviceApiHandler(mergeResultWithContext, {
-  updatePing: true,
-  updateDeviceLog: true,
-})
+const mergeResultHandler = deviceApiHandler(mergeResultWithContext)
 
-function deviceApiHandler(handler, handlerOptions) {
+async function getHandlerOptionsFromContext(
+  handler,
+  { pluginNames: plugins = [] },
+  defaultHandlerOptions = {}
+) {
+  const handlerOptionGroups = await loadPlugin(plugins, 'handlerOptions')
+  return _.merge(
+    {},
+    defaultHandlerOptions,
+    handlerOptionGroups[handler.name] || {}
+  )
+}
+
+async function getHandlerOptionsFromRequest(
+  handler,
+  { auth = { credentials: {} }, type = {} },
+  defaultHandlerOptions = {}
+) {
+  let plugins = []
+  let partnerPluginName
+  let deviceTypePluginName
+  const { credentials: { token: deviceApiKeyToken } } = auth
+  if (deviceApiKeyToken) {
+    ;({ partnerPluginName, deviceTypePluginName } =
+      (await knex
+        .from('DeviceApiKey as dak')
+        .leftJoin('Partner as dak_p', 'dak_p.id', 'dak.partnerId')
+        .leftJoin('Device as dev', 'dev.id', 'dak.deviceId')
+        .leftJoin('DeviceType as dt', 'dt.id', 'dev.deviceTypeId')
+        .leftJoin('Partner as dev_p', 'dev_p.id', 'dev.partnerId')
+        .where('dak.token', deviceApiKeyToken)
+        .first(
+          knex.raw('COALESCE(dev_p.plugin, dak_p.plugin) as partnerPluginName'),
+          'dt.plugin as deviceTypePluginName'
+        )) || {})
+  }
+  const { id: deviceTypeId } = type
+  if (!deviceTypePluginName && deviceTypeId) {
+    ;({ deviceTypePluginName } =
+      (await knex
+        .from('DeviceType as dt')
+        .where('dt.externalId', deviceTypeId)
+        .first('dt.plugin as deviceTypePluginName')) || {})
+  }
+  if (partnerPluginName) {
+    plugins = [...plugins, partnerPluginName]
+  }
+  if (deviceTypePluginName) {
+    plugins = [...plugins, deviceTypePluginName]
+  }
+  const handlerOptionGroups = await loadPlugin(plugins, 'handlerOptions')
+  return _.merge(
+    {},
+    defaultHandlerOptions,
+    handlerOptionGroups[handler.name] || {}
+  )
+}
+
+function deviceApiHandler(handler, defaultHandlerOptions = {}) {
   return asyncHandler(async request => {
     const { error, context } = await createDeviceApiContext(
+      handler,
       request,
-      handlerOptions
+      defaultHandlerOptions
     )
-    const { updateDeviceLog = false } = handlerOptions
     if (error) {
       await updateLogs(request)
       return error
     }
-
+    let handlerOptions = await getHandlerOptionsFromContext(
+      handler,
+      context,
+      defaultHandlerOptions
+    )
+    const { updateDeviceLog = false } = handlerOptions
     const { device, now } = context
     const deviceId = device.id
     // TODO Does Hapi Remote address work through proxies? Check headers?
@@ -134,6 +173,11 @@ function deviceApiHandler(handler, handlerOptions) {
       // If handler changes device (e.g. GxAlert plugin), update timestamps
       // for new device as necessary
       if (context.device.id !== originalDeviceId) {
+        handlerOptions = await getHandlerOptionsFromContext(
+          handler,
+          context,
+          defaultHandlerOptions
+        )
         await updateDeviceTimestamps(context, handlerOptions, remoteAddress)
       }
 
@@ -500,7 +544,16 @@ async function getResultWithContext(context) {
   return postProcessResult
 }
 
-async function createDeviceApiContext(originalRequest, handlerOptions) {
+async function createDeviceApiContext(
+  handler,
+  originalRequest,
+  defaultHandlerOptions
+) {
+  const handlerOptions = await getHandlerOptionsFromRequest(
+    handler,
+    originalRequest,
+    defaultHandlerOptions
+  )
   const request = {
     auth: originalRequest.auth,
     params: originalRequest.params,
@@ -533,19 +586,26 @@ async function createDeviceApiContext(originalRequest, handlerOptions) {
     .innerJoin('DeviceStatus as ds', 'd.deviceStatusId', 'ds.id')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .innerJoin('DeviceTypeCategory as dtc', 'dtc.id', 'dt.deviceTypeCategoryId')
+    .leftJoin('Partner as p', 'p.id', 'd.partnerId')
     .where({
       'dak.token': auth.credentials.token,
       'dak.revoked': false,
     })
     .first(
       'd.id',
-      'd.name',
-      'd.serial',
       'd.partnerId',
       'd.siteId',
+      'd.geographyId',
+      'd.name',
+      'd.serial',
+      'd.macAddress',
+      'd.configurationData',
+      'd.lastSeenOn',
+      'd.putInService',
       'ds.token as status',
       'dt.externalId as deviceType',
       'dt.plugin as deviceTypePluginName',
+      'p.plugin as partnerPluginName',
       'dtc.name as deviceTypeCategory'
     )
 

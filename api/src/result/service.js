@@ -107,6 +107,7 @@ const SORT_FIELDS = [
   'resultCategory2Name',
   'patientId',
 ]
+
 async function getListResults(query, auth) {
   const selectFields = _.clone(SELECT_LIST_FIELDS)
   const sortableFields = _.clone(SORT_FIELDS)
@@ -648,7 +649,7 @@ async function updateFormData(request) {
   if (!result.ok) {
     return Boom.notFound()
   }
-  const existingFormData = _.get(result, 'formData', {})
+  const existingFormData = _.get(result.data, 'formData', {})
   const mergedFormData = _.merge({}, existingFormData, payload)
   if (!_.isEqual(existingFormData, mergedFormData)) {
     const resultForm = await knex('ResultForm')

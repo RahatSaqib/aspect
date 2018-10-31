@@ -102,8 +102,8 @@
     "node-base64-image": "^1.0.4",
     "node-cron": "^1.2.1",
     "node-uuid": "^1.4.8",
+    "nodemailer": "^4.6.8",
     "raven": "^2.1.2",
-    "sendgrid": "^5.2.2",
     "shx": "^0.2.2",
     "twilio": "^3.13.1",
     "vision": "^4.1.1"

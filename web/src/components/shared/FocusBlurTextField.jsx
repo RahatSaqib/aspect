@@ -12,6 +12,7 @@ export class FocusBlurTextField extends PureComponent {
     onFocus: _.noop,
     onKeyUp: _.noop,
     value: '',
+    component: TextField,
   }
 
   static propTypes = {
@@ -20,6 +21,7 @@ export class FocusBlurTextField extends PureComponent {
     onKeyUp: PropTypes.func,
     onCommitValue: PropTypes.func.isRequired,
     value: PropTypes.string,
+    component: PropTypes.oneOfType([PropTypes.string, PropTypes.func]),
   }
 
   state = {
@@ -48,7 +50,7 @@ export class FocusBlurTextField extends PureComponent {
   }
 
   handleChange = event => {
-    const { value } = event.target
+    const { value } = event.target || { value: event }
     this.setState({ pendingValue: value })
   }
 
@@ -62,16 +64,14 @@ export class FocusBlurTextField extends PureComponent {
     const value = isFocused ? pendingValue : this.props.value
     const restProps = _.omit(this.props, ['onCommitValue'])
 
-    return (
-      <TextField
-        {...restProps}
-        onFocus={this.handleFocus}
-        onBlur={this.handleBlur}
-        onKeyUp={this.handleKeyUp}
-        onChange={this.handleChange}
-        value={value}
-      />
-    )
+    return React.createElement(this.props.component, {
+      ...restProps,
+      onFocus: this.handleFocus,
+      onBlur: this.handleBlur,
+      onKeyUp: this.handleKeyUp,
+      onChange: this.handleChange,
+      value,
+    })
   }
 }
 

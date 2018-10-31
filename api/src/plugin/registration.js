@@ -1,4 +1,4 @@
-const { get } = require('lodash')
+const { get, merge } = require('lodash')
 const Boom = require('boom')
 
 const { postProcessMergeResult } = require('../deviceApi/result')
@@ -11,11 +11,33 @@ const DEFAULT_SETTINGS = {
   },
 }
 
+const DEFAULT_HANDLER_OPTIONS = {
+  addDeviceDataWithContext: {
+    createDevice: true,
+    updatePing: true,
+    updateDeviceLog: true,
+  },
+  updateDeviceConfigurationWithContext: {
+    updatePing: true,
+    updateDeviceLog: true,
+  },
+  addDeviceOperationWithContext: {
+    updatePing: true,
+    updateDeviceLog: true,
+  },
+  mergeResultWithContext: {
+    updatePing: true,
+    updateDeviceLog: true,
+  },
+}
+
 const plugins = {
   default: {
     settings: DEFAULT_SETTINGS,
+    handlerOptions: DEFAULT_HANDLER_OPTIONS,
     issueResolutions: {},
     issueEscalations: {},
+    dataCategories: {},
     transformInitialPayload,
     getDeviceSeenOn,
     getDevicePingOn,
@@ -33,7 +55,6 @@ const plugins = {
     transformMergeResultPayload,
     postProcessMergeResult,
     onResultLogged,
-    dataCategories: {},
   },
   commcare: {
     transformInitialPayload: require('./deviceType/CommCareApp/transformInitialPayload'),
@@ -68,9 +89,20 @@ const plugins = {
     settings: require('./partner/Myanmar/settings'),
     issueResolutions: require('./partner/Myanmar/issueResolutions'),
     issueEscalations: require('./partner/Myanmar/issueEscalations'),
+    dataCategories: require('./partner/Myanmar/dataCategories'),
     transformMergeResultPayload: require('./partner/Myanmar/transformMergeResultPayload'),
     onResultLogged: require('./partner/Myanmar/onResultLogged'),
-    dataCategories: require('./partner/Myanmar/dataCategories'),
+  },
+  alereftpconnector: {
+    handlerOptions: merge(
+      {},
+      DEFAULT_HANDLER_OPTIONS,
+      require('./deviceType/AlereFtpConnector/handlerOptions')
+    ),
+    getDeviceSeenOn: require('./deviceType/AlereFtpConnector/getDeviceSeenOn'),
+    preProcessAddDeviceData: require('./deviceType/AlereFtpConnector/preProcessAddDeviceData'),
+    preProcessMergeResult: require('./deviceType/AlereFtpConnector/preProcessMergeResult'),
+    postProcessMergeResult: require('./deviceType/AlereFtpConnector/postProcessMergeResult'),
   },
 }
 

@@ -149,12 +149,22 @@ async function deleteGeneXpertDeviceSiteDataAndRefreshTokens(
   await knex('DeviceSiteHistory')
     .whereIn('deviceId', deviceIds)
     .delete()
+
   await knex('IssueEvent')
     .whereIn('issueId', issueIds)
+    .orWhere(function() {
+      if (resultIds != null && resultIds.length > 0) {
+        this.whereRaw(
+          `JSON_EXTRACT(data, "$.resultId") IN (${resultIds.join(',')})`
+        )
+      }
+    })
     .delete()
+
   await knex('Issue')
     .whereIn('deviceId', deviceIds)
     .delete()
+
   await knex('InventoryLog')
     .whereIn('resultId', resultIds)
     .delete()
@@ -186,6 +196,10 @@ async function deleteGeneXpertDeviceSiteDataAndRefreshTokens(
     .delete()
   await knex('Sample')
     .whereIn('originSiteId', siteIds)
+    .delete()
+
+  await knex('FactInventoryConsumptionRate')
+    .whereIn('siteId', siteIds)
     .delete()
 
   await knex('Site')
@@ -259,6 +273,7 @@ class GxAlertApiTestContext {
         .from('DeviceStatus')
         .where('token', 'approved')
         .first()
+
       const now = new Date()
       const [deviceId] = await knex('Device').insert({
         partnerId: partner.id,

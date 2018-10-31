@@ -65,29 +65,26 @@ const dataCategories = [
   {
     name: 'HIV+',
     fieldNames: 'hivStatus',
-    // partnerId,
     externalId: 'HivStatus',
     i18nKey: 'dataCategoryHiv',
     validValues: JSON.stringify(dictHivStatus.filter(x => x !== 'Not on Form')),
     invalidValues: JSON.stringify(
       dictHivStatus.filter(x => x === 'Not on Form')
     ),
-    cutoffPercentage: 98,
+    cutoffPercentage: 95,
   },
   {
     name: 'MDR',
     fieldNames: 'previouslyTreated',
-    // partnerId,
     externalId: 'PreviouslyTreated',
     i18nKey: 'dataCategoryMdr',
     validValues: JSON.stringify(dictMdr.filter(x => x !== 'Not on Form')),
     invalidValues: JSON.stringify(dictMdr.filter(x => x === 'Not on Form')),
-    cutoffPercentage: 98,
+    cutoffPercentage: 95,
   },
   {
     name: 'Smear+',
     fieldNames: 'microscopyResult',
-    // partnerId,
     externalId: 'MicroscopyResult',
     i18nKey: 'dataCategorySmear',
     validValues: JSON.stringify(
@@ -100,8 +97,8 @@ const dataCategories = [
   },
   {
     name: 'Other',
-    fieldNames: '["city", "gender", "age", "sampleType"]',
-    // partnerId,
+    // all fields are props in patientData json
+    fieldNames: '["city", "gender", "age", "id"]',
     externalId: 'Other',
     i18nKey: 'dataCategoryOther',
     // ----------------------
@@ -112,7 +109,7 @@ const dataCategories = [
     // ----------------------
     // see func getDataCategoryStatus( in /fact/service.js
     // ----------------------
-    cutoffPercentage: 98,
+    cutoffPercentage: 95,
   },
 ]
 
