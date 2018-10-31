@@ -1,21 +1,32 @@
 module.exports = require('../utils').seed(seed)
 
-const { updateDashboardWidgetQueries } = require('../utils')
+const {
+  updateDashboardWidgetQueries,
+  seedIssueEventTriggersForPartner,
+} = require('../utils')
 
 const { issueCategoryToId } = require('../../src/shared/dictionary')
 
 async function seed(knex) {
-  const widget = await knex('DashboardWidget')
-    .where('title', 'children')
+  const moduleReplacedIssueType = await knex('IssueType')
+    .where('externalId', 'ModuleReplaced')
     .first('id')
 
-  if (widget == null) {
+  if (moduleReplacedIssueType) {
     return
   }
+
+  const { id: partnerId } = await knex('Partner')
+    .where({ name: 'Myanmar' })
+    .first()
+
+  await insertModuleReplacedIssue(knex)
+  await seedIssueEventTriggersForPartner(knex, partnerId, {
+    issueTypeWhitelist: ['DeviceMaintenance', 'ModuleReplaced'],
+  })
   await removeChildrenDashboardTarget(knex)
   await updateDashboardWidgetQueries(knex)
   await turnOffEmailSms(knex)
-  await insertModuleReplacedIssue(knex)
 }
 
 async function removeChildrenDashboardTarget(knex) {
