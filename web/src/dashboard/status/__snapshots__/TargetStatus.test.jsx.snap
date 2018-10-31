@@ -152,7 +152,7 @@ exports[`Target Status component should shallow render correctly 1`] = `
           >
             <WrappedComponent
               goal={1200}
-              hasError={false}
+              hasError={true}
               value={1220}
               windowResizeDebounceTime={300}
             />
@@ -169,7 +169,9 @@ exports[`Target Status component should shallow render correctly 1`] = `
           </div>
           <div
             className="TargetItemBlock__Label--error"
-          />
+          >
+            Patient Data Collection 75%
+          </div>
         </Unknown>,
       ]
     </div>
