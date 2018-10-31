@@ -18,19 +18,22 @@ const {
 
 const server = supertest.agent('http://localhost:8080')
 const { assert } = chai
-const context = createTestContext(server, {
-  user: 'admin',
-  type: 'Daktari Virology',
-  partner: 'Partner One',
-})
-const { factGenerateDeviceConnectivity } = require('../../src/fact/actions')
-const { deviceOffline, deviceOnline } = require('../../src/device/actions')
 
 const baseConfig = {
   requirePrinter: 'yes',
   adminPassword: 'pwd123',
   firmwareUpdateRequired: 'no',
 }
+
+const context = createTestContext(server, {
+  user: 'admin',
+  type: 'Daktari Virology',
+  partner: 'Partner One',
+  createDevice: true,
+  baseConfig,
+})
+const { factGenerateDeviceConnectivity } = require('../../src/fact/actions')
+const { deviceOffline, deviceOnline } = require('../../src/device/actions')
 
 describe('Device API routes', () => {
   const devicePath = '/device'
@@ -272,7 +275,7 @@ describe('Device API routes', () => {
 
         // get total count of results
         await server
-          .get(deviceListPath)
+          .get(`${deviceListPath}?size=100`)
           .set('Authorization', clientAuth)
           .then(res => {
             assert.equal(res.status, 200)
@@ -380,19 +383,9 @@ describe('Device API routes', () => {
   })
 
   describe('add device Logs', () => {
-    const testContext = createTestContext(server, {
-      user: 'admin',
-      partner: 'CHIZ',
-    })
-
-    const { runTest } = testContext
-
-    beforeEach(testContext.beforeEach)
-    afterEach(testContext.afterEach)
-
     it('should create add payload to DeviceLog on Joi failure', () =>
       runTest(async knex => {
-        const { apiKey, deviceAuth } = testContext
+        const { apiKey, deviceAuth } = context
         assert.isOk(apiKey)
 
         const [{ count: logLength1 }] = await knex('DeviceLog as dl').count(
