@@ -175,13 +175,10 @@ async function seed(knex) {
   await knex('JobFunctionPermission').insert([
     { jobFunctionId: jobFunctionIdLabUser, permissionId: modules.browse.view },
     { jobFunctionId: jobFunctionIdLabUser, permissionId: modules.result.admin },
+    { jobFunctionId: jobFunctionIdLabUser, permissionId: modules.site.view },
   ])
   await knex('JobFunctionFeature').insert([
     { jobFunctionId: jobFunctionIdLabUser, featureId: features.result },
-    {
-      jobFunctionId: jobFunctionIdLabUser,
-      featureId: features.resultDashboard,
-    },
   ])
 
   // create site for lab user
