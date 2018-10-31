@@ -418,43 +418,44 @@ describe('DataCategoryLow Issues Endpoint', () => {
         )
 
       expect(notifications.length).to.equal(2)
-      const notifLU = _.find(notifications, { jobFunction: 'Lab User' })
+      const notifLU = _.find(notifications, {
+        jobFunction: 'Lab User',
+        canAcknowledge: 1,
+        level: 1,
+      })
       const notifLUROView = _.find(notifications, {
         jobFunction: 'Regional Officer',
         canAcknowledge: 0,
+        level: 1,
       })
 
+      expect(notifLU.userName).to.include(USER_LU_NAME_PREFIX)
+      expect(notifLUROView.userName).to.include(USER_RO_NAME_PREFIX)
+
       // helper func for asserting similar things for each notification
-      const assertNotif = (
-        notification,
-        userNamePrefix,
-        jobFunction,
-        level
-      ) => {
+      const assertNotif = (notification, userNamePrefix) => {
         expect(notification.userName).to.include(userNamePrefix)
-        assert.equal(notification.jobFunction, jobFunction)
-        assert.equal(notification.level, level)
+
+        // check alert message
+        assert.equal(
+          notification.alertMessage,
+          processUsingHandlebarsSyntax(
+            `Data category '{{issue.data.categoryName}}' for {{issue.data.periodName}} is low ({{issue.data.percentage}}%)`,
+            {
+              issue: {
+                data: {
+                  categoryName,
+                  periodName,
+                  percentage,
+                },
+              },
+            }
+          )
+        )
       }
       // see /seeds/dataCategory.js for NotificationType items
-      assertNotif(notifLU, USER_LU_NAME_PREFIX, 'Lab User', 1)
-      assertNotif(notifLUROView, USER_RO_NAME_PREFIX, 'Regional Officer', 1)
-
-      // check alert message
-      assert.equal(
-        notifRO.alertMessage,
-        processUsingHandlebarsSyntax(
-          `Data category '{{issue.data.categoryName}}' for {{issue.data.periodName}} is low ({{issue.data.percentage}}%)`,
-          {
-            issue: {
-              data: {
-                categoryName,
-                periodName,
-                percentage,
-              },
-            },
-          }
-        )
-      )
+      assertNotif(notifLU, USER_LU_NAME_PREFIX, 'Lab User')
+      assertNotif(notifLUROView, USER_RO_NAME_PREFIX, 'Regional Officer')
     })
   })
 })
