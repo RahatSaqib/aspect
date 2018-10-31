@@ -143,11 +143,16 @@ describe('DataCategoryLow Issues Endpoint', () => {
         .where('u.name', 'myanmar_admin')
         .first('u.id')
 
-      // get 1st site for current partner
+      const { id: labUserId } = await knex('User')
+        .where({ name: USER_LU_NAME })
+        .first()
+
+      // get 1st site for current partner and labUser
       const { s: { geographyId } } = await getSite(knex, {
         partnerId,
         countryAbbreviation,
         requireInventory: true,
+        userId: labUserId,
       })
 
       // create new site for same partner and same geography
@@ -413,28 +418,30 @@ describe('DataCategoryLow Issues Endpoint', () => {
         )
 
       expect(notifications.length).to.equal(2)
-      const [notifLU, notifRO1] = notifications
+      const notifLU = _.find(notifications, { jobFunction: 'Lab User' })
+      const notifLUROView = _.find(notifications, {
+        jobFunction: 'Regional Officer',
+        canAcknowledge: 0,
+      })
 
       // helper func for asserting similar things for each notification
       const assertNotif = (
         notification,
         userNamePrefix,
         jobFunction,
-        level,
-        canAcknowledge
+        level
       ) => {
         expect(notification.userName).to.include(userNamePrefix)
         assert.equal(notification.jobFunction, jobFunction)
         assert.equal(notification.level, level)
-        assert.equal(notification.canAcknowledge, canAcknowledge)
       }
       // see /seeds/dataCategory.js for NotificationType items
-      assertNotif(notifLU, USER_LU_NAME_PREFIX, 'Lab User', 1, 1)
-      assertNotif(notifRO1, USER_RO_NAME_PREFIX, 'Regional Officer', 1, 0)
+      assertNotif(notifLU, USER_LU_NAME_PREFIX, 'Lab User', 1)
+      assertNotif(notifLUROView, USER_RO_NAME_PREFIX, 'Regional Officer', 1)
 
       // check alert message
       assert.equal(
-        notifRO1.alertMessage,
+        notifRO.alertMessage,
         processUsingHandlebarsSyntax(
           `Data category '{{issue.data.categoryName}}' for {{issue.data.periodName}} is low ({{issue.data.percentage}}%)`,
           {

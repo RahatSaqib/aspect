@@ -9,6 +9,7 @@ const context = createTestContext(server, {
   user: 'admin',
   type: 'Daktari Virology',
   partner: 'Partner One',
+  createDevice: true,
 })
 
 describe('Demo Device routes', () => {

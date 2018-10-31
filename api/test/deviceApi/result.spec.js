@@ -90,6 +90,8 @@ describe('Device Result API routes', () => {
       user: 'admin',
       type: 'Daktari Virology',
       partner: 'Partner One',
+      createDevice: true,
+      baseConfig,
     })
 
     const { runTest } = context

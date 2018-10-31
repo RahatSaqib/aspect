@@ -1,47 +1,40 @@
 const _ = require('lodash')
-const helper = require('sendgrid').mail
+const nodemailer = require('nodemailer')
 
 async function sendEmail(to, subject, htmlContent, textContent, attachments) {
-  const fromEmail = new helper.Email(process.env['email.fromAddress'], 'Aspect')
-  const toEmail = new helper.Email(to)
-  const htmlBody = htmlContent
-    ? new helper.Content('text/html', htmlContent)
-    : undefined
-  const textBody = textContent
-    ? new helper.Content('text/plain', textContent)
-    : undefined
-  const emailMessage = new helper.Mail(
-    fromEmail,
-    subject.trim(),
-    toEmail,
-    textBody || htmlBody
+  const transporter = nodemailer.createTransport(
+    {
+      host: process.env['email.host'],
+      port: process.env['email.port'] || 465,
+      auth: {
+        user: process.env['email.user'],
+        pass: process.env['email.password'],
+      },
+    },
+    {
+      from: {
+        name: 'Aspect',
+        address: process.env['email.fromEmail'],
+      },
+    }
   )
 
-  if (textBody && htmlBody) {
-    emailMessage.addContent(htmlBody)
+  const message = {
+    to,
+    subject: subject.trim(),
+    text: textContent,
+    html: htmlContent,
+    attachments: _.map(attachments, att => ({
+      content: att.content,
+      filename: att.fileName,
+      contentType: att.mimeType,
+      contentDisposition: att.disposition,
+      cid: att.fileName,
+      encoding: 'base64',
+    })),
   }
 
-  if (_.isArray(attachments) && attachments.length) {
-    attachments.forEach(att => {
-      const attachment = new helper.Attachment()
-      attachment.setContent(att.content)
-      attachment.setType(att.mimeType)
-      attachment.setFilename(att.fileName)
-      attachment.setDisposition(att.disposition) // inline / attachment
-      if (att.disposition === 'inline') {
-        attachment.setContentId(att.fileName)
-      }
-      emailMessage.addAttachment(attachment)
-    })
-  }
-  const sendGrid = require('sendgrid')(process.env['sendgrid.apiKey'])
-  const request = sendGrid.emptyRequest({
-    method: 'POST',
-    path: '/v3/mail/send',
-    body: emailMessage.toJSON(),
-  })
-
-  return sendGrid.API(request)
+  return transporter.sendMail(message)
 }
 
 module.exports = {

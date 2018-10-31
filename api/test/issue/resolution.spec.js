@@ -4,13 +4,13 @@ const _ = require('lodash')
 const { subDays, subHours } = require('date-fns')
 const { run } = require('../../src/db')
 const { runTestWithKnex } = require('../utils/generatorFunctionUtils')
-const {
-  createMessageContext,
-  waitForIdle,
-  waitForAction,
-} = require('../utils/mqUtils')
-const { resolveIssues } = require('../../src/issue/actions')
+const { createMessageContext, waitForAction } = require('../utils/mqUtils')
+const { resolveIssues, issueResolved } = require('../../src/issue/actions')
 const { types: deviceActionTypes } = require('../../src/device/actions')
+const {
+  deviceTypeToId,
+  deviceStatusToId,
+} = require('../../src/shared/dictionary')
 
 const { assert } = chai
 
@@ -96,6 +96,53 @@ describe('Issue Resolution', () => {
       .first()
   }
 
+  async function getSite(knex, { countryAbbreviation, partnerId }) {
+    ensureMySqlBeforeNestedTablesOptions(knex)
+    return knex('Site as s')
+      .join('Geography as lgaGeography', 's.geographyId', 'lgaGeography.id')
+      .join('Geography as regionalGeography', function() {
+        this.on('lgaGeography.stateId', 'regionalGeography.stateId').onNull(
+          'regionalGeography.lgaId'
+        )
+      })
+      .join('Country as c', 'lgaGeography.countryId', 'c.id')
+      .join('Person as labUser', 'lgaGeography.id', 'labUser.geographyId')
+      .join('Job as labUserJob', 'labUser.id', 'labUserJob.personId')
+      .join(
+        'JobFunction as labUserJobFunction',
+        'labUserJob.jobFunctionId',
+        'labUserJobFunction.id'
+      )
+      .join(
+        'JobContext as regionalContext',
+        'regionalGeography.id',
+        'regionalContext.geographyId'
+      )
+      .join(
+        'Job as regionalOfficerJob',
+        'regionalContext.jobId',
+        'regionalOfficerJob.id'
+      )
+      .join(
+        'JobFunction as regionalOfficerJobFunction',
+        'regionalOfficerJob.jobFunctionId',
+        'regionalOfficerJobFunction.id'
+      )
+      .join(
+        'Person as regionalOfficer',
+        'regionalOfficerJob.personId',
+        'regionalOfficer.id'
+      )
+      .where({
+        'c.abbreviation': countryAbbreviation,
+        's.partnerId': partnerId,
+        'labUserJobFunction.name': 'Lab User',
+        'regionalOfficerJobFunction.name': 'Regional Officer',
+      })
+      .options({ nestTables: true })
+      .first()
+  }
+
   async function getDeviceStatus(knex, deviceStatusToken) {
     return knex('DeviceStatus')
       .where('token', deviceStatusToken)
@@ -140,7 +187,7 @@ describe('Issue Resolution', () => {
       knex,
       'Triggered'
     )
-    const issueId = await knex('Issue').insert({
+    const [issueId] = await knex('Issue').insert({
       issueTypeId,
       issueStatusId: activeIssueStatus.id,
       partnerId,
@@ -184,6 +231,53 @@ describe('Issue Resolution', () => {
     }
     issueEvent.data = JSON.stringify(issueEvent.data)
     return knex('IssueEvent').insert(issueEvent)
+  }
+
+  async function createDeviceNoResult(
+    knex,
+    { countryAbbreviation, partnerId }
+  ) {
+    // get 1st site for current partner
+    const { s: { id: siteId, geographyId } } = await getSite(knex, {
+      countryAbbreviation,
+      partnerId,
+    })
+
+    const [deviceId] = await knex('Device').insert({
+      partnerId,
+      geographyId,
+      siteId, // new site id
+      deviceTypeId: await deviceTypeToId('CepheidGeneXpert'),
+      deviceStatusId: await deviceStatusToId('approved'),
+      name: 'Test Device',
+      shortName: 'Test Device',
+      lastSeenOn: new Date(),
+    })
+    return deviceId
+  }
+
+  async function deleteDeviceAndTestData(knex, deviceIds) {
+    await knex('FactDeviceFlag')
+      .whereIn('deviceId', deviceIds)
+      .delete()
+    await knex('DeviceStatusLog')
+      .whereIn('deviceId', deviceIds)
+      .delete()
+    await knex('FactDeviceFlag')
+      .whereIn('deviceId', deviceIds)
+      .delete()
+    await knex('DeviceLog')
+      .whereIn('deviceId', deviceIds)
+      .delete()
+    await knex('DeviceSiteHistory')
+      .whereIn('deviceId', deviceIds)
+      .delete()
+    await knex('DeviceOperation')
+      .whereIn('deviceId', deviceIds)
+      .delete()
+    await knex('Device')
+      .whereIn('id', deviceIds)
+      .delete()
   }
 
   async function cleanUpIssues(knex, issueIds) {
@@ -367,7 +461,6 @@ describe('Issue Resolution', () => {
             const waitForResolveIssues = waitForAction(resolveIssues())
             messageContext.resolveIssues()
             await waitForResolveIssues
-            await waitForIdle()
 
             const device1OfflineIssue = await getIssue(
               knex,
@@ -397,7 +490,6 @@ describe('Issue Resolution', () => {
             )
             messageContext.resolveIssues(device1OfflineIssueId)
             await waitForResolveIssue
-            await waitForIdle()
 
             const device1OfflineIssue = await getIssue(
               knex,
@@ -434,10 +526,11 @@ describe('Issue Resolution', () => {
         describe('then RESOLVE_ISSUES is dispatched with no issue ID', () => {
           it('the issue should be resolved for the online device only', () =>
             runTestWithKnex(async knex => {
-              const waitForResolveIssues = waitForAction(resolveIssues())
+              const waitForIssueResolved = waitForAction(
+                issueResolved(device1OfflineIssueId)
+              )
               messageContext.resolveIssues()
-              await waitForResolveIssues
-              await waitForIdle()
+              await waitForIssueResolved
 
               const device1OfflineIssue = await getIssue(
                 knex,
@@ -475,10 +568,17 @@ describe('Issue Resolution', () => {
         describe('then RESOLVE_ISSUES is dispatched with no issue ID', () => {
           it('the issues for both devices should be resolved', () =>
             runTestWithKnex(async knex => {
-              const waitForResolveIssues = waitForAction(resolveIssues())
+              const waitForDevice1IssueResolved = waitForAction(
+                issueResolved(device1OfflineIssueId)
+              )
+              const waitForDevice2IssueResolved = waitForAction(
+                issueResolved(device2OfflineIssueId)
+              )
               messageContext.resolveIssues()
-              await waitForResolveIssues
-              await waitForIdle()
+              await Promise.all([
+                waitForDevice1IssueResolved,
+                waitForDevice2IssueResolved,
+              ])
 
               const device1OfflineIssue = await getIssue(
                 knex,
@@ -503,12 +603,11 @@ describe('Issue Resolution', () => {
         describe('then RESOLVE_ISSUES is dispatched with an issue ID', () => {
           it('the issue should still be resolved for the one issue only', () =>
             runTestWithKnex(async knex => {
-              const waitForResolveIssue = waitForAction(
-                resolveIssues(device1OfflineIssueId)
+              const waitForIssueResolved = waitForAction(
+                issueResolved(device1OfflineIssueId)
               )
               messageContext.resolveIssues(device1OfflineIssueId)
-              await waitForResolveIssue
-              await waitForIdle()
+              await waitForIssueResolved
 
               const device1OfflineIssue = await getIssue(
                 knex,
@@ -571,10 +670,11 @@ describe('Issue Resolution', () => {
         describe('then RESOLVE_ISSUES is dispatched with no issue ID', () => {
           it('the issue should be resolved for the device that has a reason specified only', () =>
             runTestWithKnex(async knex => {
-              const waitForResolveIssues = waitForAction(resolveIssues())
+              const waitForIssueResolved = waitForAction(
+                issueResolved(device1OfflineIssueId)
+              )
               messageContext.resolveIssues()
-              await waitForResolveIssues
-              await waitForIdle()
+              await waitForIssueResolved
 
               const device1OfflineIssue = await getIssue(
                 knex,
@@ -650,10 +750,17 @@ describe('Issue Resolution', () => {
         describe('then RESOLVE_ISSUES is dispatched with no issue ID', () => {
           it('the issues for both devices should be resolved', () =>
             runTestWithKnex(async knex => {
-              const waitForResolveIssues = waitForAction(resolveIssues())
+              const waitForDevice1IssueResolved = waitForAction(
+                issueResolved(device1OfflineIssueId)
+              )
+              const waitForDevice2IssueResolved = waitForAction(
+                issueResolved(device1OfflineIssueId)
+              )
               messageContext.resolveIssues()
-              await waitForResolveIssues
-              await waitForIdle()
+              await Promise.all([
+                waitForDevice1IssueResolved,
+                waitForDevice2IssueResolved,
+              ])
 
               const device1OfflineIssue = await getIssue(
                 knex,
@@ -678,12 +785,11 @@ describe('Issue Resolution', () => {
         describe('then RESOLVE_ISSUES is dispatched with an issue ID', () => {
           it('the issue should still be resolved for the one issue only', () =>
             runTestWithKnex(async knex => {
-              const waitForResolveIssue = waitForAction(
-                resolveIssues(device1OfflineIssueId)
+              const waitForIssueResolved = waitForAction(
+                issueResolved(device1OfflineIssueId)
               )
               messageContext.resolveIssues(device1OfflineIssueId)
-              await waitForResolveIssue
-              await waitForIdle()
+              await waitForIssueResolved
 
               const device1OfflineIssue = await getIssue(
                 knex,
@@ -732,10 +838,11 @@ describe('Issue Resolution', () => {
         describe('then RESOLVE_ISSUES is dispatched with no issue ID', () => {
           it('the issue should be resolved for the decommissioned device only', () =>
             runTestWithKnex(async knex => {
-              const waitForResolveIssues = waitForAction(resolveIssues())
+              const waitForIssueResolved = waitForAction(
+                issueResolved(device1OfflineIssueId)
+              )
               messageContext.resolveIssues()
-              await waitForResolveIssues
-              await waitForIdle()
+              await waitForIssueResolved
 
               const device1OfflineIssue = await getIssue(
                 knex,
@@ -784,10 +891,17 @@ describe('Issue Resolution', () => {
         describe('then RESOLVE_ISSUES is dispatched with no issue ID', () => {
           it('the issues for both devices should be resolved', () =>
             runTestWithKnex(async knex => {
-              const waitForResolveIssues = waitForAction(resolveIssues())
+              const waitForDevice1IssueResolved = waitForAction(
+                issueResolved(device1OfflineIssueId)
+              )
+              const waitForDevice2IssueResolved = waitForAction(
+                issueResolved(device2OfflineIssueId)
+              )
               messageContext.resolveIssues()
-              await waitForResolveIssues
-              await waitForIdle()
+              await Promise.all([
+                waitForDevice1IssueResolved,
+                waitForDevice2IssueResolved,
+              ])
 
               const device1OfflineIssue = await getIssue(
                 knex,
@@ -812,12 +926,11 @@ describe('Issue Resolution', () => {
         describe('then RESOLVE_ISSUES is dispatched with an issue ID', () => {
           it('the issue should still be resolved for the one issue only', () =>
             runTestWithKnex(async knex => {
-              const waitForResolveIssue = waitForAction(
-                resolveIssues(device1OfflineIssueId)
+              const waitForIssueResolved = waitForAction(
+                issueResolved(device1OfflineIssueId)
               )
               messageContext.resolveIssues(device1OfflineIssueId)
-              await waitForResolveIssue
-              await waitForIdle()
+              await waitForIssueResolved
 
               const device1OfflineIssue = await getIssue(
                 knex,
@@ -850,6 +963,7 @@ describe('Issue Resolution', () => {
       let device2NoResultsIssueId
       const devicesToResetNoResults = []
       const factDeviceFlagsToRemove = []
+      const deviceIdsToRemove = []
 
       let now
       let admin
@@ -892,6 +1006,17 @@ describe('Issue Resolution', () => {
 
       before(async () =>
         run(async knex => {
+          const testDeviceId1 = await createDeviceNoResult(knex, {
+            partnerId: partner.id,
+            countryAbbreviation,
+          })
+          const testDeviceId2 = await createDeviceNoResult(knex, {
+            partnerId: partner.id,
+            countryAbbreviation,
+          })
+          deviceIdsToRemove.push(testDeviceId1)
+          deviceIdsToRemove.push(testDeviceId2)
+
           deviceNoResultsIssueType = await getIssueType(knex, 'DeviceNoResults')
           const noResultsSince = subDays(
             new Date(),
@@ -925,6 +1050,7 @@ describe('Issue Resolution', () => {
             noResultsSince,
             notIn: [device1.id],
           })
+
           device2 = device2Details.d
           if (!_.get(device2Details, 'fdf.noResults')) {
             if (!_.get(device2Details, 'fdf.deviceId')) {
@@ -968,6 +1094,8 @@ describe('Issue Resolution', () => {
 
       after(async () =>
         run(async knex => {
+          await deleteDeviceAndTestData(knex, deviceIdsToRemove)
+
           await Promise.all(
             _.map(factDeviceFlagsToRemove, deviceId =>
               knex('FactDeviceFlag')
@@ -1024,7 +1152,6 @@ describe('Issue Resolution', () => {
             const waitForResolveIssues = waitForAction(resolveIssues())
             messageContext.resolveIssues()
             await waitForResolveIssues
-            await waitForIdle()
 
             const device1NoResultsIssue = await getIssue(
               knex,
@@ -1054,7 +1181,6 @@ describe('Issue Resolution', () => {
             )
             messageContext.resolveIssues(device1NoResultsIssueId)
             await waitForResolveIssue
-            await waitForIdle()
 
             const device1NoResultsIssue = await getIssue(
               knex,
@@ -1099,10 +1225,11 @@ describe('Issue Resolution', () => {
         describe('then RESOLVE_ISSUES is dispatched with no issue ID', () => {
           it('the issue should be resolved for the online device only', () =>
             runTestWithKnex(async knex => {
-              const waitForResolveIssues = waitForAction(resolveIssues())
+              const waitForIssueResolved = waitForAction(
+                issueResolved(device1NoResultsIssueId)
+              )
               messageContext.resolveIssues()
-              await waitForResolveIssues
-              await waitForIdle()
+              await waitForIssueResolved
 
               const device1NoResultsIssue = await getIssue(
                 knex,
@@ -1148,10 +1275,11 @@ describe('Issue Resolution', () => {
         describe('then RESOLVE_ISSUES is dispatched with no issue ID', () => {
           it('the issues for the other device should be resolved', () =>
             runTestWithKnex(async knex => {
-              const waitForResolveIssues = waitForAction(resolveIssues())
+              const waitForIssueResolved = waitForAction(
+                issueResolved(device2NoResultsIssueId)
+              )
               messageContext.resolveIssues()
-              await waitForResolveIssues
-              await waitForIdle()
+              await waitForIssueResolved
 
               const device1NoResultsIssue = await getIssue(
                 knex,
@@ -1176,12 +1304,11 @@ describe('Issue Resolution', () => {
         describe('then RESOLVE_ISSUES is dispatched with an issue ID', () => {
           it('the issue should be resolved for the one issue only', () =>
             runTestWithKnex(async knex => {
-              const waitForResolveIssue = waitForAction(
-                resolveIssues(device2NoResultsIssueId)
+              const waitForIssueResolved = waitForAction(
+                issueResolved(device2NoResultsIssueId)
               )
               messageContext.resolveIssues(device2NoResultsIssueId)
-              await waitForResolveIssue
-              await waitForIdle()
+              await waitForIssueResolved
 
               const device1NoResultsIssue = await getIssue(
                 knex,
@@ -1246,10 +1373,11 @@ describe('Issue Resolution', () => {
         describe('then RESOLVE_ISSUES is dispatched with no issue ID', () => {
           it('the issue should be resolved for the device that has a reason specified only', () =>
             runTestWithKnex(async knex => {
-              const waitForResolveIssues = waitForAction(resolveIssues())
+              const waitForIssueResolved = waitForAction(
+                issueResolved(device1NoResultsIssueId)
+              )
               messageContext.resolveIssues()
-              await waitForResolveIssues
-              await waitForIdle()
+              await waitForIssueResolved
 
               const device1NoResultsIssue = await getIssue(
                 knex,
@@ -1343,10 +1471,17 @@ describe('Issue Resolution', () => {
         describe('then RESOLVE_ISSUES is dispatched with no issue ID', () => {
           it('the issues for both devices should be resolved', () =>
             runTestWithKnex(async knex => {
-              const waitForResolveIssues = waitForAction(resolveIssues())
+              const waitForDevice1IssueResolved = waitForAction(
+                issueResolved(device1NoResultsIssueId)
+              )
+              const waitForDevice2IssueResolved = waitForAction(
+                issueResolved(device2NoResultsIssueId)
+              )
               messageContext.resolveIssues()
-              await waitForResolveIssues
-              await waitForIdle()
+              await Promise.all([
+                waitForDevice1IssueResolved,
+                waitForDevice2IssueResolved,
+              ])
 
               const device1NoResultsIssue = await getIssue(
                 knex,
@@ -1371,12 +1506,11 @@ describe('Issue Resolution', () => {
         describe('then RESOLVE_ISSUES is dispatched with an issue ID', () => {
           it('only the one issue should be resolved', () =>
             runTestWithKnex(async knex => {
-              const waitForResolveIssue = waitForAction(
-                resolveIssues(device1NoResultsIssueId)
+              const waitForIssueResolved = waitForAction(
+                issueResolved(device1NoResultsIssueId)
               )
               messageContext.resolveIssues(device1NoResultsIssueId)
-              await waitForResolveIssue
-              await waitForIdle()
+              await waitForIssueResolved
 
               const device1NoResultsIssue = await getIssue(
                 knex,
@@ -1425,10 +1559,11 @@ describe('Issue Resolution', () => {
         describe('then RESOLVE_ISSUES is dispatched with no issue ID', () => {
           it('the issue should be resolved for the decommissioned device only', () =>
             runTestWithKnex(async knex => {
-              const waitForResolveIssues = waitForAction(resolveIssues())
+              const waitForIssueResolved = waitForAction(
+                issueResolved(device1NoResultsIssueId)
+              )
               messageContext.resolveIssues()
-              await waitForResolveIssues
-              await waitForIdle()
+              await waitForIssueResolved
 
               const device1NoResultsIssue = await getIssue(
                 knex,
@@ -1477,10 +1612,17 @@ describe('Issue Resolution', () => {
         describe('then RESOLVE_ISSUES is dispatched with no issue ID', () => {
           it('the issues for both devices should be resolved', () =>
             runTestWithKnex(async knex => {
-              const waitForResolveIssues = waitForAction(resolveIssues())
+              const waitForDevice1IssueResolved = waitForAction(
+                issueResolved(device1NoResultsIssueId)
+              )
+              const waitForDevice2IssueResolved = waitForAction(
+                issueResolved(device2NoResultsIssueId)
+              )
               messageContext.resolveIssues()
-              await waitForResolveIssues
-              await waitForIdle()
+              await Promise.all([
+                waitForDevice1IssueResolved,
+                waitForDevice2IssueResolved,
+              ])
 
               const device1NoResultsIssue = await getIssue(
                 knex,
@@ -1505,12 +1647,11 @@ describe('Issue Resolution', () => {
         describe('then RESOLVE_ISSUES is dispatched with an issue ID', () => {
           it('the issue should still be resolved for the one issue only', () =>
             runTestWithKnex(async knex => {
-              const waitForResolveIssue = waitForAction(
-                resolveIssues(device1NoResultsIssueId)
+              const waitForIssueResolved = waitForAction(
+                issueResolved(device1NoResultsIssueId)
               )
               messageContext.resolveIssues(device1NoResultsIssueId)
-              await waitForResolveIssue
-              await waitForIdle()
+              await waitForIssueResolved
 
               const device1NoResultsIssue = await getIssue(
                 knex,
