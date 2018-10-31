@@ -224,17 +224,14 @@ function resultMachineUnknownError(deviceId) {
  * resultId is required
  * moduleName is required
  */
-function resultModuleReplaced(resultId, moduleName, moduleSerial) {
-  if (resultId == null || moduleName == null) {
-    throw new Error(
-      'Must specify resultId, moduleName, and moduleSerial for resultModuleReplaced'
-    )
+function resultModuleReplaced(resultId, options) {
+  if (resultId == null) {
+    throw new Error('Must specify resultId for resultModuleReplaced')
   }
   return {
     type: types.RESULT_MODULE_REPLACED,
     resultId,
-    moduleName,
-    moduleSerial,
+    options,
   }
 }
 

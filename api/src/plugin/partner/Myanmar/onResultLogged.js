@@ -58,6 +58,7 @@ async function onResultLogged({ resultId }, { messageContext }) {
     inventoryReagentHealth,
     resultModuleUnknownError,
     resultMachineUnknownError,
+    resultModuleReplaced,
   })
   await context.run(async knex => {
     const [result] = await knex('Result as r').where('r.id', resultId)
@@ -72,18 +73,17 @@ async function onResultLogged({ resultId }, { messageContext }) {
       .join('IssueType as it', 'it.id', 'i.issueTypeId')
       .where('it.externalId', 'ModuleReplaced')
       .where('i.deviceId', deviceId)
-      .select('data->>"$.moduleSerial"')
-
-    console.log(replacedModuleSerials)
+      .select(knex.raw('data->>"$.moduleSerial" as moduleSerial'))
+      .map(s => s.moduleSerial)
 
     // check if a module was just now replaced and trigger replacement-issue if it was
     if (
       result.moduleName &&
       result.moduleSerial &&
-      result.createdOn === result.updatedOn
+      result.createdOn.getTime() === result.updatedOn.getTime()
     ) {
       // get the most recent result from the same module as the current result:
-      const [previousResultOnModule] = await knex('Result')
+      const previousResultOnModule = await knex('Result')
         .where('deviceId', result.deviceId)
         .where('moduleName', result.moduleName)
         .whereNotNull('moduleSerial')
@@ -92,18 +92,17 @@ async function onResultLogged({ resultId }, { messageContext }) {
         .orderBy('endedOn', 'desc')
         .first()
 
-      console.log('Checking for replaced module')
       if (
         previousResultOnModule &&
         previousResultOnModule.moduleSerial !== result.moduleSerial
       ) {
-        console.log('MODULE replaced!!!')
-        resultModuleReplaced(resultId, result.moduleName, result.moduleSerial)
-        replacedModuleSerials.push(result.moduleSerial)
+        context.resultModuleReplaced(resultId, {
+          moduleName: result.moduleName,
+          moduleSerial: previousResultOnModule.moduleSerial,
+        })
+        replacedModuleSerials.push(previousResultOnModule.moduleSerial)
       }
     }
-
-    console.log(replacedModuleSerials)
 
     // prepare query for device results
     const deviceErrorQuery = knex('Result as r')
