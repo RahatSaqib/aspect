@@ -44,7 +44,7 @@ module.exports = {
   },
   plugin: {},
   scheduler: {
-    enabled: process.env['scheduler.enabled'],
+    enabled: process.env['scheduler.enabled'] === 'true',
   },
 }
 
