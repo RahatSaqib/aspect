@@ -137,7 +137,7 @@ async function seedDataCategory(knex, partnerName) {
   })
 
   // ----------------------------------------------------------------------
-  // reed dataCategories
+  // read dataCategories
   // ----------------------------------------------------------------------
   const pluginName = partnerName.toLowerCase()
   const plugin = await loadPlugin([pluginName], 'dataCategories')
@@ -312,6 +312,65 @@ async function seedDataCategory(knex, partnerName) {
   })
 }
 
+async function updateDataCategoryNotificationTypeForRO(knex, partnerName) {
+  // get partnerId
+  const { id: partnerId } = await knex('Partner')
+    .where({ name: partnerName })
+    .first()
+
+  // ----------------------------------------------------------------------
+  // get jobFunctionId
+  // ----------------------------------------------------------------------
+  const { id: jobFunctionIdRegionalOfficer } = await knex('JobFunction')
+    .where({
+      name: 'Regional Officer',
+      partnerId,
+    })
+    .first('id')
+
+  // ----------------------------------------------------------------------
+  // read dataCategories
+  // ----------------------------------------------------------------------
+  const pluginName = partnerName.toLowerCase()
+  const plugin = await loadPlugin([pluginName], 'dataCategories')
+  const { dataCategories = [] } = plugin
+
+  const issueCategories = await allIssueCategoryToId()
+  // ----------------------------------------------------------------------
+  // process each data category
+  // ----------------------------------------------------------------------
+  await Promise.each(
+    dataCategories,
+    // for each category seed all tables from issue workflow
+    async ({ externalId: categoryToken }) => {
+      const { id: issueTypeId } = await knex('IssueType')
+        .where({
+          issueCategoryId: issueCategories.DataHealth,
+          externalId: `DataCategoryLowFor${categoryToken}`,
+        })
+        .first('id')
+
+      await knex('NotificationType')
+        .where({
+          partnerId,
+          issueTypeId,
+          jobFunctionId: jobFunctionIdRegionalOfficer,
+          level: 1,
+        })
+        .whereRaw('name like ?', ['RO Data Category%'])
+        .update({
+          level: 2,
+        })
+    }
+  )
+
+  // set thresholdPercentageDataCollection = 95% for all targets (see SD-769)
+  await knex('DashboardWidgetTarget').update({
+    thresholdPercentageDataCollection: 95,
+  })
+}
+
 module.exports = {
   seedDataCategory,
+  updateDataCategoryNotificationTypeForRO,
 }

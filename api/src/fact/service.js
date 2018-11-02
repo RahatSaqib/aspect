@@ -23,8 +23,6 @@ const {
   issueEventStatusToId,
 } = require('../shared/dictionary')
 
-const startOfMonth = require('date-fns/start_of_month')
-
 const daysToCalculate = [1, 7, 30, 60, 90, 365, 9999]
 const MIN_RESULTS_TO_TRIGGER_DATA_CATEGORY_LOW = 10
 
@@ -170,7 +168,9 @@ function onDeviceSeen({ deviceId }, { messageContext }) {
         this.whereNull('fdf.deviceId')
           // If fact is marked offline and we've seen the device more recently
           // then the update, we are also online
-          .orWhereRaw('fdf.offline = 1 and (fdf.updatedOn <= d.lastSeenOn)')
+          .orWhereRaw(
+            'fdf.offline = 1 and (fdf.updatedOn <= IFNULL(d.lastSeenOn, fdf.updatedOn))'
+          )
       })
       .first('d.id')
     if (offlineDevice != null) {
@@ -659,22 +659,24 @@ function onFactCalculateInventoryConsumptionRates(action, { messageContext }) {
 async function refreshConsumptionRates(knex, siteId, consumableId) {
   const updatedOn = new Date()
   const totals = await getConsumptions(knex, siteId, consumableId)
-  _.map(totals, async x => {
-    await knex.raw(
-      knex('FactInventoryConsumptionRate')
-        .insert({
-          siteId,
-          consumableId,
-          days: x.days,
-          // in GxAlert we stored totals in field 'rate', so same here.
-          // to get actual rate - do rate/days
-          rate: x.total,
-          updatedOn,
-        })
-        .toString()
-        .replace(/^insert/i, 'replace')
-    )
-  })
+  await Promise.all(
+    _.map(totals, async x => {
+      await knex.raw(
+        knex('FactInventoryConsumptionRate')
+          .insert({
+            siteId,
+            consumableId,
+            days: x.days,
+            // in GxAlert we stored totals in field 'rate', so same here.
+            // to get actual rate - do rate/days
+            rate: x.total,
+            updatedOn,
+          })
+          .toString()
+          .replace(/^insert/i, 'replace')
+      )
+    })
+  )
   return totals
 }
 
@@ -761,10 +763,10 @@ async function checkDataCategoriesForLowStatus(action, { messageContext }) {
   })
   const { loadPlugin } = require('../plugin/registration')
   const now = new Date()
-  // calculate only for current month
+  // calculate only for last 30 days
   const period = {
-    name: 'current month',
-    dateFrom: startOfMonth(now),
+    name: 'last 30 days',
+    dateFrom: subDays(now, 30),
     dateTo: now,
   }
 
@@ -862,7 +864,6 @@ async function getDataCategoryStatus(
   // base query for getting counts - totals and number of valid results
   const itemsBase = knex('Result as r')
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
-    .leftOuterJoin('Sample as smp', 'r.sampleId', 'smp.id')
     .where('r.endedOn', '>=', dateFrom)
     .where('r.endedOn', '<=', dateTo)
     .where(`d.siteId`, siteId)
@@ -896,22 +897,18 @@ async function getDataCategoryStatus(
           // get all fields for 'Other' category (i.e. "name", "gender", "age")
           const fieldNames = JSON.parse(dataCategory.fieldNames)
           _.map(fieldNames, field => {
-            if (field === 'sampleType') {
-              this.whereNotNull('r.sampleId').whereNotNull('smp.sampleTypeId')
-            } else {
-              // field value is not null (when field is missing), "undefined", "null" or ""
-              this.whereRaw(
-                `
-                (r.patientData ->> '$.${field}') is not null
-                and
-                (r.patientData ->> '$.${field}') != 'undefined'
-                and
-                (r.patientData ->> '$.${field}') != 'null'
-                and
-                (r.patientData ->> '$.${field}') != ''
-                `
-              )
-            }
+            // field value is not null (when field is missing), "undefined", "null" or ""
+            this.whereRaw(
+              `
+              (r.patientData ->> '$.${field}') is not null
+              and
+              (r.patientData ->> '$.${field}') != 'undefined'
+              and
+              (r.patientData ->> '$.${field}') != 'null'
+              and
+              (r.patientData ->> '$.${field}') != ''
+              `
+            )
             // ^^^ notice that we require ALL fields (i.e. name, gender, age) have value to count result as valid
             // if need at least one field to have value then use this.orWhereRaw above
           })

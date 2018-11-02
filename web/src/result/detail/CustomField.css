@@ -1,0 +1,19 @@
+.Container {
+  padding: 12px 12px 12px 0;
+}
+
+.Container label {
+  color: #9e9e9e;
+}
+
+.DropDown {
+  padding: 4px 0;
+}
+
+.TextBox__Input {
+  padding: 0;
+}
+
+.TextBox__InputElement {
+  padding: 6px 0;
+}

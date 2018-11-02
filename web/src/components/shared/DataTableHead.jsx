@@ -31,15 +31,23 @@ const DataTableHead = ({
     })}
   >
     {columns.map(
-      ({ key = index, label, onClick, sortable, ...restProps }, index) => (
+      (
+        { key = index, label, onClick, sortable, hiddenOn, ...restProps },
+        index
+      ) => (
         <TableCell
           key={key}
           data-column={key}
           onClick={onClick || (sortable && onHeadColumnClick)}
           {...restProps}
-          className={cssClasses(restProps.className, 'TableCell', {
-            'TableCell--clickable': _.isFunction(onClick) || sortable,
-          })}
+          className={cssClasses(
+            restProps.className,
+            'TableCell',
+            `TableHead--${hiddenOn}`,
+            {
+              'TableCell--clickable': _.isFunction(onClick) || sortable,
+            }
+          )}
         >
           {label}
           {sortColumnKey === key &&

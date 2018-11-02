@@ -7,6 +7,10 @@ const geography = require('./fixtures/geography.json')
 const _ = require('lodash')
 const Promise = require('bluebird')
 
+const {
+  updateDataCategoryNotificationTypeForRO,
+} = require('../dataCategoryLow')
+
 async function seed(knex) {
   const alertTemplateWithHideFlag = await knex('AlertTemplate')
     .where('hideWhenSiteFilterIsSelected', 1)
@@ -365,4 +369,7 @@ async function seed(knex) {
           : modules.actionDashboard.edit,
     })
   })
+
+  // correction requested in SD-769
+  await updateDataCategoryNotificationTypeForRO(knex, 'Myanmar')
 }

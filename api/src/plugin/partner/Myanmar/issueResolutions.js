@@ -1,6 +1,5 @@
 const _ = require('lodash')
 const subDays = require('date-fns/sub_days')
-const startOfMonth = require('date-fns/start_of_month')
 const Promise = require('bluebird')
 
 const {
@@ -407,7 +406,7 @@ async function resolveDataCategoryLow(knex, issue) {
   if (dataCategory) {
     const now = new Date()
     const period = {
-      dateFrom: startOfMonth(now),
+      dateFrom: subDays(now, 30),
       dateTo: now,
     }
     const props = { period, siteId, dataCategory }

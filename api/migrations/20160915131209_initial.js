@@ -532,7 +532,7 @@ async function up(knex) {
     device.string('culture', 45)
     device.string('timezone', 45)
     device.string('notes', 2000)
-    device.dateTime('lastSeenOn').notNullable()
+    device.dateTime('lastSeenOn')
     device.dateTime('lastPingOn')
     device.string('lastPingFromIp', 45)
     device.dateTime('putInService')

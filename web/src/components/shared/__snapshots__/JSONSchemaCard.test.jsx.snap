@@ -3,7 +3,7 @@
 exports[`JSONSchemaCard module JSONSchemaCard testInstance should render correctly 1`] = `
 <div>
   <div
-    className="pure-u-1-3 pure-u-sm-1-3"
+    className="pure-u-1-2 pure-u-sm-1-3"
   >
     <div
       className="Container"
@@ -23,7 +23,7 @@ exports[`JSONSchemaCard module JSONSchemaCard testInstance should render correct
     </div>
   </div>
   <div
-    className="pure-u-1-3 pure-u-sm-1-3"
+    className="pure-u-1-2 pure-u-sm-1-3"
   >
     <div
       className="Container"
@@ -95,7 +95,7 @@ exports[`JSONSchemaCard module JSONSchemaCard testInstance should render correct
     </div>
   </div>
   <div
-    className="pure-u-1-3 pure-u-sm-1-3"
+    className="pure-u-1-2 pure-u-sm-1-3"
   >
     <div
       className="Container"
@@ -179,7 +179,7 @@ exports[`JSONSchemaCard module PropertiesSchemaCard testInstance should handle n
       className="Detail__Content"
     >
       <div
-        className="pure-u-1-3 pure-u-sm-1-3"
+        className="pure-u-1-2 pure-u-sm-1-3"
       >
         <div
           className="Container"
@@ -199,7 +199,7 @@ exports[`JSONSchemaCard module PropertiesSchemaCard testInstance should handle n
         </div>
       </div>
       <div
-        className="pure-u-1-3 pure-u-sm-1-3"
+        className="pure-u-1-2 pure-u-sm-1-3"
       >
         <div
           className="Container"
@@ -219,7 +219,7 @@ exports[`JSONSchemaCard module PropertiesSchemaCard testInstance should handle n
         </div>
       </div>
       <div
-        className="pure-u-1-3 pure-u-sm-1-3"
+        className="pure-u-1-2 pure-u-sm-1-3"
       >
         <div
           className="Container"
@@ -239,7 +239,7 @@ exports[`JSONSchemaCard module PropertiesSchemaCard testInstance should handle n
         </div>
       </div>
       <div
-        className="pure-u-1-3 pure-u-sm-1-3"
+        className="pure-u-1-2 pure-u-sm-1-3"
       >
         <div
           className="Container"
@@ -259,7 +259,7 @@ exports[`JSONSchemaCard module PropertiesSchemaCard testInstance should handle n
         </div>
       </div>
       <div
-        className="pure-u-1-3 pure-u-sm-1-3"
+        className="pure-u-1-2 pure-u-sm-1-3"
       >
         <div
           className="Container"
@@ -279,7 +279,7 @@ exports[`JSONSchemaCard module PropertiesSchemaCard testInstance should handle n
         </div>
       </div>
       <div
-        className="pure-u-1-3 pure-u-sm-1-3"
+        className="pure-u-1-2 pure-u-sm-1-3"
       >
         <div
           className="Container"
@@ -299,7 +299,7 @@ exports[`JSONSchemaCard module PropertiesSchemaCard testInstance should handle n
         </div>
       </div>
       <div
-        className="pure-u-1-3 pure-u-sm-1-3"
+        className="pure-u-1-2 pure-u-sm-1-3"
       >
         <div
           className="Container"
@@ -319,7 +319,7 @@ exports[`JSONSchemaCard module PropertiesSchemaCard testInstance should handle n
         </div>
       </div>
       <div
-        className="pure-u-1-3 pure-u-sm-1-3"
+        className="pure-u-1-2 pure-u-sm-1-3"
       >
         <div
           className="Container"
@@ -339,7 +339,7 @@ exports[`JSONSchemaCard module PropertiesSchemaCard testInstance should handle n
         </div>
       </div>
       <div
-        className="pure-u-1-3 pure-u-sm-1-3"
+        className="pure-u-1-2 pure-u-sm-1-3"
       >
         <div
           className="Container"
@@ -359,7 +359,7 @@ exports[`JSONSchemaCard module PropertiesSchemaCard testInstance should handle n
         </div>
       </div>
       <div
-        className="pure-u-1-3 pure-u-sm-1-3"
+        className="pure-u-1-2 pure-u-sm-1-3"
       >
         <div
           className="Container"
@@ -379,7 +379,7 @@ exports[`JSONSchemaCard module PropertiesSchemaCard testInstance should handle n
         </div>
       </div>
       <div
-        className="pure-u-1-3 pure-u-sm-1-3"
+        className="pure-u-1-2 pure-u-sm-1-3"
       >
         <div
           className="Container"
@@ -399,7 +399,7 @@ exports[`JSONSchemaCard module PropertiesSchemaCard testInstance should handle n
         </div>
       </div>
       <div
-        className="pure-u-1-3 pure-u-sm-1-3"
+        className="pure-u-1-2 pure-u-sm-1-3"
       >
         <div
           className="Container"

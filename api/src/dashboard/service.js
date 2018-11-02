@@ -1295,10 +1295,12 @@ async function addStockLevelUpdateActions(
   siteId = null
 ) {
   if (canViewInventories(auth)) {
+    const { id: assayId } = await knex('Assay')
+      .where('externalId', 'GxMtbRif')
+      .first('id')
+
     const inventoryItems = await knex('Site as s')
-      .join('Device as d', 'd.siteId', 's.id')
-      .join('Assay as a', 'a.deviceTypeId', 'd.deviceTypeId')
-      .join('ConsumableAssay as ca', 'ca.assayId', 'a.id')
+      .join('ConsumableAssay as ca', 'ca.assayId', assayId)
       .join('Consumable as c', 'c.id', 'ca.consumableId')
       .join('PartnerConsumable as pc', 'ca.consumableId', 'pc.consumableId')
       .leftJoin('InventoryItem as ii', function() {

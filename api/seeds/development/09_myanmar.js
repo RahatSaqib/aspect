@@ -9,6 +9,10 @@ const Promise = require('bluebird')
 const {
   updateUnknownErrorOnModuleMessage,
 } = require('../seedUnknownErrorsIssue')
+const { updateDashboardWidgetQueries } = require('../utils')
+const {
+  updateDataCategoryNotificationTypeForRO,
+} = require('../dataCategoryLow')
 
 async function seed(knex) {
   const alertTemplateWithHideFlag = await knex('AlertTemplate')
@@ -370,4 +374,10 @@ async function seed(knex) {
   })
 
   await updateUnknownErrorOnModuleMessage(knex)
+
+  // see explanation details in calling function
+  await updateDashboardWidgetQueries(knex)
+
+  // correction requested in SD-769
+  await updateDataCategoryNotificationTypeForRO(knex, 'Myanmar')
 }

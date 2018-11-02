@@ -24,6 +24,11 @@
       "name": "Information System",
       "hasConnectivity": 0,
       "hasResults": 1
+    },
+    {
+      "name": "Connector",
+      "hasConnectivity": 0,
+      "hasResults": 1
     }
   ]
 }

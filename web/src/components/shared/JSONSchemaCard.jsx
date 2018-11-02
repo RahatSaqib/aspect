@@ -34,7 +34,7 @@ export const PropertiesSchemaCard = compose(
         }))
         .sortBy(({ label }) => label)
         .map(field => (
-          <Unit key={field.key} xs="1-3" sm="1-3">
+          <Unit key={field.key} xs="1-2" sm="1-3">
             {renderField(field)}
           </Unit>
         ))}
@@ -81,7 +81,7 @@ export const JSONSchemaCard = ({
           )
         }
         return (
-          <Unit key={field.key} xs="1-3" sm="1-3">
+          <Unit key={field.key} xs="1-2" sm="1-3">
             {renderField(field)}
           </Unit>
         )

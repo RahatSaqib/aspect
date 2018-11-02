@@ -1,9 +1,10 @@
+const _ = require('lodash')
 const { addDays, subDays } = require('date-fns')
 const { assert, expect } = require('chai')
+const subHours = require('date-fns/sub_hours')
 
 const { queuePurge } = require('../utils/mqUtils')
 const { run } = require('../../src/db')
-const { runTestWithKnex } = require('../utils/generatorFunctionUtils')
 const {
   createMessageContext,
   waitForIdle,
@@ -27,6 +28,13 @@ const {
   cleanUpIssues,
 } = require('../utils/issueUtils')
 const { loadPlugin } = require('../../src/plugin/registration')
+const {
+  resultWorkflowStatusToId,
+  resultSourceToId,
+  resultTypeToId,
+  resultCategoryToId,
+  sampleTypeToId,
+} = require('../../src/shared/dictionary')
 
 const USER_LU_NAME_PREFIX = 'myanmar_lab'
 const USER_RO_NAME_PREFIX = 'myanmar_ro'
@@ -35,92 +43,90 @@ describe('Inventory Stock Issues Endpoint', () => {
   const partnerName = 'Myanmar'
   const countryAbbreviation = 'MM'
 
-  let partner
-  let site
-  let siteRegionalOfficer
-  let siteId
-  let consumableId
-  let issueEventIds
   let messageContext
-  let baseProps
-  const issueIds = []
-  let stockoutIssueId
-  let stockExpiringIssueId
-  let inventoryQuantityOnHand
+  let baseProps = {
+    issueEventIds: [],
+  }
+  let issueIds = []
+  const resultIds = []
 
   before(async () =>
     run(async knex => {
-      partner = await getPartner(knex, partnerName)
-      const siteDetails = await getSite(knex, {
+      const partner = await getPartner(knex, partnerName)
+      assert.isOk(partner, `Cannot find Partner ${partnerName}`)
+      const {
+        s: { id: siteId },
+        regionalOfficer: siteRegionalOfficer,
+      } = await getSite(knex, {
         partnerId: partner.id,
         countryAbbreviation,
         requireInventory: true,
       })
-      site = siteDetails.s
-      siteRegionalOfficer = siteDetails.regionalOfficer
+      const inventoryItem = await createTestInventory(knex, siteId, partner.id)
 
-      // take consumable of 1st inventory item
-      const inventoryItem = await knex('InventoryItem as ii')
-        .where('ii.siteId', site.id)
-        .first('ii.consumableId as cid')
+      const device = await knex('Device')
+        .where({ partnerId: partner.id, siteId })
+        .first()
 
-      siteId = site.id
-      consumableId = inventoryItem.cid
+      const resultId = await createTestResult(knex, device)
+      resultIds.push(resultId)
 
-      issueEventIds = []
+      const { displayPreferences = {} } = await loadPlugin(
+        [partner.plugin],
+        'settings'
+      )
+      baseProps = {
+        siteId,
+        siteRegionalOfficer,
+        consumableId: inventoryItem.consumableId,
+        issueEventIds: [],
+        daysDue: 30,
+        displayPreferences,
+      }
+
       messageContext = await createMessageContext()
       messageContext.bindActionCreators({
         inventoryStockout,
         inventoryStockExpiring,
         escalateIssues,
       })
-
-      const { displayPreferences = {} } = await loadPlugin(
-        [partner.plugin],
-        'settings'
-      )
-
-      baseProps = {
-        siteId,
-        consumableId,
-        issueEventIds,
-        daysDue: 30,
-        displayPreferences,
-      }
     })
   )
 
   after(async () =>
     run(async knex => {
-      await waitForIdle(2000)
-
-      // restore initial value for quantityOnHand
-      const { siteId, consumableId } = await knex('Issue')
-        .where('id', stockoutIssueId)
-        .first()
-      await knex('InventoryItem')
-        .update({
-          quantityOnHand: inventoryQuantityOnHand,
-        })
-        .where({ siteId, consumableId })
-
-      // clean IssueEvent if any items added
-      if (issueEventIds.length > 0) {
-        await knex('IssueEvent')
-          .whereIn('id', issueEventIds)
+      if (resultIds.length > 0) {
+        await knex('Result')
+          .whereIn('id', resultIds)
           .delete()
       }
+      deleteConsumableTestData(knex, baseProps.consumableId)
+    })
+  )
 
-      issueEventIds = []
+  afterEach(async () =>
+    run(async knex => {
+      // make sure MQ finished it's job before removing sample message
+      await waitForIdle(2000)
 
+      // clean IssueEvent if any items added
+      if (baseProps.issueEventIds.length > 0) {
+        await knex('IssueEvent')
+          .whereIn('id', baseProps.issueEventIds)
+          .delete()
+      }
       await cleanUpIssues(knex, issueIds)
 
       await queuePurge()
+
+      baseProps.issueEventIds = []
+      issueIds = []
     })
   )
 
   it('makes sure that calculated consumption rates match rates in db for all periods', async () => {
-    await runTestWithKnex(async knex => {
+    await run(async knex => {
+      const { siteId, consumableId } = baseProps
       // calculate rates
       const totals = await refreshConsumptionRates(knex, siteId, consumableId)
 
@@ -150,9 +156,9 @@ describe('Inventory Stock Issues Endpoint', () => {
   // trigger base issues
   // ---------------------------------------------------------------------------
   // Stockout
-  it('should create Stockout issue', async () =>
-    runTestWithKnex(async knex => {
-      stockoutIssueId = await triggerInitialIssue({
+  it('should create Stockout issue', async () => {
+    await run(async knex => {
+      const stockoutIssueId = await triggerInitialIssue({
         knex,
         ...baseProps, // i.e. siteId, consumableId, issueEventIds, daysDue
         issueType: 'InventoryStockout',
@@ -160,12 +166,13 @@ describe('Inventory Stock Issues Endpoint', () => {
         actionCreator: inventoryStockout,
       })
       issueIds.push(stockoutIssueId)
-    }))
+    })
+  })
 
   // StockExpiring
-  it('should create StockExpiring issue', async () =>
-    runTestWithKnex(async knex => {
-      stockExpiringIssueId = await triggerInitialIssue({
+  it('should create StockExpiring issue', async () => {
+    await run(async knex => {
+      const stockExpiringIssueId = await triggerInitialIssue({
         knex,
         ...baseProps, // i.e. siteId, consumableId, issueEventIds, daysDue
         issueType: 'InventoryStockExpiring',
@@ -173,18 +180,38 @@ describe('Inventory Stock Issues Endpoint', () => {
         actionCreator: inventoryStockExpiring,
       })
       issueIds.push(stockExpiringIssueId)
-    }))
+    })
+  })
 
   // ---------------------------------------------------------------------------
   // escalate issues
   // ---------------------------------------------------------------------------
   describe('Escalate to level 2 of just triggered Stockout issue', () => {
-    it('change stock level to make stock lasts for less than 14 days and dispatch escalate issue action', async () =>
-      runTestWithKnex(async knex => {
-        const issueId = stockoutIssueId
+    let issueId
+    beforeEach(async () =>
+      run(async knex => {
+        const { siteId, consumableId } = baseProps
+        // calculate rates
+        await refreshConsumptionRates(knex, siteId, consumableId)
+
+        // Create stockout issue
+        issueId = await triggerInitialIssue({
+          knex,
+          ...baseProps, // i.e. siteId, consumableId, issueEventIds, daysDue
+          issueType: 'InventoryStockout',
+          dispatch: messageContext.inventoryStockout,
+          actionCreator: inventoryStockout,
+        })
+        issueIds.push(issueId)
+      })
+    )
+
+    it('change stock level to make stock lasts for less than 14 days and dispatch escalate issue action', async () => {
+      await run(async knex => {
         const { siteId, consumableId } = await knex('Issue')
           .where('id', issueId)
           .first()
+
         // get dailyRate
         const { rate: dailyRate } = (await knex('FactInventoryConsumptionRate')
           .where({ siteId, consumableId, days: 1 })
@@ -194,12 +221,6 @@ describe('Inventory Stock Issues Endpoint', () => {
         // because we store threshold for level 1 only (for triggering issue).
         // It's equal 14 days for escalating to level 2
         const dueDays = 14
-
-        // keep initial quantityOnHand to restore it after this test ends
-        const inventoryItem = await knex('InventoryItem')
-          .where({ siteId, consumableId })
-          .first('quantityOnHand')
-        inventoryQuantityOnHand = inventoryItem.quantityOnHand
 
         // estimate quantity to let stock last for 2 days less than threshold
         const quantityOnHand = dailyRate * (dueDays - 2)
@@ -219,11 +240,8 @@ describe('Inventory Stock Issues Endpoint', () => {
 
         const issue = await getIssue(knex, issueId)
         assert.equal(issue.level, 2)
-      }))
 
-    it('notifications should be created for the level that the issue has been escalated to', async () =>
-      runTestWithKnex(async knex => {
-        const issueId = stockoutIssueId
+        // notifications should be created for the level that the issue has been escalated to
         const notificationsIssue = await getIssueNotifications(knex, issueId)
         expect(notificationsIssue).to.containSubset([
           {
@@ -232,17 +250,36 @@ describe('Inventory Stock Issues Endpoint', () => {
             },
             Notification: {
               issueId,
-              personId: siteRegionalOfficer.id,
+              personId: baseProps.siteRegionalOfficer.id,
             },
           },
         ])
-      }))
+      })
+    })
   })
 
   describe('Escalate to level 2 of just triggered Stock Expiring issue', () => {
+    let issueId
+    beforeEach(async () =>
+      run(async knex => {
+        const { siteId, consumableId } = baseProps
+        // calculate rates
+        await refreshConsumptionRates(knex, siteId, consumableId)
+
+        // Create stockout issue
+        issueId = await triggerInitialIssue({
+          knex,
+          ...baseProps, // i.e. siteId, consumableId, issueEventIds, daysDue
+          issueType: 'InventoryStockExpiring',
+          dispatch: messageContext.inventoryStockExpiring,
+          actionCreator: inventoryStockExpiring,
+        })
+        issueIds.push(issueId)
+      })
+    )
+
     it('change createdOn value for just triggered Stock Expiring issue and dispatch escalate issue action', async () =>
-      runTestWithKnex(async knex => {
-        const issueId = stockExpiringIssueId
+      run(async knex => {
         // see seed/utils.js - search for 'knex('IssueEscalationTrigger').insert' -
         // level 2 - evaluationMethod: 'issue-age' and evaluationParameter: { days: 10 }
         // level 3 - evaluationMethod: 'issue-age' and evaluationParameter: { days: 20 }
@@ -262,11 +299,8 @@ describe('Inventory Stock Issues Endpoint', () => {
 
         const issue = await getIssue(knex, issueId)
         assert.equal(issue.level, 2)
-      }))
 
-    it('notifications should be created for the level that the issue has been escalated to', async () =>
-      runTestWithKnex(async knex => {
-        const issueId = stockExpiringIssueId
+        // notifications should be created for the level that the issue has been escalated to
         const notificationsIssue = await getIssueNotifications(knex, issueId)
         expect(notificationsIssue).to.containSubset([
           {
@@ -275,7 +309,7 @@ describe('Inventory Stock Issues Endpoint', () => {
             },
             Notification: {
               issueId,
-              personId: siteRegionalOfficer.id,
+              personId: baseProps.siteRegionalOfficer.id,
             },
           },
         ])
@@ -307,7 +341,7 @@ async function triggerInitialIssue({
 
   // dispatch action
   const action = actionCreator(...values)
-  dispatch(...values)
+  await dispatch(...values)
 
   // wait for MQ to handle
   await waitForAction(action)
@@ -354,10 +388,14 @@ async function triggerInitialIssue({
     .join('Person as p', 'p.id', 'n.personId')
     .join('User as u', 'u.id', 'p.userId')
     .join('AlertMessage as am', 'am.id', 'n.alertMessageId')
-    .where('n.issueId', issue.id)
+    .where({
+      'n.issueId': issue.id,
+      'nt.level': 1,
+    })
     .orderBy('jf.name') // Lab User, Regional Officer
     .orderBy('nt.createdOn') // items are in same order as they happen
     .select(
+      'nt.name as notificationTypeName',
       'u.name as userName',
       'jf.name as jobFunction',
       'nt.level',
@@ -367,7 +405,19 @@ async function triggerInitialIssue({
 
   // should have 3 entries - 1 LU and 2 RO's
   expect(notifications.length).to.equal(3)
-  const [notifLU, notifRO1, notifRO2] = notifications
+  const notifLU = _.find(notifications, { jobFunction: 'Lab User' })
+  const notifRO = _.find(
+    notifications,
+    notification =>
+      notification.notificationTypeName.indexOf('RO View') === -1 &&
+      notification.jobFunction === 'Regional Officer'
+  )
+  const notifLUROView = _.find(
+    notifications,
+    notification =>
+      notification.notificationTypeName.indexOf('RO View') > 0 &&
+      notification.jobFunction === 'Regional Officer'
+  )
 
   // helper func for asserting similar things for each notification
   const assertNotification = (
@@ -384,9 +434,15 @@ async function triggerInitialIssue({
   }
 
   assertNotification(notifLU, USER_LU_NAME_PREFIX, 'Lab User', 1, 1)
-  assertNotification(notifRO1, USER_RO_NAME_PREFIX, 'Regional Officer', 1, 0)
   const ack = issueType === 'InventoryStockout' ? 1 : 0
-  assertNotification(notifRO2, USER_RO_NAME_PREFIX, 'Regional Officer', 1, ack)
+  assertNotification(notifRO, USER_RO_NAME_PREFIX, 'Regional Officer', 1, ack)
+  assertNotification(
+    notifLUROView,
+    USER_RO_NAME_PREFIX,
+    'Regional Officer',
+    1,
+    0
+  )
 
   // check alert message
   if (issueType === 'InventoryStockout') {
@@ -425,4 +481,121 @@ async function triggerInitialIssue({
   }
 
   return issue.id
+}
+
+async function deleteConsumableTestData(knex, consumableId) {
+  const inventoryItems = await knex('InventoryItem')
+    .where({ consumableId })
+    .select('id')
+  const inventoryItemIds = _.map(inventoryItems, 'id')
+  await deleteInventoryTestData(knex, inventoryItemIds)
+
+  await knex('FactInventoryConsumptionRate')
+    .where({ consumableId })
+    .delete()
+  await knex('PartnerConsumable')
+    .where({ consumableId })
+    .delete()
+  await knex('ConsumableAssay')
+    .where({ consumableId })
+    .delete()
+  await knex('Consumable')
+    .where({ id: consumableId })
+    .delete()
+}
+
+async function deleteInventoryTestData(knex, inventoryItemIds) {
+  await knex('InventoryLog')
+    .whereIn('inventoryItemId', inventoryItemIds)
+    .delete()
+  await knex('InventoryItem')
+    .whereIn('id', inventoryItemIds)
+    .delete()
+}
+
+async function createTestResult(knex, device) {
+  const now = new Date()
+  const admin = await knex('User')
+    .where({ name: 'myanmar_admin' })
+    .first()
+  const gxMtbRifAssay = await knex('Assay')
+    .where({ externalId: 'GxMtbRif' })
+    .first()
+
+  const resultWorkflowStatusId = await resultWorkflowStatusToId('OK')
+  const resultSourceId = await resultSourceToId('DiagnosticDevice')
+  const resultTypeId = await resultTypeToId('Patient')
+  const sampleTypeId = await sampleTypeToId('DBS')
+  const noResultCategoryId = await resultCategoryToId('NoResult')
+
+  const { id: sampleId } = await knex('Sample')
+    .where({
+      sampleTypeId,
+      originSiteId: device.siteId,
+    })
+    .first('id')
+  const resultId = await knex('Result').insert({
+    createdOn: now,
+    createdBy: admin.id,
+    updatedOn: now,
+    updatedBy: admin.id,
+    externalId: `NEW RESULT ${new Date().getTime()}`,
+    assayId: gxMtbRifAssay.id,
+    partnerId: device.partnerId,
+    geographyId: device.geographyId,
+    siteId: device.siteId,
+    deviceId: device.id,
+    resultWorkflowStatusId,
+    resultSourceId,
+    resultTypeId,
+    sampleId,
+    resultCategory1: noResultCategoryId,
+    resultCategory2: noResultCategoryId,
+    startedOn: subHours(now, 2),
+    endedOn: now,
+  })
+  return resultId
+}
+
+async function createTestInventory(knex, siteId, partnerId) {
+  const { id: assayId } = await knex('Assay')
+    .where({ externalId: 'GxMtbRif' })
+    .first('id')
+
+  const [consumableId] = await knex('Consumable').insert(
+    {
+      name: 'Test Cartridge',
+      unit: 1,
+      canExpire: 1,
+      manufacturer: 'Daktari',
+    },
+    'id'
+  )
+  await knex('ConsumableAssay').insert({
+    consumableId,
+    assayId,
+    quantity: 1,
+  })
+
+  await knex('PartnerConsumable').insert({
+    partnerId,
+    consumableId,
+    allowStockUpdateFromActionDashboard: true,
+  })
+
+  const inventoryItemId = await knex('InventoryItem').insert(
+    {
+      consumableId,
+      siteId,
+      lotNumber: 'TEST-LOT',
+      quantityOnHand: 500,
+    },
+    'id'
+  )
+
+  const inventoryItem = await knex('InventoryItem')
+    .where({ id: inventoryItemId })
+    .first()
+
+  return inventoryItem
 }

@@ -2,6 +2,7 @@
 
 .Container {
   border-radius: 0;
+  overflow: visible;
 }
 
 .Header {
@@ -20,6 +21,7 @@
   flex-basis: 20%;
   flex-shrink: 0;
   color: var(--aspect-color-grey-4);
+  padding-right: 5px;
 }
 
 .Header__Content {
