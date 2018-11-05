@@ -898,7 +898,7 @@ async function getDataCategoryStatus(
           const fieldNames = JSON.parse(dataCategory.fieldNames)
           _.map(fieldNames, field => {
             // field value is not null (when field is missing), "undefined", "null" or ""
-            this.orWhereRaw(
+            this.whereRaw(
               `
               (r.patientData ->> '$.${field}') is not null
               and
