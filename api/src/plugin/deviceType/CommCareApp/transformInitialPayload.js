@@ -90,6 +90,7 @@ async function transformInitialPayload({ payload }) {
       },
       sender: {
         operator: _.get(metadata, 'username'),
+        version: String(_.get(metadata, 'commcare_version')),
       },
       instrument: {
         serial: _.get(metadata, 'deviceID'),
