@@ -4,7 +4,6 @@ const _ = require('lodash')
 const bcrypt = require('bcrypt')
 const config = require('../../src/config')
 const { getPermissionModules } = require('../utils')
-const { randomToken } = require('../../src/deviceApi/apiKey')
 const geography = require('./fixtures/geography.json')
 
 const {
@@ -32,7 +31,7 @@ async function seed(knex) {
   const now = new Date()
   const [adminId] = await knex('User').insert({
     name: 'nhls_eid',
-    password: bcrypt.hashSync('mNv~P6&4U', saltRounds),
+    password: bcrypt.hashSync('fvxye6JjPU', saltRounds),
     approved: 1,
     createdOn: now,
     lockedOut: 0,
@@ -376,7 +375,7 @@ async function seed(knex) {
   await knex('DeviceApiKey').insert(
     Object.assign(
       {
-        token: randomToken(),
+        token: '0dmqueurr7yw8rfr03zg',
         revoked: 0,
         partnerId,
         geographyId,
