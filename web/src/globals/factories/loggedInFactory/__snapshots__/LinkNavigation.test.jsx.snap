@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`LinkNavigation component should not see browse link when having no browse feature 1`] = `
+exports[`LinkNavigation component should not see browse link when having no device feature 1`] = `
 <ThemedNavigation
   actions={Array []}
   className="Navigation"
@@ -27,7 +27,7 @@ exports[`LinkNavigation component should not see browse link when having no brow
 </ThemedNavigation>
 `;
 
-exports[`LinkNavigation component should see browse link when having browse feature 1`] = `
+exports[`LinkNavigation component should see browse link when having feature and permission 1`] = `
 <ThemedNavigation
   actions={Array []}
   className="Navigation"
@@ -50,6 +50,21 @@ exports[`LinkNavigation component should see browse link when having browse feat
       }
     }
     title="Home"
+  />
+  <withHandlers(pure(Link))
+    history={undefined}
+    href="/browse/device"
+    label="Browse"
+    location={undefined}
+    onClick={undefined}
+    theme={
+      Object {
+        "active": "Link__active",
+        "icon": "Link__icon",
+        "link": "Link__link",
+      }
+    }
+    title="Browse"
   />
 </ThemedNavigation>
 `;

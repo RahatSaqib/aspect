@@ -79,6 +79,7 @@ const mapStateToProps = state => {
     isLoggedOut,
     loggedOutReason,
     features: state.user.features,
+    permissions: state.user.jwt.permissions,
   }
 }
 

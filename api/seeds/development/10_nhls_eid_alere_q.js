@@ -1,5 +1,6 @@
 module.exports = require('../utils').seed(seed)
 
+const _ = require('lodash')
 const config = require('../../src/config')
 const bcrypt = require('bcrypt')
 
@@ -166,6 +167,68 @@ async function seed(knex) {
     jobId: jobIdAdmin,
     geographyId: southAfricaGeographyId,
   })
+
+  const [jobFunctionIdLabUser] = await knex('JobFunction').insert({
+    name: 'Lab User',
+    partnerId,
+  })
+  await knex('JobFunctionPermission').insert([
+    { jobFunctionId: jobFunctionIdLabUser, permissionId: modules.browse.view },
+    { jobFunctionId: jobFunctionIdLabUser, permissionId: modules.result.admin },
+    { jobFunctionId: jobFunctionIdLabUser, permissionId: modules.site.view },
+  ])
+  await knex('JobFunctionFeature').insert([
+    { jobFunctionId: jobFunctionIdLabUser, featureId: features.result },
+  ])
+
+  // create site for lab user
+  await Promise.all(
+    _.map(['1', '2', '3'], async siteNum => {
+      const [siteId] = await knex('Site').insert(
+        Object.assign(
+          {
+            partnerId,
+            geographyId: southAfricaGeographyId,
+            name: `SA NHLS Site ${siteNum}`,
+            shortName: `SA NHLS Site ${siteNum}`,
+            externalId: `sa_nhls_site${siteNum}`,
+          },
+          auditFields
+        )
+      )
+      const labUserName = `nhls_lab${siteNum}`
+      const [labUserId] = await knex('User').insert({
+        name: labUserName,
+        password: bcrypt.hashSync(labUserName, saltRounds),
+        approved: 1,
+        createdOn: now,
+        lockedOut: 0,
+        failedPasswordAttempts: 0,
+      })
+      const [labPersonId] = await knex('Person').insert(
+        Object.assign(
+          {
+            userId: labUserId,
+            name: `NHLS Lab User ${siteNum}`,
+            lastPartnerId: partnerId,
+            lastCountryId: countryId,
+            geographyId: southAfricaGeographyId,
+            culture,
+            timezone,
+          },
+          auditFields
+        )
+      )
+      const [jobIdLab] = await knex('Job').insert({
+        personId: labPersonId,
+        jobFunctionId: jobFunctionIdLabUser,
+      })
+      await knex('JobContext').insert({
+        jobId: jobIdLab,
+        siteId,
+      })
+    })
+  )
 
   const [alereQHiv12DetectAssayId] = await knex('Assay').insert({
     name: 'Alere q HIV-1/2 Detect',
@@ -416,6 +479,116 @@ async function seed(knex) {
       assayId: alereQHiv12VLPlasmaAssayId,
       consumableId: alereQHiv12VLPlasmaCartridgeId,
       quantity: 1,
+    },
+  ])
+
+  const geneXpertHiv1VlFormSchema = {
+    hospitalNumber: {
+      i18nLabel: 'hospitalNumber',
+      control: {
+        type: 'TextBox',
+      },
+      order: 1,
+    },
+    studyID: {
+      i18nLabel: 'studyID',
+      control: {
+        type: 'TextBox',
+      },
+      order: 2,
+    },
+    nameOfPatient: {
+      i18nLabel: 'nameOfPatient',
+      control: {
+        type: 'TextBox',
+      },
+      order: 3,
+    },
+    surnameOfPatient: {
+      i18nLabel: 'surnameOfPatient',
+      control: {
+        type: 'TextBox',
+      },
+      order: 4,
+    },
+    ward: {
+      i18nLabel: 'ward',
+      control: {
+        type: 'TextBox',
+      },
+      order: 5,
+    },
+    timeSampleTaken: {
+      i18nLabel: 'timeSampleTaken',
+      control: {
+        type: 'DateTime',
+      },
+      order: 6,
+    },
+    sampleType: {
+      i18nLabel: 'sampleType',
+      control: {
+        type: 'DropDown',
+        options: [
+          {
+            i18nText: 'studyOfSampleType',
+            value: 'study',
+          },
+          {
+            i18nText: 'EQAOfSampleType',
+            value: 'EQA',
+          },
+          {
+            i18nText: 'miscOfSampleType',
+            value: 'misc',
+          },
+        ],
+      },
+      order: 7,
+    },
+  }
+
+  const assayAlereQHiv12FormSchema = Object.assign(
+    {},
+    geneXpertHiv1VlFormSchema,
+    {
+      timeInstrumentResulted: {
+        i18nLabel: 'timeInstrumentResulted',
+        control: {
+          type: 'DateTime',
+        },
+        order: 8,
+      },
+    }
+  )
+
+  const { id: assayGeneXpertHiv1VlId } = await knex('Assay')
+    .where({ externalId: 'GxHiv1Vl' })
+    .first('id')
+  const { id: assayGeneXpertHiv1QualId } = await knex('Assay')
+    .where({ externalId: 'GxHiv1Qual' })
+    .first('id')
+
+  await knex('ResultForm').insert([
+    {
+      partnerId,
+      assayId: assayGeneXpertHiv1VlId,
+      formSchema: JSON.stringify(geneXpertHiv1VlFormSchema),
+    },
+    {
+      partnerId,
+      assayId: assayGeneXpertHiv1QualId,
+      formSchema: JSON.stringify(geneXpertHiv1VlFormSchema),
+    },
+    {
+      partnerId,
+      assayId: alereQHiv12VLPlasmaAssayId,
+      formSchema: JSON.stringify(assayAlereQHiv12FormSchema),
+    },
+    {
+      partnerId,
+      assayId: alereQHiv12DetectAssayId,
+      formSchema: JSON.stringify(assayAlereQHiv12FormSchema),
     },
   ])
 }

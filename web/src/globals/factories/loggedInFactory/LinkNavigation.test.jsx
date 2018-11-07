@@ -9,29 +9,33 @@ describe('LinkNavigation component', () => {
   const intlProvider = new IntlProvider({ locale: 'en' }, {})
   const { intl } = intlProvider.getChildContext()
 
-  const props = {
-    intl,
-    userPermissions: Immutable.Set(['browse:view']),
-  }
-
   it('should shallow render correctly', () => {
-    const element = renderer.render(
-      <LinkNavigation {...props} userFeatures={Immutable.Set()} />
-    )
+    const props = {
+      intl,
+      userPermissions: Immutable.Set(['browse:view']),
+      userFeatures: Immutable.Set(['summaryDashboard']),
+    }
+    const element = renderer.render(<LinkNavigation {...props} />)
     expect(element).toMatchSnapshot()
   })
 
-  it('should see browse link when having browse feature', () => {
-    const element = renderer.render(
-      <LinkNavigation {...props} userFeatures={Immutable.Set(['device'])} />
-    )
+  it('should see browse link when having feature and permission', () => {
+    const props = {
+      intl,
+      userPermissions: Immutable.Set(['browse:view', 'device:view']),
+      userFeatures: Immutable.Set(['summaryDashboard', 'device']),
+    }
+    const element = renderer.render(<LinkNavigation {...props} />)
     expect(element).toMatchSnapshot()
   })
 
-  it('should not see browse link when having no browse feature', () => {
-    const element = renderer.render(
-      <LinkNavigation {...props} userFeatures={Immutable.Set([])} />
-    )
+  it('should not see browse link when having no device feature', () => {
+    const props = {
+      intl,
+      userPermissions: Immutable.Set(['browse:view', 'device:view']),
+      userFeatures: Immutable.Set(['summaryDashboard']),
+    }
+    const element = renderer.render(<LinkNavigation {...props} />)
     expect(element).toMatchSnapshot()
   })
 })
