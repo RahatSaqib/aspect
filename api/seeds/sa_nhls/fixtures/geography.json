@@ -13,7 +13,99 @@
       "exportColumns": "DeploymentDescription|TestEndedOn|AssayName|AssayVersion|User|Result1|Result2|ResultText|PatientId|ReagentLotID|ExpirationDate|CartridgeSerial|ModuleSerial|SoftwareVersion|ErrorCode|ErrorCategory|ErrorDescription|SampleId|Notes|ProbeDCt|ProbeCCt|ProbeECt|ProbeBCt|Qc1Ct|Qc2Ct",
       "inventoryDaysThreshold": 21,
       "monthStartsOnDay": 1,
-      "states": []
+      "states": [
+        {
+          "abbreviation": "EC",
+          "name": "Eastern Cape",
+          "lgas": [
+            {
+              "name": "Buffalo City Metropolitan"
+            },
+            {
+              "name": "Nelson Mandela Bay Metropolitan"
+            },
+            {
+              "name": "Alfred Nzo District"
+            },
+            {
+              "name": "Amathole District"
+            },
+            {
+              "name": "Chris Hani District"
+            },
+            {
+              "name": "Joe Gqabi District"
+            },
+            {
+              "name": "OR Tambo District"
+            },
+            {
+              "name": "Sarah Baartman District"
+            }
+          ]
+        },
+        {
+          "abbreviation": "FS",
+          "name": "Free State"
+        },
+        {
+          "abbreviation": "GT",
+          "name": "Gauteng",
+          "lgas": [
+            {
+              "name": "City of Johannesburg"
+            },
+            {
+              "name": "City of Tshwane"
+            },
+            {
+              "name": "Ekurhuleni"
+            },
+            {
+              "name": "Emfuleni"
+            },
+            {
+              "name": "Lesedi"
+            },
+            {
+              "name": "Merafong City"
+            },
+            {
+              "name": "Midvaal"
+            },
+            {
+              "name": "Mogale City"
+            },
+            {
+              "name": "Rand West City"
+            }
+          ]
+        },
+        {
+          "abbreviation": "NL",
+          "name": "KwaZulu-Natal"
+        },
+        {
+          "abbreviation": "LP",
+          "name": "Limpopo"
+        },
+        {
+          "abbreviation": "MP",
+          "name": "Mpumalanga"
+        },
+        {
+          "abbreviation": "NW",
+          "name": "North West"
+        },
+        {
+          "abbreviation": "NC",
+          "name": "Northern Cape"
+        },
+        {
+          "abbreviation": "WC",
+          "name": "Western Cape"
+        }
+      ]
     }
   ]
 }
