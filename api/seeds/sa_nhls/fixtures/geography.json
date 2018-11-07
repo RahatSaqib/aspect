@@ -15,95 +15,22 @@
       "monthStartsOnDay": 1,
       "states": [
         {
-          "abbreviation": "EC",
-          "name": "Eastern Cape",
-          "lgas": [
-            {
-              "name": "Buffalo City Metropolitan"
-            },
-            {
-              "name": "Nelson Mandela Bay Metropolitan"
-            },
-            {
-              "name": "Alfred Nzo District"
-            },
-            {
-              "name": "Amathole District"
-            },
-            {
-              "name": "Chris Hani District"
-            },
-            {
-              "name": "Joe Gqabi District"
-            },
-            {
-              "name": "OR Tambo District"
-            },
-            {
-              "name": "Sarah Baartman District"
-            }
-          ]
-        },
-        {
-          "abbreviation": "FS",
-          "name": "Free State"
-        },
-        {
-          "abbreviation": "GT",
+          "abbreviation": "GA",
           "name": "Gauteng",
           "lgas": [
             {
-              "name": "City of Johannesburg"
+              "name": "Coronationville"
             },
             {
-              "name": "City of Tshwane"
+              "name": "Diepkloof"
             },
             {
-              "name": "Ekurhuleni"
+              "name": "Kalafong"
             },
             {
-              "name": "Emfuleni"
-            },
-            {
-              "name": "Lesedi"
-            },
-            {
-              "name": "Merafong City"
-            },
-            {
-              "name": "Midvaal"
-            },
-            {
-              "name": "Mogale City"
-            },
-            {
-              "name": "Rand West City"
+              "name": "Parktown"
             }
           ]
-        },
-        {
-          "abbreviation": "NL",
-          "name": "KwaZulu-Natal"
-        },
-        {
-          "abbreviation": "LP",
-          "name": "Limpopo"
-        },
-        {
-          "abbreviation": "MP",
-          "name": "Mpumalanga"
-        },
-        {
-          "abbreviation": "NW",
-          "name": "North West"
-        },
-        {
-          "abbreviation": "NC",
-          "name": "Northern Cape"
-        },
-        {
-          "abbreviation": "WC",
-          "name": "Western Cape"
         }
       ]
     }
