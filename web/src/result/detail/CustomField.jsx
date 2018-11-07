@@ -96,7 +96,7 @@ export default class CustomField extends PureComponent {
   }
 
   onTextBoxCommitValue = ({ target: { value } }) => {
-    this.onUpdateData(value || null)
+    this.onUpdateData(value || '')
   }
 
   onUpdateData = value => {
