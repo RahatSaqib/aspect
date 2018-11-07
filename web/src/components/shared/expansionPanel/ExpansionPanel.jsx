@@ -47,7 +47,7 @@ export const ExpansionPanel = ({
     return child
   })
   return (
-    <Card className={cssClasses('Container')} {...restProps}>
+    <Card className={cssClasses('Container', className)} {...restProps}>
       {header}
       {expanded && newChildren}
     </Card>

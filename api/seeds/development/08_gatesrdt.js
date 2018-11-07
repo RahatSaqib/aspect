@@ -1,17 +1,19 @@
 module.exports = require('../utils').seed(seed)
 
+const { createResults } = require('../utils_gatesrdt')
+
 async function seed(knex) {
   const { id: partnerId } = await knex('Partner')
     .where('name', 'GatesRDT')
     .first()
 
-  const { id: commCareGatesRdtAssayId } = await knex('Assay')
+  const { id: assayId, deviceTypeId } = await knex('Assay')
     .where('externalId', 'CommCareGatesRDT')
     .first()
 
   // Skip this seed file if we already have a result form for the GatesRDT assay
   const existingResultForm = await knex('ResultForm')
-    .where({ partnerId, assayId: commCareGatesRdtAssayId })
+    .where({ partnerId, assayId })
     .first('partnerId', 'assayId')
   if (existingResultForm) {
     return
@@ -19,7 +21,7 @@ async function seed(knex) {
 
   await knex('ResultForm').insert({
     partnerId,
-    assayId: commCareGatesRdtAssayId,
+    assayId,
     formSchema: JSON.stringify({
       expertInterpretation: {
         i18nLabel: 'confirmedInterpretationOfResult',
@@ -48,4 +50,8 @@ async function seed(knex) {
       },
     }),
   })
+
+  // create sample results for specified targets
+  const patients = require('./fixtures/patients.json')
+  await createResults(knex, { partnerId, deviceTypeId, assayId, patients })
 }
