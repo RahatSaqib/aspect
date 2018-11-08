@@ -20,19 +20,25 @@ function getMustacheTokensInString(inputString) {
   return inputString.match(/{{\s*[\w.[\]\s]+\s*}}/g)
 }
 
-function addDataSourceToQuery(qb, aliases) {
+function addDataSourceToQuery(queryBuilder, aliases) {
   // TODO generalize to other aliases and make joined tables and field names unique
   // similar to auth/constraints
   const { message, notification } = aliases
 
   if (message != null) {
-    qb
+    queryBuilder
       .leftJoin('Person as p', `${message}.personId`, 'p.id')
       .leftJoin('Site as s', `${message}.siteId`, 's.id')
       .leftJoin('Device as d', `${message}.deviceId`, 'd.id')
+      .leftJoin('DeviceType as dt', `d.deviceTypeId`, 'dt.id')
       .leftJoin('Result as r', `${message}.resultId`, 'r.id')
+      .leftJoin('Assay as a', `r.assayId`, 'a.id')
+      .leftJoin('Sample as sample', `r.sampleId`, 'sample.id')
+      .leftJoin('ResultCategory as rc1', `r.resultCategory1`, 'rc1.id')
+      .leftJoin('ResultCategory as rc2', `r.resultCategory2`, 'rc1.id')
       .leftJoin('Partner as pu', 'pu.id', 'p.lastPartnerId')
       .select(
+        's.externalId as siteExternalId',
         's.name as siteName',
         's.shortName as siteShortName',
         'p.name as personName',
@@ -40,17 +46,23 @@ function addDataSourceToQuery(qb, aliases) {
         'pu.plugin as partnerPlugin',
         'd.lastPingOn as deviceLastPingOn',
         'd.lastSeenOn as deviceLastSeenOn',
+        'dt.externalId as deviceTypeExternalId',
         'r.resultData',
         'r.patientData as resultPatientData',
+        'r.formData as resultFormData',
         knex.raw('coalesce(r.moduleName, r.moduleSerial) as resultModuleName'),
         'r.moduleSerial as resultModuleSerial',
         'r.errorCode as resultErrorCode',
-        'r.errorNotes as resultErrorNotes'
+        'r.errorNotes as resultErrorNotes',
+        'a.externalId as assayExternalId',
+        'sample.externalId as sampleExternalId',
+        'rc1.externalId as resultCategory1ExternalId',
+        'rc2.externalId as resultCategory2ExternalId'
       )
   }
 
   if (notification != null) {
-    qb
+    queryBuilder
       .leftJoin('Issue as i', `${notification}.issueId`, 'i.id')
       .leftJoin(
         'NotificationType as nt',
@@ -65,7 +77,7 @@ function addDataSourceToQuery(qb, aliases) {
       )
   }
 
-  return qb
+  return queryBuilder
 }
 
 async function processUsingDataSourceQuery(data, templateFields, options = {}) {
@@ -92,22 +104,37 @@ async function getBaseDataSource(data) {
   )
   return {
     site: {
+      id: d.siteExternalId,
       name: d.siteName,
       shortName: d.siteShortName,
     },
     device: {
       name: d.deviceName,
+      deviceType: d.deviceTypeExternalId,
       lastSeenOn: d.deviceLastSeenOn,
       lastPingOn: d.deviceLastPingOn,
     },
     result: {
       data: d.resultData == null ? {} : JSON.parse(d.resultData),
+      formData: d.resultFormData == null ? {} : JSON.parse(d.resultFormData),
       patient:
         d.resultPatientData == null ? {} : JSON.parse(d.resultPatientData),
       moduleName: d.resultModuleName,
       moduleSerial: d.resultModuleSerial,
       errorCode: d.resultErrorCode,
       errorNotes: d.resultErrorNotes,
+      assay: {
+        id: d.assayExternalId,
+      },
+      sample: {
+        id: d.sampleExternalId,
+      },
+      category1: {
+        id: d.resultCategory1ExternalId,
+      },
+      category2: {
+        id: d.resultCategory2ExternalId,
+      },
     },
     person: {
       name: d.personName,
