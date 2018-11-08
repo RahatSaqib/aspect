@@ -63,13 +63,23 @@ async function seed(knex) {
 
   await Promise.all(
     _.map(labClinic.clinics, async clinic => {
-      const province = provincesByName[clinic.stateName.toLowerCase()] || {
-        id: null,
-        districts: {},
-      }
-      const district = province.districts[clinic.lgaName.toLowerCase()] || {
-        id: null,
-      }
+      const province = clinic.stateName
+        ? provincesByName[clinic.stateName.toLowerCase()] || {
+            id: null,
+            districts: {},
+          }
+        : {
+            id: null,
+            districts: {},
+          }
+      const district =
+        province.districts && clinic.lgaName
+          ? province.districts[clinic.lgaName.toLowerCase()] || {
+              id: null,
+            }
+          : {
+              id: null,
+            }
       const { id: clinicGeographyId } = await knex('Geography')
         .where({
           countryId: southAfricaCountry.id,

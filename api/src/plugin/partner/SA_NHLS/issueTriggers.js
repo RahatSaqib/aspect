@@ -99,10 +99,6 @@ async function shouldSendResultToRedCAP(knex, action) {
         .andWhere('wt.externalId', 'LIKE', 'redCap%')
         .first()
       if (!previouslySentRedCapNotificationsForResult) {
-        console.log('2',
-          'previouslySentRedCapNotificationsForResult: ',
-          previouslySentRedCapNotificationsForResult
-        )
         return true
       }
     }

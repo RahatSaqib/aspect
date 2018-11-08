@@ -31,6 +31,10 @@
               "name": "Parktown"
             }
           ]
+        },
+        {
+          "abbreviation": "EC",
+          "name": "Eastern Cape"
         }
       ]
     }

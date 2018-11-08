@@ -32,11 +32,17 @@
       "lgaName": "Parktown"
     },
     {
-      "externalId": "KPTH",
+      "externalId": "kalafong",
       "name": "Kalafong KPTH",
       "shortName": "Kalafong KPTH",
       "stateName": "Gauteng",
       "lgaName": "Kalafong"
+    },
+    {
+      "externalId": "DNAH",
+      "name": "Dora Nginza Hospital",
+      "shortName": "Dora Nginza Hospital",
+      "stateName": "Eastern Cape"
     }
   ]
 }
