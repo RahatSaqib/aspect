@@ -1,7 +1,7 @@
 const Promise = require('bluebird')
 const _ = require('lodash')
 const { issueResolved } = require('./actions')
-const { conditionsMet } = require('./evaluation')
+const { issueConditionsMet } = require('./issueEvaluation')
 const {
   issueStatusToId,
   issueEventStatusToId,
@@ -21,7 +21,7 @@ function onResolveIssues() {
         return Promise.resolve()
       }
       return Promise.each(openIssuesToCheck, async issueResolutionTrigger => {
-        const shouldResolve = await conditionsMet(
+        const shouldResolve = await issueConditionsMet(
           knex,
           issueResolutionTrigger,
           issueResolutionTrigger.conditions
