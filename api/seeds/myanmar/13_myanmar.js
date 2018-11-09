@@ -1,7 +1,34 @@
 module.exports = require('../utils').seed(seed)
-// TODO: Remove the following two ESLint ignore-settings when implementing seeds
-/* eslint no-unused-vars: 0 */
-/* eslint no-empty-function: 0 */
+
+const { seedIssueEventTriggersForPartner } = require('../utils')
+
+const { issueCategoryToId } = require('../../src/shared/dictionary')
+
 async function seed(knex) {
-  // TODO: Check if seed file already ran
+  const moduleReplacedIssueType = await knex('IssueType')
+    .where('externalId', 'ModuleReplaced')
+    .first('id')
+
+  if (moduleReplacedIssueType) {
+    return
+  }
+
+  const { id: partnerId } = await knex('Partner')
+    .where({ name: 'Myanmar' })
+    .first()
+
+  await insertModuleReplacedIssue(knex)
+  await seedIssueEventTriggersForPartner(knex, partnerId, {
+    issueTypeWhitelist: ['DeviceMaintenance', 'ModuleReplaced'],
+  })
+}
+
+async function insertModuleReplacedIssue(knex) {
+  const issueCategoryDeviceHealthId = await issueCategoryToId('DeviceHealth')
+  await knex('IssueType').insert({
+    name: 'Module Replaced',
+    externalId: 'ModuleReplaced',
+    i18nKey: 'issueTypeModuleReplaced',
+    issueCategoryId: issueCategoryDeviceHealthId,
+  })
 }
