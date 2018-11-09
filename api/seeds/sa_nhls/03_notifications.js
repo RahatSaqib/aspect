@@ -24,12 +24,13 @@ async function seed(knex) {
   const [newResultAlertTemplateId] = await knex('AlertTemplate').insert(
     Object.assign(
       {
-        message: 'New Result Uploaded {{sample.externalId}}',
+        message: 'New Result Uploaded {{result.sample.id}}',
       },
       auditFields
     )
   )
 
+  const redCapDateTimeFormat = 'YYYY-MM-DD HH:mm'
   const [redCapAlereQHiv12DetectWebHookTemplateId] = await knex(
     'WebhookTemplate'
   ).insert(
@@ -38,9 +39,28 @@ async function seed(knex) {
         externalId: 'redCapAlereQHiv12Detect',
         method: 'POST',
         url: config.webhook.redcap.url,
-        payload: `token=${
-          config.webhook.redcap.authToken
-        }&content=record&format=json&type=flat&overwriteBehavior=normal&forceAutoNumber=true&data=%5B%7B%22record_id%22%3A%221%22%2C+%22redcap_data_access_group%22%3A[DeploymentHostId|filters:{"Rahima Moosa Mother and Child Hospital":"rmmch","CHBAH Maternity POCT":"chbah","CHBAH":"chbah","CMJAH":"cmjah","Kalafong KPTH":"kalafong","Dora Nginza Hospital":""}>double_quote>url_encode|default:%22%22]%2C+%22first_name%22%3A[Name|filters:double_quote>url_encode|default:%22%22]%2C+%22surname%22%3A[Surname|filters:double_quote>url_encode|default:%22%22]%2C+%22hospital_number%22%3A[Hospital Number|filters:double_quote>url_encode|default:%22%22]%2C+%22site_code%22%3A[DeploymentHostId|filters:{"Rahima Moosa Mother and Child Hospital":"R","CHBAH Maternity POCT":"B","CHBAH":"B","CMJAH":"J","Kalafong KPTH":"K","Dora Nginza Hospital":"D"}>double_quote>url_encode|default:%22%22]%2C+%22ward_cubicle%22%3A[Ward|filters:double_quote>url_encode|default:%22%22]%2C+%22sample_category%22%3A[Sample Type|filters:double_quote>url_encode|default:%22%22]%2C+%22instrument_ca%22%3A%221%22%2C+%22assayhiv%22%3A%222%22%2C+%22sample_barcode%22%3A[SampleId|filters:double_quote>url_encode|default:%22%22]%2C+%22sample_taken%22%3A[TestStartedOn|filters:yyyy-MM-dd HH:mm>double_quote>url_encode|default:%22%22]%2C+%22point_of_care_instrument_r%22%3A[Result1|filters:{"Positive":"1","Negative":"2","No Result":"3","Invalid":"3","Error":"4"}>double_quote>url_encode|default:%22%22]%2C+%22error_code1%22%3A[ErrorCode|filters:double_quote>url_encode|default:%22%22]%2C+%22poc_viral_load%22%3A%22%22%2C+%22ct_value%22%3A[ProbeCCt|filters:double_quote>url_encode|default:%220%22]%2C+%22result_instrument%22%3A[TestEndedOn|filters:yyyy-MM-dd HH:mm>double_quote>url_encode|default:%22%22]%7D%5D&returnContent=ids&returnFormat=json`,
+        payload:
+          `token=${
+            config.webhook.redcap.authToken
+          }&content=record&format=json&type=flat&overwriteBehavior=normal&forceAutoNumber=true&data=%5B%7B%22` +
+          `record_id%22%3A%221%22%2C+` +
+          `%22redcap_data_access_group%22%3A{{urlEncode (enclose (toLowerCase (defaultTo site.id '')) with='"')}}%2C+` +
+          `%22first_name%22%3A{{urlEncode (enclose (defaultTo result.formData.nameOfPatient '') with='"')}}%2C+` +
+          `%22surname%22%3A{{urlEncode (enclose (defaultTo result.formData.surnameOfPatient '') with='"')}}%2C+` +
+          `%22hospital_number%22%3A{{urlEncode (enclose (defaultTo result.formData.hospitalNumber '') with='"')}}%2C+` +
+          `%22site_code%22%3A{{urlEncode (enclose (defaultTo (mapValue site.id '{"DNAH":"D","kalafong":"K","CMJAH":"J","RMMCH":"R","CHBAH":"B"}') '') with='"')}}%2C+` +
+          `%22ward_cubicle%22%3A{{urlEncode (enclose (defaultTo result.formData.ward '') with='"')}}%2C+` +
+          `%22sample_category%22%3A{{urlEncode (enclose (defaultTo result.formData.sampleType '') with='"')}}%2C+` +
+          `%22instrument_ca%22%3A{{urlEncode (enclose (defaultTo (mapValue device.deviceType '{"CepheidGeneXpert":"1","AlereQ":"2"}') '') with='"')}}%2C+` +
+          `%22assayhiv%22%3A{{urlEncode (enclose (defaultTo (mapValue result.assay.id '{"assayAlereQHiv12VLPlasma":"1","assayAlereQHiv12Detect":"2","GxHiv1Vl":"1","GxHiv1Qual":"2"}') '') with='"')}}%2C+` +
+          `%22sample_barcode%22%3A{{urlEncode (enclose (defaultTo result.sample.id '') with='"')}}%2C+` +
+          `%22sample_taken%22%3A{{urlEncode (enclose (defaultTo (formatDate result.formData.timeSampleTaken '${redCapDateTimeFormat}') '') with='"')}}%2C+` +
+          `%22point_of_care_instrument_r%22%3A[Result1|filters:{"Positive":"1","Negative":"2","No Result":"3","Invalid":"3","Error":"4"}>double_quote>url_encode|default:%22%22]%2C+` +
+          `%22error_code1%22%3A{{urlEncode (enclose (defaultTo result.errorCode '') with='"')}}%2C+` +
+          `%22poc_viral_load%22%3A%22%22%2C+` +
+          `%22ct_value%22%3A%220%22%2C+` +
+          `%22result_instrument%22%3A{{urlEncode (enclose (defaultTo (formatDate result.endedOn '${redCapDateTimeFormat}') '') with='"')}}` +
+          `%7D%5D&returnContent=ids&returnFormat=json`,
         fileContentTypeId: await fileContentTypeToId('formUrlEncoded'),
       },
       auditFields

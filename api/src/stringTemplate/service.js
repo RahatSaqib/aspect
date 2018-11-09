@@ -208,6 +208,9 @@ function getArgumentFromOptions(options, keyInOptionsHash) {
 }
 
 function formatDate(date, options) {
+  if (_.isNil(date)) {
+    return date
+  }
   const dateFormat =
     getArgumentFromOptions(options, 'formatString') ||
     _.get(this, 'displayPreferences.dateFormat', 'YYYY-MM-DD')
@@ -216,13 +219,20 @@ function formatDate(date, options) {
 
 function toLowerCase(stringValue) {
   if (stringValue) {
-    return stringValue.toLowerCase()
+    if (stringValue instanceof handlebars.SafeString) {
+      return safeString(stringValue.string.toLowerCase())
+    }
+    return safeString(stringValue.toLowerCase())
   }
   return stringValue
 }
 
 function safeString(value) {
-  if (!value || typeof value !== 'string') {
+  if (
+    _.isNil(value) ||
+    value instanceof handlebars.SafeString ||
+    typeof value !== 'string'
+  ) {
     return value
   }
   return new handlebars.SafeString(value)
@@ -231,29 +241,56 @@ function safeString(value) {
 function mapValue(value, options) {
   const valueMapString = getArgumentFromOptions(options, 'valueMap')
   if (valueMapString) {
+    if (value instanceof handlebars.SafeString) {
+      return safeString(JSON.parse(valueMapString)[value.string])
+    }
     return safeString(JSON.parse(valueMapString)[value])
   }
   return safeString(value)
 }
 
 function defaultTo(value, options) {
-  return safeString(value || getArgumentFromOptions(options, 'value'))
+  const defaultValue = getArgumentFromOptions(options, 'value')
+  if (value instanceof handlebars.SafeString) {
+    return safeString(value.string || defaultValue)
+  }
+  return safeString(value || defaultValue)
 }
 
 function enclose(value, options) {
+  let rawValue = value
+  if (value instanceof handlebars.SafeString) {
+    rawValue = value.string
+  }
+  if (_.isNil(rawValue)) {
+    return value
+  }
   const encloseWith = getArgumentFromOptions(options, 'with')
-  return safeString(`${encloseWith}${value || ''}${encloseWith}`)
+  return safeString(`${encloseWith}${rawValue}${encloseWith}`)
 }
 
 function escapeLines(value) {
-  if (!value || value.indexOf('\n') < 0) {
+  let rawValue = value
+  if (value instanceof handlebars.SafeString) {
+    rawValue = value.string
+  }
+  if (!rawValue || rawValue.indexOf('\n') < 0) {
     return safeString(value)
   }
-  return safeString(_.map(value.split('\n'), line => line.trim()).join('\\n'))
+  return safeString(
+    _.map(rawValue.split('\n'), line => line.trim()).join('\\n')
+  )
 }
 
 function urlEncode(value) {
-  return safeString(encodeURI(value))
+  let rawValue = value
+  if (value instanceof handlebars.SafeString) {
+    rawValue = value.string
+  }
+  if (_.isNil(rawValue)) {
+    return value
+  }
+  return safeString(encodeURI(rawValue))
 }
 
 module.exports = {

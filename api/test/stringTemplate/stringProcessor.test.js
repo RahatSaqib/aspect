@@ -148,17 +148,22 @@ describe('stringTemplate', () => {
     )
 
     const messageDataSource = {
-      siteExternalId: 'ALTEST',
-      deviceName: 'Akron Laboratory',
+      siteExternalId: 'RMMCH',
+      deviceName: 'Rahima Moosa Mother and Child Hospital',
+      deviceTypeExternalId: 'AlereQ',
       deviceLastSeenOn: new Date(2018, 7, 1, 10, 51, 13),
       resultStartedOn: new Date(2018, 7, 1, 10, 16, 28),
       resultEndedOn: new Date(2018, 7, 1, 10, 18, 1),
       resultNotes: 'These are the notes\nfor sample:\n   SAMPLE-123',
-      resultData: `{"id":1,"sampleBarcode":"SAMPLE-123"}`,
+      sampleExternalId: 'SAMPLE-123',
+      resultData: `{"id":1,"sampleBarcode":"SAMPLE-123","operator":"RHANDZU","resultNo":1,"sampleId":"FUNCTION TEST","testName":"Alere™ q HIV-1/2 Detect","errorCode":"18006","timeStamp":"2018-10-05T13:40:46","hiv2Result":"---","pickedUpOn":"2018-11-08T14:06:21.305072","sourceFile":"/home/south_africa_nhls/ftp/alere_q/01-01_NAT-04000925_2018-10-31-11-18-58.csv.zip","cartridgeId":"0479001033","deviceCheck":"Fail","hiv1OResult":"---","deviceSerial":"NAT-04000925","hiv1MNResult":"---","analysisCheck":"----","negativeControl":"----","sampleDetection":"----","softwareVersion":"0.24.2","hiv1PositiveControl":"----","hiv2PositiveControl":"----"}`,
+      resultFormData: `{"firstName":"James","surname":"Hetfield","musicalSkills":"","nameOfPatient":"Bryan","surnameOfPatient":"Richards","hospitalNumber":"HS97349","studyID":"ST976","ward":"66","timeSampleTaken":"2018-10-05T13:40:46","sampleType":"study","timeInstrumentResulted":"2018-10-05T14:51:18"}`,
       resultModuleName: null,
       resultModuleSerial: undefined,
+      resultErrorCode: null,
       resultErrorNotes:
         'The result ended as\nan error. Why?\r\n   There are a number of reasons:\n1: # of tests\n2: & others such as 1+1=2',
+      assayExternalId: 'assayAlereQHiv12Detect',
     }
 
     async function runProcessUsingDataSourceQuery(payloadTemplate) {
@@ -212,8 +217,11 @@ describe('stringTemplate', () => {
     describe('mapValue helper', () => {
       it('should map the value to something in the value map provided', async () => {
         const valueMap = {
-          ALTEST: 'A',
-          BLTEST: 'B',
+          DNAH: 'D',
+          kalafong: 'K',
+          CMJAH: 'J',
+          RMMCH: 'R',
+          CHBAH: 'B',
         }
         const message = await runProcessUsingDataSourceQuery(
           `External Facility Code for {{device.name}} is {{mapValue site.id valueMap='${JSON.stringify(
@@ -289,11 +297,23 @@ describe('stringTemplate', () => {
         )
       })
 
-      it('should enclose a blank string when value is not present', async () => {
+      it('should return the original value string when value is nil', async () => {
         const message = await runProcessUsingDataSourceQuery(
           `Device's pants Size is {{enclose device.pantsSize '"'}}`
         )
-        assert.equal(message.payload, `Device's pants Size is ""`)
+        assert.equal(message.payload, `Device's pants Size is `)
+      })
+
+      it('should enclose a blank string when it is passed', async () => {
+        const message = await runProcessUsingDataSourceQuery(
+          `{{result.formData.firstName}} {{result.formData.surname}} Musical Skills: {{enclose result.formData.musicalSkills '"'}}`
+        )
+        assert.equal(
+          message.payload,
+          `${JSON.parse(messageDataSource.resultFormData).firstName} ${
+            JSON.parse(messageDataSource.resultFormData).surname
+          } Musical Skills: ""`
+        )
       })
     })
 
@@ -360,6 +380,103 @@ describe('stringTemplate', () => {
             ).toLowerCase()}"`
           )}`
         )
+      })
+
+      describe('use case for SA NHLS', () => {
+        it('should process RedCAP API Payloads', async () => {
+          const redCapDateTimeFormat = 'YYYY-MM-DD HH:mm'
+          const message = await runProcessUsingDataSourceQuery(
+            `token=1A234567B8C90D12345E6789F0G1234H&content=record&format=json&type=flat&overwriteBehavior=normal&forceAutoNumber=true&data=%5B%7B%22` +
+              `record_id%22%3A%221%22%2C+` +
+              `%22redcap_data_access_group%22%3A{{urlEncode (enclose (toLowerCase (defaultTo site.id '')) with='"')}}%2C+` +
+              `%22first_name%22%3A{{urlEncode (enclose (defaultTo result.formData.nameOfPatient '') with='"')}}%2C+` +
+              `%22surname%22%3A{{urlEncode (enclose (defaultTo result.formData.surnameOfPatient '') with='"')}}%2C+` +
+              `%22hospital_number%22%3A{{urlEncode (enclose (defaultTo result.formData.hospitalNumber '') with='"')}}%2C+` +
+              `%22site_code%22%3A{{urlEncode (enclose (defaultTo (mapValue site.id '{"DNAH":"D","kalafong":"K","CMJAH":"J","RMMCH":"R","CHBAH":"B"}') '') with='"')}}%2C+` +
+              `%22ward_cubicle%22%3A{{urlEncode (enclose (defaultTo result.formData.ward '') with='"')}}%2C+` +
+              `%22sample_category%22%3A{{urlEncode (enclose (defaultTo result.formData.sampleType '') with='"')}}%2C+` +
+              `%22instrument_ca%22%3A{{urlEncode (enclose (defaultTo (mapValue device.deviceType '{"CepheidGeneXpert":"1","AlereQ":"2"}') '') with='"')}}%2C+` +
+              `%22assayhiv%22%3A{{urlEncode (enclose (defaultTo (mapValue result.assay.id '{"assayAlereQHiv12VLPlasma":"1","assayAlereQHiv12Detect":"2","GxHiv1Vl":"1","GxHiv1Qual":"2"}') '') with='"')}}%2C+` +
+              `%22sample_barcode%22%3A{{urlEncode (enclose (defaultTo result.sample.id '') with='"')}}%2C+` +
+              `%22sample_taken%22%3A{{urlEncode (enclose (defaultTo (formatDate result.formData.timeSampleTaken '${redCapDateTimeFormat}') '') with='"')}}%2C+` +
+              `%22point_of_care_instrument_r%22%3A[Result1|filters:{"Positive":"1","Negative":"2","No Result":"3","Invalid":"3","Error":"4"}>double_quote>url_encode|default:%22%22]%2C+` +
+              `%22error_code1%22%3A{{urlEncode (enclose (defaultTo result.errorCode '') with='"')}}%2C+` +
+              `%22poc_viral_load%22%3A%22%22%2C+` +
+              `%22ct_value%22%3A%220%22%2C+` +
+              `%22result_instrument%22%3A{{urlEncode (enclose (defaultTo (formatDate result.endedOn '${redCapDateTimeFormat}') '') with='"')}}` +
+              `%7D%5D&returnContent=ids&returnFormat=json`
+          )
+          const formData = JSON.parse(messageDataSource.resultFormData)
+          const redCapDeviceTypeCodes = {
+            CepheidGeneXpert: '1',
+            AlereQ: '2',
+          }
+          const redCapAssayCodes = {
+            assayAlereQHiv12VLPlasma: '1',
+            assayAlereQHiv12Detect: '2',
+            GxHiv1Vl: '1',
+            GxHiv1Qual: '2',
+          }
+          const redCapSiteCodes = {
+            DNAH: 'D',
+            kalafong: 'K',
+            CMJAH: 'J',
+            RMMCH: 'R',
+            CHBAH: 'B',
+          }
+          assert.equal(
+            message.payload,
+            `token=1A234567B8C90D12345E6789F0G1234H&content=record&format=json&type=flat&overwriteBehavior=normal&forceAutoNumber=true&data=%5B%7B%22` +
+              `record_id%22%3A%221%22%2C+` +
+              `%22redcap_data_access_group%22%3A%22${encodeURI(
+                messageDataSource.siteExternalId.toLowerCase()
+              )}%22%2C+` +
+              `%22first_name%22%3A%22${encodeURI(
+                formData.nameOfPatient
+              )}%22%2C+` +
+              `%22surname%22%3A%22${encodeURI(
+                formData.surnameOfPatient
+              )}%22%2C+` +
+              `%22hospital_number%22%3A%22${encodeURI(
+                formData.hospitalNumber
+              )}%22%2C+` +
+              `%22site_code%22%3A%22${
+                redCapSiteCodes[messageDataSource.siteExternalId]
+              }%22%2C+` +
+              `%22ward_cubicle%22%3A%22${encodeURI(formData.ward)}%22%2C+` +
+              `%22sample_category%22%3A%22${encodeURI(
+                formData.sampleType
+              )}%22%2C+` +
+              `%22instrument_ca%22%3A%22${
+                redCapDeviceTypeCodes[messageDataSource.deviceTypeExternalId]
+              }%22%2C+` +
+              `%22assayhiv%22%3A%22${
+                redCapAssayCodes[messageDataSource.assayExternalId]
+              }%22%2C+` +
+              `%22sample_barcode%22%3A%22${encodeURI(
+                messageDataSource.sampleExternalId
+              )}%22%2C+` +
+              `%22sample_taken%22%3A%22${encodeURI(
+                formatDateOrDefault(
+                  formData.timeSampleTaken,
+                  redCapDateTimeFormat
+                )
+              )}%22%2C+` +
+              `%22point_of_care_instrument_r%22%3A[Result1|filters:{"Positive":"1","Negative":"2","No Result":"3","Invalid":"3","Error":"4"}>double_quote>url_encode|default:%22%22]%2C+` +
+              `%22error_code1%22%3A%22${encodeURI(
+                messageDataSource.resultErrorCode || ''
+              )}%22%2C+` +
+              `%22poc_viral_load%22%3A%22%22%2C+` +
+              `%22ct_value%22%3A%220%22%2C+` +
+              `%22result_instrument%22%3A%22${encodeURI(
+                formatDateOrDefault(
+                  messageDataSource.resultEndedOn,
+                  redCapDateTimeFormat
+                )
+              )}%22` +
+              `%7D%5D&returnContent=ids&returnFormat=json`
+          )
+        })
       })
     })
   })
