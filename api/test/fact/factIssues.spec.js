@@ -56,7 +56,9 @@ describe('Fact based issues', () => {
       siteName = site.name
     })
   )
-  beforeEach(context.beforeEach)
+  beforeEach(async () => {
+    await context.createDeviceApiKey()
+  })
   afterEach(context.afterEach)
 
   it('should create issues when Device Offline and No Results > max days no results', () =>
