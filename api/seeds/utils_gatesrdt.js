@@ -317,9 +317,13 @@ async function createResults(
         })
       }
       // copy image to folder /files/##
-      const filePath = `../api/files/${fileReferenceId}/${imageFileName}`
+      const dirPath = `../api/files/${fileReferenceId}`
+      const filePath = `${dirPath}/${imageFileName}`
+
+      if (!fs.existsSync(dirPath)) {
+        fs.mkdirSync(dirPath, { recursive: true })
+      }
       if (!fs.existsSync(filePath)) {
-        fs.mkdirSync(`../api/files/${fileReferenceId}`, { recursive: true })
         fs.copyFileSync(
           `../api/seeds/development/fixtures/${imageFileName}`,
           filePath
