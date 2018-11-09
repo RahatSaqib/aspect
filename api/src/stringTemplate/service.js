@@ -10,6 +10,7 @@ handlebars.registerHelper('isoDate', isoDate)
 handlebars.registerHelper('formatDate', formatDate)
 handlebars.registerHelper('toLowerCase', toLowerCase)
 handlebars.registerHelper('mapValue', mapValue)
+handlebars.registerHelper('defaultTo', defaultTo)
 
 // See unit tests for examples
 // Can include displayPreferences
@@ -213,6 +214,16 @@ function mapValue(value, options) {
     return JSON.parse(options.hash.valueMap)[value]
   }
   return value
+}
+
+function defaultTo(value, options) {
+  let defaultValue
+  if (typeof options === 'string') {
+    defaultValue = options
+  } else {
+    defaultValue = _.get(options, ['hash', 'value'])
+  }
+  return value || defaultValue
 }
 
 module.exports = {

@@ -238,6 +238,29 @@ describe('stringTemplate', () => {
       })
     })
 
+    describe('defaultTo helper', () => {
+      it('should return default value specified', async () => {
+        const message = await runProcessUsingDataSourceQuery(
+          `Device's pants Size is {{defaultTo device.pantsSize '4XL'}}`
+        )
+        assert.equal(message.payload, `Device's pants Size is 4XL`)
+      })
+
+      it('should allow more explicit declarations', async () => {
+        const message = await runProcessUsingDataSourceQuery(
+          `Device's pants Size is {{defaultTo device.pantsSize value='Medium'}}`
+        )
+        assert.equal(message.payload, `Device's pants Size is Medium`)
+      })
+
+      it('should still return nothing when default value is not specified', async () => {
+        const message = await runProcessUsingDataSourceQuery(
+          `Device's pants Size is {{defaultTo device.pantsSize}}`
+        )
+        assert.equal(message.payload, `Device's pants Size is `)
+      })
+    })
+
     describe('chaining helpers', () => {
       it("should pass the result of a helper to it's predecessor", async () => {
         const specifiedFormat = 'YYYY-MMMM-DD'
