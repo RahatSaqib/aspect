@@ -1,3 +1,4 @@
+const _ = require('lodash')
 const proxyquire = require('proxyquire')
 const Promise = require('bluebird')
 const { assert } = require('chai')
@@ -152,8 +153,14 @@ describe('stringTemplate', () => {
       deviceLastSeenOn: new Date(2018, 7, 1, 10, 51, 13),
       resultStartedOn: new Date(2018, 7, 1, 10, 16, 28),
       resultEndedOn: new Date(2018, 7, 1, 10, 18, 1),
+      resultNotes: 'These are the notes\nfor sample:\n   SAMPLE-123',
       resultData: `{"id":1,"sampleBarcode":"SAMPLE-123"}`,
+      resultModuleName: null,
+      resultModuleSerial: undefined,
+      resultErrorNotes:
+        'The result ended as\nan error. Why?\r\n   There are a number of reasons:\n1: # of tests\n2: & others such as 1+1=2',
     }
+
     async function runProcessUsingDataSourceQuery(payloadTemplate) {
       const data = Object.assign({}, messageDataSource, { payloadTemplate })
       const templateFields = ['payloadTemplate']
@@ -261,18 +268,97 @@ describe('stringTemplate', () => {
       })
     })
 
+    describe('enclose helper', () => {
+      it('should return the value enclosed in the characters specified', async () => {
+        const message = await runProcessUsingDataSourceQuery(
+          `Device's name is {{enclose device.name '"'}}`
+        )
+        assert.equal(
+          message.payload,
+          `Device's name is "${messageDataSource.deviceName}"`
+        )
+      })
+
+      it('should allow more explicit declarations', async () => {
+        const message = await runProcessUsingDataSourceQuery(
+          `Device's name is {{enclose device.name with='"'}}`
+        )
+        assert.equal(
+          message.payload,
+          `Device's name is "${messageDataSource.deviceName}"`
+        )
+      })
+
+      it('should enclose a blank string when value is not present', async () => {
+        const message = await runProcessUsingDataSourceQuery(
+          `Device's pants Size is {{enclose device.pantsSize '"'}}`
+        )
+        assert.equal(message.payload, `Device's pants Size is ""`)
+      })
+    })
+
+    describe('escapeLines helper', () => {
+      it('should escape line breaks and trim each line', async () => {
+        const message = await runProcessUsingDataSourceQuery(
+          'RESULT NOTES: {{escapeLines result.notes}}'
+        )
+        assert.equal(
+          message.payload,
+          `RESULT NOTES: ${_.map(
+            messageDataSource.resultNotes.split('\n'),
+            line => line.trim()
+          ).join('\\n')}`
+        )
+      })
+
+      it('should do nothing when the value is nothing', async () => {
+        let message = await runProcessUsingDataSourceQuery(
+          'Result module serial is {{escapeLines result.moduleSerial}}'
+        )
+        assert.equal(message.payload, 'Result module serial is ')
+        message = await runProcessUsingDataSourceQuery(
+          'Result module name is {{escapeLines result.moduleName}}'
+        )
+        assert.equal(message.payload, 'Result module name is ')
+      })
+
+      it('should do nothing when the value contains no line breaks', async () => {
+        const message = await runProcessUsingDataSourceQuery(
+          `Device's name is {{escapeLines device.name}}`
+        )
+        assert.equal(
+          message.payload,
+          `Device's name is ${messageDataSource.deviceName}`
+        )
+      })
+    })
+
+    describe('urlEncode helper', () => {
+      it('should return the URL encoded value', async () => {
+        const message = await runProcessUsingDataSourceQuery(
+          `Result error notes: {{urlEncode result.errorNotes}}`
+        )
+        assert.equal(
+          message.payload,
+          `Result error notes: ${encodeURI(messageDataSource.resultErrorNotes)}`
+        )
+      })
+    })
+
     describe('chaining helpers', () => {
       it("should pass the result of a helper to it's predecessor", async () => {
         const specifiedFormat = 'YYYY-MMMM-DD'
         const message = await runProcessUsingDataSourceQuery(
-          `Offline since {{toLowerCase (formatDate device.lastSeenOn formatString='${specifiedFormat}')}}`
+          `Offline since {{urlEncode (enclose (toLowerCase (formatDate device.lastSeenOn formatString='${specifiedFormat}')) with='"')}}`
         )
         assert.equal(
           message.payload,
-          `Offline since ${formatDateOrDefault(
-            messageDataSource.deviceLastSeenOn,
-            specifiedFormat
-          ).toLowerCase()}`
+          `Offline since ${encodeURI(
+            `"${formatDateOrDefault(
+              messageDataSource.deviceLastSeenOn,
+              specifiedFormat
+            ).toLowerCase()}"`
+          )}`
         )
       })
     })

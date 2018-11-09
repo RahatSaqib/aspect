@@ -11,6 +11,9 @@ handlebars.registerHelper('formatDate', formatDate)
 handlebars.registerHelper('toLowerCase', toLowerCase)
 handlebars.registerHelper('mapValue', mapValue)
 handlebars.registerHelper('defaultTo', defaultTo)
+handlebars.registerHelper('enclose', enclose)
+handlebars.registerHelper('escapeLines', escapeLines)
+handlebars.registerHelper('urlEncode', urlEncode)
 
 // See unit tests for examples
 // Can include displayPreferences
@@ -55,6 +58,7 @@ function addDataSourceToQuery(queryBuilder, aliases) {
         'r.formData as resultFormData',
         'r.startedOn as resultStartedOn',
         'r.endedOn as resultEndedOn',
+        'r.notes as resultNotes',
         knex.raw('coalesce(r.moduleName, r.moduleSerial) as resultModuleName'),
         'r.moduleSerial as resultModuleSerial',
         'r.errorCode as resultErrorCode',
@@ -126,6 +130,7 @@ async function getBaseDataSource(data) {
         d.resultPatientData == null ? {} : JSON.parse(d.resultPatientData),
       startedOn: d.resultStartedOn,
       endedOn: d.resultEndedOn,
+      notes: d.resultNotes,
       moduleName: d.resultModuleName,
       moduleSerial: d.resultModuleSerial,
       errorCode: d.resultErrorCode,
@@ -195,9 +200,16 @@ function isoDate(date) {
   return parsed == null ? null : parsed.toISOString()
 }
 
+function getArgumentFromOptions(options, keyInOptionsHash) {
+  if (typeof options === 'string') {
+    return options
+  }
+  return _.get(options, ['hash', keyInOptionsHash])
+}
+
 function formatDate(date, options) {
   const dateFormat =
-    options.hash.formatString ||
+    getArgumentFromOptions(options, 'formatString') ||
     _.get(this, 'displayPreferences.dateFormat', 'YYYY-MM-DD')
   return formatDateOrDefault(date, dateFormat)
 }
@@ -209,21 +221,39 @@ function toLowerCase(stringValue) {
   return stringValue
 }
 
-function mapValue(value, options) {
-  if (options.hash.valueMap) {
-    return JSON.parse(options.hash.valueMap)[value]
+function safeString(value) {
+  if (!value || typeof value !== 'string') {
+    return value
   }
-  return value
+  return new handlebars.SafeString(value)
+}
+
+function mapValue(value, options) {
+  const valueMapString = getArgumentFromOptions(options, 'valueMap')
+  if (valueMapString) {
+    return safeString(JSON.parse(valueMapString)[value])
+  }
+  return safeString(value)
 }
 
 function defaultTo(value, options) {
-  let defaultValue
-  if (typeof options === 'string') {
-    defaultValue = options
-  } else {
-    defaultValue = _.get(options, ['hash', 'value'])
+  return safeString(value || getArgumentFromOptions(options, 'value'))
+}
+
+function enclose(value, options) {
+  const encloseWith = getArgumentFromOptions(options, 'with')
+  return safeString(`${encloseWith}${value || ''}${encloseWith}`)
+}
+
+function escapeLines(value) {
+  if (!value || value.indexOf('\n') < 0) {
+    return safeString(value)
   }
-  return value || defaultValue
+  return safeString(_.map(value.split('\n'), line => line.trim()).join('\\n'))
+}
+
+function urlEncode(value) {
+  return safeString(encodeURI(value))
 }
 
 module.exports = {
