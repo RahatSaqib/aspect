@@ -845,7 +845,7 @@ const basicResultPayload = {
     },
     sender: {
       version: '4.7b',
-      operator: 'Big Boy Baumgartner',
+      operator: 'Big Boy Bryan',
     },
     patient: {
       id: '0833223622',
