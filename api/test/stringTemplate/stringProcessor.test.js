@@ -164,6 +164,8 @@ describe('stringTemplate', () => {
       resultErrorNotes:
         'The result ended as\nan error. Why?\r\n   There are a number of reasons:\n1: # of tests\n2: & others such as 1+1=2',
       assayExternalId: 'assayAlereQHiv12Detect',
+      resultCategory1ExternalId: 'Detected',
+      resultCategory2ExternalId: 'NotDetected',
     }
 
     async function runProcessUsingDataSourceQuery(payloadTemplate) {
@@ -399,7 +401,7 @@ describe('stringTemplate', () => {
               `%22assayhiv%22%3A{{urlEncode (enclose (defaultTo (mapValue result.assay.id '{"assayAlereQHiv12VLPlasma":"1","assayAlereQHiv12Detect":"2","GxHiv1Vl":"1","GxHiv1Qual":"2"}') '') with='"')}}%2C+` +
               `%22sample_barcode%22%3A{{urlEncode (enclose (defaultTo result.sample.id '') with='"')}}%2C+` +
               `%22sample_taken%22%3A{{urlEncode (enclose (defaultTo (formatDate result.formData.timeSampleTaken '${redCapDateTimeFormat}') '') with='"')}}%2C+` +
-              `%22point_of_care_instrument_r%22%3A[Result1|filters:{"Positive":"1","Negative":"2","No Result":"3","Invalid":"3","Error":"4"}>double_quote>url_encode|default:%22%22]%2C+` +
+              `%22point_of_care_instrument_r%22%3A{{urlEncode (enclose (defaultTo (mapValue (tryMergeResultCategories result.category1.id result.category2.id) '{"Detected":"1","MoreThan1000":"1","LessThan1000":"1","Trace Detected":"1","NotDetected":"2","NoResult":"3","Discordant":"3","Indeterminate":"3","Invalid":"3","Success":"3","CollectNewSample":"3","Rejected":"3","Missing":"3","Unknown":"3","Error":"4"}') '') with='"')}}%2C+` +
               `%22error_code1%22%3A{{urlEncode (enclose (defaultTo result.errorCode '') with='"')}}%2C+` +
               `%22poc_viral_load%22%3A%22%22%2C+` +
               `%22ct_value%22%3A{{urlEncode (enclose (defaultTo result.data.probes.probeCCt '0') with='"')}}%2C+` +
@@ -425,6 +427,57 @@ describe('stringTemplate', () => {
             RMMCH: 'R',
             CHBAH: 'B',
           }
+          const redCapResultCategoryCodes = {
+            Detected: '1',
+            MoreThan1000: '1',
+            LessThan1000: '1',
+            'Trace Detected': '1',
+            NotDetected: '2',
+            NoResult: '3',
+            Discordant: '3',
+            Indeterminate: '3',
+            Invalid: '3',
+            Success: '3',
+            CollectNewSample: '3',
+            Rejected: '3',
+            Missing: '3',
+            Unknown: '3',
+            Error: '4',
+          }
+          const tryMergeResultCategories = (
+            resultCategory1,
+            resultCategory2
+          ) => {
+            const priorityResult = (resultCategories, resultCateoryId) => {
+              if (resultCategories.includes(resultCateoryId)) {
+                return resultCateoryId
+              }
+            }
+            const resultCategories = [resultCategory1, resultCategory2]
+            const orderedPriorityCategories = [
+              'Error',
+              'Discordant',
+              'Detected',
+              'MoreThan1000',
+              'LessThan1000',
+              'Trace Detected',
+              'NotDetected',
+              'Invalid',
+              'Indeterminate',
+              'NoResult',
+            ]
+            for (let i = 0; i < orderedPriorityCategories.length; i++) {
+              const foundPriorityCategory = priorityResult(
+                resultCategories,
+                orderedPriorityCategories
+              )
+              if (foundPriorityCategory) {
+                return foundPriorityCategory
+              }
+            }
+            return resultCategory1 || resultCategory2
+          }
+
           assert.equal(
             message.payload,
             `token=1A234567B8C90D12345E6789F0G1234H&content=record&format=json&type=flat&overwriteBehavior=normal&forceAutoNumber=true&data=%5B%7B%22` +
@@ -463,7 +516,14 @@ describe('stringTemplate', () => {
                   redCapDateTimeFormat
                 )
               )}%22%2C+` +
-              `%22point_of_care_instrument_r%22%3A[Result1|filters:{"Positive":"1","Negative":"2","No Result":"3","Invalid":"3","Error":"4"}>double_quote>url_encode|default:%22%22]%2C+` +
+              `%22point_of_care_instrument_r%22%3A%22${
+                redCapResultCategoryCodes[
+                  tryMergeResultCategories(
+                    messageDataSource.resultCategory1ExternalId,
+                    messageDataSource.resultCategory2ExternalId
+                  )
+                ]
+              }%22%2C+` +
               `%22error_code1%22%3A%22${encodeURI(
                 messageDataSource.resultErrorCode || ''
               )}%22%2C+` +

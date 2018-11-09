@@ -14,6 +14,7 @@ handlebars.registerHelper('defaultTo', defaultTo)
 handlebars.registerHelper('enclose', enclose)
 handlebars.registerHelper('escapeLines', escapeLines)
 handlebars.registerHelper('urlEncode', urlEncode)
+handlebars.registerHelper('tryMergeResultCategories', tryMergeResultCategories)
 
 // See unit tests for examples
 // Can include displayPreferences
@@ -291,6 +292,38 @@ function urlEncode(value) {
     return value
   }
   return safeString(encodeURI(rawValue))
+}
+
+function priorityResult(resultCategories, resultCateoryId) {
+  if (resultCategories.includes(resultCateoryId)) {
+    return resultCateoryId
+  }
+}
+
+function tryMergeResultCategories(resultCategory1, resultCategory2) {
+  const resultCategories = [resultCategory1, resultCategory2]
+  const orderedPriorityCategories = [
+    'Error',
+    'Discordant',
+    'Detected',
+    'MoreThan1000',
+    'LessThan1000',
+    'Trace Detected',
+    'NotDetected',
+    'Invalid',
+    'Indeterminate',
+    'NoResult',
+  ]
+  for (let i = 0; i < orderedPriorityCategories.length; i++) {
+    const foundPriorityCategory = priorityResult(
+      resultCategories,
+      orderedPriorityCategories
+    )
+    if (foundPriorityCategory) {
+      return foundPriorityCategory
+    }
+  }
+  return resultCategory1 || resultCategory2
 }
 
 module.exports = {
