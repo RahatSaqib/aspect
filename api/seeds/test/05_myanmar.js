@@ -5,15 +5,8 @@ const _ = require('lodash')
 
 const config = require('../../src/config')
 const myanmarSites = require('./fixtures/myanmarSites.json')
-const patients = require('./fixtures/patients.json')
 const dashboardWidget = require('./fixtures/myanmarDashboardWidget.json')
-const { errorCodes } = require('./fixtures/errorCodes.js')
-const {
-  addMilliseconds,
-  addMinutes,
-  subDays,
-  differenceInDays,
-} = require('date-fns')
+
 const {
   rowsAsObject,
   getDefaultMessageTypes,
@@ -24,13 +17,8 @@ const {
 } = require('../utils')
 const {
   allFeatureToId,
-  allResultCategoryToId,
-  deviceStatusToId,
+
   partnerTypeToId,
-  resultSourceToId,
-  resultTypeToId,
-  resultWorkflowStatusToId,
-  sampleTypeToId,
 } = require('../../src/shared/dictionary')
 
 const { seedUnknownErrorsIssue } = require('../seedUnknownErrorsIssue')
@@ -38,8 +26,6 @@ const { seedDataCategory } = require('../dataCategoryLow')
 
 const now = new Date()
 const millisInHour = 1000 * 60 * 60
-const millisInMinute = 1000 * 60
-const resultTimeFrameInDays = 365
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 
@@ -67,13 +53,8 @@ async function seed(knex) {
     updatedOn: now,
     updatedBy: adminId,
   }
-
   // Reuse previously seeded "static" data
-  const [deviceTypes, assays, defaultMessageTypes] = await Promise.all([
-    rowsAsObject(knex, 'DeviceType', 'externalId'),
-    rowsAsObject(knex, 'Assay', 'externalId'),
-    getDefaultMessageTypes(knex),
-  ])
+  const defaultMessageTypes = await getDefaultMessageTypes(knex)
   let issueTypes = await rowsAsObject(knex, 'IssueType', 'externalId')
 
   const maxDaysDeviceNoResults = 14
@@ -297,7 +278,6 @@ async function seed(knex) {
 
   // Regional Officer Jobs and Targets
   const adminRegions = ['AYY', 'KCN', 'MDY']
-  const targetTokens = ['MDR', 'Smear', 'HIV', 'Total']
   let regionNumber = 0
   await Promise.all(
     _.map(adminRegions, async region => {
@@ -339,113 +319,8 @@ async function seed(knex) {
         jobId: jobIdRegion,
         geographyId: regionId,
       })
-      let targetTotal = 0
-      await Promise.all(
-        _.map(targetTokens, async token => {
-          let targetValue = 850 + Math.floor(Math.random() * 200 - 100)
-
-          if (token === 'Total') {
-            targetValue = targetTotal + Math.floor(Math.random() * 200)
-          } else {
-            targetTotal += targetValue
-          }
-
-          await knex('Target').insert({
-            geographyId: regionId,
-            targetToken: token,
-            targetValue,
-          })
-        })
-      )
     })
   )
-
-  // every clinic has a site, GxAlert device and MTB/Rif+ and Ultra results
-  const {
-    Detected: resultCategoryDetectedId,
-    NotDetected: resultCategoryNotDetectedId,
-    Indeterminate: resultCategoryIndeterminateId,
-    Invalid: resultCategoryInvalidId,
-    Error: resultCategoryErrorId,
-  } = await allResultCategoryToId()
-
-  const resultWorkflowStatusId = await resultWorkflowStatusToId('Ordered')
-  const resultSourceId = await resultSourceToId('DiagnosticDevice')
-  const resultTypeId = await resultTypeToId('Patient')
-
-  const possibleResults = [
-    {
-      resultText: 'MTB Detected, Rif Resistance Not Detected',
-      category1: resultCategoryDetectedId,
-      category2: resultCategoryNotDetectedId,
-      minLikelihood: 0,
-      maxLikelihood: 20,
-    },
-    {
-      resultText: 'MTB Detected, Rif Resistance Detected',
-      category1: resultCategoryDetectedId,
-      category2: resultCategoryDetectedId,
-      minLikelihood: 21,
-      maxLikelihood: 26,
-    },
-    {
-      resultText: 'MTB Detected, Rif Indeterminate',
-      category1: resultCategoryDetectedId,
-      category2: resultCategoryIndeterminateId,
-      minLikelihood: 27,
-      maxLikelihood: 28,
-    },
-    {
-      resultText: 'ERROR',
-      category1: resultCategoryErrorId,
-      category2: null,
-      minLikelihood: 29,
-      maxLikelihood: 34,
-    },
-    {
-      resultText: 'Invalid',
-      category1: resultCategoryInvalidId,
-      category2: null,
-      minLikelihood: 35,
-      maxLikelihood: 38,
-    },
-    {
-      resultText: 'Not Detected',
-      category1: resultCategoryNotDetectedId,
-      category2: null,
-      minLikelihood: 39,
-      maxLikelihood: 100,
-    },
-  ]
-
-  const resultData = {
-    probes: {
-      probeA: 'NEG',
-      probeB: 'POS',
-      probeC: 'NO RESULT',
-      probeD: 'NEG',
-      probeE: 'POS',
-      probeSpc: 'NO RESULT',
-      qc1: 'YES',
-      qc2: 'No',
-      probeACt: 12.32,
-      probeBCt: 11.2,
-      probeCCt: 12.5,
-      probeDCt: 0.5,
-      probeECt: 1.2,
-      probeSpcCt: 5.78,
-      qc1Ct: 1,
-      qc2Ct: 0.007,
-      probeAEndpt: 1.6,
-      probeBEndpt: 2.33,
-      probeCEndpt: 457,
-      probeDEndpt: 12.43,
-      probeEEndpt: 3.14,
-      probeSpcEndpt: 8.9018,
-      qc1Endpt: 0.1234,
-      qc2Endpt: 1.22,
-    },
-  }
 
   const siteDatas = []
   await Promise.all(
@@ -484,120 +359,6 @@ async function seed(knex) {
       const [siteId] = await knex('Site').insert(siteData)
       siteData.id = siteId
       siteDatas.push(siteData)
-
-      // only create results if in managed regions
-      const sampleTypeDBSId = await sampleTypeToId('DBS')
-      const samples = []
-      await Promise.all(
-        _.map(_.range(500), async i => {
-          const sample = Object.assign(
-            {},
-            {
-              externalId: `SMP-TB-${i}`,
-              collectedOn: calculateDateForResult(i, 500, millisInMinute),
-              sampleTypeId: sampleTypeDBSId,
-              originSiteId: siteData.id,
-            }
-          )
-
-          sample.id = await knex('Sample').insert(sample)
-          samples.push(sample)
-        })
-      )
-
-      await Promise.all(
-        _.map(site.devices, async deviceSeed => {
-          const device = {
-            partnerId,
-            geographyId: siteGeographyId,
-            siteId,
-            deviceTypeId: deviceTypes.CepheidGeneXpert.id,
-            deviceStatusId: await deviceStatusToId('approved'),
-            name: deviceSeed.name,
-            shortName: deviceSeed.shortName,
-            macAddress: deviceSeed.macAddress,
-            serial: deviceSeed.serial,
-            hostId: deviceSeed.hostId,
-            culture: deviceSeed.culture,
-            timezone: deviceSeed.timezone,
-            notes: deviceSeed.notes,
-            lastSeenOn: now,
-          }
-          const [deviceId] = await knex('Device').insert(device)
-          device.id = deviceId
-
-          // only create results if managed region
-          const resultMtbNumber = 1000 + Math.floor(Math.random() * 200 - 100)
-          await Promise.all(
-            _.map(_.range(resultMtbNumber), async i => {
-              const sample = samples[i % samples.length]
-              let randomDate = calculateDateForResult(i, resultMtbNumber, 6000)
-
-              // Leave some devices as being quiet, with results, for a while
-              if (
-                deviceId % 3 === 0 &&
-                Math.abs(differenceInDays(now, randomDate)) <
-                  maxDaysDeviceNoResults + 3
-              ) {
-                randomDate = subDays(randomDate, maxDaysDeviceNoResults + 3)
-              }
-
-              const rnd = _.random(0, 100)
-              const result = _.find(
-                possibleResults,
-                r => rnd >= r.minLikelihood && rnd <= r.maxLikelihood
-              )
-
-              resultData.resultText = result.resultText
-              await knex('Result').insert(
-                Object.assign({}, auditFields, {
-                  externalId: `UQTB-${i}`,
-                  assayId: assays.GxMtbRif.id,
-                  partnerId,
-                  geographyId: siteData.geographyId,
-                  siteId: siteData.id,
-                  deviceId: device.id,
-                  resultWorkflowStatusId,
-                  longitude: siteData.latitude,
-                  latitude: siteData.longitude,
-                  resultSourceId,
-                  resultTypeId,
-                  sampleId: sample.id,
-                  sampleRunNumber: `${i % 2 + 1}`,
-                  sampleGroup: `GRP-TB-${i % 5}`,
-                  resultCategory1: result.category1,
-                  resultCategory2: result.category2,
-                  resultData: JSON.stringify(resultData),
-                  assayVersion: '4',
-                  startedOn: randomDate,
-                  endedOn: addMinutes(randomDate, 100),
-                  consumableSerial: `${i}12`,
-                  consumableExpirationDate: new Date(
-                    +now + 200 * i * millisInHour
-                  ),
-                  consumableLot: `Lot ${i % 5}`,
-                  instrumentSerial: `S-1234-${i % 3}`,
-                  moduleName: 'Module A',
-                  moduleSerial: `M-1234-${i % 4}`,
-                  researchId: `R-ID-${i}`,
-                  patientData: JSON.stringify(patients[_.random(99)]),
-                  senderVersion: '4.6b',
-                  senderOperator: 'Marsha',
-                  notes: 'This is a test... result',
-                  errorCode:
-                    result.category1 === resultCategoryErrorId
-                      ? errorCodes[_.random(errorCodes.length)]
-                      : null,
-                  errorNotes:
-                    result.category1 === resultCategoryErrorId
-                      ? 'Exceeded cycle threshold'
-                      : null,
-                })
-              )
-            })
-          )
-        })
-      )
     })
   )
 
@@ -1315,31 +1076,6 @@ async function seed(knex) {
     ),
   ])
 
-  // TB Cartridges Consumable Id
-  const { id: consumableGxTbCartridgeId } = await knex('Consumable')
-    .where({ name: 'GeneXpert TB Cartridge' })
-    .first('id')
-  // Insert Inventory Items
-  await Promise.all(
-    _.map(_.range(siteDatas.length), async i => {
-      const siteData = siteDatas[i]
-      const siteId = siteData.id
-      // TB Cartridges
-      if (siteId % 2 === 0) {
-        await knex('InventoryItem').insert(
-          Object.assign(
-            {
-              consumableId: consumableGxTbCartridgeId,
-              siteId,
-              quantityOnHand: _.random(0, 1000),
-            },
-            auditFields
-          )
-        )
-      }
-    })
-  )
-
   // Fill Issue/AlertMessage/Notification table with some mock data
   const devices = await knex('Device').where({ partnerId })
   const issueStatusActiveId = await getId(knex, 'IssueStatus', 'Active')
@@ -1943,21 +1679,6 @@ async function seed(knex) {
   ])
 
   await seedDataCategory(knex, 'Myanmar')
-}
-
-function calculateDateForResult(
-  currentResult,
-  totalResults,
-  randomMillisToAdd
-) {
-  const daysToSubtract =
-    resultTimeFrameInDays -
-    Math.ceil(currentResult / totalResults * resultTimeFrameInDays)
-
-  return addMilliseconds(
-    subDays(now, daysToSubtract),
-    _.random(randomMillisToAdd)
-  )
 }
 
 async function getId(knex, table, externalId) {
