@@ -237,5 +237,21 @@ describe('stringTemplate', () => {
         )
       })
     })
+
+    describe('chaining helpers', () => {
+      it("should pass the result of a helper to it's predecessor", async () => {
+        const specifiedFormat = 'YYYY-MMMM-DD'
+        const message = await runProcessUsingDataSourceQuery(
+          `Offline since {{toLowerCase (formatDate device.lastSeenOn formatString='${specifiedFormat}')}}`
+        )
+        assert.equal(
+          message.payload,
+          `Offline since ${formatDateOrDefault(
+            messageDataSource.deviceLastSeenOn,
+            specifiedFormat
+          ).toLowerCase()}`
+        )
+      })
+    })
   })
 })
