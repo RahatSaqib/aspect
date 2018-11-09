@@ -1,11 +1,15 @@
+const proxyquire = require('proxyquire')
+const Promise = require('bluebird')
 const { assert } = require('chai')
-const {
-  processUsingHandlebarsSyntax,
-} = require('../../src/stringTemplate/service')
 const { runTest } = require('../utils/generatorFunctionUtils')
+const { formatDateOrDefault } = require('../../src/shared/date')
 
-describe('stringTemplate/processUsingHandlebarsSyntax', () => {
-  describe('process', () => {
+describe('stringTemplate', () => {
+  describe('processUsingHandlebarsSyntax', () => {
+    const {
+      processUsingHandlebarsSyntax,
+    } = require('../../src/stringTemplate/service')
+
     it('should replace matching words in the template string', () => {
       const sampleString =
         'Device in {{site.state}}, {{site.country}} is currently offline'
@@ -85,7 +89,7 @@ describe('stringTemplate/processUsingHandlebarsSyntax', () => {
 
     it('should format date without display preferences', () => {
       const sampleString =
-        'Device {{device.shortName}} is offline since {{formatDate data.offlineOn }}'
+        'Device {{device.shortName}} is offline since {{formatDate data.offlineOn}}'
       const expectedResult = 'Device  is offline since 2018-08-01'
       const inputObject = {
         device: {
@@ -124,6 +128,114 @@ describe('stringTemplate/processUsingHandlebarsSyntax', () => {
           assert.deepEqual(resultString, expectedResult)
         }
       )
+    })
+  })
+
+  describe('processUsingDataSourceQuery', () => {
+    const displayPreferences = {
+      dateFormat: 'D/M/YYYY',
+      timeFormat: 'HH:mm:ss',
+      dateTimeFormat: 'D/M/YYYY HH:mm:ss',
+    }
+    const { processUsingDataSourceQuery } = proxyquire(
+      '../../src/stringTemplate/service',
+      {
+        '../plugin/registration': {
+          loadPlugin: async () => Promise.resolve({ displayPreferences }),
+        },
+      }
+    )
+
+    const messageDataSource = {
+      siteExternalId: 'ALTEST',
+      deviceName: 'Akron Laboratory',
+      deviceLastSeenOn: new Date(2018, 7, 1, 10, 51, 13),
+      resultStartedOn: new Date(2018, 7, 1, 10, 16, 28),
+      resultEndedOn: new Date(2018, 7, 1, 10, 18, 1),
+      resultData: `{"id":1,"sampleBarcode":"SAMPLE-123"}`,
+    }
+    async function runProcessUsingDataSourceQuery(payloadTemplate) {
+      const data = Object.assign({}, messageDataSource, { payloadTemplate })
+      const templateFields = ['payloadTemplate']
+      const options = { dynamic: true }
+      return processUsingDataSourceQuery(data, templateFields, options)
+    }
+
+    describe('formatDate helper', () => {
+      it('should format date with display preferences as default', async () => {
+        const message = await runProcessUsingDataSourceQuery(
+          'Offline since {{formatDate device.lastSeenOn}}'
+        )
+        assert.equal(
+          message.payload,
+          `Offline since ${formatDateOrDefault(
+            messageDataSource.deviceLastSeenOn,
+            displayPreferences.dateFormat
+          )}`
+        )
+      })
+
+      it('should format date with a specific format is specified', async () => {
+        const specifiedFormat = 'YYYY-MM-DDHH:mm'
+        const message = await runProcessUsingDataSourceQuery(
+          `Offline since {{formatDate device.lastSeenOn formatString='${specifiedFormat}'}}`
+        )
+        assert.equal(
+          message.payload,
+          `Offline since ${formatDateOrDefault(
+            messageDataSource.deviceLastSeenOn,
+            specifiedFormat
+          )}`
+        )
+      })
+    })
+
+    describe('toLowerCase helper', () => {
+      it('should format a string value to lower case', async () => {
+        const message = await runProcessUsingDataSourceQuery(
+          `Device {{toLowerCase device.name}} is offline`
+        )
+        assert.equal(
+          message.payload,
+          `Device ${messageDataSource.deviceName.toLowerCase()} is offline`
+        )
+      })
+    })
+
+    describe('mapValue helper', () => {
+      it('should map the value to something in the value map provided', async () => {
+        const valueMap = {
+          ALTEST: 'A',
+          BLTEST: 'B',
+        }
+        const message = await runProcessUsingDataSourceQuery(
+          `External Facility Code for {{device.name}} is {{mapValue site.id valueMap='${JSON.stringify(
+            valueMap
+          )}'}}`
+        )
+        assert.equal(
+          message.payload,
+          `External Facility Code for ${messageDataSource.deviceName} is ${
+            valueMap[messageDataSource.siteExternalId]
+          }`
+        )
+      })
+
+      it("should return nothing if the value map doesn't map it", async () => {
+        const valueMap = {
+          RANDOMVALUE: 'A',
+          SOMEOTHERVALUE: 'B',
+        }
+        const message = await runProcessUsingDataSourceQuery(
+          `External Facility Code for {{device.name}} is {{mapValue site.id valueMap='${JSON.stringify(
+            valueMap
+          )}'}}`
+        )
+        assert.equal(
+          message.payload,
+          `External Facility Code for ${messageDataSource.deviceName} is `
+        )
+      })
     })
   })
 })

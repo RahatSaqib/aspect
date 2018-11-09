@@ -8,6 +8,8 @@ const handlebars = require('handlebars')
 handlebars.registerHelper('numberOfDays', numberOfDays)
 handlebars.registerHelper('isoDate', isoDate)
 handlebars.registerHelper('formatDate', formatDate)
+handlebars.registerHelper('toLowerCase', toLowerCase)
+handlebars.registerHelper('mapValue', mapValue)
 
 // See unit tests for examples
 // Can include displayPreferences
@@ -50,6 +52,8 @@ function addDataSourceToQuery(queryBuilder, aliases) {
         'r.resultData',
         'r.patientData as resultPatientData',
         'r.formData as resultFormData',
+        'r.startedOn as resultStartedOn',
+        'r.endedOn as resultEndedOn',
         knex.raw('coalesce(r.moduleName, r.moduleSerial) as resultModuleName'),
         'r.moduleSerial as resultModuleSerial',
         'r.errorCode as resultErrorCode',
@@ -119,6 +123,8 @@ async function getBaseDataSource(data) {
       formData: d.resultFormData == null ? {} : JSON.parse(d.resultFormData),
       patient:
         d.resultPatientData == null ? {} : JSON.parse(d.resultPatientData),
+      startedOn: d.resultStartedOn,
+      endedOn: d.resultEndedOn,
       moduleName: d.resultModuleName,
       moduleSerial: d.resultModuleSerial,
       errorCode: d.resultErrorCode,
@@ -188,9 +194,25 @@ function isoDate(date) {
   return parsed == null ? null : parsed.toISOString()
 }
 
-function formatDate(date) {
-  const dateFormat = _.get(this, 'displayPreferences.dateFormat', 'YYYY-MM-DD')
+function formatDate(date, options) {
+  const dateFormat =
+    options.hash.formatString ||
+    _.get(this, 'displayPreferences.dateFormat', 'YYYY-MM-DD')
   return formatDateOrDefault(date, dateFormat)
+}
+
+function toLowerCase(stringValue) {
+  if (stringValue) {
+    return stringValue.toLowerCase()
+  }
+  return stringValue
+}
+
+function mapValue(value, options) {
+  if (options.hash.valueMap) {
+    return JSON.parse(options.hash.valueMap)[value]
+  }
+  return value
 }
 
 module.exports = {
