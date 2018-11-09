@@ -1,32 +1,22 @@
 module.exports = require('../utils').seed(seed)
 
+const { updateDashboardWidgetQueries } = require('../utils')
 const {
-  updateDashboardWidgetQueries,
-  seedIssueEventTriggersForPartner,
-} = require('../utils')
-
-const { issueCategoryToId } = require('../../src/shared/dictionary')
+  updateDataCategoryNotificationTypeForRO,
+} = require('../dataCategoryLow')
 
 async function seed(knex) {
-  const moduleReplacedIssueType = await knex('IssueType')
-    .where('externalId', 'ModuleReplaced')
+  const widget = await knex('DashboardWidget')
+    .where('title', 'children')
     .first('id')
 
-  if (moduleReplacedIssueType) {
+  if (widget == null) {
     return
   }
-
-  const { id: partnerId } = await knex('Partner')
-    .where({ name: 'Myanmar' })
-    .first()
-
-  await insertModuleReplacedIssue(knex)
-  await seedIssueEventTriggersForPartner(knex, partnerId, {
-    issueTypeWhitelist: ['DeviceMaintenance', 'ModuleReplaced'],
-  })
   await removeChildrenDashboardTarget(knex)
   await updateDashboardWidgetQueries(knex)
   await turnOffEmailSms(knex)
+  await updateDataCategoryNotificationTypeForRO(knex, 'Myanmar')
 }
 
 async function removeChildrenDashboardTarget(knex) {
@@ -56,15 +46,5 @@ async function turnOffEmailSms(knex) {
   await knex('MessageType').update({
     emailTemplateId: null,
     smsTemplateId: null,
-  })
-}
-
-async function insertModuleReplacedIssue(knex) {
-  const issueCategoryDeviceHealthId = await issueCategoryToId('DeviceHealth')
-  await knex('IssueType').insert({
-    name: 'Module Replaced',
-    externalId: 'ModuleReplaced',
-    i18nKey: 'issueTypeModuleReplaced',
-    issueCategoryId: issueCategoryDeviceHealthId,
   })
 }

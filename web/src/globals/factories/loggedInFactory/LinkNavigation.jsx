@@ -44,6 +44,7 @@ export const LinkNavigation = ({
         href: '/dashboard',
         label: 'Home',
         requiredPermissions: [],
+        requiredFeatures: ['summaryDashboard'],
       },
       {
         href: '/task-list',

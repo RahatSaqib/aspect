@@ -1,10 +1,5 @@
 const _ = require('lodash')
-const {
-  subDays,
-  addMilliseconds,
-  startOfMonth,
-  subMinutes,
-} = require('date-fns')
+const { subDays, addMilliseconds, subMinutes } = require('date-fns')
 const { assert, expect } = require('chai')
 const Promise = require('bluebird')
 
@@ -148,11 +143,16 @@ describe('DataCategoryLow Issues Endpoint', () => {
         .where('u.name', 'myanmar_admin')
         .first('u.id')
 
-      // get 1st site for current partner
+      const { id: labUserId } = await knex('User')
+        .where({ name: USER_LU_NAME })
+        .first()
+
+      // get 1st site for current partner and labUser
       const { s: { geographyId } } = await getSite(knex, {
         partnerId,
         countryAbbreviation,
         requireInventory: true,
+        userId: labUserId,
       })
 
       // create new site for same partner and same geography
@@ -321,10 +321,10 @@ describe('DataCategoryLow Issues Endpoint', () => {
 
   it('trigger DataCategoryLow issue for testing site', async () => {
     await runTestWithKnex(async knex => {
-      // current month
+      // last 30 days
       const period = {
-        name: 'current month',
-        dateFrom: startOfMonth(now),
+        name: 'last 30 days',
+        dateFrom: subDays(now, 30),
         dateTo: now,
       }
       // get item for our testing category
@@ -417,43 +417,45 @@ describe('DataCategoryLow Issues Endpoint', () => {
           'am.message as alertMessage'
         )
 
-      expect(notifications.length).to.equal(3)
-      const [notifLU, notifRO1, notifRO2] = notifications
+      expect(notifications.length).to.equal(2)
+      const notifLU = _.find(notifications, {
+        jobFunction: 'Lab User',
+        canAcknowledge: 1,
+        level: 1,
+      })
+      const notifLUROView = _.find(notifications, {
+        jobFunction: 'Regional Officer',
+        canAcknowledge: 0,
+        level: 1,
+      })
+
+      expect(notifLU.userName).to.include(USER_LU_NAME_PREFIX)
+      expect(notifLUROView.userName).to.include(USER_RO_NAME_PREFIX)
 
       // helper func for asserting similar things for each notification
-      const assertNotif = (
-        notification,
-        userNamePrefix,
-        jobFunction,
-        level,
-        canAcknowledge
-      ) => {
+      const assertNotif = (notification, userNamePrefix) => {
         expect(notification.userName).to.include(userNamePrefix)
-        assert.equal(notification.jobFunction, jobFunction)
-        assert.equal(notification.level, level)
-        assert.equal(notification.canAcknowledge, canAcknowledge)
+
+        // check alert message
+        assert.equal(
+          notification.alertMessage,
+          processUsingHandlebarsSyntax(
+            `Data category '{{issue.data.categoryName}}' for {{issue.data.periodName}} is low ({{issue.data.percentage}}%)`,
+            {
+              issue: {
+                data: {
+                  categoryName,
+                  periodName,
+                  percentage,
+                },
+              },
+            }
+          )
+        )
       }
       // see /seeds/dataCategory.js for NotificationType items
-      assertNotif(notifLU, USER_LU_NAME_PREFIX, 'Lab User', 1, 1)
-      assertNotif(notifRO1, USER_RO_NAME_PREFIX, 'Regional Officer', 1, 1)
-      assertNotif(notifRO2, USER_RO_NAME_PREFIX, 'Regional Officer', 1, 0)
-
-      // check alert message
-      assert.equal(
-        notifRO1.alertMessage,
-        processUsingHandlebarsSyntax(
-          `Data category '{{issue.data.categoryName}}' for {{issue.data.periodName}} is low ({{issue.data.percentage}}%)`,
-          {
-            issue: {
-              data: {
-                categoryName,
-                periodName,
-                percentage,
-              },
-            },
-          }
-        )
-      )
+      assertNotif(notifLU, USER_LU_NAME_PREFIX, 'Lab User')
+      assertNotif(notifLUROView, USER_RO_NAME_PREFIX, 'Regional Officer')
     })
   })
 })
