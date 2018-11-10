@@ -15,6 +15,10 @@ handlebars.registerHelper('enclose', enclose)
 handlebars.registerHelper('escapeLines', escapeLines)
 handlebars.registerHelper('urlEncode', urlEncode)
 handlebars.registerHelper('tryMergeResultCategories', tryMergeResultCategories)
+handlebars.registerHelper(
+  'extractValueFromRegexCaptureGroup',
+  extractValueFromRegexCaptureGroup
+)
 
 // See unit tests for examples
 // Can include displayPreferences
@@ -324,6 +328,25 @@ function tryMergeResultCategories(resultCategory1, resultCategory2) {
     }
   }
   return resultCategory1 || resultCategory2
+}
+
+function extractValueFromRegexCaptureGroup(stringValue, options) {
+  let rawValue = stringValue
+  if (stringValue instanceof handlebars.SafeString) {
+    rawValue = stringValue.string
+  }
+  if (_.isNil(rawValue)) {
+    return null
+  }
+  const expression = getArgumentFromOptions(options, 'expression')
+  const groupNumber = _.get(options, ['hash', 'groupNumber'], 1)
+  if (expression) {
+    const regex = new RegExp(expression, 'g')
+    const match = regex.exec(stringValue)
+    if (match && match.length > groupNumber) {
+      return safeString(match[groupNumber])
+    }
+  }
 }
 
 module.exports = {

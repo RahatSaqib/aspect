@@ -168,8 +168,8 @@ describe('stringTemplate', () => {
       resultCategory2ExternalId: 'NotDetected',
     }
 
-    async function runProcessUsingDataSourceQuery(payloadTemplate) {
-      const data = Object.assign({}, messageDataSource, { payloadTemplate })
+    async function runProcessUsingDataSourceQuery(payloadTemplate, changesToMessageDataSource = {}) {
+      const data = Object.assign({}, messageDataSource, changesToMessageDataSource, { payloadTemplate })
       const templateFields = ['payloadTemplate']
       const options = { dynamic: true }
       return processUsingDataSourceQuery(data, templateFields, options)
@@ -364,6 +364,55 @@ describe('stringTemplate', () => {
           message.payload,
           `Result error notes: ${encodeURI(messageDataSource.resultErrorNotes)}`
         )
+      })
+    })
+
+    describe('extractValueFromRegexCaptureGroup helper', () => {
+      it('should return the value in the matched group', async () => {
+        let message = await runProcessUsingDataSourceQuery(
+          `Result Numeric Value: {{extractValueFromRegexCaptureGroup result.data.hiv2Result expression='((< )?\\d*) cp\\/mL' groupNumber=1}}`,
+          {
+            resultData: `{"hiv2Result":"< 800 cp/mL"}`,
+          }
+        )
+        assert.equal(message.payload, 'Result Numeric Value: < 800')
+        message = await runProcessUsingDataSourceQuery(
+          `Result Numeric Value: {{extractValueFromRegexCaptureGroup result.data.hiv2Result expression='((< )?\\d*) cp\\/mL' groupNumber=1}}`,
+          {
+            resultData: `{"hiv2Result":"2299 cp/mL"}`,
+          }
+        )
+        assert.equal(message.payload, 'Result Numeric Value: 2299')
+      })
+
+      it('should default group number to 1', async () => {
+        const message = await runProcessUsingDataSourceQuery(
+          `Result Numeric Value: {{extractValueFromRegexCaptureGroup result.data.hiv2Result expression='((< )?\\d*) cp\\/mL'}}`,
+          {
+            resultData: `{"hiv2Result":"< 800 cp/mL"}`,
+          }
+        )
+        assert.equal(message.payload, 'Result Numeric Value: < 800')
+      })
+
+      it('should provide nothing when expression is not defined', async () => {
+        const message = await runProcessUsingDataSourceQuery(
+          `Result Numeric Value: {{extractValueFromRegexCaptureGroup result.data.hiv2Result}}`,
+          {
+            resultData: `{"hiv2Result":"< 800 cp/mL"}`,
+          }
+        )
+        assert.equal(message.payload, 'Result Numeric Value: ')
+      })
+
+      it('should allow expression to be provided as the default option', async () => {
+        const message = await runProcessUsingDataSourceQuery(
+          `Result Numeric Value: {{extractValueFromRegexCaptureGroup result.data.hiv2Result '((< )?\\d*) cp\\/mL'}}`,
+          {
+            resultData: `{"hiv2Result":"< 800 cp/mL"}`,
+          }
+        )
+        assert.equal(message.payload, 'Result Numeric Value: < 800')
       })
     })
 
