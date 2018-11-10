@@ -21,6 +21,7 @@ const {
   resultMachinePowerError,
   resultModuleUnknownError,
   resultMachineUnknownError,
+  resultModuleReplaced,
 } = require('../../../src/result/actions')
 const { inventoryReagentHealth } = require('../../../src/inventory/actions')
 const { resolveIssues } = require('../../../src/issue/actions')
@@ -916,6 +917,7 @@ describe('Myanmar Issue endpoints', () => {
             .join('IssueType as it', 'i.issueTypeId', 'it.id')
             .join('IssueStatus as is', 'i.issueStatusId', 'is.id')
             .where({ 'i.deviceId': deviceId })
+            .whereNot('it.externalId', 'ModuleReplaced')
             .select(
               'i.id',
               'it.externalId as issueType',
@@ -960,7 +962,7 @@ describe('Myanmar Issue endpoints', () => {
     runTest(async knex => {
       const { now } = context
 
-      // Post to deviceApi to ensure the device in in Aspect
+      // Post to deviceApi to ensure the device is in Aspect
       const response = await postToDeviceApi({
         authHeader: deviceAuth,
         payload: _.merge({}, basicDevicePayload, {
@@ -1034,7 +1036,7 @@ describe('Myanmar Issue endpoints', () => {
             serial: instrumentSerial,
             module: {
               serial: moduleSerial,
-              name: 'A1',
+              name: 'A2',
             },
           },
         }
@@ -1077,6 +1079,7 @@ describe('Myanmar Issue endpoints', () => {
             .join('IssueType as it', 'i.issueTypeId', 'it.id')
             .join('IssueStatus as is', 'i.issueStatusId', 'is.id')
             .where({ 'i.deviceId': deviceId })
+            .whereNot('it.externalId', 'ModuleReplaced')
             .select(
               'i.id',
               'it.externalId as issueType',
@@ -2049,6 +2052,299 @@ describe('Myanmar Issue endpoints', () => {
         'Resolved',
         await getIssueStatusByIssueId(knex, machineUnknownErrorId)
       )
+    }))
+
+  it('should create a module replaced issue when a new serial is detected in a slot', () =>
+    runTest(async knex => {
+      const { now } = context
+
+      // Post to deviceApi to ensure the device in in Aspect
+      const response = await postToDeviceApi({
+        authHeader: deviceAuth,
+        payload: _.merge({}, basicDevicePayload, {
+          name: deviceName,
+        }),
+      })
+      const deviceId = response.body.device.id
+
+      // Post one result to slot A1
+      let resultId = `UNIQUE-ID-1`
+      let sampleId = `GENMAC25521`
+      let moduleSerial = `GENMAC123A`
+      let instrumentSerial = `CEPH-PC-123`
+      let testStartedOn = setMilliseconds(subDays(now, 3), 0)
+      let testEndedOn = setMilliseconds(addHours(testStartedOn, 2), 0)
+
+      let result = {
+        id: resultId,
+        startedOn: testStartedOn,
+        endedOn: testEndedOn,
+        sample: { id: sampleId },
+        instrument: {
+          serial: instrumentSerial,
+          module: {
+            serial: moduleSerial,
+            name: 'A1',
+          },
+        },
+      }
+
+      let payload = _.merge(
+        {},
+        basicDevicePayload,
+        { name: deviceName },
+        basicResultPayload,
+        {
+          result,
+        }
+      )
+      await postToDeviceApi({
+        authHeader: deviceAuth,
+        payload,
+      })
+
+      // Post one result with a different module serial to the same slot
+      let moduleReplacedIssueId = null
+      resultId = `UNIQUE-ID-2`
+      sampleId = `GENMAC25B2`
+      moduleSerial = `GENMAC123B`
+      instrumentSerial = `CEPH-PC-123`
+      testStartedOn = setMilliseconds(subDays(now, 2), 0)
+      testEndedOn = setMilliseconds(addHours(testStartedOn, 2), 0)
+
+      // Post the result with the new module serial
+      result = {
+        id: resultId,
+        startedOn: testStartedOn,
+        endedOn: testEndedOn,
+        sample: { id: sampleId },
+        instrument: {
+          serial: instrumentSerial,
+          module: {
+            serial: moduleSerial,
+            name: 'A1',
+          },
+        },
+      }
+
+      payload = _.merge(
+        {},
+        basicDevicePayload,
+        { name: deviceName },
+        basicResultPayload,
+        {
+          result,
+        }
+      )
+
+      // Should create module replaced issue
+      const waitForModuleReplacedIssue = waitForAction(
+        resultModuleReplaced(deviceId)
+      )
+      await postToDeviceApi({
+        authHeader: deviceAuth,
+        payload,
+      })
+      await waitForModuleReplacedIssue
+      await waitForIdle()
+
+      const issues = await getIssuesByDeviceId(knex, deviceId)
+      assert.equal(issues.length, 1)
+      assert.equal(issues[0].issueType, 'ModuleReplaced')
+      assert.equal(issues[0].deviceId, deviceId)
+      assert.equal(issues[0].issueStatus, 'Active')
+      moduleReplacedIssueId = issues[0].id
+
+      await dispatchAndWaitForAction(resolveIssues(moduleReplacedIssueId))
+      assert.equal(
+        'Active',
+        await getIssueStatusByIssueId(knex, moduleReplacedIssueId)
+      )
+    }))
+
+  it('should NOT create a module replaced issue when a new serial is detected in a different slot', () =>
+    runTest(async knex => {
+      const { now } = context
+
+      // Post to deviceApi to ensure the device in in Aspect
+      const response = await postToDeviceApi({
+        authHeader: deviceAuth,
+        payload: _.merge({}, basicDevicePayload, {
+          name: deviceName,
+        }),
+      })
+      const deviceId = response.body.device.id
+
+      // Post one result to slot A1
+      let resultId = `UNIQUE-ID-1`
+      let sampleId = `GENMAC25521`
+      let moduleSerial = `GENMAC123A`
+      let instrumentSerial = `CEPH-PC-123`
+      let testStartedOn = setMilliseconds(subDays(now, 3), 0)
+      let testEndedOn = setMilliseconds(addHours(testStartedOn, 2), 0)
+
+      let result = {
+        id: resultId,
+        startedOn: testStartedOn,
+        endedOn: testEndedOn,
+        sample: { id: sampleId },
+        instrument: {
+          serial: instrumentSerial,
+          module: {
+            serial: moduleSerial,
+            name: 'A1',
+          },
+        },
+      }
+
+      let payload = _.merge(
+        {},
+        basicDevicePayload,
+        { name: deviceName },
+        basicResultPayload,
+        {
+          result,
+        }
+      )
+      await postToDeviceApi({
+        authHeader: deviceAuth,
+        payload,
+      })
+
+      // Post one result with a different module serial to the same slot
+      resultId = `UNIQUE-ID-2`
+      sampleId = `GENMAC25B2`
+      moduleSerial = `GENMAC123B`
+      instrumentSerial = `CEPH-PC-123`
+      testStartedOn = setMilliseconds(subDays(now, 2), 0)
+      testEndedOn = setMilliseconds(addHours(testStartedOn, 2), 0)
+
+      // Post the result with the new module serial
+      result = {
+        id: resultId,
+        startedOn: testStartedOn,
+        endedOn: testEndedOn,
+        sample: { id: sampleId },
+        instrument: {
+          serial: instrumentSerial,
+          module: {
+            serial: moduleSerial,
+            name: 'B2',
+          },
+        },
+      }
+
+      payload = _.merge(
+        {},
+        basicDevicePayload,
+        { name: deviceName },
+        basicResultPayload,
+        {
+          result,
+        }
+      )
+
+      // Should NOT create module replaced issue
+      await postToDeviceApi({
+        authHeader: deviceAuth,
+        payload,
+      })
+      await waitForIdle()
+
+      const issues = await getIssuesByDeviceId(knex, deviceId)
+      assert.equal(issues.length, 0)
+    }))
+
+  it('should NOT create a module replaced issue when the same serial is detected in a slot', () =>
+    runTest(async knex => {
+      const { now } = context
+
+      // Post to deviceApi to ensure the device in in Aspect
+      const response = await postToDeviceApi({
+        authHeader: deviceAuth,
+        payload: _.merge({}, basicDevicePayload, {
+          name: deviceName,
+        }),
+      })
+      const deviceId = response.body.device.id
+
+      // Post one result to slot A1
+      let resultId = `UNIQUE-ID-1`
+      let sampleId = `GENMAC25521`
+      const moduleSerial = `GENMAC123A`
+      let instrumentSerial = `CEPH-PC-123`
+      let testStartedOn = setMilliseconds(subDays(now, 3), 0)
+      let testEndedOn = setMilliseconds(addHours(testStartedOn, 2), 0)
+
+      let result = {
+        id: resultId,
+        startedOn: testStartedOn,
+        endedOn: testEndedOn,
+        sample: { id: sampleId },
+        instrument: {
+          serial: instrumentSerial,
+          module: {
+            serial: moduleSerial,
+            name: 'A1',
+          },
+        },
+      }
+
+      let payload = _.merge(
+        {},
+        basicDevicePayload,
+        { name: deviceName },
+        basicResultPayload,
+        {
+          result,
+        }
+      )
+      await postToDeviceApi({
+        authHeader: deviceAuth,
+        payload,
+      })
+
+      // Post one result with a different module serial to the same slot
+      resultId = `UNIQUE-ID-2`
+      sampleId = `GENMAC25B2`
+      instrumentSerial = `CEPH-PC-123`
+      testStartedOn = setMilliseconds(subDays(now, 2), 0)
+      testEndedOn = setMilliseconds(addHours(testStartedOn, 2), 0)
+
+      // Post the result with the new module serial
+      result = {
+        id: resultId,
+        startedOn: testStartedOn,
+        endedOn: testEndedOn,
+        sample: { id: sampleId },
+        instrument: {
+          serial: instrumentSerial,
+          module: {
+            serial: moduleSerial,
+            name: 'A1',
+          },
+        },
+      }
+
+      payload = _.merge(
+        {},
+        basicDevicePayload,
+        { name: deviceName },
+        basicResultPayload,
+        {
+          result,
+        }
+      )
+
+      // Should NOT create module replaced issue
+      await postToDeviceApi({
+        authHeader: deviceAuth,
+        payload,
+      })
+      await waitForIdle()
+
+      const issues = await getIssuesByDeviceId(knex, deviceId)
+      assert.equal(issues.length, 0)
     }))
 })
 
