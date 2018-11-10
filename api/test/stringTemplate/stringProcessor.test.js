@@ -168,8 +168,16 @@ describe('stringTemplate', () => {
       resultCategory2ExternalId: 'NotDetected',
     }
 
-    async function runProcessUsingDataSourceQuery(payloadTemplate, changesToMessageDataSource = {}) {
-      const data = Object.assign({}, messageDataSource, changesToMessageDataSource, { payloadTemplate })
+    async function runProcessUsingDataSourceQuery(
+      payloadTemplate,
+      changesToMessageDataSource = {}
+    ) {
+      const data = Object.assign(
+        {},
+        messageDataSource,
+        changesToMessageDataSource,
+        { payloadTemplate }
+      )
       const templateFields = ['payloadTemplate']
       const options = { dynamic: true }
       return processUsingDataSourceQuery(data, templateFields, options)
@@ -367,6 +375,47 @@ describe('stringTemplate', () => {
       })
     })
 
+    describe('isRegexMatch helper', () => {
+      it('should return true is the value matches the regex', async () => {
+        const template = `{{#if (isRegexMatch result.data.hiv2Result expression='((< )?\\d*) cp\\/mL')}}Result has numeric value{{else}}Result does not have numeric value{{/if}}`
+        let message = await runProcessUsingDataSourceQuery(template, {
+          resultData: `{"hiv2Result":"< 800 cp/mL"}`,
+        })
+        assert.equal(message.payload, 'Result has numeric value')
+        message = await runProcessUsingDataSourceQuery(template, {
+          resultData: `{"hiv2Result":"Undetected"}`,
+        })
+        assert.equal(message.payload, 'Result does not have numeric value')
+      })
+
+      it('should provide falsey when expression is not defined', async () => {
+        const message = await runProcessUsingDataSourceQuery(
+          `{{#if (isRegexMatch result.data.hiv2Result)}}Result has numeric value{{else}}Result does not have numeric value{{/if}}`,
+          {
+            resultData: `{"hiv2Result":"< 800 cp/mL"}`,
+          }
+        )
+        assert.equal(message.payload, 'Result does not have numeric value')
+      })
+
+      it('should allow expression to be provided as the default option', async () => {
+        const message = await runProcessUsingDataSourceQuery(
+          `{{#if (isRegexMatch result.data.hiv2Result '((< )?\\d*) cp\\/mL')}}Result has numeric value{{else}}Result does not have numeric value{{/if}}`,
+          {
+            resultData: `{"hiv2Result":"< 800 cp/mL"}`,
+          }
+        )
+        assert.equal(message.payload, 'Result has numeric value')
+      })
+
+      it('should provide falsey when value is not defined', async () => {
+        const message = await runProcessUsingDataSourceQuery(
+          `{{#if (isRegexMatch result.data.someUndefinedValue '((< )?\\d*) cp\\/mL')}}Result has numeric value{{else}}Result does not have numeric value{{/if}}`
+        )
+        assert.equal(message.payload, 'Result does not have numeric value')
+      })
+    })
+
     describe('extractValueFromRegexCaptureGroup helper', () => {
       it('should return the value in the matched group', async () => {
         let message = await runProcessUsingDataSourceQuery(
@@ -413,6 +462,13 @@ describe('stringTemplate', () => {
           }
         )
         assert.equal(message.payload, 'Result Numeric Value: < 800')
+      })
+
+      it('should provide nothing when value is not defined', async () => {
+        const message = await runProcessUsingDataSourceQuery(
+          `Result Numeric Value: {{extractValueFromRegexCaptureGroup result.data.someUndefinedValue '((< )?\\d*) cp\\/mL'}}`
+        )
+        assert.equal(message.payload, 'Result Numeric Value: ')
       })
     })
 

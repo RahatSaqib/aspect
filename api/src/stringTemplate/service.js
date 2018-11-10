@@ -15,6 +15,7 @@ handlebars.registerHelper('enclose', enclose)
 handlebars.registerHelper('escapeLines', escapeLines)
 handlebars.registerHelper('urlEncode', urlEncode)
 handlebars.registerHelper('tryMergeResultCategories', tryMergeResultCategories)
+handlebars.registerHelper('isRegexMatch', isRegexMatch)
 handlebars.registerHelper(
   'extractValueFromRegexCaptureGroup',
   extractValueFromRegexCaptureGroup
@@ -330,21 +331,34 @@ function tryMergeResultCategories(resultCategory1, resultCategory2) {
   return resultCategory1 || resultCategory2
 }
 
+function isRegexMatch(stringValue, options) {
+  let rawValue = stringValue
+  if (stringValue instanceof handlebars.SafeString) {
+    rawValue = stringValue.string
+  }
+  if (!_.isNil(rawValue)) {
+    const expression = getArgumentFromOptions(options, 'expression')
+    if (expression) {
+      const regex = new RegExp(expression, 'g')
+      return !_.isNull(stringValue.match(regex))
+    }
+  }
+}
+
 function extractValueFromRegexCaptureGroup(stringValue, options) {
   let rawValue = stringValue
   if (stringValue instanceof handlebars.SafeString) {
     rawValue = stringValue.string
   }
-  if (_.isNil(rawValue)) {
-    return null
-  }
-  const expression = getArgumentFromOptions(options, 'expression')
-  const groupNumber = _.get(options, ['hash', 'groupNumber'], 1)
-  if (expression) {
-    const regex = new RegExp(expression, 'g')
-    const match = regex.exec(stringValue)
-    if (match && match.length > groupNumber) {
-      return safeString(match[groupNumber])
+  if (!_.isNil(rawValue)) {
+    const expression = getArgumentFromOptions(options, 'expression')
+    const groupNumber = _.get(options, ['hash', 'groupNumber'], 1)
+    if (expression) {
+      const regex = new RegExp(expression, 'g')
+      const match = regex.exec(stringValue)
+      if (match && match.length > groupNumber) {
+        return safeString(match[groupNumber])
+      }
     }
   }
 }
