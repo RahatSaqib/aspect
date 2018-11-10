@@ -73,9 +73,10 @@ async function onResultLogged({ resultId }, { messageContext }) {
       .join('IssueType as it', 'it.id', 'i.issueTypeId')
       .where('it.externalId', 'ModuleReplaced')
       .where('i.deviceId', deviceId)
-      .select(knex.raw('data->>"$.moduleSerial" as moduleSerial'))
-      .map(s => s.moduleSerial)
-
+      .select(
+        knex.raw('data->>"$.replacedModuleSerial" as replacedModuleSerial')
+      )
+      .map(s => s.replacedModuleSerial)
     // check if a module was just now replaced and trigger replacement-issue if it was
     if (
       result.moduleName &&
@@ -90,15 +91,16 @@ async function onResultLogged({ resultId }, { messageContext }) {
         .whereNot('id', resultId)
         .whereRaw('endedOn < ?', [result.endedOn])
         .orderBy('endedOn', 'desc')
-        .first()
-
+        .first('moduleSerial')
       if (
         previousResultOnModule &&
-        previousResultOnModule.moduleSerial !== result.moduleSerial
+        previousResultOnModule.moduleSerial !== result.moduleSerial &&
+        !replacedModuleSerials.includes(previousResultOnModule.moduleSerial)
       ) {
-        context.resultModuleReplaced(resultId, {
+        context.resultModuleReplaced(deviceId, {
           moduleName: result.moduleName,
-          moduleSerial: previousResultOnModule.moduleSerial,
+          replacedModuleSerial: previousResultOnModule.moduleSerial,
+          newModuleSerial: result.moduleSerial,
         })
         replacedModuleSerials.push(previousResultOnModule.moduleSerial)
       }
