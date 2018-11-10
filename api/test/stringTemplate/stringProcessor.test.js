@@ -472,6 +472,28 @@ describe('stringTemplate', () => {
       })
     })
 
+    describe('ifEquals helper', () => {
+      it('should branch in when values are equal', async () => {
+        const message = await runProcessUsingDataSourceQuery(
+          `{{#ifEquals result.data.hiv2Result '< 800 cp/mL'}}Values Are Equal{{else}}Values Are NOT Equal{{/ifEquals}}`,
+          {
+            resultData: `{"hiv2Result":"< 800 cp/mL"}`,
+          }
+        )
+        assert.equal(message.payload, 'Values Are Equal')
+      })
+
+      it('should branch into else when values are not equal', async () => {
+        const message = await runProcessUsingDataSourceQuery(
+          `{{#ifEquals result.data.hiv2Result '< 800 cp/mL'}}Values Are Equal{{else}}Values Are NOT Equal{{/ifEquals}}`,
+          {
+            resultData: `{"hiv2Result":"Detected"}`,
+          }
+        )
+        assert.equal(message.payload, 'Values Are NOT Equal')
+      })
+    })
+
     describe('chaining helpers', () => {
       it("should pass the result of a helper to it's predecessor", async () => {
         const specifiedFormat = 'YYYY-MMMM-DD'
@@ -488,101 +510,175 @@ describe('stringTemplate', () => {
           )}`
         )
       })
+    })
 
-      describe('use case for SA NHLS', () => {
-        it('should process RedCAP API Payloads', async () => {
-          const redCapDateTimeFormat = 'YYYY-MM-DD HH:mm'
+    describe('use cases for SA NHLS', () => {
+      it('should process RedCAP API Payloads', async () => {
+        const redCapDateTimeFormat = 'YYYY-MM-DD HH:mm'
+        const template =
+          `token=1A234567B8C90D12345E6789F0G1234H&content=record&format=json&type=flat&overwriteBehavior=normal&forceAutoNumber=true&data=%5B%7B%22` +
+          `record_id%22%3A%221%22%2C+` +
+          `%22redcap_data_access_group%22%3A{{urlEncode (enclose (toLowerCase (defaultTo site.id '')) with='"')}}%2C+` +
+          `%22first_name%22%3A{{urlEncode (enclose (defaultTo result.formData.nameOfPatient '') with='"')}}%2C+` +
+          `%22surname%22%3A{{urlEncode (enclose (defaultTo result.formData.surnameOfPatient '') with='"')}}%2C+` +
+          `%22hospital_number%22%3A{{urlEncode (enclose (defaultTo result.formData.hospitalNumber '') with='"')}}%2C+` +
+          `%22site_code%22%3A{{urlEncode (enclose (defaultTo (mapValue site.id '{"DNAH":"D","kalafong":"K","CMJAH":"J","RMMCH":"R","CHBAH":"B"}') '') with='"')}}%2C+` +
+          `%22ward_cubicle%22%3A{{urlEncode (enclose (defaultTo result.formData.ward '') with='"')}}%2C+` +
+          `%22sample_category%22%3A{{urlEncode (enclose (defaultTo result.formData.sampleType '') with='"')}}%2C+` +
+          `%22instrument_ca%22%3A{{urlEncode (enclose (defaultTo (mapValue device.deviceType '{"CepheidGeneXpert":"1","AlereQ":"2"}') '') with='"')}}%2C+` +
+          `%22assayhiv%22%3A{{urlEncode (enclose (defaultTo (mapValue result.assay.id '{"assayAlereQHiv12VLPlasma":"1","assayAlereQHiv12Detect":"2","GxHiv1Vl":"1","GxHiv1Qual":"2"}') '') with='"')}}%2C+` +
+          `%22sample_barcode%22%3A{{urlEncode (enclose (defaultTo result.sample.id '') with='"')}}%2C+` +
+          `%22sample_taken%22%3A{{urlEncode (enclose (defaultTo (formatDate result.formData.timeSampleTaken '${redCapDateTimeFormat}') '') with='"')}}%2C+` +
+          `%22point_of_care_instrument_r%22%3A{{urlEncode (enclose (defaultTo (mapValue (tryMergeResultCategories result.category1.id result.category2.id) '{"Detected":"1","MoreThan1000":"1","LessThan1000":"1","Trace Detected":"1","NotDetected":"2","NoResult":"3","Discordant":"3","Indeterminate":"3","Invalid":"3","Success":"3","CollectNewSample":"3","Rejected":"3","Missing":"3","Unknown":"3","Error":"4"}') '') with='"')}}%2C+` +
+          `%22error_code1%22%3A{{urlEncode (enclose (defaultTo result.errorCode '') with='"')}}%2C+` +
+          `%22poc_viral_load%22%3A%22%22%2C+` +
+          `%22ct_value%22%3A{{urlEncode (enclose (defaultTo result.data.probes.probeCCt '0') with='"')}}%2C+` +
+          `%22result_instrument%22%3A{{urlEncode (enclose (defaultTo (formatDate result.formData.timeInstrumentResulted '${redCapDateTimeFormat}') '') with='"')}}` +
+          `%7D%5D&returnContent=ids&returnFormat=json`
+        const redCapDeviceTypeCodes = {
+          CepheidGeneXpert: '1',
+          AlereQ: '2',
+        }
+        const redCapAssayCodes = {
+          assayAlereQHiv12VLPlasma: '1',
+          assayAlereQHiv12Detect: '2',
+          GxHiv1Vl: '1',
+          GxHiv1Qual: '2',
+        }
+        const redCapSiteCodes = {
+          DNAH: 'D',
+          kalafong: 'K',
+          CMJAH: 'J',
+          RMMCH: 'R',
+          CHBAH: 'B',
+        }
+        const redCapResultCategoryCodes = {
+          Detected: '1',
+          MoreThan1000: '1',
+          LessThan1000: '1',
+          'Trace Detected': '1',
+          NotDetected: '2',
+          NoResult: '3',
+          Discordant: '3',
+          Indeterminate: '3',
+          Invalid: '3',
+          Success: '3',
+          CollectNewSample: '3',
+          Rejected: '3',
+          Missing: '3',
+          Unknown: '3',
+          Error: '4',
+        }
+        const tryMergeResultCategories = (resultCategory1, resultCategory2) => {
+          const priorityResult = (resultCategories, resultCateoryId) => {
+            if (resultCategories.includes(resultCateoryId)) {
+              return resultCateoryId
+            }
+          }
+          const resultCategories = [resultCategory1, resultCategory2]
+          const orderedPriorityCategories = [
+            'Error',
+            'Discordant',
+            'Detected',
+            'MoreThan1000',
+            'LessThan1000',
+            'Trace Detected',
+            'NotDetected',
+            'Invalid',
+            'Indeterminate',
+            'NoResult',
+          ]
+          for (let i = 0; i < orderedPriorityCategories.length; i++) {
+            const foundPriorityCategory = priorityResult(
+              resultCategories,
+              orderedPriorityCategories
+            )
+            if (foundPriorityCategory) {
+              return foundPriorityCategory
+            }
+          }
+          return resultCategory1 || resultCategory2
+        }
+
+        const useCases = [
+          {
+            assayExternalId: 'assayAlereQHiv12Detect',
+            resultCategory1ExternalId: 'Error',
+            resultCategory2ExternalId: 'Error',
+            deviceTypeExternalId: 'AlereQ',
+            resultData: `{"hiv1OResult":"---","hiv1MNResult":"---","hiv2Result":"---","errorCode":"18006","id":1,"sampleBarcode":"SAMPLE-123","operator":"RHANDZU","resultNo":1,"sampleId":"FUNCTION TEST","testName":"Alere™ q HIV-1/2 Detect","timeStamp":"2018-10-05T13:40:46","pickedUpOn":"2018-11-08T14:06:21.305072","sourceFile":"/home/south_africa_nhls/ftp/alere_q/01-01_NAT-04000925_2018-10-31-11-18-58.csv.zip","cartridgeId":"0479001033","deviceCheck":"Fail","deviceSerial":"NAT-04000925","analysisCheck":"----","negativeControl":"----","sampleDetection":"----","softwareVersion":"0.24.2","hiv1PositiveControl":"----","hiv2PositiveControl":"----"}`,
+          },
+          {
+            assayExternalId: 'assayAlereQHiv12Detect',
+            resultCategory1ExternalId: 'NoResult',
+            resultCategory2ExternalId: 'NoResult',
+            deviceTypeExternalId: 'AlereQ',
+            resultData: `{"hiv1OResult":"None","hiv1MNResult":"None","hiv2Result":"None","errorCode":"18006","id":1,"sampleBarcode":"SAMPLE-123","operator":"RHANDZU","resultNo":1,"sampleId":"FUNCTION TEST","testName":"Alere™ q HIV-1/2 Detect","timeStamp":"2018-10-05T13:40:46","pickedUpOn":"2018-11-08T14:06:21.305072","sourceFile":"/home/south_africa_nhls/ftp/alere_q/01-01_NAT-04000925_2018-10-31-11-18-58.csv.zip","cartridgeId":"0479001033","deviceCheck":"Fail","deviceSerial":"NAT-04000925","analysisCheck":"----","negativeControl":"----","sampleDetection":"----","softwareVersion":"0.24.2","hiv1PositiveControl":"----","hiv2PositiveControl":"----"}`,
+          },
+          {
+            assayExternalId: 'assayAlereQHiv12Detect',
+            resultCategory1ExternalId: 'Detected',
+            resultCategory2ExternalId: 'NotDetected',
+            deviceTypeExternalId: 'AlereQ',
+            resultData: `{"hiv1OResult":"Detected","hiv1MNResult":"Undetected","hiv2Result":"Undetected","errorCode":"0","id":1,"sampleBarcode":"SAMPLE-123","operator":"RHANDZU","resultNo":1,"sampleId":"FUNCTION TEST","testName":"Alere™ q HIV-1/2 Detect","timeStamp":"2018-10-05T13:40:46","pickedUpOn":"2018-11-08T14:06:21.305072","sourceFile":"/home/south_africa_nhls/ftp/alere_q/01-01_NAT-04000925_2018-10-31-11-18-58.csv.zip","cartridgeId":"0479001033","deviceCheck":"Fail","deviceSerial":"NAT-04000925","analysisCheck":"----","negativeControl":"----","sampleDetection":"----","softwareVersion":"0.24.2","hiv1PositiveControl":"----","hiv2PositiveControl":"----"}`,
+          },
+          {
+            assayExternalId: 'assayAlereQHiv12Detect',
+            resultCategory1ExternalId: 'Detected',
+            resultCategory2ExternalId: 'NotDetected',
+            deviceTypeExternalId: 'AlereQ',
+            resultData: `{"hiv1OResult":"Undetected","hiv1MNResult":"Detected","hiv2Result":"Undetected","errorCode":"0","id":1,"sampleBarcode":"SAMPLE-123","operator":"RHANDZU","resultNo":1,"sampleId":"FUNCTION TEST","testName":"Alere™ q HIV-1/2 Detect","timeStamp":"2018-10-05T13:40:46","pickedUpOn":"2018-11-08T14:06:21.305072","sourceFile":"/home/south_africa_nhls/ftp/alere_q/01-01_NAT-04000925_2018-10-31-11-18-58.csv.zip","cartridgeId":"0479001033","deviceCheck":"Fail","deviceSerial":"NAT-04000925","analysisCheck":"----","negativeControl":"----","sampleDetection":"----","softwareVersion":"0.24.2","hiv1PositiveControl":"----","hiv2PositiveControl":"----"}`,
+          },
+          {
+            assayExternalId: 'assayAlereQHiv12Detect',
+            resultCategory1ExternalId: 'NotDetected',
+            resultCategory2ExternalId: 'Detected',
+            deviceTypeExternalId: 'AlereQ',
+            resultData: `{"hiv1OResult":"Undetected","hiv1MNResult":"Undetected","hiv2Result":"Detected","errorCode":"0","id":1,"sampleBarcode":"SAMPLE-123","operator":"RHANDZU","resultNo":1,"sampleId":"FUNCTION TEST","testName":"Alere™ q HIV-1/2 Detect","timeStamp":"2018-10-05T13:40:46","pickedUpOn":"2018-11-08T14:06:21.305072","sourceFile":"/home/south_africa_nhls/ftp/alere_q/01-01_NAT-04000925_2018-10-31-11-18-58.csv.zip","cartridgeId":"0479001033","deviceCheck":"Fail","deviceSerial":"NAT-04000925","analysisCheck":"----","negativeControl":"----","sampleDetection":"----","softwareVersion":"0.24.2","hiv1PositiveControl":"----","hiv2PositiveControl":"----"}`,
+          },
+          {
+            assayExternalId: 'assayAlereQHiv12VLPlasma',
+            resultCategory1ExternalId: 'Error',
+            resultCategory2ExternalId: 'Error',
+            deviceTypeExternalId: 'AlereQ',
+            resultData: `{"hiv1OResult":"---","hiv1MNResult":"---","hiv2Result":"---","errorCode":"18006","id":1,"sampleBarcode":"SAMPLE-123","operator":"RHANDZU","resultNo":1,"sampleId":"FUNCTION TEST","testName":"Alere™ q HIV-1/2 Detect","timeStamp":"2018-10-05T13:40:46","pickedUpOn":"2018-11-08T14:06:21.305072","sourceFile":"/home/south_africa_nhls/ftp/alere_q/01-01_NAT-04000925_2018-10-31-11-18-58.csv.zip","cartridgeId":"0479001033","deviceCheck":"Fail","deviceSerial":"NAT-04000925","analysisCheck":"----","negativeControl":"----","sampleDetection":"----","softwareVersion":"0.24.2","hiv1PositiveControl":"----","hiv2PositiveControl":"----"}`,
+          },
+          {
+            assayExternalId: 'assayAlereQHiv12VLPlasma',
+            resultCategory1ExternalId: 'NoResult',
+            resultCategory2ExternalId: 'NoResult',
+            deviceTypeExternalId: 'AlereQ',
+            resultData: `{"hiv1OResult":"None","hiv1MNResult":"None","hiv2Result":"None","errorCode":"18006","id":1,"sampleBarcode":"SAMPLE-123","operator":"RHANDZU","resultNo":1,"sampleId":"FUNCTION TEST","testName":"Alere™ q HIV-1/2 Detect","timeStamp":"2018-10-05T13:40:46","pickedUpOn":"2018-11-08T14:06:21.305072","sourceFile":"/home/south_africa_nhls/ftp/alere_q/01-01_NAT-04000925_2018-10-31-11-18-58.csv.zip","cartridgeId":"0479001033","deviceCheck":"Fail","deviceSerial":"NAT-04000925","analysisCheck":"----","negativeControl":"----","sampleDetection":"----","softwareVersion":"0.24.2","hiv1PositiveControl":"----","hiv2PositiveControl":"----"}`,
+          },
+          {
+            assayExternalId: 'assayAlereQHiv12VLPlasma',
+            resultCategory1ExternalId: 'Detected',
+            resultCategory2ExternalId: 'NotDetected',
+            deviceTypeExternalId: 'AlereQ',
+            resultData: `{"hiv1OResult":"2299 cp/mL","hiv1MNResult":"Undetected","hiv2Result":"Undetected","errorCode":"0","id":1,"sampleBarcode":"SAMPLE-123","operator":"RHANDZU","resultNo":1,"sampleId":"FUNCTION TEST","testName":"Alere™ q HIV-1/2 Detect","timeStamp":"2018-10-05T13:40:46","pickedUpOn":"2018-11-08T14:06:21.305072","sourceFile":"/home/south_africa_nhls/ftp/alere_q/01-01_NAT-04000925_2018-10-31-11-18-58.csv.zip","cartridgeId":"0479001033","deviceCheck":"Fail","deviceSerial":"NAT-04000925","analysisCheck":"----","negativeControl":"----","sampleDetection":"----","softwareVersion":"0.24.2","hiv1PositiveControl":"----","hiv2PositiveControl":"----"}`,
+          },
+          {
+            assayExternalId: 'assayAlereQHiv12VLPlasma',
+            resultCategory1ExternalId: 'Detected',
+            resultCategory2ExternalId: 'NotDetected',
+            deviceTypeExternalId: 'AlereQ',
+            resultData: `{"hiv1OResult":"< 800 cp/mL","hiv1MNResult":"2299 cp/mL","hiv2Result":"Undetected","errorCode":"0","id":1,"sampleBarcode":"SAMPLE-123","operator":"RHANDZU","resultNo":1,"sampleId":"FUNCTION TEST","testName":"Alere™ q HIV-1/2 Detect","timeStamp":"2018-10-05T13:40:46","pickedUpOn":"2018-11-08T14:06:21.305072","sourceFile":"/home/south_africa_nhls/ftp/alere_q/01-01_NAT-04000925_2018-10-31-11-18-58.csv.zip","cartridgeId":"0479001033","deviceCheck":"Fail","deviceSerial":"NAT-04000925","analysisCheck":"----","negativeControl":"----","sampleDetection":"----","softwareVersion":"0.24.2","hiv1PositiveControl":"----","hiv2PositiveControl":"----"}`,
+          },
+          {
+            assayExternalId: 'assayAlereQHiv12VLPlasma',
+            resultCategory1ExternalId: 'Detected',
+            resultCategory2ExternalId: 'Detected',
+            deviceTypeExternalId: 'AlereQ',
+            resultData: `{"hiv1OResult":"Undetected","hiv1MNResult":"Undetected","hiv2Result":"2299 cp/mL","errorCode":"0","id":1,"sampleBarcode":"SAMPLE-123","operator":"RHANDZU","resultNo":1,"sampleId":"FUNCTION TEST","testName":"Alere™ q HIV-1/2 Detect","timeStamp":"2018-10-05T13:40:46","pickedUpOn":"2018-11-08T14:06:21.305072","sourceFile":"/home/south_africa_nhls/ftp/alere_q/01-01_NAT-04000925_2018-10-31-11-18-58.csv.zip","cartridgeId":"0479001033","deviceCheck":"Fail","deviceSerial":"NAT-04000925","analysisCheck":"----","negativeControl":"----","sampleDetection":"----","softwareVersion":"0.24.2","hiv1PositiveControl":"----","hiv2PositiveControl":"----"}`,
+          },
+        ]
+        const formData = JSON.parse(messageDataSource.resultFormData)
+        await Promise.each(useCases, async useCase => {
           const message = await runProcessUsingDataSourceQuery(
-            `token=1A234567B8C90D12345E6789F0G1234H&content=record&format=json&type=flat&overwriteBehavior=normal&forceAutoNumber=true&data=%5B%7B%22` +
-              `record_id%22%3A%221%22%2C+` +
-              `%22redcap_data_access_group%22%3A{{urlEncode (enclose (toLowerCase (defaultTo site.id '')) with='"')}}%2C+` +
-              `%22first_name%22%3A{{urlEncode (enclose (defaultTo result.formData.nameOfPatient '') with='"')}}%2C+` +
-              `%22surname%22%3A{{urlEncode (enclose (defaultTo result.formData.surnameOfPatient '') with='"')}}%2C+` +
-              `%22hospital_number%22%3A{{urlEncode (enclose (defaultTo result.formData.hospitalNumber '') with='"')}}%2C+` +
-              `%22site_code%22%3A{{urlEncode (enclose (defaultTo (mapValue site.id '{"DNAH":"D","kalafong":"K","CMJAH":"J","RMMCH":"R","CHBAH":"B"}') '') with='"')}}%2C+` +
-              `%22ward_cubicle%22%3A{{urlEncode (enclose (defaultTo result.formData.ward '') with='"')}}%2C+` +
-              `%22sample_category%22%3A{{urlEncode (enclose (defaultTo result.formData.sampleType '') with='"')}}%2C+` +
-              `%22instrument_ca%22%3A{{urlEncode (enclose (defaultTo (mapValue device.deviceType '{"CepheidGeneXpert":"1","AlereQ":"2"}') '') with='"')}}%2C+` +
-              `%22assayhiv%22%3A{{urlEncode (enclose (defaultTo (mapValue result.assay.id '{"assayAlereQHiv12VLPlasma":"1","assayAlereQHiv12Detect":"2","GxHiv1Vl":"1","GxHiv1Qual":"2"}') '') with='"')}}%2C+` +
-              `%22sample_barcode%22%3A{{urlEncode (enclose (defaultTo result.sample.id '') with='"')}}%2C+` +
-              `%22sample_taken%22%3A{{urlEncode (enclose (defaultTo (formatDate result.formData.timeSampleTaken '${redCapDateTimeFormat}') '') with='"')}}%2C+` +
-              `%22point_of_care_instrument_r%22%3A{{urlEncode (enclose (defaultTo (mapValue (tryMergeResultCategories result.category1.id result.category2.id) '{"Detected":"1","MoreThan1000":"1","LessThan1000":"1","Trace Detected":"1","NotDetected":"2","NoResult":"3","Discordant":"3","Indeterminate":"3","Invalid":"3","Success":"3","CollectNewSample":"3","Rejected":"3","Missing":"3","Unknown":"3","Error":"4"}') '') with='"')}}%2C+` +
-              `%22error_code1%22%3A{{urlEncode (enclose (defaultTo result.errorCode '') with='"')}}%2C+` +
-              `%22poc_viral_load%22%3A%22%22%2C+` +
-              `%22ct_value%22%3A{{urlEncode (enclose (defaultTo result.data.probes.probeCCt '0') with='"')}}%2C+` +
-              `%22result_instrument%22%3A{{urlEncode (enclose (defaultTo (formatDate result.endedOn '${redCapDateTimeFormat}') '') with='"')}}` +
-              `%7D%5D&returnContent=ids&returnFormat=json`
+            template,
+            useCase
           )
-          const formData = JSON.parse(messageDataSource.resultFormData)
-          const resultData = JSON.parse(messageDataSource.resultData)
-          const redCapDeviceTypeCodes = {
-            CepheidGeneXpert: '1',
-            AlereQ: '2',
-          }
-          const redCapAssayCodes = {
-            assayAlereQHiv12VLPlasma: '1',
-            assayAlereQHiv12Detect: '2',
-            GxHiv1Vl: '1',
-            GxHiv1Qual: '2',
-          }
-          const redCapSiteCodes = {
-            DNAH: 'D',
-            kalafong: 'K',
-            CMJAH: 'J',
-            RMMCH: 'R',
-            CHBAH: 'B',
-          }
-          const redCapResultCategoryCodes = {
-            Detected: '1',
-            MoreThan1000: '1',
-            LessThan1000: '1',
-            'Trace Detected': '1',
-            NotDetected: '2',
-            NoResult: '3',
-            Discordant: '3',
-            Indeterminate: '3',
-            Invalid: '3',
-            Success: '3',
-            CollectNewSample: '3',
-            Rejected: '3',
-            Missing: '3',
-            Unknown: '3',
-            Error: '4',
-          }
-          const tryMergeResultCategories = (
-            resultCategory1,
-            resultCategory2
-          ) => {
-            const priorityResult = (resultCategories, resultCateoryId) => {
-              if (resultCategories.includes(resultCateoryId)) {
-                return resultCateoryId
-              }
-            }
-            const resultCategories = [resultCategory1, resultCategory2]
-            const orderedPriorityCategories = [
-              'Error',
-              'Discordant',
-              'Detected',
-              'MoreThan1000',
-              'LessThan1000',
-              'Trace Detected',
-              'NotDetected',
-              'Invalid',
-              'Indeterminate',
-              'NoResult',
-            ]
-            for (let i = 0; i < orderedPriorityCategories.length; i++) {
-              const foundPriorityCategory = priorityResult(
-                resultCategories,
-                orderedPriorityCategories
-              )
-              if (foundPriorityCategory) {
-                return foundPriorityCategory
-              }
-            }
-            return resultCategory1 || resultCategory2
-          }
-
+          const resultData = JSON.parse(useCase.resultData)
           assert.equal(
             message.payload,
             `token=1A234567B8C90D12345E6789F0G1234H&content=record&format=json&type=flat&overwriteBehavior=normal&forceAutoNumber=true&data=%5B%7B%22` +
@@ -607,10 +703,10 @@ describe('stringTemplate', () => {
                 formData.sampleType
               )}%22%2C+` +
               `%22instrument_ca%22%3A%22${
-                redCapDeviceTypeCodes[messageDataSource.deviceTypeExternalId]
+                redCapDeviceTypeCodes[useCase.deviceTypeExternalId]
               }%22%2C+` +
               `%22assayhiv%22%3A%22${
-                redCapAssayCodes[messageDataSource.assayExternalId]
+                redCapAssayCodes[useCase.assayExternalId]
               }%22%2C+` +
               `%22sample_barcode%22%3A%22${encodeURI(
                 messageDataSource.sampleExternalId
@@ -624,8 +720,8 @@ describe('stringTemplate', () => {
               `%22point_of_care_instrument_r%22%3A%22${
                 redCapResultCategoryCodes[
                   tryMergeResultCategories(
-                    messageDataSource.resultCategory1ExternalId,
-                    messageDataSource.resultCategory2ExternalId
+                    useCase.resultCategory1ExternalId,
+                    useCase.resultCategory2ExternalId
                   )
                 ]
               }%22%2C+` +
@@ -639,11 +735,12 @@ describe('stringTemplate', () => {
               ]) || '0'}%22%2C+` +
               `%22result_instrument%22%3A%22${encodeURI(
                 formatDateOrDefault(
-                  messageDataSource.resultEndedOn,
+                  formData.timeInstrumentResulted,
                   redCapDateTimeFormat
                 )
               )}%22` +
-              `%7D%5D&returnContent=ids&returnFormat=json`
+              `%7D%5D&returnContent=ids&returnFormat=json`,
+            `Use case failed: ${JSON.stringify(useCase)}`
           )
         })
       })

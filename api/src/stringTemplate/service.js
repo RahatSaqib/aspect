@@ -20,6 +20,7 @@ handlebars.registerHelper(
   'extractValueFromRegexCaptureGroup',
   extractValueFromRegexCaptureGroup
 )
+handlebars.registerHelper('ifEquals', ifEquals)
 
 // See unit tests for examples
 // Can include displayPreferences
@@ -361,6 +362,17 @@ function extractValueFromRegexCaptureGroup(stringValue, options) {
       }
     }
   }
+}
+
+function ifEquals(value, rightHandSideValue, options) {
+  let rawValue = value
+  if (value instanceof handlebars.SafeString) {
+    rawValue = value.string
+  }
+  if (_.isEqual(rawValue, rightHandSideValue)) {
+    return options.fn(this)
+  }
+  return options.inverse(this)
 }
 
 module.exports = {
