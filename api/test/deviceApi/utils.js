@@ -89,7 +89,17 @@ async function deleteDeviceAndTestData(knex, apiKeys) {
     .whereIn('deviceId', deviceIds)
     .map(op => op.id)
 
+  const tagIds = await knex('ResultTag')
+    .whereIn('resultId', resultIds)
+    .pluck('tagId')
+
   await deleteIssues(knex, { deviceIds, resultIds })
+  await knex('ResultTag')
+    .whereIn('tagId', tagIds)
+    .delete()
+  await knex('Tag')
+    .whereIn('id', tagIds)
+    .delete()
   await knex('DeviceStatusLog')
     .whereIn('deviceId', deviceIds)
     .delete()

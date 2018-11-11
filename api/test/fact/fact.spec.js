@@ -38,14 +38,13 @@ describe('Fact tables initial data', () => {
     it('should contain result counts that agree with the results in the Result-table', () =>
       runTestWithKnex(async knex => {
         // get result counts for first device in Result-table
-        const [minDevice] = await knex('Result').min('deviceId as deviceId')
         const [countInResultTable] = await knex('Result')
-          .where({ deviceId: minDevice.deviceId })
+          .where({ deviceId: context.deviceId })
           .count('id as resultCount')
 
         // get result counts in fact tables
         const [countInFactTable] = await knex('FactResultsDevice')
-          .where({ deviceId: minDevice.deviceId })
+          .where({ deviceId: context.deviceId })
           .andWhere({ days: 9999 })
           .select('resultCount')
 
