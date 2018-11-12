@@ -57,9 +57,33 @@ async function seed(knex) {
           `%22sample_taken%22%3A{{urlEncode (enclose (defaultTo (formatDate result.formData.timeSampleTaken '${redCapDateTimeFormat}') '') with='"')}}%2C+` +
           `%22point_of_care_instrument_r%22%3A{{urlEncode (enclose (defaultTo (mapValue (tryMergeResultCategories result.category1.id result.category2.id) '{"Detected":"1","MoreThan1000":"1","LessThan1000":"1","Trace Detected":"1","NotDetected":"2","NoResult":"3","Discordant":"3","Indeterminate":"3","Invalid":"3","Success":"3","CollectNewSample":"3","Rejected":"3","Missing":"3","Unknown":"3","Error":"4"}') '') with='"')}}%2C+` +
           `%22error_code1%22%3A{{urlEncode (enclose (defaultTo result.errorCode '') with='"')}}%2C+` +
-          `%22poc_viral_load%22%3A%22%22%2C+` +
+          `%22poc_viral_load%22%3A` +
+          `{{#if (eq result.assay.id 'assayAlereQHiv12VLPlasma')}}` +
+          `{{#if (or (eq (tryMergeResultCategories result.category1.id result.category2.id) 'Error') ` +
+          `(eq (tryMergeResultCategories result.category1.id result.category2.id) 'NoResult'))}}` +
+          `{{urlEncode (enclose (tryMergeResultCategories result.category1.id result.category2.id) with='"')}}` +
+          `{{else if (or (isRegexMatch result.data.hiv1MNResult '((< )?\\d*) cp\\/mL') ` +
+          `(isRegexMatch result.data.hiv1OResult '((< )?\\d*) cp\\/mL') ` +
+          `(isRegexMatch result.data.hiv2Result '((< )?\\d*) cp\\/mL'))}}` +
+          `%22{{urlEncode (defaultTo (maxViralLoadValue result.data.hiv1MNResult result.data.hiv1OResult result.data.hiv2Result) '0')}}%20copies%2Fml%22` +
+          `{{else}}` +
+          `%220%22` +
+          `{{/if}}` +
+          `{{else if (eq result.assay.id 'GxHiv1Vl')}}` +
+          `{{#if (or (eq (tryMergeResultCategories result.category1.id result.category2.id) 'Error') ` +
+          `(eq (tryMergeResultCategories result.category1.id result.category2.id) 'NoResult'))}}` +
+          `{{urlEncode (enclose (tryMergeResultCategories result.category1.id result.category2.id) with='"')}}` +
+          `{{else if (gt result.data.copies 10000000)}}` +
+          `%22%3E10%20000%20000%20copies%2fml%22` +
+          `{{else}}` +
+          `%22{{urlEncode (defaultTo result.data.copies '0')}}%20copies%2Fml%22` +
+          `{{/if}}` +
+          `{{else}}` +
+          `%22%22` +
+          `{{/if}}` +
+          `%2C+` +
           `%22ct_value%22%3A{{urlEncode (enclose (defaultTo result.data.probes.probeCCt '0') with='"')}}%2C+` +
-          `%22result_instrument%22%3A{{urlEncode (enclose (defaultTo (formatDate result.endedOn '${redCapDateTimeFormat}') '') with='"')}}` +
+          `%22result_instrument%22%3A{{urlEncode (enclose (defaultTo (formatDate result.formData.timeInstrumentResulted '${redCapDateTimeFormat}') '') with='"')}}` +
           `%7D%5D&returnContent=ids&returnFormat=json`,
         fileContentTypeId: await fileContentTypeToId('formUrlEncoded'),
       },

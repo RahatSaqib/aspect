@@ -20,7 +20,18 @@ handlebars.registerHelper(
   'extractValueFromRegexCaptureGroup',
   extractValueFromRegexCaptureGroup
 )
-handlebars.registerHelper('ifEquals', ifEquals)
+handlebars.registerHelper('toInt', toInt)
+handlebars.registerHelper('maxViralLoadValue', maxViralLoadValue)
+handlebars.registerHelper({
+  eq: (v1, v2) => v1 === v2,
+  ne: (v1, v2) => v1 !== v2,
+  lt: (v1, v2) => v1 < v2,
+  gt: (v1, v2) => v1 > v2,
+  lte: (v1, v2) => v1 <= v2,
+  gte: (v1, v2) => v1 >= v2,
+  and: (...rest) => Array.prototype.slice.call(rest).every(Boolean),
+  or: (...rest) => Array.prototype.slice.call(rest, 0, -1).some(Boolean),
+})
 
 // See unit tests for examples
 // Can include displayPreferences
@@ -245,30 +256,31 @@ function safeString(value) {
   return new handlebars.SafeString(value)
 }
 
+function rawString(value) {
+  let rawValue = value
+  if (value instanceof handlebars.SafeString) {
+    rawValue = value.string
+  }
+  return rawValue
+}
+
 function mapValue(value, options) {
+  const rawValue = rawString(value)
   const valueMapString = getArgumentFromOptions(options, 'valueMap')
   if (valueMapString) {
-    if (value instanceof handlebars.SafeString) {
-      return safeString(JSON.parse(valueMapString)[value.string])
-    }
-    return safeString(JSON.parse(valueMapString)[value])
+    return safeString(JSON.parse(valueMapString)[rawValue])
   }
   return safeString(value)
 }
 
 function defaultTo(value, options) {
+  const rawValue = rawString(value)
   const defaultValue = getArgumentFromOptions(options, 'value')
-  if (value instanceof handlebars.SafeString) {
-    return safeString(value.string || defaultValue)
-  }
-  return safeString(value || defaultValue)
+  return safeString(rawValue || defaultValue)
 }
 
 function enclose(value, options) {
-  let rawValue = value
-  if (value instanceof handlebars.SafeString) {
-    rawValue = value.string
-  }
+  const rawValue = rawString(value)
   if (_.isNil(rawValue)) {
     return value
   }
@@ -277,10 +289,7 @@ function enclose(value, options) {
 }
 
 function escapeLines(value) {
-  let rawValue = value
-  if (value instanceof handlebars.SafeString) {
-    rawValue = value.string
-  }
+  const rawValue = rawString(value)
   if (!rawValue || rawValue.indexOf('\n') < 0) {
     return safeString(value)
   }
@@ -290,14 +299,11 @@ function escapeLines(value) {
 }
 
 function urlEncode(value) {
-  let rawValue = value
-  if (value instanceof handlebars.SafeString) {
-    rawValue = value.string
-  }
+  const rawValue = rawString(value)
   if (_.isNil(rawValue)) {
     return value
   }
-  return safeString(encodeURI(rawValue))
+  return safeString(encodeURIComponent(rawValue))
 }
 
 function priorityResult(resultCategories, resultCateoryId) {
@@ -333,10 +339,7 @@ function tryMergeResultCategories(resultCategory1, resultCategory2) {
 }
 
 function isRegexMatch(stringValue, options) {
-  let rawValue = stringValue
-  if (stringValue instanceof handlebars.SafeString) {
-    rawValue = stringValue.string
-  }
+  const rawValue = rawString(stringValue)
   if (!_.isNil(rawValue)) {
     const expression = getArgumentFromOptions(options, 'expression')
     if (expression) {
@@ -347,10 +350,7 @@ function isRegexMatch(stringValue, options) {
 }
 
 function extractValueFromRegexCaptureGroup(stringValue, options) {
-  let rawValue = stringValue
-  if (stringValue instanceof handlebars.SafeString) {
-    rawValue = stringValue.string
-  }
+  const rawValue = rawString(stringValue)
   if (!_.isNil(rawValue)) {
     const expression = getArgumentFromOptions(options, 'expression')
     const groupNumber = _.get(options, ['hash', 'groupNumber'], 1)
@@ -364,15 +364,33 @@ function extractValueFromRegexCaptureGroup(stringValue, options) {
   }
 }
 
-function ifEquals(value, rightHandSideValue, options) {
+function toInt(value) {
+  const rawValue = rawString(value)
+  if (!_.isNil(rawValue)) {
+    return parseInt(rawValue, 10)
+  }
+}
+
+function extractNumericValue(value) {
   let rawValue = value
-  if (value instanceof handlebars.SafeString) {
-    rawValue = value.string
+  if (_.isNil(rawValue)) {
+    rawValue = 0
+  } else {
+    rawValue = rawString(value)
   }
-  if (_.isEqual(rawValue, rightHandSideValue)) {
-    return options.fn(this)
+  if (typeof rawValue === 'string') {
+    const numericStringValue = rawString(
+      extractValueFromRegexCaptureGroup(rawValue, '([\\d|\\s|\\.]*)')
+    ).replace(/\s/, '')
+    const numericValue = parseFloat(numericStringValue)
+    if (!isNaN(numericValue)) {
+      return numericValue
+    }
   }
-  return options.inverse(this)
+}
+
+function maxViralLoadValue(...rest) {
+  return _.max(_.map(rest.slice(0, -1), arg => extractNumericValue(arg)))
 }
 
 module.exports = {

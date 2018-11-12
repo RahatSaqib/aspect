@@ -370,7 +370,9 @@ describe('stringTemplate', () => {
         )
         assert.equal(
           message.payload,
-          `Result error notes: ${encodeURI(messageDataSource.resultErrorNotes)}`
+          `Result error notes: ${encodeURIComponent(
+            messageDataSource.resultErrorNotes
+          )}`
         )
       })
     })
@@ -472,10 +474,10 @@ describe('stringTemplate', () => {
       })
     })
 
-    describe('ifEquals helper', () => {
+    describe('eq helper', () => {
       it('should branch in when values are equal', async () => {
         const message = await runProcessUsingDataSourceQuery(
-          `{{#ifEquals result.data.hiv2Result '< 800 cp/mL'}}Values Are Equal{{else}}Values Are NOT Equal{{/ifEquals}}`,
+          `{{#if (eq result.data.hiv2Result '< 800 cp/mL')}}Values Are Equal{{else}}Values Are NOT Equal{{/if}}`,
           {
             resultData: `{"hiv2Result":"< 800 cp/mL"}`,
           }
@@ -485,12 +487,61 @@ describe('stringTemplate', () => {
 
       it('should branch into else when values are not equal', async () => {
         const message = await runProcessUsingDataSourceQuery(
-          `{{#ifEquals result.data.hiv2Result '< 800 cp/mL'}}Values Are Equal{{else}}Values Are NOT Equal{{/ifEquals}}`,
+          `{{#if (eq result.data.hiv2Result '< 800 cp/mL')}}Values Are Equal{{else}}Values Are NOT Equal{{/if}}`,
           {
             resultData: `{"hiv2Result":"Detected"}`,
           }
         )
         assert.equal(message.payload, 'Values Are NOT Equal')
+      })
+    })
+
+    describe('toInt helper', () => {
+      it('should parse the value as an integer thant can be compared to other numbers', async () => {
+        let template = `{{#if (gt result.data.numericValue 8888)}}Numeric Value is greater than 8888{{else}}Numeric Value is NOT greater than 8888{{/if}}`
+        let message = await runProcessUsingDataSourceQuery(template, {
+          resultData: `{"numericValue":"10000"}`,
+        })
+        assert.equal(message.payload, `Numeric Value is greater than 8888`)
+        message = await runProcessUsingDataSourceQuery(template, {
+          resultData: `{"numericValue":"999"}`,
+        })
+        assert.equal(message.payload, `Numeric Value is NOT greater than 8888`)
+
+        template = `{{#if (gt result.data.numericValue 8888.88)}}Numeric Value is greater than 8888.88{{else}}Numeric Value is NOT greater than 8888.88{{/if}}`
+        message = await runProcessUsingDataSourceQuery(template, {
+          resultData: `{"numericValue":"10000"}`,
+        })
+        assert.equal(message.payload, `Numeric Value is greater than 8888.88`)
+        message = await runProcessUsingDataSourceQuery(template, {
+          resultData: `{"numericValue":"999"}`,
+        })
+        assert.equal(
+          message.payload,
+          `Numeric Value is NOT greater than 8888.88`
+        )
+      })
+    })
+
+    describe('maxViralLoadValue helper', () => {
+      it('should return the highest numeric value passed', async () => {
+        const message = await runProcessUsingDataSourceQuery(
+          `Viral Load: {{maxViralLoadValue result.data.numericValue1 result.data.numericValue2 result.data.numericValue3 result.data.numericValue4 result.data.numericValue4}}`,
+          {
+            resultData: `{"numericValue1":"10000 cp/mL","numericValue2":"Undetected","numericValue3":"< 10 000.13 cp/mL","numericValue4":"10 000.13 cp/mL","numericValue5":null}`,
+          }
+        )
+        assert.equal(message.payload, `Viral Load: 10000.13`)
+      })
+
+      it('should return the nothing by default', async () => {
+        const message = await runProcessUsingDataSourceQuery(
+          `Viral Load: {{maxViralLoadValue result.data.numericValue1 result.data.numericValue2 result.data.numericValue3 result.data.numericValue4 result.data.numericValue4}}`,
+          {
+            resultData: `{"numericValue1":"Error","numericValue2":"Undetected","numericValue3":"NoResult","numericValue4":"","numericValue5":null}`,
+          }
+        )
+        assert.equal(message.payload, `Viral Load: `)
       })
     })
 
@@ -502,7 +553,7 @@ describe('stringTemplate', () => {
         )
         assert.equal(
           message.payload,
-          `Offline since ${encodeURI(
+          `Offline since ${encodeURIComponent(
             `"${formatDateOrDefault(
               messageDataSource.deviceLastSeenOn,
               specifiedFormat
@@ -531,7 +582,31 @@ describe('stringTemplate', () => {
           `%22sample_taken%22%3A{{urlEncode (enclose (defaultTo (formatDate result.formData.timeSampleTaken '${redCapDateTimeFormat}') '') with='"')}}%2C+` +
           `%22point_of_care_instrument_r%22%3A{{urlEncode (enclose (defaultTo (mapValue (tryMergeResultCategories result.category1.id result.category2.id) '{"Detected":"1","MoreThan1000":"1","LessThan1000":"1","Trace Detected":"1","NotDetected":"2","NoResult":"3","Discordant":"3","Indeterminate":"3","Invalid":"3","Success":"3","CollectNewSample":"3","Rejected":"3","Missing":"3","Unknown":"3","Error":"4"}') '') with='"')}}%2C+` +
           `%22error_code1%22%3A{{urlEncode (enclose (defaultTo result.errorCode '') with='"')}}%2C+` +
-          `%22poc_viral_load%22%3A%22%22%2C+` +
+          `%22poc_viral_load%22%3A` +
+          `{{#if (eq result.assay.id 'assayAlereQHiv12VLPlasma')}}` +
+          `{{#if (or (eq (tryMergeResultCategories result.category1.id result.category2.id) 'Error') ` +
+          `(eq (tryMergeResultCategories result.category1.id result.category2.id) 'NoResult'))}}` +
+          `{{urlEncode (enclose (tryMergeResultCategories result.category1.id result.category2.id) with='"')}}` +
+          `{{else if (or (isRegexMatch result.data.hiv1MNResult '((< )?\\d*) cp\\/mL') ` +
+          `(isRegexMatch result.data.hiv1OResult '((< )?\\d*) cp\\/mL') ` +
+          `(isRegexMatch result.data.hiv2Result '((< )?\\d*) cp\\/mL'))}}` +
+          `%22{{urlEncode (defaultTo (maxViralLoadValue result.data.hiv1MNResult result.data.hiv1OResult result.data.hiv2Result) '0')}}%20copies%2Fml%22` +
+          `{{else}}` +
+          `%220%22` +
+          `{{/if}}` +
+          `{{else if (eq result.assay.id 'GxHiv1Vl')}}` +
+          `{{#if (or (eq (tryMergeResultCategories result.category1.id result.category2.id) 'Error') ` +
+          `(eq (tryMergeResultCategories result.category1.id result.category2.id) 'NoResult'))}}` +
+          `{{urlEncode (enclose (tryMergeResultCategories result.category1.id result.category2.id) with='"')}}` +
+          `{{else if (gt result.data.copies 10000000)}}` +
+          `%22%3E10%20000%20000%20copies%2fml%22` +
+          `{{else}}` +
+          `%22{{urlEncode (defaultTo result.data.copies '0')}}%20copies%2Fml%22` +
+          `{{/if}}` +
+          `{{else}}` +
+          `%22%22` +
+          `{{/if}}` +
+          `%2C+` +
           `%22ct_value%22%3A{{urlEncode (enclose (defaultTo result.data.probes.probeCCt '0') with='"')}}%2C+` +
           `%22result_instrument%22%3A{{urlEncode (enclose (defaultTo (formatDate result.formData.timeInstrumentResulted '${redCapDateTimeFormat}') '') with='"')}}` +
           `%7D%5D&returnContent=ids&returnFormat=json`
@@ -605,6 +680,7 @@ describe('stringTemplate', () => {
             assayExternalId: 'assayAlereQHiv12Detect',
             resultCategory1ExternalId: 'Error',
             resultCategory2ExternalId: 'Error',
+            expectedPocVl: '',
             deviceTypeExternalId: 'AlereQ',
             resultData: `{"hiv1OResult":"---","hiv1MNResult":"---","hiv2Result":"---","errorCode":"18006","id":1,"sampleBarcode":"SAMPLE-123","operator":"RHANDZU","resultNo":1,"sampleId":"FUNCTION TEST","testName":"Alere™ q HIV-1/2 Detect","timeStamp":"2018-10-05T13:40:46","pickedUpOn":"2018-11-08T14:06:21.305072","sourceFile":"/home/south_africa_nhls/ftp/alere_q/01-01_NAT-04000925_2018-10-31-11-18-58.csv.zip","cartridgeId":"0479001033","deviceCheck":"Fail","deviceSerial":"NAT-04000925","analysisCheck":"----","negativeControl":"----","sampleDetection":"----","softwareVersion":"0.24.2","hiv1PositiveControl":"----","hiv2PositiveControl":"----"}`,
           },
@@ -612,6 +688,7 @@ describe('stringTemplate', () => {
             assayExternalId: 'assayAlereQHiv12Detect',
             resultCategory1ExternalId: 'NoResult',
             resultCategory2ExternalId: 'NoResult',
+            expectedPocVl: '',
             deviceTypeExternalId: 'AlereQ',
             resultData: `{"hiv1OResult":"None","hiv1MNResult":"None","hiv2Result":"None","errorCode":"18006","id":1,"sampleBarcode":"SAMPLE-123","operator":"RHANDZU","resultNo":1,"sampleId":"FUNCTION TEST","testName":"Alere™ q HIV-1/2 Detect","timeStamp":"2018-10-05T13:40:46","pickedUpOn":"2018-11-08T14:06:21.305072","sourceFile":"/home/south_africa_nhls/ftp/alere_q/01-01_NAT-04000925_2018-10-31-11-18-58.csv.zip","cartridgeId":"0479001033","deviceCheck":"Fail","deviceSerial":"NAT-04000925","analysisCheck":"----","negativeControl":"----","sampleDetection":"----","softwareVersion":"0.24.2","hiv1PositiveControl":"----","hiv2PositiveControl":"----"}`,
           },
@@ -619,6 +696,7 @@ describe('stringTemplate', () => {
             assayExternalId: 'assayAlereQHiv12Detect',
             resultCategory1ExternalId: 'Detected',
             resultCategory2ExternalId: 'NotDetected',
+            expectedPocVl: '',
             deviceTypeExternalId: 'AlereQ',
             resultData: `{"hiv1OResult":"Detected","hiv1MNResult":"Undetected","hiv2Result":"Undetected","errorCode":"0","id":1,"sampleBarcode":"SAMPLE-123","operator":"RHANDZU","resultNo":1,"sampleId":"FUNCTION TEST","testName":"Alere™ q HIV-1/2 Detect","timeStamp":"2018-10-05T13:40:46","pickedUpOn":"2018-11-08T14:06:21.305072","sourceFile":"/home/south_africa_nhls/ftp/alere_q/01-01_NAT-04000925_2018-10-31-11-18-58.csv.zip","cartridgeId":"0479001033","deviceCheck":"Fail","deviceSerial":"NAT-04000925","analysisCheck":"----","negativeControl":"----","sampleDetection":"----","softwareVersion":"0.24.2","hiv1PositiveControl":"----","hiv2PositiveControl":"----"}`,
           },
@@ -626,6 +704,7 @@ describe('stringTemplate', () => {
             assayExternalId: 'assayAlereQHiv12Detect',
             resultCategory1ExternalId: 'Detected',
             resultCategory2ExternalId: 'NotDetected',
+            expectedPocVl: '',
             deviceTypeExternalId: 'AlereQ',
             resultData: `{"hiv1OResult":"Undetected","hiv1MNResult":"Detected","hiv2Result":"Undetected","errorCode":"0","id":1,"sampleBarcode":"SAMPLE-123","operator":"RHANDZU","resultNo":1,"sampleId":"FUNCTION TEST","testName":"Alere™ q HIV-1/2 Detect","timeStamp":"2018-10-05T13:40:46","pickedUpOn":"2018-11-08T14:06:21.305072","sourceFile":"/home/south_africa_nhls/ftp/alere_q/01-01_NAT-04000925_2018-10-31-11-18-58.csv.zip","cartridgeId":"0479001033","deviceCheck":"Fail","deviceSerial":"NAT-04000925","analysisCheck":"----","negativeControl":"----","sampleDetection":"----","softwareVersion":"0.24.2","hiv1PositiveControl":"----","hiv2PositiveControl":"----"}`,
           },
@@ -633,6 +712,7 @@ describe('stringTemplate', () => {
             assayExternalId: 'assayAlereQHiv12Detect',
             resultCategory1ExternalId: 'NotDetected',
             resultCategory2ExternalId: 'Detected',
+            expectedPocVl: '',
             deviceTypeExternalId: 'AlereQ',
             resultData: `{"hiv1OResult":"Undetected","hiv1MNResult":"Undetected","hiv2Result":"Detected","errorCode":"0","id":1,"sampleBarcode":"SAMPLE-123","operator":"RHANDZU","resultNo":1,"sampleId":"FUNCTION TEST","testName":"Alere™ q HIV-1/2 Detect","timeStamp":"2018-10-05T13:40:46","pickedUpOn":"2018-11-08T14:06:21.305072","sourceFile":"/home/south_africa_nhls/ftp/alere_q/01-01_NAT-04000925_2018-10-31-11-18-58.csv.zip","cartridgeId":"0479001033","deviceCheck":"Fail","deviceSerial":"NAT-04000925","analysisCheck":"----","negativeControl":"----","sampleDetection":"----","softwareVersion":"0.24.2","hiv1PositiveControl":"----","hiv2PositiveControl":"----"}`,
           },
@@ -640,6 +720,7 @@ describe('stringTemplate', () => {
             assayExternalId: 'assayAlereQHiv12VLPlasma',
             resultCategory1ExternalId: 'Error',
             resultCategory2ExternalId: 'Error',
+            expectedPocVl: 'Error',
             deviceTypeExternalId: 'AlereQ',
             resultData: `{"hiv1OResult":"---","hiv1MNResult":"---","hiv2Result":"---","errorCode":"18006","id":1,"sampleBarcode":"SAMPLE-123","operator":"RHANDZU","resultNo":1,"sampleId":"FUNCTION TEST","testName":"Alere™ q HIV-1/2 Detect","timeStamp":"2018-10-05T13:40:46","pickedUpOn":"2018-11-08T14:06:21.305072","sourceFile":"/home/south_africa_nhls/ftp/alere_q/01-01_NAT-04000925_2018-10-31-11-18-58.csv.zip","cartridgeId":"0479001033","deviceCheck":"Fail","deviceSerial":"NAT-04000925","analysisCheck":"----","negativeControl":"----","sampleDetection":"----","softwareVersion":"0.24.2","hiv1PositiveControl":"----","hiv2PositiveControl":"----"}`,
           },
@@ -647,6 +728,7 @@ describe('stringTemplate', () => {
             assayExternalId: 'assayAlereQHiv12VLPlasma',
             resultCategory1ExternalId: 'NoResult',
             resultCategory2ExternalId: 'NoResult',
+            expectedPocVl: 'NoResult',
             deviceTypeExternalId: 'AlereQ',
             resultData: `{"hiv1OResult":"None","hiv1MNResult":"None","hiv2Result":"None","errorCode":"18006","id":1,"sampleBarcode":"SAMPLE-123","operator":"RHANDZU","resultNo":1,"sampleId":"FUNCTION TEST","testName":"Alere™ q HIV-1/2 Detect","timeStamp":"2018-10-05T13:40:46","pickedUpOn":"2018-11-08T14:06:21.305072","sourceFile":"/home/south_africa_nhls/ftp/alere_q/01-01_NAT-04000925_2018-10-31-11-18-58.csv.zip","cartridgeId":"0479001033","deviceCheck":"Fail","deviceSerial":"NAT-04000925","analysisCheck":"----","negativeControl":"----","sampleDetection":"----","softwareVersion":"0.24.2","hiv1PositiveControl":"----","hiv2PositiveControl":"----"}`,
           },
@@ -654,6 +736,7 @@ describe('stringTemplate', () => {
             assayExternalId: 'assayAlereQHiv12VLPlasma',
             resultCategory1ExternalId: 'Detected',
             resultCategory2ExternalId: 'NotDetected',
+            expectedPocVl: '2299 copies/ml',
             deviceTypeExternalId: 'AlereQ',
             resultData: `{"hiv1OResult":"2299 cp/mL","hiv1MNResult":"Undetected","hiv2Result":"Undetected","errorCode":"0","id":1,"sampleBarcode":"SAMPLE-123","operator":"RHANDZU","resultNo":1,"sampleId":"FUNCTION TEST","testName":"Alere™ q HIV-1/2 Detect","timeStamp":"2018-10-05T13:40:46","pickedUpOn":"2018-11-08T14:06:21.305072","sourceFile":"/home/south_africa_nhls/ftp/alere_q/01-01_NAT-04000925_2018-10-31-11-18-58.csv.zip","cartridgeId":"0479001033","deviceCheck":"Fail","deviceSerial":"NAT-04000925","analysisCheck":"----","negativeControl":"----","sampleDetection":"----","softwareVersion":"0.24.2","hiv1PositiveControl":"----","hiv2PositiveControl":"----"}`,
           },
@@ -661,15 +744,25 @@ describe('stringTemplate', () => {
             assayExternalId: 'assayAlereQHiv12VLPlasma',
             resultCategory1ExternalId: 'Detected',
             resultCategory2ExternalId: 'NotDetected',
+            expectedPocVl: '2299 copies/ml',
             deviceTypeExternalId: 'AlereQ',
             resultData: `{"hiv1OResult":"< 800 cp/mL","hiv1MNResult":"2299 cp/mL","hiv2Result":"Undetected","errorCode":"0","id":1,"sampleBarcode":"SAMPLE-123","operator":"RHANDZU","resultNo":1,"sampleId":"FUNCTION TEST","testName":"Alere™ q HIV-1/2 Detect","timeStamp":"2018-10-05T13:40:46","pickedUpOn":"2018-11-08T14:06:21.305072","sourceFile":"/home/south_africa_nhls/ftp/alere_q/01-01_NAT-04000925_2018-10-31-11-18-58.csv.zip","cartridgeId":"0479001033","deviceCheck":"Fail","deviceSerial":"NAT-04000925","analysisCheck":"----","negativeControl":"----","sampleDetection":"----","softwareVersion":"0.24.2","hiv1PositiveControl":"----","hiv2PositiveControl":"----"}`,
           },
           {
             assayExternalId: 'assayAlereQHiv12VLPlasma',
             resultCategory1ExternalId: 'Detected',
-            resultCategory2ExternalId: 'Detected',
+            resultCategory2ExternalId: 'NotDetected',
+            expectedPocVl: '2299 copies/ml',
             deviceTypeExternalId: 'AlereQ',
             resultData: `{"hiv1OResult":"Undetected","hiv1MNResult":"Undetected","hiv2Result":"2299 cp/mL","errorCode":"0","id":1,"sampleBarcode":"SAMPLE-123","operator":"RHANDZU","resultNo":1,"sampleId":"FUNCTION TEST","testName":"Alere™ q HIV-1/2 Detect","timeStamp":"2018-10-05T13:40:46","pickedUpOn":"2018-11-08T14:06:21.305072","sourceFile":"/home/south_africa_nhls/ftp/alere_q/01-01_NAT-04000925_2018-10-31-11-18-58.csv.zip","cartridgeId":"0479001033","deviceCheck":"Fail","deviceSerial":"NAT-04000925","analysisCheck":"----","negativeControl":"----","sampleDetection":"----","softwareVersion":"0.24.2","hiv1PositiveControl":"----","hiv2PositiveControl":"----"}`,
+          },
+          {
+            assayExternalId: 'assayAlereQHiv12VLPlasma',
+            resultCategory1ExternalId: 'Detected',
+            resultCategory2ExternalId: 'Detected',
+            expectedPocVl: '2299 copies/ml',
+            deviceTypeExternalId: 'AlereQ',
+            resultData: `{"hiv1OResult":"< 800 cp/mL","hiv1MNResult":"Undetected","hiv2Result":"2299 cp/mL","errorCode":"0","id":1,"sampleBarcode":"SAMPLE-123","operator":"RHANDZU","resultNo":1,"sampleId":"FUNCTION TEST","testName":"Alere™ q HIV-1/2 Detect","timeStamp":"2018-10-05T13:40:46","pickedUpOn":"2018-11-08T14:06:21.305072","sourceFile":"/home/south_africa_nhls/ftp/alere_q/01-01_NAT-04000925_2018-10-31-11-18-58.csv.zip","cartridgeId":"0479001033","deviceCheck":"Fail","deviceSerial":"NAT-04000925","analysisCheck":"----","negativeControl":"----","sampleDetection":"----","softwareVersion":"0.24.2","hiv1PositiveControl":"----","hiv2PositiveControl":"----"}`,
           },
         ]
         const formData = JSON.parse(messageDataSource.resultFormData)
@@ -683,23 +776,25 @@ describe('stringTemplate', () => {
             message.payload,
             `token=1A234567B8C90D12345E6789F0G1234H&content=record&format=json&type=flat&overwriteBehavior=normal&forceAutoNumber=true&data=%5B%7B%22` +
               `record_id%22%3A%221%22%2C+` +
-              `%22redcap_data_access_group%22%3A%22${encodeURI(
+              `%22redcap_data_access_group%22%3A%22${encodeURIComponent(
                 messageDataSource.siteExternalId.toLowerCase()
               )}%22%2C+` +
-              `%22first_name%22%3A%22${encodeURI(
+              `%22first_name%22%3A%22${encodeURIComponent(
                 formData.nameOfPatient
               )}%22%2C+` +
-              `%22surname%22%3A%22${encodeURI(
+              `%22surname%22%3A%22${encodeURIComponent(
                 formData.surnameOfPatient
               )}%22%2C+` +
-              `%22hospital_number%22%3A%22${encodeURI(
+              `%22hospital_number%22%3A%22${encodeURIComponent(
                 formData.hospitalNumber
               )}%22%2C+` +
               `%22site_code%22%3A%22${
                 redCapSiteCodes[messageDataSource.siteExternalId]
               }%22%2C+` +
-              `%22ward_cubicle%22%3A%22${encodeURI(formData.ward)}%22%2C+` +
-              `%22sample_category%22%3A%22${encodeURI(
+              `%22ward_cubicle%22%3A%22${encodeURIComponent(
+                formData.ward
+              )}%22%2C+` +
+              `%22sample_category%22%3A%22${encodeURIComponent(
                 formData.sampleType
               )}%22%2C+` +
               `%22instrument_ca%22%3A%22${
@@ -708,10 +803,10 @@ describe('stringTemplate', () => {
               `%22assayhiv%22%3A%22${
                 redCapAssayCodes[useCase.assayExternalId]
               }%22%2C+` +
-              `%22sample_barcode%22%3A%22${encodeURI(
+              `%22sample_barcode%22%3A%22${encodeURIComponent(
                 messageDataSource.sampleExternalId
               )}%22%2C+` +
-              `%22sample_taken%22%3A%22${encodeURI(
+              `%22sample_taken%22%3A%22${encodeURIComponent(
                 formatDateOrDefault(
                   formData.timeSampleTaken,
                   redCapDateTimeFormat
@@ -725,15 +820,17 @@ describe('stringTemplate', () => {
                   )
                 ]
               }%22%2C+` +
-              `%22error_code1%22%3A%22${encodeURI(
+              `%22error_code1%22%3A%22${encodeURIComponent(
                 messageDataSource.resultErrorCode || ''
               )}%22%2C+` +
-              `%22poc_viral_load%22%3A%22%22%2C+` +
+              `%22poc_viral_load%22%3A%22${encodeURIComponent(
+                useCase.expectedPocVl
+              )}%22%2C+` +
               `%22ct_value%22%3A%22${_.get(resultData, [
                 'probes',
                 'probeCCT',
               ]) || '0'}%22%2C+` +
-              `%22result_instrument%22%3A%22${encodeURI(
+              `%22result_instrument%22%3A%22${encodeURIComponent(
                 formatDateOrDefault(
                   formData.timeInstrumentResulted,
                   redCapDateTimeFormat
