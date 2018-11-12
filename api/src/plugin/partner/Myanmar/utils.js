@@ -26,6 +26,18 @@ async function getEscalateOrResolveStatusForIssueStockout(knex, issue) {
   }
 }
 
+async function getReplacedModuleSerials(knex, deviceId) {
+  const replacedModuleSerials = knex('Issue as i')
+    .join('IssueType as it', 'it.id', 'i.issueTypeId')
+    .where('it.externalId', 'ModuleReplaced')
+    .where('i.deviceId', deviceId)
+    .select(knex.raw('data->>"$.replacedModuleSerial" as replacedModuleSerial'))
+    .map(s => s.replacedModuleSerial)
+
+  return replacedModuleSerials
+}
+
 module.exports = {
   getEscalateOrResolveStatusForIssueStockout,
+  getReplacedModuleSerials,
 }

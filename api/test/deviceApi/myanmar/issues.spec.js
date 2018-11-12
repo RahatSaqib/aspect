@@ -162,6 +162,126 @@ describe('Myanmar Issue endpoints', () => {
       )
     }))
 
+  it('should create a module temperature issue and resolve on module change', () =>
+    runTest(async knex => {
+      const { now } = context
+      const errorCode = '4010'
+
+      // Post to deviceApi to ensure the device in in Aspect
+      const response = await postToDeviceApi({
+        authHeader: deviceAuth,
+        payload: _.merge({}, basicDevicePayload, {
+          name: deviceName,
+        }),
+      })
+      const deviceId = response.body.device.id
+
+      let moduleTempErrorIssueId = null
+      for (let i = 0; i < 5; i++) {
+        /* eslint-disable no-await-in-loop */
+        const errorTestResultId = `UNIQUE-ID-WITH-TEMP-ERROR-${i}`
+        const sampleId = `TEM2542552${i}`
+        const moduleSerial = `MOD98765`
+        const instrumentSerial = `CEPH-PC-123${i}`
+        const testStartedOn = setMilliseconds(subDays(now, i + 3), 0)
+        const testEndedOn = setMilliseconds(addHours(testStartedOn, i + 2), 0)
+        const payload = _.merge(
+          {},
+          basicDevicePayload,
+          { name: deviceName },
+          basicResultPayload,
+          {
+            result: {
+              id: errorTestResultId,
+              startedOn: testStartedOn,
+              endedOn: testEndedOn,
+              error: {
+                code: errorCode,
+              },
+              sample: { id: sampleId },
+              instrument: {
+                serial: instrumentSerial,
+                module: {
+                  serial: moduleSerial,
+                  name: 'A1',
+                },
+              },
+            },
+          }
+        )
+
+        if (i < 4) {
+          // Post the result to aspect
+          await postToDeviceApi({
+            authHeader: deviceAuth,
+            payload,
+          })
+        } else {
+          // Should create issue when errors > 4
+          const waitForModuleTemperatureError = waitForAction(
+            resultModuleTemperatureError(deviceId)
+          )
+          await postToDeviceApi({
+            authHeader: deviceAuth,
+            payload,
+          })
+          await waitForModuleTemperatureError
+          await waitForIdle()
+
+          const issues = await getIssuesByDeviceId(knex, deviceId)
+          assert.equal(issues.length, 1)
+          assert.equal(issues[0].issueType, 'ModuleTemperatureError')
+          assert.equal(issues[0].deviceId, deviceId)
+          assert.equal(issues[0].issueStatus, 'Active')
+          moduleTempErrorIssueId = issues[0].id
+        }
+      }
+
+      const errorTestResultId = `UNIQUE-ID-WITH-TEMP-ERROR-X`
+      const sampleId = `TEM2542552X`
+      const moduleSerial = `MOD98765-X`
+      const instrumentSerial = `CEPH-PC-123X`
+      const testStartedOn = setMilliseconds(subDays(now, 2), 0)
+      const testEndedOn = setMilliseconds(addHours(testStartedOn, 2), 0)
+      const payload = _.merge(
+        {},
+        basicDevicePayload,
+        { name: deviceName },
+        basicResultPayload,
+        {
+          result: {
+            id: errorTestResultId,
+            startedOn: testStartedOn,
+            endedOn: testEndedOn,
+            error: {
+              code: errorCode,
+            },
+            sample: { id: sampleId },
+            instrument: {
+              serial: instrumentSerial,
+              module: {
+                serial: moduleSerial,
+                name: 'A1',
+              },
+            },
+          },
+        }
+      )
+
+      // Post the result to aspect
+      await postToDeviceApi({
+        authHeader: deviceAuth,
+        payload,
+      })
+
+      await waitForIdle()
+      await dispatchAndWaitForAction(resolveIssues(moduleTempErrorIssueId))
+      assert.equal(
+        'Resolved',
+        await getIssueStatusByIssueId(knex, moduleTempErrorIssueId)
+      )
+    }))
+
   it('should create a module temperature issue and resolve on Machine temp error', () =>
     runTest(async knex => {
       const { now } = context
@@ -422,6 +542,135 @@ describe('Myanmar Issue endpoints', () => {
           await getIssueStatusByIssueId(knex, machineTempErrorIssueId)
         )
       }
+    }))
+
+  it('should create a machine temperature issue and resolve when a module is swapped and errors on new modules are under the required percentage', () =>
+    runTest(async knex => {
+      const { now } = context
+      const errorCode = '4010'
+
+      // Post to deviceApi to ensure the device in in Aspect
+      const response = await postToDeviceApi({
+        authHeader: deviceAuth,
+        payload: _.merge({}, basicDevicePayload, {
+          name: deviceName,
+        }),
+      })
+      const deviceId = response.body.device.id
+      let machineTempErrorIssueId = null
+      for (let i = 0; i < 10; i++) {
+        /* eslint-disable no-await-in-loop */
+        const errorTestResultId = `UNIQUE-ID-WITH-MTEMP-ERROR-${i}`
+        const sampleId = `MTEMP2542552${i}`
+        const moduleSerial = `MTEMP1234${i % 3}`
+        const moduleName = `Module A-${i % 3}`
+        const instrumentSerial = `CEPH-PC-123${i}`
+        const testStartedOn = setMilliseconds(subDays(now, i + 3), 0)
+        const testEndedOn = setMilliseconds(addHours(testStartedOn, i + 2), 0)
+        const payload = _.merge(
+          {},
+          basicDevicePayload,
+          { name: deviceName },
+          basicResultPayload,
+          {
+            result: {
+              id: errorTestResultId,
+              startedOn: testStartedOn,
+              endedOn: testEndedOn,
+              error: {
+                code: errorCode,
+              },
+              sample: { id: sampleId },
+              instrument: {
+                serial: instrumentSerial,
+                module: {
+                  serial: moduleSerial,
+                  name: moduleName,
+                },
+              },
+            },
+          }
+        )
+        if (i === 8) {
+          // Should create issue when errors === 8
+          const waitForMachineTemperatureError = waitForAction(
+            resultMachineTemperatureError(deviceId)
+          )
+          await postToDeviceApi({
+            authHeader: deviceAuth,
+            payload,
+          })
+          await waitForMachineTemperatureError
+          await waitForIdle()
+        } else {
+          // Post the result to aspect
+          await postToDeviceApi({
+            authHeader: deviceAuth,
+            payload,
+          })
+        }
+
+        const issues = await getIssuesByDeviceId(knex, deviceId)
+        if (i < 8) {
+          // should not have issue prior to temp error
+          assert.equal(issues.length, 0)
+        } else {
+          // should have only one active issue after 8
+          assert.equal(issues.length, 1)
+          assert.equal(issues[0].issueType, 'MachineTemperatureError')
+          assert.equal(issues[0].deviceId, deviceId)
+          assert.equal(issues[0].issueStatus, 'Active')
+          machineTempErrorIssueId = issues[0].id
+        }
+      }
+
+      // replace all three modules
+      for (let i = 0; i < 3; i++) {
+        /* eslint-disable no-await-in-loop */
+        const errorTestResultId = `UNIQUE-ID-WITH-MTEMP-ERROR-X-${i}`
+        const sampleId = `MTEMP2542552-X-${i}`
+        const moduleSerial = `MTEMP1234-X-${i}`
+        const moduleName = `Module A-${i}`
+        const instrumentSerial = `CEPH-PC-123${i}`
+        const testStartedOn = setMilliseconds(subDays(now, i + 2), 0)
+        const testEndedOn = setMilliseconds(addHours(testStartedOn, i + 2), 0)
+        const payload = _.merge(
+          {},
+          basicDevicePayload,
+          { name: deviceName },
+          basicResultPayload,
+          {
+            result: {
+              id: errorTestResultId,
+              startedOn: testStartedOn,
+              endedOn: testEndedOn,
+              sample: { id: sampleId },
+              instrument: {
+                serial: instrumentSerial,
+                module: {
+                  serial: moduleSerial,
+                  name: moduleName,
+                },
+              },
+            },
+          }
+        )
+
+        // Post the result to aspect
+        await postToDeviceApi({
+          authHeader: deviceAuth,
+          payload,
+        })
+      }
+
+      await waitForIdle()
+
+      // Should resolve because modules were replaced
+      await dispatchAndWaitForAction(resolveIssues(machineTempErrorIssueId))
+      assert.equal(
+        'Resolved',
+        await getIssueStatusByIssueId(knex, machineTempErrorIssueId)
+      )
     }))
 
   it('should create a module power issue and resolve when TC no longer met', () =>
@@ -2059,7 +2308,7 @@ describe('Myanmar Issue endpoints', () => {
       const { now } = context
 
       // Post to deviceApi to ensure the device in in Aspect
-      const response = await postToDeviceApi({
+      let response = await postToDeviceApi({
         authHeader: deviceAuth,
         payload: _.merge({}, basicDevicePayload, {
           name: deviceName,
@@ -2103,8 +2352,40 @@ describe('Myanmar Issue endpoints', () => {
         payload,
       })
 
-      // Post one result with a different module serial to the same slot
+      // Post another result with same module serial to the same slot
       let moduleReplacedIssueId = null
+      resultId = `UNIQUE-ID-3`
+      sampleId = `GENMAC25B3`
+      moduleSerial = `GENMAC123B`
+      instrumentSerial = `CEPH-PC-123`
+      testStartedOn = setMilliseconds(subDays(now, 1), 0)
+      testEndedOn = setMilliseconds(addHours(testStartedOn, 2), 0)
+
+      // Post the result with the new module serial
+      result = {
+        id: resultId,
+        startedOn: testStartedOn,
+        endedOn: testEndedOn,
+        sample: { id: sampleId },
+        instrument: {
+          serial: instrumentSerial,
+          module: {
+            serial: moduleSerial,
+            name: 'A1',
+          },
+        },
+      }
+
+      payload = _.merge(
+        {},
+        basicDevicePayload,
+        { name: deviceName },
+        basicResultPayload,
+        {
+          result,
+        }
+      )
+
       resultId = `UNIQUE-ID-2`
       sampleId = `GENMAC25B2`
       moduleSerial = `GENMAC123B`
@@ -2137,14 +2418,15 @@ describe('Myanmar Issue endpoints', () => {
         }
       )
 
-      // Should create module replaced issue
-      const waitForModuleReplacedIssue = waitForAction(
-        resultModuleReplaced(deviceId)
-      )
-      await postToDeviceApi({
+      // Should create one module replaced issue
+      response = await postToDeviceApi({
         authHeader: deviceAuth,
         payload,
       })
+
+      const waitForModuleReplacedIssue = waitForAction(
+        resultModuleReplaced(response.body.result.id)
+      )
       await waitForModuleReplacedIssue
       await waitForIdle()
 

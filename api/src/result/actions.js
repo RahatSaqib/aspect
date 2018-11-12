@@ -221,15 +221,15 @@ function resultMachineUnknownError(deviceId) {
  * Creates an action to notify that a module in the given
  * slot (= moduleName) was replaced
  *
- * deviceId is required
+ * resultId is required
  */
-function resultModuleReplaced(deviceId, options) {
-  if (deviceId == null) {
-    throw new Error('Must specify deviceId for resultModuleReplaced')
+function resultModuleReplaced(resultId, options) {
+  if (resultId == null) {
+    throw new Error('Must specify resultId for resultModuleReplaced')
   }
   return {
     type: types.RESULT_MODULE_REPLACED,
-    deviceId,
+    resultId,
     options,
   }
 }
