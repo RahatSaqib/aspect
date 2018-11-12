@@ -615,7 +615,7 @@ async function updateDashboardWidgetQueries(knex) {
     // --------
     // "Child" target is removed - see SD-761
     // --------
-    // order of how Mynamar checks the KPI (see SD-621 - https://ops.systemone.id/browse/SD-621?focusedCommentId=18533&page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel#comment-18533):
+    // order of how Myanmar checks the KPI (see SD-621 - https://ops.systemone.id/browse/SD-621?focusedCommentId=18533&page=com.atlassian.jira.plugin.system.issuetabpanels:comment-tabpanel#comment-18533):
     // MDR should include all MDR (regardless of HIV/smear)
     // HIV = HIV (not mdr) and any smear
     // Smear positive = not HIV/Not MDR
