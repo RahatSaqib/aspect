@@ -392,7 +392,7 @@ function extractNumericViralLoadValue(value) {
       ''
     )
     const numericValue = parseFloat(numericStringValueWithoutWhiteSpace)
-    if (!isNaN(numericValue)) {
+    if (!Number.isNaN(numericValue)) {
       if (isRegexMatch(rawValue, '>[\\d|\\s|\\.]+')) {
         return {
           numericValue: numericValue + 1,
