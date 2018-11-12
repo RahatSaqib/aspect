@@ -371,7 +371,7 @@ function toInt(value) {
   }
 }
 
-function extractNumericValue(value) {
+function extractNumericViralLoadValue(value) {
   let rawValue = value
   if (_.isNil(rawValue)) {
     rawValue = 0
@@ -379,18 +379,39 @@ function extractNumericValue(value) {
     rawValue = rawString(value)
   }
   if (typeof rawValue === 'string') {
-    const numericStringValue = rawString(
-      extractValueFromRegexCaptureGroup(rawValue, '([\\d|\\s|\\.]*)')
-    ).replace(/\s/, '')
-    const numericValue = parseFloat(numericStringValue)
+    const numericStringValue = (
+      rawString(
+        extractValueFromRegexCaptureGroup(rawValue, '([\\d|\\s|\\.]+)')
+      ) || ''
+    ).trim()
+    const numericStringValueWithoutWhiteSpace = numericStringValue.replace(
+      /\s/,
+      ''
+    )
+    const numericValue = parseFloat(numericStringValueWithoutWhiteSpace)
     if (!isNaN(numericValue)) {
-      return numericValue
+      if (isRegexMatch(rawValue, '>[\\d|\\s|\\.]+')) {
+        return {
+          numericValue: numericValue + 1,
+          text: `> ${numericStringValue}`,
+        }
+      } else if (isRegexMatch(rawValue, '<[\\d|\\s|\\.]+')) {
+        return {
+          numericValue: numericValue - 1,
+          text: `< ${numericStringValue}`,
+        }
+      }
+      return { numericValue, text: numericValue.toString() }
     }
   }
 }
 
 function maxViralLoadValue(...rest) {
-  return _.max(_.map(rest.slice(0, -1), arg => extractNumericValue(arg)))
+  const maxViralLoadValue = _.maxBy(
+    _.map(rest.slice(0, -1), arg => extractNumericViralLoadValue(arg)),
+    viralLoad => _.get(viralLoad, 'numericValue')
+  )
+  return safeString(_.get(maxViralLoadValue, 'text'))
 }
 
 module.exports = {

@@ -379,7 +379,7 @@ describe('stringTemplate', () => {
 
     describe('isRegexMatch helper', () => {
       it('should return true is the value matches the regex', async () => {
-        const template = `{{#if (isRegexMatch result.data.hiv2Result expression='((< )?\\d*) cp\\/mL')}}Result has numeric value{{else}}Result does not have numeric value{{/if}}`
+        const template = `{{#if (isRegexMatch result.data.hiv2Result expression='((< )?\\d+) cp\\/mL')}}Result has numeric value{{else}}Result does not have numeric value{{/if}}`
         let message = await runProcessUsingDataSourceQuery(template, {
           resultData: `{"hiv2Result":"< 800 cp/mL"}`,
         })
@@ -402,7 +402,7 @@ describe('stringTemplate', () => {
 
       it('should allow expression to be provided as the default option', async () => {
         const message = await runProcessUsingDataSourceQuery(
-          `{{#if (isRegexMatch result.data.hiv2Result '((< )?\\d*) cp\\/mL')}}Result has numeric value{{else}}Result does not have numeric value{{/if}}`,
+          `{{#if (isRegexMatch result.data.hiv2Result '((< )?\\d+) cp\\/mL')}}Result has numeric value{{else}}Result does not have numeric value{{/if}}`,
           {
             resultData: `{"hiv2Result":"< 800 cp/mL"}`,
           }
@@ -412,7 +412,7 @@ describe('stringTemplate', () => {
 
       it('should provide falsey when value is not defined', async () => {
         const message = await runProcessUsingDataSourceQuery(
-          `{{#if (isRegexMatch result.data.someUndefinedValue '((< )?\\d*) cp\\/mL')}}Result has numeric value{{else}}Result does not have numeric value{{/if}}`
+          `{{#if (isRegexMatch result.data.someUndefinedValue '((< )?\\d+) cp\\/mL')}}Result has numeric value{{else}}Result does not have numeric value{{/if}}`
         )
         assert.equal(message.payload, 'Result does not have numeric value')
       })
@@ -421,14 +421,14 @@ describe('stringTemplate', () => {
     describe('extractValueFromRegexCaptureGroup helper', () => {
       it('should return the value in the matched group', async () => {
         let message = await runProcessUsingDataSourceQuery(
-          `Result Numeric Value: {{extractValueFromRegexCaptureGroup result.data.hiv2Result expression='((< )?\\d*) cp\\/mL' groupNumber=1}}`,
+          `Result Numeric Value: {{extractValueFromRegexCaptureGroup result.data.hiv2Result expression='((< )?\\d+) cp\\/mL' groupNumber=1}}`,
           {
             resultData: `{"hiv2Result":"< 800 cp/mL"}`,
           }
         )
         assert.equal(message.payload, 'Result Numeric Value: < 800')
         message = await runProcessUsingDataSourceQuery(
-          `Result Numeric Value: {{extractValueFromRegexCaptureGroup result.data.hiv2Result expression='((< )?\\d*) cp\\/mL' groupNumber=1}}`,
+          `Result Numeric Value: {{extractValueFromRegexCaptureGroup result.data.hiv2Result expression='((< )?\\d+) cp\\/mL' groupNumber=1}}`,
           {
             resultData: `{"hiv2Result":"2299 cp/mL"}`,
           }
@@ -438,7 +438,7 @@ describe('stringTemplate', () => {
 
       it('should default group number to 1', async () => {
         const message = await runProcessUsingDataSourceQuery(
-          `Result Numeric Value: {{extractValueFromRegexCaptureGroup result.data.hiv2Result expression='((< )?\\d*) cp\\/mL'}}`,
+          `Result Numeric Value: {{extractValueFromRegexCaptureGroup result.data.hiv2Result expression='((< )?\\d+) cp\\/mL'}}`,
           {
             resultData: `{"hiv2Result":"< 800 cp/mL"}`,
           }
@@ -458,7 +458,7 @@ describe('stringTemplate', () => {
 
       it('should allow expression to be provided as the default option', async () => {
         const message = await runProcessUsingDataSourceQuery(
-          `Result Numeric Value: {{extractValueFromRegexCaptureGroup result.data.hiv2Result '((< )?\\d*) cp\\/mL'}}`,
+          `Result Numeric Value: {{extractValueFromRegexCaptureGroup result.data.hiv2Result '((< )?\\d+) cp\\/mL'}}`,
           {
             resultData: `{"hiv2Result":"< 800 cp/mL"}`,
           }
@@ -468,7 +468,7 @@ describe('stringTemplate', () => {
 
       it('should provide nothing when value is not defined', async () => {
         const message = await runProcessUsingDataSourceQuery(
-          `Result Numeric Value: {{extractValueFromRegexCaptureGroup result.data.someUndefinedValue '((< )?\\d*) cp\\/mL'}}`
+          `Result Numeric Value: {{extractValueFromRegexCaptureGroup result.data.someUndefinedValue '((< )?\\d+) cp\\/mL'}}`
         )
         assert.equal(message.payload, 'Result Numeric Value: ')
       })
@@ -587,10 +587,16 @@ describe('stringTemplate', () => {
           `{{#if (or (eq (tryMergeResultCategories result.category1.id result.category2.id) 'Error') ` +
           `(eq (tryMergeResultCategories result.category1.id result.category2.id) 'NoResult'))}}` +
           `{{urlEncode (enclose (tryMergeResultCategories result.category1.id result.category2.id) with='"')}}` +
-          `{{else if (or (isRegexMatch result.data.hiv1MNResult '((< )?\\d*) cp\\/mL') ` +
-          `(isRegexMatch result.data.hiv1OResult '((< )?\\d*) cp\\/mL') ` +
-          `(isRegexMatch result.data.hiv2Result '((< )?\\d*) cp\\/mL'))}}` +
+          `{{else if (or (isRegexMatch result.data.hiv1MNResult '([\\d|\\s|\\.]+) cp\\/mL') ` +
+          `(isRegexMatch result.data.hiv1OResult '([\\d|\\s|\\.]+) cp\\/mL') ` +
+          `(isRegexMatch result.data.hiv2Result '([\\d|\\s|\\.]+) cp\\/mL'))}}` +
+          `{{#if (or (gt (toInt (extractValueFromRegexCaptureGroup result.data.hiv1MNResult '([\\d|\\s|\\.]+) cp\\/mL')) 10000000) ` +
+          `(gt (toInt (extractValueFromRegexCaptureGroup result.data.hiv1OResult '([\\d|\\s|\\.]+) cp\\/mL')) 10000000) ` +
+          `(gt (toInt (extractValueFromRegexCaptureGroup result.data.hiv2Result '([\\d|\\s|\\.]+) cp\\/mL')) 10000000))}}` +
+          `%22%3E%2010%20000%20000%20copies%2Fml%22` +
+          `{{else}}` +
           `%22{{urlEncode (defaultTo (maxViralLoadValue result.data.hiv1MNResult result.data.hiv1OResult result.data.hiv2Result) '0')}}%20copies%2Fml%22` +
+          `{{/if}}` +
           `{{else}}` +
           `%220%22` +
           `{{/if}}` +
@@ -598,7 +604,7 @@ describe('stringTemplate', () => {
           `{{#if (or (eq (tryMergeResultCategories result.category1.id result.category2.id) 'Error') ` +
           `(eq (tryMergeResultCategories result.category1.id result.category2.id) 'NoResult'))}}` +
           `{{urlEncode (enclose (tryMergeResultCategories result.category1.id result.category2.id) with='"')}}` +
-          `{{else if (gt result.data.copies 10000000)}}` +
+          `{{else if (gt (toInt result.data.copies) 10000000)}}` +
           `%22%3E10%20000%20000%20copies%2fml%22` +
           `{{else}}` +
           `%22{{urlEncode (defaultTo result.data.copies '0')}}%20copies%2Fml%22` +
@@ -763,6 +769,22 @@ describe('stringTemplate', () => {
             expectedPocVl: '2299 copies/ml',
             deviceTypeExternalId: 'AlereQ',
             resultData: `{"hiv1OResult":"< 800 cp/mL","hiv1MNResult":"Undetected","hiv2Result":"2299 cp/mL","errorCode":"0","id":1,"sampleBarcode":"SAMPLE-123","operator":"RHANDZU","resultNo":1,"sampleId":"FUNCTION TEST","testName":"Alere™ q HIV-1/2 Detect","timeStamp":"2018-10-05T13:40:46","pickedUpOn":"2018-11-08T14:06:21.305072","sourceFile":"/home/south_africa_nhls/ftp/alere_q/01-01_NAT-04000925_2018-10-31-11-18-58.csv.zip","cartridgeId":"0479001033","deviceCheck":"Fail","deviceSerial":"NAT-04000925","analysisCheck":"----","negativeControl":"----","sampleDetection":"----","softwareVersion":"0.24.2","hiv1PositiveControl":"----","hiv2PositiveControl":"----"}`,
+          },
+          {
+            assayExternalId: 'assayAlereQHiv12VLPlasma',
+            resultCategory1ExternalId: 'Detected',
+            resultCategory2ExternalId: 'Detected',
+            expectedPocVl: '< 800 copies/ml',
+            deviceTypeExternalId: 'AlereQ',
+            resultData: `{"hiv1OResult":"< 800 cp/mL","hiv1MNResult":"Undetected","hiv2Result":"Undetected","errorCode":"0","id":1,"sampleBarcode":"SAMPLE-123","operator":"RHANDZU","resultNo":1,"sampleId":"FUNCTION TEST","testName":"Alere™ q HIV-1/2 Detect","timeStamp":"2018-10-05T13:40:46","pickedUpOn":"2018-11-08T14:06:21.305072","sourceFile":"/home/south_africa_nhls/ftp/alere_q/01-01_NAT-04000925_2018-10-31-11-18-58.csv.zip","cartridgeId":"0479001033","deviceCheck":"Fail","deviceSerial":"NAT-04000925","analysisCheck":"----","negativeControl":"----","sampleDetection":"----","softwareVersion":"0.24.2","hiv1PositiveControl":"----","hiv2PositiveControl":"----"}`,
+          },
+          {
+            assayExternalId: 'assayAlereQHiv12VLPlasma',
+            resultCategory1ExternalId: 'Detected',
+            resultCategory2ExternalId: 'Detected',
+            expectedPocVl: '> 10 000 000 copies/ml',
+            deviceTypeExternalId: 'AlereQ',
+            resultData: `{"hiv1OResult":"10000001 cp/mL","hiv1MNResult":"Undetected","hiv2Result":"Undetected","errorCode":"0","id":1,"sampleBarcode":"SAMPLE-123","operator":"RHANDZU","resultNo":1,"sampleId":"FUNCTION TEST","testName":"Alere™ q HIV-1/2 Detect","timeStamp":"2018-10-05T13:40:46","pickedUpOn":"2018-11-08T14:06:21.305072","sourceFile":"/home/south_africa_nhls/ftp/alere_q/01-01_NAT-04000925_2018-10-31-11-18-58.csv.zip","cartridgeId":"0479001033","deviceCheck":"Fail","deviceSerial":"NAT-04000925","analysisCheck":"----","negativeControl":"----","sampleDetection":"----","softwareVersion":"0.24.2","hiv1PositiveControl":"----","hiv2PositiveControl":"----"}`,
           },
         ]
         const formData = JSON.parse(messageDataSource.resultFormData)

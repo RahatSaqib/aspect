@@ -62,10 +62,16 @@ async function seed(knex) {
           `{{#if (or (eq (tryMergeResultCategories result.category1.id result.category2.id) 'Error') ` +
           `(eq (tryMergeResultCategories result.category1.id result.category2.id) 'NoResult'))}}` +
           `{{urlEncode (enclose (tryMergeResultCategories result.category1.id result.category2.id) with='"')}}` +
-          `{{else if (or (isRegexMatch result.data.hiv1MNResult '((< )?\\d*) cp\\/mL') ` +
-          `(isRegexMatch result.data.hiv1OResult '((< )?\\d*) cp\\/mL') ` +
-          `(isRegexMatch result.data.hiv2Result '((< )?\\d*) cp\\/mL'))}}` +
+          `{{else if (or (isRegexMatch result.data.hiv1MNResult '([\\d|\\s|\\.]+) cp\\/mL') ` +
+          `(isRegexMatch result.data.hiv1OResult '([\\d|\\s|\\.]+) cp\\/mL') ` +
+          `(isRegexMatch result.data.hiv2Result '([\\d|\\s|\\.]+) cp\\/mL'))}}` +
+          `{{#if (or (gt (toInt (extractValueFromRegexCaptureGroup result.data.hiv1MNResult '([\\d|\\s|\\.]+) cp\\/mL')) 10000000) ` +
+          `(gt (toInt (extractValueFromRegexCaptureGroup result.data.hiv1OResult '([\\d|\\s|\\.]+) cp\\/mL')) 10000000) ` +
+          `(gt (toInt (extractValueFromRegexCaptureGroup result.data.hiv2Result '([\\d|\\s|\\.]+) cp\\/mL')) 10000000))}}` +
+          `%22%3E%2010%20000%20000%20copies%2Fml%22` +
+          `{{else}}` +
           `%22{{urlEncode (defaultTo (maxViralLoadValue result.data.hiv1MNResult result.data.hiv1OResult result.data.hiv2Result) '0')}}%20copies%2Fml%22` +
+          `{{/if}}` +
           `{{else}}` +
           `%220%22` +
           `{{/if}}` +
@@ -73,7 +79,7 @@ async function seed(knex) {
           `{{#if (or (eq (tryMergeResultCategories result.category1.id result.category2.id) 'Error') ` +
           `(eq (tryMergeResultCategories result.category1.id result.category2.id) 'NoResult'))}}` +
           `{{urlEncode (enclose (tryMergeResultCategories result.category1.id result.category2.id) with='"')}}` +
-          `{{else if (gt result.data.copies 10000000)}}` +
+          `{{else if (gt (toInt result.data.copies) 10000000)}}` +
           `%22%3E10%20000%20000%20copies%2fml%22` +
           `{{else}}` +
           `%22{{urlEncode (defaultTo result.data.copies '0')}}%20copies%2Fml%22` +
