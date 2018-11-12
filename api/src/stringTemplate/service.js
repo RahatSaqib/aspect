@@ -378,6 +378,9 @@ function extractNumericViralLoadValue(value) {
   } else {
     rawValue = rawString(value)
   }
+  if (typeof rawValue === 'number') {
+    return { numericValue: rawValue, text: rawValue.toString() }
+  }
   if (typeof rawValue === 'string') {
     const numericStringValue = (
       rawString(

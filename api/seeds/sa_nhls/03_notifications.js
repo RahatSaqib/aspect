@@ -79,10 +79,10 @@ async function seed(knex) {
           `{{#if (or (eq (tryMergeResultCategories result.category1.id result.category2.id) 'Error') ` +
           `(eq (tryMergeResultCategories result.category1.id result.category2.id) 'NoResult'))}}` +
           `{{urlEncode (enclose (tryMergeResultCategories result.category1.id result.category2.id) with='"')}}` +
-          `{{else if (gt (toInt result.data.copies) 10000000)}}` +
-          `%22%3E10%20000%20000%20copies%2fml%22` +
+          `{{else if (gt (toInt (extractValueFromRegexCaptureGroup result.data.copies '([\\d|\\s|\\.]+)')) 10000000)}}` +
+          `%22%3E%2010%20000%20000%20copies%2Fml%22` +
           `{{else}}` +
-          `%22{{urlEncode (defaultTo result.data.copies '0')}}%20copies%2Fml%22` +
+          `%22{{urlEncode (defaultTo (maxViralLoadValue result.data.copies) '0')}}%20copies%2Fml%22` +
           `{{/if}}` +
           `{{else}}` +
           `%22%22` +

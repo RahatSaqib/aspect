@@ -604,10 +604,10 @@ describe('stringTemplate', () => {
           `{{#if (or (eq (tryMergeResultCategories result.category1.id result.category2.id) 'Error') ` +
           `(eq (tryMergeResultCategories result.category1.id result.category2.id) 'NoResult'))}}` +
           `{{urlEncode (enclose (tryMergeResultCategories result.category1.id result.category2.id) with='"')}}` +
-          `{{else if (gt (toInt result.data.copies) 10000000)}}` +
-          `%22%3E10%20000%20000%20copies%2fml%22` +
+          `{{else if (gt (toInt (extractValueFromRegexCaptureGroup result.data.copies '([\\d|\\s|\\.]+)')) 10000000)}}` +
+          `%22%3E%2010%20000%20000%20copies%2Fml%22` +
           `{{else}}` +
-          `%22{{urlEncode (defaultTo result.data.copies '0')}}%20copies%2Fml%22` +
+          `%22{{urlEncode (defaultTo (maxViralLoadValue result.data.copies) '0')}}%20copies%2Fml%22` +
           `{{/if}}` +
           `{{else}}` +
           `%22%22` +
@@ -786,6 +786,98 @@ describe('stringTemplate', () => {
             deviceTypeExternalId: 'AlereQ',
             resultData: `{"hiv1OResult":"10000001 cp/mL","hiv1MNResult":"Undetected","hiv2Result":"Undetected","errorCode":"0","id":1,"sampleBarcode":"SAMPLE-123","operator":"RHANDZU","resultNo":1,"sampleId":"FUNCTION TEST","testName":"Alere™ q HIV-1/2 Detect","timeStamp":"2018-10-05T13:40:46","pickedUpOn":"2018-11-08T14:06:21.305072","sourceFile":"/home/south_africa_nhls/ftp/alere_q/01-01_NAT-04000925_2018-10-31-11-18-58.csv.zip","cartridgeId":"0479001033","deviceCheck":"Fail","deviceSerial":"NAT-04000925","analysisCheck":"----","negativeControl":"----","sampleDetection":"----","softwareVersion":"0.24.2","hiv1PositiveControl":"----","hiv2PositiveControl":"----"}`,
           },
+          {
+            assayExternalId: 'GxHiv1Qual',
+            resultCategory1ExternalId: 'Error',
+            resultCategory2ExternalId: 'Error',
+            expectedPocVl: '',
+            deviceTypeExternalId: 'CepheidGeneXpert',
+            resultData: `{}`,
+            resultDataErrorCode: '5000',
+          },
+          {
+            assayExternalId: 'GxHiv1Qual',
+            resultCategory1ExternalId: 'NoResult',
+            resultCategory2ExternalId: 'NoResult',
+            expectedPocVl: '',
+            deviceTypeExternalId: 'CepheidGeneXpert',
+          },
+          {
+            assayExternalId: 'GxHiv1Qual',
+            resultCategory1ExternalId: 'Detected',
+            resultCategory2ExternalId: 'NotDetected',
+            expectedPocVl: '',
+            deviceTypeExternalId: 'CepheidGeneXpert',
+          },
+          {
+            assayExternalId: 'GxHiv1Qual',
+            resultCategory1ExternalId: 'Detected',
+            resultCategory2ExternalId: 'NotDetected',
+            expectedPocVl: '',
+            deviceTypeExternalId: 'CepheidGeneXpert',
+          },
+          {
+            assayExternalId: 'GxHiv1Qual',
+            resultCategory1ExternalId: 'NotDetected',
+            resultCategory2ExternalId: 'Detected',
+            expectedPocVl: '',
+            deviceTypeExternalId: 'CepheidGeneXpert',
+          },
+          {
+            assayExternalId: 'GxHiv1Vl',
+            resultCategory1ExternalId: 'Error',
+            resultCategory2ExternalId: 'Error',
+            expectedPocVl: 'Error',
+            deviceTypeExternalId: 'CepheidGeneXpert',
+            resultDataErrorCode: '7000',
+          },
+          {
+            assayExternalId: 'GxHiv1Vl',
+            resultCategory1ExternalId: 'NoResult',
+            resultCategory2ExternalId: 'NoResult',
+            expectedPocVl: 'NoResult',
+            deviceTypeExternalId: 'CepheidGeneXpert',
+          },
+          {
+            assayExternalId: 'GxHiv1Vl',
+            resultCategory1ExternalId: 'Detected',
+            resultCategory2ExternalId: 'NotDetected',
+            expectedPocVl: '2299 copies/ml',
+            deviceTypeExternalId: 'CepheidGeneXpert',
+            resultData: `{"copies":2299}`,
+          },
+          {
+            assayExternalId: 'GxHiv1Vl',
+            resultCategory1ExternalId: 'Detected',
+            resultCategory2ExternalId: 'NotDetected',
+            expectedPocVl: '< 800 copies/ml',
+            deviceTypeExternalId: 'CepheidGeneXpert',
+            resultData: `{"copies":"< 800"}`,
+          },
+          {
+            assayExternalId: 'GxHiv1Vl',
+            resultCategory1ExternalId: 'Detected',
+            resultCategory2ExternalId: 'NotDetected',
+            expectedPocVl: '2299 copies/ml',
+            deviceTypeExternalId: 'CepheidGeneXpert',
+            resultData: `{"copies":"2299"}`,
+          },
+          {
+            assayExternalId: 'GxHiv1Vl',
+            resultCategory1ExternalId: 'Detected',
+            resultCategory2ExternalId: 'Detected',
+            expectedPocVl: '< 800 copies/ml',
+            deviceTypeExternalId: 'CepheidGeneXpert',
+            resultData: `{"copies":"< 800 cp/ml"}`,
+          },
+          {
+            assayExternalId: 'GxHiv1Vl',
+            resultCategory1ExternalId: 'Detected',
+            resultCategory2ExternalId: 'Detected',
+            expectedPocVl: '> 10 000 000 copies/ml',
+            deviceTypeExternalId: 'CepheidGeneXpert',
+            resultData: `{"copies":"10000001"}`,
+          },
         ]
         const formData = JSON.parse(messageDataSource.resultFormData)
         await Promise.each(useCases, async useCase => {
@@ -793,7 +885,9 @@ describe('stringTemplate', () => {
             template,
             useCase
           )
-          const resultData = JSON.parse(useCase.resultData)
+          const resultData = JSON.parse(
+            useCase.resultData || messageDataSource.resultData
+          )
           assert.equal(
             message.payload,
             `token=1A234567B8C90D12345E6789F0G1234H&content=record&format=json&type=flat&overwriteBehavior=normal&forceAutoNumber=true&data=%5B%7B%22` +
