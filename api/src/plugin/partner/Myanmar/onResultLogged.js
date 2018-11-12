@@ -19,6 +19,8 @@ const {
 const { inventoryReagentHealth } = require('../../../inventory/actions')
 const { resultCategoryToId } = require('../../../shared/dictionary')
 
+const { getReplacedModuleSerials } = require('./utils')
+
 const {
   MODULE_TEMPERATURE_ERROR_CODES,
   MODULE_POWER_ERROR_CODES,
@@ -67,16 +69,8 @@ async function onResultLogged({ resultId }, { messageContext }) {
     let reagentErrorRatio = 0
     let invalidReagentErrorRatio = 0
     let invalidReagentErrorCount = 0
-
     // get all modules that were replaced so we can ignore them in the queries below:
-    const replacedModuleSerials = await knex('Issue as i')
-      .join('IssueType as it', 'it.id', 'i.issueTypeId')
-      .where('it.externalId', 'ModuleReplaced')
-      .where('i.deviceId', deviceId)
-      .select(
-        knex.raw('data->>"$.replacedModuleSerial" as replacedModuleSerial')
-      )
-      .map(s => s.replacedModuleSerial)
+    const replacedModuleSerials = await getReplacedModuleSerials(knex, deviceId)
     // check if a module was just now replaced and trigger replacement-issue if it was
     if (
       result.moduleName &&
@@ -97,7 +91,7 @@ async function onResultLogged({ resultId }, { messageContext }) {
         previousResultOnModule.moduleSerial !== result.moduleSerial &&
         !replacedModuleSerials.includes(previousResultOnModule.moduleSerial)
       ) {
-        context.resultModuleReplaced(deviceId, {
+        context.resultModuleReplaced(resultId, {
           moduleName: result.moduleName,
           replacedModuleSerial: previousResultOnModule.moduleSerial,
           newModuleSerial: result.moduleSerial,
