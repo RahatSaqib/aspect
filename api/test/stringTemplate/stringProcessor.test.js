@@ -879,21 +879,20 @@ describe('stringTemplate', () => {
             resultData: `{"copies":"10000001"}`,
           },
         ]
-        const formData = JSON.parse(messageDataSource.resultFormData)
         await Promise.each(useCases, async useCase => {
+          const dataSource = Object.assign({}, messageDataSource, useCase)
+          const formData = JSON.parse(dataSource.resultFormData)
           const message = await runProcessUsingDataSourceQuery(
             template,
             useCase
           )
-          const resultData = JSON.parse(
-            useCase.resultData || messageDataSource.resultData
-          )
+          const resultData = JSON.parse(dataSource.resultData)
           assert.equal(
             message.payload,
             `token=1A234567B8C90D12345E6789F0G1234H&content=record&format=json&type=flat&overwriteBehavior=normal&forceAutoNumber=true&data=%5B%7B%22` +
               `record_id%22%3A%221%22%2C%20` +
               `%22redcap_data_access_group%22%3A%22${encodeURIComponent(
-                messageDataSource.siteExternalId.toLowerCase()
+                dataSource.siteExternalId.toLowerCase()
               )}%22%2C%20` +
               `%22first_name%22%3A%22${encodeURIComponent(
                 formData.nameOfPatient
@@ -905,7 +904,7 @@ describe('stringTemplate', () => {
                 formData.hospitalNumber
               )}%22%2C%20` +
               `%22site_code%22%3A%22${
-                redCapSiteCodes[messageDataSource.siteExternalId]
+                redCapSiteCodes[dataSource.siteExternalId]
               }%22%2C%20` +
               `%22ward_cubicle%22%3A%22${encodeURIComponent(
                 formData.ward
@@ -914,13 +913,13 @@ describe('stringTemplate', () => {
                 formData.sampleType
               )}%22%2C%20` +
               `%22instrument_ca%22%3A%22${
-                redCapDeviceTypeCodes[useCase.deviceTypeExternalId]
+                redCapDeviceTypeCodes[dataSource.deviceTypeExternalId]
               }%22%2C%20` +
               `%22assayhiv%22%3A%22${
-                redCapAssayCodes[useCase.assayExternalId]
+                redCapAssayCodes[dataSource.assayExternalId]
               }%22%2C%20` +
               `%22sample_barcode%22%3A%22${encodeURIComponent(
-                messageDataSource.sampleExternalId
+                dataSource.sampleExternalId
               )}%22%2C%20` +
               `%22sample_taken%22%3A%22${encodeURIComponent(
                 formatDateOrDefault(
@@ -931,16 +930,16 @@ describe('stringTemplate', () => {
               `%22point_of_care_instrument_r%22%3A%22${
                 redCapResultCategoryCodes[
                   tryMergeResultCategories(
-                    useCase.resultCategory1ExternalId,
-                    useCase.resultCategory2ExternalId
+                    dataSource.resultCategory1ExternalId,
+                    dataSource.resultCategory2ExternalId
                   )
                 ]
               }%22%2C%20` +
               `%22error_code1%22%3A%22${encodeURIComponent(
-                messageDataSource.resultErrorCode || ''
+                dataSource.resultErrorCode || ''
               )}%22%2C%20` +
               `%22poc_viral_load%22%3A%22${encodeURIComponent(
-                useCase.expectedPocVl
+                dataSource.expectedPocVl
               )}%22%2C%20` +
               `%22ct_value%22%3A%22${_.get(resultData, [
                 'probes',
@@ -971,17 +970,17 @@ describe('stringTemplate', () => {
             .and.containSubset([
               {
                 record_id: '1',
-                redcap_data_access_group: messageDataSource.siteExternalId.toLowerCase(),
+                redcap_data_access_group: dataSource.siteExternalId.toLowerCase(),
                 first_name: formData.nameOfPatient,
                 surname: formData.surnameOfPatient,
                 hospital_number: formData.hospitalNumber,
-                site_code: redCapSiteCodes[messageDataSource.siteExternalId],
+                site_code: redCapSiteCodes[dataSource.siteExternalId],
                 ward_cubicle: formData.ward,
                 sample_category: formData.sampleType,
                 instrument_ca:
-                  redCapDeviceTypeCodes[useCase.deviceTypeExternalId],
-                assayhiv: redCapAssayCodes[useCase.assayExternalId],
-                sample_barcode: messageDataSource.sampleExternalId,
+                  redCapDeviceTypeCodes[dataSource.deviceTypeExternalId],
+                assayhiv: redCapAssayCodes[dataSource.assayExternalId],
+                sample_barcode: dataSource.sampleExternalId,
                 sample_taken: formatDateOrDefault(
                   formData.timeSampleTaken,
                   redCapDateTimeFormat
@@ -989,12 +988,12 @@ describe('stringTemplate', () => {
                 point_of_care_instrument_r:
                   redCapResultCategoryCodes[
                     tryMergeResultCategories(
-                      useCase.resultCategory1ExternalId,
-                      useCase.resultCategory2ExternalId
+                      dataSource.resultCategory1ExternalId,
+                      dataSource.resultCategory2ExternalId
                     )
                   ],
-                error_code1: messageDataSource.resultErrorCode || '',
-                poc_viral_load: useCase.expectedPocVl,
+                error_code1: dataSource.resultErrorCode || '',
+                poc_viral_load: dataSource.expectedPocVl,
                 ct_value: _.get(resultData, ['probes', 'probeCCT']) || '0',
                 result_instrument: formatDateOrDefault(
                   formData.timeInstrumentResulted,
