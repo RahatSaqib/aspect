@@ -9,6 +9,21 @@ const {
 } = require('../../src/shared/dictionary')
 
 async function seed(knex) {
+  const { id: partnerId } = await knex('Partner')
+    .where('name', 'South Africa NHLS')
+    .first()
+
+  const existingNotificationType = await knex('NotificationType')
+    .where({
+      name: 'Result Data Entered',
+      partnerId,
+    })
+    .first('id')
+
+  if (existingNotificationType) {
+    return
+  }
+
   const now = new Date()
   const { id: adminId } = await knex('User')
     .where({ name: 'nhls_eid' })
@@ -132,10 +147,6 @@ async function seed(knex) {
       defaultMessageTypeId: resultDataEnteredMessageTypeId,
     },
   ])
-
-  const { id: partnerId } = await knex('Partner')
-    .where('name', 'South Africa NHLS')
-    .first()
 
   const { id: adminJobFunctionId } = await knex('JobFunction')
     .where({ name: 'Admin', partnerId })
