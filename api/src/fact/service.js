@@ -10,7 +10,7 @@ const {
   factGenerateResultCounts,
   factDataCategoryLow,
 } = require('./actions')
-
+const { resolveIssues, escalateIssues } = require('../issue/actions')
 const {
   deviceOffline,
   deviceOnline,
@@ -22,6 +22,10 @@ const {
   issueStatusToId,
   issueEventStatusToId,
 } = require('../shared/dictionary')
+const {
+  auditInventoryStockout,
+  auditInventoryStockExpiring,
+} = require('../shared/mqUtil')
 
 const daysToCalculate = [1, 7, 30, 60, 90, 365, 9999]
 const MIN_RESULTS_TO_TRIGGER_DATA_CATEGORY_LOW = 10
@@ -439,6 +443,8 @@ function onFactCheckInventoryStock(action, { messageContext }) {
   const context = messageContext.bindActionCreators({
     inventoryStockout,
     inventoryStockExpiring,
+    resolveIssues,
+    escalateIssues,
   })
 
   // loop all sites and audit each consumables
@@ -478,167 +484,25 @@ function onFactCheckInventoryStock(action, { messageContext }) {
           knex,
           site,
           dailyRate,
+          resolver: context.resolveIssues,
+          escalator: context.escalateIssues,
         }
-        // Stockout
+        // Stockout - check if issue may be triggered, resolved or escalated
         await auditInventoryStockout({
           ...props,
           dueDays: site.dueDaysInventoryStockout,
-          dispatch: context.inventoryStockout,
+          trigger: context.inventoryStockout,
         })
-        // Stock Expiring
+        // Stock Expiring - check if issue may be triggered, resolved or escalated
         await auditInventoryStockExpiring({
           ...props,
           dueDays: site.dueDaysInventoryStockExpiring,
-          dispatch: context.inventoryStockExpiring,
+          trigger: context.inventoryStockExpiring,
         })
       }
     })
   })
 }
-
-// -----------------------------
-// auditInventoryStockout
-// -----------------------------
-async function auditInventoryStockout({
-  knex,
-  site: { siteId, consumableId },
-  dailyRate,
-  dueDays,
-  dispatch,
-}) {
-  const days = await totalDaysUnexpiredInventoryItemsLast({
-    knex,
-    siteId,
-    consumableId,
-    dailyRate,
-    dueDays,
-  })
-
-  if (days < dueDays) {
-    dispatch(siteId, consumableId, days)
-  }
-}
-
-// -----------------------------
-// totalDaysUnexpiredInventoryItemsLast - is used also in plugin Myanmar/issueResolutions.js
-// -----------------------------
-async function totalDaysUnexpiredInventoryItemsLast({
-  knex,
-  siteId,
-  consumableId,
-  dailyRate,
-  dueDays,
-}) {
-  // get all un-expired inventory items for provided site/consumable
-  const items = await knex('InventoryItem')
-    .where(function() {
-      this.whereNull('expiresOn') // if is null
-        .orWhere('expiresOn', '>', new Date()) // or unexpired
-    })
-    .where({ siteId, consumableId })
-    .select(
-      'quantityOnHand',
-      'expiresOn',
-      knex.raw(
-        `CAST(
-          DATEDIFF(
-            IFNULL(
-              expiresOn,
-              DATE_ADD(NOW(), INTERVAL ? DAY)
-            ),
-            NOW()
-          )
-          AS SIGNED INTEGER
-        ) AS expiresInDays`,
-        [dueDays + 1]
-      )
-    )
-
-  // take into account expiration dates - calculate how long items last
-  const days = _.reduce(
-    items,
-    (sum, item) => {
-      const lastsInDays = item.quantityOnHand / dailyRate
-      const lastsActual = Math.min(lastsInDays, item.expiresInDays)
-      const daysLeft = lastsActual - sum
-      const cntDays = Math.max(0, daysLeft)
-      return sum + cntDays
-    },
-    0
-  )
-
-  return days
-}
-
-// -----------------------------
-// auditInventoryStockExpiring
-// -----------------------------
-async function auditInventoryStockExpiring({
-  knex,
-  site: { siteId, consumableId },
-  dailyRate,
-  dueDays,
-  dispatch,
-}) {
-  const totalWasted = await totalWastedInventoryItems({
-    knex,
-    siteId,
-    consumableId,
-    dailyRate,
-  })
-
-  if (totalWasted > 0) {
-    dispatch(siteId, consumableId, dueDays, totalWasted)
-  }
-}
-// -----------------------------
-// totalWastedInventoryItems - is used also in plugin Myanmar/issueResolutions.js
-// -----------------------------
-async function totalWastedInventoryItems({
-  knex,
-  siteId,
-  consumableId,
-  dailyRate,
-}) {
-  // get all un-expired inventory items for provided site/consumable
-  const items = await knex('InventoryItem')
-    .where({ siteId, consumableId })
-    .whereNotNull('expiresOn') // is NOT null
-    .where('expiresOn', '>', new Date()) // and unexpired
-    .select(
-      'quantityOnHand',
-      'expiresOn',
-      knex.raw(
-        `CAST(GREATEST(DATEDIFF(expiresOn, NOW()), 0) AS SIGNED INTEGER) AS expiresInDays`
-      )
-    )
-
-  // take into account expiration dates - calculate how long items last
-  const now = new Date()
-  const totalWasted = _.reduce(
-    items,
-    (sum, item) => {
-      const lastsInDays = item.quantityOnHand / dailyRate
-      const wasted =
-        item.expiresInDays < lastsInDays
-          ? item.expiresOn > now
-            ? dailyRate * (lastsInDays - item.expiresInDays)
-            : item.quantityOnHand
-          : 0
-
-      return sum + wasted
-    },
-    0
-  )
-
-  return totalWasted
-}
-
-// -------------------------------------------------------------------------------------
-// ---
-// --- functions for Inventory Consumption Rates
-// ---
-// -------------------------------------------------------------------------------------
 
 // ------------------------------
 // is called from scheduler
@@ -936,10 +800,6 @@ module.exports = {
   onDeviceUpdateFlag,
   onResultLogged,
   refreshConsumptionRates,
-  totalDaysUnexpiredInventoryItemsLast,
-  totalWastedInventoryItems,
-  auditInventoryStockout,
-  auditInventoryStockExpiring,
   checkDataCategoriesForLowStatus,
   getDataCategoryStatus,
   MIN_RESULTS_TO_TRIGGER_DATA_CATEGORY_LOW,

@@ -32,6 +32,7 @@ const {
 
 const { totalWastedInventoryItems } = require('../../../fact/service')
 const { getEscalateOrResolveStatusForIssueStockout } = require('./utils')
+const { isStockEmpty } = require('../../../shared/mqUtil')
 
 const { issueStatusToId, issueTypeToId } = require('../../../shared/dictionary')
 
@@ -426,8 +427,14 @@ async function resolveIssueStockout(knex, issue) {
 }
 
 async function resolveIssueStockExpiring(knex, issue) {
+  const isEmptyStock = await isStockEmpty(knex, siteId, consumableId)
+
+  if (isEmptyStock) {
+    return true
+  }
+
   // ---------------------------------------
-  // see auditInventoryStockExpiring() in /fact/service.js for triggering issue - here we check opposite
+  // see auditInventoryStockExpiring() in /shared/mqUtil.js for triggering issue - here we check opposite
   // ---------------------------------------
   const { siteId, consumableId } = issue
   const { rate: dailyRate } = (await knex('FactInventoryConsumptionRate')

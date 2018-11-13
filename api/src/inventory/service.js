@@ -18,13 +18,12 @@ const {
 const { findConsumableReason } = require('../consumable/consumableService')
 const { getUser } = require('../auth/service')
 const { getSite } = require('../site/service')
-const { issueTypeToId, issueStatusToId } = require('../shared/dictionary')
 const { resolveIssues, escalateIssues } = require('../issue/actions')
 const { inventoryStockout, inventoryStockExpiring } = require('./actions')
 const {
   auditInventoryStockout,
   auditInventoryStockExpiring,
-} = require('../fact/service')
+} = require('../shared/mqUtil')
 
 const INVENTORY_ITEM_SELECT_LIST_FIELDS = [
   'ii.id',
@@ -1092,13 +1091,11 @@ async function checkOpenedStockIssues({
     }
 
     await checkStockoutIssues({
-      issueType: 'InventoryStockout',
       dueDays: site.dueDaysInventoryStockout,
       ...props,
     })
 
     await checkStockExpiringIssues({
-      issueType: 'InventoryStockExpiring',
       dueDays: site.dueDaysInventoryStockExpiring,
       ...props,
     })
@@ -1111,23 +1108,17 @@ async function checkStockoutIssues({
   consumableId,
   dailyRate,
   dueDays,
-  issueType,
   messageContext,
 }) {
-  // see if need to trigger issue - call same func as scheduler runs
+  // see if need to trigger issue - call same func as scheduler
   await auditInventoryStockout({
     knex,
     site: { siteId, consumableId },
     dailyRate,
     dueDays,
-    dispatch: messageContext.inventoryStockout,
-  })
-  // see if need to resolve issue
-  await resolveEscalate({
-    knex,
-    siteId,
-    issueType,
-    messageContext,
+    trigger: messageContext.inventoryStockout,
+    resolver: messageContext.resolveIssues,
+    escalator: messageContext.escalateIssues,
   })
 }
 
@@ -1137,41 +1128,17 @@ async function checkStockExpiringIssues({
   consumableId,
   dailyRate,
   dueDays,
-  issueType,
   messageContext,
 }) {
-  // see if need to trigger issue - call same func as scheduler runs
+  // see if need to trigger issue - call same func as scheduler
   await auditInventoryStockExpiring({
     knex,
     site: { siteId, consumableId },
     dailyRate,
     dueDays,
-    dispatch: messageContext.inventoryStockExpiring,
-  })
-  // see if need to resolve issue
-  await resolveEscalate({
-    knex,
-    siteId,
-    issueType,
-    messageContext,
-  })
-}
-
-async function resolveEscalate({ knex, siteId, issueType, messageContext }) {
-  // get all Active issues of this type for current siteId
-  const issueTypeId = await issueTypeToId(issueType)
-  const issueStatusId = await issueStatusToId('Active')
-  const issues = await knex('Issue')
-    .where({ siteId, issueTypeId, issueStatusId })
-    .select('id')
-
-  // loop through all active issues and
-  _.each(issues, ({ id: issueId }) => {
-    // try to resolve issue (i.e. for Myanmar it runs function in /plugin/partner/Myanmar/issueResolutions.js)
-    messageContext.resolveIssues(issueId)
-
-    // try to escalate issue
-    messageContext.escalateIssues(issueId)
+    trigger: messageContext.inventoryStockExpiring,
+    resolver: messageContext.resolveIssues,
+    escalator: messageContext.escalateIssues,
   })
 }
 
