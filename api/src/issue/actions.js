@@ -18,7 +18,7 @@ const types = {
  * issueId is required.
  */
 function issueCreated(issueId) {
-  if (issueId == null) {
+  if (!issueId) {
     throw new Error('Must specify issueId')
   }
   return {
@@ -36,7 +36,7 @@ function issueCreated(issueId) {
  * issueId is required.
  */
 function issueTriggered(issueId) {
-  if (issueId == null) {
+  if (!issueId) {
     throw new Error('Must specify issueId')
   }
   return {
@@ -55,10 +55,10 @@ function issueTriggered(issueId) {
  * level is required
  */
 function issueEscalated(issueId, level) {
-  if (issueId == null) {
+  if (!issueId) {
     throw new Error('Must specify issueId')
   }
-  if (level == null) {
+  if (!level) {
     throw new Error('Must specify level')
   }
   return {
@@ -75,7 +75,7 @@ function issueEscalated(issueId, level) {
  * issueId is required.
  */
 function issueAcknowledged(issueId) {
-  if (issueId == null) {
+  if (!issueId) {
     throw new Error('Must specify issueId')
   }
   return {
@@ -91,7 +91,7 @@ function issueAcknowledged(issueId) {
  * issueId is required.
  */
 function issueResolved(issueId) {
-  if (issueId == null) {
+  if (!issueId) {
     throw new Error('Must specify issueId')
   }
   return {
