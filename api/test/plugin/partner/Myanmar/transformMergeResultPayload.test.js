@@ -113,7 +113,8 @@ describe('transformMergeResultPayload plugin for CepheidGeneXpert devices in Mya
             },
           },
           {
-            notes: '65,M,Yes,HIV-,Dx,Neg,Kan Gyi Su,Baye Pauk,Shwe Pyi Thar,LPA TSP,Relapse.',
+            notes:
+              '65,M,Yes,HIV-,Dx,Neg,Kan Gyi Su,Baye Pauk,Shwe Pyi Thar,LPA TSP,Relapse.',
             expectedPayload: {
               patient: {
                 hivStatus: 'HIV Negative',
