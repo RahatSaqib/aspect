@@ -15,7 +15,7 @@ const types = {
  * userName: Authenticated user / device, or null if unknown
  */
 function logCreated(logKey, severity, data, userName = null) {
-  if (logKey == null) {
+  if (!logKey) {
     throw new Error('Must specify logKey')
   }
   return {

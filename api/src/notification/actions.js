@@ -12,7 +12,7 @@ const types = {
  * issuedId is required.
  */
 function notificationCreated(notificationId) {
-  if (notificationId == null) {
+  if (!notificationId) {
     throw new Error('Must specify notificationId')
   }
   return {
