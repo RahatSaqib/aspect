@@ -6,15 +6,18 @@ const { subHours } = require('date-fns')
 const { runTest } = require('../utils/generatorFunctionUtils')
 
 describe('issue evaluation', () => {
-  function getConditionsMet(sqlScriptContents = null) {
-    const { conditionsMet } = proxyquire('../../src/issue/evaluation', {
-      '../shared/io': {
-        readTextFile() {
-          return Promise.resolve(sqlScriptContents)
+  function getIssueConditionsMet(sqlScriptContents = null) {
+    const { issueConditionsMet } = proxyquire(
+      '../../src/issue/issueEvaluation',
+      {
+        '../shared/io': {
+          readTextFile() {
+            return Promise.resolve(sqlScriptContents)
+          },
         },
-      },
-    })
-    return conditionsMet
+      }
+    )
+    return issueConditionsMet
   }
 
   let knex
@@ -50,32 +53,32 @@ describe('issue evaluation', () => {
   it('should evaluate to true for empty conditions', async () => {
     const issue = {}
     let conditions = {}
-    const conditionsMet = getConditionsMet()
-    await runTest(conditionsMet, [knex, issue, conditions])(result => {
+    const issueConditionsMet = getIssueConditionsMet()
+    await runTest(issueConditionsMet, [knex, issue, conditions])(result => {
       assert.isOk(result)
     })
     conditions = []
-    await runTest(conditionsMet, [knex, issue, conditions])(result => {
+    await runTest(issueConditionsMet, [knex, issue, conditions])(result => {
       assert.isOk(result)
     })
     conditions = null
-    await runTest(conditionsMet, [knex, issue, conditions])(result => {
+    await runTest(issueConditionsMet, [knex, issue, conditions])(result => {
       assert.isOk(result)
     })
     conditions = undefined
-    await runTest(conditionsMet, [knex, issue, conditions])(result => {
+    await runTest(issueConditionsMet, [knex, issue, conditions])(result => {
       assert.isOk(result)
     })
   })
 
   it('should not allow unrecognised evaluation methods', async () => {
     const issue = {}
-    const conditionsMet = getConditionsMet()
+    const issueConditionsMet = getIssueConditionsMet()
     let conditions = {
       evaluationMethod: 'unrecognised-method',
     }
     try {
-      await runTest(conditionsMet, [knex, issue, conditions])(() => {})
+      await runTest(issueConditionsMet, [knex, issue, conditions])(() => {})
       assert.fail(
         'An error should be thrown when an unrecognised evaluation method is passed'
       )
@@ -89,7 +92,7 @@ describe('issue evaluation', () => {
       evaluationParameter: 'SELECT thing FROM stuff',
     }
     try {
-      await runTest(conditionsMet, [knex, issue, conditions])(() => {})
+      await runTest(issueConditionsMet, [knex, issue, conditions])(() => {})
       assert.fail(
         'An error should be thrown when an unrecognised evaluation method is passed'
       )
@@ -105,7 +108,7 @@ describe('issue evaluation', () => {
       },
     ]
     try {
-      await runTest(conditionsMet, [knex, issue, conditions])(() => {})
+      await runTest(issueConditionsMet, [knex, issue, conditions])(() => {})
       assert.fail(
         'An error should be thrown when an unrecognised evaluation method is passed'
       )
@@ -117,7 +120,7 @@ describe('issue evaluation', () => {
     }
     conditions = [{}]
     try {
-      await runTest(conditionsMet, [knex, issue, conditions])(() => {})
+      await runTest(issueConditionsMet, [knex, issue, conditions])(() => {})
       assert.fail(
         'An error should be thrown when an unrecognised evaluation method is passed'
       )
@@ -142,7 +145,7 @@ describe('issue evaluation', () => {
       },
     ]
     try {
-      await runTest(conditionsMet, [knex, issue, conditions])(() => {})
+      await runTest(issueConditionsMet, [knex, issue, conditions])(() => {})
       assert.fail(
         'An error should be thrown when an unrecognised evaluation method is passed'
       )
@@ -159,7 +162,7 @@ describe('issue evaluation', () => {
       id: 3,
       geographyId: 13,
     }
-    const conditionsMet = getConditionsMet('')
+    const issueConditionsMet = getIssueConditionsMet('')
     let conditions = [
       {
         evaluationMethod: 'inline-sql',
@@ -174,7 +177,7 @@ describe('issue evaluation', () => {
         evaluationParameter: 'CALL getResultFromSomeQuery(?,?)',
       },
     ]
-    await runTest(conditionsMet, [knex, issue, conditions])(result => {
+    await runTest(issueConditionsMet, [knex, issue, conditions])(result => {
       assert.isOk(result)
     })
 
@@ -199,7 +202,7 @@ describe('issue evaluation', () => {
         },
       ],
     }
-    await runTest(conditionsMet, [knex, issue, conditions])(result => {
+    await runTest(issueConditionsMet, [knex, issue, conditions])(result => {
       assert.isOk(result)
     })
 
@@ -224,7 +227,7 @@ describe('issue evaluation', () => {
         },
       ],
     }
-    await runTest(conditionsMet, [knex, issue, conditions])(result => {
+    await runTest(issueConditionsMet, [knex, issue, conditions])(result => {
       assert.isOk(result)
     })
   })
@@ -234,7 +237,7 @@ describe('issue evaluation', () => {
       id: 3,
       geographyId: 13,
     }
-    const conditionsMet = getConditionsMet('')
+    const issueConditionsMet = getIssueConditionsMet('')
     initKnex([
       {
         result: { colHeader: 1 },
@@ -260,7 +263,7 @@ describe('issue evaluation', () => {
           'CALL getResultFromSomeQuery({{id}},{{geographyId}})',
       },
     ]
-    await runTest(conditionsMet, [knex, issue, conditions])(result => {
+    await runTest(issueConditionsMet, [knex, issue, conditions])(result => {
       assert.isNotOk(result)
     })
 
@@ -294,7 +297,7 @@ describe('issue evaluation', () => {
         },
       ],
     }
-    await runTest(conditionsMet, [knex, issue, conditions])(result => {
+    await runTest(issueConditionsMet, [knex, issue, conditions])(result => {
       assert.isNotOk(result)
     })
 
@@ -328,7 +331,7 @@ describe('issue evaluation', () => {
         },
       ],
     }
-    await runTest(conditionsMet, [knex, issue, conditions])(result => {
+    await runTest(issueConditionsMet, [knex, issue, conditions])(result => {
       assert.isNotOk(result)
     })
   })
@@ -338,7 +341,7 @@ describe('issue evaluation', () => {
       id: 3,
       geographyId: 13,
     }
-    const conditionsMet = getConditionsMet('')
+    const issueConditionsMet = getIssueConditionsMet('')
     initKnex([
       {
         result: { colHeader: 1 },
@@ -366,7 +369,7 @@ describe('issue evaluation', () => {
           'CALL getResultFromSomeQuery({{id}},{{geographyId}})',
       },
     ]
-    await runTest(conditionsMet, [knex, issue, conditions])(result => {
+    await runTest(issueConditionsMet, [knex, issue, conditions])(result => {
       assert.isOk(result)
     })
 
@@ -400,7 +403,7 @@ describe('issue evaluation', () => {
         },
       ],
     }
-    await runTest(conditionsMet, [knex, issue, conditions])(result => {
+    await runTest(issueConditionsMet, [knex, issue, conditions])(result => {
       assert.isOk(result)
     })
 
@@ -434,7 +437,7 @@ describe('issue evaluation', () => {
         },
       ],
     }
-    await runTest(conditionsMet, [knex, issue, conditions])(result => {
+    await runTest(issueConditionsMet, [knex, issue, conditions])(result => {
       assert.isOk(result)
     })
   })
@@ -444,7 +447,7 @@ describe('issue evaluation', () => {
       id: 3,
       geographyId: 13,
     }
-    const conditionsMet = getConditionsMet('')
+    const issueConditionsMet = getIssueConditionsMet('')
     initKnex([
       {
         result: { colHeader: 1 },
@@ -484,7 +487,7 @@ describe('issue evaluation', () => {
         },
       ],
     }
-    await runTest(conditionsMet, [knex, issue, conditions])(result => {
+    await runTest(issueConditionsMet, [knex, issue, conditions])(result => {
       assert.isNotOk(result)
     })
   })
@@ -494,7 +497,7 @@ describe('issue evaluation', () => {
       id: 3,
       geographyId: 13,
     }
-    const conditionsMet = getConditionsMet()
+    const issueConditionsMet = getIssueConditionsMet()
     const conditions = [
       {
         evaluationMethod: 'inline-sql',
@@ -527,7 +530,7 @@ describe('issue evaluation', () => {
           'CALL getResultFromSomeQuery({{id}},{{geographyId}})',
       },
     ]
-    await runTest(conditionsMet, [knex, issue, conditions])(result => {
+    await runTest(issueConditionsMet, [knex, issue, conditions])(result => {
       assert.isOk(result)
     })
     initKnex([
@@ -540,7 +543,7 @@ describe('issue evaluation', () => {
         result: { colHeader: false },
       },
     ])
-    await runTest(conditionsMet, [knex, issue, conditions])(result => {
+    await runTest(issueConditionsMet, [knex, issue, conditions])(result => {
       assert.isNotOk(result)
     })
   })
@@ -549,7 +552,7 @@ describe('issue evaluation', () => {
     const issue = {
       triggeredOn: new Date(),
     }
-    const conditionsMet = getConditionsMet()
+    const issueConditionsMet = getIssueConditionsMet()
     const conditions = [
       {
         evaluationMethod: 'issue-age',
@@ -558,7 +561,7 @@ describe('issue evaluation', () => {
         },
       },
     ]
-    await runTest(conditionsMet, [knex, issue, conditions])(result => {
+    await runTest(issueConditionsMet, [knex, issue, conditions])(result => {
       assert.isNotOk(result)
     })
   })
@@ -567,7 +570,7 @@ describe('issue evaluation', () => {
     const issue = {
       triggeredOn: subHours(new Date(), 2),
     }
-    const conditionsMet = getConditionsMet()
+    const issueConditionsMet = getIssueConditionsMet()
     const conditions = [
       {
         evaluationMethod: 'issue-age',
@@ -576,7 +579,7 @@ describe('issue evaluation', () => {
         },
       },
     ]
-    await runTest(conditionsMet, [knex, issue, conditions])(result => {
+    await runTest(issueConditionsMet, [knex, issue, conditions])(result => {
       assert.isOk(result)
     })
   })
@@ -586,7 +589,7 @@ describe('issue evaluation', () => {
       id: 3,
       geographyId: 13,
     }
-    const conditionsMet = getConditionsMet('')
+    const issueConditionsMet = getIssueConditionsMet('')
     initKnex([
       {
         result: { colHeader: 1 },
@@ -609,7 +612,7 @@ describe('issue evaluation', () => {
       evaluationParameter: 'SELECT someField FROM SOME_TABLE',
     }
     try {
-      await runTest(conditionsMet, [knex, issue, conditions])(() => {})
+      await runTest(issueConditionsMet, [knex, issue, conditions])(() => {})
       assert.fail(
         'An error should be thrown when an SQL condition returns blank result'
       )
@@ -625,7 +628,7 @@ describe('issue evaluation', () => {
         'SELECT otherField FROM OTHER_TABLE WHERE issueId = {{id}}',
     }
     try {
-      await runTest(conditionsMet, [knex, issue, conditions])(() => {})
+      await runTest(issueConditionsMet, [knex, issue, conditions])(() => {})
       assert.fail(
         'An error should be thrown when an SQL condition returns blank result'
       )
@@ -640,7 +643,7 @@ describe('issue evaluation', () => {
       evaluationParameter: 'SELECT yetAnotherField FROM OTHER_TABLE',
     }
     try {
-      await runTest(conditionsMet, [knex, issue, conditions])(() => {})
+      await runTest(issueConditionsMet, [knex, issue, conditions])(() => {})
       assert.fail(
         'An error should be thrown when an SQL condition returns blank result'
       )
@@ -657,7 +660,7 @@ describe('issue evaluation', () => {
       id: 3,
       geographyId: 13,
     }
-    const conditionsMet = getConditionsMet('')
+    const issueConditionsMet = getIssueConditionsMet('')
     initKnex([
       {
         result: { colHeader: 1 },
@@ -685,7 +688,7 @@ describe('issue evaluation', () => {
       evaluationMethod: 'inline-sql',
       evaluationParameter: 'SELECT otherField FROM OTHER_TABLE',
     }
-    await runTest(conditionsMet, [knex, issue, conditions])(result => {
+    await runTest(issueConditionsMet, [knex, issue, conditions])(result => {
       assert.isNotOk(result)
     })
     conditions = {
@@ -693,7 +696,7 @@ describe('issue evaluation', () => {
       evaluationParameter:
         'SELECT otherField FROM OTHER_TABLE WHERE issueId = {{id}}',
     }
-    await runTest(conditionsMet, [knex, issue, conditions])(result => {
+    await runTest(issueConditionsMet, [knex, issue, conditions])(result => {
       assert.isOk(result)
     })
     conditions = {
@@ -702,7 +705,7 @@ describe('issue evaluation', () => {
         'SELECT yetAnotherField FROM OTHER_TABLE WHERE issueId = {{id}}',
     }
     try {
-      await runTest(conditionsMet, [knex, issue, conditions])(result => {
+      await runTest(issueConditionsMet, [knex, issue, conditions])(result => {
         assert.isNotOk(result)
       })
       assert.fail(

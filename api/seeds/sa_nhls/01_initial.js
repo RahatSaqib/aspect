@@ -4,7 +4,6 @@ const _ = require('lodash')
 const bcrypt = require('bcrypt')
 const config = require('../../src/config')
 const { getPermissionModules } = require('../utils')
-const { randomToken } = require('../../src/deviceApi/apiKey')
 const geography = require('./fixtures/geography.json')
 
 const {
@@ -32,7 +31,7 @@ async function seed(knex) {
   const now = new Date()
   const [adminId] = await knex('User').insert({
     name: 'nhls_eid',
-    password: bcrypt.hashSync('mNv~P6&4U', saltRounds),
+    password: bcrypt.hashSync('fvxye6JjPU', saltRounds),
     approved: 1,
     createdOn: now,
     lockedOut: 0,
@@ -44,195 +43,6 @@ async function seed(knex) {
     updatedOn: now,
     updatedBy: adminId,
   }
-
-  // define resultData object
-  const geneXpertResultDataSchemaHiv = JSON.stringify({
-    resultText: {
-      title: 'Result Text',
-      type: 'string',
-      i18nKey: 'resultText',
-    },
-    copies: {
-      title: 'Copies/mL',
-      type: 'number',
-      list: true,
-    },
-    log: {
-      title: 'log',
-      type: 'number',
-    },
-    probes: {
-      title: 'Probes',
-      type: 'object',
-      i18nKey: 'probes',
-      properties: {
-        gpCt: {
-          title: 'GP Ct',
-          type: 'number',
-        },
-        gpEndPt: {
-          title: 'GP Endpt',
-          type: 'number',
-        },
-        cicCt: {
-          title: 'CIC Ct',
-          type: 'number',
-        },
-        cicEndPt: {
-          title: 'CIC EndPt',
-          type: 'number',
-        },
-        sacCt: {
-          title: 'SAC Ct',
-          type: 'number',
-        },
-        sacEndPt: {
-          title: 'SAC EndPt',
-          type: 'number',
-        },
-        npCt: {
-          title: 'NP Ct',
-          type: 'number',
-        },
-        npEndPt: {
-          title: 'NP EndPt',
-          type: 'number',
-        },
-        qc1Ct: {
-          title: 'QC1 Ct',
-          type: 'number',
-        },
-        qc1Endpt: {
-          title: 'QC1 EndPt',
-          type: 'number',
-        },
-        qc2Ct: {
-          title: 'QC2 Ct',
-          type: 'number',
-        },
-        qc2Endpt: {
-          title: 'Qc2Endpt',
-          type: 'number',
-        },
-      },
-    },
-  })
-
-  // define patientData object
-  const geneXpertPatientDataSchema = JSON.stringify({
-    id: {
-      title: 'Patient ID',
-      type: 'string',
-      order: 0,
-    },
-    name: {
-      title: 'Name',
-      type: 'string',
-      order: 1,
-    },
-    street: {
-      title: 'Street',
-      type: 'string',
-      order: 2,
-    },
-    city: {
-      title: 'City',
-      type: 'string',
-      order: 3,
-    },
-    state: {
-      title: 'State',
-      type: 'string',
-      order: 4,
-    },
-    zip: {
-      title: 'Zip',
-      type: 'string',
-      order: 5,
-    },
-    phone: {
-      title: 'Phone',
-      type: 'string',
-      order: 6,
-    },
-    hivStatus: {
-      title: 'HIV Status',
-      type: 'string',
-      order: 7,
-    },
-    age: {
-      title: 'Age (in years)',
-      type: 'number',
-      order: 8,
-    },
-    gender: {
-      title: 'Gender',
-      type: 'string',
-      order: 9,
-    },
-    microscopyResult: {
-      title: 'Microscopy Result',
-      type: 'string',
-      order: 10,
-    },
-  })
-
-  // define configurationData object
-  const geneXpertConfigurationDataSchema = JSON.stringify({
-    requirePrinter: {
-      title: 'Require printer',
-      type: 'string',
-    },
-    adminPassword: {
-      title: 'Admin password',
-      type: 'string',
-    },
-    firmwareUpdateRequired: {
-      title: 'Firmware update required',
-      type: 'string',
-    },
-    modules: {
-      title: 'Modules',
-      type: 'object',
-      i18nKey: 'Modules',
-      properties: {
-        module1: {
-          title: 'Module 1',
-          type: 'string',
-        },
-        module2: {
-          title: 'Module 2',
-          type: 'string',
-        },
-        module3: {
-          title: 'Module 3',
-          type: 'string',
-        },
-        module4: {
-          title: 'Module 4',
-          type: 'string',
-        },
-      },
-    },
-  })
-
-  // define deviceOperation object
-  const deviceOperationSchema = JSON.stringify({
-    voltage: {
-      title: 'Voltage',
-      type: 'number',
-      prefix: '',
-      suffix: 'V',
-      decimals: 2,
-    },
-    temperature: {
-      title: 'Temperature',
-      type: 'number',
-      prefix: '',
-      suffix: 'F',
-      decimals: 1,
-    },
-  })
 
   const deviceTypeCategoryConnector = await deviceTypeCategoryToId('Connector')
   const deviceTypeCategoryLab = await deviceTypeCategoryToId('Lab')
@@ -247,19 +57,9 @@ async function seed(knex) {
 
   const [deviceTypeAlereAlereQId] = await knex('DeviceType').insert({
     externalId: 'AlereQ',
-    name: 'Q',
-    manufacturer: 'Alere',
+    name: 'Alere q',
+    manufacturer: 'Abbott',
     deviceTypeCategoryId: deviceTypeCategoryLab,
-  })
-
-  const [deviceTypeGeneXpertId] = await knex('DeviceType').insert({
-    externalId: 'CepheidGeneXpert',
-    name: 'GeneXpert',
-    manufacturer: 'Cepheid',
-    plugin: 'gxconnect',
-    deviceTypeCategoryId: deviceTypeCategoryLab,
-    configurationDataSchema: geneXpertConfigurationDataSchema,
-    deviceOperationSchema,
   })
 
   // Reuse previously seeded "static" data
@@ -272,6 +72,7 @@ async function seed(knex) {
   const [partnerId] = await knex('Partner').insert({
     name: 'South Africa NHLS',
     partnerTypeId: await partnerTypeToId('Operating'),
+    plugin: 'sa_nhls',
     deviceLogHistoryDays: 365,
     maxDaysDeviceOffline: 7,
     maxDaysDeviceNoResults: 14,
@@ -376,7 +177,7 @@ async function seed(knex) {
   await knex('DeviceApiKey').insert(
     Object.assign(
       {
-        token: randomToken(),
+        token: '0dmqueurr7yw8rfr03zg',
         revoked: 0,
         partnerId,
         geographyId,
@@ -651,36 +452,6 @@ async function seed(knex) {
     }),
   })
 
-  const [geneXpertHiv1VlAssayId] = await knex('Assay').insert({
-    name: 'GeneXpert HIV-1 VL',
-    i18nKey: 'assayGeneXpertHiv1Vl',
-    externalId: 'GxHiv1Vl',
-    assayTypeId: await assayTypeToId('HIV VL'),
-    deviceTypeId: deviceTypeGeneXpertId,
-    resultSourceId: await resultSourceToId('DiagnosticDevice'),
-    resultCategory1Label: 'HIV',
-    resultCategory1i18nKey: 'resultCategoryHiv',
-    resultCategory2Label: null,
-    resultCategory2i18nKey: null,
-    resultDataSchema: geneXpertResultDataSchemaHiv,
-    patientDataSchema: geneXpertPatientDataSchema,
-  })
-
-  const [geneXpertHiv1QualAssayId] = await knex('Assay').insert({
-    name: 'GeneXpert HIV-1 Qual',
-    i18nKey: 'assayGeneXpertHiv1Qual',
-    externalId: 'GxHiv1Qual',
-    assayTypeId: await assayTypeToId('HIV Qual'),
-    deviceTypeId: deviceTypeGeneXpertId,
-    resultSourceId: await resultSourceToId('DiagnosticDevice'),
-    resultCategory1Label: 'HIV',
-    resultCategory1i18nKey: 'resultCategoryHiv',
-    resultCategory2Label: null,
-    resultCategory2i18nKey: null,
-    resultDataSchema: geneXpertResultDataSchemaHiv,
-    patientDataSchema: geneXpertPatientDataSchema,
-  })
-
   const piece = await unitToId('Piece')
   const [alereQHiv12DetectCartridgeId] = await knex('Consumable').insert({
     name: 'Alere q HIV-1/2 Detect Cartridge',
@@ -694,18 +465,6 @@ async function seed(knex) {
     canExpire: 1,
     manufacturer: 'Alere',
   })
-  const [gxHiv1VlCartridgeId] = await knex('Consumable').insert({
-    name: 'Xpert HIV-1 Viral Load Cartridge',
-    unit: piece,
-    canExpire: 1,
-    manufacturer: 'Cepheid',
-  })
-  const [gxHiv1QualCartridgeId] = await knex('Consumable').insert({
-    name: 'Xpert HIV-1 Qual Cartridge',
-    unit: piece,
-    canExpire: 1,
-    manufacturer: 'Cepheid',
-  })
 
   await knex('ConsumableAssay').insert([
     {
@@ -718,19 +477,9 @@ async function seed(knex) {
       consumableId: alereQHiv12VLPlasmaCartridgeId,
       quantity: 1,
     },
-    {
-      assayId: geneXpertHiv1VlAssayId,
-      consumableId: gxHiv1VlCartridgeId,
-      quantity: 1,
-    },
-    {
-      assayId: geneXpertHiv1QualAssayId,
-      consumableId: gxHiv1QualCartridgeId,
-      quantity: 1,
-    },
   ])
 
-  const geneXpertHiv1VlFormSchema = {
+  const assayAlereQHiv12FormSchema = {
     hospitalNumber: {
       i18nLabel: 'hospitalNumber',
       control: {
@@ -794,33 +543,16 @@ async function seed(knex) {
       },
       order: 7,
     },
+    timeInstrumentResulted: {
+      i18nLabel: 'timeInstrumentResulted',
+      control: {
+        type: 'DateTime',
+      },
+      order: 8,
+    },
   }
 
-  const assayAlereQHiv12FormSchema = Object.assign(
-    {},
-    geneXpertHiv1VlFormSchema,
-    {
-      timeInstrumentResulted: {
-        i18nLabel: 'timeInstrumentResulted',
-        control: {
-          type: 'DateTime',
-        },
-        order: 8,
-      },
-    }
-  )
-
   await knex('ResultForm').insert([
-    {
-      partnerId,
-      assayId: geneXpertHiv1VlAssayId,
-      formSchema: JSON.stringify(geneXpertHiv1VlFormSchema),
-    },
-    {
-      partnerId,
-      assayId: geneXpertHiv1QualAssayId,
-      formSchema: JSON.stringify(geneXpertHiv1VlFormSchema),
-    },
     {
       partnerId,
       assayId: alereQHiv12VLPlasmaAssayId,

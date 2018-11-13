@@ -1,7 +1,7 @@
 const Promise = require('bluebird')
 const _ = require('lodash')
 const { issueEscalated, escalateIssues } = require('./actions')
-const { conditionsMet } = require('./evaluation')
+const { issueConditionsMet } = require('./issueEvaluation')
 const { issueEventStatusToId } = require('../shared/dictionary')
 const { alertMessageUpdateAfterIssueDataChanged } = require('../alert/actions')
 
@@ -38,7 +38,7 @@ function onEscalateIssues() {
         return Promise.resolve()
       }
       return Promise.each(openIssuesToCheck, async issueEscalationTrigger => {
-        const shouldEscalate = await conditionsMet(
+        const shouldEscalate = await issueConditionsMet(
           knex,
           issueEscalationTrigger,
           issueEscalationTrigger.conditions
