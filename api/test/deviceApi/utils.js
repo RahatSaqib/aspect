@@ -3,7 +3,6 @@ const chai = require('chai')
 const supertest = require('supertest')
 const { subHours } = require('date-fns')
 const { run } = require('../../src/db')
-const { getConstraints, addConstraints } = require('../../src/auth/constraints')
 const { randomToken } = require('../../src/deviceApi/apiKey')
 const { getResult } = require('../../src/deviceApi/result')
 const { queuePurge } = require('../utils/mqUtils')
@@ -90,7 +89,17 @@ async function deleteDeviceAndTestData(knex, apiKeys) {
     .whereIn('deviceId', deviceIds)
     .map(op => op.id)
 
+  const tagIds = await knex('ResultTag')
+    .whereIn('resultId', resultIds)
+    .pluck('tagId')
+
   await deleteIssues(knex, { deviceIds, resultIds })
+  await knex('ResultTag')
+    .whereIn('tagId', tagIds)
+    .delete()
+  await knex('Tag')
+    .whereIn('id', tagIds)
+    .delete()
   await knex('DeviceStatusLog')
     .whereIn('deviceId', deviceIds)
     .delete()
@@ -264,246 +273,282 @@ async function getLastResult(knex, deviceId) {
   return getResult(knex, resultId)
 }
 
+async function createSite(knex, { partner, user, site }) {
+  const { id: partnerId } = await knex('Partner')
+    .where({ name: partner })
+    .first('id')
+  // find geography for current user
+  const { id: geographyId } = await knex('Geography as g')
+    .join('JobContext as jc', 'g.id', 'jc.geographyId')
+    .join('Job as j', 'jc.jobId', 'j.id')
+    .join('Person as p', 'j.personId', 'p.id')
+    .join('User as u', 'p.userId', 'u.id')
+    .where('p.lastPartnerId', partnerId)
+    .andWhere('u.name', user)
+    .first('g.id')
+
+  // create new site
+  const [siteId] = await knex('Site').insert({
+    name: 'Test Site',
+    shortName: 'Test Site',
+    externalId: site || `Test Site ${new Date().getTime()}`,
+    partnerId,
+    geographyId,
+  })
+
+  return siteId
+}
+
+async function createDevice(
+  knex,
+  { siteId, type = 'DaktariVirology', status = 'approved', baseConfig = {} }
+) {
+  const now = new Date()
+
+  const { geographyId, partnerId } = await knex('Site as s')
+    .where({ id: siteId })
+    .first()
+
+  const [deviceId] = await knex('Device').insert({
+    partnerId,
+    geographyId,
+    siteId,
+    deviceTypeId: await deviceTypeToId(type),
+    deviceStatusId: await deviceStatusToId(status),
+    configurationData: JSON.stringify(baseConfig),
+    name: 'Test Device',
+    shortName: 'Test Device',
+    lastSeenOn: now,
+  })
+
+  await knex('FactDeviceFlag').insert({ deviceId, updatedOn: now })
+
+  return deviceId
+}
+
+async function createResult(
+  knex,
+  { deviceId, userId, sampleType = 'DBS', assayName = 'DaktariHivVl' }
+) {
+  const now = new Date()
+
+  const { siteId, partnerId, geographyId } = await knex('Device as d')
+    .where({ id: deviceId })
+    .first()
+
+  const [sampleId] = await knex('Sample').insert({
+    externalId: `NEW SAMPLE ${new Date().getTime()}`,
+    collectedOn: now,
+    sampleTypeId: await sampleTypeToId(sampleType),
+    originSiteId: siteId,
+  })
+
+  const { id: daktariHivVlId } = await knex('Assay')
+    .where({ externalId: assayName })
+    .first()
+
+  const [resultId] = await knex('Result').insert({
+    createdOn: now,
+    createdBy: userId,
+    updatedOn: now,
+    updatedBy: userId,
+    externalId: `NEW RESULT ${new Date().getTime()}`,
+    assayId: daktariHivVlId,
+    partnerId,
+    geographyId,
+    siteId,
+    deviceId,
+    resultWorkflowStatusId: await resultWorkflowStatusToId('OK'),
+    resultSourceId: await resultSourceToId('Generated'),
+    resultTypeId: await resultTypeToId('Patient'),
+    sampleId,
+    resultCategory1: await resultCategoryToId('NoResult'),
+    resultData: JSON.stringify({}),
+    startedOn: subHours(now, 2),
+    endedOn: now,
+  })
+
+  return resultId
+}
+
 function createTestContext(server, auth) {
   return new DeviceApiTestContext(server, auth)
 }
 
 class DeviceApiTestContext {
-  constructor(server, auth) {
-    this.auth = auth
-
+  constructor(
+    server,
+    {
+      user,
+      password,
+      partner,
+      type,
+      site,
+      status = 'approved',
+      baseConfig = {},
+    }
+  ) {
     this.server = server
-    this.checkpoint = null
-    this.siteId = null
+    this.user = user
+    this.password = password
+    this.partner = partner
+    this.type = type
+    this.site = site
+    this.status = status
+    this.baseConfig = baseConfig
+    this.now = new Date()
+
+    this.siteIds = []
     this.deviceIds = []
-    this.initialConfigurationData = {}
     this.apiKeysWithoutDevice = []
-
-    _.bindAll(this, ['beforeEach', 'afterEach', 'runTest'])
+    _.bindAll(this, [
+      'runTest',
+      'afterEach',
+      'createDeviceWithResult',
+      'createDeviceApiKey',
+    ])
   }
 
-  beforeEach() {
-    return run(async () => {
-      this.checkpoint = null
-      this.siteId = null
-      this.deviceIds.splice(0)
-      this.initialConfigurationData = {}
-      this.apiKeysWithoutDevice.splice(0)
-    })
-  }
-
-  // Does not currently work to create initial checkpoint in beforeEach
-  // because of how Device Token is setup, so runTest creates an initial
-  // checkpoint and then runs test using db.run
-  // Also allows device authentication in setup of test without relying
-  // on run order of tests
-  runTest(test) {
+  createDeviceWithResult() {
     return run(async knex => {
-      this.deviceIds.splice(0)
-      this.apiKeysWithoutDevice.splice(0)
-
-      // Authenticates device and user from auth setup
-      const { server, auth } = this
-      const {
-        user,
-        type,
-        status = 'approved',
-        createDevice = false,
-        baseConfig = {},
-      } = auth
-      const now = new Date()
-      this.now = now
       const { userId } = await knex('User')
-        .where({ name: user })
+        .where({ name: this.user })
         .first('id as userId')
-      assert.isOk(userId, `Cannot find user ${user}`)
-      this.userId = userId
 
-      const clientToken = await server
-        .post('/api/auth')
-        .send({
-          name: user,
-          password: _.get(auth, 'password', 'test07'),
-          clientName: 'Mocha/Chai',
-        })
-        .then(res => {
-          assert.equal(res.status, 200)
-          assert.isAbove(res.body.access.length, 100)
-          assert.isAbove(res.body.refresh.length, 50)
-          assert.isAbove(res.body.clientId.length, 32)
-          return res.body.access
-        })
-      const dataConstraints = await getConstraints({ name: user })
-
-      let device = await knex('Device as d')
-        .innerJoin('DeviceApiKey as dak', 'dak.deviceId', 'd.id')
-        .innerJoin('DeviceType as dt', 'dt.id', 'd.deviceTypeId')
-        .innerJoin('DeviceStatus as ds', 'ds.id', 'd.deviceStatusId')
-        .modify(addConstraints, dataConstraints, { device: 'd' })
-        .where(
-          Object.assign(
-            {
-              'ds.token': status,
-              'dak.revoked': 0,
-            },
-            type ? { 'dt.name': type } : {}
-          )
-        )
-        .orderBy('d.name')
-        .first('dak.token', 'd.id')
-      let apiKey = null
-      if (device != null) {
-        apiKey = { token: device.token }
-      } else {
-        // if we can't find device, create API Key
-        assert.isNotOk(
-          auth.status,
-          `Cannot find device with status ${auth.status}`
-        )
-        assert.isOk(auth.partner, 'Must specify partner')
-        const { id: partnerId } = await knex('Partner')
-          .where({ name: auth.partner })
-          .first('id')
-        assert.isOk(partnerId, `Cannot find partner ${auth.partner}`)
-        this.partnerId = partnerId
-        apiKey = await this.createApiKey(knex, auth.site || null)
-
-        if (createDevice) {
-          // find geography for current user
-          const { id: geographyId } = await knex('Geography as g')
-            .join('JobContext as jc', 'g.id', 'jc.geographyId')
-            .join('Job as j', 'jc.jobId', 'j.id')
-            .join('Person as p', 'j.personId', 'p.id')
-            .join('User as u', 'p.userId', 'u.id')
-            .where('p.lastPartnerId', partnerId)
-            .andWhere('u.name', user)
-            .first('g.id')
-
-          // create new site
-          const [siteId] = await knex('Site').insert({
-            name: 'Test Site',
-            shortName: 'Test Site',
-            externalId: `Test Site ${new Date().getTime()}`,
-            partnerId,
-            geographyId,
-          })
-          this.siteId = siteId
-
-          const [deviceId] = await knex('Device').insert({
-            partnerId: this.partnerId,
-            geographyId,
-            siteId,
-            deviceTypeId: await deviceTypeToId('DaktariVirology'),
-            deviceStatusId: await deviceStatusToId(status),
-            configurationData: JSON.stringify(baseConfig),
-            name: 'Test Device',
-            shortName: 'Test Device',
-            lastSeenOn: now,
-          })
-
-          await knex('DeviceApiKey')
-            .where({ token: apiKey.token })
-            .update({ deviceId })
-
-          device = await knex('Device as d')
-            .innerJoin('DeviceApiKey as dak', 'dak.deviceId', 'd.id')
-            .where({ 'd.id': deviceId })
-            .first('dak.token', 'd.id')
-
-          const [sampleId] = await knex('Sample').insert({
-            externalId: `NEW SAMPLE ${new Date().getTime()}`,
-            collectedOn: now,
-            sampleTypeId: await sampleTypeToId('DBS'),
-            originSiteId: siteId,
-          })
-
-          const { id: daktariHivVlId } = await knex('Assay')
-            .where({ externalId: 'DaktariHivVl' })
-            .first()
-
-          await knex('Result').insert({
-            createdOn: now,
-            createdBy: this.userId,
-            updatedOn: now,
-            updatedBy: this.userId,
-            externalId: `NEW RESULT ${new Date().getTime()}`,
-            assayId: daktariHivVlId,
-            partnerId,
-            geographyId,
-            siteId,
-            deviceId: device.id,
-            resultWorkflowStatusId: await resultWorkflowStatusToId('OK'),
-            resultSourceId: await resultSourceToId('Generated'),
-            resultTypeId: await resultTypeToId('Patient'),
-            sampleId,
-            resultCategory1: await resultCategoryToId('NoResult'),
-            resultData: JSON.stringify({}),
-            startedOn: subHours(now, 2),
-            endedOn: now,
-          })
-        }
-      }
-      assert.isOk(apiKey)
-
+      const clientToken = await this.requestClientToken({
+        user: this.user,
+        password: this.password,
+      })
+      const apiKey = await this.createApiKey(knex)
       // save device id for the following tests
       this.apiKey = apiKey
       this.clientAuth = `Bearer ${clientToken}`
       this.deviceAuth = `Bearer ${apiKey.token}`
 
-      if (device != null) {
-        this.deviceId = device.id
+      const siteId = await createSite(knex, {
+        partner: this.partner,
+        user: this.user,
+        site: this.site,
+      })
+      // create second site for merge results
+      const site2Id = await createSite(knex, {
+        partner: this.partner,
+        user: this.user,
+      })
+      this.siteIds.push(siteId)
+      this.siteIds.push(site2Id)
 
-        this.deviceIds.push(device.id)
-        const { configurationData } = await knex('Device')
-          .where({ id: device.id })
-          .first('configurationData')
+      const deviceId = await createDevice(knex, {
+        siteId,
+        type: this.type,
+        status: this.status,
+        baseConfig: this.baseConfig,
+      })
+      this.deviceId = deviceId
+      this.deviceIds.push(deviceId)
 
-        this.initialConfigurationData[device.id] = configurationData || null
-        this.deviceConfigurationData = JSON.parse(
-          this.initialConfigurationData[device.id]
-        )
+      await createResult(knex, {
+        deviceId,
+        userId,
+      })
 
-        this.checkpoint = `Device API Device Tests ${new Date()}`
-        await this.server
-          .post(devicePath)
-          .set('Authorization', this.deviceAuth)
-          .send({ checkpoint: this.checkpoint })
-          .then(res => {
-            assert.equal(res.status, 200)
-            assert.typeOf(res.body, 'Object')
-          })
-      }
+      await knex('DeviceApiKey')
+        .where({ token: apiKey.token })
+        .update({ deviceId })
 
-      return test(knex)
+      this.checkpoint = `Device API Device Tests ${new Date()}`
+      await this.server
+        .post(devicePath)
+        .set('Authorization', this.deviceAuth)
+        .send({ checkpoint: this.checkpoint })
+        .then(res => {
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+        })
     })
   }
 
+  createDeviceApiKey() {
+    return run(async knex => {
+      const clientToken = await this.requestClientToken({
+        user: this.user,
+        password: this.password,
+      })
+      const apiKey = await this.createApiKey(knex, this.site)
+      // save device id for the following tests
+      this.apiKey = apiKey
+      this.clientAuth = `Bearer ${clientToken}`
+      this.deviceAuth = `Bearer ${apiKey.token}`
+    })
+  }
+
+  requestClientToken({ user, password = 'test07' }) {
+    return server
+      .post('/api/auth')
+      .send({
+        name: user,
+        password,
+        clientName: 'Mocha/Chai',
+      })
+      .then(res => {
+        assert.equal(res.status, 200)
+        assert.isAbove(res.body.access.length, 100)
+        assert.isAbove(res.body.refresh.length, 50)
+        assert.isAbove(res.body.clientId.length, 32)
+        return res.body.access
+      })
+  }
+
   async createApiKey(knex, siteName = null) {
+    const { id: partnerId } = await knex('Partner')
+      .where({ name: this.partner })
+      .first('id')
+
+    const { userId } = await knex('User')
+      .where({ name: this.user })
+      .first('id as userId')
+
     let site = null
     if (siteName != null) {
       site = await knex('Site')
-        .where({ externalId: siteName, partnerId: this.partnerId })
+        .where({ externalId: siteName, partnerId })
         .first('id', 'partnerId', 'geographyId')
-      assert.isOk(
-        site,
-        `Cannot find site ${siteName} partner ${this.partnerId}`
-      )
+      assert.isOk(site, `Cannot find site ${siteName} partner ${this.partner}`)
     }
 
     const apiKey = { token: randomToken() }
     await knex('DeviceApiKey').insert({
       token: apiKey.token,
       revoked: 0,
-      partnerId: this.partnerId,
+      partnerId,
       geographyId: site ? site.geographyId : null,
       siteId: site ? site.id : null,
       createdOn: this.now,
-      createdBy: this.userId,
+      createdBy: userId,
       updatedOn: this.now,
-      updatedBy: this.userId,
+      updatedBy: userId,
     })
     this.apiKeysWithoutDevice.push(apiKey)
     return apiKey
+  }
+
+  createSites(siteNames) {
+    return run(async knex => {
+      await Promise.all(
+        _.map(siteNames, async siteName => {
+          const siteId = await createSite(knex, {
+            partner: this.partner,
+            user: this.user,
+            site: siteName,
+          })
+          this.siteIds.push(siteId)
+        })
+      )
+    })
+  }
+
+  runTest(test) {
+    return run(async knex => test(knex))
   }
 
   afterEach() {
@@ -511,17 +556,6 @@ class DeviceApiTestContext {
       // Wait for queue to be idle so all created data
       // that will be created can be cleared
       await queuePurge()
-
-      // Reset to previous device configuration
-      await Promise.all(
-        this.deviceIds.map(deviceId => {
-          const configurationData =
-            this.initialConfigurationData[deviceId] || null
-          return knex('Device')
-            .where({ id: deviceId })
-            .update({ configurationData })
-        })
-      )
 
       if (this.checkpoint) {
         await deleteTestDataFromCheckpoint(
@@ -535,15 +569,15 @@ class DeviceApiTestContext {
         await deleteDeviceAndTestData(knex, this.apiKeysWithoutDevice)
       }
 
-      if (this.siteId) {
+      if (this.siteIds.length > 0) {
         await knex('Sample')
-          .where({ originSiteId: this.siteId })
+          .whereIn('originSiteId', this.siteIds)
           .delete()
         await knex('InventoryItem')
-          .where({ siteId: this.siteId })
+          .whereIn('siteId', this.siteIds)
           .delete()
         await knex('Site')
-          .where({ id: this.siteId })
+          .whereIn('id', this.siteIds)
           .delete()
       }
     })
