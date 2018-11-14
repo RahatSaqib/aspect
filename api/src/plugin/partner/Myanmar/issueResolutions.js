@@ -32,7 +32,7 @@ const {
 
 const { totalWastedInventoryItems } = require('../../../fact/service')
 const { getEscalateOrResolveStatusForIssueStockout } = require('./utils')
-const { isStockEmpty } = require('../../../shared/mqUtil')
+const { isStockEmpty } = require('../../../shared/utilsInventory')
 
 const { issueStatusToId, issueTypeToId } = require('../../../shared/dictionary')
 
@@ -430,6 +430,7 @@ async function resolveIssueStockExpiring(knex, issue) {
   const isEmptyStock = await isStockEmpty(knex, siteId, consumableId)
 
   if (isEmptyStock) {
+    // nothing to waste so consider resolved
     return true
   }
 

@@ -23,7 +23,7 @@ const { inventoryStockout, inventoryStockExpiring } = require('./actions')
 const {
   auditInventoryStockout,
   auditInventoryStockExpiring,
-} = require('../shared/mqUtil')
+} = require('../shared/utilsInventory')
 
 const INVENTORY_ITEM_SELECT_LIST_FIELDS = [
   'ii.id',

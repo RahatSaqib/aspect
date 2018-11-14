@@ -25,7 +25,7 @@ const {
 const {
   auditInventoryStockout,
   auditInventoryStockExpiring,
-} = require('../shared/mqUtil')
+} = require('../shared/utilsInventory')
 
 const daysToCalculate = [1, 7, 30, 60, 90, 365, 9999]
 const MIN_RESULTS_TO_TRIGGER_DATA_CATEGORY_LOW = 10

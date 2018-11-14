@@ -1,17 +1,18 @@
 const {
   totalDaysUnexpiredInventoryItemsLast,
   isStockEmpty,
-} = require('../../../shared/mqUtil')
+} = require('../../../shared/utilsInventory')
 
 async function getEscalateOrResolveStatusForIssueStockout(knex, issue) {
   const { partnerId, siteId, consumableId } = issue
 
   const isEmptyStock = await isStockEmpty(knex, siteId, consumableId)
   if (isEmptyStock) {
-    // consider issue resolved if stock is empty, i.e. no item in InventoryItem or quantityOnHand is null/0
+    // if stock is empty then keep issue unchanged
     return {
+      // level: 1,
       isEscalated: false,
-      isResolved: true,
+      isResolved: false,
     }
   }
 
