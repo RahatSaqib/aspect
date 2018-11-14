@@ -1340,7 +1340,9 @@ async function addStockLevelUpdateActions(
           if (inventoryItem) {
             alertMessage.totalInStock = inventoryItem.totalInStock
             alertMessage.consumableId = inventoryItem.consumableId
-            inventoryOutdated = inventoryItem.updatedOn < inventoryCutoff
+            inventoryOutdated = inventoryItem.updatedOn
+              ? inventoryItem.updatedOn < inventoryCutoff
+              : false
           } else {
             alertMessage.totalInStock = 0
             alertMessage.consumableId = null
