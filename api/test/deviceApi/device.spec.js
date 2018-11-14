@@ -27,9 +27,8 @@ const baseConfig = {
 
 const context = createTestContext(server, {
   user: 'admin',
-  type: 'Daktari Virology',
+  type: 'DaktariVirology',
   partner: 'Partner One',
-  createDevice: true,
   baseConfig,
 })
 const { factGenerateDeviceConnectivity } = require('../../src/fact/actions')
@@ -40,7 +39,9 @@ describe('Device API routes', () => {
 
   const { runTest } = context
 
-  beforeEach(context.beforeEach)
+  beforeEach(async () => {
+    await context.createDeviceWithResult()
+  })
   afterEach(context.afterEach)
 
   describe('configuration', () => {
@@ -297,7 +298,10 @@ describe('Device API routes', () => {
     })
     const { runTest } = newDeviceContext
 
-    beforeEach(newDeviceContext.beforeEach)
+    beforeEach(async () => {
+      await newDeviceContext.createSites(['CHIZ'])
+      await newDeviceContext.createDeviceApiKey()
+    })
     afterEach(newDeviceContext.afterEach)
     it('should create Device with statusId and add log to DeviceStatusLog table', () =>
       runTest(async knex => {

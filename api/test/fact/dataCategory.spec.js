@@ -151,7 +151,7 @@ describe('DataCategoryLow Issues Endpoint', () => {
       const { s: { geographyId } } = await getSite(knex, {
         partnerId,
         countryAbbreviation,
-        requireInventory: true,
+        requireInventory: false,
         userId: labUserId,
       })
 

@@ -7,20 +7,21 @@ const {
 } = require('../utils')
 const {
   allAssayTypeToId,
-  allDeviceStatusToId,
   allDeviceTypeCategoryToId,
   allIssueCategoryToId,
   allMessageSeverityToId,
   allPartnerTypeToId,
   allResultCategoryToId,
   allResultSourceToId,
-  allResultWorkflowStatusToId,
-  allSampleTypeToId,
+  deviceStatusToId,
+  sampleTypeToId,
   resultTypeToId,
+  resultWorkflowStatusToId,
   unitToId,
 } = require('../../src/shared/dictionary')
 const _ = require('lodash')
 const bcrypt = require('bcrypt')
+const Promise = require('bluebird')
 const { randomToken } = require('../../src/deviceApi/apiKey')
 const geography = require('./fixtures/geography.json')
 const patients = require('./fixtures/patients.json')
@@ -29,8 +30,7 @@ const { errorCodes } = require('./fixtures/errorCodes.js')
 const {
   addMilliseconds,
   addMinutes,
-  addHours,
-  subHours,
+
   subDays,
 } = require('date-fns')
 
@@ -38,12 +38,8 @@ const millisInHour = 1000 * 60 * 60
 const millisInMinute = 1000 * 60
 const millisInNormalYear = 1000 * 60 * 60 * 24 * 365
 const resultTimeFrameInDays = 365
-const deviceNumber = 50
-const routerNumber = 20
+
 const resultMultiplier = process.env['seeds.resultMultiplier'] || 100
-const resultMtbNumber = 1 * resultMultiplier
-const resultEbolaNumber = 0.5 * resultMultiplier
-const resultHivVlNumber = 0.5 * resultMultiplier
 const resultHcvNumber = 0.5 * resultMultiplier
 const now = new Date()
 const patientNumber = patients.length - 1
@@ -343,12 +339,6 @@ async function seed(knex) {
     plugin: 'gxalert',
     deviceTypeCategoryId: deviceTypeCategoryInformationSystem,
   })
-
-  // DeviceStatus
-  const {
-    assigned: deviceStatusAssigned,
-    approved: deviceStatusApproved,
-  } = await allDeviceStatusToId()
 
   // Result source
   const {
@@ -1561,179 +1551,104 @@ async function seed(knex) {
   })
 
   // Result Workflow Status
-  const {
-    Ordered: ordered,
-    Processed: processed,
-    Validated: validated,
-    Deliverable: deliverable,
-    Acknowledged: acknowledged,
-  } = await allResultWorkflowStatusToId()
+  const processed = await resultWorkflowStatusToId('Processed')
 
   // Create geographic hierarchy
   const countries = {}
-  const geographies = []
   const siteDatas = []
-  await Promise.all(
-    _.map(geography.countries, async country => {
-      const countryData = _.pick(country, [
-        'abbreviation',
-        'name',
-        'a3',
-        'culture',
-        'countryCode',
-        'stateLabel',
-        'lgaLabel',
-        'timezone',
-        'portNumber',
-        'exportColumns',
-        'inventoryDaysThreshold',
-        'monthStartsOnDay',
-      ])
-      const [countryId] = await knex('Country').insert(countryData)
-      countryData.id = countryId
-      countries[country.abbreviation] = countryData
-      countryData.states = {}
+  await Promise.each(geography.countries, async country => {
+    const countryData = _.pick(country, [
+      'abbreviation',
+      'name',
+      'a3',
+      'culture',
+      'countryCode',
+      'stateLabel',
+      'lgaLabel',
+      'timezone',
+      'portNumber',
+      'exportColumns',
+      'inventoryDaysThreshold',
+      'monthStartsOnDay',
+    ])
+    const [countryId] = await knex('Country').insert(countryData)
+    countryData.id = countryId
+    countries[country.abbreviation] = countryData
+    countryData.states = {}
 
-      const [countryGeographyId] = await knex('Geography').insert({ countryId })
-      countryData.geographyId = countryGeographyId
+    const [countryGeographyId] = await knex('Geography').insert({ countryId })
+    countryData.geographyId = countryGeographyId
 
-      await Promise.all(
-        _.map(country.states || [], async state => {
-          const stateData = _.pick(state, ['abbreviation', 'name'])
-          const [stateId] = await knex('State').insert(stateData)
-          stateData.id = stateId
-          const stateKey = state.abbreviation || state.name
-          countryData.states[stateKey] = stateData
-          stateData.lgas = {}
+    await Promise.each(country.states || [], async state => {
+      const stateData = _.pick(state, ['abbreviation', 'name'])
+      const [stateId] = await knex('State').insert(stateData)
+      stateData.id = stateId
+      const stateKey = state.abbreviation || state.name
+      countryData.states[stateKey] = stateData
+      stateData.lgas = {}
 
-          const [stateGeographyId] = await knex('Geography').insert({
-            countryId,
-            stateId,
-          })
-          stateData.geographyId = stateGeographyId
+      const [stateGeographyId] = await knex('Geography').insert({
+        countryId,
+        stateId,
+      })
+      stateData.geographyId = stateGeographyId
 
-          await Promise.all(
-            _.map(state.lgas || [], async lga => {
-              const lgaData = _.pick(lga, ['name'])
+      await Promise.each(state.lgas || [], async lga => {
+        const lgaData = _.pick(lga, ['name'])
 
-              const [lgaId] = await knex('Lga').insert(lgaData)
-              lgaData.id = lgaId
-              stateData.lgas[lga.name] = lgaData
-              lgaData.sites = {}
+        const [lgaId] = await knex('Lga').insert(lgaData)
+        lgaData.id = lgaId
+        stateData.lgas[lga.name] = lgaData
+        lgaData.sites = {}
 
-              const geoData = { countryId, stateId, lgaId }
-              const [geographyId] = await knex('Geography').insert(geoData)
-              lgaData.geographyId = geographyId
-              geographies.push(Object.assign({ id: geographyId }, geoData))
-
-              // up to 5 of sites at each LGA
-              await Promise.all(
-                _.map(_.range(1, 6 - lgaData.id % 5), async siteNumber => {
-                  const siteData = Object.assign(
-                    {
-                      partnerId: partnerOneId,
-                      geographyId,
-                      externalId: `${state.name}_${siteNumber}`,
-                      name: `${lga.name} ${country.lgaLabel} ${
-                        state.name
-                      } #${siteNumber}`,
-                      shortName: `${lga.name}, ${stateKey} #${siteNumber}`,
-                      city: `${lga.name} City`,
-                      street1: `${lgaData.id} Main Street`,
-                      zip: `12345-${lgaData.id}`,
-                      latitude: _.has(state, 'lat')
-                        ? state.lat + _.random(-0.5, 0.5, true)
-                        : undefined,
-                      longitude: _.has(state, 'lng')
-                        ? state.lng + _.random(-0.5, 0.5, true)
-                        : undefined,
-                    },
-                    auditFields
-                  )
-                  const [siteId] = await knex('Site').insert(siteData)
-                  siteData.id = siteId
-                  siteData.abbreviation = countryData.abbreviation
-                  siteDatas.push(siteData)
-                })
-              )
-            })
-          )
-        })
-      )
-    })
-  )
-
-  // Users
-  const userIds = {}
-  const personIds = {}
-  await Promise.all(
-    _.map(
-      [
-        'Admin',
-        'Bill',
-        'Bob',
-        'Frank',
-        'Ed',
-        'Fred',
-        'Jason',
-        'Jim',
-        'Jon',
-        'Ned',
-        'Sam',
-        'Steve',
-      ],
-      async name => {
-        let userId
-        if (name === 'Admin') {
-          userId = adminId
-        } else {
-          ;[userId] = await knex('User').insert({
-            name: name.toLowerCase(),
-            // User "Bill" was migrated from a GxAlert database.
-            // Set pw to something that doesn't look like a bcrypt hash
-            // so that Gx API is used to verify pw and set on aspect
-            password:
-              name === 'Bill'
-                ? 'SOMESTRING'
-                : bcrypt.hashSync('test07', saltRounds),
-            legacyPassword: name === 'Bill' ? 1 : 0,
-            approved: 1,
-            createdOn: now,
-            lockedOut: 0,
-            failedPasswordAttempts: 0,
-          })
-        }
-        userIds[name.toLowerCase()] = userId
-
-        const lastPartnerId = _.includes(['Jim', 'Jason'], name)
-          ? partnerTwoId
-          : partnerOneId
-        const lastCountryId = _.includes(['Jim', 'Sam'], name)
-          ? countries.NG.id
-          : countries.US.id
-        const timezone = _.includes(['Jim', 'Sam'], name)
-          ? countries.NG.timezone
-          : countries.US.timezone
-        const culture = _.includes(['Jim', 'Sam'], name)
-          ? countries.NG.culture
-          : countries.US.culture
-
-        const [personId] = await knex('Person').insert(
-          Object.assign(
+        const geoData = { countryId, stateId, lgaId }
+        const [geographyId] = await knex('Geography').insert(geoData)
+        lgaData.geographyId = geographyId
+        if (state.name === 'Ohio') {
+          const siteData = Object.assign(
             {
-              userId,
-              name,
-              lastPartnerId,
-              lastCountryId,
-              timezone,
-              culture,
-              geographyId: geographies[geographies.length % userId].id,
+              partnerId: partnerOneId,
+              geographyId,
+              externalId: `${state.name}_${lga.name}`,
+              name: `${lga.name} ${country.lgaLabel} ${state.name}`,
+              shortName: `${lga.name}, ${stateKey}`,
+              city: `${lga.name} City`,
+              street1: `${lgaData.id} Main Street`,
+              zip: `12345-${lgaData.id}`,
+              latitude: _.has(state, 'lat')
+                ? state.lat + _.random(-0.5, 0.5, true)
+                : undefined,
+              longitude: _.has(state, 'lng')
+                ? state.lng + _.random(-0.5, 0.5, true)
+                : undefined,
             },
             auditFields
           )
-        )
-        personIds[name.toLowerCase()] = personId
-      }
+          const [siteId] = await knex('Site').insert(siteData)
+          siteData.id = siteId
+          siteDatas.push(siteData)
+        }
+      })
+    })
+  })
+
+  const { id: geographyId } = await knex('Geography as g')
+    .innerJoin('Country as c', 'c.id', 'g.countryId')
+    .where({ 'c.a3': 'USA' })
+    .first('g.id')
+
+  const [adminPersonId] = await knex('Person').insert(
+    Object.assign(
+      {
+        userId: adminId,
+        name: 'Admin',
+        lastPartnerId: partnerOneId,
+        lastCountryId: countries.US.id,
+        timezone: countries.US.timezone,
+        culture: countries.US.culture,
+        geographyId,
+      },
+      auditFields
     )
   )
 
@@ -1745,996 +1660,125 @@ async function seed(knex) {
       cell: config.admin.cell,
     })
 
-  const siteDatasForDevice = _.concat(
-    _.take(
-      _.filter(siteDatas, site => site.abbreviation === 'US'),
-      deviceNumber / 2
-    ),
-    _.take(
-      _.filter(siteDatas, site => site.abbreviation === 'NG'),
-      deviceNumber / 2
-    )
-  )
-  // insert some routers with sims:
-  const routerIds = []
-  await Promise.all(
-    _.map(_.range(routerNumber), async i => {
-      const siteData = siteDatasForDevice[i % siteDatasForDevice.length]
-      const [routerId] = await knex('Device').insert(
-        Object.assign({}, auditFields, {
-          name: `Router at ${i} ${siteData.shortName}`,
-          shortName: `r${i}`,
-          deviceTypeId: deviceTypeIdRouter,
-          deviceStatusId: deviceStatusApproved,
-          partnerId: siteData.partnerId,
-          geographyId: siteData.geographyId,
-          siteId: siteData.id,
-          createdOn: new Date(+now - 3 * i * millisInHour),
-          updatedOn: new Date(+now - i * millisInHour),
-          lastPingOn: new Date(+now - i * millisInHour / 3),
-          lastSeenOn: new Date(+now - i * millisInHour / 3),
-        })
-      )
-      routerIds.push(routerId)
+  const deviceStatusApproved = await deviceStatusToId('approved')
+
+  // insert router with sims
+  const site = siteDatas[0]
+  const [routerId] = await knex('Device').insert(
+    Object.assign({}, auditFields, {
+      name: `Router at ${site.shortName}`,
+      shortName: `Router ${site.shortName}`,
+      deviceTypeId: deviceTypeIdRouter,
+      deviceStatusId: deviceStatusApproved,
+      partnerId: site.partnerId,
+      geographyId: site.geographyId,
+      siteId: site.id,
+      createdOn: new Date(+now - 3 * _.random(10) * millisInHour),
+      updatedOn: new Date(+now - _.random(10) * millisInHour),
+      lastPingOn: new Date(+now - _.random(10) * millisInHour / 3),
+      lastSeenOn: new Date(+now - _.random(10) * millisInHour / 3),
     })
   )
 
-  // ... and 1-3 sims for some routers
-  const sims = _.map(_.range(0, routerNumber, 2), i => {
-    const routerId = routerIds[i]
-    return Object.assign({}, auditFields, {
+  await knex('DeviceSim').insert(
+    Object.assign({}, auditFields, {
       deviceId: routerId,
-      provider: i % 3 === 0 ? 'Glo' : 'Vodafone',
+      provider: 'Vodafone',
       serial: `SRL-${routerId}`,
       number: `+1 413 123 45${routerId}`,
-    })
-  })
-  await knex('DeviceSim').insert(sims)
-
-  // insert GeneXpert devices
-  const devicesGeneXpert = []
-  await Promise.all(
-    _.map(_.range(deviceNumber), async i => {
-      const siteData = siteDatasForDevice[i % siteDatasForDevice.length]
-      const routerId = routerIds[i]
-      const device = Object.assign({}, auditFields, {
-        name: `GeneXpert #${i} ${siteData.shortName}`,
-        shortName: `GeneXpert #${i}`,
-        deviceTypeId: deviceTypeGeneXpertId,
-        deviceStatusId:
-          i % 3 === 0 ? deviceStatusApproved : deviceStatusAssigned,
-        configurationData: JSON.stringify({
-          requirePrinter: 'no',
-          adminPassword: 'pwd123',
-          firmwareUpdateRequired: 'yes',
-          modules: {
-            module1: '18889030',
-            module2: '51395910',
-            module3: '33550994',
-            module4: '73235848',
-          },
-        }),
-        partnerId: siteData.partnerId,
-        geographyId: siteData.geographyId,
-        siteId: siteData.id,
-        // not all sites will have a router - we only added routers to some site
-        deviceId: routerId || null,
-        createdOn: new Date(+now - 3 * i * millisInHour),
-        updatedOn: new Date(+now - i * millisInHour),
-        lastPingOn: new Date(+now - i * millisInHour / 3),
-        lastSeenOn: new Date(+now - i * millisInHour / 3),
-        hostId: _.times(8, () =>
-          String.fromCharCode(65 + _.random(25) + (_.random(1) > 0 ? 32 : 0))
-        ).join(''),
-        serial: _.times(24, () =>
-          String.fromCharCode(65 + _.random(25) + (_.random(1) > 0 ? 32 : 0))
-        ).join(''),
-      })
-
-      device.id = await knex('Device').insert(device)
-      devicesGeneXpert.push(device)
-
-      // Create API Keys
-      await knex('DeviceApiKey').insert(
-        Object.assign(
-          {
-            token: randomToken(),
-            revoked: 0,
-            partnerId: siteData.partnerId,
-            geographyId: siteData.geographyId,
-            siteId: siteData.id,
-            deviceId: device.id,
-          },
-          auditFields
-        )
-      )
-
-      // Create Status Log
-      await knex('DeviceStatusLog').insert({
-        deviceId: device.id,
-        deviceStatusId:
-          _.random(1) > 0 ? deviceStatusApproved : deviceStatusAssigned,
-        changedOn: auditFields.updatedOn,
-        createdOn: auditFields.createdOn,
-        createdBy: auditFields.createdBy,
-      })
-
-      // Create DeviceOperation
-      const operationNumber = _.random(3, 11)
-      await Promise.all(
-        _.map(_.range(operationNumber), async j => {
-          await knex('DeviceOperation').insert({
-            deviceId: device.id,
-            data: JSON.stringify({
-              voltage: _.random(1.35, 1.65, true),
-              temperature: _.random(30, 70),
-            }),
-            startedOn: new Date(+now + _.random(j, j + 1, true) * millisInHour),
-            createdOn: now,
-          })
-        })
-      )
     })
   )
 
   // insert Daktari devices
   const devicesDaktari = []
-  await Promise.all(
-    _.map(_.range(deviceNumber), async i => {
-      const siteData = siteDatasForDevice[i % siteDatasForDevice.length]
-      const routerId = routerIds[i]
-      const device = Object.assign({}, auditFields, {
-        name: `Daktari #${i} ${siteData.shortName}`,
-        shortName: `Daktari #${i}`,
-        deviceTypeId: deviceTypeDaktariVirologyId,
-        deviceStatusId:
-          _.random(1) > 0 ? deviceStatusApproved : deviceStatusAssigned,
-        configurationData: JSON.stringify({
-          requirePrinter: 'yes',
-          adminPassword: 'pwd123',
-          firmwareUpdateRequired: 'no',
-        }),
-        partnerId: siteData.partnerId,
-        geographyId: siteData.geographyId,
-        siteId: siteData.id,
-        // not all sites will have a router - we only added routers to some site
-        deviceId: routerId || null,
-        createdOn: new Date(+now - 3 * i * millisInHour),
-        updatedOn: new Date(+now - i * millisInHour),
-        lastPingOn: new Date(+now - i * millisInHour / 3),
-        lastSeenOn: new Date(+now - i * millisInHour / 3),
-        hostId: _.times(8, () =>
-          String.fromCharCode(65 + _.random(25) + (_.random(1) > 0 ? 32 : 0))
-        ).join(''),
-        serial: _.times(24, () =>
-          String.fromCharCode(65 + _.random(25) + (_.random(1) > 0 ? 32 : 0))
-        ).join(''),
-      })
-
-      device.id = await knex('Device').insert(device)
-      devicesDaktari.push(device)
-
-      // Create API Keys
-      await knex('DeviceApiKey').insert(
-        Object.assign(
-          {
-            token: randomToken(),
-            revoked: 0,
-            partnerId: siteData.partnerId,
-            geographyId: siteData.geographyId,
-            siteId: siteData.id,
-            deviceId: device.id,
-          },
-          auditFields
-        )
-      )
-
-      // Create DeviceOperation
-      const operationNumber = _.random(3, 11)
-      await Promise.all(
-        _.map(_.range(operationNumber), async j => {
-          await knex('DeviceOperation').insert({
-            deviceId: device.id,
-            data: JSON.stringify({
-              voltage: _.random(1.35, 1.65, true),
-              temperature: _.random(30, 70),
-            }),
-            startedOn: new Date(+now + _.random(j, j + 1, true) * millisInHour),
-            createdOn: now,
-          })
-        })
-      )
+  await Promise.each(siteDatas, async (siteData, i) => {
+    const device = Object.assign({}, auditFields, {
+      name: `Daktari ${siteData.shortName}`,
+      shortName: `Daktari ${siteData.shortName}`,
+      deviceTypeId: deviceTypeDaktariVirologyId,
+      deviceStatusId: deviceStatusApproved,
+      configurationData: JSON.stringify({
+        requirePrinter: 'yes',
+        adminPassword: 'pwd123',
+        firmwareUpdateRequired: 'no',
+      }),
+      partnerId: siteData.partnerId,
+      geographyId: siteData.geographyId,
+      siteId: siteData.id,
+      deviceId: i === 0 ? routerId : null,
+      createdOn: new Date(+now - 3 * i * millisInHour),
+      updatedOn: new Date(+now - i * millisInHour),
+      lastPingOn: new Date(+now - i * millisInHour / 3),
+      lastSeenOn: new Date(+now - i * millisInHour / 3),
+      hostId: _.times(8, () =>
+        String.fromCharCode(65 + i + (_.random(1) > 0 ? 32 : 0))
+      ).join(''),
+      serial: _.times(24, () =>
+        String.fromCharCode(65 + i + (_.random(1) > 0 ? 32 : 0))
+      ).join(''),
     })
-  )
+
+    device.id = await knex('Device').insert(device)
+    devicesDaktari.push(device)
+
+    // Create API Keys
+    await knex('DeviceApiKey').insert(
+      Object.assign(
+        {
+          token: randomToken(),
+          revoked: 0,
+          partnerId: siteData.partnerId,
+          geographyId: siteData.geographyId,
+          siteId: siteData.id,
+          deviceId: device.id,
+        },
+        auditFields
+      )
+    )
+  })
 
   // Insert Inventory Items
-  await Promise.all(
-    _.map(_.range(siteDatas.length), async i => {
-      const siteData = siteDatas[i]
-      // TB Cartridges
-      await knex('InventoryItem').insert(
-        Object.assign(
-          {
-            consumableId: consumableGxTbCartridgeId,
-            siteId: siteData.id,
-            lotNumber: `${(i + 3) * (i + 1)}${
-              ['A', 'B'][i % 2]
-            }-${(siteData.id + i) * consumableGxTbCartridgeId}`,
-            expiresOn: new Date(
-              new Date(
-                now.getTime() +
-                  _.random(-millisInNormalYear, millisInNormalYear)
-              ).setHours(0, 0, 0, 0)
-            ),
-            quantityOnHand: _.random(0, 1000),
-          },
-          auditFields
-        )
-      )
-      if (i % 5 === 0) {
-        await knex('InventoryItem').insert(
-          Object.assign(
-            {
-              consumableId: consumableGxEbolaCartridgeId,
-              siteId: siteData.id,
-              lotNumber: `${(i + 7) * (i + 1)}${
-                ['Q', 'P'][i % 2]
-              }-${(siteData.id + i) * consumableGxEbolaCartridgeId}`,
-              expiresOn: new Date(
-                new Date(
-                  now.getTime() +
-                    _.random(-millisInNormalYear, millisInNormalYear)
-                ).setHours(0, 0, 0, 0)
-              ),
-              quantityOnHand: _.random(0, 1000),
-            },
-            auditFields
-          )
-        )
-      }
-      if (i % 7 === 0) {
-        await knex('InventoryItem').insert(
-          Object.assign(
-            {
-              consumableId: consumableGxHiv1VlCartridgeId,
-              siteId: siteData.id,
-              lotNumber: `${(i + 11) * (i + 1)}${
-                ['A', 'V'][i % 2]
-              }-${(siteData.id + i) * consumableGxHiv1VlCartridgeId}`,
-              expiresOn: new Date(
-                new Date(
-                  now.getTime() +
-                    _.random(-millisInNormalYear, millisInNormalYear)
-                ).setHours(0, 0, 0, 0)
-              ),
-              quantityOnHand: _.random(0, 1000),
-            },
-            auditFields
-          )
-        )
-      }
-    })
-  )
-
-  const {
-    DBS: sampleTypeDBSId,
-    Plasma: sampleTypePlasmaId,
-  } = await allSampleTypeToId()
-
-  // some TB samples:
-  let samples = []
-  await Promise.all(
-    _.map(_.range(resultMtbNumber / 2), async i => {
-      const siteData = siteDatasForDevice[i % siteDatasForDevice.length]
-      const sample = Object.assign(
-        {},
+  await Promise.each(siteDatas, async (siteData, i) => {
+    // TB Cartridges
+    await knex('InventoryItem').insert(
+      Object.assign(
         {
-          externalId: `SMP-TB-${i}`,
-          collectedOn: calculateDateForResult(
-            i,
-            resultMtbNumber,
-            millisInMinute
+          consumableId: consumableGxTbCartridgeId,
+          siteId: siteData.id,
+          lotNumber: `${(i + 3) * (i + 1)}${['A', 'B'][i % 2]}-${(siteData.id +
+            i) *
+            consumableGxTbCartridgeId}`,
+          expiresOn: new Date(
+            new Date(
+              now.getTime() + _.random(-millisInNormalYear, millisInNormalYear)
+            ).setHours(0, 0, 0, 0)
           ),
-          sampleTypeId: sampleTypeDBSId,
-          originSiteId: siteData.id,
-        }
-      )
-
-      sample.id = await knex('Sample').insert(sample)
-
-      samples.push(sample)
-    })
-  )
-
-  // Results section
-  // TB results:
-  let possibleResults = [
-    {
-      resultText: 'MTB Detected, Rif Resistance Not Detected',
-      category1: resultCategoryDetectedId,
-      category2: resultCategoryNotDetectedId,
-      minLikelihood: 0,
-      maxLikelihood: 20,
-    },
-    {
-      resultText: 'MTB Detected, Rif Resistance Detected',
-      category1: resultCategoryDetectedId,
-      category2: resultCategoryDetectedId,
-      minLikelihood: 21,
-      maxLikelihood: 26,
-    },
-    {
-      resultText: 'MTB Detected, Rif Indeterminate',
-      category1: resultCategoryDetectedId,
-      category2: resultCategoryIndeterminateId,
-      minLikelihood: 27,
-      maxLikelihood: 28,
-    },
-    {
-      resultText: 'ERROR',
-      category1: resultCategoryErrorId,
-      category2: null,
-      minLikelihood: 29,
-      maxLikelihood: 34,
-    },
-    {
-      resultText: 'Invalid',
-      category1: resultCategoryInvalidId,
-      category2: null,
-      minLikelihood: 35,
-      maxLikelihood: 38,
-    },
-    {
-      resultText: 'Not Detected',
-      category1: resultCategoryDetectedId,
-      category2: null,
-      minLikelihood: 39,
-      maxLikelihood: 100,
-    },
-  ]
-
-  let resultData = {
-    probes: {
-      probeA: 'NEG',
-      probeB: 'POS',
-      probeC: 'NO RESULT',
-      probeD: 'NEG',
-      probeE: 'POS',
-      probeSpc: 'NO RESULT',
-      qc1: 'YES',
-      qc2: 'No',
-      probeACt: 12.32,
-      probeBCt: 11.2,
-      probeCCt: 12.5,
-      probeDCt: 0.5,
-      probeECt: 1.2,
-      probeSpcCt: 5.78,
-      qc1Ct: 1,
-      qc2Ct: 0.007,
-      probeAEndpt: 1.6,
-      probeBEndpt: 2.33,
-      probeCEndpt: 457,
-      probeDEndpt: 12.43,
-      probeEEndpt: 3.14,
-      probeSpcEndpt: 8.9018,
-      qc1Endpt: 0.1234,
-      qc2Endpt: 1.22,
-    },
-  }
-
-  _.map(_.range(resultMtbNumber), async i => {
-    const device = devicesGeneXpert[i % devicesGeneXpert.length]
-    const siteData = siteDatas.find(site => site.id === device.siteId)
-    const sample = samples[i % samples.length]
-    const randomDate = calculateDateForResult(i, resultMtbNumber, 6000)
-
-    const rnd = _.random(0, 100)
-    const result = _.find(
-      possibleResults,
-      r => rnd >= r.minLikelihood && rnd <= r.maxLikelihood
-    )
-    resultData.resultText = result.resultText
-    const resultId = await knex('Result').insert(
-      Object.assign({}, auditFields, {
-        externalId: `UQTB-${i}`,
-        assayId: assayGeneXpertMtbRifId,
-        partnerId: partnerOneId,
-        geographyId: siteData.geographyId,
-        siteId: siteData.id,
-        deviceId: device.id,
-        resultWorkflowStatusId: ordered,
-        longitude: -81.581222,
-        latitude: 28.419348,
-        resultSourceId: resultSourceDiagnosticId,
-        resultTypeId: resultTypePatientId,
-        sampleId: sample.id,
-        sampleRunNumber: `${i % 2 + 1}`,
-        sampleGroup: `GRP-HIV-${i % 5}`,
-        resultCategory1: result.category1,
-        resultCategory2: result.category2,
-        resultData: JSON.stringify(resultData),
-        assayVersion: '4',
-        startedOn: randomDate,
-        endedOn: addMinutes(randomDate, 100),
-        consumableSerial: `${i}12`,
-        consumableExpirationDate: new Date(+now + 200 * i * millisInHour),
-        consumableLot: `Lot ${i % 5}`,
-        instrumentSerial: `S-1234-${i % 3}`,
-        moduleName: 'Module A',
-        moduleSerial: `M-1234-${i % 4}`,
-        researchId: `R-ID-${i}`,
-        patientData: JSON.stringify(patients[_.random(patientNumber)]),
-        senderVersion: '4.6b',
-        senderOperator: 'Marsha',
-        notes: 'This is a test... result',
-        errorCode:
-          result.category1 === resultCategoryErrorId
-            ? errorCodes[_.random(errorCodes.length)]
-            : null,
-        errorNotes:
-          result.category1 === resultCategoryErrorId
-            ? 'Exceeded cycle threshold'
-            : null,
-      })
-    )
-
-    await knex('ResultWorkflowLog').insert({
-      resultId,
-      resultWorkflowStatusId: ordered,
-      operator: 'Marsha',
-      changedOn: subHours(randomDate, 25),
-      createdOn: subHours(randomDate, 26),
-      createdBy: adminId,
-    })
-
-    await knex('ResultWorkflowLog').insert({
-      resultId,
-      resultWorkflowStatusId: acknowledged,
-      operator: 'John',
-      changedOn: addHours(randomDate, 2),
-      createdOn: addHours(randomDate, 1),
-      createdBy: adminId,
-    })
-
-    await knex('DeviceLog').insert({
-      deviceId: device.id,
-      createdOn: addHours(randomDate, 1),
-      senderIp: '0.0.0.0',
-      checkPoint: `rrt_${_.random(20)}`,
-      source: 'seed data',
-      rawMessage: JSON.stringify({
-        type: {
-          id: _.sample([
-            deviceTypeGeneXpertId.name,
-            deviceTypeAfinionId.name,
-            deviceTypeQId.name,
-            deviceTypeM2000Id.name,
-            deviceTypeChaiId.name,
-            deviceTypeDaktariVirologyId.name,
-            deviceTypeDaktariInSightId.name,
-            deviceTypeIdRouter.name,
-            deviceTypeCommCare.name,
-          ]),
-          site: {
-            id: siteData.externalId,
-          },
-          result: {
-            data: Object.assign({}, auditFields, {
-              externalId: `UQTB-${i}`,
-              assayId: assayGeneXpertMtbRifId,
-              partnerId: partnerOneId,
-              geographyId: siteData.geographyId,
-              siteId: siteData.id,
-              deviceId: device.id,
-              resultWorkflowStatusId: ordered,
-              longitude: -81.581222,
-              latitude: 28.419348,
-              resultSourceId: resultSourceDiagnosticId,
-              resultTypeId: resultTypePatientId,
-              sampleId: sample.id,
-              sampleRunNumber: `${i % 2 + 1}`,
-              sampleGroup: `GRP-HIV-${i % 5}`,
-              resultCategory1: result.category1,
-              resultCategory2: result.category2,
-              resultData,
-              assayVersion: '4',
-              startedOn: randomDate,
-              endedOn: addMinutes(randomDate, 100),
-              consumableSerial: `${i}12`,
-              consumableExpirationDate: new Date(+now + 200 * i * millisInHour),
-              consumableLot: `Lot ${i % 5}`,
-              instrumentSerial: `S-1234-${i % 3}`,
-              moduleName: 'Module A',
-              moduleSerial: `M-1234-${i % 4}`,
-              researchId: `R-ID-${i}`,
-              patientData: patients[_.random(patientNumber)],
-              senderVersion: '4.6b',
-              senderOperator: 'Marsha',
-              notes: 'This is a test... result',
-              errorCode:
-                result.category1 === resultCategoryErrorId
-                  ? errorCodes[_.random(errorCodes.length)]
-                  : null,
-              errorNotes:
-                result.category1 === resultCategoryErrorId
-                  ? 'Exceeded cycle threshold'
-                  : null,
-            }),
-          },
+          quantityOnHand: _.random(0, 1000),
         },
-      }),
-      deviceConfigurationUpdated: 0,
-      resultId,
-    })
-  })
-
-  // some Ebola samples:
-  samples = []
-  await Promise.all(
-    _.map(_.range(resultEbolaNumber / 2), async i => {
-      const siteData = siteDatasForDevice[i % siteDatasForDevice.length]
-      const sample = Object.assign(
-        {},
-        {
-          externalId: `SMP-EB-${i}`,
-          collectedOn: calculateDateForResult(
-            i,
-            resultEbolaNumber,
-            millisInMinute
-          ),
-          sampleTypeId: sampleTypePlasmaId,
-          originSiteId: siteData.id,
-        }
+        auditFields
       )
-
-      sample.id = await knex('Sample').insert(sample)
-
-      samples.push(sample)
-    })
-  )
-
-  // Ebola results:
-  possibleResults = [
-    {
-      resultText: 'Ebola GP NON DÉTECTÉ|Ebola NP NON DÉTECTÉ',
-      category1: resultCategoryNotDetectedId,
-      category2: resultCategoryNotDetectedId,
-    },
-    {
-      resultText: 'Ebola GP DÉTECTÉ|Ebola NP NON DÉTECTÉ',
-      category1: resultCategoryDetectedId,
-      category2: resultCategoryNotDetectedId,
-    },
-    {
-      resultText: 'Ebola GP Not Detected|Ebola NP Detected',
-      category1: resultCategoryNotDetectedId,
-      category2: resultCategoryDetectedId,
-    },
-    {
-      resultText: 'No Result',
-      category1: resultCategoryNoResultId,
-      category2: null,
-    },
-    { resultText: 'ERROR', category1: resultCategoryErrorId, category2: null },
-    {
-      resultText: 'Invalid',
-      category1: resultCategoryInvalidId,
-      category2: null,
-    },
-  ]
-
-  resultData = {
-    probes: {
-      probeA: null,
-      probeB: null,
-      probeC: null,
-      probeD: null,
-      probeE: null,
-      probeSpc: null,
-      qc1: null,
-      qc2: null,
-      probeACt: 0.32,
-      probeBCt: 0,
-      probeCCt: 11.4,
-      probeDCt: 0.5,
-      probeECt: 1.2,
-      probeSpcCt: null,
-      qc1Ct: 1,
-      qc2Ct: 0.007,
-      probeAEndpt: 1.6,
-      probeBEndpt: 2.33,
-      probeCEndpt: 457,
-      probeDEndpt: 12.43,
-      probeEEndpt: 3.14,
-      probeSpcEndpt: null,
-      qc1Endpt: 0.1234,
-      qc2Endpt: 1.22,
-    },
-  }
-
-  _.map(_.range(resultEbolaNumber), async i => {
-    const device = devicesGeneXpert[i % devicesGeneXpert.length]
-    const siteData = siteDatas.find(site => site.id === device.siteId)
-    const sample = samples[i % samples.length]
-    const randomDate = calculateDateForResult(i, resultEbolaNumber, 6000)
-
-    let j = 0
-    await Promise.all(
-      _.map(possibleResults, async result => {
-        j += 1
-        if (_.random(5) === 0) {
-          resultData.resultText = result.resultText
-          const resultId = await knex('Result').insert(
-            Object.assign({}, auditFields, {
-              externalId: `UQEB-${i}-${j}`,
-              assayId: assayGeneXpertEbolaId,
-              partnerId: partnerOneId,
-              geographyId: siteData.geographyId,
-              siteId: siteData.id,
-              deviceId: device.id,
-              resultWorkflowStatusId: processed,
-              longitude: -81.581222,
-              latitude: 28.419348,
-              resultSourceId: resultSourceDiagnosticId,
-              resultTypeId: resultTypePatientId,
-              sampleId: sample.id,
-              sampleRunNumber: `${i % 2 + 1}`,
-              resultCategory1: result.category1,
-              sampleGroup: `GRP-HIV-${i % 5}`,
-              resultCategory2: result.category2,
-              resultData: JSON.stringify(resultData),
-              assayVersion: '4',
-              startedOn: randomDate,
-              endedOn: addMinutes(randomDate, 100),
-              consumableSerial: `${i}12`,
-              consumableExpirationDate: new Date(+now + 200 * i * millisInHour),
-              consumableLot: `Lot ${i % 5}`,
-              instrumentSerial: `S-1234-${i % 3}`,
-              moduleName: 'Module A',
-              moduleSerial: `M-1234-${i % 4}`,
-              researchId: `R-ID-${i}`,
-              patientData: JSON.stringify(patients[_.random(patientNumber)]),
-              senderVersion: '4.7a',
-              senderOperator: 'Marsha',
-              notes: 'This is an Ebola test result',
-              errorCode:
-                result.category1 === resultCategoryErrorId
-                  ? errorCodes[_.random(errorCodes.length)]
-                  : null,
-              errorNotes:
-                result.category1 === resultCategoryErrorId
-                  ? 'Exceeded cycle threshold'
-                  : null,
-            })
-          )
-
-          await knex('ResultWorkflowLog').insert({
-            resultId,
-            resultWorkflowStatusId: ordered,
-            operator: 'Bill',
-            changedOn: subHours(randomDate, 34),
-            createdOn: subHours(randomDate, 35),
-            createdBy: adminId,
-          })
-
-          await knex('ResultWorkflowLog').insert({
-            resultId,
-            resultWorkflowStatusId: processed,
-            operator: 'Marsha',
-            changedOn: subHours(randomDate, 13),
-            createdOn: subHours(randomDate, 12),
-            createdBy: adminId,
-          })
-
-          await knex('ResultWorkflowLog').insert({
-            resultId,
-            resultWorkflowStatusId: acknowledged,
-            operator: 'John',
-            changedOn: addHours(randomDate, 41),
-            createdOn: addHours(randomDate, 42),
-            createdBy: adminId,
-          })
-        }
-      })
     )
   })
 
-  // some HIV VL samples:
-  samples = []
-  await Promise.all(
-    _.map(_.range(resultHivVlNumber / 2), async i => {
-      const siteData = siteDatasForDevice[i % siteDatasForDevice.length]
-      const sample = Object.assign(
-        {},
-        {
-          externalId: `SMP-HIV-${i}`,
-          collectedOn: calculateDateForResult(
-            i,
-            resultHivVlNumber,
-            millisInMinute
-          ),
-          sampleTypeId: sampleTypeDBSId,
-          originSiteId: siteData.id,
-        }
-      )
-
-      sample.id = await knex('Sample').insert(sample)
-
-      samples.push(sample)
-    })
-  )
-
-  // HIV VL Results for the GeneXpert:
-  possibleResults = [
-    {
-      resultText: 'HIV-1 DÉTECTÉ {0} copies/mL (log {1})',
-      category1: resultCategoryDetectedId,
-    },
-    { resultText: 'HIV-1 NON DÉTECTÉ', category1: resultCategoryNotDetectedId },
-    { resultText: 'No Result', category1: resultCategoryNoResultId },
-    { resultText: 'ERROR', category1: resultCategoryErrorId },
-    { resultText: 'Invalid', category1: resultCategoryInvalidId },
-  ]
-
-  resultData = {
-    probes: {
-      gpCt: 25.4,
-      gpEndPt: 558.0,
-      cicCt: 23.9,
-      cicEndPt: 289.0,
-      sacCt: 33.8,
-      sacEndPt: 650.0,
-      npCt: 12.2,
-      npEndPt: null,
-      qc1Ct: 0.32,
-      qc1Endpt: 0,
-      qc2Ct: 11.4,
-      qc2Endpt: 0.5,
-    },
-  }
-
-  _.map(_.range(resultHivVlNumber), async i => {
-    const device = devicesGeneXpert[i % devicesGeneXpert.length]
-    const siteData = siteDatas.find(site => site.id === device.siteId)
-    const sample = samples[i % samples.length]
-    const randomDate = calculateDateForResult(i, resultHivVlNumber, 6000)
-
-    // make sure we have at least one result with these status
-    const ensureResultIds = [acknowledged, validated, deliverable]
-    let j = 0
-    await Promise.all(
-      _.map(possibleResults, async result => {
-        j += 1
-        if (_.random(4) === 0) {
-          let copies = 3200
-          let log = 5
-          if (result === possibleResults[0]) {
-            copies = Math.floor(Math.random() * 500000)
-            log = Math.round(Math.random() * 600) / 100
-          } else {
-            copies = null
-            log = null
-          }
-
-          resultData.copies = copies
-          resultData.log = log
-          resultData.resultText = result.resultText
-            .replace('{0}', copies)
-            .replace('{1}', log)
-
-          const resultStatus =
-            ensureResultIds.shift() || _.random(1) < 0.3
-              ? acknowledged
-              : _.random(1) < 0.5 ? validated : deliverable
-
-          const resultId = await knex('Result').insert(
-            Object.assign({}, auditFields, {
-              externalId: `UQHIV-${i}-${j}`,
-              assayId: assayGeneXpertHiv1VlId,
-              partnerId: partnerOneId,
-              geographyId: siteData.geographyId,
-              siteId: siteData.id,
-              deviceId: device.id,
-              resultWorkflowStatusId: resultStatus,
-              longitude: -81.581222,
-              latitude: 28.419348,
-              resultSourceId: resultSourceDiagnosticId,
-              resultTypeId: resultTypePatientId,
-              sampleId: sample.id,
-              sampleRunNumber: `${i % 2 + 1}`,
-              resultCategory1: result.category1,
-              resultData: JSON.stringify(resultData),
-              assayVersion: '4',
-              startedOn: randomDate,
-              endedOn: addMinutes(randomDate, 92),
-              consumableSerial: `${i}12`,
-              consumableExpirationDate: new Date(+now + 200 * i * millisInHour),
-              consumableLot: `Lot ${i % 5}`,
-              instrumentSerial: `S-1234-${i % 3}`,
-              moduleName: 'Module A',
-              moduleSerial: `M-1234-${i % 4}`,
-              researchId: `R-ID-${i}`,
-              patientData: JSON.stringify(patients[_.random(patientNumber)]),
-              senderVersion: '4.4',
-              senderOperator: 'Marsha',
-              notes: 'This is an HIV test result',
-              errorCode:
-                result.category1 === resultCategoryErrorId
-                  ? errorCodes[_.random(errorCodes.length)]
-                  : null,
-              errorNotes:
-                result.category1 === resultCategoryErrorId
-                  ? 'Exceeded cycle threshold'
-                  : null,
-            })
-          )
-
-          await knex('ResultWorkflowLog').insert({
-            resultId,
-            resultWorkflowStatusId: resultStatus,
-            operator: 'Marsha',
-            changedOn: subHours(randomDate, 2),
-            createdOn: subHours(randomDate, 3),
-            createdBy: adminId,
-          })
-        }
-      })
+  // some HCV samples for Daktari
+  const samples = []
+  await Promise.each(siteDatas, async (siteData, i) => {
+    const siteDate = siteDatas[i]
+    const sample = Object.assign(
+      {},
+      {
+        externalId: `SMP-HCV-GX-${i}`,
+        collectedOn: calculateDateForResult(i, resultHcvNumber, millisInMinute),
+        sampleTypeId: await sampleTypeToId('DBS'),
+        originSiteId: siteDate.id,
+      }
     )
+    sample.id = await knex('Sample').insert(sample)
+    samples.push(sample)
   })
 
-  // some HCV samples for GeneXpert
-  samples = []
-  await Promise.all(
-    _.map(_.range(resultHcvNumber / 2), async i => {
-      const sample = Object.assign(
-        {},
-        {
-          externalId: `SMP-HCV-GX-${i}`,
-          collectedOn: calculateDateForResult(
-            i,
-            resultHcvNumber,
-            millisInMinute
-          ),
-          sampleTypeId: sampleTypeDBSId,
-        }
-      )
-
-      sample.id = await knex('Sample').insert(sample)
-
-      samples.push(sample)
-    })
-  )
-
-  // Daktari HCV Results:
-  possibleResults = [
-    { resultText: 'HCV Detected - {0}', category1: resultCategoryDetectedId },
-    { resultText: 'HCV Not Detected', category1: resultCategoryNotDetectedId },
-    { resultText: 'No Result', category1: resultCategoryNoResultId },
-    { resultText: 'Error', category1: resultCategoryErrorId },
-    { resultText: 'Invalid', category1: resultCategoryInvalidId },
-  ]
-
-  resultData = {
-    probes: {
-      gpCt: 25.4,
-      gpEndPt: 558.0,
-      cicCt: 23.9,
-      cicEndPt: 289.0,
-      sacCt: 33.8,
-      sacEndPt: 650.0,
-      npCt: 12.2,
-      npEndPt: null,
-      qc1Ct: 0.32,
-      qc1Endpt: 0,
-      qc2Ct: 11.4,
-      qc2Endpt: 0.5,
-    },
-  }
-
-  _.map(_.range(resultHcvNumber), async i => {
-    const device = devicesDaktari[i % devicesDaktari.length]
-    const siteData = siteDatas.find(site => site.id === device.siteId)
-    const sample = samples[i % samples.length]
-    const randomDate = calculateDateForResult(i, resultHcvNumber, 6000)
-
-    let j = 0
-    await Promise.all(
-      _.map(possibleResults, async result => {
-        j += 1
-        if (_.random(4) === 0) {
-          let count = 3200
-          if (result === possibleResults[0]) {
-            count = Math.floor(Math.random() * 100000000)
-          } else {
-            count = null
-          }
-
-          resultData.count = count
-          resultData.resultText = result.resultText.replace('{0}', count)
-
-          const resultId = await knex('Result').insert(
-            Object.assign({}, auditFields, {
-              externalId: `UQ-GX-HCV-${i}-${j}`,
-              assayId: assayGeneXpertHcvId,
-              partnerId: partnerOneId,
-              geographyId: siteData.geographyId,
-              siteId: siteData.id,
-              deviceId: device.id,
-              resultWorkflowStatusId: processed,
-              longitude: -81.581222,
-              latitude: 28.419348,
-              resultSourceId: resultSourceDiagnosticId,
-              resultTypeId: resultTypePatientId,
-              sampleId: sample.id,
-              sampleRunNumber: `${i % 2 + 1}`,
-              sampleGroup: `GRP-HIV-${i % 5}`,
-              resultCategory1: result.category1,
-              resultData: JSON.stringify(resultData),
-              assayVersion: '4.7',
-              startedOn: randomDate,
-              endedOn: addMinutes(randomDate, 80),
-              consumableSerial: `${i}12`,
-              consumableExpirationDate: new Date(+now + 200 * i * millisInHour),
-              consumableLot: `Lot ${i % 5}`,
-              instrumentSerial: `S-1234-${i % 3}`,
-              moduleName: 'Module A',
-              moduleSerial: `M-1234-${i % 4}`,
-              researchId: `R-ID-${i}`,
-              patientData: JSON.stringify(patients[_.random(patientNumber)]),
-              senderVersion: '4.7b',
-              senderOperator: 'Gene Hackman',
-              notes: 'This is an HCV test result',
-              errorCode:
-                result.category1 === resultCategoryErrorId
-                  ? errorCodes[_.random(errorCodes.length)]
-                  : null,
-              errorNotes:
-                result.category1 === resultCategoryErrorId
-                  ? 'Exceeded cycle threshold'
-                  : null,
-            })
-          )
-
-          await knex('ResultWorkflowLog').insert({
-            resultId,
-            resultWorkflowStatusId: processed,
-            operator: 'Gene Hackman',
-            changedOn: addMinutes(randomDate, 90),
-            createdOn: addMinutes(randomDate, 90),
-            createdBy: adminId,
-          })
-        }
-      })
-    )
-  })
-
-  // some HIV VL samples for Daktari
-  samples = []
-  await Promise.all(
-    _.map(_.range(resultHivVlNumber), async i => {
-      const siteData = siteDatasForDevice[i % siteDatasForDevice.length]
-      const sample = Object.assign(
-        {},
-        {
-          externalId: `SMP-HIV-DAK-${i}`,
-          collectedOn: calculateDateForResult(
-            i,
-            resultHivVlNumber,
-            millisInMinute
-          ),
-          sampleTypeId: sampleTypeDBSId,
-          originSiteId: siteData.id,
-        }
-      )
-
-      sample.id = await knex('Sample').insert(sample)
-
-      samples.push(sample)
-    })
-  )
-
-  // HIV VL Results for the GeneXpert:
-  possibleResults = [
+  // Daktari HIV VL  Results:
+  const possibleResults = [
     {
       resultText: 'HIV Detected (log {1})',
       category1: resultCategoryDetectedId,
@@ -2745,7 +1789,7 @@ async function seed(knex) {
     { resultText: 'Invalid', category1: resultCategoryInvalidId },
   ]
 
-  resultData = {
+  const resultData = {
     probes: {
       gpCt: 25.4,
       gpEndPt: 558.0,
@@ -2762,224 +1806,81 @@ async function seed(knex) {
     },
   }
 
-  _.map(_.range(resultHivVlNumber), async i => {
-    const device = devicesDaktari[i % devicesDaktari.length]
-    const siteData = siteDatas.find(site => site.id === device.siteId)
-    const sample = samples[i % samples.length]
-    const randomDate = calculateDateForResult(i, resultHivVlNumber, 6000)
-
-    let j = 0
-    await Promise.all(
-      _.map(possibleResults, async result => {
-        j += 1
-        if (_.random(4) === 0) {
-          let copies = 3200
-          let log = 5
-          if (result === possibleResults[0]) {
-            copies = Math.floor(Math.random() * 500000)
-            log = Math.round(Math.random() * 600) / 100
-          } else {
-            copies = null
-            log = null
-          }
-
-          resultData.copies = copies
-          resultData.log = log
-          resultData.resultText = result.resultText
-            .replace('{0}', copies)
-            .replace('{1}', log)
-
-          const resultId = await knex('Result').insert(
-            Object.assign({}, auditFields, {
-              externalId: `UQ-DAK-HIV-${i}-${j}`,
-              assayId: assayDaktariHivVlId,
-              partnerId: partnerOneId,
-              geographyId: siteData.geographyId,
-              siteId: siteData.id,
-              deviceId: device.id,
-              resultWorkflowStatusId: acknowledged,
-              longitude: -81.581222,
-              latitude: 28.419348,
-              resultSourceId: resultSourceDiagnosticId,
-              resultTypeId: resultTypePatientId,
-              sampleId: sample.id,
-              sampleRunNumber: `${i % 2 + 1}`,
-              sampleGroup: `GRP-HIV-${i % 5}`,
-              resultCategory1: result.category1,
-              resultData: JSON.stringify(resultData),
-              assayVersion: '4',
-              startedOn: randomDate,
-              endedOn: addMinutes(randomDate, 48),
-              consumableSerial: `${i}12`,
-              consumableExpirationDate: new Date(+now + 200 * i * millisInHour),
-              consumableLot: `Lot ${i % 5}`,
-              instrumentSerial: `S-1234-${i % 3}`,
-              moduleName: 'Module A',
-              moduleSerial: `M-1234-${i % 4}`,
-              researchId: `R-ID-${i}`,
-              patientData: JSON.stringify(patients[_.random(patientNumber)]),
-              senderVersion: '4.4',
-              senderOperator: 'Aaron',
-              notes: 'This is an HIV test result',
-              errorCode:
-                result.category1 === resultCategoryErrorId
-                  ? errorCodes[_.random(errorCodes.length)]
-                  : null,
-              errorNotes:
-                result.category1 === resultCategoryErrorId
-                  ? 'Exceeded cycle threshold'
-                  : null,
-            })
-          )
-
-          await knex('ResultWorkflowLog').insert({
-            resultId,
-            resultWorkflowStatusId: acknowledged,
-            operator: 'Aaron',
-            changedOn: addMinutes(randomDate, 90),
-            createdOn: addMinutes(randomDate, 90),
-            createdBy: adminId,
-          })
-        }
-      })
-    )
-  })
-
-  // some HCV samples for Daktari
-  samples = []
-  await Promise.all(
-    _.map(_.range(resultHcvNumber / 2), async i => {
-      const siteData = siteDatasForDevice[i % siteDatasForDevice.length]
-      const sample = Object.assign(
-        {},
-        {
-          externalId: `SMP-HCV-DAK-${i}`,
-          collectedOn: calculateDateForResult(
-            i,
-            resultHcvNumber,
-            millisInMinute
-          ),
-          sampleTypeId: sampleTypeDBSId,
-          originSiteId: siteData.id,
-        }
-      )
-
-      sample.id = await knex('Sample').insert(sample)
-
-      samples.push(sample)
-    })
-  )
-
-  // Daktari HCV Results:
-  possibleResults = [
-    {
-      resultText: 'HCV Detected (log {1})',
-      category1: resultCategoryDetectedId,
-    },
-    { resultText: 'HCV Not Detected', category1: resultCategoryNotDetectedId },
-    { resultText: 'No Result', category1: resultCategoryNoResultId },
-    { resultText: 'Error', category1: resultCategoryErrorId },
-    { resultText: 'Invalid', category1: resultCategoryInvalidId },
-  ]
-
-  resultData = {
-    probes: {
-      gpCt: 25.4,
-      gpEndPt: 558.0,
-      cicCt: 23.9,
-      cicEndPt: 289.0,
-      sacCt: 33.8,
-      sacEndPt: 650.0,
-      npCt: 12.2,
-      npEndPt: null,
-      qc1Ct: 0.32,
-      qc1Endpt: 0,
-      qc2Ct: 11.4,
-      qc2Endpt: 0.5,
-    },
-  }
-
-  _.map(_.range(resultHcvNumber), async i => {
-    const device = devicesDaktari[i % devicesDaktari.length]
+  const resultDatas = []
+  _.map(_.range(devicesDaktari.length * 3), i => {
+    const device = devicesDaktari[i % siteDatas.length]
     const siteData = siteDatas.find(site => site.id === device.siteId)
     const sample = samples[i % samples.length]
     const randomDate = calculateDateForResult(i, resultHcvNumber, 6000)
 
-    let j = 0
-    await Promise.all(
-      _.map(possibleResults, async result => {
-        j += 1
-        if (_.random(4) === 0) {
-          let copies = 3200
-          let log = 5
-          if (result === possibleResults[0]) {
-            copies = Math.floor(Math.random() * 500000)
-            log = Math.round(Math.random() * 600) / 100
-          } else {
-            copies = null
-            log = null
-          }
+    const result = possibleResults[_.random(4)]
+    let copies = 3200
+    let log = 5
+    if (result === possibleResults[0]) {
+      copies = Math.floor(Math.random() * 500000)
+      log = Math.round(Math.random() * 600) / 100
+    } else {
+      copies = null
+      log = null
+    }
+    resultData.resultText = result.resultText
+      .replace('{0}', copies)
+      .replace('{1}', log)
 
-          resultData.copies = copies
-          resultData.log = log
-          resultData.resultText = result.resultText
-            .replace('{0}', copies)
-            .replace('{1}', log)
-
-          const resultId = await knex('Result').insert(
-            Object.assign({}, auditFields, {
-              externalId: `UQ-DAK-HCV-${i}-${j}`,
-              assayId: assayDaktariHcvId,
-              partnerId: partnerOneId,
-              geographyId: siteData.geographyId,
-              siteId: siteData.id,
-              deviceId: device.id,
-              resultWorkflowStatusId: acknowledged,
-              longitude: -81.581222,
-              latitude: 28.419348,
-              resultSourceId: resultSourceDiagnosticId,
-              resultTypeId: resultTypePatientId,
-              sampleId: sample.id,
-              sampleRunNumber: `${i % 2 + 1}`,
-              sampleGroup: `GRP-HIV-${i % 5}`,
-              resultCategory1: result.category1,
-              resultData: JSON.stringify(resultData),
-              assayVersion: '4',
-              startedOn: randomDate,
-              endedOn: addMinutes(randomDate, 64),
-              consumableSerial: `${i}12`,
-              consumableExpirationDate: new Date(+now + 200 * i * millisInHour),
-              consumableLot: `Lot ${i % 5}`,
-              instrumentSerial: `S-1234-${i % 3}`,
-              moduleName: 'Module A',
-              moduleSerial: `M-1234-${i % 4}`,
-              researchId: `R-ID-${i}`,
-              patientData: JSON.stringify(patients[_.random(patientNumber)]),
-              senderVersion: '4.4',
-              senderOperator: 'Aaron',
-              notes: 'This is an HCV test result',
-              errorCode:
-                result.category1 === resultCategoryErrorId
-                  ? errorCodes[_.random(errorCodes.length)]
-                  : null,
-              errorNotes:
-                result.category1 === resultCategoryErrorId
-                  ? 'Exceeded cycle threshold'
-                  : null,
-            })
-          )
-
-          await knex('ResultWorkflowLog').insert({
-            resultId,
-            resultWorkflowStatusId: acknowledged,
-            operator: 'Aaron',
-            changedOn: addMinutes(randomDate, 120),
-            createdOn: addMinutes(randomDate, 120),
-            createdBy: adminId,
-          })
-        }
+    resultDatas.push(
+      Object.assign({}, auditFields, {
+        externalId: `UQ-DAK-HIV-${i}`,
+        assayId: assayDaktariHivVlId,
+        partnerId: partnerOneId,
+        geographyId: siteData.geographyId,
+        siteId: siteData.id,
+        deviceId: device.id,
+        resultWorkflowStatusId: processed,
+        longitude: -81.581222,
+        latitude: 28.419348,
+        resultSourceId: resultSourceDiagnosticId,
+        resultTypeId: resultTypePatientId,
+        sampleId: sample.id,
+        sampleRunNumber: `${i % 2 + 1}`,
+        sampleGroup: `GRP-HIV-${i % 5}`,
+        resultCategory1: result.category1,
+        resultData: JSON.stringify(resultData),
+        assayVersion: '4',
+        startedOn: randomDate,
+        endedOn: addMinutes(randomDate, 48),
+        consumableSerial: `${i}12`,
+        consumableExpirationDate: new Date(+now + 200 * i * millisInHour),
+        consumableLot: `Lot ${i % 5}`,
+        instrumentSerial: `S-1234-${i % 3}`,
+        moduleName: 'Module A',
+        moduleSerial: `M-1234-${i % 4}`,
+        researchId: `R-ID-${i}`,
+        patientData: JSON.stringify(patients[_.random(patientNumber)]),
+        senderVersion: '4.4',
+        senderOperator: 'Aaron',
+        notes: 'This is an HIV test result',
+        errorCode:
+          result.category1 === resultCategoryErrorId
+            ? errorCodes[_.random(errorCodes.length)]
+            : null,
+        errorNotes:
+          result.category1 === resultCategoryErrorId
+            ? 'Exceeded cycle threshold'
+            : null,
       })
     )
+  })
+
+  await Promise.each(resultDatas, async resultData => {
+    const resultId = await knex('Result').insert(resultData)
+    await knex('ResultWorkflowLog').insert({
+      resultId,
+      resultWorkflowStatusId: processed,
+      operator: 'Aaron',
+      changedOn: addMinutes(now, 90),
+      createdOn: addMinutes(now, 90),
+      createdBy: adminId,
+    })
   })
 
   // Job Functions
@@ -3068,147 +1969,46 @@ async function seed(knex) {
 
   // crate jobs for users
   const jobIdAdmin = await knex('Job').insert({
-    personId: personIds.admin,
+    personId: adminPersonId,
     jobFunctionId: jobFunctionIdAdmin,
-  })
-
-  const jobIdJason = await knex('Job').insert({
-    personId: personIds.jason,
-    jobFunctionId: jobFunctionIdPartnerTwo,
-  })
-
-  const jobIdSam = await knex('Job').insert({
-    personId: personIds.sam,
-    jobFunctionId: jobFunctionIdAdmin,
-  })
-
-  const jobIdBob = await knex('Job').insert({
-    personId: personIds.bob,
-    jobFunctionId: jobFunctionIdManager,
-  })
-  const jobIdFrank = await knex('Job').insert({
-    personId: personIds.frank,
-    jobFunctionId: jobFunctionIdManager,
-  })
-  const jobIdNed = await knex('Job').insert({
-    personId: personIds.ned,
-    jobFunctionId: jobFunctionIdClinician,
-  })
-  const jobIdFred = await knex('Job').insert({
-    personId: personIds.fred,
-    jobFunctionId: jobFunctionIdClinician,
   })
 
   // Constrain jobs by context
   await knex('JobContext').insert([
     { jobId: jobIdAdmin, geographyId: countries.US.geographyId },
-    { jobId: jobIdJason, geographyId: countries.US.geographyId },
-    { jobId: jobIdSam, geographyId: countries.NG.geographyId },
-    { jobId: jobIdBob, geographyId: countries.US.states.OH.geographyId },
-    { jobId: jobIdFrank, geographyId: countries.US.states.NE.geographyId },
-    {
-      jobId: jobIdNed,
-      geographyId: countries.US.states.OH.lgas.Wayne.geographyId,
-    },
-    {
-      jobId: jobIdFred,
-      geographyId: countries.US.states.OH.lgas.Wayne.geographyId,
-    },
-    {
-      jobId: jobIdFred,
-      geographyId: countries.US.states.MA.lgas.Suffolk.geographyId,
-    },
   ])
 
-  // Fill device flags with random data
-  // TODO: Remove when we implemented the jobs that calculate these flags
-  const devices = await knex('Device').select('id')
-  await Promise.all(
-    _.map(devices, async device => {
-      await knex('FactDeviceFlag').insert({
-        deviceId: device.id,
-        offline: _.random(10) === 0,
-        service: _.random(10) === 0,
-        calibration: _.random(10) === 0,
-        errorRate: _.random(10) === 0,
-        qcProblem: _.random(10) === 0,
-        lowInventory: _.random(10) === 0,
-        outOfInventory: _.random(10) === 0,
-        expiringInventory: _.random(10) === 0,
-        expiringWarranty: _.random(10) === 0,
-        updatedOn: now,
-      })
-    })
-  )
-
-  // Create tag
-  const [tagOneId] = await knex('Tag').insert({
-    title: 'SCO',
-    partnerId: partnerOneId,
-  })
-
-  const [tagTwoId] = await knex('Tag').insert({
-    title: 'STP',
-    partnerId: partnerOneId,
-  })
-
-  const [tagThreeId] = await knex('Tag').insert({
-    title: 'DBP',
-    partnerId: partnerTwoId,
-  })
-
-  const tagIds = [tagOneId, tagTwoId, tagThreeId]
-
-  const results = await knex('Result')
-    .select('id')
-    .limit(20)
-  await Promise.all(
-    _.map(results, async result => {
-      await Promise.all(
-        _.map(tagIds, async tagId => {
-          if (_.random(2) === 0) {
-            await knex('ResultTag').insert({
-              resultId: result.id,
-              tagId,
-            })
-          }
-        })
-      )
-    })
-  )
   // Create DashboardWidget
   const widgetIds = {}
-  await Promise.all(
-    _.map(dashboardWidget.stat, async widget => {
-      const widgetData = _.pick(widget, [
-        'title',
-        'titleI18nKey',
-        'subTitle',
-        'subTitleI18nKey',
-        'sqlForIndicator',
-        'link',
-        'sortOrder',
-      ])
-      const [widgetId] = await knex('DashboardWidget').insert(widgetData)
-      const statWidgetData = _.pick(widget, [
-        'icon',
-        'sqlForStatUnit',
-        'statUnit',
-        'statUnitI18nKey',
-        'statStatus',
-        'statStatusI18nKey',
-        'sqlForExtra',
-        'extraUnit',
-        'extraUnitI18nKey',
-        'extraLabel',
-        'extraLabelI18nKey',
-      ])
-      await knex('DashboardWidgetStat').insert(
-        Object.assign({ dashboardWidgetId: widgetId }, statWidgetData)
-      )
-      widgetIds[_.toLower(widget.title)] = widgetId
-    })
-  )
+  await Promise.each(dashboardWidget.stat, async widget => {
+    const widgetData = _.pick(widget, [
+      'title',
+      'titleI18nKey',
+      'subTitle',
+      'subTitleI18nKey',
+      'sqlForIndicator',
+      'link',
+      'sortOrder',
+    ])
+    const [widgetId] = await knex('DashboardWidget').insert(widgetData)
+    const statWidgetData = _.pick(widget, [
+      'icon',
+      'sqlForStatUnit',
+      'statUnit',
+      'statUnitI18nKey',
+      'statStatus',
+      'statStatusI18nKey',
+      'sqlForExtra',
+      'extraUnit',
+      'extraUnitI18nKey',
+      'extraLabel',
+      'extraLabelI18nKey',
+    ])
+    await knex('DashboardWidgetStat').insert(
+      Object.assign({ dashboardWidgetId: widgetId }, statWidgetData)
+    )
+    widgetIds[_.toLower(widget.title)] = widgetId
+  })
 
   await knex('JobFunctionDashboardWidget').insert([
     { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.sites },

@@ -9,7 +9,7 @@ const Promise = require('bluebird')
 const {
   updateUnknownErrorOnModuleMessage,
 } = require('../seedUnknownErrorsIssue')
-const { updateDashboardWidgetQueries } = require('../utils')
+const { updateDashboardWidgetQueries } = require('../utils_myanmar')
 const {
   updateDataCategoryNotificationTypeForRO,
 } = require('../dataCategoryLow')

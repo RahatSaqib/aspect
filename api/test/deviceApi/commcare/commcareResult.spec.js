@@ -26,7 +26,10 @@ describe('CommCare Result API routes', () => {
 
     const { runTest } = context
 
-    beforeEach(context.beforeEach)
+    before(async () => {
+      await context.createSites(['commcare'])
+      await context.createDeviceApiKey()
+    })
     afterEach(context.afterEach)
 
     it('should add and return device results', () =>

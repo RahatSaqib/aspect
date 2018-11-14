@@ -4,6 +4,8 @@ const { seedIssueEventTriggersForPartner } = require('../utils')
 
 const { issueCategoryToId } = require('../../src/shared/dictionary')
 
+const { updateDashboardWidgetQueries } = require('../utils_myanmar')
+
 async function seed(knex) {
   const moduleReplacedIssueType = await knex('IssueType')
     .where('externalId', 'ModuleReplaced')
@@ -21,6 +23,7 @@ async function seed(knex) {
   await seedIssueEventTriggersForPartner(knex, partnerId, {
     issueTypeWhitelist: ['DeviceMaintenance', 'ModuleReplaced'],
   })
+  await updateDashboardWidgetQueries(knex)
 }
 
 async function insertModuleReplacedIssue(knex) {
