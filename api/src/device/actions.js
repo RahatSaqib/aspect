@@ -19,7 +19,7 @@ const types = {
  * deviceId is required.
  */
 function deviceSeen(deviceId) {
-  if (deviceId == null) {
+  if (!deviceId) {
     throw new Error('Must specify deviceId for notify deviceSeen')
   }
   return {
@@ -38,7 +38,7 @@ function deviceSeen(deviceId) {
  *  data: Optional additional maintenance data to record, plain object
  */
 function deviceMaintenance(deviceId, options) {
-  if (deviceId == null) {
+  if (!deviceId) {
     throw new Error('Must specify deviceId for notify deviceMaintenance')
   }
   return {
@@ -54,7 +54,7 @@ function deviceMaintenance(deviceId, options) {
  * deviceId is required.
  */
 function deviceMaintenanceResolved(deviceId) {
-  if (deviceId == null) {
+  if (!deviceId) {
     throw new Error(
       'Must specify deviceId for notify deviceMaintenanceResolved'
     )
@@ -76,7 +76,7 @@ function deviceMaintenanceResolved(deviceId) {
  *    lastPingOn: date device last ping
  */
 function deviceOffline(deviceId, options) {
-  if (deviceId == null) {
+  if (!deviceId) {
     throw new Error('Must specify deviceId for notify deviceOffline')
   }
   return {
@@ -93,7 +93,7 @@ function deviceOffline(deviceId, options) {
  * deviceId is required.
  */
 function deviceOnline(deviceId) {
-  if (deviceId == null) {
+  if (!deviceId) {
     throw new Error('Must specify deviceId for notify deviceOnline')
   }
   return {
@@ -112,7 +112,7 @@ function deviceOnline(deviceId) {
  *    lastResultOn: date of last result for device
  */
 function deviceNoResults(deviceId, options) {
-  if (deviceId == null) {
+  if (!deviceId) {
     throw new Error('Must specify deviceId for notify deviceNoResults')
   }
   return {
@@ -129,7 +129,7 @@ function deviceNoResults(deviceId, options) {
  * deviceId is required.
  */
 function deviceHasNewResults(deviceId) {
-  if (deviceId == null) {
+  if (!deviceId) {
     throw new Error('Must specify deviceId for notify deviceHasNewResults')
   }
   return {

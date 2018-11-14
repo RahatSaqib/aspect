@@ -11,6 +11,7 @@ const types = {
   RESULT_MACHINE_POWER_ERROR: 'RESULT_MACHINE_POWER_ERROR',
   RESULT_MODULE_UNKNOWN_ERROR: 'RESULT_MODULE_UNKNOWN_ERROR',
   RESULT_MACHINE_UNKNOWN_ERROR: 'RESULT_MACHINE_UNKNOWN_ERROR',
+  RESULT_MODULE_REPLACED: 'RESULT_MODULE_REPLACED',
 }
 
 // ----------- Action Creators -------------------
@@ -25,8 +26,8 @@ const types = {
  * device API listener will create one)
  */
 function resultUpdated(resultId, deviceLogId) {
-  if (resultId == null) {
-    throw new Error('Must specify resultId for notifyResultUpdated')
+  if (!resultId) {
+    throw new Error('Must specify resultId for resultUpdated')
   }
   return {
     type: types.RESULT_UPDATED,
@@ -43,10 +44,8 @@ function resultUpdated(resultId, deviceLogId) {
  * deviceLogId is required
  */
 function resultLogged(resultId, deviceLogId) {
-  if (resultId == null || deviceLogId == null) {
-    throw new Error(
-      'Must specify resultId and deviceLogId for notifyResultLogged'
-    )
+  if (!resultId || !deviceLogId) {
+    throw new Error('Must specify resultId and deviceLogId for resultLogged')
   }
   return {
     type: types.RESULT_LOGGED,
@@ -65,10 +64,8 @@ function resultLogged(resultId, deviceLogId) {
  *   moduleSerial
  */
 function resultModuleTemperatureError(deviceId, options) {
-  if (deviceId == null) {
-    throw new Error(
-      'Must specify deviceId for notify resultModuleTemperatureError'
-    )
+  if (!deviceId) {
+    throw new Error('Must specify deviceId for resultModuleTemperatureError')
   }
   return {
     type: types.RESULT_MODULE_TEMPERATURE_ERROR,
@@ -87,8 +84,8 @@ function resultModuleTemperatureError(deviceId, options) {
  *   moduleSerial
  */
 function resultModulePowerError(deviceId, options) {
-  if (deviceId == null) {
-    throw new Error('Must specify deviceId for notify resultModulePowerError')
+  if (!deviceId) {
+    throw new Error('Must specify deviceId for resultModulePowerError')
   }
   return {
     type: types.RESULT_MODULE_POWER_ERROR,
@@ -107,8 +104,8 @@ function resultModulePowerError(deviceId, options) {
  *   moduleSerial
  */
 function resultModuleFailureError(deviceId, options) {
-  if (deviceId == null) {
-    throw new Error('Must specify deviceId for notify resultModuleFailureError')
+  if (!deviceId) {
+    throw new Error('Must specify deviceId for resultModuleFailureError')
   }
   return {
     type: types.RESULT_MODULE_FAILURE_ERROR,
@@ -124,10 +121,8 @@ function resultModuleFailureError(deviceId, options) {
  * deviceId is required.
  */
 function resultMachineTemperatureError(deviceId) {
-  if (deviceId == null) {
-    throw new Error(
-      'Must specify deviceId for notify resultMachineTemperatureError'
-    )
+  if (!deviceId) {
+    throw new Error('Must specify deviceId for resultMachineTemperatureError')
   }
   return {
     type: types.RESULT_MACHINE_TEMPERATURE_ERROR,
@@ -145,10 +140,8 @@ function resultMachineTemperatureError(deviceId) {
  *   moduleSerial
  */
 function resultModuleProceduralError(deviceId, options) {
-  if (deviceId == null) {
-    throw new Error(
-      'Must specify deviceId for notify resultModuleProceduralError'
-    )
+  if (!deviceId) {
+    throw new Error('Must specify deviceId for resultModuleProceduralError')
   }
   return {
     type: types.RESULT_MODULE_PROCEDURAL_ERROR,
@@ -163,8 +156,8 @@ function resultModuleProceduralError(deviceId, options) {
  * deviceId is required.
  */
 function resultMachinePowerError(deviceId) {
-  if (deviceId == null) {
-    throw new Error('Must specify deviceId for notify resultMachinePowerError')
+  if (!deviceId) {
+    throw new Error('Must specify deviceId for resultMachinePowerError')
   }
   return {
     type: types.RESULT_MACHINE_POWER_ERROR,
@@ -179,10 +172,8 @@ function resultMachinePowerError(deviceId) {
  * deviceId is required.
  */
 function resultMachineProceduralError(deviceId) {
-  if (deviceId == null) {
-    throw new Error(
-      'Must specify deviceId for notify resultMachineProceduralError'
-    )
+  if (!deviceId) {
+    throw new Error('Must specify deviceId for resultMachineProceduralError')
   }
   return {
     type: types.RESULT_MACHINE_PROCEDURAL_ERROR,
@@ -200,8 +191,8 @@ function resultMachineProceduralError(deviceId) {
  *   moduleSerial
  */
 function resultModuleUnknownError(deviceId, options) {
-  if (deviceId == null) {
-    throw new Error('Must specify deviceId for notify resultModuleUnknownError')
+  if (!deviceId) {
+    throw new Error('Must specify deviceId for resultModuleUnknownError')
   }
   return {
     type: types.RESULT_MODULE_UNKNOWN_ERROR,
@@ -217,14 +208,29 @@ function resultModuleUnknownError(deviceId, options) {
  * deviceId is required.
  */
 function resultMachineUnknownError(deviceId) {
-  if (deviceId == null) {
-    throw new Error(
-      'Must specify deviceId for notify resultMachineProceduralError'
-    )
+  if (!deviceId) {
+    throw new Error('Must specify deviceId for resultMachineUnknownError')
   }
   return {
     type: types.RESULT_MACHINE_UNKNOWN_ERROR,
     deviceId,
+  }
+}
+
+/**
+ * Creates an action to notify that a module in the given
+ * slot (= moduleName) was replaced
+ *
+ * resultId is required
+ */
+function resultModuleReplaced(resultId, options) {
+  if (!resultId) {
+    throw new Error('Must specify resultId for resultModuleReplaced')
+  }
+  return {
+    type: types.RESULT_MODULE_REPLACED,
+    resultId,
+    options,
   }
 }
 
@@ -241,4 +247,5 @@ module.exports = {
   resultMachinePowerError,
   resultModuleUnknownError,
   resultMachineUnknownError,
+  resultModuleReplaced,
 }

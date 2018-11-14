@@ -186,6 +186,6 @@ async function seed(knex) {
   await seedUnknownErrorsIssue(knex, 'Myanmar', 'myanmar_admin')
 
   await seedIssueEventTriggersForPartner(knex, partnerId, {
-    issueTypeWhitelist: ['DeviceMaintenance'],
+    issueTypeWhitelist: ['DeviceMaintenance', 'ModuleReplaced'],
   })
 }

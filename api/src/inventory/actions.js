@@ -13,7 +13,7 @@ const types = {
  * Is called when inventory if going out-of-stock in [daysDue]
  */
 function inventoryStockout(siteId, consumableId, daysDue) {
-  if (!siteId || !consumableId || daysDue == null) {
+  if (!siteId || !consumableId || !daysDue) {
     throw new Error('Must specify siteId, consumableId, daysDue')
   }
 
@@ -32,7 +32,7 @@ function inventoryStockout(siteId, consumableId, daysDue) {
  * Is called when inventory stock is expiring in [daysDue] with [totalWasted] wasted items
  */
 function inventoryStockExpiring(siteId, consumableId, daysDue, totalWasted) {
-  if (!siteId || !consumableId || daysDue == null || totalWasted == null) {
+  if (!siteId || !consumableId || !daysDue || !totalWasted) {
     throw new Error('Must specify siteId, consumableId, daysDue, totalWasted')
   }
 
