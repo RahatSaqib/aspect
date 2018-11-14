@@ -2,17 +2,6 @@ const _ = require('lodash')
 const { issueTypeToId, issueStatusToId } = require('../shared/dictionary')
 
 // -----------------------------
-// isStockEmpty
-// -----------------------------
-async function isStockEmpty(knex, siteId, consumableId) {
-  const inventoryItem = await knex('InventoryItem')
-    .where({ siteId, consumableId })
-    .first()
-  const { quantityOnHand } = inventoryItem || {}
-  // return true if quantityOnHand is null or 0
-  return !quantityOnHand
-}
-// -----------------------------
 // auditInventoryStockout
 // -----------------------------
 async function auditInventoryStockout({
@@ -24,20 +13,16 @@ async function auditInventoryStockout({
   resolver,
   escalator,
 }) {
-  // issue may be triggered only if stock is not empty
-  const isEmptyStock = await isStockEmpty(knex, siteId, consumableId)
-  if (!isEmptyStock) {
-    const days = await totalDaysUnexpiredInventoryItemsLast({
-      knex,
-      siteId,
-      consumableId,
-      dailyRate,
-      dueDays,
-    })
-
-    if (days < dueDays) {
-      trigger(siteId, consumableId, days)
-    }
+  // trigger issue if condition meets
+  const days = await totalDaysUnexpiredInventoryItemsLast({
+    knex,
+    siteId,
+    consumableId,
+    dailyRate,
+    dueDays,
+  })
+  if (days < dueDays) {
+    trigger(siteId, consumableId, days)
   }
 
   // resolve or escalate issue
@@ -111,19 +96,15 @@ async function auditInventoryStockExpiring({
   resolver,
   escalator,
 }) {
-  // issue may be triggered only if stock is not empty
-  const isEmptyStock = await isStockEmpty(knex, siteId, consumableId)
-  if (!isEmptyStock) {
-    const totalWasted = await totalWastedInventoryItems({
-      knex,
-      siteId,
-      consumableId,
-      dailyRate,
-    })
-
-    if (totalWasted > 0) {
-      trigger(siteId, consumableId, dueDays, totalWasted)
-    }
+  // trigger issue if condition meets
+  const totalWasted = await totalWastedInventoryItems({
+    knex,
+    siteId,
+    consumableId,
+    dailyRate,
+  })
+  if (totalWasted > 0) {
+    trigger(siteId, consumableId, dueDays, totalWasted)
   }
 
   // resolve or escalate issue
@@ -202,6 +183,18 @@ async function resolveEscalate({
     // try to escalate issue
     if (escalator) escalator(issueId)
   })
+}
+
+// -----------------------------
+// isStockEmpty
+// -----------------------------
+async function isStockEmpty(knex, siteId, consumableId) {
+  const inventoryItem = await knex('InventoryItem')
+    .where({ siteId, consumableId })
+    .first()
+  const { quantityOnHand } = inventoryItem || {}
+  // return true if quantityOnHand is null or 0
+  return !quantityOnHand
 }
 
 module.exports = {
