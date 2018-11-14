@@ -12,12 +12,12 @@ async function updateDashboardWidgetQueries(knex) {
   // rules evaluated in order, stopping at the first matching class."
   // ---------------------------------------
 
-  const base = `SELECT IFNULL(count(r.id), 0) as cnt 
-  FROM Result as r 
-    INNER JOIN Device as d on d.id = r.deviceId 
-    INNER JOIN Site as s on s.id = d.siteId 
-    INNER JOIN Partner p on s.partnerId = p.id 
-    LEFT OUTER JOIN Geography as g on s.geographyId = g.id 
+  const base = `SELECT IFNULL(count(r.id), 0) as cnt
+  FROM Result as r
+    INNER JOIN Device as d on d.id = r.deviceId
+    INNER JOIN Site as s on s.id = d.siteId
+    INNER JOIN Partner p on s.partnerId = p.id
+    LEFT OUTER JOIN Geography as g on s.geographyId = g.id
     INNER JOIN Assay as a on a.id = r.assayId
   `
   const inAssays = "a.externalId IN ('GxMtbRif', 'GxMtbRifUltra')"
