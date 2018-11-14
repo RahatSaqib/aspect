@@ -67,6 +67,29 @@ function onIssueEventTrigger(partnerId, issueType, triggerConditions) {
         const openIssue = await findOpenIssue(knex, issueType, action)
         let issue = null
         if (openIssue != null) {
+          // ----------------------
+          // check special usecase
+          const { type, options = {} } = action
+          if (type === 'INVENTORY_STOCKOUT') {
+            // get new value for daysDue
+            const { daysDue: daysDueNew } = options
+            // get stringified json of saved action.options from last time
+            const { data } = openIssue
+            if (data) {
+              const d = JSON.parse(data)
+              // get old value for daysDue
+              const { daysDue: daysDueOld } = d || {}
+              // if new and old values are 0 - exit because it means we already triggered issue after StockLevel = 0
+              // (i.e. daysDueOld is already 0) and no need to re-trigger it and update Issue table with new value of
+              // 'data' column with today's date (which is used then to refresh message in AlertMessage table).
+              // This is what customer requested to not happen, see jira ticket SD-804 for details
+              if (daysDueOld === 0 && daysDueNew === 0) {
+                return
+              }
+            }
+          }
+          // ----------------------
+
           issue = await mergeActionData(knex, openIssue, action)
         } else {
           issue = await createNewIssue(knex, issueType, action)

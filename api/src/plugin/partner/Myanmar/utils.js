@@ -1,9 +1,21 @@
 const {
   totalDaysUnexpiredInventoryItemsLast,
-} = require('../../../fact/service')
+  isStockEmpty,
+} = require('../../../shared/utilsInventory')
 
 async function getEscalateOrResolveStatusForIssueStockout(knex, issue) {
   const { partnerId, siteId, consumableId } = issue
+
+  const isEmptyStock = await isStockEmpty(knex, siteId, consumableId)
+  if (isEmptyStock) {
+    // if stock is empty then keep issue unchanged
+    return {
+      // level: 1,
+      isEscalated: false,
+      isResolved: false,
+    }
+  }
+
   const { rate: dailyRate } = (await knex('FactInventoryConsumptionRate')
     .where({ siteId, consumableId, days: 1 })
     .first('rate')) || { rate: 0 }
