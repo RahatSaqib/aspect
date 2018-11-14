@@ -313,11 +313,11 @@ export class ResultDetail extends PureComponent {
 
   renderFormData() {
     const { intl: { formatMessage }, result, updateResultFormData } = this.props
-    if (!result || !result.has('formSchema') || !result.get('formSchema')) {
+    if (!result || !result.getIn(['formSchema', 'fields'])) {
       return false
     }
     const [...fieldKeys] = result
-      .get('formSchema')
+      .getIn(['formSchema', 'fields'])
       .sortBy(value => value.get('order'))
       .keys()
     if (_.isEmpty(fieldKeys)) {
@@ -326,7 +326,9 @@ export class ResultDetail extends PureComponent {
     const sectionLabel =
       fieldKeys.length === 1
         ? formatMessage(
-            messages[result.getIn(['formSchema', fieldKeys[0], 'i18nLabel'])]
+            messages[
+              result.getIn(['formSchema', 'fields', fieldKeys[0], 'i18nLabel'])
+            ]
           )
         : formatMessage(messages.additionalResultDetails)
     const formData = result.get('formData') || Immutable.Map({})
@@ -337,7 +339,11 @@ export class ResultDetail extends PureComponent {
           <div className={cssClasses('FormDataContainer')}>
             {fieldKeys.map(formFieldKey => {
               const { intl: { formatMessage } } = this.props
-              const fieldSchema = result.getIn(['formSchema', formFieldKey])
+              const fieldSchema = result.getIn([
+                'formSchema',
+                'fields',
+                formFieldKey,
+              ])
               return (
                 <Unit
                   key={formFieldKey}

@@ -667,7 +667,7 @@ async function updateFormData(request) {
     const formSchema = JSON.parse(resultForm.formSchema)
     const unrecognisedFields = _.difference(
       Object.keys(payload),
-      Object.keys(formSchema)
+      Object.keys(formSchema.fields)
     )
     if (!_.isEmpty(unrecognisedFields)) {
       const undefinedFieldMessage =
@@ -681,7 +681,7 @@ async function updateFormData(request) {
     const fieldValidationErrors = []
     _.each(Object.keys(payload), formFieldKey => {
       const formFieldValue = _.get(payload, formFieldKey)
-      const formFieldSchema = _.get(formSchema, formFieldKey)
+      const formFieldSchema = _.get(formSchema, ['fields', formFieldKey])
       if (!_.isNil(formFieldValue)) {
         const allowMultipleSelection = _.get(
           formFieldSchema,

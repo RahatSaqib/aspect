@@ -169,22 +169,25 @@ describe('result/service', () => {
         assay: basicAssay(),
         assayForm: {
           formSchema: JSON.stringify({
-            definedField: {
-              control: {
-                type: 'ButtonGroup',
-                options: [
-                  {
-                    value: 'Yes',
-                    i18nText: 'yes',
-                  },
-                  {
-                    value: 'No',
-                    i18nText: 'no',
-                  },
-                ],
+            fields: {
+              definedField: {
+                control: {
+                  type: 'ButtonGroup',
+                  options: [
+                    {
+                      value: 'Yes',
+                      i18nText: 'yes',
+                    },
+                    {
+                      value: 'No',
+                      i18nText: 'no',
+                    },
+                  ],
+                },
+                i18nLabel: 'defineFieldLabel',
               },
-              i18nLabel: 'defineFieldLabel',
             },
+            sendChangesOn: 'change',
           }),
         },
       })
@@ -232,18 +235,21 @@ describe('result/service', () => {
         assay: basicAssay(),
         assayForm: {
           formSchema: JSON.stringify({
-            customField1: {
-              control: {
-                type: 'TextBox',
+            fields: {
+              customField1: {
+                control: {
+                  type: 'TextBox',
+                },
+                i18nLabel: 'fieldLabel1',
               },
-              i18nLabel: 'fieldLabel1',
-            },
-            customField2: {
-              control: {
-                type: 'CheckBox',
+              customField2: {
+                control: {
+                  type: 'CheckBox',
+                },
+                i18nLabel: 'fieldLabel2',
               },
-              i18nLabel: 'fieldLabel2',
             },
+            sendChangesOn: 'change',
           }),
         },
       })
@@ -274,18 +280,21 @@ describe('result/service', () => {
         assay: basicAssay(),
         assayForm: {
           formSchema: JSON.stringify({
-            customField1: {
-              control: {
-                type: 'TextBox',
+            fields: {
+              customField1: {
+                control: {
+                  type: 'TextBox',
+                },
+                i18nLabel: 'fieldLabel1',
               },
-              i18nLabel: 'fieldLabel1',
-            },
-            customField2: {
-              control: {
-                type: 'CheckBox',
+              customField2: {
+                control: {
+                  type: 'CheckBox',
+                },
+                i18nLabel: 'fieldLabel2',
               },
-              i18nLabel: 'fieldLabel2',
             },
+            sendChangesOn: 'change',
           }),
         },
       })
@@ -315,23 +324,26 @@ describe('result/service', () => {
           assay: basicAssay(),
           assayForm: {
             formSchema: JSON.stringify({
-              singleSelectionField: {
-                control: {
-                  type: 'ButtonGroup',
-                  options: [
-                    {
-                      value: 'Yes',
-                      i18nText: 'yes',
-                    },
-                    {
-                      value: 'No',
-                      i18nText: 'no',
-                    },
-                  ],
-                  allowMultipleSelection: false,
+              fields: {
+                singleSelectionField: {
+                  control: {
+                    type: 'ButtonGroup',
+                    options: [
+                      {
+                        value: 'Yes',
+                        i18nText: 'yes',
+                      },
+                      {
+                        value: 'No',
+                        i18nText: 'no',
+                      },
+                    ],
+                    allowMultipleSelection: false,
+                  },
+                  i18nLabel: 'singleSelectionFieldLabel',
                 },
-                i18nLabel: 'singleSelectionFieldLabel',
               },
+              sendChangesOn: 'change',
             }),
           },
         })
@@ -360,22 +372,25 @@ describe('result/service', () => {
           assay: basicAssay(),
           assayForm: {
             formSchema: JSON.stringify({
-              singleSelectionField: {
-                control: {
-                  type: 'ButtonGroup',
-                  options: [
-                    {
-                      value: 'Yes',
-                      i18nText: 'yes',
-                    },
-                    {
-                      value: 'No',
-                      i18nText: 'no',
-                    },
-                  ],
+              fields: {
+                singleSelectionField: {
+                  control: {
+                    type: 'ButtonGroup',
+                    options: [
+                      {
+                        value: 'Yes',
+                        i18nText: 'yes',
+                      },
+                      {
+                        value: 'No',
+                        i18nText: 'no',
+                      },
+                    ],
+                  },
+                  i18nLabel: 'singleSelectionFieldLabel',
                 },
-                i18nLabel: 'singleSelectionFieldLabel',
               },
+              sendChangesOn: 'change',
             }),
           },
         })
@@ -438,26 +453,29 @@ describe('result/service', () => {
           assay: basicAssay(),
           assayForm: {
             formSchema: JSON.stringify({
-              singleSelectionField: {
-                control: {
-                  type: 'ButtonGroup',
-                  options: [
-                    {
-                      value: 'Yes',
-                      i18nText: 'yes',
-                    },
-                    {
-                      value: 'No',
-                      i18nText: 'no',
-                    },
-                    {
-                      value: '',
-                      i18nText: 'unknown',
-                    },
-                  ],
+              fields: {
+                singleSelectionField: {
+                  control: {
+                    type: 'ButtonGroup',
+                    options: [
+                      {
+                        value: 'Yes',
+                        i18nText: 'yes',
+                      },
+                      {
+                        value: 'No',
+                        i18nText: 'no',
+                      },
+                      {
+                        value: '',
+                        i18nText: 'unknown',
+                      },
+                    ],
+                  },
+                  i18nLabel: 'singleSelectionFieldLabel',
                 },
-                i18nLabel: 'singleSelectionFieldLabel',
               },
+              sendChangesOn: 'change',
             }),
           },
         })
