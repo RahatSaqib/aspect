@@ -7,23 +7,21 @@ const {
 } = require('../utils')
 const {
   allAssayTypeToId,
-
   allDeviceTypeCategoryToId,
   allIssueCategoryToId,
   allMessageSeverityToId,
   allPartnerTypeToId,
   allResultCategoryToId,
   allResultSourceToId,
-
   deviceStatusToId,
   sampleTypeToId,
   resultTypeToId,
   resultWorkflowStatusToId,
-
   unitToId,
 } = require('../../src/shared/dictionary')
 const _ = require('lodash')
 const bcrypt = require('bcrypt')
+const Promise = require('bluebird')
 const { randomToken } = require('../../src/deviceApi/apiKey')
 const geography = require('./fixtures/geography.json')
 const patients = require('./fixtures/patients.json')
@@ -1558,87 +1556,81 @@ async function seed(knex) {
   // Create geographic hierarchy
   const countries = {}
   const siteDatas = []
-  await Promise.all(
-    _.map(geography.countries, async country => {
-      const countryData = _.pick(country, [
-        'abbreviation',
-        'name',
-        'a3',
-        'culture',
-        'countryCode',
-        'stateLabel',
-        'lgaLabel',
-        'timezone',
-        'portNumber',
-        'exportColumns',
-        'inventoryDaysThreshold',
-        'monthStartsOnDay',
-      ])
-      const [countryId] = await knex('Country').insert(countryData)
-      countryData.id = countryId
-      countries[country.abbreviation] = countryData
-      countryData.states = {}
+  await Promise.each(geography.countries, async country => {
+    const countryData = _.pick(country, [
+      'abbreviation',
+      'name',
+      'a3',
+      'culture',
+      'countryCode',
+      'stateLabel',
+      'lgaLabel',
+      'timezone',
+      'portNumber',
+      'exportColumns',
+      'inventoryDaysThreshold',
+      'monthStartsOnDay',
+    ])
+    const [countryId] = await knex('Country').insert(countryData)
+    countryData.id = countryId
+    countries[country.abbreviation] = countryData
+    countryData.states = {}
 
-      const [countryGeographyId] = await knex('Geography').insert({ countryId })
-      countryData.geographyId = countryGeographyId
+    const [countryGeographyId] = await knex('Geography').insert({ countryId })
+    countryData.geographyId = countryGeographyId
 
-      await Promise.all(
-        _.map(country.states || [], async state => {
-          const stateData = _.pick(state, ['abbreviation', 'name'])
-          const [stateId] = await knex('State').insert(stateData)
-          stateData.id = stateId
-          const stateKey = state.abbreviation || state.name
-          countryData.states[stateKey] = stateData
-          stateData.lgas = {}
+    await Promise.each(country.states || [], async state => {
+      const stateData = _.pick(state, ['abbreviation', 'name'])
+      const [stateId] = await knex('State').insert(stateData)
+      stateData.id = stateId
+      const stateKey = state.abbreviation || state.name
+      countryData.states[stateKey] = stateData
+      stateData.lgas = {}
 
-          const [stateGeographyId] = await knex('Geography').insert({
-            countryId,
-            stateId,
-          })
-          stateData.geographyId = stateGeographyId
+      const [stateGeographyId] = await knex('Geography').insert({
+        countryId,
+        stateId,
+      })
+      stateData.geographyId = stateGeographyId
 
-          await Promise.all(
-            _.map(state.lgas || [], async lga => {
-              const lgaData = _.pick(lga, ['name'])
+      await Promise.each(state.lgas || [], async lga => {
+        const lgaData = _.pick(lga, ['name'])
 
-              const [lgaId] = await knex('Lga').insert(lgaData)
-              lgaData.id = lgaId
-              stateData.lgas[lga.name] = lgaData
-              lgaData.sites = {}
+        const [lgaId] = await knex('Lga').insert(lgaData)
+        lgaData.id = lgaId
+        stateData.lgas[lga.name] = lgaData
+        lgaData.sites = {}
 
-              const geoData = { countryId, stateId, lgaId }
-              const [geographyId] = await knex('Geography').insert(geoData)
-              lgaData.geographyId = geographyId
-              if (state.name === 'Ohio') {
-                const siteData = Object.assign(
-                  {
-                    partnerId: partnerOneId,
-                    geographyId,
-                    externalId: `${state.name}_${lga.name}`,
-                    name: `${lga.name} ${country.lgaLabel} ${state.name}`,
-                    shortName: `${lga.name}, ${stateKey}`,
-                    city: `${lga.name} City`,
-                    street1: `${lgaData.id} Main Street`,
-                    zip: `12345-${lgaData.id}`,
-                    latitude: _.has(state, 'lat')
-                      ? state.lat + _.random(-0.5, 0.5, true)
-                      : undefined,
-                    longitude: _.has(state, 'lng')
-                      ? state.lng + _.random(-0.5, 0.5, true)
-                      : undefined,
-                  },
-                  auditFields
-                )
-                const [siteId] = await knex('Site').insert(siteData)
-                siteData.id = siteId
-                siteDatas.push(siteData)
-              }
-            })
+        const geoData = { countryId, stateId, lgaId }
+        const [geographyId] = await knex('Geography').insert(geoData)
+        lgaData.geographyId = geographyId
+        if (state.name === 'Ohio') {
+          const siteData = Object.assign(
+            {
+              partnerId: partnerOneId,
+              geographyId,
+              externalId: `${state.name}_${lga.name}`,
+              name: `${lga.name} ${country.lgaLabel} ${state.name}`,
+              shortName: `${lga.name}, ${stateKey}`,
+              city: `${lga.name} City`,
+              street1: `${lgaData.id} Main Street`,
+              zip: `12345-${lgaData.id}`,
+              latitude: _.has(state, 'lat')
+                ? state.lat + _.random(-0.5, 0.5, true)
+                : undefined,
+              longitude: _.has(state, 'lng')
+                ? state.lng + _.random(-0.5, 0.5, true)
+                : undefined,
+            },
+            auditFields
           )
-        })
-      )
+          const [siteId] = await knex('Site').insert(siteData)
+          siteData.id = siteId
+          siteDatas.push(siteData)
+        }
+      })
     })
-  )
+  })
 
   const { id: geographyId } = await knex('Geography as g')
     .innerJoin('Country as c', 'c.id', 'g.countryId')
@@ -1699,104 +1691,91 @@ async function seed(knex) {
 
   // insert Daktari devices
   const devicesDaktari = []
-  await Promise.all(
-    _.map(_.range(siteDatas.length), async i => {
-      const siteData = siteDatas[i]
-      const device = Object.assign({}, auditFields, {
-        name: `Daktari ${siteData.shortName}`,
-        shortName: `Daktari ${siteData.shortName}`,
-        deviceTypeId: deviceTypeDaktariVirologyId,
-        deviceStatusId: deviceStatusApproved,
-        configurationData: JSON.stringify({
-          requirePrinter: 'yes',
-          adminPassword: 'pwd123',
-          firmwareUpdateRequired: 'no',
-        }),
-        partnerId: siteData.partnerId,
-        geographyId: siteData.geographyId,
-        siteId: siteData.id,
-        deviceId: i === 0 ? routerId : null,
-        createdOn: new Date(+now - 3 * i * millisInHour),
-        updatedOn: new Date(+now - i * millisInHour),
-        lastPingOn: new Date(+now - i * millisInHour / 3),
-        lastSeenOn: new Date(+now - i * millisInHour / 3),
-        hostId: _.times(8, () =>
-          String.fromCharCode(65 + i + (_.random(1) > 0 ? 32 : 0))
-        ).join(''),
-        serial: _.times(24, () =>
-          String.fromCharCode(65 + i + (_.random(1) > 0 ? 32 : 0))
-        ).join(''),
-      })
-
-      device.id = await knex('Device').insert(device)
-      devicesDaktari.push(device)
-
-      // Create API Keys
-      await knex('DeviceApiKey').insert(
-        Object.assign(
-          {
-            token: randomToken(),
-            revoked: 0,
-            partnerId: siteData.partnerId,
-            geographyId: siteData.geographyId,
-            siteId: siteData.id,
-            deviceId: device.id,
-          },
-          auditFields
-        )
-      )
+  await Promise.each(siteDatas, async (siteData, i) => {
+    const device = Object.assign({}, auditFields, {
+      name: `Daktari ${siteData.shortName}`,
+      shortName: `Daktari ${siteData.shortName}`,
+      deviceTypeId: deviceTypeDaktariVirologyId,
+      deviceStatusId: deviceStatusApproved,
+      configurationData: JSON.stringify({
+        requirePrinter: 'yes',
+        adminPassword: 'pwd123',
+        firmwareUpdateRequired: 'no',
+      }),
+      partnerId: siteData.partnerId,
+      geographyId: siteData.geographyId,
+      siteId: siteData.id,
+      deviceId: i === 0 ? routerId : null,
+      createdOn: new Date(+now - 3 * i * millisInHour),
+      updatedOn: new Date(+now - i * millisInHour),
+      lastPingOn: new Date(+now - i * millisInHour / 3),
+      lastSeenOn: new Date(+now - i * millisInHour / 3),
+      hostId: _.times(8, () =>
+        String.fromCharCode(65 + i + (_.random(1) > 0 ? 32 : 0))
+      ).join(''),
+      serial: _.times(24, () =>
+        String.fromCharCode(65 + i + (_.random(1) > 0 ? 32 : 0))
+      ).join(''),
     })
-  )
+
+    device.id = await knex('Device').insert(device)
+    devicesDaktari.push(device)
+
+    // Create API Keys
+    await knex('DeviceApiKey').insert(
+      Object.assign(
+        {
+          token: randomToken(),
+          revoked: 0,
+          partnerId: siteData.partnerId,
+          geographyId: siteData.geographyId,
+          siteId: siteData.id,
+          deviceId: device.id,
+        },
+        auditFields
+      )
+    )
+  })
 
   // Insert Inventory Items
-  await Promise.all(
-    _.map(_.range(siteDatas.length), async i => {
-      const siteData = siteDatas[i]
-      // TB Cartridges
-      await knex('InventoryItem').insert(
-        Object.assign(
-          {
-            consumableId: consumableGxTbCartridgeId,
-            siteId: siteData.id,
-            lotNumber: `${(i + 3) * (i + 1)}${
-              ['A', 'B'][i % 2]
-            }-${(siteData.id + i) * consumableGxTbCartridgeId}`,
-            expiresOn: new Date(
-              new Date(
-                now.getTime() +
-                  _.random(-millisInNormalYear, millisInNormalYear)
-              ).setHours(0, 0, 0, 0)
-            ),
-            quantityOnHand: _.random(0, 1000),
-          },
-          auditFields
-        )
+  await Promise.each(siteDatas, async (siteData, i) => {
+    // TB Cartridges
+    await knex('InventoryItem').insert(
+      Object.assign(
+        {
+          consumableId: consumableGxTbCartridgeId,
+          siteId: siteData.id,
+          lotNumber: `${(i + 3) * (i + 1)}${['A', 'B'][i % 2]}-${(siteData.id +
+            i) *
+            consumableGxTbCartridgeId}`,
+          expiresOn: new Date(
+            new Date(
+              now.getTime() + _.random(-millisInNormalYear, millisInNormalYear)
+            ).setHours(0, 0, 0, 0)
+          ),
+          quantityOnHand: _.random(0, 1000),
+        },
+        auditFields
       )
-    })
-  )
+    )
+  })
 
   // some HCV samples for Daktari
   const samples = []
-  await Promise.all(
-    _.map(_.range(siteDatas.length), async i => {
-      const siteDate = siteDatas[i]
-      const sample = Object.assign(
-        {},
-        {
-          externalId: `SMP-HCV-GX-${i}`,
-          collectedOn: calculateDateForResult(
-            i,
-            resultHcvNumber,
-            millisInMinute
-          ),
-          sampleTypeId: await sampleTypeToId('DBS'),
-          originSiteId: siteDate.id,
-        }
-      )
-      sample.id = await knex('Sample').insert(sample)
-      samples.push(sample)
-    })
-  )
+  await Promise.each(siteDatas, async (siteData, i) => {
+    const siteDate = siteDatas[i]
+    const sample = Object.assign(
+      {},
+      {
+        externalId: `SMP-HCV-GX-${i}`,
+        collectedOn: calculateDateForResult(i, resultHcvNumber, millisInMinute),
+        sampleTypeId: await sampleTypeToId('DBS'),
+        originSiteId: siteDate.id,
+      }
+    )
+    sample.id = await knex('Sample').insert(sample)
+    samples.push(sample)
+  })
 
   // Daktari HIV VL  Results:
   const possibleResults = [
@@ -1827,7 +1806,8 @@ async function seed(knex) {
     },
   }
 
-  _.map(_.range(devicesDaktari.length * 3), async i => {
+  const resultDatas = []
+  _.map(_.range(devicesDaktari.length * 3), i => {
     const device = devicesDaktari[i % siteDatas.length]
     const siteData = siteDatas.find(site => site.id === device.siteId)
     const sample = samples[i % samples.length]
@@ -1847,7 +1827,7 @@ async function seed(knex) {
       .replace('{0}', copies)
       .replace('{1}', log)
 
-    const resultId = await knex('Result').insert(
+    resultDatas.push(
       Object.assign({}, auditFields, {
         externalId: `UQ-DAK-HIV-${i}`,
         assayId: assayDaktariHivVlId,
@@ -1889,13 +1869,16 @@ async function seed(knex) {
             : null,
       })
     )
+  })
 
+  await Promise.each(resultDatas, async resultData => {
+    const resultId = await knex('Result').insert(resultData)
     await knex('ResultWorkflowLog').insert({
       resultId,
       resultWorkflowStatusId: processed,
       operator: 'Aaron',
-      changedOn: addMinutes(randomDate, 90),
-      createdOn: addMinutes(randomDate, 90),
+      changedOn: addMinutes(now, 90),
+      createdOn: addMinutes(now, 90),
       createdBy: adminId,
     })
   })
@@ -1997,37 +1980,35 @@ async function seed(knex) {
 
   // Create DashboardWidget
   const widgetIds = {}
-  await Promise.all(
-    _.map(dashboardWidget.stat, async widget => {
-      const widgetData = _.pick(widget, [
-        'title',
-        'titleI18nKey',
-        'subTitle',
-        'subTitleI18nKey',
-        'sqlForIndicator',
-        'link',
-        'sortOrder',
-      ])
-      const [widgetId] = await knex('DashboardWidget').insert(widgetData)
-      const statWidgetData = _.pick(widget, [
-        'icon',
-        'sqlForStatUnit',
-        'statUnit',
-        'statUnitI18nKey',
-        'statStatus',
-        'statStatusI18nKey',
-        'sqlForExtra',
-        'extraUnit',
-        'extraUnitI18nKey',
-        'extraLabel',
-        'extraLabelI18nKey',
-      ])
-      await knex('DashboardWidgetStat').insert(
-        Object.assign({ dashboardWidgetId: widgetId }, statWidgetData)
-      )
-      widgetIds[_.toLower(widget.title)] = widgetId
-    })
-  )
+  await Promise.each(dashboardWidget.stat, async widget => {
+    const widgetData = _.pick(widget, [
+      'title',
+      'titleI18nKey',
+      'subTitle',
+      'subTitleI18nKey',
+      'sqlForIndicator',
+      'link',
+      'sortOrder',
+    ])
+    const [widgetId] = await knex('DashboardWidget').insert(widgetData)
+    const statWidgetData = _.pick(widget, [
+      'icon',
+      'sqlForStatUnit',
+      'statUnit',
+      'statUnitI18nKey',
+      'statStatus',
+      'statStatusI18nKey',
+      'sqlForExtra',
+      'extraUnit',
+      'extraUnitI18nKey',
+      'extraLabel',
+      'extraLabelI18nKey',
+    ])
+    await knex('DashboardWidgetStat').insert(
+      Object.assign({ dashboardWidgetId: widgetId }, statWidgetData)
+    )
+    widgetIds[_.toLower(widget.title)] = widgetId
+  })
 
   await knex('JobFunctionDashboardWidget').insert([
     { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.sites },

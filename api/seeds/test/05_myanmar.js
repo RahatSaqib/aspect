@@ -2,6 +2,7 @@ module.exports = require('../utils').seed(seed)
 
 const bcrypt = require('bcrypt')
 const _ = require('lodash')
+const Promise = require('bluebird')
 
 const config = require('../../src/config')
 const myanmarSites = require('./fixtures/myanmarSites.json')
@@ -17,7 +18,8 @@ const {
 } = require('../utils')
 const {
   allFeatureToId,
-
+  deviceStatusToId,
+  deviceTypeToId,
   partnerTypeToId,
 } = require('../../src/shared/dictionary')
 
@@ -278,211 +280,212 @@ async function seed(knex) {
 
   // Regional Officer Jobs and Targets
   const adminRegions = ['AYY', 'KCN', 'MDY']
-  let regionNumber = 0
-  await Promise.all(
-    _.map(adminRegions, async region => {
-      regionNumber += 1
-      const regionUserName = `myanmar_ro${regionNumber}`
-      const { id: regionId } = await knex('Geography')
-        .where({
-          countryId,
-          stateId: statesByAbbreviation[region].id,
-        })
-        .first()
-      const [regionUserId] = await knex('User').insert({
-        name: regionUserName,
-        password: bcrypt.hashSync(regionUserName, saltRounds),
-        approved: 1,
-        createdOn: now,
-        lockedOut: 0,
-        failedPasswordAttempts: 0,
+  await Promise.each(adminRegions, async (region, regionNumber) => {
+    const regionUserName = `myanmar_ro${regionNumber + 1}`
+    const { id: regionId } = await knex('Geography')
+      .where({
+        countryId,
+        stateId: statesByAbbreviation[region].id,
       })
-      const [regionPersonId] = await knex('Person').insert(
-        Object.assign(
-          {
-            userId: regionUserId,
-            name: `Myanmar Regional Officer ${region}`,
-            lastPartnerId: partnerId,
-            lastCountryId: countryId,
-            geographyId: myanmarGeographyId,
-            culture: myanmarCountry.culture,
-            timezone: myanmarCountry.timezone,
-          },
-          auditFields
-        )
-      )
-      const [jobIdRegion] = await knex('Job').insert({
-        personId: regionPersonId,
-        jobFunctionId: jobFunctionIdRegionalOfficer,
-      })
-      await knex('JobContext').insert({
-        jobId: jobIdRegion,
-        geographyId: regionId,
-      })
+      .first()
+    const [regionUserId] = await knex('User').insert({
+      name: regionUserName,
+      password: bcrypt.hashSync(regionUserName, saltRounds),
+      approved: 1,
+      createdOn: now,
+      lockedOut: 0,
+      failedPasswordAttempts: 0,
     })
-  )
-
-  const siteDatas = []
-  await Promise.all(
-    _.map(myanmarSites.sites, async site => {
-      const { id: siteGeographyId } = await knex('Geography')
-        .where({
-          countryId,
-          stateId: (
-            statesByAbbreviation[site.stateAbbreviation] || { id: null }
-          ).id,
-          lgaId: (lgasByName[site.lgaName] || { id: null }).id,
-        })
-        .first()
-
-      // sites
-      const siteData = Object.assign(
+    const [regionPersonId] = await knex('Person').insert(
+      Object.assign(
         {
-          partnerId,
-          geographyId: siteGeographyId,
-          name: site.name,
-          shortName: site.shortName,
-          externalId: site.externalId,
-          notes: site.notes,
-          city: site.city,
-          street1: site.street1,
-          street2: site.street2,
-          zip: site.zip,
-          latitude: site.latitude,
-          longitude: site.longitude,
-          timezoneId: site.timezoneId,
-          hoursStart: site.hoursStart,
-          hoursEnd: site.hoursEnd,
+          userId: regionUserId,
+          name: `Myanmar Regional Officer ${region}`,
+          lastPartnerId: partnerId,
+          lastCountryId: countryId,
+          geographyId: myanmarGeographyId,
+          culture: myanmarCountry.culture,
+          timezone: myanmarCountry.timezone,
         },
         auditFields
       )
-      const [siteId] = await knex('Site').insert(siteData)
-      siteData.id = siteId
-      siteDatas.push(siteData)
+    )
+    const [jobIdRegion] = await knex('Job').insert({
+      personId: regionPersonId,
+      jobFunctionId: jobFunctionIdRegionalOfficer,
     })
-  )
+    await knex('JobContext').insert({
+      jobId: jobIdRegion,
+      geographyId: regionId,
+    })
+  })
+
+  await Promise.each(myanmarSites.sites, async site => {
+    const { id: siteGeographyId } = await knex('Geography')
+      .where({
+        countryId,
+        stateId: (statesByAbbreviation[site.stateAbbreviation] || { id: null })
+          .id,
+        lgaId: (lgasByName[site.lgaName] || { id: null }).id,
+      })
+      .first()
+
+    // sites
+    const siteData = Object.assign(
+      {
+        partnerId,
+        geographyId: siteGeographyId,
+        name: site.name,
+        shortName: site.shortName,
+        externalId: site.externalId,
+        notes: site.notes,
+        city: site.city,
+        street1: site.street1,
+        street2: site.street2,
+        zip: site.zip,
+        latitude: site.latitude,
+        longitude: site.longitude,
+        timezoneId: site.timezoneId,
+        hoursStart: site.hoursStart,
+        hoursEnd: site.hoursEnd,
+      },
+      auditFields
+    )
+    const [siteId] = await knex('Site').insert(siteData)
+    siteData.id = siteId
+
+    await Promise.each(site.devices, async deviceSeed => {
+      const device = {
+        partnerId,
+        geographyId: siteGeographyId,
+        siteId,
+        deviceTypeId: await deviceTypeToId('CepheidGeneXpert'),
+        deviceStatusId: await deviceStatusToId('approved'),
+        name: deviceSeed.name,
+        shortName: deviceSeed.shortName,
+        macAddress: deviceSeed.macAddress,
+        serial: deviceSeed.serial,
+        hostId: deviceSeed.hostId,
+        culture: deviceSeed.culture,
+        timezone: deviceSeed.timezone,
+        notes: deviceSeed.notes,
+        lastSeenOn: now,
+      }
+      await knex('Device').insert(device)
+    })
+  })
 
   // Lab User Jobs
-  let labNumber = 0
-  await Promise.all(
-    _.map(adminRegions, async region => {
-      labNumber += 1
-      const labUserName = `myanmar_lab${labNumber}`
-      const { siteId, geographyId } = await knex('Site as s')
-        .join('Geography as g', 's.geographyId', 'g.id')
-        .where({
-          's.partnerId': partnerId,
-          'g.countryId': countryId,
-          'g.stateId': statesByAbbreviation[region].id,
-        })
-        .first('s.id as siteId', 'g.id as geographyId')
-      const [labUserId] = await knex('User').insert({
-        name: labUserName,
-        password: bcrypt.hashSync(labUserName, saltRounds),
-        approved: 1,
-        createdOn: now,
-        lockedOut: 0,
-        failedPasswordAttempts: 0,
+  await Promise.each(adminRegions, async (region, labNumber) => {
+    const labUserName = `myanmar_lab${labNumber + 1}`
+    const { siteId, geographyId } = await knex('Site as s')
+      .join('Geography as g', 's.geographyId', 'g.id')
+      .where({
+        's.partnerId': partnerId,
+        'g.countryId': countryId,
+        'g.stateId': statesByAbbreviation[region].id,
       })
-      const [labPersonId] = await knex('Person').insert(
-        Object.assign(
-          {
-            userId: labUserId,
-            name: `Myanmar Lab User ${region}`,
-            lastPartnerId: partnerId,
-            lastCountryId: countryId,
-            geographyId,
-            culture: myanmarCountry.culture,
-            timezone: myanmarCountry.timezone,
-          },
-          auditFields
-        )
-      )
-      const [jobIdLab] = await knex('Job').insert({
-        personId: labPersonId,
-        jobFunctionId: jobFunctionIdLabUser,
-      })
-      await knex('JobContext').insert({
-        jobId: jobIdLab,
-        siteId,
-      })
+      .first('s.id as siteId', 'g.id as geographyId')
+    const [labUserId] = await knex('User').insert({
+      name: labUserName,
+      password: bcrypt.hashSync(labUserName, saltRounds),
+      approved: 1,
+      createdOn: now,
+      lockedOut: 0,
+      failedPasswordAttempts: 0,
     })
-  )
+    const [labPersonId] = await knex('Person').insert(
+      Object.assign(
+        {
+          userId: labUserId,
+          name: `Myanmar Lab User ${region}`,
+          lastPartnerId: partnerId,
+          lastCountryId: countryId,
+          geographyId,
+          culture: myanmarCountry.culture,
+          timezone: myanmarCountry.timezone,
+        },
+        auditFields
+      )
+    )
+    const [jobIdLab] = await knex('Job').insert({
+      personId: labPersonId,
+      jobFunctionId: jobFunctionIdLabUser,
+    })
+    await knex('JobContext').insert({
+      jobId: jobIdLab,
+      siteId,
+    })
+  })
 
   // Create DashboardWidget
   const statWidgets = []
-  await Promise.all(
-    _.map(dashboardWidget.stat, async widget => {
-      const widgetData = _.pick(widget, [
-        'title',
-        'titleI18nKey',
-        'subTitle',
-        'subTitleI18nKey',
-        'sqlForIndicator',
-        'link',
-        'sortOrder',
-      ])
-      const [widgetId] = await knex('DashboardWidget').insert(widgetData)
-      const statWidgetData = _.pick(widget, [
-        'icon',
-        'sqlForStatUnit',
-        'statUnit',
-        'statUnitI18nKey',
-        'statStatus',
-        'statStatusI18nKey',
-        'sqlForExtra',
-        'extraUnit',
-        'extraUnitI18nKey',
-        'extraLabel',
-        'extraLabelI18nKey',
-      ])
-      await knex('DashboardWidgetStat').insert(
-        Object.assign({ dashboardWidgetId: widgetId }, statWidgetData)
-      )
-      statWidgets.push(widgetId)
-    })
-  )
+  await Promise.each(dashboardWidget.stat, async widget => {
+    const widgetData = _.pick(widget, [
+      'title',
+      'titleI18nKey',
+      'subTitle',
+      'subTitleI18nKey',
+      'sqlForIndicator',
+      'link',
+      'sortOrder',
+    ])
+    const [widgetId] = await knex('DashboardWidget').insert(widgetData)
+    const statWidgetData = _.pick(widget, [
+      'icon',
+      'sqlForStatUnit',
+      'statUnit',
+      'statUnitI18nKey',
+      'statStatus',
+      'statStatusI18nKey',
+      'sqlForExtra',
+      'extraUnit',
+      'extraUnitI18nKey',
+      'extraLabel',
+      'extraLabelI18nKey',
+    ])
+    await knex('DashboardWidgetStat').insert(
+      Object.assign({ dashboardWidgetId: widgetId }, statWidgetData)
+    )
+    statWidgets.push(widgetId)
+  })
 
   const targetWidgets = []
-  await Promise.all(
-    _.map(dashboardWidget.target, async widget => {
-      const widgetData = _.pick(widget, [
-        'title',
-        'titleI18nKey',
-        'subTitle',
-        'subTitleI18nKey',
-        'sqlForIndicator',
-        'link',
-        'sortOrder',
-      ])
-      const [widgetId] = await knex('DashboardWidget').insert(widgetData)
-      const statWidgetData = _.pick(widget, [
-        'sqlForDataCollection',
-        'thresholdPercentageDataCollection',
-        'targetToken',
-      ])
-      await knex('DashboardWidgetTarget').insert(
-        Object.assign({ dashboardWidgetId: widgetId }, statWidgetData)
-      )
-      targetWidgets.push(widgetId)
-    })
-  )
+  await Promise.each(dashboardWidget.target, async widget => {
+    const widgetData = _.pick(widget, [
+      'title',
+      'titleI18nKey',
+      'subTitle',
+      'subTitleI18nKey',
+      'sqlForIndicator',
+      'link',
+      'sortOrder',
+    ])
+    const [widgetId] = await knex('DashboardWidget').insert(widgetData)
+    const statWidgetData = _.pick(widget, [
+      'sqlForDataCollection',
+      'thresholdPercentageDataCollection',
+      'targetToken',
+    ])
+    await knex('DashboardWidgetTarget').insert(
+      Object.assign({ dashboardWidgetId: widgetId }, statWidgetData)
+    )
+    targetWidgets.push(widgetId)
+  })
 
-  await Promise.all(
-    _.map(statWidgets, async widgetId => {
-      await knex('JobFunctionDashboardWidget').insert([
-        { jobFunctionId: jobFunctionIdAdmin, widgetId },
-        { jobFunctionId: jobFunctionIdRegionalOfficer, widgetId },
-        { jobFunctionId: jobFunctionIdLabUser, widgetId },
-      ])
-    }),
-    _.map(targetWidgets, async widgetId => {
-      await knex('JobFunctionDashboardWidget').insert([
-        { jobFunctionId: jobFunctionIdAdmin, widgetId },
-        { jobFunctionId: jobFunctionIdRegionalOfficer, widgetId },
-      ])
-    })
-  )
+  await Promise.each(statWidgets, async widgetId => {
+    await knex('JobFunctionDashboardWidget').insert([
+      { jobFunctionId: jobFunctionIdAdmin, widgetId },
+      { jobFunctionId: jobFunctionIdRegionalOfficer, widgetId },
+      { jobFunctionId: jobFunctionIdLabUser, widgetId },
+    ])
+  })
+  await Promise.each(targetWidgets, async widgetId => {
+    await knex('JobFunctionDashboardWidget').insert([
+      { jobFunctionId: jobFunctionIdAdmin, widgetId },
+      { jobFunctionId: jobFunctionIdRegionalOfficer, widgetId },
+    ])
+  })
 
   // Notifications
   await knex('NotificationType').insert([
@@ -1153,49 +1156,45 @@ async function seed(knex) {
       return memo
     }, {})
 
-  await Promise.all(
-    _.map(devices, async device => {
-      await Promise.all(
-        _.map(luIssueTypeIds, async issueTypeId => {
-          const issueStatusId =
-            issueTypeId === issueTypes.StockLevelUpdate.id
-              ? issueStatusOkId
-              : issueStatusActiveId
-          const [issueId] = await knex('Issue').insert(
-            Object.assign(
-              {
-                issueTypeId,
-                issueStatusId,
-                deviceId: device.id,
-                siteId: device.siteId,
-                geographyId: device.geographyId,
-              },
-              issue
-            )
-          )
-          if (issueStatusId === issueStatusAcknowledgedId) {
-            await knex('IssueStatusLog').insert({
-              issueId,
-              issueStatusId: issueStatusActiveId,
-              changedOn: now,
-              createdOn: now,
-              createdBy: adminId,
-            })
-          }
-          if (issueStatusId !== issueStatusActiveId) {
-            await knex('IssueStatusLog').insert({
-              issueId,
-              issueStatusId,
-              changedOn: new Date(+now + millisInHour),
-              createdOn: new Date(+now + millisInHour - 1000),
-              createdBy: adminId,
-            })
-          }
-          issueIds.push(issueId)
-        })
+  await Promise.each(devices, async device => {
+    await Promise.each(luIssueTypeIds, async issueTypeId => {
+      const issueStatusId =
+        issueTypeId === issueTypes.StockLevelUpdate.id
+          ? issueStatusOkId
+          : issueStatusActiveId
+      const [issueId] = await knex('Issue').insert(
+        Object.assign(
+          {
+            issueTypeId,
+            issueStatusId,
+            deviceId: device.id,
+            siteId: device.siteId,
+            geographyId: device.geographyId,
+          },
+          issue
+        )
       )
+      if (issueStatusId === issueStatusAcknowledgedId) {
+        await knex('IssueStatusLog').insert({
+          issueId,
+          issueStatusId: issueStatusActiveId,
+          changedOn: now,
+          createdOn: now,
+          createdBy: adminId,
+        })
+      }
+      if (issueStatusId !== issueStatusActiveId) {
+        await knex('IssueStatusLog').insert({
+          issueId,
+          issueStatusId,
+          changedOn: new Date(+now + millisInHour),
+          createdOn: new Date(+now + millisInHour - 1000),
+          createdBy: adminId,
+        })
+      }
+      issueIds.push(issueId)
     })
-  )
+  })
 
   const luPolicies = await knex('NotificationType as nt')
     .join('MessageType as mt', 'nt.messageTypeId', 'mt.id')
@@ -1219,40 +1218,38 @@ async function seed(knex) {
       'mt.alertTemplateId'
     )
 
-  await Promise.all(
-    _.map(luPolicies, async policy => {
-      const deviceId = deviceIds[policy.deviceId][policy.personId]
-      if (deviceId) {
-        const [alertMessageId] = await knex('AlertMessage').insert(
-          Object.assign(
-            {
-              messageStatusId: messageStatusSentId,
-              message: luAlertMessages[policy.issueTypeId],
-              createdOn: now,
-              updatedOn: now,
-            },
-            _.pick(policy, [
-              'alertTemplateId',
-              'personId',
-              'siteId',
-              'deviceId',
-              'resultId',
-            ])
-          )
+  await Promise.each(luPolicies, async policy => {
+    const deviceId = deviceIds[policy.deviceId][policy.personId]
+    if (deviceId) {
+      const [alertMessageId] = await knex('AlertMessage').insert(
+        Object.assign(
+          {
+            messageStatusId: messageStatusSentId,
+            message: luAlertMessages[policy.issueTypeId],
+            createdOn: now,
+            updatedOn: now,
+          },
+          _.pick(policy, [
+            'alertTemplateId',
+            'personId',
+            'siteId',
+            'deviceId',
+            'resultId',
+          ])
         )
+      )
 
-        await knex('Notification').insert(
-          Object.assign(
-            {
-              createdOn: now,
-              alertMessageId,
-            },
-            _.pick(policy, ['notificationTypeId', 'issueId', 'personId'])
-          )
+      await knex('Notification').insert(
+        Object.assign(
+          {
+            createdOn: now,
+            alertMessageId,
+          },
+          _.pick(policy, ['notificationTypeId', 'issueId', 'personId'])
         )
-      }
-    })
-  )
+      )
+    }
+  })
 
   // add issues for RO
   const roIssueTypeIds = [
@@ -1279,49 +1276,45 @@ async function seed(knex) {
 
   issue.level = 2
   issueIds = []
-  await Promise.all(
-    _.map(devices, async device => {
-      await Promise.all(
-        _.map(roIssueTypeIds, async issueTypeId => {
-          const issueStatusId =
-            issueTypeId === issueTypes.StockLevelUpdate.id
-              ? issueStatusOkId
-              : issueStatusActiveId
-          const [issueId] = await knex('Issue').insert(
-            Object.assign(
-              {
-                issueTypeId,
-                issueStatusId,
-                deviceId: device.id,
-                siteId: device.siteId,
-                geographyId: device.geographyId,
-              },
-              issue
-            )
-          )
-          if (issueStatusId === issueStatusAcknowledgedId) {
-            await knex('IssueStatusLog').insert({
-              issueId,
-              issueStatusId: issueStatusActiveId,
-              changedOn: now,
-              createdOn: now,
-              createdBy: adminId,
-            })
-          }
-          if (issueStatusId !== issueStatusActiveId) {
-            await knex('IssueStatusLog').insert({
-              issueId,
-              issueStatusId,
-              changedOn: new Date(+now + millisInHour),
-              createdOn: new Date(+now + millisInHour - 1000),
-              createdBy: adminId,
-            })
-          }
-          issueIds.push(issueId)
-        })
+  await Promise.each(devices, async device => {
+    await Promise.each(roIssueTypeIds, async issueTypeId => {
+      const issueStatusId =
+        issueTypeId === issueTypes.StockLevelUpdate.id
+          ? issueStatusOkId
+          : issueStatusActiveId
+      const [issueId] = await knex('Issue').insert(
+        Object.assign(
+          {
+            issueTypeId,
+            issueStatusId,
+            deviceId: device.id,
+            siteId: device.siteId,
+            geographyId: device.geographyId,
+          },
+          issue
+        )
       )
+      if (issueStatusId === issueStatusAcknowledgedId) {
+        await knex('IssueStatusLog').insert({
+          issueId,
+          issueStatusId: issueStatusActiveId,
+          changedOn: now,
+          createdOn: now,
+          createdBy: adminId,
+        })
+      }
+      if (issueStatusId !== issueStatusActiveId) {
+        await knex('IssueStatusLog').insert({
+          issueId,
+          issueStatusId,
+          changedOn: new Date(+now + millisInHour),
+          createdOn: new Date(+now + millisInHour - 1000),
+          createdBy: adminId,
+        })
+      }
+      issueIds.push(issueId)
     })
-  )
+  })
 
   const roPolicies = await knex('NotificationType as nt')
     .join('MessageType as mt', 'nt.messageTypeId', 'mt.id')
@@ -1348,43 +1341,41 @@ async function seed(knex) {
       'mt.alertTemplateId'
     )
 
-  await Promise.all(
-    _.map(roPolicies, async policy => {
-      const deviceId = deviceIds[policy.deviceId][policy.personId]
-      if (deviceId) {
-        const message = policy.notificationTypeName.endsWith('RO View')
-          ? luAlertMessages[policy.issueTypeId]
-          : roAlertMessages[policy.issueTypeId]
-        const [alertMessageId] = await knex('AlertMessage').insert(
-          Object.assign(
-            {
-              messageStatusId: messageStatusSentId,
-              message,
-              createdOn: now,
-              updatedOn: now,
-            },
-            _.pick(policy, [
-              'alertTemplateId',
-              'personId',
-              'siteId',
-              'deviceId',
-              'resultId',
-            ])
-          )
+  await Promise.each(roPolicies, async policy => {
+    const deviceId = deviceIds[policy.deviceId][policy.personId]
+    if (deviceId) {
+      const message = policy.notificationTypeName.endsWith('RO View')
+        ? luAlertMessages[policy.issueTypeId]
+        : roAlertMessages[policy.issueTypeId]
+      const [alertMessageId] = await knex('AlertMessage').insert(
+        Object.assign(
+          {
+            messageStatusId: messageStatusSentId,
+            message,
+            createdOn: now,
+            updatedOn: now,
+          },
+          _.pick(policy, [
+            'alertTemplateId',
+            'personId',
+            'siteId',
+            'deviceId',
+            'resultId',
+          ])
         )
+      )
 
-        await knex('Notification').insert(
-          Object.assign(
-            {
-              createdOn: now,
-              alertMessageId,
-            },
-            _.pick(policy, ['notificationTypeId', 'issueId', 'personId'])
-          )
+      await knex('Notification').insert(
+        Object.assign(
+          {
+            createdOn: now,
+            alertMessageId,
+          },
+          _.pick(policy, ['notificationTypeId', 'issueId', 'personId'])
         )
-      }
-    })
-  )
+      )
+    }
+  })
 
   await seedStockIssues(knex)
   await seedStockIssuesUpdate(knex, 'Myanmar')

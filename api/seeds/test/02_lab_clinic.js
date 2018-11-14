@@ -428,23 +428,6 @@ async function seed(knex) {
   ])
   await knex('JobContext').insert({ jobId: jobIdAdmin, geographyId })
 
-  await knex('DeviceType')
-    .where({ externalId: 'MetacomRouter' })
-    .first()
-
-  await knex('DeviceType')
-    .where({ externalId: 'CHAILIMS' })
-    .first()
-
-  await knex('DeviceStatus')
-    .where({ token: 'approved' })
-    .first()
-
-  // EID Results and samples
-  await knex('SampleType')
-    .where('externalId', 'DBS')
-    .select('id')
-
   // Results section
   const {
     Detected: resultCategoryDetectedId,
