@@ -329,6 +329,7 @@ describe('Issue Resolution', () => {
 
     let partner
     let messageContext
+    const deviceIdsToRemove = []
 
     before(async () =>
       run(async knex => {
@@ -342,6 +343,21 @@ describe('Issue Resolution', () => {
           knex,
           'decommissioned'
         )
+        const testDeviceId1 = await createDeviceNoResult(knex, {
+          partnerId: partner.id,
+          countryAbbreviation,
+        })
+        const testDeviceId2 = await createDeviceNoResult(knex, {
+          partnerId: partner.id,
+          countryAbbreviation,
+        })
+        deviceIdsToRemove.push(testDeviceId1)
+        deviceIdsToRemove.push(testDeviceId2)
+      })
+    )
+    after(async () =>
+      run(async knex => {
+        await deleteDeviceAndTestData(knex, deviceIdsToRemove)
       })
     )
 
@@ -963,7 +979,6 @@ describe('Issue Resolution', () => {
       let device2NoResultsIssueId
       const devicesToResetNoResults = []
       const factDeviceFlagsToRemove = []
-      const deviceIdsToRemove = []
 
       let now
       let admin
@@ -1006,17 +1021,6 @@ describe('Issue Resolution', () => {
 
       before(async () =>
         run(async knex => {
-          const testDeviceId1 = await createDeviceNoResult(knex, {
-            partnerId: partner.id,
-            countryAbbreviation,
-          })
-          const testDeviceId2 = await createDeviceNoResult(knex, {
-            partnerId: partner.id,
-            countryAbbreviation,
-          })
-          deviceIdsToRemove.push(testDeviceId1)
-          deviceIdsToRemove.push(testDeviceId2)
-
           deviceNoResultsIssueType = await getIssueType(knex, 'DeviceNoResults')
           const noResultsSince = subDays(
             new Date(),
@@ -1094,8 +1098,6 @@ describe('Issue Resolution', () => {
 
       after(async () =>
         run(async knex => {
-          await deleteDeviceAndTestData(knex, deviceIdsToRemove)
-
           await Promise.all(
             _.map(factDeviceFlagsToRemove, deviceId =>
               knex('FactDeviceFlag')

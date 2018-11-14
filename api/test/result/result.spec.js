@@ -14,7 +14,6 @@ const {
   getDeviceFromApiKey,
   getLastResultId,
   getLastResult,
-  deleteDeviceAndTestData,
 } = require('../deviceApi/utils')
 
 describe('Result routes', () => {
@@ -482,7 +481,8 @@ describe('Result routes', () => {
 
       beforeEach(async () => {
         const commcarePluginPath = '/device/plugin/commcare'
-        await context.beforeEach()
+        await context.createSites(['commcare'])
+        await context.createDeviceApiKey()
 
         return runTest(async knex => {
           apiKey = context.apiKey // eslint-disable-line prefer-destructuring
@@ -507,12 +507,7 @@ describe('Result routes', () => {
         })
       })
 
-      afterEach(async () => {
-        await runTest(async knex =>
-          deleteDeviceAndTestData(knex, [apiKey, context.apiKey])
-        )
-        return context.afterEach()
-      })
+      afterEach(context.afterEach)
 
       it('Should save values to the formData field in the result', async () =>
         runTestWithKnex(async knex => {

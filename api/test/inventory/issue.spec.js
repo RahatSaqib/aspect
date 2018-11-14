@@ -29,6 +29,8 @@ const {
 } = require('../utils/issueUtils')
 const { loadPlugin } = require('../../src/plugin/registration')
 const {
+  deviceTypeToId,
+  deviceStatusToId,
   resultWorkflowStatusToId,
   resultSourceToId,
   resultTypeToId,
@@ -55,17 +57,25 @@ describe('Inventory Stock Issues Endpoint', () => {
       const partner = await getPartner(knex, partnerName)
       assert.isOk(partner, `Cannot find Partner ${partnerName}`)
       const {
-        s: { id: siteId },
+        s: { id: siteId, geographyId },
         regionalOfficer: siteRegionalOfficer,
       } = await getSite(knex, {
         partnerId: partner.id,
         countryAbbreviation,
-        requireInventory: true,
+        requireInventory: false,
       })
+
       const inventoryItem = await createTestInventory(knex, siteId, partner.id)
 
+      const [deviceId] = await createTestDevice(
+        knex,
+        siteId,
+        geographyId,
+        partner.id
+      )
+
       const device = await knex('Device')
-        .where({ partnerId: partner.id, siteId })
+        .where({ id: deviceId })
         .first()
 
       const resultId = await createTestResult(knex, device)
@@ -96,8 +106,20 @@ describe('Inventory Stock Issues Endpoint', () => {
   after(async () =>
     run(async knex => {
       if (resultIds.length > 0) {
+        const deviceIds = await knex('Result')
+          .whereIn('id', resultIds)
+          .pluck('deviceId')
+        const sampleIds = await knex('Result')
+          .whereIn('id', resultIds)
+          .pluck('sampleId')
         await knex('Result')
           .whereIn('id', resultIds)
+          .delete()
+        await knex('Sample')
+          .whereIn('id', sampleIds)
+          .delete()
+        await knex('Device')
+          .whereIn('id', deviceIds)
           .delete()
       }
       deleteConsumableTestData(knex, baseProps.consumableId)
@@ -513,6 +535,19 @@ async function deleteInventoryTestData(knex, inventoryItemIds) {
     .delete()
 }
 
+async function createTestDevice(knex, siteId, geographyId, partnerId) {
+  return knex('Device').insert({
+    partnerId,
+    geographyId,
+    siteId, // new site id
+    deviceTypeId: await deviceTypeToId('CepheidGeneXpert'),
+    deviceStatusId: await deviceStatusToId('approved'),
+    name: 'Test Device',
+    shortName: 'Test Device',
+    lastSeenOn: new Date(),
+  })
+}
+
 async function createTestResult(knex, device) {
   const now = new Date()
   const admin = await knex('User')
@@ -528,13 +563,14 @@ async function createTestResult(knex, device) {
   const sampleTypeId = await sampleTypeToId('DBS')
   const noResultCategoryId = await resultCategoryToId('NoResult')
 
-  const { id: sampleId } = await knex('Sample')
-    .where({
-      sampleTypeId,
-      originSiteId: device.siteId,
-    })
-    .first('id')
-  const resultId = await knex('Result').insert({
+  const [sampleId] = await knex('Sample').insert({
+    externalId: `NEW SAMPLE ${new Date().getTime()}`,
+    collectedOn: now,
+    sampleTypeId,
+    originSiteId: device.siteId,
+  })
+
+  const [resultId] = await knex('Result').insert({
     createdOn: now,
     createdBy: admin.id,
     updatedOn: now,

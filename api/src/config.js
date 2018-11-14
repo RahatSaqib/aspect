@@ -43,6 +43,7 @@ module.exports = {
     cell: process.env['admin.cell'],
   },
   plugin: {},
+  webhook: {},
   scheduler: {
     enabled: process.env['scheduler.enabled'] === 'true',
   },
@@ -75,6 +76,15 @@ function configureOptional(config) {
   const commcareApiKey = process.env['plugin.commcare.apiKey']
   if (commcareApiKey) {
     config.plugin.commcare = { apiKey: commcareApiKey }
+  }
+
+  const redcapWebApiUrl = process.env['webhook.redcap.url']
+  const redcapWebApiAuthToken = process.env['webhook.redcap.authToken']
+  if (redcapWebApiUrl && redcapWebApiAuthToken) {
+    config.webhook.redcap = {
+      url: redcapWebApiUrl,
+      authToken: redcapWebApiAuthToken,
+    }
   }
 }
 

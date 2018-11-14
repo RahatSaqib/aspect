@@ -3,7 +3,6 @@ module.exports = require('../utils').seed(seed)
 const _ = require('lodash')
 const config = require('../../src/config')
 const bcrypt = require('bcrypt')
-const { randomToken } = require('../../src/deviceApi/apiKey')
 
 const {
   rowsAsObject,
@@ -149,29 +148,6 @@ async function seed(knex) {
     { personId: adminPersonId, jobFunctionId: jobFunctionIdAdmin },
   ])
   await knex('JobContext').insert({ jobId: jobIdAdmin, geographyId })
-
-  // Create initial DeviceAPI Key for CommCare which requires site.
-  const commcareSiteId = await knex('Site').insert(
-    Object.assign({}, auditFields, {
-      name: 'CommCare Site',
-      shortName: 'CommCare Site',
-      externalId: 'commcare',
-      partnerId,
-      geographyId,
-    })
-  )
-  await knex('DeviceApiKey').insert(
-    Object.assign(
-      {
-        token: randomToken(),
-        revoked: 0,
-        partnerId,
-        geographyId,
-        siteId: commcareSiteId,
-      },
-      auditFields
-    )
-  )
 
   // Create WebhookTemplate for downloading images
   const commcareApiKey = _.get(config, 'plugin.commcare.apiKey', '')

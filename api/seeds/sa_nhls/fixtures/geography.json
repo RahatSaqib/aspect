@@ -13,7 +13,30 @@
       "exportColumns": "DeploymentDescription|TestEndedOn|AssayName|AssayVersion|User|Result1|Result2|ResultText|PatientId|ReagentLotID|ExpirationDate|CartridgeSerial|ModuleSerial|SoftwareVersion|ErrorCode|ErrorCategory|ErrorDescription|SampleId|Notes|ProbeDCt|ProbeCCt|ProbeECt|ProbeBCt|Qc1Ct|Qc2Ct",
       "inventoryDaysThreshold": 21,
       "monthStartsOnDay": 1,
-      "states": []
+      "states": [
+        {
+          "abbreviation": "GA",
+          "name": "Gauteng",
+          "lgas": [
+            {
+              "name": "Coronationville"
+            },
+            {
+              "name": "Diepkloof"
+            },
+            {
+              "name": "Kalafong"
+            },
+            {
+              "name": "Parktown"
+            }
+          ]
+        },
+        {
+          "abbreviation": "EC",
+          "name": "Eastern Cape"
+        }
+      ]
     }
   ]
 }

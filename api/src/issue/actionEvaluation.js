@@ -1,32 +1,21 @@
 const Promise = require('bluebird')
 const _ = require('lodash')
-const {
-  addSeconds,
-  addMinutes,
-  addHours,
-  addDays,
-  addWeeks,
-  addMonths,
-  addYears,
-} = require('date-fns')
 const { readTextFile } = require('../shared/io')
 
 const evaluationMethods = {
   'inline-sql': evaluateInlineSql,
   'sql-script': evaluateSqlScript,
   'plugin-function': evaluatePluginFunction,
-  'issue-age': triggeredEventOlderThan,
-  'result-category': checkResultCategory,
-  'child-condition': conditionsMet,
-  'child-conditions': conditionsMet,
+  'child-condition': actionConditionsMet,
+  'child-conditions': actionConditionsMet,
 }
 
-async function conditionsMet(knex, issue, conditions) {
+async function actionConditionsMet(knex, action, partnerId, conditions) {
   if (_.isEmpty(conditions)) {
     return Promise.resolve(true)
   }
   if (Array.isArray(conditions)) {
-    return evaluateArrayOfConditions(knex, issue, conditions)
+    return evaluateArrayOfConditions(knex, action, partnerId, conditions)
   }
   const { evaluationMethod = null, evaluationParameter = null } = conditions
   if (!evaluationMethods[evaluationMethod]) {
@@ -34,10 +23,15 @@ async function conditionsMet(knex, issue, conditions) {
       `Unrecognised evaluation method in condition ${evaluationMethod}`
     )
   }
-  return evaluationMethods[evaluationMethod](knex, issue, evaluationParameter)
+  return evaluationMethods[evaluationMethod](
+    knex,
+    action,
+    partnerId,
+    evaluationParameter
+  )
 }
 
-async function evaluateArrayOfConditions(knex, issue, conditions) {
+async function evaluateArrayOfConditions(knex, action, partnerId, conditions) {
   const invalidConditions = _.filter(
     conditions,
     ({ evaluationMethod = null }) => !evaluationMethods[evaluationMethod]
@@ -62,7 +56,7 @@ async function evaluateArrayOfConditions(knex, issue, conditions) {
   if (!_.isEmpty(andConditions)) {
     const andConditionsMet = await Promise.all(
       _.map(andConditions, async condition =>
-        conditionsMet(knex, issue, condition)
+        actionConditionsMet(knex, action, partnerId, condition)
       )
     )
     if (_.some(andConditionsMet, andConditionMet => !andConditionMet)) {
@@ -73,7 +67,7 @@ async function evaluateArrayOfConditions(knex, issue, conditions) {
   if (!_.isEmpty(orConditions)) {
     const orConditionsMet = await Promise.all(
       _.map(orConditions, async condition =>
-        conditionsMet(knex, issue, condition)
+        actionConditionsMet(knex, action, partnerId, condition)
       )
     )
     if (_.every(orConditionsMet, orConditionMet => !orConditionMet)) {
@@ -83,64 +77,42 @@ async function evaluateArrayOfConditions(knex, issue, conditions) {
   return true
 }
 
-async function evaluatePluginFunction(knex, issue, functionName) {
+async function evaluatePluginFunction(knex, action, partnerId, functionName) {
   const partner = await knex('Partner')
-    .where({ id: issue.partnerId })
+    .where({ id: partnerId })
     .first('plugin')
   if (partner == null) {
     return false
   }
   const { loadPlugin } = require('../plugin/registration')
-  const resolutions = await loadPlugin([partner.plugin], 'issueResolutions')
-  const escalations = await loadPlugin([partner.plugin], 'issueEscalations')
-  const plugins = { ...resolutions, ...escalations }
+  const plugins = await loadPlugin([partner.plugin], 'issueTriggers')
   const func = plugins[functionName]
-  return func != null && func(knex, issue)
+  return func != null && func(knex, action)
 }
 
-async function evaluateInlineSql(knex, issue, inlineSql) {
-  return evaluateSql(knex, issue, inlineSql)
+async function evaluateInlineSql(knex, action, partnerId, inlineSql) {
+  return evaluateSql(knex, action, partnerId, inlineSql)
 }
 
-async function evaluateSqlScript(knex, issue, pathToSqlScript) {
+async function evaluateSqlScript(knex, action, partnerId, pathToSqlScript) {
   const sql = await readTextFile(pathToSqlScript)
-  return evaluateSql(knex, issue, sql)
+  return evaluateSql(knex, action, partnerId, sql)
 }
 
-async function evaluateSql(knex, issue, sql) {
+async function evaluateSql(knex, action, partnerId, sql) {
   const {
     processUsingHandlebarsSyntax,
     getMustacheTokensInString,
   } = require('../stringTemplate/service')
 
-  const issueValues = _.omit(issue, 'conditions')
-  const parameterPlaceholders = _.mapValues(issueValues, () => '?')
-  /*
-  issueValues Schema:
-  -------------------
-   id int NOT NULL
-   issueTypeId int NOT NULL
-   issueStatusId int NOT NULL
-   partnerId int NOT NULL
-   geographyId int NULL
-   siteId int NULL
-   deviceId int NULL
-   resultId int NULL
-   level int NOT NULL
-   createdOn datetime NOT NULL
-   updatedOn datetime NOT NULL
-   triggeredOn datetime NOT NULL
-
-   FOR ESCALATION CONDITIONS ONLY:
-   escalateToLevel int NOT NULL
-  */
+  const parameterPlaceholders = _.mapValues(action, () => '?')
   const parameterisedSqlQuery = processUsingHandlebarsSyntax(
     sql,
     parameterPlaceholders
   )
   const parameterPlaceHolders = getMustacheTokensInString(sql)
   const parameters = _.map(parameterPlaceHolders, parameterPlaceHolder =>
-    processUsingHandlebarsSyntax(parameterPlaceHolder, issueValues)
+    processUsingHandlebarsSyntax(parameterPlaceHolder, action)
   )
   const evaluatedResult = await knex.raw(parameterisedSqlQuery, parameters)
   return isResultTruthy(evaluatedResult, parameterisedSqlQuery, parameters)
@@ -176,54 +148,6 @@ function isResultTruthy(result, parameterisedSqlQuery, parameters) {
   return !!result
 }
 
-async function triggeredEventOlderThan(knex, issue, issueAge) {
-  const issueAgeSpec = _.assign(
-    {
-      seconds: 0,
-      minutes: 0,
-      hours: 0,
-      days: 0,
-      weeks: 0,
-      months: 0,
-      years: 0,
-    },
-    issueAge
-  )
-  const issueTriggeredOnPlusAge = addYears(
-    addMonths(
-      addWeeks(
-        addDays(
-          addHours(
-            addMinutes(
-              addSeconds(issue.triggeredOn, issueAgeSpec.seconds),
-              issueAgeSpec.minutes
-            ),
-            issueAgeSpec.hours
-          ),
-          issueAgeSpec.days
-        ),
-        issueAgeSpec.weeks
-      ),
-      issueAgeSpec.months
-    ),
-    issueAgeSpec.years
-  )
-  return Promise.resolve(issueTriggeredOnPlusAge < new Date())
-}
-
-async function checkResultCategory(knex, issue, category) {
-  if (category.index !== 1 && category.index !== 2) {
-    // currently only support two categories in data model
-    return false
-  }
-  const result = await knex('Result as r')
-    .join('ResultCategory as rc', 'rc.id', `r.resultCategory${category.index}`)
-    .join('Issue as i', 'i.resultId', 'r.id')
-    .where({ 'i.id': issue.id, 'rc.externalId': category.externalId })
-    .first('r.id')
-  return result != null
-}
-
 module.exports = {
-  conditionsMet,
+  actionConditionsMet,
 }

@@ -128,25 +128,23 @@ async function seed(knex) {
 
   // SD-621 Ensure targets have updated values
   // TODO move Target updates to static utils
-  await Promise.all(
-    _.map(geography.countries[0].states, async state => {
-      const geography = await knex('Geography')
-        .join('State', 'Geography.stateId', 'State.id')
-        .whereNotNull('stateId')
-        .whereNull('lgaId')
-        .where('State.name', state.name)
-        .first('Geography.id')
+  await Promise.each(geography.countries[0].states, async state => {
+    const geography = await knex('Geography')
+      .join('State', 'Geography.stateId', 'State.id')
+      .whereNotNull('stateId')
+      .whereNull('lgaId')
+      .where('State.name', state.name)
+      .first('Geography.id')
 
-      await Promise.all(
-        _.map(state.targets, async (value, key) => {
-          await knex('Target')
-            .where({ geographyId: geography.id })
-            .where({ targetToken: key })
-            .update({ targetValue: value })
-        })
-      )
-    })
-  )
+    await Promise.all(
+      _.map(state.targets, async (value, key) => {
+        await knex('Target')
+          .where({ geographyId: geography.id })
+          .where({ targetToken: key })
+          .update({ targetValue: value })
+      })
+    )
+  })
 
   // SD-589 Format Issue Dates
   await knex('AlertTemplate')
