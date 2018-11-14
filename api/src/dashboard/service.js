@@ -10,6 +10,7 @@ const {
   canEditInventories,
 } = require('../auth/constraints')
 const addDays = require('date-fns/add_days')
+const subDays = require('date-fns/sub_days')
 const isAfter = require('date-fns/is_after')
 const differenceInDays = require('date-fns/difference_in_days')
 const { getUser, hasFeature } = require('../auth/service')
@@ -1294,6 +1295,9 @@ async function addStockLevelUpdateActions(
   actionDashboardAlertMessages,
   siteId = null
 ) {
+  const inventoryCutoff = subDays(new Date(), 30)
+  let inventoryOutdated = false
+
   if (canViewInventories(auth)) {
     const { id: assayId } = await knex('Assay')
       .where('externalId', 'GxMtbRif')
@@ -1321,6 +1325,7 @@ async function addStockLevelUpdateActions(
         's.id as siteId',
         's.name as siteName',
         'c.id as consumableId',
+        knex.raw('max(ii.updatedOn) as updatedOn'),
         knex.raw('sum(coalesce(ii.quantityOnHand, 0)) as totalInStock')
       )
 
@@ -1332,13 +1337,18 @@ async function addStockLevelUpdateActions(
         alertMessage.canEdit = canEditInventories(auth)
         if (alertMessage.siteId && inventoryItemsBySite[alertMessage.siteId]) {
           const [inventoryItem] = inventoryItemsBySite[alertMessage.siteId]
-          alertMessage.totalInStock =
-            inventoryItem == null ? 0 : inventoryItem.totalInStock
-          alertMessage.consumableId =
-            inventoryItem == null ? null : inventoryItem.consumableId
+          if (inventoryItem) {
+            alertMessage.totalInStock = inventoryItem.totalInStock
+            alertMessage.consumableId = inventoryItem.consumableId
+            inventoryOutdated = inventoryItem.updatedOn < inventoryCutoff
+          } else {
+            alertMessage.totalInStock = 0
+            alertMessage.consumableId = null
+            inventoryOutdated = false
+          }
           delete inventoryItemsBySite[alertMessage.siteId]
         }
-        if (alertMessage.totalInStock <= 0) {
+        if (alertMessage.totalInStock <= 0 || inventoryOutdated) {
           alertMessage.status = 'Active'
           alertMessage.statusI18nKey = 'issueStatusActive'
           alertMessage.issueStatusSortOrder = 0
