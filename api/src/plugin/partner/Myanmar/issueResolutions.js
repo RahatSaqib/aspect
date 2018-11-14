@@ -31,13 +31,28 @@ const {
 } = require('../../../fact/service')
 
 const { totalWastedInventoryItems } = require('../../../fact/service')
-const { getEscalateOrResolveStatusForIssueStockout } = require('./utils')
+
+const { isStockEmpty } = require('../../../shared/utilsInventory')
+
+const {
+  getEscalateOrResolveStatusForIssueStockout,
+  getReplacedModuleSerials,
+} = require('./utils')
 
 const { issueStatusToId, issueTypeToId } = require('../../../shared/dictionary')
 
 async function resolveModuleFailureError(knex, issue) {
   const last30day = subDays(new Date(), 30)
   const issueData = JSON.parse(issue.data) || {}
+
+  const replacedModuleSerials = await getReplacedModuleSerials(
+    knex,
+    issue.deviceId
+  )
+  if (replacedModuleSerials.includes(issueData.moduleSerial)) {
+    return true
+  }
+
   const modules = await knex('Result as r')
     .innerJoin('ResultCategory as rc', 'r.resultCategory1', 'rc.id')
     .where('rc.externalId', 'Error')
@@ -60,6 +75,15 @@ async function resolveModuleTemperatureError(knex, issue) {
   // TC Not met
   const last30day = subDays(new Date(), 30)
   const issueData = JSON.parse(issue.data) || {}
+
+  const replacedModuleSerials = await getReplacedModuleSerials(
+    knex,
+    issue.deviceId
+  )
+  if (replacedModuleSerials.includes(issueData.moduleSerial)) {
+    return true
+  }
+
   const modules = await knex('Result as r')
     .innerJoin('ResultCategory as rc', 'r.resultCategory1', 'rc.id')
     .where('rc.externalId', 'Error')
@@ -97,17 +121,26 @@ async function resolveModuleTemperatureError(knex, issue) {
 
 async function resolveMachineTemperatureError(knex, issue) {
   const last30day = subDays(new Date(), 30)
+
+  const replacedModuleSerials = await getReplacedModuleSerials(
+    knex,
+    issue.deviceId
+  )
+
   const [machine] = await knex('Result as r')
     .innerJoin('ResultCategory as rc', 'r.resultCategory1', 'rc.id')
     .where('rc.externalId', 'Error')
     .where('r.deviceId', issue.deviceId)
     .where('r.endedOn', '>=', last30day)
     .whereIn('r.errorCode', MODULE_TEMPERATURE_ERROR_CODES)
+    .whereNotIn('r.moduleSerial', replacedModuleSerials)
     .count('r.id as errorCount')
   const [total] = await knex('Result as r')
     .where('r.deviceId', issue.deviceId)
     .where('r.endedOn', '>=', last30day)
+    .whereNotIn('r.moduleSerial', replacedModuleSerials)
     .count('r.id as resultCount')
+
   return (
     machine != null &&
     100 * machine.errorCount / total.resultCount <
@@ -119,6 +152,15 @@ async function resolveModulePowerError(knex, issue) {
   // TC Not met
   const last30day = subDays(new Date(), 30)
   const issueData = JSON.parse(issue.data) || {}
+
+  const replacedModuleSerials = await getReplacedModuleSerials(
+    knex,
+    issue.deviceId
+  )
+  if (replacedModuleSerials.includes(issueData.moduleSerial)) {
+    return true
+  }
+
   const modules = await knex('Result as r')
     .innerJoin('ResultCategory as rc', 'r.resultCategory1', 'rc.id')
     .where('rc.externalId', 'Error')
@@ -176,6 +218,15 @@ async function resolveMachinePowerError(knex, issue) {
 async function resolveModuleProceduralError(knex, issue) {
   const { moduleSerial = null } = JSON.parse(issue.data) || {}
   const last30day = subDays(new Date(), 30)
+
+  const replacedModuleSerials = await getReplacedModuleSerials(
+    knex,
+    issue.deviceId
+  )
+  if (replacedModuleSerials.includes(moduleSerial)) {
+    return true
+  }
+
   const [module] = await knex('Result as r')
     .innerJoin('ResultCategory as rc', 'r.resultCategory1', 'rc.id')
     .where('rc.externalId', 'Error')
@@ -219,6 +270,15 @@ async function resolveMachineProceduralError(knex, issue) {
 async function resolveModuleUnknownError(knex, issue) {
   const last30day = subDays(new Date(), 30)
   const issueData = JSON.parse(issue.data) || {}
+
+  const replacedModuleSerials = await getReplacedModuleSerials(
+    knex,
+    issue.deviceId
+  )
+  if (replacedModuleSerials.includes(issueData.moduleSerial)) {
+    return true
+  }
+
   const modules = await knex('Result as r')
     .innerJoin('ResultCategory as rc', 'r.resultCategory1', 'rc.id')
     .where('rc.externalId', 'Error')
@@ -426,8 +486,15 @@ async function resolveIssueStockout(knex, issue) {
 }
 
 async function resolveIssueStockExpiring(knex, issue) {
+  const isEmptyStock = await isStockEmpty(knex, siteId, consumableId)
+
+  if (isEmptyStock) {
+    // nothing to waste so consider resolved
+    return true
+  }
+
   // ---------------------------------------
-  // see auditInventoryStockExpiring() in /fact/service.js for triggering issue - here we check opposite
+  // see auditInventoryStockExpiring() in /shared/mqUtil.js for triggering issue - here we check opposite
   // ---------------------------------------
   const { siteId, consumableId } = issue
   const { rate: dailyRate } = (await knex('FactInventoryConsumptionRate')

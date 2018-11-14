@@ -14,7 +14,7 @@ const types = {
  * emailMessageId is required.
  */
 function emailMessageCreated(emailMessageId) {
-  if (emailMessageId == null) {
+  if (!emailMessageId) {
     throw new Error('Must specify emailMessageId')
   }
   return {

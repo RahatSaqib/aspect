@@ -14,7 +14,7 @@ const types = {
  * smsMessageId is required.
  */
 function smsMessageCreated(smsMessageId) {
-  if (smsMessageId == null) {
+  if (!smsMessageId) {
     throw new Error('Must specify smsMessageId')
   }
   return {

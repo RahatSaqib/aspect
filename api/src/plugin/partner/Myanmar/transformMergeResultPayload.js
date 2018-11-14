@@ -45,9 +45,9 @@ function parseNotes(payload) {
   const hivStatusRegex = /(^|\s|,)(hiv([+]|[-]|[?])),?($|\s|,)/i
   const hivStatusMatches = notes.match(hivStatusRegex) || []
 
-  const ageInYearsRegex = /(^|\s|,)([1]?[0-9]{1,2}),?($|\s|,)/i
+  const ageInYearsRegex = /(^|\s|,)([1]?[0-9]{1,2})(,|yrs|m|f)?($|\s|,)/i
   const ageInYearsMatches = notes.match(ageInYearsRegex) || []
-  const genderRegex = /(^|\s|,)([m]|[f]),?($|\s|,)/i
+  const genderRegex = /(^|\s|,)([0-9]{0,2})([m]|[f]),?($|\s|,)/i
   const genderMatches = notes.match(genderRegex) || []
 
   if (
@@ -84,7 +84,7 @@ function parseNotes(payload) {
 
   const existingGender = _.get(payload, 'patient.gender')
   if (!_.isEmpty(genderMatches) && !existingGender) {
-    const capturedGender = genderMatches[2].toLowerCase().trim()
+    const capturedGender = genderMatches[3].toLowerCase().trim()
     if (capturedGender === 'm') {
       _.set(payload, 'patient.gender', 'Male')
     } else if (capturedGender === 'f') {

@@ -10,7 +10,7 @@ const server = supertest.agent('http://localhost:8080')
 const { assert } = chai
 const context = createTestContext(server, {
   user: 'admin',
-  type: 'Daktari Virology',
+  type: 'DaktariVirology',
   partner: 'Partner One',
   status: 'assigned',
 })
@@ -22,7 +22,9 @@ describe('Device API status tests', () => {
 
   const { runTest } = context
 
-  beforeEach(context.beforeEach)
+  beforeEach(async () => {
+    await context.createDeviceWithResult()
+  })
   afterEach(context.afterEach)
 
   describe('unapproved', () => {

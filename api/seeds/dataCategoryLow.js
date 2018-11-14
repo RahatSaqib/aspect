@@ -308,7 +308,7 @@ async function seedDataCategory(knex, partnerName) {
   // IssueEventTrigger - make sure table is up-to-date after latest changes in IssueEventTrigger.json
   // ----------------------------------------------------------------------
   await seedIssueEventTriggersForPartner(knex, partnerId, {
-    issueTypeWhitelist: ['DeviceMaintenance'],
+    issueTypeWhitelist: ['DeviceMaintenance', 'ModuleReplaced'],
   })
 }
 

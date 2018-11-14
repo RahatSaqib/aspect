@@ -69,11 +69,13 @@ const enhance = compose(
             x => _.omit(x, 'search'),
             x =>
               _.get(x, 'state.referrer', {
-                pathname: '/dashboard',
+                pathname: '/',
               })
           )(location)
           if (loggedOutReason === reasonTypes.idle) {
             history.replace(referrer)
+          } else if (loggedOutReason === reasonTypes.userRequested) {
+            history.replace('/')
           } else {
             history.push(referrer)
           }
