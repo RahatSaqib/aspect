@@ -483,75 +483,76 @@ async function seed(knex) {
   ])
 
   const geneXpertHiv1VlFormSchema = {
-    hospitalNumber: {
-      i18nLabel: 'hospitalNumber',
-      control: {
-        type: 'TextBox',
+    fields: {
+      hospitalNumber: {
+        i18nLabel: 'hospitalNumber',
+        control: {
+          type: 'TextBox',
+        },
+        order: 1,
       },
-      order: 1,
-    },
-    studyID: {
-      i18nLabel: 'studyID',
-      control: {
-        type: 'TextBox',
+      studyID: {
+        i18nLabel: 'studyID',
+        control: {
+          type: 'TextBox',
+        },
+        order: 2,
       },
-      order: 2,
-    },
-    nameOfPatient: {
-      i18nLabel: 'nameOfPatient',
-      control: {
-        type: 'TextBox',
+      nameOfPatient: {
+        i18nLabel: 'nameOfPatient',
+        control: {
+          type: 'TextBox',
+        },
+        order: 3,
       },
-      order: 3,
-    },
-    surnameOfPatient: {
-      i18nLabel: 'surnameOfPatient',
-      control: {
-        type: 'TextBox',
+      surnameOfPatient: {
+        i18nLabel: 'surnameOfPatient',
+        control: {
+          type: 'TextBox',
+        },
+        order: 4,
       },
-      order: 4,
-    },
-    ward: {
-      i18nLabel: 'ward',
-      control: {
-        type: 'TextBox',
+      ward: {
+        i18nLabel: 'ward',
+        control: {
+          type: 'TextBox',
+        },
+        order: 5,
       },
-      order: 5,
-    },
-    timeSampleTaken: {
-      i18nLabel: 'timeSampleTaken',
-      control: {
-        type: 'DateTime',
+      timeSampleTaken: {
+        i18nLabel: 'timeSampleTaken',
+        control: {
+          type: 'DateTime',
+        },
+        order: 6,
       },
-      order: 6,
-    },
-    sampleType: {
-      i18nLabel: 'sampleType',
-      control: {
-        type: 'DropDown',
-        options: [
-          {
-            i18nText: 'studyOfSampleType',
-            value: 'study',
-          },
-          {
-            i18nText: 'EQAOfSampleType',
-            value: 'EQA',
-          },
-          {
-            i18nText: 'miscOfSampleType',
-            value: 'misc',
-          },
-        ],
+      sampleType: {
+        i18nLabel: 'sampleType',
+        control: {
+          type: 'DropDown',
+          options: [
+            {
+              i18nText: 'studyOfSampleType',
+              value: 'study',
+            },
+            {
+              i18nText: 'EQAOfSampleType',
+              value: 'EQA',
+            },
+            {
+              i18nText: 'miscOfSampleType',
+              value: 'misc',
+            },
+          ],
+        },
+        order: 7,
       },
-      order: 7,
     },
+    sendChangesOn: 'change',
   }
 
-  const assayAlereQHiv12FormSchema = Object.assign(
-    {},
-    geneXpertHiv1VlFormSchema,
-    {
+  const assayAlereQHiv12FormSchema = _.merge({}, geneXpertHiv1VlFormSchema, {
+    fields: {
       timeInstrumentResulted: {
         i18nLabel: 'timeInstrumentResulted',
         control: {
@@ -559,8 +560,9 @@ async function seed(knex) {
         },
         order: 8,
       },
-    }
-  )
+    },
+    sendChangesOn: 'submit',
+  })
 
   const { id: assayGeneXpertHiv1VlId } = await knex('Assay')
     .where({ externalId: 'GxHiv1Vl' })
