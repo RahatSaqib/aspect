@@ -14,7 +14,7 @@ const types = {
  * webhookMessageId is required.
  */
 function webhookMessageCreated(webhookMessageId) {
-  if (webhookMessageId == null) {
+  if (!webhookMessageId) {
     throw new Error('Must specify webhookMessageId')
   }
   return {
@@ -30,7 +30,7 @@ function webhookMessageCreated(webhookMessageId) {
  * webhookMessageId is required.
  */
 function webhookMessagePending(webhookMessageId) {
-  if (webhookMessageId == null) {
+  if (!webhookMessageId) {
     throw new Error('Must specify webhookMessageId')
   }
   return {

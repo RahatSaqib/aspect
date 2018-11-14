@@ -134,6 +134,13 @@
       }
     },
     {
+      "issueType": "ModuleReplaced",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "RESULT_MODULE_REPLACED"
+      }
+    },
+    {
       "issueType": "DataCategoryLowForHivStatus",
       "issueEventStatus": "Triggered",
       "triggerConditions": {

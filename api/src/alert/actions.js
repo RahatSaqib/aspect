@@ -14,7 +14,7 @@ const types = {
  * alertMessageId is required.
  */
 function alertMessageCreated(alertMessageId) {
-  if (alertMessageId == null) {
+  if (!alertMessageId) {
     throw new Error('Must specify alertMessageId')
   }
   return {

@@ -1666,7 +1666,7 @@ async function seed(knex) {
   await seedStockIssuesUpdate(knex, 'Myanmar')
   await seedUnknownErrorsIssue(knex, 'Myanmar', 'myanmar_admin')
   await seedIssueEventTriggersForPartner(knex, partnerId, {
-    issueTypeWhitelist: ['DeviceMaintenance'],
+    issueTypeWhitelist: ['DeviceMaintenance', 'ModuleReplaced'],
   })
   issueTypes = await rowsAsObject(knex, 'IssueType', 'externalId')
 
