@@ -709,7 +709,7 @@ async function seed(knex) {
     .where({ partnerId, externalId: 'CMJAH' })
     .first()
   // get/create device
-  let { id: deviceId, serial: deviceSerial } = await knex('Device')
+  const { id: deviceId, serial: deviceSerial } = await knex('Device')
     .where({
       partnerId,
       geographyId,
@@ -1135,7 +1135,7 @@ async function seed(knex) {
             result.testEndedOn,
             result.sampleId
           ),
-          assayId: alereQHiv12DetectAssayId,
+          assayId: alereQHiv12VLPlasmaAssayId,
           partnerId,
           geographyId,
           siteId,

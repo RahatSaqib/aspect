@@ -325,7 +325,6 @@ export class ResultDetail extends PureComponent {
     )
       .delete('resultText')
       .filter(field => field.get('type') === 'object')
-
     return (
       <JSONSchemaCard
         renderField={field => <ReadOnlyField {...field} />}
