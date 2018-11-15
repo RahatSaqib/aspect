@@ -32,7 +32,9 @@ describe('Result Detail screen', () => {
     screenSchema: {},
     resultTags: Immutable.List([]),
     editable: false,
-    loading: false,
+    formDataSaving: false,
+    formDataDirty: false,
+    saveResultFormData: sinon.spy(),
   }
   function renderResultDetailsScreen(props) {
     return shallow(<ResultDetail {...props} />)

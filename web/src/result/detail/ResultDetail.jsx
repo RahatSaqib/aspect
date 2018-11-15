@@ -13,6 +13,7 @@ import Checkbox from 'material-ui/Checkbox'
 import MdChevronLeft from 'react-icons/lib/md/chevron-left'
 import MdChevronRight from 'react-icons/lib/md/chevron-right'
 import MdClose from 'react-icons/lib/md/clear'
+import { Button } from 'react-toolbox/lib/button'
 
 // Our own imports
 import config from '../../config'
@@ -25,6 +26,7 @@ import {
   updateResultQcCheck,
   saveResultFormDataValue,
   setResultFormDataValue,
+  saveResultFormData,
   Result,
 } from '../ResultRedux'
 import ConnectedTagInput from '../../tag/ConnectedTagInput'
@@ -104,6 +106,10 @@ const messages = defineMessages({
     id: 'pages.ResultDetail.formFields.confirmedInterpretationOfResult',
     defaultMessage: 'Confirmed Interpretation of Result',
   },
+  submit: {
+    id: 'pages.ResultDetail.formFields.submit',
+    defaultMessage: 'Submit',
+  },
 })
 
 const enhance = compose(
@@ -118,7 +124,8 @@ const enhance = compose(
     (state, props) => {
       const result = state.result.items.byId.get(props.match.params.resultId)
       const screenSchema = state.result.get('screenSchema')
-      const loading = state.result.get('loading')
+      const formDataSaving = state.result.get('formDataSaving')
+      const formDataDirty = state.result.get('formDataDirty')
       const resultTags = state.tag.tags.getIn(
         ['result', props.match.params.resultId],
         Immutable.List()
@@ -130,7 +137,8 @@ const enhance = compose(
         resultTags,
         editable: isEditable(state.user, result),
         token: state.user.access,
-        loading,
+        formDataSaving,
+        formDataDirty,
       }
     },
     dispatch =>
@@ -141,6 +149,7 @@ const enhance = compose(
           updateResultQcCheck,
           saveResultFormDataValue,
           setResultFormDataValue,
+          saveResultFormData,
           fetchTags,
           updateTags,
         },
@@ -156,7 +165,9 @@ const enhance = compose(
     updateResultQcCheck: PropTypes.func.isRequired,
     fetchTags: PropTypes.func.isRequired,
     updateTags: PropTypes.func.isRequired,
-    loading: PropTypes.bool.isRequired,
+    formDataSaving: PropTypes.bool.isRequired,
+    formDataDirty: PropTypes.bool.isRequired,
+    saveResultFormData: PropTypes.func.isRequired,
   })
 )
 
@@ -182,12 +193,20 @@ export class ResultDetail extends PureComponent {
 
   onChangeQcCheck = event => {
     const { result } = this.props
-
     this.props.updateResultQcCheck(result.get('id'), event.target.checked)
   }
 
   onResultTagChange = (qryId, qryType, tags) => {
     this.props.updateTags(qryId, qryType, tags.join(','))
+  }
+
+  submitFormData = () => {
+    const { result } = this.props
+    const formData = result.get('formData')
+    this.props.saveResultFormData(
+      result.get('id'),
+      _.isNil(formData) ? null : formData.toJS()
+    )
   }
 
   clickThumbnail(imageIndex) {
@@ -322,7 +341,8 @@ export class ResultDetail extends PureComponent {
       result,
       saveResultFormDataValue,
       setResultFormDataValue,
-      loading,
+      formDataSaving,
+      formDataDirty,
     } = this.props
     if (!result || !result.getIn(['formSchema', 'fields'])) {
       return false
@@ -379,7 +399,16 @@ export class ResultDetail extends PureComponent {
                 </Unit>
               )
             })}
-            {loading && this.renderProgress()}
+            {showSubmitButton && (
+              <Button
+                disabled={!formDataDirty}
+                raised
+                label={formatMessage(messages.submit)}
+                onClick={this.submitFormData}
+                className={cssClasses('FormDataSubmitButton')}
+              />
+            )}
+            {formDataSaving && this.renderProgress()}
           </div>
           <div className={cssClasses('FormProgressContainer')}>
             {this.renderProgress()}
