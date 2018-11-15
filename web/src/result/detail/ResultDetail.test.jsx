@@ -20,7 +20,7 @@ describe('Result Detail screen', () => {
     fetchSingleResult() {},
     fetchResultLog() {},
     fetchTags() {},
-    updateResultFormData: sinon.spy(),
+    saveResultFormDataValue: sinon.spy(),
     updateResultQcCheck() {},
     deviceLogs: Immutable.List([]),
     intl: {
@@ -32,6 +32,7 @@ describe('Result Detail screen', () => {
     screenSchema: {},
     resultTags: Immutable.List([]),
     editable: false,
+    loading: false,
   }
   function renderResultDetailsScreen(props) {
     return shallow(<ResultDetail {...props} />)
@@ -118,15 +119,18 @@ describe('Result Detail screen', () => {
             .filter({ 'data-value': 'positive' })
             .first()
 
-          const { updateResultFormData, result } = propsWithFormSchemaInResult
-          expect(updateResultFormData.callCount).toBe(0)
+          const {
+            saveResultFormDataValue,
+            result,
+          } = propsWithFormSchemaInResult
+          expect(saveResultFormDataValue.callCount).toBe(0)
 
           positiveOption.simulate('click', {
             target: { dataset: { value: 'positive' } },
           })
 
-          expect(updateResultFormData.callCount).toBe(1)
-          expect(updateResultFormData.lastCall.args).toEqual([
+          expect(saveResultFormDataValue.callCount).toBe(1)
+          expect(saveResultFormDataValue.lastCall.args).toEqual([
             result.get('id'),
             Object.keys(result.getIn(['formSchema', 'fields']).toJS())[0],
             'positive',

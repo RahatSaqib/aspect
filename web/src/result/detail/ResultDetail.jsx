@@ -23,7 +23,8 @@ import {
   fetchSingleResult,
   fetchResultLog,
   updateResultQcCheck,
-  updateResultFormData,
+  saveResultFormDataValue,
+  setResultFormDataValue,
   Result,
 } from '../ResultRedux'
 import ConnectedTagInput from '../../tag/ConnectedTagInput'
@@ -117,6 +118,7 @@ const enhance = compose(
     (state, props) => {
       const result = state.result.items.byId.get(props.match.params.resultId)
       const screenSchema = state.result.get('screenSchema')
+      const loading = state.result.get('loading')
       const resultTags = state.tag.tags.getIn(
         ['result', props.match.params.resultId],
         Immutable.List()
@@ -128,6 +130,7 @@ const enhance = compose(
         resultTags,
         editable: isEditable(state.user, result),
         token: state.user.access,
+        loading,
       }
     },
     dispatch =>
@@ -136,7 +139,8 @@ const enhance = compose(
           fetchSingleResult,
           fetchResultLog,
           updateResultQcCheck,
-          updateResultFormData,
+          saveResultFormDataValue,
+          setResultFormDataValue,
           fetchTags,
           updateTags,
         },
@@ -152,6 +156,7 @@ const enhance = compose(
     updateResultQcCheck: PropTypes.func.isRequired,
     fetchTags: PropTypes.func.isRequired,
     updateTags: PropTypes.func.isRequired,
+    loading: PropTypes.bool.isRequired,
   })
 )
 
@@ -312,7 +317,13 @@ export class ResultDetail extends PureComponent {
   }
 
   renderFormData() {
-    const { intl: { formatMessage }, result, updateResultFormData } = this.props
+    const {
+      intl: { formatMessage },
+      result,
+      saveResultFormDataValue,
+      setResultFormDataValue,
+      loading,
+    } = this.props
     if (!result || !result.getIn(['formSchema', 'fields'])) {
       return false
     }
@@ -323,6 +334,11 @@ export class ResultDetail extends PureComponent {
     if (_.isEmpty(fieldKeys)) {
       return false
     }
+    const showSubmitButton =
+      result.getIn(['formSchema', 'sendChangesOn']) === 'submit'
+    const updateFormData = showSubmitButton
+      ? setResultFormDataValue
+      : saveResultFormDataValue
     const sectionLabel =
       fieldKeys.length === 1
         ? formatMessage(
@@ -348,7 +364,7 @@ export class ResultDetail extends PureComponent {
                 <Unit
                   key={formFieldKey}
                   xs="1-2"
-                  sm="1-3"
+                  xl="1-3"
                   className={cssClasses('Flexed')}
                 >
                   <CustomField
@@ -358,11 +374,15 @@ export class ResultDetail extends PureComponent {
                     formData={formData}
                     formatMessage={formatMessage}
                     isMultiField={isMultiField}
-                    updateFormData={updateResultFormData}
+                    updateFormData={updateFormData}
                   />
                 </Unit>
               )
             })}
+            {loading && this.renderProgress()}
+          </div>
+          <div className={cssClasses('FormProgressContainer')}>
+            {this.renderProgress()}
           </div>
         </ExpansionPanelHeader>
       </ExpansionPanel>

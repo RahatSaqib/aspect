@@ -34,6 +34,9 @@ export const types = {
 
   REQUEST_RESULT_LOG: 'REQUEST_RESULT_LOG',
   RECEIVE_RESULT_LOG: 'RECEIVE_RESULT_LOG',
+
+  SAVING_RESULT_FORM_DATA: 'SAVING_RESULT_FORM_DATA',
+  SET_RESULT_FORM_DATA_VALUE: 'SET_RESULT_FORM_DATA_VALUE',
 }
 /*
  * ---------------- Action Creators -----------------
@@ -265,12 +268,19 @@ function updateSingleResultQcCheck(resultId, qcCheck) {
   }
 }
 
-function updateSingleResultFormData(resultId, formFieldKey, value) {
+function setSingleResultFormDataValue(resultId, formFieldKey, value) {
   return {
-    type: types.REQUEST_SINGLE_RESULT,
+    type: types.SET_RESULT_FORM_DATA_VALUE,
     resultId,
     formFieldKey,
     value,
+  }
+}
+
+function savingSingleResultFormDataValue(resultId) {
+  return {
+    type: types.SAVING_RESULT_FORM_DATA,
+    resultId,
   }
 }
 
@@ -296,9 +306,10 @@ export function updateResultQcCheck(resultId, qcCheck) {
   }
 }
 
-export function updateResultFormData(resultId, formFieldKey, value) {
+export function saveResultFormDataValue(resultId, formFieldKey, value) {
   return dispatch => {
-    dispatch(updateSingleResultFormData(resultId, formFieldKey, value))
+    dispatch(setSingleResultFormDataValue(resultId, formFieldKey, value))
+    dispatch(savingSingleResultFormDataValue(resultId))
     const formData = {}
     formData[formFieldKey] = value
     return aspectFetch(`/result/form-data/${resultId}`, {
@@ -309,7 +320,7 @@ export function updateResultFormData(resultId, formFieldKey, value) {
           defineMessages({
             title: {
               id:
-                'errorResponseMessages.updateResultFormData.PUT.default.title',
+                'errorResponseMessages.saveResultFormDataValue.PUT.default.title',
               defaultMessage:
                 'An error occurred when trying to update the result.',
             },
@@ -318,6 +329,11 @@ export function updateResultFormData(resultId, formFieldKey, value) {
       },
     }).then(json => dispatch(receiveUpdatedSingleResult(json.data)))
   }
+}
+
+export function setResultFormDataValue(resultId, formFieldKey, value) {
+  return dispatch =>
+    dispatch(setSingleResultFormDataValue(resultId, formFieldKey, value))
 }
 
 /*
@@ -477,10 +493,15 @@ export default function resultReducer(state = initialState, action) {
       })
     case types.RECEIVE_SINGLE_RESULT:
     case types.RECEIVE_UPDATED_SINGLE_RESULT:
-      return state.withMutations(mutState => {
-        const immutItem = Immutable.fromJS(action.item)
-        mutState.set('items', receiveItem(mutState.items, immutItem))
-      })
+      return state
+        .withMutations(mutState => {
+          const immutItem = Immutable.fromJS(action.item)
+          mutState.set('items', receiveItem(mutState.items, immutItem))
+        })
+        .merge({
+          loading: false,
+        })
+    case types.SAVING_RESULT_FORM_DATA:
     case types.REQUEST_RESULT_LOG:
       return state.merge({
         loading: true,
@@ -512,6 +533,15 @@ export default function resultReducer(state = initialState, action) {
         mutState.set('workflowLog', workflowLog)
       })
 
+    case types.SET_RESULT_FORM_DATA_VALUE:
+      return state.withMutations(mutState => {
+        const formData = {}
+        formData[action.formFieldKey] = action.value
+        mutState.set(
+          'items',
+          mutState.items.mergeDeepIn(['byId', action.resultId], { formData })
+        )
+      })
     default:
       return state
   }
