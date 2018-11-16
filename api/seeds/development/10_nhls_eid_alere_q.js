@@ -342,6 +342,34 @@ async function seed(knex) {
     })
   )
 
+  const patientDataSchema = JSON.stringify({
+    id: {
+      title: 'Patient ID',
+      type: 'string',
+      order: 0,
+    },
+    firstName: {
+      title: 'First Name',
+      type: 'string',
+      order: 1,
+    },
+    surname: {
+      title: 'Surname',
+      type: 'string',
+      order: 2,
+    },
+    ward: {
+      title: 'Ward',
+      type: 'string',
+      order: 3,
+    },
+    hospitalNumber: {
+      title: 'Hospital Number',
+      type: 'string',
+      order: 4,
+    },
+  })
+
   const [alereQHiv12DetectAssayId] = await knex('Assay').insert({
     name: 'Alere q HIV-1/2 Detect',
     i18nKey: 'assayAlereQHiv12Detect',
@@ -442,6 +470,7 @@ async function seed(knex) {
         title: 'Picked Up On',
       },
     }),
+    patientDataSchema,
   })
   const [alereQHiv12VLPlasmaAssayId] = await knex('Assay').insert({
     name: 'Alere q HIV-1/2 VL plasma',
@@ -565,6 +594,7 @@ async function seed(knex) {
         title: 'Picked Up On',
       },
     }),
+    patientDataSchema,
   })
 
   const piece = await unitToId('Piece')

@@ -109,6 +109,7 @@ const plugins = {
     issueTriggers: require('./partner/SA_NHLS/issueTriggers'),
     issueEscalations: require('./partner/SA_NHLS/issueEscalationConditions'),
     issueResolutions: require('./partner/SA_NHLS/issueResolutionConditions'),
+    onResultLogged: require('./partner/SA_NHLS/onResultLogged'),
   },
 }
 
