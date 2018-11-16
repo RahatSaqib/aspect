@@ -87,12 +87,8 @@ const dataCategories = [
     fieldNames: 'microscopyResult',
     externalId: 'MicroscopyResult',
     i18nKey: 'dataCategorySmear',
-    validValues: JSON.stringify(
-      dictSmear.filter(x => x !== 'Not on Form' && x !== 'Not Done')
-    ),
-    invalidValues: JSON.stringify(
-      dictSmear.filter(x => x === 'Not on Form' || x === 'Not Done')
-    ),
+    validValues: JSON.stringify(dictSmear.filter(x => x !== 'Not on Form')),
+    invalidValues: JSON.stringify(dictSmear.filter(x => x === 'Not on Form')),
     cutoffPercentage: 95,
   },
   {
