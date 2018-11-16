@@ -1,0 +1,54 @@
+{
+  "clinics": [
+    {
+      "externalId": "CHBAH",
+      "name": "Chris Hani Baragwanath Academic Hospital Maternity POCT",
+      "shortName": "CHBAH POCT",
+      "stateName": "Gauteng",
+      "lgaName": "Diepkloof",
+      "devices": [
+        {
+          "deviceTypeId": "AlereQ",
+          "deviceSerial": "NAT-04000925"
+        },
+        {
+          "deviceTypeId": "AlereQ",
+          "deviceSerial": "nat-04001091"
+        }
+      ]
+    },
+    {
+      "externalId": "RMMCH",
+      "name": "Rahima Moosa Mother and Child Hospital",
+      "shortName": "RMMCH",
+      "stateName": "Gauteng",
+      "lgaName": "Coronationville"
+    },
+    {
+      "externalId": "CMJAH",
+      "name": "Charlotte Maxeke Johannesburg Academic Hospital",
+      "shortName": "CMJAH",
+      "stateName": "Gauteng",
+      "lgaName": "Parktown",
+      "devices": [
+        {
+          "deviceTypeId": "AlereQ",
+          "deviceSerial": "NAT-04000585"
+        }
+      ]
+    },
+    {
+      "externalId": "kalafong",
+      "name": "Kalafong KPTH",
+      "shortName": "Kalafong KPTH",
+      "stateName": "Gauteng",
+      "lgaName": "Kalafong"
+    },
+    {
+      "externalId": "DNAH",
+      "name": "Dora Nginza Hospital",
+      "shortName": "Dora Nginza Hospital",
+      "stateName": "Eastern Cape"
+    }
+  ]
+}

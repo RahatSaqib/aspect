@@ -34,6 +34,9 @@ export const types = {
 
   REQUEST_RESULT_LOG: 'REQUEST_RESULT_LOG',
   RECEIVE_RESULT_LOG: 'RECEIVE_RESULT_LOG',
+
+  SAVING_RESULT_FORM_DATA: 'SAVING_RESULT_FORM_DATA',
+  SET_RESULT_FORM_DATA_VALUE: 'SET_RESULT_FORM_DATA_VALUE',
 }
 /*
  * ---------------- Action Creators -----------------
@@ -265,12 +268,19 @@ function updateSingleResultQcCheck(resultId, qcCheck) {
   }
 }
 
-function updateSingleResultFormData(resultId, formFieldKey, value) {
+function setSingleResultFormDataValue(resultId, formFieldKey, value) {
   return {
-    type: types.REQUEST_SINGLE_RESULT,
+    type: types.SET_RESULT_FORM_DATA_VALUE,
     resultId,
     formFieldKey,
     value,
+  }
+}
+
+function savingSingleResultFormData(resultId) {
+  return {
+    type: types.SAVING_RESULT_FORM_DATA,
+    resultId,
   }
 }
 
@@ -296,27 +306,58 @@ export function updateResultQcCheck(resultId, qcCheck) {
   }
 }
 
-export function updateResultFormData(resultId, formFieldKey, value) {
+function sendUpdatedResultFormData(dispatch, resultId, formData) {
+  return aspectFetch(`/result/form-data/${resultId}`, {
+    method: 'PUT',
+    body: JSON.stringify(formData),
+    errorNotifications: {
+      default: errorPleaseTryAgainInAFewMinutes(
+        defineMessages({
+          title: {
+            id:
+              'errorResponseMessages.saveResultFormDataValue.PUT.default.title',
+            defaultMessage:
+              'An error occurred when trying to update the result.',
+          },
+        })
+      ),
+    },
+  }).then(json => dispatch(receiveUpdatedSingleResult(json.data)))
+}
+
+export function saveResultFormDataValue(resultId, formFieldKey, value) {
   return dispatch => {
-    dispatch(updateSingleResultFormData(resultId, formFieldKey, value))
+    dispatch(setSingleResultFormDataValue(resultId, formFieldKey, value))
+    dispatch(savingSingleResultFormData(resultId))
     const formData = {}
     formData[formFieldKey] = value
-    return aspectFetch(`/result/form-data/${resultId}`, {
-      method: 'PUT',
-      body: JSON.stringify(formData),
-      errorNotifications: {
-        default: errorPleaseTryAgainInAFewMinutes(
-          defineMessages({
-            title: {
-              id:
-                'errorResponseMessages.updateResultFormData.PUT.default.title',
-              defaultMessage:
-                'An error occurred when trying to update the result.',
-            },
-          })
-        ),
-      },
-    }).then(json => dispatch(receiveUpdatedSingleResult(json.data)))
+    return sendUpdatedResultFormData(dispatch, resultId, formData)
+  }
+}
+
+export function setResultFormDataValue(resultId, formFieldKey, value) {
+  return (dispatch, getState) => {
+    const originalFieldValue =
+      getState().getIn([
+        'result',
+        'items',
+        'byId',
+        resultId,
+        'formData',
+        formFieldKey,
+      ]) || ''
+    if (value !== originalFieldValue) {
+      return dispatch(
+        setSingleResultFormDataValue(resultId, formFieldKey, value)
+      )
+    }
+  }
+}
+
+export function saveResultFormData(resultId, formData) {
+  return dispatch => {
+    dispatch(savingSingleResultFormData(resultId))
+    return sendUpdatedResultFormData(dispatch, resultId, formData)
   }
 }
 
@@ -458,6 +499,8 @@ export const Result = Immutable.Record({
   deviceLogs: new Immutable.List(),
   screenSchema: new Immutable.fromJS(screenSchema),
   loading: true,
+  formDataSaving: false,
+  formDataDirty: false,
 })
 
 const initialState = new Result()
@@ -477,9 +520,19 @@ export default function resultReducer(state = initialState, action) {
       })
     case types.RECEIVE_SINGLE_RESULT:
     case types.RECEIVE_UPDATED_SINGLE_RESULT:
-      return state.withMutations(mutState => {
-        const immutItem = Immutable.fromJS(action.item)
-        mutState.set('items', receiveItem(mutState.items, immutItem))
+      return state
+        .withMutations(mutState => {
+          const immutItem = Immutable.fromJS(action.item)
+          mutState.set('items', receiveItem(mutState.items, immutItem))
+        })
+        .merge({
+          loading: false,
+          formDataSaving: false,
+          formDataDirty: false,
+        })
+    case types.SAVING_RESULT_FORM_DATA:
+      return state.merge({
+        formDataSaving: true,
       })
     case types.REQUEST_RESULT_LOG:
       return state.merge({
@@ -512,6 +565,17 @@ export default function resultReducer(state = initialState, action) {
         mutState.set('workflowLog', workflowLog)
       })
 
+    case types.SET_RESULT_FORM_DATA_VALUE:
+      return state
+        .withMutations(mutState => {
+          const formData = {}
+          formData[action.formFieldKey] = action.value
+          mutState.set(
+            'items',
+            mutState.items.mergeDeepIn(['byId', action.resultId], { formData })
+          )
+        })
+        .merge({ formDataDirty: true })
     default:
       return state
   }

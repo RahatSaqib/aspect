@@ -23,31 +23,34 @@ async function seed(knex) {
     partnerId,
     assayId,
     formSchema: JSON.stringify({
-      expertInterpretation: {
-        i18nLabel: 'confirmedInterpretationOfResult',
-        control: {
-          type: 'ButtonGroup',
-          allowMultipleSelection: false,
-          options: [
-            {
-              i18nText: 'none',
-              value: null,
-            },
-            {
-              i18nText: 'negative',
-              value: 'negative',
-            },
-            {
-              i18nText: 'positive',
-              value: 'positive',
-            },
-            {
-              i18nText: 'uninterpretable',
-              value: 'uninterpretable',
-            },
-          ],
+      fields: {
+        expertInterpretation: {
+          i18nLabel: 'confirmedInterpretationOfResult',
+          control: {
+            type: 'ButtonGroup',
+            allowMultipleSelection: false,
+            options: [
+              {
+                i18nText: 'none',
+                value: null,
+              },
+              {
+                i18nText: 'negative',
+                value: 'negative',
+              },
+              {
+                i18nText: 'positive',
+                value: 'positive',
+              },
+              {
+                i18nText: 'uninterpretable',
+                value: 'uninterpretable',
+              },
+            ],
+          },
         },
       },
+      sendChangesOn: 'change',
     }),
   })
 
