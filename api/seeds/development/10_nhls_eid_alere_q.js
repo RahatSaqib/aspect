@@ -7,6 +7,7 @@ const Promise = require('bluebird')
 const config = require('../../src/config')
 const southAfricaLabClinic = require('./fixtures/southAfricaLabClinic.json')
 const { rowsAsObject, getPermissionModules } = require('../utils')
+const { seedNotifications } = require('../utils_sa_nhls')
 const {
   allResultCategoryToId,
   allResultWorkflowStatusToId,
@@ -1169,4 +1170,6 @@ async function seed(knex) {
     },
     { concurrency: config.db.connectionLimit }
   )
+
+  await seedNotifications(knex, { partnerId })
 }
