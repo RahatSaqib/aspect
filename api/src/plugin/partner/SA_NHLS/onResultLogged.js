@@ -7,7 +7,7 @@ async function onResultLogged({ resultId }, { messageContext }) {
   const context = messageContext.bindActionCreators({ resultUpdated })
   return context.transact(async knex => {
     const now = new Date()
-    const result = knex('Result as r')
+    const result = await knex('Result as r')
       .join('sample as s', 'r.sampleId', 's.id')
       .where({ 'r.id': resultId })
       .first(
@@ -64,7 +64,7 @@ async function onResultLogged({ resultId }, { messageContext }) {
       if (!_.isEmpty(sampleUpdates)) {
         await knex('Sample')
           .where('id', sampleId)
-          .update(sampleId)
+          .update(sampleUpdates)
       }
     }
   })

@@ -81,6 +81,7 @@ async function seed(knex) {
   const [partnerId] = await knex('Partner').insert({
     name: 'South Africa NHLS',
     partnerTypeId: await partnerTypeToId('Operating'),
+    plugin: 'sa_nhls',
     deviceLogHistoryDays: 365,
     maxDaysDeviceOffline: 7,
     maxDaysDeviceNoResults: 14,
@@ -626,47 +627,54 @@ async function seed(knex) {
 
   const geneXpertHiv1VlFormSchema = {
     fields: {
+      patientId: {
+        i18nLabel: 'patientId',
+        control: {
+          type: 'TextBox',
+        },
+        order: 1,
+      },
       hospitalNumber: {
         i18nLabel: 'hospitalNumber',
         control: {
           type: 'TextBox',
         },
-        order: 1,
+        order: 2,
       },
       studyID: {
         i18nLabel: 'studyID',
         control: {
           type: 'TextBox',
         },
-        order: 2,
+        order: 3,
       },
       nameOfPatient: {
         i18nLabel: 'nameOfPatient',
         control: {
           type: 'TextBox',
         },
-        order: 3,
+        order: 4,
       },
       surnameOfPatient: {
         i18nLabel: 'surnameOfPatient',
         control: {
           type: 'TextBox',
         },
-        order: 4,
+        order: 5,
       },
       ward: {
         i18nLabel: 'ward',
         control: {
           type: 'TextBox',
         },
-        order: 5,
+        order: 6,
       },
       timeSampleTaken: {
         i18nLabel: 'timeSampleTaken',
         control: {
           type: 'DateTime',
         },
-        order: 6,
+        order: 7,
       },
       sampleType: {
         i18nLabel: 'sampleType',
@@ -687,7 +695,7 @@ async function seed(knex) {
             },
           ],
         },
-        order: 7,
+        order: 8,
       },
     },
     sendChangesOn: 'change',
@@ -700,7 +708,7 @@ async function seed(knex) {
         control: {
           type: 'DateTime',
         },
-        order: 8,
+        order: 9,
       },
     },
     sendChangesOn: 'submit',

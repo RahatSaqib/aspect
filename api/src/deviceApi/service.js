@@ -1033,7 +1033,7 @@ function onResultLogged(action, context) {
       [partnerPluginName, deviceTypePluginName],
       'onResultLogged'
     )
-    onResultLogged(action, context)
+    return onResultLogged(action, context)
   })
 }
 

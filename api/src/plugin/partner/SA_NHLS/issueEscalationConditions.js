@@ -8,7 +8,7 @@ async function shouldSendResultPositiveSms(knex, issue) {
       .join('Issue as i', 'r.id', 'i.resultId')
       .join('IssueType as it', 'i.issueTypeId', 'it.id')
       .leftJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
-      .leftJoin('ResultCategory as rc12', 'r.resultCategory2', 'rc2.id')
+      .leftJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
       .where({
         'r.id': resultId,
         'i.level': 1,
