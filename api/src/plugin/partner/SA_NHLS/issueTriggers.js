@@ -33,7 +33,7 @@ async function shouldRaiseNewResultAlert(knex, action) {
       currentIssueStatus === 'Inactive' &&
       latestIssueEventStatus !== 'Triggered'
     ) {
-      const formData = resultUploadedIssueResults[0].formData
+      const { formData } = resultUploadedIssueResults[0]
       let formDataObject
       if (formData) {
         formDataObject = JSON.parse(formData)

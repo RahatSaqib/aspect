@@ -306,9 +306,9 @@ function urlEncode(value) {
   return safeString(encodeURIComponent(rawValue))
 }
 
-function priorityResult(resultCategories, resultCateoryId) {
-  if (resultCategories.includes(resultCateoryId)) {
-    return resultCateoryId
+function priorityResult(resultCategories, resultCategoryId) {
+  if (resultCategories.includes(resultCategoryId)) {
+    return resultCategoryId
   }
 }
 
@@ -329,7 +329,7 @@ function tryMergeResultCategories(resultCategory1, resultCategory2) {
   for (let i = 0; i < orderedPriorityCategories.length; i++) {
     const foundPriorityCategory = priorityResult(
       resultCategories,
-      orderedPriorityCategories
+      orderedPriorityCategories[i]
     )
     if (foundPriorityCategory) {
       return foundPriorityCategory
