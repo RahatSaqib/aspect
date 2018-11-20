@@ -1573,6 +1573,7 @@ async function seed(knex) {
   const countries = {}
   const geographies = []
   const siteDatas = []
+  const preventRandomSitesForCountries = ['ZANHLS']
   await Promise.all(
     _.map(geography.countries, async country => {
       const countryData = _.pick(country, [
@@ -1627,34 +1628,40 @@ async function seed(knex) {
               geographies.push(Object.assign({ id: geographyId }, geoData))
 
               // up to 5 of sites at each LGA
-              await Promise.all(
-                _.map(_.range(1, 6 - lgaData.id % 5), async siteNumber => {
-                  const siteData = Object.assign(
-                    {
-                      partnerId: partnerOneId,
-                      geographyId,
-                      externalId: `${state.name}_${siteNumber}`,
-                      name: `${lga.name} ${country.lgaLabel} ${
-                        state.name
-                      } #${siteNumber}`,
-                      shortName: `${lga.name}, ${stateKey} #${siteNumber}`,
-                      city: `${lga.name} City`,
-                      street1: `${lgaData.id} Main Street`,
-                      zip: `12345-${lgaData.id}`,
-                      latitude: _.has(state, 'lat')
-                        ? state.lat + _.random(-0.5, 0.5, true)
-                        : undefined,
-                      longitude: _.has(state, 'lng')
-                        ? state.lng + _.random(-0.5, 0.5, true)
-                        : undefined,
-                    },
-                    auditFields
-                  )
-                  const [siteId] = await knex('Site').insert(siteData)
-                  siteData.id = siteId
-                  siteDatas.push(siteData)
-                })
-              )
+              if (
+                !preventRandomSitesForCountries.includes(
+                  countryData.abbreviation
+                )
+              ) {
+                await Promise.all(
+                  _.map(_.range(1, 6 - lgaData.id % 5), async siteNumber => {
+                    const siteData = Object.assign(
+                      {
+                        partnerId: partnerOneId,
+                        geographyId,
+                        externalId: `${state.name}_${siteNumber}`,
+                        name: `${lga.name} ${country.lgaLabel} ${
+                          state.name
+                        } #${siteNumber}`,
+                        shortName: `${lga.name}, ${stateKey} #${siteNumber}`,
+                        city: `${lga.name} City`,
+                        street1: `${lgaData.id} Main Street`,
+                        zip: `12345-${lgaData.id}`,
+                        latitude: _.has(state, 'lat')
+                          ? state.lat + _.random(-0.5, 0.5, true)
+                          : undefined,
+                        longitude: _.has(state, 'lng')
+                          ? state.lng + _.random(-0.5, 0.5, true)
+                          : undefined,
+                      },
+                      auditFields
+                    )
+                    const [siteId] = await knex('Site').insert(siteData)
+                    siteData.id = siteId
+                    siteDatas.push(siteData)
+                  })
+                )
+              }
             })
           )
         })

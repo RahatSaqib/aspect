@@ -96,7 +96,7 @@ async function validateUserAtGxAlert(username, password, user) {
   if (gxUser.dotNetRoles.includes('admin') || gxUser.role === 'national') {
     jobFunction = allJobFunctions.find(x => x.name === 'Admin')
   }
-  if (!jobFunction && gxUser.role === 'state') {
+  if (!jobFunction && (gxUser.role === 'state' || gxUser.role === 'lga')) {
     jobFunction =
       allJobFunctions.find(x => x.name === 'Regional Officer') ||
       allJobFunctions.find(x => x.name === 'Manager')
@@ -274,7 +274,7 @@ async function setJobContext(knex, jobId, gxUser) {
         const geographyId = await getCreateGeographyIdByGxGeo(knex, options)
         const shortName = dep.description || dep.hostId
 
-        const { siteId } =
+        let { siteId } =
           (await knex('Device')
             .where({ geographyId })
             .where(function() {
@@ -283,19 +283,29 @@ async function setJobContext(knex, jobId, gxUser) {
             .first()) || {}
 
         if (!siteId) {
+          const site =
+            (await knex('Site')
+              .where({ geographyId })
+              .where(function() {
+                this.where({ shortName }).orWhere('name', shortName)
+              })
+              .first()) || {}
+          siteId = site.id
+        }
+
+        if (!siteId) {
           throw new Error(
             `No device with shortName or name '${shortName}' found for geographyId ${geographyId}`
           )
         }
-
         if (geographyId && siteId) {
-          let { id: jobContextId } =
+          const { id: jobContextId } =
             (await knex('JobContext')
               .where({ jobId, siteId })
               .whereNull('geographyId')
               .first()) || {}
           if (!jobContextId) {
-            ;[jobContextId] = await knex('JobContext').insert({ jobId, siteId })
+            await knex('JobContext').insert({ jobId, siteId })
           }
           hasJobContext = true
         }

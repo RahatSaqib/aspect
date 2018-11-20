@@ -281,6 +281,34 @@ async function seed(knex) {
     geographyId: southAfricaGeographyId,
   })
 
+  const [jobFunctionIdRegionalOfficer] = await knex('JobFunction').insert({
+    name: 'Regional Officer',
+    partnerId,
+  })
+  await knex('JobFunctionPermission').insert([
+    {
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      permissionId: modules.browse.view,
+    },
+    {
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      permissionId: modules.result.admin,
+    },
+    {
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      permissionId: modules.device.view,
+    },
+    {
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      permissionId: modules.site.view,
+    },
+  ])
+  await knex('JobFunctionFeature').insert([
+    { jobFunctionId: jobFunctionIdRegionalOfficer, featureId: features.device },
+    { jobFunctionId: jobFunctionIdRegionalOfficer, featureId: features.result },
+    { jobFunctionId: jobFunctionIdRegionalOfficer, featureId: features.site },
+  ])
+
   const [jobFunctionIdLabUser] = await knex('JobFunction').insert({
     name: 'Lab User',
     partnerId,
@@ -288,10 +316,13 @@ async function seed(knex) {
   await knex('JobFunctionPermission').insert([
     { jobFunctionId: jobFunctionIdLabUser, permissionId: modules.browse.view },
     { jobFunctionId: jobFunctionIdLabUser, permissionId: modules.result.admin },
+    { jobFunctionId: jobFunctionIdLabUser, permissionId: modules.device.view },
     { jobFunctionId: jobFunctionIdLabUser, permissionId: modules.site.view },
   ])
   await knex('JobFunctionFeature').insert([
+    { jobFunctionId: jobFunctionIdLabUser, featureId: features.device },
     { jobFunctionId: jobFunctionIdLabUser, featureId: features.result },
+    { jobFunctionId: jobFunctionIdLabUser, featureId: features.site },
   ])
 
   // create site for lab user
