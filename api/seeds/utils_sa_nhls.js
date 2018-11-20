@@ -267,16 +267,28 @@ async function seedNotifications(knex, { partnerId }) {
     updatedOn: now,
   })
 
-  await knex('IssueResolutionTrigger').insert({
-    issueTypeId: issueTypeResultUploadedId,
-    partnerId,
-    resolutionConditions: JSON.stringify({
-      evaluationMethod: 'plugin-function',
-      evaluationParameter: 'shouldResolveNewResultAlert',
-    }),
-    createdOn: now,
-    updatedOn: now,
-  })
+  await knex('IssueResolutionTrigger').insert([
+    {
+      issueTypeId: issueTypeResultUploadedId,
+      partnerId,
+      resolutionConditions: JSON.stringify({
+        evaluationMethod: 'plugin-function',
+        evaluationParameter: 'shouldResolveNewResultAlert',
+      }),
+      createdOn: now,
+      updatedOn: now,
+    },
+    {
+      issueTypeId: issueTypeResultDataEnteredId,
+      partnerId,
+      resolutionConditions: JSON.stringify({
+        evaluationMethod: 'plugin-function',
+        evaluationParameter: 'shouldResolveResultDataEnteredIssue',
+      }),
+      createdOn: now,
+      updatedOn: now,
+    },
+  ])
 }
 
 module.exports = {
