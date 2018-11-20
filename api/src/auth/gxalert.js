@@ -15,7 +15,6 @@ require('isomorphic-fetch')
 
 const config = require('../config')
 const { query, transact } = require('../db')
-const { loadPlugin } = require('../plugin/registration')
 
 const bcryptHash = promisify(bcrypt.hash)
 
@@ -73,12 +72,12 @@ async function validateUserAtGxAlert(username, password, user) {
   // check that country has exactly 1 partner
   // -------------------------------------------
   const partners = await query('Get partners from all sites of this country')
-    .select('s.partnerId as id, plugin')
+    .select('s.partnerId as id', 'p.plugin')
     .from('Site as s')
     .innerJoin('Geography as g', 's.geographyId', 'g.id')
     .innerJoin('Partner as p', 's.partnerId', 'p.id')
     .where('g.countryId', countryId)
-    .distinct('s.partnerId')
+    .distinct('s.partnerId', 'p.plugin')
   // exit if not exactly 1 partner in this country
   if (!partners || partners.length !== 1) {
     return null
@@ -182,6 +181,7 @@ async function validateUserAtGxAlert(username, password, user) {
 
     // finally return User
     user = await getUser(username, knex)
+    const { loadPlugin } = require('../plugin/registration')
     const onGxAlertAuthenticated = await loadPlugin(
       [partnerPlugin],
       'onGxAlertAuthenticated'

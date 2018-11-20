@@ -1,9 +1,9 @@
 const _ = require('lodash')
-const { knex } = require('../db')
 const { distanceInWordsStrict } = require('date-fns')
-const { parseDateOrDefault, formatDateOrDefault } = require('../shared/date')
-const { loadPlugin } = require('../plugin/registration')
 const handlebars = require('handlebars')
+
+const { knex } = require('../db')
+const { parseDateOrDefault, formatDateOrDefault } = require('../shared/date')
 
 handlebars.registerHelper('numberOfDays', numberOfDays)
 handlebars.registerHelper('isoDate', isoDate)
@@ -125,6 +125,7 @@ async function processUsingDataSourceQuery(data, templateFields, options = {}) {
 
 async function getBaseDataSource(data) {
   const d = data || {}
+  const { loadPlugin } = require('../plugin/registration')
   const { displayPreferences = {} } = await loadPlugin(
     [d.partnerPlugin],
     'settings'
