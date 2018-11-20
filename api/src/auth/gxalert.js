@@ -9,8 +9,10 @@ const {
   method,
   body,
 } = require('http-client')
+const Promise = require('bluebird')
 
 require('isomorphic-fetch')
+
 const config = require('../config')
 const { query, transact } = require('../db')
 
@@ -156,6 +158,13 @@ async function validateUserAtGxAlert(username, password, user) {
     // create/update Person in our db
     const personOptions = { userId, partnerId, countryId }
     const personId = await updateCreatePerson(knex, gxUser, personOptions)
+    if (!_.isEmpty(gxUser.tags)) {
+      await updateTagsForPerson(knex, {
+        partnerId,
+        personId,
+        tagTitles: gxUser.tags,
+      })
+    }
 
     // insert Job if not exists
     if (jobFunctionId) {
@@ -397,9 +406,6 @@ async function getCountryIdByAbbr(countryAbbreviation) {
   return countryId
 }
 
-// --------------------------------------------------------------------------------------------
-// getCreateGeographyIdByGxGeo
-// --------------------------------------------------------------------------------------------
 async function getCreateGeographyIdByGxGeo(
   knex,
   { countryAbbreviation, stateName, stateAbbreviation, lgaName }
@@ -491,6 +497,45 @@ async function getCreateGeographyIdByGxGeo(
   }
 
   return geographyId
+}
+
+async function updateTagsForPerson(
+  knex,
+  { partnerId, personId, tagTitles = [] }
+) {
+  const tagsInDatabase = await knex('Tag')
+    .whereIn('title', tagTitles)
+    .andWhere('partnerId', partnerId)
+    .select()
+  const tagsToInsert = _.filter(
+    _.uniq(tagTitles),
+    tagTitle => !_.some(tagsInDatabase, { title: tagTitle })
+  )
+  await Promise.each(tagsToInsert, async tagToInsert => {
+    const [tagId] = await knex('Tag').insert({
+      title: tagToInsert,
+      partnerId,
+    })
+    tagsInDatabase.push({
+      id: tagId,
+      title: tagToInsert,
+      partnerId,
+    })
+  })
+
+  const personTagsInDatabase = await knex('PersonTag').where(
+    'personId',
+    personId
+  )
+  const tagsToAppendToPerson = _.filter(
+    tagsInDatabase,
+    tagInDatabase => !_.some(personTagsInDatabase, { tagId: tagInDatabase.id })
+  )
+  return Promise.map(
+    tagsToAppendToPerson,
+    async tag => knex('PersonTag').insert({ tagId: tag.id, personId }),
+    { concurrency: config.db.connectionLimit }
+  )
 }
 
 module.exports = {
