@@ -1,4 +1,5 @@
 const _ = require('lodash')
+const Promise = require('bluebird')
 const subMinutes = require('date-fns/sub_minutes')
 const { getJobConstraints, addConstraints } = require('../auth/constraints')
 const { notificationCreated } = require('./actions')
@@ -138,6 +139,7 @@ async function onIssueEscalated({ issueId }, { messageContext: context }) {
         'nt.id',
         'nt.jobFunctionId',
         'nt.level',
+        'nt.sendToContactsWithMatchingTags',
         'i.siteId',
         'i.deviceId',
         'i.resultId',
@@ -154,20 +156,30 @@ async function onIssueEscalated({ issueId }, { messageContext: context }) {
     // since we are ordered by, max level at first position and filter all with same
     let jobFunctionId = null
     let jobFunctionLevel = null
-    for (const policy of policies) {
-      /* eslint-disable no-await-in-loop */
+    await Promise.each(policies, async policy => {
       if (policy.jobFunctionId !== jobFunctionId) {
         ;({ jobFunctionId, level: jobFunctionLevel } = policy)
       } else if (policy.level !== jobFunctionLevel) {
         // This is a lower level for this particular job function
         // continue until we get to end of list or new job function
         /* eslint-disable no-continue */
-        continue
+        return Promise.resolve()
       }
-
+      const notificationTypeTagIds = policy.sendToContactsWithMatchingTags
+        ? await knex('NotificationTypeTag')
+            .where({ notificationTypeId: policy.id })
+            .pluck('tagId')
+        : []
       const people = await knex('Job as j')
         .join('JobFunction as jf', 'j.jobFunctionId', 'jf.id')
-        .where({ 'jf.id': policy.jobFunctionId })
+        .modify(queryBuilder => {
+          if (policy.sendToContactsWithMatchingTags) {
+            queryBuilder
+              .join('PersonTag as pt', 'j.personId', 'pt.personId')
+              .whereIn('pt.tagId', notificationTypeTagIds)
+          }
+          queryBuilder.where('jf.id', policy.jobFunctionId)
+        })
         .distinct('j.personId as id')
       // Issue notification to every person assigned, (subscriber will create as necessary)
       await Promise.all(
@@ -272,7 +284,7 @@ async function onIssueEscalated({ issueId }, { messageContext: context }) {
           }
         })
       )
-    }
+    })
   })
 }
 

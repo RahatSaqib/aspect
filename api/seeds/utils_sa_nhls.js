@@ -181,11 +181,14 @@ async function seedNotifications(knex, { partnerId }) {
   const { id: adminJobFunctionId } = await knex('JobFunction')
     .where({ name: 'Admin', partnerId })
     .first('id')
+  const { id: regionalOfficerJobFunctionId } = await knex('JobFunction')
+    .where({ name: 'Regional Officer', partnerId })
+    .first('id')
   const { id: labUserJobFunctionId } = await knex('JobFunction')
     .where({ name: 'Lab User', partnerId })
     .first('id')
 
-  await knex('NotificationType').insert([
+  await knex('NotificationType').insert(
     Object.assign(
       {
         name: 'Result Uploaded',
@@ -197,7 +200,9 @@ async function seedNotifications(knex, { partnerId }) {
         messageTypeId: resultUploadedMessageTypeId,
       },
       auditFields
-    ),
+    )
+  )
+  await knex('NotificationType').insert(
     Object.assign(
       {
         name: 'Result Data Entered',
@@ -209,19 +214,81 @@ async function seedNotifications(knex, { partnerId }) {
         messageTypeId: resultDataEnteredMessageTypeId,
       },
       auditFields
-    ),
+    )
+  )
+  await knex('NotificationType').insert(
     Object.assign(
       {
-        name: 'Positive Result Data Entered',
+        name: 'LU Positive Result Data Entered',
         partnerId,
         issueTypeId: issueTypeResultDataEnteredId,
-        jobFunctionId: adminJobFunctionId,
+        jobFunctionId: labUserJobFunctionId,
         level: 2,
         canAcknowledge: 0,
         messageTypeId: positiveResultDataEnteredMessageTypeId,
       },
       auditFields
-    ),
+    )
+  )
+  const [roPositiveResultDataEnteredId] = await knex('NotificationType').insert(
+    Object.assign(
+      {
+        name: 'RO Positive Result Data Entered',
+        partnerId,
+        issueTypeId: issueTypeResultDataEnteredId,
+        jobFunctionId: regionalOfficerJobFunctionId,
+        level: 2,
+        canAcknowledge: 0,
+        messageTypeId: positiveResultDataEnteredMessageTypeId,
+        sendToContactsWithMatchingTags: true,
+      },
+      auditFields
+    )
+  )
+  const [positiveEidTag] = await knex('Tag').insert({
+    title: 'EID+',
+    partnerId,
+  })
+  const [positiveVLTag] = await knex('Tag').insert({
+    title: 'HIV-VL>50',
+    partnerId,
+  })
+  await knex('NotificationTypeTag').insert([
+    {
+      notificationTypeId: roPositiveResultDataEnteredId,
+      tagId: positiveEidTag,
+    },
+    {
+      notificationTypeId: roPositiveResultDataEnteredId,
+      tagId: positiveVLTag,
+    },
+  ])
+  const [adminPositiveResultDataEnteredId] = await knex(
+    'NotificationType'
+  ).insert(
+    Object.assign(
+      {
+        name: 'Admin Positive Result Data Entered',
+        partnerId,
+        issueTypeId: issueTypeResultDataEnteredId,
+        jobFunctionId: regionalOfficerJobFunctionId,
+        level: 2,
+        canAcknowledge: 0,
+        messageTypeId: positiveResultDataEnteredMessageTypeId,
+        sendToContactsWithMatchingTags: true,
+      },
+      auditFields
+    )
+  )
+  await knex('NotificationTypeTag').insert([
+    {
+      notificationTypeId: adminPositiveResultDataEnteredId,
+      tagId: positiveEidTag,
+    },
+    {
+      notificationTypeId: adminPositiveResultDataEnteredId,
+      tagId: positiveVLTag,
+    },
   ])
 
   await knex('IssueEventTrigger').insert([
