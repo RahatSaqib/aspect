@@ -15,6 +15,7 @@ require('isomorphic-fetch')
 
 const config = require('../config')
 const { query, transact } = require('../db')
+const { loadPlugin } = require('../plugin/registration')
 
 const bcryptHash = promisify(bcrypt.hash)
 
@@ -72,7 +73,7 @@ async function validateUserAtGxAlert(username, password, user) {
   // check that country has exactly 1 partner
   // -------------------------------------------
   const partners = await query('Get partners from all sites of this country')
-    .select('s.partnerId as id')
+    .select('s.partnerId as id, plugin')
     .from('Site as s')
     .innerJoin('Geography as g', 's.geographyId', 'g.id')
     .innerJoin('Partner as p', 's.partnerId', 'p.id')
@@ -83,7 +84,7 @@ async function validateUserAtGxAlert(username, password, user) {
     return null
   }
 
-  const { id: partnerId } = partners[0]
+  const { id: partnerId, plugin: partnerPlugin } = partners[0]
   // -------------------------------------------
   // calculate jobFunctionId
   // -------------------------------------------
@@ -181,6 +182,11 @@ async function validateUserAtGxAlert(username, password, user) {
 
     // finally return User
     user = await getUser(username, knex)
+    const onGxAlertAuthenticated = await loadPlugin(
+      [partnerPlugin],
+      'onGxAlertAuthenticated'
+    )
+    await onGxAlertAuthenticated({ gxUser, partnerId, personId, knex })
     return user
 
     // catch error from setJobContext() if no site found or JobContext defined

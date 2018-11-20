@@ -56,6 +56,7 @@ const plugins = {
     transformMergeResultPayload,
     postProcessMergeResult,
     onResultLogged,
+    onGxAlertAuthenticated,
   },
   commcare: {
     transformInitialPayload: require('./deviceType/CommCareApp/transformInitialPayload'),
@@ -110,6 +111,7 @@ const plugins = {
     issueEscalations: require('./partner/SA_NHLS/issueEscalationConditions'),
     issueResolutions: require('./partner/SA_NHLS/issueResolutionConditions'),
     onResultLogged: require('./partner/SA_NHLS/onResultLogged'),
+    onGxAlertAuthenticated: require('./partner/SA_NHLS/onGxAlertAuthenticated'),
   },
 }
 
@@ -290,7 +292,15 @@ async function transformMergeResultPayload(context) {
  * RESULT_LOGGED action has been published referencing
  * a result handled by this plugin
  */
-function onResultLogged(/* { resultId }, { messageContext } */) {
+async function onResultLogged(/* { resultId }, { messageContext } */) {
+  // do nothing by default
+}
+
+/**
+ * A user, that does not yet exist in Aspect, has logged in using GxAlert credentials
+ * and the user has been migrated into Aspect.
+ */
+async function onGxAlertAuthenticated(/* { gxUser, user, personId, partnerId, knex } */) {
   // do nothing by default
 }
 

@@ -30,7 +30,7 @@ const MERGEABLE_REPORTABLE_IDS = [
   ERROR_EXTERNALID,
 ]
 
-function onResultLogged({ resultId }, { messageContext }) {
+async function onResultLogged({ resultId }, { messageContext }) {
   const context = messageContext.bindActionCreators({ resultUpdated })
   return context.transact(async knex => {
     const now = new Date()
