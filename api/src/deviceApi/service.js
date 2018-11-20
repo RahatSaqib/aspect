@@ -991,29 +991,28 @@ async function onResultUpdated({ resultId, deviceLogId }, { messageContext }) {
   if (deviceLogId) {
     // we've already created device logs originating here, so ignore
     return context.resultLogged(resultId, deviceLogId)
-  } else {
-    return context.transact(async knex => {
-      // TODO dispatch from client API using plugin so
-      // senderIp, createdOn, source, etc are available
-      // Everything else, we should add a device log entry so that
-      // the updates will be downloaded
-      const createdOn = new Date()
-      const [deviceLogId] = await knex('Result')
-        .where({ id: resultId })
-        .first('deviceId')
-        .then(({ deviceId }) =>
-          knex('DeviceLog').insert({
-            deviceId,
-            resultId,
-            source: 'DeviceApiResultUpdated',
-            createdOn,
-            senderIp: '',
-            rawMessage: '',
-          })
-        )
-      context.resultLogged(resultId, deviceLogId)
-    })
   }
+  return context.transact(async knex => {
+    // TODO dispatch from client API using plugin so
+    // senderIp, createdOn, source, etc are available
+    // Everything else, we should add a device log entry so that
+    // the updates will be downloaded
+    const createdOn = new Date()
+    const [deviceLogId] = await knex('Result')
+      .where({ id: resultId })
+      .first('deviceId')
+      .then(({ deviceId }) =>
+        knex('DeviceLog').insert({
+          deviceId,
+          resultId,
+          source: 'DeviceApiResultUpdated',
+          createdOn,
+          senderIp: '',
+          rawMessage: '',
+        })
+      )
+    context.resultLogged(resultId, deviceLogId)
+  })
 }
 
 async function onResultLogged(action, context) {
