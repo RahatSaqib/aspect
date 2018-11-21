@@ -15,6 +15,7 @@ async function up(knex) {
       .boolean('sendToContactsWithMatchingTags')
       .notNullable()
       .defaultTo(0)
+    notificationType.integer('jobFunctionId').alter()
   })
 
   await knex.schema.createTable('NotificationTypeTag', notificationTypeTag => {
@@ -32,6 +33,10 @@ async function up(knex) {
       .inTable('Tag')
     notificationTypeTag.primary(['notificationTypeId', 'tagId'])
   })
+
+  await knex.schema.table('Notification', notification => {
+    notification.integer('personId').alter()
+  })
 }
 async function down(knex) {
   await knex.schema.table('SmsTemplate', smsTemplate => {
@@ -43,7 +48,18 @@ async function down(knex) {
 
   await knex.schema.table('NotificationType', notificationType => {
     notificationType.dropColumns('sendToContactsWithMatchingTags')
+    notificationType
+      .integer('jobFunctionId')
+      .notNullable()
+      .alter()
   })
 
   await knex.schema.dropTableIfExists('NotificationTypeTag')
+
+  await knex.schema.table('Notification', notification => {
+    notification
+      .integer('personId')
+      .notNullable()
+      .alter()
+  })
 }

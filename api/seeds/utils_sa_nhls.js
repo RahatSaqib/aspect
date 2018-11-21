@@ -168,14 +168,12 @@ async function seedNotifications(knex, { partnerId }) {
     externalId: 'ResultUploaded',
     i18nKey: 'issueTypeResultUploaded',
     issueCategoryId: issueCategoryDataHealthId,
-    defaultMessageTypeId: resultUploadedMessageTypeId,
   })
   const [issueTypeResultDataEnteredId] = await knex('IssueType').insert({
     name: 'Result Data Entered',
     externalId: 'ResultDataEntered',
     i18nKey: 'issueTypeResultDataEntered',
     issueCategoryId: issueCategoryDataHealthId,
-    defaultMessageTypeId: resultDataEnteredMessageTypeId,
   })
 
   const { id: adminJobFunctionId } = await knex('JobFunction')
@@ -208,7 +206,6 @@ async function seedNotifications(knex, { partnerId }) {
         name: 'Result Data Entered',
         partnerId,
         issueTypeId: issueTypeResultDataEnteredId,
-        jobFunctionId: adminJobFunctionId,
         level: 1,
         canAcknowledge: 0,
         messageTypeId: resultDataEnteredMessageTypeId,
@@ -271,7 +268,7 @@ async function seedNotifications(knex, { partnerId }) {
         name: 'Admin Positive Result Data Entered',
         partnerId,
         issueTypeId: issueTypeResultDataEnteredId,
-        jobFunctionId: regionalOfficerJobFunctionId,
+        jobFunctionId: adminJobFunctionId,
         level: 2,
         canAcknowledge: 0,
         messageTypeId: positiveResultDataEnteredMessageTypeId,
