@@ -141,7 +141,7 @@ async function seed(knex) {
       )
     })
   )
-  const { culture, timezone, id: countryId, geographyId } = countries.ZA
+  const { culture, timezone, id: countryId, geographyId } = countries.ZANHLS
 
   // create site for Alere FTP Connector device
   const [southAfricaNhlsAlereFtpConnectorSiteId] = await knex('Site').insert(
