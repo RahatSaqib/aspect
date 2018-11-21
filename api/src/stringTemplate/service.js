@@ -68,6 +68,7 @@ function addDataSourceToQuery(queryBuilder, aliases) {
         'p.name as personName',
         'p.cell as personCell',
         'pu.plugin as partnerPlugin',
+        'd.name as deviceName',
         'd.lastPingOn as deviceLastPingOn',
         'd.lastSeenOn as deviceLastSeenOn',
         'dt.externalId as deviceTypeExternalId',
