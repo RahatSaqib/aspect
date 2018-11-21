@@ -171,7 +171,6 @@ async function onResultLogged({ resultId }, { messageContext }) {
           .clone()
           .where('r.endedOn', '>=', last30day)
           .whereIn('r.errorCode', MODULE_POWER_ERROR_CODES)
-          .whereNotIn('r.moduleSerial', replacedModuleSerials)
           .count('r.id as errorCount')
         if (errorCount > machinePowerMaxErrors) {
           context.resultMachinePowerError(deviceId)
@@ -379,7 +378,6 @@ async function onResultLogged({ resultId }, { messageContext }) {
     const [{ machineResultCount }] = await knex('Result as r')
       .where('r.deviceId', deviceId)
       .where('r.endedOn', '>=', last30day)
-      .whereNotIn('r.moduleSerial', replacedModuleSerials)
       .count('r.id as machineResultCount')
 
     if (machineResultCount !== 0) {
