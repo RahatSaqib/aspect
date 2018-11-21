@@ -2176,7 +2176,7 @@ async function seed(knex) {
   await Promise.each(saNhlsStaff, async person => {
     let userId = null
     if (person.username) {
-      const pw = bcrypt.hashSync('nhlsEid2018', saltRounds)
+      const pw = bcrypt.hashSync(person.password, saltRounds)
       const baseUserData = {
         password: pw,
         failedPasswordAttempts: 0,
