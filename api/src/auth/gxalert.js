@@ -510,24 +510,35 @@ async function updateTagsForPerson(
   { partnerId, personId, tagTitles = [] }
 ) {
   const tagsInDatabase = await knex('Tag')
-    .whereIn('title', tagTitles)
+    .whereIn(
+      knex.raw('LOWER(title)'),
+      _.map(tagTitles, tagTitle => tagTitle.toLowerCase())
+    )
     .andWhere('partnerId', partnerId)
     .select()
   const tagsToInsert = _.filter(
-    _.uniq(tagTitles),
-    tagTitle => !_.some(tagsInDatabase, { title: tagTitle })
+    _.uniqBy(tagTitles, tagTitle => tagTitle.toLowerCase()),
+    tagTitle =>
+      !_.some(
+        tagsInDatabase,
+        tagInDatabase =>
+          tagInDatabase.title.toLowerCase() === tagTitle.toLowerCase()
+      )
   )
-  await Promise.each(tagsToInsert, async tagToInsert => {
-    const [tagId] = await knex('Tag').insert({
-      title: tagToInsert,
-      partnerId,
-    })
-    tagsInDatabase.push({
-      id: tagId,
-      title: tagToInsert,
-      partnerId,
-    })
-  })
+  await Promise.each(
+    _.uniqBy(tagsToInsert, tagToInsert => tagToInsert.toLowerCase()),
+    async tagToInsert => {
+      const [tagId] = await knex('Tag').insert({
+        title: tagToInsert,
+        partnerId,
+      })
+      tagsInDatabase.push({
+        id: tagId,
+        title: tagToInsert,
+        partnerId,
+      })
+    }
+  )
 
   const personTagsInDatabase = await knex('PersonTag').where(
     'personId',
