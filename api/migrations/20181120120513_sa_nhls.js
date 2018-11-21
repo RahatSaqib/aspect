@@ -4,7 +4,10 @@ module.exports = require('../src/db').migration(up, down)
 /* eslint no-empty-function: 0 */
 async function up(knex) {
   await knex.schema.table('SmsTemplate', smsTemplate => {
-    smsTemplate.text('message').notNullable().alter()
+    smsTemplate
+      .text('message')
+      .notNullable()
+      .alter()
   })
 
   await knex.schema.table('NotificationType', notificationType => {
@@ -32,7 +35,10 @@ async function up(knex) {
 }
 async function down(knex) {
   await knex.schema.table('SmsTemplate', smsTemplate => {
-    smsTemplate.string('message', 1000).notNullable().alter()
+    smsTemplate
+      .string('message', 1000)
+      .notNullable()
+      .alter()
   })
 
   await knex.schema.table('NotificationType', notificationType => {

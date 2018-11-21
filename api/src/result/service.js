@@ -40,7 +40,7 @@ const SELECT_LIST_FIELDS = [
   'r.deviceId',
   'stp.name as sampleTypeName',
   knex.raw(
-    'JSON_UNQUOTE(JSON_EXTRACT(r.resultData, "$.resultText")) as resultText'
+    `IFNULL(JSON_UNQUOTE(JSON_EXTRACT(r.resultData, "$.resultText")), CONCAT(IFNULL(rc1.name, ''), '|', IFNULL(rc2.name, ''))) as resultText`
   ),
   knex.raw('JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id")) as patientId'),
 ]

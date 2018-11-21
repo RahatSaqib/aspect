@@ -2265,7 +2265,7 @@ async function seed(knex) {
         tagInDatabase =>
           !_.some(personTagsInDatabase, { tagId: tagInDatabase.id })
       )
-      return Promise.each(tagsToAppendToPerson, async tag =>
+      await Promise.each(tagsToAppendToPerson, async tag =>
         knex('PersonTag').insert({ tagId: tag.id, personId })
       )
     }
