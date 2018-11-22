@@ -510,10 +510,7 @@ async function updateTagsForPerson(
   { partnerId, personId, tagTitles = [] }
 ) {
   const tagsInDatabase = await knex('Tag')
-    .whereIn(
-      knex.raw('LOWER(title)'),
-      _.map(tagTitles, tagTitle => tagTitle.toLowerCase())
-    )
+    .whereIn('title', tagTitles)
     .andWhere('partnerId', partnerId)
     .select()
   const tagsToInsert = _.filter(
