@@ -13,7 +13,10 @@ async function up(knex) {
       .boolean('sendToContactsWithMatchingTags')
       .notNullable()
       .defaultTo(0)
-    notificationType.integer('jobFunctionId').alter()
+    notificationType
+      .integer('jobFunctionId')
+      .unsigned()
+      .alter()
   })
 
   await knex.schema.createTable('NotificationTypeTag', notificationTypeTag => {
@@ -48,6 +51,7 @@ async function down(knex) {
     notificationType.dropColumns('sendToContactsWithMatchingTags')
     notificationType
       .integer('jobFunctionId')
+      .unsigned()
       .notNullable()
       .alter()
   })
