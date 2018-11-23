@@ -36,7 +36,10 @@ async function up(knex) {
   })
 
   await knex.schema.table('Notification', notification => {
-    notification.integer('personId').alter()
+    notification
+      .integer('personId')
+      .unsigned()
+      .alter()
   })
 }
 async function down(knex) {
@@ -61,6 +64,7 @@ async function down(knex) {
   await knex.schema.table('Notification', notification => {
     notification
       .integer('personId')
+      .unsigned()
       .notNullable()
       .alter()
   })
