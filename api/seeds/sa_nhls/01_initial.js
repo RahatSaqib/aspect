@@ -141,7 +141,7 @@ async function seed(knex) {
       )
     })
   )
-  const { culture, timezone, id: countryId, geographyId } = countries.ZA
+  const { culture, timezone, id: countryId, geographyId } = countries.ZANHLS
 
   // create site for Alere FTP Connector device
   const [southAfricaNhlsAlereFtpConnectorSiteId] = await knex('Site').insert(
@@ -224,6 +224,78 @@ async function seed(knex) {
   await knex('JobContext').insert({
     jobId: jobIdAdmin,
     geographyId,
+  })
+
+  const [jobFunctionIdRegionalOfficer] = await knex('JobFunction').insert({
+    name: 'Regional Officer',
+    partnerId,
+  })
+  await knex('JobFunctionPermission').insert([
+    {
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      permissionId: modules.browse.view,
+    },
+    {
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      permissionId: modules.result.admin,
+    },
+    {
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      permissionId: modules.device.view,
+    },
+    {
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      permissionId: modules.site.view,
+    },
+  ])
+  await knex('JobFunctionFeature').insert([
+    { jobFunctionId: jobFunctionIdRegionalOfficer, featureId: features.device },
+    { jobFunctionId: jobFunctionIdRegionalOfficer, featureId: features.result },
+    { jobFunctionId: jobFunctionIdRegionalOfficer, featureId: features.site },
+  ])
+
+  const [jobFunctionIdLabUser] = await knex('JobFunction').insert({
+    name: 'Lab User',
+    partnerId,
+  })
+  await knex('JobFunctionPermission').insert([
+    { jobFunctionId: jobFunctionIdLabUser, permissionId: modules.browse.view },
+    { jobFunctionId: jobFunctionIdLabUser, permissionId: modules.result.admin },
+    { jobFunctionId: jobFunctionIdLabUser, permissionId: modules.device.view },
+    { jobFunctionId: jobFunctionIdLabUser, permissionId: modules.site.view },
+  ])
+  await knex('JobFunctionFeature').insert([
+    { jobFunctionId: jobFunctionIdLabUser, featureId: features.device },
+    { jobFunctionId: jobFunctionIdLabUser, featureId: features.result },
+    { jobFunctionId: jobFunctionIdLabUser, featureId: features.site },
+  ])
+
+  const patientDataSchema = JSON.stringify({
+    id: {
+      title: 'Patient ID',
+      type: 'string',
+      order: 0,
+    },
+    firstName: {
+      title: 'First Name',
+      type: 'string',
+      order: 1,
+    },
+    surname: {
+      title: 'Surname',
+      type: 'string',
+      order: 2,
+    },
+    ward: {
+      title: 'Ward',
+      type: 'string',
+      order: 3,
+    },
+    hospitalNumber: {
+      title: 'Hospital Number',
+      type: 'string',
+      order: 4,
+    },
   })
 
   const [alereQHiv12DetectAssayId] = await knex('Assay').insert({
@@ -326,6 +398,7 @@ async function seed(knex) {
         title: 'Picked Up On',
       },
     }),
+    patientDataSchema,
   })
 
   const [alereQHiv12VLPlasmaAssayId] = await knex('Assay').insert({
@@ -450,6 +523,7 @@ async function seed(knex) {
         title: 'Picked Up On',
       },
     }),
+    patientDataSchema,
   })
 
   const piece = await unitToId('Piece')
@@ -481,47 +555,54 @@ async function seed(knex) {
 
   const assayAlereQHiv12FormSchema = {
     fields: {
+      patientId: {
+        i18nLabel: 'patientId',
+        control: {
+          type: 'TextBox',
+        },
+        order: 1,
+      },
       hospitalNumber: {
         i18nLabel: 'hospitalNumber',
         control: {
           type: 'TextBox',
         },
-        order: 1,
+        order: 2,
       },
       studyID: {
         i18nLabel: 'studyID',
         control: {
           type: 'TextBox',
         },
-        order: 2,
+        order: 3,
       },
       nameOfPatient: {
         i18nLabel: 'nameOfPatient',
         control: {
           type: 'TextBox',
         },
-        order: 3,
+        order: 4,
       },
       surnameOfPatient: {
         i18nLabel: 'surnameOfPatient',
         control: {
           type: 'TextBox',
         },
-        order: 4,
+        order: 5,
       },
       ward: {
         i18nLabel: 'ward',
         control: {
           type: 'TextBox',
         },
-        order: 5,
+        order: 6,
       },
       timeSampleTaken: {
         i18nLabel: 'timeSampleTaken',
         control: {
           type: 'DateTime',
         },
-        order: 6,
+        order: 7,
       },
       sampleType: {
         i18nLabel: 'sampleType',
@@ -542,14 +623,14 @@ async function seed(knex) {
             },
           ],
         },
-        order: 7,
+        order: 8,
       },
       timeInstrumentResulted: {
         i18nLabel: 'timeInstrumentResulted',
         control: {
           type: 'DateTime',
         },
-        order: 8,
+        order: 9,
       },
     },
     sendChangesOn: 'submit',

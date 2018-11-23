@@ -1,9 +1,9 @@
 const _ = require('lodash')
-const { knex } = require('../db')
 const { distanceInWordsStrict } = require('date-fns')
-const { parseDateOrDefault, formatDateOrDefault } = require('../shared/date')
-const { loadPlugin } = require('../plugin/registration')
 const handlebars = require('handlebars')
+
+const { knex } = require('../db')
+const { parseDateOrDefault, formatDateOrDefault } = require('../shared/date')
 
 handlebars.registerHelper('numberOfDays', numberOfDays)
 handlebars.registerHelper('isoDate', isoDate)
@@ -68,6 +68,7 @@ function addDataSourceToQuery(queryBuilder, aliases) {
         'p.name as personName',
         'p.cell as personCell',
         'pu.plugin as partnerPlugin',
+        'd.name as deviceName',
         'd.lastPingOn as deviceLastPingOn',
         'd.lastSeenOn as deviceLastSeenOn',
         'dt.externalId as deviceTypeExternalId',
@@ -125,6 +126,7 @@ async function processUsingDataSourceQuery(data, templateFields, options = {}) {
 
 async function getBaseDataSource(data) {
   const d = data || {}
+  const { loadPlugin } = require('../plugin/registration')
   const { displayPreferences = {} } = await loadPlugin(
     [d.partnerPlugin],
     'settings'
@@ -306,9 +308,9 @@ function urlEncode(value) {
   return safeString(encodeURIComponent(rawValue))
 }
 
-function priorityResult(resultCategories, resultCateoryId) {
-  if (resultCategories.includes(resultCateoryId)) {
-    return resultCateoryId
+function priorityResult(resultCategories, resultCategoryId) {
+  if (resultCategories.includes(resultCategoryId)) {
+    return resultCategoryId
   }
 }
 
@@ -329,7 +331,7 @@ function tryMergeResultCategories(resultCategory1, resultCategory2) {
   for (let i = 0; i < orderedPriorityCategories.length; i++) {
     const foundPriorityCategory = priorityResult(
       resultCategories,
-      orderedPriorityCategories
+      orderedPriorityCategories[i]
     )
     if (foundPriorityCategory) {
       return foundPriorityCategory

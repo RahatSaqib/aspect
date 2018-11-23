@@ -2,5 +2,6 @@
 --reporter-options spec=-,mocha-bamboo-reporter=-
 --ui bdd
 --recursive
+--timeout 10000
 test/utils/unitTestSetup.js
 test/**/*.test.js*
