@@ -13,10 +13,15 @@ async function up(knex) {
       .boolean('sendToContactsWithMatchingTags')
       .notNullable()
       .defaultTo(0)
+    notificationType.dropForeign('jobFunctionId')
     notificationType
       .integer('jobFunctionId')
       .unsigned()
       .alter()
+  })
+
+  await knex.schema.table('NotificationType', notificationType => {
+    notificationType.foreign('jobFunctionId').references('JobFunction.id')
   })
 
   await knex.schema.createTable('NotificationTypeTag', notificationTypeTag => {
@@ -24,22 +29,27 @@ async function up(knex) {
       .integer('notificationTypeId')
       .unsigned()
       .index()
-      .references('id')
-      .inTable('NotificationType')
     notificationTypeTag
       .integer('tagId')
       .unsigned()
       .index()
-      .references('id')
-      .inTable('Tag')
     notificationTypeTag.primary(['notificationTypeId', 'tagId'])
+    notificationTypeTag
+      .foreign('notificationTypeId')
+      .references('NotificationType.id')
+    notificationTypeTag.foreign('tagId').references('Tag.id')
   })
 
   await knex.schema.table('Notification', notification => {
+    notification.dropForeign('personId')
     notification
       .integer('personId')
       .unsigned()
       .alter()
+  })
+
+  await knex.schema.table('Notification', notification => {
+    notification.foreign('personId').references('Person.id')
   })
 }
 async function down(knex) {
@@ -52,6 +62,7 @@ async function down(knex) {
 
   await knex.schema.table('NotificationType', notificationType => {
     notificationType.dropColumns('sendToContactsWithMatchingTags')
+    notificationType.dropForeign('jobFunctionId')
     notificationType
       .integer('jobFunctionId')
       .unsigned()
@@ -59,13 +70,22 @@ async function down(knex) {
       .alter()
   })
 
+  await knex.schema.table('NotificationType', notificationType => {
+    notificationType.foreign('jobFunctionId').references('JobFunction.id')
+  })
+
   await knex.schema.dropTableIfExists('NotificationTypeTag')
 
   await knex.schema.table('Notification', notification => {
+    notification.dropForeign('personId')
     notification
       .integer('personId')
       .unsigned()
       .notNullable()
       .alter()
+  })
+
+  await knex.schema.table('Notification', notification => {
+    notification.foreign('personId').references('Person.id')
   })
 }
