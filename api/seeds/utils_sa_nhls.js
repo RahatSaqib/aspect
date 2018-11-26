@@ -1,3 +1,5 @@
+const _ = require('lodash')
+
 const config = require('../src/config')
 const {
   fileContentTypeToId,
@@ -7,6 +9,14 @@ const {
 } = require('../src/shared/dictionary')
 
 async function seedNotifications(knex, { partnerId }) {
+  const redCapUrl = _.get(config, 'webhook.redcap.url')
+  const redCapAuthToken = _.get(config, 'webhook.redcap.authToken')
+  if (!redCapUrl || !redCapAuthToken) {
+    console.warn(
+      'Missing RedCAP webhook environment variables. Ensure that webhook.redcap.url and webhook.redcap.authToken are set in .env'
+    )
+    return
+  }
   const now = new Date()
   const { id: adminId } = await knex('User')
     .where({ name: 'nhls_eid' })
@@ -45,12 +55,10 @@ async function seedNotifications(knex, { partnerId }) {
       {
         externalId: 'redCapAlereQHiv12Detect',
         method: 'POST',
-        url: config.webhook.redcap.url,
+        url: redCapUrl,
         payload:
-          `token=${
-            config.webhook.redcap.authToken
-          }&content=record&format=json&type=flat&overwriteBehavior=normal&forceAutoNumber=true&data=%5B%7B%22` +
-          `record_id%22%3A%221%22%2C%20` +
+          `token=${redCapAuthToken}&content=record&format=json&type=flat&overwriteBehavior=normal&` +
+          `forceAutoNumber=true&data=%5B%7B%22record_id%22%3A%221%22%2C%20` +
           `%22redcap_data_access_group%22%3A{{urlEncode (enclose (toLowerCase (defaultTo site.id '')) with='"')}}%2C%20` +
           `%22first_name%22%3A{{urlEncode (enclose (defaultTo result.formData.nameOfPatient '') with='"')}}%2C%20` +
           `%22surname%22%3A{{urlEncode (enclose (defaultTo result.formData.surnameOfPatient '') with='"')}}%2C%20` +
