@@ -6,10 +6,8 @@
   "main": "",
   "scripts": {
     "styleguide": "styleguidist server",
-    "prestart": "webpack --config cfg/dll.js",
-    "start": "webpack-dev-server --config cfg/src.js --open 'google chrome' --env.ASPECT_TARGET=local",
-    "predist": "webpack --config cfg/dll.js",
-    "dist": "webpack --config cfg/src.js --env.ASPECT_TARGET=dist",
+    "start": "webpack-dev-server --config cfg/dev.js --open --env.ASPECT_TARGET=local",    
+    "dist": "webpack --config cfg/dist.js --env.ASPECT_TARGET=dist",
     "pretest": "fsys --task=remove --fileFolder=coverage && fsys --task=remove --fileFolder=mocha.json",
     "test": "cross-env ASPECT_TARGET=test BABEL_ENV=test JEST_FILE=mocha.json jest --coverage",
     "test:snapshot": "npm run test -- -u",
@@ -66,19 +64,43 @@
     "env": {
       "test": {
         "plugins": [
-          "babel-plugin-dynamic-import-node"
+          "babel-plugin-dynamic-import-node",
+          "@babel/plugin-syntax-dynamic-import",
+          "@babel/plugin-syntax-import-meta",
+          "@babel/plugin-proposal-class-properties",
+          "@babel/plugin-proposal-json-strings",
+          [
+            "@babel/plugin-proposal-decorators",
+            {
+              "legacy": true
+            }
+          ],
+          "@babel/plugin-proposal-function-sent",
+          "@babel/plugin-proposal-export-namespace-from",
+          "@babel/plugin-proposal-numeric-separator",
+          "@babel/plugin-proposal-throw-expressions",
+          "@babel/plugin-proposal-export-default-from",
+          "@babel/plugin-proposal-logical-assignment-operators",
+          "@babel/plugin-proposal-optional-chaining",
+          [
+            "@babel/plugin-proposal-pipeline-operator",
+            {
+              "proposal": "minimal"
+            }
+          ],
+          "@babel/plugin-proposal-nullish-coalescing-operator",
+          "@babel/plugin-proposal-do-expressions"
         ],
         "presets": [
           [
-            "env",
+            "@babel/preset-env",
             {
               "targets": {
                 "node": "current"
               }
             }
           ],
-          "stage-1",
-          "react"
+          "@babel/preset-react"
         ]
       },
       "message": {
@@ -88,19 +110,43 @@
             {
               "messagesDir": "./i18n"
             }
-          ]
+          ],
+          "@babel/plugin-syntax-dynamic-import",
+          "@babel/plugin-syntax-import-meta",
+          "@babel/plugin-proposal-class-properties",
+          "@babel/plugin-proposal-json-strings",
+          [
+            "@babel/plugin-proposal-decorators",
+            {
+              "legacy": true
+            }
+          ],
+          "@babel/plugin-proposal-function-sent",
+          "@babel/plugin-proposal-export-namespace-from",
+          "@babel/plugin-proposal-numeric-separator",
+          "@babel/plugin-proposal-throw-expressions",
+          "@babel/plugin-proposal-export-default-from",
+          "@babel/plugin-proposal-logical-assignment-operators",
+          "@babel/plugin-proposal-optional-chaining",
+          [
+            "@babel/plugin-proposal-pipeline-operator",
+            {
+              "proposal": "minimal"
+            }
+          ],
+          "@babel/plugin-proposal-nullish-coalescing-operator",
+          "@babel/plugin-proposal-do-expressions"
         ],
         "presets": [
           [
-            "env",
+            "@babel/preset-env",
             {
               "targets": {
                 "node": "current"
               }
             }
           ],
-          "stage-1",
-          "react"
+          "@babel/preset-react"
         ]
       },
       "webpack": {
@@ -112,14 +158,39 @@
           [
             "react-hot-loader/babel",
             {}
-          ]
+          ],
+          "@babel/plugin-syntax-dynamic-import",
+          "@babel/plugin-syntax-import-meta",
+          "@babel/plugin-proposal-class-properties",
+          "@babel/plugin-proposal-json-strings",
+          [
+            "@babel/plugin-proposal-decorators",
+            {
+              "legacy": true
+            }
+          ],
+          "@babel/plugin-proposal-function-sent",
+          "@babel/plugin-proposal-export-namespace-from",
+          "@babel/plugin-proposal-numeric-separator",
+          "@babel/plugin-proposal-throw-expressions",
+          "@babel/plugin-proposal-export-default-from",
+          "@babel/plugin-proposal-logical-assignment-operators",
+          "@babel/plugin-proposal-optional-chaining",
+          [
+            "@babel/plugin-proposal-pipeline-operator",
+            {
+              "proposal": "minimal"
+            }
+          ],
+          "@babel/plugin-proposal-nullish-coalescing-operator",
+          "@babel/plugin-proposal-do-expressions"
         ],
         "presets": [
           [
-            "env",
+            "@babel/preset-env",
             {
               "modules": false,
-              "useBuiltIns": true,
+              "useBuiltIns": "usage",
               "targets": {
                 "browsers": [
                   "last 2 versions"
@@ -127,8 +198,7 @@
               }
             }
           ],
-          "stage-1",
-          "react"
+          "@babel/preset-react"
         ]
       }
     }
@@ -137,26 +207,41 @@
   "keywords": [],
   "author": "SystemOne",
   "devDependencies": {
-    "babel-cli": "^6.24.1",
-    "babel-core": "^6.24.1",
-    "babel-eslint": "^8.0.1",
-    "babel-loader": "^7.0.0-beta.1",
+    "@babel/cli": "^7.0.0",
+    "@babel/core": "^7.0.0",
+    "@babel/plugin-proposal-class-properties": "^7.0.0",
+    "@babel/plugin-proposal-decorators": "^7.0.0",
+    "@babel/plugin-proposal-do-expressions": "^7.0.0",
+    "@babel/plugin-proposal-export-default-from": "^7.0.0",
+    "@babel/plugin-proposal-export-namespace-from": "^7.0.0",
+    "@babel/plugin-proposal-function-sent": "^7.0.0",
+    "@babel/plugin-proposal-json-strings": "^7.0.0",
+    "@babel/plugin-proposal-logical-assignment-operators": "^7.0.0",
+    "@babel/plugin-proposal-nullish-coalescing-operator": "^7.0.0",
+    "@babel/plugin-proposal-numeric-separator": "^7.0.0",
+    "@babel/plugin-proposal-optional-chaining": "^7.0.0",
+    "@babel/plugin-proposal-pipeline-operator": "^7.0.0",
+    "@babel/plugin-proposal-throw-expressions": "^7.0.0",
+    "@babel/plugin-syntax-dynamic-import": "^7.0.0",
+    "@babel/plugin-syntax-import-meta": "^7.0.0",
+    "@babel/polyfill": "^7.0.0",
+    "@babel/preset-env": "^7.0.0",
+    "@babel/preset-react": "^7.0.0",
+    "@babel/register": "^7.0.0",
+    "babel-core": "^7.0.0-bridge.0",
+    "babel-eslint": "^9.0.0",
+    "babel-jest": "^23.4.2",
+    "babel-loader": "^8.0.0",
     "babel-plugin-dynamic-import-node": "^1.1.0",
     "babel-plugin-lodash": "^3.2.11",
     "babel-plugin-react-intl": "^2.3.1",
-    "babel-polyfill": "^6.23.0",
-    "babel-preset-env": "^1.4.0",
-    "babel-preset-react": "^6.24.1",
-    "babel-preset-stage-1": "^6.24.1",
-    "babel-register": "^6.24.1",
     "caniuse-lite": "^1.0.30000697",
-    "case-sensitive-paths-webpack-plugin": "^2.0.0",
-    "chunk-manifest-webpack-plugin": "^1.0.0",
-    "compression-webpack-plugin": "^1.0.0",
+    "case-sensitive-paths-webpack-plugin": "^2.1.2",
+    "compression-webpack-plugin": "^2.0.0",
     "core-js": "^2.4.0",
-    "cross-env": "^5.0.1",
-    "css-loader": "^0.28.0",
-    "del-webpack-plugin": "^1.0.1",
+    "cross-env": "^5.2.0",
+    "css-loader": "^1.0.1",
+    "del-webpack-plugin": "^1.2.0",
     "enzyme": "^3.0.0",
     "enzyme-adapter-react-15": "^1.0.0",
     "eslint": "^4.4.1",
@@ -167,42 +252,46 @@
     "eslint-plugin-jsx-a11y": "^6.0.2",
     "eslint-plugin-prettier": "^2.1.1",
     "eslint-plugin-react": "^7.0.1",
-    "extract-text-webpack-plugin": "^3.0.0",
-    "favicons-webpack-plugin": "^0.0.7",
-    "file-loader": "^1.1.5",
+    "favicons-webpack-plugin": "^0.0.9",
+    "file-loader": "^2.0.0",
     "fs-extra-cli": "0.0.4",
     "glob": "^7.1.2",
-    "html-loader": "^0.5.1",
-    "html-webpack-harddisk-plugin": "^0.1.0",
-    "html-webpack-include-assets-plugin": "^1.0.0",
-    "html-webpack-plugin": "^2.28.0",
+    "html-loader": "^0.5.5",
+    "html-webpack-harddisk-plugin": "^1.0.1",
+    "html-webpack-include-assets-plugin": "^1.0.6",
+    "html-webpack-plugin": "^3.2.0",
     "husky": "^0.14.0",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^21.2.0",
     "jest-bamboo-formatter": "^1.0.1",
     "jest-fetch-mock": "^1.4.0",
     "lint-staged": "^6.0.0",
+    "mini-css-extract-plugin": "^0.4.5",
     "npm-run-all": "^4.0.2",
     "null-loader": "^0.1.1",
-    "postcss": "^6.0.2",
-    "postcss-cssnext": "^3.0.2",
-    "postcss-import": "^11.0.0",
-    "postcss-loader": "^2.0.6",
+    "optimize-css-assets-webpack-plugin": "^5.0.1",
+    "postcss": "^7.0.6",
+    "postcss-cssnext": "^3.1.0",
+    "postcss-import": "^12.0.1",
+    "postcss-loader": "^3.0.0",
     "postcss-pxtorem": "^4.0.0",
     "prettier": "^1.5.2",
     "react-intl-po": "^2.0.2",
-    "react-styleguidist": "^6.0.10",
+    "react-styleguidist": "^8.0.6",
     "react-test-renderer": "^15.5.4",
     "sinon": "^4.0.0",
     "static-loader": "^0.1.8",
-    "style-loader": "^0.19.0",
+    "style-loader": "^0.23.1",
     "svg-sprite-loader": "^3.7.3",
-    "url-loader": "^0.6.2",
+    "uglifyjs-webpack-plugin": "^2.0.1",
+    "url-loader": "^1.1.2",
     "util.promisify": "^1.0.0",
-    "webapp-manifest-plugin": "^0.0.4",
-    "webpack": "^3.3.0",
+    "webpack": "^4.26.0",
     "webpack-bundle-analyzer": "^2.11.1",
-    "webpack-dev-server": "^2.4.2",
+    "webpack-cli": "^3.1.2",
+    "webpack-dev-server": "^3.1.10",
+    "webpack-merge": "^4.1.4",
+    "webpack-pwa-manifest": "^3.7.1",
     "why-did-you-update": "^0.1.0"
   },
   "dependencies": {

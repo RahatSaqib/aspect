@@ -82,11 +82,8 @@ module.exports = () => {
         }),
         new webpack.EnvironmentPlugin(['NODE_ENV']),
         new webpack.NoEmitOnErrorsPlugin(),
-        new webpack.optimize.UglifyJsPlugin({
-          sourceMap: true,
-        }),
         new CompressionPlugin({
-          asset: '[path].gz[query]',
+          filename: '[path].gz[query]',
           test: /\.(js|css)(\.map)?$/,
           threshold: 10240,
         }),
