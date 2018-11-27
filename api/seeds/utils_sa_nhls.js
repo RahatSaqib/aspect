@@ -12,10 +12,10 @@ async function seedNotifications(knex, { partnerId }) {
   const redCapUrl = _.get(config, 'webhook.redcap.url')
   const redCapAuthToken = _.get(config, 'webhook.redcap.authToken')
   if (!redCapUrl || !redCapAuthToken) {
-    console.warn(
+    console.error(
       'Missing RedCAP webhook environment variables. Ensure that webhook.redcap.url and webhook.redcap.authToken are set in .env'
     )
-    return
+    process.exit(1)
   }
   const now = new Date()
   const { id: adminId } = await knex('User')
