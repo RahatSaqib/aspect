@@ -1,6 +1,6 @@
 module.exports = require('../utils').seed(seed)
 
-const { updateDashboardWidgetQueries } = require('../utils')
+const { updateDashboardWidgetQueries } = require('../utils_myanmar')
 const {
   updateDataCategoryNotificationTypeForRO,
 } = require('../dataCategoryLow')

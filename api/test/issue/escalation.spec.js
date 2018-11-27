@@ -11,6 +11,11 @@ const {
 const { escalateIssues } = require('../../src/issue/actions')
 const { types: deviceActionTypes } = require('../../src/device/actions')
 const { types: resultActionTypes } = require('../../src/result/actions')
+const { getSite } = require('../utils/issueUtils')
+const {
+  deviceTypeToId,
+  deviceStatusToId,
+} = require('../../src/shared/dictionary')
 
 const { assert, expect } = chai
 
@@ -236,18 +241,82 @@ describe('Issue Escalation', () => {
       .del()
   }
 
+  async function createDeviceNoResult(
+    knex,
+    { countryAbbreviation, partnerId }
+  ) {
+    // get 1st site for current partner
+    const { s: { id: siteId, geographyId } } = await getSite(knex, {
+      countryAbbreviation,
+      partnerId,
+    })
+
+    const [deviceId] = await knex('Device').insert({
+      partnerId,
+      geographyId,
+      siteId, // new site id
+      deviceTypeId: await deviceTypeToId('CepheidGeneXpert'),
+      deviceStatusId: await deviceStatusToId('approved'),
+      name: 'Test Device',
+      shortName: 'Test Device',
+      lastSeenOn: new Date(),
+    })
+    return deviceId
+  }
+
+  async function deleteDeviceAndTestData(knex, deviceIds) {
+    await knex('FactDeviceFlag')
+      .whereIn('deviceId', deviceIds)
+      .delete()
+    await knex('DeviceStatusLog')
+      .whereIn('deviceId', deviceIds)
+      .delete()
+    await knex('FactDeviceFlag')
+      .whereIn('deviceId', deviceIds)
+      .delete()
+    await knex('DeviceLog')
+      .whereIn('deviceId', deviceIds)
+      .delete()
+    await knex('DeviceSiteHistory')
+      .whereIn('deviceId', deviceIds)
+      .delete()
+    await knex('DeviceOperation')
+      .whereIn('deviceId', deviceIds)
+      .delete()
+    await knex('Device')
+      .whereIn('id', deviceIds)
+      .delete()
+  }
+
   describe('For Myanmar', () => {
     const partnerName = 'Myanmar'
     const countryAbbreviation = 'MM'
 
     let partner
     let messageContext
+    const deviceIdsToRemove = []
 
     before(async () =>
       run(async knex => {
         partner = await getPartner(knex, partnerName)
         messageContext = await createMessageContext()
         messageContext.bindActionCreators({ escalateIssues })
+
+        const testDeviceId1 = await createDeviceNoResult(knex, {
+          partnerId: partner.id,
+          countryAbbreviation,
+        })
+        const testDeviceId2 = await createDeviceNoResult(knex, {
+          partnerId: partner.id,
+          countryAbbreviation,
+        })
+        deviceIdsToRemove.push(testDeviceId1)
+        deviceIdsToRemove.push(testDeviceId2)
+      })
+    )
+    after(async () =>
+      run(async knex => {
+        await deleteDeviceAndTestData(knex, deviceIdsToRemove)
       })
     )
 

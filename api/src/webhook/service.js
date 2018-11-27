@@ -65,8 +65,8 @@ function onWebhookMessagePending({ webhookMessageId }, { messageContext }) {
   return context.run(async knex => {
     // TODO If filename and resultId add ResultFileReference join
     const message = await knex('WebhookMessage as m')
-      .join('WebhookTemplate as tmpl', 'm.webhookTemplateId', 'tmpl.id')
-      .join('FileContentType as fct', 'tmpl.fileContentTypeId', 'fct.id')
+      .leftJoin('WebhookTemplate as tmpl', 'm.webhookTemplateId', 'tmpl.id')
+      .leftJoin('FileContentType as fct', 'tmpl.fileContentTypeId', 'fct.id')
       .where({ 'm.id': webhookMessageId })
       .first(
         'tmpl.method',
@@ -80,66 +80,67 @@ function onWebhookMessagePending({ webhookMessageId }, { messageContext }) {
         'fct.mimeType',
         'fct.mimeSubType'
       )
-
-    const contentType = `${message.mimeType}/${message.mimeSubType}`
-    const fetchArgs = [method(message.method)]
-    if (message.urlBase != null) {
-      fetchArgs.push(base(message.urlBase))
-    }
-    if (message.headers != null) {
-      _.forEach(JSON.parse(message.headers), (value, key) =>
-        fetchArgs.push(header(key, value))
-      )
-    }
-    if (message.params != null) {
-      fetchArgs.push(params(JSON.parse(message.params)))
-    }
-    if (message.payload != null && message.payload !== '') {
-      fetchArgs.push(body(message.payload, contentType))
-    }
-
-    let webhookError = false
-    let fileStream = null
-    if (message.fileReferenceId != null) {
-      fileStream = await createStreamFromFileReference(
-        knex,
-        message.fileReferenceId
-      )
-      if (fileStream == null) {
-        webhookError = true
+    if (message) {
+      const contentType = `${message.mimeType}/${message.mimeSubType}`
+      const fetchArgs = [method(message.method)]
+      if (message.urlBase != null) {
+        fetchArgs.push(base(message.urlBase))
       }
-    }
-
-    if (!webhookError) {
-      const fetch = createFetch(...fetchArgs)
-      const resp = await fetch(message.url)
-      if (fileStream != null) {
-        resp.body.pipe(fileStream)
+      if (message.headers != null) {
+        _.forEach(JSON.parse(message.headers), (value, key) =>
+          fetchArgs.push(header(key, value))
+        )
       }
-      webhookError = !resp.ok
-    }
-
-    const now = new Date()
-    const messageUpdates = { updatedOn: now }
-
-    const messageStatusIdSent = await messageStatusToId('Sent')
-    if (webhookError) {
-      messageUpdates.messageStatusId = await messageStatusToId('Error')
-    } else {
-      messageUpdates.messageStatusId = messageStatusIdSent
-      if (message.fileReferenceId != null && message.resultId != null) {
-        await knex('ResultFileReference').insert({
-          resultId: message.resultId,
-          fileReferenceId: message.fileReferenceId,
-        })
+      if (message.params != null) {
+        fetchArgs.push(params(JSON.parse(message.params)))
       }
-    }
-    await knex('WebhookMessage')
-      .where({ id: webhookMessageId })
-      .update(messageUpdates)
+      if (message.payload != null && message.payload !== '') {
+        fetchArgs.push(body(message.payload, contentType))
+      }
 
-    if (messageUpdates.messageStatusId === messageStatusIdSent) {
-      context.webhookMessageSent(webhookMessageId)
+      let webhookError = false
+      let fileStream = null
+      if (message.fileReferenceId != null) {
+        fileStream = await createStreamFromFileReference(
+          knex,
+          message.fileReferenceId
+        )
+        if (fileStream == null) {
+          webhookError = true
+        }
+      }
+
+      if (!webhookError) {
+        const fetch = createFetch(...fetchArgs)
+        const resp = await fetch(message.url)
+        if (fileStream != null) {
+          resp.body.pipe(fileStream)
+        }
+        webhookError = !resp.ok
+      }
+
+      const now = new Date()
+      const messageUpdates = { updatedOn: now }
+
+      const messageStatusIdSent = await messageStatusToId('Sent')
+      if (webhookError) {
+        messageUpdates.messageStatusId = await messageStatusToId('Error')
+      } else {
+        messageUpdates.messageStatusId = messageStatusIdSent
+        if (message.fileReferenceId != null && message.resultId != null) {
+          await knex('ResultFileReference').insert({
+            resultId: message.resultId,
+            fileReferenceId: message.fileReferenceId,
+          })
+        }
+      }
+      await knex('WebhookMessage')
+        .where({ id: webhookMessageId })
+        .update(messageUpdates)
+
+      if (messageUpdates.messageStatusId === messageStatusIdSent) {
+        context.webhookMessageSent(webhookMessageId)
+      }
     }
   })
 }

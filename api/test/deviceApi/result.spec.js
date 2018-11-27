@@ -88,15 +88,16 @@ describe('Device Result API routes', () => {
   describe('admin result updates', () => {
     const context = createTestContext(server, {
       user: 'admin',
-      type: 'Daktari Virology',
+      type: 'DaktariVirology',
       partner: 'Partner One',
-      createDevice: true,
       baseConfig,
     })
 
     const { runTest } = context
 
-    beforeEach(context.beforeEach)
+    beforeEach(async () => {
+      await context.createDeviceWithResult()
+    })
     afterEach(context.afterEach)
 
     it('should add and return device results', () =>
@@ -1598,13 +1599,13 @@ describe('Device Result API routes', () => {
 
       it('should try to deduct the correct inventory item based on expiration date and lot number', () =>
         runTest(async knex => {
-          const { deviceId, deviceAuth, now } = context
+          const { deviceId, deviceAuth, now, user } = context
           const past = new Date(+now - 36000)
           const { siteId } = await knex('Device')
             .where({ id: deviceId })
             .first('siteId')
           const { id: adminId } = await knex('User')
-            .where({ name: context.auth.user })
+            .where({ name: user })
             .first('id')
           const assayExternalId = 'DaktariHivVl'
           const daktariHivVlCartridgeId = (await knex('Consumable as c')
@@ -1827,7 +1828,7 @@ describe('Device Result API routes', () => {
 
       it('should try to deduct the correct inventory item based on expiration date over lot number', () =>
         runTest(async knex => {
-          const { deviceId, deviceAuth, now, auth: { user } } = context
+          const { deviceId, deviceAuth, now, user } = context
           const past = new Date(+now - 36000)
           const { siteId } = await knex('Device')
             .where({ id: deviceId })
@@ -1957,7 +1958,7 @@ describe('Device Result API routes', () => {
 
       it('should deduct inventory item with null lot number and expiresOn', () =>
         runTest(async knex => {
-          const { deviceId, deviceAuth, now, auth: { user } } = context
+          const { deviceId, deviceAuth, now, user } = context
           const { siteId } = await knex('Device')
             .where({ id: deviceId })
             .first('siteId')
@@ -2078,7 +2079,7 @@ describe('Device Result API routes', () => {
 
       it('should update lot number if null and exact match of expiresOn', () =>
         runTest(async knex => {
-          const { deviceId, deviceAuth, now, auth: { user } } = context
+          const { deviceId, deviceAuth, now, user } = context
           const { siteId } = await knex('Device')
             .where({ id: deviceId })
             .first('siteId')
@@ -2257,7 +2258,7 @@ describe('Device Result API routes', () => {
 
       it('should update quantityOnHand only if tested on before item updatedOn', () =>
         runTest(async knex => {
-          const { deviceId, deviceAuth, now, auth: { user } } = context
+          const { deviceId, deviceAuth, now, user } = context
           const { siteId } = await knex('Device')
             .where({ id: deviceId })
             .first('siteId')
@@ -2481,7 +2482,7 @@ describe('Device Result API routes', () => {
 
       it('should deduct inventory item with closest expiresOn', () =>
         runTest(async knex => {
-          const { deviceId, deviceAuth, now, auth: { user } } = context
+          const { deviceId, deviceAuth, now, user } = context
           const { siteId } = await knex('Device')
             .where({ id: deviceId })
             .first('siteId')
@@ -3000,7 +3001,10 @@ describe('Device Result API routes', () => {
 
     const { runTest } = context
 
-    beforeEach(context.beforeEach)
+    beforeEach(async () => {
+      await context.createSites(['CHIZ', '1315', '1723', 'BALAKA', 'PIH'])
+      await context.createDeviceApiKey()
+    })
     afterEach(context.afterEach)
 
     it('should create Device on first post with API Key', () =>
@@ -4048,11 +4052,7 @@ describe('Device Result API routes', () => {
       describe('and a large number of historical results are being downloaded', () => {
         it('should automatically acknowledge results based on where they are down the list and date ended on', () =>
           runTest(async knex => {
-            const {
-              deviceAuth,
-              apiKey,
-              auth: { partner: partnerName },
-            } = context
+            const { deviceAuth, apiKey, partner: partnerName } = context
 
             // Make sure the device is found on aspect
             await server
@@ -4186,11 +4186,7 @@ describe('Device Result API routes', () => {
       describe('and a small number of historical results are being downloaded', () => {
         it('should NOT automatically acknowledge results so that there are always results visible on the terminal after initial sync', () =>
           runTest(async knex => {
-            const {
-              deviceAuth,
-              apiKey,
-              auth: { partner: partnerName },
-            } = context
+            const { deviceAuth, apiKey, partner: partnerName } = context
 
             // Make sure the device is found on aspect
             await server
@@ -4356,11 +4352,7 @@ describe('Device Result API routes', () => {
       describe('and the results being downloaded are current', () => {
         it('should NOT automatically acknowledge results so that there are always results visible on the terminal after initial sync', () =>
           runTest(async knex => {
-            const {
-              deviceAuth,
-              apiKey,
-              auth: { partner: partnerName },
-            } = context
+            const { deviceAuth, apiKey, partner: partnerName } = context
 
             // Make sure the device is found on aspect
             await server

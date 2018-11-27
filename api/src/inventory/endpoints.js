@@ -275,7 +275,7 @@ const routes = [
         },
         payload: {
           quantity: Joi.number()
-            .positive()
+            .min(0)
             .required(),
         },
       },

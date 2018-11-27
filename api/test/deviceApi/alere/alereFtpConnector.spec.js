@@ -790,7 +790,7 @@ describe('Device API routes for Alere FTP Connector Device', () => {
               .where({ id: inventoryItemId })
               .first()
             expect(resultDetailsAfterSecondPost).to.containSubset(
-              resultDetailsAfterFirstPost
+              _.omit(resultDetailsAfterFirstPost, 'updatedOn')
             )
             expect(inventoryItemAfterSecondPost).to.deep.equal(
               inventoryItemAfterFirstPost

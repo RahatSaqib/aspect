@@ -1,9 +1,21 @@
 const {
   totalDaysUnexpiredInventoryItemsLast,
-} = require('../../../fact/service')
+  isStockEmpty,
+} = require('../../../shared/utilsInventory')
 
 async function getEscalateOrResolveStatusForIssueStockout(knex, issue) {
   const { partnerId, siteId, consumableId } = issue
+
+  const isEmptyStock = await isStockEmpty(knex, siteId, consumableId)
+  if (isEmptyStock) {
+    // if stock is empty then keep issue unchanged
+    return {
+      // level: 1,
+      isEscalated: false,
+      isResolved: false,
+    }
+  }
+
   const { rate: dailyRate } = (await knex('FactInventoryConsumptionRate')
     .where({ siteId, consumableId, days: 1 })
     .first('rate')) || { rate: 0 }
@@ -26,6 +38,18 @@ async function getEscalateOrResolveStatusForIssueStockout(knex, issue) {
   }
 }
 
+async function getReplacedModuleSerials(knex, deviceId) {
+  const replacedModuleSerials = knex('Issue as i')
+    .join('IssueType as it', 'it.id', 'i.issueTypeId')
+    .where('it.externalId', 'ModuleReplaced')
+    .where('i.deviceId', deviceId)
+    .select(knex.raw('data->>"$.replacedModuleSerial" as replacedModuleSerial'))
+    .map(s => s.replacedModuleSerial)
+
+  return replacedModuleSerials
+}
+
 module.exports = {
   getEscalateOrResolveStatusForIssueStockout,
+  getReplacedModuleSerials,
 }

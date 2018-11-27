@@ -33,6 +33,16 @@ const makeLink = (template, data) => {
   }
 }
 
+const conditionsMet = (schema, data) => {
+  const condition = schema.get('condition')
+  if (condition) {
+    const criteria = condition.get('criteria')
+    const value = condition.get('value')
+    return criteria && value && data.getIn(criteria.split('.')) === value
+  }
+  return true
+}
+
 export const DetailGroup = compose(
   mapProps(({ data, rawData, groupSchema, ...restProps }) => {
     const dataSchemaPath = groupSchema.getIn(['detail', 'dataSchema'])
@@ -88,6 +98,7 @@ export const DetailGroup = compose(
         fields={groupSchema
           .getIn(['detail', 'rows'], EMPTY_MAP)
           .filter(it => it.get('row') === 0)
+          .filter(it => conditionsMet(it, rawData))
           .sortBy(value => value.get('order'))
           .entrySeq()
           .map(([key, value]) => ({
@@ -109,6 +120,7 @@ export const DetailGroup = compose(
         {groupSchema
           .getIn(['detail', 'rows'], EMPTY_MAP)
           .filter(it => it.get('row') > 0)
+          .filter(it => conditionsMet(it, rawData))
           .sortBy(value => value.get('order'))
           .groupBy(x => x.get('row'))
           .valueSeq()

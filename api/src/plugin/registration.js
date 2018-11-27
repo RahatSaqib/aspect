@@ -35,6 +35,7 @@ const plugins = {
   default: {
     settings: DEFAULT_SETTINGS,
     handlerOptions: DEFAULT_HANDLER_OPTIONS,
+    issueTriggers: {},
     issueResolutions: {},
     issueEscalations: {},
     dataCategories: {},
@@ -103,6 +104,9 @@ const plugins = {
     preProcessAddDeviceData: require('./deviceType/AlereFtpConnector/preProcessAddDeviceData'),
     preProcessMergeResult: require('./deviceType/AlereFtpConnector/preProcessMergeResult'),
     postProcessMergeResult: require('./deviceType/AlereFtpConnector/postProcessMergeResult'),
+  },
+  sa_nhls: {
+    issueTriggers: require('./partner/SA_NHLS/issueTriggers'),
   },
 }
 

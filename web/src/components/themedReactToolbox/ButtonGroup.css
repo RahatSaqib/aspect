@@ -14,6 +14,12 @@
     var(--toolbox-button-border-radius);
 }
 
+.ButtonGroup--isolated {
+  display: flex;
+  flex: 1;
+  flex-wrap: wrap;
+}
+
 .ButtonGroup--isolated > *:not(:first-child) {
   margin-left: 5px;
 }

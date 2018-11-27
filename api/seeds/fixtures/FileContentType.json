@@ -197,6 +197,12 @@
       "externalId": "application7Zip",
       "mimeType": "application",
       "mimeSubtype": "x-7z-compressed"
+    },
+    {
+      "name": "URL Encoded Form Data",
+      "externalId": "formUrlEncoded",
+      "mimeType": "application",
+      "mimeSubtype": "x-www-form-urlencoded"
     }
   ]
 }
