@@ -6,10 +6,11 @@ const cssImport = require('postcss-import')
 const cssNext = require('postcss-cssnext')
 const DelWebpackPlugin = require('del-webpack-plugin')
 const FaviconsWebpackPlugin = require('favicons-webpack-plugin')
+const HardSourceWebpackPlugin = require('hard-source-webpack-plugin')
 const HtmlWebpackHarddiskPlugin = require('html-webpack-harddisk-plugin')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
 const SpriteLoaderPlugin = require('svg-sprite-loader/plugin')
 const WebpackPwaManifest = require('webpack-pwa-manifest')
-const HtmlWebpackPlugin = require('html-webpack-plugin')
 
 const {
   definePluginVariables,
@@ -43,26 +44,6 @@ module.exports = {
   resolve: {
     extensions: ['.json', '.js', '.jsx'],
   },
-  // optimization: {
-  //   splitChunks: {
-  //     cacheGroups: {
-  //       commons: {
-  //         name: 'commons',
-  //         chunks: 'initial',
-  //         minChunks: 2,
-  //         maxInitialRequests: 5,
-  //         minSize: 0,
-  //       },
-  //       vendor: {
-  //         test: /node_modules/,
-  //         chunks: 'initial',
-  //         name: 'vendor',
-  //         priority: 10,
-  //         enforce: true,
-  //       },
-  //     },
-  //   },
-  // },
   module: {
     rules: [
       {
@@ -137,12 +118,6 @@ module.exports = {
   },
   plugins: [
     new DelWebpackPlugin({
-      exclude: [
-        'dll.vendor.js',
-        'dll.vendor.js.gz',
-        'dll.vendor.js.map',
-        'dll.vendor.js.map.gz',
-      ],
       info: false,
     }),
     new webpack.DefinePlugin(_.assign({}, definePluginVariables)),
@@ -154,6 +129,12 @@ module.exports = {
       favicon: path.join(__dirname, '../src/template/favicon.png'),
     }),
     new SpriteLoaderPlugin(),
+    new HardSourceWebpackPlugin(),
+    new HardSourceWebpackPlugin.ExcludeModulePlugin([
+      {
+        test: /\.svg$/,
+      },
+    ]),
     new FaviconsWebpackPlugin({
       logo: path.join(__dirname, '../src/template/favicon.png'),
       prefix: 'icons-[hash]-',
