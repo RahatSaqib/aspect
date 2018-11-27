@@ -20,7 +20,7 @@ describe('Result Detail screen', () => {
     fetchSingleResult() {},
     fetchResultLog() {},
     fetchTags() {},
-    updateResultFormData: sinon.spy(),
+    saveResultFormDataValue: sinon.spy(),
     updateResultQcCheck() {},
     deviceLogs: Immutable.List([]),
     intl: {
@@ -32,6 +32,9 @@ describe('Result Detail screen', () => {
     screenSchema: {},
     resultTags: Immutable.List([]),
     editable: false,
+    formDataSaving: false,
+    formDataDirty: false,
+    saveResultFormData: sinon.spy(),
   }
   function renderResultDetailsScreen(props) {
     return shallow(<ResultDetail {...props} />)
@@ -44,31 +47,34 @@ describe('Result Detail screen', () => {
           id: 103897,
           assay: Immutable.Map({}),
           formSchema: Immutable.Map({
-            expertInterpretation: Immutable.Map({
-              i18nLabel: 'confirmedInterpretationOfResult',
-              control: Immutable.Map({
-                type: 'ButtonGroup',
-                allowMultipleSelection: false,
-                options: Immutable.List([
-                  Immutable.Map({
-                    i18nText: 'none',
-                    value: null,
-                  }),
-                  Immutable.Map({
-                    i18nText: 'negative',
-                    value: 'negative',
-                  }),
-                  Immutable.Map({
-                    i18nText: 'positive',
-                    value: 'positive',
-                  }),
-                  Immutable.Map({
-                    i18nText: 'uninterpretable',
-                    value: 'uninterpretable',
-                  }),
-                ]),
+            fields: Immutable.Map({
+              expertInterpretation: Immutable.Map({
+                i18nLabel: 'confirmedInterpretationOfResult',
+                control: Immutable.Map({
+                  type: 'ButtonGroup',
+                  allowMultipleSelection: false,
+                  options: Immutable.List([
+                    Immutable.Map({
+                      i18nText: 'none',
+                      value: null,
+                    }),
+                    Immutable.Map({
+                      i18nText: 'negative',
+                      value: 'negative',
+                    }),
+                    Immutable.Map({
+                      i18nText: 'positive',
+                      value: 'positive',
+                    }),
+                    Immutable.Map({
+                      i18nText: 'uninterpretable',
+                      value: 'uninterpretable',
+                    }),
+                  ]),
+                }),
               }),
             }),
+            sendChangesOn: 'change',
           }),
         }),
       })
@@ -115,17 +121,20 @@ describe('Result Detail screen', () => {
             .filter({ 'data-value': 'positive' })
             .first()
 
-          const { updateResultFormData, result } = propsWithFormSchemaInResult
-          expect(updateResultFormData.callCount).toBe(0)
+          const {
+            saveResultFormDataValue,
+            result,
+          } = propsWithFormSchemaInResult
+          expect(saveResultFormDataValue.callCount).toBe(0)
 
           positiveOption.simulate('click', {
             target: { dataset: { value: 'positive' } },
           })
 
-          expect(updateResultFormData.callCount).toBe(1)
-          expect(updateResultFormData.lastCall.args).toEqual([
+          expect(saveResultFormDataValue.callCount).toBe(1)
+          expect(saveResultFormDataValue.lastCall.args).toEqual([
             result.get('id'),
-            Object.keys(result.get('formSchema').toJS())[0],
+            Object.keys(result.getIn(['formSchema', 'fields']).toJS())[0],
             'positive',
           ])
         })
@@ -138,56 +147,59 @@ describe('Result Detail screen', () => {
           id: 103897,
           assay: Immutable.Map({}),
           formSchema: Immutable.Map({
-            field1: Immutable.Map({
-              i18nLabel: 'tags',
-              control: Immutable.Map({
-                type: 'ButtonGroup',
-                allowMultipleSelection: false,
-                options: Immutable.List([
-                  Immutable.Map({
-                    i18nText: 'none',
-                    value: null,
-                  }),
-                  Immutable.Map({
-                    i18nText: 'negative',
-                    value: 'negative',
-                  }),
-                  Immutable.Map({
-                    i18nText: 'positive',
-                    value: 'positive',
-                  }),
-                  Immutable.Map({
-                    i18nText: 'uninterpretable',
-                    value: 'uninterpretable',
-                  }),
-                ]),
+            fields: Immutable.Map({
+              field1: Immutable.Map({
+                i18nLabel: 'tags',
+                control: Immutable.Map({
+                  type: 'ButtonGroup',
+                  allowMultipleSelection: false,
+                  options: Immutable.List([
+                    Immutable.Map({
+                      i18nText: 'none',
+                      value: null,
+                    }),
+                    Immutable.Map({
+                      i18nText: 'negative',
+                      value: 'negative',
+                    }),
+                    Immutable.Map({
+                      i18nText: 'positive',
+                      value: 'positive',
+                    }),
+                    Immutable.Map({
+                      i18nText: 'uninterpretable',
+                      value: 'uninterpretable',
+                    }),
+                  ]),
+                }),
+              }),
+              field2: Immutable.Map({
+                i18nLabel: 'fieldFollowup',
+                control: Immutable.Map({
+                  type: 'ButtonGroup',
+                  allowMultipleSelection: false,
+                  options: Immutable.List([
+                    Immutable.Map({
+                      i18nText: 'none',
+                      value: null,
+                    }),
+                    Immutable.Map({
+                      i18nText: 'negative',
+                      value: 'negative',
+                    }),
+                    Immutable.Map({
+                      i18nText: 'positive',
+                      value: 'positive',
+                    }),
+                    Immutable.Map({
+                      i18nText: 'uninterpretable',
+                      value: 'uninterpretable',
+                    }),
+                  ]),
+                }),
               }),
             }),
-            field2: Immutable.Map({
-              i18nLabel: 'fieldFollowup',
-              control: Immutable.Map({
-                type: 'ButtonGroup',
-                allowMultipleSelection: false,
-                options: Immutable.List([
-                  Immutable.Map({
-                    i18nText: 'none',
-                    value: null,
-                  }),
-                  Immutable.Map({
-                    i18nText: 'negative',
-                    value: 'negative',
-                  }),
-                  Immutable.Map({
-                    i18nText: 'positive',
-                    value: 'positive',
-                  }),
-                  Immutable.Map({
-                    i18nText: 'uninterpretable',
-                    value: 'uninterpretable',
-                  }),
-                ]),
-              }),
-            }),
+            sendChangesOn: 'change',
           }),
         }),
       })
@@ -211,62 +223,65 @@ describe('Result Detail screen', () => {
           id: 103897,
           assay: Immutable.Map({}),
           formSchema: Immutable.Map({
-            field1: Immutable.Map({
-              i18nLabel: 'tags',
-              control: Immutable.Map({
-                type: 'ButtonGroup',
-                allowMultipleSelection: false,
-                options: Immutable.List([
-                  Immutable.Map({
-                    i18nText: 'none',
-                    value: null,
-                  }),
-                  Immutable.Map({
-                    i18nText: 'negative',
-                    value: 'negative',
-                  }),
-                  Immutable.Map({
-                    i18nText: 'positive',
-                    value: 'positive',
-                  }),
-                  Immutable.Map({
-                    i18nText: 'uninterpretable',
-                    value: 'uninterpretable',
-                  }),
-                ]),
+            fields: Immutable.Map({
+              field1: Immutable.Map({
+                i18nLabel: 'tags',
+                control: Immutable.Map({
+                  type: 'ButtonGroup',
+                  allowMultipleSelection: false,
+                  options: Immutable.List([
+                    Immutable.Map({
+                      i18nText: 'none',
+                      value: null,
+                    }),
+                    Immutable.Map({
+                      i18nText: 'negative',
+                      value: 'negative',
+                    }),
+                    Immutable.Map({
+                      i18nText: 'positive',
+                      value: 'positive',
+                    }),
+                    Immutable.Map({
+                      i18nText: 'uninterpretable',
+                      value: 'uninterpretable',
+                    }),
+                  ]),
+                }),
+              }),
+              field2: Immutable.Map({
+                i18nLabel: 'fieldFollowup',
+                control: Immutable.Map({
+                  type: 'ButtonGroup',
+                  allowMultipleSelection: false,
+                  options: Immutable.List([
+                    Immutable.Map({
+                      i18nText: 'none',
+                      value: null,
+                    }),
+                    Immutable.Map({
+                      i18nText: 'negative',
+                      value: 'negative',
+                    }),
+                    Immutable.Map({
+                      i18nText: 'positive',
+                      value: 'positive',
+                    }),
+                    Immutable.Map({
+                      i18nText: 'uninterpretable',
+                      value: 'uninterpretable',
+                    }),
+                  ]),
+                }),
+              }),
+              field3: Immutable.Map({
+                i18nLabel: 'fieldFollowup',
+                control: Immutable.Map({
+                  type: 'UnrecognisedType',
+                }),
               }),
             }),
-            field2: Immutable.Map({
-              i18nLabel: 'fieldFollowup',
-              control: Immutable.Map({
-                type: 'ButtonGroup',
-                allowMultipleSelection: false,
-                options: Immutable.List([
-                  Immutable.Map({
-                    i18nText: 'none',
-                    value: null,
-                  }),
-                  Immutable.Map({
-                    i18nText: 'negative',
-                    value: 'negative',
-                  }),
-                  Immutable.Map({
-                    i18nText: 'positive',
-                    value: 'positive',
-                  }),
-                  Immutable.Map({
-                    i18nText: 'uninterpretable',
-                    value: 'uninterpretable',
-                  }),
-                ]),
-              }),
-            }),
-            field3: Immutable.Map({
-              i18nLabel: 'fieldFollowup',
-              control: Immutable.Map({
-                type: 'UnrecognisedType',
-              }),
-            }),
+            sendChangesOn: 'change',
           }),
         }),
       })

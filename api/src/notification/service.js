@@ -1,4 +1,5 @@
 const _ = require('lodash')
+const Promise = require('bluebird')
 const subMinutes = require('date-fns/sub_minutes')
 const { getJobConstraints, addConstraints } = require('../auth/constraints')
 const { notificationCreated } = require('./actions')
@@ -111,13 +112,6 @@ async function listNotifications(request) {
 }
 
 async function onIssueEscalated({ issueId }, { messageContext: context }) {
-  context.bindActionCreators({
-    notificationCreated,
-    alertMessageCreated,
-    emailMessageCreated,
-    smsMessageCreated,
-    webhookMessageCreated,
-  })
   await context.transact(async knex => {
     const now = new Date()
     // Find escalation policy for the issue
@@ -138,6 +132,7 @@ async function onIssueEscalated({ issueId }, { messageContext: context }) {
         'nt.id',
         'nt.jobFunctionId',
         'nt.level',
+        'nt.sendToContactsWithMatchingTags',
         'i.siteId',
         'i.deviceId',
         'i.resultId',
@@ -154,126 +149,154 @@ async function onIssueEscalated({ issueId }, { messageContext: context }) {
     // since we are ordered by, max level at first position and filter all with same
     let jobFunctionId = null
     let jobFunctionLevel = null
-    for (const policy of policies) {
-      /* eslint-disable no-await-in-loop */
-      if (policy.jobFunctionId !== jobFunctionId) {
-        ;({ jobFunctionId, level: jobFunctionLevel } = policy)
-      } else if (policy.level !== jobFunctionLevel) {
-        // This is a lower level for this particular job function
-        // continue until we get to end of list or new job function
-        /* eslint-disable no-continue */
-        continue
-      }
-
-      const people = await knex('Job as j')
-        .join('JobFunction as jf', 'j.jobFunctionId', 'jf.id')
-        .where({ 'jf.id': policy.jobFunctionId })
-        .distinct('j.personId as id')
-      // Issue notification to every person assigned, (subscriber will create as necessary)
-      await Promise.all(
-        people.map(async person => {
-          // does person have job context that can see this issue?
-          const constraints = await getJobConstraints(
-            person.id,
-            policy.jobFunctionId
-          )
-          const issuePermitted = await knex('Issue as i')
-            .leftJoin('Device as d', 'i.deviceId', 'd.id')
-            .leftJoin('Site as s', 'i.siteId', 's.id')
-            .leftJoin('Geography as g', 'i.geographyId', 'g.id')
-            .leftJoin('Partner as p', 'i.partnerId', 'p.id')
-            .modify(addConstraints, constraints, {
-              device: 'd',
-              site: 's',
-              geography: 'g',
-              partner: 'p',
-            })
-            .where({ 'i.id': issueId })
-            .first('i.id')
-          if (issuePermitted != null) {
-            const notification = {
-              issueId,
-              notificationTypeId: policy.id,
-              personId: person.id,
+    await Promise.each(policies, async policy => {
+      if (_.isNil(policy.jobFunctionId)) {
+        await createNotificationIfNotCreatedAlready(
+          { issueId, policy, now },
+          { messageContext: context, knex }
+        )
+      } else {
+        if (policy.jobFunctionId !== jobFunctionId) {
+          ;({ jobFunctionId, level: jobFunctionLevel } = policy)
+        } else if (policy.level !== jobFunctionLevel) {
+          // This is a lower level for this particular job function
+          // continue until we get to end of list or new job function
+          /* eslint-disable no-continue */
+          return Promise.resolve()
+        }
+        const notificationTypeTagIds = policy.sendToContactsWithMatchingTags
+          ? await knex('NotificationTypeTag')
+              .where({ notificationTypeId: policy.id })
+              .pluck('tagId')
+          : []
+        const people = await knex('Job as j')
+          .join('JobFunction as jf', 'j.jobFunctionId', 'jf.id')
+          .modify(queryBuilder => {
+            if (policy.sendToContactsWithMatchingTags) {
+              queryBuilder
+                .join('PersonTag as pt', 'j.personId', 'pt.personId')
+                .whereIn('pt.tagId', notificationTypeTagIds)
             }
-            const existingNotification = await knex('Notification')
-              .where(notification)
-              .first()
-            if (existingNotification == null) {
-              notification.createdOn = now
-              const messageStatusId = await messageStatusToId('Initial')
-              const sharedMessageProperties = {
-                messageStatusId,
-                personId: person.id,
-                siteId: policy.siteId,
-                deviceId: policy.deviceId,
-                resultId: policy.resultId,
-                createdOn: now,
-                updatedOn: now,
-              }
-
-              if (policy.alertTemplateId != null) {
-                const [alertMessageId] = await knex('AlertMessage').insert(
-                  Object.assign(
-                    {
-                      alertTemplateId: policy.alertTemplateId,
-                    },
-                    sharedMessageProperties
-                  )
-                )
-                notification.alertMessageId = alertMessageId
-                context.alertMessageCreated(alertMessageId)
-              }
-
-              if (policy.emailTemplateId != null) {
-                const [emailMessageId] = await knex('EmailMessage').insert(
-                  Object.assign(
-                    {
-                      emailTemplateId: policy.emailTemplateId,
-                    },
-                    sharedMessageProperties
-                  )
-                )
-                notification.emailMessageId = emailMessageId
-                context.emailMessageCreated(emailMessageId)
-              }
-
-              if (policy.smsTemplateId != null) {
-                const [smsMessageId] = await knex('SmsMessage').insert(
-                  Object.assign(
-                    {
-                      smsTemplateId: policy.smsTemplateId,
-                    },
-                    sharedMessageProperties
-                  )
-                )
-                notification.smsMessageId = smsMessageId
-                context.smsMessageCreated(smsMessageId)
-              }
-
-              if (policy.webhookTemplateId != null) {
-                const [webhookMessageId] = await knex('WebhookMessage').insert(
-                  Object.assign(
-                    {
-                      webhookTemplateId: policy.webhookTemplateId,
-                    },
-                    sharedMessageProperties
-                  )
-                )
-                notification.webhookMessageId = webhookMessageId
-                context.webhookMessageCreated(webhookMessageId)
-              }
-
-              const [notificationId] = await knex('Notification').insert(
-                notification
+            queryBuilder.where('jf.id', policy.jobFunctionId)
+          })
+          .distinct('j.personId as id')
+        // Issue notification to every person assigned, (subscriber will create as necessary)
+        await Promise.all(
+          people.map(async person => {
+            // does person have job context that can see this issue?
+            const constraints = await getJobConstraints(
+              person.id,
+              policy.jobFunctionId
+            )
+            const issuePermitted = await knex('Issue as i')
+              .leftJoin('Device as d', 'i.deviceId', 'd.id')
+              .leftJoin('Site as s', 'i.siteId', 's.id')
+              .leftJoin('Geography as g', 'i.geographyId', 'g.id')
+              .leftJoin('Partner as p', 'i.partnerId', 'p.id')
+              .modify(addConstraints, constraints, {
+                device: 'd',
+                site: 's',
+                geography: 'g',
+                partner: 'p',
+              })
+              .where({ 'i.id': issueId })
+              .first('i.id')
+            if (issuePermitted != null) {
+              await createNotificationIfNotCreatedAlready(
+                { issueId, personId: person.id, policy, now },
+                { messageContext: context, knex }
               )
-              context.notificationCreated(notificationId)
             }
-          }
-        })
-      )
-    }
+          })
+        )
+      }
+    })
   })
+}
+
+async function createNotificationIfNotCreatedAlready(
+  { issueId, personId = null, policy, now = new Date() },
+  { messageContext: context, knex }
+) {
+  context.bindActionCreators({
+    notificationCreated,
+    alertMessageCreated,
+    emailMessageCreated,
+    smsMessageCreated,
+    webhookMessageCreated,
+  })
+  const notification = { issueId, notificationTypeId: policy.id, personId }
+  const existingNotification = await knex('Notification')
+    .where(notification)
+    .first()
+  if (!existingNotification) {
+    notification.createdOn = now
+    const messageStatusId = await messageStatusToId('Initial')
+    const sharedMessageProperties = {
+      messageStatusId,
+      personId,
+      siteId: policy.siteId,
+      deviceId: policy.deviceId,
+      resultId: policy.resultId,
+      createdOn: now,
+      updatedOn: now,
+    }
+
+    if (policy.alertTemplateId != null) {
+      const [alertMessageId] = await knex('AlertMessage').insert(
+        Object.assign(
+          {
+            alertTemplateId: policy.alertTemplateId,
+          },
+          sharedMessageProperties
+        )
+      )
+      notification.alertMessageId = alertMessageId
+      context.alertMessageCreated(alertMessageId)
+    }
+
+    if (policy.emailTemplateId != null) {
+      const [emailMessageId] = await knex('EmailMessage').insert(
+        Object.assign(
+          {
+            emailTemplateId: policy.emailTemplateId,
+          },
+          sharedMessageProperties
+        )
+      )
+      notification.emailMessageId = emailMessageId
+      context.emailMessageCreated(emailMessageId)
+    }
+
+    if (policy.smsTemplateId != null) {
+      const [smsMessageId] = await knex('SmsMessage').insert(
+        Object.assign(
+          {
+            smsTemplateId: policy.smsTemplateId,
+          },
+          sharedMessageProperties
+        )
+      )
+      notification.smsMessageId = smsMessageId
+      context.smsMessageCreated(smsMessageId)
+    }
+
+    if (policy.webhookTemplateId != null) {
+      const [webhookMessageId] = await knex('WebhookMessage').insert(
+        Object.assign(
+          {
+            webhookTemplateId: policy.webhookTemplateId,
+          },
+          sharedMessageProperties
+        )
+      )
+      notification.webhookMessageId = webhookMessageId
+      context.webhookMessageCreated(webhookMessageId)
+    }
+
+    const [notificationId] = await knex('Notification').insert(notification)
+    context.notificationCreated(notificationId)
+  }
 }
 
 module.exports = {

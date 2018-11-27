@@ -209,7 +209,7 @@ function addConstraints(queryBuilder, constraints, aliases) {
   }
 
   // data filter constraints are ORed
-  if (!_.isEmpty(constraints)) {
+  if (!_.isEmpty(_.get(constraints, '$or'))) {
     queryBuilder.where(function() {
       for (const constraint of constraints.$or) {
         addConstraintWithJobFunction({

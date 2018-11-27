@@ -40,7 +40,7 @@ const SELECT_LIST_FIELDS = [
   'r.deviceId',
   'stp.name as sampleTypeName',
   knex.raw(
-    'JSON_UNQUOTE(JSON_EXTRACT(r.resultData, "$.resultText")) as resultText'
+    `IFNULL(JSON_UNQUOTE(JSON_EXTRACT(r.resultData, "$.resultText")), CONCAT(IFNULL(rc1.name, ''), '|', IFNULL(rc2.name, ''))) as resultText`
   ),
   knex.raw('JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id")) as patientId'),
 ]
@@ -667,7 +667,7 @@ async function updateFormData(request) {
     const formSchema = JSON.parse(resultForm.formSchema)
     const unrecognisedFields = _.difference(
       Object.keys(payload),
-      Object.keys(formSchema)
+      Object.keys(formSchema.fields)
     )
     if (!_.isEmpty(unrecognisedFields)) {
       const undefinedFieldMessage =
@@ -681,7 +681,7 @@ async function updateFormData(request) {
     const fieldValidationErrors = []
     _.each(Object.keys(payload), formFieldKey => {
       const formFieldValue = _.get(payload, formFieldKey)
-      const formFieldSchema = _.get(formSchema, formFieldKey)
+      const formFieldSchema = _.get(formSchema, ['fields', formFieldKey])
       if (!_.isNil(formFieldValue)) {
         const allowMultipleSelection = _.get(
           formFieldSchema,
