@@ -10,10 +10,14 @@ const config = require('../../src/config')
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 
 async function seed(knex) {
-  const existingUser = await knex('User')
-    .where('name', 'sergio.carmona@nhls.ac.za')
-    .first()
-  if (existingUser) {
+  const usernames = _.map(
+    _.filter(gxAlertContacts, contact => !_.isNil(contact.username)),
+    'username'
+  )
+  const existingUsernames = await knex('User')
+    .whereIn('name', usernames)
+    .select('id')
+  if (existingUsernames.length === usernames.length) {
     return
   }
 
