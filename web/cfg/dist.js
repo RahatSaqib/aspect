@@ -1,8 +1,8 @@
 const webpack = require('webpack')
 const merge = require('webpack-merge')
 const base = require('./base')
+const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin')
 const CompressionPlugin = require('compression-webpack-plugin')
-const HtmlWebpackPlugin = require('html-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin')
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
@@ -43,13 +43,6 @@ const config = () => {
         filename: '[name].[contenthash].css',
         chunkFilename: '[id].[contenthash].css',
       }),
-      new HtmlWebpackPlugin({
-        minify: {
-          removeComments: true,
-          collapseWhitespace: true,
-          removeAttributeQuotes: true,
-        },
-      }),
       new webpack.NamedChunksPlugin(),
       new webpack.HashedModuleIdsPlugin(),
       new CompressionPlugin({
@@ -58,16 +51,34 @@ const config = () => {
         test: /\.(js|css)(\.map)?$/,
         threshold: 10240,
       }),
+      new CaseSensitivePathsPlugin(),
       new BundleAnalyzerPlugin({
-        analyzerMode: 'static',
-        reportFilename: 'bundle-report.html',
         openAnalyzer: true,
       }),
     ],
     optimization: {
+      minimize: true,
       runtimeChunk: 'single',
       splitChunks: {
         chunks: 'all',
+        minSize: 30000,
+        minChunks: 1,
+        maxAsyncRequests: 5,
+        maxInitialRequests: 3,
+        name: true,
+        cacheGroups: {
+          vendor: {
+            chunks: 'all',
+            test: /[\\/]node_modules[\\/]/,
+            name: 'vendor',
+          },
+          main: {
+            chunks: 'all',
+            minChunks: 2,
+            reuseExistingChunk: true,
+            enforce: true,
+          },
+        },
       },
       minimizer: [
         new UglifyJsPlugin({
@@ -88,7 +99,18 @@ const config = () => {
           cache: true,
           parallel: true,
         }),
-        new OptimizeCSSAssetsPlugin(),
+        new OptimizeCSSAssetsPlugin({
+          assetNameRegExp: /\.css$/g,
+          cssProcessorOptions: {
+            safe: true,
+            autoprefixer: { disable: true },
+            mergeLonghand: false,
+            discardComments: {
+              removeAll: true,
+            },
+          },
+          canPrint: true,
+        }),
       ],
     },
   }

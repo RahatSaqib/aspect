@@ -267,7 +267,7 @@
     "jest-bamboo-formatter": "^1.0.1",
     "jest-fetch-mock": "^1.4.0",
     "lint-staged": "^6.0.0",
-    "mini-css-extract-plugin": "^0.4.5",
+    "mini-css-extract-plugin": "0.4.1",
     "npm-run-all": "^4.0.2",
     "null-loader": "^0.1.1",
     "optimize-css-assets-webpack-plugin": "^5.0.1",

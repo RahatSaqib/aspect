@@ -83,8 +83,6 @@ const config = () => {
     },
     plugins: [
       new webpack.EnvironmentPlugin(['NODE_ENV', 'ASPECT_TARGET']),
-      new webpack.NamedModulesPlugin(),
-      new webpack.HotModuleReplacementPlugin(),
       new AutoDllPlugin({
         inject: true,
         debug: true,
@@ -94,6 +92,8 @@ const config = () => {
           vendor,
         },
       }),
+      new webpack.NamedModulesPlugin(),
+      new webpack.HotModuleReplacementPlugin(),
     ],
   }
 }
