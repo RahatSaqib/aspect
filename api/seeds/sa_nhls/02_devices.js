@@ -9,10 +9,11 @@ const {
 } = require('../../src/shared/dictionary')
 
 async function seed(knex) {
-  const existingSites = await knex('Site')
-    .where({ name: 'CHBAH Maternity POCT' })
-    .first('id')
-  if (existingSites) {
+  const clinicExternalIds = _.map(labClinic.clinics, 'externalId')
+  const existingSiteExternalIds = await knex('Site')
+    .whereIn('externalId', clinicExternalIds)
+    .select('id')
+  if (existingSiteExternalIds.length === clinicExternalIds.length) {
     return
   }
   const now = new Date()
@@ -102,33 +103,46 @@ async function seed(knex) {
         },
         auditFields
       )
-      const [siteId] = await knex('Site').insert(siteData)
+      const existingSite = await knex('Site')
+        .where('externalId', clinic.externalId)
+        .first('id')
+      let siteId = 0
+      if (existingSite) {
+        siteId = existingSite.id
+      } else {
+        ;[siteId] = await knex('Site').insert(siteData)
+      }
       siteData.id = siteId
 
       if (clinic.devices) {
         await Promise.all(
-          _.map(clinic.devices, async device =>
-            knex('Device').insert(
-              Object.assign(
-                {
-                  partnerId,
-                  geographyId: clinicGeographyId,
-                  siteId,
-                  deviceTypeId: await deviceTypeToId(device.deviceTypeId),
-                  deviceStatusId: await deviceStatusToId('approved'),
-                  name: `${siteData.shortName} ${device.deviceTypeId} ${
-                    device.deviceSerial
-                  }`,
-                  shortName: `${device.deviceTypeId} ${device.deviceSerial}`,
-                  serial: device.deviceSerial,
-                  culture: southAfricaCountry.culture,
-                  timezone: siteData.timezoneId,
-                  configurationData: '{}',
-                },
-                auditFields
+          _.map(clinic.devices, async device => {
+            const existingDevice = await knex('Device')
+              .where({ siteId, serial: device.deviceSerial })
+              .first('id')
+            if (!existingDevice) {
+              await knex('Device').insert(
+                Object.assign(
+                  {
+                    partnerId,
+                    geographyId: clinicGeographyId,
+                    siteId,
+                    deviceTypeId: await deviceTypeToId(device.deviceTypeId),
+                    deviceStatusId: await deviceStatusToId('approved'),
+                    name: `${siteData.shortName} ${device.deviceTypeId} ${
+                      device.deviceSerial
+                    }`,
+                    shortName: `${device.deviceTypeId} ${device.deviceSerial}`,
+                    serial: device.deviceSerial,
+                    culture: southAfricaCountry.culture,
+                    timezone: siteData.timezoneId,
+                    configurationData: '{}',
+                  },
+                  auditFields
+                )
               )
-            )
-          )
+            }
+          })
         )
       }
     })
