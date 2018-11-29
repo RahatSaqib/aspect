@@ -61,7 +61,7 @@ const routes = [
       notes: 'Proxies reports from GxAlert',
       auth: { scope: ['site', 'device'] },
       timeout: {
-        server: 600000,
+        server: 300000,
         socket: false,
       },
       validate: {
