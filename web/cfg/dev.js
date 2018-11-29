@@ -31,7 +31,6 @@ const vendor = [
   'react-redux',
   'react-router',
   'react-router-dom',
-  'react-tap-event-plugin',
   'recompose',
   'redux',
   'redux-form/immutable',
