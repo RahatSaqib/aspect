@@ -95,19 +95,26 @@ async function seed(knex) {
   await Promise.each(gxAlertContacts, async person => {
     let userId = null
     if (person.username) {
-      const pw = bcrypt.hashSync(person.password, saltRounds)
-      const baseUserData = {
-        password: pw,
-        failedPasswordAttempts: 0,
-        legacyPassword: 1,
-        lockedOut: 0,
+      const existingUser = await knex('User')
+        .where('name', person.username)
+        .first('id')
+      if (existingUser) {
+        userId = existingUser.id
+      } else {
+        const pw = bcrypt.hashSync(person.password, saltRounds)
+        const baseUserData = {
+          password: pw,
+          failedPasswordAttempts: 0,
+          legacyPassword: 1,
+          lockedOut: 0,
+        }
+        ;[userId] = await knex('User').insert({
+          name: person.username,
+          approved: 1,
+          createdOn: now,
+          ...baseUserData,
+        })
       }
-      ;[userId] = await knex('User').insert({
-        name: person.username,
-        approved: 1,
-        createdOn: now,
-        ...baseUserData,
-      })
     }
 
     const province = person.stateName
@@ -134,24 +141,30 @@ async function seed(knex) {
         lgaId: district.id,
       })
       .first()
-
-    const [personId] = await knex('Person').insert({
-      name: person.personName,
-      timezone: person.timezone,
-      culture: person.culture,
-      geographyId,
-      title: person.title,
-      email: person.emailAddress,
-      cell: person.mobile,
-      userId,
-      lastPartnerId: partnerId,
-      lastCountryId: countryId,
-      hidePatientId: person.hidePatientId,
-      hideSampleId: person.hideSampleId,
-      hideNotes: person.hideNotes,
-      ...auditFields,
-    })
-
+    let personId = null
+    const existingPerson = await knex('Person')
+      .where({ name: person.username, title: person.title })
+      .first('id')
+    if (existingPerson) {
+      personId = existingPerson.id
+    } else {
+      ;[personId] = await knex('Person').insert({
+        name: person.personName,
+        timezone: person.timezone,
+        culture: person.culture,
+        geographyId,
+        title: person.title,
+        email: person.emailAddress,
+        cell: person.mobile,
+        userId,
+        lastPartnerId: partnerId,
+        lastCountryId: countryId,
+        hidePatientId: person.hidePatientId,
+        hideSampleId: person.hideSampleId,
+        hideNotes: person.hideNotes,
+        ...auditFields,
+      })
+    }
     if (!_.isEmpty(person.tags)) {
       const tagsInDatabase = await knex('Tag')
         .whereIn('title', person.tags)
@@ -186,17 +199,22 @@ async function seed(knex) {
         knex('PersonTag').insert({ tagId: tag.id, personId })
       )
     }
-    const [jobId] = await knex('Job').insert({
-      personId,
-      jobFunctionId: jobFunctions[person.jobFunctionId],
-    })
-    if (jobFunctions[person.jobFunctionId] === jobFunctionIdLabUser) {
-      await knex('JobContext').insert({
-        jobId,
-        siteId: siteIds[person.deploymentShortName],
+    const existingJob = await knex('Job')
+      .where({ personId, jobFunctionId: jobFunctions[person.jobFunctionId] })
+      .first()
+    if (!existingJob) {
+      const [jobId] = await knex('Job').insert({
+        personId,
+        jobFunctionId: jobFunctions[person.jobFunctionId],
       })
-    } else {
-      await knex('JobContext').insert({ jobId, geographyId })
+      if (jobFunctions[person.jobFunctionId] === jobFunctionIdLabUser) {
+        await knex('JobContext').insert({
+          jobId,
+          siteId: siteIds[person.deploymentShortName],
+        })
+      } else {
+        await knex('JobContext').insert({ jobId, geographyId })
+      }
     }
   })
 }
