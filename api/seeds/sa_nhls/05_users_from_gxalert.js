@@ -143,7 +143,7 @@ async function seed(knex) {
       .first()
     let personId = null
     const existingPerson = await knex('Person')
-      .where({ name: person.username, title: person.title })
+      .where({ name: person.personName, title: person.title })
       .first('id')
     if (existingPerson) {
       personId = existingPerson.id
