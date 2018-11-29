@@ -60,6 +60,10 @@ const routes = [
       description: 'Gx Alert Reports',
       notes: 'Proxies reports from GxAlert',
       auth: { scope: ['site', 'device'] },
+      timeout: {
+        server: 600000,
+        socket: false,
+      },
       validate: {
         params: {
           reportName: Joi.string()
