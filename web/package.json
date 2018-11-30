@@ -6,46 +6,46 @@
   "main": "",
   "scripts": {
     "styleguide": "styleguidist server",
-    "start": "webpack-dev-server --config cfg/dev.js --open --inline --hot --env.ASPECT_TARGET=local",
+    "start":
+      "webpack-dev-server --config cfg/dev.js --open --inline --hot --env.ASPECT_TARGET=local",
     "dist": "webpack --config cfg/dist.js --env.ASPECT_TARGET=dist",
-    "pretest": "fsys --task=remove --fileFolder=coverage && fsys --task=remove --fileFolder=mocha.json",
-    "test": "cross-env ASPECT_TARGET=test BABEL_ENV=test JEST_FILE=mocha.json jest --coverage",
+    "pretest":
+      "fsys --task=remove --fileFolder=coverage && fsys --task=remove --fileFolder=mocha.json",
+    "test":
+      "cross-env ASPECT_TARGET=test BABEL_ENV=test JEST_FILE=mocha.json jest --coverage",
     "test:snapshot": "npm run test -- -u",
     "test:watch": "npm run test -- --watch",
     "posttest": "npm run lint",
-    "preupdatemessages:start": "cross-env BABEL_ENV=message babel --quiet --out-dir ./i18n/dist ./src",
-    "updatemessages:start": "rip json2pot \"./i18n/src/**/*.json\" -o ./src/shared/i18n/diff.pot",
-    "updatemessages:end": "rip po2json \"./src/shared/i18n/web.*.po\" -m \"./i18n/src/**/*.json\" -o ./src/shared/i18n/translation.json",
-    "postupdatemessages:end": "fsys --task=remove --fileFolder=i18n && fsys --task=remove --fileFolder=src/shared/i18n/diff.pot",
+    "preupdatemessages:start":
+      "cross-env BABEL_ENV=message babel --quiet --out-dir ./i18n/dist ./src",
+    "updatemessages:start":
+      "rip json2pot \"./i18n/src/**/*.json\" -o ./src/shared/i18n/diff.pot",
+    "updatemessages:end":
+      "rip po2json \"./src/shared/i18n/web.*.po\" -m \"./i18n/src/**/*.json\" -o ./src/shared/i18n/translation.json",
+    "postupdatemessages:end":
+      "fsys --task=remove --fileFolder=i18n && fsys --task=remove --fileFolder=src/shared/i18n/diff.pot",
     "prettier": "prettier --no-semi --single-quote --trailing-comma=es5",
     "prettier:write": "npm run prettier -- --write \"./src/**/*.{js,jsx,css}\"",
-    "lint": "eslint . --ext .js --ext .jsx --ignore-pattern coverage/ --ignore-pattern dist/",
-    "release:major": "npm version major && npm publish && git push --follow-tags",
-    "release:minor": "npm version minor && npm publish && git push --follow-tags",
-    "release:patch": "npm version patch && npm publish && git push --follow-tags",
+    "lint":
+      "eslint . --ext .js --ext .jsx --ignore-pattern coverage/ --ignore-pattern dist/",
+    "release:major":
+      "npm version major && npm publish && git push --follow-tags",
+    "release:minor":
+      "npm version minor && npm publish && git push --follow-tags",
+    "release:patch":
+      "npm version patch && npm publish && git push --follow-tags",
     "precommit": "lint-staged"
   },
   "lint-staged": {
     "linters": {
-      "web/cfg/**/*.js": [
-        "eslint --fix",
-        "git add"
-      ],
-      "web/src/**/*.css": [
-        "prettier --write",
-        "git add"
-      ],
-      "web/src/**/*.js": [
-        "eslint --fix",
-        "git add"
-      ],
-      "web/src/**/*.jsx": [
-        "eslint --fix",
-        "git add"
-      ]
+      "web/cfg/**/*.js": ["eslint --fix", "git add"],
+      "web/src/**/*.css": ["prettier --write", "git add"],
+      "web/src/**/*.js": ["eslint --fix", "git add"],
+      "web/src/**/*.jsx": ["eslint --fix", "git add"]
     }
   },
   "jest": {
+    "verbose": true,
     "setupFiles": [
       "<rootDir>/src/__setup__/polyfills.js",
       "<rootDir>/src/__setup__/mockDate.js",
@@ -53,12 +53,13 @@
       "<rootDir>/src/__setup__/enzyme.js"
     ],
     "moduleNameMapper": {
-      "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$": "<rootDir>/src/__mocks__/fileMock.js",
+      "\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$":
+        "<rootDir>/src/__mocks__/fileMock.js",
       "\\.scss$": "<rootDir>/src/__mocks__/globalStyleMock.js",
       "\\.css$": "identity-obj-proxy"
     },
     "testResultsProcessor": "jest-bamboo-formatter"
-  }, 
+  },
   "repository": "",
   "keywords": [],
   "author": "SystemOne",
@@ -119,7 +120,7 @@
     "html-webpack-plugin": "^3.2.0",
     "husky": "^0.14.0",
     "identity-obj-proxy": "^3.0.0",
-    "jest": "^21.2.0",
+    "jest": "^23.6.0",
     "jest-bamboo-formatter": "^1.0.1",
     "jest-fetch-mock": "^1.4.0",
     "lint-staged": "^6.0.0",
