@@ -368,7 +368,6 @@ async function onResultLogged({ resultId }, { messageContext }) {
       .count('r.id as noResultCount')
 
     const [{ powerErrorCount }] = await knex('Result as r')
-      .innerJoin('ResultCategory as rc', 'r.resultCategory1', 'rc.id')
       .where('r.deviceId', deviceId)
       .where('r.endedOn', '>=', last30day)
       .whereIn('r.errorCode', MODULE_POWER_ERROR_CODES)
