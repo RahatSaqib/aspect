@@ -5,7 +5,7 @@ exports[`Device Status component should shallow render correctly 1`] = `
   composeTheme="deeply"
   mapThemrProps={[Function]}
 >
-  <Unknown
+  <Title
     icon={
       <MdDescription
         className="Title__Icon"
@@ -14,13 +14,13 @@ exports[`Device Status component should shallow render correctly 1`] = `
     title="Devices"
   />
   <div>
-    <Unknown
+    <Unit
       lg="1-4"
       sm="1-2"
     >
       <CountryWithPoints />
-    </Unknown>
-    <Unknown
+    </Unit>
+    <Unit
       lg="1-4"
       sm="1-2"
     >
@@ -64,8 +64,8 @@ exports[`Device Status component should shallow render correctly 1`] = `
         }
         title="operational devices"
       />
-    </Unknown>
-    <Unknown
+    </Unit>
+    <Unit
       lg="1-4"
       sm="1-2"
     >
@@ -147,8 +147,8 @@ exports[`Device Status component should shallow render correctly 1`] = `
         }
         title="calibration"
       />
-    </Unknown>
-    <Unknown
+    </Unit>
+    <Unit
       lg="1-4"
       sm="1-2"
     >
@@ -230,7 +230,7 @@ exports[`Device Status component should shallow render correctly 1`] = `
         }
         title="test failures"
       />
-    </Unknown>
+    </Unit>
   </div>
 </ThemedCard>
 `;

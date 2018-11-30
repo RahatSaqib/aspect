@@ -71,7 +71,7 @@ module.exports = {
         ],
         '@babel/preset-react',
       ],
-      plugins,
+      plugins: [...plugins, 'babel-plugin-dynamic-import-node'],
     },
     message: {
       presets: [

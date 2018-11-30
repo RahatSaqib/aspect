@@ -48,7 +48,7 @@ exports[`NotificationList module NotificationList component should render correc
     <DataTableProgressBar
       disabled={true}
     />
-    <pure(withHandlers(Component))
+    <pure(withHandlers(EmptyList))
       intl={
         Object {
           "defaultFormats": Object {},

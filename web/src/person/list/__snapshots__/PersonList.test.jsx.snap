@@ -39,7 +39,7 @@ exports[`Person List module PersonList component should shallow render correctly
     <DataTableProgressBar
       disabled={true}
     />
-    <pure(withHandlers(Component))
+    <pure(withHandlers(EmptyList))
       history={
         Object {
           "push": [Function],

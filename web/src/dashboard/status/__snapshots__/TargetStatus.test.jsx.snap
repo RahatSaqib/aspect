@@ -9,7 +9,7 @@ exports[`Target Status component should shallow render correctly 1`] = `
   <div
     className="TitleContainer"
   >
-    <Unknown
+    <Title
       icon={
         <Icon
           className="Title__Icon"
@@ -31,7 +31,7 @@ exports[`Target Status component should shallow render correctly 1`] = `
       className="TargetItemBlockContainer"
     >
       Immutable.List [
-        <Unknown
+        <Unit
           className="TargetItemBlock"
           sm="1-4"
           xs="1-4"
@@ -76,8 +76,8 @@ exports[`Target Status component should shallow render correctly 1`] = `
           >
             Patient Data Collection 59.53%
           </div>
-        </Unknown>,
-        <Unknown
+        </Unit>,
+        <Unit
           className="TargetItemBlock"
           sm="1-4"
           xs="1-4"
@@ -122,8 +122,8 @@ exports[`Target Status component should shallow render correctly 1`] = `
           >
             Patient Data Collection 45%
           </div>
-        </Unknown>,
-        <Unknown
+        </Unit>,
+        <Unit
           className="TargetItemBlock"
           sm="1-4"
           xs="1-4"
@@ -168,7 +168,7 @@ exports[`Target Status component should shallow render correctly 1`] = `
           >
             Patient Data Collection 75%
           </div>
-        </Unknown>,
+        </Unit>,
       ]
     </div>
   </div>
