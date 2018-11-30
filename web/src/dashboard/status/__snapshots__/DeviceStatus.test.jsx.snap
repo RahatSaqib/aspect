@@ -2,7 +2,6 @@
 
 exports[`Device Status component should shallow render correctly 1`] = `
 <ThemedCard
-  className={undefined}
   composeTheme="deeply"
   mapThemrProps={[Function]}
 >
@@ -19,11 +18,7 @@ exports[`Device Status component should shallow render correctly 1`] = `
       lg="1-4"
       sm="1-2"
     >
-      <CountryWithPoints
-        countryIsoAlpha2Code={undefined}
-        fill={undefined}
-        points={undefined}
-      />
+      <CountryWithPoints />
     </Unknown>
     <Unknown
       lg="1-4"
@@ -67,9 +62,6 @@ exports[`Device Status component should shallow render correctly 1`] = `
             },
           ]
         }
-        onClick={undefined}
-        onMouseEnter={undefined}
-        onMouseLeave={undefined}
         title="operational devices"
       />
     </Unknown>
@@ -114,9 +106,6 @@ exports[`Device Status component should shallow render correctly 1`] = `
             },
           ]
         }
-        onClick={undefined}
-        onMouseEnter={undefined}
-        onMouseLeave={undefined}
         title="warranty expiring"
       />
       <SummaryItemsBlock
@@ -156,9 +145,6 @@ exports[`Device Status component should shallow render correctly 1`] = `
             },
           ]
         }
-        onClick={undefined}
-        onMouseEnter={undefined}
-        onMouseLeave={undefined}
         title="calibration"
       />
     </Unknown>
@@ -203,9 +189,6 @@ exports[`Device Status component should shallow render correctly 1`] = `
             },
           ]
         }
-        onClick={undefined}
-        onMouseEnter={undefined}
-        onMouseLeave={undefined}
         title="uploading data"
       />
       <SummaryItemsBlock
@@ -245,9 +228,6 @@ exports[`Device Status component should shallow render correctly 1`] = `
             },
           ]
         }
-        onClick={undefined}
-        onMouseEnter={undefined}
-        onMouseLeave={undefined}
         title="test failures"
       />
     </Unknown>

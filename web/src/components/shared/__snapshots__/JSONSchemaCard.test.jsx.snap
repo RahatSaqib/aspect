@@ -49,7 +49,6 @@ exports[`JSONSchemaCard module JSONSchemaCard testInstance should render correct
     <div
       className="Header"
       onClick={[Function]}
-      onKeyDown={undefined}
       role="button"
       tabIndex="0"
     >
@@ -65,7 +64,6 @@ exports[`JSONSchemaCard module JSONSchemaCard testInstance should render correct
         className=" Header__Icon"
         data-react-toolbox="button"
         disabled={false}
-        href={undefined}
         onMouseDown={[Function]}
         onMouseLeave={[Function]}
         onMouseUp={[Function]}
@@ -125,7 +123,6 @@ exports[`JSONSchemaCard module PropertiesSchemaCard testInstance should handle n
   <div
     className="Header"
     onClick={[Function]}
-    onKeyDown={undefined}
     role="button"
     tabIndex="0"
   >
@@ -141,7 +138,6 @@ exports[`JSONSchemaCard module PropertiesSchemaCard testInstance should handle n
       className=" Header__Icon"
       data-react-toolbox="button"
       disabled={false}
-      href={undefined}
       onMouseDown={[Function]}
       onMouseLeave={[Function]}
       onMouseUp={[Function]}

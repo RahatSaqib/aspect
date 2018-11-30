@@ -529,7 +529,6 @@ exports[`UserPreferencesForm module UserPreferencesForm component should disable
           },
         ]
       }
-      value={undefined}
       valueKey="id"
     />
     <ThemedDropdown
@@ -559,7 +558,6 @@ exports[`UserPreferencesForm module UserPreferencesForm component should disable
         ]
       }
       template={[Function]}
-      value={undefined}
       valueKey="culture"
     />
   </div>
@@ -1113,7 +1111,6 @@ exports[`UserPreferencesForm module UserPreferencesForm component should enable 
           },
         ]
       }
-      value={undefined}
       valueKey="id"
     />
     <ThemedDropdown
@@ -1143,7 +1140,6 @@ exports[`UserPreferencesForm module UserPreferencesForm component should enable 
         ]
       }
       template={[Function]}
-      value={undefined}
       valueKey="culture"
     />
   </div>
@@ -1697,7 +1693,6 @@ exports[`UserPreferencesForm module UserPreferencesForm component should shallow
           },
         ]
       }
-      value={undefined}
       valueKey="id"
     />
     <ThemedDropdown
@@ -1727,7 +1722,6 @@ exports[`UserPreferencesForm module UserPreferencesForm component should shallow
         ]
       }
       template={[Function]}
-      value={undefined}
       valueKey="culture"
     />
   </div>

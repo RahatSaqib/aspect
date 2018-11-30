@@ -13,8 +13,6 @@ exports[`NotificationList module NotificationList component should render correc
     title="Notifications"
   />
   <pure(withProps(withHandlers(Connect(lifecycle(BrowseFilters)))))
-    config={undefined}
-    history={undefined}
     intl={
       Object {
         "defaultFormats": Object {},
@@ -51,7 +49,6 @@ exports[`NotificationList module NotificationList component should render correc
       disabled={true}
     />
     <pure(withHandlers(Component))
-      history={undefined}
       intl={
         Object {
           "defaultFormats": Object {},

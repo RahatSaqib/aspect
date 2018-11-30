@@ -1,9 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Summary Status component should shallow render correctly 1`] = `
-<div
-  className={undefined}
->
+<div>
   <Unknown
     lg="1-4"
     sm="1-2"

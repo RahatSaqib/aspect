@@ -21,11 +21,7 @@ exports[`Target Status component should shallow render correctly 1`] = `
     <div
       className="FiltersGroup__Child FiltersGroup__Child--dropdown"
     >
-      <mapProps(ThemedDropdown)
-        onChange={undefined}
-        source={undefined}
-        value={undefined}
-      />
+      <mapProps(ThemedDropdown) />
     </div>
   </div>
   <div

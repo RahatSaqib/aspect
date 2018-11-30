@@ -13,7 +13,6 @@ exports[`Person List module PersonList component should shallow render correctly
     title="Contacts"
   />
   <pure(withProps(withHandlers(Connect(lifecycle(BrowseFilters)))))
-    config={undefined}
     history={
       Object {
         "push": [Function],

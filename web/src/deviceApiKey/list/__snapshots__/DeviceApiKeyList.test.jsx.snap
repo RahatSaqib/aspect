@@ -13,7 +13,6 @@ exports[`Device Api Key List module DeviceApiKeyList component should shallow re
     title="Device API Keys"
   />
   <pure(withProps(withHandlers(Connect(lifecycle(BrowseFilters)))))
-    config={undefined}
     history={
       Object {
         "push": [Function],
@@ -160,7 +159,6 @@ exports[`Device Api Key List module DeviceApiKeyList component should shallow re
     title="Device API Keys"
   />
   <pure(withProps(withHandlers(Connect(lifecycle(BrowseFilters)))))
-    config={undefined}
     history={
       Object {
         "push": [Function],
