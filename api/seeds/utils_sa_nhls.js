@@ -12,6 +12,7 @@ async function seedNotifications(knex, { partnerId }) {
   const redCapUrl = _.get(config, 'webhook.redcap.url')
   const redCapAuthToken = _.get(config, 'webhook.redcap.authToken')
   if (!redCapUrl || !redCapAuthToken) {
+    // eslint-disable-next-line no-console
     console.error(
       'Missing RedCAP webhook environment variables. Ensure that webhook.redcap.url and webhook.redcap.authToken are set in .env'
     )
