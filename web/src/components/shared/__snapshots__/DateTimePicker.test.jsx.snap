@@ -1,0 +1,41 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DateTimePicker component should shallow render correctly 1`] = `
+<div>
+  <TextField
+    disabled={false}
+    floatingLabelFixed={false}
+    fullWidth={false}
+    multiLine={false}
+    name="datetime"
+    onClick={[Function]}
+    readOnly={true}
+    rows={1}
+    type="text"
+    underlineShow={true}
+    value="2018-11-05 15:30:00"
+  />
+  <DatePickerDialog
+    DateTimeFormat={[Function]}
+    autoOk={true}
+    cancelLabel="Cancel"
+    container="dialog"
+    firstDayOfWeek={1}
+    initialDate={2018-11-05T07:30:00.000Z}
+    locale="en-US"
+    mode="portrait"
+    okLabel="OK"
+    onAccept={[Function]}
+    openToYearSelection={false}
+  />
+  <TimePickerDialog
+    autoOk={true}
+    cancelLabel="Cancel"
+    format="24hr"
+    initialDate={2018-11-05T07:30:00.000Z}
+    minutesStep={1}
+    okLabel="OK"
+    onAccept={[Function]}
+  />
+</div>
+`;
