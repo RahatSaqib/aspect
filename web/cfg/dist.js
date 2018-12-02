@@ -81,24 +81,7 @@ const config = () => {
         },
       },
       minimizer: [
-        new UglifyJsPlugin({
-          uglifyOptions: {
-            mangle: false,
-            beautify: false,
-            comments: false,
-            toplevel: false,
-            sourceMap: true,
-            cache: true,
-            keep_classnames: true,
-            keep_fnames: true,
-            compress: {
-              drop_console: true,
-            },
-          },
-          sourceMap: false,
-          cache: true,
-          parallel: true,
-        }),
+        new UglifyJsPlugin(),
         new OptimizeCSSAssetsPlugin({
           assetNameRegExp: /\.css$/g,
           cssProcessorOptions: {

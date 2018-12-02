@@ -49,11 +49,10 @@ const config = () => {
     mode: 'development',
     entry: [
       'core-js/es6/symbol',
-      'react-hot-loader/patch',
       'webpack-dev-server/client?http://localhost:8000',
       'webpack/hot/only-dev-server',
     ],
-    devtool: 'cheap-module-eval-source-map',
+    devtool: 'inline-source-map',
     module: {
       rules: [
         {
@@ -92,7 +91,6 @@ const config = () => {
         },
       }),
       new webpack.NamedModulesPlugin(),
-      new webpack.HotModuleReplacementPlugin(),
     ],
   }
 }
