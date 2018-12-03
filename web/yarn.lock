@@ -800,7 +800,7 @@
   version "8.0.56"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-8.0.56.tgz#c4652f88d7a677e26ccc16c1485c282ce28f1ce9"
 
-"@types/prop-types@^15.5.2":
+"@types/prop-types@^15.5.6":
   version "15.5.6"
   resolved "https://registry.yarnpkg.com/@types/prop-types/-/prop-types-15.5.6.tgz#9c03d3fed70a8d517c191b7734da2879b50ca26c"
 
@@ -5127,7 +5127,7 @@ hoek@4.x.x:
 
 hoist-non-react-statics@^1.2.0:
   version "1.2.0"
-  resolved "https://registry.yarnpkg.com/hoist-non-react-statics/-/hoist-non-react-statics-1.2.0.tgz#aa448cf0986d55cc40773b17174b7dd066cb7cfb"
+  resolved "http://registry.npmjs.org/hoist-non-react-statics/-/hoist-non-react-statics-1.2.0.tgz#aa448cf0986d55cc40773b17174b7dd066cb7cfb"
 
 hoist-non-react-statics@^2.2.1, hoist-non-react-statics@^2.3.0, hoist-non-react-statics@^2.3.1:
   version "2.3.1"
@@ -9285,10 +9285,6 @@ railroad-diagrams@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/railroad-diagrams/-/railroad-diagrams-1.0.0.tgz#eb7e6267548ddedfb899c1b90e57374559cddb7e"
 
-ramda@^0.23.0:
-  version "0.23.0"
-  resolved "https://registry.yarnpkg.com/ramda/-/ramda-0.23.0.tgz#ccd13fff73497a93974e3e86327bfd87bd6e8e2b"
-
 ramda@^0.24.1:
   version "0.24.1"
   resolved "https://registry.yarnpkg.com/ramda/-/ramda-0.24.1.tgz#c3b7755197f35b8dc3502228262c4c91ddb6b857"
@@ -9578,9 +9574,9 @@ react-side-effect@^1.1.0:
     exenv "^1.2.1"
     shallowequal "^1.0.1"
 
-react-style-proptype@^3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/react-style-proptype/-/react-style-proptype-3.0.0.tgz#89e0b646f266c656abb0f0dd8202dbd5036c31e6"
+react-style-proptype@^3.2.2:
+  version "3.2.2"
+  resolved "https://registry.yarnpkg.com/react-style-proptype/-/react-style-proptype-3.2.2.tgz#d8e998e62ce79ec35b087252b90f19f1c33968a0"
   dependencies:
     prop-types "^15.5.4"
 
@@ -9658,17 +9654,17 @@ react-test-renderer@^16.0.0-0, react-test-renderer@^16.6.3:
     react-is "^16.6.3"
     scheduler "^0.11.2"
 
-react-toolbox@^2.0.0-beta.13:
+"react-toolbox@https://github.com/react-toolbox/react-toolbox#dev":
   version "2.0.0-beta.13"
-  resolved "https://registry.yarnpkg.com/react-toolbox/-/react-toolbox-2.0.0-beta.13.tgz#43f80c2e672ebb8bd56baff24167f65e88858950"
+  resolved "https://github.com/react-toolbox/react-toolbox#dab5a985c422c5ce805215957e32f6b30b3d9744"
   dependencies:
-    "@types/prop-types" "^15.5.2"
-    classnames "^2.2.5"
-    core-js "^2.4.0"
-    ramda "^0.23.0"
+    "@babel/runtime" "^7.1.2"
+    "@types/prop-types" "^15.5.6"
+    classnames "^2.2.6"
+    core-js "^2.5.7"
     react-css-themr "^2.1.2"
-    react-style-proptype "^3.0.0"
-    react-transition-group "^2.2.1"
+    react-style-proptype "^3.2.2"
+    react-transition-group "^2.5.0"
 
 react-transition-group@^1.1.3, react-transition-group@^1.2.1:
   version "1.2.1"
@@ -9680,7 +9676,7 @@ react-transition-group@^1.1.3, react-transition-group@^1.2.1:
     prop-types "^15.5.6"
     warning "^3.0.0"
 
-react-transition-group@^2.2.1:
+react-transition-group@^2.5.0:
   version "2.5.0"
   resolved "https://registry.yarnpkg.com/react-transition-group/-/react-transition-group-2.5.0.tgz#70bca0e3546102c4dc5cf3f5f57f73447cce6874"
   dependencies:

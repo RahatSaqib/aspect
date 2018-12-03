@@ -9,7 +9,7 @@ It's already themed by `context`, where you can think it's defined like this:
 ```css
 .check {
   ……
-  composes: check from 'react-toolbox/lib/checkbox/theme.css';
+  composes: check from 'react-toolbox/lib/checkbox/theme.module.css';
   composes: check from 'src/components/themedReactToolbox/Checkbox.css';
   ……
 }

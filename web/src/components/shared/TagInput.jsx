@@ -5,7 +5,7 @@ import { compose, mapProps, withHandlers } from 'recompose'
 import { Input } from 'react-toolbox/lib/input'
 import { Chip } from 'react-toolbox/lib/chip'
 import { AUTOCOMPLETE, CHIP } from 'react-toolbox/lib/identifiers'
-import theme from 'react-toolbox/lib/autocomplete/theme.css'
+import theme from 'react-toolbox/lib/autocomplete/theme.module.css'
 import { autocompleteFactory } from '../../components/themedReactToolbox/ForkedAutocomplete'
 
 const cssClasses = classnames.bind(require('./TagInput.css'))

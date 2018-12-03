@@ -61,7 +61,7 @@ exports[`JSONSchemaCard module JSONSchemaCard testInstance should render correct
         className="Header__Content"
       />
       <button
-        className=" Header__Icon"
+        className="Header__Icon"
         data-react-toolbox="button"
         disabled={false}
         onMouseDown={[Function]}
@@ -135,7 +135,7 @@ exports[`JSONSchemaCard module PropertiesSchemaCard testInstance should handle n
       className="Header__Content"
     />
     <button
-      className=" Header__Icon"
+      className="Header__Icon"
       data-react-toolbox="button"
       disabled={false}
       onMouseDown={[Function]}

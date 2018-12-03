@@ -42,3 +42,8 @@
   background-color: var(--aspect-color-grey-5);
   border: none;
 }
+
+.dropdown {
+  composes: dropdown from 'react-toolbox/lib/dropdown/theme.module.css'; /* dependency */  
+  outline-style: none;
+}
