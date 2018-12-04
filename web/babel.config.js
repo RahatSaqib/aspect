@@ -31,17 +31,6 @@ const plugins = [
   '@babel/plugin-proposal-do-expressions',
 ]
 
-// if (process.env.BABEL_ENV === 'test') {
-//   plugins.push('dynamic-import-node')
-// } else if (process.env.BABEL_ENV === 'message') {
-//   plugins.push([
-//     'babel-plugin-react-intl',
-//     {
-//       messagesDir: './i18n',
-//     },
-//   ])
-// }
-
 module.exports = {
   env: {
     webpack: {
@@ -78,16 +67,22 @@ module.exports = {
         [
           '@babel/preset-env',
           {
-            modules: false,
-            useBuiltIns: 'usage',
             targets: {
-              browsers: ['last 2 versions'],
+              node: 'current',
             },
           },
         ],
         '@babel/preset-react',
       ],
-      plugins,
+      plugins: [
+        ...plugins,
+        [
+          'babel-plugin-react-intl',
+          {
+            messagesDir: './i18n',
+          },
+        ],
+      ],
     },
   },
 }

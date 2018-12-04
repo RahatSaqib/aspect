@@ -12,12 +12,17 @@ exports[`DateTimePicker component should shallow render correctly 1`] = `
     readOnly={true}
     rows={1}
     type="text"
+    underlineFocusStyle={
+      Object {
+        "borderColor": "#3F51B5",
+      }
+    }
     underlineShow={true}
     value="2018-11-05 15:30:00"
   />
   <DatePickerDialog
     DateTimeFormat={[Function]}
-    autoOk={true}
+    autoOk={false}
     cancelLabel="Cancel"
     container="dialog"
     firstDayOfWeek={1}
@@ -29,7 +34,7 @@ exports[`DateTimePicker component should shallow render correctly 1`] = `
     openToYearSelection={false}
   />
   <TimePickerDialog
-    autoOk={true}
+    autoOk={false}
     cancelLabel="Cancel"
     format="24hr"
     initialDate={2018-11-05T07:30:00.000Z}
