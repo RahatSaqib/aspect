@@ -52,7 +52,7 @@ const config = () => {
       'webpack-dev-server/client?http://localhost:8000',
       'webpack/hot/only-dev-server',
     ],
-    devtool: 'inline-source-map',
+    devtool: 'cheap-module-eval-source-map',
     module: {
       rules: [
         {
@@ -84,8 +84,8 @@ const config = () => {
       new AutoDllPlugin({
         inject: true,
         debug: true,
-        filename: '[name]_[hash].js',
-        path: './dll',
+        filename: '[name]_dll.js',
+        path: './',
         entry: {
           vendor,
         },

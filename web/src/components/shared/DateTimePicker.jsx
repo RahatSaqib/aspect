@@ -56,12 +56,15 @@ class DateTimePicker extends Component {
           name="datetime"
           value={this.getDisplayDate()}
           onClick={this.openDatePicker}
+          underlineFocusStyle={{
+            borderColor: '#3F51B5',
+          }}
           readOnly
         />
         <DatePickerDialog
           ref={this.datePickerRef}
           initialDate={dateTime}
-          autoOk
+          autoOk={false}
           mode="portrait"
           firstDayOfWeek={1}
           onAccept={this.selectDate}
@@ -71,7 +74,7 @@ class DateTimePicker extends Component {
           initialDate={dateTime}
           format="24hr"
           minutesStep={1}
-          autoOk
+          autoOk={false}
           onAccept={this.selectTime}
         />
       </div>
