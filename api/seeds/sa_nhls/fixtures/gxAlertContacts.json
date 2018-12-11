@@ -26,14 +26,15 @@
     "title": "Dr",
     "hidePatientId": false,
     "hideSampleId": false,
-    "hideNotes": false
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
   },
   {
     "personName": "Sonjiha Khan",
     "jobFunctions": ["Lab User"],
     "emailAddress": "sonjiha.khan@wits.ac.za",
-    "username": null,
-    "password": null,
+    "username": "sonjiha.khan@wits.ac.za",
+    "password": "J2Rt7phPT0",
     "mobile": "+27795024672",
     "tags": ["EID+RMMCH", "VL>50RMMCH", "EID+", "HIV-VL>50"],
     "stateName": "Gauteng",
@@ -44,14 +45,15 @@
     "title": "Lab Contact",
     "hidePatientId": true,
     "hideSampleId": true,
-    "hideNotes": true
+    "hideNotes": true,
+    "getPasswordFromGxAlert": false
   },
   {
     "personName": "Ms Ntaoleng Moreko",
     "jobFunctions": ["Regional Officer", "Lab User"],
     "emailAddress": "ntaolengmoreko@gmail.com",
-    "username": null,
-    "password": null,
+    "username": "ntaolengmoreko@gmail.com",
+    "password": "i73xNtNlZS",
     "mobile": "+27739023780",
     "tags": ["EID+CHBAH", "VL>50CHBAH", "EID+", "HIV-VL>50"],
     "stateName": "Gauteng",
@@ -62,7 +64,8 @@
     "title": "NICD",
     "hidePatientId": true,
     "hideSampleId": true,
-    "hideNotes": true
+    "hideNotes": true,
+    "getPasswordFromGxAlert": false
   },
   {
     "personName": "Dr. Thomas",
@@ -80,7 +83,8 @@
     "title": "Doctor",
     "hidePatientId": false,
     "hideSampleId": false,
-    "hideNotes": false
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
   },
   {
     "personName": "Dr. Nakwa",
@@ -98,7 +102,8 @@
     "title": null,
     "hidePatientId": false,
     "hideSampleId": false,
-    "hideNotes": false
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
   },
   {
     "personName": "Dr. Sono",
@@ -116,7 +121,8 @@
     "title": null,
     "hidePatientId": false,
     "hideSampleId": false,
-    "hideNotes": false
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
   },
   {
     "personName": "Dr. Seake",
@@ -134,7 +140,8 @@
     "title": null,
     "hidePatientId": false,
     "hideSampleId": false,
-    "hideNotes": false
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
   },
   {
     "personName": "Dr. Sepeng",
@@ -152,7 +159,8 @@
     "title": null,
     "hidePatientId": false,
     "hideSampleId": false,
-    "hideNotes": false
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
   },
   {
     "personName": "Dr. Ontdongo",
@@ -170,7 +178,8 @@
     "title": null,
     "hidePatientId": false,
     "hideSampleId": false,
-    "hideNotes": false
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
   },
   {
     "personName": "Dr. Ntuli",
@@ -188,7 +197,8 @@
     "title": "Paeds",
     "hidePatientId": false,
     "hideSampleId": false,
-    "hideNotes": false
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
   },
   {
     "personName": "Dr. Van Kwawegen",
@@ -206,7 +216,8 @@
     "title": null,
     "hidePatientId": false,
     "hideSampleId": false,
-    "hideNotes": false
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
   },
   {
     "personName": "Matron Nomusa Ramela",
@@ -224,7 +235,8 @@
     "title": null,
     "hidePatientId": false,
     "hideSampleId": false,
-    "hideNotes": false
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
   },
   {
     "personName": "Dr. Mary Adam",
@@ -242,7 +254,8 @@
     "title": "O&G",
     "hidePatientId": false,
     "hideSampleId": false,
-    "hideNotes": false
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
   },
   {
     "personName": "Dr. Philiswa Mlandu",
@@ -260,7 +273,8 @@
     "title": null,
     "hidePatientId": false,
     "hideSampleId": false,
-    "hideNotes": false
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
   },
   {
     "personName": "Ahmad Haeri",
@@ -289,7 +303,8 @@
     "title": null,
     "hidePatientId": true,
     "hideSampleId": false,
-    "hideNotes": false
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
   },
   {
     "personName": "Sr Moipone Piliso",
@@ -318,7 +333,8 @@
     "title": "Study Coordinator",
     "hidePatientId": true,
     "hideSampleId": false,
-    "hideNotes": false
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
   },
   {
     "personName": "Natasha Gous",
@@ -336,7 +352,8 @@
     "title": "Dr",
     "hidePatientId": true,
     "hideSampleId": false,
-    "hideNotes": false
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
   },
   {
     "personName": "Dr. Karl Technau",
@@ -354,7 +371,8 @@
     "title": "Senior Doctor Paeditric  HIV Department",
     "hidePatientId": true,
     "hideSampleId": false,
-    "hideNotes": false
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
   },
   {
     "personName": "Dr. Kate Braithwaite",
@@ -372,7 +390,8 @@
     "title": "Medical Officer Paeds HIV dept",
     "hidePatientId": true,
     "hideSampleId": false,
-    "hideNotes": false
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
   },
   {
     "personName": "Dr. Ebrahim Bera",
@@ -390,7 +409,8 @@
     "title": "Obstetric Consultant",
     "hidePatientId": true,
     "hideSampleId": false,
-    "hideNotes": false
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
   },
   {
     "personName": "Dr. Fortein",
@@ -408,7 +428,8 @@
     "title": "Obstetric Medical Officer",
     "hidePatientId": true,
     "hideSampleId": false,
-    "hideNotes": false
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
   },
   {
     "personName": "Dr. Loshnee Nair",
@@ -426,7 +447,8 @@
     "title": "Paediatric Consultant",
     "hidePatientId": true,
     "hideSampleId": false,
-    "hideNotes": false
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
   },
   {
     "personName": "Dr. Tracy Turner",
@@ -444,7 +466,8 @@
     "title": "Paediatric Registrar",
     "hidePatientId": true,
     "hideSampleId": false,
-    "hideNotes": false
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
   },
   {
     "personName": "Auréllie Mukendi",
@@ -473,7 +496,8 @@
     "title": "Research Assistant",
     "hidePatientId": false,
     "hideSampleId": false,
-    "hideNotes": false
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
   },
   {
     "personName": "Bahle Matrose",
@@ -491,7 +515,8 @@
     "title": "Phlebotomist",
     "hidePatientId": true,
     "hideSampleId": false,
-    "hideNotes": false
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
   },
   {
     "personName": "Lerato Mthombeni",
@@ -527,7 +552,8 @@
     "title": "Gynae and Obstets Consultant",
     "hidePatientId": true,
     "hideSampleId": false,
-    "hideNotes": false
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
   },
   {
     "personName": "Dr. Natalie Odell",
@@ -545,7 +571,8 @@
     "title": "Gynae and Obstets",
     "hidePatientId": true,
     "hideSampleId": false,
-    "hideNotes": false
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
   },
   {
     "personName": "Dr. Felicia Molokoane",
@@ -563,7 +590,8 @@
     "title": "Gynae and Obstets Consultant",
     "hidePatientId": true,
     "hideSampleId": false,
-    "hideNotes": false
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
   },
   {
     "personName": "Dr. Derisha Pillay",
@@ -581,7 +609,8 @@
     "title": "Kalafong Paeds Consultant",
     "hidePatientId": true,
     "hideSampleId": false,
-    "hideNotes": false
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
   },
   {
     "personName": "Dr. Meera Ooka",
@@ -599,7 +628,8 @@
     "title": "Paeds",
     "hidePatientId": false,
     "hideSampleId": false,
-    "hideNotes": false
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
   },
   {
     "personName": "Dr. Natasha Davies",
@@ -617,7 +647,8 @@
     "title": "Adult ARV clinic",
     "hidePatientId": false,
     "hideSampleId": false,
-    "hideNotes": false
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
   },
   {
     "personName": "Sr Beverly Letsoalo",
@@ -635,7 +666,8 @@
     "title": "PCR Coordinator",
     "hidePatientId": false,
     "hideSampleId": false,
-    "hideNotes": false
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
   },
   {
     "personName": "Dr. Vuyelwa Baba",
@@ -653,7 +685,8 @@
     "title": "O&G",
     "hidePatientId": false,
     "hideSampleId": false,
-    "hideNotes": false
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
   },
   {
     "personName": "Dr. Khosi Ngobesi",
@@ -671,7 +704,8 @@
     "title": null,
     "hidePatientId": false,
     "hideSampleId": false,
-    "hideNotes": false
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
   },
   {
     "personName": "Prof Nicolette du Plessis",
@@ -689,7 +723,8 @@
     "title": null,
     "hidePatientId": false,
     "hideSampleId": false,
-    "hideNotes": false
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
   },
   {
     "personName": "Dr. Khomotso Masemola",
@@ -707,7 +742,8 @@
     "title": null,
     "hidePatientId": false,
     "hideSampleId": false,
-    "hideNotes": false
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
   },
   {
     "personName": "Dr. Marike Boersema",
@@ -725,7 +761,8 @@
     "title": null,
     "hidePatientId": false,
     "hideSampleId": false,
-    "hideNotes": false
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
   },
   {
     "personName": "Dr. Valerie Vannevel",
@@ -743,7 +780,8 @@
     "title": null,
     "hidePatientId": false,
     "hideSampleId": false,
-    "hideNotes": false
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
   },
   {
     "personName": "Dr. Debbie Vaz",
@@ -761,7 +799,8 @@
     "title": null,
     "hidePatientId": false,
     "hideSampleId": false,
-    "hideNotes": false
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
   },
   {
     "personName": "Dr. Sonia Hitchcock",
@@ -779,7 +818,8 @@
     "title": null,
     "hidePatientId": false,
     "hideSampleId": false,
-    "hideNotes": false
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
   },
   {
     "personName": "Gayle Sherman",
@@ -797,7 +837,8 @@
     "title": null,
     "hidePatientId": false,
     "hideSampleId": false,
-    "hideNotes": false
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
   },
   {
     "personName": "Tanya Murray",
@@ -815,14 +856,15 @@
     "title": null,
     "hidePatientId": false,
     "hideSampleId": false,
-    "hideNotes": false
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
   },
   {
     "personName": "Lerato Mthombeni",
     "jobFunctions": ["Lab User"],
     "emailAddress": "shivlera@yahoo.com",
-    "username": null,
-    "password": null,
+    "username": "shivlera@yahoo.com",
+    "password": "G4CEWslFEZ",
     "mobile": "+27825926204",
     "tags": [],
     "stateName": null,
@@ -833,7 +875,8 @@
     "title": "Lab Contact",
     "hidePatientId": false,
     "hideSampleId": false,
-    "hideNotes": false
+    "hideNotes": false,
+    "getPasswordFromGxAlert": false
   },
   {
     "personName": "Veronica Mphaphuli",
@@ -851,7 +894,8 @@
     "title": "Neonatology",
     "hidePatientId": false,
     "hideSampleId": false,
-    "hideNotes": false
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
   },
   {
     "personName": "Yoliswa magadla",
@@ -869,7 +913,8 @@
     "title": "Neonatology",
     "hidePatientId": false,
     "hideSampleId": false,
-    "hideNotes": false
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
   },
   {
     "personName": "Tanusha Ramdin",
@@ -887,7 +932,8 @@
     "title": "Neonatology",
     "hidePatientId": false,
     "hideSampleId": false,
-    "hideNotes": false
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
   },
   {
     "personName": "Dalubuhle Ndiweni",
@@ -905,7 +951,8 @@
     "title": "General paeds/HIV clinic",
     "hidePatientId": false,
     "hideSampleId": false,
-    "hideNotes": false
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
   },
   {
     "personName": "Nkele Selepe",
@@ -923,6 +970,7 @@
     "title": null,
     "hidePatientId": false,
     "hideSampleId": false,
-    "hideNotes": false
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
   }
 ]

@@ -98,7 +98,7 @@ async function seed(knex) {
         const baseUserData = {
           password: pw,
           failedPasswordAttempts: 0,
-          legacyPassword: 1,
+          legacyPassword: person.getPasswordFromGxAlert ? 1 : 0,
           lockedOut: 0,
         }
         ;[userId] = await knex('User').insert({
