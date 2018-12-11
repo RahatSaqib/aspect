@@ -25,20 +25,13 @@ async function seed(knex) {
     .where('name', 'South Africa NHLS')
     .first('id')
 
-  const { id: jobFunctionIdAdmin } = await knex('JobFunction')
-    .where({ name: 'Admin', partnerId })
-    .first('id')
-  const { id: jobFunctionIdRegionalOfficer } = await knex('JobFunction')
-    .where({ name: 'Regional Officer', partnerId })
-    .first('id')
-  const { id: jobFunctionIdLabUser } = await knex('JobFunction')
-    .where({ name: 'Lab User', partnerId })
-    .first('id')
-  const jobFunctions = {
-    jobFunctionIdAdmin,
-    jobFunctionIdRegionalOfficer,
-    jobFunctionIdLabUser,
-  }
+  const jobFunctions = await knex('JobFunction')
+    .where({ partnerId })
+    .select()
+    .reduce((jobFunctionMap, jobFunction) => {
+      jobFunctionMap[jobFunction.name] = jobFunction.id
+      return jobFunctionMap
+    }, {})
 
   const now = new Date()
   const { id: adminId } = await knex('User')
@@ -199,22 +192,26 @@ async function seed(knex) {
         knex('PersonTag').insert({ tagId: tag.id, personId })
       )
     }
-    const existingJob = await knex('Job')
-      .where({ personId, jobFunctionId: jobFunctions[person.jobFunctionId] })
-      .first()
-    if (!existingJob) {
-      const [jobId] = await knex('Job').insert({
-        personId,
-        jobFunctionId: jobFunctions[person.jobFunctionId],
+    if (!_.isEmpty(person.jobFunctions)) {
+      await Promise.each(person.jobFunctions, async jobFunctionName => {
+        const existingJob = await knex('Job')
+          .where({ personId, jobFunctionId: jobFunctions[jobFunctionName] })
+          .first()
+        if (!existingJob) {
+          const [jobId] = await knex('Job').insert({
+            personId,
+            jobFunctionId: jobFunctions[jobFunctionName],
+          })
+          if (jobFunctionName === 'Lab User') {
+            await knex('JobContext').insert({
+              jobId,
+              siteId: siteIds[person.deploymentShortName],
+            })
+          } else {
+            await knex('JobContext').insert({ jobId, geographyId })
+          }
+        }
       })
-      if (jobFunctions[person.jobFunctionId] === jobFunctionIdLabUser) {
-        await knex('JobContext').insert({
-          jobId,
-          siteId: siteIds[person.deploymentShortName],
-        })
-      } else {
-        await knex('JobContext').insert({ jobId, geographyId })
-      }
     }
   })
 }

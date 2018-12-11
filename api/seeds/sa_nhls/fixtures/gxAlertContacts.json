@@ -1,7 +1,7 @@
 [
   {
     "personName": "Sergio Carmona",
-    "jobFunctionId": "jobFunctionIdAdmin",
+    "jobFunctions": ["Admin"],
     "emailAddress": "sergio.carmona@nhls.ac.za",
     "username": "sergio.carmona@nhls.ac.za",
     "password": "e243cd1ae9",
@@ -30,7 +30,7 @@
   },
   {
     "personName": "Sonjiha Khan",
-    "jobFunctionId": "jobFunctionIdLabUser",
+    "jobFunctions": ["Lab User"],
     "emailAddress": "sonjiha.khan@wits.ac.za",
     "username": null,
     "password": null,
@@ -48,7 +48,7 @@
   },
   {
     "personName": "Ms Ntaoleng Moreko",
-    "jobFunctionId": "jobFunctionIdRegionalOfficer",
+    "jobFunctions": ["Regional Officer", "Lab User"],
     "emailAddress": "ntaolengmoreko@gmail.com",
     "username": null,
     "password": null,
@@ -56,7 +56,7 @@
     "tags": ["EID+CHBAH", "VL>50CHBAH", "EID+", "HIV-VL>50"],
     "stateName": "Gauteng",
     "lgaName": "Diepkloof ",
-    "deploymentShortName": null,
+    "deploymentShortName": "CHBAH Maternity POCT",
     "timezone": "South Africa Standard Time",
     "culture": "en",
     "title": "NICD",
@@ -66,7 +66,7 @@
   },
   {
     "personName": "Dr. Thomas",
-    "jobFunctionId": "jobFunctionIdRegionalOfficer",
+    "jobFunctions": ["Regional Officer"],
     "emailAddress": null,
     "username": null,
     "password": null,
@@ -84,7 +84,7 @@
   },
   {
     "personName": "Dr. Nakwa",
-    "jobFunctionId": "jobFunctionIdRegionalOfficer",
+    "jobFunctions": ["Regional Officer"],
     "emailAddress": null,
     "username": null,
     "password": null,
@@ -102,7 +102,7 @@
   },
   {
     "personName": "Dr. Sono",
-    "jobFunctionId": "jobFunctionIdRegionalOfficer",
+    "jobFunctions": ["Regional Officer"],
     "emailAddress": null,
     "username": null,
     "password": null,
@@ -120,7 +120,7 @@
   },
   {
     "personName": "Dr. Seake",
-    "jobFunctionId": "jobFunctionIdRegionalOfficer",
+    "jobFunctions": ["Regional Officer"],
     "emailAddress": null,
     "username": null,
     "password": null,
@@ -138,7 +138,7 @@
   },
   {
     "personName": "Dr. Sepeng",
-    "jobFunctionId": "jobFunctionIdRegionalOfficer",
+    "jobFunctions": ["Regional Officer"],
     "emailAddress": null,
     "username": null,
     "password": null,
@@ -156,7 +156,7 @@
   },
   {
     "personName": "Dr. Ontdongo",
-    "jobFunctionId": "jobFunctionIdRegionalOfficer",
+    "jobFunctions": ["Regional Officer"],
     "emailAddress": null,
     "username": null,
     "password": null,
@@ -174,7 +174,7 @@
   },
   {
     "personName": "Dr. Ntuli",
-    "jobFunctionId": "jobFunctionIdRegionalOfficer",
+    "jobFunctions": ["Regional Officer"],
     "emailAddress": null,
     "username": null,
     "password": null,
@@ -192,7 +192,7 @@
   },
   {
     "personName": "Dr. Van Kwawegen",
-    "jobFunctionId": "jobFunctionIdRegionalOfficer",
+    "jobFunctions": ["Regional Officer"],
     "emailAddress": null,
     "username": null,
     "password": null,
@@ -210,7 +210,7 @@
   },
   {
     "personName": "Matron Nomusa Ramela",
-    "jobFunctionId": "jobFunctionIdRegionalOfficer",
+    "jobFunctions": ["Regional Officer"],
     "emailAddress": null,
     "username": null,
     "password": null,
@@ -228,7 +228,7 @@
   },
   {
     "personName": "Dr. Mary Adam",
-    "jobFunctionId": "jobFunctionIdRegionalOfficer",
+    "jobFunctions": ["Regional Officer"],
     "emailAddress": null,
     "username": null,
     "password": null,
@@ -246,7 +246,7 @@
   },
   {
     "personName": "Dr. Philiswa Mlandu",
-    "jobFunctionId": "jobFunctionIdRegionalOfficer",
+    "jobFunctions": ["Regional Officer"],
     "emailAddress": null,
     "username": null,
     "password": null,
@@ -264,7 +264,7 @@
   },
   {
     "personName": "Ahmad Haeri",
-    "jobFunctionId": "jobFunctionIdAdmin",
+    "jobFunctions": ["Admin"],
     "emailAddress": "ahmadh@nicd.ac.za",
     "username": "ahmadh@nicd.ac.za",
     "password": "1e8bac51d8",
@@ -293,7 +293,7 @@
   },
   {
     "personName": "Sr Moipone Piliso",
-    "jobFunctionId": "jobFunctionIdAdmin",
+    "jobFunctions": ["Admin"],
     "emailAddress": "moipone.piliso@wits.ac.za",
     "username": "moipone.piliso@wits.ac.za",
     "password": "19753210ea",
@@ -322,7 +322,7 @@
   },
   {
     "personName": "Natasha Gous",
-    "jobFunctionId": "jobFunctionIdAdmin",
+    "jobFunctions": ["Admin"],
     "emailAddress": "ngous@systemone.id",
     "username": "ngous@systemone.id",
     "password": "e53b42841b",
@@ -340,7 +340,7 @@
   },
   {
     "personName": "Dr. Karl Technau",
-    "jobFunctionId": "jobFunctionIdRegionalOfficer",
+    "jobFunctions": ["Regional Officer"],
     "emailAddress": "karltechnau@gmail.com",
     "username": null,
     "password": null,
@@ -358,7 +358,7 @@
   },
   {
     "personName": "Dr. Kate Braithwaite",
-    "jobFunctionId": "jobFunctionIdRegionalOfficer",
+    "jobFunctions": ["Regional Officer"],
     "emailAddress": null,
     "username": null,
     "password": null,
@@ -376,7 +376,7 @@
   },
   {
     "personName": "Dr. Ebrahim Bera",
-    "jobFunctionId": "jobFunctionIdRegionalOfficer",
+    "jobFunctions": ["Regional Officer"],
     "emailAddress": null,
     "username": null,
     "password": null,
@@ -394,7 +394,7 @@
   },
   {
     "personName": "Dr. Fortein",
-    "jobFunctionId": "jobFunctionIdRegionalOfficer",
+    "jobFunctions": ["Regional Officer"],
     "emailAddress": null,
     "username": null,
     "password": null,
@@ -412,7 +412,7 @@
   },
   {
     "personName": "Dr. Loshnee Nair",
-    "jobFunctionId": "jobFunctionIdRegionalOfficer",
+    "jobFunctions": ["Regional Officer"],
     "emailAddress": null,
     "username": null,
     "password": null,
@@ -430,7 +430,7 @@
   },
   {
     "personName": "Dr. Tracy Turner",
-    "jobFunctionId": "jobFunctionIdRegionalOfficer",
+    "jobFunctions": ["Regional Officer"],
     "emailAddress": null,
     "username": null,
     "password": null,
@@ -448,7 +448,7 @@
   },
   {
     "personName": "Auréllie Mukendi",
-    "jobFunctionId": "jobFunctionIdAdmin",
+    "jobFunctions": ["Admin"],
     "emailAddress": "aureliem@nicd.ac.za",
     "username": "aureliem@nicd.ac.za",
     "password": "f54b8ba50f",
@@ -477,7 +477,7 @@
   },
   {
     "personName": "Bahle Matrose",
-    "jobFunctionId": "jobFunctionIdRegionalOfficer",
+    "jobFunctions": ["Regional Officer"],
     "emailAddress": null,
     "username": null,
     "password": null,
@@ -495,7 +495,7 @@
   },
   {
     "personName": "Lerato Mthombeni",
-    "jobFunctionId": "jobFunctionIdRegionalOfficer",
+    "jobFunctions": ["Regional Officer"],
     "emailAddress": null,
     "username": null,
     "password": null,
@@ -513,7 +513,7 @@
   },
   {
     "personName": "Dr. Coceka Mnyani",
-    "jobFunctionId": "jobFunctionIdRegionalOfficer",
+    "jobFunctions": ["Regional Officer"],
     "emailAddress": "nandipha.mnyani@gmail.com",
     "username": null,
     "password": null,
@@ -531,7 +531,7 @@
   },
   {
     "personName": "Dr. Natalie Odell",
-    "jobFunctionId": "jobFunctionIdRegionalOfficer",
+    "jobFunctions": ["Regional Officer"],
     "emailAddress": null,
     "username": null,
     "password": null,
@@ -549,7 +549,7 @@
   },
   {
     "personName": "Dr. Felicia Molokoane",
-    "jobFunctionId": "jobFunctionIdRegionalOfficer",
+    "jobFunctions": ["Regional Officer"],
     "emailAddress": null,
     "username": null,
     "password": null,
@@ -567,7 +567,7 @@
   },
   {
     "personName": "Dr. Derisha Pillay",
-    "jobFunctionId": "jobFunctionIdRegionalOfficer",
+    "jobFunctions": ["Regional Officer"],
     "emailAddress": null,
     "username": null,
     "password": null,
@@ -585,7 +585,7 @@
   },
   {
     "personName": "Dr. Meera Ooka",
-    "jobFunctionId": "jobFunctionIdRegionalOfficer",
+    "jobFunctions": ["Regional Officer"],
     "emailAddress": null,
     "username": null,
     "password": null,
@@ -603,7 +603,7 @@
   },
   {
     "personName": "Dr. Natasha Davies",
-    "jobFunctionId": "jobFunctionIdRegionalOfficer",
+    "jobFunctions": ["Regional Officer"],
     "emailAddress": null,
     "username": null,
     "password": null,
@@ -621,7 +621,7 @@
   },
   {
     "personName": "Sr Beverly Letsoalo",
-    "jobFunctionId": "jobFunctionIdRegionalOfficer",
+    "jobFunctions": ["Regional Officer"],
     "emailAddress": null,
     "username": null,
     "password": null,
@@ -639,7 +639,7 @@
   },
   {
     "personName": "Dr. Vuyelwa Baba",
-    "jobFunctionId": "jobFunctionIdRegionalOfficer",
+    "jobFunctions": ["Regional Officer"],
     "emailAddress": null,
     "username": null,
     "password": null,
@@ -657,7 +657,7 @@
   },
   {
     "personName": "Dr. Khosi Ngobesi",
-    "jobFunctionId": "jobFunctionIdRegionalOfficer",
+    "jobFunctions": ["Regional Officer"],
     "emailAddress": null,
     "username": null,
     "password": null,
@@ -675,7 +675,7 @@
   },
   {
     "personName": "Prof Nicolette du Plessis",
-    "jobFunctionId": "jobFunctionIdRegionalOfficer",
+    "jobFunctions": ["Regional Officer"],
     "emailAddress": null,
     "username": null,
     "password": null,
@@ -693,7 +693,7 @@
   },
   {
     "personName": "Dr. Khomotso Masemola",
-    "jobFunctionId": "jobFunctionIdRegionalOfficer",
+    "jobFunctions": ["Regional Officer"],
     "emailAddress": null,
     "username": null,
     "password": null,
@@ -711,7 +711,7 @@
   },
   {
     "personName": "Dr. Marike Boersema",
-    "jobFunctionId": "jobFunctionIdRegionalOfficer",
+    "jobFunctions": ["Regional Officer"],
     "emailAddress": null,
     "username": null,
     "password": null,
@@ -729,7 +729,7 @@
   },
   {
     "personName": "Dr. Valerie Vannevel",
-    "jobFunctionId": "jobFunctionIdRegionalOfficer",
+    "jobFunctions": ["Regional Officer"],
     "emailAddress": null,
     "username": null,
     "password": null,
@@ -747,7 +747,7 @@
   },
   {
     "personName": "Dr. Debbie Vaz",
-    "jobFunctionId": "jobFunctionIdRegionalOfficer",
+    "jobFunctions": ["Regional Officer"],
     "emailAddress": null,
     "username": null,
     "password": null,
@@ -765,7 +765,7 @@
   },
   {
     "personName": "Dr. Sonia Hitchcock",
-    "jobFunctionId": "jobFunctionIdRegionalOfficer",
+    "jobFunctions": ["Regional Officer"],
     "emailAddress": null,
     "username": null,
     "password": null,
@@ -783,7 +783,7 @@
   },
   {
     "personName": "Gayle Sherman",
-    "jobFunctionId": "jobFunctionIdAdmin",
+    "jobFunctions": ["Admin"],
     "emailAddress": "gayles@nicd.ac.za",
     "username": "gayles@nicd.ac.za",
     "password": "f0781cc81c",
@@ -801,7 +801,7 @@
   },
   {
     "personName": "Tanya Murray",
-    "jobFunctionId": "jobFunctionIdAdmin",
+    "jobFunctions": ["Admin"],
     "emailAddress": "tanyaymurray@gmail.com",
     "username": "tanyaymurray@gmail.com",
     "password": "04fe6f2ac9",
@@ -819,7 +819,7 @@
   },
   {
     "personName": "Lerato Mthombeni",
-    "jobFunctionId": "jobFunctionIdLabUser",
+    "jobFunctions": ["Lab User"],
     "emailAddress": "shivlera@yahoo.com",
     "username": null,
     "password": null,
@@ -837,7 +837,7 @@
   },
   {
     "personName": "Veronica Mphaphuli",
-    "jobFunctionId": "jobFunctionIdRegionalOfficer",
+    "jobFunctions": ["Regional Officer"],
     "emailAddress": null,
     "username": null,
     "password": null,
@@ -855,7 +855,7 @@
   },
   {
     "personName": "Yoliswa magadla",
-    "jobFunctionId": "jobFunctionIdRegionalOfficer",
+    "jobFunctions": ["Regional Officer"],
     "emailAddress": null,
     "username": null,
     "password": null,
@@ -873,7 +873,7 @@
   },
   {
     "personName": "Tanusha Ramdin",
-    "jobFunctionId": "jobFunctionIdRegionalOfficer",
+    "jobFunctions": ["Regional Officer"],
     "emailAddress": null,
     "username": null,
     "password": null,
@@ -891,7 +891,7 @@
   },
   {
     "personName": "Dalubuhle Ndiweni",
-    "jobFunctionId": "jobFunctionIdRegionalOfficer",
+    "jobFunctions": ["Regional Officer"],
     "emailAddress": null,
     "username": null,
     "password": null,
@@ -909,7 +909,7 @@
   },
   {
     "personName": "Nkele Selepe",
-    "jobFunctionId": "jobFunctionIdRegionalOfficer",
+    "jobFunctions": ["Regional Officer"],
     "emailAddress": null,
     "username": null,
     "password": null,
