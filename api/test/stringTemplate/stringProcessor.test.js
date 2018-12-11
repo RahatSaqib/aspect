@@ -1009,7 +1009,7 @@ describe('stringTemplate', () => {
       it('should process SMS Payloads for New Results', async () => {
         const template =
           'New Result Uploaded {{result.sample.id}} from {{device.name}}. ' +
-          'Awaiting additional details to be entered in Aspect?'
+          'Please login to Aspect and enter additional details'
         const message = await runProcessUsingDataSourceQuery(
           template,
           messageDataSource
@@ -1018,7 +1018,7 @@ describe('stringTemplate', () => {
           message.payload,
           `New Result Uploaded ${messageDataSource.sampleExternalId}` +
             ` from ${messageDataSource.deviceName}. ` +
-            `Awaiting additional details to be entered in Aspect?`
+            `Please login to Aspect and enter additional details`
         )
       })
 
