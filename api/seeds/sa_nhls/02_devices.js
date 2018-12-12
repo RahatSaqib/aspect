@@ -9,13 +9,6 @@ const {
 } = require('../../src/shared/dictionary')
 
 async function seed(knex) {
-  const clinicExternalIds = _.map(labClinic.clinics, 'externalId')
-  const existingSiteExternalIds = await knex('Site')
-    .whereIn('externalId', clinicExternalIds)
-    .select('id')
-  if (existingSiteExternalIds.length === clinicExternalIds.length) {
-    return
-  }
   const now = new Date()
   const { id: adminId } = await knex('User')
     .where({ name: 'nhls_eid' })
