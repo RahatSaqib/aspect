@@ -131,7 +131,7 @@ module.exports = {
     new FaviconsWebpackPlugin({
       logo: path.join(__dirname, '../src/template/favicon.png'),
       prefix: 'icons-[hash]-',
-      persistentCache: true,
+      persistentCache: false,
       inject: true,
       background: '#fff',
       // which icons should be generated (see https://github.com/haydenbleasel/favicons#usage)
