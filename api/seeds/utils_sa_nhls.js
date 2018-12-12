@@ -44,7 +44,7 @@ async function seedNotifications(knex, { partnerId }) {
     Object.assign(
       {
         message:
-          'New Result Uploaded {{result.sample.id}} from {{device.name}}. Awaiting additional details to be entered in Aspect?',
+          'New Result Uploaded {{result.sample.id}} from {{device.name}}. Please login to Aspect and enter additional details',
       },
       auditFields
     )
