@@ -14,9 +14,9 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 
 // Material-UI
-import MenuItem from 'material-ui/MenuItem'
+import MenuItem from '@material-ui/core/MenuItem'
+import Select from '@material-ui/core/Select'
 
-import ForkedSelectField from '../../components/forkedMaterialUi/ForkedSelectField'
 import { fetchSitesForSelectList } from '../../site/SiteRedux'
 
 const enhance = compose(
@@ -76,11 +76,11 @@ const enhance = compose(
 
 export function SiteSelectField({ sitesSelectList, ...restProps }) {
   return (
-    <ForkedSelectField {...restProps}>
+    <Select {...restProps}>
       {sitesSelectList.map(s => (
         <MenuItem key={s.value} value={s.value} primaryText={s.text} />
       ))}
-    </ForkedSelectField>
+    </Select>
   )
 }
 

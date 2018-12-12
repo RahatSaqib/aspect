@@ -4,15 +4,14 @@ import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-
-import MenuItem from 'material-ui/MenuItem'
+import MenuItem from '@material-ui/core/MenuItem'
 
 import { fetchLgasForLocationSelector } from '../../geography/GeographyRedux'
-import ForkedSelectField from '../../components/forkedMaterialUi/ForkedSelectField'
 import {
   getSelectedCountry,
   getSelectedCountryStates,
 } from './StateSelectField'
+import SelectField from '../SelectField'
 
 export function getSelectedState(props) {
   const states = getSelectedCountryStates(props)
@@ -67,7 +66,7 @@ export class LgaSelectField extends PureComponent {
     }
   }
 
-  handleSelectFieldChange = (event, index, value) => {
+  handleSelectFieldChange = ({ target: { value } }) => {
     this.props.onLgaIdChange(value === 'all' ? undefined : value)
   }
 
@@ -85,17 +84,19 @@ export class LgaSelectField extends PureComponent {
     const lgas = getSelectedStateLgas(this.props)
 
     return (
-      <ForkedSelectField
+      <SelectField
         {...restProps}
         disabled={lgas.loading || lgas.items.isEmpty()}
         value={lgaId}
         onChange={this.handleSelectFieldChange}
       >
-        {allItemText && <MenuItem value="all" primaryText={allItemText} />}
-        {lgas.items.map(l => (
-          <MenuItem key={l.id} value={l.id} primaryText={l.name} />
+        {allItemText && <MenuItem value="all">{allItemText}</MenuItem>}
+        {lgas.items.map(c => (
+          <MenuItem key={c.id} value={c.id}>
+            {c.name}
+          </MenuItem>
         ))}
-      </ForkedSelectField>
+      </SelectField>
     )
   }
 }

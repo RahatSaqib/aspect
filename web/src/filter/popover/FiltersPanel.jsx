@@ -627,8 +627,7 @@ export const FiltersPanel = ({
             floatingLabelText={
               dateFilterLabel || intl.formatMessage(messages.date)
             }
-            onChangeDate={onDateChange}
-            datePickerContainer="dialog"
+            onChangeDate={onDateChange}            
             controlClassName={cssClasses('Control')}
             minDate={filters.minDate}
             maxDate={filters.maxDate}

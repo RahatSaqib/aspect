@@ -12,8 +12,7 @@ import {
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 
-// Material-UI
-import AutoComplete from 'material-ui/AutoComplete'
+import AutoComplete from '../../components/shared/AutoComplete'
 
 import { fetchSitesForSelectList } from '../../site/SiteRedux'
 
@@ -63,6 +62,12 @@ const enhance = compose(
       if (index !== -1) {
         onSiteIdChange(chosenRequest.value)
       }
+    },
+    onSelect: ({ onSiteIdChange, onSiteNameChange }) => text => {
+      onSiteNameChange(text)
+    },
+    onUpdateInput: ({ onSiteIdChange, onSiteNameChange }) => text => {
+      onSiteNameChange(text)
     },
     // --------------------------
     // on bluring - check if actual visual site name is correct (exists in dataSource)

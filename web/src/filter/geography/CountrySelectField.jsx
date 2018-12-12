@@ -3,14 +3,13 @@ import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
+import MenuItem from '@material-ui/core/MenuItem'
 
-import MenuItem from 'material-ui/MenuItem'
-
+import SelectField from '../SelectField'
 import {
   fetchCountriesForLocationSelector,
   LazyLoadItems,
 } from '../../geography/GeographyRedux'
-import ForkedSelectField from '../../components/forkedMaterialUi/ForkedSelectField'
 
 export class CountrySelectField extends PureComponent {
   static propTypes = {
@@ -31,31 +30,31 @@ export class CountrySelectField extends PureComponent {
     this.props.fetchCountriesForLocationSelector(countries)
   }
 
-  handleSelectFieldChange = (event, index, value) => {
+  handleSelectFieldChange = ({ target: { value } }) => {
     this.props.onCountryIdChange(value === 'all' ? undefined : value)
   }
 
   render() {
-    const { allItemText, countries, countryId } = this.props
-    const restProps = _.omit(this.props, [
-      'allItemText',
-      'countries',
+    const { allItemText, countries, countryId, ...others } = this.props
+
+    const restProps = _.omit(others, [
       'onCountryIdChange',
-      'countryId',
       'fetchCountriesForLocationSelector',
     ])
 
     return (
-      <ForkedSelectField
+      <SelectField
         {...restProps}
         value={countryId}
         onChange={this.handleSelectFieldChange}
       >
-        {allItemText && <MenuItem value="all" primaryText={allItemText} />}
+        {allItemText && <MenuItem value="all">{allItemText}</MenuItem>}
         {countries.items.map(c => (
-          <MenuItem key={c.id} value={c.id} primaryText={c.name} />
+          <MenuItem key={c.id} value={c.id}>
+            {c.name}
+          </MenuItem>
         ))}
-      </ForkedSelectField>
+      </SelectField>
     )
   }
 }
