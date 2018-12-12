@@ -21,12 +21,13 @@ import React, { PureComponent } from 'react'
 import { injectIntl, defineMessages, intlShape } from 'react-intl'
 
 // Material-UI
-import DatePicker from 'material-ui/DatePicker'
-import MenuItem from 'material-ui/MenuItem'
-import Divider from 'material-ui/Divider'
+import MenuItem from '@material-ui/core/MenuItem'
+import Divider from '@material-ui/core/Divider'
+import { DatePicker } from 'material-ui-pickers'
 
 // Our own imports
-import ForkedSelectField from '../../components/forkedMaterialUi/ForkedSelectField'
+import SelectField from '../SelectField'
+import { formatDate } from '../../shared/utils/dateFormat'
 import styles from './DateRangeSelector.css'
 
 const messages = defineMessages({
@@ -137,15 +138,16 @@ export class DateRangeSelector extends PureComponent {
     intl: intlShape.isRequired,
     onChangeDate: PropTypes.func.isRequired,
     floatingLabelText: PropTypes.string.isRequired,
-    datePickerContainer: PropTypes.oneOf(['dialog', 'inline']).isRequired,
     controlClassName: PropTypes.string.isRequired,
     minDate: PropTypes.string,
     maxDate: PropTypes.string,
+    classes: PropTypes.string,
   }
 
   static defaultProps = {
     minDate: null,
     maxDate: null,
+    classes: '',
   }
 
   state = {
@@ -398,15 +400,15 @@ export class DateRangeSelector extends PureComponent {
     return maxDate && new Date(maxDate)
   }
 
-  handleMaxDateChange = (event, date) => {
+  handleMaxDateChange = date => {
     this.props.onChangeDate({ maxDate: endOfDay(date).toJSON() })
   }
 
-  handleMinDateChange = (event, date) => {
+  handleMinDateChange = date => {
     this.props.onChangeDate({ minDate: date.toJSON() })
   }
 
-  handleDateRangeChange = (event, index, value) => {
+  handleDateRangeChange = ({ target: { value } }) => {
     this.props.onChangeDate(
       value
         ? { minDate: value.minDate.toJSON(), maxDate: value.maxDate.toJSON() }
@@ -414,7 +416,7 @@ export class DateRangeSelector extends PureComponent {
     )
   }
 
-  handleRangeModeChange = (event, index, value) => {
+  handleRangeModeChange = ({ target: { value } }) => {
     this.setState({
       rangeMode: value,
     })
@@ -425,7 +427,6 @@ export class DateRangeSelector extends PureComponent {
     const {
       intl: { formatMessage },
       floatingLabelText,
-      datePickerContainer,
       controlClassName,
     } = this.props
 
@@ -455,8 +456,7 @@ export class DateRangeSelector extends PureComponent {
     })
 
     const restProps = _.omit(this.props, [
-      'floatingLabelText',
-      'datePickerContainer',
+      'floatingLabelText',      
       'controlClassName',
       'clearButtonTooltip',
       'onChangeDate',
@@ -467,7 +467,7 @@ export class DateRangeSelector extends PureComponent {
     return (
       <div className={styles.DateRangeSelector}>
         <div className={controlClassName}>
-          <ForkedSelectField
+          <SelectField
             className={styles.DateRangeSelector__RangeModeSelector}
             floatingLabelText={floatingLabelText}
             floatingLabelFixed
@@ -476,25 +476,20 @@ export class DateRangeSelector extends PureComponent {
             onChange={this.handleRangeModeChange}
             menuStyle={{ minWidth: '7em' }}
           >
-            <MenuItem value="any" primaryText={formatMessage(messages.any)} />
+            <MenuItem value="any">{formatMessage(messages.any)}</MenuItem>
             <Divider />
-            <MenuItem value="day" primaryText={formatMessage(messages.day)} />
-            <MenuItem value="week" primaryText={formatMessage(messages.week)} />
-            <MenuItem
-              value="month"
-              primaryText={formatMessage(messages.month)}
-            />
-            <MenuItem
-              value="quarter"
-              primaryText={formatMessage(messages.quarter)}
-            />
-            <MenuItem value="year" primaryText={formatMessage(messages.year)} />
+            <MenuItem value="day">{formatMessage(messages.day)}</MenuItem>
+            <MenuItem value="week">{formatMessage(messages.week)}</MenuItem>
+            <MenuItem value="month">{formatMessage(messages.month)} </MenuItem>
+            <MenuItem value="quarter">
+              {formatMessage(messages.quarter)}{' '}
+            </MenuItem>
+            <MenuItem value="year">{formatMessage(messages.year)}</MenuItem>
             <Divider />
-            <MenuItem
-              value="custom"
-              primaryText={formatMessage(messages.custom)}
-            />
-          </ForkedSelectField>
+            <MenuItem value="custom">
+              {formatMessage(messages.custom)}{' '}
+            </MenuItem>
+          </SelectField>
         </div>
         {(() => {
           switch (this.state.rangeMode) {
@@ -505,32 +500,34 @@ export class DateRangeSelector extends PureComponent {
                 <div className={styles.DateRangeSelector__DatePickerContainer}>
                   <DatePicker
                     {...restProps}
-                    floatingLabelText=" "
-                    floatingLabelFixed
+                    label=" "
+                    margin="normal"
                     className={controlClassName}
+                    labelFunc={formatDate}
                     value={this.getMinDate()}
+                    placeholder={formatMessage(messages.fromDate)}
                     onChange={this.handleMinDateChange}
-                    hintText={formatMessage(messages.fromDate)}
-                    container={datePickerContainer}
-                    mode="landscape"
+                    InputProps={{ style: { width: '16em' } }}
+                    InputLabelProps={{ shrink: true }}
                   />
                   <DatePicker
-                    {..._.omit(restProps, 'floatingLabelText')}
-                    floatingLabelText=" "
-                    floatingLabelFixed
+                    {...restProps}
+                    label=" "
+                    margin="normal"
                     className={controlClassName}
+                    labelFunc={formatDate}
                     value={this.getMaxDate()}
                     onChange={this.handleMaxDateChange}
-                    hintText={formatMessage(messages.toDate)}
-                    container={datePickerContainer}
-                    mode="landscape"
+                    placeholder={formatMessage(messages.toDate)}
+                    InputProps={{ style: { width: '16em' } }}
+                    InputLabelProps={{ shrink: true }}
                   />
                 </div>
               )
             default:
               return (
                 <div className={controlClassName}>
-                  <ForkedSelectField
+                  <SelectField
                     className={styles.DateRangeSelector__DropDownList}
                     floatingLabelText=" "
                     floatingLabelFixed
@@ -543,10 +540,11 @@ export class DateRangeSelector extends PureComponent {
                       <MenuItem
                         key={dropDownSelectItem.minDate}
                         value={dropDownSelectItem}
-                        primaryText={dropDownSelectItem.label}
-                      />
+                      >
+                        {dropDownSelectItem.label}
+                      </MenuItem>
                     ))}
-                  </ForkedSelectField>
+                  </SelectField>
                 </div>
               )
           }
