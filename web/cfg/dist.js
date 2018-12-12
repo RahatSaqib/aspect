@@ -1,8 +1,10 @@
 const webpack = require('webpack')
+const path = require('path')
 const merge = require('webpack-merge')
 const base = require('./base')
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin')
 const CompressionPlugin = require('compression-webpack-plugin')
+const FaviconsWebpackPlugin = require('favicons-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin')
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
@@ -42,6 +44,26 @@ const config = () => {
       new MiniCssExtractPlugin({
         filename: '[name].[contenthash].css',
         chunkFilename: '[id].[contenthash].css',
+      }),
+      new FaviconsWebpackPlugin({
+        logo: path.join(__dirname, '../src/template/favicon.png'),
+        prefix: 'icons-[contenthash]-',
+        persistentCache: false,
+        inject: true,
+        background: '#fff',
+        // which icons should be generated (see https://github.com/haydenbleasel/favicons#usage)
+        icons: {
+          android: true,
+          appleIcon: true,
+          appleStartup: false,
+          coast: false,
+          favicons: true,
+          firefox: true,
+          opengraph: false,
+          twitter: false,
+          yandex: false,
+          windows: false,
+        },
       }),
       new webpack.NamedChunksPlugin(),
       new webpack.HashedModuleIdsPlugin(),
