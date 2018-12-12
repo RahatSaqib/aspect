@@ -51,7 +51,7 @@ function renderSuggestion({
   )
 }
 
-function getSuggestions(suggestions, value) {
+function getSuggestions(suggestions, value = '') {
   const inputValue = _.deburr(value.trim()).toLowerCase()
 
   return inputValue.length === 0
@@ -70,7 +70,7 @@ const styles = theme => ({
     position: 'relative',
   },
   popper: {
-    zIndex: 1300,
+    zIndex: theme.zIndex.tooltip,
   },
   paper: {
     position: 'absolute',
@@ -78,7 +78,11 @@ const styles = theme => ({
     marginTop: theme.spacing.unit,
     left: 0,
     right: 0,
-    width: 'calc(200% + 5px)',
+    overflowY: 'auto',
+    overflowX: 'hidden',
+    maxHeight: `calc(${theme.typography.button.lineHeight} * ${
+      theme.typography.button.fontSize
+    } * 10)`,
   },
   inputRoot: {
     flexWrap: 'wrap',
@@ -94,26 +98,47 @@ const styles = theme => ({
 
 export class AutoComplete extends PureComponent {
   static propTypes = {
+    classes: PropTypes.string,
+    searchText: PropTypes.string,
+    dataSource: PropTypes.arrayOf(PropTypes.object),
+    hintText: PropTypes.string,
+    floatingLabelText: PropTypes.string,
+    floatingLabelFixed: PropTypes.bool,
+    fullWidth: PropTypes.bool,
     onSelect: PropTypes.func,
     onUpdateInput: PropTypes.func,
   }
   static defaultProps = {
+    classes: '',
+    searchText: '',
+    dataSource: [],
+    hintText: '',
+    floatingLabelText: '',
+    floatingLabelFixed: false,
+    fullWidth: false,
     onSelect: _.noop,
     onUpdateInput: _.noop,
   }
 
-  handleStateChange = changes => {    
-    if (changes.hasOwnProperty('selectedItem')) {
-      this.props.onSelect(changes.selectedItem)
-    } else if (changes.hasOwnProperty('inputValue')) {
-      this.inputValue = changes.inputValue
+  handleChange = value => {
+    this.props.onSelect(value)
+  }
+
+  handleInputBlur = ({ target: { value } }) => {
+    this.props.onUpdateInput(value)
+  }
+
+  handleInputKeyUp = ({ key, target: { value } }) => {
+    if (key === 'Enter') {
+      this.props.onUpdateInput(value)
     }
   }
 
+  itemToString = item => (item ? item.text : '')
+
   preventResetOnBlur = (state, changes) => {
     if (changes.type === Downshift.stateChangeTypes.blurInput) {
-      this.props.onUpdateInput(this.inputValue)
-      return Object.assign(changes, { inputValue: this.inputValue })
+      return {}
     }
     return changes
   }
@@ -132,7 +157,8 @@ export class AutoComplete extends PureComponent {
       <div className={classes.root}>
         <Downshift
           selectedItem={searchText}
-          onStateChange={this.handleStateChange}
+          itemToString={this.itemToString}
+          onChange={this.handleChange}
           stateReducer={this.preventResetOnBlur}
         >
           {({
@@ -151,12 +177,15 @@ export class AutoComplete extends PureComponent {
                 placeholder: hintText,
                 classes,
                 InputLabelProps: {
-                  shrink: floatingLabelFixed,
+                  shrink: floatingLabelFixed || undefined,
                 },
                 ref: node => {
                   this.popperNode = node
                 },
-                InputProps: getInputProps({}),
+                InputProps: getInputProps({
+                  onBlur: this.handleInputBlur,
+                  onKeyUp: this.handleInputKeyUp,
+                }),
               })}
               <Popper
                 open={isOpen}
@@ -176,7 +205,7 @@ export class AutoComplete extends PureComponent {
                       className={classes.paper}
                       style={{
                         minWidth: this.popperNode
-                          ? this.popperNode.clientWidth
+                          ? this.popperNode.clientWidth + 32
                           : null,
                       }}
                     >
@@ -185,7 +214,7 @@ export class AutoComplete extends PureComponent {
                           renderSuggestion({
                             suggestion,
                             index,
-                            itemProps: getItemProps({ item: suggestion.text }),
+                            itemProps: getItemProps({ item: suggestion }),
                             highlightedIndex,
                             selectedItem,
                           })

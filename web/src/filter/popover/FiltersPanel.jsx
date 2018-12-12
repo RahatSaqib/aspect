@@ -550,7 +550,6 @@ export const FiltersPanel = ({
               name="siteName"
               value={filters.siteName || ''}
               onSiteNameChange={onSiteNameChange}
-              onUpdateInput={onSiteNameChange}
               floatingLabelFixed
               hintText={intl.formatMessage(messages.enterSiteName)}
               floatingLabelText={intl.formatMessage(messages.site)}
@@ -562,8 +561,7 @@ export const FiltersPanel = ({
             <SiteAutoCompleteField
               name="sampleOriginSite"
               value={filters.sampleOriginSite || ''}
-              onSiteNameChange={onSampleOriginSiteChange}
-              onUpdateInput={onSampleOriginSiteChange}
+              onSiteIdChange={onSampleOriginSiteChange}
               floatingLabelFixed
               hintText={intl.formatMessage(messages.enterSampleOriginSite)}
               floatingLabelText={intl.formatMessage(messages.sampleOriginSite)}
@@ -627,7 +625,7 @@ export const FiltersPanel = ({
             floatingLabelText={
               dateFilterLabel || intl.formatMessage(messages.date)
             }
-            onChangeDate={onDateChange}            
+            onChangeDate={onDateChange}
             controlClassName={cssClasses('Control')}
             minDate={filters.minDate}
             maxDate={filters.maxDate}
