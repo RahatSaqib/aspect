@@ -18,7 +18,7 @@ exports[`DateTimePicker component should shallow render correctly 1`] = `
       }
     }
     underlineShow={true}
-    value="2018-11-05 15:30:00"
+    value="2018-11-05 07:30:00"
   />
   <DatePickerDialog
     DateTimeFormat={[Function]}

@@ -12,7 +12,7 @@ jest.useFakeTimers()
 
 describe('DateTimePicker component', () => {
   const props = {
-    value: new Date(2018, 10, 5, 15, 30),
+    value: new Date(2018, 10, 5, 7, 30),
   }
 
   const mountWithMuiTheme = node =>
