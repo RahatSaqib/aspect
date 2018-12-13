@@ -2,6 +2,7 @@ import _ from 'lodash'
 import { createFetch, base, header, accept } from 'http-client'
 import { defineMessages } from 'react-intl'
 import { showError } from '../../appNotification/AppNotificationRedux'
+import { setLastServerResponseTime } from '../../globals/GlobalsRedux'
 
 import config from '../../config'
 import { getAspectAccess } from '../../globals/sideEffects/LocalStorage'
@@ -47,6 +48,11 @@ function handleFetchResponseOrError(fetch, input, options = {}) {
   return fetch(input, options)
     .then(
       resp => {
+        const date = resp.headers.get('date')
+        if (date) {
+          const store = require('../../store').default
+          store.dispatch(setLastServerResponseTime(new Date(date)))
+        }
         if (resp.ok) {
           // HTTP Status === 2xx
           return resp.json().then(changeAllIdsToString)
