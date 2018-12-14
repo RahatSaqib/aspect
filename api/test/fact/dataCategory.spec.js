@@ -348,8 +348,8 @@ describe('DataCategoryLow Issues Endpoint', () => {
       expect(percentage).to.be.lessThan(dataCategory.cutoffPercentage)
       percentage =
         percentage < 10
-          ? Math.round(10 * percentage) / 10 // ##.#
-          : Math.round(percentage) // ##
+          ? Math.floor(10 * percentage) / 10 // ##.#
+          : Math.floor(percentage) // ##
 
       // trigger issue and wait for idle
       const payload = {
