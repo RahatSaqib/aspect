@@ -26,7 +26,7 @@ import Divider from '@material-ui/core/Divider'
 import { DatePicker } from 'material-ui-pickers'
 
 // Our own imports
-import SelectField from '../SelectField'
+import SelectField from '../../components/shared/SelectField'
 import { formatDate } from '../../shared/utils/dateFormat'
 import styles from './DateRangeSelector.css'
 
@@ -456,7 +456,7 @@ export class DateRangeSelector extends PureComponent {
     })
 
     const restProps = _.omit(this.props, [
-      'floatingLabelText',      
+      'floatingLabelText',
       'controlClassName',
       'clearButtonTooltip',
       'onChangeDate',
@@ -467,14 +467,13 @@ export class DateRangeSelector extends PureComponent {
     return (
       <div className={styles.DateRangeSelector}>
         <div className={controlClassName}>
-          <SelectField
+          <SelectField            
             className={styles.DateRangeSelector__RangeModeSelector}
             floatingLabelText={floatingLabelText}
             floatingLabelFixed
             hintText={dropDownListHintText}
             value={this.state.rangeMode}
             onChange={this.handleRangeModeChange}
-            menuStyle={{ minWidth: '7em' }}
           >
             <MenuItem value="any">{formatMessage(messages.any)}</MenuItem>
             <Divider />
@@ -532,8 +531,7 @@ export class DateRangeSelector extends PureComponent {
                     floatingLabelText=" "
                     floatingLabelFixed
                     hintText={dropDownListHintText}
-                    value={selectedValue}
-                    autoWidth
+                    value={selectedValue}                    
                     onChange={this.handleDateRangeChange}
                   >
                     {dropDownSelectItems.map(dropDownSelectItem => (

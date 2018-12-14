@@ -7,7 +7,7 @@ import { connect } from 'react-redux'
 import Immutable from 'immutable'
 import MenuItem from '@material-ui/core/MenuItem'
 
-import SelectField from '../SelectField'
+import SelectField from '../../components/shared/SelectField'
 import { fetchAssays } from '../../assay/AssayRedux'
 
 export class AssaySelectField extends PureComponent {

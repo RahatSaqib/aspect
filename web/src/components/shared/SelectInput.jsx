@@ -1,10 +1,10 @@
 import _ from 'lodash'
 import React from 'react'
 import { Field } from 'redux-form/immutable'
-import MenuItem from 'material-ui/MenuItem'
+import MenuItem from '@material-ui/core/MenuItem'
 import classNames from 'classnames'
 
-import ForkedSelectField from '../forkedMaterialUi/ForkedSelectField'
+import SelectField from './SelectField'
 import styles from './Shared.css'
 
 const MenuItemLabel = props => {
@@ -30,18 +30,18 @@ const MenuItemLabel = props => {
 const renderSelectField = props => {
   const { onSelectionChanged, input, meta, selectFieldProps, children } = props
   const { touched, error } = meta
-  const onChange = (event, index, value) => {
+  const onChange = event => {
     if (onSelectionChanged) {
-      onSelectionChanged(event, index, value)
+      onSelectionChanged(event)
     }
-    input.onChange(value)
+    input.onChange(event.target.value)
   }
   const selectFieldStyle = {
     verticalAlign: 'bottom',
     ...selectFieldProps.style,
   }
   return (
-    <ForkedSelectField
+    <SelectField
       {...input}
       errorStyle={{
         float: 'left',
@@ -59,7 +59,7 @@ const renderSelectField = props => {
       })}
     >
       {children}
-    </ForkedSelectField>
+    </SelectField>
   )
 }
 
@@ -101,14 +101,15 @@ const renderFormField = props => {
         <MenuItem
           key={item.key}
           value={item.value}
-          primaryText={item.primaryText}
           label={
             <MenuItemLabel
               text={item.primaryText}
               selectedItemStyle={selectedItemStyle}
             />
           }
-        />
+        >
+          {item.primaryText}
+        </MenuItem>
       ))}
     </Field>
   )

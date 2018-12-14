@@ -73,7 +73,6 @@ const styles = theme => ({
     zIndex: theme.zIndex.tooltip,
   },
   paper: {
-    position: 'absolute',
     zIndex: 1,
     marginTop: theme.spacing.unit,
     left: 0,
@@ -98,7 +97,7 @@ const styles = theme => ({
 
 export class AutoComplete extends PureComponent {
   static propTypes = {
-    classes: PropTypes.string,
+    classes: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     searchText: PropTypes.string,
     dataSource: PropTypes.arrayOf(PropTypes.object),
     hintText: PropTypes.string,
@@ -109,7 +108,6 @@ export class AutoComplete extends PureComponent {
     onUpdateInput: PropTypes.func,
   }
   static defaultProps = {
-    classes: '',
     searchText: '',
     dataSource: [],
     hintText: '',

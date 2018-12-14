@@ -7,7 +7,7 @@ import { connect } from 'react-redux'
 import MenuItem from '@material-ui/core/MenuItem'
 
 import { fetchStatesForLocationSelector } from '../../geography/GeographyRedux'
-import SelectField from '../SelectField'
+import SelectField from '../../components/shared/SelectField'
 
 export function getSelectedCountry({ countries, countryId }) {
   if (countries.loading) {

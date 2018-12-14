@@ -8,7 +8,7 @@ import { connect } from 'react-redux'
 // Material-UI
 import MenuItem from '@material-ui/core/MenuItem'
 
-import SelectField from '../SelectField'
+import SelectField from '../../components/shared/SelectField'
 import { fetchDeviceStatuses } from '../../deviceStatus/DeviceStatusRedux'
 
 export class DeviceStatusSelectField extends PureComponent {

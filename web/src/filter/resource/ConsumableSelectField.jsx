@@ -9,7 +9,7 @@ import { connect } from 'react-redux'
 import MenuItem from '@material-ui/core/MenuItem'
 
 // Our imports
-import SelectField from '../SelectField'
+import SelectField from '../../components/shared/SelectField'
 import {
   fetchConsumables,
   ConsumableItems,

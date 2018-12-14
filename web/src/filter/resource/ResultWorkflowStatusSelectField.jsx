@@ -8,7 +8,7 @@ import { connect } from 'react-redux'
 // Material-UI
 import MenuItem from '@material-ui/core/MenuItem'
 
-import SelectField from '../SelectField'
+import SelectField from '../../components/shared/SelectField'
 import { fetchWorkflowStatuses } from '../../resultWorkflowStatus/ResultWorkflowStatusRedux'
 
 export class ResultWorkflowStatusSelectField extends PureComponent {

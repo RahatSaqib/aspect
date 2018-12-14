@@ -7,7 +7,7 @@ import { compose, pure, setPropTypes, mapProps, lifecycle } from 'recompose'
 
 import MenuItem from '@material-ui/core/MenuItem'
 
-import SelectField from '../SelectField'
+import SelectField from '../../components/shared/SelectField'
 import { fetchPartnersAndJobFunctionsForSelectList } from '../../job/JobRedux'
 
 const enhance = compose(

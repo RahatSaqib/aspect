@@ -11,7 +11,7 @@ import {
   getSelectedCountry,
   getSelectedCountryStates,
 } from './StateSelectField'
-import SelectField from '../SelectField'
+import SelectField from '../../components/shared/SelectField'
 
 export function getSelectedState(props) {
   const states = getSelectedCountryStates(props)

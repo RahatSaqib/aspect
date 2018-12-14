@@ -9,7 +9,7 @@ import Immutable from 'immutable'
 // Material-UI
 import MenuItem from '@material-ui/core/MenuItem'
 
-import SelectField from '../SelectField'
+import SelectField from '../../components/shared/SelectField'
 import { fetchAssays } from '../../assay/AssayRedux'
 
 export class ResultCategorySelectField extends PureComponent {

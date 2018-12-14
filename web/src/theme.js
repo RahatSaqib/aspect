@@ -27,7 +27,7 @@ export default {
     },
     MuiMenuItem: {
       root: {
-        width: 256,
+        minWidth: 256,
       },
       selected: {
         color: orange[700],
