@@ -246,7 +246,6 @@ export const TargetStatus = ({
                   <TemperatureGauge
                     goal={target.get('target')}
                     value={target.get('count')}
-                    hasError={hasError(target)}
                   />
                 </div>
                 <div className={cssClasses('TargetItemBlock__Label')}>

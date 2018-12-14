@@ -60,7 +60,6 @@ exports[`Target Status component should shallow render correctly 1`] = `
           >
             <WrappedComponent
               goal={10000}
-              hasError={true}
               value={897}
               windowResizeDebounceTime={300}
             />
@@ -106,7 +105,6 @@ exports[`Target Status component should shallow render correctly 1`] = `
           >
             <WrappedComponent
               goal={2536}
-              hasError={true}
               value={533}
               windowResizeDebounceTime={300}
             />
@@ -152,7 +150,6 @@ exports[`Target Status component should shallow render correctly 1`] = `
           >
             <WrappedComponent
               goal={1200}
-              hasError={true}
               value={1220}
               windowResizeDebounceTime={300}
             />
