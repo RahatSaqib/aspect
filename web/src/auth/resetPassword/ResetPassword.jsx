@@ -4,14 +4,13 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 import { FormattedHTMLMessage } from 'react-intl'
-import { Button } from 'react-toolbox/lib/button'
 import { Link } from 'react-router-dom'
 
 // Material-UI
-import Paper from 'material-ui/Paper'
+import Paper from '@material-ui/core/Paper'
 import { Step, Stepper, StepLabel, StepContent } from 'material-ui/Stepper'
-import FlatButton from 'material-ui/FlatButton'
-import LinearProgress from 'material-ui/LinearProgress'
+import Button from '@material-ui/core/Button'
+import LinearProgress from '@material-ui/core/LinearProgress'
 import Dialog from 'material-ui/Dialog'
 
 // Our own imports
@@ -169,13 +168,11 @@ export class ResetPassword extends PureComponent {
     const { intl: { formatMessage } } = this.props
     const { stepIndex, emailAddress, resettingPassword } = this.state
     const adminHelpDialogActions = [
-      <FlatButton
-        label={formatMessage(messages.adminHelpClose)}
-        secondary
-        onClick={this.closeAdminHelpDialog}
-      />,
+      <Button color="secondary" onClick={this.closeAdminHelpDialog}>
+        {formatMessage(messages.adminHelpClose)}
+      </Button>,
       <Link to="login">
-        <FlatButton label={formatMessage(messages.backToLogin)} primary />
+        <Button color="primary">{formatMessage(messages.backToLogin)}</Button>
       </Link>,
     ]
 
@@ -214,11 +211,7 @@ export class ResetPassword extends PureComponent {
                       intl={intl}
                       action={
                         <Link to="/login">
-                          <Button
-                            neutral
-                            flat
-                            label={intl.formatMessage(messages.cancel)}
-                          />
+                          <Button>{intl.formatMessage(messages.cancel)}</Button>
                         </Link>
                       }
                       onSubmit={this.createResetPasswordToken}
@@ -245,11 +238,9 @@ export class ResetPassword extends PureComponent {
                         intl={intl}
                         action={
                           <Link to="/login">
-                            <Button
-                              neutral
-                              flat
-                              label={intl.formatMessage(messages.cancel)}
-                            />
+                            <Button>
+                              {intl.formatMessage(messages.cancel)}
+                            </Button>
                           </Link>
                         }
                         onSubmit={this.updatePassword}
@@ -265,12 +256,9 @@ export class ResetPassword extends PureComponent {
                       <FormattedHTMLMessage {...messages.finishContent} />
                       <div className={styles.Form__ActionRow}>
                         <Link to="login">
-                          <FlatButton
-                            primary
-                            label={formatMessage(
-                              messages.loginWithMyNewPassword
-                            )}
-                          />
+                          <Button color="primary">
+                            {formatMessage(messages.loginWithMyNewPassword)}
+                          </Button>
                         </Link>
                       </div>
                     </div>
@@ -288,11 +276,9 @@ export class ResetPassword extends PureComponent {
                           intl={intl}
                           action={
                             <Link to="/login">
-                              <Button
-                                neutral
-                                flat
-                                label={intl.formatMessage(messages.cancel)}
-                              />
+                              <Button>
+                                {intl.formatMessage(messages.cancel)}
+                              </Button>
                             </Link>
                           }
                           onSubmit={this.createResetPasswordToken}
@@ -328,11 +314,9 @@ export class ResetPassword extends PureComponent {
                           intl={intl}
                           action={
                             <Link to="/login">
-                              <Button
-                                neutral
-                                flat
-                                label={intl.formatMessage(messages.cancel)}
-                              />
+                              <Button>
+                                {intl.formatMessage(messages.cancel)}
+                              </Button>
                             </Link>
                           }
                           onSubmit={this.updatePassword}
@@ -346,12 +330,9 @@ export class ResetPassword extends PureComponent {
                           <FormattedHTMLMessage {...messages.finishContent} />
                           <div className={styles.Form__ActionRow}>
                             <Link to="login">
-                              <FlatButton
-                                primary
-                                label={formatMessage(
-                                  messages.loginWithMyNewPassword
-                                )}
-                              />
+                              <Button color="primary">
+                                {formatMessage(messages.loginWithMyNewPassword)}
+                              </Button>
                             </Link>
                           </div>
                         </div>

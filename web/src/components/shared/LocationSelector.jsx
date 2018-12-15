@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import React, { PureComponent } from 'react'
-import LinearProgress from 'material-ui/LinearProgress'
+import LinearProgress from '@material-ui/core/LinearProgress'
 import { injectIntl, defineMessages } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'

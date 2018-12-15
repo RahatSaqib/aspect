@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import React from 'react'
 import { shallow } from 'enzyme'
-import LinearProgress from 'material-ui/LinearProgress'
+import LinearProgress from '@material-ui/core/LinearProgress'
 import Dialog from 'material-ui/Dialog'
 import { Stepper, StepLabel, StepContent } from 'material-ui/Stepper'
 

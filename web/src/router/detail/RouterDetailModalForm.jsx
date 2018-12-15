@@ -6,10 +6,10 @@ import { compose, setPropTypes, pure } from 'recompose'
 import { Link } from 'react-router-dom'
 
 // Material-UI
-import FlatButton from 'material-ui/FlatButton'
+import Button from '@material-ui/core/Button'
 import TextField from 'material-ui/TextField'
 import Checkbox from 'material-ui/Checkbox'
-import ExitToApp from 'material-ui/svg-icons/action/exit-to-app'
+import ExitToApp from '@material-ui/icons/ExitToApp'
 import Dialog from 'material-ui/Dialog'
 
 // Our own imports
@@ -68,21 +68,23 @@ export const RouterDetailModalForm = props => {
 
   const actions = [
     props.onCancel && (
-      <FlatButton
+      <Button
         onClick={props.onCancel}
         type="button"
-        label={labels.cancel}
-        primary
+        color="primary"
         style={{ marginRight: 10 }}
-      />
+      >
+        {labels.cancel}
+      </Button>
     ),
-    <FlatButton
+    <Button
       disabled={form.pristine || !form.valid || form.submitting}
       onClick={props.handleSubmit}
       type="button"
-      label={labels.update}
-      secondary
-    />,
+      color="secondary"
+    >     
+      {labels.update}
+    </Button>,
   ]
 
   return (

@@ -7,8 +7,8 @@ import Helmet from 'react-helmet'
 
 // Material-UI
 import IconButton from 'material-ui/IconButton'
-import ActionHome from 'material-ui/svg-icons/action/home'
-import ActionBack from 'material-ui/svg-icons/hardware/keyboard-arrow-left'
+import ActionHome from '@material-ui/icons/Home'
+import ActionBack from '@material-ui/icons/KeyboardArrowLeft'
 
 const cssClasses = classnames.bind(require('./NotFound.css'))
 
@@ -37,11 +37,11 @@ export class NotFound extends PureComponent {
           className={cssClasses('Container__Button')}
           onClick={this.props.history.goBack}
         >
-          <ActionBack />
+          <ActionBack fontSize="large" />
         </IconButton>
         <Link to="/">
           <IconButton className={cssClasses('Container__Button')}>
-            <ActionHome />
+            <ActionHome fontSize="large" />
           </IconButton>
         </Link>
       </div>

@@ -2,13 +2,35 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import _ from 'lodash'
 import { defineMessages, intlShape } from 'react-intl'
+import { withStyles } from '@material-ui/core/styles'
 import TextField from 'material-ui/TextField'
 import Popover from 'material-ui/Popover'
-import LinearProgress from 'material-ui/LinearProgress'
-import CheckIcon from 'material-ui/svg-icons/navigation/check'
-import CloseIcon from 'material-ui/svg-icons/navigation/close'
+import LinearProgress from '@material-ui/core/LinearProgress'
+import CheckIcon from '@material-ui/icons/Check'
+import CloseIcon from '@material-ui/icons/Close'
 import classNames from 'classnames'
 import styles from './Shared.css'
+
+const blue = 'rgb(78, 145, 252)'
+const red = 'rgb(226, 18, 18)'
+const amber = 'rgb(255, 174, 0)'
+const green = 'rgb(27, 186, 13)'
+
+const muiStyles = {
+  linearProgress: {
+    height: '1em',
+    backgroundColor: 'transparent',
+  },
+  linearColorError: {
+    backgroundColor: red,
+  },
+  linearColorWarning: {
+    backgroundColor: amber,
+  },
+  linearColorSuccess: {
+    backgroundColor: green,
+  },
+}
 
 const messages = defineMessages({
   passwordStrengthMeterWeak: {
@@ -74,6 +96,7 @@ export class StrongPasswordInput extends React.PureComponent {
 
   render() {
     const {
+      classes,
       input,
       meta: { touched, dirty, error },
       textFieldProps,
@@ -104,13 +127,7 @@ export class StrongPasswordInput extends React.PureComponent {
         passwordStrengthRules.mixUpperAndLowerCase &&
         passwordStrengthRules.containSpecialCharacter,
     }
-    const blue = 'rgb(78, 145, 252)'
-    const red = 'rgb(226, 18, 18)'
-    const amber = 'rgb(255, 174, 0)'
-    const green = 'rgb(27, 186, 13)'
-    const passwordStrengthColor = passwordStrengthResults.isWeak
-      ? red
-      : passwordStrengthResults.isStrong ? green : amber
+
     const passwordStrengthScore = passwordStrengthResults.isWeak
       ? 30
       : passwordStrengthResults.isStrong ? 100 : 60
@@ -168,10 +185,16 @@ export class StrongPasswordInput extends React.PureComponent {
         >
           <span style={strengthMessageStyle}>{strengthMessage}</span>
           <LinearProgress
-            mode="determinate"
+            classes={{
+              root: classes.linearProgress,
+              barColorPrimary: passwordStrengthResults.isWeak
+                ? classes.linearColorError
+                : passwordStrengthResults.isStrong
+                  ? classes.linearColorSuccess
+                  : classes.linearColorWarning,
+            }}
+            variant="determinate"
             value={passwordStrengthScore}
-            color={passwordStrengthColor}
-            style={{ height: '1em', backgroundColor: 'transparent' }}
           />
           <ul className={styles.List__Unstyled}>
             <li>
@@ -227,4 +250,4 @@ export class StrongPasswordInput extends React.PureComponent {
   }
 }
 
-export default StrongPasswordInput
+export default withStyles(muiStyles)(StrongPasswordInput)

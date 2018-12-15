@@ -38,7 +38,7 @@ exports[`Device Api Key List module DeviceApiKeyList component should shallow re
     onClickExport={[Function]}
   />
   <div>
-    <FlatButton
+    <Button
       disabled={false}
       fullWidth={false}
       label="Generate"
@@ -52,7 +52,7 @@ exports[`Device Api Key List module DeviceApiKeyList component should shallow re
       primary={false}
       secondary={false}
     />
-    <FlatButton
+    <Button
       disabled={true}
       fullWidth={false}
       label="Assign"
@@ -184,7 +184,7 @@ exports[`Device Api Key List module DeviceApiKeyList component should shallow re
     onClickExport={[Function]}
   />
   <div>
-    <FlatButton
+    <Button
       disabled={false}
       fullWidth={false}
       label="Generate"
@@ -198,7 +198,7 @@ exports[`Device Api Key List module DeviceApiKeyList component should shallow re
       primary={false}
       secondary={false}
     />
-    <FlatButton
+    <Button
       disabled={true}
       fullWidth={false}
       label="Assign"

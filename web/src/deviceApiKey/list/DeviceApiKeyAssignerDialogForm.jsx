@@ -6,7 +6,7 @@ import { compose, pure, setPropTypes } from 'recompose'
 import { defineMessages, intlShape } from 'react-intl'
 
 // Material-UI
-import FlatButton from 'material-ui/FlatButton'
+import Button from '@material-ui/core/Button'
 import Dialog from 'material-ui/Dialog'
 
 // Our own imports
@@ -99,19 +99,17 @@ export function DeviceApiKeyAssignerDialogForm({
   const { formatMessage } = intl
 
   const actions = [
-    <FlatButton
-      onClick={onCancel}
-      type="button"
-      label={formatMessage(messages.cancel)}
-      secondary
-    />,
-    <FlatButton
+    <Button type="button" color="secondary" onClick={onCancel}>
+      {intl.formatMessage(messages.cancel)}
+    </Button>,
+    <Button
       disabled={form.pristine || !form.valid || form.submitting}
       onClick={handleSubmit}
       type="button"
-      label={formatMessage(messages.assign)}
-      primary
-    />,
+      color="primary"
+    >
+      {intl.formatMessage(messages.assign)}
+    </Button>,
   ]
   return (
     <Dialog

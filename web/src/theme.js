@@ -1,6 +1,5 @@
 import orange from '@material-ui/core/colors/orange'
 import grey from '@material-ui/core/colors/grey'
-import indigo from '@material-ui/core/colors/indigo'
 
 export default {  
   typography: {
@@ -8,10 +7,35 @@ export default {
     fontFamily: 'Lato, sans-serif',
   },
   palette: {
-    primary: indigo,
+    primary: {
+      light: process.env['--aspect-color-chill-blue-3'],
+      main: process.env['--aspect-color-chill-blue-2'],
+      dark: process.env['--aspect-color-chill-blue-1'],
+      contrastText: '#fff',
+    },
     secondary: orange,
   },
   overrides: {
+    MuiButton: {
+      root:{        
+        borderRadius: process.env['--toolbox-button-border-radius'],
+      },      
+      containedSecondary: {
+        backgroundColor: process.env['--aspect-button-accent-color'],
+        color: '#fff'
+      }
+    },
+    MuiSvgIcon: {
+      root: {       
+        fontSize: 16,
+      },
+      fontSizeSmall: {
+        fontSize: 14,
+      },
+      fontSizeLarge: {
+        fontSize: 24,
+      },
+    },
     MuiSelect: {
       root: {
         width: 256,

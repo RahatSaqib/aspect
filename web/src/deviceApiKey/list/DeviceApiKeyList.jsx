@@ -15,7 +15,7 @@ import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 import { Checkbox } from 'react-toolbox/lib/checkbox'
 
-import FlatButton from 'material-ui/FlatButton'
+import Button from '@material-ui/core/Button'
 
 import {
   makeSortPageSelector,
@@ -385,15 +385,15 @@ export const DeviceApiKeyList = ({
       onClickExport={onExportClick}
     />
     <div>
-      <FlatButton
-        label={intl.formatMessage(messages.generate)}
-        onClick={onOpenGeneratorDialog}
-      />
-      <FlatButton
-        label={intl.formatMessage(messages.assign)}
+      <Button onClick={onOpenGeneratorDialog}>
+        {intl.formatMessage(messages.generate)}
+      </Button>
+      <Button
         onClick={onOpenAssignerDialog}
         disabled={_.isEmpty(assignerValues.deviceApiKeyIds)}
-      />
+      >
+        {intl.formatMessage(messages.assign)}
+      </Button>
       <DeviceApiKeyGeneratorDialogForm
         isDialogOpen={isGeneratorDialogOpen}
         onChange={onGeneratorFormChange}

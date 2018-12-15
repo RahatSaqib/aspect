@@ -1,8 +1,8 @@
 import _ from 'lodash'
 import React from 'react'
-import LinearProgress from 'material-ui/LinearProgress'
+import LinearProgress from '@material-ui/core/LinearProgress'
 import Dialog from 'material-ui/Dialog'
-import FlatButton from 'material-ui/FlatButton'
+import Button from '@material-ui/core/Button'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { compose, withHandlers, lifecycle, withProps } from 'recompose'
@@ -29,7 +29,9 @@ const enhance = compose(
   }),
   withProps(({ handleToggle }) => ({
     dialogActions: [
-      <FlatButton label="Close" primary onClick={handleToggle} />,
+      <Button color="primary" onClick={handleToggle}>
+        Close
+      </Button>,
     ],
   }))
 )

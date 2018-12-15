@@ -6,9 +6,9 @@ import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 
 // Material-UI
-import LinearProgress from 'material-ui/LinearProgress'
+import LinearProgress from '@material-ui/core/LinearProgress'
 import MenuItem from 'material-ui/MenuItem'
-import Paper from 'material-ui/Paper'
+import Paper from '@material-ui/core/Paper'
 import RaisedButton from 'material-ui/RaisedButton'
 import SelectField from 'material-ui/SelectField'
 

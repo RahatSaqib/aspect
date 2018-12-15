@@ -5,7 +5,7 @@ import { compose, setPropTypes, pure } from 'recompose'
 import { Field, reduxForm } from 'redux-form/immutable'
 
 // Material-UI
-import LinearProgress from 'material-ui/LinearProgress'
+import LinearProgress from '@material-ui/core/LinearProgress'
 import RaisedButton from 'material-ui/RaisedButton'
 import TextField from 'material-ui/TextField'
 

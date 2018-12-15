@@ -10,10 +10,10 @@ import Helmet from 'react-helmet'
 
 // Material-UI
 import Dialog from 'material-ui/Dialog'
-import LinearProgress from 'material-ui/LinearProgress'
+import LinearProgress from '@material-ui/core/LinearProgress'
 import { Card, CardHeader, CardText } from 'material-ui/Card'
 import IconButton from 'material-ui/IconButton'
-import ModeEdit from 'material-ui/svg-icons/editor/mode-edit'
+import ModeEdit from '@material-ui/icons/Edit'
 
 // Our own imports
 import { formatDate } from '../../shared/utils/dateFormat'
