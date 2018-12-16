@@ -18,7 +18,7 @@ export const V0TextField = withStyles(styles)(
     <TextField
       label={floatingLabelText}
       InputLabelProps={{
-        shrink: floatingLabelFixed,
+        shrink: floatingLabelFixed || undefined,
       }}
       placeholder={hintText}
       {...restProps}

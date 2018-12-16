@@ -1,32 +1,72 @@
 import orange from '@material-ui/core/colors/orange'
 import grey from '@material-ui/core/colors/grey'
+import lightGreen from '@material-ui/core/colors/lightGreen'
 
-export default {  
+export default {
   typography: {
     useNextVariants: true,
     fontFamily: 'Lato, sans-serif',
   },
   palette: {
     primary: {
-      light: process.env['--aspect-color-chill-blue-3'],
-      main: process.env['--aspect-color-chill-blue-2'],
-      dark: process.env['--aspect-color-chill-blue-1'],
+      light: lightGreen[500],
+      main: lightGreen[600],
+      dark: lightGreen[700],
       contrastText: '#fff',
     },
-    secondary: orange,
+    secondary: {
+      light: lightGreen[300],
+      main: orange[700],
+      dark: orange[700],
+      contrastText: '#fff',
+    },
   },
   overrides: {
     MuiButton: {
-      root:{        
+      root: {
         borderRadius: process.env['--toolbox-button-border-radius'],
-      },      
+      },
       containedSecondary: {
-        backgroundColor: process.env['--aspect-button-accent-color'],
-        color: '#fff'
-      }
+        color: '#fff',
+      },
+    },
+    MuiCard: {
+      root: {
+        borderRadius: 0,
+      },
+    },
+    MuiExpansionPanel: {
+      root: {
+        '&:before': {
+          opacity: 0,
+        },
+      },
+      expanded: {
+        margin: 0,
+      },
+    },
+    MuiExpansionPanelSummary: {
+      root: {
+        minHeight: 'auto',
+        padding: '0 16px 0 16px',
+        '&$expanded': {
+          minHeight: 'auto',
+        },
+      },
+      content: {
+        margin: '12px 0',
+        '&$expanded': {
+          margin: '12px 0',
+        },
+      },
+    },
+    MuiExpansionPanelDetails: {
+      root: {
+        padding: '8px 16px 16px',
+      },
     },
     MuiSvgIcon: {
-      root: {       
+      root: {
         fontSize: 16,
       },
       fontSizeSmall: {
@@ -38,7 +78,7 @@ export default {
     },
     MuiSelect: {
       root: {
-        width: 256,
+        minWidth: 256,
       },
       select: {
         '&:focus': {

@@ -3,8 +3,8 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import { compose, setPropTypes } from 'recompose'
 import { connect } from 'react-redux'
-import Dialog from 'material-ui/Dialog'
 import { defineMessages } from 'react-intl'
+import Dialog from '../../components/shared/Dialog'
 
 const messages = defineMessages({
   title: {

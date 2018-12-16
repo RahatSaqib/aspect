@@ -10,8 +10,8 @@ exports.customPropertiesVariables = {
 
   '--aspect-color-chill-blue-1': '#34717c',
   '--aspect-color-chill-blue-2': '#3e8f98',
-  '--aspect-color-chill-blue-3': '#67abb4',  
-  
+  '--aspect-color-chill-blue-3': '#67abb4',
+
   '--aspect-color-grey-1': '#363844',
   '--aspect-color-grey-2': '#444853',
   '--aspect-color-grey-3': '#6d6f7d',

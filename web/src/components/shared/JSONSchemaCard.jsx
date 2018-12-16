@@ -2,14 +2,14 @@ import PropTypes from 'prop-types'
 // Imports from packages
 import React from 'react'
 import { compose, setPropTypes, pure } from 'recompose'
+import ExpansionPanel from '@material-ui/core/ExpansionPanel'
+import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails'
+import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary'
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
+import Typography from '@material-ui/core/Typography'
 
 // Our own imports
 import { Unit } from '../pureGrids'
-import {
-  ExpansionPanel,
-  ExpansionPanelHeader,
-  ExpansionPanelDetail,
-} from './expansionPanel'
 
 export const PropertiesSchemaCard = compose(
   pure,
@@ -22,23 +22,27 @@ export const PropertiesSchemaCard = compose(
   })
 )(({ initiallyExpanded, title, renderField, dataSchema, data }) => (
   <ExpansionPanel expanded={initiallyExpanded}>
-    <ExpansionPanelHeader label={title} />
-    <ExpansionPanelDetail>
-      {dataSchema
-        .keySeq()
-        .map(key => ({
-          key,
-          label: dataSchema.getIn([key, 'title']) /* Todo: i18n */,
-          type: dataSchema.getIn([key, 'type']),
-          value: data.get(key),
-        }))
-        .sortBy(({ label }) => label)
-        .map(field => (
-          <Unit key={field.key} xs="1-2" sm="1-3">
-            {renderField(field)}
-          </Unit>
-        ))}
-    </ExpansionPanelDetail>
+    <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+      <Typography variant="subtitle1">{title}</Typography>
+    </ExpansionPanelSummary>
+    <ExpansionPanelDetails>
+      <Typography variant="body2">
+        {dataSchema
+          .keySeq()
+          .map(key => ({
+            key,
+            label: dataSchema.getIn([key, 'title']) /* Todo: i18n */,
+            type: dataSchema.getIn([key, 'type']),
+            value: data.get(key),
+          }))
+          .sortBy(({ label }) => label)
+          .map(field => (
+            <Unit key={field.key} xs="1-2" sm="1-3">
+              {renderField(field)}
+            </Unit>
+          ))}
+      </Typography>
+    </ExpansionPanelDetails>
   </ExpansionPanel>
 ))
 

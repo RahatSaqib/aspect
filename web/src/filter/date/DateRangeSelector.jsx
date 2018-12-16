@@ -467,7 +467,7 @@ export class DateRangeSelector extends PureComponent {
     return (
       <div className={styles.DateRangeSelector}>
         <div className={controlClassName}>
-          <SelectField            
+          <SelectField
             className={styles.DateRangeSelector__RangeModeSelector}
             floatingLabelText={floatingLabelText}
             floatingLabelFixed
@@ -531,7 +531,7 @@ export class DateRangeSelector extends PureComponent {
                     floatingLabelText=" "
                     floatingLabelFixed
                     hintText={dropDownListHintText}
-                    value={selectedValue}                    
+                    value={selectedValue}
                     onChange={this.handleDateRangeChange}
                   >
                     {dropDownSelectItems.map(dropDownSelectItem => (

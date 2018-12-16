@@ -5,10 +5,6 @@ import classNames from 'classnames'
 import { withStyles } from '@material-ui/core/styles'
 import TextField from '@material-ui/core/TextField'
 import MenuItem from '@material-ui/core/MenuItem'
-import InputLabel from '@material-ui/core/InputLabel'
-import Input from '@material-ui/core/Input'
-import FormHelperText from '@material-ui/core/FormHelperText'
-import FormControl from '@material-ui/core/FormControl'
 
 const styles = theme => ({
   label: {
@@ -26,32 +22,37 @@ const styles = theme => ({
   },
   fullWidth: {
     width: '100%',
-  },  
+  },
 })
 
-const SelectField = ({  
+const SelectField = ({
   autoWidth,
   classes,
   className,
   errorText,
+  errorStyle,
   floatingLabelFixed,
   floatingLabelText,
   fullWidth,
   helperText,
   hintText,
-  value,  
+  value,
   children,
   onChange,
   ...restProps
 }) => (
   <TextField
     select
-    margin="normal"    
+    margin="normal"
     label={floatingLabelText}
-    value={value}    
+    value={value}
     InputLabelProps={{
       shrink: floatingLabelFixed || undefined,
     }}
+    FormHelperTextProps={{
+      style: errorStyle,
+    }}
+    SelectProps={{ autoWidth: true }}
     className={classNames(classes.root, className)}
     classes={{
       root: classNames({ [classes.fullWidth]: fullWidth }),
@@ -71,10 +72,11 @@ const SelectField = ({
 )
 
 SelectField.propTypes = {
+  autoWidth: PropTypes.bool,
   classes: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   className: PropTypes.string,
-  error: PropTypes.bool,
-  errorText: PropTypes.string,
+  errorText: PropTypes.node,
+  errorStyle: PropTypes.object, // eslint-disable-line
   floatingLabelFixed: PropTypes.bool,
   floatingLabelText: PropTypes.string,
   fullWidth: PropTypes.bool,
@@ -86,6 +88,7 @@ SelectField.propTypes = {
 }
 
 SelectField.defaultProps = {
+  autoWidth: true,
   className: '',
   helperText: '',
   errorText: '',

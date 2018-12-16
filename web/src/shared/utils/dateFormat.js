@@ -4,8 +4,12 @@ import { getAspectDisplayPreferences } from '../../globals/sideEffects/LocalStor
 
 function format(date, displayPreferenceKey) {
   const prefs = getAspectDisplayPreferences()
-  const dateFormat = _.replace(prefs.get(displayPreferenceKey, 'YYYY-MM-dd'),/D/g, 'd')
-  
+  const dateFormat = _.replace(
+    prefs.get(displayPreferenceKey, 'YYYY-MM-dd'),
+    /D/g,
+    'd'
+  )
+
   return date == null
     ? ''
     : dateFnFormat(date, dateFormat, { awareOfUnicodeTokens: true })

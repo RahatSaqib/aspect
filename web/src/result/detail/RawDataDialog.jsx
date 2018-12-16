@@ -1,12 +1,12 @@
 import _ from 'lodash'
 import React from 'react'
 import LinearProgress from '@material-ui/core/LinearProgress'
-import Dialog from 'material-ui/Dialog'
 import Button from '@material-ui/core/Button'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { compose, withHandlers, lifecycle, withProps } from 'recompose'
 
+import Dialog from '../../components/shared/Dialog'
 import { fetchResultLog } from '../ResultRedux'
 import RawData from './RawData'
 

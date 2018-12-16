@@ -3,13 +3,14 @@ import React from 'react'
 import _ from 'lodash'
 import { defineMessages, intlShape } from 'react-intl'
 import { withStyles } from '@material-ui/core/styles'
-import TextField from 'material-ui/TextField'
 import Popover from 'material-ui/Popover'
 import LinearProgress from '@material-ui/core/LinearProgress'
 import CheckIcon from '@material-ui/icons/Check'
 import CloseIcon from '@material-ui/icons/Close'
 import classNames from 'classnames'
 import styles from './Shared.css'
+
+import TextField from '../../components/shared/TextField'
 
 const blue = 'rgb(78, 145, 252)'
 const red = 'rgb(226, 18, 18)'
@@ -66,6 +67,7 @@ const messages = defineMessages({
 
 export class StrongPasswordInput extends React.PureComponent {
   static propTypes = {
+    classes: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     input: PropTypes.object.isRequired, // eslint-disable-line
     meta: PropTypes.object.isRequired, // eslint-disable-line
     textFieldProps: PropTypes.object.isRequired, // eslint-disable-line

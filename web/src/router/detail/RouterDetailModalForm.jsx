@@ -7,16 +7,16 @@ import { Link } from 'react-router-dom'
 
 // Material-UI
 import Button from '@material-ui/core/Button'
-import TextField from 'material-ui/TextField'
-import Checkbox from 'material-ui/Checkbox'
 import ExitToApp from '@material-ui/icons/ExitToApp'
-import Dialog from 'material-ui/Dialog'
 
 // Our own imports
 import recomposeForm from '../../components/recomposeForm'
 import JSONSchemaCard from '../../components/shared/JSONSchemaCard'
 import SiteAutoCompleteField from '../../filter/resource/SiteAutoCompleteField'
 import { tokens } from '../../deviceStatus/DeviceStatusRedux'
+import CheckboxField from '../../components/shared/CheckboxField'
+import TextField from '../../components/shared/TextField'
+import Dialog from '../../components/shared/Dialog'
 
 const cssClasses = classnames.bind(require('./RouterDetailModalForm.css'))
 
@@ -82,7 +82,7 @@ export const RouterDetailModalForm = props => {
       onClick={props.handleSubmit}
       type="button"
       color="secondary"
-    >     
+    >
       {labels.update}
     </Button>,
   ]
@@ -90,6 +90,7 @@ export const RouterDetailModalForm = props => {
   return (
     <Dialog
       modal
+      autoScrollBodyContent
       actions={actions}
       open={props.isDialogOpen}
       onRequestClose={props.onCancel}
@@ -119,12 +120,12 @@ export const RouterDetailModalForm = props => {
           fullWidth
           errorText={meta.notes.touched && meta.notes.error}
         />
-        <Checkbox
+        <CheckboxField
           name="Status"
-          label={labels.statusToken}
-          style={{ padding: '10px 0' }}
+          color="primary"
           checked={values.statusToken === tokens.APPROVED}
-          onCheck={props.onStatusTokenChange}
+          onChange={props.onStatusTokenChange}
+          label={labels.statusToken}
         />
         <div className={cssClasses('AutoCompleteField')}>
           <div className={cssClasses('AutoCompleteField__Inner')}>

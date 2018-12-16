@@ -61,10 +61,10 @@ export const ResetPasswordEnterEmail = ({
         maxLength={500}
       />
     </div>
-    <div className={cssClasses('Form__ActionRow')}>      
+    <div className={cssClasses('Form__ActionRow')}>
       <Button
         type="submit"
-        color="secondary"        
+        color="secondary"
         variant="contained"
         disabled={form.pristine || !form.valid || form.submitting}
       >

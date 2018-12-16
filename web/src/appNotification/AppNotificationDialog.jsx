@@ -7,7 +7,6 @@ import _ from 'lodash'
 import { defineMessages, intlShape, FormattedMessage } from 'react-intl'
 
 // Material-UI
-import Dialog from 'material-ui/Dialog'
 import Button from '@material-ui/core/Button'
 import ErrorIcon from '@material-ui/icons/Error'
 import WarningIcon from '@material-ui/icons/Warning'
@@ -17,6 +16,7 @@ import orange from '@material-ui/core/colors/orange'
 import red from '@material-ui/core/colors/red'
 
 // Our own imports
+import Dialog from '../components/shared/Dialog'
 import { hideAppNotification, Error } from './AppNotificationRedux'
 import styles from './AppNotificationDialog.css'
 

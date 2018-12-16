@@ -7,14 +7,14 @@ import { defineMessages, intlShape } from 'react-intl'
 
 // Material-UI
 import Button from '@material-ui/core/Button'
-import TextField from 'material-ui/TextField'
-import Dialog from 'material-ui/Dialog'
 
 // Our own imports
 import recomposeForm from '../../components/recomposeForm'
 import CountrySelectField from '../../filter/geography/CountrySelectField'
 import PartnerSelectField from '../../filter/partner/PartnerSelectField'
 import SiteSelectField from '../../filter/resource/SiteSelectField'
+import TextField from '../../components/shared/TextField'
+import Dialog from '../../components/shared/Dialog'
 
 const messages = defineMessages({
   cancel: {

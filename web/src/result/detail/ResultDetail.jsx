@@ -9,7 +9,6 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 // Material-UI
-import Checkbox from 'material-ui/Checkbox'
 import MdChevronLeft from 'react-icons/lib/md/chevron-left'
 import MdChevronRight from 'react-icons/lib/md/chevron-right'
 import MdClose from 'react-icons/lib/md/clear'
@@ -18,6 +17,7 @@ import { Button } from 'react-toolbox/lib/button'
 // Our own imports
 import config from '../../config'
 import DelayShowingProgressBar from '../../components/shared/DelayShowingProgressBar'
+import CheckboxField from '../../components/shared/CheckboxField'
 import JSONSchemaCard from '../../components/shared/JSONSchemaCard'
 import NavTitle from '../../globals/components/NavTitle'
 import {
@@ -532,12 +532,12 @@ export class ResultDetail extends PureComponent {
             <ExpansionPanelHeader
               label={intl.formatMessage(messages.fieldFollowup)}
             >
-              <Checkbox
+              <CheckboxField
                 name="Status"
                 label={intl.formatMessage(messages.confirmed)}
-                labelStyle={{ marginLeft: -12 }}
+                style={{ marginRight: 4 }}
                 checked={result.get('qcCheck') === 1}
-                onCheck={this.onChangeQcCheck}
+                onChange={this.onChangeQcCheck}
                 disabled={
                   result.get('resultWorkflowStatusExternalId') !== 'Deliverable'
                 }

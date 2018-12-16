@@ -11,11 +11,11 @@ import Paper from '@material-ui/core/Paper'
 import { Step, Stepper, StepLabel, StepContent } from 'material-ui/Stepper'
 import Button from '@material-ui/core/Button'
 import LinearProgress from '@material-ui/core/LinearProgress'
-import Dialog from 'material-ui/Dialog'
 
 // Our own imports
 import config from '../../config'
 import { Unit, Hidden } from '../../components/pureGrids'
+import Dialog from '../../components/shared/Dialog'
 import {
   resetPasswordEnterEmailAddress,
   resetPasswordEnterPassword,

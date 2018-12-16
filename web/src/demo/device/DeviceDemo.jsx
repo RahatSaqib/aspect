@@ -9,7 +9,7 @@ import Helmet from 'react-helmet'
 import LinearProgress from '@material-ui/core/LinearProgress'
 import MenuItem from 'material-ui/MenuItem'
 import Paper from '@material-ui/core/Paper'
-import RaisedButton from 'material-ui/RaisedButton'
+import Button from '@material-ui/core/Button'
 import SelectField from 'material-ui/SelectField'
 
 // Our own imports
@@ -139,12 +139,14 @@ export class DeviceDemo extends PureComponent {
           </SelectField>
         </div>
         <div>
-          <RaisedButton
-            primary
-            label="Post New Result"
+          <Button
+            colosr="primary"
             onClick={this.handlePostResult}
             disabled={!postEnabled}
-          />
+            variant="contained"
+          >
+            Post New Result
+          </Button>
         </div>
       </div>
     )

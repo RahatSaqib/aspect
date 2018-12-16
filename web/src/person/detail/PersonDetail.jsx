@@ -8,7 +8,7 @@ import Helmet from 'react-helmet'
 
 // Material-UI
 import Paper from '@material-ui/core/Paper'
-import { Tabs, Tab } from 'material-ui/Tabs'
+import Tab from '@material-ui/core/Tab'
 import LinearProgress from '@material-ui/core/LinearProgress'
 import MapsPersonPin from '@material-ui/icons/PersonPinRounded'
 import Language from '@material-ui/icons/Language'
@@ -18,6 +18,7 @@ import LoginDetailsForm from './LoginDetailsForm'
 import UserPreferencesForm from './UserPreferencesForm'
 
 // Our own imports
+import Tabs from '../../components/shared/Tabs'
 import { Hidden, Visible } from '../../components/pureGrids'
 import NavTitle from '../../globals/components/NavTitle'
 import isEditable from '../../shared/selectors/person'
@@ -160,9 +161,9 @@ export class PersonDetail extends PureComponent {
         <NavTitle title={formatMessage(messages.title)} />
         <Paper>
           {editable && (
-            <Tabs>
+            <Tabs fullWidth>
               <Tab
-                icon={<MapsPersonPin />}
+                icon={<MapsPersonPin fontSize="large" />}
                 label={
                   <Hidden xs component="span">
                     {formatMessage(messages.contactDetails)}
@@ -185,7 +186,7 @@ export class PersonDetail extends PureComponent {
               </Tab>
               {userIsAdmin && (
                 <Tab
-                  icon={<Lock />}
+                  icon={<Lock fontSize="large" />}
                   label={
                     <Hidden xs component="span">
                       {formatMessage(messages.systemAccessControl)}
@@ -205,7 +206,7 @@ export class PersonDetail extends PureComponent {
                 </Tab>
               )}
               <Tab
-                icon={<Language />}
+                icon={<Language fontSize="large" />}
                 label={
                   <Hidden xs component="span">
                     {formatMessage(messages.languageAndTimezone)}
