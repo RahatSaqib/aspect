@@ -113,5 +113,10 @@ export default {
       },
       selected: {},
     },
+    MuiStepIcon: {
+      root: {
+        fontSize: '1.25rem',
+      },
+    },
   },
 }

@@ -3,7 +3,8 @@ import React from 'react'
 import _ from 'lodash'
 import { defineMessages, intlShape } from 'react-intl'
 import { withStyles } from '@material-ui/core/styles'
-import Popover from 'material-ui/Popover'
+import Paper from '@material-ui/core/Paper'
+import Popper from '@material-ui/core/Popper'
 import LinearProgress from '@material-ui/core/LinearProgress'
 import CheckIcon from '@material-ui/icons/Check'
 import CloseIcon from '@material-ui/icons/Close'
@@ -17,7 +18,7 @@ const red = 'rgb(226, 18, 18)'
 const amber = 'rgb(255, 174, 0)'
 const green = 'rgb(27, 186, 13)'
 
-const muiStyles = {
+const muiStyles = theme => ({
   linearProgress: {
     height: '1em',
     backgroundColor: 'transparent',
@@ -31,7 +32,10 @@ const muiStyles = {
   linearColorSuccess: {
     backgroundColor: green,
   },
-}
+  warningPopover: {
+    marginTop: theme.typography.pxToRem(24),
+  },
+})
 
 const messages = defineMessages({
   passwordStrengthMeterWeak: {
@@ -179,74 +183,77 @@ export class StrongPasswordInput extends React.PureComponent {
           onFocus={this.handleFocus}
           onBlur={this.handleBlur}
         />
-        <Popover
+
+        <Popper
           anchorEl={this.state.anchorEl}
           open={this.state.showMeter && !_.isEmpty(input.value)}
-          useLayerForClickAway={false}
+          placement="bottom-start"
           {...popOverProps}
         >
-          <span style={strengthMessageStyle}>{strengthMessage}</span>
-          <LinearProgress
-            classes={{
-              root: classes.linearProgress,
-              barColorPrimary: passwordStrengthResults.isWeak
-                ? classes.linearColorError
-                : passwordStrengthResults.isStrong
-                  ? classes.linearColorSuccess
-                  : classes.linearColorWarning,
-            }}
-            variant="determinate"
-            value={passwordStrengthScore}
-          />
-          <ul className={styles.List__Unstyled}>
-            <li>
-              {passwordStrengthRules.minLength ? (
-                <CheckIcon style={checkIconStyle} />
-              ) : (
-                <CloseIcon style={crossIconStyle} />
-              )}
-              <span style={strengthRuleStyle}>
-                {formatMessage(messages.passwordStrengthMeterMinLength, {
-                  minLength: 8,
-                })}
-              </span>
-            </li>
-            <li>
-              {passwordStrengthRules.containsNumber ? (
-                <CheckIcon style={checkIconStyle} />
-              ) : (
-                <CloseIcon style={crossIconStyle} />
-              )}
-              <span style={strengthRuleStyle}>
-                {formatMessage(messages.passwordStrengthMeterContainsNumber)}
-              </span>
-            </li>
-            <li>
-              {passwordStrengthRules.mixUpperAndLowerCase ? (
-                <CheckIcon style={checkIconStyle} />
-              ) : (
-                <CloseIcon style={crossIconStyle} />
-              )}
-              <span style={strengthRuleStyle}>
-                {formatMessage(
-                  messages.passwordStrengthMeterMixUpperAndLowerCase
+          <Paper className={classes.warningPopover}>
+            <span style={strengthMessageStyle}>{strengthMessage}</span>
+            <LinearProgress
+              classes={{
+                root: classes.linearProgress,
+                barColorPrimary: passwordStrengthResults.isWeak
+                  ? classes.linearColorError
+                  : passwordStrengthResults.isStrong
+                    ? classes.linearColorSuccess
+                    : classes.linearColorWarning,
+              }}
+              variant="determinate"
+              value={passwordStrengthScore}
+            />
+            <ul className={styles.List__Unstyled}>
+              <li>
+                {passwordStrengthRules.minLength ? (
+                  <CheckIcon style={checkIconStyle} />
+                ) : (
+                  <CloseIcon style={crossIconStyle} />
                 )}
-              </span>
-            </li>
-            <li>
-              {passwordStrengthRules.containSpecialCharacter ? (
-                <CheckIcon style={checkIconStyle} />
-              ) : (
-                <CloseIcon style={crossIconStyle} />
-              )}
-              <span style={strengthRuleStyle}>
-                {formatMessage(
-                  messages.passwordStrengthMeterContainsSpecialCharacter
+                <span style={strengthRuleStyle}>
+                  {formatMessage(messages.passwordStrengthMeterMinLength, {
+                    minLength: 8,
+                  })}
+                </span>
+              </li>
+              <li>
+                {passwordStrengthRules.containsNumber ? (
+                  <CheckIcon style={checkIconStyle} />
+                ) : (
+                  <CloseIcon style={crossIconStyle} />
                 )}
-              </span>
-            </li>
-          </ul>
-        </Popover>
+                <span style={strengthRuleStyle}>
+                  {formatMessage(messages.passwordStrengthMeterContainsNumber)}
+                </span>
+              </li>
+              <li>
+                {passwordStrengthRules.mixUpperAndLowerCase ? (
+                  <CheckIcon style={checkIconStyle} />
+                ) : (
+                  <CloseIcon style={crossIconStyle} />
+                )}
+                <span style={strengthRuleStyle}>
+                  {formatMessage(
+                    messages.passwordStrengthMeterMixUpperAndLowerCase
+                  )}
+                </span>
+              </li>
+              <li>
+                {passwordStrengthRules.containSpecialCharacter ? (
+                  <CheckIcon style={checkIconStyle} />
+                ) : (
+                  <CloseIcon style={crossIconStyle} />
+                )}
+                <span style={strengthRuleStyle}>
+                  {formatMessage(
+                    messages.passwordStrengthMeterContainsSpecialCharacter
+                  )}
+                </span>
+              </li>
+            </ul>
+          </Paper>
+        </Popper>
       </div>
     )
   }

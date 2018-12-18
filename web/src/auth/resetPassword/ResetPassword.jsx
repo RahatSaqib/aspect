@@ -8,7 +8,10 @@ import { Link } from 'react-router-dom'
 
 // Material-UI
 import Paper from '@material-ui/core/Paper'
-import { Step, Stepper, StepLabel, StepContent } from 'material-ui/Stepper'
+import Stepper from '@material-ui/core/Stepper'
+import Step from '@material-ui/core/Step'
+import StepLabel from '@material-ui/core/StepLabel'
+import StepContent from '@material-ui/core/StepContent'
 import Button from '@material-ui/core/Button'
 import LinearProgress from '@material-ui/core/LinearProgress'
 

@@ -7,10 +7,10 @@ import Helmet from 'react-helmet'
 
 // Material-UI
 import LinearProgress from '@material-ui/core/LinearProgress'
-import MenuItem from 'material-ui/MenuItem'
+import MenuItem from '@material-ui/core/MenuItem'
 import Paper from '@material-ui/core/Paper'
 import Button from '@material-ui/core/Button'
-import SelectField from 'material-ui/SelectField'
+import TextField from '@material-ui/core/TextField'
 
 // Our own imports
 import { fetchDemoDevice, postDemoDeviceResult } from '../DemoRedux'
@@ -68,7 +68,7 @@ export class DeviceDemo extends PureComponent {
     this.props.fetchDemoDevice(this.props.match.params.deviceId)
   }
 
-  handleSelectFieldChange = field => (event, index, value) => {
+  handleSelectFieldChange = field => ({ target: { value } }) => {
     this.setState(Object.assign({}, this.state, { [field]: value }))
   }
 
@@ -107,40 +107,42 @@ export class DeviceDemo extends PureComponent {
     return (
       <div>
         <div>
-          <SelectField
+          <TextField
+            select
+            margin="normal"
             value={assayId}
-            floatingLabelText="Assay"
+            label="Assay"
             fullWidth
+            InputLabelProps={{ shrink: !!assayId }}
             onChange={this.handleSelectFieldChange('assayId')}
           >
             {assays.map(a => (
-              <MenuItem
-                key={a.get('id')}
-                value={a.get('id')}
-                primaryText={a.get('name')}
-              />
+              <MenuItem key={a.get('id')} value={a.get('id')}>
+                {a.get('name')}
+              </MenuItem>
             ))}
-          </SelectField>
+          </TextField>
         </div>
         <div>
-          <SelectField
+          <TextField
+            select
+            margin="normal"
             value={resultId}
-            floatingLabelText="Result"
+            label="Result"
             fullWidth
+            InputLabelProps={{ shrink: !!resultId }}
             onChange={this.handleSelectFieldChange('resultId')}
           >
             {results.map(r => (
-              <MenuItem
-                key={r.get('id')}
-                value={r.get('id')}
-                primaryText={r.get('name')}
-              />
+              <MenuItem key={r.get('id')} value={r.get('id')}>
+                {r.get('name')}
+              </MenuItem>
             ))}
-          </SelectField>
+          </TextField>
         </div>
         <div>
           <Button
-            colosr="primary"
+            color="primary"
             onClick={this.handlePostResult}
             disabled={!postEnabled}
             variant="contained"

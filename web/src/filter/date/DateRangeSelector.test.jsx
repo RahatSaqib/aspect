@@ -1,8 +1,8 @@
 import React from 'react'
 import { shallow } from 'enzyme'
 import sinon from 'sinon'
-import DatePicker from 'material-ui/DatePicker'
-import MenuItem from 'material-ui/MenuItem'
+import { DatePicker } from 'material-ui-pickers'
+import MenuItem from '@material-ui/core/MenuItem'
 import { IntlProvider } from 'react-intl'
 
 import ForkedSelectField from '../../components/forkedMaterialUi/ForkedSelectField'

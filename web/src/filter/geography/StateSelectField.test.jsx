@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import sinon from 'sinon'
 import { shallow, mount } from 'enzyme'
-import getMuiTheme from 'material-ui/styles/getMuiTheme'
+import { createMuiTheme } from '@material-ui/core/styles'
 
 import {
   LazyLoadItems,
@@ -18,7 +18,7 @@ describe('StateSelectField module', () => {
   const mountWithMuiTheme = node =>
     mount(node, {
       context: {
-        muiTheme: getMuiTheme(),
+        muiTheme: createMuiTheme(),
       },
       childContextTypes: {
         muiTheme: PropTypes.object.isRequired,

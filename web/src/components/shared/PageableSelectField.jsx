@@ -3,8 +3,8 @@ import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
 
 // Material-UI
-import SelectField from 'material-ui/SelectField'
-import MenuItem from 'material-ui/MenuItem'
+import Select from '@material-ui/core/Select'
+import MenuItem from '@material-ui/core/MenuItem'
 
 const VALUE_LOAD_MORE = 'VALUE_LOAD_MORE'
 const VALUE_LOADING_MORE = 'VALUE_LOADING_MORE'
@@ -44,22 +44,18 @@ export default class PageableSelectField extends PureComponent {
     } = this.props
 
     return (
-      <SelectField {...restProps} onChange={this.handleChange}>
+      <Select {...restProps} onChange={this.handleChange}>
         {children}
         {isLoadingMore ? (
-          <MenuItem
-            key={VALUE_LOADING_MORE}
-            value={VALUE_LOADING_MORE}
-            primaryText={loadingMoreText}
-          />
+          <MenuItem key={VALUE_LOADING_MORE} value={VALUE_LOADING_MORE}>
+            {loadingMoreText}
+          </MenuItem>
         ) : (
-          <MenuItem
-            key={VALUE_LOAD_MORE}
-            value={VALUE_LOAD_MORE}
-            primaryText={loadMoreText}
-          />
+          <MenuItem key={VALUE_LOAD_MORE} value={VALUE_LOAD_MORE}>
+            {loadMoreText}
+          </MenuItem>
         )}
-      </SelectField>
+      </Select>
     )
   }
 }
