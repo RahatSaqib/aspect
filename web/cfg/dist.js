@@ -47,7 +47,7 @@ const config = () => {
       }),
       new FaviconsWebpackPlugin({
         logo: path.join(__dirname, '../src/template/favicon.png'),
-        prefix: 'icons-[contenthash]-',
+        prefix: 'icons-[hash]-',
         persistentCache: false,
         inject: true,
         background: '#fff',
