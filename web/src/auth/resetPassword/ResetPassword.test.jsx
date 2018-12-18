@@ -39,7 +39,7 @@ describe('ResetPassword module', () => {
       expect(ResetPasswordWrapper.getElement().type).toEqual('div')
     })
 
-    it('should contain a vertical stepper for small screens and a horizontal stepper for large screens', () => {
+    it.only('should contain a vertical stepper for small screens and a horizontal stepper for large screens', () => {
       const largeScreenDiv = ResetPasswordWrapper.find(Hidden).find({
         xs: true,
         sm: true,
@@ -48,12 +48,18 @@ describe('ResetPassword module', () => {
         xl: true,
       })
 
-      expect(largeScreenDiv.find(Stepper).props().orientation).toEqual(
-        'horizontal'
-      )
-      expect(smallScreenDiv.find(Stepper).props().orientation).toEqual(
-        'vertical'
-      )
+      expect(
+        largeScreenDiv
+          .find(Stepper)
+          .dive()
+          .props().orientation
+      ).toEqual('horizontal')
+      expect(
+        smallScreenDiv
+          .find(Stepper)
+          .dive()
+          .props().orientation
+      ).toEqual('vertical')
     })
 
     it('should contain the same steps for both large and small screens', () => {

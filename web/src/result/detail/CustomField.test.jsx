@@ -1,14 +1,15 @@
 import React from 'react'
 import ReactShallowRenderer from 'react-test-renderer/shallow'
-import { shallow } from 'enzyme'
+import { shallow, mount } from 'enzyme'
 import sinon from 'sinon'
 import Immutable from 'immutable'
 import _ from 'lodash'
 import { Button } from 'react-toolbox/lib/button'
+import { MuiPickersUtilsProvider } from 'material-ui-pickers'
+import DateFnsUtils from '@date-io/date-fns'
 import FormGroup from '../../components/themedReactToolbox/FormGroup'
 import CustomField from './CustomField'
 import StyledDropdown from '../../components/themedReactToolbox/StyledDropdown'
-import DateTimePicker from '../../components/shared/DateTimePicker'
 import FocusBlurTextField from '../../components/shared/FocusBlurTextField'
 
 describe('CustomField component', () => {
@@ -16,6 +17,14 @@ describe('CustomField component', () => {
 
   function renderCustomerField(props) {
     return shallow(<CustomField {...props} />)
+  }
+
+  function mountCustomerField(props) {
+    return mount(
+      <MuiPickersUtilsProvider utils={DateFnsUtils}>
+        <CustomField {...props} />
+      </MuiPickersUtilsProvider>
+    )
   }
 
   describe('When field type is ButtonGroup', () => {
@@ -240,8 +249,8 @@ describe('CustomField component', () => {
     })
 
     it('should show empty field when form data has not been set', () => {
-      const customField = renderCustomerField(props)
-      const dateTimePicker = customField.find(DateTimePicker)
+      const customField = mountCustomerField(props)
+      const dateTimePicker = customField.find('DateTimePickerModal')
       expect(dateTimePicker.prop('value')).toBeNull()
     })
 
@@ -252,22 +261,34 @@ describe('CustomField component', () => {
           expertInterpretation: mockDate,
         }),
       })
-      const customField = renderCustomerField(propsWithValue)
-      const dateTimePicker = customField.find(DateTimePicker)
+      const customField = mountCustomerField(propsWithValue)
+      const dateTimePicker = customField.find('DateTimePickerModal')
       expect(dateTimePicker.prop('value')).toEqual(mockDate)
     })
 
-    it('should call onUpdateDate event when the user select the date or time', () => {
-      const mockDate = new Date(2018, 10, 5, 15, 30)
-      const customField = renderCustomerField(props)
-      const dateTimePicker = customField.find(DateTimePicker)
+    it.only('should call onUpdateDate event when the user select the date or time', () => {
+      const customField = mountCustomerField(props)
+
       const { updateFormData } = props
       expect(updateFormData.callCount).toBe(0)
+      customField.find('input').simulate('click')
+      expect(customField.find('Dialog').props().open).toBeTruthy()
+      customField
+        .find('Day button')
+        .at(10)
+        .simulate('click')
 
-      dateTimePicker.simulate('change', mockDate)
+      expect(customField.find('Clock').prop('type')).toBe('hours')
+      customField
+        .find('Clock div[role="menu"]')
+        .simulate('mouseUp', { nativeEvent: { offsetX: 10, offsetY: 20 } })
+
+      expect(customField.find('Clock').prop('type')).toBe('minutes')
+      customField
+        .find('Clock div[role="menu"]')
+        .simulate('mouseUp', { nativeEvent: { offsetX: 10, offsetY: 20 } })
 
       expect(updateFormData.callCount).toBe(1)
-      expect(updateFormData.lastCall.args[2]).toEqual(mockDate)
     })
   })
 

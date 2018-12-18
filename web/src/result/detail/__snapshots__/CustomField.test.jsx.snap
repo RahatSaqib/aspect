@@ -87,7 +87,11 @@ exports[`CustomField component When field type is DateTime should shallow render
   label=""
   mapThemrProps={[Function]}
 >
-  <DateTimePicker
+  <ForwardRef
+    ampm={false}
+    autoOk={true}
+    fullWidth={true}
+    labelFunc={[Function]}
     onChange={[Function]}
     value={null}
   />

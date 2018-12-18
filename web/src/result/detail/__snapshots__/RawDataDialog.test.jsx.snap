@@ -2,12 +2,9 @@
 
 exports[`RawDataDialog module RawDataDialog component should render correctly 1`] = `
 <div>
-  <Dialog
-    autoDetectWindowHeight={true}
+  <WithStyles(Dialog)
     autoScrollBodyContent={true}
-    modal={false}
     open={true}
-    repositionOnUpdate={true}
     title="Raw Result Data"
   >
     <div
@@ -19,6 +16,6 @@ exports[`RawDataDialog module RawDataDialog component should render correctly 1`
     >
       No log entries found for this result
     </div>
-  </Dialog>
+  </WithStyles(Dialog)>
 </div>
 `;

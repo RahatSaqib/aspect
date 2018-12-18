@@ -43,53 +43,339 @@ exports[`JSONSchemaCard module JSONSchemaCard testInstance should render correct
     </div>
   </div>
   <div
-    className="Container"
-    data-react-toolbox="card"
+    className="MuiPaper-root-4 MuiPaper-elevation1-7 MuiExpansionPanel-root-1"
   >
     <div
-      className="Header"
+      aria-expanded={false}
+      className="MuiButtonBase-root-37 MuiExpansionPanelSummary-root-31"
+      onBlur={[Function]}
       onClick={[Function]}
+      onFocus={[Function]}
+      onKeyDown={[Function]}
+      onKeyUp={[Function]}
+      onMouseDown={[Function]}
+      onMouseLeave={[Function]}
+      onMouseUp={[Function]}
+      onTouchEnd={[Function]}
+      onTouchMove={[Function]}
+      onTouchStart={[Function]}
       role="button"
       tabIndex="0"
     >
       <div
-        className="Label"
+        className="MuiExpansionPanelSummary-content-35"
       >
-        Probes
+        <h6
+          className="MuiTypography-root-40 MuiTypography-subtitle1-58"
+        >
+          Probes
+        </h6>
       </div>
       <div
-        className="Header__Content"
-      />
-      <button
-        className="Header__Icon"
-        data-react-toolbox="button"
-        disabled={false}
+        aria-hidden="true"
+        className="MuiButtonBase-root-37 MuiIconButton-root-75 MuiExpansionPanelSummary-expandIcon-36"
+        onBlur={[Function]}
+        onFocus={[Function]}
+        onKeyDown={[Function]}
+        onKeyUp={[Function]}
         onMouseDown={[Function]}
         onMouseLeave={[Function]}
         onMouseUp={[Function]}
+        onTouchEnd={[Function]}
+        onTouchMove={[Function]}
         onTouchStart={[Function]}
-        type="button"
+        role="button"
+        tabIndex={-1}
       >
-        <svg
-          fill="currentColor"
-          height="1em"
-          preserveAspectRatio="xMidYMid meet"
-          style={
-            Object {
-              "color": undefined,
-              "verticalAlign": "middle",
-            }
-          }
-          viewBox="0 0 40 40"
-          width="1em"
+        <span
+          className="MuiIconButton-label-80"
         >
-          <g>
+          <svg
+            aria-hidden="true"
+            className="MuiSvgIcon-root-81"
+            focusable="false"
+            role="presentation"
+            viewBox="0 0 24 24"
+          >
             <path
-              d="m27.7 14.3l2.3 2.3-10 10-10-10 2.3-2.3 7.7 7.7z"
+              d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"
             />
-          </g>
-        </svg>
-      </button>
+            <path
+              d="M0 0h24v24H0z"
+              fill="none"
+            />
+          </svg>
+        </span>
+        <span
+          className="MuiTouchRipple-root-95"
+        />
+      </div>
+    </div>
+    <div
+      aria-hidden="true"
+      className="MuiCollapse-container-90"
+      style={
+        Object {
+          "minHeight": "0px",
+        }
+      }
+    >
+      <div
+        className="MuiCollapse-wrapper-92"
+      >
+        <div
+          className="MuiCollapse-wrapperInner-93"
+        >
+          <div
+            className="MuiExpansionPanelDetails-root-94"
+          >
+            <p
+              className="MuiTypography-root-40 MuiTypography-body2-48"
+            >
+              <div
+                className="pure-u-1-2 pure-u-sm-1-3"
+              >
+                <div
+                  className="Container"
+                >
+                  <label
+                    className="Container__Label"
+                    htmlFor="CIC_Ct"
+                  >
+                    CIC Ct
+                  </label>
+                  <div
+                    className="Container__Value"
+                    id="CIC_Ct"
+                  >
+                    23.9
+                  </div>
+                </div>
+              </div>
+              <div
+                className="pure-u-1-2 pure-u-sm-1-3"
+              >
+                <div
+                  className="Container"
+                >
+                  <label
+                    className="Container__Label"
+                    htmlFor="CIC_EndPt"
+                  >
+                    CIC EndPt
+                  </label>
+                  <div
+                    className="Container__Value"
+                    id="CIC_EndPt"
+                  >
+                    289
+                  </div>
+                </div>
+              </div>
+              <div
+                className="pure-u-1-2 pure-u-sm-1-3"
+              >
+                <div
+                  className="Container"
+                >
+                  <label
+                    className="Container__Label"
+                    htmlFor="GP_Ct"
+                  >
+                    GP Ct
+                  </label>
+                  <div
+                    className="Container__Value"
+                    id="GP_Ct"
+                  >
+                    25.4
+                  </div>
+                </div>
+              </div>
+              <div
+                className="pure-u-1-2 pure-u-sm-1-3"
+              >
+                <div
+                  className="Container"
+                >
+                  <label
+                    className="Container__Label"
+                    htmlFor="GP_Endpt"
+                  >
+                    GP Endpt
+                  </label>
+                  <div
+                    className="Container__Value"
+                    id="GP_Endpt"
+                  >
+                    558
+                  </div>
+                </div>
+              </div>
+              <div
+                className="pure-u-1-2 pure-u-sm-1-3"
+              >
+                <div
+                  className="Container"
+                >
+                  <label
+                    className="Container__Label"
+                    htmlFor="NP_Ct"
+                  >
+                    NP Ct
+                  </label>
+                  <div
+                    className="Container__Value"
+                    id="NP_Ct"
+                  >
+                    12.2
+                  </div>
+                </div>
+              </div>
+              <div
+                className="pure-u-1-2 pure-u-sm-1-3"
+              >
+                <div
+                  className="Container"
+                >
+                  <label
+                    className="Container__Label"
+                    htmlFor="NP_EndPt"
+                  >
+                    NP EndPt
+                  </label>
+                  <div
+                    className="Container__Value"
+                    id="NP_EndPt"
+                  >
+                    -
+                  </div>
+                </div>
+              </div>
+              <div
+                className="pure-u-1-2 pure-u-sm-1-3"
+              >
+                <div
+                  className="Container"
+                >
+                  <label
+                    className="Container__Label"
+                    htmlFor="QC1_Ct"
+                  >
+                    QC1 Ct
+                  </label>
+                  <div
+                    className="Container__Value"
+                    id="QC1_Ct"
+                  >
+                    0.32
+                  </div>
+                </div>
+              </div>
+              <div
+                className="pure-u-1-2 pure-u-sm-1-3"
+              >
+                <div
+                  className="Container"
+                >
+                  <label
+                    className="Container__Label"
+                    htmlFor="QC1_EndPt"
+                  >
+                    QC1 EndPt
+                  </label>
+                  <div
+                    className="Container__Value"
+                    id="QC1_EndPt"
+                  >
+                    -
+                  </div>
+                </div>
+              </div>
+              <div
+                className="pure-u-1-2 pure-u-sm-1-3"
+              >
+                <div
+                  className="Container"
+                >
+                  <label
+                    className="Container__Label"
+                    htmlFor="QC2_Ct"
+                  >
+                    QC2 Ct
+                  </label>
+                  <div
+                    className="Container__Value"
+                    id="QC2_Ct"
+                  >
+                    11.4
+                  </div>
+                </div>
+              </div>
+              <div
+                className="pure-u-1-2 pure-u-sm-1-3"
+              >
+                <div
+                  className="Container"
+                >
+                  <label
+                    className="Container__Label"
+                    htmlFor="Qc2Endpt"
+                  >
+                    Qc2Endpt
+                  </label>
+                  <div
+                    className="Container__Value"
+                    id="Qc2Endpt"
+                  >
+                    0.5
+                  </div>
+                </div>
+              </div>
+              <div
+                className="pure-u-1-2 pure-u-sm-1-3"
+              >
+                <div
+                  className="Container"
+                >
+                  <label
+                    className="Container__Label"
+                    htmlFor="SAC_Ct"
+                  >
+                    SAC Ct
+                  </label>
+                  <div
+                    className="Container__Value"
+                    id="SAC_Ct"
+                  >
+                    33.8
+                  </div>
+                </div>
+              </div>
+              <div
+                className="pure-u-1-2 pure-u-sm-1-3"
+              >
+                <div
+                  className="Container"
+                >
+                  <label
+                    className="Container__Label"
+                    htmlFor="SAC_EndPt"
+                  >
+                    SAC EndPt
+                  </label>
+                  <div
+                    className="Container__Value"
+                    id="SAC_EndPt"
+                  >
+                    650
+                  </div>
+                </div>
+              </div>
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
   <div
@@ -117,301 +403,335 @@ exports[`JSONSchemaCard module JSONSchemaCard testInstance should render correct
 
 exports[`JSONSchemaCard module PropertiesSchemaCard testInstance should handle nested field expanding correctly 1`] = `
 <div
-  className="Container"
-  data-react-toolbox="card"
+  className="MuiPaper-root-4 MuiPaper-elevation1-7 MuiExpansionPanel-root-1 MuiExpansionPanel-expanded-2"
 >
   <div
-    className="Header"
+    aria-expanded={true}
+    className="MuiButtonBase-root-37 MuiExpansionPanelSummary-root-31 MuiExpansionPanelSummary-expanded-32"
+    onBlur={[Function]}
     onClick={[Function]}
+    onFocus={[Function]}
+    onKeyDown={[Function]}
+    onKeyUp={[Function]}
+    onMouseDown={[Function]}
+    onMouseLeave={[Function]}
+    onMouseUp={[Function]}
+    onTouchEnd={[Function]}
+    onTouchMove={[Function]}
+    onTouchStart={[Function]}
     role="button"
     tabIndex="0"
   >
     <div
-      className="Label"
+      className="MuiExpansionPanelSummary-content-35 MuiExpansionPanelSummary-expanded-32"
     >
-      Data
+      <h6
+        className="MuiTypography-root-40 MuiTypography-subtitle1-58"
+      >
+        Data
+      </h6>
     </div>
     <div
-      className="Header__Content"
-    />
-    <button
-      className="Header__Icon"
-      data-react-toolbox="button"
-      disabled={false}
+      aria-hidden="true"
+      className="MuiButtonBase-root-37 MuiIconButton-root-75 MuiExpansionPanelSummary-expandIcon-36 MuiExpansionPanelSummary-expanded-32"
+      onBlur={[Function]}
+      onFocus={[Function]}
+      onKeyDown={[Function]}
+      onKeyUp={[Function]}
       onMouseDown={[Function]}
       onMouseLeave={[Function]}
       onMouseUp={[Function]}
+      onTouchEnd={[Function]}
+      onTouchMove={[Function]}
       onTouchStart={[Function]}
-      type="button"
+      role="button"
+      tabIndex={-1}
     >
-      <svg
-        fill="currentColor"
-        height="1em"
-        preserveAspectRatio="xMidYMid meet"
-        style={
-          Object {
-            "color": undefined,
-            "verticalAlign": "middle",
-          }
-        }
-        viewBox="0 0 40 40"
-        width="1em"
+      <span
+        className="MuiIconButton-label-80"
       >
-        <g>
+        <svg
+          aria-hidden="true"
+          className="MuiSvgIcon-root-81"
+          focusable="false"
+          role="presentation"
+          viewBox="0 0 24 24"
+        >
           <path
-            d="m20 13.4l10 10-2.3 2.3-7.7-7.7-7.7 7.7-2.3-2.3z"
+            d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"
           />
-        </g>
-      </svg>
-    </button>
+          <path
+            d="M0 0h24v24H0z"
+            fill="none"
+          />
+        </svg>
+      </span>
+      <span
+        className="MuiTouchRipple-root-95"
+      />
+    </div>
   </div>
   <div
-    className="Detail"
+    className="MuiCollapse-container-90 MuiCollapse-entered-91"
+    style={
+      Object {
+        "minHeight": "0px",
+      }
+    }
   >
     <div
-      className="Label"
-    />
-    <div
-      className="Detail__Content"
+      className="MuiCollapse-wrapper-92"
     >
       <div
-        className="pure-u-1-2 pure-u-sm-1-3"
+        className="MuiCollapse-wrapperInner-93"
       >
         <div
-          className="Container"
+          className="MuiExpansionPanelDetails-root-94"
         >
-          <label
-            className="Container__Label"
-            htmlFor="CIC_Ct"
+          <p
+            className="MuiTypography-root-40 MuiTypography-body2-48"
           >
-            CIC Ct
-          </label>
-          <div
-            className="Container__Value"
-            id="CIC_Ct"
-          >
-            23.9
-          </div>
-        </div>
-      </div>
-      <div
-        className="pure-u-1-2 pure-u-sm-1-3"
-      >
-        <div
-          className="Container"
-        >
-          <label
-            className="Container__Label"
-            htmlFor="CIC_EndPt"
-          >
-            CIC EndPt
-          </label>
-          <div
-            className="Container__Value"
-            id="CIC_EndPt"
-          >
-            289
-          </div>
-        </div>
-      </div>
-      <div
-        className="pure-u-1-2 pure-u-sm-1-3"
-      >
-        <div
-          className="Container"
-        >
-          <label
-            className="Container__Label"
-            htmlFor="GP_Ct"
-          >
-            GP Ct
-          </label>
-          <div
-            className="Container__Value"
-            id="GP_Ct"
-          >
-            25.4
-          </div>
-        </div>
-      </div>
-      <div
-        className="pure-u-1-2 pure-u-sm-1-3"
-      >
-        <div
-          className="Container"
-        >
-          <label
-            className="Container__Label"
-            htmlFor="GP_Endpt"
-          >
-            GP Endpt
-          </label>
-          <div
-            className="Container__Value"
-            id="GP_Endpt"
-          >
-            558
-          </div>
-        </div>
-      </div>
-      <div
-        className="pure-u-1-2 pure-u-sm-1-3"
-      >
-        <div
-          className="Container"
-        >
-          <label
-            className="Container__Label"
-            htmlFor="NP_Ct"
-          >
-            NP Ct
-          </label>
-          <div
-            className="Container__Value"
-            id="NP_Ct"
-          >
-            12.2
-          </div>
-        </div>
-      </div>
-      <div
-        className="pure-u-1-2 pure-u-sm-1-3"
-      >
-        <div
-          className="Container"
-        >
-          <label
-            className="Container__Label"
-            htmlFor="NP_EndPt"
-          >
-            NP EndPt
-          </label>
-          <div
-            className="Container__Value"
-            id="NP_EndPt"
-          >
-            -
-          </div>
-        </div>
-      </div>
-      <div
-        className="pure-u-1-2 pure-u-sm-1-3"
-      >
-        <div
-          className="Container"
-        >
-          <label
-            className="Container__Label"
-            htmlFor="QC1_Ct"
-          >
-            QC1 Ct
-          </label>
-          <div
-            className="Container__Value"
-            id="QC1_Ct"
-          >
-            0.32
-          </div>
-        </div>
-      </div>
-      <div
-        className="pure-u-1-2 pure-u-sm-1-3"
-      >
-        <div
-          className="Container"
-        >
-          <label
-            className="Container__Label"
-            htmlFor="QC1_EndPt"
-          >
-            QC1 EndPt
-          </label>
-          <div
-            className="Container__Value"
-            id="QC1_EndPt"
-          >
-            -
-          </div>
-        </div>
-      </div>
-      <div
-        className="pure-u-1-2 pure-u-sm-1-3"
-      >
-        <div
-          className="Container"
-        >
-          <label
-            className="Container__Label"
-            htmlFor="QC2_Ct"
-          >
-            QC2 Ct
-          </label>
-          <div
-            className="Container__Value"
-            id="QC2_Ct"
-          >
-            11.4
-          </div>
-        </div>
-      </div>
-      <div
-        className="pure-u-1-2 pure-u-sm-1-3"
-      >
-        <div
-          className="Container"
-        >
-          <label
-            className="Container__Label"
-            htmlFor="Qc2Endpt"
-          >
-            Qc2Endpt
-          </label>
-          <div
-            className="Container__Value"
-            id="Qc2Endpt"
-          >
-            0.5
-          </div>
-        </div>
-      </div>
-      <div
-        className="pure-u-1-2 pure-u-sm-1-3"
-      >
-        <div
-          className="Container"
-        >
-          <label
-            className="Container__Label"
-            htmlFor="SAC_Ct"
-          >
-            SAC Ct
-          </label>
-          <div
-            className="Container__Value"
-            id="SAC_Ct"
-          >
-            33.8
-          </div>
-        </div>
-      </div>
-      <div
-        className="pure-u-1-2 pure-u-sm-1-3"
-      >
-        <div
-          className="Container"
-        >
-          <label
-            className="Container__Label"
-            htmlFor="SAC_EndPt"
-          >
-            SAC EndPt
-          </label>
-          <div
-            className="Container__Value"
-            id="SAC_EndPt"
-          >
-            650
-          </div>
+            <div
+              className="pure-u-1-2 pure-u-sm-1-3"
+            >
+              <div
+                className="Container"
+              >
+                <label
+                  className="Container__Label"
+                  htmlFor="CIC_Ct"
+                >
+                  CIC Ct
+                </label>
+                <div
+                  className="Container__Value"
+                  id="CIC_Ct"
+                >
+                  23.9
+                </div>
+              </div>
+            </div>
+            <div
+              className="pure-u-1-2 pure-u-sm-1-3"
+            >
+              <div
+                className="Container"
+              >
+                <label
+                  className="Container__Label"
+                  htmlFor="CIC_EndPt"
+                >
+                  CIC EndPt
+                </label>
+                <div
+                  className="Container__Value"
+                  id="CIC_EndPt"
+                >
+                  289
+                </div>
+              </div>
+            </div>
+            <div
+              className="pure-u-1-2 pure-u-sm-1-3"
+            >
+              <div
+                className="Container"
+              >
+                <label
+                  className="Container__Label"
+                  htmlFor="GP_Ct"
+                >
+                  GP Ct
+                </label>
+                <div
+                  className="Container__Value"
+                  id="GP_Ct"
+                >
+                  25.4
+                </div>
+              </div>
+            </div>
+            <div
+              className="pure-u-1-2 pure-u-sm-1-3"
+            >
+              <div
+                className="Container"
+              >
+                <label
+                  className="Container__Label"
+                  htmlFor="GP_Endpt"
+                >
+                  GP Endpt
+                </label>
+                <div
+                  className="Container__Value"
+                  id="GP_Endpt"
+                >
+                  558
+                </div>
+              </div>
+            </div>
+            <div
+              className="pure-u-1-2 pure-u-sm-1-3"
+            >
+              <div
+                className="Container"
+              >
+                <label
+                  className="Container__Label"
+                  htmlFor="NP_Ct"
+                >
+                  NP Ct
+                </label>
+                <div
+                  className="Container__Value"
+                  id="NP_Ct"
+                >
+                  12.2
+                </div>
+              </div>
+            </div>
+            <div
+              className="pure-u-1-2 pure-u-sm-1-3"
+            >
+              <div
+                className="Container"
+              >
+                <label
+                  className="Container__Label"
+                  htmlFor="NP_EndPt"
+                >
+                  NP EndPt
+                </label>
+                <div
+                  className="Container__Value"
+                  id="NP_EndPt"
+                >
+                  -
+                </div>
+              </div>
+            </div>
+            <div
+              className="pure-u-1-2 pure-u-sm-1-3"
+            >
+              <div
+                className="Container"
+              >
+                <label
+                  className="Container__Label"
+                  htmlFor="QC1_Ct"
+                >
+                  QC1 Ct
+                </label>
+                <div
+                  className="Container__Value"
+                  id="QC1_Ct"
+                >
+                  0.32
+                </div>
+              </div>
+            </div>
+            <div
+              className="pure-u-1-2 pure-u-sm-1-3"
+            >
+              <div
+                className="Container"
+              >
+                <label
+                  className="Container__Label"
+                  htmlFor="QC1_EndPt"
+                >
+                  QC1 EndPt
+                </label>
+                <div
+                  className="Container__Value"
+                  id="QC1_EndPt"
+                >
+                  -
+                </div>
+              </div>
+            </div>
+            <div
+              className="pure-u-1-2 pure-u-sm-1-3"
+            >
+              <div
+                className="Container"
+              >
+                <label
+                  className="Container__Label"
+                  htmlFor="QC2_Ct"
+                >
+                  QC2 Ct
+                </label>
+                <div
+                  className="Container__Value"
+                  id="QC2_Ct"
+                >
+                  11.4
+                </div>
+              </div>
+            </div>
+            <div
+              className="pure-u-1-2 pure-u-sm-1-3"
+            >
+              <div
+                className="Container"
+              >
+                <label
+                  className="Container__Label"
+                  htmlFor="Qc2Endpt"
+                >
+                  Qc2Endpt
+                </label>
+                <div
+                  className="Container__Value"
+                  id="Qc2Endpt"
+                >
+                  0.5
+                </div>
+              </div>
+            </div>
+            <div
+              className="pure-u-1-2 pure-u-sm-1-3"
+            >
+              <div
+                className="Container"
+              >
+                <label
+                  className="Container__Label"
+                  htmlFor="SAC_Ct"
+                >
+                  SAC Ct
+                </label>
+                <div
+                  className="Container__Value"
+                  id="SAC_Ct"
+                >
+                  33.8
+                </div>
+              </div>
+            </div>
+            <div
+              className="pure-u-1-2 pure-u-sm-1-3"
+            >
+              <div
+                className="Container"
+              >
+                <label
+                  className="Container__Label"
+                  htmlFor="SAC_EndPt"
+                >
+                  SAC EndPt
+                </label>
+                <div
+                  className="Container__Value"
+                  id="SAC_EndPt"
+                >
+                  650
+                </div>
+              </div>
+            </div>
+          </p>
         </div>
       </div>
     </div>

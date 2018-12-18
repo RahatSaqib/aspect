@@ -38,34 +38,17 @@ exports[`Device Api Key List module DeviceApiKeyList component should shallow re
     onClickExport={[Function]}
   />
   <div>
-    <Button
-      disabled={false}
-      fullWidth={false}
-      label="Generate"
-      labelPosition="after"
-      labelStyle={Object {}}
+    <WithStyles(Button)
       onClick={[Function]}
-      onKeyboardFocus={[Function]}
-      onMouseEnter={[Function]}
-      onMouseLeave={[Function]}
-      onTouchStart={[Function]}
-      primary={false}
-      secondary={false}
-    />
-    <Button
+    >
+      Generate
+    </WithStyles(Button)>
+    <WithStyles(Button)
       disabled={true}
-      fullWidth={false}
-      label="Assign"
-      labelPosition="after"
-      labelStyle={Object {}}
       onClick={[Function]}
-      onKeyboardFocus={[Function]}
-      onMouseEnter={[Function]}
-      onMouseLeave={[Function]}
-      onTouchStart={[Function]}
-      primary={false}
-      secondary={false}
-    />
+    >
+      Assign
+    </WithStyles(Button)>
     <pure(recomposeForm(DeviceApiKeyGeneratorDialogForm))
       intl={
         Object {
@@ -184,34 +167,17 @@ exports[`Device Api Key List module DeviceApiKeyList component should shallow re
     onClickExport={[Function]}
   />
   <div>
-    <Button
-      disabled={false}
-      fullWidth={false}
-      label="Generate"
-      labelPosition="after"
-      labelStyle={Object {}}
+    <WithStyles(Button)
       onClick={[Function]}
-      onKeyboardFocus={[Function]}
-      onMouseEnter={[Function]}
-      onMouseLeave={[Function]}
-      onTouchStart={[Function]}
-      primary={false}
-      secondary={false}
-    />
-    <Button
+    >
+      Generate
+    </WithStyles(Button)>
+    <WithStyles(Button)
       disabled={true}
-      fullWidth={false}
-      label="Assign"
-      labelPosition="after"
-      labelStyle={Object {}}
       onClick={[Function]}
-      onKeyboardFocus={[Function]}
-      onMouseEnter={[Function]}
-      onMouseLeave={[Function]}
-      onTouchStart={[Function]}
-      primary={false}
-      secondary={false}
-    />
+    >
+      Assign
+    </WithStyles(Button)>
     <pure(recomposeForm(DeviceApiKeyGeneratorDialogForm))
       intl={
         Object {

@@ -2,7 +2,7 @@ import React from 'react'
 import { Field } from 'redux-form/immutable'
 import { shallow } from 'enzyme'
 import _ from 'lodash'
-import MenuItem from '@material-ui/core/@MenuItem'
+import MenuItem from '@material-ui/core/MenuItem'
 import SelectInput from './SelectInput'
 
 describe('SelectInput', () => {
@@ -52,7 +52,7 @@ describe('SelectInput', () => {
       children: [],
     })
 
-    expect(selectField.type.name).toEqual('SelectField')
+    expect(selectField.type.displayName).toEqual('WithStyles(SelectField)')
     expect(selectField.props).toEqual({
       ...selectField.props,
       errorStyle: {
@@ -79,7 +79,7 @@ describe('SelectInput', () => {
           element =>
             element.type() === MenuItem &&
             element.props().value === item.personId
-        ).props().primaryText
+        ).props().children
       ).toEqual(item.fullName)
     })
   })

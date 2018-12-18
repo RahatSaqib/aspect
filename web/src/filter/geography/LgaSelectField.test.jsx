@@ -10,7 +10,7 @@ import {
   LazyLoadParent,
   LazyLoadChild,
 } from '../../geography/GeographyRedux'
-import ForkedSelectField from '../../components/forkedMaterialUi/ForkedSelectField'
+import SelectField from '../../components/shared/SelectField'
 
 describe('LgaSelectField module', () => {
   const { LgaSelectField } = require('./LgaSelectField')
@@ -122,20 +122,13 @@ describe('LgaSelectField module', () => {
         countryId: '2',
       }
       const LgaSelectFieldWrapper = shallow(<LgaSelectField {...props} />)
-      const ForkedSelectFieldWrapper = LgaSelectFieldWrapper.find(
-        ForkedSelectField
-      )
+      const SelectFieldWrapper = LgaSelectFieldWrapper.find(SelectField)
 
-      ForkedSelectFieldWrapper.simulate('change', undefined, undefined, '2')
+      SelectFieldWrapper.simulate('change', { target: { value: '2' } })
       expect(props.onLgaIdChange.calledOnce).toBe(true)
       expect(props.onLgaIdChange.calledWith('2')).toBe(true)
 
-      ForkedSelectFieldWrapper.simulate(
-        'change',
-        undefined,
-        undefined,
-        undefined
-      )
+      SelectFieldWrapper.simulate('change', { target: { value: undefined } })
       expect(props.onLgaIdChange.calledTwice).toBe(true)
       expect(props.onLgaIdChange.calledWith(undefined)).toBe(true)
     })

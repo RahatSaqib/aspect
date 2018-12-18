@@ -10,7 +10,7 @@ import {
   LazyLoadParent,
   LazyLoadChild,
 } from '../../geography/GeographyRedux'
-import ForkedSelectField from '../../components/forkedMaterialUi/ForkedSelectField'
+import SelectField from '../../components/shared/SelectField'
 
 describe('CountrySelectField module', () => {
   const { CountrySelectField } = require('./CountrySelectField')
@@ -106,20 +106,13 @@ describe('CountrySelectField module', () => {
       const CountrySelectFieldWrapper = shallow(
         <CountrySelectField {...props} />
       )
-      const ForkedSelectFieldWrapper = CountrySelectFieldWrapper.find(
-        ForkedSelectField
-      )
+      const SelectFieldWrapper = CountrySelectFieldWrapper.find(SelectField)
 
-      ForkedSelectFieldWrapper.simulate('change', undefined, undefined, '2')
+      SelectFieldWrapper.simulate('change', { target: { value: '2' } })
       expect(props.onCountryIdChange.calledOnce).toBe(true)
       expect(props.onCountryIdChange.calledWith('2')).toBe(true)
 
-      ForkedSelectFieldWrapper.simulate(
-        'change',
-        undefined,
-        undefined,
-        undefined
-      )
+      SelectFieldWrapper.simulate('change', { target: { value: undefined } })
       expect(props.onCountryIdChange.calledTwice).toBe(true)
       expect(props.onCountryIdChange.calledWith(undefined)).toBe(true)
     })
