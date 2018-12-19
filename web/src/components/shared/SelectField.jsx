@@ -45,14 +45,16 @@ const SelectField = ({
     select
     margin="normal"
     label={floatingLabelText}
-    value={value}
     InputLabelProps={{
       shrink: floatingLabelFixed || undefined,
     }}
     FormHelperTextProps={{
       style: errorStyle,
     }}
-    SelectProps={{ autoWidth: true }}
+    SelectProps={{
+      autoWidth: true,
+      value,
+    }}
     className={classNames(classes.root, className)}
     classes={{
       root: classNames({ [classes.fullWidth]: fullWidth }),
@@ -82,7 +84,12 @@ SelectField.propTypes = {
   fullWidth: PropTypes.bool,
   helperText: PropTypes.string,
   hintText: PropTypes.string,
-  value: PropTypes.string,
+  value: PropTypes.oneOfType([
+    PropTypes.string,
+    PropTypes.number,
+    PropTypes.bool,
+    PropTypes.object,
+  ]), // eslint-disable-line
   children: PropTypes.node.isRequired,
   onChange: PropTypes.func.isRequired,
 }

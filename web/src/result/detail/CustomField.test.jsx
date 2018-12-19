@@ -266,29 +266,21 @@ describe('CustomField component', () => {
       expect(dateTimePicker.prop('value')).toEqual(mockDate)
     })
 
-    it.only('should call onUpdateDate event when the user select the date or time', () => {
+    it('should call onUpdateDate event when the user select the date or time', () => {
+      const mockDate = new Date(2018, 10, 5, 15, 30)
       const customField = mountCustomerField(props)
 
       const { updateFormData } = props
       expect(updateFormData.callCount).toBe(0)
-      customField.find('input').simulate('click')
-      expect(customField.find('Dialog').props().open).toBeTruthy()
-      customField
-        .find('Day button')
-        .at(10)
-        .simulate('click')
 
-      expect(customField.find('Clock').prop('type')).toBe('hours')
       customField
-        .find('Clock div[role="menu"]')
-        .simulate('mouseUp', { nativeEvent: { offsetX: 10, offsetY: 20 } })
-
-      expect(customField.find('Clock').prop('type')).toBe('minutes')
-      customField
-        .find('Clock div[role="menu"]')
-        .simulate('mouseUp', { nativeEvent: { offsetX: 10, offsetY: 20 } })
+        .find('DateTimePickerModal')
+        .first()
+        .props()
+        .onChange(mockDate)
 
       expect(updateFormData.callCount).toBe(1)
+      expect(updateFormData.lastCall.args[2]).toEqual(mockDate)
     })
   })
 

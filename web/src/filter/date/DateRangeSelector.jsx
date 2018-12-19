@@ -141,13 +141,11 @@ export class DateRangeSelector extends PureComponent {
     controlClassName: PropTypes.string.isRequired,
     minDate: PropTypes.string,
     maxDate: PropTypes.string,
-    classes: PropTypes.string,
   }
 
   static defaultProps = {
     minDate: null,
     maxDate: null,
-    classes: '',
   }
 
   state = {
@@ -536,7 +534,7 @@ export class DateRangeSelector extends PureComponent {
                   >
                     {dropDownSelectItems.map(dropDownSelectItem => (
                       <MenuItem
-                        key={dropDownSelectItem.minDate}
+                        key={`${dropDownSelectItem.minDate.getTime()}-${dropDownSelectItem.maxDate.getTime()}`}
                         value={dropDownSelectItem}
                       >
                         {dropDownSelectItem.label}

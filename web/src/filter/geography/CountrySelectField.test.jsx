@@ -18,7 +18,11 @@ describe('CountrySelectField module', () => {
   const mountWithMuiTheme = node =>
     mount(node, {
       context: {
-        muiTheme: createMuiTheme(),
+        muiTheme: createMuiTheme({
+          typography: {
+            useNextVariants: true,
+          },
+        }),
       },
       childContextTypes: {
         muiTheme: PropTypes.object.isRequired,
