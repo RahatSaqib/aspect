@@ -20,7 +20,9 @@ const deviceApiPath = '/device'
 server.connection({
   port,
   routes: {
-    cors: true,
+    cors: {
+      exposedHeaders: ['WWW-Authenticate', 'Server-Authorization', 'Date'],
+    },
   },
 })
 

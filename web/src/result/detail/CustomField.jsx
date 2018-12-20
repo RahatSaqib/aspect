@@ -52,10 +52,6 @@ const messages = defineMessages({
     id: 'pages.ResultDetail.formFields.hospitalNumber',
     defaultMessage: 'Hospital Number',
   },
-  studyID: {
-    id: 'pages.ResultDetail.formFields.studyID',
-    defaultMessage: 'Study ID',
-  },
   nameOfPatient: {
     id: 'pages.ResultDetail.formFields.nameOfPatient',
     defaultMessage: 'Name',

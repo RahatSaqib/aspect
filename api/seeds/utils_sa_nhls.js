@@ -12,6 +12,7 @@ async function seedNotifications(knex, { partnerId }) {
   const redCapUrl = _.get(config, 'webhook.redcap.url')
   const redCapAuthToken = _.get(config, 'webhook.redcap.authToken')
   if (!redCapUrl || !redCapAuthToken) {
+    // eslint-disable-next-line no-console
     console.error(
       'Missing RedCAP webhook environment variables. Ensure that webhook.redcap.url and webhook.redcap.authToken are set in .env'
     )
@@ -43,7 +44,7 @@ async function seedNotifications(knex, { partnerId }) {
     Object.assign(
       {
         message:
-          'New Result Uploaded {{result.sample.id}} from {{device.name}}. Awaiting additional details to be entered in Aspect?',
+          'New Result Uploaded {{result.sample.id}} from {{device.name}}. Please login to Aspect and enter additional details',
       },
       auditFields
     )

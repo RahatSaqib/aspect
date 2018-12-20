@@ -322,7 +322,7 @@ async function seed(knex) {
         title: 'Cartridge ID',
       },
       sampleId: { list: true, order: 5, type: 'string', title: 'Sample ID' },
-      hiv1MnResult: {
+      hiv1MNResult: {
         list: true,
         order: 6,
         type: 'string',
