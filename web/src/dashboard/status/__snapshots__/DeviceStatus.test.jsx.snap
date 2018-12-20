@@ -2,11 +2,10 @@
 
 exports[`Device Status component should shallow render correctly 1`] = `
 <ThemedCard
-  className={undefined}
   composeTheme="deeply"
   mapThemrProps={[Function]}
 >
-  <Unknown
+  <Title
     icon={
       <MdDescription
         className="Title__Icon"
@@ -15,17 +14,13 @@ exports[`Device Status component should shallow render correctly 1`] = `
     title="Devices"
   />
   <div>
-    <Unknown
+    <Unit
       lg="1-4"
       sm="1-2"
     >
-      <CountryWithPoints
-        countryIsoAlpha2Code={undefined}
-        fill={undefined}
-        points={undefined}
-      />
-    </Unknown>
-    <Unknown
+      <CountryWithPoints />
+    </Unit>
+    <Unit
       lg="1-4"
       sm="1-2"
     >
@@ -67,13 +62,10 @@ exports[`Device Status component should shallow render correctly 1`] = `
             },
           ]
         }
-        onClick={undefined}
-        onMouseEnter={undefined}
-        onMouseLeave={undefined}
         title="operational devices"
       />
-    </Unknown>
-    <Unknown
+    </Unit>
+    <Unit
       lg="1-4"
       sm="1-2"
     >
@@ -114,9 +106,6 @@ exports[`Device Status component should shallow render correctly 1`] = `
             },
           ]
         }
-        onClick={undefined}
-        onMouseEnter={undefined}
-        onMouseLeave={undefined}
         title="warranty expiring"
       />
       <SummaryItemsBlock
@@ -156,13 +145,10 @@ exports[`Device Status component should shallow render correctly 1`] = `
             },
           ]
         }
-        onClick={undefined}
-        onMouseEnter={undefined}
-        onMouseLeave={undefined}
         title="calibration"
       />
-    </Unknown>
-    <Unknown
+    </Unit>
+    <Unit
       lg="1-4"
       sm="1-2"
     >
@@ -203,9 +189,6 @@ exports[`Device Status component should shallow render correctly 1`] = `
             },
           ]
         }
-        onClick={undefined}
-        onMouseEnter={undefined}
-        onMouseLeave={undefined}
         title="uploading data"
       />
       <SummaryItemsBlock
@@ -245,12 +228,9 @@ exports[`Device Status component should shallow render correctly 1`] = `
             },
           ]
         }
-        onClick={undefined}
-        onMouseEnter={undefined}
-        onMouseLeave={undefined}
         title="test failures"
       />
-    </Unknown>
+    </Unit>
   </div>
 </ThemedCard>
 `;

@@ -8,7 +8,6 @@ exports[`DetailPanel module DetailGroup component should render correctly 1`] = 
   <div
     className="Header"
     onClick={[Function]}
-    onKeyDown={undefined}
     role="button"
     tabIndex="0"
   >
@@ -42,10 +41,9 @@ exports[`DetailPanel module DetailGroup component should render correctly 1`] = 
       </div>
     </div>
     <button
-      className=" Header__Icon"
+      className="Header__Icon"
       data-react-toolbox="button"
       disabled={false}
-      href={undefined}
       onMouseDown={[Function]}
       onMouseLeave={[Function]}
       onMouseUp={[Function]}
@@ -113,7 +111,6 @@ exports[`DetailPanel module DetailPanel component should render correctly 1`] = 
     <div
       className="Header"
       onClick={[Function]}
-      onKeyDown={undefined}
       role="button"
       tabIndex="0"
     >
@@ -147,10 +144,9 @@ exports[`DetailPanel module DetailPanel component should render correctly 1`] = 
         </div>
       </div>
       <button
-        className=" Header__Icon"
+        className="Header__Icon"
         data-react-toolbox="button"
         disabled={false}
-        href={undefined}
         onMouseDown={[Function]}
         onMouseLeave={[Function]}
         onMouseUp={[Function]}

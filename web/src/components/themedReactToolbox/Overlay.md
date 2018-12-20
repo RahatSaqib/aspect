@@ -9,7 +9,7 @@ It's already themed by `context`, where you can think it's defined like this:
 ```css
 .overlay {
   ……
-  composes: button from 'react-toolbox/lib/overlay/theme.css';
+  composes: button from 'react-toolbox/lib/overlay/theme.module.css';
   composes: button from 'src/components/themedReactToolbox/Overlay.css';
   ……
 }

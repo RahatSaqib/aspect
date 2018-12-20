@@ -117,7 +117,7 @@ export class AppNotificationDialog extends PureComponent {
         <FlatButton
           label={formatMessage(closeText, messageValues)}
           primary={!showProceed}
-          onTouchTap={this.handleClose}
+          onClick={this.handleClose}
         />
       )
     }
@@ -130,7 +130,7 @@ export class AppNotificationDialog extends PureComponent {
         <FlatButton
           label={formatMessage(proceedText, messageValues)}
           primary
-          onTouchTap={this.handleProceed}
+          onClick={this.handleProceed}
         />
       )
     }

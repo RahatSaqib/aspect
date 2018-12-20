@@ -13,7 +13,6 @@ exports[`Device Api Key List module DeviceApiKeyList component should shallow re
     title="Device API Keys"
   />
   <pure(withProps(withHandlers(Connect(lifecycle(BrowseFilters)))))
-    config={undefined}
     history={
       Object {
         "push": [Function],
@@ -45,11 +44,11 @@ exports[`Device Api Key List module DeviceApiKeyList component should shallow re
       label="Generate"
       labelPosition="after"
       labelStyle={Object {}}
+      onClick={[Function]}
       onKeyboardFocus={[Function]}
       onMouseEnter={[Function]}
       onMouseLeave={[Function]}
       onTouchStart={[Function]}
-      onTouchTap={[Function]}
       primary={false}
       secondary={false}
     />
@@ -59,11 +58,11 @@ exports[`Device Api Key List module DeviceApiKeyList component should shallow re
       label="Assign"
       labelPosition="after"
       labelStyle={Object {}}
+      onClick={[Function]}
       onKeyboardFocus={[Function]}
       onMouseEnter={[Function]}
       onMouseLeave={[Function]}
       onTouchStart={[Function]}
-      onTouchTap={[Function]}
       primary={false}
       secondary={false}
     />
@@ -119,7 +118,7 @@ exports[`Device Api Key List module DeviceApiKeyList component should shallow re
     <DataTableProgressBar
       disabled={true}
     />
-    <pure(withHandlers(Component))
+    <pure(withHandlers(EmptyList))
       history={
         Object {
           "push": [Function],
@@ -160,7 +159,6 @@ exports[`Device Api Key List module DeviceApiKeyList component should shallow re
     title="Device API Keys"
   />
   <pure(withProps(withHandlers(Connect(lifecycle(BrowseFilters)))))
-    config={undefined}
     history={
       Object {
         "push": [Function],
@@ -192,11 +190,11 @@ exports[`Device Api Key List module DeviceApiKeyList component should shallow re
       label="Generate"
       labelPosition="after"
       labelStyle={Object {}}
+      onClick={[Function]}
       onKeyboardFocus={[Function]}
       onMouseEnter={[Function]}
       onMouseLeave={[Function]}
       onTouchStart={[Function]}
-      onTouchTap={[Function]}
       primary={false}
       secondary={false}
     />
@@ -206,11 +204,11 @@ exports[`Device Api Key List module DeviceApiKeyList component should shallow re
       label="Assign"
       labelPosition="after"
       labelStyle={Object {}}
+      onClick={[Function]}
       onKeyboardFocus={[Function]}
       onMouseEnter={[Function]}
       onMouseLeave={[Function]}
       onTouchStart={[Function]}
-      onTouchTap={[Function]}
       primary={false}
       secondary={false}
     />

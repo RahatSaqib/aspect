@@ -35,7 +35,7 @@ export class NotFound extends PureComponent {
         </h2>
         <IconButton
           className={cssClasses('Container__Button')}
-          onTouchTap={this.props.history.goBack}
+          onClick={this.props.history.goBack}
         >
           <ActionBack />
         </IconButton>

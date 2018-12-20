@@ -7,21 +7,18 @@ exports[`TaskAggre module TaskAggre component should render correctly 1`] = `
     encodeSpecialCharacters={true}
     title="Task"
   />
-  <Unknown
-    history={undefined}
+  <DetailBackBar
     location={
       Object {
         "search": "",
       }
     }
-    match={undefined}
-    onBackClick={undefined}
     title="TB positive results"
   />
   <section
     className="Section"
   >
-    <Unknown
+    <Unit
       lg="1-4"
     >
       <legend
@@ -45,8 +42,8 @@ exports[`TaskAggre module TaskAggre component should render correctly 1`] = `
           </Link>
         </span>
       </div>
-    </Unknown>
-    <Unknown
+    </Unit>
+    <Unit
       lg="1-2"
     >
       <legend
@@ -84,8 +81,8 @@ exports[`TaskAggre module TaskAggre component should render correctly 1`] = `
           </Link>
         </span>
       </div>
-    </Unknown>
-    <Unknown
+    </Unit>
+    <Unit
       lg="1-4"
     >
       <legend
@@ -109,7 +106,7 @@ exports[`TaskAggre module TaskAggre component should render correctly 1`] = `
           </Link>
         </span>
       </div>
-    </Unknown>
+    </Unit>
   </section>
   <section
     className="Section"
@@ -118,8 +115,7 @@ exports[`TaskAggre module TaskAggre component should render correctly 1`] = `
       <DataTableProgressBar
         disabled={true}
       />
-      <pure(withHandlers(Component))
-        history={undefined}
+      <pure(withHandlers(EmptyList))
         intl={
           Object {
             "defaultFormats": Object {},

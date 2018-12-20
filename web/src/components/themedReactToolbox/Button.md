@@ -9,7 +9,7 @@ It's already themed by `context`, where you can think it's defined like this:
 ```css
 .button {
   ……
-  composes: button from 'react-toolbox/lib/button/theme.css';
+  composes: button from 'react-toolbox/lib/button/theme.module.css';
   composes: button from 'src/components/themedReactToolbox/Button.css';
   ……
 }

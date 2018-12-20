@@ -2,7 +2,7 @@ import classnames from 'classnames'
 import React from 'react'
 import { compose } from 'recompose'
 import { themr } from 'react-css-themr'
-import theme from 'react-toolbox/lib/input/theme.css'
+import theme from 'react-toolbox/lib/input/theme.module.css'
 import { INPUT } from 'react-toolbox/lib/identifiers'
 
 const enhance = compose(themr(INPUT, theme))

@@ -2,7 +2,7 @@ import React from 'react'
 import ReactShallowRenderer from 'react-test-renderer/shallow'
 import { RawDataDialog } from './RawDataDialog'
 
-describe('NotificationList module', () => {
+describe('RawDataDialog module', () => {
   const props = { isShown: true, logs: [] }
 
   describe('RawDataDialog component', () => {

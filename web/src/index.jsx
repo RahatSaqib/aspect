@@ -6,7 +6,6 @@ import _ from 'lodash'
 import React from 'react'
 import { render } from 'react-dom'
 import { overrideComponentTypeChecker } from 'react-toolbox/lib/utils/is-component-of-type'
-import injectTapEventPlugin from 'react-tap-event-plugin'
 
 import config from './config'
 import store from './store'
@@ -20,10 +19,6 @@ if (config.sentry) {
   const Raven = require('raven-js')
   Raven.config(config.sentry.dsn).install()
 }
-
-// This won't be necessary when facebook updates react
-// http://stackoverflow.com/a/34015469/988941
-injectTapEventPlugin()
 
 // polyfill intl if necessary
 // http://formatjs.io/guides/runtime-environments/
