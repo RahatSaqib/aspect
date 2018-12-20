@@ -3,7 +3,7 @@
     {
       "externalId": "CHBAH",
       "name": "Chris Hani Baragwanath Academic Hospital Maternity POCT",
-      "shortName": "CHBAH POCT",
+      "shortName": "CHBAH Maternity POCT",
       "stateName": "Gauteng",
       "lgaName": "Diepkloof",
       "devices": [
@@ -14,6 +14,14 @@
         {
           "deviceTypeId": "AlereQ",
           "deviceSerial": "nat-04001091"
+        },
+        {
+          "deviceTypeId": "AlereQ",
+          "deviceSerial": "NAT-04000553"
+        },
+        {
+          "deviceTypeId": "AlereQ",
+          "deviceSerial": "nat-04000286"
         }
       ]
     },
@@ -29,7 +37,13 @@
       "name": "Charlotte Maxeke Johannesburg Academic Hospital",
       "shortName": "CMJAH",
       "stateName": "Gauteng",
-      "lgaName": "Parktown"
+      "lgaName": "Parktown",
+      "devices": [
+        {
+          "deviceTypeId": "AlereQ",
+          "deviceSerial": "NAT-04001093"
+        }
+      ]
     },
     {
       "externalId": "kalafong",

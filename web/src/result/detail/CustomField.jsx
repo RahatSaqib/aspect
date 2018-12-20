@@ -40,17 +40,17 @@ const messages = defineMessages({
     id: 'pages.ResultDetail.formOptions.uninterpretable',
     defaultMessage: 'Uninterpretable',
   },
-  default: {
-    id: 'pages.ResultDetail.formFields.default',
+  defaultString: {
+    id: 'pages.ResultDetail.formFields.defaultString',
     defaultMessage: '',
+  },
+  patientId: {
+    id: 'pages.ResultDetail.formFields.patientId',
+    defaultMessage: 'Patient ID',
   },
   hospitalNumber: {
     id: 'pages.ResultDetail.formFields.hospitalNumber',
     defaultMessage: 'Hospital Number',
-  },
-  studyID: {
-    id: 'pages.ResultDetail.formFields.studyID',
-    defaultMessage: 'Study ID',
   },
   nameOfPatient: {
     id: 'pages.ResultDetail.formFields.nameOfPatient',
@@ -116,7 +116,7 @@ export default class CustomField extends PureComponent {
     const fieldType = fieldSchema.getIn(['control', 'type'])
     const fieldLabel = isMultiField
       ? formatMessage(
-          messages[fieldSchema.get('i18nLabel')] || messages.default
+          messages[fieldSchema.get('i18nLabel')] || messages.defaultString
         )
       : ''
     const fieldValue = formData ? formData.get(formFieldKey, null) : null

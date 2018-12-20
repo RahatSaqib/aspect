@@ -149,6 +149,7 @@ describe('stringTemplate', () => {
 
     const messageDataSource = {
       siteExternalId: 'RMMCH',
+      siteShortName: 'Rahima Moosa RMMCH',
       deviceName: 'Rahima Moosa Mother and Child Hospital',
       deviceTypeExternalId: 'AlereQ',
       deviceLastSeenOn: new Date(2018, 7, 1, 10, 51, 13),
@@ -158,6 +159,7 @@ describe('stringTemplate', () => {
       sampleExternalId: 'SAMPLE-123',
       resultData: `{"id":1,"sampleBarcode":"SAMPLE-123","operator":"RHANDZU","resultNo":1,"sampleId":"FUNCTION TEST","testName":"Alere™ q HIV-1/2 Detect","errorCode":"18006","timeStamp":"2018-10-05T13:40:46","hiv2Result":"---","pickedUpOn":"2018-11-08T14:06:21.305072","sourceFile":"/home/south_africa_nhls/ftp/alere_q/01-01_NAT-04000925_2018-10-31-11-18-58.csv.zip","cartridgeId":"0479001033","deviceCheck":"Fail","hiv1OResult":"---","deviceSerial":"NAT-04000925","hiv1MNResult":"---","analysisCheck":"----","negativeControl":"----","sampleDetection":"----","softwareVersion":"0.24.2","hiv1PositiveControl":"----","hiv2PositiveControl":"----"}`,
       resultFormData: `{"firstName":"James","surname":"Hetfield","musicalSkills":"","nameOfPatient":"Bryan","surnameOfPatient":"Richards","hospitalNumber":"HS97349","studyID":"ST976","ward":"66","timeSampleTaken":"2018-10-05T13:40:46","sampleType":"study","timeInstrumentResulted":"2018-10-05T14:51:18"}`,
+      resultPatientData: `{"id":"ABC-123"}`,
       resultModuleName: null,
       resultModuleSerial: undefined,
       resultErrorCode: null,
@@ -651,9 +653,9 @@ describe('stringTemplate', () => {
           Error: '4',
         }
         const tryMergeResultCategories = (resultCategory1, resultCategory2) => {
-          const priorityResult = (resultCategories, resultCateoryId) => {
-            if (resultCategories.includes(resultCateoryId)) {
-              return resultCateoryId
+          const priorityResult = (resultCategories, resultCategoryId) => {
+            if (resultCategories.includes(resultCategoryId)) {
+              return resultCategoryId
             }
           }
           const resultCategories = [resultCategory1, resultCategory2]
@@ -672,7 +674,7 @@ describe('stringTemplate', () => {
           for (let i = 0; i < orderedPriorityCategories.length; i++) {
             const foundPriorityCategory = priorityResult(
               resultCategories,
-              orderedPriorityCategories
+              orderedPriorityCategories[i]
             )
             if (foundPriorityCategory) {
               return foundPriorityCategory
@@ -1001,6 +1003,210 @@ describe('stringTemplate', () => {
                 ),
               },
             ])
+        })
+      })
+
+      it('should process SMS Payloads for New Results', async () => {
+        const template =
+          'New Result Uploaded {{result.sample.id}} from {{device.name}}. ' +
+          'Please login to Aspect and enter additional details'
+        const message = await runProcessUsingDataSourceQuery(
+          template,
+          messageDataSource
+        )
+        assert.equal(
+          message.payload,
+          `New Result Uploaded ${messageDataSource.sampleExternalId}` +
+            ` from ${messageDataSource.deviceName}. ` +
+            `Please login to Aspect and enter additional details`
+        )
+      })
+
+      it('should process SMS Payloads for Results after result detals have been filled out', async () => {
+        const template =
+          `GxAlert. New case HIV > 50 cps from {{site.shortName}}; ` +
+          `in Ward: {{result.formData.ward}}; Sample ID: {{result.sample.id}};  ` +
+          `Patient ID: {{result.patient.id}} on {{formatDate result.endedOn}}` +
+          `{{#if (eq result.assay.id 'assayAlereQHiv12VLPlasma')}}` +
+          `{{#if (or (isRegexMatch result.data.hiv1MNResult '([\\d|\\s|\\.]+) cp\\/mL') ` +
+          `(isRegexMatch result.data.hiv1OResult '([\\d|\\s|\\.]+) cp\\/mL') ` +
+          `(isRegexMatch result.data.hiv2Result '([\\d|\\s|\\.]+) cp\\/mL'))}}` +
+          `{{#if (or (gt (toInt (extractValueFromRegexCaptureGroup result.data.hiv1MNResult '([\\d|\\s|\\.]+) cp\\/mL')) 10000000) ` +
+          `(gt (toInt (extractValueFromRegexCaptureGroup result.data.hiv1OResult '([\\d|\\s|\\.]+) cp\\/mL')) 10000000) ` +
+          `(gt (toInt (extractValueFromRegexCaptureGroup result.data.hiv2Result '([\\d|\\s|\\.]+) cp\\/mL')) 10000000))}}` +
+          `; Result: > 10 000 000 cp/ml` +
+          `{{else}}` +
+          `; Result: {{maxViralLoadValue result.data.hiv1MNResult result.data.hiv1OResult result.data.hiv2Result}} cp/ml` +
+          `{{/if}}` +
+          `{{/if}}` +
+          `{{else if (eq result.assay.id 'GxHiv1Vl')}}` +
+          `{{#if (gt (toInt (extractValueFromRegexCaptureGroup result.data.copies '([\\d|\\s|\\.]+)')) 10000000)}}` +
+          `; Result: > 10 000 000 cp/ml` +
+          `{{else}}` +
+          `; Result: {{maxViralLoadValue result.data.copies}} cp/ml` +
+          `{{/if}}` +
+          `{{else}}` +
+          `; Result: {{mapValue (tryMergeResultCategories result.category1.id result.category2.id) '{"Detected":"HIV+","NotDetected":"HIV-"}'}}` +
+          `{{/if}}`
+
+        const useCases = [
+          {
+            assayExternalId: 'assayAlereQHiv12Detect',
+            resultCategory1ExternalId: 'Detected',
+            resultCategory2ExternalId: 'NotDetected',
+            expectedResult: 'HIV+',
+            deviceTypeExternalId: 'AlereQ',
+            resultData: `{"hiv1OResult":"Detected","hiv1MNResult":"Undetected","hiv2Result":"Undetected","errorCode":"0","id":1,"sampleBarcode":"SAMPLE-123","operator":"RHANDZU","resultNo":1,"sampleId":"FUNCTION TEST","testName":"Alere™ q HIV-1/2 Detect","timeStamp":"2018-10-05T13:40:46","pickedUpOn":"2018-11-08T14:06:21.305072","sourceFile":"/home/south_africa_nhls/ftp/alere_q/01-01_NAT-04000925_2018-10-31-11-18-58.csv.zip","cartridgeId":"0479001033","deviceCheck":"Fail","deviceSerial":"NAT-04000925","analysisCheck":"----","negativeControl":"----","sampleDetection":"----","softwareVersion":"0.24.2","hiv1PositiveControl":"----","hiv2PositiveControl":"----"}`,
+          },
+          {
+            assayExternalId: 'assayAlereQHiv12Detect',
+            resultCategory1ExternalId: 'Detected',
+            resultCategory2ExternalId: 'NotDetected',
+            expectedResult: 'HIV+',
+            deviceTypeExternalId: 'AlereQ',
+            resultData: `{"hiv1OResult":"Undetected","hiv1MNResult":"Detected","hiv2Result":"Undetected","errorCode":"0","id":1,"sampleBarcode":"SAMPLE-123","operator":"RHANDZU","resultNo":1,"sampleId":"FUNCTION TEST","testName":"Alere™ q HIV-1/2 Detect","timeStamp":"2018-10-05T13:40:46","pickedUpOn":"2018-11-08T14:06:21.305072","sourceFile":"/home/south_africa_nhls/ftp/alere_q/01-01_NAT-04000925_2018-10-31-11-18-58.csv.zip","cartridgeId":"0479001033","deviceCheck":"Fail","deviceSerial":"NAT-04000925","analysisCheck":"----","negativeControl":"----","sampleDetection":"----","softwareVersion":"0.24.2","hiv1PositiveControl":"----","hiv2PositiveControl":"----"}`,
+          },
+          {
+            assayExternalId: 'assayAlereQHiv12Detect',
+            resultCategory1ExternalId: 'NotDetected',
+            resultCategory2ExternalId: 'Detected',
+            expectedResult: 'HIV+',
+            deviceTypeExternalId: 'AlereQ',
+            resultData: `{"hiv1OResult":"Undetected","hiv1MNResult":"Undetected","hiv2Result":"Detected","errorCode":"0","id":1,"sampleBarcode":"SAMPLE-123","operator":"RHANDZU","resultNo":1,"sampleId":"FUNCTION TEST","testName":"Alere™ q HIV-1/2 Detect","timeStamp":"2018-10-05T13:40:46","pickedUpOn":"2018-11-08T14:06:21.305072","sourceFile":"/home/south_africa_nhls/ftp/alere_q/01-01_NAT-04000925_2018-10-31-11-18-58.csv.zip","cartridgeId":"0479001033","deviceCheck":"Fail","deviceSerial":"NAT-04000925","analysisCheck":"----","negativeControl":"----","sampleDetection":"----","softwareVersion":"0.24.2","hiv1PositiveControl":"----","hiv2PositiveControl":"----"}`,
+          },
+          {
+            assayExternalId: 'assayAlereQHiv12VLPlasma',
+            resultCategory1ExternalId: 'Detected',
+            resultCategory2ExternalId: 'NotDetected',
+            expectedResult: '2299 cp/ml',
+            deviceTypeExternalId: 'AlereQ',
+            resultData: `{"hiv1OResult":"2299 cp/mL","hiv1MNResult":"Undetected","hiv2Result":"Undetected","errorCode":"0","id":1,"sampleBarcode":"SAMPLE-123","operator":"RHANDZU","resultNo":1,"sampleId":"FUNCTION TEST","testName":"Alere™ q HIV-1/2 Detect","timeStamp":"2018-10-05T13:40:46","pickedUpOn":"2018-11-08T14:06:21.305072","sourceFile":"/home/south_africa_nhls/ftp/alere_q/01-01_NAT-04000925_2018-10-31-11-18-58.csv.zip","cartridgeId":"0479001033","deviceCheck":"Fail","deviceSerial":"NAT-04000925","analysisCheck":"----","negativeControl":"----","sampleDetection":"----","softwareVersion":"0.24.2","hiv1PositiveControl":"----","hiv2PositiveControl":"----"}`,
+          },
+          {
+            assayExternalId: 'assayAlereQHiv12VLPlasma',
+            resultCategory1ExternalId: 'Detected',
+            resultCategory2ExternalId: 'NotDetected',
+            expectedResult: '2299 cp/ml',
+            deviceTypeExternalId: 'AlereQ',
+            resultData: `{"hiv1OResult":"< 800 cp/mL","hiv1MNResult":"2299 cp/mL","hiv2Result":"Undetected","errorCode":"0","id":1,"sampleBarcode":"SAMPLE-123","operator":"RHANDZU","resultNo":1,"sampleId":"FUNCTION TEST","testName":"Alere™ q HIV-1/2 Detect","timeStamp":"2018-10-05T13:40:46","pickedUpOn":"2018-11-08T14:06:21.305072","sourceFile":"/home/south_africa_nhls/ftp/alere_q/01-01_NAT-04000925_2018-10-31-11-18-58.csv.zip","cartridgeId":"0479001033","deviceCheck":"Fail","deviceSerial":"NAT-04000925","analysisCheck":"----","negativeControl":"----","sampleDetection":"----","softwareVersion":"0.24.2","hiv1PositiveControl":"----","hiv2PositiveControl":"----"}`,
+          },
+          {
+            assayExternalId: 'assayAlereQHiv12VLPlasma',
+            resultCategory1ExternalId: 'Detected',
+            resultCategory2ExternalId: 'NotDetected',
+            expectedResult: '2299 cp/ml',
+            deviceTypeExternalId: 'AlereQ',
+            resultData: `{"hiv1OResult":"Undetected","hiv1MNResult":"Undetected","hiv2Result":"2299 cp/mL","errorCode":"0","id":1,"sampleBarcode":"SAMPLE-123","operator":"RHANDZU","resultNo":1,"sampleId":"FUNCTION TEST","testName":"Alere™ q HIV-1/2 Detect","timeStamp":"2018-10-05T13:40:46","pickedUpOn":"2018-11-08T14:06:21.305072","sourceFile":"/home/south_africa_nhls/ftp/alere_q/01-01_NAT-04000925_2018-10-31-11-18-58.csv.zip","cartridgeId":"0479001033","deviceCheck":"Fail","deviceSerial":"NAT-04000925","analysisCheck":"----","negativeControl":"----","sampleDetection":"----","softwareVersion":"0.24.2","hiv1PositiveControl":"----","hiv2PositiveControl":"----"}`,
+          },
+          {
+            assayExternalId: 'assayAlereQHiv12VLPlasma',
+            resultCategory1ExternalId: 'Detected',
+            resultCategory2ExternalId: 'Detected',
+            expectedResult: '2299 cp/ml',
+            deviceTypeExternalId: 'AlereQ',
+            resultData: `{"hiv1OResult":"< 800 cp/mL","hiv1MNResult":"Undetected","hiv2Result":"2299 cp/mL","errorCode":"0","id":1,"sampleBarcode":"SAMPLE-123","operator":"RHANDZU","resultNo":1,"sampleId":"FUNCTION TEST","testName":"Alere™ q HIV-1/2 Detect","timeStamp":"2018-10-05T13:40:46","pickedUpOn":"2018-11-08T14:06:21.305072","sourceFile":"/home/south_africa_nhls/ftp/alere_q/01-01_NAT-04000925_2018-10-31-11-18-58.csv.zip","cartridgeId":"0479001033","deviceCheck":"Fail","deviceSerial":"NAT-04000925","analysisCheck":"----","negativeControl":"----","sampleDetection":"----","softwareVersion":"0.24.2","hiv1PositiveControl":"----","hiv2PositiveControl":"----"}`,
+          },
+          {
+            assayExternalId: 'assayAlereQHiv12VLPlasma',
+            resultCategory1ExternalId: 'Detected',
+            resultCategory2ExternalId: 'Detected',
+            expectedResult: '< 800 cp/ml',
+            deviceTypeExternalId: 'AlereQ',
+            resultData: `{"hiv1OResult":"< 800 cp/mL","hiv1MNResult":"Undetected","hiv2Result":"Undetected","errorCode":"0","id":1,"sampleBarcode":"SAMPLE-123","operator":"RHANDZU","resultNo":1,"sampleId":"FUNCTION TEST","testName":"Alere™ q HIV-1/2 Detect","timeStamp":"2018-10-05T13:40:46","pickedUpOn":"2018-11-08T14:06:21.305072","sourceFile":"/home/south_africa_nhls/ftp/alere_q/01-01_NAT-04000925_2018-10-31-11-18-58.csv.zip","cartridgeId":"0479001033","deviceCheck":"Fail","deviceSerial":"NAT-04000925","analysisCheck":"----","negativeControl":"----","sampleDetection":"----","softwareVersion":"0.24.2","hiv1PositiveControl":"----","hiv2PositiveControl":"----"}`,
+          },
+          {
+            assayExternalId: 'assayAlereQHiv12VLPlasma',
+            resultCategory1ExternalId: 'Detected',
+            resultCategory2ExternalId: 'Detected',
+            expectedResult: '> 10 000 000 cp/ml',
+            deviceTypeExternalId: 'AlereQ',
+            resultData: `{"hiv1OResult":"10000001 cp/mL","hiv1MNResult":"Undetected","hiv2Result":"Undetected","errorCode":"0","id":1,"sampleBarcode":"SAMPLE-123","operator":"RHANDZU","resultNo":1,"sampleId":"FUNCTION TEST","testName":"Alere™ q HIV-1/2 Detect","timeStamp":"2018-10-05T13:40:46","pickedUpOn":"2018-11-08T14:06:21.305072","sourceFile":"/home/south_africa_nhls/ftp/alere_q/01-01_NAT-04000925_2018-10-31-11-18-58.csv.zip","cartridgeId":"0479001033","deviceCheck":"Fail","deviceSerial":"NAT-04000925","analysisCheck":"----","negativeControl":"----","sampleDetection":"----","softwareVersion":"0.24.2","hiv1PositiveControl":"----","hiv2PositiveControl":"----"}`,
+          },
+          {
+            assayExternalId: 'GxHiv1Qual',
+            resultCategory1ExternalId: 'Detected',
+            resultCategory2ExternalId: 'NotDetected',
+            expectedResult: 'HIV+',
+            deviceTypeExternalId: 'CepheidGeneXpert',
+          },
+          {
+            assayExternalId: 'GxHiv1Qual',
+            resultCategory1ExternalId: 'Detected',
+            resultCategory2ExternalId: 'NotDetected',
+            expectedResult: 'HIV+',
+            deviceTypeExternalId: 'CepheidGeneXpert',
+          },
+          {
+            assayExternalId: 'GxHiv1Qual',
+            resultCategory1ExternalId: 'NotDetected',
+            resultCategory2ExternalId: 'Detected',
+            expectedResult: 'HIV+',
+            deviceTypeExternalId: 'CepheidGeneXpert',
+          },
+          {
+            assayExternalId: 'GxHiv1Vl',
+            resultCategory1ExternalId: 'Detected',
+            resultCategory2ExternalId: 'NotDetected',
+            expectedResult: '2299 cp/ml',
+            deviceTypeExternalId: 'CepheidGeneXpert',
+            resultData: `{"copies":2299}`,
+          },
+          {
+            assayExternalId: 'GxHiv1Vl',
+            resultCategory1ExternalId: 'Detected',
+            resultCategory2ExternalId: 'NotDetected',
+            expectedResult: '< 800 cp/ml',
+            deviceTypeExternalId: 'CepheidGeneXpert',
+            resultData: `{"copies":"< 800"}`,
+          },
+          {
+            assayExternalId: 'GxHiv1Vl',
+            resultCategory1ExternalId: 'Detected',
+            resultCategory2ExternalId: 'NotDetected',
+            expectedResult: '2299 cp/ml',
+            deviceTypeExternalId: 'CepheidGeneXpert',
+            resultData: `{"copies":"2299"}`,
+          },
+          {
+            assayExternalId: 'GxHiv1Vl',
+            resultCategory1ExternalId: 'Detected',
+            resultCategory2ExternalId: 'Detected',
+            expectedResult: '< 800 cp/ml',
+            deviceTypeExternalId: 'CepheidGeneXpert',
+            resultData: `{"copies":"< 800 cp/ml"}`,
+          },
+          {
+            assayExternalId: 'GxHiv1Vl',
+            resultCategory1ExternalId: 'Detected',
+            resultCategory2ExternalId: 'Detected',
+            expectedResult: '> 10 000 000 cp/ml',
+            deviceTypeExternalId: 'CepheidGeneXpert',
+            resultData: `{"copies":"10000001"}`,
+          },
+        ]
+        await Promise.each(useCases, async useCase => {
+          const dataSource = Object.assign({}, messageDataSource, useCase)
+          const formData = JSON.parse(dataSource.resultFormData)
+          const message = await runProcessUsingDataSourceQuery(
+            template,
+            useCase
+          )
+          const patientData = JSON.parse(dataSource.resultPatientData)
+          assert.equal(
+            message.payload,
+            `GxAlert. New case HIV > 50 cps from ${
+              dataSource.siteShortName
+            }; ` +
+              `in Ward: ${formData.ward}; Sample ID: ${
+                dataSource.sampleExternalId
+              };  ` +
+              `Patient ID: ${patientData.id} on ${formatDateOrDefault(
+                dataSource.resultEndedOn,
+                displayPreferences.dateFormat
+              )}` +
+              `; Result: ${dataSource.expectedResult}`,
+            `Use case failed: ${JSON.stringify(useCase)}`
+          )
         })
       })
     })

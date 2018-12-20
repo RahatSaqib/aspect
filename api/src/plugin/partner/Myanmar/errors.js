@@ -97,8 +97,8 @@ const moduleFailureMaxErrors = 2
 const machineTemperatureMaxErrors = 8
 const minPrcntMachineTemperatureResolve = 1
 const maxPrcntErrors = 5
-const machinePowerMaxErrors = 8
 const machinePowerMinNoResults = 8
+const machinePowerMinErrorsNoResult = 8
 const maxPrcntMachinePowerErrors = 3
 const minPrcntMachinePowerResolve = 1
 const maxInvalidResultRatio = 3
@@ -127,8 +127,8 @@ module.exports = {
   machineTemperatureMaxErrors,
   minPrcntMachineTemperatureResolve,
   maxPrcntErrors,
-  machinePowerMaxErrors,
   machinePowerMinNoResults,
+  machinePowerMinErrorsNoResult,
   maxPrcntMachinePowerErrors,
   minPrcntMachinePowerResolve,
   maxInvalidResultRatio,

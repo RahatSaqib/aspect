@@ -20,6 +20,12 @@
   flex-wrap: wrap;
 }
 
+@media screen and (--md-viewport) {
+  .ButtonGroup--isolated {
+    flex-wrap: nowrap;
+  }
+}
+
 .ButtonGroup--isolated > *:not(:first-child) {
   margin-left: 5px;
 }

@@ -1,10 +1,21 @@
 module.exports = require('../utils').seed(seed)
 
 const _ = require('lodash')
-const config = require('../../src/config')
 const bcrypt = require('bcrypt')
+const Promise = require('bluebird')
 
+const config = require('../../src/config')
+const southAfricaLabClinic = require('./fixtures/southAfricaLabClinic.json')
 const { rowsAsObject, getPermissionModules } = require('../utils')
+const { seedNotifications } = require('../utils_sa_nhls')
+const {
+  allResultCategoryToId,
+  allResultWorkflowStatusToId,
+  resultTypeToId,
+  deviceTypeToId,
+} = require('../../src/shared/dictionary')
+const { createUniqueIdForResult } = require('../../src/result/service')
+const { parseDateOrDefault } = require('../../src/shared/date')
 
 const {
   deviceTypeCategoryToId,
@@ -70,6 +81,7 @@ async function seed(knex) {
   const [partnerId] = await knex('Partner').insert({
     name: 'South Africa NHLS',
     partnerTypeId: await partnerTypeToId('Operating'),
+    plugin: 'sa_nhls',
     deviceLogHistoryDays: 365,
     maxDaysDeviceOffline: 7,
     maxDaysDeviceNoResults: 14,
@@ -129,6 +141,109 @@ async function seed(knex) {
     )
   )
 
+  const southAfricaProvinces = await knex('Geography as g')
+    .innerJoin('State as s', 's.id', 'g.stateId')
+    .where({ 'g.countryId': southAfricaCountry.id })
+    .select('g.countryId', 's.id', 's.name')
+  const southAfricaDistricts = await knex('Geography as g')
+    .innerJoin('Lga as l', 'l.id', 'g.lgaId')
+    .innerJoin('State as s', 's.id', 'g.stateId')
+    .where({ 'g.countryId': southAfricaCountry.id })
+    .select('g.countryId', 'l.id', 'l.name', 's.name as stateName')
+  const provincesByName = southAfricaProvinces.reduce(
+    (provinceMemo, province) => {
+      provinceMemo[province.name.toLowerCase()] = province
+      const provinceDistricts = _.filter(southAfricaDistricts, {
+        stateName: province.name,
+      })
+      if (provinceDistricts) {
+        provinceMemo[
+          province.name.toLowerCase()
+        ].districts = provinceDistricts.reduce((districtMemo, district) => {
+          districtMemo[district.name.toLowerCase()] = district
+          return districtMemo
+        }, {})
+      }
+      return provinceMemo
+    },
+    {}
+  )
+
+  const siteIds = {}
+  await Promise.all(
+    _.map(southAfricaLabClinic.clinics, async clinic => {
+      const province = clinic.stateName
+        ? provincesByName[clinic.stateName.toLowerCase()] || {
+            id: null,
+            districts: {},
+          }
+        : {
+            id: null,
+            districts: {},
+          }
+      const district =
+        province.districts && clinic.lgaName
+          ? province.districts[clinic.lgaName.toLowerCase()] || {
+              id: null,
+            }
+          : {
+              id: null,
+            }
+      const { id: clinicGeographyId } = await knex('Geography')
+        .where({
+          countryId: southAfricaCountry.id,
+          stateId: province.id,
+          lgaId: district.id,
+        })
+        .first()
+
+      // sites
+      const siteData = Object.assign(
+        {
+          partnerId,
+          geographyId: clinicGeographyId,
+          name: clinic.name,
+          shortName: clinic.shortName,
+          externalId: clinic.externalId,
+          latitude: clinic.latitude,
+          longitude: clinic.longitude,
+          timezoneId: southAfricaCountry.timezone,
+        },
+        auditFields
+      )
+      const [siteId] = await knex('Site').insert(siteData)
+      siteData.id = siteId
+      siteIds[clinic.shortName] = siteId
+
+      if (clinic.devices) {
+        await Promise.all(
+          _.map(clinic.devices, async device =>
+            knex('Device').insert(
+              Object.assign(
+                {
+                  partnerId,
+                  geographyId: clinicGeographyId,
+                  siteId,
+                  deviceTypeId: await deviceTypeToId(device.deviceTypeId),
+                  deviceStatusId: await deviceStatusToId('approved'),
+                  name: `${siteData.shortName} ${device.deviceTypeId} ${
+                    device.deviceSerial
+                  }`,
+                  shortName: `${device.deviceTypeId} ${device.deviceSerial}`,
+                  serial: device.deviceSerial,
+                  culture: southAfricaCountry.culture,
+                  timezone: siteData.timezoneId,
+                  configurationData: '{}',
+                },
+                auditFields
+              )
+            )
+          )
+        )
+      }
+    })
+  )
+
   const [adminPersonId] = await knex('Person').insert(
     Object.assign(
       {
@@ -168,6 +283,34 @@ async function seed(knex) {
     geographyId: southAfricaGeographyId,
   })
 
+  const [jobFunctionIdRegionalOfficer] = await knex('JobFunction').insert({
+    name: 'Regional Officer',
+    partnerId,
+  })
+  await knex('JobFunctionPermission').insert([
+    {
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      permissionId: modules.browse.view,
+    },
+    {
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      permissionId: modules.result.admin,
+    },
+    {
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      permissionId: modules.device.view,
+    },
+    {
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      permissionId: modules.site.view,
+    },
+  ])
+  await knex('JobFunctionFeature').insert([
+    { jobFunctionId: jobFunctionIdRegionalOfficer, featureId: features.device },
+    { jobFunctionId: jobFunctionIdRegionalOfficer, featureId: features.result },
+    { jobFunctionId: jobFunctionIdRegionalOfficer, featureId: features.site },
+  ])
+
   const [jobFunctionIdLabUser] = await knex('JobFunction').insert({
     name: 'Lab User',
     partnerId,
@@ -175,10 +318,13 @@ async function seed(knex) {
   await knex('JobFunctionPermission').insert([
     { jobFunctionId: jobFunctionIdLabUser, permissionId: modules.browse.view },
     { jobFunctionId: jobFunctionIdLabUser, permissionId: modules.result.admin },
+    { jobFunctionId: jobFunctionIdLabUser, permissionId: modules.device.view },
     { jobFunctionId: jobFunctionIdLabUser, permissionId: modules.site.view },
   ])
   await knex('JobFunctionFeature').insert([
+    { jobFunctionId: jobFunctionIdLabUser, featureId: features.device },
     { jobFunctionId: jobFunctionIdLabUser, featureId: features.result },
+    { jobFunctionId: jobFunctionIdLabUser, featureId: features.site },
   ])
 
   // create site for lab user
@@ -230,6 +376,34 @@ async function seed(knex) {
     })
   )
 
+  const patientDataSchema = JSON.stringify({
+    id: {
+      title: 'Patient ID',
+      type: 'string',
+      order: 0,
+    },
+    firstName: {
+      title: 'First Name',
+      type: 'string',
+      order: 1,
+    },
+    surname: {
+      title: 'Surname',
+      type: 'string',
+      order: 2,
+    },
+    ward: {
+      title: 'Ward',
+      type: 'string',
+      order: 3,
+    },
+    hospitalNumber: {
+      title: 'Hospital Number',
+      type: 'string',
+      order: 4,
+    },
+  })
+
   const [alereQHiv12DetectAssayId] = await knex('Assay').insert({
     name: 'Alere q HIV-1/2 Detect',
     i18nKey: 'assayAlereQHiv12Detect',
@@ -254,7 +428,7 @@ async function seed(knex) {
         title: 'Cartridge ID',
       },
       sampleId: { list: true, order: 5, type: 'string', title: 'Sample ID' },
-      hiv1MnResult: {
+      hiv1MNResult: {
         list: true,
         order: 6,
         type: 'string',
@@ -330,6 +504,7 @@ async function seed(knex) {
         title: 'Picked Up On',
       },
     }),
+    patientDataSchema,
   })
   const [alereQHiv12VLPlasmaAssayId] = await knex('Assay').insert({
     name: 'Alere q HIV-1/2 VL plasma',
@@ -453,6 +628,7 @@ async function seed(knex) {
         title: 'Picked Up On',
       },
     }),
+    patientDataSchema,
   })
 
   const piece = await unitToId('Piece')
@@ -483,84 +659,93 @@ async function seed(knex) {
   ])
 
   const geneXpertHiv1VlFormSchema = {
-    hospitalNumber: {
-      i18nLabel: 'hospitalNumber',
-      control: {
-        type: 'TextBox',
+    fields: {
+      patientId: {
+        i18nLabel: 'patientId',
+        control: {
+          type: 'TextBox',
+        },
+        order: 1,
       },
-      order: 1,
-    },
-    studyID: {
-      i18nLabel: 'studyID',
-      control: {
-        type: 'TextBox',
+      hospitalNumber: {
+        i18nLabel: 'hospitalNumber',
+        control: {
+          type: 'TextBox',
+        },
+        order: 2,
       },
-      order: 2,
-    },
-    nameOfPatient: {
-      i18nLabel: 'nameOfPatient',
-      control: {
-        type: 'TextBox',
+      studyID: {
+        i18nLabel: 'studyID',
+        control: {
+          type: 'TextBox',
+        },
+        order: 3,
       },
-      order: 3,
-    },
-    surnameOfPatient: {
-      i18nLabel: 'surnameOfPatient',
-      control: {
-        type: 'TextBox',
+      nameOfPatient: {
+        i18nLabel: 'nameOfPatient',
+        control: {
+          type: 'TextBox',
+        },
+        order: 4,
       },
-      order: 4,
-    },
-    ward: {
-      i18nLabel: 'ward',
-      control: {
-        type: 'TextBox',
+      surnameOfPatient: {
+        i18nLabel: 'surnameOfPatient',
+        control: {
+          type: 'TextBox',
+        },
+        order: 5,
       },
-      order: 5,
-    },
-    timeSampleTaken: {
-      i18nLabel: 'timeSampleTaken',
-      control: {
-        type: 'DateTime',
+      ward: {
+        i18nLabel: 'ward',
+        control: {
+          type: 'TextBox',
+        },
+        order: 6,
       },
-      order: 6,
-    },
-    sampleType: {
-      i18nLabel: 'sampleType',
-      control: {
-        type: 'DropDown',
-        options: [
-          {
-            i18nText: 'studyOfSampleType',
-            value: 'study',
-          },
-          {
-            i18nText: 'EQAOfSampleType',
-            value: 'EQA',
-          },
-          {
-            i18nText: 'miscOfSampleType',
-            value: 'misc',
-          },
-        ],
+      timeSampleTaken: {
+        i18nLabel: 'timeSampleTaken',
+        control: {
+          type: 'DateTime',
+        },
+        order: 7,
       },
-      order: 7,
+      sampleType: {
+        i18nLabel: 'sampleType',
+        control: {
+          type: 'DropDown',
+          options: [
+            {
+              i18nText: 'studyOfSampleType',
+              value: 'study',
+            },
+            {
+              i18nText: 'EQAOfSampleType',
+              value: 'EQA',
+            },
+            {
+              i18nText: 'miscOfSampleType',
+              value: 'misc',
+            },
+          ],
+        },
+        order: 8,
+      },
     },
+    sendChangesOn: 'change',
   }
 
-  const assayAlereQHiv12FormSchema = Object.assign(
-    {},
-    geneXpertHiv1VlFormSchema,
-    {
+  const assayAlereQHiv12FormSchema = _.merge({}, geneXpertHiv1VlFormSchema, {
+    fields: {
       timeInstrumentResulted: {
         i18nLabel: 'timeInstrumentResulted',
         control: {
           type: 'DateTime',
         },
-        order: 8,
+        order: 9,
       },
-    }
-  )
+    },
+    sendChangesOn: 'submit',
+  })
 
   const { id: assayGeneXpertHiv1VlId } = await knex('Assay')
     .where({ externalId: 'GxHiv1Vl' })
@@ -591,4 +776,1510 @@ async function seed(knex) {
       formSchema: JSON.stringify(assayAlereQHiv12FormSchema),
     },
   ])
+
+  const { id: cmjahSiteId, geographyId: cmjahGeographyId } = await knex('Site')
+    .where({ partnerId, externalId: 'CMJAH' })
+    .first()
+  // get/create device
+  const { id: cmjahDeviceId, serial: cmjahDeviceSerial } = await knex('Device')
+    .where({
+      partnerId,
+      geographyId: cmjahGeographyId,
+      siteId: cmjahSiteId,
+    })
+    .first('id', 'serial')
+
+  const {
+    OK: resultWorkflowStatusOKId,
+    Error: resultWorkflowStatusErrorId,
+  } = await allResultWorkflowStatusToId()
+  const resultSourceDiagnosticDeviceId = await resultSourceToId(
+    'DiagnosticDevice'
+  )
+  const resultTypePatientId = await resultTypeToId('Patient')
+
+  const {
+    Detected: resultCategoryDetectedId,
+    NotDetected: resultCategoryNotDetectedId,
+    NoResult: resultCategoryNoResultId,
+    Error: resultCategoryErrorId,
+  } = await allResultCategoryToId()
+
+  const results = [
+    {
+      sampleId: 'TEST',
+      testStartedOn: parseDateOrDefault('2018-04-18 09:55:24', now),
+      testEndedOn: parseDateOrDefault('2018-04-18 09:55:24', now),
+      resultWorkflowStatusId: resultWorkflowStatusErrorId,
+      category1: resultCategoryErrorId,
+      category2: resultCategoryErrorId,
+      resultData:
+        '{"status": "IUO", "operator": "LUCIA", "resultNo": 7, "sampleId": "TEST", "testName": "Alere™ q HIV-1/2 VL plasma", "errorCode": "21501", "timeStamp": "2018-04-18T09:55:24", "deviceMode": "", "hiv2Result": "---", "pickedUpOn": "2018-11-14T14:44:47.561056", "sourceFile": "/home/south_africa_nhls/ftp/alere_q/07-05_NAT-04000585_2018-09-05-10-05-51.zip", "cartridgeId": "0653001709", "deviceCheck": "Pass", "hiv1OResult": "---", "deviceSerial": "NAT-04000585", "hiv1MNResult": "---", "analysisCheck": "----", "negativeControl": "----", "sampleDetection": "Fail", "softwareVersion": "0.24.5", "hiv1PositiveControl": "----", "hiv2PositiveControl": "----"}',
+      consumableSerial: '0653001709',
+      senderVersion: '0.24.5',
+      senderOperator: 'LUCIA',
+      rawData:
+        '	Result No;	Device Serial;	Test Name;	Cartridge ID;	Sample ID;	HIV-1 M/N cp/mL;	HIV-1 O cp/mL;	HIV-2 cp/mL;	Error Code;	Operator;	Timestamp;	Sample Detection;	Device;	HIV-1 Positive Control;	HIV-2 Positive Control;	Negative Control;	Analysis;	Device Software;	Device Mode;	Status\n	7;	NAT-04000585;	Alere™ q HIV-1/2 VL plasma;	0653001709;	TEST;	---;	---;	---;	21501;	LUCIA;	2018-04-18 09:55:24;	Fail;	Pass;	----;	----;	----;	----;	0.24.5;	;	IUO',
+      errorCode: '21501',
+    },
+    {
+      sampleId: 'TEST 2 FCS',
+      testStartedOn: parseDateOrDefault('2018-04-18 10:58:01', now),
+      testEndedOn: parseDateOrDefault('2018-04-18 10:58:01', now),
+      resultWorkflowStatusId: resultWorkflowStatusOKId,
+      category1: resultCategoryNotDetectedId,
+      category2: resultCategoryNotDetectedId,
+      resultData:
+        '{"status": "IUO", "operator": "LUCIA", "resultNo": 8, "sampleId": "TEST 2 FCS", "testName": "Alere™ q HIV-1/2 VL plasma", "errorCode": "0", "timeStamp": "2018-04-18T10:58:01", "deviceMode": "", "hiv2Result": "Undetected", "pickedUpOn": "2018-11-14T14:44:47.561056", "sourceFile": "/home/south_africa_nhls/ftp/alere_q/07-05_NAT-04000585_2018-09-05-10-05-51.zip", "cartridgeId": "0653001756", "deviceCheck": "Pass", "hiv1OResult": "Undetected", "deviceSerial": "NAT-04000585", "hiv1MNResult": "Undetected", "analysisCheck": "Pass", "negativeControl": "Pass", "sampleDetection": "Pass", "softwareVersion": "0.24.5", "hiv1PositiveControl": "Pass", "hiv2PositiveControl": "Pass"}',
+      consumableSerial: '0653001756',
+      senderVersion: '0.24.5',
+      senderOperator: 'LUCIA',
+      rawData:
+        '	Result No;	Device Serial;	Test Name;	Cartridge ID;	Sample ID;	HIV-1 M/N cp/mL;	HIV-1 O cp/mL;	HIV-2 cp/mL;	Error Code;	Operator;	Timestamp;	Sample Detection;	Device;	HIV-1 Positive Control;	HIV-2 Positive Control;	Negative Control;	Analysis;	Device Software;	Device Mode;	Status\n	8;	NAT-04000585;	Alere™ q HIV-1/2 VL plasma;	0653001756;	TEST 2 FCS;	Undetected;	Undetected;	Undetected;	0;	LUCIA;	2018-04-18 10:58:01;	Pass;	Pass;	Pass;	Pass;	Pass;	Pass;	0.24.5;	;	IUO',
+      errorCode: null,
+    },
+    {
+      sampleId: 'TEST',
+      testStartedOn: parseDateOrDefault('2018-04-18 12:50:43', now),
+      testEndedOn: parseDateOrDefault('2018-04-18 12:50:43', now),
+      resultWorkflowStatusId: resultWorkflowStatusOKId,
+      category1: resultCategoryNotDetectedId,
+      category2: resultCategoryNotDetectedId,
+      resultData:
+        '{"status": "IUO", "operator": "GREG", "resultNo": 9, "sampleId": "TEST", "testName": "Alere™ q HIV-1/2 VL plasma", "errorCode": "0", "timeStamp": "2018-04-18T12:50:43", "deviceMode": "", "hiv2Result": "Undetected", "pickedUpOn": "2018-11-14T14:44:47.561056", "sourceFile": "/home/south_africa_nhls/ftp/alere_q/07-05_NAT-04000585_2018-09-05-10-05-51.zip", "cartridgeId": "0653002528", "deviceCheck": "Pass", "hiv1OResult": "Undetected", "deviceSerial": "NAT-04000585", "hiv1MNResult": "Undetected", "analysisCheck": "Pass", "negativeControl": "Pass", "sampleDetection": "Pass", "softwareVersion": "0.24.5", "hiv1PositiveControl": "Pass", "hiv2PositiveControl": "Pass"}',
+      consumableSerial: '0653002528',
+      senderVersion: '0.24.5',
+      senderOperator: 'GREG',
+      rawData:
+        '	Result No;	Device Serial;	Test Name;	Cartridge ID;	Sample ID;	HIV-1 M/N cp/mL;	HIV-1 O cp/mL;	HIV-2 cp/mL;	Error Code;	Operator;	Timestamp;	Sample Detection;	Device;	HIV-1 Positive Control;	HIV-2 Positive Control;	Negative Control;	Analysis;	Device Software;	Device Mode;	Status\n	9;	NAT-04000585;	Alere™ q HIV-1/2 VL plasma;	0653002528;	TEST;	Undetected;	Undetected;	Undetected;	0;	GREG;	2018-04-18 12:50:43;	Pass;	Pass;	Pass;	Pass;	Pass;	Pass;	0.24.5;	;	IUO',
+      errorCode: null,
+    },
+    {
+      sampleId: 'LOG 3',
+      testStartedOn: parseDateOrDefault('2018-05-18 14:08:11', now),
+      testEndedOn: parseDateOrDefault('2018-05-18 14:08:11', now),
+      resultWorkflowStatusId: resultWorkflowStatusOKId,
+      category1: resultCategoryDetectedId,
+      category2: resultCategoryNotDetectedId,
+      resultData:
+        '{"status": "IUO", "operator": "NAMBITHA", "resultNo": 10, "sampleId": "LOG 3", "testName": "Alere™ q HIV-1/2 VL plasma", "errorCode": "0", "timeStamp": "2018-05-18T14:08:11", "deviceMode": "", "hiv2Result": "Undetected", "pickedUpOn": "2018-11-14T14:44:47.561056", "sourceFile": "/home/south_africa_nhls/ftp/alere_q/07-05_NAT-04000585_2018-09-05-10-05-51.zip", "cartridgeId": "0653002552", "deviceCheck": "Pass", "hiv1OResult": "Undetected", "deviceSerial": "NAT-04000585", "hiv1MNResult": "2299 cp/mL", "analysisCheck": "Pass", "negativeControl": "Pass", "sampleDetection": "Pass", "softwareVersion": "0.24.5", "hiv1PositiveControl": "Pass", "hiv2PositiveControl": "Pass"}',
+      consumableSerial: '0653002552',
+      senderVersion: '0.24.5',
+      senderOperator: 'NAMBITHA',
+      rawData:
+        '	Result No;	Device Serial;	Test Name;	Cartridge ID;	Sample ID;	HIV-1 M/N cp/mL;	HIV-1 O cp/mL;	HIV-2 cp/mL;	Error Code;	Operator;	Timestamp;	Sample Detection;	Device;	HIV-1 Positive Control;	HIV-2 Positive Control;	Negative Control;	Analysis;	Device Software;	Device Mode;	Status\n	10;	NAT-04000585;	Alere™ q HIV-1/2 VL plasma;	0653002552;	LOG 3;	2299 cp/mL;	Undetected;	Undetected;	0;	NAMBITHA;	2018-05-18 14:08:11;	Pass;	Pass;	Pass;	Pass;	Pass;	Pass;	0.24.5;	;	IUO',
+      errorCode: null,
+    },
+    {
+      sampleId: 'VISA18004A',
+      testStartedOn: parseDateOrDefault('2018-05-23 15:45:41', now),
+      testEndedOn: parseDateOrDefault('2018-05-23 15:45:41', now),
+      resultWorkflowStatusId: resultWorkflowStatusOKId,
+      category1: resultCategoryNotDetectedId,
+      category2: resultCategoryNotDetectedId,
+      resultData:
+        '{"status": "IUO", "operator": "Zukiswa", "resultNo": 11, "sampleId": "VISA18004A", "testName": "Alere™ q HIV-1/2 VL plasma", "errorCode": "0", "timeStamp": "2018-05-23T15:45:41", "deviceMode": "", "hiv2Result": "Undetected", "pickedUpOn": "2018-11-14T14:44:47.561056", "sourceFile": "/home/south_africa_nhls/ftp/alere_q/07-05_NAT-04000585_2018-09-05-10-05-51.zip", "cartridgeId": "0653002559", "deviceCheck": "Pass", "hiv1OResult": "Undetected", "deviceSerial": "NAT-04000585", "hiv1MNResult": "Undetected", "analysisCheck": "Pass", "negativeControl": "Pass", "sampleDetection": "Pass", "softwareVersion": "0.24.5", "hiv1PositiveControl": "Pass", "hiv2PositiveControl": "Pass"}',
+      consumableSerial: '0653002559',
+      senderVersion: '0.24.5',
+      senderOperator: 'Zukiswa',
+      rawData:
+        '	Result No;	Device Serial;	Test Name;	Cartridge ID;	Sample ID;	HIV-1 M/N cp/mL;	HIV-1 O cp/mL;	HIV-2 cp/mL;	Error Code;	Operator;	Timestamp;	Sample Detection;	Device;	HIV-1 Positive Control;	HIV-2 Positive Control;	Negative Control;	Analysis;	Device Software;	Device Mode;	Status\n	11;	NAT-04000585;	Alere™ q HIV-1/2 VL plasma;	0653002559;	VISA18004A;	Undetected;	Undetected;	Undetected;	0;	Zukiswa;	2018-05-23 15:45:41;	Pass;	Pass;	Pass;	Pass;	Pass;	Pass;	0.24.5;	;	IUO',
+      errorCode: null,
+    },
+    {
+      sampleId: 'VISA1802A',
+      testStartedOn: parseDateOrDefault('2018-05-23 19:26:24', now),
+      testEndedOn: parseDateOrDefault('2018-05-23 19:26:24', now),
+      resultWorkflowStatusId: resultWorkflowStatusOKId,
+      category1: resultCategoryDetectedId,
+      category2: resultCategoryNotDetectedId,
+      resultData:
+        '{"status": "IUO", "operator": "Zukiswa", "resultNo": 12, "sampleId": "VISA1802A", "testName": "Alere™ q HIV-1/2 VL plasma", "errorCode": "0", "timeStamp": "2018-05-23T19:26:24", "deviceMode": "", "hiv2Result": "Undetected", "pickedUpOn": "2018-11-14T14:44:47.561056", "sourceFile": "/home/south_africa_nhls/ftp/alere_q/07-05_NAT-04000585_2018-09-05-10-05-51.zip", "cartridgeId": "0653002562", "deviceCheck": "Pass", "hiv1OResult": "Undetected", "deviceSerial": "NAT-04000585", "hiv1MNResult": "4823 cp/mL", "analysisCheck": "Pass", "negativeControl": "Pass", "sampleDetection": "Pass", "softwareVersion": "0.24.5", "hiv1PositiveControl": "Pass", "hiv2PositiveControl": "Pass"}',
+      consumableSerial: '0653002562',
+      senderVersion: '0.24.5',
+      senderOperator: 'Zukiswa',
+      rawData:
+        '	Result No;	Device Serial;	Test Name;	Cartridge ID;	Sample ID;	HIV-1 M/N cp/mL;	HIV-1 O cp/mL;	HIV-2 cp/mL;	Error Code;	Operator;	Timestamp;	Sample Detection;	Device;	HIV-1 Positive Control;	HIV-2 Positive Control;	Negative Control;	Analysis;	Device Software;	Device Mode;	Status\n	12;	NAT-04000585;	Alere™ q HIV-1/2 VL plasma;	0653002562;	VISA1802A;	4823 cp/mL;	Undetected;	Undetected;	0;	Zukiswa;	2018-05-23 19:26:24;	Pass;	Pass;	Pass;	Pass;	Pass;	Pass;	0.24.5;	;	IUO',
+      errorCode: null,
+    },
+    {
+      sampleId: 'VQA01B',
+      testStartedOn: parseDateOrDefault('2018-08-07 15:00:27', now),
+      testEndedOn: parseDateOrDefault('2018-08-07 15:00:27', now),
+      resultWorkflowStatusId: resultWorkflowStatusOKId,
+      category1: resultCategoryDetectedId,
+      category2: resultCategoryNotDetectedId,
+      resultData:
+        '{"status": "IUO", "operator": "LYNETTE", "resultNo": 13, "sampleId": "VQA01B", "testName": "Alere™ q HIV-1/2 VL plasma", "errorCode": "0", "timeStamp": "2018-08-07T15:00:27", "deviceMode": "", "hiv2Result": "Undetected", "pickedUpOn": "2018-11-14T14:44:47.561056", "sourceFile": "/home/south_africa_nhls/ftp/alere_q/07-05_NAT-04000585_2018-09-05-10-05-51.zip", "cartridgeId": "0653002478", "deviceCheck": "Pass", "hiv1OResult": "Undetected", "deviceSerial": "NAT-04000585", "hiv1MNResult": "1267 cp/mL", "analysisCheck": "Pass", "negativeControl": "Pass", "sampleDetection": "Pass", "softwareVersion": "0.24.5", "hiv1PositiveControl": "Pass", "hiv2PositiveControl": "Pass"}',
+      consumableSerial: '0653002478',
+      senderVersion: '0.24.5',
+      senderOperator: 'LYNETTE',
+      rawData:
+        '	Result No;	Device Serial;	Test Name;	Cartridge ID;	Sample ID;	HIV-1 M/N cp/mL;	HIV-1 O cp/mL;	HIV-2 cp/mL;	Error Code;	Operator;	Timestamp;	Sample Detection;	Device;	HIV-1 Positive Control;	HIV-2 Positive Control;	Negative Control;	Analysis;	Device Software;	Device Mode;	Status\n	13;	NAT-04000585;	Alere™ q HIV-1/2 VL plasma;	0653002478;	VQA01B;	1267 cp/mL;	Undetected;	Undetected;	0;	LYNETTE;	2018-08-07 15:00:27;	Pass;	Pass;	Pass;	Pass;	Pass;	Pass;	0.24.5;	;	IUO',
+      errorCode: null,
+    },
+    {
+      sampleId: 'VQA02B',
+      testStartedOn: parseDateOrDefault('2018-08-08 14:36:54', now),
+      testEndedOn: parseDateOrDefault('2018-08-08 14:36:54', now),
+      resultWorkflowStatusId: resultWorkflowStatusOKId,
+      category1: resultCategoryNotDetectedId,
+      category2: resultCategoryNotDetectedId,
+      resultData:
+        '{"status": "IUO", "operator": "LYNETTE", "resultNo": 14, "sampleId": "VQA02B", "testName": "Alere™ q HIV-1/2 VL plasma", "errorCode": "0", "timeStamp": "2018-08-08T14:36:54", "deviceMode": "", "hiv2Result": "Undetected", "pickedUpOn": "2018-11-14T14:44:47.561056", "sourceFile": "/home/south_africa_nhls/ftp/alere_q/07-05_NAT-04000585_2018-09-05-10-05-51.zip", "cartridgeId": "0653002480", "deviceCheck": "Pass", "hiv1OResult": "Undetected", "deviceSerial": "NAT-04000585", "hiv1MNResult": "Undetected", "analysisCheck": "Pass", "negativeControl": "Pass", "sampleDetection": "Pass", "softwareVersion": "0.24.5", "hiv1PositiveControl": "Pass", "hiv2PositiveControl": "Pass"}',
+      consumableSerial: '0653002480',
+      senderVersion: '0.24.5',
+      senderOperator: 'LYNETTE',
+      rawData:
+        '	Result No;	Device Serial;	Test Name;	Cartridge ID;	Sample ID;	HIV-1 M/N cp/mL;	HIV-1 O cp/mL;	HIV-2 cp/mL;	Error Code;	Operator;	Timestamp;	Sample Detection;	Device;	HIV-1 Positive Control;	HIV-2 Positive Control;	Negative Control;	Analysis;	Device Software;	Device Mode;	Status\n	14;	NAT-04000585;	Alere™ q HIV-1/2 VL plasma;	0653002480;	VQA02B;	Undetected;	Undetected;	Undetected;	0;	LYNETTE;	2018-08-08 14:36:54;	Pass;	Pass;	Pass;	Pass;	Pass;	Pass;	0.24.5;	;	IUO',
+      errorCode: null,
+    },
+    {
+      sampleId: 'VQA 03B',
+      testStartedOn: parseDateOrDefault('2018-08-08 16:33:12', now),
+      testEndedOn: parseDateOrDefault('2018-08-08 16:33:12', now),
+      resultWorkflowStatusId: resultWorkflowStatusOKId,
+      category1: resultCategoryNotDetectedId,
+      category2: resultCategoryNotDetectedId,
+      resultData:
+        '{"status": "IUO", "operator": "NAMBITHA", "resultNo": 15, "sampleId": "VQA 03B", "testName": "Alere™ q HIV-1/2 VL plasma", "errorCode": "0", "timeStamp": "2018-08-08T16:33:12", "deviceMode": "", "hiv2Result": "Undetected", "pickedUpOn": "2018-11-14T14:44:47.561056", "sourceFile": "/home/south_africa_nhls/ftp/alere_q/07-05_NAT-04000585_2018-09-05-10-05-51.zip", "cartridgeId": "0653002506", "deviceCheck": "Pass", "hiv1OResult": "Undetected", "deviceSerial": "NAT-04000585", "hiv1MNResult": "Undetected", "analysisCheck": "Pass", "negativeControl": "Pass", "sampleDetection": "Pass", "softwareVersion": "0.24.5", "hiv1PositiveControl": "Pass", "hiv2PositiveControl": "Pass"}',
+      consumableSerial: '0653002506',
+      senderVersion: '0.24.5',
+      senderOperator: 'NAMBITHA',
+      rawData:
+        '	Result No;	Device Serial;	Test Name;	Cartridge ID;	Sample ID;	HIV-1 M/N cp/mL;	HIV-1 O cp/mL;	HIV-2 cp/mL;	Error Code;	Operator;	Timestamp;	Sample Detection;	Device;	HIV-1 Positive Control;	HIV-2 Positive Control;	Negative Control;	Analysis;	Device Software;	Device Mode;	Status\n	15;	NAT-04000585;	Alere™ q HIV-1/2 VL plasma;	0653002506;	VQA 03B;	Undetected;	Undetected;	Undetected;	0;	NAMBITHA;	2018-08-08 16:33:12;	Pass;	Pass;	Pass;	Pass;	Pass;	Pass;	0.24.5;	;	IUO',
+      errorCode: null,
+    },
+    {
+      sampleId: 'VQA 04B',
+      testStartedOn: parseDateOrDefault('2018-08-09 11:29:22', now),
+      testEndedOn: parseDateOrDefault('2018-08-09 11:29:22', now),
+      resultWorkflowStatusId: resultWorkflowStatusOKId,
+      category1: resultCategoryDetectedId,
+      category2: resultCategoryNotDetectedId,
+      resultData:
+        '{"status": "IUO", "operator": "NAMBITHA", "resultNo": 16, "sampleId": "VQA 04B", "testName": "Alere™ q HIV-1/2 VL plasma", "errorCode": "0", "timeStamp": "2018-08-09T11:29:22", "deviceMode": "", "hiv2Result": "Undetected", "pickedUpOn": "2018-11-14T14:44:47.561056", "sourceFile": "/home/south_africa_nhls/ftp/alere_q/07-05_NAT-04000585_2018-09-05-10-05-51.zip", "cartridgeId": "0659600678", "deviceCheck": "Pass", "hiv1OResult": "Undetected", "deviceSerial": "NAT-04000585", "hiv1MNResult": "25563 cp/mL", "analysisCheck": "Pass", "negativeControl": "Pass", "sampleDetection": "Pass", "softwareVersion": "0.24.5", "hiv1PositiveControl": "Pass", "hiv2PositiveControl": "Pass"}',
+      consumableSerial: '0659600678',
+      senderVersion: '0.24.5',
+      senderOperator: 'NAMBITHA',
+      rawData:
+        '	Result No;	Device Serial;	Test Name;	Cartridge ID;	Sample ID;	HIV-1 M/N cp/mL;	HIV-1 O cp/mL;	HIV-2 cp/mL;	Error Code;	Operator;	Timestamp;	Sample Detection;	Device;	HIV-1 Positive Control;	HIV-2 Positive Control;	Negative Control;	Analysis;	Device Software;	Device Mode;	Status\n	16;	NAT-04000585;	Alere™ q HIV-1/2 VL plasma;	0659600678;	VQA 04B;	25563 cp/mL;	Undetected;	Undetected;	0;	NAMBITHA;	2018-08-09 11:29:22;	Pass;	Pass;	Pass;	Pass;	Pass;	Pass;	0.24.5;	;	IUO',
+      errorCode: null,
+    },
+    {
+      sampleId: 'VQA 05B',
+      testStartedOn: parseDateOrDefault('2018-08-09 15:22:54', now),
+      testEndedOn: parseDateOrDefault('2018-08-09 15:22:54', now),
+      resultWorkflowStatusId: resultWorkflowStatusOKId,
+      category1: resultCategoryDetectedId,
+      category2: resultCategoryNotDetectedId,
+      resultData:
+        '{"status": "IUO", "operator": "NAMBITHA", "resultNo": 17, "sampleId": "VQA 05B", "testName": "Alere™ q HIV-1/2 VL plasma", "errorCode": "0", "timeStamp": "2018-08-09T15:22:54", "deviceMode": "", "hiv2Result": "Undetected", "pickedUpOn": "2018-11-14T14:44:47.561056", "sourceFile": "/home/south_africa_nhls/ftp/alere_q/07-05_NAT-04000585_2018-09-05-10-05-51.zip", "cartridgeId": "0659600712", "deviceCheck": "Pass", "hiv1OResult": "Undetected", "deviceSerial": "NAT-04000585", "hiv1MNResult": "3629 cp/mL", "analysisCheck": "Pass", "negativeControl": "Pass", "sampleDetection": "Pass", "softwareVersion": "0.24.5", "hiv1PositiveControl": "Pass", "hiv2PositiveControl": "Pass"}',
+      consumableSerial: '0659600712',
+      senderVersion: '0.24.5',
+      senderOperator: 'NAMBITHA',
+      rawData:
+        '	Result No;	Device Serial;	Test Name;	Cartridge ID;	Sample ID;	HIV-1 M/N cp/mL;	HIV-1 O cp/mL;	HIV-2 cp/mL;	Error Code;	Operator;	Timestamp;	Sample Detection;	Device;	HIV-1 Positive Control;	HIV-2 Positive Control;	Negative Control;	Analysis;	Device Software;	Device Mode;	Status\n	17;	NAT-04000585;	Alere™ q HIV-1/2 VL plasma;	0659600712;	VQA 05B;	3629 cp/mL;	Undetected;	Undetected;	0;	NAMBITHA;	2018-08-09 15:22:54;	Pass;	Pass;	Pass;	Pass;	Pass;	Pass;	0.24.5;	;	IUO',
+      errorCode: null,
+    },
+    {
+      sampleId: '100',
+      testStartedOn: parseDateOrDefault('2018-08-13 12:04:19', now),
+      testEndedOn: parseDateOrDefault('2018-08-13 12:04:19', now),
+      resultWorkflowStatusId: resultWorkflowStatusOKId,
+      category1: resultCategoryDetectedId,
+      category2: resultCategoryNotDetectedId,
+      resultData:
+        '{"status": "IUO", "operator": "LUCIA", "resultNo": 18, "sampleId": "100", "testName": "Alere™ q HIV-1/2 VL plasma", "errorCode": "0", "timeStamp": "2018-08-13T12:04:19", "deviceMode": "", "hiv2Result": "Undetected", "pickedUpOn": "2018-11-14T14:44:47.561056", "sourceFile": "/home/south_africa_nhls/ftp/alere_q/07-05_NAT-04000585_2018-09-05-10-05-51.zip", "cartridgeId": "0659600707", "deviceCheck": "Pass", "hiv1OResult": "Undetected", "deviceSerial": "NAT-04000585", "hiv1MNResult": "89881 cp/mL", "analysisCheck": "Pass", "negativeControl": "Pass", "sampleDetection": "Pass", "softwareVersion": "0.24.5", "hiv1PositiveControl": "Pass", "hiv2PositiveControl": "Pass"}',
+      consumableSerial: '0659600707',
+      senderVersion: '0.24.5',
+      senderOperator: 'LUCIA',
+      rawData:
+        '	Result No;	Device Serial;	Test Name;	Cartridge ID;	Sample ID;	HIV-1 M/N cp/mL;	HIV-1 O cp/mL;	HIV-2 cp/mL;	Error Code;	Operator;	Timestamp;	Sample Detection;	Device;	HIV-1 Positive Control;	HIV-2 Positive Control;	Negative Control;	Analysis;	Device Software;	Device Mode;	Status\n	18;	NAT-04000585;	Alere™ q HIV-1/2 VL plasma;	0659600707;	100;	89881 cp/mL;	Undetected;	Undetected;	0;	LUCIA;	2018-08-13 12:04:19;	Pass;	Pass;	Pass;	Pass;	Pass;	Pass;	0.24.5;	;	IUO',
+      errorCode: null,
+    },
+    {
+      sampleId: 'pos c 6',
+      testStartedOn: parseDateOrDefault('2018-08-13 16:35:35', now),
+      testEndedOn: parseDateOrDefault('2018-08-13 16:35:35', now),
+      resultWorkflowStatusId: resultWorkflowStatusOKId,
+      category1: resultCategoryDetectedId,
+      category2: resultCategoryNotDetectedId,
+      resultData:
+        '{"status": "IUO", "operator": "LYNETTE", "resultNo": 19, "sampleId": "pos c 6", "testName": "Alere™ q HIV-1/2 VL plasma", "errorCode": "0", "timeStamp": "2018-08-13T16:35:35", "deviceMode": "", "hiv2Result": "Undetected", "pickedUpOn": "2018-11-14T14:44:47.561056", "sourceFile": "/home/south_africa_nhls/ftp/alere_q/07-05_NAT-04000585_2018-09-05-10-05-51.zip", "cartridgeId": "0659600715", "deviceCheck": "Pass", "hiv1OResult": "Undetected", "deviceSerial": "NAT-04000585", "hiv1MNResult": "5153 cp/mL", "analysisCheck": "Pass", "negativeControl": "Pass", "sampleDetection": "Pass", "softwareVersion": "0.24.5", "hiv1PositiveControl": "Pass", "hiv2PositiveControl": "Pass"}',
+      consumableSerial: '0659600715',
+      senderVersion: '0.24.5',
+      senderOperator: 'LYNETTE',
+      rawData:
+        '	Result No;	Device Serial;	Test Name;	Cartridge ID;	Sample ID;	HIV-1 M/N cp/mL;	HIV-1 O cp/mL;	HIV-2 cp/mL;	Error Code;	Operator;	Timestamp;	Sample Detection;	Device;	HIV-1 Positive Control;	HIV-2 Positive Control;	Negative Control;	Analysis;	Device Software;	Device Mode;	Status\n	19;	NAT-04000585;	Alere™ q HIV-1/2 VL plasma;	0659600715;	pos c 6;	5153 cp/mL;	Undetected;	Undetected;	0;	LYNETTE;	2018-08-13 16:35:35;	Pass;	Pass;	Pass;	Pass;	Pass;	Pass;	0.24.5;	;	IUO',
+      errorCode: null,
+    },
+    {
+      sampleId: 'neg c 12',
+      testStartedOn: parseDateOrDefault('2018-08-13 19:11:14', now),
+      testEndedOn: parseDateOrDefault('2018-08-13 19:11:14', now),
+      resultWorkflowStatusId: resultWorkflowStatusOKId,
+      category1: resultCategoryNotDetectedId,
+      category2: resultCategoryNotDetectedId,
+      resultData:
+        '{"status": "IUO", "operator": "NAMBITHA", "resultNo": 20, "sampleId": "neg c 12", "testName": "Alere™ q HIV-1/2 VL plasma", "errorCode": "0", "timeStamp": "2018-08-13T19:11:14", "deviceMode": "", "hiv2Result": "Undetected", "pickedUpOn": "2018-11-14T14:44:47.561056", "sourceFile": "/home/south_africa_nhls/ftp/alere_q/07-05_NAT-04000585_2018-09-05-10-05-51.zip", "cartridgeId": "0659600902", "deviceCheck": "Pass", "hiv1OResult": "Undetected", "deviceSerial": "NAT-04000585", "hiv1MNResult": "Undetected", "analysisCheck": "Pass", "negativeControl": "Pass", "sampleDetection": "Pass", "softwareVersion": "0.24.5", "hiv1PositiveControl": "Pass", "hiv2PositiveControl": "Pass"}',
+      consumableSerial: '0659600902',
+      senderVersion: '0.24.5',
+      senderOperator: 'NAMBITHA',
+      rawData:
+        '	Result No;	Device Serial;	Test Name;	Cartridge ID;	Sample ID;	HIV-1 M/N cp/mL;	HIV-1 O cp/mL;	HIV-2 cp/mL;	Error Code;	Operator;	Timestamp;	Sample Detection;	Device;	HIV-1 Positive Control;	HIV-2 Positive Control;	Negative Control;	Analysis;	Device Software;	Device Mode;	Status\n	20;	NAT-04000585;	Alere™ q HIV-1/2 VL plasma;	0659600902;	neg c 12;	Undetected;	Undetected;	Undetected;	0;	NAMBITHA;	2018-08-13 19:11:14;	Pass;	Pass;	Pass;	Pass;	Pass;	Pass;	0.24.5;	;	IUO',
+      errorCode: null,
+    },
+    {
+      sampleId: 'neg c 12',
+      testStartedOn: parseDateOrDefault('2018-08-13 20:54:50', now),
+      testEndedOn: parseDateOrDefault('2018-08-13 20:54:50', now),
+      resultWorkflowStatusId: resultWorkflowStatusOKId,
+      category1: resultCategoryNotDetectedId,
+      category2: resultCategoryNotDetectedId,
+      resultData:
+        '{"status": "IUO", "operator": "NAMBITHA", "resultNo": 21, "sampleId": "neg c 12", "testName": "Alere™ q HIV-1/2 VL plasma", "errorCode": "0", "timeStamp": "2018-08-13T20:54:50", "deviceMode": "", "hiv2Result": "Undetected", "pickedUpOn": "2018-11-14T14:44:47.561056", "sourceFile": "/home/south_africa_nhls/ftp/alere_q/07-05_NAT-04000585_2018-09-05-10-05-51.zip", "cartridgeId": "0659600882", "deviceCheck": "Pass", "hiv1OResult": "Undetected", "deviceSerial": "NAT-04000585", "hiv1MNResult": "Undetected", "analysisCheck": "Pass", "negativeControl": "Pass", "sampleDetection": "Pass", "softwareVersion": "0.24.5", "hiv1PositiveControl": "Pass", "hiv2PositiveControl": "Pass"}',
+      consumableSerial: '0659600882',
+      senderVersion: '0.24.5',
+      senderOperator: 'NAMBITHA',
+      rawData:
+        '	Result No;	Device Serial;	Test Name;	Cartridge ID;	Sample ID;	HIV-1 M/N cp/mL;	HIV-1 O cp/mL;	HIV-2 cp/mL;	Error Code;	Operator;	Timestamp;	Sample Detection;	Device;	HIV-1 Positive Control;	HIV-2 Positive Control;	Negative Control;	Analysis;	Device Software;	Device Mode;	Status\n	21;	NAT-04000585;	Alere™ q HIV-1/2 VL plasma;	0659600882;	neg c 12;	Undetected;	Undetected;	Undetected;	0;	NAMBITHA;	2018-08-13 20:54:50;	Pass;	Pass;	Pass;	Pass;	Pass;	Pass;	0.24.5;	;	IUO',
+      errorCode: null,
+    },
+    {
+      sampleId: 'pos c 6',
+      testStartedOn: parseDateOrDefault('2018-08-14 13:31:40', now),
+      testEndedOn: parseDateOrDefault('2018-08-14 13:31:40', now),
+      resultWorkflowStatusId: resultWorkflowStatusOKId,
+      category1: resultCategoryDetectedId,
+      category2: resultCategoryNotDetectedId,
+      resultData:
+        '{"status": "IUO", "operator": "LYNETTE", "resultNo": 22, "sampleId": "pos c 6", "testName": "Alere™ q HIV-1/2 VL plasma", "errorCode": "0", "timeStamp": "2018-08-14T13:31:40", "deviceMode": "", "hiv2Result": "Undetected", "pickedUpOn": "2018-11-14T14:44:47.561056", "sourceFile": "/home/south_africa_nhls/ftp/alere_q/07-05_NAT-04000585_2018-09-05-10-05-51.zip", "cartridgeId": "0659600916", "deviceCheck": "Pass", "hiv1OResult": "Undetected", "deviceSerial": "NAT-04000585", "hiv1MNResult": "2936 cp/mL", "analysisCheck": "Pass", "negativeControl": "Pass", "sampleDetection": "Pass", "softwareVersion": "0.24.5", "hiv1PositiveControl": "Pass", "hiv2PositiveControl": "Pass"}',
+      consumableSerial: '0659600916',
+      senderVersion: '0.24.5',
+      senderOperator: 'LYNETTE',
+      rawData:
+        '	Result No;	Device Serial;	Test Name;	Cartridge ID;	Sample ID;	HIV-1 M/N cp/mL;	HIV-1 O cp/mL;	HIV-2 cp/mL;	Error Code;	Operator;	Timestamp;	Sample Detection;	Device;	HIV-1 Positive Control;	HIV-2 Positive Control;	Negative Control;	Analysis;	Device Software;	Device Mode;	Status\n	22;	NAT-04000585;	Alere™ q HIV-1/2 VL plasma;	0659600916;	pos c 6;	2936 cp/mL;	Undetected;	Undetected;	0;	LYNETTE;	2018-08-14 13:31:40;	Pass;	Pass;	Pass;	Pass;	Pass;	Pass;	0.24.5;	;	IUO',
+      errorCode: null,
+    },
+    {
+      sampleId: 'VAL0004CL',
+      testStartedOn: parseDateOrDefault('2018-08-14 16:57:01', now),
+      testEndedOn: parseDateOrDefault('2018-08-14 16:57:01', now),
+      resultWorkflowStatusId: resultWorkflowStatusOKId,
+      category1: resultCategoryNotDetectedId,
+      category2: resultCategoryNotDetectedId,
+      resultData:
+        '{"status": "IUO", "operator": "SC", "resultNo": 23, "sampleId": "VAL0004CL", "testName": "Alere™ q HIV-1/2 VL plasma", "errorCode": "0", "timeStamp": "2018-08-14T16:57:01", "deviceMode": "", "hiv2Result": "Undetected", "pickedUpOn": "2018-11-14T14:44:47.561056", "sourceFile": "/home/south_africa_nhls/ftp/alere_q/07-05_NAT-04000585_2018-09-05-10-05-51.zip", "cartridgeId": "0659600929", "deviceCheck": "Pass", "hiv1OResult": "Undetected", "deviceSerial": "NAT-04000585", "hiv1MNResult": "Undetected", "analysisCheck": "Pass", "negativeControl": "Pass", "sampleDetection": "Pass", "softwareVersion": "0.24.5", "hiv1PositiveControl": "Pass", "hiv2PositiveControl": "Pass"}',
+      consumableSerial: '0659600929',
+      senderVersion: '0.24.5',
+      senderOperator: 'SC',
+      rawData:
+        '	Result No;	Device Serial;	Test Name;	Cartridge ID;	Sample ID;	HIV-1 M/N cp/mL;	HIV-1 O cp/mL;	HIV-2 cp/mL;	Error Code;	Operator;	Timestamp;	Sample Detection;	Device;	HIV-1 Positive Control;	HIV-2 Positive Control;	Negative Control;	Analysis;	Device Software;	Device Mode;	Status\n	23;	NAT-04000585;	Alere™ q HIV-1/2 VL plasma;	0659600929;	VAL0004CL;	Undetected;	Undetected;	Undetected;	0;	SC;	2018-08-14 16:57:01;	Pass;	Pass;	Pass;	Pass;	Pass;	Pass;	0.24.5;	;	IUO',
+      errorCode: null,
+    },
+    {
+      sampleId: 'VAL0019CL',
+      testStartedOn: parseDateOrDefault('2018-08-14 20:10:16', now),
+      testEndedOn: parseDateOrDefault('2018-08-14 20:10:16', now),
+      resultWorkflowStatusId: resultWorkflowStatusOKId,
+      category1: resultCategoryNotDetectedId,
+      category2: resultCategoryNotDetectedId,
+      resultData:
+        '{"status": "IUO", "operator": "NAMBITHA", "resultNo": 24, "sampleId": "VAL0019CL", "testName": "Alere™ q HIV-1/2 VL plasma", "errorCode": "0", "timeStamp": "2018-08-14T20:10:16", "deviceMode": "", "hiv2Result": "Undetected", "pickedUpOn": "2018-11-14T14:44:47.561056", "sourceFile": "/home/south_africa_nhls/ftp/alere_q/07-05_NAT-04000585_2018-09-05-10-05-51.zip", "cartridgeId": "0659600758", "deviceCheck": "Pass", "hiv1OResult": "Undetected", "deviceSerial": "NAT-04000585", "hiv1MNResult": "Undetected", "analysisCheck": "Pass", "negativeControl": "Pass", "sampleDetection": "Pass", "softwareVersion": "0.24.5", "hiv1PositiveControl": "Pass", "hiv2PositiveControl": "Pass"}',
+      consumableSerial: '0659600758',
+      senderVersion: '0.24.5',
+      senderOperator: 'NAMBITHA',
+      rawData:
+        '	Result No;	Device Serial;	Test Name;	Cartridge ID;	Sample ID;	HIV-1 M/N cp/mL;	HIV-1 O cp/mL;	HIV-2 cp/mL;	Error Code;	Operator;	Timestamp;	Sample Detection;	Device;	HIV-1 Positive Control;	HIV-2 Positive Control;	Negative Control;	Analysis;	Device Software;	Device Mode;	Status\n	24;	NAT-04000585;	Alere™ q HIV-1/2 VL plasma;	0659600758;	VAL0019CL;	Undetected;	Undetected;	Undetected;	0;	NAMBITHA;	2018-08-14 20:10:16;	Pass;	Pass;	Pass;	Pass;	Pass;	Pass;	0.24.5;	;	IUO',
+      errorCode: null,
+    },
+    {
+      sampleId: 'pos c 6',
+      testStartedOn: parseDateOrDefault('2018-08-15 03:41:51', now),
+      testEndedOn: parseDateOrDefault('2018-08-15 03:41:51', now),
+      resultWorkflowStatusId: resultWorkflowStatusOKId,
+      category1: resultCategoryDetectedId,
+      category2: resultCategoryNotDetectedId,
+      resultData:
+        '{"status": "IUO", "operator": "NAMBITHA", "resultNo": 25, "sampleId": "pos c 6", "testName": "Alere™ q HIV-1/2 VL plasma", "errorCode": "0", "timeStamp": "2018-08-15T03:41:51", "deviceMode": "", "hiv2Result": "Undetected", "pickedUpOn": "2018-11-14T14:44:47.561056", "sourceFile": "/home/south_africa_nhls/ftp/alere_q/07-05_NAT-04000585_2018-09-05-10-05-51.zip", "cartridgeId": "0659600764", "deviceCheck": "Pass", "hiv1OResult": "Undetected", "deviceSerial": "NAT-04000585", "hiv1MNResult": "2803 cp/mL", "analysisCheck": "Pass", "negativeControl": "Pass", "sampleDetection": "Pass", "softwareVersion": "0.24.5", "hiv1PositiveControl": "Pass", "hiv2PositiveControl": "Pass"}',
+      consumableSerial: '0659600764',
+      senderVersion: '0.24.5',
+      senderOperator: 'NAMBITHA',
+      rawData:
+        '	Result No;	Device Serial;	Test Name;	Cartridge ID;	Sample ID;	HIV-1 M/N cp/mL;	HIV-1 O cp/mL;	HIV-2 cp/mL;	Error Code;	Operator;	Timestamp;	Sample Detection;	Device;	HIV-1 Positive Control;	HIV-2 Positive Control;	Negative Control;	Analysis;	Device Software;	Device Mode;	Status\n	25;	NAT-04000585;	Alere™ q HIV-1/2 VL plasma;	0659600764;	pos c 6;	2803 cp/mL;	Undetected;	Undetected;	0;	NAMBITHA;	2018-08-15 03:41:51;	Pass;	Pass;	Pass;	Pass;	Pass;	Pass;	0.24.5;	;	IUO',
+      errorCode: null,
+    },
+    {
+      sampleId: 'VAL0032CL',
+      testStartedOn: parseDateOrDefault('2018-08-15 09:29:51', now),
+      testEndedOn: parseDateOrDefault('2018-08-15 09:29:51', now),
+      resultWorkflowStatusId: resultWorkflowStatusOKId,
+      category1: resultCategoryDetectedId,
+      category2: resultCategoryNotDetectedId,
+      resultData:
+        '{"status": "IUO", "operator": "SC", "resultNo": 26, "sampleId": "VAL0032CL", "testName": "Alere™ q HIV-1/2 VL plasma", "errorCode": "0", "timeStamp": "2018-08-15T09:29:51", "deviceMode": "", "hiv2Result": "Undetected", "pickedUpOn": "2018-11-14T14:44:47.561056", "sourceFile": "/home/south_africa_nhls/ftp/alere_q/07-05_NAT-04000585_2018-09-05-10-05-51.zip", "cartridgeId": "0659600784", "deviceCheck": "Pass", "hiv1OResult": "Undetected", "deviceSerial": "NAT-04000585", "hiv1MNResult": "5961 cp/mL", "analysisCheck": "Pass", "negativeControl": "Pass", "sampleDetection": "Pass", "softwareVersion": "0.24.5", "hiv1PositiveControl": "Pass", "hiv2PositiveControl": "Pass"}',
+      consumableSerial: '0659600784',
+      senderVersion: '0.24.5',
+      senderOperator: 'SC',
+      rawData:
+        '	Result No;	Device Serial;	Test Name;	Cartridge ID;	Sample ID;	HIV-1 M/N cp/mL;	HIV-1 O cp/mL;	HIV-2 cp/mL;	Error Code;	Operator;	Timestamp;	Sample Detection;	Device;	HIV-1 Positive Control;	HIV-2 Positive Control;	Negative Control;	Analysis;	Device Software;	Device Mode;	Status\n	26;	NAT-04000585;	Alere™ q HIV-1/2 VL plasma;	0659600784;	VAL0032CL;	5961 cp/mL;	Undetected;	Undetected;	0;	SC;	2018-08-15 09:29:51;	Pass;	Pass;	Pass;	Pass;	Pass;	Pass;	0.24.5;	;	IUO',
+      errorCode: null,
+    },
+    {
+      sampleId: 'VAL0047CL',
+      testStartedOn: parseDateOrDefault('2018-08-15 11:49:35', now),
+      testEndedOn: parseDateOrDefault('2018-08-15 11:49:35', now),
+      resultWorkflowStatusId: resultWorkflowStatusErrorId,
+      category1: resultCategoryNoResultId,
+      category2: resultCategoryNoResultId,
+      resultData:
+        '{"status": "IUO", "operator": "SC", "resultNo": 27, "sampleId": "VAL0047CL", "testName": "Alere™ q HIV-1/2 VL plasma", "errorCode": "23026", "timeStamp": "2018-08-15T11:49:35", "deviceMode": "", "hiv2Result": "None", "pickedUpOn": "2018-11-14T14:44:47.561056", "sourceFile": "/home/south_africa_nhls/ftp/alere_q/07-05_NAT-04000585_2018-09-05-10-05-51.zip", "cartridgeId": "0659600532", "deviceCheck": "Pass", "hiv1OResult": "None", "deviceSerial": "NAT-04000585", "hiv1MNResult": "None", "analysisCheck": "Pass", "negativeControl": "Pass", "sampleDetection": "Pass", "softwareVersion": "0.24.5", "hiv1PositiveControl": "Fail", "hiv2PositiveControl": "Fail"}',
+      consumableSerial: '0659600532',
+      senderVersion: '0.24.5',
+      senderOperator: 'SC',
+      rawData:
+        '	Result No;	Device Serial;	Test Name;	Cartridge ID;	Sample ID;	HIV-1 M/N cp/mL;	HIV-1 O cp/mL;	HIV-2 cp/mL;	Error Code;	Operator;	Timestamp;	Sample Detection;	Device;	HIV-1 Positive Control;	HIV-2 Positive Control;	Negative Control;	Analysis;	Device Software;	Device Mode;	Status\n	27;	NAT-04000585;	Alere™ q HIV-1/2 VL plasma;	0659600532;	VAL0047CL;	None;	None;	None;	23026;	SC;	2018-08-15 11:49:35;	Pass;	Pass;	Fail;	Fail;	Pass;	Pass;	0.24.5;	;	IUO',
+      errorCode: '23026',
+    },
+    {
+      sampleId: 'VAL0062CL',
+      testStartedOn: parseDateOrDefault('2018-08-15 16:51:46', now),
+      testEndedOn: parseDateOrDefault('2018-08-15 16:51:46', now),
+      resultWorkflowStatusId: resultWorkflowStatusOKId,
+      category1: resultCategoryNotDetectedId,
+      category2: resultCategoryNotDetectedId,
+      resultData:
+        '{"status": "IUO", "operator": "SC", "resultNo": 28, "sampleId": "VAL0062CL", "testName": "Alere™ q HIV-1/2 VL plasma", "errorCode": "0", "timeStamp": "2018-08-15T16:51:46", "deviceMode": "", "hiv2Result": "Undetected", "pickedUpOn": "2018-11-14T14:44:47.561056", "sourceFile": "/home/south_africa_nhls/ftp/alere_q/07-05_NAT-04000585_2018-09-05-10-05-51.zip", "cartridgeId": "0659600571", "deviceCheck": "Pass", "hiv1OResult": "Undetected", "deviceSerial": "NAT-04000585", "hiv1MNResult": "Undetected", "analysisCheck": "Pass", "negativeControl": "Pass", "sampleDetection": "Pass", "softwareVersion": "0.24.5", "hiv1PositiveControl": "Pass", "hiv2PositiveControl": "Pass"}',
+      consumableSerial: '0659600571',
+      senderVersion: '0.24.5',
+      senderOperator: 'SC',
+      rawData:
+        '	Result No;	Device Serial;	Test Name;	Cartridge ID;	Sample ID;	HIV-1 M/N cp/mL;	HIV-1 O cp/mL;	HIV-2 cp/mL;	Error Code;	Operator;	Timestamp;	Sample Detection;	Device;	HIV-1 Positive Control;	HIV-2 Positive Control;	Negative Control;	Analysis;	Device Software;	Device Mode;	Status\n	28;	NAT-04000585;	Alere™ q HIV-1/2 VL plasma;	0659600571;	VAL0062CL;	Undetected;	Undetected;	Undetected;	0;	SC;	2018-08-15 16:51:46;	Pass;	Pass;	Pass;	Pass;	Pass;	Pass;	0.24.5;	;	IUO',
+      errorCode: null,
+    },
+    {
+      sampleId: 'VAL0077CL',
+      testStartedOn: parseDateOrDefault('2018-08-15 21:20:36', now),
+      testEndedOn: parseDateOrDefault('2018-08-15 21:20:36', now),
+      resultWorkflowStatusId: resultWorkflowStatusOKId,
+      category1: resultCategoryNotDetectedId,
+      category2: resultCategoryNotDetectedId,
+      resultData:
+        '{"status": "IUO", "operator": "NAMBITHA", "resultNo": 29, "sampleId": "VAL0077CL", "testName": "Alere™ q HIV-1/2 VL plasma", "errorCode": "0", "timeStamp": "2018-08-15T21:20:36", "deviceMode": "", "hiv2Result": "Undetected", "pickedUpOn": "2018-11-14T14:44:47.561056", "sourceFile": "/home/south_africa_nhls/ftp/alere_q/07-05_NAT-04000585_2018-09-05-10-05-51.zip", "cartridgeId": "0659600594", "deviceCheck": "Pass", "hiv1OResult": "Undetected", "deviceSerial": "NAT-04000585", "hiv1MNResult": "Undetected", "analysisCheck": "Pass", "negativeControl": "Pass", "sampleDetection": "Pass", "softwareVersion": "0.24.5", "hiv1PositiveControl": "Pass", "hiv2PositiveControl": "Pass"}',
+      consumableSerial: '0659600594',
+      senderVersion: '0.24.5',
+      senderOperator: 'NAMBITHA',
+      rawData:
+        '	Result No;	Device Serial;	Test Name;	Cartridge ID;	Sample ID;	HIV-1 M/N cp/mL;	HIV-1 O cp/mL;	HIV-2 cp/mL;	Error Code;	Operator;	Timestamp;	Sample Detection;	Device;	HIV-1 Positive Control;	HIV-2 Positive Control;	Negative Control;	Analysis;	Device Software;	Device Mode;	Status\n	29;	NAT-04000585;	Alere™ q HIV-1/2 VL plasma;	0659600594;	VAL0077CL;	Undetected;	Undetected;	Undetected;	0;	NAMBITHA;	2018-08-15 21:20:36;	Pass;	Pass;	Pass;	Pass;	Pass;	Pass;	0.24.5;	;	IUO',
+      errorCode: null,
+    },
+    {
+      sampleId: 'VAL0092CL',
+      testStartedOn: parseDateOrDefault('2018-08-16 03:55:03', now),
+      testEndedOn: parseDateOrDefault('2018-08-16 03:55:03', now),
+      resultWorkflowStatusId: resultWorkflowStatusOKId,
+      category1: resultCategoryDetectedId,
+      category2: resultCategoryNotDetectedId,
+      resultData:
+        '{"status": "IUO", "operator": "NAMBITHA", "resultNo": 30, "sampleId": "VAL0092CL", "testName": "Alere™ q HIV-1/2 VL plasma", "errorCode": "0", "timeStamp": "2018-08-16T03:55:03", "deviceMode": "", "hiv2Result": "Undetected", "pickedUpOn": "2018-11-14T14:44:47.561056", "sourceFile": "/home/south_africa_nhls/ftp/alere_q/07-05_NAT-04000585_2018-09-05-10-05-51.zip", "cartridgeId": "0659600573", "deviceCheck": "Pass", "hiv1OResult": "Undetected", "deviceSerial": "NAT-04000585", "hiv1MNResult": "< 800 cp/mL", "analysisCheck": "Pass", "negativeControl": "Pass", "sampleDetection": "Pass", "softwareVersion": "0.24.5", "hiv1PositiveControl": "Pass", "hiv2PositiveControl": "Pass"}',
+      consumableSerial: '0659600573',
+      senderVersion: '0.24.5',
+      senderOperator: 'NAMBITHA',
+      rawData:
+        '	Result No;	Device Serial;	Test Name;	Cartridge ID;	Sample ID;	HIV-1 M/N cp/mL;	HIV-1 O cp/mL;	HIV-2 cp/mL;	Error Code;	Operator;	Timestamp;	Sample Detection;	Device;	HIV-1 Positive Control;	HIV-2 Positive Control;	Negative Control;	Analysis;	Device Software;	Device Mode;	Status\n	30;	NAT-04000585;	Alere™ q HIV-1/2 VL plasma;	0659600573;	VAL0092CL;	< 800 cp/mL;	Undetected;	Undetected;	0;	NAMBITHA;	2018-08-16 03:55:03;	Pass;	Pass;	Pass;	Pass;	Pass;	Pass;	0.24.5;	;	IUO',
+      errorCode: null,
+    },
+  ]
+
+  await Promise.map(
+    results,
+    async result => {
+      const [sampleId] = await knex('Sample').insert({
+        externalId: result.sampleId,
+        originSiteId: cmjahSiteId,
+      })
+      const [resultId] = await knex('Result').insert(
+        Object.assign({}, auditFields, {
+          externalId: createUniqueIdForResult(
+            cmjahDeviceSerial,
+            result.testStartedOn,
+            result.testEndedOn,
+            result.sampleId
+          ),
+          assayId: alereQHiv12VLPlasmaAssayId,
+          partnerId,
+          geographyId: cmjahGeographyId,
+          siteId: cmjahSiteId,
+          deviceId: cmjahDeviceId,
+          resultWorkflowStatusId: result.resultWorkflowStatusId,
+          resultSourceId: resultSourceDiagnosticDeviceId,
+          resultTypeId: resultTypePatientId,
+          sampleId,
+          resultCategory1: result.category1,
+          resultCategory2: result.category2,
+          resultData: result.resultData,
+          startedOn: result.testStartedOn,
+          endedOn: result.testEndedOn,
+          instrumentSerial: cmjahDeviceSerial,
+          consumableSerial: result.consumableSerial,
+          senderVersion: result.senderVersion,
+          senderOperator: result.senderOperator,
+          rawData: result.rawData,
+          errorCode: result.errorCode,
+          qcCheck: 0,
+        })
+      )
+      await knex('ResultWorkflowLog').insert({
+        resultId,
+        resultWorkflowStatusId: result.resultWorkflowStatusId,
+        changedOn: now,
+        createdOn: now,
+        reason: 'Device API Update',
+        operator: result.senderOperator,
+      })
+    },
+    { concurrency: config.db.connectionLimit }
+  )
+
+  await seedNotifications(knex, { partnerId })
+
+  const saNhlsStaff = [
+    {
+      personName: 'Sergio Carmona',
+      jobFunctionId: jobFunctionIdAdmin,
+      emailAddress: 'brichards@systemone.id',
+      username: 'sergio.carmona@nhls.ac.za',
+      password: 'P@$$w0rd',
+      mobile: '+27833243682',
+      tags: [
+        'EID+',
+        'EID+CHBAH',
+        'EID+CMJAH',
+        'EID+KPTH',
+        'EID+RMMCH',
+        'HIV-VL>50',
+        'VL>50CHBAH',
+        'VL>50CMJAH',
+        'VL>50KPTH',
+        'VL>50RMMCH',
+      ],
+      stateName: null,
+      lgaName: null,
+      deploymentShortName: null,
+      timezone: 'South Africa Standard Time',
+      culture: 'en',
+      title: 'Dr',
+      hidePatientId: false,
+      hideSampleId: false,
+      hideNotes: false,
+    },
+    {
+      personName: 'Sonjiha Khan',
+      jobFunctionId: jobFunctionIdLabUser,
+      emailAddress: 'brichards@systemone.id',
+      username: null,
+      password: null,
+      mobile: '+27833243682',
+      tags: ['EID+RMMCH', 'VL>50RMMCH', 'EID+', 'HIV-VL>50'],
+      stateName: 'Gauteng',
+      lgaName: 'Coronationville',
+      deploymentShortName: 'RMMCH',
+      timezone: 'South Africa Standard Time',
+      culture: 'en',
+      title: 'Lab Contact',
+      hidePatientId: true,
+      hideSampleId: true,
+      hideNotes: true,
+    },
+    {
+      personName: 'Ms Ntaoleng Moreko',
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      emailAddress: 'brichards@systemone.id',
+      username: null,
+      password: null,
+      mobile: '+27833243682',
+      tags: ['EID+CHBAH', 'VL>50CHBAH', 'EID+', 'HIV-VL>50'],
+      stateName: 'Gauteng',
+      lgaName: 'Diepkloof ',
+      deploymentShortName: null,
+      timezone: 'South Africa Standard Time',
+      culture: 'en',
+      title: 'NICD',
+      hidePatientId: true,
+      hideSampleId: true,
+      hideNotes: true,
+    },
+    {
+      personName: 'Dr. Thomas',
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      emailAddress: 'brichards@systemone.id',
+      username: null,
+      password: null,
+      mobile: '+27833243682',
+      tags: ['EID+CHBAH', 'VL>50CHBAH', 'EID+', 'HIV-VL>50'],
+      stateName: 'Gauteng',
+      lgaName: 'Diepkloof ',
+      deploymentShortName: null,
+      timezone: 'South Africa Standard Time',
+      culture: 'en',
+      title: 'Doctor',
+      hidePatientId: false,
+      hideSampleId: false,
+      hideNotes: false,
+    },
+    {
+      personName: 'Dr. Nakwa',
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      emailAddress: 'brichards@systemone.id',
+      username: null,
+      password: null,
+      mobile: '+27833243682',
+      tags: ['EID+CHBAH', 'VL>50CHBAH', 'EID+', 'HIV-VL>50'],
+      stateName: 'Gauteng',
+      lgaName: 'Diepkloof ',
+      deploymentShortName: null,
+      timezone: 'South Africa Standard Time',
+      culture: 'en',
+      title: null,
+      hidePatientId: false,
+      hideSampleId: false,
+      hideNotes: false,
+    },
+    {
+      personName: 'Dr. Sono',
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      emailAddress: 'brichards@systemone.id',
+      username: null,
+      password: null,
+      mobile: '+27833243682',
+      tags: ['EID+CHBAH', 'VL>50CHBAH', 'EID+', 'HIV-VL>50'],
+      stateName: 'Gauteng',
+      lgaName: 'Diepkloof ',
+      deploymentShortName: null,
+      timezone: 'South Africa Standard Time',
+      culture: 'en',
+      title: null,
+      hidePatientId: false,
+      hideSampleId: false,
+      hideNotes: false,
+    },
+    {
+      personName: 'Dr. Seake',
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      emailAddress: 'brichards@systemone.id',
+      username: null,
+      password: null,
+      mobile: '+27833243682',
+      tags: ['EID+CHBAH', 'VL>50CHBAH', 'EID+', 'HIV-VL>50'],
+      stateName: 'Gauteng',
+      lgaName: 'Diepkloof ',
+      deploymentShortName: null,
+      timezone: 'South Africa Standard Time',
+      culture: 'en',
+      title: null,
+      hidePatientId: false,
+      hideSampleId: false,
+      hideNotes: false,
+    },
+    {
+      personName: 'Dr. Sepeng',
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      emailAddress: 'brichards@systemone.id',
+      username: null,
+      password: null,
+      mobile: '+27833243682',
+      tags: ['EID+CHBAH', 'VL>50CHBAH', 'EID+', 'HIV-VL>50'],
+      stateName: 'Gauteng',
+      lgaName: 'Diepkloof ',
+      deploymentShortName: null,
+      timezone: 'South Africa Standard Time',
+      culture: 'en',
+      title: null,
+      hidePatientId: false,
+      hideSampleId: false,
+      hideNotes: false,
+    },
+    {
+      personName: 'Dr. Ontdongo',
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      emailAddress: 'brichards@systemone.id',
+      username: null,
+      password: null,
+      mobile: '+27833243682',
+      tags: ['EID+CHBAH', 'VL>50CHBAH', 'EID+', 'HIV-VL>50'],
+      stateName: 'Gauteng',
+      lgaName: 'Diepkloof ',
+      deploymentShortName: null,
+      timezone: 'South Africa Standard Time',
+      culture: 'en',
+      title: null,
+      hidePatientId: false,
+      hideSampleId: false,
+      hideNotes: false,
+    },
+    {
+      personName: 'Dr. Ntuli',
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      emailAddress: 'brichards@systemone.id',
+      username: null,
+      password: null,
+      mobile: '+27833243682',
+      tags: ['EID+CHBAH', 'VL>50CHBAH', 'EID+', 'HIV-VL>50'],
+      stateName: 'Gauteng',
+      lgaName: 'Diepkloof ',
+      deploymentShortName: null,
+      timezone: 'South Africa Standard Time',
+      culture: 'en',
+      title: 'Paeds',
+      hidePatientId: false,
+      hideSampleId: false,
+      hideNotes: false,
+    },
+    {
+      personName: 'Dr. Van Kwawegen',
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      emailAddress: 'brichards@systemone.id',
+      username: null,
+      password: null,
+      mobile: '+27833243682',
+      tags: ['EID+CHBAH', 'VL>50CHBAH', 'EID+', 'HIV-VL>50'],
+      stateName: 'Gauteng',
+      lgaName: 'Diepkloof ',
+      deploymentShortName: null,
+      timezone: 'South Africa Standard Time',
+      culture: 'en',
+      title: null,
+      hidePatientId: false,
+      hideSampleId: false,
+      hideNotes: false,
+    },
+    {
+      personName: 'Matron Nomusa Ramela',
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      emailAddress: 'brichards@systemone.id',
+      username: null,
+      password: null,
+      mobile: '+27833243682',
+      tags: ['EID+CHBAH', 'VL>50CHBAH', 'EID+', 'HIV-VL>50'],
+      stateName: 'Gauteng',
+      lgaName: 'Diepkloof ',
+      deploymentShortName: null,
+      timezone: 'South Africa Standard Time',
+      culture: 'en',
+      title: null,
+      hidePatientId: false,
+      hideSampleId: false,
+      hideNotes: false,
+    },
+    {
+      personName: 'Dr. Mary Adam',
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      emailAddress: 'brichards@systemone.id',
+      username: null,
+      password: null,
+      mobile: '+27833243682',
+      tags: ['EID+CHBAH', 'VL>50CHBAH', 'EID+', 'HIV-VL>50'],
+      stateName: 'Gauteng',
+      lgaName: 'Diepkloof ',
+      deploymentShortName: null,
+      timezone: 'South Africa Standard Time',
+      culture: 'en',
+      title: 'O&G',
+      hidePatientId: false,
+      hideSampleId: false,
+      hideNotes: false,
+    },
+    {
+      personName: 'Dr. Philiswa Mlandu',
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      emailAddress: 'brichards@systemone.id',
+      username: null,
+      password: null,
+      mobile: '+27833243682',
+      tags: ['EID+CHBAH', 'VL>50CHBAH', 'EID+', 'HIV-VL>50'],
+      stateName: 'Gauteng',
+      lgaName: 'Diepkloof ',
+      deploymentShortName: null,
+      timezone: 'South Africa Standard Time',
+      culture: 'en',
+      title: null,
+      hidePatientId: false,
+      hideSampleId: false,
+      hideNotes: false,
+    },
+    {
+      personName: 'Ahmad Haeri',
+      jobFunctionId: jobFunctionIdAdmin,
+      emailAddress: 'brichards@systemone.id',
+      username: 'ahmadh@nicd.ac.za',
+      password: 'P@$$w0rd',
+      mobile: '+27833243682',
+      tags: [
+        'EID+',
+        'EID+CHBAH',
+        'EID+CMJAH',
+        'EID+KPTH',
+        'EID+RMMCH',
+        'HIV-VL>50',
+        'VL>50CHBAH',
+        'VL>50CMJAH',
+        'VL>50KPTH',
+        'VL>50RMMCH',
+      ],
+      stateName: null,
+      lgaName: null,
+      deploymentShortName: null,
+      timezone: 'South Africa Standard Time',
+      culture: 'en',
+      title: null,
+      hidePatientId: true,
+      hideSampleId: false,
+      hideNotes: false,
+    },
+    {
+      personName: 'Sr Moipone Piliso',
+      jobFunctionId: jobFunctionIdAdmin,
+      emailAddress: 'brichards@systemone.id',
+      username: 'moipone.piliso@wits.ac.za',
+      password: 'P@$$w0rd',
+      mobile: '+27833243682',
+      tags: [
+        'EID+',
+        'EID+CHBAH',
+        'EID+CMJAH',
+        'EID+KPTH',
+        'EID+RMMCH',
+        'HIV-VL>50',
+        'VL>50CHBAH',
+        'VL>50CMJAH',
+        'VL>50KPTH',
+        'VL>50RMMCH',
+      ],
+      stateName: null,
+      lgaName: null,
+      deploymentShortName: null,
+      timezone: 'South Africa Standard Time',
+      culture: 'en',
+      title: 'Study Coordinator',
+      hidePatientId: true,
+      hideSampleId: false,
+      hideNotes: false,
+    },
+    {
+      personName: 'Natasha Gous',
+      jobFunctionId: jobFunctionIdAdmin,
+      emailAddress: 'brichards@systemone.id',
+      username: 'ngous@systemone.id',
+      password: 'P@$$w0rd',
+      mobile: '+27833243682',
+      tags: [],
+      stateName: null,
+      lgaName: null,
+      deploymentShortName: null,
+      timezone: 'South Africa Standard Time',
+      culture: 'en',
+      title: 'Dr',
+      hidePatientId: true,
+      hideSampleId: false,
+      hideNotes: false,
+    },
+    {
+      personName: 'Dr. Karl Technau',
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      emailAddress: 'brichards@systemone.id',
+      username: null,
+      password: null,
+      mobile: '+27833243682',
+      tags: ['EID+RMMCH', 'VL>50RMMCH', 'EID+', 'HIV-VL>50'],
+      stateName: 'Gauteng',
+      lgaName: 'Coronationville',
+      deploymentShortName: null,
+      timezone: 'South Africa Standard Time',
+      culture: 'en',
+      title: 'Senior Doctor Paeditric  HIV Department',
+      hidePatientId: true,
+      hideSampleId: false,
+      hideNotes: false,
+    },
+    {
+      personName: 'Dr. Kate Braithwaite',
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      emailAddress: 'brichards@systemone.id',
+      username: null,
+      password: null,
+      mobile: '+27833243682',
+      tags: ['EID+RMMCH', 'VL>50RMMCH', 'EID+', 'HIV-VL>50'],
+      stateName: 'Gauteng',
+      lgaName: 'Coronationville',
+      deploymentShortName: null,
+      timezone: 'South Africa Standard Time',
+      culture: 'en',
+      title: 'Medical Officer Paeds HIV dept',
+      hidePatientId: true,
+      hideSampleId: false,
+      hideNotes: false,
+    },
+    {
+      personName: 'Dr. Ebrahim Bera',
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      emailAddress: 'brichards@systemone.id',
+      username: null,
+      password: null,
+      mobile: '+27833243682',
+      tags: ['EID+RMMCH', 'VL>50RMMCH', 'EID+', 'HIV-VL>50'],
+      stateName: 'Gauteng',
+      lgaName: 'Coronationville',
+      deploymentShortName: null,
+      timezone: 'South Africa Standard Time',
+      culture: 'en',
+      title: 'Obstetric Consultant',
+      hidePatientId: true,
+      hideSampleId: false,
+      hideNotes: false,
+    },
+    {
+      personName: 'Dr. Fortein',
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      emailAddress: 'brichards@systemone.id',
+      username: null,
+      password: null,
+      mobile: '+27833243682',
+      tags: ['EID+RMMCH', 'VL>50RMMCH', 'EID+', 'HIV-VL>50'],
+      stateName: 'Gauteng',
+      lgaName: 'Coronationville',
+      deploymentShortName: null,
+      timezone: 'South Africa Standard Time',
+      culture: 'en',
+      title: 'Obstetric Medical Officer',
+      hidePatientId: true,
+      hideSampleId: false,
+      hideNotes: false,
+    },
+    {
+      personName: 'Dr. Loshnee Nair',
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      emailAddress: 'brichards@systemone.id',
+      username: null,
+      password: null,
+      mobile: '+27833243682',
+      tags: ['EID+RMMCH', 'VL>50RMMCH', 'EID+', 'HIV-VL>50'],
+      stateName: 'Gauteng',
+      lgaName: 'Coronationville',
+      deploymentShortName: null,
+      timezone: 'South Africa Standard Time',
+      culture: 'en',
+      title: 'Paediatric Consultant',
+      hidePatientId: true,
+      hideSampleId: false,
+      hideNotes: false,
+    },
+    {
+      personName: 'Dr. Tracy Turner',
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      emailAddress: 'brichards@systemone.id',
+      username: null,
+      password: null,
+      mobile: '+27833243682',
+      tags: ['EID+RMMCH', 'VL>50RMMCH', 'EID+', 'HIV-VL>50'],
+      stateName: 'Gauteng',
+      lgaName: 'Coronationville',
+      deploymentShortName: null,
+      timezone: 'South Africa Standard Time',
+      culture: 'en',
+      title: 'Paediatric Registrar',
+      hidePatientId: true,
+      hideSampleId: false,
+      hideNotes: false,
+    },
+    {
+      personName: 'Auréllie Mukendi',
+      jobFunctionId: jobFunctionIdAdmin,
+      emailAddress: 'brichards@systemone.id',
+      username: 'aureliem@nicd.ac.za',
+      password: 'P@$$w0rd',
+      mobile: '+27833243682',
+      tags: [
+        'EID+',
+        'EID+CHBAH',
+        'EID+CMJAH',
+        'EID+KPTH',
+        'EID+RMMCH',
+        'HIV-VL>50',
+        'VL>50CHBAH',
+        'VL>50CMJAH',
+        'VL>50KPTH',
+        'VL>50RMMCH',
+      ],
+      stateName: null,
+      lgaName: null,
+      deploymentShortName: null,
+      timezone: 'South Africa Standard Time',
+      culture: 'en',
+      title: 'Research Assistant',
+      hidePatientId: false,
+      hideSampleId: false,
+      hideNotes: false,
+    },
+    {
+      personName: 'Bahle Matrose',
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      emailAddress: 'brichards@systemone.id',
+      username: null,
+      password: null,
+      mobile: '+27833243682',
+      tags: ['EID+RMMCH', 'VL>50RMMCH', 'EID+', 'HIV-VL>50'],
+      stateName: 'Gauteng',
+      lgaName: 'Coronationville',
+      deploymentShortName: null,
+      timezone: 'South Africa Standard Time',
+      culture: 'en',
+      title: 'Phlebotomist',
+      hidePatientId: true,
+      hideSampleId: false,
+      hideNotes: false,
+    },
+    {
+      personName: 'Lerato Mthombeni',
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      emailAddress: 'brichards@systemone.id',
+      username: null,
+      password: null,
+      mobile: '+27833243682',
+      tags: ['EID+CMJAH', 'VL>50CMJAH', 'EID+', 'HIV-VL>50'],
+      stateName: 'Gauteng',
+      lgaName: 'Parktown',
+      deploymentShortName: null,
+      timezone: 'South Africa Standard Time',
+      culture: 'en',
+      title: 'NICD',
+      hidePatientId: true,
+      hideSampleId: true,
+      hideNotes: true,
+    },
+    {
+      personName: 'Dr. Coceka Mnyani',
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      emailAddress: 'brichards@systemone.id',
+      username: null,
+      password: null,
+      mobile: '+27833243682',
+      tags: ['EID+CMJAH', 'VL>50CMJAH', 'EID+', 'HIV-VL>50'],
+      stateName: 'Gauteng',
+      lgaName: 'Parktown',
+      deploymentShortName: null,
+      timezone: 'South Africa Standard Time',
+      culture: 'en',
+      title: 'Gynae and Obstets Consultant',
+      hidePatientId: true,
+      hideSampleId: false,
+      hideNotes: false,
+    },
+    {
+      personName: 'Dr. Natalie Odell',
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      emailAddress: 'brichards@systemone.id',
+      username: null,
+      password: null,
+      mobile: '+27833243682',
+      tags: ['EID+CMJAH', 'VL>50CMJAH', 'EID+', 'HIV-VL>50'],
+      stateName: 'Gauteng',
+      lgaName: 'Parktown',
+      deploymentShortName: null,
+      timezone: 'South Africa Standard Time',
+      culture: 'en',
+      title: 'Gynae and Obstets',
+      hidePatientId: true,
+      hideSampleId: false,
+      hideNotes: false,
+    },
+    {
+      personName: 'Dr. Felicia Molokoane',
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      emailAddress: 'brichards@systemone.id',
+      username: null,
+      password: null,
+      mobile: '+27833243682',
+      tags: ['EID+KPTH', 'VL>50KPTH', 'EID+', 'HIV-VL>50'],
+      stateName: 'Gauteng',
+      lgaName: 'Kalafong',
+      deploymentShortName: null,
+      timezone: 'South Africa Standard Time',
+      culture: 'en',
+      title: 'Gynae and Obstets Consultant',
+      hidePatientId: true,
+      hideSampleId: false,
+      hideNotes: false,
+    },
+    {
+      personName: 'Dr. Derisha Pillay',
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      emailAddress: 'brichards@systemone.id',
+      username: null,
+      password: null,
+      mobile: '+27833243682',
+      tags: ['EID+KPTH', 'VL>50KPTH', 'EID+', 'HIV-VL>50'],
+      stateName: 'Gauteng',
+      lgaName: 'Kalafong',
+      deploymentShortName: null,
+      timezone: 'South Africa Standard Time',
+      culture: 'en',
+      title: 'Kalafong Paeds Consultant',
+      hidePatientId: true,
+      hideSampleId: false,
+      hideNotes: false,
+    },
+    {
+      personName: 'Dr. Meera Ooka',
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      emailAddress: 'brichards@systemone.id',
+      username: null,
+      password: null,
+      mobile: '+27833243682',
+      tags: ['EID+RMMCH', 'VL>50RMMCH', 'EID+', 'HIV-VL>50'],
+      stateName: 'Gauteng',
+      lgaName: 'Coronationville',
+      deploymentShortName: null,
+      timezone: 'South Africa Standard Time',
+      culture: 'en',
+      title: 'Paeds',
+      hidePatientId: false,
+      hideSampleId: false,
+      hideNotes: false,
+    },
+    {
+      personName: 'Dr. Natasha Davies',
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      emailAddress: 'brichards@systemone.id',
+      username: null,
+      password: null,
+      mobile: '+27833243682',
+      tags: ['EID+CMJAH', 'VL>50CMJAH', 'EID+', 'HIV-VL>50'],
+      stateName: 'Gauteng',
+      lgaName: 'Parktown',
+      deploymentShortName: null,
+      timezone: 'South Africa Standard Time',
+      culture: 'en',
+      title: 'Adult ARV clinic',
+      hidePatientId: false,
+      hideSampleId: false,
+      hideNotes: false,
+    },
+    {
+      personName: 'Sr Beverly Letsoalo',
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      emailAddress: 'brichards@systemone.id',
+      username: null,
+      password: null,
+      mobile: '+27833243682',
+      tags: ['EID+CMJAH', 'VL>50CMJAH', 'EID+', 'HIV-VL>50'],
+      stateName: 'Gauteng',
+      lgaName: 'Parktown',
+      deploymentShortName: null,
+      timezone: 'South Africa Standard Time',
+      culture: 'en',
+      title: 'PCR Coordinator',
+      hidePatientId: false,
+      hideSampleId: false,
+      hideNotes: false,
+    },
+    {
+      personName: 'Dr. Vuyelwa Baba',
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      emailAddress: 'brichards@systemone.id',
+      username: null,
+      password: null,
+      mobile: '+27833243682',
+      tags: ['EID+CHBAH', 'VL>50CHBAH', 'EID+', 'HIV-VL>50'],
+      stateName: 'Gauteng',
+      lgaName: 'Diepkloof ',
+      deploymentShortName: null,
+      timezone: 'South Africa Standard Time',
+      culture: 'en',
+      title: 'O&G',
+      hidePatientId: false,
+      hideSampleId: false,
+      hideNotes: false,
+    },
+    {
+      personName: 'Dr. Khosi Ngobesi',
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      emailAddress: 'brichards@systemone.id',
+      username: null,
+      password: null,
+      mobile: '+27833243682',
+      tags: ['EID+KPTH', 'VL>50KPTH', 'EID+', 'HIV-VL>50'],
+      stateName: 'Gauteng',
+      lgaName: 'Kalafong',
+      deploymentShortName: null,
+      timezone: 'South Africa Standard Time',
+      culture: 'en',
+      title: null,
+      hidePatientId: false,
+      hideSampleId: false,
+      hideNotes: false,
+    },
+    {
+      personName: 'Prof Nicolette du Plessis',
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      emailAddress: 'brichards@systemone.id',
+      username: null,
+      password: null,
+      mobile: '+27833243682',
+      tags: ['EID+KPTH', 'VL>50KPTH', 'EID+', 'HIV-VL>50'],
+      stateName: 'Gauteng',
+      lgaName: 'Kalafong',
+      deploymentShortName: null,
+      timezone: 'South Africa Standard Time',
+      culture: 'en',
+      title: null,
+      hidePatientId: false,
+      hideSampleId: false,
+      hideNotes: false,
+    },
+    {
+      personName: 'Dr. Khomotso Masemola',
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      emailAddress: 'brichards@systemone.id',
+      username: null,
+      password: null,
+      mobile: '+27833243682',
+      tags: ['EID+KPTH', 'VL>50KPTH', 'EID+', 'HIV-VL>50'],
+      stateName: 'Gauteng',
+      lgaName: 'Kalafong',
+      deploymentShortName: null,
+      timezone: 'South Africa Standard Time',
+      culture: 'en',
+      title: null,
+      hidePatientId: false,
+      hideSampleId: false,
+      hideNotes: false,
+    },
+    {
+      personName: 'Dr. Marike Boersema',
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      emailAddress: 'brichards@systemone.id',
+      username: null,
+      password: null,
+      mobile: '+27833243682',
+      tags: ['EID+KPTH', 'VL>50KPTH', 'EID+', 'HIV-VL>50'],
+      stateName: 'Gauteng',
+      lgaName: 'Kalafong',
+      deploymentShortName: null,
+      timezone: 'South Africa Standard Time',
+      culture: 'en',
+      title: null,
+      hidePatientId: false,
+      hideSampleId: false,
+      hideNotes: false,
+    },
+    {
+      personName: 'Dr. Valerie Vannevel',
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      emailAddress: 'brichards@systemone.id',
+      username: null,
+      password: null,
+      mobile: '+27833243682',
+      tags: ['EID+KPTH', 'VL>50KPTH', 'EID+', 'HIV-VL>50'],
+      stateName: 'Gauteng',
+      lgaName: 'Kalafong',
+      deploymentShortName: null,
+      timezone: 'South Africa Standard Time',
+      culture: 'en',
+      title: null,
+      hidePatientId: false,
+      hideSampleId: false,
+      hideNotes: false,
+    },
+    {
+      personName: 'Dr. Debbie Vaz',
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      emailAddress: 'brichards@systemone.id',
+      username: null,
+      password: null,
+      mobile: '+27833243682',
+      tags: ['EID+KPTH', 'VL>50KPTH', 'EID+', 'HIV-VL>50'],
+      stateName: 'Gauteng',
+      lgaName: 'Kalafong',
+      deploymentShortName: null,
+      timezone: 'South Africa Standard Time',
+      culture: 'en',
+      title: null,
+      hidePatientId: false,
+      hideSampleId: false,
+      hideNotes: false,
+    },
+    {
+      personName: 'Dr. Sonia Hitchcock',
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      emailAddress: 'brichards@systemone.id',
+      username: null,
+      password: null,
+      mobile: '+27833243682',
+      tags: ['EID+KPTH', 'VL>50KPTH', 'EID+', 'HIV-VL>50'],
+      stateName: 'Gauteng',
+      lgaName: 'Kalafong',
+      deploymentShortName: null,
+      timezone: 'South Africa Standard Time',
+      culture: 'en',
+      title: null,
+      hidePatientId: false,
+      hideSampleId: false,
+      hideNotes: false,
+    },
+    {
+      personName: 'Gayle Sherman',
+      jobFunctionId: jobFunctionIdAdmin,
+      emailAddress: 'brichards@systemone.id',
+      username: 'gayles@nicd.ac.za',
+      password: 'P@$$w0rd',
+      mobile: '+27833243682',
+      tags: [],
+      stateName: null,
+      lgaName: null,
+      deploymentShortName: null,
+      timezone: 'South Africa Standard Time',
+      culture: 'en',
+      title: null,
+      hidePatientId: false,
+      hideSampleId: false,
+      hideNotes: false,
+    },
+    {
+      personName: 'Tanya Murray',
+      jobFunctionId: jobFunctionIdAdmin,
+      emailAddress: 'brichards@systemone.id',
+      username: 'tanyaymurray@gmail.com',
+      password: 'P@$$w0rd',
+      mobile: '+27833243682',
+      tags: [],
+      stateName: null,
+      lgaName: null,
+      deploymentShortName: null,
+      timezone: 'South Africa Standard Time',
+      culture: 'en',
+      title: null,
+      hidePatientId: false,
+      hideSampleId: false,
+      hideNotes: false,
+    },
+    {
+      personName: 'Lerato Mthombeni',
+      jobFunctionId: jobFunctionIdLabUser,
+      emailAddress: 'brichards@systemone.id',
+      username: null,
+      password: null,
+      mobile: '+27833243682',
+      tags: [],
+      stateName: null,
+      lgaName: null,
+      deploymentShortName: 'CMJAH',
+      timezone: 'South Africa Standard Time',
+      culture: 'en',
+      title: 'Lab Contact',
+      hidePatientId: false,
+      hideSampleId: false,
+      hideNotes: false,
+    },
+    {
+      personName: 'Veronica Mphaphuli',
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      emailAddress: 'brichards@systemone.id',
+      username: null,
+      password: null,
+      mobile: '+27833243682',
+      tags: ['EID+CMJAH', 'VL>50CMJAH', 'EID+', 'HIV-VL>50'],
+      stateName: 'Gauteng',
+      lgaName: 'Parktown',
+      deploymentShortName: null,
+      timezone: 'South Africa Standard Time',
+      culture: 'en',
+      title: 'Neonatology',
+      hidePatientId: false,
+      hideSampleId: false,
+      hideNotes: false,
+    },
+    {
+      personName: 'Yoliswa magadla',
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      emailAddress: 'brichards@systemone.id',
+      username: null,
+      password: null,
+      mobile: '+27833243682',
+      tags: ['EID+CMJAH', 'VL>50CMJAH', 'EID+', 'HIV-VL>50'],
+      stateName: 'Gauteng',
+      lgaName: 'Parktown',
+      deploymentShortName: null,
+      timezone: 'South Africa Standard Time',
+      culture: 'en',
+      title: 'Neonatology',
+      hidePatientId: false,
+      hideSampleId: false,
+      hideNotes: false,
+    },
+    {
+      personName: 'Tanusha Ramdin',
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      emailAddress: 'brichards@systemone.id',
+      username: null,
+      password: null,
+      mobile: '+27833243682',
+      tags: ['EID+CMJAH', 'VL>50CMJAH', 'EID+', 'HIV-VL>50'],
+      stateName: 'Gauteng',
+      lgaName: 'Parktown',
+      deploymentShortName: null,
+      timezone: 'South Africa Standard Time',
+      culture: 'en',
+      title: 'Neonatology',
+      hidePatientId: false,
+      hideSampleId: false,
+      hideNotes: false,
+    },
+    {
+      personName: 'Dalubuhle Ndiweni',
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      emailAddress: 'brichards@systemone.id',
+      username: null,
+      password: null,
+      mobile: '+27833243682',
+      tags: ['EID+CMJAH', 'VL>50CMJAH', 'EID+', 'HIV-VL>50'],
+      stateName: 'Gauteng',
+      lgaName: 'Parktown',
+      deploymentShortName: null,
+      timezone: 'South Africa Standard Time',
+      culture: 'en',
+      title: 'General paeds/HIV clinic',
+      hidePatientId: false,
+      hideSampleId: false,
+      hideNotes: false,
+    },
+    {
+      personName: 'Nkele Selepe',
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      emailAddress: 'brichards@systemone.id',
+      username: null,
+      password: null,
+      mobile: '+27833243682',
+      tags: ['EID+KPTH', 'VL>50KPTH', 'EID+', 'HIV-VL>50'],
+      stateName: 'Gauteng',
+      lgaName: 'Kalafong',
+      deploymentShortName: null,
+      timezone: 'South Africa Standard Time',
+      culture: 'en',
+      title: null,
+      hidePatientId: false,
+      hideSampleId: false,
+      hideNotes: false,
+    },
+  ]
+
+  await Promise.each(saNhlsStaff, async person => {
+    let userId = null
+    if (person.username) {
+      const pw = bcrypt.hashSync(person.password, saltRounds)
+      const baseUserData = {
+        password: pw,
+        failedPasswordAttempts: 0,
+        legacyPassword: 0,
+        lockedOut: 0,
+      }
+      ;[userId] = await knex('User').insert({
+        name: person.username,
+        approved: 1,
+        createdOn: now,
+        ...baseUserData,
+      })
+    }
+
+    const province = person.stateName
+      ? provincesByName[person.stateName.toLowerCase()] || {
+          id: null,
+          districts: {},
+        }
+      : {
+          id: null,
+          districts: {},
+        }
+    const district =
+      province.districts && person.lgaName
+        ? province.districts[person.lgaName.toLowerCase()] || {
+            id: null,
+          }
+        : {
+            id: null,
+          }
+    const { id: geographyId } = await knex('Geography')
+      .where({
+        countryId,
+        stateId: province.id,
+        lgaId: district.id,
+      })
+      .first()
+
+    const [personId] = await knex('Person').insert({
+      name: person.personName,
+      timezone: person.timezone,
+      culture: person.culture,
+      geographyId,
+      title: person.title,
+      email: person.emailAddress,
+      cell: person.mobile,
+      userId,
+      lastPartnerId: partnerId,
+      lastCountryId: countryId,
+      createdOn: now,
+      createdBy: adminId,
+      hidePatientId: person.hidePatientId,
+      hideSampleId: person.hideSampleId,
+      hideNotes: person.hideNotes,
+      ...auditFields,
+    })
+
+    if (!_.isEmpty(person.tags)) {
+      const tagsInDatabase = await knex('Tag')
+        .whereIn('title', person.tags)
+        .andWhere('partnerId', partnerId)
+        .select()
+      const tagsToInsert = _.filter(
+        _.uniq(person.tags),
+        tagTitle => !_.some(tagsInDatabase, { title: tagTitle })
+      )
+      await Promise.each(tagsToInsert, async tagToInsert => {
+        const [tagId] = await knex('Tag').insert({
+          title: tagToInsert,
+          partnerId,
+        })
+        tagsInDatabase.push({
+          id: tagId,
+          title: tagToInsert,
+          partnerId,
+        })
+      })
+
+      const personTagsInDatabase = await knex('PersonTag').where(
+        'personId',
+        personId
+      )
+      const tagsToAppendToPerson = _.filter(
+        tagsInDatabase,
+        tagInDatabase =>
+          !_.some(personTagsInDatabase, { tagId: tagInDatabase.id })
+      )
+      await Promise.each(tagsToAppendToPerson, async tag =>
+        knex('PersonTag').insert({ tagId: tag.id, personId })
+      )
+    }
+    const [jobId] = await knex('Job').insert({
+      personId,
+      jobFunctionId: person.jobFunctionId,
+    })
+    if (person.jobFunctionId === jobFunctionIdLabUser) {
+      await knex('JobContext').insert({
+        jobId,
+        siteId: siteIds[person.deploymentShortName],
+      })
+    } else {
+      await knex('JobContext').insert({ jobId, geographyId })
+    }
+  })
 }

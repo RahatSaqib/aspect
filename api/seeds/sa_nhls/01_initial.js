@@ -141,7 +141,7 @@ async function seed(knex) {
       )
     })
   )
-  const { culture, timezone, id: countryId, geographyId } = countries.ZA
+  const { culture, timezone, id: countryId, geographyId } = countries.ZANHLS
 
   // create site for Alere FTP Connector device
   const [southAfricaNhlsAlereFtpConnectorSiteId] = await knex('Site').insert(
@@ -226,6 +226,78 @@ async function seed(knex) {
     geographyId,
   })
 
+  const [jobFunctionIdRegionalOfficer] = await knex('JobFunction').insert({
+    name: 'Regional Officer',
+    partnerId,
+  })
+  await knex('JobFunctionPermission').insert([
+    {
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      permissionId: modules.browse.view,
+    },
+    {
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      permissionId: modules.result.admin,
+    },
+    {
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      permissionId: modules.device.view,
+    },
+    {
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      permissionId: modules.site.view,
+    },
+  ])
+  await knex('JobFunctionFeature').insert([
+    { jobFunctionId: jobFunctionIdRegionalOfficer, featureId: features.device },
+    { jobFunctionId: jobFunctionIdRegionalOfficer, featureId: features.result },
+    { jobFunctionId: jobFunctionIdRegionalOfficer, featureId: features.site },
+  ])
+
+  const [jobFunctionIdLabUser] = await knex('JobFunction').insert({
+    name: 'Lab User',
+    partnerId,
+  })
+  await knex('JobFunctionPermission').insert([
+    { jobFunctionId: jobFunctionIdLabUser, permissionId: modules.browse.view },
+    { jobFunctionId: jobFunctionIdLabUser, permissionId: modules.result.admin },
+    { jobFunctionId: jobFunctionIdLabUser, permissionId: modules.device.view },
+    { jobFunctionId: jobFunctionIdLabUser, permissionId: modules.site.view },
+  ])
+  await knex('JobFunctionFeature').insert([
+    { jobFunctionId: jobFunctionIdLabUser, featureId: features.device },
+    { jobFunctionId: jobFunctionIdLabUser, featureId: features.result },
+    { jobFunctionId: jobFunctionIdLabUser, featureId: features.site },
+  ])
+
+  const patientDataSchema = JSON.stringify({
+    id: {
+      title: 'Patient ID',
+      type: 'string',
+      order: 0,
+    },
+    firstName: {
+      title: 'First Name',
+      type: 'string',
+      order: 1,
+    },
+    surname: {
+      title: 'Surname',
+      type: 'string',
+      order: 2,
+    },
+    ward: {
+      title: 'Ward',
+      type: 'string',
+      order: 3,
+    },
+    hospitalNumber: {
+      title: 'Hospital Number',
+      type: 'string',
+      order: 4,
+    },
+  })
+
   const [alereQHiv12DetectAssayId] = await knex('Assay').insert({
     name: 'Alere q HIV-1/2 Detect',
     i18nKey: 'assayAlereQHiv12Detect',
@@ -250,7 +322,7 @@ async function seed(knex) {
         title: 'Cartridge ID',
       },
       sampleId: { list: true, order: 5, type: 'string', title: 'Sample ID' },
-      hiv1MnResult: {
+      hiv1MNResult: {
         list: true,
         order: 6,
         type: 'string',
@@ -326,6 +398,7 @@ async function seed(knex) {
         title: 'Picked Up On',
       },
     }),
+    patientDataSchema,
   })
 
   const [alereQHiv12VLPlasmaAssayId] = await knex('Assay').insert({
@@ -450,6 +523,7 @@ async function seed(knex) {
         title: 'Picked Up On',
       },
     }),
+    patientDataSchema,
   })
 
   const piece = await unitToId('Piece')
@@ -480,76 +554,86 @@ async function seed(knex) {
   ])
 
   const assayAlereQHiv12FormSchema = {
-    hospitalNumber: {
-      i18nLabel: 'hospitalNumber',
-      control: {
-        type: 'TextBox',
+    fields: {
+      patientId: {
+        i18nLabel: 'patientId',
+        control: {
+          type: 'TextBox',
+        },
+        order: 1,
       },
-      order: 1,
-    },
-    studyID: {
-      i18nLabel: 'studyID',
-      control: {
-        type: 'TextBox',
+      hospitalNumber: {
+        i18nLabel: 'hospitalNumber',
+        control: {
+          type: 'TextBox',
+        },
+        order: 2,
       },
-      order: 2,
-    },
-    nameOfPatient: {
-      i18nLabel: 'nameOfPatient',
-      control: {
-        type: 'TextBox',
+      studyID: {
+        i18nLabel: 'studyID',
+        control: {
+          type: 'TextBox',
+        },
+        order: 3,
       },
-      order: 3,
-    },
-    surnameOfPatient: {
-      i18nLabel: 'surnameOfPatient',
-      control: {
-        type: 'TextBox',
+      nameOfPatient: {
+        i18nLabel: 'nameOfPatient',
+        control: {
+          type: 'TextBox',
+        },
+        order: 4,
       },
-      order: 4,
-    },
-    ward: {
-      i18nLabel: 'ward',
-      control: {
-        type: 'TextBox',
+      surnameOfPatient: {
+        i18nLabel: 'surnameOfPatient',
+        control: {
+          type: 'TextBox',
+        },
+        order: 5,
       },
-      order: 5,
-    },
-    timeSampleTaken: {
-      i18nLabel: 'timeSampleTaken',
-      control: {
-        type: 'DateTime',
+      ward: {
+        i18nLabel: 'ward',
+        control: {
+          type: 'TextBox',
+        },
+        order: 6,
       },
-      order: 6,
-    },
-    sampleType: {
-      i18nLabel: 'sampleType',
-      control: {
-        type: 'DropDown',
-        options: [
-          {
-            i18nText: 'studyOfSampleType',
-            value: 'study',
-          },
-          {
-            i18nText: 'EQAOfSampleType',
-            value: 'EQA',
-          },
-          {
-            i18nText: 'miscOfSampleType',
-            value: 'misc',
-          },
-        ],
+      timeSampleTaken: {
+        i18nLabel: 'timeSampleTaken',
+        control: {
+          type: 'DateTime',
+        },
+        order: 7,
       },
-      order: 7,
-    },
-    timeInstrumentResulted: {
-      i18nLabel: 'timeInstrumentResulted',
-      control: {
-        type: 'DateTime',
+      sampleType: {
+        i18nLabel: 'sampleType',
+        control: {
+          type: 'DropDown',
+          options: [
+            {
+              i18nText: 'studyOfSampleType',
+              value: 'study',
+            },
+            {
+              i18nText: 'EQAOfSampleType',
+              value: 'EQA',
+            },
+            {
+              i18nText: 'miscOfSampleType',
+              value: 'misc',
+            },
+          ],
+        },
+        order: 8,
       },
-      order: 8,
+      timeInstrumentResulted: {
+        i18nLabel: 'timeInstrumentResulted',
+        control: {
+          type: 'DateTime',
+        },
+        order: 9,
+      },
     },
+    sendChangesOn: 'submit',
   }
 
   await knex('ResultForm').insert([

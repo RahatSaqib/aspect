@@ -986,37 +986,36 @@ function addDeviceLogResultConstraints(queryBuilder) {
     .where('rws.externalId', '<>', 'Purged')
 }
 
-function onResultUpdated({ resultId, deviceLogId }, { messageContext }) {
+async function onResultUpdated({ resultId, deviceLogId }, { messageContext }) {
   const context = messageContext.bindActionCreators({ resultLogged })
   if (deviceLogId) {
     // we've already created device logs originating here, so ignore
-    context.resultLogged(resultId, deviceLogId)
-  } else {
-    return context.transact(async knex => {
-      // TODO dispatch from client API using plugin so
-      // senderIp, createdOn, source, etc are available
-      // Everything else, we should add a device log entry so that
-      // the updates will be downloaded
-      const createdOn = new Date()
-      const [deviceLogId] = await knex('Result')
-        .where({ id: resultId })
-        .first('deviceId')
-        .then(({ deviceId }) =>
-          knex('DeviceLog').insert({
-            deviceId,
-            resultId,
-            source: 'DeviceApiResultUpdated',
-            createdOn,
-            senderIp: '',
-            rawMessage: '',
-          })
-        )
-      context.resultLogged(resultId, deviceLogId)
-    })
+    return context.resultLogged(resultId, deviceLogId)
   }
+  return context.transact(async knex => {
+    // TODO dispatch from client API using plugin so
+    // senderIp, createdOn, source, etc are available
+    // Everything else, we should add a device log entry so that
+    // the updates will be downloaded
+    const createdOn = new Date()
+    const [deviceLogId] = await knex('Result')
+      .where({ id: resultId })
+      .first('deviceId')
+      .then(({ deviceId }) =>
+        knex('DeviceLog').insert({
+          deviceId,
+          resultId,
+          source: 'DeviceApiResultUpdated',
+          createdOn,
+          senderIp: '',
+          rawMessage: '',
+        })
+      )
+    context.resultLogged(resultId, deviceLogId)
+  })
 }
 
-function onResultLogged(action, context) {
+async function onResultLogged(action, context) {
   return run(async knex => {
     const { partnerPluginName, deviceTypePluginName } = await knex(
       'Result as r'
@@ -1033,7 +1032,7 @@ function onResultLogged(action, context) {
       [partnerPluginName, deviceTypePluginName],
       'onResultLogged'
     )
-    onResultLogged(action, context)
+    return onResultLogged(action, context)
   })
 }
 

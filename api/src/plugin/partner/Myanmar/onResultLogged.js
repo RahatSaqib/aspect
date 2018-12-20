@@ -32,8 +32,8 @@ const {
   moduleFailureMaxErrors,
   machineTemperatureMaxErrors,
   maxPrcntErrors,
-  machinePowerMaxErrors,
   machinePowerMinNoResults,
+  machinePowerMinErrorsNoResult,
   maxPrcntMachinePowerErrors,
   maxInvalidResultRatio,
   invalidResultBatchRatio,
@@ -167,15 +167,6 @@ async function onResultLogged({ resultId }, { messageContext }) {
             }
           })
         )
-        const [{ errorCount }] = await deviceErrorQuery
-          .clone()
-          .where('r.endedOn', '>=', last30day)
-          .whereIn('r.errorCode', MODULE_POWER_ERROR_CODES)
-          .whereNotIn('r.moduleSerial', replacedModuleSerials)
-          .count('r.id as errorCount')
-        if (errorCount > machinePowerMaxErrors) {
-          context.resultMachinePowerError(deviceId)
-        }
       } else if (MODULE_FAILURE_ERROR_CODES.includes(result.errorCode)) {
         const modules = await deviceErrorQuery
           .clone()
@@ -367,7 +358,7 @@ async function onResultLogged({ resultId }, { messageContext }) {
       }
     }
 
-    // Check for machine power issue triggered by noResult
+    // Check for machine power issue triggered by noResult or power errors
     const [{ noResultCount }] = await knex('Result as r')
       .innerJoin('ResultCategory as rc', 'r.resultCategory1', 'rc.id')
       .where('r.deviceId', deviceId)
@@ -376,18 +367,24 @@ async function onResultLogged({ resultId }, { messageContext }) {
       .whereNotIn('r.moduleSerial', replacedModuleSerials)
       .count('r.id as noResultCount')
 
+    const [{ powerErrorCount }] = await knex('Result as r')
+      .where('r.deviceId', deviceId)
+      .where('r.endedOn', '>=', last30day)
+      .whereIn('r.errorCode', MODULE_POWER_ERROR_CODES)
+      .whereNotIn('r.moduleSerial', replacedModuleSerials)
+      .count('r.id as powerErrorCount')
+
     const [{ machineResultCount }] = await knex('Result as r')
       .where('r.deviceId', deviceId)
       .where('r.endedOn', '>=', last30day)
-      .whereNotIn('r.moduleSerial', replacedModuleSerials)
       .count('r.id as machineResultCount')
 
     if (machineResultCount !== 0) {
       const prcntNoResult = noResultCount / machineResultCount * 100
       if (
-        prcntNoResult > maxPrcntMachinePowerErrors &&
-        // LU Machine Power: minimum of 8 "No Results"
-        noResultCount >= machinePowerMinNoResults
+        (prcntNoResult > maxPrcntMachinePowerErrors &&
+          noResultCount >= machinePowerMinNoResults) ||
+        noResultCount + powerErrorCount > machinePowerMinErrorsNoResult
       ) {
         context.resultMachinePowerError(deviceId)
       }

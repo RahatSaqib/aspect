@@ -9,8 +9,10 @@ const {
   method,
   body,
 } = require('http-client')
+const Promise = require('bluebird')
 
 require('isomorphic-fetch')
+
 const config = require('../config')
 const { query, transact } = require('../db')
 
@@ -70,18 +72,18 @@ async function validateUserAtGxAlert(username, password, user) {
   // check that country has exactly 1 partner
   // -------------------------------------------
   const partners = await query('Get partners from all sites of this country')
-    .select('s.partnerId as id')
+    .select('s.partnerId as id', 'p.plugin')
     .from('Site as s')
     .innerJoin('Geography as g', 's.geographyId', 'g.id')
     .innerJoin('Partner as p', 's.partnerId', 'p.id')
     .where('g.countryId', countryId)
-    .distinct('s.partnerId')
+    .distinct('s.partnerId', 'p.plugin')
   // exit if not exactly 1 partner in this country
   if (!partners || partners.length !== 1) {
     return null
   }
 
-  const { id: partnerId } = partners[0]
+  const { id: partnerId, plugin: partnerPlugin } = partners[0]
   // -------------------------------------------
   // calculate jobFunctionId
   // -------------------------------------------
@@ -96,7 +98,7 @@ async function validateUserAtGxAlert(username, password, user) {
   if (gxUser.dotNetRoles.includes('admin') || gxUser.role === 'national') {
     jobFunction = allJobFunctions.find(x => x.name === 'Admin')
   }
-  if (!jobFunction && gxUser.role === 'state') {
+  if (!jobFunction && (gxUser.role === 'state' || gxUser.role === 'lga')) {
     jobFunction =
       allJobFunctions.find(x => x.name === 'Regional Officer') ||
       allJobFunctions.find(x => x.name === 'Manager')
@@ -156,6 +158,13 @@ async function validateUserAtGxAlert(username, password, user) {
     // create/update Person in our db
     const personOptions = { userId, partnerId, countryId }
     const personId = await updateCreatePerson(knex, gxUser, personOptions)
+    if (!_.isEmpty(gxUser.tags)) {
+      await updateTagsForPerson(knex, {
+        partnerId,
+        personId,
+        tagTitles: gxUser.tags,
+      })
+    }
 
     // insert Job if not exists
     if (jobFunctionId) {
@@ -172,6 +181,12 @@ async function validateUserAtGxAlert(username, password, user) {
 
     // finally return User
     user = await getUser(username, knex)
+    const { loadPlugin } = require('../plugin/registration')
+    const onGxAlertAuthenticated = await loadPlugin(
+      [partnerPlugin],
+      'onGxAlertAuthenticated'
+    )
+    await onGxAlertAuthenticated({ gxUser, partnerId, personId, knex })
     return user
 
     // catch error from setJobContext() if no site found or JobContext defined
@@ -274,7 +289,7 @@ async function setJobContext(knex, jobId, gxUser) {
         const geographyId = await getCreateGeographyIdByGxGeo(knex, options)
         const shortName = dep.description || dep.hostId
 
-        const { siteId } =
+        let { siteId } =
           (await knex('Device')
             .where({ geographyId })
             .where(function() {
@@ -283,19 +298,29 @@ async function setJobContext(knex, jobId, gxUser) {
             .first()) || {}
 
         if (!siteId) {
+          const site =
+            (await knex('Site')
+              .where({ geographyId })
+              .where(function() {
+                this.where({ shortName }).orWhere('name', shortName)
+              })
+              .first()) || {}
+          siteId = site.id
+        }
+
+        if (!siteId) {
           throw new Error(
             `No device with shortName or name '${shortName}' found for geographyId ${geographyId}`
           )
         }
-
         if (geographyId && siteId) {
-          let { id: jobContextId } =
+          const { id: jobContextId } =
             (await knex('JobContext')
               .where({ jobId, siteId })
               .whereNull('geographyId')
               .first()) || {}
           if (!jobContextId) {
-            ;[jobContextId] = await knex('JobContext').insert({ jobId, siteId })
+            await knex('JobContext').insert({ jobId, siteId })
           }
           hasJobContext = true
         }
@@ -387,9 +412,6 @@ async function getCountryIdByAbbr(countryAbbreviation) {
   return countryId
 }
 
-// --------------------------------------------------------------------------------------------
-// getCreateGeographyIdByGxGeo
-// --------------------------------------------------------------------------------------------
 async function getCreateGeographyIdByGxGeo(
   knex,
   { countryAbbreviation, stateName, stateAbbreviation, lgaName }
@@ -481,6 +503,53 @@ async function getCreateGeographyIdByGxGeo(
   }
 
   return geographyId
+}
+
+async function updateTagsForPerson(
+  knex,
+  { partnerId, personId, tagTitles = [] }
+) {
+  const tagsInDatabase = await knex('Tag')
+    .whereIn('title', tagTitles)
+    .andWhere('partnerId', partnerId)
+    .select()
+  const tagsToInsert = _.filter(
+    _.uniqBy(tagTitles, tagTitle => tagTitle.toLowerCase()),
+    tagTitle =>
+      !_.some(
+        tagsInDatabase,
+        tagInDatabase =>
+          tagInDatabase.title.toLowerCase() === tagTitle.toLowerCase()
+      )
+  )
+  await Promise.each(
+    _.uniqBy(tagsToInsert, tagToInsert => tagToInsert.toLowerCase()),
+    async tagToInsert => {
+      const [tagId] = await knex('Tag').insert({
+        title: tagToInsert,
+        partnerId,
+      })
+      tagsInDatabase.push({
+        id: tagId,
+        title: tagToInsert,
+        partnerId,
+      })
+    }
+  )
+
+  const personTagsInDatabase = await knex('PersonTag').where(
+    'personId',
+    personId
+  )
+  const tagsToAppendToPerson = _.filter(
+    tagsInDatabase,
+    tagInDatabase => !_.some(personTagsInDatabase, { tagId: tagInDatabase.id })
+  )
+  return Promise.map(
+    tagsToAppendToPerson,
+    async tag => knex('PersonTag').insert({ tagId: tag.id, personId }),
+    { concurrency: config.db.connectionLimit }
+  )
 }
 
 module.exports = {

@@ -1573,6 +1573,7 @@ async function seed(knex) {
   const countries = {}
   const geographies = []
   const siteDatas = []
+  const preventRandomSitesForCountries = ['ZANHLS']
   await Promise.all(
     _.map(geography.countries, async country => {
       const countryData = _.pick(country, [
@@ -1627,34 +1628,40 @@ async function seed(knex) {
               geographies.push(Object.assign({ id: geographyId }, geoData))
 
               // up to 5 of sites at each LGA
-              await Promise.all(
-                _.map(_.range(1, 6 - lgaData.id % 5), async siteNumber => {
-                  const siteData = Object.assign(
-                    {
-                      partnerId: partnerOneId,
-                      geographyId,
-                      externalId: `${state.name}_${siteNumber}`,
-                      name: `${lga.name} ${country.lgaLabel} ${
-                        state.name
-                      } #${siteNumber}`,
-                      shortName: `${lga.name}, ${stateKey} #${siteNumber}`,
-                      city: `${lga.name} City`,
-                      street1: `${lgaData.id} Main Street`,
-                      zip: `12345-${lgaData.id}`,
-                      latitude: _.has(state, 'lat')
-                        ? state.lat + _.random(-0.5, 0.5, true)
-                        : undefined,
-                      longitude: _.has(state, 'lng')
-                        ? state.lng + _.random(-0.5, 0.5, true)
-                        : undefined,
-                    },
-                    auditFields
-                  )
-                  const [siteId] = await knex('Site').insert(siteData)
-                  siteData.id = siteId
-                  siteDatas.push(siteData)
-                })
-              )
+              if (
+                !preventRandomSitesForCountries.includes(
+                  countryData.abbreviation
+                )
+              ) {
+                await Promise.all(
+                  _.map(_.range(1, 6 - lgaData.id % 5), async siteNumber => {
+                    const siteData = Object.assign(
+                      {
+                        partnerId: partnerOneId,
+                        geographyId,
+                        externalId: `${state.name}_${siteNumber}`,
+                        name: `${lga.name} ${country.lgaLabel} ${
+                          state.name
+                        } #${siteNumber}`,
+                        shortName: `${lga.name}, ${stateKey} #${siteNumber}`,
+                        city: `${lga.name} City`,
+                        street1: `${lgaData.id} Main Street`,
+                        zip: `12345-${lgaData.id}`,
+                        latitude: _.has(state, 'lat')
+                          ? state.lat + _.random(-0.5, 0.5, true)
+                          : undefined,
+                        longitude: _.has(state, 'lng')
+                          ? state.lng + _.random(-0.5, 0.5, true)
+                          : undefined,
+                      },
+                      auditFields
+                    )
+                    const [siteId] = await knex('Site').insert(siteData)
+                    siteData.id = siteId
+                    siteDatas.push(siteData)
+                  })
+                )
+              }
             })
           )
         })
@@ -3870,69 +3877,72 @@ async function seed(knex) {
   ])
 
   const geneXpertHiv1VlFormSchema = JSON.stringify({
-    hospitalNumber: {
-      i18nLabel: 'hospitalNumber',
-      control: {
-        type: 'TextBox',
+    fields: {
+      hospitalNumber: {
+        i18nLabel: 'hospitalNumber',
+        control: {
+          type: 'TextBox',
+        },
+        order: 1,
       },
-      order: 1,
-    },
-    studyID: {
-      i18nLabel: 'studyID',
-      control: {
-        type: 'TextBox',
+      studyID: {
+        i18nLabel: 'studyID',
+        control: {
+          type: 'TextBox',
+        },
+        order: 2,
       },
-      order: 2,
-    },
-    nameOfPatient: {
-      i18nLabel: 'nameOfPatient',
-      control: {
-        type: 'TextBox',
+      nameOfPatient: {
+        i18nLabel: 'nameOfPatient',
+        control: {
+          type: 'TextBox',
+        },
+        order: 3,
       },
-      order: 3,
-    },
-    surnameOfPatient: {
-      i18nLabel: 'surnameOfPatient',
-      control: {
-        type: 'TextBox',
+      surnameOfPatient: {
+        i18nLabel: 'surnameOfPatient',
+        control: {
+          type: 'TextBox',
+        },
+        order: 4,
       },
-      order: 4,
-    },
-    ward: {
-      i18nLabel: 'ward',
-      control: {
-        type: 'TextBox',
+      ward: {
+        i18nLabel: 'ward',
+        control: {
+          type: 'TextBox',
+        },
+        order: 5,
       },
-      order: 5,
-    },
-    timeSampleTaken: {
-      i18nLabel: 'timeSampleTaken',
-      control: {
-        type: 'DateTime',
+      timeSampleTaken: {
+        i18nLabel: 'timeSampleTaken',
+        control: {
+          type: 'DateTime',
+        },
+        order: 6,
       },
-      order: 6,
-    },
-    sampleType: {
-      i18nLabel: 'sampleType',
-      control: {
-        type: 'DropDown',
-        options: [
-          {
-            i18nText: 'studyOfSampleType',
-            value: 'study',
-          },
-          {
-            i18nText: 'EQAOfSampleType',
-            value: 'EQA',
-          },
-          {
-            i18nText: 'miscOfSampleType',
-            value: 'misc',
-          },
-        ],
+      sampleType: {
+        i18nLabel: 'sampleType',
+        control: {
+          type: 'DropDown',
+          options: [
+            {
+              i18nText: 'studyOfSampleType',
+              value: 'study',
+            },
+            {
+              i18nText: 'EQAOfSampleType',
+              value: 'EQA',
+            },
+            {
+              i18nText: 'miscOfSampleType',
+              value: 'misc',
+            },
+          ],
+        },
+        order: 7,
       },
-      order: 7,
     },
+    sendChangesOn: 'change',
   })
 
   await knex('ResultForm').insert({

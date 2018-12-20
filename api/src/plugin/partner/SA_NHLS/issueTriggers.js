@@ -33,10 +33,21 @@ async function shouldRaiseNewResultAlert(knex, action) {
       currentIssueStatus === 'Inactive' &&
       latestIssueEventStatus !== 'Triggered'
     ) {
+      const { formData } = resultUploadedIssueResults[0]
+      let formDataObject
+      if (formData) {
+        formDataObject = JSON.parse(formData)
+      }
       if (
-        resultUploadedIssueResults[0].formData === null ||
-        resultUploadedIssueResults[0].formData === '' ||
-        _.isEmpty(JSON.parse(resultUploadedIssueResults[0].formData))
+        !formDataObject ||
+        _.isEmpty(formDataObject) ||
+        _.every(
+          _.values(formDataObject),
+          formDataValue =>
+            _.isEmpty(formDataValue) ||
+            _.isNil(formDataValue) ||
+            formDataValue === ''
+        )
       ) {
         return true
       }
@@ -53,10 +64,20 @@ async function shouldSendResultToRedCAP(knex, action) {
     if (_.isEmpty(result)) {
       return false
     }
+    let formDataObject
+    if (result.formData) {
+      formDataObject = JSON.parse(result.formData)
+    }
     if (
-      result.formData === null ||
-      result.formData === '' ||
-      _.isEmpty(JSON.parse(result.formData))
+      !formDataObject ||
+      _.isEmpty(formDataObject) ||
+      _.every(
+        _.values(formDataObject),
+        formDataValue =>
+          _.isEmpty(formDataValue) ||
+          _.isNil(formDataValue) ||
+          formDataValue === ''
+      )
     ) {
       return false
     }

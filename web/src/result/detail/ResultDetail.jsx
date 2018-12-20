@@ -13,6 +13,7 @@ import Checkbox from 'material-ui/Checkbox'
 import MdChevronLeft from 'react-icons/lib/md/chevron-left'
 import MdChevronRight from 'react-icons/lib/md/chevron-right'
 import MdClose from 'react-icons/lib/md/clear'
+import { Button } from 'react-toolbox/lib/button'
 
 // Our own imports
 import config from '../../config'
@@ -23,7 +24,9 @@ import {
   fetchSingleResult,
   fetchResultLog,
   updateResultQcCheck,
-  updateResultFormData,
+  saveResultFormDataValue,
+  setResultFormDataValue,
+  saveResultFormData,
   Result,
 } from '../ResultRedux'
 import ConnectedTagInput from '../../tag/ConnectedTagInput'
@@ -103,6 +106,10 @@ const messages = defineMessages({
     id: 'pages.ResultDetail.formFields.confirmedInterpretationOfResult',
     defaultMessage: 'Confirmed Interpretation of Result',
   },
+  submit: {
+    id: 'pages.ResultDetail.formFields.submit',
+    defaultMessage: 'Submit',
+  },
 })
 
 const enhance = compose(
@@ -117,6 +124,8 @@ const enhance = compose(
     (state, props) => {
       const result = state.result.items.byId.get(props.match.params.resultId)
       const screenSchema = state.result.get('screenSchema')
+      const formDataSaving = state.result.get('formDataSaving')
+      const formDataDirty = state.result.get('formDataDirty')
       const resultTags = state.tag.tags.getIn(
         ['result', props.match.params.resultId],
         Immutable.List()
@@ -128,6 +137,8 @@ const enhance = compose(
         resultTags,
         editable: isEditable(state.user, result),
         token: state.user.access,
+        formDataSaving,
+        formDataDirty,
       }
     },
     dispatch =>
@@ -136,7 +147,9 @@ const enhance = compose(
           fetchSingleResult,
           fetchResultLog,
           updateResultQcCheck,
-          updateResultFormData,
+          saveResultFormDataValue,
+          setResultFormDataValue,
+          saveResultFormData,
           fetchTags,
           updateTags,
         },
@@ -152,6 +165,9 @@ const enhance = compose(
     updateResultQcCheck: PropTypes.func.isRequired,
     fetchTags: PropTypes.func.isRequired,
     updateTags: PropTypes.func.isRequired,
+    formDataSaving: PropTypes.bool.isRequired,
+    formDataDirty: PropTypes.bool.isRequired,
+    saveResultFormData: PropTypes.func.isRequired,
   })
 )
 
@@ -177,12 +193,20 @@ export class ResultDetail extends PureComponent {
 
   onChangeQcCheck = event => {
     const { result } = this.props
-
     this.props.updateResultQcCheck(result.get('id'), event.target.checked)
   }
 
   onResultTagChange = (qryId, qryType, tags) => {
     this.props.updateTags(qryId, qryType, tags.join(','))
+  }
+
+  submitFormData = () => {
+    const { result } = this.props
+    const formData = result.get('formData')
+    this.props.saveResultFormData(
+      result.get('id'),
+      _.isNil(formData) ? null : formData.toJS()
+    )
   }
 
   clickThumbnail(imageIndex) {
@@ -301,7 +325,6 @@ export class ResultDetail extends PureComponent {
     )
       .delete('resultText')
       .filter(field => field.get('type') === 'object')
-
     return (
       <JSONSchemaCard
         renderField={field => <ReadOnlyField {...field} />}
@@ -312,21 +335,35 @@ export class ResultDetail extends PureComponent {
   }
 
   renderFormData() {
-    const { intl: { formatMessage }, result, updateResultFormData } = this.props
-    if (!result || !result.has('formSchema') || !result.get('formSchema')) {
+    const {
+      intl: { formatMessage },
+      result,
+      saveResultFormDataValue,
+      setResultFormDataValue,
+      formDataSaving,
+      formDataDirty,
+    } = this.props
+    if (!result || !result.getIn(['formSchema', 'fields'])) {
       return false
     }
     const [...fieldKeys] = result
-      .get('formSchema')
+      .getIn(['formSchema', 'fields'])
       .sortBy(value => value.get('order'))
       .keys()
     if (_.isEmpty(fieldKeys)) {
       return false
     }
+    const showSubmitButton =
+      result.getIn(['formSchema', 'sendChangesOn']) === 'submit'
+    const updateFormData = showSubmitButton
+      ? setResultFormDataValue
+      : saveResultFormDataValue
     const sectionLabel =
       fieldKeys.length === 1
         ? formatMessage(
-            messages[result.getIn(['formSchema', fieldKeys[0], 'i18nLabel'])]
+            messages[
+              result.getIn(['formSchema', 'fields', fieldKeys[0], 'i18nLabel'])
+            ]
           )
         : formatMessage(messages.additionalResultDetails)
     const formData = result.get('formData') || Immutable.Map({})
@@ -337,12 +374,16 @@ export class ResultDetail extends PureComponent {
           <div className={cssClasses('FormDataContainer')}>
             {fieldKeys.map(formFieldKey => {
               const { intl: { formatMessage } } = this.props
-              const fieldSchema = result.getIn(['formSchema', formFieldKey])
+              const fieldSchema = result.getIn([
+                'formSchema',
+                'fields',
+                formFieldKey,
+              ])
               return (
                 <Unit
                   key={formFieldKey}
                   xs="1-2"
-                  sm="1-3"
+                  xl="1-3"
                   className={cssClasses('Flexed')}
                 >
                   <CustomField
@@ -352,11 +393,24 @@ export class ResultDetail extends PureComponent {
                     formData={formData}
                     formatMessage={formatMessage}
                     isMultiField={isMultiField}
-                    updateFormData={updateResultFormData}
+                    updateFormData={updateFormData}
                   />
                 </Unit>
               )
             })}
+            {showSubmitButton && (
+              <Button
+                disabled={!formDataDirty}
+                raised
+                label={formatMessage(messages.submit)}
+                onClick={this.submitFormData}
+                className={cssClasses('FormDataSubmitButton')}
+              />
+            )}
+            {formDataSaving && this.renderProgress()}
+          </div>
+          <div className={cssClasses('FormProgressContainer')}>
+            {this.renderProgress()}
           </div>
         </ExpansionPanelHeader>
       </ExpansionPanel>

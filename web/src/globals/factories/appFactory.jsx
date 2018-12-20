@@ -55,9 +55,9 @@ const mapStateToProps = state => {
   let { loggedOutReason } = state.user
 
   const jwtExp = state.user.jwt.exp
-  if (_.isNumber(jwtExp)) {
-    const isExpired = jwtExp < Date.now() / 1000
-
+  if (_.isNumber(jwtExp) && state.globals.lastServerResponseTime) {
+    const isExpired =
+      jwtExp < state.globals.lastServerResponseTime.getTime() / 1000
     if (isExpired) {
       isLoggedOut = true
       loggedOutReason = reasonTypes.expiredJWT
