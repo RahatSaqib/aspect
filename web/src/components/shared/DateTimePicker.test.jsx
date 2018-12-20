@@ -3,16 +3,29 @@ import PropTypes from 'prop-types'
 import ReactShallowRenderer from 'react-test-renderer/shallow'
 import { mount } from 'enzyme'
 import sinon from 'sinon'
+import { addMinutes, subMinutes } from 'date-fns'
 import getMuiTheme from 'material-ui/styles/getMuiTheme'
 import TextField from 'material-ui/TextField'
 import DatePickerDialog from 'material-ui/DatePicker/DatePickerDialog'
 import DateTimePicker from './DateTimePicker'
 
+const getLocalDateTime = date => {
+  const offset = date.getTimezoneOffset()
+
+  return Math.sign(offset) !== -1
+    ? subMinutes(date, offset)
+    : addMinutes(date, Math.abs(offset))
+}
+
+jest.mock('../../shared/utils/dateFormat', () => ({
+  formatDateTime: () => '2018-11-05 07:30:00',
+}))
+
 jest.useFakeTimers()
 
 describe('DateTimePicker component', () => {
   const props = {
-    value: new Date(2018, 10, 5, 7, 30),
+    value: getLocalDateTime(new Date(2018, 10, 5, 7, 30)),
   }
 
   const mountWithMuiTheme = node =>
