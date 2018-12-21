@@ -196,7 +196,7 @@
     "react-redux": "^5.0.4",
     "react-router": "^4.1.1",
     "react-router-dom": "^4.1.1",
-    "react-toolbox": "https://github.com/react-toolbox/react-toolbox#dev",
+    "react-toolbox": "file:./packages/react-toolbox-2.0.0-lastest.tgz",
     "react-transition-group": "^1.1.3",
     "recompose": "^0.26.0",
     "redux": "^3.5.2",
