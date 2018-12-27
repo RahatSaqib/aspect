@@ -54,7 +54,7 @@ async function seedNotifications(knex, { partnerId }) {
   const [redCapAlereQWebHookTemplateId] = await knex('WebhookTemplate').insert(
     Object.assign(
       {
-        externalId: 'redCapAlereQHiv12Detect',
+        externalId: 'redCapAlereQ',
         method: 'POST',
         url: redCapUrl,
         payload:
