@@ -3885,40 +3885,33 @@ async function seed(knex) {
         },
         order: 1,
       },
-      studyID: {
-        i18nLabel: 'studyID',
-        control: {
-          type: 'TextBox',
-        },
-        order: 2,
-      },
       nameOfPatient: {
         i18nLabel: 'nameOfPatient',
         control: {
           type: 'TextBox',
         },
-        order: 3,
+        order: 2,
       },
       surnameOfPatient: {
         i18nLabel: 'surnameOfPatient',
         control: {
           type: 'TextBox',
         },
-        order: 4,
+        order: 3,
       },
       ward: {
         i18nLabel: 'ward',
         control: {
           type: 'TextBox',
         },
-        order: 5,
+        order: 4,
       },
       timeSampleTaken: {
         i18nLabel: 'timeSampleTaken',
         control: {
           type: 'DateTime',
         },
-        order: 6,
+        order: 5,
       },
       sampleType: {
         i18nLabel: 'sampleType',
@@ -3927,19 +3920,19 @@ async function seed(knex) {
           options: [
             {
               i18nText: 'studyOfSampleType',
-              value: 'study',
+              value: '1',
             },
             {
               i18nText: 'EQAOfSampleType',
-              value: 'EQA',
+              value: '2',
             },
             {
               i18nText: 'miscOfSampleType',
-              value: 'misc',
+              value: '3',
             },
           ],
         },
-        order: 7,
+        order: 6,
       },
     },
     sendChangesOn: 'change',
