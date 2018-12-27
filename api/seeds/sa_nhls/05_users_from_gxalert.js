@@ -110,30 +110,35 @@ async function seed(knex) {
       }
     }
 
-    const province = person.stateName
-      ? provincesByName[person.stateName.toLowerCase()] || {
-          id: null,
-          districts: {},
-        }
-      : {
-          id: null,
-          districts: {},
-        }
+    const province =
+      !_.isEmpty(person.geographies) && person.geographies[0].stateName
+        ? provincesByName[person.geographies[0].stateName.toLowerCase()] || {
+            id: null,
+            districts: {},
+          }
+        : {
+            id: null,
+            districts: {},
+          }
     const district =
-      province.districts && person.lgaName
-        ? province.districts[person.lgaName.toLowerCase()] || {
+      province.districts &&
+      !_.isEmpty(person.geographies) &&
+      person.geographies[0].lgaName
+        ? province.districts[person.geographies[0].lgaName.toLowerCase()] || {
             id: null,
           }
         : {
             id: null,
           }
-    const { id: geographyId } = await knex('Geography')
-      .where({
-        countryId,
-        stateId: province.id,
-        lgaId: district.id,
-      })
-      .first()
+    const { id: geographyId } = !_.isEmpty(person.geographies)
+      ? await knex('Geography')
+          .where({
+            countryId,
+            stateId: province.id,
+            lgaId: district.id,
+          })
+          .first()
+      : { id: null }
     let personId = null
     const existingPerson = await knex('Person')
       .where({ name: person.personName, title: person.title })
@@ -207,8 +212,37 @@ async function seed(knex) {
               jobId,
               siteId: siteIds[person.deploymentShortName],
             })
-          } else {
-            await knex('JobContext').insert({ jobId, geographyId })
+          } else if (!_.isEmpty(person.geographies)) {
+            await Promise.each(person.geographies, async geography => {
+              const jobProvince = geography.stateName
+                ? provincesByName[geography.stateName.toLowerCase()] || {
+                    id: null,
+                    districts: {},
+                  }
+                : {
+                    id: null,
+                    districts: {},
+                  }
+              const jobDistrict =
+                province.districts && geography.lgaName
+                  ? province.districts[geography.lgaName.toLowerCase()] || {
+                      id: null,
+                    }
+                  : {
+                      id: null,
+                    }
+              const { id: jobGeographyId } = await knex('Geography')
+                .where({
+                  countryId,
+                  stateId: jobProvince.id,
+                  lgaId: jobDistrict.id,
+                })
+                .first()
+              await knex('JobContext').insert({
+                jobId,
+                geographyId: jobGeographyId,
+              })
+            })
           }
         }
       })

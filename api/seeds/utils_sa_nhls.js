@@ -113,7 +113,9 @@ async function seedNotifications(knex, { partnerId }) {
     )
   )
 
-  const [resultDataEnteredSmsTemplateId] = await knex('SmsTemplate').insert(
+  const [positiveResultDataEnteredSmsTemplateId] = await knex(
+    'SmsTemplate'
+  ).insert(
     Object.assign(
       {
         message:
@@ -166,7 +168,7 @@ async function seedNotifications(knex, { partnerId }) {
   ).insert([
     {
       messageSeverityId: messageSeverityAlertId,
-      smsTemplateId: resultDataEnteredSmsTemplateId,
+      smsTemplateId: positiveResultDataEnteredSmsTemplateId,
     },
   ])
 
