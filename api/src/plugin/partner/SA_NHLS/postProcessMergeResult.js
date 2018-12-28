@@ -22,68 +22,73 @@ async function postProcessMergeResult(context, result, previousResult) {
       'a.externalId as assayExternalId',
       's.externalId as siteExternalId'
     )
-
   const positiveResultCategories = [
     'Detected',
     'Trace Detected',
     'LessThan1000',
     'MoreThan1000',
   ]
-  const existingResultTags = await knex('ResultTag as rt')
-    .join('Tag as t', 'rt.tagId', 't.id')
-    .where('rt.resultId', result.id)
-    .andWhere('t.partnerId', result.partnerId)
-    .select('t.id', 't.title')
-
-  if (
+  const resultIsPositive =
     positiveResultCategories.includes(
       resultDetails.resultCategory1ExternalId
     ) ||
     positiveResultCategories.includes(resultDetails.resultCategory2ExternalId)
-  ) {
-    const positiveResultTagTitle =
+  const positiveResultTagTitle =
+    resultDetails.assayExternalId === 'assayAlereQHiv12Detect'
+      ? 'EID+'
+      : resultDetails.assayExternalId === 'assayAlereQHiv12VLPlasma'
+        ? 'HIV-VL>50'
+        : null
+  if (resultIsPositive && positiveResultTagTitle) {
+    const existingResultTags = await knex('ResultTag')
+      .where('resultId', result.id)
+      .select()
+    const partnerTags = await knex('Tag')
+      .where('partnerId', result.partnerId)
+      .select('id', 'title')
+
+    const positiveResultTag = _.find(
+      partnerTags,
+      partnerTag =>
+        partnerTag.title.toLowerCase() === positiveResultTagTitle.toLowerCase()
+    )
+
+    const resultAlreadyTaggedPositive = _.some(existingResultTags, {
+      tagId: positiveResultTag.id,
+    })
+
+    if (!resultAlreadyTaggedPositive) {
+      await knex('ResultTag').insert({
+        resultId: result.id,
+        tagId: positiveResultTag.id,
+      })
+    }
+    const positiveResultSiteTagTitlePrefix =
       resultDetails.assayExternalId === 'assayAlereQHiv12Detect'
         ? 'EID+'
         : resultDetails.assayExternalId === 'assayAlereQHiv12VLPlasma'
-          ? 'HIV-VL>50'
+          ? 'VL>50'
           : null
-    if (positiveResultTagTitle) {
-      const partnerTags = await knex('Tag')
-        .where('partnerId', result.partnerId)
-        .select('t.id', 't.title')
-      if (!_.some(existingResultTags, { title: positiveResultTagTitle })) {
-        const positiveResultTag = _.head(partnerTags, {
-          title: positiveResultTagTitle,
+
+    if (resultDetails.siteExternalId && positiveResultSiteTagTitlePrefix) {
+      const positiveResultTagForSite = _.find(
+        partnerTags,
+        partnerTag =>
+          partnerTag.title.toLowerCase() ===
+          `${positiveResultSiteTagTitlePrefix}${
+            resultDetails.siteExternalId
+          }`.toLowerCase()
+      )
+
+      const resultAlreadyTaggedPositiveForSite = _.some(existingResultTags, {
+        tagId: positiveResultTagForSite.id,
+      })
+
+      if (!resultAlreadyTaggedPositiveForSite) {
+        await knex('ResultTag').insert({
+          resultId: result.id,
+          tagId: positiveResultTagForSite.id,
         })
-        if (positiveResultTag) {
-          await knex('ResultTag').insert({
-            resultId: result.id,
-            tagId: positiveResultTag.id,
-          })
-        }
-      }
-      const positiveResultSiteTagTitlePrefix =
-        resultDetails.assayExternalId === 'assayAlereQHiv12Detect'
-          ? 'EID+'
-          : resultDetails.assayExternalId === 'assayAlereQHiv12VLPlasma'
-            ? 'VL>50'
-            : null
-      if (
-        !_.some(existingResultTags, {
-          title:
-            positiveResultSiteTagTitlePrefix + resultDetails.siteExternalId,
-        })
-      ) {
-        const positiveResultSiteTag = _.head(partnerTags, {
-          title:
-            positiveResultSiteTagTitlePrefix + resultDetails.siteExternalId,
-        })
-        if (positiveResultSiteTag) {
-          await knex('ResultTag').insert({
-            resultId: result.id,
-            tagId: positiveResultSiteTag.id,
-          })
-        }
       }
     }
   }
