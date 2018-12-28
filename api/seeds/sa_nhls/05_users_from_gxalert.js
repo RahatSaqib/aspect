@@ -10,11 +10,6 @@ const config = require('../../src/config')
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 
 async function seed(knex) {
-  const usernames = _.map(
-    _.filter(gxAlertContacts, contact => !_.isNil(contact.username)),
-    'username'
-  )
-
   const { id: partnerId } = await knex('Partner')
     .where('name', 'South Africa NHLS')
     .first('id')
