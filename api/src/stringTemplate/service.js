@@ -59,7 +59,7 @@ function addDataSourceToQuery(queryBuilder, aliases) {
       .leftJoin('Assay as a', `r.assayId`, 'a.id')
       .leftJoin('Sample as sample', `r.sampleId`, 'sample.id')
       .leftJoin('ResultCategory as rc1', `r.resultCategory1`, 'rc1.id')
-      .leftJoin('ResultCategory as rc2', `r.resultCategory2`, 'rc1.id')
+      .leftJoin('ResultCategory as rc2', `r.resultCategory2`, 'rc2.id')
       .leftJoin('Partner as pu', 'pu.id', 'p.lastPartnerId')
       .select(
         's.externalId as siteExternalId',
