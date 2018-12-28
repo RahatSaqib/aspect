@@ -14,12 +14,6 @@ async function seed(knex) {
     _.filter(gxAlertContacts, contact => !_.isNil(contact.username)),
     'username'
   )
-  const existingUsernames = await knex('User')
-    .whereIn('name', usernames)
-    .select('id')
-  if (existingUsernames.length === usernames.length) {
-    return
-  }
 
   const { id: partnerId } = await knex('Partner')
     .where('name', 'South Africa NHLS')
@@ -224,8 +218,8 @@ async function seed(knex) {
                     districts: {},
                   }
               const jobDistrict =
-                province.districts && geography.lgaName
-                  ? province.districts[geography.lgaName.toLowerCase()] || {
+                jobProvince.districts && geography.lgaName
+                  ? jobProvince.districts[geography.lgaName.toLowerCase()] || {
                       id: null,
                     }
                   : {
