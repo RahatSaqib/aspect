@@ -1,16 +1,14 @@
 const _ = require('lodash')
-const { addResultWorkflowLogIfChanged } = require('../../../deviceApi/result')
+const alereFtpConnectorPostProcessMergeResult = require('../../deviceType/AlereFtpConnector/postProcessMergeResult')
 
 async function postProcessMergeResult(context, result, previousResult) {
-  const { knex, payload, now } = context
-  await addResultWorkflowLogIfChanged(
-    knex,
-    payload,
+  const alereFtpConnectorPluginResult = await alereFtpConnectorPostProcessMergeResult(
+    context,
     result,
-    previousResult,
-    'Device API Update',
-    now
+    previousResult
   )
+
+  const { knex } = context
 
   const resultDetails = await knex('Result as r')
     .leftJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
@@ -88,24 +86,8 @@ async function postProcessMergeResult(context, result, previousResult) {
         }
       }
     }
-  } else {
-    const positiveResultTagIds = _.map(
-      _.filter(
-        existingResultTags,
-        tag =>
-          tag.title.toUpperCase().indexOf('EID+') > -1 ||
-          tag.title.toUpperCase().indexOf('VL>50') > -1
-      ),
-      'id'
-    )
-    if (!_.isEmpty(positiveResultTagIds)) {
-      await knex('ResultTag')
-        .whereIn('tagId', positiveResultTagIds)
-        .andWhere('resultId', result.id)
-        .del()
-    }
   }
-  return {}
+  return alereFtpConnectorPluginResult
 }
 
 module.exports = postProcessMergeResult
