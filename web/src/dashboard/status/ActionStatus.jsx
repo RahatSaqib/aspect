@@ -13,6 +13,7 @@ import {
   withStateHandlers,
 } from 'recompose'
 import { Card } from 'react-toolbox/lib/card'
+import TableBody from '@material-ui/core/TableBody'
 
 import { Unit } from '../../components/pureGrids'
 import { fetchActionDashboard } from '../DashboardRedux'
@@ -231,18 +232,20 @@ export const ActionStatus = ({
               },
             ]}
           />
-          {actionSummaryMap
-            .get(selectedCategory, EMPTY_LIST)
-            .map(action => (
-              <ActionDataTableRow
-                key={action.get('id')}
-                intl={intl}
-                messages={messages}
-                action={action}
-                onActionListClick={onActionListClick}
-                sortingProps={sortingProps}
-              />
-            ))}
+          <TableBody>
+            {actionSummaryMap
+              .get(selectedCategory, EMPTY_LIST)
+              .map(action => (
+                <ActionDataTableRow
+                  key={action.get('id')}
+                  intl={intl}
+                  messages={messages}
+                  action={action}
+                  onActionListClick={onActionListClick}
+                  sortingProps={sortingProps}
+                />
+              ))}
+          </TableBody>
         </ActionDataTable>
         {!actionSummaryMap.has(selectedCategory) && (
           <div className={cssClasses('ActionDataTable--empty')}>

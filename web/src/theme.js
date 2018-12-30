@@ -5,7 +5,9 @@ import lightGreen from '@material-ui/core/colors/lightGreen'
 export default {
   typography: {
     useNextVariants: true,
-    fontFamily: 'Lato, sans-serif',
+    latoFontWeightRegular: 400,
+    latoFontWeightBold: 700,
+    latoFontWeightBlack: 900,
   },
   palette: {
     primary: {
@@ -117,6 +119,19 @@ export default {
     MuiStepIcon: {
       root: {
         fontSize: '1.25rem',
+      },
+    },
+    MuiTableRow: {
+      head: {
+        height: 48,
+      },
+    },
+    MuiTableCell: {
+      root: {
+        padding: '12px 18px',
+      },
+      body: {
+        fontSize: 14,
       },
     },
   },

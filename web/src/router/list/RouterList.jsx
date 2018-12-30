@@ -6,6 +6,7 @@ import { defineMessages } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
+import TableBody from '@material-ui/core/TableBody'
 
 import {
   makeSortPageSelector,
@@ -224,17 +225,19 @@ export const RouterList = ({
               },
             ]}
           />
-          {items.currentIdList
-            .map(id => items.byId.get(id))
-            .map(router => (
-              <RouterDataTableRow
-                key={router.get('id')}
-                intl={intl}
-                router={router}
-                onClick={onRowClick}
-                data-router-id={router.get('id')}
-              />
-            ))}
+          <TableBody>
+            {items.currentIdList
+              .map(id => items.byId.get(id))
+              .map(router => (
+                <RouterDataTableRow
+                  key={router.get('id')}
+                  intl={intl}
+                  router={router}
+                  onClick={onRowClick}
+                  data-router-id={router.get('id')}
+                />
+              ))}
+          </TableBody>
         </RouterDataTable>
       )}
       {!items.currentIdList.isEmpty() && (

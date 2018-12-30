@@ -1,13 +1,5 @@
 @import '../../globals/variables.css';
 
-.TableRow {
-  composes: TableRow from '../../components/shared/DataTableRow.css';
-}
-
-.TableCell {
-  composes: TableCell from '../../components/shared/DataTableRow.css';
-}
-
 .TableCell--errorsCount {
   color: var(--aspect-color-mandy);
 }

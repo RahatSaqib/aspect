@@ -1,11 +1,14 @@
 import _ from 'lodash'
 import classnames from 'classnames/bind'
 import React from 'react'
-import { TableRow, TableCell } from 'react-toolbox/lib/table'
 import FaExclamationTriangle from 'react-icons/lib/fa/exclamation-triangle'
 import MdModeComment from 'react-icons/lib/md/mode-comment'
 import ColoredButton from '../../components/themedReactToolbox/ColoredButton'
 import AlertType from '../../components/shared/AlertType'
+import {
+  DataTableRow as TableRow,
+  DataTableCell as TableCell,
+} from '../../components/shared/tableBody'
 
 const cssClasses = classnames.bind(require('./TaskTableRow.css'))
 

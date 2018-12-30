@@ -8,6 +8,7 @@ import { Card } from 'react-toolbox/lib/card'
 import { Input } from 'react-toolbox/lib/input'
 import { Button } from 'react-toolbox/lib/button'
 import MdRefresh from 'react-icons/lib/md/refresh'
+import TableBody from '@material-ui/core/TableBody'
 
 import { Unit } from '../../../components/pureGrids'
 import NotificationDetailBackBar from '../NotificationDetailBackBar'
@@ -363,49 +364,51 @@ export const NotificationDetailView = ({
           selectable={false}
           className={cssClasses('NotificationDeliveryDataTable')}
         >
-          {[
-            {
-              id: 1,
-              topic: 'health',
-              title: 'TB MTB+ Rif+ in Western Region',
-              site: 'Fort Portal Lab',
-              time: subDays(now, 2),
-            },
-            {
-              id: 2,
-              topic: 'health',
-              title: 'TB MTB+ Rif+ in Western Region',
-              site: 'Fort Portal Lab',
-              time: subDays(now, 3),
-            },
-            {
-              id: 3,
-              topic: 'health',
-              title: 'TB MTB+ Rif+ in Western Region',
-              site: 'Jinja Lab',
-              time: subDays(now, 5),
-            },
-            {
-              id: 4,
-              topic: 'health',
-              title: 'TB MTB+ Rif+ in Western Region',
-              site: 'Kampala Lab',
-              time: subDays(now, 6),
-            },
-            {
-              id: 5,
-              topic: 'health',
-              title: 'TB MTB+ Rif+ in Western Region',
-              site: 'Fort Portal Lab',
-              time: subDays(now, 7),
-            },
-          ].map(delivery => (
-            <NotificationDeliveryDataTableRow
-              key={delivery.id}
-              intl={intl}
-              delivery={delivery}
-            />
-          ))}
+          <TableBody>
+            {[
+              {
+                id: 1,
+                topic: 'health',
+                title: 'TB MTB+ Rif+ in Western Region',
+                site: 'Fort Portal Lab',
+                time: subDays(now, 2),
+              },
+              {
+                id: 2,
+                topic: 'health',
+                title: 'TB MTB+ Rif+ in Western Region',
+                site: 'Fort Portal Lab',
+                time: subDays(now, 3),
+              },
+              {
+                id: 3,
+                topic: 'health',
+                title: 'TB MTB+ Rif+ in Western Region',
+                site: 'Jinja Lab',
+                time: subDays(now, 5),
+              },
+              {
+                id: 4,
+                topic: 'health',
+                title: 'TB MTB+ Rif+ in Western Region',
+                site: 'Kampala Lab',
+                time: subDays(now, 6),
+              },
+              {
+                id: 5,
+                topic: 'health',
+                title: 'TB MTB+ Rif+ in Western Region',
+                site: 'Fort Portal Lab',
+                time: subDays(now, 7),
+              },
+            ].map(delivery => (
+              <NotificationDeliveryDataTableRow
+                key={delivery.id}
+                intl={intl}
+                delivery={delivery}
+              />
+            ))}
+          </TableBody>
         </NotificationDeliveryDataTable>
         <p>Showing 5 sample alerts matching query</p>
       </Card>

@@ -3,6 +3,7 @@ import React from 'react'
 import { compose, withHandlers, lifecycle, pure } from 'recompose'
 import { defineMessages } from 'react-intl'
 import { Card, CardTitle, CardText } from 'react-toolbox/lib/card'
+import TableBody from '@material-ui/core/TableBody'
 
 import TablePaginator from '../../components/shared/TablePaginator'
 import DataTableProgressBar from '../../components/shared/DataTableProgressBar'
@@ -121,15 +122,17 @@ export const ResultWorkflowStatusLog = ({
               },
             ]}
           />
-          {items.currentIdList
-            .map(id => items.byId.get(id))
-            .map(workflowLog => (
-              <WorkflowLogDataTableRow
-                key={workflowLog.get('id')}
-                intl={intl}
-                workflowLog={workflowLog}
-              />
-            ))}
+          <TableBody>
+            {items.currentIdList
+              .map(id => items.byId.get(id))
+              .map(workflowLog => (
+                <WorkflowLogDataTableRow
+                  key={workflowLog.get('id')}
+                  intl={intl}
+                  workflowLog={workflowLog}
+                />
+              ))}
+          </TableBody>
         </WorkflowLogDataTable>
         <TablePaginator
           className={cssClasses('TablePaginator')}

@@ -195,6 +195,7 @@
     "react-hot-loader": "^4.6.3",
     "react-icons": "^2.2.5",
     "react-intl": "^2.2.3",
+    "react-jss": "^10.0.0-alpha.3",
     "react-loadable": "^5.2.2",
     "react-redux": "^5.0.4",
     "react-router": "^4.1.1",

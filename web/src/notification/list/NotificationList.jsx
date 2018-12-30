@@ -6,6 +6,7 @@ import { defineMessages } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
+import TableBody from '@material-ui/core/TableBody'
 
 import {
   makeSortPageSelector,
@@ -241,17 +242,19 @@ export const NotificationList = ({
             ))}
         </NotificationDataTable>
       )}
-      {!items.currentIdList.isEmpty() && (
-        <BrowseTablePaginator
-          history={history}
-          location={location}
-          intl={intl}
-          paginatorStatus={messages.paginatorStatus}
-          total={table.total}
-          pageAt={pageAt}
-          pageSize={pageSize}
-        />
-      )}
+      <TableBody>
+        {!items.currentIdList.isEmpty() && (
+          <BrowseTablePaginator
+            history={history}
+            location={location}
+            intl={intl}
+            paginatorStatus={messages.paginatorStatus}
+            total={table.total}
+            pageAt={pageAt}
+            pageSize={pageSize}
+          />
+        )}
+      </TableBody>
     </DataTableCard>
   </div>
 )

@@ -1,15 +1,11 @@
 @import '../../../globals/variables.css';
 
-.TableRow {
-  composes: TableRow from '../../../task/list/TaskTableRow.css';
-}
-
 .TableCell {
   composes: TableCell from '../../../task/list/TaskTableRow.css';
 }
 
 .FaCircle {
-  composes: FaCircle from '../../../task/list/TaskTableRow.css';
+  composes: FaCircle from '../../../components/shared/AlertType.css';
 }
 
 .ColoredButton {

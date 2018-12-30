@@ -16,6 +16,7 @@ import MdTransfer from 'react-icons/lib/md/swap-horiz'
 import MdRemove from 'react-icons/lib/md/remove'
 import MdDone from 'react-icons/lib/md/done'
 import MdMoreVert from 'react-icons/lib/md/more-vert'
+import TableBody from '@material-ui/core/TableBody'
 
 import {
   makeSortPageSelector,
@@ -416,53 +417,55 @@ export const InventoryItemsList = ({
               },
             ]}
           />
-          {items.currentIdList
-            .map(id => items.byId.get(id))
-            .map(inventoryItem => (
-              <InventoryDataTableRow
-                key={inventoryItem.get('id')}
-                intl={intl}
-                inventoryItem={inventoryItem}
-              >
-                <IconMenu
-                  icon={<MdMoreVert />}
-                  position="topRight"
-                  onSelect={makeOnInventoryItemActionSelect(
-                    inventoryItem.get('id')
-                  )}
+          <TableBody>
+            {items.currentIdList
+              .map(id => items.byId.get(id))
+              .map(inventoryItem => (
+                <InventoryDataTableRow
+                  key={inventoryItem.get('id')}
+                  intl={intl}
+                  inventoryItem={inventoryItem}
                 >
-                  {inventoryItem.get('inTransitFromSiteId') && (
-                    <MenuItem
-                      value={showReceiveInventoryDialog}
-                      icon={<MdDone />}
-                      caption={intl.formatMessage(messages.receiveInventory)}
-                    />
-                  )}
-                  {!inventoryItem.get('inTransitFromSiteId') && (
-                    <MenuItem
-                      value={showAddInventoryDialog}
-                      icon={<MdAdd />}
-                      caption={intl.formatMessage(messages.addInventory)}
-                    />
-                  )}
+                  <IconMenu
+                    icon={<MdMoreVert />}
+                    position="topRight"
+                    onSelect={makeOnInventoryItemActionSelect(
+                      inventoryItem.get('id')
+                    )}
+                  >
+                    {inventoryItem.get('inTransitFromSiteId') && (
+                      <MenuItem
+                        value={showReceiveInventoryDialog}
+                        icon={<MdDone />}
+                        caption={intl.formatMessage(messages.receiveInventory)}
+                      />
+                    )}
+                    {!inventoryItem.get('inTransitFromSiteId') && (
+                      <MenuItem
+                        value={showAddInventoryDialog}
+                        icon={<MdAdd />}
+                        caption={intl.formatMessage(messages.addInventory)}
+                      />
+                    )}
 
-                  {!inventoryItem.get('inTransitFromSiteId') && (
-                    <MenuItem
-                      value={showTransferInventoryDialog}
-                      icon={<MdTransfer />}
-                      caption={intl.formatMessage(messages.transferInventory)}
-                    />
-                  )}
-                  {!inventoryItem.get('inTransitFromSiteId') && (
-                    <MenuItem
-                      value={showRemoveInventoryDialog}
-                      icon={<MdRemove />}
-                      caption={intl.formatMessage(messages.removeInventory)}
-                    />
-                  )}
-                </IconMenu>
-              </InventoryDataTableRow>
-            ))}
+                    {!inventoryItem.get('inTransitFromSiteId') && (
+                      <MenuItem
+                        value={showTransferInventoryDialog}
+                        icon={<MdTransfer />}
+                        caption={intl.formatMessage(messages.transferInventory)}
+                      />
+                    )}
+                    {!inventoryItem.get('inTransitFromSiteId') && (
+                      <MenuItem
+                        value={showRemoveInventoryDialog}
+                        icon={<MdRemove />}
+                        caption={intl.formatMessage(messages.removeInventory)}
+                      />
+                    )}
+                  </IconMenu>
+                </InventoryDataTableRow>
+              ))}
+          </TableBody>
         </InventoryDataTable>
       )}
       {!items.currentIdList.isEmpty() && (

@@ -1,9 +1,13 @@
 import _ from 'lodash'
 import classnames from 'classnames/bind'
 import React from 'react'
-import { TableRow, TableCell } from 'react-toolbox/lib/table'
 import FaCircle from 'react-icons/lib/fa/circle'
 import ColoredButton from '../../../components/themedReactToolbox/ColoredButton'
+
+import {
+  DataTableRow as TableRow,
+  DataTableCell as TableCell,
+} from '../../../components/shared/tableBody'
 
 const cssClasses = classnames.bind(
   require('./NotificationDeliveryTableRow.css')
@@ -12,10 +16,7 @@ const cssClasses = classnames.bind(
 const enhance = _.identity
 
 const NotificationDeliveryTableRow = ({ intl, delivery, ...restProps }) => (
-  <TableRow
-    {...restProps}
-    className={cssClasses(restProps.className, 'TableRow')}
-  >
+  <TableRow {...restProps} className={cssClasses(restProps.className)}>
     <TableCell className={cssClasses('TableCell')}>
       <FaCircle className={cssClasses('FaCircle')} />
     </TableCell>

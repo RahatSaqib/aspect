@@ -1,8 +1,12 @@
 import _ from 'lodash'
 import classnames from 'classnames/bind'
 import React from 'react'
-import { TableRow, TableCell } from 'react-toolbox/lib/table'
 import { formatDistanceStrict } from 'date-fns'
+
+import {
+  DataTableRow as TableRow,
+  DataTableCell as TableCell,
+} from '../../components/shared/tableBody'
 import ColoredButton from '../../components/themedReactToolbox/ColoredButton'
 import messages from './messages'
 
@@ -24,32 +28,26 @@ const Rate = ({ intl, it, messageId }) => (
 const DeviceTableRow = ({ intl, device, onAlertClick, ...restProps }) => (
   <TableRow
     {...restProps}
-    className={cssClasses(restProps.className, 'TableRow')}
+    className={cssClasses('TableRow', restProps.className)}
   >
-    <TableCell className={cssClasses('TableCell')}>
-      {device.get('name')}
-    </TableCell>
-    <TableCell className={cssClasses('TableCell')}>
-      {device.get('state')}
-    </TableCell>
-    <TableCell className={cssClasses('TableCell')}>
-      {device.get('status')}
-    </TableCell>
-    <TableCell className={cssClasses('TableCell')}>
+    <TableCell>{device.get('name')}</TableCell>
+    <TableCell>{device.get('state')}</TableCell>
+    <TableCell>{device.get('status')}</TableCell>
+    <TableCell>
       <Rate
         intl={intl}
         it={device.get('availability').toJS()}
         messageId={messages.availabilityOfDays}
       />
     </TableCell>
-    <TableCell className={cssClasses('TableCell')}>
+    <TableCell>
       <Rate
         intl={intl}
         it={device.get('error').toJS()}
         messageId={messages.errorOfTotal}
       />
     </TableCell>
-    <TableCell className={cssClasses('TableCell', 'TableCell--alerts')}>
+    <TableCell className={cssClasses('TableCell--alerts')}>
       {device
         .get('alerts')
         .map(it => (
@@ -66,20 +64,14 @@ const DeviceTableRow = ({ intl, device, onAlertClick, ...restProps }) => (
           />
         ))}
     </TableCell>
-    <TableCell className={cssClasses('TableCell')}>
+    <TableCell>
       {intl.formatMessage(messages.reportingForDays, {
         period: formatDistanceStrict(new Date(), device.get('createdOn')),
       })}
     </TableCell>
-    <TableCell className={cssClasses('TableCell')}>
-      {intl.formatRelative(device.get('lastSeen'))}
-    </TableCell>
-    <TableCell className={cssClasses('TableCell', 'TableCell--numeric')}>
-      {intl.formatNumber(device.get('lastMonth'))}
-    </TableCell>
-    <TableCell className={cssClasses('TableCell', 'TableCell--numeric')}>
-      {intl.formatNumber(device.get('thisMonth'))}
-    </TableCell>
+    <TableCell>{intl.formatRelative(device.get('lastSeen'))}</TableCell>
+    <TableCell numeric>{intl.formatNumber(device.get('lastMonth'))}</TableCell>
+    <TableCell numeric>{intl.formatNumber(device.get('thisMonth'))}</TableCell>
   </TableRow>
 )
 

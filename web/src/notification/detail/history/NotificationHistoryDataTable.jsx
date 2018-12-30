@@ -1,14 +1,10 @@
-import { themr } from 'react-css-themr'
-import { tableFactory } from 'react-toolbox/lib/table/Table'
-import { TABLE } from 'react-toolbox/lib/identifiers'
+import Table from '@material-ui/core/Table'
 
-import DataTableHead from '../../../components/shared/DataTableHead'
+import { DataTableHead } from '../../../components/shared/tableHead'
 import NotificationHistoryTableRow from './NotificationHistoryTableRow'
 
-const RawTable = tableFactory(DataTableHead, NotificationHistoryTableRow)
-export const NotificationHistoryDataTable = themr(TABLE)(RawTable)
-
 export {
+  Table as NotificationHistoryDataTable,
   DataTableHead as NotificationHistoryDataTableHead,
   NotificationHistoryTableRow as NotificationHistoryDataTableRow,
 }

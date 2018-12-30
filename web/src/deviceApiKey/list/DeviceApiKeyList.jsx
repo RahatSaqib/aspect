@@ -14,7 +14,7 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 import { Checkbox } from 'react-toolbox/lib/checkbox'
-
+import TableBody from '@material-ui/core/TableBody'
 import Button from '@material-ui/core/Button'
 
 import {
@@ -478,23 +478,25 @@ export const DeviceApiKeyList = ({
               },
             ]}
           />
-          {items.currentIdList
-            .map(id => items.byId.get(id))
-            .map(deviceApiKey => (
-              <DeviceApiKeyDataTableRow
-                key={deviceApiKey.get('id')}
-                intl={intl}
-                deviceApiKey={deviceApiKey}
-                disabled={!selectableIds.includes(deviceApiKey.get('id'))}
-                checked={
-                  assignerValues.deviceApiKeyIds.indexOf(
-                    deviceApiKey.get('id')
-                  ) !== -1
-                }
-                onSelectedChange={onSelectedChange}
-                onRevokedChange={onRevokedChange}
-              />
-            ))}
+          <TableBody>
+            {items.currentIdList
+              .map(id => items.byId.get(id))
+              .map(deviceApiKey => (
+                <DeviceApiKeyDataTableRow
+                  key={deviceApiKey.get('id')}
+                  intl={intl}
+                  deviceApiKey={deviceApiKey}
+                  disabled={!selectableIds.includes(deviceApiKey.get('id'))}
+                  checked={
+                    assignerValues.deviceApiKeyIds.indexOf(
+                      deviceApiKey.get('id')
+                    ) !== -1
+                  }
+                  onSelectedChange={onSelectedChange}
+                  onRevokedChange={onRevokedChange}
+                />
+              ))}
+          </TableBody>
         </DeviceApiKeyDataTable>
       )}
       {!items.currentIdList.isEmpty() && (

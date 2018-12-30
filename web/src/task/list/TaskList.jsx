@@ -6,6 +6,7 @@ import { defineMessages } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
+import TableBody from '@material-ui/core/TableBody'
 
 import { Button } from 'react-toolbox/lib/button'
 
@@ -338,20 +339,22 @@ export const TaskList = ({
               },
             ]}
           />
-          {items.currentIdList
-            .map(id => items.byId.get(id))
-            .map(task => (
-              <TaskDataTableRow
-                key={task.get('id')}
-                intl={intl}
-                messages={messages}
-                task={task}
-                onClick={onRowClick}
-                data-task-id={
-                  task.get('alertCount') > 0 ? 'aggre-list' : 'detail'
-                }
-              />
-            ))}
+          <TableBody>
+            {items.currentIdList
+              .map(id => items.byId.get(id))
+              .map(task => (
+                <TaskDataTableRow
+                  key={task.get('id')}
+                  intl={intl}
+                  messages={messages}
+                  task={task}
+                  onClick={onRowClick}
+                  data-task-id={
+                    task.get('alertCount') > 0 ? 'aggre-list' : 'detail'
+                  }
+                />
+              ))}
+          </TableBody>
         </TaskDataTable>
       )}
       {!items.currentIdList.isEmpty() && (

@@ -2,10 +2,11 @@ const path = require('path')
 const glob = require('glob')
 const _ = require('lodash')
 
-const partialConfig = _.pick(
-  require('./cfg/src.js')({ ASPECT_TARGET: 'local' }),
-  ['resolve', 'module', 'plugins']
-)
+const partialConfig = _.pick(require('./cfg/dev.js'), [
+  'resolve',
+  'module',
+  'plugins',
+])
 
 partialConfig.plugins = partialConfig.plugins.filter(
   x => x.constructor.name === 'ExtractTextPlugin'
@@ -23,7 +24,9 @@ module.exports = {
       'src/components/graph/@(BarGraph|ColumnGraph|LineGraph|CountryMap).{js,jsx}'
     ),
     ...glob.sync('src/components/shared/flagIcon/@(FlagIcon).{js,jsx}'),
-    ...glob.sync('src/components/shared/expansionPanel/!(index).{js,jsx}'),
+    ...glob.sync(
+      'src/components/shared/@(expansionPanel|data-table)/!(index).{js,jsx}'
+    ),
   ],
   styleguideComponents: {
     Wrapper: path.join(

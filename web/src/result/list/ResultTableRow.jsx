@@ -1,14 +1,15 @@
 import _ from 'lodash'
 import classnames from 'classnames/bind'
 import React from 'react'
-import { TableRow, TableCell } from 'react-toolbox/lib/table'
+import {
+  DataTableRow as TableRow,
+  DataTableCell as TableCell,
+} from '../../components/shared/tableBody'
 import { formatDate } from '../../shared/utils/dateFormat'
 
 const cssClasses = classnames.bind(
   require('../../components/shared/DataTableRow.css')
 )
-
-const enhance = _.identity
 
 const formatterByType = _.partial(
   // TODO: refactor, see DeviceOperationTableRow
@@ -20,40 +21,18 @@ const formatterByType = _.partial(
 )
 
 const ResultTableRow = ({ intl, extraColumns, result, ...restProps }) => (
-  <TableRow
-    {...restProps}
-    className={cssClasses(restProps.className, 'TableRow')}
-  >
-    <TableCell className={cssClasses('TableCell')}>
-      {formatDate(result.get('endedOn'))}
-    </TableCell>
-    <TableCell className={cssClasses('TableCell', 'TableCell--md')}>
-      {result.get('deviceName')}
-    </TableCell>
-    <TableCell className={cssClasses('TableCell', 'TableCell--md')}>
-      {result.get('sampleOriginSiteName')}
-    </TableCell>
-    <TableCell className={cssClasses('TableCell')}>
-      {result.get('sampleId')}
-    </TableCell>
-    <TableCell className={cssClasses('TableCell', 'TableCell--lg')}>
-      {result.get('sampleGroup')}
-    </TableCell>
-    <TableCell className={cssClasses('TableCell')}>
-      {result.get('resultText')}
-    </TableCell>
-    <TableCell className={cssClasses('TableCell', 'TableCell--md')}>
-      {result.get('resultWorkflowStatus')}
-    </TableCell>
-    <TableCell className={cssClasses('TableCell', 'TableCell--xs')}>
-      {result.get('patientId')}
-    </TableCell>
+  <TableRow {...restProps} className={cssClasses(restProps.className)}>
+    <TableCell>{formatDate(result.get('endedOn'))}</TableCell>
+    <TableCell hiddenOn="sm">{result.get('deviceName')}</TableCell>
+    <TableCell hiddenOn="sm">{result.get('sampleOriginSiteName')}</TableCell>
+    <TableCell>{result.get('sampleId')}</TableCell>
+    <TableCell hiddenOn="md">{result.get('sampleGroup')}</TableCell>
+    <TableCell>{result.get('resultText')}</TableCell>
+    <TableCell hiddenOn="sm">{result.get('resultWorkflowStatus')}</TableCell>
+    <TableCell hiddenOn="xs">{result.get('patientId')}</TableCell>
     {extraColumns.map(column => (
       // TODO: refactor, see DeviceOperationTableRow
-      <TableCell
-        key={column.get('db')}
-        className={cssClasses('TableCell', 'TableCell--lg')}
-      >
+      <TableCell key={column.get('db')} hiddenOn="nd">
         {formatterByType(column.get('type'))(
           result.get(column.get('db')),
           intl
@@ -63,4 +42,4 @@ const ResultTableRow = ({ intl, extraColumns, result, ...restProps }) => (
   </TableRow>
 )
 
-export default enhance(ResultTableRow)
+export default ResultTableRow

@@ -9,6 +9,8 @@ import { Button } from 'react-toolbox/lib/button'
 import { Card } from 'react-toolbox/lib/card'
 import MdFileDownload from 'react-icons/lib/md/file-download'
 import Helmet from 'react-helmet'
+import TableBody from '@material-ui/core/TableBody'
+
 import {
   makeSortPageSelector,
   makeSearchParamsSanitizer,
@@ -255,19 +257,21 @@ export const DeviceDetailOperation = ({
                     .valueSeq()
                 )}
               />
-              {items.currentIdList
-                .map(id => items.byId.get(id))
-                .map(deviceOperation => (
-                  <DeviceOperationDataTableRow
-                    key={deviceOperation.get('id')}
-                    intl={intl}
-                    deviceOperation={deviceOperation}
-                    deviceOperationSchema={device.getIn([
-                      'deviceType',
-                      'deviceOperationSchema',
-                    ])}
-                  />
-                ))}
+              <TableBody>
+                {items.currentIdList
+                  .map(id => items.byId.get(id))
+                  .map(deviceOperation => (
+                    <DeviceOperationDataTableRow
+                      key={deviceOperation.get('id')}
+                      intl={intl}
+                      deviceOperation={deviceOperation}
+                      deviceOperationSchema={device.getIn([
+                        'deviceType',
+                        'deviceOperationSchema',
+                      ])}
+                    />
+                  ))}
+              </TableBody>
             </DeviceOperationDataTable>
           )}
           {!items.currentIdList.isEmpty() && (

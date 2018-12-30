@@ -10,6 +10,8 @@ import { Button } from 'react-toolbox/lib/button'
 import { Card } from 'react-toolbox/lib/card'
 import MdFileDownload from 'react-icons/lib/md/file-download'
 import Helmet from 'react-helmet'
+import TableBody from '@material-ui/core/TableBody'
+
 import {
   makeSortPageSelector,
   makeSearchParamsSanitizer,
@@ -330,17 +332,19 @@ const Results = enhanceResults(
                   },
                 ]}
               />
-              {items.currentIdList
-                .map(id => items.byId.get(id))
-                .map(result => (
-                  <ResultDataTableRow
-                    key={result.get('id')}
-                    intl={intl}
-                    result={result}
-                    onClick={onRowClick}
-                    data-result-id={result.get('id')}
-                  />
-                ))}
+              <TableBody>
+                {items.currentIdList
+                  .map(id => items.byId.get(id))
+                  .map(result => (
+                    <ResultDataTableRow
+                      key={result.get('id')}
+                      intl={intl}
+                      result={result}
+                      onClick={onRowClick}
+                      data-result-id={result.get('id')}
+                    />
+                  ))}
+              </TableBody>
             </ResultDataTable>
           )}
           {!items.currentIdList.isEmpty() && (

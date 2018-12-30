@@ -1,7 +1,11 @@
 import _ from 'lodash'
 import classnames from 'classnames/bind'
 import React from 'react'
-import { TableRow, TableCell } from 'react-toolbox/lib/table'
+
+import {
+  DataTableRow as TableRow,
+  DataTableCell as TableCell,
+} from '../../components/shared/tableBody'
 
 const cssClasses = classnames.bind(
   require('../../components/shared/DataTableRow.css')
@@ -10,39 +14,24 @@ const cssClasses = classnames.bind(
 const enhance = _.identity
 
 const ReporterTableRow = ({ intl, reporter, ...restProps }) => (
-  <TableRow
-    {...restProps}
-    className={cssClasses(restProps.className, 'TableRow')}
-  >
-    <TableCell className={cssClasses('TableCell')}>
-      {reporter.get('siteName')}
-    </TableCell>
-    <TableCell className={cssClasses('TableCell')}>
-      {reporter.get('shortName')}
-    </TableCell>
-    <TableCell className={cssClasses('TableCell')}>
-      {reporter.get('status')}
-    </TableCell>
-    <TableCell className={cssClasses('TableCell')}>
-      {intl.formatRelative(reporter.get('createdOn'))}
-    </TableCell>
-    <TableCell className={cssClasses('TableCell')}>
-      {intl.formatRelative(reporter.get('lastSeen'))}
-    </TableCell>
-    <TableCell className={cssClasses('TableCell')}>
+  <TableRow {...restProps} className={cssClasses(restProps.className)}>
+    <TableCell>{reporter.get('siteName')}</TableCell>
+    <TableCell>{reporter.get('shortName')}</TableCell>
+    <TableCell>{reporter.get('status')}</TableCell>
+    <TableCell>{intl.formatRelative(reporter.get('createdOn'))}</TableCell>
+    <TableCell>{intl.formatRelative(reporter.get('lastSeen'))}</TableCell>
+    <TableCell>
       {intl.formatNumber(reporter.get('deliveredLastMonth'))}
     </TableCell>
-    <TableCell className={cssClasses('TableCell')}>
+    <TableCell>
       {intl.formatNumber(reporter.get('deliveredThisMonth'))}
     </TableCell>
-    <TableCell className={cssClasses('TableCell')}>
+    <TableCell>
       {intl.formatNumber(reporter.get('acknowledgedRatio'), {
         style: 'percent',
       })}
     </TableCell>
-    <TableCell className={cssClasses('TableCell')}>
-      {intl.formatNumber(reporter.get('totalFlagged'))}
-    </TableCell>
+    <TableCell>{intl.formatNumber(reporter.get('totalFlagged'))}</TableCell>
   </TableRow>
 )
 

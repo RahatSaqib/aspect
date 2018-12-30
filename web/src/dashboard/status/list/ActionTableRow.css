@@ -4,12 +4,7 @@
   --notification-icon-size: 36px;
 }
 
-.TableRow {
-  composes: TableRow from '../../../components/shared/DataTableRow.css';
-}
-
 .TableCell {
-  composes: TableCell from '../../../components/shared/DataTableRow.css';
   color: var(--aspect-color-grey-4);
   font-size: var(--aspect-font-size-md);
 }
