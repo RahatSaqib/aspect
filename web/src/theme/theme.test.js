@@ -1,4 +1,4 @@
-import theme from './theme'
+import theme from './theme/variables'
 
 describe('Theme', () => {
   it('It is an object that contains at least the primary and accent colors', () => {

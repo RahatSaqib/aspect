@@ -1,10 +1,6 @@
 import React from 'react'
 import { ThemeProvider } from 'react-css-themr'
-import {
-  MuiThemeProvider,
-  createMuiTheme,
-  jssPreset,
-} from '@material-ui/core/styles'
+import { MuiThemeProvider, jssPreset } from '@material-ui/core/styles'
 import { create } from 'jss'
 import { JssProvider } from 'react-jss'
 
@@ -18,7 +14,7 @@ const jss = create({
 
 export const uiProvidersFactory = render => props => (
   <JssProvider jss={jss}>
-    <MuiThemeProvider theme={createMuiTheme(theme)}>
+    <MuiThemeProvider theme={theme}>
       <ThemeProvider theme={themedReactToolbox}>{render(props)}</ThemeProvider>
     </MuiThemeProvider>
   </JssProvider>
