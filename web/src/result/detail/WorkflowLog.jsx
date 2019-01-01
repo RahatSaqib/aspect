@@ -2,7 +2,10 @@ import classnames from 'classnames/bind'
 import React from 'react'
 import { compose, withHandlers, lifecycle, pure } from 'recompose'
 import { defineMessages } from 'react-intl'
-import { Card, CardTitle, CardText } from 'react-toolbox/lib/card'
+import Card from '@material-ui/core/Card'
+import CardHeader from '@material-ui/core/CardHeader'
+import CardContent from '@material-ui/core/CardContent'
+import Typography from '@material-ui/core/Typography'
 import TableBody from '@material-ui/core/TableBody'
 
 import TablePaginator from '../../components/shared/TablePaginator'
@@ -84,68 +87,70 @@ export const ResultWorkflowStatusLog = ({
   onPageSizeChange,
 }) => (
   <Card>
-    <CardTitle
+    <CardHeader
       title={intl.formatMessage(messages.totalWorkflowStatusLog, {
         itemCount: table.total,
       })}
     />
-    {items.currentIdList.isEmpty() && (
-      <CardText className={cssClasses('CardText')}>
-        {intl.formatMessage(messages.noWorkflowStatusLog)}
-      </CardText>
-    )}
-    {!items.currentIdList.isEmpty() && (
-      <CardText>
-        <DataTableProgressBar disabled={!table.loading} />
-        <WorkflowLogDataTable
-          selectable={false}
-          className={cssClasses('WorkflowLogDataTable')}
-        >
-          <WorkflowLogDataTableHead
-            sortColumnKey={table.sortCol}
-            sortColumnDir={table.sortDir}
-            columns={[
-              {
-                key: 'changedOn',
-                label: intl.formatMessage(messages.logChangedOn),
-                onClick: onHeadColumnClick,
-              },
-              {
-                key: 'statusName',
-                label: intl.formatMessage(messages.logStatus),
-                onClick: onHeadColumnClick,
-              },
-              {
-                key: 'operator',
-                label: intl.formatMessage(messages.logOperator),
-                onClick: onHeadColumnClick,
-              },
-            ]}
+    <CardContent>
+      {items.currentIdList.isEmpty() && (
+        <Typography className={cssClasses('CardText')}>
+          {intl.formatMessage(messages.noWorkflowStatusLog)}
+        </Typography>
+      )}
+      {!items.currentIdList.isEmpty() && (
+        <Typography>
+          <DataTableProgressBar disabled={!table.loading} />
+          <WorkflowLogDataTable
+            selectable={false}
+            className={cssClasses('WorkflowLogDataTable')}
+          >
+            <WorkflowLogDataTableHead
+              sortColumnKey={table.sortCol}
+              sortColumnDir={table.sortDir}
+              columns={[
+                {
+                  key: 'changedOn',
+                  label: intl.formatMessage(messages.logChangedOn),
+                  onClick: onHeadColumnClick,
+                },
+                {
+                  key: 'statusName',
+                  label: intl.formatMessage(messages.logStatus),
+                  onClick: onHeadColumnClick,
+                },
+                {
+                  key: 'operator',
+                  label: intl.formatMessage(messages.logOperator),
+                  onClick: onHeadColumnClick,
+                },
+              ]}
+            />
+            <TableBody>
+              {items.currentIdList
+                .map(id => items.byId.get(id))
+                .map(workflowLog => (
+                  <WorkflowLogDataTableRow
+                    key={workflowLog.get('id')}
+                    intl={intl}
+                    workflowLog={workflowLog}
+                  />
+                ))}
+            </TableBody>
+          </WorkflowLogDataTable>
+          <TablePaginator
+            className={cssClasses('TablePaginator')}
+            intl={intl}
+            paginatorStatus={messages.logPaginatorStatus}
+            pageAt={table.page}
+            pageSize={table.pageSize}
+            total={table.total}
+            onPageChange={onPageChange}
+            onPageSizeChange={onPageSizeChange}
           />
-          <TableBody>
-            {items.currentIdList
-              .map(id => items.byId.get(id))
-              .map(workflowLog => (
-                <WorkflowLogDataTableRow
-                  key={workflowLog.get('id')}
-                  intl={intl}
-                  workflowLog={workflowLog}
-                />
-              ))}
-          </TableBody>
-        </WorkflowLogDataTable>
-        <TablePaginator
-          className={cssClasses('TablePaginator')}
-          intl={intl}
-          paginatorStatus={messages.logPaginatorStatus}
-          pageAt={table.page}
-          pageSize={table.pageSize}
-          total={table.total}
-          onPageChange={onPageChange}
-          onPageSizeChange={onPageSizeChange}
-        />
-      </CardText>
-    )}
+        </Typography>
+      )}
+    </CardContent>
   </Card>
 )
 

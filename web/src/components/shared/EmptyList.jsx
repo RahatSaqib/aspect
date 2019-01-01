@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import React from 'react'
-import { Button } from 'react-toolbox/lib/button'
+import Button from '@material-ui/core/Button'
 import { defineMessages } from 'react-intl'
 
 const messages = defineMessages({
@@ -19,11 +19,9 @@ const enhance = _.identity
 export const EmptyList = ({ intl, onClearFilters }) => (
   <div style={{ textAlign: 'center' }}>
     <p>{intl.formatMessage(messages.noResultsTitle)}</p>
-    <Button
-      flat
-      label={intl.formatMessage(messages.clearFilters)}
-      onClick={onClearFilters}
-    />
+    <Button variant="text" onClick={onClearFilters}>
+      {intl.formatMessage(messages.clearFilters)}
+    </Button>
   </div>
 )
 

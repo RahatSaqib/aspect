@@ -12,7 +12,7 @@ import Helmet from 'react-helmet'
 import MdChevronLeft from 'react-icons/lib/md/chevron-left'
 import MdChevronRight from 'react-icons/lib/md/chevron-right'
 import MdClose from 'react-icons/lib/md/clear'
-import { Button } from 'react-toolbox/lib/button'
+import Button from '@material-ui/core/Button'
 
 // Our own imports
 import config from '../../config'
@@ -401,11 +401,12 @@ export class ResultDetail extends PureComponent {
             {showSubmitButton && (
               <Button
                 disabled={!formDataDirty}
-                raised
-                label={formatMessage(messages.submit)}
+                variant="contained"
                 onClick={this.submitFormData}
                 className={cssClasses('FormDataSubmitButton')}
-              />
+              >
+                {formatMessage(messages.submit)}
+              </Button>
             )}
             {formDataSaving && this.renderProgress()}
           </div>

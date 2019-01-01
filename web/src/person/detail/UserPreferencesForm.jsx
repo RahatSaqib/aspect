@@ -3,7 +3,7 @@ import classnames from 'classnames/bind'
 import React from 'react'
 import { compose, lifecycle, pure } from 'recompose'
 import { Dropdown } from 'react-toolbox/lib/dropdown'
-import { Button } from 'react-toolbox/lib/button'
+import Button from '@material-ui/core/Button'
 
 import recomposeForm from '../../components/recomposeForm'
 import FlagIcon from '../../components/shared/flagIcon/FlagIcon'
@@ -101,11 +101,12 @@ export const UserPreferencesForm = ({
     <div className={cssClasses('Form__ActionRow')}>
       <Button
         type="submit"
-        label={intl.formatMessage(messages.save)}
         disabled={form.pristine || !form.valid || form.loading}
-        raised
-        neutral
-      />
+        color="primary"
+        variant="contained"
+      >
+        {intl.formatMessage(messages.save)}
+      </Button>
     </div>
   </form>
 )

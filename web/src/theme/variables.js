@@ -33,6 +33,7 @@ const themedColors = {
   text: '#fff',
   primary: customPropertiesVariables['--aspect-color-chill-blue-1'],
   secondary: customPropertiesVariables['--aspect-button-accent-color'],
+  buttonBorderRadius: 3,
 }
 
 export default {

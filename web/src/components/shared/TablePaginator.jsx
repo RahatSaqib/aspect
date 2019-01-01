@@ -3,7 +3,7 @@ import classnames from 'classnames/bind'
 import React from 'react'
 import { defineMessages } from 'react-intl'
 import { compose, withProps, withHandlers, pure } from 'recompose'
-import { Button } from 'react-toolbox/lib/button'
+import Button from '@material-ui/core/Button'
 import FaAngleDoubleLeft from 'react-icons/lib/fa/angle-double-left'
 import FaAngleLeft from 'react-icons/lib/fa/angle-left'
 import FaAngleRight from 'react-icons/lib/fa/angle-right'
@@ -122,8 +122,8 @@ const TablePaginator = ({
       <Button
         className={cssClasses('Left__Button')}
         disabled={!hasFirstPage}
-        primary
-        inverse
+        color="primary"
+        variant="outlined"
         onClick={onFirstClick}
       >
         <FaAngleDoubleLeft />
@@ -132,8 +132,8 @@ const TablePaginator = ({
       <Button
         className={cssClasses('Left__Button')}
         disabled={!hasPreviousPage}
-        primary
-        inverse
+        color="primary"
+        variant="outlined"
         onClick={onPreviousClick}
       >
         <FaAngleLeft />
@@ -151,8 +151,8 @@ const TablePaginator = ({
       <Button
         className={cssClasses('Left__Button', 'Left__Button--next')}
         disabled={!hasNextPage}
-        primary
-        inverse
+        color="primary"
+        variant="outlined"
         onClick={onNextClick}
       >
         {intl.formatMessage(timedMessageUsed ? messages.older : messages.next)}
@@ -161,8 +161,8 @@ const TablePaginator = ({
       <Button
         className={cssClasses('Left__Button', 'Left__Button--next')}
         disabled={!hasLastPage}
-        primary
-        inverse
+        color="primary"
+        variant="outlined"
         onClick={onLastClick}
       >
         {intl.formatMessage(messages.last)}
@@ -173,12 +173,20 @@ const TablePaginator = ({
       {pageSizeButtonKeys.map(key => (
         <Button
           key={key}
-          className={cssClasses('Right__Button')}
+          className={cssClasses('Right__Button', {
+            selected:
+              (key !== ALL_KEY && key === pageSize) || pageSize === total,
+          })}
           onClick={restProps[`onPageSizeChange${key}`]}
-          label={key !== ALL_KEY ? `${key}` : intl.formatMessage(messages.all)}
-          primary
-          raised={key !== ALL_KEY ? key === pageSize : pageSize === total}
-        />
+          variant={
+            (key !== ALL_KEY && key === pageSize) || pageSize === total
+              ? 'contained'
+              : 'text'
+          }
+          color="primary"
+        >
+          {key !== ALL_KEY ? `${key}` : intl.formatMessage(messages.all)}
+        </Button>
       ))}
     </div>
   </div>

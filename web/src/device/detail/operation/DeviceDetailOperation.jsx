@@ -5,8 +5,8 @@ import { defineMessages } from 'react-intl'
 import { compose, withProps, withHandlers, lifecycle } from 'recompose'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import { Button } from 'react-toolbox/lib/button'
-import { Card } from 'react-toolbox/lib/card'
+import IconButton from '@material-ui/core/IconButton'
+import Card from '@material-ui/core/Card'
 import MdFileDownload from 'react-icons/lib/md/file-download'
 import Helmet from 'react-helmet'
 import TableBody from '@material-ui/core/TableBody'
@@ -211,7 +211,9 @@ export const DeviceDetailOperation = ({
         <header className={cssClasses('Header')}>
           <div className={cssClasses('Header__Title')}>Operation history</div>
           <div className={cssClasses('Header__Actions')}>
-            <Button icon={<MdFileDownload />} onClick={onExportClick} />
+            <IconButton onClick={onExportClick}>
+              <MdFileDownload />
+            </IconButton>
           </div>
         </header>
         <div>

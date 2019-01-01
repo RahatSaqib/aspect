@@ -1,9 +1,9 @@
 import classnames from 'classnames/bind'
 import React from 'react'
 import { compose, setDisplayName } from 'recompose'
-import MdExpandLess from 'react-icons/lib/md/expand-less'
-import MdExpandMore from 'react-icons/lib/md/expand-more'
-import { IconButton } from 'react-toolbox/lib/button'
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
+import ExpandLessIcon from '@material-ui/icons/ExpandLess'
+import IconButton from '@material-ui/core/IconButton'
 
 const cssClasses = classnames.bind(require('./ExpansionPanel.css'))
 
@@ -40,8 +40,13 @@ export const ExpansionPanelHeader = ({
       className={cssClasses('Header__Icon', {
         'Header__Icon--disabled': disabled,
       })}
-      icon={expanded ? <MdExpandLess /> : <MdExpandMore />}
-    />
+    >
+      {expanded ? (
+        <ExpandLessIcon style={{ fontSize: '20px' }} />
+      ) : (
+        <ExpandMoreIcon style={{ fontSize: '20px' }} />
+      )}
+    </IconButton>
   </div>
 )
 

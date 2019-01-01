@@ -2,12 +2,12 @@ import React, { PureComponent } from 'react'
 import classnames from 'classnames/bind'
 import { defineMessages } from 'react-intl'
 import isValid from 'date-fns/isValid'
-import { Button } from 'react-toolbox/lib/button'
 import { Input } from 'react-toolbox/lib/input'
 import DateTimeInput from '../../components/shared/DateTimeInput'
 import FocusBlurTextField from '../../components/shared/FocusBlurTextField'
 import FormGroup from '../../components/themedReactToolbox/FormGroup'
 import ButtonGroup from '../../components/themedReactToolbox/ButtonGroup'
+import AspectButton from '../../components/shared/AspectButton'
 import StyledDropdown from '../../components/themedReactToolbox/StyledDropdown'
 
 const cssClasses = classnames.bind(require('./CustomField.css'))
@@ -91,7 +91,7 @@ const messages = defineMessages({
 })
 
 export default class CustomField extends PureComponent {
-  onButtonGroupClick = ({ target: { dataset: { value } } }) => {
+  onButtonGroupClick = ({ currentTarget: { dataset: { value } } }) => {
     this.onUpdateData(value || null)
   }
 
@@ -133,19 +133,18 @@ export default class CustomField extends PureComponent {
           key={formFieldKey}
         >
           <ButtonGroup isolated>
-            {fieldSchema
-              .getIn(['control', 'options'])
-              .map(option => (
-                <Button
-                  key={option.get('value') || 'null'}
-                  primary
-                  raised
-                  inverse={option.get('value') !== fieldValue}
-                  label={formatMessage(messages[option.get('i18nText')])}
-                  data-value={option.get('value')}
-                  onClick={this.onButtonGroupClick}
-                />
-              ))}
+            {fieldSchema.getIn(['control', 'options']).map(option => (
+              <AspectButton
+                key={option.get('value') || 'null'}
+                color="primary"
+                variant="contained"
+                inverse={option.get('value') !== fieldValue}
+                data-value={option.get('value')}
+                onClick={this.onButtonGroupClick}
+              >
+                {formatMessage(messages[option.get('i18nText')])}
+              </AspectButton>
+            ))}
           </ButtonGroup>
         </FormGroup>
       )

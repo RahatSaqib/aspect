@@ -11,7 +11,7 @@ import {
   pure,
 } from 'recompose'
 import { connect } from 'react-redux'
-import { Card } from 'react-toolbox/lib/card'
+import Card from '@material-ui/core/Card'
 import MdDescription from 'react-icons/lib/md/description'
 
 import { findKeyInTree } from '../../shared/utils/dom'

@@ -8,10 +8,10 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 import { Checkbox } from 'react-toolbox/lib/checkbox'
-import { IconButton } from 'react-toolbox/lib/button'
-import withTooltip from 'react-toolbox/lib/tooltip'
+import IconButton from '@material-ui/core/IconButton'
+import Tooltip from '@material-ui/core/Tooltip'
 import { IconMenu, MenuItem } from 'react-toolbox/lib/menu'
-import MdAdd from 'react-icons/lib/md/add'
+import AddIcon from '@material-ui/icons/Add'
 import MdTransfer from 'react-icons/lib/md/swap-horiz'
 import MdRemove from 'react-icons/lib/md/remove'
 import MdDone from 'react-icons/lib/md/done'
@@ -62,8 +62,6 @@ import {
 } from './InventoryDataTable'
 
 const cssClasses = classnames.bind(require('./InventoryItemsList.css'))
-
-const TooltipIconButton = withTooltip(IconButton)
 
 const EMPTY_MAP = Immutable.Map()
 
@@ -313,13 +311,6 @@ const enhance = compose(
 const makeOnInventoryItemActionSelect = inventoryItemId => showDialogFn =>
   showDialogFn(inventoryItemId)
 
-const themes = {
-  TooltipIconButton: {
-    tooltip: cssClasses('TooltipIconButton__tooltip'),
-    toggle: cssClasses('TooltipIconButton__toggle'),
-  },
-}
-
 export const InventoryItemsList = ({
   intl,
   history,
@@ -363,12 +354,17 @@ export const InventoryItemsList = ({
         onChange={onGroupBySiteChange}
         label={intl.formatMessage(messages.groupBySite)}
       />
-      <TooltipIconButton
-        theme={themes.TooltipIconButton}
-        icon={<MdAdd />}
-        tooltip={intl.formatMessage(messages.addInventory)}
-        onClick={showNewInventoryDialog}
-      />
+      <Tooltip
+        title={intl.formatMessage(messages.addInventory)}
+        placement="bottom"
+      >
+        <IconButton
+          aria-label={intl.formatMessage(messages.addInventory)}
+          onClick={showNewInventoryDialog}
+        >
+          <AddIcon fontSize="large" />
+        </IconButton>
+      </Tooltip>
     </DataTableCard>
     <DataTableCard className={cssClasses('DataTableCard--table')}>
       <DataTableProgressBar disabled={!table.loading} />
@@ -443,7 +439,7 @@ export const InventoryItemsList = ({
                     {!inventoryItem.get('inTransitFromSiteId') && (
                       <MenuItem
                         value={showAddInventoryDialog}
-                        icon={<MdAdd />}
+                        icon={<AddIcon />}
                         caption={intl.formatMessage(messages.addInventory)}
                       />
                     )}

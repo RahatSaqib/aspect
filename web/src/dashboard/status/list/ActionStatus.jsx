@@ -2,7 +2,7 @@ import classnames from 'classnames/bind'
 import React from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import { Button } from 'react-toolbox/lib/button'
+import Button from '@material-ui/core/Button'
 import { Input } from 'react-toolbox/lib/input'
 import { compose, lifecycle, pure, withHandlers } from 'recompose'
 
@@ -120,12 +120,13 @@ const UpdateStockLevelInput = compose(
           theme={themes.Input}
         />
         <Button
-          inverse
+          variant="contained"
           disabled={form.pristine || !form.valid || form.submitting}
           className={cssClasses('Button__Acknowledge')}
-          label={intl.formatMessage(messages.update)}
           onClick={handleSubmit}
-        />
+        >
+          {intl.formatMessage(messages.update)}
+        </Button>
       </span>
     </div>
   )
@@ -182,7 +183,7 @@ export const ActionStatus = compose(
     return (
       <div className={cssClasses('Issue__Action__Status')}>
         {action.get('canAcknowledge') === 1 ? (
-          <Button
+          <AspectButton
             inverse
             className={cssClasses('Button__Acknowledge')}
             label={intl.formatMessage(messages.acknowledge)}

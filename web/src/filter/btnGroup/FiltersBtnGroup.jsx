@@ -4,7 +4,7 @@ import React, { Children } from 'react'
 import { compose, pure } from 'recompose'
 import { defineMessages } from 'react-intl'
 import { connect } from 'react-redux'
-import { Button } from 'react-toolbox/lib/button'
+import Button from '@material-ui/core/Button'
 import MdClose from 'react-icons/lib/md/close'
 import { formatDate } from '../../shared/utils/dateFormat'
 
@@ -125,8 +125,8 @@ const makeButton = labelFn => (props, filterKey) => (
   <Button
     key={filterKey}
     className={cssClasses('Button')}
-    raised
-    accent
+    color="secondary"
+    variant="contained"
     onClick={() => props.onRemoveFilterItem(filterKey)}
   >
     {labelFn(props, props.filters[filterKey])}

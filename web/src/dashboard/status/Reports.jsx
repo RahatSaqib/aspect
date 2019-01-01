@@ -3,8 +3,7 @@ import _ from 'lodash'
 import React from 'react'
 import { connect } from 'react-redux'
 import { compose, pure, withProps } from 'recompose'
-import { Card } from 'react-toolbox/lib/card'
-import { Button } from 'react-toolbox/lib/button'
+import Card from '@material-ui/core/Card'
 import subtractDays from 'date-fns/subDays'
 import subtractYears from 'date-fns/subYears'
 import endOfYear from 'date-fns/endOfYear'
@@ -19,6 +18,7 @@ import {
   requirePermissions,
   isEnabledFeature,
 } from '../../components/shared/requirePermissions'
+import AspectButton from '../../components/shared/AspectButton'
 
 const cssClasses = classnames.bind(require('./Status.css'))
 
@@ -88,7 +88,7 @@ export const Reports = ({
           />
         </div>
         <div className={cssClasses('ReportsContainer')}>
-          <Button
+          <AspectButton
             className={cssClasses('ReportsContainer__Button')}
             inverse
             href={`${
@@ -96,8 +96,8 @@ export const Reports = ({
             }/report/gx/RifResistanceExportExcel.xlsx?dateFrom=${last7Days}&token=${token}`}
           >
             Rif Report (last 7 days)
-          </Button>
-          <Button
+          </AspectButton>
+          <AspectButton
             className={cssClasses('ReportsContainer__Button')}
             inverse
             href={`${
@@ -105,8 +105,8 @@ export const Reports = ({
             }/report/gx/MtbPositiveExportExcel.xlsx?dateFrom=${last7Days}&token=${token}`}
           >
             MTB+ Report (last 7 days)
-          </Button>
-          <Button
+          </AspectButton>
+          <AspectButton
             className={cssClasses('ReportsContainer__Button')}
             inverse
             href={`${
@@ -114,8 +114,8 @@ export const Reports = ({
             }/report/gx/IndeterminateExportExcel.xlsx?dateFrom=${last7Days}&token=${token}`}
           >
             TI Report (last 7 days)
-          </Button>
-          <Button
+          </AspectButton>
+          <AspectButton
             className={cssClasses('ReportsContainer__Button')}
             inverse
             href={`${
@@ -123,10 +123,10 @@ export const Reports = ({
             }/report/gx/FailedTestsReportExcel.xlsx?dateFrom=${last7Days}&token=${token}`}
           >
             Failed Test Report (last 7 days)
-          </Button>
+          </AspectButton>
         </div>
         <div className={cssClasses('ReportsContainer')}>
-          <Button
+          <AspectButton
             className={cssClasses('ReportsContainer__Button')}
             inverse
             href={`${
@@ -134,8 +134,8 @@ export const Reports = ({
             }/report/gx/RifResistanceExportExcel.xlsx?dateFrom=${last30Days}&token=${token}`}
           >
             Rif Report (last 30 days)
-          </Button>
-          <Button
+          </AspectButton>
+          <AspectButton
             className={cssClasses('ReportsContainer__Button')}
             inverse
             href={`${
@@ -143,8 +143,8 @@ export const Reports = ({
             }/report/gx/MtbPositiveExportExcel.xlsx?dateFrom=${last30Days}&token=${token}`}
           >
             MTB+ Report (last 30 days)
-          </Button>
-          <Button
+          </AspectButton>
+          <AspectButton
             className={cssClasses('ReportsContainer__Button')}
             inverse
             href={`${
@@ -152,8 +152,8 @@ export const Reports = ({
             }/report/gx/IndeterminateExportExcel.xlsx?dateFrom=${last30Days}&token=${token}`}
           >
             TI Report (last 30 days)
-          </Button>
-          <Button
+          </AspectButton>
+          <AspectButton
             className={cssClasses('ReportsContainer__Button')}
             inverse
             href={`${
@@ -161,10 +161,10 @@ export const Reports = ({
             }/report/gx/FailedTestsReportExcel.xlsx?dateFrom=${last30Days}&token=${token}`}
           >
             Failed Test Report (last 30 days)
-          </Button>
+          </AspectButton>
         </div>
         <div className={cssClasses('ReportsContainer')}>
-          <Button
+          <AspectButton
             className={cssClasses('ReportsContainer__Button')}
             inverse
             href={`${
@@ -172,8 +172,8 @@ export const Reports = ({
             }/report/gx/QuarterlyReportExcel.xlsx?dateFrom=${beginningOfLastYear}&dateTo=${endOfLastYear}&token=${token}`}
           >
             {`Quarterly Report ${new Date().getFullYear() - 1}`}
-          </Button>
-          <Button
+          </AspectButton>
+          <AspectButton
             className={cssClasses('ReportsContainer__Button')}
             inverse
             href={`${
@@ -181,7 +181,7 @@ export const Reports = ({
             }/report/gx/QuarterlyReportExcel.xlsx?dateFrom=${beginningOfThisYear}&dateTo=${endOfThisYear}&token=${token}`}
           >
             {`Quarterly Report ${new Date().getFullYear()}`}
-          </Button>
+          </AspectButton>
         </div>
       </Card>
     )) || (
@@ -198,7 +198,7 @@ export const Reports = ({
         />
       </div>
       <div className={cssClasses('ReportsContainer')}>
-        <Button
+        <AspectButton
           className={cssClasses('ReportsContainer__Button')}
           inverse
           href={`${
@@ -206,8 +206,8 @@ export const Reports = ({
           }/report/gx/LogsExportExcel.xlsx?dateFrom=${last30Days}&siteId=${siteId}&token=${token}`}
         >
           Inventory Report
-        </Button>
-        <Button
+        </AspectButton>
+        <AspectButton
           className={cssClasses('ReportsContainer__Button')}
           inverse
           href={`${
@@ -215,8 +215,8 @@ export const Reports = ({
           }/report/gx/QuarterlyReportExcel.xlsx?dateFrom=${beginningOfLastYear}&dateTo=${endOfLastYear}&siteId=${siteId}&token=${token}`}
         >
           {`Quarterly Report ${new Date().getFullYear() - 1}`}
-        </Button>
-        <Button
+        </AspectButton>
+        <AspectButton
           className={cssClasses('ReportsContainer__Button')}
           inverse
           href={`${
@@ -224,7 +224,7 @@ export const Reports = ({
           }/report/gx/QuarterlyReportExcel.xlsx?dateFrom=${beginningOfThisYear}&dateTo=${endOfThisYear}&siteId=${siteId}&token=${token}`}
         >
           {`Quarterly Report ${new Date().getFullYear()}`}
-        </Button>
+        </AspectButton>
       </div>
     </Card>
   )

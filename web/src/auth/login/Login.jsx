@@ -7,10 +7,10 @@ import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 import { defineMessages } from 'react-intl'
 import { Link } from 'react-router-dom'
-import { Button } from 'react-toolbox/lib/button'
-import { Card } from 'react-toolbox/lib/card'
+import Button from '@material-ui/core/Button'
 import { ProgressBar } from 'react-toolbox/lib/progress_bar'
 import { Input } from 'react-toolbox/lib/input'
+import Card from '@material-ui/core/Card'
 
 import { Unit } from '../../components/pureGrids'
 import recomposeForm from '../../components/recomposeForm'
@@ -179,12 +179,13 @@ export const Login = ({
             <div className={cssClasses('Form__ActionRow')}>
               <Button
                 type="submit"
+                variant="contained"
+                color="primary"
                 className={cssClasses('Button')}
-                label={intl.formatMessage(messages.login)}
                 disabled={!form.valid}
-                raised
-                primary
-              />
+              >
+                {intl.formatMessage(messages.login)}
+              </Button>
               <Link className={cssClasses('Right_Align')} to="reset-password">
                 {intl.formatMessage(messages.resetPasswordLink)}
               </Link>

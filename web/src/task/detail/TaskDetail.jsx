@@ -7,8 +7,7 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
 import Helmet from 'react-helmet'
-import { Card } from 'react-toolbox/lib/card'
-import { Button } from 'react-toolbox/lib/button'
+import Card from '@material-ui/core/Card'
 import { Input } from 'react-toolbox/lib/input'
 import { Checkbox } from 'react-toolbox/lib/checkbox'
 import FaArrowUp from 'react-icons/lib/fa/arrow-up'
@@ -18,6 +17,7 @@ import DetailBackBar from '../../globals/components/DetailBackBar'
 import { Unit } from '../../components/pureGrids'
 import AlertType from '../../components/shared/AlertType'
 import FaBellZ from '../../components/shared/FaBellZ'
+import AspectButton from '../../components/shared/AspectButton'
 
 const cssClasses = classnames.bind(require('./TaskDetail.css'))
 
@@ -56,12 +56,6 @@ const enhance = compose(
   })
 )
 
-const BUTTON_THEME = {
-  primary: cssClasses('Button--primary'),
-  raised: cssClasses('Button--raised'),
-  inverse: cssClasses('Button--inverse'),
-}
-
 const INPUT_THEME = {
   inputElement: cssClasses('Input__inputElement'),
 }
@@ -92,9 +86,12 @@ export const TaskDetail = ({
             Needs calibrating
           </span>
           <small className={cssClasses('Card__Title__Date')}>by April 10</small>
-          <Button className={cssClasses('Card__Title__Button')} raised>
+          <AspectButton
+            className={cssClasses('Card__Title__Button')}
+            variant="contained"
+          >
             Alert settings
-          </Button>
+          </AspectButton>
         </h2>
         <div className={cssClasses('Card__Content')}>
           <Unit lg="1-5">
@@ -197,21 +194,25 @@ export const TaskDetail = ({
               isolated
               className={cssClasses('Card__Content__StatusButtonGroup')}
             >
-              <Button
-                primary
-                raised
+              <AspectButton
+                color="primary"
+                variant="contained"
                 inverse
-                label="Alerted"
-                theme={BUTTON_THEME}
-              />
-              <Button primary raised label="In progress" theme={BUTTON_THEME} />
-              <Button
-                primary
-                raised
+                className={cssClasses('Button--inverse')}
+              >
+                Alerted
+              </AspectButton>
+              <AspectButton color="primary" variant="contained">
+                In progress
+              </AspectButton>
+              <AspectButton
+                color="primary"
+                variant="contained"
                 inverse
-                label="Resolved"
-                theme={BUTTON_THEME}
-              />
+                className={cssClasses('Button--inverse')}
+              >
+                Resolved
+              </AspectButton>
             </ButtonGroup>
           </Unit>
           <Unit sm="1-1">
@@ -257,7 +258,7 @@ export const TaskDetail = ({
             <Input theme={INPUT_THEME} multiline rows={6} defaultValue="  " />
           </Unit>
           <Unit sm="1-2">
-            <Button raised label="Add comment" />
+            <AspectButton variant="contained">Add comment</AspectButton>
           </Unit>
           <Unit sm="1-2">
             <Checkbox

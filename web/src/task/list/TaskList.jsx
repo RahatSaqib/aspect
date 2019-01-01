@@ -8,7 +8,7 @@ import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 import TableBody from '@material-ui/core/TableBody'
 
-import { Button } from 'react-toolbox/lib/button'
+import AspectButton from '../../components/shared/AspectButton'
 
 import {
   makeSortPageSelector,
@@ -208,52 +208,58 @@ export const TaskList = ({
     <Helmet title={intl.formatMessage(messages.tasksTitle)} />
     <div className={cssClasses('FiltersGroup')}>
       <ButtonGroup adjacent className={cssClasses('FiltersGroup__Child')}>
-        <Button
-          primary
-          raised
+        <AspectButton
+          color="primary"
+          variant="contained"
           inverse={alertType !== 'mine'}
-          label="My alerts"
           data-alert-type="mine"
           onClick={onAlertTypeClick}
-        />
-        <Button
+        >
+          My alerts
+        </AspectButton>
+        <AspectButton
           className={cssClasses('Button--mini')}
-          primary
-          raised
-          label={`${countByAlert.get('mine', 0)}`}
-        />
+          color="primary"
+          variant="contained"
+        >
+          {`${countByAlert.get('mine', 0)}`}
+        </AspectButton>
       </ButtonGroup>
       <ButtonGroup adjacent className={cssClasses('FiltersGroup__Child')}>
-        <Button
-          primary
-          raised
+        <AspectButton
+          color="primary"
+          variant="contained"
           inverse={alertType !== 'snoozed'}
-          label="Snoozed"
           data-alert-type="snoozed"
           onClick={onAlertTypeClick}
-        />
-        <Button
+        >
+          Snoozed
+        </AspectButton>
+        <AspectButton
           className={cssClasses('Button--mini')}
-          primary
-          raised
-          label={`${countByAlert.get('snoozed', 0)}`}
-        />
+          color="primary"
+          variant="contained"
+        >
+          {`${countByAlert.get('snoozed', 0)}`}
+        </AspectButton>
       </ButtonGroup>
       <ButtonGroup adjacent className={cssClasses('FiltersGroup__Child')}>
-        <Button
-          primary
-          raised
+        <AspectButton
+          color="primary"
+          variant="contained"
           inverse={alertType !== 'all'}
-          label="All"
           data-alert-type="all"
           onClick={onAlertTypeClick}
-        />
-        <Button
+        >
+          All
+        </AspectButton>
+        <AspectButton
           className={cssClasses('Button--mini')}
-          primary
-          raised
-          label={`${countByAlert.get('total', 0)}`}
-        />
+          color="primary"
+          variant="contained"
+        >
+          {`${countByAlert.get('total', 0)}`}
+        </AspectButton>
       </ButtonGroup>
       <div
         className={cssClasses(

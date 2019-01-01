@@ -4,9 +4,8 @@ import classnames from 'classnames/bind'
 import React from 'react'
 import { withStateHandlers } from 'recompose'
 import Helmet from 'react-helmet'
-import { Card } from 'react-toolbox/lib/card'
+import Card from '@material-ui/core/Card'
 import { Input } from 'react-toolbox/lib/input'
-import { Button } from 'react-toolbox/lib/button'
 import MdRefresh from 'react-icons/lib/md/refresh'
 import TableBody from '@material-ui/core/TableBody'
 
@@ -16,6 +15,7 @@ import {
   NotificationDeliveryDataTable,
   NotificationDeliveryDataTableRow,
 } from './NotificationDeliveryDataTable'
+import AspectButton from '../../../components/shared/AspectButton'
 
 const cssClasses = classnames.bind(require('../NotificationDetail.css'))
 
@@ -25,7 +25,7 @@ const MockTogglBtn = withStateHandlers(
   {
     onClick: ({ inverse }) => () => ({ inverse: !inverse }),
   }
-)(Button)
+)(AspectButton)
 
 const enhance = _.identity
 
@@ -77,12 +77,13 @@ export const NotificationDetailView = ({
               <MockTogglBtn
                 key={label}
                 className={cssClasses('Card__Button', 'Card__Button--inline')}
-                primary
-                raised
+                color="primary"
+                variant="contained"
                 inverse={label !== 'Result'}
-                label={label}
                 theme={BUTTON_THEME}
-              />
+              >
+                {label}
+              </MockTogglBtn>
             )
           )}
         </div>
@@ -96,12 +97,13 @@ export const NotificationDetailView = ({
             <MockTogglBtn
               key={label}
               className={cssClasses('Card__Button', 'Card__Button--inline')}
-              primary
-              raised
+              color="primary"
+              variant="contained"
               inverse={label !== 'TB'}
-              label={label}
               theme={BUTTON_THEME}
-            />
+            >
+              {label}
+            </MockTogglBtn>
           ))}
         </div>
       </Card>
@@ -123,12 +125,13 @@ export const NotificationDetailView = ({
             <MockTogglBtn
               key={label}
               className={cssClasses('Card__Button', 'Card__Button--inline')}
-              primary
-              raised
+              color="primary"
+              variant="contained"
               inverse={label !== 'MTB+ Rif?'}
-              label={label}
               theme={BUTTON_THEME}
-            />
+            >
+              {label}
+            </MockTogglBtn>
           ))}
         </div>
       </Card>
@@ -146,12 +149,13 @@ export const NotificationDetailView = ({
             <MockTogglBtn
               key={label}
               className={cssClasses('Card__Button', 'Card__Button--inline')}
-              primary
-              raised
+              color="primary"
+              variant="contained"
               inverse={label !== 'Choose by state'}
-              label={label}
               theme={BUTTON_THEME}
-            />
+            >
+              {label}
+            </MockTogglBtn>
           ))}
         </div>
         <hr />
@@ -170,11 +174,12 @@ export const NotificationDetailView = ({
             <MockTogglBtn
               key={label}
               className={cssClasses('Card__Button', 'Card__Button--inline')}
-              primary
-              raised
-              label={label}
+              color="primary"
+              variant="contained"
               theme={BUTTON_THEME}
-            />
+            >
+              {label}
+            </MockTogglBtn>
           ))}
         </div>
       </Card>
@@ -196,8 +201,8 @@ export const NotificationDetailView = ({
               <MockTogglBtn
                 key={label}
                 className={cssClasses('Card__Button', 'Card__Button--block')}
-                primary
-                raised
+                color="primary"
+                variant="contained"
                 inverse={
                   !_.includes(
                     [
@@ -207,9 +212,10 @@ export const NotificationDetailView = ({
                     label
                   )
                 }
-                label={label}
                 theme={BUTTON_THEME}
-              />
+              >
+                {label}
+              </MockTogglBtn>
             ))}
           </Unit>
           <Unit sm="1-2" md="2-3" className={cssClasses('Recipients__Right')}>
@@ -219,11 +225,12 @@ export const NotificationDetailView = ({
             <div>
               <MockTogglBtn
                 className={cssClasses('Card__Button', 'Card__Button--inline')}
-                primary
-                raised
-                label="Tag name"
+                color="primary"
+                variant="contained"
                 theme={BUTTON_THEME}
-              />
+              >
+                Tag name
+              </MockTogglBtn>
             </div>
           </Unit>
         </div>
@@ -247,12 +254,13 @@ export const NotificationDetailView = ({
             <MockTogglBtn
               key={label}
               className={cssClasses('Card__Button', 'Card__Button--inline')}
-              primary
-              raised
+              color="primary"
+              variant="contained"
               inverse={_.includes(['Web', 'Email'], label)}
-              label={label}
               theme={BUTTON_THEME}
-            />
+            >
+              {label}
+            </MockTogglBtn>
           ))}
         </div>
       </Card>
@@ -264,27 +272,30 @@ export const NotificationDetailView = ({
           <span>If there is a</span>
           <MockTogglBtn
             className={cssClasses('Card__Button', 'Card__Button--inline')}
-            primary
-            raised
-            label="Result"
+            color="primary"
+            variant="contained"
             theme={BUTTON_THEME}
-          />
+          >
+            Result
+          </MockTogglBtn>
           <span>for</span>
           <MockTogglBtn
             className={cssClasses('Card__Button', 'Card__Button--inline')}
-            primary
-            raised
-            label="TB"
+            color="primary"
+            variant="contained"
             theme={BUTTON_THEME}
-          />
+          >
+            TB
+          </MockTogglBtn>
           <span>that is</span>
           <MockTogglBtn
             className={cssClasses('Card__Button', 'Card__Button--inline')}
-            primary
-            raised
-            label="MTB+ Rif+"
+            color="primary"
+            variant="contained"
             theme={BUTTON_THEME}
-          />
+          >
+            MTB+ Rif+
+          </MockTogglBtn>
         </div>
         <hr />
         <div>
@@ -297,11 +308,12 @@ export const NotificationDetailView = ({
             <MockTogglBtn
               key={label}
               className={cssClasses('Card__Button', 'Card__Button--inline')}
-              primary
-              raised
-              label={label}
+              color="primary"
+              variant="contained"
               theme={BUTTON_THEME}
-            />
+            >
+              {label}
+            </MockTogglBtn>
           ))}
         </div>
         <hr />
@@ -309,44 +321,49 @@ export const NotificationDetailView = ({
           <span>Alert people</span>
           <MockTogglBtn
             className={cssClasses('Card__Button', 'Card__Button--inline')}
-            primary
-            raised
-            label="State contacts (in same state as device)"
+            color="primary"
+            variant="contained"
             theme={BUTTON_THEME}
-          />
+          >
+            State contacts (in same state as device)
+          </MockTogglBtn>
           <MockTogglBtn
             className={cssClasses('Card__Button', 'Card__Button--inline')}
-            primary
-            raised
-            label="Lab contacts for the device"
+            color="primary"
+            variant="contained"
             theme={BUTTON_THEME}
-          />
+          >
+            Lab contacts for the device
+          </MockTogglBtn>
           <span>tagged</span>
           <MockTogglBtn
             className={cssClasses('Card__Button', 'Card__Button--inline')}
-            primary
-            raised
-            label="tag name"
+            color="primary"
+            variant="contained"
             theme={BUTTON_THEME}
-          />
+          >
+            tag name
+          </MockTogglBtn>
         </div>
         <hr />
         <div>
           <span>Send alert by</span>
           <MockTogglBtn
             className={cssClasses('Card__Button', 'Card__Button--inline')}
-            primary
-            raised
-            label="Web"
+            color="primary"
+            variant="contained"
             theme={BUTTON_THEME}
-          />
+          >
+            Web
+          </MockTogglBtn>
           <MockTogglBtn
             className={cssClasses('Card__Button', 'Card__Button--inline')}
-            primary
-            raised
-            label="Email"
+            color="primary"
+            variant="contained"
             theme={BUTTON_THEME}
-          />
+          >
+            Email
+          </MockTogglBtn>
         </div>
       </Card>
     </section>
@@ -355,7 +372,10 @@ export const NotificationDetailView = ({
         <h2 className={cssClasses('Card__Title')}>
           <div>Result</div>
           <div>
-            <MockTogglBtn className={cssClasses('Button--square')} raised>
+            <MockTogglBtn
+              className={cssClasses('Button--square')}
+              variant="contained"
+            >
               <MdRefresh />
             </MockTogglBtn>
           </div>

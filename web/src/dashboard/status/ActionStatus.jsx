@@ -12,7 +12,7 @@ import {
   withProps,
   withStateHandlers,
 } from 'recompose'
-import { Card } from 'react-toolbox/lib/card'
+import Card from '@material-ui/core/Card'
 import TableBody from '@material-ui/core/TableBody'
 
 import { Unit } from '../../components/pureGrids'

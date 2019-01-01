@@ -64,8 +64,8 @@
   font-weight: var(--lato-font-weight-bold);
 }
 
-.Button--primary:not([disabled]).Button--raised.Button--inverse {
-  background-color: var(--aspect-color-grey-7);
+.Button--inverse {
+  background-color: var(--aspect-color-grey-7) !important;
 }
 
 .Input__inputElement {

@@ -4,12 +4,12 @@ import { compose, lifecycle, withHandlers, withProps } from 'recompose'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
-import { Card } from 'react-toolbox/lib/card'
-import { Button } from 'react-toolbox/lib/button'
+import Card from '@material-ui/core/Card'
 
 import { Unit } from '../../components/pureGrids'
 import ColumnGraph from '../../components/graph/ColumnGraph'
 import DelayShowingProgressBar from '../../components/shared/DelayShowingProgressBar'
+import AspectButton from '../../components/shared/AspectButton'
 // import FiltersPanel from '../../filter/popover/FiltersPanel'
 import Title from '../status/Title'
 import { fetchOperationalStatus } from '../DashboardRedux'
@@ -114,12 +114,13 @@ const SectionAbnormalCollection = ({
           colorClassName={colorClassName}
           title={title}
         />
-        <Button
+        <AspectButton
           className={cssClasses('Button')}
-          raised
-          label="Data and reports"
+          variant="contained"
           onClick={onDataReportClick}
-        />
+        >
+          Data and reports
+        </AspectButton>
       </div>
       <div>
         {collection.map(c => (
@@ -152,62 +153,69 @@ export const OperationalData = ({
     <Helmet title="Operational Data" />
     <div className={cssClasses('FiltersGroup')}>
       <div className={cssClasses('FiltersGroup__Child')}>
-        <Button
+        <AspectButton
           className={cssClasses('Button')}
-          primary
-          raised
+          color="primary"
+          variant="contained"
           inverse={assayType !== 'all'}
-          label="All diseases"
           data-assay-type="all"
           onClick={onAssayTypeClick}
-        />
-        <Button
+        >
+          All diseases
+        </AspectButton>
+
+        <AspectButton
           className={cssClasses('Button')}
-          primary
-          raised
+          color="primary"
+          variant="contained"
           inverse={assayType !== 'TB'}
-          label="TB"
           data-assay-type="TB"
           onClick={onAssayTypeClick}
-        />
-        <Button
+        >
+          TB
+        </AspectButton>
+        <AspectButton
           className={cssClasses('Button')}
-          primary
-          raised
+          color="primary"
+          variant="contained"
           inverse={assayType !== 'HIV'}
-          label="HIV"
           data-assay-type="HIV"
           onClick={onAssayTypeClick}
-        />
-        <Button
+        >
+          HIV
+        </AspectButton>
+        <AspectButton
           className={cssClasses('Button')}
-          primary
-          raised
+          color="primary"
+          variant="contained"
           inverse={assayType !== 'HCV'}
-          label="HCV"
           data-assay-type="HCV"
           onClick={onAssayTypeClick}
-        />
+        >
+          HCV
+        </AspectButton>
       </div>
       <div className={cssClasses('FiltersGroup__Child')}>
-        <Button
+        <AspectButton
           className={cssClasses('Button')}
-          primary
-          raised
+          color="primary"
+          variant="contained"
           inverse={dateRange !== '30'}
-          label="30 days"
           data-date-range="30"
           onClick={onDateRangeClick}
-        />
-        <Button
+        >
+          30 days
+        </AspectButton>
+        <AspectButton
           className={cssClasses('Button')}
-          primary
-          raised
+          color="primary"
+          variant="contained"
           inverse={dateRange !== '60'}
-          label="60 days"
           data-date-range="60"
           onClick={onDateRangeClick}
-        />
+        >
+          60 days
+        </AspectButton>
         {/* <Button
           className={cssClasses('Button')}
           primary
@@ -251,12 +259,13 @@ export const OperationalData = ({
               colorClassName={cssClasses('Title__Color--site')}
               title="Sites"
             />
-            <Button
+            <AspectButton
               className={cssClasses('Button')}
-              raised
-              label="Data and reports"
+              variant="contained"
               onClick={onDataReportClick}
-            />
+            >
+              Data and reports
+            </AspectButton>
           </div>
           <div>
             {operational.get('site', []).map(c => (

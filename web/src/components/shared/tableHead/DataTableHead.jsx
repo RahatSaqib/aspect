@@ -11,7 +11,7 @@ import KeyboardArrowDown from '@material-ui/icons/KeyboardArrowDown'
 const styles = theme => {
   const style = {
     cell: {
-      fontWeight: theme.typography.latoFontWeightBold,
+      fontWeight: theme.typography.fontWeightBold,
     },
     clickable: {
       cursor: 'pointer',

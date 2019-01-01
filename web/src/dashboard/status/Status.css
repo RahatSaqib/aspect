@@ -238,11 +238,11 @@
   text-transform: capitalize;
 }
 
-.Button--receive:not([disabled]).Button--raised {
+.Button--receive:not([disabled]) {
   background-color: var(--aspect-color-mantis);
 }
 
-.Button--discard:not([disabled]).Button--raised {
+.Button--discard:not([disabled]) {
   background-color: var(--aspect-color-mandy);
 }
 

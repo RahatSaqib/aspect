@@ -6,14 +6,14 @@ import Immutable from 'immutable'
 import { compose, withStateHandlers, withHandlers, lifecycle } from 'recompose'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import { Button } from 'react-toolbox/lib/button'
-import { Card } from 'react-toolbox/lib/card'
+import Card from '@material-ui/core/Card'
 import { Input } from 'react-toolbox/lib/input'
 import Helmet from 'react-helmet'
 import DeviceDetailBackBar from '../DeviceDetailBackBar'
 import recomposeForm from '../../../components/recomposeForm'
 import FormGroup from '../../../components/themedReactToolbox/FormGroup'
 import ButtonGroup from '../../../components/themedReactToolbox/ButtonGroup'
+import AspectButton from '../../../components/shared/AspectButton'
 import SiteSelectField from '../../../filter/resource/SiteSelectField'
 import ConnectedTagInput from '../../../tag/ConnectedTagInput'
 import { fetchDeviceTypesForSelectList } from '../../../deviceType/DeviceTypeRedux'
@@ -99,18 +99,13 @@ const enhance = compose(
       values: initializeValuesFrom(device),
     }),
     {
-      onDeviceTypeClick: ({ values }) => ({
-        target: { dataset: { value } },
-      }) => ({
+      onDeviceTypeClick: ({ values }) => value => ({
         values: {
           ...values,
           deviceTypeId: value,
         },
       }),
-
-      onRequirePrinterClick: ({ values }) => ({
-        target: { dataset: { value } },
-      }) => ({
+      onRequirePrinterClick: ({ values }) => value => ({
         values: {
           ...values,
           requirePrinter: value,
@@ -213,15 +208,18 @@ export const DeviceDetailEdit = ({
             <ButtonGroup isolated>
               {deviceTypeSelectList.items.map(deviceType => (
                 // FIXME: Can deviceTypeId editable?
-                <Button
+                <AspectButton
                   key={deviceType.get('id')}
-                  primary
-                  raised
+                  color="primary"
+                  variant="contained"
                   inverse={deviceType.get('id') !== values.deviceTypeId}
-                  label={deviceType.get('name')}
                   data-value={deviceType.get('id')}
-                  onClick={onDeviceTypeClick}
-                />
+                  onClick={({ currentTarget: { dataset: { value } } }) =>
+                    onDeviceTypeClick(value)
+                  }
+                >
+                  {deviceType.get('name')}
+                </AspectButton>
               ))}
             </ButtonGroup>
           </FormGroup>
@@ -242,15 +240,18 @@ export const DeviceDetailEdit = ({
                     label: intl.formatMessage(messages.no),
                   },
                 ].map(({ value, label }) => (
-                  <Button
+                  <AspectButton
                     key={value}
-                    primary
-                    raised
+                    color="primary"
+                    variant="contained"
                     inverse={values.requirePrinter !== value}
-                    label={label}
                     data-value={value}
-                    onClick={onRequirePrinterClick}
-                  />
+                    onClick={({ currentTarget: { dataset: { value } } }) =>
+                      onRequirePrinterClick(value)
+                    }
+                  >
+                    {label}
+                  </AspectButton>
                 ))}
               </ButtonGroup>
             </FormGroup>
@@ -317,21 +318,23 @@ export const DeviceDetailEdit = ({
           )}
           <div className={cssClasses('Form__Actions')}>
             <ButtonGroup isolated>
-              <Button
+              <AspectButton
                 type="button"
-                label={intl.formatMessage(messages.discard)}
                 disabled={form.pristine}
                 onClick={onDiscardClick}
-                raised
-                primary
-              />
-              <Button
+                color="primary"
+                variant="contained"
+              >
+                {intl.formatMessage(messages.discard)}
+              </AspectButton>
+              <AspectButton
                 type="submit"
-                label={intl.formatMessage(messages.save)}
                 disabled={form.pristine || !form.valid || form.submitting}
-                raised
-                primary
-              />
+                color="primary"
+                variant="contained"
+              >
+                {intl.formatMessage(messages.save)}
+              </AspectButton>
             </ButtonGroup>
           </div>
         </form>

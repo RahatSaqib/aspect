@@ -3,11 +3,12 @@ import { fade } from '@material-ui/core/styles/colorManipulator'
 export default ({ theme, themedColors }) => ({
   MuiButton: {
     root: {
-      borderRadius:
-        theme.customPropertiesVariables['--toolbox-button-border-radius'],
+      borderRadius: themedColors.buttonBorderRadius,
       textTransform: 'inherit',
     },
     contained: {
+      color: theme.palette.common.white,
+      backgroundColor: theme.palette.grey[500],
       boxShadow: 'none',
       '&$focusVisible': {
         boxShadow: 'none',
@@ -17,6 +18,17 @@ export default ({ theme, themedColors }) => ({
       },
       '&$disabled': {
         boxShadow: 'none',
+      },
+      '&:hover': {
+        backgroundColor: theme.palette.grey[500],
+      },
+      '&.inverse': {
+        backgroundColor: theme.palette.common.white,
+        color: themedColors.primary,
+        '&:hover': {
+          backgroundColor: theme.palette.common.white,
+          color: themedColors.primary,
+        },
       },
     },
     /* Styles applied to the root element if `variant="[contained | fab]"` and `color="primary"`. */
@@ -31,7 +43,7 @@ export default ({ theme, themedColors }) => ({
     },
     /* Styles applied to the root element if `variant="[contained | fab]"` and `color="secondary"`. */
     containedSecondary: {
-      color: '#fff',
+      color: theme.palette.common.white,
       backgroundColor: themedColors.secondary,
       '&:hover': {
         backgroundColor: themedColors.secondary,
@@ -56,7 +68,14 @@ export default ({ theme, themedColors }) => ({
         },
       },
       '&$disabled': {
-        border: `1px solid ${theme.palette.action.disabled}`,
+        border: 'none',
+      },
+    },
+    text: {
+      '&.inverse': {
+        backgroundColor: theme.palette.common.white,
+        color: themedColors.primary,
+        border: `1px solid ${themedColors.primary}`,
       },
     },
     /* Styles applied to the root element if `variant="text"` and `color="primary"`. */

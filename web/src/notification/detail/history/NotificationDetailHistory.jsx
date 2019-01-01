@@ -4,7 +4,7 @@ import classnames from 'classnames/bind'
 import React from 'react'
 import { defineMessages } from 'react-intl'
 import Helmet from 'react-helmet'
-import { Card } from 'react-toolbox/lib/card'
+import Card from '@material-ui/core/Card'
 import TableBody from '@material-ui/core/TableBody'
 
 import BrowseTablePaginator from '../../../globals/components/BrowseTablePaginator'

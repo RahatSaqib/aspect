@@ -17,14 +17,6 @@
   margin: 9px 0;
 }
 
-.TooltipIconButton__tooltip {
-  min-width: 120px;
-}
-
-.TooltipIconButton__toggle > svg {
-  vertical-align: middle;
-}
-
 .InventoryDataTable {
   composes: ComponentDataTable from '../../components/shared/DataTable.css';
 }

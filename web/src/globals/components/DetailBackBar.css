@@ -21,13 +21,11 @@
   padding: 0;
   height: var(--back-icon-size);
   font-size: var(--back-icon-size);
+  color: var(--aspect-color-grey-2);
+  min-width: 90px;
 }
 
 .Container__Button--back > svg {
   height: var(--back-icon-size);
   margin: 0 -20px;
-}
-
-.Button--primary:not([disabled]).Button--flat {
-  color: var(--aspect-color-grey-2);
 }

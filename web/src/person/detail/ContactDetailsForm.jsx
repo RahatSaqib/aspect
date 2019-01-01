@@ -2,7 +2,7 @@ import _ from 'lodash'
 import classnames from 'classnames/bind'
 import React from 'react'
 import { compose, lifecycle, withHandlers, pure } from 'recompose'
-import { Button } from 'react-toolbox/lib/button'
+import Button from '@material-ui/core/Button'
 import { Input } from 'react-toolbox/lib/input'
 
 import recomposeForm from '../../components/recomposeForm'
@@ -300,11 +300,12 @@ export const ContactDetailsForm = ({
     <div className={cssClasses('Form__ActionRow')}>
       <Button
         type="submit"
-        primary
-        raised
+        color="primary"
+        variant="contained"
         disabled={loading || form.pristine || !form.valid || form.submitting}
-        label={intl.formatMessage(messages.save)}
-      />
+      >
+        {intl.formatMessage(messages.save)}
+      </Button>
     </div>
   </form>
 )
