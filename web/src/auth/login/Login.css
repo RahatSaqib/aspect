@@ -16,6 +16,7 @@
 
 .Form__ActionRow {
   padding: 20px 0 0 0;
+  overflow: hidden;
 }
 
 .Form__ActionRow .Right_Align {
@@ -44,4 +45,8 @@
   width: 300px;
   padding: 0 0 0 0;
   overflow: hidden;
+}
+
+.Progress {
+  width: 100%;
 }

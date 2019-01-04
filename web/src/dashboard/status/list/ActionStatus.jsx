@@ -183,12 +183,13 @@ export const ActionStatus = compose(
     return (
       <div className={cssClasses('Issue__Action__Status')}>
         {action.get('canAcknowledge') === 1 ? (
-          <AspectButton
+          <Button
             inverse
             className={cssClasses('Button__Acknowledge')}
-            label={intl.formatMessage(messages.acknowledge)}
             onClick={handleSubmit}
-          />
+          >
+            {intl.formatMessage(messages.acknowledge)}
+          </Button>
         ) : (
           <div className={cssClasses('Issue__Action__Status')}>
             <span>

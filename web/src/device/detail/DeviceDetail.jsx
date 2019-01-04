@@ -134,7 +134,7 @@ export const DeviceDetail = ({
         className={cssClasses('DelayShowingProgressBar')}
         disabled={false}
         type="circular"
-        mode="indeterminate"
+        variant="indeterminate"
       />
     )}
   </div>

@@ -4,9 +4,13 @@ import React, { PureComponent } from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import _ from 'lodash'
+import classNames from 'classnames'
 import { defineMessages, intlShape } from 'react-intl'
-
-import { Snackbar } from 'react-toolbox/lib'
+import Button from '@material-ui/core/Button'
+import Snackbar from '@material-ui/core/Snackbar'
+import green from '@material-ui/core/colors/green'
+import amber from '@material-ui/core/colors/amber'
+import { withStyles } from '@material-ui/core/styles'
 
 // Our own imports
 import {
@@ -28,10 +32,20 @@ const genericMessages = defineMessages({
 
 const enhance = _.flowRight(connect(mapStateToProps, mapDispatchToProps))
 
+const styles = {
+  info: {
+    color: green[600],
+  },
+  warning: {
+    color: amber[700],
+  },
+}
+
 export class AppNotificationSnackBar extends PureComponent {
   static propTypes = {
     intl: intlShape.isRequired,
     appNotification: PropTypes.objectOf(Error),
+    classes: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
     showMoreDetails: PropTypes.func.isRequired,
     hideAppNotification: PropTypes.func.isRequired,
   }
@@ -58,7 +72,11 @@ export class AppNotificationSnackBar extends PureComponent {
   }
 
   render() {
-    const { appNotification, intl: { formatMessage } } = this.props
+    const {
+      classes: classNameValues,
+      appNotification,
+      intl: { formatMessage },
+    } = this.props
 
     const appNotificationMessageOrDefault = (messageKey, fallbackMessage) => {
       const messageDescriptor = appNotification.getIn([
@@ -103,13 +121,24 @@ export class AppNotificationSnackBar extends PureComponent {
     const showDetails = appNotification.get('showDetails')
     return (
       <Snackbar
-        action={actionText ? actionText.toUpperCase() : actionText}
-        active={hasNotification && !showDetails}
-        label={title ? formatMessage(title, messageValues) : ''}
-        timeout={4000}
-        onClick={actionTouchTap}
-        onTimeout={this.handleClose}
+        className={classNames(classNameValues.fullWidth)}
+        open={hasNotification && !showDetails}
+        message={title ? formatMessage(title, messageValues) : ''}
+        autoHideDuration={4000}
+        onClose={this.handleClose}
         type={isError ? 'warning' : 'accept'}
+        action={
+          <Button
+            className={classNames({
+              [classNameValues.info]: !isError,
+              [classNameValues.warning]: isError,
+            })}
+            size="small"
+            onClick={actionTouchTap}
+          >
+            {actionText ? actionText.toUpperCase() : actionText}
+          </Button>
+        }
       />
     )
   }
@@ -131,4 +160,4 @@ function mapDispatchToProps(dispatch) {
   )
 }
 
-export default enhance(AppNotificationSnackBar)
+export default enhance(withStyles(styles)(AppNotificationSnackBar))

@@ -126,7 +126,6 @@ export const ReporterDetailModalForm = props => {
         <CheckboxField
           name="Status"
           label={labels.statusToken}
-          color="primary"
           checked={values.statusToken === tokens.APPROVED}
           onChange={props.onStatusTokenChange}
         />

@@ -272,7 +272,7 @@ export class ResultDetail extends PureComponent {
   }
 
   renderProgress() {
-    return <DelayShowingProgressBar type="linear" mode="indeterminate" />
+    return <DelayShowingProgressBar variant="indeterminate" />
   }
 
   renderRawResult() {

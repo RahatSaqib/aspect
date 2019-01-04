@@ -9,7 +9,6 @@ import { Link } from 'react-router-dom'
 import Helmet from 'react-helmet'
 import Card from '@material-ui/core/Card'
 import { Input } from 'react-toolbox/lib/input'
-import { Checkbox } from 'react-toolbox/lib/checkbox'
 import FaArrowUp from 'react-icons/lib/fa/arrow-up'
 
 import ButtonGroup from '../../components/themedReactToolbox/ButtonGroup'
@@ -18,6 +17,7 @@ import { Unit } from '../../components/pureGrids'
 import AlertType from '../../components/shared/AlertType'
 import FaBellZ from '../../components/shared/FaBellZ'
 import AspectButton from '../../components/shared/AspectButton'
+import CheckboxField from '../../components/shared/CheckboxField'
 
 const cssClasses = classnames.bind(require('./TaskDetail.css'))
 
@@ -260,12 +260,8 @@ export const TaskDetail = ({
           <Unit sm="1-2">
             <AspectButton variant="contained">Add comment</AspectButton>
           </Unit>
-          <Unit sm="1-2">
-            <Checkbox
-              className={cssClasses('NewMessage__Checkbox')}
-              checked={false}
-              label="This is now resolved"
-            />
+          <Unit sm="1-2" className={cssClasses('NewMessage__Checkbox')}>
+            <CheckboxField checked={false} label="This is now resolved" />
           </Unit>
         </div>
       </Card>

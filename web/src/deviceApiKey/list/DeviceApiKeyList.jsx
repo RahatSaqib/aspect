@@ -13,7 +13,6 @@ import { defineMessages } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
-import { Checkbox } from 'react-toolbox/lib/checkbox'
 import TableBody from '@material-ui/core/TableBody'
 import Button from '@material-ui/core/Button'
 
@@ -32,6 +31,7 @@ import BrowseEmptyList from '../../globals/components/BrowseEmptyList'
 import BrowseTablePaginator from '../../globals/components/BrowseTablePaginator'
 import DataTableCard from '../../components/shared/DataTableCard'
 import DataTableProgressBar from '../../components/shared/DataTableProgressBar'
+import AspectCheckbox from '../../components/shared/AspectCheckbox'
 import {
   exportDeviceApiKeys,
   generateDeviceApiKeys,
@@ -314,8 +314,8 @@ const enhance = compose(
     },
 
     onSelectedChange: ({ dialogState, onChangeDialogState }) => (
-      isInputChecked,
-      { target: { dataset: { deviceApiKeyId } } }
+      { target: { dataset: { deviceApiKeyId } } },
+      isInputChecked
     ) => {
       const { assignerValues } = dialogState
       const nextDeviceApiKeyIds = isInputChecked
@@ -331,10 +331,8 @@ const enhance = compose(
       })
     },
 
-    onRevokedChange: ({ updateSingleDeviceApiKey }) => (
-      revoked,
-      { target: { dataset: { deviceApiKeyId } } }
-    ) => {
+    onRevokedChange: ({ updateSingleDeviceApiKey }) => (event, revoked) => {
+      const { target: { dataset: { deviceApiKeyId } } } = event
       updateSingleDeviceApiKey(deviceApiKeyId, {
         revoked,
       })
@@ -431,7 +429,7 @@ export const DeviceApiKeyList = ({
               {
                 key: 'id',
                 label: (
-                  <Checkbox
+                  <AspectCheckbox
                     name="selectAll"
                     disabled={selectableIds.isEmpty()}
                     checked={selectableIds.equals(

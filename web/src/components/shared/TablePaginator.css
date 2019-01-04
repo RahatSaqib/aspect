@@ -66,6 +66,7 @@
 }
 
 .Right__Button:not(.selected) {
+  color: var(--aspect-color-chill-blue-1);
   background-color: var(--aspect-color-grey-7);
 }
 

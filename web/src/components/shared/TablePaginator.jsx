@@ -174,15 +174,10 @@ const TablePaginator = ({
         <Button
           key={key}
           className={cssClasses('Right__Button', {
-            selected:
-              (key !== ALL_KEY && key === pageSize) || pageSize === total,
+            selected: key !== ALL_KEY ? key === pageSize : pageSize === total,
           })}
           onClick={restProps[`onPageSizeChange${key}`]}
-          variant={
-            (key !== ALL_KEY && key === pageSize) || pageSize === total
-              ? 'contained'
-              : 'text'
-          }
+          variant="contained"
           color="primary"
         >
           {key !== ALL_KEY ? `${key}` : intl.formatMessage(messages.all)}

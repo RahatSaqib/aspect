@@ -7,7 +7,6 @@ import { defineMessages } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
-import { Checkbox } from 'react-toolbox/lib/checkbox'
 import IconButton from '@material-ui/core/IconButton'
 import Tooltip from '@material-ui/core/Tooltip'
 import { IconMenu, MenuItem } from 'react-toolbox/lib/menu'
@@ -27,6 +26,7 @@ import {
   sanitizeFiltersStringBy,
   reduceFiltersConfig,
 } from '../../filter/utils'
+import CheckboxField from '../../components/shared/CheckboxField'
 import NavTitle from '../../globals/components/NavTitle'
 import BrowseFilters from '../../globals/components/BrowseFilters'
 import BrowseEmptyList from '../../globals/components/BrowseEmptyList'
@@ -254,10 +254,10 @@ const enhance = compose(
     },
   }),
   withHandlers({
-    onGroupBySiteChange: ({
-      toggleGroupBySite,
-      onInitialLoad,
-    }) => isInputChecked => {
+    onGroupBySiteChange: ({ toggleGroupBySite, onInitialLoad }) => (
+      event,
+      isInputChecked
+    ) => {
       toggleGroupBySite(isInputChecked)
       onInitialLoad()
     },
@@ -347,12 +347,12 @@ export const InventoryItemsList = ({
       dateFilterLabel={intl.formatMessage(messages.expiresOn)}
     />
     <DataTableCard className={cssClasses('DataTableCard--action')}>
-      <Checkbox
+      <CheckboxField
         className={cssClasses('Checkbox')}
         name="groupBySite"
         checked={table.get('groupBy').includes('siteId')}
-        onChange={onGroupBySiteChange}
         label={intl.formatMessage(messages.groupBySite)}
+        onChange={onGroupBySiteChange}
       />
       <Tooltip
         title={intl.formatMessage(messages.addInventory)}

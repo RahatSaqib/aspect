@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import classnames from 'classnames/bind'
 import React from 'react'
-import withTooltip from 'react-toolbox/lib/tooltip'
+import Tooltip from '@material-ui/core/Tooltip'
 import FaExclamationTriangle from 'react-icons/lib/fa/exclamation-triangle'
 import FaCircle from 'react-icons/lib/fa/circle'
 
@@ -16,14 +16,18 @@ const yDomainMaxBy = {
   'days-unavailable': 14,
 }
 
-const Title = ({ title, children, ...restProps }) => (
+const Header = ({ header, children, ...restProps }) => (
   <div {..._.omit(restProps, ['tooltip', 'theme'])}>
-    {title}
+    {header}
     {children}
   </div>
 )
 
-const TitleWithTooltip = withTooltip(Title)
+const HeaderWithTooltip = ({ tooltip, ...restProps }) => (
+  <Tooltip title={tooltip} placement="top">
+    <Header {...restProps} />
+  </Tooltip>
+)
 
 const AbnormalBarChart = ({ component, intl, item, ...restProps }) =>
   React.createElement(
@@ -40,9 +44,9 @@ const AbnormalBarChart = ({ component, intl, item, ...restProps }) =>
       yDomainMax={yDomainMaxBy[item.get('key')]}
       fill={it => (it.abnormal ? '#EA4E62' : '#36DED6')}
     />,
-    React.createElement(item.get('titleTooltip') ? TitleWithTooltip : Title, {
+    React.createElement(item.get('titleTooltip') ? HeaderWithTooltip : Header, {
       className: cssClasses('AbnormalBarChart__Title'),
-      title:
+      header:
         item.get('title') ||
         intl.formatMessage(messages[item.get('titleI18nKey')]),
       tooltip: item.get('titleTooltip'),

@@ -301,8 +301,8 @@ export const OperationalData = ({
     <DelayShowingProgressBar
       disabled={!loading}
       type="circular"
-      mode="indeterminate"
-      theme={themes.DelayShowingProgressBar}
+      variant="indeterminate"
+      className={cssClasses('DelayShowingProgressBar--indeterminate')}
     />
   </div>
 )

@@ -8,7 +8,7 @@ import Helmet from 'react-helmet'
 import { defineMessages } from 'react-intl'
 import { Link } from 'react-router-dom'
 import Button from '@material-ui/core/Button'
-import { ProgressBar } from 'react-toolbox/lib/progress_bar'
+import LinearProgress from '@material-ui/core/LinearProgress'
 import { Input } from 'react-toolbox/lib/input'
 import Card from '@material-ui/core/Card'
 
@@ -191,7 +191,9 @@ export const Login = ({
               </Link>
             </div>
           </form>
-          {form.submitting && <ProgressBar type="linear" />}
+          {form.submitting && (
+            <LinearProgress className={cssClasses('Progress')} />
+          )}
         </Card>
       </Unit>
     </div>
