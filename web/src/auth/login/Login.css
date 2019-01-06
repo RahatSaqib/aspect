@@ -29,8 +29,9 @@
   padding: 10px 0 0 0;
 }
 
-.Form__Input {
-  color: #828282;
+.Form__Input--error {
+  margin-top: 5px;
+  margin-bottom: -10px;
 }
 
 .Logo__Container {

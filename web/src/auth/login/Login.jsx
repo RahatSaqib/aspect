@@ -9,7 +9,7 @@ import { defineMessages } from 'react-intl'
 import { Link } from 'react-router-dom'
 import Button from '@material-ui/core/Button'
 import LinearProgress from '@material-ui/core/LinearProgress'
-import { Input } from 'react-toolbox/lib/input'
+import TextField from '@material-ui/core/TextField'
 import Card from '@material-ui/core/Card'
 
 import { Unit } from '../../components/pureGrids'
@@ -95,11 +95,11 @@ const enhance = compose(
     fields: [
       {
         fieldName: 'user',
-        valueFromChangeEvent: _.identity,
+        valueFromChangeEvent: it => it.target.value,
       },
       {
         fieldName: 'password',
-        valueFromChangeEvent: _.identity,
+        valueFromChangeEvent: it => it.target.value,
       },
     ],
     validate(values) {
@@ -116,12 +116,6 @@ const enhance = compose(
     },
   })
 )
-
-const themes = {
-  Input: {
-    label: cssClasses('Form__Input'),
-  },
-}
 
 const AspectLogo = () => (
   <img
@@ -157,24 +151,35 @@ export const Login = ({
               location={location}
               className={cssClasses('Form__Info')}
             />
-            <Input
-              innerRef={onUsernameMount}
-              type="text"
+            <TextField
+              inputRef={onUsernameMount}
+              autoFocus
+              fullWidth
               name="user"
               label={intl.formatMessage(messages.user)}
               value={values.user}
               onChange={onUserChange}
               error={meta.user.touched && meta.user.error}
-              theme={themes.Input}
+              helperText={meta.user.touched && meta.user.error}
+              margin="normal"
+              FormHelperTextProps={{
+                margin: 'dense',
+              }}
             />
-            <Input
+            <TextField
+              autoFocus
+              fullWidth
               type="password"
               name="password"
               label={intl.formatMessage(messages.password)}
               value={values.password}
               onChange={onPasswordChange}
               error={meta.password.touched && meta.password.error}
-              theme={themes.Input}
+              helperText={meta.password.touched && meta.password.error}
+              margin="normal"
+              FormHelperTextProps={{
+                margin: 'dense',
+              }}
             />
             <div className={cssClasses('Form__ActionRow')}>
               <Button

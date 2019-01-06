@@ -68,9 +68,14 @@
   background-color: var(--aspect-color-grey-7) !important;
 }
 
-.Input__inputElement {
+.Input {
   border: 1px solid rgba(0, 0, 0, 0.12);
   border-radius: 4px;
+  margin: 20px 0;
+  width: 100%;
+}
+
+.Input__inputElement {
   padding: 8px 12px;
 }
 

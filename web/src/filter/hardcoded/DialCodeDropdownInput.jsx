@@ -2,7 +2,7 @@ import _ from 'lodash'
 import classnames from 'classnames/bind'
 import React from 'react'
 import { compose, withProps, withHandlers, pure } from 'recompose'
-import { Input } from 'react-toolbox/lib/input'
+import TextField from '@material-ui/core/TextField'
 
 import DialCodeDropdown from './DialCodeDropdown'
 import dialCodes from './dialCodes'
@@ -53,7 +53,9 @@ const enhance = compose(
       onChange(`${dialCode} ${numberPart}`.trim())
     },
 
-    onRawNumberChange: ({ onChange, dialCode }) => rawNumber => {
+    onRawNumberChange: ({ onChange, dialCode }) => ({
+      target: { value: rawNumber },
+    }) => {
       if (rawNumber) {
         const { numberPart, nextDialCode } = parseRawNumber(rawNumber)
         if (nextDialCode in dialCodeBy) {
@@ -87,7 +89,8 @@ const DialCodeDropdownInput = ({
       onChange={onDialCodeChange}
       theme={themes.DialCodeDropdown}
     />
-    <Input
+    <TextField
+      fullWidth
       type="text"
       {...restProps}
       className={cssClasses('Input')}

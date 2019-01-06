@@ -2,22 +2,15 @@ import React, { PureComponent } from 'react'
 import classnames from 'classnames/bind'
 import { defineMessages } from 'react-intl'
 import isValid from 'date-fns/isValid'
-import { Input } from 'react-toolbox/lib/input'
 import DateTimeInput from '../../components/shared/DateTimeInput'
 import FocusBlurTextField from '../../components/shared/FocusBlurTextField'
 import FormGroup from '../../components/themedReactToolbox/FormGroup'
 import ButtonGroup from '../../components/themedReactToolbox/ButtonGroup'
 import AspectButton from '../../components/shared/AspectButton'
+import TextField from '../../components/shared/TextField'
 import StyledDropdown from '../../components/themedReactToolbox/StyledDropdown'
 
 const cssClasses = classnames.bind(require('./CustomField.css'))
-
-const THEME = {
-  Input: {
-    input: cssClasses('TextBox__Input'),
-    inputElement: cssClasses('TextBox__InputElement'),
-  },
-}
 
 const messages = defineMessages({
   confirmedInterpretationOfResult: {
@@ -156,19 +149,23 @@ export default class CustomField extends PureComponent {
           key={formFieldKey}
         >
           <FocusBlurTextField
-            component={Input}
+            component={TextField}
             name="formFieldKey"
             value={fieldValue}
             onCommitValue={this.onTextBoxCommitValue}
-            floatingLabelFixe
-            theme={THEME.Input}
+            floatingLabelFixed
+            fullWidth
+            className={cssClasses('TextBox__Input')}
+            inputProps={{
+              className: cssClasses('TextBox__InputElement'),
+            }}
           />
         </FormGroup>
       )
     } else if (fieldType === 'DropDown') {
       return (
         <FormGroup
-          className={cssClasses('Container')}
+          className={cssClasses('Container', 'Container___DropDown')}
           label={fieldLabel}
           key={formFieldKey}
         >

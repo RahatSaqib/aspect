@@ -7,7 +7,7 @@ import { withProps } from 'recompose'
 import { connect } from 'react-redux'
 import { defineMessages } from 'react-intl'
 import { Dialog } from 'react-toolbox/lib/dialog'
-import { Input } from 'react-toolbox/lib/input'
+import TextField from '@material-ui/core/TextField'
 import { DatePicker } from 'react-toolbox/lib/date_picker'
 
 import SiteSelectField from '../../filter/resource/SiteSelectField'
@@ -222,7 +222,8 @@ export const InventoryAdjustmentDialogForm = ({
           )}
         </section>
         <section>
-          <Input
+          <TextField
+            fullWidth
             type="text"
             name="lotNumber"
             label={intl.formatMessage(messages.lotNumber)}
@@ -230,7 +231,12 @@ export const InventoryAdjustmentDialogForm = ({
             value={values.lotNumber}
             onChange={onLotNumberChange}
             error={meta.lotNumber.touched && meta.lotNumber.error}
-            maxLength={500}
+            helperText={meta.lotNumber.touched && meta.lotNumber.error}
+            margin="normal"
+            FormHelperTextProps={{
+              margin: 'dense',
+            }}
+            inputProps={{ maxLength: 500 }}
           />
           {values.canExpire && (
             <DatePicker
@@ -288,7 +294,8 @@ export const InventoryAdjustmentDialogForm = ({
           )}
         </section>
         <section>
-          <Input
+          <TextField
+            fullWidth
             type="text"
             name="quantity"
             label={labels.quantity}
@@ -298,7 +305,12 @@ export const InventoryAdjustmentDialogForm = ({
             // style={formFieldStyle}
             // inputStyle={{ textAlign: 'right' }}
             error={meta.quantity.touched && meta.quantity.error}
-            maxLength={500}
+            helperText={meta.quantity.touched && meta.quantity.error}
+            margin="normal"
+            FormHelperTextProps={{
+              margin: 'dense',
+            }}
+            inputProps={{ maxLength: 500 }}
           />
           <p className={cssClasses('Field__quantity--status')}>
             <span>{consumable.get('unitShortName')}</span>
@@ -366,7 +378,8 @@ export const InventoryAdjustmentDialogForm = ({
           </section>
         )}
         <section>
-          <Input
+          <TextField
+            fullWidth
             type="notes"
             name="quantity"
             label={intl.formatMessage(messages.notes)}
@@ -377,7 +390,12 @@ export const InventoryAdjustmentDialogForm = ({
             rows={2}
             // style={formFieldStyle}
             error={meta.notes.touched && meta.notes.error}
-            maxLength={2000}
+            helperText={meta.notes.touched && meta.notes.error}
+            margin="normal"
+            FormHelperTextProps={{
+              margin: 'dense',
+            }}
+            inputProps={{ maxLength: 2000 }}
           />
         </section>
       </div>

@@ -3,7 +3,7 @@ import classnames from 'classnames/bind'
 import React from 'react'
 import { compose, lifecycle, withHandlers, pure } from 'recompose'
 import Button from '@material-ui/core/Button'
-import { Input } from 'react-toolbox/lib/input'
+import TextField from '@material-ui/core/TextField'
 
 import recomposeForm from '../../components/recomposeForm'
 import validateEmailAddress from '../../shared/utils/validate'
@@ -91,18 +91,21 @@ const enhance = compose(
   }),
   recomposeForm({
     fields: [
-      { fieldName: 'name', valueFromChangeEvent: _.identity },
-      { fieldName: 'title', valueFromChangeEvent: _.identity },
-      { fieldName: 'email', valueFromChangeEvent: _.identity },
-      { fieldName: 'email2', valueFromChangeEvent: _.identity },
+      { fieldName: 'name', valueFromChangeEvent: it => it.target.value },
+      { fieldName: 'title', valueFromChangeEvent: it => it.target.value },
+      { fieldName: 'email', valueFromChangeEvent: it => it.target.value },
+      { fieldName: 'email2', valueFromChangeEvent: it => it.target.value },
       { fieldName: 'phone', valueFromChangeEvent: _.identity },
       { fieldName: 'cell', valueFromChangeEvent: _.identity },
-      { fieldName: 'lastPartnerId', valueFromChangeEvent: _.identity },
+      {
+        fieldName: 'lastPartnerId',
+        valueFromChangeEvent: _.identity,
+      },
       { fieldName: 'countryId', valueFromChangeEvent: _.identity },
       { fieldName: 'stateId', valueFromChangeEvent: _.identity },
       { fieldName: 'lgaId', valueFromChangeEvent: _.identity },
-      { fieldName: 'zip', valueFromChangeEvent: _.identity },
-      { fieldName: 'notes', valueFromChangeEvent: _.identity },
+      { fieldName: 'zip', valueFromChangeEvent: it => it.target.value },
+      { fieldName: 'notes', valueFromChangeEvent: it => it.target.value },
     ],
     validate,
   }),
@@ -150,7 +153,8 @@ export const ContactDetailsForm = ({
   <form onSubmit={handleSubmit} className={cssClasses('Form')}>
     <div className={cssClasses('Form__Content')}>
       <section>
-        <Input
+        <TextField
+          fullWidth
           type="text"
           name="name"
           label={intl.formatMessage(messages.fullName)}
@@ -158,9 +162,15 @@ export const ContactDetailsForm = ({
           onChange={onNameChange}
           disabled={loading}
           error={meta.name.touched && meta.name.error}
-          maxLength={500}
+          helperText={meta.name.touched && meta.name.error}
+          margin="normal"
+          FormHelperTextProps={{
+            margin: 'dense',
+          }}
+          inputProps={{ maxLength: 500 }}
         />
-        <Input
+        <TextField
+          fullWidth
           type="text"
           name="title"
           label={intl.formatMessage(messages.jobTitle)}
@@ -168,12 +178,18 @@ export const ContactDetailsForm = ({
           onChange={onTitleChange}
           disabled={loading}
           error={meta.title.touched && meta.title.error}
-          maxLength={255}
+          helperText={meta.title.touched && meta.title.error}
+          margin="normal"
+          FormHelperTextProps={{
+            margin: 'dense',
+          }}
+          inputProps={{ maxLength: 255 }}
         />
       </section>
       <section>
         <h1>{intl.formatMessage(messages.emailHeader)}</h1>
-        <Input
+        <TextField
+          fullWidth
           type="email"
           name="email"
           label={intl.formatMessage(messages.primaryEmail)}
@@ -181,9 +197,15 @@ export const ContactDetailsForm = ({
           onChange={onEmailChange}
           disabled={loading}
           error={meta.email.touched && meta.email.error}
-          maxLength={500}
+          helperText={meta.email.touched && meta.email.error}
+          margin="normal"
+          FormHelperTextProps={{
+            margin: 'dense',
+          }}
+          inputProps={{ maxLength: 500 }}
         />
-        <Input
+        <TextField
+          fullWidth
           type="email"
           name="email2"
           label={intl.formatMessage(messages.secondaryEmail)}
@@ -191,7 +213,12 @@ export const ContactDetailsForm = ({
           onChange={onEmail2Change}
           disabled={loading}
           error={meta.email2.touched && meta.email2.error}
-          maxLength={500}
+          helperText={meta.email2.touched && meta.email2.error}
+          margin="normal"
+          FormHelperTextProps={{
+            margin: 'dense',
+          }}
+          inputProps={{ maxLength: 500 }}
         />
       </section>
       <section>
@@ -203,7 +230,12 @@ export const ContactDetailsForm = ({
           onChange={onPhoneChange}
           disabled={loading}
           error={meta.phone.touched && meta.phone.error}
-          maxLength={40}
+          helperText={meta.phone.touched && meta.phone.error}
+          margin="normal"
+          FormHelperTextProps={{
+            margin: 'dense',
+          }}
+          inputProps={{ maxLength: 40 }}
         />
         <DialCodeDropdownInput
           name="cell"
@@ -212,7 +244,12 @@ export const ContactDetailsForm = ({
           onChange={onCellChange}
           disabled={loading}
           error={meta.cell.touched && meta.cell.error}
-          maxLength={40}
+          helperText={meta.cell.touched && meta.cell.error}
+          margin="normal"
+          FormHelperTextProps={{
+            margin: 'dense',
+          }}
+          inputProps={{ maxLength: 40 }}
         />
       </section>
       {userIsAdmin && (
@@ -269,7 +306,8 @@ export const ContactDetailsForm = ({
             floatingLabelText={intl.formatMessage(messages.lga)}
           />
         </div>
-        <Input
+        <TextField
+          fullWidth
           type="text"
           name="zip"
           label={intl.formatMessage(messages.zip)}
@@ -277,12 +315,18 @@ export const ContactDetailsForm = ({
           onChange={onZipChange}
           disabled={loading}
           error={meta.zip.touched && meta.zip.error}
-          maxLength={45}
+          helperText={meta.zip.touched && meta.zip.error}
+          margin="normal"
+          FormHelperTextProps={{
+            margin: 'dense',
+          }}
+          inputProps={{ maxLength: 45 }}
         />
       </section>
       {showNotesField && (
         <section>
-          <Input
+          <TextField
+            fullWidth
             type="text"
             name="notes"
             label={intl.formatMessage(messages.notes)}
@@ -290,9 +334,14 @@ export const ContactDetailsForm = ({
             onChange={onNotesChange}
             disabled={loading}
             error={meta.notes.touched && meta.notes.error}
-            maxLength={2000}
+            helperText={meta.notes.touched && meta.notes.error}
             multiline
             rows={4}
+            margin="normal"
+            FormHelperTextProps={{
+              margin: 'dense',
+            }}
+            inputProps={{ maxLength: 2000 }}
           />
         </section>
       )}

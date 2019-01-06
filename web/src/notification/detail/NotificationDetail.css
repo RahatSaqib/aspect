@@ -16,6 +16,11 @@
   padding: 30px;
 }
 
+.Card hr {
+  visibility: hidden;
+  margin: 8px 0;
+}
+
 .Card__Title {
   margin-top: 0;
   display: flex;
@@ -43,7 +48,11 @@
 .Input__inputElement {
   border: 1px solid rgba(0, 0, 0, 0.12);
   border-radius: 4px;
-  padding: 8px 12px;
+  padding: 0 12px;
+}
+
+.Input__inputElement:before {
+  border-bottom: none;
 }
 
 .Input--inline {

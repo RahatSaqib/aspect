@@ -83,11 +83,11 @@
   padding-left: 10px;
 }
 
-.DelayShowingProgressBar--indeterminate[disabled] {
+.DelayShowingProgressCircular--indeterminate[disabled] {
   display: none;
 }
 
-.DelayShowingProgressBar--indeterminate:not([disabled]) {
+.DelayShowingProgressCircular--indeterminate:not([disabled]) {
   position: fixed;
   top: 50%;
   left: 50%;

@@ -128,10 +128,11 @@
 
 .Form__Input {
   padding: 0;
-  margin-right: 5px;
+  margin: 0 5px 0 0;
 }
 
 .Form_InputElement {
   width: 80px;
   text-align: right;
+  font-weight: normal;
 }

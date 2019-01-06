@@ -1,25 +1,36 @@
 import classnames from 'classnames'
 import React from 'react'
-import { compose } from 'recompose'
-import { themr } from 'react-css-themr'
-import theme from 'react-toolbox/lib/input/theme.module.css'
-import { INPUT } from 'react-toolbox/lib/identifiers'
+import FormLabel from '@material-ui/core/FormLabel'
+import FormControl from '@material-ui/core/FormControl'
+import { withStyles } from '@material-ui/core/styles'
 
-const enhance = compose(themr(INPUT, theme))
+const styles = {
+  root: {
+    width: '100%',
+    margin: '8px 0 20px 0',
+  },
+  label: {
+    fontSize: '0.75rem',
+    marginBottom: 6,
+  },
+  input: {
+    borderBottom: 'none',
+  },
+}
 
-const FormGroup = ({ theme, className, label, htmlFor, children }) => (
-  <div className={classnames(theme.input, className)}>
-    <div
-      id={htmlFor}
-      className={classnames(theme.inputElement, theme.filled)}
-      style={{ borderBottom: 'none' }}
-    >
+const FormGroup = ({
+  classes: classNameValues,
+  className,
+  label,
+  htmlFor,
+  children,
+}) => (
+  <FormControl className={classnames(classNameValues.root, className)}>
+    <FormLabel className={classNameValues.label}>{label}</FormLabel>
+    <div id={htmlFor} className={classnames(classNameValues.input)}>
       {children}
     </div>
-    <label className={theme.label} htmlFor={htmlFor}>
-      {label}
-    </label>
-  </div>
+  </FormControl>
 )
 
-export default enhance(FormGroup)
+export default withStyles(styles)(FormGroup)

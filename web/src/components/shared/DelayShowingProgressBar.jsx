@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import { compose, lifecycle } from 'recompose'
+import CircularProgress from '@material-ui/core/CircularProgress'
 import LinearProgress from '@material-ui/core/LinearProgress'
 
 const DELAY = 500
@@ -64,3 +65,6 @@ const enhance = compose(
 )
 
 export default enhance(LinearProgress)
+
+const DelayShowingProgressCircular = enhance(CircularProgress)
+export { DelayShowingProgressCircular }

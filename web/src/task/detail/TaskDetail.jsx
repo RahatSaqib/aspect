@@ -8,7 +8,7 @@ import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
 import Helmet from 'react-helmet'
 import Card from '@material-ui/core/Card'
-import { Input } from 'react-toolbox/lib/input'
+import Input from '@material-ui/core/Input'
 import FaArrowUp from 'react-icons/lib/fa/arrow-up'
 
 import ButtonGroup from '../../components/themedReactToolbox/ButtonGroup'
@@ -55,10 +55,6 @@ const enhance = compose(
     },
   })
 )
-
-const INPUT_THEME = {
-  inputElement: cssClasses('Input__inputElement'),
-}
 
 export const TaskDetail = ({
   intl,
@@ -255,7 +251,15 @@ export const TaskDetail = ({
             </ol>
           </Unit>
           <Unit sm="1-1">
-            <Input theme={INPUT_THEME} multiline rows={6} defaultValue="  " />
+            <Input
+              multiline
+              rows={6}
+              defaultValue="  "
+              className={cssClasses('Input')}
+              inputProps={{
+                className: cssClasses('Input__inputElement'),
+              }}
+            />
           </Unit>
           <Unit sm="1-2">
             <AspectButton variant="contained">Add comment</AspectButton>

@@ -7,7 +7,7 @@ import { compose, withStateHandlers, withHandlers, lifecycle } from 'recompose'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Card from '@material-ui/core/Card'
-import { Input } from 'react-toolbox/lib/input'
+import TextField from '@material-ui/core/TextField'
 import Helmet from 'react-helmet'
 import DeviceDetailBackBar from '../DeviceDetailBackBar'
 import recomposeForm from '../../../components/recomposeForm'
@@ -153,7 +153,7 @@ const enhance = compose(
     fields: [
       {
         fieldName: 'adminPassword',
-        valueFromChangeEvent: _.identity,
+        valueFromChangeEvent: it => it.target.value,
       },
       {
         fieldName: 'siteId',
@@ -267,20 +267,26 @@ export const DeviceDetailEdit = ({
               value={deviceTags.toJS()}
             />
           </FormGroup>
-          <Input
+          <TextField
+            fullWidth
             type="text"
             name="hostId"
             disabled
             label={intl.formatMessage(messages.hostId)}
             value={device.get('hostId')}
-            maxLength={500}
+            margin="normal"
+            FormHelperTextProps={{
+              margin: 'dense',
+            }}
+            inputProps={{ maxLength: 500 }}
           />
           {device.hasIn([
             'deviceType',
             'configurationDataSchema',
             'adminPassword',
           ]) && (
-            <Input
+            <TextField
+              fullWidth
               type="text"
               name="adminPassword"
               label={intl.formatMessage(messages.adminPassword)}
@@ -288,7 +294,14 @@ export const DeviceDetailEdit = ({
               value={values.adminPassword}
               onChange={onAdminPasswordChange}
               error={meta.adminPassword.touched && meta.adminPassword.error}
-              maxLength={500}
+              helperText={
+                meta.adminPassword.touched && meta.adminPassword.error
+              }
+              margin="normal"
+              FormHelperTextProps={{
+                margin: 'dense',
+              }}
+              inputProps={{ maxLength: 500 }}
             />
           )}
           <SiteSelectField

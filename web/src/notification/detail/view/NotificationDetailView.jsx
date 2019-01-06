@@ -5,7 +5,7 @@ import React from 'react'
 import { withStateHandlers } from 'recompose'
 import Helmet from 'react-helmet'
 import Card from '@material-ui/core/Card'
-import { Input } from 'react-toolbox/lib/input'
+import TextField from '@material-ui/core/TextField'
 import MdRefresh from 'react-icons/lib/md/refresh'
 import TableBody from '@material-ui/core/TableBody'
 
@@ -28,10 +28,6 @@ const MockTogglBtn = withStateHandlers(
 )(AspectButton)
 
 const enhance = _.identity
-
-const INPUT_THEME = {
-  inputElement: cssClasses('Input__inputElement'),
-}
 
 const BUTTON_THEME = {
   primary: cssClasses('Button--primary'),
@@ -61,9 +57,13 @@ export const NotificationDetailView = ({
       <Card className={cssClasses('Card')}>
         <h2 className={cssClasses('Card__Title')}>Alerts title</h2>
         <div>
-          <Input
-            theme={INPUT_THEME}
+          <TextField
+            fullWidth
+            margin="normal"
             placeholder="TB MTB+ Rif+ in Western Region"
+            InputProps={{
+              className: cssClasses('Input__inputElement'),
+            }}
           />
         </div>
       </Card>
@@ -160,9 +160,13 @@ export const NotificationDetailView = ({
         </div>
         <hr />
         <div>
-          <Input
-            theme={INPUT_THEME}
+          <TextField
+            fullWidth
+            margin="normal"
             placeholder="TB MTB+ Rif+ in Western Region"
+            InputProps={{
+              className: cssClasses('Input__inputElement'),
+            }}
           />
         </div>
         <div>
@@ -220,7 +224,13 @@ export const NotificationDetailView = ({
           </Unit>
           <Unit sm="1-2" md="2-3" className={cssClasses('Recipients__Right')}>
             <div>
-              <Input theme={INPUT_THEME} defaultValue="Tag A" />
+              <TextField
+                margin="normal"
+                defaultValue="Tag A"
+                InputProps={{
+                  className: cssClasses('Input__inputElement'),
+                }}
+              />
             </div>
             <div>
               <MockTogglBtn
@@ -237,9 +247,11 @@ export const NotificationDetailView = ({
         <hr />
         <div>
           Include data reported up to{' '}
-          <Input
-            theme={INPUT_THEME}
+          <TextField
             className={cssClasses('Input--inline')}
+            InputProps={{
+              className: cssClasses('Input__inputElement'),
+            }}
             defaultValue="30"
           />{' '}
           days before
@@ -437,15 +449,23 @@ export const NotificationDetailView = ({
       <Card className={cssClasses('Card')}>
         <h2 className={cssClasses('Card__Title')}>Alerts title</h2>
         <div>
-          <Input
-            theme={INPUT_THEME}
+          <TextField
+            fullWidth
+            margin="normal"
             defaultValue="TB MTB+ Rif+ in Western Region"
+            InputProps={{
+              className: cssClasses('Input__inputElement'),
+            }}
           />
-          <Input
-            theme={INPUT_THEME}
+          <TextField
+            fullWidth
+            margin="normal"
             multiline
             rows={3}
             defaultValue="Hello [r"
+            InputProps={{
+              className: cssClasses('Input__inputElement'),
+            }}
           />
         </div>
       </Card>

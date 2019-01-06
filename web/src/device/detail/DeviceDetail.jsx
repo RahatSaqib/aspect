@@ -6,7 +6,7 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { Switch, Route } from 'react-router-dom'
 import isEditable from '../../shared/selectors/device'
-import DelayShowingProgressBar from '../../components/shared/DelayShowingProgressBar'
+import { DelayShowingProgressCircular } from '../../components/shared/DelayShowingProgressBar'
 import { fetchSingleDevice, updateSingleDevice } from '../DeviceRedux'
 import DeviceDetailProfile from './profile/DeviceDetailProfile'
 import DeviceDetailOperation from './operation/DeviceDetailOperation'
@@ -130,10 +130,9 @@ export const DeviceDetail = ({
       </Switch>
     )}
     {loading && (
-      <DelayShowingProgressBar
-        className={cssClasses('DelayShowingProgressBar')}
+      <DelayShowingProgressCircular
+        className={cssClasses('DelayShowingProgressCircular')}
         disabled={false}
-        type="circular"
         variant="indeterminate"
       />
     )}

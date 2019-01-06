@@ -8,7 +8,7 @@ import Card from '@material-ui/core/Card'
 
 import { Unit } from '../../components/pureGrids'
 import ColumnGraph from '../../components/graph/ColumnGraph'
-import DelayShowingProgressBar from '../../components/shared/DelayShowingProgressBar'
+import { DelayShowingProgressCircular } from '../../components/shared/DelayShowingProgressBar'
 import AspectButton from '../../components/shared/AspectButton'
 // import FiltersPanel from '../../filter/popover/FiltersPanel'
 import Title from '../status/Title'
@@ -92,12 +92,6 @@ const enhance = compose(
     }
   })
 )
-
-const themes = {
-  DelayShowingProgressBar: {
-    indeterminate: cssClasses('DelayShowingProgressBar--indeterminate'),
-  },
-}
 
 const SectionAbnormalCollection = ({
   intl,
@@ -298,11 +292,10 @@ export const OperationalData = ({
         onDataReportClick={onDataReportClick}
       />
     </div>
-    <DelayShowingProgressBar
+    <DelayShowingProgressCircular
       disabled={!loading}
-      type="circular"
       variant="indeterminate"
-      className={cssClasses('DelayShowingProgressBar--indeterminate')}
+      className={cssClasses('DelayShowingProgressCircular--indeterminate')}
     />
   </div>
 )

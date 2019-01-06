@@ -3,7 +3,7 @@ import React from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Button from '@material-ui/core/Button'
-import { Input } from 'react-toolbox/lib/input'
+import TextField from '@material-ui/core/TextField'
 import { compose, lifecycle, pure, withHandlers } from 'recompose'
 
 import { formatDate } from '../../../shared/utils/dateFormat'
@@ -14,13 +14,6 @@ import { showAcknowledgement } from '../../../appNotification/AppNotificationRed
 import { fetchActionDashboard } from '../../DashboardRedux'
 
 const cssClasses = classnames.bind(require('./ActionTableRow.css'))
-
-const themes = {
-  Input: {
-    input: cssClasses('Form__Input'),
-    inputElement: cssClasses('Form_InputElement'),
-  },
-}
 
 const UpdateStockLevelInput = compose(
   pure,
@@ -82,7 +75,7 @@ const UpdateStockLevelInput = compose(
     fields: [
       {
         fieldName: 'quantity',
-        valueFromChangeEvent: value => {
+        valueFromChangeEvent: ({ target: { value } }) => {
           if (/^\d+\.?\d*$/.test(value)) {
             return parseInt(value, 10)
           }
@@ -112,12 +105,19 @@ const UpdateStockLevelInput = compose(
             forceEdit ? messages.updateStockLevel : messages.stockLevel
           )}
         </span>
-        <Input
+        <TextField
           type="text"
           name="quantity"
           value={values.quantity}
           onChange={onQuantityChange}
-          theme={themes.Input}
+          margin="normal"
+          FormHelperTextProps={{
+            margin: 'dense',
+          }}
+          className={cssClasses('Form__Input')}
+          inputProps={{
+            className: cssClasses('Form_InputElement'),
+          }}
         />
         <Button
           variant="contained"
