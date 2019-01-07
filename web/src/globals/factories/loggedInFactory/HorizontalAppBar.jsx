@@ -4,13 +4,15 @@ import { compose, withHandlers } from 'recompose'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import AppBar from 'react-toolbox/lib/app_bar'
-import { IconMenu, MenuItem } from 'react-toolbox/lib/menu'
+import MenuItem from '@material-ui/core/MenuItem'
+
 import FaUser from 'react-icons/lib/fa/user'
 
 import ConfluenceIcon from './ConfluenceIcon'
 import LinkNavigation from './LinkNavigation'
 import { closeDrawer, userRequestedLogout } from '../../../auth/AuthRedux'
 import { isEnabledFeature } from '../../../components/shared/requirePermissions'
+import IconMenu from '../../../components/shared/IconMenu'
 
 const cssClasses = classnames.bind(require('./index.css'))
 
@@ -35,7 +37,6 @@ const themes = {
     appBar: cssClasses('AppBar__appBar', 'AppBar__appBar--sm'),
     leftIcon: cssClasses('AppBar__leftIcon'),
   },
-  IconMenu: { icon: cssClasses('IconMenu__icon') },
 }
 
 const HorizontalAppBar = ({
@@ -59,19 +60,13 @@ const HorizontalAppBar = ({
       type="horizontal"
       onClick={closeDrawer}
     />
-    <IconMenu
-      icon={<FaUser />}
-      theme={themes.IconMenu}
-      position="topRight"
-      menuRipple
-    >
+    <IconMenu icon={<FaUser className={cssClasses('IconMenu__icon')} />}>
       {isEnabledFeature(userFeatures, ['account']) && (
-        <MenuItem
-          caption="Account Details"
-          onClick={navigateCurrentAccountDetails}
-        />
+        <MenuItem onClick={navigateCurrentAccountDetails}>
+          Account Details
+        </MenuItem>
       )}
-      <MenuItem caption="Sign out" onClick={userRequestedLogout} />
+      <MenuItem onClick={userRequestedLogout}>Sign out</MenuItem>
     </IconMenu>
   </AppBar>
 )

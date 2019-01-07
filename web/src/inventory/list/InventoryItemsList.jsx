@@ -9,12 +9,14 @@ import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 import IconButton from '@material-ui/core/IconButton'
 import Tooltip from '@material-ui/core/Tooltip'
-import { IconMenu, MenuItem } from 'react-toolbox/lib/menu'
+import MenuItem from '@material-ui/core/MenuItem'
+import ListItemIcon from '@material-ui/core/ListItemIcon'
+import ListItemText from '@material-ui/core/ListItemText'
 import AddIcon from '@material-ui/icons/Add'
-import MdTransfer from 'react-icons/lib/md/swap-horiz'
-import MdRemove from 'react-icons/lib/md/remove'
-import MdDone from 'react-icons/lib/md/done'
-import MdMoreVert from 'react-icons/lib/md/more-vert'
+import TransferIcon from '@material-ui/icons/SwapHoriz'
+import RemoveIcon from '@material-ui/icons/Remove'
+import DoneIcon from '@material-ui/icons/Done'
+import MoreVertIcon from '@material-ui/icons/MoreVert'
 import TableBody from '@material-ui/core/TableBody'
 
 import {
@@ -27,6 +29,7 @@ import {
   reduceFiltersConfig,
 } from '../../filter/utils'
 import CheckboxField from '../../components/shared/CheckboxField'
+import IconMenu from '../../components/shared/IconMenu'
 import NavTitle from '../../globals/components/NavTitle'
 import BrowseFilters from '../../globals/components/BrowseFilters'
 import BrowseEmptyList from '../../globals/components/BrowseEmptyList'
@@ -308,9 +311,6 @@ const enhance = compose(
   })
 )
 
-const makeOnInventoryItemActionSelect = inventoryItemId => showDialogFn =>
-  showDialogFn(inventoryItemId)
-
 export const InventoryItemsList = ({
   intl,
   history,
@@ -372,10 +372,7 @@ export const InventoryItemsList = ({
         <BrowseEmptyList history={history} location={location} intl={intl} />
       )}
       {!items.currentIdList.isEmpty() && (
-        <InventoryDataTable
-          selectable={false}
-          className={cssClasses('InventoryDataTable')}
-        >
+        <InventoryDataTable className={cssClasses('InventoryDataTable')}>
           <InventoryDataTableHead
             history={history}
             location={location}
@@ -422,41 +419,67 @@ export const InventoryItemsList = ({
                   intl={intl}
                   inventoryItem={inventoryItem}
                 >
-                  <IconMenu
-                    icon={<MdMoreVert />}
-                    position="topRight"
-                    onSelect={makeOnInventoryItemActionSelect(
-                      inventoryItem.get('id')
-                    )}
-                  >
+                  <IconMenu icon={<MoreVertIcon />}>
                     {inventoryItem.get('inTransitFromSiteId') && (
                       <MenuItem
-                        value={showReceiveInventoryDialog}
-                        icon={<MdDone />}
-                        caption={intl.formatMessage(messages.receiveInventory)}
-                      />
+                        value={inventoryItem.get('id')}
+                        onClick={showReceiveInventoryDialog}
+                      >
+                        <ListItemIcon>
+                          <DoneIcon />
+                        </ListItemIcon>
+                        <ListItemText
+                          inset
+                          primary={intl.formatMessage(
+                            messages.receiveInventory
+                          )}
+                        />
+                      </MenuItem>
                     )}
                     {!inventoryItem.get('inTransitFromSiteId') && (
                       <MenuItem
-                        value={showAddInventoryDialog}
-                        icon={<AddIcon />}
-                        caption={intl.formatMessage(messages.addInventory)}
-                      />
+                        value={inventoryItem.get('id')}
+                        onClick={showAddInventoryDialog}
+                      >
+                        <ListItemIcon>
+                          <AddIcon />
+                        </ListItemIcon>
+                        <ListItemText
+                          inset
+                          primary={intl.formatMessage(messages.addInventory)}
+                        />
+                      </MenuItem>
                     )}
 
                     {!inventoryItem.get('inTransitFromSiteId') && (
                       <MenuItem
-                        value={showTransferInventoryDialog}
-                        icon={<MdTransfer />}
-                        caption={intl.formatMessage(messages.transferInventory)}
-                      />
+                        value={inventoryItem.get('id')}
+                        onClick={showTransferInventoryDialog}
+                      >
+                        <ListItemIcon>
+                          <TransferIcon />
+                        </ListItemIcon>
+                        <ListItemText
+                          inset
+                          primary={intl.formatMessage(
+                            messages.transferInventory
+                          )}
+                        />
+                      </MenuItem>
                     )}
                     {!inventoryItem.get('inTransitFromSiteId') && (
                       <MenuItem
-                        value={showRemoveInventoryDialog}
-                        icon={<MdRemove />}
-                        caption={intl.formatMessage(messages.removeInventory)}
-                      />
+                        value={inventoryItem.get('id')}
+                        onClick={showRemoveInventoryDialog}
+                      >
+                        <ListItemIcon>
+                          <RemoveIcon />
+                        </ListItemIcon>
+                        <ListItemText
+                          inset
+                          primary={intl.formatMessage(messages.removeInventory)}
+                        />
+                      </MenuItem>
                     )}
                   </IconMenu>
                 </InventoryDataTableRow>
