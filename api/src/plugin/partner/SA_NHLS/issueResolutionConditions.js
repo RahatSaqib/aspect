@@ -36,82 +36,59 @@ async function shouldResolveNewResultAlert(knex, issue) {
 }
 
 async function shouldResolveResultDataEnteredIssue(knex, issue) {
-  const { resultId, partnerId } = issue
-
-  if (resultId) {
-    const { id: resultDataEnteredNotificationTypeId } = await knex(
-      'NotificationType'
+  // If patient details have been captured for a result,
+  // the result is NEGATIVE
+  // and the result has been sent to RedCAP
+  // then the 'ResultDataEnteredIssue' issue is resolved
+  const { id, level, partnerId } = issue
+  const sentRedCAPNotification = await knex('Issue as i')
+    .join('Result as r', 'i.resultId', 'r.id')
+    .leftJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
+    .leftJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
+    .join('Notification as n', 'i.id', 'n.issueId')
+    .join('NotificationType as nt', 'n.notificationTypeId', 'nt.id')
+    .join('WebhookMessage as wm', 'n.webhookMessageId', 'wm.id')
+    .join('WebhookTemplate as wt', 'wm.webhookTemplateId', 'wt.id')
+    .join('MessageStatus as ms', 'wm.messageStatusId', 'ms.id')
+    .where('i.id', id)
+    .andWhere('nt.partnerId', partnerId)
+    .andWhere('wt.externalId', 'redCapAlereQ')
+    .andWhere('ms.externalId', 'Sent')
+    .first(
+      'rc1.externalId as resultCategory1',
+      'rc2.externalId as resultCategory2'
     )
-      .where({ partnerId, name: 'Result Data Entered' })
-      .first('id')
-    const { id: positiveResultDataEnteredNotificationTypeId } = await knex(
-      'NotificationType'
-    )
-      .where({ partnerId, name: 'Positive Result Data Entered' })
-      .first('id')
-    const result = await knex('Result as r')
-      .join('Issue as i', 'r.id', 'i.resultId')
-      .join('IssueType as it', 'i.issueTypeId', 'it.id')
-      .leftJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
-      .leftJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
-      .leftJoin('Notification as redCapN', function() {
-        this.on('i.id', 'redCapN.issueId').andOn(
-          'redCapN.notificationTypeId',
-          knex.raw(resultDataEnteredNotificationTypeId)
-        )
-      })
-      .leftJoin(
-        'WebhookMessage as redCapWhm',
-        'redCapN.webhookMessageId',
-        'redCapWhm.id'
-      )
-      .leftJoin(
-        'MessageStatus as redCapMs',
-        'redCapWhm.messageStatusId',
-        'redCapMs.id'
-      )
-      .leftJoin('Notification as posSmsN', function() {
-        this.on('i.id', 'posSmsN.issueId').andOn(
-          'posSmsN.notificationTypeId',
-          knex.raw(positiveResultDataEnteredNotificationTypeId)
-        )
-      })
-      .leftJoin('SmsMessage as posSmsM', 'posSmsN.smsMessageId', 'posSmsM.id')
-      .leftJoin(
-        'MessageStatus as posSmsMs',
-        'posSmsM.messageStatusId',
-        'posSmsMs.id'
-      )
-      .where({
-        'r.id': resultId,
-        'it.externalId': 'ResultDataEntered',
-      })
-      .first(
-        'rc1.externalId as resultCategory1',
-        'rc2.externalId as resultCategory2',
-        'i.level',
-        'redCapMs.externalId as redCapWebhookMessageStatus',
-        'posSmsMs.externalId as resultPositiveSmsMessageStatus'
-      )
-
-    if (result) {
-      const positiveResultCategories = [
-        'Detected',
-        'Trace Detected',
-        'LessThan1000',
-        'MoreThan1000',
-      ]
-      const resultPositive =
-        positiveResultCategories.includes(result.resultCategory1) ||
-        positiveResultCategories.includes(result.resultCategory2)
-      if (
-        resultPositive &&
-        result.resultPositiveSmsMessageStatus === 'Sent' &&
-        result.level === 2
-      ) {
-        return true
-      }
-      if (result.redCapWebhookMessageStatus === 'Sent') {
+  if (!_.isNil(sentRedCAPNotification)) {
+    const positiveResultCategories = [
+      'Detected',
+      'Trace Detected',
+      'LessThan1000',
+      'MoreThan1000',
+    ]
+    const resultNegative =
+      !positiveResultCategories.includes(
+        sentRedCAPNotification.resultCategory1
+      ) &&
+      !positiveResultCategories.includes(sentRedCAPNotification.resultCategory2)
+    if (resultNegative) {
+      return true
+    }
+    // If the result is POSITIVE,
+    // the result has been sent to RedCAP
+    // The issue has been escalated above level 1,
+    // and all Positive SMS notifications have been sent
+    // then the 'ResultDataEnteredIssue' issue is resolved
+    if (level > 1) {
+      const firstUnsentPositiveSmsNotification = await knex('Issue as i')
+        .join('Notification as n', 'i.id', 'n.issueId')
+        .join('NotificationType as nt', 'n.notificationTypeId', 'nt.id')
+        .join('SmsMessage as sm', 'n.smsMessageId', 'sm.id')
+        .join('MessageStatus as ms', 'sm.messageStatusId', 'ms.id')
+        .where('i.id', id)
+        .andWhere('nt.partnerId', partnerId)
+        .andWhere('ms.externalId', '<>', 'Sent')
+        .first('sm.id')
+      if (_.isNil(firstUnsentPositiveSmsNotification)) {
         return true
       }
     }
