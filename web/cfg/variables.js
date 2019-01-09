@@ -36,6 +36,8 @@ exports.customPropertiesVariables = {
   '--aspect-font-size-sm': '14px',
   '--aspect-font-size-md': '16px',
   '--aspect-font-size-lg': '24px',
+
+  '--aspect-button-border-radius': '3px',
 }
 
 exports.definePluginVariables = _.transform(

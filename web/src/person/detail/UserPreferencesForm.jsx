@@ -1,9 +1,9 @@
-import _ from 'lodash'
 import classnames from 'classnames/bind'
 import React from 'react'
 import { compose, lifecycle, pure } from 'recompose'
-import { Dropdown } from 'react-toolbox/lib/dropdown'
 import Button from '@material-ui/core/Button'
+import MenuItem from '@material-ui/core/MenuItem'
+import TextField from '@material-ui/core/TextField'
 
 import recomposeForm from '../../components/recomposeForm'
 import FlagIcon from '../../components/shared/flagIcon/FlagIcon'
@@ -41,11 +41,11 @@ const enhance = compose(
     fields: [
       {
         fieldName: 'timezone',
-        valueFromChangeEvent: _.identity,
+        valueFromChangeEvent: it => it.target.value,
       },
       {
         fieldName: 'culture',
-        valueFromChangeEvent: _.identity,
+        valueFromChangeEvent: it => it.target.value,
       },
     ],
     validate() {
@@ -66,37 +66,47 @@ export const UserPreferencesForm = ({
 }) => (
   <form onSubmit={handleSubmit} className={cssClasses('Form')}>
     <div className={cssClasses('Form__Content')}>
-      <Dropdown
+      <TextField
+        select
+        fullWidth
+        id="timezone"
         name="timezone"
         label={intl.formatMessage(messages.timezone)}
         disabled={loading || form.submitting}
         onChange={onTimezoneChange}
-        labelKey="name"
-        valueKey="id"
-        source={timezones}
         value={values.timezone}
-      />
-      <Dropdown
+        margin="normal"
+        InputLabelProps={{ shrink: true }}
+      >
+        {timezones.map(item => (
+          <MenuItem value={item.id}>{item.name}</MenuItem>
+        ))}
+      </TextField>
+
+      <TextField
+        select
+        fullWidth
+        id="culture"
         name="culture"
         label={intl.formatMessage(messages.language)}
         disabled={loading || form.submitting}
         onChange={onCultureChange}
-        template={({
-          language_name: name,
-          iso_alpha2_code: countryIsoAlpha2Code,
-        }) => (
-          <span>
-            <FlagIcon
-              withRightMargin
-              countryIsoAlpha2Code={countryIsoAlpha2Code}
-            />
-            {name}
-          </span>
-        )}
-        valueKey="culture"
-        source={languages}
         value={values.culture}
-      />
+        margin="normal"
+        InputLabelProps={{ shrink: true }}
+      >
+        {languages.map(item => (
+          <MenuItem value={item.culture}>
+            <span>
+              <FlagIcon
+                withRightMargin
+                countryIsoAlpha2Code={item.iso_alpha2_code}
+              />
+              {item.language_name}
+            </span>
+          </MenuItem>
+        ))}
+      </TextField>
     </div>
     <div className={cssClasses('Form__ActionRow')}>
       <Button

@@ -5,7 +5,7 @@ import { compose, lifecycle, withHandlers, withProps } from 'recompose'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { defineMessages } from 'react-intl'
-import StyledDropdown from '../../components/themedReactToolbox/StyledDropdown'
+import StyledDropdown from '../../components/shared/StyledDropdown'
 import { fetchSitesForSelectList } from '../../site/SiteRedux'
 import { mergeToFiltersParams } from '../../filter/utils'
 import requirePermissions from '../../components/shared/requirePermissions'
@@ -37,7 +37,7 @@ const enhance = compose(
     },
   }),
   withHandlers({
-    onChange: ({ history, location }) => value => {
+    onChange: ({ history, location }) => ({ target: { value } }) => {
       const searchParams = new URLSearchParams(location.search)
       const filtersParams = mergeToFiltersParams(
         { siteId: value },

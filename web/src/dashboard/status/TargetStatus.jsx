@@ -23,7 +23,7 @@ import { fetchTargetDashboard } from '../DashboardRedux'
 import Title from './Title'
 import Icon from '../../components/shared/icon/Icon'
 import TemperatureGauge from '../../components/graph/TemperatureGauge'
-import StyledDropdown from '../../components/themedReactToolbox/StyledDropdown'
+import StyledDropdown from '../../components/shared/StyledDropdown'
 import { mergeToFiltersParams } from '../../filter/utils'
 import requirePermissions from '../../components/shared/requirePermissions'
 
@@ -144,7 +144,9 @@ const enhance = compose(
       )
       fetchTargetDashboard(filtersParams)
     },
-    onDateRangeClick: ({ history, location, dateRangeList }) => dateRange => {
+    onDateRangeClick: ({ history, location, dateRangeList }) => ({
+      target: { value: dateRange },
+    }) => {
       const selectedValue = _fp.find(
         {
           value: dateRange,

@@ -1,6 +1,6 @@
 import { compose, mapProps, defaultProps } from 'recompose'
 
-import StyledDropdown from '../../components/themedReactToolbox/StyledDropdown'
+import StyledDropdown from '../../components/shared/StyledDropdown'
 
 const navigations = [
   { value: '/browse/device', label: 'Devices' },
@@ -18,7 +18,7 @@ const navigations = [
 const enhance = compose(
   mapProps(({ history, location, ...restProps }) => ({
     ...restProps,
-    onChange: value => {
+    onChange: ({ target: { value } }) => {
       const searchParams = new URLSearchParams()
       searchParams.set(
         'filters',

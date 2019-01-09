@@ -18,7 +18,7 @@ import {
 import { sanitizeFiltersStringBy } from '../../filter/utils'
 // import FiltersPanel from '../../filter/popover/FiltersPanel'
 import ButtonGroup from '../../components/themedReactToolbox/ButtonGroup'
-import StyledDropdown from '../../components/themedReactToolbox/StyledDropdown'
+import StyledDropdown from '../../components/shared/StyledDropdown'
 import BrowseEmptyList from '../../globals/components/BrowseEmptyList'
 import BrowseTablePaginator from '../../globals/components/BrowseTablePaginator'
 import DataTableCard from '../../components/shared/DataTableCard'
@@ -129,7 +129,9 @@ const enhance = compose(
       })
     },
 
-    onTopicChange: ({ history, location }) => topic => {
+    onTopicChange: ({ history, location }) => ({
+      target: { value: topic },
+    }) => {
       const searchParams = new URLSearchParams(location.search)
       const filtersParams = new URLSearchParams(
         searchParams.get('filters') || ''

@@ -8,7 +8,7 @@ import Button from '@material-ui/core/Button'
 
 import FormGroup from '../../components/themedReactToolbox/FormGroup'
 import CustomField from './CustomField'
-import StyledDropdown from '../../components/themedReactToolbox/StyledDropdown'
+import StyledDropdown from '../../components/shared/StyledDropdown'
 import FocusBlurTextField from '../../components/shared/FocusBlurTextField'
 import DateTimeInput from '../../components/shared/DateTimeInput'
 

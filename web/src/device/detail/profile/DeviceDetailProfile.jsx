@@ -19,7 +19,7 @@ import {
   composeSanitizer,
 } from '../../../shared/selectors/searchParams'
 import { sanitizeFiltersStringBy } from '../../../filter/utils'
-import StyledDropdown from '../../../components/themedReactToolbox/StyledDropdown'
+import StyledDropdown from '../../../components/shared/StyledDropdown'
 import { Unit } from '../../../components/pureGrids'
 import DataTableProgressBar from '../../../components/shared/DataTableProgressBar'
 import BrowseTablePaginator from '../../../globals/components/BrowseTablePaginator'

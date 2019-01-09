@@ -42,7 +42,9 @@ const enhance = compose(
       fetchSingleDevice(match.params.deviceId, searchParams)
     },
 
-    onDateRangeChange: ({ history, location }) => dateRange => {
+    onDateRangeChange: ({ history, location }) => ({
+      target: { value: dateRange },
+    }) => {
       const searchParams = new URLSearchParams(location.search)
       searchParams.set('dateRange', dateRange)
 

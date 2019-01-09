@@ -49,7 +49,9 @@ const enhance = compose(
     }
   }),
   withHandlers({
-    onDialCodeChange: ({ onChange, numberPart }) => dialCode => {
+    onDialCodeChange: ({ onChange, numberPart }) => ({
+      dial_code: dialCode,
+    }) => {
       onChange(`${dialCode} ${numberPart}`.trim())
     },
 
@@ -70,12 +72,6 @@ const enhance = compose(
   })
 )
 
-const themes = {
-  DialCodeDropdown: {
-    dropdown: cssClasses('DialCodeDropdown__dropdown'),
-  },
-}
-
 const DialCodeDropdownInput = ({
   dialCode,
   numberPart,
@@ -87,7 +83,7 @@ const DialCodeDropdownInput = ({
     <DialCodeDropdown
       value={dialCode}
       onChange={onDialCodeChange}
-      theme={themes.DialCodeDropdown}
+      className={cssClasses('DialCodeDropdown__dropdown')}
     />
     <TextField
       fullWidth

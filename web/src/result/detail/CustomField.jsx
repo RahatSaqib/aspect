@@ -8,7 +8,7 @@ import FormGroup from '../../components/themedReactToolbox/FormGroup'
 import ButtonGroup from '../../components/themedReactToolbox/ButtonGroup'
 import AspectButton from '../../components/shared/AspectButton'
 import TextField from '../../components/shared/TextField'
-import StyledDropdown from '../../components/themedReactToolbox/StyledDropdown'
+import StyledDropdown from '../../components/shared/StyledDropdown'
 
 const cssClasses = classnames.bind(require('./CustomField.css'))
 
@@ -92,6 +92,10 @@ export default class CustomField extends PureComponent {
     this.onUpdateData(value || '')
   }
 
+  onDropdownChangeValue = ({ target: { value } }) => {
+    this.onUpdateData(value || '')
+  }
+
   onUpdateData = value => {
     const { resultId, formFieldKey, updateFormData } = this.props
     updateFormData(resultId, formFieldKey, value)
@@ -170,6 +174,7 @@ export default class CustomField extends PureComponent {
           key={formFieldKey}
         >
           <StyledDropdown
+            fullWidth
             className={cssClasses('DropDown')}
             source={fieldSchema
               .getIn(['control', 'options'])
@@ -179,7 +184,7 @@ export default class CustomField extends PureComponent {
               }))
               .toJS()}
             value={fieldValue}
-            onChange={this.onUpdateData}
+            onChange={this.onDropdownChangeValue}
           />
         </FormGroup>
       )
