@@ -1,6 +1,0 @@
-@import '../../globals/variables.css';
-
-.dialog {
-  composes: dialog from 'react-toolbox/lib/dialog/theme.module.css'; /* dependency */
-  z-index: var(--z-index-dialog);
-}

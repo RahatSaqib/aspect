@@ -1,4 +1,5 @@
 import React from 'react'
+import _ from 'lodash'
 import Select from '@material-ui/core/Select'
 import MenuItem from '@material-ui/core/MenuItem'
 import Input from '@material-ui/core/Input'
@@ -54,12 +55,16 @@ const styles = theme => ({
 export const Dropdown = ({ classes, source, ...props }) => (
   <Select
     input={<Input disableUnderline />}
-    classes={{ ...classes }}
+    classes={{ ..._.omit(classes, 'menu') }}
     MenuProps={{ classes: { paper: classes.menu } }}
     {...props}
   >
     {source &&
-      source.map(item => <MenuItem value={item.value}>{item.label}</MenuItem>)}
+      source.map(item => (
+        <MenuItem key={item.value} value={item.value}>
+          {item.label}
+        </MenuItem>
+      ))}
   </Select>
 )
 
