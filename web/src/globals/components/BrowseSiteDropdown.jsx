@@ -86,7 +86,7 @@ const SiteDropdown = ({ isSingleSite, source, ...restProps }) =>
   (isSingleSite ? (
     <div className={cssClasses('SiteDropdown__Label')}>{source[1].label}</div>
   ) : (
-    <StyledDropdown source={source} {...restProps} />
+    <StyledDropdown displayEmpty source={source} {...restProps} />
   ))
 
 export default enhance(SiteDropdown)

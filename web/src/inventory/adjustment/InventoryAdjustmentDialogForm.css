@@ -1,4 +1,9 @@
+@import '../../globals/variables.css';
+
 .Field__quantity--status {
   display: flex;
   justify-content: space-between;
+  margin: -16px 0 20px 0;
+  color: var(--aspect-color-grey-3);
+  font-size: var(--aspect-font-size-sm);
 }

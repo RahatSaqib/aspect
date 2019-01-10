@@ -3,8 +3,8 @@ import React from 'react'
 import { compose, lifecycle, withHandlers, pure } from 'recompose'
 import Button from '@material-ui/core/Button'
 import TextField from '@material-ui/core/TextField'
-import { Dialog } from 'react-toolbox/lib/dialog'
 
+import Dialog from '../../components/shared/Dialog'
 import StrongPasswordInput from '../../components/shared/StrongPasswordInput'
 import recomposeForm from '../../components/recomposeForm'
 import messages from './messages'
@@ -192,20 +192,24 @@ export const LoginDetailsForm = ({
     </div>
     <Dialog
       actions={[
-        {
-          label: intl.formatMessage(messages.cancelCurrentPassword),
-          onClick: closeCurrentPasswordInputDialog,
-          disabled: loading,
-        },
-        {
-          label: intl.formatMessage(messages.submitCurrentPassword),
-          onClick: handleSubmit,
-          disabled: loading || form.pristine || !form.valid || form.submitting,
-        },
+        <Button
+          color="primary"
+          disabled={loading}
+          onClick={closeCurrentPasswordInputDialog}
+        >
+          {intl.formatMessage(messages.cancelCurrentPassword)}
+        </Button>,
+        <Button
+          color="primary"
+          disabled={loading || form.pristine || !form.valid || form.submitting}
+          onClick={handleSubmit}
+        >
+          intl.formatMessage(messages.submitCurrentPassword)}
+        </Button>,
       ]}
-      active={currentPasswordInputDialogOpen || false}
-      onEscKeyDown={closeCurrentPasswordInputDialog}
-      onOverlayClick={closeCurrentPasswordInputDialog}
+      open={currentPasswordInputDialogOpen || false}
+      onEscapeKeyDown={closeCurrentPasswordInputDialog}
+      onClose={closeCurrentPasswordInputDialog}
       title={intl.formatMessage(messages.currentPasswordDialogHeader)}
     >
       <p>{intl.formatMessage(messages.currentPasswordDialogMessage)}</p>

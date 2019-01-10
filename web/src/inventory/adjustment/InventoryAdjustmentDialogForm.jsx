@@ -6,15 +6,17 @@ import React from 'react'
 import { withProps } from 'recompose'
 import { connect } from 'react-redux'
 import { defineMessages } from 'react-intl'
-import { Dialog } from 'react-toolbox/lib/dialog'
+import Button from '@material-ui/core/Button'
 import TextField from '@material-ui/core/TextField'
-import { DatePicker } from 'react-toolbox/lib/date_picker'
+import { DatePicker } from 'material-ui-pickers'
 
+import Dialog from '../../components/shared/Dialog'
 import SiteSelectField from '../../filter/resource/SiteSelectField'
 import ConsumableSelectField from '../../filter/resource/ConsumableSelectField'
 import ConsumableReasonSelectField, {
   testConductedReasonI18nKey,
 } from '../../filter/resource/ConsumableReasonSelectField'
+import { formatDate } from '../../shared/utils/dateFormat'
 
 const cssClasses = classnames.bind(
   require('./InventoryAdjustmentDialogForm.css')
@@ -65,7 +67,7 @@ export const SHARED_DEFAULT_VALUES = {
 export const sharedFields = {
   lotNumber: {
     fieldName: 'lotNumber',
-    valueFromChangeEvent: _.identity,
+    valueFromChangeEvent: it => it.target.value,
   },
   canExpire: {
     fieldName: 'canExpire',
@@ -77,7 +79,7 @@ export const sharedFields = {
   },
   quantity: {
     fieldName: 'quantity',
-    valueFromChangeEvent: value => {
+    valueFromChangeEvent: ({ target: { value } }) => {
       if (/^\d+\.?\d*$/.test(value)) {
         return parseInt(value, 10)
       }
@@ -90,7 +92,7 @@ export const sharedFields = {
   },
   notes: {
     fieldName: 'notes',
-    valueFromChangeEvent: _.identity,
+    valueFromChangeEvent: it => it.target.value,
   },
   // Partial:
   toSiteId: {
@@ -190,18 +192,22 @@ export const InventoryAdjustmentDialogForm = ({
 }) => (
   <Dialog
     actions={[
-      { label: intl.formatMessage(messages.cancel), onClick: onCancel },
-      {
-        accent: true,
-        raised: true,
-        label: intl.formatMessage(messages.submit),
-        onClick: handleSubmit,
-        disabled: form.pristine || !form.valid || form.submitting,
-      },
+      <Button color="primary" onClick={onCancel}>
+        {intl.formatMessage(messages.cancel)}
+      </Button>,
+      <Button
+        color="primary"
+        variant="contained"
+        disabled={form.pristine || !form.valid || form.submitting}
+        onClick={handleSubmit}
+      >
+        {intl.formatMessage(messages.submit)}
+      </Button>,
     ]}
-    active={isDialogActive}
-    onEscKeyDown={onCancel}
-    onOverlayClick={onCancel}
+    maxWidth="sm"
+    open={isDialogActive}
+    onEscapeKeyDown={onCancel}
+    onClose={onCancel}
     title={labels.dialogTitle}
   >
     <form className={cssClasses('Form')}>
@@ -240,16 +246,19 @@ export const InventoryAdjustmentDialogForm = ({
           />
           {values.canExpire && (
             <DatePicker
+              autoOk
+              fullWidth
               name="expiresOn"
               label={intl.formatMessage(messages.expiryDate)}
               disabled={form.submitting}
+              labelFunc={formatDate}
+              margin="normal"
               // container="inline"
               // mode="landscape"
               // autoOk
               // style={formFieldStyle}
               onChange={onExpiresOnChange}
               value={values.expiresOn}
-              sundayFirstDayOfWeek
             />
           )}
         </section>
@@ -328,6 +337,7 @@ export const InventoryAdjustmentDialogForm = ({
               value={values.reasonId}
               onConsumableReasonIdChange={onReasonIdChange}
               errorText={meta.reasonId.touched && meta.reasonId.error}
+              margin="normal"
               fullWidth
             />
           </section>
@@ -336,44 +346,51 @@ export const InventoryAdjustmentDialogForm = ({
           consumableReason.get('i18nKey') === testConductedReasonI18nKey && (
             <section>
               <DatePicker
+                autoOk
+                fullWidth
                 name="dateAdjustedFrom"
                 label={intl.formatMessage(messages.testsRunBetween)}
                 disabled={form.submitting}
+                labelFunc={formatDate}
+                margin="normal"
                 // container="inline"
                 // mode="landscape"
                 // style={formFieldStyle}
                 value={values.dateAdjustedFrom}
                 onChange={onDateAdjustedFromChange}
-                autoOk
-                sundayFirstDayOfWeek
               />
+
               <DatePicker
+                autoOk
+                fullWidth
                 name="dateAdjustedTo"
                 label={intl.formatMessage(messages.and)}
                 disabled={form.submitting}
+                labelFunc={formatDate}
+                margin="normal"
                 // container="inline"
                 // mode="landscape"
                 // style={formFieldStyle}
                 value={values.dateAdjustedTo}
                 onChange={onDateAdjustedToChange}
-                autoOk
-                sundayFirstDayOfWeek
               />
             </section>
           )}
         {_.has(values, 'dateAdjusted') && (
           <section>
             <DatePicker
+              autoOk
+              fullWidth
               name="dateAdjusted"
               label={labels.dateAdjusted}
               disabled={form.submitting}
+              labelFunc={formatDate}
+              margin="normal"
               // container="inline"
               // mode="landscape"
               // style={formFieldStyle}
               value={values.dateAdjusted}
               onChange={onDateAdjustedChange}
-              autoOk
-              sundayFirstDayOfWeek
             />
           </section>
         )}

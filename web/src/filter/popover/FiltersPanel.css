@@ -44,6 +44,10 @@
   transform: rotate(180deg);
 }
 
+.Modal {
+  z-index: var(--z-index-overlay);
+}
+
 .Popover {
   will-change: transform;
   position: absolute;
