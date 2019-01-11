@@ -6,7 +6,6 @@ import { compose, pure, withProps } from 'recompose'
 import { Card } from 'react-toolbox/lib/card'
 import { Button } from 'react-toolbox/lib/button'
 import subtractDays from 'date-fns/subDays'
-import startOfYear from 'date-fns/startOfYear'
 import formatDate from 'date-fns/format'
 import config from '../../config'
 import { getAspectAccess } from '../../globals/sideEffects/LocalStorage'
@@ -32,7 +31,10 @@ const enhance = compose(
     const now = new Date()
     const last7Days = formatDate(subtractDays(now, 7), 'YYYY-MM-DD')
     const last30Days = formatDate(subtractDays(now, 30), 'YYYY-MM-DD')
-    const beginningOfYear = formatDate(startOfYear(now), 'YYYY-MM-DD')
+    const beginningOfYear = `${now.getFullYear()}-01-01`
+    const endOfYear = `${now.getFullYear()}-12-31`
+    const beginningOfLastYear = `${now.getFullYear() - 1}-01-01`
+    const endOfLastYear = `${now.getFullYear() - 1}-12-31`
     return {
       showHigherLevel: _.isEmpty(filtersParams.get('siteId')),
       token: getAspectAccess(),
@@ -40,6 +42,9 @@ const enhance = compose(
       last7Days,
       last30Days,
       beginningOfYear,
+      endOfYear,
+      beginningOfLastYear,
+      endOfLastYear,
     }
   })
 )
@@ -51,6 +56,9 @@ export const Reports = ({
   last7Days,
   last30Days,
   beginningOfYear,
+  endOfYear,
+  beginningOfLastYear,
+  endOfLastYear,
   // --- injected by recompose ---
   showHigherLevel,
   userFeatures,
@@ -152,9 +160,18 @@ export const Reports = ({
             inverse
             href={`${
               config.aspectApi
-            }/report/gx/QuarterlyReportExcel.xlsx?dateFrom=${beginningOfYear}&token=${token}`}
+            }/report/gx/QuarterlyReportExcel.xlsx?dateFrom=${beginningOfLastYear}&dateTo=${endOfLastYear}&token=${token}`}
           >
-            Quarterly Report
+            {`Quarterly Report ${new Date().getFullYear() - 1}`}
+          </Button>
+          <Button
+            className={cssClasses('ReportsContainer__Button')}
+            inverse
+            href={`${
+              config.aspectApi
+            }/report/gx/QuarterlyReportExcel.xlsx?dateFrom=${beginningOfYear}&dateTo=${endOfYear}&token=${token}`}
+          >
+            {`Quarterly Report ${new Date().getFullYear()}`}
           </Button>
         </div>
       </Card>
@@ -186,9 +203,18 @@ export const Reports = ({
           inverse
           href={`${
             config.aspectApi
-          }/report/gx/QuarterlyReportExcel.xlsx?dateFrom=${beginningOfYear}&siteId=${siteId}&token=${token}`}
+          }/report/gx/QuarterlyReportExcel.xlsx?dateFrom=${beginningOfLastYear}&dateTo=${endOfLastYear}&siteId=${siteId}&token=${token}`}
         >
-          Quarterly Report
+          {`Quarterly Report ${new Date().getFullYear() - 1}`}
+        </Button>
+        <Button
+          className={cssClasses('ReportsContainer__Button')}
+          inverse
+          href={`${
+            config.aspectApi
+          }/report/gx/QuarterlyReportExcel.xlsx?dateFrom=${beginningOfYear}&dateTo=${endOfYear}&siteId=${siteId}&token=${token}`}
+        >
+          {`Quarterly Report ${new Date().getFullYear()}`}
         </Button>
       </div>
     </Card>
