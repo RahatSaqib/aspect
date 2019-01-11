@@ -6,6 +6,9 @@ import { compose, pure, withProps } from 'recompose'
 import { Card } from 'react-toolbox/lib/card'
 import { Button } from 'react-toolbox/lib/button'
 import subtractDays from 'date-fns/subDays'
+import subtractYears from 'date-fns/subYears'
+import endOfYear from 'date-fns/endOfYear'
+import startOfYear from 'date-fns/startOfYear'
 import formatDate from 'date-fns/format'
 import config from '../../config'
 import { getAspectAccess } from '../../globals/sideEffects/LocalStorage'
@@ -31,18 +34,24 @@ const enhance = compose(
     const now = new Date()
     const last7Days = formatDate(subtractDays(now, 7), 'YYYY-MM-DD')
     const last30Days = formatDate(subtractDays(now, 30), 'YYYY-MM-DD')
-    const beginningOfYear = `${now.getFullYear()}-01-01`
-    const endOfYear = `${now.getFullYear()}-12-31`
-    const beginningOfLastYear = `${now.getFullYear() - 1}-01-01`
-    const endOfLastYear = `${now.getFullYear() - 1}-12-31`
+    const beginningOfThisYear = formatDate(startOfYear(now), 'YYYY-MM-DD')
+    const endOfThisYear = formatDate(endOfYear(now), 'YYYY-MM-DD')
+    const beginningOfLastYear = formatDate(
+      startOfYear(subtractYears(now, 1)),
+      'YYYY-MM-DD'
+    )
+    const endOfLastYear = formatDate(
+      endOfYear(subtractYears(now, 1)),
+      'YYYY-MM-DD'
+    )
     return {
       showHigherLevel: _.isEmpty(filtersParams.get('siteId')),
       token: getAspectAccess(),
       siteId: filtersParams.get('siteId'),
       last7Days,
       last30Days,
-      beginningOfYear,
-      endOfYear,
+      beginningOfThisYear,
+      endOfThisYear,
       beginningOfLastYear,
       endOfLastYear,
     }
@@ -55,8 +64,8 @@ export const Reports = ({
   siteId,
   last7Days,
   last30Days,
-  beginningOfYear,
-  endOfYear,
+  beginningOfThisYear,
+  endOfThisYear,
   beginningOfLastYear,
   endOfLastYear,
   // --- injected by recompose ---
@@ -169,7 +178,7 @@ export const Reports = ({
             inverse
             href={`${
               config.aspectApi
-            }/report/gx/QuarterlyReportExcel.xlsx?dateFrom=${beginningOfYear}&dateTo=${endOfYear}&token=${token}`}
+            }/report/gx/QuarterlyReportExcel.xlsx?dateFrom=${beginningOfThisYear}&dateTo=${endOfThisYear}&token=${token}`}
           >
             {`Quarterly Report ${new Date().getFullYear()}`}
           </Button>
@@ -212,7 +221,7 @@ export const Reports = ({
           inverse
           href={`${
             config.aspectApi
-          }/report/gx/QuarterlyReportExcel.xlsx?dateFrom=${beginningOfYear}&dateTo=${endOfYear}&siteId=${siteId}&token=${token}`}
+          }/report/gx/QuarterlyReportExcel.xlsx?dateFrom=${beginningOfThisYear}&dateTo=${endOfThisYear}&siteId=${siteId}&token=${token}`}
         >
           {`Quarterly Report ${new Date().getFullYear()}`}
         </Button>
