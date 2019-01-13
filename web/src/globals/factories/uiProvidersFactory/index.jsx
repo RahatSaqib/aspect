@@ -2,7 +2,7 @@ import React from 'react'
 import { ThemeProvider } from 'react-css-themr'
 import { MuiThemeProvider, jssPreset } from '@material-ui/core/styles'
 import { create } from 'jss'
-import { createGenerateId, JssProvider } from 'react-jss'
+import { JssProvider } from 'react-jss'
 
 import theme from '../../../theme'
 import themedReactToolbox from '../../../components/themedReactToolbox'
@@ -11,10 +11,10 @@ const jss = create({
   ...jssPreset(),
   insertionPoint: 'insertion-point-jss',
 })
-const generateId = createGenerateId()
+// const generateId = createGenerateId()
 
 export const uiProvidersFactory = render => props => (
-  <JssProvider jss={jss} generateId={generateId}>
+  <JssProvider jss={jss}>
     <MuiThemeProvider theme={theme}>
       <ThemeProvider theme={themedReactToolbox}>{render(props)}</ThemeProvider>
     </MuiThemeProvider>

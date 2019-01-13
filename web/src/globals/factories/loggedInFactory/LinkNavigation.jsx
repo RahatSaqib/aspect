@@ -1,6 +1,5 @@
 import classnames from 'classnames/bind'
 import React from 'react'
-import Navigation from 'react-toolbox/lib/navigation'
 import { connect } from 'react-redux'
 import { compose, pure } from 'recompose'
 
@@ -18,7 +17,7 @@ const themes = {
 }
 
 export const makeThemedLink = props => (
-  <Link {...props} key={props.href} title={props.label} theme={themes.Link} />
+  <Link {...props} key={props.href} theme={themes.Link} />
 )
 
 const enhance = compose(
@@ -98,7 +97,7 @@ export const LinkNavigation = ({
     userFeatures
   )
   return (
-    <Navigation
+    <nav
       type={type}
       className={cssClasses('Navigation', {
         'Navigation--vertical': type === 'vertical',
@@ -114,7 +113,7 @@ export const LinkNavigation = ({
         })
       )}
       {children}
-    </Navigation>
+    </nav>
   )
 }
 

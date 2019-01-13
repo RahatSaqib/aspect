@@ -5,13 +5,35 @@
   display: inline-block;
   width: 36px;
 }
+
+.Layout {
+  align-items: stretch;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 100vh;
+  min-width: 100%;
+  position: relative;
+}
+
 /* Specific */
 .Panel {
   background-color: var(--aspect-color-grey-7);
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.VerticalAppBar {
+  align-items: center;
+  justify-content: space-between;
 }
 
 .AppBar__appBar {
   background-color: #ffffff;
+  position: static;
 }
 
 .AppBar__leftIcon:not([disabled]).AppBar__leftIcon:not([disabled]) {
@@ -34,13 +56,19 @@
   flex-grow: 1;
 }
 
+.Navigation--vertical {
+  min-width: 280px;
+}
+
 .Navigation--vertical .Link__link {
   margin: 15px;
+  display: block;
 }
 
 .Navigation--horizontal .Link__link {
   text-align: center;
   margin: 0 15px;
+  display: inline;
 }
 
 .IconMenu__icon:not([disabled]).IconMenu__icon:not([disabled]) {
@@ -58,7 +86,7 @@
 }
 
 .Link__link {
-  color: var(--aspect-color-grey-4);
+  color: #000;
   font-size: var(--aspect-font-size-sm);
 }
 
@@ -67,7 +95,7 @@
   font-weight: var(--lato-font-weight-bold);
 }
 
-.Link__link::after {
+.Navigation--vertical .Link__link::after {
   /* provides placeholder content for bold font: https://stackoverflow.com/a/20249560 */
   display: block;
   content: attr(title);
