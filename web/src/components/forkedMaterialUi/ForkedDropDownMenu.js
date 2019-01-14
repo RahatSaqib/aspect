@@ -327,7 +327,7 @@ class DropDownMenu extends Component {
       >
         <ClearFix
           style={styles.control}
-          onTouchTap={this.handleTouchTapControl}
+          onClick={this.handleTouchTapControl}
         >
           <div
             style={prepareStyles(

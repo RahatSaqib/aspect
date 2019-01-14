@@ -258,7 +258,7 @@ export class ReporterDetail extends PureComponent {
       <div>
         <IconButton
           tooltip={formatMessage(messages.editTooltip)}
-          onTouchTap={this.handleToggleEditDialog}
+          onClick={this.handleToggleEditDialog}
         >
           <ModeEdit />
         </IconButton>

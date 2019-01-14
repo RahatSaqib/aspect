@@ -1,5 +1,5 @@
 import React from 'react'
-import ReactTestRenderer from 'react-test-renderer'
+import ReactShallowRenderer from 'react-test-renderer/shallow'
 import { shallow } from 'enzyme'
 import sinon from 'sinon'
 import Immutable from 'immutable'
@@ -8,10 +8,12 @@ import { Button } from 'react-toolbox/lib/button'
 import FormGroup from '../../components/themedReactToolbox/FormGroup'
 import CustomField from './CustomField'
 import StyledDropdown from '../../components/themedReactToolbox/StyledDropdown'
-import DateTimePicker from '../../components/themedReactToolbox/DateTimePicker'
+import DateTimePicker from '../../components/shared/DateTimePicker'
 import FocusBlurTextField from '../../components/shared/FocusBlurTextField'
 
 describe('CustomField component', () => {
+  const renderer = ReactShallowRenderer.createRenderer()
+
   function renderCustomerField(props) {
     return shallow(<CustomField {...props} />)
   }
@@ -49,7 +51,7 @@ describe('CustomField component', () => {
     }
 
     it('should shallow render correctly', () => {
-      const component = ReactTestRenderer.create(<CustomField {...props} />)
+      const component = renderer.render(<CustomField {...props} />)
       expect(component).toMatchSnapshot()
     })
 
@@ -119,7 +121,7 @@ describe('CustomField component', () => {
     }
 
     it('should shallow render correctly', () => {
-      const component = ReactTestRenderer.create(<CustomField {...props} />)
+      const component = renderer.render(<CustomField {...props} />)
       expect(component).toMatchSnapshot()
     })
 
@@ -185,7 +187,7 @@ describe('CustomField component', () => {
     }
 
     it('should shallow render correctly', () => {
-      const component = ReactTestRenderer.create(<CustomField {...props} />)
+      const component = renderer.render(<CustomField {...props} />)
       expect(component).toMatchSnapshot()
     })
 
@@ -233,7 +235,7 @@ describe('CustomField component', () => {
     }
 
     it('should shallow render correctly', () => {
-      const component = ReactTestRenderer.create(<CustomField {...props} />)
+      const component = renderer.render(<CustomField {...props} />)
       expect(component).toMatchSnapshot()
     })
 

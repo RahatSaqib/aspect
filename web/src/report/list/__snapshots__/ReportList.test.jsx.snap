@@ -13,8 +13,6 @@ exports[`ReportList component should shallow render correctly 1`] = `
     title="Reports"
   />
   <pure(withProps(withHandlers(Connect(lifecycle(BrowseFilters)))))
-    config={undefined}
-    history={undefined}
     intl={
       Object {
         "defaultFormats": Object {},
@@ -50,8 +48,7 @@ exports[`ReportList component should shallow render correctly 1`] = `
     <DataTableProgressBar
       disabled={true}
     />
-    <pure(withHandlers(Component))
-      history={undefined}
+    <pure(withHandlers(EmptyList))
       intl={
         Object {
           "defaultFormats": Object {},

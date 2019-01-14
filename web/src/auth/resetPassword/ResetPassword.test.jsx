@@ -237,7 +237,7 @@ describe('ResetPassword module', () => {
         let adminHelpDialog = ResetPasswordWrapper.find(Dialog)
         expect(adminHelpDialog.props().open).toBe(true)
 
-        adminHelpDialog.props().actions[0].props.onTouchTap()
+        adminHelpDialog.props().actions[0].props.onClick()
         ResetPasswordWrapper.update()
         adminHelpDialog = ResetPasswordWrapper.find(Dialog)
         expect(adminHelpDialog.props().open).toBe(false)

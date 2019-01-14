@@ -5,7 +5,7 @@
 }
 
 .button {
-  composes: button from 'react-toolbox/lib/button/theme.css'; /* dependency */
+  composes: button from 'react-toolbox/lib/button/theme.module.css'; /* dependency */
   text-transform: inherit;
   border-radius: var(--toolbox-button-border-radius);
 }

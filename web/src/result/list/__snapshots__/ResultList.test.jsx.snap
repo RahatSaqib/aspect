@@ -14,8 +14,6 @@ exports[`Result List component should shallow render correctly 1`] = `
   />
   <pure(withProps(withHandlers(Connect(lifecycle(BrowseFilters)))))
     askConfirmationForExport={false}
-    config={undefined}
-    history={undefined}
     intl={
       Object {
         "defaultFormats": Object {},
@@ -46,14 +44,12 @@ exports[`Result List component should shallow render correctly 1`] = `
         "search": "?filters=assayType%3DTB",
       }
     }
-    onClickExport={undefined}
   />
   <DataTableCard>
     <DataTableProgressBar
       disabled={true}
     />
-    <pure(withHandlers(Component))
-      history={undefined}
+    <pure(withHandlers(EmptyList))
       intl={
         Object {
           "defaultFormats": Object {},

@@ -1,13 +1,11 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`NotificationList module RawDataDialog component should render correctly 1`] = `
+exports[`RawDataDialog module RawDataDialog component should render correctly 1`] = `
 <div>
   <Dialog
-    actions={undefined}
     autoDetectWindowHeight={true}
     autoScrollBodyContent={true}
     modal={false}
-    onRequestClose={undefined}
     open={true}
     repositionOnUpdate={true}
     title="Raw Result Data"

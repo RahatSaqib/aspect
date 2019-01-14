@@ -18,8 +18,7 @@
       "VL>50KPTH",
       "VL>50RMMCH"
     ],
-    "stateName": null,
-    "lgaName": null,
+    "geographies": [{}],
     "deploymentShortName": null,
     "timezone": "South Africa Standard Time",
     "culture": "en",
@@ -37,8 +36,10 @@
     "password": "J2Rt7phPT0",
     "mobile": "+27795024672",
     "tags": ["EID+RMMCH", "VL>50RMMCH", "EID+", "HIV-VL>50"],
-    "stateName": "Gauteng",
-    "lgaName": "Coronationville",
+    "geographies": [{
+      "stateName": "Gauteng",
+      "lgaName": "Coronationville"
+    }],
     "deploymentShortName": "RMMCH",
     "timezone": "South Africa Standard Time",
     "culture": "en",
@@ -53,11 +54,13 @@
     "jobFunctions": ["Regional Officer", "Lab User"],
     "emailAddress": "ntaolengmoreko@gmail.com",
     "username": "ntaolengmoreko@gmail.com",
-    "password": "i73xNtNlZS",
+    "password": "Motabogi1043",
     "mobile": "+27739023780",
     "tags": ["EID+CHBAH", "VL>50CHBAH", "EID+", "HIV-VL>50"],
-    "stateName": "Gauteng",
-    "lgaName": "Diepkloof ",
+    "geographies": [{
+      "stateName": "Gauteng",
+      "lgaName": "Diepkloof"
+    }],
     "deploymentShortName": "CHBAH Maternity POCT",
     "timezone": "South Africa Standard Time",
     "culture": "en",
@@ -75,8 +78,10 @@
     "password": null,
     "mobile": "+27829296310",
     "tags": ["EID+CHBAH", "VL>50CHBAH", "EID+", "HIV-VL>50"],
-    "stateName": "Gauteng",
-    "lgaName": "Diepkloof ",
+    "geographies": [{
+      "stateName": "Gauteng",
+      "lgaName": "Diepkloof"
+    }],
     "deploymentShortName": null,
     "timezone": "South Africa Standard Time",
     "culture": "en",
@@ -94,8 +99,10 @@
     "password": null,
     "mobile": "+27724140622",
     "tags": ["EID+CHBAH", "VL>50CHBAH", "EID+", "HIV-VL>50"],
-    "stateName": "Gauteng",
-    "lgaName": "Diepkloof ",
+    "geographies": [{
+      "stateName": "Gauteng",
+      "lgaName": "Diepkloof"
+    }],
     "deploymentShortName": null,
     "timezone": "South Africa Standard Time",
     "culture": "en",
@@ -113,8 +120,10 @@
     "password": null,
     "mobile": "+27829222441",
     "tags": ["EID+CHBAH", "VL>50CHBAH", "EID+", "HIV-VL>50"],
-    "stateName": "Gauteng",
-    "lgaName": "Diepkloof ",
+    "geographies": [{
+      "stateName": "Gauteng",
+      "lgaName": "Diepkloof"
+    }],
     "deploymentShortName": null,
     "timezone": "South Africa Standard Time",
     "culture": "en",
@@ -132,8 +141,10 @@
     "password": null,
     "mobile": "+27783936743",
     "tags": ["EID+CHBAH", "VL>50CHBAH", "EID+", "HIV-VL>50"],
-    "stateName": "Gauteng",
-    "lgaName": "Diepkloof ",
+    "geographies": [{
+      "stateName": "Gauteng",
+      "lgaName": "Diepkloof"
+    }],
     "deploymentShortName": null,
     "timezone": "South Africa Standard Time",
     "culture": "en",
@@ -151,8 +162,10 @@
     "password": null,
     "mobile": "+27824394027",
     "tags": ["EID+CHBAH", "VL>50CHBAH", "EID+", "HIV-VL>50"],
-    "stateName": "Gauteng",
-    "lgaName": "Diepkloof ",
+    "geographies": [{
+      "stateName": "Gauteng",
+      "lgaName": "Diepkloof"
+    }],
     "deploymentShortName": null,
     "timezone": "South Africa Standard Time",
     "culture": "en",
@@ -170,8 +183,10 @@
     "password": null,
     "mobile": "+27795148681",
     "tags": ["EID+CHBAH", "VL>50CHBAH", "EID+", "HIV-VL>50"],
-    "stateName": "Gauteng",
-    "lgaName": "Diepkloof ",
+    "geographies": [{
+      "stateName": "Gauteng",
+      "lgaName": "Diepkloof"
+    }],
     "deploymentShortName": null,
     "timezone": "South Africa Standard Time",
     "culture": "en",
@@ -189,8 +204,10 @@
     "password": null,
     "mobile": "+27733359191",
     "tags": ["EID+CHBAH", "VL>50CHBAH", "EID+", "HIV-VL>50"],
-    "stateName": "Gauteng",
-    "lgaName": "Diepkloof ",
+    "geographies": [{
+      "stateName": "Gauteng",
+      "lgaName": "Diepkloof"
+    }],
     "deploymentShortName": null,
     "timezone": "South Africa Standard Time",
     "culture": "en",
@@ -208,8 +225,10 @@
     "password": null,
     "mobile": "+27832750107",
     "tags": ["EID+CHBAH", "VL>50CHBAH", "EID+", "HIV-VL>50"],
-    "stateName": "Gauteng",
-    "lgaName": "Diepkloof ",
+    "geographies": [{
+      "stateName": "Gauteng",
+      "lgaName": "Diepkloof"
+    }],
     "deploymentShortName": null,
     "timezone": "South Africa Standard Time",
     "culture": "en",
@@ -227,8 +246,10 @@
     "password": null,
     "mobile": "+27725514491",
     "tags": ["EID+CHBAH", "VL>50CHBAH", "EID+", "HIV-VL>50"],
-    "stateName": "Gauteng",
-    "lgaName": "Diepkloof ",
+    "geographies": [{
+      "stateName": "Gauteng",
+      "lgaName": "Diepkloof"
+    }],
     "deploymentShortName": null,
     "timezone": "South Africa Standard Time",
     "culture": "en",
@@ -246,8 +267,10 @@
     "password": null,
     "mobile": "+27721800036",
     "tags": ["EID+CHBAH", "VL>50CHBAH", "EID+", "HIV-VL>50"],
-    "stateName": "Gauteng",
-    "lgaName": "Diepkloof ",
+    "geographies": [{
+      "stateName": "Gauteng",
+      "lgaName": "Diepkloof"
+    }],
     "deploymentShortName": null,
     "timezone": "South Africa Standard Time",
     "culture": "en",
@@ -265,8 +288,10 @@
     "password": null,
     "mobile": "+27826692783",
     "tags": ["EID+CHBAH", "VL>50CHBAH", "EID+", "HIV-VL>50"],
-    "stateName": "Gauteng",
-    "lgaName": "Diepkloof ",
+    "geographies": [{
+      "stateName": "Gauteng",
+      "lgaName": "Diepkloof"
+    }],
     "deploymentShortName": null,
     "timezone": "South Africa Standard Time",
     "culture": "en",
@@ -278,7 +303,7 @@
   },
   {
     "personName": "Ahmad Haeri",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Admin", "Regional Officer"],
     "emailAddress": "ahmadh@nicd.ac.za",
     "username": "ahmadh@nicd.ac.za",
     "password": "1e8bac51d8",
@@ -295,8 +320,7 @@
       "VL>50KPTH",
       "VL>50RMMCH"
     ],
-    "stateName": null,
-    "lgaName": null,
+    "geographies": [{}],
     "deploymentShortName": null,
     "timezone": "South Africa Standard Time",
     "culture": "en",
@@ -308,7 +332,7 @@
   },
   {
     "personName": "Sr Moipone Piliso",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Admin", "Regional Officer"],
     "emailAddress": "moipone.piliso@wits.ac.za",
     "username": "moipone.piliso@wits.ac.za",
     "password": "19753210ea",
@@ -325,8 +349,7 @@
       "VL>50KPTH",
       "VL>50RMMCH"
     ],
-    "stateName": null,
-    "lgaName": null,
+    "geographies": [{}],
     "deploymentShortName": null,
     "timezone": "South Africa Standard Time",
     "culture": "en",
@@ -344,8 +367,7 @@
     "password": "e53b42841b",
     "mobile": "+27828299006",
     "tags": [],
-    "stateName": null,
-    "lgaName": null,
+    "geographies": [{}],
     "deploymentShortName": null,
     "timezone": "South Africa Standard Time",
     "culture": "en",
@@ -363,8 +385,10 @@
     "password": null,
     "mobile": "+27826873633",
     "tags": ["EID+RMMCH", "VL>50RMMCH", "EID+", "HIV-VL>50"],
-    "stateName": "Gauteng",
-    "lgaName": "Coronationville",
+    "geographies": [{
+      "stateName": "Gauteng",
+      "lgaName": "Coronationville"
+    }],
     "deploymentShortName": null,
     "timezone": "South Africa Standard Time",
     "culture": "en",
@@ -382,8 +406,10 @@
     "password": null,
     "mobile": "+27722070358",
     "tags": ["EID+RMMCH", "VL>50RMMCH", "EID+", "HIV-VL>50"],
-    "stateName": "Gauteng",
-    "lgaName": "Coronationville",
+    "geographies": [{
+      "stateName": "Gauteng",
+      "lgaName": "Coronationville"
+    }],
     "deploymentShortName": null,
     "timezone": "South Africa Standard Time",
     "culture": "en",
@@ -401,8 +427,10 @@
     "password": null,
     "mobile": "+27767886888",
     "tags": ["EID+RMMCH", "VL>50RMMCH", "EID+", "HIV-VL>50"],
-    "stateName": "Gauteng",
-    "lgaName": "Coronationville",
+    "geographies": [{
+      "stateName": "Gauteng",
+      "lgaName": "Coronationville"
+    }],
     "deploymentShortName": null,
     "timezone": "South Africa Standard Time",
     "culture": "en",
@@ -420,8 +448,10 @@
     "password": null,
     "mobile": "+27828831991",
     "tags": ["EID+RMMCH", "VL>50RMMCH", "EID+", "HIV-VL>50"],
-    "stateName": "Gauteng",
-    "lgaName": "Coronationville",
+    "geographies": [{
+      "stateName": "Gauteng",
+      "lgaName": "Coronationville"
+    }],
     "deploymentShortName": null,
     "timezone": "South Africa Standard Time",
     "culture": "en",
@@ -439,8 +469,10 @@
     "password": null,
     "mobile": "+27827576666",
     "tags": ["EID+RMMCH", "VL>50RMMCH", "EID+", "HIV-VL>50"],
-    "stateName": "Gauteng",
-    "lgaName": "Coronationville",
+    "geographies": [{
+      "stateName": "Gauteng",
+      "lgaName": "Coronationville"
+    }],
     "deploymentShortName": null,
     "timezone": "South Africa Standard Time",
     "culture": "en",
@@ -458,8 +490,10 @@
     "password": null,
     "mobile": "+27848051365",
     "tags": ["EID+RMMCH", "VL>50RMMCH", "EID+", "HIV-VL>50"],
-    "stateName": "Gauteng",
-    "lgaName": "Coronationville",
+    "geographies": [{
+      "stateName": "Gauteng",
+      "lgaName": "Coronationville"
+    }],
     "deploymentShortName": null,
     "timezone": "South Africa Standard Time",
     "culture": "en",
@@ -471,7 +505,7 @@
   },
   {
     "personName": "Auréllie Mukendi",
-    "jobFunctions": ["Admin"],
+    "jobFunctions": ["Admin", "Regional Officer"],
     "emailAddress": "aureliem@nicd.ac.za",
     "username": "aureliem@nicd.ac.za",
     "password": "f54b8ba50f",
@@ -488,8 +522,7 @@
       "VL>50KPTH",
       "VL>50RMMCH"
     ],
-    "stateName": null,
-    "lgaName": null,
+    "geographies": [{}],
     "deploymentShortName": null,
     "timezone": "South Africa Standard Time",
     "culture": "en",
@@ -507,8 +540,10 @@
     "password": null,
     "mobile": "+27781639062",
     "tags": ["EID+RMMCH", "VL>50RMMCH", "EID+", "HIV-VL>50"],
-    "stateName": "Gauteng",
-    "lgaName": "Coronationville",
+    "geographies": [{
+      "stateName": "Gauteng",
+      "lgaName": "Coronationville"
+    }],
     "deploymentShortName": null,
     "timezone": "South Africa Standard Time",
     "culture": "en",
@@ -520,21 +555,24 @@
   },
   {
     "personName": "Lerato Mthombeni",
-    "jobFunctions": ["Regional Officer"],
-    "emailAddress": null,
-    "username": null,
-    "password": null,
+    "jobFunctions": ["Regional Officer", "Lab User"],
+    "emailAddress": "shivlera@yahoo.com",
+    "username": "shivlera@yahoo.com",
+    "password": "G4CEWslFEZ",
     "mobile": "+27825926204",
     "tags": ["EID+CMJAH", "VL>50CMJAH", "EID+", "HIV-VL>50"],
-    "stateName": "Gauteng",
-    "lgaName": "Parktown",
-    "deploymentShortName": null,
+    "geographies": [{
+      "stateName": "Gauteng",
+      "lgaName": "Parktown"
+    }],
+    "deploymentShortName": "CMJAH",
     "timezone": "South Africa Standard Time",
     "culture": "en",
-    "title": "NICD",
-    "hidePatientId": true,
-    "hideSampleId": true,
-    "hideNotes": true
+    "title": "Lab Contact",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": false
   },
   {
     "personName": "Dr. Coceka Mnyani",
@@ -544,8 +582,10 @@
     "password": null,
     "mobile": "+27824919203",
     "tags": ["EID+CMJAH", "VL>50CMJAH", "EID+", "HIV-VL>50"],
-    "stateName": "Gauteng",
-    "lgaName": "Parktown",
+    "geographies": [{
+      "stateName": "Gauteng",
+      "lgaName": "Parktown"
+    }],
     "deploymentShortName": null,
     "timezone": "South Africa Standard Time",
     "culture": "en",
@@ -563,8 +603,10 @@
     "password": null,
     "mobile": "+27829033418",
     "tags": ["EID+CMJAH", "VL>50CMJAH", "EID+", "HIV-VL>50"],
-    "stateName": "Gauteng",
-    "lgaName": "Parktown",
+    "geographies": [{
+      "stateName": "Gauteng",
+      "lgaName": "Parktown"
+    }],
     "deploymentShortName": null,
     "timezone": "South Africa Standard Time",
     "culture": "en",
@@ -582,8 +624,10 @@
     "password": null,
     "mobile": "+27833684995",
     "tags": ["EID+KPTH", "VL>50KPTH", "EID+", "HIV-VL>50"],
-    "stateName": "Gauteng",
-    "lgaName": "Kalafong",
+    "geographies": [{
+      "stateName": "Gauteng",
+      "lgaName": "Kalafong"
+    }],
     "deploymentShortName": null,
     "timezone": "South Africa Standard Time",
     "culture": "en",
@@ -601,8 +645,10 @@
     "password": null,
     "mobile": "+27825083744",
     "tags": ["EID+KPTH", "VL>50KPTH", "EID+", "HIV-VL>50"],
-    "stateName": "Gauteng",
-    "lgaName": "Kalafong",
+    "geographies": [{
+      "stateName": "Gauteng",
+      "lgaName": "Kalafong"
+    }],
     "deploymentShortName": null,
     "timezone": "South Africa Standard Time",
     "culture": "en",
@@ -620,8 +666,10 @@
     "password": null,
     "mobile": "+270726037070",
     "tags": ["EID+RMMCH", "VL>50RMMCH", "EID+", "HIV-VL>50"],
-    "stateName": "Gauteng",
-    "lgaName": "Coronationville",
+    "geographies": [{
+      "stateName": "Gauteng",
+      "lgaName": "Coronationville"
+    }],
     "deploymentShortName": null,
     "timezone": "South Africa Standard Time",
     "culture": "en",
@@ -639,8 +687,10 @@
     "password": null,
     "mobile": "+27829077581",
     "tags": ["EID+CMJAH", "VL>50CMJAH", "EID+", "HIV-VL>50"],
-    "stateName": "Gauteng",
-    "lgaName": "Parktown",
+    "geographies": [{
+      "stateName": "Gauteng",
+      "lgaName": "Parktown"
+    }],
     "deploymentShortName": null,
     "timezone": "South Africa Standard Time",
     "culture": "en",
@@ -658,8 +708,10 @@
     "password": null,
     "mobile": "+27837379763",
     "tags": ["EID+CMJAH", "VL>50CMJAH", "EID+", "HIV-VL>50"],
-    "stateName": "Gauteng",
-    "lgaName": "Parktown",
+    "geographies": [{
+      "stateName": "Gauteng",
+      "lgaName": "Parktown"
+    }],
     "deploymentShortName": null,
     "timezone": "South Africa Standard Time",
     "culture": "en",
@@ -677,8 +729,10 @@
     "password": null,
     "mobile": "+27823254230",
     "tags": ["EID+CHBAH", "VL>50CHBAH", "EID+", "HIV-VL>50"],
-    "stateName": "Gauteng",
-    "lgaName": "Diepkloof ",
+    "geographies": [{
+      "stateName": "Gauteng",
+      "lgaName": "Diepkloof"
+    }],
     "deploymentShortName": null,
     "timezone": "South Africa Standard Time",
     "culture": "en",
@@ -696,8 +750,10 @@
     "password": null,
     "mobile": "+27726049019",
     "tags": ["EID+KPTH", "VL>50KPTH", "EID+", "HIV-VL>50"],
-    "stateName": "Gauteng",
-    "lgaName": "Kalafong",
+    "geographies": [{
+      "stateName": "Gauteng",
+      "lgaName": "Kalafong"
+    }],
     "deploymentShortName": null,
     "timezone": "South Africa Standard Time",
     "culture": "en",
@@ -715,8 +771,10 @@
     "password": null,
     "mobile": "+27729545480",
     "tags": ["EID+KPTH", "VL>50KPTH", "EID+", "HIV-VL>50"],
-    "stateName": "Gauteng",
-    "lgaName": "Kalafong",
+    "geographies": [{
+      "stateName": "Gauteng",
+      "lgaName": "Kalafong"
+    }],
     "deploymentShortName": null,
     "timezone": "South Africa Standard Time",
     "culture": "en",
@@ -734,8 +792,10 @@
     "password": null,
     "mobile": "+27723477244",
     "tags": ["EID+KPTH", "VL>50KPTH", "EID+", "HIV-VL>50"],
-    "stateName": "Gauteng",
-    "lgaName": "Kalafong",
+    "geographies": [{
+      "stateName": "Gauteng",
+      "lgaName": "Kalafong"
+    }],
     "deploymentShortName": null,
     "timezone": "South Africa Standard Time",
     "culture": "en",
@@ -753,8 +813,10 @@
     "password": null,
     "mobile": "+27824421579",
     "tags": ["EID+KPTH", "VL>50KPTH", "EID+", "HIV-VL>50"],
-    "stateName": "Gauteng",
-    "lgaName": "Kalafong",
+    "geographies": [{
+      "stateName": "Gauteng",
+      "lgaName": "Kalafong"
+    }],
     "deploymentShortName": null,
     "timezone": "South Africa Standard Time",
     "culture": "en",
@@ -772,8 +834,10 @@
     "password": null,
     "mobile": "+27729988704",
     "tags": ["EID+KPTH", "VL>50KPTH", "EID+", "HIV-VL>50"],
-    "stateName": "Gauteng",
-    "lgaName": "Kalafong",
+    "geographies": [{
+      "stateName": "Gauteng",
+      "lgaName": "Kalafong"
+    }],
     "deploymentShortName": null,
     "timezone": "South Africa Standard Time",
     "culture": "en",
@@ -791,8 +855,10 @@
     "password": null,
     "mobile": "+27826346206",
     "tags": ["EID+KPTH", "VL>50KPTH", "EID+", "HIV-VL>50"],
-    "stateName": "Gauteng",
-    "lgaName": "Kalafong",
+    "geographies": [{
+      "stateName": "Gauteng",
+      "lgaName": "Kalafong"
+    }],
     "deploymentShortName": null,
     "timezone": "South Africa Standard Time",
     "culture": "en",
@@ -810,8 +876,10 @@
     "password": null,
     "mobile": "+27825795057",
     "tags": ["EID+KPTH", "VL>50KPTH", "EID+", "HIV-VL>50"],
-    "stateName": "Gauteng",
-    "lgaName": "Kalafong",
+    "geographies": [{
+      "stateName": "Gauteng",
+      "lgaName": "Kalafong"
+    }],
     "deploymentShortName": null,
     "timezone": "South Africa Standard Time",
     "culture": "en",
@@ -829,8 +897,7 @@
     "password": "f0781cc81c",
     "mobile": null,
     "tags": [],
-    "stateName": null,
-    "lgaName": null,
+    "geographies": [{}],
     "deploymentShortName": null,
     "timezone": "South Africa Standard Time",
     "culture": "en",
@@ -848,8 +915,7 @@
     "password": "04fe6f2ac9",
     "mobile": null,
     "tags": [],
-    "stateName": null,
-    "lgaName": null,
+    "geographies": [{}],
     "deploymentShortName": null,
     "timezone": "South Africa Standard Time",
     "culture": "en",
@@ -860,25 +926,6 @@
     "getPasswordFromGxAlert": true
   },
   {
-    "personName": "Lerato Mthombeni",
-    "jobFunctions": ["Lab User"],
-    "emailAddress": "shivlera@yahoo.com",
-    "username": "shivlera@yahoo.com",
-    "password": "G4CEWslFEZ",
-    "mobile": "+27825926204",
-    "tags": [],
-    "stateName": null,
-    "lgaName": null,
-    "deploymentShortName": "CMJAH",
-    "timezone": "South Africa Standard Time",
-    "culture": "en",
-    "title": "Lab Contact",
-    "hidePatientId": false,
-    "hideSampleId": false,
-    "hideNotes": false,
-    "getPasswordFromGxAlert": false
-  },
-  {
     "personName": "Veronica Mphaphuli",
     "jobFunctions": ["Regional Officer"],
     "emailAddress": null,
@@ -886,8 +933,10 @@
     "password": null,
     "mobile": "+27069967719",
     "tags": ["EID+CMJAH", "VL>50CMJAH", "EID+", "HIV-VL>50"],
-    "stateName": "Gauteng",
-    "lgaName": "Parktown",
+    "geographies": [{
+      "stateName": "Gauteng",
+      "lgaName": "Parktown"
+    }],
     "deploymentShortName": null,
     "timezone": "South Africa Standard Time",
     "culture": "en",
@@ -905,8 +954,10 @@
     "password": null,
     "mobile": "+270836957059",
     "tags": ["EID+CMJAH", "VL>50CMJAH", "EID+", "HIV-VL>50"],
-    "stateName": "Gauteng",
-    "lgaName": "Parktown",
+    "geographies": [{
+      "stateName": "Gauteng",
+      "lgaName": "Parktown"
+    }],
     "deploymentShortName": null,
     "timezone": "South Africa Standard Time",
     "culture": "en",
@@ -924,8 +975,10 @@
     "password": null,
     "mobile": "+270823324242",
     "tags": ["EID+CMJAH", "VL>50CMJAH", "EID+", "HIV-VL>50"],
-    "stateName": "Gauteng",
-    "lgaName": "Parktown",
+    "geographies": [{
+      "stateName": "Gauteng",
+      "lgaName": "Parktown"
+    }],
     "deploymentShortName": null,
     "timezone": "South Africa Standard Time",
     "culture": "en",
@@ -943,8 +996,10 @@
     "password": null,
     "mobile": "+270834604792",
     "tags": ["EID+CMJAH", "VL>50CMJAH", "EID+", "HIV-VL>50"],
-    "stateName": "Gauteng",
-    "lgaName": "Parktown",
+    "geographies": [{
+      "stateName": "Gauteng",
+      "lgaName": "Parktown"
+    }],
     "deploymentShortName": null,
     "timezone": "South Africa Standard Time",
     "culture": "en",
@@ -962,8 +1017,10 @@
     "password": null,
     "mobile": "+27832944504",
     "tags": ["EID+KPTH", "VL>50KPTH", "EID+", "HIV-VL>50"],
-    "stateName": "Gauteng",
-    "lgaName": "Kalafong",
+    "geographies": [{
+      "stateName": "Gauteng",
+      "lgaName": "Kalafong"
+    }],
     "deploymentShortName": null,
     "timezone": "South Africa Standard Time",
     "culture": "en",

@@ -172,7 +172,7 @@ export class ResetPassword extends PureComponent {
       <FlatButton
         label={formatMessage(messages.adminHelpClose)}
         secondary
-        onTouchTap={this.closeAdminHelpDialog}
+        onClick={this.closeAdminHelpDialog}
       />,
       <Link to="login">
         <FlatButton label={formatMessage(messages.backToLogin)} primary />

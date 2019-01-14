@@ -1,10 +1,8 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Summary Status component should shallow render correctly 1`] = `
-<div
-  className={undefined}
->
-  <Unknown
+<div>
+  <Unit
     lg="1-4"
     sm="1-2"
   >
@@ -81,8 +79,8 @@ exports[`Summary Status component should shallow render correctly 1`] = `
         </div>
       </ThemedCard>
     </Link>
-  </Unknown>
-  <Unknown
+  </Unit>
+  <Unit
     lg="1-4"
     sm="1-2"
   >
@@ -157,8 +155,8 @@ exports[`Summary Status component should shallow render correctly 1`] = `
         </div>
       </ThemedCard>
     </Link>
-  </Unknown>
-  <Unknown
+  </Unit>
+  <Unit
     lg="1-4"
     sm="1-2"
   >
@@ -233,8 +231,8 @@ exports[`Summary Status component should shallow render correctly 1`] = `
         </div>
       </ThemedCard>
     </Link>
-  </Unknown>
-  <Unknown
+  </Unit>
+  <Unit
     lg="1-4"
     sm="1-2"
   >
@@ -309,6 +307,6 @@ exports[`Summary Status component should shallow render correctly 1`] = `
         </div>
       </ThemedCard>
     </Link>
-  </Unknown>
+  </Unit>
 </div>
 `;

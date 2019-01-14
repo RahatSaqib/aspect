@@ -6,7 +6,7 @@ import { connect } from 'react-redux'
 import _ from 'lodash'
 import { defineMessages, intlShape } from 'react-intl'
 
-import { Snackbar } from 'react-toolbox'
+import { Snackbar } from 'react-toolbox/lib'
 
 // Our own imports
 import {

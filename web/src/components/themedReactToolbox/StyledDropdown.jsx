@@ -9,6 +9,7 @@ const enhance = compose(
     ...props,
     theme: {
       ...props.theme,
+      dropdown: cssClasses('dropdown'),
       inputDisabled: cssClasses('input__disabled'),
       inputInput: cssClasses('input__input'),
       inputInputElement: cssClasses('input__inputElement'),

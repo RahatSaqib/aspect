@@ -8,7 +8,7 @@ async function onResultLogged({ resultId }, { messageContext }) {
   return context.transact(async knex => {
     const now = new Date()
     const result = await knex('Result as r')
-      .join('sample as s', 'r.sampleId', 's.id')
+      .join('Sample as s', 'r.sampleId', 's.id')
       .where({ 'r.id': resultId })
       .first(
         'r.formData',
