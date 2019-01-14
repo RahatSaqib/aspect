@@ -318,23 +318,23 @@ async function createResults(
         })
       }
       // copy image to folder /files/##
-      const dirPath = path.join(
+      const filesFolder = path.join(
         __dirname,
         '../files',
         fileReferenceId.toString()
       )
-      const fixturePath = path.join(
+      const fixturesFolder = path.join(
         __dirname,
         'development/fixtures',
         imageFileName
       )
-      const filePath = path.join(dirPath, imageFileName)
+      const filePath = path.join(filesFolder, imageFileName)
 
-      if (!fs.existsSync(dirPath)) {
-        fs.mkdirSync(dirPath, { recursive: true })
+      if (!fs.existsSync(filesFolder)) {
+        fs.mkdirSync(filesFolder, { recursive: true })
       }
       if (!fs.existsSync(filePath)) {
-        fs.copyFileSync(fixturePath, filePath)
+        fs.copyFileSync(fixturesFolder, filePath)
       }
     }
   })
