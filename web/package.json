@@ -23,7 +23,8 @@
     "release:major": "npm version major && npm publish && git push --follow-tags",
     "release:minor": "npm version minor && npm publish && git push --follow-tags",
     "release:patch": "npm version patch && npm publish && git push --follow-tags",
-    "precommit": "lint-staged"
+    "precommit": "lint-staged",
+    "bundle-report": "webpack-bundle-analyzer dist/assets/stats.json"
   },
   "lint-staged": {
     "linters": {

@@ -53,7 +53,9 @@ const config = () => {
       }),
       new CaseSensitivePathsPlugin(),
       new BundleAnalyzerPlugin({
-        openAnalyzer: true,
+        analyzerMode: 'disabled',
+        generateStatsFile: true,
+        openAnalyzer: false,
       }),
     ],
     optimization: {
