@@ -1,4 +1,5 @@
 const fs = require('fs')
+const path = require('path')
 const _ = require('lodash')
 const {
   addMilliseconds,
@@ -317,17 +318,23 @@ async function createResults(
         })
       }
       // copy image to folder /files/##
-      const dirPath = `../api/files/${fileReferenceId}`
-      const filePath = `${dirPath}/${imageFileName}`
+      const dirPath = path.join(
+        __dirname,
+        '../files',
+        fileReferenceId.toString()
+      )
+      const fixturePath = path.join(
+        __dirname,
+        'development/fixtures',
+        imageFileName
+      )
+      const filePath = path.join(dirPath, imageFileName)
 
       if (!fs.existsSync(dirPath)) {
         fs.mkdirSync(dirPath, { recursive: true })
       }
       if (!fs.existsSync(filePath)) {
-        fs.copyFileSync(
-          `../api/seeds/development/fixtures/${imageFileName}`,
-          filePath
-        )
+        fs.copyFileSync(fixturePath, filePath)
       }
     }
   })
