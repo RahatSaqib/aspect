@@ -112,6 +112,7 @@ const plugins = {
     issueResolutions: require('./partner/SA_NHLS/issueResolutionConditions'),
     onResultLogged: require('./partner/SA_NHLS/onResultLogged'),
     onGxAlertAuthenticated: require('./partner/SA_NHLS/onGxAlertAuthenticated'),
+    postProcessMergeResult: require('./partner/SA_NHLS/postProcessMergeResult'),
   },
 }
 

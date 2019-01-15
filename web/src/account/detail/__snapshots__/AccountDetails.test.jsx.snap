@@ -41,7 +41,7 @@ exports[`AccountDetails module AccountDetails component should shallow render co
         >
           Contact Details
         </Visible>
-        <pure(lifecycle(recomposeForm(withHandlers(Component))))
+        <pure(lifecycle(recomposeForm(withHandlers(ContactDetailsForm))))
           contactDetails={
             Immutable.Record {
               "id": null,
@@ -87,7 +87,7 @@ exports[`AccountDetails module AccountDetails component should shallow render co
         >
           Username & Password
         </Visible>
-        <pure(lifecycle(recomposeForm(withHandlers(Component))))
+        <pure(lifecycle(recomposeForm(withHandlers(LoginDetailsForm))))
           closeCurrentPasswordInputDialog={[Function]}
           currentPasswordInputDialogOpen={false}
           intl={
@@ -130,7 +130,7 @@ exports[`AccountDetails module AccountDetails component should shallow render co
         >
           Language & Timezone
         </Visible>
-        <pure(lifecycle(recomposeForm(Component)))
+        <pure(lifecycle(recomposeForm(UserPreferencesForm)))
           intl={
             Object {
               "formatMessage": [Function],
@@ -199,7 +199,7 @@ exports[`AccountDetails module AccountDetails component when loading is true sho
         >
           Contact Details
         </Visible>
-        <pure(lifecycle(recomposeForm(withHandlers(Component))))
+        <pure(lifecycle(recomposeForm(withHandlers(ContactDetailsForm))))
           contactDetails={
             Immutable.Record {
               "id": null,
@@ -251,7 +251,7 @@ exports[`AccountDetails module AccountDetails component when loading is true sho
         >
           Username & Password
         </Visible>
-        <pure(lifecycle(recomposeForm(withHandlers(Component))))
+        <pure(lifecycle(recomposeForm(withHandlers(LoginDetailsForm))))
           closeCurrentPasswordInputDialog={[Function]}
           currentPasswordInputDialogOpen={false}
           intl={
@@ -300,7 +300,7 @@ exports[`AccountDetails module AccountDetails component when loading is true sho
         >
           Language & Timezone
         </Visible>
-        <pure(lifecycle(recomposeForm(Component)))
+        <pure(lifecycle(recomposeForm(UserPreferencesForm)))
           intl={
             Object {
               "formatMessage": [Function],

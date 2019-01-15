@@ -142,7 +142,7 @@ export class DeviceDemo extends PureComponent {
           <RaisedButton
             primary
             label="Post New Result"
-            onTouchTap={this.handlePostResult}
+            onClick={this.handlePostResult}
             disabled={!postEnabled}
           />
         </div>

@@ -30,7 +30,17 @@
       "name": "Rahima Moosa Mother and Child Hospital",
       "shortName": "RMMCH",
       "stateName": "Gauteng",
-      "lgaName": "Coronationville"
+      "lgaName": "Coronationville",
+      "devices": [
+        {
+          "deviceTypeId": "AlereQ",
+          "deviceSerial": "NAT-04001094"
+        },
+        {
+          "deviceTypeId": "AlereQ",
+          "deviceSerial": "NAT-04000893"
+        }
+      ]
     },
     {
       "externalId": "CMJAH",

@@ -154,7 +154,7 @@ export const ReporterDetailModalForm = props => {
               name={field.key}
               floatingLabelText={field.label}
               value={field.value}
-              onTouchTap={stopEventPropagation}
+              onClick={stopEventPropagation}
               onChange={event =>
                 props.onConfigurationDataChange(
                   values.configurationData.setIn(field.path, event.target.value)

@@ -10,11 +10,8 @@ exports[`LinkNavigation component should not see browse link when having no devi
   type="horizontal"
 >
   <withHandlers(pure(Link))
-    history={undefined}
     href="/dashboard"
     label="Home"
-    location={undefined}
-    onClick={undefined}
     theme={
       Object {
         "active": "Link__active",
@@ -37,11 +34,8 @@ exports[`LinkNavigation component should see browse link when having feature and
   type="horizontal"
 >
   <withHandlers(pure(Link))
-    history={undefined}
     href="/dashboard"
     label="Home"
-    location={undefined}
-    onClick={undefined}
     theme={
       Object {
         "active": "Link__active",
@@ -52,11 +46,8 @@ exports[`LinkNavigation component should see browse link when having feature and
     title="Home"
   />
   <withHandlers(pure(Link))
-    history={undefined}
     href="/browse/device"
     label="Browse"
-    location={undefined}
-    onClick={undefined}
     theme={
       Object {
         "active": "Link__active",
@@ -79,11 +70,8 @@ exports[`LinkNavigation component should shallow render correctly 1`] = `
   type="horizontal"
 >
   <withHandlers(pure(Link))
-    history={undefined}
     href="/dashboard"
     label="Home"
-    location={undefined}
-    onClick={undefined}
     theme={
       Object {
         "active": "Link__active",

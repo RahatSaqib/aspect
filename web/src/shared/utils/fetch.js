@@ -28,6 +28,9 @@ function addAuthHeaderMiddleware(fetch, input, options = {}) {
 class APIApplicationError extends Error {
   constructor(...args) {
     super(...args)
+    // make `instanceof APIApplicationError` work in ES5 for Jest
+    this.constructor = APIApplicationError
+    this.__proto__ = APIApplicationError.prototype // eslint-disable-line no-proto
     if (Error.captureStackTrace) {
       Error.captureStackTrace(this, APIApplicationError)
     }
@@ -37,6 +40,9 @@ class APIApplicationError extends Error {
 class ConnectionError extends Error {
   constructor(...args) {
     super(...args)
+    // make `instanceof ConnectionError` work in ES5 for Jest
+    this.constructor = ConnectionError
+    this.__proto__ = ConnectionError.prototype // eslint-disable-line no-proto
     if (Error.captureStackTrace) {
       Error.captureStackTrace(this, ConnectionError)
     }

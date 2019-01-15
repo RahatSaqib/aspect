@@ -387,11 +387,11 @@ export const DeviceApiKeyList = ({
     <div>
       <FlatButton
         label={intl.formatMessage(messages.generate)}
-        onTouchTap={onOpenGeneratorDialog}
+        onClick={onOpenGeneratorDialog}
       />
       <FlatButton
         label={intl.formatMessage(messages.assign)}
-        onTouchTap={onOpenAssignerDialog}
+        onClick={onOpenAssignerDialog}
         disabled={_.isEmpty(assignerValues.deviceApiKeyIds)}
       />
       <DeviceApiKeyGeneratorDialogForm

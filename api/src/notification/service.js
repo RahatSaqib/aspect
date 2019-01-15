@@ -169,13 +169,39 @@ async function onIssueEscalated({ issueId }, { messageContext: context }) {
               .where({ notificationTypeId: policy.id })
               .pluck('tagId')
           : []
+        const siteTagIds =
+          policy.sendToContactsWithMatchingTags && policy.siteId
+            ? await knex('SiteTag')
+                .where({ siteId: policy.siteId })
+                .pluck('tagId')
+            : []
+        const deviceTagIds =
+          policy.sendToContactsWithMatchingTags && policy.deviceId
+            ? await knex('DeviceTag')
+                .where({ deviceId: policy.deviceId })
+                .pluck('tagId')
+            : []
+        const resultTagIds =
+          policy.sendToContactsWithMatchingTags && policy.resultId
+            ? await knex('ResultTag')
+                .where({ resultId: policy.resultId })
+                .pluck('tagId')
+            : []
         const people = await knex('Job as j')
           .join('JobFunction as jf', 'j.jobFunctionId', 'jf.id')
           .modify(queryBuilder => {
             if (policy.sendToContactsWithMatchingTags) {
               queryBuilder
                 .join('PersonTag as pt', 'j.personId', 'pt.personId')
-                .whereIn('pt.tagId', notificationTypeTagIds)
+                .whereIn(
+                  'pt.tagId',
+                  _.uniq([
+                    ...notificationTypeTagIds,
+                    ...siteTagIds,
+                    ...deviceTagIds,
+                    ...resultTagIds,
+                  ])
+                )
             }
             queryBuilder.where('jf.id', policy.jobFunctionId)
           })

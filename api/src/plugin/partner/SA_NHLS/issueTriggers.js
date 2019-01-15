@@ -117,7 +117,7 @@ async function shouldSendResultToRedCAP(knex, action) {
         .join('MessageStatus as ms', 'wm.messageStatusId', 'ms.id')
         .where('n.issueId', resultDataEnteredIssueResults[0].id)
         .andWhere('ms.externalId', '<>', 'Error')
-        .andWhere('wt.externalId', 'LIKE', 'redCap%')
+        .andWhere('wt.externalId', 'redCapAlereQ')
         .first()
       if (!previouslySentRedCapNotificationsForResult) {
         return true

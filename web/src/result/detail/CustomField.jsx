@@ -8,7 +8,7 @@ import FocusBlurTextField from '../../components/shared/FocusBlurTextField'
 import FormGroup from '../../components/themedReactToolbox/FormGroup'
 import ButtonGroup from '../../components/themedReactToolbox/ButtonGroup'
 import StyledDropdown from '../../components/themedReactToolbox/StyledDropdown'
-import DateTimePicker from '../../components/themedReactToolbox/DateTimePicker'
+import DateTimePicker from '../../components/shared/DateTimePicker'
 
 const cssClasses = classnames.bind(require('./CustomField.css'))
 
@@ -195,11 +195,7 @@ export default class CustomField extends PureComponent {
           label={fieldLabel}
           key={formFieldKey}
         >
-          <DateTimePicker
-            value={fieldDateTime}
-            theme={THEME}
-            onChange={this.onUpdateData}
-          />
+          <DateTimePicker value={fieldDateTime} onChange={this.onUpdateData} />
         </FormGroup>
       )
     }

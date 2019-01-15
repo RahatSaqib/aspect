@@ -13,7 +13,6 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable a
         className=""
         composeTheme="deeply"
         disabled={true}
-        error={undefined}
         floating={true}
         hint=""
         label="Full Name"
@@ -23,14 +22,13 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable a
         name="name"
         onChange={[Function]}
         required={false}
+        role="input"
         type="text"
-        value={undefined}
       />
       <ThemedInput
         className=""
         composeTheme="deeply"
         disabled={true}
-        error={undefined}
         floating={true}
         hint=""
         label="Job Title"
@@ -40,8 +38,8 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable a
         name="title"
         onChange={[Function]}
         required={false}
+        role="input"
         type="text"
-        value={undefined}
       />
     </section>
     <section>
@@ -52,7 +50,6 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable a
         className=""
         composeTheme="deeply"
         disabled={true}
-        error={undefined}
         floating={true}
         hint=""
         label="Primary"
@@ -62,14 +59,13 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable a
         name="email"
         onChange={[Function]}
         required={false}
+        role="input"
         type="email"
-        value={undefined}
       />
       <ThemedInput
         className=""
         composeTheme="deeply"
         disabled={true}
-        error={undefined}
         floating={true}
         hint=""
         label="Alternate"
@@ -79,8 +75,8 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable a
         name="email2"
         onChange={[Function]}
         required={false}
+        role="input"
         type="email"
-        value={undefined}
       />
     </section>
     <section>
@@ -89,21 +85,17 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable a
       </h1>
       <pure(withProps(withHandlers(DialCodeDropdownInput)))
         disabled={true}
-        error={undefined}
         label="Telephone"
         maxLength={40}
         name="phone"
         onChange={[Function]}
-        value={undefined}
       />
       <pure(withProps(withHandlers(DialCodeDropdownInput)))
         disabled={true}
-        error={undefined}
         label="Mobile"
         maxLength={40}
         name="cell"
         onChange={[Function]}
-        value={undefined}
       />
     </section>
     <section>
@@ -116,7 +108,6 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable a
         <Connect(CountrySelectField)
           allItemText="All"
           className="GeographyDropdown"
-          countryId={undefined}
           floatingLabelFixed={true}
           floatingLabelText="Country"
           onCountryIdChange={[Function]}
@@ -124,28 +115,22 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable a
         <Connect(StateSelectField)
           allItemText="All"
           className="GeographyDropdown"
-          countryId={undefined}
           floatingLabelFixed={true}
           floatingLabelText="State"
           onStateIdChange={[Function]}
-          stateId={undefined}
         />
         <Connect(LgaSelectField)
           allItemText="All"
           className="GeographyDropdown"
-          countryId={undefined}
           floatingLabelFixed={true}
           floatingLabelText="Area"
-          lgaId={undefined}
           onLgaIdChange={[Function]}
-          stateId={undefined}
         />
       </div>
       <ThemedInput
         className=""
         composeTheme="deeply"
         disabled={true}
-        error={undefined}
         floating={true}
         hint=""
         label="Zip Code"
@@ -155,8 +140,8 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable a
         name="zip"
         onChange={[Function]}
         required={false}
+        role="input"
         type="text"
-        value={undefined}
       />
     </section>
   </div>
@@ -194,7 +179,6 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
         className=""
         composeTheme="deeply"
         disabled={false}
-        error={undefined}
         floating={true}
         hint=""
         label="Full Name"
@@ -204,14 +188,13 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
         name="name"
         onChange={[Function]}
         required={false}
+        role="input"
         type="text"
-        value={undefined}
       />
       <ThemedInput
         className=""
         composeTheme="deeply"
         disabled={false}
-        error={undefined}
         floating={true}
         hint=""
         label="Job Title"
@@ -221,8 +204,8 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
         name="title"
         onChange={[Function]}
         required={false}
+        role="input"
         type="text"
-        value={undefined}
       />
     </section>
     <section>
@@ -233,7 +216,6 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
         className=""
         composeTheme="deeply"
         disabled={false}
-        error={undefined}
         floating={true}
         hint=""
         label="Primary"
@@ -243,14 +225,13 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
         name="email"
         onChange={[Function]}
         required={false}
+        role="input"
         type="email"
-        value={undefined}
       />
       <ThemedInput
         className=""
         composeTheme="deeply"
         disabled={false}
-        error={undefined}
         floating={true}
         hint=""
         label="Alternate"
@@ -260,8 +241,8 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
         name="email2"
         onChange={[Function]}
         required={false}
+        role="input"
         type="email"
-        value={undefined}
       />
     </section>
     <section>
@@ -270,21 +251,17 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
       </h1>
       <pure(withProps(withHandlers(DialCodeDropdownInput)))
         disabled={false}
-        error={undefined}
         label="Telephone"
         maxLength={40}
         name="phone"
         onChange={[Function]}
-        value={undefined}
       />
       <pure(withProps(withHandlers(DialCodeDropdownInput)))
         disabled={false}
-        error={undefined}
         label="Mobile"
         maxLength={40}
         name="cell"
         onChange={[Function]}
-        value={undefined}
       />
     </section>
     <section>
@@ -297,7 +274,6 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
         <Connect(CountrySelectField)
           allItemText="All"
           className="GeographyDropdown"
-          countryId={undefined}
           floatingLabelFixed={true}
           floatingLabelText="Country"
           onCountryIdChange={[Function]}
@@ -305,28 +281,22 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
         <Connect(StateSelectField)
           allItemText="All"
           className="GeographyDropdown"
-          countryId={undefined}
           floatingLabelFixed={true}
           floatingLabelText="State"
           onStateIdChange={[Function]}
-          stateId={undefined}
         />
         <Connect(LgaSelectField)
           allItemText="All"
           className="GeographyDropdown"
-          countryId={undefined}
           floatingLabelFixed={true}
           floatingLabelText="Area"
-          lgaId={undefined}
           onLgaIdChange={[Function]}
-          stateId={undefined}
         />
       </div>
       <ThemedInput
         className=""
         composeTheme="deeply"
         disabled={false}
-        error={undefined}
         floating={true}
         hint=""
         label="Zip Code"
@@ -336,8 +306,8 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
         name="zip"
         onChange={[Function]}
         required={false}
+        role="input"
         type="text"
-        value={undefined}
       />
     </section>
   </div>
@@ -375,7 +345,6 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
         className=""
         composeTheme="deeply"
         disabled={false}
-        error={undefined}
         floating={true}
         hint=""
         label="Full Name"
@@ -385,14 +354,13 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
         name="name"
         onChange={[Function]}
         required={false}
+        role="input"
         type="text"
-        value={undefined}
       />
       <ThemedInput
         className=""
         composeTheme="deeply"
         disabled={false}
-        error={undefined}
         floating={true}
         hint=""
         label="Job Title"
@@ -402,8 +370,8 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
         name="title"
         onChange={[Function]}
         required={false}
+        role="input"
         type="text"
-        value={undefined}
       />
     </section>
     <section>
@@ -414,7 +382,6 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
         className=""
         composeTheme="deeply"
         disabled={false}
-        error={undefined}
         floating={true}
         hint=""
         label="Primary"
@@ -424,14 +391,13 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
         name="email"
         onChange={[Function]}
         required={false}
+        role="input"
         type="email"
-        value={undefined}
       />
       <ThemedInput
         className=""
         composeTheme="deeply"
         disabled={false}
-        error={undefined}
         floating={true}
         hint=""
         label="Alternate"
@@ -441,8 +407,8 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
         name="email2"
         onChange={[Function]}
         required={false}
+        role="input"
         type="email"
-        value={undefined}
       />
     </section>
     <section>
@@ -451,21 +417,17 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
       </h1>
       <pure(withProps(withHandlers(DialCodeDropdownInput)))
         disabled={false}
-        error={undefined}
         label="Telephone"
         maxLength={40}
         name="phone"
         onChange={[Function]}
-        value={undefined}
       />
       <pure(withProps(withHandlers(DialCodeDropdownInput)))
         disabled={false}
-        error={undefined}
         label="Mobile"
         maxLength={40}
         name="cell"
         onChange={[Function]}
-        value={undefined}
       />
     </section>
     <section>
@@ -478,7 +440,6 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
         <Connect(CountrySelectField)
           allItemText="All"
           className="GeographyDropdown"
-          countryId={undefined}
           floatingLabelFixed={true}
           floatingLabelText="Country"
           onCountryIdChange={[Function]}
@@ -486,28 +447,22 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
         <Connect(StateSelectField)
           allItemText="All"
           className="GeographyDropdown"
-          countryId={undefined}
           floatingLabelFixed={true}
           floatingLabelText="State"
           onStateIdChange={[Function]}
-          stateId={undefined}
         />
         <Connect(LgaSelectField)
           allItemText="All"
           className="GeographyDropdown"
-          countryId={undefined}
           floatingLabelFixed={true}
           floatingLabelText="Area"
-          lgaId={undefined}
           onLgaIdChange={[Function]}
-          stateId={undefined}
         />
       </div>
       <ThemedInput
         className=""
         composeTheme="deeply"
         disabled={false}
-        error={undefined}
         floating={true}
         hint=""
         label="Zip Code"
@@ -517,8 +472,8 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
         name="zip"
         onChange={[Function]}
         required={false}
+        role="input"
         type="text"
-        value={undefined}
       />
     </section>
   </div>
@@ -556,7 +511,6 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
         className=""
         composeTheme="deeply"
         disabled={false}
-        error={undefined}
         floating={true}
         hint=""
         label="Full Name"
@@ -566,14 +520,13 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
         name="name"
         onChange={[Function]}
         required={false}
+        role="input"
         type="text"
-        value={undefined}
       />
       <ThemedInput
         className=""
         composeTheme="deeply"
         disabled={false}
-        error={undefined}
         floating={true}
         hint=""
         label="Job Title"
@@ -583,8 +536,8 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
         name="title"
         onChange={[Function]}
         required={false}
+        role="input"
         type="text"
-        value={undefined}
       />
     </section>
     <section>
@@ -595,7 +548,6 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
         className=""
         composeTheme="deeply"
         disabled={false}
-        error={undefined}
         floating={true}
         hint=""
         label="Primary"
@@ -605,14 +557,13 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
         name="email"
         onChange={[Function]}
         required={false}
+        role="input"
         type="email"
-        value={undefined}
       />
       <ThemedInput
         className=""
         composeTheme="deeply"
         disabled={false}
-        error={undefined}
         floating={true}
         hint=""
         label="Alternate"
@@ -622,8 +573,8 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
         name="email2"
         onChange={[Function]}
         required={false}
+        role="input"
         type="email"
-        value={undefined}
       />
     </section>
     <section>
@@ -632,21 +583,17 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
       </h1>
       <pure(withProps(withHandlers(DialCodeDropdownInput)))
         disabled={false}
-        error={undefined}
         label="Telephone"
         maxLength={40}
         name="phone"
         onChange={[Function]}
-        value={undefined}
       />
       <pure(withProps(withHandlers(DialCodeDropdownInput)))
         disabled={false}
-        error={undefined}
         label="Mobile"
         maxLength={40}
         name="cell"
         onChange={[Function]}
-        value={undefined}
       />
     </section>
     <section>
@@ -659,7 +606,6 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
         <Connect(CountrySelectField)
           allItemText="All"
           className="GeographyDropdown"
-          countryId={undefined}
           floatingLabelFixed={true}
           floatingLabelText="Country"
           onCountryIdChange={[Function]}
@@ -667,28 +613,22 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
         <Connect(StateSelectField)
           allItemText="All"
           className="GeographyDropdown"
-          countryId={undefined}
           floatingLabelFixed={true}
           floatingLabelText="State"
           onStateIdChange={[Function]}
-          stateId={undefined}
         />
         <Connect(LgaSelectField)
           allItemText="All"
           className="GeographyDropdown"
-          countryId={undefined}
           floatingLabelFixed={true}
           floatingLabelText="Area"
-          lgaId={undefined}
           onLgaIdChange={[Function]}
-          stateId={undefined}
         />
       </div>
       <ThemedInput
         className=""
         composeTheme="deeply"
         disabled={false}
-        error={undefined}
         floating={true}
         hint=""
         label="Zip Code"
@@ -698,8 +638,8 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
         name="zip"
         onChange={[Function]}
         required={false}
+        role="input"
         type="text"
-        value={undefined}
       />
     </section>
   </div>
@@ -737,7 +677,6 @@ exports[`ContactDetailsForm module ContactDetailsForm component should enable th
         className=""
         composeTheme="deeply"
         disabled={false}
-        error={undefined}
         floating={true}
         hint=""
         label="Full Name"
@@ -747,14 +686,13 @@ exports[`ContactDetailsForm module ContactDetailsForm component should enable th
         name="name"
         onChange={[Function]}
         required={false}
+        role="input"
         type="text"
-        value={undefined}
       />
       <ThemedInput
         className=""
         composeTheme="deeply"
         disabled={false}
-        error={undefined}
         floating={true}
         hint=""
         label="Job Title"
@@ -764,8 +702,8 @@ exports[`ContactDetailsForm module ContactDetailsForm component should enable th
         name="title"
         onChange={[Function]}
         required={false}
+        role="input"
         type="text"
-        value={undefined}
       />
     </section>
     <section>
@@ -776,7 +714,6 @@ exports[`ContactDetailsForm module ContactDetailsForm component should enable th
         className=""
         composeTheme="deeply"
         disabled={false}
-        error={undefined}
         floating={true}
         hint=""
         label="Primary"
@@ -786,14 +723,13 @@ exports[`ContactDetailsForm module ContactDetailsForm component should enable th
         name="email"
         onChange={[Function]}
         required={false}
+        role="input"
         type="email"
-        value={undefined}
       />
       <ThemedInput
         className=""
         composeTheme="deeply"
         disabled={false}
-        error={undefined}
         floating={true}
         hint=""
         label="Alternate"
@@ -803,8 +739,8 @@ exports[`ContactDetailsForm module ContactDetailsForm component should enable th
         name="email2"
         onChange={[Function]}
         required={false}
+        role="input"
         type="email"
-        value={undefined}
       />
     </section>
     <section>
@@ -813,21 +749,17 @@ exports[`ContactDetailsForm module ContactDetailsForm component should enable th
       </h1>
       <pure(withProps(withHandlers(DialCodeDropdownInput)))
         disabled={false}
-        error={undefined}
         label="Telephone"
         maxLength={40}
         name="phone"
         onChange={[Function]}
-        value={undefined}
       />
       <pure(withProps(withHandlers(DialCodeDropdownInput)))
         disabled={false}
-        error={undefined}
         label="Mobile"
         maxLength={40}
         name="cell"
         onChange={[Function]}
-        value={undefined}
       />
     </section>
     <section>
@@ -840,7 +772,6 @@ exports[`ContactDetailsForm module ContactDetailsForm component should enable th
         <Connect(CountrySelectField)
           allItemText="All"
           className="GeographyDropdown"
-          countryId={undefined}
           floatingLabelFixed={true}
           floatingLabelText="Country"
           onCountryIdChange={[Function]}
@@ -848,28 +779,22 @@ exports[`ContactDetailsForm module ContactDetailsForm component should enable th
         <Connect(StateSelectField)
           allItemText="All"
           className="GeographyDropdown"
-          countryId={undefined}
           floatingLabelFixed={true}
           floatingLabelText="State"
           onStateIdChange={[Function]}
-          stateId={undefined}
         />
         <Connect(LgaSelectField)
           allItemText="All"
           className="GeographyDropdown"
-          countryId={undefined}
           floatingLabelFixed={true}
           floatingLabelText="Area"
-          lgaId={undefined}
           onLgaIdChange={[Function]}
-          stateId={undefined}
         />
       </div>
       <ThemedInput
         className=""
         composeTheme="deeply"
         disabled={false}
-        error={undefined}
         floating={true}
         hint=""
         label="Zip Code"
@@ -879,8 +804,8 @@ exports[`ContactDetailsForm module ContactDetailsForm component should enable th
         name="zip"
         onChange={[Function]}
         required={false}
+        role="input"
         type="text"
-        value={undefined}
       />
     </section>
   </div>
@@ -918,7 +843,6 @@ exports[`ContactDetailsForm module ContactDetailsForm component should render co
         className=""
         composeTheme="deeply"
         disabled={false}
-        error={undefined}
         floating={true}
         hint=""
         label="Full Name"
@@ -928,14 +852,13 @@ exports[`ContactDetailsForm module ContactDetailsForm component should render co
         name="name"
         onChange={[Function]}
         required={false}
+        role="input"
         type="text"
-        value={undefined}
       />
       <ThemedInput
         className=""
         composeTheme="deeply"
         disabled={false}
-        error={undefined}
         floating={true}
         hint=""
         label="Job Title"
@@ -945,8 +868,8 @@ exports[`ContactDetailsForm module ContactDetailsForm component should render co
         name="title"
         onChange={[Function]}
         required={false}
+        role="input"
         type="text"
-        value={undefined}
       />
     </section>
     <section>
@@ -957,7 +880,6 @@ exports[`ContactDetailsForm module ContactDetailsForm component should render co
         className=""
         composeTheme="deeply"
         disabled={false}
-        error={undefined}
         floating={true}
         hint=""
         label="Primary"
@@ -967,14 +889,13 @@ exports[`ContactDetailsForm module ContactDetailsForm component should render co
         name="email"
         onChange={[Function]}
         required={false}
+        role="input"
         type="email"
-        value={undefined}
       />
       <ThemedInput
         className=""
         composeTheme="deeply"
         disabled={false}
-        error={undefined}
         floating={true}
         hint=""
         label="Alternate"
@@ -984,8 +905,8 @@ exports[`ContactDetailsForm module ContactDetailsForm component should render co
         name="email2"
         onChange={[Function]}
         required={false}
+        role="input"
         type="email"
-        value={undefined}
       />
     </section>
     <section>
@@ -994,21 +915,17 @@ exports[`ContactDetailsForm module ContactDetailsForm component should render co
       </h1>
       <pure(withProps(withHandlers(DialCodeDropdownInput)))
         disabled={false}
-        error={undefined}
         label="Telephone"
         maxLength={40}
         name="phone"
         onChange={[Function]}
-        value={undefined}
       />
       <pure(withProps(withHandlers(DialCodeDropdownInput)))
         disabled={false}
-        error={undefined}
         label="Mobile"
         maxLength={40}
         name="cell"
         onChange={[Function]}
-        value={undefined}
       />
     </section>
     <section>
@@ -1021,7 +938,6 @@ exports[`ContactDetailsForm module ContactDetailsForm component should render co
         <Connect(CountrySelectField)
           allItemText="All"
           className="GeographyDropdown"
-          countryId={undefined}
           floatingLabelFixed={true}
           floatingLabelText="Country"
           onCountryIdChange={[Function]}
@@ -1029,28 +945,22 @@ exports[`ContactDetailsForm module ContactDetailsForm component should render co
         <Connect(StateSelectField)
           allItemText="All"
           className="GeographyDropdown"
-          countryId={undefined}
           floatingLabelFixed={true}
           floatingLabelText="State"
           onStateIdChange={[Function]}
-          stateId={undefined}
         />
         <Connect(LgaSelectField)
           allItemText="All"
           className="GeographyDropdown"
-          countryId={undefined}
           floatingLabelFixed={true}
           floatingLabelText="Area"
-          lgaId={undefined}
           onLgaIdChange={[Function]}
-          stateId={undefined}
         />
       </div>
       <ThemedInput
         className=""
         composeTheme="deeply"
         disabled={false}
-        error={undefined}
         floating={true}
         hint=""
         label="Zip Code"
@@ -1060,8 +970,8 @@ exports[`ContactDetailsForm module ContactDetailsForm component should render co
         name="zip"
         onChange={[Function]}
         required={false}
+        role="input"
         type="text"
-        value={undefined}
       />
     </section>
   </div>

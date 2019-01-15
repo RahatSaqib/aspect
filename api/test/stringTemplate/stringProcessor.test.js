@@ -689,6 +689,7 @@ describe('stringTemplate', () => {
             resultCategory1ExternalId: 'Error',
             resultCategory2ExternalId: 'Error',
             expectedPocVl: '',
+            expectedPocInstrumentR: '4',
             deviceTypeExternalId: 'AlereQ',
             resultData: `{"hiv1OResult":"---","hiv1MNResult":"---","hiv2Result":"---","errorCode":"18006","id":1,"sampleBarcode":"SAMPLE-123","operator":"RHANDZU","resultNo":1,"sampleId":"FUNCTION TEST","testName":"Alere™ q HIV-1/2 Detect","timeStamp":"2018-10-05T13:40:46","pickedUpOn":"2018-11-08T14:06:21.305072","sourceFile":"/home/south_africa_nhls/ftp/alere_q/01-01_NAT-04000925_2018-10-31-11-18-58.csv.zip","cartridgeId":"0479001033","deviceCheck":"Fail","deviceSerial":"NAT-04000925","analysisCheck":"----","negativeControl":"----","sampleDetection":"----","softwareVersion":"0.24.2","hiv1PositiveControl":"----","hiv2PositiveControl":"----"}`,
           },
@@ -697,6 +698,7 @@ describe('stringTemplate', () => {
             resultCategory1ExternalId: 'NoResult',
             resultCategory2ExternalId: 'NoResult',
             expectedPocVl: '',
+            expectedPocInstrumentR: '3',
             deviceTypeExternalId: 'AlereQ',
             resultData: `{"hiv1OResult":"None","hiv1MNResult":"None","hiv2Result":"None","errorCode":"18006","id":1,"sampleBarcode":"SAMPLE-123","operator":"RHANDZU","resultNo":1,"sampleId":"FUNCTION TEST","testName":"Alere™ q HIV-1/2 Detect","timeStamp":"2018-10-05T13:40:46","pickedUpOn":"2018-11-08T14:06:21.305072","sourceFile":"/home/south_africa_nhls/ftp/alere_q/01-01_NAT-04000925_2018-10-31-11-18-58.csv.zip","cartridgeId":"0479001033","deviceCheck":"Fail","deviceSerial":"NAT-04000925","analysisCheck":"----","negativeControl":"----","sampleDetection":"----","softwareVersion":"0.24.2","hiv1PositiveControl":"----","hiv2PositiveControl":"----"}`,
           },
@@ -705,6 +707,7 @@ describe('stringTemplate', () => {
             resultCategory1ExternalId: 'Detected',
             resultCategory2ExternalId: 'NotDetected',
             expectedPocVl: '',
+            expectedPocInstrumentR: '1',
             deviceTypeExternalId: 'AlereQ',
             resultData: `{"hiv1OResult":"Detected","hiv1MNResult":"Undetected","hiv2Result":"Undetected","errorCode":"0","id":1,"sampleBarcode":"SAMPLE-123","operator":"RHANDZU","resultNo":1,"sampleId":"FUNCTION TEST","testName":"Alere™ q HIV-1/2 Detect","timeStamp":"2018-10-05T13:40:46","pickedUpOn":"2018-11-08T14:06:21.305072","sourceFile":"/home/south_africa_nhls/ftp/alere_q/01-01_NAT-04000925_2018-10-31-11-18-58.csv.zip","cartridgeId":"0479001033","deviceCheck":"Fail","deviceSerial":"NAT-04000925","analysisCheck":"----","negativeControl":"----","sampleDetection":"----","softwareVersion":"0.24.2","hiv1PositiveControl":"----","hiv2PositiveControl":"----"}`,
           },
@@ -713,6 +716,7 @@ describe('stringTemplate', () => {
             resultCategory1ExternalId: 'Detected',
             resultCategory2ExternalId: 'NotDetected',
             expectedPocVl: '',
+            expectedPocInstrumentR: '1',
             deviceTypeExternalId: 'AlereQ',
             resultData: `{"hiv1OResult":"Undetected","hiv1MNResult":"Detected","hiv2Result":"Undetected","errorCode":"0","id":1,"sampleBarcode":"SAMPLE-123","operator":"RHANDZU","resultNo":1,"sampleId":"FUNCTION TEST","testName":"Alere™ q HIV-1/2 Detect","timeStamp":"2018-10-05T13:40:46","pickedUpOn":"2018-11-08T14:06:21.305072","sourceFile":"/home/south_africa_nhls/ftp/alere_q/01-01_NAT-04000925_2018-10-31-11-18-58.csv.zip","cartridgeId":"0479001033","deviceCheck":"Fail","deviceSerial":"NAT-04000925","analysisCheck":"----","negativeControl":"----","sampleDetection":"----","softwareVersion":"0.24.2","hiv1PositiveControl":"----","hiv2PositiveControl":"----"}`,
           },
@@ -721,8 +725,18 @@ describe('stringTemplate', () => {
             resultCategory1ExternalId: 'NotDetected',
             resultCategory2ExternalId: 'Detected',
             expectedPocVl: '',
+            expectedPocInstrumentR: '1',
             deviceTypeExternalId: 'AlereQ',
             resultData: `{"hiv1OResult":"Undetected","hiv1MNResult":"Undetected","hiv2Result":"Detected","errorCode":"0","id":1,"sampleBarcode":"SAMPLE-123","operator":"RHANDZU","resultNo":1,"sampleId":"FUNCTION TEST","testName":"Alere™ q HIV-1/2 Detect","timeStamp":"2018-10-05T13:40:46","pickedUpOn":"2018-11-08T14:06:21.305072","sourceFile":"/home/south_africa_nhls/ftp/alere_q/01-01_NAT-04000925_2018-10-31-11-18-58.csv.zip","cartridgeId":"0479001033","deviceCheck":"Fail","deviceSerial":"NAT-04000925","analysisCheck":"----","negativeControl":"----","sampleDetection":"----","softwareVersion":"0.24.2","hiv1PositiveControl":"----","hiv2PositiveControl":"----"}`,
+          },
+          {
+            assayExternalId: 'assayAlereQHiv12Detect',
+            resultCategory1ExternalId: 'NotDetected',
+            resultCategory2ExternalId: 'NotDetected',
+            expectedPocVl: '',
+            expectedPocInstrumentR: '2',
+            deviceTypeExternalId: 'AlereQ',
+            resultData: `{"hiv1OResult":"Undetected","hiv1MNResult":"Undetected","hiv2Result":"Undetected","errorCode":"0","id":1,"sampleBarcode":"SAMPLE-123","operator":"RHANDZU","resultNo":1,"sampleId":"FUNCTION TEST","testName":"Alere™ q HIV-1/2 Detect","timeStamp":"2018-10-05T13:40:46","pickedUpOn":"2018-11-08T14:06:21.305072","sourceFile":"/home/south_africa_nhls/ftp/alere_q/01-01_NAT-04000925_2018-10-31-11-18-58.csv.zip","cartridgeId":"0479001033","deviceCheck":"Fail","deviceSerial":"NAT-04000925","analysisCheck":"----","negativeControl":"----","sampleDetection":"----","softwareVersion":"0.24.2","hiv1PositiveControl":"----","hiv2PositiveControl":"----"}`,
           },
           {
             assayExternalId: 'assayAlereQHiv12VLPlasma',
@@ -930,12 +944,14 @@ describe('stringTemplate', () => {
                 )
               )}%22%2C%20` +
               `%22point_of_care_instrument_r%22%3A%22${
-                redCapResultCategoryCodes[
-                  tryMergeResultCategories(
-                    dataSource.resultCategory1ExternalId,
-                    dataSource.resultCategory2ExternalId
-                  )
-                ]
+                dataSource.expectedPocInstrumentR
+                  ? dataSource.expectedPocInstrumentR
+                  : redCapResultCategoryCodes[
+                      tryMergeResultCategories(
+                        dataSource.resultCategory1ExternalId,
+                        dataSource.resultCategory2ExternalId
+                      )
+                    ]
               }%22%2C%20` +
               `%22error_code1%22%3A%22${encodeURIComponent(
                 dataSource.resultErrorCode || ''
