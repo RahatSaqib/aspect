@@ -2,240 +2,204 @@
 
 exports[`DelayShowingProgressBar module DelayShowingProgressBar component should render correctly 1`] = `
 <div
-  aria-valuemax={100}
-  aria-valuemin={0}
-  aria-valuenow={0}
-  className=""
-  data-react-toolbox="progress-bar"
+  className="MuiLinearProgress-root-1 MuiLinearProgress-colorPrimary-2 MuiLinearProgress-indeterminate-5"
   disabled={true}
+  role="progressbar"
 >
-  <div>
-    <span
-      data-ref="buffer"
-    />
-    <span
-      data-ref="value"
-    />
-  </div>
+  <div
+    className="MuiLinearProgress-bar-11 MuiLinearProgress-barColorPrimary-12 MuiLinearProgress-bar1Indeterminate-14"
+    style={Object {}}
+  />
+  <div
+    className="MuiLinearProgress-bar-11 MuiLinearProgress-barColorPrimary-12 MuiLinearProgress-bar2Indeterminate-17"
+    style={Object {}}
+  />
 </div>
 `;
 
 exports[`DelayShowingProgressBar module DelayShowingProgressBar component when change from disabled to enabled should enable progress bar with a delay 1`] = `
 <div
-  aria-valuemax={100}
-  aria-valuemin={0}
-  aria-valuenow={0}
-  className=""
-  data-react-toolbox="progress-bar"
+  className="MuiLinearProgress-root-1 MuiLinearProgress-colorPrimary-2 MuiLinearProgress-indeterminate-5"
   disabled={true}
+  role="progressbar"
 >
-  <div>
-    <span
-      data-ref="buffer"
-    />
-    <span
-      data-ref="value"
-    />
-  </div>
+  <div
+    className="MuiLinearProgress-bar-11 MuiLinearProgress-barColorPrimary-12 MuiLinearProgress-bar1Indeterminate-14"
+    style={Object {}}
+  />
+  <div
+    className="MuiLinearProgress-bar-11 MuiLinearProgress-barColorPrimary-12 MuiLinearProgress-bar2Indeterminate-17"
+    style={Object {}}
+  />
 </div>
 `;
 
 exports[`DelayShowingProgressBar module DelayShowingProgressBar component when change from disabled to enabled should enable progress bar with a delay 2`] = `
 <div
-  aria-valuemax={100}
-  aria-valuemin={0}
-  aria-valuenow={0}
-  className=""
-  data-react-toolbox="progress-bar"
+  className="MuiLinearProgress-root-1 MuiLinearProgress-colorPrimary-2 MuiLinearProgress-indeterminate-5"
   disabled={true}
+  role="progressbar"
 >
-  <div>
-    <span
-      data-ref="buffer"
-    />
-    <span
-      data-ref="value"
-    />
-  </div>
+  <div
+    className="MuiLinearProgress-bar-11 MuiLinearProgress-barColorPrimary-12 MuiLinearProgress-bar1Indeterminate-14"
+    style={Object {}}
+  />
+  <div
+    className="MuiLinearProgress-bar-11 MuiLinearProgress-barColorPrimary-12 MuiLinearProgress-bar2Indeterminate-17"
+    style={Object {}}
+  />
 </div>
 `;
 
 exports[`DelayShowingProgressBar module DelayShowingProgressBar component when change from disabled to enabled should enable progress bar with a delay 3`] = `
 <div
-  aria-valuemax={100}
-  aria-valuemin={0}
-  aria-valuenow={0}
-  className=""
-  data-react-toolbox="progress-bar"
+  className="MuiLinearProgress-root-1 MuiLinearProgress-colorPrimary-2 MuiLinearProgress-indeterminate-5"
   disabled={true}
+  role="progressbar"
 >
-  <div>
-    <span
-      data-ref="buffer"
-    />
-    <span
-      data-ref="value"
-    />
-  </div>
+  <div
+    className="MuiLinearProgress-bar-11 MuiLinearProgress-barColorPrimary-12 MuiLinearProgress-bar1Indeterminate-14"
+    style={Object {}}
+  />
+  <div
+    className="MuiLinearProgress-bar-11 MuiLinearProgress-barColorPrimary-12 MuiLinearProgress-bar2Indeterminate-17"
+    style={Object {}}
+  />
 </div>
 `;
 
 exports[`DelayShowingProgressBar module DelayShowingProgressBar component when change from disabled to enabled should enable progress bar with a delay 4`] = `
 <div
-  aria-valuemax={100}
-  aria-valuemin={0}
-  aria-valuenow={0}
-  className=""
-  data-react-toolbox="progress-bar"
+  className="MuiLinearProgress-root-1 MuiLinearProgress-colorPrimary-2 MuiLinearProgress-indeterminate-5"
   disabled={false}
+  role="progressbar"
 >
-  <div>
-    <span
-      data-ref="buffer"
-    />
-    <span
-      data-ref="value"
-    />
-  </div>
+  <div
+    className="MuiLinearProgress-bar-11 MuiLinearProgress-barColorPrimary-12 MuiLinearProgress-bar1Indeterminate-14"
+    style={Object {}}
+  />
+  <div
+    className="MuiLinearProgress-bar-11 MuiLinearProgress-barColorPrimary-12 MuiLinearProgress-bar2Indeterminate-17"
+    style={Object {}}
+  />
 </div>
 `;
 
 exports[`DelayShowingProgressBar module DelayShowingProgressBar component when change from enabled to disabled should disable progress bar immediately 1`] = `
 <div
-  aria-valuemax={100}
-  aria-valuemin={0}
-  aria-valuenow={0}
-  className=""
-  data-react-toolbox="progress-bar"
+  className="MuiLinearProgress-root-1 MuiLinearProgress-colorPrimary-2 MuiLinearProgress-indeterminate-5"
   disabled={false}
+  role="progressbar"
 >
-  <div>
-    <span
-      data-ref="buffer"
-    />
-    <span
-      data-ref="value"
-    />
-  </div>
+  <div
+    className="MuiLinearProgress-bar-11 MuiLinearProgress-barColorPrimary-12 MuiLinearProgress-bar1Indeterminate-14"
+    style={Object {}}
+  />
+  <div
+    className="MuiLinearProgress-bar-11 MuiLinearProgress-barColorPrimary-12 MuiLinearProgress-bar2Indeterminate-17"
+    style={Object {}}
+  />
 </div>
 `;
 
 exports[`DelayShowingProgressBar module DelayShowingProgressBar component when change from enabled to disabled should disable progress bar immediately 2`] = `
 <div
-  aria-valuemax={100}
-  aria-valuemin={0}
-  aria-valuenow={0}
-  className=""
-  data-react-toolbox="progress-bar"
+  className="MuiLinearProgress-root-1 MuiLinearProgress-colorPrimary-2 MuiLinearProgress-indeterminate-5"
   disabled={true}
+  role="progressbar"
 >
-  <div>
-    <span
-      data-ref="buffer"
-    />
-    <span
-      data-ref="value"
-    />
-  </div>
+  <div
+    className="MuiLinearProgress-bar-11 MuiLinearProgress-barColorPrimary-12 MuiLinearProgress-bar1Indeterminate-14"
+    style={Object {}}
+  />
+  <div
+    className="MuiLinearProgress-bar-11 MuiLinearProgress-barColorPrimary-12 MuiLinearProgress-bar2Indeterminate-17"
+    style={Object {}}
+  />
 </div>
 `;
 
 exports[`DelayShowingProgressBar module DelayShowingProgressBar component when change from enabled to disabled should disable progress bar immediately 3`] = `
 <div
-  aria-valuemax={100}
-  aria-valuemin={0}
-  aria-valuenow={0}
-  className=""
-  data-react-toolbox="progress-bar"
+  className="MuiLinearProgress-root-1 MuiLinearProgress-colorPrimary-2 MuiLinearProgress-indeterminate-5"
   disabled={true}
+  role="progressbar"
 >
-  <div>
-    <span
-      data-ref="buffer"
-    />
-    <span
-      data-ref="value"
-    />
-  </div>
+  <div
+    className="MuiLinearProgress-bar-11 MuiLinearProgress-barColorPrimary-12 MuiLinearProgress-bar1Indeterminate-14"
+    style={Object {}}
+  />
+  <div
+    className="MuiLinearProgress-bar-11 MuiLinearProgress-barColorPrimary-12 MuiLinearProgress-bar2Indeterminate-17"
+    style={Object {}}
+  />
 </div>
 `;
 
 exports[`DelayShowingProgressBar module DelayShowingProgressBar component when render once should disable progress bar give by initial condition 1`] = `
 <div
-  aria-valuemax={100}
-  aria-valuemin={0}
-  aria-valuenow={0}
-  className=""
-  data-react-toolbox="progress-bar"
+  className="MuiLinearProgress-root-1 MuiLinearProgress-colorPrimary-2 MuiLinearProgress-indeterminate-5"
   disabled={true}
+  role="progressbar"
 >
-  <div>
-    <span
-      data-ref="buffer"
-    />
-    <span
-      data-ref="value"
-    />
-  </div>
+  <div
+    className="MuiLinearProgress-bar-11 MuiLinearProgress-barColorPrimary-12 MuiLinearProgress-bar1Indeterminate-14"
+    style={Object {}}
+  />
+  <div
+    className="MuiLinearProgress-bar-11 MuiLinearProgress-barColorPrimary-12 MuiLinearProgress-bar2Indeterminate-17"
+    style={Object {}}
+  />
 </div>
 `;
 
 exports[`DelayShowingProgressBar module DelayShowingProgressBar component when render once should disable progress bar give by initial condition 2`] = `
 <div
-  aria-valuemax={100}
-  aria-valuemin={0}
-  aria-valuenow={0}
-  className=""
-  data-react-toolbox="progress-bar"
+  className="MuiLinearProgress-root-1 MuiLinearProgress-colorPrimary-2 MuiLinearProgress-indeterminate-5"
   disabled={true}
+  role="progressbar"
 >
-  <div>
-    <span
-      data-ref="buffer"
-    />
-    <span
-      data-ref="value"
-    />
-  </div>
+  <div
+    className="MuiLinearProgress-bar-11 MuiLinearProgress-barColorPrimary-12 MuiLinearProgress-bar1Indeterminate-14"
+    style={Object {}}
+  />
+  <div
+    className="MuiLinearProgress-bar-11 MuiLinearProgress-barColorPrimary-12 MuiLinearProgress-bar2Indeterminate-17"
+    style={Object {}}
+  />
 </div>
 `;
 
 exports[`DelayShowingProgressBar module DelayShowingProgressBar component when render once should enable progress bar give by initial condition 1`] = `
 <div
-  aria-valuemax={100}
-  aria-valuemin={0}
-  aria-valuenow={0}
-  className=""
-  data-react-toolbox="progress-bar"
+  className="MuiLinearProgress-root-1 MuiLinearProgress-colorPrimary-2 MuiLinearProgress-indeterminate-5"
   disabled={false}
+  role="progressbar"
 >
-  <div>
-    <span
-      data-ref="buffer"
-    />
-    <span
-      data-ref="value"
-    />
-  </div>
+  <div
+    className="MuiLinearProgress-bar-11 MuiLinearProgress-barColorPrimary-12 MuiLinearProgress-bar1Indeterminate-14"
+    style={Object {}}
+  />
+  <div
+    className="MuiLinearProgress-bar-11 MuiLinearProgress-barColorPrimary-12 MuiLinearProgress-bar2Indeterminate-17"
+    style={Object {}}
+  />
 </div>
 `;
 
 exports[`DelayShowingProgressBar module DelayShowingProgressBar component when render once should enable progress bar give by initial condition 2`] = `
 <div
-  aria-valuemax={100}
-  aria-valuemin={0}
-  aria-valuenow={0}
-  className=""
-  data-react-toolbox="progress-bar"
+  className="MuiLinearProgress-root-1 MuiLinearProgress-colorPrimary-2 MuiLinearProgress-indeterminate-5"
   disabled={false}
+  role="progressbar"
 >
-  <div>
-    <span
-      data-ref="buffer"
-    />
-    <span
-      data-ref="value"
-    />
-  </div>
+  <div
+    className="MuiLinearProgress-bar-11 MuiLinearProgress-barColorPrimary-12 MuiLinearProgress-bar1Indeterminate-14"
+    style={Object {}}
+  />
+  <div
+    className="MuiLinearProgress-bar-11 MuiLinearProgress-barColorPrimary-12 MuiLinearProgress-bar2Indeterminate-17"
+    style={Object {}}
+  />
 </div>
 `;

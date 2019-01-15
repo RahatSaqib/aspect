@@ -5,7 +5,6 @@ import 'url-search-params-polyfill'
 import _ from 'lodash'
 import React from 'react'
 import { render } from 'react-dom'
-import { overrideComponentTypeChecker } from 'react-toolbox/lib/utils/is-component-of-type'
 
 import config from './config'
 import store from './store'
@@ -50,11 +49,6 @@ if (process.env.NODE_ENV === 'development' && false) {
     ),
   })
 }
-
-overrideComponentTypeChecker(
-  (classType, reactElement) =>
-    React.createElement(classType).type === reactElement.type
-)
 
 const appDom = document.getElementById('app')
 
