@@ -7,14 +7,14 @@ import { defineMessages, intlShape } from 'react-intl'
 
 // Material-UI
 import Button from '@material-ui/core/Button'
+import TextField from '@material-ui/core/TextField'
 
 // Our own imports
-import recomposeForm from '../../components/recomposeForm'
+import recomposeForm, { errorProps } from '../../components/recomposeForm'
 import CountrySelectField from '../../filter/geography/CountrySelectField'
 import PartnerSelectField from '../../filter/partner/PartnerSelectField'
 import SiteSelectField from '../../filter/resource/SiteSelectField'
-import TextField from '../../components/shared/TextField'
-import Dialog from '../../components/shared/Dialog'
+import AspectDialog from '../../components/shared/AspectDialog'
 
 const messages = defineMessages({
   cancel: {
@@ -84,6 +84,12 @@ const enhance = compose(
   })
 )
 
+const errorStyle = {
+  float: 'left',
+  whiteSpace: 'nowrap',
+  textOverflow: 'visible',
+}
+
 export function DeviceApiKeyGeneratorDialogForm({
   isDialogOpen,
   onCancel,
@@ -113,7 +119,7 @@ export function DeviceApiKeyGeneratorDialogForm({
     </Button>,
   ]
   return (
-    <Dialog
+    <AspectDialog
       title={formatMessage(messages.generatorDialogTitle)}
       actions={actions}
       open={isDialogOpen}
@@ -122,13 +128,17 @@ export function DeviceApiKeyGeneratorDialogForm({
     >
       <form>
         <TextField
+          fullWidth
           name="count"
           type="number"
-          floatingLabelText={formatMessage(messages.count)}
+          label={formatMessage(messages.count)}
+          InputLabelProps={{
+            shrink: undefined,
+          }}
+          errorStyle={errorStyle}
+          {...errorProps(meta.count)}
           value={values.count}
           onChange={onCountChange}
-          errorText={meta.count.touched && meta.count.error}
-          fullWidth
         />
         <CountrySelectField
           name="countryId"
@@ -136,11 +146,7 @@ export function DeviceApiKeyGeneratorDialogForm({
           allItemText=""
           countryId={values.countryId}
           onCountryIdChange={onCountryIdChange}
-          errorStyle={{
-            float: 'left',
-            whiteSpace: 'nowrap',
-            textOverflow: 'visible',
-          }}
+          errorStyle={errorStyle}
           errorText={meta.countryId.touched && meta.countryId.error}
           fullWidth
           tabIndex="0"
@@ -153,11 +159,7 @@ export function DeviceApiKeyGeneratorDialogForm({
           emptyText=""
           partnerId={values.partnerId}
           onChangePartner={onPartnerIdChange}
-          errorStyle={{
-            float: 'left',
-            whiteSpace: 'nowrap',
-            textOverflow: 'visible',
-          }}
+          errorStyle={errorStyle}
           errorText={meta.partnerId.touched && meta.partnerId.error}
           fullWidth
           tabIndex="0"
@@ -170,18 +172,14 @@ export function DeviceApiKeyGeneratorDialogForm({
           partnerId={values.partnerId}
           value={values.siteId}
           onSiteChange={onSiteIdChange}
-          errorStyle={{
-            float: 'left',
-            whiteSpace: 'nowrap',
-            textOverflow: 'visible',
-          }}
+          errorStyle={errorStyle}
           errorText={meta.siteId.touched && meta.siteId.error}
           fullWidth
           tabIndex="0"
           aria-haspopup
         />
       </form>
-    </Dialog>
+    </AspectDialog>
   )
 }
 

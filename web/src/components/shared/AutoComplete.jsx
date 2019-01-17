@@ -1,4 +1,4 @@
-import React, { PureComponent } from 'react'
+import React, { useRef } from 'react'
 import PropTypes from 'prop-types'
 import _ from 'lodash'
 import Downshift from 'downshift'
@@ -9,15 +9,15 @@ import Paper from '@material-ui/core/Paper'
 import MenuItem from '@material-ui/core/MenuItem'
 
 function renderInput(inputProps) {
-  const { InputProps, classes, ref, ...other } = inputProps
+  const { InputProps, classesMap, ref, ...other } = inputProps
   return (
     <TextField
       margin="normal"
       InputProps={{
         inputRef: ref,
         classes: {
-          root: classes.inputRoot,
-          input: classes.inputInput,
+          root: classesMap.inputRoot,
+          input: classesMap.inputInput,
         },
         ...InputProps,
       }}
@@ -95,138 +95,137 @@ const styles = theme => ({
   },
 })
 
-export class AutoComplete extends PureComponent {
-  static propTypes = {
-    classes: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-    searchText: PropTypes.string,
-    dataSource: PropTypes.arrayOf(PropTypes.object),
-    hintText: PropTypes.string,
-    floatingLabelText: PropTypes.string,
-    floatingLabelFixed: PropTypes.bool,
-    fullWidth: PropTypes.bool,
-    onSelect: PropTypes.func,
-    onUpdateInput: PropTypes.func,
-  }
-  static defaultProps = {
-    searchText: '',
-    dataSource: [],
-    hintText: '',
-    floatingLabelText: '',
-    floatingLabelFixed: false,
-    fullWidth: false,
-    onSelect: _.noop,
-    onUpdateInput: _.noop,
+const AutoComplete = ({
+  classes: classesMap,
+  searchText,
+  dataSource,
+  hintText,
+  floatingLabelText,
+  floatingLabelFixed,
+  fullWidth,
+  onSelect,
+  onUpdateInput,
+}) => {
+  const popperNode = useRef(null)
+
+  const handleChange = value => {
+    onSelect(value)
   }
 
-  handleChange = value => {
-    this.props.onSelect(value)
+  const handleInputBlur = ({ target: { value } }) => {
+    onUpdateInput(value)
   }
 
-  handleInputBlur = ({ target: { value } }) => {
-    this.props.onUpdateInput(value)
-  }
-
-  handleInputKeyUp = ({ key, target: { value } }) => {
+  const handleInputKeyUp = ({ key, target: { value } }) => {
     if (key === 'Enter') {
-      this.props.onUpdateInput(value)
+      onUpdateInput(value)
     }
   }
 
-  itemToString = item => (item ? item.text : '')
+  const itemToString = item => (item ? item.text : '')
 
-  preventResetOnBlur = (state, changes) => {
+  const preventResetOnBlur = (state, changes) => {
     if (changes.type === Downshift.stateChangeTypes.blurInput) {
       return {}
     }
     return changes
   }
 
-  render() {
-    const {
-      classes,
-      searchText,
-      dataSource,
-      hintText,
-      floatingLabelText,
-      floatingLabelFixed,
-      fullWidth,
-    } = this.props
-    return (
-      <div className={classes.root}>
-        <Downshift
-          selectedItem={searchText}
-          itemToString={this.itemToString}
-          onChange={this.handleChange}
-          stateReducer={this.preventResetOnBlur}
-        >
-          {({
-            getInputProps,
-            getItemProps,
-            getMenuProps,
-            highlightedIndex,
-            inputValue,
-            isOpen,
-            selectedItem,
-          }) => (
-            <div className={classes.container}>
-              {renderInput({
-                fullWidth,
-                label: floatingLabelText,
-                placeholder: hintText,
-                classes,
-                InputLabelProps: {
-                  shrink: floatingLabelFixed || undefined,
-                },
-                ref: node => {
-                  this.popperNode = node
-                },
-                InputProps: getInputProps({
-                  onBlur: this.handleInputBlur,
-                  onKeyUp: this.handleInputKeyUp,
-                }),
-              })}
-              <Popper
-                open={isOpen}
-                anchorEl={this.popperNode}
-                className={classes.popper}
-                transition
-                popperOptions={{ placement: 'bottom-start' }}
+  return (
+    <div className={classesMap.root}>
+      <Downshift
+        selectedItem={searchText}
+        itemToString={itemToString}
+        onChange={handleChange}
+        stateReducer={preventResetOnBlur}
+      >
+        {({
+          getInputProps,
+          getItemProps,
+          getMenuProps,
+          highlightedIndex,
+          inputValue,
+          isOpen,
+          selectedItem,
+        }) => (
+          <div className={classesMap.container}>
+            {renderInput({
+              fullWidth,
+              label: floatingLabelText,
+              placeholder: hintText,
+              classesMap,
+              InputLabelProps: {
+                shrink: floatingLabelFixed || undefined,
+              },
+              ref: popperNode,
+              InputProps: getInputProps({
+                onBlur: handleInputBlur,
+                onKeyUp: handleInputKeyUp,
+              }),
+            })}
+            <Popper
+              open={isOpen}
+              anchorEl={popperNode.current}
+              className={classesMap.popper}
+              transition
+              popperOptions={{ placement: 'bottom-start' }}
+            >
+              <div
+                {...(isOpen
+                  ? getMenuProps({}, { suppressRefError: true })
+                  : {})}
               >
-                <div
-                  {...(isOpen
-                    ? getMenuProps({}, { suppressRefError: true })
-                    : {})}
-                >
-                  {isOpen ? (
-                    <Paper
-                      square
-                      className={classes.paper}
-                      style={{
-                        minWidth: this.popperNode
-                          ? this.popperNode.clientWidth + 32
-                          : null,
-                      }}
-                    >
-                      {getSuggestions(dataSource, inputValue).map(
-                        (suggestion, index) =>
-                          renderSuggestion({
-                            suggestion,
-                            index,
-                            itemProps: getItemProps({ item: suggestion }),
-                            highlightedIndex,
-                            selectedItem,
-                          })
-                      )}
-                    </Paper>
-                  ) : null}
-                </div>
-              </Popper>
-            </div>
-          )}
-        </Downshift>
-      </div>
-    )
-  }
+                {isOpen ? (
+                  <Paper
+                    square
+                    className={classesMap.paper}
+                    style={{
+                      minWidth: popperNode
+                        ? popperNode.current.clientWidth + 32
+                        : null,
+                    }}
+                  >
+                    {getSuggestions(dataSource, inputValue).map(
+                      (suggestion, index) =>
+                        renderSuggestion({
+                          suggestion,
+                          index,
+                          itemProps: getItemProps({ item: suggestion }),
+                          highlightedIndex,
+                          selectedItem,
+                        })
+                    )}
+                  </Paper>
+                ) : null}
+              </div>
+            </Popper>
+          </div>
+        )}
+      </Downshift>
+    </div>
+  )
+}
+
+AutoComplete.propTypes = {
+  classes: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  searchText: PropTypes.string,
+  dataSource: PropTypes.arrayOf(PropTypes.object),
+  hintText: PropTypes.string,
+  floatingLabelText: PropTypes.string,
+  floatingLabelFixed: PropTypes.bool,
+  fullWidth: PropTypes.bool,
+  onSelect: PropTypes.func,
+  onUpdateInput: PropTypes.func,
+}
+AutoComplete.defaultProps = {
+  searchText: '',
+  dataSource: [],
+  hintText: '',
+  floatingLabelText: '',
+  floatingLabelFixed: false,
+  fullWidth: false,
+  onSelect: _.noop,
+  onUpdateInput: _.noop,
 }
 
 export default withStyles(styles)(AutoComplete)

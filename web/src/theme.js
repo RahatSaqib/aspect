@@ -92,10 +92,10 @@ export default {
     MuiMenuItem: {
       root: {
         minWidth: 256,
-      },
-      selected: {
-        color: orange[700],
-        '&:hover': {
+        '&$selected': {
+          color: orange[700],
+        },
+        '&$selected:hover': {
           background: 'none',
         },
       },

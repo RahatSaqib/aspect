@@ -4,7 +4,7 @@ import React from 'react'
 import { compose, setPropTypes } from 'recompose'
 import { connect } from 'react-redux'
 import { defineMessages } from 'react-intl'
-import Dialog from '../../components/shared/Dialog'
+import AspectDialog from '../../components/shared/AspectDialog'
 
 const messages = defineMessages({
   title: {
@@ -35,13 +35,13 @@ export const IdleDialog = ({ intl, idleStatus }) => {
   const { formatMessage } = intl
 
   return (
-    <Dialog
+    <AspectDialog
       title={formatMessage(messages.title)}
       modal
       open={idleStatus === 'IDLESTATUS_INACTIVE'}
     >
       <span>{formatMessage(messages.help)}</span>
-    </Dialog>
+    </AspectDialog>
   )
 }
 

@@ -7,7 +7,7 @@ import Checkbox from '@material-ui/core/Checkbox'
 import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank'
 import CheckBoxIcon from '@material-ui/icons/CheckBox'
 
-const styles = () => ({
+const styles = {
   root: {
     marginLeft: 0,
   },
@@ -22,19 +22,19 @@ const styles = () => ({
   icon: {
     fontSize: 24,
   },
-})
+}
 
-const CheckboxField = ({ classes, label, ...restProps }) => (
+const CheckboxField = ({ classes: classesMap, label, ...restProps }) => (
   <FormControlLabel
     classes={{
-      root: classes.root,
-      label: classes.label,
+      root: classesMap.root,
+      label: classesMap.label,
     }}
     control={
       <Checkbox
-        classes={{ root: classes.checkbox }}
-        icon={<CheckBoxOutlineBlankIcon classes={{ root: classes.icon }} />}
-        checkedIcon={<CheckBoxIcon classes={{ root: classes.icon }} />}
+        classes={{ root: classesMap.checkbox }}
+        icon={<CheckBoxOutlineBlankIcon classes={{ root: classesMap.icon }} />}
+        checkedIcon={<CheckBoxIcon classes={{ root: classesMap.icon }} />}
         {...restProps}
       />
     }

@@ -18,7 +18,7 @@ import LoginDetailsForm from './LoginDetailsForm'
 import UserPreferencesForm from './UserPreferencesForm'
 
 // Our own imports
-import Tabs from '../../components/shared/Tabs'
+import AspectTabs from '../../components/shared/AspectTabs'
 import { Hidden, Visible } from '../../components/pureGrids'
 import NavTitle from '../../globals/components/NavTitle'
 import isEditable from '../../shared/selectors/person'
@@ -161,7 +161,7 @@ export class PersonDetail extends PureComponent {
         <NavTitle title={formatMessage(messages.title)} />
         <Paper>
           {editable && (
-            <Tabs fullWidth>
+            <AspectTabs fullWidth>
               <Tab
                 icon={<MapsPersonPin fontSize="large" />}
                 label={
@@ -224,7 +224,7 @@ export class PersonDetail extends PureComponent {
                   onSubmit={this.saveUserPreferences}
                 />
               </Tab>
-            </Tabs>
+            </AspectTabs>
           )}
         </Paper>
       </div>

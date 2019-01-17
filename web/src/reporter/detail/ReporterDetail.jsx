@@ -22,7 +22,7 @@ import IconButton from '@material-ui/core/IconButton'
 import ModeEdit from '@material-ui/icons/Edit'
 
 // Our own imports
-import Dialog from '../../components/shared/Dialog'
+import AspectDialog from '../../components/shared/AspectDialog'
 import { formatDate } from '../../shared/utils/dateFormat'
 import { Unit } from '../../components/pureGrids'
 import isEditable from '../../shared/selectors/device'
@@ -397,13 +397,13 @@ export class ReporterDetail extends PureComponent {
           </ExpansionPanelDetails>
         </ExpansionPanel>
         {/* Dialog for demo purpose */}
-        <Dialog
+        <AspectDialog
           modal={false}
           open={this.state.isDemoDialogOpen}
           onRequestClose={this.handleToggleDialog}
         >
           Not yet implemented
-        </Dialog>
+        </AspectDialog>
         {/* Calibration */}
         <ExpansionPanel expanded onClick={this.handleToggleDialog}>
           <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>

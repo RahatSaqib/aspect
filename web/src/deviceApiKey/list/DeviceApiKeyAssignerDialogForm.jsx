@@ -14,7 +14,7 @@ import CountrySelectField from '../../filter/geography/CountrySelectField'
 import PartnerSelectField from '../../filter/partner/PartnerSelectField'
 import SiteSelectField from '../../filter/resource/SiteSelectField'
 import DeviceSelectField from '../../filter/resource/DeviceSelectField'
-import Dialog from '../../components/shared/Dialog'
+import AspectDialog from '../../components/shared/AspectDialog'
 
 const messages = defineMessages({
   cancel: {
@@ -112,7 +112,7 @@ export function DeviceApiKeyAssignerDialogForm({
     </Button>,
   ]
   return (
-    <Dialog
+    <AspectDialog
       title={formatMessage(messages.assignerDialogTitle, { count })}
       actions={actions}
       open={isDialogOpen}
@@ -189,7 +189,7 @@ export function DeviceApiKeyAssignerDialogForm({
           aria-haspopup
         />
       </form>
-    </Dialog>
+    </AspectDialog>
   )
 }
 

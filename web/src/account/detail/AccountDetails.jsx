@@ -11,7 +11,7 @@ import MapsPersonPin from '@material-ui/icons/PersonPinRounded'
 import Language from '@material-ui/icons/Language'
 import Lock from '@material-ui/icons/Lock'
 
-import Tabs from '../../components/shared/Tabs'
+import AspectTabs from '../../components/shared/AspectTabs'
 import { Hidden, Visible } from '../../components/pureGrids'
 import NavTitle from '../../globals/components/NavTitle'
 import ContactDetailsForm from '../../person/detail/ContactDetailsForm'
@@ -149,7 +149,7 @@ export class AccountDetails extends PureComponent {
         <Helmet title={formatMessage(accountDetailsMessages.title)} />
         <NavTitle title={formatMessage(accountDetailsMessages.title)} />
         <Paper>
-          <Tabs fullWidth>
+          <AspectTabs fullWidth>
             <Tab
               icon={<MapsPersonPin fontSize="large" />}
               label={
@@ -216,7 +216,7 @@ export class AccountDetails extends PureComponent {
                 onSubmit={this.handleSaveUserPreferences}
               />
             </Tab>
-          </Tabs>
+          </AspectTabs>
         </Paper>
       </div>
     )

@@ -8,15 +8,15 @@ import { Link } from 'react-router-dom'
 // Material-UI
 import Button from '@material-ui/core/Button'
 import ExitToApp from '@material-ui/icons/ExitToApp'
+import TextField from '@material-ui/core/TextField'
 
 // Our own imports
-import recomposeForm from '../../components/recomposeForm'
+import recomposeForm, { errorProps } from '../../components/recomposeForm'
 import JSONSchemaCard from '../../components/shared/JSONSchemaCard'
 import SiteAutoCompleteField from '../../filter/resource/SiteAutoCompleteField'
 import { tokens } from '../../deviceStatus/DeviceStatusRedux'
 import CheckboxField from '../../components/shared/CheckboxField'
-import TextField from '../../components/shared/TextField'
-import Dialog from '../../components/shared/Dialog'
+import AspectDialog from '../../components/shared/AspectDialog'
 
 const cssClasses = classnames.bind(require('./RouterDetailModalForm.css'))
 
@@ -88,7 +88,7 @@ export const RouterDetailModalForm = props => {
   ]
 
   return (
-    <Dialog
+    <AspectDialog
       modal
       autoScrollBodyContent
       actions={actions}
@@ -98,27 +98,30 @@ export const RouterDetailModalForm = props => {
       <form>
         <TextField
           name="Name"
-          floatingLabelText={labels.name}
+          label={labels.name}
           value={values.name}
           onChange={props.onNameChange}
           fullWidth
-          errorText={meta.name.touched && meta.name.error}
+          {...errorProps(meta.name)}
+          margin="normal"
         />
         <TextField
           name="ShortName"
-          floatingLabelText={labels.shortName}
+          label={labels.shortName}
           value={values.shortName}
           onChange={props.onShortNameChange}
           fullWidth
-          errorText={meta.shortName.touched && meta.shortName.error}
+          {...errorProps(meta.shortName)}
+          margin="normal"
         />
         <TextField
           name="Notes"
-          floatingLabelText={labels.notes}
+          label={labels.notes}
           value={values.notes}
           onChange={props.onNotesChange}
           fullWidth
-          errorText={meta.notes.touched && meta.notes.error}
+          {...errorProps(meta.notes)}
+          margin="normal"
         />
         <CheckboxField
           name="Status"
@@ -154,7 +157,7 @@ export const RouterDetailModalForm = props => {
           renderField={field => (
             <TextField
               name={field.key}
-              floatingLabelText={field.label}
+              label={field.label}
               value={field.value}
               onClick={stopEventPropagation}
               onChange={event =>
@@ -163,6 +166,7 @@ export const RouterDetailModalForm = props => {
                 )
               }
               fullWidth
+              margin="normal"
             />
           )}
           formatNestedSubtitle={props.formatNestedSubtitle}
@@ -170,7 +174,7 @@ export const RouterDetailModalForm = props => {
           data={values.configurationData}
         />
       </form>
-    </Dialog>
+    </AspectDialog>
   )
 }
 

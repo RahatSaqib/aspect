@@ -16,7 +16,7 @@ import orange from '@material-ui/core/colors/orange'
 import red from '@material-ui/core/colors/red'
 
 // Our own imports
-import Dialog from '../components/shared/Dialog'
+import AspectDialog from '../components/shared/AspectDialog'
 import { hideAppNotification, Error } from './AppNotificationRedux'
 import styles from './AppNotificationDialog.css'
 
@@ -150,7 +150,7 @@ export class AppNotificationDialog extends PureComponent {
     const hasNotification = appNotification.get('hasNotification')
     const showDetails = appNotification.get('showDetails')
     return (
-      <Dialog
+      <AspectDialog
         title={title ? formatMessage(title, messageValues) : ''}
         actions={actions}
         modal={showProceed}
@@ -189,7 +189,7 @@ export class AppNotificationDialog extends PureComponent {
             </p>
           )}
         </div>
-      </Dialog>
+      </AspectDialog>
     )
   }
 }

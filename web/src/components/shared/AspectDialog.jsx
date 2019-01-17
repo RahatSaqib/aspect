@@ -1,15 +1,12 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 
-import { withStyles } from '@material-ui/core/styles'
-import MUIDialog from '@material-ui/core/Dialog'
+import Dialog from '@material-ui/core/Dialog'
 import DialogActions from '@material-ui/core/DialogActions'
 import DialogContent from '@material-ui/core/DialogContent'
 import DialogTitle from '@material-ui/core/DialogTitle'
 
-const styles = () => ({})
-
-const Dialog = ({
+const AspectDialog = ({
   actions,
   autoScrollBodyContent,
   children,
@@ -19,7 +16,7 @@ const Dialog = ({
   title,
   ...restProps
 }) => (
-  <MUIDialog
+  <Dialog
     disableEscapeKeyDown={modal}
     fullWidth
     maxWidth={maxWidth}
@@ -34,10 +31,10 @@ const Dialog = ({
     {React.Children.count(actions) > 0 && (
       <DialogActions>{React.Children.toArray(actions)}</DialogActions>
     )}
-  </MUIDialog>
+  </Dialog>
 )
 
-Dialog.propTypes = {
+AspectDialog.propTypes = {
   actions: PropTypes.node, // eslint-disable-line
   autoScrollBodyContent: PropTypes.bool,
   children: PropTypes.node.isRequired,
@@ -46,11 +43,11 @@ Dialog.propTypes = {
   onRequestClose: PropTypes.func, // eslint-disable-line
   title: PropTypes.string,
 }
-Dialog.defaultProps = {
+AspectDialog.defaultProps = {
   autoScrollBodyContent: false,
   maxWidth: 'md',
   modal: false,
   title: '',
 }
 
-export default withStyles(styles)(Dialog)
+export default AspectDialog

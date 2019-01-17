@@ -18,7 +18,7 @@ import LinearProgress from '@material-ui/core/LinearProgress'
 // Our own imports
 import config from '../../config'
 import { Unit, Hidden } from '../../components/pureGrids'
-import Dialog from '../../components/shared/Dialog'
+import AspectDialog from '../../components/shared/AspectDialog'
 import {
   resetPasswordEnterEmailAddress,
   resetPasswordEnterPassword,
@@ -347,7 +347,7 @@ export class ResetPassword extends PureComponent {
             </Unit>
           </div>
         </div>
-        <Dialog
+        <AspectDialog
           title={formatMessage(messages.adminHelpHeader)}
           actions={adminHelpDialogActions}
           modal={false}
@@ -360,7 +360,7 @@ export class ResetPassword extends PureComponent {
               supportEmail: config.supportEmail,
             }}
           />
-        </Dialog>
+        </AspectDialog>
       </div>
     )
   }

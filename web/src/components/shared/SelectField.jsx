@@ -27,7 +27,7 @@ const styles = theme => ({
 
 const SelectField = ({
   autoWidth,
-  classes,
+  classes: classesMap,
   className,
   errorText,
   errorStyle,
@@ -53,11 +53,12 @@ const SelectField = ({
     }}
     SelectProps={{
       autoWidth: true,
+      displayEmpty: true,
       value,
     }}
-    className={classNames(classes.root, className)}
+    className={classNames(classesMap.root, className)}
     classes={{
-      root: classNames({ [classes.fullWidth]: fullWidth }),
+      root: classNames({ [classesMap.fullWidth]: fullWidth }),
     }}
     error={!!errorText}
     helperText={errorText || helperText}
@@ -65,8 +66,8 @@ const SelectField = ({
     {...restProps}
   >
     {!!hintText && (
-      <MenuItem value="" className={classes.emptyMenuItem}>
-        <span className={classes.placeholder}>{hintText}</span>
+      <MenuItem value="" className={classesMap.emptyMenuItem}>
+        <span className={classesMap.placeholder}>{hintText}</span>
       </MenuItem>
     )}
     {children}

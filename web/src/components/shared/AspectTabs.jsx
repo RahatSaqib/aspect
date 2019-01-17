@@ -10,7 +10,7 @@ import classNames from 'classnames'
 
 import { withStyles } from '@material-ui/core/styles'
 import AppBar from '@material-ui/core/AppBar'
-import MuiTabs from '@material-ui/core/Tabs'
+import Tabs from '@material-ui/core/Tabs'
 
 const styles = () => ({
   container: {
@@ -27,15 +27,17 @@ const styles = () => ({
   selected: {},
 })
 
-const TabContainer = withStyles(styles)(({ classes, selected, children }) => (
-  <div
-    className={classNames(classes.container, {
-      [classes.selected]: selected,
-    })}
-  >
-    {children}
-  </div>
-))
+const TabContainer = withStyles(styles)(
+  ({ classes: classesMap, selected, children }) => (
+    <div
+      className={classNames(classesMap.container, {
+        [classesMap.selected]: selected,
+      })}
+    >
+      {children}
+    </div>
+  )
+)
 
 const getTabs = children => {
   const tabs = []
@@ -48,7 +50,7 @@ const getTabs = children => {
   return tabs
 }
 
-class Tabs extends Component {
+class AspectTabs extends Component {
   constructor(props) {
     super(props)
     const { initialSelectedIndex, children } = props
@@ -93,13 +95,13 @@ class Tabs extends Component {
     return (
       <div>
         <AppBar position="static">
-          <MuiTabs
+          <Tabs
             value={selectedIndex}
             {...restProps}
             onChange={this.handleChange}
           >
             {tabs}
-          </MuiTabs>
+          </Tabs>
         </AppBar>
         {tabContent}
       </div>
@@ -107,11 +109,11 @@ class Tabs extends Component {
   }
 }
 
-Tabs.propTypes = {
+AspectTabs.propTypes = {
   children: PropTypes.node.isRequired,
   initialSelectedIndex: PropTypes.number,
 }
-Tabs.defaultProps = {
+AspectTabs.defaultProps = {
   initialSelectedIndex: 0,
 }
-export default Tabs
+export default AspectTabs

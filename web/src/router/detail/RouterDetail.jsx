@@ -23,7 +23,7 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
 import Typography from '@material-ui/core/Typography'
 
 // Our own imports
-import Dialog from '../../components/shared/Dialog'
+import AspectDialog from '../../components/shared/AspectDialog'
 import { Unit } from '../../components/pureGrids'
 import isEditable from '../../shared/selectors/device'
 import { fetchSingleRouter, updateSingleRouter } from '../RouterRedux'
@@ -389,13 +389,13 @@ export class RouterDetail extends PureComponent {
           </ExpansionPanelDetails>
         </ExpansionPanel>
         {/* Dialog for demo purpose */}
-        <Dialog
+        <AspectDialog
           modal={false}
           open={this.state.isDemoDialogOpen}
           onRequestClose={this.handleToggleDialog}
         >
           Not yet implemented
-        </Dialog>
+        </AspectDialog>
         {/* Contacts */}
         <ExpansionPanel defaultExpanded>
           <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>

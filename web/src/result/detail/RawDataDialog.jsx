@@ -6,7 +6,7 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { compose, withHandlers, lifecycle, withProps } from 'recompose'
 
-import Dialog from '../../components/shared/Dialog'
+import AspectDialog from '../../components/shared/AspectDialog'
 import { fetchResultLog } from '../ResultRedux'
 import RawData from './RawData'
 
@@ -47,7 +47,7 @@ export const RawDataDialog = ({
   loading,
 }) => (
   <div>
-    <Dialog
+    <AspectDialog
       actions={dialogActions}
       open={isShown}
       onRequestClose={handleToggle}
@@ -75,7 +75,7 @@ export const RawDataDialog = ({
           )
         })
       )}
-    </Dialog>
+    </AspectDialog>
   </div>
 )
 
