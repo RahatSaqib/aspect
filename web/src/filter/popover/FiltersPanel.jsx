@@ -500,11 +500,14 @@ export const FiltersPanel = ({
               name="patientOrResearchId"
               value={filters.patientOrResearchId || ''}
               onCommitValue={onTextFieldCommitValue}
-              floatingLabelFixed
-              hintText={intl.formatMessage(messages.enterPatientOrResearchId)}
-              floatingLabelText={intl.formatMessage(
-                messages.patientOrResearchId
+              InputLabelProps={{
+                shrink: true,
+              }}
+              placeholder={intl.formatMessage(
+                messages.enterPatientOrResearchId
               )}
+              label={intl.formatMessage(messages.patientOrResearchId)}
+              margin="normal"
             />
           </div>
         )}
@@ -514,9 +517,12 @@ export const FiltersPanel = ({
               name="sampleId"
               value={filters.sampleId || ''}
               onCommitValue={onTextFieldCommitValue}
-              floatingLabelFixed
-              hintText={intl.formatMessage(messages.enterSampleId)}
-              floatingLabelText={intl.formatMessage(messages.sampleId)}
+              InputLabelProps={{
+                shrink: true,
+              }}
+              placeholder={intl.formatMessage(messages.enterSampleId)}
+              label={intl.formatMessage(messages.sampleId)}
+              margin="normal"
             />
           </div>
         )}
@@ -526,9 +532,12 @@ export const FiltersPanel = ({
               name="sampleGroup"
               value={filters.sampleGroup || ''}
               onCommitValue={onTextFieldCommitValue}
-              floatingLabelFixed
-              hintText={intl.formatMessage(messages.enterSampleGroup)}
-              floatingLabelText={intl.formatMessage(messages.sampleGroup)}
+              InputLabelProps={{
+                shrink: true,
+              }}
+              placeholder={intl.formatMessage(messages.enterSampleGroup)}
+              label={intl.formatMessage(messages.sampleGroup)}
+              margin="normal"
             />
           </div>
         )}
@@ -538,9 +547,12 @@ export const FiltersPanel = ({
               name="deviceName"
               value={filters.deviceName || ''}
               onCommitValue={onTextFieldCommitValue}
-              floatingLabelFixed
-              hintText={intl.formatMessage(messages.enterDeviceName)}
-              floatingLabelText={intl.formatMessage(messages.deviceName)}
+              InputLabelProps={{
+                shrink: true,
+              }}
+              placeholder={intl.formatMessage(messages.enterDeviceName)}
+              label={intl.formatMessage(messages.deviceName)}
+              margin="normal"
             />
           </div>
         )}
@@ -574,9 +586,12 @@ export const FiltersPanel = ({
               name="contactNameOrEmail"
               value={filters.contactNameOrEmail || ''}
               onCommitValue={onTextFieldCommitValue}
-              floatingLabelFixed
-              hintText={intl.formatMessage(messages.setContactNameEmail)}
-              floatingLabelText={intl.formatMessage(messages.contactNameEmail)}
+              InputLabelProps={{
+                shrink: true,
+              }}
+              placeholder={intl.formatMessage(messages.setContactNameEmail)}
+              label={intl.formatMessage(messages.contactNameEmail)}
+              margin="normal"
             />
           </div>
         )}
@@ -586,9 +601,12 @@ export const FiltersPanel = ({
               name="externalId"
               value={filters.externalId || ''}
               onCommitValue={onTextFieldCommitValue}
-              floatingLabelFixed
-              hintText={intl.formatMessage(messages.enterExternalId)}
-              floatingLabelText={intl.formatMessage(messages.externalId)}
+              InputLabelProps={{
+                shrink: true,
+              }}
+              placeholder={intl.formatMessage(messages.enterExternalId)}
+              label={intl.formatMessage(messages.externalId)}
+              margin="normal"
             />
           </div>
         )}

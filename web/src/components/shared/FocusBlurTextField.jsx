@@ -13,20 +13,6 @@ const styles = () => ({
     width: 256,
   },
 })
-export const V0TextField = withStyles(styles)(
-  ({ floatingLabelFixed, floatingLabelText, hintText, ...restProps }) => (
-    <TextField
-      label={floatingLabelText}
-      InputLabelProps={{
-        shrink: floatingLabelFixed || undefined,
-      }}
-      placeholder={hintText}
-      {...restProps}
-    >
-      {floatingLabelText}
-    </TextField>
-  )
-)
 
 export class FocusBlurTextField extends PureComponent {
   static defaultProps = {
@@ -34,7 +20,7 @@ export class FocusBlurTextField extends PureComponent {
     onFocus: _.noop,
     onKeyUp: _.noop,
     value: '',
-    component: V0TextField,
+    component: withStyles(styles)(TextField),
   }
 
   static propTypes = {
