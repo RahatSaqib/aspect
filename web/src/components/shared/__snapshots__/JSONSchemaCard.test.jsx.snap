@@ -50,6 +50,7 @@ exports[`JSONSchemaCard module JSONSchemaCard testInstance should render correct
       className="MuiButtonBase-root-37 MuiExpansionPanelSummary-root-31"
       onBlur={[Function]}
       onClick={[Function]}
+      onContextMenu={[Function]}
       onFocus={[Function]}
       onKeyDown={[Function]}
       onKeyUp={[Function]}
@@ -73,8 +74,9 @@ exports[`JSONSchemaCard module JSONSchemaCard testInstance should render correct
       </div>
       <div
         aria-hidden="true"
-        className="MuiButtonBase-root-37 MuiIconButton-root-75 MuiExpansionPanelSummary-expandIcon-36"
+        className="MuiButtonBase-root-37 MuiIconButton-root-76 MuiExpansionPanelSummary-expandIcon-36"
         onBlur={[Function]}
+        onContextMenu={[Function]}
         onFocus={[Function]}
         onKeyDown={[Function]}
         onKeyUp={[Function]}
@@ -88,11 +90,11 @@ exports[`JSONSchemaCard module JSONSchemaCard testInstance should render correct
         tabIndex={-1}
       >
         <span
-          className="MuiIconButton-label-80"
+          className="MuiIconButton-label-81"
         >
           <svg
             aria-hidden="true"
-            className="MuiSvgIcon-root-81"
+            className="MuiSvgIcon-root-82"
             focusable="false"
             role="presentation"
             viewBox="0 0 24 24"
@@ -107,13 +109,13 @@ exports[`JSONSchemaCard module JSONSchemaCard testInstance should render correct
           </svg>
         </span>
         <span
-          className="MuiTouchRipple-root-95"
+          className="MuiTouchRipple-root-96"
         />
       </div>
     </div>
     <div
       aria-hidden="true"
-      className="MuiCollapse-container-90"
+      className="MuiCollapse-container-91"
       style={
         Object {
           "minHeight": "0px",
@@ -121,13 +123,13 @@ exports[`JSONSchemaCard module JSONSchemaCard testInstance should render correct
       }
     >
       <div
-        className="MuiCollapse-wrapper-92"
+        className="MuiCollapse-wrapper-93"
       >
         <div
-          className="MuiCollapse-wrapperInner-93"
+          className="MuiCollapse-wrapperInner-94"
         >
           <div
-            className="MuiExpansionPanelDetails-root-94"
+            className="MuiExpansionPanelDetails-root-95"
           >
             <p
               className="MuiTypography-root-40 MuiTypography-body2-48"
@@ -410,6 +412,7 @@ exports[`JSONSchemaCard module PropertiesSchemaCard testInstance should handle n
     className="MuiButtonBase-root-37 MuiExpansionPanelSummary-root-31 MuiExpansionPanelSummary-expanded-32"
     onBlur={[Function]}
     onClick={[Function]}
+    onContextMenu={[Function]}
     onFocus={[Function]}
     onKeyDown={[Function]}
     onKeyUp={[Function]}
@@ -433,8 +436,9 @@ exports[`JSONSchemaCard module PropertiesSchemaCard testInstance should handle n
     </div>
     <div
       aria-hidden="true"
-      className="MuiButtonBase-root-37 MuiIconButton-root-75 MuiExpansionPanelSummary-expandIcon-36 MuiExpansionPanelSummary-expanded-32"
+      className="MuiButtonBase-root-37 MuiIconButton-root-76 MuiExpansionPanelSummary-expandIcon-36 MuiExpansionPanelSummary-expanded-32"
       onBlur={[Function]}
+      onContextMenu={[Function]}
       onFocus={[Function]}
       onKeyDown={[Function]}
       onKeyUp={[Function]}
@@ -448,11 +452,11 @@ exports[`JSONSchemaCard module PropertiesSchemaCard testInstance should handle n
       tabIndex={-1}
     >
       <span
-        className="MuiIconButton-label-80"
+        className="MuiIconButton-label-81"
       >
         <svg
           aria-hidden="true"
-          className="MuiSvgIcon-root-81"
+          className="MuiSvgIcon-root-82"
           focusable="false"
           role="presentation"
           viewBox="0 0 24 24"
@@ -467,12 +471,12 @@ exports[`JSONSchemaCard module PropertiesSchemaCard testInstance should handle n
         </svg>
       </span>
       <span
-        className="MuiTouchRipple-root-95"
+        className="MuiTouchRipple-root-96"
       />
     </div>
   </div>
   <div
-    className="MuiCollapse-container-90 MuiCollapse-entered-91"
+    className="MuiCollapse-container-91 MuiCollapse-entered-92"
     style={
       Object {
         "minHeight": "0px",
@@ -480,13 +484,13 @@ exports[`JSONSchemaCard module PropertiesSchemaCard testInstance should handle n
     }
   >
     <div
-      className="MuiCollapse-wrapper-92"
+      className="MuiCollapse-wrapper-93"
     >
       <div
-        className="MuiCollapse-wrapperInner-93"
+        className="MuiCollapse-wrapperInner-94"
       >
         <div
-          className="MuiExpansionPanelDetails-root-94"
+          className="MuiExpansionPanelDetails-root-95"
         >
           <p
             className="MuiTypography-root-40 MuiTypography-body2-48"

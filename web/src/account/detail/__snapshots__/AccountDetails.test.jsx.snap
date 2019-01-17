@@ -13,7 +13,7 @@ exports[`AccountDetails module AccountDetails component should shallow render co
     title="Account Details"
   />
   <WithStyles(Paper)>
-    <Tabs
+    <AspectTabs
       fullWidth={true}
       initialSelectedIndex={0}
     >
@@ -154,7 +154,7 @@ exports[`AccountDetails module AccountDetails component should shallow render co
           }
         />
       </WithStyles(Tab)>
-    </Tabs>
+    </AspectTabs>
   </WithStyles(Paper)>
 </div>
 `;
@@ -172,7 +172,7 @@ exports[`AccountDetails module AccountDetails component when loading is true sho
     title="Account Details"
   />
   <WithStyles(Paper)>
-    <Tabs
+    <AspectTabs
       fullWidth={true}
       initialSelectedIndex={0}
     >
@@ -316,7 +316,7 @@ exports[`AccountDetails module AccountDetails component when loading is true sho
           }
         />
       </WithStyles(Tab)>
-    </Tabs>
+    </AspectTabs>
   </WithStyles(Paper)>
 </div>
 `;
