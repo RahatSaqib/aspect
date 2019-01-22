@@ -68,16 +68,18 @@ export const ResetPasswordEnterPassword = ({
       <StrongPasswordInput
         intl={intl}
         input={{
-          type: 'password',
-          name: 'newPassword',
-          autoFocus: true,
-          fullWidth: true,
-          label: intl.formatMessage(messages.newPassword),
           value: values.newPassword,
           onChange: onNewPasswordChange,
-          inputProps: { maxLength: 100 },
         }}
         meta={meta.newPassword}
+        textFieldProps={{
+          floatingLabelText: intl.formatMessage(messages.newPassword),
+          type: 'password',
+          name: 'newPassword',
+          maxLength: 100,
+          autoFocus: true,
+          fullWidth: true,
+        }}
         popOverProps={{}}
       />
       <TextField

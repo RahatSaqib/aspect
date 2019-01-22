@@ -2,12 +2,12 @@ import React, { PureComponent } from 'react'
 import classnames from 'classnames/bind'
 import { defineMessages } from 'react-intl'
 import isValid from 'date-fns/isValid'
+import Input from '@material-ui/core/Input'
 import DateTimeInput from '../../components/shared/DateTimeInput'
 import FocusBlurTextField from '../../components/shared/FocusBlurTextField'
 import FormGroup from '../../components/themedReactToolbox/FormGroup'
 import ButtonGroup from '../../components/themedReactToolbox/ButtonGroup'
 import AspectButton from '../../components/shared/AspectButton'
-import TextField from '../../components/shared/TextField'
 import StyledDropdown from '../../components/shared/StyledDropdown'
 
 const cssClasses = classnames.bind(require('./CustomField.css'))
@@ -153,7 +153,7 @@ export default class CustomField extends PureComponent {
           key={formFieldKey}
         >
           <FocusBlurTextField
-            component={TextField}
+            component={Input}
             name="formFieldKey"
             value={fieldValue}
             onCommitValue={this.onTextBoxCommitValue}

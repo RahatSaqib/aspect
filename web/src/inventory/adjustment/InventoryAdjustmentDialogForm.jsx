@@ -8,9 +8,9 @@ import { connect } from 'react-redux'
 import { defineMessages } from 'react-intl'
 import Button from '@material-ui/core/Button'
 import TextField from '@material-ui/core/TextField'
-import { DatePicker } from 'material-ui-pickers'
 
-import Dialog from '../../components/shared/Dialog'
+import AspectDialog from '../../components/shared/AspectDialog'
+import DateTimeInput from '../../components/shared/DateTimeInput'
 import SiteSelectField from '../../filter/resource/SiteSelectField'
 import ConsumableSelectField from '../../filter/resource/ConsumableSelectField'
 import ConsumableReasonSelectField, {
@@ -190,7 +190,7 @@ export const InventoryAdjustmentDialogForm = ({
   onNotesChange,
   handleSubmit,
 }) => (
-  <Dialog
+  <AspectDialog
     actions={[
       <Button color="primary" onClick={onCancel}>
         {intl.formatMessage(messages.cancel)}
@@ -245,14 +245,10 @@ export const InventoryAdjustmentDialogForm = ({
             inputProps={{ maxLength: 500 }}
           />
           {values.canExpire && (
-            <DatePicker
-              autoOk
-              fullWidth
+            <DateTimeInput
               name="expiresOn"
               label={intl.formatMessage(messages.expiryDate)}
               disabled={form.submitting}
-              labelFunc={formatDate}
-              margin="normal"
               // container="inline"
               // mode="landscape"
               // autoOk
@@ -345,7 +341,7 @@ export const InventoryAdjustmentDialogForm = ({
         {consumableReason &&
           consumableReason.get('i18nKey') === testConductedReasonI18nKey && (
             <section>
-              <DatePicker
+              <DateTimeInput
                 autoOk
                 fullWidth
                 name="dateAdjustedFrom"
@@ -360,7 +356,7 @@ export const InventoryAdjustmentDialogForm = ({
                 onChange={onDateAdjustedFromChange}
               />
 
-              <DatePicker
+              <DateTimeInput
                 autoOk
                 fullWidth
                 name="dateAdjustedTo"
@@ -378,7 +374,7 @@ export const InventoryAdjustmentDialogForm = ({
           )}
         {_.has(values, 'dateAdjusted') && (
           <section>
-            <DatePicker
+            <DateTimeInput
               autoOk
               fullWidth
               name="dateAdjusted"
@@ -417,5 +413,5 @@ export const InventoryAdjustmentDialogForm = ({
         </section>
       </div>
     </form>
-  </Dialog>
+  </AspectDialog>
 )

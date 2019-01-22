@@ -4,7 +4,7 @@ import { compose, lifecycle, withHandlers, pure } from 'recompose'
 import Button from '@material-ui/core/Button'
 import TextField from '@material-ui/core/TextField'
 
-import Dialog from '../../components/shared/Dialog'
+import AspectDialog from '../../components/shared/AspectDialog'
 import StrongPasswordInput from '../../components/shared/StrongPasswordInput'
 import recomposeForm from '../../components/recomposeForm'
 import messages from './messages'
@@ -151,17 +151,19 @@ export const LoginDetailsForm = ({
       <StrongPasswordInput
         intl={intl}
         input={{
-          type: 'password',
-          name: 'newPassword',
-          autoFocus: true,
-          fullWidth: true,
-          label: intl.formatMessage(messages.newPassword),
           value: values.newPassword,
           onChange: onNewPasswordChange,
-          inputProps: { maxLength: 100 },
         }}
         disabled={loading}
         meta={meta.newPassword}
+        textFieldProps={{
+          floatingLabelText: intl.formatMessage(messages.newPassword),
+          type: 'password',
+          name: 'newPassword',
+          maxLength: 100,
+          autoFocus: true,
+          fullWidth: true,
+        }}
         popOverProps={{}}
       />
       <TextField
@@ -190,7 +192,7 @@ export const LoginDetailsForm = ({
         {intl.formatMessage(messages.save)}
       </Button>
     </div>
-    <Dialog
+    <AspectDialog
       actions={[
         <Button
           color="primary"
@@ -230,7 +232,7 @@ export const LoginDetailsForm = ({
           margin: 'dense',
         }}
       />
-    </Dialog>
+    </AspectDialog>
   </form>
 )
 
