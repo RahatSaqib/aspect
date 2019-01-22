@@ -87,6 +87,7 @@ export default {
       },
       icon: {
         color: grey[300],
+        fontSize: 24,
       },
     },
     MuiMenuItem: {

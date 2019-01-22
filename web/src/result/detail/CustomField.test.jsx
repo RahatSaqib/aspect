@@ -5,12 +5,11 @@ import sinon from 'sinon'
 import Immutable from 'immutable'
 import _ from 'lodash'
 import { Button } from 'react-toolbox/lib/button'
-import { MuiPickersUtilsProvider } from 'material-ui-pickers'
-import DateFnsUtils from '@date-io/date-fns'
 import FormGroup from '../../components/themedReactToolbox/FormGroup'
 import CustomField from './CustomField'
 import StyledDropdown from '../../components/themedReactToolbox/StyledDropdown'
 import FocusBlurTextField from '../../components/shared/FocusBlurTextField'
+import DateTimeInput from '../../components/shared/DateTimeInput'
 
 describe('CustomField component', () => {
   const renderer = ReactShallowRenderer.createRenderer()
@@ -20,11 +19,7 @@ describe('CustomField component', () => {
   }
 
   function mountCustomerField(props) {
-    return mount(
-      <MuiPickersUtilsProvider utils={DateFnsUtils}>
-        <CustomField {...props} />
-      </MuiPickersUtilsProvider>
-    )
+    return mount(<CustomField {...props} />)
   }
 
   describe('When field type is ButtonGroup', () => {
@@ -250,8 +245,8 @@ describe('CustomField component', () => {
 
     it('should show empty field when form data has not been set', () => {
       const customField = mountCustomerField(props)
-      const dateTimePicker = customField.find('DateTimePickerModal')
-      expect(dateTimePicker.prop('value')).toBeNull()
+      const dateTimeInput = customField.find(DateTimeInput)
+      expect(dateTimeInput.prop('value')).toBeNull()
     })
 
     it('should show date/time when form form data has been set', () => {
@@ -262,8 +257,8 @@ describe('CustomField component', () => {
         }),
       })
       const customField = mountCustomerField(propsWithValue)
-      const dateTimePicker = customField.find('DateTimePickerModal')
-      expect(dateTimePicker.prop('value')).toEqual(mockDate)
+      const dateTimeInput = customField.find(DateTimeInput)
+      expect(dateTimeInput.prop('value')).toEqual(mockDate)
     })
 
     it('should call onUpdateDate event when the user select the date or time', () => {
@@ -274,7 +269,7 @@ describe('CustomField component', () => {
       expect(updateFormData.callCount).toBe(0)
 
       customField
-        .find('DateTimePickerModal')
+        .find(DateTimeInput)
         .first()
         .props()
         .onChange(mockDate)

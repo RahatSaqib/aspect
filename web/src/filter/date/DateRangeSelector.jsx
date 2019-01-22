@@ -23,10 +23,10 @@ import { injectIntl, defineMessages, intlShape } from 'react-intl'
 // Material-UI
 import MenuItem from '@material-ui/core/MenuItem'
 import Divider from '@material-ui/core/Divider'
-import { DatePicker } from 'material-ui-pickers'
 
 // Our own imports
 import SelectField from '../../components/shared/SelectField'
+import DateTimeInput from '../../components/shared/DateTimeInput'
 import { formatDate } from '../../shared/utils/dateFormat'
 import styles from './DateRangeSelector.css'
 
@@ -495,29 +495,23 @@ export class DateRangeSelector extends PureComponent {
             case 'custom':
               return (
                 <div className={styles.DateRangeSelector__DatePickerContainer}>
-                  <DatePicker
+                  <DateTimeInput
                     {...restProps}
                     label=" "
-                    margin="normal"
                     className={controlClassName}
                     labelFunc={formatDate}
                     value={this.getMinDate()}
                     placeholder={formatMessage(messages.fromDate)}
                     onChange={this.handleMinDateChange}
-                    InputProps={{ style: { width: '16em' } }}
-                    InputLabelProps={{ shrink: true }}
                   />
-                  <DatePicker
+                  <DateTimeInput
                     {...restProps}
                     label=" "
-                    margin="normal"
                     className={controlClassName}
                     labelFunc={formatDate}
                     value={this.getMaxDate()}
                     onChange={this.handleMaxDateChange}
                     placeholder={formatMessage(messages.toDate)}
-                    InputProps={{ style: { width: '16em' } }}
-                    InputLabelProps={{ shrink: true }}
                   />
                 </div>
               )

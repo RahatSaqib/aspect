@@ -4,12 +4,11 @@ import { defineMessages } from 'react-intl'
 import isValid from 'date-fns/isValid'
 import { Button } from 'react-toolbox/lib/button'
 import { Input } from 'react-toolbox/lib/input'
-import { DateTimePicker } from 'material-ui-pickers'
+import DateTimeInput from '../../components/shared/DateTimeInput'
 import FocusBlurTextField from '../../components/shared/FocusBlurTextField'
 import FormGroup from '../../components/themedReactToolbox/FormGroup'
 import ButtonGroup from '../../components/themedReactToolbox/ButtonGroup'
 import StyledDropdown from '../../components/themedReactToolbox/StyledDropdown'
-import { formatDateTime } from '../../shared/utils/dateFormat'
 
 const cssClasses = classnames.bind(require('./CustomField.css'))
 
@@ -196,11 +195,9 @@ export default class CustomField extends PureComponent {
           label={fieldLabel}
           key={formFieldKey}
         >
-          <DateTimePicker
-            autoOk
-            ampm={false}
-            fullWidth
-            labelFunc={formatDateTime}
+          <DateTimeInput
+            className={cssClasses('DateTime')}
+            displayFormat="Y-M-D H:m"
             value={fieldDateTime}
             onChange={this.onUpdateData}
           />
