@@ -14,45 +14,6 @@ async function up(knex) {
       .alter()
   })
 
-  await knex.schema.table('AlertTemplate', alertTemplate => {
-    alertTemplate
-      .integer('createdBy')
-      .unsigned()
-      .nullable()
-      .alter()
-    alertTemplate
-      .integer('updatedBy')
-      .unsigned()
-      .nullable()
-      .alter()
-  })
-
-  await knex.schema.table('SmsTemplate', smsTemplate => {
-    smsTemplate
-      .integer('createdBy')
-      .unsigned()
-      .nullable()
-      .alter()
-    smsTemplate
-      .integer('updatedBy')
-      .unsigned()
-      .nullable()
-      .alter()
-  })
-
-  await knex.schema.table('EmailTemplate', emailTemplate => {
-    emailTemplate
-      .integer('createdBy')
-      .unsigned()
-      .nullable()
-      .alter()
-    emailTemplate
-      .integer('updatedBy')
-      .unsigned()
-      .nullable()
-      .alter()
-  })
-
   await knex.schema.table('NotificationType', notificationType => {
     notificationType
       .integer('createdBy')
@@ -82,69 +43,6 @@ async function down(knex) {
       .notNullable()
       .alter()
     person
-      .integer('updatedBy')
-      .unsigned()
-      .references('id')
-      .inTable('Person')
-      .notNullable()
-      .alter()
-  })
-
-  await knex.schema.table('AlertTemplate', alertTemplate => {
-    alertTemplate.dropForeign('createdBy')
-    alertTemplate.dropForeign('updatedBy')
-  })
-  await knex.schema.table('AlertTemplate', alertTemplate => {
-    alertTemplate
-      .integer('createdBy')
-      .unsigned()
-      .references('id')
-      .inTable('Person')
-      .notNullable()
-      .alter()
-    alertTemplate
-      .integer('updatedBy')
-      .unsigned()
-      .references('id')
-      .inTable('Person')
-      .notNullable()
-      .alter()
-  })
-
-  await knex.schema.table('SmsTemplate', smsTemplate => {
-    smsTemplate.dropForeign('createdBy')
-    smsTemplate.dropForeign('updatedBy')
-  })
-  await knex.schema.table('SmsTemplate', smsTemplate => {
-    smsTemplate
-      .integer('createdBy')
-      .unsigned()
-      .references('id')
-      .inTable('Person')
-      .notNullable()
-      .alter()
-    smsTemplate
-      .integer('updatedBy')
-      .unsigned()
-      .references('id')
-      .inTable('Person')
-      .notNullable()
-      .alter()
-  })
-
-  await knex.schema.table('EmailTemplate', emailTemplate => {
-    emailTemplate.dropForeign('createdBy')
-    emailTemplate.dropForeign('updatedBy')
-  })
-  await knex.schema.table('EmailTemplate', emailTemplate => {
-    emailTemplate
-      .integer('createdBy')
-      .unsigned()
-      .references('id')
-      .inTable('Person')
-      .notNullable()
-      .alter()
-    emailTemplate
       .integer('updatedBy')
       .unsigned()
       .references('id')
