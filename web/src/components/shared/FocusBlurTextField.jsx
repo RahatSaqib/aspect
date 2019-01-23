@@ -2,9 +2,17 @@
 import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
-
+import { withStyles } from '@material-ui/core/styles'
 // Material-UI
-import TextField from 'material-ui/TextField'
+import TextField from '@material-ui/core/TextField'
+
+const styles = () => ({
+  root: {
+    marginTop: 16,
+    marginBottom: 8,
+    width: 256,
+  },
+})
 
 export class FocusBlurTextField extends PureComponent {
   static defaultProps = {
@@ -12,7 +20,7 @@ export class FocusBlurTextField extends PureComponent {
     onFocus: _.noop,
     onKeyUp: _.noop,
     value: '',
-    component: TextField,
+    component: withStyles(styles)(TextField),
   }
 
   static propTypes = {
@@ -62,7 +70,7 @@ export class FocusBlurTextField extends PureComponent {
   render() {
     const { isFocused, pendingValue } = this.state
     const value = isFocused ? pendingValue : this.props.value
-    const restProps = _.omit(this.props, ['onCommitValue'])
+    const restProps = _.omit(this.props, ['onCommitValue', 'component'])
 
     return React.createElement(this.props.component, {
       ...restProps,

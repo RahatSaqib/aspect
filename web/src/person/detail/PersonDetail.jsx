@@ -7,17 +7,18 @@ import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 
 // Material-UI
-import Paper from 'material-ui/Paper'
-import { Tabs, Tab } from 'material-ui/Tabs'
-import LinearProgress from 'material-ui/LinearProgress'
-import MapsPersonPin from 'material-ui/svg-icons/maps/person-pin'
-import Language from 'material-ui/svg-icons/action/language'
-import Lock from 'material-ui/svg-icons/action/lock'
+import Paper from '@material-ui/core/Paper'
+import Tab from '@material-ui/core/Tab'
+import LinearProgress from '@material-ui/core/LinearProgress'
+import MapsPersonPin from '@material-ui/icons/PersonPinRounded'
+import Language from '@material-ui/icons/Language'
+import Lock from '@material-ui/icons/Lock'
 import ContactDetailsForm from './ContactDetailsForm'
 import LoginDetailsForm from './LoginDetailsForm'
 import UserPreferencesForm from './UserPreferencesForm'
 
 // Our own imports
+import AspectTabs from '../../components/shared/AspectTabs'
 import { Hidden, Visible } from '../../components/pureGrids'
 import NavTitle from '../../globals/components/NavTitle'
 import isEditable from '../../shared/selectors/person'
@@ -160,9 +161,9 @@ export class PersonDetail extends PureComponent {
         <NavTitle title={formatMessage(messages.title)} />
         <Paper>
           {editable && (
-            <Tabs>
+            <AspectTabs fullWidth>
               <Tab
-                icon={<MapsPersonPin />}
+                icon={<MapsPersonPin fontSize="large" />}
                 label={
                   <Hidden xs component="span">
                     {formatMessage(messages.contactDetails)}
@@ -185,7 +186,7 @@ export class PersonDetail extends PureComponent {
               </Tab>
               {userIsAdmin && (
                 <Tab
-                  icon={<Lock />}
+                  icon={<Lock fontSize="large" />}
                   label={
                     <Hidden xs component="span">
                       {formatMessage(messages.systemAccessControl)}
@@ -205,7 +206,7 @@ export class PersonDetail extends PureComponent {
                 </Tab>
               )}
               <Tab
-                icon={<Language />}
+                icon={<Language fontSize="large" />}
                 label={
                   <Hidden xs component="span">
                     {formatMessage(messages.languageAndTimezone)}
@@ -223,7 +224,7 @@ export class PersonDetail extends PureComponent {
                   onSubmit={this.saveUserPreferences}
                 />
               </Tab>
-            </Tabs>
+            </AspectTabs>
           )}
         </Paper>
       </div>

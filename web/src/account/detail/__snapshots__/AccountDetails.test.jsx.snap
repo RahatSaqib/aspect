@@ -12,18 +12,17 @@ exports[`AccountDetails module AccountDetails component should shallow render co
   <Connect(lifecycle(Component))
     title="Account Details"
   />
-  <Paper
-    circle={false}
-    rounded={true}
-    transitionEnabled={true}
-    zDepth={1}
-  >
-    <Tabs
+  <WithStyles(Paper)>
+    <AspectTabs
+      fullWidth={true}
       initialSelectedIndex={0}
-      onChange={[Function]}
     >
-      <Tab
-        icon={<MapsPersonPin />}
+      <WithStyles(Tab)
+        icon={
+          <pure(PersonPinRoundedIcon)
+            fontSize="large"
+          />
+        }
         label={
           <Hidden
             className={null}
@@ -67,9 +66,13 @@ exports[`AccountDetails module AccountDetails component should shallow render co
           loading={false}
           onSubmit={[Function]}
         />
-      </Tab>
-      <Tab
-        icon={<ActionLock />}
+      </WithStyles(Tab)>
+      <WithStyles(Tab)
+        icon={
+          <pure(LockIcon)
+            fontSize="large"
+          />
+        }
         label={
           <Hidden
             className={null}
@@ -110,9 +113,13 @@ exports[`AccountDetails module AccountDetails component should shallow render co
           onSubmit={[Function]}
           openCurrentPasswordInputDialog={[Function]}
         />
-      </Tab>
-      <Tab
-        icon={<ActionLanguage />}
+      </WithStyles(Tab)>
+      <WithStyles(Tab)
+        icon={
+          <pure(LanguageIcon)
+            fontSize="large"
+          />
+        }
         label={
           <Hidden
             className={null}
@@ -146,9 +153,9 @@ exports[`AccountDetails module AccountDetails component should shallow render co
             }
           }
         />
-      </Tab>
-    </Tabs>
-  </Paper>
+      </WithStyles(Tab)>
+    </AspectTabs>
+  </WithStyles(Paper)>
 </div>
 `;
 
@@ -164,18 +171,17 @@ exports[`AccountDetails module AccountDetails component when loading is true sho
   <Connect(lifecycle(Component))
     title="Account Details"
   />
-  <Paper
-    circle={false}
-    rounded={true}
-    transitionEnabled={true}
-    zDepth={1}
-  >
-    <Tabs
+  <WithStyles(Paper)>
+    <AspectTabs
+      fullWidth={true}
       initialSelectedIndex={0}
-      onChange={[Function]}
     >
-      <Tab
-        icon={<MapsPersonPin />}
+      <WithStyles(Tab)
+        icon={
+          <pure(PersonPinRoundedIcon)
+            fontSize="large"
+          />
+        }
         label={
           <Hidden
             className={null}
@@ -186,12 +192,7 @@ exports[`AccountDetails module AccountDetails component when loading is true sho
           </Hidden>
         }
       >
-        <LinearProgress
-          max={100}
-          min={0}
-          mode="indeterminate"
-          value={0}
-        />
+        <WithStyles(LinearProgress) />
         <Visible
           className="Form__Header"
           component="h2"
@@ -225,9 +226,13 @@ exports[`AccountDetails module AccountDetails component when loading is true sho
           loading={true}
           onSubmit={[Function]}
         />
-      </Tab>
-      <Tab
-        icon={<ActionLock />}
+      </WithStyles(Tab)>
+      <WithStyles(Tab)
+        icon={
+          <pure(LockIcon)
+            fontSize="large"
+          />
+        }
         label={
           <Hidden
             className={null}
@@ -238,12 +243,7 @@ exports[`AccountDetails module AccountDetails component when loading is true sho
           </Hidden>
         }
       >
-        <LinearProgress
-          max={100}
-          min={0}
-          mode="indeterminate"
-          value={0}
-        />
+        <WithStyles(LinearProgress) />
         <Visible
           className="Form__Header"
           component="h2"
@@ -274,9 +274,13 @@ exports[`AccountDetails module AccountDetails component when loading is true sho
           onSubmit={[Function]}
           openCurrentPasswordInputDialog={[Function]}
         />
-      </Tab>
-      <Tab
-        icon={<ActionLanguage />}
+      </WithStyles(Tab)>
+      <WithStyles(Tab)
+        icon={
+          <pure(LanguageIcon)
+            fontSize="large"
+          />
+        }
         label={
           <Hidden
             className={null}
@@ -287,12 +291,7 @@ exports[`AccountDetails module AccountDetails component when loading is true sho
           </Hidden>
         }
       >
-        <LinearProgress
-          max={100}
-          min={0}
-          mode="indeterminate"
-          value={0}
-        />
+        <WithStyles(LinearProgress) />
         <Visible
           className="Form__Header"
           component="h2"
@@ -316,8 +315,8 @@ exports[`AccountDetails module AccountDetails component when loading is true sho
             }
           }
         />
-      </Tab>
-    </Tabs>
-  </Paper>
+      </WithStyles(Tab)>
+    </AspectTabs>
+  </WithStyles(Paper)>
 </div>
 `;

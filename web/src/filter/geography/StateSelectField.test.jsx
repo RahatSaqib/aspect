@@ -3,14 +3,14 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import sinon from 'sinon'
 import { shallow, mount } from 'enzyme'
-import getMuiTheme from 'material-ui/styles/getMuiTheme'
+import { createMuiTheme } from '@material-ui/core/styles'
 
 import {
   LazyLoadItems,
   LazyLoadParent,
   LazyLoadChild,
 } from '../../geography/GeographyRedux'
-import ForkedSelectField from '../../components/forkedMaterialUi/ForkedSelectField'
+import SelectField from '../../components/shared/SelectField'
 
 describe('StateSelectField module', () => {
   const { StateSelectField } = require('./StateSelectField')
@@ -18,7 +18,11 @@ describe('StateSelectField module', () => {
   const mountWithMuiTheme = node =>
     mount(node, {
       context: {
-        muiTheme: getMuiTheme(),
+        muiTheme: createMuiTheme({
+          typography: {
+            useNextVariants: true,
+          },
+        }),
       },
       childContextTypes: {
         muiTheme: PropTypes.object.isRequired,
@@ -120,20 +124,13 @@ describe('StateSelectField module', () => {
         countryId: '2',
       }
       const StateSelectFieldWrapper = shallow(<StateSelectField {...props} />)
-      const ForkedSelectFieldWrapper = StateSelectFieldWrapper.find(
-        ForkedSelectField
-      )
+      const SelectFieldWrapper = StateSelectFieldWrapper.find(SelectField)
 
-      ForkedSelectFieldWrapper.simulate('change', undefined, undefined, '2')
+      SelectFieldWrapper.simulate('change', { target: { value: '2' } })
       expect(props.onStateIdChange.calledOnce).toBe(true)
       expect(props.onStateIdChange.calledWith('2')).toBe(true)
 
-      ForkedSelectFieldWrapper.simulate(
-        'change',
-        undefined,
-        undefined,
-        undefined
-      )
+      SelectFieldWrapper.simulate('change', { target: { value: undefined } })
       expect(props.onStateIdChange.calledTwice).toBe(true)
       expect(props.onStateIdChange.calledWith(undefined)).toBe(true)
     })

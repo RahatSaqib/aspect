@@ -13,12 +13,7 @@ exports[`ReporterDetail component should shallow render correctly 1`] = `
     title="Reporter Detail"
   />
   <div>
-    <LinearProgress
-      max={100}
-      min={0}
-      mode="indeterminate"
-      value={0}
-    />
+    <WithStyles(LinearProgress) />
   </div>
   <requirePermissions(Link)
     className="DemoLink"

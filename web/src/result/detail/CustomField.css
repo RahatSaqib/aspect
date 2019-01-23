@@ -20,3 +20,7 @@
 .TextBox__InputElement {
   padding: 6px 0;
 }
+
+.DateTime {
+  width: 320px;
+}

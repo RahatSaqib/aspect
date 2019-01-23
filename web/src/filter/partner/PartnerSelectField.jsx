@@ -5,10 +5,10 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { compose, pure, setPropTypes, mapProps, lifecycle } from 'recompose'
 
-import MenuItem from 'material-ui/MenuItem'
+import MenuItem from '@material-ui/core/MenuItem'
 
+import SelectField from '../../components/shared/SelectField'
 import { fetchPartnersAndJobFunctionsForSelectList } from '../../job/JobRedux'
-import ForkedSelectField from '../../components/forkedMaterialUi/ForkedSelectField'
 
 const enhance = compose(
   pure,
@@ -54,7 +54,7 @@ const enhance = compose(
         text: item.get('name') || props.emptyText,
       }))
       .toJS(),
-    onChangePartner(event, index, value) {
+    onChangePartner({ target: { value } }) {
       props.onChangePartner(value)
     },
   }))
@@ -68,16 +68,18 @@ export function PartnerSelectField({
   ...restProps
 }) {
   return (
-    <ForkedSelectField
+    <SelectField
       {...restProps}
       value={partnerId}
       onChange={onChangePartner}
       disabled={disabled || _fp.isEmpty(partnerList)}
     >
       {partnerList.map(p => (
-        <MenuItem key={p.value} value={p.value} primaryText={p.text} />
+        <MenuItem key={p.value} value={p.value}>
+          {p.text}
+        </MenuItem>
       ))}
-    </ForkedSelectField>
+    </SelectField>
   )
 }
 

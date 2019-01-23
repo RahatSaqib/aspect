@@ -7,8 +7,8 @@ import Helmet from 'react-helmet'
 import Immutable from 'immutable'
 
 // Material-UI
-import Paper from 'material-ui/Paper'
-import LinearProgress from 'material-ui/LinearProgress'
+import Paper from '@material-ui/core/Paper'
+import LinearProgress from '@material-ui/core/LinearProgress'
 
 // Our own imports
 import NavTitle from '../../globals/components/NavTitle'

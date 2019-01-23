@@ -6,10 +6,10 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 
 // Material-UI
-import SelectField from 'material-ui/SelectField'
-import MenuItem from 'material-ui/MenuItem'
+import MenuItem from '@material-ui/core/MenuItem'
 
 // Our imports
+import SelectField from '../../components/shared/SelectField'
 import {
   fetchConsumables,
   ConsumableItems,
@@ -35,7 +35,7 @@ export class ConsumableSelectField extends PureComponent {
     fetchConsumables(false)
   }
 
-  handleChange = (event, index, value) => {
+  handleChange = ({ target: { value } }) => {
     this.props.onConsumableChange(value === 'all' ? undefined : value)
   }
 
@@ -51,13 +51,11 @@ export class ConsumableSelectField extends PureComponent {
 
     return (
       <SelectField {...restProps} value={value} onChange={this.handleChange}>
-        {allItemText && <MenuItem value="all" primaryText={allItemText} />}
-        {consumableItems.map(c => (
-          <MenuItem
-            key={c.get('id')}
-            value={c.get('id')}
-            primaryText={c.get('name')}
-          />
+        {allItemText && <MenuItem value="all">{allItemText}</MenuItem>}
+        {consumableItems.map(a => (
+          <MenuItem key={a.get('id')} value={a.get('id')}>
+            {a.get('name')}
+          </MenuItem>
         ))}
       </SelectField>
     )

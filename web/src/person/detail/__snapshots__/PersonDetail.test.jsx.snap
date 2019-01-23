@@ -12,11 +12,6 @@ exports[`PersonDetail module Person Detail component should render correctly 1`]
   <Connect(lifecycle(Component))
     title="Person Detail"
   />
-  <Paper
-    circle={false}
-    rounded={true}
-    transitionEnabled={true}
-    zDepth={1}
-  />
+  <WithStyles(Paper) />
 </div>
 `;
