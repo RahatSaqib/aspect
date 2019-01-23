@@ -13,7 +13,7 @@ import TextField from '@material-ui/core/TextField'
 import Card from '@material-ui/core/Card'
 
 import { Unit } from '../../components/pureGrids'
-import recomposeForm from '../../components/recomposeForm'
+import recomposeForm, { errorProps } from '../../components/recomposeForm'
 import { loginStart } from '../AuthRedux'
 import Reason from './Reason'
 import { reasonTypes } from '../loggedOutReasons'
@@ -159,8 +159,7 @@ export const Login = ({
               label={intl.formatMessage(messages.user)}
               value={values.user}
               onChange={onUserChange}
-              error={meta.user.touched && meta.user.error}
-              helperText={meta.user.touched && meta.user.error}
+              {...errorProps(meta.user)}
               margin="normal"
               FormHelperTextProps={{
                 margin: 'dense',
@@ -174,8 +173,7 @@ export const Login = ({
               label={intl.formatMessage(messages.password)}
               value={values.password}
               onChange={onPasswordChange}
-              error={meta.password.touched && meta.password.error}
-              helperText={meta.password.touched && meta.password.error}
+              {...errorProps(meta.password)}
               margin="normal"
               FormHelperTextProps={{
                 margin: 'dense',

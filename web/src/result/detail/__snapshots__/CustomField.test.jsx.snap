@@ -1,91 +1,59 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`CustomField component When field type is ButtonGroup should shallow render correctly 1`] = `
-<ThemedFormGroup
+<WithStyles(FormGroup)
   className="Container"
-  composeTheme="deeply"
   label=""
-  mapThemrProps={[Function]}
 >
   <ButtonGroup
     isolated={true}
   >
     Immutable.List [
-      <ThemedThemed
-        composeTheme="deeply"
+      <AspectButton
+        color="primary"
         data-value={null}
-        disabled={false}
         inverse={false}
-        label="None"
-        mapThemrProps={[Function]}
         onClick={[Function]}
-        primary={true}
-        raised={true}
-        ripple={true}
-        rippleCentered={false}
-        rippleClassName=""
-        rippleMultiple={true}
-        rippleSpread={2}
-      />,
-      <ThemedThemed
-        composeTheme="deeply"
+        variant="contained"
+      >
+        None
+      </AspectButton>,
+      <AspectButton
+        color="primary"
         data-value="negative"
-        disabled={false}
         inverse={true}
-        label="Negative"
-        mapThemrProps={[Function]}
         onClick={[Function]}
-        primary={true}
-        raised={true}
-        ripple={true}
-        rippleCentered={false}
-        rippleClassName=""
-        rippleMultiple={true}
-        rippleSpread={2}
-      />,
-      <ThemedThemed
-        composeTheme="deeply"
+        variant="contained"
+      >
+        Negative
+      </AspectButton>,
+      <AspectButton
+        color="primary"
         data-value="positive"
-        disabled={false}
         inverse={true}
-        label="Positive"
-        mapThemrProps={[Function]}
         onClick={[Function]}
-        primary={true}
-        raised={true}
-        ripple={true}
-        rippleCentered={false}
-        rippleClassName=""
-        rippleMultiple={true}
-        rippleSpread={2}
-      />,
-      <ThemedThemed
-        composeTheme="deeply"
+        variant="contained"
+      >
+        Positive
+      </AspectButton>,
+      <AspectButton
+        color="primary"
         data-value="uninterpretable"
-        disabled={false}
         inverse={true}
-        label="Uninterpretable"
-        mapThemrProps={[Function]}
         onClick={[Function]}
-        primary={true}
-        raised={true}
-        ripple={true}
-        rippleCentered={false}
-        rippleClassName=""
-        rippleMultiple={true}
-        rippleSpread={2}
-      />,
+        variant="contained"
+      >
+        Uninterpretable
+      </AspectButton>,
     ]
   </ButtonGroup>
-</ThemedFormGroup>
+</WithStyles(FormGroup)>
 `;
 
 exports[`CustomField component When field type is DateTime should shallow render correctly 1`] = `
-<ThemedFormGroup
+<WithStyles(FormGroup)
   className="Container"
-  composeTheme="deeply"
   label=""
-  mapThemrProps={[Function]}
 >
   <WithStyles(DateTimeInput)
     className="DateTime"
@@ -93,18 +61,17 @@ exports[`CustomField component When field type is DateTime should shallow render
     onChange={[Function]}
     value={null}
   />
-</ThemedFormGroup>
+</WithStyles(FormGroup)>
 `;
 
 exports[`CustomField component When field type is DropDown should shallow render correctly 1`] = `
-<ThemedFormGroup
-  className="Container"
-  composeTheme="deeply"
+<WithStyles(FormGroup)
+  className="Container Container___DropDown"
   label=""
-  mapThemrProps={[Function]}
 >
-  <mapProps(ThemedDropdown)
+  <WithStyles(Dropdown)
     className="DropDown"
+    fullWidth={true}
     onChange={[Function]}
     source={
       Array [
@@ -128,31 +95,30 @@ exports[`CustomField component When field type is DropDown should shallow render
     }
     value={null}
   />
-</ThemedFormGroup>
+</WithStyles(FormGroup)>
 `;
 
 exports[`CustomField component When field type is TextBox should shallow render correctly 1`] = `
-<ThemedFormGroup
+<WithStyles(FormGroup)
   className="Container"
-  composeTheme="deeply"
   label=""
-  mapThemrProps={[Function]}
 >
   <FocusBlurTextField
+    className="TextBox__Input"
     component={[Function]}
-    floatingLabelFixe={true}
+    floatingLabelFixed={true}
+    fullWidth={true}
+    inputProps={
+      Object {
+        "className": "TextBox__InputElement",
+      }
+    }
     name="formFieldKey"
     onBlur={[Function]}
     onCommitValue={[Function]}
     onFocus={[Function]}
     onKeyUp={[Function]}
-    theme={
-      Object {
-        "input": "TextBox__Input",
-        "inputElement": "TextBox__InputElement",
-      }
-    }
     value={null}
   />
-</ThemedFormGroup>
+</WithStyles(FormGroup)>
 `;

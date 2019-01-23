@@ -160,4 +160,8 @@ function mapDispatchToProps(dispatch) {
   )
 }
 
-export default enhance(withStyles(styles)(AppNotificationSnackBar))
+export const StyledAppNotificationSnackBar = withStyles(styles)(
+  AppNotificationSnackBar
+)
+
+export default enhance(StyledAppNotificationSnackBar)

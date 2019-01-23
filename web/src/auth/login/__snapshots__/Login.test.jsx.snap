@@ -22,10 +22,7 @@ exports[`Login component should shallow render correctly 1`] = `
       sm="11-12"
       xl="1-3"
     >
-      <ThemedCard
-        composeTheme="deeply"
-        mapThemrProps={[Function]}
-      >
+      <WithStyles(Card)>
         <div
           className="Logo__Container"
         >
@@ -63,68 +60,53 @@ exports[`Login component should shallow render correctly 1`] = `
               }
             }
           />
-          <ThemedInput
-            className=""
-            composeTheme="deeply"
-            disabled={false}
-            error=""
-            floating={true}
-            hint=""
+          <TextField
+            FormHelperTextProps={
+              Object {
+                "margin": "dense",
+              }
+            }
+            autoFocus={true}
+            fullWidth={true}
             label="Username"
-            mapThemrProps={[Function]}
-            multiline={false}
+            margin="normal"
             name="user"
             onChange={[Function]}
             required={false}
-            role="input"
-            theme={
+            select={false}
+            value=""
+            variant="standard"
+          />
+          <TextField
+            FormHelperTextProps={
               Object {
-                "label": "Form__Input",
+                "margin": "dense",
               }
             }
-            type="text"
-            value=""
-          />
-          <ThemedInput
-            className=""
-            composeTheme="deeply"
-            disabled={false}
-            error=""
-            floating={true}
-            hint=""
+            autoFocus={true}
+            fullWidth={true}
             label="Password"
-            mapThemrProps={[Function]}
-            multiline={false}
+            margin="normal"
             name="password"
             onChange={[Function]}
             required={false}
-            role="input"
-            theme={
-              Object {
-                "label": "Form__Input",
-              }
-            }
+            select={false}
             type="password"
             value=""
+            variant="standard"
           />
           <div
             className="Form__ActionRow"
           >
-            <ThemedThemed
+            <WithStyles(Button)
               className="Button"
-              composeTheme="deeply"
+              color="primary"
               disabled={false}
-              label="Login"
-              mapThemrProps={[Function]}
-              primary={true}
-              raised={true}
-              ripple={true}
-              rippleCentered={false}
-              rippleClassName=""
-              rippleMultiple={true}
-              rippleSpread={2}
               type="submit"
-            />
+              variant="contained"
+            >
+              Login
+            </WithStyles(Button)>
             <Link
               className="Right_Align"
               replace={false}
@@ -134,7 +116,7 @@ exports[`Login component should shallow render correctly 1`] = `
             </Link>
           </div>
         </form>
-      </ThemedCard>
+      </WithStyles(Card)>
     </Unit>
   </div>
 </div>

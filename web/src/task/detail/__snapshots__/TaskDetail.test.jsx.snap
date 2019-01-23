@@ -26,10 +26,8 @@ exports[`TaskDetail module TaskDetail component should render correctly 1`] = `
   <section
     className="Section"
   >
-    <ThemedCard
+    <WithStyles(Card)
       className="Card"
-      composeTheme="deeply"
-      mapThemrProps={[Function]}
     >
       <h2
         className="Card__Title"
@@ -48,20 +46,12 @@ exports[`TaskDetail module TaskDetail component should render correctly 1`] = `
         >
           by April 10
         </small>
-        <ThemedThemed
+        <AspectButton
           className="Card__Title__Button"
-          composeTheme="deeply"
-          disabled={false}
-          mapThemrProps={[Function]}
-          raised={true}
-          ripple={true}
-          rippleCentered={false}
-          rippleClassName=""
-          rippleMultiple={true}
-          rippleSpread={2}
+          variant="contained"
         >
           Alert settings
-        </ThemedThemed>
+        </AspectButton>
       </h2>
       <div
         className="Card__Content"
@@ -227,68 +217,28 @@ exports[`TaskDetail module TaskDetail component should render correctly 1`] = `
             className="Card__Content__StatusButtonGroup"
             isolated={true}
           >
-            <ThemedThemed
-              composeTheme="deeply"
-              disabled={false}
+            <AspectButton
+              className="Button--inverse"
+              color="primary"
               inverse={true}
-              label="Alerted"
-              mapThemrProps={[Function]}
-              primary={true}
-              raised={true}
-              ripple={true}
-              rippleCentered={false}
-              rippleClassName=""
-              rippleMultiple={true}
-              rippleSpread={2}
-              theme={
-                Object {
-                  "inverse": "Button--inverse",
-                  "primary": "Button--primary",
-                  "raised": "Button--raised",
-                }
-              }
-            />
-            <ThemedThemed
-              composeTheme="deeply"
-              disabled={false}
-              label="In progress"
-              mapThemrProps={[Function]}
-              primary={true}
-              raised={true}
-              ripple={true}
-              rippleCentered={false}
-              rippleClassName=""
-              rippleMultiple={true}
-              rippleSpread={2}
-              theme={
-                Object {
-                  "inverse": "Button--inverse",
-                  "primary": "Button--primary",
-                  "raised": "Button--raised",
-                }
-              }
-            />
-            <ThemedThemed
-              composeTheme="deeply"
-              disabled={false}
+              variant="contained"
+            >
+              Alerted
+            </AspectButton>
+            <AspectButton
+              color="primary"
+              variant="contained"
+            >
+              In progress
+            </AspectButton>
+            <AspectButton
+              className="Button--inverse"
+              color="primary"
               inverse={true}
-              label="Resolved"
-              mapThemrProps={[Function]}
-              primary={true}
-              raised={true}
-              ripple={true}
-              rippleCentered={false}
-              rippleClassName=""
-              rippleMultiple={true}
-              rippleSpread={2}
-              theme={
-                Object {
-                  "inverse": "Button--inverse",
-                  "primary": "Button--primary",
-                  "raised": "Button--raised",
-                }
-              }
-            />
+              variant="contained"
+            >
+              Resolved
+            </AspectButton>
           </ButtonGroup>
         </Unit>
         <Unit
@@ -344,56 +294,38 @@ exports[`TaskDetail module TaskDetail component should render correctly 1`] = `
         <Unit
           sm="1-1"
         >
-          <ThemedInput
-            className=""
-            composeTheme="deeply"
+          <WithStyles(Input)
+            className="Input"
             defaultValue="  "
-            disabled={false}
-            floating={true}
-            hint=""
-            mapThemrProps={[Function]}
-            multiline={true}
-            required={false}
-            role="input"
-            rows={6}
-            theme={
+            inputProps={
               Object {
-                "inputElement": "Input__inputElement",
+                "className": "Input__inputElement",
               }
             }
-            type="text"
+            multiline={true}
+            rows={6}
           />
         </Unit>
         <Unit
           sm="1-2"
         >
-          <ThemedThemed
-            composeTheme="deeply"
-            disabled={false}
-            label="Add comment"
-            mapThemrProps={[Function]}
-            raised={true}
-            ripple={true}
-            rippleCentered={false}
-            rippleClassName=""
-            rippleMultiple={true}
-            rippleSpread={2}
-          />
+          <AspectButton
+            variant="contained"
+          >
+            Add comment
+          </AspectButton>
         </Unit>
         <Unit
+          className="NewMessage__Checkbox"
           sm="1-2"
         >
-          <ThemedCheckbox
+          <WithStyles(CheckboxField)
             checked={false}
-            className="NewMessage__Checkbox"
-            composeTheme="deeply"
-            disabled={false}
             label="This is now resolved"
-            mapThemrProps={[Function]}
           />
         </Unit>
       </div>
-    </ThemedCard>
+    </WithStyles(Card)>
   </section>
 </div>
 `;

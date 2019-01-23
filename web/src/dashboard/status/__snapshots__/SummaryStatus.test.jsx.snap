@@ -11,10 +11,8 @@ exports[`Summary Status component should shallow render correctly 1`] = `
       replace={false}
       to="/browse/result"
     >
-      <ThemedCard
+      <WithStyles(Card)
         className="Summary__Card"
-        composeTheme="deeply"
-        mapThemrProps={[Function]}
       >
         <div
           className="Summary__Card__Title"
@@ -77,7 +75,7 @@ exports[`Summary Status component should shallow render correctly 1`] = `
             </div>
           </div>
         </div>
-      </ThemedCard>
+      </WithStyles(Card)>
     </Link>
   </Unit>
   <Unit
@@ -89,10 +87,8 @@ exports[`Summary Status component should shallow render correctly 1`] = `
       replace={false}
       to="/browse/result"
     >
-      <ThemedCard
+      <WithStyles(Card)
         className="Summary__Card"
-        composeTheme="deeply"
-        mapThemrProps={[Function]}
       >
         <div
           className="Summary__Card__Title"
@@ -153,7 +149,7 @@ exports[`Summary Status component should shallow render correctly 1`] = `
             </div>
           </div>
         </div>
-      </ThemedCard>
+      </WithStyles(Card)>
     </Link>
   </Unit>
   <Unit
@@ -165,10 +161,8 @@ exports[`Summary Status component should shallow render correctly 1`] = `
       replace={false}
       to="/browse/result"
     >
-      <ThemedCard
+      <WithStyles(Card)
         className="Summary__Card"
-        composeTheme="deeply"
-        mapThemrProps={[Function]}
       >
         <div
           className="Summary__Card__Title"
@@ -229,7 +223,7 @@ exports[`Summary Status component should shallow render correctly 1`] = `
             </div>
           </div>
         </div>
-      </ThemedCard>
+      </WithStyles(Card)>
     </Link>
   </Unit>
   <Unit
@@ -241,10 +235,8 @@ exports[`Summary Status component should shallow render correctly 1`] = `
       replace={false}
       to="/browse/result"
     >
-      <ThemedCard
+      <WithStyles(Card)
         className="Summary__Card"
-        composeTheme="deeply"
-        mapThemrProps={[Function]}
       >
         <div
           className="Summary__Card__Title"
@@ -305,7 +297,7 @@ exports[`Summary Status component should shallow render correctly 1`] = `
             </div>
           </div>
         </div>
-      </ThemedCard>
+      </WithStyles(Card)>
     </Link>
   </Unit>
 </div>

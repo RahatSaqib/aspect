@@ -80,6 +80,7 @@ exports[`NotificationList module NotificationList component should render correc
         }
       }
     />
+    <WithStyles(TableBody) />
   </DataTableCard>
 </div>
 `;

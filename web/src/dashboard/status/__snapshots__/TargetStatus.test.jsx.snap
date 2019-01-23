@@ -1,10 +1,8 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Target Status component should shallow render correctly 1`] = `
-<ThemedCard
+<WithStyles(Card)
   className="Section--withStatus"
-  composeTheme="deeply"
-  mapThemrProps={[Function]}
 >
   <div
     className="TitleContainer"
@@ -21,7 +19,7 @@ exports[`Target Status component should shallow render correctly 1`] = `
     <div
       className="FiltersGroup__Child FiltersGroup__Child--dropdown"
     >
-      <mapProps(ThemedDropdown) />
+      <WithStyles(Dropdown) />
     </div>
   </div>
   <div
@@ -169,5 +167,5 @@ exports[`Target Status component should shallow render correctly 1`] = `
       ]
     </div>
   </div>
-</ThemedCard>
+</WithStyles(Card)>
 `;

@@ -3,7 +3,7 @@ import ReactShallowRenderer from 'react-test-renderer/shallow'
 import { IntlProvider } from 'react-intl'
 import Immutable from 'immutable'
 
-import { AppNotificationSnackBar } from './AppNotificationSnackBar'
+import { StyledAppNotificationSnackBar } from './AppNotificationSnackBar'
 
 describe('App Notification SnackBar component', () => {
   const renderer = new ReactShallowRenderer()
@@ -49,7 +49,9 @@ describe('App Notification SnackBar component', () => {
   }
 
   it('should shallow render correctly', () => {
-    const element = renderer.render(<AppNotificationSnackBar {...props} />)
+    const element = renderer.render(
+      <StyledAppNotificationSnackBar {...props} />
+    )
 
     expect(element).toMatchSnapshot()
   })

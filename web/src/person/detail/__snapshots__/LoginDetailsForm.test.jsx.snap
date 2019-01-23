@@ -8,21 +8,28 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable all f
   <div
     className="Form__Content"
   >
-    <ThemedInput
-      className=""
-      composeTheme="deeply"
+    <TextField
+      FormHelperTextProps={
+        Object {
+          "margin": "dense",
+        }
+      }
+      autoFocus={true}
       disabled={true}
-      floating={true}
-      hint=""
+      fullWidth={true}
+      inputProps={
+        Object {
+          "maxLength": 255,
+        }
+      }
       label="Username"
-      mapThemrProps={[Function]}
-      maxLength={255}
-      multiline={false}
+      margin="normal"
       name="username"
       onChange={[Function]}
       required={false}
-      role="input"
+      select={false}
       type="text"
+      variant="standard"
     />
     <br />
     <WithStyles(StrongPasswordInput)
@@ -71,82 +78,87 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable all f
         }
       }
     />
-    <ThemedInput
-      className=""
-      composeTheme="deeply"
+    <TextField
+      autoFocus={true}
       disabled={true}
-      floating={true}
-      hint=""
+      fullWidth={true}
+      inputProps={
+        Object {
+          "maxLength": 100,
+        }
+      }
       label="Confirm New Password"
-      mapThemrProps={[Function]}
-      maxLength={100}
-      multiline={false}
       name="confirmNewPassword"
       onChange={[Function]}
       required={false}
-      role="input"
+      select={false}
       type="password"
+      variant="standard"
     />
   </div>
   <div
     className="Form__ActionRow"
   >
-    <ThemedThemed
-      composeTheme="deeply"
+    <WithStyles(Button)
+      color="primary"
       disabled={true}
-      label="Save"
-      mapThemrProps={[Function]}
-      primary={true}
-      raised={true}
-      ripple={true}
-      rippleCentered={false}
-      rippleClassName=""
-      rippleMultiple={true}
-      rippleSpread={2}
       type="submit"
-    />
+      variant="contained"
+    >
+      Save
+    </WithStyles(Button)>
   </div>
-  <ThemedActivableRenderer
+  <AspectDialog
     actions={
       Array [
-        Object {
-          "disabled": true,
-          "label": "Cancel",
-          "onClick": undefined,
-        },
-        Object {
-          "disabled": true,
-          "label": "Submit",
-          "onClick": [Function],
-        },
+        <WithStyles(Button)
+          color="primary"
+          disabled={true}
+        >
+          Cancel
+        </WithStyles(Button)>,
+        <WithStyles(Button)
+          color="primary"
+          disabled={true}
+          onClick={[Function]}
+        >
+          intl.formatMessage(messages.submitCurrentPassword)}
+        </WithStyles(Button)>,
       ]
     }
-    active={false}
-    composeTheme="deeply"
-    delay={500}
-    mapThemrProps={[Function]}
+    autoScrollBodyContent={false}
+    maxWidth="md"
+    modal={false}
+    open={false}
     title="Enter Current Password"
   >
     <p>
       To update your login details, please enter your current password
     </p>
-    <ThemedInput
-      className=""
-      composeTheme="deeply"
+    <TextField
+      FormHelperTextProps={
+        Object {
+          "margin": "dense",
+        }
+      }
+      autoFocus={true}
       disabled={true}
-      floating={true}
-      hint=""
-      mapThemrProps={[Function]}
-      maxLength={100}
-      multiline={false}
+      fullWidth={true}
+      inputProps={
+        Object {
+          "maxLength": 100,
+        }
+      }
+      margin="normal"
       name="currentPassword"
       onChange={[Function]}
       onKeyPress={[Function]}
       required={false}
-      role="input"
+      select={false}
       type="password"
+      variant="standard"
     />
-  </ThemedActivableRenderer>
+  </AspectDialog>
 </form>
 `;
 
@@ -158,21 +170,28 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable the s
   <div
     className="Form__Content"
   >
-    <ThemedInput
-      className=""
-      composeTheme="deeply"
+    <TextField
+      FormHelperTextProps={
+        Object {
+          "margin": "dense",
+        }
+      }
+      autoFocus={true}
       disabled={false}
-      floating={true}
-      hint=""
+      fullWidth={true}
+      inputProps={
+        Object {
+          "maxLength": 255,
+        }
+      }
       label="Username"
-      mapThemrProps={[Function]}
-      maxLength={255}
-      multiline={false}
+      margin="normal"
       name="username"
       onChange={[Function]}
       required={false}
-      role="input"
+      select={false}
       type="text"
+      variant="standard"
     />
     <br />
     <WithStyles(StrongPasswordInput)
@@ -221,82 +240,87 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable the s
         }
       }
     />
-    <ThemedInput
-      className=""
-      composeTheme="deeply"
+    <TextField
+      autoFocus={true}
       disabled={false}
-      floating={true}
-      hint=""
+      fullWidth={true}
+      inputProps={
+        Object {
+          "maxLength": 100,
+        }
+      }
       label="Confirm New Password"
-      mapThemrProps={[Function]}
-      maxLength={100}
-      multiline={false}
       name="confirmNewPassword"
       onChange={[Function]}
       required={false}
-      role="input"
+      select={false}
       type="password"
+      variant="standard"
     />
   </div>
   <div
     className="Form__ActionRow"
   >
-    <ThemedThemed
-      composeTheme="deeply"
+    <WithStyles(Button)
+      color="primary"
       disabled={true}
-      label="Save"
-      mapThemrProps={[Function]}
-      primary={true}
-      raised={true}
-      ripple={true}
-      rippleCentered={false}
-      rippleClassName=""
-      rippleMultiple={true}
-      rippleSpread={2}
       type="submit"
-    />
+      variant="contained"
+    >
+      Save
+    </WithStyles(Button)>
   </div>
-  <ThemedActivableRenderer
+  <AspectDialog
     actions={
       Array [
-        Object {
-          "disabled": false,
-          "label": "Cancel",
-          "onClick": undefined,
-        },
-        Object {
-          "disabled": true,
-          "label": "Submit",
-          "onClick": [Function],
-        },
+        <WithStyles(Button)
+          color="primary"
+          disabled={false}
+        >
+          Cancel
+        </WithStyles(Button)>,
+        <WithStyles(Button)
+          color="primary"
+          disabled={true}
+          onClick={[Function]}
+        >
+          intl.formatMessage(messages.submitCurrentPassword)}
+        </WithStyles(Button)>,
       ]
     }
-    active={false}
-    composeTheme="deeply"
-    delay={500}
-    mapThemrProps={[Function]}
+    autoScrollBodyContent={false}
+    maxWidth="md"
+    modal={false}
+    open={false}
     title="Enter Current Password"
   >
     <p>
       To update your login details, please enter your current password
     </p>
-    <ThemedInput
-      className=""
-      composeTheme="deeply"
+    <TextField
+      FormHelperTextProps={
+        Object {
+          "margin": "dense",
+        }
+      }
+      autoFocus={true}
       disabled={false}
-      floating={true}
-      hint=""
-      mapThemrProps={[Function]}
-      maxLength={100}
-      multiline={false}
+      fullWidth={true}
+      inputProps={
+        Object {
+          "maxLength": 100,
+        }
+      }
+      margin="normal"
       name="currentPassword"
       onChange={[Function]}
       onKeyPress={[Function]}
       required={false}
-      role="input"
+      select={false}
       type="password"
+      variant="standard"
     />
-  </ThemedActivableRenderer>
+  </AspectDialog>
 </form>
 `;
 
@@ -308,21 +332,28 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable the s
   <div
     className="Form__Content"
   >
-    <ThemedInput
-      className=""
-      composeTheme="deeply"
+    <TextField
+      FormHelperTextProps={
+        Object {
+          "margin": "dense",
+        }
+      }
+      autoFocus={true}
       disabled={false}
-      floating={true}
-      hint=""
+      fullWidth={true}
+      inputProps={
+        Object {
+          "maxLength": 255,
+        }
+      }
       label="Username"
-      mapThemrProps={[Function]}
-      maxLength={255}
-      multiline={false}
+      margin="normal"
       name="username"
       onChange={[Function]}
       required={false}
-      role="input"
+      select={false}
       type="text"
+      variant="standard"
     />
     <br />
     <WithStyles(StrongPasswordInput)
@@ -371,82 +402,87 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable the s
         }
       }
     />
-    <ThemedInput
-      className=""
-      composeTheme="deeply"
+    <TextField
+      autoFocus={true}
       disabled={false}
-      floating={true}
-      hint=""
+      fullWidth={true}
+      inputProps={
+        Object {
+          "maxLength": 100,
+        }
+      }
       label="Confirm New Password"
-      mapThemrProps={[Function]}
-      maxLength={100}
-      multiline={false}
       name="confirmNewPassword"
       onChange={[Function]}
       required={false}
-      role="input"
+      select={false}
       type="password"
+      variant="standard"
     />
   </div>
   <div
     className="Form__ActionRow"
   >
-    <ThemedThemed
-      composeTheme="deeply"
+    <WithStyles(Button)
+      color="primary"
       disabled={true}
-      label="Save"
-      mapThemrProps={[Function]}
-      primary={true}
-      raised={true}
-      ripple={true}
-      rippleCentered={false}
-      rippleClassName=""
-      rippleMultiple={true}
-      rippleSpread={2}
       type="submit"
-    />
+      variant="contained"
+    >
+      Save
+    </WithStyles(Button)>
   </div>
-  <ThemedActivableRenderer
+  <AspectDialog
     actions={
       Array [
-        Object {
-          "disabled": false,
-          "label": "Cancel",
-          "onClick": undefined,
-        },
-        Object {
-          "disabled": true,
-          "label": "Submit",
-          "onClick": [Function],
-        },
+        <WithStyles(Button)
+          color="primary"
+          disabled={false}
+        >
+          Cancel
+        </WithStyles(Button)>,
+        <WithStyles(Button)
+          color="primary"
+          disabled={true}
+          onClick={[Function]}
+        >
+          intl.formatMessage(messages.submitCurrentPassword)}
+        </WithStyles(Button)>,
       ]
     }
-    active={false}
-    composeTheme="deeply"
-    delay={500}
-    mapThemrProps={[Function]}
+    autoScrollBodyContent={false}
+    maxWidth="md"
+    modal={false}
+    open={false}
     title="Enter Current Password"
   >
     <p>
       To update your login details, please enter your current password
     </p>
-    <ThemedInput
-      className=""
-      composeTheme="deeply"
+    <TextField
+      FormHelperTextProps={
+        Object {
+          "margin": "dense",
+        }
+      }
+      autoFocus={true}
       disabled={false}
-      floating={true}
-      hint=""
-      mapThemrProps={[Function]}
-      maxLength={100}
-      multiline={false}
+      fullWidth={true}
+      inputProps={
+        Object {
+          "maxLength": 100,
+        }
+      }
+      margin="normal"
       name="currentPassword"
       onChange={[Function]}
       onKeyPress={[Function]}
       required={false}
-      role="input"
+      select={false}
       type="password"
+      variant="standard"
     />
-  </ThemedActivableRenderer>
+  </AspectDialog>
 </form>
 `;
 
@@ -458,21 +494,28 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable the s
   <div
     className="Form__Content"
   >
-    <ThemedInput
-      className=""
-      composeTheme="deeply"
+    <TextField
+      FormHelperTextProps={
+        Object {
+          "margin": "dense",
+        }
+      }
+      autoFocus={true}
       disabled={false}
-      floating={true}
-      hint=""
+      fullWidth={true}
+      inputProps={
+        Object {
+          "maxLength": 255,
+        }
+      }
       label="Username"
-      mapThemrProps={[Function]}
-      maxLength={255}
-      multiline={false}
+      margin="normal"
       name="username"
       onChange={[Function]}
       required={false}
-      role="input"
+      select={false}
       type="text"
+      variant="standard"
     />
     <br />
     <WithStyles(StrongPasswordInput)
@@ -521,82 +564,87 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable the s
         }
       }
     />
-    <ThemedInput
-      className=""
-      composeTheme="deeply"
+    <TextField
+      autoFocus={true}
       disabled={false}
-      floating={true}
-      hint=""
+      fullWidth={true}
+      inputProps={
+        Object {
+          "maxLength": 100,
+        }
+      }
       label="Confirm New Password"
-      mapThemrProps={[Function]}
-      maxLength={100}
-      multiline={false}
       name="confirmNewPassword"
       onChange={[Function]}
       required={false}
-      role="input"
+      select={false}
       type="password"
+      variant="standard"
     />
   </div>
   <div
     className="Form__ActionRow"
   >
-    <ThemedThemed
-      composeTheme="deeply"
+    <WithStyles(Button)
+      color="primary"
       disabled={true}
-      label="Save"
-      mapThemrProps={[Function]}
-      primary={true}
-      raised={true}
-      ripple={true}
-      rippleCentered={false}
-      rippleClassName=""
-      rippleMultiple={true}
-      rippleSpread={2}
       type="submit"
-    />
+      variant="contained"
+    >
+      Save
+    </WithStyles(Button)>
   </div>
-  <ThemedActivableRenderer
+  <AspectDialog
     actions={
       Array [
-        Object {
-          "disabled": false,
-          "label": "Cancel",
-          "onClick": undefined,
-        },
-        Object {
-          "disabled": true,
-          "label": "Submit",
-          "onClick": [Function],
-        },
+        <WithStyles(Button)
+          color="primary"
+          disabled={false}
+        >
+          Cancel
+        </WithStyles(Button)>,
+        <WithStyles(Button)
+          color="primary"
+          disabled={true}
+          onClick={[Function]}
+        >
+          intl.formatMessage(messages.submitCurrentPassword)}
+        </WithStyles(Button)>,
       ]
     }
-    active={false}
-    composeTheme="deeply"
-    delay={500}
-    mapThemrProps={[Function]}
+    autoScrollBodyContent={false}
+    maxWidth="md"
+    modal={false}
+    open={false}
     title="Enter Current Password"
   >
     <p>
       To update your login details, please enter your current password
     </p>
-    <ThemedInput
-      className=""
-      composeTheme="deeply"
+    <TextField
+      FormHelperTextProps={
+        Object {
+          "margin": "dense",
+        }
+      }
+      autoFocus={true}
       disabled={false}
-      floating={true}
-      hint=""
-      mapThemrProps={[Function]}
-      maxLength={100}
-      multiline={false}
+      fullWidth={true}
+      inputProps={
+        Object {
+          "maxLength": 100,
+        }
+      }
+      margin="normal"
       name="currentPassword"
       onChange={[Function]}
       onKeyPress={[Function]}
       required={false}
-      role="input"
+      select={false}
       type="password"
+      variant="standard"
     />
-  </ThemedActivableRenderer>
+  </AspectDialog>
 </form>
 `;
 
@@ -608,21 +656,28 @@ exports[`LoginDetailsForm module LoginDetailsForm component should enable the su
   <div
     className="Form__Content"
   >
-    <ThemedInput
-      className=""
-      composeTheme="deeply"
+    <TextField
+      FormHelperTextProps={
+        Object {
+          "margin": "dense",
+        }
+      }
+      autoFocus={true}
       disabled={false}
-      floating={true}
-      hint=""
+      fullWidth={true}
+      inputProps={
+        Object {
+          "maxLength": 255,
+        }
+      }
       label="Username"
-      mapThemrProps={[Function]}
-      maxLength={255}
-      multiline={false}
+      margin="normal"
       name="username"
       onChange={[Function]}
       required={false}
-      role="input"
+      select={false}
       type="text"
+      variant="standard"
     />
     <br />
     <WithStyles(StrongPasswordInput)
@@ -671,82 +726,87 @@ exports[`LoginDetailsForm module LoginDetailsForm component should enable the su
         }
       }
     />
-    <ThemedInput
-      className=""
-      composeTheme="deeply"
+    <TextField
+      autoFocus={true}
       disabled={false}
-      floating={true}
-      hint=""
+      fullWidth={true}
+      inputProps={
+        Object {
+          "maxLength": 100,
+        }
+      }
       label="Confirm New Password"
-      mapThemrProps={[Function]}
-      maxLength={100}
-      multiline={false}
       name="confirmNewPassword"
       onChange={[Function]}
       required={false}
-      role="input"
+      select={false}
       type="password"
+      variant="standard"
     />
   </div>
   <div
     className="Form__ActionRow"
   >
-    <ThemedThemed
-      composeTheme="deeply"
+    <WithStyles(Button)
+      color="primary"
       disabled={false}
-      label="Save"
-      mapThemrProps={[Function]}
-      primary={true}
-      raised={true}
-      ripple={true}
-      rippleCentered={false}
-      rippleClassName=""
-      rippleMultiple={true}
-      rippleSpread={2}
       type="submit"
-    />
+      variant="contained"
+    >
+      Save
+    </WithStyles(Button)>
   </div>
-  <ThemedActivableRenderer
+  <AspectDialog
     actions={
       Array [
-        Object {
-          "disabled": false,
-          "label": "Cancel",
-          "onClick": undefined,
-        },
-        Object {
-          "disabled": false,
-          "label": "Submit",
-          "onClick": [Function],
-        },
+        <WithStyles(Button)
+          color="primary"
+          disabled={false}
+        >
+          Cancel
+        </WithStyles(Button)>,
+        <WithStyles(Button)
+          color="primary"
+          disabled={false}
+          onClick={[Function]}
+        >
+          intl.formatMessage(messages.submitCurrentPassword)}
+        </WithStyles(Button)>,
       ]
     }
-    active={false}
-    composeTheme="deeply"
-    delay={500}
-    mapThemrProps={[Function]}
+    autoScrollBodyContent={false}
+    maxWidth="md"
+    modal={false}
+    open={false}
     title="Enter Current Password"
   >
     <p>
       To update your login details, please enter your current password
     </p>
-    <ThemedInput
-      className=""
-      composeTheme="deeply"
+    <TextField
+      FormHelperTextProps={
+        Object {
+          "margin": "dense",
+        }
+      }
+      autoFocus={true}
       disabled={false}
-      floating={true}
-      hint=""
-      mapThemrProps={[Function]}
-      maxLength={100}
-      multiline={false}
+      fullWidth={true}
+      inputProps={
+        Object {
+          "maxLength": 100,
+        }
+      }
+      margin="normal"
       name="currentPassword"
       onChange={[Function]}
       onKeyPress={[Function]}
       required={false}
-      role="input"
+      select={false}
       type="password"
+      variant="standard"
     />
-  </ThemedActivableRenderer>
+  </AspectDialog>
 </form>
 `;
 
@@ -758,21 +818,28 @@ exports[`LoginDetailsForm module LoginDetailsForm component should render correc
   <div
     className="Form__Content"
   >
-    <ThemedInput
-      className=""
-      composeTheme="deeply"
+    <TextField
+      FormHelperTextProps={
+        Object {
+          "margin": "dense",
+        }
+      }
+      autoFocus={true}
       disabled={false}
-      floating={true}
-      hint=""
+      fullWidth={true}
+      inputProps={
+        Object {
+          "maxLength": 255,
+        }
+      }
       label="Username"
-      mapThemrProps={[Function]}
-      maxLength={255}
-      multiline={false}
+      margin="normal"
       name="username"
       onChange={[Function]}
       required={false}
-      role="input"
+      select={false}
       type="text"
+      variant="standard"
     />
     <br />
     <WithStyles(StrongPasswordInput)
@@ -821,82 +888,87 @@ exports[`LoginDetailsForm module LoginDetailsForm component should render correc
         }
       }
     />
-    <ThemedInput
-      className=""
-      composeTheme="deeply"
+    <TextField
+      autoFocus={true}
       disabled={false}
-      floating={true}
-      hint=""
+      fullWidth={true}
+      inputProps={
+        Object {
+          "maxLength": 100,
+        }
+      }
       label="Confirm New Password"
-      mapThemrProps={[Function]}
-      maxLength={100}
-      multiline={false}
       name="confirmNewPassword"
       onChange={[Function]}
       required={false}
-      role="input"
+      select={false}
       type="password"
+      variant="standard"
     />
   </div>
   <div
     className="Form__ActionRow"
   >
-    <ThemedThemed
-      composeTheme="deeply"
+    <WithStyles(Button)
+      color="primary"
       disabled={true}
-      label="Save"
-      mapThemrProps={[Function]}
-      primary={true}
-      raised={true}
-      ripple={true}
-      rippleCentered={false}
-      rippleClassName=""
-      rippleMultiple={true}
-      rippleSpread={2}
       type="submit"
-    />
+      variant="contained"
+    >
+      Save
+    </WithStyles(Button)>
   </div>
-  <ThemedActivableRenderer
+  <AspectDialog
     actions={
       Array [
-        Object {
-          "disabled": false,
-          "label": "Cancel",
-          "onClick": undefined,
-        },
-        Object {
-          "disabled": true,
-          "label": "Submit",
-          "onClick": [Function],
-        },
+        <WithStyles(Button)
+          color="primary"
+          disabled={false}
+        >
+          Cancel
+        </WithStyles(Button)>,
+        <WithStyles(Button)
+          color="primary"
+          disabled={true}
+          onClick={[Function]}
+        >
+          intl.formatMessage(messages.submitCurrentPassword)}
+        </WithStyles(Button)>,
       ]
     }
-    active={false}
-    composeTheme="deeply"
-    delay={500}
-    mapThemrProps={[Function]}
+    autoScrollBodyContent={false}
+    maxWidth="md"
+    modal={false}
+    open={false}
     title="Enter Current Password"
   >
     <p>
       To update your login details, please enter your current password
     </p>
-    <ThemedInput
-      className=""
-      composeTheme="deeply"
+    <TextField
+      FormHelperTextProps={
+        Object {
+          "margin": "dense",
+        }
+      }
+      autoFocus={true}
       disabled={false}
-      floating={true}
-      hint=""
-      mapThemrProps={[Function]}
-      maxLength={100}
-      multiline={false}
+      fullWidth={true}
+      inputProps={
+        Object {
+          "maxLength": 100,
+        }
+      }
+      margin="normal"
       name="currentPassword"
       onChange={[Function]}
       onKeyPress={[Function]}
       required={false}
-      role="input"
+      select={false}
       type="password"
+      variant="standard"
     />
-  </ThemedActivableRenderer>
+  </AspectDialog>
 </form>
 `;
 

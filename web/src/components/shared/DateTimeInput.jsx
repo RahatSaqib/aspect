@@ -191,7 +191,7 @@ const DateTimeInput = ({
       className={classNames(className, classesMap.selectControl)}
       onBlur={handleBlur}
     >
-      {_.map(displayFormat, display => {
+      {_.each(displayFormat, (display, i) => {
         const { name, options } = displayOptions[display] || ''
         if (name) {
           return renderSelect({
@@ -204,7 +204,7 @@ const DateTimeInput = ({
           })
         }
         return (
-          <div className={classesMap.separator}>
+          <div key={`${display}-${i}`} className={classesMap.separator}>
             <div>{display}</div>
           </div>
         )

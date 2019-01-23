@@ -1,10 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Device Status component should shallow render correctly 1`] = `
-<ThemedCard
-  composeTheme="deeply"
-  mapThemrProps={[Function]}
->
+<WithStyles(Card)>
   <Title
     icon={
       <MdDescription
@@ -232,5 +229,5 @@ exports[`Device Status component should shallow render correctly 1`] = `
       />
     </Unit>
   </div>
-</ThemedCard>
+</WithStyles(Card)>
 `;
