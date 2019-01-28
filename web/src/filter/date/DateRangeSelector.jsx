@@ -496,7 +496,6 @@ export class DateRangeSelector extends PureComponent {
               return (
                 <div className={styles.DateRangeSelector__DatePickerContainer}>
                   <DateTimeInput
-                    {...restProps}
                     label=" "
                     className={controlClassName}
                     labelFunc={formatDate}

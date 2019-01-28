@@ -73,7 +73,7 @@ export class AppNotificationSnackBar extends PureComponent {
 
   render() {
     const {
-      classes: classNameValues,
+      classes: classesMap,
       appNotification,
       intl: { formatMessage },
     } = this.props
@@ -121,7 +121,7 @@ export class AppNotificationSnackBar extends PureComponent {
     const showDetails = appNotification.get('showDetails')
     return (
       <Snackbar
-        className={classNames(classNameValues.fullWidth)}
+        className={classNames(classesMap.fullWidth)}
         open={hasNotification && !showDetails}
         message={title ? formatMessage(title, messageValues) : ''}
         autoHideDuration={4000}
@@ -130,8 +130,8 @@ export class AppNotificationSnackBar extends PureComponent {
         action={
           <Button
             className={classNames({
-              [classNameValues.info]: !isError,
-              [classNameValues.warning]: isError,
+              [classesMap.info]: !isError,
+              [classesMap.warning]: isError,
             })}
             size="small"
             onClick={actionTouchTap}
