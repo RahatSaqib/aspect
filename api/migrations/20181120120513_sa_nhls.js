@@ -1,5 +1,7 @@
 module.exports = require('../src/db').migration(up, down)
 
+const Promise = require('bluebird')
+
 async function up(knex) {
   await knex.schema.table('SmsTemplate', smsTemplate => {
     smsTemplate
@@ -9,19 +11,20 @@ async function up(knex) {
   })
 
   await knex.schema.table('NotificationType', notificationType => {
+    notificationType.dropForeign(['jobFunctionId'])
+  })
+  await knex.schema.table('NotificationType', notificationType => {
     notificationType
       .boolean('sendToContactsWithMatchingTags')
       .notNullable()
       .defaultTo(0)
-    notificationType.dropForeign('jobFunctionId')
     notificationType
       .integer('jobFunctionId')
       .unsigned()
+      .references('id')
+      .inTable('JobFunction')
+      .nullable()
       .alter()
-  })
-
-  await knex.schema.table('NotificationType', notificationType => {
-    notificationType.foreign('jobFunctionId').references('JobFunction.id')
   })
 
   await knex.schema.createTable('NotificationTypeTag', notificationTypeTag => {
@@ -52,6 +55,7 @@ async function up(knex) {
     notification.foreign('personId').references('Person.id')
   })
 }
+
 async function down(knex) {
   await knex.schema.table('SmsTemplate', smsTemplate => {
     smsTemplate
@@ -60,18 +64,29 @@ async function down(knex) {
       .alter()
   })
 
+  const adminJobFunctionPerPartner = await knex('JobFunction')
+    .where('name', 'Admin')
+    .groupBy('name', 'partnerId')
+    .select('id', 'partnerId')
+
+  await Promise.each(adminJobFunctionPerPartner, async adminJobFunction =>
+    knex('NotificationType')
+      .where('partnerId', adminJobFunction.partnerId)
+      .update({ jobFunctionId: adminJobFunction.id })
+  )
+
+  await knex.schema.table('NotificationType', notificationType => {
+    notificationType.dropForeign(['jobFunctionId'])
+  })
   await knex.schema.table('NotificationType', notificationType => {
     notificationType.dropColumns('sendToContactsWithMatchingTags')
-    notificationType.dropForeign('jobFunctionId')
     notificationType
       .integer('jobFunctionId')
       .unsigned()
+      .references('id')
+      .inTable('JobFunction')
       .notNullable()
       .alter()
-  })
-
-  await knex.schema.table('NotificationType', notificationType => {
-    notificationType.foreign('jobFunctionId').references('JobFunction.id')
   })
 
   await knex.schema.dropTableIfExists('NotificationTypeTag')
