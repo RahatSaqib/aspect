@@ -223,7 +223,9 @@ describe('stringTemplate', () => {
         assert.notEqual(
           message.payload,
           `Offline since ${formatDateOrDefault(
-            messageDataSource.deviceLastSeenOn,
+            convertToTimeZone(messageDataSource.deviceLastSeenOn, {
+              timeZone: 'America/Chicago',
+            }),
             'HH:mm'
           )}`
         )
@@ -245,7 +247,9 @@ describe('stringTemplate', () => {
         assert.notEqual(
           message.payload,
           `Offline since ${formatDateOrDefault(
-            messageDataSource.deviceLastSeenOn,
+            convertToTimeZone(messageDataSource.deviceLastSeenOn, {
+              timeZone: 'America/Chicago',
+            }),
             'HH:mm'
           )}`
         )
