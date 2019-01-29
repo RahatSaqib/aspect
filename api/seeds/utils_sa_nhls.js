@@ -70,7 +70,7 @@ async function seedNotifications(knex, { partnerId }) {
           `%22instrument_ca%22%3A{{urlEncode (enclose (defaultTo (mapValue device.deviceType '{"CepheidGeneXpert":"1","AlereQ":"2"}') '') with='"')}}%2C%20` +
           `%22assayhiv%22%3A{{urlEncode (enclose (defaultTo (mapValue result.assay.id '{"assayAlereQHiv12VLPlasma":"1","assayAlereQHiv12Detect":"2","GxHiv1Vl":"1","GxHiv1Qual":"2"}') '') with='"')}}%2C%20` +
           `%22sample_barcode%22%3A{{urlEncode (enclose (defaultTo result.sample.id '') with='"')}}%2C%20` +
-          `%22sample_taken%22%3A{{urlEncode (enclose (defaultTo (formatDate result.formData.timeSampleTaken '${redCapDateTimeFormat}') '') with='"')}}%2C%20` +
+          `%22sample_taken%22%3A{{urlEncode (enclose (defaultTo (formatDate (offsetToTimeZone result.formData.timeSampleTaken 'Africa/Johannesburg') '${redCapDateTimeFormat}') '') with='"')}}%2C%20` +
           `%22point_of_care_instrument_r%22%3A{{urlEncode (enclose (defaultTo (mapValue (tryMergeResultCategories result.category1.id result.category2.id) '{"Detected":"1","MoreThan1000":"1","LessThan1000":"1","Trace Detected":"1","NotDetected":"2","NoResult":"3","Discordant":"3","Indeterminate":"3","Invalid":"3","Success":"3","CollectNewSample":"3","Rejected":"3","Missing":"3","Unknown":"3","Error":"4"}') '') with='"')}}%2C%20` +
           `%22error_code1%22%3A{{urlEncode (enclose (defaultTo result.errorCode '') with='"')}}%2C%20` +
           `%22poc_viral_load%22%3A` +
@@ -105,7 +105,7 @@ async function seedNotifications(knex, { partnerId }) {
           `{{/if}}` +
           `%2C%20` +
           `%22ct_value%22%3A{{urlEncode (enclose (defaultTo result.data.probes.probeCCt '0') with='"')}}%2C%20` +
-          `%22result_instrument%22%3A{{urlEncode (enclose (defaultTo (formatDate result.formData.timeInstrumentResulted '${redCapDateTimeFormat}') '') with='"')}}` +
+          `%22result_instrument%22%3A{{urlEncode (enclose (defaultTo (formatDate (offsetToTimeZone result.formData.timeInstrumentResulted 'Africa/Johannesburg') '${redCapDateTimeFormat}') '') with='"')}}` +
           `%7D%5D&returnContent=ids&returnFormat=json`,
         fileContentTypeId: await fileContentTypeToId('formUrlEncoded'),
       },
