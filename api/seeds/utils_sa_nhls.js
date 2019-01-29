@@ -113,13 +113,19 @@ async function seedNotifications(knex, { partnerId }) {
     )
   )
 
-  const [positiveResultDataEnteredSmsTemplateId] = await knex(
+  const [positiveAlereResultDataEnteredSmsTemplateId] = await knex(
     'SmsTemplate'
   ).insert(
     Object.assign(
       {
         message:
-          `GxAlert. New case HIV > 50 cps from {{site.shortName}}; ` +
+          `GxAlert. New ` +
+          `{{#if (or (eq result.assay.id 'assayAlereQHiv12VLPlasma') (eq result.assay.id 'GxHiv1Vl'))}}` +
+          `case HIV > 50 cps ` +
+          `{{else}}` +
+          `EID HIV+ Case ` +
+          `{{/if}}` +
+          `from {{site.shortName}}; ` +
           `in Ward: {{result.formData.ward}}; Sample ID: {{result.sample.id}};  ` +
           `Patient ID: {{result.patient.id}} on {{formatDate result.endedOn}}` +
           `{{#if (eq result.assay.id 'assayAlereQHiv12VLPlasma')}}` +
@@ -168,7 +174,7 @@ async function seedNotifications(knex, { partnerId }) {
   ).insert([
     {
       messageSeverityId: messageSeverityAlertId,
-      smsTemplateId: positiveResultDataEnteredSmsTemplateId,
+      smsTemplateId: positiveAlereResultDataEnteredSmsTemplateId,
     },
   ])
 
