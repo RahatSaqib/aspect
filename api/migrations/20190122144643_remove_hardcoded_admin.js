@@ -1,6 +1,7 @@
 module.exports = require('../src/db').migration(up, down)
 
 const Promise = require('bluebird')
+const _ = require('lodash')
 
 async function up(knex) {
   await knex.schema.table('Person', person => {
@@ -67,21 +68,23 @@ async function down(knex) {
     person.dropForeign(['createdBy'])
     person.dropForeign(['updatedBy'])
   })
-  await knex('Person')
-    .whereNull('lastPartnerId')
-    .update({
-      createdBy: firstCountryAdminUserPerPartner[0].userId,
-      updatedBy: firstCountryAdminUserPerPartner[0].userId,
-    })
-  await Promise.each(firstCountryAdminUserPerPartner, async countryAdmin =>
-    knex('Person')
-      .where('lastPartnerId', countryAdmin.partnerId)
-      .update({
-        createdBy: countryAdmin.userId,
-        updatedBy: countryAdmin.userId,
-      })
-  )
 
+  if (!_.isEmpty(firstCountryAdminUserPerPartner)) {
+    await knex('Person')
+      .whereNull('lastPartnerId')
+      .update({
+        createdBy: firstCountryAdminUserPerPartner[0].userId,
+        updatedBy: firstCountryAdminUserPerPartner[0].userId,
+      })
+    await Promise.each(firstCountryAdminUserPerPartner, async countryAdmin =>
+      knex('Person')
+        .where('lastPartnerId', countryAdmin.partnerId)
+        .update({
+          createdBy: countryAdmin.userId,
+          updatedBy: countryAdmin.userId,
+        })
+    )
+  }
   await knex.schema.table('Person', person => {
     person
       .integer('createdBy')
@@ -103,14 +106,17 @@ async function down(knex) {
     notificationType.dropForeign(['createdBy'])
     notificationType.dropForeign(['updatedBy'])
   })
-  await Promise.each(firstCountryAdminUserPerPartner, async countryAdmin =>
-    knex('NotificationType')
-      .where('partnerId', countryAdmin.partnerId)
-      .update({
-        createdBy: countryAdmin.userId,
-        updatedBy: countryAdmin.userId,
-      })
-  )
+
+  if (!_.isEmpty(firstCountryAdminUserPerPartner)) {
+    await Promise.each(firstCountryAdminUserPerPartner, async countryAdmin =>
+      knex('NotificationType')
+        .where('partnerId', countryAdmin.partnerId)
+        .update({
+          createdBy: countryAdmin.userId,
+          updatedBy: countryAdmin.userId,
+        })
+    )
+  }
 
   await knex.schema.table('NotificationType', notificationType => {
     notificationType

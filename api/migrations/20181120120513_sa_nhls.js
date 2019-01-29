@@ -1,6 +1,7 @@
 module.exports = require('../src/db').migration(up, down)
 
 const Promise = require('bluebird')
+const _ = require('lodash')
 
 async function up(knex) {
   await knex.schema.table('SmsTemplate', smsTemplate => {
@@ -72,11 +73,13 @@ async function down(knex) {
     .groupBy('name', 'partnerId')
     .select('id', 'partnerId')
 
-  await Promise.each(adminJobFunctionPerPartner, async adminJobFunction =>
-    knex('NotificationType')
-      .where('partnerId', adminJobFunction.partnerId)
-      .update({ jobFunctionId: adminJobFunction.id })
-  )
+  if (!_.isEmpty(adminJobFunctionPerPartner)) {
+    await Promise.each(adminJobFunctionPerPartner, async adminJobFunction =>
+      knex('NotificationType')
+        .where('partnerId', adminJobFunction.partnerId)
+        .update({jobFunctionId: adminJobFunction.id})
+    )
+  }
 
   await knex.schema.table('NotificationType', notificationType => {
     notificationType.dropForeign(['jobFunctionId'])
