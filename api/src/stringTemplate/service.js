@@ -9,7 +9,7 @@ const { parseDateOrDefault, formatDateOrDefault } = require('../shared/date')
 
 handlebars.registerHelper('numberOfDays', numberOfDays)
 handlebars.registerHelper('isoDate', isoDate)
-handlebars.registerHelper('ensureTimeZone', ensureTimeZone)
+handlebars.registerHelper('offsetToTimeZone', offsetToTimeZone)
 handlebars.registerHelper('formatDate', formatDate)
 handlebars.registerHelper('toLowerCase', toLowerCase)
 handlebars.registerHelper('mapValue', mapValue)
@@ -422,7 +422,7 @@ function maxViralLoadValue(...rest) {
   return safeString(_.get(maxViralLoadValue, 'text'))
 }
 
-function ensureTimeZone(date, options) {
+function offsetToTimeZone(date, options) {
   if (_.isNil(date)) {
     return date
   }

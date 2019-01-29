@@ -215,10 +215,10 @@ describe('stringTemplate', () => {
       })
     })
 
-    describe('ensureTimeZone helper', () => {
+    describe('offsetToTimeZone helper', () => {
       it('should change the date to use the offset of the timezone specified', async () => {
         const message = await runProcessUsingDataSourceQuery(
-          `Offline since {{formatDate (ensureTimeZone device.lastSeenOn timeZone='Pacific/Pitcairn') 'HH:mm'}}`
+          `Offline since {{formatDate (offsetToTimeZone device.lastSeenOn timeZone='Pacific/Pitcairn') 'HH:mm'}}`
         )
         assert.notEqual(
           message.payload,
@@ -240,7 +240,7 @@ describe('stringTemplate', () => {
 
       it('should accept timeZone as the default parameter', async () => {
         const message = await runProcessUsingDataSourceQuery(
-          `Offline since {{formatDate (ensureTimeZone device.lastSeenOn 'Pacific/Pitcairn') 'HH:mm'}}`
+          `Offline since {{formatDate (offsetToTimeZone device.lastSeenOn 'Pacific/Pitcairn') 'HH:mm'}}`
         )
         assert.notEqual(
           message.payload,
@@ -262,7 +262,7 @@ describe('stringTemplate', () => {
 
       it('should evaluate to nothing if no data was provided', async () => {
         const message = await runProcessUsingDataSourceQuery(
-          `Offline since {{formatDate (ensureTimeZone device.thisDateDoesntExist timeZone='Pacific/Pitcairn') 'HH:mm'}}`
+          `Offline since {{formatDate (offsetToTimeZone device.thisDateDoesntExist timeZone='Pacific/Pitcairn') 'HH:mm'}}`
         )
         assert.equal(message.payload, `Offline since `)
       })
@@ -270,7 +270,7 @@ describe('stringTemplate', () => {
       it('should not change the date to use an offset if the timezone IS NOT specified', async () => {
         const specifiedFormat = 'YYYY-MM-DDHH:mm'
         const message = await runProcessUsingDataSourceQuery(
-          `Offline since {{formatDate (ensureTimeZone device.lastSeenOn) formatString='${specifiedFormat}'}}`
+          `Offline since {{formatDate (offsetToTimeZone device.lastSeenOn) formatString='${specifiedFormat}'}}`
         )
         assert.equal(
           message.payload,
@@ -650,7 +650,7 @@ describe('stringTemplate', () => {
           `%22instrument_ca%22%3A{{urlEncode (enclose (defaultTo (mapValue device.deviceType '{"CepheidGeneXpert":"1","AlereQ":"2"}') '') with='"')}}%2C%20` +
           `%22assayhiv%22%3A{{urlEncode (enclose (defaultTo (mapValue result.assay.id '{"assayAlereQHiv12VLPlasma":"1","assayAlereQHiv12Detect":"2","GxHiv1Vl":"1","GxHiv1Qual":"2"}') '') with='"')}}%2C%20` +
           `%22sample_barcode%22%3A{{urlEncode (enclose (defaultTo result.sample.id '') with='"')}}%2C%20` +
-          `%22sample_taken%22%3A{{urlEncode (enclose (defaultTo (formatDate (ensureTimeZone result.formData.timeSampleTaken '${johannesburgTimeZone}') '${redCapDateTimeFormat}') '') with='"')}}%2C%20` +
+          `%22sample_taken%22%3A{{urlEncode (enclose (defaultTo (formatDate (offsetToTimeZone result.formData.timeSampleTaken '${johannesburgTimeZone}') '${redCapDateTimeFormat}') '') with='"')}}%2C%20` +
           `%22point_of_care_instrument_r%22%3A{{urlEncode (enclose (defaultTo (mapValue (tryMergeResultCategories result.category1.id result.category2.id) '{"Detected":"1","MoreThan1000":"1","LessThan1000":"1","Trace Detected":"1","NotDetected":"2","NoResult":"3","Discordant":"3","Indeterminate":"3","Invalid":"3","Success":"3","CollectNewSample":"3","Rejected":"3","Missing":"3","Unknown":"3","Error":"4"}') '') with='"')}}%2C%20` +
           `%22error_code1%22%3A{{urlEncode (enclose (defaultTo result.errorCode '') with='"')}}%2C%20` +
           `%22poc_viral_load%22%3A` +
@@ -685,7 +685,7 @@ describe('stringTemplate', () => {
           `{{/if}}` +
           `%2C%20` +
           `%22ct_value%22%3A{{urlEncode (enclose (defaultTo result.data.probes.probeCCt '0') with='"')}}%2C%20` +
-          `%22result_instrument%22%3A{{urlEncode (enclose (defaultTo (formatDate (ensureTimeZone result.formData.timeInstrumentResulted '${johannesburgTimeZone}') '${redCapDateTimeFormat}') '') with='"')}}` +
+          `%22result_instrument%22%3A{{urlEncode (enclose (defaultTo (formatDate (offsetToTimeZone result.formData.timeInstrumentResulted '${johannesburgTimeZone}') '${redCapDateTimeFormat}') '') with='"')}}` +
           `%7D%5D&returnContent=ids&returnFormat=json`
         const redCapDeviceTypeCodes = {
           CepheidGeneXpert: '1',
