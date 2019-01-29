@@ -77,7 +77,7 @@ async function down(knex) {
     await Promise.each(adminJobFunctionPerPartner, async adminJobFunction =>
       knex('NotificationType')
         .where('partnerId', adminJobFunction.partnerId)
-        .update({jobFunctionId: adminJobFunction.id})
+        .update({ jobFunctionId: adminJobFunction.id })
     )
   }
 
@@ -97,7 +97,9 @@ async function down(knex) {
 
   await knex.schema.dropTableIfExists('NotificationTypeTag')
 
-  await knex('Notification').whereNull('personId').delete()
+  await knex('Notification')
+    .whereNull('personId')
+    .delete()
   await knex.schema.table('Notification', notificationType => {
     notificationType.dropForeign(['personId'])
   })
