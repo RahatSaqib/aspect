@@ -636,6 +636,7 @@ describe('stringTemplate', () => {
     describe('use cases for SA NHLS', () => {
       it('should process RedCAP API Payloads', async () => {
         const redCapDateTimeFormat = 'YYYY-MM-DD HH:mm'
+        const johannesburgTimeZone = 'Africa/Johannesburg'
         const template =
           `token=1A234567B8C90D12345E6789F0G1234H&content=record&format=json&type=flat&overwriteBehavior=normal&forceAutoNumber=true&data=%5B%7B%22` +
           `record_id%22%3A%221%22%2C%20` +
@@ -649,7 +650,7 @@ describe('stringTemplate', () => {
           `%22instrument_ca%22%3A{{urlEncode (enclose (defaultTo (mapValue device.deviceType '{"CepheidGeneXpert":"1","AlereQ":"2"}') '') with='"')}}%2C%20` +
           `%22assayhiv%22%3A{{urlEncode (enclose (defaultTo (mapValue result.assay.id '{"assayAlereQHiv12VLPlasma":"1","assayAlereQHiv12Detect":"2","GxHiv1Vl":"1","GxHiv1Qual":"2"}') '') with='"')}}%2C%20` +
           `%22sample_barcode%22%3A{{urlEncode (enclose (defaultTo result.sample.id '') with='"')}}%2C%20` +
-          `%22sample_taken%22%3A{{urlEncode (enclose (defaultTo (formatDate (ensureTimeZone result.formData.timeSampleTaken 'Africa/Johannesburg') '${redCapDateTimeFormat}') '') with='"')}}%2C%20` +
+          `%22sample_taken%22%3A{{urlEncode (enclose (defaultTo (formatDate (ensureTimeZone result.formData.timeSampleTaken '${johannesburgTimeZone}') '${redCapDateTimeFormat}') '') with='"')}}%2C%20` +
           `%22point_of_care_instrument_r%22%3A{{urlEncode (enclose (defaultTo (mapValue (tryMergeResultCategories result.category1.id result.category2.id) '{"Detected":"1","MoreThan1000":"1","LessThan1000":"1","Trace Detected":"1","NotDetected":"2","NoResult":"3","Discordant":"3","Indeterminate":"3","Invalid":"3","Success":"3","CollectNewSample":"3","Rejected":"3","Missing":"3","Unknown":"3","Error":"4"}') '') with='"')}}%2C%20` +
           `%22error_code1%22%3A{{urlEncode (enclose (defaultTo result.errorCode '') with='"')}}%2C%20` +
           `%22poc_viral_load%22%3A` +
@@ -684,7 +685,7 @@ describe('stringTemplate', () => {
           `{{/if}}` +
           `%2C%20` +
           `%22ct_value%22%3A{{urlEncode (enclose (defaultTo result.data.probes.probeCCt '0') with='"')}}%2C%20` +
-          `%22result_instrument%22%3A{{urlEncode (enclose (defaultTo (formatDate (ensureTimeZone result.formData.timeInstrumentResulted 'Africa/Johannesburg') '${redCapDateTimeFormat}') '') with='"')}}` +
+          `%22result_instrument%22%3A{{urlEncode (enclose (defaultTo (formatDate (ensureTimeZone result.formData.timeInstrumentResulted '${johannesburgTimeZone}') '${redCapDateTimeFormat}') '') with='"')}}` +
           `%7D%5D&returnContent=ids&returnFormat=json`
         const redCapDeviceTypeCodes = {
           CepheidGeneXpert: '1',
@@ -1008,7 +1009,7 @@ describe('stringTemplate', () => {
               `%22sample_taken%22%3A%22${encodeURIComponent(
                 formatDateOrDefault(
                   convertToTimeZone(formData.timeSampleTaken, {
-                    timeZone: 'Africa/Johannesburg',
+                    timeZone: johannesburgTimeZone,
                   }),
                   redCapDateTimeFormat
                 )
@@ -1036,7 +1037,7 @@ describe('stringTemplate', () => {
               `%22result_instrument%22%3A%22${encodeURIComponent(
                 formatDateOrDefault(
                   convertToTimeZone(formData.timeInstrumentResulted, {
-                    timeZone: 'Africa/Johannesburg',
+                    timeZone: johannesburgTimeZone,
                   }),
                   redCapDateTimeFormat
                 )
@@ -1072,7 +1073,9 @@ describe('stringTemplate', () => {
                 assayhiv: redCapAssayCodes[dataSource.assayExternalId],
                 sample_barcode: dataSource.sampleExternalId,
                 sample_taken: formatDateOrDefault(
-                  formData.timeSampleTaken,
+                  convertToTimeZone(formData.timeSampleTaken, {
+                    timeZone: johannesburgTimeZone,
+                  }),
                   redCapDateTimeFormat
                 ),
                 point_of_care_instrument_r:
@@ -1086,7 +1089,9 @@ describe('stringTemplate', () => {
                 poc_viral_load: dataSource.expectedPocVl,
                 ct_value: _.get(resultData, ['probes', 'probeCCT']) || '0',
                 result_instrument: formatDateOrDefault(
-                  formData.timeInstrumentResulted,
+                  convertToTimeZone(formData.timeInstrumentResulted, {
+                    timeZone: johannesburgTimeZone,
+                  }),
                   redCapDateTimeFormat
                 ),
               },
