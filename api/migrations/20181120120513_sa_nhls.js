@@ -43,16 +43,17 @@ async function up(knex) {
     notificationTypeTag.foreign('tagId').references('Tag.id')
   })
 
+  await knex.schema.table('Notification', notificationType => {
+    notificationType.dropForeign(['personId'])
+  })
   await knex.schema.table('Notification', notification => {
-    notification.dropForeign('personId')
     notification
       .integer('personId')
       .unsigned()
+      .references('id')
+      .inTable('Person')
+      .nullable()
       .alter()
-  })
-
-  await knex.schema.table('Notification', notification => {
-    notification.foreign('personId').references('Person.id')
   })
 }
 
@@ -91,16 +92,17 @@ async function down(knex) {
 
   await knex.schema.dropTableIfExists('NotificationTypeTag')
 
+  await knex('Notification').whereNull('personId').delete()
+  await knex.schema.table('Notification', notificationType => {
+    notificationType.dropForeign(['personId'])
+  })
   await knex.schema.table('Notification', notification => {
-    notification.dropForeign('personId')
     notification
       .integer('personId')
       .unsigned()
+      .references('id')
+      .inTable('Person')
       .notNullable()
       .alter()
-  })
-
-  await knex.schema.table('Notification', notification => {
-    notification.foreign('personId').references('Person.id')
   })
 }
