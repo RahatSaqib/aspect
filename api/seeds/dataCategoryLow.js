@@ -94,14 +94,9 @@ async function seedDataCategory(knex, partnerName) {
   const { id: partnerId } = await knex('Partner')
     .where({ name: partnerName })
     .first()
-  const { id: adminId } = await knex('User')
-    .where({ name: 'admin' })
-    .first()
   const auditFields = {
     createdOn: now,
-    createdBy: adminId,
     updatedOn: now,
-    updatedBy: adminId,
   }
 
   // --------------------
