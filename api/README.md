@@ -4,6 +4,14 @@ This is the web api for all aspect clients.
 
 Swagger UI is available for testing the UI manually and viewing route documentation at http://localhost:8080/documentation .  Use the `api/auth` route to generate a JWT token (named 'access' in response) and include the token in authenticated routes.
 
+## Recommended versions
+
+Node v8.12 ([nvm](https://github.com/creationix/nvm) highly recommended)
+
+Mysql v5.7
+
+Yarn v1.9.4
+
 ## Quick start
 
 Quick Start for development. Everything is explained in more detail throughout this README.
