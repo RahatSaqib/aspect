@@ -1,6 +1,6 @@
 import React from 'react'
 import ReactShallowRenderer from 'react-test-renderer/shallow'
-import { shallow } from 'enzyme'
+import { shallow, mount } from 'enzyme'
 import sinon from 'sinon'
 import Immutable from 'immutable'
 import _ from 'lodash'
@@ -8,14 +8,18 @@ import { Button } from 'react-toolbox/lib/button'
 import FormGroup from '../../components/themedReactToolbox/FormGroup'
 import CustomField from './CustomField'
 import StyledDropdown from '../../components/themedReactToolbox/StyledDropdown'
-import DateTimePicker from '../../components/shared/DateTimePicker'
 import FocusBlurTextField from '../../components/shared/FocusBlurTextField'
+import DateTimeInput from '../../components/shared/DateTimeInput'
 
 describe('CustomField component', () => {
   const renderer = ReactShallowRenderer.createRenderer()
 
   function renderCustomerField(props) {
     return shallow(<CustomField {...props} />)
+  }
+
+  function mountCustomerField(props) {
+    return mount(<CustomField {...props} />)
   }
 
   describe('When field type is ButtonGroup', () => {
@@ -240,9 +244,9 @@ describe('CustomField component', () => {
     })
 
     it('should show empty field when form data has not been set', () => {
-      const customField = renderCustomerField(props)
-      const dateTimePicker = customField.find(DateTimePicker)
-      expect(dateTimePicker.prop('value')).toBeNull()
+      const customField = mountCustomerField(props)
+      const dateTimeInput = customField.find(DateTimeInput)
+      expect(dateTimeInput.prop('value')).toBeNull()
     })
 
     it('should show date/time when form form data has been set', () => {
@@ -252,19 +256,23 @@ describe('CustomField component', () => {
           expertInterpretation: mockDate,
         }),
       })
-      const customField = renderCustomerField(propsWithValue)
-      const dateTimePicker = customField.find(DateTimePicker)
-      expect(dateTimePicker.prop('value')).toEqual(mockDate)
+      const customField = mountCustomerField(propsWithValue)
+      const dateTimeInput = customField.find(DateTimeInput)
+      expect(dateTimeInput.prop('value')).toEqual(mockDate)
     })
 
     it('should call onUpdateDate event when the user select the date or time', () => {
       const mockDate = new Date(2018, 10, 5, 15, 30)
-      const customField = renderCustomerField(props)
-      const dateTimePicker = customField.find(DateTimePicker)
+      const customField = mountCustomerField(props)
+
       const { updateFormData } = props
       expect(updateFormData.callCount).toBe(0)
 
-      dateTimePicker.simulate('change', mockDate)
+      customField
+        .find(DateTimeInput)
+        .first()
+        .props()
+        .onChange(mockDate)
 
       expect(updateFormData.callCount).toBe(1)
       expect(updateFormData.lastCall.args[2]).toEqual(mockDate)

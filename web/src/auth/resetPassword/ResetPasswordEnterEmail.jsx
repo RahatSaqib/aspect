@@ -2,7 +2,7 @@ import _ from 'lodash'
 import classnames from 'classnames/bind'
 import React from 'react'
 import { compose, withState, pure } from 'recompose'
-import { Button } from 'react-toolbox/lib/button'
+import Button from '@material-ui/core/Button'
 import { Input } from 'react-toolbox/lib/input'
 
 import validateEmailAddress from '../../shared/utils/validate'
@@ -64,11 +64,12 @@ export const ResetPasswordEnterEmail = ({
     <div className={cssClasses('Form__ActionRow')}>
       <Button
         type="submit"
-        primary
-        raised
+        color="secondary"
+        variant="contained"
         disabled={form.pristine || !form.valid || form.submitting}
-        label={intl.formatMessage(messages.next)}
-      />
+      >
+        {intl.formatMessage(messages.next)}
+      </Button>
       {action}
     </div>
   </form>

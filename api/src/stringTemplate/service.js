@@ -1,5 +1,7 @@
 const _ = require('lodash')
 const { distanceInWordsStrict } = require('date-fns')
+const { findTimeZone } = require('timezone-support')
+const { convertToTimeZone } = require('date-fns-timezone')
 const handlebars = require('handlebars')
 
 const { knex } = require('../db')
@@ -7,6 +9,7 @@ const { parseDateOrDefault, formatDateOrDefault } = require('../shared/date')
 
 handlebars.registerHelper('numberOfDays', numberOfDays)
 handlebars.registerHelper('isoDate', isoDate)
+handlebars.registerHelper('offsetToTimeZone', offsetToTimeZone)
 handlebars.registerHelper('formatDate', formatDate)
 handlebars.registerHelper('toLowerCase', toLowerCase)
 handlebars.registerHelper('mapValue', mapValue)
@@ -417,6 +420,22 @@ function maxViralLoadValue(...rest) {
     viralLoad => _.get(viralLoad, 'numericValue')
   )
   return safeString(_.get(maxViralLoadValue, 'text'))
+}
+
+function offsetToTimeZone(date, options) {
+  if (_.isNil(date)) {
+    return date
+  }
+  const parsedDate = parseDateOrDefault(date)
+  if (_.isNil(parsedDate)) {
+    return parsedDate
+  }
+  const timeZoneName = getArgumentFromOptions(options, 'timeZone')
+  if (!timeZoneName) {
+    return parsedDate
+  }
+  const timeZone = findTimeZone(timeZoneName)
+  return convertToTimeZone(parsedDate, { timeZone: timeZone.name })
 }
 
 module.exports = {

@@ -5,7 +5,7 @@ import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
 import { reduxForm, formValueSelector } from 'redux-form/immutable'
 import { connect } from 'react-redux'
-import CircularProgress from 'material-ui/CircularProgress'
+import CircularProgress from '@material-ui/core/CircularProgress'
 
 import { latLng, address } from '../../shared/selectors/site'
 import SiteMap from './SiteMap'
@@ -132,7 +132,7 @@ export class SiteLocationFormMap extends PureComponent {
         ) : (
           <div>
             <p>Finding location</p>
-            <CircularProgress size={2} />
+            <CircularProgress />
           </div>
         )}
       </div>

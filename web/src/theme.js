@@ -1,56 +1,123 @@
-// This file contains all possible settings for
-// customizing the material-ui theme
-// See here for the possible properties:
-// https://github.com/callemall/material-ui/blob/master/src/styles/getMuiTheme.js
-import {
-  lightGreen300,
-  lightGreen600,
-  lightGreen700,
-  orange700,
-  grey700,
-  grey500,
-  grey400,
-  grey100,
-} from 'material-ui/styles/colors'
+import orange from '@material-ui/core/colors/orange'
+import grey from '@material-ui/core/colors/grey'
+import lightGreen from '@material-ui/core/colors/lightGreen'
 
 export default {
-  appBar: {
-    height: 56,
+  typography: {
+    useNextVariants: true,
+    fontFamily: 'Lato, sans-serif',
   },
-  drawer: {
-    width: 220,
-  },
-  menu: {
-    textColor: grey700,
-    color: lightGreen300,
-  },
-  spacing: {
-    iconSize: 24,
-  },
-  tableHeaderColumn: {
-    textColor: grey700,
-    height: 24,
-    spacing: 12,
-  },
-  tableRow: {
-    hoverColor: grey100,
-  },
-  tableRowColumn: {
-    height: 24,
-    spacing: 12,
-  },
-  textField: {
-    floatingLabelColor: grey500,
-    // disabledTextColor: palette.disabledColor,
-    borderColor: grey400,
-  },
-  fontFamily: 'Lato, sans-serif',
   palette: {
-    primary1Color: lightGreen600,
-    primary2Color: lightGreen700,
-    primary3Color: lightGreen300,
-    accent1Color: orange700,
-    accent2Color: lightGreen300,
-    accent3Color: orange700,
+    primary: {
+      light: lightGreen[500],
+      main: lightGreen[600],
+      dark: lightGreen[700],
+      contrastText: '#fff',
+    },
+    secondary: {
+      light: lightGreen[300],
+      main: orange[700],
+      dark: orange[700],
+      contrastText: '#fff',
+    },
+  },
+  overrides: {
+    MuiButton: {
+      root: {
+        borderRadius: process.env['--toolbox-button-border-radius'],
+      },
+      containedSecondary: {
+        color: '#fff',
+      },
+    },
+    MuiCard: {
+      root: {
+        borderRadius: 0,
+      },
+    },
+    MuiExpansionPanel: {
+      root: {
+        '&:before': {
+          opacity: 0,
+        },
+      },
+      expanded: {
+        margin: 0,
+      },
+    },
+    MuiExpansionPanelSummary: {
+      root: {
+        minHeight: 'auto',
+        padding: '0 16px 0 16px',
+        '&$expanded': {
+          minHeight: 'auto',
+        },
+      },
+      content: {
+        margin: '12px 0',
+        '&$expanded': {
+          margin: '12px 0',
+        },
+      },
+    },
+    MuiExpansionPanelDetails: {
+      root: {
+        padding: '8px 16px 16px',
+      },
+    },
+    MuiSvgIcon: {
+      root: {
+        fontSize: 16,
+      },
+      fontSizeSmall: {
+        fontSize: 14,
+      },
+      fontSizeLarge: {
+        fontSize: 24,
+      },
+    },
+    MuiSelect: {
+      root: {
+        minWidth: 256,
+      },
+      select: {
+        '&:focus': {
+          background: 'none',
+        },
+      },
+      icon: {
+        color: grey[300],
+        fontSize: 24,
+      },
+    },
+    MuiMenuItem: {
+      root: {
+        minWidth: 256,
+        '&$selected': {
+          color: orange[700],
+        },
+        '&$selected:hover': {
+          background: 'none',
+        },
+      },
+    },
+    MuiListItem: {
+      root: {
+        paddingTop: 4,
+        paddingBottom: 4,
+        '&$selected': {
+          background: 'none',
+        },
+        '&$selected:hover': {
+          backgroundColor: 'rgba(0, 0, 0, 0.08)',
+        },
+      },
+      selected: {},
+    },
+    MuiStepIcon: {
+      root: {
+        fontSize: '1.25rem',
+      },
+    },
   },
 }

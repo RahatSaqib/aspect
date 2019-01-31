@@ -4,7 +4,7 @@ import ReactShallowRenderer from 'react-test-renderer/shallow'
 import { makeItems } from '../../shared/metaReducers/items'
 import { makeTable } from '../../shared/metaReducers/table'
 
-jest.mock('material-ui/Checkbox', () => 'StubCheckbox')
+jest.mock('@material-ui/core/Checkbox', () => 'StubCheckbox')
 
 describe('Device Api Key List module', () => {
   const { DeviceApiKeyList } = require('./DeviceApiKeyList')

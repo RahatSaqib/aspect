@@ -9,13 +9,20 @@ import { Link } from 'react-router-dom'
 import Helmet from 'react-helmet'
 
 // Material-UI
-import Dialog from 'material-ui/Dialog'
-import LinearProgress from 'material-ui/LinearProgress'
-import { Card, CardHeader, CardText } from 'material-ui/Card'
-import IconButton from 'material-ui/IconButton'
-import ModeEdit from 'material-ui/svg-icons/editor/mode-edit'
+import LinearProgress from '@material-ui/core/LinearProgress'
+import Card from '@material-ui/core/Card'
+import CardContent from '@material-ui/core/CardContent'
+import ExpansionPanel from '@material-ui/core/ExpansionPanel'
+import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails'
+import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary'
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore'
+import Tooltip from '@material-ui/core/Tooltip'
+import Typography from '@material-ui/core/Typography'
+import IconButton from '@material-ui/core/IconButton'
+import ModeEdit from '@material-ui/icons/Edit'
 
 // Our own imports
+import AspectDialog from '../../components/shared/AspectDialog'
 import { formatDate } from '../../shared/utils/dateFormat'
 import { Unit } from '../../components/pureGrids'
 import isEditable from '../../shared/selectors/device'
@@ -256,12 +263,14 @@ export class ReporterDetail extends PureComponent {
 
     return (
       <div>
-        <IconButton
-          tooltip={formatMessage(messages.editTooltip)}
-          onClick={this.handleToggleEditDialog}
-        >
-          <ModeEdit />
-        </IconButton>
+        <Tooltip title={formatMessage(messages.editTooltip)} placement="bottom">
+          <IconButton
+            aria-label={formatMessage(messages.editTooltip)}
+            onClick={this.handleToggleEditDialog}
+          >
+            <ModeEdit fontSize="large" />
+          </IconButton>
+        </Tooltip>
         <ReporterDetailModalForm
           formatNestedSubtitle={this.handleFormatNestedSubtitle}
           configurationDataSchema={dataSchema}
@@ -302,7 +311,7 @@ export class ReporterDetail extends PureComponent {
       <div>
         {/* IDs and site/results */}
         <Card>
-          <CardText>
+          <CardContent>
             <Unit sm="5-6" md="11-12">
               <ReadOnlyField
                 label=""
@@ -344,13 +353,22 @@ export class ReporterDetail extends PureComponent {
               {/* Dialog for ReporterDetailModalForm */}
               {this.renderEditButtonWithDialog()}
             </Unit>
-          </CardText>
+          </CardContent>
         </Card>
         {/* Graphs */}
-        <Card expanded>
-          <CardText style={{ paddingTop: 10 }} className={styles.CardText}>
+        <ExpansionPanel defaultExpanded>
+          <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
             <Unit sm="1-1" md="1-2">
-              <CardHeader title="Utilization Rate Over Time" />
+              <Typography variant="subtitle1">
+                Utilization Rate Over Time
+              </Typography>
+            </Unit>
+            <Unit sm="1-1" md="1-2">
+              <Typography variant="subtitle1">Error Rates Over Time</Typography>
+            </Unit>
+          </ExpansionPanelSummary>
+          <ExpansionPanelDetails>
+            <Unit sm="1-1" md="1-2">
               <ReadOnlyField
                 label=""
                 value
@@ -364,41 +382,46 @@ export class ReporterDetail extends PureComponent {
               />
             </Unit>
             <Unit sm="1-1" md="1-2">
-              <CardHeader title="Error Rates Over Time" />
               <ReadOnlyField
                 label=""
                 value
                 format={() => (
                   <img
-                    alt="error rate"
+                    alt="error rates"
                     src={require('../../device/detail/error_rates.png')}
                     style={{ width: '100%' }}
                   />
                 )}
               />
             </Unit>
-          </CardText>
-        </Card>
+          </ExpansionPanelDetails>
+        </ExpansionPanel>
         {/* Dialog for demo purpose */}
-        <Dialog
+        <AspectDialog
           modal={false}
           open={this.state.isDemoDialogOpen}
           onRequestClose={this.handleToggleDialog}
         >
           Not yet implemented
-        </Dialog>
+        </AspectDialog>
         {/* Calibration */}
-        <Card onClick={this.handleToggleDialog} expanded>
-          <CardHeader title="Calibration" actAsExpander showExpandableButton />
-          <CardText style={{ paddingTop: 10 }}>
-            Last calibrated 12/1/2016
-          </CardText>
-        </Card>
+        <ExpansionPanel expanded onClick={this.handleToggleDialog}>
+          <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+            <Typography variant="subtitle1">Calibration</Typography>
+          </ExpansionPanelSummary>
+          <ExpansionPanelDetails>
+            <Typography variant="body2">Last calibrated 12/1/2016</Typography>
+          </ExpansionPanelDetails>
+        </ExpansionPanel>
         {/* Warranty */}
-        <Card onClick={this.handleToggleDialog} expanded>
-          <CardHeader title="Warranty" actAsExpander showExpandableButton />
-          <CardText style={{ paddingTop: 10 }}>Expires 12/31/2018</CardText>
-        </Card>
+        <ExpansionPanel expanded onClick={this.handleToggleDialog}>
+          <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+            <Typography variant="subtitle1">Warranty</Typography>
+          </ExpansionPanelSummary>
+          <ExpansionPanelDetails>
+            <Typography variant="body2">Expires 12/31/2018</Typography>
+          </ExpansionPanelDetails>
+        </ExpansionPanel>
         {/* Configuration */}
         <JSONSchemaCard
           title={formatMessage(messages.fieldConfiguration)}
@@ -409,44 +432,43 @@ export class ReporterDetail extends PureComponent {
           data={reporter.get('configurationData')}
         />
         {/* Technical information */}
-        <Card initiallyExpanded>
-          <CardHeader
-            title="Technical information"
-            actAsExpander
-            showExpandableButton
-          />
-          <CardText
-            actAsExpander
-            expandable
-            style={{ paddingTop: 10 }}
-            className={styles.CardText}
-          >
-            <Unit sm="1-2" md="1-3" lg="1-4">
-              <ReadOnlyField
-                label={formatMessage(messages.fieldFirstApprovedOn)}
-                value={getFormattedDate(reporter.get('approvedOn'))}
-              />
-            </Unit>
-            <Unit sm="1-2" md="1-3" lg="1-4">
-              <ReadOnlyField
-                label={formatMessage(messages.fieldFirstApprovedBy)}
-                value={reporter.get('approvedBy')}
-              />
-            </Unit>
-            <Unit sm="1-2" md="1-3" lg="1-4">
-              <ReadOnlyField
-                label={formatMessage(messages.fieldHostId)}
-                value={reporter.get('hostId')}
-              />
-            </Unit>
-            <Unit sm="1-2" md="1-3" lg="1-4">
-              <ReadOnlyField
-                label={formatMessage(messages.fieldSerial)}
-                value={reporter.get('serial')}
-              />
-            </Unit>
-          </CardText>
-        </Card>
+        <ExpansionPanel defaultExpanded>
+          <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+            <Typography variant="subtitle1">Technical information</Typography>
+          </ExpansionPanelSummary>
+          <ExpansionPanelDetails>
+            <Typography
+              variant="body2"
+              component="div"
+              style={{ width: '100%' }}
+            >
+              <Unit sm="1-2" md="1-3" lg="1-4">
+                <ReadOnlyField
+                  label={formatMessage(messages.fieldFirstApprovedOn)}
+                  value={getFormattedDate(reporter.get('approvedOn'))}
+                />
+              </Unit>
+              <Unit sm="1-2" md="1-3" lg="1-4">
+                <ReadOnlyField
+                  label={formatMessage(messages.fieldFirstApprovedBy)}
+                  value={reporter.get('approvedBy')}
+                />
+              </Unit>
+              <Unit sm="1-2" md="1-3" lg="1-4">
+                <ReadOnlyField
+                  label={formatMessage(messages.fieldHostId)}
+                  value={reporter.get('hostId')}
+                />
+              </Unit>
+              <Unit sm="1-2" md="1-3" lg="1-4">
+                <ReadOnlyField
+                  label={formatMessage(messages.fieldSerial)}
+                  value={reporter.get('serial')}
+                />
+              </Unit>
+            </Typography>
+          </ExpansionPanelDetails>
+        </ExpansionPanel>
       </div>
     )
   }

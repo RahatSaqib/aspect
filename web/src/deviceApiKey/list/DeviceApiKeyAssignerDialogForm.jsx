@@ -6,8 +6,7 @@ import { compose, pure, setPropTypes } from 'recompose'
 import { defineMessages, intlShape } from 'react-intl'
 
 // Material-UI
-import FlatButton from 'material-ui/FlatButton'
-import Dialog from 'material-ui/Dialog'
+import Button from '@material-ui/core/Button'
 
 // Our own imports
 import recomposeForm from '../../components/recomposeForm'
@@ -15,6 +14,7 @@ import CountrySelectField from '../../filter/geography/CountrySelectField'
 import PartnerSelectField from '../../filter/partner/PartnerSelectField'
 import SiteSelectField from '../../filter/resource/SiteSelectField'
 import DeviceSelectField from '../../filter/resource/DeviceSelectField'
+import AspectDialog from '../../components/shared/AspectDialog'
 
 const messages = defineMessages({
   cancel: {
@@ -99,22 +99,20 @@ export function DeviceApiKeyAssignerDialogForm({
   const { formatMessage } = intl
 
   const actions = [
-    <FlatButton
-      onClick={onCancel}
-      type="button"
-      label={formatMessage(messages.cancel)}
-      secondary
-    />,
-    <FlatButton
+    <Button type="button" color="secondary" onClick={onCancel}>
+      {intl.formatMessage(messages.cancel)}
+    </Button>,
+    <Button
       disabled={form.pristine || !form.valid || form.submitting}
       onClick={handleSubmit}
       type="button"
-      label={formatMessage(messages.assign)}
-      primary
-    />,
+      color="primary"
+    >
+      {intl.formatMessage(messages.assign)}
+    </Button>,
   ]
   return (
-    <Dialog
+    <AspectDialog
       title={formatMessage(messages.assignerDialogTitle, { count })}
       actions={actions}
       open={isDialogOpen}
@@ -191,7 +189,7 @@ export function DeviceApiKeyAssignerDialogForm({
           aria-haspopup
         />
       </form>
-    </Dialog>
+    </AspectDialog>
   )
 }
 

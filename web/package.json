@@ -152,6 +152,8 @@
     "why-did-you-update": "^1.0.6"
   },
   "dependencies": {
+    "@material-ui/core": "^3.9.0",
+    "@material-ui/icons": "^3.0.1",
     "@vx/axis": "^0.0.147",
     "@vx/geo": "^0.0.143",
     "@vx/glyph": "^0.0.143",
@@ -169,6 +171,7 @@
     "date-fns": "^2.0.0-alpha.1",
     "dom-helpers": "^3.2.1",
     "dotenv-safe": "^4.0.4",
+    "downshift": "^3.1.6",
     "element-resize-detector": "^1.1.12",
     "email-validator": "^1.0.7",
     "global": "^4.3.2",
@@ -181,7 +184,6 @@
     "jwt-decode": "^2.2.0",
     "keycode": "^2.1.8",
     "lodash": "^4.17.4",
-    "material-ui": "^0.20.0",
     "piwik-react-router": "^0.12.0",
     "prop-types": "^15.5.8",
     "raven-js": "^3.14.2",
@@ -190,7 +192,7 @@
     "react-dom": "^16.7.0-alpha.2",
     "react-google-maps": "^9.4.2",
     "react-helmet": "^5.0.3",
-    "react-hot-loader": "^4.3.12",
+    "react-hot-loader": "^4.6.3",
     "react-icons": "^2.2.5",
     "react-intl": "^2.2.3",
     "react-loadable": "^5.2.2",

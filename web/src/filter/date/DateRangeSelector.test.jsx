@@ -1,12 +1,12 @@
 import React from 'react'
+import _ from 'lodash'
 import { shallow } from 'enzyme'
 import sinon from 'sinon'
-import DatePicker from 'material-ui/DatePicker'
-import MenuItem from 'material-ui/MenuItem'
+import MenuItem from '@material-ui/core/MenuItem'
 import { IntlProvider } from 'react-intl'
-
-import ForkedSelectField from '../../components/forkedMaterialUi/ForkedSelectField'
 import { DateRangeSelector } from './DateRangeSelector'
+import SelectField from '../../components/shared/SelectField'
+import DateTimeInput from '../../components/shared/DateTimeInput'
 
 describe('DateRangeSelector Component', () => {
   const intlProvider = new IntlProvider({ locale: 'en' }, {})
@@ -15,10 +15,8 @@ describe('DateRangeSelector Component', () => {
   const props = {
     intl,
     clearButtonTooltip: 'Clear',
-    clearButtonStyle: {},
     onChangeDate: sinon.spy(),
     floatingLabelText: 'Date Range',
-    datePickerContainer: 'dialog',
     controlClassName: 'Control',
   }
   let DateRangeSelectorWrapper
@@ -28,12 +26,11 @@ describe('DateRangeSelector Component', () => {
   })
 
   describe('Custom date range', () => {
-    it('should show date pickers in place of a dropdown list when a defined range type is deleted', () => {
+    it('should show date input', () => {
       DateRangeSelectorWrapper.setState({
         rangeMode: 'custom',
       })
-      expect(DateRangeSelectorWrapper.find(ForkedSelectField).length).toEqual(1)
-      expect(DateRangeSelectorWrapper.find(DatePicker).length).toEqual(2)
+      expect(DateRangeSelectorWrapper.find(DateTimeInput).length).toEqual(2)
     })
 
     it('should call onDateChanged when date is picked', () => {
@@ -42,15 +39,19 @@ describe('DateRangeSelector Component', () => {
       })
       const minDate = new Date(2014, 1, 23)
       const maxDate = new Date(2016, 10, 2)
-      DateRangeSelectorWrapper.find(DatePicker)
+      DateRangeSelectorWrapper.find(DateTimeInput)
         .first()
-        .simulate('change', undefined, minDate)
+        .props()
+        .onChange(minDate)
+
       expect(props.onChangeDate.lastCall.args[0]).toEqual({
         minDate: minDate.toJSON(),
       })
-      DateRangeSelectorWrapper.find(DatePicker)
+
+      DateRangeSelectorWrapper.find(DateTimeInput)
         .last()
-        .simulate('change', undefined, maxDate)
+        .props()
+        .onChange(maxDate)
       const endOfDayMilliseconds = 1000 * 60 * 60 * 24 - 1
       expect(props.onChangeDate.lastCall.args[0]).toEqual({
         maxDate: new Date(maxDate.getTime() + endOfDayMilliseconds).toJSON(),
@@ -63,38 +64,28 @@ describe('DateRangeSelector Component', () => {
       DateRangeSelectorWrapper.setState({
         rangeMode: 'day',
       })
-      expect(
-        DateRangeSelectorWrapper.find(ForkedSelectField).length
-      ).toBeTruthy()
-      expect(DateRangeSelectorWrapper.find(DatePicker).length).toBeFalsy()
+      expect(DateRangeSelectorWrapper.find(SelectField).length).toBeTruthy()
+      expect(DateRangeSelectorWrapper.find(DateTimeInput).length).toBeFalsy()
       DateRangeSelectorWrapper.setState({
         rangeMode: 'week',
       })
-      expect(
-        DateRangeSelectorWrapper.find(ForkedSelectField).length
-      ).toBeTruthy()
-      expect(DateRangeSelectorWrapper.find(DatePicker).length).toBeFalsy()
+      expect(DateRangeSelectorWrapper.find(SelectField).length).toBeTruthy()
+      expect(DateRangeSelectorWrapper.find(DateTimeInput).length).toBeFalsy()
       DateRangeSelectorWrapper.setState({
         rangeMode: 'month',
       })
-      expect(
-        DateRangeSelectorWrapper.find(ForkedSelectField).length
-      ).toBeTruthy()
-      expect(DateRangeSelectorWrapper.find(DatePicker).length).toBeFalsy()
+      expect(DateRangeSelectorWrapper.find(SelectField).length).toBeTruthy()
+      expect(DateRangeSelectorWrapper.find(DateTimeInput).length).toBeFalsy()
       DateRangeSelectorWrapper.setState({
         rangeMode: 'quarter',
       })
-      expect(
-        DateRangeSelectorWrapper.find(ForkedSelectField).length
-      ).toBeTruthy()
-      expect(DateRangeSelectorWrapper.find(DatePicker).length).toBeFalsy()
+      expect(DateRangeSelectorWrapper.find(SelectField).length).toBeTruthy()
+      expect(DateRangeSelectorWrapper.find(DateTimeInput).length).toBeFalsy()
       DateRangeSelectorWrapper.setState({
         rangeMode: 'year',
       })
-      expect(
-        DateRangeSelectorWrapper.find(ForkedSelectField).length
-      ).toBeTruthy()
-      expect(DateRangeSelectorWrapper.find(DatePicker).length).toBeFalsy()
+      expect(DateRangeSelectorWrapper.find(SelectField).length).toBeTruthy()
+      expect(DateRangeSelectorWrapper.find(DateTimeInput).length).toBeFalsy()
     })
 
     const expectedDateTests = [
@@ -612,59 +603,63 @@ describe('DateRangeSelector Component', () => {
           DateRangeSelectorWrapper.setState({
             rangeMode: 'day',
           })
-          const dropDownListItems = DateRangeSelectorWrapper.find(
-            ForkedSelectField
-          )
+          DateRangeSelectorWrapper.find(SelectField)
+            .at(1)
+            .simulate('click')
+          const dropDownListItems = DateRangeSelectorWrapper.find(SelectField)
             .at(1)
             .find(MenuItem)
+            .filterWhere(
+              item => !_.includes(item.prop('className'), 'emptyMenuItem')
+            )
           expect(dropDownListItems.length).toEqual(8)
           const firstItemInDropDownList = dropDownListItems.at(0)
           expect(firstItemInDropDownList.props()).toEqual({
             ...firstItemInDropDownList.props(),
             value: expectedDateTest.today,
-            primaryText: expectedDateTest.today.label,
+            children: expectedDateTest.today.label,
           })
           const secondItemInDropDownList = dropDownListItems.at(1)
           expect(secondItemInDropDownList.props()).toEqual({
             ...secondItemInDropDownList.props(),
             value: expectedDateTest.yesterday,
-            primaryText: expectedDateTest.yesterday.label,
+            children: expectedDateTest.yesterday.label,
           })
           const thirdItemInDropDownList = dropDownListItems.at(2)
           expect(thirdItemInDropDownList.props()).toEqual({
             ...thirdItemInDropDownList.props(),
             value: expectedDateTest.twoDaysAgo,
-            primaryText: expectedDateTest.twoDaysAgo.label,
+            children: expectedDateTest.twoDaysAgo.label,
           })
           const forthItemInDropDownList = dropDownListItems.at(3)
           expect(forthItemInDropDownList.props()).toEqual({
             ...forthItemInDropDownList.props(),
             value: expectedDateTest.threeDaysAgo,
-            primaryText: expectedDateTest.threeDaysAgo.label,
+            children: expectedDateTest.threeDaysAgo.label,
           })
           const fifthItemInDropDownList = dropDownListItems.at(4)
           expect(fifthItemInDropDownList.props()).toEqual({
             ...fifthItemInDropDownList.props(),
             value: expectedDateTest.fourDaysAgo,
-            primaryText: expectedDateTest.fourDaysAgo.label,
+            children: expectedDateTest.fourDaysAgo.label,
           })
           const sixthItemInDropDownList = dropDownListItems.at(5)
           expect(sixthItemInDropDownList.props()).toEqual({
             ...sixthItemInDropDownList.props(),
             value: expectedDateTest.fiveDaysAgo,
-            primaryText: expectedDateTest.fiveDaysAgo.label,
+            children: expectedDateTest.fiveDaysAgo.label,
           })
           const seventhItemInDropDownList = dropDownListItems.at(6)
           expect(seventhItemInDropDownList.props()).toEqual({
             ...seventhItemInDropDownList.props(),
             value: expectedDateTest.sixDaysAgo,
-            primaryText: expectedDateTest.sixDaysAgo.label,
+            children: expectedDateTest.sixDaysAgo.label,
           })
           const lastItemInDropDownList = dropDownListItems.last()
           expect(lastItemInDropDownList.props()).toEqual({
             ...lastItemInDropDownList.props(),
             value: expectedDateTest.sevenDaysAgo,
-            primaryText: expectedDateTest.sevenDaysAgo.label,
+            children: expectedDateTest.sevenDaysAgo.label,
           })
         })
 
@@ -672,65 +667,69 @@ describe('DateRangeSelector Component', () => {
           DateRangeSelectorWrapper.setState({
             rangeMode: 'week',
           })
-          const dropDownListItems = DateRangeSelectorWrapper.find(
-            ForkedSelectField
-          )
+          DateRangeSelectorWrapper.find(SelectField)
+            .at(1)
+            .simulate('click')
+          const dropDownListItems = DateRangeSelectorWrapper.find(SelectField)
             .at(1)
             .find(MenuItem)
+            .filterWhere(
+              item => !_.includes(item.prop('className'), 'emptyMenuItem')
+            )
           expect(dropDownListItems.length).toEqual(9)
           const firstItemInDropDownList = dropDownListItems.at(0)
           expect(firstItemInDropDownList.props()).toEqual({
             ...firstItemInDropDownList.props(),
             value: expectedDateTest.last7Days,
-            primaryText: expectedDateTest.last7Days.label,
+            children: expectedDateTest.last7Days.label,
           })
           const secondItemInDropDownList = dropDownListItems.at(1)
           expect(secondItemInDropDownList.props()).toEqual({
             ...secondItemInDropDownList.props(),
             value: expectedDateTest.thisWeek,
-            primaryText: expectedDateTest.thisWeek.label,
+            children: expectedDateTest.thisWeek.label,
           })
           const thirdItemInDropDownList = dropDownListItems.at(2)
           expect(thirdItemInDropDownList.props()).toEqual({
             ...thirdItemInDropDownList.props(),
             value: expectedDateTest.lastWeek,
-            primaryText: expectedDateTest.lastWeek.label,
+            children: expectedDateTest.lastWeek.label,
           })
           const forthItemInDropDownList = dropDownListItems.at(3)
           expect(forthItemInDropDownList.props()).toEqual({
             ...forthItemInDropDownList.props(),
             value: expectedDateTest.twoWeeksAgo,
-            primaryText: expectedDateTest.twoWeeksAgo.label,
+            children: expectedDateTest.twoWeeksAgo.label,
           })
           const fifthItemInDropDownList = dropDownListItems.at(4)
           expect(fifthItemInDropDownList.props()).toEqual({
             ...fifthItemInDropDownList.props(),
             value: expectedDateTest.threeWeeksAgo,
-            primaryText: expectedDateTest.threeWeeksAgo.label,
+            children: expectedDateTest.threeWeeksAgo.label,
           })
           const sixthItemInDropDownList = dropDownListItems.at(5)
           expect(sixthItemInDropDownList.props()).toEqual({
             ...sixthItemInDropDownList.props(),
             value: expectedDateTest.fourWeeksAgo,
-            primaryText: expectedDateTest.fourWeeksAgo.label,
+            children: expectedDateTest.fourWeeksAgo.label,
           })
           const seventhItemInDropDownList = dropDownListItems.at(6)
           expect(seventhItemInDropDownList.props()).toEqual({
             ...seventhItemInDropDownList.props(),
             value: expectedDateTest.fiveWeeksAgo,
-            primaryText: expectedDateTest.fiveWeeksAgo.label,
+            children: expectedDateTest.fiveWeeksAgo.label,
           })
           const eighthItemInDropDownList = dropDownListItems.at(7)
           expect(eighthItemInDropDownList.props()).toEqual({
             ...eighthItemInDropDownList.props(),
             value: expectedDateTest.sixWeeksAgo,
-            primaryText: expectedDateTest.sixWeeksAgo.label,
+            children: expectedDateTest.sixWeeksAgo.label,
           })
           const lastItemInDropDownList = dropDownListItems.last()
           expect(lastItemInDropDownList.props()).toEqual({
             ...lastItemInDropDownList.props(),
             value: expectedDateTest.sevenWeeksAgo,
-            primaryText: expectedDateTest.sevenWeeksAgo.label,
+            children: expectedDateTest.sevenWeeksAgo.label,
           })
         })
 
@@ -738,89 +737,93 @@ describe('DateRangeSelector Component', () => {
           DateRangeSelectorWrapper.setState({
             rangeMode: 'month',
           })
-          const dropDownListItems = DateRangeSelectorWrapper.find(
-            ForkedSelectField
-          )
+          DateRangeSelectorWrapper.find(SelectField)
+            .at(1)
+            .simulate('click')
+          const dropDownListItems = DateRangeSelectorWrapper.find(SelectField)
             .at(1)
             .find(MenuItem)
+            .filterWhere(
+              item => !_.includes(item.prop('className'), 'emptyMenuItem')
+            )
           expect(dropDownListItems.length).toEqual(13)
           const firstItemInDropDownList = dropDownListItems.at(0)
           expect(firstItemInDropDownList.props()).toEqual({
             ...firstItemInDropDownList.props(),
             value: expectedDateTest.last30Days,
-            primaryText: expectedDateTest.last30Days.label,
+            children: expectedDateTest.last30Days.label,
           })
           const secondItemInDropDownList = dropDownListItems.at(1)
           expect(secondItemInDropDownList.props()).toEqual({
             ...secondItemInDropDownList.props(),
             value: expectedDateTest.thisMonth,
-            primaryText: expectedDateTest.thisMonth.label,
+            children: expectedDateTest.thisMonth.label,
           })
           const thirdItemInDropDownList = dropDownListItems.at(2)
           expect(thirdItemInDropDownList.props()).toEqual({
             ...thirdItemInDropDownList.props(),
             value: expectedDateTest.lastMonth,
-            primaryText: expectedDateTest.lastMonth.label,
+            children: expectedDateTest.lastMonth.label,
           })
           const forthItemInDropDownList = dropDownListItems.at(3)
           expect(forthItemInDropDownList.props()).toEqual({
             ...forthItemInDropDownList.props(),
             value: expectedDateTest.twoMonthsAgo,
-            primaryText: expectedDateTest.twoMonthsAgo.label,
+            children: expectedDateTest.twoMonthsAgo.label,
           })
           const fifthItemInDropDownList = dropDownListItems.at(4)
           expect(fifthItemInDropDownList.props()).toEqual({
             ...fifthItemInDropDownList.props(),
             value: expectedDateTest.threeMonthsAgo,
-            primaryText: expectedDateTest.threeMonthsAgo.label,
+            children: expectedDateTest.threeMonthsAgo.label,
           })
           const sixthItemInDropDownList = dropDownListItems.at(5)
           expect(sixthItemInDropDownList.props()).toEqual({
             ...sixthItemInDropDownList.props(),
             value: expectedDateTest.fourMonthsAgo,
-            primaryText: expectedDateTest.fourMonthsAgo.label,
+            children: expectedDateTest.fourMonthsAgo.label,
           })
           const seventhItemInDropDownList = dropDownListItems.at(6)
           expect(seventhItemInDropDownList.props()).toEqual({
             ...seventhItemInDropDownList.props(),
             value: expectedDateTest.fiveMonthsAgo,
-            primaryText: expectedDateTest.fiveMonthsAgo.label,
+            children: expectedDateTest.fiveMonthsAgo.label,
           })
           const eighthItemInDropDownList = dropDownListItems.at(7)
           expect(eighthItemInDropDownList.props()).toEqual({
             ...eighthItemInDropDownList.props(),
             value: expectedDateTest.sixMonthsAgo,
-            primaryText: expectedDateTest.sixMonthsAgo.label,
+            children: expectedDateTest.sixMonthsAgo.label,
           })
           const ninthItemInDropDownList = dropDownListItems.at(8)
           expect(ninthItemInDropDownList.props()).toEqual({
             ...ninthItemInDropDownList.props(),
             value: expectedDateTest.sevenMonthsAgo,
-            primaryText: expectedDateTest.sevenMonthsAgo.label,
+            children: expectedDateTest.sevenMonthsAgo.label,
           })
           const tenthItemInDropDownList = dropDownListItems.at(9)
           expect(tenthItemInDropDownList.props()).toEqual({
             ...tenthItemInDropDownList.props(),
             value: expectedDateTest.eightMonthsAgo,
-            primaryText: expectedDateTest.eightMonthsAgo.label,
+            children: expectedDateTest.eightMonthsAgo.label,
           })
           const eleventhItemInDropDownList = dropDownListItems.at(10)
           expect(eleventhItemInDropDownList.props()).toEqual({
             ...eleventhItemInDropDownList.props(),
             value: expectedDateTest.nineMonthsAgo,
-            primaryText: expectedDateTest.nineMonthsAgo.label,
+            children: expectedDateTest.nineMonthsAgo.label,
           })
           const twelfthItemInDropDownList = dropDownListItems.at(11)
           expect(twelfthItemInDropDownList.props()).toEqual({
             ...twelfthItemInDropDownList.props(),
             value: expectedDateTest.tenMonthsAgo,
-            primaryText: expectedDateTest.tenMonthsAgo.label,
+            children: expectedDateTest.tenMonthsAgo.label,
           })
           const lastItemInDropDownList = dropDownListItems.last()
           expect(lastItemInDropDownList.props()).toEqual({
             ...lastItemInDropDownList.props(),
             value: expectedDateTest.elevenMonthsAgo,
-            primaryText: expectedDateTest.elevenMonthsAgo.label,
+            children: expectedDateTest.elevenMonthsAgo.label,
           })
         })
 
@@ -828,83 +831,87 @@ describe('DateRangeSelector Component', () => {
           DateRangeSelectorWrapper.setState({
             rangeMode: 'quarter',
           })
-          const dropDownListItems = DateRangeSelectorWrapper.find(
-            ForkedSelectField
-          )
+          DateRangeSelectorWrapper.find(SelectField)
+            .at(1)
+            .simulate('click')
+          const dropDownListItems = DateRangeSelectorWrapper.find(SelectField)
             .at(1)
             .find(MenuItem)
+            .filterWhere(
+              item => !_.includes(item.prop('className'), 'emptyMenuItem')
+            )
           expect(dropDownListItems.length).toEqual(12)
           const firstItemInDropDownList = dropDownListItems.at(0)
           expect(firstItemInDropDownList.props()).toEqual({
             ...firstItemInDropDownList.props(),
             value: expectedDateTest.thisQuarter,
-            primaryText: expectedDateTest.thisQuarter.label,
+            children: expectedDateTest.thisQuarter.label,
           })
           const secondItemInDropDownList = dropDownListItems.at(1)
           expect(secondItemInDropDownList.props()).toEqual({
             ...secondItemInDropDownList.props(),
             value: expectedDateTest.lastQuarter,
-            primaryText: expectedDateTest.lastQuarter.label,
+            children: expectedDateTest.lastQuarter.label,
           })
           const thirdItemInDropDownList = dropDownListItems.at(2)
           expect(thirdItemInDropDownList.props()).toEqual({
             ...thirdItemInDropDownList.props(),
             value: expectedDateTest.twoQuartersAgo,
-            primaryText: expectedDateTest.twoQuartersAgo.label,
+            children: expectedDateTest.twoQuartersAgo.label,
           })
           const forthItemInDropDownList = dropDownListItems.at(3)
           expect(forthItemInDropDownList.props()).toEqual({
             ...forthItemInDropDownList.props(),
             value: expectedDateTest.threeQuartersAgo,
-            primaryText: expectedDateTest.threeQuartersAgo.label,
+            children: expectedDateTest.threeQuartersAgo.label,
           })
           const fifthItemInDropDownList = dropDownListItems.at(4)
           expect(fifthItemInDropDownList.props()).toEqual({
             ...fifthItemInDropDownList.props(),
             value: expectedDateTest.fourQuartersAgo,
-            primaryText: expectedDateTest.fourQuartersAgo.label,
+            children: expectedDateTest.fourQuartersAgo.label,
           })
           const sixthItemInDropDownList = dropDownListItems.at(5)
           expect(sixthItemInDropDownList.props()).toEqual({
             ...sixthItemInDropDownList.props(),
             value: expectedDateTest.fiveQuartersAgo,
-            primaryText: expectedDateTest.fiveQuartersAgo.label,
+            children: expectedDateTest.fiveQuartersAgo.label,
           })
           const seventhItemInDropDownList = dropDownListItems.at(6)
           expect(seventhItemInDropDownList.props()).toEqual({
             ...seventhItemInDropDownList.props(),
             value: expectedDateTest.sixQuartersAgo,
-            primaryText: expectedDateTest.sixQuartersAgo.label,
+            children: expectedDateTest.sixQuartersAgo.label,
           })
           const eighthItemInDropDownList = dropDownListItems.at(7)
           expect(eighthItemInDropDownList.props()).toEqual({
             ...eighthItemInDropDownList.props(),
             value: expectedDateTest.sevenQuartersAgo,
-            primaryText: expectedDateTest.sevenQuartersAgo.label,
+            children: expectedDateTest.sevenQuartersAgo.label,
           })
           const ninthItemInDropDownList = dropDownListItems.at(8)
           expect(ninthItemInDropDownList.props()).toEqual({
             ...ninthItemInDropDownList.props(),
             value: expectedDateTest.eightQuartersAgo,
-            primaryText: expectedDateTest.eightQuartersAgo.label,
+            children: expectedDateTest.eightQuartersAgo.label,
           })
           const tenthItemInDropDownList = dropDownListItems.at(9)
           expect(tenthItemInDropDownList.props()).toEqual({
             ...tenthItemInDropDownList.props(),
             value: expectedDateTest.nineQuartersAgo,
-            primaryText: expectedDateTest.nineQuartersAgo.label,
+            children: expectedDateTest.nineQuartersAgo.label,
           })
           const eleventhItemInDropDownList = dropDownListItems.at(10)
           expect(eleventhItemInDropDownList.props()).toEqual({
             ...eleventhItemInDropDownList.props(),
             value: expectedDateTest.tenQuartersAgo,
-            primaryText: expectedDateTest.tenQuartersAgo.label,
+            children: expectedDateTest.tenQuartersAgo.label,
           })
           const lastItemInDropDownList = dropDownListItems.last()
           expect(lastItemInDropDownList.props()).toEqual({
             ...lastItemInDropDownList.props(),
             value: expectedDateTest.elevenQuartersAgo,
-            primaryText: expectedDateTest.elevenQuartersAgo.label,
+            children: expectedDateTest.elevenQuartersAgo.label,
           })
         })
 
@@ -912,53 +919,58 @@ describe('DateRangeSelector Component', () => {
           DateRangeSelectorWrapper.setState({
             rangeMode: 'year',
           })
-          const dropDownListItems = DateRangeSelectorWrapper.find(
-            ForkedSelectField
-          )
+          DateRangeSelectorWrapper.find(SelectField)
+            .at(1)
+
+            .simulate('click')
+          const dropDownListItems = DateRangeSelectorWrapper.find(SelectField)
             .at(1)
             .find(MenuItem)
+            .filterWhere(
+              item => !_.includes(item.prop('className'), 'emptyMenuItem')
+            )
           expect(dropDownListItems.length).toEqual(7)
           const firstItemInDropDownList = dropDownListItems.at(0)
           expect(firstItemInDropDownList.props()).toEqual({
             ...firstItemInDropDownList.props(),
             value: expectedDateTest.thisYear,
-            primaryText: expectedDateTest.thisYear.label,
+            children: expectedDateTest.thisYear.label,
           })
           const secondItemInDropDownList = dropDownListItems.at(1)
           expect(secondItemInDropDownList.props()).toEqual({
             ...secondItemInDropDownList.props(),
             value: expectedDateTest.lastYear,
-            primaryText: expectedDateTest.lastYear.label,
+            children: expectedDateTest.lastYear.label,
           })
           const thirdItemInDropDownList = dropDownListItems.at(2)
           expect(thirdItemInDropDownList.props()).toEqual({
             ...thirdItemInDropDownList.props(),
             value: expectedDateTest.twoYearsAgo,
-            primaryText: expectedDateTest.twoYearsAgo.label,
+            children: expectedDateTest.twoYearsAgo.label,
           })
           const forthItemInDropDownList = dropDownListItems.at(3)
           expect(forthItemInDropDownList.props()).toEqual({
             ...forthItemInDropDownList.props(),
             value: expectedDateTest.threeYearsAgo,
-            primaryText: expectedDateTest.threeYearsAgo.label,
+            children: expectedDateTest.threeYearsAgo.label,
           })
           const fifthItemInDropDownList = dropDownListItems.at(4)
           expect(fifthItemInDropDownList.props()).toEqual({
             ...fifthItemInDropDownList.props(),
             value: expectedDateTest.fourYearsAgo,
-            primaryText: expectedDateTest.fourYearsAgo.label,
+            children: expectedDateTest.fourYearsAgo.label,
           })
           const sixthItemInDropDownList = dropDownListItems.at(5)
           expect(sixthItemInDropDownList.props()).toEqual({
             ...sixthItemInDropDownList.props(),
             value: expectedDateTest.fiveYearsAgo,
-            primaryText: expectedDateTest.fiveYearsAgo.label,
+            children: expectedDateTest.fiveYearsAgo.label,
           })
           const lastItemInDropDownList = dropDownListItems.last()
           expect(lastItemInDropDownList.props()).toEqual({
             ...lastItemInDropDownList.props(),
             value: expectedDateTest.sixYearsAgo,
-            primaryText: expectedDateTest.sixYearsAgo.label,
+            children: expectedDateTest.sixYearsAgo.label,
           })
         })
 
@@ -966,14 +978,10 @@ describe('DateRangeSelector Component', () => {
           DateRangeSelectorWrapper.setState({
             rangeMode: 'day',
           })
-          DateRangeSelectorWrapper.find(ForkedSelectField)
+          DateRangeSelectorWrapper.find(SelectField)
             .at(1)
-            .simulate(
-              'change',
-              undefined,
-              undefined,
-              expectedDateTest.twoDaysAgo
-            )
+            .props()
+            .onChange({ target: { value: expectedDateTest.twoDaysAgo } })
           expect(props.onChangeDate.lastCall.args[0]).toEqual({
             minDate: expectedDateTest.twoDaysAgo.minDate.toJSON(),
             maxDate: expectedDateTest.twoDaysAgo.maxDate.toJSON(),
@@ -981,9 +989,10 @@ describe('DateRangeSelector Component', () => {
           DateRangeSelectorWrapper.setState({
             rangeMode: 'week',
           })
-          DateRangeSelectorWrapper.find(ForkedSelectField)
+          DateRangeSelectorWrapper.find(SelectField)
             .at(1)
-            .simulate('change', undefined, undefined, expectedDateTest.lastWeek)
+            .props()
+            .onChange({ target: { value: expectedDateTest.lastWeek } })
           expect(props.onChangeDate.lastCall.args[0]).toEqual({
             minDate: expectedDateTest.lastWeek.minDate.toJSON(),
             maxDate: expectedDateTest.lastWeek.maxDate.toJSON(),

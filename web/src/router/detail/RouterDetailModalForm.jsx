@@ -6,17 +6,17 @@ import { compose, setPropTypes, pure } from 'recompose'
 import { Link } from 'react-router-dom'
 
 // Material-UI
-import FlatButton from 'material-ui/FlatButton'
-import TextField from 'material-ui/TextField'
-import Checkbox from 'material-ui/Checkbox'
-import ExitToApp from 'material-ui/svg-icons/action/exit-to-app'
-import Dialog from 'material-ui/Dialog'
+import Button from '@material-ui/core/Button'
+import ExitToApp from '@material-ui/icons/ExitToApp'
+import TextField from '@material-ui/core/TextField'
 
 // Our own imports
-import recomposeForm from '../../components/recomposeForm'
+import recomposeForm, { errorProps } from '../../components/recomposeForm'
 import JSONSchemaCard from '../../components/shared/JSONSchemaCard'
 import SiteAutoCompleteField from '../../filter/resource/SiteAutoCompleteField'
 import { tokens } from '../../deviceStatus/DeviceStatusRedux'
+import CheckboxField from '../../components/shared/CheckboxField'
+import AspectDialog from '../../components/shared/AspectDialog'
 
 const cssClasses = classnames.bind(require('./RouterDetailModalForm.css'))
 
@@ -68,26 +68,29 @@ export const RouterDetailModalForm = props => {
 
   const actions = [
     props.onCancel && (
-      <FlatButton
+      <Button
         onClick={props.onCancel}
         type="button"
-        label={labels.cancel}
-        primary
+        color="primary"
         style={{ marginRight: 10 }}
-      />
+      >
+        {labels.cancel}
+      </Button>
     ),
-    <FlatButton
+    <Button
       disabled={form.pristine || !form.valid || form.submitting}
       onClick={props.handleSubmit}
       type="button"
-      label={labels.update}
-      secondary
-    />,
+      color="secondary"
+    >
+      {labels.update}
+    </Button>,
   ]
 
   return (
-    <Dialog
+    <AspectDialog
       modal
+      autoScrollBodyContent
       actions={actions}
       open={props.isDialogOpen}
       onRequestClose={props.onCancel}
@@ -95,34 +98,37 @@ export const RouterDetailModalForm = props => {
       <form>
         <TextField
           name="Name"
-          floatingLabelText={labels.name}
+          label={labels.name}
           value={values.name}
           onChange={props.onNameChange}
           fullWidth
-          errorText={meta.name.touched && meta.name.error}
+          {...errorProps(meta.name)}
+          margin="normal"
         />
         <TextField
           name="ShortName"
-          floatingLabelText={labels.shortName}
+          label={labels.shortName}
           value={values.shortName}
           onChange={props.onShortNameChange}
           fullWidth
-          errorText={meta.shortName.touched && meta.shortName.error}
+          {...errorProps(meta.shortName)}
+          margin="normal"
         />
         <TextField
           name="Notes"
-          floatingLabelText={labels.notes}
+          label={labels.notes}
           value={values.notes}
           onChange={props.onNotesChange}
           fullWidth
-          errorText={meta.notes.touched && meta.notes.error}
+          {...errorProps(meta.notes)}
+          margin="normal"
         />
-        <Checkbox
+        <CheckboxField
           name="Status"
-          label={labels.statusToken}
-          style={{ padding: '10px 0' }}
+          color="primary"
           checked={values.statusToken === tokens.APPROVED}
-          onCheck={props.onStatusTokenChange}
+          onChange={props.onStatusTokenChange}
+          label={labels.statusToken}
         />
         <div className={cssClasses('AutoCompleteField')}>
           <div className={cssClasses('AutoCompleteField__Inner')}>
@@ -151,7 +157,7 @@ export const RouterDetailModalForm = props => {
           renderField={field => (
             <TextField
               name={field.key}
-              floatingLabelText={field.label}
+              label={field.label}
               value={field.value}
               onClick={stopEventPropagation}
               onChange={event =>
@@ -160,6 +166,7 @@ export const RouterDetailModalForm = props => {
                 )
               }
               fullWidth
+              margin="normal"
             />
           )}
           formatNestedSubtitle={props.formatNestedSubtitle}
@@ -167,7 +174,7 @@ export const RouterDetailModalForm = props => {
           data={values.configurationData}
         />
       </form>
-    </Dialog>
+    </AspectDialog>
   )
 }
 

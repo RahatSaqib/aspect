@@ -87,7 +87,9 @@ exports[`CustomField component When field type is DateTime should shallow render
   label=""
   mapThemrProps={[Function]}
 >
-  <DateTimePicker
+  <WithStyles(DateTimeInput)
+    className="DateTime"
+    displayFormat="Y-M-D H:m"
     onChange={[Function]}
     value={null}
   />
