@@ -18,7 +18,6 @@ const vendor = [
   'invariant',
   'jwt-decode',
   'keycode',
-  'material-ui',
   'piwik-react-router',
   'raven-js',
   'react',

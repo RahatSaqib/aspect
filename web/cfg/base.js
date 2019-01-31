@@ -5,7 +5,6 @@ const pxToRem = require('postcss-pxtorem')
 const cssImport = require('postcss-import')
 const cssNext = require('postcss-cssnext')
 const DelWebpackPlugin = require('del-webpack-plugin')
-const FaviconsWebpackPlugin = require('favicons-webpack-plugin')
 const HtmlWebpackHarddiskPlugin = require('html-webpack-harddisk-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const SpriteLoaderPlugin = require('svg-sprite-loader/plugin')
@@ -128,26 +127,6 @@ module.exports = {
       favicon: path.join(__dirname, '../src/template/favicon.png'),
     }),
     new SpriteLoaderPlugin(),
-    new FaviconsWebpackPlugin({
-      logo: path.join(__dirname, '../src/template/favicon.png'),
-      prefix: 'icons-[hash]-',
-      persistentCache: true,
-      inject: true,
-      background: '#fff',
-      // which icons should be generated (see https://github.com/haydenbleasel/favicons#usage)
-      icons: {
-        android: true,
-        appleIcon: true,
-        appleStartup: false,
-        coast: false,
-        favicons: true,
-        firefox: true,
-        opengraph: false,
-        twitter: false,
-        yandex: false,
-        windows: false,
-      },
-    }),
     new WebpackPwaManifest({
       icons: [
         {

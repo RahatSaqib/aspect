@@ -12,8 +12,7 @@ import {
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 
-// Material-UI
-import AutoComplete from 'material-ui/AutoComplete'
+import AutoComplete from '../../components/shared/AutoComplete'
 
 import { fetchSitesForSelectList } from '../../site/SiteRedux'
 
@@ -44,45 +43,12 @@ const enhance = compose(
     onSiteNameChange: props.onSiteNameChange || _fp.noop,
   })),
   withHandlers({
-    onNewRequest: ({ onSiteIdChange, onSiteNameChange }) => (
-      chosenRequest,
-      index
-    ) => {
-      const text =
-        index === -1
-          ? /* if user typed text and pressed Enter, then index=-1 - and
-         * chosenRequest is string value
-         * (see API doc - http://www.material-ui.com/#/components/auto-complete)
-         */
-            chosenRequest
-          : /* if user selected item from the popup menu list then index>=0 and
-         * chosenRequest is object literal of default format {text:'', value:''}
-         */
-            chosenRequest.text
+    onSelect: ({ onSiteIdChange, onSiteNameChange }) => chosenRequest => {
+      onSiteNameChange(chosenRequest.text)
+      onSiteIdChange(chosenRequest.value)
+    },
+    onUpdateInput: ({ onSiteNameChange }) => text => {
       onSiteNameChange(text)
-      if (index !== -1) {
-        onSiteIdChange(chosenRequest.value)
-      }
-    },
-    // --------------------------
-    // on bluring - check if actual visual site name is correct (exists in dataSource)
-    // and is equal to value stored in props
-    // --------------------------
-    onBlur: ({ onSiteNameChange }) => ({ target: { value } }) => {
-      onSiteNameChange(value.trim())
-    },
-    onKeyUp: ({ onSiteNameChange }) => ({ key, target: { value } }) => {
-      if (key === 'Enter') {
-        // --------------------------
-        // FYI: NewRequest event is triggered only if input control has value (even spaces)
-        // So,
-        // - if control has no value and original value was not null/empty - then clear
-        // - if control has value - do nothing because NewRequest is triggering next
-        // --------------------------
-        if (value.trim() === '') {
-          onSiteNameChange(null)
-        }
-      }
     },
   }),
   mapProps(props => {

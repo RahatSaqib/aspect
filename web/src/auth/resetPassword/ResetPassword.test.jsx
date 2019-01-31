@@ -1,12 +1,14 @@
 import _ from 'lodash'
 import React from 'react'
 import { shallow } from 'enzyme'
-import LinearProgress from 'material-ui/LinearProgress'
-import Dialog from 'material-ui/Dialog'
-import { Stepper, StepLabel, StepContent } from 'material-ui/Stepper'
+import LinearProgress from '@material-ui/core/LinearProgress'
+import Stepper from '@material-ui/core/Stepper'
+import StepLabel from '@material-ui/core/StepLabel'
+import StepContent from '@material-ui/core/StepContent'
 
 import { Hidden } from '../../components/pureGrids'
 import ResetPasswordEnterEmail from './ResetPasswordEnterEmail'
+import AspectDialog from '../../components/shared/AspectDialog'
 
 describe('ResetPassword module', () => {
   const { ResetPassword } = require('./ResetPassword')
@@ -37,7 +39,7 @@ describe('ResetPassword module', () => {
       expect(ResetPasswordWrapper.getElement().type).toEqual('div')
     })
 
-    it('should contain a vertical stepper for small screens and a horizontal stepper for large screens', () => {
+    it.only('should contain a vertical stepper for small screens and a horizontal stepper for large screens', () => {
       const largeScreenDiv = ResetPasswordWrapper.find(Hidden).find({
         xs: true,
         sm: true,
@@ -46,12 +48,18 @@ describe('ResetPassword module', () => {
         xl: true,
       })
 
-      expect(largeScreenDiv.find(Stepper).props().orientation).toEqual(
-        'horizontal'
-      )
-      expect(smallScreenDiv.find(Stepper).props().orientation).toEqual(
-        'vertical'
-      )
+      expect(
+        largeScreenDiv
+          .find(Stepper)
+          .dive()
+          .props().orientation
+      ).toEqual('horizontal')
+      expect(
+        smallScreenDiv
+          .find(Stepper)
+          .dive()
+          .props().orientation
+      ).toEqual('vertical')
     })
 
     it('should contain the same steps for both large and small screens', () => {
@@ -192,7 +200,7 @@ describe('ResetPassword module', () => {
 
     describe('admin help dialog', () => {
       it('should contain a hidden admin help dialog', () => {
-        const adminHelpDialog = ResetPasswordWrapper.find(Dialog)
+        const adminHelpDialog = ResetPasswordWrapper.find(AspectDialog)
 
         expect(adminHelpDialog.props().title).toEqual(
           'Request a New Password From Aspect'
@@ -218,7 +226,7 @@ describe('ResetPassword module', () => {
           .onShowAdminHelpDialog({ preventDefault: _.noop })
         ResetPasswordWrapper.update()
 
-        const adminHelpDialog = ResetPasswordWrapper.find(Dialog)
+        const adminHelpDialog = ResetPasswordWrapper.find(AspectDialog)
         expect(adminHelpDialog.props().open).toBe(true)
       })
 
@@ -234,12 +242,12 @@ describe('ResetPassword module', () => {
 
         iDidntReceiveAnEmailLink.simulate('click', { preventDefault: _.noop })
         ResetPasswordWrapper.update()
-        let adminHelpDialog = ResetPasswordWrapper.find(Dialog)
+        let adminHelpDialog = ResetPasswordWrapper.find(AspectDialog)
         expect(adminHelpDialog.props().open).toBe(true)
 
         adminHelpDialog.props().actions[0].props.onClick()
         ResetPasswordWrapper.update()
-        adminHelpDialog = ResetPasswordWrapper.find(Dialog)
+        adminHelpDialog = ResetPasswordWrapper.find(AspectDialog)
         expect(adminHelpDialog.props().open).toBe(false)
       })
 
@@ -255,7 +263,7 @@ describe('ResetPassword module', () => {
 
         iDidntReceiveAnEmailLink.simulate('click', { preventDefault: _.noop })
         ResetPasswordWrapper.update()
-        const adminHelpDialog = ResetPasswordWrapper.find(Dialog)
+        const adminHelpDialog = ResetPasswordWrapper.find(AspectDialog)
         expect(adminHelpDialog.props().open).toBe(true)
 
         expect(adminHelpDialog.props().actions[1].props.to).toEqual('login')

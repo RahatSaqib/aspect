@@ -84,7 +84,7 @@ const enhance = compose(
   pure,
   connect(
     state => ({
-      siteItemsById: state.site.items.byId,
+      siteItemsById: state.site.selectList.items,
       countryItems: state.geography.countriesForLocationSelector.items,
       consumableItems: state.consumable.consumables.items,
       assayItems: state.assay.items,
@@ -214,7 +214,6 @@ const buttonBy = {
   sampleOriginSite: makeButton(({ intl, siteItemsById }, sampleOriginSiteId) =>
     intl.formatMessage(messages.sampleOriginSite, {
       sampleOriginSiteName: siteItemsById
-        .valueSeq()
         .find(
           it => it.get('id') === sampleOriginSiteId,
           EMPTY_CONTEXT,

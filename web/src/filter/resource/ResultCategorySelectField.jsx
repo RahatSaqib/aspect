@@ -7,9 +7,9 @@ import { connect } from 'react-redux'
 import Immutable from 'immutable'
 
 // Material-UI
-import SelectField from 'material-ui/SelectField'
-import MenuItem from 'material-ui/MenuItem'
+import MenuItem from '@material-ui/core/MenuItem'
 
+import SelectField from '../../components/shared/SelectField'
 import { fetchAssays } from '../../assay/AssayRedux'
 
 export class ResultCategorySelectField extends PureComponent {
@@ -32,7 +32,7 @@ export class ResultCategorySelectField extends PureComponent {
     this.props.fetchAssays(false)
   }
 
-  handleChange = (event, index, value) => {
+  handleChange = ({ target: { value } }) => {
     this.props.onResultCategoryChange(value === 'all' ? undefined : value)
   }
 
@@ -53,13 +53,11 @@ export class ResultCategorySelectField extends PureComponent {
 
     return (
       <SelectField {...restProps} value={value} onChange={this.handleChange}>
-        {allItemText && <MenuItem value="all" primaryText={allItemText} />}
-        {resultCategories.map(rc => (
-          <MenuItem
-            key={rc.get('id')}
-            value={rc.get('id')}
-            primaryText={rc.get('name')}
-          />
+        {allItemText && <MenuItem value="all">{allItemText}</MenuItem>}
+        {resultCategories.map(a => (
+          <MenuItem key={a.get('id')} value={a.get('id')}>
+            {a.get('name')}
+          </MenuItem>
         ))}
       </SelectField>
     )

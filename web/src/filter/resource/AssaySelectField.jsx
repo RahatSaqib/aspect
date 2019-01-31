@@ -5,11 +5,9 @@ import React, { PureComponent } from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Immutable from 'immutable'
+import MenuItem from '@material-ui/core/MenuItem'
 
-// Material-UI
-import SelectField from 'material-ui/SelectField'
-import MenuItem from 'material-ui/MenuItem'
-
+import SelectField from '../../components/shared/SelectField'
 import { fetchAssays } from '../../assay/AssayRedux'
 
 export class AssaySelectField extends PureComponent {
@@ -30,7 +28,7 @@ export class AssaySelectField extends PureComponent {
     this.props.fetchAssays(false)
   }
 
-  handleChange = (event, index, value) => {
+  handleChange = ({ target: { value } }) => {
     this.props.onAssayChange(value === 'all' ? undefined : value)
   }
 
@@ -47,13 +45,11 @@ export class AssaySelectField extends PureComponent {
 
     return (
       <SelectField {...restProps} value={value} onChange={this.handleChange}>
-        {allItemText && <MenuItem value="all" primaryText={allItemText} />}
+        {allItemText && <MenuItem value="all">{allItemText}</MenuItem>}
         {validAssays.map(a => (
-          <MenuItem
-            key={a.get('id')}
-            value={a.get('id')}
-            primaryText={a.get('name')}
-          />
+          <MenuItem key={a.get('id')} value={a.get('id')}>
+            {a.get('name')}
+          </MenuItem>
         ))}
       </SelectField>
     )

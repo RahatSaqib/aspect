@@ -1,14 +1,40 @@
 import PropTypes from 'prop-types'
-import React from 'react'
+import React, { useState } from 'react'
 import _ from 'lodash'
 import { defineMessages, intlShape } from 'react-intl'
-import TextField from 'material-ui/TextField'
-import Popover from 'material-ui/Popover'
-import LinearProgress from 'material-ui/LinearProgress'
-import CheckIcon from 'material-ui/svg-icons/navigation/check'
-import CloseIcon from 'material-ui/svg-icons/navigation/close'
+import { withStyles } from '@material-ui/core/styles'
+import Paper from '@material-ui/core/Paper'
+import Popper from '@material-ui/core/Popper'
+import LinearProgress from '@material-ui/core/LinearProgress'
+import CheckIcon from '@material-ui/icons/Check'
+import CloseIcon from '@material-ui/icons/Close'
+import TextField from '@material-ui/core/TextField'
 import classNames from 'classnames'
 import styles from './Shared.css'
+
+const blue = 'rgb(78, 145, 252)'
+const red = 'rgb(226, 18, 18)'
+const amber = 'rgb(255, 174, 0)'
+const green = 'rgb(27, 186, 13)'
+
+const muiStyles = theme => ({
+  linearProgress: {
+    height: '1em',
+    backgroundColor: 'transparent',
+  },
+  linearColorError: {
+    backgroundColor: red,
+  },
+  linearColorWarning: {
+    backgroundColor: amber,
+  },
+  linearColorSuccess: {
+    backgroundColor: green,
+  },
+  warningPopover: {
+    marginTop: theme.typography.pxToRem(24),
+  },
+})
 
 const messages = defineMessages({
   passwordStrengthMeterWeak: {
@@ -42,136 +68,120 @@ const messages = defineMessages({
   },
 })
 
-export class StrongPasswordInput extends React.PureComponent {
-  static propTypes = {
-    input: PropTypes.object.isRequired, // eslint-disable-line
-    meta: PropTypes.object.isRequired, // eslint-disable-line
-    textFieldProps: PropTypes.object.isRequired, // eslint-disable-line
-    popOverProps: PropTypes.object.isRequired, // eslint-disable-line
-    intl: intlShape.isRequired,
+const StrongPasswordInput = ({
+  classes: classesMap,
+  input,
+  meta: { touched, dirty, error },
+  textFieldProps,
+  popOverProps,
+  intl,
+}) => {
+  const [showMeter, setShowMeter] = useState(false)
+  const [anchorEl, setAnchorEl] = useState(null)
+  const handleFocus = event => {
+    setShowMeter(true)
+    setAnchorEl(event.currentTarget)
   }
 
-  constructor(props) {
-    super(props)
-
-    this.state = {
-      showMeter: false,
-    }
+  const handleBlur = () => {
+    setShowMeter(false)
   }
 
-  handleFocus = event => {
-    this.setState({
-      anchorEl: event.currentTarget,
-      showMeter: true,
-    })
+  const { formatMessage } = intl
+  const passwordStrengthRules = {
+    minLength: input.value.length > 7,
+    containsNumber: /\d/.test(input.value),
+    mixUpperAndLowerCase: /(?=.*?[a-z])(?=.*?[A-Z])/.test(input.value),
+    containSpecialCharacter: /(?=.*?[`~!@#$%^&*()\-=_+\\[\]{}/?,.<>])/.test(
+      input.value
+    ),
+  }
+  const passwordStrengthResults = {
+    isWeak:
+      !passwordStrengthRules.minLength ||
+      (!passwordStrengthRules.containsNumber &&
+        !passwordStrengthRules.containSpecialCharacter),
+    isOkay:
+      passwordStrengthRules.minLength &&
+      (passwordStrengthRules.containsNumber ||
+        passwordStrengthRules.containSpecialCharacter),
+    isStrong:
+      passwordStrengthRules.minLength &&
+      passwordStrengthRules.containsNumber &&
+      passwordStrengthRules.mixUpperAndLowerCase &&
+      passwordStrengthRules.containSpecialCharacter,
   }
 
-  handleBlur = () => {
-    this.setState({
-      showMeter: false,
-    })
+  const passwordStrengthScore = passwordStrengthResults.isWeak
+    ? 30
+    : passwordStrengthResults.isStrong ? 100 : 60
+  const iconStyle = {
+    lineHeight: '1.3em',
+    width: '1.3em',
+    height: '1.3em',
+    margin: '0 0.3em',
+    verticalAlign: 'bottom',
   }
+  const checkIconStyle = { ...iconStyle, fill: blue }
+  const crossIconStyle = { ...iconStyle, fill: red }
+  const strengthRuleStyle = { lineHeight: '1em' }
+  const strengthStyle = {
+    display: 'inline-block',
+    width: '100%',
+    textAlign: 'center',
+    margin: '0.5em 0',
+  }
+  const weakStyle = { ...strengthStyle, color: red }
+  const okayStyle = { ...strengthStyle, color: amber }
+  const strongStyle = { ...strengthStyle, color: green }
 
-  render() {
-    const {
-      input,
-      meta: { touched, dirty, error },
-      textFieldProps,
-      popOverProps,
-      intl,
-    } = this.props
-    const { formatMessage } = intl
-    const passwordStrengthRules = {
-      minLength: input.value.length > 7,
-      containsNumber: /\d/.test(input.value),
-      mixUpperAndLowerCase: /(?=.*?[a-z])(?=.*?[A-Z])/.test(input.value),
-      containSpecialCharacter: /(?=.*?[`~!@#$%^&*()\-=_+\\[\]{}/?,.<>])/.test(
-        input.value
-      ),
-    }
-    const passwordStrengthResults = {
-      isWeak:
-        !passwordStrengthRules.minLength ||
-        (!passwordStrengthRules.containsNumber &&
-          !passwordStrengthRules.containSpecialCharacter),
-      isOkay:
-        passwordStrengthRules.minLength &&
-        (passwordStrengthRules.containsNumber ||
-          passwordStrengthRules.containSpecialCharacter),
-      isStrong:
-        passwordStrengthRules.minLength &&
-        passwordStrengthRules.containsNumber &&
-        passwordStrengthRules.mixUpperAndLowerCase &&
-        passwordStrengthRules.containSpecialCharacter,
-    }
-    const blue = 'rgb(78, 145, 252)'
-    const red = 'rgb(226, 18, 18)'
-    const amber = 'rgb(255, 174, 0)'
-    const green = 'rgb(27, 186, 13)'
-    const passwordStrengthColor = passwordStrengthResults.isWeak
-      ? red
-      : passwordStrengthResults.isStrong ? green : amber
-    const passwordStrengthScore = passwordStrengthResults.isWeak
-      ? 30
-      : passwordStrengthResults.isStrong ? 100 : 60
-    const iconStyle = {
-      lineHeight: '1.3em',
-      width: '1.3em',
-      height: '1.3em',
-      margin: '0 0.3em',
-      verticalAlign: 'bottom',
-    }
-    const checkIconStyle = { ...iconStyle, fill: blue }
-    const crossIconStyle = { ...iconStyle, fill: red }
-    const strengthRuleStyle = { lineHeight: '1em' }
-    const strengthStyle = {
-      display: 'inline-block',
-      width: '100%',
-      textAlign: 'center',
-      margin: '0.5em 0',
-    }
-    const weakStyle = { ...strengthStyle, color: red }
-    const okayStyle = { ...strengthStyle, color: amber }
-    const strongStyle = { ...strengthStyle, color: green }
+  const strengthMessage = passwordStrengthResults.isStrong
+    ? formatMessage(messages.passwordStrengthMeterStrong)
+    : passwordStrengthResults.isWeak
+      ? formatMessage(messages.passwordStrengthMeterWeak)
+      : formatMessage(messages.passwordStrengthMeterOkay)
 
-    const strengthMessage = passwordStrengthResults.isStrong
-      ? formatMessage(messages.passwordStrengthMeterStrong)
-      : passwordStrengthResults.isWeak
-        ? formatMessage(messages.passwordStrengthMeterWeak)
-        : formatMessage(messages.passwordStrengthMeterOkay)
+  const strengthMessageStyle = passwordStrengthResults.isStrong
+    ? strongStyle
+    : passwordStrengthResults.isWeak ? weakStyle : okayStyle
 
-    const strengthMessageStyle = passwordStrengthResults.isStrong
-      ? strongStyle
-      : passwordStrengthResults.isWeak ? weakStyle : okayStyle
-    return (
-      <div>
-        <TextField
-          {...input}
-          errorStyle={{
-            float: 'left',
-            whiteSpace: 'nowrap',
-            textOverflow: 'visible',
-          }}
-          errorText={(touched || dirty) && error}
-          {...textFieldProps}
-          className={classNames({
-            [styles.Form__Field]: textFieldProps.fullWidth,
-          })}
-          onFocus={this.handleFocus}
-          onBlur={this.handleBlur}
-        />
-        <Popover
-          anchorEl={this.state.anchorEl}
-          open={this.state.showMeter && !_.isEmpty(input.value)}
-          useLayerForClickAway={false}
-          {...popOverProps}
-        >
+  return (
+    <div>
+      <TextField
+        {...input}
+        errorStyle={{
+          float: 'left',
+          whiteSpace: 'nowrap',
+          textOverflow: 'visible',
+        }}
+        errorText={(touched || dirty) && error}
+        {...textFieldProps}
+        className={classNames({
+          [styles.Form__Field]: textFieldProps.fullWidth,
+        })}
+        onFocus={handleFocus}
+        onBlur={handleBlur}
+      />
+
+      <Popper
+        anchorEl={anchorEl}
+        open={showMeter && !_.isEmpty(input.value)}
+        placement="bottom-start"
+        {...popOverProps}
+      >
+        <Paper className={classesMap.warningPopover}>
           <span style={strengthMessageStyle}>{strengthMessage}</span>
           <LinearProgress
-            mode="determinate"
+            classes={{
+              root: classesMap.linearProgress,
+              barColorPrimary: passwordStrengthResults.isWeak
+                ? classesMap.linearColorError
+                : passwordStrengthResults.isStrong
+                  ? classesMap.linearColorSuccess
+                  : classesMap.linearColorWarning,
+            }}
+            variant="determinate"
             value={passwordStrengthScore}
-            color={passwordStrengthColor}
-            style={{ height: '1em', backgroundColor: 'transparent' }}
           />
           <ul className={styles.List__Unstyled}>
             <li>
@@ -221,10 +231,19 @@ export class StrongPasswordInput extends React.PureComponent {
               </span>
             </li>
           </ul>
-        </Popover>
-      </div>
-    )
-  }
+        </Paper>
+      </Popper>
+    </div>
+  )
 }
 
-export default StrongPasswordInput
+StrongPasswordInput.propTypes = {
+  classes: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  input: PropTypes.object.isRequired, // eslint-disable-line
+  meta: PropTypes.object.isRequired, // eslint-disable-line
+  textFieldProps: PropTypes.object.isRequired, // eslint-disable-line
+  popOverProps: PropTypes.object.isRequired, // eslint-disable-line
+  intl: intlShape.isRequired,
+}
+
+export default withStyles(muiStyles)(StrongPasswordInput)

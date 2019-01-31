@@ -10,6 +10,7 @@ import subtractMonths from 'date-fns/subMonths'
 import endOfQuarter from 'date-fns/endOfQuarter'
 import startOfQuarter from 'date-fns/startOfQuarter'
 import subtractQuarters from 'date-fns/subQuarters'
+import subtractYears from 'date-fns/subYears'
 import endOfYear from 'date-fns/endOfYear'
 import startOfYear from 'date-fns/startOfYear'
 
@@ -51,6 +52,8 @@ function recaculateDateRanges(now = new Date()) {
   const thisMonthEnd = endOfMonth(now)
   const thisYearStart = startOfYear(now)
   const thisYearEnd = endOfYear(now)
+  const lastYearStart = subtractYears(thisYearStart, 1)
+  const lastYearEnd = subtractYears(thisYearEnd, 1)
   const thisQuarterStart = startOfQuarter(now)
   const thisQuarterEnd = endOfQuarter(now)
 
@@ -65,6 +68,10 @@ function recaculateDateRanges(now = new Date()) {
     thisYear: {
       minDate: thisYearStart,
       maxDate: thisYearEnd,
+    },
+    lastYear: {
+      minDate: lastYearStart,
+      maxDate: lastYearEnd,
     },
     thisQuarter: {
       minDate: thisQuarterStart,
@@ -102,6 +109,7 @@ const enhance = compose(
     const dateRanges = recaculateDateRanges()
     const dateRangeList = [
       'thisYear',
+      'lastYear',
       'thisQuarter',
       'lastQuarter',
       'thisMonth',

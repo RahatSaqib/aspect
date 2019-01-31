@@ -25,7 +25,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable all f
       type="text"
     />
     <br />
-    <StrongPasswordInput
+    <WithStyles(StrongPasswordInput)
       disabled={true}
       input={
         Object {
@@ -175,7 +175,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable the s
       type="text"
     />
     <br />
-    <StrongPasswordInput
+    <WithStyles(StrongPasswordInput)
       disabled={false}
       input={
         Object {
@@ -325,7 +325,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable the s
       type="text"
     />
     <br />
-    <StrongPasswordInput
+    <WithStyles(StrongPasswordInput)
       disabled={false}
       input={
         Object {
@@ -475,7 +475,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable the s
       type="text"
     />
     <br />
-    <StrongPasswordInput
+    <WithStyles(StrongPasswordInput)
       disabled={false}
       input={
         Object {
@@ -625,7 +625,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should enable the su
       type="text"
     />
     <br />
-    <StrongPasswordInput
+    <WithStyles(StrongPasswordInput)
       disabled={false}
       input={
         Object {
@@ -775,7 +775,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should render correc
       type="text"
     />
     <br />
-    <StrongPasswordInput
+    <WithStyles(StrongPasswordInput)
       disabled={false}
       input={
         Object {

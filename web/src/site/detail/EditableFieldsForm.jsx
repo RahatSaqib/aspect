@@ -5,9 +5,9 @@ import { compose, setPropTypes, pure } from 'recompose'
 import { Field, reduxForm } from 'redux-form/immutable'
 
 // Material-UI
-import LinearProgress from 'material-ui/LinearProgress'
-import RaisedButton from 'material-ui/RaisedButton'
-import TextField from 'material-ui/TextField'
+import LinearProgress from '@material-ui/core/LinearProgress'
+import Button from '@material-ui/core/Button'
+import TextField from '@material-ui/core/TextField'
 
 // Our own imports
 import TimezoneSelect from '../../components/shared/TimezoneSelect'
@@ -19,13 +19,15 @@ const renderTextField = ({ input, meta, ...restProps }) => (
   <TextField
     {...restProps}
     {...input}
+    margin="normal"
     fullWidth
     errorStyle={{
       float: 'left',
       whiteSpace: 'nowrap',
       textOverflow: 'visible',
     }}
-    errorText={meta.touched && meta.error}
+    error={!!(meta.touched && meta.error)}
+    helperText={meta.touched && meta.error}
   />
 )
 
@@ -73,19 +75,15 @@ export const EditableFieldsForm = ({
   onSiteTagChange,
 }) => (
   <form onSubmit={handleSubmit}>
-    <Field
-      name="name"
-      floatingLabelText={labels.name}
-      component={renderTextField}
-    />
+    <Field name="name" label={labels.name} component={renderTextField} />
     <Field
       name="shortName"
-      floatingLabelText={labels.shortName}
+      label={labels.shortName}
       component={renderTextField}
     />
     <Field
       name="externalId"
-      floatingLabelText={labels.externalId}
+      label={labels.externalId}
       component={renderTextField}
     />
     <TimezoneSelect
@@ -102,21 +100,13 @@ export const EditableFieldsForm = ({
       stateIdFieldName="stateId"
       lgaIdFieldName="lgaId"
     />
-    <Field
-      name="address"
-      floatingLabelText={labels.address}
-      component={renderTextField}
-    />
+    <Field name="address" label={labels.address} component={renderTextField} />
     <Field
       name="address2"
-      floatingLabelText={labels.address2}
+      label={labels.address2}
       component={renderTextField}
     />
-    <Field
-      name="city"
-      floatingLabelText={labels.city}
-      component={renderTextField}
-    />
+    <Field name="city" label={labels.city} component={renderTextField} />
     <Field
       name="zip"
       floatingLabelText={labels.zip}
@@ -135,12 +125,14 @@ export const EditableFieldsForm = ({
         />
       )}
     />
-    <RaisedButton
+    <Button
       disabled={pristine || submitting}
       type="submit"
-      label="Update"
-      secondary
-    />
+      color="secondary"
+      variant="contained"
+    >
+      Update
+    </Button>
     {submitting && <LinearProgress />}
   </form>
 )

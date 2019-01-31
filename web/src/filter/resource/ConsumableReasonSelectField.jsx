@@ -5,8 +5,8 @@ import { compose, setPropTypes, lifecycle, pure } from 'recompose'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 
-import SelectField from 'material-ui/SelectField'
-import MenuItem from 'material-ui/MenuItem'
+import Select from '@material-ui/core/Select'
+import MenuItem from '@material-ui/core/MenuItem'
 
 import { fetchConsumableReasons } from '../../consumable/ConsumableRedux'
 
@@ -72,7 +72,7 @@ export const ConsumableReasonSelectField = ({
   onConsumableReasonIdChange,
   ...restProps
 }) => (
-  <SelectField
+  <Select
     {...restProps}
     disabled={
       restProps.disabled ||
@@ -92,7 +92,7 @@ export const ConsumableReasonSelectField = ({
         }
       />
     ))}
-  </SelectField>
+  </Select>
 )
 
 export default enhance(ConsumableReasonSelectField)

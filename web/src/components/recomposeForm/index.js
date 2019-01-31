@@ -5,6 +5,14 @@ import wrapDisplayName from 'recompose/wrapDisplayName'
 
 export const normalChangeEventReader = event => event.target.value
 
+export const errorProps = ({ touched, error } = {}) =>
+  touched && error
+    ? {
+        error: true,
+        helperText: touched && error,
+      }
+    : {}
+
 const mapFieldNames = _fp.map(
   fieldNameLike =>
     _fp.isObject(fieldNameLike)

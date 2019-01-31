@@ -4,11 +4,10 @@ import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-
-import MenuItem from 'material-ui/MenuItem'
+import MenuItem from '@material-ui/core/MenuItem'
 
 import { fetchStatesForLocationSelector } from '../../geography/GeographyRedux'
-import ForkedSelectField from '../../components/forkedMaterialUi/ForkedSelectField'
+import SelectField from '../../components/shared/SelectField'
 
 export function getSelectedCountry({ countries, countryId }) {
   if (countries.loading) {
@@ -62,7 +61,7 @@ export class StateSelectField extends PureComponent {
     }
   }
 
-  handleSelectFieldChange = (event, index, value) => {
+  handleSelectFieldChange = ({ target: { value } }) => {
     this.props.onStateIdChange(value === 'all' ? undefined : value)
   }
 
@@ -78,16 +77,18 @@ export class StateSelectField extends PureComponent {
     ])
 
     return (
-      <ForkedSelectField
+      <SelectField
         {...restProps}
         value={stateId}
         onChange={this.handleSelectFieldChange}
       >
-        {allItemText && <MenuItem value="all" primaryText={allItemText} />}
+        {allItemText && <MenuItem value="all">{allItemText}</MenuItem>}
         {getSelectedCountryStates(this.props).map(s => (
-          <MenuItem key={s.id} value={s.id} primaryText={s.name} />
+          <MenuItem key={s.id} value={s.id}>
+            {s.name}
+          </MenuItem>
         ))}
-      </ForkedSelectField>
+      </SelectField>
     )
   }
 }
