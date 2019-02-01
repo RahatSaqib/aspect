@@ -342,7 +342,7 @@ async function mergeResult(
     },
     result
   )
-
+  
   let resultId
   if (existingResult) {
     resultId = existingResult.id
@@ -421,6 +421,7 @@ async function getResult(knex, resultId) {
 
   const result = { formData: null }
 
+  
   if (row.resultExternalId != null) {
     result.id = row.resultExternalId
   }
@@ -558,6 +559,7 @@ async function postProcessMergeResult(context, result, previousResult) {
     'Device API Update',
     now
   )
+  await resolveAutoTagging(knex,result)
   // // TODO ASP-355 consume inventory using a message listener instead
   // // of within plugin/same transaction
   await consumeInventoryForResult(knex, payload, result)
@@ -584,6 +586,48 @@ async function consumeInventoryForResult(knex, payload, result) {
     knex
   )
 }
+
+const getTags = (regExp, field) =>{ 
+  let re = new RegExp(regExp,"g");
+  return field ? field.match(re):[];
+};
+
+async function resolveAutoTagging(
+  knex,
+  result
+) {
+
+  let country = await knex("Device as d")
+  .join("Geography as g", "d.geographyId","g.id")
+  .join("Country as c","g.countryId","c.id")
+  .where("d.id",result.deviceId).first();
+  
+  let taggingResults=[];
+
+  if(country.tagRegexSampleId && country.tagRegexSampleId!=""){
+    taggingResults.push(getTags(country.tagRegexSampleId,result.sampleId));
+  }
+  if(country.tagRegexNotes && country.tagRegexNotes!=""){
+    taggingResults.push(getTags(country.tagRegexNotes,result.notes));
+  }
+  if(country.tagRegexPatientId && country.tagRegexPatientId!=""){
+    taggingResults.push(getTags(country.tagRegexPatientId,result.patientId));
+  }
+  let tags=taggingResults.map((elem)=>{
+    return {title: elem, 
+      partnerId: result.partnerId};
+  });
+
+  let tags=taggingResults.map((elem)=>{
+    return {title: elem, 
+      partnerId: result.partnerId};
+  });
+
+  let resultTags=tags.map((elem)=>{return {tagId: elem.Id, resultId:result.Id };} );
+  let saveResultTags=await knex("ResultTags")
+
+}
+
 
 async function addResultWorkflowLogIfChanged(
   knex,

@@ -40,7 +40,7 @@ function waitAsyncComplete(result) {
 
 describe('Device Result API routes', () => {
   const clientBasePath = '/api/result'
-
+  
   function setResultAsDeliverable(context, resultId) {
     const { clientAuth } = context
     const clientSingleResultPath = `${clientBasePath}/`
@@ -99,7 +99,7 @@ describe('Device Result API routes', () => {
       await context.createDeviceWithResult()
     })
     afterEach(context.afterEach)
-
+    
     it('should add and return device results', () =>
       runTest(async knex => {
         const resultIds = []
@@ -814,7 +814,27 @@ describe('Device Result API routes', () => {
             assert.equal(res.body.name, deviceFirstName)
           })
       }))
+      /*it.only('autoTaggingFunction',()=>{
+        runTest(async knex => {
+          const { deviceId, deviceAuth, now } = context
+  
+          let result1={
+            "patientData":null
+          };
 
+          assert.deepEqual(getTags("-(A-Z{3})", result1.patientData),[]);
+          result1.patientData='12312312-123';
+          assert.equal(result1.patientData,'12312312-123');
+          assert.equal(getTags('-(A-Z{3})', result1.patientData),'-123');
+          result1.patientData="12312312-12312312";
+          assert.deepEqual(getTags('-(A-Z{3})$', result1.patientData),[]);
+          
+        })   
+            
+          
+        
+      });*/
+      
     it('should set default result status and categories', () =>
       runTest(async knex => {
         const resultIds = []
