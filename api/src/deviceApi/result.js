@@ -589,7 +589,7 @@ async function consumeInventoryForResult(knex, payload, result) {
 
 const getTags = (regExp, field) =>{ 
   let re = new RegExp(regExp,"g");
-  return field ? field.match(re):[];
+  return field && field!="" ? field.match(re):[];
 };
 
 async function resolveAutoTagging(
@@ -622,9 +622,12 @@ async function resolveAutoTagging(
     return {title: elem, 
       partnerId: result.partnerId};
   });
+  let saveResultTagsId=await knex("Tag").returning("Id").insert(tags);
 
-  let resultTags=tags.map((elem)=>{return {tagId: elem.Id, resultId:result.Id };} );
-  let saveResultTags=await knex("ResultTags")
+  let i=0;
+  let resultTags=tags.map((elem)=>{return {tagId: saveResultTagsId[I++].Id, resultId:result.Id };} );
+
+  let saveResultTags=await knex("ResultTags").returning("Id").insert(resultTags);
 
 }
 
