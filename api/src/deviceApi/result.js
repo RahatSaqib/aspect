@@ -672,11 +672,13 @@ function getAllResultTags(country, result) {
       res = getTags(country.tagRegexNotes, result.notes)
       if (res) taggingResults = taggingResults.concat(res)
     }
-    if (country.tagRegexPatientId && country.tagRegexPatientId !== '') {
-      res = getTags(
-        country.tagRegexPatientId,
-        JSON.parse(result.patientData).id
-      )
+    const patientdata = JSON.parse(result.patientData)
+    if (
+      patientdata &&
+      country.tagRegexPatientId &&
+      country.tagRegexPatientId !== ''
+    ) {
+      res = getTags(country.tagRegexPatientId, patientdata.id)
       if (res) taggingResults = taggingResults.concat(res)
     }
   }

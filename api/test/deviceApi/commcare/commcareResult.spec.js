@@ -32,7 +32,7 @@ describe('CommCare Result API routes', () => {
     })
     afterEach(context.afterEach)
 
-    it.only('should add and return device results', () =>
+    it('should add and return device results', () =>
       runTest(async knex => {
         const { apiKey } = context
 
