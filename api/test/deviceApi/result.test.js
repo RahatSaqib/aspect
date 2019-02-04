@@ -30,7 +30,7 @@ const result1 = {
   notes: 'AWesome Awesome, Awsome',
 }
 
-describe.only('This test is for results autotagging function', () => {
+describe('This test is for results autotagging function', () => {
   it('it should return an array of matching regular expression tags', async () => {
     const tags = getAllResultTags(country1, result1)
     assert.equal(tags.length, 4)
@@ -49,7 +49,7 @@ describe.only('This test is for results autotagging function', () => {
     assert.equal(country.abbreviation, 'US')
   })
 
-  it.only('it should save tags for a result', async () => {
+  it('it should save tags for a result', async () => {
     const knex = query()
     const result = await knex('Result')
       .select('*')
