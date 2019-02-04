@@ -1060,6 +1060,16 @@ async function updateLogs(request) {
   })
 }
 
+async function getHealthStateHandler() {
+  return knex('Device as d')
+    .join('Geography as g', 'd.geographyId', 'g.id')
+    .join('Country as c', 'g.countryId', 'c.id')
+    .select('c.abbreviation as a2', 'c.a3 as A3', 'c.name as Country')
+    .min('d.createdOn as Date')
+    .count('d.id as Total')
+    .groupBy('c.abbreviation', 'c.a3', 'c.name')
+}
+
 module.exports = {
   getDeviceDataHandler,
   getDeviceOperationHandler,
@@ -1072,4 +1082,5 @@ module.exports = {
   addDeviceLog,
   onResultUpdated,
   onResultLogged,
+  getHealthStateHandler,
 }
