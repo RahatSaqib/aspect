@@ -342,7 +342,7 @@ async function mergeResult(
     },
     result
   )
-  
+
   let resultId
   if (existingResult) {
     resultId = existingResult.id
@@ -421,7 +421,6 @@ async function getResult(knex, resultId) {
 
   const result = { formData: null }
 
-  
   if (row.resultExternalId != null) {
     result.id = row.resultExternalId
   }
@@ -559,7 +558,7 @@ async function postProcessMergeResult(context, result, previousResult) {
     'Device API Update',
     now
   )
-  await resolveAutoTagging(knex,result)
+  await resolveAutoTagging(knex, result)
   // // TODO ASP-355 consume inventory using a message listener instead
   // // of within plugin/same transaction
   await consumeInventoryForResult(knex, payload, result)
@@ -587,50 +586,99 @@ async function consumeInventoryForResult(knex, payload, result) {
   )
 }
 
-const getTags = (regExp, field) =>{ 
-  let re = new RegExp(regExp,"g");
-  return field && field!="" ? field.match(re):[];
-};
-
-async function resolveAutoTagging(
-  knex,
-  result
-) {
-
-  let country = await knex("Device as d")
-  .join("Geography as g", "d.geographyId","g.id")
-  .join("Country as c","g.countryId","c.id")
-  .where("d.id",result.deviceId).first();
-  
-  let taggingResults=[];
-
-  if(country.tagRegexSampleId && country.tagRegexSampleId!=""){
-    taggingResults.push(getTags(country.tagRegexSampleId,result.sampleId));
-  }
-  if(country.tagRegexNotes && country.tagRegexNotes!=""){
-    taggingResults.push(getTags(country.tagRegexNotes,result.notes));
-  }
-  if(country.tagRegexPatientId && country.tagRegexPatientId!=""){
-    taggingResults.push(getTags(country.tagRegexPatientId,result.patientId));
-  }
-  let tags=taggingResults.map((elem)=>{
-    return {title: elem, 
-      partnerId: result.partnerId};
-  });
-
-  let tags=taggingResults.map((elem)=>{
-    return {title: elem, 
-      partnerId: result.partnerId};
-  });
-  let saveResultTagsId=await knex("Tag").returning("Id").insert(tags);
-
-  let i=0;
-  let resultTags=tags.map((elem)=>{return {tagId: saveResultTagsId[I++].Id, resultId:result.Id };} );
-
-  let saveResultTags=await knex("ResultTags").returning("Id").insert(resultTags);
-
+const getTags = (regExp, field) => {
+  const re = new RegExp(regExp, 'g')
+  return field && field !== '' ? field.toString().match(re) : []
 }
 
+async function resolveAutoTagging(knex, result) {
+  const existingTags = await getExistingTagByPartner(knex, result.partnerId)
+  const country = await getCountryByDeviceId(knex, result.deviceId)
+
+  let taggingResults = getAllResultTags(country, result)
+
+  taggingResults = _.uniqBy(taggingResults)
+
+  const tagsToBeAdded = _.filter(
+    taggingResults,
+    tag => !includesIgnoreCase(existingTags, tag)
+  )
+
+  const tagsToBeUpdated = _.filter(existingTags, tag =>
+    includesIgnoreCaseByResultId(taggingResults, tag, result.id)
+  )
+
+  _.map(tagsToBeAdded, async tag => {
+    await knex('Tag')
+      .returning('id')
+      .insert({
+        title: tag,
+        partnerId: result.partnerId,
+      })
+      .then(resultIds =>
+        resultIds.forEach(async element => {
+          await knex('ResultTag').insert({
+            tagId: element,
+            resultId: result.id,
+          })
+        })
+      )
+  })
+  _.map(tagsToBeUpdated, async elem => {
+    await knex('ResultTag').insert({
+      tagId: elem.id,
+      resultId: result.id,
+    })
+  })
+}
+
+function includesIgnoreCase(collection, value) {
+  return _.some(
+    collection,
+    item => item.title.toLowerCase() === value.toLowerCase()
+  )
+}
+function includesIgnoreCaseByResultId(collection, value, resultId) {
+  return _.some(
+    collection,
+    item =>
+      item.toLowerCase() === value.title.toLowerCase() &&
+      value.resultId !== resultId
+  )
+}
+
+async function getCountryByDeviceId(knex, deviceId) {
+  return knex('Device as d')
+    .join('Geography as g', 'd.geographyId', 'g.id')
+    .join('Country as c', 'g.countryId', 'c.id')
+    .where('d.id', deviceId)
+    .first()
+}
+
+function getAllResultTags(country, result) {
+  let taggingResults = []
+  let res = []
+  if (country.tagRegexSampleId && country.tagRegexSampleId !== '') {
+    res = getTags(country.tagRegexSampleId, result.sampleId)
+    if (res) taggingResults = taggingResults.concat(res)
+  }
+
+  if (country.tagRegexNotes && country.tagRegexNotes !== '') {
+    res = getTags(country.tagRegexNotes, result.notes)
+    if (res) taggingResults = taggingResults.concat(res)
+  }
+  if (country.tagRegexPatientId && country.tagRegexPatientId !== '') {
+    res = getTags(country.tagRegexPatientId, JSON.parse(result.patientData).id)
+    if (res) taggingResults = taggingResults.concat(res)
+  }
+  return taggingResults
+}
+async function getExistingTagByPartner(knex, partnerId) {
+  return knex('Tag as t')
+    .join('ResultTag as rt', 't.id', 'rt.tagId')
+    .select('t.id', 't.title', 'rt.resultId')
+    .where('t.partnerId', partnerId)
+}
 
 async function addResultWorkflowLogIfChanged(
   knex,
@@ -734,11 +782,26 @@ async function getLatestResultWorkflowLog(knex, resultId) {
   return latestResultWorkFlowLog
 }
 
-module.exports = {
-  mergeResult,
-  getResult,
-  postProcessMergeResult,
-  consumeInventoryForResult,
-  addResultWorkflowLogIfChanged,
-  updateResultWorkflowStatus,
+if (!process.env.testPrivateFunctions) {
+  module.exports = {
+    mergeResult,
+    getResult,
+    postProcessMergeResult,
+    consumeInventoryForResult,
+    addResultWorkflowLogIfChanged,
+    updateResultWorkflowStatus,
+  }
+} else {
+  module.exports = {
+    mergeResult,
+    getResult,
+    postProcessMergeResult,
+    consumeInventoryForResult,
+    addResultWorkflowLogIfChanged,
+    updateResultWorkflowStatus,
+    resolveAutoTagging,
+    getAllResultTags,
+    getCountryByDeviceId,
+    getExistingTagByPartner,
+  }
 }

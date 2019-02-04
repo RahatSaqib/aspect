@@ -42,7 +42,10 @@
         { "name": "Phalombe" },
         { "name": "Zomba" },
         { "name": "Neno" }
-      ]
+      ],
+      "tagRegexSampleId":"-([A-Z]){3}$",
+      "tagRegexPatientId":"-([A-Z]){3}$",
+      "tagRegexNotes":",\\s?([0-9]{3}-[0-9]{2})"
     },
     {
       "abbreviation": "NG",
@@ -66,7 +69,10 @@
           "name": "Ogun",
           "lgas": [{ "name": "Ifo" }, { "name": "Ipokia" }]
         }
-      ]
+      ],
+      "tagRegexSampleId":"-(A-Z){3}$",
+      "tagRegexPatientId":"-(A-Z){3}$",
+      "tagRegexNotes":",\\s?([0-9]{3}-[0-9]{2})"
     },
     {
       "abbreviation": "US",
@@ -418,7 +424,10 @@
           "lat": 42.755966,
           "lng": -107.30249
         }
-      ]
+      ],
+      "tagRegexSampleId":"(0-9)$",
+      "tagRegexPatientId":"(0-9)",
+      "tagRegexNotes":",\\s?([0-9]{3}-[0-9]{2})"
     },
     {
       "abbreviation": "MM",
@@ -652,5 +661,8 @@
         }
       ]
     }
-  ]
+  ],
+  "tagRegexSampleId":"([0-9])",
+  "tagRegexPatientId":"([0-9])$",
+  "tagRegexNotes":",\\s?([0-9]{3}-[0-9]{2})"
 }
