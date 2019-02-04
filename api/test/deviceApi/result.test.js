@@ -1,6 +1,6 @@
 const chai = require('chai')
 
-const { assert, expect } = chai
+const { assert } = chai
 
 const {
   getAllResultTags,
@@ -31,6 +31,14 @@ const result1 = {
 }
 
 describe('This test is for results autotagging function', () => {
+  before(async () => {
+    await query()('ResultTag').del()
+    await query()('Tag').del()
+  })
+  after(async () => {
+    await query()('ResultTag').del()
+    await query()('Tag').del()
+  })
   it('it should return an array of matching regular expression tags', async () => {
     const tags = getAllResultTags(country1, result1)
     assert.equal(tags.length, 4)
@@ -40,7 +48,7 @@ describe('This test is for results autotagging function', () => {
     assert.equal(tags[3], '-123')
 
     const tag2 = getAllResultTags(country3, result1)
-    assert(tag2.length == 0)
+    assert(tag2.length === 0)
   })
 
   it('it should return a country by deviceId', async () => {
@@ -67,14 +75,9 @@ describe('This test is for results autotagging function', () => {
       .first()
 
     await resolveAutoTagging(knex, result2)
-    const result3 = await knex('Result')
-      .select('*')
-      .where('id', 3)
-      .first()
-    await resolveAutoTagging(knex, result3)
 
     const tags2 = await getExistingTagByPartner(knex, result.partnerId)
 
-    assert(tags2.length >= 4)
+    assert.equal(tags2.length, 2)
   })
 })

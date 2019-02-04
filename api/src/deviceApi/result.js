@@ -12,6 +12,8 @@ const {
 
 const inventory = require('../inventory/service')
 
+const transact = require('../../src/db')
+
 async function mergeResult(
   knex,
   deviceId,
@@ -599,14 +601,16 @@ async function resolveAutoTagging(knex, result) {
 
   taggingResults = _.uniqBy(taggingResults)
 
-  const tagsToBeAdded = _.filter(
+  let tagsToBeAdded = _.filter(
     taggingResults,
     tag => !includesIgnoreCase(existingTags, tag)
   )
 
-  const tagsToBeUpdated = _.filter(existingTags, tag =>
+  let tagsToBeUpdated = _.filter(existingTags, tag =>
     includesIgnoreCaseByResultId(taggingResults, tag, result.id)
   )
+  tagsToBeAdded = _.uniqBy(tagsToBeAdded)
+  tagsToBeUpdated = _.uniqBy(tagsToBeUpdated)
 
   _.map(tagsToBeAdded, async tag => {
     await knex('Tag')
@@ -658,18 +662,23 @@ async function getCountryByDeviceId(knex, deviceId) {
 function getAllResultTags(country, result) {
   let taggingResults = []
   let res = []
-  if (country.tagRegexSampleId && country.tagRegexSampleId !== '') {
-    res = getTags(country.tagRegexSampleId, result.sampleId)
-    if (res) taggingResults = taggingResults.concat(res)
-  }
+  if (country) {
+    if (country.tagRegexSampleId && country.tagRegexSampleId !== '') {
+      res = getTags(country.tagRegexSampleId, result.sampleId)
+      if (res) taggingResults = taggingResults.concat(res)
+    }
 
-  if (country.tagRegexNotes && country.tagRegexNotes !== '') {
-    res = getTags(country.tagRegexNotes, result.notes)
-    if (res) taggingResults = taggingResults.concat(res)
-  }
-  if (country.tagRegexPatientId && country.tagRegexPatientId !== '') {
-    res = getTags(country.tagRegexPatientId, JSON.parse(result.patientData).id)
-    if (res) taggingResults = taggingResults.concat(res)
+    if (country.tagRegexNotes && country.tagRegexNotes !== '') {
+      res = getTags(country.tagRegexNotes, result.notes)
+      if (res) taggingResults = taggingResults.concat(res)
+    }
+    if (country.tagRegexPatientId && country.tagRegexPatientId !== '') {
+      res = getTags(
+        country.tagRegexPatientId,
+        JSON.parse(result.patientData).id
+      )
+      if (res) taggingResults = taggingResults.concat(res)
+    }
   }
   return taggingResults
 }
@@ -677,6 +686,7 @@ async function getExistingTagByPartner(knex, partnerId) {
   return knex('Tag as t')
     .join('ResultTag as rt', 't.id', 'rt.tagId')
     .select('t.id', 't.title', 'rt.resultId')
+    .distinct('t.id', 't.title', 'rt.resultId')
     .where('t.partnerId', partnerId)
 }
 
