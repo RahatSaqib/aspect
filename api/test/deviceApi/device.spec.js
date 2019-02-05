@@ -34,7 +34,7 @@ const context = createTestContext(server, {
 const { factGenerateDeviceConnectivity } = require('../../src/fact/actions')
 const { deviceOffline, deviceOnline } = require('../../src/device/actions')
 
-describe.only('Device API routes', () => {
+describe('Device API routes', () => {
   const devicePath = '/device'
 
   const { runTest } = context

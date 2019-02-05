@@ -642,10 +642,102 @@ const routes = [
           allowUnknown: true,
         },
         schema: {
-          Countries: Joi.array().description('Countries stats'),
-          Devices: Joi.array().description('Device stats'),
-          Tests: Joi.array().description('Tests stats'),
-          Notifications: Joi.array().description('Notifications stats'),
+          Countries: Joi.array()
+            .items(
+              Joi.object().keys({
+                Country: Joi.string().description('Country name'),
+                A2: Joi.string().description(
+                  'Abbreviation of the country name 2 letters'
+                ),
+                A3: Joi.string().description(
+                  'Abbreviation of the country name 3 letters'
+                ),
+                Date: Joi.date()
+                  .allow(null)
+                  .iso()
+                  .description('Date of the first device pluged'),
+                Total: Joi.number()
+                  .allow(null)
+                  .description('The numbers of devices the country had'),
+              })
+            )
+            .single(true)
+            .description('Countries stats'),
+          Devices: Joi.array()
+            .items(
+              Joi.object().keys({
+                Country: Joi.string().description('Country name'),
+                A2: Joi.string().description(
+                  'Abbreviation of the country name 2 letters'
+                ),
+                A3: Joi.string().description(
+                  'Abbreviation of the country name 3 letters'
+                ),
+                Date: Joi.date()
+                  .allow(null)
+                  .iso()
+                  .description('Date of the "Total" devices were plugged'),
+                Total: Joi.number()
+                  .allow(null)
+                  .description(
+                    'The numbers of devices that were plugged this month'
+                  ),
+              })
+            )
+            .single(true)
+            .description('Device stats'),
+          Tests: Joi.array()
+            .items(
+              Joi.object().keys({
+                Country: Joi.string().description('Country name'),
+                A2: Joi.string().description(
+                  'Abbreviation of the country name 2 letters'
+                ),
+                A3: Joi.string().description(
+                  'Abbreviation of the country name 3 letters'
+                ),
+                Date: Joi.date()
+                  .allow(null)
+                  .iso()
+                  .description(
+                    'Date of the "Total" test were maded in this period'
+                  ),
+                Total: Joi.number()
+                  .allow(null)
+                  .description(
+                    'The numbers of devices that were plugged this month'
+                  ),
+              })
+            )
+            .description('Tests stats'),
+          Notifications: Joi.array()
+            .items(
+              Joi.object().keys({
+                Country: Joi.string().description('Country name'),
+                A2: Joi.string().description(
+                  'Abbreviation of the country name 2 letters'
+                ),
+                A3: Joi.string().description(
+                  'Abbreviation of the country name 3 letters'
+                ),
+                Date: Joi.date()
+                  .allow(null)
+                  .iso()
+                  .description(
+                    'Date of the "Total" test were maded in this period'
+                  ),
+                Sms: Joi.number()
+                  .allow(null)
+                  .description('The numbers of sms that were sent this period'),
+                Email: Joi.number()
+                  .allow(null)
+                  .description('The numbers of emails were sent this period'),
+                Total: Joi.number()
+                  .allow(null)
+                  .description('The sum of Sms and Emails sent in this period'),
+              })
+            )
+            .description('Notifications stats'),
         },
       },
     },
