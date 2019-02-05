@@ -62,6 +62,7 @@ const updatedOnFieldTables = [
   'WebhookMessage',
   'WebhookTemplate',
 ]
+
 async function up(knex) {
   createdOnFieldTables.forEach(async element => {
     await knex.schema.alterTable(element, table => {
