@@ -1060,7 +1060,7 @@ async function updateLogs(request) {
   })
 }
 
-async function getDevicesByCountry(){
+async function getDevicesByCountry() {
   return knex('Device as d')
     .join('Geography as g', 'd.geographyId', 'g.id')
     .join('Country as c', 'g.countryId', 'c.id')
@@ -1075,11 +1075,11 @@ async function getDevicesByCountry(){
     .groupByRaw("date(date_format(d.createdOn,'%Y-%m-01'))")
 }
 
-async function getTestByCountry(){
+async function getTestByCountry() {
   return knex('Device as d')
     .join('Geography as g', 'd.geographyId', 'g.id')
     .join('Country as c', 'g.countryId', 'c.id')
-    .LeftJoin('Result as r', 'd.id', 'r.deviceId')
+    .leftJoin('Result as r', 'd.id', 'r.deviceId')
     .select(
       'c.abbreviation as A2',
       'c.a3 as A3',
@@ -1091,12 +1091,11 @@ async function getTestByCountry(){
     .groupByRaw("date(date_format(r.createdOn,'%Y-%m-01'))")
 }
 
-async function getNotificationsByCountry(){
+async function getNotificationsByCountry() {
   return knex('Device as d')
     .join('Geography as g', 'd.geographyId', 'g.id')
     .join('Country as c', 'g.countryId', 'c.id')
-    .join('Result as r', 'd.id', 'r.deviceId')
-    .leftJoin('Issue as i', 'r.id', 'i.resultId')
+    .leftJoin('Issue as i', 'd.id', 'i.deviceId')
     .leftJoin('Notification as n', 'i.id', 'n.issueId')
     .select(
       'c.abbreviation as a2',
@@ -1104,15 +1103,16 @@ async function getNotificationsByCountry(){
       'c.name as Country',
       knex.raw("date(date_format(n.createdOn,'%Y-%m-01')) as Date"),
       knex.raw(
-        'sum(case emailMessageId when null then 0 else 1 end) as email '
+        'sum(case when emailMessageId  is not null then 1 else 0 end) as Email '
       ),
-      knex.raw('sum(case smsMessageId when null then 0 else 1 end) as sms ')
+      knex.raw(
+        'sum(case when smsMessageId is not null then 1 else 0 end) as Sms '
+      )
     )
-    .count('n.id as Total')
     .groupBy('c.abbreviation', 'c.a3', 'c.name')
     .groupByRaw("date(date_format(n.createdOn,'%Y-%m-01'))")
 }
-async function getCountriesHeathState(){
+async function getCountriesHeathState() {
   return knex('Device as d')
     .join('Geography as g', 'd.geographyId', 'g.id')
     .join('Country as c', 'g.countryId', 'c.id')
@@ -1128,31 +1128,31 @@ async function getHealthStateHandler() {
   const tests = await getTestByCountry()
   const notifications = await getNotificationsByCountry()
   const result = {
-    Country: _.map(countries, item => ({
+    Countries: _.map(countries, item => ({
       Country: item.Country,
-      A3: item.A3,
       A2: item.A2,
+      A3: item.A3,
       Date: item.Date,
       Total: item.Total,
     })),
     Devices: _.map(devices, item => ({
       Country: item.Country,
-      A3: item.A3,
       A2: item.A2,
+      A3: item.A3,
       Date: item.Date,
       Total: item.Total,
     })),
-    Test: _.map(tests, item => ({
+    Tests: _.map(tests, item => ({
       Country: item.Country,
-      A3: item.A3,
       A2: item.A2,
+      A3: item.A3,
       Date: item.Date,
       Total: item.Total,
     })),
-    Notification: _.map(notifications, item => ({
+    Notifications: _.map(notifications, item => ({
       Country: item.Country,
-      A3: item.A3,
       A2: item.A2,
+      A3: item.A3,
       Date: item.Date,
       Sms: item.Sms,
       Email: item.Email,
@@ -1175,5 +1175,4 @@ module.exports = {
   onResultUpdated,
   onResultLogged,
   getHealthStateHandler,
-  getTestByCountry,
 }
