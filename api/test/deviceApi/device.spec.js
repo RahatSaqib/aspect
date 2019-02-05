@@ -416,18 +416,17 @@ describe.only('Device API routes', () => {
   })
 
   describe('return health stats of remote server', () => {
-    it('should return json with the servers stats.', async () => {
-      const { apiKey, deviceAuth } = context
-      const deviceListPath = '/api/device'
-
-      assert.isOk(apiKey)
-      await server
-        .get(`${deviceListPath}/health-stats`)
-        .set('Authorization', deviceAuth)
-        .then(res => {
-          assert.equal(res.status, 200)
-          assert.typeOf(res.body, 'Object')
-        })
-    })
+    it('should return json with the servers stats.', () =>
+      runTest(async () => {
+        const { apiKey, deviceAuth } = context
+        assert.isOk(apiKey)
+        await server
+          .get(`${devicePath}/health-stats`)
+          .set('Authorization', deviceAuth)
+          .then(res => {
+            assert.equal(res.status, 200)
+            assert.typeOf(res.body, 'Object')
+          })
+      }))
   })
 })

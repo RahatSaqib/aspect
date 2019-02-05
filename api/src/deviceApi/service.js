@@ -1060,7 +1060,7 @@ async function updateLogs(request) {
   })
 }
 
-async function getDevicesByCountry() {
+async function getDevicesByCountry(knex) {
   return knex('Device as d')
     .join('Geography as g', 'd.geographyId', 'g.id')
     .join('Country as c', 'g.countryId', 'c.id')
@@ -1073,9 +1073,10 @@ async function getDevicesByCountry() {
     .count('d.id as Total')
     .groupBy('c.abbreviation', 'c.a3', 'c.name')
     .groupByRaw("date(date_format(d.createdOn,'%Y-%m-01'))")
+    .orderBy('Date', 'asc')
 }
 
-async function getTestByCountry() {
+async function getTestByCountry(knex) {
   return knex('Device as d')
     .join('Geography as g', 'd.geographyId', 'g.id')
     .join('Country as c', 'g.countryId', 'c.id')
@@ -1089,9 +1090,10 @@ async function getTestByCountry() {
     .count('r.id as Total')
     .groupBy('c.abbreviation', 'c.a3', 'c.name')
     .groupByRaw("date(date_format(r.createdOn,'%Y-%m-01'))")
+    .orderBy('Date', 'asc')
 }
 
-async function getNotificationsByCountry() {
+async function getNotificationsByCountry(knex) {
   return knex('Device as d')
     .join('Geography as g', 'd.geographyId', 'g.id')
     .join('Country as c', 'g.countryId', 'c.id')
@@ -1111,8 +1113,9 @@ async function getNotificationsByCountry() {
     )
     .groupBy('c.abbreviation', 'c.a3', 'c.name')
     .groupByRaw("date(date_format(n.createdOn,'%Y-%m-01'))")
+    .orderBy('Date', 'asc')
 }
-async function getCountriesHeathState() {
+async function getCountriesHeathState(knex) {
   return knex('Device as d')
     .join('Geography as g', 'd.geographyId', 'g.id')
     .join('Country as c', 'g.countryId', 'c.id')
@@ -1120,13 +1123,15 @@ async function getCountriesHeathState() {
     .min('d.createdOn as Date')
     .count('d.id as Total')
     .groupBy('c.abbreviation', 'c.a3', 'c.name')
+    .orderBy('Date', 'asc')
 }
+const getHealthStateHandler = deviceApiHandler(getHealthState)
 
-async function getHealthStateHandler() {
-  const countries = await getCountriesHeathState()
-  const devices = await getDevicesByCountry()
-  const tests = await getTestByCountry()
-  const notifications = await getNotificationsByCountry()
+async function getHealthState(context) {
+  const countries = await getCountriesHeathState(context.knex)
+  const devices = await getDevicesByCountry(context.knex)
+  const tests = await getTestByCountry(context.knex)
+  const notifications = await getNotificationsByCountry(context.knex)
   const result = {
     Countries: _.map(countries, item => ({
       Country: item.Country,

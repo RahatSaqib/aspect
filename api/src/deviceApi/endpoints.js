@@ -632,32 +632,22 @@ const routes = [
   {
     method: 'GET',
     path: '/health-stats',
-    config: { auth: false },
     handler: getHealthStateHandler,
-   /* config: {
+    config: {
       notes: 'Get health stats',
       description:
         'It returns a json object with the summary of the device and country operational data',
-      auth: false,
-      validate: {
-        query: {
-          checkpoint: Joi.string(),
-          offset: Joi.string(),
-        },
-      },
       response: {
         options: {
           allowUnknown: true,
         },
         schema: {
-          Countries: Joi.object()
-            .allow('', null)
-            .description('Countries stats'),
-          Devices: Joi.object().description('Device stats'),
-          Tests: Joi.object().description('Tests stats'),
-          Notifications: Joi.object().description('Notifications stats'),
+          Countries: Joi.array().description('Countries stats'),
+          Devices: Joi.array().description('Device stats'),
+          Tests: Joi.array().description('Tests stats'),
+          Notifications: Joi.array().description('Notifications stats'),
         },
-      }, */
+      },
     },
   },
 ]
