@@ -16,6 +16,7 @@ const {
   addDeviceLog,
   onResultUpdated,
   onResultLogged,
+  getHealthStateHandler,
 } = require('./service')
 
 const errorPayload = Joi.object()
@@ -625,6 +626,38 @@ const routes = [
           error: errorPayload,
         },
       },
+    },
+  },
+  // GET /device/heath-stats
+  {
+    method: 'GET',
+    path: '/health-stats',
+    config: { auth: false },
+    handler: getHealthStateHandler,
+   /* config: {
+      notes: 'Get health stats',
+      description:
+        'It returns a json object with the summary of the device and country operational data',
+      auth: false,
+      validate: {
+        query: {
+          checkpoint: Joi.string(),
+          offset: Joi.string(),
+        },
+      },
+      response: {
+        options: {
+          allowUnknown: true,
+        },
+        schema: {
+          Countries: Joi.object()
+            .allow('', null)
+            .description('Countries stats'),
+          Devices: Joi.object().description('Device stats'),
+          Tests: Joi.object().description('Tests stats'),
+          Notifications: Joi.object().description('Notifications stats'),
+        },
+      }, */
     },
   },
 ]

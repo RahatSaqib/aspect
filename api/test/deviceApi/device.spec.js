@@ -34,7 +34,7 @@ const context = createTestContext(server, {
 const { factGenerateDeviceConnectivity } = require('../../src/fact/actions')
 const { deviceOffline, deviceOnline } = require('../../src/device/actions')
 
-describe('Device API routes', () => {
+describe.only('Device API routes', () => {
   const devicePath = '/device'
 
   const { runTest } = context
@@ -413,5 +413,21 @@ describe('Device API routes', () => {
 
         assert.equal(logLength1 + 1, logLength2)
       }))
+  })
+
+  describe('return health stats of remote server', () => {
+    it('should return json with the servers stats.', async () => {
+      const { apiKey, deviceAuth } = context
+      const deviceListPath = '/api/device'
+
+      assert.isOk(apiKey)
+      await server
+        .get(`${deviceListPath}/health-stats`)
+        .set('Authorization', deviceAuth)
+        .then(res => {
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+        })
+    })
   })
 })
