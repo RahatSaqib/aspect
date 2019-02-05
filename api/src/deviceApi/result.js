@@ -794,26 +794,11 @@ async function getLatestResultWorkflowLog(knex, resultId) {
   return latestResultWorkFlowLog
 }
 
-if (!process.env.testPrivateFunctions) {
-  module.exports = {
-    mergeResult,
-    getResult,
-    postProcessMergeResult,
-    consumeInventoryForResult,
-    addResultWorkflowLogIfChanged,
-    updateResultWorkflowStatus,
-  }
-} else {
-  module.exports = {
-    mergeResult,
-    getResult,
-    postProcessMergeResult,
-    consumeInventoryForResult,
-    addResultWorkflowLogIfChanged,
-    updateResultWorkflowStatus,
-    resolveAutoTagging,
-    getAllResultTags,
-    getCountryByDeviceId,
-    getExistingTagByPartner,
-  }
+module.exports = {
+  mergeResult,
+  getResult,
+  postProcessMergeResult,
+  consumeInventoryForResult,
+  addResultWorkflowLogIfChanged,
+  updateResultWorkflowStatus,
 }
