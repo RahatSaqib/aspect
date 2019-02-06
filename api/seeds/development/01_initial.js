@@ -2999,7 +2999,7 @@ async function seed(knex) {
     partnerId: partnerTwoId,
   })
 
-  const featureBlacklist = ['reporter']
+  const featureBlacklist = ['reporter', 'clinicalIndicators', 'operationalData']
 
   // assign features to JobFeatures
   await assignAllFeaturesToJobFunctionIds(
