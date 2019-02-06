@@ -2999,13 +2999,19 @@ async function seed(knex) {
     partnerId: partnerTwoId,
   })
 
+  const featureBlacklist = ['reporter']
+
   // assign features to JobFeatures
-  await assignAllFeaturesToJobFunctionIds(knex, [
-    jobFunctionIdAdmin,
-    jobFunctionIdManager,
-    jobFunctionIdPartnerTwo,
-    jobFunctionIdClinician,
-  ])
+  await assignAllFeaturesToJobFunctionIds(
+    knex,
+    [
+      jobFunctionIdAdmin,
+      jobFunctionIdManager,
+      jobFunctionIdPartnerTwo,
+      jobFunctionIdClinician,
+    ],
+    featureBlacklist
+  )
 
   // assign permissions to job functions
   const modules = await getPermissionModules(knex)
