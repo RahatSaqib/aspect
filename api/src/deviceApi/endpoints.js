@@ -16,7 +16,7 @@ const {
   addDeviceLog,
   onResultUpdated,
   onResultLogged,
-  getHealthStateHandler,
+  getHealthStatsHandler,
 } = require('./service')
 
 const errorPayload = Joi.object()
@@ -632,7 +632,7 @@ const routes = [
   {
     method: 'GET',
     path: '/health-stats',
-    handler: getHealthStateHandler,
+    handler: getHealthStatsHandler,
     config: {
       notes: 'Get health stats',
       description:
@@ -655,7 +655,7 @@ const routes = [
                 Date: Joi.date()
                   .allow(null)
                   .iso()
-                  .description('Date of the first device pluged'),
+                  .description('Date of the first device connected'),
                 Total: Joi.number()
                   .allow(null)
                   .description('The numbers of devices the country had'),
@@ -676,11 +676,11 @@ const routes = [
                 Date: Joi.date()
                   .allow(null)
                   .iso()
-                  .description('Date of the "Total" devices were plugged'),
+                  .description('Date of the "Total" devices were connected'),
                 Total: Joi.number()
                   .allow(null)
                   .description(
-                    'The numbers of devices that were plugged this month'
+                    'The numbers of devices that were connected this month'
                   ),
               })
             )
@@ -700,12 +700,12 @@ const routes = [
                   .allow(null)
                   .iso()
                   .description(
-                    'Date of the "Total" test were maded in this period'
+                    'Date of the "Total" test were conducted in this period'
                   ),
                 Total: Joi.number()
                   .allow(null)
                   .description(
-                    'The numbers of devices that were plugged this month'
+                    'The numbers of devices that were connected this month'
                   ),
               })
             )

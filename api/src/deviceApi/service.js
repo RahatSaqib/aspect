@@ -1071,8 +1071,7 @@ async function getDevicesByCountry(knex) {
       knex.raw("date(date_format(d.createdOn,'%Y-%m-01')) as Date")
     )
     .count('d.id as Total')
-    .groupBy('c.abbreviation', 'c.a3', 'c.name')
-    .groupByRaw("date(date_format(d.createdOn,'%Y-%m-01'))")
+    .groupBy('c.abbreviation', 'c.a3', 'c.name', 'Date')
     .orderBy('Date', 'asc')
 }
 
@@ -1088,8 +1087,7 @@ async function getTestByCountry(knex) {
       knex.raw("date(date_format(r.createdOn,'%Y-%m-01')) as Date")
     )
     .count('r.id as Total')
-    .groupBy('c.abbreviation', 'c.a3', 'c.name')
-    .groupByRaw("date(date_format(r.createdOn,'%Y-%m-01'))")
+    .groupBy('c.abbreviation', 'c.a3', 'c.name', 'Date')
     .orderBy('Date', 'asc')
 }
 
@@ -1111,11 +1109,10 @@ async function getNotificationsByCountry(knex) {
         'sum(case when smsMessageId is not null then 1 else 0 end) as Sms '
       )
     )
-    .groupBy('c.abbreviation', 'c.a3', 'c.name')
-    .groupByRaw("date(date_format(n.createdOn,'%Y-%m-01'))")
+    .groupBy('c.abbreviation', 'c.a3', 'c.name', 'Date')
     .orderBy('Date', 'asc')
 }
-async function getCountriesHeathState(knex) {
+async function getCountriesHealthStats(knex) {
   return knex('Device as d')
     .join('Geography as g', 'd.geographyId', 'g.id')
     .join('Country as c', 'g.countryId', 'c.id')
@@ -1125,35 +1122,17 @@ async function getCountriesHeathState(knex) {
     .groupBy('c.abbreviation', 'c.a3', 'c.name')
     .orderBy('Date', 'asc')
 }
-const getHealthStateHandler = deviceApiHandler(getHealthState)
+const getHealthStatsHandler = deviceApiHandler(getHealthState)
 
 async function getHealthState(context) {
-  const countries = await getCountriesHeathState(context.knex)
+  const countries = await getCountriesHealthStats(context.knex)
   const devices = await getDevicesByCountry(context.knex)
   const tests = await getTestByCountry(context.knex)
   const notifications = await getNotificationsByCountry(context.knex)
   const result = {
-    Countries: _.map(countries, item => ({
-      Country: item.Country,
-      A2: item.A2,
-      A3: item.A3,
-      Date: item.Date,
-      Total: item.Total,
-    })),
-    Devices: _.map(devices, item => ({
-      Country: item.Country,
-      A2: item.A2,
-      A3: item.A3,
-      Date: item.Date,
-      Total: item.Total,
-    })),
-    Tests: _.map(tests, item => ({
-      Country: item.Country,
-      A2: item.A2,
-      A3: item.A3,
-      Date: item.Date,
-      Total: item.Total,
-    })),
+    Countries: countries,
+    Devices: devices,
+    Tests: tests,
     Notifications: _.map(notifications, item => ({
       Country: item.Country,
       A2: item.A2,
@@ -1179,5 +1158,5 @@ module.exports = {
   addDeviceLog,
   onResultUpdated,
   onResultLogged,
-  getHealthStateHandler,
+  getHealthStatsHandler,
 }

@@ -425,7 +425,10 @@ describe('Device API routes', () => {
           .set('Authorization', deviceAuth)
           .then(res => {
             assert.equal(res.status, 200)
-            assert.typeOf(res.body, 'Object')
+            assert.typeOf(res.body.Countries, 'Array')
+            assert.typeOf(res.body.Devices, 'Array')
+            assert.typeOf(res.body.Tests, 'Array')
+            assert.typeOf(res.body.Notifications, 'Array')
           })
       }))
   })

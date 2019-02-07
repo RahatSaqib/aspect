@@ -68,13 +68,3 @@ async function down(knex) {
     })
   })
 }
-/*
-async function up(knex) {
-  // nothing to do
-}
-async function down(knex) {
-  // nothing to do
-}
-
-
-*/
