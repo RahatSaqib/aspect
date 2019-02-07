@@ -12,8 +12,6 @@ const {
 
 const inventory = require('../inventory/service')
 
-const transact = require('../../src/db')
-
 async function mergeResult(
   knex,
   deviceId,
@@ -665,6 +663,7 @@ function getAllResultTags(country, result) {
   if (country) {
     if (country.tagRegexSampleId && country.tagRegexSampleId !== '') {
       res = getTags(country.tagRegexSampleId, result.sampleId)
+
       if (res) taggingResults = taggingResults.concat(res)
     }
 
@@ -801,4 +800,5 @@ module.exports = {
   consumeInventoryForResult,
   addResultWorkflowLogIfChanged,
   updateResultWorkflowStatus,
+  getAllResultTags,
 }

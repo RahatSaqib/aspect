@@ -425,8 +425,8 @@
           "lng": -107.30249
         }
       ],
-      "tagRegexSampleId":"(0-9)$",
-      "tagRegexPatientId":"(0-9)",
+      "tagRegexSampleId":"-([A-Z]){3}$",
+      "tagRegexPatientId":"-([0-9]){3}$",
       "tagRegexNotes":",\\s?([0-9]{3}-[0-9]{2})"
     },
     {
@@ -662,7 +662,7 @@
       ]
     }
   ],
-  "tagRegexSampleId":"([0-9])",
-  "tagRegexPatientId":"([0-9])$",
+  "tagRegexSampleId":"-([A-Z]){3}$",
+  "tagRegexPatientId":"-([A-Z]){3}$",
   "tagRegexNotes":",\\s?([0-9]{3}-[0-9]{2})"
 }

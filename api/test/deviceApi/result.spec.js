@@ -194,6 +194,13 @@ describe('Device Result API routes', () => {
           .where({ id: resultIds[0] })
           .first()
 
+        const tagsResult1 = await knex('Result as r')
+          .join('ResultTag as rt', 'r.id', 'rt.resultId')
+          .join('Tag as t', 'rt.tagid', 't.id')
+          .where({ 'r.id': resultIds[0] })
+          .select('t.*')
+
+        assert.equal(tagsResult1.length, 0)
         assert.deepEqual(JSON.parse(result1.resultData), { a: 'b' })
 
         const result1Type = await knex('ResultType as rt')
@@ -415,7 +422,7 @@ describe('Device Result API routes', () => {
               version: '99-1',
               operator: 'Bob O',
             },
-            notes: 'My Awesome notes about this Awesome result!',
+            notes: 'My Awesome notes about this Awesome result!, 123-12',
             error: {
               code: '123',
               notes: 'Oh NOZE!',
@@ -455,7 +462,13 @@ describe('Device Result API routes', () => {
         const result2 = await knex('Result as r')
           .where({ 'r.id': resultIds[1] })
           .first()
-
+        const tagsResult2 = await knex('Result as r')
+          .join('ResultTag as rt', 'r.id', 'rt.resultId')
+          .join('Tag as t', 'rt.tagid', 't.id')
+          .where({ 'r.id': result2.id })
+          .select('t.*')
+        assert.equal(tagsResult2[0].title, ', 123-12')
+        assert.equal(tagsResult2[1].title, '-333')
         assert.deepEqual(JSON.parse(result2.resultData), {
           a: 'b',
           c: 2,
@@ -516,7 +529,7 @@ describe('Device Result API routes', () => {
         assert.equal(result2.senderOperator, 'Bob O')
         assert.equal(
           result2.notes,
-          'My Awesome notes about this Awesome result!'
+          'My Awesome notes about this Awesome result!, 123-12'
         )
         assert.equal(result2.errorCode, '123')
         assert.equal(result2.errorNotes, 'Oh NOZE!')
@@ -647,13 +660,12 @@ describe('Device Result API routes', () => {
             version: '99-1',
             operator: 'Bob O',
           },
-          notes: 'My Awesome notes about this Awesome result!',
+          notes: 'My Awesome notes about this Awesome result!, 123-12',
           error: {
             code: '123',
             notes: 'Oh NOZE!',
           },
         })
-
         await server
           .get(clientSingleResultPath + resultId2)
           .set('Authorization', clientAuth)
@@ -787,7 +799,7 @@ describe('Device Result API routes', () => {
                 version: '99-1',
                 operator: 'Bob O',
               },
-              notes: 'My Awesome notes about this Awesome result!',
+              notes: 'My Awesome notes about this Awesome result!, 123-12',
               error: {
                 code: '123',
                 notes: 'Oh NOZE!',
