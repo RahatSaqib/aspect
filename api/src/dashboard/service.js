@@ -393,26 +393,6 @@ async function inventoryItemDashboard(request) {
   const siteList = await getSiteList(auth, dataConstraints)
   const inventoryItemList = await getInventoryItemList(auth, dataConstraints)
 
-  const inventorySiteSummaryList = _.sortBy(
-    _.reduce(
-      _.groupBy(inventoryItemList, 'siteId'),
-      (acc, list) => {
-        if (!_.isEmpty(list)) {
-          const minRemainingDays = _.minBy(list, 'remainingDays').remainingDays
-          const { siteId } = list[0]
-
-          acc.push({
-            siteId,
-            minRemainingDays,
-          })
-        }
-        return acc
-      },
-      []
-    ),
-    it => -1 * it.minRemainingDays
-  )
-
   const inventoryConsumableSummaryList = _.reduce(
     _.groupBy(inventoryItemList, 'consumableId'),
     (acc, list) => {
@@ -468,7 +448,6 @@ async function inventoryItemDashboard(request) {
   const result = {
     data: {
       siteList,
-      inventorySiteSummaryList,
       inventoryConsumableSummaryList,
     },
   }
