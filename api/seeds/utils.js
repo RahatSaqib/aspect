@@ -551,17 +551,19 @@ async function seedIssueEventTriggersForPartner(
 async function assignAllFeaturesToJobFunctionIds(
   knex,
   jobFunctionIds,
-  featureBlacklist = [
+  featureBlacklist = []
+) {
+  const defaultFeatureBlacklist = [
     // These are currently hardcoded to Myanmar, so skip by default
     'targetDashboard',
     'actionDashboard',
     'reportDashboard',
     'siteFilterDashboard',
   ]
-) {
   const features = _.filter(
     await allFeatureToId(),
-    (val, key) => !_.includes(featureBlacklist, key)
+    (val, key) =>
+      !_.includes([...defaultFeatureBlacklist, ...featureBlacklist], key)
   )
   await Promise.all(
     _.map(features, async featureId => {
