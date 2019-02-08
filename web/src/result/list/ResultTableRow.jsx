@@ -32,7 +32,7 @@ const ResultTableRow = ({ intl, extraColumns, result, ...restProps }) => (
     <TableCell hiddenOn="xs">{result.get('patientId')}</TableCell>
     {extraColumns.map(column => (
       // TODO: refactor, see DeviceOperationTableRow
-      <TableCell key={column.get('db')} hiddenOn="nd">
+      <TableCell key={column.get('db')} hiddenOn="md">
         {formatterByType(column.get('type'))(
           result.get(column.get('db')),
           intl

@@ -1,66 +1,30 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`NotificationTableRow module NotificationTableRow component should render correctly 1`] = `
-<ThemedTableRow
-  className="TableRow"
-  composeTheme="deeply"
-  mapThemrProps={[Function]}
+<WithStyles(DataTableRow)
+  className=""
 >
-  <ThemedTableCell
-    className="TableCell"
-    composeTheme="deeply"
-    mapThemrProps={[Function]}
-    numeric={false}
-    tagName="td"
-  >
+  <WithStyles(DataTableCell)>
     <AlertType
       alertType="mine"
     />
-  </ThemedTableCell>
-  <ThemedTableCell
-    className="TableCell"
-    composeTheme="deeply"
-    mapThemrProps={[Function]}
-    numeric={false}
-    tagName="td"
-  >
+  </WithStyles(DataTableCell)>
+  <WithStyles(DataTableCell)>
     Failed search devices
-  </ThemedTableCell>
-  <ThemedTableCell
-    className="TableCell"
-    composeTheme="deeply"
-    mapThemrProps={[Function]}
-    numeric={false}
-    tagName="td"
-  >
+  </WithStyles(DataTableCell)>
+  <WithStyles(DataTableCell)>
     now
-  </ThemedTableCell>
-  <ThemedTableCell
-    className="TableCell"
-    composeTheme="deeply"
-    mapThemrProps={[Function]}
-    numeric={false}
-    tagName="td"
+  </WithStyles(DataTableCell)>
+  <WithStyles(DataTableCell)>
+    10
+  </WithStyles(DataTableCell)>
+  <WithStyles(DataTableCell)>
+    10
+  </WithStyles(DataTableCell)>
+  <WithStyles(DataTableCell)
+    className="TableCell--errorsCount"
   >
     10
-  </ThemedTableCell>
-  <ThemedTableCell
-    className="TableCell"
-    composeTheme="deeply"
-    mapThemrProps={[Function]}
-    numeric={false}
-    tagName="td"
-  >
-    10
-  </ThemedTableCell>
-  <ThemedTableCell
-    className="TableCell TableCell--errorsCount"
-    composeTheme="deeply"
-    mapThemrProps={[Function]}
-    numeric={false}
-    tagName="td"
-  >
-    10
-  </ThemedTableCell>
-</ThemedTableRow>
+  </WithStyles(DataTableCell)>
+</WithStyles(DataTableRow)>
 `;

@@ -5,8 +5,13 @@ import TableRow from '@material-ui/core/TableRow'
 
 import styles from './DataTableRowStyle'
 
-const DataTableRow = ({ classes, className, children, ...restProps }) => (
-  <TableRow {...restProps} className={classNames(className, classes.row)}>
+const DataTableRow = ({
+  classes: classesMap,
+  className,
+  children,
+  ...restProps
+}) => (
+  <TableRow {...restProps} className={classNames(className, classesMap.row)}>
     {children}
   </TableRow>
 )

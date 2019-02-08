@@ -79,7 +79,9 @@ export const UserPreferencesForm = ({
         InputLabelProps={{ shrink: true }}
       >
         {timezones.map(item => (
-          <MenuItem value={item.id}>{item.name}</MenuItem>
+          <MenuItem key={item.id} value={item.id}>
+            {item.name}
+          </MenuItem>
         ))}
       </TextField>
 
@@ -96,7 +98,7 @@ export const UserPreferencesForm = ({
         InputLabelProps={{ shrink: true }}
       >
         {languages.map(item => (
-          <MenuItem value={item.culture}>
+          <MenuItem key={item.culture} value={item.culture}>
             <span>
               <FlagIcon
                 withRightMargin

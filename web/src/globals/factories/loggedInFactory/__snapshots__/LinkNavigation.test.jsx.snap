@@ -1,13 +1,8 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`LinkNavigation component should not see browse link when having no device feature 1`] = `
-<ThemedNavigation
-  actions={Array []}
+<nav
   className="Navigation"
-  composeTheme="deeply"
-  mapThemrProps={[Function]}
-  routes={Array []}
-  type="horizontal"
 >
   <withHandlers(pure(Link))
     href="/dashboard"
@@ -19,19 +14,13 @@ exports[`LinkNavigation component should not see browse link when having no devi
         "link": "Link__link",
       }
     }
-    title="Home"
   />
-</ThemedNavigation>
+</nav>
 `;
 
 exports[`LinkNavigation component should see browse link when having feature and permission 1`] = `
-<ThemedNavigation
-  actions={Array []}
+<nav
   className="Navigation"
-  composeTheme="deeply"
-  mapThemrProps={[Function]}
-  routes={Array []}
-  type="horizontal"
 >
   <withHandlers(pure(Link))
     href="/dashboard"
@@ -43,7 +32,6 @@ exports[`LinkNavigation component should see browse link when having feature and
         "link": "Link__link",
       }
     }
-    title="Home"
   />
   <withHandlers(pure(Link))
     href="/browse/device"
@@ -55,19 +43,13 @@ exports[`LinkNavigation component should see browse link when having feature and
         "link": "Link__link",
       }
     }
-    title="Browse"
   />
-</ThemedNavigation>
+</nav>
 `;
 
 exports[`LinkNavigation component should shallow render correctly 1`] = `
-<ThemedNavigation
-  actions={Array []}
+<nav
   className="Navigation"
-  composeTheme="deeply"
-  mapThemrProps={[Function]}
-  routes={Array []}
-  type="horizontal"
 >
   <withHandlers(pure(Link))
     href="/dashboard"
@@ -79,7 +61,6 @@ exports[`LinkNavigation component should shallow render correctly 1`] = `
         "link": "Link__link",
       }
     }
-    title="Home"
   />
-</ThemedNavigation>
+</nav>
 `;

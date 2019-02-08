@@ -3,10 +3,10 @@ import { shallow } from 'enzyme'
 import sinon from 'sinon'
 import Immutable from 'immutable'
 import _ from 'lodash'
-import Button from '@material-ui/core/Button'
 import { ResultDetail } from './ResultDetail'
 import FormGroup from '../../components/themedReactToolbox/FormGroup'
 import { ExpansionPanelHeader } from '../../components/shared/expansionPanel'
+import AspectButton from '../../components/shared/AspectButton'
 import CustomField from './CustomField'
 
 describe('Result Detail screen', () => {
@@ -96,7 +96,7 @@ describe('Result Detail screen', () => {
         const optionButtons = resultDetailsScreen
           .find(ExpansionPanelHeader)
           .filter({ label: 'Confirmed Interpretation of Result' })
-          .find(Button)
+          .find(AspectButton)
         const nullOptionButton = optionButtons
           .filter({ 'data-value': null })
           .first()
@@ -117,7 +117,7 @@ describe('Result Detail screen', () => {
           const positiveOption = resultDetailsScreen
             .find(CustomField)
             .dive()
-            .find(Button)
+            .find(AspectButton)
             .filter({ 'data-value': 'positive' })
             .first()
 
@@ -128,7 +128,7 @@ describe('Result Detail screen', () => {
           expect(saveResultFormDataValue.callCount).toBe(0)
 
           positiveOption.simulate('click', {
-            target: { dataset: { value: 'positive' } },
+            currentTarget: { dataset: { value: 'positive' } },
           })
 
           expect(saveResultFormDataValue.callCount).toBe(1)

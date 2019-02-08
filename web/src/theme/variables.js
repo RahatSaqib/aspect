@@ -10,6 +10,9 @@ const theme = createMuiTheme({
     fontWeightBlack: 900,
   },
   palette: {
+    action: {
+      hoverOpacity: 0.2,
+    },
     primary: {
       light: lightGreen[500],
       main: lightGreen[600],

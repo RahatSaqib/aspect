@@ -6,7 +6,7 @@ import TableCell from '@material-ui/core/TableCell'
 import styles from './DataTableRowStyle'
 
 const DataTableCell = ({
-  classes,
+  classes: classesMap,
   className,
   children,
   hiddenOn,
@@ -17,11 +17,11 @@ const DataTableCell = ({
   <TableCell
     className={classNames(
       className,
-      classes.cell,
-      classes[`hidden${hiddenOn}Down`],
+      classesMap.cell,
+      classesMap[`hidden${hiddenOn}Down`],
       {
-        [classes.numeric]: numeric,
-        [classes.small]: small,
+        [classesMap.numeric]: numeric,
+        [classesMap.small]: small,
       }
     )}
     {...restProps}

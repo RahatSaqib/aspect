@@ -44,7 +44,7 @@ const styles = theme => {
 }
 
 const DataTableHead = ({
-  classes,
+  classes: classesMap,
   compact,
   sortColumnKey,
   sortColumnDir,
@@ -52,7 +52,7 @@ const DataTableHead = ({
   onHeadColumnClick,
 }) => (
   <TableHead>
-    <TableRow className={classNames({ [classes.compact]: compact })}>
+    <TableRow className={classNames({ [classesMap.compact]: compact })}>
       {columns.map(
         (
           {
@@ -75,12 +75,12 @@ const DataTableHead = ({
             {...restProps}
             className={classNames(
               restProps.className,
-              classes.cell,
-              classes[`hidden${hiddenOn}Down`],
+              classesMap.cell,
+              classesMap[`hidden${hiddenOn}Down`],
               {
-                [classes.centerAlignedCell]: !!colSpan,
-                [classes.clickable]: _.isFunction(onClick) || sortable,
-                [classes.compact]: compact,
+                [classesMap.centerAlignedCell]: !!colSpan,
+                [classesMap.clickable]: _.isFunction(onClick) || sortable,
+                [classesMap.compact]: compact,
               }
             )}
           >
@@ -100,7 +100,7 @@ const DataTableHead = ({
                 }
                 IconComponent={KeyboardArrowDown}
                 classes={{
-                  icon: classes.sortIcon,
+                  icon: classesMap.sortIcon,
                 }}
               >
                 {label}

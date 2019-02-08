@@ -408,6 +408,7 @@
 .ReportsContainer__Button {
   margin: 0 20px;
   background-color: var(--aspect-color-grey-5);
+  color: #fff;
   white-space: normal;
   height: auto;
   width: 250px;

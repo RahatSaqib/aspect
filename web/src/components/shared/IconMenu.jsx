@@ -19,7 +19,7 @@ const styles = theme => ({
   },
 })
 
-const IconMenu = ({ classes: classNameValues, label, icon, children }) => {
+const IconMenu = ({ classes: classesMap, label, icon, children }) => {
   const [anchorEl, setAnchorEl] = useState(null)
   const open = Boolean(anchorEl)
 
@@ -45,11 +45,11 @@ const IconMenu = ({ classes: classNameValues, label, icon, children }) => {
         aria-label={label}
         aria-owns={open ? 'icon-menu' : undefined}
         aria-haspopup="true"
-        className={classNames(classNameValues.iconButton)}
+        className={classNames(classesMap.iconButton)}
         onClick={handleMenu}
       >
         {cloneElement(icon, {
-          className: classNames(icon.props.className, classNameValues.icon),
+          className: classNames(icon.props.className, classesMap.icon),
         })}
       </IconButton>
       <Menu
@@ -71,7 +71,7 @@ const IconMenu = ({ classes: classNameValues, label, icon, children }) => {
             return cloneElement(menuItem, {
               className: classNames(
                 menuItem.props.className,
-                classNameValues.menuItem
+                classesMap.menuItem
               ),
               onClick: handleClick(menuItem),
             })

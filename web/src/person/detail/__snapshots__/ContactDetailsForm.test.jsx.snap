@@ -9,74 +9,98 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable a
     className="Form__Content"
   >
     <section>
-      <ThemedInput
-        className=""
-        composeTheme="deeply"
+      <TextField
+        FormHelperTextProps={
+          Object {
+            "margin": "dense",
+          }
+        }
         disabled={true}
-        floating={true}
-        hint=""
+        fullWidth={true}
+        inputProps={
+          Object {
+            "maxLength": 500,
+          }
+        }
         label="Full Name"
-        mapThemrProps={[Function]}
-        maxLength={500}
-        multiline={false}
+        margin="normal"
         name="name"
         onChange={[Function]}
         required={false}
-        role="input"
+        select={false}
         type="text"
+        variant="standard"
       />
-      <ThemedInput
-        className=""
-        composeTheme="deeply"
+      <TextField
+        FormHelperTextProps={
+          Object {
+            "margin": "dense",
+          }
+        }
         disabled={true}
-        floating={true}
-        hint=""
+        fullWidth={true}
+        inputProps={
+          Object {
+            "maxLength": 255,
+          }
+        }
         label="Job Title"
-        mapThemrProps={[Function]}
-        maxLength={255}
-        multiline={false}
+        margin="normal"
         name="title"
         onChange={[Function]}
         required={false}
-        role="input"
+        select={false}
         type="text"
+        variant="standard"
       />
     </section>
     <section>
       <h1>
         Email
       </h1>
-      <ThemedInput
-        className=""
-        composeTheme="deeply"
+      <TextField
+        FormHelperTextProps={
+          Object {
+            "margin": "dense",
+          }
+        }
         disabled={true}
-        floating={true}
-        hint=""
+        fullWidth={true}
+        inputProps={
+          Object {
+            "maxLength": 500,
+          }
+        }
         label="Primary"
-        mapThemrProps={[Function]}
-        maxLength={500}
-        multiline={false}
+        margin="normal"
         name="email"
         onChange={[Function]}
         required={false}
-        role="input"
+        select={false}
         type="email"
+        variant="standard"
       />
-      <ThemedInput
-        className=""
-        composeTheme="deeply"
+      <TextField
+        FormHelperTextProps={
+          Object {
+            "margin": "dense",
+          }
+        }
         disabled={true}
-        floating={true}
-        hint=""
+        fullWidth={true}
+        inputProps={
+          Object {
+            "maxLength": 500,
+          }
+        }
         label="Alternate"
-        mapThemrProps={[Function]}
-        maxLength={500}
-        multiline={false}
+        margin="normal"
         name="email2"
         onChange={[Function]}
         required={false}
-        role="input"
+        select={false}
         type="email"
+        variant="standard"
       />
     </section>
     <section>
@@ -84,16 +108,36 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable a
         Phone
       </h1>
       <pure(withProps(withHandlers(DialCodeDropdownInput)))
+        FormHelperTextProps={
+          Object {
+            "margin": "dense",
+          }
+        }
         disabled={true}
+        inputProps={
+          Object {
+            "maxLength": 40,
+          }
+        }
         label="Telephone"
-        maxLength={40}
+        margin="normal"
         name="phone"
         onChange={[Function]}
       />
       <pure(withProps(withHandlers(DialCodeDropdownInput)))
+        FormHelperTextProps={
+          Object {
+            "margin": "dense",
+          }
+        }
         disabled={true}
+        inputProps={
+          Object {
+            "maxLength": 40,
+          }
+        }
         label="Mobile"
-        maxLength={40}
+        margin="normal"
         name="cell"
         onChange={[Function]}
       />
@@ -127,41 +171,41 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable a
           onLgaIdChange={[Function]}
         />
       </div>
-      <ThemedInput
-        className=""
-        composeTheme="deeply"
+      <TextField
+        FormHelperTextProps={
+          Object {
+            "margin": "dense",
+          }
+        }
         disabled={true}
-        floating={true}
-        hint=""
+        fullWidth={true}
+        inputProps={
+          Object {
+            "maxLength": 45,
+          }
+        }
         label="Zip Code"
-        mapThemrProps={[Function]}
-        maxLength={45}
-        multiline={false}
+        margin="normal"
         name="zip"
         onChange={[Function]}
         required={false}
-        role="input"
+        select={false}
         type="text"
+        variant="standard"
       />
     </section>
   </div>
   <div
     className="Form__ActionRow"
   >
-    <ThemedThemed
-      composeTheme="deeply"
+    <WithStyles(Button)
+      color="primary"
       disabled={true}
-      label="Save"
-      mapThemrProps={[Function]}
-      primary={true}
-      raised={true}
-      ripple={true}
-      rippleCentered={false}
-      rippleClassName=""
-      rippleMultiple={true}
-      rippleSpread={2}
       type="submit"
-    />
+      variant="contained"
+    >
+      Save
+    </WithStyles(Button)>
   </div>
 </form>
 `;
@@ -175,74 +219,98 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
     className="Form__Content"
   >
     <section>
-      <ThemedInput
-        className=""
-        composeTheme="deeply"
+      <TextField
+        FormHelperTextProps={
+          Object {
+            "margin": "dense",
+          }
+        }
         disabled={false}
-        floating={true}
-        hint=""
+        fullWidth={true}
+        inputProps={
+          Object {
+            "maxLength": 500,
+          }
+        }
         label="Full Name"
-        mapThemrProps={[Function]}
-        maxLength={500}
-        multiline={false}
+        margin="normal"
         name="name"
         onChange={[Function]}
         required={false}
-        role="input"
+        select={false}
         type="text"
+        variant="standard"
       />
-      <ThemedInput
-        className=""
-        composeTheme="deeply"
+      <TextField
+        FormHelperTextProps={
+          Object {
+            "margin": "dense",
+          }
+        }
         disabled={false}
-        floating={true}
-        hint=""
+        fullWidth={true}
+        inputProps={
+          Object {
+            "maxLength": 255,
+          }
+        }
         label="Job Title"
-        mapThemrProps={[Function]}
-        maxLength={255}
-        multiline={false}
+        margin="normal"
         name="title"
         onChange={[Function]}
         required={false}
-        role="input"
+        select={false}
         type="text"
+        variant="standard"
       />
     </section>
     <section>
       <h1>
         Email
       </h1>
-      <ThemedInput
-        className=""
-        composeTheme="deeply"
+      <TextField
+        FormHelperTextProps={
+          Object {
+            "margin": "dense",
+          }
+        }
         disabled={false}
-        floating={true}
-        hint=""
+        fullWidth={true}
+        inputProps={
+          Object {
+            "maxLength": 500,
+          }
+        }
         label="Primary"
-        mapThemrProps={[Function]}
-        maxLength={500}
-        multiline={false}
+        margin="normal"
         name="email"
         onChange={[Function]}
         required={false}
-        role="input"
+        select={false}
         type="email"
+        variant="standard"
       />
-      <ThemedInput
-        className=""
-        composeTheme="deeply"
+      <TextField
+        FormHelperTextProps={
+          Object {
+            "margin": "dense",
+          }
+        }
         disabled={false}
-        floating={true}
-        hint=""
+        fullWidth={true}
+        inputProps={
+          Object {
+            "maxLength": 500,
+          }
+        }
         label="Alternate"
-        mapThemrProps={[Function]}
-        maxLength={500}
-        multiline={false}
+        margin="normal"
         name="email2"
         onChange={[Function]}
         required={false}
-        role="input"
+        select={false}
         type="email"
+        variant="standard"
       />
     </section>
     <section>
@@ -250,16 +318,36 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
         Phone
       </h1>
       <pure(withProps(withHandlers(DialCodeDropdownInput)))
+        FormHelperTextProps={
+          Object {
+            "margin": "dense",
+          }
+        }
         disabled={false}
+        inputProps={
+          Object {
+            "maxLength": 40,
+          }
+        }
         label="Telephone"
-        maxLength={40}
+        margin="normal"
         name="phone"
         onChange={[Function]}
       />
       <pure(withProps(withHandlers(DialCodeDropdownInput)))
+        FormHelperTextProps={
+          Object {
+            "margin": "dense",
+          }
+        }
         disabled={false}
+        inputProps={
+          Object {
+            "maxLength": 40,
+          }
+        }
         label="Mobile"
-        maxLength={40}
+        margin="normal"
         name="cell"
         onChange={[Function]}
       />
@@ -293,41 +381,41 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
           onLgaIdChange={[Function]}
         />
       </div>
-      <ThemedInput
-        className=""
-        composeTheme="deeply"
+      <TextField
+        FormHelperTextProps={
+          Object {
+            "margin": "dense",
+          }
+        }
         disabled={false}
-        floating={true}
-        hint=""
+        fullWidth={true}
+        inputProps={
+          Object {
+            "maxLength": 45,
+          }
+        }
         label="Zip Code"
-        mapThemrProps={[Function]}
-        maxLength={45}
-        multiline={false}
+        margin="normal"
         name="zip"
         onChange={[Function]}
         required={false}
-        role="input"
+        select={false}
         type="text"
+        variant="standard"
       />
     </section>
   </div>
   <div
     className="Form__ActionRow"
   >
-    <ThemedThemed
-      composeTheme="deeply"
+    <WithStyles(Button)
+      color="primary"
       disabled={true}
-      label="Save"
-      mapThemrProps={[Function]}
-      primary={true}
-      raised={true}
-      ripple={true}
-      rippleCentered={false}
-      rippleClassName=""
-      rippleMultiple={true}
-      rippleSpread={2}
       type="submit"
-    />
+      variant="contained"
+    >
+      Save
+    </WithStyles(Button)>
   </div>
 </form>
 `;
@@ -341,74 +429,98 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
     className="Form__Content"
   >
     <section>
-      <ThemedInput
-        className=""
-        composeTheme="deeply"
+      <TextField
+        FormHelperTextProps={
+          Object {
+            "margin": "dense",
+          }
+        }
         disabled={false}
-        floating={true}
-        hint=""
+        fullWidth={true}
+        inputProps={
+          Object {
+            "maxLength": 500,
+          }
+        }
         label="Full Name"
-        mapThemrProps={[Function]}
-        maxLength={500}
-        multiline={false}
+        margin="normal"
         name="name"
         onChange={[Function]}
         required={false}
-        role="input"
+        select={false}
         type="text"
+        variant="standard"
       />
-      <ThemedInput
-        className=""
-        composeTheme="deeply"
+      <TextField
+        FormHelperTextProps={
+          Object {
+            "margin": "dense",
+          }
+        }
         disabled={false}
-        floating={true}
-        hint=""
+        fullWidth={true}
+        inputProps={
+          Object {
+            "maxLength": 255,
+          }
+        }
         label="Job Title"
-        mapThemrProps={[Function]}
-        maxLength={255}
-        multiline={false}
+        margin="normal"
         name="title"
         onChange={[Function]}
         required={false}
-        role="input"
+        select={false}
         type="text"
+        variant="standard"
       />
     </section>
     <section>
       <h1>
         Email
       </h1>
-      <ThemedInput
-        className=""
-        composeTheme="deeply"
+      <TextField
+        FormHelperTextProps={
+          Object {
+            "margin": "dense",
+          }
+        }
         disabled={false}
-        floating={true}
-        hint=""
+        fullWidth={true}
+        inputProps={
+          Object {
+            "maxLength": 500,
+          }
+        }
         label="Primary"
-        mapThemrProps={[Function]}
-        maxLength={500}
-        multiline={false}
+        margin="normal"
         name="email"
         onChange={[Function]}
         required={false}
-        role="input"
+        select={false}
         type="email"
+        variant="standard"
       />
-      <ThemedInput
-        className=""
-        composeTheme="deeply"
+      <TextField
+        FormHelperTextProps={
+          Object {
+            "margin": "dense",
+          }
+        }
         disabled={false}
-        floating={true}
-        hint=""
+        fullWidth={true}
+        inputProps={
+          Object {
+            "maxLength": 500,
+          }
+        }
         label="Alternate"
-        mapThemrProps={[Function]}
-        maxLength={500}
-        multiline={false}
+        margin="normal"
         name="email2"
         onChange={[Function]}
         required={false}
-        role="input"
+        select={false}
         type="email"
+        variant="standard"
       />
     </section>
     <section>
@@ -416,16 +528,36 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
         Phone
       </h1>
       <pure(withProps(withHandlers(DialCodeDropdownInput)))
+        FormHelperTextProps={
+          Object {
+            "margin": "dense",
+          }
+        }
         disabled={false}
+        inputProps={
+          Object {
+            "maxLength": 40,
+          }
+        }
         label="Telephone"
-        maxLength={40}
+        margin="normal"
         name="phone"
         onChange={[Function]}
       />
       <pure(withProps(withHandlers(DialCodeDropdownInput)))
+        FormHelperTextProps={
+          Object {
+            "margin": "dense",
+          }
+        }
         disabled={false}
+        inputProps={
+          Object {
+            "maxLength": 40,
+          }
+        }
         label="Mobile"
-        maxLength={40}
+        margin="normal"
         name="cell"
         onChange={[Function]}
       />
@@ -459,41 +591,41 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
           onLgaIdChange={[Function]}
         />
       </div>
-      <ThemedInput
-        className=""
-        composeTheme="deeply"
+      <TextField
+        FormHelperTextProps={
+          Object {
+            "margin": "dense",
+          }
+        }
         disabled={false}
-        floating={true}
-        hint=""
+        fullWidth={true}
+        inputProps={
+          Object {
+            "maxLength": 45,
+          }
+        }
         label="Zip Code"
-        mapThemrProps={[Function]}
-        maxLength={45}
-        multiline={false}
+        margin="normal"
         name="zip"
         onChange={[Function]}
         required={false}
-        role="input"
+        select={false}
         type="text"
+        variant="standard"
       />
     </section>
   </div>
   <div
     className="Form__ActionRow"
   >
-    <ThemedThemed
-      composeTheme="deeply"
+    <WithStyles(Button)
+      color="primary"
       disabled={true}
-      label="Save"
-      mapThemrProps={[Function]}
-      primary={true}
-      raised={true}
-      ripple={true}
-      rippleCentered={false}
-      rippleClassName=""
-      rippleMultiple={true}
-      rippleSpread={2}
       type="submit"
-    />
+      variant="contained"
+    >
+      Save
+    </WithStyles(Button)>
   </div>
 </form>
 `;
@@ -507,74 +639,98 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
     className="Form__Content"
   >
     <section>
-      <ThemedInput
-        className=""
-        composeTheme="deeply"
+      <TextField
+        FormHelperTextProps={
+          Object {
+            "margin": "dense",
+          }
+        }
         disabled={false}
-        floating={true}
-        hint=""
+        fullWidth={true}
+        inputProps={
+          Object {
+            "maxLength": 500,
+          }
+        }
         label="Full Name"
-        mapThemrProps={[Function]}
-        maxLength={500}
-        multiline={false}
+        margin="normal"
         name="name"
         onChange={[Function]}
         required={false}
-        role="input"
+        select={false}
         type="text"
+        variant="standard"
       />
-      <ThemedInput
-        className=""
-        composeTheme="deeply"
+      <TextField
+        FormHelperTextProps={
+          Object {
+            "margin": "dense",
+          }
+        }
         disabled={false}
-        floating={true}
-        hint=""
+        fullWidth={true}
+        inputProps={
+          Object {
+            "maxLength": 255,
+          }
+        }
         label="Job Title"
-        mapThemrProps={[Function]}
-        maxLength={255}
-        multiline={false}
+        margin="normal"
         name="title"
         onChange={[Function]}
         required={false}
-        role="input"
+        select={false}
         type="text"
+        variant="standard"
       />
     </section>
     <section>
       <h1>
         Email
       </h1>
-      <ThemedInput
-        className=""
-        composeTheme="deeply"
+      <TextField
+        FormHelperTextProps={
+          Object {
+            "margin": "dense",
+          }
+        }
         disabled={false}
-        floating={true}
-        hint=""
+        fullWidth={true}
+        inputProps={
+          Object {
+            "maxLength": 500,
+          }
+        }
         label="Primary"
-        mapThemrProps={[Function]}
-        maxLength={500}
-        multiline={false}
+        margin="normal"
         name="email"
         onChange={[Function]}
         required={false}
-        role="input"
+        select={false}
         type="email"
+        variant="standard"
       />
-      <ThemedInput
-        className=""
-        composeTheme="deeply"
+      <TextField
+        FormHelperTextProps={
+          Object {
+            "margin": "dense",
+          }
+        }
         disabled={false}
-        floating={true}
-        hint=""
+        fullWidth={true}
+        inputProps={
+          Object {
+            "maxLength": 500,
+          }
+        }
         label="Alternate"
-        mapThemrProps={[Function]}
-        maxLength={500}
-        multiline={false}
+        margin="normal"
         name="email2"
         onChange={[Function]}
         required={false}
-        role="input"
+        select={false}
         type="email"
+        variant="standard"
       />
     </section>
     <section>
@@ -582,16 +738,36 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
         Phone
       </h1>
       <pure(withProps(withHandlers(DialCodeDropdownInput)))
+        FormHelperTextProps={
+          Object {
+            "margin": "dense",
+          }
+        }
         disabled={false}
+        inputProps={
+          Object {
+            "maxLength": 40,
+          }
+        }
         label="Telephone"
-        maxLength={40}
+        margin="normal"
         name="phone"
         onChange={[Function]}
       />
       <pure(withProps(withHandlers(DialCodeDropdownInput)))
+        FormHelperTextProps={
+          Object {
+            "margin": "dense",
+          }
+        }
         disabled={false}
+        inputProps={
+          Object {
+            "maxLength": 40,
+          }
+        }
         label="Mobile"
-        maxLength={40}
+        margin="normal"
         name="cell"
         onChange={[Function]}
       />
@@ -625,41 +801,41 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
           onLgaIdChange={[Function]}
         />
       </div>
-      <ThemedInput
-        className=""
-        composeTheme="deeply"
+      <TextField
+        FormHelperTextProps={
+          Object {
+            "margin": "dense",
+          }
+        }
         disabled={false}
-        floating={true}
-        hint=""
+        fullWidth={true}
+        inputProps={
+          Object {
+            "maxLength": 45,
+          }
+        }
         label="Zip Code"
-        mapThemrProps={[Function]}
-        maxLength={45}
-        multiline={false}
+        margin="normal"
         name="zip"
         onChange={[Function]}
         required={false}
-        role="input"
+        select={false}
         type="text"
+        variant="standard"
       />
     </section>
   </div>
   <div
     className="Form__ActionRow"
   >
-    <ThemedThemed
-      composeTheme="deeply"
+    <WithStyles(Button)
+      color="primary"
       disabled={true}
-      label="Save"
-      mapThemrProps={[Function]}
-      primary={true}
-      raised={true}
-      ripple={true}
-      rippleCentered={false}
-      rippleClassName=""
-      rippleMultiple={true}
-      rippleSpread={2}
       type="submit"
-    />
+      variant="contained"
+    >
+      Save
+    </WithStyles(Button)>
   </div>
 </form>
 `;
@@ -673,74 +849,98 @@ exports[`ContactDetailsForm module ContactDetailsForm component should enable th
     className="Form__Content"
   >
     <section>
-      <ThemedInput
-        className=""
-        composeTheme="deeply"
+      <TextField
+        FormHelperTextProps={
+          Object {
+            "margin": "dense",
+          }
+        }
         disabled={false}
-        floating={true}
-        hint=""
+        fullWidth={true}
+        inputProps={
+          Object {
+            "maxLength": 500,
+          }
+        }
         label="Full Name"
-        mapThemrProps={[Function]}
-        maxLength={500}
-        multiline={false}
+        margin="normal"
         name="name"
         onChange={[Function]}
         required={false}
-        role="input"
+        select={false}
         type="text"
+        variant="standard"
       />
-      <ThemedInput
-        className=""
-        composeTheme="deeply"
+      <TextField
+        FormHelperTextProps={
+          Object {
+            "margin": "dense",
+          }
+        }
         disabled={false}
-        floating={true}
-        hint=""
+        fullWidth={true}
+        inputProps={
+          Object {
+            "maxLength": 255,
+          }
+        }
         label="Job Title"
-        mapThemrProps={[Function]}
-        maxLength={255}
-        multiline={false}
+        margin="normal"
         name="title"
         onChange={[Function]}
         required={false}
-        role="input"
+        select={false}
         type="text"
+        variant="standard"
       />
     </section>
     <section>
       <h1>
         Email
       </h1>
-      <ThemedInput
-        className=""
-        composeTheme="deeply"
+      <TextField
+        FormHelperTextProps={
+          Object {
+            "margin": "dense",
+          }
+        }
         disabled={false}
-        floating={true}
-        hint=""
+        fullWidth={true}
+        inputProps={
+          Object {
+            "maxLength": 500,
+          }
+        }
         label="Primary"
-        mapThemrProps={[Function]}
-        maxLength={500}
-        multiline={false}
+        margin="normal"
         name="email"
         onChange={[Function]}
         required={false}
-        role="input"
+        select={false}
         type="email"
+        variant="standard"
       />
-      <ThemedInput
-        className=""
-        composeTheme="deeply"
+      <TextField
+        FormHelperTextProps={
+          Object {
+            "margin": "dense",
+          }
+        }
         disabled={false}
-        floating={true}
-        hint=""
+        fullWidth={true}
+        inputProps={
+          Object {
+            "maxLength": 500,
+          }
+        }
         label="Alternate"
-        mapThemrProps={[Function]}
-        maxLength={500}
-        multiline={false}
+        margin="normal"
         name="email2"
         onChange={[Function]}
         required={false}
-        role="input"
+        select={false}
         type="email"
+        variant="standard"
       />
     </section>
     <section>
@@ -748,16 +948,36 @@ exports[`ContactDetailsForm module ContactDetailsForm component should enable th
         Phone
       </h1>
       <pure(withProps(withHandlers(DialCodeDropdownInput)))
+        FormHelperTextProps={
+          Object {
+            "margin": "dense",
+          }
+        }
         disabled={false}
+        inputProps={
+          Object {
+            "maxLength": 40,
+          }
+        }
         label="Telephone"
-        maxLength={40}
+        margin="normal"
         name="phone"
         onChange={[Function]}
       />
       <pure(withProps(withHandlers(DialCodeDropdownInput)))
+        FormHelperTextProps={
+          Object {
+            "margin": "dense",
+          }
+        }
         disabled={false}
+        inputProps={
+          Object {
+            "maxLength": 40,
+          }
+        }
         label="Mobile"
-        maxLength={40}
+        margin="normal"
         name="cell"
         onChange={[Function]}
       />
@@ -791,41 +1011,41 @@ exports[`ContactDetailsForm module ContactDetailsForm component should enable th
           onLgaIdChange={[Function]}
         />
       </div>
-      <ThemedInput
-        className=""
-        composeTheme="deeply"
+      <TextField
+        FormHelperTextProps={
+          Object {
+            "margin": "dense",
+          }
+        }
         disabled={false}
-        floating={true}
-        hint=""
+        fullWidth={true}
+        inputProps={
+          Object {
+            "maxLength": 45,
+          }
+        }
         label="Zip Code"
-        mapThemrProps={[Function]}
-        maxLength={45}
-        multiline={false}
+        margin="normal"
         name="zip"
         onChange={[Function]}
         required={false}
-        role="input"
+        select={false}
         type="text"
+        variant="standard"
       />
     </section>
   </div>
   <div
     className="Form__ActionRow"
   >
-    <ThemedThemed
-      composeTheme="deeply"
+    <WithStyles(Button)
+      color="primary"
       disabled={false}
-      label="Save"
-      mapThemrProps={[Function]}
-      primary={true}
-      raised={true}
-      ripple={true}
-      rippleCentered={false}
-      rippleClassName=""
-      rippleMultiple={true}
-      rippleSpread={2}
       type="submit"
-    />
+      variant="contained"
+    >
+      Save
+    </WithStyles(Button)>
   </div>
 </form>
 `;
@@ -839,74 +1059,98 @@ exports[`ContactDetailsForm module ContactDetailsForm component should render co
     className="Form__Content"
   >
     <section>
-      <ThemedInput
-        className=""
-        composeTheme="deeply"
+      <TextField
+        FormHelperTextProps={
+          Object {
+            "margin": "dense",
+          }
+        }
         disabled={false}
-        floating={true}
-        hint=""
+        fullWidth={true}
+        inputProps={
+          Object {
+            "maxLength": 500,
+          }
+        }
         label="Full Name"
-        mapThemrProps={[Function]}
-        maxLength={500}
-        multiline={false}
+        margin="normal"
         name="name"
         onChange={[Function]}
         required={false}
-        role="input"
+        select={false}
         type="text"
+        variant="standard"
       />
-      <ThemedInput
-        className=""
-        composeTheme="deeply"
+      <TextField
+        FormHelperTextProps={
+          Object {
+            "margin": "dense",
+          }
+        }
         disabled={false}
-        floating={true}
-        hint=""
+        fullWidth={true}
+        inputProps={
+          Object {
+            "maxLength": 255,
+          }
+        }
         label="Job Title"
-        mapThemrProps={[Function]}
-        maxLength={255}
-        multiline={false}
+        margin="normal"
         name="title"
         onChange={[Function]}
         required={false}
-        role="input"
+        select={false}
         type="text"
+        variant="standard"
       />
     </section>
     <section>
       <h1>
         Email
       </h1>
-      <ThemedInput
-        className=""
-        composeTheme="deeply"
+      <TextField
+        FormHelperTextProps={
+          Object {
+            "margin": "dense",
+          }
+        }
         disabled={false}
-        floating={true}
-        hint=""
+        fullWidth={true}
+        inputProps={
+          Object {
+            "maxLength": 500,
+          }
+        }
         label="Primary"
-        mapThemrProps={[Function]}
-        maxLength={500}
-        multiline={false}
+        margin="normal"
         name="email"
         onChange={[Function]}
         required={false}
-        role="input"
+        select={false}
         type="email"
+        variant="standard"
       />
-      <ThemedInput
-        className=""
-        composeTheme="deeply"
+      <TextField
+        FormHelperTextProps={
+          Object {
+            "margin": "dense",
+          }
+        }
         disabled={false}
-        floating={true}
-        hint=""
+        fullWidth={true}
+        inputProps={
+          Object {
+            "maxLength": 500,
+          }
+        }
         label="Alternate"
-        mapThemrProps={[Function]}
-        maxLength={500}
-        multiline={false}
+        margin="normal"
         name="email2"
         onChange={[Function]}
         required={false}
-        role="input"
+        select={false}
         type="email"
+        variant="standard"
       />
     </section>
     <section>
@@ -914,16 +1158,36 @@ exports[`ContactDetailsForm module ContactDetailsForm component should render co
         Phone
       </h1>
       <pure(withProps(withHandlers(DialCodeDropdownInput)))
+        FormHelperTextProps={
+          Object {
+            "margin": "dense",
+          }
+        }
         disabled={false}
+        inputProps={
+          Object {
+            "maxLength": 40,
+          }
+        }
         label="Telephone"
-        maxLength={40}
+        margin="normal"
         name="phone"
         onChange={[Function]}
       />
       <pure(withProps(withHandlers(DialCodeDropdownInput)))
+        FormHelperTextProps={
+          Object {
+            "margin": "dense",
+          }
+        }
         disabled={false}
+        inputProps={
+          Object {
+            "maxLength": 40,
+          }
+        }
         label="Mobile"
-        maxLength={40}
+        margin="normal"
         name="cell"
         onChange={[Function]}
       />
@@ -957,41 +1221,41 @@ exports[`ContactDetailsForm module ContactDetailsForm component should render co
           onLgaIdChange={[Function]}
         />
       </div>
-      <ThemedInput
-        className=""
-        composeTheme="deeply"
+      <TextField
+        FormHelperTextProps={
+          Object {
+            "margin": "dense",
+          }
+        }
         disabled={false}
-        floating={true}
-        hint=""
+        fullWidth={true}
+        inputProps={
+          Object {
+            "maxLength": 45,
+          }
+        }
         label="Zip Code"
-        mapThemrProps={[Function]}
-        maxLength={45}
-        multiline={false}
+        margin="normal"
         name="zip"
         onChange={[Function]}
         required={false}
-        role="input"
+        select={false}
         type="text"
+        variant="standard"
       />
     </section>
   </div>
   <div
     className="Form__ActionRow"
   >
-    <ThemedThemed
-      composeTheme="deeply"
+    <WithStyles(Button)
+      color="primary"
       disabled={true}
-      label="Save"
-      mapThemrProps={[Function]}
-      primary={true}
-      raised={true}
-      ripple={true}
-      rippleCentered={false}
-      rippleClassName=""
-      rippleMultiple={true}
-      rippleSpread={2}
       type="submit"
-    />
+      variant="contained"
+    >
+      Save
+    </WithStyles(Button)>
   </div>
 </form>
 `;
