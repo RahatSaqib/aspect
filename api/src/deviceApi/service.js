@@ -1060,6 +1060,92 @@ async function updateLogs(request) {
   })
 }
 
+async function getDevicesByCountry(knex) {
+  return knex('Device as d')
+    .join('Geography as g', 'd.geographyId', 'g.id')
+    .join('Country as c', 'g.countryId', 'c.id')
+    .select(
+      'c.abbreviation as A2',
+      'c.a3 as A3',
+      'c.name as Country',
+      knex.raw("date(date_format(d.createdOn,'%Y-%m-01')) as Date")
+    )
+    .count('d.id as Total')
+    .groupBy('c.abbreviation', 'c.a3', 'c.name', 'Date')
+    .orderBy('Date', 'asc')
+}
+
+async function getTestByCountry(knex) {
+  return knex('Device as d')
+    .join('Geography as g', 'd.geographyId', 'g.id')
+    .join('Country as c', 'g.countryId', 'c.id')
+    .leftJoin('Result as r', 'd.id', 'r.deviceId')
+    .select(
+      'c.abbreviation as A2',
+      'c.a3 as A3',
+      'c.name as Country',
+      knex.raw("date(date_format(r.createdOn,'%Y-%m-01')) as Date")
+    )
+    .count('r.id as Total')
+    .groupBy('c.abbreviation', 'c.a3', 'c.name', 'Date')
+    .orderBy('Date', 'asc')
+}
+
+async function getNotificationsByCountry(knex) {
+  return knex('Device as d')
+    .join('Geography as g', 'd.geographyId', 'g.id')
+    .join('Country as c', 'g.countryId', 'c.id')
+    .leftJoin('Issue as i', 'd.id', 'i.deviceId')
+    .leftJoin('Notification as n', 'i.id', 'n.issueId')
+    .select(
+      'c.abbreviation as a2',
+      'c.a3 as A3',
+      'c.name as Country',
+      knex.raw("date(date_format(n.createdOn,'%Y-%m-01')) as Date"),
+      knex.raw(
+        'sum(case when emailMessageId  is not null then 1 else 0 end) as Email '
+      ),
+      knex.raw(
+        'sum(case when smsMessageId is not null then 1 else 0 end) as Sms '
+      )
+    )
+    .groupBy('c.abbreviation', 'c.a3', 'c.name', 'Date')
+    .orderBy('Date', 'asc')
+}
+async function getCountriesHealthStats(knex) {
+  return knex('Device as d')
+    .join('Geography as g', 'd.geographyId', 'g.id')
+    .join('Country as c', 'g.countryId', 'c.id')
+    .select('c.abbreviation as a2', 'c.a3 as A3', 'c.name as Country')
+    .min('d.createdOn as Date')
+    .count('d.id as Total')
+    .groupBy('c.abbreviation', 'c.a3', 'c.name')
+    .orderBy('Date', 'asc')
+}
+const getHealthStatsHandler = deviceApiHandler(getHealthState)
+
+async function getHealthState(context) {
+  const countries = await getCountriesHealthStats(context.knex)
+  const devices = await getDevicesByCountry(context.knex)
+  const tests = await getTestByCountry(context.knex)
+  const notifications = await getNotificationsByCountry(context.knex)
+  const result = {
+    Countries: countries,
+    Devices: devices,
+    Tests: tests,
+    Notifications: _.map(notifications, item => ({
+      Country: item.Country,
+      A2: item.A2,
+      A3: item.A3,
+      Date: item.Date,
+      Sms: item.Sms,
+      Email: item.Email,
+      Total: item.Sms + item.Email,
+    })),
+  }
+  return result
+}
+
 module.exports = {
   getDeviceDataHandler,
   getDeviceOperationHandler,
@@ -1072,4 +1158,5 @@ module.exports = {
   addDeviceLog,
   onResultUpdated,
   onResultLogged,
+  getHealthStatsHandler,
 }

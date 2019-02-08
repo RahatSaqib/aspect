@@ -1396,6 +1396,8 @@ describe('Device API routes for GxConnect Devices', () => {
             siteId: site.id,
             expiresOn: expiryDate,
             quantityOnHand: initialQuantityOnHand,
+            createdOn: subDays(now, 4),
+            updatedOn: subDays(now, 4),
           })
 
           const testStartedOn = setMilliseconds(subDays(context.now, 3), 0)
@@ -1485,6 +1487,8 @@ describe('Device API routes for GxConnect Devices', () => {
               siteId: site.id,
               expiresOn: expiryDate,
               quantityOnHand: initialQuantityOnHand,
+              createdOn: subDays(now, 4),
+              updatedOn: subDays(now, 4),
             })
 
             const inventoryItemBeforeFirstRequest = await knex('InventoryItem')
