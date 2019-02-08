@@ -149,38 +149,6 @@ export const DeviceStatus = ({
         <SummaryItemsBlock
           data-device-ids={JSON.stringify(
             deviceSummaryMap
-              .getIn(['warrantyExpiring', 'deviceIds'], EMPTY_LIST)
-              .map(_.toString)
-          )}
-          onClick={onSummaryItemClick}
-          onMouseEnter={onMouseEnter}
-          onMouseLeave={onMouseLeave}
-          intl={intl}
-          title={intl.formatMessage(messages.summaryWarrantyExpiringTitle)}
-          items={deviceSummaryMap
-            .getIn(['warrantyExpiring', 'items'], EMPTY_LIST)
-            .toJS()}
-        />
-        <SummaryItemsBlock
-          data-device-ids={JSON.stringify(
-            deviceSummaryMap
-              .getIn(['calibration', 'deviceIds'], EMPTY_LIST)
-              .map(_.toString)
-          )}
-          onClick={onSummaryItemClick}
-          onMouseEnter={onMouseEnter}
-          onMouseLeave={onMouseLeave}
-          intl={intl}
-          title={intl.formatMessage(messages.summaryCalibrationTitle)}
-          items={deviceSummaryMap
-            .getIn(['calibration', 'items'], EMPTY_LIST)
-            .toJS()}
-        />
-      </Unit>
-      <Unit sm="1-2" lg="1-4">
-        <SummaryItemsBlock
-          data-device-ids={JSON.stringify(
-            deviceSummaryMap
               .getIn(['uploadingData', 'deviceIds'], EMPTY_LIST)
               .map(_.toString)
           )}

@@ -503,15 +503,67 @@ async function getDeviceList(auth, dataConstraints) {
   }
 
   const deviceList = await knex('Device as d')
-    .innerJoin('FactDeviceFlag as fdf', 'd.id', 'fdf.deviceId')
     .innerJoin('Site as s', 's.id', 'd.siteId')
     .innerJoin('Partner as p', 'd.partnerId', 'p.id')
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
-    .select('d.id', 'd.siteId', 'fdf.*')
+    // getting latest issue of each type (notice 'i2.id is null' in WHERE clause)
+    .leftOuterJoin('Issue as i1', 'd.id', 'i1.deviceId')
+    .leftOuterJoin('Issue as i2', function() {
+      this.on('i1.deviceId', '=', 'i2.deviceId')
+        .andOn('i1.issueTypeId', '=', 'i2.issueTypeId')
+        .andOn('i1.level', '<', 'i2.level')
+        .andOn('i1.id', '<', 'i2.id')
+    })
+    .innerJoin('IssueType as it', 'i1.issueTypeId', 'it.id')
+    .innerJoin('IssueStatus as ist', 'i1.issueStatusId', 'ist.id')
+    .whereNull('i2.id')
+    .select(
+      'd.id',
+      'd.siteId',
+      'it.externalId as issueType',
+      'i1.level as issueLevel',
+      'ist.externalId as issueStatus'
+    )
     .modify(addConstraints, dataConstraints, {
       site: 's',
       geography: 'g',
     })
+    // reduce whole list of device/issueType to distinct list of devices
+    .reduce((memo, row) => {
+      const { id, siteId, issueType, issueStatus } = row
+      let device = memo.find(x => x.id === id)
+      if (!device) {
+        device = {
+          id,
+          siteId,
+          // Fully Operational = Devices that don't have any issues or all are OK/Resolved
+          fullyOperational: true,
+          // Not Reporting = Devices that have issue "Device No Results"
+          offline: false,
+          // High Failure rates = Devices that have any of the Machine/Module/Reagent/Unknown error
+          errorRate: false,
+        }
+        memo.push(device)
+      }
+      const hasIssue = !['OK', 'Resolved'].includes(issueStatus)
+      if (hasIssue) {
+        device.fullyOperational = false
+
+        if (issueType === 'DeviceNoResults') {
+          device.offline = true
+        }
+
+        if (
+          issueType.indexOf('Machine') === 0 ||
+          issueType.indexOf('Module') === 0 ||
+          issueType.indexOf('Reagent') === 0
+        ) {
+          device.errorRate = true
+        }
+      }
+      return memo
+    }, [])
+
   return deviceList
 }
 
@@ -532,18 +584,7 @@ async function deviceDashboard(request) {
     it.longitude = site.longitude
   })
 
-  const operationalDeviceList = _.filter(deviceList, {
-    offline: 0,
-    service: 0,
-    calibration: 0,
-    errorRate: 0,
-    qcProblem: 0,
-    lowInventory: 0,
-    outOfInventory: 0,
-    expiringInventory: 0,
-  })
-  const warrantyExpiringDeviceList = _.filter(deviceList, 'expiringWarranty')
-  const calibrationDueDeviceList = _.filter(deviceList, 'calibration')
+  const operationalDeviceList = _.filter(deviceList, 'fullyOperational')
   const offlineDeviceList = _.filter(deviceList, 'offline')
   const highErrorRateDeviceList = _.filter(deviceList, 'errorRate')
 
@@ -557,28 +598,6 @@ async function deviceDashboard(request) {
           total: deviceList.length,
           titleI18nKey: i18nKeys.ofTotalDevicesTitle,
           subI18nKey: i18nKeys.fullyOperationalStatus,
-        },
-      ],
-    },
-    warrantyExpiring: {
-      deviceIds: _.map(warrantyExpiringDeviceList, 'id'),
-      items: [
-        {
-          key: 0,
-          count: warrantyExpiringDeviceList.length,
-          titleI18nKey: i18nKeys.devicesTitle,
-          subI18nKey: i18nKeys.warrantyExpiringStatus,
-        },
-      ],
-    },
-    calibration: {
-      deviceIds: _.map(calibrationDueDeviceList, 'id'),
-      items: [
-        {
-          key: 0,
-          count: calibrationDueDeviceList.length,
-          titleI18nKey: i18nKeys.devicesTitle,
-          subI18nKey: i18nKeys.needCalibrationStatus,
         },
       ],
     },
