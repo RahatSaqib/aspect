@@ -3,10 +3,7 @@ import classnames from 'classnames/bind'
 import React from 'react'
 import FaCircle from 'react-icons/lib/fa/circle'
 import { formatDateTime } from '../../../shared/utils/dateFormat'
-import {
-  DataTableRow as TableRow,
-  DataTableCell as TableCell,
-} from '../../../components/shared/tableBody'
+import { TableRow, TableCell } from '../../../components/shared/tableBody'
 
 const cssClasses = classnames.bind(require('./NotificationHistoryTableRow.css'))
 

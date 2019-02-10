@@ -3,10 +3,7 @@ import classnames from 'classnames/bind'
 import React from 'react'
 import AlertType from '../../components/shared/AlertType'
 
-import {
-  DataTableRow as TableRow,
-  DataTableCell as TableCell,
-} from '../../components/shared/tableBody'
+import { TableRow, TableCell } from '../../components/shared/tableBody'
 
 const cssClasses = classnames.bind(require('./NotificationTableRow.css'))
 

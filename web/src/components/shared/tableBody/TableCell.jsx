@@ -1,11 +1,11 @@
 import classNames from 'classnames'
 import React from 'react'
 import { withStyles } from '@material-ui/core/styles'
-import TableCell from '@material-ui/core/TableCell'
+import MUITableCell from '@material-ui/core/TableCell'
 
-import styles from './DataTableRowStyle'
+import styles from './TableRowStyle'
 
-const DataTableCell = ({
+const TableCell = ({
   classes: classesMap,
   className,
   children,
@@ -14,7 +14,7 @@ const DataTableCell = ({
   small,
   ...restProps
 }) => (
-  <TableCell
+  <MUITableCell
     className={classNames(
       className,
       classesMap.cell,
@@ -27,7 +27,7 @@ const DataTableCell = ({
     {...restProps}
   >
     {children}
-  </TableCell>
+  </MUITableCell>
 )
 
-export default withStyles(styles)(DataTableCell)
+export default withStyles(styles)(TableCell)

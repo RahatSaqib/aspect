@@ -3,10 +3,7 @@ import classnames from 'classnames/bind'
 import React from 'react'
 import { formatDistanceStrict } from 'date-fns'
 
-import {
-  DataTableRow as TableRow,
-  DataTableCell as TableCell,
-} from '../../components/shared/tableBody'
+import { TableRow, TableCell } from '../../components/shared/tableBody'
 import ColoredButton from '../../components/themedReactToolbox/ColoredButton'
 import messages from './messages'
 
