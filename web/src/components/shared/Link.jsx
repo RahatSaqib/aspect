@@ -34,6 +34,7 @@ const Link = ({
     className={classNames(theme.link, {
       [theme.active]: new RegExp(`^${restProps.href}`).test(location.pathname),
     })}
+    title={label}
   >
     <abbr>{label}</abbr>
   </MUILink>
