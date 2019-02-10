@@ -38,6 +38,7 @@ const themedColors = {
   secondary: customPropertiesVariables['--aspect-button-accent-color'],
   buttonBorderRadius:
     customPropertiesVariables['--aspect-button-border-radius'],
+  inputColor: customPropertiesVariables['--aspect-text-input-color'],
 }
 
 export default {

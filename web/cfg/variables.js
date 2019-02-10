@@ -32,6 +32,8 @@ exports.customPropertiesVariables = {
 
   '--aspect-button-accent-color': '#084482',
 
+  '--aspect-text-input-color': '#3f51b5',
+
   // Font Size
   '--aspect-font-size-sm': '14px',
   '--aspect-font-size-md': '16px',
