@@ -1,30 +1,30 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`NotificationTableRow module NotificationTableRow component should render correctly 1`] = `
-<WithStyles(DataTableRow)
+<WithStyles(TableRow)
   className=""
 >
-  <WithStyles(DataTableCell)>
+  <WithStyles(TableCell)>
     <AlertType
       alertType="mine"
     />
-  </WithStyles(DataTableCell)>
-  <WithStyles(DataTableCell)>
+  </WithStyles(TableCell)>
+  <WithStyles(TableCell)>
     Failed search devices
-  </WithStyles(DataTableCell)>
-  <WithStyles(DataTableCell)>
+  </WithStyles(TableCell)>
+  <WithStyles(TableCell)>
     now
-  </WithStyles(DataTableCell)>
-  <WithStyles(DataTableCell)>
+  </WithStyles(TableCell)>
+  <WithStyles(TableCell)>
     10
-  </WithStyles(DataTableCell)>
-  <WithStyles(DataTableCell)>
+  </WithStyles(TableCell)>
+  <WithStyles(TableCell)>
     10
-  </WithStyles(DataTableCell)>
-  <WithStyles(DataTableCell)
+  </WithStyles(TableCell)>
+  <WithStyles(TableCell)
     className="TableCell--errorsCount"
   >
     10
-  </WithStyles(DataTableCell)>
-</WithStyles(DataTableRow)>
+  </WithStyles(TableCell)>
+</WithStyles(TableRow)>
 `;

@@ -1,4 +1,5 @@
-const _ = require('lodash')
+const transform = require('lodash/transform')
+const set = require('lodash/set')
 
 exports.customPropertiesVariables = {
   '--aspect-color-cyan': '#3cc0cd',
@@ -42,10 +43,10 @@ exports.customPropertiesVariables = {
   '--aspect-button-border-radius': '3px',
 }
 
-exports.definePluginVariables = _.transform(
+exports.definePluginVariables = transform(
   exports.customPropertiesVariables,
   (result, value, key) =>
     // Transform key into the form like: process.env['--aspect-color-cyan']
-    _.set(result, `process.env['${key}']`, JSON.stringify(value)),
+    set(result, `process.env['${key}']`, JSON.stringify(value)),
   {}
 )

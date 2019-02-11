@@ -1,20 +1,20 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`PersonTableRow component should shallow render correctly 1`] = `
-<WithStyles(DataTableRow)
+<WithStyles(TableRow)
   className=""
 >
-  <WithStyles(DataTableCell)>
+  <WithStyles(TableCell)>
     Admin
-  </WithStyles(DataTableCell)>
-  <WithStyles(DataTableCell)>
+  </WithStyles(TableCell)>
+  <WithStyles(TableCell)>
     Admin
-  </WithStyles(DataTableCell)>
-  <WithStyles(DataTableCell)>
+  </WithStyles(TableCell)>
+  <WithStyles(TableCell)>
     Lagos
-  </WithStyles(DataTableCell)>
-  <WithStyles(DataTableCell)>
+  </WithStyles(TableCell)>
+  <WithStyles(TableCell)>
     Apapa
-  </WithStyles(DataTableCell)>
-</WithStyles(DataTableRow)>
+  </WithStyles(TableCell)>
+</WithStyles(TableRow)>
 `;
