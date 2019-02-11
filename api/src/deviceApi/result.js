@@ -603,35 +603,35 @@ async function resolveAutoTagging(knex, result) {
     taggingResults,
     tag => !includesIgnoreCase(existingTags, tag)
   )
-
+  console.log(tagsToBeAdded)
   let tagsToBeUpdated = _.filter(existingTags, tag =>
     includesIgnoreCaseByResultId(taggingResults, tag, result.id)
   )
+  console.log(tagsToBeUpdated)
+
   tagsToBeAdded = _.uniqBy(tagsToBeAdded)
   tagsToBeUpdated = _.uniqBy(tagsToBeUpdated)
 
-  _.map(tagsToBeAdded, async tag => {
-    await knex('Tag')
-      .returning('id')
-      .insert({
-        title: tag,
-        partnerId: result.partnerId,
-      })
-      .then(resultIds =>
-        resultIds.forEach(async element => {
-          await knex('ResultTag').insert({
-            tagId: element,
-            resultId: result.id,
-          })
-        })
-      )
-  })
-  _.map(tagsToBeUpdated, async elem => {
-    await knex('ResultTag').insert({
+  const insertedValues = _.map(tagsToBeAdded, tags => ({
+    title: tags,
+    partnerId: result.partnerId,
+  }))
+  console.log(insertedValues)
+
+  const tagIds = await knex('Tag')
+    .returning('id')
+    .insert(insertedValues)
+  console.log(tagIds)
+  await knex('ResultTag').insert(
+    _.map(tagIds, tagId => ({ tagId, resultId: result.id }))
+  )
+
+  await knex('ResultTag').insert(
+    _.map(tagsToBeUpdated, async elem => ({
       tagId: elem.id,
       resultId: result.id,
-    })
-  })
+    }))
+  )
 }
 
 function includesIgnoreCase(collection, value) {
