@@ -87,7 +87,7 @@ const getSuggestions = (suggestions, selectedItem, value = '') => {
 }
 
 const TagInput = ({
-  classes: classesMap,
+  classes: classNameValues,
   disabled,
   fullWidth,
   maxTags,
@@ -172,7 +172,7 @@ const TagInput = ({
         selectedItem,
         highlightedIndex,
       }) => (
-        <div className={classesMap.container}>
+        <div className={classNameValues.container}>
           <Grid container spacing={4} alignItems="stretch">
             {selectedItem.length > 0 && (
               <Grid item>
@@ -181,14 +181,16 @@ const TagInput = ({
                     key={item}
                     tabIndex={-1}
                     label={item}
-                    deleteIcon={<ClearIcon className={classesMap.deleteIcon} />}
-                    className={classesMap.chip}
+                    deleteIcon={
+                      <ClearIcon className={classNameValues.deleteIcon} />
+                    }
+                    className={classNameValues.chip}
                     onDelete={handleDelete(item)}
                   />
                 ))}
               </Grid>
             )}
-            <Grid item className={classesMap.inputContainer}>
+            <Grid item className={classNameValues.inputContainer}>
               <RootRef rootRef={popperNode}>
                 <Input
                   fullWidth={fullWidth}
@@ -203,13 +205,13 @@ const TagInput = ({
           <Popper
             open={isOpen}
             anchorEl={popperNode.current}
-            className={classesMap.popper}
+            className={classNameValues.popper}
             transition
             popperOptions={{ placement: 'bottom-start' }}
             {...(isOpen ? getMenuProps({}, { suppressRefError: true }) : {})}
           >
             {isOpen ? (
-              <Paper className={classesMap.paper} square>
+              <Paper className={classNameValues.paper} square>
                 {getSuggestions(source, selectedItem, inputValue).map(
                   (suggestion, index) =>
                     renderSuggestion({

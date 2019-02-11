@@ -82,6 +82,7 @@ export class AccountDetails extends PureComponent {
     fetchAccountDetails()
   }
 
+  // FIXME: `incorrectCurrentPasswordEntered` is not a valid field in the `loginDetails`
   componentWillReceiveProps(newProps) {
     if (
       newProps.accountDetails &&
@@ -117,7 +118,7 @@ export class AccountDetails extends PureComponent {
       zip: values.zip,
     })
 
-  handleSaveLoginDetails = values => {
+  handleSaveLoginDetails = values =>
     this.props.saveLoginDetails(values).then(
       () => {
         this.closeCurrentPasswordInputDialog()
@@ -132,7 +133,6 @@ export class AccountDetails extends PureComponent {
         }
       }
     )
-  }
 
   handleSaveUserPreferences = values =>
     this.props.saveUserPreferences({

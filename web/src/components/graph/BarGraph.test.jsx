@@ -1,10 +1,9 @@
 import React from 'react'
-import ReactShallowRenderer from 'react-test-renderer/shallow'
+import { shallow } from 'enzyme'
 
 import BarGraph from './BarGraph'
 
 describe('BarGraph component', () => {
-  const renderer = new ReactShallowRenderer()
   const props = {
     data: [
       {
@@ -29,9 +28,7 @@ describe('BarGraph component', () => {
     numLabelSize: 30,
   }
 
-  it('should shallow render correctly', () => {
-    const element = renderer.render(<BarGraph {...props} />)
-
-    expect(element).toMatchSnapshot()
+  it('should shallow render without crash', () => {
+    shallow(<BarGraph {...props} />)
   })
 })

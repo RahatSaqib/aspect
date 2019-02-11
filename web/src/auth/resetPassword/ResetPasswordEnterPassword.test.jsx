@@ -1,7 +1,9 @@
 import _ from 'lodash'
 import React from 'react'
-import ReactShallowRenderer from 'react-test-renderer/shallow'
+import { shallow } from 'enzyme'
 import { IntlProvider } from 'react-intl'
+import Button from '@material-ui/core/Button'
+import messages from './messages'
 
 describe('ResetPasswordEnterPassword module', () => {
   const {
@@ -10,7 +12,6 @@ describe('ResetPasswordEnterPassword module', () => {
   } = require('./ResetPasswordEnterPassword')
   const intlProvider = new IntlProvider({ locale: 'en' }, {})
   const { intl } = intlProvider.getChildContext()
-  const renderer = ReactShallowRenderer.createRenderer()
   const props = {
     intl,
     values: { newPassword: '' },
@@ -24,79 +25,143 @@ describe('ResetPasswordEnterPassword module', () => {
   }
 
   describe('ResetPasswordEnterPassword component', () => {
-    it('should render correctly', () => {
-      const element = renderer.render(
-        <ResetPasswordEnterPassword {...props} form={{}} />
-      )
-      expect(element).toMatchSnapshot()
+    it('should render without crash', () => {
+      shallow(<ResetPasswordEnterPassword {...props} form={{}} />)
     })
 
     it('should disable the submit button when the form is pristine, invalid or submitting', () => {
-      let element = renderer.render(
+      let wrapper = shallow(
         <ResetPasswordEnterPassword
           {...props}
           form={{ pristine: true, valid: false, submitting: false }}
         />
       )
-      expect(element).toMatchSnapshot()
+      expect(
+        wrapper
+          .find(Button)
+          .filter({ type: 'submit' })
+          .prop('disabled')
+      ).toBeTruthy()
 
-      element = renderer.render(
+      wrapper = shallow(
         <ResetPasswordEnterPassword
           {...props}
           form={{ pristine: false, valid: false, submitting: false }}
         />
       )
-      expect(element).toMatchSnapshot()
+      expect(
+        wrapper
+          .find(Button)
+          .filter({ type: 'submit' })
+          .prop('disabled')
+      ).toBeTruthy()
 
-      element = renderer.render(
+      wrapper = shallow(
         <ResetPasswordEnterPassword
           {...props}
           form={{ pristine: false, valid: true, submitting: true }}
         />
       )
-      expect(element).toMatchSnapshot()
+      expect(
+        wrapper
+          .find(Button)
+          .filter({ type: 'submit' })
+          .prop('disabled')
+      ).toBeTruthy()
     })
 
     it('should enable the submit button when the form is dirty, valid and not submitting', () => {
-      const element = renderer.render(
+      const wrapper = shallow(
         <ResetPasswordEnterPassword
           {...props}
           form={{ pristine: false, valid: true, submitting: false }}
         />
       )
-      expect(element).toMatchSnapshot()
+
+      expect(
+        wrapper
+          .find(Button)
+          .filter({ type: 'submit' })
+          .prop('disabled')
+      ).toBeFalsy()
     })
   })
 
   describe('validate function', () => {
-    it('should validate required email address', () => {
-      expect(
-        validate({ newPassword: '', confirmNewPassword: '' }, props)
-      ).toMatchSnapshot()
+    const newPasswordTooShort = intl.formatMessage(messages.newPasswordTooShort)
+    const newPasswordMustContainANumberOrSpecialCharacter = intl.formatMessage(
+      messages.newPasswordMustContainANumberOrSpecialCharacter
+    )
+    const passwordsDoNotMatch = intl.formatMessage(messages.passwordsDoNotMatch)
+    const newPasswordRequired = intl.formatMessage(messages.newPasswordRequired)
+
+    it('should contain  a`newPasswordRequired` message with an empty password', () => {
+      expect(validate({ newPassword: '' }, props).newPassword).toEqual(
+        newPasswordRequired
+      )
     })
 
-    it('should validate that the email address is valid', () => {
+    it('should contain a `newPasswordTooShort` message when the length of `newPassword` is less than 8', () => {
+      expect(validate({ newPassword: 'abcdefg' }, props).newPassword).toEqual(
+        newPasswordTooShort
+      )
+      expect(validate({ newPassword: ' abcdefg ' }, props).newPassword).toEqual(
+        newPasswordTooShort
+      )
       expect(
-        validate({ newPassword: 'test', confirmNewPassword: '' }, props)
-      ).toMatchSnapshot()
+        validate({ newPassword: ' abcdefg ', confirmNewPassword: '' }, props)
+          .newPassword
+      ).toEqual(newPasswordTooShort)
       expect(
-        validate({ newPassword: 'testabcd', confirmNewPassword: '' }, props)
-      ).toMatchSnapshot()
-      expect(
-        validate({ newPassword: 'testabc1', confirmNewPassword: '' }, props)
-      ).toMatchSnapshot()
+        validate({ newPassword: ' abcdefgh ', confirmNewPassword: '' }, props)
+          .newPassword
+      ).not.toEqual(newPasswordTooShort)
     })
 
-    it('should validate confirm password is equal to password', () => {
+    it('should contain at least one number or special character', () => {
       expect(
-        validate({ newPassword: 'testab1$', confirmNewPassword: '' }, props)
-      ).toMatchSnapshot()
+        validate({ newPassword: 'allcharacter', confirmNewPassword: '' }, props)
+          .newPassword
+      ).toEqual(newPasswordMustContainANumberOrSpecialCharacter)
       expect(
         validate(
-          { newPassword: 'testab1$', confirmNewPassword: 'testab1$' },
+          { newPassword: 'allcharacter1', confirmNewPassword: '' },
           props
         )
-      ).toMatchSnapshot()
+      ).not.toHaveProperty('newPassword')
+      expect(
+        validate(
+          { newPassword: 'allcharacter$', confirmNewPassword: '' },
+          props
+        )
+      ).not.toHaveProperty('newPassword')
+      expect(
+        validate(
+          { newPassword: 'allcharacter1$', confirmNewPassword: '' },
+          props
+        )
+      ).not.toHaveProperty('newPassword')
+    })
+
+    it('should only pass the password when the `newPassword` and `confirmNewPassword` are equal', () => {
+      expect(
+        validate(
+          {
+            newPassword: 'a-valid-pa$$word',
+            confirmNewPassword: 'valid-but-not-$ame',
+          },
+          props
+        ).confirmNewPassword
+      ).toEqual(passwordsDoNotMatch)
+      expect(
+        validate(
+          {
+            newPassword: 'a-valid-pa$$word',
+            confirmNewPassword: 'a-valid-pa$$word',
+          },
+          props
+        )
+      ).toEqual({})
     })
   })
 })

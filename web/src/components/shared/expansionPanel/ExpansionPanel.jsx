@@ -20,7 +20,7 @@ const enhance = compose(
 
 export const ExpansionPanel = ({
   children,
-  classes: classesMap,
+  classes,
   className,
   CollapseProps,
   defaultExpanded,

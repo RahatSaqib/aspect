@@ -1,7 +1,7 @@
 import Immutable from 'immutable'
 import React from 'react'
 import { IntlProvider } from 'react-intl'
-import ReactTestRenderer from 'react-test-renderer'
+import { shallow } from 'enzyme'
 import DetailPanel, { DetailGroup } from './DetailPanel'
 
 describe('DetailPanel module', () => {
@@ -10,7 +10,7 @@ describe('DetailPanel module', () => {
 
   describe('DetailGroup component', () => {
     it('should render correctly', () => {
-      const element = ReactTestRenderer.create(
+      shallow(
         <DetailGroup
           intl={intl}
           groupSchema={screenSchema.getIn(['groups', 'patientData'])}
@@ -18,16 +18,12 @@ describe('DetailPanel module', () => {
           data={data.get('patientData')}
         />
       )
-      expect(element).toMatchSnapshot()
     })
   })
 
   describe('DetailPanel component', () => {
-    it('should render correctly', () => {
-      const element = ReactTestRenderer.create(
-        <DetailPanel intl={intl} data={data} schema={screenSchema} />
-      )
-      expect(element).toMatchSnapshot()
+    it('should render without crash', () => {
+      shallow(<DetailPanel intl={intl} data={data} schema={screenSchema} />)
     })
   })
 })

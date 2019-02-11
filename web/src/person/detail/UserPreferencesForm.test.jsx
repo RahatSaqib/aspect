@@ -1,6 +1,8 @@
 import _ from 'lodash'
 import React from 'react'
-import ReactShallowRenderer from 'react-test-renderer/shallow'
+import { shallow } from 'enzyme'
+import TextField from '@material-ui/core/TextField'
+import Button from '@material-ui/core/Button'
 
 describe('UserPreferencesForm module', () => {
   const { UserPreferencesForm } = require('./UserPreferencesForm')
@@ -21,24 +23,19 @@ describe('UserPreferencesForm module', () => {
   }
 
   describe('UserPreferencesForm component', () => {
-    const renderer = new ReactShallowRenderer()
-
-    it('should shallow render correctly', () => {
-      const element = renderer.render(<UserPreferencesForm {...props} />)
-
-      expect(element).toMatchSnapshot()
+    it('should shallow render without crash', () => {
+      shallow(<UserPreferencesForm {...props} />)
     })
 
     it('should disable all fields when form is loading', () => {
-      const element = renderer.render(
-        <UserPreferencesForm {...props} loading />
-      )
-
-      expect(element).toMatchSnapshot()
+      const wrapper = shallow(<UserPreferencesForm {...props} loading />)
+      const results = wrapper.find(TextField)
+      expect(results).toHaveLength(2)
+      results.forEach(w => expect(w.prop('disabled')).toBe(true))
     })
 
     it('should enable the submit button when the form is dirty, valid and not submitting', () => {
-      const element = renderer.render(
+      const wrapper = shallow(
         <UserPreferencesForm
           {...props}
           form={{
@@ -48,7 +45,12 @@ describe('UserPreferencesForm module', () => {
           }}
         />
       )
-      expect(element).toMatchSnapshot()
+      expect(
+        wrapper
+          .find(Button)
+          .filter({ type: 'submit' })
+          .prop('disabled')
+      ).toBeFalsy()
     })
   })
 })

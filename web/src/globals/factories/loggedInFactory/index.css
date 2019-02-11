@@ -68,18 +68,7 @@
 .Navigation--horizontal .Link__link {
   text-align: center;
   margin: 0 15px;
-  display: inline-block;
-}
-
-.Navigation--horizontal .Link__link:after {
-  display: block;
-  content: attr(title);
-  font-weight: 700;
-  height: 1px;
-  color: transparent;
-  overflow: hidden;
-  visibility: hidden;
-  margin-bottom: -1px;
+  display: inline;
 }
 
 .IconMenu__icon:not([disabled]).IconMenu__icon:not([disabled]) {
