@@ -11,7 +11,7 @@ import { withTooltip, Tooltip } from '@vx/tooltip'
 const enhance = compose(
   withProps(
     ({
-      clientWidth: width = 225,
+      clientWidth: width = 250,
       clientHeight: height = 225,
       margin: rawMargin,
       data,
