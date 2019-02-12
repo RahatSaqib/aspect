@@ -11,6 +11,8 @@ function alias(table) {
 
 async function getConstraints(credentials, forModule = null) {
   const user = await getUser(credentials.name)
+user.partnerId = 6
+user.countryId = 2
   const constraints = {
     partner: {
       id: user.partnerId,
