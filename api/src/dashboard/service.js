@@ -351,11 +351,11 @@ async function getInventoryItemList(auth, dataConstraints) {
     .innerJoin('Geography as g', 's.geographyId', 'g.id')
     .innerJoin('Country as co', 'g.countryId', 'co.id')
     .innerJoin('Consumable as c', 'ii.consumableId', 'c.id')
-    .innerJoin('FactInventoryConsumptionRate as fcr', function() {
-      this.on('ii.consumableId', 'fcr.consumableId')
-        .andOn('ii.siteId', 'fcr.siteId')
-        .andOn('fcr.days', 1)
-    })
+    // .innerJoin('FactInventoryConsumptionRate as fcr', function() {
+    //   this.on('ii.consumableId', 'fcr.consumableId')
+    //     .andOn('ii.siteId', 'fcr.siteId')
+    //     .andOn('fcr.days', 1)
+    // })
     .modify(addConstraints, dataConstraints, {
       site: 's',
       geography: 'g',
@@ -367,19 +367,18 @@ async function getInventoryItemList(auth, dataConstraints) {
       'ii.quantityOnHand',
       'ii.siteId',
       'ii.consumableId',
-      'c.name as consumableName',
-      'fcr.rate as consumptionRate'
+      'c.name as consumableName'
     )
 
   inventoryItemList.forEach(it => {
     it.runningLow =
       it.quantityOnHand <= it.inventoryDaysThreshold * it.consumptionRate
 
-    // consider remaining days greater than threshold if consumptionRate is 0
-    it.remainingDays =
-      it.consumptionRate > 0
-        ? Math.floor(it.quantityOnHand / it.consumptionRate)
-        : it.inventoryDaysThreshold + 1
+    // // consider remaining days greater than threshold if consumptionRate is 0
+    // it.remainingDays =
+    //   it.consumptionRate > 0
+    //     ? Math.floor(it.quantityOnHand / it.consumptionRate)
+    //     : it.inventoryDaysThreshold + 1
 
     if (_.isDate(it.expiresOn)) {
       it.expiring = isAfter(
@@ -409,14 +408,16 @@ async function getConsumablesList(auth, dataConstraints) {
         .andOn('i1.level', '<', 'i2.level')
         .andOn('i1.id', '<', 'i2.id')
     })
-    .innerJoin('IssueType as it', 'i1.issueTypeId', 'it.id')
-    .innerJoin('IssueStatus as ist', 'i1.issueStatusId', 'ist.id')
-    .innerJoin('FactInventoryConsumptionRate as fcr', function() {
+    .leftOuterJoin('IssueType as it', 'i1.issueTypeId', 'it.id')
+    .leftOuterJoin('IssueStatus as ist', 'i1.issueStatusId', 'ist.id')
+    .leftOuterJoin('FactInventoryConsumptionRate as fcr', function() {
       this.on('ii.consumableId', 'fcr.consumableId')
         .andOn('ii.siteId', 'fcr.siteId')
         .andOn('fcr.days', 1)
     })
+    // 'i2.id is null' makes sure only last issue of each type is selected
     .whereNull('i2.id')
+    // .whereNotIn('ist.externalId', ['Inactive', 'OK', 'Resolved'])
     .modify(addConstraints, dataConstraints, {
       site: 's',
       geography: 'g',
@@ -459,7 +460,7 @@ async function getConsumablesList(auth, dataConstraints) {
         memo.push(item)
       }
       const { issueType, issueStatus, data } = row
-      const hasIssue = !['OK', 'Resolved'].includes(issueStatus)
+      const hasIssue = !['Inactive', 'OK', 'Resolved'].includes(issueStatus)
       const isInventoryIssue = [
         'InventoryStockout',
         'InventoryStockExpiring',
@@ -620,8 +621,9 @@ async function getDeviceList(auth, dataConstraints) {
         .andOn('i1.level', '<', 'i2.level')
         .andOn('i1.id', '<', 'i2.id')
     })
-    .innerJoin('IssueType as it', 'i1.issueTypeId', 'it.id')
-    .innerJoin('IssueStatus as ist', 'i1.issueStatusId', 'ist.id')
+    .leftOuterJoin('IssueType as it', 'i1.issueTypeId', 'it.id')
+    .leftOuterJoin('IssueStatus as ist', 'i1.issueStatusId', 'ist.id')
+    // 'i2.id is null' makes sure only last issue of each type is selected
     .whereNull('i2.id')
     .select(
       'd.id',

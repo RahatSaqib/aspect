@@ -28,6 +28,10 @@ const SELECT_LIST_FIELDS = [
   'dc.name as category',
   'dc.hasResults',
   'dc.hasConnectivity',
+  // 'it.externalId as issueType',
+  // 'i1.level as issueLevel',
+  // 'ist.externalId as issueStatus',
+  // knex.raw('GROUP_CONCAT(it.externalId) as issueTypes'),
 ]
 
 const SELECT_SHOW_FIELDS = [
@@ -70,6 +74,18 @@ async function getListDevices(query, auth) {
     .innerJoin('Site as s', 'd.siteId', 's.id')
     .leftJoin('Geography as g', 's.geographyId', 'g.id')
     .leftJoin('State as st', 'g.stateId', 'st.id')
+    // // getting latest issue of each type (notice 'i2.id is null' in WHERE clause)
+    // .leftOuterJoin('Issue as i1', 'd.id', 'i1.deviceId')
+    // .leftOuterJoin('Issue as i2', function() {
+    //   this.on('i1.deviceId', '=', 'i2.deviceId')
+    //     .andOn('i1.issueTypeId', '=', 'i2.issueTypeId')
+    //     .andOn('i1.level', '<', 'i2.level')
+    //     .andOn('i1.id', '<', 'i2.id')
+    // })
+    // .leftOuterJoin('IssueType as it', 'i1.issueTypeId', 'it.id')
+    // .leftOuterJoin('IssueStatus as ist', 'i1.issueStatusId', 'ist.id')
+    // // 'i2.id is null' makes sure only last issue of each type is selected
+    // .whereNull('i2.id')
     .where(function() {
       if (!query.deviceIds) {
         return
@@ -196,6 +212,28 @@ async function getListDevices(query, auth) {
         .where('rw.externalId', '=', 'Flagged')
         .countDistinct('r.id')
         .as('totalFlagged'),
+
+      // get csv of issue types
+      knex('Issue as i1')
+        // .leftOuterJoin('Issue as i1', 'd.id', 'i1.deviceId')
+        .leftOuterJoin('Issue as i2', function() {
+          this.on('i1.deviceId', '=', 'i2.deviceId')
+            .andOn('i1.issueTypeId', '=', 'i2.issueTypeId')
+            .andOn('i1.level', '<', 'i2.level')
+            .andOn('i1.id', '<', 'i2.id')
+        })
+        .leftOuterJoin('IssueType as it', 'i1.issueTypeId', 'it.id')
+        .leftOuterJoin('IssueStatus as ist', 'i1.issueStatusId', 'ist.id')
+        .leftOuterJoin('IssueCategory as ic', 'it.issueCategoryId', 'ic.id')
+        .whereRaw('i1.deviceId = d.id')
+        // 'i2.id is null' makes sure only last issue of each type is selected
+        .whereNull('i2.id')
+        // skip IssueStatus 'Inactive', 'OK' or 'Resolved'
+        .whereNotIn('ist.externalId', ['Inactive', 'OK', 'Resolved'])
+        // group concat pattern is 'issueType i18n key|issueCategory externalId'
+        .select(knex.raw(`GROUP_CONCAT(CONCAT(it.i18nKey,'|',ic.externalId))`))
+        // .as('i18nIssueTypes'),
+        .as('csvIssueTypesCombo'),
     ])
 
   // return result when both queries are finished
@@ -211,17 +249,11 @@ async function getListDevices(query, auth) {
       count: it.thisMonthErrors,
       total: it.thisMonth,
     }
-    it.alerts = [
-      {
-        type: 'needs-repair',
-      },
-      {
-        type: 'warranty',
-      },
-      {
-        type: 'quality-control',
-      },
-    ].filter(() => _.random(0, 10) > 7)
+    // issue type i18nKey and issue category externalId to show issue names in Issues column
+    it.alerts = it.csvIssueTypesCombo.split(',').map(combo => {
+      const [issueTypeKey, issueCategory] = combo.split('|')
+      return { issueTypeKey, issueCategory }
+    })
   })
 
   const result = { ok: true, total, length: data.length, data }

@@ -35,7 +35,7 @@ const messages = defineMessages({
   },
   defaultString: {
     id: 'pages.ResultDetail.formFields.defaultString',
-    defaultMessage: '',
+    defaultMessage: 'Default String',
   },
   patientId: {
     id: 'pages.ResultDetail.formFields.patientId',
@@ -62,7 +62,7 @@ const messages = defineMessages({
     defaultMessage: 'Time Sample Taken',
   },
   sampleType: {
-    id: 'pages.ResultDetail.formFields.hospitalNumber',
+    id: 'pages.ResultDetail.formFields.sampleType',
     defaultMessage: 'Sample Type',
   },
   studyOfSampleType: {
@@ -78,7 +78,7 @@ const messages = defineMessages({
     defaultMessage: 'Misc.',
   },
   timeInstrumentResulted: {
-    id: 'pages.ResultDetail.formFields.hospitalNumber',
+    id: 'pages.ResultDetail.formFields.timeInstrumentResulted',
     defaultMessage: 'Time Instrument Resulted',
   },
 })
