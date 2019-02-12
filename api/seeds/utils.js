@@ -455,6 +455,7 @@ async function getPermissionModules(knex) {
 
 async function seedStaticData(knex) {
   const tables = [
+    'DeviceApiRawStatus',
     'FileContentType',
     'IssueCategory',
     'IssueEventStatus',
