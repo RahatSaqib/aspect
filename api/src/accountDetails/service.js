@@ -107,4 +107,5 @@ module.exports = {
   getAccountDetailsForLoggedInUser,
   saveContactDetailsForLoggedInUser,
   saveUserPreferencesForLoggedInUser,
+  getAccountDetailsForUsername,
 }

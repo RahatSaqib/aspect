@@ -7,8 +7,6 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 
-import { Button } from 'react-toolbox/lib/button'
-
 import {
   makeSortPageSelector,
   makeSearchParamsSanitizer,
@@ -16,7 +14,6 @@ import {
 } from '../../shared/selectors/searchParams'
 import { sanitizeFiltersStringBy } from '../../filter/utils'
 // import FiltersPanel from '../../filter/popover/FiltersPanel'
-import ButtonGroup from '../../components/themedReactToolbox/ButtonGroup'
 import StyledDropdown from '../../components/themedReactToolbox/StyledDropdown'
 import BrowseEmptyList from '../../globals/components/BrowseEmptyList'
 import BrowseTablePaginator from '../../globals/components/BrowseTablePaginator'
@@ -191,11 +188,9 @@ export const TaskList = ({
   location,
   table,
   items,
-  countByAlert,
   // --- injected by recompose ---
-  alertType,
+
   topic,
-  onAlertTypeClick,
   onTopicChange,
   sortCol,
   sortDir,
@@ -206,7 +201,7 @@ export const TaskList = ({
   <div className={cssClasses('Container')}>
     <Helmet title={intl.formatMessage(messages.tasksTitle)} />
     <div className={cssClasses('FiltersGroup')}>
-      <ButtonGroup adjacent className={cssClasses('FiltersGroup__Child')}>
+      {/* <ButtonGroup adjacent className={cssClasses('FiltersGroup__Child')}>
         <Button
           primary
           raised
@@ -238,6 +233,7 @@ export const TaskList = ({
           label={`${countByAlert.get('snoozed', 0)}`}
         />
       </ButtonGroup>
+
       <ButtonGroup adjacent className={cssClasses('FiltersGroup__Child')}>
         <Button
           primary
@@ -254,6 +250,7 @@ export const TaskList = ({
           label={`${countByAlert.get('total', 0)}`}
         />
       </ButtonGroup>
+      */}
       <div
         className={cssClasses(
           'FiltersGroup__Child',

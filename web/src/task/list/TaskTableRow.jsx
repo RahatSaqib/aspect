@@ -3,7 +3,7 @@ import classnames from 'classnames/bind'
 import React from 'react'
 import { TableRow, TableCell } from 'react-toolbox/lib/table'
 import FaExclamationTriangle from 'react-icons/lib/fa/exclamation-triangle'
-import MdModeComment from 'react-icons/lib/md/mode-comment'
+// import MdModeComment from 'react-icons/lib/md/mode-comment'
 import ColoredButton from '../../components/themedReactToolbox/ColoredButton'
 import AlertType from '../../components/shared/AlertType'
 
@@ -17,17 +17,17 @@ const TaskTableRow = ({ intl, messages, task, ...restProps }) => (
     className={cssClasses(restProps.className, 'TableRow')}
   >
     <TableCell className={cssClasses('TableCell')}>
-      <AlertType alertType={task.get('alertType')} />
+      <AlertType alertType={task.get('issueStatus')} />
     </TableCell>
     <TableCell className={cssClasses('TableCell')}>
       <div className={cssClasses('Message')}>
         <ColoredButton
           className={cssClasses('ColoredButton')}
-          shipCove={task.get('topic') === 'health'}
-          shakespeare={task.get('topic') === 'device'}
-          mountain={task.get('topic') === 'consumable'}
-          brink={task.get('topic') === 'site'}
-          label={task.get('topic')}
+          shipCove={task.get('issueCategory') === 'health'}
+          shakespeare={task.get('issueCategory') === 'device'}
+          mountain={task.get('issueCategory') === 'consumable'}
+          brink={task.get('issueCategory') === 'site'}
+          label={task.get('issueCategory')}
         />
         <span className={cssClasses('Message__Subject')}>
           {task.get('title')}
@@ -35,13 +35,13 @@ const TaskTableRow = ({ intl, messages, task, ...restProps }) => (
         <span className={cssClasses('Message__Text')}>
           {task.get('message')}
         </span>
-        {task.get('alertCount') > 0 && (
+        {task.get('issueCount') > 0 && (
           <span className={cssClasses('Message__Alert')}>
             <FaExclamationTriangle
               className={cssClasses('FaExclamationTriangle')}
             />
             {intl.formatMessage(messages.alertCount, {
-              alertCount: task.get('alertCount'),
+              alertCount: task.get('issueCount'),
             })}
           </span>
         )}
@@ -53,7 +53,7 @@ const TaskTableRow = ({ intl, messages, task, ...restProps }) => (
     <TableCell className={cssClasses('TableCell')}>
       {intl.formatRelative(task.get('time'))}
     </TableCell>
-    <TableCell
+    {/*    <TableCell
       className={cssClasses('TableCell', 'TableCell--notificationCount')}
     >
       {task.get('notificationCount') > 0 && (
@@ -66,6 +66,7 @@ const TaskTableRow = ({ intl, messages, task, ...restProps }) => (
       )}
       {task.get('notificationCount') === 0 && '…'}
     </TableCell>
+      */}
   </TableRow>
 )
 
