@@ -29,7 +29,8 @@
     "test:quiet": "npm-run-all test:unit test:contract:quiet",
     "test:contract": "npm-run-all -c start:background mocha:contract stop:background",
     "test:contract:quiet": "npm-run-all -c start:background:quiet mocha:contract stop:background:quiet",
-    "test:unit": "npm-run-all lint mocha:unit:clear:coverage mocha:unit:coverage"
+    "test:unit": "npm-run-all lint mocha:unit:clear:coverage mocha:unit:coverage",
+    "test:reseed": "npm-run-all db:reseed test"
   },
   "nyc": {
     "check-coverage": true,

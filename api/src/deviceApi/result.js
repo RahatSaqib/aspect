@@ -592,23 +592,24 @@ const getTags = (regExp, field) => {
 }
 
 async function resolveAutoTagging(knex, result) {
-  const existingTags = await getExistingTagByPartner(knex, result.partnerId)
   const country = await getCountryByDeviceId(knex, result.deviceId)
 
-  let taggingResults = getAllResultTags(country, result)
-
-  taggingResults = _.uniqBy(taggingResults)
-
-  let tagsToBeAdded = _.filter(
-    taggingResults,
-    tag => !includesIgnoreCase(existingTags, tag)
+  const taggingResults = getAllResultTags(country, result)
+  const existingTags = await getExistingTagByPartner(
+    knex,
+    result.partnerId,
+    taggingResults
   )
 
-  let tagsToBeUpdated = _.filter(existingTags, tag =>
-    includesIgnoreCaseByResultId(taggingResults, tag, result.id)
+  const tagsToBeAdded = _.uniqBy(
+    _.filter(taggingResults, tag => !includesIgnoreCase(existingTags, tag))
   )
-  tagsToBeAdded = _.uniqBy(tagsToBeAdded)
-  tagsToBeUpdated = _.uniqBy(tagsToBeUpdated)
+
+  const tagsToBeUpdated = _.uniqBy(
+    _.filter(existingTags, tag =>
+      includesIgnoreCaseByResultId(taggingResults, tag, result.id)
+    )
+  )
 
   _.map(tagsToBeAdded, async tag => {
     const TagId = await knex('Tag')
@@ -677,14 +678,15 @@ function getAllResultTags(country, result) {
       if (res) taggingResults = taggingResults.concat(res)
     }
   }
-  return taggingResults
+  return _.uniqBy(taggingResults)
 }
-async function getExistingTagByPartner(knex, partnerId) {
+async function getExistingTagByPartner(knex, partnerId, taggingResults) {
   return knex('Tag as t')
     .join('ResultTag as rt', 't.id', 'rt.tagId')
     .select('t.id', 't.title', 'rt.resultId')
     .distinct('t.id', 't.title', 'rt.resultId')
     .where('t.partnerId', partnerId)
+    .whereIn('t.title', taggingResults)
 }
 
 async function addResultWorkflowLogIfChanged(
