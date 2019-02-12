@@ -539,13 +539,15 @@ async function inventoryItemDashboard(request) {
 
         const result = _.filter(
           [
-            runningLowCount > 0 && {
+            // to show <SummaryItemsBlock> only when there is issue 'Stockout' add 'runningLowCount > 0 && {...'
+            {
               key: 0,
               count: runningLowCount,
               titleI18nKey: i18nKeys.sitesTitle,
               subI18nKey: i18nKeys.runningLowStatus,
             },
-            expiringCount > 0 && {
+            // to show <SummaryItemsBlock> only when there is issue 'StockExpiring' add 'expiringCount > 0 && {...'
+            {
               key: 1,
               count: expiringCount,
               titleI18nKey: i18nKeys.sitesTitle,

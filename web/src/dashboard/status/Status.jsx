@@ -22,8 +22,7 @@ const enhance = compose(
   connect(
     state => ({
       userName: state.user.jwt.name,
-      // countryIsoAlpha2Code: state.user.culture.substring(3, 5),
-      countryIsoAlpha2Code: 'MM',
+      countryIsoAlpha2Code: state.user.culture.substring(3, 5),
     }),
     bindActionCreators.bind(null, {
       showAcknowledgement,
