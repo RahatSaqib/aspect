@@ -16,108 +16,66 @@ exports[`TaskList module TaskList component should render correctly 1`] = `
       adjacent={true}
       className="FiltersGroup__Child"
     >
-      <ThemedThemed
-        composeTheme="deeply"
+      <AspectButton
+        color="primary"
         data-alert-type="mine"
-        disabled={false}
         inverse={true}
-        label="My alerts"
-        mapThemrProps={[Function]}
-        primary={true}
-        raised={true}
-        ripple={true}
-        rippleCentered={false}
-        rippleClassName=""
-        rippleMultiple={true}
-        rippleSpread={2}
-      />
-      <ThemedThemed
+        variant="contained"
+      >
+        My alerts
+      </AspectButton>
+      <AspectButton
         className="Button--mini"
-        composeTheme="deeply"
-        disabled={false}
-        label="0"
-        mapThemrProps={[Function]}
-        primary={true}
-        raised={true}
-        ripple={true}
-        rippleCentered={false}
-        rippleClassName=""
-        rippleMultiple={true}
-        rippleSpread={2}
-      />
+        color="primary"
+        variant="contained"
+      >
+        0
+      </AspectButton>
     </ButtonGroup>
     <ButtonGroup
       adjacent={true}
       className="FiltersGroup__Child"
     >
-      <ThemedThemed
-        composeTheme="deeply"
+      <AspectButton
+        color="primary"
         data-alert-type="snoozed"
-        disabled={false}
         inverse={true}
-        label="Snoozed"
-        mapThemrProps={[Function]}
-        primary={true}
-        raised={true}
-        ripple={true}
-        rippleCentered={false}
-        rippleClassName=""
-        rippleMultiple={true}
-        rippleSpread={2}
-      />
-      <ThemedThemed
+        variant="contained"
+      >
+        Snoozed
+      </AspectButton>
+      <AspectButton
         className="Button--mini"
-        composeTheme="deeply"
-        disabled={false}
-        label="0"
-        mapThemrProps={[Function]}
-        primary={true}
-        raised={true}
-        ripple={true}
-        rippleCentered={false}
-        rippleClassName=""
-        rippleMultiple={true}
-        rippleSpread={2}
-      />
+        color="primary"
+        variant="contained"
+      >
+        0
+      </AspectButton>
     </ButtonGroup>
     <ButtonGroup
       adjacent={true}
       className="FiltersGroup__Child"
     >
-      <ThemedThemed
-        composeTheme="deeply"
+      <AspectButton
+        color="primary"
         data-alert-type="all"
-        disabled={false}
         inverse={true}
-        label="All"
-        mapThemrProps={[Function]}
-        primary={true}
-        raised={true}
-        ripple={true}
-        rippleCentered={false}
-        rippleClassName=""
-        rippleMultiple={true}
-        rippleSpread={2}
-      />
-      <ThemedThemed
+        variant="contained"
+      >
+        All
+      </AspectButton>
+      <AspectButton
         className="Button--mini"
-        composeTheme="deeply"
-        disabled={false}
-        label="0"
-        mapThemrProps={[Function]}
-        primary={true}
-        raised={true}
-        ripple={true}
-        rippleCentered={false}
-        rippleClassName=""
-        rippleMultiple={true}
-        rippleSpread={2}
-      />
+        color="primary"
+        variant="contained"
+      >
+        0
+      </AspectButton>
     </ButtonGroup>
     <div
       className="FiltersGroup__Child FiltersGroup__Child--dropdown"
     >
-      <mapProps(ThemedDropdown)
+      <WithStyles(Dropdown)
         source={
           Array [
             Object {

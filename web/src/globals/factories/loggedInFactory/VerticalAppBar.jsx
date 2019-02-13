@@ -3,8 +3,10 @@ import React from 'react'
 import { compose, withHandlers } from 'recompose'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import AppBar from 'react-toolbox/lib/app_bar'
-import MdMenuIcon from 'react-icons/lib/md/menu'
+import AppBar from '@material-ui/core/AppBar'
+import Toolbar from '@material-ui/core/Toolbar'
+import IconButton from '@material-ui/core/IconButton'
+import MenuIcon from '@material-ui/icons/Menu'
 
 import ConfluenceIcon from './ConfluenceIcon'
 import { toggleDrawer } from '../../../auth/AuthRedux'
@@ -23,21 +25,21 @@ const enhance = compose(
   )
 )
 
-const themes = {
-  AppBar: {
-    appBar: cssClasses('AppBar__appBar', 'AppBar__appBar--xs'),
-    leftIcon: cssClasses('AppBar__leftIcon'),
-  },
-}
-
 const VerticalAppBar = ({ toggleDrawer, navigateRoot }) => (
-  <AppBar
-    leftIcon={<MdMenuIcon />}
-    onLeftIconClick={toggleDrawer}
-    rightIcon={<ConfluenceIcon />}
-    onRightIconClick={navigateRoot}
-    theme={themes.AppBar}
-  />
+  <AppBar className={cssClasses('AppBar__appBar', 'AppBar__appBar--xs')}>
+    <Toolbar className={cssClasses('VerticalAppBar')}>
+      <IconButton
+        className={cssClasses('AppBar__leftIcon')}
+        aria-label="Menu"
+        onClick={toggleDrawer}
+      >
+        <MenuIcon fontSize="large" />
+      </IconButton>
+      <IconButton aria-label="Logo" onClick={navigateRoot}>
+        <ConfluenceIcon />
+      </IconButton>
+    </Toolbar>
+  </AppBar>
 )
 
 export default enhance(VerticalAppBar)

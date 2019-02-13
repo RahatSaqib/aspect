@@ -1,64 +1,26 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`ReportTableRow component should shallow render correctly 1`] = `
-<ThemedTableRow
-  className="TableRow"
-  composeTheme="deeply"
-  mapThemrProps={[Function]}
+<WithStyles(TableRow)
+  className=""
 >
-  <ThemedTableCell
-    className="TableCell"
-    composeTheme="deeply"
-    mapThemrProps={[Function]}
-    numeric={false}
-    tagName="td"
-  >
+  <WithStyles(TableCell)>
     PIH Lilongwe
-  </ThemedTableCell>
-  <ThemedTableCell
-    className="TableCell"
-    composeTheme="deeply"
-    mapThemrProps={[Function]}
-    numeric={false}
-    tagName="td"
-  >
+  </WithStyles(TableCell)>
+  <WithStyles(TableCell)>
     998533
-  </ThemedTableCell>
-  <ThemedTableCell
-    className="TableCell"
-    composeTheme="deeply"
-    mapThemrProps={[Function]}
-    numeric={false}
-    tagName="td"
-  >
+  </WithStyles(TableCell)>
+  <WithStyles(TableCell)>
     2016-03-12
-  </ThemedTableCell>
-  <ThemedTableCell
-    className="TableCell"
-    composeTheme="deeply"
-    mapThemrProps={[Function]}
-    numeric={false}
-    tagName="td"
-  >
+  </WithStyles(TableCell)>
+  <WithStyles(TableCell)>
     401
-  </ThemedTableCell>
-  <ThemedTableCell
-    className="TableCell"
-    composeTheme="deeply"
-    mapThemrProps={[Function]}
-    numeric={false}
-    tagName="td"
-  >
+  </WithStyles(TableCell)>
+  <WithStyles(TableCell)>
     2030
-  </ThemedTableCell>
-  <ThemedTableCell
-    className="TableCell"
-    composeTheme="deeply"
-    mapThemrProps={[Function]}
-    numeric={false}
-    tagName="td"
-  >
+  </WithStyles(TableCell)>
+  <WithStyles(TableCell)>
     7
-  </ThemedTableCell>
-</ThemedTableRow>
+  </WithStyles(TableCell)>
+</WithStyles(TableRow)>
 `;

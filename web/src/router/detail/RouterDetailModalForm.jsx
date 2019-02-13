@@ -125,7 +125,6 @@ export const RouterDetailModalForm = props => {
         />
         <CheckboxField
           name="Status"
-          color="primary"
           checked={values.statusToken === tokens.APPROVED}
           onChange={props.onStatusTokenChange}
           label={labels.statusToken}

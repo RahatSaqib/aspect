@@ -1,7 +1,7 @@
 import classnames from 'classnames/bind'
 import React from 'react'
 import { compose, withStateHandlers } from 'recompose'
-import { Card } from 'react-toolbox/lib/card'
+import Card from '@material-ui/core/Card'
 
 const cssClasses = classnames.bind(require('./ExpansionPanel.css'))
 
@@ -20,7 +20,7 @@ const enhance = compose(
 
 export const ExpansionPanel = ({
   children,
-  classes,
+  classes: classesMap,
   className,
   CollapseProps,
   defaultExpanded,

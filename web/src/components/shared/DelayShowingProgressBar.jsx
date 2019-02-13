@@ -1,6 +1,7 @@
 import _ from 'lodash'
 import { compose, lifecycle } from 'recompose'
-import { ProgressBar } from 'react-toolbox/lib/progress_bar'
+import CircularProgress from '@material-ui/core/CircularProgress'
+import LinearProgress from '@material-ui/core/LinearProgress'
 
 const DELAY = 500
 
@@ -63,4 +64,7 @@ const enhance = compose(
   })
 )
 
-export default enhance(ProgressBar)
+export default enhance(LinearProgress)
+
+const DelayShowingProgressCircular = enhance(CircularProgress)
+export { DelayShowingProgressCircular }

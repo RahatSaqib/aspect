@@ -40,7 +40,7 @@ const styles = () => ({
   selectControl: {
     display: 'flex',
     flexFlow: 'row nowrap',
-    margin: '16px 0 8px 0',
+    margin: '0 0 8px 0',
   },
   separator: {
     display: 'flex',
@@ -148,7 +148,7 @@ const renderSelect = ({
     key={name}
     name={name}
     onChange={handleChange(accessOptions[`set${name}`])}
-    value={accessOptions[`get${name}`](value)}
+    value={value ? accessOptions[`get${name}`](value) : ''}
   >
     <option value="" hidden>
       {name}
@@ -191,7 +191,7 @@ const DateTimeInput = ({
       className={classNames(className, classesMap.selectControl)}
       onBlur={handleBlur}
     >
-      {_.map(displayFormat, display => {
+      {_.map(displayFormat, (display, i) => {
         const { name, options } = displayOptions[display] || ''
         if (name) {
           return renderSelect({
@@ -204,7 +204,7 @@ const DateTimeInput = ({
           })
         }
         return (
-          <div className={classesMap.separator}>
+          <div key={`${display}-${i}`} className={classesMap.separator}>
             <div>{display}</div>
           </div>
         )
@@ -225,7 +225,7 @@ DateTimeInput.defaultProps = {
   className: '',
   displayFormat: 'Y/M/D',
   label: '',
-  value: '',
+  value: null,
 }
 
 export default withStyles(styles)(DateTimeInput)

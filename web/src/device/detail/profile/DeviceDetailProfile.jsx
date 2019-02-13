@@ -6,17 +6,20 @@ import { defineMessages } from 'react-intl'
 import { compose, withProps, withHandlers, lifecycle } from 'recompose'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import { Button } from 'react-toolbox/lib/button'
-import { Card } from 'react-toolbox/lib/card'
+import Button from '@material-ui/core/Button'
+import IconButton from '@material-ui/core/IconButton'
+import Card from '@material-ui/core/Card'
 import MdFileDownload from 'react-icons/lib/md/file-download'
 import Helmet from 'react-helmet'
+import TableBody from '@material-ui/core/TableBody'
+
 import {
   makeSortPageSelector,
   makeSearchParamsSanitizer,
   composeSanitizer,
 } from '../../../shared/selectors/searchParams'
 import { sanitizeFiltersStringBy } from '../../../filter/utils'
-import StyledDropdown from '../../../components/themedReactToolbox/StyledDropdown'
+import StyledDropdown from '../../../components/shared/StyledDropdown'
 import { Unit } from '../../../components/pureGrids'
 import DataTableProgressBar from '../../../components/shared/DataTableProgressBar'
 import BrowseTablePaginator from '../../../globals/components/BrowseTablePaginator'
@@ -270,7 +273,9 @@ const Results = enhanceResults(
         <header className={cssClasses('Header')}>
           <div className={cssClasses('Header__Title')}>Test history</div>
           <div className={cssClasses('Header__Actions')}>
-            <Button icon={<MdFileDownload />} onClick={onExportClick} />
+            <IconButton onClick={onExportClick}>
+              <MdFileDownload />
+            </IconButton>
           </div>
         </header>
         <div>
@@ -330,17 +335,19 @@ const Results = enhanceResults(
                   },
                 ]}
               />
-              {items.currentIdList
-                .map(id => items.byId.get(id))
-                .map(result => (
-                  <ResultDataTableRow
-                    key={result.get('id')}
-                    intl={intl}
-                    result={result}
-                    onClick={onRowClick}
-                    data-result-id={result.get('id')}
-                  />
-                ))}
+              <TableBody>
+                {items.currentIdList
+                  .map(id => items.byId.get(id))
+                  .map(result => (
+                    <ResultDataTableRow
+                      key={result.get('id')}
+                      intl={intl}
+                      result={result}
+                      onClick={onRowClick}
+                      data-result-id={result.get('id')}
+                    />
+                  ))}
+              </TableBody>
             </ResultDataTable>
           )}
           {!items.currentIdList.isEmpty() && (
@@ -396,7 +403,7 @@ export const DeviceDetailProfile = ({
             title={intl.formatMessage(messages.status)}
             description={device.get('status')}
             action={
-              <Button raised onClick={onToggleDeviceStatus}>
+              <Button variant="contained" onClick={onToggleDeviceStatus}>
                 Change
               </Button>
             }
@@ -404,7 +411,7 @@ export const DeviceDetailProfile = ({
           <Summary
             title={intl.formatMessage(messages.calibration)}
             description="TODO: Up to date"
-            action={<Button raised>Add record</Button>}
+            action={<Button variant="contained">Add record</Button>}
           />
           <Summary title={intl.formatMessage(messages.firmware)} />
           <Summary
@@ -421,12 +428,12 @@ export const DeviceDetailProfile = ({
           <Summary
             title={intl.formatMessage(messages.maintenance)}
             description="TODO: Up to date"
-            action={<Button raised>Add record</Button>}
+            action={<Button variant="contained">Add record</Button>}
           />
           <Summary
             title={intl.formatMessage(messages.warranty)}
             description="TODO: Expires in 18 months"
-            action={<Button raised>Update</Button>}
+            action={<Button variant="contained">Update</Button>}
           />
         </div>
       </Card>

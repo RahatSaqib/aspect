@@ -74,9 +74,9 @@ const enhance = compose(
   }))
 )
 
-export function SiteSelectField({ sitesSelectList, ...restProps }) {
+export function SiteSelectField({ sitesSelectList, onChange, ...restProps }) {
   return (
-    <SelectField {...restProps}>
+    <SelectField {...restProps} onChange={onChange}>
       {sitesSelectList.map(s => (
         <MenuItem key={s.value} value={s.value}>
           {s.text}

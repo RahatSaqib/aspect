@@ -2,8 +2,7 @@
 
 exports[`DetailPanel module DetailGroup component should render correctly 1`] = `
 <div
-  className="Container"
-  data-react-toolbox="card"
+  className="MuiPaper-root-2 MuiPaper-elevation1-5 MuiPaper-rounded-3 MuiCard-root-1 Container"
 >
   <div
     className="Header"
@@ -41,34 +40,49 @@ exports[`DetailPanel module DetailGroup component should render correctly 1`] = 
       </div>
     </div>
     <button
-      className="Header__Icon"
-      data-react-toolbox="button"
+      className="MuiButtonBase-root-35 MuiIconButton-root-29 Header__Icon"
       disabled={false}
+      onBlur={[Function]}
+      onContextMenu={[Function]}
+      onFocus={[Function]}
+      onKeyDown={[Function]}
+      onKeyUp={[Function]}
       onMouseDown={[Function]}
       onMouseLeave={[Function]}
       onMouseUp={[Function]}
+      onTouchEnd={[Function]}
+      onTouchMove={[Function]}
       onTouchStart={[Function]}
+      tabIndex="0"
       type="button"
     >
-      <svg
-        fill="currentColor"
-        height="1em"
-        preserveAspectRatio="xMidYMid meet"
-        style={
-          Object {
-            "color": undefined,
-            "verticalAlign": "middle",
-          }
-        }
-        viewBox="0 0 40 40"
-        width="1em"
+      <span
+        className="MuiIconButton-label-34"
       >
-        <g>
+        <svg
+          aria-hidden="true"
+          className="MuiSvgIcon-root-38"
+          focusable="false"
+          role="presentation"
+          style={
+            Object {
+              "fontSize": "20px",
+            }
+          }
+          viewBox="0 0 24 24"
+        >
           <path
-            d="m27.7 14.3l2.3 2.3-10 10-10-10 2.3-2.3 7.7 7.7z"
+            d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"
           />
-        </g>
-      </svg>
+          <path
+            d="M0 0h24v24H0z"
+            fill="none"
+          />
+        </svg>
+      </span>
+      <span
+        className="MuiTouchRipple-root-47"
+      />
     </button>
   </div>
 </div>
@@ -76,8 +90,7 @@ exports[`DetailPanel module DetailGroup component should render correctly 1`] = 
 
 exports[`DetailPanel module DetailPanel component should render correctly 1`] = `
 <div
-  className=""
-  data-react-toolbox="card"
+  className="MuiPaper-root-2 MuiPaper-elevation1-5 MuiPaper-rounded-3 MuiCard-root-1"
 >
   <div
     className="Title Title"
@@ -105,8 +118,7 @@ exports[`DetailPanel module DetailPanel component should render correctly 1`] = 
     Test Result
   </div>
   <div
-    className="Container"
-    data-react-toolbox="card"
+    className="MuiPaper-root-2 MuiPaper-elevation1-5 MuiPaper-rounded-3 MuiCard-root-1 Container"
   >
     <div
       className="Header"
@@ -144,34 +156,49 @@ exports[`DetailPanel module DetailPanel component should render correctly 1`] = 
         </div>
       </div>
       <button
-        className="Header__Icon"
-        data-react-toolbox="button"
+        className="MuiButtonBase-root-35 MuiIconButton-root-29 Header__Icon"
         disabled={false}
+        onBlur={[Function]}
+        onContextMenu={[Function]}
+        onFocus={[Function]}
+        onKeyDown={[Function]}
+        onKeyUp={[Function]}
         onMouseDown={[Function]}
         onMouseLeave={[Function]}
         onMouseUp={[Function]}
+        onTouchEnd={[Function]}
+        onTouchMove={[Function]}
         onTouchStart={[Function]}
+        tabIndex="0"
         type="button"
       >
-        <svg
-          fill="currentColor"
-          height="1em"
-          preserveAspectRatio="xMidYMid meet"
-          style={
-            Object {
-              "color": undefined,
-              "verticalAlign": "middle",
-            }
-          }
-          viewBox="0 0 40 40"
-          width="1em"
+        <span
+          className="MuiIconButton-label-34"
         >
-          <g>
+          <svg
+            aria-hidden="true"
+            className="MuiSvgIcon-root-38"
+            focusable="false"
+            role="presentation"
+            style={
+              Object {
+                "fontSize": "20px",
+              }
+            }
+            viewBox="0 0 24 24"
+          >
             <path
-              d="m27.7 14.3l2.3 2.3-10 10-10-10 2.3-2.3 7.7 7.7z"
+              d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"
             />
-          </g>
-        </svg>
+            <path
+              d="M0 0h24v24H0z"
+              fill="none"
+            />
+          </svg>
+        </span>
+        <span
+          className="MuiTouchRipple-root-47"
+        />
       </button>
     </div>
   </div>

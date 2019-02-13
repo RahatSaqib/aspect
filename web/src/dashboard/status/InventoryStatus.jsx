@@ -10,8 +10,8 @@ import {
   pure,
 } from 'recompose'
 import { connect } from 'react-redux'
-import { Card } from 'react-toolbox/lib/card'
-import { Button } from 'react-toolbox/lib/button'
+import Card from '@material-ui/core/Card'
+import Button from '@material-ui/core/Button'
 import MdAssignmentTurnedIn from 'react-icons/lib/md/assignment-turned-in'
 
 import { findKeyInTree } from '../../shared/utils/dom'
@@ -169,25 +169,29 @@ export const InventoryStatus = ({
       <Unit sm="1-2" lg="1-4">
         <div className={cssClasses('ButtonsBlock')}>
           <Button
-            className={cssClasses('Button')}
-            label={intl.formatMessage(messages.receiveConsumablesLabel)}
+            className={cssClasses('Button', 'Button--receive')}
             onClick={onInventoryClick}
-            raised
+            variant="contained"
             theme={themes.Button}
-          />
+          >
+            {intl.formatMessage(messages.receiveConsumablesLabel)}
+          </Button>
           <Button
             className={cssClasses('Button', 'Button--discard')}
-            label={intl.formatMessage(messages.discardConsumablesLabel)}
             onClick={onInventoryClick}
-            raised
+            variant="contained"
             theme={themes.Button}
-          />
+          >
+            {intl.formatMessage(messages.discardConsumablesLabel)}
+          </Button>
+
           <Button
             className={cssClasses('Button')}
-            label={intl.formatMessage(messages.manageConsumablesLabel)}
             onClick={onInventoryClick}
-            raised
-          />
+            variant="contained"
+          >
+            {intl.formatMessage(messages.manageConsumablesLabel)}
+          </Button>
         </div>
       </Unit>
     </div>

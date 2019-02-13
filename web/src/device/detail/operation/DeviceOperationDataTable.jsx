@@ -1,14 +1,10 @@
-import { themr } from 'react-css-themr'
-import { tableFactory } from 'react-toolbox/lib/table/Table'
-import { TABLE } from 'react-toolbox/lib/identifiers'
+import Table from '@material-ui/core/Table'
 
-import DataTableHead from '../../../globals/components/BrowseDataTableHead'
+import DataTableHead from '../../../components/shared/tableHead'
 import DeviceOperationTableRow from './DeviceOperationTableRow'
 
-const RawTable = tableFactory(DataTableHead, DeviceOperationTableRow)
-export const DeviceOperationDataTable = themr(TABLE)(RawTable)
-
 export {
+  Table as DeviceOperationDataTable,
   DataTableHead as DeviceOperationDataTableHead,
   DeviceOperationTableRow as DeviceOperationDataTableRow,
 }

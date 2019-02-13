@@ -3,6 +3,7 @@
 }
 
 .DataTableCard--action {
+  padding: 12px 20px;
   margin-bottom: 2px;
   display: flex;
   flex-flow: row;
@@ -14,15 +15,7 @@
 }
 
 .Checkbox {
-  margin: 9px 0;
-}
-
-.TooltipIconButton__tooltip {
-  min-width: 120px;
-}
-
-.TooltipIconButton__toggle > svg {
-  vertical-align: middle;
+  padding: 0;
 }
 
 .InventoryDataTable {

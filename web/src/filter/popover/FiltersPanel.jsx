@@ -1,12 +1,11 @@
 import classnames from 'classnames/bind'
 import { compose, withState, withHandlers } from 'recompose'
-import React from 'react'
+import React, { Fragment } from 'react'
 import ReactDOM from 'react-dom'
 import { defineMessages } from 'react-intl'
 import MdKeyboardArrowDown from 'react-icons/lib/md/keyboard-arrow-down'
-import { Overlay } from 'react-toolbox/lib/overlay'
-import { Card } from 'react-toolbox/lib/card'
-import { Button } from 'react-toolbox/lib/button'
+import Modal from '@material-ui/core/Modal'
+import Card from '@material-ui/core/Card'
 
 import FallbackUntilDone from '../../components/shared/FallbackUntilDone'
 import FocusBlurTextField from '../../components/shared/FocusBlurTextField'
@@ -21,6 +20,7 @@ import SiteAutoCompleteField from '../resource/SiteAutoCompleteField'
 import DateRangeSelector from '../date/DateRangeSelector'
 import ResultWorkflowStatusSelectField from '../resource/ResultWorkflowStatusSelectField'
 import DeviceStatusSelectField from '../resource/DeviceStatusSelectField'
+import AspectButton from '../../components/shared/AspectButton'
 
 const cssClasses = classnames.bind(require('./FiltersPanel.css'))
 
@@ -330,9 +330,9 @@ export const FiltersPanel = ({
   onDeviceStatusIdChange,
 }) => (
   <div className={cssClasses('Container', className)}>
-    <Button
+    <AspectButton
       className={cssClasses('Button')}
-      primary
+      color="primary"
       inverse
       disabled={disabled}
       onClick={onToggleShown}
@@ -358,12 +358,16 @@ export const FiltersPanel = ({
           'Button__icon--shown': isShown,
         })}
       />
-    </Button>
-    <Overlay
-      active={isShown}
-      onClick={onToggleShown}
-      onEscKeyDown={onToggleShown}
-    />
+    </AspectButton>
+
+    <Modal
+      className={cssClasses('Modal')}
+      open={isShown}
+      onClose={onToggleShown}
+    >
+      <Fragment />
+    </Modal>
+
     <div
       className={cssClasses('Popover', {
         'Popover--shown': isShown,

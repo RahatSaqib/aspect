@@ -15,112 +15,70 @@ exports[`OperationData Component should shallow render correctly 1`] = `
     <div
       className="FiltersGroup__Child"
     >
-      <ThemedThemed
+      <AspectButton
         className="Button"
-        composeTheme="deeply"
+        color="primary"
         data-assay-type="all"
-        disabled={false}
         inverse={false}
-        label="All diseases"
-        mapThemrProps={[Function]}
         onClick={[Function]}
-        primary={true}
-        raised={true}
-        ripple={true}
-        rippleCentered={false}
-        rippleClassName=""
-        rippleMultiple={true}
-        rippleSpread={2}
-      />
-      <ThemedThemed
+        variant="contained"
+      >
+        All diseases
+      </AspectButton>
+      <AspectButton
         className="Button"
-        composeTheme="deeply"
+        color="primary"
         data-assay-type="TB"
-        disabled={false}
         inverse={true}
-        label="TB"
-        mapThemrProps={[Function]}
         onClick={[Function]}
-        primary={true}
-        raised={true}
-        ripple={true}
-        rippleCentered={false}
-        rippleClassName=""
-        rippleMultiple={true}
-        rippleSpread={2}
-      />
-      <ThemedThemed
+        variant="contained"
+      >
+        TB
+      </AspectButton>
+      <AspectButton
         className="Button"
-        composeTheme="deeply"
+        color="primary"
         data-assay-type="HIV"
-        disabled={false}
         inverse={true}
-        label="HIV"
-        mapThemrProps={[Function]}
         onClick={[Function]}
-        primary={true}
-        raised={true}
-        ripple={true}
-        rippleCentered={false}
-        rippleClassName=""
-        rippleMultiple={true}
-        rippleSpread={2}
-      />
-      <ThemedThemed
+        variant="contained"
+      >
+        HIV
+      </AspectButton>
+      <AspectButton
         className="Button"
-        composeTheme="deeply"
+        color="primary"
         data-assay-type="HCV"
-        disabled={false}
         inverse={true}
-        label="HCV"
-        mapThemrProps={[Function]}
         onClick={[Function]}
-        primary={true}
-        raised={true}
-        ripple={true}
-        rippleCentered={false}
-        rippleClassName=""
-        rippleMultiple={true}
-        rippleSpread={2}
-      />
+        variant="contained"
+      >
+        HCV
+      </AspectButton>
     </div>
     <div
       className="FiltersGroup__Child"
     >
-      <ThemedThemed
+      <AspectButton
         className="Button"
-        composeTheme="deeply"
+        color="primary"
         data-date-range="30"
-        disabled={false}
         inverse={true}
-        label="30 days"
-        mapThemrProps={[Function]}
         onClick={[Function]}
-        primary={true}
-        raised={true}
-        ripple={true}
-        rippleCentered={false}
-        rippleClassName=""
-        rippleMultiple={true}
-        rippleSpread={2}
-      />
-      <ThemedThemed
+        variant="contained"
+      >
+        30 days
+      </AspectButton>
+      <AspectButton
         className="Button"
-        composeTheme="deeply"
+        color="primary"
         data-date-range="60"
-        disabled={false}
         inverse={true}
-        label="60 days"
-        mapThemrProps={[Function]}
         onClick={[Function]}
-        primary={true}
-        raised={true}
-        ripple={true}
-        rippleCentered={false}
-        rippleClassName=""
-        rippleMultiple={true}
-        rippleSpread={2}
-      />
+        variant="contained"
+      >
+        60 days
+      </AspectButton>
     </div>
   </div>
   <div
@@ -150,10 +108,8 @@ exports[`OperationData Component should shallow render correctly 1`] = `
     <div
       className="Section"
     >
-      <ThemedCard
+      <WithStyles(Card)
         className="Section__Content"
-        composeTheme="deeply"
-        mapThemrProps={[Function]}
       >
         <div
           className="TitleContainer"
@@ -163,25 +119,18 @@ exports[`OperationData Component should shallow render correctly 1`] = `
             colorClassName="Title__Color--site"
             title="Sites"
           />
-          <ThemedThemed
+          <AspectButton
             className="Button"
-            composeTheme="deeply"
-            disabled={false}
-            label="Data and reports"
-            mapThemrProps={[Function]}
             onClick={[Function]}
-            raised={true}
-            ripple={true}
-            rippleCentered={false}
-            rippleClassName=""
-            rippleMultiple={true}
-            rippleSpread={2}
-          />
+            variant="contained"
+          >
+            Data and reports
+          </AspectButton>
         </div>
         <div>
           Immutable.List []
         </div>
-      </ThemedCard>
+      </WithStyles(Card)>
     </div>
     <SectionAbnormalCollection
       collection={Array []}
@@ -189,15 +138,10 @@ exports[`OperationData Component should shallow render correctly 1`] = `
       title="Staff"
     />
   </div>
-  <lifecycle(ThemedProgressBar)
+  <lifecycle(WithStyles(CircularProgress))
+    className="DelayShowingProgressCircular--indeterminate"
     disabled={true}
-    mode="indeterminate"
-    theme={
-      Object {
-        "indeterminate": "DelayShowingProgressBar--indeterminate",
-      }
-    }
-    type="circular"
+    variant="indeterminate"
   />
 </div>
 `;

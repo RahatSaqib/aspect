@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import classnames from 'classnames/bind'
 import React from 'react'
-import { Card } from 'react-toolbox/lib/card'
+import Card from '@material-ui/core/Card'
 
 const cssClasses = classnames.bind(require('./DataTableCard.css'))
 

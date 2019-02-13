@@ -5,6 +5,7 @@ import { compose, withProps, withHandlers, lifecycle } from 'recompose'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
+import TableBody from '@material-ui/core/TableBody'
 
 import {
   makeSortPageSelector,
@@ -290,18 +291,20 @@ export const DeviceList = ({
               },
             ]}
           />
-          {items.currentIdList
-            .map(id => items.byId.get(id))
-            .map(device => (
-              <DeviceDataTableRow
-                key={device.get('id')}
-                intl={intl}
-                device={device}
-                onClick={onRowClick}
-                onAlertClick={onAlertClick}
-                data-device-id={device.get('id')}
-              />
-            ))}
+          <TableBody>
+            {items.currentIdList
+              .map(id => items.byId.get(id))
+              .map(device => (
+                <DeviceDataTableRow
+                  key={device.get('id')}
+                  intl={intl}
+                  device={device}
+                  onClick={onRowClick}
+                  onAlertClick={onAlertClick}
+                  data-device-id={device.get('id')}
+                />
+              ))}
+          </TableBody>
         </DeviceDataTable>
       )}
       {!items.currentIdList.isEmpty() && (
