@@ -50,30 +50,19 @@ const DeviceTableRow = ({ intl, device, onAlertClick, ...restProps }) => (
     <TableCell className={cssClasses('TableCell--alerts')}>
       {device
         .get('alerts')
-        .map(it => {
-console.log(it, it.get('issueTypeKey'), "messages[it.get('issueTypeKey')]", messages[it.get('issueTypeKey')])
-
-          return (
+        .map(it => (
           <ColoredButton
-            key={it.get('issueTypeKey')}
+            key={it.get('key')}
             className={cssClasses('ColoredButton--micro')}
-
-            // shipCove={it.get('type') === 'needs-repair'}
-            // shakespeare={it.get('type') === 'warranty'}
-            // mountain={it.get('type') === 'quality-control'}
-            // brink={it.get('type') === 'connectivity'}
-
-            shipCove={it.get('issueCategory') === 'DeviceHealth'}
-            shakespeare={it.get('issueCategory') === 'ReagentHealth'}
-            mountain={it.get('issueCategory') === 'DataHealth'}
-            brink={it.get('issueCategory') === 'ConnectivityHealth'}
-
-            // label={intl.formatMessage(messages[_.camelCase(it.get('type'))])}
-            label={intl.formatMessage(messages[it.get('issueTypeKey')])}
+            shipCove={it.get('key') === 'issueCategoryDeviceHealth'}
+            shakespeare={it.get('key') === 'issueCategoryReagentHealth'}
+            mountain={it.get('key') === 'issueCategoryDataHealth'}
+            brink={it.get('key') === 'issueCategoryConnectivityHealth'}
+            label={intl.formatMessage(messages[it.get('key')])}
             onClick={onAlertClick}
             data-pathname="/browse/notification/detail"
           />
-        )})}
+        ))}
     </TableCell>
     <TableCell>
       {intl.formatMessage(messages.reportingForDays, {

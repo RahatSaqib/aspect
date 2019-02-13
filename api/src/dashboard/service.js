@@ -351,11 +351,6 @@ async function getInventoryItemList(auth, dataConstraints) {
     .innerJoin('Geography as g', 's.geographyId', 'g.id')
     .innerJoin('Country as co', 'g.countryId', 'co.id')
     .innerJoin('Consumable as c', 'ii.consumableId', 'c.id')
-    // .innerJoin('FactInventoryConsumptionRate as fcr', function() {
-    //   this.on('ii.consumableId', 'fcr.consumableId')
-    //     .andOn('ii.siteId', 'fcr.siteId')
-    //     .andOn('fcr.days', 1)
-    // })
     .modify(addConstraints, dataConstraints, {
       site: 's',
       geography: 'g',
@@ -370,16 +365,15 @@ async function getInventoryItemList(auth, dataConstraints) {
       'c.name as consumableName'
     )
 
+  const MOCK_CURRENT_CONSUMPTION_RATE = 20
+
   inventoryItemList.forEach(it => {
     it.runningLow =
-      it.quantityOnHand <= it.inventoryDaysThreshold * it.consumptionRate
-
-    // // consider remaining days greater than threshold if consumptionRate is 0
-    // it.remainingDays =
-    //   it.consumptionRate > 0
-    //     ? Math.floor(it.quantityOnHand / it.consumptionRate)
-    //     : it.inventoryDaysThreshold + 1
-
+      it.quantityOnHand <=
+      it.inventoryDaysThreshold * MOCK_CURRENT_CONSUMPTION_RATE
+    it.remainingDays = Math.floor(
+      it.quantityOnHand / MOCK_CURRENT_CONSUMPTION_RATE
+    )
     if (_.isDate(it.expiresOn)) {
       it.expiring = isAfter(
         addDays(it.expiresOn, it.remainingDays),
@@ -434,13 +428,7 @@ async function getConsumablesList(auth, dataConstraints) {
     )
     // reduce whole list of (site,consumable,issueType) to distinct list of (site,consumable)
     .reduce((memo, row) => {
-      const {
-        siteId,
-        consumableId,
-        consumableName,
-        consumptionRate = 0.5,
-        quantityOnHand = 0,
-      } = row
+      const { siteId, consumableId, consumableName } = row
       let item = memo.find(
         x => x.siteId === siteId && x.consumableId === consumableId
       )
@@ -455,7 +443,7 @@ async function getConsumablesList(auth, dataConstraints) {
           // Expiring stock = "Inventory Stock Expiring"
           expiring: false,
           // for bar chart
-          remainingDays: undefined,
+          remainingDays: 0,
         }
         memo.push(item)
       }
@@ -476,14 +464,6 @@ async function getConsumablesList(auth, dataConstraints) {
         item.remainingDays = d && Math.round(+d.daysDue)
       }
 
-      if (!item.remainingDays) {
-        // const { consumptionRate = 0.5, quantityOnHand } = item
-        item.remainingDays =
-          consumptionRate > 0
-            ? Math.floor(quantityOnHand / consumptionRate)
-            : 999
-      }
-
       return memo
     }, [])
 
@@ -497,26 +477,6 @@ async function inventoryItemDashboard(request) {
   const dataConstraints = await getConstraints(auth.credentials)
   const siteList = await getSiteList(auth, dataConstraints)
   const consumables = await getConsumablesList(auth, dataConstraints)
-
-  const inventorySiteSummaryList = _.sortBy(
-    _.reduce(
-      _.groupBy(consumables, 'siteId'),
-      (acc, list) => {
-        if (!_.isEmpty(list)) {
-          const minRemainingDays = _.minBy(list, 'remainingDays').remainingDays
-          const { siteId } = list[0]
-
-          acc.push({
-            siteId,
-            minRemainingDays,
-          })
-        }
-        return acc
-      },
-      []
-    ),
-    it => -1 * it.minRemainingDays
-  )
 
   const inventoryConsumableSummaryList = _.reduce(
     _.groupBy(consumables, 'consumableId'),
@@ -575,7 +535,6 @@ async function inventoryItemDashboard(request) {
   const result = {
     data: {
       siteList,
-      inventorySiteSummaryList,
       inventoryConsumableSummaryList,
     },
   }

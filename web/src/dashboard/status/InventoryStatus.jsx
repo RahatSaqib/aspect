@@ -20,7 +20,6 @@ import requirePermissions from '../../components/shared/requirePermissions'
 import { fetchInventoryItemDashboard } from '../DashboardRedux'
 import Title from './Title'
 import CountryWithPoints from './CountryWithPoints'
-import InventorySiteSummaryBar from './InventorySiteSummaryBar'
 import SummaryItemsBlock from './SummaryItemsBlock'
 import messages from './messages'
 
@@ -35,7 +34,6 @@ const enhance = compose(
   connect(
     state => ({
       siteList: state.dashboard.inventoryItemSiteList,
-      inventorySiteSummaryList: state.dashboard.inventorySiteSummaryList,
       inventoryConsumableSummaryList:
         state.dashboard.inventoryConsumableSummaryList,
     }),
@@ -81,11 +79,8 @@ const enhance = compose(
       }),
     }
   ),
-  withProps(({ siteList, activeSiteIds, inventorySiteSummaryList }) => {
+  withProps(({ siteList, activeSiteIds }) => {
     const siteStateAbbrs = siteList.map(it => it.get('stateAbbr')).toSet()
-    const siteById = siteList
-      .toKeyedSeq()
-      .mapEntries(([, it]) => [it.get('id'), it])
 
     return {
       fill: ({ properties: { postal } }) =>
@@ -98,11 +93,6 @@ const enhance = compose(
           latitude: it.get('latitude'),
           longitude: it.get('longitude'),
         }))
-        .toJS(),
-      inventorySiteSummaryList: inventorySiteSummaryList
-        .map(it =>
-          it.set('siteName', siteById.getIn([it.get('siteId'), 'name']))
-        )
         .toJS(),
     }
   })
@@ -121,7 +111,6 @@ export const InventoryStatus = ({
   title,
   fill,
   points,
-  inventorySiteSummaryList,
   inventoryConsumableSummaryList,
   onInventoryClick,
   onSummaryItemClick,
@@ -141,9 +130,6 @@ export const InventoryStatus = ({
           fill={fill}
           points={points}
         />
-      </Unit>
-      <Unit sm="1-2" lg="1-4">
-        <InventorySiteSummaryBar data={inventorySiteSummaryList} />
       </Unit>
       <Unit sm="1-2" lg="1-4">
         <div
