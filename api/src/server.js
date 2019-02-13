@@ -6,7 +6,11 @@ const Hapi = require('hapi')
 
 const config = require('./config')
 const { version } = require('./../package.json')
-const { addClientRoutes, addDeviceRoutes } = require('./routes')
+const {
+  addClientRoutes,
+  addDeviceRoutes,
+  addDeviceRawRoutes,
+} = require('./routes')
 const { createMessageQueue } = require('./mq')
 const { addSubscriptions } = require('./subscriptions')
 const { startScheduler } = require('./scheduler')
@@ -17,6 +21,7 @@ const server = new Hapi.Server()
 const port = process.env.PORT || 8080
 const clientApiPath = '/api'
 const deviceApiPath = '/device'
+const deviceApiRawPath = '/device/raw'
 
 server.connection({
   port,
@@ -232,6 +237,27 @@ server.register(
   {
     routes: {
       prefix: deviceApiPath,
+    },
+  },
+  err => {
+    if (err) throw err
+  }
+)
+
+// Device API raw data route mounted under /device/raw
+function deviceApiRawPlugin(server, options, next) {
+  addDeviceRawRoutes(server)
+  next()
+}
+deviceApiRawPlugin.attributes = {
+  name: 'deviceApiRaw',
+  version,
+}
+server.register(
+  { register: deviceApiRawPlugin },
+  {
+    routes: {
+      prefix: deviceApiRawPath,
     },
   },
   err => {

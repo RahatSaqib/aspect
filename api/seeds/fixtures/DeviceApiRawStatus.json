@@ -1,11 +1,6 @@
 {
   "data": [
     {
-      "name": "New",
-      "externalId": "New",
-      "i18nKey": "DeviceApiRawStatusNew"
-    },
-    {
       "name": "Ready",
       "externalId": "Ready",
       "i18nKey": "DeviceApiRawStatusReady"
