@@ -34,9 +34,15 @@ function returnIso8601StringWithoutTimeZoneOffset(date) {
   return `${date.toISOString().split('.')[0]}.000`
 }
 
+function getUtcTime(localTime) {
+  const time = localTime || new Date()
+  return new Date(time.getTime() + time.getTimezoneOffset() * 60000)
+}
+
 module.exports = {
   getDateOrDefault,
   parseDateOrDefault,
   formatDateOrDefault,
   returnIso8601StringWithoutTimeZoneOffset,
+  getUtcTime,
 }
