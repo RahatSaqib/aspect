@@ -122,7 +122,9 @@ describe('Device API Raw routes', () => {
     it('should save the request in DeviceApiRaw and respond with the record ID', async () => {
       const payload = { data: { message: 'This payload will be encrypted' } }
       const response = await server
-        .post(deviceApiRawPath)
+        .post(
+          `${deviceApiRawPath}/some/path/params?someParamName=some_param_value&anotherParamName=another%20param%20value`
+        )
         .set('Authorization', `Bearer ${validApiKeyToken}`)
         .send(payload)
       assert.equal(response.statusCode, 200)
@@ -144,7 +146,13 @@ describe('Device API Raw routes', () => {
         decrypt(deviceApiRawRecord.rawData, deviceApiRawRecord.salt)
       )
       expect(decryptedRequestData.payload).to.deep.equal(payload)
-      expect(decryptedRequestData.params).to.be.an('object')
+      expect(decryptedRequestData.params).to.deep.equal({
+        params: 'some/path/params',
+      })
+      expect(decryptedRequestData.query).to.deep.equal({
+        someParamName: 'some_param_value',
+        anotherParamName: 'another param value',
+      })
       expect(decryptedRequestData.auth.credentials.token).to.equal(
         validApiKeyToken
       )
