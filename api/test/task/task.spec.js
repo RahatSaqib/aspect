@@ -8,9 +8,10 @@ const server = supertest.agent('http://localhost:8080')
 const { assert } = chai
 const context = createAlertTestContext({ user: 'admin' })
 describe.only('Task Routes', () => {
+  beforeEach(context.beforeEach)
+  afterEach(context.afterEach)
+
   describe('/taskbystatus', () => {
-    beforeEach(context.beforeEach)
-    afterEach(context.afterEach)
     const path = '/api/taskbystatus'
     describe('GET', () => {
       shared.checkToken(server, path)

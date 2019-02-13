@@ -1,6 +1,6 @@
 const _ = require('lodash')
 const { knex } = require('../db')
-const setupPaginator = require('knex-paginator')
+const setupPaginator = require('../shared/knex-paginator')
 
 const { getAccountDetailsForUsername } = require('../accountDetails/service')
 
@@ -33,7 +33,7 @@ async function getQuery(request, query, queryBuilder) {
     })
     .modify(queryBuilder)
     .orderBy(sortColumn, query.sortDir)
-    .paginate(query.size || 10, query.page || 1)
+    .paginate(query.size || 10, query.page || 1, true)
   return result
 }
 
@@ -60,8 +60,10 @@ async function listTasksByStatus(request) {
         knex.raw('ifnull(d.name,site.name) as title')
       )
   })
+  console.log(queryKnex)
 
-  const result = processTaskResults(queryKnex.data)
+  const result = processTaskResults(queryKnex.data, queryKnex.total || 0)
+  console.log(result)
   return result
 }
 async function listTasks(request) {
@@ -91,15 +93,17 @@ async function listTasks(request) {
         knex.raw('date(am.createdOn)')
       )
   })
+  console.log(queryKnex)
 
-  return processTaskResults(queryKnex.data)
+  const result = processTaskResults(queryKnex.data, queryKnex.total)
+  console.log(result)
+  return result
 }
 
-function processTaskResults(dataWithFilteredTopic) {
+function processTaskResults(dataWithFilteredTopic, total) {
   const countByAlert = _.countBy(dataWithFilteredTopic, 'issueCategory')
-  countByAlert.total = dataWithFilteredTopic.length
+  countByAlert.total = total
 
-  const total = dataWithFilteredTopic.length
   const result = {
     ok: true,
     total,

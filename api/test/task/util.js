@@ -49,6 +49,7 @@ class TaskContextTest {
           .insert({
             alertTemplateId,
             messageStatusId,
+            message: 'Test message',
             personId: userId,
             siteId: '3',
             deviceId: elem.deviceId,
@@ -59,6 +60,7 @@ class TaskContextTest {
           Object.assign({
             createdOn: now,
             alertMessageId: insertedid,
+
             issueId: elem.id,
             personId: userId,
             notificationTypeId: 1,
