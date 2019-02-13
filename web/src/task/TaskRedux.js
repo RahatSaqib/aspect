@@ -18,6 +18,7 @@ import {
 export const types = {
   REQUEST_TASKS: 'REQUEST_TASKS',
   RECEIVE_TASKS: 'RECEIVE_TASKS',
+  GET_TASK: 'GET_TASKS',
 }
 //
 
@@ -35,12 +36,95 @@ function requestTasks(sortCol, sortDir, page, size, filters) {
   }
 }
 
+function requestAlarmsByStatus(
+  sortCol,
+  sortDir,
+  page,
+  size,
+  filters,
+  date,
+  site,
+  issueCategory
+) {
+  return {
+    type: types.GET_TASK,
+    sortCol,
+    sortDir,
+    page,
+    size,
+    filters,
+    site,
+    date,
+    issueCategory,
+  }
+}
+
 function receiveTasks(json) {
   return {
     type: types.RECEIVE_TASKS,
     items: json.data,
     total: json.total,
     countByAlert: json.countByAlert,
+  }
+}
+
+export function getAlarmsByStatus(
+  date,
+  site,
+  issueCategory,
+  filtersParams,
+  sortCol,
+  sortDir,
+  page,
+  pageSize
+) {
+  return dispatch => {
+    const filters = _.fromPairs([...filtersParams.entries()])
+    dispatch(
+      requestAlarmsByStatus(
+        sortCol,
+        sortDir,
+        page,
+        pageSize,
+        filters,
+        date,
+        site,
+        issueCategory
+      )
+    )
+
+    return aspectFetch(
+      `/taskbystatus?${stringify({
+        sortCol,
+        sortDir,
+        page,
+        size: pageSize,
+        date,
+        site,
+        issueCategory,
+        ...filters,
+      })}`,
+      {
+        errorTasks: {
+          400: filterFieldsRejectedError(
+            defineMessages({
+              title: {
+                id: 'errorResponseMessages.getAlarmsByStatus.GET.400.title',
+                defaultMessage: 'Searching Task Failed',
+              },
+            })
+          ),
+          default: errorPleaseTryAgainInAFewMinutes(
+            defineMessages({
+              title: {
+                id: 'errorResponseMessages.getAlarmsByStatus.GET.default.title',
+                defaultMessage: 'Loading Tasks Failed',
+              },
+            })
+          ),
+        },
+      }
+    ).then(json => dispatch(receiveTasks(json)))
   }
 }
 

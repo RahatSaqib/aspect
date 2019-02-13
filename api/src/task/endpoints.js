@@ -1,6 +1,6 @@
 const Joi = require('joi')
 const { asyncHandler, validateSortPageParams } = require('../routes')
-const { listTasks } = require('./service')
+const { listTasks, listTasksByStatus } = require('./service')
 
 const routes = [
   {
@@ -20,6 +20,32 @@ const routes = [
             topic: Joi.string()
               .allow('')
               .description('Filter for topic'),
+          },
+          validateSortPageParams('topic', 'site', 'time')
+        ),
+      },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/taskbystatus',
+    handler: asyncHandler(listTasksByStatus),
+    config: {
+      description: 'Task List by status',
+      notes: 'Pageable and sortable list of tasks',
+      auth: { scope: ['task:view', 'task:edit'] },
+      validate: {
+        query: Object.assign(
+          {
+            alertType: Joi.string()
+              .allow('')
+              .description('Filter for alert type'),
+            topic: Joi.string()
+              .allow('')
+              .description('Filter for topic'),
+            siteId: Joi.number().allow(''),
+            date: Joi.date().iso(),
+            statusId: Joi.number(),
           },
           validateSortPageParams('topic', 'site', 'time')
         ),

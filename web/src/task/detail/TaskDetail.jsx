@@ -13,7 +13,7 @@ import { Input } from 'react-toolbox/lib/input'
 import { Checkbox } from 'react-toolbox/lib/checkbox'
 import FaArrowUp from 'react-icons/lib/fa/arrow-up'
 
-import ButtonGroup from '../../components/themedReactToolbox/ButtonGroup'
+// import ButtonGroup from '../../components/themedReactToolbox/ButtonGroup'
 import DetailBackBar from '../../globals/components/DetailBackBar'
 import { Unit } from '../../components/pureGrids'
 import AlertType from '../../components/shared/AlertType'
@@ -56,11 +56,12 @@ const enhance = compose(
   })
 )
 
-const BUTTON_THEME = {
+/* const BUTTON_THEME = {
   primary: cssClasses('Button--primary'),
   raised: cssClasses('Button--raised'),
   inverse: cssClasses('Button--inverse'),
 }
+*/
 
 const INPUT_THEME = {
   inputElement: cssClasses('Input__inputElement'),
@@ -92,9 +93,9 @@ export const TaskDetail = ({
             Needs calibrating
           </span>
           <small className={cssClasses('Card__Title__Date')}>by April 10</small>
-          <Button className={cssClasses('Card__Title__Button')} raised>
+          {/* <Button className={cssClasses('Card__Title__Button')} raised>
             Alert settings
-          </Button>
+          </Button> */}
         </h2>
         <div className={cssClasses('Card__Content')}>
           <Unit lg="1-5">
@@ -192,7 +193,7 @@ export const TaskDetail = ({
           <Unit lg="1-2">
             <span className={cssClasses('Summary__Item')}>Status</span>
           </Unit>
-          <Unit lg="1-2">
+          {/* <Unit lg="1-2">
             <ButtonGroup
               isolated
               className={cssClasses('Card__Content__StatusButtonGroup')}
@@ -213,7 +214,7 @@ export const TaskDetail = ({
                 theme={BUTTON_THEME}
               />
             </ButtonGroup>
-          </Unit>
+          </Unit> */}
           <Unit sm="1-1">
             <ol className={cssClasses('MessageList')}>
               {_.map(

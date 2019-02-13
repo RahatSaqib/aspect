@@ -66,7 +66,7 @@ const FILTERS_CONFIG = {
 }
 
 export const searchSanitizer = makeSearchParamsSanitizer({
-  availableSortCol: ['topic', 'site', 'time'],
+  availableSortCol: ['issueCategory', 'site', 'time'],
 })
 export const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
 export const filtersFromLocation = composeSanitizer(
@@ -345,7 +345,7 @@ export const TaskList = ({
                 task={task}
                 onClick={onRowClick}
                 data-task-id={
-                  task.get('alertCount') > 0 ? 'aggre-list' : 'detail'
+                  task.get('issueCount') > 0 ? 'aggre-list' : 'detail'
                 }
               />
             ))}
