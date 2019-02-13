@@ -39,7 +39,7 @@ describe('encryption shared util', () => {
   })
 
   describe('createSalt', () => {
-    const { createSalt, encrypt, decrypt } = encryption
+    const { createSalt } = encryption
 
     it('should be able to generate a salt of 44 characters', () => {
       const salt = createSalt()
@@ -67,7 +67,6 @@ describe('encryption shared util', () => {
       const plainText = 'This string is to be encrypted'
       const salt = createSalt()
       const encryptedText = encrypt(plainText, salt)
-      console.log(encryptedText)
       const decryptedText = decrypt(encryptedText, salt)
       expect(decryptedText).to.equal(plainText)
     })

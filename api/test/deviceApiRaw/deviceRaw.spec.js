@@ -1,4 +1,3 @@
-const _ = require('lodash')
 const supertest = require('supertest')
 const chai = require('chai')
 const { knex } = require('../../src/db')
@@ -102,7 +101,6 @@ describe('Device API Raw routes', () => {
           updatedOn: now,
           updatedBy: userId,
         })
-        console.log(validApiKeyToken)
       }
     })
 
@@ -146,7 +144,7 @@ describe('Device API Raw routes', () => {
         decrypt(deviceApiRawRecord.rawData, deviceApiRawRecord.salt)
       )
       expect(decryptedRequestData.payload).to.deep.equal(payload)
-      expect(decryptedRequestData.params).to.exist()
+      expect(decryptedRequestData.params).to.be.an('object')
       expect(decryptedRequestData.auth.credentials.token).to.equal(
         validApiKeyToken
       )
