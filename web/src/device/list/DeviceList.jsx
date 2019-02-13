@@ -266,8 +266,8 @@ export const DeviceList = ({
                 sortable: false,
               },
               {
-                key: 'issues',
-                label: intl.formatMessage(messages.issues),
+                key: 'issueCategory',
+                label: intl.formatMessage(messages.issueCategory),
               },
               {
                 key: 'createdOn',
