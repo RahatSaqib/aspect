@@ -612,7 +612,7 @@ async function getDeviceList(auth, dataConstraints) {
         }
         memo.push(device)
       }
-      const hasIssue = !['OK', 'Resolved'].includes(issueStatus)
+      const hasIssue = !['Inactive', 'OK', 'Resolved'].includes(issueStatus)
       if (hasIssue) {
         device.fullyOperational = false
 
