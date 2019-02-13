@@ -343,13 +343,6 @@ async function updateCreatePerson(
   { userId, partnerId: lastPartnerId, countryId: lastCountryId }
 ) {
   const now = new Date()
-  // user id for required fields createdBy, updatedBy
-  const { id: adminId } = await knex
-    .from('User')
-    .where({ name: 'admin' })
-    .first('id')
-
-  // Person Id
   let { id: personId } =
     (await knex
       .from('Person')
@@ -370,7 +363,6 @@ async function updateCreatePerson(
     timezone: gxUser.timezoneId,
     culture: gxUser.culture,
     updatedOn: now,
-    updatedBy: adminId,
     // optional fields
     geographyId,
     title: gxUser.title,
@@ -387,7 +379,6 @@ async function updateCreatePerson(
       lastPartnerId,
       lastCountryId,
       createdOn: now,
-      createdBy: adminId,
       ...basePersonData,
     })
   } else {

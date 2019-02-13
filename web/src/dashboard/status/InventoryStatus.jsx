@@ -18,6 +18,7 @@ import { findKeyInTree } from '../../shared/utils/dom'
 import { Unit } from '../../components/pureGrids'
 import requirePermissions from '../../components/shared/requirePermissions'
 import { fetchInventoryItemDashboard } from '../DashboardRedux'
+import { showNewInventoryDialog } from '../../inventory/InventoryRedux'
 import Title from './Title'
 import CountryWithPoints from './CountryWithPoints'
 import SummaryItemsBlock from './SummaryItemsBlock'
@@ -39,6 +40,7 @@ const enhance = compose(
     }),
     bindActionCreators.bind(null, {
       fetchInventoryItemDashboard,
+      showNewInventoryDialog,
     })
   ),
   lifecycle({
@@ -51,8 +53,12 @@ const enhance = compose(
       activeSiteIds: [],
     }),
     {
-      onInventoryClick: (state, { history }) => () =>
-        history.push('/browse/inventory'),
+      onInventoryClick: (state, { history, showNewInventoryDialog }) => ({
+        openDialog = false,
+      }) => {
+        history.push('/browse/inventory')
+        if (openDialog) showNewInventoryDialog()
+      },
 
       onSummaryItemClick: (state, { history }) => ({ target }) => {
         const searchParams = new URLSearchParams()
@@ -131,7 +137,7 @@ export const InventoryStatus = ({
           points={points}
         />
       </Unit>
-      <Unit sm="1-2" lg="1-4">
+      <Unit sm="1-2">
         <div
           className={cssClasses('SummaryItemsBlocks--horizontal-scrollable')}
         >
@@ -156,21 +162,12 @@ export const InventoryStatus = ({
         <div className={cssClasses('ButtonsBlock')}>
           <Button
             className={cssClasses('Button', 'Button--receive')}
-            onClick={onInventoryClick}
+            onClick={() => onInventoryClick({ openDialog: true })}
             variant="contained"
             theme={themes.Button}
           >
             {intl.formatMessage(messages.receiveConsumablesLabel)}
           </Button>
-          <Button
-            className={cssClasses('Button', 'Button--discard')}
-            onClick={onInventoryClick}
-            variant="contained"
-            theme={themes.Button}
-          >
-            {intl.formatMessage(messages.discardConsumablesLabel)}
-          </Button>
-
           <Button
             className={cssClasses('Button')}
             onClick={onInventoryClick}

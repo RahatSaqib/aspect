@@ -1029,5 +1029,26 @@
     "hideSampleId": false,
     "hideNotes": false,
     "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Dr. Michael Christie",
+    "jobFunctions": ["Regional Officer"],
+    "emailAddress": null,
+    "username": null,
+    "password": null,
+    "mobile": "+27824506930",
+    "tags": ["EID+KPTH", "EID+"],
+    "geographies": [{
+      "stateName": "Gauteng",
+      "lgaName": "Kalafong"
+    }],
+    "deploymentShortName": null,
+    "timezone": "South Africa Standard Time",
+    "culture": "en",
+    "title": null,
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
   }
 ]

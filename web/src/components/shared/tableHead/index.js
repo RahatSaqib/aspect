@@ -1,4 +1,4 @@
-import DataTableHead from './DataTableHead'
+import TableHead from './TableHead'
 
-export { DataTableHead }
+export { TableHead }
 export { default } from './BrowseDataTableHead'

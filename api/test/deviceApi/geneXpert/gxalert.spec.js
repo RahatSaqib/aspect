@@ -3647,6 +3647,8 @@ describe('Device API routes for GxAlert Device', () => {
             siteId: geneXpertDevice.siteId,
             expiresOn: expiryDate,
             quantityOnHand: initialQuantityOnHand,
+            createdOn: subDays(now, 4),
+            updatedOn: subDays(now, 4),
           })
 
           const testStartedOn = setMilliseconds(subDays(now, 3), 0)
@@ -3733,6 +3735,8 @@ describe('Device API routes for GxAlert Device', () => {
               siteId: geneXpertDevice.siteId,
               expiresOn: expiryDate,
               quantityOnHand: initialQuantityOnHand,
+              createdOn: subDays(now, 4),
+              updatedOn: subDays(now, 4),
             })
 
             const inventoryItemBefore = await knex('InventoryItem')

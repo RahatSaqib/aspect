@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react'
-import DataTableHead from './DataTableHead'
+import TableHead from './TableHead'
 
 export const useSortFilter = ({
   history,
@@ -41,7 +41,7 @@ const BrowseDataTableHead = ({
     sortColumnKey,
     sortColumnDir,
   })
-  return <DataTableHead onHeadColumnClick={onSortColumn} {...restProps} />
+  return <TableHead onHeadColumnClick={onSortColumn} {...restProps} />
 }
 
 export default BrowseDataTableHead

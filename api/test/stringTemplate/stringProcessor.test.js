@@ -4,6 +4,7 @@ const Promise = require('bluebird')
 const { assert, expect } = require('chai')
 const { runTest } = require('../utils/generatorFunctionUtils')
 const { formatDateOrDefault } = require('../../src/shared/date')
+const { convertToTimeZone } = require('date-fns-timezone')
 
 describe('stringTemplate', () => {
   describe('processUsingHandlebarsSyntax', () => {
@@ -203,6 +204,77 @@ describe('stringTemplate', () => {
         const specifiedFormat = 'YYYY-MM-DDHH:mm'
         const message = await runProcessUsingDataSourceQuery(
           `Offline since {{formatDate device.lastSeenOn formatString='${specifiedFormat}'}}`
+        )
+        assert.equal(
+          message.payload,
+          `Offline since ${formatDateOrDefault(
+            messageDataSource.deviceLastSeenOn,
+            specifiedFormat
+          )}`
+        )
+      })
+    })
+
+    describe('offsetToTimeZone helper', () => {
+      it('should change the date to use the offset of the timezone specified', async () => {
+        const message = await runProcessUsingDataSourceQuery(
+          `Offline since {{formatDate (offsetToTimeZone device.lastSeenOn timeZone='Pacific/Pitcairn') 'HH:mm'}}`
+        )
+        assert.notEqual(
+          message.payload,
+          `Offline since ${formatDateOrDefault(
+            convertToTimeZone(messageDataSource.deviceLastSeenOn, {
+              timeZone: 'America/Chicago',
+            }),
+            'HH:mm'
+          )}`
+        )
+        assert.equal(
+          message.payload,
+          `Offline since ${formatDateOrDefault(
+            convertToTimeZone(messageDataSource.deviceLastSeenOn, {
+              timeZone: 'Pacific/Pitcairn',
+            }),
+            'HH:mm'
+          )}`
+        )
+      })
+
+      it('should accept timeZone as the default parameter', async () => {
+        const message = await runProcessUsingDataSourceQuery(
+          `Offline since {{formatDate (offsetToTimeZone device.lastSeenOn 'Pacific/Pitcairn') 'HH:mm'}}`
+        )
+        assert.notEqual(
+          message.payload,
+          `Offline since ${formatDateOrDefault(
+            convertToTimeZone(messageDataSource.deviceLastSeenOn, {
+              timeZone: 'America/Chicago',
+            }),
+            'HH:mm'
+          )}`
+        )
+        assert.equal(
+          message.payload,
+          `Offline since ${formatDateOrDefault(
+            convertToTimeZone(messageDataSource.deviceLastSeenOn, {
+              timeZone: 'Pacific/Pitcairn',
+            }),
+            'HH:mm'
+          )}`
+        )
+      })
+
+      it('should evaluate to nothing if no data was provided', async () => {
+        const message = await runProcessUsingDataSourceQuery(
+          `Offline since {{formatDate (offsetToTimeZone device.thisDateDoesntExist timeZone='Pacific/Pitcairn') 'HH:mm'}}`
+        )
+        assert.equal(message.payload, `Offline since `)
+      })
+
+      it('should not change the date to use an offset if the timezone IS NOT specified', async () => {
+        const specifiedFormat = 'YYYY-MM-DDHH:mm'
+        const message = await runProcessUsingDataSourceQuery(
+          `Offline since {{formatDate (offsetToTimeZone device.lastSeenOn) formatString='${specifiedFormat}'}}`
         )
         assert.equal(
           message.payload,
@@ -568,6 +640,7 @@ describe('stringTemplate', () => {
     describe('use cases for SA NHLS', () => {
       it('should process RedCAP API Payloads', async () => {
         const redCapDateTimeFormat = 'YYYY-MM-DD HH:mm'
+        const johannesburgTimeZone = 'Africa/Johannesburg'
         const template =
           `token=1A234567B8C90D12345E6789F0G1234H&content=record&format=json&type=flat&overwriteBehavior=normal&forceAutoNumber=true&data=%5B%7B%22` +
           `record_id%22%3A%221%22%2C%20` +
@@ -581,7 +654,7 @@ describe('stringTemplate', () => {
           `%22instrument_ca%22%3A{{urlEncode (enclose (defaultTo (mapValue device.deviceType '{"CepheidGeneXpert":"1","AlereQ":"2"}') '') with='"')}}%2C%20` +
           `%22assayhiv%22%3A{{urlEncode (enclose (defaultTo (mapValue result.assay.id '{"assayAlereQHiv12VLPlasma":"1","assayAlereQHiv12Detect":"2","GxHiv1Vl":"1","GxHiv1Qual":"2"}') '') with='"')}}%2C%20` +
           `%22sample_barcode%22%3A{{urlEncode (enclose (defaultTo result.sample.id '') with='"')}}%2C%20` +
-          `%22sample_taken%22%3A{{urlEncode (enclose (defaultTo (formatDate result.formData.timeSampleTaken '${redCapDateTimeFormat}') '') with='"')}}%2C%20` +
+          `%22sample_taken%22%3A{{urlEncode (enclose (defaultTo (formatDate (offsetToTimeZone result.formData.timeSampleTaken '${johannesburgTimeZone}') '${redCapDateTimeFormat}') '') with='"')}}%2C%20` +
           `%22point_of_care_instrument_r%22%3A{{urlEncode (enclose (defaultTo (mapValue (tryMergeResultCategories result.category1.id result.category2.id) '{"Detected":"1","MoreThan1000":"1","LessThan1000":"1","Trace Detected":"1","NotDetected":"2","NoResult":"3","Discordant":"3","Indeterminate":"3","Invalid":"3","Success":"3","CollectNewSample":"3","Rejected":"3","Missing":"3","Unknown":"3","Error":"4"}') '') with='"')}}%2C%20` +
           `%22error_code1%22%3A{{urlEncode (enclose (defaultTo result.errorCode '') with='"')}}%2C%20` +
           `%22poc_viral_load%22%3A` +
@@ -616,7 +689,7 @@ describe('stringTemplate', () => {
           `{{/if}}` +
           `%2C%20` +
           `%22ct_value%22%3A{{urlEncode (enclose (defaultTo result.data.probes.probeCCt '0') with='"')}}%2C%20` +
-          `%22result_instrument%22%3A{{urlEncode (enclose (defaultTo (formatDate result.formData.timeInstrumentResulted '${redCapDateTimeFormat}') '') with='"')}}` +
+          `%22result_instrument%22%3A{{urlEncode (enclose (defaultTo (formatDate (offsetToTimeZone result.formData.timeInstrumentResulted '${johannesburgTimeZone}') '${redCapDateTimeFormat}') '') with='"')}}` +
           `%7D%5D&returnContent=ids&returnFormat=json`
         const redCapDeviceTypeCodes = {
           CepheidGeneXpert: '1',
@@ -939,7 +1012,9 @@ describe('stringTemplate', () => {
               )}%22%2C%20` +
               `%22sample_taken%22%3A%22${encodeURIComponent(
                 formatDateOrDefault(
-                  formData.timeSampleTaken,
+                  convertToTimeZone(formData.timeSampleTaken, {
+                    timeZone: johannesburgTimeZone,
+                  }),
                   redCapDateTimeFormat
                 )
               )}%22%2C%20` +
@@ -965,7 +1040,9 @@ describe('stringTemplate', () => {
               ]) || '0'}%22%2C%20` +
               `%22result_instrument%22%3A%22${encodeURIComponent(
                 formatDateOrDefault(
-                  formData.timeInstrumentResulted,
+                  convertToTimeZone(formData.timeInstrumentResulted, {
+                    timeZone: johannesburgTimeZone,
+                  }),
                   redCapDateTimeFormat
                 )
               )}%22` +
@@ -1000,7 +1077,9 @@ describe('stringTemplate', () => {
                 assayhiv: redCapAssayCodes[dataSource.assayExternalId],
                 sample_barcode: dataSource.sampleExternalId,
                 sample_taken: formatDateOrDefault(
-                  formData.timeSampleTaken,
+                  convertToTimeZone(formData.timeSampleTaken, {
+                    timeZone: johannesburgTimeZone,
+                  }),
                   redCapDateTimeFormat
                 ),
                 point_of_care_instrument_r:
@@ -1014,7 +1093,9 @@ describe('stringTemplate', () => {
                 poc_viral_load: dataSource.expectedPocVl,
                 ct_value: _.get(resultData, ['probes', 'probeCCT']) || '0',
                 result_instrument: formatDateOrDefault(
-                  formData.timeInstrumentResulted,
+                  convertToTimeZone(formData.timeInstrumentResulted, {
+                    timeZone: johannesburgTimeZone,
+                  }),
                   redCapDateTimeFormat
                 ),
               },
@@ -1038,9 +1119,15 @@ describe('stringTemplate', () => {
         )
       })
 
-      it('should process SMS Payloads for Results after result detals have been filled out', async () => {
+      it('should process SMS Payloads for Results after result details have been filled out', async () => {
         const template =
-          `GxAlert. New case HIV > 50 cps from {{site.shortName}}; ` +
+          `GxAlert. New ` +
+          `{{#if (or (eq result.assay.id 'assayAlereQHiv12VLPlasma') (eq result.assay.id 'GxHiv1Vl'))}}` +
+          `case HIV > 50 cps ` +
+          `{{else}}` +
+          `EID HIV+ Case ` +
+          `{{/if}}` +
+          `from {{site.shortName}}; ` +
           `in Ward: {{result.formData.ward}}; Sample ID: {{result.sample.id}};  ` +
           `Patient ID: {{result.patient.id}} on {{formatDate result.endedOn}}` +
           `{{#if (eq result.assay.id 'assayAlereQHiv12VLPlasma')}}` +
@@ -1070,6 +1157,7 @@ describe('stringTemplate', () => {
             assayExternalId: 'assayAlereQHiv12Detect',
             resultCategory1ExternalId: 'Detected',
             resultCategory2ExternalId: 'NotDetected',
+            expectedTitle: 'New EID HIV+ Case from',
             expectedResult: 'HIV+',
             deviceTypeExternalId: 'AlereQ',
             resultData: `{"hiv1OResult":"Detected","hiv1MNResult":"Undetected","hiv2Result":"Undetected","errorCode":"0","id":1,"sampleBarcode":"SAMPLE-123","operator":"RHANDZU","resultNo":1,"sampleId":"FUNCTION TEST","testName":"Alere™ q HIV-1/2 Detect","timeStamp":"2018-10-05T13:40:46","pickedUpOn":"2018-11-08T14:06:21.305072","sourceFile":"/home/south_africa_nhls/ftp/alere_q/01-01_NAT-04000925_2018-10-31-11-18-58.csv.zip","cartridgeId":"0479001033","deviceCheck":"Fail","deviceSerial":"NAT-04000925","analysisCheck":"----","negativeControl":"----","sampleDetection":"----","softwareVersion":"0.24.2","hiv1PositiveControl":"----","hiv2PositiveControl":"----"}`,
@@ -1078,6 +1166,7 @@ describe('stringTemplate', () => {
             assayExternalId: 'assayAlereQHiv12Detect',
             resultCategory1ExternalId: 'Detected',
             resultCategory2ExternalId: 'NotDetected',
+            expectedTitle: 'New EID HIV+ Case from',
             expectedResult: 'HIV+',
             deviceTypeExternalId: 'AlereQ',
             resultData: `{"hiv1OResult":"Undetected","hiv1MNResult":"Detected","hiv2Result":"Undetected","errorCode":"0","id":1,"sampleBarcode":"SAMPLE-123","operator":"RHANDZU","resultNo":1,"sampleId":"FUNCTION TEST","testName":"Alere™ q HIV-1/2 Detect","timeStamp":"2018-10-05T13:40:46","pickedUpOn":"2018-11-08T14:06:21.305072","sourceFile":"/home/south_africa_nhls/ftp/alere_q/01-01_NAT-04000925_2018-10-31-11-18-58.csv.zip","cartridgeId":"0479001033","deviceCheck":"Fail","deviceSerial":"NAT-04000925","analysisCheck":"----","negativeControl":"----","sampleDetection":"----","softwareVersion":"0.24.2","hiv1PositiveControl":"----","hiv2PositiveControl":"----"}`,
@@ -1086,6 +1175,7 @@ describe('stringTemplate', () => {
             assayExternalId: 'assayAlereQHiv12Detect',
             resultCategory1ExternalId: 'NotDetected',
             resultCategory2ExternalId: 'Detected',
+            expectedTitle: 'New EID HIV+ Case from',
             expectedResult: 'HIV+',
             deviceTypeExternalId: 'AlereQ',
             resultData: `{"hiv1OResult":"Undetected","hiv1MNResult":"Undetected","hiv2Result":"Detected","errorCode":"0","id":1,"sampleBarcode":"SAMPLE-123","operator":"RHANDZU","resultNo":1,"sampleId":"FUNCTION TEST","testName":"Alere™ q HIV-1/2 Detect","timeStamp":"2018-10-05T13:40:46","pickedUpOn":"2018-11-08T14:06:21.305072","sourceFile":"/home/south_africa_nhls/ftp/alere_q/01-01_NAT-04000925_2018-10-31-11-18-58.csv.zip","cartridgeId":"0479001033","deviceCheck":"Fail","deviceSerial":"NAT-04000925","analysisCheck":"----","negativeControl":"----","sampleDetection":"----","softwareVersion":"0.24.2","hiv1PositiveControl":"----","hiv2PositiveControl":"----"}`,
@@ -1094,6 +1184,7 @@ describe('stringTemplate', () => {
             assayExternalId: 'assayAlereQHiv12VLPlasma',
             resultCategory1ExternalId: 'Detected',
             resultCategory2ExternalId: 'NotDetected',
+            expectedTitle: 'New case HIV > 50 cps from',
             expectedResult: '2299 cp/ml',
             deviceTypeExternalId: 'AlereQ',
             resultData: `{"hiv1OResult":"2299 cp/mL","hiv1MNResult":"Undetected","hiv2Result":"Undetected","errorCode":"0","id":1,"sampleBarcode":"SAMPLE-123","operator":"RHANDZU","resultNo":1,"sampleId":"FUNCTION TEST","testName":"Alere™ q HIV-1/2 Detect","timeStamp":"2018-10-05T13:40:46","pickedUpOn":"2018-11-08T14:06:21.305072","sourceFile":"/home/south_africa_nhls/ftp/alere_q/01-01_NAT-04000925_2018-10-31-11-18-58.csv.zip","cartridgeId":"0479001033","deviceCheck":"Fail","deviceSerial":"NAT-04000925","analysisCheck":"----","negativeControl":"----","sampleDetection":"----","softwareVersion":"0.24.2","hiv1PositiveControl":"----","hiv2PositiveControl":"----"}`,
@@ -1102,6 +1193,7 @@ describe('stringTemplate', () => {
             assayExternalId: 'assayAlereQHiv12VLPlasma',
             resultCategory1ExternalId: 'Detected',
             resultCategory2ExternalId: 'NotDetected',
+            expectedTitle: 'New case HIV > 50 cps from',
             expectedResult: '2299 cp/ml',
             deviceTypeExternalId: 'AlereQ',
             resultData: `{"hiv1OResult":"< 800 cp/mL","hiv1MNResult":"2299 cp/mL","hiv2Result":"Undetected","errorCode":"0","id":1,"sampleBarcode":"SAMPLE-123","operator":"RHANDZU","resultNo":1,"sampleId":"FUNCTION TEST","testName":"Alere™ q HIV-1/2 Detect","timeStamp":"2018-10-05T13:40:46","pickedUpOn":"2018-11-08T14:06:21.305072","sourceFile":"/home/south_africa_nhls/ftp/alere_q/01-01_NAT-04000925_2018-10-31-11-18-58.csv.zip","cartridgeId":"0479001033","deviceCheck":"Fail","deviceSerial":"NAT-04000925","analysisCheck":"----","negativeControl":"----","sampleDetection":"----","softwareVersion":"0.24.2","hiv1PositiveControl":"----","hiv2PositiveControl":"----"}`,
@@ -1110,6 +1202,7 @@ describe('stringTemplate', () => {
             assayExternalId: 'assayAlereQHiv12VLPlasma',
             resultCategory1ExternalId: 'Detected',
             resultCategory2ExternalId: 'NotDetected',
+            expectedTitle: 'New case HIV > 50 cps from',
             expectedResult: '2299 cp/ml',
             deviceTypeExternalId: 'AlereQ',
             resultData: `{"hiv1OResult":"Undetected","hiv1MNResult":"Undetected","hiv2Result":"2299 cp/mL","errorCode":"0","id":1,"sampleBarcode":"SAMPLE-123","operator":"RHANDZU","resultNo":1,"sampleId":"FUNCTION TEST","testName":"Alere™ q HIV-1/2 Detect","timeStamp":"2018-10-05T13:40:46","pickedUpOn":"2018-11-08T14:06:21.305072","sourceFile":"/home/south_africa_nhls/ftp/alere_q/01-01_NAT-04000925_2018-10-31-11-18-58.csv.zip","cartridgeId":"0479001033","deviceCheck":"Fail","deviceSerial":"NAT-04000925","analysisCheck":"----","negativeControl":"----","sampleDetection":"----","softwareVersion":"0.24.2","hiv1PositiveControl":"----","hiv2PositiveControl":"----"}`,
@@ -1118,6 +1211,7 @@ describe('stringTemplate', () => {
             assayExternalId: 'assayAlereQHiv12VLPlasma',
             resultCategory1ExternalId: 'Detected',
             resultCategory2ExternalId: 'Detected',
+            expectedTitle: 'New case HIV > 50 cps from',
             expectedResult: '2299 cp/ml',
             deviceTypeExternalId: 'AlereQ',
             resultData: `{"hiv1OResult":"< 800 cp/mL","hiv1MNResult":"Undetected","hiv2Result":"2299 cp/mL","errorCode":"0","id":1,"sampleBarcode":"SAMPLE-123","operator":"RHANDZU","resultNo":1,"sampleId":"FUNCTION TEST","testName":"Alere™ q HIV-1/2 Detect","timeStamp":"2018-10-05T13:40:46","pickedUpOn":"2018-11-08T14:06:21.305072","sourceFile":"/home/south_africa_nhls/ftp/alere_q/01-01_NAT-04000925_2018-10-31-11-18-58.csv.zip","cartridgeId":"0479001033","deviceCheck":"Fail","deviceSerial":"NAT-04000925","analysisCheck":"----","negativeControl":"----","sampleDetection":"----","softwareVersion":"0.24.2","hiv1PositiveControl":"----","hiv2PositiveControl":"----"}`,
@@ -1126,6 +1220,7 @@ describe('stringTemplate', () => {
             assayExternalId: 'assayAlereQHiv12VLPlasma',
             resultCategory1ExternalId: 'Detected',
             resultCategory2ExternalId: 'Detected',
+            expectedTitle: 'New case HIV > 50 cps from',
             expectedResult: '< 800 cp/ml',
             deviceTypeExternalId: 'AlereQ',
             resultData: `{"hiv1OResult":"< 800 cp/mL","hiv1MNResult":"Undetected","hiv2Result":"Undetected","errorCode":"0","id":1,"sampleBarcode":"SAMPLE-123","operator":"RHANDZU","resultNo":1,"sampleId":"FUNCTION TEST","testName":"Alere™ q HIV-1/2 Detect","timeStamp":"2018-10-05T13:40:46","pickedUpOn":"2018-11-08T14:06:21.305072","sourceFile":"/home/south_africa_nhls/ftp/alere_q/01-01_NAT-04000925_2018-10-31-11-18-58.csv.zip","cartridgeId":"0479001033","deviceCheck":"Fail","deviceSerial":"NAT-04000925","analysisCheck":"----","negativeControl":"----","sampleDetection":"----","softwareVersion":"0.24.2","hiv1PositiveControl":"----","hiv2PositiveControl":"----"}`,
@@ -1134,6 +1229,7 @@ describe('stringTemplate', () => {
             assayExternalId: 'assayAlereQHiv12VLPlasma',
             resultCategory1ExternalId: 'Detected',
             resultCategory2ExternalId: 'Detected',
+            expectedTitle: 'New case HIV > 50 cps from',
             expectedResult: '> 10 000 000 cp/ml',
             deviceTypeExternalId: 'AlereQ',
             resultData: `{"hiv1OResult":"10000001 cp/mL","hiv1MNResult":"Undetected","hiv2Result":"Undetected","errorCode":"0","id":1,"sampleBarcode":"SAMPLE-123","operator":"RHANDZU","resultNo":1,"sampleId":"FUNCTION TEST","testName":"Alere™ q HIV-1/2 Detect","timeStamp":"2018-10-05T13:40:46","pickedUpOn":"2018-11-08T14:06:21.305072","sourceFile":"/home/south_africa_nhls/ftp/alere_q/01-01_NAT-04000925_2018-10-31-11-18-58.csv.zip","cartridgeId":"0479001033","deviceCheck":"Fail","deviceSerial":"NAT-04000925","analysisCheck":"----","negativeControl":"----","sampleDetection":"----","softwareVersion":"0.24.2","hiv1PositiveControl":"----","hiv2PositiveControl":"----"}`,
@@ -1142,6 +1238,7 @@ describe('stringTemplate', () => {
             assayExternalId: 'GxHiv1Qual',
             resultCategory1ExternalId: 'Detected',
             resultCategory2ExternalId: 'NotDetected',
+            expectedTitle: 'New EID HIV+ Case from',
             expectedResult: 'HIV+',
             deviceTypeExternalId: 'CepheidGeneXpert',
           },
@@ -1149,6 +1246,7 @@ describe('stringTemplate', () => {
             assayExternalId: 'GxHiv1Qual',
             resultCategory1ExternalId: 'Detected',
             resultCategory2ExternalId: 'NotDetected',
+            expectedTitle: 'New EID HIV+ Case from',
             expectedResult: 'HIV+',
             deviceTypeExternalId: 'CepheidGeneXpert',
           },
@@ -1156,6 +1254,7 @@ describe('stringTemplate', () => {
             assayExternalId: 'GxHiv1Qual',
             resultCategory1ExternalId: 'NotDetected',
             resultCategory2ExternalId: 'Detected',
+            expectedTitle: 'New EID HIV+ Case from',
             expectedResult: 'HIV+',
             deviceTypeExternalId: 'CepheidGeneXpert',
           },
@@ -1163,6 +1262,7 @@ describe('stringTemplate', () => {
             assayExternalId: 'GxHiv1Vl',
             resultCategory1ExternalId: 'Detected',
             resultCategory2ExternalId: 'NotDetected',
+            expectedTitle: 'New case HIV > 50 cps from',
             expectedResult: '2299 cp/ml',
             deviceTypeExternalId: 'CepheidGeneXpert',
             resultData: `{"copies":2299}`,
@@ -1171,6 +1271,7 @@ describe('stringTemplate', () => {
             assayExternalId: 'GxHiv1Vl',
             resultCategory1ExternalId: 'Detected',
             resultCategory2ExternalId: 'NotDetected',
+            expectedTitle: 'New case HIV > 50 cps from',
             expectedResult: '< 800 cp/ml',
             deviceTypeExternalId: 'CepheidGeneXpert',
             resultData: `{"copies":"< 800"}`,
@@ -1179,6 +1280,7 @@ describe('stringTemplate', () => {
             assayExternalId: 'GxHiv1Vl',
             resultCategory1ExternalId: 'Detected',
             resultCategory2ExternalId: 'NotDetected',
+            expectedTitle: 'New case HIV > 50 cps from',
             expectedResult: '2299 cp/ml',
             deviceTypeExternalId: 'CepheidGeneXpert',
             resultData: `{"copies":"2299"}`,
@@ -1187,6 +1289,7 @@ describe('stringTemplate', () => {
             assayExternalId: 'GxHiv1Vl',
             resultCategory1ExternalId: 'Detected',
             resultCategory2ExternalId: 'Detected',
+            expectedTitle: 'New case HIV > 50 cps from',
             expectedResult: '< 800 cp/ml',
             deviceTypeExternalId: 'CepheidGeneXpert',
             resultData: `{"copies":"< 800 cp/ml"}`,
@@ -1195,6 +1298,7 @@ describe('stringTemplate', () => {
             assayExternalId: 'GxHiv1Vl',
             resultCategory1ExternalId: 'Detected',
             resultCategory2ExternalId: 'Detected',
+            expectedTitle: 'New case HIV > 50 cps from',
             expectedResult: '> 10 000 000 cp/ml',
             deviceTypeExternalId: 'CepheidGeneXpert',
             resultData: `{"copies":"10000001"}`,
@@ -1210,7 +1314,7 @@ describe('stringTemplate', () => {
           const patientData = JSON.parse(dataSource.resultPatientData)
           assert.equal(
             message.payload,
-            `GxAlert. New case HIV > 50 cps from ${
+            `GxAlert. ${dataSource.expectedTitle} ${
               dataSource.siteShortName
             }; ` +
               `in Ward: ${formData.ward}; Sample ID: ${

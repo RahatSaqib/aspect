@@ -84,16 +84,10 @@ async function seedStockIssues(knex) {
     .where({ name: 'Myanmar' })
     .first()
 
-  const { id: adminId } = await knex('User as u')
-    .where({ 'u.name': 'myanmar_admin' })
-    .first('u.id')
-
   const now = new Date()
   const auditFields = {
     createdOn: now,
-    createdBy: adminId,
     updatedOn: now,
-    updatedBy: adminId,
   }
 
   // Reuse previously seeded "static" data
@@ -557,17 +551,19 @@ async function seedIssueEventTriggersForPartner(
 async function assignAllFeaturesToJobFunctionIds(
   knex,
   jobFunctionIds,
-  featureBlacklist = [
+  featureBlacklist = []
+) {
+  const defaultFeatureBlacklist = [
     // These are currently hardcoded to Myanmar, so skip by default
     'targetDashboard',
     'actionDashboard',
     'reportDashboard',
     'siteFilterDashboard',
   ]
-) {
   const features = _.filter(
     await allFeatureToId(),
-    (val, key) => !_.includes(featureBlacklist, key)
+    (val, key) =>
+      !_.includes([...defaultFeatureBlacklist, ...featureBlacklist], key)
   )
   await Promise.all(
     _.map(features, async featureId => {

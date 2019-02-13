@@ -1,4 +1,4 @@
-import DataTableRow from './DataTableRow'
-import DataTableCell from './DataTableCell'
+import TableRow from './TableRow'
+import TableCell from './TableCell'
 
-export { DataTableRow, DataTableCell }
+export { TableRow, TableCell }

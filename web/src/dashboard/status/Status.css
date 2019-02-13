@@ -223,6 +223,7 @@
     overflow-x: auto;
     display: flex;
     flex-flow: column wrap;
+    overflow-x: auto
   }
 }
 
