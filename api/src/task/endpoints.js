@@ -45,7 +45,7 @@ const routes = [
               .description('Filter for topic'),
             siteId: Joi.number().allow(''),
             date: Joi.date().iso(),
-            statusId: Joi.number(),
+            categoryId: Joi.number(),
           },
           validateSortPageParams('topic', 'site', 'time')
         ),

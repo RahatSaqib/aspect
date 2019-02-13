@@ -1,6 +1,10 @@
 const _ = require('lodash')
 const { knex } = require('../db')
+const setupPaginator = require('knex-paginator')
+
 const { getAccountDetailsForUsername } = require('../accountDetails/service')
+
+setupPaginator(knex)
 
 const RESOLVED_ISSUE_STATUS = 8
 const OK_ISSUE_STATUS = 4
@@ -9,8 +13,7 @@ async function getQuery(request, query, queryBuilder) {
   const loggedUserName = request.auth.credentials.name
   const accountDetails = await getAccountDetailsForUsername(loggedUserName)
   const sortColumn = query.sortCol ? query.sortCol : 'time'
-
-  return knex('AlertMessage as am')
+  const result = await knex('AlertMessage as am')
     .join('Notification as notif', 'am.id', 'notif.alertMessageId')
     .join('Site as site', 'am.siteId', 'site.id')
     .join('Device as d', 'am.deviceId', 'd.id')
@@ -18,82 +21,91 @@ async function getQuery(request, query, queryBuilder) {
     .leftJoin('IssueStatus as is', 'i.issueStatusId', 'is.id')
     .leftJoin('IssueType as it', 'i.issueTypeId', 'it.id')
     .leftJoin('IssueCategory as ic', 'it.issueCategoryId', 'ic.id')
-    .modify(queryBuilder)
     .where(builder => {
       if (_.isString(query.topic) && query.topic !== 'all')
         builder = builder.where('ic.name', query.topic)
+      if (_.isString(query.alertType) && query.alertType !== 'all')
+        builder = builder.where('it.name', query.alertType)
+
       return builder
         .where('am.personId', accountDetails.id)
         .whereNotIn('is.id', [RESOLVED_ISSUE_STATUS, OK_ISSUE_STATUS])
     })
-    .select(
-      'am.id as id',
-      'site.name as site',
-      'is.name as issueStatus',
-      'is.Id as issueStatusId',
-      'ic.name as issueCategory',
-      'ic.Id as issueCategoryId',
-      knex.raw('date(am.createdOn) as time'),
-      'am.message',
-      knex.raw('sum(case when i.id is null then 0 else 1 end) as issueCount'),
-      knex.raw('ifnull(d.name,site.name) as title')
-    )
+    .modify(queryBuilder)
     .orderBy(sortColumn, query.sortDir)
+    .paginate(query.size || 10, query.page || 1)
+  return result
 }
 
 async function listTasksByStatus(request) {
   const { query } = request
-  const issueStatus = query.statusId
+  const issueCategoryId = query.categoryId
   const { siteId, date } = query
+  const sqlDate = new Date(date).toISOString().split('T')[0]
+  console.log(sqlDate)
+  const queryKnex = await getQuery(request, query, builder => {
+    builder
+      .where('ic.Id', issueCategoryId)
+      .where('site.id', siteId)
+      .whereRaw('date(am.createdOn) = ?', [sqlDate])
+      .select(
+        'am.id as id',
+        'site.name as site',
+        'is.name as issueStatus',
+        'is.Id as issueStatusId',
+        'ic.name as issueCategory',
+        'ic.Id as issueCategoryId',
+        knex.raw('date(am.createdOn) as time'),
+        'am.message',
+        knex.raw('ifnull(d.name,site.name) as title')
+      )
+  })
 
-  console.log(issueStatus, siteId, date)
-
-  const queryKnex = await getQuery(request, query)
-
-  const dataWithFilteredTopic = queryKnex
-
-  return processTaskResults(dataWithFilteredTopic, query)
+  const result = processTaskResults(queryKnex.data)
+  return result
 }
 async function listTasks(request) {
   const { query } = request
 
   const queryKnex = await getQuery(request, query, queryBuilder => {
-    queryBuilder.groupBy(
-      'site',
-      'issueStatus',
-      'issueStatusId',
-      'title',
-      'issueCategory',
-      'issueCategoryId',
-      'time'
-    )
+    queryBuilder
+      .select(
+        'am.id as id',
+        'site.name as site',
+        'is.name as issueStatus',
+        'is.Id as issueStatusId',
+        'ic.name as issueCategory',
+        'ic.Id as issueCategoryId',
+        knex.raw('date(am.createdOn) as time'),
+        'am.message',
+        knex.raw('sum(case when i.id is null then 0 else 1 end) as issueCount'),
+        knex.raw('ifnull(d.name,site.name) as title')
+      )
+      .groupBy(
+        'site.name',
+        'is.name',
+        'is.id',
+        knex.raw('ifnull(d.name,site.name)'),
+        'ic.name',
+        'ic.id',
+        knex.raw('date(am.createdOn)')
+      )
   })
-  const dataWithFilteredTopic = queryKnex
-  return processTaskResults(dataWithFilteredTopic, query)
+
+  return processTaskResults(queryKnex.data)
 }
 
-function processTaskResults(dataWithFilteredTopic, query) {
+function processTaskResults(dataWithFilteredTopic) {
   const countByAlert = _.countBy(dataWithFilteredTopic, 'issueCategory')
   countByAlert.total = dataWithFilteredTopic.length
-  const rawData = _.flowRight(
-    _.isString(query.alertType) && query.alertType !== 'all'
-      ? x => _.filter(x, ['issueCategory', query.alertType])
-      : _.identity
-  )(dataWithFilteredTopic)
 
-  const total = rawData.length
-  const size = parseInt(query.size, 10)
-  const page = parseInt(query.page, 10)
-  const data = _.flowRight(x =>
-    x.slice(size * page, Math.min(total, size * page + size))
-  )(rawData)
-
+  const total = dataWithFilteredTopic.length
   const result = {
     ok: true,
     total,
-    data,
+    data: dataWithFilteredTopic,
     countByAlert,
-    length: data.length,
+    length: dataWithFilteredTopic.length,
   }
 
   return result
