@@ -406,7 +406,6 @@ const Summary = Immutable.Record({
   resultSiteList: Immutable.List(),
   resultSummaryList: Immutable.List(),
   inventoryItemSiteList: Immutable.List(),
-  inventorySiteSummaryList: Immutable.List(),
   inventoryConsumableSummaryList: Immutable.List(),
   deviceList: Immutable.List(),
   deviceSummaryMap: Immutable.Map(),
@@ -499,10 +498,6 @@ export default function dashboardReducer(state = initialState, action) {
             mutState.requestedAtSet.delete(action.requestedAt)
           )
           mutState.mergeDeepIn(['inventoryItemSiteList'], action.data.siteList)
-          mutState.mergeDeepIn(
-            ['inventorySiteSummaryList'],
-            action.data.inventorySiteSummaryList
-          )
           mutState.mergeDeepIn(
             ['inventoryConsumableSummaryList'],
             action.data.inventoryConsumableSummaryList

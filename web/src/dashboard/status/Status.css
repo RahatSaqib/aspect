@@ -223,6 +223,7 @@
     overflow-x: scroll;
     display: flex;
     flex-flow: column wrap;
+    overflow-x: auto
   }
 }
 
