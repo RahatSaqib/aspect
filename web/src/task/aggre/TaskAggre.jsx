@@ -1,5 +1,4 @@
 import classnames from 'classnames/bind'
-// import _ from 'lodash'
 import React from 'react'
 import { compose, withProps, withHandlers, lifecycle } from 'recompose'
 import { defineMessages } from 'react-intl'
@@ -67,6 +66,8 @@ const enhance = compose(
     state => ({
       items: state.task.items,
       table: state.task.table,
+      sites: state.task.sites,
+      devices: state.task.devices,
     }),
     bindActionCreators.bind(null, {
       getAlarmsByStatus,
@@ -141,6 +142,8 @@ export const TaskAggre = ({
   match,
   table,
   items,
+  sites,
+  devices,
   // --- injected by recompose ---
   onBackClick,
   sortCol,
@@ -162,44 +165,39 @@ export const TaskAggre = ({
       <Unit lg="1-4">
         <legend className={cssClasses('Summary__Legend')}>Sites</legend>
         <div>
-          <span className={cssClasses('Summary__Item')}>
-            Kampala Lab
-            <Link
-              to="/browse/site"
-              className={cssClasses('Summary__Item__Link')}
-            >
-              <FaArrowUp
-                className={cssClasses('Summary__Item__Link__FaArrowUp')}
-              />
-            </Link>
-          </span>
+          {!sites.isEmpty() &&
+            sites.toArray().map(element => (
+              <span className={cssClasses('Summary__Item')}>
+                {element.site}
+                <Link
+                  to={`/browse/site/${element.siteId}`}
+                  className={cssClasses('Summary__Item__Link')}
+                >
+                  <FaArrowUp
+                    className={cssClasses('Summary__Item__Link__FaArrowUp')}
+                  />
+                </Link>
+              </span>
+            ))}
         </div>
       </Unit>
       <Unit lg="1-2">
         <legend className={cssClasses('Summary__Legend')}>Devices</legend>
         <div>
-          <span className={cssClasses('Summary__Item')}>
-            TB Device Kampala 1
-            <Link
-              to="/browse/device"
-              className={cssClasses('Summary__Item__Link')}
-            >
-              <FaArrowUp
-                className={cssClasses('Summary__Item__Link__FaArrowUp')}
-              />
-            </Link>
-          </span>
-          <span className={cssClasses('Summary__Item')}>
-            TB Device Kampala 2
-            <Link
-              to="/browse/device"
-              className={cssClasses('Summary__Item__Link')}
-            >
-              <FaArrowUp
-                className={cssClasses('Summary__Item__Link__FaArrowUp')}
-              />
-            </Link>
-          </span>
+          {!devices.isEmpty() &&
+            devices.toArray().map(element => (
+              <span className={cssClasses('Summary__Item')}>
+                {element.device}
+                <Link
+                  to={`/browse/device/${element.deviceId}`}
+                  className={cssClasses('Summary__Item__Link')}
+                >
+                  <FaArrowUp
+                    className={cssClasses('Summary__Item__Link__FaArrowUp')}
+                  />
+                </Link>
+              </span>
+            ))}
         </div>
       </Unit>
       {/* <Unit lg="1-4">

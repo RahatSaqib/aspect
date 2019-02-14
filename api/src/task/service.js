@@ -42,7 +42,6 @@ async function listTasksByStatus(request) {
   const issueCategoryId = query.categoryId
   const { date } = query
   const sqlDate = new Date(date).toISOString().split('T')[0]
-  console.log(sqlDate)
   const queryKnex = await getQuery(request, query, builder => {
     builder
       .where('ic.Id', issueCategoryId)
@@ -50,11 +49,14 @@ async function listTasksByStatus(request) {
       .select(
         'am.id as id',
         'site.name as site',
+        'site.id as siteId',
+        'd.name as device',
+        'd.id as deviceId',
         'is.name as issueStatus',
         'is.Id as issueStatusId',
         'ic.name as issueCategory',
         'ic.Id as issueCategoryId',
-        knex.raw('date(am.createdOn) as time'),
+        knex.raw('am.createdOn as time'),
         'am.message',
         knex.raw('ifnull(d.name,site.name) as title')
       )

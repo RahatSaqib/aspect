@@ -19,6 +19,7 @@ export const types = {
   REQUEST_TASKS: 'REQUEST_TASKS',
   RECEIVE_TASKS: 'RECEIVE_TASKS',
   GET_TASK: 'GET_TASKS',
+  RECEIVE_DETAILEDTASKS: 'RECEIVE_DETAILEDTASKS',
 }
 //
 
@@ -63,6 +64,26 @@ function receiveTasks(json) {
     items: json.data,
     total: json.total,
     countByAlert: json.countByAlert,
+  }
+}
+
+function receiveDetailedTasks(json) {
+  return {
+    type: types.RECEIVE_DETAILEDTASKS,
+    items: json.data,
+    total: json.total,
+    countByAlert: json.countByAlert,
+    sites: _.uniqBy(
+      _.map(json.data, elem => ({ siteId: elem.siteId, site: elem.site })),
+      'siteId'
+    ),
+    devices: _.uniqBy(
+      _.map(json.data, elem => ({
+        deviceId: elem.deviceId,
+        device: elem.device,
+      })),
+      'deviceId'
+    ),
   }
 }
 
@@ -119,7 +140,7 @@ export function getAlarmsByStatus(
           ),
         },
       }
-    ).then(json => dispatch(receiveTasks(json)))
+    ).then(json => dispatch(receiveDetailedTasks(json)))
   }
 }
 
@@ -166,6 +187,8 @@ const Task = Immutable.Record({
   items: new Items(),
   table: new Table(),
   countByAlert: Immutable.Map(),
+  sites: Immutable.List(),
+  devices: Immutable.List(),
 })
 
 const initialState = new Task()
@@ -181,6 +204,18 @@ export default function taskReducer(state = initialState, action) {
         mutState.set('table', receiveTableItems(mutState.table, action.total))
         mutState.set('countByAlert', Immutable.Map(action.countByAlert))
       })
+    case types.RECEIVE_DETAILEDTASKS: {
+      const result = state.withMutations(mutState => {
+        const immutList = Immutable.fromJS(action.items)
+        mutState.set('items', receiveList(mutState.items, immutList))
+        mutState.set('table', receiveTableItems(mutState.table, action.total))
+        mutState.set('countByAlert', Immutable.Map(action.countByAlert))
+        mutState.set('sites', Immutable.List(action.sites))
+        mutState.set('devices', Immutable.List(action.devices))
+      })
+
+      return result
+    }
     default:
       return state
   }

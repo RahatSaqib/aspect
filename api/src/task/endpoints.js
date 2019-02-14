@@ -42,9 +42,6 @@ const routes = [
                 issueStatus: Joi.string()
                   .required()
                   .description('The name of the issue status'),
-                alertTemplateId: Joi.number().description(
-                  'The message type for the alarm'
-                ),
                 issueStatusId: Joi.number()
                   .required()
                   .description('The id of the issue status'),
@@ -103,7 +100,6 @@ const routes = [
               .description('Filter for topic'),
             date: Joi.date().iso(),
             categoryId: Joi.number(),
-            alertTemplateId: Joi.number(),
           },
           validateSortPageParams('topic', 'site', 'time')
         ),
@@ -123,6 +119,9 @@ const routes = [
                 site: Joi.string()
                   .required()
                   .description('The site name'),
+                siteId: Joi.number().description('The site Id'),
+                deviceId: Joi.number().description('The device Id'),
+                device: Joi.string().description('The device name'),
                 issueStatus: Joi.string()
                   .required()
                   .description('The name of the issue status'),
