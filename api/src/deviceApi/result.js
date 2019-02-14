@@ -598,7 +598,8 @@ async function resolveAutoTagging(knex, result) {
   const existingTags = await getExistingTagByPartner(
     knex,
     result.partnerId,
-    taggingResults
+    taggingResults,
+    result.id
   )
 
   const tagsToBeAdded = _.uniqBy(
@@ -606,9 +607,7 @@ async function resolveAutoTagging(knex, result) {
   )
 
   const tagsToBeUpdated = _.uniqBy(
-    _.filter(existingTags, tag =>
-      includesIgnoreCaseByResultId(taggingResults, tag, result.id)
-    )
+    _.filter(existingTags, tag => includesIgnoreCase(taggingResults, tag))
   )
 
   _.map(tagsToBeAdded, async tag => {
@@ -635,14 +634,6 @@ function includesIgnoreCase(collection, value) {
   return _.some(
     collection,
     item => item.title.toLowerCase() === value.toLowerCase()
-  )
-}
-function includesIgnoreCaseByResultId(collection, value, resultId) {
-  return _.some(
-    collection,
-    item =>
-      item.toLowerCase() === value.title.toLowerCase() &&
-      value.resultId !== resultId
   )
 }
 
@@ -680,12 +671,18 @@ function getAllResultTags(country, result) {
   }
   return _.uniqBy(taggingResults)
 }
-async function getExistingTagByPartner(knex, partnerId, taggingResults) {
+async function getExistingTagByPartner(
+  knex,
+  partnerId,
+  taggingResults,
+  resultId
+) {
   return knex('Tag as t')
     .join('ResultTag as rt', 't.id', 'rt.tagId')
-    .select('t.id', 't.title', 'rt.resultId')
-    .distinct('t.id', 't.title', 'rt.resultId')
+    .select('t.id', 't.title')
+    .distinct('t.id', 't.title')
     .where('t.partnerId', partnerId)
+    .whereNot('rt.resultId', resultId)
     .whereIn('t.title', taggingResults)
 }
 
