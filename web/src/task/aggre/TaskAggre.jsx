@@ -1,4 +1,5 @@
 import classnames from 'classnames/bind'
+// import _ from 'lodash'
 import React from 'react'
 import { compose, withProps, withHandlers, lifecycle } from 'recompose'
 import { defineMessages } from 'react-intl'
@@ -7,7 +8,7 @@ import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
 import Helmet from 'react-helmet'
 import FaArrowUp from 'react-icons/lib/fa/arrow-up'
-
+import queryString from 'query-string'
 import { makeSortPageSelector } from '../../shared/selectors/searchParams'
 import DetailBackBar from '../../globals/components/DetailBackBar'
 import { Unit } from '../../components/pureGrids'
@@ -25,7 +26,7 @@ import {
   TaskDataTableHead,
   TaskDataTableRow,
 } from '../list/TaskDataTable'
-import { fetchTasks } from '../TaskRedux'
+import { getAlarmsByStatus } from '../TaskRedux'
 
 const cssClasses = classnames.bind(require('./TaskAggre.css'))
 
@@ -68,21 +69,30 @@ const enhance = compose(
       table: state.task.table,
     }),
     bindActionCreators.bind(null, {
-      fetchTasks,
+      getAlarmsByStatus,
     })
   ),
   withHandlers({
     onInitialLoad: ({
       location,
-      fetchTasks,
+      getAlarmsByStatus,
       sortCol,
       sortDir,
       pageAt,
       pageSize,
     }) => () => {
       const { sanitized, value: filtersParams } = filtersFromLocation(location)
+      const taskDetails = queryString.parse(location.search)
       if (!sanitized) {
-        fetchTasks(filtersParams, sortCol, sortDir, pageAt, pageSize)
+        getAlarmsByStatus(
+          filtersParams,
+          sortCol,
+          sortDir,
+          pageAt,
+          pageSize,
+          taskDetails.date,
+          taskDetails.categoryId
+        )
       }
     },
 
@@ -150,7 +160,7 @@ export const TaskAggre = ({
     />
     <section className={cssClasses('Section')}>
       <Unit lg="1-4">
-        <legend className={cssClasses('Summary__Legend')}>Site</legend>
+        <legend className={cssClasses('Summary__Legend')}>Sites</legend>
         <div>
           <span className={cssClasses('Summary__Item')}>
             Kampala Lab
@@ -192,7 +202,7 @@ export const TaskAggre = ({
           </span>
         </div>
       </Unit>
-      <Unit lg="1-4">
+      {/* <Unit lg="1-4">
         <legend className={cssClasses('Summary__Legend')}>More</legend>
         <div>
           <span className={cssClasses('Summary__Item')}>
@@ -207,7 +217,7 @@ export const TaskAggre = ({
             </Link>
           </span>
         </div>
-      </Unit>
+      </Unit> */}
     </section>
     <section className={cssClasses('Section')}>
       <DataTableCard>
@@ -245,18 +255,7 @@ export const TaskAggre = ({
               ]}
             />
             {items.currentIdList
-              .map(id =>
-                items.byId.get(id).merge({
-                  /* FIXME: actual impl */
-                  alertType: 'mine',
-                  topic: 'health',
-                  title: 'TB',
-                  alertCount: 0,
-                  message: 'positive results',
-                  site: 'Kampala Lab',
-                  notificationCount: 0,
-                })
-              )
+              .map(id => items.byId.get(id))
               .map(task => (
                 <TaskDataTableRow
                   key={task.get('id')}
@@ -269,7 +268,7 @@ export const TaskAggre = ({
               ))}
           </TaskDataTable>
         )}
-        {!items.currentIdList.isEmpty() && (
+        {!items.isEmpty() > 0 && (
           <BrowseTablePaginator
             history={history}
             location={location}

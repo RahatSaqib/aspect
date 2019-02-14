@@ -42,6 +42,9 @@ const routes = [
                 issueStatus: Joi.string()
                   .required()
                   .description('The name of the issue status'),
+                alertTemplateId: Joi.number().description(
+                  'The message type for the alarm'
+                ),
                 issueStatusId: Joi.number()
                   .required()
                   .description('The id of the issue status'),
@@ -98,9 +101,9 @@ const routes = [
             topic: Joi.string()
               .allow('')
               .description('Filter for topic'),
-            siteId: Joi.number().allow(''),
             date: Joi.date().iso(),
             categoryId: Joi.number(),
+            alertTemplateId: Joi.number(),
           },
           validateSortPageParams('topic', 'site', 'time')
         ),

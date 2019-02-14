@@ -43,8 +43,7 @@ function requestAlarmsByStatus(
   size,
   filters,
   date,
-  site,
-  issueCategory
+  categoryId
 ) {
   return {
     type: types.GET_TASK,
@@ -53,9 +52,8 @@ function requestAlarmsByStatus(
     page,
     size,
     filters,
-    site,
     date,
-    issueCategory,
+    categoryId,
   }
 }
 
@@ -69,14 +67,13 @@ function receiveTasks(json) {
 }
 
 export function getAlarmsByStatus(
-  date,
-  site,
-  issueCategory,
   filtersParams,
   sortCol,
   sortDir,
   page,
-  pageSize
+  pageSize,
+  date,
+  categoryId
 ) {
   return dispatch => {
     const filters = _.fromPairs([...filtersParams.entries()])
@@ -88,8 +85,7 @@ export function getAlarmsByStatus(
         pageSize,
         filters,
         date,
-        site,
-        issueCategory
+        categoryId
       )
     )
 
@@ -99,9 +95,8 @@ export function getAlarmsByStatus(
         sortDir,
         page,
         size: pageSize,
-        date,
-        site,
-        issueCategory,
+        date: new Date(date).toISOString(),
+        categoryId,
         ...filters,
       })}`,
       {

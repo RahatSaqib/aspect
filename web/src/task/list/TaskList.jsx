@@ -345,7 +345,11 @@ export const TaskList = ({
                 task={task}
                 onClick={onRowClick}
                 data-task-id={
-                  task.get('issueCount') > 0 ? 'aggre-list' : 'detail'
+                  task.get('issueCount') > 0
+                    ? `aggre-list?categoryId=${task.get(
+                        'issueCategoryId'
+                      )}&date=${task.get('time')}`
+                    : 'detail'
                 }
               />
             ))}

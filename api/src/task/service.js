@@ -40,13 +40,12 @@ async function getQuery(request, query, queryBuilder) {
 async function listTasksByStatus(request) {
   const { query } = request
   const issueCategoryId = query.categoryId
-  const { siteId, date } = query
+  const { date } = query
   const sqlDate = new Date(date).toISOString().split('T')[0]
   console.log(sqlDate)
   const queryKnex = await getQuery(request, query, builder => {
     builder
       .where('ic.Id', issueCategoryId)
-      .where('site.id', siteId)
       .whereRaw('date(am.createdOn) = ?', [sqlDate])
       .select(
         'am.id as id',
@@ -73,21 +72,22 @@ async function listTasks(request) {
     queryBuilder
       .select(
         'am.id as id',
-        'site.name as site',
+        knex.raw("group_concat(DISTINCT site.name separator ', ') as site"),
         'is.name as issueStatus',
+        // 'am.alertTemplateId',
         'is.Id as issueStatusId',
         'ic.name as issueCategory',
         'ic.Id as issueCategoryId',
         knex.raw('date(am.createdOn) as time'),
         'am.message',
         knex.raw('sum(case when i.id is null then 0 else 1 end) as issueCount'),
-        knex.raw('ifnull(d.name,site.name) as title')
+        knex.raw(
+          "group_concat(DISTINCT ifnull(d.name,site.name) separator ', ') as title"
+        )
       )
       .groupBy(
-        'site.name',
-        'is.name',
         'is.id',
-        knex.raw('ifnull(d.name,site.name)'),
+        //   'am.alertTemplateId',
         'ic.name',
         'ic.id',
         knex.raw('date(am.createdOn)')
