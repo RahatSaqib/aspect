@@ -1,6 +1,6 @@
 const Joi = require('joi')
 const { asyncHandler, validateSortPageParams } = require('../routes')
-const { listTasks, listTasksByStatus } = require('./service')
+const { listTasks, listTasksByStatus, getTask } = require('./service')
 
 const routes = [
   {
@@ -170,6 +170,23 @@ const routes = [
             'The amount of task present in this page'
           ),
           ok: Joi.boolean().description('The status of the request'),
+        },
+      },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/task/{id}',
+    handler: asyncHandler(getTask),
+    config: {
+      description: 'Task List',
+      notes: 'details of the task for the current id',
+      auth: { scope: ['task:view', 'task:edit'] },
+      validate: {
+        query: {
+          id: Joi.number()
+            .required()
+            .description('id number of the alert'),
         },
       },
     },

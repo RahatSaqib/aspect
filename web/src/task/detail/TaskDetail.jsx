@@ -1,4 +1,4 @@
-import _ from 'lodash'
+// import _ from 'lodash'
 import classnames from 'classnames/bind'
 import React from 'react'
 import { compose, withHandlers, lifecycle } from 'recompose'
@@ -8,16 +8,16 @@ import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
 import Helmet from 'react-helmet'
 import { Card } from 'react-toolbox/lib/card'
-import { Button } from 'react-toolbox/lib/button'
-import { Input } from 'react-toolbox/lib/input'
-import { Checkbox } from 'react-toolbox/lib/checkbox'
+// import { Button } from 'react-toolbox/lib/button'
+// import { Input } from 'react-toolbox/lib/input'
+// import { Checkbox } from 'react-toolbox/lib/checkbox'
 import FaArrowUp from 'react-icons/lib/fa/arrow-up'
 
 // import ButtonGroup from '../../components/themedReactToolbox/ButtonGroup'
 import DetailBackBar from '../../globals/components/DetailBackBar'
 import { Unit } from '../../components/pureGrids'
 import AlertType from '../../components/shared/AlertType'
-import FaBellZ from '../../components/shared/FaBellZ'
+// import FaBellZ from '../../components/shared/FaBellZ'
 
 const cssClasses = classnames.bind(require('./TaskDetail.css'))
 
@@ -33,6 +33,7 @@ const enhance = compose(
     state => ({
       items: state.notification.items,
       table: state.notification.table,
+      title: state.notification.title,
     }),
     bindActionCreators.bind(null, {})
   ),
@@ -63,9 +64,9 @@ const enhance = compose(
 }
 */
 
-const INPUT_THEME = {
-  inputElement: cssClasses('Input__inputElement'),
-}
+// const INPUT_THEME = {
+//   inputElement: cssClasses('Input__inputElement'),
+// }
 
 export const TaskDetail = ({
   intl,
@@ -127,10 +128,10 @@ export const TaskDetail = ({
           <Unit lg="1-5" />
           <Unit lg="1-5">March 31, 2017 2:17PM</Unit>
           <Unit lg="1-5">
-            <Link to="/" className={cssClasses('Summary__Item__Link')}>
+            {/* <Link to="/" className={cssClasses('Summary__Item__Link')}>
               <FaBellZ className={cssClasses('Summary__Item__Link__FaBellZ')} />
               Snooze
-            </Link>
+            </Link> */}
           </Unit>
           <Unit lg="1-5">
             <legend className={cssClasses('Summary__Legend')}>
@@ -189,7 +190,6 @@ export const TaskDetail = ({
               </span>
             </div>
           </Unit>
-          <hr />
           <Unit lg="1-2">
             <span className={cssClasses('Summary__Item')}>Status</span>
           </Unit>
@@ -215,7 +215,7 @@ export const TaskDetail = ({
               />
             </ButtonGroup>
           </Unit> */}
-          <Unit sm="1-1">
+          {/* <Unit sm="1-1">
             <ol className={cssClasses('MessageList')}>
               {_.map(
                 [
@@ -266,7 +266,7 @@ export const TaskDetail = ({
               checked={false}
               label="This is now resolved"
             />
-          </Unit>
+          </Unit> */}
         </div>
       </Card>
     </section>

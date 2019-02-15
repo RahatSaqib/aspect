@@ -115,8 +115,29 @@ function processTaskResults(dataWithFilteredTopic, total) {
 
   return result
 }
-
+async function getTask(request) {
+  const { query } = request
+  await getQuery(request, query, builder => {
+    builder
+      .where('am.Id', query.id)
+      .select(
+        'am.id as id',
+        'site.name as site',
+        'site.id as siteId',
+        'd.name as device',
+        'd.id as deviceId',
+        'is.name as issueStatus',
+        'is.Id as issueStatusId',
+        'ic.name as issueCategory',
+        'ic.Id as issueCategoryId',
+        knex.raw('am.createdOn as time'),
+        'am.message',
+        knex.raw('ifnull(d.name,site.name) as title')
+      )
+  })
+}
 module.exports = {
   listTasks,
   listTasksByStatus,
+  getTask,
 }
