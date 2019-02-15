@@ -56,6 +56,9 @@ async function listSites(request) {
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
     .leftOuterJoin('State as st', 'g.stateId', 'st.id')
     .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
+    .leftOuterJoin('Issue as i', 's.id', 'i.siteId')
+    .leftOuterJoin('IssueType as t', 'i.issueTypeId', 't.id')
+    .leftOuterJoin('IssueCategory as c', 't.issueCategoryId', 'c.id')
     .where(function() {
       if (!query.siteIds) {
         return
@@ -94,11 +97,21 @@ async function listSites(request) {
   const getItems = siteQuery
     .clone()
     .modify(sortPageParams, query, 'name')
+    .distinct('c.name as issueCategory')
     .select(SELECT_LIST_FIELDS)
 
   // return result when both queries are finished
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
 
+  const output = []
+  await data.forEach(function(site) {
+    if (!this[site.id]) {
+      this[site.id] = { ...site, issueCategory: [] }
+      output.push(this[site.id])
+    }
+
+    this[site.id].issueCategory.push(site.issueCategory)
+  })
   const result = { ok: true, total, length: data.length, data }
 
   return result

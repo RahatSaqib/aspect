@@ -57,6 +57,10 @@ const messages = defineMessages({
     id: 'pages.SiteList.externalId',
     defaultMessage: 'Site ID',
   },
+  issueCategory: {
+    id: 'pages.SiteList.issueCategory',
+    defaultMessage: 'issueCategory',
+  },
   paginatorStatus: {
     id: 'pages.SiteList.paginatorStatus',
     defaultMessage: `Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural,
@@ -226,6 +230,11 @@ export const SiteList = ({
               {
                 key: 'totalDevices',
                 label: intl.formatMessage(messages.totalDevices),
+                sortable: true,
+              },
+              {
+                key: 'issueCategory',
+                label: intl.formatMessage(messages.issueCategory),
                 sortable: true,
               },
             ]}
