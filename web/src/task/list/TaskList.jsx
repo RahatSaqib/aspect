@@ -351,7 +351,7 @@ export const TaskList = ({
                       )}&date=${task.get('time')}&alertTemplateId=${task.get(
                         'alertTemplateId'
                       )}`
-                    : 'detail'
+                    : `/${task.get('id')}`
                 }
               />
             ))}

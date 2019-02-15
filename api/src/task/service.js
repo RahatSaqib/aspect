@@ -34,6 +34,7 @@ async function getQuery(request, query, queryBuilder) {
     .modify(queryBuilder)
     .orderBy(sortColumn, query.sortDir)
     .paginate(query.size || 10, query.page || 1, true)
+
   return result
 }
 async function listTasksByStatus(request) {
@@ -116,25 +117,78 @@ function processTaskResults(dataWithFilteredTopic, total) {
   return result
 }
 async function getTask(request) {
-  const { query } = request
-  await getQuery(request, query, builder => {
-    builder
-      .where('am.Id', query.id)
-      .select(
-        'am.id as id',
-        'site.name as site',
-        'site.id as siteId',
-        'd.name as device',
-        'd.id as deviceId',
-        'is.name as issueStatus',
-        'is.Id as issueStatusId',
-        'ic.name as issueCategory',
-        'ic.Id as issueCategoryId',
-        knex.raw('am.createdOn as time'),
-        'am.message',
-        knex.raw('ifnull(d.name,site.name) as title')
-      )
-  })
+  const { params: { taskId } } = request
+  const loggedUserName = request.auth.credentials.name
+  const accountDetails = await getAccountDetailsForUsername(loggedUserName)
+
+  const task = await getTaskDetailsQuery(taskId, accountDetails.id)
+  console.log(task)
+  console.log(task.jobPersons)
+
+  if (task.jobPersons.split(';').length > 1) {
+    task.jobPersons = task.jobPersons.split(';').map((elem, index) => ({
+      PersonName: elem,
+      PersonId: task.jobPersonsId.split(';')[index],
+    }))
+  } else {
+    task.jobPersons = [
+      {
+        PersonName: task.jobPersons,
+        PersonId: task.jobPersonsId,
+      },
+    ]
+  }
+  return task
+}
+
+async function getTaskDetailsQuery(taskId, userId) {
+  const query = await knex('AlertMessage as am')
+    .join('Person as p', 'am.personId', 'p.Id')
+    .join('Notification as notif', 'am.id', 'notif.alertMessageId')
+    .join('Site as site', 'am.siteId', 'site.id')
+    .join('Device as d', 'am.deviceId', 'd.id')
+    .leftJoin('Issue as i', 'notif.issueId', 'i.id')
+    .leftJoin('IssueStatus as is', 'i.issueStatusId', 'is.id')
+    .leftJoin('IssueType as it', 'i.issueTypeId', 'it.id')
+    .leftJoin('IssueCategory as ic', 'it.issueCategoryId', 'ic.id')
+    .join('JobContext as jb', 'site.Id', 'jb.siteId')
+    .join('Job as job', 'jb.jobId', 'job.Id')
+    .join('Person as jobperson', 'job.personId', 'jobperson.Id')
+    .where('am.Id', taskId)
+    .where('am.personId', userId)
+    .first(
+      'am.id as id',
+      'site.name as site',
+      'site.id as siteId',
+      'd.name as device',
+      'd.id as deviceId',
+      'is.name as issueStatus',
+      'is.Id as issueStatusId',
+      'ic.name as issueCategory',
+      'p.name as personName',
+      'ic.Id as issueCategoryId',
+      'am.createdOn as time',
+      'am.message',
+      knex.raw('ifnull(d.name,site.name) as title'),
+      knex.raw("group_concat(jobperson.name separator ';') as jobPersons"),
+      knex.raw("group_concat(jobperson.id separator ';') as jobPersonsId")
+    )
+    .groupBy(
+      'am.id',
+      'site',
+      'site.id',
+      'd.name',
+      'd.id',
+      'issueStatus',
+      'issueStatusId',
+      'issueCategory',
+      'personName',
+      'issueCategoryId',
+      'time',
+      'am.message',
+      'title'
+    )
+  return query
 }
 module.exports = {
   listTasks,

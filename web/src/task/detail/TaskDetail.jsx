@@ -1,18 +1,19 @@
-// import _ from 'lodash'
+import _ from 'lodash'
 import classnames from 'classnames/bind'
 import React from 'react'
-import { compose, withHandlers, lifecycle } from 'recompose'
+import { compose, withHandlers, lifecycle, setPropTypes } from 'recompose'
 import { defineMessages } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
 import Helmet from 'react-helmet'
 import { Card } from 'react-toolbox/lib/card'
+import PropTypes from 'prop-types'
 // import { Button } from 'react-toolbox/lib/button'
 // import { Input } from 'react-toolbox/lib/input'
 // import { Checkbox } from 'react-toolbox/lib/checkbox'
 import FaArrowUp from 'react-icons/lib/fa/arrow-up'
-
+import { fetchTask } from '../TaskRedux'
 // import ButtonGroup from '../../components/themedReactToolbox/ButtonGroup'
 import DetailBackBar from '../../globals/components/DetailBackBar'
 import { Unit } from '../../components/pureGrids'
@@ -29,17 +30,24 @@ const messages = defineMessages({
 })
 
 const enhance = compose(
+  setPropTypes({
+    match: PropTypes.shape({
+      params: PropTypes.shape({
+        taskId: PropTypes.string.isRequired,
+      }).isRequired,
+    }).isRequired,
+  }),
   connect(
     state => ({
-      items: state.notification.items,
-      table: state.notification.table,
-      title: state.notification.title,
+      task: state.task.taskDetails,
+      jobPersons: state.task.jobPersons,
     }),
-    bindActionCreators.bind(null, {})
+    bindActionCreators.bind(null, { fetchTask })
   ),
   withHandlers({
-    onInitialLoad: () => () => {},
-
+    onInitialLoad: ({ match, fetchTask }) => () => {
+      fetchTask(match.params.taskId)
+    },
     onBackClick: ({ history }) => () => {
       history.goBack()
     },
@@ -48,7 +56,6 @@ const enhance = compose(
     componentDidMount() {
       this.props.onInitialLoad()
     },
-
     componentWillReceiveProps(nextProps) {
       if (this.props.location.search !== nextProps.location.search) {
         this.props.onInitialLoad()
@@ -73,6 +80,8 @@ export const TaskDetail = ({
   history,
   location,
   match,
+  task,
+  jobPersons,
   // --- injected by recompose ---
   onBackClick,
 }) => (
@@ -83,7 +92,7 @@ export const TaskDetail = ({
       location={location}
       match={match}
       onBackClick={onBackClick}
-      title="HealthCo HIV Device"
+      title={task.get('title')}
     />
     <section className={cssClasses('Section')}>
       <Card className={cssClasses('Card')}>
@@ -91,9 +100,8 @@ export const TaskDetail = ({
           <AlertType alertType="mine" />
           <span className={cssClasses('Card__Title__Text')}>
             {' '}
-            Needs calibrating
+            {task.get('message')}
           </span>
-          <small className={cssClasses('Card__Title__Date')}>by April 10</small>
           {/* <Button className={cssClasses('Card__Title__Button')} raised>
             Alert settings
           </Button> */}
@@ -101,9 +109,9 @@ export const TaskDetail = ({
         <div className={cssClasses('Card__Content')}>
           <Unit lg="1-5">
             <span className={cssClasses('Summary__Item')}>
-              HealthCo HIV Device
+              {task.get('device')}
               <Link
-                to="/browse/device"
+                to={`/browse/device/{task.get('device')}`}
                 className={cssClasses('Summary__Item__Link')}
               >
                 <FaArrowUp
@@ -114,9 +122,9 @@ export const TaskDetail = ({
           </Unit>
           <Unit lg="1-5">
             <span className={cssClasses('Summary__Item')}>
-              Mbarara Lab
+              {task.get('site')}
               <Link
-                to="/browse/site"
+                to={`/browse/site${task.get('site')}`}
                 className={cssClasses('Summary__Item__Link')}
               >
                 <FaArrowUp
@@ -126,7 +134,7 @@ export const TaskDetail = ({
             </span>
           </Unit>
           <Unit lg="1-5" />
-          <Unit lg="1-5">March 31, 2017 2:17PM</Unit>
+          <Unit lg="1-5">{intl.formatRelative(task.get('time'))}</Unit>
           <Unit lg="1-5">
             {/* <Link to="/" className={cssClasses('Summary__Item__Link')}>
               <FaBellZ className={cssClasses('Summary__Item__Link__FaBellZ')} />
@@ -139,22 +147,8 @@ export const TaskDetail = ({
             </legend>
             <div>
               <span className={cssClasses('Summary__Item')}>
-                Mary
-                <Link
-                  to="/browse/device"
-                  className={cssClasses('Summary__Item__Link')}
-                >
-                  <FaArrowUp
-                    className={cssClasses('Summary__Item__Link__FaArrowUp')}
-                  />
-                </Link>
-              </span>
-              <span className={cssClasses('Summary__Item')}>
-                Abdul
-                <Link
-                  to="/browse/device"
-                  className={cssClasses('Summary__Item__Link')}
-                >
+                {task.get('personName')}
+                <Link to="#" className={cssClasses('Summary__Item__Link')}>
                   <FaArrowUp
                     className={cssClasses('Summary__Item__Link__FaArrowUp')}
                   />
@@ -167,31 +161,23 @@ export const TaskDetail = ({
               Site contact
             </legend>
             <div>
-              <span className={cssClasses('Summary__Item')}>
-                Dr Doreen Adengo
-                <Link
-                  to="/browse/site"
-                  className={cssClasses('Summary__Item__Link')}
-                >
-                  <FaArrowUp
-                    className={cssClasses('Summary__Item__Link__FaArrowUp')}
-                  />
-                </Link>
-              </span>
-            </div>
-          </Unit>
-          <Unit lg="3-5">
-            <legend className={cssClasses('Summary__Legend')}>&nbsp;</legend>
-            <div>
-              <span className={cssClasses('Summary__Item')}>
-                <Link to="/" className={cssClasses('Summary__Item__Link')}>
-                  074 2834 8273
-                </Link>
-              </span>
+              {_.map(jobPersons.toArray(), elem => (
+                <span className={cssClasses('Summary__Item')}>
+                  {elem.PersonName}
+                  <Link to="#" className={cssClasses('Summary__Item__Link')}>
+                    <FaArrowUp
+                      className={cssClasses('Summary__Item__Link__FaArrowUp')}
+                    />
+                  </Link>
+                </span>
+              ))}
             </div>
           </Unit>
           <Unit lg="1-2">
-            <span className={cssClasses('Summary__Item')}>Status</span>
+            <legend className={cssClasses('Summary__Legend')}>Status</legend>
+            <span className={cssClasses('Summary__Item')}>
+              {task.get('issueStatus')}
+            </span>
           </Unit>
           {/* <Unit lg="1-2">
             <ButtonGroup

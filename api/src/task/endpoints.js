@@ -176,17 +176,15 @@ const routes = [
   },
   {
     method: 'GET',
-    path: '/task/{id}',
+    path: '/task/{taskId}',
     handler: asyncHandler(getTask),
     config: {
       description: 'Task List',
       notes: 'details of the task for the current id',
       auth: { scope: ['task:view', 'task:edit'] },
       validate: {
-        query: {
-          id: Joi.number()
-            .required()
-            .description('id number of the alert'),
+        params: {
+          taskId: Joi.number().description('id number of the alert'),
         },
       },
     },

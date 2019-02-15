@@ -17,7 +17,9 @@ import {
 
 export const types = {
   REQUEST_TASKS: 'REQUEST_TASKS',
+  REQUEST_TASK: 'REQUEST_TASK',
   RECEIVE_TASKS: 'RECEIVE_TASKS',
+  RECEIVE_TASK: 'RECEIVE_TASK',
   GET_TASK: 'GET_TASKS',
   RECEIVE_DETAILEDTASKS: 'RECEIVE_DETAILEDTASKS',
 }
@@ -34,6 +36,13 @@ function requestTasks(sortCol, sortDir, page, size, filters) {
     page,
     size,
     filters,
+  }
+}
+
+function requestTask(id) {
+  return {
+    type: types.REQUEST_TASK,
+    id,
   }
 }
 
@@ -67,6 +76,12 @@ function receiveTasks(json) {
   }
 }
 
+function receiveTask(json) {
+  return {
+    type: types.RECEIVE_TASK,
+    ...json,
+  }
+}
 function receiveDetailedTasks(json) {
   return {
     type: types.RECEIVE_DETAILEDTASKS,
@@ -148,6 +163,32 @@ export function getAlarmsByStatus(
   }
 }
 
+export function fetchTask(id) {
+  return dispatch => {
+    dispatch(requestTask(id))
+    return aspectFetch(`/task/${id}`, {
+      errorTasks: {
+        400: filterFieldsRejectedError(
+          defineMessages({
+            title: {
+              id: 'errorResponseMessages.fetchTask.GET.400.title',
+              defaultMessage: 'Searching Task Failed',
+            },
+          })
+        ),
+        default: errorPleaseTryAgainInAFewMinutes(
+          defineMessages({
+            title: {
+              id: 'errorResponseMessages.fetchTask.GET.default.title',
+              defaultMessage: 'Loading Task Failed',
+            },
+          })
+        ),
+      },
+    }).then(json => dispatch(receiveTask(json)))
+  }
+}
+
 export function fetchTasks(filtersParams, sortCol, sortDir, page, pageSize) {
   return dispatch => {
     const filters = _.fromPairs([...filtersParams.entries()])
@@ -194,6 +235,8 @@ const Task = Immutable.Record({
   sites: Immutable.List(),
   devices: Immutable.List(),
   title: String(),
+  taskDetails: Immutable.Map(),
+  jobPersons: Immutable.List(),
 })
 
 const initialState = new Task()
@@ -209,8 +252,8 @@ export default function taskReducer(state = initialState, action) {
         mutState.set('table', receiveTableItems(mutState.table, action.total))
         mutState.set('countByAlert', Immutable.Map(action.countByAlert))
       })
-    case types.RECEIVE_DETAILEDTASKS: {
-      const result = state.withMutations(mutState => {
+    case types.RECEIVE_DETAILEDTASKS:
+      return state.withMutations(mutState => {
         const immutList = Immutable.fromJS(action.items)
         mutState.set('items', receiveList(mutState.items, immutList))
         mutState.set('table', receiveTableItems(mutState.table, action.total))
@@ -219,8 +262,11 @@ export default function taskReducer(state = initialState, action) {
         mutState.set('devices', Immutable.List(action.devices))
         mutState.set('title', Immutable.fromJS(action.title))
       })
-      return result
-    }
+    case types.RECEIVE_TASK:
+      return state.withMutations(mutState => {
+        mutState.set('taskDetails', Immutable.fromJS(action))
+        mutState.set('jobPersons', Immutable.List(action.jobPersons))
+      })
     default:
       return state
   }

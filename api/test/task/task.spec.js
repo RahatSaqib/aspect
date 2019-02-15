@@ -2,12 +2,13 @@ const supertest = require('supertest')
 const chai = require('chai')
 const shared = require('../utils/sharedToken')
 const { createAlertTestContext } = require('./util')
+const { run } = require('../../src/db')
 // const _ = require('lodash')
 
 const server = supertest.agent('http://localhost:8080')
 const { assert } = chai
 const context = createAlertTestContext({ user: 'admin' })
-describe('Task Routes', () => {
+describe.only('Task Routes', () => {
   beforeEach(context.beforeEach)
   afterEach(context.afterEach)
 
@@ -16,12 +17,14 @@ describe('Task Routes', () => {
     describe('GET', () => {
       shared.checkToken(server, path)
       it('should return a list of alarms and issues by specific date, siteid and issuestatus', done => {
-        const siteId = 3
+        const alertTemplateId = 1
         const date = new Date().toISOString()
         const statusId = 4
 
         server
-          .get(`${path}?siteId=${siteId}&date=${date}&categoryId=${statusId}`)
+          .get(
+            `${path}?alertTemplateId=${alertTemplateId}&date=${date}&categoryId=${statusId}`
+          )
           .set('Authorization', `Bearer ${shared.token}`)
           .end((err, res) => {
             assert.isNotNull(res.body.data)
@@ -44,6 +47,31 @@ describe('Task Routes', () => {
       })
     })
   })
+
+  describe.only('/task/{taskId}', () => {
+    const path = '/api/task/'
+    describe('GET', () => {
+      shared.checkToken(server, path)
+      it('should return an alarm and issues by specific id', done => {
+        run(() => {
+          server
+            .get(`${path}1`)
+            .set('Authorization', `Bearer ${shared.token}`)
+            .end((err, res) => {
+              console.log(res.body)
+              assert.isNotNull(res.body)
+              assert.property(res.body, 'issueStatus')
+              assert.property(res.body, 'issueCategory')
+              assert.property(res.body, 'message')
+              assert.property(res.body, 'site')
+              assert.property(res.body, 'time')
+              assert.property(res.body, 'id')
+              done()
+            })
+        })
+      })
+    })
+  })
   describe('/task', () => {
     const path = '/api/task'
     describe('GET', () => {
@@ -54,6 +82,7 @@ describe('Task Routes', () => {
           .set('Authorization', `Bearer ${shared.token}`)
           .end((err, res) => {
             assert.isNotNull(res.body.data)
+            console.log(typeof res.body.data)
 
             assert.isAbove(res.body.data.length, 0)
             assert.typeOf(res.body.data, 'Array')

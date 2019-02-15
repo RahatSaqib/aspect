@@ -16,6 +16,7 @@ class TaskContextTest {
   constructor(auth) {
     this.auth = auth
     this.messageId = []
+    this.insertedid = []
 
     _.bindAll(this, ['afterEach', 'beforeEach'])
   }
@@ -44,7 +45,7 @@ class TaskContextTest {
       _.forEach(results, async elem => {
         // add sample alert message
         const now = new Date()
-        const insertedid = await knex('AlertMessage')
+        this.insertedid = await knex('AlertMessage')
           .returning('id')
           .insert({
             alertTemplateId,
@@ -59,19 +60,18 @@ class TaskContextTest {
         await knex('Notification').insert(
           Object.assign({
             createdOn: now,
-            alertMessageId: insertedid,
+            alertMessageId: this.insertedid,
 
             issueId: elem.id,
             personId: userId,
             notificationTypeId: 1,
           })
         )
-        assert.isOk(insertedid)
-        this.messageId.push(insertedid)
+        assert.isOk(this.insertedid)
+        this.messageId.push(this.insertedid[0])
       })
     })
   }
-
   afterEach() {
     return run(async knex => {
       // remove sample message
@@ -83,6 +83,7 @@ class TaskContextTest {
           .whereIn('id', this.messageId)
           .delete()
       }
+      this.messageId = []
     })
   }
 }
