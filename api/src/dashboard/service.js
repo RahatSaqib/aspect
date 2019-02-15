@@ -389,85 +389,35 @@ async function getConsumablesList(auth, dataConstraints) {
   if (!canViewInventories(auth)) {
     return []
   }
-  const inventoryItemList = await knex('InventoryItem as ii')
-    .innerJoin('Site as s', 'ii.siteId', 's.id')
-    .innerJoin('Geography as g', 's.geographyId', 'g.id')
-    .innerJoin('Country as co', 'g.countryId', 'co.id')
-    .innerJoin('Consumable as c', 'ii.consumableId', 'c.id')
-    // getting latest issue of each type (notice 'i2.id is null' in WHERE clause)
-    .leftOuterJoin('Issue as i1', 's.id', 'i1.siteId')
-    .leftOuterJoin('Issue as i2', function() {
-      this.on('i1.siteId', '=', 'i2.siteId')
-        .andOn('i1.issueTypeId', '=', 'i2.issueTypeId')
-        .andOn('i1.level', '<', 'i2.level')
-        .andOn('i1.id', '<', 'i2.id')
+
+  const consumables = await knex('Consumable as c')
+    .innerJoin('ConsumableAssay as ca', 'c.id', 'ca.consumableId')
+    .innerJoin('Assay as a', 'ca.assayId', 'a.id')
+    .innerJoin('DeviceType as dt', 'a.deviceTypeId', 'dt.id')
+    .innerJoin('Device as d', 'dt.id', 'd.deviceTypeId')
+    .innerJoin('Site as s', 'd.siteId', 's.id')
+    .leftOuterJoin('Issue as i', function() {
+      this.on('s.id', 'i.siteId').andOn('c.id', 'i.consumableId')
     })
-    .leftOuterJoin('IssueType as it', 'i1.issueTypeId', 'it.id')
-    .leftOuterJoin('IssueStatus as ist', 'i1.issueStatusId', 'ist.id')
-    .leftOuterJoin('FactInventoryConsumptionRate as fcr', function() {
-      this.on('ii.consumableId', 'fcr.consumableId')
-        .andOn('ii.siteId', 'fcr.siteId')
-        .andOn('fcr.days', 1)
-    })
-    // 'i2.id is null' makes sure only last issue of each type is selected
-    .whereNull('i2.id')
-    // .whereNotIn('ist.externalId', ['Inactive', 'OK', 'Resolved'])
+    .leftOuterJoin('IssueType as it', 'i.issueTypeId', 'it.id')
+    .leftOuterJoin('IssueStatus as ist', 'i.issueStatusId', 'ist.id')
     .modify(addConstraints, dataConstraints, {
       site: 's',
-      geography: 'g',
     })
+    .groupBy('c.id', 's.id')
     .select(
-      'ii.siteId',
-      'ii.consumableId',
+      's.id as siteId',
+      'c.id as consumableId',
       'c.name as consumableName',
-      'it.externalId as issueType',
-      'ist.externalId as issueStatus',
-      'i1.data',
-      'fcr.rate as consumptionRate',
-      'ii.quantityOnHand'
-    )
-    // reduce whole list of (site,consumable,issueType) to distinct list of (site,consumable)
-    .reduce((memo, row) => {
-      const { siteId, consumableId, consumableName } = row
-      let item = memo.find(
-        x => x.siteId === siteId && x.consumableId === consumableId
+      knex.raw(
+        "sum(it.externalId = 'InventoryStockout' and ist.externalId not in ('Inactive', 'OK', 'Resolved')) as cntStockout"
+      ),
+      knex.raw(
+        "sum(it.externalId = 'InventoryStockExpiring' and ist.externalId not in ('Inactive', 'OK', 'Resolved')) as cntExpiring"
       )
-      if (!item) {
-        item = {
-          // id,
-          siteId,
-          consumableId,
-          consumableName,
-          // Running low = “Inventory Stockout”
-          runningLow: false,
-          // Expiring stock = "Inventory Stock Expiring"
-          expiring: false,
-          // for bar chart
-          remainingDays: 0,
-        }
-        memo.push(item)
-      }
-      const { issueType, issueStatus, data } = row
-      const hasIssue = !['Inactive', 'OK', 'Resolved'].includes(issueStatus)
-      const isInventoryIssue = [
-        'InventoryStockout',
-        'InventoryStockExpiring',
-      ].includes(issueType)
-      if (hasIssue && isInventoryIssue) {
-        if (issueType === 'InventoryStockout') {
-          item.runningLow = true
-        }
-        if (issueType === 'InventoryStockExpiring') {
-          item.expiring = true
-        }
-        const d = data && JSON.parse(data)
-        item.remainingDays = d && Math.round(+d.daysDue)
-      }
+    )
 
-      return memo
-    }, [])
-
-  return inventoryItemList
+  return consumables
 }
 
 async function inventoryItemDashboard(request) {
@@ -482,17 +432,17 @@ async function inventoryItemDashboard(request) {
     _.groupBy(consumables, 'consumableId'),
     (acc, list) => {
       if (!_.isEmpty(list)) {
-        const { runningLowCount, expiringCount, affectedSiteIds } = list.reduce(
+        const { stockoutCount, expiringCount, affectedSiteIds } = list.reduce(
           (result, it) => {
-            result.runningLowCount += it.runningLow ? 1 : 0
-            result.expiringCount += it.expiring ? 1 : 0
-            if (it.runningLow || it.expiring) {
+            result.stockoutCount += it.cntStockout ? 1 : 0
+            result.expiringCount += it.cntExpiring ? 1 : 0
+            if (it.cntStockout || it.cntExpiring) {
               result.affectedSiteIds.push(it.siteId)
             }
             return result
           },
           {
-            runningLowCount: 0,
+            stockoutCount: 0,
             expiringCount: 0,
             affectedSiteIds: [],
           }
@@ -503,7 +453,7 @@ async function inventoryItemDashboard(request) {
             // to show <SummaryItemsBlock> only when there is issue 'Stockout' add 'runningLowCount > 0 && {...'
             {
               key: 0,
-              count: runningLowCount,
+              count: stockoutCount,
               titleI18nKey: i18nKeys.sitesTitle,
               subI18nKey: i18nKeys.runningLowStatus,
             },
@@ -572,32 +522,29 @@ async function getDeviceList(auth, dataConstraints) {
     .innerJoin('Site as s', 's.id', 'd.siteId')
     .innerJoin('Partner as p', 'd.partnerId', 'p.id')
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
-    // getting latest issue of each type (notice 'i2.id is null' in WHERE clause)
-    .leftOuterJoin('Issue as i1', 'd.id', 'i1.deviceId')
-    .leftOuterJoin('Issue as i2', function() {
-      this.on('i1.deviceId', '=', 'i2.deviceId')
-        .andOn('i1.issueTypeId', '=', 'i2.issueTypeId')
-        .andOn('i1.level', '<', 'i2.level')
-        .andOn('i1.id', '<', 'i2.id')
-    })
-    .leftOuterJoin('IssueType as it', 'i1.issueTypeId', 'it.id')
-    .leftOuterJoin('IssueStatus as ist', 'i1.issueStatusId', 'ist.id')
-    // 'i2.id is null' makes sure only last issue of each type is selected
-    .whereNull('i2.id')
-    .select(
-      'd.id',
-      'd.siteId',
-      'it.externalId as issueType',
-      'i1.level as issueLevel',
-      'ist.externalId as issueStatus'
-    )
+    .leftOuterJoin('Issue as i', 'd.id', 'i.deviceId')
+    .leftOuterJoin('IssueType as it', 'i.issueTypeId', 'it.id')
+    .leftOuterJoin('IssueStatus as ist', 'i.issueStatusId', 'ist.id')
     .modify(addConstraints, dataConstraints, {
       site: 's',
       geography: 'g',
     })
-    // reduce whole list of device/issueType to distinct list of devices
-    .reduce((memo, row) => {
-      const { id, siteId, issueType, issueStatus } = row
+    .groupBy('d.id')
+    .select(
+      'd.id',
+      'd.siteId',
+      'it.externalId as issueType',
+      knex.raw(
+        "sum(ist.externalId not in ('Inactive', 'OK', 'Resolved')) as totalIssues"
+      ),
+      knex.raw(
+        "sum(it.externalId = 'DeviceNoResults' and ist.externalId not in ('Inactive', 'OK', 'Resolved')) as cntNoResults"
+      ),
+      knex.raw(
+        "sum((it.externalId like 'Machine%' or it.externalId like 'Module%' or it.externalId like 'Reagent%') and ist.externalId not in ('Inactive', 'OK', 'Resolved')) as cntErrorRate"
+      )
+    )
+    .reduce((memo, { id, siteId, totalIssues, cntNoResults, cntErrorRate }) => {
       let device = memo.find(x => x.id === id)
       if (!device) {
         device = {
@@ -612,22 +559,19 @@ async function getDeviceList(auth, dataConstraints) {
         }
         memo.push(device)
       }
-      const hasIssue = !['Inactive', 'OK', 'Resolved'].includes(issueStatus)
-      if (hasIssue) {
+
+      if (totalIssues) {
         device.fullyOperational = false
-
-        if (issueType === 'DeviceNoResults') {
-          device.offline = true
-        }
-
-        if (
-          issueType.indexOf('Machine') === 0 ||
-          issueType.indexOf('Module') === 0 ||
-          issueType.indexOf('Reagent') === 0
-        ) {
-          device.errorRate = true
-        }
       }
+
+      if (cntNoResults) {
+        device.offline = true
+      }
+
+      if (cntErrorRate) {
+        device.errorRate = true
+      }
+
       return memo
     }, [])
 
