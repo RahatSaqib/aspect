@@ -73,6 +73,7 @@ function receiveDetailedTasks(json) {
     items: json.data,
     total: json.total,
     countByAlert: json.countByAlert,
+    title: json.data && json.data.length > 0 ? json.data[0].message : '',
     sites: _.uniqBy(
       _.map(json.data, elem => ({ siteId: elem.siteId, site: elem.site })),
       'siteId'
@@ -189,6 +190,7 @@ const Task = Immutable.Record({
   countByAlert: Immutable.Map(),
   sites: Immutable.List(),
   devices: Immutable.List(),
+  title: String(),
 })
 
 const initialState = new Task()
@@ -212,8 +214,8 @@ export default function taskReducer(state = initialState, action) {
         mutState.set('countByAlert', Immutable.Map(action.countByAlert))
         mutState.set('sites', Immutable.List(action.sites))
         mutState.set('devices', Immutable.List(action.devices))
+        mutState.set('title', Immutable.fromJS(action.title))
       })
-
       return result
     }
     default:

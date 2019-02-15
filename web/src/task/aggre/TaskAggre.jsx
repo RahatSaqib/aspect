@@ -68,6 +68,7 @@ const enhance = compose(
       table: state.task.table,
       sites: state.task.sites,
       devices: state.task.devices,
+      title: state.task.title,
     }),
     bindActionCreators.bind(null, {
       getAlarmsByStatus,
@@ -144,6 +145,7 @@ export const TaskAggre = ({
   items,
   sites,
   devices,
+  title,
   // --- injected by recompose ---
   onBackClick,
   sortCol,
@@ -159,7 +161,7 @@ export const TaskAggre = ({
       location={location}
       match={match}
       onBackClick={onBackClick}
-      title="TB positive results"
+      title={title}
     />
     <section className={cssClasses('Section')}>
       <Unit lg="1-4">
