@@ -35,7 +35,10 @@ const routes = [
               Joi.object().keys({
                 id: Joi.number()
                   .required()
-                  .description('The id of the alarm message'),
+                  .description(
+                    'Returns the max alert message Id, it is only needed for the datatable'
+                  ),
+                alertTemplateId: Joi.number().required(),
                 site: Joi.string()
                   .required()
                   .description('The site name'),
@@ -98,8 +101,15 @@ const routes = [
             topic: Joi.string()
               .allow('')
               .description('Filter for topic'),
-            date: Joi.date().iso(),
-            categoryId: Joi.number(),
+            date: Joi.date()
+              .iso()
+              .description('Filter for the alarm date'),
+            categoryId: Joi.number().description(
+              'Filter for the alarm category'
+            ),
+            alertTemplateId: Joi.number().description(
+              'Filter for the alarm message'
+            ),
           },
           validateSortPageParams('topic', 'site', 'time')
         ),

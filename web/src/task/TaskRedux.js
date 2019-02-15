@@ -95,7 +95,8 @@ export function getAlarmsByStatus(
   page,
   pageSize,
   date,
-  categoryId
+  categoryId,
+  alertTemplateId
 ) {
   return dispatch => {
     const filters = _.fromPairs([...filtersParams.entries()])
@@ -107,7 +108,8 @@ export function getAlarmsByStatus(
         pageSize,
         filters,
         date,
-        categoryId
+        categoryId,
+        alertTemplateId
       )
     )
 
@@ -119,6 +121,7 @@ export function getAlarmsByStatus(
         size: pageSize,
         date: new Date(date).toISOString(),
         categoryId,
+        alertTemplateId,
         ...filters,
       })}`,
       {

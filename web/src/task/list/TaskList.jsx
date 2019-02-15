@@ -348,7 +348,9 @@ export const TaskList = ({
                   task.get('issueCount') > 0
                     ? `aggre-list?categoryId=${task.get(
                         'issueCategoryId'
-                      )}&date=${task.get('time')}`
+                      )}&date=${task.get('time')}&alertTemplateId=${task.get(
+                        'alertTemplateId'
+                      )}`
                     : 'detail'
                 }
               />

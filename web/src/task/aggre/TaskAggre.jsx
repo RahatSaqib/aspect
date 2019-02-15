@@ -93,7 +93,8 @@ const enhance = compose(
           pageAt,
           pageSize,
           taskDetails.date,
-          taskDetails.categoryId
+          taskDetails.categoryId,
+          taskDetails.alertTemplateId
         )
       }
     },
@@ -263,7 +264,7 @@ export const TaskAggre = ({
                   messages={messages}
                   task={task}
                   onClick={onRowClick}
-                  data-task-id="detail"
+                  data-task-id={`detail/${task.get('id')}`}
                 />
               ))}
           </TaskDataTable>
