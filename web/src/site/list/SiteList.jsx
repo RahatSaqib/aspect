@@ -251,7 +251,6 @@ export const SiteList = ({
               {
                 key: 'siteIssues',
                 label: intl.formatMessage(messages.siteIssues),
-                sortable: true,
               },
             ]}
           />
