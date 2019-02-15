@@ -1,0 +1,10 @@
+[
+  {
+    "id": "pages.AccountDetails.title",
+    "defaultMessage": "Account Details"
+  },
+  {
+    "id": "pages.AccountDetails.usernameAndPassword",
+    "defaultMessage": "Username & Password"
+  }
+]

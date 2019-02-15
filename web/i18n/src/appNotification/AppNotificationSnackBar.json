@@ -1,0 +1,10 @@
+[
+  {
+    "id": "errorResponseMessages.generic.title",
+    "defaultMessage": "Aspect has Encountered a Problem."
+  },
+  {
+    "id": "errorResponseMessages.inline.moreDetails",
+    "defaultMessage": "Details..."
+  }
+]

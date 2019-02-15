@@ -1,0 +1,10 @@
+[
+  {
+    "id": "errorResponseMessages.fetchAssays.GET.400.title",
+    "defaultMessage": "Searching Assays Failed"
+  },
+  {
+    "id": "errorResponseMessages.fetchAssays.GET.default.title",
+    "defaultMessage": "Loading Assays Failed"
+  }
+]

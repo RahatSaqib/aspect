@@ -153,7 +153,7 @@ export function fetchSingleResult(resultId) {
         default: errorPleaseTryAgainInAFewMinutes(
           defineMessages({
             title: {
-              id: 'errorResponseMessages.fetchSingleResult.GET.default.title',
+              id: 'errorResponseMessages.fetchSingleResultDetails.GET.default.title',
               defaultMessage: 'Error Loading Result Details',
             },
           })

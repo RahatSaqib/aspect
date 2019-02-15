@@ -1,0 +1,38 @@
+[
+  {
+    "id": "errorResponseMessages.loginStart.POST.401.accountLocked.title",
+    "defaultMessage": "Login Failed"
+  },
+  {
+    "id": "errorResponseMessages.loginStart.POST.401.accountLocked.message",
+    "defaultMessage": "Your user account has been locked"
+  },
+  {
+    "id": "errorResponseMessages.loginStart.POST.401.accountLocked.resolution",
+    "defaultMessage": "You can contact us to unlock your account for you by email ({supportEmail})"
+  },
+  {
+    "id": "errorResponseMessages.loginStart.POST.default.default.title",
+    "defaultMessage": "Login Failed"
+  },
+  {
+    "id": "errorResponseMessages.loginStart.POST.default.default.message",
+    "defaultMessage": "The details that you have entered are incorrect"
+  },
+  {
+    "id": "errorResponseMessages.loginStart.POST.default.resolution",
+    "defaultMessage": "Please re-enter your login details and try again?"
+  },
+  {
+    "id": "errorResponseMessages.loginStart.POST.default.title",
+    "defaultMessage": "Login Error"
+  },
+  {
+    "id": "errorResponseMessages.resetPasswordEnterEmailAddress.POST.default.title",
+    "defaultMessage": "Error Sending Reset Password Email"
+  },
+  {
+    "id": "errorResponseMessages.resetPasswordEnterPassword.POST.default.title",
+    "defaultMessage": "Error Saving New Password"
+  }
+]

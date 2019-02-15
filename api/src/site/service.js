@@ -22,6 +22,7 @@ const SELECT_LIST_FIELDS = [
   's.createdOn',
   totalDevicesQuery,
   's.externalId',
+  'activeIssues.siteIssues',
 ]
 
 const SELECT_SHOW_FIELDS = [
@@ -56,9 +57,23 @@ async function listSites(request) {
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
     .leftOuterJoin('State as st', 'g.stateId', 'st.id')
     .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
-    .leftOuterJoin('Issue as i', 's.id', 'i.siteId')
-    .leftOuterJoin('IssueType as t', 'i.issueTypeId', 't.id')
-    .leftOuterJoin('IssueCategory as c', 't.issueCategoryId', 'c.id')
+    .leftOuterJoin(
+      knex('Issue as i')
+        .select(
+          'i.siteId',
+          knex.raw(
+            "GROUP_CONCAT( DISTINCT ic.externalId SEPARATOR ',' ) as siteIssues"
+          )
+        )
+        .innerJoin('IssueStatus as ist', 'ist.id', 'i.issuestatusid ')
+        .innerJoin('IssueType as it', 'i.issueTypeId', 'it.id')
+        .innerJoin('IssueCategory as ic', 'it.issueCategoryId', 'ic.id')
+        .whereNotIn('ist.name', ['OK', 'Resolved'])
+        .groupBy('i.siteId')
+        .as('activeIssues'),
+      'activeIssues.siteId',
+      's.id'
+    )
     .where(function() {
       if (!query.siteIds) {
         return
@@ -86,8 +101,6 @@ async function listSites(request) {
       externalId: 's.externalId',
     })
     .modify(addConstraints, dataConstraints, { site: 's', geography: 'g' })
-
-  // get total count for paging
   const getCount = siteQuery
     .clone()
     .count('s.id as count')
@@ -97,23 +110,14 @@ async function listSites(request) {
   const getItems = siteQuery
     .clone()
     .modify(sortPageParams, query, 'name')
-    .distinct('c.name as issueCategory')
     .select(SELECT_LIST_FIELDS)
 
   // return result when both queries are finished
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
-
-  const output = []
-  await data.forEach(function(site) {
-    if (!this[site.id]) {
-      this[site.id] = { ...site, issueCategory: [] }
-      output.push(this[site.id])
-    }
-
-    this[site.id].issueCategory.push(site.issueCategory)
+  data.forEach(site => {
+    if (site.siteIssues) site.siteIssues = site.siteIssues.split(',')
   })
   const result = { ok: true, total, length: data.length, data }
-
   return result
 }
 

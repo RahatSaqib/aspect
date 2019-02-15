@@ -1,0 +1,18 @@
+[
+  {
+    "id": "errorResponseMessages.generic.title",
+    "defaultMessage": "Aspect has Encountered a Problem."
+  },
+  {
+    "id": "errorResponseMessages.generic.message",
+    "defaultMessage": "Our technical team has been notified of the problem and will attend to it as soon as possible."
+  },
+  {
+    "id": "errorResponseMessages.generic.closeText",
+    "defaultMessage": "Close"
+  },
+  {
+    "id": "errorResponseMessages.generic.proceedText",
+    "defaultMessage": "Proceed"
+  }
+]
