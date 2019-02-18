@@ -33,8 +33,7 @@ async function getQuery(request, query, queryBuilder) {
     })
     .modify(queryBuilder)
     .orderBy(sortColumn, query.sortDir)
-    .paginate(query.size || 10, query.page || 1, true)
-
+    .paginate(query.size || 10, query.page || 0, true)
   return result
 }
 async function listTasksByStatus(request) {
@@ -62,8 +61,6 @@ async function listTasksByStatus(request) {
         knex.raw('ifnull(d.name,site.name) as title')
       )
   })
-  console.log(queryKnex)
-
   const result = processTaskResults(queryKnex.data, queryKnex.total || 0)
 
   return result
@@ -98,7 +95,7 @@ async function listTasks(request) {
         knex.raw('date(am.createdOn)')
       )
   })
-  console.log(queryKnex)
+
   const result = processTaskResults(queryKnex.data, queryKnex.total || 0)
   return result
 }
@@ -123,8 +120,6 @@ async function getTask(request) {
   const accountDetails = await getAccountDetailsForUsername(loggedUserName)
 
   const task = await getTaskDetailsQuery(taskId, accountDetails.id)
-  console.log(task)
-  console.log(task.jobPersons)
 
   if (task.jobPersons.split(';').length > 1) {
     task.jobPersons = task.jobPersons.split(';').map((elem, index) => ({

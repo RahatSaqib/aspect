@@ -25,12 +25,11 @@ module.exports = function(knex) {
     }
 
     // Don't allow negative pages
-    if (page < 1) {
-      page = 1
+    if (page < 0) {
+      page = 0
     }
 
-    const offset = (page - 1) * perPage
-
+    const offset = page * perPage
     const promises = []
 
     // If the paginator is aware of its length, count the resulting rows
@@ -69,12 +68,8 @@ module.exports = function(knex) {
 
     return Promise.all(promises).then(([countQuery, result]) => {
       // If the paginator is length aware...
-
-      // console.log(`total:${countQuery ? countQuery.total : 0}`)
-      console.log(typeof countQuery)
       if (isLengthAware) {
         let total = 0
-
         if (countQuery[0] && countQuery[0][0] !== undefined)
           // eslint-disable-next-line prefer-destructuring
           total = countQuery[0][0].total

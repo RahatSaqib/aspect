@@ -20,6 +20,7 @@ const routes = [
             topic: Joi.string()
               .allow('')
               .description('Filter for topic'),
+            pageAt:
           },
           validateSortPageParams('title', 'site', 'time')
         ),

@@ -241,14 +241,17 @@ export const TaskAggre = ({
                 {
                   key: 'topic',
                   label: intl.formatMessage(messages.topic),
+                  sortable: true,
                 },
                 {
                   key: 'site',
                   label: intl.formatMessage(messages.site),
+                  sortable: true,
                 },
                 {
                   key: 'time',
                   label: intl.formatMessage(messages.time),
+                  sortable: true,
                 },
                 {
                   key: 'alert',
