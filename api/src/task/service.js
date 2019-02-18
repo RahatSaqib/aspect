@@ -23,7 +23,7 @@ async function getQuery(request, query, queryBuilder) {
     .leftJoin('IssueCategory as ic', 'it.issueCategoryId', 'ic.id')
     .where(builder => {
       if (_.isString(query.topic) && query.topic !== 'all')
-        builder = builder.where('ic.name', query.topic)
+        builder = builder.where('ic.shortName', query.topic.toLowerCase())
       if (_.isString(query.alertType) && query.alertType !== 'all')
         builder = builder.where('it.name', query.alertType)
 
@@ -65,7 +65,7 @@ async function listTasksByStatus(request) {
   console.log(queryKnex)
 
   const result = processTaskResults(queryKnex.data, queryKnex.total || 0)
-  console.log(result)
+
   return result
 }
 async function listTasks(request) {
@@ -98,7 +98,8 @@ async function listTasks(request) {
         knex.raw('date(am.createdOn)')
       )
   })
-  const result = processTaskResults(queryKnex.data, queryKnex.total)
+  console.log(queryKnex)
+  const result = processTaskResults(queryKnex.data, queryKnex.total || 0)
   return result
 }
 

@@ -66,7 +66,7 @@ const FILTERS_CONFIG = {
 }
 
 export const searchSanitizer = makeSearchParamsSanitizer({
-  availableSortCol: ['issueCategory', 'site', 'time'],
+  availableSortCol: ['title', 'site', 'time'],
 })
 export const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
 export const filtersFromLocation = composeSanitizer(
@@ -269,16 +269,16 @@ export const TaskList = ({
               label: 'Device',
             },
             {
-              value: 'consumable',
-              label: 'Consumable',
+              value: 'reagent',
+              label: 'Reagent',
             },
             {
-              value: 'health',
-              label: 'Health',
+              value: 'data',
+              label: 'Data',
             },
             {
-              value: 'site',
-              label: 'Sites',
+              value: 'connectivity',
+              label: 'Connectivity',
             },
           ]}
           onChange={onTopicChange}
@@ -316,7 +316,7 @@ export const TaskList = ({
                 key: 'icon',
               },
               {
-                key: 'topic',
+                key: 'title',
                 label: intl.formatMessage(messages.topic),
                 sortable: true,
               },

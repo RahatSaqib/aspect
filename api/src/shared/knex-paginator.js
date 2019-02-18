@@ -10,10 +10,12 @@ module.exports = function(knex) {
     let paginator = {}
 
     // Validate argument type
+    // eslint-disable-next-line no-restricted-globals
     if (isNaN(perPage)) {
       throw new Error('Paginator error: perPage must be a number.')
     }
 
+    // eslint-disable-next-line no-restricted-globals
     if (isNaN(page)) {
       throw new Error('Paginator error: page must be an number.')
     }
@@ -33,14 +35,32 @@ module.exports = function(knex) {
 
     // If the paginator is aware of its length, count the resulting rows
     if (isLengthAware) {
-      promises.push(
+      if (
         this.clone()
-          .clearSelect()
-          .clearOrder()
-          .count('* as total')
-          .first()
-      )
+          .toSQL()
+          .sql.toLowerCase()
+          .indexOf('group by') !== -1
+      ) {
+        promises.push(
+          knex.raw(
+            `select count(*) as total from (${this.clone()
+              .clearSelect()
+              .clearOrder()
+              .count('*')
+              .toString()}) as q`
+          )
+        )
+      } else {
+        promises.push(
+          this.clone()
+            .clearSelect()
+            .clearOrder()
+            .count('* as total')
+            .first()
+        )
+      }
     } else {
+      // eslint-disable-next-line no-unused-vars
       promises.push(new Promise((resolve, _) => resolve()))
     }
 
@@ -49,9 +69,16 @@ module.exports = function(knex) {
 
     return Promise.all(promises).then(([countQuery, result]) => {
       // If the paginator is length aware...
-      if (isLengthAware) {
-        const total = countQuery ? countQuery.total : 0
 
+      // console.log(`total:${countQuery ? countQuery.total : 0}`)
+      console.log(typeof countQuery)
+      if (isLengthAware) {
+        let total = 0
+
+        if (countQuery[0] && countQuery[0][0] !== undefined)
+          // eslint-disable-next-line prefer-destructuring
+          total = countQuery[0][0].total
+        else total = countQuery ? countQuery.total : 0
         paginator = {
           ...paginator,
           total,

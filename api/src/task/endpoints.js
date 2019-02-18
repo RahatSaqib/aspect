@@ -21,7 +21,7 @@ const routes = [
               .allow('')
               .description('Filter for topic'),
           },
-          validateSortPageParams('topic', 'site', 'time')
+          validateSortPageParams('title', 'site', 'time')
         ),
       },
       response: {
