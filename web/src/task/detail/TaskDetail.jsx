@@ -163,7 +163,7 @@ export const TaskDetail = ({
             <div>
               {_.map(jobPersons.toArray(), elem => (
                 <span className={cssClasses('Summary__Item')}>
-                  {elem.PersonName}
+                  {elem.personName}
                   <Link to="#" className={cssClasses('Summary__Item__Link')}>
                     <FaArrowUp
                       className={cssClasses('Summary__Item__Link__FaArrowUp')}

@@ -123,14 +123,14 @@ async function getTask(request) {
 
   if (task.jobPersons.split(';').length > 1) {
     task.jobPersons = task.jobPersons.split(';').map((elem, index) => ({
-      PersonName: elem,
-      PersonId: task.jobPersonsId.split(';')[index],
+      personName: elem,
+      personId: task.jobPersonsId.split(';')[index],
     }))
   } else {
     task.jobPersons = [
       {
-        PersonName: task.jobPersons,
-        PersonId: task.jobPersonsId,
+        personName: task.jobPersons,
+        personId: task.jobPersonsId,
       },
     ]
   }

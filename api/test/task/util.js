@@ -31,14 +31,18 @@ class TaskContextTest {
       this.userId = userId
 
       // read 1st alert template
-      const { id: alertTemplateId } = await knex('AlertTemplate').first('id')
+      const { id: alertTemplateId } = await knex('AlertTemplate')
+        .where('id', 1)
+        .first('id')
       assert.isOk(alertTemplateId)
 
       // read 1st Result and coresponding siteId/deviceId
-      const results = await knex('Issue')
-        .where('siteid', 3)
-        //  .where('deviceid', 2)
-        .select('id', 'deviceId')
+      const results = await knex('Issue as i')
+        .leftJoin('IssueStatus as is', 'i.issueStatusId', 'is.id')
+        .leftJoin('IssueType as it', 'i.issueTypeId', 'it.id')
+        .leftJoin('IssueCategory as ic', 'it.issueCategoryId', 'ic.id')
+        .where('ic.id', 1)
+        .select('i.id', 'i.deviceId')
 
       const messageStatusId = await messageStatusToId('Initial')
 
@@ -72,6 +76,11 @@ class TaskContextTest {
       })
     })
   }
+
+  getMessageId() {
+    return this.messageId[0]
+  }
+
   afterEach() {
     return run(async knex => {
       // remove sample message

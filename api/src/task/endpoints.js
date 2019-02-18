@@ -20,7 +20,6 @@ const routes = [
             topic: Joi.string()
               .allow('')
               .description('Filter for topic'),
-            pageAt:
           },
           validateSortPageParams('title', 'site', 'time')
         ),
@@ -185,7 +184,65 @@ const routes = [
       auth: { scope: ['task:view', 'task:edit'] },
       validate: {
         params: {
-          taskId: Joi.number().description('id number of the alert'),
+          taskId: Joi.number()
+            .required()
+            .description('id number of the alert'),
+        },
+      },
+      response: {
+        options: {
+          allowUnknown: true,
+        },
+
+        schema: {
+          task: Joi.object()
+            .keys({
+              id: Joi.number()
+                .required()
+                .description('The id of the alarm message'),
+              site: Joi.string()
+                .required()
+                .description('The site name'),
+              siteId: Joi.number().description('The site Id'),
+              deviceId: Joi.number().description('The device Id'),
+              device: Joi.string().description('The device name'),
+              issueStatus: Joi.string()
+                .required()
+                .description('The name of the issue status'),
+              issueStatusId: Joi.number()
+                .required()
+                .description('The id of the issue status'),
+              issueCategory: Joi.string()
+                .required()
+                .description('The name of the issue category'),
+              issueCategoryId: Joi.number()
+                .required()
+                .description('The id of the issue category'),
+              time: Joi.date()
+                .required()
+                .description('Date for the alarm'),
+              message: Joi.string()
+                .allow(null)
+                .description('Message of the alert'),
+              personName: Joi.string().description(
+                'The name of the site contact'
+              ),
+              title: Joi.string()
+                .required()
+                .description("The alert's title"),
+              jobPersons: Joi.array().items(
+                Joi.object().keys({
+                  personName: Joi.string()
+                    .required()
+                    .description('Name of the person alerted'),
+                  personId: Joi.string()
+                    .required()
+                    .description('Id of the person alerted'),
+                })
+              ),
+            })
+            .description('The task'),
+          ok: Joi.boolean().description('The status of the request'),
         },
       },
     },
