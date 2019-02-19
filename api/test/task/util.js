@@ -2,6 +2,7 @@ const _ = require('lodash')
 const chai = require('chai')
 const { messageStatusToId } = require('../../src/shared/dictionary')
 const { run } = require('../../src/db')
+const Promise = require('bluebird')
 
 const { assert } = chai
 
@@ -46,7 +47,7 @@ class TaskContextTest {
 
       const messageStatusId = await messageStatusToId('Initial')
 
-      _.forEach(results, async elem => {
+      Promise.each(results, async elem => {
         // add sample alert message
         const now = new Date()
         this.insertedid = await knex('AlertMessage')
@@ -65,7 +66,6 @@ class TaskContextTest {
           Object.assign({
             createdOn: now,
             alertMessageId: this.insertedid,
-
             issueId: elem.id,
             personId: userId,
             notificationTypeId: 1,
@@ -78,7 +78,7 @@ class TaskContextTest {
   }
 
   getMessageId() {
-    return this.messageId[0]
+    return _.last(this.messageId)
   }
 
   afterEach() {

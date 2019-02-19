@@ -6,7 +6,7 @@ const { createAlertTestContext } = require('./util')
 const server = supertest.agent('http://localhost:8080')
 const { assert } = chai
 const context = createAlertTestContext({ user: 'admin' })
-describe.only('Task Routes', () => {
+describe('Task Routes', () => {
   before(context.beforeEach)
   after(context.afterEach)
 
