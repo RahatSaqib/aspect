@@ -6,7 +6,9 @@ import { defineMessages } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
+import TableBody from '@material-ui/core/TableBody'
 
+import AspectButton from '../../components/shared/AspectButton'
 import {
   makeSortPageSelector,
   makeSearchParamsSanitizer,
@@ -14,7 +16,8 @@ import {
 } from '../../shared/selectors/searchParams'
 import { sanitizeFiltersStringBy } from '../../filter/utils'
 // import FiltersPanel from '../../filter/popover/FiltersPanel'
-import StyledDropdown from '../../components/themedReactToolbox/StyledDropdown'
+import ButtonGroup from '../../components/themedReactToolbox/ButtonGroup'
+import StyledDropdown from '../../components/shared/StyledDropdown'
 import BrowseEmptyList from '../../globals/components/BrowseEmptyList'
 import BrowseTablePaginator from '../../globals/components/BrowseTablePaginator'
 import DataTableCard from '../../components/shared/DataTableCard'
@@ -125,7 +128,9 @@ const enhance = compose(
       })
     },
 
-    onTopicChange: ({ history, location }) => topic => {
+    onTopicChange: ({ history, location }) => ({
+      target: { value: topic },
+    }) => {
       const searchParams = new URLSearchParams(location.search)
       const filtersParams = new URLSearchParams(
         searchParams.get('filters') || ''
@@ -201,54 +206,63 @@ export const TaskList = ({
   <div className={cssClasses('Container')}>
     <Helmet title={intl.formatMessage(messages.tasksTitle)} />
     <div className={cssClasses('FiltersGroup')}>
-      {/* <ButtonGroup adjacent className={cssClasses('FiltersGroup__Child')}>
-        <Button
-          primary
-          raised
+
+      {/* 
+      <ButtonGroup adjacent className={cssClasses('FiltersGroup__Child')}>
+        <AspectButton
+          color="primary"
+          variant="contained"
+
           inverse={alertType !== 'mine'}
-          label="My alerts"
           data-alert-type="mine"
           onClick={onAlertTypeClick}
-        />
-        <Button
+        >
+          My alerts
+        </AspectButton>
+        <AspectButton
           className={cssClasses('Button--mini')}
-          primary
-          raised
-          label={`${countByAlert.get('mine', 0)}`}
-        />
+          color="primary"
+          variant="contained"
+        >
+          {`${countByAlert.get('mine', 0)}`}
+        </AspectButton>
       </ButtonGroup>
       <ButtonGroup adjacent className={cssClasses('FiltersGroup__Child')}>
-        <Button
-          primary
-          raised
+        <AspectButton
+          color="primary"
+          variant="contained"
           inverse={alertType !== 'snoozed'}
-          label="Snoozed"
           data-alert-type="snoozed"
           onClick={onAlertTypeClick}
-        />
-        <Button
+        >
+          Snoozed
+        </AspectButton>
+        <AspectButton
           className={cssClasses('Button--mini')}
-          primary
-          raised
-          label={`${countByAlert.get('snoozed', 0)}`}
-        />
+          color="primary"
+          variant="contained"
+        >
+          {`${countByAlert.get('snoozed', 0)}`}
+        </AspectButton>
       </ButtonGroup>
 
       <ButtonGroup adjacent className={cssClasses('FiltersGroup__Child')}>
-        <Button
-          primary
-          raised
+        <AspectButton
+          color="primary"
+          variant="contained"
           inverse={alertType !== 'all'}
-          label="All"
           data-alert-type="all"
           onClick={onAlertTypeClick}
-        />
-        <Button
+        >
+          All
+        </AspectButton>
+        <AspectButton
           className={cssClasses('Button--mini')}
-          primary
-          raised
-          label={`${countByAlert.get('total', 0)}`}
-        />
+          color="primary"
+          variant="contained"
+        >
+          {`${countByAlert.get('total', 0)}`}
+        </AspectButton>
       </ButtonGroup>
       */}
       <div

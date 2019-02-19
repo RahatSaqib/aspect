@@ -62,6 +62,8 @@ async function deleteTestDataFromCheckpoint(knex, checkpoint, deviceIds) {
   await knex('ResultFileReference')
     .whereIn('resultId', resultIds)
     .delete()
+  await knex('ResultTag').del()
+  await knex('Tag').del()
   await knex('Result')
     .whereIn('id', resultIds)
     .delete()

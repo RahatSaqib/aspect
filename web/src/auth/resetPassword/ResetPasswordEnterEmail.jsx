@@ -1,9 +1,8 @@
-import _ from 'lodash'
 import classnames from 'classnames/bind'
 import React from 'react'
 import { compose, withState, pure } from 'recompose'
 import Button from '@material-ui/core/Button'
-import { Input } from 'react-toolbox/lib/input'
+import TextField from '@material-ui/core/TextField'
 
 import validateEmailAddress from '../../shared/utils/validate'
 import recomposeForm from '../../components/recomposeForm'
@@ -28,7 +27,7 @@ const enhance = compose(
     fields: [
       {
         fieldName: 'emailAddress',
-        valueFromChangeEvent: _.identity,
+        valueFromChangeEvent: it => it.target.value,
       },
     ],
     validate,
@@ -51,14 +50,21 @@ export const ResetPasswordEnterEmail = ({
       <a href="#showAdminHelp" onClick={onShowAdminHelpDialog}>
         {intl.formatMessage(messages.iDontHaveAnEmailAddress)}
       </a>
-      <Input
+      <TextField
+        autoFocus
+        fullWidth
         type="email"
         name="emailAddress"
         label={intl.formatMessage(messages.emailAddress)}
         value={values.emailAddress}
         onChange={onEmailAddressChange}
         error={meta.emailAddress.touched && meta.emailAddress.error}
-        maxLength={500}
+        helperText={meta.emailAddress.touched && meta.emailAddress.error}
+        margin="normal"
+        FormHelperTextProps={{
+          margin: 'dense',
+        }}
+        inputProps={{ maxLength: 500 }}
       />
     </div>
     <div className={cssClasses('Form__ActionRow')}>

@@ -1,9 +1,9 @@
 import _ from 'lodash'
 import classnames from 'classnames/bind'
 import React from 'react'
-import { TableRow, TableCell } from 'react-toolbox/lib/table'
 import FaCircle from 'react-icons/lib/fa/circle'
 import { formatDateTime } from '../../../shared/utils/dateFormat'
+import { TableRow, TableCell } from '../../../components/shared/tableBody'
 
 const cssClasses = classnames.bind(require('./NotificationHistoryTableRow.css'))
 

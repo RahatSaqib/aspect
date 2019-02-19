@@ -2,9 +2,9 @@ import _ from 'lodash'
 import classnames from 'classnames/bind'
 import React from 'react'
 import FaCircle from 'react-icons/lib/fa/circle'
-import { TableRow, TableCell } from 'react-toolbox/lib/table'
-import { Button } from 'react-toolbox/lib/button'
 import ArrowLeft from 'react-icons/lib/ti/arrow-right'
+import { TableRow, TableCell } from '../../../components/shared/tableBody'
+import AspectButton from '../../../components/shared/AspectButton'
 import requirePermissions from '../../../components/shared/requirePermissions'
 import ActionStatus from './ActionStatus'
 
@@ -26,7 +26,7 @@ const ActionLinkButton = requirePermissions({
     'report',
     'deviceApiKey',
   ],
-})(Button)
+})(AspectButton)
 
 const ActionTableRow = ({
   intl,
@@ -36,10 +36,7 @@ const ActionTableRow = ({
   sortingProps,
   ...restProps
 }) => (
-  <TableRow
-    {...restProps}
-    className={cssClasses(restProps.className, 'TableRow')}
-  >
+  <TableRow {...restProps} className={cssClasses(restProps.className)}>
     <TableCell className={cssClasses('TableCell', 'TableCell--actionType')}>
       <FaCircle
         className={cssClasses(

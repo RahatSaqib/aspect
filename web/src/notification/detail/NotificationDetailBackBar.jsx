@@ -1,7 +1,7 @@
 import { defineMessages } from 'react-intl'
 import React from 'react'
 import { compose, withHandlers } from 'recompose'
-import { Button } from 'react-toolbox/lib/button'
+import AspectButton from '../../components/shared/AspectButton'
 import DetailBackBar from '../../globals/components/DetailBackBar'
 
 const messages = defineMessages({
@@ -24,9 +24,7 @@ const enhance = compose(
     onBackClick: ({ history }) => () => {
       history.goBack()
     },
-    onPathClick: ({ history, match }) => ({
-      target: { dataset: { path } },
-    }) => {
+    onPathClick: ({ history, match }) => path => {
       history.push({
         pathname: path.replace(/:([A-Za-z]+)/g, ($, key) => match.params[key]),
       })
@@ -66,17 +64,19 @@ const NotificationDetailBackBar = ({
         path: `/browse/notification/:notificationId/history`,
       },
     ].map(({ label, path, disabled }) => (
-      <Button
+      <AspectButton
         key={path}
-        onClick={onPathClick}
+        onClick={({ currentTarget: { dataset: { path } } }) =>
+          onPathClick(path)
+        }
         data-path={path}
-        primary
-        raised
+        color="primary"
+        variant="contained"
         inverse={match.path !== path}
         disabled={disabled}
       >
         {label}
-      </Button>
+      </AspectButton>
     ))}
   </DetailBackBar>
 )

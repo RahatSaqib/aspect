@@ -1,14 +1,10 @@
-import { themr } from 'react-css-themr'
-import { tableFactory } from 'react-toolbox/lib/table/Table'
-import { TABLE } from 'react-toolbox/lib/identifiers'
+import Table from '@material-ui/core/Table'
 
-import DataTableHead from '../../components/shared/DataTableHead'
+import { DataTableHead } from '../../components/shared/tableHead'
 import WorkflowLogTableRow from './WorkflowLogTableRow'
 
-const RawTable = tableFactory(DataTableHead, WorkflowLogTableRow)
-export const WorkflowLogDataTable = themr(TABLE)(RawTable)
-
 export {
+  Table as WorkflowLogDataTable,
   DataTableHead as WorkflowLogDataTableHead,
   WorkflowLogTableRow as WorkflowLogDataTableRow,
 }

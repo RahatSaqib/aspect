@@ -7,13 +7,13 @@ import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 import { defineMessages } from 'react-intl'
 import { Link } from 'react-router-dom'
-import { Button } from 'react-toolbox/lib/button'
-import { Card } from 'react-toolbox/lib/card'
-import { ProgressBar } from 'react-toolbox/lib/progress_bar'
-import { Input } from 'react-toolbox/lib/input'
+import Button from '@material-ui/core/Button'
+import LinearProgress from '@material-ui/core/LinearProgress'
+import TextField from '@material-ui/core/TextField'
+import Card from '@material-ui/core/Card'
 
 import { Unit } from '../../components/pureGrids'
-import recomposeForm from '../../components/recomposeForm'
+import recomposeForm, { errorProps } from '../../components/recomposeForm'
 import { loginStart } from '../AuthRedux'
 import Reason from './Reason'
 import { reasonTypes } from '../loggedOutReasons'
@@ -95,11 +95,11 @@ const enhance = compose(
     fields: [
       {
         fieldName: 'user',
-        valueFromChangeEvent: _.identity,
+        valueFromChangeEvent: it => it.target.value,
       },
       {
         fieldName: 'password',
-        valueFromChangeEvent: _.identity,
+        valueFromChangeEvent: it => it.target.value,
       },
     ],
     validate(values) {
@@ -116,12 +116,6 @@ const enhance = compose(
     },
   })
 )
-
-const themes = {
-  Input: {
-    label: cssClasses('Form__Input'),
-  },
-}
 
 const AspectLogo = () => (
   <img
@@ -157,40 +151,52 @@ export const Login = ({
               location={location}
               className={cssClasses('Form__Info')}
             />
-            <Input
-              innerRef={onUsernameMount}
-              type="text"
+            <TextField
+              inputRef={onUsernameMount}
+              autoFocus
+              fullWidth
               name="user"
               label={intl.formatMessage(messages.user)}
               value={values.user}
               onChange={onUserChange}
-              error={meta.user.touched && meta.user.error}
-              theme={themes.Input}
+              {...errorProps(meta.user)}
+              margin="normal"
+              FormHelperTextProps={{
+                margin: 'dense',
+              }}
             />
-            <Input
+            <TextField
+              autoFocus
+              fullWidth
               type="password"
               name="password"
               label={intl.formatMessage(messages.password)}
               value={values.password}
               onChange={onPasswordChange}
-              error={meta.password.touched && meta.password.error}
-              theme={themes.Input}
+              {...errorProps(meta.password)}
+              margin="normal"
+              FormHelperTextProps={{
+                margin: 'dense',
+              }}
             />
             <div className={cssClasses('Form__ActionRow')}>
               <Button
                 type="submit"
+                variant="contained"
+                color="primary"
                 className={cssClasses('Button')}
-                label={intl.formatMessage(messages.login)}
                 disabled={!form.valid}
-                raised
-                primary
-              />
+              >
+                {intl.formatMessage(messages.login)}
+              </Button>
               <Link className={cssClasses('Right_Align')} to="reset-password">
                 {intl.formatMessage(messages.resetPasswordLink)}
               </Link>
             </div>
           </form>
-          {form.submitting && <ProgressBar type="linear" />}
+          {form.submitting && (
+            <LinearProgress className={cssClasses('Progress')} />
+          )}
         </Card>
       </Unit>
     </div>

@@ -1,17 +1,13 @@
 import _ from 'lodash'
 import classnames from 'classnames/bind'
 import React from 'react'
-import { TableRow, TableCell } from 'react-toolbox/lib/table'
-import { Checkbox } from 'react-toolbox/lib/checkbox'
 import { formatDate } from '../../shared/utils/dateFormat'
+import { TableRow, TableCell } from '../../components/shared/tableBody'
+import AspectCheckbox from '../../components/shared/AspectCheckbox'
 
 const cssClasses = classnames.bind(require('./DeviceApiKeyTableRow.css'))
 
 const enhance = _.identity
-
-const themes = {
-  Checkbox: { field: cssClasses('Checkbox__field') },
-}
 
 const DeviceApiKeyTableRow = ({
   intl,
@@ -22,42 +18,31 @@ const DeviceApiKeyTableRow = ({
   onRevokedChange,
   ...restProps
 }) => (
-  <TableRow
-    {...restProps}
-    className={cssClasses(restProps.className, 'TableRow')}
-  >
-    <TableCell className={cssClasses('TableCell')}>
-      <Checkbox
+  <TableRow {...restProps} className={cssClasses(restProps.className)}>
+    <TableCell>
+      <AspectCheckbox
         name="selected"
-        data-device-api-key-id={deviceApiKey.get('id')}
+        className={cssClasses('Checkbox__field')}
+        inputProps={{
+          'data-device-api-key-id': deviceApiKey.get('id'),
+        }}
         disabled={disabled}
         checked={checked}
         onChange={onSelectedChange}
-        theme={themes.Checkbox}
       />
     </TableCell>
-    <TableCell className={cssClasses('TableCell')}>
-      {formatDate(deviceApiKey.get('createdOn'))}
-    </TableCell>
-    <TableCell className={cssClasses('TableCell')}>
-      {deviceApiKey.get('token')}
-    </TableCell>
-    <TableCell className={cssClasses('TableCell')}>
-      {deviceApiKey.get('partner')}
-    </TableCell>
-    <TableCell className={cssClasses('TableCell')}>
-      {deviceApiKey.get('country')}
-    </TableCell>
-    <TableCell className={cssClasses('TableCell')}>
-      {deviceApiKey.get('site')}
-    </TableCell>
-    <TableCell className={cssClasses('TableCell')}>
-      {deviceApiKey.get('device')}
-    </TableCell>
-    <TableCell className={cssClasses('TableCell')}>
-      <Checkbox
+    <TableCell>{formatDate(deviceApiKey.get('createdOn'))}</TableCell>
+    <TableCell>{deviceApiKey.get('token')}</TableCell>
+    <TableCell>{deviceApiKey.get('partner')}</TableCell>
+    <TableCell>{deviceApiKey.get('country')}</TableCell>
+    <TableCell>{deviceApiKey.get('site')}</TableCell>
+    <TableCell>{deviceApiKey.get('device')}</TableCell>
+    <TableCell>
+      <AspectCheckbox
         name="revoked"
-        data-device-api-key-id={deviceApiKey.get('id')}
+        inputProps={{
+          'data-device-api-key-id': deviceApiKey.get('id'),
+        }}
         checked={deviceApiKey.get('revoked') > 0}
         onChange={onRevokedChange}
       />

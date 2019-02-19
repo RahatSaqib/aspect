@@ -1,18 +1,11 @@
 import _ from 'lodash'
 import classnames from 'classnames/bind'
 import React from 'react'
-import { Button } from 'react-toolbox/lib/button'
+import AspectButton from '../../components/shared/AspectButton'
 
 const cssClasses = classnames.bind(require('./ColoredButton.css'))
 
 const enhance = _.identity
-
-const themes = {
-  ColoredButton: {
-    neutral: cssClasses('ColoredButton--neutral'),
-    raised: cssClasses('ColoredButton--raised'),
-  },
-}
 
 const ColoredButton = ({
   neutral = true,
@@ -21,20 +14,23 @@ const ColoredButton = ({
   shakespeare = false,
   mountain = false,
   brink = false,
+  label,
   ...restProps
 }) => (
-  <Button
+  <AspectButton
     {...restProps}
-    neutral={neutral}
-    raised={raised}
+    variant={raised ? 'contained' : 'text'}
     className={cssClasses(restProps.className, {
       'ColoredButton--ship-cove': shipCove,
       'ColoredButton--shakespeare': shakespeare,
       'ColoredButton--mountain': mountain,
       'ColoredButton--brink': brink,
+      'ColoredButton--neutral': neutral,
+      'ColoredButton--raised': raised,
     })}
-    theme={themes.ColoredButton}
-  />
+  >
+    {label}
+  </AspectButton>
 )
 
 export default enhance(ColoredButton)

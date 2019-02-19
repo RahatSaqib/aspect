@@ -1,11 +1,10 @@
-import { themr } from 'react-css-themr'
-import { tableFactory } from 'react-toolbox/lib/table/Table'
-import { TABLE } from 'react-toolbox/lib/identifiers'
+import Table from '@material-ui/core/Table'
 
-import DataTableHead from '../../globals/components/BrowseDataTableHead'
+import DataTableHead from '../../components/shared/tableHead'
 import TaskTableRow from './TaskTableRow'
 
-const RawTable = tableFactory(DataTableHead, TaskTableRow)
-export const TaskDataTable = themr(TABLE)(RawTable)
-
-export { DataTableHead as TaskDataTableHead, TaskTableRow as TaskDataTableRow }
+export {
+  Table as TaskDataTable,
+  DataTableHead as TaskDataTableHead,
+  TaskTableRow as TaskDataTableRow,
+}

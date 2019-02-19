@@ -6,15 +6,18 @@ import React from 'react'
 import { withProps } from 'recompose'
 import { connect } from 'react-redux'
 import { defineMessages } from 'react-intl'
-import { Dialog } from 'react-toolbox/lib/dialog'
-import { Input } from 'react-toolbox/lib/input'
-import { DatePicker } from 'react-toolbox/lib/date_picker'
+import Button from '@material-ui/core/Button'
+import TextField from '@material-ui/core/TextField'
 
+import AspectDialog from '../../components/shared/AspectDialog'
+import DateTimeInput from '../../components/shared/DateTimeInput'
+import FormGroup from '../../components/themedReactToolbox/FormGroup'
 import SiteSelectField from '../../filter/resource/SiteSelectField'
 import ConsumableSelectField from '../../filter/resource/ConsumableSelectField'
 import ConsumableReasonSelectField, {
   testConductedReasonI18nKey,
 } from '../../filter/resource/ConsumableReasonSelectField'
+import { formatDate } from '../../shared/utils/dateFormat'
 
 const cssClasses = classnames.bind(
   require('./InventoryAdjustmentDialogForm.css')
@@ -65,7 +68,7 @@ export const SHARED_DEFAULT_VALUES = {
 export const sharedFields = {
   lotNumber: {
     fieldName: 'lotNumber',
-    valueFromChangeEvent: _.identity,
+    valueFromChangeEvent: it => it.target.value,
   },
   canExpire: {
     fieldName: 'canExpire',
@@ -77,7 +80,7 @@ export const sharedFields = {
   },
   quantity: {
     fieldName: 'quantity',
-    valueFromChangeEvent: value => {
+    valueFromChangeEvent: ({ target: { value } }) => {
       if (/^\d+\.?\d*$/.test(value)) {
         return parseInt(value, 10)
       }
@@ -90,7 +93,7 @@ export const sharedFields = {
   },
   notes: {
     fieldName: 'notes',
-    valueFromChangeEvent: _.identity,
+    valueFromChangeEvent: it => it.target.value,
   },
   // Partial:
   toSiteId: {
@@ -188,20 +191,24 @@ export const InventoryAdjustmentDialogForm = ({
   onNotesChange,
   handleSubmit,
 }) => (
-  <Dialog
+  <AspectDialog
     actions={[
-      { label: intl.formatMessage(messages.cancel), onClick: onCancel },
-      {
-        accent: true,
-        raised: true,
-        label: intl.formatMessage(messages.submit),
-        onClick: handleSubmit,
-        disabled: form.pristine || !form.valid || form.submitting,
-      },
+      <Button color="primary" onClick={onCancel}>
+        {intl.formatMessage(messages.cancel)}
+      </Button>,
+      <Button
+        color="primary"
+        variant="contained"
+        disabled={form.pristine || !form.valid || form.submitting}
+        onClick={handleSubmit}
+      >
+        {intl.formatMessage(messages.submit)}
+      </Button>,
     ]}
-    active={isDialogActive}
-    onEscKeyDown={onCancel}
-    onOverlayClick={onCancel}
+    maxWidth="sm"
+    open={isDialogActive}
+    onEscapeKeyDown={onCancel}
+    onClose={onCancel}
     title={labels.dialogTitle}
   >
     <form className={cssClasses('Form')}>
@@ -222,7 +229,8 @@ export const InventoryAdjustmentDialogForm = ({
           )}
         </section>
         <section>
-          <Input
+          <TextField
+            fullWidth
             type="text"
             name="lotNumber"
             label={intl.formatMessage(messages.lotNumber)}
@@ -230,21 +238,26 @@ export const InventoryAdjustmentDialogForm = ({
             value={values.lotNumber}
             onChange={onLotNumberChange}
             error={meta.lotNumber.touched && meta.lotNumber.error}
-            maxLength={500}
+            helperText={meta.lotNumber.touched && meta.lotNumber.error}
+            margin="normal"
+            FormHelperTextProps={{
+              margin: 'dense',
+            }}
+            inputProps={{ maxLength: 500 }}
           />
           {values.canExpire && (
-            <DatePicker
-              name="expiresOn"
-              label={intl.formatMessage(messages.expiryDate)}
-              disabled={form.submitting}
-              // container="inline"
-              // mode="landscape"
-              // autoOk
-              // style={formFieldStyle}
-              onChange={onExpiresOnChange}
-              value={values.expiresOn}
-              sundayFirstDayOfWeek
-            />
+            <FormGroup label={intl.formatMessage(messages.expiryDate)}>
+              <DateTimeInput
+                name="expiresOn"
+                disabled={form.submitting}
+                // container="inline"
+                // mode="landscape"
+                // autoOk
+                // style={formFieldStyle}
+                onChange={onExpiresOnChange}
+                value={values.expiresOn}
+              />
+            </FormGroup>
           )}
         </section>
         <section>
@@ -288,7 +301,8 @@ export const InventoryAdjustmentDialogForm = ({
           )}
         </section>
         <section>
-          <Input
+          <TextField
+            fullWidth
             type="text"
             name="quantity"
             label={labels.quantity}
@@ -298,7 +312,12 @@ export const InventoryAdjustmentDialogForm = ({
             // style={formFieldStyle}
             // inputStyle={{ textAlign: 'right' }}
             error={meta.quantity.touched && meta.quantity.error}
-            maxLength={500}
+            helperText={meta.quantity.touched && meta.quantity.error}
+            margin="normal"
+            FormHelperTextProps={{
+              margin: 'dense',
+            }}
+            inputProps={{ maxLength: 500 }}
           />
           <p className={cssClasses('Field__quantity--status')}>
             <span>{consumable.get('unitShortName')}</span>
@@ -316,6 +335,7 @@ export const InventoryAdjustmentDialogForm = ({
               value={values.reasonId}
               onConsumableReasonIdChange={onReasonIdChange}
               errorText={meta.reasonId.touched && meta.reasonId.error}
+              margin="normal"
               fullWidth
             />
           </section>
@@ -323,50 +343,60 @@ export const InventoryAdjustmentDialogForm = ({
         {consumableReason &&
           consumableReason.get('i18nKey') === testConductedReasonI18nKey && (
             <section>
-              <DatePicker
-                name="dateAdjustedFrom"
-                label={intl.formatMessage(messages.testsRunBetween)}
-                disabled={form.submitting}
-                // container="inline"
-                // mode="landscape"
-                // style={formFieldStyle}
-                value={values.dateAdjustedFrom}
-                onChange={onDateAdjustedFromChange}
-                autoOk
-                sundayFirstDayOfWeek
-              />
-              <DatePicker
-                name="dateAdjustedTo"
-                label={intl.formatMessage(messages.and)}
-                disabled={form.submitting}
-                // container="inline"
-                // mode="landscape"
-                // style={formFieldStyle}
-                value={values.dateAdjustedTo}
-                onChange={onDateAdjustedToChange}
-                autoOk
-                sundayFirstDayOfWeek
-              />
+              <FormGroup label={intl.formatMessage(messages.testsRunBetween)}>
+                <DateTimeInput
+                  autoOk
+                  fullWidth
+                  name="dateAdjustedFrom"
+                  disabled={form.submitting}
+                  labelFunc={formatDate}
+                  margin="normal"
+                  // container="inline"
+                  // mode="landscape"
+                  // style={formFieldStyle}
+                  value={values.dateAdjustedFrom}
+                  onChange={onDateAdjustedFromChange}
+                />
+              </FormGroup>
+              <FormGroup label={intl.formatMessage(messages.and)}>
+                <DateTimeInput
+                  autoOk
+                  fullWidth
+                  name="dateAdjustedTo"
+                  disabled={form.submitting}
+                  labelFunc={formatDate}
+                  margin="normal"
+                  // container="inline"
+                  // mode="landscape"
+                  // style={formFieldStyle}
+                  value={values.dateAdjustedTo}
+                  onChange={onDateAdjustedToChange}
+                />
+              </FormGroup>
             </section>
           )}
         {_.has(values, 'dateAdjusted') && (
           <section>
-            <DatePicker
-              name="dateAdjusted"
-              label={labels.dateAdjusted}
-              disabled={form.submitting}
-              // container="inline"
-              // mode="landscape"
-              // style={formFieldStyle}
-              value={values.dateAdjusted}
-              onChange={onDateAdjustedChange}
-              autoOk
-              sundayFirstDayOfWeek
-            />
+            <FormGroup label={labels.dateAdjusted}>
+              <DateTimeInput
+                autoOk
+                fullWidth
+                name="dateAdjusted"
+                disabled={form.submitting}
+                labelFunc={formatDate}
+                margin="normal"
+                // container="inline"
+                // mode="landscape"
+                // style={formFieldStyle}
+                value={values.dateAdjusted}
+                onChange={onDateAdjustedChange}
+              />
+            </FormGroup>
           </section>
         )}
         <section>
-          <Input
+          <TextField
+            fullWidth
             type="notes"
             name="quantity"
             label={intl.formatMessage(messages.notes)}
@@ -377,10 +407,15 @@ export const InventoryAdjustmentDialogForm = ({
             rows={2}
             // style={formFieldStyle}
             error={meta.notes.touched && meta.notes.error}
-            maxLength={2000}
+            helperText={meta.notes.touched && meta.notes.error}
+            margin="normal"
+            FormHelperTextProps={{
+              margin: 'dense',
+            }}
+            inputProps={{ maxLength: 2000 }}
           />
         </section>
       </div>
     </form>
-  </Dialog>
+  </AspectDialog>
 )
