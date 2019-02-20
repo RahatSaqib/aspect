@@ -180,7 +180,6 @@ export const LoginDetailsForm = ({
           meta.confirmNewPassword.touched && meta.confirmNewPassword.error
         }
         inputProps={{ maxLength: 100 }}
-        margin="normal"
       />
     </div>
     <div className={cssClasses('Form__ActionRow')}>
@@ -207,7 +206,7 @@ export const LoginDetailsForm = ({
           disabled={loading || form.pristine || !form.valid || form.submitting}
           onClick={handleSubmit}
         >
-          intl.formatMessage(messages.submitCurrentPassword)}
+          {intl.formatMessage(messages.submitCurrentPassword)}
         </Button>,
       ]}
       open={currentPasswordInputDialogOpen || false}

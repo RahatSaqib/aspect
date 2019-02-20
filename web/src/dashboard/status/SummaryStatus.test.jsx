@@ -1,11 +1,10 @@
 import Immutable from 'immutable'
 import React from 'react'
-import ReactShallowRenderer from 'react-test-renderer/shallow'
+import { shallow } from 'enzyme'
 import { IntlProvider } from 'react-intl'
 import { SummaryStatus } from './SummaryStatus'
 
 describe('Summary Status component', () => {
-  const renderer = new ReactShallowRenderer()
   const intlProvider = new IntlProvider({ locale: 'en' }, {})
   const { intl } = intlProvider.getChildContext()
 
@@ -109,8 +108,6 @@ describe('Summary Status component', () => {
   }
 
   it('should shallow render correctly', () => {
-    const element = renderer.render(<SummaryStatus {...props} />)
-
-    expect(element).toMatchSnapshot()
+    shallow(<SummaryStatus {...props} />)
   })
 })

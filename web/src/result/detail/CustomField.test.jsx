@@ -1,5 +1,4 @@
 import React from 'react'
-import ReactShallowRenderer from 'react-test-renderer/shallow'
 import { shallow, mount } from 'enzyme'
 import sinon from 'sinon'
 import Immutable from 'immutable'
@@ -13,8 +12,6 @@ import DateTimeInput from '../../components/shared/DateTimeInput'
 import AspectButton from '../../components/shared/AspectButton'
 
 describe('CustomField component', () => {
-  const renderer = ReactShallowRenderer.createRenderer()
-
   function renderCustomerField(props) {
     return shallow(<CustomField {...props} />)
   }
@@ -55,9 +52,8 @@ describe('CustomField component', () => {
       formatMessage: message => message.defaultMessage,
     }
 
-    it('should shallow render correctly', () => {
-      const component = renderer.render(<CustomField {...props} />)
-      expect(component).toMatchSnapshot()
+    it('should shallow render without crash', () => {
+      shallow(<CustomField {...props} />)
     })
 
     it('should select the null option when form data has not been set', () => {
@@ -125,9 +121,8 @@ describe('CustomField component', () => {
       formatMessage: message => message.defaultMessage,
     }
 
-    it('should shallow render correctly', () => {
-      const component = renderer.render(<CustomField {...props} />)
-      expect(component).toMatchSnapshot()
+    it('should shallow render without crash', () => {
+      shallow(<CustomField {...props} />)
     })
 
     it('should show empty field when form data has not been set', () => {
@@ -191,9 +186,8 @@ describe('CustomField component', () => {
       formatMessage: message => message.defaultMessage,
     }
 
-    it('should shallow render correctly', () => {
-      const component = renderer.render(<CustomField {...props} />)
-      expect(component).toMatchSnapshot()
+    it('should shallow render without crash', () => {
+      shallow(<CustomField {...props} />)
     })
 
     it('should unselect any option when form data has not been set', () => {
@@ -241,9 +235,8 @@ describe('CustomField component', () => {
       formatMessage: message => message.defaultMessage,
     }
 
-    it('should shallow render correctly', () => {
-      const component = renderer.render(<CustomField {...props} />)
-      expect(component).toMatchSnapshot()
+    it('should shallow render without crash', () => {
+      shallow(<CustomField {...props} />)
     })
 
     it('should show empty field when form data has not been set', () => {

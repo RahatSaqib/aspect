@@ -1,7 +1,10 @@
 import _ from 'lodash'
 import classnames from 'classnames/bind'
 import React from 'react'
-import { TableRow, TableCell } from '../../components/shared/tableBody'
+import {
+  DataTableRow as TableRow,
+  DataTableCell as TableCell,
+} from '../../components/shared/tableBody'
 import { formatDate } from '../../shared/utils/dateFormat'
 
 const cssClasses = classnames.bind(
@@ -29,7 +32,7 @@ const ResultTableRow = ({ intl, extraColumns, result, ...restProps }) => (
     <TableCell hiddenOn="xs">{result.get('patientId')}</TableCell>
     {extraColumns.map(column => (
       // TODO: refactor, see DeviceOperationTableRow
-      <TableCell key={column.get('db')} hiddenOn="md">
+      <TableCell key={column.get('db')} hiddenOn="nd">
         {formatterByType(column.get('type'))(
           result.get(column.get('db')),
           intl

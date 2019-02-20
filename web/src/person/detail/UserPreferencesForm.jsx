@@ -113,7 +113,7 @@ export const UserPreferencesForm = ({
     <div className={cssClasses('Form__ActionRow')}>
       <Button
         type="submit"
-        disabled={form.pristine || !form.valid || form.loading}
+        disabled={form.pristine || !form.valid || form.submitting}
         color="primary"
         variant="contained"
       >

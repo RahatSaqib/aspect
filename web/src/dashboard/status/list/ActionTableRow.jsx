@@ -3,7 +3,10 @@ import classnames from 'classnames/bind'
 import React from 'react'
 import FaCircle from 'react-icons/lib/fa/circle'
 import ArrowLeft from 'react-icons/lib/ti/arrow-right'
-import { TableRow, TableCell } from '../../../components/shared/tableBody'
+import {
+  DataTableRow as TableRow,
+  DataTableCell as TableCell,
+} from '../../../components/shared/tableBody'
 import AspectButton from '../../../components/shared/AspectButton'
 import requirePermissions from '../../../components/shared/requirePermissions'
 import ActionStatus from './ActionStatus'

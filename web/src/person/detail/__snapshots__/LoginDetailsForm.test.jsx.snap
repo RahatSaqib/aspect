@@ -88,7 +88,6 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable all f
         }
       }
       label="Confirm New Password"
-      margin="normal"
       name="confirmNewPassword"
       onChange={[Function]}
       required={false}
@@ -123,7 +122,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable all f
           disabled={true}
           onClick={[Function]}
         >
-          intl.formatMessage(messages.submitCurrentPassword)}
+          Submit
         </WithStyles(Button)>,
       ]
     }
@@ -251,7 +250,6 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable the s
         }
       }
       label="Confirm New Password"
-      margin="normal"
       name="confirmNewPassword"
       onChange={[Function]}
       required={false}
@@ -286,7 +284,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable the s
           disabled={true}
           onClick={[Function]}
         >
-          intl.formatMessage(messages.submitCurrentPassword)}
+          Submit
         </WithStyles(Button)>,
       ]
     }
@@ -414,7 +412,6 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable the s
         }
       }
       label="Confirm New Password"
-      margin="normal"
       name="confirmNewPassword"
       onChange={[Function]}
       required={false}
@@ -449,7 +446,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable the s
           disabled={true}
           onClick={[Function]}
         >
-          intl.formatMessage(messages.submitCurrentPassword)}
+          Submit
         </WithStyles(Button)>,
       ]
     }
@@ -577,7 +574,6 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable the s
         }
       }
       label="Confirm New Password"
-      margin="normal"
       name="confirmNewPassword"
       onChange={[Function]}
       required={false}
@@ -612,7 +608,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable the s
           disabled={true}
           onClick={[Function]}
         >
-          intl.formatMessage(messages.submitCurrentPassword)}
+          Submit
         </WithStyles(Button)>,
       ]
     }
@@ -740,7 +736,6 @@ exports[`LoginDetailsForm module LoginDetailsForm component should enable the su
         }
       }
       label="Confirm New Password"
-      margin="normal"
       name="confirmNewPassword"
       onChange={[Function]}
       required={false}
@@ -775,7 +770,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should enable the su
           disabled={false}
           onClick={[Function]}
         >
-          intl.formatMessage(messages.submitCurrentPassword)}
+          Submit
         </WithStyles(Button)>,
       ]
     }
@@ -903,7 +898,6 @@ exports[`LoginDetailsForm module LoginDetailsForm component should render correc
         }
       }
       label="Confirm New Password"
-      margin="normal"
       name="confirmNewPassword"
       onChange={[Function]}
       required={false}
@@ -938,7 +932,7 @@ exports[`LoginDetailsForm module LoginDetailsForm component should render correc
           disabled={true}
           onClick={[Function]}
         >
-          intl.formatMessage(messages.submitCurrentPassword)}
+          Submit
         </WithStyles(Button)>,
       ]
     }
