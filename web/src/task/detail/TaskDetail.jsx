@@ -7,17 +7,14 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
 import Helmet from 'react-helmet'
+import PropTypes from 'prop-types'
 import Card from '@material-ui/core/Card'
-import Input from '@material-ui/core/Input'
 import FaArrowUp from 'react-icons/lib/fa/arrow-up'
 import { fetchTask } from '../TaskRedux'
 // import ButtonGroup from '../../components/themedReactToolbox/ButtonGroup'
 import DetailBackBar from '../../globals/components/DetailBackBar'
 import { Unit } from '../../components/pureGrids'
 import AlertType from '../../components/shared/AlertType'
-import FaBellZ from '../../components/shared/FaBellZ'
-import AspectButton from '../../components/shared/AspectButton'
-import CheckboxField from '../../components/shared/CheckboxField'
 
 const cssClasses = classnames.bind(require('./TaskDetail.css'))
 
@@ -91,7 +88,7 @@ export const TaskDetail = ({
             {task.get('message')}
           </span>
 
-          {/*<small className={cssClasses('Card__Title__Date')}>by April 10</small>
+          {/* <small className={cssClasses('Card__Title__Date')}>by April 10</small>
           <AspectButton
             className={cssClasses('Card__Title__Button')}
             variant="contained"
@@ -253,8 +250,7 @@ export const TaskDetail = ({
           </Unit>          
           <Unit sm="1-2" className={cssClasses('NewMessage__Checkbox')}>
             <CheckboxField checked={false} label="This is now resolved" />
-          </Unit>*/}
-
+          </Unit> */}
         </div>
       </Card>
     </section>

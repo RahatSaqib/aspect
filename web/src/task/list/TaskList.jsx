@@ -6,9 +6,9 @@ import { defineMessages } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
-import TableBody from '@material-ui/core/TableBody'
+/* import TableBody from '@material-ui/core/TableBody'
 
-import AspectButton from '../../components/shared/AspectButton'
+import AspectButton from '../../components/shared/AspectButton' */
 import {
   makeSortPageSelector,
   makeSearchParamsSanitizer,
@@ -16,7 +16,7 @@ import {
 } from '../../shared/selectors/searchParams'
 import { sanitizeFiltersStringBy } from '../../filter/utils'
 // import FiltersPanel from '../../filter/popover/FiltersPanel'
-import ButtonGroup from '../../components/themedReactToolbox/ButtonGroup'
+// import ButtonGroup from '../../components/themedReactToolbox/ButtonGroup'
 import StyledDropdown from '../../components/shared/StyledDropdown'
 import BrowseEmptyList from '../../globals/components/BrowseEmptyList'
 import BrowseTablePaginator from '../../globals/components/BrowseTablePaginator'
@@ -206,7 +206,6 @@ export const TaskList = ({
   <div className={cssClasses('Container')}>
     <Helmet title={intl.formatMessage(messages.tasksTitle)} />
     <div className={cssClasses('FiltersGroup')}>
-
       {/* 
       <ButtonGroup adjacent className={cssClasses('FiltersGroup__Child')}>
         <AspectButton

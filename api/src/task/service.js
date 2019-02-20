@@ -121,18 +121,19 @@ async function getTask(request) {
 
   const task = await getTaskDetailsQuery(taskId, accountDetails.id)
 
-  if (task.jobPersons.split(';').length > 1) {
-    task.jobPersons = task.jobPersons.split(';').map((elem, index) => ({
-      personName: elem,
-      personId: task.jobPersonsId.split(';')[index],
-    }))
-  } else {
-    task.jobPersons = [
-      {
-        personName: task.jobPersons,
-        personId: task.jobPersonsId,
-      },
-    ]
+  if (task && task.jobPersons) {
+    if (task.jobPersons.split(';').length > 1)
+      task.jobPersons = task.jobPersons.split(';').map((elem, index) => ({
+        personName: elem,
+        personId: task.jobPersonsId.split(';')[index],
+      }))
+    else
+      task.jobPersons = [
+        {
+          personName: task.jobPersons,
+          personId: task.jobPersonsId,
+        },
+      ]
   }
   return task
 }
