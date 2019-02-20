@@ -54,7 +54,7 @@ const enhance = compose(
       activeDeviceIds: [],
     }),
     {
-      onSummaryItemClick: (state, { history }) => ({ target }) => {
+      onSummaryDeviceClick: (state, { history }) => ({ target }) => {
         const searchParams = new URLSearchParams()
         const filtersParams = new URLSearchParams()
         filtersParams.set(
@@ -84,7 +84,7 @@ const enhance = compose(
   ),
   withProps(({ deviceList, activeDeviceIds }) => {
     const deviceStateAbbrs = deviceList.map(it => it.get('stateAbbr')).toSet()
-
+    // console.log("devices", "************",  deviceList.toJS())
     return {
       fill: ({ properties: { postal } }) =>
         deviceStateAbbrs.has(postal) ? '#00c4e0' : '#a4e6f2',
@@ -110,7 +110,7 @@ export const DeviceStatus = ({
   fill,
   points,
   deviceSummaryMap,
-  onSummaryItemClick,
+  onSummaryDeviceClick,
   onMouseEnter,
   onMouseLeave,
   countryIsoAlpha2Code,
@@ -135,7 +135,7 @@ export const DeviceStatus = ({
               .getIn(['operational', 'deviceIds'], EMPTY_LIST)
               .map(_.toString)
           )}
-          onClick={onSummaryItemClick}
+          onClick={onSummaryDeviceClick}
           onMouseEnter={onMouseEnter}
           onMouseLeave={onMouseLeave}
           intl={intl}
@@ -152,7 +152,7 @@ export const DeviceStatus = ({
               .getIn(['warrantyExpiring', 'deviceIds'], EMPTY_LIST)
               .map(_.toString)
           )}
-          onClick={onSummaryItemClick}
+          onClick={onSummaryDeviceClick}
           onMouseEnter={onMouseEnter}
           onMouseLeave={onMouseLeave}
           intl={intl}
@@ -167,7 +167,7 @@ export const DeviceStatus = ({
               .getIn(['calibration', 'deviceIds'], EMPTY_LIST)
               .map(_.toString)
           )}
-          onClick={onSummaryItemClick}
+          onClick={onSummaryDeviceClick}
           onMouseEnter={onMouseEnter}
           onMouseLeave={onMouseLeave}
           intl={intl}
@@ -184,7 +184,7 @@ export const DeviceStatus = ({
               .getIn(['uploadingData', 'deviceIds'], EMPTY_LIST)
               .map(_.toString)
           )}
-          onClick={onSummaryItemClick}
+          onClick={onSummaryDeviceClick}
           onMouseEnter={onMouseEnter}
           onMouseLeave={onMouseLeave}
           intl={intl}
@@ -199,7 +199,7 @@ export const DeviceStatus = ({
               .getIn(['testFailures', 'deviceIds'], EMPTY_LIST)
               .map(_.toString)
           )}
-          onClick={onSummaryItemClick}
+          onClick={onSummaryDeviceClick}
           onMouseEnter={onMouseEnter}
           onMouseLeave={onMouseLeave}
           intl={intl}
