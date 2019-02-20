@@ -1,12 +1,11 @@
 import React from 'react'
-import ReactShallowRenderer from 'react-test-renderer/shallow'
+import { shallow } from 'enzyme'
 import { IntlProvider } from 'react-intl'
 import Immutable from 'immutable'
 
 import ReportTableRow from './ReportTableRow'
 
 describe('ReportTableRow component', () => {
-  const renderer = new ReactShallowRenderer()
   const intlProvider = new IntlProvider({ locale: 'en' }, {})
   const { intl } = intlProvider.getChildContext()
 
@@ -23,9 +22,7 @@ describe('ReportTableRow component', () => {
     }),
   }
 
-  it('should shallow render correctly', () => {
-    const element = renderer.render(<ReportTableRow {...props} />)
-
-    expect(element).toMatchSnapshot()
+  it('should shallow render without crash', () => {
+    shallow(<ReportTableRow {...props} />)
   })
 })

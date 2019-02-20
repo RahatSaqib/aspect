@@ -1,10 +1,9 @@
 import React from 'react'
-import ReactShallowRenderer from 'react-test-renderer/shallow'
+import { shallow } from 'enzyme'
 
 import LineGraph from './LineGraph'
 
 describe('LineGraph component', () => {
-  const renderer = new ReactShallowRenderer()
   const props = {
     data: [
       { date: 'Site 1', value: [1, 2, 8] },
@@ -22,11 +21,7 @@ describe('LineGraph component', () => {
     hideLabel: false,
   }
 
-  it('should shallow render correctly', () => {
-    const element = renderer.render(
-      <LineGraph {...props} gridLines timeStyle />
-    )
-
-    expect(element).toMatchSnapshot()
+  it('should shallow render without crash', () => {
+    shallow(<LineGraph {...props} gridLines timeStyle />)
   })
 })

@@ -1,6 +1,6 @@
 import Immutable from 'immutable'
 import React from 'react'
-import ReactShallowRenderer from 'react-test-renderer/shallow'
+import { shallow } from 'enzyme'
 import { IntlProvider } from 'react-intl'
 import NotificationTableRow from './NotificationTableRow'
 
@@ -21,11 +21,8 @@ describe('NotificationTableRow module', () => {
   }
 
   describe('NotificationTableRow component', () => {
-    const renderer = ReactShallowRenderer.createRenderer()
-
-    it('should render correctly', () => {
-      const element = renderer.render(<NotificationTableRow {...props} />)
-      expect(element).toMatchSnapshot()
+    it('should render without crash', () => {
+      shallow(<NotificationTableRow {...props} />)
     })
   })
 })

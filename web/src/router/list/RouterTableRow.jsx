@@ -2,7 +2,10 @@ import _ from 'lodash'
 import classnames from 'classnames/bind'
 import React from 'react'
 
-import { TableRow, TableCell } from '../../components/shared/tableBody'
+import {
+  DataTableRow as TableRow,
+  DataTableCell as TableCell,
+} from '../../components/shared/tableBody'
 
 const cssClasses = classnames.bind(
   require('../../components/shared/DataTableRow.css')

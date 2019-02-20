@@ -189,8 +189,7 @@ export default class CustomField extends PureComponent {
         </FormGroup>
       )
     } else if (fieldType === 'DateTime') {
-      const fieldDateTime =
-        fieldValue !== null && isValid(fieldValue) ? new Date(fieldValue) : null
+      const fieldDateTime = isValid(fieldValue) ? new Date(fieldValue) : null
       return (
         <FormGroup
           className={cssClasses('Container')}

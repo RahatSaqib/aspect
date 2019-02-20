@@ -1,10 +1,9 @@
 import React from 'react'
-import ReactShallowRenderer from 'react-test-renderer/shallow'
+import { shallow } from 'enzyme'
 
 import AbnormalBarGraph from './AbnormalBarGraph'
 
 describe('AbnormalBarGraph Component', () => {
-  const renderer = new ReactShallowRenderer()
   const props = {
     data: [
       {
@@ -18,8 +17,7 @@ describe('AbnormalBarGraph Component', () => {
     fill: it => (it.abnormal ? '#EA4E62' : '#36DED6'),
   }
 
-  it('should shallow render correctly', () => {
-    const element = renderer.render(<AbnormalBarGraph {...props} />)
-    expect(element).toMatchSnapshot()
+  it('should shallow render without crash', () => {
+    shallow(<AbnormalBarGraph {...props} />)
   })
 })

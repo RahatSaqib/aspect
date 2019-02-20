@@ -7,7 +7,6 @@
   display: flex;
   flex-flow: row wrap;
   margin-top: 16px;
-  margin-bottom: 12px;
 }
 
 .DateRangeSelector__DatePickerContainer > * {

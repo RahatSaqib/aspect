@@ -4,7 +4,10 @@ import React from 'react'
 import FaCircle from 'react-icons/lib/fa/circle'
 import ColoredButton from '../../../components/themedReactToolbox/ColoredButton'
 
-import { TableRow, TableCell } from '../../../components/shared/tableBody'
+import {
+  DataTableRow as TableRow,
+  DataTableCell as TableCell,
+} from '../../../components/shared/tableBody'
 
 const cssClasses = classnames.bind(
   require('./NotificationDeliveryTableRow.css')

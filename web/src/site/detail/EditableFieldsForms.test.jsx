@@ -1,12 +1,10 @@
 import React from 'react'
-import ReactShallowRenderer from 'react-test-renderer/shallow'
+import { shallow } from 'enzyme'
 import { fromJS } from 'immutable'
 
 import EditableFieldsForm from './EditableFieldsForm'
 
 describe('EditableFieldsForm Component', () => {
-  const renderer = new ReactShallowRenderer()
-
   const props = {
     initialValues: fromJS({
       address: '13 Main Street',
@@ -39,8 +37,7 @@ describe('EditableFieldsForm Component', () => {
     submiting: false,
   }
 
-  it('should shallow render correctly', () => {
-    const element = renderer.render(<EditableFieldsForm {...props} />)
-    expect(element).toMatchSnapshot()
+  it('should shallow render without crash', () => {
+    shallow(<EditableFieldsForm {...props} />)
   })
 })
