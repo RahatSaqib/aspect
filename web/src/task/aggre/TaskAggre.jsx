@@ -168,7 +168,8 @@ export const TaskAggre = ({
       <Unit lg="1-4">
         <legend className={cssClasses('Summary__Legend')}>Sites</legend>
         <div>
-          {!sites.isEmpty() &&
+          {sites &&
+            !sites.isEmpty() &&
             sites.toArray().map(element => (
               <span className={cssClasses('Summary__Item')}>
                 {element.site}
@@ -187,7 +188,8 @@ export const TaskAggre = ({
       <Unit lg="1-2">
         <legend className={cssClasses('Summary__Legend')}>Devices</legend>
         <div>
-          {!devices.isEmpty() &&
+          {devices &&
+            !devices.isEmpty() &&
             devices.toArray().map(element => (
               <span className={cssClasses('Summary__Item')}>
                 {element.device}

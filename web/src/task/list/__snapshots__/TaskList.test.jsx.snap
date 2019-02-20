@@ -12,66 +12,6 @@ exports[`TaskList module TaskList component should render correctly 1`] = `
   <div
     className="FiltersGroup"
   >
-    <ButtonGroup
-      adjacent={true}
-      className="FiltersGroup__Child"
-    >
-      <AspectButton
-        color="primary"
-        data-alert-type="mine"
-        inverse={true}
-        variant="contained"
-      >
-        My alerts
-      </AspectButton>
-      <AspectButton
-        className="Button--mini"
-        color="primary"
-        variant="contained"
-      >
-        0
-      </AspectButton>
-    </ButtonGroup>
-    <ButtonGroup
-      adjacent={true}
-      className="FiltersGroup__Child"
-    >
-      <AspectButton
-        color="primary"
-        data-alert-type="snoozed"
-        inverse={true}
-        variant="contained"
-      >
-        Snoozed
-      </AspectButton>
-      <AspectButton
-        className="Button--mini"
-        color="primary"
-        variant="contained"
-      >
-        0
-      </AspectButton>
-    </ButtonGroup>
-    <ButtonGroup
-      adjacent={true}
-      className="FiltersGroup__Child"
-    >
-      <AspectButton
-        color="primary"
-        data-alert-type="all"
-        inverse={true}
-        variant="contained"
-      >
-        All
-      </AspectButton>
-      <AspectButton
-        className="Button--mini"
-        color="primary"
-        variant="contained"
-      >
-        0
-      </AspectButton>
-    </ButtonGroup>
     <div
       className="FiltersGroup__Child FiltersGroup__Child--dropdown"
     >
@@ -87,16 +27,16 @@ exports[`TaskList module TaskList component should render correctly 1`] = `
               "value": "device",
             },
             Object {
-              "label": "Consumable",
-              "value": "consumable",
+              "label": "Reagent",
+              "value": "reagent",
             },
             Object {
-              "label": "Health",
-              "value": "health",
+              "label": "Data",
+              "value": "data",
             },
             Object {
-              "label": "Sites",
-              "value": "site",
+              "label": "Connectivity",
+              "value": "connectivity",
             },
           ]
         }
