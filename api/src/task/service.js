@@ -142,7 +142,6 @@ async function getPersonsBySite(siteId) {
     .leftJoin('Person as jobperson', 'job.personId', 'jobperson.Id')
     .where('jb.siteId', siteId)
     .select('jobperson.name as jobPersons', 'jobperson.id as jobPersonsId')
-  console.log(query)
   return query
 }
 async function getTaskDetailsQuery(taskId, userId) {
