@@ -125,24 +125,26 @@ async function getTask(request) {
   const accountDetails = await getAccountDetailsForUsername(loggedUserName)
 
   const task = await getTaskDetailsQuery(taskId, accountDetails.id)
+  const persons = await getPersonsBySite(task.siteId)
+  if (persons) {
+    task.jobPersons = _.map(persons, person => ({
+      personName: person.jobPersons,
+      personId: person.jobPersonsId,
+    }))
+  } else task.jobPersons = []
 
-  if (task && task.jobPersons) {
-    if (task.jobPersons.split(';').length > 1)
-      task.jobPersons = task.jobPersons.split(';').map((elem, index) => ({
-        personName: elem,
-        personId: task.jobPersonsId.split(';')[index],
-      }))
-    else
-      task.jobPersons = [
-        {
-          personName: task.jobPersons,
-          personId: task.jobPersonsId,
-        },
-      ]
-  }
   return task
 }
 
+async function getPersonsBySite(siteId) {
+  const query = await knex('JobContext as jb')
+    .leftJoin('Job as job', 'jb.jobId', 'job.Id')
+    .leftJoin('Person as jobperson', 'job.personId', 'jobperson.Id')
+    .where('jb.siteId', siteId)
+    .select('jobperson.name as jobPersons', 'jobperson.id as jobPersonsId')
+  console.log(query)
+  return query
+}
 async function getTaskDetailsQuery(taskId, userId) {
   const query = await knex('AlertMessage as am')
     .join('Person as p', 'am.personId', 'p.Id')
@@ -153,9 +155,6 @@ async function getTaskDetailsQuery(taskId, userId) {
     .leftJoin('IssueStatus as is', 'i.issueStatusId', 'is.id')
     .leftJoin('IssueType as it', 'i.issueTypeId', 'it.id')
     .leftJoin('IssueCategory as ic', 'it.issueCategoryId', 'ic.id')
-    .leftJoin('JobContext as jb', 'site.Id', 'jb.siteId')
-    .leftJoin('Job as job', 'jb.jobId', 'job.Id')
-    .leftJoin('Person as jobperson', 'job.personId', 'jobperson.Id')
     .where('am.Id', taskId)
     .where('am.personId', userId)
     .first(
@@ -171,9 +170,7 @@ async function getTaskDetailsQuery(taskId, userId) {
       'ic.Id as issueCategoryId',
       'am.createdOn as time',
       'am.message',
-      knex.raw('ifnull(d.name,site.name) as title'),
-      knex.raw("group_concat(jobperson.name separator ';') as jobPersons"),
-      knex.raw("group_concat(jobperson.id separator ';') as jobPersonsId")
+      knex.raw('ifnull(d.name,site.name) as title')
     )
     .groupBy(
       'am.id',

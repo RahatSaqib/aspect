@@ -17,6 +17,7 @@ class TaskContextTest {
   constructor(auth) {
     this.auth = auth
     this.messageId = []
+    this.issueId = []
     this.insertedid = []
 
     _.bindAll(this, ['afterEach', 'beforeEach'])
@@ -38,17 +39,33 @@ class TaskContextTest {
       assert.isOk(alertTemplateId)
 
       // read 1st Result and coresponding siteId/deviceId
-      const results = await knex('Issue as i')
+      const issues = _.times(100, () => ({
+        issueTypeId: 5,
+        issueStatusId: 2,
+        partnerId: 4,
+        geographyId: 100,
+        siteId: 3,
+        deviceId: 4,
+        level: 1,
+        createdOn: new Date(),
+        updatedOn: new Date(),
+      }))
+      /* const results = await knex('Issue as i')
         .leftJoin('IssueStatus as is', 'i.issueStatusId', 'is.id')
         .leftJoin('IssueType as it', 'i.issueTypeId', 'it.id')
         .leftJoin('IssueCategory as ic', 'it.issueCategoryId', 'ic.id')
         .where('ic.id', 1)
         .select('i.id', 'i.deviceId')
+*/
+      assert.isOk(issues)
 
       const messageStatusId = await messageStatusToId('Initial')
 
-      Promise.each(results, async elem => {
+      await Promise.each(issues, async elem => {
         // add sample alert message
+        const issueId = await knex('Issue')
+          .insert(issues)
+          .returning('id')
         const now = new Date()
         this.insertedid = await knex('AlertMessage')
           .returning('id')
@@ -66,11 +83,12 @@ class TaskContextTest {
           Object.assign({
             createdOn: now,
             alertMessageId: this.insertedid,
-            issueId: elem.id,
+            issueId,
             personId: userId,
             notificationTypeId: 1,
           })
         )
+        this.issueId.push(issueId[0])
         assert.isOk(this.insertedid)
         this.messageId.push(this.insertedid[0])
       })
@@ -91,7 +109,11 @@ class TaskContextTest {
         await knex('AlertMessage')
           .whereIn('id', this.messageId)
           .delete()
+        await knex('Issue')
+          .whereIn('id', this.issueId)
+          .delete()
       }
+
       this.messageId = []
     })
   }

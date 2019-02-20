@@ -8,7 +8,7 @@ async function seed(knex) {
     .where({ name: 'Admin' })
     .first('id as userId')
 
-  // read 1st Result and coresponding siteId/deviceId
+  // read 1st Result and coresponding
   const issues = await knex('Issue as i')
     .join('IssueStatus as is', 'i.issueStatusId', 'is.id')
     .join('IssueType as it', 'i.issueTypeId', 'it.id')
