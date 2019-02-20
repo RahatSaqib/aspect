@@ -343,9 +343,6 @@ export const TaskList = ({
                 label: intl.formatMessage(messages.time),
                 sortable: true,
               },
-              {
-                key: 'alert',
-              },
             ]}
           />
           {items.currentIdList
@@ -358,13 +355,13 @@ export const TaskList = ({
                 task={task}
                 onClick={onRowClick}
                 data-task-id={
-                  task.get('issueCount') > 0
+                  task.get('issueCount') > 1
                     ? `aggre-list?categoryId=${task.get(
                         'issueCategoryId'
                       )}&date=${task.get('time')}&alertTemplateId=${task.get(
                         'alertTemplateId'
                       )}`
-                    : `/${task.get('id')}`
+                    : `${task.get('id')}`
                 }
               />
             ))}

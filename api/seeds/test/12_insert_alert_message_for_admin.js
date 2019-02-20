@@ -9,15 +9,15 @@ async function seed(knex) {
     .first('id as userId')
 
   // read 1st Result and coresponding siteId/deviceId
-  const results = await knex('Issue as i')
-    .leftJoin('IssueStatus as is', 'i.issueStatusId', 'is.id')
-    .leftJoin('IssueType as it', 'i.issueTypeId', 'it.id')
-    .leftJoin('IssueCategory as ic', 'it.issueCategoryId', 'ic.id')
+  const issues = await knex('Issue as i')
+    .join('IssueStatus as is', 'i.issueStatusId', 'is.id')
+    .join('IssueType as it', 'i.issueTypeId', 'it.id')
+    .join('IssueCategory as ic', 'it.issueCategoryId', 'ic.id')
     .select('i.id', 'i.deviceId', 'i.siteId')
     .limit(100)
 
   const messageStatusId = await messageStatusToId('Initial')
-  await Promise.each(results, async elem => {
+  await Promise.each(issues, async elem => {
     // add sample alert message
     const now = new Date(new Date().toDateString())
     const idTemplate = Math.floor(Math.random() * 9) + 1
@@ -43,7 +43,5 @@ async function seed(knex) {
         notificationTypeId: 1,
       })
     )
-
-    //    messageId.push(this.insertedid[0])
   })
 }

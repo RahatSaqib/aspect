@@ -23,10 +23,30 @@ const TaskTableRow = ({ intl, messages, task, ...restProps }) => (
       <div className={cssClasses('Message')}>
         <ColoredButton
           className={cssClasses('ColoredButton')}
-          shipCove={task.get('issueCategory') === 'health'}
-          shakespeare={task.get('issueCategory') === 'device'}
-          mountain={task.get('issueCategory') === 'consumable'}
-          brink={task.get('issueCategory') === 'site'}
+          shipCove={
+            task
+              .get('issueCategoryExternalId')
+              .toString()
+              .toLowerCase() === 'devicehealth'
+          }
+          shakespeare={
+            task
+              .get('issueCategoryExternalId')
+              .toString()
+              .toLowerCase() === 'reagenthealth'
+          }
+          mountain={
+            task
+              .get('issueCategoryExternalId')
+              .toString()
+              .toLowerCase() === 'datahealth'
+          }
+          brink={
+            task
+              .get('issueCategoryExternalId')
+              .toString()
+              .toLowerCase() === 'connectivityhealth'
+          }
           label={task.get('issueCategory')}
         />
         <span className={cssClasses('Message__Subject')}>
@@ -36,7 +56,7 @@ const TaskTableRow = ({ intl, messages, task, ...restProps }) => (
           {task.get('message')}
         </span>
         {messages.alertCount &&
-          task.get('issueCount') > 0 && (
+          task.get('issueCount') > 1 && (
             <span className={cssClasses('Message__Alert')}>
               <FaExclamationTriangle
                 className={cssClasses('FaExclamationTriangle')}
@@ -54,20 +74,6 @@ const TaskTableRow = ({ intl, messages, task, ...restProps }) => (
     <TableCell className={cssClasses('TableCell')}>
       {intl.formatRelative(task.get('time'))}
     </TableCell>
-    {/*    <TableCell
-      className={cssClasses('TableCell', 'TableCell--notificationCount')}
-    >
-      {task.get('notificationCount') > 0 && (
-        <MdModeComment className={cssClasses('MdModeComment')} />
-      )}
-      {task.get('notificationCount') > 0 && (
-        <span className={cssClasses('NotificationCount')}>
-          {task.get('notificationCount')}
-        </span>
-      )}
-      {task.get('notificationCount') === 0 && '…'}
-    </TableCell>
-      */}
   </TableRow>
 )
 

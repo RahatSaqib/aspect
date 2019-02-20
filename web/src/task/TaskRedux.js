@@ -20,7 +20,7 @@ export const types = {
   REQUEST_TASK: 'REQUEST_TASK',
   RECEIVE_TASKS: 'RECEIVE_TASKS',
   RECEIVE_TASK: 'RECEIVE_TASK',
-  GET_TASK: 'GET_TASKS',
+  REQUEST_TASKBYSTATUS: 'REQUEST_TASKBYSTATUS',
   RECEIVE_DETAILEDTASKS: 'RECEIVE_DETAILEDTASKS',
 }
 //
@@ -46,7 +46,7 @@ function requestTask(id) {
   }
 }
 
-function requestAlarmsByStatus(
+function requestTaskByStatus(
   sortCol,
   sortDir,
   page,
@@ -56,7 +56,7 @@ function requestAlarmsByStatus(
   categoryId
 ) {
   return {
-    type: types.GET_TASK,
+    type: types.REQUEST_TASKBYSTATUS,
     sortCol,
     sortDir,
     page,
@@ -103,7 +103,7 @@ function receiveDetailedTasks(json) {
   }
 }
 
-export function getAlarmsByStatus(
+export function getAlarmsByAlarmTemplateAndDate(
   filtersParams,
   sortCol,
   sortDir,
@@ -116,7 +116,7 @@ export function getAlarmsByStatus(
   return dispatch => {
     const filters = _.fromPairs([...filtersParams.entries()])
     dispatch(
-      requestAlarmsByStatus(
+      requestTaskByStatus(
         sortCol,
         sortDir,
         page,

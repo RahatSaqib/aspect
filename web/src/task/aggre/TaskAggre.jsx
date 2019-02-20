@@ -25,7 +25,7 @@ import {
   TaskDataTableHead,
   TaskDataTableRow,
 } from '../list/TaskDataTable'
-import { getAlarmsByStatus } from '../TaskRedux'
+import { getAlarmsByAlarmTemplateAndDate } from '../TaskRedux'
 
 const cssClasses = classnames.bind(require('./TaskAggre.css'))
 
@@ -71,13 +71,13 @@ const enhance = compose(
       title: state.task.title,
     }),
     bindActionCreators.bind(null, {
-      getAlarmsByStatus,
+      getAlarmsByAlarmTemplateAndDate,
     })
   ),
   withHandlers({
     onInitialLoad: ({
       location,
-      getAlarmsByStatus,
+      getAlarmsByAlarmTemplateAndDate,
       sortCol,
       sortDir,
       pageAt,
@@ -86,7 +86,7 @@ const enhance = compose(
       const { sanitized, value: filtersParams } = filtersFromLocation(location)
       const taskDetails = queryString.parse(location.search)
       if (!sanitized) {
-        getAlarmsByStatus(
+        getAlarmsByAlarmTemplateAndDate(
           filtersParams,
           sortCol,
           sortDir,
@@ -205,22 +205,6 @@ export const TaskAggre = ({
             ))}
         </div>
       </Unit>
-      {/* <Unit lg="1-4">
-        <legend className={cssClasses('Summary__Legend')}>More</legend>
-        <div>
-          <span className={cssClasses('Summary__Item')}>
-            Alert settings
-            <Link
-              to="/task/detail"
-              className={cssClasses('Summary__Item__Link')}
-            >
-              <FaArrowUp
-                className={cssClasses('Summary__Item__Link__FaArrowUp')}
-              />
-            </Link>
-          </span>
-        </div>
-      </Unit> */}
     </section>
     <section className={cssClasses('Section')}>
       <DataTableCard>
@@ -255,9 +239,6 @@ export const TaskAggre = ({
                   label: intl.formatMessage(messages.time),
                   sortable: true,
                 },
-                {
-                  key: 'alert',
-                },
               ]}
             />
             {items.currentIdList
@@ -274,7 +255,7 @@ export const TaskAggre = ({
               ))}
           </TaskDataTable>
         )}
-        {!items.isEmpty() > 0 && (
+        {!items.isEmpty() && (
           <BrowseTablePaginator
             history={history}
             location={location}

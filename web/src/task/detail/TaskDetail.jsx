@@ -84,19 +84,11 @@ export const TaskDetail = ({
       <section className={cssClasses('Section')}>
         <Card className={cssClasses('Card')}>
           <h2 className={cssClasses('Card__Title')}>
-            <AlertType alertType="mine" />
+            <AlertType alertType={task.get('issueStatus')} />
             <span className={cssClasses('Card__Title__Text')}>
               {' '}
               {task.get('message')}
             </span>
-
-            {/* <small className={cssClasses('Card__Title__Date')}>by April 10</small>
-            <AspectButton
-              className={cssClasses('Card__Title__Button')}
-              variant="contained"
-            >
-              Alert settings
-            </AspectButton> */}
           </h2>
           <div className={cssClasses('Card__Content')}>
             <Unit lg="1-5">

@@ -6,8 +6,8 @@ const { getAccountDetailsForUsername } = require('../accountDetails/service')
 
 setupPaginator(knex)
 
-const RESOLVED_ISSUE_STATUS = 8
-const OK_ISSUE_STATUS = 4
+const RESOLVED_ISSUE_STATUS = 'Resolved'
+const OK_ISSUE_STATUS = 'Ok'
 
 async function getQuery(request, query, queryBuilder) {
   const loggedUserName = request.auth.credentials.name
@@ -23,13 +23,16 @@ async function getQuery(request, query, queryBuilder) {
     .leftJoin('IssueCategory as ic', 'it.issueCategoryId', 'ic.id')
     .where(builder => {
       if (_.isString(query.topic) && query.topic !== 'all')
-        builder = builder.where('ic.shortName', query.topic.toLowerCase())
+        builder = builder.where(
+          knex.raw('lower(ic.shortName)'),
+          query.topic.toLowerCase()
+        )
       if (_.isString(query.alertType) && query.alertType !== 'all')
         builder = builder.where('it.name', query.alertType)
 
       return builder
         .where('am.personId', accountDetails.id)
-        .whereNotIn('is.id', [RESOLVED_ISSUE_STATUS, OK_ISSUE_STATUS])
+        .whereNotIn('is.externalid', [RESOLVED_ISSUE_STATUS, OK_ISSUE_STATUS])
     })
     .modify(queryBuilder)
     .orderBy(sortColumn, query.sortDir)
@@ -50,11 +53,12 @@ async function listTasksByStatus(request) {
         'am.id as id',
         'site.name as site',
         'site.id as siteId',
+        'ic.externalId as issueCategoryExternalId',
         'd.name as device',
         'd.id as deviceId',
         'is.name as issueStatus',
         'is.Id as issueStatusId',
-        'ic.name as issueCategory',
+        'ic.shortname as issueCategory',
         'ic.Id as issueCategoryId',
         knex.raw('am.createdOn as time'),
         'am.message',
@@ -77,9 +81,9 @@ async function listTasks(request) {
         'is.name as issueStatus',
         'am.alertTemplateId',
         'is.Id as issueStatusId',
-        'ic.name as issueCategory',
+        'ic.shortname as issueCategory',
         'ic.Id as issueCategoryId',
-
+        'ic.externalId as issueCategoryExternalId',
         knex.raw('date(am.createdOn) as time'),
         'am.message',
         knex.raw('sum(case when i.id is null then 0 else 1 end) as issueCount'),
@@ -92,6 +96,7 @@ async function listTasks(request) {
         'am.alertTemplateId',
         'ic.name',
         'ic.id',
+        'ic.externalId',
         knex.raw('date(am.createdOn)')
       )
   })
@@ -148,9 +153,9 @@ async function getTaskDetailsQuery(taskId, userId) {
     .leftJoin('IssueStatus as is', 'i.issueStatusId', 'is.id')
     .leftJoin('IssueType as it', 'i.issueTypeId', 'it.id')
     .leftJoin('IssueCategory as ic', 'it.issueCategoryId', 'ic.id')
-    .join('JobContext as jb', 'site.Id', 'jb.siteId')
-    .join('Job as job', 'jb.jobId', 'job.Id')
-    .join('Person as jobperson', 'job.personId', 'jobperson.Id')
+    .leftJoin('JobContext as jb', 'site.Id', 'jb.siteId')
+    .leftJoin('Job as job', 'jb.jobId', 'job.Id')
+    .leftJoin('Person as jobperson', 'job.personId', 'jobperson.Id')
     .where('am.Id', taskId)
     .where('am.personId', userId)
     .first(
