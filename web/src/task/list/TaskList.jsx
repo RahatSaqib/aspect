@@ -69,7 +69,7 @@ const FILTERS_CONFIG = {
 }
 
 export const searchSanitizer = makeSearchParamsSanitizer({
-  availableSortCol: ['title', 'site', 'time'],
+  availableSortCol: ['issueCategory', 'site', 'time'],
 })
 export const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
 export const filtersFromLocation = composeSanitizer(
@@ -128,14 +128,14 @@ const enhance = compose(
       })
     },
 
-    onTopicChange: ({ history, location }) => ({
-      target: { value: topic },
+    onIssueCategoryChange: ({ history, location }) => ({
+      target: { value: issueCategory },
     }) => {
       const searchParams = new URLSearchParams(location.search)
       const filtersParams = new URLSearchParams(
         searchParams.get('filters') || ''
       )
-      filtersParams.set('topic', topic)
+      filtersParams.set('issueCategory', issueCategory)
       searchParams.set('filters', filtersParams)
 
       history.replace({
@@ -182,7 +182,7 @@ const enhance = compose(
 
     return {
       alertType: filtersParams.get('alertType') || 'all',
-      topic: filtersParams.get('topic') || 'all',
+      issueCategory: filtersParams.get('issueCategory') || 'all',
     }
   })
 )
@@ -195,8 +195,8 @@ export const TaskList = ({
   items,
   // --- injected by recompose ---
 
-  topic,
-  onTopicChange,
+  issueCategory,
+  onIssueCategoryChange,
   sortCol,
   sortDir,
   pageAt,
@@ -206,7 +206,7 @@ export const TaskList = ({
   <div className={cssClasses('Container')}>
     <Helmet title={intl.formatMessage(messages.tasksTitle)} />
     <div className={cssClasses('FiltersGroup')}>
-      {/* 
+      {/*
       <ButtonGroup adjacent className={cssClasses('FiltersGroup__Child')}>
         <AspectButton
           color="primary"
@@ -271,7 +271,7 @@ export const TaskList = ({
         )}
       >
         <StyledDropdown
-          value={topic}
+          value={issueCategory}
           source={[
             {
               value: 'all',
@@ -294,7 +294,7 @@ export const TaskList = ({
               label: 'Connectivity',
             },
           ]}
-          onChange={onTopicChange}
+          onChange={onIssueCategoryChange}
         />
       </div>
       {/* <div className={cssClasses('FiltersGroup__Child')}>
@@ -329,7 +329,7 @@ export const TaskList = ({
                 key: 'icon',
               },
               {
-                key: 'title',
+                key: 'issueCategory',
                 label: intl.formatMessage(messages.topic),
                 sortable: true,
               },

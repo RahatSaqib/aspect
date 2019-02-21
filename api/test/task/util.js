@@ -50,13 +50,7 @@ class TaskContextTest {
         createdOn: new Date(),
         updatedOn: new Date(),
       }))
-      /* const results = await knex('Issue as i')
-        .leftJoin('IssueStatus as is', 'i.issueStatusId', 'is.id')
-        .leftJoin('IssueType as it', 'i.issueTypeId', 'it.id')
-        .leftJoin('IssueCategory as ic', 'it.issueCategoryId', 'ic.id')
-        .where('ic.id', 1)
-        .select('i.id', 'i.deviceId')
-*/
+
       assert.isOk(issues)
 
       const messageStatusId = await messageStatusToId('Initial')
