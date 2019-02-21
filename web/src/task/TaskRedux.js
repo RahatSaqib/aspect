@@ -18,10 +18,10 @@ import {
 export const types = {
   REQUEST_TASKS: 'REQUEST_TASKS',
   REQUEST_TASK: 'REQUEST_TASK',
+  REQUEST_TASKSBYSTATUS: 'REQUEST_TASKSBYSTATUS',
   RECEIVE_TASKS: 'RECEIVE_TASKS',
   RECEIVE_TASK: 'RECEIVE_TASK',
-  REQUEST_TASKBYSTATUS: 'REQUEST_TASKBYSTATUS',
-  RECEIVE_DETAILEDTASKS: 'RECEIVE_DETAILEDTASKS',
+  RECEIVE_TASKSBYSTATUS: 'RECEIVE_TASKSBYSTATUS',
 }
 //
 
@@ -46,7 +46,7 @@ function requestTask(id) {
   }
 }
 
-function requestTaskByStatus(
+function requestTasksByStatus(
   sortCol,
   sortDir,
   page,
@@ -56,7 +56,7 @@ function requestTaskByStatus(
   categoryId
 ) {
   return {
-    type: types.REQUEST_TASKBYSTATUS,
+    type: types.REQUEST_TASKSBYSTATUS,
     sortCol,
     sortDir,
     page,
@@ -84,7 +84,7 @@ function receiveTask(json) {
 }
 function receiveDetailedTasks(json) {
   return {
-    type: types.RECEIVE_DETAILEDTASKS,
+    type: types.RECEIVE_TASKSBYSTATUS,
     items: json.data,
     total: json.total,
     countByAlert: json.countByAlert,
@@ -103,7 +103,7 @@ function receiveDetailedTasks(json) {
   }
 }
 
-export function getAlarmsByAlarmTemplateAndDate(
+export function getTasksByAlertTemplateAndDate(
   filtersParams,
   sortCol,
   sortDir,
@@ -116,7 +116,7 @@ export function getAlarmsByAlarmTemplateAndDate(
   return dispatch => {
     const filters = _.fromPairs([...filtersParams.entries()])
     dispatch(
-      requestTaskByStatus(
+      requestTasksByStatus(
         sortCol,
         sortDir,
         page,
@@ -144,7 +144,7 @@ export function getAlarmsByAlarmTemplateAndDate(
           400: filterFieldsRejectedError(
             defineMessages({
               title: {
-                id: 'errorResponseMessages.getAlarmsByStatus.GET.400.title',
+                id: 'errorResponseMessages.getTasksByStatus.GET.400.title',
                 defaultMessage: 'Searching Task Failed',
               },
             })
@@ -152,7 +152,7 @@ export function getAlarmsByAlarmTemplateAndDate(
           default: errorPleaseTryAgainInAFewMinutes(
             defineMessages({
               title: {
-                id: 'errorResponseMessages.getAlarmsByStatus.GET.default.title',
+                id: 'errorResponseMessages.getTasksByStatus.GET.default.title',
                 defaultMessage: 'Loading Tasks Failed',
               },
             })
@@ -252,7 +252,7 @@ export default function taskReducer(state = initialState, action) {
         mutState.set('table', receiveTableItems(mutState.table, action.total))
         mutState.set('countByAlert', Immutable.Map(action.countByAlert))
       })
-    case types.RECEIVE_DETAILEDTASKS:
+    case types.RECEIVE_TASKSBYSTATUS:
       return state.withMutations(mutState => {
         const immutList = Immutable.fromJS(action.items)
         mutState.set('items', receiveList(mutState.items, immutList))

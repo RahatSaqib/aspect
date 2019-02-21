@@ -13,7 +13,7 @@ describe('Task Routes', () => {
   describe('/taskbystatus', () => {
     const path = '/api/taskbystatus'
     describe('GET', () => {
-      it('should return a list of alarms and issues by specific date, siteid and issuestatus', done => {
+      it('should return a list of alerts and issues by specific date, siteid and issuestatus', done => {
         const alertTemplateId = 1
         const date = new Date().toISOString()
         const statusId = 1
@@ -47,7 +47,7 @@ describe('Task Routes', () => {
   describe('/task/{taskId}', () => {
     const path = '/api/task/'
     describe('GET', () => {
-      it('should return an alarm and issues by specific id', done => {
+      it('should return an alert and issues by specific id', done => {
         const taskId = context.getMessageId()
         server
           .get(`${path}${taskId}`)
@@ -82,7 +82,7 @@ describe('Task Routes', () => {
   describe('/task', () => {
     const path = '/api/task'
     describe('GET', () => {
-      it('should return a list of alarms and issues grouped by days', done => {
+      it('should return a list of alerts and issues grouped by days', done => {
         server
           .get(`${path}?sortCol=time&sortDir=desc&page=0&size=10`)
           .set('Authorization', `Bearer ${shared.token}`)

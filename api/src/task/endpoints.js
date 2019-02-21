@@ -56,13 +56,13 @@ const routes = [
                   .description('The id of the issue category'),
                 time: Joi.date()
                   .required()
-                  .description('Date for the alarm'),
+                  .description('Date for the alert'),
                 message: Joi.string()
                   .allow(null)
                   .description('Message of the alert'),
                 issueCount: Joi.number()
                   .optional()
-                  .description('The amount of issues related with this alarm'),
+                  .description('The amount of issues related to this alert'),
                 title: Joi.string()
                   .required()
                   .description("The alert's title"),
@@ -103,12 +103,12 @@ const routes = [
               .description('Filter for topic'),
             date: Joi.date()
               .iso()
-              .description('Filter for the alarm date'),
+              .description('Filter for the alert date'),
             categoryId: Joi.number().description(
-              'Filter for the alarm category'
+              'Filter for the issue category'
             ),
             alertTemplateId: Joi.number().description(
-              'Filter for the alarm message'
+              'Filter for the alert template'
             ),
           },
           validateSortPageParams('topic', 'site', 'time')
@@ -125,7 +125,7 @@ const routes = [
               Joi.object().keys({
                 id: Joi.number()
                   .required()
-                  .description('The id of the alarm message'),
+                  .description('The id of the alert message'),
                 site: Joi.string()
                   .required()
                   .description('The site name'),
@@ -146,13 +146,13 @@ const routes = [
                   .description('The id of the issue category'),
                 time: Joi.date()
                   .required()
-                  .description('Date for the alarm'),
+                  .description('Date for the alert'),
                 message: Joi.string()
                   .allow(null)
                   .description('Message of the alert'),
                 issueCount: Joi.number()
                   .optional()
-                  .description('The amount of issues related with this alarm'),
+                  .description('The amount of issues related with this alert'),
                 title: Joi.string()
                   .required()
                   .description("The alert's title"),
@@ -199,7 +199,7 @@ const routes = [
             .keys({
               id: Joi.number()
                 .required()
-                .description('The id of the alarm message'),
+                .description('The id of the alert message'),
               site: Joi.string()
                 .required()
                 .description('The site name'),
@@ -220,7 +220,7 @@ const routes = [
                 .description('The id of the issue category'),
               time: Joi.date()
                 .required()
-                .description('Date for the alarm'),
+                .description('Date for the alert'),
               message: Joi.string()
                 .allow(null)
                 .description('Message of the alert'),

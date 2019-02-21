@@ -25,7 +25,7 @@ import {
   TaskDataTableHead,
   TaskDataTableRow,
 } from '../list/TaskDataTable'
-import { getAlarmsByAlarmTemplateAndDate } from '../TaskRedux'
+import { getTasksByAlertTemplateAndDate } from '../TaskRedux'
 
 const cssClasses = classnames.bind(require('./TaskAggre.css'))
 
@@ -71,13 +71,13 @@ const enhance = compose(
       title: state.task.title,
     }),
     bindActionCreators.bind(null, {
-      getAlarmsByAlarmTemplateAndDate,
+      getTasksByAlertTemplateAndDate,
     })
   ),
   withHandlers({
     onInitialLoad: ({
       location,
-      getAlarmsByAlarmTemplateAndDate,
+      getTasksByAlertTemplateAndDate,
       sortCol,
       sortDir,
       pageAt,
@@ -86,7 +86,7 @@ const enhance = compose(
       const { sanitized, value: filtersParams } = filtersFromLocation(location)
       const taskDetails = queryString.parse(location.search)
       if (!sanitized) {
-        getAlarmsByAlarmTemplateAndDate(
+        getTasksByAlertTemplateAndDate(
           filtersParams,
           sortCol,
           sortDir,
