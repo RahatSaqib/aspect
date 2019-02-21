@@ -17,9 +17,9 @@ const routes = [
             alertType: Joi.string()
               .allow('')
               .description('Filter for alert type'),
-            topic: Joi.string()
+            issueCategory: Joi.string()
               .allow('')
-              .description('Filter for topic'),
+              .description('Filter for issue category'),
           },
           validateSortPageParams('issueCategory', 'site', 'time')
         ),

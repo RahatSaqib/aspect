@@ -22,10 +22,10 @@ async function getQuery(request, query, queryBuilder) {
     .leftJoin('IssueType as it', 'i.issueTypeId', 'it.id')
     .leftJoin('IssueCategory as ic', 'it.issueCategoryId', 'ic.id')
     .where(builder => {
-      if (_.isString(query.topic) && query.topic !== 'all')
+      if (_.isString(query.issueCategory) && query.issueCategory !== 'all')
         builder = builder.where(
           knex.raw('lower(ic.shortName)'),
-          query.topic.toLowerCase()
+          query.issueCategory.toLowerCase()
         )
       if (_.isString(query.alertType) && query.alertType !== 'all')
         builder = builder.where('it.name', query.alertType)
@@ -105,16 +105,16 @@ async function listTasks(request) {
   return result
 }
 
-function processTaskResults(dataWithFilteredTopic, total) {
-  const countByAlert = _.countBy(dataWithFilteredTopic, 'issueCategory')
+function processTaskResults(dataWithFilteredIssueCategory, total) {
+  const countByAlert = _.countBy(dataWithFilteredIssueCategory, 'issueCategory')
   countByAlert.total = total
 
   const result = {
     ok: true,
     total,
-    data: dataWithFilteredTopic,
+    data: dataWithFilteredIssueCategory,
     countByAlert,
-    length: dataWithFilteredTopic.length,
+    length: dataWithFilteredIssueCategory.length,
   }
 
   return result
