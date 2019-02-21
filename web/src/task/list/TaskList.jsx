@@ -6,10 +6,9 @@ import { defineMessages } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
-import TableBody from '@material-ui/core/TableBody'
+/* import TableBody from '@material-ui/core/TableBody'
 
-import AspectButton from '../../components/shared/AspectButton'
-
+import AspectButton from '../../components/shared/AspectButton' */
 import {
   makeSortPageSelector,
   makeSearchParamsSanitizer,
@@ -17,7 +16,7 @@ import {
 } from '../../shared/selectors/searchParams'
 import { sanitizeFiltersStringBy } from '../../filter/utils'
 // import FiltersPanel from '../../filter/popover/FiltersPanel'
-import ButtonGroup from '../../components/themedReactToolbox/ButtonGroup'
+// import ButtonGroup from '../../components/themedReactToolbox/ButtonGroup'
 import StyledDropdown from '../../components/shared/StyledDropdown'
 import BrowseEmptyList from '../../globals/components/BrowseEmptyList'
 import BrowseTablePaginator from '../../globals/components/BrowseTablePaginator'
@@ -70,7 +69,7 @@ const FILTERS_CONFIG = {
 }
 
 export const searchSanitizer = makeSearchParamsSanitizer({
-  availableSortCol: ['topic', 'site', 'time'],
+  availableSortCol: ['issueCategory', 'site', 'time'],
 })
 export const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
 export const filtersFromLocation = composeSanitizer(
@@ -129,14 +128,14 @@ const enhance = compose(
       })
     },
 
-    onTopicChange: ({ history, location }) => ({
-      target: { value: topic },
+    onIssueCategoryChange: ({ history, location }) => ({
+      target: { value: issueCategory },
     }) => {
       const searchParams = new URLSearchParams(location.search)
       const filtersParams = new URLSearchParams(
         searchParams.get('filters') || ''
       )
-      filtersParams.set('topic', topic)
+      filtersParams.set('issueCategory', issueCategory)
       searchParams.set('filters', filtersParams)
 
       history.replace({
@@ -183,7 +182,7 @@ const enhance = compose(
 
     return {
       alertType: filtersParams.get('alertType') || 'all',
-      topic: filtersParams.get('topic') || 'all',
+      issueCategory: filtersParams.get('issueCategory') || 'all',
     }
   })
 )
@@ -194,12 +193,10 @@ export const TaskList = ({
   location,
   table,
   items,
-  countByAlert,
   // --- injected by recompose ---
-  alertType,
-  topic,
-  onAlertTypeClick,
-  onTopicChange,
+
+  issueCategory,
+  onIssueCategoryChange,
   sortCol,
   sortDir,
   pageAt,
@@ -209,10 +206,12 @@ export const TaskList = ({
   <div className={cssClasses('Container')}>
     <Helmet title={intl.formatMessage(messages.tasksTitle)} />
     <div className={cssClasses('FiltersGroup')}>
+      {/*
       <ButtonGroup adjacent className={cssClasses('FiltersGroup__Child')}>
         <AspectButton
           color="primary"
           variant="contained"
+
           inverse={alertType !== 'mine'}
           data-alert-type="mine"
           onClick={onAlertTypeClick}
@@ -245,6 +244,7 @@ export const TaskList = ({
           {`${countByAlert.get('snoozed', 0)}`}
         </AspectButton>
       </ButtonGroup>
+
       <ButtonGroup adjacent className={cssClasses('FiltersGroup__Child')}>
         <AspectButton
           color="primary"
@@ -263,6 +263,7 @@ export const TaskList = ({
           {`${countByAlert.get('total', 0)}`}
         </AspectButton>
       </ButtonGroup>
+      */}
       <div
         className={cssClasses(
           'FiltersGroup__Child',
@@ -270,7 +271,7 @@ export const TaskList = ({
         )}
       >
         <StyledDropdown
-          value={topic}
+          value={issueCategory}
           source={[
             {
               value: 'all',
@@ -281,19 +282,19 @@ export const TaskList = ({
               label: 'Device',
             },
             {
-              value: 'consumable',
-              label: 'Consumable',
+              value: 'reagent',
+              label: 'Reagent',
             },
             {
-              value: 'health',
-              label: 'Health',
+              value: 'data',
+              label: 'Data',
             },
             {
-              value: 'site',
-              label: 'Sites',
+              value: 'connectivity',
+              label: 'Connectivity',
             },
           ]}
-          onChange={onTopicChange}
+          onChange={onIssueCategoryChange}
         />
       </div>
       {/* <div className={cssClasses('FiltersGroup__Child')}>
@@ -328,7 +329,7 @@ export const TaskList = ({
                 key: 'icon',
               },
               {
-                key: 'topic',
+                key: 'issueCategory',
                 label: intl.formatMessage(messages.topic),
                 sortable: true,
               },
@@ -342,27 +343,28 @@ export const TaskList = ({
                 label: intl.formatMessage(messages.time),
                 sortable: true,
               },
-              {
-                key: 'alert',
-              },
             ]}
           />
-          <TableBody>
-            {items.currentIdList
-              .map(id => items.byId.get(id))
-              .map(task => (
-                <TaskDataTableRow
-                  key={task.get('id')}
-                  intl={intl}
-                  messages={messages}
-                  task={task}
-                  onClick={onRowClick}
-                  data-task-id={
-                    task.get('alertCount') > 0 ? 'aggre-list' : 'detail'
-                  }
-                />
-              ))}
-          </TableBody>
+          {items.currentIdList
+            .map(id => items.byId.get(id))
+            .map(task => (
+              <TaskDataTableRow
+                key={task.get('id')}
+                intl={intl}
+                messages={messages}
+                task={task}
+                onClick={onRowClick}
+                data-task-id={
+                  task.get('issueCount') > 1
+                    ? `aggre-list?categoryId=${task.get(
+                        'issueCategoryId'
+                      )}&date=${task.get('time')}&alertTemplateId=${task.get(
+                        'alertTemplateId'
+                      )}`
+                    : `${task.get('id')}`
+                }
+              />
+            ))}
         </TaskDataTable>
       )}
       {!items.currentIdList.isEmpty() && (

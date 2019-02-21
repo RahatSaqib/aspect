@@ -3,14 +3,13 @@ import classnames from 'classnames/bind'
 import React from 'react'
 import FaCircleO from 'react-icons/lib/fa/circle-o'
 import FaCircle from 'react-icons/lib/fa/circle'
-import FaBellZ from './FaBellZ'
 
 const cssClasses = classnames.bind(require('./AlertType.css'))
 
 const enhance = _.identity
 
 const AlertType = ({ alertType, ...restProps }) => {
-  if (alertType === 'mine') {
+  if (['Active', 'Due Soon', 'Due Now', 'Overdue'].indexOf(alertType) >= 0) {
     return (
       <FaCircle
         {...restProps}
@@ -18,22 +17,13 @@ const AlertType = ({ alertType, ...restProps }) => {
       />
     )
   }
-  if (alertType === 'normal') {
-    return (
-      <FaCircleO
-        {...restProps}
-        className={cssClasses(restProps.className, 'FaCircleO')}
-      />
-    )
-  }
-  if (alertType === 'snoozed') {
-    return (
-      <FaBellZ
-        {...restProps}
-        className={cssClasses(restProps.className, 'FaBellZ')}
-      />
-    )
-  }
+
+  return (
+    <FaCircleO
+      {...restProps}
+      className={cssClasses(restProps.className, 'FaCircleO')}
+    />
+  )
 }
 
 export default enhance(AlertType)
