@@ -66,6 +66,10 @@ const messages = defineMessages({
     id: 'filter.btnGroup.withDeviceStatus',
     defaultMessage: 'with device status is {deviceStatusName}',
   },
+  withDeviceType: {
+    id: 'filter.btnGroup.withDeviceType',
+    defaultMessage: 'with device type is {deviceTypeName}',
+  },
   whereExternalIdIncludes: {
     id: 'filter.btnGroup.whereExternalIdIncludes',
     defaultMessage: 'where externalId includes "{externalId}"',
@@ -91,6 +95,7 @@ const enhance = compose(
       partnerItems: state.jobs.partnersAndJobFunctionsForSelectList.partners,
       workflowStatusItems: state.resultWorkflowStatus.items,
       deviceStatusItems: state.deviceStatus.items,
+      deviceTypeItems: state.deviceType.selectList.items,
     }),
     null
   )
@@ -248,6 +253,13 @@ const buttonBy = {
     intl.formatMessage(messages.withDeviceStatus, {
       deviceStatusName: deviceStatusItems
         .find(it => it.get('id') === deviceStatusId, EMPTY_CONTEXT, EMPTY_MAP)
+        .get('name'),
+    })
+  ),
+  deviceTypeId: makeButton(({ intl, deviceTypeItems }, deviceTypeId) =>
+    intl.formatMessage(messages.withDeviceType, {
+      deviceTypeName: deviceTypeItems
+        .find(it => it.get('id') === deviceTypeId, EMPTY_CONTEXT, EMPTY_MAP)
         .get('name'),
     })
   ),

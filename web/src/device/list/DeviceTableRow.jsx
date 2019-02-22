@@ -31,7 +31,6 @@ const DeviceTableRow = ({ intl, device, onAlertClick, ...restProps }) => (
     className={cssClasses('TableRow', restProps.className)}
   >
     <TableCell>{device.get('name')}</TableCell>
-    <TableCell>{device.get('state')}</TableCell>
     <TableCell>{device.get('status')}</TableCell>
     <TableCell>
       <Rate

@@ -159,6 +159,9 @@ export const reduceFiltersConfig = (configObject, userPermissions) => {
             case 'deviceStatus':
               result.deviceStatus = true
               break
+            case 'deviceType':
+              result.deviceType = true
+              break
             case 'externalId':
               result.externalId = true
               break

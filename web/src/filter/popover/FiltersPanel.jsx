@@ -20,6 +20,7 @@ import SiteAutoCompleteField from '../resource/SiteAutoCompleteField'
 import DateRangeSelector from '../date/DateRangeSelector'
 import ResultWorkflowStatusSelectField from '../resource/ResultWorkflowStatusSelectField'
 import DeviceStatusSelectField from '../resource/DeviceStatusSelectField'
+import DeviceTypeSelectField from '../resource/DeviceTypeSelectField'
 import AspectButton from '../../components/shared/AspectButton'
 
 const cssClasses = classnames.bind(require('./FiltersPanel.css'))
@@ -93,6 +94,10 @@ const enhance = compose(
     onDeviceStatusIdChange: ({ onChangeFilters }) => deviceStatusId =>
       onChangeFilters({
         deviceStatusId,
+      }),
+    onDeviceTypeIdChange: ({ onChangeFilters }) => deviceTypeId =>
+      onChangeFilters({
+        deviceTypeId,
       }),
 
     onExcelExport: props => () =>
@@ -293,6 +298,14 @@ const messages = defineMessages({
     id: 'filter.popover.selectDeviceStatus',
     defaultMessage: 'Select status...',
   },
+  deviceType: {
+    id: 'filter.popover.deviceType',
+    defaultMessage: 'Device Type',
+  },
+  selectDeviceType: {
+    id: 'filter.popover.selectDeviceType',
+    defaultMessage: 'Select type...',
+  },
   externalId: {
     id: 'filter.popover.externalId',
     defaultMessage: 'Facility Code',
@@ -328,6 +341,7 @@ export const FiltersPanel = ({
   onDateChange,
   onWorkflowStatusIdChange,
   onDeviceStatusIdChange,
+  onDeviceTypeIdChange,
 }) => (
   <div className={cssClasses('Container', className)}>
     <AspectButton
@@ -637,6 +651,20 @@ export const FiltersPanel = ({
               floatingLabelFixed
               hintText={intl.formatMessage(messages.selectDeviceStatus)}
               floatingLabelText={intl.formatMessage(messages.deviceStatus)}
+              style={{ verticalAlign: 'bottom' }}
+              autoWidth
+            />
+          </div>
+        )}
+        {config.deviceType && (
+          <div className={cssClasses('Control')}>
+            <DeviceTypeSelectField
+              allItemText={intl.formatMessage(messages.all)}
+              value={filters.deviceTypeId}
+              onDeviceTypeChange={onDeviceTypeIdChange}
+              floatingLabelFixed
+              hintText={intl.formatMessage(messages.selectDeviceType)}
+              floatingLabelText={intl.formatMessage(messages.deviceType)}
               style={{ verticalAlign: 'bottom' }}
               autoWidth
             />
