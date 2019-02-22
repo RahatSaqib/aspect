@@ -577,6 +577,26 @@ async function assignAllFeaturesToJobFunctionIds(
   )
 }
 
+async function addLicenses(knex, partnerId = null) {
+  const licenses = await readJson(`./seeds/fixtures/License.json`)
+
+  await Promise.all(
+    _.map(
+      _.filter(
+        licenses.data,
+        val => (partnerId && !val.generic) || (!partnerId && val.generic)
+      ),
+      async license => {
+        await knex('License').insert({
+          partnerId: partnerId || null,
+          createdOn: new Date(license.createdOn),
+          content: license.content.replace('PARTNERID', partnerId),
+        })
+      }
+    )
+  )
+}
+
 module.exports = {
   seed,
   rowsAsObject,
@@ -586,4 +606,5 @@ module.exports = {
   getPermissionModules,
   seedIssueEventTriggersForPartner,
   assignAllFeaturesToJobFunctionIds,
+  addLicenses,
 }

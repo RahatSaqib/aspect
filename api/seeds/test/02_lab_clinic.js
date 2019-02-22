@@ -10,6 +10,7 @@ const config = require('../../src/config')
 const {
   getPermissionModules,
   assignAllFeaturesToJobFunctionIds,
+  addLicenses,
 } = require('../utils')
 const {
   allResultCategoryToId,
@@ -59,6 +60,7 @@ async function seed(knex) {
     maxDaysDeviceOffline: 7,
     maxDaysDeviceNoResults: 14,
   })
+  addLicenses(knex, partnerId)
 
   /* TODO Add configuration schema once UI supports and we synchronize correctly
   // define configurationData object

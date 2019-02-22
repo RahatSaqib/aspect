@@ -4,6 +4,7 @@ const config = require('../../src/config')
 const {
   getPermissionModules,
   assignAllFeaturesToJobFunctionIds,
+  addLicenses,
 } = require('../utils')
 const {
   allAssayTypeToId,
@@ -104,6 +105,7 @@ async function seed(knex) {
     maxDaysDeviceOffline: 7,
     maxDaysDeviceNoResults: 14,
   })
+  addLicenses(knex, partnerOneId)
 
   const [partnerTwoId] = await knex('Partner').insert({
     name: 'Partner Two',
@@ -112,6 +114,7 @@ async function seed(knex) {
     maxDaysDeviceOffline: 7,
     maxDaysDeviceNoResults: 14,
   })
+  addLicenses(knex, partnerTwoId)
 
   // Categories of devices (lab, connectivity...)
   const {
@@ -3949,9 +3952,12 @@ async function seed(knex) {
     assayId: assayGeneXpertHiv1VlId,
     formSchema: geneXpertHiv1VlFormSchema,
   })
+
   await knex('ResultForm').insert({
     partnerId: partnerOneId,
     assayId: assayGeneXpertHiv1QualId,
     formSchema: geneXpertHiv1VlFormSchema,
   })
+
+  addLicenses(knex)
 }
