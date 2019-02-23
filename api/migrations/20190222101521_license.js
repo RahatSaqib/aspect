@@ -14,26 +14,26 @@ async function up(knex) {
     license.charset('utf8')
   })
 
-  await knex.schema.createTable('LicenseUser', licenseUser => {
-    licenseUser
+  await knex.schema.createTable('LicensePerson', licensePerson => {
+    licensePerson
       .integer('licenseId')
       .unsigned()
       .index()
       .notNullable()
       .references('id')
       .inTable('License')
-    licenseUser
-      .integer('userId')
+    licensePerson
+      .integer('personId')
       .unsigned()
       .index()
       .notNullable()
       .references('id')
-      .inTable('User')
-    licenseUser.dateTime('acceptedOn').notNullable()
-    licenseUser.string('ip', 100).notNullable()
-    licenseUser.string('client', 500).notNullable()
-    licenseUser.primary(['licenseId', 'userId'])
-    licenseUser.charset('utf8')
+      .inTable('Person')
+    licensePerson.dateTime('acceptedOn').notNullable()
+    licensePerson.string('ip', 100).notNullable()
+    licensePerson.string('client', 500).notNullable()
+    licensePerson.primary(['licenseId', 'personId'])
+    licensePerson.charset('utf8')
   })
 
   await knex.schema.table('Person', person => {
@@ -46,6 +46,6 @@ async function down(knex) {
     person.dateTime('acceptedLicenseOn')
   })
 
-  await knex.schema.dropTable('LicenseUser')
+  await knex.schema.dropTable('LicensePerson')
   await knex.schema.dropTable('License')
 }

@@ -34,6 +34,13 @@ export const types = {
 
   REQUEST_FEATURES: 'REQUEST_FEATURES',
   RECEIVE_FEATURES: 'RECEIVE_FEATURES',
+
+  REQUEST_LICENSE: 'REQUEST_LICENSE',
+  RECEIVE_LICENSE: 'RECEIVE_LICENSE',
+
+  ACCEPT_LICENSE_REQUEST: 'ACCEPT_LICENSE_REQUEST',
+  ACCEPT_LICENSE_SUCCESS: 'ACCEPT_LICENSE_SUCCESS',
+  ACCEPT_LICENSE_FAILURE: 'ACCEPT_LICENSE_FAILURE',
 }
 
 /*
@@ -325,12 +332,103 @@ export function fetchFeatures() {
   }
 }
 
+function requestLicense() {
+  return {
+    type: types.REQUEST_LICENSE,
+  }
+}
+
+function receiveLicense(data) {
+  return {
+    type: types.RECEIVE_LICENSE,
+    data,
+  }
+}
+
+export function fetchLicense(licenseId) {
+  return dispatch => {
+    dispatch(requestLicense())
+
+    return aspectFetch(`/auth/license?licenseId=${licenseId}`).then(json =>
+      dispatch(receiveLicense(json.data))
+    )
+  }
+}
+
+function acceptLicenseRequest(requestedAt) {
+  return {
+    type: types.ACCEPT_LICENSE_REQUEST,
+    requestedAt,
+  }
+}
+
+function acceptLicenseSuccess(requestedAt, data) {
+  return {
+    type: types.ACCEPT_LICENSE_SUCCESS,
+    requestedAt,
+    data,
+  }
+}
+
+function acceptLicenseFailure(err) {
+  return {
+    type: types.ACCEPT_LICENSE_FAILURE,
+    err,
+  }
+}
+
+export function acceptLicenseStart(licenseId) {
+  return function(dispatch, getState) {
+    // First dispatch: the app state is updated to inform
+    // that the API call is starting.
+    const requestedAt = Date.now()
+    dispatch(acceptLicenseRequest(requestedAt))
+
+    const state = getState()
+    const { clientId, refresh } = state.user
+
+    return aspectFetch('/auth/license', {
+      method: 'POST',
+      body: JSON.stringify({
+        licenseId,
+        clientId,
+        token: refresh,
+      }),
+      errorNotifications: {
+        default: errorPleaseTryAgainInAFewMinutes(
+          defineMessages({
+            title: {
+              id: 'errorResponseMessages.loginStart.POST.default.title',
+              defaultMessage: 'Login Error',
+            },
+          })
+        ),
+      },
+    })
+      .then(json =>
+        dispatch(
+          acceptLicenseSuccess(requestedAt, {
+            access: json.access,
+            refresh: json.refresh,
+            clientId: json.clientId,
+            culture: json.culture,
+            timezoneId: json.timezone,
+            displayPreferences: Immutable.Map(json.displayPreferences),
+          })
+        )
+      )
+      .then(() => dispatch(fetchFeatures()))
+      .catch(err => dispatch(acceptLicenseFailure(err)))
+  }
+}
+
 /*
  * ---------------- Reducers -----------------
  */
 const JWT = Immutable.Record({
   name: '',
   permissions: Immutable.Set(),
+  hasToAcceptLicenseId: undefined,
   iat: undefined,
   exp: undefined,
   iss: '',
@@ -347,6 +445,7 @@ const User = Immutable.Record({
   drawerOpen: false,
   loggedOutReason: '',
   features: Immutable.Set(),
+  licenseContent: undefined,
 })
 
 const initialState = new User()
@@ -354,6 +453,7 @@ const initialState = new User()
 export default function authReducer(state = initialState, action) {
   switch (action.type) {
     case types.LOGIN_REQUEST:
+    case types.ACCEPT_LICENSE_REQUEST:
       return state.set('requestedAt', action.requestedAt)
 
     case types.HYDRATE_FROM_LOCAL_STORAGE:
@@ -364,8 +464,10 @@ export default function authReducer(state = initialState, action) {
     case types.LOGIN_SUCCESS:
     case types.REFRESH_SUCCESS:
     case accountTypes.RECEIVE_UPDATED_LOGIN_DETAILS:
+    case types.ACCEPT_LICENSE_SUCCESS:
       return state.withMutations(mutState => {
         mutState.delete('requestedAt')
+        mutState.delete('licenseContent')
 
         _.forEach(action.data, (v, k) => {
           if (!_.isNil(v)) {
@@ -377,6 +479,7 @@ export default function authReducer(state = initialState, action) {
           _.pick(jwtDecode(action.data.access), [
             'name',
             'permissions',
+            'hasToAcceptLicenseId',
             'iat',
             'exp',
             'iss',
@@ -384,6 +487,7 @@ export default function authReducer(state = initialState, action) {
         )
       })
     case types.LOGIN_FAILURE:
+    case types.ACCEPT_LICENSE_FAILURE:
       return state.delete('requestedAt')
 
     // fallthrough
@@ -409,6 +513,8 @@ export default function authReducer(state = initialState, action) {
         'features',
         Immutable.Set(action.data.map(x => x.module))
       )
+    case types.RECEIVE_LICENSE:
+      return state.set('licenseContent', action.data.content)
     default:
       return state
   }
