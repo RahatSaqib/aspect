@@ -146,9 +146,10 @@ server.auth.strategy('clientApi', 'jwt', {
     // if user has to accept license, deny all requests except to the license api:
     if (
       decoded.hasToAcceptLicenseId &&
-      request.url.path.indexOf('/api/license') === -1
+      request.url.path.indexOf('/api/auth/features') === -1 &&
+      request.url.path.indexOf('/api/auth/license') === -1
     ) {
-      // valid = false
+      valid = false
     }
 
     // can specify either module or permission, e.g. "device" or "device:view"

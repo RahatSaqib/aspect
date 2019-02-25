@@ -1,28 +1,45 @@
-.Container {
-  background-color: #bfbfbf;
-  height: 300px;
-  width: 500px;
-  margin: 10% auto 0 auto;
-  text-align: center;
+/*License page styles*/
+
+@import '../../globals/variables.css';
+
+.Background {
+  composes: PreLogin__Background from '../../components/shared/Shared.css';
 }
 
-.Container__Title {
-  color: #fff;
-  text-transform: uppercase;
-  font-size: 3rem;
-  font-weight: 200;
-  padding: 40px 0 20px 0;
+.License__Container {
+  padding: 40px 20px 20px 20px;
 }
 
-.Container__HelpBlock {
-  color: #fff;
-  font-size: 1.5rem;
-  font-weight: 200;
-  padding: 0 0 30px 0;
+.License__Container__License{
+  width: 100%;
+  height: 400px;
+  border: solid 1px lightgray;
+  padding: 15px;
+  overflow: auto;
+  line-height: 1.6em;
 }
 
-.Container__Button {
-  background-color: #edecec !important;
-  border-radius: 500px;
+.License__Container__ActionRow {
+  width: 100%;
+  text-align:center;
+  padding: 20px 0 0 0;
+}
+
+.License__Container__ActionRow button {
   margin: 0 5px;
 }
+
+.Logo__Container {
+  margin: auto;
+  height: 85px;
+  width: 300px;
+  padding: 20px 0 0 0;
+}
+
+.Logo__Image {
+  height: 85px;
+  width: 300px;
+  padding: 0 0 0 0;
+  overflow: hidden;
+}
+

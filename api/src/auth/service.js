@@ -15,6 +15,7 @@ const bcryptHash = promisify(bcrypt.hash)
 const config = require('../config')
 const { query } = require('../db')
 const { validateUserAtGxAlert } = require('./gxalert')
+const { getRemoteAddress } = require('../shared/request')
 
 async function checkAuthentication() {
   return { message: 'Welcome to the API!' }
@@ -65,23 +66,6 @@ function getUserId(username) {
     .from('User as u')
     .where({ 'u.name': username })
     .first('u.id')
-}
-
-async function getApplicableLicense(personId, partnerId) {
-  const latestLicense = await query(
-    'Get latest applicable license and when user accepted it'
-  )
-    .from('License as l')
-    .leftOuterJoin('LicensePerson as lp', function() {
-      this.on('l.id', '=', 'lp.licenseId').andOn('lp.personId', '=', personId)
-    })
-    .where('l.partnerId', partnerId)
-    .orWhere('l.partnerId', null)
-    .orderBy('l.partnerId', 'desc')
-    .orderBy('l.createdOn', 'desc')
-    .first('l.id', 'lp.acceptedOn')
-
-  return latestLicense
 }
 
 async function authenticate(request) {
@@ -583,6 +567,23 @@ async function getUserFeatures(request) {
   return { ok: true, data: featureModules }
 }
 
+async function getApplicableLicense(personId, partnerId) {
+  const latestLicense = await query(
+    'Get latest applicable license and when user accepted it'
+  )
+    .from('License as l')
+    .leftOuterJoin('LicensePerson as lp', function() {
+      this.on('l.id', '=', 'lp.licenseId').andOn('lp.personId', '=', personId)
+    })
+    .where('l.partnerId', partnerId)
+    .orWhere('l.partnerId', null)
+    .orderBy('l.partnerId', 'desc')
+    .orderBy('l.createdOn', 'desc')
+    .first('l.id', 'lp.acceptedOn')
+
+  return latestLicense
+}
+
 async function getLicense(request) {
   const { query: { licenseId } } = request
 
@@ -601,8 +602,7 @@ async function acceptLicense(request) {
 
   const licenseUpdates = {
     acceptedOn: new Date(),
-    ip: '192.168',
-    client: 'Client',
+    ip: getRemoteAddress(request),
   }
 
   await query('Insert or update accepted license for user').raw(

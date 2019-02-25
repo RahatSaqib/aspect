@@ -31,7 +31,6 @@ async function up(knex) {
       .inTable('Person')
     licensePerson.dateTime('acceptedOn').notNullable()
     licensePerson.string('ip', 100).notNullable()
-    licensePerson.string('client', 500).notNullable()
     licensePerson.primary(['licenseId', 'personId'])
     licensePerson.charset('utf8')
   })
