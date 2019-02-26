@@ -90,20 +90,17 @@ const enhance = compose(
       }),
     }
   ),
-  withProps(({ siteList, deviceList, activeSiteIds, activeDeviceIds }) => {
-    const stateAbbrs = deviceList.map(it => it.get('stateAbbr')).toSet()
-    // const siteStateAbbrs = siteList.map(it => it.get('stateAbbr')).toSet()
-    // const mergedList = _.merge(siteList, deviceList)
-    const activeIds = _.merge(activeSiteIds, activeDeviceIds)
+  withProps(({ siteList, activeSiteIds }) => {
+    const siteStateAbbrs = siteList.map(it => it.get('stateAbbr')).toSet()
 
     return {
       fill: ({ properties: { postal } }) =>
-        stateAbbrs.has(postal) ? '#00c4e0' : '#a4e6f2',
+        siteStateAbbrs.has(postal) ? '#00c4e0' : '#a4e6f2',
       points: siteList
         .map(it => ({
           id: it.get('name'),
           size: 6,
-          fill: _.includes(activeIds, it.get('id')) ? '#EB4D62' : '#73D749',
+          fill: _.includes(activeSiteIds, it.get('id')) ? '#EB4D62' : '#73D749',
           latitude: it.get('latitude'),
           longitude: it.get('longitude'),
         }))
@@ -146,14 +143,14 @@ export const SiteStatus = ({
         </Unit>
         <Unit sm="1-2" lg="1-4">
           <SummaryItemsBlock
-            data-device-ids={JSON.stringify(
+            data-site-ids={JSON.stringify(
               deviceSummaryMap
-                .getIn(['operational', 'deviceIds'], EMPTY_LIST)
+                .getIn(['operational', 'siteIds'], EMPTY_LIST)
                 .map(_.toString)
             )}
             onClick={onClick('device')}
-            // onMouseEnter={onMouseEnter}
-            // onMouseLeave={onMouseLeave}
+            onMouseEnter={onMouseEnter}
+            onMouseLeave={onMouseLeave}
             intl={intl}
             title={intl.formatMessage(messages.summaryOperationalDevicesTitle)}
             items={deviceSummaryMap
@@ -176,9 +173,9 @@ export const SiteStatus = ({
         </Unit>
         <Unit sm="1-2" lg="1-4">
           <SummaryItemsBlock
-            data-device-ids={JSON.stringify(
+            data-site-ids={JSON.stringify(
               deviceSummaryMap
-                .getIn(['uploadingData', 'deviceIds'], EMPTY_LIST)
+                .getIn(['uploadingData', 'siteIds'], EMPTY_LIST)
                 .map(_.toString)
             )}
             onClick={onClick('device')}
@@ -204,15 +201,15 @@ export const SiteStatus = ({
         </Unit>
         <Unit sm="1-2" lg="1-4">
           <SummaryItemsBlock
-            data-device-ids={JSON.stringify(
+            data-site-ids={JSON.stringify(
               deviceSummaryMap
-                .getIn(['testFailures', 'deviceIds'], EMPTY_LIST)
+                .getIn(['testFailures', 'siteIds'], EMPTY_LIST)
                 .map(_.toString)
             )}
             taype="site"
             onClick={onClick('device')}
-            // onMouseEnter={onMouseEnter}
-            // onMouseLeave={onMouseLeave}
+            onMouseEnter={onMouseEnter}
+            onMouseLeave={onMouseLeave}
             intl={intl}
             title={intl.formatMessage(messages.summaryTestFailuresTitle)}
             items={deviceSummaryMap
