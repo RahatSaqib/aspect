@@ -232,7 +232,9 @@ async function getListDevices(query, auth) {
       count: it.thisMonthErrors,
       total: it.thisMonth,
     }
-    it.alerts = it.issueCategories.split(',').map(key => ({ key }))
+    it.alerts = it.issueCategories
+      ? it.issueCategories.split(',').map(key => ({ key }))
+      : []
   })
 
   const result = { ok: true, total, length: data.length, data }
