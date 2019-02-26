@@ -1,6 +1,6 @@
 import Immutable from 'immutable'
 import React from 'react'
-import { shallow } from 'enzyme'
+import ReactShallowRenderer from 'react-test-renderer/shallow'
 import { IntlProvider } from 'react-intl'
 import { SiteStatus } from './SiteStatus'
 
