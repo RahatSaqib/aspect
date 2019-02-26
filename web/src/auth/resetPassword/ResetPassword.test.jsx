@@ -39,7 +39,7 @@ describe('ResetPassword module', () => {
       expect(ResetPasswordWrapper.getElement().type).toEqual('div')
     })
 
-    it.only('should contain a vertical stepper for small screens and a horizontal stepper for large screens', () => {
+    it('should contain a vertical stepper for small screens and a horizontal stepper for large screens', () => {
       const largeScreenDiv = ResetPasswordWrapper.find(Hidden).find({
         xs: true,
         sm: true,

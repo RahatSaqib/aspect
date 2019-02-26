@@ -97,6 +97,7 @@ async function getListDevices(query, auth) {
       lgaId: 'g.lgaId',
       deviceName: 'd.name',
       deviceStatusId: 'd.deviceStatusId',
+      deviceTypeId: 'd.deviceTypeId',
       hasConnectivity: 'dc.hasConnectivity',
       hasResults: 'dc.hasResults',
       category: 'dc.name',

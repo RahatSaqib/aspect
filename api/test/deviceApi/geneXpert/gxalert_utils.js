@@ -182,6 +182,10 @@ async function deleteGeneXpertDeviceSiteDataAndRefreshTokens(
     .orWhereIn('generatedResultId', resultIds)
     .delete()
 
+  await knex('ResultTag').delete()
+
+  await knex('Tag').delete()
+
   await knex('Result')
     .whereIn('id', resultIds)
     .delete()

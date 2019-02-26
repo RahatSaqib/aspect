@@ -3,7 +3,10 @@ import classnames from 'classnames/bind'
 import React from 'react'
 import { formatDistanceStrict } from 'date-fns'
 
-import { TableRow, TableCell } from '../../components/shared/tableBody'
+import {
+  DataTableRow as TableRow,
+  DataTableCell as TableCell,
+} from '../../components/shared/tableBody'
 import ColoredButton from '../../components/themedReactToolbox/ColoredButton'
 import messages from './messages'
 
@@ -28,7 +31,6 @@ const DeviceTableRow = ({ intl, device, onAlertClick, ...restProps }) => (
     className={cssClasses('TableRow', restProps.className)}
   >
     <TableCell>{device.get('name')}</TableCell>
-    <TableCell>{device.get('state')}</TableCell>
     <TableCell>{device.get('status')}</TableCell>
     <TableCell>
       <Rate

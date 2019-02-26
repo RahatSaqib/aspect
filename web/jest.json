@@ -1,0 +1,1799 @@
+{
+  "stats": {
+    "tests": 297,
+    "passes": 295,
+    "failures": 1,
+    "duration": 46502,
+    "start": "2019-02-20T17:31:44.022Z",
+    "end": "2019-02-20T17:32:30.524Z"
+  },
+  "failures": [
+    {
+      "title": "should load app config file depending on current process.env.ASPECT_TARGET",
+      "fullTitle": "appEnvConfigTests should load app config file depending on current process.env.ASPECT_TARGET",
+      "duration": 156,
+      "errorCount": 1,
+      "error": "1 failure: \n1 failed: Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).toEqual(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m\n\nExpected value to equal:\n  \u001b[32m\"test\"\u001b[39m\nReceived:\n  \u001b[31mundefined\u001b[39m\n\nDifference:\n\n  Comparing two different types of values. Expected \u001b[32mstring\u001b[39m but received \u001b[31mundefined\u001b[39m.\n    at Object.toEqual (D:\\Proyectos\\systemoneid\\aspect\\web\\src\\config\\config.test.js:3:39)\n    at Object.asyncJestTest (D:\\Proyectos\\systemoneid\\aspect\\web\\node_modules\\jest-jasmine2\\build\\jasmine_async.js:108:37)\n    at resolve (D:\\Proyectos\\systemoneid\\aspect\\web\\node_modules\\jest-jasmine2\\build\\queue_runner.js:56:12)\n    at new Promise (<anonymous>)\n    at mapper (D:\\Proyectos\\systemoneid\\aspect\\web\\node_modules\\jest-jasmine2\\build\\queue_runner.js:43:19)\n    at promise.then (D:\\Proyectos\\systemoneid\\aspect\\web\\node_modules\\jest-jasmine2\\build\\queue_runner.js:87:41)\n    at <anonymous>\n    at process._tickCallback (internal/process/next_tick.js:118:7)"
+    }
+  ],
+  "passes": [
+    {
+      "title": "should render correctly",
+      "fullTitle": "TaskDetail module,TaskDetail component should render correctly",
+      "duration": 5584,
+      "errorCount": 0
+    },
+    {
+      "title": "should render correctly",
+      "fullTitle": "TaskList module,TaskList component should render correctly",
+      "duration": 15800,
+      "errorCount": 0
+    },
+    {
+      "title": "should render correctly",
+      "fullTitle": "TaskAggre module,TaskAggre component should render correctly",
+      "duration": 16100,
+      "errorCount": 0
+    },
+    {
+      "title": "should shallow render correctly",
+      "fullTitle": "ReporterDetail component should shallow render correctly",
+      "duration": 10436,
+      "errorCount": 0
+    },
+    {
+      "title": "should contain an empty LazyLoadItems object that isn't loading and has not been refreshed yet",
+      "fullTitle": "geography reducer,initial state should contain an empty LazyLoadItems object that isn't loading and has not been refreshed yet",
+      "duration": 2689,
+      "errorCount": 0
+    },
+    {
+      "title": "should show that countries are busy loading",
+      "fullTitle": "geography reducer,actions,REQUEST_COUNTRIES_FOR_LOCATION_SELECTOR should show that countries are busy loading",
+      "duration": 2689,
+      "errorCount": 0
+    },
+    {
+      "title": "should show that countries are not loading anymore and update the last refreshed date",
+      "fullTitle": "geography reducer,actions,RECEIVE_COUNTRIES_FOR_LOCATION_SELECTOR should show that countries are not loading anymore and update the last refreshed date",
+      "duration": 2689,
+      "errorCount": 0
+    },
+    {
+      "title": "should update the items to a list of LazyLoadParents",
+      "fullTitle": "geography reducer,actions,RECEIVE_COUNTRIES_FOR_LOCATION_SELECTOR,with shallow country list should update the items to a list of LazyLoadParents",
+      "duration": 2689,
+      "errorCount": 0
+    },
+    {
+      "title": "should update the items to a list of LazyLoadParents and populate the state and lga children",
+      "fullTitle": "geography reducer,actions,RECEIVE_COUNTRIES_FOR_LOCATION_SELECTOR,with deep country list should update the items to a list of LazyLoadParents and populate the state and lga children",
+      "duration": 2689,
+      "errorCount": 0
+    },
+    {
+      "title": "should not change state",
+      "fullTitle": "geography reducer,actions,REQUEST_STATES_FOR_LOCATION_SELECTOR,when countries haven't been loaded yet should not change state",
+      "duration": 2689,
+      "errorCount": 0
+    },
+    {
+      "title": "should show that states for selected country are busy loading",
+      "fullTitle": "geography reducer,actions,REQUEST_STATES_FOR_LOCATION_SELECTOR,when countries have been loaded should show that states for selected country are busy loading",
+      "duration": 2689,
+      "errorCount": 0
+    },
+    {
+      "title": "should not change state",
+      "fullTitle": "geography reducer,actions,RECEIVE_STATES_FOR_LOCATION_SELECTOR,when countries haven't been loaded yet should not change state",
+      "duration": 2689,
+      "errorCount": 0
+    },
+    {
+      "title": "should show that states for the selected country are not loading anymore and update the last refreshed date",
+      "fullTitle": "geography reducer,actions,RECEIVE_STATES_FOR_LOCATION_SELECTOR,when countries have been loaded should show that states for the selected country are not loading anymore and update the last refreshed date",
+      "duration": 2689,
+      "errorCount": 0
+    },
+    {
+      "title": "should update the items of the selected country to a list of LazyLoadParents",
+      "fullTitle": "geography reducer,actions,RECEIVE_STATES_FOR_LOCATION_SELECTOR,when countries have been loaded,with shallow states list should update the items of the selected country to a list of LazyLoadParents",
+      "duration": 2689,
+      "errorCount": 0
+    },
+    {
+      "title": "should update the items of the selected country to a list of LazyLoadParents",
+      "fullTitle": "geography reducer,actions,RECEIVE_STATES_FOR_LOCATION_SELECTOR,when countries have been loaded,with deep states list should update the items of the selected country to a list of LazyLoadParents",
+      "duration": 2689,
+      "errorCount": 0
+    },
+    {
+      "title": "should not change state",
+      "fullTitle": "geography reducer,actions,REQUEST_LGAS_FOR_LOCATION_SELECTOR,when countries haven't been loaded yet should not change state",
+      "duration": 2689,
+      "errorCount": 0
+    },
+    {
+      "title": "should not change state",
+      "fullTitle": "geography reducer,actions,REQUEST_LGAS_FOR_LOCATION_SELECTOR,when states for the selected country haven't been loaded yet should not change state",
+      "duration": 2689,
+      "errorCount": 0
+    },
+    {
+      "title": "should show that states for selected country are busy loading",
+      "fullTitle": "geography reducer,actions,REQUEST_LGAS_FOR_LOCATION_SELECTOR,when states for the selected country have been loaded should show that states for selected country are busy loading",
+      "duration": 2689,
+      "errorCount": 0
+    },
+    {
+      "title": "should not change state",
+      "fullTitle": "geography reducer,actions,RECEIVE_LGAS_FOR_LOCATION_SELECTOR,when countries haven't been loaded yet should not change state",
+      "duration": 2689,
+      "errorCount": 0
+    },
+    {
+      "title": "should not change state",
+      "fullTitle": "geography reducer,actions,RECEIVE_LGAS_FOR_LOCATION_SELECTOR,when states for the selected country haven't been loaded yet should not change state",
+      "duration": 2689,
+      "errorCount": 0
+    },
+    {
+      "title": "should show that LGAs for the selected state are not loading anymore and update the last refreshed date",
+      "fullTitle": "geography reducer,actions,RECEIVE_LGAS_FOR_LOCATION_SELECTOR,when states for the selected country have been loaded should show that LGAs for the selected state are not loading anymore and update the last refreshed date",
+      "duration": 2689,
+      "errorCount": 0
+    },
+    {
+      "title": "should update the items of the selected country to a list of LazyLoadParents",
+      "fullTitle": "geography reducer,actions,RECEIVE_LGAS_FOR_LOCATION_SELECTOR,when states for the selected country have been loaded should update the items of the selected country to a list of LazyLoadParents",
+      "duration": 2689,
+      "errorCount": 0
+    },
+    {
+      "title": "Should return a dispatch function that dispatches nothing",
+      "fullTitle": "geography action creators,fetchCountriesForLocationSelector,when force refresh is false,and the countries cache is still fresh Should return a dispatch function that dispatches nothing",
+      "duration": 2689,
+      "errorCount": 0
+    },
+    {
+      "title": "Should dispatch a REQUEST_COUNTRIES_FOR_LOCATION_SELECTOR action",
+      "fullTitle": "geography action creators,fetchCountriesForLocationSelector,when force refresh is false,and the countries cache has expired Should dispatch a REQUEST_COUNTRIES_FOR_LOCATION_SELECTOR action",
+      "duration": 2689,
+      "errorCount": 0
+    },
+    {
+      "title": "Should request a new list of countries from the server",
+      "fullTitle": "geography action creators,fetchCountriesForLocationSelector,when force refresh is false,and the countries cache has expired Should request a new list of countries from the server",
+      "duration": 2689,
+      "errorCount": 0
+    },
+    {
+      "title": "Should dispatch a RECEIVE_COUNTRIES_FOR_LOCATION_SELECTOR action with the countries received and the current date",
+      "fullTitle": "geography action creators,fetchCountriesForLocationSelector,when force refresh is false,and the countries cache has expired,and a response is received from the server Should dispatch a RECEIVE_COUNTRIES_FOR_LOCATION_SELECTOR action with the countries received and the current date",
+      "duration": 2689,
+      "errorCount": 0
+    },
+    {
+      "title": "Should dispatch a REQUEST_COUNTRIES_FOR_LOCATION_SELECTOR action",
+      "fullTitle": "geography action creators,fetchCountriesForLocationSelector,when force refresh is false,and the countries cache has not been loaded yet Should dispatch a REQUEST_COUNTRIES_FOR_LOCATION_SELECTOR action",
+      "duration": 2689,
+      "errorCount": 0
+    },
+    {
+      "title": "Should request a new list of countries from the server",
+      "fullTitle": "geography action creators,fetchCountriesForLocationSelector,when force refresh is false,and the countries cache has not been loaded yet Should request a new list of countries from the server",
+      "duration": 2689,
+      "errorCount": 0
+    },
+    {
+      "title": "Should dispatch a RECEIVE_COUNTRIES_FOR_LOCATION_SELECTOR action with the countries received and the current date",
+      "fullTitle": "geography action creators,fetchCountriesForLocationSelector,when force refresh is false,and the countries cache has not been loaded yet,and a response is received from the server Should dispatch a RECEIVE_COUNTRIES_FOR_LOCATION_SELECTOR action with the countries received and the current date",
+      "duration": 2689,
+      "errorCount": 0
+    },
+    {
+      "title": "Should return a dispatch function that dispatches nothing",
+      "fullTitle": "geography action creators,fetchStatesForLocationSelector,and the states cache for the selected country is still fresh Should return a dispatch function that dispatches nothing",
+      "duration": 2689,
+      "errorCount": 0
+    },
+    {
+      "title": "Should dispatch a REQUEST_STATES_FOR_LOCATION_SELECTOR action",
+      "fullTitle": "geography action creators,fetchStatesForLocationSelector,and the states cache for the selected country is still fresh,and the states cache for the selected country has expired Should dispatch a REQUEST_STATES_FOR_LOCATION_SELECTOR action",
+      "duration": 2689,
+      "errorCount": 0
+    },
+    {
+      "title": "Should request a new list of states from the server",
+      "fullTitle": "geography action creators,fetchStatesForLocationSelector,and the states cache for the selected country is still fresh,and the states cache for the selected country has expired Should request a new list of states from the server",
+      "duration": 2689,
+      "errorCount": 0
+    },
+    {
+      "title": "Should dispatch a RECEIVE_STATES_FOR_LOCATION_SELECTOR action with the states received and the current date",
+      "fullTitle": "geography action creators,fetchStatesForLocationSelector,and the states cache for the selected country is still fresh,and the states cache for the selected country has expired,and a response is received from the server Should dispatch a RECEIVE_STATES_FOR_LOCATION_SELECTOR action with the states received and the current date",
+      "duration": 2689,
+      "errorCount": 0
+    },
+    {
+      "title": "Should dispatch a REQUEST_STATES_FOR_LOCATION_SELECTOR action",
+      "fullTitle": "geography action creators,fetchStatesForLocationSelector,and the states cache for the selected country is still fresh,and the states cache for the selected country cache has not been loaded yet Should dispatch a REQUEST_STATES_FOR_LOCATION_SELECTOR action",
+      "duration": 2689,
+      "errorCount": 0
+    },
+    {
+      "title": "Should request a new list of states from the server",
+      "fullTitle": "geography action creators,fetchStatesForLocationSelector,and the states cache for the selected country is still fresh,and the states cache for the selected country cache has not been loaded yet Should request a new list of states from the server",
+      "duration": 2689,
+      "errorCount": 0
+    },
+    {
+      "title": "Should dispatch a RECEIVE_STATES_FOR_LOCATION_SELECTOR action with the states received and the current date",
+      "fullTitle": "geography action creators,fetchStatesForLocationSelector,and the states cache for the selected country is still fresh,and the states cache for the selected country cache has not been loaded yet,and a response is received from the server Should dispatch a RECEIVE_STATES_FOR_LOCATION_SELECTOR action with the states received and the current date",
+      "duration": 2689,
+      "errorCount": 0
+    },
+    {
+      "title": "Should return a dispatch function that dispatches nothing",
+      "fullTitle": "geography action creators,fetchLgasForLocationSelector,and the LGAs cache for the selected state is still fresh Should return a dispatch function that dispatches nothing",
+      "duration": 2689,
+      "errorCount": 0
+    },
+    {
+      "title": "Should dispatch a REQUEST_LGAS_FOR_LOCATION_SELECTOR action",
+      "fullTitle": "geography action creators,fetchLgasForLocationSelector,and the LGAs cache for the selected state is still fresh,and the LGAs cache for the selected state has expired Should dispatch a REQUEST_LGAS_FOR_LOCATION_SELECTOR action",
+      "duration": 2689,
+      "errorCount": 0
+    },
+    {
+      "title": "Should request a new list of LGAs from the server",
+      "fullTitle": "geography action creators,fetchLgasForLocationSelector,and the LGAs cache for the selected state is still fresh,and the LGAs cache for the selected state has expired Should request a new list of LGAs from the server",
+      "duration": 2689,
+      "errorCount": 0
+    },
+    {
+      "title": "Should dispatch a RECEIVE_LGAS_FOR_LOCATION_SELECTOR action with the lgas received and the current date",
+      "fullTitle": "geography action creators,fetchLgasForLocationSelector,and the LGAs cache for the selected state is still fresh,and the LGAs cache for the selected state has expired,and a response is received from the server Should dispatch a RECEIVE_LGAS_FOR_LOCATION_SELECTOR action with the lgas received and the current date",
+      "duration": 2689,
+      "errorCount": 0
+    },
+    {
+      "title": "Should dispatch a REQUEST_LGAS_FOR_LOCATION_SELECTOR action",
+      "fullTitle": "geography action creators,fetchLgasForLocationSelector,and the LGAs cache for the selected state is still fresh,and the LGAs cache for the selected state cache has not been loaded yet Should dispatch a REQUEST_LGAS_FOR_LOCATION_SELECTOR action",
+      "duration": 2689,
+      "errorCount": 0
+    },
+    {
+      "title": "Should request a new list of LGAs from the server",
+      "fullTitle": "geography action creators,fetchLgasForLocationSelector,and the LGAs cache for the selected state is still fresh,and the LGAs cache for the selected state cache has not been loaded yet Should request a new list of LGAs from the server",
+      "duration": 2689,
+      "errorCount": 0
+    },
+    {
+      "title": "Should dispatch a RECEIVE_LGAS_FOR_LOCATION_SELECTOR action with the LGAs received and the current date",
+      "fullTitle": "geography action creators,fetchLgasForLocationSelector,and the LGAs cache for the selected state is still fresh,and the LGAs cache for the selected state cache has not been loaded yet,and a response is received from the server Should dispatch a RECEIVE_LGAS_FOR_LOCATION_SELECTOR action with the LGAs received and the current date",
+      "duration": 2689,
+      "errorCount": 0
+    },
+    {
+      "title": "should shallow render correctly",
+      "fullTitle": "AccountDetails module,AccountDetails component should shallow render correctly",
+      "duration": 4373,
+      "errorCount": 0
+    },
+    {
+      "title": "should show a progress bar in each tab",
+      "fullTitle": "AccountDetails module,AccountDetails component,when loading is true should show a progress bar in each tab",
+      "duration": 4373,
+      "errorCount": 0
+    },
+    {
+      "title": "should render correctly",
+      "fullTitle": "PersonDetail module,Person Detail component should render correctly",
+      "duration": 3918,
+      "errorCount": 0
+    },
+    {
+      "title": "should show a ButtonGroup form field",
+      "fullTitle": "Result Detail screen,When a form schema exists for the result,With a single ButtonGroup field should show a ButtonGroup form field",
+      "duration": 3295,
+      "errorCount": 0
+    },
+    {
+      "title": "should select the null option for a field when no value has been set",
+      "fullTitle": "Result Detail screen,When a form schema exists for the result,With a single ButtonGroup field should select the null option for a field when no value has been set",
+      "duration": 3295,
+      "errorCount": 0
+    },
+    {
+      "title": "should update the value in the result's formData",
+      "fullTitle": "Result Detail screen,When a form schema exists for the result,With a single ButtonGroup field,When the user clicks on one of the buttons should update the value in the result's formData",
+      "duration": 3295,
+      "errorCount": 0
+    },
+    {
+      "title": "should show both form fields",
+      "fullTitle": "Result Detail screen,When a form schema exists for the result,With multiple fields should show both form fields",
+      "duration": 3295,
+      "errorCount": 0
+    },
+    {
+      "title": "should only render the fields where the type is recognised",
+      "fullTitle": "Result Detail screen,When a form schema exists for the result,With unrecognised field types should only render the fields where the type is recognised",
+      "duration": 3295,
+      "errorCount": 0
+    },
+    {
+      "title": "should not show the form fields section",
+      "fullTitle": "Result Detail screen,When a form schema exists for the result,But is empty should not show the form fields section",
+      "duration": 3295,
+      "errorCount": 0
+    },
+    {
+      "title": "should not show the form fields section",
+      "fullTitle": "Result Detail screen,When a form schema does not exist for the result should not show the form fields section",
+      "duration": 3295,
+      "errorCount": 0
+    },
+    {
+      "title": "should shallow render correctly",
+      "fullTitle": "CustomField component,When field type is ButtonGroup should shallow render correctly",
+      "duration": 1903,
+      "errorCount": 0
+    },
+    {
+      "title": "should select the null option when form data has not been set",
+      "fullTitle": "CustomField component,When field type is ButtonGroup should select the null option when form data has not been set",
+      "duration": 1903,
+      "errorCount": 0
+    },
+    {
+      "title": "should set correct option when form data has been set",
+      "fullTitle": "CustomField component,When field type is ButtonGroup should set correct option when form data has been set",
+      "duration": 1903,
+      "errorCount": 0
+    },
+    {
+      "title": "should call onUpdateDate event when the user clicks one of the buttons",
+      "fullTitle": "CustomField component,When field type is ButtonGroup should call onUpdateDate event when the user clicks one of the buttons",
+      "duration": 1903,
+      "errorCount": 0
+    },
+    {
+      "title": "should shallow render correctly",
+      "fullTitle": "CustomField component,When field type is TextBox should shallow render correctly",
+      "duration": 1903,
+      "errorCount": 0
+    },
+    {
+      "title": "should show empty field when form data has not been set",
+      "fullTitle": "CustomField component,When field type is TextBox should show empty field when form data has not been set",
+      "duration": 1903,
+      "errorCount": 0
+    },
+    {
+      "title": "should pass value into field when form data has been set",
+      "fullTitle": "CustomField component,When field type is TextBox should pass value into field when form data has been set",
+      "duration": 1903,
+      "errorCount": 0
+    },
+    {
+      "title": "should call onUpdateDate event when the user change input value",
+      "fullTitle": "CustomField component,When field type is TextBox should call onUpdateDate event when the user change input value",
+      "duration": 1903,
+      "errorCount": 0
+    },
+    {
+      "title": "should shallow render correctly",
+      "fullTitle": "CustomField component,When field type is DropDown should shallow render correctly",
+      "duration": 1903,
+      "errorCount": 0
+    },
+    {
+      "title": "should unselect any option when form data has not been set",
+      "fullTitle": "CustomField component,When field type is DropDown should unselect any option when form data has not been set",
+      "duration": 1903,
+      "errorCount": 0
+    },
+    {
+      "title": "should select correct option when form data has been set",
+      "fullTitle": "CustomField component,When field type is DropDown should select correct option when form data has been set",
+      "duration": 1903,
+      "errorCount": 0
+    },
+    {
+      "title": "should call onUpdateDate event when the user select one of the options",
+      "fullTitle": "CustomField component,When field type is DropDown should call onUpdateDate event when the user select one of the options",
+      "duration": 1903,
+      "errorCount": 0
+    },
+    {
+      "title": "should shallow render correctly",
+      "fullTitle": "CustomField component,When field type is DateTime should shallow render correctly",
+      "duration": 1903,
+      "errorCount": 0
+    },
+    {
+      "title": "should show empty field when form data has not been set",
+      "fullTitle": "CustomField component,When field type is DateTime should show empty field when form data has not been set",
+      "duration": 1903,
+      "errorCount": 0
+    },
+    {
+      "title": "should show date/time when form form data has been set",
+      "fullTitle": "CustomField component,When field type is DateTime should show date/time when form form data has been set",
+      "duration": 1903,
+      "errorCount": 0
+    },
+    {
+      "title": "should call onUpdateDate event when the user select the date or time",
+      "fullTitle": "CustomField component,When field type is DateTime should call onUpdateDate event when the user select the date or time",
+      "duration": 1903,
+      "errorCount": 0
+    },
+    {
+      "title": "should not show Custom Field where the type is unrecognized",
+      "fullTitle": "CustomField component,With unrecognized field types should not show Custom Field where the type is unrecognized",
+      "duration": 1903,
+      "errorCount": 0
+    },
+    {
+      "title": "should be a div",
+      "fullTitle": "ResetPassword module,ResetPassword Component should be a div",
+      "duration": 2462,
+      "errorCount": 0
+    },
+    {
+      "title": "should contain a vertical stepper for small screens and a horizontal stepper for large screens",
+      "fullTitle": "ResetPassword module,ResetPassword Component should contain a vertical stepper for small screens and a horizontal stepper for large screens",
+      "duration": 2462,
+      "errorCount": 0
+    },
+    {
+      "title": "should contain the same steps for both large and small screens",
+      "fullTitle": "ResetPassword module,ResetPassword Component should contain the same steps for both large and small screens",
+      "duration": 2462,
+      "errorCount": 0
+    },
+    {
+      "title": "should show a progress bar",
+      "fullTitle": "ResetPassword module,ResetPassword Component,when busy fetching should show a progress bar",
+      "duration": 2462,
+      "errorCount": 0
+    },
+    {
+      "title": "should show a progress bar",
+      "fullTitle": "ResetPassword module,ResetPassword Component,when NOT busy fetching should show a progress bar",
+      "duration": 2462,
+      "errorCount": 0
+    },
+    {
+      "title": "should contain a hidden admin help dialog",
+      "fullTitle": "ResetPassword module,ResetPassword Component,admin help dialog should contain a hidden admin help dialog",
+      "duration": 2462,
+      "errorCount": 0
+    },
+    {
+      "title": "should show a dialog when user requests help",
+      "fullTitle": "ResetPassword module,ResetPassword Component,admin help dialog should show a dialog when user requests help",
+      "duration": 2462,
+      "errorCount": 0
+    },
+    {
+      "title": "should allow the user to close the dialog",
+      "fullTitle": "ResetPassword module,ResetPassword Component,admin help dialog should allow the user to close the dialog",
+      "duration": 2462,
+      "errorCount": 0
+    },
+    {
+      "title": "should allow the user to go back to the login page",
+      "fullTitle": "ResetPassword module,ResetPassword Component,admin help dialog should allow the user to go back to the login page",
+      "duration": 2462,
+      "errorCount": 0
+    },
+    {
+      "title": "should shallow render correctly",
+      "fullTitle": "Device Api Key List module,DeviceApiKeyList component should shallow render correctly",
+      "duration": 2549,
+      "errorCount": 0
+    },
+    {
+      "title": "should shallow render with items correctly",
+      "fullTitle": "Device Api Key List module,DeviceApiKeyList component should shallow render with items correctly",
+      "duration": 2549,
+      "errorCount": 0
+    },
+    {
+      "title": "should shallow render correctly",
+      "fullTitle": "Result List component should shallow render correctly",
+      "duration": 1597,
+      "errorCount": 0
+    },
+    {
+      "title": "should shallow render correctly",
+      "fullTitle": "Target Status component should shallow render correctly",
+      "duration": 2669,
+      "errorCount": 0
+    },
+    {
+      "title": "should render correctly",
+      "fullTitle": "DetailPanel module,DetailGroup component should render correctly",
+      "duration": 679,
+      "errorCount": 0
+    },
+    {
+      "title": "should render correctly",
+      "fullTitle": "DetailPanel module,DetailPanel component should render correctly",
+      "duration": 679,
+      "errorCount": 0
+    },
+    {
+      "title": "should shallow render correctly",
+      "fullTitle": "ColumnGraph component should shallow render correctly",
+      "duration": 1216,
+      "errorCount": 0
+    },
+    {
+      "title": "should shallow render correctly",
+      "fullTitle": "OperationData Component should shallow render correctly",
+      "duration": 2129,
+      "errorCount": 0
+    },
+    {
+      "title": "should contain an empty AccountDetails object that isn't loading or saving",
+      "fullTitle": "AccountRedux module,reducer,initial state should contain an empty AccountDetails object that isn't loading or saving",
+      "duration": 1215,
+      "errorCount": 0
+    },
+    {
+      "title": "should show that account details are busy loading",
+      "fullTitle": "AccountRedux module,reducer,actions,REQUEST_ACCOUNT_DETAILS should show that account details are busy loading",
+      "duration": 1215,
+      "errorCount": 0
+    },
+    {
+      "title": "should show that account details are not loading anymore and populate contactDetails, loginDetails and userPreferences",
+      "fullTitle": "AccountRedux module,reducer,actions,RECEIVE_ACCOUNT_DETAILS should show that account details are not loading anymore and populate contactDetails, loginDetails and userPreferences",
+      "duration": 1215,
+      "errorCount": 0
+    },
+    {
+      "title": "should show that account details are busy saving",
+      "fullTitle": "AccountRedux module,reducer,actions,SAVE_ACCOUNT_DETAILS_START should show that account details are busy saving",
+      "duration": 1215,
+      "errorCount": 0
+    },
+    {
+      "title": "should show that account details are not loading anymore and populate contactDetails only",
+      "fullTitle": "AccountRedux module,reducer,actions,RECEIVE_UPDATED_CONTACT_DETAILS should show that account details are not loading anymore and populate contactDetails only",
+      "duration": 1215,
+      "errorCount": 0
+    },
+    {
+      "title": "should show that account details are not loading anymore and populate loginDetails only",
+      "fullTitle": "AccountRedux module,reducer,actions,RECEIVE_UPDATED_LOGIN_DETAILS should show that account details are not loading anymore and populate loginDetails only",
+      "duration": 1215,
+      "errorCount": 0
+    },
+    {
+      "title": "should show that account details are not loading anymore and populate userPreferences only",
+      "fullTitle": "AccountRedux module,reducer,actions,RECEIVE_UPDATED_USER_PREFERENCES should show that account details are not loading anymore and populate userPreferences only",
+      "duration": 1215,
+      "errorCount": 0
+    },
+    {
+      "title": "should dispatch a REQUEST_ACCOUNT_DETAILS action",
+      "fullTitle": "AccountRedux module,action creators,fetchAccountDetails,when the server responds successfully should dispatch a REQUEST_ACCOUNT_DETAILS action",
+      "duration": 1215,
+      "errorCount": 0
+    },
+    {
+      "title": "should request the account details from the server",
+      "fullTitle": "AccountRedux module,action creators,fetchAccountDetails,when the server responds successfully should request the account details from the server",
+      "duration": 1215,
+      "errorCount": 0
+    },
+    {
+      "title": "Should dispatch a RECEIVE_ACCOUNT_DETAILS action with the account details received",
+      "fullTitle": "AccountRedux module,action creators,fetchAccountDetails,when the server responds successfully,when a response is received from the server Should dispatch a RECEIVE_ACCOUNT_DETAILS action with the account details received",
+      "duration": 1215,
+      "errorCount": 0
+    },
+    {
+      "title": "should dispatch a SAVE_ACCOUNT_DETAILS_START action",
+      "fullTitle": "AccountRedux module,action creators,saveContactDetails,when the server responds successfully should dispatch a SAVE_ACCOUNT_DETAILS_START action",
+      "duration": 1215,
+      "errorCount": 0
+    },
+    {
+      "title": "should send a PUT request to the server with the correct headers and the account details passed to it",
+      "fullTitle": "AccountRedux module,action creators,saveContactDetails,when the server responds successfully should send a PUT request to the server with the correct headers and the account details passed to it",
+      "duration": 1215,
+      "errorCount": 0
+    },
+    {
+      "title": "Should dispatch a RECEIVE_UPDATED_CONTACT_DETAILS action with the account details received",
+      "fullTitle": "AccountRedux module,action creators,saveContactDetails,when the server responds successfully,when a response is received from the server Should dispatch a RECEIVE_UPDATED_CONTACT_DETAILS action with the account details received",
+      "duration": 1215,
+      "errorCount": 0
+    },
+    {
+      "title": "should dispatch a SAVE_ACCOUNT_DETAILS_START action",
+      "fullTitle": "AccountRedux module,action creators,saveLoginDetails,when the server responds successfully should dispatch a SAVE_ACCOUNT_DETAILS_START action",
+      "duration": 1215,
+      "errorCount": 0
+    },
+    {
+      "title": "should send a PUT request to the server with the correct headers and the account details passed to it",
+      "fullTitle": "AccountRedux module,action creators,saveLoginDetails,when the server responds successfully should send a PUT request to the server with the correct headers and the account details passed to it",
+      "duration": 1215,
+      "errorCount": 0
+    },
+    {
+      "title": "should dispatch a SAVE_ACCOUNT_DETAILS_START action",
+      "fullTitle": "AccountRedux module,action creators,saveUserPreferences,when the server responds successfully should dispatch a SAVE_ACCOUNT_DETAILS_START action",
+      "duration": 1215,
+      "errorCount": 0
+    },
+    {
+      "title": "should send a PUT request to the server with the correct headers and the account details passed to it",
+      "fullTitle": "AccountRedux module,action creators,saveUserPreferences,when the server responds successfully should send a PUT request to the server with the correct headers and the account details passed to it",
+      "duration": 1215,
+      "errorCount": 0
+    },
+    {
+      "title": "Should dispatch a RECEIVE_UPDATED_USER_PREFERENCES action with the account details received",
+      "fullTitle": "AccountRedux module,action creators,saveUserPreferences,when the server responds successfully,when a response is received from the server Should dispatch a RECEIVE_UPDATED_USER_PREFERENCES action with the account details received",
+      "duration": 1215,
+      "errorCount": 0
+    },
+    {
+      "title": "should show date input",
+      "fullTitle": "DateRangeSelector Component,Custom date range should show date input",
+      "duration": 1226,
+      "errorCount": 0
+    },
+    {
+      "title": "should call onDateChanged when date is picked",
+      "fullTitle": "DateRangeSelector Component,Custom date range should call onDateChanged when date is picked",
+      "duration": 1226,
+      "errorCount": 0
+    },
+    {
+      "title": "should show a dropdown list in place of date pickers when a defined range type is deleted",
+      "fullTitle": "DateRangeSelector Component,Selectable Date Ranges should show a dropdown list in place of date pickers when a defined range type is deleted",
+      "duration": 1226,
+      "errorCount": 0
+    },
+    {
+      "title": "should allow the user to select one of the last 8 days",
+      "fullTitle": "DateRangeSelector Component,Selectable Date Ranges,Different Range Types should allow the user to select one of the last 8 days",
+      "duration": 1226,
+      "errorCount": 0
+    },
+    {
+      "title": "should allow the user to select the last 7 days or any one of the last 8 weeks",
+      "fullTitle": "DateRangeSelector Component,Selectable Date Ranges,Different Range Types should allow the user to select the last 7 days or any one of the last 8 weeks",
+      "duration": 1226,
+      "errorCount": 0
+    },
+    {
+      "title": "should allow the user to select the last 30 days or any one of the last 12 months",
+      "fullTitle": "DateRangeSelector Component,Selectable Date Ranges,Different Range Types should allow the user to select the last 30 days or any one of the last 12 months",
+      "duration": 1226,
+      "errorCount": 0
+    },
+    {
+      "title": "should allow the user to select any one of the last 12 quarters",
+      "fullTitle": "DateRangeSelector Component,Selectable Date Ranges,Different Range Types should allow the user to select any one of the last 12 quarters",
+      "duration": 1226,
+      "errorCount": 0
+    },
+    {
+      "title": "should allow the user to select any one of the last 7 years",
+      "fullTitle": "DateRangeSelector Component,Selectable Date Ranges,Different Range Types should allow the user to select any one of the last 7 years",
+      "duration": 1226,
+      "errorCount": 0
+    },
+    {
+      "title": "should call onDateChanged when a date range is picked",
+      "fullTitle": "DateRangeSelector Component,Selectable Date Ranges,Different Range Types should call onDateChanged when a date range is picked",
+      "duration": 1226,
+      "errorCount": 0
+    },
+    {
+      "title": "should allow the user to select one of the last 8 days",
+      "fullTitle": "DateRangeSelector Component,Selectable Date Ranges,Different Range Types should allow the user to select one of the last 8 days",
+      "duration": 1226,
+      "errorCount": 0
+    },
+    {
+      "title": "should allow the user to select the last 7 days or any one of the last 8 weeks",
+      "fullTitle": "DateRangeSelector Component,Selectable Date Ranges,Different Range Types should allow the user to select the last 7 days or any one of the last 8 weeks",
+      "duration": 1226,
+      "errorCount": 0
+    },
+    {
+      "title": "should allow the user to select the last 30 days or any one of the last 12 months",
+      "fullTitle": "DateRangeSelector Component,Selectable Date Ranges,Different Range Types should allow the user to select the last 30 days or any one of the last 12 months",
+      "duration": 1226,
+      "errorCount": 0
+    },
+    {
+      "title": "should allow the user to select any one of the last 12 quarters",
+      "fullTitle": "DateRangeSelector Component,Selectable Date Ranges,Different Range Types should allow the user to select any one of the last 12 quarters",
+      "duration": 1226,
+      "errorCount": 0
+    },
+    {
+      "title": "should allow the user to select any one of the last 7 years",
+      "fullTitle": "DateRangeSelector Component,Selectable Date Ranges,Different Range Types should allow the user to select any one of the last 7 years",
+      "duration": 1226,
+      "errorCount": 0
+    },
+    {
+      "title": "should call onDateChanged when a date range is picked",
+      "fullTitle": "DateRangeSelector Component,Selectable Date Ranges,Different Range Types should call onDateChanged when a date range is picked",
+      "duration": 1226,
+      "errorCount": 0
+    },
+    {
+      "title": "should trigger fetchCountriesForLocationSelector on mount",
+      "fullTitle": "CountrySelectField module,CountrySelectField component should trigger fetchCountriesForLocationSelector on mount",
+      "duration": 536,
+      "errorCount": 0
+    },
+    {
+      "title": "should trigger onCountryIdChange when value has been selected",
+      "fullTitle": "CountrySelectField module,CountrySelectField component should trigger onCountryIdChange when value has been selected",
+      "duration": 536,
+      "errorCount": 0
+    },
+    {
+      "title": "should render correctly",
+      "fullTitle": "NotificationList module,NotificationList component should render correctly",
+      "duration": 1072,
+      "errorCount": 0
+    },
+    {
+      "title": "should shallow render correctly",
+      "fullTitle": "Person List module,PersonList component should shallow render correctly",
+      "duration": 914,
+      "errorCount": 0
+    },
+    {
+      "title": "should shallow render correctly",
+      "fullTitle": "LinkNavigation component should shallow render correctly",
+      "duration": 759,
+      "errorCount": 0
+    },
+    {
+      "title": "should see browse link when having feature and permission",
+      "fullTitle": "LinkNavigation component should see browse link when having feature and permission",
+      "duration": 759,
+      "errorCount": 0
+    },
+    {
+      "title": "should not see browse link when having no device feature",
+      "fullTitle": "LinkNavigation component should not see browse link when having no device feature",
+      "duration": 759,
+      "errorCount": 0
+    },
+    {
+      "title": "should render correctly",
+      "fullTitle": "ResetPasswordEnterEmail module,ResetPasswordEnterEmail component should render correctly",
+      "duration": 616,
+      "errorCount": 0
+    },
+    {
+      "title": "should enable the submit button when the form is dirty, valid and not submitting",
+      "fullTitle": "ResetPasswordEnterEmail module,ResetPasswordEnterEmail component should enable the submit button when the form is dirty, valid and not submitting",
+      "duration": 616,
+      "errorCount": 0
+    },
+    {
+      "title": "should validate required email address",
+      "fullTitle": "ResetPasswordEnterEmail module,validate function should validate required email address",
+      "duration": 616,
+      "errorCount": 0
+    },
+    {
+      "title": "should validate that the email address is valid",
+      "fullTitle": "ResetPasswordEnterEmail module,validate function should validate that the email address is valid",
+      "duration": 616,
+      "errorCount": 0
+    },
+    {
+      "title": "should shallow render correctly",
+      "fullTitle": "App Notification SnackBar component should shallow render correctly",
+      "duration": 699,
+      "errorCount": 0
+    },
+    {
+      "title": "should shallow render correctly",
+      "fullTitle": "ReportList component should shallow render correctly",
+      "duration": 891,
+      "errorCount": 0
+    },
+    {
+      "title": "should shallow render correctly",
+      "fullTitle": "SiteMap Component should shallow render correctly",
+      "duration": 509,
+      "errorCount": 0
+    },
+    {
+      "title": "should handle nested field expanding correctly",
+      "fullTitle": "JSONSchemaCard module,PropertiesSchemaCard testInstance should handle nested field expanding correctly",
+      "duration": 589,
+      "errorCount": 0
+    },
+    {
+      "title": "should render correctly",
+      "fullTitle": "JSONSchemaCard module,JSONSchemaCard testInstance should render correctly",
+      "duration": 589,
+      "errorCount": 0
+    },
+    {
+      "title": "should shallow render correctly",
+      "fullTitle": "Device Status component should shallow render correctly",
+      "duration": 1244,
+      "errorCount": 0
+    },
+    {
+      "title": "should trigger fetchStatesForLocationSelector on mount",
+      "fullTitle": "StateSelectField module,StateSelectField component should trigger fetchStatesForLocationSelector on mount",
+      "duration": 660,
+      "errorCount": 0
+    },
+    {
+      "title": "should trigger fetchStatesForLocationSelector when countryId has changed",
+      "fullTitle": "StateSelectField module,StateSelectField component should trigger fetchStatesForLocationSelector when countryId has changed",
+      "duration": 660,
+      "errorCount": 0
+    },
+    {
+      "title": "should trigger onStateIdChange when value has been selected",
+      "fullTitle": "StateSelectField module,StateSelectField component should trigger onStateIdChange when value has been selected",
+      "duration": 660,
+      "errorCount": 0
+    },
+    {
+      "title": "should trigger fetchLgasForLocationSelector on mount",
+      "fullTitle": "LgaSelectField module,LgaSelectField component should trigger fetchLgasForLocationSelector on mount",
+      "duration": 622,
+      "errorCount": 0
+    },
+    {
+      "title": "should trigger fetchLgasForLocationSelector when stateId has changed",
+      "fullTitle": "LgaSelectField module,LgaSelectField component should trigger fetchLgasForLocationSelector when stateId has changed",
+      "duration": 622,
+      "errorCount": 0
+    },
+    {
+      "title": "should trigger onLgaIdChange when value has been selected",
+      "fullTitle": "LgaSelectField module,LgaSelectField component should trigger onLgaIdChange when value has been selected",
+      "duration": 622,
+      "errorCount": 0
+    },
+    {
+      "title": "should render correctly",
+      "fullTitle": "LoginDetailsForm module,LoginDetailsForm component should render correctly",
+      "duration": 396,
+      "errorCount": 0
+    },
+    {
+      "title": "should disable all fields when form is loading",
+      "fullTitle": "LoginDetailsForm module,LoginDetailsForm component should disable all fields when form is loading",
+      "duration": 396,
+      "errorCount": 0
+    },
+    {
+      "title": "should disable the submit button when the form is pristine, invalid or submitting",
+      "fullTitle": "LoginDetailsForm module,LoginDetailsForm component should disable the submit button when the form is pristine, invalid or submitting",
+      "duration": 396,
+      "errorCount": 0
+    },
+    {
+      "title": "should enable the submit button when the form is dirty, valid and not submitting",
+      "fullTitle": "LoginDetailsForm module,LoginDetailsForm component should enable the submit button when the form is dirty, valid and not submitting",
+      "duration": 396,
+      "errorCount": 0
+    },
+    {
+      "title": "should validate that a username has been entered",
+      "fullTitle": "LoginDetailsForm module,validate function should validate that a username has been entered",
+      "duration": 396,
+      "errorCount": 0
+    },
+    {
+      "title": "should validate password if it has been entered",
+      "fullTitle": "LoginDetailsForm module,validate function should validate password if it has been entered",
+      "duration": 396,
+      "errorCount": 0
+    },
+    {
+      "title": "Should be a div",
+      "fullTitle": "LocationSelector module,LocationSelector component Should be a div",
+      "duration": 624,
+      "errorCount": 0
+    },
+    {
+      "title": "Should contain three Field for country, state and LGA",
+      "fullTitle": "LocationSelector module,LocationSelector component Should contain three Field for country, state and LGA",
+      "duration": 624,
+      "errorCount": 0
+    },
+    {
+      "title": "should shallow render correctly",
+      "fullTitle": "Login component should shallow render correctly",
+      "duration": 885,
+      "errorCount": 0
+    },
+    {
+      "title": "should render correctly",
+      "fullTitle": "ContactDetailsForm module,ContactDetailsForm component should render correctly",
+      "duration": 445,
+      "errorCount": 0
+    },
+    {
+      "title": "should disable all fields when form is loading",
+      "fullTitle": "ContactDetailsForm module,ContactDetailsForm component should disable all fields when form is loading",
+      "duration": 445,
+      "errorCount": 0
+    },
+    {
+      "title": "should disable the submit button when the form is pristine, invalid or submitting",
+      "fullTitle": "ContactDetailsForm module,ContactDetailsForm component should disable the submit button when the form is pristine, invalid or submitting",
+      "duration": 445,
+      "errorCount": 0
+    },
+    {
+      "title": "should enable the submit button when the form is dirty, valid and not submitting",
+      "fullTitle": "ContactDetailsForm module,ContactDetailsForm component should enable the submit button when the form is dirty, valid and not submitting",
+      "duration": 445,
+      "errorCount": 0
+    },
+    {
+      "title": "should validate that name has been entered",
+      "fullTitle": "ContactDetailsForm module,validate function should validate that name has been entered",
+      "duration": 445,
+      "errorCount": 0
+    },
+    {
+      "title": "should validate email addresses if they have been entered",
+      "fullTitle": "ContactDetailsForm module,validate function should validate email addresses if they have been entered",
+      "duration": 445,
+      "errorCount": 0
+    },
+    {
+      "title": "should validate name and both email addresses",
+      "fullTitle": "ContactDetailsForm module,validate function should validate name and both email addresses",
+      "duration": 445,
+      "errorCount": 0
+    },
+    {
+      "title": "should shallow render correctly",
+      "fullTitle": "EditableFieldsForm Component should shallow render correctly",
+      "duration": 1300,
+      "errorCount": 0
+    },
+    {
+      "title": "should render correctly",
+      "fullTitle": "ResetPasswordEnterPassword module,ResetPasswordEnterPassword component should render correctly",
+      "duration": 464,
+      "errorCount": 0
+    },
+    {
+      "title": "should disable the submit button when the form is pristine, invalid or submitting",
+      "fullTitle": "ResetPasswordEnterPassword module,ResetPasswordEnterPassword component should disable the submit button when the form is pristine, invalid or submitting",
+      "duration": 464,
+      "errorCount": 0
+    },
+    {
+      "title": "should enable the submit button when the form is dirty, valid and not submitting",
+      "fullTitle": "ResetPasswordEnterPassword module,ResetPasswordEnterPassword component should enable the submit button when the form is dirty, valid and not submitting",
+      "duration": 464,
+      "errorCount": 0
+    },
+    {
+      "title": "should validate required email address",
+      "fullTitle": "ResetPasswordEnterPassword module,validate function should validate required email address",
+      "duration": 464,
+      "errorCount": 0
+    },
+    {
+      "title": "should validate that the email address is valid",
+      "fullTitle": "ResetPasswordEnterPassword module,validate function should validate that the email address is valid",
+      "duration": 464,
+      "errorCount": 0
+    },
+    {
+      "title": "should validate confirm password is equal to password",
+      "fullTitle": "ResetPasswordEnterPassword module,validate function should validate confirm password is equal to password",
+      "duration": 464,
+      "errorCount": 0
+    },
+    {
+      "title": "should render correctly",
+      "fullTitle": "RawDataDialog module,RawDataDialog component should render correctly",
+      "duration": 543,
+      "errorCount": 0
+    },
+    {
+      "title": "should shallow render correctly",
+      "fullTitle": "Summary Status component should shallow render correctly",
+      "duration": 517,
+      "errorCount": 0
+    },
+    {
+      "title": "should flatten the nested structure",
+      "fullTitle": "Grouped Items Reducer,When the Data Is Deep should flatten the nested structure",
+      "duration": 441,
+      "errorCount": 0
+    },
+    {
+      "title": "should generate rowSpans for each field based the nested structure",
+      "fullTitle": "Grouped Items Reducer,When the Data Is Deep should generate rowSpans for each field based the nested structure",
+      "duration": 441,
+      "errorCount": 0
+    },
+    {
+      "title": "should generate visibleProperties for each field based the nested structure",
+      "fullTitle": "Grouped Items Reducer,When the Data Is Deep should generate visibleProperties for each field based the nested structure",
+      "duration": 441,
+      "errorCount": 0
+    },
+    {
+      "title": "should return an item ID list that is in the same order as the deepest child IDs passed into it",
+      "fullTitle": "Grouped Items Reducer,When the Data Is Deep should return an item ID list that is in the same order as the deepest child IDs passed into it",
+      "duration": 441,
+      "errorCount": 0
+    },
+    {
+      "title": "should not keep stale column visibility state when a new list is received",
+      "fullTitle": "Grouped Items Reducer,When the Data Is Deep should not keep stale column visibility state when a new list is received",
+      "duration": 441,
+      "errorCount": 0
+    },
+    {
+      "title": "should return the same data",
+      "fullTitle": "Grouped Items Reducer,When the Data Already Flat should return the same data",
+      "duration": 441,
+      "errorCount": 0
+    },
+    {
+      "title": "should create rowSpans of 1",
+      "fullTitle": "Grouped Items Reducer,When the Data Already Flat should create rowSpans of 1",
+      "duration": 441,
+      "errorCount": 0
+    },
+    {
+      "title": "should generate visibleProperties for each field",
+      "fullTitle": "Grouped Items Reducer,When the Data Already Flat should generate visibleProperties for each field",
+      "duration": 441,
+      "errorCount": 0
+    },
+    {
+      "title": "should render WrappedComponent",
+      "fullTitle": "recomposeForm module,recomposeForm HOC should render WrappedComponent",
+      "duration": 368,
+      "errorCount": 0
+    },
+    {
+      "title": "should pass in form state from props",
+      "fullTitle": "recomposeForm module,recomposeForm HOC should pass in form state from props",
+      "duration": 368,
+      "errorCount": 0
+    },
+    {
+      "title": "should pass in field states from props",
+      "fullTitle": "recomposeForm module,recomposeForm HOC should pass in field states from props",
+      "duration": 368,
+      "errorCount": 0
+    },
+    {
+      "title": "should pass in form handlers from props",
+      "fullTitle": "recomposeForm module,recomposeForm HOC should pass in form handlers from props",
+      "duration": 368,
+      "errorCount": 0
+    },
+    {
+      "title": "should update in form state from props",
+      "fullTitle": "recomposeForm module,recomposeForm HOC,passing onSubmit with a function returning a resolved promise should update in form state from props",
+      "duration": 368,
+      "errorCount": 0
+    },
+    {
+      "title": "should update in form state from props",
+      "fullTitle": "recomposeForm module,recomposeForm HOC,passing onSubmit with a function returning a rejected promise should update in form state from props",
+      "duration": 368,
+      "errorCount": 0
+    },
+    {
+      "title": "should pass in field handlers from props",
+      "fullTitle": "recomposeForm module,recomposeForm HOC should pass in field handlers from props",
+      "duration": 368,
+      "errorCount": 0
+    },
+    {
+      "title": "should call onChange when fields are changed",
+      "fullTitle": "recomposeForm module,recomposeForm HOC should call onChange when fields are changed",
+      "duration": 368,
+      "errorCount": 0
+    },
+    {
+      "title": "should update field states from props",
+      "fullTitle": "recomposeForm module,recomposeForm HOC,calling onNameChange with valid value should update field states from props",
+      "duration": 368,
+      "errorCount": 0
+    },
+    {
+      "title": "should update field states from props",
+      "fullTitle": "recomposeForm module,recomposeForm HOC,calling onNameChange with invalid value should update field states from props",
+      "duration": 368,
+      "errorCount": 0
+    },
+    {
+      "title": "should shallow render correctly",
+      "fullTitle": "UserPreferencesForm module,UserPreferencesForm component should shallow render correctly",
+      "duration": 400,
+      "errorCount": 0
+    },
+    {
+      "title": "should disable all fields when form is loading",
+      "fullTitle": "UserPreferencesForm module,UserPreferencesForm component should disable all fields when form is loading",
+      "duration": 400,
+      "errorCount": 0
+    },
+    {
+      "title": "should enable the submit button when the form is dirty, valid and not submitting",
+      "fullTitle": "UserPreferencesForm module,UserPreferencesForm component should enable the submit button when the form is dirty, valid and not submitting",
+      "duration": 400,
+      "errorCount": 0
+    },
+    {
+      "title": "Should render a SelectField and pass the props assigned to it",
+      "fullTitle": "SelectInput Should render a SelectField and pass the props assigned to it",
+      "duration": 313,
+      "errorCount": 0
+    },
+    {
+      "title": "Should Render a SelectField and pass the selectFieldProps to it",
+      "fullTitle": "SelectInput Should Render a SelectField and pass the selectFieldProps to it",
+      "duration": 313,
+      "errorCount": 0
+    },
+    {
+      "title": "Should create menu items from the datasource and datasource config passed to it",
+      "fullTitle": "SelectInput Should create menu items from the datasource and datasource config passed to it",
+      "duration": 313,
+      "errorCount": 0
+    },
+    {
+      "title": "should shallow render correctly",
+      "fullTitle": "PersonTableRow component should shallow render correctly",
+      "duration": 274,
+      "errorCount": 0
+    },
+    {
+      "title": "should render correctly",
+      "fullTitle": "NotificationTableRow module,NotificationTableRow component should render correctly",
+      "duration": 329,
+      "errorCount": 0
+    },
+    {
+      "title": "should contain valid time zones only",
+      "fullTitle": "timezone module,getTimezoneById function should contain valid time zones only",
+      "duration": 376,
+      "errorCount": 0
+    },
+    {
+      "title": "should get the timezone by ID",
+      "fullTitle": "timezone module,getTimezoneById function should get the timezone by ID",
+      "duration": 376,
+      "errorCount": 0
+    },
+    {
+      "title": "should return the browser's the timezone when ID is not set or not found in list",
+      "fullTitle": "timezone module,getTimezoneById function should return the browser's the timezone when ID is not set or not found in list",
+      "duration": 376,
+      "errorCount": 0
+    },
+    {
+      "title": "should render correctly",
+      "fullTitle": "DelayShowingProgressBar module,DelayShowingProgressBar component should render correctly",
+      "duration": 268,
+      "errorCount": 0
+    },
+    {
+      "title": "should disable progress bar give by initial condition",
+      "fullTitle": "DelayShowingProgressBar module,DelayShowingProgressBar component,when render once should disable progress bar give by initial condition",
+      "duration": 268,
+      "errorCount": 0
+    },
+    {
+      "title": "should enable progress bar give by initial condition",
+      "fullTitle": "DelayShowingProgressBar module,DelayShowingProgressBar component,when render once should enable progress bar give by initial condition",
+      "duration": 268,
+      "errorCount": 0
+    },
+    {
+      "title": "should enable progress bar with a delay",
+      "fullTitle": "DelayShowingProgressBar module,DelayShowingProgressBar component,when change from disabled to enabled should enable progress bar with a delay",
+      "duration": 268,
+      "errorCount": 0
+    },
+    {
+      "title": "should disable progress bar immediately",
+      "fullTitle": "DelayShowingProgressBar module,DelayShowingProgressBar component,when change from enabled to disabled should disable progress bar immediately",
+      "duration": 268,
+      "errorCount": 0
+    },
+    {
+      "title": "should shallow render correctly",
+      "fullTitle": "App Notification Dialog component should shallow render correctly",
+      "duration": 542,
+      "errorCount": 0
+    },
+    {
+      "title": "should shallow render correctly",
+      "fullTitle": "ReportTableRow component should shallow render correctly",
+      "duration": 285,
+      "errorCount": 0
+    },
+    {
+      "title": "should shallow render correctly",
+      "fullTitle": "LineGraph component should shallow render correctly",
+      "duration": 363,
+      "errorCount": 0
+    },
+    {
+      "title": "should throw a ConnectionError",
+      "fullTitle": "aspectFetch module,aspectFetch function,unknown API endpoint should throw a ConnectionError",
+      "duration": 227,
+      "errorCount": 0
+    },
+    {
+      "title": "It is an object that contains at least the primary and accent colors",
+      "fullTitle": "Theme It is an object that contains at least the primary and accent colors",
+      "duration": 271,
+      "errorCount": 0
+    },
+    {
+      "title": "should return true for valid email address (abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ@letters-in-local.org)",
+      "fullTitle": "validate,emailAddress should return true for valid email address (abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ@letters-in-local.org)",
+      "duration": 230,
+      "errorCount": 0
+    },
+    {
+      "title": "should return true for valid email address (01234567890@numbers-in-local.net)",
+      "fullTitle": "validate,emailAddress should return true for valid email address (01234567890@numbers-in-local.net)",
+      "duration": 230,
+      "errorCount": 0
+    },
+    {
+      "title": "should return true for valid email address (&'*+-./=?^_{}~@other-valid-characters-in-local.net)",
+      "fullTitle": "validate,emailAddress should return true for valid email address (&'*+-./=?^_{}~@other-valid-characters-in-local.net)",
+      "duration": 230,
+      "errorCount": 0
+    },
+    {
+      "title": "should return true for valid email address (mixed-1234-in-{+^}-local@sld.net)",
+      "fullTitle": "validate,emailAddress should return true for valid email address (mixed-1234-in-{+^}-local@sld.net)",
+      "duration": 230,
+      "errorCount": 0
+    },
+    {
+      "title": "should return true for valid email address (a@single-character-in-local.org)",
+      "fullTitle": "validate,emailAddress should return true for valid email address (a@single-character-in-local.org)",
+      "duration": 230,
+      "errorCount": 0
+    },
+    {
+      "title": "should return true for valid email address (one-character-third-level@a.example.com)",
+      "fullTitle": "validate,emailAddress should return true for valid email address (one-character-third-level@a.example.com)",
+      "duration": 230,
+      "errorCount": 0
+    },
+    {
+      "title": "should return true for valid email address (single-character-in-sld@x.org)",
+      "fullTitle": "validate,emailAddress should return true for valid email address (single-character-in-sld@x.org)",
+      "duration": 230,
+      "errorCount": 0
+    },
+    {
+      "title": "should return true for valid email address (local@dash-in-sld.com)",
+      "fullTitle": "validate,emailAddress should return true for valid email address (local@dash-in-sld.com)",
+      "duration": 230,
+      "errorCount": 0
+    },
+    {
+      "title": "should return true for valid email address (letters-in-sld@123.com)",
+      "fullTitle": "validate,emailAddress should return true for valid email address (letters-in-sld@123.com)",
+      "duration": 230,
+      "errorCount": 0
+    },
+    {
+      "title": "should return true for valid email address (one-letter-sld@x.org)",
+      "fullTitle": "validate,emailAddress should return true for valid email address (one-letter-sld@x.org)",
+      "duration": 230,
+      "errorCount": 0
+    },
+    {
+      "title": "should return true for valid email address (uncommon-tld@sld.museum)",
+      "fullTitle": "validate,emailAddress should return true for valid email address (uncommon-tld@sld.museum)",
+      "duration": 230,
+      "errorCount": 0
+    },
+    {
+      "title": "should return true for valid email address (uncommon-tld@sld.travel)",
+      "fullTitle": "validate,emailAddress should return true for valid email address (uncommon-tld@sld.travel)",
+      "duration": 230,
+      "errorCount": 0
+    },
+    {
+      "title": "should return true for valid email address (uncommon-tld@sld.mobi)",
+      "fullTitle": "validate,emailAddress should return true for valid email address (uncommon-tld@sld.mobi)",
+      "duration": 230,
+      "errorCount": 0
+    },
+    {
+      "title": "should return true for valid email address (country-code-tld@sld.uk)",
+      "fullTitle": "validate,emailAddress should return true for valid email address (country-code-tld@sld.uk)",
+      "duration": 230,
+      "errorCount": 0
+    },
+    {
+      "title": "should return true for valid email address (country-code-tld@sld.rw)",
+      "fullTitle": "validate,emailAddress should return true for valid email address (country-code-tld@sld.rw)",
+      "duration": 230,
+      "errorCount": 0
+    },
+    {
+      "title": "should return true for valid email address (local@sld.newTLD)",
+      "fullTitle": "validate,emailAddress should return true for valid email address (local@sld.newTLD)",
+      "duration": 230,
+      "errorCount": 0
+    },
+    {
+      "title": "should return true for valid email address (the-total-length@of-an-entire-address.cannot-be-longer-than-two-hundred-and-fifty-four-characters.and-this-address-is-254-characters-exactly.so-it-should-be-valid.and-im-going-to-add-some-more-words-here.to-increase-the-lenght-blah-blah-blah-blah-bla.org)",
+      "fullTitle": "validate,emailAddress should return true for valid email address (the-total-length@of-an-entire-address.cannot-be-longer-than-two-hundred-and-fifty-four-characters.and-this-address-is-254-characters-exactly.so-it-should-be-valid.and-im-going-to-add-some-more-words-here.to-increase-the-lenght-blah-blah-blah-blah-bla.org)",
+      "duration": 230,
+      "errorCount": 0
+    },
+    {
+      "title": "should return true for valid email address (the-character-limit@for-each-part.of-the-domain.is-sixty-three-characters.this-is-exactly-sixty-three-characters-so-it-is-valid-blah-blah.com)",
+      "fullTitle": "validate,emailAddress should return true for valid email address (the-character-limit@for-each-part.of-the-domain.is-sixty-three-characters.this-is-exactly-sixty-three-characters-so-it-is-valid-blah-blah.com)",
+      "duration": 230,
+      "errorCount": 0
+    },
+    {
+      "title": "should return true for valid email address (local@sub.domains.com)",
+      "fullTitle": "validate,emailAddress should return true for valid email address (local@sub.domains.com)",
+      "duration": 230,
+      "errorCount": 0
+    },
+    {
+      "title": "should return true for valid email address (backticks`are`legit@test.com)",
+      "fullTitle": "validate,emailAddress should return true for valid email address (backticks`are`legit@test.com)",
+      "duration": 230,
+      "errorCount": 0
+    },
+    {
+      "title": "should return true for valid email address (digit-only-domain@123.com)",
+      "fullTitle": "validate,emailAddress should return true for valid email address (digit-only-domain@123.com)",
+      "duration": 230,
+      "errorCount": 0
+    },
+    {
+      "title": "should return true for valid email address (digit-only-domain-with-subdomain@sub.123.com)",
+      "fullTitle": "validate,emailAddress should return true for valid email address (digit-only-domain-with-subdomain@sub.123.com)",
+      "duration": 230,
+      "errorCount": 0
+    },
+    {
+      "title": "should return false for invalid email address (@missing-local.org)",
+      "fullTitle": "validate,emailAddress should return false for invalid email address (@missing-local.org)",
+      "duration": 230,
+      "errorCount": 0
+    },
+    {
+      "title": "should return false for invalid email address (! #$%`|@invalid-characters-in-local.org)",
+      "fullTitle": "validate,emailAddress should return false for invalid email address (! #$%`|@invalid-characters-in-local.org)",
+      "duration": 230,
+      "errorCount": 0
+    },
+    {
+      "title": "should return false for invalid email address ((),:;`|@more-invalid-characters-in-local.org)",
+      "fullTitle": "validate,emailAddress should return false for invalid email address ((),:;`|@more-invalid-characters-in-local.org)",
+      "duration": 230,
+      "errorCount": 0
+    },
+    {
+      "title": "should return false for invalid email address (<>@[]\\`|@even-more-invalid-characters-in-local.org)",
+      "fullTitle": "validate,emailAddress should return false for invalid email address (<>@[]\\`|@even-more-invalid-characters-in-local.org)",
+      "duration": 230,
+      "errorCount": 0
+    },
+    {
+      "title": "should return false for invalid email address (.local-starts-with-dot@sld.com)",
+      "fullTitle": "validate,emailAddress should return false for invalid email address (.local-starts-with-dot@sld.com)",
+      "duration": 230,
+      "errorCount": 0
+    },
+    {
+      "title": "should return false for invalid email address (local-ends-with-dot.@sld.com)",
+      "fullTitle": "validate,emailAddress should return false for invalid email address (local-ends-with-dot.@sld.com)",
+      "duration": 230,
+      "errorCount": 0
+    },
+    {
+      "title": "should return false for invalid email address (two..consecutive-dots@sld.com)",
+      "fullTitle": "validate,emailAddress should return false for invalid email address (two..consecutive-dots@sld.com)",
+      "duration": 230,
+      "errorCount": 0
+    },
+    {
+      "title": "should return false for invalid email address (partially.\"quoted\"@sld.com)",
+      "fullTitle": "validate,emailAddress should return false for invalid email address (partially.\"quoted\"@sld.com)",
+      "duration": 230,
+      "errorCount": 0
+    },
+    {
+      "title": "should return false for invalid email address (the-local-part-is-invalid-if-it-is-longer-than-sixty-four-characters@sld.net)",
+      "fullTitle": "validate,emailAddress should return false for invalid email address (the-local-part-is-invalid-if-it-is-longer-than-sixty-four-characters@sld.net)",
+      "duration": 230,
+      "errorCount": 0
+    },
+    {
+      "title": "should return false for invalid email address (missing-sld@.com)",
+      "fullTitle": "validate,emailAddress should return false for invalid email address (missing-sld@.com)",
+      "duration": 230,
+      "errorCount": 0
+    },
+    {
+      "title": "should return false for invalid email address (sld-starts-with-dashsh@-sld.com)",
+      "fullTitle": "validate,emailAddress should return false for invalid email address (sld-starts-with-dashsh@-sld.com)",
+      "duration": 230,
+      "errorCount": 0
+    },
+    {
+      "title": "should return false for invalid email address (sld-ends-with-dash@sld-.com)",
+      "fullTitle": "validate,emailAddress should return false for invalid email address (sld-ends-with-dash@sld-.com)",
+      "duration": 230,
+      "errorCount": 0
+    },
+    {
+      "title": "should return false for invalid email address (invalid-characters-in-sld@! '#$%(),/;<>_[]`|.org)",
+      "fullTitle": "validate,emailAddress should return false for invalid email address (invalid-characters-in-sld@! '#$%(),/;<>_[]`|.org)",
+      "duration": 230,
+      "errorCount": 0
+    },
+    {
+      "title": "should return false for invalid email address (missing-dot-before-tld@com)",
+      "fullTitle": "validate,emailAddress should return false for invalid email address (missing-dot-before-tld@com)",
+      "duration": 230,
+      "errorCount": 0
+    },
+    {
+      "title": "should return false for invalid email address (missing-tld@sld.)",
+      "fullTitle": "validate,emailAddress should return false for invalid email address (missing-tld@sld.)",
+      "duration": 230,
+      "errorCount": 0
+    },
+    {
+      "title": "should return false for invalid email address (invalid)",
+      "fullTitle": "validate,emailAddress should return false for invalid email address (invalid)",
+      "duration": 230,
+      "errorCount": 0
+    },
+    {
+      "title": "should return false for invalid email address (the-total-length@of-an-entire-address.cannot-be-longer-than-two-hundred-and-fifty-four-characters.and-this-address-is-255-characters-exactly.so-it-should-be-invalid.and-im-going-to-add-some-more-words-here.to-increase-the-lenght-blah-blah-blah-blah-bl.org)",
+      "fullTitle": "validate,emailAddress should return false for invalid email address (the-total-length@of-an-entire-address.cannot-be-longer-than-two-hundred-and-fifty-four-characters.and-this-address-is-255-characters-exactly.so-it-should-be-invalid.and-im-going-to-add-some-more-words-here.to-increase-the-lenght-blah-blah-blah-blah-bl.org)",
+      "duration": 230,
+      "errorCount": 0
+    },
+    {
+      "title": "should return false for invalid email address (the-character-limit@for-each-part.of-the-domain.is-sixty-three-characters.this-is-exactly-sixty-four-characters-so-it-is-invalid-blah-blah.com)",
+      "fullTitle": "validate,emailAddress should return false for invalid email address (the-character-limit@for-each-part.of-the-domain.is-sixty-three-characters.this-is-exactly-sixty-four-characters-so-it-is-invalid-blah-blah.com)",
+      "duration": 230,
+      "errorCount": 0
+    },
+    {
+      "title": "should return false for invalid email address (missing-at-sign.net)",
+      "fullTitle": "validate,emailAddress should return false for invalid email address (missing-at-sign.net)",
+      "duration": 230,
+      "errorCount": 0
+    },
+    {
+      "title": "should return false for invalid email address (unbracketed-IP@127.0.0.1)",
+      "fullTitle": "validate,emailAddress should return false for invalid email address (unbracketed-IP@127.0.0.1)",
+      "duration": 230,
+      "errorCount": 0
+    },
+    {
+      "title": "should return false for invalid email address (invalid-ip@127.0.0.1.26)",
+      "fullTitle": "validate,emailAddress should return false for invalid email address (invalid-ip@127.0.0.1.26)",
+      "duration": 230,
+      "errorCount": 0
+    },
+    {
+      "title": "should return false for invalid email address (another-invalid-ip@127.0.0.256)",
+      "fullTitle": "validate,emailAddress should return false for invalid email address (another-invalid-ip@127.0.0.256)",
+      "duration": 230,
+      "errorCount": 0
+    },
+    {
+      "title": "should return false for invalid email address (IP-and-port@127.0.0.1:25)",
+      "fullTitle": "validate,emailAddress should return false for invalid email address (IP-and-port@127.0.0.1:25)",
+      "duration": 230,
+      "errorCount": 0
+    },
+    {
+      "title": "should return false for invalid email address (trailing-dots@test.de.)",
+      "fullTitle": "validate,emailAddress should return false for invalid email address (trailing-dots@test.de.)",
+      "duration": 230,
+      "errorCount": 0
+    },
+    {
+      "title": "should return false for invalid email address (dot-on-dot-in-domainname@te..st.de)",
+      "fullTitle": "validate,emailAddress should return false for invalid email address (dot-on-dot-in-domainname@te..st.de)",
+      "duration": 230,
+      "errorCount": 0
+    },
+    {
+      "title": "should return false for invalid email address (dot-first-in-domain@.test.de)",
+      "fullTitle": "validate,emailAddress should return false for invalid email address (dot-first-in-domain@.test.de)",
+      "duration": 230,
+      "errorCount": 0
+    },
+    {
+      "title": "should return false for invalid email address (mg@ns.i)",
+      "fullTitle": "validate,emailAddress should return false for invalid email address (mg@ns.i)",
+      "duration": 230,
+      "errorCount": 0
+    },
+    {
+      "title": "should return false for blank email address () by default",
+      "fullTitle": "validate,emailAddress should return false for blank email address () by default",
+      "duration": 230,
+      "errorCount": 0
+    },
+    {
+      "title": "should return false for blank email address (null) by default",
+      "fullTitle": "validate,emailAddress should return false for blank email address (null) by default",
+      "duration": 230,
+      "errorCount": 0
+    },
+    {
+      "title": "should return false for blank email address (undefined) by default",
+      "fullTitle": "validate,emailAddress should return false for blank email address (undefined) by default",
+      "duration": 230,
+      "errorCount": 0
+    },
+    {
+      "title": "should return true for blank email address () when is optional was called",
+      "fullTitle": "validate,emailAddress should return true for blank email address () when is optional was called",
+      "duration": 230,
+      "errorCount": 0
+    },
+    {
+      "title": "should return true for blank email address (null) when is optional was called",
+      "fullTitle": "validate,emailAddress should return true for blank email address (null) when is optional was called",
+      "duration": 230,
+      "errorCount": 0
+    },
+    {
+      "title": "should return true for blank email address (undefined) when is optional was called",
+      "fullTitle": "validate,emailAddress should return true for blank email address (undefined) when is optional was called",
+      "duration": 230,
+      "errorCount": 0
+    },
+    {
+      "title": "should shallow render correctly",
+      "fullTitle": "ColumnGraph component should shallow render correctly",
+      "duration": 177,
+      "errorCount": 0
+    },
+    {
+      "title": "should dispatch a REQUEST_ASSAYS action",
+      "fullTitle": "AssayRedux module,fetchAssays action,initial fetch should dispatch a REQUEST_ASSAYS action",
+      "duration": 212,
+      "errorCount": 0
+    },
+    {
+      "title": "should request the account details from the server",
+      "fullTitle": "AssayRedux module,fetchAssays action,initial fetch should request the account details from the server",
+      "duration": 212,
+      "errorCount": 0
+    },
+    {
+      "title": "should not dispatch a REQUEST_ASSAYS action",
+      "fullTitle": "AssayRedux module,fetchAssays action,subsequent calls within 5 minutes should not dispatch a REQUEST_ASSAYS action",
+      "duration": 212,
+      "errorCount": 0
+    },
+    {
+      "title": "should not request the account details from the server",
+      "fullTitle": "AssayRedux module,fetchAssays action,subsequent calls within 5 minutes should not request the account details from the server",
+      "duration": 212,
+      "errorCount": 0
+    },
+    {
+      "title": "should dispatch a REQUEST_ASSAYS action",
+      "fullTitle": "AssayRedux module,fetchAssays action,subsequent calls after 5 minutes should dispatch a REQUEST_ASSAYS action",
+      "duration": 212,
+      "errorCount": 0
+    },
+    {
+      "title": "should request the account details from the server",
+      "fullTitle": "AssayRedux module,fetchAssays action,subsequent calls after 5 minutes should request the account details from the server",
+      "duration": 212,
+      "errorCount": 0
+    },
+    {
+      "title": "should shallow render correctly",
+      "fullTitle": "BarGraph component should shallow render correctly",
+      "duration": 371,
+      "errorCount": 0
+    },
+    {
+      "title": "should shallow render correctly",
+      "fullTitle": "AbnormalBarGraph Component should shallow render correctly",
+      "duration": 140,
+      "errorCount": 0
+    },
+    {
+      "title": "should parse correctly",
+      "fullTitle": "requirePermissions,groupByPermissionTypes,only required should parse correctly",
+      "duration": 200,
+      "errorCount": 0
+    },
+    {
+      "title": "should be valid for admin user",
+      "fullTitle": "requirePermissions,isPermittedUser,only required should be valid for admin user",
+      "duration": 200,
+      "errorCount": 0
+    },
+    {
+      "title": "should be invalid for admin user",
+      "fullTitle": "requirePermissions,isPermittedUser,only forbidden should be invalid for admin user",
+      "duration": 200,
+      "errorCount": 0
+    },
+    {
+      "title": "should be valid for admin user",
+      "fullTitle": "requirePermissions,isPermittedUser,only optional should be valid for admin user",
+      "duration": 200,
+      "errorCount": 0
+    },
+    {
+      "title": "should be valid for admin user",
+      "fullTitle": "requirePermissions,isPermittedUser,required and forbidden should be valid for admin user",
+      "duration": 200,
+      "errorCount": 0
+    },
+    {
+      "title": "should be invalid for admin user",
+      "fullTitle": "requirePermissions,isPermittedUser,required and forbidden should be invalid for admin user",
+      "duration": 200,
+      "errorCount": 0
+    },
+    {
+      "title": "should be valid for admin user",
+      "fullTitle": "requirePermissions,isPermittedUser,required, forbidden and optional should be valid for admin user",
+      "duration": 200,
+      "errorCount": 0
+    },
+    {
+      "title": "should be invalid for admin user",
+      "fullTitle": "requirePermissions,isPermittedUser,required, forbidden and optional should be invalid for admin user",
+      "duration": 200,
+      "errorCount": 0
+    },
+    {
+      "title": "should render WrappedComponent",
+      "fullTitle": "requirePermissions,given right user permissions should render WrappedComponent",
+      "duration": 200,
+      "errorCount": 0
+    },
+    {
+      "title": "should render WrappedComponent",
+      "fullTitle": "requirePermissions,given right user permissions should render WrappedComponent",
+      "duration": 200,
+      "errorCount": 0
+    },
+    {
+      "title": "should render ForbiddenComponent",
+      "fullTitle": "requirePermissions,given wrong user permissions should render ForbiddenComponent",
+      "duration": 200,
+      "errorCount": 0
+    },
+    {
+      "title": "should render ForbiddenComponent",
+      "fullTitle": "requirePermissions,given wrong user permissions should render ForbiddenComponent",
+      "duration": 200,
+      "errorCount": 0
+    },
+    {
+      "title": "should render WrappedComponent",
+      "fullTitle": "requirePermissions,given right user features should render WrappedComponent",
+      "duration": 200,
+      "errorCount": 0
+    },
+    {
+      "title": "should render WrappedComponent",
+      "fullTitle": "requirePermissions,given right user features should render WrappedComponent",
+      "duration": 200,
+      "errorCount": 0
+    },
+    {
+      "title": "should render ForbiddenComponent",
+      "fullTitle": "requirePermissions,given wrong user features should render ForbiddenComponent",
+      "duration": 200,
+      "errorCount": 0
+    },
+    {
+      "title": "should get correct class names",
+      "fullTitle": "Hidden module,getClassNames function should get correct class names",
+      "duration": 150,
+      "errorCount": 0
+    },
+    {
+      "title": "should render a hidden div",
+      "fullTitle": "Hidden module,Hidden component should render a hidden div",
+      "duration": 150,
+      "errorCount": 0
+    },
+    {
+      "title": "should render a hidden span",
+      "fullTitle": "Hidden module,Hidden component,Given component = span should render a hidden span",
+      "duration": 150,
+      "errorCount": 0
+    },
+    {
+      "title": "should render an i tag with the correct flag class names",
+      "fullTitle": "FlagIcon should render an i tag with the correct flag class names",
+      "duration": 148,
+      "errorCount": 0
+    },
+    {
+      "title": "should not render an i tag",
+      "fullTitle": "FlagIcon,When no country code is specified should not render an i tag",
+      "duration": 148,
+      "errorCount": 0
+    },
+    {
+      "title": "should pass them onto i tag",
+      "fullTitle": "FlagIcon,When styles are specified should pass them onto i tag",
+      "duration": 148,
+      "errorCount": 0
+    },
+    {
+      "title": "should shallow render correctly",
+      "fullTitle": "CountryMap component should shallow render correctly",
+      "duration": 341,
+      "errorCount": 0
+    },
+    {
+      "title": "should get correct class names",
+      "fullTitle": "Unit module,getClassNames should get correct class names",
+      "duration": 130,
+      "errorCount": 0
+    },
+    {
+      "title": "should shallow render correctly",
+      "fullTitle": "ChartAlert component should shallow render correctly",
+      "duration": 177,
+      "errorCount": 0
+    }
+  ],
+  "skipped": [
+    {
+      "title": "Should dispatch a RECEIVE_UPDATED_LOGIN_DETAILS action with the account details received",
+      "fullTitle": "AccountRedux module,action creators,saveLoginDetails,when the server responds successfully,when a response is received from the server Should dispatch a RECEIVE_UPDATED_LOGIN_DETAILS action with the account details received",
+      "duration": 1215,
+      "errorCount": 0
+    }
+  ]
+}

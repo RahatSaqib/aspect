@@ -11,7 +11,6 @@ import TextField from '@material-ui/core/TextField'
 
 import AspectDialog from '../../components/shared/AspectDialog'
 import DateTimeInput from '../../components/shared/DateTimeInput'
-import FormGroup from '../../components/themedReactToolbox/FormGroup'
 import SiteSelectField from '../../filter/resource/SiteSelectField'
 import ConsumableSelectField from '../../filter/resource/ConsumableSelectField'
 import ConsumableReasonSelectField, {
@@ -246,18 +245,17 @@ export const InventoryAdjustmentDialogForm = ({
             inputProps={{ maxLength: 500 }}
           />
           {values.canExpire && (
-            <FormGroup label={intl.formatMessage(messages.expiryDate)}>
-              <DateTimeInput
-                name="expiresOn"
-                disabled={form.submitting}
-                // container="inline"
-                // mode="landscape"
-                // autoOk
-                // style={formFieldStyle}
-                onChange={onExpiresOnChange}
-                value={values.expiresOn}
-              />
-            </FormGroup>
+            <DateTimeInput
+              name="expiresOn"
+              label={intl.formatMessage(messages.expiryDate)}
+              disabled={form.submitting}
+              // container="inline"
+              // mode="landscape"
+              // autoOk
+              // style={formFieldStyle}
+              onChange={onExpiresOnChange}
+              value={values.expiresOn}
+            />
           )}
         </section>
         <section>
@@ -343,55 +341,53 @@ export const InventoryAdjustmentDialogForm = ({
         {consumableReason &&
           consumableReason.get('i18nKey') === testConductedReasonI18nKey && (
             <section>
-              <FormGroup label={intl.formatMessage(messages.testsRunBetween)}>
-                <DateTimeInput
-                  autoOk
-                  fullWidth
-                  name="dateAdjustedFrom"
-                  disabled={form.submitting}
-                  labelFunc={formatDate}
-                  margin="normal"
-                  // container="inline"
-                  // mode="landscape"
-                  // style={formFieldStyle}
-                  value={values.dateAdjustedFrom}
-                  onChange={onDateAdjustedFromChange}
-                />
-              </FormGroup>
-              <FormGroup label={intl.formatMessage(messages.and)}>
-                <DateTimeInput
-                  autoOk
-                  fullWidth
-                  name="dateAdjustedTo"
-                  disabled={form.submitting}
-                  labelFunc={formatDate}
-                  margin="normal"
-                  // container="inline"
-                  // mode="landscape"
-                  // style={formFieldStyle}
-                  value={values.dateAdjustedTo}
-                  onChange={onDateAdjustedToChange}
-                />
-              </FormGroup>
-            </section>
-          )}
-        {_.has(values, 'dateAdjusted') && (
-          <section>
-            <FormGroup label={labels.dateAdjusted}>
               <DateTimeInput
                 autoOk
                 fullWidth
-                name="dateAdjusted"
+                name="dateAdjustedFrom"
+                label={intl.formatMessage(messages.testsRunBetween)}
                 disabled={form.submitting}
                 labelFunc={formatDate}
                 margin="normal"
                 // container="inline"
                 // mode="landscape"
                 // style={formFieldStyle}
-                value={values.dateAdjusted}
-                onChange={onDateAdjustedChange}
+                value={values.dateAdjustedFrom}
+                onChange={onDateAdjustedFromChange}
               />
-            </FormGroup>
+
+              <DateTimeInput
+                autoOk
+                fullWidth
+                name="dateAdjustedTo"
+                label={intl.formatMessage(messages.and)}
+                disabled={form.submitting}
+                labelFunc={formatDate}
+                margin="normal"
+                // container="inline"
+                // mode="landscape"
+                // style={formFieldStyle}
+                value={values.dateAdjustedTo}
+                onChange={onDateAdjustedToChange}
+              />
+            </section>
+          )}
+        {_.has(values, 'dateAdjusted') && (
+          <section>
+            <DateTimeInput
+              autoOk
+              fullWidth
+              name="dateAdjusted"
+              label={labels.dateAdjusted}
+              disabled={form.submitting}
+              labelFunc={formatDate}
+              margin="normal"
+              // container="inline"
+              // mode="landscape"
+              // style={formFieldStyle}
+              value={values.dateAdjusted}
+              onChange={onDateAdjustedChange}
+            />
           </section>
         )}
         <section>

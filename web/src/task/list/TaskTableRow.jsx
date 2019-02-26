@@ -2,10 +2,13 @@ import _ from 'lodash'
 import classnames from 'classnames/bind'
 import React from 'react'
 import FaExclamationTriangle from 'react-icons/lib/fa/exclamation-triangle'
-import MdModeComment from 'react-icons/lib/md/mode-comment'
+// import MdModeComment from 'react-icons/lib/md/mode-comment'
 import ColoredButton from '../../components/themedReactToolbox/ColoredButton'
 import AlertType from '../../components/shared/AlertType'
-import { TableRow, TableCell } from '../../components/shared/tableBody'
+import {
+  DataTableRow as TableRow,
+  DataTableCell as TableCell,
+} from '../../components/shared/tableBody'
 
 const cssClasses = classnames.bind(require('./TaskTableRow.css'))
 
@@ -17,17 +20,37 @@ const TaskTableRow = ({ intl, messages, task, ...restProps }) => (
     className={cssClasses(restProps.className, 'TableRow')}
   >
     <TableCell className={cssClasses('TableCell')}>
-      <AlertType alertType={task.get('alertType')} />
+      <AlertType alertType={task.get('issueStatus')} />
     </TableCell>
     <TableCell className={cssClasses('TableCell')}>
       <div className={cssClasses('Message')}>
         <ColoredButton
           className={cssClasses('ColoredButton')}
-          shipCove={task.get('topic') === 'health'}
-          shakespeare={task.get('topic') === 'device'}
-          mountain={task.get('topic') === 'consumable'}
-          brink={task.get('topic') === 'site'}
-          label={task.get('topic')}
+          shipCove={
+            task
+              .get('issueCategoryExternalId')
+              .toString()
+              .toLowerCase() === 'devicehealth'
+          }
+          shakespeare={
+            task
+              .get('issueCategoryExternalId')
+              .toString()
+              .toLowerCase() === 'reagenthealth'
+          }
+          mountain={
+            task
+              .get('issueCategoryExternalId')
+              .toString()
+              .toLowerCase() === 'datahealth'
+          }
+          brink={
+            task
+              .get('issueCategoryExternalId')
+              .toString()
+              .toLowerCase() === 'connectivityhealth'
+          }
+          label={task.get('issueCategory')}
         />
         <span className={cssClasses('Message__Subject')}>
           {task.get('title')}
@@ -35,16 +58,17 @@ const TaskTableRow = ({ intl, messages, task, ...restProps }) => (
         <span className={cssClasses('Message__Text')}>
           {task.get('message')}
         </span>
-        {task.get('alertCount') > 0 && (
-          <span className={cssClasses('Message__Alert')}>
-            <FaExclamationTriangle
-              className={cssClasses('FaExclamationTriangle')}
-            />
-            {intl.formatMessage(messages.alertCount, {
-              alertCount: task.get('alertCount'),
-            })}
-          </span>
-        )}
+        {messages.alertCount &&
+          task.get('issueCount') > 1 && (
+            <span className={cssClasses('Message__Alert')}>
+              <FaExclamationTriangle
+                className={cssClasses('FaExclamationTriangle')}
+              />
+              {intl.formatMessage(messages.alertCount, {
+                alertCount: task.get('issueCount'),
+              })}
+            </span>
+          )}
       </div>
     </TableCell>
     <TableCell className={cssClasses('TableCell')}>
@@ -52,19 +76,6 @@ const TaskTableRow = ({ intl, messages, task, ...restProps }) => (
     </TableCell>
     <TableCell className={cssClasses('TableCell')}>
       {intl.formatRelative(task.get('time'))}
-    </TableCell>
-    <TableCell
-      className={cssClasses('TableCell', 'TableCell--notificationCount')}
-    >
-      {task.get('notificationCount') > 0 && (
-        <MdModeComment className={cssClasses('MdModeComment')} />
-      )}
-      {task.get('notificationCount') > 0 && (
-        <span className={cssClasses('NotificationCount')}>
-          {task.get('notificationCount')}
-        </span>
-      )}
-      {task.get('notificationCount') === 0 && '…'}
     </TableCell>
   </TableRow>
 )

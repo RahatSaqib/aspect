@@ -1570,6 +1570,9 @@ async function seed(knex) {
       'exportColumns',
       'inventoryDaysThreshold',
       'monthStartsOnDay',
+      'tagRegexSampleId',
+      'tagRegexNotes',
+      'tagRegexPatientId',
     ])
     const [countryId] = await knex('Country').insert(countryData)
     countryData.id = countryId
@@ -1858,7 +1861,7 @@ async function seed(knex) {
         patientData: JSON.stringify(patients[_.random(patientNumber)]),
         senderVersion: '4.4',
         senderOperator: 'Aaron',
-        notes: 'This is an HIV test result',
+        notes: 'This is an HIV test result, 123-12',
         errorCode:
           result.category1 === resultCategoryErrorId
             ? errorCodes[_.random(errorCodes.length)]

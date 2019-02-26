@@ -50,6 +50,10 @@ const FILTERS_CONFIG = [
     requiredPermissions: [],
   },
   {
+    deviceType: true,
+    requiredPermissions: [],
+  },
+  {
     deviceStatus: true,
     requiredPermissions: [],
   },
@@ -58,7 +62,6 @@ const FILTERS_CONFIG = [
 const searchSanitizer = makeSearchParamsSanitizer({
   availableSortCol: [
     'name',
-    'state',
     'status',
     'availabilityRate',
     'errorRate',
@@ -243,11 +246,6 @@ export const DeviceList = ({
               {
                 key: 'name',
                 label: intl.formatMessage(messages.deviceName),
-                sortable: true,
-              },
-              {
-                key: 'state',
-                label: intl.formatMessage(messages.state),
                 sortable: true,
               },
               {

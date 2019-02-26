@@ -348,7 +348,7 @@ export class RouterDetail extends PureComponent {
           </CardContent>
         </Card>
         {/* Graphs */}
-        <ExpansionPanel defaultExpanded className={styles.Panel}>
+        <ExpansionPanel defaultExpanded>
           <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
             <Unit sm="1-1" md="1-2">
               <Typography variant="subtitle1">
@@ -397,7 +397,7 @@ export class RouterDetail extends PureComponent {
           Not yet implemented
         </AspectDialog>
         {/* Contacts */}
-        <ExpansionPanel defaultExpanded className={styles.Panel}>
+        <ExpansionPanel defaultExpanded>
           <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
             <Typography variant="subtitle1">Contacts</Typography>
           </ExpansionPanelSummary>
@@ -416,11 +416,7 @@ export class RouterDetail extends PureComponent {
           </ExpansionPanelDetails>
         </ExpansionPanel>
         {/* Calibration */}
-        <ExpansionPanel
-          expanded
-          onClick={this.handleToggleDialog}
-          className={styles.Panel}
-        >
+        <ExpansionPanel expanded onClick={this.handleToggleDialog}>
           <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
             <Typography variant="subtitle1">Calibration</Typography>
           </ExpansionPanelSummary>
@@ -429,11 +425,7 @@ export class RouterDetail extends PureComponent {
           </ExpansionPanelDetails>
         </ExpansionPanel>
         {/* Warranty */}
-        <ExpansionPanel
-          expanded
-          onClick={this.handleToggleDialog}
-          className={styles.Panel}
-        >
+        <ExpansionPanel expanded onClick={this.handleToggleDialog}>
           <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
             <Typography variant="subtitle1">Warranty</Typography>
           </ExpansionPanelSummary>
@@ -451,7 +443,7 @@ export class RouterDetail extends PureComponent {
           data={router.get('configurationData')}
         />
         {/* Technical information */}
-        <ExpansionPanel defaultExpanded className={styles.Panel}>
+        <ExpansionPanel defaultExpanded>
           <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
             <Typography variant="subtitle1">Technical information</Typography>
           </ExpansionPanelSummary>
