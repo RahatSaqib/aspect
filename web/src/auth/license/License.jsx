@@ -7,8 +7,8 @@ import { defineMessages } from 'react-intl'
 import { connect } from 'react-redux'
 import Button from '@material-ui/core/Button'
 import Card from '@material-ui/core/Card'
-import { Unit } from '../../components/pureGrids'
 import Helmet from 'react-helmet'
+import { Unit } from '../../components/pureGrids'
 
 import {
   fetchLicense,
@@ -85,14 +85,14 @@ const AspectLogo = () => (
   />
 )
 
-const License = ({
+export const License = ({
   intl,
   licenseContent,
   onDoNotAcceptClick,
   onAcceptClick,
 }) => (
   <div className={cssClasses('Background')}>
-    <Helmet title="Not Found" />
+    <Helmet title="License" />
     <div>
       <Unit sm="1-24" md="1-12" lg="1-12" xl="1-6" />
       <Unit sm="11-12" md="5-6" lg="5-6" xl="2-3">
@@ -103,7 +103,10 @@ const License = ({
           <div className={cssClasses('License__Container')}>
             <div className={cssClasses('License__Container__License')}>
               {licenseContent &&
-                licenseContent.split('\n').map(item => <p>{item}</p>)}
+                licenseContent
+                  .split('\n')
+                  // eslint-disable-next-line react/no-array-index-key
+                  .map((item, key) => <p key={key}>{item}</p>)}
             </div>
             <div className={cssClasses('License__Container__ActionRow')}>
               <Button

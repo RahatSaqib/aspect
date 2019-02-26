@@ -186,7 +186,8 @@ async function refreshToken(request) {
       'p.culture',
       'p.timezone',
       'p.lastPartnerId as partnerId',
-      'p.lastCountryId as countryId'
+      'p.lastCountryId as countryId',
+      'p.id as personId'
     )
 
   if (!data) {
@@ -247,7 +248,7 @@ async function hasFeature(userId, partnerId, module) {
 }
 
 // generate a new jwt for the given user data
-function getAccessToken({ id, name, partnerId }) {
+function getAccessToken({ id, name, partnerId, personId }) {
   return query('Get permissions for user and partner')
     .from('Permission as p')
     .innerJoin('JobFunctionPermission as jfp', 'p.id', 'jfp.permissionId')
@@ -258,15 +259,16 @@ function getAccessToken({ id, name, partnerId }) {
     .orderBy(['p.module', 'p.activity'])
     .distinct('p.module', 'p.activity')
     .then(async data => {
-      const applicableLicense = await getApplicableLicense(id, partnerId)
+      const applicableLicense = await getApplicableLicense(personId, partnerId)
       // create a new token
       const token = jwt.sign(
         {
           name,
           permissions: data.map(p => `${p.module}:${p.activity}`),
-          hasToAcceptLicenseId: applicableLicense.acceptedOn
-            ? null
-            : applicableLicense.id,
+          hasToAcceptLicenseId:
+            !applicableLicense || applicableLicense.acceptedOn
+              ? null
+              : applicableLicense.id,
         },
         config.secret,
         {
