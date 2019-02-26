@@ -49,6 +49,9 @@ function listDevicesBaseConfig() {
           deviceStatusId: Joi.number()
             .allow('')
             .description('Filter for device status ID'),
+          deviceTypeId: Joi.number()
+            .allow('')
+            .description('Filter for device type ID'),
           category: Joi.string().description('Filter for device type category'),
           type: Joi.string().description('Filter for device type'),
           name: Joi.string()
