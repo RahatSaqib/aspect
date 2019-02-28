@@ -15,6 +15,7 @@ const {
   seedStockIssuesUpdate,
   getPermissionModules,
   seedIssueEventTriggersForPartner,
+  seedUnknownErrorsIssue,
 } = require('../utils')
 const {
   allFeatureToId,
@@ -23,7 +24,6 @@ const {
   partnerTypeToId,
 } = require('../../src/shared/dictionary')
 
-const { seedUnknownErrorsIssue } = require('../seedUnknownErrorsIssue')
 const { seedDataCategory } = require('../dataCategoryLow')
 
 const now = new Date()

@@ -4,8 +4,8 @@ const {
   rowsAsObject,
   getDefaultMessageTypes,
   seedIssueEventTriggersForPartner,
+  seedUnknownErrorsIssue,
 } = require('../utils')
-const { seedUnknownErrorsIssue } = require('../seedUnknownErrorsIssue')
 
 async function seed(knex) {
   const [issueTypes, defaultMessageTypes] = await Promise.all([
