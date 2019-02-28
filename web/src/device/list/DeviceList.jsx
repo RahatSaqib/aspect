@@ -245,7 +245,7 @@ export const DeviceList = ({
             columns={[
               {
                 key: 'name',
-                label: intl.formatMessage(messages.deviceName),
+                label: intl.formatMessage(messages.devicesTitle),
                 sortable: true,
               },
               {

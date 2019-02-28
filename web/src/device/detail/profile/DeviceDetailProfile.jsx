@@ -1,5 +1,4 @@
 import _ from 'lodash'
-import Immutable from 'immutable'
 import classnames from 'classnames/bind'
 import React from 'react'
 import { defineMessages } from 'react-intl'
@@ -19,12 +18,9 @@ import {
   composeSanitizer,
 } from '../../../shared/selectors/searchParams'
 import { sanitizeFiltersStringBy } from '../../../filter/utils'
-import StyledDropdown from '../../../components/shared/StyledDropdown'
-import { Unit } from '../../../components/pureGrids'
 import DataTableProgressBar from '../../../components/shared/DataTableProgressBar'
 import BrowseTablePaginator from '../../../globals/components/BrowseTablePaginator'
 import BrowseEmptyList from '../../../globals/components/BrowseEmptyList'
-import AbnormalBarChart from '../../../dashboard/operational/AbnormalBarChart'
 import { fetchResults, exportResults } from '../../../result/ResultRedux'
 import { tokens } from '../../../deviceStatus/DeviceStatusRedux'
 import DeviceDetailBackBar from '../DeviceDetailBackBar'
@@ -37,8 +33,6 @@ import {
 import requirePermissions from '../../../components/shared/requirePermissions'
 
 const cssClasses = classnames.bind(require('../DeviceDetail.css'))
-
-const EMPTY_LIST = Immutable.List()
 
 const messages = defineMessages({
   deviceType: {
@@ -53,13 +47,9 @@ const messages = defineMessages({
     id: 'pages.DeviceDetailProfile.calibration',
     defaultMessage: 'Calibration',
   },
-  firmware: {
-    id: 'pages.DeviceDetailProfile.firmware',
-    defaultMessage: 'Firmware',
-  },
   location: {
     id: 'pages.DeviceDetailProfile.location',
-    defaultMessage: 'Location',
+    defaultMessage: 'Site',
   },
   connectivity: {
     id: 'pages.DeviceDetailProfile.connectivity',
@@ -68,10 +58,6 @@ const messages = defineMessages({
   lastSeen: {
     id: 'pages.DeviceDetailProfile.lastSeenOn',
     defaultMessage: 'Last seen {lastSeen}',
-  },
-  maintenance: {
-    id: 'pages.DeviceDetailProfile.maintenance',
-    defaultMessage: 'Maintenance',
   },
   warranty: {
     id: 'pages.DeviceDetailProfile.warranty',
@@ -372,8 +358,6 @@ export const DeviceDetailProfile = ({
   history,
   location,
   match,
-  dateRange,
-  onDateRangeChange,
   device,
   // --- injected by recompose ---
   onToggleDeviceStatus,
@@ -381,115 +365,75 @@ export const DeviceDetailProfile = ({
   sortDir,
   pageAt,
   pageSize,
-}) => (
-  <div>
-    <Helmet title={device.get('name')} />
-    <DeviceDetailBackBar
-      intl={intl}
-      history={history}
-      location={location}
-      match={match}
-      title={device.get('name')}
-    />
-    <section className={cssClasses('Section', 'Section--first')}>
-      <Card className={cssClasses('Section__Content')}>
-        <div>
-          <Summary
-            title={intl.formatMessage(messages.deviceType)}
-            description={device.getIn(['deviceType', 'name'])}
-            to={`/browse/device-type/${device.get('deviceTypeId')}`}
-          />
-          <Summary
-            title={intl.formatMessage(messages.status)}
-            description={device.get('status')}
-            action={
-              <Button variant="contained" onClick={onToggleDeviceStatus}>
-                Change
-              </Button>
-            }
-          />
-          <Summary
-            title={intl.formatMessage(messages.calibration)}
-            description="TODO: Up to date"
-            action={<Button variant="contained">Add record</Button>}
-          />
-          <Summary title={intl.formatMessage(messages.firmware)} />
-          <Summary
-            title={intl.formatMessage(messages.location)}
-            description={device.get('siteName')}
-            to={`/browse/site/${device.get('siteId')}`}
-          />
-          <Summary
-            title={intl.formatMessage(messages.connectivity)}
-            description={intl.formatMessage(messages.lastSeen, {
-              lastSeen: intl.formatRelative(device.get('lastSeen')),
-            })}
-          />
-          <Summary
-            title={intl.formatMessage(messages.maintenance)}
-            description="TODO: Up to date"
-            action={<Button variant="contained">Add record</Button>}
-          />
-          <Summary
-            title={intl.formatMessage(messages.warranty)}
-            description="TODO: Expires in 18 months"
-            action={<Button variant="contained">Update</Button>}
-          />
-        </div>
-      </Card>
-    </section>
-    <section className={cssClasses('Section')}>
-      <Card className={cssClasses('Section__Content')}>
-        <header className={cssClasses('Header')}>
-          <div className={cssClasses('Header__Title')}>Performance</div>
-          <div className={cssClasses('Header__Actions')}>
-            <StyledDropdown
-              value={dateRange}
-              source={[
-                {
-                  value: '30',
-                  label: '30 days',
-                },
-                {
-                  value: '60',
-                  label: '60 days',
-                },
-                {
-                  value: '90',
-                  label: '90 days',
-                },
-              ]}
-              onChange={onDateRangeChange}
+}) => {
+  const deviceName = `${device.get('type')} at ${device.get('siteName')}`
+  return (
+    <div>
+      <Helmet title={deviceName} />
+      <DeviceDetailBackBar
+        intl={intl}
+        history={history}
+        location={location}
+        match={match}
+        title={deviceName}
+      />
+      <section className={cssClasses('Section', 'Section--first')}>
+        <Card className={cssClasses('Section__Content')}>
+          <div>
+            <Summary
+              title={intl.formatMessage(messages.deviceType)}
+              description={device.getIn(['deviceType', 'name'])}
+              to={`/browse/device?filters=deviceTypeId%3D${device.get(
+                'deviceTypeId'
+              )}`}
+            />
+            <Summary
+              title={intl.formatMessage(messages.status)}
+              description={device.get('status')}
+              action={
+                <Button variant="contained" onClick={onToggleDeviceStatus}>
+                  Change
+                </Button>
+              }
+            />
+            <Summary
+              title={intl.formatMessage(messages.calibration)}
+              description="TODO: Up to date"
+              action={<Button variant="contained">Add record</Button>}
+            />
+            <Summary
+              title={intl.formatMessage(messages.location)}
+              description={device.get('siteName')}
+              to={`/browse/site/${device.get('siteId')}`}
+            />
+            <Summary
+              title={intl.formatMessage(messages.connectivity)}
+              description={intl.formatMessage(messages.lastSeen, {
+                lastSeen: `${intl.formatDate(
+                  device.get('lastSeen')
+                )} at ${intl.formatTime(device.get('lastSeen'))}`,
+              })}
+            />
+            <Summary
+              title={intl.formatMessage(messages.warranty)}
+              description="TODO: Expires in 18 months"
+              action={<Button variant="contained">Update</Button>}
             />
           </div>
-        </header>
-        <div>
-          {device
-            .getIn(['operations'], EMPTY_LIST)
-            .map(c => (
-              <AbnormalBarChart
-                key={c.get('key')}
-                intl={intl}
-                component={Unit}
-                item={c}
-                sm="1-2"
-                lg="1-4"
-              />
-            ))}
-        </div>
-      </Card>
-    </section>
-    <Results
-      match={match}
-      history={history}
-      location={location}
-      sortDir={sortDir}
-      sortCol={sortCol}
-      intl={intl}
-      pageAt={pageAt}
-      pageSize={pageSize}
-    />
-  </div>
-)
+        </Card>
+      </section>
+      <Results
+        match={match}
+        history={history}
+        location={location}
+        sortDir={sortDir}
+        sortCol={sortCol}
+        intl={intl}
+        pageAt={pageAt}
+        pageSize={pageSize}
+      />
+    </div>
+  )
+}
 
 export default enhance(DeviceDetailProfile)

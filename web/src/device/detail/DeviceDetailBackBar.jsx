@@ -58,10 +58,6 @@ const DeviceDetailBackBar = ({
         path: `/browse/device/:deviceId`,
       },
       {
-        label: intl.formatMessage(messages.operation),
-        path: `/browse/device/:deviceId/operation`,
-      },
-      {
         label: intl.formatMessage(messages.alerts),
         path: `/browse/device/:deviceId/alerts`,
       },
