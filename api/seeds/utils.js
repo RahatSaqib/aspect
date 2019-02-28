@@ -1599,23 +1599,8 @@ async function seedIssueResolutionTrigger(
   ])
 }
 // ***********************************************************************
-async function seedUnknownErrorsIssue(knex, partnerName, adminName) {
-  const { id: partnerId } = await knex('Partner')
-    .where({ name: partnerName })
-    .first()
-
-  const { id: adminId } = await knex('User as u')
-    .where({ 'u.name': adminName })
-    .first('u.id')
-
-  const now = new Date()
-  const auditFields = {
-    createdOn: now,
-    createdBy: adminId,
-    updatedOn: now,
-    updatedBy: adminId,
-  }
-
+async function seedUnknownErrorsIssue(knex, { partnerId, auditFields }) {
+  const auditDates = _.pick(auditFields, ['createdOn', 'updatedOn'])
   const [issueCategories, messageSeverities] = await Promise.all([
     rowsAsObject(knex, 'IssueCategory', 'externalId'),
     rowsAsObject(knex, 'MessageSeverity'),
@@ -1638,73 +1623,75 @@ async function seedUnknownErrorsIssue(knex, partnerName, adminName) {
   // ------------------------------------------
   // Module UnknownErrors issue templates
   // ------------------------------------------
-  const [moduleAlertTemplateId] = await knex('AlertTemplate').insert(
-    Object.assign(
-      {
-        message:
-          'Errors without code on module {{issue.data.moduleName}}, conduct troubleshooting.',
-      },
-      auditFields
-    )
+  const { id: moduleAlertTemplateId } = await upsertSingle(
+    knex,
+    'AlertTemplate',
+    ['message'],
+    {
+      message:
+        'Errors without code on module {{issue.data.moduleName}}, conduct troubleshooting.',
+      ...auditFields,
+    }
   )
-
-  const [moduleSmsTemplateId] = await knex('SmsTemplate').insert(
-    Object.assign(
-      {
-        message:
-          '{{device.name}}: Errors without code on module {{issue.data.moduleName}}, conduct troubleshooting.',
-      },
-      auditFields
-    )
+  const { id: moduleSmsTemplateId } = await upsertSingle(
+    knex,
+    'SmsTemplate',
+    ['message'],
+    {
+      message:
+        '{{device.name}}: Errors without code on module {{issue.data.moduleName}}, conduct troubleshooting.',
+      ...auditFields,
+    }
   )
-
-  const [moduleEmailTemplateId] = await knex('EmailTemplate').insert(
-    Object.assign(
-      {
-        subject:
-          '{{device.name}}: Errors without code on module {{issue.data.moduleName}}',
-        body:
-          '{{device.name}}: Errors without code on module {{issue.data.moduleName}}, conduct troubleshooting.',
-        htmlBody:
-          '{{device.name}}: Errors without code on module <em>{{issue.data.moduleName}}</em>, conduct troubleshooting.',
-      },
-      auditFields
-    )
+  const { id: moduleEmailTemplateId } = await upsertSingle(
+    knex,
+    'EmailTemplate',
+    ['subject', 'body'],
+    {
+      subject:
+        '{{device.name}}: Errors without code on module {{issue.data.moduleName}}',
+      body:
+        '{{device.name}}: Errors without code on module {{issue.data.moduleName}}, conduct troubleshooting.',
+      htmlBody:
+        '{{device.name}}: Errors without code on module <em>{{issue.data.moduleName}}</em>, conduct troubleshooting.',
+      ...auditFields,
+    }
   )
 
   // ------------------------------------------
   // Machine UnknownErrors issue templates
   // ------------------------------------------
-  const [machineAlertTemplateId] = await knex('AlertTemplate').insert(
-    Object.assign(
-      {
-        message: 'Errors without code across machine, conduct troubleshooting',
-      },
-      auditFields
-    )
+  const { id: machineAlertTemplateId } = await upsertSingle(
+    knex,
+    'AlertTemplate',
+    ['message'],
+    {
+      message: 'Errors without code across machine, conduct troubleshooting',
+      ...auditFields,
+    }
   )
-
-  const [machineSmsTemplateId] = await knex('SmsTemplate').insert(
-    Object.assign(
-      {
-        message:
-          '{{device.name}}: Errors without code across machine, conduct troubleshooting.',
-      },
-      auditFields
-    )
+  const { id: machineSmsTemplateId } = await upsertSingle(
+    knex,
+    'SmsTemplate',
+    ['message'],
+    {
+      message:
+        '{{device.name}}: Errors without code across machine, conduct troubleshooting.',
+      ...auditFields,
+    }
   )
-
-  const [machineEmailTemplateId] = await knex('EmailTemplate').insert(
-    Object.assign(
-      {
-        subject: '{{device.name}}: Errors without code across machine',
-        body:
-          '{{device.name}}: Errors without code across machine, conduct troubleshooting.',
-        htmlBody:
-          '{{device.name}}: Errors without code across machine, conduct troubleshooting.',
-      },
-      auditFields
-    )
+  const { id: machineEmailTemplateId } = await upsertSingle(
+    knex,
+    'EmailTemplate',
+    ['subject', 'body'],
+    {
+      subject: '{{device.name}}: Errors without code across machine',
+      body:
+        '{{device.name}}: Errors without code across machine, conduct troubleshooting.',
+      htmlBody:
+        '{{device.name}}: Errors without code across machine, conduct troubleshooting.',
+      ...auditFields,
+    }
   )
 
   // ------------------------------------------
@@ -1895,8 +1882,7 @@ async function seedUnknownErrorsIssue(knex, partnerName, adminName) {
         evaluationMethod: 'issue-age',
         evaluationParameter: { days: 30 },
       }),
-      createdOn: now,
-      updatedOn: now,
+      ...auditDates,
     },
     {
       issueTypeId: moduleIssueTypeId,
@@ -1906,8 +1892,7 @@ async function seedUnknownErrorsIssue(knex, partnerName, adminName) {
         evaluationMethod: 'issue-age',
         evaluationParameter: { days: 60 },
       }),
-      createdOn: now,
-      updatedOn: now,
+      ...auditDates,
     },
     // Machine
     {
@@ -1918,8 +1903,7 @@ async function seedUnknownErrorsIssue(knex, partnerName, adminName) {
         evaluationMethod: 'issue-age',
         evaluationParameter: { days: 30 },
       }),
-      createdOn: now,
-      updatedOn: now,
+      ...auditDates,
     },
     {
       issueTypeId: machineIssueTypeId,
@@ -1929,8 +1913,7 @@ async function seedUnknownErrorsIssue(knex, partnerName, adminName) {
         evaluationMethod: 'issue-age',
         evaluationParameter: { days: 60 },
       }),
-      createdOn: now,
-      updatedOn: now,
+      ...auditDates,
     },
   ])
 }
@@ -1981,7 +1964,7 @@ async function seedIssues(
 ) {
   await seedStockIssues(knex)
   await seedStockIssuesUpdate(knex, 'Myanmar')
-  await seedUnknownErrorsIssue(knex, 'Myanmar', 'myanmar_admin')
+  await seedUnknownErrorsIssue(knex, { partnerId, auditFields })
   await seedIssueEventTriggersForPartner(knex, partnerId, {
     issueTypeWhitelist,
     issueTypeBlacklist,

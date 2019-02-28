@@ -183,7 +183,7 @@ async function seed(knex) {
     .update('level', 1)
     .where('name', 'RO Reagent Health')
 
-  await seedUnknownErrorsIssue(knex, 'Myanmar', 'myanmar_admin')
+  await seedUnknownErrorsIssue(knex, { partnerId, auditFields })
 
   await seedIssueEventTriggersForPartner(knex, partnerId, {
     issueTypeWhitelist: ['DeviceMaintenance', 'ModuleReplaced'],

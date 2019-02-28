@@ -1379,7 +1379,7 @@ async function seed(knex) {
 
   await seedStockIssues(knex)
   await seedStockIssuesUpdate(knex, 'Myanmar')
-  await seedUnknownErrorsIssue(knex, 'Myanmar', 'myanmar_admin')
+  await seedUnknownErrorsIssue(knex, { partnerId, auditFields })
   await seedIssueEventTriggersForPartner(knex, partnerId, {
     issueTypeWhitelist: ['DeviceMaintenance', 'ModuleReplaced'],
   })
