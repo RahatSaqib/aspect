@@ -10,7 +10,7 @@ async function up(knex) {
       .references('id')
       .inTable('Partner')
     license.dateTime('createdOn').notNullable()
-    license.text('content').notNullable()
+    license.mediumtext('content').notNullable()
     license.charset('utf8')
   })
 

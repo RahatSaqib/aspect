@@ -577,23 +577,47 @@ async function assignAllFeaturesToJobFunctionIds(
   )
 }
 
-async function addLicenses(knex, partnerId = null) {
-  const licenses = await readJson(`./seeds/fixtures/License.json`)
+async function addLicenses(knex) {
+  const { data: licensesByPartner } = await readJson(
+    `./seeds/fixtures/License.json`
+  )
+
+  const [partners] = await Promise.all([rowsAsObject(knex, 'Partner')])
+
+  await Promise.each(
+    licensesByPartner,
+    async ({ partnerNames, createdOn, content }) => {
+      await knex('License').insert(
+        _.map(partnerNames, partnerName => ({
+          partnerId: partnerName ? partners[partnerName].id : null,
+          createdOn: new Date(createdOn),
+          content: content.replace('PARTNERNAME', partnerName),
+        }))
+      )
+    }
+  )
+}
+
+async function addLicensePersons(knex, personNameToExclude = '') {
+  const persons = await knex('Person')
+    .whereNot('name', personNameToExclude)
+    .select('id', 'lastPartnerId', 'name')
 
   await Promise.all(
-    _.map(
-      _.filter(
-        licenses.data,
-        val => (partnerId && !val.generic) || (!partnerId && val.generic)
-      ),
-      async license => {
-        await knex('License').insert({
-          partnerId: partnerId || null,
-          createdOn: new Date(license.createdOn),
-          content: license.content.replace('PARTNERID', partnerId),
-        })
-      }
-    )
+    _.map(persons, async p => {
+      const { id: licenseId } = await knex('License')
+        .where('partnerId', p.lastPartnerId)
+        .orWhere('partnerId', null)
+        .orderBy('partnerId', 'desc')
+        .orderBy('createdOn', 'desc')
+        .first('id')
+      await knex('LicensePerson').insert({
+        personId: p.id,
+        licenseId,
+        ip: '127.0.0.1',
+        acceptedOn: new Date(),
+      })
+    })
   )
 }
 
@@ -607,4 +631,5 @@ module.exports = {
   seedIssueEventTriggersForPartner,
   assignAllFeaturesToJobFunctionIds,
   addLicenses,
+  addLicensePersons,
 }

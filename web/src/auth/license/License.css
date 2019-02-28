@@ -1,9 +1,10 @@
-/*License page styles*/
-
 @import '../../globals/variables.css';
 
 .Background {
-  composes: PreLogin__Background from '../../components/shared/Shared.css';
+  height: 100%;
+  /*This makes the top half of the screen green and bottom half in gray*/
+  background: var(--aspect-color-grey-7);
+  padding-top: 80px;
 }
 
 .License__Container {
@@ -12,7 +13,7 @@
 
 .License__Container__License{
   width: 100%;
-  height: 400px;
+  height: 550px;
   border: solid 1px lightgray;
   padding: 15px;
   overflow: auto;
