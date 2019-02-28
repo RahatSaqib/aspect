@@ -3949,6 +3949,7 @@ async function seed(knex) {
     assayId: assayGeneXpertHiv1VlId,
     formSchema: geneXpertHiv1VlFormSchema,
   })
+
   await knex('ResultForm').insert({
     partnerId: partnerOneId,
     assayId: assayGeneXpertHiv1QualId,

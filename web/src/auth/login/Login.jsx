@@ -120,7 +120,7 @@ const enhance = compose(
 const AspectLogo = () => (
   <img
     className={cssClasses('Logo__Image')}
-    src={require('./logo_aspect.png')}
+    src={require('../logo_aspect.png')}
     alt="Aspect"
   />
 )

@@ -672,4 +672,60 @@ describe('Authentication routes', () => {
         })
     })
   })
+
+  describe('GET to /auth/license', () => {
+    beforeEach(() => {
+      path = '/api/auth/license?licenseId=1'
+    })
+
+    it('should return the license text for the given ID', done => {
+      server
+        .get(path)
+        .set('Authorization', `Bearer ${jwToken}`)
+        .end((err, res) => {
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+          assert.property(res.body, 'data')
+          assert.typeOf(res.body.data, 'Object')
+          assert.property(res.body.data, 'id')
+          assert.property(res.body.data, 'createdOn')
+          assert.property(res.body.data, 'content')
+          done()
+        })
+    })
+  })
+
+  describe('POST to /auth/license', () => {
+    beforeEach(() => {
+      path = '/api/auth/license'
+    })
+
+    it('should update the license accepted date for the user in the db and return a new JWT', done => {
+      server
+        .post(path)
+        .set('Authorization', `Bearer ${jwToken}`)
+        .send({
+          licenseId: 1,
+          clientId,
+          token: refreshToken,
+        })
+        .end((err, res) => {
+          assert.equal(res.status, 200)
+          assert.isAbove(res.body.access.length, 100)
+          assert.isAbove(res.body.refresh.length, 50)
+          assert.isAbove(res.body.clientId.length, 32)
+
+          jwt.verify(res.body.access, config.secret, (err, decoded) => {
+            assert.isNotOk(err) // isNotOk = is falsy
+            assert.property(decoded, 'name')
+            assert.property(decoded, 'permissions')
+            assert.property(decoded, 'iat')
+            assert.property(decoded, 'exp')
+            assert.property(decoded, 'iss')
+
+            done()
+          })
+        })
+    })
+  })
 })
