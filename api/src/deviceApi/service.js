@@ -1,6 +1,7 @@
 const Boom = require('boom')
 const _ = require('lodash')
 const { knex, transact, run } = require('../db')
+const { getRemoteAddress } = require('../shared/request')
 const { asyncHandler } = require('../routes')
 const { deviceStatusToId, deviceTypeToPlugin } = require('../shared/dictionary')
 
@@ -135,7 +136,7 @@ function deviceApiHandler(handler, defaultHandlerOptions = {}) {
     const { device, now } = context
     const deviceId = device.id
     // TODO Does Hapi Remote address work through proxies? Check headers?
-    const remoteAddress = request.info.remoteAddress || ''
+    const remoteAddress = getRemoteAddress(request)
 
     // Insert Device Log and Update Ping prior to calling handler and
     // in separate transaction so it is recorded even if handler fails
@@ -1055,7 +1056,7 @@ async function updateLogs(request) {
     resultId: null,
     source: _.get(request.payload, 'log.source', ''),
     createdOn: new Date(),
-    senderIp: (request.info && request.info.remoteAddress) || '',
+    senderIp: getRemoteAddress(request),
     rawMessage: JSON.stringify(request.plugins.rawPayload),
   })
 }

@@ -11,6 +11,8 @@ const {
   createResetPasswordToken,
   updatePasswordWithResetPasswordToken,
   getUserFeatures,
+  getLicense,
+  acceptLicense,
 } = require('./service')
 
 const routes = [
@@ -154,6 +156,40 @@ const routes = [
     config: {
       description: 'Get UI features of the logged in user',
       notes: 'Returns a list of feature object',
+    },
+  },
+  {
+    method: 'GET',
+    path: '/auth/license',
+    handler: asyncHandler(getLicense),
+    config: {
+      description: 'Load license for the user',
+      notes: 'Loads the the license that applies to the current user',
+      validate: {
+        query: {
+          licenseId: Joi.number()
+            .description('License ID')
+            .required()
+            .description('ID of the license'),
+        },
+      },
+    },
+  },
+  {
+    method: 'POST',
+    path: '/auth/license',
+    handler: asyncHandler(acceptLicense),
+    config: {
+      description: 'Accepts the given license for the current user',
+      notes:
+        'Looks up the license based on the give license ID and marks it as accepted for the current user',
+      validate: {
+        payload: {
+          licenseId: Joi.number().required(),
+          clientId: Joi.string().required(),
+          token: Joi.string().required(),
+        },
+      },
     },
   },
 ]

@@ -1,6 +1,7 @@
 const config = require('../config')
 const { parseDateOrDefault } = require('../shared/date')
 const { logCreated } = require('./actions')
+const { getRemoteAddress } = require('../shared/request')
 
 const logConsoleDataKeys = {
   request: ['remoteAddress', 'method', 'path', 'statusCode', 'timeElapsed'],
@@ -29,7 +30,6 @@ function subscribeOnLogCreated(handler) {
 function logRequest(queue, request) {
   const { info, auth, method, url, response } = request
 
-  const { remoteAddress } = info
   const { path } = url
   const { statusCode } = response
 
@@ -43,7 +43,7 @@ function logRequest(queue, request) {
     path,
     statusCode,
     timeElapsed,
-    remoteAddress,
+    remoteAddress: getRemoteAddress(request),
   }
 
   logAction(logCreated('request', severity, data, userName), queue)

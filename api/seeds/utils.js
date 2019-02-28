@@ -1986,6 +1986,50 @@ async function dropUniqueKey(knex, tableName) {
   })
 }
 
+async function addLicenses(knex) {
+  const { data: licensesByPartner } = await readJson(
+    `./seeds/fixtures/License.json`
+  )
+
+  const [partners] = await Promise.all([rowsAsObject(knex, 'Partner')])
+
+  await Promise.each(
+    licensesByPartner,
+    async ({ partnerNames, createdOn, content }) => {
+      await knex('License').insert(
+        _.map(partnerNames, partnerName => ({
+          partnerId: partnerName ? partners[partnerName].id : null,
+          createdOn: new Date(createdOn),
+          content: content.replace('PARTNERNAME', partnerName),
+        }))
+      )
+    }
+  )
+}
+
+async function addLicensePersons(knex, personNameToExclude = '') {
+  const persons = await knex('Person')
+    .whereNot('name', personNameToExclude)
+    .select('id', 'lastPartnerId', 'name')
+
+  await Promise.all(
+    _.map(persons, async p => {
+      const { id: licenseId } = await knex('License')
+        .where('partnerId', p.lastPartnerId)
+        .orWhere('partnerId', null)
+        .orderBy('partnerId', 'desc')
+        .orderBy('createdOn', 'desc')
+        .first('id')
+      await knex('LicensePerson').insert({
+        personId: p.id,
+        licenseId,
+        ip: '127.0.0.1',
+        acceptedOn: new Date(),
+      })
+    })
+  )
+}
+
 module.exports = {
   seed,
   rowsAsObject,
@@ -1995,6 +2039,7 @@ module.exports = {
   getPermissionModules,
   seedIssueEventTriggersForPartner,
   assignAllFeaturesToJobFunctionIds,
+
   upsertItems,
   upsertSingle,
   seedIssues,
@@ -2014,4 +2059,7 @@ module.exports = {
   uniqueKeys,
   addUniqueKey,
   dropUniqueKey,
+
+  addLicenses,
+  addLicensePersons,
 }

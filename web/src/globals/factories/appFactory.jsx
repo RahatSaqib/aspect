@@ -75,6 +75,7 @@ const mapStateToProps = state => {
     clientId: state.user.clientId,
     displayPreferences: state.user.displayPreferences,
     drawerOpen: state.user.drawerOpen,
+    hasToAcceptLicenseId: state.user.jwt.hasToAcceptLicenseId,
     // For render()
     isLoggedOut,
     loggedOutReason,
