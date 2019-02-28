@@ -164,7 +164,13 @@ async function seed(knex) {
     jobFunctionIdLabUser,
     jobFunctionIdRegionalOfficer,
   }
-  const baseProps = { partnerId, pluginName, jobFunctionIds, auditFields }
+  const baseProps = {
+    partnerId,
+    pluginName,
+    jobFunctionIds,
+    auditFields,
+    issueTypeWhitelist: ['DeviceMaintenance', 'ModuleReplaced'],
+  }
 
   const featureModules = await allFeatureToId()
   await knex('JobFunctionFeature').insert([

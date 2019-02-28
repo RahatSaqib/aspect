@@ -15,6 +15,14 @@ const uniqueKeys = {
   ],
   IssueResolutionTrigger: ['issueTypeId', 'partnerId'],
   IssueEscalationTrigger: ['issueTypeId', 'partnerId', 'escalateToLevel'],
+  MessageType: [
+    'messageSeverityId',
+    'alertTemplateId',
+    'smsTemplateId',
+    'emailTemplateId',
+    'webhookTemplateId',
+  ],
+  IssueType: ['externalId'],
 }
 
 // Helper for seeed files. Ru
@@ -167,26 +175,28 @@ async function seedStockIssues(knex) {
     ...auditFields,
   })
 
-  const stockoutMessageTypeId = await knex('MessageType').insert(
+  const { id: stockoutMessageTypeId } = await upsertSingle(
+    knex,
+    'MessageType',
     {
       messageSeverityId: messageSeverities.Alert.id,
       alertTemplateId: stockoutAlertTemplateId,
       smsTemplateId: stockoutSmsTemplateId,
       emailTemplateId: stockoutEmailTemplateId,
-    },
-    'id'
+    }
   )
-  const stockExpiringMessageTypeId = await knex('MessageType').insert(
+  const { id: stockExpiringMessageTypeId } = await upsertSingle(
+    knex,
+    'MessageType',
     {
       messageSeverityId: messageSeverities.Alert.id,
       alertTemplateId: stockExpiringAlertTemplateId,
       smsTemplateId: stockExpiringSmsTemplateId,
       emailTemplateId: stockExpiringEmailTemplateId,
-    },
-    'id'
+    }
   )
 
-  await knex('IssueType').insert([
+  await upsertItems(knex, 'IssueType', uniqueKeys.IssueType, [
     {
       name: 'Inventory Stockout',
       externalId: 'InventoryStockout',
@@ -225,7 +235,7 @@ async function seedStockIssues(knex) {
   // -------------------------------------------
   // Notifications
   // -------------------------------------------
-  await knex('NotificationType').insert([
+  await upsertNotificationTypes(knex, [
     // ------------
     // Stockout
     // ------------
@@ -357,7 +367,7 @@ async function seedStockIssues(knex) {
   // -------------------------------------------
   // Issue Escalation Triggers
   // -------------------------------------------
-  await knex('IssueEscalationTrigger').insert([
+  await upsertIssueEscalationTrigger(knex, [
     // ------------
     // Inventory Stockout escalation
     // ------------
@@ -648,6 +658,28 @@ async function upsertItems(knex, tableName, whereKeys, items) {
     })
     await Promise.all(queries)
   }
+}
+// ***********************************************************************
+async function upsertSingle(knex, tableName, whereClause, item) {
+  if (typeof whereClause === 'string') {
+    // single field name which is a primary or unique key, 'item' is required param
+    const fieldKey = whereClause
+    whereClause = { [fieldKey]: item[fieldKey] }
+  } else if (_.isArray(whereClause)) {
+    // array of field names, 'item' is required param
+    whereClause = _.pick(item, whereClause)
+  } else {
+    // 'whereClause' is json, if 'item' is missing set it to 'whereClause'
+    item = item || whereClause
+  }
+  const q = knex(tableName).where(whereClause)
+  const existingItem = await q.first()
+  if (existingItem) {
+    await q.clone().update(item)
+  } else {
+    await knex(tableName).insert(item)
+  }
+  return q.first()
 }
 // ***********************************************************************
 async function upsertNotificationTypes(knex, items) {
@@ -1584,13 +1616,10 @@ async function seedUnknownErrorsIssue(knex, partnerName, adminName) {
     updatedBy: adminId,
   }
 
-  const issueCategories = await rowsAsObject(
-    knex,
-    'IssueCategory',
-    'externalId'
-  )
-
-  const messageSeverities = await rowsAsObject(knex, 'MessageSeverity')
+  const [issueCategories, messageSeverities] = await Promise.all([
+    rowsAsObject(knex, 'IssueCategory', 'externalId'),
+    rowsAsObject(knex, 'MessageSeverity'),
+  ])
 
   const { id: jobFunctionIdRegionalOfficer } = await knex('JobFunction')
     .where({
@@ -1681,14 +1710,13 @@ async function seedUnknownErrorsIssue(knex, partnerName, adminName) {
   // ------------------------------------------
   // MessageType
   // ------------------------------------------
-  const [moduleMessageTypeId] = await knex('MessageType').insert({
+  const { id: moduleMessageTypeId } = await upsertSingle(knex, 'MessageType', {
     messageSeverityId: messageSeverities.Alert.id,
     alertTemplateId: moduleAlertTemplateId,
     smsTemplateId: moduleSmsTemplateId,
     emailTemplateId: moduleEmailTemplateId,
   })
-
-  const [machineMessageTypeId] = await knex('MessageType').insert({
+  const { id: machineMessageTypeId } = await upsertSingle(knex, 'MessageType', {
     messageSeverityId: messageSeverities.Alert.id,
     alertTemplateId: machineAlertTemplateId,
     smsTemplateId: machineSmsTemplateId,
@@ -1696,27 +1724,37 @@ async function seedUnknownErrorsIssue(knex, partnerName, adminName) {
   })
 
   // ------------------------------------------
-  // Issuetype
+  // IssueType
   // ------------------------------------------
-  const [moduleIssueTypeId] = await knex('IssueType').insert({
-    name: 'Module Unknown Error',
-    externalId: 'ModuleUnknownError',
-    i18nKey: 'issueStatusModuleUnknownError',
-    issueCategoryId: issueCategories.DeviceHealth.id,
-    defaultMessageTypeId: moduleMessageTypeId,
-  })
-  const [machineIssueTypeId] = await knex('IssueType').insert({
-    name: 'Machine Unknown Error',
-    externalId: 'MachineUnknownError',
-    i18nKey: 'issueStatusMachineUnknownError',
-    issueCategoryId: issueCategories.DeviceHealth.id,
-    defaultMessageTypeId: machineMessageTypeId,
-  })
+  const { id: moduleIssueTypeId } = await upsertSingle(
+    knex,
+    'IssueType',
+    uniqueKeys.IssueType,
+    {
+      name: 'Module Unknown Error',
+      externalId: 'ModuleUnknownError',
+      i18nKey: 'issueStatusModuleUnknownError',
+      issueCategoryId: issueCategories.DeviceHealth.id,
+      defaultMessageTypeId: moduleMessageTypeId,
+    }
+  )
+  const { id: machineIssueTypeId } = await upsertSingle(
+    knex,
+    'IssueType',
+    uniqueKeys.IssueType,
+    {
+      name: 'Machine Unknown Error',
+      externalId: 'MachineUnknownError',
+      i18nKey: 'issueStatusMachineUnknownError',
+      issueCategoryId: issueCategories.DeviceHealth.id,
+      defaultMessageTypeId: machineMessageTypeId,
+    }
+  )
 
   // ------------------------------------------
   // NotificationType
   // ------------------------------------------
-  await knex('NotificationType').insert([
+  await upsertNotificationTypes(knex, [
     // Module
     Object.assign(
       {
@@ -1847,7 +1885,7 @@ async function seedUnknownErrorsIssue(knex, partnerName, adminName) {
   // ------------------------------------------
   // Issue Escalation Triggers
   // ------------------------------------------
-  await knex('IssueEscalationTrigger').insert([
+  await upsertIssueEscalationTrigger(knex, [
     // Module
     {
       issueTypeId: moduleIssueTypeId,
@@ -1931,12 +1969,22 @@ async function updateUnknownErrorOnModuleMessage(knex) {
     })
 }
 // ***********************************************************************
-async function seedIssues(knex, { partnerId, pluginName, auditFields }) {
+async function seedIssues(
+  knex,
+  {
+    partnerId,
+    pluginName,
+    auditFields,
+    issueTypeBlacklist = [],
+    issueTypeWhitelist = [],
+  }
+) {
   await seedStockIssues(knex)
   await seedStockIssuesUpdate(knex, 'Myanmar')
   await seedUnknownErrorsIssue(knex, 'Myanmar', 'myanmar_admin')
   await seedIssueEventTriggersForPartner(knex, partnerId, {
-    issueTypeWhitelist: ['DeviceMaintenance', 'ModuleReplaced'],
+    issueTypeWhitelist,
+    issueTypeBlacklist,
   })
 
   // issue triggers
@@ -1946,12 +1994,12 @@ async function seedIssues(knex, { partnerId, pluginName, auditFields }) {
 // ***********************************************************************
 async function addUniqueKey(knex, tableName) {
   await knex.schema.alterTable(tableName, table => {
-    table.unique(uniqueKeys[tableName], `ix_${tableName}_unique`)
+    table.unique(uniqueKeys[tableName], `${tableName}_unique`)
   })
 }
 async function dropUniqueKey(knex, tableName) {
   await knex.schema.alterTable(tableName, table => {
-    table.dropUnique(uniqueKeys[tableName], `ix_${tableName}_unique`)
+    table.dropUnique(uniqueKeys[tableName], `${tableName}_unique`)
   })
 }
 
@@ -1965,6 +2013,7 @@ module.exports = {
   seedIssueEventTriggersForPartner,
   assignAllFeaturesToJobFunctionIds,
   upsertItems,
+  upsertSingle,
   seedIssues,
 
   seedNotificationTypes,
