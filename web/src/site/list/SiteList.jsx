@@ -55,7 +55,7 @@ const messages = defineMessages({
   },
   externalId: {
     id: 'pages.SiteList.externalId',
-    defaultMessage: 'Facility Code',
+    defaultMessage: 'Site ID',
   },
   paginatorStatus: {
     id: 'pages.SiteList.paginatorStatus',
@@ -211,6 +211,11 @@ export const SiteList = ({
               {
                 key: 'state',
                 label: intl.formatMessage(messages.state),
+                sortable: true,
+              },
+              {
+                key: 'siteId',
+                label: intl.formatMessage(messages.externalId),
                 sortable: true,
               },
               {
