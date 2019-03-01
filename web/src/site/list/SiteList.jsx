@@ -59,7 +59,7 @@ export const messages = defineMessages({
   },
   siteIssues: {
     id: 'pages.SiteList.siteIssues',
-    defaultMessage: 'Issues',
+    defaultMessage: 'Issue Categories',
   },
   deviceHealth: {
     id: 'pages.SiteList.deviceHealth',
