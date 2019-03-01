@@ -9,6 +9,7 @@ const tablesWithUniqueKeys = [
   'IssueEscalationTrigger',
   'NotificationType',
   'MessageType',
+  'IssueType',
 ]
 
 async function up(knex) {

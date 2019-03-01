@@ -1626,7 +1626,11 @@ async function seedUnknownErrorsIssue(knex, { partnerId, auditFields }) {
   const { id: moduleAlertTemplateId } = await upsertSingle(
     knex,
     'AlertTemplate',
-    ['message'],
+    [
+      'message',
+      'hideWhenSiteFilterIsSelected',
+      'hideWhenSiteFilterIsNotSelected',
+    ],
     {
       message:
         'Errors without code on module {{issue.data.moduleName}}, conduct troubleshooting.',
@@ -1664,7 +1668,11 @@ async function seedUnknownErrorsIssue(knex, { partnerId, auditFields }) {
   const { id: machineAlertTemplateId } = await upsertSingle(
     knex,
     'AlertTemplate',
-    ['message'],
+    [
+      'message',
+      'hideWhenSiteFilterIsSelected',
+      'hideWhenSiteFilterIsNotSelected',
+    ],
     {
       message: 'Errors without code across machine, conduct troubleshooting',
       ...auditFields,
