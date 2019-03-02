@@ -111,11 +111,19 @@ const enhance = compose(
       }),
     }
   ),
-  withProps(({ siteList, activeSiteIds, siteSummaryMap }) => {
+  withProps(({ siteList, activeSiteIds, siteSummaryMap, deviceSummaryMap }) => {
     const siteStateAbbrs = siteList.map(it => it.get('stateAbbr')).toSet()
-    const issueSiteIds = getIssueIdsFromSummaryMap(
+    const issueSiteIdsFromSiteSummaryMap = getIssueIdsFromSummaryMap(
       'siteIds',
       siteSummaryMap.toJS()
+    )
+    const issueSiteIdsFromDeviceSummaryMap = getIssueIdsFromSummaryMap(
+      'siteIds',
+      deviceSummaryMap.toJS()
+    ).map(id => String(id))
+
+    const issueSiteIds = _.uniq(
+      issueSiteIdsFromSiteSummaryMap.concat(issueSiteIdsFromDeviceSummaryMap)
     )
 
     return {
