@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import _fp from 'lodash/fp'
 import Immutable from 'immutable'
 import classnames from 'classnames/bind'
 import React from 'react'
@@ -26,6 +27,26 @@ import messages from './messages'
 const cssClasses = classnames.bind(require('./Status.css'))
 
 const EMPTY_LIST = Immutable.List()
+
+const getIssueIdsFromSummaryMap = (key, summaryMap) =>
+  _fp.pipe(
+    _fp.values,
+    _fp.flatMap(_fp.prop([key])),
+    _fp.uniq,
+    _fp.filter(id => !_fp.isNil(id))
+  )(summaryMap)
+
+function getFillColor({ id, activeSiteIds, issueSiteIds }) {
+  if (_.includes(activeSiteIds, id)) {
+    return process.env['--aspect-color-mandy']
+  }
+
+  if (_.includes(issueSiteIds, id)) {
+    return process.env['--aspect-color-supernova']
+  }
+
+  return process.env['--aspect-color-mantis']
+}
 
 const enhance = compose(
   pure,
@@ -90,8 +111,12 @@ const enhance = compose(
       }),
     }
   ),
-  withProps(({ siteList, activeSiteIds }) => {
+  withProps(({ siteList, activeSiteIds, siteSummaryMap }) => {
     const siteStateAbbrs = siteList.map(it => it.get('stateAbbr')).toSet()
+    const issueSiteIds = getIssueIdsFromSummaryMap(
+      'siteIds',
+      siteSummaryMap.toJS()
+    )
 
     return {
       fill: ({ properties: { postal } }) =>
@@ -101,7 +126,7 @@ const enhance = compose(
           id: it.get('name'),
           siteName: it.get('name'),
           size: 3,
-          fill: _.includes(activeSiteIds, it.get('id')) ? '#EB4D62' : '#73D749',
+          fill: getFillColor({ activeSiteIds, issueSiteIds, id: it.get('id') }),
           latitude: it.get('latitude'),
           longitude: it.get('longitude'),
         }))
