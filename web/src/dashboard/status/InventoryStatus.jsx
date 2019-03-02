@@ -95,6 +95,7 @@ const enhance = compose(
         .map(it => ({
           id: it.get('name'),
           size: 3,
+          siteName: it.get('name'),
           fill: _.includes(activeSiteIds, it.get('id')) ? '#EB4D62' : '#73D749',
           latitude: it.get('latitude'),
           longitude: it.get('longitude'),

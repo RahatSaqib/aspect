@@ -99,6 +99,7 @@ const enhance = compose(
       points: siteList
         .map(it => ({
           id: it.get('name'),
+          siteName: it.get('name'),
           size: 3,
           fill: _.includes(activeSiteIds, it.get('id')) ? '#EB4D62' : '#73D749',
           latitude: it.get('latitude'),

@@ -3,6 +3,7 @@ import React from 'react'
 import { ScaleSVG } from '@vx/responsive'
 import { Group } from '@vx/group'
 import { GlyphDot } from '@vx/glyph'
+import Tooltip from '@material-ui/core/Tooltip'
 import CountryMap from '../../components/graph/CountryMap'
 
 const enhance = _.identity
@@ -50,11 +51,18 @@ const CountryWithPoints = ({
                 ({ longitude, latitude }) =>
                   _.isFinite(longitude) && _.isFinite(latitude)
               )
-              .map(({ longitude, latitude, fill, size, id }) => {
+              .map(({ longitude, latitude, fill, size, id, siteName }) => {
                 const [left, top] = projection([longitude, latitude])
+                const isTooltipDisabled = _.isNil(siteName)
+
                 return (
-                  _.isFinite(left) &&
-                  _.isFinite(top) && (
+                  <Tooltip
+                    title={siteName}
+                    aria-label={siteName}
+                    disableFocusListener={isTooltipDisabled}
+                    disableHoverListener={isTooltipDisabled}
+                    disableTouchListener={isTooltipDisabled}
+                  >
                     <GlyphDot
                       key={`point-${id}`}
                       data-point-id={id}
@@ -67,7 +75,7 @@ const CountryWithPoints = ({
                       onMouseEnter={onMouseEnter}
                       onMouseLeave={onMouseLeave}
                     />
-                  )
+                  </Tooltip>
                 )
               })}
           </Group>
