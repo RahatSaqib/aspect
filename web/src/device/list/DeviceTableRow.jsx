@@ -75,10 +75,3 @@ const DeviceTableRow = ({ intl, device, onAlertClick, ...restProps }) => (
 )
 
 export default enhance(DeviceTableRow)
-
-// neutral = true,
-// raised = true,
-// shipCove = false,
-// shakespeare = false,
-// mountain = false,
-// brink = false,

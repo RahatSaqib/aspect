@@ -25,7 +25,7 @@ export const colorByResultCategoryExternalId = {
 const enhance = compose(
   withProps(
     ({
-      clientWidth: width = 330,
+      clientWidth: width = 300,
       clientHeight: height = 300,
       margin: rawMargin,
       item,
