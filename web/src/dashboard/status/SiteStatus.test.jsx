@@ -1,20 +1,72 @@
 import Immutable from 'immutable'
 import React from 'react'
-import { shallow } from 'enzyme'
+import ReactShallowRenderer from 'react-test-renderer/shallow'
 import { IntlProvider } from 'react-intl'
-import { DeviceStatus } from './DeviceStatus'
+import { SiteStatus } from './SiteStatus'
 
-describe('Device Status component', () => {
+describe('Site Status component', () => {
+  const renderer = new ReactShallowRenderer()
   const intlProvider = new IntlProvider({ locale: 'en' }, {})
   const { intl } = intlProvider.getChildContext()
 
   const props = {
     intl,
-    title: 'Devices',
+    title: 'Sites',
     cssClasses: 'Section__Content',
+    siteSummaryMap: Immutable.fromJS({
+      onlineNow: {
+        siteIds: [17, 21],
+        items: [
+          {
+            key: 0,
+            count: 2,
+            total: 27,
+            titleI18nKey: 'ofTotalSitesTitle',
+            subI18nKey: 'reportingStatus',
+          },
+        ],
+      },
+      stockManagement: {
+        siteIds: [12],
+        items: [
+          {
+            key: 0,
+            count: 1,
+            total: 27,
+            titleI18nKey: 'ofTotalSitesTitle',
+            subI18nKey: 'withStockIssues',
+          },
+        ],
+      },
+      deviceManagement: {
+        siteIds: [9, 12, 50],
+        items: [
+          {
+            key: 0,
+            count: 3,
+            total: 27,
+            titleI18nKey: 'ofTotalSitesTitle',
+            subI18nKey: 'withDeviceIssues',
+          },
+        ],
+      },
+      uploadingData: {
+        siteIds: [12],
+        items: [
+          {
+            key: 0,
+            count: 1,
+            total: 27,
+            titleI18nKey: 'ofTotalSitesTitle',
+            subI18nKey: 'notReportingStatus',
+          },
+        ],
+      },
+    }),
     deviceSummaryMap: Immutable.fromJS({
       operational: {
         deviceIds: [38, 86],
+        siteIds: [20],
         items: [
           {
             key: 0,
@@ -27,6 +79,7 @@ describe('Device Status component', () => {
       },
       warrantyExpiring: {
         deviceIds: [16],
+        siteIds: [1],
         items: [
           {
             key: 0,
@@ -38,6 +91,7 @@ describe('Device Status component', () => {
       },
       calibration: {
         deviceIds: [20],
+        siteIds: [20],
         items: [
           {
             key: 0,
@@ -49,6 +103,7 @@ describe('Device Status component', () => {
       },
       uploadingData: {
         deviceIds: [88, 109],
+        siteIds: [11, 12],
         items: [
           {
             key: 0,
@@ -72,7 +127,9 @@ describe('Device Status component', () => {
     }),
   }
 
-  it('should shallow render without crash', () => {
-    shallow(<DeviceStatus {...props} />)
+  it('should shallow render correctly', () => {
+    const element = renderer.render(<SiteStatus {...props} />)
+
+    expect(element).toMatchSnapshot()
   })
 })

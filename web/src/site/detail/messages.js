@@ -17,7 +17,7 @@ export default defineMessages({
   },
   fieldExternalId: {
     id: 'pages.SiteDetail.fieldExternalId',
-    defaultMessage: 'Facility Code',
+    defaultMessage: 'Site ID',
   },
   fieldTimeZone: {
     id: 'pages.SiteDetail.fieldTimeZone',

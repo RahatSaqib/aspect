@@ -15,6 +15,7 @@ const bcryptHash = promisify(bcrypt.hash)
 const config = require('../config')
 const { query } = require('../db')
 const { validateUserAtGxAlert } = require('./gxalert')
+const { getRemoteAddress } = require('../shared/request')
 
 async function checkAuthentication() {
   return { message: 'Welcome to the API!' }
@@ -78,8 +79,6 @@ async function authenticate(request) {
     if (!user) {
       return Boom.unauthorized('Authentication failed. Wrong password.')
     }
-  } else if (user.lockedOut === 1) {
-    return Boom.unauthorized('Your account is locked.')
   }
 
   if (user.lockedOut === 1) {
@@ -139,6 +138,7 @@ async function authenticate(request) {
 
   const accessToken = await getAccessToken(user)
   const displayPreferences = await getDisplayPreferences(user)
+
   return {
     access: accessToken,
     refresh: refreshToken,
@@ -186,7 +186,8 @@ async function refreshToken(request) {
       'p.culture',
       'p.timezone',
       'p.lastPartnerId as partnerId',
-      'p.lastCountryId as countryId'
+      'p.lastCountryId as countryId',
+      'p.id as personId'
     )
 
   if (!data) {
@@ -247,7 +248,7 @@ async function hasFeature(userId, partnerId, module) {
 }
 
 // generate a new jwt for the given user data
-function getAccessToken({ id, name, partnerId }) {
+function getAccessToken({ id, name, partnerId, personId }) {
   return query('Get permissions for user and partner')
     .from('Permission as p')
     .innerJoin('JobFunctionPermission as jfp', 'p.id', 'jfp.permissionId')
@@ -258,11 +259,16 @@ function getAccessToken({ id, name, partnerId }) {
     .orderBy(['p.module', 'p.activity'])
     .distinct('p.module', 'p.activity')
     .then(async data => {
+      const applicableLicense = await getApplicableLicense(personId, partnerId)
       // create a new token
       const token = jwt.sign(
         {
           name,
           permissions: data.map(p => `${p.module}:${p.activity}`),
+          hasToAcceptLicenseId:
+            !applicableLicense || applicableLicense.acceptedOn
+              ? null
+              : applicableLicense.id,
         },
         config.secret,
         {
@@ -563,6 +569,62 @@ async function getUserFeatures(request) {
   return { ok: true, data: featureModules }
 }
 
+async function getApplicableLicense(personId, partnerId) {
+  const latestLicense = await query(
+    'Get latest applicable license and when user accepted it'
+  )
+    .from('License as l')
+    .leftOuterJoin('LicensePerson as lp', function() {
+      this.on('l.id', '=', 'lp.licenseId').andOn('lp.personId', '=', personId)
+    })
+    .where('l.partnerId', partnerId)
+    .orWhere('l.partnerId', null)
+    .orderBy('l.partnerId', 'desc')
+    .orderBy('l.createdOn', 'desc')
+    .first('l.id', 'lp.acceptedOn')
+
+  return latestLicense
+}
+
+async function getLicense(request) {
+  const { query: { licenseId } } = request
+
+  const license = await query('Get license')
+    .from('License')
+    .where('id', licenseId)
+    .first('id', 'createdOn', 'content')
+
+  return { ok: true, data: license }
+}
+
+async function acceptLicense(request) {
+  const { payload: { licenseId } } = request
+
+  const loggedInUser = await getUser(request.auth.credentials.name)
+
+  const licenseUpdates = {
+    acceptedOn: new Date(),
+    ip: getRemoteAddress(request),
+  }
+
+  await query('Insert or update accepted license for user').raw(
+    'INSERT INTO LicensePerson set ? ON DUPLICATE KEY UPDATE ?',
+    [
+      Object.assign(
+        {
+          licenseId,
+          personId: loggedInUser.personId,
+        },
+        licenseUpdates
+      ),
+      licenseUpdates,
+    ]
+  )
+
+  // need to return a new JWT, now without hasToAcceptLicenseId
+  return refreshToken(request)
+}
+
 module.exports = {
   getUser,
   authenticate,
@@ -574,4 +636,6 @@ module.exports = {
   updatePasswordWithResetPasswordToken,
   getUserFeatures,
   hasFeature,
+  getLicense,
+  acceptLicense,
 }

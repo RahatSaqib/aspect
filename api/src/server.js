@@ -141,8 +141,16 @@ server.auth.strategy('deviceApiBasic', 'basic', {
 server.auth.strategy('clientApi', 'jwt', {
   key: config.secret,
   validateFunc(decoded, request, callback) {
-    // TODO What do we want to do to validate data within decoded JWT token?
-    const valid = true
+    let valid = true
+
+    // if user has to accept license, deny all requests except to the license api:
+    if (
+      decoded.hasToAcceptLicenseId &&
+      request.url.path.indexOf('/api/auth/features') === -1 &&
+      request.url.path.indexOf('/api/auth/license') === -1
+    ) {
+      valid = false
+    }
 
     // can specify either module or permission, e.g. "device" or "device:view"
     // for authorization scope on routes.
@@ -152,7 +160,6 @@ server.auth.strategy('clientApi', 'jwt', {
     // ["device", "!site"] will authorize anyone with device but not site modules
     // ["+device", "site:view", "site:edit"] will authorize anyone with device (required)
     //   and either "site:view" or "site:edit" permissions
-
     const modules = decoded.permissions
       ? _.uniq(
           _.map(

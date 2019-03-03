@@ -602,6 +602,7 @@ async function deviceDashboard(request) {
   const deviceSummaryMap = {
     operational: {
       deviceIds: _.map(operationalDeviceList, 'id'),
+      siteIds: _.uniq(_.map(operationalDeviceList, 'siteId')),
       items: [
         {
           key: 0,
@@ -614,6 +615,7 @@ async function deviceDashboard(request) {
     },
     uploadingData: {
       deviceIds: _.map(offlineDeviceList, 'id'),
+      siteIds: _.uniq(_.map(offlineDeviceList, 'siteId')),
       items: [
         {
           key: 0,
@@ -625,6 +627,7 @@ async function deviceDashboard(request) {
     },
     testFailures: {
       deviceIds: _.map(highErrorRateDeviceList, 'id'),
+      siteIds: _.uniq(_.map(highErrorRateDeviceList, 'siteId')),
       items: [
         {
           key: 0,

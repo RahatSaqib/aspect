@@ -26,7 +26,7 @@ describe('EditableFieldsForm Component', () => {
       address: 'Address',
       address2: 'Address 2',
       city: 'City',
-      externalId: 'Facility Code',
+      externalId: 'Site ID',
       name: 'Name',
       shortName: 'ShortName',
       timezone: 'Time Zone',
