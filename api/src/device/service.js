@@ -4,6 +4,7 @@ const Boom = require('boom')
 
 const { knex, filterParams, sortPageParams } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
+const { getUser } = require('../auth/service')
 const { deviceStatusToId, resultCategoryToId } = require('../shared/dictionary')
 const {
   getCellsByValue,
@@ -515,6 +516,36 @@ async function getDevice(deviceId) {
   return device
 }
 
+async function updateDeviceMaintenance(request) {
+  const { auth, params, payload } = request
+  const dataConstraints = await getConstraints(auth.credentials)
+
+  const device = await knex('Device as d')
+    .where('d.id', +params.deviceId)
+    .modify(addConstraints, dataConstraints, { device: 'd' })
+    .first('id')
+
+  if (!device) {
+    return Boom.notFound()
+  }
+  const { id: deviceId } = device
+
+  const currentlyLoggedInUser = await getUser(auth.credentials.name)
+
+  const { deviceMaintenanceTypeId, note } = payload
+
+  await knex('DeviceMaintenance').insert({
+    deviceId,
+    deviceMaintenanceTypeId,
+    note,
+    createdOn: new Date(),
+    createdBy: currentlyLoggedInUser.id,
+  })
+
+  const result = await showDevice(request)
+  return result
+}
+
 module.exports = {
   listDevices,
   showDevice,
@@ -523,4 +554,5 @@ module.exports = {
   exportDevices,
   listDevicesForSelectList,
   getDevice,
+  updateDeviceMaintenance,
 }

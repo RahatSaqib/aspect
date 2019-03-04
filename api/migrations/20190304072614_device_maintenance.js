@@ -1,0 +1,43 @@
+module.exports = require('../src/db').migration(up, down)
+
+async function up(knex) {
+  await knex.schema.createTable('DeviceMaintenanceType', x => {
+    x.increments('id')
+    x.string('name').notNullable()
+    x.string('externalId').notNullable()
+    x.string('i18nKey')
+    x.charset('utf8')
+  })
+
+  await knex.schema.createTable('DeviceMaintenance', x => {
+    x.increments('id')
+    x
+      .integer('deviceId')
+      .unsigned()
+      .index()
+      .notNullable()
+      .references('id')
+      .inTable('Device')
+    x
+      .integer('deviceMaintenanceTypeId')
+      .unsigned()
+      .index()
+      .notNullable()
+      .references('id')
+      .inTable('DeviceMaintenanceType')
+    x.string('note', 2000)
+    x.dateTime('createdOn').notNullable()
+    x
+      .integer('createdBy')
+      .unsigned()
+      .index()
+      .references('id')
+      .inTable('User')
+    x.charset('utf8')
+  })
+}
+
+async function down(knex) {
+  await knex.schema.dropTable('DeviceMaintenance')
+  await knex.schema.dropTable('DeviceMaintenanceType')
+}

@@ -621,6 +621,23 @@ async function addLicensePersons(knex, personNameToExclude = '') {
   )
 }
 
+async function seedDeviceMaintenanceType(knex) {
+  const { data: deviceMaintenanceTypes } = await readJson(
+    `./seeds/fixtures/DeviceMaintenanceType.json`
+  )
+
+  await Promise.each(
+    deviceMaintenanceTypes,
+    async ({ name, externalId, i18nKey }) => {
+      await knex('DeviceMaintenanceType').insert({
+        name,
+        externalId,
+        i18nKey,
+      })
+    }
+  )
+}
+
 module.exports = {
   seed,
   rowsAsObject,
@@ -632,4 +649,5 @@ module.exports = {
   assignAllFeaturesToJobFunctionIds,
   addLicenses,
   addLicensePersons,
+  seedDeviceMaintenanceType,
 }
