@@ -1,5 +1,8 @@
 const { rowsAsObject } = require('../utils')
-const { getPermissionModules } = require('../utils')
+const {
+  getPermissionModules,
+  upsertIssueResolutionTrigger,
+} = require('../utils')
 
 module.exports = require('../utils').seed(seed)
 
@@ -113,7 +116,7 @@ async function seed(knex) {
     const issueTypes = await rowsAsObject(knex, 'IssueType', 'externalId')
     const now = new Date()
 
-    await knex('IssueResolutionTrigger').insert({
+    await upsertIssueResolutionTrigger(knex, {
       issueTypeId: issueTypes.DeviceNoResults.id,
       partnerId,
       resolutionConditions: JSON.stringify({
