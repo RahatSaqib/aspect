@@ -228,7 +228,7 @@ export const DeviceList = ({
             columns={[
               {
                 key: 'empty',
-                colSpan: 8,
+                colSpan: 7,
               },
               {
                 key: 'tests',

@@ -30,10 +30,10 @@ const SiteTableRow = ({ intl, site, ...restProps }) => (
               key={issue}
               className={cssClasses('ColoredButton--micro')}
               label={intl.formatMessage(messages[_.camelCase(issue)])}
-              shipCove={issue.startsWith('Device')}
-              shakespeare={issue.startsWith('Reagent')}
-              mountain={issue.startsWith('Connectivity')}
-              brink={issue.startsWith('Data')}
+              shipCove={issue === 'DeviceHealth'}
+              shakespeare={issue === 'ReagentHealth'}
+              mountain={issue === 'ConnectivityHealth'}
+              brink={issue === 'DataHealth'}
             />
           ))}
     </TableCell>
