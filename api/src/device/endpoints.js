@@ -210,6 +210,11 @@ const routes = [
         },
         payload: {
           deviceMaintenanceTypeId: Joi.number(),
+          contextDate: Joi.date()
+            .iso()
+            .description(
+              'Specified date for type of maintenance, i.e. warranty due date, calibration date'
+            ),
           note: Joi.string(),
         },
       },

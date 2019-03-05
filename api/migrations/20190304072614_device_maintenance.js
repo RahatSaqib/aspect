@@ -26,11 +26,20 @@ async function up(knex) {
       .references('id')
       .inTable('DeviceMaintenanceType')
     x.string('note', 2000)
+    x
+      .dateTime('contextDate')
+      .index()
+      .notNullable()
+    x
+      .boolean('current')
+      .index()
+      .notNullable()
     x.dateTime('createdOn').notNullable()
     x
       .integer('createdBy')
       .unsigned()
       .index()
+      .notNullable()
       .references('id')
       .inTable('User')
     x.charset('utf8')

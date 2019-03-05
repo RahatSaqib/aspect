@@ -532,11 +532,22 @@ async function updateDeviceMaintenance(request) {
 
   const currentlyLoggedInUser = await getUser(auth.credentials.name)
 
-  const { deviceMaintenanceTypeId, note } = payload
+  const { deviceMaintenanceTypeId, contextDate = new Date(), note } = payload
 
+  // reset 'current' for current maintenance type and device
+  await knex('DeviceMaintenance')
+    .update({ current: 0 })
+    .where({
+      deviceId,
+      deviceMaintenanceTypeId,
+      current: 1,
+    })
+  // insert new record with last maintenance status
   await knex('DeviceMaintenance').insert({
     deviceId,
     deviceMaintenanceTypeId,
+    current: 1,
+    contextDate,
     note,
     createdOn: new Date(),
     createdBy: currentlyLoggedInUser.id,
