@@ -173,7 +173,7 @@ export function fetchResultLog(resultId) {
         default: errorPleaseTryAgainInAFewMinutes(
           defineMessages({
             title: {
-              id: 'errorResponseMessages.fetchSingleResult.GET.default.title',
+              id: 'errorResponseMessages.fetchDeviceLog.GET.default.title',
               defaultMessage: 'Error Loading Result Logs',
             },
           })

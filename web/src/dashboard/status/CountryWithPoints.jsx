@@ -45,24 +45,31 @@ const CountryWithPoints = ({
         ]}
         projectionFunc={projection => (
           <Group>
-            {points.map(point => {
-              const [left, top] = projection([point.longitude, point.latitude])
-
-              return (
-                <GlyphDot
-                  key={`point-${point.id}`}
-                  data-point-id={point.id}
-                  fill={point.fill}
-                  stroke="#ffffff"
-                  strokeWidth={1.5}
-                  cx={left}
-                  cy={top}
-                  r={point.size}
-                  onMouseEnter={onMouseEnter}
-                  onMouseLeave={onMouseLeave}
-                />
+            {points
+              .filter(
+                ({ longitude, latitude }) =>
+                  _.isFinite(longitude) && _.isFinite(latitude)
               )
-            })}
+              .map(({ longitude, latitude, fill, size, id }) => {
+                const [left, top] = projection([longitude, latitude])
+                return (
+                  _.isFinite(left) &&
+                  _.isFinite(top) && (
+                    <GlyphDot
+                      key={`point-${id}`}
+                      data-point-id={id}
+                      fill={fill}
+                      stroke="#ffffff"
+                      strokeWidth={1.5}
+                      cx={left}
+                      cy={top}
+                      r={size}
+                      onMouseEnter={onMouseEnter}
+                      onMouseLeave={onMouseLeave}
+                    />
+                  )
+                )
+              })}
           </Group>
         )}
         fill={fill}

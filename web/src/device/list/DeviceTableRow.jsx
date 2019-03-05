@@ -51,13 +51,13 @@ const DeviceTableRow = ({ intl, device, onAlertClick, ...restProps }) => (
         .get('alerts')
         .map(it => (
           <ColoredButton
-            key={it.get('type')}
+            key={it.get('key')}
             className={cssClasses('ColoredButton--micro')}
-            shipCove={it.get('type') === 'needs-repair'}
-            shakespeare={it.get('type') === 'warranty'}
-            mountain={it.get('type') === 'quality-control'}
-            brink={it.get('type') === 'connectivity'}
-            label={intl.formatMessage(messages[_.camelCase(it.get('type'))])}
+            shipCove={it.get('key') === 'issueCategoryDeviceHealth'}
+            shakespeare={it.get('key') === 'issueCategoryReagentHealth'}
+            mountain={it.get('key') === 'issueCategoryDataHealth'}
+            brink={it.get('key') === 'issueCategoryConnectivityHealth'}
+            label={intl.formatMessage(messages[it.get('key')])}
             onClick={onAlertClick}
             data-pathname="/browse/notification/detail"
           />

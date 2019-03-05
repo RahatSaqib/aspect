@@ -385,29 +385,64 @@ async function getInventoryItemList(auth, dataConstraints) {
   return inventoryItemList
 }
 
+async function getConsumablesList(auth, dataConstraints) {
+  if (!canViewInventories(auth)) {
+    return []
+  }
+
+  const consumables = await knex('Consumable as c')
+    .innerJoin('ConsumableAssay as ca', 'c.id', 'ca.consumableId')
+    .innerJoin('Assay as a', 'ca.assayId', 'a.id')
+    .innerJoin('DeviceType as dt', 'a.deviceTypeId', 'dt.id')
+    .innerJoin('Device as d', 'dt.id', 'd.deviceTypeId')
+    .innerJoin('Site as s', 'd.siteId', 's.id')
+    .leftOuterJoin('Issue as i', function() {
+      this.on('s.id', 'i.siteId').andOn('c.id', 'i.consumableId')
+    })
+    .leftOuterJoin('IssueType as it', 'i.issueTypeId', 'it.id')
+    .leftOuterJoin('IssueStatus as ist', 'i.issueStatusId', 'ist.id')
+    .modify(addConstraints, dataConstraints, {
+      site: 's',
+    })
+    .groupBy('c.id', 's.id')
+    .select(
+      's.id as siteId',
+      'c.id as consumableId',
+      'c.name as consumableName',
+      knex.raw(
+        "sum(it.externalId = 'InventoryStockout' and ist.externalId not in ('Inactive', 'OK', 'Resolved')) as cntStockout"
+      ),
+      knex.raw(
+        "sum(it.externalId = 'InventoryStockExpiring' and ist.externalId not in ('Inactive', 'OK', 'Resolved')) as cntExpiring"
+      )
+    )
+
+  return consumables
+}
+
 async function inventoryItemDashboard(request) {
   const { auth } = request
 
   // get data constraints
   const dataConstraints = await getConstraints(auth.credentials)
   const siteList = await getSiteList(auth, dataConstraints)
-  const inventoryItemList = await getInventoryItemList(auth, dataConstraints)
+  const consumables = await getConsumablesList(auth, dataConstraints)
 
   const inventoryConsumableSummaryList = _.reduce(
-    _.groupBy(inventoryItemList, 'consumableId'),
+    _.groupBy(consumables, 'consumableId'),
     (acc, list) => {
       if (!_.isEmpty(list)) {
-        const { runningLowCount, expiringCount, affectedSiteIds } = list.reduce(
+        const { stockoutCount, expiringCount, affectedSiteIds } = list.reduce(
           (result, it) => {
-            result.runningLowCount += it.runningLow ? 1 : 0
-            result.expiringCount += it.expiring ? 1 : 0
-            if (it.runningLow || it.expiring) {
+            result.stockoutCount += it.cntStockout ? 1 : 0
+            result.expiringCount += it.cntExpiring ? 1 : 0
+            if (it.cntStockout || it.cntExpiring) {
               result.affectedSiteIds.push(it.siteId)
             }
             return result
           },
           {
-            runningLowCount: 0,
+            stockoutCount: 0,
             expiringCount: 0,
             affectedSiteIds: [],
           }
@@ -415,13 +450,15 @@ async function inventoryItemDashboard(request) {
 
         const result = _.filter(
           [
-            runningLowCount > 0 && {
+            // to show <SummaryItemsBlock> only when there is issue 'Stockout' add 'runningLowCount > 0 && {...'
+            {
               key: 0,
-              count: runningLowCount,
+              count: stockoutCount,
               titleI18nKey: i18nKeys.sitesTitle,
               subI18nKey: i18nKeys.runningLowStatus,
             },
-            expiringCount > 0 && {
+            // to show <SummaryItemsBlock> only when there is issue 'StockExpiring' add 'expiringCount > 0 && {...'
+            {
               key: 1,
               count: expiringCount,
               titleI18nKey: i18nKeys.sitesTitle,
@@ -482,15 +519,62 @@ async function getDeviceList(auth, dataConstraints) {
   }
 
   const deviceList = await knex('Device as d')
-    .innerJoin('FactDeviceFlag as fdf', 'd.id', 'fdf.deviceId')
     .innerJoin('Site as s', 's.id', 'd.siteId')
     .innerJoin('Partner as p', 'd.partnerId', 'p.id')
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
-    .select('d.id', 'd.siteId', 'fdf.*')
+    .leftOuterJoin('Issue as i', 'd.id', 'i.deviceId')
+    .leftOuterJoin('IssueType as it', 'i.issueTypeId', 'it.id')
+    .leftOuterJoin('IssueStatus as ist', 'i.issueStatusId', 'ist.id')
     .modify(addConstraints, dataConstraints, {
       site: 's',
       geography: 'g',
     })
+    .groupBy('d.id')
+    .select(
+      'd.id',
+      'd.siteId',
+      'it.externalId as issueType',
+      knex.raw(
+        "sum(ist.externalId not in ('Inactive', 'OK', 'Resolved')) as totalIssues"
+      ),
+      knex.raw(
+        "sum(it.externalId = 'DeviceNoResults' and ist.externalId not in ('Inactive', 'OK', 'Resolved')) as cntNoResults"
+      ),
+      knex.raw(
+        "sum((it.externalId like 'Machine%' or it.externalId like 'Module%' or it.externalId like 'Reagent%') and ist.externalId not in ('Inactive', 'OK', 'Resolved')) as cntErrorRate"
+      )
+    )
+    .reduce((memo, { id, siteId, totalIssues, cntNoResults, cntErrorRate }) => {
+      let device = memo.find(x => x.id === id)
+      if (!device) {
+        device = {
+          id,
+          siteId,
+          // Fully Operational = Devices that don't have any issues or all are OK/Resolved
+          fullyOperational: true,
+          // Not Reporting = Devices that have issue "Device No Results"
+          offline: false,
+          // High Failure rates = Devices that have any of the Machine/Module/Reagent/Unknown error
+          errorRate: false,
+        }
+        memo.push(device)
+      }
+
+      if (totalIssues) {
+        device.fullyOperational = false
+      }
+
+      if (cntNoResults) {
+        device.offline = true
+      }
+
+      if (cntErrorRate) {
+        device.errorRate = true
+      }
+
+      return memo
+    }, [])
+
   return deviceList
 }
 
@@ -511,18 +595,7 @@ async function deviceDashboard(request) {
     it.longitude = site.longitude
   })
 
-  const operationalDeviceList = _.filter(deviceList, {
-    offline: 0,
-    service: 0,
-    calibration: 0,
-    errorRate: 0,
-    qcProblem: 0,
-    lowInventory: 0,
-    outOfInventory: 0,
-    expiringInventory: 0,
-  })
-  const warrantyExpiringDeviceList = _.filter(deviceList, 'expiringWarranty')
-  const calibrationDueDeviceList = _.filter(deviceList, 'calibration')
+  const operationalDeviceList = _.filter(deviceList, 'fullyOperational')
   const offlineDeviceList = _.filter(deviceList, 'offline')
   const highErrorRateDeviceList = _.filter(deviceList, 'errorRate')
 
@@ -537,30 +610,6 @@ async function deviceDashboard(request) {
           total: deviceList.length,
           titleI18nKey: i18nKeys.ofTotalDevicesTitle,
           subI18nKey: i18nKeys.fullyOperationalStatus,
-        },
-      ],
-    },
-    warrantyExpiring: {
-      deviceIds: _.map(warrantyExpiringDeviceList, 'id'),
-      siteIds: _.uniq(_.map(warrantyExpiringDeviceList, 'siteId')),
-      items: [
-        {
-          key: 0,
-          count: warrantyExpiringDeviceList.length,
-          titleI18nKey: i18nKeys.devicesTitle,
-          subI18nKey: i18nKeys.warrantyExpiringStatus,
-        },
-      ],
-    },
-    calibration: {
-      deviceIds: _.map(calibrationDueDeviceList, 'id'),
-      siteIds: _.uniq(_.map(calibrationDueDeviceList, 'siteId')),
-      items: [
-        {
-          key: 0,
-          count: calibrationDueDeviceList.length,
-          titleI18nKey: i18nKeys.devicesTitle,
-          subI18nKey: i18nKeys.needCalibrationStatus,
         },
       ],
     },

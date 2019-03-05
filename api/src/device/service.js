@@ -197,6 +197,26 @@ async function getListDevices(query, auth) {
         .where('rw.externalId', '=', 'Flagged')
         .countDistinct('r.id')
         .as('totalFlagged'),
+
+      // get csv of issue types
+      knex('Issue as i1')
+        // .leftOuterJoin('Issue as i1', 'd.id', 'i1.deviceId')
+        .leftOuterJoin('Issue as i2', function() {
+          this.on('i1.deviceId', '=', 'i2.deviceId')
+            .andOn('i1.issueTypeId', '=', 'i2.issueTypeId')
+            .andOn('i1.level', '<', 'i2.level')
+            .andOn('i1.id', '<', 'i2.id')
+        })
+        .leftOuterJoin('IssueType as it', 'i1.issueTypeId', 'it.id')
+        .leftOuterJoin('IssueStatus as ist', 'i1.issueStatusId', 'ist.id')
+        .leftOuterJoin('IssueCategory as ic', 'it.issueCategoryId', 'ic.id')
+        .whereRaw('i1.deviceId = d.id')
+        // 'i2.id is null' makes sure only last issue of each type is selected
+        .whereNull('i2.id')
+        // skip IssueStatus 'Inactive', 'OK' or 'Resolved'
+        .whereNotIn('ist.externalId', ['Inactive', 'OK', 'Resolved'])
+        .select(knex.raw(`GROUP_CONCAT(DISTINCT ic.i18nKey)`))
+        .as('issueCategories'),
     ])
 
   // return result when both queries are finished
@@ -212,17 +232,9 @@ async function getListDevices(query, auth) {
       count: it.thisMonthErrors,
       total: it.thisMonth,
     }
-    it.alerts = [
-      {
-        type: 'needs-repair',
-      },
-      {
-        type: 'warranty',
-      },
-      {
-        type: 'quality-control',
-      },
-    ].filter(() => _.random(0, 10) > 7)
+    it.alerts = it.issueCategories
+      ? it.issueCategories.split(',').map(key => ({ key }))
+      : []
   })
 
   const result = { ok: true, total, length: data.length, data }
