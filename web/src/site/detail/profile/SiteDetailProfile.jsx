@@ -1,0 +1,113 @@
+import PropTypes from 'prop-types'
+// Imports from packages
+import React from 'react'
+import classnames from 'classnames/bind'
+import Card from '@material-ui/core/Card'
+
+// Our own imports
+import { ReadOnlyField } from '../../../components/shared/ReadOnlyFields'
+import ConnectedTagInput from '../../../tag/ConnectedTagInput'
+import messages from '../messages'
+import { Site } from '../../SiteRedux'
+import Summary from '../../../globals/components/Summary'
+import SiteDetailBackBar from '../SiteDetailBackBar'
+
+const cssClasses = classnames.bind(require('../SiteDetail.css'))
+
+const SiteDetailProfile = ({
+  site,
+  siteTags,
+  formatMessage,
+  history,
+  location,
+  match,
+  disabled,
+}) => {
+  const fields = [
+    {
+      label: formatMessage(messages.fieldName),
+      value: site.get('name'),
+    },
+    {
+      label: formatMessage(messages.fieldShortName),
+      value: site.get('shortName'),
+    },
+    {
+      label: formatMessage(messages.fieldExternalId),
+      value: site.get('externalId'),
+    },
+    {
+      label: formatMessage(messages.fieldAddress),
+      value: (
+        <div>
+          <p>{site.get('street1')}</p>
+          <p>{site.get('street2')}</p>
+          <p>{site.get('zip')}</p>
+        </div>
+      ),
+    },
+    {
+      label: formatMessage(messages.fieldState),
+      value: site.get('state'),
+    },
+    {
+      label: formatMessage(messages.fieldCity),
+      value: site.get('city'),
+    },
+    {
+      label: formatMessage(messages.fieldLGA),
+      value: site.get('lga'),
+    },
+  ]
+  return (
+    <div>
+      {site && (
+        <SiteDetailBackBar
+          formatMessage={formatMessage}
+          history={history}
+          location={location}
+          match={match}
+          title={site.get('name')}
+          disabled={disabled}
+        />
+      )}
+      <section className={cssClasses('Section', 'Section--first')}>
+        <Card className={cssClasses('Section__Content')}>
+          {fields.map(field => (
+            <Summary title={field.label} description={field.value} />
+          ))}
+          <ReadOnlyField
+            label={formatMessage(messages.fieldTags)}
+            value={siteTags}
+            format={v => (
+              <ConnectedTagInput
+                qryId={site.get('id')}
+                qryType="site"
+                disabled
+                allowCreate
+                value={v}
+              />
+            )}
+          />
+        </Card>
+      </section>
+    </div>
+  )
+}
+
+SiteDetailProfile.defaultProps = {
+  site: null,
+  siteTags: [],
+}
+
+SiteDetailProfile.propTypes = {
+  formatMessage: PropTypes.func.isRequired,
+  site: PropTypes.objectOf(Site),
+  history: PropTypes.object.isRequired, // eslint-disable-next-line react/forbid-prop-types
+  location: PropTypes.object.isRequired, // eslint-disable-next-line react/forbid-prop-types
+  match: PropTypes.object.isRequired, // eslint-disable-next-line react/forbid-prop-types
+  disabled: PropTypes.bool.isRequired,
+  siteTags: PropTypes.arrayOf(PropTypes.object),
+}
+
+export default SiteDetailProfile

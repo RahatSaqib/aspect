@@ -55,4 +55,8 @@ export default defineMessages({
     id: 'pages.SiteDetail.fieldTags',
     defaultMessage: 'Tags',
   },
+  fieldDevices: {
+    id: 'pages.SiteDetail.fieldDevices',
+    defaultMessage: 'Devices',
+  },
 })

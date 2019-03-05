@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom'
 import FaExternalLink from 'react-icons/lib/fa/external-link'
 import { Unit } from '../../components/pureGrids'
 
-const cssClasses = classnames.bind(require('./DeviceDetail.css'))
+const cssClasses = classnames.bind(require('./Summary.css'))
 
 const enhance = _.identity
 

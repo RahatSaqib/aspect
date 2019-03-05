@@ -22,7 +22,7 @@ import BrowseTablePaginator from '../../../globals/components/BrowseTablePaginat
 import BrowseEmptyList from '../../../globals/components/BrowseEmptyList'
 import { fetchDeviceOperations } from '../../../deviceOperation/DeviceOperationRedux'
 import DeviceDetailBackBar from '../DeviceDetailBackBar'
-import Summary from '../Summary'
+import Summary from '../../../globals/components/Summary'
 import {
   DeviceOperationDataTable,
   DeviceOperationDataTableHead,
