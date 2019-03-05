@@ -133,7 +133,7 @@ const enhance = compose(
         .map(it => ({
           id: it.get('name'),
           siteName: it.get('name'),
-          size: 3,
+          size: 5,
           fill: getFillColor({ activeSiteIds, issueSiteIds, id: it.get('id') }),
           latitude: it.get('latitude'),
           longitude: it.get('longitude'),
