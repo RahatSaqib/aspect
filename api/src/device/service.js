@@ -523,7 +523,7 @@ async function updateDeviceMaintenance(request) {
   const device = await knex('Device as d')
     .where('d.id', +params.deviceId)
     .modify(addConstraints, dataConstraints, { device: 'd' })
-    .first('id')
+    .first('d.id')
 
   if (!device) {
     return Boom.notFound()
@@ -543,7 +543,7 @@ async function updateDeviceMaintenance(request) {
       current: 1,
     })
   // insert new record with last maintenance status
-  await knex('DeviceMaintenance').insert({
+  const [deviceMaintenanceId] = await knex('DeviceMaintenance').insert({
     deviceId,
     deviceMaintenanceTypeId,
     current: 1,
@@ -553,8 +553,7 @@ async function updateDeviceMaintenance(request) {
     createdBy: currentlyLoggedInUser.id,
   })
 
-  const result = await showDevice(request)
-  return result
+  return { ok: true, data: deviceMaintenanceId }
 }
 
 module.exports = {
