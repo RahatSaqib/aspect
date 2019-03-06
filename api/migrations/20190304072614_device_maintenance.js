@@ -1,6 +1,9 @@
+const { seedDeviceMaintenanceType } = require('../seeds/utils')
+
 module.exports = require('../src/db').migration(up, down)
 
 async function up(knex) {
+  // create and seed dictionary table DeviceMaintenanceType
   await knex.schema.createTable('DeviceMaintenanceType', x => {
     x.increments('id')
     x.string('name').notNullable()
@@ -8,6 +11,7 @@ async function up(knex) {
     x.string('i18nKey')
     x.charset('utf8')
   })
+  await seedDeviceMaintenanceType(knex)
 
   await knex.schema.createTable('DeviceMaintenance', x => {
     x.increments('id')
