@@ -1,10 +1,11 @@
 module.exports = require('../utils').seed(seed)
 
 const { seedDataCategory } = require('../dataCategoryLow')
-const { rowsAsObject, seedStockIssuesUpdate } = require('../utils')
 const {
+  rowsAsObject,
+  seedStockIssuesUpdate,
   updateUnknownErrorOnModuleMessage,
-} = require('../seedUnknownErrorsIssue')
+} = require('../utils')
 
 async function seed(knex) {
   // check if seed already ran:

@@ -29,6 +29,10 @@ export const messages = defineMessages({
     id: 'pages.DeviceList.issues',
     defaultMessage: 'Issues',
   },
+  issueCategory: {
+    id: 'pages.DeviceList.issueCategory',
+    defaultMessage: 'Issue Category',
+  },
   reportingFor: {
     id: 'pages.DeviceList.reportingFor',
     defaultMessage: 'Reporting For',
@@ -85,8 +89,25 @@ export const messages = defineMessages({
     defaultMessage: 'For {period}',
   },
   noTests: {
-    id: 'pages.DeviceList.reportingForDays',
+    id: 'pages.DeviceList.noTests',
     defaultMessage: 'No Tests',
+  },
+
+  issueCategoryDeviceHealth: {
+    id: 'issueCategoryDeviceHealth',
+    defaultMessage: 'Device',
+  },
+  issueCategoryReagentHealth: {
+    id: 'issueCategoryReagentHealth',
+    defaultMessage: 'Reagent',
+  },
+  issueCategoryDataHealth: {
+    id: 'issueCategoryDataHealth',
+    defaultMessage: 'Data',
+  },
+  issueCategoryConnectivityHealth: {
+    id: 'issueCategoryConnectivityHealth',
+    defaultMessage: 'Connectivity',
   },
 })
 

@@ -143,10 +143,13 @@ export const SiteStatus = ({
         </Unit>
         <Unit sm="1-2" lg="1-4">
           <SummaryItemsBlock
-            data-site-ids={JSON.stringify(
+            data-device-ids={JSON.stringify(
               deviceSummaryMap
-                .getIn(['operational', 'siteIds'], EMPTY_LIST)
+                .getIn(['operational', 'deviceIds'], EMPTY_LIST)
                 .map(_.toString)
+            )}
+            data-site-ids={JSON.stringify(
+              deviceSummaryMap.getIn(['operational', 'siteIds'], EMPTY_LIST)
             )}
             onClick={onClick('device')}
             onMouseEnter={onMouseEnter}
@@ -173,12 +176,17 @@ export const SiteStatus = ({
         </Unit>
         <Unit sm="1-2" lg="1-4">
           <SummaryItemsBlock
-            data-site-ids={JSON.stringify(
+            data-device-ids={JSON.stringify(
               deviceSummaryMap
-                .getIn(['uploadingData', 'siteIds'], EMPTY_LIST)
+                .getIn(['uploadingData', 'deviceIds'], EMPTY_LIST)
                 .map(_.toString)
             )}
+            data-site-ids={JSON.stringify(
+              deviceSummaryMap.getIn(['uploadingData', 'siteIds'], EMPTY_LIST)
+            )}
             onClick={onClick('device')}
+            onMouseEnter={onMouseEnter}
+            onMouseLeave={onMouseLeave}
             intl={intl}
             title={intl.formatMessage(messages.summaryUploadingDataTitle)}
             items={deviceSummaryMap
@@ -201,12 +209,14 @@ export const SiteStatus = ({
         </Unit>
         <Unit sm="1-2" lg="1-4">
           <SummaryItemsBlock
-            data-site-ids={JSON.stringify(
+            data-device-ids={JSON.stringify(
               deviceSummaryMap
-                .getIn(['testFailures', 'siteIds'], EMPTY_LIST)
+                .getIn(['testFailures', 'deviceIds'], EMPTY_LIST)
                 .map(_.toString)
             )}
-            taype="site"
+            data-site-ids={JSON.stringify(
+              deviceSummaryMap.getIn(['testFailures', 'siteIds'], EMPTY_LIST)
+            )}
             onClick={onClick('device')}
             onMouseEnter={onMouseEnter}
             onMouseLeave={onMouseLeave}

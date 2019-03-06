@@ -1,14 +1,14 @@
-const { rowsAsObject } = require('../utils')
-const { getPermissionModules } = require('../utils')
+const { rowsAsObject, updateUnknownErrorOnModuleMessage } = require('../utils')
+const {
+  getPermissionModules,
+  upsertIssueResolutionTrigger,
+} = require('../utils')
 
 module.exports = require('../utils').seed(seed)
 
 const geography = require('./fixtures/geography.json')
 const _ = require('lodash')
 const Promise = require('bluebird')
-const {
-  updateUnknownErrorOnModuleMessage,
-} = require('../seedUnknownErrorsIssue')
 const { updateDashboardWidgetQueries } = require('../utils_myanmar')
 const {
   updateDataCategoryNotificationTypeForRO,
@@ -116,7 +116,7 @@ async function seed(knex) {
     const issueTypes = await rowsAsObject(knex, 'IssueType', 'externalId')
     const now = new Date()
 
-    await knex('IssueResolutionTrigger').insert({
+    await upsertIssueResolutionTrigger(knex, {
       issueTypeId: issueTypes.DeviceNoResults.id,
       partnerId,
       resolutionConditions: JSON.stringify({
