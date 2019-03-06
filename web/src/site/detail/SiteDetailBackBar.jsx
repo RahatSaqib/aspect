@@ -27,7 +27,7 @@ const SiteDetailBackBar = ({
   disabled,
 }) => {
   const onBackClick = () => {
-    history.goBack()
+    history.push('/browse/site')
   }
   const onPathClick = path => {
     history.push({

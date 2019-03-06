@@ -58,6 +58,22 @@ const SiteDetailProfile = ({
       label: formatMessage(messages.fieldLGA),
       value: site.get('lga'),
     },
+    {
+      label: formatMessage(messages.fieldContact),
+      value: site.get('cname'),
+    },
+    {
+      label: formatMessage(messages.fieldDevices),
+      value:
+        site.get('devices') &&
+        site
+          .get('devices')
+          .toJS()
+          .map(device => ({
+            description: device.name,
+            to: `/browse/device?filters=deviceTypeId%3D${device.id}`,
+          })),
+    },
   ]
   return (
     <div>

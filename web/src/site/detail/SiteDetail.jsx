@@ -42,7 +42,6 @@ const SiteDetail = props => {
     return site && site.has('longitude') && site.has('latitude')
   }
   const { intl, updateSingleSite, site, match, siteTags, editable } = props
-  console.log("rwrt",site&&site.toJS())
   return (
     <div>
       <Helmet title={intl.formatMessage(messages.title)} />

@@ -59,4 +59,8 @@ export default defineMessages({
     id: 'pages.SiteDetail.fieldDevices',
     defaultMessage: 'Devices',
   },
+  fieldContact: {
+    id: 'pages.SiteDetail.fieldContact',
+    defaultMessage: 'Site Contact',
+  },
 })
