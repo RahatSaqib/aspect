@@ -409,9 +409,7 @@ export const DeviceDetailProfile = ({
             <Summary
               title={intl.formatMessage(messages.connectivity)}
               description={intl.formatMessage(messages.lastSeen, {
-                lastSeen: `${intl.formatDate(
-                  device.get('lastSeen')
-                )} at ${intl.formatTime(device.get('lastSeen'))}`,
+                lastSeen: intl.formatRelative(device.get('lastSeen')),
               })}
             />
             <Summary
