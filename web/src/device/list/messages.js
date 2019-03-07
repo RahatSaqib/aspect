@@ -31,7 +31,7 @@ export const messages = defineMessages({
   },
   issueCategory: {
     id: 'pages.DeviceList.issueCategory',
-    defaultMessage: 'Issue Category',
+    defaultMessage: 'Issues',
   },
   reportingFor: {
     id: 'pages.DeviceList.reportingFor',

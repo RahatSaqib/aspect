@@ -37,19 +37,19 @@ const i18nKeyByType = _.reduce(
 
 const messages = defineMessages({
   [i18nKeyByType.userRequested]: {
-    id: `pages.Login.reasonUserRequested`,
+    id: 'pages.Login.reasonUserRequested',
     defaultMessage: "You've successfully logged out",
   },
   [i18nKeyByType.idle]: {
-    id: `pages.Login.reasonIdle`,
+    id: 'pages.Login.reasonIdle',
     defaultMessage: 'You were logged out due to inactivity',
   },
   [i18nKeyByType.expiredJWT]: {
-    id: `pages.Login.reasonExpiredJWT`,
+    id: 'pages.Login.reasonExpiredJWT',
     defaultMessage: 'You were logged out due to an expired session',
   },
   [i18nKeyByType.refreshJWTFailure]: {
-    id: `pages.Login.reasonRefreshJWTFailure`,
+    id: 'pages.Login.reasonRefreshJWTFailure',
     defaultMessage: 'You were logged out due to refreshing session failure',
   },
 })
