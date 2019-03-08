@@ -36,7 +36,6 @@ const SELECT_SHOW_FIELDS = [
   's.createdOn',
   'c.contact as cname',
   'sd.devices',
-  // 'contact.*',
   totalDevicesQuery,
   'g.countryId',
   'g.stateId',

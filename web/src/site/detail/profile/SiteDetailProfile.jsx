@@ -112,16 +112,15 @@ const SiteDetailProfile = ({
 }
 
 SiteDetailProfile.defaultProps = {
-  site: null,
   siteTags: [],
 }
 
 SiteDetailProfile.propTypes = {
   formatMessage: PropTypes.func.isRequired,
-  site: PropTypes.objectOf(Site),
-  history: PropTypes.object.isRequired, // eslint-disable-next-line react/forbid-prop-types
-  location: PropTypes.object.isRequired, // eslint-disable-next-line react/forbid-prop-types
-  match: PropTypes.object.isRequired, // eslint-disable-next-line react/forbid-prop-types
+  site: PropTypes.objectOf(Site).isRequired,
+  history: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  location: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   disabled: PropTypes.bool.isRequired,
   siteTags: PropTypes.arrayOf(PropTypes.object),
 }
