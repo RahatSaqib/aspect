@@ -21,8 +21,33 @@ const SELECT_LIST_RESULT_CATEGORY_FIELDS = [
   'rc.name',
   'rc.i18nKey',
   'rca.assayId',
+  'rca.emphasize',
+  'rca.requirestreatment',
 ]
 
+async function listAssaysResultSchema(request) {
+  const { auth } = request
+  const dataConstraints = await getConstraints(auth.credentials)
+  const assaysList = await knex('Result as r')
+    .innerJoin('Assay as a', 'r.assayId', 'a.id')
+    .innerJoin('Device as d', 'r.deviceId', 'd.id')
+    .modify(addConstraints, dataConstraints, { device: 'd' })
+    .select('a.id', 'a.resultDataSchema', 'a.patientDataSchema')
+
+  const rawResultCategories = await knex('ResultCategory as rc')
+    .innerJoin('ResultCategoryAssay as rca', 'rc.id', 'rca.resultCategoryId')
+    .whereIn('rca.assayId', _.map(assaysList, 'id'))
+    .select(SELECT_LIST_RESULT_CATEGORY_FIELDS)
+
+  const resultCategoriesByAssayId = _.groupBy(rawResultCategories, 'assayId')
+  const result = _.map(assaysList, elem => ({
+    assayId: elem.id,
+    resultDataSchema: JSON.parse(elem.resultDataSchema),
+    patientDataSchema: JSON.parse(elem.patientDataSchema),
+    resultCategories: resultCategoriesByAssayId[elem.id],
+  }))
+  return result
+}
 async function listAssays(request) {
   const { query, auth } = request
 
@@ -79,4 +104,5 @@ async function listAssays(request) {
 
 module.exports = {
   listAssays,
+  listAssaysResultSchema,
 }
