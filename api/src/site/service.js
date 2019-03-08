@@ -23,7 +23,6 @@ const SELECT_LIST_FIELDS = [
   totalDevicesQuery,
   's.externalId',
   'activeIssues.siteIssues',
-  // 'contact.*',
 ]
 
 const SELECT_SHOW_FIELDS = [
