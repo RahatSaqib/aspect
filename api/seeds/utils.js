@@ -1327,7 +1327,9 @@ async function seedIssueEscalationTrigger(
       escalationConditions: pluginName
         ? JSON.stringify({
             evaluationMethod: 'sql-script',
-            evaluationParameter: `./src/plugin/partner/${pluginName}/sqlScripts/shouldEscalateL2NotificationAfter30Days.sql`,
+            evaluationParameter: `./src/plugin/partner/${_.upperFirst(
+              pluginName
+            )}/sqlScripts/shouldEscalateL2NotificationAfter30Days.sql`,
           })
         : JSON.stringify({
             evaluationMethod: 'issue-age',
@@ -1352,7 +1354,9 @@ async function seedIssueEscalationTrigger(
       escalationConditions: pluginName
         ? JSON.stringify({
             evaluationMethod: 'sql-script',
-            evaluationParameter: `./src/plugin/partner/${pluginName}/sqlScripts/shouldEscalateL2NotificationAfter7Days.sql`,
+            evaluationParameter: `./src/plugin/partner/${_.upperFirst(
+              pluginName
+            )}/sqlScripts/shouldEscalateL2NotificationAfter7Days.sql`,
           })
         : JSON.stringify({
             evaluationMethod: 'issue-age',
@@ -1466,7 +1470,9 @@ async function seedIssueResolutionTrigger(
       resolutionConditions: pluginName
         ? JSON.stringify({
             evaluationMethod: 'sql-script',
-            evaluationParameter: `./src/plugin/partner/${pluginName}/sqlScripts/shouldResolveDeviceOffline.sql`,
+            evaluationParameter: `./src/plugin/partner/${_.upperFirst(
+              pluginName
+            )}/sqlScripts/shouldResolveDeviceOffline.sql`,
           })
         : JSON.stringify({
             evaluationMethod: 'plugin-function',
@@ -1480,7 +1486,9 @@ async function seedIssueResolutionTrigger(
       resolutionConditions: pluginName
         ? JSON.stringify({
             evaluationMethod: 'sql-script',
-            evaluationParameter: `./src/plugin/partner/${pluginName}/sqlScripts/shouldResolveDeviceNoResults.sql`,
+            evaluationParameter: `./src/plugin/partner/${_.upperFirst(
+              pluginName
+            )}/sqlScripts/shouldResolveDeviceNoResults.sql`,
           })
         : JSON.stringify({
             evaluationMethod: 'plugin-function',
