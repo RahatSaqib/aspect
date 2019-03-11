@@ -4625,6 +4625,11 @@ pg-connection-string@2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/pg-connection-string/-/pg-connection-string-2.0.0.tgz#3eefe5997e06d94821e4d502e42b6a1c73f8df82"
 
+phone@^2.3.7:
+  version "2.3.7"
+  resolved "https://registry.yarnpkg.com/phone/-/phone-2.3.7.tgz#1dba3287fc91c6c8962b545b2620364514ed68ac"
+  integrity sha512-To3ph8+Zuww7zAX2S1rWizxmDEquh9WQDIswgQYcRy1K4XUhG7iCmP6s/rZGfVCfJDgr6w6x9R7Mhn2hGhca5g==
+
 pify@^2.0.0:
   version "2.3.0"
   resolved "https://registry.yarnpkg.com/pify/-/pify-2.3.0.tgz#ed141a6ac043a849ea588498e7dca8b15330e90c"
