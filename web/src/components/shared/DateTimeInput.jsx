@@ -184,24 +184,13 @@ const DateTimeInput = ({
     const changedDate = set(optionsDate, value)
     setOptionsDate(changedDate)
     setDateTime(changedDate)
-  }
-
-  const handleBlur = event => {
-    const { currentTarget } = event
-    setTimeout(() => {
-      if (!currentTarget.contains(document.activeElement)) {
-        onChange(optionsDate)
-      }
-    }, 0)
+    onChange(changedDate)
   }
 
   const dateParts = multiSplit(displayFormat, ['-', ':', '/', ' ', '_', '|'])
 
   return (
-    <div
-      className={classNames(className, classesMap.selectControl)}
-      onBlur={handleBlur}
-    >
+    <div className={classNames(className, classesMap.selectControl)}>
       {_.map(dateParts, (display, i) => {
         const { name, options } = displayOptions[display] || ''
         if (name) {
