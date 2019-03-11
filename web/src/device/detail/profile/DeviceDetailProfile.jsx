@@ -487,7 +487,8 @@ export const DeviceDetailProfile = ({
           intl={intl}
           device={device}
           isDialogActive={
-            activeDialog.get('name') === types.DEVICE_DIALOG_FORM_FOR_CALIBRATION
+            activeDialog.get('name') ===
+            types.DEVICE_DIALOG_FORM_FOR_CALIBRATION
           }
           onCancel={onHideDialog}
           onSubmit={onCalibrationSubmit}
