@@ -3,10 +3,7 @@ const chai = require('chai')
 
 const server = supertest.agent('http://localhost:8080')
 const { assert } = chai
-// const context = createAlertTestContext({ user: 'admin' })
 describe('Server Routes', () => {
-  // before(context.beforeEach)
-  // after(context.afterEach)
   describe('/server', () => {
     const path = '/api/server'
     describe('GET', () => {

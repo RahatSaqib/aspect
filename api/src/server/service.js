@@ -7,7 +7,6 @@ async function getServersByPartner() {
     name: elem.name,
     serverUrl: elem.serverUrl,
   }))
-  console.log(result)
   return { data: result }
 }
 
