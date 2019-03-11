@@ -305,7 +305,7 @@ export function exportDevices(
   }
 }
 
-export function showDialogForm(externalId, data) {
+export function showDialog(externalId, data) {
   return dispatch => {
     dispatch({
       type: types.DEVICE_MAINTENANCE_FORM_SHOW,
@@ -314,7 +314,7 @@ export function showDialogForm(externalId, data) {
     })
   }
 }
-export function hideDialogForm() {
+export function hideDialog() {
   return dispatch => {
     dispatch({
       type: types.DEVICE_MAINTENANCE_FORM_HIDE,
@@ -349,16 +349,16 @@ export function updateDeviceMaintenance({
                   : 'Setting Device Warranty Due Date Failed',
             },
           }),
-          onClose: () => dispatch(showDialogForm(externalId, values)),
+          onClose: () => dispatch(showDialog(externalId, values)),
         }),
       },
     })
       .then(json => {
         dispatch(receiveUpdatedSingleDevice(requestedAt, json.data))
-        dispatch(hideDialogForm())
+        dispatch(hideDialog())
       })
       .catch(err => {
-        dispatch(hideDialogForm())
+        dispatch(hideDialog())
         throw err
       })
 }

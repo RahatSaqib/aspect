@@ -3,24 +3,19 @@ import { compose, withProps, lifecycle, pure } from 'recompose'
 import { defineMessages } from 'react-intl'
 
 import recomposeForm from '../../components/recomposeForm'
-import {
-  SHARED_DEFAULT_VALUES,
-  sharedFields,
-  withTodayProps,
-  BaseDialogForm,
-} from './BaseDialogForm'
+import { SHARED_DEFAULT_VALUES, sharedFields, BaseDialog } from './BaseDialog'
 
 const messages = defineMessages({
   dialogTitle: {
-    id: 'pages.WarrantyDialogForm.dialogTitle',
+    id: 'pages.WarrantyDialog.dialogTitle',
     defaultMessage: 'Device Warranty',
   },
   warrantyDueDate: {
-    id: 'pages.WarrantyDialogForm.warrantyDueDate',
+    id: 'pages.WarrantyDialog.warrantyDueDate',
     defaultMessage: 'Warranty Due Date',
   },
   warrantyDueDateIsRequired: {
-    id: 'pages.WarrantyDialogForm.warrantyDueDateIsRequired',
+    id: 'pages.WarrantyDialog.warrantyDueDateIsRequired',
     defaultMessage: 'Warranty Due Date is required',
   },
 })
@@ -37,7 +32,6 @@ const DEFAULT_VALUES = _.pick(SHARED_DEFAULT_VALUES, ['contextDate', 'notes'])
 
 const enhance = compose(
   pure,
-  withTodayProps,
   lifecycle({
     componentWillMount() {
       const { device } = this.props
@@ -63,4 +57,4 @@ const enhance = compose(
   })
 )
 
-export default enhance(BaseDialogForm)
+export default enhance(BaseDialog)

@@ -12,11 +12,11 @@ import AspectDialog from '../../components/shared/AspectDialog'
 import DateTimeInput from '../../components/shared/DateTimeInput'
 import { formatDate } from '../../shared/utils/dateFormat'
 
-const cssClasses = classnames.bind(require('./BaseDialogForm.css'))
+const cssClasses = classnames.bind(require('./BaseDialog.css'))
 
 export const sharedMessages = defineMessages({
   notes: {
-    id: 'pages.BaseDialogForm.notes',
+    id: 'pages.BaseDialog.notes',
     defaultMessage: 'Notes',
   },
 })
@@ -43,16 +43,16 @@ export const withTodayProps = withProps(() => ({
 
 export const messages = defineMessages({
   submit: {
-    id: 'pages.BaseDialogForm.submit',
+    id: 'pages.BaseDialog.submit',
     defaultMessage: 'Submit',
   },
   cancel: {
-    id: 'pages.BaseDialogForm.cancel',
+    id: 'pages.BaseDialog.cancel',
     defaultMessage: 'Cancel',
   },
 })
 
-export const BaseDialogForm = ({
+export const BaseDialog = ({
   intl,
   isDialogActive,
   onCancel,

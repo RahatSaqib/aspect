@@ -25,8 +25,8 @@ import BrowseEmptyList from '../../../globals/components/BrowseEmptyList'
 import { fetchResults, exportResults } from '../../../result/ResultRedux'
 import { tokens } from '../../../deviceStatus/DeviceStatusRedux'
 import {
-  showDialogForm,
-  hideDialogForm,
+  showDialog,
+  hideDialog,
   updateDeviceMaintenance,
 } from '../../DeviceRedux'
 import DeviceDetailBackBar from '../DeviceDetailBackBar'
@@ -37,8 +37,8 @@ import {
   ResultDataTableRow,
 } from './ResultDataTable'
 import requirePermissions from '../../../components/shared/requirePermissions'
-import CalibrationDialogForm from '../../adjustment/CalibrationDialogForm'
-import WarrantyDialogForm from '../../adjustment/WarrantyDialogForm'
+import CalibrationDialog from '../../adjustment/CalibrationDialog'
+import WarrantyDialog from '../../adjustment/WarrantyDialog'
 
 const cssClasses = classnames.bind(require('../DeviceDetail.css'))
 
@@ -160,8 +160,8 @@ const enhance = compose(
       }
     },
     {
-      showDialogForm,
-      hideDialogForm,
+      showDialog,
+      hideDialog,
       updateDeviceMaintenance,
     }
   ),
@@ -179,13 +179,13 @@ const enhance = compose(
             ? tokens.APPROVED
             : tokens.ASSIGNED,
       }),
-    onShowCalibrationDialog: ({ showDialogForm, device }) => () => {
-      showDialogForm('calibration', device)
+    onShowCalibrationDialog: ({ showDialog, device }) => () => {
+      showDialog('calibration', device)
     },
-    onShowWarrantyDialog: ({ showDialogForm, device }) => () => {
-      showDialogForm('warranty', device)
+    onShowWarrantyDialog: ({ showDialog, device }) => () => {
+      showDialog('warranty', device)
     },
-    onHideDialog: ({ hideDialogForm }) => () => hideDialogForm(),
+    onHideDialog: ({ hideDialog }) => () => hideDialog(),
 
     onCalibrationSubmit: ({ device, updateDeviceMaintenance }) => values => {
       updateDeviceMaintenance({
@@ -492,14 +492,14 @@ export const DeviceDetailProfile = ({
             />
           </div>
         </Card>
-        <CalibrationDialogForm
+        <CalibrationDialog
           intl={intl}
           device={device}
           isDialogActive={activeDialog.get('name') === 'calibration'}
           onCancel={onHideDialog}
           onSubmit={onCalibrationSubmit}
         />
-        <WarrantyDialogForm
+        <WarrantyDialog
           intl={intl}
           device={device}
           isDialogActive={activeDialog.get('name') === 'warranty'}

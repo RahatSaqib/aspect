@@ -3,23 +3,19 @@ import { compose, withProps, lifecycle, pure } from 'recompose'
 import { defineMessages } from 'react-intl'
 
 import recomposeForm from '../../components/recomposeForm'
-import {
-  SHARED_DEFAULT_VALUES,
-  sharedFields,
-  BaseDialogForm,
-} from './BaseDialogForm'
+import { SHARED_DEFAULT_VALUES, sharedFields, BaseDialog } from './BaseDialog'
 
 const messages = defineMessages({
   dialogTitle: {
-    id: 'pages.CalibrationDialogForm.dialogTitle',
+    id: 'pages.CalibrationDialog.dialogTitle',
     defaultMessage: 'Device Calibration',
   },
   calibrationDate: {
-    id: 'pages.CalibrationDialogForm.calibrationDate',
+    id: 'pages.CalibrationDialog.calibrationDate',
     defaultMessage: 'Calibration Date',
   },
   calibrationDateIsRequired: {
-    id: 'pages.WarrantyDialogForm.calibrationDateIsRequired',
+    id: 'pages.WarrantyDialog.calibrationDateIsRequired',
     defaultMessage: 'Calibration Date is required',
   },
 })
@@ -61,4 +57,4 @@ const enhance = compose(
   })
 )
 
-export default enhance(BaseDialogForm)
+export default enhance(BaseDialog)
