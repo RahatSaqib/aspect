@@ -34,23 +34,4 @@ describe('Assay routes', () => {
         })
     })
   })
-
-  describe('GET', () => {
-    it('should return a list of assays when using valid token', done => {
-      server
-        .get(`${path}resultandpatientschema`)
-        .set('Authorization', `Bearer ${shared.token}`)
-        .end((err, res) => {
-          assert.equal(res.status, 200)
-          assert.typeOf(res.body, 'Array')
-          assert.isAbove(res.body.length, 1)
-          assert.property(res.body[0], 'assayId')
-          assert.property(res.body[0], 'resultDataSchema')
-          assert.property(res.body[0], 'patientDataSchema')
-          assert.property(res.body[0], 'resultCategories')
-
-          done()
-        })
-    })
-  })
 })

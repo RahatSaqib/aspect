@@ -9,11 +9,12 @@ const SELECT_LIST_FIELDS = [
   'at.name as assayTypeName',
   'dt.id as deviceTypeId',
   'dt.name as deviceTypeName',
-  'a.resultDataSchema',
   'a.resultCategory1Label',
   'a.resultCategory1i18nKey',
   'a.resultCategory2Label',
   'a.resultCategory2i18nKey',
+  'a.resultDataSchema',
+  'a.patientDataSchema',
 ]
 
 const SELECT_LIST_RESULT_CATEGORY_FIELDS = [
@@ -25,14 +26,16 @@ const SELECT_LIST_RESULT_CATEGORY_FIELDS = [
   'rca.requirestreatment',
 ]
 
-async function listAssaysResultSchema(request) {
-  const { auth } = request
-  const dataConstraints = await getConstraints(auth.credentials)
+async function listAssaysResultSchema(deviceApiContext) {
+  const { knex, device } = deviceApiContext
   const assaysList = await knex('Result as r')
     .innerJoin('Assay as a', 'r.assayId', 'a.id')
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
-    .modify(addConstraints, dataConstraints, { device: 'd' })
-    .select('a.id', 'a.resultDataSchema', 'a.patientDataSchema')
+    .innerJoin('DeviceType as dt', 'd.devicetypeId', 'dt.id')
+    .innerJoin('AssayType as at', 'a.assaytypeId', 'at.id')
+    .where('d.siteId', device.siteId)
+    .select(SELECT_LIST_FIELDS)
+    .distinct()
 
   const rawResultCategories = await knex('ResultCategory as rc')
     .innerJoin('ResultCategoryAssay as rca', 'rc.id', 'rca.resultCategoryId')
@@ -40,12 +43,14 @@ async function listAssaysResultSchema(request) {
     .select(SELECT_LIST_RESULT_CATEGORY_FIELDS)
 
   const resultCategoriesByAssayId = _.groupBy(rawResultCategories, 'assayId')
-  const result = _.map(assaysList, elem => ({
-    assayId: elem.id,
-    resultDataSchema: JSON.parse(elem.resultDataSchema),
-    patientDataSchema: JSON.parse(elem.patientDataSchema),
-    resultCategories: resultCategoriesByAssayId[elem.id],
-  }))
+  const result = _.map(assaysList, elem =>
+    Object.assign({}, elem, {
+      assayId: elem.id,
+      resultDataSchema: JSON.parse(elem.resultDataSchema),
+      patientDataSchema: JSON.parse(elem.patientDataSchema),
+      resultCategories: resultCategoriesByAssayId[elem.id],
+    })
+  )
   return result
 }
 async function listAssays(request) {

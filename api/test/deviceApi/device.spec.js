@@ -415,6 +415,36 @@ describe('Device API routes', () => {
       }))
   })
 
+  describe('GET /device/assayresultandpatientschema', () => {
+    it('should return a list of assays patient and result and schema data', () => {
+      runTest(async () => {
+        const { deviceAuth } = context
+
+        await server
+          .get(`${devicePath}/assayresultandpatientschema`)
+          .set('Authorization', deviceAuth)
+          .end((err, res) => {
+            assert.equal(res.status, 200)
+            assert.typeOf(res.body, 'Array')
+            assert.isAbove(res.body.length, 0)
+            assert.property(res.body[0], 'id')
+            assert.property(res.body[0], 'resultDataSchema')
+            assert.property(res.body[0], 'patientDataSchema')
+            assert.property(res.body[0], 'resultCategories')
+            assert.property(res.body[0], 'assayTypeId')
+            assert.property(res.body[0], 'name')
+            assert.property(res.body[0], 'assayTypeName')
+            assert.property(res.body[0], 'deviceTypeId')
+            assert.property(res.body[0], 'deviceTypeName')
+            assert.property(res.body[0], 'deviceTypeId')
+            assert.property(res.body[0], 'resultCategory1Label')
+            assert.property(res.body[0], 'resultCategory1i18nKey')
+            assert.property(res.body[0], 'resultCategory2Label')
+            assert.property(res.body[0], 'resultCategory2i18nKey')
+          })
+      })
+    })
+  })
   describe('return health stats of remote server', () => {
     it('should return json with the servers stats.', () =>
       runTest(async () => {
