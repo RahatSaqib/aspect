@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import _fp from 'lodash/fp'
 import Immutable from 'immutable'
 import classnames from 'classnames/bind'
 import React from 'react'
@@ -26,6 +27,26 @@ import messages from './messages'
 const cssClasses = classnames.bind(require('./Status.css'))
 
 const EMPTY_LIST = Immutable.List()
+
+const getIssueIdsFromSummaryMap = (key, summaryMap) =>
+  _fp.pipe(
+    _fp.values,
+    _fp.flatMap(_fp.prop([key])),
+    _fp.uniq,
+    _fp.filter(id => !_fp.isNil(id))
+  )(summaryMap)
+
+function getFillColor({ id, activeSiteIds, issueSiteIds }) {
+  if (_.includes(activeSiteIds, id)) {
+    return process.env['--aspect-color-mandy']
+  }
+
+  if (_.includes(issueSiteIds, id)) {
+    return process.env['--aspect-color-supernova']
+  }
+
+  return process.env['--aspect-color-mantis']
+}
 
 const enhance = compose(
   pure,
@@ -90,8 +111,20 @@ const enhance = compose(
       }),
     }
   ),
-  withProps(({ siteList, activeSiteIds }) => {
+  withProps(({ siteList, activeSiteIds, siteSummaryMap, deviceSummaryMap }) => {
     const siteStateAbbrs = siteList.map(it => it.get('stateAbbr')).toSet()
+    const issueSiteIdsFromSiteSummaryMap = getIssueIdsFromSummaryMap(
+      'siteIds',
+      siteSummaryMap.toJS()
+    )
+    const issueSiteIdsFromDeviceSummaryMap = getIssueIdsFromSummaryMap(
+      'siteIds',
+      deviceSummaryMap.toJS()
+    ).map(id => String(id))
+
+    const issueSiteIds = _.uniq(
+      issueSiteIdsFromSiteSummaryMap.concat(issueSiteIdsFromDeviceSummaryMap)
+    )
 
     return {
       fill: ({ properties: { postal } }) =>
@@ -99,8 +132,9 @@ const enhance = compose(
       points: siteList
         .map(it => ({
           id: it.get('name'),
-          size: 6,
-          fill: _.includes(activeSiteIds, it.get('id')) ? '#EB4D62' : '#73D749',
+          siteName: it.get('name'),
+          size: 5,
+          fill: getFillColor({ activeSiteIds, issueSiteIds, id: it.get('id') }),
           latitude: it.get('latitude'),
           longitude: it.get('longitude'),
         }))

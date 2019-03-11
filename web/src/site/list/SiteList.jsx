@@ -32,7 +32,7 @@ import {
 
 const cssClasses = classnames.bind(require('./SiteList.css'))
 
-const messages = defineMessages({
+export const messages = defineMessages({
   sitesTitle: {
     id: 'pages.SiteList.title',
     defaultMessage: 'Sites',
@@ -56,6 +56,26 @@ const messages = defineMessages({
   externalId: {
     id: 'pages.SiteList.externalId',
     defaultMessage: 'Site ID',
+  },
+  siteIssues: {
+    id: 'pages.SiteList.siteIssues',
+    defaultMessage: 'Issues',
+  },
+  deviceHealth: {
+    id: 'pages.SiteList.deviceHealth',
+    defaultMessage: 'Device Health',
+  },
+  reagentHealth: {
+    id: 'pages.SiteList.reagentHealth',
+    defaultMessage: 'Reagent Health',
+  },
+  dataHealth: {
+    id: 'pages.SiteList.dataHealth',
+    defaultMessage: 'Data Health',
+  },
+  connectivityHealth: {
+    id: 'pages.SiteList.connectivityHealth',
+    defaultMessage: 'Connectivity Health',
   },
   paginatorStatus: {
     id: 'pages.SiteList.paginatorStatus',
@@ -227,6 +247,10 @@ export const SiteList = ({
                 key: 'totalDevices',
                 label: intl.formatMessage(messages.totalDevices),
                 sortable: true,
+              },
+              {
+                key: 'siteIssues',
+                label: intl.formatMessage(messages.siteIssues),
               },
             ]}
           />

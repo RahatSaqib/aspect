@@ -56,6 +56,14 @@
   visibility: hidden;
 }
 
+.ColoredButton--micro {
+  padding: 0 4px;
+  height: 18px;
+  min-height: 18px;
+  line-height: 18px;
+  font-size: 12px;
+}
+
 @media screen and (--xs-viewport) {
   .TableCell--xs {
     display: table-cell;

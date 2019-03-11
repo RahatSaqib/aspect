@@ -11,6 +11,9 @@ import ColoredButton from '../../components/themedReactToolbox/ColoredButton'
 import messages from './messages'
 
 const cssClasses = classnames.bind(require('./DeviceTableRow.css'))
+const sharedCssClasses = classnames.bind(
+  require('../../components/shared/DataTableRow.css')
+)
 
 const enhance = _.identity
 
@@ -30,7 +33,9 @@ const DeviceTableRow = ({ intl, device, onAlertClick, ...restProps }) => (
     {...restProps}
     className={cssClasses('TableRow', restProps.className)}
   >
-    <TableCell>{device.get('name')}</TableCell>
+    <TableCell>{`${device.get('type')} at ${device.get(
+      'siteName'
+    )}`}</TableCell>
     <TableCell>{device.get('status')}</TableCell>
     <TableCell>
       <Rate
@@ -52,7 +57,7 @@ const DeviceTableRow = ({ intl, device, onAlertClick, ...restProps }) => (
         .map(it => (
           <ColoredButton
             key={it.get('key')}
-            className={cssClasses('ColoredButton--micro')}
+            className={sharedCssClasses('ColoredButton--micro')}
             shipCove={it.get('key') === 'issueCategoryDeviceHealth'}
             shakespeare={it.get('key') === 'issueCategoryReagentHealth'}
             mountain={it.get('key') === 'issueCategoryDataHealth'}

@@ -10,7 +10,7 @@ const cssClasses = classnames.bind(require('./DeviceDetail.css'))
 const enhance = _.identity
 
 const Summary = ({ title, description, to, action }) => (
-  <Unit sm="1-4" className={cssClasses('Summary')}>
+  <Unit sm="1-3" className={cssClasses('Summary')}>
     <div className={cssClasses('Summary__Title')}>{title}</div>
     <div className={cssClasses('Summary__Description')}>
       {description}

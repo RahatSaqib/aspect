@@ -22,7 +22,8 @@ exports[`Site Status component should shallow render correctly 1`] = `
       sm="1-2"
     >
       <SummaryItemsBlock
-        data-site-ids="[\\"20\\"]"
+        data-device-ids="[\\"38\\",\\"86\\"]"
+        data-site-ids="[20]"
         intl={
           Object {
             "defaultFormats": Object {},
@@ -109,7 +110,8 @@ exports[`Site Status component should shallow render correctly 1`] = `
       sm="1-2"
     >
       <SummaryItemsBlock
-        data-site-ids="[\\"11\\",\\"12\\"]"
+        data-device-ids="[\\"88\\",\\"109\\"]"
+        data-site-ids="[11,12]"
         intl={
           Object {
             "defaultFormats": Object {},
@@ -195,6 +197,7 @@ exports[`Site Status component should shallow render correctly 1`] = `
       sm="1-2"
     >
       <SummaryItemsBlock
+        data-device-ids="[\\"37\\"]"
         data-site-ids="[]"
         intl={
           Object {
@@ -232,7 +235,6 @@ exports[`Site Status component should shallow render correctly 1`] = `
           ]
         }
         onClick={[Function]}
-        taype="site"
         title="test failures"
       />
       <SummaryItemsBlock

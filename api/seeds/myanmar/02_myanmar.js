@@ -62,6 +62,7 @@ async function seed(knex) {
     autoAcknowledgeOlderThanDays: 28,
     numberToLeaveUnacknowledged: 15,
     maxDaysDeviceOffline: 7,
+    serverUrl: 'https://myanmar.aspect.id',
   })
 
   const [myanmarCountry] = await knex('Country as c')
