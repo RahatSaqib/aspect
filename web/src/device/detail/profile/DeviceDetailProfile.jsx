@@ -48,7 +48,7 @@ const messages = defineMessages({
     defaultMessage: 'Calibration',
   },
   location: {
-    id: 'pages.DeviceDetailProfile.location',
+    id: 'pages.DeviceDetailProfile.site',
     defaultMessage: 'Site',
   },
   connectivity: {
