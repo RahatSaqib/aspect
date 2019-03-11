@@ -25,7 +25,6 @@ import BrowseEmptyList from '../../../globals/components/BrowseEmptyList'
 import { fetchResults, exportResults } from '../../../result/ResultRedux'
 import { tokens } from '../../../deviceStatus/DeviceStatusRedux'
 import {
-  types,
   showDialogForm,
   hideDialogForm,
   updateDeviceMaintenance,
@@ -181,23 +180,23 @@ const enhance = compose(
             : tokens.ASSIGNED,
       }),
     onShowCalibrationDialog: ({ showDialogForm, device }) => () => {
-      showDialogForm(types.DEVICE_DIALOG_FORM_FOR_CALIBRATION, device)
+      showDialogForm('calibration', device)
     },
     onShowWarrantyDialog: ({ showDialogForm, device }) => () => {
-      showDialogForm(types.DEVICE_DIALOG_FORM_FOR_WARRANTY, device)
+      showDialogForm('warranty', device)
     },
     onHideDialog: ({ hideDialogForm }) => () => hideDialogForm(),
 
     onCalibrationSubmit: ({ device, updateDeviceMaintenance }) => values => {
       updateDeviceMaintenance({
-        formName: types.DEVICE_DIALOG_FORM_FOR_CALIBRATION,
+        externalId: 'calibration',
         device,
         values,
       })
     },
     onWarrantySubmit: ({ device, updateDeviceMaintenance }) => values => {
       updateDeviceMaintenance({
-        formName: types.DEVICE_DIALOG_FORM_FOR_WARRANTY,
+        externalId: 'warranty',
         device,
         values,
       })
@@ -496,19 +495,14 @@ export const DeviceDetailProfile = ({
         <CalibrationDialogForm
           intl={intl}
           device={device}
-          isDialogActive={
-            activeDialog.get('name') ===
-            types.DEVICE_DIALOG_FORM_FOR_CALIBRATION
-          }
+          isDialogActive={activeDialog.get('name') === 'calibration'}
           onCancel={onHideDialog}
           onSubmit={onCalibrationSubmit}
         />
         <WarrantyDialogForm
           intl={intl}
           device={device}
-          isDialogActive={
-            activeDialog.get('name') === types.DEVICE_DIALOG_FORM_FOR_WARRANTY
-          }
+          isDialogActive={activeDialog.get('name') === 'warranty'}
           onCancel={onHideDialog}
           onSubmit={onWarrantySubmit}
         />

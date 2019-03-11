@@ -5,7 +5,11 @@ const Boom = require('boom')
 const { knex, filterParams, sortPageParams } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 const { getUser } = require('../auth/service')
-const { deviceStatusToId, resultCategoryToId } = require('../shared/dictionary')
+const {
+  deviceStatusToId,
+  resultCategoryToId,
+  deviceMaintenanceTypeToId,
+} = require('../shared/dictionary')
 const {
   getCellsByValue,
   generateExcelFile,
@@ -266,15 +270,10 @@ async function getDeviceByDeviceId({
 }) {
   const dataConstraints = await getConstraints(credentials)
 
-  const deviceMaintenanceType = await knex('DeviceMaintenanceType as dmt')
-    // .join('IssueType as it', 'it.defaultMessageTypeId', 'mt.id')
-    .select('dmt.externalId', 'dmt.*')
-    .reduce((memo, row) => {
-      memo[row.externalId] = row
-      return memo
-    }, {})
-  const maintenanceCalibrationId = deviceMaintenanceType.calibration.id
-  const maintenanceWarrantyId = deviceMaintenanceType.warranty.id
+  const maintenanceCalibrationId = await deviceMaintenanceTypeToId(
+    'calibration'
+  )
+  const maintenanceWarrantyId = await deviceMaintenanceTypeToId('warranty')
 
   const devices = await knex('Device as d')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
@@ -588,7 +587,10 @@ async function updateDeviceMaintenance(request) {
 
   const currentlyLoggedInUser = await getUser(credentials.name)
 
-  const { deviceMaintenanceTypeId, contextDate = new Date(), notes } = payload
+  const { externalId, contextDate = new Date(), notes } = payload
+  const { id: deviceMaintenanceTypeId } = await knex('DeviceMaintenanceType')
+    .where({ externalId })
+    .first('id')
 
   // reset 'current' for current maintenance type and device
   await knex('DeviceMaintenance')
@@ -599,7 +601,7 @@ async function updateDeviceMaintenance(request) {
       current: 1,
     })
   // insert new record with last maintenance status
-  const [deviceMaintenanceId] = await knex('DeviceMaintenance').insert({
+  await knex('DeviceMaintenance').insert({
     deviceId,
     deviceMaintenanceTypeId,
     current: 1,
@@ -615,7 +617,7 @@ async function updateDeviceMaintenance(request) {
     credentials,
   })
 
-  return { ok: true, data: { device, deviceMaintenanceId } }
+  return { ok: true, data: device }
 }
 
 module.exports = {

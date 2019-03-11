@@ -34,10 +34,8 @@ export const types = {
   REQUEST_DEVICES_FOR_SELECT_LIST: 'REQUEST_DEVICES_FOR_SELECT_LIST',
   RECEIVE_DEVICES_FOR_SELECT_LIST: 'RECEIVE_DEVICES_FOR_SELECT_LIST',
 
-  DEVICE_DIALOG_FORM_FOR_CALIBRATION: 'DEVICE_DIALOG_FORM_FOR_CALIBRATION',
-  DEVICE_DIALOG_FORM_FOR_WARRANTY: 'DEVICE_DIALOG_FORM_FOR_WARRANTY',
-  DEVICE_DIALOG_FORM_SHOW: 'DEVICE_DIALOG_FORM_SHOW',
-  DEVICE_DIALOG_FORM_HIDE: 'DEVICE_DIALOG_FORM_HIDE',
+  DEVICE_MAINTENANCE_FORM_SHOW: 'DEVICE_MAINTENANCE_FORM_SHOW',
+  DEVICE_MAINTENANCE_FORM_HIDE: 'DEVICE_MAINTENANCE_FORM_HIDE',
 }
 /*
  * ---------------- Action Creators -----------------
@@ -307,11 +305,11 @@ export function exportDevices(
   }
 }
 
-export function showDialogForm(formName, data) {
+export function showDialogForm(externalId, data) {
   return dispatch => {
     dispatch({
-      type: types.DEVICE_DIALOG_FORM_SHOW,
-      formName,
+      type: types.DEVICE_MAINTENANCE_FORM_SHOW,
+      externalId,
       data,
     })
   }
@@ -319,34 +317,25 @@ export function showDialogForm(formName, data) {
 export function hideDialogForm() {
   return dispatch => {
     dispatch({
-      type: types.DEVICE_DIALOG_FORM_HIDE,
+      type: types.DEVICE_MAINTENANCE_FORM_HIDE,
     })
   }
 }
 
 export function updateDeviceMaintenance({
-  formName,
+  externalId,
   device,
   values,
   requestedAt = new Date(),
 }) {
   const deviceId = device.get('id')
-  const maintenanceTypeIds = device.get('maintenanceTypeIds')
-  const deviceMaintenanceTypeId =
-    formName === types.DEVICE_DIALOG_FORM_FOR_CALIBRATION
-      ? maintenanceTypeIds.get('calibration')
-      : maintenanceTypeIds.get('warranty')
-  const getErrorMessage = formName =>
-    formName === types.DEVICE_DIALOG_FORM_FOR_CALIBRATION
-      ? 'Setting Device Calibration Date Failed'
-      : 'Setting Device Warranty Due Date Failed'
 
   return dispatch =>
     aspectFetch(`/device/maintenance/${deviceId}`, {
       method: 'POST',
       body: JSON.stringify({
         ...values,
-        deviceMaintenanceTypeId,
+        externalId,
       }),
       errorNotifications: {
         default: errorPleaseTryAgainInAFewMinutes({
@@ -354,15 +343,18 @@ export function updateDeviceMaintenance({
             title: {
               id:
                 'errorResponseMessages.setDeviceMaintenance.POST.default.title',
-              defaultMessage: getErrorMessage(formName),
+              defaultMessage:
+                externalId === 'calibration'
+                  ? 'Setting Device Calibration Date Failed'
+                  : 'Setting Device Warranty Due Date Failed',
             },
           }),
-          onClose: () => dispatch(showDialogForm(formName, values)),
+          onClose: () => dispatch(showDialogForm(externalId, values)),
         }),
       },
     })
       .then(json => {
-        dispatch(receiveUpdatedSingleDevice(requestedAt, json.data.device))
+        dispatch(receiveUpdatedSingleDevice(requestedAt, json.data))
         dispatch(hideDialogForm())
       })
       .catch(err => {
@@ -424,12 +416,12 @@ export default function deviceReducer(state = initialState, action) {
         lastRefreshed: action.lastRefreshed,
         items: new Immutable.fromJS(action.items),
       })
-    case types.DEVICE_DIALOG_FORM_SHOW:
+    case types.DEVICE_MAINTENANCE_FORM_SHOW:
       return state.mergeIn(['activeDialog'], {
-        name: action.formName,
+        name: action.externalId,
         data: action.data,
       })
-    case types.DEVICE_DIALOG_FORM_HIDE:
+    case types.DEVICE_MAINTENANCE_FORM_HIDE:
       return state.setIn(['activeDialog', 'name'], undefined)
     default:
       return state

@@ -209,7 +209,7 @@ const routes = [
             .required(),
         },
         payload: {
-          deviceMaintenanceTypeId: Joi.number(),
+          externalId: Joi.string(),
           contextDate: Joi.date()
             .iso()
             .description(
