@@ -12,6 +12,7 @@ import Card from '@material-ui/core/Card'
 import MdFileDownload from 'react-icons/lib/md/file-download'
 import Helmet from 'react-helmet'
 import TableBody from '@material-ui/core/TableBody'
+import { formatDistanceStrict } from 'date-fns'
 
 import {
   makeSortPageSelector,
@@ -27,6 +28,12 @@ import BrowseEmptyList from '../../../globals/components/BrowseEmptyList'
 import AbnormalBarChart from '../../../dashboard/operational/AbnormalBarChart'
 import { fetchResults, exportResults } from '../../../result/ResultRedux'
 import { tokens } from '../../../deviceStatus/DeviceStatusRedux'
+import {
+  types,
+  showDialogForm,
+  hideDialogForm,
+  updateDeviceMaintenance,
+} from '../../DeviceRedux'
 import DeviceDetailBackBar from '../DeviceDetailBackBar'
 import Summary from '../Summary'
 import {
@@ -35,6 +42,8 @@ import {
   ResultDataTableRow,
 } from './ResultDataTable'
 import requirePermissions from '../../../components/shared/requirePermissions'
+import CalibrationDialogForm from '../../adjustment/CalibrationDialogForm'
+import WarrantyDialogForm from '../../adjustment/WarrantyDialogForm'
 
 const cssClasses = classnames.bind(require('../DeviceDetail.css'))
 
@@ -146,8 +155,27 @@ const filtersFromLocation = composeSanitizer(
   ),
   searchSanitizer
 )
+const formatMaintenanceDate = date => {
+  if (!date) {
+    return 'n / a'
+  }
+  return formatDistanceStrict(date, new Date(), { addSuffix: true })
+}
 
 const enhance = compose(
+  connect(
+    state => {
+      const { activeDialog } = state.device
+      return {
+        activeDialog,
+      }
+    },
+    {
+      showDialogForm,
+      hideDialogForm,
+      updateDeviceMaintenance,
+    }
+  ),
   withProps(
     makeSortPageSelector({
       sortCol: 'endedOn',
@@ -162,6 +190,28 @@ const enhance = compose(
             ? tokens.APPROVED
             : tokens.ASSIGNED,
       }),
+    onShowCalibrationDialog: ({ showDialogForm, device }) => () => {
+      showDialogForm(types.DEVICE_DIALOG_FORM_FOR_CALIBRATION, device)
+    },
+    onShowWarrantyDialog: ({ showDialogForm, device }) => () => {
+      showDialogForm(types.DEVICE_DIALOG_FORM_FOR_WARRANTY, device)
+    },
+    onHideDialog: ({ hideDialogForm }) => () => hideDialogForm(),
+
+    onCalibrationSubmit: ({ device, updateDeviceMaintenance }) => values => {
+      updateDeviceMaintenance({
+        formName: types.DEVICE_DIALOG_FORM_FOR_CALIBRATION,
+        device,
+        values,
+      })
+    },
+    onWarrantySubmit: ({ device, updateDeviceMaintenance }) => values => {
+      updateDeviceMaintenance({
+        formName: types.DEVICE_DIALOG_FORM_FOR_WARRANTY,
+        device,
+        values,
+      })
+    },
   })
 )
 
@@ -381,6 +431,12 @@ export const DeviceDetailProfile = ({
   sortDir,
   pageAt,
   pageSize,
+  activeDialog,
+  onShowCalibrationDialog,
+  onShowWarrantyDialog,
+  onHideDialog,
+  onCalibrationSubmit,
+  onWarrantySubmit,
 }) => (
   <div>
     <Helmet title={device.get('name')} />
@@ -410,8 +466,13 @@ export const DeviceDetailProfile = ({
           />
           <Summary
             title={intl.formatMessage(messages.calibration)}
-            description="TODO: Up to date"
-            action={<Button variant="contained">Add record</Button>}
+            description={formatMaintenanceDate(device.get('calibrationDate'))}
+            // "TODO: Up to date"
+            action={
+              <Button variant="contained" onClick={onShowCalibrationDialog}>
+                Add record
+              </Button>
+            }
           />
           <Summary title={intl.formatMessage(messages.firmware)} />
           <Summary
@@ -432,11 +493,34 @@ export const DeviceDetailProfile = ({
           />
           <Summary
             title={intl.formatMessage(messages.warranty)}
-            description="TODO: Expires in 18 months"
-            action={<Button variant="contained">Update</Button>}
+            // description="TODO: Expires in 18 months"
+            description={formatMaintenanceDate(device.get('warrantyDueDate'))}
+            action={
+              <Button variant="contained" onClick={onShowWarrantyDialog}>
+                Update
+              </Button>
+            }
           />
         </div>
       </Card>
+      <CalibrationDialogForm
+        intl={intl}
+        device={device}
+        isDialogActive={
+          activeDialog.get('name') === types.DEVICE_DIALOG_FORM_FOR_CALIBRATION
+        }
+        onCancel={onHideDialog}
+        onSubmit={onCalibrationSubmit}
+      />
+      <WarrantyDialogForm
+        intl={intl}
+        device={device}
+        isDialogActive={
+          activeDialog.get('name') === types.DEVICE_DIALOG_FORM_FOR_WARRANTY
+        }
+        onCancel={onHideDialog}
+        onSubmit={onWarrantySubmit}
+      />
     </section>
     <section className={cssClasses('Section')}>
       <Card className={cssClasses('Section__Content')}>

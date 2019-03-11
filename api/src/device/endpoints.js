@@ -215,7 +215,7 @@ const routes = [
             .description(
               'Specified date for type of maintenance, i.e. warranty due date, calibration date'
             ),
-          note: Joi.string(),
+          notes: Joi.string(),
         },
       },
     },

@@ -29,7 +29,7 @@ async function up(knex) {
       .notNullable()
       .references('id')
       .inTable('DeviceMaintenanceType')
-    x.string('note', 2000)
+    x.string('notes', 2000)
     x
       .dateTime('contextDate')
       .index()

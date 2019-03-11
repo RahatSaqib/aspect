@@ -33,6 +33,11 @@ export const types = {
 
   REQUEST_DEVICES_FOR_SELECT_LIST: 'REQUEST_DEVICES_FOR_SELECT_LIST',
   RECEIVE_DEVICES_FOR_SELECT_LIST: 'RECEIVE_DEVICES_FOR_SELECT_LIST',
+
+  DEVICE_DIALOG_FORM_FOR_CALIBRATION: 'DEVICE_DIALOG_FORM_FOR_CALIBRATION',
+  DEVICE_DIALOG_FORM_FOR_WARRANTY: 'DEVICE_DIALOG_FORM_FOR_WARRANTY',
+  DEVICE_DIALOG_FORM_SHOW: 'DEVICE_DIALOG_FORM_SHOW',
+  DEVICE_DIALOG_FORM_HIDE: 'DEVICE_DIALOG_FORM_HIDE',
 }
 /*
  * ---------------- Action Creators -----------------
@@ -302,6 +307,70 @@ export function exportDevices(
   }
 }
 
+export function showDialogForm(formName, data) {
+  return dispatch => {
+    dispatch({
+      type: types.DEVICE_DIALOG_FORM_SHOW,
+      formName,
+      data,
+    })
+  }
+}
+export function hideDialogForm() {
+  return dispatch => {
+    dispatch({
+      type: types.DEVICE_DIALOG_FORM_HIDE,
+    })
+  }
+}
+
+export function updateDeviceMaintenance({
+  formName,
+  device,
+  values,
+  requestedAt = new Date(),
+}) {
+  const deviceId = device.get('id')
+  const maintenanceTypeIds = device.get('maintenanceTypeIds')
+  const deviceMaintenanceTypeId =
+    formName === types.DEVICE_DIALOG_FORM_FOR_CALIBRATION
+      ? maintenanceTypeIds.get('calibration')
+      : maintenanceTypeIds.get('warranty')
+  const getErrorMessage = formName =>
+    formName === types.DEVICE_DIALOG_FORM_FOR_CALIBRATION
+      ? 'Setting Device Calibration Date Failed'
+      : 'Setting Device Warranty Due Date Failed'
+
+  return dispatch =>
+    aspectFetch(`/device/maintenance/${deviceId}`, {
+      method: 'POST',
+      body: JSON.stringify({
+        ...values,
+        deviceMaintenanceTypeId,
+      }),
+      errorNotifications: {
+        default: errorPleaseTryAgainInAFewMinutes({
+          ...defineMessages({
+            title: {
+              id:
+                'errorResponseMessages.setDeviceMaintenance.POST.default.title',
+              defaultMessage: getErrorMessage(formName),
+            },
+          }),
+          onClose: () => dispatch(showDialogForm(formName, values)),
+        }),
+      },
+    })
+      .then(json => {
+        dispatch(receiveUpdatedSingleDevice(requestedAt, json.data.device))
+        dispatch(hideDialogForm())
+      })
+      .catch(err => {
+        dispatch(hideDialogForm())
+        throw err
+      })
+}
+
 /*
  * ---------------- Reducers -----------------
  */
@@ -315,6 +384,10 @@ const Device = Immutable.Record({
   items: new Items(),
   table: new Table(),
   selectList: new SelectListItems(),
+  activeDialog: Immutable.Map({
+    name: undefined,
+    data: undefined,
+  }),
 })
 
 const initialState = new Device()
@@ -351,6 +424,13 @@ export default function deviceReducer(state = initialState, action) {
         lastRefreshed: action.lastRefreshed,
         items: new Immutable.fromJS(action.items),
       })
+    case types.DEVICE_DIALOG_FORM_SHOW:
+      return state.mergeIn(['activeDialog'], {
+        name: action.formName,
+        data: action.data,
+      })
+    case types.DEVICE_DIALOG_FORM_HIDE:
+      return state.setIn(['activeDialog', 'name'], undefined)
     default:
       return state
   }
