@@ -53,7 +53,7 @@ const TaskTableRow = ({ intl, messages, task, ...restProps }) => (
           label={task.get('issueCategory')}
         />
         <span className={cssClasses('Message__Subject')}>
-          {task.get('title')}
+          {addEllipsis(task.get('title'))}
         </span>
         <span className={cssClasses('Message__Text')}>
           {task.get('message')}
@@ -72,12 +72,17 @@ const TaskTableRow = ({ intl, messages, task, ...restProps }) => (
       </div>
     </TableCell>
     <TableCell className={cssClasses('TableCell')}>
-      {task.get('site')}
+      {addEllipsis(task.get('site'))}
     </TableCell>
     <TableCell className={cssClasses('TableCell')}>
       {intl.formatRelative(task.get('time'))}
     </TableCell>
   </TableRow>
 )
+function addEllipsis(words) {
+  const wordsArray = words.split(',')
+  if (wordsArray.length > 2) return `${wordsArray[0]}, ${wordsArray[1]} ...`
+  return words
+}
 
 export default enhance(TaskTableRow)
