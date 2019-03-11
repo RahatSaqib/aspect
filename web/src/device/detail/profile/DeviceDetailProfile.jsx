@@ -47,7 +47,7 @@ const messages = defineMessages({
     id: 'pages.DeviceDetailProfile.calibration',
     defaultMessage: 'Calibration',
   },
-  location: {
+  site: {
     id: 'pages.DeviceDetailProfile.site',
     defaultMessage: 'Site',
   },
@@ -402,7 +402,7 @@ export const DeviceDetailProfile = ({
               action={<Button variant="contained">Add record</Button>}
             />
             <Summary
-              title={intl.formatMessage(messages.location)}
+              title={intl.formatMessage(messages.site)}
               description={device.get('siteName')}
               to={`/browse/site/${device.get('siteId')}`}
             />
