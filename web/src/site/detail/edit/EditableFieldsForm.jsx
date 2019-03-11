@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import { compose, setPropTypes, pure } from 'recompose'
 import { Field, reduxForm } from 'redux-form/immutable'
+import classnames from 'classnames/bind'
 
 // Material-UI
 import LinearProgress from '@material-ui/core/LinearProgress'
@@ -14,6 +15,8 @@ import TimezoneSelect from '../../../components/shared/TimezoneSelect'
 import LocationSelector from '../../../components/shared/LocationSelector'
 import ConnectedTagInput from '../../../tag/ConnectedTagInput'
 import { ReadOnlyField } from '../../../components/shared/ReadOnlyFields'
+
+const cssClasses = classnames.bind(require('./EditableFieldsForm.css'))
 
 const renderTextField = ({ input, meta, ...restProps }) => (
   <TextField
@@ -75,23 +78,26 @@ export const EditableFieldsForm = ({
   onSiteTagChange,
 }) => (
   <form onSubmit={handleSubmit}>
-    <Field name="name" label={labels.name} component={renderTextField} />
-    <Field
-      name="shortName"
-      label={labels.shortName}
-      component={renderTextField}
-    />
-    <Field
-      name="externalId"
-      label={labels.externalId}
-      component={renderTextField}
-    />
-    <TimezoneSelect
-      name="timezone"
-      label={labels.timezone}
-      disabled={loading || submitting}
-      fullWidth
-    />
+    <div className={cssClasses('container')}>
+      <Field
+        className={cssClasses('container__field')}
+        name="name"
+        label={labels.name}
+        component={renderTextField}
+      />
+      <Field
+        className={cssClasses('container__field')}
+        name="shortName"
+        label={labels.shortName}
+        component={renderTextField}
+      />
+      <Field
+        className={cssClasses('container__field')}
+        name="fieldFacilityCode"
+        label={labels.facilityCode}
+        component={renderTextField}
+      />
+    </div>
     <LocationSelector
       loading={loading}
       initialValues={initialValues}
@@ -100,18 +106,59 @@ export const EditableFieldsForm = ({
       stateIdFieldName="stateId"
       lgaIdFieldName="lgaId"
     />
-    <Field name="address" label={labels.address} component={renderTextField} />
-    <Field
-      name="address2"
-      label={labels.address2}
-      component={renderTextField}
+    <div className={cssClasses('container')}>
+      <Field
+        className={cssClasses('container__field')}
+        name="address"
+        label={labels.address}
+        component={renderTextField}
+      />
+      <Field
+        className={cssClasses('container__field')}
+        name="address2"
+        label={labels.address2}
+        component={renderTextField}
+      />
+    </div>
+    <div className={cssClasses('container')}>
+      <Field
+        className={cssClasses('container__field')}
+        name="city"
+        label={labels.city}
+        component={renderTextField}
+      />
+      <Field
+        className={cssClasses('container__field')}
+        name="zip"
+        label={labels.zip}
+        component={renderTextField}
+      />
+    </div>
+    <div className={cssClasses('container')}>
+      <Field
+        className={cssClasses('container__field')}
+        name="longitude"
+        label={labels.longitude}
+        component={renderTextField}
+      />
+      <Field
+        className={cssClasses('container__field')}
+        name="latitude"
+        label={labels.latitude}
+        component={renderTextField}
+      />
+    </div>
+    <TimezoneSelect
+      name="timezone"
+      label={labels.timezone}
+      disabled={loading || submitting}
+      fullWidth
     />
-    <Field name="city" label={labels.city} component={renderTextField} />
-    <Field
-      name="zip"
-      floatingLabelText={labels.zip}
+    {/* <Field
+      name="externalId"
+      label={labels.externalId}
       component={renderTextField}
-    />
+    /> */}
     <ReadOnlyField
       label={labels.tags}
       value={siteTags}
