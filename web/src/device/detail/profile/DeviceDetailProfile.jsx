@@ -11,13 +11,13 @@ import Card from '@material-ui/core/Card'
 import MdFileDownload from 'react-icons/lib/md/file-download'
 import Helmet from 'react-helmet'
 import TableBody from '@material-ui/core/TableBody'
-import { formatDistanceStrict } from 'date-fns'
 
 import {
   makeSortPageSelector,
   makeSearchParamsSanitizer,
   composeSanitizer,
 } from '../../../shared/selectors/searchParams'
+import { formatDate } from '../../../shared/utils/dateFormat'
 import { sanitizeFiltersStringBy } from '../../../filter/utils'
 import DataTableProgressBar from '../../../components/shared/DataTableProgressBar'
 import BrowseTablePaginator from '../../../globals/components/BrowseTablePaginator'
@@ -107,6 +107,10 @@ const messages = defineMessages({
       other {# results}
     }`,
   },
+  undefinedValue: {
+    id: 'pages.DeviceDetailProfile.undefinedValue',
+    defaultMessage: 'n/a',
+  },
 })
 
 const FILTERS_CONFIG = {
@@ -141,11 +145,11 @@ const filtersFromLocation = composeSanitizer(
   ),
   searchSanitizer
 )
-const formatMaintenanceDate = date => {
+const formatMaintenanceDate = (intl, date) => {
   if (!date) {
-    return 'n / a'
+    return intl.formatMessage(messages.endedOn)
   }
-  return formatDistanceStrict(date, new Date(), { addSuffix: true })
+  return formatDate(date)
 }
 
 const enhance = compose(
@@ -454,7 +458,10 @@ export const DeviceDetailProfile = ({
             />
             <Summary
               title={intl.formatMessage(messages.calibration)}
-              description={formatMaintenanceDate(device.get('calibrationDate'))}
+              description={formatMaintenanceDate(
+                intl,
+                device.get('calibrationDate')
+              )}
               action={
                 <Button variant="contained" onClick={onShowCalibrationDialog}>
                   Add record
@@ -474,7 +481,10 @@ export const DeviceDetailProfile = ({
             />
             <Summary
               title={intl.formatMessage(messages.warranty)}
-              description={formatMaintenanceDate(device.get('warrantyDueDate'))}
+              description={formatMaintenanceDate(
+                intl,
+                device.get('warrantyDueDate')
+              )}
               action={
                 <Button variant="contained" onClick={onShowWarrantyDialog}>
                   Update
