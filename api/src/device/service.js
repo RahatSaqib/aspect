@@ -352,11 +352,6 @@ async function getDeviceByDeviceId({
     () => contacts.splice(_.random(0, contacts.length - 1), 1)[0]
   )
 
-  device.maintenanceTypeIds = {
-    calibration: maintenanceCalibrationId,
-    warranty: maintenanceWarrantyId,
-  }
-
   return device
 }
 
