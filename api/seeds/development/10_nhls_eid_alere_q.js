@@ -85,6 +85,7 @@ async function seed(knex) {
     deviceLogHistoryDays: 365,
     maxDaysDeviceOffline: 7,
     maxDaysDeviceNoResults: 14,
+    serverUrl: 'https://sanhls.aspect.id',
   })
 
   const [southAfricaCountry] = await knex('Country as c')
