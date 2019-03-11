@@ -37,8 +37,8 @@ import {
   ResultDataTableRow,
 } from './ResultDataTable'
 import requirePermissions from '../../../components/shared/requirePermissions'
-import CalibrationDialog from '../../adjustment/CalibrationDialog'
-import WarrantyDialog from '../../adjustment/WarrantyDialog'
+import CalibrationDialog from '../../maintenance/CalibrationDialog'
+import WarrantyDialog from '../../maintenance/WarrantyDialog'
 
 const cssClasses = classnames.bind(require('../DeviceDetail.css'))
 
