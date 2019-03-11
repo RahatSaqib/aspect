@@ -68,6 +68,9 @@ function addClientRoutes(server) {
     require('./dashboard/endpoints').routes.map(decorateClientAPI('dashboard'))
   )
   server.route(require('./tag/endpoints').routes.map(decorateClientAPI()))
+  server.route(
+    require('./server/endpoints').routes.map(decorateClientAPI('server'))
+  )
 }
 
 function addDeviceRoutes(server) {

@@ -83,6 +83,7 @@ async function seed(knex) {
     numberToLeaveUnacknowledged: 15,
     maxDaysDeviceOffline: 7,
     maxDaysDeviceNoResults,
+    serverUrl: 'https://myanmar.aspect.id',
   })
 
   // -------------------------

@@ -76,6 +76,7 @@ async function seed(knex) {
     deviceLogHistoryDays: 365,
     maxDaysDeviceOffline: 7,
     maxDaysDeviceNoResults: 14,
+    serverUrl: 'https://sanhls.aspect.id',
   })
 
   // Create geographic hierarchy
