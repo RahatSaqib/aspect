@@ -15,6 +15,7 @@ const SELECT_LIST_FIELDS = [
   'a.resultCategory2i18nKey',
   'a.resultDataSchema',
   'a.patientDataSchema',
+  'a.patientDataSchema'
 ]
 
 const SELECT_LIST_RESULT_CATEGORY_FIELDS = [

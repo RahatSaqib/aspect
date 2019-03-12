@@ -170,6 +170,7 @@ async function seed(knex) {
 
   await knex('Assay').insert({
     name: 'Reporter HIV VL',
+    abbreviation: 'Reporter HIV VL',
     i18nKey: 'AssayReporterHivVl',
     externalId: 'HivVl',
     assayTypeId: await assayTypeToId('HIV VL'),
