@@ -21,19 +21,20 @@ const SELECT_LIST_RESULT_CATEGORY_FIELDS = [
   'rc.id',
   'rc.name',
   'rc.i18nKey',
+  'rc.externalId',
   'rca.assayId',
   'rca.emphasize',
   'rca.requirestreatment',
 ]
-
-async function listAssaysResultSchema(deviceApiContext) {
-  const { knex, device } = deviceApiContext
+async function listAssaysResultSchema(request) {
+  const { auth } = request
+  const dataConstraints = await getConstraints(auth.credentials)
   const assaysList = await knex('Result as r')
     .innerJoin('Assay as a', 'r.assayId', 'a.id')
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
     .innerJoin('DeviceType as dt', 'd.devicetypeId', 'dt.id')
     .innerJoin('AssayType as at', 'a.assaytypeId', 'at.id')
-    .where('d.siteId', device.siteId)
+    .modify(addConstraints, dataConstraints, { device: 'd' })
     .select(SELECT_LIST_FIELDS)
     .distinct()
 

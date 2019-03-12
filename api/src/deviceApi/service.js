@@ -4,8 +4,6 @@ const { knex, transact, run } = require('../db')
 const { getRemoteAddress } = require('../shared/request')
 const { asyncHandler } = require('../routes')
 const { deviceStatusToId, deviceTypeToPlugin } = require('../shared/dictionary')
-const { listAssaysResultSchema } = require('../assay/service')
-
 const {
   resultUpdated,
   resultLogged,
@@ -1126,7 +1124,6 @@ async function getCountriesHealthStats(knex) {
     .orderBy('Date', 'asc')
 }
 const getHealthStatsHandler = deviceApiHandler(getHealthState)
-const listAssaysResultSchemaHandler = deviceApiHandler(listAssaysResultSchema)
 
 async function getHealthState(context) {
   const countries = await getCountriesHealthStats(context.knex)
@@ -1163,5 +1160,4 @@ module.exports = {
   onResultUpdated,
   onResultLogged,
   getHealthStatsHandler,
-  listAssaysResultSchemaHandler,
 }
