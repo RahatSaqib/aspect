@@ -65,6 +65,12 @@ const routes = [
             resultCategories: Joi.array()
               .allow(null)
               .description('The json object for result Categories'),
+            assayTypeAbbreviation: Joi.string()
+              .allow(null)
+              .description('The assay type abbreviation'),
+            abbreviation: Joi.string()
+              .allow(null)
+              .description('The assay abbreviation'),
           })
         ),
       },

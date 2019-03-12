@@ -5,7 +5,7 @@ const shared = require('../utils/sharedToken')
 const server = supertest.agent('http://localhost:8080')
 const { assert } = chai
 
-describe.only('Assay routes', () => {
+describe('Assay routes', () => {
   const path = '/api/assay'
   shared.checkToken(server, path)
   describe('GET', () => {
@@ -27,6 +27,8 @@ describe.only('Assay routes', () => {
           assert.property(res.body.data[0], 'deviceTypeName')
           assert.property(res.body.data[0], 'hasResults')
           assert.property(res.body.data[0], 'resultDataSchema')
+          assert.property(res.body.data[0], 'assayTypeAbbreviation')
+          assert.property(res.body.data[0], 'abbreviation')
           assert.property(res.body, 'total')
           done()
         })
