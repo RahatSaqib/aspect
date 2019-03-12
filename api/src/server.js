@@ -42,33 +42,34 @@ const plugins = [
   // Basic authentication in Device API
   require('hapi-auth-basic'),
 
-  // SwaggerUI and documentation
-  {
-    register: require('hapi-swagger'),
-    options: {
-      info: {
-        title: 'Aspect API',
-        version,
-      },
-      swaggerUIPath: `${config.swagger.uiPath}/swaggerui/`,
-      jsonPath: `${config.swagger.uiPath}/swagger.json`,
-      documentationPath: `${config.swagger.uiPath}/documentation`,
-      pathReplacements: [
-        {
-          replaceIn: 'all',
-          pattern: /^/,
-          replacement: config.swagger.uiPath,
-        },
-      ],
-    },
-  },
-
   // Set payload prior to validation transformation
   rawPayloadPlugin,
 
   // Set message queue
   messageQueuePlugin,
 ]
+
+if (config.swagger.enabled) {
+  plugins.push({
+    register: require('hapi-swagger'),
+    options: {
+      info: {
+        title: 'Aspect API',
+        version,
+      },
+      schemes: config.swagger.schemes,
+      host: config.swagger.host,
+      pathPrefixSize: config.swagger.pathPrefixSize,
+      pathReplacements: [
+        {
+          replaceIn: 'all',
+          pattern: /^/,
+          replacement: config.swagger.apiUrlSegment,
+        },
+      ],
+    },
+  })
+}
 
 addRavenPlugin(plugins)
 
