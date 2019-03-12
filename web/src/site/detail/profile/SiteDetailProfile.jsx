@@ -101,7 +101,7 @@ const SiteDetailProfile = ({
       <section className={cssClasses('Section', 'Section--first')}>
         <Card className={cssClasses('Section__Content')}>
           {fields.map(field => (
-            <Summary title={field.label} description={field.value} />
+            <Summary title={field.label} description={field.value} cols="4" />
           ))}
           <ReadOnlyField
             label={formatMessage(messages.fieldTags)}

@@ -26,8 +26,8 @@ const descriptionSection = (description, to, action) => (
   </div>
 )
 
-const Summary = ({ title, description, to, action }) => (
-  <Unit sm="1-3" className={cssClasses('Summary')}>
+const Summary = ({ title, description, to, action, cols }) => (
+  <Unit sm={`1-${cols}`} className={cssClasses('Summary')}>
     <div className={cssClasses('Summary__Title')}>{title}</div>
     {Array.isArray(description)
       ? description.map(item => (
@@ -48,11 +48,13 @@ Summary.propTypes = {
   ]).isRequired,
   to: PropTypes.string,
   action: PropTypes.string,
+  cols: PropTypes.string,
 }
 
 Summary.defaultProps = {
   to: null,
   action: null,
+  cols: '3',
 }
 
 export default enhance(Summary)
