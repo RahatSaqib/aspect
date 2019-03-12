@@ -4,7 +4,6 @@ const { knex, transact, run } = require('../db')
 const { getRemoteAddress } = require('../shared/request')
 const { asyncHandler } = require('../routes')
 const { deviceStatusToId, deviceTypeToPlugin } = require('../shared/dictionary')
-
 const {
   resultUpdated,
   resultLogged,
@@ -572,14 +571,6 @@ async function createDeviceApiContext(
     }
   )
 
-  if (handlerOptions.transformInitialPayload && request.params.pluginName) {
-    const transformInitialPayload = await loadPlugin(
-      [request.params.pluginName],
-      'transformInitialPayload'
-    )
-    request.payload = await transformInitialPayload(originalRequest)
-  }
-
   const { auth } = request
   const now = new Date()
   const existingDeviceAndData = await knex('DeviceApiKey as dak')
@@ -587,6 +578,8 @@ async function createDeviceApiContext(
     .innerJoin('DeviceStatus as ds', 'd.deviceStatusId', 'ds.id')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .innerJoin('DeviceTypeCategory as dtc', 'dtc.id', 'dt.deviceTypeCategoryId')
+    .innerJoin('Geography as g', 'd.geographyId', 'g.id')
+    .innerJoin('Country as c', 'c.id', 'g.countryId')
     .leftJoin('Partner as p', 'p.id', 'd.partnerId')
     .where({
       'dak.token': auth.credentials.token,
@@ -607,9 +600,19 @@ async function createDeviceApiContext(
       'dt.externalId as deviceType',
       'dt.plugin as deviceTypePluginName',
       'p.plugin as partnerPluginName',
-      'dtc.name as deviceTypeCategory'
+      'dtc.name as deviceTypeCategory',
+      'c.abbreviation as countryAbbreviation'
     )
-
+  if (handlerOptions.transformInitialPayload && request.params.pluginName) {
+    const transformInitialPayload = await loadPlugin(
+      [request.params.pluginName],
+      'transformInitialPayload'
+    )
+    request.payload = await transformInitialPayload(
+      originalRequest,
+      existingDeviceAndData.countryAbbreviation
+    )
+  }
   let device = null
   if (existingDeviceAndData != null) {
     device = existingDeviceAndData

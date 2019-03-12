@@ -28,7 +28,7 @@ describe('CommCare Result API routes', () => {
 
     before(async () => {
       await context.createSites(['commcare'])
-      await context.createDeviceApiKey()
+      await context.createDeviceWithApiKey()
     })
     afterEach(context.afterEach)
 
