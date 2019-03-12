@@ -60,7 +60,15 @@ const SiteDetailProfile = ({
     },
     {
       label: formatMessage(messages.fieldContact),
-      value: site.get('cname'),
+      value:
+        site.get('contacts') &&
+        site
+          .get('contacts')
+          .toJS()
+          .map(contact => ({
+            description: contact.name,
+            to: `/browse/person/${contact.id}`,
+          })),
     },
     {
       label: formatMessage(messages.fieldDevices),
@@ -71,7 +79,10 @@ const SiteDetailProfile = ({
           .toJS()
           .map(device => ({
             description: device.name,
-            to: `/browse/device?filters=deviceTypeId%3D${device.id}`,
+            to:
+              device.category === 2
+                ? '/browse/router'
+                : `/browse/device?filters=deviceTypeId%3D${device.id}`,
           })),
     },
   ]

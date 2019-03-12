@@ -34,8 +34,6 @@ const SELECT_SHOW_FIELDS = [
   'l.name as lga',
   'ct.name as country',
   's.createdOn',
-  'c.contact as cname',
-  'sd.devices',
   totalDevicesQuery,
   'g.countryId',
   'g.stateId',
@@ -129,29 +127,6 @@ function getSite(siteId, dataConstraints) {
     .leftOuterJoin('State as st', 'g.stateId', 'st.id')
     .leftOuterJoin('Country as ct', 'g.countryId', 'ct.id')
     .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
-    .leftOuterJoin(
-      knex('JobContext as jc')
-        .select('p.name as contact', 'jc.siteId')
-        .innerJoin('Job as j', 'jc.jobId', 'j.id')
-        .innerJoin('Person as p', ' j.personId', 'p.id')
-        .as('c'),
-      's.id',
-      'c.siteId'
-    )
-    .leftOuterJoin(
-      knex('Device as d')
-        .select(
-          'd.siteId',
-          knex.raw(
-            "GROUP_CONCAT( dt.id , '-' , dt.name SEPARATOR ';' ) as devices"
-          )
-        )
-        .leftOuterJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
-        .groupBy('d.siteId')
-        .as('sd'),
-      's.id',
-      'sd.siteId'
-    )
     .where('s.id', siteId)
     .modify(addConstraints, dataConstraints, { site: 's', geography: 'g' })
     .first(SELECT_SHOW_FIELDS)
@@ -164,15 +139,19 @@ async function showSite(request) {
 
   // get item
   const item = await getSite(params.siteId, dataConstraints)
-  if (item.devices) {
-    item.devices = item.devices.split(';').map(device => {
-      const separator = device.indexOf('-')
-      return {
-        id: device.substring(0, separator),
-        name: device.substring(separator + 1),
-      }
-    })
-  }
+  item.devices = await knex('Device as d')
+    .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
+    .innerJoin('DeviceTypeCategory as dtc', 'dt.deviceTypeCategoryId', 'dtc.id')
+    .where('siteId', params.siteId)
+    .distinct('dt.id', 'dt.name', 'dtc.id as category')
+    .select()
+
+  item.contacts = await knex('JobContext as jc')
+    .innerJoin('Job as j', 'jc.jobId', 'j.id')
+    .innerJoin('Person as p', 'j.personId', 'p.id')
+    .where('jc.siteId', params.siteId)
+    .select('p.name', 'p.id')
+
   const result = { ok: true, data: item }
 
   return result
