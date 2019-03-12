@@ -15,6 +15,8 @@ import TimezoneSelect from '../../../components/shared/TimezoneSelect'
 import LocationSelector from '../../../components/shared/LocationSelector'
 import ConnectedTagInput from '../../../tag/ConnectedTagInput'
 import { ReadOnlyField } from '../../../components/shared/ReadOnlyFields'
+import AspectButton from '../../../components/shared/AspectButton'
+import messages from '../messages'
 
 const cssClasses = classnames.bind(require('./EditableFieldsForm.css'))
 
@@ -68,6 +70,7 @@ const enhance = compose(
 
 // Renders underlying form and inputs components
 export const EditableFieldsForm = ({
+  formatMessage,
   labels,
   loading,
   initialValues,
@@ -134,7 +137,7 @@ export const EditableFieldsForm = ({
         component={renderTextField}
       />
     </div>
-    <div className={cssClasses('container')}>
+    <div className={cssClasses('container', 'coordinate')}>
       <Field
         className={cssClasses('container__field')}
         name="longitude"
@@ -147,6 +150,16 @@ export const EditableFieldsForm = ({
         label={labels.latitude}
         component={renderTextField}
       />
+      <div className={cssClasses('coordinate__button')}>
+        <AspectButton
+          // disabled={disabled}
+          color="primary"
+          variant="contained"
+          // inverse={match.path !== path}
+        >
+          {formatMessage(messages.buttonSetBasedonAddress)}
+        </AspectButton>
+      </div>
     </div>
     <TimezoneSelect
       name="timezone"
@@ -178,7 +191,7 @@ export const EditableFieldsForm = ({
       color="secondary"
       variant="contained"
     >
-      Update
+      {formatMessage(messages.buttonUpdate)}
     </Button>
     {submitting && <LinearProgress />}
   </form>

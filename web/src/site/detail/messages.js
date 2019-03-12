@@ -75,4 +75,12 @@ export default defineMessages({
     id: 'pages.SiteDetail.fieldContact',
     defaultMessage: 'Site Contact',
   },
+  buttonSetBasedonAddress: {
+    id: 'pages.SiteDetail.buttonSetBasedonAddress',
+    defaultMessage: 'Set based on address',
+  },
+  buttonUpdate: {
+    id: 'pages.SiteDetail.buttonUpdate',
+    defaultMessage: 'UPDATE',
+  },
 })

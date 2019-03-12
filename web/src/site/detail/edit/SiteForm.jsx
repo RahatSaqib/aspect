@@ -92,6 +92,7 @@ const SiteForm = props => {
       <section className={cssClasses('Section', 'Section--first')}>
         <Card className={cssClasses('Section__Content')}>
           <EditableFieldsFormContainer
+            formatMessage={formatMessage}
             labels={labels}
             enableReinitialize
             initialValues={initialValues}
