@@ -233,6 +233,7 @@ async function seed(knex) {
 
   await knex('Assay').insert({
     name: 'Reporter EID',
+    abbreviation: 'Reporter EID',
     i18nKey: 'AssayReporterEid',
     externalId: 'EID',
     assayTypeId: await assayTypeToId('EID'),

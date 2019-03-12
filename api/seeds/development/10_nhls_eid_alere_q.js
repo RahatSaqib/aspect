@@ -406,6 +406,7 @@ async function seed(knex) {
 
   const [alereQHiv12DetectAssayId] = await knex('Assay').insert({
     name: 'Alere q HIV-1/2 Detect',
+    abbreviation: 'Q HIV detect',
     i18nKey: 'assayAlereQHiv12Detect',
     externalId: 'assayAlereQHiv12Detect',
     assayTypeId: await assayTypeToId('HIV Qual'),
@@ -508,6 +509,7 @@ async function seed(knex) {
   })
   const [alereQHiv12VLPlasmaAssayId] = await knex('Assay').insert({
     name: 'Alere q HIV-1/2 VL plasma',
+    abbreviation: 'Q HIV Plasma',
     i18nKey: 'assayAlereQHiv12VLPlasma',
     externalId: 'assayAlereQHiv12VLPlasma',
     assayTypeId: await assayTypeToId('HIV VL'),
