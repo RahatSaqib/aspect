@@ -595,7 +595,7 @@ async function updateDeviceMaintenance(request) {
       current: 1,
     })
     .first()
-  if (item && item.contextDate.toShortDate() === contextDate.toShortDate()) {
+  if (item && item.contextDate.toDateString() === contextDate.toDateString()) {
     // update existing record if dates are the same
     await knex('DeviceMaintenance')
       .where({ id: item.id })
