@@ -26,13 +26,44 @@ server.connection({
   },
 })
 
+const { swagger: { enabled: swaggerEnabled }, raven } = config
+
 const plugins = [
-  // static file handling (hapi-swagger dependency)
   require('inert'),
-
-  // view layer (hapi-swagger dependency)
-  require('vision'),
-
+  // Load Swagger documentation if configured
+  ...(swaggerEnabled
+    ? [
+        require('vision'),
+        {
+          register: require('hapi-swagger'),
+          options: {
+            info: {
+              title: 'Aspect API',
+              version,
+            },
+            schemes: config.swagger.schemes,
+            host: config.swagger.host,
+            pathPrefixSize: config.swagger.pathPrefixSize,
+            pathReplacements: [
+              {
+                replaceIn: 'all',
+                pattern: /^/,
+                replacement: config.swagger.apiUrlSegment,
+              },
+            ],
+          },
+        },
+      ]
+    : []),
+  // Load Raven (Sentry) plugin if configured
+  ...(raven
+    ? [
+        {
+          register: require('hapi-raven'),
+          options: { dsn: raven.dsn },
+        },
+      ]
+    : []),
   // JWT for authentication in client API
   require('hapi-auth-jwt2'),
 
@@ -48,30 +79,6 @@ const plugins = [
   // Set message queue
   messageQueuePlugin,
 ]
-
-if (config.swagger.enabled) {
-  plugins.push({
-    register: require('hapi-swagger'),
-    options: {
-      info: {
-        title: 'Aspect API',
-        version,
-      },
-      schemes: config.swagger.schemes,
-      host: config.swagger.host,
-      pathPrefixSize: config.swagger.pathPrefixSize,
-      pathReplacements: [
-        {
-          replaceIn: 'all',
-          pattern: /^/,
-          replacement: config.swagger.apiUrlSegment,
-        },
-      ],
-    },
-  })
-}
-
-addRavenPlugin(plugins)
 
 function messageQueuePlugin(server, options, next) {
   createMessageQueue('aspect')
@@ -94,17 +101,6 @@ function messageQueuePlugin(server, options, next) {
 messageQueuePlugin.attributes = {
   name: 'messageQueue',
   version,
-}
-
-// Loads Raven (Sentry) plugin if configured
-function addRavenPlugin(plugins) {
-  const { raven } = config
-  if (raven) {
-    plugins.push({
-      register: require('hapi-raven'),
-      options: { dsn: raven.dsn },
-    })
-  }
 }
 
 // Plugin to set payload prior to validation transformation
