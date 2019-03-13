@@ -52,6 +52,8 @@ const swaggerPlugins = swaggerEnabled
           schemes: config.swagger.schemes,
           host: config.swagger.host,
           pathPrefixSize: config.swagger.pathPrefixSize,
+          swaggerUIPath: `${config.swagger.apiUrlSegment}/swaggerui/`,
+          jsonPath: `${config.swagger.apiUrlSegment}/swagger.json`,
           pathReplacements: [
             {
               replaceIn: 'all',
