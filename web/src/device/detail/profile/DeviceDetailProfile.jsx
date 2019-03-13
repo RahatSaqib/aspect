@@ -1,16 +1,18 @@
 import _ from 'lodash'
 import classnames from 'classnames/bind'
-import React from 'react'
+import React, { Fragment } from 'react'
 import { defineMessages } from 'react-intl'
 import { compose, withProps, withHandlers, lifecycle } from 'recompose'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Button from '@material-ui/core/Button'
 import IconButton from '@material-ui/core/IconButton'
+import Tooltip from '@material-ui/core/Tooltip'
 import Card from '@material-ui/core/Card'
 import MdFileDownload from 'react-icons/lib/md/file-download'
 import Helmet from 'react-helmet'
 import TableBody from '@material-ui/core/TableBody'
+import NotesIcon from '@material-ui/icons/ChatBubbleOutline'
 
 import {
   makeSortPageSelector,
@@ -110,6 +112,10 @@ const messages = defineMessages({
     id: 'pages.DeviceDetailProfile.undefinedValue',
     defaultMessage: 'n/a',
   },
+  notes: {
+    id: 'pages.DeviceDetailProfile.notes',
+    defaultMessage: 'notes',
+  },
 })
 
 const FILTERS_CONFIG = {
@@ -146,7 +152,7 @@ const filtersFromLocation = composeSanitizer(
 )
 const formatMaintenanceDate = (intl, date) => {
   if (!date) {
-    return intl.formatMessage(messages.endedOn)
+    return intl.formatMessage(messages.undefinedValue)
   }
   return formatDate(date)
 }
@@ -426,6 +432,8 @@ export const DeviceDetailProfile = ({
   onWarrantySubmit,
 }) => {
   const deviceName = `${device.get('type')} at ${device.get('siteName')}`
+  const calibrationNotes = device.get('calibrationNotes')
+  const warrantyNotes = device.get('warrantyNotes')
   return (
     <div>
       <Helmet title={deviceName} />
@@ -457,10 +465,24 @@ export const DeviceDetailProfile = ({
             />
             <Summary
               title={intl.formatMessage(messages.calibration)}
-              description={formatMaintenanceDate(
-                intl,
-                device.get('calibrationDate')
-              )}
+              description={
+                <Fragment>
+                  {formatMaintenanceDate(intl, device.get('calibrationDate'))}
+                  {calibrationNotes && (
+                    <Tooltip
+                      disableHoverListener
+                      title={calibrationNotes}
+                      placement="top"
+                    >
+                      <IconButton
+                        aria-label={intl.formatMessage(messages.notes)}
+                      >
+                        <NotesIcon fontSize="larger" />
+                      </IconButton>
+                    </Tooltip>
+                  )}
+                </Fragment>
+              }
               action={
                 <Button variant="contained" onClick={onShowCalibrationDialog}>
                   Add record
@@ -480,10 +502,24 @@ export const DeviceDetailProfile = ({
             />
             <Summary
               title={intl.formatMessage(messages.warranty)}
-              description={formatMaintenanceDate(
-                intl,
-                device.get('warrantyDueDate')
-              )}
+              description={
+                <Fragment>
+                  {formatMaintenanceDate(intl, device.get('warrantyDueDate'))}
+                  {warrantyNotes && (
+                    <Tooltip
+                      disableHoverListener
+                      title={warrantyNotes}
+                      placement="bottom"
+                    >
+                      <IconButton
+                        aria-label={intl.formatMessage(messages.notes)}
+                      >
+                        <NotesIcon fontSize="larger" />
+                      </IconButton>
+                    </Tooltip>
+                  )}
+                </Fragment>
+              }
               action={
                 <Button variant="contained" onClick={onShowWarrantyDialog}>
                   Update

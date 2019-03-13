@@ -46,6 +46,14 @@ async function up(knex) {
       .notNullable()
       .references('id')
       .inTable('User')
+    x.dateTime('updatedOn').notNullable()
+    x
+      .integer('updatedBy')
+      .unsigned()
+      .index()
+      .notNullable()
+      .references('id')
+      .inTable('User')
     x.charset('utf8')
   })
 }

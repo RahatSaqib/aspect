@@ -587,25 +587,46 @@ async function updateDeviceMaintenance(request) {
     .where({ externalId })
     .first('id')
 
-  // reset 'current' for current maintenance type and device
-  await knex('DeviceMaintenance')
-    .update({ current: 0 })
+  // get currently active maintenance item
+  const item = await knex('DeviceMaintenance')
     .where({
       deviceId,
       deviceMaintenanceTypeId,
       current: 1,
     })
-  // insert new record with last maintenance status
-  await knex('DeviceMaintenance').insert({
-    deviceId,
-    deviceMaintenanceTypeId,
-    current: 1,
-    contextDate,
-    notes,
-    createdOn: new Date(),
-    createdBy: currentlyLoggedInUser.id,
-  })
-
+    .first()
+  if (item && item.contextDate.toShortDate() === contextDate.toShortDate()) {
+    // update existing record if dates are the same
+    await knex('DeviceMaintenance')
+      .where({ id: item.id })
+      .update({
+        contextDate,
+        notes,
+        updatedOn: new Date(),
+        updatedBy: currentlyLoggedInUser.id,
+      })
+  } else {
+    // reset 'current' for current maintenance type and device
+    await knex('DeviceMaintenance')
+      .update({ current: 0 })
+      .where({
+        deviceId,
+        deviceMaintenanceTypeId,
+        current: 1,
+      })
+    // insert new record with last maintenance status
+    await knex('DeviceMaintenance').insert({
+      deviceId,
+      deviceMaintenanceTypeId,
+      current: 1,
+      contextDate,
+      notes,
+      createdOn: new Date(),
+      createdBy: currentlyLoggedInUser.id,
+      updatedOn: new Date(),
+      updatedBy: currentlyLoggedInUser.id,
+    })
+  }
   // get same 'device' as for Device Details
   device = await getDeviceByDeviceId({
     deviceId,
