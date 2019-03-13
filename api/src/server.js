@@ -28,42 +28,46 @@ server.connection({
 
 const { swagger: { enabled: swaggerEnabled }, raven } = config
 
-const plugins = [
-  require('inert'),
-  // Load Swagger documentation if configured
-  ...(swaggerEnabled
-    ? [
-        require('vision'),
-        {
-          register: require('hapi-swagger'),
-          options: {
-            info: {
-              title: 'Aspect API',
-              version,
-            },
-            schemes: config.swagger.schemes,
-            host: config.swagger.host,
-            pathPrefixSize: config.swagger.pathPrefixSize,
-            pathReplacements: [
-              {
-                replaceIn: 'all',
-                pattern: /^/,
-                replacement: config.swagger.apiUrlSegment,
-              },
-            ],
+// Load Raven (Sentry) plugin if configured
+const ravenPlugins = raven
+  ? [
+      {
+        register: require('hapi-raven'),
+        options: { dsn: raven.dsn },
+      },
+    ]
+  : []
+
+// Load Swagger documentation if configured
+const swaggerPlugins = swaggerEnabled
+  ? [
+      require('vision'),
+      {
+        register: require('hapi-swagger'),
+        options: {
+          info: {
+            title: 'Aspect API',
+            version,
           },
+          schemes: config.swagger.schemes,
+          host: config.swagger.host,
+          pathPrefixSize: config.swagger.pathPrefixSize,
+          pathReplacements: [
+            {
+              replaceIn: 'all',
+              pattern: /^/,
+              replacement: config.swagger.apiUrlSegment,
+            },
+          ],
         },
-      ]
-    : []),
-  // Load Raven (Sentry) plugin if configured
-  ...(raven
-    ? [
-        {
-          register: require('hapi-raven'),
-          options: { dsn: raven.dsn },
-        },
-      ]
-    : []),
+      },
+    ]
+  : []
+
+const plugins = [
+  ...ravenPlugins,
+  require('inert'),
+  ...swaggerPlugins,
   // JWT for authentication in client API
   require('hapi-auth-jwt2'),
 
