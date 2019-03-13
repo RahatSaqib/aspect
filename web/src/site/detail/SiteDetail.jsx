@@ -57,6 +57,7 @@ const SiteDetail = props => {
                 disabled={!editable}
                 {...props}
                 site={site}
+                siteTags={siteTags.toJS()}
               />
             )}
           />

@@ -5,8 +5,6 @@ import classnames from 'classnames/bind'
 import Card from '@material-ui/core/Card'
 
 // Our own imports
-import { ReadOnlyField } from '../../../components/shared/ReadOnlyFields'
-import ConnectedTagInput from '../../../tag/ConnectedTagInput'
 import messages from '../messages'
 import { Site } from '../../SiteRedux'
 import Summary from '../../../globals/components/Summary'
@@ -103,18 +101,11 @@ const SiteDetailProfile = ({
           {fields.map(field => (
             <Summary title={field.label} description={field.value} cols="4" />
           ))}
-          <ReadOnlyField
-            label={formatMessage(messages.fieldTags)}
-            value={siteTags}
-            format={v => (
-              <ConnectedTagInput
-                qryId={site.get('id')}
-                qryType="site"
-                disabled
-                allowCreate
-                value={v}
-              />
-            )}
+
+          <Summary
+            title={formatMessage(messages.fieldTags)}
+            description={siteTags.map(tag => tag.title).join(', ')}
+            cols="1"
           />
         </Card>
       </section>
