@@ -28,13 +28,13 @@ module.exports = {
     url: process.env['amqp.url'],
   },
   swagger: {
-    enabled: process.env['swagger.enabled'],
+    enabled: process.env['swagger.enabled'] === 'true',
     schemes: getSwaggerSchemes(
-      process.env['swagger.scheme.http'],
-      process.env['swagger.scheme.https']
+      process.env['swagger.scheme.http'] === 'true',
+      process.env['swagger.scheme.https'] === 'true'
     ),
     host: process.env['swagger.host'] || '',
-    pathPrefixSize: process.env['swagger.pathPrefixSize'] || 1,
+    pathPrefixSize: parseInt(process.env['swagger.pathPrefixSize'] || '1', 10),
     apiUrlSegment: process.env['swagger.apiUrlSegment'] || '',
   },
   sms: {
