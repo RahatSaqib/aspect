@@ -83,6 +83,10 @@ const SiteDetailProfile = ({
                 : `/browse/device?filters=deviceTypeId%3D${device.id}`,
           })),
     },
+    {
+      label: formatMessage(messages.fieldTags),
+      value: siteTags.map(tag => tag.title).join(', '),
+    },
   ]
   return (
     <div>
@@ -101,12 +105,6 @@ const SiteDetailProfile = ({
           {fields.map(field => (
             <Summary title={field.label} description={field.value} cols="4" />
           ))}
-
-          <Summary
-            title={formatMessage(messages.fieldTags)}
-            description={siteTags.map(tag => tag.title).join(', ')}
-            cols="1"
-          />
         </Card>
       </section>
     </div>
