@@ -6,7 +6,7 @@ const {
 } = require('../routes')
 const {
   listResults,
-  listResultsComplete,
+  listResultsSync,
   showResult,
   listResultTypes,
   updateWorkflowStatus,
@@ -92,32 +92,6 @@ const routes = [
       },
       listResultsBaseConfig()
     ),
-  },
-  {
-    method: 'GET',
-    path: '/resultcomplete',
-    handler: asyncHandler(listResultsComplete),
-    config: Object.assign({
-      description: 'Result List Complete',
-      notes:
-        'Pageable and sortable list of complete results (including all result details). Used for the reporter app',
-      auth: { scope: ['result:view', 'result:edit'] },
-      validate: {
-        query: Object.assign(
-          {
-            minUpdatedOn: Joi.date()
-              .iso()
-              .allow(null)
-              .description('Updated From Date'),
-            maxUpdatedOn: Joi.date()
-              .iso()
-              .allow(null)
-              .description('Updated To Date'),
-          },
-          validateSortPageParams('updatedOn')
-        ),
-      },
-    }),
   },
   {
     method: 'GET',
@@ -334,6 +308,32 @@ const routes = [
       },
       listResultsBaseConfig()
     ),
+  },
+  {
+    method: 'GET',
+    path: '/result/sync',
+    handler: asyncHandler(listResultsSync),
+    config: Object.assign({
+      description: 'Result Sync',
+      notes:
+        'Pageable and sortable list of complete results (including all result details). Used for syncing the reporter app',
+      auth: { scope: ['result:view', 'result:edit'] },
+      validate: {
+        query: Object.assign(
+          {
+            minUpdatedOn: Joi.date()
+              .iso()
+              .allow(null)
+              .description('Updated From Date'),
+            maxUpdatedOn: Joi.date()
+              .iso()
+              .allow(null)
+              .description('Updated To Date'),
+          },
+          validateSortPageParams('updatedOn')
+        ),
+      },
+    }),
   },
 ]
 

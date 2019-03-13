@@ -257,7 +257,7 @@ async function listResults(request) {
   return result
 }
 
-async function getListResultsComplete(query, auth) {
+async function getListResultsSync(query, auth) {
   // get data constraints
   const dataConstraints = await getConstraints(auth.credentials)
 
@@ -362,9 +362,9 @@ async function getListResultsComplete(query, auth) {
   return result
 }
 
-async function listResultsComplete(request) {
+async function listResultsSync(request) {
   const { query, auth } = request
-  const result = await getListResultsComplete(query, auth)
+  const result = await getListResultsSync(query, auth)
   return result
 }
 
@@ -948,7 +948,7 @@ function createUniqueIdForResult(
 
 module.exports = {
   listResults,
-  listResultsComplete,
+  listResultsSync,
   showResult,
   listResultTypes,
   updateWorkflowStatus,

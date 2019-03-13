@@ -3,6 +3,7 @@ module.exports = require('../utils').seed(seed)
 const _ = require('lodash')
 const bcrypt = require('bcrypt')
 const Promise = require('bluebird')
+const { addMinutes } = require('date-fns')
 
 const config = require('../../src/config')
 const southAfricaLabClinic = require('./fixtures/southAfricaLabClinic.json')
@@ -1215,6 +1216,8 @@ async function seed(knex) {
           resultData: result.resultData,
           startedOn: result.testStartedOn,
           endedOn: result.testEndedOn,
+          createdOn: addMinutes(result.testEndedOn, 10),
+          updatedOn: addMinutes(result.testEndedOn, 30),
           instrumentSerial: cmjahDeviceSerial,
           consumableSerial: result.consumableSerial,
           senderVersion: result.senderVersion,
