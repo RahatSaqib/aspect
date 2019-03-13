@@ -333,6 +333,133 @@ const routes = [
           validateSortPageParams('updatedOn')
         ),
       },
+      response: {
+        options: {
+          allowUnknown: false,
+        },
+        schema: Joi.object().keys({
+          ok: Joi.bool()
+            .required()
+            .description('False if there was some sort of error'),
+          total: Joi.number()
+            .required()
+            .description(
+              'The total number of results that match the given filters'
+            ),
+          length: Joi.number()
+            .required()
+            .description('The number of results included in this response'),
+          data: Joi.array()
+            .required()
+            .description('The results')
+            .items(
+              Joi.object().keys({
+                externalId: Joi.string()
+                  .required()
+                  .description(
+                    'Unique ID of the result for this instance of Aspect'
+                  ),
+                startedOn: Joi.date()
+                  .required()
+                  .description('When sample processing started'),
+                endedOn: Joi.date()
+                  .required()
+                  .description('When sample processing ended'),
+                createdOn: Joi.date()
+                  .required()
+                  .description(
+                    'When the result was added to the Aspect database'
+                  ),
+                updatedOn: Joi.date()
+                  .required()
+                  .description(
+                    'When the result was last updated in the Aspect database'
+                  ),
+                longitude: Joi.number()
+                  .allow(null)
+                  .description(
+                    'Longitude of the device at the time the sample was processed'
+                  ),
+                latitude: Joi.number()
+                  .allow(null)
+                  .description(
+                    'Latitude of the device at the time the sample was processed'
+                  ),
+                assayExternalId: Joi.string()
+                  .required()
+                  .description('Unique ID of the Assay'),
+                siteName: Joi.string()
+                  .required()
+                  .description(
+                    'Name of the site where the device was located when the sample was processed'
+                  ),
+                deviceName: Joi.string()
+                  .required()
+                  .description('Name of the device'),
+                resultCategory1ExternalId: Joi.string()
+                  .allow(null)
+                  .description('Category of the first result'),
+                resultCategory2ExternalId: Joi.string()
+                  .allow(null)
+                  .description('Category of the second result'),
+                resultWorkflowStatusExternalId: Joi.string()
+                  .allow(null)
+                  .description('Current workflow status of the result'),
+                patientData: Joi.object()
+                  .allow(null)
+                  .description('Data about the patient'),
+                resultData: Joi.object()
+                  .allow(null)
+                  .description('Data about the result'),
+                researchId: Joi.string()
+                  .allow(null)
+                  .description('An optional research ID for the patient'),
+                formData: Joi.array()
+                  .allow(null)
+                  .description('Form data that was entered in the Aspect UI'),
+                senderVersion: Joi.string()
+                  .allow(null)
+                  .description('Version of the device software'),
+                senderOperator: Joi.string()
+                  .allow(null)
+                  .description('Operator of the device'),
+                notes: Joi.string()
+                  .allow(null)
+                  .description('Any notes entered for the sample'),
+                errorCode: Joi.string()
+                  .allow(null)
+                  .description(
+                    'If an error occurred, contains the error code from the device'
+                  ),
+                errorNotes: Joi.string()
+                  .allow(null)
+                  .description('Contains any details about the error'),
+                sampleId: Joi.string()
+                  .allow(null)
+                  .description('Sample ID'),
+                sampleGroup: Joi.string()
+                  .allow(null)
+                  .description('The group that the sample belongs to (if any)'),
+                sampleCollectedOn: Joi.date()
+                  .allow(null)
+                  .description('When the sample was collected'),
+                sampleOriginSiteExternalId: Joi.string()
+                  .allow(null)
+                  .description(
+                    'Unique ID of the site where the sample was taken'
+                  ),
+                sampleOriginSiteName: Joi.string()
+                  .allow(null)
+                  .description('Name of the site where the sample was taken'),
+                sampleTypeName: Joi.string()
+                  .allow(null)
+                  .description(
+                    'Type of the sample (DBS or Sputum, for example)'
+                  ),
+              })
+            ),
+        }),
+      },
     }),
   },
 ]
