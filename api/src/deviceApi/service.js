@@ -573,13 +573,14 @@ async function createDeviceApiContext(
 
   const { auth } = request
   const now = new Date()
+
   const existingDeviceAndData = await knex('DeviceApiKey as dak')
     .innerJoin('Device as d', 'dak.deviceId', 'd.id')
     .innerJoin('DeviceStatus as ds', 'd.deviceStatusId', 'ds.id')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .innerJoin('DeviceTypeCategory as dtc', 'dtc.id', 'dt.deviceTypeCategoryId')
-    .innerJoin('Geography as g', 'd.geographyId', 'g.id')
-    .innerJoin('Country as c', 'c.id', 'g.countryId')
+    .leftJoin('Geography as g', 'd.geographyId', 'g.id')
+    .leftJoin('Country as c', 'g.countryId', 'c.id')
     .leftJoin('Partner as p', 'p.id', 'd.partnerId')
     .where({
       'dak.token': auth.credentials.token,
@@ -611,8 +612,11 @@ async function createDeviceApiContext(
     request.payload = await transformInitialPayload(
       originalRequest,
       existingDeviceAndData.countryAbbreviation
+        ? existingDeviceAndData.countryAbbreviation
+        : null
     )
   }
+
   let device = null
   if (existingDeviceAndData != null) {
     device = existingDeviceAndData
