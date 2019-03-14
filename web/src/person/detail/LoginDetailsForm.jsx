@@ -1,9 +1,12 @@
+import purple from '@material-ui/core/colors/purple'
 import classnames from 'classnames/bind'
 import React from 'react'
 import { compose, lifecycle, withHandlers, pure } from 'recompose'
 import Button from '@material-ui/core/Button'
+import { withStyles } from '@material-ui/core/styles'
 import TextField from '@material-ui/core/TextField'
-
+import Switch from '@material-ui/core/Switch'
+import FormControlLabel from '@material-ui/core/FormControlLabel'
 import AspectDialog from '../../components/shared/AspectDialog'
 import StrongPasswordInput from '../../components/shared/StrongPasswordInput'
 import recomposeForm from '../../components/recomposeForm'
@@ -49,15 +52,68 @@ const DEFAULT_VALUES = {
   newPassword: '',
   confirmNewPassword: '',
   currentPassword: '',
+  userEnable: false,
 }
 
 const getInitialValues = loginDetails => ({
   ...DEFAULT_VALUES,
   username: loginDetails.get('username') || DEFAULT_VALUES.username,
 })
+const styles = theme => ({
+  colorSwitchBase: {
+    color: purple[300],
+    '&$colorChecked': {
+      color: purple[500],
+      '& + $colorBar': {
+        backgroundColor: purple[500],
+      },
+    },
+  },
+  colorBar: {},
+  colorChecked: {},
+  iOSSwitchBase: {
+    '&$iOSChecked': {
+      color: theme.palette.common.white,
+      '& + $iOSBar': {
+        backgroundColor: '#52d869',
+      },
+    },
+    transition: theme.transitions.create('transform', {
+      duration: theme.transitions.duration.shortest,
+      easing: theme.transitions.easing.sharp,
+    }),
+  },
+  iOSChecked: {
+    transform: 'translateX(15px)',
+    '& + $iOSBar': {
+      opacity: 1,
+      border: 'none',
+    },
+  },
+  iOSBar: {
+    borderRadius: 13,
+    width: 42,
+    height: 26,
+    marginTop: -13,
+    marginLeft: -21,
+    border: 'solid 1px',
+    borderColor: theme.palette.grey[400],
+    backgroundColor: theme.palette.grey[50],
+    opacity: 1,
+    transition: theme.transitions.create(['background-color', 'border']),
+  },
+  iOSIcon: {
+    width: 24,
+    height: 24,
+  },
+  iOSIconChecked: {
+    boxShadow: theme.shadows[1],
+  },
+})
 
 const enhance = compose(
   pure,
+  withStyles(styles),
   lifecycle({
     componentWillMount() {
       const onChange = values => this.setState({ values })
@@ -89,6 +145,10 @@ const enhance = compose(
       },
       {
         fieldName: 'currentPassword',
+        valueFromChangeEvent: it => it.target.value,
+      },
+      {
+        fieldName: 'userEnable',
         valueFromChangeEvent: it => it.target.value,
       },
     ],
@@ -123,6 +183,7 @@ export const LoginDetailsForm = ({
   meta,
   onUsernameChange,
   onNewPasswordChange,
+  onUserEnableChange,
   onConfirmNewPasswordChange,
   onCurrentPasswordChange,
   onCurrentPasswordKeyPress,
@@ -180,6 +241,22 @@ export const LoginDetailsForm = ({
           meta.confirmNewPassword.touched && meta.confirmNewPassword.error
         }
         inputProps={{ maxLength: 100 }}
+      />
+      <FormControlLabel
+        control={
+          <Switch
+            checked={values.userEnable}
+            onChange={onUserEnableChange}
+            value={values.userEnable}
+            name="userEnable"
+            /*  classes={{
+              switchBase: classes.colorSwitchBase,
+              checked: classes.colorChecked,
+              bar: classes.colorBar,
+            }} */
+          />
+        }
+        label={intl.formatMessage(messages.userEnableLabel)}
       />
     </div>
     <div className={cssClasses('Form__ActionRow')}>
