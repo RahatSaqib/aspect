@@ -469,11 +469,7 @@ export const DeviceDetailProfile = ({
                 <Fragment>
                   {formatMaintenanceDate(intl, device.get('calibrationDate'))}
                   {calibrationNotes && (
-                    <Tooltip
-                      disableHoverListener
-                      title={calibrationNotes}
-                      placement="top"
-                    >
+                    <Tooltip title={calibrationNotes} placement="top">
                       <IconButton
                         aria-label={intl.formatMessage(messages.notes)}
                       >
@@ -506,11 +502,7 @@ export const DeviceDetailProfile = ({
                 <Fragment>
                   {formatMaintenanceDate(intl, device.get('warrantyDueDate'))}
                   {warrantyNotes && (
-                    <Tooltip
-                      disableHoverListener
-                      title={warrantyNotes}
-                      placement="bottom"
-                    >
+                    <Tooltip title={warrantyNotes} placement="bottom">
                       <IconButton
                         aria-label={intl.formatMessage(messages.notes)}
                       >
