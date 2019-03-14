@@ -311,11 +311,20 @@ async function createDevice(
     .where({ id: siteId })
     .first()
 
+  const deviceTypeId = await deviceTypeToId(type)
+
+  const deviceCapacity = await knex('DeviceCapacity')
+    .where({ deviceTypeId })
+    .where({ partnerId })
+    .where({ defaultForDeviceType: 1 })
+    .first('id')
+
   const [deviceId] = await knex('Device').insert({
     partnerId,
     geographyId,
     siteId,
-    deviceTypeId: await deviceTypeToId(type),
+    deviceTypeId,
+    deviceCapacityId: deviceCapacity ? deviceCapacity.id : null,
     deviceStatusId: await deviceStatusToId(status),
     configurationData: JSON.stringify(baseConfig),
     name: 'Test Device',

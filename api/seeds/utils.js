@@ -2046,6 +2046,59 @@ async function addLicensePersons(knex, personNameToExclude = '') {
   )
 }
 
+async function addDeviceCapacities(knex) {
+  const { data: deviceCapacitiesByPartner } = await readJson(
+    `./seeds/fixtures/DeviceCapacity.json`
+  )
+
+  const [partners] = await Promise.all([rowsAsObject(knex, 'Partner')])
+  const [deviceTypes] = await Promise.all([
+    rowsAsObject(knex, 'DeviceType', 'externalId'),
+  ])
+
+  await Promise.each(
+    deviceCapacitiesByPartner,
+    async ({
+      deviceTypeExternalId,
+      defaultForDeviceType,
+      name,
+      dailyCapacity,
+    }) => {
+      await knex('DeviceCapacity').insert(
+        _.map(partners, partner => ({
+          partnerId: partner.id,
+          deviceTypeId: deviceTypes[deviceTypeExternalId].id,
+          defaultForDeviceType,
+          name,
+          dailyCapacity,
+        }))
+      )
+    }
+  )
+}
+
+async function setCapacityForExistingDevices(knex) {
+  const devices = await knex('Device')
+    .where('deviceCapacityId', null)
+    .distinct('partnerId', 'deviceTypeId')
+
+  const deviceCapacities = await knex('DeviceCapacity')
+    .where('defaultForDeviceType', 1)
+    .select('id', 'partnerId', 'deviceTypeId')
+  await Promise.each(devices, async ({ partnerId, deviceTypeId }) => {
+    const deviceCapacityByPartnerId = _.find(
+      deviceCapacities,
+      dc => dc.partnerId === partnerId && dc.deviceTypeId === deviceTypeId
+    )
+    if (deviceCapacityByPartnerId) {
+      await knex('Device')
+        .where({ partnerId })
+        .where({ deviceTypeId })
+        .update({ deviceCapacityId: deviceCapacityByPartnerId.id })
+    }
+  })
+}
+
 module.exports = {
   seed,
   rowsAsObject,
@@ -2078,4 +2131,7 @@ module.exports = {
 
   addLicenses,
   addLicensePersons,
+
+  addDeviceCapacities,
+  setCapacityForExistingDevices,
 }

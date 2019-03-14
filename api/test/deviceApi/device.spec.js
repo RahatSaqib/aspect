@@ -384,6 +384,34 @@ describe('Device API routes', () => {
         )
         assert.equal(onlineFactDevice.offline, 0)
       }))
+    it('should assign the Device to the default capacity for the device type and partner', () =>
+      runTest(async knex => {
+        const { apiKey, deviceAuth } = newDeviceContext
+        assert.isOk(apiKey)
+
+        // add device
+        await server
+          .post(devicePath)
+          .set('Authorization', deviceAuth)
+          .send({
+            type: { id: 'DaktariInSight' },
+            site: { id: 'CHIZ' },
+          })
+          .then(res => {
+            assert.equal(res.status, 200)
+          })
+        await waitForIdle()
+
+        const newDevice = await getDeviceFromApiKey(knex, apiKey)
+
+        const { id: deviceCapacityId } = await knex('DeviceCapacity')
+          .where({ deviceTypeId: newDevice.deviceTypeId })
+          .where({ partnerId: newDevice.partnerId })
+          .where({ defaultForDeviceType: 1 })
+          .first('id')
+
+        assert.equal(newDevice.deviceCapacityId, deviceCapacityId)
+      }))
   })
 
   describe('add device Logs', () => {
