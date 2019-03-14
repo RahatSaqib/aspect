@@ -26,7 +26,7 @@ const routes = [
   // GET /assayresultandpatientschema
   {
     method: 'GET',
-    path: '/assayresultandpatientschema',
+    path: '/assay/resultandpatientschema',
     handler: asyncHandler(listAssaysResultSchema),
     config: {
       description: 'Assay List for patient and result data',
@@ -38,11 +38,16 @@ const routes = [
 
         schema: Joi.array().items(
           Joi.object().keys({
-            id: Joi.number().description('The id of the assay'),
+            externalId: Joi.string().description(
+              'The external id of the assay'
+            ),
+            assayId: Joi.number().description('The assay Id'),
             assayTypeId: Joi.number().description('The assayType id'),
             name: Joi.string().description('The assay Name'),
             assayTypeName: Joi.string().description('The assay type Name'),
-            deviceTypeId: Joi.number().description('The device type id'),
+            deviceTypeExternalId: Joi.string().description(
+              'The device type id'
+            ),
             deviceTypeName: Joi.string().description('The device type Name'),
             resultCategory1Label: Joi.string()
               .allow(null)
@@ -61,7 +66,7 @@ const routes = [
               .description('The json object for the result data schema field'),
             patientDataSchema: Joi.object()
               .allow(null)
-              .description('The json object for the result data schema field'),
+              .description('The json object for the patient data schema field'),
             resultCategories: Joi.array()
               .allow(null)
               .description('The json object for result Categories'),
@@ -69,7 +74,7 @@ const routes = [
               .allow(null)
               .description('The assay type abbreviation'),
             abbreviation: Joi.string()
-              .allow(null)
+              .min(0)
               .description('The assay abbreviation'),
           })
         ),

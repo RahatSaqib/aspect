@@ -4,10 +4,12 @@ const { getConstraints, addConstraints } = require('../auth/constraints')
 
 const SELECT_LIST_FIELDS = [
   'a.id',
+  'a.externalId',
   'at.id as assayTypeId',
   'a.name',
   'at.name as assayTypeName',
   'dt.id as deviceTypeId',
+  'dt.externalId as deviceTypeExternalId',
   'dt.name as deviceTypeName',
   'a.resultCategory1Label',
   'a.resultCategory1i18nKey',
@@ -37,23 +39,42 @@ async function listAssaysResultSchema(request) {
     .innerJoin('DeviceType as dt', 'd.devicetypeId', 'dt.id')
     .innerJoin('AssayType as at', 'a.assaytypeId', 'at.id')
     .modify(addConstraints, dataConstraints, { device: 'd' })
-    .select(SELECT_LIST_FIELDS)
+    .select(
+      'a.id as assayId',
+      'a.externalId',
+      'at.id as assayTypeId',
+      'a.name',
+      'at.name as assayTypeName',
+      'dt.externalId as deviceTypeExternalId',
+      'dt.name as deviceTypeName',
+      'a.resultCategory1Label',
+      'a.resultCategory1i18nKey',
+      'a.resultCategory2Label',
+      'a.resultCategory2i18nKey',
+      'a.resultDataSchema',
+      'a.patientDataSchema',
+      'a.abbreviation',
+      'at.abbreviation as assayTypeAbbreviation'
+    )
     .distinct()
-
   const rawResultCategories = await knex('ResultCategory as rc')
     .innerJoin('ResultCategoryAssay as rca', 'rc.id', 'rca.resultCategoryId')
-    .whereIn('rca.assayId', _.map(assaysList, 'id'))
+    .whereIn('rca.assayId', _.map(assaysList, 'assayId'))
     .select(SELECT_LIST_RESULT_CATEGORY_FIELDS)
 
   const resultCategoriesByAssayId = _.groupBy(rawResultCategories, 'assayId')
-  const result = _.map(assaysList, elem =>
-    Object.assign({}, elem, {
-      assayId: elem.id,
-      resultDataSchema: JSON.parse(elem.resultDataSchema),
-      patientDataSchema: JSON.parse(elem.patientDataSchema),
-      resultCategories: resultCategoriesByAssayId[elem.id],
+  const result = _.map(assaysList, elem => {
+    const resultDataSchema = JSON.parse(elem.resultDataSchema)
+    const patientDataSchema = JSON.parse(elem.patientDataSchema)
+    delete patientDataSchema.assayId
+    delete patientDataSchema.id
+    const assay = Object.assign({}, elem, {
+      resultDataSchema,
+      patientDataSchema,
+      resultCategories: resultCategoriesByAssayId[elem.assayId],
     })
-  )
+    return assay
+  })
   return result
 }
 async function listAssays(request) {
