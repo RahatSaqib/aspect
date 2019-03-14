@@ -139,6 +139,18 @@ async function showSite(request) {
 
   // get item
   const item = await getSite(params.siteId, dataConstraints)
+  item.devices = await knex('Device as d')
+    .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
+    .innerJoin('DeviceTypeCategory as dtc', 'dt.deviceTypeCategoryId', 'dtc.id')
+    .where('siteId', params.siteId)
+    .distinct('dt.id', 'dt.name', 'dtc.id as category')
+    .select()
+
+  item.contacts = await knex('JobContext as jc')
+    .innerJoin('Job as j', 'jc.jobId', 'j.id')
+    .innerJoin('Person as p', 'j.personId', 'p.id')
+    .where('jc.siteId', params.siteId)
+    .select('p.name', 'p.id')
 
   const result = { ok: true, data: item }
 

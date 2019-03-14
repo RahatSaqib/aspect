@@ -24,7 +24,7 @@ import BrowseEmptyList from '../../../globals/components/BrowseEmptyList'
 import { fetchResults, exportResults } from '../../../result/ResultRedux'
 import { tokens } from '../../../deviceStatus/DeviceStatusRedux'
 import DeviceDetailBackBar from '../DeviceDetailBackBar'
-import Summary from '../Summary'
+import Summary from '../../../globals/components/Summary'
 import {
   ResultDataTable,
   ResultDataTableHead,
