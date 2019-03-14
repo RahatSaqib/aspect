@@ -11,7 +11,12 @@ import Paper from '@material-ui/core/Paper'
 import LinearProgress from '@material-ui/core/LinearProgress'
 
 import isEditable from '../../shared/selectors/site'
-import { fetchSingleSite, updateSingleSite, Site } from '../SiteRedux'
+import {
+  fetchSingleSite,
+  updateSingleSite,
+  updateLatLongFromFormAddress,
+  Site,
+} from '../SiteRedux'
 import { fetchTags, updateTags } from '../../tag/TagRedux'
 import messages from './messages'
 import SiteDetailAlert from './alerts/SiteDetailAlerts'
@@ -41,7 +46,15 @@ const SiteDetail = props => {
     const { site } = props
     return site && site.has('longitude') && site.has('latitude')
   }
-  const { intl, updateSingleSite, site, match, siteTags, editable } = props
+  const {
+    intl,
+    updateSingleSite,
+    site,
+    match,
+    siteTags,
+    editable,
+    updateLatLongFromFormAddress,
+  } = props
   return (
     <div>
       <Helmet title={intl.formatMessage(messages.title)} />
@@ -82,6 +95,7 @@ const SiteDetail = props => {
                   formatMessage={intl.formatMessage}
                   onSubmit={updateSingleSite}
                   onSiteTagChange={onSiteTagChange}
+                  onSetBasedAddressClick={updateLatLongFromFormAddress}
                   disabled={!editable}
                   {...props}
                   site={site}
@@ -134,10 +148,12 @@ SiteDetail.propTypes = {
   updateSingleSite: PropTypes.func.isRequired,
   fetchTags: PropTypes.func.isRequired,
   updateTags: PropTypes.func.isRequired,
+  updateLatLongFromFormAddress: PropTypes.func.isRequired,
 }
 export default connect(mapStateToProps, {
   fetchSingleSite,
   updateSingleSite,
   fetchTags,
   updateTags,
+  updateLatLongFromFormAddress,
 })(SiteDetail)

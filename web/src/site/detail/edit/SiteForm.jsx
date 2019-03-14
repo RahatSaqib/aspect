@@ -27,8 +27,8 @@ const SiteForm = props => {
       street2: data.get('address2'),
       city: data.get('city'),
       zip: data.get('zip'),
-      longitude: data.get('lng'),
-      latitude: data.get('lat'),
+      longitude: data.get('longitude'),
+      latitude: data.get('latitude'),
     })
   }
   const {
@@ -36,6 +36,7 @@ const SiteForm = props => {
     siteTags,
     formatMessage,
     onSiteTagChange,
+    onSetBasedAddressClick,
     history,
     location,
     match,
@@ -62,6 +63,8 @@ const SiteForm = props => {
     city: site.get('city'),
     zip: site.get('zip'),
     id: site.get('id'),
+    longitude: site.get('longitude'),
+    latitude: site.get('latitude'),
   }
   const labels = {
     name: formatMessage(messages.fieldName),
@@ -99,6 +102,7 @@ const SiteForm = props => {
             siteTags={siteTags}
             onSubmit={handleSubmit}
             onSiteTagChange={onSiteTagChange}
+            onSetBasedAddressClick={onSetBasedAddressClick}
           />
         </Card>
       </section>
@@ -110,6 +114,7 @@ SiteForm.propTypes = {
   formatMessage: PropTypes.func.isRequired,
   onSubmit: PropTypes.func.isRequired,
   onSiteTagChange: PropTypes.func.isRequired,
+  onSetBasedAddressClick: PropTypes.func.isRequired,
   site: PropTypes.objectOf(Site).isRequired,
   siteTags: PropTypes.arrayOf(PropTypes.object),
   history: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types

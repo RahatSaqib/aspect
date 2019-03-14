@@ -3,6 +3,7 @@ import _ from 'lodash'
 import Immutable from 'immutable'
 import { defineMessages } from 'react-intl'
 import differenceInMinutes from 'date-fns/differenceInMinutes'
+import { formValueSelector, change as changeForm } from 'redux-form/immutable'
 
 import { aspectFetch } from '../shared/utils/fetch'
 import {
@@ -18,6 +19,7 @@ import {
   receiveTableItems,
   Table,
 } from '../shared/metaReducers/table'
+import { getLatLongFromAddress } from './utils/address'
 
 export const types = {
   REQUEST_SITES: 'REQUEST_SITES',
@@ -246,6 +248,29 @@ export function updateSingleSite(siteId, data) {
         ),
       },
     }).then(json => dispatch(receiveUpdatedSingleSite(json.data)))
+  }
+}
+
+export function updateLatLongFromFormAddress() {
+  const formName = 'siteDetail'
+  const formSelector = formValueSelector(formName)
+  const formAddressSelector = state =>
+    formSelector(
+      state,
+      'country',
+      'state',
+      'lga',
+      'city',
+      'address',
+      'address2'
+    )
+
+  return (dispatch, getState) => {
+    const formAddress = formAddressSelector(getState())
+    return getLatLongFromAddress(formAddress).then(({ lat, lng }) => {
+      dispatch(changeForm(formName, 'latitude', lat))
+      dispatch(changeForm(formName, 'longitude', lng))
+    })
   }
 }
 /*

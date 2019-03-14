@@ -1,7 +1,8 @@
-import PropTypes from 'prop-types'
 // Imports from packages
+import PropTypes from 'prop-types'
 import React from 'react'
-import { compose, setPropTypes, pure } from 'recompose'
+
+import { compose, setPropTypes, pure, withHandlers } from 'recompose'
 import { Field, reduxForm } from 'redux-form/immutable'
 import classnames from 'classnames/bind'
 
@@ -16,6 +17,7 @@ import LocationSelector from '../../../components/shared/LocationSelector'
 import ConnectedTagInput from '../../../tag/ConnectedTagInput'
 import { ReadOnlyField } from '../../../components/shared/ReadOnlyFields'
 import AspectButton from '../../../components/shared/AspectButton'
+
 import messages from '../messages'
 
 const cssClasses = classnames.bind(require('./EditableFieldsForm.css'))
@@ -59,12 +61,18 @@ const enhance = compose(
     form: 'siteDetail',
     validate,
   }),
+  withHandlers({
+    onSetLatLong: ({ onSetBasedAddressClick }) => () => {
+      onSetBasedAddressClick()
+    },
+  }),
   setPropTypes({
     initialValues: PropTypes.object.isRequired,
     handleSubmit: PropTypes.func.isRequired,
     pristine: PropTypes.bool.isRequired,
     submitting: PropTypes.bool.isRequired,
     onChangeSiteTag: PropTypes.func.isRequired,
+    onSetBasedAddressClick: PropTypes.func.isRequired,
   })
 )
 
@@ -79,6 +87,7 @@ export const EditableFieldsForm = ({
   submitting,
   siteTags,
   onSiteTagChange,
+  onSetLatLong,
 }) => (
   <form onSubmit={handleSubmit}>
     <div className={cssClasses('container')}>
@@ -155,6 +164,7 @@ export const EditableFieldsForm = ({
           // disabled={disabled}
           color="primary"
           variant="contained"
+          onClick={onSetLatLong}
           // inverse={match.path !== path}
         >
           {formatMessage(messages.buttonSetBasedonAddress)}
