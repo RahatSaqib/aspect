@@ -19,6 +19,8 @@ import {
 } from '../../../shared/selectors/searchParams'
 import { sanitizeFiltersStringBy } from '../../../filter/utils'
 import DataTableProgressBar from '../../../components/shared/DataTableProgressBar'
+import ColoredNumber from '../../../components/shared/ColoredNumber'
+import AspectTooltip from '../../../components/shared/AspectTooltip'
 import BrowseTablePaginator from '../../../globals/components/BrowseTablePaginator'
 import BrowseEmptyList from '../../../globals/components/BrowseEmptyList'
 import { fetchResults, exportResults } from '../../../result/ResultRedux'
@@ -31,6 +33,7 @@ import {
   ResultDataTableRow,
 } from './ResultDataTable'
 import requirePermissions from '../../../components/shared/requirePermissions'
+import { getAspectDisplayPreferences } from '../../../globals/sideEffects/LocalStorage'
 
 const cssClasses = classnames.bind(require('../DeviceDetail.css'))
 
@@ -62,6 +65,24 @@ const messages = defineMessages({
   warranty: {
     id: 'pages.DeviceDetailProfile.warranty',
     defaultMessage: 'Warranty',
+  },
+  utilizationRate: {
+    id: 'pages.DeviceDetailProfile.utilizationRate',
+    defaultMessage: 'Utilization Rate',
+  },
+  utilizationRateExplain: {
+    id: 'pages.DeviceDetailProfile.utilizationRateExplain',
+    defaultMessage:
+      'Number of results in the last 30 days divided by the daily capacity of the instrument multiplied by 30 days',
+  },
+  errorRate: {
+    id: 'pages.DeviceDetailProfile.errorRate',
+    defaultMessage: 'Error Rate',
+  },
+  errorRateExplain: {
+    id: 'pages.DeviceDetailProfile.errorRateExplain',
+    defaultMessage:
+      'Number of errors divided by number of results in the last 30 days',
   },
   endedOn: {
     id: 'pages.DeviceDetailProfile.EndedOn',
@@ -367,6 +388,7 @@ export const DeviceDetailProfile = ({
   pageSize,
 }) => {
   const deviceName = `${device.get('type')} at ${device.get('siteName')}`
+  const prefs = getAspectDisplayPreferences()
   return (
     <div>
       <Helmet title={deviceName} />
@@ -416,6 +438,68 @@ export const DeviceDetailProfile = ({
               title={intl.formatMessage(messages.warranty)}
               description="TODO: Expires in 18 months"
               action={<Button variant="contained">Update</Button>}
+            />
+            <Summary
+              title={
+                <AspectTooltip
+                  showHelpIcon
+                  title={
+                    <React.Fragment>
+                      {`${intl.formatMessage(
+                        messages.utilizationRateExplain
+                      )}: ${device.get('resultCount30')} / (${device.get(
+                        'dailyCapacity'
+                      )}*30) = ${intl.formatNumber(
+                        device.get('utilizationRateThisMonth')
+                      )}`}
+                    </React.Fragment>
+                  }
+                >
+                  {intl.formatMessage(messages.utilizationRate)}
+                </AspectTooltip>
+              }
+              description={
+                <ColoredNumber
+                  number={device.get('utilizationRateThisMonth')}
+                  intl={intl}
+                  formatNumberStyle="percent"
+                  error={
+                    device.get('utilizationRateThisMonth') <
+                    prefs.get('utilizationRateThreshold')
+                  }
+                />
+              }
+            />
+            <Summary
+              title={
+                <AspectTooltip
+                  showHelpIcon
+                  title={
+                    <React.Fragment>
+                      {`${intl.formatMessage(
+                        messages.errorRateExplain
+                      )}: ${device.get('errorCount30')} / ${device.get(
+                        'resultCount30'
+                      )} = ${intl.formatNumber(
+                        device.get('errorRateThisMonth')
+                      )}`}
+                    </React.Fragment>
+                  }
+                >
+                  {intl.formatMessage(messages.errorRate)}
+                </AspectTooltip>
+              }
+              description={
+                <ColoredNumber
+                  number={device.get('errorRateThisMonth')}
+                  intl={intl}
+                  formatNumberStyle="percent"
+                  error={
+                    device.get('errorRateThisMonth') >
+                    prefs.get('errorRateThreshold')
+                  }
+                />
+              }
             />
           </div>
         </Card>

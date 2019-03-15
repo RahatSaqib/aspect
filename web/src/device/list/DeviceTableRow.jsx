@@ -8,6 +8,8 @@ import {
   DataTableCell as TableCell,
 } from '../../components/shared/tableBody'
 import ColoredButton from '../../components/themedReactToolbox/ColoredButton'
+import ColoredNumber from '../../components/shared/ColoredNumber'
+import { getAspectDisplayPreferences } from '../../globals/sideEffects/LocalStorage'
 import messages from './messages'
 
 const cssClasses = classnames.bind(require('./DeviceTableRow.css'))
@@ -15,13 +17,23 @@ const sharedCssClasses = classnames.bind(
   require('../../components/shared/DataTableRow.css')
 )
 
+const prefs = getAspectDisplayPreferences()
 const enhance = _.identity
 
-const Rate = ({ intl, it, messageId }) => (
+const Rate = ({ intl, it, messageId, threshold }) => (
   <span>
-    {it.total === 0
-      ? intl.formatMessage(messages.noTests)
-      : intl.formatNumber(it.count / it.total, { style: 'percent' })}
+    {it.total === 0 ? (
+      intl.formatMessage(messages.noTests)
+    ) : (
+      <ColoredNumber
+        number={it.count / it.total}
+        intl={intl}
+        formatNumberStyle="percent"
+        error={
+          threshold && it.count / it.total > prefs.get('errorRateThreshold')
+        }
+      />
+    )}
     <span className={cssClasses('Rate__hover')}>
       {intl.formatMessage(messageId, it)}
     </span>
@@ -48,6 +60,7 @@ const DeviceTableRow = ({ intl, device, onAlertClick, ...restProps }) => (
       <Rate
         intl={intl}
         it={device.get('error').toJS()}
+        threshold={prefs.get('errorRateThreshold')}
         messageId={messages.errorOfTotal}
       />
     </TableCell>
