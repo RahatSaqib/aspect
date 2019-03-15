@@ -163,6 +163,7 @@ function receiveUpdatedSinglePersonLoadinDetails(updatedInformation) {
     type: types.RECEIVE_UPDATED_SINGLE_PERSON_LOGIN_DETAILS,
     personId: updatedInformation.personId,
     username: updatedInformation.username,
+    userLockedOut: updatedInformation.userLockedOut,
   }
 }
 
@@ -223,7 +224,11 @@ export function updateSinglePersonLoginDetails(personId, data) {
     return aspectFetch(`/auth/update-person-login-details/${personId}`, {
       method: 'PUT',
       body: JSON.stringify(
-        _.pick(loginDetailsJson, ['newUsername', 'newPassword'])
+        _.pick(loginDetailsJson, [
+          'newUsername',
+          'newPassword',
+          'userLockedOut',
+        ])
       ),
       errorNotifications: {
         409: inlineWarning(

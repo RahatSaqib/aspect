@@ -53,6 +53,7 @@ function getUserByPersonId(personId) {
       'u.legacyPassword',
       'u.id',
       'u.name',
+      'u.lockedOut',
       'p.culture',
       'p.timezone',
       'p.id as personId',
@@ -337,6 +338,13 @@ async function getChangedFields(payload, existingRecord) {
       }
     }
   }
+  console.log(payload)
+  if (
+    payload.userLockedOut !== undefined &&
+    payload.userLockedOut !== existingRecord.lockedOut
+  ) {
+    changedFields.lockedOut = payload.userLockedOut
+  }
   return changedFields
 }
 
@@ -525,9 +533,11 @@ async function updateUsernameAndPasswordForPerson(request) {
 
   const responseData = {
     personId: params.personId,
+    userLockedOut: payload.userLockedOut,
   }
   if (userLinkedToPerson) {
     const changedFields = await getChangedFields(payload, userLinkedToPerson)
+
     if (!_.isEmpty(changedFields)) {
       await updateUser(userLinkedToPerson.id, changedFields)
     }
@@ -547,12 +557,12 @@ async function updateUsernameAndPasswordForPerson(request) {
         ),
         approved: 1,
         createdOn: new Date(),
-        lockedOut: 0,
+        lockedOut: payload.userLockedOut || 0,
         failedPasswordAttempts: 0,
         legacyPassword: 0,
       })
 
-    responseData.changedFields = ['name', 'password']
+    responseData.changedFields = ['name', 'password', 'lockedOut']
     responseData.username = payload.newUsername
   }
 

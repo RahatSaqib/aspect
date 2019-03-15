@@ -118,12 +118,13 @@ export class PersonDetail extends PureComponent {
     })
   }
 
-  saveLoginDetails = ({ username, newPassword }) => {
+  saveLoginDetails = ({ username, newPassword, userLockedOut }) => {
     const { person, updateSinglePersonLoginDetails } = this.props
     const loginDetails = new LoginDetails(person)
     return updateSinglePersonLoginDetails(loginDetails.get('id'), {
       newUsername: username,
       newPassword,
+      userLockedOut,
     }).then(() => {
       this.props.showAcknowledgement({
         title: messages.detailsUpdatedSuccessfully,
