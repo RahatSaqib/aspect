@@ -105,7 +105,7 @@ export const EditableFieldsForm = ({
       />
       <Field
         className={cssClasses('container__field')}
-        name="fieldFacilityCode"
+        name="externalId"
         label={labels.facilityCode}
         component={renderTextField}
       />
@@ -177,11 +177,6 @@ export const EditableFieldsForm = ({
       disabled={loading || submitting}
       fullWidth
     />
-    {/* <Field
-      name="externalId"
-      label={labels.externalId}
-      component={renderTextField}
-    /> */}
     <ReadOnlyField
       label={labels.tags}
       value={siteTags}
