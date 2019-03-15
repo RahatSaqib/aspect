@@ -55,6 +55,7 @@ const enhance = compose(
   setPropTypes({
     labels: PropTypes.object.isRequired,
     loading: PropTypes.bool,
+    updateLatLongFromFormAddress: PropTypes.func.isRequired,
   }),
   pure,
   reduxForm({
@@ -62,8 +63,8 @@ const enhance = compose(
     validate,
   }),
   withHandlers({
-    onSetLatLong: ({ onSetBasedAddressClick }) => () => {
-      onSetBasedAddressClick()
+    onSetBasedAddressClick: ({ updateLatLongFromFormAddress }) => () => {
+      updateLatLongFromFormAddress()
     },
   }),
   setPropTypes({
@@ -87,7 +88,7 @@ export const EditableFieldsForm = ({
   submitting,
   siteTags,
   onSiteTagChange,
-  onSetLatLong,
+  onSetBasedAddressClick,
 }) => (
   <form onSubmit={handleSubmit}>
     <div className={cssClasses('container')}>
@@ -161,11 +162,9 @@ export const EditableFieldsForm = ({
       />
       <div className={cssClasses('coordinate__button')}>
         <AspectButton
-          // disabled={disabled}
           color="primary"
           variant="contained"
-          onClick={onSetLatLong}
-          // inverse={match.path !== path}
+          onClick={onSetBasedAddressClick}
         >
           {formatMessage(messages.buttonSetBasedonAddress)}
         </AspectButton>

@@ -36,7 +36,7 @@ const SiteForm = props => {
     siteTags,
     formatMessage,
     onSiteTagChange,
-    onSetBasedAddressClick,
+    updateLatLongFromFormAddress,
     history,
     location,
     match,
@@ -102,7 +102,7 @@ const SiteForm = props => {
             siteTags={siteTags}
             onSubmit={handleSubmit}
             onSiteTagChange={onSiteTagChange}
-            onSetBasedAddressClick={onSetBasedAddressClick}
+            updateLatLongFromFormAddress={updateLatLongFromFormAddress}
           />
         </Card>
       </section>
@@ -114,7 +114,7 @@ SiteForm.propTypes = {
   formatMessage: PropTypes.func.isRequired,
   onSubmit: PropTypes.func.isRequired,
   onSiteTagChange: PropTypes.func.isRequired,
-  onSetBasedAddressClick: PropTypes.func.isRequired,
+  updateLatLongFromFormAddress: PropTypes.func.isRequired,
   site: PropTypes.objectOf(Site).isRequired,
   siteTags: PropTypes.arrayOf(PropTypes.object),
   history: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types

@@ -55,6 +55,7 @@ const SiteDetail = props => {
     editable,
     updateLatLongFromFormAddress,
   } = props
+
   return (
     <div>
       <Helmet title={intl.formatMessage(messages.title)} />
@@ -95,7 +96,7 @@ const SiteDetail = props => {
                   formatMessage={intl.formatMessage}
                   onSubmit={updateSingleSite}
                   onSiteTagChange={onSiteTagChange}
-                  onSetBasedAddressClick={updateLatLongFromFormAddress}
+                  updateLatLongFromFormAddress={updateLatLongFromFormAddress}
                   disabled={!editable}
                   {...props}
                   site={site}
@@ -110,9 +111,7 @@ const SiteDetail = props => {
       )}
       <section className={cssClasses('Section', 'Section--first')}>
         <Paper>
-          {hasSiteWithLocation() && (
-            <SiteLocationFormMap editable={editable} site={site} />
-          )}
+          {hasSiteWithLocation() && <SiteLocationFormMap site={site} />}
         </Paper>
       </section>
     </div>
