@@ -669,8 +669,8 @@ describe('Result Workflow Status Log', () => {
   })
 })
 
-describe('Result sync routes', () => {
-  const path = '/api/result/sync'
+describe('Result download routes', () => {
+  const path = '/api/result/download'
   describe('GET', () => {
     shared.checkToken(server, path)
 
@@ -694,6 +694,7 @@ describe('Result sync routes', () => {
           assert.typeOf(res.body.data, 'array')
           assert.equal(res.body.data.length, 1)
 
+          assert.property(res.body.data[0], 'id')
           assert.property(res.body.data[0], 'externalId')
           assert.property(res.body.data[0], 'startedOn')
           assert.property(res.body.data[0], 'endedOn')
@@ -723,35 +724,7 @@ describe('Result sync routes', () => {
           assert.property(res.body.data[0], 'sampleOriginSiteName')
           assert.property(res.body.data[0], 'sampleTypeName')
 
-          assert.typeOf(res.body.data[0].externalId, 'string')
-          assert.typeOf(res.body.data[0].startedOn, 'string')
-          assert.typeOf(res.body.data[0].endedOn, 'string')
-          assert.typeOf(res.body.data[0].createdOn, 'string')
-          assert.typeOf(res.body.data[0].updatedOn, 'string')
-          assert.typeOf(res.body.data[0].longitude, 'number')
-          assert.typeOf(res.body.data[0].latitude, 'number')
-          assert.typeOf(res.body.data[0].assayExternalId, 'string')
-          assert.typeOf(res.body.data[0].siteName, 'string')
-          assert.typeOf(res.body.data[0].deviceName, 'string')
-          assert.typeOf(res.body.data[0].resultCategory1ExternalId, 'string')
-          assert.typeOf(
-            res.body.data[0].resultWorkflowStatusExternalId,
-            'string'
-          )
-          assert.typeOf(res.body.data[0].patientData, 'Object')
-          assert.typeOf(res.body.data[0].resultData, 'Object')
-          assert.typeOf(res.body.data[0].researchId, 'string')
-          assert.typeOf(res.body.data[0].senderVersion, 'string')
-          assert.typeOf(res.body.data[0].senderOperator, 'string')
-          assert.typeOf(res.body.data[0].notes, 'string')
-          assert.typeOf(res.body.data[0].sampleId, 'string')
-          assert.typeOf(res.body.data[0].sampleGroup, 'string')
-          assert.typeOf(res.body.data[0].sampleCollectedOn, 'string')
-          assert.typeOf(res.body.data[0].sampleOriginSiteExternalId, 'string')
-          assert.typeOf(res.body.data[0].sampleOriginSiteName, 'string')
-          assert.typeOf(res.body.data[0].sampleTypeName, 'string')
-
-          assert.equal(Object.keys(res.body.data[0]).length, 28)
+          assert.equal(Object.keys(res.body.data[0]).length, 29)
 
           done()
         })

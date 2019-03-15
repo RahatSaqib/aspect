@@ -169,6 +169,28 @@ describe('result endpoints', () => {
           .execute()
       })
     })
+
+    describe('/result/download', () => {
+      let endpoint
+      const expectedResponse = { value: 'Expected result' }
+
+      beforeEach(() => {
+        endpoint = setupRoute('GET', '/result/download', {
+          async downloadResultsList() {
+            return expectedResponse
+          },
+        })
+      })
+      it('Should respond with the data returned from the service', done => {
+        endpointUtils
+          .callHandlerOn(endpoint)
+          .handleResponseWith(response => {
+            assert.deepEqual(response, expectedResponse)
+          })
+          .thenCall(done)
+          .execute()
+      })
+    })
   })
 
   describe('PUT', () => {
@@ -192,28 +214,6 @@ describe('result endpoints', () => {
           .thenCall(done)
           .execute()
       })
-    })
-  })
-
-  describe('/result/sync', () => {
-    let endpoint
-    const expectedResponse = { value: 'Expected result' }
-
-    beforeEach(() => {
-      endpoint = setupRoute('GET', '/result/sync', {
-        async listResultsSync() {
-          return expectedResponse
-        },
-      })
-    })
-    it('Should respond with the data returned from the service', done => {
-      endpointUtils
-        .callHandlerOn(endpoint)
-        .handleResponseWith(response => {
-          assert.deepEqual(response, expectedResponse)
-        })
-        .thenCall(done)
-        .execute()
     })
   })
 })

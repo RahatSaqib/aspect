@@ -18,6 +18,7 @@ const {
 } = require('../shared/io')
 const { resultWorkflowStatusToId } = require('../shared/dictionary')
 const { oneDirectionalMd5Hash } = require('../shared/encryption')
+const { returnIso8601StringWithoutTimeZoneOffset } = require('../shared/date')
 const { getPathFromFileReferenceId } = require('../file/service')
 
 const SELECT_LIST_FIELDS = [
@@ -185,8 +186,6 @@ async function getListResults(query, auth) {
     .leftJoin('ResultWorkflowStatus as rs', 'r.resultWorkflowStatusId', 'rs.id')
     .leftJoin('ResultSource as rsrc', 'r.resultSourceId', 'rsrc.id')
     .leftJoin('Site as si', 'r.siteId', 'si.id')
-    // Filter Generated results for now until we come up with appropriate UI
-    .where('rsrc.externalId', '<>', 'Generated')
     .modify(filterDateRangeParams, query, 'r.endedOn')
     .modify(filterParams, query, {
       deviceId: 'd.id',
@@ -252,12 +251,14 @@ async function getListResults(query, auth) {
 }
 
 async function listResults(request) {
+  console.log(request)
+
   const { query, auth } = request
   const result = await getListResults(query, auth)
   return result
 }
 
-async function getListResultsSync(query, auth) {
+async function getDownloadResultsList(query, auth) {
   // get data constraints
   const dataConstraints = await getConstraints(auth.credentials)
 
@@ -276,7 +277,6 @@ async function getListResultsSync(query, auth) {
     .leftJoin('ResultWorkflowStatus as rs', 'r.resultWorkflowStatusId', 'rs.id')
     .leftJoin('ResultSource as rsrc', 'r.resultSourceId', 'rsrc.id')
     .leftJoin('Site as si', 'r.siteId', 'si.id')
-    .where('rsrc.externalId', '<>', 'Generated')
     .modify((queryBuilder, params) => {
       if (params.minUpdatedOn) {
         queryBuilder.where('r.updatedOn', '>=', params.minUpdatedOn)
@@ -298,6 +298,7 @@ async function getListResultsSync(query, auth) {
     .clone()
     .modify(sortPageParams, query, 'updatedOn')
     .select(
+      'r.id',
       'r.externalId',
       'r.startedOn',
       'r.endedOn',
@@ -331,22 +332,18 @@ async function getListResultsSync(query, auth) {
   // return result when both queries are finished
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
 
-  // parse patientData to valid JSON
   _.each(data, d => {
+    d.startedOn = returnIso8601StringWithoutTimeZoneOffset(d.startedOn)
+    d.endedOn = returnIso8601StringWithoutTimeZoneOffset(d.endedOn)
+
     if (d.patientData) {
       d.patientData = JSON.parse(d.patientData)
     }
-  })
 
-  // parse resultData to valid JSON
-  _.each(data, d => {
     if (d.resultData) {
       d.resultData = JSON.parse(d.resultData)
     }
-  })
 
-  // parse formData to valid JSON
-  _.each(data, d => {
     if (d.formData) {
       d.formData = JSON.parse(d.formData)
     }
@@ -362,9 +359,10 @@ async function getListResultsSync(query, auth) {
   return result
 }
 
-async function listResultsSync(request) {
+async function downloadResultsList(request) {
+  console.log(request)
   const { query, auth } = request
-  const result = await getListResultsSync(query, auth)
+  const result = await getDownloadResultsList(query, auth)
   return result
 }
 
@@ -948,7 +946,7 @@ function createUniqueIdForResult(
 
 module.exports = {
   listResults,
-  listResultsSync,
+  downloadResultsList,
   showResult,
   listResultTypes,
   updateWorkflowStatus,

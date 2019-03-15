@@ -6,7 +6,7 @@ const {
 } = require('../routes')
 const {
   listResults,
-  listResultsSync,
+  downloadResultsList,
   showResult,
   listResultTypes,
   updateWorkflowStatus,
@@ -311,8 +311,8 @@ const routes = [
   },
   {
     method: 'GET',
-    path: '/result/sync',
-    handler: asyncHandler(listResultsSync),
+    path: '/result/download',
+    handler: asyncHandler(downloadResultsList),
     config: Object.assign({
       description: 'Result Sync',
       notes:
@@ -354,26 +354,35 @@ const routes = [
             .description('The results')
             .items(
               Joi.object().keys({
-                externalId: Joi.string()
+                id: Joi.number()
                   .required()
                   .description(
                     'Unique ID of the result for this instance of Aspect'
                   ),
+                externalId: Joi.string()
+                  .required()
+                  .description(
+                    'Unique ID of the result for this diagnostic device'
+                  ),
                 startedOn: Joi.date()
                   .required()
-                  .description('When sample processing started'),
+                  .description(
+                    'When sample processing started. Note that the zone designator is empty because this is the local date/time as reported by the device. This should be shown as is and not converted to the user time zone.'
+                  ),
                 endedOn: Joi.date()
                   .required()
-                  .description('When sample processing ended'),
+                  .description(
+                    'When sample processing ended. Note that the zone designator is empty because this is the local date/time as reported by the device. This should be shown as is and not converted to the user time zone.'
+                  ),
                 createdOn: Joi.date()
                   .required()
                   .description(
-                    'When the result was added to the Aspect database'
+                    'When the result was added to the Aspect database. Note that this includes the zone designator and the time zone is UTC. This can be converted to the user time zone.'
                   ),
                 updatedOn: Joi.date()
                   .required()
                   .description(
-                    'When the result was last updated in the Aspect database'
+                    'When the result was last updated in the Aspect database. Note that this includes the zone designator and the time zone is UTC. This can be converted to the user time zone.'
                   ),
                 longitude: Joi.number()
                   .allow(null)
@@ -414,7 +423,7 @@ const routes = [
                 researchId: Joi.string()
                   .allow(null)
                   .description('An optional research ID for the patient'),
-                formData: Joi.array()
+                formData: Joi.object()
                   .allow(null)
                   .description('Form data that was entered in the Aspect UI'),
                 senderVersion: Joi.string()
