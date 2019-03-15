@@ -80,7 +80,8 @@ function getPersonDetails(personId) {
       'p.hideNotes',
       'c.name as country',
       's.name as stateName',
-      'l.name as lgaName'
+      'l.name as lgaName',
+      'u.lockedOut as userLockedOut'
     )
 }
 

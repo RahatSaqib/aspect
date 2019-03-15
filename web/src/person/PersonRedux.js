@@ -307,6 +307,7 @@ export const LoginDetails = Immutable.Record({
   currentPassword: null,
   partnerId: null,
   jobFunctions: new Immutable.List([]),
+  userLockedOut: false,
 })
 export const UserPreferences = Immutable.Record({
   id: null,
@@ -337,6 +338,7 @@ export default function personReducer(state = initialState, action) {
         const person = state.items.byId.get(action.personId).merge({
           loaded: true,
           username: action.username,
+          userLockedOut: action.userLockedOut,
         })
         mutState.set('items', receiveItem(mutState.items, person))
       })

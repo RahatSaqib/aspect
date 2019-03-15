@@ -1,7 +1,7 @@
-import purple from '@material-ui/core/colors/purple'
 import classnames from 'classnames/bind'
 import React from 'react'
 import { compose, lifecycle, withHandlers, pure } from 'recompose'
+import Typography from '@material-ui/core/Typography'
 import Button from '@material-ui/core/Button'
 import { withStyles } from '@material-ui/core/styles'
 import TextField from '@material-ui/core/TextField'
@@ -52,30 +52,23 @@ const DEFAULT_VALUES = {
   newPassword: '',
   confirmNewPassword: '',
   currentPassword: '',
-  userEnable: false,
+  userLockedOut: false,
 }
 
 const getInitialValues = loginDetails => ({
   ...DEFAULT_VALUES,
   username: loginDetails.get('username') || DEFAULT_VALUES.username,
+  userLockedOut:
+    loginDetails.get('userLockedOut') || DEFAULT_VALUES.userLockedOut,
 })
 const styles = theme => ({
-  colorSwitchBase: {
-    color: purple[300],
-    '&$colorChecked': {
-      color: purple[500],
-      '& + $colorBar': {
-        backgroundColor: purple[500],
-      },
-    },
-  },
   colorBar: {},
   colorChecked: {},
   iOSSwitchBase: {
     '&$iOSChecked': {
       color: theme.palette.common.white,
       '& + $iOSBar': {
-        backgroundColor: '#52d869',
+        backgroundColor: '#7cb342',
       },
     },
     transition: theme.transitions.create('transform', {
@@ -108,6 +101,13 @@ const styles = theme => ({
   },
   iOSIconChecked: {
     boxShadow: theme.shadows[1],
+  },
+  switchLabel: {
+    fontSize: '1em',
+    color: 'rgb(0,0,0,0.49)',
+    textTransform: 'uppercase',
+    fontWeight: '400',
+    margin: '2em 0 1em',
   },
 })
 
@@ -148,8 +148,8 @@ const enhance = compose(
         valueFromChangeEvent: it => it.target.value,
       },
       {
-        fieldName: 'userEnable',
-        valueFromChangeEvent: it => it.target.value,
+        fieldName: 'userLockedOut',
+        valueFromChangeEvent: it => it.target.checked,
       },
     ],
     validate,
@@ -176,6 +176,7 @@ export const LoginDetailsForm = ({
   loading,
   currentPasswordInputDialogOpen,
   closeCurrentPasswordInputDialog,
+  classes,
   // --- injected by recompose ---
   onSubmit,
   form,
@@ -183,7 +184,7 @@ export const LoginDetailsForm = ({
   meta,
   onUsernameChange,
   onNewPasswordChange,
-  onUserEnableChange,
+  onUserLockedOutChange,
   onConfirmNewPasswordChange,
   onCurrentPasswordChange,
   onCurrentPasswordKeyPress,
@@ -243,20 +244,25 @@ export const LoginDetailsForm = ({
         inputProps={{ maxLength: 100 }}
       />
       <FormControlLabel
+        label={
+          <Typography className={classes.switchLabel}>
+            {intl.formatMessage(messages.userLockedOutLabel)}
+          </Typography>
+        }
         control={
           <Switch
-            checked={values.userEnable}
-            onChange={onUserEnableChange}
-            value={values.userEnable}
-            name="userEnable"
-            /*  classes={{
-              switchBase: classes.colorSwitchBase,
-              checked: classes.colorChecked,
-              bar: classes.colorBar,
-            }} */
+            checked={values.userLockedOut}
+            onChange={onUserLockedOutChange}
+            name="userLockedOut"
+            classes={{
+              switchBase: classes.iOSSwitchBase,
+              bar: classes.iOSBar,
+              icon: classes.iOSIcon,
+              iconChecked: classes.iOSIconChecked,
+              checked: classes.iOSChecked,
+            }}
           />
         }
-        label={intl.formatMessage(messages.userEnableLabel)}
       />
     </div>
     <div className={cssClasses('Form__ActionRow')}>
