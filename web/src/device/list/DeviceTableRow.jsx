@@ -9,29 +9,26 @@ import {
 } from '../../components/shared/tableBody'
 import ColoredButton from '../../components/themedReactToolbox/ColoredButton'
 import ColoredNumber from '../../components/shared/ColoredNumber'
-import { getAspectDisplayPreferences } from '../../globals/sideEffects/LocalStorage'
 import messages from './messages'
+import { ignoreElements } from '../../../node_modules/rxjs/operator/ignoreElements'
 
 const cssClasses = classnames.bind(require('./DeviceTableRow.css'))
 const sharedCssClasses = classnames.bind(
   require('../../components/shared/DataTableRow.css')
 )
 
-const prefs = getAspectDisplayPreferences()
 const enhance = _.identity
 
 const Rate = ({ intl, it, messageId, threshold }) => (
   <span>
     {it.total === 0 ? (
-      intl.formatMessage(messages.noTests)
+      intl.formatMessage(messages.noResults)
     ) : (
       <ColoredNumber
         number={it.count / it.total}
         intl={intl}
         formatNumberStyle="percent"
-        error={
-          threshold && it.count / it.total > prefs.get('errorRateThreshold')
-        }
+        error={threshold && it.count / it.total > threshold}
       />
     )}
     <span className={cssClasses('Rate__hover')}>
@@ -40,7 +37,13 @@ const Rate = ({ intl, it, messageId, threshold }) => (
   </span>
 )
 
-const DeviceTableRow = ({ intl, device, onAlertClick, ...restProps }) => (
+const DeviceTableRow = ({
+  intl,
+  device,
+  onAlertClick,
+  displayPreferences,
+  ...restProps
+}) => (
   <TableRow
     {...restProps}
     className={cssClasses('TableRow', restProps.className)}
@@ -60,7 +63,7 @@ const DeviceTableRow = ({ intl, device, onAlertClick, ...restProps }) => (
       <Rate
         intl={intl}
         it={device.get('error').toJS()}
-        threshold={prefs.get('errorRateThreshold')}
+        threshold={displayPreferences.get('errorRateThreshold')}
         messageId={messages.errorOfTotal}
       />
     </TableCell>
@@ -77,7 +80,7 @@ const DeviceTableRow = ({ intl, device, onAlertClick, ...restProps }) => (
             brink={it.get('key') === 'issueCategoryConnectivityHealth'}
             label={intl.formatMessage(messages[it.get('key')])}
             onClick={onAlertClick}
-            data-pathname="/browse/notification/detail"
+            data-device-id={device.get('id')}
           />
         ))}
     </TableCell>

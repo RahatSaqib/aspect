@@ -261,20 +261,6 @@ async function getDeviceByDeviceId(request, fields = SELECT_SHOW_FIELDS) {
   device.resultCountLastMonth = device.resultCount60 - device.resultCount30
   device.errorCountLastMonth = device.errorCount60 - device.errorCount30
 
-  device.errorRateThisMonth =
-    device.resultCount30 > 0 ? device.errorCount30 / device.resultCount30 : 0
-  device.errorRateLastMonth =
-    device.resultCountLastMonth > 0
-      ? device.errorCountLastMonth / device.resultCountLastMonth
-      : 0
-
-  if (device.dailyCapacity) {
-    device.utilizationRateThisMonth =
-      device.resultCount30 / (device.dailyCapacity * 30)
-    device.utilizationRateLastMonth =
-      device.resultCountLastMonth / (device.dailyCapacity * 30)
-  }
-
   return device
 }
 

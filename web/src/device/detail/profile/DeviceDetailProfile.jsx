@@ -33,7 +33,6 @@ import {
   ResultDataTableRow,
 } from './ResultDataTable'
 import requirePermissions from '../../../components/shared/requirePermissions'
-import { getAspectDisplayPreferences } from '../../../globals/sideEffects/LocalStorage'
 
 const cssClasses = classnames.bind(require('../DeviceDetail.css'))
 
@@ -118,6 +117,10 @@ const messages = defineMessages({
       one {# result}
       other {# results}
     }`,
+  },
+  noResults: {
+    id: 'pages.DeviceDetailProfile.noResults',
+    defaultMessage: 'No Results',
   },
 })
 
@@ -380,6 +383,7 @@ export const DeviceDetailProfile = ({
   location,
   match,
   device,
+  displayPreferences,
   // --- injected by recompose ---
   onToggleDeviceStatus,
   sortCol,
@@ -388,7 +392,13 @@ export const DeviceDetailProfile = ({
   pageSize,
 }) => {
   const deviceName = `${device.get('type')} at ${device.get('siteName')}`
-  const prefs = getAspectDisplayPreferences()
+  const dailyCapacity = device.get('dailyCapacity')
+  const resultCount30 = device.get('resultCount30')
+  const errorCount30 = device.get('errorCount30')
+  const utilizationRateThisMonth = dailyCapacity
+    ? resultCount30 / (dailyCapacity * 30)
+    : null
+  const errorRateThisMonth = resultCount30 ? errorCount30 / resultCount30 : null
   return (
     <div>
       <Helmet title={deviceName} />
@@ -439,37 +449,37 @@ export const DeviceDetailProfile = ({
               description="TODO: Expires in 18 months"
               action={<Button variant="contained">Update</Button>}
             />
-            <Summary
-              title={
-                <AspectTooltip
-                  showHelpIcon
-                  title={
-                    <React.Fragment>
-                      {`${intl.formatMessage(
-                        messages.utilizationRateExplain
-                      )}: ${device.get('resultCount30')} / (${device.get(
-                        'dailyCapacity'
-                      )}*30) = ${intl.formatNumber(
-                        device.get('utilizationRateThisMonth')
-                      )}`}
-                    </React.Fragment>
-                  }
-                >
-                  {intl.formatMessage(messages.utilizationRate)}
-                </AspectTooltip>
-              }
-              description={
-                <ColoredNumber
-                  number={device.get('utilizationRateThisMonth')}
-                  intl={intl}
-                  formatNumberStyle="percent"
-                  error={
-                    device.get('utilizationRateThisMonth') <
-                    prefs.get('utilizationRateThreshold')
-                  }
-                />
-              }
-            />
+            {dailyCapacity && (
+              <Summary
+                title={
+                  <AspectTooltip
+                    showHelpIcon
+                    title={
+                      <React.Fragment>
+                        {`${intl.formatMessage(
+                          messages.utilizationRateExplain
+                        )}: ${resultCount30} / (${dailyCapacity}*30) = ${intl.formatNumber(
+                          utilizationRateThisMonth
+                        )}`}
+                      </React.Fragment>
+                    }
+                  >
+                    {intl.formatMessage(messages.utilizationRate)}
+                  </AspectTooltip>
+                }
+                description={
+                  <ColoredNumber
+                    number={utilizationRateThisMonth}
+                    intl={intl}
+                    formatNumberStyle="percent"
+                    error={
+                      utilizationRateThisMonth <
+                      displayPreferences.get('utilizationRateThreshold')
+                    }
+                  />
+                }
+              />
+            )}
             <Summary
               title={
                 <AspectTooltip
@@ -478,11 +488,11 @@ export const DeviceDetailProfile = ({
                     <React.Fragment>
                       {`${intl.formatMessage(
                         messages.errorRateExplain
-                      )}: ${device.get('errorCount30')} / ${device.get(
-                        'resultCount30'
-                      )} = ${intl.formatNumber(
-                        device.get('errorRateThisMonth')
-                      )}`}
+                      )}: ${errorCount30} / ${resultCount30} = ${
+                        errorRateThisMonth
+                          ? intl.formatNumber(errorRateThisMonth)
+                          : intl.formatMessage(messages.noResults)
+                      }`}
                     </React.Fragment>
                   }
                 >
@@ -490,15 +500,19 @@ export const DeviceDetailProfile = ({
                 </AspectTooltip>
               }
               description={
-                <ColoredNumber
-                  number={device.get('errorRateThisMonth')}
-                  intl={intl}
-                  formatNumberStyle="percent"
-                  error={
-                    device.get('errorRateThisMonth') >
-                    prefs.get('errorRateThreshold')
-                  }
-                />
+                resultCount30 ? (
+                  <ColoredNumber
+                    number={errorRateThisMonth}
+                    intl={intl}
+                    formatNumberStyle="percent"
+                    error={
+                      errorRateThisMonth >
+                      displayPreferences.get('errorRateThreshold')
+                    }
+                  />
+                ) : (
+                  intl.formatMessage(messages.noResults)
+                )
               }
             />
           </div>

@@ -143,6 +143,12 @@ const enhance = compose(
       }
     },
 
+    onAlertClick: ({ history }) => event => {
+      event.stopPropagation()
+      const { currentTarget: { dataset: { siteId } } } = event
+      history.push(`/browse/site/${siteId}/alerts`)
+    },
+
     onRowClick: ({ history }) => ({ currentTarget: { dataset: { siteId } } }) =>
       history.push(`/browse/site/${siteId}`),
   }),
@@ -196,6 +202,7 @@ export const SiteList = ({
   pageAt,
   pageSize,
   onRowClick,
+  onAlertClick,
   reducedFilters,
 }) => (
   <div className={cssClasses('Container')}>
@@ -263,6 +270,7 @@ export const SiteList = ({
                   intl={intl}
                   site={site}
                   onClick={onRowClick}
+                  onAlertClick={onAlertClick}
                   data-site-id={site.get('id')}
                 />
               ))}

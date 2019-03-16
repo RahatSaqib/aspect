@@ -25,10 +25,13 @@ const enhance = compose(
         EMPTY_MAP
       )
 
+      const { displayPreferences } = state.user
+
       return {
         editable: isEditable(state.user, device),
         loading: !!state.device.requestedAt,
         device,
+        displayPreferences,
       }
     },
     bindActionCreators.bind(null, {
@@ -83,6 +86,7 @@ export const DeviceDetail = ({
   dateRange,
   onDateRangeChange,
   device,
+  displayPreferences,
   updateSingleDevice,
 }) => (
   <div>
@@ -98,6 +102,7 @@ export const DeviceDetail = ({
               dateRange={dateRange}
               onDateRangeChange={onDateRangeChange}
               device={device}
+              displayPreferences={displayPreferences}
               updateSingleDevice={updateSingleDevice}
             />
           )}
