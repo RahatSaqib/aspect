@@ -11,25 +11,12 @@ import SiteDetailBackBar from '../SiteDetailBackBar'
 const cssClasses = classnames.bind(require('../SiteDetail.css'))
 
 const SiteForm = props => {
-  const handleSubmit = data => {
-    const { site, onSubmit } = props
-
-    onSubmit(site.get('id'), {
-      // Map form fields to API fields
-      name: data.get('name'),
-      shortName: data.get('shortName'),
-      externalId: data.get('externalId'),
-      timezone: data.get('timezone'),
-      countryId: data.get('countryId'),
-      stateId: data.get('stateId'),
-      lgaId: data.get('lgaId'),
-      street1: data.get('address'),
-      street2: data.get('address2'),
-      city: data.get('city'),
-      zip: data.get('zip'),
-      longitude: data.get('longitude'),
-      latitude: data.get('latitude'),
-    })
+  const handleSubmit = async data => {
+    const { site, onSubmit, updateLatLongFromFormAddress } = props
+    if (!data.get('longitude') || !data.get('latitude')) {
+      await updateLatLongFromFormAddress()
+    }
+    return onSubmit(site.get('id'))
   }
   const {
     site,

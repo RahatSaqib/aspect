@@ -13,7 +13,7 @@ import LinearProgress from '@material-ui/core/LinearProgress'
 import isEditable from '../../shared/selectors/site'
 import {
   fetchSingleSite,
-  updateSingleSite,
+  updateSingleSiteFromForm,
   updateLatLongFromFormAddress,
   Site,
 } from '../SiteRedux'
@@ -48,7 +48,7 @@ const SiteDetail = props => {
   }
   const {
     intl,
-    updateSingleSite,
+    updateSingleSiteFromForm,
     site,
     match,
     siteTags,
@@ -94,7 +94,7 @@ const SiteDetail = props => {
               editable ? (
                 <SiteForm
                   formatMessage={intl.formatMessage}
-                  onSubmit={updateSingleSite}
+                  onSubmit={updateSingleSiteFromForm}
                   onSiteTagChange={onSiteTagChange}
                   updateLatLongFromFormAddress={updateLatLongFromFormAddress}
                   disabled={!editable}
@@ -128,6 +128,7 @@ const mapStateToProps = (state, ownProps) => {
     editable: isEditable(state.user, site),
     site,
     siteTags,
+    lastServerResponseTime: state.getIn(['globals', 'lastServerResponseTime']),
   }
 }
 
@@ -144,14 +145,14 @@ SiteDetail.propTypes = {
   site: PropTypes.objectOf(Site).isRequired,
   siteTags: PropTypes.instanceOf(Immutable.List).isRequired,
   fetchSingleSite: PropTypes.func.isRequired,
-  updateSingleSite: PropTypes.func.isRequired,
+  updateSingleSiteFromForm: PropTypes.func.isRequired,
   fetchTags: PropTypes.func.isRequired,
   updateTags: PropTypes.func.isRequired,
   updateLatLongFromFormAddress: PropTypes.func.isRequired,
 }
 export default connect(mapStateToProps, {
   fetchSingleSite,
-  updateSingleSite,
+  updateSingleSiteFromForm,
   fetchTags,
   updateTags,
   updateLatLongFromFormAddress,

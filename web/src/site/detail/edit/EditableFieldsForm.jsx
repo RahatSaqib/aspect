@@ -61,6 +61,7 @@ const enhance = compose(
   reduxForm({
     form: 'siteDetail',
     validate,
+    enableReinitialize: true,
   }),
   withHandlers({
     onSetBasedAddressClick: ({ updateLatLongFromFormAddress }) => () => {

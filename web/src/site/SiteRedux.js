@@ -247,7 +247,39 @@ export function updateSingleSite(siteId, data) {
           })
         ),
       },
-    }).then(json => dispatch(receiveUpdatedSingleSite(json.data)))
+    }).then(json => {
+      dispatch(receiveUpdatedSingleSite(json.data))
+      return json.data
+    })
+  }
+}
+
+export function updateSingleSiteFromForm(siteId) {
+  const formName = 'siteDetail'
+
+  return (dispatch, getState) => {
+    const state = getState()
+    const formData = state.getIn(['form', formName, 'values'])
+    const submitData = {
+      // Map form fields to API fields
+      name: formData.get('name'),
+      shortName: formData.get('shortName'),
+      externalId: formData.get('externalId'),
+      timezone: formData.get('timezone'),
+      countryId: formData.get('countryId'),
+      stateId: formData.get('stateId'),
+      lgaId: formData.get('lgaId'),
+      street1: formData.get('address'),
+      street2: formData.get('address2'),
+      city: formData.get('city'),
+      zip: formData.get('zip'),
+      longitude: formData.get('longitude'),
+      latitude: formData.get('latitude'),
+    }
+    return dispatch(updateSingleSite(siteId, submitData)).then(data => {
+      dispatch(changeForm(formName, 'latitude', data.latitude))
+      dispatch(changeForm(formName, 'longitude', data.longitude))
+    })
   }
 }
 
