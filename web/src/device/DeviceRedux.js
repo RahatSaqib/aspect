@@ -354,7 +354,7 @@ export function updateDeviceMaintenance({
       },
     })
       .then(json => {
-        dispatch(receiveUpdatedSingleDevice(requestedAt, json.data))
+        dispatch(receiveUpdatedSingleDevice(requestedAt, json.device))
         dispatch(hideDialog())
       })
       .catch(err => {

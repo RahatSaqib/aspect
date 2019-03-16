@@ -595,6 +595,7 @@ async function updateDeviceMaintenance(request) {
       current: 1,
     })
     .first()
+  let deviceMaintenanceId
   if (item && item.contextDate.toDateString() === contextDate.toDateString()) {
     // update existing record if dates are the same
     await knex('DeviceMaintenance')
@@ -605,6 +606,7 @@ async function updateDeviceMaintenance(request) {
         updatedOn: new Date(),
         updatedBy: currentlyLoggedInUser.id,
       })
+    deviceMaintenanceId = item.id
   } else {
     // reset 'current' for current maintenance type and device
     await knex('DeviceMaintenance')
@@ -615,7 +617,7 @@ async function updateDeviceMaintenance(request) {
         current: 1,
       })
     // insert new record with last maintenance status
-    await knex('DeviceMaintenance').insert({
+    ;[deviceMaintenanceId] = await knex('DeviceMaintenance').insert({
       deviceId,
       deviceMaintenanceTypeId,
       current: 1,
@@ -633,7 +635,7 @@ async function updateDeviceMaintenance(request) {
     credentials,
   })
 
-  return { ok: true, data: device }
+  return { ok: true, device, deviceMaintenanceId }
 }
 
 module.exports = {
