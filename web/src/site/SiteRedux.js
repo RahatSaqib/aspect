@@ -22,6 +22,7 @@ import {
 export const types = {
   REQUEST_SITES: 'REQUEST_SITES',
   RECEIVE_SITES: 'RECEIVE_SITES',
+  REJECTED_SITES: 'REJECTED_SITES',
 
   REQUEST_SINGLE_SITE: 'REQUEST_SINGLE_SITE',
   RECEIVE_SINGLE_SITE: 'RECEIVE_SINGLE_SITE',
@@ -51,6 +52,12 @@ function receiveSites(json) {
     type: types.RECEIVE_SITES,
     items: json.data,
     total: json.total,
+  }
+}
+
+function rejectSites() {
+  return {
+    type: types.REJECTED_SITES,
   }
 }
 
@@ -95,7 +102,9 @@ export function fetchSites(filtersParams, sortCol, sortDir, page, pageSize) {
           ),
         },
       }
-    ).then(json => dispatch(receiveSites(json)))
+    )
+      .then(json => dispatch(receiveSites(json)))
+      .catch(() => dispatch(rejectSites()))
   }
 }
 
@@ -266,6 +275,11 @@ export default function siteReducer(state = initialState, action) {
         const immutList = Immutable.fromJS(action.items)
         mutState.set('items', receiveList(mutState.items, immutList))
         mutState.set('table', receiveTableItems(mutState.table, action.total))
+      })
+    case types.REJECTED_SITES:
+      return state.withMutations(mutState => {
+        mutState.set('items', mutState.get('items').clear())
+        mutState.set('table', mutState.get('table').clear())
       })
     case types.RECEIVE_SINGLE_SITE:
     case types.RECEIVE_UPDATED_SINGLE_SITE:

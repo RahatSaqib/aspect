@@ -19,8 +19,8 @@ import {
 export const types = {
   REQUEST_NOTIFICATIONS: 'REQUEST_NOTIFICATIONS',
   RECEIVE_NOTIFICATIONS: 'RECEIVE_NOTIFICATIONS',
+  REJECTED_NOTIFICATIONS: 'REJECTED_NOTIFICATIONS',
 }
-//
 
 /*
  * ---------------- Action Creators -----------------
@@ -41,6 +41,12 @@ function receiveNotifications(json) {
     type: types.RECEIVE_NOTIFICATIONS,
     items: json.data,
     total: json.total,
+  }
+}
+
+function rejectNotifications() {
+  return {
+    type: types.REJECTED_NOTIFICATIONS,
   }
 }
 
@@ -92,7 +98,9 @@ export function fetchNotifications(
           ),
         },
       }
-    ).then(json => dispatch(receiveNotifications(json)))
+    )
+      .then(json => dispatch(receiveNotifications(json)))
+      .catch(() => dispatch(rejectNotifications()))
   }
 }
 /*
@@ -114,6 +122,11 @@ export default function notificationReducer(state = initialState, action) {
         const immutList = Immutable.fromJS(action.items)
         mutState.set('items', receiveList(mutState.items, immutList))
         mutState.set('table', receiveTableItems(mutState.table, action.total))
+      })
+    case types.REJECTED_NOTIFICATIONS:
+      return state.withMutations(mutState => {
+        mutState.set('items', mutState.get('items').clear())
+        mutState.set('table', mutState.get('table').clear())
       })
     default:
       return state
