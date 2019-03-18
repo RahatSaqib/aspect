@@ -22,6 +22,7 @@ import screenSchema from './ResultScreenSchema.json'
 export const types = {
   REQUEST_RESULTS: 'REQUEST_RESULTS',
   RECEIVE_RESULTS: 'RECEIVE_RESULTS',
+  REJECTED_RESULTS: 'REJECTED_RESULTS',
 
   REQUEST_SINGLE_RESULT: 'REQUEST_SINGLE_RESULT',
   RECEIVE_SINGLE_RESULT: 'RECEIVE_SINGLE_RESULT',
@@ -58,6 +59,12 @@ function receiveResults(json) {
     items: json.data,
     total: json.total,
     extraColumns: json.extraColumns,
+  }
+}
+
+function rejectResults() {
+  return {
+    type: types.REJECTED_RESULTS,
   }
 }
 
@@ -102,7 +109,9 @@ export function fetchResults(filtersParams, sortCol, sortDir, page, pageSize) {
           ),
         },
       }
-    ).then(json => dispatch(receiveResults(json)))
+    )
+      .then(json => dispatch(receiveResults(json)))
+      .catch(() => dispatch(rejectResults()))
   }
 }
 
@@ -518,6 +527,11 @@ export default function resultReducer(state = initialState, action) {
           'table',
           receiveTableItems(mutState.table, action.total, action.extraColumns)
         )
+      })
+    case types.REJECTED_RESULTS:
+      return state.withMutations(mutState => {
+        mutState.set('items', mutState.get('items').clear())
+        mutState.set('table', mutState.get('table').clear())
       })
     case types.RECEIVE_SINGLE_RESULT:
     case types.RECEIVE_UPDATED_SINGLE_RESULT:
