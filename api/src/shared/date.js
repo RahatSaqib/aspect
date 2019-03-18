@@ -27,8 +27,16 @@ function formatDateOrDefault(date, dateFormat, defaultValue = null) {
   return dateFns.format(date, 'YYYY-MM-DD')
 }
 
+function returnIso8601StringWithoutTimeZoneOffset(date) {
+  if (!date) {
+    return null
+  }
+  return `${date.toISOString().split('.')[0]}.000`
+}
+
 module.exports = {
   getDateOrDefault,
   parseDateOrDefault,
   formatDateOrDefault,
+  returnIso8601StringWithoutTimeZoneOffset,
 }
