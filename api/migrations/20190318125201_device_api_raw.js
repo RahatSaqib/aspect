@@ -12,7 +12,7 @@ async function up(knex) {
 
   await knex.schema.createTable('DeviceApiRaw', deviceApiRaw => {
     deviceApiRaw.bigincrements('id')
-    deviceApiRaw.text('rawData')
+    deviceApiRaw.text('rawData', 'mediumtext')
     deviceApiRaw.string('salt', 50)
     deviceApiRaw
       .integer('deviceApiKeyId')
@@ -34,7 +34,7 @@ async function up(knex) {
 
   await knex.schema.createTable('DeviceApiRawArchive', deviceApiRawArchive => {
     deviceApiRawArchive.bigInteger('id')
-    deviceApiRawArchive.text('rawData')
+    deviceApiRawArchive.text('rawData', 'mediumtext')
     deviceApiRawArchive.string('salt', 50)
     deviceApiRawArchive.specificType('deviceApiKeySnapshot', 'JSON')
     deviceApiRawArchive.string('deviceApiRawStatusExternalId').notNullable()
