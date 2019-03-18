@@ -95,6 +95,10 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable all f
       type="password"
       variant="standard"
     />
+    <WithStyles(AspectSwitch)
+      labelText="User lockedout"
+      name="userLockedOut"
+    />
   </div>
   <div
     className="Form__ActionRow"
@@ -256,6 +260,10 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable the s
       select={false}
       type="password"
       variant="standard"
+    />
+    <WithStyles(AspectSwitch)
+      labelText="User lockedout"
+      name="userLockedOut"
     />
   </div>
   <div
@@ -419,6 +427,10 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable the s
       type="password"
       variant="standard"
     />
+    <WithStyles(AspectSwitch)
+      labelText="User lockedout"
+      name="userLockedOut"
+    />
   </div>
   <div
     className="Form__ActionRow"
@@ -580,6 +592,10 @@ exports[`LoginDetailsForm module LoginDetailsForm component should disable the s
       select={false}
       type="password"
       variant="standard"
+    />
+    <WithStyles(AspectSwitch)
+      labelText="User lockedout"
+      name="userLockedOut"
     />
   </div>
   <div
@@ -743,6 +759,10 @@ exports[`LoginDetailsForm module LoginDetailsForm component should enable the su
       type="password"
       variant="standard"
     />
+    <WithStyles(AspectSwitch)
+      labelText="User lockedout"
+      name="userLockedOut"
+    />
   </div>
   <div
     className="Form__ActionRow"
@@ -904,6 +924,10 @@ exports[`LoginDetailsForm module LoginDetailsForm component should render correc
       select={false}
       type="password"
       variant="standard"
+    />
+    <WithStyles(AspectSwitch)
+      labelText="User lockedout"
+      name="userLockedOut"
     />
   </div>
   <div

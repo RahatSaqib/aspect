@@ -1,13 +1,10 @@
 import classnames from 'classnames/bind'
 import React from 'react'
 import { compose, lifecycle, withHandlers, pure } from 'recompose'
-import Typography from '@material-ui/core/Typography'
 import Button from '@material-ui/core/Button'
-import { withStyles } from '@material-ui/core/styles'
 import TextField from '@material-ui/core/TextField'
-import Switch from '@material-ui/core/Switch'
-import FormControlLabel from '@material-ui/core/FormControlLabel'
 import AspectDialog from '../../components/shared/AspectDialog'
+import AspectSwitch from '../../components/shared/AspectSwitch'
 import StrongPasswordInput from '../../components/shared/StrongPasswordInput'
 import recomposeForm from '../../components/recomposeForm'
 import messages from './messages'
@@ -61,59 +58,10 @@ const getInitialValues = loginDetails => ({
   userLockedOut:
     loginDetails.get('userLockedOut') || DEFAULT_VALUES.userLockedOut,
 })
-const styles = theme => ({
-  colorBar: {},
-  colorChecked: {},
-  iOSSwitchBase: {
-    '&$iOSChecked': {
-      color: theme.palette.common.white,
-      '& + $iOSBar': {
-        backgroundColor: '#7cb342',
-      },
-    },
-    transition: theme.transitions.create('transform', {
-      duration: theme.transitions.duration.shortest,
-      easing: theme.transitions.easing.sharp,
-    }),
-  },
-  iOSChecked: {
-    transform: 'translateX(15px)',
-    '& + $iOSBar': {
-      opacity: 1,
-      border: 'none',
-    },
-  },
-  iOSBar: {
-    borderRadius: 13,
-    width: 42,
-    height: 26,
-    marginTop: -13,
-    marginLeft: -21,
-    border: 'solid 1px',
-    borderColor: theme.palette.grey[400],
-    backgroundColor: theme.palette.grey[50],
-    opacity: 1,
-    transition: theme.transitions.create(['background-color', 'border']),
-  },
-  iOSIcon: {
-    width: 24,
-    height: 24,
-  },
-  iOSIconChecked: {
-    boxShadow: theme.shadows[1],
-  },
-  switchLabel: {
-    fontSize: '1em',
-    color: 'rgb(0,0,0,0.49)',
-    textTransform: 'uppercase',
-    fontWeight: '400',
-    margin: '2em 0 1em',
-  },
-})
 
 const enhance = compose(
   pure,
-  withStyles(styles),
+  // withStyles(styles),
   lifecycle({
     componentWillMount() {
       const onChange = values => this.setState({ values })
@@ -176,7 +124,7 @@ export const LoginDetailsForm = ({
   loading,
   currentPasswordInputDialogOpen,
   closeCurrentPasswordInputDialog,
-  classes,
+  // classes,
   // --- injected by recompose ---
   onSubmit,
   form,
@@ -243,26 +191,11 @@ export const LoginDetailsForm = ({
         }
         inputProps={{ maxLength: 100 }}
       />
-      <FormControlLabel
-        label={
-          <Typography className={classes.switchLabel}>
-            {intl.formatMessage(messages.userLockedOutLabel)}
-          </Typography>
-        }
-        control={
-          <Switch
-            checked={values.userLockedOut}
-            onChange={onUserLockedOutChange}
-            name="userLockedOut"
-            classes={{
-              switchBase: classes.iOSSwitchBase,
-              bar: classes.iOSBar,
-              icon: classes.iOSIcon,
-              iconChecked: classes.iOSIconChecked,
-              checked: classes.iOSChecked,
-            }}
-          />
-        }
+      <AspectSwitch
+        name="userLockedOut"
+        checked={values.userLockedOut}
+        onChange={onUserLockedOutChange}
+        labelText={intl.formatMessage(messages.userLockedOutLabel)}
       />
     </div>
     <div className={cssClasses('Form__ActionRow')}>

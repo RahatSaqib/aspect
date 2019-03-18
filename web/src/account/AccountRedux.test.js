@@ -73,6 +73,7 @@ describe('AccountRedux module', () => {
           newPassword: null,
           confirmNewPassword: null,
           currentPassword: null,
+          userLockedOut: false,
           partnerId: null,
           jobFunctions: [],
         })
@@ -116,6 +117,7 @@ describe('AccountRedux module', () => {
             confirmNewPassword: null,
             currentPassword: null,
             partnerId: null,
+            userLockedOut: false,
             jobFunctions: [],
           })
           expect(state.getIn(['data', 'userPreferences']).toJS()).toEqual(
@@ -180,6 +182,7 @@ describe('AccountRedux module', () => {
             currentPassword: null,
             partnerId: null,
             jobFunctions: [],
+            userLockedOut: false,
           })
           expect(newState.getIn(['data', 'userPreferences']).toJS()).toEqual(
             _.pick(accountDetailsData, ['id', 'timezone', 'culture'])
@@ -218,6 +221,7 @@ describe('AccountRedux module', () => {
             currentPassword: null,
             partnerId: null,
             jobFunctions: [],
+            userLockedOut: false,
           })
           expect(newState.getIn(['data', 'userPreferences']).toJS()).toEqual(
             _.pick(accountDetailsData, ['id', 'timezone', 'culture'])
@@ -270,6 +274,7 @@ describe('AccountRedux module', () => {
             currentPassword: null,
             partnerId: null,
             jobFunctions: [],
+            userLockedOut: false,
           })
           expect(newState.getIn(['data', 'userPreferences']).toJS()).toEqual(
             _.pick(newAccountDetailsData, ['id', 'timezone', 'culture'])

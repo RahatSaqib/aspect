@@ -338,7 +338,6 @@ async function getChangedFields(payload, existingRecord) {
       }
     }
   }
-  console.log(payload)
   if (
     payload.userLockedOut !== undefined &&
     payload.userLockedOut !== existingRecord.lockedOut
