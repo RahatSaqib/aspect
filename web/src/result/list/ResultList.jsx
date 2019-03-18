@@ -269,7 +269,7 @@ export const ResultList = ({
       onClickExport={onExportClick}
       askConfirmationForExport={table.total > 1000}
     />
-    <DataTableCard>
+    <DataTableCard key={`DataTableCard--table-${location.key}`}>
       <DataTableProgressBar disabled={!table.loading} />
       {items.currentIdList.isEmpty() && (
         <BrowseEmptyList history={history} location={location} intl={intl} />

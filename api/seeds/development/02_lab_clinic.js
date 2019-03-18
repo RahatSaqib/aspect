@@ -203,6 +203,7 @@ async function seed(knex) {
 
   await knex('Assay').insert({
     name: 'Reporter HIV VL',
+    abbreviation: 'Reporter HIV VL',
     i18nKey: 'AssayReporterHivVl',
     externalId: 'HivVl',
     assayTypeId: await assayTypeToId('HIV VL'),
@@ -266,6 +267,7 @@ async function seed(knex) {
 
   await knex('Assay').insert({
     name: 'Reporter EID',
+    abbreviation: 'Reporter EID',
     i18nKey: 'AssayReporterEid',
     externalId: 'EID',
     assayTypeId: await assayTypeToId('EID'),
@@ -883,6 +885,8 @@ async function seed(knex) {
         assayVersion: '4',
         startedOn: randomDate,
         endedOn: addMinutes(randomDate, 100),
+        createdOn: addMinutes(randomDate, 120),
+        updatedOn: addMinutes(randomDate, 180),
         researchId: `R-ID-${i}`,
         instrumentSerial: `S-1234-${i % 3}`,
         moduleName: 'Module A',
@@ -1069,6 +1073,8 @@ async function seed(knex) {
         assayVersion: '3',
         startedOn: randomDate,
         endedOn: addMinutes(randomDate, 100),
+        createdOn: addMinutes(randomDate, 120),
+        updatedOn: addMinutes(randomDate, 180),
         researchId: `R-ID-${i}`,
         instrumentSerial: `S-1234-${i % 3}`,
         moduleName: 'Module A',

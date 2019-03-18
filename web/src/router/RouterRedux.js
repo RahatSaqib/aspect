@@ -22,6 +22,7 @@ import {
 export const types = {
   REQUEST_ROUTERS: 'REQUEST_ROUTERS',
   RECEIVE_ROUTERS: 'RECEIVE_ROUTERS',
+  REJECTED_ROUTERS: 'REJECTED_ROUTERS',
 
   REQUEST_SINGLE_ROUTER: 'REQUEST_SINGLE_ROUTER',
   RECEIVE_SINGLE_ROUTER: 'RECEIVE_SINGLE_ROUTER',
@@ -48,6 +49,12 @@ function receiveRouters(json) {
     type: types.RECEIVE_ROUTERS,
     items: json.data,
     total: json.total,
+  }
+}
+
+function rejectRouters() {
+  return {
+    type: types.REJECTED_ROUTERS,
   }
 }
 
@@ -100,7 +107,9 @@ export function fetchRouters(
           ),
         },
       }
-    ).then(json => dispatch(receiveRouters(json)))
+    )
+      .then(json => dispatch(receiveRouters(json)))
+      .catch(() => dispatch(rejectRouters()))
   }
 }
 
@@ -200,6 +209,11 @@ export default function routerReducer(state = initialState, action) {
         const immutList = Immutable.fromJS(action.items)
         mutState.set('items', receiveList(mutState.items, immutList))
         mutState.set('table', receiveTableItems(mutState.table, action.total))
+      })
+    case types.REJECTED_ROUTERS:
+      return state.withMutations(mutState => {
+        mutState.set('items', mutState.get('items').clear())
+        mutState.set('table', mutState.get('table').clear())
       })
     case types.RECEIVE_SINGLE_ROUTER:
     case types.RECEIVE_UPDATED_SINGLE_ROUTER:

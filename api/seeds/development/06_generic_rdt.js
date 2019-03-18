@@ -29,6 +29,7 @@ async function seed(knex) {
   // Generic RDT Assay
   await knex('Assay').insert({
     name: 'Generic RDT',
+    abbreviation: 'Generic RDT',
     i18nKey: 'genericRdt',
     externalId: 'GenericRDT',
     assayTypeId,

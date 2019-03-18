@@ -28,7 +28,14 @@ module.exports = {
     url: process.env['amqp.url'],
   },
   swagger: {
-    uiPath: process.env['swagger.uiPath'] || '',
+    enabled: process.env['swagger.enabled'] === 'true',
+    schemes: getSwaggerSchemes(
+      process.env['swagger.scheme.http'] === 'true',
+      process.env['swagger.scheme.https'] === 'true'
+    ),
+    host: process.env['swagger.host'] || '',
+    pathPrefixSize: parseInt(process.env['swagger.pathPrefixSize'] || '1', 10),
+    apiUrlSegment: process.env['swagger.apiUrlSegment'] || '',
   },
   sms: {
     twilio: {
@@ -94,4 +101,15 @@ function getBooleanOrDefault(key, defaultValue) {
     return defaultValue
   }
   return value === 'true'
+}
+
+function getSwaggerSchemes(httpEnabled, httpsEnabled) {
+  const schemes = []
+  if (httpEnabled) {
+    schemes.push('http')
+  }
+  if (httpsEnabled) {
+    schemes.push('https')
+  }
+  return schemes
 }

@@ -18,6 +18,7 @@ const {
 } = require('../shared/io')
 const { resultWorkflowStatusToId } = require('../shared/dictionary')
 const { oneDirectionalMd5Hash } = require('../shared/encryption')
+const { returnIso8601StringWithoutTimeZoneOffset } = require('../shared/date')
 const { getPathFromFileReferenceId } = require('../file/service')
 
 const SELECT_LIST_FIELDS = [
@@ -183,10 +184,7 @@ async function getListResults(query, auth) {
     .leftJoin('SampleType as stp', 'sp.sampleTypeId', 'stp.id')
     .leftJoin('Site as so', 'sp.originSiteId', 'so.id')
     .leftJoin('ResultWorkflowStatus as rs', 'r.resultWorkflowStatusId', 'rs.id')
-    .leftJoin('ResultSource as rsrc', 'r.resultSourceId', 'rsrc.id')
-    .leftJoin('Site as sr', 'r.siteId', 'sr.id')
-    // Filter Generated results for now until we come up with appropriate UI
-    .where('rsrc.externalId', '<>', 'Generated')
+    .leftJoin('Site as si', 'r.siteId', 'si.id')
     .modify(filterDateRangeParams, query, 'r.endedOn')
     .modify(filterParams, query, {
       deviceId: 'd.id',
@@ -196,7 +194,7 @@ async function getListResults(query, auth) {
       stateId: 'g.stateId',
       lgaId: 'g.lgaId',
       deviceName: 'd.name',
-      siteName: 'sr.name',
+      siteName: 'si.name',
       sampleId: 'sp.externalId',
       sampleOriginSite: 'so.name',
       sampleGroup: 'r.sampleGroup',
@@ -254,6 +252,112 @@ async function getListResults(query, auth) {
 async function listResults(request) {
   const { query, auth } = request
   const result = await getListResults(query, auth)
+  return result
+}
+
+async function getDownloadResultsList(query, auth) {
+  // get data constraints
+  const dataConstraints = await getConstraints(auth.credentials)
+
+  const resultQuery = knex('Result as r')
+    .innerJoin('Assay as a', 'r.assayId', 'a.id')
+    .innerJoin('Device as d', 'r.deviceId', 'd.id')
+    .leftJoin('Geography as g', 'r.geographyId', 'g.id')
+    .leftJoin('Country as c', 'g.countryId', 'c.id')
+    .leftJoin('State as st', 'g.stateId', 'st.id')
+    .leftJoin('Lga as lg', 'g.lgaId', 'lg.id')
+    .leftJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
+    .leftJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
+    .leftJoin('Sample as sp', 'r.sampleId', 'sp.id')
+    .leftJoin('SampleType as stp', 'sp.sampleTypeId', 'stp.id')
+    .leftJoin('Site as so', 'sp.originSiteId', 'so.id')
+    .leftJoin('ResultWorkflowStatus as rs', 'r.resultWorkflowStatusId', 'rs.id')
+    .leftJoin('Site as si', 'r.siteId', 'si.id')
+    .modify((queryBuilder, params) => {
+      if (params.minUpdatedOn) {
+        queryBuilder.where('r.updatedOn', '>=', params.minUpdatedOn)
+      }
+      if (params.maxUpdatedOn) {
+        queryBuilder.where('r.updatedOn', '<', params.maxUpdatedOn)
+      }
+    }, query)
+    .modify(addConstraints, dataConstraints, { device: 'd', sample: 's' })
+
+  // get total count for paging
+  const getCount = resultQuery
+    .clone()
+    .count('r.id as count')
+    .first()
+
+  // get rows
+  const getItems = resultQuery
+    .clone()
+    .modify(sortPageParams, query, 'updatedOn')
+    .select(
+      'r.id',
+      'r.externalId',
+      'r.startedOn',
+      'r.endedOn',
+      'r.createdOn',
+      'r.updatedOn',
+      'r.longitude',
+      'r.latitude',
+      'a.externalId as assayExternalId',
+      'si.name as siteName',
+      'd.name as deviceName',
+      'rc1.externalId as resultCategory1ExternalId',
+      'rc2.externalId as resultCategory2ExternalId',
+      'rs.externalId as resultWorkflowStatusExternalId',
+      'r.patientData',
+      'r.resultData',
+      'r.formData',
+      'r.researchId',
+      'r.senderVersion',
+      'r.senderOperator',
+      'r.notes',
+      'r.errorCode',
+      'r.errorNotes',
+      'sp.externalId as sampleId',
+      'r.sampleGroup',
+      'sp.collectedOn as sampleCollectedOn',
+      'so.externalId as sampleOriginSiteExternalId',
+      'so.name as sampleOriginSiteName',
+      'stp.name as sampleTypeName'
+    )
+
+  // return result when both queries are finished
+  const [{ count: total }, data] = await Promise.all([getCount, getItems])
+
+  _.each(data, d => {
+    d.startedOn = returnIso8601StringWithoutTimeZoneOffset(d.startedOn)
+    d.endedOn = returnIso8601StringWithoutTimeZoneOffset(d.endedOn)
+
+    if (d.patientData) {
+      d.patientData = JSON.parse(d.patientData)
+    }
+
+    if (d.resultData) {
+      d.resultData = JSON.parse(d.resultData)
+    }
+
+    if (d.formData) {
+      d.formData = JSON.parse(d.formData)
+    }
+  })
+
+  const result = {
+    ok: true,
+    total,
+    length: data.length,
+    data,
+  }
+
+  return result
+}
+
+async function downloadResultsList(request) {
+  const { query, auth } = request
+  const result = await getDownloadResultsList(query, auth)
   return result
 }
 
@@ -837,6 +941,7 @@ function createUniqueIdForResult(
 
 module.exports = {
   listResults,
+  downloadResultsList,
   showResult,
   listResultTypes,
   updateWorkflowStatus,

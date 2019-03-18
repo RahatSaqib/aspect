@@ -19,6 +19,7 @@ import {
 export const types = {
   REQUEST_INVENTORY_ITEMS: 'REQUEST_INVENTORY_ITEMS',
   RECEIVE_INVENTORY_ITEMS: 'RECEIVE_INVENTORY_ITEMS',
+  REJECTED_INVENTORY_ITEMS: 'REJECTED_INVENTORY_ITEMS',
   TOGGLE_GROUP_BY_SITE: 'TOGGLE_GROUP_BY_SITE',
 
   RECEIVE_UPDATED_SINGLE_INVENTORY_ITEM:
@@ -53,6 +54,12 @@ function receiveInventoryItems(json, childrenPropertyPath) {
     items: json.data,
     total: json.total,
     childrenPropertyPath,
+  }
+}
+
+function rejectInventoryItems() {
+  return {
+    type: types.REJECTED_INVENTORY_ITEMS,
   }
 }
 
@@ -118,11 +125,13 @@ export function fetchInventoryItems(
           ),
         },
       }
-    ).then(json =>
-      dispatch(
-        receiveInventoryItems(json, groupBySite ? ['inventoryItems'] : [])
-      )
     )
+      .then(json =>
+        dispatch(
+          receiveInventoryItems(json, groupBySite ? ['inventoryItems'] : [])
+        )
+      )
+      .catch(() => dispatch(rejectInventoryItems()))
   }
 }
 
@@ -385,6 +394,11 @@ export default function inventoryItemsReducer(state = initialState, action) {
           'table',
           receiveTableItems(mutState.table, action.total, action.extraColumns)
         )
+      })
+    case types.REJECTED_INVENTORY_ITEMS:
+      return state.withMutations(mutState => {
+        mutState.set('items', mutState.get('items').clear())
+        mutState.set('table', mutState.get('table').clear())
       })
     case types.TOGGLE_GROUP_BY_SITE:
       return state.setIn(

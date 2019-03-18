@@ -44,6 +44,9 @@ grant all on aspect. * to 'aspectapi'@'localhost';
 flush privileges;
 EOT
 
+# If you are on Mac and using MySQL 5.7, add this to `my.cnf`
+`SET GLOBAL sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));`
+
 # Create an .env file and configure settings for your environment
 # using .env.example as a template
 # Make sure to uncomment following line so that knex could find it's seed directory

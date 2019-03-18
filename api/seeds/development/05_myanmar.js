@@ -592,6 +592,8 @@ async function seed(knex) {
                   assayVersion: '4',
                   startedOn: randomDate,
                   endedOn: addMinutes(randomDate, 100),
+                  createdOn: addMinutes(randomDate, 120),
+                  updatedOn: addMinutes(randomDate, 180),
                   consumableSerial: `${i}12`,
                   consumableExpirationDate: new Date(
                     +now + 200 * i * millisInHour

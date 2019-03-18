@@ -4,7 +4,6 @@ const { knex, transact, run } = require('../db')
 const { getRemoteAddress } = require('../shared/request')
 const { asyncHandler } = require('../routes')
 const { deviceStatusToId, deviceTypeToPlugin } = require('../shared/dictionary')
-
 const {
   resultUpdated,
   resultLogged,
