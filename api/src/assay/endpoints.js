@@ -42,7 +42,6 @@ const routes = [
               'The external id of the assay'
             ),
             assayId: Joi.number().description('The assay Id'),
-            assayTypeId: Joi.number().description('The assayType id'),
             name: Joi.string().description('The assay Name'),
             assayTypeName: Joi.string().description('The assay type Name'),
             deviceTypeExternalId: Joi.string().description(
