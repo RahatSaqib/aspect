@@ -184,7 +184,6 @@ async function getListResults(query, auth) {
     .leftJoin('SampleType as stp', 'sp.sampleTypeId', 'stp.id')
     .leftJoin('Site as so', 'sp.originSiteId', 'so.id')
     .leftJoin('ResultWorkflowStatus as rs', 'r.resultWorkflowStatusId', 'rs.id')
-    .leftJoin('ResultSource as rsrc', 'r.resultSourceId', 'rsrc.id')
     .leftJoin('Site as si', 'r.siteId', 'si.id')
     .modify(filterDateRangeParams, query, 'r.endedOn')
     .modify(filterParams, query, {
@@ -251,8 +250,6 @@ async function getListResults(query, auth) {
 }
 
 async function listResults(request) {
-  console.log(request)
-
   const { query, auth } = request
   const result = await getListResults(query, auth)
   return result
@@ -275,7 +272,6 @@ async function getDownloadResultsList(query, auth) {
     .leftJoin('SampleType as stp', 'sp.sampleTypeId', 'stp.id')
     .leftJoin('Site as so', 'sp.originSiteId', 'so.id')
     .leftJoin('ResultWorkflowStatus as rs', 'r.resultWorkflowStatusId', 'rs.id')
-    .leftJoin('ResultSource as rsrc', 'r.resultSourceId', 'rsrc.id')
     .leftJoin('Site as si', 'r.siteId', 'si.id')
     .modify((queryBuilder, params) => {
       if (params.minUpdatedOn) {
@@ -360,7 +356,6 @@ async function getDownloadResultsList(query, auth) {
 }
 
 async function downloadResultsList(request) {
-  console.log(request)
   const { query, auth } = request
   const result = await getDownloadResultsList(query, auth)
   return result

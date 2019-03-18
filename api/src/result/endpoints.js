@@ -377,12 +377,12 @@ const routes = [
                 createdOn: Joi.date()
                   .required()
                   .description(
-                    'When the result was added to the Aspect database. Note that this includes the zone designator and the time zone is UTC. This can be converted to the user time zone.'
+                    'When the result was added to the Aspect database. This can be converted to the user time zone.'
                   ),
                 updatedOn: Joi.date()
                   .required()
                   .description(
-                    'When the result was last updated in the Aspect database. Note that this includes the zone designator and the time zone is UTC. This can be converted to the user time zone.'
+                    'When the result was last updated in the Aspect database. This can be converted to the user time zone.'
                   ),
                 longitude: Joi.number()
                   .allow(null)
