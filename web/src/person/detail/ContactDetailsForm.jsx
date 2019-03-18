@@ -13,6 +13,7 @@ import CountrySelectField from '../../filter/geography/CountrySelectField'
 import StateSelectField from '../../filter/geography/StateSelectField'
 import LgaSelectField from '../../filter/geography/LgaSelectField'
 import messages from './messages'
+import AspectCheckbox from '../../components/shared/AspectCheckbox'
 
 const cssClasses = classnames.bind(require('./PersonDetail.css'))
 
@@ -51,6 +52,7 @@ const DEFAULT_VALUES = {
   lgaId: undefined,
   zip: '',
   notes: '',
+  canLogIn: undefined,
 }
 
 const getInitialValues = contactDetails => ({
@@ -67,6 +69,7 @@ const getInitialValues = contactDetails => ({
   lgaId: contactDetails.get('lgaId') || DEFAULT_VALUES.lgaId,
   zip: contactDetails.get('zip') || DEFAULT_VALUES.zip,
   notes: contactDetails.get('notes') || DEFAULT_VALUES.notes,
+  canLogIn: contactDetails.get('canLogIn') || undefined,
 })
 
 const enhance = compose(
@@ -106,6 +109,10 @@ const enhance = compose(
       { fieldName: 'lgaId', valueFromChangeEvent: _.identity },
       { fieldName: 'zip', valueFromChangeEvent: it => it.target.value },
       { fieldName: 'notes', valueFromChangeEvent: it => it.target.value },
+      {
+        fieldName: 'canLogIn',
+        valueFromChangeEvent: _.identity,
+      },
     ],
     validate,
   }),
@@ -119,7 +126,11 @@ const enhance = compose(
       onStateIdChange(undefined)
       onCountryIdChange(countryId)
     },
-
+    onCanLogInChange: ({ dispatch, onCanLogInChange }) => checked => {
+      console.log(checked)
+      onCanLogInChange(checked)
+      dispatch({ type: 'CAN_LOG_IN_PERSON' })
+    },
     onStateIdChange: ({ onStateIdChange, onLgaIdChange }) => stateId => {
       onLgaIdChange(undefined)
       onStateIdChange(stateId)
@@ -143,6 +154,7 @@ export const ContactDetailsForm = ({
   onPhoneChange,
   onCellChange,
   onLastPartnerIdChange,
+  onCanLogInChange,
   onCountryIdChange,
   onStateIdChange,
   onLgaIdChange,
@@ -323,6 +335,13 @@ export const ContactDetailsForm = ({
           inputProps={{ maxLength: 45 }}
         />
       </section>
+      <AspectCheckbox
+        name="canLoggedIn"
+        checked={values.canLoggedIn}
+        onChange={onCanLogInChange}
+      />{' '}
+      This contact can log in as a user
+      <section />
       {showNotesField && (
         <section>
           <TextField

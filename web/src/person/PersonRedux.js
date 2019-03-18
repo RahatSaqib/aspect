@@ -20,6 +20,7 @@ import {
 
 export const types = {
   REQUEST_PERSONS: 'REQUEST_PERSONS',
+  CAN_LOG_IN_PERSON: 'CAN_LOG_IN_PERSON',
   RECEIVE_PERSONS: 'RECEIVE_PERSONS',
   REJECTED_PERSONS: 'REJECTED_PERSONS',
 
@@ -34,6 +35,12 @@ export const types = {
 /*
  * ---------------- Action Creators -----------------
  */
+export function personCanLogIn(canLogIn) {
+  return dispatch => {
+    dispatch(transformToUser(canLogIn))
+  }
+}
+
 function requestPersons(sortCol, sortDir, page, size, filters) {
   return {
     type: types.REQUEST_PERSONS,
@@ -52,7 +59,12 @@ function receivePersons(json) {
     total: json.total,
   }
 }
-
+function transformToUser(canLogIn) {
+  return {
+    type: types.CAN_LOG_IN_PERSON,
+    canLogIn,
+  }
+}
 function rejectPersons() {
   return {
     type: types.REJECTED_PERSONS,
@@ -312,6 +324,7 @@ export const ContactDetails = Immutable.Record({
   zip: null,
   notes: null,
   lastPartnerId: null,
+  canLogIn: false,
 })
 export const LoginDetails = Immutable.Record({
   id: null,
@@ -321,7 +334,7 @@ export const LoginDetails = Immutable.Record({
   currentPassword: null,
   partnerId: null,
   jobFunctions: new Immutable.List([]),
-  userLockedOut: false,
+  userLockedOut: null,
 })
 export const UserPreferences = Immutable.Record({
   id: null,
@@ -346,6 +359,7 @@ export default function personReducer(state = initialState, action) {
         mutState.set('items', mutState.get('items').clear())
         mutState.set('table', mutState.get('table').clear())
       })
+    case types.CAN_LOG_IN_PERSON:
     case types.RECEIVE_SINGLE_PERSON:
     case types.RECEIVE_UPDATED_SINGLE_PERSON:
       return state.withMutations(mutState => {

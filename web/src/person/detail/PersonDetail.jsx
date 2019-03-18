@@ -154,6 +154,7 @@ export class PersonDetail extends PureComponent {
     const loginDetails = new LoginDetails(person)
     const userPreferences = new UserPreferences(person)
     const userIsAdmin = user.jwt.permissions.includes('person:admin')
+    const contactIsUser = person ? person.get('canLogIn') : false
     const loading = !person || person.get('loaded') !== true
 
     return (
@@ -185,27 +186,28 @@ export class PersonDetail extends PureComponent {
                   onSubmit={this.saveContactDetails}
                 />
               </Tab>
-              {userIsAdmin && (
-                <Tab
-                  icon={<Lock fontSize="large" />}
-                  label={
-                    <Hidden xs component="span">
+              {userIsAdmin &&
+                contactIsUser && (
+                  <Tab
+                    icon={<Lock fontSize="large" />}
+                    label={
+                      <Hidden xs component="span">
+                        {formatMessage(messages.systemAccessControl)}
+                      </Hidden>
+                    }
+                  >
+                    {loading && <LinearProgress />}
+                    <Visible xs component="h2" className={styles.Form__Header}>
                       {formatMessage(messages.systemAccessControl)}
-                    </Hidden>
-                  }
-                >
-                  {loading && <LinearProgress />}
-                  <Visible xs component="h2" className={styles.Form__Header}>
-                    {formatMessage(messages.systemAccessControl)}
-                  </Visible>
-                  <LoginDetailsForm
-                    intl={intl}
-                    loading={loading}
-                    loginDetails={loginDetails}
-                    onSubmit={this.saveLoginDetails}
-                  />
-                </Tab>
-              )}
+                    </Visible>
+                    <LoginDetailsForm
+                      intl={intl}
+                      loading={loading}
+                      loginDetails={loginDetails}
+                      onSubmit={this.saveLoginDetails}
+                    />
+                  </Tab>
+                )}
               <Tab
                 icon={<Language fontSize="large" />}
                 label={
