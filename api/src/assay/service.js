@@ -78,7 +78,6 @@ async function listAssaysResultSchema(request) {
         requirestreatment: category.requirestreatment,
       })),
     })
-    console.log(assay.resultCategories)
     return assay
   })
   return result
