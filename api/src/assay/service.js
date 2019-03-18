@@ -66,13 +66,19 @@ async function listAssaysResultSchema(request) {
   const result = _.map(assaysList, elem => {
     const resultDataSchema = JSON.parse(elem.resultDataSchema)
     const patientDataSchema = JSON.parse(elem.patientDataSchema)
-    delete patientDataSchema.assayId
-    delete patientDataSchema.id
+    const categories = resultCategoriesByAssayId[elem.assayId]
     const assay = Object.assign({}, elem, {
       resultDataSchema,
       patientDataSchema,
-      resultCategories: resultCategoriesByAssayId[elem.assayId],
+      resultCategories: _.map(categories, category => ({
+        name: category.name,
+        i18nKey: category.i18nKey,
+        externalId: category.externalId,
+        emphasize: category.emphasize,
+        requirestreatment: category.requirestreatment,
+      })),
     })
+    console.log(assay.resultCategories)
     return assay
   })
   return result
