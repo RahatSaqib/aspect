@@ -722,6 +722,7 @@ async function seed(knex) {
 
   const [assayGeneXpertMtbRifId] = await knex('Assay').insert({
     name: 'GeneXpert MTB/Rif',
+    abbreviation: 'GX MTB/Rif',
     i18nKey: 'assayGeneXpertMtbRif',
     externalId: 'GxMtbRif',
     assayTypeId: assayTypeMTBRifId,
@@ -737,6 +738,7 @@ async function seed(knex) {
 
   const [assayGeneXpertMtbRifUltraId] = await knex('Assay').insert({
     name: 'GeneXpert MTB/Rif Ultra',
+    abbreviation: 'GX MTB/Ultra',
     i18nKey: 'assayGeneXpertMtbRifUltra',
     externalId: 'GxMtbRifUltra',
     assayTypeId: assayTypeMTBRifId,
@@ -752,6 +754,7 @@ async function seed(knex) {
 
   const [assayGeneXpertHiv1VlId] = await knex('Assay').insert({
     name: 'GeneXpert HIV-1 VL',
+    abbreviation: 'GX HIV VL',
     i18nKey: 'assayGeneXpertHiv1Vl',
     externalId: 'GxHiv1Vl',
     assayTypeId: assayTypeHivVlId,
@@ -767,6 +770,7 @@ async function seed(knex) {
 
   const [assayGeneXpertHiv1QualId] = await knex('Assay').insert({
     name: 'GeneXpert HIV-1 Qual',
+    abbreviation: 'GX HIV Qual',
     i18nKey: 'assayGeneXpertHiv1Qual',
     externalId: 'GxHiv1Qual',
     assayTypeId: assayTypeHivQualId,
@@ -782,6 +786,7 @@ async function seed(knex) {
 
   const [assayGeneXpertEbolaId] = await knex('Assay').insert({
     name: 'GeneXpert Ebola',
+    abbreviation: 'GX Ebola',
     i18nKey: 'assayGeneXpertEbola',
     externalId: 'GxEbola',
     assayTypeId: assayTypeEbolaId,
@@ -797,6 +802,7 @@ async function seed(knex) {
 
   await knex('Assay').insert({
     name: 'GeneXpert Unknown',
+    abbreviation: 'GX UK',
     i18nKey: 'assayGeneXpertUnknown',
     externalId: 'GxUnknown',
     assayTypeId: assayTypeUnknownId,
@@ -807,6 +813,7 @@ async function seed(knex) {
 
   const [assayGeneXpertHcvId] = await knex('Assay').insert({
     name: 'GeneXpert HCV',
+    abbreviation: 'GX HCV',
     i18nKey: 'assayGeneXpertHcv',
     externalId: 'GxHcv',
     assayTypeId: assayTypeHcvId,
@@ -822,6 +829,7 @@ async function seed(knex) {
 
   const [assayDaktariHcvId] = await knex('Assay').insert({
     name: 'Daktari HCV',
+    abbreviation: 'DAK HCV',
     i18nKey: 'assayDaktariHcv',
     externalId: 'DaktariHcv',
     assayTypeId: assayTypeHcvId,
@@ -837,6 +845,7 @@ async function seed(knex) {
 
   const [assayDaktariHivVlId] = await knex('Assay').insert({
     name: 'Daktari HIV-VL',
+    abbreviation: 'DAK HIV VL',
     i18nKey: 'assayDaktariHivVl',
     externalId: 'DaktariHivVl',
     assayTypeId: assayTypeHivVlId,
@@ -852,6 +861,7 @@ async function seed(knex) {
 
   const [assayDaktariCD4Id] = await knex('Assay').insert({
     name: 'Daktari CD4',
+    abbreviation: 'DAK CD4',
     i18nKey: 'assayDaktariCD4',
     externalId: 'DaktariCD4',
     assayTypeId: assayTypeCD4Id,
@@ -867,6 +877,7 @@ async function seed(knex) {
 
   await knex('Assay').insert({
     name: 'Afinion HIV VL',
+    abbreviation: 'AF HIV VL',
     i18nKey: 'assayAfinionHivVl',
     externalId: 'AfinionHivVl',
     assayTypeId: assayTypeHivVlId,
@@ -887,6 +898,7 @@ async function seed(knex) {
 
   await knex('Assay').insert({
     name: 'Afinion Lipid Panel',
+    abbreviation: 'AF LP',
     i18nKey: 'assayAfinionLipidPanel',
     externalId: 'LipidPanel',
     assayTypeId: assayTypeLipidPanelId,
@@ -915,6 +927,7 @@ async function seed(knex) {
 
   await knex('Assay').insert({
     name: 'Q HIV VL',
+    abbreviation: 'Q HIV VL',
     i18nKey: 'assayQHivVl',
     externalId: 'HivVl',
     assayTypeId: assayTypeHivVlId,
@@ -926,6 +939,7 @@ async function seed(knex) {
 
   await knex('Assay').insert({
     name: 'Abbott m2000 HIV VL',
+    abbreviation: 'm2000 HIV VL',
     i18nKey: 'AssayAbbottM2000HivVl',
     externalId: 'HivVl',
     assayTypeId: assayTypeHivVlId,
@@ -975,6 +989,7 @@ async function seed(knex) {
 
   await knex('Assay').insert({
     name: 'Abbott m2000 EID',
+    abbreviation: 'm2000 EID',
     i18nKey: 'AssayAbbottM2000Eid',
     externalId: 'EID',
     assayTypeId: assayTypeEid,
@@ -1031,6 +1046,7 @@ async function seed(knex) {
 
   await knex('Assay').insert({
     name: 'CHAI HIV VL',
+    abbreviation: 'CHAI HIV VL',
     i18nKey: 'AssayChaiHivVl',
     externalId: 'HivVl',
     assayTypeId: assayTypeHivVlId,
@@ -1095,6 +1111,7 @@ async function seed(knex) {
 
   await knex('Assay').insert({
     name: 'CHAI EID',
+    abbreviation: 'CHAI EID',
     i18nKey: 'AssayChaiEid',
     externalId: 'EID',
     assayTypeId: assayTypeEid,
@@ -1164,6 +1181,7 @@ async function seed(knex) {
 
   const [assayCommCareHiv] = await knex('Assay').insert({
     name: 'CommCare HIV',
+    abbreviation: 'CC HIV',
     i18nKey: 'commCareHiv',
     externalId: 'CommCareHiv',
     assayTypeId: assayTypeEid,
