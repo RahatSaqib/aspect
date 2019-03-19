@@ -126,14 +126,13 @@ const enhance = compose(
       onStateIdChange(undefined)
       onCountryIdChange(countryId)
     },
-    onCanLogInChange: ({ dispatch, onCanLogInChange }) => checked => {
-      console.log(checked)
-      onCanLogInChange(checked)
-      dispatch({ type: 'CAN_LOG_IN_PERSON' })
-    },
     onStateIdChange: ({ onStateIdChange, onLgaIdChange }) => stateId => {
       onLgaIdChange(undefined)
       onStateIdChange(stateId)
+    },
+    onUserCanLogInChange: ({ isUserChange, onCanLogInChange }) => event => {
+      onCanLogInChange(event)
+      isUserChange(event.target.checked)
     },
   })
 )
@@ -154,7 +153,7 @@ export const ContactDetailsForm = ({
   onPhoneChange,
   onCellChange,
   onLastPartnerIdChange,
-  onCanLogInChange,
+  onUserCanLogInChange,
   onCountryIdChange,
   onStateIdChange,
   onLgaIdChange,
@@ -336,9 +335,9 @@ export const ContactDetailsForm = ({
         />
       </section>
       <AspectCheckbox
-        name="canLoggedIn"
+        name="canLogIn"
         checked={values.canLoggedIn}
-        onChange={onCanLogInChange}
+        onChange={onUserCanLogInChange}
       />{' '}
       This contact can log in as a user
       <section />

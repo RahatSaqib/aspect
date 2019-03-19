@@ -30,12 +30,18 @@ import {
   ContactDetails,
   LoginDetails,
   UserPreferences,
+  personCanLogIn,
 } from '../PersonRedux'
 import { fetchPartnersAndJobFunctionsForSelectList } from '../../job/JobRedux'
 import { showAcknowledgement } from '../../appNotification/AppNotificationRedux'
 
 import messages from './messages'
 import styles from './PersonDetail.css'
+
+/* const mapState = (state, ownProps) => ({
+  canLogIn: state.canLogIn,
+  ...ownProps,
+}) */
 
 const enhance = compose(
   setPropTypes({
@@ -52,6 +58,7 @@ const enhance = compose(
       return {
         editable: isEditable(state.user, person),
         person,
+        canLogIn: state.person.get('canLogIn'),
         user: state.user,
         partnersAndJobFunctionsForSelectList: state.jobs.get(
           'partnersAndJobFunctionsForSelectList'
@@ -67,6 +74,7 @@ const enhance = compose(
           updateSinglePersonLoginDetails,
           updateSinglePersonUserPreferences,
           fetchPartnersAndJobFunctionsForSelectList,
+          personCanLogIn,
         },
         dispatch
       )
@@ -90,7 +98,6 @@ export class PersonDetail extends PureComponent {
     this.handleFetchPartnersAndJobFunctions(this.props)
     this.handleFetchPerson(this.props)
   }
-
   componentWillReceiveProps(nextProps) {
     if (this.props.match.params.personId !== nextProps.match.params.personId) {
       this.handleFetchPerson(nextProps)
@@ -99,6 +106,10 @@ export class PersonDetail extends PureComponent {
 
   handleFetchPerson = ({ match, fetchSinglePerson }) => {
     fetchSinglePerson(match.params.personId)
+  }
+
+  handlePersonCanLogIn = canLogin => {
+    this.props.personCanLogIn(canLogin)
   }
 
   handleFetchPartnersAndJobFunctions = ({
@@ -146,7 +157,6 @@ export class PersonDetail extends PureComponent {
       })
     })
   }
-
   render() {
     const { intl, person, user, editable } = this.props
     const { formatMessage } = intl
@@ -154,7 +164,6 @@ export class PersonDetail extends PureComponent {
     const loginDetails = new LoginDetails(person)
     const userPreferences = new UserPreferences(person)
     const userIsAdmin = user.jwt.permissions.includes('person:admin')
-    const contactIsUser = person ? person.get('canLogIn') : false
     const loading = !person || person.get('loaded') !== true
 
     return (
@@ -183,11 +192,12 @@ export class PersonDetail extends PureComponent {
                   contactDetails={contactDetails}
                   showNotesField
                   userIsAdmin
+                  isUserChange={this.handlePersonCanLogIn}
                   onSubmit={this.saveContactDetails}
                 />
               </Tab>
               {userIsAdmin &&
-                contactIsUser && (
+                this.props.canLogIn && (
                   <Tab
                     icon={<Lock fontSize="large" />}
                     label={
