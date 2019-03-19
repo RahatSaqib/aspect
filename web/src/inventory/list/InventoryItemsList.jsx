@@ -366,7 +366,10 @@ export const InventoryItemsList = ({
         </IconButton>
       </Tooltip>
     </DataTableCard>
-    <DataTableCard className={cssClasses('DataTableCard--table')}>
+    <DataTableCard
+      key={`DataTableCard--table-${location.key}`}
+      className={cssClasses('DataTableCard--table')}
+    >
       <DataTableProgressBar disabled={!table.loading} />
       {items.currentIdList.isEmpty() && (
         <BrowseEmptyList history={history} location={location} intl={intl} />

@@ -66,6 +66,7 @@ async function seed(knex) {
 
   await knex('Assay').insert({
     name: 'MGIT G&D',
+    abbreviation: 'MGIT G&D',
     i18nKey: 'assayBDMGITBND',
     externalId: 'GND',
     assayTypeId: assayTypeTBGNDId,
@@ -89,6 +90,7 @@ async function seed(knex) {
 
   await knex('Assay').insert({
     name: 'MGIT AST',
+    abbreviation: 'MGIT AST',
     i18nKey: 'assayBDMGITAST',
     externalId: 'AST',
     assayTypeId: assayTypeTBASTId,

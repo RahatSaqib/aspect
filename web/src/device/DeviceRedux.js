@@ -24,6 +24,7 @@ import { receivedExportResponse } from '../filter/FilterRedux'
 export const types = {
   REQUEST_DEVICES: 'REQUEST_DEVICES',
   RECEIVE_DEVICES: 'RECEIVE_DEVICES',
+  REJECTED_DEVICES: 'REJECTED_DEVICES',
 
   REQUEST_SINGLE_DEVICE: 'REQUEST_SINGLE_DEVICE',
   RECEIVE_SINGLE_DEVICE: 'RECEIVE_SINGLE_DEVICE',
@@ -56,6 +57,12 @@ function receiveDevices(json) {
     type: types.RECEIVE_DEVICES,
     items: json.data,
     total: json.total,
+  }
+}
+
+function rejectDevices() {
+  return {
+    type: types.REJECTED_DEVICES,
   }
 }
 
@@ -108,7 +115,9 @@ export function fetchDevices(
           ),
         },
       }
-    ).then(json => dispatch(receiveDevices(json)))
+    )
+      .then(json => dispatch(receiveDevices(json)))
+      .catch(() => dispatch(rejectDevices()))
   }
 }
 
@@ -397,6 +406,11 @@ export default function deviceReducer(state = initialState, action) {
         const immutList = Immutable.fromJS(action.items)
         mutState.set('items', receiveList(mutState.items, immutList))
         mutState.set('table', receiveTableItems(mutState.table, action.total))
+      })
+    case types.REJECTED_DEVICES:
+      return state.withMutations(mutState => {
+        mutState.set('items', mutState.get('items').clear())
+        mutState.set('table', mutState.get('table').clear())
       })
     case types.REQUEST_SINGLE_DEVICE:
     case types.REQUEST_UPDATING_SINGLE_DEVICE:

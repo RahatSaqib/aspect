@@ -2002,6 +2002,102 @@ async function dropUniqueKey(knex, tableName) {
   })
 }
 
+async function updateCategoryAssay(knex) {
+  const categories = await knex('ResultCategory').select(
+    'id',
+    'name',
+    'externalId'
+  )
+
+  await Promise.each(categories, async ({ id, externalId }) => {
+    let json
+    if (
+      ['Detected', 'Trace Detected', 'MoreThan1000'].indexOf(externalId) >= 0
+    ) {
+      json = {
+        requiresTreatment: true,
+        emphasize: true,
+      }
+    } else if (
+      [
+        'Indeterminate',
+        'Invalid',
+        'NoResult',
+        'Error',
+        'CollectNewSample',
+        'Discordant',
+        'Rejected',
+        'Missing',
+      ].indexOf(externalId) >= 0
+    ) {
+      json = {
+        requiresTreatment: false,
+        emphasize: true,
+      }
+    } else if (
+      ['Success', 'LessThan1000', 'Unknown', 'NotDetected'].indexOf(
+        externalId
+      ) >= 0
+    ) {
+      json = {
+        requiresTreatment: false,
+        emphasize: false,
+      }
+    }
+    await knex('ResultCategoryAssay')
+      .where('resultCategoryId', id)
+      .update(json)
+  })
+}
+
+async function updateAssayAbbreviation(knex) {
+  const categories = await knex('ResultCategory').select(
+    'id',
+    'name',
+    'externalId'
+  )
+
+  await Promise.each(categories, async ({ id, externalId }) => {
+    let json
+    if (
+      ['Detected', 'Trace Detected', 'MoreThan1000'].indexOf(externalId) >= 0
+    ) {
+      json = {
+        requiresTreatment: true,
+        emphasize: true,
+      }
+    } else if (
+      [
+        'Indeterminate',
+        'Invalid',
+        'NoResult',
+        'Error',
+        'CollectNewSample',
+        'Discordant',
+        'Rejected',
+        'Missing',
+      ].indexOf(externalId) >= 0
+    ) {
+      json = {
+        requiresTreatment: false,
+        emphasize: true,
+      }
+    } else if (
+      ['Success', 'LessThan1000', 'Unknown', 'NotDetected'].indexOf(
+        externalId
+      ) >= 0
+    ) {
+      json = {
+        requiresTreatment: false,
+        emphasize: false,
+      }
+    }
+    await knex('ResultCategoryAssay')
+      .where('resultCategoryId', id)
+      .update(json)
+  })
+}
+
 async function addLicenses(knex) {
   const { data: licensesByPartner } = await readJson(
     `./seeds/fixtures/License.json`
@@ -2091,5 +2187,9 @@ module.exports = {
 
   addLicenses,
   addLicensePersons,
+
   seedDeviceMaintenanceType,
+
+  updateCategoryAssay,
+  updateAssayAbbreviation,
 }

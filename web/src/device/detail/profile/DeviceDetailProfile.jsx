@@ -32,7 +32,7 @@ import {
   updateDeviceMaintenance,
 } from '../../DeviceRedux'
 import DeviceDetailBackBar from '../DeviceDetailBackBar'
-import Summary from '../Summary'
+import Summary from '../../../globals/components/Summary'
 import {
   ResultDataTable,
   ResultDataTableHead,

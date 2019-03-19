@@ -66,6 +66,7 @@ async function seed(knex) {
 
   await knex('Assay').insert({
     name: 'BluSense Dengue',
+    abbreviation: 'BS DENGUE',
     i18nKey: 'assayBlusenseDengue',
     externalId: 'Dengue',
     assayTypeId: assayTypeDengueId,
@@ -99,6 +100,7 @@ async function seed(knex) {
 
   await knex('Assay').insert({
     name: 'BluSense Zika',
+    abbreviation: 'BS Zika',
     i18nKey: 'assayBlusenseZika',
     externalId: 'Zika',
     assayTypeId: assayTypeZikaId,
