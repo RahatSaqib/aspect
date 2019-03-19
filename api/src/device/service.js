@@ -54,9 +54,9 @@ const SELECT_SHOW_FIELDS = [
   'dt.configurationDataSchema',
   'dt.deviceOperationSchema',
   'dp.dailyCapacity',
-  'frd30.resultCount as resultCount30',
+  'frd30.resultCount as resultCountThisMonth',
   'frd60.resultCount as resultCount60',
-  knex.raw('ifnull(frd30Errors.resultCount, 0) as errorCount30'),
+  knex.raw('ifnull(frd30Errors.resultCount, 0) as errorCountThisMonth'),
   knex.raw('ifnull(frd60Errors.resultCount, 0) as errorCount60'),
 ]
 
@@ -139,8 +139,8 @@ async function getListDevices(query, auth) {
     .modify(sortPageParams, query, 'name')
     .select([
       ...SELECT_LIST_FIELDS,
-      'frd30.resultCount as thisMonth',
-      knex.raw('frd60.resultCount - frd30.resultCount as lastMonth'),
+      'frd30.resultCount as resultCountThisMonth',
+      knex.raw('frd60.resultCount - frd30.resultCount as resultCountLastMonth'),
       'frd30Errors.resultCount as thisMonthErrors',
       knex('Result as r')
         .innerJoin('Sample as s', 'r.sampleId', 's.id')
@@ -191,7 +191,7 @@ async function getListDevices(query, auth) {
     }
     it.error = {
       count: it.thisMonthErrors,
-      total: it.thisMonth,
+      total: it.resultCountThisMonth,
     }
     it.alerts = it.issueCategories
       ? it.issueCategories.split(',').map(key => ({ key }))

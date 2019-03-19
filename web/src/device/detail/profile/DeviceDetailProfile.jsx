@@ -393,12 +393,14 @@ export const DeviceDetailProfile = ({
 }) => {
   const deviceName = `${device.get('type')} at ${device.get('siteName')}`
   const dailyCapacity = device.get('dailyCapacity')
-  const resultCount30 = device.get('resultCount30')
-  const errorCount30 = device.get('errorCount30')
+  const resultCountThisMonth = device.get('resultCountThisMonth')
+  const errorCountThisMonth = device.get('errorCountThisMonth')
   const utilizationRateThisMonth = dailyCapacity
-    ? resultCount30 / (dailyCapacity * 30)
+    ? resultCountThisMonth / (dailyCapacity * 30)
     : null
-  const errorRateThisMonth = resultCount30 ? errorCount30 / resultCount30 : null
+  const errorRateThisMonth = resultCountThisMonth
+    ? errorCountThisMonth / resultCountThisMonth
+    : null
   return (
     <div>
       <Helmet title={deviceName} />
@@ -458,7 +460,7 @@ export const DeviceDetailProfile = ({
                       <React.Fragment>
                         {`${intl.formatMessage(
                           messages.utilizationRateExplain
-                        )}: ${resultCount30} / (${dailyCapacity}*30) = ${intl.formatNumber(
+                        )}: ${resultCountThisMonth} / (${dailyCapacity}*30) = ${intl.formatNumber(
                           utilizationRateThisMonth
                         )}`}
                       </React.Fragment>
@@ -488,7 +490,7 @@ export const DeviceDetailProfile = ({
                     <React.Fragment>
                       {`${intl.formatMessage(
                         messages.errorRateExplain
-                      )}: ${errorCount30} / ${resultCount30} = ${
+                      )}: ${errorCountThisMonth} / ${resultCountThisMonth} = ${
                         errorRateThisMonth
                           ? intl.formatNumber(errorRateThisMonth)
                           : intl.formatMessage(messages.noResults)
@@ -500,7 +502,7 @@ export const DeviceDetailProfile = ({
                 </AspectTooltip>
               }
               description={
-                resultCount30 ? (
+                resultCountThisMonth ? (
                   <ColoredNumber
                     number={errorRateThisMonth}
                     intl={intl}

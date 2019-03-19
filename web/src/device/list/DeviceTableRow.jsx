@@ -10,7 +10,6 @@ import {
 import ColoredButton from '../../components/themedReactToolbox/ColoredButton'
 import ColoredNumber from '../../components/shared/ColoredNumber'
 import messages from './messages'
-import { ignoreElements } from '../../../node_modules/rxjs/operator/ignoreElements'
 
 const cssClasses = classnames.bind(require('./DeviceTableRow.css'))
 const sharedCssClasses = classnames.bind(
@@ -90,8 +89,12 @@ const DeviceTableRow = ({
       })}
     </TableCell>
     <TableCell>{intl.formatRelative(device.get('lastSeen'))}</TableCell>
-    <TableCell numeric>{intl.formatNumber(device.get('lastMonth'))}</TableCell>
-    <TableCell numeric>{intl.formatNumber(device.get('thisMonth'))}</TableCell>
+    <TableCell numeric>
+      {intl.formatNumber(device.get('resultCountLastMonth'))}
+    </TableCell>
+    <TableCell numeric>
+      {intl.formatNumber(device.get('resultCountThisMonth'))}
+    </TableCell>
   </TableRow>
 )
 
