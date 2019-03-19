@@ -169,9 +169,9 @@ describe('Device routes', () => {
       function assertBase(request, response, { datePropName, notesPropName }) {
         const { contextDate, notes } = request
         assert.typeOf(response, 'Object')
-        assert.property(response, 'device')
+        assert.property(response, 'data')
         assert.property(response, 'deviceMaintenanceId')
-        const { device, deviceMaintenanceId } = response
+        const { data: device, deviceMaintenanceId } = response
         assert.property(device, datePropName)
         assert.property(device, notesPropName)
         // values in request and response should match

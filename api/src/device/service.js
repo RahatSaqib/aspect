@@ -635,7 +635,7 @@ async function updateDeviceMaintenance(request) {
     credentials,
   })
 
-  return { ok: true, device, deviceMaintenanceId }
+  return { ok: true, data: device, deviceMaintenanceId }
 }
 
 module.exports = {
