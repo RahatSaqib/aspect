@@ -1,4 +1,8 @@
-const { addDeviceRawDataHandler } = require('./service')
+const {
+  addDeviceRawDataHandler,
+  onDeviceRawMessagePosted,
+  onDeviceRawMessageHandled,
+} = require('./service')
 
 const routes = [
   {
@@ -18,4 +22,13 @@ const routes = [
   },
 ]
 
-module.exports = { routes }
+const subscriptions = [
+  {
+    actions: {
+      DEVICE_RAW_MESSAGE_POSTED: onDeviceRawMessagePosted,
+      DEVICE_RAW_MESSAGE_HANDLED: onDeviceRawMessageHandled,
+    },
+  },
+]
+
+module.exports = { routes, subscriptions }
