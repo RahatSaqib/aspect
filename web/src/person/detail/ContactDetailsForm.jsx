@@ -69,7 +69,7 @@ const getInitialValues = contactDetails => ({
   lgaId: contactDetails.get('lgaId') || DEFAULT_VALUES.lgaId,
   zip: contactDetails.get('zip') || DEFAULT_VALUES.zip,
   notes: contactDetails.get('notes') || DEFAULT_VALUES.notes,
-  canLogIn: contactDetails.get('canLogIn') || undefined,
+  canLogIn: contactDetails.get('canLogIn') || DEFAULT_VALUES.canLogIn,
 })
 
 const enhance = compose(
@@ -77,10 +77,12 @@ const enhance = compose(
   lifecycle({
     componentWillMount() {
       const onChange = values => this.setState({ values })
-
       this.setState({
         onChange,
-        values: getInitialValues(this.props.contactDetails),
+        values: getInitialValues(
+          this.props.contactDetails,
+          this.props.emailValue
+        ),
       })
     },
 
@@ -111,12 +113,15 @@ const enhance = compose(
       { fieldName: 'notes', valueFromChangeEvent: it => it.target.value },
       {
         fieldName: 'canLogIn',
-        valueFromChangeEvent: _.identity,
+        valueFromChangeEvent: it => it.target.checked,
       },
     ],
     validate,
   }),
   withHandlers({
+    onEmailChange: ({ onEmailChange }) => event => {
+      onEmailChange(event)
+    },
     onCountryIdChange: ({
       onCountryIdChange,
       onStateIdChange,
@@ -164,6 +169,12 @@ export const ContactDetailsForm = ({
   <form onSubmit={handleSubmit} className={cssClasses('Form')}>
     <div className={cssClasses('Form__Content')}>
       <section>
+        <AspectCheckbox
+          name="canLogIn"
+          checked={values.canLogIn}
+          onChange={onUserCanLogInChange}
+        />{' '}
+        This contact can log in as a user
         <TextField
           fullWidth
           type="text"
@@ -334,13 +345,6 @@ export const ContactDetailsForm = ({
           inputProps={{ maxLength: 45 }}
         />
       </section>
-      <AspectCheckbox
-        name="canLogIn"
-        checked={values.canLoggedIn}
-        onChange={onUserCanLogInChange}
-      />{' '}
-      This contact can log in as a user
-      <section />
       {showNotesField && (
         <section>
           <TextField

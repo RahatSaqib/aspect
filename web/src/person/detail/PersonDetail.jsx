@@ -31,6 +31,7 @@ import {
   LoginDetails,
   UserPreferences,
   personCanLogIn,
+  emailValueChange,
 } from '../PersonRedux'
 import { fetchPartnersAndJobFunctionsForSelectList } from '../../job/JobRedux'
 import { showAcknowledgement } from '../../appNotification/AppNotificationRedux'
@@ -54,12 +55,13 @@ const enhance = compose(
   connect(
     (state, props) => {
       const person = state.person.items.byId.get(props.match.params.personId)
-
+      if (person) console.log(person.toJS())
       return {
         editable: isEditable(state.user, person),
         person,
-        canLogIn: state.person.get('canLogIn'),
+        canLogIn: person.get('canLogIn'),
         user: state.user,
+        emailValue: state.person.get('email'),
         partnersAndJobFunctionsForSelectList: state.jobs.get(
           'partnersAndJobFunctionsForSelectList'
         ),
@@ -75,6 +77,7 @@ const enhance = compose(
           updateSinglePersonUserPreferences,
           fetchPartnersAndJobFunctionsForSelectList,
           personCanLogIn,
+          emailValueChange,
         },
         dispatch
       )
@@ -109,7 +112,12 @@ export class PersonDetail extends PureComponent {
   }
 
   handlePersonCanLogIn = canLogin => {
-    this.props.personCanLogIn(canLogin)
+    const { person } = this.props
+    this.props.personCanLogIn(canLogin, person.get('id'))
+  }
+
+  handleEmailChange = value => {
+    this.props.emailValueChange(value)
   }
 
   handleFetchPartnersAndJobFunctions = ({
@@ -165,6 +173,7 @@ export class PersonDetail extends PureComponent {
     const userPreferences = new UserPreferences(person)
     const userIsAdmin = user.jwt.permissions.includes('person:admin')
     const loading = !person || person.get('loaded') !== true
+    const isUser = !person || person.get('canLogIn') || undefined
 
     return (
       <div className={styles.Container}>
@@ -189,6 +198,7 @@ export class PersonDetail extends PureComponent {
                 <ContactDetailsForm
                   intl={intl}
                   loading={loading}
+                  emailValueChange={this.handleEmailChange}
                   contactDetails={contactDetails}
                   showNotesField
                   userIsAdmin
@@ -197,7 +207,7 @@ export class PersonDetail extends PureComponent {
                 />
               </Tab>
               {userIsAdmin &&
-                this.props.canLogIn && (
+                isUser && (
                   <Tab
                     icon={<Lock fontSize="large" />}
                     label={

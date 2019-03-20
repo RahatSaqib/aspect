@@ -5,7 +5,7 @@ const shared = require('../utils/sharedToken')
 const server = supertest.agent('http://localhost:8080')
 const { assert } = chai
 
-describe('Person routes', () => {
+describe.only('Person routes', () => {
   describe('GET /person', () => {
     const path = '/api/person'
     shared.checkToken(server, path)

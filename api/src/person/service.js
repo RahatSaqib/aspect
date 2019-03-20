@@ -81,7 +81,8 @@ function getPersonDetails(personId) {
       'c.name as country',
       's.name as stateName',
       'l.name as lgaName',
-      'u.lockedOut as userLockedOut'
+      'u.lockedOut as userLockedOut',
+      'p.canLogIn'
     )
 }
 
@@ -120,6 +121,7 @@ async function savePerson(request, updatablePersonFields) {
   )
 
   const personDetails = await getPersonDetails(params.personId)
+  console.log(personDetails)
   if (_.isEmpty(personDetails)) {
     return Boom.notFound()
   }
@@ -137,9 +139,10 @@ async function savePerson(request, updatablePersonFields) {
     },
     {}
   )
-
+  console.log(changedFields)
   // Update record if any values have changed
   const changedPersonFields = await transformGeographyFromUpdates(changedFields)
+  console.log(changedPersonFields)
   if (!_.isEmpty(changedPersonFields)) {
     if (
       changedFields.countryId &&
@@ -175,6 +178,7 @@ async function updatePerson(request) {
     'zip',
     'notes',
     'lastPartnerId',
+    'canLogIn',
   ])
 }
 

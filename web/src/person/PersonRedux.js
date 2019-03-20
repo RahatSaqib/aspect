@@ -23,7 +23,7 @@ export const types = {
   CAN_LOG_IN_PERSON: 'CAN_LOG_IN_PERSON',
   RECEIVE_PERSONS: 'RECEIVE_PERSONS',
   REJECTED_PERSONS: 'REJECTED_PERSONS',
-
+  PREFETCH_EMAIL: 'PREFETCH_EMAIL',
   REQUEST_SINGLE_PERSON: 'REQUEST_SINGLE_PERSON',
   RECEIVE_SINGLE_PERSON: 'RECEIVE_SINGLE_PERSON',
 
@@ -54,10 +54,13 @@ function receivePersons(json) {
     total: json.total,
   }
 }
-function transformToUser(canLogIn) {
+function transformToUser(canLogIn, personId) {
+  console.log(canLogIn)
+  console.log(personId)
   return {
     type: types.CAN_LOG_IN_PERSON,
     canLogIn,
+    personId,
   }
 }
 function rejectPersons() {
@@ -65,12 +68,19 @@ function rejectPersons() {
     type: types.REJECTED_PERSONS,
   }
 }
-export function personCanLogIn(canLogIn) {
+export function personCanLogIn(canLogIn, personId) {
   return dispatch => {
-    dispatch(transformToUser(canLogIn))
+    dispatch(transformToUser(canLogIn, personId))
   }
 }
-
+export function emailValueChange(value) {
+  return dispatch => {
+    dispatch(() => ({
+      type: types.PREFETCH_EMAIL,
+      value,
+    }))
+  }
+}
 export function fetchPersons(filtersParams, sortCol, sortDir, page, pageSize) {
   return dispatch => {
     const filters = _.fromPairs([...filtersParams.entries()])
@@ -234,6 +244,7 @@ export function updateSinglePerson(personId, data) {
     'zip',
     'notes',
     'lastPartnerId',
+    'canLogIn',
   ])
 }
 
@@ -309,7 +320,6 @@ export function updateSinglePersonUserPreferences(personId, data) {
 const Person = Immutable.Record({
   items: new Items(),
   table: new Table(),
-  canLogIn: false,
 })
 export const ContactDetails = Immutable.Record({
   id: null,
@@ -362,8 +372,22 @@ export default function personReducer(state = initialState, action) {
       })
     case types.CAN_LOG_IN_PERSON:
       return state.withMutations(mutState => {
-        mutState.set('canLogIn', action.canLogIn)
+        const currentState = state.items.byId
+          .get(action.personId)
+          .set('canLogIn', action.canLogIn)
+        mutState.set('items', receiveItem(mutState.items, currentState))
+        //  mutState.set('canLogIn', action.item.canLogIn)
+        // mutState.set('canLogIn', action.canLogIn)
       })
+    /* case types.PREFETCH_EMAIL:
+      return state.withMutations(mutState => {
+        const currentState = state.items.byId.get(action.personId)
+        currentState.merge({
+          username: action.username,
+          prefetchedUserName: action.emalValue,
+        })
+        mutState.set('items', receiveItem(mutState.items, person))
+      }) */
     case types.RECEIVE_SINGLE_PERSON:
     case types.RECEIVE_UPDATED_SINGLE_PERSON:
       return state.withMutations(mutState => {
