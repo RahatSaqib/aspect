@@ -72,6 +72,7 @@ const SiteDetail = props => {
                 {...props}
                 site={site}
                 siteTags={siteTags.toJS()}
+                onSiteTagChange={onSiteTagChange}
               />
             )}
           />

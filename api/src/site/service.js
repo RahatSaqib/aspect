@@ -146,15 +146,19 @@ async function showSite(request) {
     .distinct('dt.id', 'dt.name', 'dtc.id as category')
     .select()
 
-  item.contacts = await knex('JobContext as jc')
-    .innerJoin('Job as j', 'jc.jobId', 'j.id')
-    .innerJoin('Person as p', 'j.personId', 'p.id')
-    .where('jc.siteId', params.siteId)
-    .select('p.name', 'p.id')
+  item.contacts = await siteContacts(params.siteId)
 
   const result = { ok: true, data: item }
 
   return result
+}
+
+function siteContacts(id) {
+  return knex('JobContext as jc')
+    .innerJoin('Job as j', 'jc.jobId', 'j.id')
+    .innerJoin('Person as p', 'j.personId', 'p.id')
+    .where('jc.siteId', id)
+    .select('p.name', 'p.id')
 }
 
 async function updateSite(request) {
@@ -227,5 +231,6 @@ module.exports = {
   getSite,
   showSite,
   updateSite,
+  siteContacts,
   listSitesForSelectList,
 }

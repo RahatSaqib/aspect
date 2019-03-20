@@ -5,6 +5,7 @@ import classnames from 'classnames/bind'
 import Card from '@material-ui/core/Card'
 
 // Our own imports
+import Contacts from './Contacts'
 import messages from '../messages'
 import { Site } from '../../SiteRedux'
 import Summary from '../../../globals/components/Summary'
@@ -20,6 +21,7 @@ const SiteDetailProfile = ({
   location,
   match,
   disabled,
+  onSiteTagChange, //del
 }) => {
   const fields = [
     {
@@ -55,18 +57,6 @@ const SiteDetailProfile = ({
     {
       label: formatMessage(messages.fieldLGA),
       value: site.get('lga'),
-    },
-    {
-      label: formatMessage(messages.fieldContact),
-      value:
-        site.get('contacts') &&
-        site
-          .get('contacts')
-          .toJS()
-          .map(contact => ({
-            description: contact.name,
-            to: `/browse/person/${contact.id}`,
-          })),
     },
     {
       label: formatMessage(messages.fieldDevices),
@@ -111,6 +101,27 @@ const SiteDetailProfile = ({
               cols="4"
             />
           ))}
+
+          <Contacts
+            id={site.get('id')}
+            title={formatMessage(messages.fieldContact)}
+            contacts={site.get('contacts').toJS()}
+            onSiteTagChange={onSiteTagChange}
+          />
+          {/* <Summary
+            title={formatMessage(messages.fieldContact)}
+            description={
+              site.get('contacts') &&
+              site
+                .get('contacts')
+                .toJS()
+                .map(contact => ({
+                  description: contact.name,
+                  to: `/browse/person/${contact.id}`,
+                }))
+            }
+            cols="1"
+          /> */}
         </Card>
       </section>
     </div>

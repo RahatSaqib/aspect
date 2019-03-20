@@ -12,6 +12,7 @@ import {
   errorInsufficientScope,
 } from '../error/CommonErrorNotifications'
 import { receiveList, receiveItem, Items } from '../shared/metaReducers/items'
+
 import {
   requestTable,
   receiveTableItems,
@@ -23,7 +24,12 @@ export const types = {
   CAN_LOG_IN_PERSON: 'CAN_LOG_IN_PERSON',
   RECEIVE_PERSONS: 'RECEIVE_PERSONS',
   REJECTED_PERSONS: 'REJECTED_PERSONS',
+
   PREFILL_EMAIL: 'PREFILL_EMAIL',
+
+  RECEIVE_AVAILABLE_PERSONS: 'RECEIVE_AVAILABLE_PERSONS',
+  REQUEST_AVAILABLE_PERSONS: 'REQUEST_AVAILABLE_PERSONS',
+
   REQUEST_SINGLE_PERSON: 'REQUEST_SINGLE_PERSON',
   RECEIVE_SINGLE_PERSON: 'RECEIVE_SINGLE_PERSON',
 
@@ -130,6 +136,36 @@ export function fetchPersons(filtersParams, sortCol, sortDir, page, pageSize) {
   }
 }
 
+function requestAvailablePersons() {
+  return {
+    type: types.REQUEST_AVAILABLE_PERSONS,
+  }
+}
+// receive possible contacts
+function receiveAvailablePersons(items) {
+  return {
+    type: types.RECEIVE_AVAILABLE_PERSONS,
+    items,
+  }
+}
+
+export function fetchAvailablePersons() {
+  return dispatch => {
+    dispatch(requestAvailablePersons())
+    return aspectFetch('/person/available', {
+      errorNotifications: {
+        403: errorInsufficientScope(
+          defineMessages({
+            title: {
+              id: 'errorResponseMessages.fetchAvailablePersons.GET.403.title',
+              defaultMessage: 'Insufficient Permissions',
+            },
+          })
+        ),
+      },
+    }).then(json => dispatch(receiveAvailablePersons(json.data)))
+  }
+}
 // loading a single person with given personId
 function requestSinglePerson(personId) {
   return {
@@ -320,7 +356,15 @@ export function updateSinglePersonUserPreferences(personId, data) {
 const Person = Immutable.Record({
   items: new Items(),
   table: new Table(),
+  contacts: Immutable.Map(),
 })
+
+const ContactTagItems = Immutable.Record({
+  loading: false,
+  items: Immutable.List(),
+  lastRefreshed: undefined,
+})
+
 export const ContactDetails = Immutable.Record({
   id: null,
   name: null,
@@ -356,6 +400,14 @@ export const UserPreferences = Immutable.Record({
 
 const initialState = new Person()
 
+function requestAvailableContacts(state) {
+  const people = state.getIn(['contacts', 'person'])
+  if (people) {
+    state.setIn(['contacts', 'person', 'loading'], true)
+  }
+  return state
+}
+
 export default function personReducer(state = initialState, action) {
   switch (action.type) {
     case types.REQUEST_PERSONS:
@@ -378,6 +430,17 @@ export default function personReducer(state = initialState, action) {
           .set('canLogIn', action.canLogIn)
         mutState.set('items', receiveItem(mutState.items, currentState))
       })
+    case types.REQUEST_AVAILABLE_PERSONS:
+      return requestAvailableContacts(state)
+    case types.RECEIVE_AVAILABLE_PERSONS:
+      return state.mergeDeepIn(
+        ['contacts', 'person'],
+        new ContactTagItems({
+          loading: false,
+          lastRefreshed: action.lastRefreshed,
+          items: new Immutable.fromJS(action.items),
+        })
+      )
     case types.RECEIVE_SINGLE_PERSON:
     case types.RECEIVE_UPDATED_SINGLE_PERSON:
       return state.withMutations(mutState => {

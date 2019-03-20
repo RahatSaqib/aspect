@@ -90,8 +90,9 @@ const TagInput = ({
   classes: classNameValues,
   disabled,
   fullWidth,
-  maxTags,
   source,
+  onDelete,
+  onAdd,
   onTagChange,
   value: selectedItem,
 }) => {
@@ -102,7 +103,7 @@ const TagInput = ({
   const handleInputKeyDown = event => {
     // Backspace
     if (selectedItem.length && !inputValue.length && event.which === 8) {
-      onTagChange(selectedItem.slice(0, selectedItem.length - 1))
+      onTagChange(selectedItem.slice(0, selectedItem.length - 1)) // todo move to connectedTag
     }
     // Enter / comma
     if (!active && (event.which === 13 || event.which === 188)) {
@@ -132,28 +133,13 @@ const TagInput = ({
 
   const handleDelete = item => () => {
     if (!disabled) {
-      const newSelectedItem = [...selectedItem]
-      newSelectedItem.splice(newSelectedItem.indexOf(item), 1)
-      onTagChange(newSelectedItem)
+      onDelete(item, selectedItem)
     }
   }
 
   const select = newValue => {
-    if (newValue && newValue.trim() === '') {
-      return
-    }
-    if (maxTags > 0 && selectedItem.length >= maxTags) {
-      return
-    }
-
-    const isExist = Array.from(selectedItem).some(
-      val => val.toLowerCase() === newValue.toLowerCase()
-    )
-    const newSelectedItem = !isExist
-      ? [...selectedItem, newValue]
-      : [...selectedItem]
+    onAdd(newValue, selectedItem)
     setInputValue('')
-    onTagChange(newSelectedItem)
   }
 
   return (
@@ -235,8 +221,9 @@ TagInput.propTypes = {
   classes: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   disabled: PropTypes.bool,
   fullWidth: PropTypes.bool,
-  maxTags: PropTypes.number,
   onTagChange: PropTypes.func,
+  onAdd: PropTypes.func.isRequired,
+  onDelete: PropTypes.func.isRequired,
   source: PropTypes.arrayOf(PropTypes.object),
   value: PropTypes.arrayOf(PropTypes.object),
 }
