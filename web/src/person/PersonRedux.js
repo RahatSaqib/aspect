@@ -55,8 +55,6 @@ function receivePersons(json) {
   }
 }
 function transformToUser(canLogIn, personId) {
-  console.log(canLogIn)
-  console.log(personId)
   return {
     type: types.CAN_LOG_IN_PERSON,
     canLogIn,

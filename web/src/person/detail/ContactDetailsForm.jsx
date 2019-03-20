@@ -69,7 +69,7 @@ const getInitialValues = contactDetails => ({
   lgaId: contactDetails.get('lgaId') || DEFAULT_VALUES.lgaId,
   zip: contactDetails.get('zip') || DEFAULT_VALUES.zip,
   notes: contactDetails.get('notes') || DEFAULT_VALUES.notes,
-  canLogIn: contactDetails.get('canLogIn') || DEFAULT_VALUES.canLogIn,
+  canLogIn: contactDetails.get('canLogIn') === 1 || DEFAULT_VALUES.canLogIn,
 })
 
 const enhance = compose(

@@ -55,11 +55,10 @@ const enhance = compose(
   connect(
     (state, props) => {
       const person = state.person.items.byId.get(props.match.params.personId)
-      if (person) console.log(person.toJS())
       return {
         editable: isEditable(state.user, person),
         person,
-        canLogIn: person.get('canLogIn'),
+        canLogIn: person && person.get('canLogIn'),
         user: state.user,
         emailValue: state.person.get('email'),
         partnersAndJobFunctionsForSelectList: state.jobs.get(
@@ -129,12 +128,14 @@ export class PersonDetail extends PureComponent {
   saveContactDetails = values => {
     const { person, updateSinglePerson } = this.props
     const contactDetails = new ContactDetails(person)
-    return updateSinglePerson(contactDetails.get('id'), values).then(() => {
-      this.props.showAcknowledgement({
-        title: messages.detailsUpdatedSuccessfully,
-        message: messages.contactDetailsUpdatedMessage,
-      })
-    })
+    return updateSinglePerson(contactDetails.get('id'), contactDetails).then(
+      () => {
+        this.props.showAcknowledgement({
+          title: messages.detailsUpdatedSuccessfully,
+          message: messages.contactDetailsUpdatedMessage,
+        })
+      }
+    )
   }
 
   saveLoginDetails = ({ username, newPassword, userLockedOut }) => {
