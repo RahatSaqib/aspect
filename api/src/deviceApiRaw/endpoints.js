@@ -1,7 +1,8 @@
 const {
   addDeviceRawDataHandler,
   onDeviceRawMessagePosted,
-  onDeviceRawMessageHandled,
+  onDeviceRawMessageProcessed,
+  onDeviceRawMessageError,
 } = require('./service')
 
 const routes = [
@@ -26,7 +27,8 @@ const subscriptions = [
   {
     actions: {
       DEVICE_RAW_MESSAGE_POSTED: onDeviceRawMessagePosted,
-      DEVICE_RAW_MESSAGE_HANDLED: onDeviceRawMessageHandled,
+      DEVICE_RAW_MESSAGE_PROCESSED: onDeviceRawMessageProcessed,
+      DEVICE_RAW_MESSAGE_ERROR: onDeviceRawMessageError,
     },
   },
 ]
