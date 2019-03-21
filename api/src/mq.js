@@ -183,7 +183,7 @@ class MessageQueue {
    * action creators. This is mainly exposed for
    * testing.
    */
-  async waitForAction(predicate, timeout = null) {
+  async waitForAction(predicate, timeout = null, timeoutMessage = null) {
     await this.subscribeEmitActions()
     return new Promise((resolve, reject) => {
       if (_.isPlainObject(predicate)) {
@@ -206,9 +206,11 @@ class MessageQueue {
         timeoutId = setTimeout(() => {
           if (timeoutId != null) {
             dispose()
-            const rejectMessage = _.isPlainObject(predicate)
-              ? `waitForAction timeout ${JSON.stringify(predicate)}`
-              : 'waitForAction timeout'
+            const rejectMessage =
+              timeoutMessage ||
+              (_.isPlainObject(predicate)
+                ? `waitForAction timeout ${JSON.stringify(predicate)}`
+                : 'waitForAction timeout')
             debug(rejectMessage)
             reject(new Error(rejectMessage))
           }

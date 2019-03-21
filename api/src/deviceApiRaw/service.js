@@ -55,12 +55,23 @@ const addDeviceRawDataHandler = asyncHandler(async request => {
     createdOn: utcNow,
     updatedOn: utcNow,
   })
-  //TODO: Implement a timeout
+  const timeoutMilliseconds = 60000
+  const timeoutMessage = 'Timeout waiting for raw message to be handled'
   const processed = context.queue
-    .waitForAction({ type: types.DEVICE_RAW_MESSAGE_PROCESSED, deviceApiRawId })
-    .then(action => action.response || deviceApiRawId)
+    .waitForAction(
+      { type: types.DEVICE_RAW_MESSAGE_PROCESSED, deviceApiRawId },
+      timeoutMilliseconds,
+      timeoutMessage
+    )
+    .then(action => {
+      return action.response || deviceApiRawId
+    })
   const error = context.queue
-    .waitForAction({ type: types.DEVICE_RAW_MESSAGE_ERROR, deviceApiRawId })
+    .waitForAction(
+      { type: types.DEVICE_RAW_MESSAGE_ERROR, deviceApiRawId },
+      timeoutMilliseconds,
+      timeoutMessage
+    )
     .then(action => {
       if (_.get(action, 'error.isBoom')) {
         const errorPayload = _.get(action, 'error.output.payload', {})
@@ -78,7 +89,15 @@ const addDeviceRawDataHandler = asyncHandler(async request => {
       throw action.error
     })
   context.deviceRawMessagePosted(deviceApiRawId)
-  return Promise.race([processed, error])
+  return Promise.race([processed, error]).catch(error => {
+    if (_.get(error, 'message') === timeoutMessage) {
+      throw Boom.gatewayTimeout(timeoutMessage, {
+        deviceApiRawId,
+        timeoutMilliseconds,
+      })
+    }
+    throw error
+  })
 })
 
 async function onDeviceRawMessagePosted(
@@ -98,7 +117,9 @@ async function onDeviceRawMessagePosted(
       .update({ deviceApiRawStatusId: deviceApiRawLockedStatusId })
 
     // This is where the processing will happen
-    const response = { value: 'this is the response ' }
+    const response = await Promise.delay(2000, {
+      value: 'this is the response ',
+    })
     if (deviceApiRawId % 2) {
       throw Boom.badRequest(
         'Only even numbered raw messages will be processed',
