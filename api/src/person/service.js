@@ -89,10 +89,11 @@ async function assignContact(request) {
     .select()
     .where('jc.jobId', jobId)
     .then(records => {
-      const availableContact = records.find(record => !record.siteId)
-      if (records.length && availableContact) {
+      const unassignedRecord = _.find(records, record => !record.siteId)
+
+      if (records.length && unassignedRecord) {
         return knex('JobContext')
-          .where('id', '=', availableContact.id)
+          .where('id', '=', unassignedRecord.id)
           .update({ siteId })
       }
       return knex('JobContext').insert({

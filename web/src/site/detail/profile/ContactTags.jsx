@@ -52,10 +52,10 @@ const mapStateToProps = (state, ownProps) => {
     contacts,
     ..._fp.omit(['fetchContacts'], ownProps),
     availableContacts: _fp.map(
-      ownProps.identifier,
+      'id',
       contacts.getIn(['person', 'items'], Immutable.List()).toJS()
     ),
-    value: _fp.map(ownProps.identifier, ownProps.value),
+    value: _fp.map('id', ownProps.value),
   }
 }
 

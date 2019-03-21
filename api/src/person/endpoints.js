@@ -50,8 +50,7 @@ const routes = [
     path: '/person/assign/{siteId}',
     handler: asyncHandler(assignContact),
     config: {
-      description: 'Available People List',
-      notes: 'List of available users that logged in user can assign to a site',
+      description: 'Assign person as site contact',
       auth: { scope: ['site:view', 'site:edit'] },
       validate: {
         params: {
@@ -64,14 +63,6 @@ const routes = [
             .integer()
             .positive()
             .required(),
-          // personId: Joi.number()
-          //   .integer()
-          //   .positive()
-          //   .required(),
-          // siteId: Joi.number()
-          //   .integer()
-          //   .positive()
-          //   .allow('', null),
         },
       },
     },
@@ -81,8 +72,7 @@ const routes = [
     path: '/person/unassign/{siteId}',
     handler: asyncHandler(unAssignContact),
     config: {
-      description: 'Available People List',
-      notes: 'List of available users that logged in user can assign to a site',
+      description: "Remove person from site's contacts",
       auth: { scope: ['site:view', 'site:edit'] },
       validate: {
         params: {
