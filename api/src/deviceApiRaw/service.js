@@ -55,18 +55,30 @@ const addDeviceRawDataHandler = asyncHandler(async request => {
     createdOn: utcNow,
     updatedOn: utcNow,
   })
+  //TODO: Implement a timeout
   const processed = context.queue
     .waitForAction({ type: types.DEVICE_RAW_MESSAGE_PROCESSED, deviceApiRawId })
     .then(action => action.response || deviceApiRawId)
   const error = context.queue
     .waitForAction({ type: types.DEVICE_RAW_MESSAGE_ERROR, deviceApiRawId })
     .then(action => {
+      if (_.get(action, 'error.isBoom')) {
+        const errorPayload = _.get(action, 'error.output.payload', {})
+        const statusCode =
+          _.get(action, 'error.output.statusCode') ||
+          _.get(errorPayload, 'statusCode')
+        const error = Boom.boomify(new Error(_.get(errorPayload, 'message')), {
+          statusCode,
+        })
+        if (_.get(action, 'error.data')) {
+          error.data = _.get(action, 'error.data')
+        }
+        throw error
+      }
       throw action.error
     })
   context.deviceRawMessagePosted(deviceApiRawId)
-  return Promise.race([processed, error]).catch(error => {
-    throw error
-  })
+  return Promise.race([processed, error])
 })
 
 async function onDeviceRawMessagePosted(
