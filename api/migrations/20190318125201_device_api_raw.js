@@ -29,6 +29,7 @@ async function up(knex) {
       .index()
       .references('id')
       .inTable('DeviceApiRawStatus')
+    deviceApiRaw.string('dataProcessor')
     addTimestamps(deviceApiRaw)
   })
 
@@ -38,6 +39,7 @@ async function up(knex) {
     deviceApiRawArchive.string('salt', 50)
     deviceApiRawArchive.specificType('deviceApiKeySnapshot', 'JSON')
     deviceApiRawArchive.string('deviceApiRawStatusExternalId').notNullable()
+    deviceApiRawArchive.string('dataProcessor')
     addTimestamps(deviceApiRawArchive)
   })
 }

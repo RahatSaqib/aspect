@@ -157,5 +157,40 @@ describe('Device API Raw routes', () => {
         validApiKeyToken
       )
     })
+
+    it('should process the request data using the correct data processor', async () => {
+      const alereQPayload = {
+        type: {
+          id: 'AlereQ',
+        },
+      }
+      const alereQResponse = await server
+        .post(deviceApiRawPath)
+        .set('Authorization', `Bearer ${validApiKeyToken}`)
+        .send(alereQPayload)
+      assert.equal(alereQResponse.statusCode, 200)
+      const alereQDeviceApiRawRecord = await knex('DeviceApiRaw')
+        .where({ id: alereQResponse.body })
+        .first()
+      assert.equal(alereQDeviceApiRawRecord.dataProcessor, 'DefaultAlereQ')
+
+      const geneXpertPayload = {
+        type: {
+          id: 'CepheidGeneXpert',
+        },
+      }
+      const geneXpertResponse = await server
+        .post(deviceApiRawPath)
+        .set('Authorization', `Bearer ${validApiKeyToken}`)
+        .send(geneXpertPayload)
+      assert.equal(geneXpertResponse.statusCode, 200)
+      const geneXpertDeviceApiRawRecord = await knex('DeviceApiRaw')
+        .where({ id: geneXpertResponse.body })
+        .first()
+      assert.equal(
+        geneXpertDeviceApiRawRecord.dataProcessor,
+        'DefaultCepheidGeneXpert'
+      )
+    })
   })
 })

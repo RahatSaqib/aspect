@@ -19,7 +19,7 @@ function createRawDataProcessor(name, deviceApiRawRecord, messageContext) {
 }
 
 module.exports = {
-  name: 'Default_CepheidGeneXpert',
+  name: 'DefaultCepheidGeneXpert',
   predicate: async decrypteDeviceApiRaw =>
     Promise.resolve(
       _.get(decrypteDeviceApiRaw, 'rawData.payload.type.id') ===

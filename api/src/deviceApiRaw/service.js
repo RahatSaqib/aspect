@@ -63,9 +63,7 @@ const addDeviceRawDataHandler = asyncHandler(async request => {
       timeoutMilliseconds,
       timeoutMessage
     )
-    .then(action => {
-      return action.response || deviceApiRawId
-    })
+    .then(action => action.response)
   const error = context.queue
     .waitForAction(
       { type: types.DEVICE_RAW_MESSAGE_ERROR, deviceApiRawId },
@@ -123,13 +121,6 @@ async function onDeviceRawMessagePosted(
         { deviceApiRawId }
       )
     }
-    await knex('DeviceApiRaw')
-      .where('id', deviceApiRawId)
-      .update({
-        deviceApiRawStatusId: deviceApiRawLockedStatusId,
-        updatedOn: getUtcTime(),
-      })
-
     const decryptedRawRequestObject = {
       id: encryptedRawMessage.id,
       rawData: JSON.parse(
@@ -141,11 +132,18 @@ async function onDeviceRawMessagePosted(
       createdOn: encryptedRawMessage.createdOn,
       updatedOn: encryptedRawMessage.updatedOn,
     }
-    const dataProcessorPlugin = await loadRawDataProcessor(
+    const dataProcessor = await loadRawDataProcessor(
       decryptedRawRequestObject,
       context
     )
-    await dataProcessorPlugin.processRequest()
+    await knex('DeviceApiRaw')
+      .where('id', deviceApiRawId)
+      .update({
+        deviceApiRawStatusId: deviceApiRawLockedStatusId,
+        dataProcessor: dataProcessor.name,
+        updatedOn: getUtcTime(),
+      })
+    await dataProcessor.processRequest()
   } catch (error) {
     context.deviceRawMessageError(deviceApiRawId, error)
   }
@@ -154,13 +152,16 @@ async function onDeviceRawMessagePosted(
 async function loadRawDataProcessor(decrypteDeviceApiRaw, messageContext) {
   const dataProcessorRegistrations = [
     require('./dataProcessors/cepheidGeneXpert'),
-    require('./dataProcessors/alereFtpConnector'),
+    require('./dataProcessors/alereQ'),
   ]
-  let useDataProcessorRegistration = require('./dataProcessors/default')
+  let useDataProcessorRegistration = require('./dataProcessors/unknown')
+  const defaultUnknownRegistrationName = useDataProcessorRegistration.name
   await Promise.each(
     dataProcessorRegistrations,
     async dataProcessorRegistration => {
-      if (useDataProcessorRegistration.name === 'Default') {
+      if (
+        useDataProcessorRegistration.name === defaultUnknownRegistrationName
+      ) {
         const registrationMatch = await dataProcessorRegistration.predicate(
           decrypteDeviceApiRaw
         )
@@ -178,7 +179,6 @@ async function loadRawDataProcessor(decrypteDeviceApiRaw, messageContext) {
   )
 }
 
-// TODO: Save the name of the plugin that was used to process this data
 async function onDeviceRawMessageProcessed({ deviceApiRawId }) {
   const { id: deviceApiRawProcessedStatusId } = await knex('DeviceApiRawStatus')
     .where('externalId', 'Processed')

@@ -2,7 +2,7 @@ const Promise = require('bluebird')
 const _ = require('lodash')
 const { RawDataProcessor } = require('./rawDataProcessor')
 
-class DefaultAlereFtpConnector extends RawDataProcessor {
+class DefaultAlereQ extends RawDataProcessor {
   constructor(name, deviceApiRawRecord, messageContext) {
     super(name, deviceApiRawRecord, messageContext)
     this.processRequest = this.processRequest.bind(this)
@@ -15,15 +15,14 @@ class DefaultAlereFtpConnector extends RawDataProcessor {
 }
 
 function createRawDataProcessor(name, deviceApiRawRecord, messageContext) {
-  return new DefaultAlereFtpConnector(name, deviceApiRawRecord, messageContext)
+  return new DefaultAlereQ(name, deviceApiRawRecord, messageContext)
 }
 
 module.exports = {
-  name: 'Default_AlereFtpConnector',
+  name: 'DefaultAlereQ',
   predicate: async decrypteDeviceApiRaw =>
     Promise.resolve(
-      _.get(decrypteDeviceApiRaw, 'rawData.payload.type.id') ===
-        'AlereFtpConnector'
+      _.get(decrypteDeviceApiRaw, 'rawData.payload.type.id') === 'AlereQ'
     ),
   create: createRawDataProcessor,
 }
