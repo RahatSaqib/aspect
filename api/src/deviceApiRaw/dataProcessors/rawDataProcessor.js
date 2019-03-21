@@ -1,5 +1,3 @@
-const Promise = require('bluebird')
-
 class RawDataProcessor {
   constructor(
     name,
@@ -19,7 +17,8 @@ class RawDataProcessor {
   }
 
   async processRequest() {
-    this.messageContext.deviceRawMessageProcessed(this.id, this.id)
+    this.messageContext.deviceRawMessageResponseReady(this.id, this.id)
+    this.messageContext.deviceRawMessageProcessed(this.id)
     return Promise.resolve()
   }
 }

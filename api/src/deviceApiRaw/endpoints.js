@@ -1,3 +1,4 @@
+const Promise = require('bluebird')
 const {
   addDeviceRawDataHandler,
   onDeviceRawMessagePosted,
@@ -27,6 +28,7 @@ const subscriptions = [
   {
     actions: {
       DEVICE_RAW_MESSAGE_POSTED: onDeviceRawMessagePosted,
+      DEVICE_RAW_MESSAGE_RESPONSE_READY: async () => Promise.resolve(),
       DEVICE_RAW_MESSAGE_PROCESSED: onDeviceRawMessageProcessed,
       DEVICE_RAW_MESSAGE_ERROR: onDeviceRawMessageError,
     },

@@ -1,6 +1,7 @@
 // ----------- Action Types ---------------------
 const types = {
   DEVICE_RAW_MESSAGE_POSTED: 'DEVICE_RAW_MESSAGE_POSTED',
+  DEVICE_RAW_MESSAGE_RESPONSE_READY: 'DEVICE_RAW_MESSAGE_RESPONSE_READY',
   DEVICE_RAW_MESSAGE_PROCESSED: 'DEVICE_RAW_MESSAGE_PROCESSED',
   DEVICE_RAW_MESSAGE_ERROR: 'DEVICE_RAW_MESSAGE_ERROR',
 }
@@ -23,20 +24,37 @@ function deviceRawMessagePosted(deviceApiRawId) {
 }
 
 /**
- * Creates an action to notify that raw data, posted by a device has been handled
- * and that the web server can respond.
+ * Creates an action to notify that raw data has
+ * been saved and that the server can respond to
+ * the client.
  *
  * deviceApiRawId is required.
  * response is the object or value to respond to the client with.
  */
-function deviceRawMessageProcessed(deviceApiRawId, response) {
+function deviceRawMessageResponseReady(deviceApiRawId, response) {
+  if (!deviceApiRawId) {
+    throw new Error('Must specify deviceApiRawId for deviceRawMessagePosted')
+  }
+  return {
+    type: types.DEVICE_RAW_MESSAGE_RESPONSE_READY,
+    deviceApiRawId,
+    response,
+  }
+}
+
+/**
+ * Creates an action to notify that raw data, posted by a device has been handled
+ * and that the web server can respond.
+ *
+ * deviceApiRawId is required.
+ */
+function deviceRawMessageProcessed(deviceApiRawId) {
   if (!deviceApiRawId) {
     throw new Error('Must specify deviceApiRawId for deviceRawResponseReady')
   }
   return {
     type: types.DEVICE_RAW_MESSAGE_PROCESSED,
     deviceApiRawId,
-    response,
   }
 }
 
@@ -61,6 +79,7 @@ function deviceRawMessageError(deviceApiRawId, error) {
 module.exports = {
   types,
   deviceRawMessagePosted,
+  deviceRawMessageResponseReady,
   deviceRawMessageProcessed,
   deviceRawMessageError,
 }

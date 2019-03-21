@@ -8,16 +8,21 @@ const { knex } = require('../db')
 const {
   types,
   deviceRawMessagePosted,
+  deviceRawMessageResponseReady,
   deviceRawMessageProcessed,
   deviceRawMessageError,
 } = require('./actions')
+const { loadRawDataProcessor } = require('./dataProcessors/registration')
 
 const addDeviceRawDataHandler = asyncHandler(async request => {
-  const { auth = { credentials: { token: null } } } = request
-  const { credentials: { token } } = auth
-  const context = request.plugins.messageContext.bindActionCreators({
+  const {
+    auth = { credentials: { token: null } },
+    plugins: { messageContext },
+  } = request
+  const context = messageContext.bindActionCreators({
     deviceRawMessagePosted,
   })
+  const { credentials: { token } } = auth
   const salt = createSalt()
   const utcNow = getUtcTime()
   const { id: deviceApiRawReadyStatusId } = await knex('DeviceApiRawStatus')
@@ -57,9 +62,9 @@ const addDeviceRawDataHandler = asyncHandler(async request => {
   })
   const timeoutMilliseconds = 60000
   const timeoutMessage = 'Timeout waiting for raw message to be handled'
-  const processed = context.queue
+  const responseReady = context.queue
     .waitForAction(
-      { type: types.DEVICE_RAW_MESSAGE_PROCESSED, deviceApiRawId },
+      { type: types.DEVICE_RAW_MESSAGE_RESPONSE_READY, deviceApiRawId },
       timeoutMilliseconds,
       timeoutMessage
     )
@@ -87,7 +92,7 @@ const addDeviceRawDataHandler = asyncHandler(async request => {
       throw action.error
     })
   context.deviceRawMessagePosted(deviceApiRawId)
-  return Promise.race([processed, error]).catch(error => {
+  return Promise.race([responseReady, error]).catch(error => {
     if (_.get(error, 'message') === timeoutMessage) {
       throw Boom.gatewayTimeout(timeoutMessage, {
         deviceApiRawId,
@@ -103,6 +108,7 @@ async function onDeviceRawMessagePosted(
   { messageContext }
 ) {
   const context = messageContext.bindActionCreators({
+    deviceRawMessageResponseReady,
     deviceRawMessageProcessed,
     deviceRawMessageError,
   })
@@ -147,36 +153,6 @@ async function onDeviceRawMessagePosted(
   } catch (error) {
     context.deviceRawMessageError(deviceApiRawId, error)
   }
-}
-
-async function loadRawDataProcessor(decrypteDeviceApiRaw, messageContext) {
-  const dataProcessorRegistrations = [
-    require('./dataProcessors/cepheidGeneXpert'),
-    require('./dataProcessors/alereQ'),
-  ]
-  let useDataProcessorRegistration = require('./dataProcessors/unknown')
-  const defaultUnknownRegistrationName = useDataProcessorRegistration.name
-  await Promise.each(
-    dataProcessorRegistrations,
-    async dataProcessorRegistration => {
-      if (
-        useDataProcessorRegistration.name === defaultUnknownRegistrationName
-      ) {
-        const registrationMatch = await dataProcessorRegistration.predicate(
-          decrypteDeviceApiRaw
-        )
-        if (registrationMatch) {
-          useDataProcessorRegistration = dataProcessorRegistration
-        }
-      }
-      return Promise.resolve()
-    }
-  )
-  return useDataProcessorRegistration.create(
-    useDataProcessorRegistration.name,
-    decrypteDeviceApiRaw,
-    messageContext
-  )
 }
 
 async function onDeviceRawMessageProcessed({ deviceApiRawId }) {
