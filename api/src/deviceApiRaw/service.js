@@ -3,7 +3,7 @@ const Boom = require('boom')
 const Promise = require('bluebird')
 const { asyncHandler } = require('../routes')
 const { getUtcTime } = require('../shared/date')
-const { createSalt, encrypt } = require('../shared/encryption')
+const { createSalt, encrypt, decrypt } = require('../shared/encryption')
 const { knex } = require('../db')
 const {
   types,
@@ -112,20 +112,34 @@ async function onDeviceRawMessagePosted(
     const { id: deviceApiRawLockedStatusId } = await knex('DeviceApiRawStatus')
       .where('externalId', 'Locked')
       .first('id')
+    const encryptedRawMessage = await knex('DeviceApiRaw')
+      .where('id', deviceApiRawId)
+      .first()
+    if (
+      encryptedRawMessage.deviceApiRawStatusId === deviceApiRawLockedStatusId
+    ) {
+      throw Boom.locked(
+        'The raw message record has already been locked for processing',
+        { deviceApiRawId }
+      )
+    }
     await knex('DeviceApiRaw')
       .where('id', deviceApiRawId)
       .update({ deviceApiRawStatusId: deviceApiRawLockedStatusId })
 
-    // This is where the processing will happen
-    const response = await Promise.delay(2000, {
-      value: 'this is the response ',
-    })
-    if (deviceApiRawId % 2) {
-      throw Boom.badRequest(
-        'Only even numbered raw messages will be processed',
-        deviceApiRawId
-      )
+    const decryptedRawRequestObject = {
+      id: encryptedRawMessage.id,
+      rawData: JSON.parse(
+        decrypt(encryptedRawMessage.rawData, encryptedRawMessage.salt)
+      ),
+      deviceApiKeySnapshot: JSON.parse(
+        encryptedRawMessage.deviceApiKeySnapshot
+      ),
+      createdOn: encryptedRawMessage.createdOn,
+      updatedOn: encryptedRawMessage.updatedOn,
     }
+    const dataProcessorPlugin = await loadPlugin(decryptedRawRequestObject)
+    const response = await dataProcessorPlugin.processRequest()
 
     context.deviceRawMessageProcessed(deviceApiRawId, response)
   } catch (error) {
@@ -133,6 +147,17 @@ async function onDeviceRawMessagePosted(
   }
 }
 
+async function loadPlugin(decrypteDeviceApiRaw) {
+  // TODO: Implement matching predicates based on contents of request
+  return Promise.resolve({
+    processRequest: async () => {
+      console.log(decrypteDeviceApiRaw)
+      return Promise.resolve(decrypteDeviceApiRaw.id)
+    },
+  })
+}
+
+// TODO: Save the name of the plugin that was used to process this data
 async function onDeviceRawMessageProcessed({ deviceApiRawId }) {
   const { id: deviceApiRawProcessedStatusId } = await knex('DeviceApiRawStatus')
     .where('externalId', 'Processed')
