@@ -2142,6 +2142,19 @@ async function addLicensePersons(knex, personNameToExclude = '') {
   )
 }
 
+async function seedDeviceMaintenanceType(knex) {
+  const { data: deviceMaintenanceTypes } = await readJson(
+    `./seeds/fixtures/DeviceMaintenanceType.json`
+  )
+
+  await upsertItems(
+    knex,
+    'DeviceMaintenanceType', // tableName
+    'externalId', // whereKeys
+    deviceMaintenanceTypes
+  )
+}
+
 module.exports = {
   seed,
   rowsAsObject,
@@ -2174,6 +2187,9 @@ module.exports = {
 
   addLicenses,
   addLicensePersons,
+
+  seedDeviceMaintenanceType,
+
   updateCategoryAssay,
   updateAssayAbbreviation,
 }

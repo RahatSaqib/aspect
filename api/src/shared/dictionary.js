@@ -42,6 +42,7 @@ const cacheConfig = {
   Unit: {
     keyColumn: 'name',
   },
+  DeviceMaintenanceType: {},
 }
 
 async function rowsByColumn(table) {

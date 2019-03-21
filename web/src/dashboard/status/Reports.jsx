@@ -32,17 +32,17 @@ const enhance = compose(
     const searchParams = new URLSearchParams(location.search)
     const filtersParams = new URLSearchParams(searchParams.get('filters') || '')
     const now = new Date()
-    const last7Days = formatDate(subtractDays(now, 7), 'YYYY-MM-DD')
-    const last30Days = formatDate(subtractDays(now, 30), 'YYYY-MM-DD')
-    const beginningOfThisYear = formatDate(startOfYear(now), 'YYYY-MM-DD')
-    const endOfThisYear = formatDate(endOfYear(now), 'YYYY-MM-DD')
+    const last7Days = formatDate(subtractDays(now, 7), 'yyyy-MM-dd')
+    const last30Days = formatDate(subtractDays(now, 30), 'yyyy-MM-dd')
+    const beginningOfThisYear = formatDate(startOfYear(now), 'yyyy-MM-dd')
+    const endOfThisYear = formatDate(endOfYear(now), 'yyyy-MM-dd')
     const beginningOfLastYear = formatDate(
       startOfYear(subtractYears(now, 1)),
-      'YYYY-MM-DD'
+      'yyyy-MM-dd'
     )
     const endOfLastYear = formatDate(
       endOfYear(subtractYears(now, 1)),
-      'YYYY-MM-DD'
+      'yyyy-MM-dd'
     )
     return {
       showHigherLevel: _.isEmpty(filtersParams.get('siteId')),
