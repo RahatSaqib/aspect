@@ -56,10 +56,10 @@ const addDeviceRawDataHandler = asyncHandler(async request => {
     updatedOn: utcNow,
   })
   const processed = context.queue
-    .waitForAction({ type: types.DEVICE_RAW_MESSAGE_PROCESSED })
+    .waitForAction({ type: types.DEVICE_RAW_MESSAGE_PROCESSED, deviceApiRawId })
     .then(action => action.response || deviceApiRawId)
   const error = context.queue
-    .waitForAction({ type: types.DEVICE_RAW_MESSAGE_ERROR })
+    .waitForAction({ type: types.DEVICE_RAW_MESSAGE_ERROR, deviceApiRawId })
     .then(action => {
       throw action.error
     })
