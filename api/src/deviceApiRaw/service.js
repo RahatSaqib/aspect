@@ -125,7 +125,10 @@ async function onDeviceRawMessagePosted(
     }
     await knex('DeviceApiRaw')
       .where('id', deviceApiRawId)
-      .update({ deviceApiRawStatusId: deviceApiRawLockedStatusId })
+      .update({
+        deviceApiRawStatusId: deviceApiRawLockedStatusId,
+        updatedOn: getUtcTime(),
+      })
 
     const decryptedRawRequestObject = {
       id: encryptedRawMessage.id,
@@ -138,23 +141,41 @@ async function onDeviceRawMessagePosted(
       createdOn: encryptedRawMessage.createdOn,
       updatedOn: encryptedRawMessage.updatedOn,
     }
-    const dataProcessorPlugin = await loadPlugin(decryptedRawRequestObject)
-    const response = await dataProcessorPlugin.processRequest()
-
-    context.deviceRawMessageProcessed(deviceApiRawId, response)
+    const dataProcessorPlugin = await loadRawDataProcessor(
+      decryptedRawRequestObject,
+      context
+    )
+    await dataProcessorPlugin.processRequest()
   } catch (error) {
     context.deviceRawMessageError(deviceApiRawId, error)
   }
 }
 
-async function loadPlugin(decrypteDeviceApiRaw) {
-  // TODO: Implement matching predicates based on contents of request
-  return Promise.resolve({
-    processRequest: async () => {
-      console.log(decrypteDeviceApiRaw)
-      return Promise.resolve(decrypteDeviceApiRaw.id)
-    },
-  })
+async function loadRawDataProcessor(decrypteDeviceApiRaw, messageContext) {
+  const dataProcessorRegistrations = [
+    require('./dataProcessors/cepheidGeneXpert'),
+    require('./dataProcessors/alereFtpConnector'),
+  ]
+  let useDataProcessorRegistration = require('./dataProcessors/default')
+  await Promise.each(
+    dataProcessorRegistrations,
+    async dataProcessorRegistration => {
+      if (useDataProcessorRegistration.name === 'Default') {
+        const registrationMatch = await dataProcessorRegistration.predicate(
+          decrypteDeviceApiRaw
+        )
+        if (registrationMatch) {
+          useDataProcessorRegistration = dataProcessorRegistration
+        }
+      }
+      return Promise.resolve()
+    }
+  )
+  return useDataProcessorRegistration.create(
+    useDataProcessorRegistration.name,
+    decrypteDeviceApiRaw,
+    messageContext
+  )
 }
 
 // TODO: Save the name of the plugin that was used to process this data
@@ -164,7 +185,10 @@ async function onDeviceRawMessageProcessed({ deviceApiRawId }) {
     .first('id')
   await knex('DeviceApiRaw')
     .where('id', deviceApiRawId)
-    .update({ deviceApiRawStatusId: deviceApiRawProcessedStatusId })
+    .update({
+      deviceApiRawStatusId: deviceApiRawProcessedStatusId,
+      updatedOn: getUtcTime(),
+    })
 }
 
 async function onDeviceRawMessageError({ deviceApiRawId }) {
@@ -173,7 +197,10 @@ async function onDeviceRawMessageError({ deviceApiRawId }) {
     .first('id')
   await knex('DeviceApiRaw')
     .where('id', deviceApiRawId)
-    .update({ deviceApiRawStatusId: deviceApiRawErrorStatusId })
+    .update({
+      deviceApiRawStatusId: deviceApiRawErrorStatusId,
+      updatedOn: getUtcTime(),
+    })
 }
 
 module.exports = {
