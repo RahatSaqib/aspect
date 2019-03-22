@@ -85,27 +85,17 @@ async function assignContact(request) {
     })
   }
 
-  await knex('JobContext as jc')
-    .select()
-    .where('jc.jobId', jobId)
-    .then(records => {
-      const unassignedRecord = _.find(records, record => !record.siteId)
+  const newContact = { jobId, siteId }
+  const jcRecord = await knex('JobContext')
+    .where(newContact)
+    .first()
 
-      if (records.length && unassignedRecord) {
-        return knex('JobContext')
-          .where('id', '=', unassignedRecord.id)
-          .update({ siteId })
-      }
-      return knex('JobContext').insert({
-        jobId,
-        geographyId: personDetails.geogId,
-        siteId,
-      })
-      // .whereNotExists(knex('JobContext as jc').where({ jobId, siteId }))
-    })
-  const data = await siteContacts(siteId)
+  if (jcRecord) {
+    return Boom.conflict('Contact is already assigned to site')
+  }
+  await knex('JobContext').insert(newContact)
 
-  return { ok: true, data }
+  return { ok: true, data: await siteContacts(siteId) }
 }
 
 async function unAssignContact(request) {
@@ -122,7 +112,7 @@ async function unAssignContact(request) {
       if (records.length) {
         return knex('JobContext')
           .where({ jobId: personDetails.jobId, siteId })
-          .update({ siteId: null })
+          .del()
       }
     })
 
