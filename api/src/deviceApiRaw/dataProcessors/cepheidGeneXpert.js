@@ -1,11 +1,18 @@
 const Promise = require('bluebird')
 const _ = require('lodash')
-const { RawDataProcessor } = require('./rawDataProcessor')
+const DataProcessor = require('./_base')
 
-class DefaultCepheidGeneXpert extends RawDataProcessor {
+class DefaultCepheidGeneXpert extends DataProcessor {
   constructor(deviceApiRawRecord, messageContext) {
     super('DefaultCepheidGeneXpert', deviceApiRawRecord, messageContext)
     this.processRequest = this.processRequest.bind(this)
+  }
+
+  static async canProcessRequest(decrypteDeviceApiRaw) {
+    return Promise.resolve(
+      _.get(decrypteDeviceApiRaw, 'rawData.payload.type.id') ===
+        'CepheidGeneXpert'
+    )
   }
 
   async processRequest() {
@@ -15,15 +22,4 @@ class DefaultCepheidGeneXpert extends RawDataProcessor {
   }
 }
 
-function createRawDataProcessor(deviceApiRawRecord, messageContext) {
-  return new DefaultCepheidGeneXpert(deviceApiRawRecord, messageContext)
-}
-
-module.exports = {
-  predicate: async decrypteDeviceApiRaw =>
-    Promise.resolve(
-      _.get(decrypteDeviceApiRaw, 'rawData.payload.type.id') ===
-        'CepheidGeneXpert'
-    ),
-  create: createRawDataProcessor,
-}
+module.exports = DefaultCepheidGeneXpert

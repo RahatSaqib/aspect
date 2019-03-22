@@ -1,4 +1,4 @@
-class RawDataProcessor {
+class DataProcessor {
   constructor(
     name,
     { id, rawData, deviceApiKeySnapshot, createdOn, updatedOn },
@@ -16,6 +16,10 @@ class RawDataProcessor {
     this.processRequest = this.processRequest.bind(this)
   }
 
+  static async canProcessRequest() {
+    return Promise.resolve(false)
+  }
+
   async processRequest() {
     this.messageContext.deviceRawMessageResponseReady(this.id, this.id)
     this.messageContext.deviceRawMessageProcessed(this.id)
@@ -23,11 +27,4 @@ class RawDataProcessor {
   }
 }
 
-function createRawDataProcessor(name, deviceApiRawRecord, messageContext) {
-  return new RawDataProcessor(name, deviceApiRawRecord, messageContext)
-}
-
-module.exports = {
-  createRawDataProcessor,
-  RawDataProcessor,
-}
+module.exports = DataProcessor

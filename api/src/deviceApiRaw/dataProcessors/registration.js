@@ -7,17 +7,19 @@ const registeredDataProcessors = [
 ]
 
 async function loadRawDataProcessor(decrypteDeviceApiRaw, messageContext) {
-  let result = null
-  await Promise.each(registeredDataProcessors, async dataProcessor => {
-    if (!result) {
-      const matched = await dataProcessor.predicate(decrypteDeviceApiRaw)
-      if (matched) {
-        result = dataProcessor
+  let DataProcessorClass = null
+  await Promise.each(registeredDataProcessors, async Registration => {
+    if (!DataProcessorClass) {
+      const canProcessRequest = await Registration.canProcessRequest(
+        decrypteDeviceApiRaw
+      )
+      if (canProcessRequest) {
+        DataProcessorClass = Registration
       }
     }
     return Promise.resolve()
   })
-  return result.create(decrypteDeviceApiRaw, messageContext)
+  return new DataProcessorClass(decrypteDeviceApiRaw, messageContext)
 }
 
 module.exports = {

@@ -191,6 +191,24 @@ describe('Device API Raw routes', () => {
         geneXpertDeviceApiRawRecord.dataProcessor,
         'DefaultCepheidGeneXpert'
       )
+
+      const unknownPayload = {
+        type: {
+          id: 'Unknown',
+        },
+      }
+      const unknownResponse = await server
+        .post(deviceApiRawPath)
+        .set('Authorization', `Bearer ${validApiKeyToken}`)
+        .send(unknownPayload)
+      assert.equal(unknownResponse.statusCode, 200)
+      const unknownDeviceApiRawRecord = await knex('DeviceApiRaw')
+        .where({ id: unknownResponse.body })
+        .first()
+      assert.equal(
+        unknownDeviceApiRawRecord.dataProcessor,
+        'Default'
+      )
     })
   })
 })
