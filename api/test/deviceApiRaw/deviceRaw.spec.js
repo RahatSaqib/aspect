@@ -1,5 +1,7 @@
 const supertest = require('supertest')
 const chai = require('chai')
+const Promise = require('bluebird')
+const _ = require('lodash')
 const { knex } = require('../../src/db')
 const { getUtcTime } = require('../../src/shared/date')
 const { decrypt } = require('../../src/shared/encryption')
@@ -208,6 +210,27 @@ describe('Device API Raw routes', () => {
       assert.equal(
         unknownDeviceApiRawRecord.dataProcessor,
         'DefaultDataProcessor'
+      )
+    })
+
+    it('should be able to process many requests for a deferred data processor', async () => {
+      const alereQPayload = {
+        type: {
+          id: 'AlereQ',
+        },
+      }
+      await Promise.all(
+        _.map(_.range(100), async requestNumber => {
+          const alereQResponse = await server
+            .post(deviceApiRawPath)
+            .set('Authorization', `Bearer ${validApiKeyToken}`)
+            .send({ ...alereQPayload, requestNumber })
+          assert.equal(alereQResponse.statusCode, 200)
+          const alereQDeviceApiRawRecord = await knex('DeviceApiRaw')
+            .where({ id: alereQResponse.body })
+            .first()
+          assert.equal(alereQDeviceApiRawRecord.dataProcessor, 'DefaultAlereQ')
+        })
       )
     })
   })

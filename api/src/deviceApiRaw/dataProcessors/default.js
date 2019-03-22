@@ -13,7 +13,6 @@ class DefaultDataProcessor extends DataProcessor {
 
   async processRequest() {
     await Promise.resolve()
-    console.log(this.constructor.name, new Date(), 'Processing Done :)')
   }
 }
 

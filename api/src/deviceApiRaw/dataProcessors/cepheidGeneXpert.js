@@ -16,7 +16,6 @@ class DefaultCepheidGeneXpert extends DataProcessor {
 
   async processRequest() {
     await Promise.delay(10000)
-    console.log(this.constructor.name, new Date(), 'Processing Done :)')
   }
 }
 

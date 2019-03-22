@@ -15,6 +15,7 @@ const {
 
 class DataProcessor {
   constructor(request, messageContext) {
+    this.name = this.constructor.name
     this.id = null
     this.timeoutMilliseconds = 60000
     this.timeoutMessage = 'Timeout waiting for raw message to be handled'
@@ -26,6 +27,8 @@ class DataProcessor {
       deviceRawMessageError,
     })
     this.processRequest = this.processRequest.bind(this)
+    this.processRequestDeferred = this.processRequestDeferred.bind(this)
+    this.processRequestSynchronous = this.processRequestSynchronous.bind(this)
     this.deferProcessing = false
   }
 
@@ -67,7 +70,7 @@ class DataProcessor {
       deviceApiKeyId: deviceApiKey.id,
       deviceApiKeySnapshot: JSON.stringify(deviceApiKey),
       deviceApiRawStatusId: await deviceApiRawStatusToId('Ready'),
-      dataProcessor: this.constructor.name,
+      dataProcessor: this.name,
       createdOn: utcNow,
       updatedOn: utcNow,
     })
@@ -132,7 +135,6 @@ class DataProcessor {
   }
 
   async start() {
-    console.log(this.constructor.name, new Date(), 'Started')
     const deviceApiRawId = this.id
     try {
       const lockedId = await deviceApiRawStatusToId('Locked')
@@ -149,28 +151,8 @@ class DataProcessor {
 
       // TODO: Unsubscribe and destroy listener after process?
       const handlerFunction = this.deferProcessing
-        ? async () => {
-            console.log(this.constructor.name, new Date(), 'Handle Started')
-            this.messageContext.deviceRawMessageResponseReady(
-              this.id,
-              this.getResponse()
-            )
-            console.log(this.constructor.name, new Date(), 'Response Ready')
-            await this.processRequest()
-            this.messageContext.deviceRawMessageProcessed(this.id)
-            console.log(this.constructor.name, new Date(), 'Data Processed')
-          }
-        : async () => {
-            console.log(this.constructor.name, new Date(), 'Handle Started')
-            await this.processRequest()
-            this.messageContext.deviceRawMessageResponseReady(
-              this.id,
-              this.getResponse()
-            )
-            console.log(this.constructor.name, new Date(), 'Response Ready')
-            this.messageContext.deviceRawMessageProcessed(this.id)
-            console.log(this.constructor.name, new Date(), 'Data Processed')
-          }
+        ? this.processRequestDeferred
+        : this.processRequestSynchronous
       const isActionForThisInstance = action =>
         action.deviceApiRawId === deviceApiRawId
       this.messageContext.queue.subscribe('deviceApiRaw', [
@@ -179,6 +161,7 @@ class DataProcessor {
             DEVICE_RAW_MESSAGE_POSTED: {
               handlerFunction,
               shouldHandle: isActionForThisInstance,
+              allowInfiniteListeners: true,
             },
           },
         },
@@ -195,6 +178,24 @@ class DataProcessor {
 
   async processRequest() {
     return Promise.resolve()
+  }
+
+  async processRequestDeferred() {
+    this.messageContext.deviceRawMessageResponseReady(
+      this.id,
+      this.getResponse()
+    )
+    await this.processRequest()
+    this.messageContext.deviceRawMessageProcessed(this.id)
+  }
+
+  async processRequestSynchronous() {
+    await this.processRequest()
+    this.messageContext.deviceRawMessageResponseReady(
+      this.id,
+      this.getResponse()
+    )
+    this.messageContext.deviceRawMessageProcessed(this.id)
   }
 
   static async onDeviceRawMessageProcessed({ deviceApiRawId }) {

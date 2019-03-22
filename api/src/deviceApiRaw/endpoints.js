@@ -30,6 +30,7 @@ const subscriptions = [
       DEVICE_RAW_MESSAGE_POSTED: {
         handlerFunction: async () => Promise.resolve(),
         shouldHandle: () => false,
+        allowInfiniteListeners: true,
       },
       DEVICE_RAW_MESSAGE_PROCESSED: onDeviceRawMessageProcessed,
       DEVICE_RAW_MESSAGE_ERROR: onDeviceRawMessageError,

@@ -15,7 +15,12 @@ class DefaultAlereQ extends DataProcessor {
 
   async processRequest() {
     await Promise.delay(100000)
-    console.log(this.constructor.name, new Date(), 'Processing Done :)')
+    console.log(
+      this.name,
+      new Date(),
+      _.get(this.request, 'payload.requestNumber'),
+      'Processing Done :)'
+    )
   }
 }
 

@@ -116,6 +116,12 @@ class MessageQueue {
             shouldHandle = messageHandler.shouldHandle
           }
           queueOptions = messageHandler.queueOptions
+          if (messageHandler.allowInfiniteListeners) {
+            const maxListeners = this.emitter.getMaxListeners()
+            if (maxListeners > 0) {
+              this.emitter.setMaxListeners(0)
+            }
+          }
         }
         const { channel, name: queueName } = this
         const subscribeName = `${queueName}_${name}_actions_${type}`
