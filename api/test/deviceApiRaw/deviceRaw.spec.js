@@ -205,10 +205,7 @@ describe('Device API Raw routes', () => {
       const unknownDeviceApiRawRecord = await knex('DeviceApiRaw')
         .where({ id: unknownResponse.body })
         .first()
-      assert.equal(
-        unknownDeviceApiRawRecord.dataProcessor,
-        'Default'
-      )
+      assert.equal(unknownDeviceApiRawRecord.dataProcessor, 'DefaultDataProcessor')
     })
   })
 })

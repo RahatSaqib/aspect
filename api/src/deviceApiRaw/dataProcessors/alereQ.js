@@ -3,15 +3,13 @@ const _ = require('lodash')
 const DataProcessor = require('./_base')
 
 class DefaultAlereQ extends DataProcessor {
-  constructor(deviceApiRawRecord, messageContext) {
-    super('DefaultAlereQ', deviceApiRawRecord, messageContext)
+  constructor(request, messageContext) {
+    super(request, messageContext)
     this.processRequest = this.processRequest.bind(this)
   }
 
-  static async canProcessRequest(decrypteDeviceApiRaw) {
-    return Promise.resolve(
-      _.get(decrypteDeviceApiRaw, 'rawData.payload.type.id') === 'AlereQ'
-    )
+  static async canProcessRequest(request) {
+    return Promise.resolve(_.get(request, 'payload.type.id') === 'AlereQ')
   }
 
   async processRequest() {

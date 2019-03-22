@@ -2,8 +2,8 @@ const Promise = require('bluebird')
 const DataProcessor = require('./_base')
 
 class DefaultDataProcessor extends DataProcessor {
-  constructor(deviceApiRawRecord, messageContext) {
-    super('Default', deviceApiRawRecord, messageContext)
+  constructor(request, messageContext) {
+    super(request, messageContext)
     this.processRequest = this.processRequest.bind(this)
   }
 

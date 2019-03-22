@@ -11,6 +11,7 @@ const cacheConfig = {
   ConsumableReason: {
     keyColumn: 'name',
   },
+  DeviceApiRawStatus: {},
   DeviceStatus: {
     keyColumn: 'token',
   },

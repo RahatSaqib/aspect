@@ -1,3 +1,4 @@
+const Promise = require('bluebird')
 const _ = require('lodash')
 const amqp = require('amqplib')
 const EventEmitter = require('events')
@@ -78,7 +79,7 @@ class MessageQueue {
    * Subscribes to messages with the named service.
    *
    * This can be a single subscription, an array, a function,
-   * or a promise, or some combination of the obove (e.g an
+   * or a promise, or some combination of the above (e.g an
    * async function returning an array to allow dynamic loading).
    *
    * Eventually accepts an object, with the following properties:
@@ -103,12 +104,24 @@ class MessageQueue {
         this.subscribe(`${name}_${subscriptionIndex}`, subscription)
       })
     } else {
-      _.each(subscriptions.actions, (listener, type) => {
+      _.each(subscriptions.actions, (messageHandler, type) => {
+        let handlerFunction = async () => Promise.resolve()
+        let shouldHandle = () => true
+        let queueOptions
+        if (_.isFunction(messageHandler)) {
+          handlerFunction = messageHandler
+        } else {
+          handlerFunction = messageHandler.handlerFunction
+          if (messageHandler.shouldHandle) {
+            shouldHandle = messageHandler.shouldHandle
+          }
+          queueOptions = messageHandler.queueOptions
+        }
         const { channel, name: queueName } = this
         const subscribeName = `${queueName}_${name}_actions_${type}`
         const topic = `aspect.actions.${type}`
         debug(`subscribe ${subscribeName} ${topic}`)
-        const { queue } = channel.assertQueue(subscribeName, this.queueOptions)
+        const { queue } = channel.assertQueue(subscribeName, queueOptions)
         this.queues.push(queue)
         channel.bindQueue(queue, exchange, topic)
         channel.consume(queue, message => {
@@ -116,19 +129,23 @@ class MessageQueue {
           const messageContext = this.createMessageContext(subscribeName)
           const action = JSON.parse(content)
           debug(`consume ${messageContext.id} ${content}`)
-          Promise.resolve(listener(action, { messageContext }))
-            .then(() => {
-              // Do not ack until listener result resolves
-              // Allows backpressure per consumer, if this is not needed can
-              // return something (or nothing) that resolves immediately
-              debug(`ack ${messageContext.id}`)
-              this.channel.ack(message)
-            })
-            .catch(err => {
-              console.error(err) // eslint-disable-line no-console
-              // TODO nack/dead letter queue?
-              this.channel.ack(message)
-            })
+          if (shouldHandle(action)) {
+            Promise.resolve(handlerFunction(action, { messageContext }))
+              .then(() => {
+                // Do not ack until handlerFunction result resolves
+                // Allows backpressure per consumer, if this is not needed can
+                // return something (or nothing) that resolves immediately
+                debug(`ack ${messageContext.id}`)
+                this.channel.ack(message)
+              })
+              .catch(err => {
+                console.error(err) // eslint-disable-line no-console
+                // TODO nack/dead letter queue?
+                this.channel.ack(message)
+              })
+          } else {
+            this.channel.nack(message, false, true)
+          }
         })
       })
     }

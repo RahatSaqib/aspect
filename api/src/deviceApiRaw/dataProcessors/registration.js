@@ -6,20 +6,18 @@ const registeredDataProcessors = [
   require('./default'),
 ]
 
-async function loadRawDataProcessor(decrypteDeviceApiRaw, messageContext) {
+async function loadRawDataProcessor(request, messageContext) {
   let DataProcessorClass = null
   await Promise.each(registeredDataProcessors, async Registration => {
     if (!DataProcessorClass) {
-      const canProcessRequest = await Registration.canProcessRequest(
-        decrypteDeviceApiRaw
-      )
+      const canProcessRequest = await Registration.canProcessRequest(request)
       if (canProcessRequest) {
         DataProcessorClass = Registration
       }
     }
     return Promise.resolve()
   })
-  return new DataProcessorClass(decrypteDeviceApiRaw, messageContext)
+  return new DataProcessorClass(request, messageContext)
 }
 
 module.exports = {
