@@ -10,7 +10,7 @@ import { fetchPossibleTags } from './TagRedux'
 const ConnectedTagInput = ({
   qryId,
   qryType,
-  possibleTags,
+  tags,
   maxTags,
   value,
   onTagChange,
@@ -20,8 +20,11 @@ const ConnectedTagInput = ({
   useEffect(() => {
     fetchPossibleTags(qryType)
   }, [])
+  const possibleTags = tags.getIn([qryType, 'items'], Immutable.List()).toJS()
+
   const onChange = value => {
-    onTagChange(qryId, qryType, value)
+    const tags = _fp.map('title', value)
+    onTagChange(qryId, qryType, tags)
   }
 
   const onDelete = (item, selectedItem) => {
@@ -31,7 +34,9 @@ const ConnectedTagInput = ({
   }
 
   const onAdd = (item, selectedItem) => {
-    if (item && item.trim() === '') {
+    const newTag = _fp.isObject(item) ? item.title : item
+
+    if (newTag && newTag.trim() === '') {
       return
     }
     if (maxTags > 0 && selectedItem.length >= maxTags) {
@@ -39,11 +44,13 @@ const ConnectedTagInput = ({
     }
 
     const isExist = Array.from(selectedItem).some(
-      val => val.toLowerCase() === item.toLowerCase()
+      val => val.title.toLowerCase() === newTag.toLowerCase()
     )
+
     const newSelectedItem = !isExist
-      ? [...selectedItem, item]
+      ? [...selectedItem, { title: newTag }]
       : [...selectedItem]
+
     onChange(newSelectedItem)
   }
 
@@ -53,6 +60,7 @@ const ConnectedTagInput = ({
       keepFocusOnChange
       source={possibleTags}
       value={value}
+      identifier="title"
       onAdd={onAdd}
       onDelete={onDelete}
       onTagChange={onChange}
@@ -61,18 +69,10 @@ const ConnectedTagInput = ({
   )
 }
 
-const mapStateToProps = (state, ownProps) => {
-  const tags = state.tag.possibleTags
-  return {
-    tags,
-    ..._fp.omit(['fetchTags'], ownProps),
-    possibleTags: _fp.map(
-      'title',
-      tags.getIn([ownProps.qryType, 'items'], Immutable.List()).toJS()
-    ),
-    value: _fp.map('title', ownProps.value),
-  }
-}
+const mapStateToProps = state => ({
+  tags: state.tag.possibleTags,
+})
+
 ConnectedTagInput.defaultProps = {
   maxTags: 10,
 }
@@ -81,7 +81,6 @@ ConnectedTagInput.propTypes = {
   fetchPossibleTags: PropTypes.func.isRequired,
   qryId: PropTypes.string.isRequired,
   qryType: PropTypes.oneOf(['result', 'device', 'site', 'person']).isRequired,
-  possibleTags: PropTypes.arrayOf(PropTypes.string).isRequired,
   value: PropTypes.arrayOf(PropTypes.string).isRequired,
   onTagChange: PropTypes.func.isRequired,
   onAdd: PropTypes.func.isRequired,

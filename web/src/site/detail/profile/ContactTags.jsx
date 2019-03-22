@@ -11,7 +11,6 @@ const ContactsTag = ({
   qryId,
   qryType,
   contacts,
-  availableContacts,
   value,
   onTagChange,
   fetchAvailablePersons,
@@ -20,6 +19,14 @@ const ContactsTag = ({
   useEffect(() => {
     fetchAvailablePersons(qryType) // fetching contacts
   }, [])
+
+  const contactsList = contacts
+    .getIn(['person', 'items'], Immutable.List())
+    .toJS()
+  const contactIds = _fp.map('id', contactsList)
+  const currentContacts = _fp.map('id', value)
+
+  console.log(value, contactsList)
   const onChange = value => {
     // remove (sets siteid in jobcontext to null) or add (sets site id to curr id)contact =
     debugger
@@ -36,8 +43,9 @@ const ContactsTag = ({
     <TagInput
       allowCreate
       keepFocusOnChange
-      source={availableContacts}
+      source={contactIds}
       value={value}
+      identifier="name"
       onTagChange={onChange}
       onDelete={removeContact}
       addContact={addContact}
@@ -46,18 +54,9 @@ const ContactsTag = ({
   )
 }
 
-const mapStateToProps = (state, ownProps) => {
-  const { contacts } = state.person
-  return {
-    contacts,
-    ..._fp.omit(['fetchContacts'], ownProps),
-    availableContacts: _fp.map(
-      'id',
-      contacts.getIn(['person', 'items'], Immutable.List()).toJS()
-    ),
-    value: _fp.map('id', ownProps.value),
-  }
-}
+const mapStateToProps = state => ({
+  contacts: state.person.contacts,
+})
 
 ContactsTag.defaultProps = {
   identifier: 'title',
@@ -67,8 +66,8 @@ ContactsTag.propTypes = {
   fetchAvailablePersons: PropTypes.func.isRequired,
   qryId: PropTypes.string.isRequired,
   qryType: PropTypes.oneOf(['result', 'device', 'site', 'person']).isRequired,
-  availableContacts: PropTypes.arrayOf(PropTypes.string).isRequired,
-  value: PropTypes.arrayOf(PropTypes.string).isRequired,
+  // value: PropTypes.arrayOf(PropTypes.string).isRequired,
+  // contacts: array of contacts
   onTagChange: PropTypes.func.isRequired,
   identifier: PropTypes.string,
 }

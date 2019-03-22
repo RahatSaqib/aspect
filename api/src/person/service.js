@@ -143,7 +143,11 @@ async function validateContact(request) {
 
   const site = await getSite(siteId, dataConstraints)
 
-  const personDetails = await getPersonDetails(id)
+  const personDetails = await getPersonDetails(id).modify(
+    addConstraints,
+    dataConstraints,
+    { geography: 'g' }
+  )
 
   return {
     siteId,

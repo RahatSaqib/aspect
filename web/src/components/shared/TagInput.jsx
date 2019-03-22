@@ -58,18 +58,17 @@ const renderSuggestion = ({
 }) => {
   const isHighlighted = highlightedIndex === index
   const isSelected = (selectedItem || '').indexOf(suggestion.text) > -1
-
   return (
     <MenuItem
       {...itemProps}
-      key={suggestion.value}
+      key={suggestion.id}
       selected={isHighlighted}
       component="div"
       style={{
         fontWeight: isSelected ? 500 : 400,
       }}
     >
-      {suggestion}
+      {suggestion.title}
     </MenuItem>
   )
 }
@@ -81,8 +80,8 @@ const getSuggestions = (suggestions, selectedItem, value = '') => {
     ? []
     : suggestions.filter(
         suggestion =>
-          !_.includes(selectedItem, suggestion) &&
-          suggestion.toLowerCase().indexOf(inputValue) > -1
+          !_.some(selectedItem, suggestion) &&
+          suggestion.title.toLowerCase().indexOf(inputValue) > -1
       )
 }
 
@@ -94,6 +93,7 @@ const TagInput = ({
   onDelete,
   onAdd,
   onTagChange,
+  identifier,
   value: selectedItem,
 }) => {
   const [inputValue, setInputValue] = useState('')
@@ -148,6 +148,7 @@ const TagInput = ({
       onChange={handleChange}
       onStateChange={handleStateChange}
       selectedItem={selectedItem}
+      identifier={identifier}
     >
       {({
         getInputProps,
@@ -164,9 +165,9 @@ const TagInput = ({
               <Grid item>
                 {selectedItem.map(item => (
                   <Chip
-                    key={item}
+                    key={item[identifier]}
                     tabIndex={-1}
-                    label={item}
+                    label={item[identifier]}
                     deleteIcon={
                       <ClearIcon className={classNameValues.deleteIcon} />
                     }
