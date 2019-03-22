@@ -26,6 +26,7 @@ class DataProcessor {
       deviceRawMessageError,
     })
     this.processRequest = this.processRequest.bind(this)
+    this.deferProcessing = false
   }
 
   static async canProcessRequest() {
@@ -131,6 +132,7 @@ class DataProcessor {
   }
 
   async start() {
+    console.log(this.constructor.name, new Date(), 'Started')
     const deviceApiRawId = this.id
     try {
       const lockedId = await deviceApiRawStatusToId('Locked')
@@ -146,7 +148,29 @@ class DataProcessor {
       await DataProcessor.updateDeviceApiRawStatus(deviceApiRawId, 'Locked')
 
       // TODO: Unsubscribe and destroy listener after process?
-      const handlerFunction = this.processRequest
+      const handlerFunction = this.deferProcessing
+        ? async () => {
+            console.log(this.constructor.name, new Date(), 'Handle Started')
+            this.messageContext.deviceRawMessageResponseReady(
+              this.id,
+              this.getResponse()
+            )
+            console.log(this.constructor.name, new Date(), 'Response Ready')
+            await this.processRequest()
+            this.messageContext.deviceRawMessageProcessed(this.id)
+            console.log(this.constructor.name, new Date(), 'Data Processed')
+          }
+        : async () => {
+            console.log(this.constructor.name, new Date(), 'Handle Started')
+            await this.processRequest()
+            this.messageContext.deviceRawMessageResponseReady(
+              this.id,
+              this.getResponse()
+            )
+            console.log(this.constructor.name, new Date(), 'Response Ready')
+            this.messageContext.deviceRawMessageProcessed(this.id)
+            console.log(this.constructor.name, new Date(), 'Data Processed')
+          }
       const isActionForThisInstance = action =>
         action.deviceApiRawId === deviceApiRawId
       this.messageContext.queue.subscribe('deviceApiRaw', [
@@ -159,16 +183,17 @@ class DataProcessor {
           },
         },
       ])
-      // await Promise.delay(5000)
       this.messageContext.deviceRawMessagePosted(deviceApiRawId)
     } catch (error) {
       this.messageContext.deviceRawMessageError(deviceApiRawId, error)
     }
   }
 
+  getResponse() {
+    return this.id
+  }
+
   async processRequest() {
-    this.messageContext.deviceRawMessageResponseReady(this.id, this.id)
-    this.messageContext.deviceRawMessageProcessed(this.id)
     return Promise.resolve()
   }
 

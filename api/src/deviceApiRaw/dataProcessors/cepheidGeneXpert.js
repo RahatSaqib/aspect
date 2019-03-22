@@ -15,9 +15,8 @@ class DefaultCepheidGeneXpert extends DataProcessor {
   }
 
   async processRequest() {
-    this.messageContext.deviceRawMessageResponseReady(this.id, this.id)
-    this.messageContext.deviceRawMessageProcessed(this.id)
-    return Promise.resolve()
+    await Promise.delay(10000)
+    console.log(this.constructor.name, new Date(), 'Processing Done :)')
   }
 }
 

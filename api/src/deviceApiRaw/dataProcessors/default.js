@@ -12,9 +12,8 @@ class DefaultDataProcessor extends DataProcessor {
   }
 
   async processRequest() {
-    this.messageContext.deviceRawMessageResponseReady(this.id, this.id)
-    this.messageContext.deviceRawMessageProcessed(this.id)
-    return Promise.resolve()
+    await Promise.resolve()
+    console.log(this.constructor.name, new Date(), 'Processing Done :)')
   }
 }
 
