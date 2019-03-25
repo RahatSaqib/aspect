@@ -213,7 +213,7 @@ describe('Device API Raw routes', () => {
       )
     })
 
-    it('should be able to process many simultaneous requests for a deferred data processor', async () => {
+    it('should be able to process many simultaneous requests for an asynchronous data processor', async () => {
       const alereQPayload = {
         type: {
           id: 'AlereQ',
@@ -234,7 +234,7 @@ describe('Device API Raw routes', () => {
       )
     })
 
-    it('should be able to process many  requests for a deferred data processor is quick succession', async () => {
+    it('should be able to process many sequential requests for an asynchronous data processor', async () => {
       const alereQPayload = {
         type: {
           id: 'AlereQ',

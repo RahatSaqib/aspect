@@ -1,12 +1,11 @@
 const Promise = require('bluebird')
 const _ = require('lodash')
-const DataProcessor = require('./_base')
+const { AsynchronousDataProcessor } = require('./_base')
 
-class DefaultAlereQ extends DataProcessor {
+class DefaultAlereQ extends AsynchronousDataProcessor {
   constructor(request, messageContext) {
     super(request, messageContext)
     this.processRequest = this.processRequest.bind(this)
-    this.deferProcessing = true
   }
 
   static async canProcessRequest(request) {

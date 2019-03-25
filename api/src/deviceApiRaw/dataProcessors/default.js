@@ -1,7 +1,7 @@
 const Promise = require('bluebird')
-const DataProcessor = require('./_base')
+const { SynchronousDataProcessor } = require('./_base')
 
-class DefaultDataProcessor extends DataProcessor {
+class DefaultDataProcessor extends SynchronousDataProcessor {
   constructor(request, messageContext) {
     super(request, messageContext)
     this.processRequest = this.processRequest.bind(this)

@@ -26,8 +26,12 @@ class DataProcessor {
       deviceRawMessageProcessed,
       deviceRawMessageError,
     })
+    this.saveRequestAsReady = this.saveRequestAsReady.bind(this)
+    this.start = this.start.bind(this)
+    this.responseReadyPromise = this.responseReadyPromise.bind(this)
+    this.dataProcessorErrorPromise = this.dataProcessorErrorPromise.bind(this)
+    this.getResponse = this.getResponse.bind(this)
     this.processRequest = this.processRequest.bind(this)
-    this.deferProcessing = false
   }
 
   static async canProcessRequest() {
@@ -73,6 +77,40 @@ class DataProcessor {
       updatedOn: utcNow,
     })
     this.id = deviceApiRawId
+  }
+
+  async start() {
+    try {
+      const lockedId = await deviceApiRawStatusToId('Locked')
+      const deviceApiRawRecord = await knex('DeviceApiRaw')
+        .where('id', this.id)
+        .first()
+      if (deviceApiRawRecord.deviceApiRawStatusId === lockedId) {
+        throw Boom.locked(
+          'The raw message record has already been locked for processing',
+          { deviceApiRawId: this.id }
+        )
+      }
+      await DataProcessor.updateDeviceApiRawStatus(this.id, 'Locked')
+
+      const actionIsForThisDataProcessorInstance = action =>
+        action.deviceApiRawId === this.id
+      this.messageContext.queue.subscribe('deviceApiRaw', [
+        {
+          actions: {
+            DEVICE_RAW_MESSAGE_POSTED: {
+              handlerFunction: this.handlerFunction,
+              shouldHandle: actionIsForThisDataProcessorInstance,
+              allowInfiniteListeners: true,
+              consumerTag: `${this.name}_${this.id}`,
+            },
+          },
+        },
+      ])
+      this.messageContext.deviceRawMessagePosted(this.id)
+    } catch (error) {
+      this.messageContext.deviceRawMessageError(this.id, error)
+    }
   }
 
   responseReadyPromise() {
@@ -132,60 +170,8 @@ class DataProcessor {
       })
   }
 
-  async start() {
-    try {
-      const lockedId = await deviceApiRawStatusToId('Locked')
-      const deviceApiRawRecord = await knex('DeviceApiRaw')
-        .where('id', this.id)
-        .first()
-      if (deviceApiRawRecord.deviceApiRawStatusId === lockedId) {
-        throw Boom.locked(
-          'The raw message record has already been locked for processing',
-          { deviceApiRawId: this.id }
-        )
-      }
-      await DataProcessor.updateDeviceApiRawStatus(this.id, 'Locked')
-
-      const deferProcessing = this.deferProcessing
-      const handlerFunction = async () => {
-        if (deferProcessing) {
-          this.messageContext.deviceRawMessageResponseReady(
-            this.id,
-            this.getResponse()
-          )
-          await this.processRequest()
-        } else {
-          await this.processRequest()
-          this.messageContext.deviceRawMessageResponseReady(
-            this.id,
-            this.getResponse()
-          )
-        }
-        this.messageContext.deviceRawMessageProcessed(this.id)
-        this.messageContext.queue.unsubscribe(`${this.name}_${this.id}`)
-      }
-      const actionIsForThisDataProcessorInstance = action =>
-        action.deviceApiRawId === this.id
-      this.messageContext.queue.subscribe('deviceApiRaw', [
-        {
-          actions: {
-            DEVICE_RAW_MESSAGE_POSTED: {
-              handlerFunction,
-              shouldHandle: actionIsForThisDataProcessorInstance,
-              allowInfiniteListeners: true,
-              consumerTag: `${this.name}_${this.id}`,
-            },
-          },
-        },
-      ])
-      this.messageContext.deviceRawMessagePosted(this.id)
-    } catch (error) {
-      this.messageContext.deviceRawMessageError(this.id, error)
-    }
-  }
-
-  getResponse() {
-    return this.id
+  async getResponse() {
+    return Promise.resolve(this.id)
   }
 
   async processRequest() {
@@ -203,4 +189,47 @@ class DataProcessor {
   }
 }
 
-module.exports = DataProcessor
+class SynchronousDataProcessor extends DataProcessor {
+  constructor(request, messageContext) {
+    super(request, messageContext)
+    this.handlerFunction = this.handlerFunction.bind(this)
+  }
+
+  static async canProcessRequest() {
+    return DataProcessor.canProcessRequest()
+  }
+
+  async handlerFunction() {
+    await this.processRequest()
+    const response = await this.getResponse()
+    this.messageContext.deviceRawMessageResponseReady(this.id, response)
+    this.messageContext.deviceRawMessageProcessed(this.id)
+    this.messageContext.queue.unsubscribe(`${this.name}_${this.id}`)
+  }
+}
+
+class AsynchronousDataProcessor extends DataProcessor {
+  constructor(request, messageContext) {
+    super(request, messageContext)
+    this.handlerFunction = this.handlerFunction.bind(this)
+  }
+
+  static async canProcessRequest() {
+    return DataProcessor.canProcessRequest()
+  }
+
+  async handlerFunction() {
+    const response = await this.getResponse()
+    this.messageContext.deviceRawMessageResponseReady(this.id, response)
+    await this.processRequest()
+    this.messageContext.deviceRawMessageProcessed(this.id)
+    this.messageContext.queue.unsubscribe(`${this.name}_${this.id}`)
+  }
+}
+
+module.exports = {
+  SynchronousDataProcessor,
+  AsynchronousDataProcessor,
+  onDeviceRawMessageProcessed: DataProcessor.onDeviceRawMessageProcessed,
+  onDeviceRawMessageError: DataProcessor.onDeviceRawMessageError,
+}

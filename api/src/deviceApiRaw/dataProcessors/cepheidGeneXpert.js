@@ -1,8 +1,8 @@
 const Promise = require('bluebird')
 const _ = require('lodash')
-const DataProcessor = require('./_base')
+const { SynchronousDataProcessor } = require('./_base')
 
-class DefaultCepheidGeneXpert extends DataProcessor {
+class DefaultCepheidGeneXpert extends SynchronousDataProcessor {
   constructor(request, messageContext) {
     super(request, messageContext)
     this.processRequest = this.processRequest.bind(this)
