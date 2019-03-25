@@ -213,7 +213,7 @@ describe('Device API Raw routes', () => {
       )
     })
 
-    it('should be able to process many requests for a deferred data processor', async () => {
+    it('should be able to process many simultaneous requests for a deferred data processor', async () => {
       const alereQPayload = {
         type: {
           id: 'AlereQ',
@@ -232,6 +232,25 @@ describe('Device API Raw routes', () => {
           assert.equal(alereQDeviceApiRawRecord.dataProcessor, 'DefaultAlereQ')
         })
       )
+    })
+
+    it('should be able to process many  requests for a deferred data processor is quick succession', async () => {
+      const alereQPayload = {
+        type: {
+          id: 'AlereQ',
+        },
+      }
+      await Promise.each(_.range(100), async requestNumber => {
+        const alereQResponse = await server
+          .post(deviceApiRawPath)
+          .set('Authorization', `Bearer ${validApiKeyToken}`)
+          .send({ ...alereQPayload, requestNumber })
+        assert.equal(alereQResponse.statusCode, 200)
+        const alereQDeviceApiRawRecord = await knex('DeviceApiRaw')
+          .where({ id: alereQResponse.body })
+          .first()
+        assert.equal(alereQDeviceApiRawRecord.dataProcessor, 'DefaultAlereQ')
+      })
     })
   })
 })

@@ -108,12 +108,18 @@ class MessageQueue {
         let handlerFunction = async () => Promise.resolve()
         let shouldHandle = () => true
         let queueOptions
+        let consumeOptions
         if (_.isFunction(messageHandler)) {
           handlerFunction = messageHandler
         } else {
           handlerFunction = messageHandler.handlerFunction
           if (messageHandler.shouldHandle) {
             shouldHandle = messageHandler.shouldHandle
+          }
+          if (messageHandler.consumerTag) {
+            consumeOptions = {
+              consumerTag: messageHandler.consumerTag,
+            }
           }
           queueOptions = messageHandler.queueOptions
           if (messageHandler.allowInfiniteListeners) {
@@ -130,31 +136,39 @@ class MessageQueue {
         const { queue } = channel.assertQueue(subscribeName, queueOptions)
         this.queues.push(queue)
         channel.bindQueue(queue, exchange, topic)
-        channel.consume(queue, message => {
-          const content = message.content.toString()
-          const messageContext = this.createMessageContext(subscribeName)
-          const action = JSON.parse(content)
-          debug(`consume ${messageContext.id} ${content}`)
-          if (shouldHandle(action)) {
-            Promise.resolve(handlerFunction(action, { messageContext }))
-              .then(() => {
-                // Do not ack until handlerFunction result resolves
-                // Allows backpressure per consumer, if this is not needed can
-                // return something (or nothing) that resolves immediately
-                debug(`ack ${messageContext.id}`)
-                this.channel.ack(message)
-              })
-              .catch(err => {
-                console.error(err) // eslint-disable-line no-console
-                // TODO nack/dead letter queue?
-                this.channel.ack(message)
-              })
-          } else {
-            this.channel.nack(message, false, true)
-          }
-        })
+        channel.consume(
+          queue,
+          message => {
+            const content = message.content.toString()
+            const messageContext = this.createMessageContext(subscribeName)
+            const action = JSON.parse(content)
+            debug(`consume ${messageContext.id} ${content}`)
+            if (shouldHandle(action)) {
+              Promise.resolve(handlerFunction(action, { messageContext }))
+                .then(() => {
+                  // Do not ack until handlerFunction result resolves
+                  // Allows backpressure per consumer, if this is not needed can
+                  // return something (or nothing) that resolves immediately
+                  debug(`ack ${messageContext.id}`)
+                  this.channel.ack(message)
+                })
+                .catch(err => {
+                  console.error(err) // eslint-disable-line no-console
+                  // TODO nack/dead letter queue?
+                  this.channel.ack(message)
+                })
+            } else {
+              this.channel.nack(message)
+            }
+          },
+          consumeOptions
+        )
       })
     }
+  }
+
+  unsubscribe(consumerTag) {
+    this.channel.cancel(consumerTag)
   }
 
   async subscribeEmitActions() {

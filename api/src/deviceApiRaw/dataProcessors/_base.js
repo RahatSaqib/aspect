@@ -27,8 +27,6 @@ class DataProcessor {
       deviceRawMessageError,
     })
     this.processRequest = this.processRequest.bind(this)
-    this.processRequestDeferred = this.processRequestDeferred.bind(this)
-    this.processRequestSynchronous = this.processRequestSynchronous.bind(this)
     this.deferProcessing = false
   }
 
@@ -135,40 +133,54 @@ class DataProcessor {
   }
 
   async start() {
-    const deviceApiRawId = this.id
     try {
       const lockedId = await deviceApiRawStatusToId('Locked')
       const deviceApiRawRecord = await knex('DeviceApiRaw')
-        .where('id', deviceApiRawId)
+        .where('id', this.id)
         .first()
       if (deviceApiRawRecord.deviceApiRawStatusId === lockedId) {
         throw Boom.locked(
           'The raw message record has already been locked for processing',
-          { deviceApiRawId }
+          { deviceApiRawId: this.id }
         )
       }
-      await DataProcessor.updateDeviceApiRawStatus(deviceApiRawId, 'Locked')
+      await DataProcessor.updateDeviceApiRawStatus(this.id, 'Locked')
 
-      // TODO: Unsubscribe and destroy listener after process?
-      const handlerFunction = this.deferProcessing
-        ? this.processRequestDeferred
-        : this.processRequestSynchronous
-      const isActionForThisInstance = action =>
-        action.deviceApiRawId === deviceApiRawId
+      const deferProcessing = this.deferProcessing
+      const handlerFunction = async () => {
+        if (deferProcessing) {
+          this.messageContext.deviceRawMessageResponseReady(
+            this.id,
+            this.getResponse()
+          )
+          await this.processRequest()
+        } else {
+          await this.processRequest()
+          this.messageContext.deviceRawMessageResponseReady(
+            this.id,
+            this.getResponse()
+          )
+        }
+        this.messageContext.deviceRawMessageProcessed(this.id)
+        this.messageContext.queue.unsubscribe(`${this.name}_${this.id}`)
+      }
+      const actionIsForThisDataProcessorInstance = action =>
+        action.deviceApiRawId === this.id
       this.messageContext.queue.subscribe('deviceApiRaw', [
         {
           actions: {
             DEVICE_RAW_MESSAGE_POSTED: {
               handlerFunction,
-              shouldHandle: isActionForThisInstance,
+              shouldHandle: actionIsForThisDataProcessorInstance,
               allowInfiniteListeners: true,
+              consumerTag: `${this.name}_${this.id}`,
             },
           },
         },
       ])
-      this.messageContext.deviceRawMessagePosted(deviceApiRawId)
+      this.messageContext.deviceRawMessagePosted(this.id)
     } catch (error) {
-      this.messageContext.deviceRawMessageError(deviceApiRawId, error)
+      this.messageContext.deviceRawMessageError(this.id, error)
     }
   }
 
@@ -178,24 +190,6 @@ class DataProcessor {
 
   async processRequest() {
     return Promise.resolve()
-  }
-
-  async processRequestDeferred() {
-    this.messageContext.deviceRawMessageResponseReady(
-      this.id,
-      this.getResponse()
-    )
-    await this.processRequest()
-    this.messageContext.deviceRawMessageProcessed(this.id)
-  }
-
-  async processRequestSynchronous() {
-    await this.processRequest()
-    this.messageContext.deviceRawMessageResponseReady(
-      this.id,
-      this.getResponse()
-    )
-    this.messageContext.deviceRawMessageProcessed(this.id)
   }
 
   static async onDeviceRawMessageProcessed({ deviceApiRawId }) {
