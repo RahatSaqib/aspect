@@ -23,6 +23,7 @@ async function listPeople(request) {
     stateId: 'g.stateId',
     lgaId: 'g.lgaId',
     contactNameOrEmail: ['p.name', 'p.email', 'p.email2'],
+    siteId: 'jc.siteId',
   })
 
   // get total count for paging
@@ -125,6 +126,14 @@ function getSite(siteId, dataConstraints) {
     .leftJoin('Geography as g', 's.geographyId', 'g.id')
     .modify(addConstraints, dataConstraints, { geography: 'g' })
     .where('s.id', '=', siteId)
+}
+
+function siteContacts(id) {
+  return knex('JobContext as jc')
+    .innerJoin('Job as j', 'jc.jobId', 'j.id')
+    .innerJoin('Person as p', 'j.personId', 'p.id')
+    .where('jc.siteId', id)
+    .select('p.name', 'p.id')
 }
 
 async function validateContact(request) {

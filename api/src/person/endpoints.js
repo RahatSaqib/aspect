@@ -29,6 +29,11 @@ const routes = [
               .allow('')
               .description('Filter for person name/email'),
           },
+          {
+            siteId: Joi.number()
+              .allow('')
+              .description('Site ID'),
+          },
           validateAllGeographyFilterParams(),
           validateSortPageParams('name', 'level', 'state', 'lga')
         ),

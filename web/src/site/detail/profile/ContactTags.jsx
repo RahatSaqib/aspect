@@ -5,12 +5,13 @@ import Immutable from 'immutable'
 import { connect } from 'react-redux'
 
 import TagInput from '../../../components/shared/TagInput'
-import { fetchAvailablePersons } from '../../../person/PersonRedux'
-import {fetchAssignPerson} from '../../../site/SiteRedux'
+import {
+  fetchAvailablePersons,
+  fetchAssignPerson,
+} from '../../../person/PersonRedux'
 
 const ContactsTag = ({
-  qryId,
-  qryType,
+  siteId,
   contacts,
   value,
   onTagChange,
@@ -19,26 +20,25 @@ const ContactsTag = ({
   ...restProps
 }) => {
   useEffect(() => {
-    fetchAvailablePersons(qryType) // fetching contacts
+    fetchAvailablePersons('person') // fetching contacts
   }, [])
 
   const contactsList = contacts
     .getIn(['person', 'items'], Immutable.List())
     .toJS()
-  
+
   const onChange = value => {
     // remove (sets siteid in jobcontext to null) or add (sets site id to curr id)contact =
     debugger
-    contacts.find(val => val.name === value).id = qryId
-    // onTagChange(qryId, qryType, value)
+    contacts.find(val => val.name === value).id = siteId
+    // onTagChange(siteId, qryType, value)
   }
   const removeContact = value => {
     alert(`removing ${value}`)
   }
   const addContact = ({ id }) => {
     const person = { id }
-    console.log(person, fetchAssignPerson())
-    fetchAssignPerson(qryId, person)
+    fetchAssignPerson(siteId, person)
   }
   return (
     <TagInput
@@ -56,7 +56,7 @@ const ContactsTag = ({
 }
 
 const mapStateToProps = state => ({
-  contacts: state.person.contacts,
+  contacts: state.person.availableContacts,
 })
 
 ContactsTag.defaultProps = {
@@ -65,8 +65,8 @@ ContactsTag.defaultProps = {
 
 ContactsTag.propTypes = {
   fetchAvailablePersons: PropTypes.func.isRequired,
-  qryId: PropTypes.string.isRequired,
-  qryType: PropTypes.oneOf(['result', 'device', 'site', 'person']).isRequired,
+  siteId: PropTypes.string.isRequired,
+  // qryType: PropTypes.oneOf(['result', 'device', 'site', 'person']).isRequired,
   // value: PropTypes.arrayOf(PropTypes.string).isRequired,
   // contacts: array of contacts
   onTagChange: PropTypes.func.isRequired,

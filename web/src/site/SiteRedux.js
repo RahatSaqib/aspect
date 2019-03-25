@@ -34,12 +34,6 @@ export const types = {
 
   REQUEST_SITES_FOR_SELECT_LIST: 'REQUEST_SITES_FOR_SELECT_LIST',
   RECEIVE_SITES_FOR_SELECT_LIST: 'RECEIVE_SITES_FOR_SELECT_LIST',
-
-  REQUEST_ASSIGN_PERSON: 'REQUEST_ASSIGN_PERSON',
-  RECEIVE_ASSIGN_PERSON: 'RECEIVE_ASSIGN_PERSON',
-
-  REQUEST_UNASSIGN_PERSON: 'REQUEST_UNASSIGN_PERSON',
-  RECEIVE_UNASSIGN_PERSON: 'RECEIVE_UNASSIGN_PERSON',
 }
 /*
  * ---------------- Action Creators -----------------
@@ -310,42 +304,6 @@ export function updateLatLongFromFormAddress() {
       dispatch(changeForm(formName, 'latitude', convertToFloat(lat, 6)))
       dispatch(changeForm(formName, 'longitude', convertToFloat(lng, 6)))
     })
-  }
-}
-
-function requestAssignPerson(personId) {
-  return {
-    type: types.REQUEST_ASSIGN_PERSON,
-    personId,
-  }
-}
-
-function receiveAssignPerson(siteId, item) {
-  return {
-    type: types.RECEIVE_ASSIGN_PERSON,
-    siteId,
-    itemd: { id: siteId, contacts: item },
-  }
-}
-
-// assign person with given person to site with siteId
-export function fetchAssignPerson(siteId, person) {
-  return dispatch => {
-    dispatch(requestAssignPerson())
-    return aspectFetch(`/person/assign/${siteId}`, {
-      method: 'PUT',
-      body: JSON.stringify(person),
-      errorNotifications: {
-        404: errorInsufficientScope(
-          defineMessages({
-            title: {
-              id: 'errorResponseMessages.fetchAssignPerson.PUT.404.title',
-              defaultMessage: 'Not Found',
-            },
-          })
-        ),
-      },
-    }).then(json => dispatch(receiveAssignPerson(siteId, json.data)))
   }
 }
 

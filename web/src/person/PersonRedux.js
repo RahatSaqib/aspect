@@ -29,6 +29,9 @@ export const types = {
   RECEIVE_AVAILABLE_PERSONS: 'RECEIVE_AVAILABLE_PERSONS',
   REQUEST_AVAILABLE_PERSONS: 'REQUEST_AVAILABLE_PERSONS',
 
+  REQUEST_SITE_CONTACTS: 'REQUEST_SITE_CONTACTS',
+  RECEIVE_SITE_CONTACTS: 'RECEIVE_SITE_CONTACTS',
+
   REQUEST_SINGLE_PERSON: 'REQUEST_SINGLE_PERSON',
   RECEIVE_SINGLE_PERSON: 'RECEIVE_SINGLE_PERSON',
 
@@ -169,6 +172,39 @@ export function fetchAvailablePersons() {
         ),
       },
     }).then(json => dispatch(receiveAvailablePersons(json.data)))
+  }
+}
+
+function requestSiteContacts(siteId) {
+  return {
+    type: types.REQUEST_SITE_CONTACTS,
+    siteId,
+  }
+}
+// receive possible contacts
+function receiveSiteContacts(siteId, items) {
+  return {
+    type: types.RECEIVE_SITE_CONTACTS,
+    items,
+    siteId,
+  }
+}
+
+export function fetchSiteContacts(siteId) {
+  return dispatch => {
+    dispatch(requestSiteContacts(siteId))
+    return aspectFetch(`/person?siteId=${siteId}`, {
+      errorNotifications: {
+        400: filterFieldsRejectedError(
+          defineMessages({
+            title: {
+              id: 'errorResponseMessages.fetchASiteContacts.GET.400.title',
+              defaultMessage: 'Invalid Site ID',
+            },
+          })
+        ),
+      },
+    }).then(json => dispatch(receiveSiteContacts(siteId, json.data)))
   }
 }
 // loading a single person with given personId
@@ -356,18 +392,17 @@ export function updateSinglePersonUserPreferences(personId, data) {
   ])
 }
 
-function requestAssignPerson(personId) {
+function requestAssignPerson() {
   return {
     type: types.REQUEST_ASSIGN_PERSON,
-    personId,
   }
 }
 
-function receiveAssignPerson(id, contacts) {
+function receiveAssignPerson(siteId, items) {
   return {
     type: types.RECEIVE_ASSIGN_PERSON,
-    // siteId,
-    itemd: { id, contacts },
+    siteId,
+    items,
   }
 }
 
@@ -392,30 +427,14 @@ export function fetchAssignPerson(siteId, person) {
   }
 }
 
-// function requestUnAssignPerson(personId) {
-//   return {
-//     type: types.REQUEST_UNASSIGN_PERSON,
-//     personId,
-//   }
-// }
-
-// function receiveUnAssignPerson(item) {
-//   return {
-//     type: types.RECEIVE_UNASSIGN_PERSON,
-//     item,
-//   }
-// }
-
-// // unassign person with given personId from site
-// export function fetchUnAssignPerson(personId) {}
-
 /*
  * ---------------- Reducers -----------------
  */
 const Person = Immutable.Record({
   items: new Items(),
   table: new Table(),
-  contacts: Immutable.Map(),
+  availableContacts: Immutable.Map(),
+  siteContacts: Immutable.Map(),
 })
 
 const ContactTagItems = Immutable.Record({
@@ -460,9 +479,9 @@ export const UserPreferences = Immutable.Record({
 const initialState = new Person()
 
 function requestAvailableContacts(state) {
-  const people = state.getIn(['contacts', 'person'])
+  const people = state.getIn(['availableContacts', 'person'])
   if (people) {
-    state.setIn(['contacts', 'person', 'loading'], true)
+    state.setIn(['availableContacts', 'person', 'loading'], true)
   }
   return state
 }
@@ -493,12 +512,18 @@ export default function personReducer(state = initialState, action) {
       return requestAvailableContacts(state)
     case types.RECEIVE_AVAILABLE_PERSONS:
       return state.mergeDeepIn(
-        ['contacts', 'person'],
+        ['availableContacts', 'person'],
         new ContactTagItems({
           loading: false,
           lastRefreshed: action.lastRefreshed,
           items: new Immutable.fromJS(action.items),
         })
+      )
+    case types.RECEIVE_ASSIGN_PERSON:
+    case types.RECEIVE_SITE_CONTACTS:
+      return state.setIn(
+        ['siteContacts', action.siteId],
+        new Immutable.fromJS(action.items)
       )
     case types.RECEIVE_SINGLE_PERSON:
     case types.RECEIVE_UPDATED_SINGLE_PERSON:

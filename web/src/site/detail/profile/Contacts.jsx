@@ -38,8 +38,7 @@ const Contacts = ({
             hideLabel
             format={v => (
               <ContactsTag
-                qryId={id}
-                qryType="person"
+                siteId={id}
                 allowCreate
                 onTagChange={onSiteTagChange}
                 value={v}

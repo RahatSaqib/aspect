@@ -104,6 +104,7 @@ const TagInput = ({
   const handleInputKeyDown = event => {
     // Backspace
     if (selectedItem.length && !inputValue.length && event.which === 8) {
+      debugger
       onTagChange(selectedItem.slice(0, selectedItem.length - 1)) // todo move to connectedTag
     }
     // Enter / comma

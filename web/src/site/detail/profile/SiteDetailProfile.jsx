@@ -16,6 +16,7 @@ const cssClasses = classnames.bind(require('../SiteDetail.css'))
 const SiteDetailProfile = ({
   site,
   siteTags,
+  siteContacts,
   formatMessage,
   history,
   location,
@@ -105,7 +106,7 @@ const SiteDetailProfile = ({
           <Contacts
             id={site.get('id')}
             title={formatMessage(messages.fieldContact)}
-            contacts={site.get('contacts').toJS()}
+            contacts={siteContacts}
             onSiteTagChange={onSiteTagChange}
           />
           {/* <Summary
