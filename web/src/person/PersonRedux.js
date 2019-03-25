@@ -374,18 +374,7 @@ export default function personReducer(state = initialState, action) {
           .get(action.personId)
           .set('canLogIn', action.canLogIn)
         mutState.set('items', receiveItem(mutState.items, currentState))
-        //  mutState.set('canLogIn', action.item.canLogIn)
-        // mutState.set('canLogIn', action.canLogIn)
       })
-    /* case types.PREFETCH_EMAIL:
-      return state.withMutations(mutState => {
-        const currentState = state.items.byId.get(action.personId)
-        currentState.merge({
-          username: action.username,
-          prefetchedUserName: action.emalValue,
-        })
-        mutState.set('items', receiveItem(mutState.items, person))
-      }) */
     case types.RECEIVE_SINGLE_PERSON:
     case types.RECEIVE_UPDATED_SINGLE_PERSON:
       return state.withMutations(mutState => {

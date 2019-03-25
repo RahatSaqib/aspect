@@ -3,6 +3,7 @@ const Boom = require('boom')
 const { query, knex, filterParams, sortPageParams } = require('../db')
 const userService = require('../auth/service')
 const { transformGeographyFromUpdates } = require('../geography/service')
+const { revokeUsersToken } = require('../auth/service')
 
 async function listPeople(request) {
   const { query } = request
@@ -121,7 +122,6 @@ async function savePerson(request, updatablePersonFields) {
   )
 
   const personDetails = await getPersonDetails(params.personId)
-  console.log(personDetails)
   if (_.isEmpty(personDetails)) {
     return Boom.notFound()
   }
@@ -139,10 +139,8 @@ async function savePerson(request, updatablePersonFields) {
     },
     {}
   )
-  console.log(changedFields)
-  // Update record if any values have changed
+
   const changedPersonFields = await transformGeographyFromUpdates(changedFields)
-  console.log(changedPersonFields)
   if (!_.isEmpty(changedPersonFields)) {
     if (
       changedFields.countryId &&
@@ -158,6 +156,10 @@ async function savePerson(request, updatablePersonFields) {
       .from('Person as p')
       .where({ 'p.id': personDetails.id })
       .update(changedPersonFields)
+  }
+
+  if (Object.prototype.hasOwnProperty.call(changedFields, 'canLogIn')) {
+    revokeUsersToken(personDetails.userId, !changedPersonFields.canLogIn)
   }
 
   const response = await showPerson(request)

@@ -633,7 +633,17 @@ async function acceptLicense(request) {
   // need to return a new JWT, now without hasToAcceptLicenseId
   return refreshToken(request)
 }
-
+// / Revoke/Grantt access to specific user
+async function revokeUsersToken(userId, revoke) {
+  await query(
+    'change revoked state for the specific user in refresh token tables'
+  )
+    .from('RefreshToken')
+    .where({ userId })
+    .update({
+      revoked: revoke,
+    })
+}
 module.exports = {
   getUser,
   authenticate,
@@ -647,4 +657,5 @@ module.exports = {
   hasFeature,
   getLicense,
   acceptLicense,
+  revokeUsersToken,
 }
