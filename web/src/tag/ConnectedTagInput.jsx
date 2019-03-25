@@ -60,7 +60,7 @@ const ConnectedTagInput = ({
       keepFocusOnChange
       source={possibleTags}
       value={value}
-      identifier="title"
+      tagName="title"
       onAdd={onAdd}
       onDelete={onDelete}
       onTagChange={onChange}

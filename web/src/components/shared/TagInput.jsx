@@ -55,6 +55,7 @@ const renderSuggestion = ({
   itemProps,
   highlightedIndex,
   selectedItem,
+  tagName,
 }) => {
   const isHighlighted = highlightedIndex === index
   const isSelected = (selectedItem || '').indexOf(suggestion.text) > -1
@@ -68,12 +69,12 @@ const renderSuggestion = ({
         fontWeight: isSelected ? 500 : 400,
       }}
     >
-      {suggestion.title}
+      {suggestion[tagName]}
     </MenuItem>
   )
 }
 
-const getSuggestions = (suggestions, selectedItem, value = '') => {
+const getSuggestions = (suggestions, selectedItem, value = '', tagName) => {
   const inputValue = _.deburr(value.trim()).toLowerCase()
 
   return inputValue.length === 0
@@ -81,7 +82,7 @@ const getSuggestions = (suggestions, selectedItem, value = '') => {
     : suggestions.filter(
         suggestion =>
           !_.some(selectedItem, suggestion) &&
-          suggestion.title.toLowerCase().indexOf(inputValue) > -1
+          suggestion[tagName].toLowerCase().indexOf(inputValue) > -1
       )
 }
 
@@ -93,7 +94,7 @@ const TagInput = ({
   onDelete,
   onAdd,
   onTagChange,
-  identifier,
+  tagName,
   value: selectedItem,
 }) => {
   const [inputValue, setInputValue] = useState('')
@@ -148,7 +149,7 @@ const TagInput = ({
       onChange={handleChange}
       onStateChange={handleStateChange}
       selectedItem={selectedItem}
-      identifier={identifier}
+      tagName={tagName}
     >
       {({
         getInputProps,
@@ -163,18 +164,21 @@ const TagInput = ({
           <Grid container spacing={4} alignItems="stretch">
             {selectedItem.length > 0 && (
               <Grid item>
-                {selectedItem.map(item => (
-                  <Chip
-                    key={item[identifier]}
-                    tabIndex={-1}
-                    label={item[identifier]}
-                    deleteIcon={
-                      <ClearIcon className={classNameValues.deleteIcon} />
-                    }
-                    className={classNameValues.chip}
-                    onDelete={handleDelete(item)}
-                  />
-                ))}
+                {selectedItem.map(item => {
+                  const name = item[tagName]
+                  return (
+                    <Chip
+                      key={item.id}
+                      tabIndex={-1}
+                      label={name}
+                      deleteIcon={
+                        <ClearIcon className={classNameValues.deleteIcon} />
+                      }
+                      className={classNameValues.chip}
+                      onDelete={handleDelete(item)}
+                    />
+                  )
+                })}
               </Grid>
             )}
             <Grid item className={classNameValues.inputContainer}>
@@ -199,7 +203,7 @@ const TagInput = ({
           >
             {isOpen ? (
               <Paper className={classNameValues.paper} square>
-                {getSuggestions(source, selectedItem, inputValue).map(
+                {getSuggestions(source, selectedItem, inputValue, tagName).map(
                   (suggestion, index) =>
                     renderSuggestion({
                       suggestion,
@@ -207,6 +211,7 @@ const TagInput = ({
                       itemProps: getItemProps({ item: suggestion }),
                       highlightedIndex,
                       selectedItem,
+                      tagName,
                     })
                 )}
               </Paper>

@@ -41,10 +41,6 @@ const Contacts = ({
                 qryId={id}
                 qryType="person"
                 allowCreate
-                // onTagChange={() => {
-                //   // eslint-disable-next-line no-console
-                //   console.log('done')
-                // }}
                 onTagChange={onSiteTagChange}
                 value={v}
                 identifier="name"
@@ -57,17 +53,21 @@ const Contacts = ({
         </div>
       ) : (
         <div className={cssClasses('Summary__Description')}>
-          {contacts.map(contact => (
-            <Fragment>
-              {contact.name}
-              <Link
-                to={`/browse/person/${contact.id}`}
-                className={cssClasses('Summary__Description__Link')}
-              >
-                <FaExternalLink />
-              </Link>
-            </Fragment>
-          ))}
+          {contacts.length ? (
+            contacts.map(contact => (
+              <Fragment>
+                {contact.name}
+                <Link
+                  to={`/browse/person/${contact.id}`}
+                  className={cssClasses('Summary__Description__Link')}
+                >
+                  <FaExternalLink />
+                </Link>
+              </Fragment>
+            ))
+          ) : (
+            <i>No contacts assigned to site</i>
+          )}
           <span className={cssClasses('Summary__Description__Action')}>
             <Button variant="contained" onClick={saveContacts}>
               {contacts.length ? 'Update' : 'Add'}

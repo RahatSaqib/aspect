@@ -12,7 +12,6 @@ import {
   errorInsufficientScope,
 } from '../error/CommonErrorNotifications'
 import { receiveList, receiveItem, Items } from '../shared/metaReducers/items'
-
 import {
   requestTable,
   receiveTableItems,
@@ -37,6 +36,12 @@ export const types = {
   RECEIVE_UPDATED_SINGLE_PERSON: 'RECEIVE_UPDATED_SINGLE_PERSON',
   RECEIVE_UPDATED_SINGLE_PERSON_LOGIN_DETAILS:
     'RECEIVE_UPDATED_SINGLE_PERSON_LOGIN_DETAILS',
+
+  REQUEST_ASSIGN_PERSON: 'REQUEST_ASSIGN_PERSON',
+  RECEIVE_ASSIGN_PERSON: 'RECEIVE_ASSIGN_PERSON',
+
+  REQUEST_UNASSIGN_PERSON: 'REQUEST_UNASSIGN_PERSON',
+  RECEIVE_UNASSIGN_PERSON: 'RECEIVE_UNASSIGN_PERSON',
 }
 /*
  * ---------------- Action Creators -----------------
@@ -350,6 +355,60 @@ export function updateSinglePersonUserPreferences(personId, data) {
     'culture',
   ])
 }
+
+function requestAssignPerson(personId) {
+  return {
+    type: types.REQUEST_ASSIGN_PERSON,
+    personId,
+  }
+}
+
+function receiveAssignPerson(id, contacts) {
+  return {
+    type: types.RECEIVE_ASSIGN_PERSON,
+    // siteId,
+    itemd: { id, contacts },
+  }
+}
+
+// assign person with given person to site with siteId
+export function fetchAssignPerson(siteId, person) {
+  return dispatch => {
+    dispatch(requestAssignPerson())
+    return aspectFetch(`/person/assign/${siteId}`, {
+      method: 'PUT',
+      body: JSON.stringify(person),
+      errorNotifications: {
+        404: errorInsufficientScope(
+          defineMessages({
+            title: {
+              id: 'errorResponseMessages.fetchAssignPerson.PUT.404.title',
+              defaultMessage: 'Not Found',
+            },
+          })
+        ),
+      },
+    }).then(json => dispatch(receiveAssignPerson(siteId, json.data)))
+  }
+}
+
+// function requestUnAssignPerson(personId) {
+//   return {
+//     type: types.REQUEST_UNASSIGN_PERSON,
+//     personId,
+//   }
+// }
+
+// function receiveUnAssignPerson(item) {
+//   return {
+//     type: types.RECEIVE_UNASSIGN_PERSON,
+//     item,
+//   }
+// }
+
+// // unassign person with given personId from site
+// export function fetchUnAssignPerson(personId) {}
+
 /*
  * ---------------- Reducers -----------------
  */
@@ -472,6 +531,15 @@ export default function personReducer(state = initialState, action) {
           .set('loaded', false)
         mutState.set('items', receiveItem(mutState.items, person))
       })
+    case types.RECEIVE_ASSIGN_PERSON:
+      return state.withMutations(mutState => {
+        const immutItem = Immutable.fromJS(action.itemd)
+        mutState.set('items', receiveItem(mutState.items, immutItem))
+      })
+    // return state.setIn(
+    //   ['site', 'items', action.siteId],
+    //   new Immutable.fromJS(action.items)
+    // )
     default:
       return state
   }

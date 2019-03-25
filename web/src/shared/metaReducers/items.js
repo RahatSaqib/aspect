@@ -16,6 +16,7 @@ export function receiveList(items, list) {
 }
 
 export function receiveItem(items, item) {
+  console.log('receive', items.toJS(), item.toJS())
   return items.mergeDeepIn(['byId', item.get('id')], item)
 }
 

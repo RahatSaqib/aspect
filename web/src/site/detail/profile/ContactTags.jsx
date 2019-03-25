@@ -6,6 +6,7 @@ import { connect } from 'react-redux'
 
 import TagInput from '../../../components/shared/TagInput'
 import { fetchAvailablePersons } from '../../../person/PersonRedux'
+import {fetchAssignPerson} from '../../../site/SiteRedux'
 
 const ContactsTag = ({
   qryId,
@@ -14,6 +15,7 @@ const ContactsTag = ({
   value,
   onTagChange,
   fetchAvailablePersons,
+  fetchAssignPerson,
   ...restProps
 }) => {
   useEffect(() => {
@@ -23,10 +25,7 @@ const ContactsTag = ({
   const contactsList = contacts
     .getIn(['person', 'items'], Immutable.List())
     .toJS()
-  const contactIds = _fp.map('id', contactsList)
-  const currentContacts = _fp.map('id', value)
-
-  console.log(value, contactsList)
+  
   const onChange = value => {
     // remove (sets siteid in jobcontext to null) or add (sets site id to curr id)contact =
     debugger
@@ -36,19 +35,21 @@ const ContactsTag = ({
   const removeContact = value => {
     alert(`removing ${value}`)
   }
-  const addContact = value => {
-    alert(`adding ${value}`)
+  const addContact = ({ id }) => {
+    const person = { id }
+    console.log(person, fetchAssignPerson())
+    fetchAssignPerson(qryId, person)
   }
   return (
     <TagInput
       allowCreate
       keepFocusOnChange
-      source={contactIds}
+      source={contactsList}
       value={value}
-      identifier="name"
+      tagName="name"
       onTagChange={onChange}
       onDelete={removeContact}
-      addContact={addContact}
+      onAdd={addContact}
       {...restProps}
     />
   )
@@ -71,5 +72,8 @@ ContactsTag.propTypes = {
   onTagChange: PropTypes.func.isRequired,
   identifier: PropTypes.string,
 }
-export default connect(mapStateToProps, { fetchAvailablePersons })(ContactsTag)
+export default connect(mapStateToProps, {
+  fetchAvailablePersons,
+  fetchAssignPerson,
+})(ContactsTag)
 // export default ContactsTag
