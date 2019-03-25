@@ -19,7 +19,7 @@ import {
   receiveTableItems,
   Table,
 } from '../shared/metaReducers/table'
-import { getLatLongFromAddress } from './utils/address'
+import { getLatLongFromAddress, convertToFloat } from './utils/address'
 
 export const types = {
   REQUEST_SITES: 'REQUEST_SITES',
@@ -300,8 +300,8 @@ export function updateLatLongFromFormAddress() {
   return (dispatch, getState) => {
     const formAddress = formAddressSelector(getState())
     return getLatLongFromAddress(formAddress).then(({ lat, lng }) => {
-      dispatch(changeForm(formName, 'latitude', lat))
-      dispatch(changeForm(formName, 'longitude', lng))
+      dispatch(changeForm(formName, 'latitude', convertToFloat(lat, 6)))
+      dispatch(changeForm(formName, 'longitude', convertToFloat(lng, 6)))
     })
   }
 }

@@ -54,3 +54,8 @@ export function getLatLongFromAddress(address) {
     )
   })
 }
+
+export const convertToFloat = (doubleNum, decimals = 6) => {
+  const base = 10 ** decimals
+  return Math.round(Math.fround(Number(doubleNum)) * base) / base
+}
