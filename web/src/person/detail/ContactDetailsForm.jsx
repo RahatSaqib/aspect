@@ -70,6 +70,7 @@ const getInitialValues = contactDetails => ({
   zip: contactDetails.get('zip') || DEFAULT_VALUES.zip,
   notes: contactDetails.get('notes') || DEFAULT_VALUES.notes,
   canLogIn: contactDetails.get('canLogIn') === 1 || DEFAULT_VALUES.canLogIn,
+  userId: contactDetails.get('userId') || undefined,
 })
 
 const enhance = compose(
@@ -79,10 +80,7 @@ const enhance = compose(
       const onChange = values => this.setState({ values })
       this.setState({
         onChange,
-        values: getInitialValues(
-          this.props.contactDetails,
-          this.props.emailValue
-        ),
+        values: getInitialValues(this.props.contactDetails),
       })
     },
 
@@ -119,8 +117,8 @@ const enhance = compose(
     validate,
   }),
   withHandlers({
-    onEmailChange: ({ onEmailChange }) => event => {
-      onEmailChange(event)
+    onEmailBlur: ({ onEmailBlur }) => event => {
+      onEmailBlur(event.target.value)
     },
     onCountryIdChange: ({
       onCountryIdChange,
@@ -147,6 +145,7 @@ export const ContactDetailsForm = ({
   loading,
   userIsAdmin,
   showNotesField,
+  onEmailBlur,
   // --- injected by recompose ---
   form,
   values,
@@ -217,6 +216,7 @@ export const ContactDetailsForm = ({
           label={intl.formatMessage(messages.primaryEmail)}
           value={values.email}
           onChange={onEmailChange}
+          onBlur={onEmailBlur}
           disabled={loading}
           error={meta.email.touched && meta.email.error}
           helperText={meta.email.touched && meta.email.error}

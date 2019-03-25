@@ -52,9 +52,9 @@ const DEFAULT_VALUES = {
   userLockedOut: false,
 }
 
-const getInitialValues = loginDetails => ({
+const getInitialValues = (loginDetails, username) => ({
   ...DEFAULT_VALUES,
-  username: loginDetails.get('username') || DEFAULT_VALUES.username,
+  username: username || DEFAULT_VALUES.username,
   userLockedOut:
     loginDetails.get('userLockedOut') || DEFAULT_VALUES.userLockedOut,
 })
@@ -65,18 +65,29 @@ const enhance = compose(
   lifecycle({
     componentWillMount() {
       const onChange = values => this.setState({ values })
-
       this.setState({
         onChange,
-        values: getInitialValues(this.props.loginDetails),
+        values: getInitialValues(
+          this.props.loginDetails,
+          this.props.loginDetails.username
+        ),
       })
     },
 
     componentWillReceiveProps(nextProps) {
       const { loginDetails } = nextProps
+      const prefecthUser = this.props.shouldPrefetch
+
       if (this.props.loginDetails !== loginDetails) {
         // Re-initialize
-        this.state.onChange(getInitialValues(loginDetails))
+        if (prefecthUser)
+          this.state.onChange(
+            getInitialValues(loginDetails, loginDetails.email)
+          )
+        else
+          this.state.onChange(
+            getInitialValues(loginDetails, loginDetails.username)
+          )
       }
     },
   }),

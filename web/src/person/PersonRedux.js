@@ -71,7 +71,7 @@ export function personCanLogIn(canLogIn, personId) {
     dispatch(transformToUser(canLogIn, personId))
   }
 }
-export function emailValueChange(value) {
+export function emailValueBlur(value) {
   return dispatch => {
     dispatch(() => ({
       type: types.PREFETCH_EMAIL,
@@ -344,6 +344,7 @@ export const LoginDetails = Immutable.Record({
   partnerId: null,
   jobFunctions: new Immutable.List([]),
   userLockedOut: null,
+  email: null,
 })
 export const UserPreferences = Immutable.Record({
   id: null,

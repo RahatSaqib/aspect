@@ -31,7 +31,7 @@ import {
   LoginDetails,
   UserPreferences,
   personCanLogIn,
-  emailValueChange,
+  emailValueBlur,
 } from '../PersonRedux'
 import { fetchPartnersAndJobFunctionsForSelectList } from '../../job/JobRedux'
 import { showAcknowledgement } from '../../appNotification/AppNotificationRedux'
@@ -55,12 +55,14 @@ const enhance = compose(
   connect(
     (state, props) => {
       const person = state.person.items.byId.get(props.match.params.personId)
+      const prefecthUser = person && person.get('userId') > 0
       return {
         editable: isEditable(state.user, person),
         person,
         canLogIn: person && person.get('canLogIn'),
         user: state.user,
         emailValue: state.person.get('email'),
+        prefecthUser,
         partnersAndJobFunctionsForSelectList: state.jobs.get(
           'partnersAndJobFunctionsForSelectList'
         ),
@@ -76,7 +78,7 @@ const enhance = compose(
           updateSinglePersonUserPreferences,
           fetchPartnersAndJobFunctionsForSelectList,
           personCanLogIn,
-          emailValueChange,
+          emailValueBlur,
         },
         dispatch
       )
@@ -115,8 +117,8 @@ export class PersonDetail extends PureComponent {
     this.props.personCanLogIn(canLogin, person.get('id'))
   }
 
-  handleEmailChange = value => {
-    this.props.emailValueChange(value)
+  handleEmailBlur = value => {
+    this.props.emailValueBlur(value)
   }
 
   handleFetchPartnersAndJobFunctions = ({
@@ -175,6 +177,7 @@ export class PersonDetail extends PureComponent {
     const userIsAdmin = user.jwt.permissions.includes('person:admin')
     const loading = !person || person.get('loaded') !== true
     const isUser = !person || person.get('canLogIn') || undefined
+    const shouldPrefetch = !person || person.get('userId') > 0
 
     return (
       <div className={styles.Container}>
@@ -199,7 +202,7 @@ export class PersonDetail extends PureComponent {
                 <ContactDetailsForm
                   intl={intl}
                   loading={loading}
-                  emailValueChange={this.handleEmailChange}
+                  onEmailBlur={this.handleEmailBlur}
                   contactDetails={contactDetails}
                   showNotesField
                   userIsAdmin
@@ -224,6 +227,7 @@ export class PersonDetail extends PureComponent {
                     <LoginDetailsForm
                       intl={intl}
                       loading={loading}
+                      shouldPrefetch={shouldPrefetch}
                       loginDetails={loginDetails}
                       onSubmit={this.saveLoginDetails}
                     />
