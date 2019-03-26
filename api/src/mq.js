@@ -112,9 +112,9 @@ class MessageQueue {
         if (_.isFunction(messageHandler)) {
           handlerFunction = messageHandler
         } else {
-          handlerFunction = messageHandler.handlerFunction
+          ;({ handlerFunction } = messageHandler)
           if (messageHandler.shouldHandle) {
-            shouldHandle = messageHandler.shouldHandle
+            ;({ shouldHandle } = messageHandler)
           }
           if (messageHandler.consumerTag) {
             consumeOptions = {

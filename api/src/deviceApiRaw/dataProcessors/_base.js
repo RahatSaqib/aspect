@@ -151,6 +151,7 @@ class DataProcessor {
         'deviceApiRaw',
         this.listenerEndpoints
       )
+      // TODO: Find out how to check that the queue has been bound to the topic before dispatching DEVICE_RAW_MESSAGE_POSTED
       await Promise.delay(100)
       this.messageContext.deviceRawMessagePosted(this.id)
     } catch (error) {
