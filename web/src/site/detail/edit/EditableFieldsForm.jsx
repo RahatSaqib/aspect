@@ -15,6 +15,7 @@ import TextField from '@material-ui/core/TextField'
 import TimezoneSelect from '../../../components/shared/TimezoneSelect'
 import LocationSelector from '../../../components/shared/LocationSelector'
 import ConnectedTagInput from '../../../tag/ConnectedTagInput'
+import ContactsTag from '../profile/ContactTags'
 import { ReadOnlyField } from '../../../components/shared/ReadOnlyFields'
 import AspectButton from '../../../components/shared/AspectButton'
 
@@ -81,6 +82,7 @@ const enhance = compose(
 // Renders underlying form and inputs components
 export const EditableFieldsForm = ({
   formatMessage,
+  id,
   labels,
   loading,
   initialValues,
@@ -176,6 +178,19 @@ export const EditableFieldsForm = ({
       label={labels.timezone}
       disabled={loading || submitting}
       fullWidth
+    />
+    <ReadOnlyField
+      label={labels.contacts}
+      value={[]} //to do fetch the actual site contacts 
+      format={v => (
+        <ContactsTag
+          siteId={id}
+          allowCreate
+          onTagChange={onSiteTagChange}
+          value={v}
+          identifier="name"
+        />
+      )}
     />
     <ReadOnlyField
       label={labels.tags}

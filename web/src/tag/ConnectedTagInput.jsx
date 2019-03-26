@@ -63,7 +63,6 @@ const ConnectedTagInput = ({
       tagName="title"
       onAdd={onAdd}
       onDelete={onDelete}
-      onTagChange={onChange}
       {...restProps}
     />
   )

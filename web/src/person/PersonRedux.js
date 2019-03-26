@@ -40,11 +40,8 @@ export const types = {
   RECEIVE_UPDATED_SINGLE_PERSON_LOGIN_DETAILS:
     'RECEIVE_UPDATED_SINGLE_PERSON_LOGIN_DETAILS',
 
-  REQUEST_ASSIGN_PERSON: 'REQUEST_ASSIGN_PERSON',
-  RECEIVE_ASSIGN_PERSON: 'RECEIVE_ASSIGN_PERSON',
-
-  REQUEST_UNASSIGN_PERSON: 'REQUEST_UNASSIGN_PERSON',
-  RECEIVE_UNASSIGN_PERSON: 'RECEIVE_UNASSIGN_PERSON',
+  REQUEST_UPDATE_SITE_CONTACTS: 'REQUEST_UPDATE_SITE_CONTACTS',
+  RECEIVE_UPDATE_SITE_CONTACTS: 'RECEIVE_UPDATE_SITE_CONTACTS',
 }
 /*
  * ---------------- Action Creators -----------------
@@ -392,38 +389,39 @@ export function updateSinglePersonUserPreferences(personId, data) {
   ])
 }
 
-function requestAssignPerson() {
+function requestUpdateSiteContacts() {
   return {
-    type: types.REQUEST_ASSIGN_PERSON,
+    type: types.REQUEST_UPDATE_SITE_CONTACTS,
   }
 }
 
-function receiveAssignPerson(siteId, items) {
+function receiveUpdateSiteContacts(siteId, items) {
   return {
-    type: types.RECEIVE_ASSIGN_PERSON,
+    type: types.RECEIVE_UPDATE_SITE_CONTACTS,
     siteId,
     items,
   }
 }
 
 // assign person with given person to site with siteId
-export function fetchAssignPerson(siteId, person) {
+export function fetchUpdateSiteContacts(siteId, person, operation) {
+  const path = operation === 'delete' ? 'unassign' : 'assign'
   return dispatch => {
-    dispatch(requestAssignPerson())
-    return aspectFetch(`/person/assign/${siteId}`, {
+    dispatch(requestUpdateSiteContacts())
+    return aspectFetch(`/person/${path}/${siteId}`, {
       method: 'PUT',
       body: JSON.stringify(person),
       errorNotifications: {
         404: errorInsufficientScope(
           defineMessages({
             title: {
-              id: 'errorResponseMessages.fetchAssignPerson.PUT.404.title',
+              id: 'errorResponseMessages.fetchUpdateSiteContacts.PUT.404.title',
               defaultMessage: 'Not Found',
             },
           })
         ),
       },
-    }).then(json => dispatch(receiveAssignPerson(siteId, json.data)))
+    }).then(json => dispatch(receiveUpdateSiteContacts(siteId, json.data)))
   }
 }
 
@@ -519,7 +517,8 @@ export default function personReducer(state = initialState, action) {
           items: new Immutable.fromJS(action.items),
         })
       )
-    case types.RECEIVE_ASSIGN_PERSON:
+    case types.RECEIVE_UPDATE_SITE_CONTACTS:
+    case types.RECEIVE_UPDATE_SITE_CONTACTS:
     case types.RECEIVE_SITE_CONTACTS:
       return state.setIn(
         ['siteContacts', action.siteId],
@@ -556,11 +555,11 @@ export default function personReducer(state = initialState, action) {
           .set('loaded', false)
         mutState.set('items', receiveItem(mutState.items, person))
       })
-    case types.RECEIVE_ASSIGN_PERSON:
-      return state.withMutations(mutState => {
-        const immutItem = Immutable.fromJS(action.itemd)
-        mutState.set('items', receiveItem(mutState.items, immutItem))
-      })
+    // case types.RECEIVE_UPDATE_SITE_CONTACTS:
+    //   return state.withMutations(mutState => {
+    //     const immutItem = Immutable.fromJS(action.itemd)
+    //     mutState.set('items', receiveItem(mutState.items, immutItem))
+    //   })
     // return state.setIn(
     //   ['site', 'items', action.siteId],
     //   new Immutable.fromJS(action.items)

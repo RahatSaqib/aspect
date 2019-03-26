@@ -93,7 +93,6 @@ const TagInput = ({
   source,
   onDelete,
   onAdd,
-  onTagChange,
   tagName,
   value: selectedItem,
 }) => {
@@ -104,8 +103,7 @@ const TagInput = ({
   const handleInputKeyDown = event => {
     // Backspace
     if (selectedItem.length && !inputValue.length && event.which === 8) {
-      debugger
-      onTagChange(selectedItem.slice(0, selectedItem.length - 1)) // todo move to connectedTag
+      onDelete(selectedItem[selectedItem.length - 1], selectedItem)
     }
     // Enter / comma
     if (!active && (event.which === 13 || event.which === 188)) {
@@ -228,7 +226,7 @@ TagInput.propTypes = {
   classes: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   disabled: PropTypes.bool,
   fullWidth: PropTypes.bool,
-  onTagChange: PropTypes.func,
+  tagName: PropTypes.string.isRequired,
   onAdd: PropTypes.func.isRequired,
   onDelete: PropTypes.func.isRequired,
   source: PropTypes.arrayOf(PropTypes.object),
@@ -239,7 +237,6 @@ TagInput.defaultProps = {
   disabled: false,
   fullWidth: true,
   maxTags: 10,
-  onTagChange: _.identity,
   source: [],
   value: [],
 }

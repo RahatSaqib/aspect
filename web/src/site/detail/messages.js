@@ -73,7 +73,7 @@ export default defineMessages({
   },
   fieldContact: {
     id: 'pages.SiteDetail.fieldContact',
-    defaultMessage: 'Site Contact',
+    defaultMessage: 'Site Contacts',
   },
   buttonSetBasedonAddress: {
     id: 'pages.SiteDetail.buttonSetBasedonAddress',

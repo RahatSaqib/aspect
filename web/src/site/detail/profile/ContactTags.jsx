@@ -7,7 +7,7 @@ import { connect } from 'react-redux'
 import TagInput from '../../../components/shared/TagInput'
 import {
   fetchAvailablePersons,
-  fetchAssignPerson,
+  fetchUpdateSiteContacts,
 } from '../../../person/PersonRedux'
 
 const ContactsTag = ({
@@ -16,7 +16,7 @@ const ContactsTag = ({
   value,
   onTagChange,
   fetchAvailablePersons,
-  fetchAssignPerson,
+  fetchUpdateSiteContacts,
   ...restProps
 }) => {
   useEffect(() => {
@@ -27,18 +27,13 @@ const ContactsTag = ({
     .getIn(['person', 'items'], Immutable.List())
     .toJS()
 
-  const onChange = value => {
-    // remove (sets siteid in jobcontext to null) or add (sets site id to curr id)contact =
-    debugger
-    contacts.find(val => val.name === value).id = siteId
-    // onTagChange(siteId, qryType, value)
-  }
-  const removeContact = value => {
-    alert(`removing ${value}`)
+  const removeContact = ({ id }) => {
+    const person = { id }
+    fetchUpdateSiteContacts(siteId, person, 'delete')
   }
   const addContact = ({ id }) => {
     const person = { id }
-    fetchAssignPerson(siteId, person)
+    fetchUpdateSiteContacts(siteId, person)
   }
   return (
     <TagInput
@@ -47,7 +42,6 @@ const ContactsTag = ({
       source={contactsList}
       value={value}
       tagName="name"
-      onTagChange={onChange}
       onDelete={removeContact}
       onAdd={addContact}
       {...restProps}
@@ -66,7 +60,6 @@ ContactsTag.defaultProps = {
 ContactsTag.propTypes = {
   fetchAvailablePersons: PropTypes.func.isRequired,
   siteId: PropTypes.string.isRequired,
-  // qryType: PropTypes.oneOf(['result', 'device', 'site', 'person']).isRequired,
   // value: PropTypes.arrayOf(PropTypes.string).isRequired,
   // contacts: array of contacts
   onTagChange: PropTypes.func.isRequired,
@@ -74,6 +67,5 @@ ContactsTag.propTypes = {
 }
 export default connect(mapStateToProps, {
   fetchAvailablePersons,
-  fetchAssignPerson,
+  fetchUpdateSiteContacts,
 })(ContactsTag)
-// export default ContactsTag
