@@ -9,6 +9,11 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable a
     className="Form__Content"
   >
     <section>
+      <AspectCheckbox
+        name="canLogIn"
+      />
+       
+      This contact can log in as a user
       <TextField
         FormHelperTextProps={
           Object {
@@ -219,6 +224,11 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
     className="Form__Content"
   >
     <section>
+      <AspectCheckbox
+        name="canLogIn"
+      />
+       
+      This contact can log in as a user
       <TextField
         FormHelperTextProps={
           Object {
@@ -429,6 +439,11 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
     className="Form__Content"
   >
     <section>
+      <AspectCheckbox
+        name="canLogIn"
+      />
+       
+      This contact can log in as a user
       <TextField
         FormHelperTextProps={
           Object {
@@ -639,6 +654,11 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
     className="Form__Content"
   >
     <section>
+      <AspectCheckbox
+        name="canLogIn"
+      />
+       
+      This contact can log in as a user
       <TextField
         FormHelperTextProps={
           Object {
@@ -849,6 +869,11 @@ exports[`ContactDetailsForm module ContactDetailsForm component should enable th
     className="Form__Content"
   >
     <section>
+      <AspectCheckbox
+        name="canLogIn"
+      />
+       
+      This contact can log in as a user
       <TextField
         FormHelperTextProps={
           Object {
@@ -1059,6 +1084,11 @@ exports[`ContactDetailsForm module ContactDetailsForm component should render co
     className="Form__Content"
   >
     <section>
+      <AspectCheckbox
+        name="canLogIn"
+      />
+       
+      This contact can log in as a user
       <TextField
         FormHelperTextProps={
           Object {

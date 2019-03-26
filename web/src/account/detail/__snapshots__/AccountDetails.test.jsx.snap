@@ -56,6 +56,7 @@ exports[`AccountDetails module AccountDetails component should shallow render co
               "zip": null,
               "notes": null,
               "lastPartnerId": null,
+              "canLogIn": false,
             }
           }
           intl={
@@ -108,7 +109,8 @@ exports[`AccountDetails module AccountDetails component should shallow render co
               "currentPassword": null,
               "partnerId": null,
               "jobFunctions": Immutable.List [],
-              "userLockedOut": false,
+              "userLockedOut": null,
+              "email": null,
             }
           }
           onSubmit={[Function]}

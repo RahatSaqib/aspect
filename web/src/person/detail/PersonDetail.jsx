@@ -180,7 +180,6 @@ export class PersonDetail extends PureComponent {
     const isUser = !person || person.get('canLogIn') || undefined
     const shouldPrefill = person && person.get('userId') == null
     const emailValue = (person && person.get('email')) || ''
-    console.log(shouldPrefill)
     return (
       <div className={styles.Container}>
         <Helmet title={formatMessage(messages.title)} />
