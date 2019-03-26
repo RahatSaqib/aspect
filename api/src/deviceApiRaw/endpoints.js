@@ -1,9 +1,5 @@
 const Promise = require('bluebird')
 const { addDeviceRawDataHandler } = require('./service')
-const {
-  onDeviceRawMessageProcessed,
-  onDeviceRawMessageError,
-} = require('./dataProcessors/_base')
 
 const routes = [
   {
@@ -32,8 +28,8 @@ const subscriptions = [
         shouldHandle: () => false,
         allowInfiniteListeners: true,
       },
-      DEVICE_RAW_MESSAGE_PROCESSED: onDeviceRawMessageProcessed,
-      DEVICE_RAW_MESSAGE_ERROR: onDeviceRawMessageError,
+      DEVICE_RAW_MESSAGE_PROCESSED: async () => Promise.resolve(),
+      DEVICE_RAW_MESSAGE_ERROR: async () => Promise.resolve(),
     },
   },
 ]

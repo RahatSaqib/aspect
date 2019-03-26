@@ -23,6 +23,7 @@ class MessageQueue {
     this.queues = []
     this.queueEmitActions = null
     this.messageContextIdx = 0
+    this.unsubscribe = this.unsubscribe.bind(this)
   }
 
   async connect() {
@@ -62,17 +63,16 @@ class MessageQueue {
   /**
    * Dispatch an action created by an action creator
    */
-  dispatch(action) {
+  dispatch(action, bindingKey) {
     if (!_.isString(action.type)) {
       throw new Error('Actions must be object with string type')
     }
     const message = JSON.stringify(action)
+    const topic = bindingKey
+      ? `aspect.actions.${action.type}.${bindingKey}`
+      : `aspect.actions.${action.type}`
     debug(`dispatch ${this.name} ${message}`)
-    this.channel.publish(
-      exchange,
-      `aspect.actions.${action.type}`,
-      Buffer.from(message)
-    )
+    this.channel.publish(exchange, topic, Buffer.from(message))
   }
 
   /**
@@ -107,8 +107,8 @@ class MessageQueue {
       _.each(subscriptions.actions, (messageHandler, type) => {
         let handlerFunction = async () => Promise.resolve()
         let shouldHandle = () => true
-        let queueOptions
         let consumeOptions
+        let bindingKey = ''
         if (_.isFunction(messageHandler)) {
           handlerFunction = messageHandler
         } else {
@@ -121,19 +121,21 @@ class MessageQueue {
               consumerTag: messageHandler.consumerTag,
             }
           }
-          queueOptions = messageHandler.queueOptions
           if (messageHandler.allowInfiniteListeners) {
             const maxListeners = this.emitter.getMaxListeners()
             if (maxListeners > 0) {
               this.emitter.setMaxListeners(0)
             }
           }
+          if (messageHandler.bindingKey) {
+            bindingKey = `.${messageHandler.bindingKey}`
+          }
         }
         const { channel, name: queueName } = this
         const subscribeName = `${queueName}_${name}_actions_${type}`
-        const topic = `aspect.actions.${type}`
+        const topic = `aspect.actions.${type}${bindingKey}`
         debug(`subscribe ${subscribeName} ${topic}`)
-        const { queue } = channel.assertQueue(subscribeName, queueOptions)
+        const { queue } = channel.assertQueue(subscribeName)
         this.queues.push(queue)
         channel.bindQueue(queue, exchange, topic)
         channel.consume(
@@ -167,8 +169,9 @@ class MessageQueue {
     }
   }
 
-  unsubscribe(consumerTag) {
+  unsubscribe(queueName, topic, consumerTag) {
     this.channel.cancel(consumerTag)
+    this.channel.unbindQueue(queueName, exchange, topic)
   }
 
   async subscribeEmitActions() {
@@ -178,7 +181,7 @@ class MessageQueue {
       const { queue } = await channel.assertQueue('', { exclusive: true })
       this.queueEmitActions = queue
       this.queues.push(queue)
-      await channel.bindQueue(queue, exchange, 'aspect.actions.*')
+      await channel.bindQueue(queue, exchange, 'aspect.actions.#')
       await channel.consume(queue, message => {
         const content = message.content.toString()
         const action = JSON.parse(content)
@@ -309,19 +312,21 @@ class MessageContext {
     this.isFinalState = false
   }
 
-  dispatch(action) {
+  dispatch(action, bindingKey) {
     if (this.isFinalState) {
       throw new Error('Cannot dispatch after final state, create new context')
     }
 
     if (this.transaction) {
       // Queue actions until transaction committed
-      debug(`dispatch delay ${this.id} ${JSON.stringify(action)}`)
-      this.actions.push(action)
+      debug(
+        `dispatch delay ${this.id} ${JSON.stringify(action)} for ${bindingKey}`
+      )
+      this.actions.push({ action, bindingKey })
     } else {
       // transaction complete, dispatch to MQ
-      debug(`dispatch ${this.id} ${JSON.stringify(action)}`)
-      this.queue.dispatch(action)
+      debug(`dispatch ${this.id} ${JSON.stringify(action)} for ${bindingKey}`)
+      this.queue.dispatch(action, bindingKey)
     }
   }
 
@@ -349,7 +354,9 @@ class MessageContext {
     }
     debug(`commit ${this.id}`)
     this.transaction = null
-    this.actions.forEach(action => this.dispatch(action))
+    this.actions.forEach(({ action, bindingKey }) =>
+      this.dispatch(action, bindingKey)
+    )
     this.isFinalState = true
   }
 
@@ -362,9 +369,9 @@ class MessageContext {
     this.isFinalState = true
   }
 
-  bindActionCreators(creators) {
+  bindActionCreators(creators, bindingKey) {
     _.each(creators, (creator, name) => {
-      this[name] = (...args) => this.dispatch(creator(...args))
+      this[name] = (...args) => this.dispatch(creator(...args), bindingKey)
       this[name].bind(this)
     })
     return this
