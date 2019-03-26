@@ -52,7 +52,7 @@ const DEFAULT_VALUES = {
   lgaId: undefined,
   zip: '',
   notes: '',
-  canLogIn: undefined,
+  canLogIn: false,
 }
 
 const getInitialValues = contactDetails => ({
