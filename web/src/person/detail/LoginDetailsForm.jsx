@@ -52,9 +52,9 @@ const DEFAULT_VALUES = {
   userLockedOut: false,
 }
 
-const getInitialValues = (loginDetails, username) => ({
+const getInitialValues = loginDetails => ({
   ...DEFAULT_VALUES,
-  username: username || DEFAULT_VALUES.username,
+  username: loginDetails.get('username') || DEFAULT_VALUES.username,
   userLockedOut:
     loginDetails.get('userLockedOut') || DEFAULT_VALUES.userLockedOut,
 })
@@ -67,27 +67,16 @@ const enhance = compose(
       const onChange = values => this.setState({ values })
       this.setState({
         onChange,
-        values: getInitialValues(
-          this.props.loginDetails,
-          this.props.loginDetails.username
-        ),
+        values: getInitialValues(this.props.loginDetails),
       })
     },
 
     componentWillReceiveProps(nextProps) {
       const { loginDetails } = nextProps
-      const prefecthUser = this.props.shouldPrefetch
 
       if (this.props.loginDetails !== loginDetails) {
         // Re-initialize
-        if (prefecthUser)
-          this.state.onChange(
-            getInitialValues(loginDetails, loginDetails.email)
-          )
-        else
-          this.state.onChange(
-            getInitialValues(loginDetails, loginDetails.username)
-          )
+        this.state.onChange(getInitialValues(loginDetails))
       }
     },
   }),
@@ -133,6 +122,8 @@ const enhance = compose(
 export const LoginDetailsForm = ({
   intl,
   loading,
+  emailValue,
+  shouldPrefill,
   currentPasswordInputDialogOpen,
   closeCurrentPasswordInputDialog,
   // classes,
@@ -157,7 +148,7 @@ export const LoginDetailsForm = ({
         type="text"
         name="username"
         label={intl.formatMessage(messages.username)}
-        value={values.username}
+        value={shouldPrefill ? emailValue : values.username}
         onChange={onUsernameChange}
         disabled={loading}
         error={meta.username.touched && meta.username.error}

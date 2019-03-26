@@ -69,7 +69,10 @@ const getInitialValues = contactDetails => ({
   lgaId: contactDetails.get('lgaId') || DEFAULT_VALUES.lgaId,
   zip: contactDetails.get('zip') || DEFAULT_VALUES.zip,
   notes: contactDetails.get('notes') || DEFAULT_VALUES.notes,
-  canLogIn: contactDetails.get('canLogIn') === 1 || DEFAULT_VALUES.canLogIn,
+  canLogIn:
+    contactDetails.get('canLogIn') === true ||
+    contactDetails.get('canLogIn') === 1 ||
+    DEFAULT_VALUES.canLogIn,
   userId: contactDetails.get('userId') || undefined,
 })
 
@@ -118,7 +121,7 @@ const enhance = compose(
   }),
   withHandlers({
     onEmailBlur: ({ onEmailBlur }) => event => {
-      onEmailBlur(event.target.value)
+      if (event.target.value !== '') onEmailBlur(event.target.value)
     },
     onCountryIdChange: ({
       onCountryIdChange,

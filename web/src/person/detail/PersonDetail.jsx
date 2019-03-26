@@ -55,14 +55,14 @@ const enhance = compose(
   connect(
     (state, props) => {
       const person = state.person.items.byId.get(props.match.params.personId)
-      const prefecthUser = person && person.get('userId') > 0
+      const prefillUser = person && person.get('userId') > 0
       return {
         editable: isEditable(state.user, person),
         person,
         canLogIn: person && person.get('canLogIn'),
         user: state.user,
-        emailValue: state.person.get('email'),
-        prefecthUser,
+        emailValue: person && person.get('email'),
+        prefillUser,
         partnersAndJobFunctionsForSelectList: state.jobs.get(
           'partnersAndJobFunctionsForSelectList'
         ),
@@ -118,7 +118,8 @@ export class PersonDetail extends PureComponent {
   }
 
   handleEmailBlur = value => {
-    this.props.emailValueBlur(value)
+    const { person } = this.props
+    this.props.emailValueBlur(value, person.get('id'))
   }
 
   handleFetchPartnersAndJobFunctions = ({
@@ -177,8 +178,8 @@ export class PersonDetail extends PureComponent {
     const userIsAdmin = user.jwt.permissions.includes('person:admin')
     const loading = !person || person.get('loaded') !== true
     const isUser = !person || person.get('canLogIn') || undefined
-    const shouldPrefetch = !person || person.get('userId') > 0
-
+    const shouldPrefill = !person || person.get('userId') > 0
+    const emailValue = (person && person.get('email')) || ''
     return (
       <div className={styles.Container}>
         <Helmet title={formatMessage(messages.title)} />
@@ -227,7 +228,8 @@ export class PersonDetail extends PureComponent {
                     <LoginDetailsForm
                       intl={intl}
                       loading={loading}
-                      shouldPrefetch={shouldPrefetch}
+                      shouldPrefill={shouldPrefill}
+                      emailValue={emailValue}
                       loginDetails={loginDetails}
                       onSubmit={this.saveLoginDetails}
                     />

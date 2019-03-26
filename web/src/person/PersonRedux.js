@@ -71,12 +71,16 @@ export function personCanLogIn(canLogIn, personId) {
     dispatch(transformToUser(canLogIn, personId))
   }
 }
-export function emailValueBlur(value) {
+export function emailValueBlur(value, personId) {
   return dispatch => {
-    dispatch(() => ({
-      type: types.PREFETCH_EMAIL,
-      value,
-    }))
+    dispatch(prefillEmailValue(value, personId))
+  }
+}
+function prefillEmailValue(email, personId) {
+  return {
+    type: types.PREFETCH_EMAIL,
+    email,
+    personId,
   }
 }
 export function fetchPersons(filtersParams, sortCol, sortDir, page, pageSize) {
@@ -381,6 +385,13 @@ export default function personReducer(state = initialState, action) {
       return state.withMutations(mutState => {
         const immutItem = Immutable.fromJS({ ...action.item, loaded: true })
         mutState.set('items', receiveItem(mutState.items, immutItem))
+      })
+    case types.PREFETCH_EMAIL:
+      return state.withMutations(mutState => {
+        const currentState = state.items.byId
+          .get(action.personId)
+          .set('email', action.email)
+        mutState.set('items', receiveItem(mutState.items, currentState))
       })
     case types.RECEIVE_UPDATED_SINGLE_PERSON_LOGIN_DETAILS:
       return state.withMutations(mutState => {
