@@ -411,9 +411,44 @@ const routes = [
                 resultCategory2ExternalId: Joi.string()
                   .allow(null)
                   .description('Category of the second result'),
-                resultWorkflowStatusExternalId: Joi.string()
+                workflowStatus: Joi.object()
+                  .description('Current workflow status of the result')
+                  .keys({
+                    changedOn: Joi.date().description(
+                      'Date of the latest change to the workflow status'
+                    ),
+                    externalId: Joi.string().description(
+                      'External ID of the workflow status'
+                    ),
+                    i18nKey: Joi.string().description(
+                      'i18nKey ID of the workflow status'
+                    ),
+                    name: Joi.string().description(
+                      'Name of the workflow status'
+                    ),
+                    reason: Joi.string()
+                      .description(
+                        'Reason for the latest workflow status change'
+                      )
+                      .allow(null, ''),
+                  }),
+                treatmentStatus: Joi.object()
                   .allow(null)
-                  .description('Current workflow status of the result'),
+                  .description('Current treatment status of the result')
+                  .keys({
+                    changedOn: Joi.date().description(
+                      'Date of the latest change to the treatment status'
+                    ),
+                    externalId: Joi.string().description(
+                      'External ID of the treatment status'
+                    ),
+                    i18nKey: Joi.string().description(
+                      'i18nKey ID of the treatment status'
+                    ),
+                    name: Joi.string().description(
+                      'Name of the treatment status'
+                    ),
+                  }),
                 patientData: Joi.object()
                   .allow(null)
                   .description('Data about the patient'),
@@ -443,28 +478,26 @@ const routes = [
                 errorNotes: Joi.string()
                   .allow(null)
                   .description('Contains any details about the error'),
-                sampleId: Joi.string()
-                  .allow(null)
-                  .description('Sample ID'),
-                sampleGroup: Joi.string()
-                  .allow(null)
-                  .description('The group that the sample belongs to (if any)'),
-                sampleCollectedOn: Joi.date()
-                  .allow(null)
-                  .description('When the sample was collected'),
-                sampleOriginSiteExternalId: Joi.string()
-                  .allow(null)
-                  .description(
-                    'Unique ID of the site where the sample was taken'
-                  ),
-                sampleOriginSiteName: Joi.string()
-                  .allow(null)
-                  .description('Name of the site where the sample was taken'),
-                sampleTypeName: Joi.string()
-                  .allow(null)
-                  .description(
-                    'Type of the sample (DBS or Sputum, for example)'
-                  ),
+                sample: Joi.object()
+                  .description('The sample that the result is based on')
+                  .keys({
+                    id: Joi.date().description('ID of the sample'),
+                    collectedOn: Joi.date().description(
+                      'When the sample was collected'
+                    ),
+                    group: Joi.string().description(
+                      'The group of samples that this sample is a part of'
+                    ),
+                    type: Joi.string().description(
+                      'Type of the sample ("DBS", "Sputum", etc.)'
+                    ),
+                    originSite: Joi.object()
+                      .description('The site where the sample was taken')
+                      .keys({
+                        externalId: Joi.string().description('ID of the site'),
+                        name: Joi.string().description('Name of the site'),
+                      }),
+                  }),
               })
             ),
         }),

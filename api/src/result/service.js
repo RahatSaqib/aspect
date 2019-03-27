@@ -1,6 +1,7 @@
 const Boom = require('boom')
 const _ = require('lodash')
 const dateFormat = require('date-fns/format')
+const { addHours } = require('date-fns')
 
 const {
   knex,
@@ -271,8 +272,28 @@ async function getDownloadResultsList(query, auth) {
     .leftJoin('Sample as sp', 'r.sampleId', 'sp.id')
     .leftJoin('SampleType as stp', 'sp.sampleTypeId', 'stp.id')
     .leftJoin('Site as so', 'sp.originSiteId', 'so.id')
-    .leftJoin('ResultWorkflowStatus as rs', 'r.resultWorkflowStatusId', 'rs.id')
     .leftJoin('Site as si', 'r.siteId', 'si.id')
+    .leftJoin(
+      knex
+        .select('resultId')
+        .max('changedOn as maxChangedOn')
+        .from('ResultWorkflowLog')
+        .groupBy('resultId')
+        .as('wflMax'),
+      'wflMax.resultId',
+      'r.id'
+    )
+    .leftJoin('ResultWorkflowLog as wfl', function() {
+      this.on('wfl.resultId', 'wflMax.resultId').on(
+        'wfl.changedOn',
+        'wflMax.maxChangedOn'
+      )
+    })
+    .leftJoin(
+      'ResultWorkflowStatus as rs',
+      'wfl.resultWorkflowStatusId',
+      'rs.id'
+    )
     .modify((queryBuilder, params) => {
       if (params.minUpdatedOn) {
         queryBuilder.where('r.updatedOn', '>=', params.minUpdatedOn)
@@ -307,7 +328,11 @@ async function getDownloadResultsList(query, auth) {
       'd.name as deviceName',
       'rc1.externalId as resultCategory1ExternalId',
       'rc2.externalId as resultCategory2ExternalId',
+      'rs.name as resultWorkflowStatusName',
       'rs.externalId as resultWorkflowStatusExternalId',
+      'rs.i18nKey as resultWorkflowI18nKey',
+      'wfl.reason as resultWorkflowLogReason',
+      'wfl.changedOn as resultWorkflowLogChangedOn',
       'r.patientData',
       'r.resultData',
       'r.formData',
@@ -328,7 +353,9 @@ async function getDownloadResultsList(query, auth) {
   // return result when both queries are finished
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
 
-  _.each(data, d => {
+  // format dates and properties
+  let i = 0
+  data.map(d => {
     d.startedOn = returnIso8601StringWithoutTimeZoneOffset(d.startedOn)
     d.endedOn = returnIso8601StringWithoutTimeZoneOffset(d.endedOn)
 
@@ -343,6 +370,57 @@ async function getDownloadResultsList(query, auth) {
     if (d.formData) {
       d.formData = JSON.parse(d.formData)
     }
+
+    d.sample = {
+      id: d.sampleId,
+      collectedOn: d.sampleCollectedOn,
+      group: d.sampleGroup,
+      type: d.sampleTypeName,
+      originSite: {
+        externalId: d.sampleOriginSiteExternalId,
+        name: d.sampleOriginSiteName,
+      },
+    }
+    delete d.sampleId
+    delete d.sampleCollectedOn
+    delete d.sampleGroup
+    delete d.sampleTypeName
+    delete d.sampleOriginSiteExternalId
+    delete d.sampleOriginSiteName
+
+    d.workflowStatus = {
+      changedOn: d.resultWorkflowLogChangedOn,
+      externalId: d.resultWorkflowStatusExternalId,
+      i18nKey: d.resultWorkflowI18nKey,
+      name: d.resultWorkflowStatusName,
+      reason: d.resultWorkflowLogReason,
+    }
+    delete d.resultWorkflowLogChangedOn
+    delete d.resultWorkflowStatusExternalId
+    delete d.resultWorkflowI18nKey
+    delete d.resultWorkflowStatusName
+    delete d.resultWorkflowLogReason
+
+    // TODO: Use treatment status when implemented
+    if (i % 5 === 0) {
+      d.treatmentStatus = {
+        changedOn: addHours(d.endedOn, 72),
+        externalId: 'OnTreatment',
+        i18nKey: 'ResultTreatmentStatusOnTreatment',
+        name: 'On Treatment',
+      }
+    } else if (i % 3 === 0) {
+      d.treatmentStatus = {
+        changedOn: addHours(d.endedOn, 1),
+        externalId: 'AwaitingTreatment',
+        i18nKey: 'ResultTreatmentStatusAwaitingTreatment',
+        name: 'Awaiting Treatment',
+      }
+    } else {
+      d.treatmentStatus = null
+    }
+    i += 1
+    return d
   })
 
   const result = {
