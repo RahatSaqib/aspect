@@ -385,6 +385,7 @@ export default function personReducer(state = initialState, action) {
       return state.withMutations(mutState => {
         const immutItem = Immutable.fromJS({ ...action.item, loaded: true })
         mutState.set('items', receiveItem(mutState.items, immutItem))
+        console.log(action.item)
       })
     case types.PREFETCH_EMAIL:
       return state.withMutations(mutState => {

@@ -61,7 +61,6 @@ const getInitialValues = loginDetails => ({
 
 const enhance = compose(
   pure,
-  // withStyles(styles),
   lifecycle({
     componentWillMount() {
       const onChange = values => this.setState({ values })
