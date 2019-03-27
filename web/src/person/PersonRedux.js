@@ -23,7 +23,7 @@ export const types = {
   CAN_LOG_IN_PERSON: 'CAN_LOG_IN_PERSON',
   RECEIVE_PERSONS: 'RECEIVE_PERSONS',
   REJECTED_PERSONS: 'REJECTED_PERSONS',
-  PREFETCH_EMAIL: 'PREFETCH_EMAIL',
+  PREFILL_EMAIL: 'PREFILL_EMAIL',
   REQUEST_SINGLE_PERSON: 'REQUEST_SINGLE_PERSON',
   RECEIVE_SINGLE_PERSON: 'RECEIVE_SINGLE_PERSON',
 
@@ -78,7 +78,7 @@ export function emailValueBlur(value, personId) {
 }
 function prefillEmailValue(email, personId) {
   return {
-    type: types.PREFETCH_EMAIL,
+    type: types.PREFILL_EMAIL,
     email,
     personId,
   }
@@ -385,9 +385,8 @@ export default function personReducer(state = initialState, action) {
       return state.withMutations(mutState => {
         const immutItem = Immutable.fromJS({ ...action.item, loaded: true })
         mutState.set('items', receiveItem(mutState.items, immutItem))
-        console.log(action.item)
       })
-    case types.PREFETCH_EMAIL:
+    case types.PREFILL_EMAIL:
       return state.withMutations(mutState => {
         const currentState = state.items.byId
           .get(action.personId)
