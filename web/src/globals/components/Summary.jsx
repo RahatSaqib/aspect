@@ -45,6 +45,13 @@ Summary.propTypes = {
     PropTypes.string,
     PropTypes.instanceOf(Element),
     PropTypes.object,
+    PropTypes.arrayOf(
+      PropTypes.shape({
+        description: PropTypes.string,
+        to: PropTypes.string,
+        action: PropTypes.string,
+      })
+    ),
   ]).isRequired,
   to: PropTypes.string,
   action: PropTypes.string,

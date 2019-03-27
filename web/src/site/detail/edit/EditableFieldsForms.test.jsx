@@ -32,6 +32,7 @@ describe('EditableFieldsForm Component', () => {
       timezone: 'Time Zone',
       zip: 'Zip',
     },
+    updateLatLongFromFormAddress: () => {},
     handlesubmit: () => {},
     presitine: false,
     submiting: false,
