@@ -17,7 +17,6 @@ class DataProcessor {
   constructor(request, messageContext) {
     this.name = this.constructor.name
     this.id = null
-    // TODO: Set this timeout back to 1 minute
     this.timeoutMilliseconds = 60000
     this.timeoutMessage = 'Timeout waiting for raw message to be handled'
     this.request = request
