@@ -3,7 +3,7 @@ const Boom = require('boom')
 const { query, knex, filterParams, sortPageParams } = require('../db')
 const userService = require('../auth/service')
 const { transformGeographyFromUpdates } = require('../geography/service')
-const { revokeUsersToken } = require('../auth/service')
+const { revokeUsersToken, lockedOutUser } = require('../auth/service')
 
 async function listPeople(request) {
   const { query } = request
@@ -160,6 +160,7 @@ async function savePerson(request, updatablePersonFields) {
 
   if (Object.prototype.hasOwnProperty.call(changedFields, 'canLogIn')) {
     revokeUsersToken(personDetails.userId, !changedPersonFields.canLogIn)
+    lockedOutUser(personDetails.userId, !changedPersonFields.canLogIn)
   }
 
   const response = await showPerson(request)

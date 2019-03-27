@@ -339,7 +339,7 @@ async function getChangedFields(payload, existingRecord) {
     }
   }
   if (
-    payload.userLockedOut !== undefined &&
+    payload.userLockedOut &&
     payload.userLockedOut !== existingRecord.lockedOut
   ) {
     changedFields.lockedOut = payload.userLockedOut
@@ -546,7 +546,7 @@ async function updateUsernameAndPasswordForPerson(request) {
     )
     responseData.username = userLinkedToPerson.name
   } else {
-    await query('Insert new user details')
+    const [insertedUserId] = await query('Insert new user details')
       .from('User')
       .insert({
         name: payload.newUsername,
@@ -559,6 +559,12 @@ async function updateUsernameAndPasswordForPerson(request) {
         lockedOut: payload.userLockedOut || 0,
         failedPasswordAttempts: 0,
         legacyPassword: 0,
+      })
+    await query('update person for details')
+      .from('Person')
+      .where('id', params.personId)
+      .update({
+        userId: insertedUserId,
       })
 
     responseData.changedFields = ['name', 'password', 'lockedOut']
@@ -644,6 +650,15 @@ async function revokeUsersToken(userId, revoke) {
       revoked: revoke,
     })
 }
+// Lockedout and grant access to login to specific user.
+async function lockedOutUser(userId, lockedOut) {
+  await query('change Lockout state for the specific user ')
+    .from('User')
+    .where({ id: userId })
+    .update({
+      lockedOut,
+    })
+}
 module.exports = {
   getUser,
   authenticate,
@@ -658,4 +673,5 @@ module.exports = {
   getLicense,
   acceptLicense,
   revokeUsersToken,
+  lockedOutUser,
 }
