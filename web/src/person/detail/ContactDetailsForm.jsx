@@ -1,3 +1,5 @@
+import { connect } from 'react-redux'
+import Immutable from 'immutable'
 import _ from 'lodash'
 import classnames from 'classnames/bind'
 import React from 'react'
@@ -6,6 +8,8 @@ import Button from '@material-ui/core/Button'
 import TextField from '@material-ui/core/TextField'
 
 import recomposeForm from '../../components/recomposeForm'
+import ConnectedTagInput from '../../tag/ConnectedTagInput'
+import { fetchTags, updateTags } from '../../tag/TagRedux'
 import validateEmailAddress from '../../shared/utils/validate'
 import DialCodeDropdownInput from '../../filter/hardcoded/DialCodeDropdownInput'
 import PartnerSelectField from '../../filter/partner/PartnerSelectField'
@@ -71,24 +75,22 @@ const getInitialValues = contactDetails => ({
 
 const enhance = compose(
   pure,
-  lifecycle({
-    componentWillMount() {
-      const onChange = values => this.setState({ values })
+  connect(
+    (state, props) => {
+      const personTags = state.tag.tags.getIn(
+        ['person', props.contactDetails.get('id')],
+        Immutable.List()
+      )
 
-      this.setState({
-        onChange,
-        values: getInitialValues(this.props.contactDetails),
-      })
-    },
-
-    componentWillReceiveProps(nextProps) {
-      const { contactDetails } = nextProps
-      if (this.props.contactDetails !== contactDetails) {
-        // Re-initialize
-        this.state.onChange(getInitialValues(contactDetails))
+      return {
+        personTags,
       }
     },
-  }),
+    {
+      fetchTags,
+      updateTags,
+    }
+  ),
   recomposeForm({
     fields: [
       { fieldName: 'name', valueFromChangeEvent: it => it.target.value },
@@ -110,6 +112,12 @@ const enhance = compose(
     validate,
   }),
   withHandlers({
+    onLoadTags: ({ contactDetails, fetchTags }) => () => {
+      if (contactDetails.get('id')) {
+        fetchTags(contactDetails.get('id'), 'person')
+      }
+    },
+
     onCountryIdChange: ({
       onCountryIdChange,
       onStateIdChange,
@@ -123,6 +131,32 @@ const enhance = compose(
     onStateIdChange: ({ onStateIdChange, onLgaIdChange }) => stateId => {
       onLgaIdChange(undefined)
       onStateIdChange(stateId)
+    },
+
+    onPersonTagsChange: ({ updateTags }) => (qryId, qryType, tags) => {
+      updateTags(qryId, qryType, tags.join(','))
+    },
+  }),
+  lifecycle({
+    componentWillMount() {
+      const onChange = values => this.setState({ values })
+
+      this.setState({
+        onChange,
+        values: getInitialValues(this.props.contactDetails),
+      })
+    },
+
+    componentDidMount() {
+      this.props.onLoadTags()
+    },
+
+    componentDidUpdate(prevProps) {
+      const { contactDetails } = this.props
+      if (prevProps.contactDetails !== contactDetails) {
+        this.props.onLoadTags()
+        this.state.onChange(getInitialValues(contactDetails))
+      }
     },
   })
 )
@@ -149,6 +183,9 @@ export const ContactDetailsForm = ({
   onZipChange,
   onNotesChange,
   handleSubmit,
+  contactDetails,
+  personTags,
+  onPersonTagsChange,
 }) => (
   <form onSubmit={handleSubmit} className={cssClasses('Form')}>
     <div className={cssClasses('Form__Content')}>
@@ -345,6 +382,17 @@ export const ContactDetailsForm = ({
           />
         </section>
       )}
+      <section>
+        <h1>{intl.formatMessage(messages.tags)}</h1>
+        <ConnectedTagInput
+          allowCreate
+          label={intl.formatMessage(messages.chooseTags)}
+          onTagChange={onPersonTagsChange}
+          qryId={contactDetails.get('id')}
+          qryType="person"
+          value={personTags.toJS()}
+        />
+      </section>
     </div>
     <div className={cssClasses('Form__ActionRow')}>
       <Button
