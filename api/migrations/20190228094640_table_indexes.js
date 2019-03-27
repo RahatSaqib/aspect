@@ -11,6 +11,14 @@ const tablesWithUniqueKeys = [
   'MessageType',
   'IssueType',
 ]
+
+const tempTables = [
+  // 'IssueResolutionTrigger',
+  // 'IssueEscalationTrigger',
+  'NotificationType',
+  // 'MessageType',
+  'IssueType',
+]
 const messageTables = ['AlertMessage', 'EmailMessage', 'SmsMessage']
 
 async function up(knex) {
@@ -39,7 +47,7 @@ async function up(knex) {
 
 async function down(knex) {
   await Promise.all(
-    _.map(tablesWithUniqueKeys, async tableName => {
+    _.map(tempTables, async tableName => {
       await dropUniqueKey(knex, tableName)
     })
   )

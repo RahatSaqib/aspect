@@ -83,7 +83,7 @@ async function down(knex) {
 
   await knex.schema.table('SmsTemplate', smsTemplate => {
     smsTemplate
-      .string('message', 1000)
+      .string('message', 2000)
       .notNullable()
       .alter()
   })
