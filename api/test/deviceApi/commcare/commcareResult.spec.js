@@ -14,7 +14,7 @@ const { assert } = chai
 
 const pluginPath = '/device/plugin/commcare'
 
-describe('CommCare Result API routes', () => {
+describe.only('CommCare Result API routes', () => {
   describe('admin result updates', () => {
     const context = createTestContext(server, {
       user: 'gates_rdt',
@@ -43,6 +43,8 @@ describe('CommCare Result API routes', () => {
           age: 28,
           gender: 'male',
         })
+        payload.form.phone_number = '12345678'
+
         await server
           .post(pluginPath)
           .auth('commcare_test', apiKey.token)
@@ -54,10 +56,12 @@ describe('CommCare Result API routes', () => {
         const { id: deviceId } = await getDeviceFromApiKey(knex, apiKey)
 
         let result = await getLastResult(knex, deviceId)
+
         let notification = await getLastNotification(knex, deviceId)
         assert.equal(result.id, '123')
         assert.equal(result.data.resultText, 'negative')
         assert.equal(result.data.hcwConfirmatoryResult, 'negative')
+        assert.equal(result.patient.phone, '+112345678')
         assert.equal(result.patient.gender, 'male')
         assert.equal(result.patient.age, 28)
         assert.equal(notification.issueType, 'ResultReceived')
