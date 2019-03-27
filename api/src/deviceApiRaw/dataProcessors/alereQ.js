@@ -13,7 +13,7 @@ class DefaultAlereQ extends AsynchronousDataProcessor {
   }
 
   async processRequest() {
-    await Promise.delay(100000)
+    await Promise.delay(1000)
     console.log(
       this.name,
       new Date(),

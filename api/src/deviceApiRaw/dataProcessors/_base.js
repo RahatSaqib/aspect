@@ -100,6 +100,7 @@ class DataProcessor {
         allowInfiniteListeners: true,
         bindingKey: `${this.id}`,
       }
+      // TODO: Set message expiry on these queues so that they aren't blocked
       this.listenerEndpoints = [
         {
           actions: {
@@ -113,8 +114,12 @@ class DataProcessor {
             DEVICE_RAW_MESSAGE_POSTED: {
               ...dataProcessorMessageHandlerSpec,
               handlerFunction: async () => {
-                await this.handlerFunction()
-                this.messageContext.deviceRawMessageProcessed(this.id)
+                try {
+                  await this.handlerFunction()
+                  this.messageContext.deviceRawMessageProcessed(this.id)
+                } catch (error) {
+                  this.messageContext.deviceRawMessageError(this.id, error)
+                }
                 await this.unsubscribe()
               },
               consumerTag: `${this.name}_DEVICE_RAW_MESSAGE_POSTED_${this.id}`,
@@ -236,6 +241,7 @@ class DataProcessor {
     await this.unsubscribe()
   }
 
+  // TODO: FIX: When the server is terminated, running data processors don't call this, leaving messages on the queue and blocking future data processors.
   async unsubscribe() {
     _.each(this.listenerEndpoints, (listenerEndpoint, index) => {
       _.each(listenerEndpoint.actions, (messageHandler, type) => {
