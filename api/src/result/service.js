@@ -332,13 +332,17 @@ async function getDownloadResultsList(query, auth) {
     .join(
       knex
         .select('resultId')
-        .max('changedOn')
+        .max('changedOn as maxChangedOn')
         .from('ResultWorkflowLog')
         .whereIn('resultId', data.map(d => d.id))
         .groupBy('resultId')
         .as('rwlMax'),
-      'rwlMax.resultId',
-      'rwl.resultId'
+      function() {
+        this.on('rwl.resultId', 'rwlMax.resultId').on(
+          'rwl.changedOn',
+          'rwlMax.maxChangedOn'
+        )
+      }
     )
     .join('ResultWorkflowStatus as rws', 'rwl.resultWorkflowStatusId', 'rws.id')
     .select(
