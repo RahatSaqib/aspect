@@ -481,17 +481,24 @@ const routes = [
                 sample: Joi.object()
                   .description('The sample that the result is based on')
                   .keys({
-                    id: Joi.date().description('ID of the sample'),
-                    collectedOn: Joi.date().description(
-                      'When the sample was collected'
-                    ),
-                    group: Joi.string().description(
-                      'The group of samples that this sample is a part of'
-                    ),
-                    type: Joi.string().description(
-                      'Type of the sample ("DBS", "Sputum", etc.)'
-                    ),
+                    id: Joi.string()
+                      .allow(null)
+                      .description('ID of the sample'),
+                    collectedOn: Joi.date()
+                      .allow(null)
+                      .description('When the sample was collected'),
+                    group: Joi.string()
+                      .allow(null)
+                      .description(
+                        'The group of samples that this sample is a part of'
+                      ),
+                    type: Joi.string()
+                      .allow(null)
+                      .description(
+                        'Type of the sample ("DBS", "Sputum", etc.)'
+                      ),
                     originSite: Joi.object()
+                      .allow(null)
                       .description('The site where the sample was taken')
                       .keys({
                         externalId: Joi.string().description('ID of the site'),

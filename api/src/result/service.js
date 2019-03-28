@@ -273,27 +273,6 @@ async function getDownloadResultsList(query, auth) {
     .leftJoin('SampleType as stp', 'sp.sampleTypeId', 'stp.id')
     .leftJoin('Site as so', 'sp.originSiteId', 'so.id')
     .leftJoin('Site as si', 'r.siteId', 'si.id')
-    .leftJoin(
-      knex
-        .select('resultId')
-        .max('changedOn as maxChangedOn')
-        .from('ResultWorkflowLog')
-        .groupBy('resultId')
-        .as('wflMax'),
-      'wflMax.resultId',
-      'r.id'
-    )
-    .leftJoin('ResultWorkflowLog as wfl', function() {
-      this.on('wfl.resultId', 'wflMax.resultId').on(
-        'wfl.changedOn',
-        'wflMax.maxChangedOn'
-      )
-    })
-    .leftJoin(
-      'ResultWorkflowStatus as rs',
-      'wfl.resultWorkflowStatusId',
-      'rs.id'
-    )
     .modify((queryBuilder, params) => {
       if (params.minUpdatedOn) {
         queryBuilder.where('r.updatedOn', '>=', params.minUpdatedOn)
@@ -328,11 +307,6 @@ async function getDownloadResultsList(query, auth) {
       'd.name as deviceName',
       'rc1.externalId as resultCategory1ExternalId',
       'rc2.externalId as resultCategory2ExternalId',
-      'rs.name as resultWorkflowStatusName',
-      'rs.externalId as resultWorkflowStatusExternalId',
-      'rs.i18nKey as resultWorkflowI18nKey',
-      'wfl.reason as resultWorkflowLogReason',
-      'wfl.changedOn as resultWorkflowLogChangedOn',
       'r.patientData',
       'r.resultData',
       'r.formData',
@@ -353,25 +327,53 @@ async function getDownloadResultsList(query, auth) {
   // return result when both queries are finished
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
 
-  // format dates and properties
-  let i = 0
-  data.map(d => {
-    d.startedOn = returnIso8601StringWithoutTimeZoneOffset(d.startedOn)
-    d.endedOn = returnIso8601StringWithoutTimeZoneOffset(d.endedOn)
+  // get latest workflow log entry for every result:
+  const workflowLogs = await knex('ResultWorkflowLog as rwl')
+    .join(
+      knex
+        .select('resultId')
+        .max('changedOn')
+        .from('ResultWorkflowLog')
+        .whereIn('resultId', data.map(d => d.id))
+        .groupBy('resultId')
+        .as('rwlMax'),
+      'rwlMax.resultId',
+      'rwl.resultId'
+    )
+    .join('ResultWorkflowStatus as rws', 'rwl.resultWorkflowStatusId', 'rws.id')
+    .select(
+      'rwl.resultId',
+      'rws.name',
+      'rws.externalId',
+      'rws.i18nKey',
+      'rwl.reason',
+      'rwl.changedOn'
+    )
 
-    if (d.patientData) {
-      d.patientData = JSON.parse(d.patientData)
-    }
-
-    if (d.resultData) {
-      d.resultData = JSON.parse(d.resultData)
-    }
-
-    if (d.formData) {
-      d.formData = JSON.parse(d.formData)
-    }
-
-    d.sample = {
+  const transformedData = _.map(data, d => ({
+    id: d.id,
+    externalId: d.externalId,
+    startedOn: returnIso8601StringWithoutTimeZoneOffset(d.startedOn),
+    endedOn: returnIso8601StringWithoutTimeZoneOffset(d.endedOn),
+    createdOn: d.createdOn,
+    updatedOn: d.updatedOn,
+    longitude: d.longitude,
+    latitude: d.latitude,
+    assayExternalId: d.assayExternalId,
+    siteName: d.siteName,
+    deviceName: d.deviceName,
+    resultCategory1ExternalId: d.resultCategory1ExternalId,
+    resultCategory2ExternalId: d.resultCategory2ExternalId,
+    patientData: d.patientData ? JSON.parse(d.patientData) : null,
+    resultData: d.resultData ? JSON.parse(d.resultData) : null,
+    formData: d.formData ? JSON.parse(d.formData) : null,
+    researchId: d.researchId,
+    senderVersion: d.senderVersion,
+    senderOperator: d.senderOperator,
+    notes: d.notes,
+    errorCode: d.errorCode,
+    errorNotes: d.errorNotes,
+    sample: {
       id: d.sampleId,
       collectedOn: d.sampleCollectedOn,
       group: d.sampleGroup,
@@ -380,54 +382,28 @@ async function getDownloadResultsList(query, auth) {
         externalId: d.sampleOriginSiteExternalId,
         name: d.sampleOriginSiteName,
       },
-    }
-    delete d.sampleId
-    delete d.sampleCollectedOn
-    delete d.sampleGroup
-    delete d.sampleTypeName
-    delete d.sampleOriginSiteExternalId
-    delete d.sampleOriginSiteName
-
-    d.workflowStatus = {
-      changedOn: d.resultWorkflowLogChangedOn,
-      externalId: d.resultWorkflowStatusExternalId,
-      i18nKey: d.resultWorkflowI18nKey,
-      name: d.resultWorkflowStatusName,
-      reason: d.resultWorkflowLogReason,
-    }
-    delete d.resultWorkflowLogChangedOn
-    delete d.resultWorkflowStatusExternalId
-    delete d.resultWorkflowI18nKey
-    delete d.resultWorkflowStatusName
-    delete d.resultWorkflowLogReason
-
+    },
+    workflowStatus: _.omit(
+      _.find(workflowLogs, { resultId: d.id }),
+      'resultId'
+    ),
     // TODO: Use treatment status when implemented
-    if (i % 5 === 0) {
-      d.treatmentStatus = {
-        changedOn: addHours(d.endedOn, 72),
-        externalId: 'OnTreatment',
-        i18nKey: 'ResultTreatmentStatusOnTreatment',
-        name: 'On Treatment',
-      }
-    } else if (i % 3 === 0) {
-      d.treatmentStatus = {
-        changedOn: addHours(d.endedOn, 1),
-        externalId: 'AwaitingTreatment',
-        i18nKey: 'ResultTreatmentStatusAwaitingTreatment',
-        name: 'Awaiting Treatment',
-      }
-    } else {
-      d.treatmentStatus = null
-    }
-    i += 1
-    return d
-  })
+    treatmentStatus: {
+      changedOn: addHours(d.endedOn, d.id % 5 ? 4 : 72),
+      externalId: d.id % 5 ? 'AwaitingTreatment' : 'OnTreatment',
+      i18nKey:
+        d.id % 5
+          ? 'ResultTreatmentStatusAwaitingTreatment'
+          : 'ResultTreatmentStatusOnTreatment',
+      name: d.id % 5 ? 'Awaiting Treatment' : 'On Treatment',
+    },
+  }))
 
   const result = {
     ok: true,
     total,
-    length: data.length,
-    data,
+    length: transformedData.length,
+    data: transformedData,
   }
 
   return result
