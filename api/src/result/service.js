@@ -1,6 +1,7 @@
 const Boom = require('boom')
 const _ = require('lodash')
 const dateFormat = require('date-fns/format')
+const { addHours } = require('date-fns')
 
 const {
   knex,
@@ -271,7 +272,6 @@ async function getDownloadResultsList(query, auth) {
     .leftJoin('Sample as sp', 'r.sampleId', 'sp.id')
     .leftJoin('SampleType as stp', 'sp.sampleTypeId', 'stp.id')
     .leftJoin('Site as so', 'sp.originSiteId', 'so.id')
-    .leftJoin('ResultWorkflowStatus as rs', 'r.resultWorkflowStatusId', 'rs.id')
     .leftJoin('Site as si', 'r.siteId', 'si.id')
     .modify((queryBuilder, params) => {
       if (params.minUpdatedOn) {
@@ -307,7 +307,6 @@ async function getDownloadResultsList(query, auth) {
       'd.name as deviceName',
       'rc1.externalId as resultCategory1ExternalId',
       'rc2.externalId as resultCategory2ExternalId',
-      'rs.externalId as resultWorkflowStatusExternalId',
       'r.patientData',
       'r.resultData',
       'r.formData',
@@ -328,28 +327,87 @@ async function getDownloadResultsList(query, auth) {
   // return result when both queries are finished
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
 
-  _.each(data, d => {
-    d.startedOn = returnIso8601StringWithoutTimeZoneOffset(d.startedOn)
-    d.endedOn = returnIso8601StringWithoutTimeZoneOffset(d.endedOn)
+  // get latest workflow log entry for every result:
+  const workflowLogs = await knex('ResultWorkflowLog as rwl')
+    .join(
+      knex
+        .select('resultId')
+        .max('changedOn as maxChangedOn')
+        .from('ResultWorkflowLog')
+        .whereIn('resultId', data.map(d => d.id))
+        .groupBy('resultId')
+        .as('rwlMax'),
+      function() {
+        this.on('rwl.resultId', 'rwlMax.resultId').on(
+          'rwl.changedOn',
+          'rwlMax.maxChangedOn'
+        )
+      }
+    )
+    .join('ResultWorkflowStatus as rws', 'rwl.resultWorkflowStatusId', 'rws.id')
+    .select(
+      'rwl.resultId',
+      'rws.name',
+      'rws.externalId',
+      'rws.i18nKey',
+      'rwl.reason',
+      'rwl.changedOn'
+    )
 
-    if (d.patientData) {
-      d.patientData = JSON.parse(d.patientData)
-    }
-
-    if (d.resultData) {
-      d.resultData = JSON.parse(d.resultData)
-    }
-
-    if (d.formData) {
-      d.formData = JSON.parse(d.formData)
-    }
-  })
+  const transformedData = _.map(data, d => ({
+    id: d.id,
+    externalId: d.externalId,
+    startedOn: returnIso8601StringWithoutTimeZoneOffset(d.startedOn),
+    endedOn: returnIso8601StringWithoutTimeZoneOffset(d.endedOn),
+    createdOn: d.createdOn,
+    updatedOn: d.updatedOn,
+    longitude: d.longitude,
+    latitude: d.latitude,
+    assayExternalId: d.assayExternalId,
+    siteName: d.siteName,
+    deviceName: d.deviceName,
+    resultCategory1ExternalId: d.resultCategory1ExternalId,
+    resultCategory2ExternalId: d.resultCategory2ExternalId,
+    patientData: d.patientData ? JSON.parse(d.patientData) : null,
+    resultData: d.resultData ? JSON.parse(d.resultData) : null,
+    formData: d.formData ? JSON.parse(d.formData) : null,
+    researchId: d.researchId,
+    senderVersion: d.senderVersion,
+    senderOperator: d.senderOperator,
+    notes: d.notes,
+    errorCode: d.errorCode,
+    errorNotes: d.errorNotes,
+    sample: {
+      id: d.sampleId,
+      collectedOn: d.sampleCollectedOn,
+      group: d.sampleGroup,
+      type: d.sampleTypeName,
+      originSite: {
+        externalId: d.sampleOriginSiteExternalId,
+        name: d.sampleOriginSiteName,
+      },
+    },
+    workflowStatus: _.omit(
+      _.find(workflowLogs, { resultId: d.id }),
+      'resultId'
+    ),
+    // TODO: Use treatment status when implemented
+    treatmentStatus: {
+      changedOn: addHours(d.endedOn, d.id % 5 ? 4 : 72),
+      externalId: d.id % 5 ? 'AwaitingTreatment' : 'OnTreatment',
+      i18nKey:
+        d.id % 5
+          ? 'ResultTreatmentStatusAwaitingTreatment'
+          : 'ResultTreatmentStatusOnTreatment',
+      name: d.id % 5 ? 'Awaiting Treatment' : 'On Treatment',
+    },
+  }))
 
   const result = {
     ok: true,
     total,
-    length: data.length,
-    data,
+    length: transformedData.length,
+    data: transformedData,
   }
 
   return result
