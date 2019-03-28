@@ -95,6 +95,7 @@ const TagInput = ({
   onAdd,
   tagName,
   value: selectedItem,
+  noMatch,
 }) => {
   const [inputValue, setInputValue] = useState('')
   const [active, setActive] = useState(false)
@@ -149,6 +150,7 @@ const TagInput = ({
       onStateChange={handleStateChange}
       selectedItem={selectedItem}
       tagName={tagName}
+      noMatch={noMatch}
     >
       {({
         getInputProps,
@@ -158,66 +160,77 @@ const TagInput = ({
         inputValue,
         selectedItem,
         highlightedIndex,
-      }) => (
-        <div className={classNameValues.container}>
-          <Grid container spacing={4} alignItems="stretch">
-            {selectedItem.length > 0 && (
-              <Grid item>
-                {selectedItem.map(item => {
-                  const name = item[tagName]
-                  return (
-                    <Chip
-                      key={item.id}
-                      tabIndex={-1}
-                      label={name}
-                      deleteIcon={
-                        <ClearIcon className={classNameValues.deleteIcon} />
-                      }
-                      className={classNameValues.chip}
-                      onDelete={handleDelete(item)}
-                    />
-                  )
-                })}
-              </Grid>
-            )}
-            <Grid item className={classNameValues.inputContainer}>
-              <RootRef rootRef={popperNode}>
-                <Input
-                  fullWidth={fullWidth}
-                  {...getInputProps({
-                    onChange: handleInputChange,
-                    onKeyDown: handleInputKeyDown,
+      }) => {
+        const options = getSuggestions(
+          source,
+          selectedItem,
+          inputValue,
+          tagName
+        )
+        return (
+          <div className={classNameValues.container}>
+            <Grid container spacing={4} alignItems="stretch">
+              {selectedItem.length > 0 && (
+                <Grid item>
+                  {selectedItem.map(item => {
+                    const name = item[tagName]
+                    return (
+                      <Chip
+                        key={item.id}
+                        tabIndex={-1}
+                        label={name}
+                        deleteIcon={
+                          <ClearIcon className={classNameValues.deleteIcon} />
+                        }
+                        className={classNameValues.chip}
+                        onDelete={handleDelete(item)}
+                      />
+                    )
                   })}
-                />
-              </RootRef>
+                </Grid>
+              )}
+              <Grid item className={classNameValues.inputContainer}>
+                <RootRef rootRef={popperNode}>
+                  <Input
+                    fullWidth={fullWidth}
+                    {...getInputProps({
+                      onChange: handleInputChange,
+                      onKeyDown: handleInputKeyDown,
+                    })}
+                  />
+                </RootRef>
+              </Grid>
             </Grid>
-          </Grid>
-          <Popper
-            open={isOpen}
-            anchorEl={popperNode.current}
-            className={classNameValues.popper}
-            transition
-            popperOptions={{ placement: 'bottom-start' }}
-            {...(isOpen ? getMenuProps({}, { suppressRefError: true }) : {})}
-          >
-            {isOpen ? (
-              <Paper className={classNameValues.paper} square>
-                {getSuggestions(source, selectedItem, inputValue, tagName).map(
-                  (suggestion, index) =>
-                    renderSuggestion({
-                      suggestion,
-                      index,
-                      itemProps: getItemProps({ item: suggestion }),
-                      highlightedIndex,
-                      selectedItem,
-                      tagName,
-                    })
-                )}
-              </Paper>
-            ) : null}
-          </Popper>
-        </div>
-      )}
+            <Popper
+              open={isOpen}
+              anchorEl={popperNode.current}
+              className={classNameValues.popper}
+              transition
+              popperOptions={{ placement: 'bottom-start' }}
+              {...(isOpen ? getMenuProps({}, { suppressRefError: true }) : {})}
+            >
+              {isOpen ? (
+                <Paper className={classNameValues.paper} square>
+                  {options.length ? (
+                    options.map((suggestion, index) =>
+                      renderSuggestion({
+                        suggestion,
+                        index,
+                        itemProps: getItemProps({ item: suggestion }),
+                        highlightedIndex,
+                        selectedItem,
+                        tagName,
+                      })
+                    )
+                  ) : (
+                    <MenuItem>{noMatch}</MenuItem>
+                  )}
+                </Paper>
+              ) : null}
+            </Popper>
+          </div>
+        )
+      }}
     </Downshift>
   )
 }
@@ -231,6 +244,7 @@ TagInput.propTypes = {
   onDelete: PropTypes.func.isRequired,
   source: PropTypes.arrayOf(PropTypes.object),
   value: PropTypes.arrayOf(PropTypes.object),
+  noMatch: PropTypes.string.isRequired,
 }
 
 TagInput.defaultProps = {

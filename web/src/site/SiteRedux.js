@@ -223,7 +223,6 @@ function requestUpdatingSingleSite(siteId, data) {
 
 // received a updated single site
 function receiveUpdatedSingleSite(item) {
-  debugger
   return {
     type: types.RECEIVE_UPDATED_SINGLE_SITE,
     item,
@@ -306,7 +305,6 @@ export function updateLatLongFromFormAddress() {
     })
   }
 }
-
 /*
  * ---------------- Reducers -----------------
  */

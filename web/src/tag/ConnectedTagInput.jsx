@@ -84,6 +84,7 @@ ConnectedTagInput.propTypes = {
   onTagChange: PropTypes.func.isRequired,
   onAdd: PropTypes.func.isRequired,
   onDelete: PropTypes.func.isRequired,
+  tags: PropTypes.instanceOf(Immutable.List).isRequired,
   maxTags: PropTypes.number,
 }
 

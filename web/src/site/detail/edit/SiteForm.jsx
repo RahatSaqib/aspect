@@ -21,7 +21,6 @@ const SiteForm = props => {
   const {
     site,
     siteTags,
-    siteContacts,
     formatMessage,
     onSiteTagChange,
     updateLatLongFromFormAddress,
@@ -67,7 +66,7 @@ const SiteForm = props => {
     longitude: formatMessage(messages.fieldLongitude),
     latitude: formatMessage(messages.fieldLatitude),
     tags: formatMessage(messages.fieldTags),
-    contacts: formatMessage(messages.fieldContact),
+    noMatch: formatMessage(messages.fieldNoMatchTags),
   }
   return (
     <div>

@@ -3,9 +3,10 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import classnames from 'classnames/bind'
 import Card from '@material-ui/core/Card'
+import Immutable from 'immutable'
 
 // Our own imports
-import Contacts from './Contacts'
+import Contacts from '../contacts/Contacts'
 import messages from '../messages'
 import { Site } from '../../SiteRedux'
 import Summary from '../../../globals/components/Summary'
@@ -22,7 +23,6 @@ const SiteDetailProfile = ({
   location,
   match,
   disabled,
-  onSiteTagChange, //del
 }) => {
   const fields = [
     {
@@ -105,24 +105,10 @@ const SiteDetailProfile = ({
 
           <Contacts
             id={site.get('id')}
+            formatMessage={formatMessage}
             title={formatMessage(messages.fieldContact)}
             contacts={siteContacts}
-            onSiteTagChange={onSiteTagChange}
           />
-          {/* <Summary
-            title={formatMessage(messages.fieldContact)}
-            description={
-              site.get('contacts') &&
-              site
-                .get('contacts')
-                .toJS()
-                .map(contact => ({
-                  description: contact.name,
-                  to: `/browse/person/${contact.id}`,
-                }))
-            }
-            cols="1"
-          /> */}
         </Card>
       </section>
     </div>
@@ -141,6 +127,7 @@ SiteDetailProfile.propTypes = {
   match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   disabled: PropTypes.bool.isRequired,
   siteTags: PropTypes.arrayOf(PropTypes.object),
+  siteContacts: PropTypes.instanceOf(Immutable.List).isRequired,
 }
 
 export default SiteDetailProfile

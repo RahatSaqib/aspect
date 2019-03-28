@@ -83,4 +83,16 @@ export default defineMessages({
     id: 'pages.SiteDetail.buttonUpdate',
     defaultMessage: 'UPDATE',
   },
+  fieldNoContact: {
+    id: 'pages.SiteDetail.fieldNoContact',
+    defaultMessage: 'No contacts assigned to site',
+  },
+  fieldNoMatch: {
+    id: 'pages.SiteDetail.fieldNoMatch',
+    defaultMessage: 'No matching results found',
+  },
+  fieldNoMatchTags: {
+    id: 'pages.SiteDetail.fieldNoMatchTags',
+    defaultMessage: 'Press enter to add tag',
+  },
 })

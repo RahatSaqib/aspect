@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types'
 import React, { useEffect } from 'react'
-import _fp from 'lodash/fp'
 import Immutable from 'immutable'
 import { connect } from 'react-redux'
 
@@ -14,13 +13,12 @@ const ContactsTag = ({
   siteId,
   contacts,
   value,
-  onTagChange,
   fetchAvailablePersons,
   fetchUpdateSiteContacts,
   ...restProps
 }) => {
   useEffect(() => {
-    fetchAvailablePersons('person') // fetching contacts
+    fetchAvailablePersons('person')
   }, [])
 
   const contactsList = contacts
@@ -58,12 +56,12 @@ ContactsTag.defaultProps = {
 }
 
 ContactsTag.propTypes = {
+  contacts: PropTypes.instanceOf(Immutable.List).isRequired,
   fetchAvailablePersons: PropTypes.func.isRequired,
-  siteId: PropTypes.string.isRequired,
-  // value: PropTypes.arrayOf(PropTypes.string).isRequired,
-  // contacts: array of contacts
-  onTagChange: PropTypes.func.isRequired,
+  fetchUpdateSiteContacts: PropTypes.func.isRequired,
   identifier: PropTypes.string,
+  siteId: PropTypes.string.isRequired,
+  value: PropTypes.arrayOf(PropTypes.object).isRequired,
 }
 export default connect(mapStateToProps, {
   fetchAvailablePersons,

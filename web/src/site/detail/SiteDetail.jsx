@@ -153,6 +153,8 @@ SiteDetail.propTypes = {
   editable: PropTypes.bool.isRequired,
   site: PropTypes.objectOf(Site).isRequired,
   siteTags: PropTypes.instanceOf(Immutable.List).isRequired,
+  siteContacts: PropTypes.instanceOf(Immutable.List).isRequired,
+  onSiteTagChange: PropTypes.func.isRequired,
   fetchSingleSite: PropTypes.func.isRequired,
   updateSingleSiteFromForm: PropTypes.func.isRequired,
   fetchSiteContacts: PropTypes.func.isRequired,

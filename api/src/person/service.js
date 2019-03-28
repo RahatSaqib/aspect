@@ -106,16 +106,16 @@ async function unAssignContact(request) {
     return Boom.notFound()
   }
 
-  await knex('JobContext as jc')
-    .select()
-    .where({ jobId: personDetails.jobId, siteId })
-    .then(records => {
-      if (records.length) {
-        return knex('JobContext')
-          .where({ jobId: personDetails.jobId, siteId })
-          .del()
-      }
-    })
+  const contact = { jobId: personDetails.jobId, siteId }
+  const jcRecord = await knex('JobContext')
+    .where(contact)
+    .first()
+  if (!jcRecord) {
+    return Boom.notFound()
+  }
+  await knex('JobContext')
+    .where(contact)
+    .del()
 
   return { ok: true, data: await siteContacts(siteId) }
 }

@@ -403,7 +403,7 @@ function receiveUpdateSiteContacts(siteId, items) {
   }
 }
 
-// assign person with given person to site with siteId
+// (un)assign person with given person to site with siteId
 export function fetchUpdateSiteContacts(siteId, person, operation) {
   const path = operation === 'delete' ? 'unassign' : 'assign'
   return dispatch => {
@@ -518,7 +518,6 @@ export default function personReducer(state = initialState, action) {
         })
       )
     case types.RECEIVE_UPDATE_SITE_CONTACTS:
-    case types.RECEIVE_UPDATE_SITE_CONTACTS:
     case types.RECEIVE_SITE_CONTACTS:
       return state.setIn(
         ['siteContacts', action.siteId],
@@ -555,15 +554,6 @@ export default function personReducer(state = initialState, action) {
           .set('loaded', false)
         mutState.set('items', receiveItem(mutState.items, person))
       })
-    // case types.RECEIVE_UPDATE_SITE_CONTACTS:
-    //   return state.withMutations(mutState => {
-    //     const immutItem = Immutable.fromJS(action.itemd)
-    //     mutState.set('items', receiveItem(mutState.items, immutItem))
-    //   })
-    // return state.setIn(
-    //   ['site', 'items', action.siteId],
-    //   new Immutable.fromJS(action.items)
-    // )
     default:
       return state
   }

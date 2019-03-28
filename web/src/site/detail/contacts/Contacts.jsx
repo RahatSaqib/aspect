@@ -6,20 +6,16 @@ import Button from '@material-ui/core/Button'
 import FaExternalLink from 'react-icons/lib/fa/external-link'
 
 // Our own imports
-import { Unit } from '../../../components/pureGrids'
 import ContactsTag from './ContactTags'
+import messages from '../messages'
+import { Unit } from '../../../components/pureGrids'
 import { ReadOnlyField } from '../../../components/shared/ReadOnlyFields'
 
 const cssClasses = classnames.bind(
   require('../../../globals/components/Summary.css')
 )
 
-const Contacts = ({
-  id,
-  title,
-  contacts,
-  onSiteTagChange, // del
-}) => {
+const Contacts = ({ id, title, contacts, formatMessage }) => {
   const [edit, setEdit] = useState(false)
   const saveContacts = () => {
     setEdit(true)
@@ -40,9 +36,9 @@ const Contacts = ({
               <ContactsTag
                 siteId={id}
                 allowCreate
-                onTagChange={onSiteTagChange}
                 value={v}
                 identifier="name"
+                noMatch={formatMessage(messages.fieldNoMatch)}
               />
             )}
           />
@@ -65,7 +61,7 @@ const Contacts = ({
               </Fragment>
             ))
           ) : (
-            <i>No contacts assigned to site</i>
+            <i>{formatMessage(messages.fieldNoContact)}</i>
           )}
           <span className={cssClasses('Summary__Description__Action')}>
             <Button variant="contained" onClick={saveContacts}>
@@ -82,7 +78,7 @@ Contacts.propTypes = {
   id: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
   contacts: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  onSiteTagChange: PropTypes.func.isRequired,
+  formatMessage: PropTypes.func.isRequired,
 }
 
 export default Contacts
