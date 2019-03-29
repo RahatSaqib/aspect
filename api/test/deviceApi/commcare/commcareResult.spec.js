@@ -14,7 +14,7 @@ const { assert } = chai
 
 const pluginPath = '/device/plugin/commcare'
 
-describe.only('CommCare Result API routes', () => {
+describe('CommCare Result API routes', () => {
   describe('Check patient phone normalization malawi', () => {
     const context = createTestContext(server, {
       user: 'reporter_admin',
@@ -30,7 +30,7 @@ describe.only('CommCare Result API routes', () => {
       await context.createDeviceWithApiKey()
     })
     afterEach(context.afterEach)
-    it('should add and return device results', () => {
+    it('should add and return device results with normalized malawi phone', () => {
       runTest(async knex => {
         const { apiKey } = context
 
@@ -76,7 +76,7 @@ describe.only('CommCare Result API routes', () => {
       await context.createDeviceWithApiKey()
     })
     afterEach(context.afterEach)
-    it('should add and return device results', () => {
+    it('should add and return device results with a normalized myanmar phone', () => {
       runTest(async knex => {
         const { apiKey } = context
 
