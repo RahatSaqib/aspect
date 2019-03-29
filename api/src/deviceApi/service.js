@@ -604,17 +604,20 @@ async function createDeviceApiContext(
       'dtc.name as deviceTypeCategory',
       'c.abbreviation as countryAbbreviation'
     )
+  console.log(existingDeviceAndData)
+  console.log(auth.credentials.token)
   if (handlerOptions.transformInitialPayload && request.params.pluginName) {
     const transformInitialPayload = await loadPlugin(
       [request.params.pluginName],
       'transformInitialPayload'
     )
-    request.payload = await transformInitialPayload(
-      originalRequest,
-      existingDeviceAndData.countryAbbreviation
-        ? existingDeviceAndData.countryAbbreviation
-        : null
-    )
+
+    if (existingDeviceAndData && existingDeviceAndData.countryAbbreviation)
+      request.payload = await transformInitialPayload(
+        originalRequest,
+        existingDeviceAndData.countryAbbreviation
+      )
+    else request.payload = await transformInitialPayload(originalRequest)
   }
 
   let device = null
