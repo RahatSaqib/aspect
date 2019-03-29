@@ -33,81 +33,63 @@ describe.only('Person routes', () => {
     })
   })
 
-  describe('PUT', () => {
-    let contact
-    let duplicate
-    let site
-    beforeEach(async () =>
+  describe.only('PUT', () => {
+    let newContact
+    let defaultAssign
+    let siteId
+    before(async () =>
       run(async knex => {
         const dataConstraints = await getConstraints({ name: 'admin' })
-        ;[duplicate, contact] = await knex('Person as p')
-          .leftJoin('Geography as g', 'p.geographyId', 'g.id')
-          .leftOuterJoin('State as st', 'g.stateId', 'st.id')
-          .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
-          .leftJoin('Job as j', 'p.id', 'j.personId')
-          .leftJoin('JobContext as jc', 'jc.jobId', 'j.id')
-          .leftJoin('Site as s', 'jc.siteId', 's.id')
-          .modify(addConstraints, dataConstraints, {
-            geography: 'g',
-          })
-          .select('p.id', 'j.id as jobId')
-        site = await knex('Site as s')
-          .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
-          .leftOuterJoin('State as st', 'g.stateId', 'st.id')
-          .leftOuterJoin('Country as ct', 'g.countryId', 'ct.id')
-          .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
-          .modify(addConstraints, dataConstraints, {
-            site: 's',
-            geography: 'g',
-          })
-          .first('s.id')
-        console.log('site', site, duplicate, 'contact', contact)
+        ;[defaultAssign, newContact] = await getAvailableContacts(
+          knex,
+          dataConstraints
+        )
+        siteId = await getTestSiteId(knex, dataConstraints)
         await knex('JobContext').insert({
-          jobId: duplicate.jobId,
-          siteId: site.id,
+          jobId: defaultAssign.jobId,
+          siteId,
         })
+        console.log('curr', await knex('JobContext'), defaultAssign, newContact)
       })
     )
 
-    afterEach(() =>
+    after(() =>
       run(async knex => {
-        const jc = await knex('JobContext')
-        console.log('before', jc)
         await knex('JobContext')
           .where({
-            jobId: contact.jobId,
-            siteId: site.id,
+            jobId: newContact.jobId,
+            siteId,
           })
           .del()
 
         await knex('JobContext')
           .where({
-            jobId: duplicate.jobId,
-            siteId: site.id,
+            jobId: defaultAssign.jobId,
+            siteId,
           })
           .del()
-        console.log('after', jc)
+        console.log('after', await knex('JobContext'))
       })
     )
 
     describe('/person/assign/{siteId}', () => {
       it('Should assign contact to site', () => {
         server
-          .put(`${path}/assign/${site.id}`)
-          .send({ id: contact.id })
+          .put(`${path}/assign/${siteId}`)
+          .send({ id: newContact.id })
           .set('Authorization', `Bearer ${shared.token}`)
           .end((err, res) => {
+            res.body.data.some(contact =>
+              expect(contact).to.have.property('id', newContact.id)
+            )
             assert.equal(res.status, 200)
             assert.typeOf(res.body, 'Object')
-            res.body.data.some(contact =>
-              expect(contact).to.have.property('id', contact.id)
-            )
           })
       })
 
       it('Should return 400 for invalid data', () => {
         server
-          .put(`${path}/assign/${site.id}`)
+          .put(`${path}/assign/${siteId}`)
           .send({ id: 'Invalid' })
           .set('Authorization', `Bearer ${shared.token}`)
           .end((err, res) => {
@@ -117,7 +99,7 @@ describe.only('Person routes', () => {
       })
       it('Should return 404 for invalid person / site id', () => {
         server
-          .put(`${path}/assign/${site.id}`)
+          .put(`${path}/assign/${siteId}`)
           .send({ id: '1000' })
           .set('Authorization', `Bearer ${shared.token}`)
           .end((err, res) => {
@@ -131,12 +113,12 @@ describe.only('Person routes', () => {
       })
       it.skip('Should return 409 for already assigned contact', () => {
         server
-          .put(`${path}/assign/${site.id}`)
-          .send({ id: duplicate.id })
+          .put(`${path}/assign/${siteId}`)
+          .send({ id: defaultAssign.id })
           .set('Authorization', `Bearer ${shared.token}`)
           .end((err, res) => {
-            console.log('dup assign', res.body)
-            assert.equal(res.status, 409)
+            console.log('Duplicate assign', res.body)
+            // assert.equal(res.status, 409)
           })
       })
     })
@@ -144,24 +126,54 @@ describe.only('Person routes', () => {
     describe('/person/unassign/{siteId}', () => {
       it('Should remove contact from site', () => {
         server
-          .put(`${path}/unassign/${site.id}`)
-          .send({ id: duplicate.id })
+          .put(`${path}/unassign/${siteId}`)
+          .send({ id: defaultAssign.id })
           .set('Authorization', `Bearer ${shared.token}`)
           .end((err, res) => {
-            console.log('dup un', res.body)
-            // assert.equal(res.status, 409)
+            assert.equal(res.status, 200)
           })
       })
       it('Should return 404 if contact is not assigned to site', () => {
         server
-          .put(`${path}/unassign/${site.id}`)
-          .send({ id: contact.id })
+          .put(`${path}/unassign/${siteId}`)
+          .send({ id: newContact.id })
           .set('Authorization', `Bearer ${shared.token}`)
           .end((err, res) => {
-            console.log('un', res.body)
-            // assert.equal(res.status, 409)
+            assert.equal(res.status, 404)
           })
       })
     })
   })
 })
+
+// -----------------------------------
+// helper functions
+// -----------------------------------
+async function getTestSiteId(knex, dataConstraints) {
+  const { id: siteId } = await knex('Site as s')
+    .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
+    .leftOuterJoin('State as st', 'g.stateId', 'st.id')
+    .leftOuterJoin('Country as ct', 'g.countryId', 'ct.id')
+    .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
+    .modify(addConstraints, dataConstraints, {
+      site: 's',
+      geography: 'g',
+    })
+    .first('s.id')
+  return siteId
+}
+
+async function getAvailableContacts(knex, dataConstraints) {
+  const contacts = await knex('Person as p')
+    .leftJoin('Geography as g', 'p.geographyId', 'g.id')
+    .leftOuterJoin('State as st', 'g.stateId', 'st.id')
+    .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
+    .leftJoin('Job as j', 'p.id', 'j.personId')
+    .leftJoin('JobContext as jc', 'jc.jobId', 'j.id')
+    .leftJoin('Site as s', 'jc.siteId', 's.id')
+    .modify(addConstraints, dataConstraints, {
+      geography: 'g',
+    })
+    .select('p.id', 'j.id as jobId')
+  return contacts
+}
