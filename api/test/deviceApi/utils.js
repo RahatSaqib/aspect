@@ -484,6 +484,64 @@ class DeviceApiTestContext {
     })
   }
 
+  createDeviceWithApiKey() {
+    return run(async knex => {
+      const { userId } = await knex('User')
+        .where({ name: this.user })
+        .first('id as userId')
+
+      const clientToken = await this.requestClientToken({
+        user: this.user,
+        password: this.password,
+      })
+      const siteId = await createSite(knex, {
+        partner: this.partner,
+        user: this.user,
+        site: this.site,
+      })
+      // create second site for merge results
+      const site2Id = await createSite(knex, {
+        partner: this.partner,
+        user: this.user,
+      })
+      this.siteIds.push(siteId)
+      this.siteIds.push(site2Id)
+
+      const deviceId = await createDevice(knex, {
+        siteId,
+        type: this.type,
+        status: this.status,
+        baseConfig: this.baseConfig,
+      })
+      this.deviceId = deviceId
+      this.deviceIds.push(deviceId)
+      const apiKey = await this.createApiKey(knex, null, deviceId)
+      // save device id for the following tests
+      this.apiKey = apiKey
+      this.clientAuth = `Bearer ${clientToken}`
+      this.deviceAuth = `Bearer ${apiKey.token}`
+
+      await createResult(knex, {
+        deviceId,
+        userId,
+      })
+
+      await knex('DeviceApiKey')
+        .where({ token: apiKey.token })
+        .update({ deviceId })
+
+      this.checkpoint = `Device API Device Tests ${new Date()}`
+      await this.server
+        .post(devicePath)
+        .set('Authorization', this.deviceAuth)
+        .send({ checkpoint: this.checkpoint })
+        .then(res => {
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+        })
+    })
+  }
+
   requestClientToken({ user, password = 'test07' }) {
     return server
       .post('/api/auth')
@@ -501,7 +559,7 @@ class DeviceApiTestContext {
       })
   }
 
-  async createApiKey(knex, siteName = null) {
+  async createApiKey(knex, siteName = null, deviceId = null) {
     const { id: partnerId } = await knex('Partner')
       .where({ name: this.partner })
       .first('id')
@@ -529,6 +587,7 @@ class DeviceApiTestContext {
       createdBy: userId,
       updatedOn: this.now,
       updatedBy: userId,
+      deviceId,
     })
     this.apiKeysWithoutDevice.push(apiKey)
     return apiKey
