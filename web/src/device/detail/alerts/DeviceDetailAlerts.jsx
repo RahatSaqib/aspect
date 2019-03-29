@@ -3,7 +3,7 @@ import classnames from 'classnames/bind'
 import React from 'react'
 import Helmet from 'react-helmet'
 import DeviceDetailBackBar from '../DeviceDetailBackBar'
-import Summary from '../Summary'
+import Summary from '../../../globals/components/Summary'
 
 const cssClasses = classnames.bind(require('../DeviceDetail.css'))
 

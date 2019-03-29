@@ -652,7 +652,6 @@ async function createDeviceApiContext(
     deviceLogType,
     partnerId: partner.id,
     pluginNames: [partner.partnerPluginName, device.deviceTypePluginName],
-    credentials: auth.credentials,
   })
 
   // Add Device Log if requested

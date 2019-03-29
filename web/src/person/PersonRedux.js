@@ -21,6 +21,7 @@ import {
 export const types = {
   REQUEST_PERSONS: 'REQUEST_PERSONS',
   RECEIVE_PERSONS: 'RECEIVE_PERSONS',
+  REJECTED_PERSONS: 'REJECTED_PERSONS',
 
   REQUEST_SINGLE_PERSON: 'REQUEST_SINGLE_PERSON',
   RECEIVE_SINGLE_PERSON: 'RECEIVE_SINGLE_PERSON',
@@ -49,6 +50,12 @@ function receivePersons(json) {
     type: types.RECEIVE_PERSONS,
     items: json.data,
     total: json.total,
+  }
+}
+
+function rejectPersons() {
+  return {
+    type: types.REJECTED_PERSONS,
   }
 }
 
@@ -93,7 +100,9 @@ export function fetchPersons(filtersParams, sortCol, sortDir, page, pageSize) {
           ),
         },
       }
-    ).then(json => dispatch(receivePersons(json)))
+    )
+      .then(json => dispatch(receivePersons(json)))
+      .catch(() => dispatch(rejectPersons()))
   }
 }
 
@@ -325,6 +334,11 @@ export default function personReducer(state = initialState, action) {
         const immutList = Immutable.fromJS(action.items)
         mutState.set('items', receiveList(mutState.items, immutList))
         mutState.set('table', receiveTableItems(mutState.table, action.total))
+      })
+    case types.REJECTED_PERSONS:
+      return state.withMutations(mutState => {
+        mutState.set('items', mutState.get('items').clear())
+        mutState.set('table', mutState.get('table').clear())
       })
     case types.RECEIVE_SINGLE_PERSON:
     case types.RECEIVE_UPDATED_SINGLE_PERSON:

@@ -668,3 +668,66 @@ describe('Result Workflow Status Log', () => {
     })
   })
 })
+
+describe('Result download routes', () => {
+  const path = '/api/result/download'
+  describe('GET', () => {
+    shared.checkToken(server, path)
+
+    it('should return a paged list of results, including all result details', done => {
+      server
+        .get(`${path}?size=1`)
+        .set('Authorization', `Bearer ${shared.token}`)
+        .end((err, res) => {
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+
+          assert.property(res.body, 'ok')
+          assert.property(res.body, 'total')
+          assert.property(res.body, 'length')
+          assert.property(res.body, 'data')
+
+          assert.equal(res.body.ok, true)
+          assert.isAtLeast(res.body.total, 2)
+          assert.equal(res.body.length, 1)
+
+          assert.typeOf(res.body.data, 'array')
+          assert.equal(res.body.data.length, 1)
+
+          assert.property(res.body.data[0], 'id')
+          assert.property(res.body.data[0], 'externalId')
+          assert.property(res.body.data[0], 'startedOn')
+          assert.property(res.body.data[0], 'endedOn')
+          assert.property(res.body.data[0], 'createdOn')
+          assert.property(res.body.data[0], 'updatedOn')
+          assert.property(res.body.data[0], 'longitude')
+          assert.property(res.body.data[0], 'latitude')
+          assert.property(res.body.data[0], 'assayExternalId')
+          assert.property(res.body.data[0], 'siteName')
+          assert.property(res.body.data[0], 'deviceName')
+          assert.property(res.body.data[0], 'resultCategory1ExternalId')
+          assert.property(res.body.data[0], 'resultCategory2ExternalId')
+          assert.property(res.body.data[0], 'resultWorkflowStatusExternalId')
+          assert.property(res.body.data[0], 'patientData')
+          assert.property(res.body.data[0], 'resultData')
+          assert.property(res.body.data[0], 'formData')
+          assert.property(res.body.data[0], 'researchId')
+          assert.property(res.body.data[0], 'senderVersion')
+          assert.property(res.body.data[0], 'senderOperator')
+          assert.property(res.body.data[0], 'notes')
+          assert.property(res.body.data[0], 'errorCode')
+          assert.property(res.body.data[0], 'errorNotes')
+          assert.property(res.body.data[0], 'sampleId')
+          assert.property(res.body.data[0], 'sampleGroup')
+          assert.property(res.body.data[0], 'sampleCollectedOn')
+          assert.property(res.body.data[0], 'sampleOriginSiteExternalId')
+          assert.property(res.body.data[0], 'sampleOriginSiteName')
+          assert.property(res.body.data[0], 'sampleTypeName')
+
+          assert.equal(Object.keys(res.body.data[0]).length, 29)
+
+          done()
+        })
+    })
+  })
+})

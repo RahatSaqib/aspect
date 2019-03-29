@@ -78,6 +78,8 @@ describe('Site routes', () => {
           'country',
           'createdOn',
           'totalDevices',
+          'devices',
+          'contacts',
         ])
         server
           .put(`${path}/${siteId}`)
