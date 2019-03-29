@@ -87,16 +87,13 @@ async function assignContact(request) {
   }
 
   const newContact = { jobId, siteId }
-  const jcRecord = await knex('JobContext')
-    .where(newContact)
-    .first()
 
-  if (jcRecord) {
+  try {
+    const response = await knex('JobContext').insert(newContact)
+    if (response) return { ok: true, data: await siteContacts(siteId) }
+  } catch (e) {
     return Boom.conflict('Contact is already assigned to site')
   }
-  await knex('JobContext').insert(newContact)
-
-  return { ok: true, data: await siteContacts(siteId) }
 }
 
 async function unAssignContact(request) {

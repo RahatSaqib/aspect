@@ -7,7 +7,7 @@ const { getConstraints, addConstraints } = require('../../src/auth/constraints')
 const server = supertest.agent('http://localhost:8080')
 const { assert, expect } = chai
 
-describe.only('Person routes', () => {
+describe('Person routes', () => {
   const path = '/api/person'
   describe('GET /person', () => {
     shared.checkToken(server, path)
@@ -33,23 +33,14 @@ describe.only('Person routes', () => {
     })
   })
 
-  describe.only('PUT', () => {
-    let newContact
-    let defaultAssign
+  describe('PUT', () => {
+    let person
     let siteId
     before(async () =>
       run(async knex => {
         const dataConstraints = await getConstraints({ name: 'admin' })
-        ;[defaultAssign, newContact] = await getAvailableContacts(
-          knex,
-          dataConstraints
-        )
+        person = await getTestContact(knex, dataConstraints)
         siteId = await getTestSiteId(knex, dataConstraints)
-        await knex('JobContext').insert({
-          jobId: defaultAssign.jobId,
-          siteId,
-        })
-        console.log('curr', await knex('JobContext'), defaultAssign, newContact)
       })
     )
 
@@ -57,18 +48,10 @@ describe.only('Person routes', () => {
       run(async knex => {
         await knex('JobContext')
           .where({
-            jobId: newContact.jobId,
+            jobId: person.jobId,
             siteId,
           })
           .del()
-
-        await knex('JobContext')
-          .where({
-            jobId: defaultAssign.jobId,
-            siteId,
-          })
-          .del()
-        console.log('after', await knex('JobContext'))
       })
     )
 
@@ -76,18 +59,15 @@ describe.only('Person routes', () => {
       it('Should assign contact to site', () => {
         server
           .put(`${path}/assign/${siteId}`)
-          .send({ id: newContact.id })
+          .send({ id: person.id })
           .set('Authorization', `Bearer ${shared.token}`)
           .end((err, res) => {
-            res.body.data.some(contact =>
-              expect(contact).to.have.property('id', newContact.id)
-            )
             assert.equal(res.status, 200)
             assert.typeOf(res.body, 'Object')
+            res.body.data.some(contact =>
+              expect(contact).to.have.property('id', person.id)
+            )
           })
-      })
-
-      it('Should return 400 for invalid data', () => {
         server
           .put(`${path}/assign/${siteId}`)
           .send({ id: 'Invalid' })
@@ -96,8 +76,6 @@ describe.only('Person routes', () => {
             assert.equal(res.status, 400)
             assert.typeOf(res.body, 'Object')
           })
-      })
-      it('Should return 404 for invalid person / site id', () => {
         server
           .put(`${path}/assign/${siteId}`)
           .send({ id: '1000' })
@@ -110,15 +88,12 @@ describe.only('Person routes', () => {
               message: 'Not Found',
             })
           })
-      })
-      it.skip('Should return 409 for already assigned contact', () => {
         server
           .put(`${path}/assign/${siteId}`)
-          .send({ id: defaultAssign.id })
+          .send({ id: person.id })
           .set('Authorization', `Bearer ${shared.token}`)
           .end((err, res) => {
-            console.log('Duplicate assign', res.body)
-            // assert.equal(res.status, 409)
+            assert.equal(res.status, 409)
           })
       })
     })
@@ -127,19 +102,10 @@ describe.only('Person routes', () => {
       it('Should remove contact from site', () => {
         server
           .put(`${path}/unassign/${siteId}`)
-          .send({ id: defaultAssign.id })
+          .send({ id: person.id })
           .set('Authorization', `Bearer ${shared.token}`)
           .end((err, res) => {
             assert.equal(res.status, 200)
-          })
-      })
-      it('Should return 404 if contact is not assigned to site', () => {
-        server
-          .put(`${path}/unassign/${siteId}`)
-          .send({ id: newContact.id })
-          .set('Authorization', `Bearer ${shared.token}`)
-          .end((err, res) => {
-            assert.equal(res.status, 404)
           })
       })
     })
@@ -163,8 +129,8 @@ async function getTestSiteId(knex, dataConstraints) {
   return siteId
 }
 
-async function getAvailableContacts(knex, dataConstraints) {
-  const contacts = await knex('Person as p')
+async function getTestContact(knex, dataConstraints) {
+  const person = await knex('Person as p')
     .leftJoin('Geography as g', 'p.geographyId', 'g.id')
     .leftOuterJoin('State as st', 'g.stateId', 'st.id')
     .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
@@ -174,6 +140,6 @@ async function getAvailableContacts(knex, dataConstraints) {
     .modify(addConstraints, dataConstraints, {
       geography: 'g',
     })
-    .select('p.id', 'j.id as jobId')
-  return contacts
+    .first('p.id', 'j.id as jobId')
+  return person
 }
