@@ -319,6 +319,7 @@ async function getDownloadResultsList(query, auth) {
       'sp.externalId as sampleId',
       'r.sampleGroup',
       'sp.collectedOn as sampleCollectedOn',
+      'so.id as sampleOriginSiteId',
       'so.externalId as sampleOriginSiteExternalId',
       'so.name as sampleOriginSiteName',
       'stp.name as sampleTypeName'
@@ -382,25 +383,30 @@ async function getDownloadResultsList(query, auth) {
       collectedOn: d.sampleCollectedOn,
       group: d.sampleGroup,
       type: d.sampleTypeName,
-      originSite: {
-        externalId: d.sampleOriginSiteExternalId,
-        name: d.sampleOriginSiteName,
-      },
+      originSite: d.sampleOriginSiteId
+        ? {
+            externalId: d.sampleOriginSiteExternalId,
+            name: d.sampleOriginSiteName,
+          }
+        : null,
     },
     workflowStatus: _.omit(
       _.find(workflowLogs, { resultId: d.id }),
       'resultId'
     ),
     // TODO: Use treatment status when implemented
-    treatmentStatus: {
-      changedOn: addHours(d.endedOn, d.id % 5 ? 4 : 72),
-      externalId: d.id % 5 ? 'AwaitingTreatment' : 'OnTreatment',
-      i18nKey:
-        d.id % 5
-          ? 'ResultTreatmentStatusAwaitingTreatment'
-          : 'ResultTreatmentStatusOnTreatment',
-      name: d.id % 5 ? 'Awaiting Treatment' : 'On Treatment',
-    },
+    treatmentStatus:
+      d.id % 7 === 0
+        ? null
+        : {
+            changedOn: addHours(d.endedOn, d.id % 5 ? 4 : 72),
+            externalId: d.id % 5 ? 'AwaitingTreatment' : 'OnTreatment',
+            i18nKey:
+              d.id % 5
+                ? 'ResultTreatmentStatusAwaitingTreatment'
+                : 'ResultTreatmentStatusOnTreatment',
+            name: d.id % 5 ? 'Awaiting Treatment' : 'On Treatment',
+          },
   }))
 
   const result = {
