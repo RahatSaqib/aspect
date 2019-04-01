@@ -39,11 +39,6 @@ import { showAcknowledgement } from '../../appNotification/AppNotificationRedux'
 import messages from './messages'
 import styles from './PersonDetail.css'
 
-/* const mapState = (state, ownProps) => ({
-  canLogIn: state.canLogIn,
-  ...ownProps,
-}) */
-
 const enhance = compose(
   setPropTypes({
     match: PropTypes.shape({
