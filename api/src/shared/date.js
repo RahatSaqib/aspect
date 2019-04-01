@@ -10,7 +10,7 @@ function parseDateOrDefault(date, defaultValue = null) {
   if (date == null || date === '') {
     return defaultValue
   }
-  const parsed = dateFns.parse(date)
+  const parsed = dateFns.toDate(date)
   return dateFns.isValid(parsed) ? parsed : defaultValue
 }
 
@@ -24,7 +24,7 @@ function formatDateOrDefault(date, dateFormat, defaultValue = null) {
     return dateFns.format(date, dateFormat)
   }
 
-  return dateFns.format(date, 'YYYY-MM-DD')
+  return dateFns.format(date, 'yyyy-MM-dd')
 }
 
 function returnIso8601StringWithoutTimeZoneOffset(date) {

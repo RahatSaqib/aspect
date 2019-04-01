@@ -1,8 +1,8 @@
 const settings = {
   displayPreferences: {
-    dateFormat: 'D/M/YYYY',
+    dateFormat: 'd/M/yyyy',
     timeFormat: 'HH:mm:ss',
-    dateTimeFormat: 'D/M/YYYY HH:mm:ss',
+    dateTimeFormat: 'd/M/yyyy HH:mm:ss',
   },
 }
 

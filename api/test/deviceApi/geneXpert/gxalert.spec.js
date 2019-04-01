@@ -1,15 +1,15 @@
 const _ = require('lodash')
 const supertest = require('supertest')
 const chai = require('chai')
-const addYears = require('date-fns/add_years')
-const subDays = require('date-fns/sub_days')
-const addDays = require('date-fns/add_days')
-const addHours = require('date-fns/add_hours')
-const subHours = require('date-fns/sub_hours')
-const addMinutes = require('date-fns/add_minutes')
-const subMinutes = require('date-fns/sub_minutes')
-const addSeconds = require('date-fns/add_seconds')
-const setMilliseconds = require('date-fns/set_milliseconds')
+const addYears = require('date-fns/addYears')
+const subDays = require('date-fns/subDays')
+const addDays = require('date-fns/addDays')
+const addHours = require('date-fns/addHours')
+const subHours = require('date-fns/subHours')
+const addMinutes = require('date-fns/addMinutes')
+const subMinutes = require('date-fns/subMinutes')
+const addSeconds = require('date-fns/addSeconds')
+const setMilliseconds = require('date-fns/setMilliseconds')
 const dateFormat = require('date-fns/format')
 const Promise = require('bluebird')
 const { createGxAlertTestContext } = require('./gxalert_utils')
@@ -1978,7 +1978,7 @@ describe('Device API routes for GxAlert Device', () => {
             const inactiveMaintenanceNote = 'Router only has one SIM in it'
             const inactiveMaintenanceExpectedBackOnline = dateFormat(
               addDays(now, 15),
-              'YYYY-MM-DD'
+              'yyyy-MM-dd'
             )
             const waitForDeviceMaintenance = waitForAction(
               deviceMaintenance(deviceId)
@@ -2022,7 +2022,7 @@ describe('Device API routes for GxAlert Device', () => {
               const inactiveMaintenanceNote = 'Router cannot connect to VPN'
               const inactiveMaintenanceExpectedBackOnline = dateFormat(
                 addDays(now, 23),
-                'YYYY-MM-DD'
+                'yyyy-MM-dd'
               )
               const waitForDeviceMaintenance = waitForAction(
                 deviceMaintenance(deviceId)
@@ -2062,7 +2062,7 @@ describe('Device API routes for GxAlert Device', () => {
               const activeMaintenanceNote = 'VPN config was incorrect'
               const activeMaintenanceExpectedBackOnline = dateFormat(
                 now,
-                'YYYY-MM-DD'
+                'yyyy-MM-dd'
               )
               const waitForDeviceSeen = waitForAction(deviceSeen(deviceId))
               await postToDeviceApi(
@@ -2101,7 +2101,7 @@ describe('Device API routes for GxAlert Device', () => {
                 'Router cannot connect to the network'
               const inactiveMaintenanceExpectedBackOnline = dateFormat(
                 addDays(now, 16),
-                'YYYY-MM-DD'
+                'yyyy-MM-dd'
               )
               await postToDeviceApi(
                 _.merge(standardDevicePayload, {
@@ -2131,7 +2131,7 @@ describe('Device API routes for GxAlert Device', () => {
               const activeMaintenanceNote = 'VPN config was incorrect'
               const activeMaintenanceExpectedBackOnline = dateFormat(
                 now,
-                'YYYY-MM-DD'
+                'yyyy-MM-dd'
               )
               await postToDeviceApi(
                 _.merge(standardDevicePayload, {
@@ -2181,7 +2181,7 @@ describe('Device API routes for GxAlert Device', () => {
               const inactiveMaintenanceNote = 'Router cannot connect to VPN'
               const inactiveMaintenanceExpectedBackOnline = dateFormat(
                 addDays(now, 23),
-                'YYYY-MM-DD'
+                'yyyy-MM-dd'
               )
               const response = await postToDeviceApi(
                 _.merge(standardDevicePayload, {
@@ -2219,7 +2219,7 @@ describe('Device API routes for GxAlert Device', () => {
             const inactiveMaintenanceNote = 'Duplicate Router shows connected'
             const inactiveMaintenanceExpectedBackOnline = dateFormat(
               addDays(now, 19),
-              'YYYY-MM-DD'
+              'yyyy-MM-dd'
             )
             await waitForApproximately(100, 'milliseconds')
             await postToDeviceApi(

@@ -9,10 +9,10 @@ const {
   canViewInventories,
   canEditInventories,
 } = require('../auth/constraints')
-const addDays = require('date-fns/add_days')
-const subDays = require('date-fns/sub_days')
-const isAfter = require('date-fns/is_after')
-const differenceInDays = require('date-fns/difference_in_days')
+const addDays = require('date-fns/addDays')
+const subDays = require('date-fns/subDays')
+const isAfter = require('date-fns/isAfter')
+const differenceInDays = require('date-fns/differenceInDays')
 const { getUser, hasFeature } = require('../auth/service')
 const { processDynamicMessage } = require('../stringTemplate/service')
 

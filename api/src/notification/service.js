@@ -1,6 +1,6 @@
 const _ = require('lodash')
 const Promise = require('bluebird')
-const subMinutes = require('date-fns/sub_minutes')
+const subMinutes = require('date-fns/subMinutes')
 const { getJobConstraints, addConstraints } = require('../auth/constraints')
 const { notificationCreated } = require('./actions')
 const { alertMessageCreated } = require('../alert/actions')

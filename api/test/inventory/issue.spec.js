@@ -1,7 +1,7 @@
 const _ = require('lodash')
 const { addDays, subDays } = require('date-fns')
 const { assert, expect } = require('chai')
-const subHours = require('date-fns/sub_hours')
+const subHours = require('date-fns/subHours')
 
 const { queuePurge } = require('../utils/mqUtils')
 const { run } = require('../../src/db')
