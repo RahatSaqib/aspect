@@ -124,7 +124,8 @@ async function authenticate(request) {
     payload.clientName,
     clientId,
     refreshToken,
-    now
+    now,
+    payload.clientType
   )
 
   await query('Update failed password attempts to 0')
@@ -139,7 +140,7 @@ async function authenticate(request) {
   const accessToken = await getAccessToken(user)
   const displayPreferences = await getDisplayPreferences(user)
 
-  return {
+  const response = {
     access: accessToken,
     refresh: refreshToken,
     clientId,
@@ -147,10 +148,22 @@ async function authenticate(request) {
     timezone: user.timezone || 'Eastern Standard Time',
     displayPreferences,
   }
+  return response
 }
 
-function setRefreshToken(userId, clientName, clientId, refreshToken, now) {
-  const expires = new Date(now.getTime() + 7 * 86400000) // 7 days from now
+function setRefreshToken(
+  userId,
+  clientName,
+  clientId,
+  refreshToken,
+  now,
+  clientType = 'Web'
+) {
+  const expiresTime =
+    clientName && clientName.includes('Reporter App')
+      ? 30 * 86400000
+      : 7 * 86400000
+  const expires = new Date(now.getTime() + expiresTime) // 7 days from now
   // upsert refresh token
   return query('Create new refresh token for the user').raw(
     'INSERT INTO RefreshToken set ? ON DUPLICATE KEY UPDATE ?',
@@ -162,6 +175,7 @@ function setRefreshToken(userId, clientName, clientId, refreshToken, now) {
         token: refreshToken,
         expires,
         createdOn: now,
+        clientType,
       },
       {
         token: refreshToken,
