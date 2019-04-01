@@ -34,7 +34,6 @@ const SELECT_SHOW_FIELDS = [
   'd.createdOn',
   'd.lastPingOn',
   'd.lastSeenOn as lastSeen',
-  'dt.name as type',
   'ds.name as status',
   'ds.token as statusToken',
   'dc.name as category',
@@ -193,14 +192,15 @@ async function getListDevices(query, auth) {
     }
 
     it.error = {
-      count: it.thisMonthErrors,
-      total: it.resultCountThisMonth,
+      count: it.thisMonthErrors || 0,
+      total: it.resultCountThisMonth || 0,
       rate: it.resultCountThisMonth
         ? it.thisMonthErrors / it.resultCountThisMonth
         : 0,
     }
+    delete it.thisMonthErrors
 
-    it.alerts = it.issueCategories
+    it.issueCategories = it.issueCategories
       ? it.issueCategories.split(',').map(key => ({ key }))
       : []
   })
@@ -260,13 +260,21 @@ async function getDeviceByDeviceId(request, fields = SELECT_SHOW_FIELDS) {
 
   device.configurationData = JSON.parse(device.configurationData) || {}
   device.deviceType = {
+    id: device.deviceTypeId,
     name: device.deviceTypeName,
+    externalId: device.deviceTypeExternalId,
     configurationDataSchema: JSON.parse(device.configurationDataSchema) || {},
     deviceOperationSchema: JSON.parse(device.deviceOperationSchema) || {},
   }
+  delete device.deviceTypeId
+  delete device.deviceTypeName
+  delete device.deviceTypeExternalId
+  delete device.configurationDataSchema
+  delete device.deviceOperationSchema
 
-  device.resultCountLastMonth = device.resultCount60 - device.resultCount30
-  device.errorCountLastMonth = device.errorCount60 - device.errorCount30
+  device.resultCountLastMonth =
+    device.resultCount60 - device.resultCountThisMonth
+  device.errorCountLastMonth = device.errorCount60 - device.errorCountThisMonth
 
   device.utilizationRateThisMonth = device.dailyCapacity
     ? device.resultCountThisMonth / (device.dailyCapacity * 30)

@@ -68,7 +68,7 @@ const DeviceTableRow = ({
     </TableCell>
     <TableCell className={cssClasses('TableCell--alerts')}>
       {device
-        .get('alerts')
+        .get('issueCategories')
         .map(it => (
           <ColoredButton
             key={it.get('key')}

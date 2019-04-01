@@ -391,7 +391,9 @@ export const DeviceDetailProfile = ({
   pageAt,
   pageSize,
 }) => {
-  const deviceName = `${device.get('type')} at ${device.get('siteName')}`
+  const deviceName = `${device.getIn(['deviceType', 'name'])} at ${device.get(
+    'siteName'
+  )}`
   const dailyCapacity = device.get('dailyCapacity')
   const resultCountThisMonth = device.get('resultCountThisMonth')
   const errorCountThisMonth = device.get('errorCountThisMonth')
@@ -413,9 +415,10 @@ export const DeviceDetailProfile = ({
             <Summary
               title={intl.formatMessage(messages.deviceType)}
               description={device.getIn(['deviceType', 'name'])}
-              to={`/browse/device?filters=deviceTypeId%3D${device.get(
-                'deviceTypeId'
-              )}`}
+              to={`/browse/device?filters=deviceTypeId%3D${device.getIn([
+                'deviceType',
+                'id',
+              ])}`}
             />
             <Summary
               title={intl.formatMessage(messages.status)}
