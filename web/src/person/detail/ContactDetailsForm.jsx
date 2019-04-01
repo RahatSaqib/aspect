@@ -91,26 +91,6 @@ const enhance = compose(
       updateTags,
     }
   ),
-  recomposeForm({
-    fields: [
-      { fieldName: 'name', valueFromChangeEvent: it => it.target.value },
-      { fieldName: 'title', valueFromChangeEvent: it => it.target.value },
-      { fieldName: 'email', valueFromChangeEvent: it => it.target.value },
-      { fieldName: 'email2', valueFromChangeEvent: it => it.target.value },
-      { fieldName: 'phone', valueFromChangeEvent: _.identity },
-      { fieldName: 'cell', valueFromChangeEvent: _.identity },
-      {
-        fieldName: 'lastPartnerId',
-        valueFromChangeEvent: _.identity,
-      },
-      { fieldName: 'countryId', valueFromChangeEvent: _.identity },
-      { fieldName: 'stateId', valueFromChangeEvent: _.identity },
-      { fieldName: 'lgaId', valueFromChangeEvent: _.identity },
-      { fieldName: 'zip', valueFromChangeEvent: it => it.target.value },
-      { fieldName: 'notes', valueFromChangeEvent: it => it.target.value },
-    ],
-    validate,
-  }),
   withHandlers({
     onLoadTags: ({ contactDetails, fetchTags }) => () => {
       if (contactDetails.get('id')) {
@@ -158,6 +138,26 @@ const enhance = compose(
         this.state.onChange(getInitialValues(contactDetails))
       }
     },
+  }),
+  recomposeForm({
+    fields: [
+      { fieldName: 'name', valueFromChangeEvent: it => it.target.value },
+      { fieldName: 'title', valueFromChangeEvent: it => it.target.value },
+      { fieldName: 'email', valueFromChangeEvent: it => it.target.value },
+      { fieldName: 'email2', valueFromChangeEvent: it => it.target.value },
+      { fieldName: 'phone', valueFromChangeEvent: _.identity },
+      { fieldName: 'cell', valueFromChangeEvent: _.identity },
+      {
+        fieldName: 'lastPartnerId',
+        valueFromChangeEvent: _.identity,
+      },
+      { fieldName: 'countryId', valueFromChangeEvent: _.identity },
+      { fieldName: 'stateId', valueFromChangeEvent: _.identity },
+      { fieldName: 'lgaId', valueFromChangeEvent: _.identity },
+      { fieldName: 'zip', valueFromChangeEvent: it => it.target.value },
+      { fieldName: 'notes', valueFromChangeEvent: it => it.target.value },
+    ],
+    validate,
   })
 )
 
