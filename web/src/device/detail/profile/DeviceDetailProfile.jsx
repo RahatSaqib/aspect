@@ -395,12 +395,8 @@ export const DeviceDetailProfile = ({
   const dailyCapacity = device.get('dailyCapacity')
   const resultCountThisMonth = device.get('resultCountThisMonth')
   const errorCountThisMonth = device.get('errorCountThisMonth')
-  const utilizationRateThisMonth = dailyCapacity
-    ? resultCountThisMonth / (dailyCapacity * 30)
-    : null
-  const errorRateThisMonth = resultCountThisMonth
-    ? errorCountThisMonth / resultCountThisMonth
-    : null
+  const utilizationRateThisMonth = device.get('utilizationRateThisMonth')
+  const errorRateThisMonth = device.get('errorRateThisMonth')
   return (
     <div>
       <Helmet title={deviceName} />
@@ -451,7 +447,7 @@ export const DeviceDetailProfile = ({
               description="TODO: Expires in 18 months"
               action={<Button variant="contained">Update</Button>}
             />
-            {dailyCapacity && (
+            {utilizationRateThisMonth !== null && (
               <Summary
                 title={
                   <AspectTooltip
@@ -493,7 +489,7 @@ export const DeviceDetailProfile = ({
                       )}: ${errorCountThisMonth} / ${resultCountThisMonth} = ${
                         errorRateThisMonth
                           ? intl.formatNumber(errorRateThisMonth)
-                          : intl.formatMessage(messages.noResults)
+                          : 0
                       }`}
                     </React.Fragment>
                   }
@@ -502,7 +498,7 @@ export const DeviceDetailProfile = ({
                 </AspectTooltip>
               }
               description={
-                resultCountThisMonth ? (
+                errorRateThisMonth !== null ? (
                   <ColoredNumber
                     number={errorRateThisMonth}
                     intl={intl}
