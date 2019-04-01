@@ -3,9 +3,11 @@ const Boom = require('boom')
 const { query, knex, filterParams, sortPageParams } = require('../db')
 const userService = require('../auth/service')
 const { transformGeographyFromUpdates } = require('../geography/service')
+const { addConstraints, getConstraints } = require('../auth/constraints')
 
 async function listPeople(request) {
-  const { query } = request
+  const { auth, query } = request
+  const dataConstraints = await getConstraints(auth.credentials)
 
   const personQuery = knex('Person as p')
     .leftJoin('Geography as g', 'p.geographyId', 'g.id')
@@ -29,6 +31,13 @@ async function listPeople(request) {
     .where('j.personId', '=', knex.raw('p.id'))
     .select(knex.raw('group_concat(jf.name separator "; ")'))
     .as('level')
+  const getTags = knex('Tag as t')
+    .innerJoin(`PersonTag as pt`, 't.id', 'pt.tagId')
+    .innerJoin('Partner as prt', 't.partnerId', 'prt.id')
+    .where('pt.personId', '=', knex.raw('p.id'))
+    .modify(addConstraints, dataConstraints, { partner: 'prt' })
+    .select(knex.raw(`group_concat(t.title separator ';')`))
+    .as('tags')
 
   // get rows
   const getItems = personQuery
@@ -39,7 +48,8 @@ async function listPeople(request) {
       'p.name',
       getJobFunctionNames,
       's.name as state',
-      'l.name as lga'
+      'l.name as lga',
+      getTags
     )
 
   // return result when both queries are finished

@@ -60,6 +60,10 @@ const messages = defineMessages({
       other {# contacts}
     }`,
   },
+  tags: {
+    id: 'pages.PersonList.tags',
+    defaultMessage: 'Tags',
+  },
 })
 
 const FILTERS_CONFIG = [
@@ -214,6 +218,11 @@ export const PersonList = ({
               {
                 key: 'lga',
                 label: intl.formatMessage(messages.lga),
+                sortable: true,
+              },
+              {
+                key: 'tags',
+                label: intl.formatMessage(messages.tags),
                 sortable: true,
               },
             ]}

@@ -11,6 +11,30 @@ const cssClasses = classnames.bind(
 )
 
 const enhance = _.identity
+const formatTags = tagsStr => {
+  if (!tagsStr) return ''
+  let tags = tagsStr.split(';')
+  if (tags.length > 2) {
+    const tagsToShow = tags.slice(0, 2)
+    const tagsToHide = tags.slice(2)
+    tags = tagsToShow.map(tag => (
+      <span key={tag} className={cssClasses('TableCell__tag')}>
+        {tag}
+      </span>
+    ))
+    tags.push(
+      <span key="..." title={tagsToHide.join(', ')}>
+        ...
+      </span>
+    )
+    return tags
+  }
+  return tags.map(tag => (
+    <span key={tag} className={cssClasses('TableCell__tag')}>
+      {tag}
+    </span>
+  ))
+}
 
 const PersonTableRow = ({ intl, person, ...restProps }) => (
   <TableRow {...restProps} className={cssClasses(restProps.className)}>
@@ -18,6 +42,7 @@ const PersonTableRow = ({ intl, person, ...restProps }) => (
     <TableCell>{person.get('level')}</TableCell>
     <TableCell>{person.get('state')}</TableCell>
     <TableCell>{person.get('lga')}</TableCell>
+    <TableCell>{formatTags(person.get('tags'))}</TableCell>
   </TableRow>
 )
 
