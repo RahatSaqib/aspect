@@ -28,10 +28,7 @@ const routes = [
         payload: {
           name: Joi.string().required(),
           password: Joi.string().required(),
-          // I think this constant should be written in lowercase or uppercase and without spaces.
-          clientName: Joi.string()
-            .required()
-            .allow('Web', 'Reporter App', 'Mocha/Chai'),
+          clientName: Joi.string().required(),
           clientId: Joi.string(),
           clientType: Joi.string(),
         },

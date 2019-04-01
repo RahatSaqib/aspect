@@ -9,7 +9,7 @@ const { run } = require('../../src/db')
 const server = supertest.agent('http://localhost:8080')
 const { assert } = chai
 
-describe.only('Authentication routes', () => {
+describe('Authentication routes', () => {
   const adminUsername = 'admin'
   const adminPassword = 'test07'
 
@@ -26,7 +26,7 @@ describe.only('Authentication routes', () => {
     after(async () =>
       run(async knex => {
         knex('RefreshToken')
-          .where('clientId', '123123123-123123123')
+          .whereIn('clientId', ['123123123-123123123', '9999-9999'])
           .delete()
       })
     )
@@ -55,7 +55,7 @@ describe.only('Authentication routes', () => {
               .where('token', refreshToken)
               .first()
             const diffTime = result1.expires - new Date()
-            const diffTimeDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+            const diffTimeDays = Math.floor(diffTime / (1000 * 60 * 60 * 24))
             assert.equal(result1.clientType, 'Moto g6')
             assert.equal(diffTimeDays, 30)
           })
@@ -70,12 +70,13 @@ describe.only('Authentication routes', () => {
           name: adminUsername,
           password: adminPassword,
           clientName: 'Web',
+          clientId: '9999-9999',
         })
         .end((err, res) => {
           assert.equal(res.status, 200)
           assert.isAbove(res.body.access.length, 100)
           assert.isAbove(res.body.refresh.length, 50)
-          assert.isAbove(res.body.clientId.length, 32)
+          assert.equal(res.body.clientId, '9999-9999')
           assert.property(res.body, 'culture')
           assert.property(res.body, 'displayPreferences')
           assert.property(res.body, 'timezone')
@@ -86,7 +87,7 @@ describe.only('Authentication routes', () => {
               .where('token', refreshToken)
               .first()
             const diffTime = result1.expires - new Date()
-            const diffTimeDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+            const diffTimeDays = Math.floor(diffTime / (1000 * 60 * 60 * 24))
             assert.equal(result1.clientType, 'Web')
             assert.equal(result1.clientName, 'Web')
             assert.equal(diffTimeDays, 7)
