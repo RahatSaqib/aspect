@@ -211,30 +211,7 @@ export class PersonDetail extends PureComponent {
                   onSubmit={this.saveContactDetails}
                 />
               </Tab>
-              {userIsAdmin &&
-                isUser && (
-                  <Tab
-                    icon={<Lock fontSize="large" />}
-                    label={
-                      <Hidden xs component="span">
-                        {formatMessage(messages.systemAccessControl)}
-                      </Hidden>
-                    }
-                  >
-                    {loading && <LinearProgress />}
-                    <Visible xs component="h2" className={styles.Form__Header}>
-                      {formatMessage(messages.systemAccessControl)}
-                    </Visible>
-                    <LoginDetailsForm
-                      intl={intl}
-                      loading={loading}
-                      shouldPrefill={shouldPrefill}
-                      emailValue={emailValue}
-                      loginDetails={loginDetails}
-                      onSubmit={this.saveLoginDetails}
-                    />
-                  </Tab>
-                )}
+
               <Tab
                 icon={<Language fontSize="large" />}
                 label={
@@ -252,6 +229,30 @@ export class PersonDetail extends PureComponent {
                   loading={loading}
                   userPreferences={userPreferences}
                   onSubmit={this.saveUserPreferences}
+                />
+              </Tab>
+              <Tab
+                icon={<Lock fontSize="large" />}
+                style={{
+                  visibility: userIsAdmin && isUser ? 'visible' : 'hidden',
+                }}
+                label={
+                  <Hidden xs component="span">
+                    {formatMessage(messages.systemAccessControl)}
+                  </Hidden>
+                }
+              >
+                {loading && <LinearProgress />}
+                <Visible xs component="h2" className={styles.Form__Header}>
+                  {formatMessage(messages.systemAccessControl)}
+                </Visible>
+                <LoginDetailsForm
+                  intl={intl}
+                  loading={loading}
+                  shouldPrefill={shouldPrefill}
+                  emailValue={emailValue}
+                  loginDetails={loginDetails}
+                  onSubmit={this.saveLoginDetails}
                 />
               </Tab>
             </AspectTabs>

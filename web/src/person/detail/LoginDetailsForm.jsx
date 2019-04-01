@@ -52,9 +52,12 @@ const DEFAULT_VALUES = {
   userLockedOut: false,
 }
 
-const getInitialValues = loginDetails => ({
+const getInitialValues = (loginDetails, shouldPrefill, emailValue) => ({
   ...DEFAULT_VALUES,
-  username: loginDetails.get('username') || DEFAULT_VALUES.username,
+  username: shouldPrefill
+    ? emailValue
+    : loginDetails.get('username') || DEFAULT_VALUES.username,
+  // username: loginDetails.get('username') || DEFAULT_VALUES.username,
   userLockedOut:
     loginDetails.get('userLockedOut') || DEFAULT_VALUES.userLockedOut,
 })
@@ -66,16 +69,22 @@ const enhance = compose(
       const onChange = values => this.setState({ values })
       this.setState({
         onChange,
-        values: getInitialValues(this.props.loginDetails),
+        values: getInitialValues(
+          this.props.loginDetails,
+          this.props.shouldPrefill,
+          this.props.emailValue
+        ),
       })
     },
 
     componentWillReceiveProps(nextProps) {
-      const { loginDetails } = nextProps
+      const { loginDetails, shouldPrefill, emailValue } = nextProps
 
       if (this.props.loginDetails !== loginDetails) {
         // Re-initialize
-        this.state.onChange(getInitialValues(loginDetails))
+        this.state.onChange(
+          getInitialValues(loginDetails, shouldPrefill, emailValue)
+        )
       }
     },
   }),
