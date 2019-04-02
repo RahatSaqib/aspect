@@ -25,6 +25,28 @@ const uniqueKeys = {
   IssueType: ['externalId'],
 }
 
+const foreignKeys = {
+  NotificationType: [
+    { column: 'partnerId', reference: 'Partner.id' },
+    { column: 'issueTypeId', reference: 'IssueType.id' },
+    { column: 'messageTypeId', reference: 'MessageType.id' },
+  ],
+  IssueResolutionTrigger: [
+    { column: 'partnerId', reference: 'Partner.id' },
+    { column: 'issueTypeId', reference: 'IssueType.id' },
+  ],
+  IssueEscalationTrigger: [
+    { column: 'partnerId', reference: 'Partner.id' },
+    { column: 'issueTypeId', reference: 'IssueType.id' },
+  ],
+  MessageType: [
+    { column: 'messageSeverityId', reference: 'MessageSeverity.id' },
+    { column: 'alertTemplateId', reference: 'AlertTemplate.id' },
+    { column: 'smsTemplateId', reference: 'SmsTemplate.id' },
+    { column: 'emailTemplateId', reference: 'EmailTemplate.id' },
+  ],
+}
+
 // Helper for seeed files. Ru
 let hasSeededStaticData = false
 function seed(seed) {
@@ -1997,9 +2019,25 @@ async function addUniqueKey(knex, tableName) {
   })
 }
 async function dropUniqueKey(knex, tableName) {
+  await Promise.all(
+    _.map(foreignKeys[tableName], async ({ column }) => {
+      await knex.schema.table(tableName, table => {
+        table.dropForeign(column)
+      })
+    })
+  )
+
   await knex.schema.alterTable(tableName, table => {
     table.dropUnique(uniqueKeys[tableName], `${tableName}_unique`)
   })
+
+  await Promise.all(
+    _.map(foreignKeys[tableName], async ({ column, reference }) => {
+      await knex.schema.table(tableName, table => {
+        table.foreign(column).references(reference)
+      })
+    })
+  )
 }
 
 async function updateCategoryAssay(knex) {

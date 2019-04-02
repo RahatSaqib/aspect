@@ -1,3 +1,5 @@
+const Promise = require('bluebird')
+
 module.exports = require('../src/db').migration(up, down)
 
 const createdOnFieldTables = [
@@ -31,40 +33,42 @@ const updatedOnFieldTables = [
 ]
 
 async function up(knex) {
-  createdOnFieldTables.forEach(async element => {
-    await knex.schema.alterTable(element, table => {
+  await Promise.each(createdOnFieldTables, element =>
+    knex.schema.alterTable(element, table => {
       table
         .datetime('createdOn')
         .notNullable()
         .defaultTo(knex.fn.now())
         .alter()
     })
-  })
-  updatedOnFieldTables.forEach(async element => {
-    await knex.schema.alterTable(element, table => {
+  )
+
+  await Promise.each(updatedOnFieldTables, element =>
+    knex.schema.alterTable(element, table => {
       table
         .datetime('updatedOn')
         .notNullable()
         .defaultTo(knex.fn.now())
         .alter()
     })
-  })
+  )
 }
 async function down(knex) {
-  createdOnFieldTables.forEach(async element => {
-    await knex.schema.alterTable(element, table => {
+  await Promise.each(createdOnFieldTables, element =>
+    knex.schema.alterTable(element, table => {
       table
         .datetime('createdOn')
         .nullable()
         .alter()
     })
-  })
-  updatedOnFieldTables.forEach(async element => {
-    await knex.schema.alterTable(element, table => {
+  )
+
+  await Promise.each(updatedOnFieldTables, element =>
+    knex.schema.alterTable(element, table => {
       table
         .datetime('updatedOn')
         .nullable()
         .alter()
     })
-  })
+  )
 }
