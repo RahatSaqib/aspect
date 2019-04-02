@@ -8,6 +8,8 @@ const DEFAULT_SETTINGS = {
     dateFormat: 'YYYY-MM-DD',
     timeFormat: 'HH:mm:ss',
     dateTimeFormat: 'YYYY-MM-DD HH:mm:ss',
+    utilizationRateThreshold: 0.8,
+    errorRateThreshold: 0.05,
   },
 }
 

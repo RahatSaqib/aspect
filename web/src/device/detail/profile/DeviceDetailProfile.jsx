@@ -22,6 +22,8 @@ import {
 import { formatDate } from '../../../shared/utils/dateFormat'
 import { sanitizeFiltersStringBy } from '../../../filter/utils'
 import DataTableProgressBar from '../../../components/shared/DataTableProgressBar'
+import ColoredNumber from '../../../components/shared/ColoredNumber'
+import AspectTooltip from '../../../components/shared/AspectTooltip'
 import BrowseTablePaginator from '../../../globals/components/BrowseTablePaginator'
 import BrowseEmptyList from '../../../globals/components/BrowseEmptyList'
 import { fetchResults, exportResults } from '../../../result/ResultRedux'
@@ -73,6 +75,24 @@ const messages = defineMessages({
     id: 'pages.DeviceDetailProfile.warranty',
     defaultMessage: 'Warranty',
   },
+  utilizationRate: {
+    id: 'pages.DeviceDetailProfile.utilizationRate',
+    defaultMessage: 'Utilization Rate',
+  },
+  utilizationRateExplain: {
+    id: 'pages.DeviceDetailProfile.utilizationRateExplain',
+    defaultMessage:
+      'Number of results in the last 30 days divided by the daily capacity of the instrument multiplied by 30 days',
+  },
+  errorRate: {
+    id: 'pages.DeviceDetailProfile.errorRate',
+    defaultMessage: 'Error Rate',
+  },
+  errorRateExplain: {
+    id: 'pages.DeviceDetailProfile.errorRateExplain',
+    defaultMessage:
+      'Number of errors divided by number of results in the last 30 days',
+  },
   endedOn: {
     id: 'pages.DeviceDetailProfile.EndedOn',
     defaultMessage: 'Test Date',
@@ -107,6 +127,10 @@ const messages = defineMessages({
       one {# result}
       other {# results}
     }`,
+  },
+  noResults: {
+    id: 'pages.DeviceDetailProfile.noResults',
+    defaultMessage: 'No Results',
   },
   undefinedValue: {
     id: 'pages.DeviceDetailProfile.undefinedValue',
@@ -418,6 +442,7 @@ export const DeviceDetailProfile = ({
   location,
   match,
   device,
+  displayPreferences,
   // --- injected by recompose ---
   onToggleDeviceStatus,
   sortCol,
@@ -431,7 +456,14 @@ export const DeviceDetailProfile = ({
   onCalibrationSubmit,
   onWarrantySubmit,
 }) => {
-  const deviceName = `${device.get('type')} at ${device.get('siteName')}`
+  const deviceName = `${device.getIn(['deviceType', 'name'])} at ${device.get(
+    'siteName'
+  )}`
+  const dailyCapacity = device.get('dailyCapacity')
+  const resultCountThisMonth = device.get('resultCountThisMonth')
+  const errorCountThisMonth = device.get('errorCountThisMonth')
+  const utilizationRateThisMonth = device.get('utilizationRateThisMonth')
+  const errorRateThisMonth = device.get('errorRateThisMonth')
   const calibrationNotes = device.get('calibrationNotes')
   const warrantyNotes = device.get('warrantyNotes')
   return (
@@ -450,9 +482,10 @@ export const DeviceDetailProfile = ({
             <Summary
               title={intl.formatMessage(messages.deviceType)}
               description={device.getIn(['deviceType', 'name'])}
-              to={`/browse/device?filters=deviceTypeId%3D${device.get(
-                'deviceTypeId'
-              )}`}
+              to={`/browse/device?filters=deviceTypeId%3D${device.getIn([
+                'deviceType',
+                'id',
+              ])}`}
             />
             <Summary
               title={intl.formatMessage(messages.status)}
@@ -516,6 +549,75 @@ export const DeviceDetailProfile = ({
                 <Button variant="contained" onClick={onShowWarrantyDialog}>
                   Update
                 </Button>
+              }
+            />
+            {utilizationRateThisMonth !== null && (
+              <Summary
+                title={
+                  <AspectTooltip
+                    showHelpIcon
+                    title={
+                      <React.Fragment>
+                        {intl.formatMessage(messages.utilizationRateExplain)}
+                        {resultCountThisMonth !== null && (
+                          <React.Fragment>
+                            {`: ${resultCountThisMonth} / (${dailyCapacity}*30) = ${intl.formatNumber(
+                              utilizationRateThisMonth
+                            )}`}
+                          </React.Fragment>
+                        )}
+                      </React.Fragment>
+                    }
+                  >
+                    {intl.formatMessage(messages.utilizationRate)}
+                  </AspectTooltip>
+                }
+                description={
+                  <ColoredNumber
+                    number={utilizationRateThisMonth}
+                    intl={intl}
+                    formatNumberStyle="percent"
+                    error={
+                      utilizationRateThisMonth <
+                      displayPreferences.get('utilizationRateThreshold')
+                    }
+                  />
+                }
+              />
+            )}
+            <Summary
+              title={
+                <AspectTooltip
+                  showHelpIcon
+                  title={
+                    <React.Fragment>
+                      {intl.formatMessage(messages.errorRateExplain)}
+                      {errorRateThisMonth !== null && (
+                        <React.Fragment>
+                          {`: ${errorCountThisMonth} / ${resultCountThisMonth} =
+                          ${intl.formatNumber(errorRateThisMonth)}`}
+                        </React.Fragment>
+                      )}
+                    </React.Fragment>
+                  }
+                >
+                  {intl.formatMessage(messages.errorRate)}
+                </AspectTooltip>
+              }
+              description={
+                errorRateThisMonth !== null ? (
+                  <ColoredNumber
+                    number={errorRateThisMonth}
+                    intl={intl}
+                    formatNumberStyle="percent"
+                    error={
+                      errorRateThisMonth >
+                      displayPreferences.get('errorRateThreshold')
+                    }
+                  />
+                ) : (
+                  intl.formatMessage(messages.noResults)
+                )
               }
             />
           </div>

@@ -1,0 +1,17 @@
+.ChildrenContainer {
+  cursor: pointer;
+}
+
+.Tooltip {
+  font-size: 14px;
+}
+
+.Tooltip__Numbers {
+  font-size: 14px;
+}
+
+.HelpIcon {
+  cursor: pointer;
+  font-size: 16px;
+  margin: 0 0 2px 3px;
+}
