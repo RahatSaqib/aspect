@@ -328,31 +328,7 @@ async function getDownloadResultsList(query, auth) {
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
 
   // get latest workflow log entry for every result:
-  const workflowLogs = await knex('ResultWorkflowLog as rwl')
-    .join(
-      knex
-        .select('resultId')
-        .max('changedOn as maxChangedOn')
-        .from('ResultWorkflowLog')
-        .whereIn('resultId', data.map(d => d.id))
-        .groupBy('resultId')
-        .as('rwlMax'),
-      function() {
-        this.on('rwl.resultId', 'rwlMax.resultId').on(
-          'rwl.changedOn',
-          'rwlMax.maxChangedOn'
-        )
-      }
-    )
-    .join('ResultWorkflowStatus as rws', 'rwl.resultWorkflowStatusId', 'rws.id')
-    .select(
-      'rwl.resultId',
-      'rws.name',
-      'rws.externalId',
-      'rws.i18nKey',
-      'rwl.reason',
-      'rwl.changedOn'
-    )
+  const workflowLogs = await getResultWorkflowLogs(knex, data.map(d => d.id))
 
   const transformedData = _.map(data, d => ({
     id: d.id,
@@ -529,6 +505,36 @@ async function downloadFileAsync({ auth, params }) {
   return getPathFromFileReferenceId(knex, fileReference.id)
 }
 
+async function getResultWorkflowLogs(knex, resultIds) {
+  // get latest workflow log entry for every result:
+  return knex('ResultWorkflowLog as rwl')
+    .join(
+      knex
+        .select('resultId')
+        .max('changedOn as maxChangedOn')
+        .from('ResultWorkflowLog')
+        .whereIn('resultId', resultIds)
+        .groupBy('resultId')
+        .as('rwlMax'),
+      function() {
+        this.on('rwl.resultId', 'rwlMax.resultId').on(
+          'rwl.changedOn',
+          'rwlMax.maxChangedOn'
+        )
+      }
+    )
+    .join('ResultWorkflowStatus as rws', 'rwl.resultWorkflowStatusId', 'rws.id')
+    .select(
+      'rwl.resultId',
+      'rws.name',
+      'rws.externalId',
+      'rws.i18nKey',
+      'rwl.reason',
+      'rwl.changedOn',
+      'rwl.createdOn'
+    )
+}
+
 async function getResultByResultId(request, fields = SELECT_SHOW_FIELDS) {
   const { auth, params } = request
   const dataConstraints = await getConstraints(auth.credentials)
@@ -586,6 +592,12 @@ async function getResultByResultId(request, fields = SELECT_SHOW_FIELDS) {
     // select files attached to this result
     const { data: files } = await showFileReferences(request)
     data.files = files
+
+    // get latest workflow log
+    const workflowLogs = await getResultWorkflowLogs(knex, [data.id])
+    const workflowLog = _.find(workflowLogs, { resultId: data.id })
+    data.resultWorkflowLogReason = workflowLog && workflowLog.reason
+    data.resultWorkflowLogCreatedOn = workflowLog && workflowLog.createdOn
   }
 
   return { ok: results.length === 1, data }

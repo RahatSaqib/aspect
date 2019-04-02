@@ -41,6 +41,7 @@ import {
   ExpansionPanelDetail,
 } from '../../components/shared/expansionPanel'
 import CustomField from './CustomField'
+import { formatDate } from '../../shared/utils/dateFormat'
 
 import styles from './ResultDetail.css'
 
@@ -109,6 +110,26 @@ const messages = defineMessages({
   submit: {
     id: 'pages.ResultDetail.formFields.submit',
     defaultMessage: 'Submit',
+  },
+  fieldWorkflow: {
+    id: 'pages.ResultDetail.fieldWorkflow',
+    defaultMessage: 'Workflow',
+  },
+  workflowQcOk: {
+    id: 'pages.ResultDetail.workflowQcOk',
+    defaultMessage: 'QC OK',
+  },
+  workflowStatusName: {
+    id: 'pages.ResultDetail.workflowStatusName',
+    defaultMessage: 'Status',
+  },
+  workflowStatusLogReason: {
+    id: 'pages.ResultDetail.workflowStatusLogReason',
+    defaultMessage: 'Reason',
+  },
+  workflowStatusLogCreatedOn: {
+    id: 'pages.ResultDetail.workflowStatusLogCreatedOn',
+    defaultMessage: 'Created On',
   },
 })
 
@@ -513,6 +534,49 @@ export class ResultDetail extends PureComponent {
     )
   }
 
+  renderWorkflow() {
+    const { result, intl } = this.props
+    const { formatMessage } = intl
+
+    return (
+      <ExpansionPanel className={cssClasses('FieldsContainer')}>
+        <ExpansionPanelHeader label={formatMessage(messages.fieldWorkflow)}>
+          <CheckboxField
+            name="Status"
+            label={formatMessage(messages.workflowQcOk)}
+            style={{ marginRight: 4 }}
+            checked={result.get('qcCheck') === 1}
+            onChange={this.onChangeQcCheck}
+            disabled={
+              result.get('resultWorkflowStatusExternalId') !== 'Deliverable'
+            }
+            title={
+              result.get('resultWorkflowStatusExternalId') !== 'Deliverable'
+                ? formatMessage(messages.qcCheckDisabledHelp)
+                : ''
+            }
+          />
+        </ExpansionPanelHeader>
+        <ExpansionPanelDetail>
+          <Unit xs="1-2" xl="1-3" className={cssClasses('Flexed')}>
+            <ReadOnlyField
+              label={formatMessage(messages.workflowStatusName)}
+              value={result.get('resultWorkflowStatus')}
+            />
+            <ReadOnlyField
+              label={formatMessage(messages.workflowStatusLogReason)}
+              value={result.get('resultWorkflowLogReason')}
+            />
+            <ReadOnlyField
+              label={formatMessage(messages.workflowStatusLogCreatedOn)}
+              value={formatDate(result.get('resultWorkflowLogCreatedOn'))}
+            />
+          </Unit>
+        </ExpansionPanelDetail>
+      </ExpansionPanel>
+    )
+  }
+
   renderContent() {
     const { result, screenSchema, resultTags, editable, intl } = this.props
     return (
@@ -529,27 +593,8 @@ export class ResultDetail extends PureComponent {
           {/* Render lower-level sections in assay schema in cards */}
           {this.renderFormData()}
 
-          <ExpansionPanel className={cssClasses('FieldsContainer')}>
-            <ExpansionPanelHeader
-              label={intl.formatMessage(messages.fieldFollowup)}
-            >
-              <CheckboxField
-                name="Status"
-                label={intl.formatMessage(messages.confirmed)}
-                style={{ marginRight: 4 }}
-                checked={result.get('qcCheck') === 1}
-                onChange={this.onChangeQcCheck}
-                disabled={
-                  result.get('resultWorkflowStatusExternalId') !== 'Deliverable'
-                }
-                title={
-                  result.get('resultWorkflowStatusExternalId') !== 'Deliverable'
-                    ? intl.formatMessage(messages.qcCheckDisabledHelp)
-                    : ''
-                }
-              />
-            </ExpansionPanelHeader>
-          </ExpansionPanel>
+          {this.renderWorkflow()}
+
           <ExpansionPanel disabled>
             <ExpansionPanelHeader label={intl.formatMessage(messages.tags)}>
               <ConnectedTagInput
