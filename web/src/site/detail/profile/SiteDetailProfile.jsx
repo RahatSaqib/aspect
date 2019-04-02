@@ -102,8 +102,14 @@ const SiteDetailProfile = ({
       )}
       <section className={cssClasses('Section', 'Section--first')}>
         <Card className={cssClasses('Section__Content')}>
-          {fields.map(field => (
-            <Summary title={field.label} description={field.value} cols="4" />
+          {fields.map((field, idx) => (
+            <Summary
+              // eslint-disable-next-line react/no-array-index-key
+              key={idx}
+              title={field.label}
+              description={field.value}
+              cols="4"
+            />
           ))}
         </Card>
       </section>

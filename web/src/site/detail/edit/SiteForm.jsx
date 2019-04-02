@@ -11,31 +11,19 @@ import SiteDetailBackBar from '../SiteDetailBackBar'
 const cssClasses = classnames.bind(require('../SiteDetail.css'))
 
 const SiteForm = props => {
-  const handleSubmit = data => {
-    const { site, onSubmit } = props
-
-    onSubmit(site.get('id'), {
-      // Map form fields to API fields
-      name: data.get('name'),
-      shortName: data.get('shortName'),
-      externalId: data.get('externalId'),
-      timezone: data.get('timezone'),
-      countryId: data.get('countryId'),
-      stateId: data.get('stateId'),
-      lgaId: data.get('lgaId'),
-      street1: data.get('address'),
-      street2: data.get('address2'),
-      city: data.get('city'),
-      zip: data.get('zip'),
-      longitude: data.get('lng'),
-      latitude: data.get('lat'),
-    })
+  const handleSubmit = async data => {
+    const { site, onSubmit, updateLatLongFromFormAddress } = props
+    if (!data.get('longitude') || !data.get('latitude')) {
+      await updateLatLongFromFormAddress()
+    }
+    return onSubmit(site.get('id'))
   }
   const {
     site,
     siteTags,
     formatMessage,
     onSiteTagChange,
+    updateLatLongFromFormAddress,
     history,
     location,
     match,
@@ -62,16 +50,21 @@ const SiteForm = props => {
     city: site.get('city'),
     zip: site.get('zip'),
     id: site.get('id'),
+    longitude: site.get('longitude'),
+    latitude: site.get('latitude'),
   }
   const labels = {
     name: formatMessage(messages.fieldName),
     shortName: formatMessage(messages.fieldShortName),
+    facilityCode: formatMessage(messages.fieldFacilityCode),
     externalId: formatMessage(messages.fieldExternalId),
     timezone: formatMessage(messages.fieldTimeZone),
     address: formatMessage(messages.fieldAddress),
     address2: formatMessage(messages.fieldAddress2),
     city: formatMessage(messages.fieldCity),
     zip: formatMessage(messages.fieldZip),
+    longitude: formatMessage(messages.fieldLongitude),
+    latitude: formatMessage(messages.fieldLatitude),
     tags: formatMessage(messages.fieldTags),
   }
   return (
@@ -89,12 +82,14 @@ const SiteForm = props => {
       <section className={cssClasses('Section', 'Section--first')}>
         <Card className={cssClasses('Section__Content')}>
           <EditableFieldsFormContainer
+            formatMessage={formatMessage}
             labels={labels}
             enableReinitialize
             initialValues={initialValues}
             siteTags={siteTags}
             onSubmit={handleSubmit}
             onSiteTagChange={onSiteTagChange}
+            updateLatLongFromFormAddress={updateLatLongFromFormAddress}
           />
         </Card>
       </section>
@@ -106,6 +101,7 @@ SiteForm.propTypes = {
   formatMessage: PropTypes.func.isRequired,
   onSubmit: PropTypes.func.isRequired,
   onSiteTagChange: PropTypes.func.isRequired,
+  updateLatLongFromFormAddress: PropTypes.func.isRequired,
   site: PropTypes.objectOf(Site).isRequired,
   siteTags: PropTypes.arrayOf(PropTypes.object),
   history: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types

@@ -1,8 +1,10 @@
-import PropTypes from 'prop-types'
 // Imports from packages
+import PropTypes from 'prop-types'
 import React from 'react'
-import { compose, setPropTypes, pure } from 'recompose'
+
+import { compose, setPropTypes, pure, withHandlers } from 'recompose'
 import { Field, reduxForm } from 'redux-form/immutable'
+import classnames from 'classnames/bind'
 
 // Material-UI
 import LinearProgress from '@material-ui/core/LinearProgress'
@@ -14,6 +16,11 @@ import TimezoneSelect from '../../../components/shared/TimezoneSelect'
 import LocationSelector from '../../../components/shared/LocationSelector'
 import ConnectedTagInput from '../../../tag/ConnectedTagInput'
 import { ReadOnlyField } from '../../../components/shared/ReadOnlyFields'
+import AspectButton from '../../../components/shared/AspectButton'
+
+import messages from '../messages'
+
+const cssClasses = classnames.bind(require('./EditableFieldsForm.css'))
 
 const renderTextField = ({ input, meta, ...restProps }) => (
   <TextField
@@ -48,11 +55,18 @@ const enhance = compose(
   setPropTypes({
     labels: PropTypes.object.isRequired,
     loading: PropTypes.bool,
+    updateLatLongFromFormAddress: PropTypes.func.isRequired,
   }),
   pure,
   reduxForm({
     form: 'siteDetail',
     validate,
+    enableReinitialize: true,
+  }),
+  withHandlers({
+    onSetBasedAddressClick: ({ updateLatLongFromFormAddress }) => () => {
+      updateLatLongFromFormAddress()
+    },
   }),
   setPropTypes({
     initialValues: PropTypes.object.isRequired,
@@ -60,11 +74,13 @@ const enhance = compose(
     pristine: PropTypes.bool.isRequired,
     submitting: PropTypes.bool.isRequired,
     onChangeSiteTag: PropTypes.func.isRequired,
+    onSetBasedAddressClick: PropTypes.func.isRequired,
   })
 )
 
 // Renders underlying form and inputs components
 export const EditableFieldsForm = ({
+  formatMessage,
   labels,
   loading,
   initialValues,
@@ -73,25 +89,29 @@ export const EditableFieldsForm = ({
   submitting,
   siteTags,
   onSiteTagChange,
+  onSetBasedAddressClick,
 }) => (
   <form onSubmit={handleSubmit}>
-    <Field name="name" label={labels.name} component={renderTextField} />
-    <Field
-      name="shortName"
-      label={labels.shortName}
-      component={renderTextField}
-    />
-    <Field
-      name="externalId"
-      label={labels.externalId}
-      component={renderTextField}
-    />
-    <TimezoneSelect
-      name="timezone"
-      label={labels.timezone}
-      disabled={loading || submitting}
-      fullWidth
-    />
+    <div className={cssClasses('container')}>
+      <Field
+        className={cssClasses('container__field')}
+        name="name"
+        label={labels.name}
+        component={renderTextField}
+      />
+      <Field
+        className={cssClasses('container__field')}
+        name="shortName"
+        label={labels.shortName}
+        component={renderTextField}
+      />
+      <Field
+        className={cssClasses('container__field')}
+        name="externalId"
+        label={labels.facilityCode}
+        component={renderTextField}
+      />
+    </div>
     <LocationSelector
       loading={loading}
       initialValues={initialValues}
@@ -100,17 +120,62 @@ export const EditableFieldsForm = ({
       stateIdFieldName="stateId"
       lgaIdFieldName="lgaId"
     />
-    <Field name="address" label={labels.address} component={renderTextField} />
-    <Field
-      name="address2"
-      label={labels.address2}
-      component={renderTextField}
-    />
-    <Field name="city" label={labels.city} component={renderTextField} />
-    <Field
-      name="zip"
-      floatingLabelText={labels.zip}
-      component={renderTextField}
+    <div className={cssClasses('container')}>
+      <Field
+        className={cssClasses('container__field')}
+        name="address"
+        label={labels.address}
+        component={renderTextField}
+      />
+      <Field
+        className={cssClasses('container__field')}
+        name="address2"
+        label={labels.address2}
+        component={renderTextField}
+      />
+    </div>
+    <div className={cssClasses('container')}>
+      <Field
+        className={cssClasses('container__field')}
+        name="city"
+        label={labels.city}
+        component={renderTextField}
+      />
+      <Field
+        className={cssClasses('container__field')}
+        name="zip"
+        label={labels.zip}
+        component={renderTextField}
+      />
+    </div>
+    <div className={cssClasses('container', 'coordinate')}>
+      <Field
+        className={cssClasses('container__field')}
+        name="longitude"
+        label={labels.longitude}
+        component={renderTextField}
+      />
+      <Field
+        className={cssClasses('container__field')}
+        name="latitude"
+        label={labels.latitude}
+        component={renderTextField}
+      />
+      <div className={cssClasses('coordinate__button')}>
+        <AspectButton
+          color="primary"
+          variant="contained"
+          onClick={onSetBasedAddressClick}
+        >
+          {formatMessage(messages.buttonSetBasedonAddress)}
+        </AspectButton>
+      </div>
+    </div>
+    <TimezoneSelect
+      name="timezone"
+      label={labels.timezone}
+      disabled={loading || submitting}
+      fullWidth
     />
     <ReadOnlyField
       label={labels.tags}
@@ -131,7 +196,7 @@ export const EditableFieldsForm = ({
       color="secondary"
       variant="contained"
     >
-      Update
+      {formatMessage(messages.buttonUpdate)}
     </Button>
     {submitting && <LinearProgress />}
   </form>
