@@ -457,11 +457,14 @@ export const DeviceDetailProfile = ({
                     showHelpIcon
                     title={
                       <React.Fragment>
-                        {`${intl.formatMessage(
-                          messages.utilizationRateExplain
-                        )}: ${resultCountThisMonth} / (${dailyCapacity}*30) = ${intl.formatNumber(
-                          utilizationRateThisMonth
-                        )}`}
+                        {intl.formatMessage(messages.utilizationRateExplain)}
+                        {resultCountThisMonth !== null && (
+                          <React.Fragment>
+                            {`: ${resultCountThisMonth} / (${dailyCapacity}*30) = ${intl.formatNumber(
+                              utilizationRateThisMonth
+                            )}`}
+                          </React.Fragment>
+                        )}
                       </React.Fragment>
                     }
                   >
@@ -487,13 +490,13 @@ export const DeviceDetailProfile = ({
                   showHelpIcon
                   title={
                     <React.Fragment>
-                      {`${intl.formatMessage(
-                        messages.errorRateExplain
-                      )}: ${errorCountThisMonth} / ${resultCountThisMonth} = ${
-                        errorRateThisMonth
-                          ? intl.formatNumber(errorRateThisMonth)
-                          : 0
-                      }`}
+                      {intl.formatMessage(messages.errorRateExplain)}
+                      {errorRateThisMonth !== null && (
+                        <React.Fragment>
+                          {`: ${errorCountThisMonth} / ${resultCountThisMonth} =
+                          ${intl.formatNumber(errorRateThisMonth)}`}
+                        </React.Fragment>
+                      )}
                     </React.Fragment>
                   }
                 >
