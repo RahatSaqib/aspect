@@ -2164,7 +2164,6 @@ module.exports = {
   getPermissionModules,
   seedIssueEventTriggersForPartner,
   assignAllFeaturesToJobFunctionIds,
-
   upsertItems,
   upsertSingle,
   seedIssues,

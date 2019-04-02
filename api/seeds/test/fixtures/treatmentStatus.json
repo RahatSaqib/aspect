@@ -1,0 +1,12 @@
+ [
+    {
+      "name": "Awaiting Treatment",
+      "externalId": "AwaitingTreatment",
+      "i18nKey": "ResultTreatmentStatusAwaitingTreatment"
+    },
+    {
+      "name": "On Treatment",
+      "externalId": "OnTreatment",
+      "i18nKey": "ResultTreatmentStatusOnTreatment"
+    }
+  ]
