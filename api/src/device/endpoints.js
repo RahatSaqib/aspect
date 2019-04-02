@@ -384,6 +384,18 @@ const routes = [
               .description(
                 'Number of results delivered in the 30 days before that'
               ),
+            calibrationDate: Joi.date()
+              .allow(null)
+              .description('Date of the last calibration'),
+            calibrationNotes: Joi.string()
+              .allow('', null)
+              .description('Notes about the last calibration'),
+            warrantyDueDate: Joi.date()
+              .allow(null)
+              .description('Latest warranty due date'),
+            warrantyNotes: Joi.string()
+              .allow('', null)
+              .description('Notes on the latest warranty'),
           }),
         }),
       },
