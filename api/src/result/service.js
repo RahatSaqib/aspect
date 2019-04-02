@@ -595,9 +595,10 @@ async function getResultByResultId(request, fields = SELECT_SHOW_FIELDS) {
 
     // get latest workflow log
     const workflowLogs = await getResultWorkflowLogs(knex, [data.id])
-    const workflowLog = _.find(workflowLogs, { resultId: data.id })
-    data.resultWorkflowLogReason = workflowLog && workflowLog.reason
-    data.resultWorkflowLogCreatedOn = workflowLog && workflowLog.createdOn
+    const { reason, createdOn } =
+      _.find(workflowLogs, { resultId: data.id }) || {}
+    data.resultWorkflowLogReason = reason
+    data.resultWorkflowLogCreatedOn = createdOn
   }
 
   return { ok: results.length === 1, data }
