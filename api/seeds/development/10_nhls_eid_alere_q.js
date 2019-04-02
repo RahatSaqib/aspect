@@ -3,6 +3,7 @@ module.exports = require('../utils').seed(seed)
 const _ = require('lodash')
 const bcrypt = require('bcrypt')
 const Promise = require('bluebird')
+const { addMinutes } = require('date-fns')
 
 const config = require('../../src/config')
 const southAfricaLabClinic = require('./fixtures/southAfricaLabClinic.json')
@@ -407,6 +408,7 @@ async function seed(knex) {
 
   const [alereQHiv12DetectAssayId] = await knex('Assay').insert({
     name: 'Alere q HIV-1/2 Detect',
+    abbreviation: 'Q HIV detect',
     i18nKey: 'assayAlereQHiv12Detect',
     externalId: 'assayAlereQHiv12Detect',
     assayTypeId: await assayTypeToId('HIV Qual'),
@@ -509,6 +511,7 @@ async function seed(knex) {
   })
   const [alereQHiv12VLPlasmaAssayId] = await knex('Assay').insert({
     name: 'Alere q HIV-1/2 VL plasma',
+    abbreviation: 'Q HIV Plasma',
     i18nKey: 'assayAlereQHiv12VLPlasma',
     externalId: 'assayAlereQHiv12VLPlasma',
     assayTypeId: await assayTypeToId('HIV VL'),
@@ -1215,6 +1218,8 @@ async function seed(knex) {
           resultData: result.resultData,
           startedOn: result.testStartedOn,
           endedOn: result.testEndedOn,
+          createdOn: addMinutes(result.testEndedOn, 10),
+          updatedOn: addMinutes(result.testEndedOn, 30),
           instrumentSerial: cmjahDeviceSerial,
           consumableSerial: result.consumableSerial,
           senderVersion: result.senderVersion,

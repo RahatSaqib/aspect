@@ -11,6 +11,7 @@ const {
   listStatusTypes,
   exportDevices,
   listDevicesForSelectList,
+  updateDeviceMaintenance,
 } = require('./service')
 const {
   validateAllGeographyFilterParams,
@@ -452,6 +453,32 @@ const routes = [
           siteId: Joi.number()
             .allow('')
             .description('Site ID'),
+        },
+      },
+    },
+  },
+  {
+    method: 'POST',
+    path: '/device/maintenance/{deviceId}',
+    handler: asyncHandler(updateDeviceMaintenance),
+    config: {
+      description: 'Set Device Maintenance',
+      notes: 'Insert maintenance status of a device',
+      auth: { scope: ['device:edit'] },
+      validate: {
+        params: {
+          deviceId: Joi.string()
+            .description('Device id')
+            .required(),
+        },
+        payload: {
+          externalId: Joi.string(),
+          contextDate: Joi.date()
+            .iso()
+            .description(
+              'Specified date for type of maintenance, i.e. warranty due date, calibration date'
+            ),
+          notes: Joi.string(),
         },
       },
     },

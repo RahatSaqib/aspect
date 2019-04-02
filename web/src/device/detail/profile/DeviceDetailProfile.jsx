@@ -1,22 +1,25 @@
 import _ from 'lodash'
 import classnames from 'classnames/bind'
-import React from 'react'
+import React, { Fragment } from 'react'
 import { defineMessages } from 'react-intl'
 import { compose, withProps, withHandlers, lifecycle } from 'recompose'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Button from '@material-ui/core/Button'
 import IconButton from '@material-ui/core/IconButton'
+import Tooltip from '@material-ui/core/Tooltip'
 import Card from '@material-ui/core/Card'
 import MdFileDownload from 'react-icons/lib/md/file-download'
 import Helmet from 'react-helmet'
 import TableBody from '@material-ui/core/TableBody'
+import NotesIcon from '@material-ui/icons/ChatBubbleOutline'
 
 import {
   makeSortPageSelector,
   makeSearchParamsSanitizer,
   composeSanitizer,
 } from '../../../shared/selectors/searchParams'
+import { formatDate } from '../../../shared/utils/dateFormat'
 import { sanitizeFiltersStringBy } from '../../../filter/utils'
 import DataTableProgressBar from '../../../components/shared/DataTableProgressBar'
 import ColoredNumber from '../../../components/shared/ColoredNumber'
@@ -25,6 +28,11 @@ import BrowseTablePaginator from '../../../globals/components/BrowseTablePaginat
 import BrowseEmptyList from '../../../globals/components/BrowseEmptyList'
 import { fetchResults, exportResults } from '../../../result/ResultRedux'
 import { tokens } from '../../../deviceStatus/DeviceStatusRedux'
+import {
+  showDialog,
+  hideDialog,
+  updateDeviceMaintenance,
+} from '../../DeviceRedux'
 import DeviceDetailBackBar from '../DeviceDetailBackBar'
 import Summary from '../../../globals/components/Summary'
 import {
@@ -33,6 +41,8 @@ import {
   ResultDataTableRow,
 } from './ResultDataTable'
 import requirePermissions from '../../../components/shared/requirePermissions'
+import CalibrationDialog from '../../maintenance/CalibrationDialog'
+import WarrantyDialog from '../../maintenance/WarrantyDialog'
 
 const cssClasses = classnames.bind(require('../DeviceDetail.css'))
 
@@ -122,6 +132,14 @@ const messages = defineMessages({
     id: 'pages.DeviceDetailProfile.noResults',
     defaultMessage: 'No Results',
   },
+  undefinedValue: {
+    id: 'pages.DeviceDetailProfile.undefinedValue',
+    defaultMessage: 'n/a',
+  },
+  notes: {
+    id: 'pages.DeviceDetailProfile.notes',
+    defaultMessage: 'notes',
+  },
 })
 
 const FILTERS_CONFIG = {
@@ -156,8 +174,27 @@ const filtersFromLocation = composeSanitizer(
   ),
   searchSanitizer
 )
+const formatMaintenanceDate = (intl, date) => {
+  if (!date) {
+    return intl.formatMessage(messages.undefinedValue)
+  }
+  return formatDate(date)
+}
 
 const enhance = compose(
+  connect(
+    state => {
+      const { activeDialog } = state.device
+      return {
+        activeDialog,
+      }
+    },
+    {
+      showDialog,
+      hideDialog,
+      updateDeviceMaintenance,
+    }
+  ),
   withProps(
     makeSortPageSelector({
       sortCol: 'endedOn',
@@ -172,6 +209,28 @@ const enhance = compose(
             ? tokens.APPROVED
             : tokens.ASSIGNED,
       }),
+    onShowCalibrationDialog: ({ showDialog, device }) => () => {
+      showDialog('calibration', device)
+    },
+    onShowWarrantyDialog: ({ showDialog, device }) => () => {
+      showDialog('warranty', device)
+    },
+    onHideDialog: ({ hideDialog }) => () => hideDialog(),
+
+    onCalibrationSubmit: ({ device, updateDeviceMaintenance }) => values => {
+      updateDeviceMaintenance({
+        externalId: 'calibration',
+        device,
+        values,
+      })
+    },
+    onWarrantySubmit: ({ device, updateDeviceMaintenance }) => values => {
+      updateDeviceMaintenance({
+        externalId: 'warranty',
+        device,
+        values,
+      })
+    },
   })
 )
 
@@ -390,6 +449,12 @@ export const DeviceDetailProfile = ({
   sortDir,
   pageAt,
   pageSize,
+  activeDialog,
+  onShowCalibrationDialog,
+  onShowWarrantyDialog,
+  onHideDialog,
+  onCalibrationSubmit,
+  onWarrantySubmit,
 }) => {
   const deviceName = `${device.getIn(['deviceType', 'name'])} at ${device.get(
     'siteName'
@@ -399,6 +464,8 @@ export const DeviceDetailProfile = ({
   const errorCountThisMonth = device.get('errorCountThisMonth')
   const utilizationRateThisMonth = device.get('utilizationRateThisMonth')
   const errorRateThisMonth = device.get('errorRateThisMonth')
+  const calibrationNotes = device.get('calibrationNotes')
+  const warrantyNotes = device.get('warrantyNotes')
   return (
     <div>
       <Helmet title={deviceName} />
@@ -431,8 +498,25 @@ export const DeviceDetailProfile = ({
             />
             <Summary
               title={intl.formatMessage(messages.calibration)}
-              description="TODO: Up to date"
-              action={<Button variant="contained">Add record</Button>}
+              description={
+                <Fragment>
+                  {formatMaintenanceDate(intl, device.get('calibrationDate'))}
+                  {calibrationNotes && (
+                    <Tooltip title={calibrationNotes} placement="top">
+                      <IconButton
+                        aria-label={intl.formatMessage(messages.notes)}
+                      >
+                        <NotesIcon fontSize="larger" />
+                      </IconButton>
+                    </Tooltip>
+                  )}
+                </Fragment>
+              }
+              action={
+                <Button variant="contained" onClick={onShowCalibrationDialog}>
+                  Add record
+                </Button>
+              }
             />
             <Summary
               title={intl.formatMessage(messages.site)}
@@ -447,8 +531,25 @@ export const DeviceDetailProfile = ({
             />
             <Summary
               title={intl.formatMessage(messages.warranty)}
-              description="TODO: Expires in 18 months"
-              action={<Button variant="contained">Update</Button>}
+              description={
+                <Fragment>
+                  {formatMaintenanceDate(intl, device.get('warrantyDueDate'))}
+                  {warrantyNotes && (
+                    <Tooltip title={warrantyNotes} placement="bottom">
+                      <IconButton
+                        aria-label={intl.formatMessage(messages.notes)}
+                      >
+                        <NotesIcon fontSize="larger" />
+                      </IconButton>
+                    </Tooltip>
+                  )}
+                </Fragment>
+              }
+              action={
+                <Button variant="contained" onClick={onShowWarrantyDialog}>
+                  Update
+                </Button>
+              }
             />
             {utilizationRateThisMonth !== null && (
               <Summary
@@ -521,6 +622,20 @@ export const DeviceDetailProfile = ({
             />
           </div>
         </Card>
+        <CalibrationDialog
+          intl={intl}
+          device={device}
+          isDialogActive={activeDialog.get('name') === 'calibration'}
+          onCancel={onHideDialog}
+          onSubmit={onCalibrationSubmit}
+        />
+        <WarrantyDialog
+          intl={intl}
+          device={device}
+          isDialogActive={activeDialog.get('name') === 'warranty'}
+          onCancel={onHideDialog}
+          onSubmit={onWarrantySubmit}
+        />
       </section>
       <Results
         match={match}

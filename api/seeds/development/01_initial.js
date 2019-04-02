@@ -743,6 +743,7 @@ async function seed(knex) {
     resultCategory2i18nKey: 'resultCategoryRif',
     resultDataSchema: geneXpertResultDataSchema,
     patientDataSchema: geneXpertPatientDataSchema,
+    abbreviation: 'GX MTB/Rif',
   })
 
   const [assayGeneXpertMtbRifUltraId] = await knex('Assay').insert({
@@ -758,6 +759,7 @@ async function seed(knex) {
     resultCategory2i18nKey: 'resultCategoryRif',
     resultDataSchema: geneXpertResultDataSchema,
     patientDataSchema: geneXpertPatientDataSchema,
+    abbreviation: 'GX MTB/ULTRA',
   })
 
   const [assayGeneXpertHiv1VlId] = await knex('Assay').insert({
@@ -773,6 +775,7 @@ async function seed(knex) {
     resultCategory2i18nKey: null,
     resultDataSchema: geneXpertResultDataSchemaHiv,
     patientDataSchema: geneXpertPatientDataSchema,
+    abbreviation: 'GX HIV VL',
   })
 
   const [assayGeneXpertHiv1QualId] = await knex('Assay').insert({
@@ -788,6 +791,7 @@ async function seed(knex) {
     resultCategory2i18nKey: null,
     resultDataSchema: geneXpertResultDataSchemaHiv,
     patientDataSchema: geneXpertPatientDataSchema,
+    abbreviation: 'GX HIV Qual',
   })
 
   const [assayGeneXpertEbolaId] = await knex('Assay').insert({
@@ -803,6 +807,7 @@ async function seed(knex) {
     resultCategory2i18nKey: 'resultCategoryEbolaNp',
     resultDataSchema: geneXpertResultDataSchema,
     patientDataSchema: geneXpertPatientDataSchema,
+    abbreviation: 'GX Ebola',
   })
 
   await knex('Assay').insert({
@@ -813,6 +818,7 @@ async function seed(knex) {
     deviceTypeId: deviceTypeGeneXpertId,
     resultSourceId: resultSourceDiagnosticId,
     patientDataSchema: geneXpertPatientDataSchema,
+    abbreviation: 'GX UK',
   })
 
   const [assayGeneXpertHcvId] = await knex('Assay').insert({
@@ -828,6 +834,7 @@ async function seed(knex) {
     resultCategory2i18nKey: null,
     resultDataSchema: geneXpertResultDataSchemaHcv,
     patientDataSchema: geneXpertPatientDataSchema,
+    abbreviation: 'GX HCV',
   })
 
   const [assayDaktariHcvId] = await knex('Assay').insert({
@@ -843,6 +850,7 @@ async function seed(knex) {
     resultCategory2i18nKey: null,
     resultDataSchema: geneXpertResultDataSchemaHcv,
     patientDataSchema: geneXpertPatientDataSchema,
+    abbreviation: 'DAK HCV',
   })
 
   const [assayDaktariHivVlId] = await knex('Assay').insert({
@@ -858,6 +866,7 @@ async function seed(knex) {
     resultCategory2i18nKey: null,
     resultDataSchema: geneXpertResultDataSchemaHiv,
     patientDataSchema: geneXpertPatientDataSchema,
+    abbreviation: 'DAK HIV VL',
   })
 
   const [assayDaktariCD4Id] = await knex('Assay').insert({
@@ -873,6 +882,7 @@ async function seed(knex) {
     resultCategory2i18nKey: null,
     resultDataSchema: geneXpertResultDataSchemaHiv,
     patientDataSchema: geneXpertPatientDataSchema,
+    abbreviation: 'DAK CD4',
   })
 
   await knex('Assay').insert({
@@ -893,6 +903,7 @@ async function seed(knex) {
         type: 'number',
       },
     }),
+    abbreviation: 'AF HIV VL',
   })
 
   await knex('Assay').insert({
@@ -921,6 +932,7 @@ async function seed(knex) {
         unit: 'mmol/L',
       },
     }),
+    abbreviation: 'AF LP',
   })
 
   await knex('Assay').insert({
@@ -932,6 +944,7 @@ async function seed(knex) {
     resultSourceId: resultSourceDiagnosticId,
     resultCategory1Label: 'HIV',
     resultCategory1i18nKey: 'resultCategoryHivVl',
+    abbreviation: 'Q HIV VL',
   })
 
   await knex('Assay').insert({
@@ -980,6 +993,7 @@ async function seed(knex) {
         type: 'string',
         order: 5,
       },
+      abbreviation: 'm2000 HIV VL',
     }),
   })
 
@@ -1036,6 +1050,7 @@ async function seed(knex) {
         type: 'string',
         order: 6,
       },
+      abbreviation: 'm2000 EID',
     }),
   })
 
@@ -1101,6 +1116,7 @@ async function seed(knex) {
         order: 8,
       },
     }),
+    abbreviation: 'CHAI HIV VL',
   })
 
   await knex('Assay').insert({
@@ -1170,6 +1186,7 @@ async function seed(knex) {
         order: 9,
       },
     }),
+    abbreviation: 'CHAI EID',
   })
 
   const [assayCommCareHiv] = await knex('Assay').insert({
@@ -1183,6 +1200,7 @@ async function seed(knex) {
     resultCategory1i18nKey: 'resultCategoryEid',
     resultDataSchema: commCareResultDataSchemaHiv,
     patientDataSchema: commCarePatientDataSchema,
+    abbreviation: 'CC HIV',
   })
 
   // Result types
@@ -2152,6 +2170,8 @@ async function seed(knex) {
         assayVersion: '4',
         startedOn: randomDate,
         endedOn: addMinutes(randomDate, 100),
+        createdOn: addMinutes(randomDate, 120),
+        updatedOn: addMinutes(randomDate, 180),
         consumableSerial: `${i}12`,
         consumableExpirationDate: new Date(+now + 200 * i * millisInHour),
         consumableLot: `Lot ${i % 5}`,
@@ -2382,6 +2402,8 @@ async function seed(knex) {
               assayVersion: '4',
               startedOn: randomDate,
               endedOn: addMinutes(randomDate, 100),
+              createdOn: addMinutes(randomDate, 120),
+              updatedOn: addMinutes(randomDate, 180),
               consumableSerial: `${i}12`,
               consumableExpirationDate: new Date(+now + 200 * i * millisInHour),
               consumableLot: `Lot ${i % 5}`,
@@ -2543,6 +2565,8 @@ async function seed(knex) {
               assayVersion: '4',
               startedOn: randomDate,
               endedOn: addMinutes(randomDate, 92),
+              createdOn: addMinutes(randomDate, 100),
+              updatedOn: addMinutes(randomDate, 120),
               consumableSerial: `${i}12`,
               consumableExpirationDate: new Date(+now + 200 * i * millisInHour),
               consumableLot: `Lot ${i % 5}`,
@@ -2669,6 +2693,8 @@ async function seed(knex) {
               assayVersion: '4.7',
               startedOn: randomDate,
               endedOn: addMinutes(randomDate, 80),
+              createdOn: addMinutes(randomDate, 100),
+              updatedOn: addMinutes(randomDate, 120),
               consumableSerial: `${i}12`,
               consumableExpirationDate: new Date(+now + 200 * i * millisInHour),
               consumableLot: `Lot ${i % 5}`,
@@ -2806,6 +2832,8 @@ async function seed(knex) {
               assayVersion: '4',
               startedOn: randomDate,
               endedOn: addMinutes(randomDate, 48),
+              createdOn: addMinutes(randomDate, 60),
+              updatedOn: addMinutes(randomDate, 80),
               consumableSerial: `${i}12`,
               consumableExpirationDate: new Date(+now + 200 * i * millisInHour),
               consumableLot: `Lot ${i % 5}`,
@@ -2943,6 +2971,8 @@ async function seed(knex) {
               assayVersion: '4',
               startedOn: randomDate,
               endedOn: addMinutes(randomDate, 64),
+              createdOn: addMinutes(randomDate, 90),
+              updatedOn: addMinutes(randomDate, 115),
               consumableSerial: `${i}12`,
               consumableExpirationDate: new Date(+now + 200 * i * millisInHour),
               consumableLot: `Lot ${i % 5}`,

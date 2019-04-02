@@ -25,6 +25,28 @@ const uniqueKeys = {
   IssueType: ['externalId'],
 }
 
+const foreignKeys = {
+  NotificationType: [
+    { column: 'partnerId', reference: 'Partner.id' },
+    { column: 'issueTypeId', reference: 'IssueType.id' },
+    { column: 'messageTypeId', reference: 'MessageType.id' },
+  ],
+  IssueResolutionTrigger: [
+    { column: 'partnerId', reference: 'Partner.id' },
+    { column: 'issueTypeId', reference: 'IssueType.id' },
+  ],
+  IssueEscalationTrigger: [
+    { column: 'partnerId', reference: 'Partner.id' },
+    { column: 'issueTypeId', reference: 'IssueType.id' },
+  ],
+  MessageType: [
+    { column: 'messageSeverityId', reference: 'MessageSeverity.id' },
+    { column: 'alertTemplateId', reference: 'AlertTemplate.id' },
+    { column: 'smsTemplateId', reference: 'SmsTemplate.id' },
+    { column: 'emailTemplateId', reference: 'EmailTemplate.id' },
+  ],
+}
+
 // Helper for seeed files. Ru
 let hasSeededStaticData = false
 function seed(seed) {
@@ -1997,8 +2019,120 @@ async function addUniqueKey(knex, tableName) {
   })
 }
 async function dropUniqueKey(knex, tableName) {
+  await Promise.all(
+    _.map(foreignKeys[tableName], async ({ column }) => {
+      await knex.schema.table(tableName, table => {
+        table.dropForeign(column)
+      })
+    })
+  )
+
   await knex.schema.alterTable(tableName, table => {
     table.dropUnique(uniqueKeys[tableName], `${tableName}_unique`)
+  })
+
+  await Promise.all(
+    _.map(foreignKeys[tableName], async ({ column, reference }) => {
+      await knex.schema.table(tableName, table => {
+        table.foreign(column).references(reference)
+      })
+    })
+  )
+}
+
+async function updateCategoryAssay(knex) {
+  const categories = await knex('ResultCategory').select(
+    'id',
+    'name',
+    'externalId'
+  )
+
+  await Promise.each(categories, async ({ id, externalId }) => {
+    let json
+    if (
+      ['Detected', 'Trace Detected', 'MoreThan1000'].indexOf(externalId) >= 0
+    ) {
+      json = {
+        requiresTreatment: true,
+        emphasize: true,
+      }
+    } else if (
+      [
+        'Indeterminate',
+        'Invalid',
+        'NoResult',
+        'Error',
+        'CollectNewSample',
+        'Discordant',
+        'Rejected',
+        'Missing',
+      ].indexOf(externalId) >= 0
+    ) {
+      json = {
+        requiresTreatment: false,
+        emphasize: true,
+      }
+    } else if (
+      ['Success', 'LessThan1000', 'Unknown', 'NotDetected'].indexOf(
+        externalId
+      ) >= 0
+    ) {
+      json = {
+        requiresTreatment: false,
+        emphasize: false,
+      }
+    }
+    await knex('ResultCategoryAssay')
+      .where('resultCategoryId', id)
+      .update(json)
+  })
+}
+
+async function updateAssayAbbreviation(knex) {
+  const categories = await knex('ResultCategory').select(
+    'id',
+    'name',
+    'externalId'
+  )
+
+  await Promise.each(categories, async ({ id, externalId }) => {
+    let json
+    if (
+      ['Detected', 'Trace Detected', 'MoreThan1000'].indexOf(externalId) >= 0
+    ) {
+      json = {
+        requiresTreatment: true,
+        emphasize: true,
+      }
+    } else if (
+      [
+        'Indeterminate',
+        'Invalid',
+        'NoResult',
+        'Error',
+        'CollectNewSample',
+        'Discordant',
+        'Rejected',
+        'Missing',
+      ].indexOf(externalId) >= 0
+    ) {
+      json = {
+        requiresTreatment: false,
+        emphasize: true,
+      }
+    } else if (
+      ['Success', 'LessThan1000', 'Unknown', 'NotDetected'].indexOf(
+        externalId
+      ) >= 0
+    ) {
+      json = {
+        requiresTreatment: false,
+        emphasize: false,
+      }
+    }
+    await knex('ResultCategoryAssay')
+      .where('resultCategoryId', id)
+      .update(json)
   })
 }
 
@@ -2099,6 +2233,19 @@ async function setCapacityForExistingDevices(knex) {
   })
 }
 
+async function seedDeviceMaintenanceType(knex) {
+  const { data: deviceMaintenanceTypes } = await readJson(
+    `./seeds/fixtures/DeviceMaintenanceType.json`
+  )
+
+  await upsertItems(
+    knex,
+    'DeviceMaintenanceType', // tableName
+    'externalId', // whereKeys
+    deviceMaintenanceTypes
+  )
+}
+
 module.exports = {
   seed,
   rowsAsObject,
@@ -2134,4 +2281,8 @@ module.exports = {
 
   addDeviceCapacities,
   setCapacityForExistingDevices,
+  seedDeviceMaintenanceType,
+
+  updateCategoryAssay,
+  updateAssayAbbreviation,
 }

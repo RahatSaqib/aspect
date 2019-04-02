@@ -146,4 +146,28 @@ describe('auth endpoints', () => {
       })
     })
   })
+
+  describe('POST', () => {
+    describe('/device/maintenance/{deviceId}', () => {
+      let endpoint
+      const expectedResponse = { value: 'Expected auth token' }
+
+      beforeEach(() => {
+        endpoint = setupRoute('POST', '/device/maintenance/{deviceId}', {
+          async updateDeviceMaintenance() {
+            return expectedResponse
+          },
+        })
+      })
+      it('Should respond with "Expected auth token" from the service, meaning such endpoint exists', done => {
+        endpointUtils
+          .callHandlerOn(endpoint)
+          .handleResponseWith(response => {
+            assert.deepEqual(response, expectedResponse)
+          })
+          .thenCall(done)
+          .execute()
+      })
+    })
+  })
 })

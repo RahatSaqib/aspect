@@ -24,6 +24,7 @@ import { receivedExportResponse } from '../filter/FilterRedux'
 export const types = {
   REQUEST_DEVICES: 'REQUEST_DEVICES',
   RECEIVE_DEVICES: 'RECEIVE_DEVICES',
+  REJECTED_DEVICES: 'REJECTED_DEVICES',
 
   REQUEST_SINGLE_DEVICE: 'REQUEST_SINGLE_DEVICE',
   RECEIVE_SINGLE_DEVICE: 'RECEIVE_SINGLE_DEVICE',
@@ -33,6 +34,9 @@ export const types = {
 
   REQUEST_DEVICES_FOR_SELECT_LIST: 'REQUEST_DEVICES_FOR_SELECT_LIST',
   RECEIVE_DEVICES_FOR_SELECT_LIST: 'RECEIVE_DEVICES_FOR_SELECT_LIST',
+
+  DEVICE_MAINTENANCE_FORM_SHOW: 'DEVICE_MAINTENANCE_FORM_SHOW',
+  DEVICE_MAINTENANCE_FORM_HIDE: 'DEVICE_MAINTENANCE_FORM_HIDE',
 }
 /*
  * ---------------- Action Creators -----------------
@@ -53,6 +57,12 @@ function receiveDevices(json) {
     type: types.RECEIVE_DEVICES,
     items: json.data,
     total: json.total,
+  }
+}
+
+function rejectDevices() {
+  return {
+    type: types.REJECTED_DEVICES,
   }
 }
 
@@ -105,7 +115,9 @@ export function fetchDevices(
           ),
         },
       }
-    ).then(json => dispatch(receiveDevices(json)))
+    )
+      .then(json => dispatch(receiveDevices(json)))
+      .catch(() => dispatch(rejectDevices()))
   }
 }
 
@@ -302,6 +314,64 @@ export function exportDevices(
   }
 }
 
+export function showDialog(externalId, data) {
+  return dispatch => {
+    dispatch({
+      type: types.DEVICE_MAINTENANCE_FORM_SHOW,
+      externalId,
+      data,
+    })
+  }
+}
+export function hideDialog() {
+  return dispatch => {
+    dispatch({
+      type: types.DEVICE_MAINTENANCE_FORM_HIDE,
+    })
+  }
+}
+
+export function updateDeviceMaintenance({
+  externalId,
+  device,
+  values,
+  requestedAt = new Date(),
+}) {
+  const deviceId = device.get('id')
+
+  return dispatch =>
+    aspectFetch(`/device/maintenance/${deviceId}`, {
+      method: 'POST',
+      body: JSON.stringify({
+        ...values,
+        externalId,
+      }),
+      errorNotifications: {
+        default: errorPleaseTryAgainInAFewMinutes({
+          ...defineMessages({
+            title: {
+              id:
+                'errorResponseMessages.setDeviceMaintenance.POST.default.title',
+              defaultMessage:
+                externalId === 'calibration'
+                  ? 'Setting Device Calibration Date Failed'
+                  : 'Setting Device Warranty Due Date Failed',
+            },
+          }),
+          onClose: () => dispatch(showDialog(externalId, values)),
+        }),
+      },
+    })
+      .then(json => {
+        dispatch(receiveUpdatedSingleDevice(requestedAt, json.data))
+        dispatch(hideDialog())
+      })
+      .catch(err => {
+        dispatch(hideDialog())
+        throw err
+      })
+}
+
 /*
  * ---------------- Reducers -----------------
  */
@@ -315,6 +385,10 @@ const Device = Immutable.Record({
   items: new Items(),
   table: new Table(),
   selectList: new SelectListItems(),
+  activeDialog: Immutable.Map({
+    name: undefined,
+    data: undefined,
+  }),
 })
 
 const initialState = new Device()
@@ -332,6 +406,11 @@ export default function deviceReducer(state = initialState, action) {
         const immutList = Immutable.fromJS(action.items)
         mutState.set('items', receiveList(mutState.items, immutList))
         mutState.set('table', receiveTableItems(mutState.table, action.total))
+      })
+    case types.REJECTED_DEVICES:
+      return state.withMutations(mutState => {
+        mutState.set('items', mutState.get('items').clear())
+        mutState.set('table', mutState.get('table').clear())
       })
     case types.REQUEST_SINGLE_DEVICE:
     case types.REQUEST_UPDATING_SINGLE_DEVICE:
@@ -351,6 +430,13 @@ export default function deviceReducer(state = initialState, action) {
         lastRefreshed: action.lastRefreshed,
         items: new Immutable.fromJS(action.items),
       })
+    case types.DEVICE_MAINTENANCE_FORM_SHOW:
+      return state.mergeIn(['activeDialog'], {
+        name: action.externalId,
+        data: action.data,
+      })
+    case types.DEVICE_MAINTENANCE_FORM_HIDE:
+      return state.setIn(['activeDialog', 'name'], undefined)
     default:
       return state
   }

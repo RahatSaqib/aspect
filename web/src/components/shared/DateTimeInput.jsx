@@ -161,6 +161,15 @@ const renderSelect = ({
   </Select>
 )
 
+const multiSplit = (str, separators) => {
+  const tempChar = separators[0] // use the first token as a temporary join character
+  for (let i = 1; i < separators.length; i++) {
+    str = str.split(separators[i]).join(tempChar)
+  }
+  str = str.split(tempChar)
+  return str
+}
+
 const DateTimeInput = ({
   classes: classesMap,
   className,
@@ -175,23 +184,14 @@ const DateTimeInput = ({
     const changedDate = set(optionsDate, value)
     setOptionsDate(changedDate)
     setDateTime(changedDate)
+    onChange(changedDate)
   }
 
-  const handleBlur = event => {
-    const { currentTarget } = event
-    setTimeout(() => {
-      if (!currentTarget.contains(document.activeElement)) {
-        onChange(optionsDate)
-      }
-    }, 0)
-  }
+  const dateParts = multiSplit(displayFormat, ['-', ':', '/', ' ', '_', '|'])
 
   return (
-    <div
-      className={classNames(className, classesMap.selectControl)}
-      onBlur={handleBlur}
-    >
-      {_.each(displayFormat, (display, i) => {
+    <div className={classNames(className, classesMap.selectControl)}>
+      {_.map(dateParts, (display, i) => {
         const { name, options } = displayOptions[display] || ''
         if (name) {
           return renderSelect({

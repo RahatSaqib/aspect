@@ -3,7 +3,7 @@ import { getAspectDisplayPreferences } from '../../globals/sideEffects/LocalStor
 
 function format(date, displayPreferenceKey) {
   const prefs = getAspectDisplayPreferences()
-  const dateFormat = prefs.get(displayPreferenceKey, 'YYYY-MM-DD')
+  const dateFormat = prefs.get(displayPreferenceKey, 'yyyy-MM-dd')
   return date == null ? '' : dateFnFormat(date, dateFormat)
 }
 

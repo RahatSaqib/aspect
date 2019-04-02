@@ -4,7 +4,12 @@ const Boom = require('boom')
 
 const { knex, filterParams, sortPageParams } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
-const { deviceStatusToId, resultCategoryToId } = require('../shared/dictionary')
+const { getUser } = require('../auth/service')
+const {
+  deviceStatusToId,
+  resultCategoryToId,
+  deviceMaintenanceTypeToId,
+} = require('../shared/dictionary')
 const {
   getCellsByValue,
   generateExcelFile,
@@ -57,6 +62,10 @@ const SELECT_SHOW_FIELDS = [
   'frd60.resultCount as resultCount60',
   knex.raw('ifnull(frd30Errors.resultCount, 0) as errorCountThisMonth'),
   knex.raw('ifnull(frd60Errors.resultCount, 0) as errorCount60'),
+  'dmC.contextDate as calibrationDate',
+  'dmC.notes as calibrationNotes',
+  'dmW.contextDate as warrantyDueDate',
+  'dmW.notes as warrantyNotes',
 ]
 
 // ---------------------------------
@@ -222,9 +231,17 @@ async function listDevices(request) {
   return result
 }
 
-async function getDeviceByDeviceId(request, fields = SELECT_SHOW_FIELDS) {
-  const { auth, params } = request
-  const dataConstraints = await getConstraints(auth.credentials)
+async function getDeviceByDeviceId({
+  deviceId,
+  credentials,
+  fields = SELECT_SHOW_FIELDS,
+}) {
+  const dataConstraints = await getConstraints(credentials)
+
+  const maintenanceCalibrationId = await deviceMaintenanceTypeToId(
+    'calibration'
+  )
+  const maintenanceWarrantyId = await deviceMaintenanceTypeToId('warranty')
 
   const resultCategoryErrorId = await resultCategoryToId('Error')
 
@@ -250,7 +267,19 @@ async function getDeviceByDeviceId(request, fields = SELECT_SHOW_FIELDS) {
         .andOn('frd60Errors.days', 60)
         .andOn('frd60Errors.resultCategory1', resultCategoryErrorId)
     })
-    .where('d.id', +params.deviceId)
+    // device calibration
+    .leftOuterJoin('DeviceMaintenance as dmC', function() {
+      this.on('d.id', 'dmC.deviceId')
+        .andOn('dmC.current', 1)
+        .andOn('dmC.deviceMaintenanceTypeId', maintenanceCalibrationId)
+    })
+    // device warranty
+    .leftOuterJoin('DeviceMaintenance as dmW', function() {
+      this.on('d.id', 'dmW.deviceId')
+        .andOn('dmW.current', 1)
+        .andOn('dmW.deviceMaintenanceTypeId', maintenanceWarrantyId)
+    })
+    .where('d.id', +deviceId)
     .modify(addConstraints, dataConstraints, { device: 'd' })
     .first(fields)
 
@@ -287,8 +316,18 @@ async function getDeviceByDeviceId(request, fields = SELECT_SHOW_FIELDS) {
   return device
 }
 
+async function getDeviceByRequest(request, fields = SELECT_SHOW_FIELDS) {
+  const { auth: { credentials }, params: { deviceId } } = request
+
+  return getDeviceByDeviceId({
+    deviceId,
+    credentials,
+    fields,
+  })
+}
+
 async function showDevice(request) {
-  const device = await getDeviceByDeviceId(request)
+  const device = await getDeviceByRequest(request)
 
   if (!device) {
     return Boom.notFound()
@@ -307,7 +346,7 @@ async function updateDevice(request) {
 
   // TODO: check permission
 
-  const device = await getDeviceByDeviceId(request)
+  const device = await getDeviceByRequest(request)
 
   const configurationData = _.assign(
     {},
@@ -479,6 +518,78 @@ async function getDevice(deviceId) {
   return device
 }
 
+async function updateDeviceMaintenance(request) {
+  const { auth: { credentials }, params, payload } = request
+  const dataConstraints = await getConstraints(credentials)
+
+  let device = await knex('Device as d')
+    .where('d.id', +params.deviceId)
+    .modify(addConstraints, dataConstraints, { device: 'd' })
+    .first('d.id')
+
+  if (!device) {
+    return Boom.notFound()
+  }
+  const { id: deviceId } = device
+
+  const currentlyLoggedInUser = await getUser(credentials.name)
+
+  const { externalId, contextDate = new Date(), notes } = payload
+  const { id: deviceMaintenanceTypeId } = await knex('DeviceMaintenanceType')
+    .where({ externalId })
+    .first('id')
+
+  // get currently active maintenance item
+  const item = await knex('DeviceMaintenance')
+    .where({
+      deviceId,
+      deviceMaintenanceTypeId,
+      current: 1,
+    })
+    .first()
+  let deviceMaintenanceId
+  if (item && item.contextDate.toDateString() === contextDate.toDateString()) {
+    // update existing record if dates are the same
+    await knex('DeviceMaintenance')
+      .where({ id: item.id })
+      .update({
+        contextDate,
+        notes,
+        updatedOn: new Date(),
+        updatedBy: currentlyLoggedInUser.id,
+      })
+    deviceMaintenanceId = item.id
+  } else {
+    // reset 'current' for current maintenance type and device
+    await knex('DeviceMaintenance')
+      .update({ current: 0 })
+      .where({
+        deviceId,
+        deviceMaintenanceTypeId,
+        current: 1,
+      })
+    // insert new record with last maintenance status
+    ;[deviceMaintenanceId] = await knex('DeviceMaintenance').insert({
+      deviceId,
+      deviceMaintenanceTypeId,
+      current: 1,
+      contextDate,
+      notes,
+      createdOn: new Date(),
+      createdBy: currentlyLoggedInUser.id,
+      updatedOn: new Date(),
+      updatedBy: currentlyLoggedInUser.id,
+    })
+  }
+  // get same 'device' as for Device Details
+  device = await getDeviceByDeviceId({
+    deviceId,
+    credentials,
+  })
+
+  return { ok: true, data: device, deviceMaintenanceId }
+}
+
 module.exports = {
   listDevices,
   showDevice,
@@ -487,4 +598,5 @@ module.exports = {
   exportDevices,
   listDevicesForSelectList,
   getDevice,
+  updateDeviceMaintenance,
 }

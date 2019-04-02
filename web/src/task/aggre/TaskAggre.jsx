@@ -207,7 +207,7 @@ export const TaskAggre = ({
       </Unit>
     </section>
     <section className={cssClasses('Section')}>
-      <DataTableCard>
+      <DataTableCard key={`DataTableCard--table-${location.key}`}>
         <DataTableProgressBar disabled={!table.loading} />
         {items.currentIdList.isEmpty() && (
           <BrowseEmptyList history={history} location={location} intl={intl} />

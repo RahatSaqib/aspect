@@ -19,6 +19,7 @@ import {
 export const types = {
   REQUEST_REPORTS: 'REQUEST_REPORTS',
   RECEIVE_REPORTS: 'RECEIVE_REPORTS',
+  REJECTED_REPORTS: 'REJECTED_REPORTS',
 }
 //
 
@@ -41,6 +42,12 @@ function receiveReports(json) {
     type: types.RECEIVE_REPORTS,
     items: json.data,
     total: json.total,
+  }
+}
+
+function rejectReports() {
+  return {
+    type: types.REJECTED_REPORTS,
   }
 }
 
@@ -85,7 +92,9 @@ export function fetchReports(filtersParams, sortCol, sortDir, page, pageSize) {
           ),
         },
       }
-    ).then(json => dispatch(receiveReports(json)))
+    )
+      .then(json => dispatch(receiveReports(json)))
+      .catch(() => dispatch(rejectReports()))
   }
 }
 /*
@@ -109,6 +118,11 @@ export default function reportReducer(state = initialState, action) {
         const immutList = Immutable.fromJS(action.items)
         mutState.set('items', receiveList(mutState.items, immutList))
         mutState.set('table', receiveTableItems(mutState.table, action.total))
+      })
+    case types.REJECTED_REPORTS:
+      return state.withMutations(mutState => {
+        mutState.set('items', mutState.get('items').clear())
+        mutState.set('table', mutState.get('table').clear())
       })
     default:
       return state

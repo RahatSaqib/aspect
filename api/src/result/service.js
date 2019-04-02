@@ -1,6 +1,7 @@
 const Boom = require('boom')
 const _ = require('lodash')
 const dateFormat = require('date-fns/format')
+const { addHours } = require('date-fns')
 
 const {
   knex,
@@ -18,6 +19,7 @@ const {
 } = require('../shared/io')
 const { resultWorkflowStatusToId } = require('../shared/dictionary')
 const { oneDirectionalMd5Hash } = require('../shared/encryption')
+const { returnIso8601StringWithoutTimeZoneOffset } = require('../shared/date')
 const { getPathFromFileReferenceId } = require('../file/service')
 
 const SELECT_LIST_FIELDS = [
@@ -183,10 +185,7 @@ async function getListResults(query, auth) {
     .leftJoin('SampleType as stp', 'sp.sampleTypeId', 'stp.id')
     .leftJoin('Site as so', 'sp.originSiteId', 'so.id')
     .leftJoin('ResultWorkflowStatus as rs', 'r.resultWorkflowStatusId', 'rs.id')
-    .leftJoin('ResultSource as rsrc', 'r.resultSourceId', 'rsrc.id')
-    .leftJoin('Site as sr', 'r.siteId', 'sr.id')
-    // Filter Generated results for now until we come up with appropriate UI
-    .where('rsrc.externalId', '<>', 'Generated')
+    .leftJoin('Site as si', 'r.siteId', 'si.id')
     .modify(filterDateRangeParams, query, 'r.endedOn')
     .modify(filterParams, query, {
       deviceId: 'd.id',
@@ -196,7 +195,7 @@ async function getListResults(query, auth) {
       stateId: 'g.stateId',
       lgaId: 'g.lgaId',
       deviceName: 'd.name',
-      siteName: 'sr.name',
+      siteName: 'si.name',
       sampleId: 'sp.externalId',
       sampleOriginSite: 'so.name',
       sampleGroup: 'r.sampleGroup',
@@ -254,6 +253,175 @@ async function getListResults(query, auth) {
 async function listResults(request) {
   const { query, auth } = request
   const result = await getListResults(query, auth)
+  return result
+}
+
+async function getDownloadResultsList(query, auth) {
+  // get data constraints
+  const dataConstraints = await getConstraints(auth.credentials)
+
+  const resultQuery = knex('Result as r')
+    .innerJoin('Assay as a', 'r.assayId', 'a.id')
+    .innerJoin('Device as d', 'r.deviceId', 'd.id')
+    .leftJoin('Geography as g', 'r.geographyId', 'g.id')
+    .leftJoin('Country as c', 'g.countryId', 'c.id')
+    .leftJoin('State as st', 'g.stateId', 'st.id')
+    .leftJoin('Lga as lg', 'g.lgaId', 'lg.id')
+    .leftJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
+    .leftJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
+    .leftJoin('Sample as sp', 'r.sampleId', 'sp.id')
+    .leftJoin('SampleType as stp', 'sp.sampleTypeId', 'stp.id')
+    .leftJoin('Site as so', 'sp.originSiteId', 'so.id')
+    .leftJoin('Site as si', 'r.siteId', 'si.id')
+    .modify((queryBuilder, params) => {
+      if (params.minUpdatedOn) {
+        queryBuilder.where('r.updatedOn', '>=', params.minUpdatedOn)
+      }
+      if (params.maxUpdatedOn) {
+        queryBuilder.where('r.updatedOn', '<', params.maxUpdatedOn)
+      }
+    }, query)
+    .modify(addConstraints, dataConstraints, { device: 'd', sample: 's' })
+
+  // get total count for paging
+  const getCount = resultQuery
+    .clone()
+    .count('r.id as count')
+    .first()
+
+  // get rows
+  const getItems = resultQuery
+    .clone()
+    .modify(sortPageParams, query, 'updatedOn')
+    .select(
+      'r.id',
+      'r.externalId',
+      'r.startedOn',
+      'r.endedOn',
+      'r.createdOn',
+      'r.updatedOn',
+      'r.longitude',
+      'r.latitude',
+      'a.externalId as assayExternalId',
+      'si.name as siteName',
+      'd.name as deviceName',
+      'rc1.externalId as resultCategory1ExternalId',
+      'rc2.externalId as resultCategory2ExternalId',
+      'r.patientData',
+      'r.resultData',
+      'r.formData',
+      'r.researchId',
+      'r.senderVersion',
+      'r.senderOperator',
+      'r.notes',
+      'r.errorCode',
+      'r.errorNotes',
+      'sp.externalId as sampleId',
+      'r.sampleGroup',
+      'sp.collectedOn as sampleCollectedOn',
+      'so.id as sampleOriginSiteId',
+      'so.externalId as sampleOriginSiteExternalId',
+      'so.name as sampleOriginSiteName',
+      'stp.name as sampleTypeName'
+    )
+
+  // return result when both queries are finished
+  const [{ count: total }, data] = await Promise.all([getCount, getItems])
+
+  // get latest workflow log entry for every result:
+  const workflowLogs = await knex('ResultWorkflowLog as rwl')
+    .join(
+      knex
+        .select('resultId')
+        .max('changedOn as maxChangedOn')
+        .from('ResultWorkflowLog')
+        .whereIn('resultId', data.map(d => d.id))
+        .groupBy('resultId')
+        .as('rwlMax'),
+      function() {
+        this.on('rwl.resultId', 'rwlMax.resultId').on(
+          'rwl.changedOn',
+          'rwlMax.maxChangedOn'
+        )
+      }
+    )
+    .join('ResultWorkflowStatus as rws', 'rwl.resultWorkflowStatusId', 'rws.id')
+    .select(
+      'rwl.resultId',
+      'rws.name',
+      'rws.externalId',
+      'rws.i18nKey',
+      'rwl.reason',
+      'rwl.changedOn'
+    )
+
+  const transformedData = _.map(data, d => ({
+    id: d.id,
+    externalId: d.externalId,
+    startedOn: returnIso8601StringWithoutTimeZoneOffset(d.startedOn),
+    endedOn: returnIso8601StringWithoutTimeZoneOffset(d.endedOn),
+    createdOn: d.createdOn,
+    updatedOn: d.updatedOn,
+    longitude: d.longitude,
+    latitude: d.latitude,
+    assayExternalId: d.assayExternalId,
+    siteName: d.siteName,
+    deviceName: d.deviceName,
+    resultCategory1ExternalId: d.resultCategory1ExternalId,
+    resultCategory2ExternalId: d.resultCategory2ExternalId,
+    patientData: d.patientData ? JSON.parse(d.patientData) : null,
+    resultData: d.resultData ? JSON.parse(d.resultData) : null,
+    formData: d.formData ? JSON.parse(d.formData) : null,
+    researchId: d.researchId,
+    senderVersion: d.senderVersion,
+    senderOperator: d.senderOperator,
+    notes: d.notes,
+    errorCode: d.errorCode,
+    errorNotes: d.errorNotes,
+    sample: {
+      id: d.sampleId,
+      collectedOn: d.sampleCollectedOn,
+      group: d.sampleGroup,
+      type: d.sampleTypeName,
+      originSite: d.sampleOriginSiteId
+        ? {
+            externalId: d.sampleOriginSiteExternalId,
+            name: d.sampleOriginSiteName,
+          }
+        : null,
+    },
+    workflowStatus: _.omit(
+      _.find(workflowLogs, { resultId: d.id }),
+      'resultId'
+    ),
+    // TODO: Use treatment status when implemented
+    treatmentStatus:
+      d.id % 7 === 0
+        ? null
+        : {
+            changedOn: addHours(d.endedOn, d.id % 5 ? 4 : 72),
+            externalId: d.id % 5 ? 'AwaitingTreatment' : 'OnTreatment',
+            i18nKey:
+              d.id % 5
+                ? 'ResultTreatmentStatusAwaitingTreatment'
+                : 'ResultTreatmentStatusOnTreatment',
+            name: d.id % 5 ? 'Awaiting Treatment' : 'On Treatment',
+          },
+  }))
+
+  const result = {
+    ok: true,
+    total,
+    length: transformedData.length,
+    data: transformedData,
+  }
+
+  return result
+}
+
+async function downloadResultsList(request) {
+  const { query, auth } = request
+  const result = await getDownloadResultsList(query, auth)
   return result
 }
 
@@ -837,6 +1005,7 @@ function createUniqueIdForResult(
 
 module.exports = {
   listResults,
+  downloadResultsList,
   showResult,
   listResultTypes,
   updateWorkflowStatus,

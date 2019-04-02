@@ -407,7 +407,6 @@ describe('Device API routes', () => {
         assert.equal(logLength1 + 1, logLength2)
       }))
   })
-
   describe('return health stats of remote server', () => {
     it('should return json with the servers stats.', () =>
       runTest(async () => {
