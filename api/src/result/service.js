@@ -1,7 +1,6 @@
 const Boom = require('boom')
 const _ = require('lodash')
 const dateFormat = require('date-fns/format')
-const { addHours } = require('date-fns')
 
 const {
   knex,
@@ -346,68 +345,90 @@ async function getDownloadResultsList(query, auth) {
       }
     )
     .join('ResultWorkflowStatus as rws', 'rwl.resultWorkflowStatusId', 'rws.id')
+    .leftJoin(
+      knex
+        .select('resultId')
+        .max('changedOn as maxChangedOn')
+        .max('resultTreatmentStatusId as resultTreatmentStatusId')
+        .from('ResultTreatmentStatusLog')
+        .whereIn('resultId', data.map(d => d.id))
+        .groupBy('resultId')
+        .as('rtslMax'),
+      'rwl.resultId',
+      'rtslMax.resultId'
+    )
+    .leftJoin(
+      'ResultTreatmentStatus as rts',
+      'rtslMax.resultTreatmentStatusId',
+      'rts.id'
+    )
     .select(
       'rwl.resultId',
       'rws.name',
       'rws.externalId',
       'rws.i18nKey',
       'rwl.reason',
-      'rwl.changedOn'
+      'rwl.changedOn',
+      'rtslMax.maxChangedOn as treatmentChangedOn',
+      'rts.name as resultTreatmentName',
+      'rts.externalId as treatmentexternalId',
+      'rts.i18nKey as treatmenti18nKey'
     )
 
-  const transformedData = _.map(data, d => ({
-    id: d.id,
-    externalId: d.externalId,
-    startedOn: returnIso8601StringWithoutTimeZoneOffset(d.startedOn),
-    endedOn: returnIso8601StringWithoutTimeZoneOffset(d.endedOn),
-    createdOn: d.createdOn,
-    updatedOn: d.updatedOn,
-    longitude: d.longitude,
-    latitude: d.latitude,
-    assayExternalId: d.assayExternalId,
-    siteName: d.siteName,
-    deviceName: d.deviceName,
-    resultCategory1ExternalId: d.resultCategory1ExternalId,
-    resultCategory2ExternalId: d.resultCategory2ExternalId,
-    patientData: d.patientData ? JSON.parse(d.patientData) : null,
-    resultData: d.resultData ? JSON.parse(d.resultData) : null,
-    formData: d.formData ? JSON.parse(d.formData) : null,
-    researchId: d.researchId,
-    senderVersion: d.senderVersion,
-    senderOperator: d.senderOperator,
-    notes: d.notes,
-    errorCode: d.errorCode,
-    errorNotes: d.errorNotes,
-    sample: {
-      id: d.sampleId,
-      collectedOn: d.sampleCollectedOn,
-      group: d.sampleGroup,
-      type: d.sampleTypeName,
-      originSite: d.sampleOriginSiteId
-        ? {
-            externalId: d.sampleOriginSiteExternalId,
-            name: d.sampleOriginSiteName,
-          }
-        : null,
-    },
-    workflowStatus: _.omit(
-      _.find(workflowLogs, { resultId: d.id }),
-      'resultId'
-    ),
-    // TODO: Use treatment status when implemented
-    treatmentStatus:
-      d.id % 7 === 0
-        ? null
-        : {
-            changedOn: addHours(d.endedOn, d.id % 5 ? 4 : 72),
-            externalId: d.id % 5 ? 'AwaitingTreatment' : 'OnTreatment',
-            i18nKey:
-              d.id % 5
-                ? 'ResultTreatmentStatusAwaitingTreatment'
-                : 'ResultTreatmentStatusOnTreatment',
-            name: d.id % 5 ? 'Awaiting Treatment' : 'On Treatment',
-          },
-  }))
+  const transformedData = _.map(data, d => {
+    const resultWorkflow = _.find(workflowLogs, { resultId: d.id })
+    return {
+      id: d.id,
+      externalId: d.externalId,
+      startedOn: returnIso8601StringWithoutTimeZoneOffset(d.startedOn),
+      endedOn: returnIso8601StringWithoutTimeZoneOffset(d.endedOn),
+      createdOn: d.createdOn,
+      updatedOn: d.updatedOn,
+      longitude: d.longitude,
+      latitude: d.latitude,
+      assayExternalId: d.assayExternalId,
+      siteName: d.siteName,
+      deviceName: d.deviceName,
+      resultCategory1ExternalId: d.resultCategory1ExternalId,
+      resultCategory2ExternalId: d.resultCategory2ExternalId,
+      patientData: d.patientData ? JSON.parse(d.patientData) : null,
+      resultData: d.resultData ? JSON.parse(d.resultData) : null,
+      formData: d.formData ? JSON.parse(d.formData) : null,
+      researchId: d.researchId,
+      senderVersion: d.senderVersion,
+      senderOperator: d.senderOperator,
+      notes: d.notes,
+      errorCode: d.errorCode,
+      errorNotes: d.errorNotes,
+      sample: {
+        id: d.sampleId,
+        collectedOn: d.sampleCollectedOn,
+        group: d.sampleGroup,
+        type: d.sampleTypeName,
+        originSite: d.sampleOriginSiteId
+          ? {
+              externalId: d.sampleOriginSiteExternalId,
+              name: d.sampleOriginSiteName,
+            }
+          : null,
+      },
+      workflowStatus: _.omit(
+        resultWorkflow,
+        'resultId',
+        'treatmentChangedOn',
+        'resultTreatmentName',
+        'treatmentexternalId',
+        'treatmenti18nKey'
+      ),
+      // TODO: Use treatment status when implemented
+      treatmentStatus: {
+        changedOn: resultWorkflow.treatmentChangedOn,
+        name: resultWorkflow.resultTreatmentName,
+        externalId: resultWorkflow.treatmentexternalId,
+        i18nKey: resultWorkflow.treatmenti18nKey,
+      },
+    }
+  })
 
   const result = {
     ok: true,
