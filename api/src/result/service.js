@@ -506,7 +506,8 @@ async function downloadFileAsync({ auth, params }) {
 }
 
 async function getLatestResultWorkflowLogs(resultIds) {
-  // get latest workflow log entry for every result:
+  if (_.isEmpty(resultIds)) return null
+  // get latest workflow log entry for each specified result id's
   return knex('ResultWorkflowLog as rwl')
     .join(
       knex
