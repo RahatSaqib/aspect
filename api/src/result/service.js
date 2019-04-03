@@ -511,12 +511,12 @@ async function getLatestResultWorkflowLogs(resultIds) {
   return knex('ResultWorkflowLog as rwl')
     .join(
       knex
-        .select('resultId')
-        .max('changedOn as maxChangedOn')
         .from('ResultWorkflowLog')
         .whereIn('resultId', resultIds)
         .groupBy('resultId')
-        .as('rwlMax'),
+        .as('rwlMax')
+        // keep 'select' as last item in chain - in faked knex 'select' stops chaining in test api/test/result/service.test.js (see createFakeKnex())
+        .select('resultId', knex.raw('max(changedOn) as maxChangedOn')),
       function() {
         this.on('rwl.resultId', 'rwlMax.resultId').on(
           'rwl.changedOn',
