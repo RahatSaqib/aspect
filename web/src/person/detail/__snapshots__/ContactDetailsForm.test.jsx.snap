@@ -194,6 +194,18 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable a
         variant="standard"
       />
     </section>
+    <section>
+      <h1>
+        Tags
+      </h1>
+      <pure(Connect(lifecycle(withHandlers(mapProps(ConnectedTagInput)))))
+        allowCreate={true}
+        label="Choose tags"
+        onTagChange={[Function]}
+        qryType="person"
+        value={Array []}
+      />
+    </section>
   </div>
   <div
     className="Form__ActionRow"
@@ -402,6 +414,18 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
         select={false}
         type="text"
         variant="standard"
+      />
+    </section>
+    <section>
+      <h1>
+        Tags
+      </h1>
+      <pure(Connect(lifecycle(withHandlers(mapProps(ConnectedTagInput)))))
+        allowCreate={true}
+        label="Choose tags"
+        onTagChange={[Function]}
+        qryType="person"
+        value={Array []}
       />
     </section>
   </div>
@@ -614,6 +638,18 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
         variant="standard"
       />
     </section>
+    <section>
+      <h1>
+        Tags
+      </h1>
+      <pure(Connect(lifecycle(withHandlers(mapProps(ConnectedTagInput)))))
+        allowCreate={true}
+        label="Choose tags"
+        onTagChange={[Function]}
+        qryType="person"
+        value={Array []}
+      />
+    </section>
   </div>
   <div
     className="Form__ActionRow"
@@ -822,6 +858,18 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
         select={false}
         type="text"
         variant="standard"
+      />
+    </section>
+    <section>
+      <h1>
+        Tags
+      </h1>
+      <pure(Connect(lifecycle(withHandlers(mapProps(ConnectedTagInput)))))
+        allowCreate={true}
+        label="Choose tags"
+        onTagChange={[Function]}
+        qryType="person"
+        value={Array []}
       />
     </section>
   </div>
@@ -1034,6 +1082,18 @@ exports[`ContactDetailsForm module ContactDetailsForm component should enable th
         variant="standard"
       />
     </section>
+    <section>
+      <h1>
+        Tags
+      </h1>
+      <pure(Connect(lifecycle(withHandlers(mapProps(ConnectedTagInput)))))
+        allowCreate={true}
+        label="Choose tags"
+        onTagChange={[Function]}
+        qryType="person"
+        value={Array []}
+      />
+    </section>
   </div>
   <div
     className="Form__ActionRow"
@@ -1242,6 +1302,18 @@ exports[`ContactDetailsForm module ContactDetailsForm component should render co
         select={false}
         type="text"
         variant="standard"
+      />
+    </section>
+    <section>
+      <h1>
+        Tags
+      </h1>
+      <pure(Connect(lifecycle(withHandlers(mapProps(ConnectedTagInput)))))
+        allowCreate={true}
+        label="Choose tags"
+        onTagChange={[Function]}
+        qryType="person"
+        value={Array []}
       />
     </section>
   </div>
