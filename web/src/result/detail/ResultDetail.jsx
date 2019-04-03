@@ -541,21 +541,29 @@ export class ResultDetail extends PureComponent {
     return (
       <ExpansionPanel className={cssClasses('FieldsContainer')}>
         <ExpansionPanelHeader label={formatMessage(messages.fieldWorkflow)}>
-          <CheckboxField
-            name="Status"
-            label={formatMessage(messages.workflowQcOk)}
-            style={{ marginRight: 4 }}
-            checked={result.get('qcCheck') === 1}
-            onChange={this.onChangeQcCheck}
-            disabled={
-              result.get('resultWorkflowStatusExternalId') !== 'Deliverable'
-            }
-            title={
-              result.get('resultWorkflowStatusExternalId') !== 'Deliverable'
-                ? formatMessage(messages.qcCheckDisabledHelp)
-                : ''
-            }
-          />
+          <span
+            role="checkbox"
+            aria-checked="false"
+            tabIndex="0"
+            onKeyDown={() => {}}
+            onClick={e => e.stopPropagation()}
+          >
+            <CheckboxField
+              name="Status"
+              label={formatMessage(messages.workflowQcOk)}
+              style={{ marginRight: 4 }}
+              checked={result.get('qcCheck') === 1}
+              onChange={this.onChangeQcCheck}
+              disabled={
+                result.get('resultWorkflowStatusExternalId') !== 'Deliverable'
+              }
+              title={
+                result.get('resultWorkflowStatusExternalId') !== 'Deliverable'
+                  ? formatMessage(messages.qcCheckDisabledHelp)
+                  : ''
+              }
+            />
+          </span>
         </ExpansionPanelHeader>
         <ExpansionPanelDetail>
           <Unit xs="1-2" xl="1-3" className={cssClasses('Flexed')}>
