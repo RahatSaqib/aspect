@@ -25,6 +25,28 @@ const uniqueKeys = {
   IssueType: ['externalId'],
 }
 
+const foreignKeys = {
+  NotificationType: [
+    { column: 'partnerId', reference: 'Partner.id' },
+    { column: 'issueTypeId', reference: 'IssueType.id' },
+    { column: 'messageTypeId', reference: 'MessageType.id' },
+  ],
+  IssueResolutionTrigger: [
+    { column: 'partnerId', reference: 'Partner.id' },
+    { column: 'issueTypeId', reference: 'IssueType.id' },
+  ],
+  IssueEscalationTrigger: [
+    { column: 'partnerId', reference: 'Partner.id' },
+    { column: 'issueTypeId', reference: 'IssueType.id' },
+  ],
+  MessageType: [
+    { column: 'messageSeverityId', reference: 'MessageSeverity.id' },
+    { column: 'alertTemplateId', reference: 'AlertTemplate.id' },
+    { column: 'smsTemplateId', reference: 'SmsTemplate.id' },
+    { column: 'emailTemplateId', reference: 'EmailTemplate.id' },
+  ],
+}
+
 // Helper for seeed files. Ru
 let hasSeededStaticData = false
 function seed(seed) {
@@ -1997,9 +2019,25 @@ async function addUniqueKey(knex, tableName) {
   })
 }
 async function dropUniqueKey(knex, tableName) {
+  await Promise.all(
+    _.map(foreignKeys[tableName], async ({ column }) => {
+      await knex.schema.table(tableName, table => {
+        table.dropForeign(column)
+      })
+    })
+  )
+
   await knex.schema.alterTable(tableName, table => {
     table.dropUnique(uniqueKeys[tableName], `${tableName}_unique`)
   })
+
+  await Promise.all(
+    _.map(foreignKeys[tableName], async ({ column, reference }) => {
+      await knex.schema.table(tableName, table => {
+        table.foreign(column).references(reference)
+      })
+    })
+  )
 }
 
 async function updateCategoryAssay(knex) {
@@ -2142,6 +2180,59 @@ async function addLicensePersons(knex, personNameToExclude = '') {
   )
 }
 
+async function addDeviceCapacities(knex) {
+  const { data: deviceCapacitiesByPartner } = await readJson(
+    `./seeds/fixtures/DeviceCapacity.json`
+  )
+
+  const [partners] = await Promise.all([rowsAsObject(knex, 'Partner')])
+  const [deviceTypes] = await Promise.all([
+    rowsAsObject(knex, 'DeviceType', 'externalId'),
+  ])
+
+  await Promise.each(
+    deviceCapacitiesByPartner,
+    async ({
+      deviceTypeExternalId,
+      defaultForDeviceType,
+      name,
+      dailyCapacity,
+    }) => {
+      await knex('DeviceCapacity').insert(
+        _.map(partners, partner => ({
+          partnerId: partner.id,
+          deviceTypeId: deviceTypes[deviceTypeExternalId].id,
+          defaultForDeviceType,
+          name,
+          dailyCapacity,
+        }))
+      )
+    }
+  )
+}
+
+async function setCapacityForExistingDevices(knex) {
+  const devices = await knex('Device')
+    .where('deviceCapacityId', null)
+    .distinct('partnerId', 'deviceTypeId')
+
+  const deviceCapacities = await knex('DeviceCapacity')
+    .where('defaultForDeviceType', 1)
+    .select('id', 'partnerId', 'deviceTypeId')
+  await Promise.each(devices, async ({ partnerId, deviceTypeId }) => {
+    const deviceCapacityByPartnerId = _.find(
+      deviceCapacities,
+      dc => dc.partnerId === partnerId && dc.deviceTypeId === deviceTypeId
+    )
+    if (deviceCapacityByPartnerId) {
+      await knex('Device')
+        .where({ partnerId })
+        .where({ deviceTypeId })
+        .update({ deviceCapacityId: deviceCapacityByPartnerId.id })
+    }
+  })
+}
+
 async function seedDeviceMaintenanceType(knex) {
   const { data: deviceMaintenanceTypes } = await readJson(
     `./seeds/fixtures/DeviceMaintenanceType.json`
@@ -2188,6 +2279,8 @@ module.exports = {
   addLicenses,
   addLicensePersons,
 
+  addDeviceCapacities,
+  setCapacityForExistingDevices,
   seedDeviceMaintenanceType,
 
   updateCategoryAssay,

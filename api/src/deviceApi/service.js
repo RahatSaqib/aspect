@@ -571,21 +571,16 @@ async function createDeviceApiContext(
     }
   )
 
-  if (handlerOptions.transformInitialPayload && request.params.pluginName) {
-    const transformInitialPayload = await loadPlugin(
-      [request.params.pluginName],
-      'transformInitialPayload'
-    )
-    request.payload = await transformInitialPayload(originalRequest)
-  }
-
   const { auth } = request
   const now = new Date()
+
   const existingDeviceAndData = await knex('DeviceApiKey as dak')
     .innerJoin('Device as d', 'dak.deviceId', 'd.id')
     .innerJoin('DeviceStatus as ds', 'd.deviceStatusId', 'ds.id')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .innerJoin('DeviceTypeCategory as dtc', 'dtc.id', 'dt.deviceTypeCategoryId')
+    .leftJoin('Geography as g', 'd.geographyId', 'g.id')
+    .leftJoin('Country as c', 'g.countryId', 'c.id')
     .leftJoin('Partner as p', 'p.id', 'd.partnerId')
     .where({
       'dak.token': auth.credentials.token,
@@ -606,8 +601,22 @@ async function createDeviceApiContext(
       'dt.externalId as deviceType',
       'dt.plugin as deviceTypePluginName',
       'p.plugin as partnerPluginName',
-      'dtc.name as deviceTypeCategory'
+      'dtc.name as deviceTypeCategory',
+      'c.abbreviation as countryAbbreviation'
     )
+  if (handlerOptions.transformInitialPayload && request.params.pluginName) {
+    const transformInitialPayload = await loadPlugin(
+      [request.params.pluginName],
+      'transformInitialPayload'
+    )
+
+    if (existingDeviceAndData && existingDeviceAndData.countryAbbreviation)
+      request.payload = await transformInitialPayload(
+        originalRequest,
+        existingDeviceAndData.countryAbbreviation
+      )
+    else request.payload = await transformInitialPayload(originalRequest)
+  }
 
   let device = null
   if (existingDeviceAndData != null) {

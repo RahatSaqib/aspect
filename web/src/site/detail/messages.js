@@ -15,6 +15,10 @@ export default defineMessages({
     id: 'pages.SiteDetail.fieldShortName',
     defaultMessage: 'ShortName',
   },
+  fieldFacilityCode: {
+    id: 'pages.SiteDetail.fieldFacilityCode',
+    defaultMessage: 'Facility Code',
+  },
   fieldExternalId: {
     id: 'pages.SiteDetail.fieldExternalId',
     defaultMessage: 'Site ID',
@@ -51,6 +55,14 @@ export default defineMessages({
     id: 'pages.SiteDetail.fieldZip',
     defaultMessage: 'Zip',
   },
+  fieldLongitude: {
+    id: 'pages.SiteDetail.fieldLongitude',
+    defaultMessage: 'Longitude',
+  },
+  fieldLatitude: {
+    id: 'pages.SiteDetail.fieldLatitude',
+    defaultMessage: 'Latitude',
+  },
   fieldTags: {
     id: 'pages.SiteDetail.fieldTags',
     defaultMessage: 'Tags',
@@ -62,5 +74,13 @@ export default defineMessages({
   fieldContact: {
     id: 'pages.SiteDetail.fieldContact',
     defaultMessage: 'Site Contact',
+  },
+  buttonSetBasedonAddress: {
+    id: 'pages.SiteDetail.buttonSetBasedonAddress',
+    defaultMessage: 'Set based on address',
+  },
+  buttonUpdate: {
+    id: 'pages.SiteDetail.buttonUpdate',
+    defaultMessage: 'UPDATE',
   },
 })

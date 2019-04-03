@@ -22,6 +22,7 @@ import BrowseEmptyList from '../../globals/components/BrowseEmptyList'
 import BrowseTablePaginator from '../../globals/components/BrowseTablePaginator'
 import DataTableCard from '../../components/shared/DataTableCard'
 import DataTableProgressBar from '../../components/shared/DataTableProgressBar'
+
 import { fetchDevices, exportDevices } from '../DeviceRedux'
 import {
   DeviceDataTable,
@@ -91,6 +92,7 @@ const enhance = compose(
       items: state.device.items,
       table: state.device.table,
       userPermissions: state.user.jwt.permissions,
+      displayPreferences: state.user.displayPreferences,
     }),
     bindActionCreators.bind(null, {
       fetchDevices,
@@ -144,8 +146,8 @@ const enhance = compose(
     }) => history.push(`/browse/device/${deviceId}`),
     onAlertClick: ({ history }) => event => {
       event.stopPropagation()
-      const { currentTarget: { dataset: { pathname } } } = event
-      history.push(pathname)
+      const { currentTarget: { dataset: { deviceId } } } = event
+      history.push(`/browse/device/${deviceId}/alerts`)
     },
   }),
   lifecycle({
@@ -192,6 +194,7 @@ export const DeviceList = ({
   location,
   table,
   items,
+  displayPreferences,
   // --- injected by recompose ---
   sortCol,
   sortDir,
@@ -299,6 +302,7 @@ export const DeviceList = ({
                   device={device}
                   onClick={onRowClick}
                   onAlertClick={onAlertClick}
+                  displayPreferences={displayPreferences}
                   data-device-id={device.get('id')}
                 />
               ))}

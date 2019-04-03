@@ -152,7 +152,7 @@ const renderSelect = ({
     key={name}
     name={name}
     onChange={handleChange(accessOptions[`set${name}`])}
-    value={accessOptions[`get${name}`](value)}
+    value={accessOptions[`get${name}`](value) || ''}
   >
     <option value="" hidden>
       {name}
