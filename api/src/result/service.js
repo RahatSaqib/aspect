@@ -328,7 +328,7 @@ async function getDownloadResultsList(query, auth) {
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
 
   // get latest workflow log entry for every result:
-  const workflowLogs = await getResultWorkflowLogs(knex, data.map(d => d.id))
+  const workflowLogs = await getLatestResultWorkflowLogs(data.map(d => d.id))
 
   const transformedData = _.map(data, d => ({
     id: d.id,
@@ -505,7 +505,7 @@ async function downloadFileAsync({ auth, params }) {
   return getPathFromFileReferenceId(knex, fileReference.id)
 }
 
-async function getResultWorkflowLogs(knex, resultIds) {
+async function getLatestResultWorkflowLogs(resultIds) {
   // get latest workflow log entry for every result:
   return knex('ResultWorkflowLog as rwl')
     .join(
@@ -594,9 +594,9 @@ async function getResultByResultId(request, fields = SELECT_SHOW_FIELDS) {
     data.files = files
 
     // get latest workflow log
-    const workflowLogs = await getResultWorkflowLogs(knex, [data.id])
-    const { reason, createdOn } =
-      _.find(workflowLogs, { resultId: data.id }) || {}
+    const [{ reason, createdOn } = {}] = await getLatestResultWorkflowLogs([
+      data.id,
+    ])
     data.resultWorkflowLogReason = reason
     data.resultWorkflowLogCreatedOn = createdOn
   }
