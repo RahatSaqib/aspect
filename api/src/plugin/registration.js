@@ -5,9 +5,9 @@ const { postProcessMergeResult } = require('../deviceApi/result')
 
 const DEFAULT_SETTINGS = {
   displayPreferences: {
-    dateFormat: 'YYYY-MM-DD',
+    dateFormat: 'yyyy-MM-dd',
     timeFormat: 'HH:mm:ss',
-    dateTimeFormat: 'YYYY-MM-DD HH:mm:ss',
+    dateTimeFormat: 'yyyy-MM-dd HH:mm:ss',
     utilizationRateThreshold: 0.8,
     errorRateThreshold: 0.05,
   },

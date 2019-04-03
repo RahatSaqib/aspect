@@ -1185,7 +1185,12 @@ date-fns-timezone@^0.1.4:
     date-fns "^1.29.0"
     timezone-support "^1.5.5"
 
-date-fns@^1.27.2, date-fns@^1.28.5:
+date-fns@2.0.0-alpha.8:
+  version "2.0.0-alpha.8"
+  resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-2.0.0-alpha.8.tgz#a62bd76a8f38e0194b2903245e9cb962b9bbe624"
+  integrity sha1-pivXao844BlLKQMkXpy5Yrm75iQ=
+
+date-fns@^1.27.2:
   version "1.29.0"
   resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-1.29.0.tgz#12e609cdcb935127311d04d33334e2960a2a54e6"
 

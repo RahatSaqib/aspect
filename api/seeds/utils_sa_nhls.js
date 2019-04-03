@@ -50,7 +50,7 @@ async function seedNotifications(knex, { partnerId }) {
     )
   )
 
-  const redCapDateTimeFormat = 'YYYY-MM-DD HH:mm'
+  const redCapDateTimeFormat = 'yyyy-MM-dd HH:mm'
   const [redCapAlereQWebHookTemplateId] = await knex('WebhookTemplate').insert(
     Object.assign(
       {

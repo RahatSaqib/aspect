@@ -236,7 +236,7 @@ function formatDate(date, options) {
   }
   const dateFormat =
     getArgumentFromOptions(options, 'formatString') ||
-    _.get(this, 'displayPreferences.dateFormat', 'YYYY-MM-DD')
+    _.get(this, 'displayPreferences.dateFormat', 'yyyy-MM-dd')
   return formatDateOrDefault(date, dateFormat)
 }
 

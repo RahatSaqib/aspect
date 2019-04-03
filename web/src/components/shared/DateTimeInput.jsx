@@ -62,21 +62,34 @@ const accessOptions = {
   getMinutes,
 }
 
-const displayOptions = {
-  Y: {
-    name: 'Year',
-    options: () => {
-      const now = new Date()
-      const startYear = getYear(subtractYears(now, 10))
-      const endYear = getYear(subtractYears(now, -10))
+const yearProps = {
+  name: 'Year',
+  options: () => {
+    const now = new Date()
+    const startYear = getYear(subtractYears(now, 10))
+    const endYear = getYear(subtractYears(now, -10))
 
-      const years = []
-      for (let i = startYear; i <= endYear; i++) {
-        years.push({ value: i, label: dateFnFormat(new Date(i, 0, 1), 'YYYY') })
-      }
-      return years
-    },
+    const years = []
+    for (let i = startYear; i <= endYear; i++) {
+      years.push({ value: i, label: dateFnFormat(new Date(i, 0, 1), 'yyyy') })
+    }
+    return years
   },
+}
+const dayProps = {
+  name: 'Date',
+  options: date => {
+    const daysInMonth = getDaysInMonth(date)
+    const days = []
+    for (let i = 1; i <= daysInMonth; i++) {
+      days.push({ value: i, label: dateFnFormat(new Date(1970, 0, i), 'dd') })
+    }
+    return days
+  },
+}
+const displayOptions = {
+  Y: yearProps,
+  y: yearProps,
   M: {
     name: 'Month',
     options: () => {
@@ -90,17 +103,8 @@ const displayOptions = {
       return months
     },
   },
-  D: {
-    name: 'Date',
-    options: date => {
-      const daysInMonth = getDaysInMonth(date)
-      const days = []
-      for (let i = 1; i <= daysInMonth; i++) {
-        days.push({ value: i, label: dateFnFormat(new Date(1970, 0, i), 'DD') })
-      }
-      return days
-    },
-  },
+  D: dayProps,
+  d: dayProps,
   H: {
     name: 'Hours',
     options: () => {
@@ -223,8 +227,7 @@ DateTimeInput.propTypes = {
 
 DateTimeInput.defaultProps = {
   className: '',
-  displayFormat: 'Y/M/D',
-  label: '',
+  displayFormat: 'y/M/d',
   value: '',
 }
 

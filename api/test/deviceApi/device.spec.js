@@ -1,7 +1,7 @@
 const _ = require('lodash')
 const supertest = require('supertest')
 const chai = require('chai')
-const subDays = require('date-fns/sub_days')
+const subDays = require('date-fns/subDays')
 const {
   createTestContext,
   getDeviceConfigurationData,
