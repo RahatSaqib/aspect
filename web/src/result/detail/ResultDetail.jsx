@@ -566,7 +566,7 @@ export class ResultDetail extends PureComponent {
           </span>
         </ExpansionPanelHeader>
         <ExpansionPanelDetail>
-          <Unit xs="1-2" xl="1-3" className={cssClasses('Flexed')}>
+          <div className={cssClasses('Container_4_Fields')}>
             <ReadOnlyField
               label={formatMessage(messages.workflowStatusName)}
               value={result.get('resultWorkflowStatus')}
@@ -579,7 +579,7 @@ export class ResultDetail extends PureComponent {
               label={formatMessage(messages.workflowStatusLogCreatedOn)}
               value={formatDate(result.get('resultWorkflowLogCreatedOn'))}
             />
-          </Unit>
+          </div>
         </ExpansionPanelDetail>
       </ExpansionPanel>
     )
