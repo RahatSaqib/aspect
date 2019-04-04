@@ -15,14 +15,14 @@ async function up(knex) {
       .index()
       .references('id')
       .inTable('Result')
-      .onDelete('SET NULL')
     t
       .integer('resultTreatmentStatusId')
       .unsigned()
+      .notNullable()
       .index()
       .references('id')
       .inTable('ResultTreatmentStatus')
-      .onDelete('SET NULL')
+
     t.string('data').nullable()
     t.string('method').nullable()
     t.datetime('changedOn').defaultTo(knex.fn.now())
@@ -33,7 +33,6 @@ async function up(knex) {
       .index()
       .references('id')
       .inTable('User')
-      .onDelete('SET NULL')
   })
 }
 async function down(knex) {

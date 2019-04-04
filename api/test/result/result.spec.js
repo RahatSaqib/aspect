@@ -16,7 +16,7 @@ const {
   getLastResult,
 } = require('../deviceApi/utils')
 
-describe.only('Result routes', () => {
+describe('Result routes', () => {
   const path = '/api/result'
   let resultId = 1
   let assayId = 1
@@ -159,6 +159,13 @@ describe.only('Result routes', () => {
   })
 
   describe('PUT', () => {
+    after(async () =>
+      runTestWithKnex(async knex => {
+        await knex('ResultTreatmentStatusLog')
+          .where('resultId', resultId)
+          .delete()
+      })
+    )
     it('Should update result status given a resultId', done => {
       const updateWithExternalId = {
         resultWorkflowStatusId: null,
@@ -299,7 +306,7 @@ describe.only('Result routes', () => {
             })
         })
     })
-    it.only('Should update result treatment status given a resultId', done => {
+    it('Should update result treatment status given a resultId', () => {
       const updateWithExternalId = {
         resultTreatmentStatusId: null,
         externalId: 'AwaitingTreatment',
@@ -307,7 +314,7 @@ describe.only('Result routes', () => {
         method: 'sms',
       }
       const updateWithId = {
-        resultTreatmentStatusId: 1,
+        resultTreatmentStatusId: 2,
         externalId: null,
         data: 'should be treated',
         method: 'sms',
@@ -418,31 +425,10 @@ describe.only('Result routes', () => {
               })
 
               // check if resultWorkflowStatus was updated
-              assert.equal(res.body.data.resultWorkflowStatus, 'OK')
-
-              // Check if update persisted
-              server
-                .get(`/api/result/${resultId}`)
-                .set('Authorization', `Bearer${shared.token}`)
-                .end((err, res) => {
-                  assert.equal(res.body.data.resultWorkflowStatus, 'OK')
-
-                  // Clean Up: Update resultWorkflowStatus with original status
-                  server
-                    .put(`${path}/workflow-status/${resultId}`)
-                    .send({
-                      resultWorkflowStatusId: null,
-                      externalId: initialResultWorkflowStatus,
-                    })
-                    .set('Authorization', `Bearer${shared.token}`)
-                    .end((err, res) => {
-                      assert.equal(
-                        res.body.data.resultWorkflowStatus,
-                        initialResultWorkflowStatusName
-                      )
-                      done()
-                    })
-                })
+              assert.equal(
+                res.body.data.treatmentStatus.externalId,
+                'OnTreatment'
+              )
             })
         })
     })
