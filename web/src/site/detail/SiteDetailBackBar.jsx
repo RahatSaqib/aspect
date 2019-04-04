@@ -66,7 +66,7 @@ const SiteDetailBackBar = ({
           data-path={path}
           color="primary"
           variant="contained"
-          inverse={match.path !== path}
+          inverse={match.path !== path && !disabled}
         >
           {label}
         </AspectButton>

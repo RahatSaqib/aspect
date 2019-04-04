@@ -4,7 +4,7 @@ import React from 'react'
 import { compose, withHandlers, lifecycle, withProps } from 'recompose'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import { Switch, Route } from 'react-router-dom'
+import { Switch, Redirect, Route } from 'react-router-dom'
 import isEditable from '../../shared/selectors/device'
 import { DelayShowingProgressCircular } from '../../components/shared/DelayShowingProgressBar'
 import { fetchSingleDevice, updateSingleDevice } from '../DeviceRedux'
@@ -102,6 +102,7 @@ export const DeviceDetail = ({
               dateRange={dateRange}
               onDateRangeChange={onDateRangeChange}
               device={device}
+              disabled={!editable}
               displayPreferences={displayPreferences}
               updateSingleDevice={updateSingleDevice}
             />
@@ -111,28 +112,42 @@ export const DeviceDetail = ({
           exact
           path={`${match.path}/operation`}
           render={props => (
-            <DeviceDetailOperation intl={intl} {...props} device={device} />
+            <DeviceDetailOperation
+              intl={intl}
+              {...props}
+              device={device}
+              disabled={!editable}
+            />
           )}
         />
         <Route
           exact
           path={`${match.path}/alerts`}
           render={props => (
-            <DeviceDetailAlerts intl={intl} {...props} device={device} />
+            <DeviceDetailAlerts
+              intl={intl}
+              {...props}
+              device={device}
+              disabled={!editable}
+            />
           )}
         />
         <Route
           exact
           path={`${match.path}/edit`}
-          render={props => (
-            <DeviceDetailEdit
-              intl={intl}
-              {...props}
-              device={device}
-              editable={editable}
-              updateSingleDevice={updateSingleDevice}
-            />
-          )}
+          render={props =>
+            editable ? (
+              <DeviceDetailEdit
+                intl={intl}
+                {...props}
+                device={device}
+                editable={editable}
+                updateSingleDevice={updateSingleDevice}
+              />
+            ) : (
+              <Redirect to={match.url} />
+            )
+          }
         />
       </Switch>
     )}
