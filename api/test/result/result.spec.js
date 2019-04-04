@@ -299,7 +299,153 @@ describe('Result routes', () => {
             })
         })
     })
+    it('Should update result treatment status given a resultId', done => {
+      const updateWithExternalId = {
+        resultTreatmentStatusId: null,
+        externalId: 'AwaitingTreatment',
+        data: 'should be treated',
+        method: 'sms',
+      }
+      const updateWithId = {
+        resultTreatmentStatusId: 1,
+        externalId: null,
+        data: 'should be treated',
+        method: 'sms',
+      }
 
+      // update with external ID
+      server
+        .put(`${path}/treatment-status/${resultId}`)
+        .send(updateWithExternalId)
+        .set('Authorization', `Bearer${shared.token}`)
+        .end((err, res) => {
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+          assert.property(res.body, 'data')
+          assert.typeOf(res.body.data, 'Object')
+          assert.typeOf(res.body.data.assay, 'Object')
+          assert.typeOf(res.body.data.assay.resultDataSchema, 'Object')
+          assert.typeOf(res.body.data.resultData, 'Object')
+          const resultFieldNames = [
+            'id',
+            'endedOn',
+            'deviceName',
+            'countryName',
+            'stateName',
+            'lgaName',
+            'resultCategory1Name',
+            'resultCategory2Name',
+            'resultData',
+            'sampleId',
+            'sampleGroup',
+            'patientId',
+            'siteName',
+            'assayVersion',
+            'consumableSerial',
+            'consumableLot',
+            'consumableExpirationDate',
+            'instrumentSerial',
+            'moduleName',
+            'moduleSerial',
+            'researchId',
+            'senderVersion',
+            'senderOperator',
+            'notes',
+            'errorCode',
+            'errorNotes',
+            'createdOn',
+            'updatedOn',
+            'assayId',
+            'assay',
+          ]
+          _.each(resultFieldNames, fieldName => {
+            assert.property(res.body.data, fieldName)
+          })
+
+          // check the updated fieldName
+          assert.equal(
+            res.body.data.treatmentStatus.externalId,
+            'AwaitingTreatment'
+          )
+
+          // update with resultWorkflowStatusId
+          server
+            .put(`${path}/treatment-status/${resultId}`)
+            .send(updateWithId)
+            .set('Authorization', `Bearer${shared.token}`)
+            .end((err, res) => {
+              assert.equal(res.status, 200)
+              assert.typeOf(res.body, 'Object')
+              assert.property(res.body, 'data')
+              assert.typeOf(res.body.data, 'Object')
+              assert.typeOf(res.body.data.assay, 'Object')
+              assert.typeOf(res.body.data.assay.resultDataSchema, 'Object')
+              assert.typeOf(res.body.data.resultData, 'Object')
+              const resultFieldNames = [
+                'id',
+                'endedOn',
+                'deviceName',
+                'countryName',
+                'stateName',
+                'lgaName',
+                'resultCategory1Name',
+                'resultCategory2Name',
+                'resultData',
+                'sampleId',
+                'sampleGroup',
+                'patientId',
+                'siteName',
+                'assayVersion',
+                'consumableSerial',
+                'consumableLot',
+                'consumableExpirationDate',
+                'instrumentSerial',
+                'moduleName',
+                'moduleSerial',
+                'researchId',
+                'senderVersion',
+                'senderOperator',
+                'notes',
+                'errorCode',
+                'errorNotes',
+                'createdOn',
+                'updatedOn',
+                'assayId',
+                'assay',
+              ]
+              _.each(resultFieldNames, fieldName => {
+                assert.property(res.body.data, fieldName)
+              })
+
+              // check if resultWorkflowStatus was updated
+              assert.equal(res.body.data.resultWorkflowStatus, 'OK')
+
+              // Check if update persisted
+              server
+                .get(`/api/result/${resultId}`)
+                .set('Authorization', `Bearer${shared.token}`)
+                .end((err, res) => {
+                  assert.equal(res.body.data.resultWorkflowStatus, 'OK')
+
+                  // Clean Up: Update resultWorkflowStatus with original status
+                  server
+                    .put(`${path}/workflow-status/${resultId}`)
+                    .send({
+                      resultWorkflowStatusId: null,
+                      externalId: initialResultWorkflowStatus,
+                    })
+                    .set('Authorization', `Bearer${shared.token}`)
+                    .end((err, res) => {
+                      assert.equal(
+                        res.body.data.resultWorkflowStatus,
+                        initialResultWorkflowStatusName
+                      )
+                      done()
+                    })
+                })
+            })
+        })
+    })
     it('Updating "QC Check" should fail if not in status "Deliverable"', done => {
       // try settings
       server
