@@ -416,7 +416,6 @@ async function getDownloadResultsList(query, auth) {
         'treatmentexternalId',
         'treatmenti18nKey'
       ),
-      // TODO: Use treatment status when implemented
       treatmentStatus: {
         changedOn: resultWorkflow.treatmentChangedOn,
         name: resultWorkflow.resultTreatmentName,
@@ -425,7 +424,6 @@ async function getDownloadResultsList(query, auth) {
       },
     }
   })
-  console.log(transformedData)
   const result = {
     ok: true,
     total,
@@ -774,6 +772,65 @@ async function updateWorkflowStatus(request) {
   return response
 }
 
+async function updateTreatmentStatus(request) {
+  const { auth, params, payload } = request
+  const now = new Date()
+  const { resultId } = params
+  const { id: currentUserId } = await getUser(auth.credentials.name)
+
+  // get the result so we can check access and if status changed
+  const result = await getResultByResultId(request)
+  if (!result.ok) {
+    Boom.notFound()
+  }
+
+  const { resultTreatmentStatusId, data, method } = payload
+  let treatmentStatusId
+  // check if a externalId is provided
+  if (payload.externalId) {
+    const result = await resultTreatmentStatusToId(payload.externalId)
+    treatmentStatusId = result.id
+    if (!treatmentStatusId) {
+      return Boom.badRequest('Invalid ResultWorkflowStatus ID')
+    }
+  } else {
+    treatmentStatusId = resultTreatmentStatusId
+  }
+
+  // update the treatment status.
+
+  if (resultTreatmentStatusId !== result.data.resultTreatmentStatusId) {
+    await knex('ResultTreatmentStatusLog').insert({
+      resultId,
+      resultTreatmentStatusId: treatmentStatusId,
+      method,
+      data,
+      createdOn: now,
+      changedOn: now,
+      createdBy: currentUserId,
+    })
+  }
+  const response = await showResult(request)
+  response.data.treatmentStatus = await getLastTreatmentStatusByResult(resultId)
+
+  return response
+}
+async function getLastTreatmentStatusByResult(resultId) {
+  return knex('ResultTreatmentStatusLog as rtl')
+    .innerJoin(
+      'ResultTreatmentStatus as ts',
+      'rtl.resultTreatmentStatusId',
+      'ts.id'
+    )
+    .where('rtl.resultId', resultId)
+    .orderBy('createdOn', 'desc')
+    .first('rtl.changedOn', 'ts.name', 'ts.externalid', 'ts.i18nKey')
+}
+async function resultTreatmentStatusToId(externalId) {
+  return knex('ResultTreatmentStatus')
+    .where('externalId', externalId)
+    .first('id')
+}
 async function updateQcCheck(request) {
   const { auth, params, payload, plugins: { messageContext } } = request
   const now = new Date()
@@ -1026,6 +1083,7 @@ module.exports = {
   showResult,
   listResultTypes,
   updateWorkflowStatus,
+  updateTreatmentStatus,
   updateQcCheck,
   updateFormData,
   listWorkflowStatusTypes,
