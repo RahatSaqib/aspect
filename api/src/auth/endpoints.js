@@ -30,6 +30,20 @@ const routes = [
           password: Joi.string().required(),
           clientName: Joi.string().required(),
           clientId: Joi.string(),
+          clientType: Joi.string(),
+        },
+      },
+      response: {
+        options: {
+          allowUnknown: true,
+        },
+        schema: {
+          access: Joi.string().required(),
+          refresh: Joi.string().required(),
+          clientId: Joi.string().required(),
+          culture: Joi.string().required(),
+          timezone: Joi.string().required(),
+          displayPreferences: Joi.object(),
         },
       },
     },
