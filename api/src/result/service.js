@@ -827,8 +827,8 @@ async function getLastTreatmentStatusByResult(resultId) {
       'ts.id'
     )
     .where('rtl.resultId', resultId)
-    .orderBy('createdOn', 'desc')
-    .first('rtl.changedOn', 'ts.name', 'ts.externalid', 'ts.i18nKey')
+    .orderBy('rtl.id', 'desc')
+    .first('rtl.changedOn', 'ts.name', 'ts.externalId', 'ts.i18nKey')
 }
 async function resultTreatmentStatusToId(externalId) {
   return knex('ResultTreatmentStatus')

@@ -159,6 +159,13 @@ describe('Result routes', () => {
   })
 
   describe('PUT', () => {
+    after(async () =>
+      runTestWithKnex(async knex => {
+        await knex('ResultTreatmentStatusLog')
+          .where('resultId', resultId)
+          .delete()
+      })
+    )
     it('Should update result status given a resultId', done => {
       const updateWithExternalId = {
         resultWorkflowStatusId: null,
@@ -299,7 +306,11 @@ describe('Result routes', () => {
             })
         })
     })
+<<<<<<< HEAD
     it('Should update result treatment status given a resultId', done => {
+=======
+    it('Should update result treatment status given a resultId', () => {
+>>>>>>> asp 971 return treatment status
       const updateWithExternalId = {
         resultTreatmentStatusId: null,
         externalId: 'AwaitingTreatment',
@@ -307,7 +318,7 @@ describe('Result routes', () => {
         method: 'sms',
       }
       const updateWithId = {
-        resultTreatmentStatusId: 1,
+        resultTreatmentStatusId: 2,
         externalId: null,
         data: 'should be treated',
         method: 'sms',
@@ -418,31 +429,10 @@ describe('Result routes', () => {
               })
 
               // check if resultWorkflowStatus was updated
-              assert.equal(res.body.data.resultWorkflowStatus, 'OK')
-
-              // Check if update persisted
-              server
-                .get(`/api/result/${resultId}`)
-                .set('Authorization', `Bearer${shared.token}`)
-                .end((err, res) => {
-                  assert.equal(res.body.data.resultWorkflowStatus, 'OK')
-
-                  // Clean Up: Update resultWorkflowStatus with original status
-                  server
-                    .put(`${path}/workflow-status/${resultId}`)
-                    .send({
-                      resultWorkflowStatusId: null,
-                      externalId: initialResultWorkflowStatus,
-                    })
-                    .set('Authorization', `Bearer${shared.token}`)
-                    .end((err, res) => {
-                      assert.equal(
-                        res.body.data.resultWorkflowStatus,
-                        initialResultWorkflowStatusName
-                      )
-                      done()
-                    })
-                })
+              assert.equal(
+                res.body.data.treatmentStatus.externalId,
+                'OnTreatment'
+              )
             })
         })
     })
