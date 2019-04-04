@@ -12,7 +12,7 @@ import messages from './messages'
 const cssClasses = classnames.bind(require('./PersonDetail.css'))
 
 export function validate(
-  { username, newPassword, confirmNewPassword, currentPassword },
+  { username, newPassword, confirmNewPassword, currentPassword, shouldPrefill },
   { intl, currentPasswordInputDialogOpen }
 ) {
   const errors = {}
@@ -41,6 +41,11 @@ export function validate(
       )
     }
   }
+  if (shouldPrefill && !newPassword) {
+    errors.currentPassword = intl.formatMessage(
+      messages.currentPasswordRequired
+    )
+  }
   return errors
 }
 
@@ -60,6 +65,7 @@ const getInitialValues = (loginDetails, shouldPrefill, emailValue) => ({
   // username: loginDetails.get('username') || DEFAULT_VALUES.username,
   userLockedOut:
     loginDetails.get('userLockedOut') || DEFAULT_VALUES.userLockedOut,
+  shouldPrefill,
 })
 
 const enhance = compose(
@@ -130,8 +136,6 @@ const enhance = compose(
 export const LoginDetailsForm = ({
   intl,
   loading,
-  emailValue,
-  shouldPrefill,
   currentPasswordInputDialogOpen,
   closeCurrentPasswordInputDialog,
   // classes,
@@ -156,7 +160,7 @@ export const LoginDetailsForm = ({
         type="text"
         name="username"
         label={intl.formatMessage(messages.username)}
-        value={shouldPrefill ? emailValue : values.username}
+        value={values.username}
         onChange={onUsernameChange}
         disabled={loading}
         error={meta.username.touched && meta.username.error}
