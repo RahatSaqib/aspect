@@ -17,6 +17,7 @@ const { query } = require('../db')
 const { validateUserAtGxAlert } = require('./gxalert')
 const { getRemoteAddress } = require('../shared/request')
 
+const REPORTERAPP = 'reporter_app'
 async function checkAuthentication() {
   return { message: 'Welcome to the API!' }
 }
@@ -140,7 +141,7 @@ async function authenticate(request) {
   const accessToken = await getAccessToken(user)
   const displayPreferences = await getDisplayPreferences(user)
 
-  const response = {
+  return {
     access: accessToken,
     refresh: refreshToken,
     clientId,
@@ -148,7 +149,6 @@ async function authenticate(request) {
     timezone: user.timezone || 'Eastern Standard Time',
     displayPreferences,
   }
-  return response
 }
 
 function setRefreshToken(
@@ -157,13 +157,13 @@ function setRefreshToken(
   clientId,
   refreshToken,
   now,
-  clientType = 'Web'
+  clientType = 'web'
 ) {
   const expiresTime =
-    clientName && clientName.includes('Reporter App')
+    clientName && clientName.includes(REPORTERAPP)
       ? 30 * 86400000
       : 7 * 86400000
-  const expires = new Date(now.getTime() + expiresTime) // 7 days from now
+  const expires = new Date(now.getTime() + expiresTime) // 7 days from now or 30 depending if its a reporter app
   // upsert refresh token
   return query('Create new refresh token for the user').raw(
     'INSERT INTO RefreshToken set ? ON DUPLICATE KEY UPDATE ?',
