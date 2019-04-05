@@ -340,7 +340,7 @@ async function getChangedFields(payload, existingRecord) {
     }
   }
   if (
-    payload.userLockedOut &&
+    _.isBoolean(payload.userLockedOut) &&
     payload.userLockedOut !== existingRecord.lockedOut
   ) {
     changedFields.lockedOut = payload.userLockedOut
