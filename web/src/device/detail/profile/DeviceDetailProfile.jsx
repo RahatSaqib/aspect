@@ -442,6 +442,7 @@ export const DeviceDetailProfile = ({
   location,
   match,
   device,
+  disabled,
   displayPreferences,
   // --- injected by recompose ---
   onToggleDeviceStatus,
@@ -474,6 +475,7 @@ export const DeviceDetailProfile = ({
         history={history}
         location={location}
         match={match}
+        disabled={disabled}
         title={deviceName}
       />
       <section className={cssClasses('Section', 'Section--first')}>
@@ -491,7 +493,11 @@ export const DeviceDetailProfile = ({
               title={intl.formatMessage(messages.status)}
               description={device.get('status')}
               action={
-                <Button variant="contained" onClick={onToggleDeviceStatus}>
+                <Button
+                  variant="contained"
+                  onClick={onToggleDeviceStatus}
+                  disabled={disabled}
+                >
                   Change
                 </Button>
               }
@@ -513,7 +519,11 @@ export const DeviceDetailProfile = ({
                 </Fragment>
               }
               action={
-                <Button variant="contained" onClick={onShowCalibrationDialog}>
+                <Button
+                  variant="contained"
+                  onClick={onShowCalibrationDialog}
+                  disabled={disabled}
+                >
                   Add record
                 </Button>
               }
@@ -546,7 +556,11 @@ export const DeviceDetailProfile = ({
                 </Fragment>
               }
               action={
-                <Button variant="contained" onClick={onShowWarrantyDialog}>
+                <Button
+                  variant="contained"
+                  onClick={onShowWarrantyDialog}
+                  disabled={disabled}
+                >
                   Update
                 </Button>
               }

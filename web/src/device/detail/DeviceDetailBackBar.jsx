@@ -1,6 +1,5 @@
 import { defineMessages } from 'react-intl'
 import React from 'react'
-import { compose, withHandlers } from 'recompose'
 import AspectButton from '../../components/shared/AspectButton'
 import DetailBackBar from '../../globals/components/DetailBackBar'
 
@@ -23,63 +22,61 @@ const messages = defineMessages({
   },
 })
 
-const enhance = compose(
-  withHandlers({
-    onBackClick: ({ history }) => () => {
-      history.goBack()
-    },
-    onPathClick: ({ history, match }) => path => {
-      history.push({
-        pathname: path.replace(/:([A-Za-z]+)/g, ($, key) => match.params[key]),
-      })
-    },
-  })
-)
-
 const DeviceDetailBackBar = ({
   intl,
   history,
   location,
   match,
   title,
-  onBackClick,
-  onPathClick,
-}) => (
-  <DetailBackBar
-    history={history}
-    location={location}
-    match={match}
-    onBackClick={onBackClick}
-    title={title}
-  >
-    {[
-      {
-        label: intl.formatMessage(messages.profile),
-        path: `/browse/device/:deviceId`,
-      },
-      {
-        label: intl.formatMessage(messages.alerts),
-        path: `/browse/device/:deviceId/alerts`,
-      },
-      {
-        label: intl.formatMessage(messages.edit),
-        path: `/browse/device/:deviceId/edit`,
-      },
-    ].map(({ label, path }) => (
-      <AspectButton
-        key={path}
-        onClick={({ currentTarget: { dataset: { path } } }) =>
-          onPathClick(path)
-        }
-        data-path={path}
-        color="primary"
-        variant="contained"
-        inverse={match.path !== path}
-      >
-        {label}
-      </AspectButton>
-    ))}
-  </DetailBackBar>
-)
+  disabled,
+}) => {
+  const onBackClick = () => {
+    history.goBack()
+  }
+  const onPathClick = path => {
+    history.push({
+      pathname: path.replace(/:([A-Za-z]+)/g, ($, key) => match.params[key]),
+    })
+  }
+  return (
+    <DetailBackBar
+      history={history}
+      location={location}
+      match={match}
+      onBackClick={onBackClick}
+      title={title}
+    >
+      {[
+        {
+          label: intl.formatMessage(messages.profile),
+          path: `/browse/device/:deviceId`,
+        },
+        {
+          label: intl.formatMessage(messages.alerts),
+          path: `/browse/device/:deviceId/alerts`,
+        },
+        {
+          label: intl.formatMessage(messages.edit),
+          path: `/browse/device/:deviceId/edit`,
+          disabled,
+        },
+      ].map(({ label, path, disabled = false }) => (
+        <AspectButton
+          key={path}
+          onClick={({ currentTarget: { dataset: { path } } }) =>
+            onPathClick(path)
+          }
+          disabled={disabled}
+          data-path={path}
+          color="primary"
+          variant="contained"
+          inverse={match.path !== path && !disabled}
+        >
+          {label}
+        </AspectButton>
+      ))}
+    </DetailBackBar>
+  )
+}
 
-export default enhance(DeviceDetailBackBar)
+export default DeviceDetailBackBar

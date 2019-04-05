@@ -15,6 +15,7 @@ export const DeviceDetailAlerts = ({
   location,
   match,
   device,
+  disabled,
   // --- injected by recompose ---
 }) => {
   const deviceName = `${device.getIn(['deviceType', 'name'])} at ${device.get(
@@ -28,6 +29,7 @@ export const DeviceDetailAlerts = ({
         history={history}
         location={location}
         match={match}
+        disabled={disabled}
         title={deviceName}
       />
       <section className={cssClasses('Section', 'Section--first')}>
