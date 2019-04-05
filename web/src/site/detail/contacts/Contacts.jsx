@@ -43,7 +43,7 @@ const Contacts = ({ id, title, contacts, formatMessage }) => {
             )}
           />
           <Button variant="contained" onClick={editContacts}>
-            Update
+            Change
           </Button>
         </div>
       ) : (
