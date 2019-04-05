@@ -58,7 +58,8 @@ function getUserByPersonId(personId) {
       'p.timezone',
       'p.id as personId',
       'p.lastPartnerId as partnerId',
-      'p.lastCountryId as countryId'
+      'p.lastCountryId as countryId',
+      'p.userId'
     )
 }
 
@@ -545,6 +546,7 @@ async function updateUsernameAndPasswordForPerson(request) {
       _.omit(changedFields, ['lastPasswordChange'])
     )
     responseData.username = userLinkedToPerson.name
+    responseData.userId = userLinkedToPerson.userId
   } else {
     const [insertedUserId] = await query('Insert new user details')
       .from('User')
@@ -565,10 +567,12 @@ async function updateUsernameAndPasswordForPerson(request) {
       .where('id', params.personId)
       .update({
         userId: insertedUserId,
+        canLogIn: true,
       })
 
     responseData.changedFields = ['name', 'password', 'lockedOut']
     responseData.username = payload.newUsername
+    responseData.userId = insertedUserId
   }
 
   return {

@@ -194,9 +194,7 @@ function receiveUpdatedSinglePerson(item) {
 function receiveUpdatedSinglePersonLoadinDetails(updatedInformation) {
   return {
     type: types.RECEIVE_UPDATED_SINGLE_PERSON_LOGIN_DETAILS,
-    personId: updatedInformation.personId,
-    username: updatedInformation.username,
-    userLockedOut: updatedInformation.userLockedOut,
+    ...updatedInformation,
   }
 }
 
@@ -395,11 +393,13 @@ export default function personReducer(state = initialState, action) {
       })
     case types.RECEIVE_UPDATED_SINGLE_PERSON_LOGIN_DETAILS:
       return state.withMutations(mutState => {
-        const person = state.items.byId.get(action.personId).merge({
-          loaded: true,
-          username: action.username,
-          userLockedOut: action.userLockedOut,
-        })
+        const person = state.items.byId
+          .get(action.personId)
+          .set('loaded', true)
+          .set('username', action.username)
+          .set('userLockedOut', action.userLockedOut)
+          .set('userId', action.userId)
+
         mutState.set('items', receiveItem(mutState.items, person))
       })
     case types.REQUEST_UPDATING_SINGLE_PERSON:
