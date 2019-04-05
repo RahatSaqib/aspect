@@ -5,7 +5,7 @@ import Contacts from './Contacts'
 
 describe('Contacts Component', () => {
   const props = {
-    id: 1,
+    id: '1',
     title: '',
     contacts: [],
     formatMessage: message => message.defaultMessage,

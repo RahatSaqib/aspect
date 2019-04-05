@@ -165,7 +165,6 @@ SiteDetail.propTypes = {
 export default connect(mapStateToProps, {
   fetchSingleSite,
   updateSingleSiteFromForm,
-  updateSingleSite,
   fetchSiteContacts,
   fetchTags,
   updateTags,

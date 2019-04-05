@@ -77,7 +77,7 @@ const Contacts = ({ id, title, contacts, formatMessage }) => {
 Contacts.propTypes = {
   id: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
-  contacts: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  contacts: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
   formatMessage: PropTypes.func.isRequired,
 }
 

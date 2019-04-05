@@ -81,7 +81,6 @@ const enhance = compose(
 // Renders underlying form and inputs components
 export const EditableFieldsForm = ({
   formatMessage,
-  id,
   labels,
   loading,
   initialValues,

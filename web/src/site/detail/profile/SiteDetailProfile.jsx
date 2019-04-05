@@ -3,7 +3,6 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import classnames from 'classnames/bind'
 import Card from '@material-ui/core/Card'
-import Immutable from 'immutable'
 
 // Our own imports
 import Contacts from '../contacts/Contacts'
@@ -117,6 +116,7 @@ const SiteDetailProfile = ({
 
 SiteDetailProfile.defaultProps = {
   siteTags: [],
+  siteContacts: [],
 }
 
 SiteDetailProfile.propTypes = {
@@ -127,7 +127,7 @@ SiteDetailProfile.propTypes = {
   match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   disabled: PropTypes.bool.isRequired,
   siteTags: PropTypes.arrayOf(PropTypes.object),
-  siteContacts: PropTypes.instanceOf(Immutable.List).isRequired,
+  siteContacts: PropTypes.arrayOf(PropTypes.object),
 }
 
 export default SiteDetailProfile
