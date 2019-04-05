@@ -374,7 +374,6 @@ async function getDownloadResultsList(query, auth) {
       'rts.externalId as treatmentexternalId',
       'rts.i18nKey as treatmenti18nKey'
     )
-
   const transformedData = _.map(data, d => {
     const resultWorkflow = _.find(workflowLogs, { resultId: d.id })
     return {

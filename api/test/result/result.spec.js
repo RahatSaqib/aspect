@@ -306,11 +306,7 @@ describe('Result routes', () => {
             })
         })
     })
-<<<<<<< HEAD
-    it('Should update result treatment status given a resultId', done => {
-=======
     it('Should update result treatment status given a resultId', () => {
->>>>>>> asp 971 return treatment status
       const updateWithExternalId = {
         resultTreatmentStatusId: null,
         externalId: 'AwaitingTreatment',
