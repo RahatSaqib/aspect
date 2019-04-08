@@ -23,7 +23,7 @@ const messages = defineMessages({
   },
   location: {
     id: 'pages.DeviceDetailEdit.location',
-    defaultMessage: 'Location',
+    defaultMessage: 'Site',
   },
   discard: {
     id: 'pages.DeviceDetailEdit.discard',
