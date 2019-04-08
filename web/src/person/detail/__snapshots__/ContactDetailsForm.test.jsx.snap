@@ -8,6 +8,20 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable a
   <div
     className="Form__Content"
   >
+    <div
+      style={
+        Object {
+          "marginBottom": 20,
+        }
+      }
+    >
+      <AspectCheckbox
+        margin="normal"
+        name="canLogIn"
+      />
+       
+      This contact can log in as a user
+    </div>
     <section>
       <TextField
         FormHelperTextProps={
@@ -218,6 +232,20 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
   <div
     className="Form__Content"
   >
+    <div
+      style={
+        Object {
+          "marginBottom": 20,
+        }
+      }
+    >
+      <AspectCheckbox
+        margin="normal"
+        name="canLogIn"
+      />
+       
+      This contact can log in as a user
+    </div>
     <section>
       <TextField
         FormHelperTextProps={
@@ -428,6 +456,20 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
   <div
     className="Form__Content"
   >
+    <div
+      style={
+        Object {
+          "marginBottom": 20,
+        }
+      }
+    >
+      <AspectCheckbox
+        margin="normal"
+        name="canLogIn"
+      />
+       
+      This contact can log in as a user
+    </div>
     <section>
       <TextField
         FormHelperTextProps={
@@ -638,6 +680,20 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
   <div
     className="Form__Content"
   >
+    <div
+      style={
+        Object {
+          "marginBottom": 20,
+        }
+      }
+    >
+      <AspectCheckbox
+        margin="normal"
+        name="canLogIn"
+      />
+       
+      This contact can log in as a user
+    </div>
     <section>
       <TextField
         FormHelperTextProps={
@@ -848,6 +904,20 @@ exports[`ContactDetailsForm module ContactDetailsForm component should enable th
   <div
     className="Form__Content"
   >
+    <div
+      style={
+        Object {
+          "marginBottom": 20,
+        }
+      }
+    >
+      <AspectCheckbox
+        margin="normal"
+        name="canLogIn"
+      />
+       
+      This contact can log in as a user
+    </div>
     <section>
       <TextField
         FormHelperTextProps={
@@ -1058,6 +1128,20 @@ exports[`ContactDetailsForm module ContactDetailsForm component should render co
   <div
     className="Form__Content"
   >
+    <div
+      style={
+        Object {
+          "marginBottom": 20,
+        }
+      }
+    >
+      <AspectCheckbox
+        margin="normal"
+        name="canLogIn"
+      />
+       
+      This contact can log in as a user
+    </div>
     <section>
       <TextField
         FormHelperTextProps={

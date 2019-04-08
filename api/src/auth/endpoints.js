@@ -159,6 +159,7 @@ const routes = [
           newPassword: Joi.string()
             .max(100)
             .allow('', null),
+          userLockedOut: Joi.boolean().allow(null),
         },
       },
     },

@@ -150,6 +150,10 @@ export default defineMessages({
     defaultMessage:
       'The password needs to contain at least one number or special character (%!$*...)',
   },
+  userLockedOutLabel: {
+    id: 'pages.UpdateLoginDetails.userEnableLabel',
+    defaultMessage: 'User lockedout',
+  },
   passwordsDoNotMatch: {
     id: 'pages.UpdateLoginDetails.passwordsDoNotMatch',
     defaultMessage: "These passwords don't match",

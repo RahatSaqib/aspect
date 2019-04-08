@@ -54,11 +54,13 @@ function getUserByPersonId(personId) {
       'u.legacyPassword',
       'u.id',
       'u.name',
+      'u.lockedOut',
       'p.culture',
       'p.timezone',
       'p.id as personId',
       'p.lastPartnerId as partnerId',
-      'p.lastCountryId as countryId'
+      'p.lastCountryId as countryId',
+      'p.userId'
     )
 }
 
@@ -351,6 +353,12 @@ async function getChangedFields(payload, existingRecord) {
       }
     }
   }
+  if (
+    _.isBoolean(payload.userLockedOut) &&
+    payload.userLockedOut !== existingRecord.lockedOut
+  ) {
+    changedFields.lockedOut = payload.userLockedOut
+  }
   return changedFields
 }
 
@@ -539,9 +547,13 @@ async function updateUsernameAndPasswordForPerson(request) {
 
   const responseData = {
     personId: params.personId,
+    userLockedOut: payload.userLockedOut,
   }
+  let linkedUserId
   if (userLinkedToPerson) {
     const changedFields = await getChangedFields(payload, userLinkedToPerson)
+    linkedUserId = userLinkedToPerson.id
+
     if (!_.isEmpty(changedFields)) {
       await updateUser(userLinkedToPerson.id, changedFields)
     }
@@ -550,8 +562,9 @@ async function updateUsernameAndPasswordForPerson(request) {
       _.omit(changedFields, ['lastPasswordChange'])
     )
     responseData.username = userLinkedToPerson.name
+    responseData.userId = userLinkedToPerson.userId
   } else {
-    await query('Insert new user details')
+    const [insertedUserId] = await query('Insert new user details')
       .from('User')
       .insert({
         name: payload.newUsername,
@@ -561,15 +574,22 @@ async function updateUsernameAndPasswordForPerson(request) {
         ),
         approved: 1,
         createdOn: new Date(),
-        lockedOut: 0,
+        lockedOut: payload.userLockedOut || 0,
         failedPasswordAttempts: 0,
         legacyPassword: 0,
       })
-
-    responseData.changedFields = ['name', 'password']
+    linkedUserId = insertedUserId
+    responseData.changedFields = ['name', 'password', 'lockedOut']
     responseData.username = payload.newUsername
+    responseData.userId = insertedUserId
   }
-
+  await query('update person for details')
+    .from('Person')
+    .where('id', params.personId)
+    .update({
+      userId: linkedUserId,
+      canLogIn: true,
+    })
   return {
     ok: true,
     data: responseData,
@@ -638,7 +658,26 @@ async function acceptLicense(request) {
   // need to return a new JWT, now without hasToAcceptLicenseId
   return refreshToken(request)
 }
-
+// / Revoke/Grantt access to specific user
+async function revokeUsersToken(userId, revoke) {
+  await query(
+    'change revoked state for the specific user in refresh token tables'
+  )
+    .from('RefreshToken')
+    .where({ userId })
+    .update({
+      revoked: revoke,
+    })
+}
+// Lockedout and grant access to login to specific user.
+async function lockedOutUser(userId, lockedOut) {
+  await query('change Lockout state for the specific user ')
+    .from('User')
+    .where({ id: userId })
+    .update({
+      lockedOut,
+    })
+}
 module.exports = {
   getUser,
   authenticate,
@@ -652,4 +691,6 @@ module.exports = {
   hasFeature,
   getLicense,
   acceptLicense,
+  revokeUsersToken,
+  lockedOutUser,
 }

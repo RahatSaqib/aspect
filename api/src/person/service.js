@@ -3,6 +3,7 @@ const Boom = require('boom')
 const { query, knex, filterParams, sortPageParams } = require('../db')
 const userService = require('../auth/service')
 const { transformGeographyFromUpdates } = require('../geography/service')
+const { revokeUsersToken, lockedOutUser } = require('../auth/service')
 
 async function listPeople(request) {
   const { query } = request
@@ -80,7 +81,9 @@ function getPersonDetails(personId) {
       'p.hideNotes',
       'c.name as country',
       's.name as stateName',
-      'l.name as lgaName'
+      'l.name as lgaName',
+      'u.lockedOut as userLockedOut',
+      'p.canLogIn'
     )
 }
 
@@ -137,7 +140,6 @@ async function savePerson(request, updatablePersonFields) {
     {}
   )
 
-  // Update record if any values have changed
   const changedPersonFields = await transformGeographyFromUpdates(changedFields)
   if (!_.isEmpty(changedPersonFields)) {
     if (
@@ -154,6 +156,11 @@ async function savePerson(request, updatablePersonFields) {
       .from('Person as p')
       .where({ 'p.id': personDetails.id })
       .update(changedPersonFields)
+  }
+
+  if (Object.prototype.hasOwnProperty.call(changedFields, 'canLogIn')) {
+    revokeUsersToken(personDetails.userId, !changedPersonFields.canLogIn)
+    lockedOutUser(personDetails.userId, !changedPersonFields.canLogIn)
   }
 
   const response = await showPerson(request)
@@ -174,6 +181,7 @@ async function updatePerson(request) {
     'zip',
     'notes',
     'lastPartnerId',
+    'canLogIn',
   ])
 }
 
