@@ -56,7 +56,17 @@ const styles = theme => ({
 
 const AspectSwitch = ({ labelText, classes, ...restProps }) => (
   <FormControlLabel
-    label={<Typography className={classes.switchLabel}>{labelText}</Typography>}
+    label={
+      <Typography
+        className={classes.switchLabel}
+        style={{
+          marginTop: '0px',
+          marginBottom: '0px',
+        }}
+      >
+        {labelText}
+      </Typography>
+    }
     control={
       <Switch
         {...restProps}
