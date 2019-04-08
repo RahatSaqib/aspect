@@ -1,12 +1,15 @@
+import _ from 'lodash'
 import classnames from 'classnames/bind'
 import { defineMessages } from 'react-intl'
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import Immutable from 'immutable'
+import { compose, withStateHandlers, withHandlers, lifecycle } from 'recompose'
+import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Card from '@material-ui/core/Card'
 import Helmet from 'react-helmet'
-
 import DeviceDetailBackBar from '../DeviceDetailBackBar'
+import recomposeForm from '../../../components/recomposeForm'
 import FormGroup from '../../../components/themedReactToolbox/FormGroup'
 import ButtonGroup from '../../../components/themedReactToolbox/ButtonGroup'
 import AspectButton from '../../../components/shared/AspectButton'
@@ -35,40 +38,94 @@ const messages = defineMessages({
   },
 })
 
-const DeviceDetailEdit = ({
+const initializeValuesFrom = device => ({
+  siteId: device.get('siteId'),
+})
+
+const enhance = compose(
+  connect(
+    (state, props) => {
+      const deviceTags = state.tag.tags.getIn(
+        ['device', props.device.get('id')],
+        Immutable.List()
+      )
+
+      return {
+        deviceTags,
+      }
+    },
+    bindActionCreators.bind(null, {
+      fetchTags,
+      updateTags,
+    })
+  ),
+  withStateHandlers(
+    ({ device }) => ({
+      values: initializeValuesFrom(device),
+    }),
+    {
+      onChange: () => values => ({
+        values,
+      }),
+
+      onDiscardClick: ($, { device }) => () => ({
+        values: initializeValuesFrom(device),
+      }),
+    }
+  ),
+  withHandlers({
+    onInitialLoad: ({ device, fetchTags }) => () => {
+      fetchTags(device.get('id'), 'device')
+    },
+
+    onSubmit: ({ device, updateSingleDevice }) => values =>
+      updateSingleDevice(device.get('id'), {
+        siteId: values.siteId,
+      }),
+
+    onDeviceTagChange: ({ updateTags }) => (qryId, qryType, tags) => {
+      updateTags(qryId, qryType, tags.join(','))
+    },
+  }),
+  lifecycle({
+    componentDidMount() {
+      this.props.onInitialLoad()
+    },
+  }),
+  recomposeForm({
+    fields: [
+      {
+        fieldName: 'siteId',
+        valueFromChangeEvent: _.identity,
+      },
+    ],
+    validate(values) {
+      const errors = {}
+      if (!values.siteId) {
+        errors.siteId = 'Required'
+      }
+      return errors
+    },
+  })
+)
+
+export const DeviceDetailEdit = ({
   intl,
   history,
   location,
   match,
   device,
   editable,
+  // --- injected by recompose ---
   deviceTags,
-  fetchTags,
-  updateTags,
-  updateSingleDevice,
+  form,
+  meta,
+  values,
+  onSiteIdChange,
+  onDiscardClick,
+  handleSubmit,
+  onDeviceTagChange,
 }) => {
-  const initialSiteId = device.get('siteId')
-  const [siteId, setSiteId] = useState(initialSiteId)
-  useEffect(() => {
-    fetchTags(device.get('id'), 'device')
-  }, [])
-
-  const onSubmit = event => {
-    event.preventDefault()
-    updateSingleDevice(device.get('id'), {
-      siteId,
-    })
-  }
-
-  const onChange = siteId => {
-    setSiteId(siteId)
-  }
-
-  const onDiscardClick = () => setSiteId(initialSiteId)
-
-  const onDeviceTagChange = (qryId, qryType, tags) => {
-    updateTags(qryId, qryType, tags.join(','))
-  }
   const deviceName = `${device.getIn(['deviceType', 'name'])} at ${device.get(
     'siteName'
   )}`
@@ -84,18 +141,23 @@ const DeviceDetailEdit = ({
       />
       <section className={cssClasses('Section', 'Section--first')}>
         <Card className={cssClasses('Section__Content')}>
-          <form onSubmit={onSubmit}>
+          <form onSubmit={handleSubmit}>
             <SiteSelectField
               name="siteId"
               floatingLabelText={intl.formatMessage(messages.location)}
-              // disabled={form.submitting}
-              value={siteId}
-              onSiteChange={onChange}
+              disabled={form.submitting}
+              value={values.siteId}
+              onSiteChange={onSiteIdChange}
+              errorStyle={{
+                float: 'left',
+                whiteSpace: 'nowrap',
+                textOverflow: 'visible',
+              }}
+              errorText={meta.siteId.touched && meta.siteId.error}
               fullWidth
               tabIndex="0"
               aria-haspopup
             />
-
             <FormGroup label={intl.formatMessage(messages.tags)}>
               <ConnectedTagInput
                 qryId={device.get('id')}
@@ -111,7 +173,7 @@ const DeviceDetailEdit = ({
               <ButtonGroup isolated>
                 <AspectButton
                   type="button"
-                  // disabled={form.pristine}
+                  disabled={form.pristine}
                   onClick={onDiscardClick}
                   color="primary"
                   variant="contained"
@@ -120,7 +182,7 @@ const DeviceDetailEdit = ({
                 </AspectButton>
                 <AspectButton
                   type="submit"
-                  // disabled={form.pristine || !form.valid || form.submitting}
+                  disabled={form.pristine || !form.valid || form.submitting}
                   color="primary"
                   variant="contained"
                 >
@@ -135,17 +197,4 @@ const DeviceDetailEdit = ({
   )
 }
 
-const mapStateToProps = (state, ownProps) => {
-  const deviceTags = state.tag.tags.getIn(
-    ['device', ownProps.device.get('id')],
-    Immutable.List()
-  )
-  return {
-    deviceTags,
-  }
-}
-
-export default connect(mapStateToProps, {
-  fetchTags,
-  updateTags,
-})(DeviceDetailEdit)
+export default enhance(DeviceDetailEdit)
