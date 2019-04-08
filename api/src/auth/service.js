@@ -535,8 +535,10 @@ async function updateUsernameAndPasswordForPerson(request) {
     personId: params.personId,
     userLockedOut: payload.userLockedOut,
   }
+  let linkedUserId
   if (userLinkedToPerson) {
     const changedFields = await getChangedFields(payload, userLinkedToPerson)
+    linkedUserId = userLinkedToPerson.id
 
     if (!_.isEmpty(changedFields)) {
       await updateUser(userLinkedToPerson.id, changedFields)
@@ -562,19 +564,18 @@ async function updateUsernameAndPasswordForPerson(request) {
         failedPasswordAttempts: 0,
         legacyPassword: 0,
       })
-    await query('update person for details')
-      .from('Person')
-      .where('id', params.personId)
-      .update({
-        userId: insertedUserId,
-        canLogIn: true,
-      })
-
+    linkedUserId = insertedUserId
     responseData.changedFields = ['name', 'password', 'lockedOut']
     responseData.username = payload.newUsername
     responseData.userId = insertedUserId
   }
-
+  await query('update person for details')
+    .from('Person')
+    .where('id', params.personId)
+    .update({
+      userId: linkedUserId,
+      canLogIn: true,
+    })
   return {
     ok: true,
     data: responseData,
