@@ -1,5 +1,5 @@
 const _ = require('lodash')
-const { distanceInWordsStrict } = require('date-fns')
+const { formatDistanceStrict } = require('date-fns')
 const { findTimeZone } = require('timezone-support')
 const { convertToTimeZone } = require('date-fns-timezone')
 const handlebars = require('handlebars')
@@ -212,8 +212,8 @@ function numberOfDays(date) {
   if (date == null || date === '') {
     return 'days'
   }
-  return distanceInWordsStrict(new Date(), date, {
-    unit: 'd',
+  return formatDistanceStrict(new Date(), date, {
+    unit: 'day',
     partialMethod: 'ceil',
   })
 }
