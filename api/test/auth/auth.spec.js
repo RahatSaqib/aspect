@@ -1,3 +1,4 @@
+const jwtDecode = require('jwt-decode')
 const supertest = require('supertest')
 const chai = require('chai')
 const jwt = require('jsonwebtoken')
@@ -5,14 +6,17 @@ const uuid = require('node-uuid')
 const config = require('../../src/config')
 const shared = require('../utils/sharedToken')
 const { run } = require('../../src/db')
+const bcrypt = require('bcrypt')
 
+const saltRounds = parseInt(config.passwordSaltRounds, 10)
 const server = supertest.agent('http://localhost:8080')
 const { assert } = chai
 
 describe('Authentication routes', () => {
   const adminUsername = 'admin'
   const adminPassword = 'test07'
-
+  const unlisencedUser = 'testuser'
+  const unlisencedUserPassword = 'test07'
   let path = '/api/auth'
   let jwToken = ''
   let refreshToken = ''
@@ -23,10 +27,47 @@ describe('Authentication routes', () => {
   })
 
   describe('POST', () => {
+    before(async () =>
+      run(async knex => {
+        const lastPartnerId = 4
+        const lastCountryId = 4
+
+        const timezone = 'Myanmar Standard Time'
+
+        const culture = 'en'
+        const [id] = await knex('User').insert({
+          name: unlisencedUser.toLowerCase(),
+          password: bcrypt.hashSync(unlisencedUserPassword, saltRounds),
+          legacyPassword: 0,
+          approved: 1,
+          lockedOut: 0,
+          createdOn: new Date(),
+          failedPasswordAttempts: 0,
+        })
+
+        await knex('Person').insert({
+          userId: id,
+          name: unlisencedUser,
+          lastPartnerId,
+          lastCountryId,
+          timezone,
+          culture,
+          createdOn: new Date(),
+          updatedOn: new Date(),
+          geographyId: 98,
+        })
+      })
+    )
     after(async () =>
       run(async knex => {
-        knex('RefreshToken')
+        await knex('RefreshToken')
           .whereIn('clientId', ['123123123-123123123', '9999-9999'])
+          .delete()
+        await knex('Person')
+          .where('name', unlisencedUser)
+          .delete()
+        await knex('User')
+          .where('name', unlisencedUser)
           .delete()
       })
     )
@@ -36,7 +77,7 @@ describe('Authentication routes', () => {
         .send({
           name: adminUsername,
           password: adminPassword,
-          clientName: 'Reporter App',
+          clientName: 'reporter_app',
           clientType: 'Moto g6',
           clientId: '123123123-123123123',
         })
@@ -48,6 +89,9 @@ describe('Authentication routes', () => {
           assert.property(res.body, 'culture')
           assert.property(res.body, 'displayPreferences')
           assert.property(res.body, 'timezone')
+          const jwtdecoded = jwtDecode(res.body.access)
+          assert.property(jwtdecoded, 'hasToAcceptLicenseId')
+          assert.isNull(jwtdecoded.hasToAcceptLicenseId)
 
           refreshToken = res.body.refresh
           run(async knex => {
@@ -57,7 +101,7 @@ describe('Authentication routes', () => {
             const diffTime = result1.expires - new Date()
             const diffTimeDays = Math.floor(diffTime / (1000 * 60 * 60 * 24))
             assert.equal(result1.clientType, 'Moto g6')
-            assert.equal(diffTimeDays, 30)
+            assert.isAbove(diffTimeDays, 28)
           })
 
           done()
@@ -67,9 +111,9 @@ describe('Authentication routes', () => {
       server
         .post(path)
         .send({
-          name: adminUsername,
-          password: adminPassword,
-          clientName: 'Web',
+          name: unlisencedUser,
+          password: unlisencedUserPassword,
+          clientName: 'web',
           clientId: '9999-9999',
         })
         .end((err, res) => {
@@ -80,6 +124,9 @@ describe('Authentication routes', () => {
           assert.property(res.body, 'culture')
           assert.property(res.body, 'displayPreferences')
           assert.property(res.body, 'timezone')
+          const jwtdecoded = jwtDecode(res.body.access)
+          assert.property(jwtdecoded, 'hasToAcceptLicenseId')
+          assert.isNotNull(jwtdecoded.hasToAcceptLicenseId)
 
           refreshToken = res.body.refresh
           run(async knex => {
@@ -89,7 +136,7 @@ describe('Authentication routes', () => {
             const diffTime = result1.expires - new Date()
             const diffTimeDays = Math.floor(diffTime / (1000 * 60 * 60 * 24))
             assert.equal(result1.clientType, 'Web')
-            assert.equal(result1.clientName, 'Web')
+            assert.equal(result1.clientName, 'web')
             assert.equal(diffTimeDays, 7)
           })
 
