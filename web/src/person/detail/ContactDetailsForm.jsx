@@ -102,21 +102,6 @@ const enhance = compose(
       }
     },
 
-    onCountryIdChange: ({
-      onCountryIdChange,
-      onStateIdChange,
-      onLgaIdChange,
-    }) => countryId => {
-      onLgaIdChange(undefined)
-      onStateIdChange(undefined)
-      onCountryIdChange(countryId)
-    },
-
-    onStateIdChange: ({ onStateIdChange, onLgaIdChange }) => stateId => {
-      onLgaIdChange(undefined)
-      onStateIdChange(stateId)
-    },
-
     onPersonTagsChange: ({ updateTags }) => (qryId, qryType, tags) => {
       updateTags(qryId, qryType, tags.join(','))
     },
