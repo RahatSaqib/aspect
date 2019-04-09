@@ -4,6 +4,8 @@ const jwt = require('jsonwebtoken')
 const uuid = require('node-uuid')
 const config = require('../../src/config')
 const shared = require('../utils/sharedToken')
+const { runTestWithKnex } = require('../utils/generatorFunctionUtils')
+
 const { run } = require('../../src/db')
 
 const server = supertest.agent('http://localhost:8080')
@@ -30,72 +32,69 @@ describe('Authentication routes', () => {
           .delete()
       })
     )
-    it('should return a JSON message that contains a valid jwt, access token, and client ID with different expiration for Reporter App', done => {
-      server
-        .post(path)
-        .send({
-          name: adminUsername,
-          password: adminPassword,
-          clientName: 'Reporter App',
-          clientType: 'Moto g6',
-          clientId: '123123123-123123123',
-        })
-        .end((err, res) => {
-          assert.equal(res.status, 200)
-          assert.isAbove(res.body.access.length, 100)
-          assert.isAbove(res.body.refresh.length, 50)
-          assert.equal(res.body.clientId, '123123123-123123123')
-          assert.property(res.body, 'culture')
-          assert.property(res.body, 'displayPreferences')
-          assert.property(res.body, 'timezone')
+    it('should return a JSON message that contains a valid jwt, access token, and client ID with different expiration for Reporter App', async () =>
+      runTestWithKnex(async knex => {
+        const refreshToken = await server
+          .post(path)
+          .send({
+            name: adminUsername,
+            password: adminPassword,
+            clientName: 'reporter_app',
+            clientType: 'Moto g6',
+            clientId: '123123123-123123123',
+          })
+          .then(res => {
+            assert.equal(res.status, 200)
+            assert.isAbove(res.body.access.length, 100)
+            assert.isAbove(res.body.refresh.length, 50)
+            assert.equal(res.body.clientId, '123123123-123123123')
+            assert.property(res.body, 'culture')
+            assert.property(res.body, 'displayPreferences')
+            assert.property(res.body, 'timezone')
 
-          refreshToken = res.body.refresh
-          run(async knex => {
-            const result1 = await knex('RefreshToken')
-              .where('token', refreshToken)
-              .first()
-            const diffTime = result1.expires - new Date()
-            const diffTimeDays = Math.floor(diffTime / (1000 * 60 * 60 * 24))
-            assert.equal(result1.clientType, 'Moto g6')
-            assert.equal(diffTimeDays, 30)
+            return res.body.refresh
           })
 
-          done()
-        })
-    })
-    it('should return a JSON message that contains a valid jwt, access token, and client ID with different expiration for web', done => {
-      server
-        .post(path)
-        .send({
-          name: adminUsername,
-          password: adminPassword,
-          clientName: 'Web',
-          clientId: '9999-9999',
-        })
-        .end((err, res) => {
-          assert.equal(res.status, 200)
-          assert.isAbove(res.body.access.length, 100)
-          assert.isAbove(res.body.refresh.length, 50)
-          assert.equal(res.body.clientId, '9999-9999')
-          assert.property(res.body, 'culture')
-          assert.property(res.body, 'displayPreferences')
-          assert.property(res.body, 'timezone')
+        const rt = await knex('RefreshToken')
+          .where('token', refreshToken)
+          .first()
+        const diffTime = rt.expires - new Date()
+        const diffTimeDays = diffTime / (1000 * 60 * 60 * 24)
+        assert.equal(rt.clientType, 'Moto g6')
+        assert.closeTo(diffTimeDays, 30, 0.00001)
+      }))
 
-          refreshToken = res.body.refresh
-          run(async knex => {
-            const result1 = await knex('RefreshToken')
-              .where('token', refreshToken)
-              .first()
-            const diffTime = result1.expires - new Date()
-            const diffTimeDays = Math.floor(diffTime / (1000 * 60 * 60 * 24))
-            assert.equal(result1.clientType, 'Web')
-            assert.equal(result1.clientName, 'Web')
-            assert.equal(diffTimeDays, 7)
+    it('should return a JSON message that contains a valid jwt, access token, and client ID with different expiration for web', async () =>
+      runTestWithKnex(async knex => {
+        const refreshToken = await server
+          .post(path)
+          .send({
+            name: adminUsername,
+            password: adminPassword,
+            clientName: 'web',
+            clientId: '9999-9999',
+          })
+          .then(res => {
+            assert.equal(res.status, 200)
+            assert.isAbove(res.body.access.length, 100)
+            assert.isAbove(res.body.refresh.length, 50)
+            assert.equal(res.body.clientId, '9999-9999')
+            assert.property(res.body, 'culture')
+            assert.property(res.body, 'displayPreferences')
+            assert.property(res.body, 'timezone')
+
+            return res.body.refresh
           })
 
-          done()
-        })
-    })
+        const rt = await knex('RefreshToken')
+          .where('token', refreshToken)
+          .first()
+        const diffTime = rt.expires - new Date()
+        const diffTimeDays = diffTime / (1000 * 60 * 60 * 24)
+        assert.equal(rt.clientType, 'web')
+        assert.equal(rt.clientName, 'web')
+        assert.closeTo(diffTimeDays, 7, 0.00001)
+      }))
   })
   describe('POST', () => {
     it('should return 400 and error message if no user name is provided', done => {
