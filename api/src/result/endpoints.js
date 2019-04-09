@@ -10,6 +10,7 @@ const {
   showResult,
   listResultTypes,
   updateWorkflowStatus,
+  updateTreatmentStatus,
   updateQcCheck,
   updateFormData,
   listWorkflowStatusTypes,
@@ -411,9 +412,46 @@ const routes = [
                 resultCategory2ExternalId: Joi.string()
                   .allow(null)
                   .description('Category of the second result'),
-                resultWorkflowStatusExternalId: Joi.string()
+                workflowStatus: Joi.object()
+                  .description('Current workflow status of the result')
+                  .keys({
+                    changedOn: Joi.date().description(
+                      'Date of the latest change to the workflow status'
+                    ),
+                    externalId: Joi.string().description(
+                      'External ID of the workflow status'
+                    ),
+                    i18nKey: Joi.string().description(
+                      'i18nKey ID of the workflow status'
+                    ),
+                    name: Joi.string().description(
+                      'Name of the workflow status'
+                    ),
+                    reason: Joi.string()
+                      .description(
+                        'Reason for the latest workflow status change'
+                      )
+                      .allow(null, ''),
+                  }),
+                treatmentStatus: Joi.object()
                   .allow(null)
-                  .description('Current workflow status of the result'),
+                  .description('Current treatment status of the result')
+                  .keys({
+                    changedOn: Joi.date()
+                      .description(
+                        'Date of the latest change to the treatment status'
+                      )
+                      .allow(null),
+                    externalId: Joi.string()
+                      .description('External ID of the treatment status')
+                      .allow(null),
+                    i18nKey: Joi.string()
+                      .description('i18nKey ID of the treatment status')
+                      .allow(null),
+                    name: Joi.string()
+                      .description('Name of the treatment status')
+                      .allow(null),
+                  }),
                 patientData: Joi.object()
                   .allow(null)
                   .description('Data about the patient'),
@@ -443,33 +481,233 @@ const routes = [
                 errorNotes: Joi.string()
                   .allow(null)
                   .description('Contains any details about the error'),
-                sampleId: Joi.string()
-                  .allow(null)
-                  .description('Sample ID'),
-                sampleGroup: Joi.string()
-                  .allow(null)
-                  .description('The group that the sample belongs to (if any)'),
-                sampleCollectedOn: Joi.date()
-                  .allow(null)
-                  .description('When the sample was collected'),
-                sampleOriginSiteExternalId: Joi.string()
-                  .allow(null)
-                  .description(
-                    'Unique ID of the site where the sample was taken'
-                  ),
-                sampleOriginSiteName: Joi.string()
-                  .allow(null)
-                  .description('Name of the site where the sample was taken'),
-                sampleTypeName: Joi.string()
-                  .allow(null)
-                  .description(
-                    'Type of the sample (DBS or Sputum, for example)'
-                  ),
+                sample: Joi.object()
+                  .description('The sample that the result is based on')
+                  .keys({
+                    id: Joi.string()
+                      .allow(null)
+                      .description('ID of the sample'),
+                    collectedOn: Joi.date()
+                      .allow(null)
+                      .description('When the sample was collected'),
+                    group: Joi.string()
+                      .allow(null)
+                      .description(
+                        'The group of samples that this sample is a part of'
+                      ),
+                    type: Joi.string()
+                      .allow(null)
+                      .description(
+                        'Type of the sample ("DBS", "Sputum", etc.)'
+                      ),
+                    originSite: Joi.object()
+                      .allow(null)
+                      .description('The site where the sample was taken')
+                      .keys({
+                        externalId: Joi.string().description('ID of the site'),
+                        name: Joi.string().description('Name of the site'),
+                      }),
+                  }),
               })
             ),
         }),
       },
     }),
+  },
+  {
+    method: 'PUT',
+    path: '/result/treatment-status/{resultId}',
+    handler: asyncHandler(updateTreatmentStatus),
+    config: {
+      description: 'Update Result Status',
+      notes: 'Update the status of a result',
+      auth: { scope: ['result:edit'] },
+      validate: {
+        params: {
+          resultId: Joi.number()
+            .integer()
+            .positive()
+            .description('Result Id'),
+        },
+        payload: {
+          resultTreatmentStatusId: Joi.number()
+            .integer()
+            .positive()
+            .allow('', null),
+          externalId: Joi.string().allow('', null),
+          data: Joi.string().allow('', null),
+          method: Joi.string().allow('', null),
+        },
+      },
+      response: {
+        options: {
+          allowUnknown: false,
+        },
+        schema: Joi.object().keys({
+          ok: Joi.bool()
+            .required()
+            .description('False if there was some sort of error'),
+          data: Joi.object()
+            .required()
+            .description('The results')
+            .keys({
+              id: Joi.number()
+                .required()
+                .description(
+                  'Unique ID of the result for this instance of Aspect'
+                ),
+              deviceName: Joi.string()
+                .allow('')
+                .description('Filter for device name'),
+              externalId: Joi.string()
+                .required()
+                .description(
+                  'Unique ID of the result for this diagnostic device'
+                ),
+              startedOn: Joi.date()
+                .required()
+                .description(
+                  'When sample processing started. Note that the zone designator is empty because this is the local date/time as reported by the device. This should be shown as is and not converted to the user time zone.'
+                ),
+              endedOn: Joi.date()
+                .required()
+                .description(
+                  'When sample processing ended. Note that the zone designator is empty because this is the local date/time as reported by the device. This should be shown as is and not converted to the user time zone.'
+                ),
+              createdOn: Joi.date()
+                .required()
+                .description(
+                  'When the result was added to the Aspect database. This can be converted to the user time zone.'
+                ),
+              updatedOn: Joi.date()
+                .required()
+                .description(
+                  'When the result was last updated in the Aspect database. This can be converted to the user time zone.'
+                ),
+              deviceId: Joi.number()
+                .integer()
+                .positive()
+                .required()
+                .description('Device id in aspect'),
+              deviceSerial: Joi.string()
+                .allow(null, '')
+                .description('The device serial number'),
+              countryName: Joi.string().description(
+                "The device's country name"
+              ),
+              stateName: Joi.string().description("The device's state name"),
+              lgaName: Joi.string().description("The device's lga name"),
+              resultCategory1Name: Joi.string()
+                .allow(null)
+                .description("The result's category 1 name"),
+              resultCategory2Name: Joi.string()
+                .allow(null)
+                .description("The result's category 2 name"),
+              resultWorkflowStatusId: Joi.number()
+                .integer()
+                .description("The result's workflow status id"),
+              resultWorkflowStatus: Joi.string()
+                .allow(null)
+                .description("The result's Workflow status name"),
+              resultWorkflowStatusExternalId: Joi.string()
+                .allow(null)
+                .description("The result's Workflow status name"),
+              resultData: Joi.object().description('The result data'),
+              files: Joi.array().description('Result Files'),
+
+              formData: Joi.object()
+                .allow(null)
+                .description('The form data'),
+              siteId: Joi.number()
+                .integer()
+                .positive()
+                .description('The id of the site'),
+              siteName: Joi.string()
+                .allow(null)
+                .description('The name of the site'),
+              assayVersion: Joi.string()
+                .allow(null)
+                .description('The assay Version'),
+              consumableSerial: Joi.string()
+                .allow(null)
+                .description('The consumable serial'),
+              instrumentalSerial: Joi.string()
+                .allow(null)
+                .description('The instrumental serial'),
+              consumableLot: Joi.string()
+                .allow(null)
+                .description('The consumable lot'),
+              instrumentSerial: Joi.string()
+                .allow(null)
+                .description('Instrumental serial number'),
+              moduleName: Joi.string()
+                .allow(null)
+                .description('The module name'),
+              moduleSerial: Joi.string()
+                .allow(null)
+                .description('The module serial'),
+              researchId: Joi.string()
+                .allow(null)
+                .description('The research id'),
+              senderVersion: Joi.string()
+                .allow(null)
+                .description('The sender version'),
+              senderOperator: Joi.string()
+                .allow(null)
+                .description('The sender operator'),
+              consumableExpirationDate: Joi.date()
+                .allow(null)
+                .description('The consumable expiration date'),
+              notes: Joi.string()
+                .allow(null)
+                .description('Any notes entered for the sample'),
+              errorCode: Joi.string()
+                .allow(null)
+                .description(
+                  'If an error occurred, contains the error code from the device'
+                ),
+              errorNotes: Joi.string()
+                .allow(null)
+                .description('Contains any details about the error'),
+              assayId: Joi.number()
+                .integer()
+                .description('The id of the assay'),
+              sampleOriginSiteId: Joi.number()
+                .integer()
+                .description('the id of the original site'),
+              sampleId: Joi.string()
+                .allow(null)
+                .description('Sample id'),
+              sampleGroup: Joi.string()
+                .allow(null)
+                .description('Sample group'),
+              sampleCollectedOn: Joi.date().description(
+                'The date when the sample has been collected'
+              ),
+              sampleOriginSiteName: Joi.string()
+                .allow(null)
+                .description('Sample original site name'),
+              sampleTypeName: Joi.string()
+                .allow(null)
+                .description('Sample type name'),
+              patientId: Joi.string()
+                .allow(null)
+                .description('The patient Id'),
+              patientData: Joi.object().description('The patient data'),
+              qcCheck: Joi.number().description('Qc check name'),
+              formSchema: Joi.object()
+                .allow(null)
+                .description('The form data object'),
+              assay: Joi.object()
+                .allow(null)
+                .description('The assay object'),
+              treatmentStatus: Joi.object()
+                .allow(null)
+                .description('The treatment status object'),
+            }),
+        }),
+      },
+    },
   },
 ]
 

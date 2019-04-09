@@ -104,9 +104,9 @@ const routes = [
             .integer()
             .positive()
             .allow('', null),
-          street1: Joi.string().required(),
+          street1: Joi.string().allow('', null),
           street2: Joi.string().allow('', null),
-          city: Joi.string().required(),
+          city: Joi.string().allow('', null),
           zip: Joi.string()
             .max(45)
             .allow('', null),

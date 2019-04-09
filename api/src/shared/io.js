@@ -23,12 +23,12 @@ function createDirectory(path) {
 }
 
 // ---------------------------------
-// get directory for export file - with pattern 'temp/YYYY-MM-DD/HH/UUID'
+// get directory for export file - with pattern 'temp/yyyy-MM-dd/HH/UUID'
 // ---------------------------------
 function getExportDirectory() {
   const dt = new Date()
 
-  // pattern for random directory is /temp/YYYY-MM-DD/HH/uuid, using time-based UUID (v1)
+  // pattern for random directory is /temp/yyyy-MM-dd/HH/uuid, using time-based UUID (v1)
   const relPath = `/temp/${dt.getUTCFullYear()}-${dt.getUTCMonth() +
     1}-${dt.getUTCDate()}/${dt.getUTCHours()}/${uuid.v1()}`
 
@@ -36,7 +36,7 @@ function getExportDirectory() {
   const dirFull = `./../web/dist/${relPath}`
 
   // ---memo--------
-  // time part (YYYY-MM-DD/HH) allows auto-deleting old folders by external process - i.e. every
+  // time part (yyyy-MM-dd/HH) allows auto-deleting old folders by external process - i.e. every
   // 2 hours delete folders from 2-hours back. If lots of files are being generated (millions
   // every hour) - may add MM to path for tracking minutes too
   // -----------

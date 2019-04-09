@@ -11,7 +11,12 @@ import Paper from '@material-ui/core/Paper'
 import LinearProgress from '@material-ui/core/LinearProgress'
 
 import isEditable from '../../shared/selectors/site'
-import { fetchSingleSite, updateSingleSite, Site } from '../SiteRedux'
+import {
+  fetchSingleSite,
+  updateSingleSiteFromForm,
+  updateLatLongFromFormAddress,
+  Site,
+} from '../SiteRedux'
 import { fetchTags, updateTags } from '../../tag/TagRedux'
 import messages from './messages'
 import SiteDetailAlert from './alerts/SiteDetailAlerts'
@@ -41,7 +46,16 @@ const SiteDetail = props => {
     const { site } = props
     return site && site.has('longitude') && site.has('latitude')
   }
-  const { intl, updateSingleSite, site, match, siteTags, editable } = props
+  const {
+    intl,
+    updateSingleSiteFromForm,
+    site,
+    match,
+    siteTags,
+    editable,
+    updateLatLongFromFormAddress,
+  } = props
+
   return (
     <div>
       <Helmet title={intl.formatMessage(messages.title)} />
@@ -80,8 +94,9 @@ const SiteDetail = props => {
               editable ? (
                 <SiteForm
                   formatMessage={intl.formatMessage}
-                  onSubmit={updateSingleSite}
+                  onSubmit={updateSingleSiteFromForm}
                   onSiteTagChange={onSiteTagChange}
+                  updateLatLongFromFormAddress={updateLatLongFromFormAddress}
                   disabled={!editable}
                   {...props}
                   site={site}
@@ -96,9 +111,7 @@ const SiteDetail = props => {
       )}
       <section className={cssClasses('Section', 'Section--first')}>
         <Paper>
-          {hasSiteWithLocation() && (
-            <SiteLocationFormMap editable={editable} site={site} />
-          )}
+          {hasSiteWithLocation() && <SiteLocationFormMap site={site} />}
         </Paper>
       </section>
     </div>
@@ -115,6 +128,7 @@ const mapStateToProps = (state, ownProps) => {
     editable: isEditable(state.user, site),
     site,
     siteTags,
+    lastServerResponseTime: state.getIn(['globals', 'lastServerResponseTime']),
   }
 }
 
@@ -131,13 +145,15 @@ SiteDetail.propTypes = {
   site: PropTypes.objectOf(Site).isRequired,
   siteTags: PropTypes.instanceOf(Immutable.List).isRequired,
   fetchSingleSite: PropTypes.func.isRequired,
-  updateSingleSite: PropTypes.func.isRequired,
+  updateSingleSiteFromForm: PropTypes.func.isRequired,
   fetchTags: PropTypes.func.isRequired,
   updateTags: PropTypes.func.isRequired,
+  updateLatLongFromFormAddress: PropTypes.func.isRequired,
 }
 export default connect(mapStateToProps, {
   fetchSingleSite,
-  updateSingleSite,
+  updateSingleSiteFromForm,
   fetchTags,
   updateTags,
+  updateLatLongFromFormAddress,
 })(SiteDetail)

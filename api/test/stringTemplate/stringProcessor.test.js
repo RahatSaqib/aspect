@@ -122,7 +122,7 @@ describe('stringTemplate', () => {
           offlineOn: '2018-08-01',
         },
         displayPreferences: {
-          dateFormat: 'D/M/YYYY',
+          dateFormat: 'd/M/yyyy',
         },
       }
       return runTest(processUsingHandlebarsSyntax, [sampleString, inputObject])(
@@ -135,9 +135,9 @@ describe('stringTemplate', () => {
 
   describe('processUsingDataSourceQuery', () => {
     const displayPreferences = {
-      dateFormat: 'D/M/YYYY',
+      dateFormat: 'd/M/yyyy',
       timeFormat: 'HH:mm:ss',
-      dateTimeFormat: 'D/M/YYYY HH:mm:ss',
+      dateTimeFormat: 'd/M/yyyy HH:mm:ss',
     }
     const { processUsingDataSourceQuery } = proxyquire(
       '../../src/stringTemplate/service',
@@ -201,7 +201,7 @@ describe('stringTemplate', () => {
       })
 
       it('should format date with a specific format is specified', async () => {
-        const specifiedFormat = 'YYYY-MM-DDHH:mm'
+        const specifiedFormat = 'yyyy-MM-ddHH:mm'
         const message = await runProcessUsingDataSourceQuery(
           `Offline since {{formatDate device.lastSeenOn formatString='${specifiedFormat}'}}`
         )
@@ -272,7 +272,7 @@ describe('stringTemplate', () => {
       })
 
       it('should not change the date to use an offset if the timezone IS NOT specified', async () => {
-        const specifiedFormat = 'YYYY-MM-DDHH:mm'
+        const specifiedFormat = 'yyyy-MM-ddHH:mm'
         const message = await runProcessUsingDataSourceQuery(
           `Offline since {{formatDate (offsetToTimeZone device.lastSeenOn) formatString='${specifiedFormat}'}}`
         )
@@ -621,7 +621,7 @@ describe('stringTemplate', () => {
 
     describe('chaining helpers', () => {
       it("should pass the result of a helper to it's predecessor", async () => {
-        const specifiedFormat = 'YYYY-MMMM-DD'
+        const specifiedFormat = 'yyyy-MMMM-dd'
         const message = await runProcessUsingDataSourceQuery(
           `Offline since {{urlEncode (enclose (toLowerCase (formatDate device.lastSeenOn formatString='${specifiedFormat}')) with='"')}}`
         )
@@ -639,7 +639,7 @@ describe('stringTemplate', () => {
 
     describe('use cases for SA NHLS', () => {
       it('should process RedCAP API Payloads', async () => {
-        const redCapDateTimeFormat = 'YYYY-MM-DD HH:mm'
+        const redCapDateTimeFormat = 'yyyy-MM-dd HH:mm'
         const johannesburgTimeZone = 'Africa/Johannesburg'
         const template =
           `token=1A234567B8C90D12345E6789F0G1234H&content=record&format=json&type=flat&overwriteBehavior=normal&forceAutoNumber=true&data=%5B%7B%22` +

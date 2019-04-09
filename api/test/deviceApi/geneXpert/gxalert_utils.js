@@ -278,11 +278,18 @@ class GxAlertApiTestContext {
         .where('token', 'approved')
         .first()
 
+      const deviceCapacity = await knex('DeviceCapacity')
+        .where({ deviceTypeId: gxAlertDeviceType.id })
+        .where({ partnerId: partner.id })
+        .where({ defaultForDeviceType: 1 })
+        .first('id')
+
       const now = new Date()
       const [deviceId] = await knex('Device').insert({
         partnerId: partner.id,
         geographyId: geography.id,
         deviceTypeId: gxAlertDeviceType.id,
+        deviceCapacityId: deviceCapacity ? deviceCapacity.id : null,
         deviceStatusId: approvedDeviceStatus.id,
         name: this.basicDevicePayload.name,
         shortName: this.basicDevicePayload.name,

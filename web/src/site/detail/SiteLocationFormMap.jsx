@@ -8,26 +8,13 @@ import { connect } from 'react-redux'
 import CircularProgress from '@material-ui/core/CircularProgress'
 
 import { latLng, address } from '../../shared/selectors/site'
+import {
+  isValidLatLng,
+  isValidFullAddress,
+  formatFullAddressToAddressQuery,
+} from '../utils/address'
 import SiteMap from './SiteMap'
 import styles from './SiteLocationFormMap.css'
-
-function isValidLatLng({ lat, lng }) {
-  return _.isNumber(lat) && _.isNumber(lng)
-}
-
-function isValidFullAddress({ country, state, lga, city, address, address2 }) {
-  return _.some([country, state, lga, city, address, address2], _.isString)
-}
-
-function formatFullAddressToAddressQuery({
-  country,
-  state,
-  lga,
-  city,
-  address,
-}) {
-  return `${address}, ${city}, ${lga}, ${state}, ${country}`
-}
 
 /*
  * This component deals with four location values:
@@ -91,8 +78,8 @@ export class SiteLocationFormMap extends PureComponent {
   handlePositionFound({ geometry: { location } }) {
     const { editable, change } = this.props
     if (editable) {
-      change('lat', location.lat())
-      change('lng', location.lng())
+      change('latitude', location.lat())
+      change('longitude', location.lng())
     }
   }
 

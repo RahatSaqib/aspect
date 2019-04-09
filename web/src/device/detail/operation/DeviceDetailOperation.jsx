@@ -163,6 +163,7 @@ export const DeviceDetailOperation = ({
   location,
   match,
   device,
+  disabled,
   // --- injected by recompose ---
   table,
   items,
@@ -179,6 +180,7 @@ export const DeviceDetailOperation = ({
       history={history}
       location={location}
       match={match}
+      disabled={disabled}
       title={device.get('name')}
     />
     <section className={cssClasses('Section', 'Section--first')}>

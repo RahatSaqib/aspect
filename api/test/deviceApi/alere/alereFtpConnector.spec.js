@@ -1,10 +1,10 @@
 const _ = require('lodash')
 const supertest = require('supertest')
 const chai = require('chai')
-const subDays = require('date-fns/sub_days')
-const subHours = require('date-fns/sub_hours')
-const subMinutes = require('date-fns/sub_minutes')
-const setMilliseconds = require('date-fns/set_milliseconds')
+const subDays = require('date-fns/subDays')
+const subHours = require('date-fns/subHours')
+const subMinutes = require('date-fns/subMinutes')
+const setMilliseconds = require('date-fns/setMilliseconds')
 const {
   postToDeviceApi,
   getMaxDeviceId,
