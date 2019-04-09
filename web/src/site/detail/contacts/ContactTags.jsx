@@ -51,15 +51,10 @@ const mapStateToProps = state => ({
   contacts: state.person.availableContacts,
 })
 
-ContactsTag.defaultProps = {
-  identifier: 'title',
-}
-
 ContactsTag.propTypes = {
   contacts: PropTypes.instanceOf(Immutable.List).isRequired,
   fetchAvailablePersons: PropTypes.func.isRequired,
   fetchUpdateSiteContacts: PropTypes.func.isRequired,
-  identifier: PropTypes.string,
   siteId: PropTypes.string.isRequired,
   value: PropTypes.arrayOf(PropTypes.object).isRequired,
 }

@@ -18,7 +18,7 @@ const getPeople = () =>
 async function listPeople(request) {
   const { query } = request
 
-  const personQuery = await getPeople().modify(filterParams, query, {
+  const personQuery = getPeople().modify(filterParams, query, {
     countryId: 'g.countryId',
     stateId: 'g.stateId',
     lgaId: 'g.lgaId',
