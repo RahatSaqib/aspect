@@ -519,8 +519,8 @@ const routes = [
     path: '/result/treatment-status/{resultId}',
     handler: asyncHandler(updateTreatmentStatus),
     config: {
-      description: 'Update Result Status',
-      notes: 'Update the status of a result',
+      description: 'Update Result Treatment Status',
+      notes: 'Update the treatment status of a result',
       auth: { scope: ['result:edit'] },
       validate: {
         params: {
@@ -537,6 +537,12 @@ const routes = [
           externalId: Joi.string().allow('', null),
           data: Joi.string().allow('', null),
           method: Joi.string().allow('', null),
+          updatedOn: Joi.date()
+            .iso()
+            .optional()
+            .description(
+              'This is the date when the status were updated. This is optional'
+            ),
         },
       },
       response: {

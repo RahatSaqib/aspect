@@ -776,7 +776,7 @@ async function updateWorkflowStatus(request) {
 }
 
 async function updateTreatmentStatus(request) {
-  const { auth, params, payload } = request
+  const { auth, params, payload, updatedOn = new Date() } = request
   const now = new Date()
   const { resultId } = params
   const { id: currentUserId } = await getUser(auth.credentials.name)
@@ -811,6 +811,7 @@ async function updateTreatmentStatus(request) {
       createdOn: now,
       changedOn: now,
       createdBy: currentUserId,
+      updatedOn,
     })
   }
   const response = await showResult(request)
