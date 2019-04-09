@@ -38,6 +38,7 @@ async function up(knex) {
 
 async function down(knex) {
   await knex.schema.table('Device', device => {
+    device.dropForeign('deviceCapacityId')
     device.dropColumns('deviceCapacityId')
   })
 
