@@ -15,23 +15,30 @@ export const DeviceDetailAlerts = ({
   location,
   match,
   device,
+  disabled,
   // --- injected by recompose ---
-}) => (
-  <div>
-    <Helmet title={device.get('name')} />
-    <DeviceDetailBackBar
-      intl={intl}
-      history={history}
-      location={location}
-      match={match}
-      title={device.get('name')}
-    />
-    <section className={cssClasses('Section', 'Section--first')}>
-      <div className={cssClasses('Section__Content')}>
-        <Summary title="Alerts" description="TODO" />
-      </div>
-    </section>
-  </div>
-)
+}) => {
+  const deviceName = `${device.getIn(['deviceType', 'name'])} at ${device.get(
+    'siteName'
+  )}`
+  return (
+    <div>
+      <Helmet title={deviceName} />
+      <DeviceDetailBackBar
+        intl={intl}
+        history={history}
+        location={location}
+        match={match}
+        disabled={disabled}
+        title={deviceName}
+      />
+      <section className={cssClasses('Section', 'Section--first')}>
+        <div className={cssClasses('Section__Content')}>
+          <Summary title="Alerts" description="TODO" />
+        </div>
+      </section>
+    </div>
+  )
+}
 
 export default enhance(DeviceDetailAlerts)

@@ -3,8 +3,8 @@ import React from 'react'
 import { compose, lifecycle, withHandlers, pure } from 'recompose'
 import Button from '@material-ui/core/Button'
 import TextField from '@material-ui/core/TextField'
-
 import AspectDialog from '../../components/shared/AspectDialog'
+import AspectSwitch from '../../components/shared/AspectSwitch'
 import StrongPasswordInput from '../../components/shared/StrongPasswordInput'
 import recomposeForm from '../../components/recomposeForm'
 import messages from './messages'
@@ -12,7 +12,7 @@ import messages from './messages'
 const cssClasses = classnames.bind(require('./PersonDetail.css'))
 
 export function validate(
-  { username, newPassword, confirmNewPassword, currentPassword },
+  { username, newPassword, confirmNewPassword, currentPassword, shouldPrefill },
   { intl, currentPasswordInputDialogOpen }
 ) {
   const errors = {}
@@ -41,6 +41,11 @@ export function validate(
       )
     }
   }
+  if (shouldPrefill && !newPassword) {
+    errors.currentPassword = intl.formatMessage(
+      messages.currentPasswordRequired
+    )
+  }
   return errors
 }
 
@@ -49,11 +54,18 @@ const DEFAULT_VALUES = {
   newPassword: '',
   confirmNewPassword: '',
   currentPassword: '',
+  userLockedOut: false,
 }
 
-const getInitialValues = loginDetails => ({
+const getInitialValues = (loginDetails, shouldPrefill, emailValue) => ({
   ...DEFAULT_VALUES,
-  username: loginDetails.get('username') || DEFAULT_VALUES.username,
+  username: shouldPrefill
+    ? emailValue
+    : loginDetails.get('username') || DEFAULT_VALUES.username,
+  // username: loginDetails.get('username') || DEFAULT_VALUES.username,
+  userLockedOut:
+    loginDetails.get('userLockedOut') || DEFAULT_VALUES.userLockedOut,
+  shouldPrefill,
 })
 
 const enhance = compose(
@@ -61,18 +73,24 @@ const enhance = compose(
   lifecycle({
     componentWillMount() {
       const onChange = values => this.setState({ values })
-
       this.setState({
         onChange,
-        values: getInitialValues(this.props.loginDetails),
+        values: getInitialValues(
+          this.props.loginDetails,
+          this.props.shouldPrefill,
+          this.props.emailValue
+        ),
       })
     },
 
     componentWillReceiveProps(nextProps) {
-      const { loginDetails } = nextProps
+      const { loginDetails, shouldPrefill, emailValue } = nextProps
+
       if (this.props.loginDetails !== loginDetails) {
         // Re-initialize
-        this.state.onChange(getInitialValues(loginDetails))
+        this.state.onChange(
+          getInitialValues(loginDetails, shouldPrefill, emailValue)
+        )
       }
     },
   }),
@@ -90,6 +108,10 @@ const enhance = compose(
       {
         fieldName: 'currentPassword',
         valueFromChangeEvent: it => it.target.value,
+      },
+      {
+        fieldName: 'userLockedOut',
+        valueFromChangeEvent: it => it.target.checked,
       },
     ],
     validate,
@@ -116,6 +138,7 @@ export const LoginDetailsForm = ({
   loading,
   currentPasswordInputDialogOpen,
   closeCurrentPasswordInputDialog,
+  // classes,
   // --- injected by recompose ---
   onSubmit,
   form,
@@ -123,6 +146,7 @@ export const LoginDetailsForm = ({
   meta,
   onUsernameChange,
   onNewPasswordChange,
+  onUserLockedOutChange,
   onConfirmNewPasswordChange,
   onCurrentPasswordChange,
   onCurrentPasswordKeyPress,
@@ -180,6 +204,12 @@ export const LoginDetailsForm = ({
           meta.confirmNewPassword.touched && meta.confirmNewPassword.error
         }
         inputProps={{ maxLength: 100 }}
+      />
+      <AspectSwitch
+        name="userLockedOut"
+        checked={values.userLockedOut}
+        onChange={onUserLockedOutChange}
+        labelText={intl.formatMessage(messages.userLockedOutLabel)}
       />
     </div>
     <div className={cssClasses('Form__ActionRow')}>

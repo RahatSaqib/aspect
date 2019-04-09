@@ -1,5 +1,5 @@
 const _ = require('lodash')
-const subDays = require('date-fns/sub_days')
+const subDays = require('date-fns/subDays')
 const Promise = require('bluebird')
 
 const {

@@ -3,6 +3,7 @@ import _ from 'lodash'
 import Immutable from 'immutable'
 import { defineMessages } from 'react-intl'
 import differenceInMinutes from 'date-fns/differenceInMinutes'
+import { formValueSelector, change as changeForm } from 'redux-form/immutable'
 
 import { aspectFetch } from '../shared/utils/fetch'
 import {
@@ -18,6 +19,7 @@ import {
   receiveTableItems,
   Table,
 } from '../shared/metaReducers/table'
+import { getLatLongFromAddress, convertToFloat } from './utils/address'
 
 export const types = {
   REQUEST_SITES: 'REQUEST_SITES',
@@ -245,7 +247,62 @@ export function updateSingleSite(siteId, data) {
           })
         ),
       },
-    }).then(json => dispatch(receiveUpdatedSingleSite(json.data)))
+    }).then(json => {
+      dispatch(receiveUpdatedSingleSite(json.data))
+      return json.data
+    })
+  }
+}
+
+export function updateSingleSiteFromForm(siteId) {
+  const formName = 'siteDetail'
+
+  return (dispatch, getState) => {
+    const state = getState()
+    const formData = state.getIn(['form', formName, 'values'])
+    const submitData = {
+      // Map form fields to API fields
+      name: formData.get('name'),
+      shortName: formData.get('shortName'),
+      externalId: formData.get('externalId'),
+      timezone: formData.get('timezone'),
+      countryId: formData.get('countryId'),
+      stateId: formData.get('stateId'),
+      lgaId: formData.get('lgaId'),
+      street1: formData.get('address'),
+      street2: formData.get('address2'),
+      city: formData.get('city'),
+      zip: formData.get('zip'),
+      longitude: formData.get('longitude'),
+      latitude: formData.get('latitude'),
+    }
+    return dispatch(updateSingleSite(siteId, submitData)).then(data => {
+      dispatch(changeForm(formName, 'latitude', data.latitude))
+      dispatch(changeForm(formName, 'longitude', data.longitude))
+    })
+  }
+}
+
+export function updateLatLongFromFormAddress() {
+  const formName = 'siteDetail'
+  const formSelector = formValueSelector(formName)
+  const formAddressSelector = state =>
+    formSelector(
+      state,
+      'country',
+      'state',
+      'lga',
+      'city',
+      'address',
+      'address2'
+    )
+
+  return (dispatch, getState) => {
+    const formAddress = formAddressSelector(getState())
+    return getLatLongFromAddress(formAddress).then(({ lat, lng }) => {
+      dispatch(changeForm(formName, 'latitude', convertToFloat(lat, 6)))
+      dispatch(changeForm(formName, 'longitude', convertToFloat(lng, 6)))
+    })
   }
 }
 /*

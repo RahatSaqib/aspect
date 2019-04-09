@@ -1,7 +1,7 @@
 const _ = require('lodash')
 const supertest = require('supertest')
 const chai = require('chai')
-const subDays = require('date-fns/sub_days')
+const subDays = require('date-fns/subDays')
 const {
   createTestContext,
   getDeviceConfigurationData,
@@ -255,41 +255,6 @@ describe('Device API routes', () => {
       }))
   })
 
-  describe('get result count', () => {
-    it('should return result count from device', () =>
-      runTest(async knex => {
-        const deviceListPath = '/api/device'
-        const { apiKey, deviceId, clientAuth } = context
-        const last30Day = subDays(new Date(), 30)
-        const last60Day = subDays(last30Day, 30)
-        assert.isOk(apiKey)
-
-        const totalResultsLastMonth = await knex('Result as r')
-          .whereBetween('r.endedOn', [last60Day, last30Day])
-          .where({ deviceId })
-          .countDistinct('r.id as total')
-
-        const totalResultsThisMonth = await knex('Result as r')
-          .where({ deviceId })
-          .andWhere('r.endedOn', '>=', last30Day)
-          .countDistinct('r.id as total')
-
-        // get total count of results
-        await server
-          .get(`${deviceListPath}?size=100`)
-          .set('Authorization', clientAuth)
-          .then(res => {
-            assert.equal(res.status, 200)
-            const device = _.find(
-              res.body.data,
-              device => device.id === deviceId
-            )
-            assert.equal(device.lastMonth, totalResultsLastMonth[0].total)
-            assert.equal(device.thisMonth, totalResultsThisMonth[0].total)
-          })
-      }))
-  })
-
   describe('add new device', () => {
     const newDeviceContext = createTestContext(server, {
       user: 'reporter_admin',
@@ -383,6 +348,34 @@ describe('Device API routes', () => {
           newDevice.id
         )
         assert.equal(onlineFactDevice.offline, 0)
+      }))
+    it('should assign the Device to the default capacity for the device type and partner', () =>
+      runTest(async knex => {
+        const { apiKey, deviceAuth } = newDeviceContext
+        assert.isOk(apiKey)
+
+        // add device
+        await server
+          .post(devicePath)
+          .set('Authorization', deviceAuth)
+          .send({
+            type: { id: 'DaktariInSight' },
+            site: { id: 'CHIZ' },
+          })
+          .then(res => {
+            assert.equal(res.status, 200)
+          })
+        await waitForIdle()
+
+        const newDevice = await getDeviceFromApiKey(knex, apiKey)
+
+        const { id: deviceCapacityId } = await knex('DeviceCapacity')
+          .where({ deviceTypeId: newDevice.deviceTypeId })
+          .where({ partnerId: newDevice.partnerId })
+          .where({ defaultForDeviceType: 1 })
+          .first('id')
+
+        assert.equal(newDevice.deviceCapacityId, deviceCapacityId)
       }))
   })
 

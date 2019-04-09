@@ -20,9 +20,10 @@ import {
 
 export const types = {
   REQUEST_PERSONS: 'REQUEST_PERSONS',
+  CAN_LOG_IN_PERSON: 'CAN_LOG_IN_PERSON',
   RECEIVE_PERSONS: 'RECEIVE_PERSONS',
   REJECTED_PERSONS: 'REJECTED_PERSONS',
-
+  PREFILL_EMAIL: 'PREFILL_EMAIL',
   REQUEST_SINGLE_PERSON: 'REQUEST_SINGLE_PERSON',
   RECEIVE_SINGLE_PERSON: 'RECEIVE_SINGLE_PERSON',
 
@@ -34,6 +35,7 @@ export const types = {
 /*
  * ---------------- Action Creators -----------------
  */
+
 function requestPersons(sortCol, sortDir, page, size, filters) {
   return {
     type: types.REQUEST_PERSONS,
@@ -52,13 +54,35 @@ function receivePersons(json) {
     total: json.total,
   }
 }
-
+function transformToUser(canLogIn, personId) {
+  return {
+    type: types.CAN_LOG_IN_PERSON,
+    canLogIn,
+    personId,
+  }
+}
 function rejectPersons() {
   return {
     type: types.REJECTED_PERSONS,
   }
 }
-
+export function personCanLogIn(canLogIn, personId) {
+  return dispatch => {
+    dispatch(transformToUser(canLogIn, personId))
+  }
+}
+export function emailValueBlur(value, personId) {
+  return dispatch => {
+    dispatch(prefillEmailValue(value, personId))
+  }
+}
+function prefillEmailValue(email, personId) {
+  return {
+    type: types.PREFILL_EMAIL,
+    email,
+    personId,
+  }
+}
 export function fetchPersons(filtersParams, sortCol, sortDir, page, pageSize) {
   return dispatch => {
     const filters = _.fromPairs([...filtersParams.entries()])
@@ -170,8 +194,7 @@ function receiveUpdatedSinglePerson(item) {
 function receiveUpdatedSinglePersonLoadinDetails(updatedInformation) {
   return {
     type: types.RECEIVE_UPDATED_SINGLE_PERSON_LOGIN_DETAILS,
-    personId: updatedInformation.personId,
-    username: updatedInformation.username,
+    ...updatedInformation,
   }
 }
 
@@ -221,6 +244,7 @@ export function updateSinglePerson(personId, data) {
     'zip',
     'notes',
     'lastPartnerId',
+    'canLogIn',
   ])
 }
 
@@ -232,7 +256,11 @@ export function updateSinglePersonLoginDetails(personId, data) {
     return aspectFetch(`/auth/update-person-login-details/${personId}`, {
       method: 'PUT',
       body: JSON.stringify(
-        _.pick(loginDetailsJson, ['newUsername', 'newPassword'])
+        _.pick(loginDetailsJson, [
+          'newUsername',
+          'newPassword',
+          'userLockedOut',
+        ])
       ),
       errorNotifications: {
         409: inlineWarning(
@@ -307,6 +335,7 @@ export const ContactDetails = Immutable.Record({
   zip: null,
   notes: null,
   lastPartnerId: null,
+  canLogIn: false,
 })
 export const LoginDetails = Immutable.Record({
   id: null,
@@ -316,6 +345,8 @@ export const LoginDetails = Immutable.Record({
   currentPassword: null,
   partnerId: null,
   jobFunctions: new Immutable.List([]),
+  userLockedOut: null,
+  email: null,
 })
 export const UserPreferences = Immutable.Record({
   id: null,
@@ -340,18 +371,35 @@ export default function personReducer(state = initialState, action) {
         mutState.set('items', mutState.get('items').clear())
         mutState.set('table', mutState.get('table').clear())
       })
+    case types.CAN_LOG_IN_PERSON:
+      return state.withMutations(mutState => {
+        const currentState = state.items.byId
+          .get(action.personId)
+          .set('canLogIn', action.canLogIn)
+        mutState.set('items', receiveItem(mutState.items, currentState))
+      })
     case types.RECEIVE_SINGLE_PERSON:
     case types.RECEIVE_UPDATED_SINGLE_PERSON:
       return state.withMutations(mutState => {
         const immutItem = Immutable.fromJS({ ...action.item, loaded: true })
         mutState.set('items', receiveItem(mutState.items, immutItem))
       })
+    case types.PREFILL_EMAIL:
+      return state.withMutations(mutState => {
+        const currentState = state.items.byId
+          .get(action.personId)
+          .set('email', action.email)
+        mutState.set('items', receiveItem(mutState.items, currentState))
+      })
     case types.RECEIVE_UPDATED_SINGLE_PERSON_LOGIN_DETAILS:
       return state.withMutations(mutState => {
-        const person = state.items.byId.get(action.personId).merge({
-          loaded: true,
-          username: action.username,
-        })
+        const person = state.items.byId
+          .get(action.personId)
+          .set('loaded', true)
+          .set('username', action.username)
+          .set('userLockedOut', action.userLockedOut)
+          .set('userId', action.userId)
+
         mutState.set('items', receiveItem(mutState.items, person))
       })
     case types.REQUEST_UPDATING_SINGLE_PERSON:

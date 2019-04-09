@@ -30,6 +30,8 @@ import {
   ContactDetails,
   LoginDetails,
   UserPreferences,
+  personCanLogIn,
+  emailValueBlur,
 } from '../PersonRedux'
 import { fetchPartnersAndJobFunctionsForSelectList } from '../../job/JobRedux'
 import { showAcknowledgement } from '../../appNotification/AppNotificationRedux'
@@ -48,11 +50,14 @@ const enhance = compose(
   connect(
     (state, props) => {
       const person = state.person.items.byId.get(props.match.params.personId)
-
+      const prefillUser = person && person.get('userId') > 0
       return {
         editable: isEditable(state.user, person),
         person,
+        canLogIn: person && person.get('canLogIn'),
         user: state.user,
+        emailValue: person && person.get('email'),
+        prefillUser,
         partnersAndJobFunctionsForSelectList: state.jobs.get(
           'partnersAndJobFunctionsForSelectList'
         ),
@@ -67,6 +72,8 @@ const enhance = compose(
           updateSinglePersonLoginDetails,
           updateSinglePersonUserPreferences,
           fetchPartnersAndJobFunctionsForSelectList,
+          personCanLogIn,
+          emailValueBlur,
         },
         dispatch
       )
@@ -90,7 +97,6 @@ export class PersonDetail extends PureComponent {
     this.handleFetchPartnersAndJobFunctions(this.props)
     this.handleFetchPerson(this.props)
   }
-
   componentWillReceiveProps(nextProps) {
     if (this.props.match.params.personId !== nextProps.match.params.personId) {
       this.handleFetchPerson(nextProps)
@@ -101,29 +107,42 @@ export class PersonDetail extends PureComponent {
     fetchSinglePerson(match.params.personId)
   }
 
+  handlePersonCanLogIn = canLogin => {
+    const { person } = this.props
+    this.props.personCanLogIn(canLogin, person.get('id'))
+  }
+
+  handleEmailBlur = value => {
+    const { person } = this.props
+    this.props.emailValueBlur(value, person.get('id'))
+  }
+
   handleFetchPartnersAndJobFunctions = ({
     fetchPartnersAndJobFunctionsForSelectList,
   }) => {
     fetchPartnersAndJobFunctionsForSelectList()
   }
 
-  saveContactDetails = values => {
+  saveContactDetails = () => {
     const { person, updateSinglePerson } = this.props
     const contactDetails = new ContactDetails(person)
-    return updateSinglePerson(contactDetails.get('id'), values).then(() => {
-      this.props.showAcknowledgement({
-        title: messages.detailsUpdatedSuccessfully,
-        message: messages.contactDetailsUpdatedMessage,
-      })
-    })
+    return updateSinglePerson(contactDetails.get('id'), contactDetails).then(
+      () => {
+        this.props.showAcknowledgement({
+          title: messages.detailsUpdatedSuccessfully,
+          message: messages.contactDetailsUpdatedMessage,
+        })
+      }
+    )
   }
 
-  saveLoginDetails = ({ username, newPassword }) => {
+  saveLoginDetails = ({ username, newPassword, userLockedOut }) => {
     const { person, updateSinglePersonLoginDetails } = this.props
     const loginDetails = new LoginDetails(person)
     return updateSinglePersonLoginDetails(loginDetails.get('id'), {
       newUsername: username,
       newPassword,
+      userLockedOut,
     }).then(() => {
       this.props.showAcknowledgement({
         title: messages.detailsUpdatedSuccessfully,
@@ -145,7 +164,6 @@ export class PersonDetail extends PureComponent {
       })
     })
   }
-
   render() {
     const { intl, person, user, editable } = this.props
     const { formatMessage } = intl
@@ -154,7 +172,9 @@ export class PersonDetail extends PureComponent {
     const userPreferences = new UserPreferences(person)
     const userIsAdmin = user.jwt.permissions.includes('person:admin')
     const loading = !person || person.get('loaded') !== true
-
+    const isUser = !person || person.get('canLogIn') || undefined
+    const shouldPrefill = person && person.get('userId') == null
+    const emailValue = (person && person.get('email')) || ''
     return (
       <div className={styles.Container}>
         <Helmet title={formatMessage(messages.title)} />
@@ -178,33 +198,15 @@ export class PersonDetail extends PureComponent {
                 <ContactDetailsForm
                   intl={intl}
                   loading={loading}
+                  onEmailBlur={this.handleEmailBlur}
                   contactDetails={contactDetails}
                   showNotesField
                   userIsAdmin
+                  isUserChange={this.handlePersonCanLogIn}
                   onSubmit={this.saveContactDetails}
                 />
               </Tab>
-              {userIsAdmin && (
-                <Tab
-                  icon={<Lock fontSize="large" />}
-                  label={
-                    <Hidden xs component="span">
-                      {formatMessage(messages.systemAccessControl)}
-                    </Hidden>
-                  }
-                >
-                  {loading && <LinearProgress />}
-                  <Visible xs component="h2" className={styles.Form__Header}>
-                    {formatMessage(messages.systemAccessControl)}
-                  </Visible>
-                  <LoginDetailsForm
-                    intl={intl}
-                    loading={loading}
-                    loginDetails={loginDetails}
-                    onSubmit={this.saveLoginDetails}
-                  />
-                </Tab>
-              )}
+
               <Tab
                 icon={<Language fontSize="large" />}
                 label={
@@ -222,6 +224,30 @@ export class PersonDetail extends PureComponent {
                   loading={loading}
                   userPreferences={userPreferences}
                   onSubmit={this.saveUserPreferences}
+                />
+              </Tab>
+              <Tab
+                icon={<Lock fontSize="large" />}
+                style={{
+                  visibility: userIsAdmin && isUser ? 'visible' : 'hidden',
+                }}
+                label={
+                  <Hidden xs component="span">
+                    {formatMessage(messages.systemAccessControl)}
+                  </Hidden>
+                }
+              >
+                {loading && <LinearProgress />}
+                <Visible xs component="h2" className={styles.Form__Header}>
+                  {formatMessage(messages.systemAccessControl)}
+                </Visible>
+                <LoginDetailsForm
+                  intl={intl}
+                  loading={loading}
+                  shouldPrefill={shouldPrefill}
+                  emailValue={emailValue}
+                  loginDetails={loginDetails}
+                  onSubmit={this.saveLoginDetails}
                 />
               </Tab>
             </AspectTabs>

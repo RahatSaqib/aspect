@@ -8,6 +8,7 @@ import {
   DataTableCell as TableCell,
 } from '../../components/shared/tableBody'
 import ColoredButton from '../../components/themedReactToolbox/ColoredButton'
+import ColoredNumber from '../../components/shared/ColoredNumber'
 import messages from './messages'
 
 const cssClasses = classnames.bind(require('./DeviceTableRow.css'))
@@ -17,18 +18,31 @@ const sharedCssClasses = classnames.bind(
 
 const enhance = _.identity
 
-const Rate = ({ intl, it, messageId }) => (
+const Rate = ({ intl, it, messageId, threshold }) => (
   <span>
-    {it.total === 0
-      ? intl.formatMessage(messages.noTests)
-      : intl.formatNumber(it.count / it.total, { style: 'percent' })}
+    {it.total === 0 ? (
+      intl.formatMessage(messages.noResults)
+    ) : (
+      <ColoredNumber
+        number={it.rate}
+        intl={intl}
+        formatNumberStyle="percent"
+        error={threshold && it.rate > threshold}
+      />
+    )}
     <span className={cssClasses('Rate__hover')}>
       {intl.formatMessage(messageId, it)}
     </span>
   </span>
 )
 
-const DeviceTableRow = ({ intl, device, onAlertClick, ...restProps }) => (
+const DeviceTableRow = ({
+  intl,
+  device,
+  onAlertClick,
+  displayPreferences,
+  ...restProps
+}) => (
   <TableRow
     {...restProps}
     className={cssClasses('TableRow', restProps.className)}
@@ -48,12 +62,13 @@ const DeviceTableRow = ({ intl, device, onAlertClick, ...restProps }) => (
       <Rate
         intl={intl}
         it={device.get('error').toJS()}
+        threshold={displayPreferences.get('errorRateThreshold')}
         messageId={messages.errorOfTotal}
       />
     </TableCell>
     <TableCell className={cssClasses('TableCell--alerts')}>
       {device
-        .get('alerts')
+        .get('issueCategories')
         .map(it => (
           <ColoredButton
             key={it.get('key')}
@@ -64,7 +79,7 @@ const DeviceTableRow = ({ intl, device, onAlertClick, ...restProps }) => (
             brink={it.get('key') === 'issueCategoryConnectivityHealth'}
             label={intl.formatMessage(messages[it.get('key')])}
             onClick={onAlertClick}
-            data-pathname="/browse/notification/detail"
+            data-device-id={device.get('id')}
           />
         ))}
     </TableCell>
@@ -74,8 +89,12 @@ const DeviceTableRow = ({ intl, device, onAlertClick, ...restProps }) => (
       })}
     </TableCell>
     <TableCell>{intl.formatRelative(device.get('lastSeen'))}</TableCell>
-    <TableCell numeric>{intl.formatNumber(device.get('lastMonth'))}</TableCell>
-    <TableCell numeric>{intl.formatNumber(device.get('thisMonth'))}</TableCell>
+    <TableCell numeric>
+      {intl.formatNumber(device.get('resultCountLastMonth'))}
+    </TableCell>
+    <TableCell numeric>
+      {intl.formatNumber(device.get('resultCountThisMonth'))}
+    </TableCell>
   </TableRow>
 )
 

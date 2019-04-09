@@ -154,6 +154,12 @@ async function createNewDevice(
     }
   }
 
+  const deviceCapacity = await knex('DeviceCapacity')
+    .where({ deviceTypeId: deviceType.id })
+    .where({ partnerId })
+    .where({ defaultForDeviceType: 1 })
+    .first('id')
+
   // Use or generate device name
   if (!name) {
     if (serial) {
@@ -174,6 +180,7 @@ async function createNewDevice(
     geographyId,
     siteId,
     deviceTypeId: deviceType.id,
+    deviceCapacityId: deviceCapacity ? deviceCapacity.id : null,
     deviceStatusId,
     name,
     serial,

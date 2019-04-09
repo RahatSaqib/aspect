@@ -13,6 +13,7 @@ import CountrySelectField from '../../filter/geography/CountrySelectField'
 import StateSelectField from '../../filter/geography/StateSelectField'
 import LgaSelectField from '../../filter/geography/LgaSelectField'
 import messages from './messages'
+import AspectCheckbox from '../../components/shared/AspectCheckbox'
 
 const cssClasses = classnames.bind(require('./PersonDetail.css'))
 
@@ -51,6 +52,7 @@ const DEFAULT_VALUES = {
   lgaId: undefined,
   zip: '',
   notes: '',
+  canLogIn: false,
 }
 
 const getInitialValues = contactDetails => ({
@@ -67,6 +69,8 @@ const getInitialValues = contactDetails => ({
   lgaId: contactDetails.get('lgaId') || DEFAULT_VALUES.lgaId,
   zip: contactDetails.get('zip') || DEFAULT_VALUES.zip,
   notes: contactDetails.get('notes') || DEFAULT_VALUES.notes,
+  canLogIn: !!contactDetails.get('canLogIn') || DEFAULT_VALUES.canLogIn,
+  userId: contactDetails.get('userId') || undefined,
 })
 
 const enhance = compose(
@@ -74,7 +78,6 @@ const enhance = compose(
   lifecycle({
     componentWillMount() {
       const onChange = values => this.setState({ values })
-
       this.setState({
         onChange,
         values: getInitialValues(this.props.contactDetails),
@@ -106,10 +109,17 @@ const enhance = compose(
       { fieldName: 'lgaId', valueFromChangeEvent: _.identity },
       { fieldName: 'zip', valueFromChangeEvent: it => it.target.value },
       { fieldName: 'notes', valueFromChangeEvent: it => it.target.value },
+      {
+        fieldName: 'canLogIn',
+        valueFromChangeEvent: it => it.target.checked,
+      },
     ],
     validate,
   }),
   withHandlers({
+    onEmailBlur: ({ onEmailBlur }) => event => {
+      if (event.target.value !== '') onEmailBlur(event.target.value)
+    },
     onCountryIdChange: ({
       onCountryIdChange,
       onStateIdChange,
@@ -119,10 +129,13 @@ const enhance = compose(
       onStateIdChange(undefined)
       onCountryIdChange(countryId)
     },
-
     onStateIdChange: ({ onStateIdChange, onLgaIdChange }) => stateId => {
       onLgaIdChange(undefined)
       onStateIdChange(stateId)
+    },
+    onUserCanLogInChange: ({ isUserChange, onCanLogInChange }) => event => {
+      onCanLogInChange(event)
+      isUserChange(event.target.checked)
     },
   })
 )
@@ -132,6 +145,7 @@ export const ContactDetailsForm = ({
   loading,
   userIsAdmin,
   showNotesField,
+  onEmailBlur,
   // --- injected by recompose ---
   form,
   values,
@@ -143,6 +157,7 @@ export const ContactDetailsForm = ({
   onPhoneChange,
   onCellChange,
   onLastPartnerIdChange,
+  onUserCanLogInChange,
   onCountryIdChange,
   onStateIdChange,
   onLgaIdChange,
@@ -152,6 +167,15 @@ export const ContactDetailsForm = ({
 }) => (
   <form onSubmit={handleSubmit} className={cssClasses('Form')}>
     <div className={cssClasses('Form__Content')}>
+      <div style={{ marginBottom: 20 }}>
+        <AspectCheckbox
+          name="canLogIn"
+          margin="normal"
+          checked={values.canLogIn}
+          onChange={onUserCanLogInChange}
+        />{' '}
+        This contact can log in as a user
+      </div>
       <section>
         <TextField
           fullWidth
@@ -195,6 +219,7 @@ export const ContactDetailsForm = ({
           label={intl.formatMessage(messages.primaryEmail)}
           value={values.email}
           onChange={onEmailChange}
+          onBlur={onEmailBlur}
           disabled={loading}
           error={meta.email.touched && meta.email.error}
           helperText={meta.email.touched && meta.email.error}

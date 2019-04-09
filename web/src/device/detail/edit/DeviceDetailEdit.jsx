@@ -69,7 +69,7 @@ const messages = defineMessages({
 })
 
 const initializeValuesFrom = device => ({
-  deviceTypeId: device.get('deviceTypeId'),
+  deviceTypeId: device.getIn(['deviceType', 'id']),
   requirePrinter: device.getIn(['configurationData', 'requirePrinter']),
   adminPassword: device.getIn(['configurationData', 'adminPassword']),
   siteId: device.get('siteId'),
@@ -191,169 +191,174 @@ export const DeviceDetailEdit = ({
   onDiscardClick,
   handleSubmit,
   onDeviceTagChange,
-}) => (
-  <div>
-    <Helmet title={device.get('name')} />
-    <DeviceDetailBackBar
-      intl={intl}
-      history={history}
-      location={location}
-      match={match}
-      title={device.get('name')}
-    />
-    <section className={cssClasses('Section', 'Section--first')}>
-      <Card className={cssClasses('Section__Content')}>
-        <form onSubmit={handleSubmit}>
-          <FormGroup label={intl.formatMessage(messages.deviceType)}>
-            <ButtonGroup isolated>
-              {deviceTypeSelectList.items.map(deviceType => (
-                // FIXME: Can deviceTypeId editable?
-                <AspectButton
-                  key={deviceType.get('id')}
-                  color="primary"
-                  variant="contained"
-                  inverse={deviceType.get('id') !== values.deviceTypeId}
-                  data-value={deviceType.get('id')}
-                  onClick={({ currentTarget: { dataset: { value } } }) =>
-                    onDeviceTypeClick(value)
-                  }
-                >
-                  {deviceType.get('name')}
-                </AspectButton>
-              ))}
-            </ButtonGroup>
-          </FormGroup>
-          {device.hasIn([
-            'deviceType',
-            'configurationDataSchema',
-            'requirePrinter',
-          ]) && (
-            <FormGroup label={intl.formatMessage(messages.requirePrinter)}>
+}) => {
+  const deviceName = `${device.getIn(['deviceType', 'name'])} at ${device.get(
+    'siteName'
+  )}`
+  return (
+    <div>
+      <Helmet title={deviceName} />
+      <DeviceDetailBackBar
+        intl={intl}
+        history={history}
+        location={location}
+        match={match}
+        title={deviceName}
+      />
+      <section className={cssClasses('Section', 'Section--first')}>
+        <Card className={cssClasses('Section__Content')}>
+          <form onSubmit={handleSubmit}>
+            <FormGroup label={intl.formatMessage(messages.deviceType)}>
               <ButtonGroup isolated>
-                {[
-                  {
-                    value: 'yes',
-                    label: intl.formatMessage(messages.yes),
-                  },
-                  {
-                    value: 'no',
-                    label: intl.formatMessage(messages.no),
-                  },
-                ].map(({ value, label }) => (
+                {deviceTypeSelectList.items.map(deviceType => (
+                  // FIXME: Can deviceTypeId editable?
                   <AspectButton
-                    key={value}
+                    key={deviceType.get('id')}
                     color="primary"
                     variant="contained"
-                    inverse={values.requirePrinter !== value}
-                    data-value={value}
+                    inverse={deviceType.get('id') !== values.deviceTypeId}
+                    data-value={deviceType.get('id')}
                     onClick={({ currentTarget: { dataset: { value } } }) =>
-                      onRequirePrinterClick(value)
+                      onDeviceTypeClick(value)
                     }
                   >
-                    {label}
+                    {deviceType.get('name')}
                   </AspectButton>
                 ))}
               </ButtonGroup>
             </FormGroup>
-          )}
-          <FormGroup label={intl.formatMessage(messages.tags)}>
-            <ConnectedTagInput
-              qryId={device.get('id')}
-              qryType="device"
-              label="Choose countries"
-              allowCreate
-              disabled={!editable}
-              onTagChange={onDeviceTagChange}
-              value={deviceTags.toJS()}
-            />
-          </FormGroup>
-          <TextField
-            fullWidth
-            type="text"
-            name="hostId"
-            disabled
-            label={intl.formatMessage(messages.hostId)}
-            value={device.get('hostId')}
-            margin="normal"
-            FormHelperTextProps={{
-              margin: 'dense',
-            }}
-            inputProps={{ maxLength: 500 }}
-          />
-          {device.hasIn([
-            'deviceType',
-            'configurationDataSchema',
-            'adminPassword',
-          ]) && (
+            {device.hasIn([
+              'deviceType',
+              'configurationDataSchema',
+              'requirePrinter',
+            ]) && (
+              <FormGroup label={intl.formatMessage(messages.requirePrinter)}>
+                <ButtonGroup isolated>
+                  {[
+                    {
+                      value: 'yes',
+                      label: intl.formatMessage(messages.yes),
+                    },
+                    {
+                      value: 'no',
+                      label: intl.formatMessage(messages.no),
+                    },
+                  ].map(({ value, label }) => (
+                    <AspectButton
+                      key={value}
+                      color="primary"
+                      variant="contained"
+                      inverse={values.requirePrinter !== value}
+                      data-value={value}
+                      onClick={({ currentTarget: { dataset: { value } } }) =>
+                        onRequirePrinterClick(value)
+                      }
+                    >
+                      {label}
+                    </AspectButton>
+                  ))}
+                </ButtonGroup>
+              </FormGroup>
+            )}
+            <FormGroup label={intl.formatMessage(messages.tags)}>
+              <ConnectedTagInput
+                qryId={device.get('id')}
+                qryType="device"
+                label="Choose countries"
+                allowCreate
+                disabled={!editable}
+                onTagChange={onDeviceTagChange}
+                value={deviceTags.toJS()}
+              />
+            </FormGroup>
             <TextField
               fullWidth
               type="text"
-              name="adminPassword"
-              label={intl.formatMessage(messages.adminPassword)}
-              disabled={form.submitting}
-              value={values.adminPassword}
-              onChange={onAdminPasswordChange}
-              error={meta.adminPassword.touched && meta.adminPassword.error}
-              helperText={
-                meta.adminPassword.touched && meta.adminPassword.error
-              }
+              name="hostId"
+              disabled
+              label={intl.formatMessage(messages.hostId)}
+              value={device.get('hostId')}
               margin="normal"
               FormHelperTextProps={{
                 margin: 'dense',
               }}
               inputProps={{ maxLength: 500 }}
             />
-          )}
-          <SiteSelectField
-            name="siteId"
-            floatingLabelText={intl.formatMessage(messages.location)}
-            disabled={form.submitting}
-            value={values.siteId}
-            onSiteChange={onSiteIdChange}
-            errorStyle={{
-              float: 'left',
-              whiteSpace: 'nowrap',
-              textOverflow: 'visible',
-            }}
-            errorText={meta.siteId.touched && meta.siteId.error}
-            fullWidth
-            tabIndex="0"
-            aria-haspopup
-          />
-          {device.hasIn([
-            'deviceType',
-            'configurationDataSchema',
-            'firmwareUpdateRequired',
-          ]) && (
-            <FormGroup label={intl.formatMessage(messages.firmware)}>
-              "TODO: 72.43.102"
-            </FormGroup>
-          )}
-          <div className={cssClasses('Form__Actions')}>
-            <ButtonGroup isolated>
-              <AspectButton
-                type="button"
-                disabled={form.pristine}
-                onClick={onDiscardClick}
-                color="primary"
-                variant="contained"
-              >
-                {intl.formatMessage(messages.discard)}
-              </AspectButton>
-              <AspectButton
-                type="submit"
-                disabled={form.pristine || !form.valid || form.submitting}
-                color="primary"
-                variant="contained"
-              >
-                {intl.formatMessage(messages.save)}
-              </AspectButton>
-            </ButtonGroup>
-          </div>
-        </form>
-      </Card>
-    </section>
-  </div>
-)
+            {device.hasIn([
+              'deviceType',
+              'configurationDataSchema',
+              'adminPassword',
+            ]) && (
+              <TextField
+                fullWidth
+                type="text"
+                name="adminPassword"
+                label={intl.formatMessage(messages.adminPassword)}
+                disabled={form.submitting}
+                value={values.adminPassword}
+                onChange={onAdminPasswordChange}
+                error={meta.adminPassword.touched && meta.adminPassword.error}
+                helperText={
+                  meta.adminPassword.touched && meta.adminPassword.error
+                }
+                margin="normal"
+                FormHelperTextProps={{
+                  margin: 'dense',
+                }}
+                inputProps={{ maxLength: 500 }}
+              />
+            )}
+            <SiteSelectField
+              name="siteId"
+              floatingLabelText={intl.formatMessage(messages.location)}
+              disabled={form.submitting}
+              value={values.siteId}
+              onSiteChange={onSiteIdChange}
+              errorStyle={{
+                float: 'left',
+                whiteSpace: 'nowrap',
+                textOverflow: 'visible',
+              }}
+              errorText={meta.siteId.touched && meta.siteId.error}
+              fullWidth
+              tabIndex="0"
+              aria-haspopup
+            />
+            {device.hasIn([
+              'deviceType',
+              'configurationDataSchema',
+              'firmwareUpdateRequired',
+            ]) && (
+              <FormGroup label={intl.formatMessage(messages.firmware)}>
+                "TODO: 72.43.102"
+              </FormGroup>
+            )}
+            <div className={cssClasses('Form__Actions')}>
+              <ButtonGroup isolated>
+                <AspectButton
+                  type="button"
+                  disabled={form.pristine}
+                  onClick={onDiscardClick}
+                  color="primary"
+                  variant="contained"
+                >
+                  {intl.formatMessage(messages.discard)}
+                </AspectButton>
+                <AspectButton
+                  type="submit"
+                  disabled={form.pristine || !form.valid || form.submitting}
+                  color="primary"
+                  variant="contained"
+                >
+                  {intl.formatMessage(messages.save)}
+                </AspectButton>
+              </ButtonGroup>
+            </div>
+          </form>
+        </Card>
+      </section>
+    </div>
+  )
+}
 
 export default enhance(DeviceDetailEdit)
