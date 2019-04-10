@@ -105,7 +105,7 @@ const routes = [
             .integer()
             .positive()
             .allow('', null),
-          canLogIn: Joi.boolean(),
+          canLogIn: [Joi.boolean(), Joi.number().only(0, 1)],
         },
       },
     },

@@ -33,7 +33,7 @@ async function listPeople(request) {
     .select(knex.raw('group_concat(jf.name separator "; ")'))
     .as('level')
   const getTags = knex('Tag as t')
-    .innerJoin(`PersonTag as pt`, 't.id', 'pt.tagId')
+    .innerJoin('PersonTag as pt', 't.id', 'pt.tagId')
     .innerJoin('Partner as prt', 't.partnerId', 'prt.id')
     .where('pt.personId', '=', knex.raw('p.id'))
     .modify(addConstraints, dataConstraints, { partner: 'prt' })

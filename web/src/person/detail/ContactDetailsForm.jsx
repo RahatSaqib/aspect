@@ -101,10 +101,6 @@ const enhance = compose(
         fetchTags(contactDetails.get('id'), 'person')
       }
     },
-
-    onPersonTagsChange: ({ updateTags }) => (qryId, qryType, tags) => {
-      updateTags(qryId, qryType, tags.join(','))
-    },
   }),
   lifecycle({
     componentWillMount() {
@@ -171,6 +167,9 @@ const enhance = compose(
     onUserCanLogInChange: ({ isUserChange, onCanLogInChange }) => event => {
       onCanLogInChange(event)
       isUserChange(event.target.checked)
+    },
+    onPersonTagsChange: ({ updateTags }) => (qryId, qryType, tags) => {
+      updateTags(qryId, qryType, tags.join(','))
     },
   })
 )
