@@ -33,7 +33,10 @@ import ConnectedTagInput from '../../tag/ConnectedTagInput'
 import { fetchTags, updateTags } from '../../tag/TagRedux'
 import isEditable from '../../shared/selectors/result'
 import { Unit } from '../../components/pureGrids'
-import { ReadOnlyField } from '../../components/shared/ReadOnlyFields'
+import {
+  ReadOnlyField,
+  ReadOnlyFields,
+} from '../../components/shared/ReadOnlyFields'
 import DetailPanel from '../../components/shared/detailPanel/DetailPanel'
 import {
   ExpansionPanel,
@@ -119,16 +122,16 @@ const messages = defineMessages({
     id: 'pages.ResultDetail.workflowQcOk',
     defaultMessage: 'QC OK',
   },
-  workflowStatusName: {
-    id: 'pages.ResultDetail.workflowStatusName',
+  resultWorkflowStatus: {
+    id: 'pages.ResultDetail.resultWorkflowStatus',
     defaultMessage: 'Status',
   },
-  workflowStatusLogReason: {
-    id: 'pages.ResultDetail.workflowStatusLogReason',
+  resultWorkflowLogReason: {
+    id: 'pages.ResultDetail.resultWorkflowLogReason',
     defaultMessage: 'Reason',
   },
-  workflowStatusLogCreatedOn: {
-    id: 'pages.ResultDetail.workflowStatusLogCreatedOn',
+  resultWorkflowLogCreatedOn: {
+    id: 'pages.ResultDetail.resultWorkflowLogCreatedOn',
     defaultMessage: 'Created On',
   },
 })
@@ -537,6 +540,21 @@ export class ResultDetail extends PureComponent {
   renderWorkflow() {
     const { result, intl } = this.props
     const { formatMessage } = intl
+    const fields = [
+      'resultWorkflowStatus',
+      'resultWorkflowLogReason',
+      'resultWorkflowLogCreatedOn',
+    ].map((fieldName, key) => {
+      let value = result.get(fieldName)
+      if (fieldName.includes('CreatedOn')) {
+        value = formatDate(value)
+      }
+      return {
+        key,
+        label: formatMessage(messages[fieldName]),
+        value,
+      }
+    })
 
     return (
       <ExpansionPanel className={cssClasses('FieldsContainer')}>
@@ -566,20 +584,10 @@ export class ResultDetail extends PureComponent {
           </span>
         </ExpansionPanelHeader>
         <ExpansionPanelDetail>
-          <div className={cssClasses('Container_4_Fields')}>
-            <ReadOnlyField
-              label={formatMessage(messages.workflowStatusName)}
-              value={result.get('resultWorkflowStatus')}
-            />
-            <ReadOnlyField
-              label={formatMessage(messages.workflowStatusLogReason)}
-              value={result.get('resultWorkflowLogReason')}
-            />
-            <ReadOnlyField
-              label={formatMessage(messages.workflowStatusLogCreatedOn)}
-              value={formatDate(result.get('resultWorkflowLogCreatedOn'))}
-            />
-          </div>
+          <ReadOnlyFields
+            className={cssClasses('Field__Container')}
+            fields={fields}
+          />
         </ExpansionPanelDetail>
       </ExpansionPanel>
     )
