@@ -312,6 +312,7 @@ describe('Result routes', () => {
         externalId: 'AwaitingTreatment',
         data: 'should be treated',
         method: 'sms',
+        updatedOn: '2019-03-28T10:00:33.000Z',
       }
       const updateWithId = {
         resultTreatmentStatusId: 2,
@@ -375,6 +376,10 @@ describe('Result routes', () => {
             'AwaitingTreatment'
           )
 
+          assert.equal(
+            res.body.data.treatmentStatus.changedOn,
+            '2019-03-28T10:00:33.000Z'
+          )
           // update with resultWorkflowStatusId
           server
             .put(`${path}/treatment-status/${resultId}`)
@@ -429,6 +434,10 @@ describe('Result routes', () => {
                 res.body.data.treatmentStatus.externalId,
                 'OnTreatment'
               )
+
+              const diffTime =
+                new Date(res.body.data.treatmentStatus.changedOn) - new Date()
+              assert.closeTo(diffTime / 1000, 0, 0.9, 'should be near from now')
             })
         })
     })
