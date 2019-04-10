@@ -509,7 +509,13 @@ async function downloadFileAsync({ auth, params }) {
 }
 
 async function getLatestResultWorkflowLogs(resultIds) {
-  if (_.isEmpty(resultIds)) return null
+  if (
+    !resultIds ||
+    // make sure array is not empty and doesn't contain undefined/null
+    _.isEmpty(resultIds.filter(x => !!x))
+  ) {
+    return []
+  }
   // get latest workflow log entry for each specified result id's
   return knex('ResultWorkflowLog as rwl')
     .join(

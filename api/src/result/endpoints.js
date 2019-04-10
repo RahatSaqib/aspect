@@ -418,6 +418,9 @@ const routes = [
                     changedOn: Joi.date().description(
                       'Date of the latest change to the workflow status'
                     ),
+                    createdOn: Joi.date().description(
+                      'Date of creation of the workflow status'
+                    ),
                     externalId: Joi.string().description(
                       'External ID of the workflow status'
                     ),
@@ -704,6 +707,12 @@ const routes = [
               treatmentStatus: Joi.object()
                 .allow(null)
                 .description('The treatment status object'),
+              resultWorkflowLogReason: Joi.string()
+                .allow(null)
+                .description('Value of Reason from latest ResultWorkflowLog'),
+              resultWorkflowLogCreatedOn: Joi.date()
+                .allow(null)
+                .description('CreatedOn date from latest ResultWorkflowLog'),
             }),
         }),
       },
