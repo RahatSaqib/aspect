@@ -367,7 +367,7 @@ async function updateDevice(request) {
   const updatedCount = await knex('Device')
     .where('id', params.deviceId)
     .update({
-      siteId: device.siteId || payload.siteId,
+      siteId: payload.siteId || device.siteId,
       deviceStatusId,
       configurationData: JSON.stringify(configurationData),
     })
