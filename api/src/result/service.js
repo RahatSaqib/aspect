@@ -258,7 +258,18 @@ async function listResults(request) {
 async function getDownloadResultsList(query, auth) {
   // get data constraints
   const dataConstraints = await getConstraints(auth.credentials)
+  const resultIdentifier = knex.raw('??', ['r.id'])
 
+  const TreatmentSubquery1 = knex('ResultTreatmentStatusLog as rl')
+    .innerJoin(
+      'ResultTreatmentStatus as rs',
+      'rl.resultTreatmentStatusId',
+      'rs.id'
+    )
+    .where('resultId', resultIdentifier)
+    .orderBy('rl.changedOn', 'desc')
+    .first('rl.resultId', 'rs.externalId')
+    .as('resultTreatment')
   const resultQuery = knex('Result as r')
     .innerJoin('Assay as a', 'r.assayId', 'a.id')
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
@@ -268,10 +279,18 @@ async function getDownloadResultsList(query, auth) {
     .leftJoin('Lga as lg', 'g.lgaId', 'lg.id')
     .leftJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
     .leftJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
+    .leftJoin(
+      'ResultWorkflowStatus as rws',
+      'r.resultWorkflowStatusId',
+      'rws.id'
+    )
     .leftJoin('Sample as sp', 'r.sampleId', 'sp.id')
     .leftJoin('SampleType as stp', 'sp.sampleTypeId', 'stp.id')
     .leftJoin('Site as so', 'sp.originSiteId', 'so.id')
     .leftJoin('Site as si', 'r.siteId', 'si.id')
+    .leftJoin(TreatmentSubquery1, () =>
+      this.on('r.id', '=', 'resultTreatment.resultId')
+    )
     .modify((queryBuilder, params) => {
       if (params.minUpdatedOn) {
         queryBuilder.where('r.updatedOn', '>=', params.minUpdatedOn)
@@ -279,6 +298,29 @@ async function getDownloadResultsList(query, auth) {
       if (params.maxUpdatedOn) {
         queryBuilder.where('r.updatedOn', '<', params.maxUpdatedOn)
       }
+      if (params.patientSample) {
+        queryBuilder
+          .orWhere('r.sampleId', 'like', `%${params.patientSample}%`)
+          .orWhere(
+            knex.raw('JSON_EXTRACT(patientData,"$.firstName")'),
+            'like',
+            `%${params.patientSample}%`
+          )
+          .orWhere('r.sampleId', 'like', `${+'%' + params.patientSample}%`)
+      }
+      if (params.assayTypeAbbreviations) {
+        queryBuilder.whereIn('a.abbreviation', params.assayTypeAbbreviations)
+      }
+      if (params.resultCategories) {
+        queryBuilder
+          .orWhereIn('rc1.externalId', params.resultCategories)
+          .orWhereIn('rc2.externalId', params.resultCategories)
+      }
+      if (params.workflowStatus) {
+        queryBuilder.where('rws.externalId', params.workflowStatus)
+      }
+      if (params.treatmentStatus)
+        queryBuilder.where('resultTreatment.externalId', params.treatmentStatus)
     }, query)
     .modify(addConstraints, dataConstraints, { device: 'd', sample: 's' })
 
