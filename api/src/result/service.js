@@ -258,18 +258,6 @@ async function listResults(request) {
 async function getDownloadResultsList(query, auth) {
   // get data constraints
   const dataConstraints = await getConstraints(auth.credentials)
-  const resultIdentifier = knex.raw('??', ['r.id'])
-
-  const TreatmentSubquery1 = knex('ResultTreatmentStatusLog as rl')
-    .innerJoin(
-      'ResultTreatmentStatus as rs',
-      'rl.resultTreatmentStatusId',
-      'rs.id'
-    )
-    .where('resultId', resultIdentifier)
-    .orderBy('rl.changedOn', 'desc')
-    .first('rl.resultId', 'rs.externalId')
-    .as('resultTreatment')
   const resultQuery = knex('Result as r')
     .innerJoin('Assay as a', 'r.assayId', 'a.id')
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
@@ -288,9 +276,17 @@ async function getDownloadResultsList(query, auth) {
     .leftJoin('SampleType as stp', 'sp.sampleTypeId', 'stp.id')
     .leftJoin('Site as so', 'sp.originSiteId', 'so.id')
     .leftJoin('Site as si', 'r.siteId', 'si.id')
-    .leftJoin(TreatmentSubquery1, () =>
-      this.on('r.id', '=', 'resultTreatment.resultId')
+    .leftJoin(
+      'ResultTreatmentStatusLog as rtsl',
+      'r.ResultTreatmentStatusLogId',
+      'rtsl.id'
     )
+    .leftJoin(
+      'ResultTreatmentStatus as resultTreatment',
+      'rtsl.treatmentStatusId',
+      'resultTreatment.id'
+    )
+
     .modify((queryBuilder, params) => {
       if (params.minUpdatedOn) {
         queryBuilder.where('r.updatedOn', '>=', params.minUpdatedOn)
@@ -343,6 +339,7 @@ async function getDownloadResultsList(query, auth) {
       'r.updatedOn',
       'r.longitude',
       'r.latitude',
+      'r.treatmentStatusWorkflowId',
       'a.externalId as assayExternalId',
       'si.name as siteName',
       'd.name as deviceName',
@@ -389,12 +386,14 @@ async function getDownloadResultsList(query, auth) {
     .join('ResultWorkflowStatus as rws', 'rwl.resultWorkflowStatusId', 'rws.id')
     .leftJoin(
       knex
-        .select('resultId')
-        .max('changedOn as maxChangedOn')
-        .max('resultTreatmentStatusId as resultTreatmentStatusId')
+        .select(
+          'resultId',
+          'changedOn as maxChangedOn',
+          'resultTreatmentStatusId'
+        )
         .from('ResultTreatmentStatusLog')
-        .whereIn('resultId', data.map(d => d.id))
-        .groupBy('resultId')
+        .whereIn('id', data.map(d => d.treatmentStatusWorkflowId))
+
         .as('rtslMax'),
       'rwl.resultId',
       'rtslMax.resultId'
@@ -842,10 +841,10 @@ async function updateTreatmentStatus(request) {
     treatmentStatusId = resultTreatmentStatusId
   }
 
-  // update the treatment status.
-
   if (resultTreatmentStatusId !== result.data.resultTreatmentStatusId) {
-    await knex('ResultTreatmentStatusLog').insert({
+    const [resultTreatmentStatusLogId] = await knex(
+      'ResultTreatmentStatusLog'
+    ).insert({
       resultId,
       resultTreatmentStatusId: treatmentStatusId,
       method,
@@ -854,6 +853,12 @@ async function updateTreatmentStatus(request) {
       changedOn: now,
       createdBy: currentUserId,
     })
+    // TODO: When we merge with tikect 996 we should change this.
+    // We must create a constraint to validate if there is some offline update, check if its the lastone or not.
+    // We only need to update the last state in this moment.
+    await knex('Result')
+      .where('id', resultId)
+      .update({ resultTreatmentStatusLogId })
   }
   const response = await showResult(request)
   response.data.treatmentStatus = await getLastTreatmentStatusByResult(resultId)
@@ -868,7 +873,7 @@ async function getLastTreatmentStatusByResult(resultId) {
       'ts.id'
     )
     .where('rtl.resultId', resultId)
-    .orderBy('rtl.id', 'desc')
+    .orderBy('rtl.changedOn', 'desc')
     .first('rtl.changedOn', 'ts.name', 'ts.externalId', 'ts.i18nKey')
 }
 async function resultTreatmentStatusToId(externalId) {
