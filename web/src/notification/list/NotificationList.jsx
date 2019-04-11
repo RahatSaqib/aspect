@@ -37,6 +37,10 @@ const messages = defineMessages({
     id: 'pages.NotificationList.title',
     defaultMessage: 'Notifications',
   },
+  notificationsName: {
+    id: 'pages.NotificationList.name',
+    defaultMessage: 'Name',
+  },
   lastTriggered: {
     id: 'pages.NotificationList.lastTriggered',
     defaultMessage: 'Last triggered',
@@ -49,9 +53,17 @@ const messages = defineMessages({
     id: 'pages.NotificationList.totalTriggers',
     defaultMessage: 'Total triggers',
   },
-  errors: {
-    id: 'pages.NotificationList.errors',
-    defaultMessage: 'Errors',
+  issues: {
+    id: 'pages.NotificationList.issues',
+    defaultMessage: 'Issues',
+  },
+  sms: {
+    id: 'pages.NotificationList.sms',
+    defaultMessage: 'SMS',
+  },
+  email: {
+    id: 'pages.NotificationList.email',
+    defaultMessage: 'Email',
   },
   paginatorStatus: {
     id: 'pages.NotificationList.paginatorStatus',
@@ -201,10 +213,8 @@ export const NotificationList = ({
             sortColumnDir={sortDir}
             columns={[
               {
-                key: 'alertType',
-              },
-              {
                 key: 'alertName',
+                label: intl.formatMessage(messages.notificationsName),
                 sortable: true,
               },
               {
@@ -223,8 +233,18 @@ export const NotificationList = ({
                 sortable: true,
               },
               {
-                key: 'errorsCount',
-                label: intl.formatMessage(messages.errors),
+                key: 'issues',
+                label: intl.formatMessage(messages.issues),
+                sortable: true,
+              },
+              {
+                key: 'sms',
+                label: intl.formatMessage(messages.sms),
+                sortable: true,
+              },
+              {
+                key: 'email',
+                label: intl.formatMessage(messages.email),
                 sortable: true,
               },
             ]}

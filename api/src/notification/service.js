@@ -1,6 +1,12 @@
 const _ = require('lodash')
 const Promise = require('bluebird')
 const subMinutes = require('date-fns/subMinutes')
+const {
+  knex,
+  filterParams,
+  filterDateRangeParams,
+  sortPageParams,
+} = require('../db')
 const { getJobConstraints, addConstraints } = require('../auth/constraints')
 const { notificationCreated } = require('./actions')
 const { alertMessageCreated } = require('../alert/actions')
@@ -12,6 +18,45 @@ const { messageStatusToId } = require('../shared/dictionary')
 async function listNotifications(request) {
   const { query } = request
   const now = Date.now()
+
+  const notificationQuery = knex('Notification as n')
+    .innerJoin('NotificationType as nt', 'nt.id', 'n.notificationTypeId')
+    .leftJoin('MessageType as m', 'm.id', 'nt.messageTypeId')
+    .select(
+      'nt.name',
+      'nt.messageTypeId',
+      knex.raw('GROUP_CONCAT(n.alertMessageId) as issues'),
+      knex.raw('GROUP_CONCAT(n.emailMessageId) as emails'),
+      knex.raw('GROUP_CONCAT(n.smsMessageId) as sms'),
+      knex.raw('GROUP_CONCAT(n.createdOn)'),
+      'm.alertTemplateId',
+      'm.emailTemplateId',
+      'm.smsTemplateId'
+    )
+    .max('n.createdOn as lastTriggeredOn')
+    .groupBy('nt.name')
+    .modify(filterDateRangeParams, query, 'lastTriggeredOn')
+  // .modify(filterParams, query, {})
+  const getItems = notificationQuery
+    .clone()
+    .modify(sortPageParams, query, 'nt.name')
+  const getCount = notificationQuery
+    .clone()
+    .count('n.id as count')
+    .first()
+  const [{ count: tota }, Data] = await Promise.all([getCount, getItems])
+  Data.forEach(notification => {
+    notification.issueCount = notification.alertTemplateId
+      ? _.size(notification.issues.split(','))
+      : 'Not Configured'
+    notification.emailCount = notification.emailTemplateId
+      ? _.size(notification.emails.split(','))
+      : 'Not Configured'
+    notification.issueCount = notification.smsTemplateId
+      ? _.size(notification.sms.split(','))
+      : 'Not Configured'
+  })
+  console.log('-----------', Data)
 
   const data = _.flowRight(
     x =>

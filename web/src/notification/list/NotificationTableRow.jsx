@@ -1,7 +1,6 @@
 import _ from 'lodash'
 import classnames from 'classnames/bind'
 import React from 'react'
-import AlertType from '../../components/shared/AlertType'
 
 import {
   DataTableRow as TableRow,
@@ -14,9 +13,6 @@ const enhance = _.identity
 
 const NotificationTableRow = ({ intl, notification, ...restProps }) => (
   <TableRow {...restProps} className={cssClasses(restProps.className)}>
-    <TableCell>
-      <AlertType alertType={notification.get('alertType')} />
-    </TableCell>
     <TableCell>{notification.get('alertName')}</TableCell>
     <TableCell>
       {intl.formatRelative(notification.get('lastTriggeredOn'))}
@@ -30,6 +26,8 @@ const NotificationTableRow = ({ intl, notification, ...restProps }) => (
     >
       {notification.get('errorsCount')}
     </TableCell>
+    <TableCell>{notification.get('alertName')}</TableCell>
+    <TableCell>Not configured</TableCell>
   </TableRow>
 )
 
