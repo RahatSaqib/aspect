@@ -335,10 +335,10 @@ const routes = [
               .description(
                 'Is the string for look for the patient. this string could be the patient id, the sample id or the patient name'
               ),
-            assayTypeAbbreviations: Joi.array()
+            assayTypeAbbreviations: Joi.string()
               .optional()
               .description('an array with the assay type abbreviation'),
-            resultCategories: Joi.array()
+            resultCategories: Joi.string()
               .optional()
               .description('an array with the assay type abbreviation'),
             workflowStatus: Joi.string()
