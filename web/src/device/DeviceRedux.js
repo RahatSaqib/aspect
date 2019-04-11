@@ -338,7 +338,22 @@ export function updateDeviceMaintenance({
   requestedAt = new Date(),
 }) {
   const deviceId = device.get('id')
-
+  const i18nErrorTitleDescriptor =
+    externalId === 'calibration'
+      ? defineMessages({
+          title: {
+            id:
+              'errorResponseMessages.updateDeviceMaintenance.calibration.POST.default.title',
+            defaultMessage: 'Setting Device Calibration Date Failed',
+          },
+        })
+      : defineMessages({
+          title: {
+            id:
+              'errorResponseMessages.updateDeviceMaintenance.warranty.POST.default.title',
+            defaultMessage: 'Setting Device Warranty Due Date Failed',
+          },
+        })
   return dispatch =>
     aspectFetch(`/device/maintenance/${deviceId}`, {
       method: 'POST',
@@ -348,16 +363,7 @@ export function updateDeviceMaintenance({
       }),
       errorNotifications: {
         default: errorPleaseTryAgainInAFewMinutes({
-          ...defineMessages({
-            title: {
-              id:
-                'errorResponseMessages.setDeviceMaintenance.POST.default.title',
-              defaultMessage:
-                externalId === 'calibration'
-                  ? 'Setting Device Calibration Date Failed'
-                  : 'Setting Device Warranty Due Date Failed',
-            },
-          }),
+          ...i18nErrorTitleDescriptor,
           onClose: () => dispatch(showDialog(externalId, values)),
         }),
       },
