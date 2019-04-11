@@ -11,7 +11,7 @@
   padding: 40px 20px 20px 20px;
 }
 
-.License__Container__License{
+.License__Container__License {
   width: 100%;
   height: 400px;
   border: solid 1px lightgray;
@@ -22,7 +22,7 @@
 
 .License__Container__ActionRow {
   width: 100%;
-  text-align:center;
+  text-align: center;
   padding: 20px 0 0 0;
 }
 
@@ -43,4 +43,3 @@
   padding: 0 0 0 0;
   overflow: hidden;
 }
-
