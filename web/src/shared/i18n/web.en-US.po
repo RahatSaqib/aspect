@@ -1,92 +1,5018 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: \n"
-"POT-Creation-Date: \n"
-"PO-Revision-Date: \n"
-"Last-Translator: \n"
-"Language-Team: \n"
-"Language: en_US\n"
-"MIME-Version: 1.0\n"
+"POT-Creation-Date: 2019-04-11T08:58:20.003Z\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.8.11\n"
+"MIME-Version: 1.0\n"
+"X-Generator: Poedit 2.2.1\n"
+"Project-Id-Version: \n"
+"PO-Revision-Date: \n"
+"Language-Team: \n"
+"Last-Translator: \n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: en_US\n"
 
-#. [pages.PersonList.title] - undefined
-#: i18n/src/components/pages/person/PersonList.json
+#. [pages.ResultDetail.qcCheckDisabledHelp]
+#. defaultMessage is:
+#. "QC Check" is only enabled if the result is in the status "Ready for Delivery" and hasn't been sent to the reporter yet
+#: i18n/src/result/detail/ResultDetail.json
+msgid ""
+"\"QC Check\" is only enabled if the result is in the status \"Ready for "
+"Delivery\" and hasn't been sent to the reporter yet"
+msgstr ""
+"\"QC Check\" is only enabled if the result is in the status \"Ready for "
+"Delivery\" and hasn't been sent to the reporter yet"
+
+#. [pages.ReporterList.acknowledgedRatio]
+#. defaultMessage is:
+#. % Acknowledged
+#: i18n/src/reporter/list/ReporterList.json
+msgid "% Acknowledged"
+msgstr "% Acknowledged"
+
+#. [pages.AddInventoryDialogForm.nextQuantityStatus]
+#. defaultMessage is:
+#. (New quantity on hand: {nextQuantity} {unitShortName})
+#. [pages.NewInventoryDialogForm.nextQuantityStatus]
+#. defaultMessage is:
+#. (New quantity on hand: {nextQuantity} {unitShortName})
+#. [pages.RemoveInventoryDialogForm.nextQuantityStatus]
+#. defaultMessage is:
+#. (New quantity on hand: {nextQuantity} {unitShortName})
+#. [pages.TransferInventoryDialogForm.nextQuantityStatus]
+#. defaultMessage is:
+#. (New quantity on hand: {nextQuantity} {unitShortName})
+#: i18n/src/inventory/adjustment/AddInventoryDialogForm.json
+#: i18n/src/inventory/adjustment/NewInventoryDialogForm.json
+#: i18n/src/inventory/adjustment/RemoveInventoryDialogForm.json
+#: i18n/src/inventory/adjustment/TransferInventoryDialogForm.json
+msgid "(New quantity on hand: {nextQuantity} {unitShortName})"
+msgstr "(New quantity on hand: {nextQuantity} {unitShortName})"
+
+#. [pages.ReceiveInventoryDialogForm.nextQuantityStatus]
+#. defaultMessage is:
+#. (Quantity Transferred: {nextQuantity} {unitShortName})
+#: i18n/src/inventory/adjustment/ReceiveInventoryDialogForm.json
+msgid "(Quantity Transferred: {nextQuantity} {unitShortName})"
+msgstr "(Quantity Transferred: {nextQuantity} {unitShortName})"
+
+#. [pages.InventoryItemsList.inTransitFromSiteName]
+#. defaultMessage is:
+#. * in transit from {inTransitFromSiteName}
+#: i18n/src/inventory/list/InventoryTableRow.json
+msgid "* in transit from {inTransitFromSiteName}"
+msgstr "* in transit from {inTransitFromSiteName}"
+
+#. [pages.UpdateLoginDetails.usernameRequired]
+#. defaultMessage is:
+#. A username is required
+#: i18n/src/person/detail/messages.json
+msgid "A username is required"
+msgstr "A username is required"
+
+#. [pages.AccountDetails.title]
+#. defaultMessage is:
+#. Account Details
+#: i18n/src/account/detail/messages.json
+msgid "Account Details"
+msgstr "Account Details"
+
+#. [pages.Status.acknowledge]
+#. defaultMessage is:
+#. Acknowledge
+#: i18n/src/dashboard/status/messages.json
+msgid "Acknowledge"
+msgstr "Acknowledge"
+
+#. [pages.Status.acknowledged]
+#. defaultMessage is:
+#. Acknowledged
+#: i18n/src/dashboard/status/messages.json
+msgid "Acknowledged"
+msgstr "Acknowledged"
+
+#. [errorResponseMessages.acknowledgeIssue..default.title]
+#. defaultMessage is:
+#. Acknowledging Issue Failed
+#: i18n/src/issue/IssueRedux.json
+msgid "Acknowledging Issue Failed"
+msgstr "Acknowledging Issue Failed"
+
+#. [pages.Status.actionTitle]
+#. defaultMessage is:
+#. Actions
+#: i18n/src/dashboard/status/messages.json
+msgid "Actions"
+msgstr "Actions"
+
+#. [pages.Status.activeSince]
+#. defaultMessage is:
+#. Active since
+#: i18n/src/dashboard/status/messages.json
+msgid "Active since"
+msgstr "Active since"
+
+#. [pages.InventoryItemsList.addInventory]
+#. defaultMessage is:
+#. Add Inventory
+#: i18n/src/inventory/list/InventoryItemsList.json
+msgid "Add Inventory"
+msgstr "Add Inventory"
+
+#. [pages.AddInventoryDialogForm.dialogTitle]
+#. defaultMessage is:
+#. Add {consumableName}
+#. [pages.NewInventoryDialogForm.dialogTitle]
+#. defaultMessage is:
+#. Add {consumableName}
+#: i18n/src/inventory/adjustment/AddInventoryDialogForm.json
+#: i18n/src/inventory/adjustment/NewInventoryDialogForm.json
+msgid "Add {consumableName}"
+msgstr "Add {consumableName}"
+
+#. [errorResponseMessages.addInventory.PUT.default.title]
+#. defaultMessage is:
+#. Adding Inventory Failed
+#. [errorResponseMessages.addInventory.POST.default.title]
+#. defaultMessage is:
+#. Adding Inventory Failed
+#: i18n/src/inventory/InventoryRedux.json
+msgid "Adding Inventory Failed"
+msgstr "Adding Inventory Failed"
+
+#. [pages.ResultDetail.additionalResultDetails]
+#. defaultMessage is:
+#. Additional Result Details
+#: i18n/src/result/detail/ResultDetail.json
+msgid "Additional Result Details"
+msgstr "Additional Result Details"
+
+#. [pages.SiteDetail.fieldAddress]
+#. defaultMessage is:
+#. Address
+#: i18n/src/site/detail/messages.json
+msgid "Address"
+msgstr "Address"
+
+#. [pages.SiteDetail.fieldAddress2]
+#. defaultMessage is:
+#. Address 2
+#: i18n/src/site/detail/messages.json
+msgid "Address 2"
+msgstr "Address 2"
+
+#. [pages.InventoryItemsList.adjust]
+#. defaultMessage is:
+#. Adjust
+#: i18n/src/inventory/list/InventoryItemsList.json
+msgid "Adjust"
+msgstr "Adjust"
+
+#. [pages.DeviceDetail.alerts]
+#. defaultMessage is:
+#. Alerts
+#. [pages.SiteDetail.alerts]
+#. defaultMessage is:
+#. Alerts
+#: i18n/src/device/detail/DeviceDetailBackBar.json
+#: i18n/src/site/detail/SiteDetailBackBar.json
+msgid "Alerts"
+msgstr "Alerts"
+
+#. [pages.TablePaginator.all]
+#. defaultMessage is:
+#. All
+#. [filter.popover.all]
+#. defaultMessage is:
+#. All
+#. [pages.PersonDetails.all]
+#. defaultMessage is:
+#. All
+#: i18n/src/components/shared/TablePaginator.json
+#: i18n/src/filter/popover/FiltersPanel.json
+#: i18n/src/person/detail/messages.json
+msgid "All"
+msgstr "All"
+
+#. [pages.OperationalData.deviceCalibrationsUpToDate]
+#. defaultMessage is:
+#. All device calibrations up to date
+#: i18n/src/dashboard/operational/messages.json
+msgid "All device calibrations up to date"
+msgstr "All device calibrations up to date"
+
+#. [pages.ContactDetails.email2]
+#. defaultMessage is:
+#. Alternate
+#: i18n/src/person/detail/messages.json
+msgid "Alternate"
+msgstr "Alternate"
+
+#. [errorResponseMessages.updatePerson.PUT.default.title]
+#. defaultMessage is:
+#. An Error Occurred When Trying to Save the Contact
+#: i18n/src/person/PersonRedux.json
+msgid "An Error Occurred When Trying to Save the Contact"
+msgstr "An Error Occurred When Trying to Save the Contact"
+
+#. [errorResponseMessages.updateSingleDevice.PUT.default.title]
+#. defaultMessage is:
+#. An Error Occurred When Trying to Save the Device
+#. [errorResponseMessages.updateSingleDevice.PUT.default.title]
+#. defaultMessage is:
+#. An Error Occurred When Trying to Save the Device
+#: i18n/src/demo/DemoRedux.json i18n/src/device/DeviceRedux.json
+msgid "An Error Occurred When Trying to Save the Device"
+msgstr "An Error Occurred When Trying to Save the Device"
+
+#. [errorResponseMessages.updateSingleDeviceApiKey.PUT.default.title]
+#. defaultMessage is:
+#. An Error Occurred When Trying to Save the DeviceApiKey
+#: i18n/src/deviceApiKey/DeviceApiKeyRedux.json
+msgid "An Error Occurred When Trying to Save the DeviceApiKey"
+msgstr "An Error Occurred When Trying to Save the DeviceApiKey"
+
+#. [errorResponseMessages.updateSingleReporter.PUT.default.title]
+#. defaultMessage is:
+#. An Error Occurred When Trying to Save the Reporter
+#: i18n/src/reporter/ReporterRedux.json
+msgid "An Error Occurred When Trying to Save the Reporter"
+msgstr "An Error Occurred When Trying to Save the Reporter"
+
+#. [errorResponseMessages.updateSingleResult.PUT.default.title]
+#. defaultMessage is:
+#. An Error Occurred When Trying to Save the Result
+#: i18n/src/result/ResultRedux.json
+msgid "An Error Occurred When Trying to Save the Result"
+msgstr "An Error Occurred When Trying to Save the Result"
+
+#. [errorResponseMessages.updateSingleRouter.PUT.default.title]
+#. defaultMessage is:
+#. An Error Occurred When Trying to Save the Router
+#: i18n/src/router/RouterRedux.json
+msgid "An Error Occurred When Trying to Save the Router"
+msgstr "An Error Occurred When Trying to Save the Router"
+
+#. [errorResponseMessages.updateSingleSite.PUT.default.title]
+#. defaultMessage is:
+#. An Error Occurred When Trying to Save the Site
+#: i18n/src/site/SiteRedux.json
+msgid "An Error Occurred When Trying to Save the Site"
+msgstr "An Error Occurred When Trying to Save the Site"
+
+#. [errorResponseMessages.updateResultWorkflowStatus.PUT.default.title]
+#. defaultMessage is:
+#. An Error Occurred When Trying to Save the Workflow Status
+#: i18n/src/result/ResultRedux.json
+msgid "An Error Occurred When Trying to Save the Workflow Status"
+msgstr "An Error Occurred When Trying to Save the Workflow Status"
+
+#. [errorResponseMessages.updateTags.PUT.default.title]
+#. defaultMessage is:
+#. An Error Occurred When Trying to Update Tags
+#: i18n/src/tag/TagRedux.json
+msgid "An Error Occurred When Trying to Update Tags"
+msgstr "An Error Occurred When Trying to Update Tags"
+
+#. [pages.ResetPassword.emailSent]
+#. defaultMessage is:
+#. An email has been sent to you
+#: i18n/src/auth/resetPassword/messages.json
+msgid "An email has been sent to you"
+msgstr "An email has been sent to you"
+
+#. [errorResponseMessages.updateResultQcCheck.PUT.default.title]
+#. defaultMessage is:
+#. An error occurred when trying to update the "QC Check" flag.
+#: i18n/src/result/ResultRedux.json
+msgid "An error occurred when trying to update the \"QC Check\" flag."
+msgstr "An error occurred when trying to update the \"QC Check\" flag."
+
+#. [errorResponseMessages.saveResultFormDataValue.PUT.default.title]
+#. defaultMessage is:
+#. An error occurred when trying to update the result.
+#: i18n/src/result/ResultRedux.json
+msgid "An error occurred when trying to update the result."
+msgstr "An error occurred when trying to update the result."
+
+#. [pages.dateRangeSelector.any]
+#. defaultMessage is:
+#. Any
+#: i18n/src/filter/date/DateRangeSelector.json
+msgid "Any"
+msgstr "Any"
+
+#. [pages.DeviceDetail.approved]
+#. defaultMessage is:
+#. Approved
+#. [pages.RouterDetail.approved]
+#. defaultMessage is:
+#. Approved
+#: i18n/src/reporter/detail/ReporterDetail.json
+#: i18n/src/router/detail/RouterDetail.json
+msgid "Approved"
+msgstr "Approved"
+
+#. [pages.LocationSelector.lga]
+#. defaultMessage is:
+#. Area
+#. [filter.popover.lga]
+#. defaultMessage is:
+#. Area
+#. [pages.PersonDetails.lga]
+#. defaultMessage is:
+#. Area
+#: i18n/src/components/shared/LocationSelector.json
+#: i18n/src/filter/popover/FiltersPanel.json
+#: i18n/src/person/detail/messages.json
+msgid "Area"
+msgstr "Area"
+
+#. [errorResponseMessages.generic.title]
+#. defaultMessage is:
+#. Aspect has Encountered a Problem.
+#. [errorResponseMessages.generic.title]
+#. defaultMessage is:
+#. Aspect has Encountered a Problem.
+#: i18n/src/appNotification/AppNotificationDialog.json
+#: i18n/src/appNotification/AppNotificationSnackBar.json
+msgid "Aspect has Encountered a Problem."
+msgstr "Aspect has Encountered a Problem."
+
+#. [filter.popover.assay]
+#. defaultMessage is:
+#. Assay
+#. [pages.ResultList.assayId]
+#. defaultMessage is:
+#. Assay
+#: i18n/src/filter/popover/FiltersPanel.json
+#: i18n/src/result/list/ResultList.json
+msgid "Assay"
+msgstr "Assay"
+
+#. [pages.DeviceApiKeyList.assign]
+#. defaultMessage is:
+#. Assign
+#. [pages.DeviceApiKeyList.assign]
+#. defaultMessage is:
+#. Assign
+#: i18n/src/deviceApiKey/list/DeviceApiKeyAssignerDialogForm.json
+#: i18n/src/deviceApiKey/list/DeviceApiKeyList.json
+msgid "Assign"
+msgstr "Assign"
+
+#. [errorResponseMessages.assignDeviceApiKeys.POST.400.title]
+#. defaultMessage is:
+#. Assign DeviceApiKeys Failed
+#. [errorResponseMessages.assignDeviceApiKeys.POST.default.title]
+#. defaultMessage is:
+#. Assign DeviceApiKeys Failed
+#: i18n/src/deviceApiKey/DeviceApiKeyRedux.json
+msgid "Assign DeviceApiKeys Failed"
+msgstr "Assign DeviceApiKeys Failed"
+
+#. [pages.DeviceApiKeyList.assignerDialogTitle]
+#. defaultMessage is:
+#. Assign {count} Keys
+#: i18n/src/deviceApiKey/list/DeviceApiKeyAssignerDialogForm.json
+msgid "Assign {count} Keys"
+msgstr "Assign {count} Keys"
+
+#. [pages.IdleDialog.title]
+#. defaultMessage is:
+#. Automatic Logout
+#: i18n/src/idle/components/IdleDialog.json
+msgid "Automatic Logout"
+msgstr "Automatic Logout"
+
+#. [pages.DeviceList.availabilityRate]
+#. defaultMessage is:
+#. Availability
+#: i18n/src/device/list/messages.json
+msgid "Availability"
+msgstr "Availability"
+
+#. [pages.ResetPassword.backToLogin]
+#. defaultMessage is:
+#. Back to Login Page
+#: i18n/src/auth/resetPassword/messages.json
+msgid "Back to Login Page"
+msgstr "Back to Login Page"
+
+#. [pages.ListExport.exportCsv]
+#. defaultMessage is:
+#. CSV
+#: i18n/src/filter/popover/FiltersPanel.json
+msgid "CSV"
+msgstr "CSV"
+
+#. [pages.DeviceDetailProfile.calibration]
+#. defaultMessage is:
+#. Calibration
+#: i18n/src/device/detail/profile/DeviceDetailProfile.json
+msgid "Calibration"
+msgstr "Calibration"
+
+#. [pages.CalibrationDialog.calibrationDate]
+#. defaultMessage is:
+#. Calibration Date
+#: i18n/src/device/maintenance/CalibrationDialog.json
+msgid "Calibration Date"
+msgstr "Calibration Date"
+
+#. [pages.WarrantyDialog.calibrationDateIsRequired]
+#. defaultMessage is:
+#. Calibration Date is required
+#: i18n/src/device/maintenance/CalibrationDialog.json
+msgid "Calibration Date is required"
+msgstr "Calibration Date is required"
+
+#. [pages.ResetPassword.cancel]
+#. defaultMessage is:
+#. Cancel
+#. [pages.BaseDialog.cancel]
+#. defaultMessage is:
+#. Cancel
+#. [pages.DeviceApiKeyList.cancel]
+#. defaultMessage is:
+#. Cancel
+#. [pages.DeviceApiKeyList.cancel]
+#. defaultMessage is:
+#. Cancel
+#. [pages.InventoryAdjustmentDialogForm.cancel]
+#. defaultMessage is:
+#. Cancel
+#. [pages.UpdateLoginDetails.cancelCurrentPassword]
+#. defaultMessage is:
+#. Cancel
+#. [pages.ReporterDetail.cancel]
+#. defaultMessage is:
+#. Cancel
+#. [pages.RouterDetail.cancel]
+#. defaultMessage is:
+#. Cancel
+#: i18n/src/auth/resetPassword/messages.json
+#: i18n/src/device/maintenance/BaseDialog.json
+#: i18n/src/deviceApiKey/list/DeviceApiKeyAssignerDialogForm.json
+#: i18n/src/deviceApiKey/list/DeviceApiKeyGeneratorDialogForm.json
+#: i18n/src/inventory/adjustment/InventoryAdjustmentDialogForm.json
+#: i18n/src/person/detail/messages.json
+#: i18n/src/reporter/detail/ReporterDetail.json
+#: i18n/src/router/detail/RouterDetail.json
+msgid "Cancel"
+msgstr "Cancel"
+
+#. [pages.ResultWorkflowStatusLog.logChangedOn]
+#. defaultMessage is:
+#. Changed On
+#: i18n/src/result/detail/WorkflowLog.json
+msgid "Changed On"
+msgstr "Changed On"
+
+#. [pages.ResetPassword.checkEmail]
+#. defaultMessage is:
+#. Check Inbox
+#: i18n/src/auth/resetPassword/messages.json
+msgid "Check Inbox"
+msgstr "Check Inbox"
+
+#. [pages.SiteDetail.fieldCity]
+#. defaultMessage is:
+#. City
+#: i18n/src/site/detail/messages.json
+msgid "City"
+msgstr "City"
+
+#. [shared.EmptyList.clearFilters]
+#. defaultMessage is:
+#. Clear filters
+#: i18n/src/components/shared/EmptyList.json
+msgid "Clear filters"
+msgstr "Clear filters"
+
+#. [errorResponseMessages.generic.closeText]
+#. defaultMessage is:
+#. Close
+#. [pages.ResetPassword.adminHelpClose]
+#. defaultMessage is:
+#. Close
+#. [filter.popover.close]
+#. defaultMessage is:
+#. Close
+#: i18n/src/appNotification/AppNotificationDialog.json
+#: i18n/src/auth/resetPassword/messages.json
+#: i18n/src/filter/popover/FiltersPanel.json
+msgid "Close"
+msgstr "Close"
+
+#. [pages.DeviceDetail.fieldConfiguration]
+#. defaultMessage is:
+#. Configuration
+#. [pages.RouterDetail.fieldConfiguration]
+#. defaultMessage is:
+#. Configuration
+#: i18n/src/reporter/detail/ReporterDetail.json
+#: i18n/src/router/detail/RouterDetail.json
+msgid "Configuration"
+msgstr "Configuration"
+
+#. [pages.ResetPassword.confirmNewPassword]
+#. defaultMessage is:
+#. Confirm New Password
+#. [pages.UpdateLoginDetails.confirmNewPassword]
+#. defaultMessage is:
+#. Confirm New Password
+#: i18n/src/auth/resetPassword/messages.json
+#: i18n/src/person/detail/messages.json
+msgid "Confirm New Password"
+msgstr "Confirm New Password"
+
+#. [pages.ResultDetail.confirmed]
+#. defaultMessage is:
+#. Confirmed
+#: i18n/src/result/detail/ResultDetail.json
+msgid "Confirmed"
+msgstr "Confirmed"
+
+#. [pages.ResultDetail.formFields.confirmedInterpretationOfResult]
+#. defaultMessage is:
+#. Confirmed Interpretation of Result
+#. [pages.ResultDetail.formFields.confirmedInterpretationOfResult]
+#. defaultMessage is:
+#. Confirmed Interpretation of Result
+#: i18n/src/result/detail/CustomField.json
+#: i18n/src/result/detail/ResultDetail.json
+msgid "Confirmed Interpretation of Result"
+msgstr "Confirmed Interpretation of Result"
+
+#. [pages.ReporterDetail.fieldFirstConnected]
+#. defaultMessage is:
+#. Connected
+#. [pages.RouterDetail.fieldFirstConnected]
+#. defaultMessage is:
+#. Connected
+#: i18n/src/reporter/detail/ReporterDetail.json
+#: i18n/src/router/detail/RouterDetail.json
+msgid "Connected"
+msgstr "Connected"
+
+#. [pages.ReporterList.connectedSince]
+#. defaultMessage is:
+#. Connected Since
+#: i18n/src/reporter/list/ReporterList.json
+msgid "Connected Since"
+msgstr "Connected Since"
+
+#. [pages.Status.issueCategoryConnectivityHealth]
+#. defaultMessage is:
+#. Connection
+#: i18n/src/dashboard/status/messages.json
+msgid "Connection"
+msgstr "Connection"
+
+#. [pages.DeviceDetailProfile.connectivity]
+#. defaultMessage is:
+#. Connectivity
+#. [pages.DeviceList.connectivity]
+#. defaultMessage is:
+#. Connectivity
+#. [issueCategoryConnectivityHealth]
+#. defaultMessage is:
+#. Connectivity
+#: i18n/src/device/detail/profile/DeviceDetailProfile.json
+#: i18n/src/device/list/messages.json
+msgid "Connectivity"
+msgstr "Connectivity"
+
+#. [pages.SiteList.connectivityHealth]
+#. defaultMessage is:
+#. Connectivity Health
+#: i18n/src/site/list/SiteList.json
+msgid "Connectivity Health"
+msgstr "Connectivity Health"
+
+#. [filter.popover.consumable]
+#. defaultMessage is:
+#. Consumable
+#. [pages.InventoryAdjustmentDialogForm.consumable]
+#. defaultMessage is:
+#. Consumable
+#. [pages.InventoryItemsList.consumableName]
+#. defaultMessage is:
+#. Consumable
+#: i18n/src/filter/popover/FiltersPanel.json
+#: i18n/src/inventory/adjustment/InventoryAdjustmentDialogForm.json
+#: i18n/src/inventory/list/InventoryItemsList.json
+msgid "Consumable"
+msgstr "Consumable"
+
+#. [pages.PersonDetails.contactDetails]
+#. defaultMessage is:
+#. Contact Details
+#: i18n/src/person/detail/messages.json
+msgid "Contact Details"
+msgstr "Contact Details"
+
+#. [pages.PersonDetails.contactDetailsUpdatedMessage]
+#. defaultMessage is:
+#. Contact details changed successfully
+#: i18n/src/person/detail/messages.json
+msgid "Contact details changed successfully"
+msgstr "Contact details changed successfully"
+
+#. [filter.popover.contactNameEmail]
+#. defaultMessage is:
+#. Contact name/email
+#: i18n/src/filter/popover/FiltersPanel.json
+msgid "Contact name/email"
+msgstr "Contact name/email"
+
+#. [pages.PersonList.title]
+#. defaultMessage is:
+#. Contacts
+#: i18n/src/person/list/PersonList.json
 msgid "Contacts"
 msgstr "Contacts"
 
-#. [pages.PersonList.lga] - undefined
-#: i18n/src/components/pages/person/PersonList.json
+#. [errorResponseMessages.fetchSinglePerson.GET.404.title]
+#. defaultMessage is:
+#. Could Not Find Contact's Details
+#. [errorResponseMessages.updatePerson.PUT.404.title]
+#. defaultMessage is:
+#. Could Not Find Contact's Details
+#: i18n/src/person/PersonRedux.json
+msgid "Could Not Find Contact's Details"
+msgstr "Could Not Find Contact's Details"
+
+#. [errorResponseMessages.fetchSingleDevice.GET.404.title]
+#. defaultMessage is:
+#. Could Not Find Device Details
+#. [errorResponseMessages.fetchSingleDevice.GET.404.title]
+#. defaultMessage is:
+#. Could Not Find Device Details
+#: i18n/src/demo/DemoRedux.json i18n/src/device/DeviceRedux.json
+msgid "Could Not Find Device Details"
+msgstr "Could Not Find Device Details"
+
+#. [errorResponseMessages.fetchSingleReporter.GET.404.title]
+#. defaultMessage is:
+#. Could Not Find Reporter Details
+#: i18n/src/reporter/ReporterRedux.json
+msgid "Could Not Find Reporter Details"
+msgstr "Could Not Find Reporter Details"
+
+#. [errorResponseMessages.fetchSingleRouter.GET.404.title]
+#. defaultMessage is:
+#. Could Not Find Router Details
+#: i18n/src/router/RouterRedux.json
+msgid "Could Not Find Router Details"
+msgstr "Could Not Find Router Details"
+
+#. [errorResponseMessages.fetchSingleSite.GET.404.title]
+#. defaultMessage is:
+#. Could Not Find Site Details
+#: i18n/src/site/SiteRedux.json
+msgid "Could Not Find Site Details"
+msgstr "Could Not Find Site Details"
+
+#. [errorResponseMessages.fetchSingleResult.GET.404.title]
+#. defaultMessage is:
+#. Could Not Find Test Result
+#: i18n/src/result/ResultRedux.json
+msgid "Could Not Find Test Result"
+msgstr "Could Not Find Test Result"
+
+#. [errorResponseMessages.updateSinglePersonLoginDetails.PUT.404.title]
+#. defaultMessage is:
+#. Could Not Find User's Details
+#: i18n/src/person/PersonRedux.json
+msgid "Could Not Find User's Details"
+msgstr "Could Not Find User's Details"
+
+#. [pages.DeviceApiKeyList.count]
+#. defaultMessage is:
+#. Count (1-100)
+#: i18n/src/deviceApiKey/list/DeviceApiKeyGeneratorDialogForm.json
+msgid "Count (1-100)"
+msgstr "Count (1-100)"
+
+#. [pages.ManageDevices.filterTemplateOptional]
+#. defaultMessage is:
+#. Counting only <ASSAY> assays<RESULT><DATE>.
+#: i18n/src/styleguide/main/StyleguideMain.json
+msgid "Counting only <ASSAY> assays<RESULT><DATE>."
+msgstr "Counting only <ASSAY> assays<RESULT><DATE>."
+
+#. [pages.DeviceApiKeyList.filterTemplateOptional]
+#. defaultMessage is:
+#. Counting only <PARTNER_ID>.
+#: i18n/src/deviceApiKey/list/DeviceApiKeyList.json
+msgid "Counting only <PARTNER_ID>."
+msgstr "Counting only <PARTNER_ID>."
+
+#. [pages.LocationSelector.country]
+#. defaultMessage is:
+#. Country
+#. [pages.DeviceApiKeyList.countryId]
+#. defaultMessage is:
+#. Country
+#. [pages.DeviceApiKeyList.countryId]
+#. defaultMessage is:
+#. Country
+#. [pages.DeviceApiKeyList.country]
+#. defaultMessage is:
+#. Country
+#. [filter.popover.country]
+#. defaultMessage is:
+#. Country
+#. [pages.PersonDetails.country]
+#. defaultMessage is:
+#. Country
+#. [pages.SiteDetail.fieldCountry]
+#. defaultMessage is:
+#. Country
+#: i18n/src/components/shared/LocationSelector.json
+#: i18n/src/deviceApiKey/list/DeviceApiKeyAssignerDialogForm.json
+#: i18n/src/deviceApiKey/list/DeviceApiKeyGeneratorDialogForm.json
+#: i18n/src/deviceApiKey/list/DeviceApiKeyList.json
+#: i18n/src/filter/popover/FiltersPanel.json
+#: i18n/src/person/detail/messages.json i18n/src/site/detail/messages.json
+msgid "Country"
+msgstr "Country"
+
+#. [pages.PersonList.lga]
+#. defaultMessage is:
+#. County
+#. [pages.SiteList.lga]
+#. defaultMessage is:
+#. County
+#: i18n/src/person/list/PersonList.json i18n/src/site/list/SiteList.json
 msgid "County"
 msgstr "County"
 
-#. [pages.Dashboard.culture] - undefined
-#. [pages.DeviceList.culture] - undefined
-#: i18n/src/components/pages/dashboard/Dashboard.json
-#: i18n/src/components/pages/device/DeviceList.json
-msgid "Culture"
-msgstr "Culture"
+#. [pages.DeviceApiKeyList.createdOn]
+#. defaultMessage is:
+#. Created On
+#: i18n/src/deviceApiKey/list/DeviceApiKeyList.json
+msgid "Created On"
+msgstr "Created On"
 
-#. [pages.DeviceList.deviceName] - undefined
-#: i18n/src/components/pages/device/DeviceList.json
+#. [pages.ResultDetail.createdOnLabel]
+#. defaultMessage is:
+#. Created on: {date}
+#: i18n/src/result/detail/ResultDetail.json
+msgid "Created on: {date}"
+msgstr "Created on: {date}"
+
+#. [pages.UpdateLoginDetails.currentPassword]
+#. defaultMessage is:
+#. Current Password
+#: i18n/src/person/detail/messages.json
+msgid "Current Password"
+msgstr "Current Password"
+
+#. [pages.dateRangeSelector.custom]
+#. defaultMessage is:
+#. Custom
+#: i18n/src/filter/date/DateRangeSelector.json
+msgid "Custom"
+msgstr "Custom"
+
+#. [issueCategoryDataHealth]
+#. defaultMessage is:
+#. Data
+#: i18n/src/device/list/messages.json
+msgid "Data"
+msgstr "Data"
+
+#. [pages.SiteList.dataHealth]
+#. defaultMessage is:
+#. Data Health
+#: i18n/src/site/list/SiteList.json
+msgid "Data Health"
+msgstr "Data Health"
+
+#. [component.DateTimeInput.date.placeholder]
+#. defaultMessage is:
+#. Date
+#. [pages.DeviceDetailOperation.startedOn]
+#. defaultMessage is:
+#. Date
+#. [filter.popover.date]
+#. defaultMessage is:
+#. Date
+#: i18n/src/components/shared/DateTimeInput/messages.json
+#: i18n/src/device/detail/operation/DeviceDetailOperation.json
+#: i18n/src/filter/popover/FiltersPanel.json
+msgid "Date"
+msgstr "Date"
+
+#. [pages.AddInventoryDialogForm.dateAdjusted]
+#. defaultMessage is:
+#. Date Added
+#. [pages.NewInventoryDialogForm.dateAdjusted]
+#. defaultMessage is:
+#. Date Added
+#: i18n/src/inventory/adjustment/AddInventoryDialogForm.json
+#: i18n/src/inventory/adjustment/NewInventoryDialogForm.json
+msgid "Date Added"
+msgstr "Date Added"
+
+#. [pages.ReceiveInventoryDialogForm.dateAdjusted]
+#. defaultMessage is:
+#. Date Received
+#: i18n/src/inventory/adjustment/ReceiveInventoryDialogForm.json
+msgid "Date Received"
+msgstr "Date Received"
+
+#. [pages.RemoveInventoryDialogForm.dateAdjusted]
+#. defaultMessage is:
+#. Date Removed
+#: i18n/src/inventory/adjustment/RemoveInventoryDialogForm.json
+msgid "Date Removed"
+msgstr "Date Removed"
+
+#. [pages.TransferInventoryDialogForm.dateAdjusted]
+#. defaultMessage is:
+#. Date Transferred
+#: i18n/src/inventory/adjustment/TransferInventoryDialogForm.json
+msgid "Date Transferred"
+msgstr "Date Transferred"
+
+#. [pages.ReportList.dateOfError]
+#. defaultMessage is:
+#. Date of Error
+#: i18n/src/report/list/ReportList.json
+msgid "Date of Error"
+msgstr "Date of Error"
+
+#. [pages.dateRangeSelector.day]
+#. defaultMessage is:
+#. Day
+#: i18n/src/filter/date/DateRangeSelector.json
+msgid "Day"
+msgstr "Day"
+
+#. [pages.ResultDetail.formFields.defaultString]
+#. defaultMessage is:
+#. Default String
+#: i18n/src/result/detail/CustomField.json
+msgid "Default String"
+msgstr "Default String"
+
+#. [pages.ReportList.deploymentName]
+#. defaultMessage is:
+#. Deployment Name
+#: i18n/src/report/list/ReportList.json
+msgid "Deployment Name"
+msgstr "Deployment Name"
+
+#. [pages.PersonDetails.detailsUpdatedSuccessfully]
+#. defaultMessage is:
+#. Details Changed Successfully
+#: i18n/src/person/detail/messages.json
+msgid "Details Changed Successfully"
+msgstr "Details Changed Successfully"
+
+#. [errorResponseMessages.inline.moreDetails]
+#. defaultMessage is:
+#. Details...
+#: i18n/src/appNotification/AppNotificationSnackBar.json
+msgid "Details..."
+msgstr "Details..."
+
+#. [pages.Status.actionDevice]
+#. defaultMessage is:
+#. Device
+#. [issueCategoryDeviceHealth]
+#. defaultMessage is:
+#. Device
+#. [pages.DeviceApiKeyList.deviceId]
+#. defaultMessage is:
+#. Device
+#. [pages.DeviceApiKeyList.device]
+#. defaultMessage is:
+#. Device
+#. [filter.popover.deviceName]
+#. defaultMessage is:
+#. Device
+#. [pages.ResultList.deviceName]
+#. defaultMessage is:
+#. Device
+#: i18n/src/dashboard/status/messages.json i18n/src/device/list/messages.json
+#: i18n/src/deviceApiKey/list/DeviceApiKeyAssignerDialogForm.json
+#: i18n/src/deviceApiKey/list/DeviceApiKeyList.json
+#: i18n/src/filter/popover/FiltersPanel.json
+#: i18n/src/result/list/ResultList.json
+msgid "Device"
+msgstr "Device"
+
+#. [pages.DeviceApiKeyList.title]
+#. defaultMessage is:
+#. Device API Keys
+#: i18n/src/deviceApiKey/list/DeviceApiKeyList.json
+msgid "Device API Keys"
+msgstr "Device API Keys"
+
+#. [pages.DeviceApiKeyList.generatorDialogTitle]
+#. defaultMessage is:
+#. Device API Keys Generator
+#: i18n/src/deviceApiKey/list/DeviceApiKeyGeneratorDialogForm.json
+msgid "Device API Keys Generator"
+msgstr "Device API Keys Generator"
+
+#. [pages.CalibrationDialog.dialogTitle]
+#. defaultMessage is:
+#. Device Calibration
+#: i18n/src/device/maintenance/CalibrationDialog.json
+msgid "Device Calibration"
+msgstr "Device Calibration"
+
+#. [pages.SiteList.deviceHealth]
+#. defaultMessage is:
+#. Device Health
+#: i18n/src/site/list/SiteList.json
+msgid "Device Health"
+msgstr "Device Health"
+
+#. [pages.DeviceList.deviceName]
+#. defaultMessage is:
+#. Device Name
+#: i18n/src/device/list/messages.json
 msgid "Device Name"
 msgstr "Device Name"
 
-#. [pages.Dashboard.title] - undefined
-#. [pages.DeviceList.title] - undefined
-#: i18n/src/components/pages/dashboard/Dashboard.json
-#: i18n/src/components/pages/device/DeviceList.json
+#. [filter.popover.deviceStatus]
+#. defaultMessage is:
+#. Device Status
+#: i18n/src/filter/popover/FiltersPanel.json
+msgid "Device Status"
+msgstr "Device Status"
+
+#. [filter.popover.deviceType]
+#. defaultMessage is:
+#. Device Type
+#: i18n/src/filter/popover/FiltersPanel.json
+msgid "Device Type"
+msgstr "Device Type"
+
+#. [pages.WarrantyDialog.dialogTitle]
+#. defaultMessage is:
+#. Device Warranty
+#: i18n/src/device/maintenance/WarrantyDialog.json
+msgid "Device Warranty"
+msgstr "Device Warranty"
+
+#. [pages.DeviceDetailProfile.deviceType]
+#. defaultMessage is:
+#. Device type
+#: i18n/src/device/detail/profile/DeviceDetailProfile.json
+msgid "Device type"
+msgstr "Device type"
+
+#. [pages.DeviceList.devicesTitle]
+#. defaultMessage is:
+#. Devices
+#. [pages.SiteDetail.fieldDevices]
+#. defaultMessage is:
+#. Devices
+#: i18n/src/device/list/messages.json i18n/src/site/detail/messages.json
 msgid "Devices"
 msgstr "Devices"
 
-#. [pages.DeviceList.lastSeen] - undefined
-#: i18n/src/components/pages/device/DeviceList.json
+#. [pages.DeviceDetailEdit.discard]
+#. defaultMessage is:
+#. Discard
+#: i18n/src/device/detail/edit/DeviceDetailEdit.json
+msgid "Discard"
+msgstr "Discard"
+
+#. [pages.Status.downloadReport]
+#. defaultMessage is:
+#. Download Report
+#: i18n/src/dashboard/status/messages.json
+msgid "Download Report"
+msgstr "Download Report"
+
+#. [pages.ResultDetail.formOptions.EQAOfSampleType]
+#. defaultMessage is:
+#. EQA
+#: i18n/src/result/detail/CustomField.json
+msgid "EQA"
+msgstr "EQA"
+
+#. [pages.DeviceDetail.edit]
+#. defaultMessage is:
+#. Edit
+#. [pages.NotificationDetail.edit]
+#. defaultMessage is:
+#. Edit
+#. [pages.ReporterDetail.editTooltip]
+#. defaultMessage is:
+#. Edit
+#. [pages.RouterDetail.editTooltip]
+#. defaultMessage is:
+#. Edit
+#. [pages.SiteDetail.edit]
+#. defaultMessage is:
+#. Edit
+#: i18n/src/device/detail/DeviceDetailBackBar.json
+#: i18n/src/notification/detail/NotificationDetailBackBar.json
+#: i18n/src/reporter/detail/ReporterDetail.json
+#: i18n/src/router/detail/RouterDetail.json
+#: i18n/src/site/detail/SiteDetailBackBar.json
+msgid "Edit"
+msgstr "Edit"
+
+#. [errorResponseMessages.disconnected.default.message]
+#. defaultMessage is:
+#. Either your computer has been disconnected from the internet or our server has failed to respond.
+#: i18n/src/shared/utils/fetch.json
+msgid ""
+"Either your computer has been disconnected from the internet or our server "
+"has failed to respond."
+msgstr ""
+"Either your computer has been disconnected from the internet or our server "
+"has failed to respond."
+
+#. [pages.ContactDetails.emailHeader]
+#. defaultMessage is:
+#. Email
+#: i18n/src/person/detail/messages.json
+msgid "Email"
+msgstr "Email"
+
+#. [pages.ResetPassword.emailAddress]
+#. defaultMessage is:
+#. Email Address
+#: i18n/src/auth/resetPassword/messages.json
+msgid "Email Address"
+msgstr "Email Address"
+
+#. [pages.UpdateLoginDetails.currentPasswordDialogHeader]
+#. defaultMessage is:
+#. Enter Current Password
+#: i18n/src/person/detail/messages.json
+msgid "Enter Current Password"
+msgstr "Enter Current Password"
+
+#. [pages.ResetPassword.enterEmailAddress]
+#. defaultMessage is:
+#. Enter Email Address
+#: i18n/src/auth/resetPassword/messages.json
+msgid "Enter Email Address"
+msgstr "Enter Email Address"
+
+#. [pages.ResetPassword.enterNewPassword]
+#. defaultMessage is:
+#. Enter New Password
+#: i18n/src/auth/resetPassword/messages.json
+msgid "Enter New Password"
+msgstr "Enter New Password"
+
+#. [filter.popover.setContactNameEmail]
+#. defaultMessage is:
+#. Enter contact name/email...
+#: i18n/src/filter/popover/FiltersPanel.json
+msgid "Enter contact name/email..."
+msgstr "Enter contact name/email..."
+
+#. [filter.popover.enterDeviceName]
+#. defaultMessage is:
+#. Enter device name...
+#: i18n/src/filter/popover/FiltersPanel.json
+msgid "Enter device name..."
+msgstr "Enter device name..."
+
+#. [filter.popover.enterExternalId]
+#. defaultMessage is:
+#. Enter facility code...
+#: i18n/src/filter/popover/FiltersPanel.json
+msgid "Enter facility code..."
+msgstr "Enter facility code..."
+
+#. [filter.popover.enterPatientOrResearchId]
+#. defaultMessage is:
+#. Enter patient/study ID...
+#: i18n/src/filter/popover/FiltersPanel.json
+msgid "Enter patient/study ID..."
+msgstr "Enter patient/study ID..."
+
+#. [filter.popover.enterSampleId]
+#. defaultMessage is:
+#. Enter sample ID...
+#: i18n/src/filter/popover/FiltersPanel.json
+msgid "Enter sample ID..."
+msgstr "Enter sample ID..."
+
+#. [filter.popover.enterSampleGroup]
+#. defaultMessage is:
+#. Enter sample group...
+#: i18n/src/filter/popover/FiltersPanel.json
+msgid "Enter sample group..."
+msgstr "Enter sample group..."
+
+#. [filter.popover.enterSampleOriginSite]
+#. defaultMessage is:
+#. Enter sample origin site name...
+#: i18n/src/filter/popover/FiltersPanel.json
+msgid "Enter sample origin site name..."
+msgstr "Enter sample origin site name..."
+
+#. [filter.popover.enterSiteName]
+#. defaultMessage is:
+#. Enter site name...
+#: i18n/src/filter/popover/FiltersPanel.json
+msgid "Enter site name..."
+msgstr "Enter site name..."
+
+#. [pages.ReportList.error]
+#. defaultMessage is:
+#. Error
+#: i18n/src/report/list/ReportList.json
+msgid "Error"
+msgstr "Error"
+
+#. [errorResponseMessages.receiveActionDashboard.GET.default.title]
+#. defaultMessage is:
+#. Error Loading Action Data
+#: i18n/src/dashboard/DashboardRedux.json
+msgid "Error Loading Action Data"
+msgstr "Error Loading Action Data"
+
+#. [errorResponseMessages.fetchLgasForLocationSelector.GET.default.title]
+#. defaultMessage is:
+#. Error Loading Areas for {stateName}
+#: i18n/src/geography/GeographyRedux.json
+msgid "Error Loading Areas for {stateName}"
+msgstr "Error Loading Areas for {stateName}"
+
+#. [errorResponseMessages.fetchSinglePerson.GET.default.title]
+#. defaultMessage is:
+#. Error Loading Contact's Details
+#: i18n/src/person/PersonRedux.json
+msgid "Error Loading Contact's Details"
+msgstr "Error Loading Contact's Details"
+
+#. [errorResponseMessages.fetchCountriesForLocationSelector.GET.default.title]
+#. defaultMessage is:
+#. Error Loading Countries
+#: i18n/src/geography/GeographyRedux.json
+msgid "Error Loading Countries"
+msgstr "Error Loading Countries"
+
+#. [errorResponseMessages.fetchDeviceDashboard.GET.default.title]
+#. defaultMessage is:
+#. Error Loading Dashboard Device
+#: i18n/src/dashboard/DashboardRedux.json
+msgid "Error Loading Dashboard Device"
+msgstr "Error Loading Dashboard Device"
+
+#. [errorResponseMessages.fetchSiteDashboard.GET.default.title]
+#. defaultMessage is:
+#. Error Loading Dashboard Site
+#: i18n/src/dashboard/DashboardRedux.json
+msgid "Error Loading Dashboard Site"
+msgstr "Error Loading Dashboard Site"
+
+#. [errorResponseMessages.fetchStatDashboard.GET.default.title]
+#. defaultMessage is:
+#. Error Loading Dashboard Stat
+#: i18n/src/dashboard/DashboardRedux.json
+msgid "Error Loading Dashboard Stat"
+msgstr "Error Loading Dashboard Stat"
+
+#. [errorResponseMessages.fetchTargetDashboard.GET.default.title]
+#. defaultMessage is:
+#. Error Loading Dashboard Target
+#: i18n/src/dashboard/DashboardRedux.json
+msgid "Error Loading Dashboard Target"
+msgstr "Error Loading Dashboard Target"
+
+#. [errorResponseMessages.fetchSingleDevice.GET.default.title]
+#. defaultMessage is:
+#. Error Loading Device Details
+#. [errorResponseMessages.fetchSingleDevice.GET.default.title]
+#. defaultMessage is:
+#. Error Loading Device Details
+#: i18n/src/demo/DemoRedux.json i18n/src/device/DeviceRedux.json
+msgid "Error Loading Device Details"
+msgstr "Error Loading Device Details"
+
+#. [errorResponseMessages.fetchInventoryItemDashboard.GET.default.title]
+#. defaultMessage is:
+#. Error Loading InventoryItem Dashboard
+#: i18n/src/dashboard/DashboardRedux.json
+msgid "Error Loading InventoryItem Dashboard"
+msgstr "Error Loading InventoryItem Dashboard"
+
+#. [errorResponseMessages.receiveOperationalStatus.GET.default.title]
+#. defaultMessage is:
+#. Error Loading Operational Data
+#: i18n/src/dashboard/DashboardRedux.json
+msgid "Error Loading Operational Data"
+msgstr "Error Loading Operational Data"
+
+#. [errorResponseMessages.fetchPartnersAndJobFunctionsForSelectList.GET.default.title]
+#. defaultMessage is:
+#. Error Loading Partners And Job Functions
+#: i18n/src/job/JobRedux.json
+msgid "Error Loading Partners And Job Functions"
+msgstr "Error Loading Partners And Job Functions"
+
+#. [errorResponseMessages.fetchSingleReporter.GET.default.title]
+#. defaultMessage is:
+#. Error Loading Reporter Details
+#: i18n/src/reporter/ReporterRedux.json
+msgid "Error Loading Reporter Details"
+msgstr "Error Loading Reporter Details"
+
+#. [errorResponseMessages.fetchResultDashboard.GET.default.title]
+#. defaultMessage is:
+#. Error Loading Result Dashboard
+#: i18n/src/dashboard/DashboardRedux.json
+msgid "Error Loading Result Dashboard"
+msgstr "Error Loading Result Dashboard"
+
+#. [errorResponseMessages.fetchSingleResultDetails.GET.default.title]
+#. defaultMessage is:
+#. Error Loading Result Details
+#: i18n/src/result/ResultRedux.json
+msgid "Error Loading Result Details"
+msgstr "Error Loading Result Details"
+
+#. [errorResponseMessages.fetchDeviceLog.GET.default.title]
+#. defaultMessage is:
+#. Error Loading Result Logs
+#: i18n/src/result/ResultRedux.json
+msgid "Error Loading Result Logs"
+msgstr "Error Loading Result Logs"
+
+#. [errorResponseMessages.fetchSingleRouter.GET.default.title]
+#. defaultMessage is:
+#. Error Loading Router Details
+#: i18n/src/router/RouterRedux.json
+msgid "Error Loading Router Details"
+msgstr "Error Loading Router Details"
+
+#. [errorResponseMessages.fetchSingleSite.GET.default.title]
+#. defaultMessage is:
+#. Error Loading Site Details
+#: i18n/src/site/SiteRedux.json
+msgid "Error Loading Site Details"
+msgstr "Error Loading Site Details"
+
+#. [errorResponseMessages.fetchStatesForLocationSelector.GET.default.title]
+#. defaultMessage is:
+#. Error Loading States for {countryName}
+#: i18n/src/geography/GeographyRedux.json
+msgid "Error Loading States for {countryName}"
+msgstr "Error Loading States for {countryName}"
+
+#. [pages.DeviceDetailProfile.errorRate]
+#. defaultMessage is:
+#. Error Rate
+#: i18n/src/device/detail/profile/DeviceDetailProfile.json
+msgid "Error Rate"
+msgstr "Error Rate"
+
+#. [errorResponseMessages.resetPasswordEnterPassword.POST.default.title]
+#. defaultMessage is:
+#. Error Saving New Password
+#: i18n/src/auth/AuthRedux.json
+msgid "Error Saving New Password"
+msgstr "Error Saving New Password"
+
+#. [errorResponseMessages.resetPasswordEnterEmailAddress.POST.default.title]
+#. defaultMessage is:
+#. Error Sending Reset Password Email
+#: i18n/src/auth/AuthRedux.json
+msgid "Error Sending Reset Password Email"
+msgstr "Error Sending Reset Password Email"
+
+#. [pages.NotificationList.errors]
+#. defaultMessage is:
+#. Errors
+#: i18n/src/notification/list/NotificationList.json
+msgid "Errors"
+msgstr "Errors"
+
+#. [pages.ListExport.exportExcel]
+#. defaultMessage is:
+#. Excel
+#: i18n/src/filter/popover/FiltersPanel.json
+msgid "Excel"
+msgstr "Excel"
+
+#. [filter.ConsumableReasonSelectField.ConsumableReason_Expired]
+#. defaultMessage is:
+#. Expired
+#: i18n/src/filter/resource/ConsumableReasonSelectField.json
+msgid "Expired"
+msgstr "Expired"
+
+#. [pages.InventoryItemsList.expiresIn]
+#. defaultMessage is:
+#. Expires
+#: i18n/src/inventory/list/InventoryItemsList.json
+msgid "Expires"
+msgstr "Expires"
+
+#. [pages.InventoryItemsList.expiresOn]
+#. defaultMessage is:
+#. Expires On
+#: i18n/src/inventory/list/InventoryItemsList.json
+msgid "Expires On"
+msgstr "Expires On"
+
+#. [pages.InventoryAdjustmentDialogForm.expiryDate]
+#. defaultMessage is:
+#. Expiry Date
+#: i18n/src/inventory/adjustment/InventoryAdjustmentDialogForm.json
+msgid "Expiry Date"
+msgstr "Expiry Date"
+
+#. [errorResponseMessages.exportDeviceApiKeys.GET.400.title]
+#. defaultMessage is:
+#. Exporting DeviceApiKeys Failed
+#. [errorResponseMessages.exportDeviceApiKeys.GET.default.title]
+#. defaultMessage is:
+#. Exporting DeviceApiKeys Failed
+#: i18n/src/deviceApiKey/DeviceApiKeyRedux.json
+msgid "Exporting DeviceApiKeys Failed"
+msgstr "Exporting DeviceApiKeys Failed"
+
+#. [errorResponseMessages.exportDevices.GET.400.title]
+#. defaultMessage is:
+#. Exporting Devices Failed
+#. [errorResponseMessages.exportDevices.GET.default.title]
+#. defaultMessage is:
+#. Exporting Devices Failed
+#: i18n/src/device/DeviceRedux.json
+msgid "Exporting Devices Failed"
+msgstr "Exporting Devices Failed"
+
+#. [errorResponseMessages.exportResults.GET.400.title]
+#. defaultMessage is:
+#. Exporting Results Failed
+#. [errorResponseMessages.exportResults.GET.default.title]
+#. defaultMessage is:
+#. Exporting Results Failed
+#: i18n/src/result/ResultRedux.json
+msgid "Exporting Results Failed"
+msgstr "Exporting Results Failed"
+
+#. [filter.popover.externalId]
+#. defaultMessage is:
+#. Facility Code
+#. [pages.SiteDetail.fieldFacilityCode]
+#. defaultMessage is:
+#. Facility Code
+#: i18n/src/filter/popover/FiltersPanel.json i18n/src/site/detail/messages.json
+msgid "Facility Code"
+msgstr "Facility Code"
+
+#. [pages.ResetPassword.finish]
+#. defaultMessage is:
+#. Finish
+#: i18n/src/auth/resetPassword/messages.json
+msgid "Finish"
+msgstr "Finish"
+
+#. [pages.DeviceDetailOperation.firmware]
+#. defaultMessage is:
+#. Firmware
+#: i18n/src/device/detail/operation/DeviceDetailOperation.json
+msgid "Firmware"
+msgstr "Firmware"
+
+#. [pages.TablePaginator.first]
+#. defaultMessage is:
+#. First
+#: i18n/src/components/shared/TablePaginator.json
+msgid "First"
+msgstr "First"
+
+#. [pages.ReporterDetail.fieldFirstApprovedBy]
+#. defaultMessage is:
+#. First Approved By
+#. [pages.RouterDetail.fieldFirstApprovedBy]
+#. defaultMessage is:
+#. First Approved By
+#: i18n/src/reporter/detail/ReporterDetail.json
+#: i18n/src/router/detail/RouterDetail.json
+msgid "First Approved By"
+msgstr "First Approved By"
+
+#. [pages.ReporterDetail.fieldFirstApprovedOn]
+#. defaultMessage is:
+#. First Approved On
+#. [pages.RouterDetail.fieldFirstApprovedOn]
+#. defaultMessage is:
+#. First Approved On
+#: i18n/src/reporter/detail/ReporterDetail.json
+#: i18n/src/router/detail/RouterDetail.json
+msgid "First Approved On"
+msgstr "First Approved On"
+
+#. [pages.DeviceDetailEdit.firstApproved]
+#. defaultMessage is:
+#. First approved
+#: i18n/src/device/detail/operation/DeviceDetailOperation.json
+msgid "First approved"
+msgstr "First approved"
+
+#. [pages.ReporterList.flagged]
+#. defaultMessage is:
+#. Flagged
+#: i18n/src/reporter/list/ReporterList.json
+msgid "Flagged"
+msgstr "Flagged"
+
+#. [pages.ResultDetail.fieldFollowup]
+#. defaultMessage is:
+#. Followup
+#: i18n/src/result/detail/ResultDetail.json
+msgid "Followup"
+msgstr "Followup"
+
+#. [pages.DeviceList.reportingForDays]
+#. defaultMessage is:
+#. For {period}
+#: i18n/src/device/list/messages.json
+msgid "For {period}"
+msgstr "For {period}"
+
+#. [pages.Login.resetPasswordLink]
+#. defaultMessage is:
+#. Forgot Password?
+#: i18n/src/auth/login/Login.json
+msgid "Forgot Password?"
+msgstr "Forgot Password?"
+
+#. [pages.InventoryAdjustmentDialogForm.fromSiteName]
+#. defaultMessage is:
+#. From Site
+#: i18n/src/inventory/adjustment/InventoryAdjustmentDialogForm.json
+msgid "From Site"
+msgstr "From Site"
+
+#. [pages.dateRangeSelector.fromDate]
+#. defaultMessage is:
+#. From...
+#: i18n/src/filter/date/DateRangeSelector.json
+msgid "From..."
+msgstr "From..."
+
+#. [pages.ContactDetails.name]
+#. defaultMessage is:
+#. Full Name
+#: i18n/src/person/detail/messages.json
+msgid "Full Name"
+msgstr "Full Name"
+
+#. [pages.Status.issueCategoryDeviceHealth]
+#. defaultMessage is:
+#. GeneXpert
+#: i18n/src/dashboard/status/messages.json
+msgid "GeneXpert"
+msgstr "GeneXpert"
+
+#. [pages.DeviceApiKeyList.generate]
+#. defaultMessage is:
+#. Generate
+#. [pages.DeviceApiKeyList.generate]
+#. defaultMessage is:
+#. Generate
+#: i18n/src/deviceApiKey/list/DeviceApiKeyGeneratorDialogForm.json
+#: i18n/src/deviceApiKey/list/DeviceApiKeyList.json
+msgid "Generate"
+msgstr "Generate"
+
+#. [errorResponseMessages.generateDeviceApiKeys.POST.400.title]
+#. defaultMessage is:
+#. Generate DeviceApiKeys Failed
+#. [errorResponseMessages.generateDeviceApiKeys.POST.default.title]
+#. defaultMessage is:
+#. Generate DeviceApiKeys Failed
+#: i18n/src/deviceApiKey/DeviceApiKeyRedux.json
+msgid "Generate DeviceApiKeys Failed"
+msgstr "Generate DeviceApiKeys Failed"
+
+#. [pages.InventoryItemsList.groupBySite]
+#. defaultMessage is:
+#. Group by Site
+#: i18n/src/inventory/list/InventoryItemsList.json
+msgid "Group by Site"
+msgstr "Group by Site"
+
+#. [pages.ResultList.resultCategoryHiv]
+#. defaultMessage is:
+#. HIV
+#: i18n/src/result/list/ResultList.json
+msgid "HIV"
+msgstr "HIV"
+
+#. [pages.StrongPasswordInput.passwordStrengthMeterMixUpperAndLowerCase]
+#. defaultMessage is:
+#. Has a mix of UPPER and lower case characters
+#: i18n/src/components/shared/StrongPasswordInput.json
+msgid "Has a mix of UPPER and lower case characters"
+msgstr "Has a mix of UPPER and lower case characters"
+
+#. [pages.StrongPasswordInput.passwordStrengthMeterContainsNumber]
+#. defaultMessage is:
+#. Has a number
+#: i18n/src/components/shared/StrongPasswordInput.json
+msgid "Has a number"
+msgstr "Has a number"
+
+#. [pages.StrongPasswordInput.passwordStrengthMeterContainsSpecialCharacter]
+#. defaultMessage is:
+#. Has a special character (%!$*...)
+#: i18n/src/components/shared/StrongPasswordInput.json
+msgid "Has a special character (%!$*...)"
+msgstr "Has a special character (%!$*...)"
+
+#. [pages.NotificationDetail.history]
+#. defaultMessage is:
+#. History
+#: i18n/src/notification/detail/NotificationDetailBackBar.json
+msgid "History"
+msgstr "History"
+
+#. [pages.ResultDetail.formFields.hospitalNumber]
+#. defaultMessage is:
+#. Hospital Number
+#: i18n/src/result/detail/CustomField.json
+msgid "Hospital Number"
+msgstr "Hospital Number"
+
+#. [pages.DeviceDetailEdit.hostId]
+#. defaultMessage is:
+#. Host ID
+#: i18n/src/device/detail/operation/DeviceDetailOperation.json
+msgid "Host ID"
+msgstr "Host ID"
+
+#. [pages.ReporterDetail.fieldHostId]
+#. defaultMessage is:
+#. Host Id
+#. [pages.RouterDetail.fieldHostId]
+#. defaultMessage is:
+#. Host Id
+#: i18n/src/reporter/detail/ReporterDetail.json
+#: i18n/src/router/detail/RouterDetail.json
+msgid "Host Id"
+msgstr "Host Id"
+
+#. [component.DateTimeInput.hours.placeholder]
+#. defaultMessage is:
+#. Hours
+#: i18n/src/components/shared/DateTimeInput/messages.json
+msgid "Hours"
+msgstr "Hours"
+
+#. [pages.License.accept]
+#. defaultMessage is:
+#. I Accept
+#: i18n/src/auth/license/License.json
+msgid "I Accept"
+msgstr "I Accept"
+
+#. [pages.License.doNotAccept]
+#. defaultMessage is:
+#. I Do Not Accept
+#: i18n/src/auth/license/License.json
+msgid "I Do Not Accept"
+msgstr "I Do Not Accept"
+
+#. [pages.ResetPassword.iDidntReceiveAnEmail]
+#. defaultMessage is:
+#. I didn't receive an email
+#: i18n/src/auth/resetPassword/messages.json
+msgid "I didn't receive an email"
+msgstr "I didn't receive an email"
+
+#. [pages.ResetPassword.iDontHaveAnEmailAddress]
+#. defaultMessage is:
+#. I don't know what email address I am registered with
+#: i18n/src/auth/resetPassword/messages.json
+msgid "I don't know what email address I am registered with"
+msgstr "I don't know what email address I am registered with"
+
+#. [pages.DeviceDetailOperation.id]
+#. defaultMessage is:
+#. ID
+#: i18n/src/device/detail/operation/DeviceDetailOperation.json
+msgid "ID"
+msgstr "ID"
+
+#. [pages.ResetPassword.adminHelpContent]
+#. defaultMessage is:
+#. If you you need help to recover you login details, please contact us so that we may assist you. You can request our help by sending an email to {supportEmail}
+#: i18n/src/auth/resetPassword/messages.json
+msgid ""
+"If you you need help to recover you login details, please contact us so that "
+"we may assist you. You can request our help by sending an email to "
+"{supportEmail}"
+msgstr ""
+"If you you need help to recover you login details, please contact us so that "
+"we may assist you. You can request our help by sending an email to "
+"{supportEmail}"
+
+#. [pages.ResultDetail.images]
+#. defaultMessage is:
+#. Images
+#: i18n/src/result/detail/ResultDetail.json
+msgid "Images"
+msgstr "Images"
+
+#. [errorResponseMessages.common.filterError.resolution]
+#. defaultMessage is:
+#. In the meantime, you could try to adjust the values in these filter fields, change the column that you are sorting on in the list or change the page number that you are viewing
+#: i18n/src/error/CommonErrorNotifications.json
+msgid ""
+"In the meantime, you could try to adjust the values in these filter fields, "
+"change the column that you are sorting on in the list or change the page "
+"number that you are viewing"
+msgstr ""
+"In the meantime, you could try to adjust the values in these filter fields, "
+"change the column that you are sorting on in the list or change the page "
+"number that you are viewing"
+
+#. [errorResponseMessages.fetchPersons.GET.403.title]
+#. defaultMessage is:
+#. Insufficient Permissions
+#. [errorResponseMessages.fetchPersons.GET.403.title]
+#. defaultMessage is:
+#. Insufficient Permissions
+#. [errorResponseMessages.fetchPersons.GET.403.title]
+#. defaultMessage is:
+#. Insufficient Permissions
+#. [errorResponseMessages.fetchPersons.GET.403.title]
+#. defaultMessage is:
+#. Insufficient Permissions
+#. [errorResponseMessages.fetchPersons.GET.403.title]
+#. defaultMessage is:
+#. Insufficient Permissions
+#. [errorResponseMessages.fetchPersons.GET.403.title]
+#. defaultMessage is:
+#. Insufficient Permissions
+#. [errorResponseMessages.fetchPersons.GET.403.title]
+#. defaultMessage is:
+#. Insufficient Permissions
+#. [errorResponseMessages.fetchPersons.GET.403.title]
+#. defaultMessage is:
+#. Insufficient Permissions
+#. [errorResponseMessages.fetchPersons.GET.403.title]
+#. defaultMessage is:
+#. Insufficient Permissions
+#. [errorResponseMessages.fetchPersons.GET.403.title]
+#. defaultMessage is:
+#. Insufficient Permissions
+#. [errorResponseMessages.fetchPersons.GET.403.title]
+#. defaultMessage is:
+#. Insufficient Permissions
+#: i18n/src/dashboard/DashboardRedux.json i18n/src/device/DeviceRedux.json
+#: i18n/src/deviceApiKey/DeviceApiKeyRedux.json
+#: i18n/src/inventory/InventoryRedux.json
+#: i18n/src/notification/NotificationRedux.json
+#: i18n/src/person/PersonRedux.json i18n/src/report/ReportRedux.json
+#: i18n/src/reporter/ReporterRedux.json i18n/src/result/ResultRedux.json
+#: i18n/src/router/RouterRedux.json i18n/src/site/SiteRedux.json
+msgid "Insufficient Permissions"
+msgstr "Insufficient Permissions"
+
+#. [errorResponseMessages.saveLoginDetails.PUT.403.title]
+#. defaultMessage is:
+#. Invalid Password
+#: i18n/src/account/AccountRedux.json
+msgid "Invalid Password"
+msgstr "Invalid Password"
+
+#. [pages.NewInventoryDialogForm.defaultConsumableName]
+#. defaultMessage is:
+#. Inventory Item
+#: i18n/src/inventory/adjustment/NewInventoryDialogForm.json
+msgid "Inventory Item"
+msgstr "Inventory Item"
+
+#. [pages.InventoryItemsList.inventoryAdjustedSuccessfully]
+#. defaultMessage is:
+#. Inventory levels have been adjusted successfully
+#: i18n/src/inventory/list/InventoryItemsList.json
+msgid "Inventory levels have been adjusted successfully"
+msgstr "Inventory levels have been adjusted successfully"
+
+#. [pages.InventoryItemsList.inventoryItemsTitle]
+#. defaultMessage is:
+#. Inventory on Hand
+#: i18n/src/inventory/list/InventoryItemsList.json
+msgid "Inventory on Hand"
+msgstr "Inventory on Hand"
+
+#. [pages.StrongPasswordInput.passwordStrengthMeterMinLength]
+#. defaultMessage is:
+#. Is at least {minLength} characters long
+#: i18n/src/components/shared/StrongPasswordInput.json
+msgid "Is at least {minLength} characters long"
+msgstr "Is at least {minLength} characters long"
+
+#. [pages.Status.actionIssue]
+#. defaultMessage is:
+#. Issue
+#: i18n/src/dashboard/status/messages.json
+msgid "Issue"
+msgstr "Issue"
+
+#. [pages.DeviceList.issues]
+#. defaultMessage is:
+#. Issues
+#. [pages.DeviceList.issueCategory]
+#. defaultMessage is:
+#. Issues
+#. [pages.SiteList.siteIssues]
+#. defaultMessage is:
+#. Issues
+#: i18n/src/device/list/messages.json i18n/src/site/list/SiteList.json
+msgid "Issues"
+msgstr "Issues"
+
+#. [errorResponseMessages.common.notFound.message]
+#. defaultMessage is:
+#. It might have been deleted or renamed
+#: i18n/src/error/CommonErrorNotifications.json
+msgid "It might have been deleted or renamed"
+msgstr "It might have been deleted or renamed"
+
+#. [pages.PersonList.level]
+#. defaultMessage is:
+#. Job
+#: i18n/src/person/list/PersonList.json
+msgid "Job"
+msgstr "Job"
+
+#. [pages.ContactDetails.title]
+#. defaultMessage is:
+#. Job Title
+#: i18n/src/person/detail/messages.json
+msgid "Job Title"
+msgstr "Job Title"
+
+#. [pages.DeviceApiKeyList.token]
+#. defaultMessage is:
+#. Key
+#: i18n/src/deviceApiKey/list/DeviceApiKeyList.json
+msgid "Key"
+msgstr "Key"
+
+#. [pages.SiteDetail.fieldLGA]
+#. defaultMessage is:
+#. LGA
+#: i18n/src/site/detail/messages.json
+msgid "LGA"
+msgstr "LGA"
+
+#. [pages.Status.actionLab]
+#. defaultMessage is:
+#. Lab
+#: i18n/src/dashboard/status/messages.json
+msgid "Lab"
+msgstr "Lab"
+
+#. [pages.UserPreferences.language]
+#. defaultMessage is:
+#. Language
+#: i18n/src/person/detail/messages.json
+msgid "Language"
+msgstr "Language"
+
+#. [pages.PersonDetails.languageAndTimezone]
+#. defaultMessage is:
+#. Language & Timezone
+#: i18n/src/person/detail/messages.json
+msgid "Language & Timezone"
+msgstr "Language & Timezone"
+
+#. [pages.TablePaginator.last]
+#. defaultMessage is:
+#. Last
+#: i18n/src/components/shared/TablePaginator.json
+msgid "Last"
+msgstr "Last"
+
+#. [pages.Status.subResultsTitle]
+#. defaultMessage is:
+#. Last 30 Days
+#. [pages.dateRangeSelector.last30Days]
+#. defaultMessage is:
+#. Last 30 Days
+#: i18n/src/dashboard/status/messages.json
+#: i18n/src/filter/date/DateRangeSelector.json
+msgid "Last 30 Days"
+msgstr "Last 30 Days"
+
+#. [pages.dateRangeSelector.last7Days]
+#. defaultMessage is:
+#. Last 7 Days
+#: i18n/src/filter/date/DateRangeSelector.json
+msgid "Last 7 Days"
+msgstr "Last 7 Days"
+
+#. [pages.Status.lastMonth]
+#. defaultMessage is:
+#. Last Month
+#. [pages.DeviceList.lastMonth]
+#. defaultMessage is:
+#. Last Month
+#. [pages.dateRangeSelector.lastMonth]
+#. defaultMessage is:
+#. Last Month
+#. [pages.ReporterList.deliveredLastMonth]
+#. defaultMessage is:
+#. Last Month
+#: i18n/src/dashboard/status/messages.json i18n/src/device/list/messages.json
+#: i18n/src/filter/date/DateRangeSelector.json
+#: i18n/src/reporter/list/ReporterList.json
+msgid "Last Month"
+msgstr "Last Month"
+
+#. [pages.Status.lastQuarter]
+#. defaultMessage is:
+#. Last Quarter
+#: i18n/src/dashboard/status/messages.json
+msgid "Last Quarter"
+msgstr "Last Quarter"
+
+#. [pages.DeviceList.lastSeen]
+#. defaultMessage is:
+#. Last Seen
+#. [pages.ReporterDetail.fieldLastSeen]
+#. defaultMessage is:
+#. Last Seen
+#. [pages.ReporterList.lastSeen]
+#. defaultMessage is:
+#. Last Seen
+#. [pages.RouterDetail.fieldLastSeen]
+#. defaultMessage is:
+#. Last Seen
+#. [pages.RouterList.lastSeen]
+#. defaultMessage is:
+#. Last Seen
+#: i18n/src/device/list/messages.json
+#: i18n/src/reporter/detail/ReporterDetail.json
+#: i18n/src/reporter/list/ReporterList.json
+#: i18n/src/router/detail/RouterDetail.json
+#: i18n/src/router/list/RouterList.json
 msgid "Last Seen"
 msgstr "Last Seen"
 
-#. [pages.PersonList.personName] - undefined
-#: i18n/src/components/pages/person/PersonList.json
+#. [pages.dateRangeSelector.lastWeek]
+#. defaultMessage is:
+#. Last Week
+#: i18n/src/filter/date/DateRangeSelector.json
+msgid "Last Week"
+msgstr "Last Week"
+
+#. [pages.Status.lastYear]
+#. defaultMessage is:
+#. Last Year
+#. [pages.dateRangeSelector.lastYear]
+#. defaultMessage is:
+#. Last Year
+#: i18n/src/dashboard/status/messages.json
+#: i18n/src/filter/date/DateRangeSelector.json
+msgid "Last Year"
+msgstr "Last Year"
+
+#. [pages.DeviceDetailProfile.lastSeenOn]
+#. defaultMessage is:
+#. Last seen {lastSeen}
+#: i18n/src/device/detail/profile/DeviceDetailProfile.json
+msgid "Last seen {lastSeen}"
+msgstr "Last seen {lastSeen}"
+
+#. [pages.NotificationList.lastTriggered]
+#. defaultMessage is:
+#. Last triggered
+#: i18n/src/notification/list/NotificationList.json
+msgid "Last triggered"
+msgstr "Last triggered"
+
+#. [pages.SiteDetail.fieldLatitude]
+#. defaultMessage is:
+#. Latitude
+#: i18n/src/site/detail/messages.json
+msgid "Latitude"
+msgstr "Latitude"
+
+#. [pages.License.title]
+#. defaultMessage is:
+#. License
+#: i18n/src/auth/license/License.json
+msgid "License"
+msgstr "License"
+
+#. [errorResponseMessages.fetchAccountDetails.GET.default.title]
+#. defaultMessage is:
+#. Loading Account Details Failed
+#: i18n/src/account/AccountRedux.json
+msgid "Loading Account Details Failed"
+msgstr "Loading Account Details Failed"
+
+#. [errorResponseMessages.fetchAssays.GET.default.title]
+#. defaultMessage is:
+#. Loading Assays Failed
+#: i18n/src/assay/AssayRedux.json
+msgid "Loading Assays Failed"
+msgstr "Loading Assays Failed"
+
+#. [errorResponseMessages.fetchConsumableReasons.GET.default.title]
+#. defaultMessage is:
+#. Loading Consumable Reasons Failed
+#: i18n/src/consumable/ConsumableRedux.json
+msgid "Loading Consumable Reasons Failed"
+msgstr "Loading Consumable Reasons Failed"
+
+#. [errorResponseMessages.fetchConsumables.GET.default.title]
+#. defaultMessage is:
+#. Loading Consumables Failed
+#: i18n/src/consumable/ConsumableRedux.json
+msgid "Loading Consumables Failed"
+msgstr "Loading Consumables Failed"
+
+#. [errorResponseMessages.fetchPersons.GET.default.title]
+#. defaultMessage is:
+#. Loading Contacts Failed
+#: i18n/src/person/PersonRedux.json
+msgid "Loading Contacts Failed"
+msgstr "Loading Contacts Failed"
+
+#. [errorResponseMessages.fetchDeviceStatuses.GET.default.title]
+#. defaultMessage is:
+#. Loading Device Statuses Failed
+#: i18n/src/deviceStatus/DeviceStatusRedux.json
+msgid "Loading Device Statuses Failed"
+msgstr "Loading Device Statuses Failed"
+
+#. [errorResponseMessages.fetchDeviceApiKeys.GET.default.title]
+#. defaultMessage is:
+#. Loading DeviceApiKeys Failed
+#: i18n/src/deviceApiKey/DeviceApiKeyRedux.json
+msgid "Loading DeviceApiKeys Failed"
+msgstr "Loading DeviceApiKeys Failed"
+
+#. [errorResponseMessages.fetchDeviceOperations.GET.default.title]
+#. defaultMessage is:
+#. Loading DeviceOperations Failed
+#: i18n/src/deviceOperation/DeviceOperationRedux.json
+msgid "Loading DeviceOperations Failed"
+msgstr "Loading DeviceOperations Failed"
+
+#. [errorResponseMessages.fetchDeviceTypes.GET.default.title]
+#. defaultMessage is:
+#. Loading DeviceTypes Failed
+#: i18n/src/deviceType/DeviceTypeRedux.json
+msgid "Loading DeviceTypes Failed"
+msgstr "Loading DeviceTypes Failed"
+
+#. [errorResponseMessages.fetchDevices.GET.default.title]
+#. defaultMessage is:
+#. Loading Devices Failed
+#. [errorResponseMessages.fetchDevicesForSelectList.GET.default.title]
+#. defaultMessage is:
+#. Loading Devices Failed
+#: i18n/src/device/DeviceRedux.json
+msgid "Loading Devices Failed"
+msgstr "Loading Devices Failed"
+
+#. [errorResponseMessages.fetchInventoryItems.GET.default.title]
+#. defaultMessage is:
+#. Loading Inventory Items Failed
+#: i18n/src/inventory/InventoryRedux.json
+msgid "Loading Inventory Items Failed"
+msgstr "Loading Inventory Items Failed"
+
+#. [errorResponseMessages.fetchNotifications.GET.default.title]
+#. defaultMessage is:
+#. Loading Notifications Failed
+#: i18n/src/notification/NotificationRedux.json
+msgid "Loading Notifications Failed"
+msgstr "Loading Notifications Failed"
+
+#. [errorResponseMessages.fetchPossibleTags.GET.default.title]
+#. defaultMessage is:
+#. Loading Possible Tags Failed
+#: i18n/src/tag/TagRedux.json
+msgid "Loading Possible Tags Failed"
+msgstr "Loading Possible Tags Failed"
+
+#. [errorResponseMessages.fetchReporters.GET.default.title]
+#. defaultMessage is:
+#. Loading Reporters Failed
+#: i18n/src/reporter/ReporterRedux.json
+msgid "Loading Reporters Failed"
+msgstr "Loading Reporters Failed"
+
+#. [errorResponseMessages.fetchReports.GET.default.title]
+#. defaultMessage is:
+#. Loading Reports Failed
+#: i18n/src/report/ReportRedux.json
+msgid "Loading Reports Failed"
+msgstr "Loading Reports Failed"
+
+#. [errorResponseMessages.fetchWorkflowLogs.GET.default.title]
+#. defaultMessage is:
+#. Loading Result Workflow Status Logs Failed
+#: i18n/src/result/ResultRedux.json
+msgid "Loading Result Workflow Status Logs Failed"
+msgstr "Loading Result Workflow Status Logs Failed"
+
+#. [errorResponseMessages.fetchWorkflowStatuses.GET.default.title]
+#. defaultMessage is:
+#. Loading Result Workflow Statuses Failed
+#: i18n/src/resultWorkflowStatus/ResultWorkflowStatusRedux.json
+msgid "Loading Result Workflow Statuses Failed"
+msgstr "Loading Result Workflow Statuses Failed"
+
+#. [errorResponseMessages.fetchResults.GET.default.title]
+#. defaultMessage is:
+#. Loading Results Failed
+#: i18n/src/result/ResultRedux.json
+msgid "Loading Results Failed"
+msgstr "Loading Results Failed"
+
+#. [errorResponseMessages.fetchRouters.GET.default.title]
+#. defaultMessage is:
+#. Loading Routers Failed
+#: i18n/src/router/RouterRedux.json
+msgid "Loading Routers Failed"
+msgstr "Loading Routers Failed"
+
+#. [errorResponseMessages.fetchSites.GET.default.title]
+#. defaultMessage is:
+#. Loading Sites Failed
+#: i18n/src/site/SiteRedux.json
+msgid "Loading Sites Failed"
+msgstr "Loading Sites Failed"
+
+#. [errorResponseMessages.fetchTags.GET.default.title]
+#. defaultMessage is:
+#. Loading Tags Failed
+#: i18n/src/tag/TagRedux.json
+msgid "Loading Tags Failed"
+msgstr "Loading Tags Failed"
+
+#. [errorResponseMessages.fetchTask.GET.default.title]
+#. defaultMessage is:
+#. Loading Task Failed
+#: i18n/src/task/TaskRedux.json
+msgid "Loading Task Failed"
+msgstr "Loading Task Failed"
+
+#. [errorResponseMessages.getTasksByStatus.GET.default.title]
+#. defaultMessage is:
+#. Loading Tasks Failed
+#. [errorResponseMessages.fetchTasks.GET.default.title]
+#. defaultMessage is:
+#. Loading Tasks Failed
+#: i18n/src/task/TaskRedux.json
+msgid "Loading Tasks Failed"
+msgstr "Loading Tasks Failed"
+
+#. [pages.ContactDetails.locationHeader]
+#. defaultMessage is:
+#. Location
+#: i18n/src/person/detail/messages.json
+msgid "Location"
+msgstr "Location"
+
+#. [pages.Login.title]
+#. defaultMessage is:
+#. Login
+#. [pages.Login.login]
+#. defaultMessage is:
+#. Login
+#: i18n/src/auth/login/Login.json
+msgid "Login"
+msgstr "Login"
+
+#. [errorResponseMessages.loginStart.POST.default.title]
+#. defaultMessage is:
+#. Login Error
+#: i18n/src/auth/AuthRedux.json
+msgid "Login Error"
+msgstr "Login Error"
+
+#. [errorResponseMessages.loginStart.POST.401.accountLocked.title]
+#. defaultMessage is:
+#. Login Failed
+#. [errorResponseMessages.loginStart.POST.default.default.title]
+#. defaultMessage is:
+#. Login Failed
+#: i18n/src/auth/AuthRedux.json
+msgid "Login Failed"
+msgstr "Login Failed"
+
+#. [pages.ResetPassword.loginWithMyNewPassword]
+#. defaultMessage is:
+#. Login with my new password
+#: i18n/src/auth/resetPassword/messages.json
+msgid "Login with my new password"
+msgstr "Login with my new password"
+
+#. [pages.SiteDetail.fieldLongitude]
+#. defaultMessage is:
+#. Longitude
+#: i18n/src/site/detail/messages.json
+msgid "Longitude"
+msgstr "Longitude"
+
+#. [filter.ConsumableReasonSelectField.ConsumableReason_Lost]
+#. defaultMessage is:
+#. Lost
+#: i18n/src/filter/resource/ConsumableReasonSelectField.json
+msgid "Lost"
+msgstr "Lost"
+
+#. [pages.InventoryAdjustmentDialogForm.lotNumber]
+#. defaultMessage is:
+#. Lot Number
+#: i18n/src/inventory/adjustment/InventoryAdjustmentDialogForm.json
+msgid "Lot Number"
+msgstr "Lot Number"
+
+#. [pages.ResultDetail.formOptions.miscOfSampleType]
+#. defaultMessage is:
+#. Misc.
+#: i18n/src/result/detail/CustomField.json
+msgid "Misc."
+msgstr "Misc."
+
+#. [pages.AccountDetails.cell]
+#. defaultMessage is:
+#. Mobile
+#: i18n/src/person/detail/messages.json
+msgid "Mobile"
+msgstr "Mobile"
+
+#. [pages.ReportList.moduleSerial]
+#. defaultMessage is:
+#. Module Serial
+#: i18n/src/report/list/ReportList.json
+msgid "Module Serial"
+msgstr "Module Serial"
+
+#. [component.DateTimeInput.month.placeholder]
+#. defaultMessage is:
+#. Month
+#. [pages.dateRangeSelector.month]
+#. defaultMessage is:
+#. Month
+#: i18n/src/components/shared/DateTimeInput/messages.json
+#: i18n/src/filter/date/DateRangeSelector.json
+msgid "Month"
+msgstr "Month"
+
+#. [filter.popover.moreFilters]
+#. defaultMessage is:
+#. More filters
+#: i18n/src/filter/popover/FiltersPanel.json
+msgid "More filters"
+msgstr "More filters"
+
+#. [pages.PersonList.personName]
+#. defaultMessage is:
+#. Name
+#. [pages.ReporterDetail.fieldName]
+#. defaultMessage is:
+#. Name
+#. [pages.ResultDetail.formFields.nameOfPatient]
+#. defaultMessage is:
+#. Name
+#. [pages.RouterDetail.fieldName]
+#. defaultMessage is:
+#. Name
+#. [pages.SiteDetail.fieldName]
+#. defaultMessage is:
+#. Name
+#. [pages.SiteList.siteName]
+#. defaultMessage is:
+#. Name
+#: i18n/src/person/list/PersonList.json
+#: i18n/src/reporter/detail/ReporterDetail.json
+#: i18n/src/result/detail/CustomField.json
+#: i18n/src/router/detail/RouterDetail.json i18n/src/site/detail/messages.json
+#: i18n/src/site/list/SiteList.json
 msgid "Name"
 msgstr "Name"
 
-#. [pages.NotFound.title] - undefined
-#: i18n/src/components/pages/error/NotFound.json
+#. [pages.DeviceList.needsRepair]
+#. defaultMessage is:
+#. Needs Repair
+#: i18n/src/device/list/messages.json
+msgid "Needs Repair"
+msgstr "Needs Repair"
+
+#. [pages.ResultDetail.formOptions.negative]
+#. defaultMessage is:
+#. Negative
+#: i18n/src/result/detail/CustomField.json
+msgid "Negative"
+msgstr "Negative"
+
+#. [pages.InventoryItemsList.never]
+#. defaultMessage is:
+#. Never
+#: i18n/src/inventory/list/InventoryTableRow.json
+msgid "Never"
+msgstr "Never"
+
+#. [pages.ResetPassword.newPassword]
+#. defaultMessage is:
+#. New Password
+#. [pages.UpdateLoginDetails.newPassword]
+#. defaultMessage is:
+#. New Password
+#: i18n/src/auth/resetPassword/messages.json
+#: i18n/src/person/detail/messages.json
+msgid "New Password"
+msgstr "New Password"
+
+#. [pages.TablePaginator.newer]
+#. defaultMessage is:
+#. Newer
+#: i18n/src/components/shared/TablePaginator.json
+msgid "Newer"
+msgstr "Newer"
+
+#. [pages.ResetPassword.next]
+#. defaultMessage is:
+#. Next
+#. [pages.TablePaginator.next]
+#. defaultMessage is:
+#. Next
+#: i18n/src/auth/resetPassword/messages.json
+#: i18n/src/components/shared/TablePaginator.json
+msgid "Next"
+msgstr "Next"
+
+#. [pages.DeviceDetailProfile.noResults]
+#. defaultMessage is:
+#. No Results
+#. [pages.DeviceList.noResults]
+#. defaultMessage is:
+#. No Results
+#: i18n/src/device/detail/profile/DeviceDetailProfile.json
+#: i18n/src/device/list/messages.json
+msgid "No Results"
+msgstr "No Results"
+
+#. [pages.ResultDetail.noImagesHelp]
+#. defaultMessage is:
+#. No images attached for this result
+#: i18n/src/result/detail/ResultDetail.json
+msgid "No images attached for this result"
+msgstr "No images attached for this result"
+
+#. [pages.ResultDetail.noLogsHelp]
+#. defaultMessage is:
+#. No log entries found for this result
+#: i18n/src/result/detail/ResultDetail.json
+msgid "No log entries found for this result"
+msgstr "No log entries found for this result"
+
+#. [pages.ResultWorkflowStatusLog.noWorkflowStatusLog]
+#. defaultMessage is:
+#. No logs for this result.
+#: i18n/src/result/detail/WorkflowLog.json
+msgid "No logs for this result."
+msgstr "No logs for this result."
+
+#. [shared.EmptyList.noResultsTitle]
+#. defaultMessage is:
+#. No results match your selected filters
+#: i18n/src/components/shared/EmptyList.json
+msgid "No results match your selected filters"
+msgstr "No results match your selected filters"
+
+#. [filter.popover.none]
+#. defaultMessage is:
+#. None
+#. [pages.PersonDetails.none]
+#. defaultMessage is:
+#. None
+#. [pages.ResultDetail.formOptions.none]
+#. defaultMessage is:
+#. None
+#: i18n/src/filter/popover/FiltersPanel.json
+#: i18n/src/person/detail/messages.json i18n/src/result/detail/CustomField.json
+msgid "None"
+msgstr "None"
+
+#. [pages.NotFound.title]
+#. defaultMessage is:
+#. Not Found
+#: i18n/src/error/notFound/NotFound.json
 msgid "Not Found"
 msgstr "Not Found"
 
-#. [pages.DeviceList.reportingFor] - undefined
-#: i18n/src/components/pages/device/DeviceList.json
+#. [pages.BaseDialog.notes]
+#. defaultMessage is:
+#. Notes
+#. [pages.InventoryAdjustmentDialogForm.notes]
+#. defaultMessage is:
+#. Notes
+#. [pages.ContactDetails.notes]
+#. defaultMessage is:
+#. Notes
+#. [pages.ReporterDetail.fieldNotes]
+#. defaultMessage is:
+#. Notes
+#. [pages.RouterDetail.fieldNotes]
+#. defaultMessage is:
+#. Notes
+#: i18n/src/device/maintenance/BaseDialog.json
+#: i18n/src/inventory/adjustment/InventoryAdjustmentDialogForm.json
+#: i18n/src/person/detail/messages.json
+#: i18n/src/reporter/detail/ReporterDetail.json
+#: i18n/src/router/detail/RouterDetail.json
+msgid "Notes"
+msgstr "Notes"
+
+#. [pages.NotificationList.title]
+#. defaultMessage is:
+#. Notifications
+#: i18n/src/notification/list/NotificationList.json
+msgid "Notifications"
+msgstr "Notifications"
+
+#. [pages.ReporterList.numberOfTestsLeft]
+#. defaultMessage is:
+#. Number Of
+#: i18n/src/reporter/list/ReporterList.json
+msgid "Number Of"
+msgstr "Number Of"
+
+#. [pages.SiteList.totalDevices]
+#. defaultMessage is:
+#. Number of Devices
+#: i18n/src/site/list/SiteList.json
+msgid "Number of Devices"
+msgstr "Number of Devices"
+
+#. [pages.DeviceList.numberOfTests]
+#. defaultMessage is:
+#. Number of Tests
+#: i18n/src/device/list/messages.json
+msgid "Number of Tests"
+msgstr "Number of Tests"
+
+#. [pages.DeviceDetailProfile.errorRateExplain]
+#. defaultMessage is:
+#. Number of errors divided by number of results in the last 30 days
+#: i18n/src/device/detail/profile/DeviceDetailProfile.json
+msgid "Number of errors divided by number of results in the last 30 days"
+msgstr "Number of errors divided by number of results in the last 30 days"
+
+#. [pages.DeviceDetailProfile.utilizationRateExplain]
+#. defaultMessage is:
+#. Number of results in the last 30 days divided by the daily capacity of the instrument multiplied by 30 days
+#: i18n/src/device/detail/profile/DeviceDetailProfile.json
+msgid ""
+"Number of results in the last 30 days divided by the daily capacity of the "
+"instrument multiplied by 30 days"
+msgstr ""
+"Number of results in the last 30 days divided by the daily capacity of the "
+"instrument multiplied by 30 days"
+
+#. [pages.StrongPasswordInput.passwordStrengthMeterOkay]
+#. defaultMessage is:
+#. Okay
+#: i18n/src/components/shared/StrongPasswordInput.json
+msgid "Okay"
+msgstr "Okay"
+
+#. [pages.TablePaginator.older]
+#. defaultMessage is:
+#. Older
+#: i18n/src/components/shared/TablePaginator.json
+msgid "Older"
+msgstr "Older"
+
+#. [pages.DeviceDetail.operation]
+#. defaultMessage is:
+#. Operation
+#: i18n/src/device/detail/DeviceDetailBackBar.json
+msgid "Operation"
+msgstr "Operation"
+
+#. [pages.ResultWorkflowStatusLog.logOperator]
+#. defaultMessage is:
+#. Operator
+#: i18n/src/result/detail/WorkflowLog.json
+msgid "Operator"
+msgstr "Operator"
+
+#. [errorResponseMessages.generic.message]
+#. defaultMessage is:
+#. Our technical team has been notified of the problem and will attend to it as soon as possible.
+#: i18n/src/appNotification/AppNotificationDialog.json
+msgid ""
+"Our technical team has been notified of the problem and will attend to it as "
+"soon as possible."
+msgstr ""
+"Our technical team has been notified of the problem and will attend to it as "
+"soon as possible."
+
+#. [pages.DeviceApiKeyList.partnerId]
+#. defaultMessage is:
+#. Partner
+#. [pages.DeviceApiKeyList.partnerId]
+#. defaultMessage is:
+#. Partner
+#. [pages.DeviceApiKeyList.partner]
+#. defaultMessage is:
+#. Partner
+#. [filter.popover.partner]
+#. defaultMessage is:
+#. Partner
+#. [pages.AccountDetails.partner]
+#. defaultMessage is:
+#. Partner
+#: i18n/src/deviceApiKey/list/DeviceApiKeyAssignerDialogForm.json
+#: i18n/src/deviceApiKey/list/DeviceApiKeyGeneratorDialogForm.json
+#: i18n/src/deviceApiKey/list/DeviceApiKeyList.json
+#: i18n/src/filter/popover/FiltersPanel.json
+#: i18n/src/person/detail/messages.json
+msgid "Partner"
+msgstr "Partner"
+
+#. [pages.Login.password]
+#. defaultMessage is:
+#. Password
+#: i18n/src/auth/login/Login.json
+msgid "Password"
+msgstr "Password"
+
+#. [pages.ResetPassword.passwordUpdatedTitle]
+#. defaultMessage is:
+#. Password Changed Successfully
+#: i18n/src/auth/resetPassword/messages.json
+msgid "Password Changed Successfully"
+msgstr "Password Changed Successfully"
+
+#. [pages.ResetPassword.passwordUpdateFailedTitle]
+#. defaultMessage is:
+#. Password Reset Failed
+#: i18n/src/auth/resetPassword/messages.json
+msgid "Password Reset Failed"
+msgstr "Password Reset Failed"
+
+#. [pages.Status.issueCategoryDataHealth]
+#. defaultMessage is:
+#. Patient Data
+#: i18n/src/dashboard/status/messages.json
+msgid "Patient Data"
+msgstr "Patient Data"
+
+#. [pages.Status.targetErrorMessageLabel]
+#. defaultMessage is:
+#. Patient Data Collection {dataCollection}
+#: i18n/src/dashboard/status/messages.json
+msgid "Patient Data Collection {dataCollection}"
+msgstr "Patient Data Collection {dataCollection}"
+
+#. [pages.DeviceDetailProfile.patiendId]
+#. defaultMessage is:
+#. Patient ID
+#. [pages.ResultDetail.formFields.patientId]
+#. defaultMessage is:
+#. Patient ID
+#. [pages.ResultList.patiendId]
+#. defaultMessage is:
+#. Patient ID
+#: i18n/src/device/detail/profile/DeviceDetailProfile.json
+#: i18n/src/result/detail/CustomField.json i18n/src/result/list/ResultList.json
+msgid "Patient ID"
+msgstr "Patient ID"
+
+#. [filter.popover.patientOrResearchId]
+#. defaultMessage is:
+#. Patient/Study ID
+#: i18n/src/filter/popover/FiltersPanel.json
+msgid "Patient/Study ID"
+msgstr "Patient/Study ID"
+
+#. [pages.PersonDetail.title]
+#. defaultMessage is:
+#. Person Detail
+#: i18n/src/person/detail/messages.json
+msgid "Person Detail"
+msgstr "Person Detail"
+
+#. [pages.ContactDetails.phoneHeader]
+#. defaultMessage is:
+#. Phone
+#: i18n/src/person/detail/messages.json
+msgid "Phone"
+msgstr "Phone"
+
+#. [errorResponseMessages.common.notFound.resolution]
+#. defaultMessage is:
+#. Please check that it still exists
+#: i18n/src/error/CommonErrorNotifications.json
+msgid "Please check that it still exists"
+msgstr "Please check that it still exists"
+
+#. [pages.InventoryAdjustmentDialogForm.dateFromAfterDateTo]
+#. defaultMessage is:
+#. Please choose a date later or equal to from date
+#: i18n/src/inventory/adjustment/InventoryAdjustmentDialogForm.json
+msgid "Please choose a date later or equal to from date"
+msgstr "Please choose a date later or equal to from date"
+
+#. [pages.ReceiveInventoryDialogForm.siteShouldBeDifferent]
+#. defaultMessage is:
+#. Please choose a different site
+#. [pages.TransferInventoryDialogForm.siteShouldBeDifferent]
+#. defaultMessage is:
+#. Please choose a different site
+#: i18n/src/inventory/adjustment/ReceiveInventoryDialogForm.json
+#: i18n/src/inventory/adjustment/TransferInventoryDialogForm.json
+msgid "Please choose a different site"
+msgstr "Please choose a different site"
+
+#. [errorResponseMessages.common.insufficientScope.resolution]
+#. defaultMessage is:
+#. Please contact your administrator to grant access permissions.
+#: i18n/src/error/CommonErrorNotifications.json
+msgid "Please contact your administrator to grant access permissions."
+msgstr "Please contact your administrator to grant access permissions."
+
+#. [pages.ResetPassword.newPasswordRequired]
+#. defaultMessage is:
+#. Please enter a new password
+#: i18n/src/auth/resetPassword/messages.json
+msgid "Please enter a new password"
+msgstr "Please enter a new password"
+
+#. [pages.ResetPassword.invalidEmailAddress]
+#. defaultMessage is:
+#. Please enter a valid email address
+#. [pages.ContactDetails.invalidEmailAddress]
+#. defaultMessage is:
+#. Please enter a valid email address
+#: i18n/src/auth/resetPassword/messages.json
+#: i18n/src/person/detail/messages.json
+msgid "Please enter a valid email address"
+msgstr "Please enter a valid email address"
+
+#. [pages.ResetPassword.enterEmailAddressContent]
+#. defaultMessage is:
+#. Please enter the email address that you are registered with
+#: i18n/src/auth/resetPassword/messages.json
+msgid "Please enter the email address that you are registered with"
+msgstr "Please enter the email address that you are registered with"
+
+#. [pages.ContactDetails.nameRequired]
+#. defaultMessage is:
+#. Please enter your Full name
+#: i18n/src/person/detail/messages.json
+msgid "Please enter your Full name"
+msgstr "Please enter your Full name"
+
+#. [pages.UpdateLoginDetails.currentPasswordRequired]
+#. defaultMessage is:
+#. Please enter your current password to update your login details
+#: i18n/src/person/detail/messages.json
+msgid "Please enter your current password to update your login details"
+msgstr "Please enter your current password to update your login details"
+
+#. [pages.ResetPassword.enterNewPasswordContent]
+#. defaultMessage is:
+#. Please enter your new password?
+#: i18n/src/auth/resetPassword/messages.json
+msgid "Please enter your new password?"
+msgstr "Please enter your new password?"
+
+#. [errorResponseMessages.loginStart.POST.default.resolution]
+#. defaultMessage is:
+#. Please re-enter your login details and try again?
+#: i18n/src/auth/AuthRedux.json
+msgid "Please re-enter your login details and try again?"
+msgstr "Please re-enter your login details and try again?"
+
+#. [pages.InventoryAdjustmentDialogForm.reasonRequired]
+#. defaultMessage is:
+#. Please select a reason
+#: i18n/src/inventory/adjustment/InventoryAdjustmentDialogForm.json
+msgid "Please select a reason"
+msgstr "Please select a reason"
+
+#. [pages.InventoryAdjustmentDialogForm.siteRequired]
+#. defaultMessage is:
+#. Please select a site
+#: i18n/src/inventory/adjustment/InventoryAdjustmentDialogForm.json
+msgid "Please select a site"
+msgstr "Please select a site"
+
+#. [pages.InventoryAdjustmentDialogForm.consumableRequired]
+#. defaultMessage is:
+#. Please specify a consumable
+#: i18n/src/inventory/adjustment/InventoryAdjustmentDialogForm.json
+msgid "Please specify a consumable"
+msgstr "Please specify a consumable"
+
+#. [pages.InventoryAdjustmentDialogForm.dateRequired]
+#. defaultMessage is:
+#. Please specify a date
+#: i18n/src/inventory/adjustment/InventoryAdjustmentDialogForm.json
+msgid "Please specify a date"
+msgstr "Please specify a date"
+
+#. [pages.InventoryAdjustmentDialogForm.expiryDateRequired]
+#. defaultMessage is:
+#. Please specify an expiry date
+#: i18n/src/inventory/adjustment/InventoryAdjustmentDialogForm.json
+msgid "Please specify an expiry date"
+msgstr "Please specify an expiry date"
+
+#. [pages.AddInventoryDialogForm.quantityRequired]
+#. defaultMessage is:
+#. Please specify the quantity to add
+#. [pages.NewInventoryDialogForm.quantityRequired]
+#. defaultMessage is:
+#. Please specify the quantity to add
+#: i18n/src/inventory/adjustment/AddInventoryDialogForm.json
+#: i18n/src/inventory/adjustment/NewInventoryDialogForm.json
+msgid "Please specify the quantity to add"
+msgstr "Please specify the quantity to add"
+
+#. [pages.ReceiveInventoryDialogForm.quantityRequired]
+#. defaultMessage is:
+#. Please specify the quantity to receive
+#: i18n/src/inventory/adjustment/ReceiveInventoryDialogForm.json
+msgid "Please specify the quantity to receive"
+msgstr "Please specify the quantity to receive"
+
+#. [pages.RemoveInventoryDialogForm.quantityRequired]
+#. defaultMessage is:
+#. Please specify the quantity to remove
+#: i18n/src/inventory/adjustment/RemoveInventoryDialogForm.json
+msgid "Please specify the quantity to remove"
+msgstr "Please specify the quantity to remove"
+
+#. [pages.TransferInventoryDialogForm.quantityRequired]
+#. defaultMessage is:
+#. Please specify the quantity to transfer
+#: i18n/src/inventory/adjustment/TransferInventoryDialogForm.json
+msgid "Please specify the quantity to transfer"
+msgstr "Please specify the quantity to transfer"
+
+#. [errorResponseMessages.common.tryAgainLater.resolution]
+#. defaultMessage is:
+#. Please try again in a few minutes
+#: i18n/src/error/CommonErrorNotifications.json
+msgid "Please try again in a few minutes"
+msgstr "Please try again in a few minutes"
+
+#. [errorResponseMessages.saveLoginDetails.PUT.409.resolution]
+#. defaultMessage is:
+#. Please try another username
+#. [errorResponseMessages.updateSinglePersonLoginDetails.PUT.409.resolution]
+#. defaultMessage is:
+#. Please try another username
+#: i18n/src/account/AccountRedux.json i18n/src/person/PersonRedux.json
+msgid "Please try another username"
+msgstr "Please try another username"
+
+#. [errorResponseMessages.saveLoginDetails.PUT.403.resolution]
+#. defaultMessage is:
+#. Please try re-entering your password or contact us to reset your login details
+#: i18n/src/account/AccountRedux.json
+msgid ""
+"Please try re-entering your password or contact us to reset your login "
+"details"
+msgstr ""
+"Please try re-entering your password or contact us to reset your login "
+"details"
+
+#. [pages.ResultDetail.formOptions.positive]
+#. defaultMessage is:
+#. Positive
+#: i18n/src/result/detail/CustomField.json
+msgid "Positive"
+msgstr "Positive"
+
+#. [pages.TablePaginator.previous]
+#. defaultMessage is:
+#. Previous
+#: i18n/src/components/shared/TablePaginator.json
+msgid "Previous"
+msgstr "Previous"
+
+#. [pages.ContactDetails.email]
+#. defaultMessage is:
+#. Primary
+#: i18n/src/person/detail/messages.json
+msgid "Primary"
+msgstr "Primary"
+
+#. [errorResponseMessages.generic.proceedText]
+#. defaultMessage is:
+#. Proceed
+#: i18n/src/appNotification/AppNotificationDialog.json
+msgid "Proceed"
+msgstr "Proceed"
+
+#. [pages.DeviceDetail.profile]
+#. defaultMessage is:
+#. Profile
+#. [pages.SiteDetail.profile]
+#. defaultMessage is:
+#. Profile
+#: i18n/src/device/detail/DeviceDetailBackBar.json
+#: i18n/src/site/detail/SiteDetailBackBar.json
+msgid "Profile"
+msgstr "Profile"
+
+#. [pages.Status.targetProgressLabel]
+#. defaultMessage is:
+#. Progress:
+#: i18n/src/dashboard/status/messages.json
+msgid "Progress:"
+msgstr "Progress:"
+
+#. [pages.ResultDetail.qcCheck]
+#. defaultMessage is:
+#. QC Check
+#: i18n/src/result/detail/ResultDetail.json
+msgid "QC Check"
+msgstr "QC Check"
+
+#. [pages.DeviceList.qualityControl]
+#. defaultMessage is:
+#. Quality Control
+#: i18n/src/device/list/messages.json
+msgid "Quality Control"
+msgstr "Quality Control"
+
+#. [pages.ReceiveInventoryDialogForm.quantity]
+#. defaultMessage is:
+#. Quantity Received
+#: i18n/src/inventory/adjustment/ReceiveInventoryDialogForm.json
+msgid "Quantity Received"
+msgstr "Quantity Received"
+
+#. [pages.InventoryItemsList.quantityOnHand]
+#. defaultMessage is:
+#. Quantity on Hand
+#: i18n/src/inventory/list/InventoryItemsList.json
+msgid "Quantity on Hand"
+msgstr "Quantity on Hand"
+
+#. [pages.AddInventoryDialogForm.quantity]
+#. defaultMessage is:
+#. Quantity to Add
+#. [pages.NewInventoryDialogForm.quantity]
+#. defaultMessage is:
+#. Quantity to Add
+#: i18n/src/inventory/adjustment/AddInventoryDialogForm.json
+#: i18n/src/inventory/adjustment/NewInventoryDialogForm.json
+msgid "Quantity to Add"
+msgstr "Quantity to Add"
+
+#. [pages.RemoveInventoryDialogForm.quantity]
+#. defaultMessage is:
+#. Quantity to Remove
+#: i18n/src/inventory/adjustment/RemoveInventoryDialogForm.json
+msgid "Quantity to Remove"
+msgstr "Quantity to Remove"
+
+#. [pages.TransferInventoryDialogForm.quantity]
+#. defaultMessage is:
+#. Quantity to Transfer
+#: i18n/src/inventory/adjustment/TransferInventoryDialogForm.json
+msgid "Quantity to Transfer"
+msgstr "Quantity to Transfer"
+
+#. [pages.dateRangeSelector.quarter]
+#. defaultMessage is:
+#. Quarter
+#: i18n/src/filter/date/DateRangeSelector.json
+msgid "Quarter"
+msgstr "Quarter"
+
+#. [pages.ResultDetail.rawData]
+#. defaultMessage is:
+#. Raw Data
+#: i18n/src/result/detail/ResultDetail.json
+msgid "Raw Data"
+msgstr "Raw Data"
+
+#. [issueCategoryReagentHealth]
+#. defaultMessage is:
+#. Reagent
+#: i18n/src/device/list/messages.json
+msgid "Reagent"
+msgstr "Reagent"
+
+#. [pages.SiteList.reagentHealth]
+#. defaultMessage is:
+#. Reagent Health
+#: i18n/src/site/list/SiteList.json
+msgid "Reagent Health"
+msgstr "Reagent Health"
+
+#. [pages.Status.issueCategoryReagentHealth]
+#. defaultMessage is:
+#. Reagents
+#: i18n/src/dashboard/status/messages.json
+msgid "Reagents"
+msgstr "Reagents"
+
+#. [pages.InventoryAdjustmentDialogForm.reason]
+#. defaultMessage is:
+#. Reason
+#: i18n/src/inventory/adjustment/InventoryAdjustmentDialogForm.json
+msgid "Reason"
+msgstr "Reason"
+
+#. [pages.InventoryItemsList.receiveInventory]
+#. defaultMessage is:
+#. Receive Inventory in Transit
+#: i18n/src/inventory/list/InventoryItemsList.json
+msgid "Receive Inventory in Transit"
+msgstr "Receive Inventory in Transit"
+
+#. [pages.ReceiveInventoryDialogForm.dialogTitle]
+#. defaultMessage is:
+#. Receive {consumableName}
+#: i18n/src/inventory/adjustment/ReceiveInventoryDialogForm.json
+msgid "Receive {consumableName}"
+msgstr "Receive {consumableName}"
+
+#. [errorResponseMessages.receiveInventory.PUT.default.title]
+#. defaultMessage is:
+#. Receiving Inventory Failed
+#: i18n/src/inventory/InventoryRedux.json
+msgid "Receiving Inventory Failed"
+msgstr "Receiving Inventory Failed"
+
+#. [pages.NotificationList.recipients]
+#. defaultMessage is:
+#. Recipients
+#: i18n/src/notification/list/NotificationList.json
+msgid "Recipients"
+msgstr "Recipients"
+
+#. [pages.SiteDropdown.allSites]
+#. defaultMessage is:
+#. Region: {region}
+#: i18n/src/globals/components/BrowseSiteDropdown.json
+msgid "Region: {region}"
+msgstr "Region: {region}"
+
+#. [pages.Status.targetsTitle]
+#. defaultMessage is:
+#. Regional Progress Indicators
+#: i18n/src/dashboard/status/messages.json
+msgid "Regional Progress Indicators"
+msgstr "Regional Progress Indicators"
+
+#. [pages.InventoryItemsList.removeInventory]
+#. defaultMessage is:
+#. Remove Inventory
+#: i18n/src/inventory/list/InventoryItemsList.json
+msgid "Remove Inventory"
+msgstr "Remove Inventory"
+
+#. [pages.RemoveInventoryDialogForm.dialogTitle]
+#. defaultMessage is:
+#. Remove {consumableName}
+#: i18n/src/inventory/adjustment/RemoveInventoryDialogForm.json
+msgid "Remove {consumableName}"
+msgstr "Remove {consumableName}"
+
+#. [errorResponseMessages.removeInventory.PUT.default.title]
+#. defaultMessage is:
+#. Removing Inventory Failed
+#: i18n/src/inventory/InventoryRedux.json
+msgid "Removing Inventory Failed"
+msgstr "Removing Inventory Failed"
+
+#. [pages.ReporterList.reporterShortName]
+#. defaultMessage is:
+#. Reporter
+#: i18n/src/reporter/list/ReporterList.json
+msgid "Reporter"
+msgstr "Reporter"
+
+#. [pages.ReporterDetail.title]
+#. defaultMessage is:
+#. Reporter Detail
+#: i18n/src/reporter/detail/ReporterDetail.json
+msgid "Reporter Detail"
+msgstr "Reporter Detail"
+
+#. [pages.ReporterList.reporterName]
+#. defaultMessage is:
+#. Reporter Name
+#: i18n/src/reporter/list/ReporterList.json
+msgid "Reporter Name"
+msgstr "Reporter Name"
+
+#. [pages.ReporterList.reportersTitle]
+#. defaultMessage is:
+#. Reporters
+#: i18n/src/reporter/list/ReporterList.json
+msgid "Reporters"
+msgstr "Reporters"
+
+#. [pages.DeviceList.reportingFor]
+#. defaultMessage is:
+#. Reporting For
+#. [pages.RouterList.reportingFor]
+#. defaultMessage is:
+#. Reporting For
+#: i18n/src/device/list/messages.json i18n/src/router/list/RouterList.json
 msgid "Reporting For"
 msgstr "Reporting For"
 
-#. [pages.PersonList.level] - undefined
-#: i18n/src/components/pages/person/PersonList.json
-msgid "Role"
-msgstr "Role"
+#. [pages.Status.reportsTitle]
+#. defaultMessage is:
+#. Reports
+#. [pages.ReportList.title]
+#. defaultMessage is:
+#. Reports
+#: i18n/src/dashboard/status/messages.json i18n/src/report/list/ReportList.json
+msgid "Reports"
+msgstr "Reports"
 
-#. [pages.DeviceList.shortName] - undefined
-#: i18n/src/components/pages/device/DeviceList.json
-msgid "Short Name"
-msgstr "Short Name"
+#. [pages.ResetPassword.adminHelpHeader]
+#. defaultMessage is:
+#. Request a New Password From Aspect
+#: i18n/src/auth/resetPassword/messages.json
+msgid "Request a New Password From Aspect"
+msgstr "Request a New Password From Aspect"
 
-#. [pages.PersonList.state] - undefined
-#: i18n/src/components/pages/person/PersonList.json
+#. [pages.DeviceDetailOperation.requirePrinter]
+#. defaultMessage is:
+#. Require printer
+#: i18n/src/device/detail/operation/DeviceDetailOperation.json
+msgid "Require printer"
+msgstr "Require printer"
+
+#. [pages.ResetPassword.title]
+#. defaultMessage is:
+#. Reset Password
+#: i18n/src/auth/resetPassword/messages.json
+msgid "Reset Password"
+msgstr "Reset Password"
+
+#. [filter.popover.result]
+#. defaultMessage is:
+#. Result
+#: i18n/src/filter/popover/FiltersPanel.json
+msgid "Result"
+msgstr "Result"
+
+#. [pages.ResultDetail.title]
+#. defaultMessage is:
+#. Result Detail
+#: i18n/src/result/detail/ResultDetail.json
+msgid "Result Detail"
+msgstr "Result Detail"
+
+#. [pages.DeviceDetailProfile.resultText]
+#. defaultMessage is:
+#. Result Text
+#. [pages.ResultList.resultText]
+#. defaultMessage is:
+#. Result Text
+#: i18n/src/device/detail/profile/DeviceDetailProfile.json
+#: i18n/src/result/list/ResultList.json
+msgid "Result Text"
+msgstr "Result Text"
+
+#. [pages.DeviceDetailProfile.resultWorkflowStatus]
+#. defaultMessage is:
+#. Result Workflow Status
+#. [pages.ResultList.resultWorkflowStatus]
+#. defaultMessage is:
+#. Result Workflow Status
+#: i18n/src/device/detail/profile/DeviceDetailProfile.json
+#: i18n/src/result/list/ResultList.json
+msgid "Result Workflow Status"
+msgstr "Result Workflow Status"
+
+#. [pages.ResultWorkflowStatusLog.totalWorkflowStatusLog]
+#. defaultMessage is:
+#. Result Workflow Status Log {itemCount, plural, =0 {} other {({itemCount})}}
+#: i18n/src/result/detail/WorkflowLog.json
+msgid ""
+"Result Workflow Status Log {itemCount, plural, =0 {} other {({itemCount})}}"
+msgstr ""
+"Result Workflow Status Log {itemCount, plural, =0 {} other {({itemCount})}}"
+
+#. [pages.ResultList.title]
+#. defaultMessage is:
+#. Results
+#: i18n/src/result/list/ResultList.json
+msgid "Results"
+msgstr "Results"
+
+#. [pages.DeviceApiKeyList.revoked]
+#. defaultMessage is:
+#. Revoked
+#: i18n/src/deviceApiKey/list/DeviceApiKeyList.json
+msgid "Revoked"
+msgstr "Revoked"
+
+#. [pages.RouterDetail.title]
+#. defaultMessage is:
+#. Router Detail
+#: i18n/src/router/detail/RouterDetail.json
+msgid "Router Detail"
+msgstr "Router Detail"
+
+#. [pages.RouterList.routerName]
+#. defaultMessage is:
+#. Router Name
+#: i18n/src/router/list/RouterList.json
+msgid "Router Name"
+msgstr "Router Name"
+
+#. [pages.RouterList.routersTitle]
+#. defaultMessage is:
+#. Routers
+#: i18n/src/router/list/RouterList.json
+msgid "Routers"
+msgstr "Routers"
+
+#. [pages.Status.stockLevel]
+#. defaultMessage is:
+#. STOCK LEVEL:
+#: i18n/src/dashboard/status/messages.json
+msgid "STOCK LEVEL:"
+msgstr "STOCK LEVEL:"
+
+#. [pages.DeviceDetailProfile.sampleGroup]
+#. defaultMessage is:
+#. Sample Group
+#. [filter.popover.sampleGroup]
+#. defaultMessage is:
+#. Sample Group
+#. [pages.ResultList.sampleGroup]
+#. defaultMessage is:
+#. Sample Group
+#: i18n/src/device/detail/profile/DeviceDetailProfile.json
+#: i18n/src/filter/popover/FiltersPanel.json
+#: i18n/src/result/list/ResultList.json
+msgid "Sample Group"
+msgstr "Sample Group"
+
+#. [pages.DeviceDetailProfile.sampleId]
+#. defaultMessage is:
+#. Sample ID
+#. [filter.popover.sampleId]
+#. defaultMessage is:
+#. Sample ID
+#. [pages.ResultList.sampleId]
+#. defaultMessage is:
+#. Sample ID
+#: i18n/src/device/detail/profile/DeviceDetailProfile.json
+#: i18n/src/filter/popover/FiltersPanel.json
+#: i18n/src/result/list/ResultList.json
+msgid "Sample ID"
+msgstr "Sample ID"
+
+#. [pages.DeviceDetailProfile.sampleOriginSiteName]
+#. defaultMessage is:
+#. Sample Origin Site
+#. [pages.ResultList.sampleOriginSiteName]
+#. defaultMessage is:
+#. Sample Origin Site
+#: i18n/src/device/detail/profile/DeviceDetailProfile.json
+#: i18n/src/result/list/ResultList.json
+msgid "Sample Origin Site"
+msgstr "Sample Origin Site"
+
+#. [pages.ResultDetail.formFields.sampleType]
+#. defaultMessage is:
+#. Sample Type
+#: i18n/src/result/detail/CustomField.json
+msgid "Sample Type"
+msgstr "Sample Type"
+
+#. [filter.popover.sampleOriginSite]
+#. defaultMessage is:
+#. Sample origin site
+#: i18n/src/filter/popover/FiltersPanel.json
+msgid "Sample origin site"
+msgstr "Sample origin site"
+
+#. [pages.DeviceDetailEdit.save]
+#. defaultMessage is:
+#. Save
+#. [pages.PersonDetails.save]
+#. defaultMessage is:
+#. Save
+#: i18n/src/device/detail/edit/DeviceDetailEdit.json
+#: i18n/src/person/detail/messages.json
+msgid "Save"
+msgstr "Save"
+
+#. [errorResponseMessages.saveContactDetails.PUT.default.title]
+#. defaultMessage is:
+#. Saving Contact Details Failed
+#: i18n/src/account/AccountRedux.json
+msgid "Saving Contact Details Failed"
+msgstr "Saving Contact Details Failed"
+
+#. [errorResponseMessages.saveLoginDetails.PUT.default.title]
+#. defaultMessage is:
+#. Saving Login Details Failed
+#. [errorResponseMessages.updateSinglePersonLoginDetails.PUT.default.title]
+#. defaultMessage is:
+#. Saving Login Details Failed
+#: i18n/src/account/AccountRedux.json i18n/src/person/PersonRedux.json
+msgid "Saving Login Details Failed"
+msgstr "Saving Login Details Failed"
+
+#. [errorResponseMessages.saveUserPreferences.PUT.default.title]
+#. defaultMessage is:
+#. Saving User Preferences Failed
+#: i18n/src/account/AccountRedux.json
+msgid "Saving User Preferences Failed"
+msgstr "Saving User Preferences Failed"
+
+#. [errorResponseMessages.fetchAssays.GET.400.title]
+#. defaultMessage is:
+#. Searching Assays Failed
+#: i18n/src/assay/AssayRedux.json
+msgid "Searching Assays Failed"
+msgstr "Searching Assays Failed"
+
+#. [errorResponseMessages.fetchConsumables.GET.400.title]
+#. defaultMessage is:
+#. Searching Consumables Failed
+#: i18n/src/consumable/ConsumableRedux.json
+msgid "Searching Consumables Failed"
+msgstr "Searching Consumables Failed"
+
+#. [errorResponseMessages.fetchPersons.GET.400.title]
+#. defaultMessage is:
+#. Searching Contacts Failed
+#: i18n/src/person/PersonRedux.json
+msgid "Searching Contacts Failed"
+msgstr "Searching Contacts Failed"
+
+#. [errorResponseMessages.fetchDeviceStatuses.GET.400.title]
+#. defaultMessage is:
+#. Searching Device Statuses Failed
+#: i18n/src/deviceStatus/DeviceStatusRedux.json
+msgid "Searching Device Statuses Failed"
+msgstr "Searching Device Statuses Failed"
+
+#. [errorResponseMessages.fetchDeviceApiKeys.GET.400.title]
+#. defaultMessage is:
+#. Searching DeviceApiKeys Failed
+#: i18n/src/deviceApiKey/DeviceApiKeyRedux.json
+msgid "Searching DeviceApiKeys Failed"
+msgstr "Searching DeviceApiKeys Failed"
+
+#. [errorResponseMessages.fetchDeviceOperations.GET.400.title]
+#. defaultMessage is:
+#. Searching DeviceOperations Failed
+#: i18n/src/deviceOperation/DeviceOperationRedux.json
+msgid "Searching DeviceOperations Failed"
+msgstr "Searching DeviceOperations Failed"
+
+#. [errorResponseMessages.fetchDevices.GET.400.title]
+#. defaultMessage is:
+#. Searching Devices Failed
+#: i18n/src/device/DeviceRedux.json
+msgid "Searching Devices Failed"
+msgstr "Searching Devices Failed"
+
+#. [errorResponseMessages.fetchInventoryItems.GET.400.title]
+#. defaultMessage is:
+#. Searching Inventory Items Failed
+#: i18n/src/inventory/InventoryRedux.json
+msgid "Searching Inventory Items Failed"
+msgstr "Searching Inventory Items Failed"
+
+#. [errorResponseMessages.fetchNotifications.GET.400.title]
+#. defaultMessage is:
+#. Searching Notifications Failed
+#: i18n/src/notification/NotificationRedux.json
+msgid "Searching Notifications Failed"
+msgstr "Searching Notifications Failed"
+
+#. [errorResponseMessages.fetchReporters.GET.400.title]
+#. defaultMessage is:
+#. Searching Reporters Failed
+#: i18n/src/reporter/ReporterRedux.json
+msgid "Searching Reporters Failed"
+msgstr "Searching Reporters Failed"
+
+#. [errorResponseMessages.fetchReports.GET.400.title]
+#. defaultMessage is:
+#. Searching Reports Failed
+#: i18n/src/report/ReportRedux.json
+msgid "Searching Reports Failed"
+msgstr "Searching Reports Failed"
+
+#. [errorResponseMessages.fetchWorkflowLogs.GET.400.title]
+#. defaultMessage is:
+#. Searching Result Workflow Status Logs Failed
+#: i18n/src/result/ResultRedux.json
+msgid "Searching Result Workflow Status Logs Failed"
+msgstr "Searching Result Workflow Status Logs Failed"
+
+#. [errorResponseMessages.fetchWorkflowStatuses.GET.400.title]
+#. defaultMessage is:
+#. Searching Result Workflow Statuses Failed
+#: i18n/src/resultWorkflowStatus/ResultWorkflowStatusRedux.json
+msgid "Searching Result Workflow Statuses Failed"
+msgstr "Searching Result Workflow Statuses Failed"
+
+#. [errorResponseMessages.fetchResults.GET.400.title]
+#. defaultMessage is:
+#. Searching Results Failed
+#: i18n/src/result/ResultRedux.json
+msgid "Searching Results Failed"
+msgstr "Searching Results Failed"
+
+#. [errorResponseMessages.fetchRouters.GET.400.title]
+#. defaultMessage is:
+#. Searching Routers Failed
+#: i18n/src/router/RouterRedux.json
+msgid "Searching Routers Failed"
+msgstr "Searching Routers Failed"
+
+#. [errorResponseMessages.fetchSites.GET.400.title]
+#. defaultMessage is:
+#. Searching Sites Failed
+#: i18n/src/site/SiteRedux.json
+msgid "Searching Sites Failed"
+msgstr "Searching Sites Failed"
+
+#. [errorResponseMessages.getTasksByStatus.GET.400.title]
+#. defaultMessage is:
+#. Searching Task Failed
+#. [errorResponseMessages.fetchTask.GET.400.title]
+#. defaultMessage is:
+#. Searching Task Failed
+#: i18n/src/task/TaskRedux.json
+msgid "Searching Task Failed"
+msgstr "Searching Task Failed"
+
+#. [errorResponseMessages.fetchTasks.GET.400.title]
+#. defaultMessage is:
+#. Searching Tasks Failed
+#: i18n/src/task/TaskRedux.json
+msgid "Searching Tasks Failed"
+msgstr "Searching Tasks Failed"
+
+#. [pages.dateRangeSelector.selectDay]
+#. defaultMessage is:
+#. Select Day...
+#: i18n/src/filter/date/DateRangeSelector.json
+msgid "Select Day..."
+msgstr "Select Day..."
+
+#. [pages.dateRangeSelector.selectMonth]
+#. defaultMessage is:
+#. Select Month...
+#: i18n/src/filter/date/DateRangeSelector.json
+msgid "Select Month..."
+msgstr "Select Month..."
+
+#. [pages.dateRangeSelector.selectQuarter]
+#. defaultMessage is:
+#. Select Quarter...
+#: i18n/src/filter/date/DateRangeSelector.json
+msgid "Select Quarter..."
+msgstr "Select Quarter..."
+
+#. [pages.dateRangeSelector.selectWeek]
+#. defaultMessage is:
+#. Select Week...
+#: i18n/src/filter/date/DateRangeSelector.json
+msgid "Select Week..."
+msgstr "Select Week..."
+
+#. [pages.dateRangeSelector.selectYear]
+#. defaultMessage is:
+#. Select Year...
+#: i18n/src/filter/date/DateRangeSelector.json
+msgid "Select Year..."
+msgstr "Select Year..."
+
+#. [filter.popover.selectLga]
+#. defaultMessage is:
+#. Select area...
+#: i18n/src/filter/popover/FiltersPanel.json
+msgid "Select area..."
+msgstr "Select area..."
+
+#. [filter.popover.selectAssay]
+#. defaultMessage is:
+#. Select assay...
+#: i18n/src/filter/popover/FiltersPanel.json
+msgid "Select assay..."
+msgstr "Select assay..."
+
+#. [filter.popover.selectConsumable]
+#. defaultMessage is:
+#. Select consumable...
+#: i18n/src/filter/popover/FiltersPanel.json
+msgid "Select consumable..."
+msgstr "Select consumable..."
+
+#. [filter.popover.selectCountry]
+#. defaultMessage is:
+#. Select country...
+#: i18n/src/filter/popover/FiltersPanel.json
+msgid "Select country..."
+msgstr "Select country..."
+
+#. [filter.popover.selectPartner]
+#. defaultMessage is:
+#. Select partner...
+#: i18n/src/filter/popover/FiltersPanel.json
+msgid "Select partner..."
+msgstr "Select partner..."
+
+#. [filter.popover.selectResult]
+#. defaultMessage is:
+#. Select result...
+#: i18n/src/filter/popover/FiltersPanel.json
+msgid "Select result..."
+msgstr "Select result..."
+
+#. [filter.popover.selectState]
+#. defaultMessage is:
+#. Select state...
+#: i18n/src/filter/popover/FiltersPanel.json
+msgid "Select state..."
+msgstr "Select state..."
+
+#. [filter.popover.selectWorkflowStatus]
+#. defaultMessage is:
+#. Select status...
+#. [filter.popover.selectDeviceStatus]
+#. defaultMessage is:
+#. Select status...
+#: i18n/src/filter/popover/FiltersPanel.json
+msgid "Select status..."
+msgstr "Select status..."
+
+#. [filter.popover.selectDeviceType]
+#. defaultMessage is:
+#. Select type...
+#: i18n/src/filter/popover/FiltersPanel.json
+msgid "Select type..."
+msgstr "Select type..."
+
+#. [pages.ReporterDetail.fieldSerial]
+#. defaultMessage is:
+#. Serial
+#. [pages.RouterDetail.fieldSerial]
+#. defaultMessage is:
+#. Serial
+#: i18n/src/reporter/detail/ReporterDetail.json
+#: i18n/src/router/detail/RouterDetail.json
+msgid "Serial"
+msgstr "Serial"
+
+#. [pages.DeviceDetailEdit.serialNumber]
+#. defaultMessage is:
+#. Serial number
+#: i18n/src/device/detail/operation/DeviceDetailOperation.json
+msgid "Serial number"
+msgstr "Serial number"
+
+#. [filter.popover.setFilters]
+#. defaultMessage is:
+#. Set Filters
+#: i18n/src/filter/popover/FiltersPanel.json
+msgid "Set Filters"
+msgstr "Set Filters"
+
+#. [pages.SiteDetail.buttonSetBasedonAddress]
+#. defaultMessage is:
+#. Set based on address
+#: i18n/src/site/detail/messages.json
+msgid "Set based on address"
+msgstr "Set based on address"
+
+#. [errorResponseMessages.updateDeviceMaintenance.calibration.POST.default.title]
+#. defaultMessage is:
+#. Setting Device Calibration Date Failed
+#: i18n/src/device/DeviceRedux.json
+msgid "Setting Device Calibration Date Failed"
+msgstr "Setting Device Calibration Date Failed"
+
+#. [errorResponseMessages.updateDeviceMaintenance.warranty.POST.default.title]
+#. defaultMessage is:
+#. Setting Device Warranty Due Date Failed
+#: i18n/src/device/DeviceRedux.json
+msgid "Setting Device Warranty Due Date Failed"
+msgstr "Setting Device Warranty Due Date Failed"
+
+#. [pages.ReporterDetail.fieldShortName]
+#. defaultMessage is:
+#. ShortName
+#. [pages.RouterDetail.fieldShortName]
+#. defaultMessage is:
+#. ShortName
+#. [pages.SiteDetail.fieldShortName]
+#. defaultMessage is:
+#. ShortName
+#: i18n/src/reporter/detail/ReporterDetail.json
+#: i18n/src/router/detail/RouterDetail.json i18n/src/site/detail/messages.json
+msgid "ShortName"
+msgstr "ShortName"
+
+#. [pages.PersonList.paginatorStatus]
+#. defaultMessage is:
+#. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# contact} other {# contacts}}
+#: i18n/src/person/list/PersonList.json
+msgid ""
+"Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
+"contact} other {# contacts}}"
+msgstr ""
+"Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
+"contact} other {# contacts}}"
+
+#. [pages.DeviceApiKeyList.paginatorStatus]
+#. defaultMessage is:
+#. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# device API key} other {# device API keys}}
+#: i18n/src/deviceApiKey/list/DeviceApiKeyList.json
+msgid ""
+"Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
+"device API key} other {# device API keys}}"
+msgstr ""
+"Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
+"device API key} other {# device API keys}}"
+
+#. [pages.DeviceList.paginatorStatus]
+#. defaultMessage is:
+#. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# device} other {# devices}}
+#: i18n/src/device/list/messages.json
+msgid ""
+"Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
+"device} other {# devices}}"
+msgstr ""
+"Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
+"device} other {# devices}}"
+
+#. [pages.NotificationDetailHistory.paginatorStatus]
+#. defaultMessage is:
+#. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# event} other {# events}}
+#: i18n/src/notification/detail/history/NotificationDetailHistory.json
+msgid ""
+"Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
+"event} other {# events}}"
+msgstr ""
+"Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
+"event} other {# events}}"
+
+#. [pages.ResultWorkflowStatusLog.paginatorStatus]
+#. defaultMessage is:
+#. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# log} other {# logs}}
+#: i18n/src/result/detail/WorkflowLog.json
+msgid ""
+"Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# log} "
+"other {# logs}}"
+msgstr ""
+"Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# log} "
+"other {# logs}}"
+
+#. [pages.NotificationList.paginatorStatus]
+#. defaultMessage is:
+#. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# notification} other {# notifications}}
+#: i18n/src/notification/list/NotificationList.json
+msgid ""
+"Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
+"notification} other {# notifications}}"
+msgstr ""
+"Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
+"notification} other {# notifications}}"
+
+#. [pages.DeviceDetailOperation.paginatorStatus]
+#. defaultMessage is:
+#. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# record} other {# records}}
+#: i18n/src/device/detail/operation/DeviceDetailOperation.json
+msgid ""
+"Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
+"record} other {# records}}"
+msgstr ""
+"Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
+"record} other {# records}}"
+
+#. [pages.ReporterList.paginatorStatus]
+#. defaultMessage is:
+#. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# reporter} other {# reporters}}
+#: i18n/src/reporter/list/ReporterList.json
+msgid ""
+"Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
+"reporter} other {# reporters}}"
+msgstr ""
+"Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
+"reporter} other {# reporters}}"
+
+#. [pages.ReportList.paginatorStatus]
+#. defaultMessage is:
+#. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# report} other {# reports}}
+#: i18n/src/report/list/ReportList.json
+msgid ""
+"Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
+"report} other {# reports}}"
+msgstr ""
+"Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
+"report} other {# reports}}"
+
+#. [pages.DeviceDetailProfile.paginatorStatus]
+#. defaultMessage is:
+#. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# result} other {# results}}
+#. [pages.ResultList.paginatorStatus]
+#. defaultMessage is:
+#. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# result} other {# results}}
+#: i18n/src/device/detail/profile/DeviceDetailProfile.json
+#: i18n/src/result/list/ResultList.json
+msgid ""
+"Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
+"result} other {# results}}"
+msgstr ""
+"Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
+"result} other {# results}}"
+
+#. [pages.RouterList.paginatorStatus]
+#. defaultMessage is:
+#. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# router} other {# routers}}
+#: i18n/src/router/list/RouterList.json
+msgid ""
+"Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
+"router} other {# routers}}"
+msgstr ""
+"Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
+"router} other {# routers}}"
+
+#. [pages.SiteList.paginatorStatus]
+#. defaultMessage is:
+#. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# site} other {# sites}}
+#: i18n/src/site/list/SiteList.json
+msgid ""
+"Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# site} "
+"other {# sites}}"
+msgstr ""
+"Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# site} "
+"other {# sites}}"
+
+#. [pages.InventoryItemsList.paginatorStatus]
+#. defaultMessage is:
+#. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# supply} other {# supplies}}
+#: i18n/src/inventory/list/InventoryItemsList.json
+msgid ""
+"Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
+"supply} other {# supplies}}"
+msgstr ""
+"Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
+"supply} other {# supplies}}"
+
+#. [pages.TaskList.paginatorStatus]
+#. defaultMessage is:
+#. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# task} other {# tasks}}
+#. [pages.TaskList.paginatorStatus]
+#. defaultMessage is:
+#. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# task} other {# tasks}}
+#: i18n/src/task/aggre/TaskAggre.json i18n/src/task/list/TaskList.json
+msgid ""
+"Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# task} "
+"other {# tasks}}"
+msgstr ""
+"Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# task} "
+"other {# tasks}}"
+
+#. [pages.DeviceDetailEdit.location]
+#. defaultMessage is:
+#. Site
+#. [pages.DeviceDetailProfile.site]
+#. defaultMessage is:
+#. Site
+#. [pages.DeviceApiKeyList.siteId]
+#. defaultMessage is:
+#. Site
+#. [pages.DeviceApiKeyList.siteId]
+#. defaultMessage is:
+#. Site
+#. [pages.DeviceApiKeyList.site]
+#. defaultMessage is:
+#. Site
+#. [filter.popover.site]
+#. defaultMessage is:
+#. Site
+#. [pages.ReporterDetail.fieldSiteId]
+#. defaultMessage is:
+#. Site
+#. [pages.ReporterList.siteName]
+#. defaultMessage is:
+#. Site
+#. [pages.RouterDetail.fieldSiteId]
+#. defaultMessage is:
+#. Site
+#. [pages.TaskList.site]
+#. defaultMessage is:
+#. Site
+#. [pages.TaskList.site]
+#. defaultMessage is:
+#. Site
+#: i18n/src/device/detail/edit/DeviceDetailEdit.json
+#: i18n/src/device/detail/profile/DeviceDetailProfile.json
+#: i18n/src/deviceApiKey/list/DeviceApiKeyAssignerDialogForm.json
+#: i18n/src/deviceApiKey/list/DeviceApiKeyGeneratorDialogForm.json
+#: i18n/src/deviceApiKey/list/DeviceApiKeyList.json
+#: i18n/src/filter/popover/FiltersPanel.json
+#: i18n/src/reporter/detail/ReporterDetail.json
+#: i18n/src/reporter/list/ReporterList.json
+#: i18n/src/router/detail/RouterDetail.json i18n/src/task/aggre/TaskAggre.json
+#: i18n/src/task/list/TaskList.json
+msgid "Site"
+msgstr "Site"
+
+#. [pages.SiteDetail.fieldContact]
+#. defaultMessage is:
+#. Site Contact
+#: i18n/src/site/detail/messages.json
+msgid "Site Contact"
+msgstr "Site Contact"
+
+#. [pages.SiteDetail.title]
+#. defaultMessage is:
+#. Site Detail
+#: i18n/src/site/detail/messages.json
+msgid "Site Detail"
+msgstr "Site Detail"
+
+#. [pages.SiteDetail.fieldExternalId]
+#. defaultMessage is:
+#. Site ID
+#. [pages.SiteList.externalId]
+#. defaultMessage is:
+#. Site ID
+#: i18n/src/site/detail/messages.json i18n/src/site/list/SiteList.json
+msgid "Site ID"
+msgstr "Site ID"
+
+#. [pages.InventoryItemsList.siteName]
+#. defaultMessage is:
+#. Site Name
+#: i18n/src/inventory/list/InventoryItemsList.json
+msgid "Site Name"
+msgstr "Site Name"
+
+#. [pages.SiteList.title]
+#. defaultMessage is:
+#. Sites
+#: i18n/src/site/list/SiteList.json
+msgid "Sites"
+msgstr "Sites"
+
+#. [pages.LocationSelector.state]
+#. defaultMessage is:
+#. State
+#. [pages.DeviceList.state]
+#. defaultMessage is:
+#. State
+#. [filter.popover.state]
+#. defaultMessage is:
+#. State
+#. [pages.PersonDetails.state]
+#. defaultMessage is:
+#. State
+#. [pages.PersonList.state]
+#. defaultMessage is:
+#. State
+#. [pages.SiteDetail.fieldState]
+#. defaultMessage is:
+#. State
+#. [pages.SiteList.state]
+#. defaultMessage is:
+#. State
+#: i18n/src/components/shared/LocationSelector.json
+#: i18n/src/device/list/messages.json i18n/src/filter/popover/FiltersPanel.json
+#: i18n/src/person/detail/messages.json i18n/src/person/list/PersonList.json
+#: i18n/src/site/detail/messages.json i18n/src/site/list/SiteList.json
 msgid "State"
 msgstr "State"
 
-#. [pages.DeviceList.status] - undefined
-#: i18n/src/components/pages/device/DeviceList.json
+#. [pages.Status.actionStatus]
+#. defaultMessage is:
+#. Status
+#. [pages.DeviceDetailProfile.status]
+#. defaultMessage is:
+#. Status
+#. [pages.DeviceList.status]
+#. defaultMessage is:
+#. Status
+#. [pages.ReporterDetail.fieldStatus]
+#. defaultMessage is:
+#. Status
+#. [pages.ReporterList.status]
+#. defaultMessage is:
+#. Status
+#. [pages.ResultWorkflowStatusLog.logStatus]
+#. defaultMessage is:
+#. Status
+#. [pages.RouterDetail.fieldStatus]
+#. defaultMessage is:
+#. Status
+#. [pages.RouterList.status]
+#. defaultMessage is:
+#. Status
+#: i18n/src/dashboard/status/messages.json
+#: i18n/src/device/detail/profile/DeviceDetailProfile.json
+#: i18n/src/device/list/messages.json
+#: i18n/src/reporter/detail/ReporterDetail.json
+#: i18n/src/reporter/list/ReporterList.json
+#: i18n/src/result/detail/WorkflowLog.json
+#: i18n/src/router/detail/RouterDetail.json
+#: i18n/src/router/list/RouterList.json
 msgid "Status"
 msgstr "Status"
 
-#. [pages.NotFound.help] - undefined
-#: i18n/src/components/pages/error/NotFound.json
+#. [pages.Status.stockLevelUpdatedSuccessfully]
+#. defaultMessage is:
+#. Stock levels have been updated successfully
+#: i18n/src/dashboard/status/messages.json
+msgid "Stock levels have been updated successfully"
+msgstr "Stock levels have been updated successfully"
+
+#. [filter.ConsumableReasonSelectField.ConsumableReason_Stolen]
+#. defaultMessage is:
+#. Stolen
+#: i18n/src/filter/resource/ConsumableReasonSelectField.json
+msgid "Stolen"
+msgstr "Stolen"
+
+#. [pages.StrongPasswordInput.passwordStrengthMeterStrong]
+#. defaultMessage is:
+#. Strong
+#: i18n/src/components/shared/StrongPasswordInput.json
+msgid "Strong"
+msgstr "Strong"
+
+#. [pages.ResultDetail.formOptions.studyOfSampleType]
+#. defaultMessage is:
+#. Study
+#: i18n/src/result/detail/CustomField.json
+msgid "Study"
+msgstr "Study"
+
+#. [pages.StyleguideMain.title]
+#. defaultMessage is:
+#. Styleguide
+#: i18n/src/styleguide/main/StyleguideMain.json
+msgid "Styleguide"
+msgstr "Styleguide"
+
+#. [pages.BaseDialog.submit]
+#. defaultMessage is:
+#. Submit
+#. [pages.InventoryAdjustmentDialogForm.submit]
+#. defaultMessage is:
+#. Submit
+#. [pages.UpdateLoginDetails.submitCurrentPassword]
+#. defaultMessage is:
+#. Submit
+#. [pages.ResultDetail.formFields.submit]
+#. defaultMessage is:
+#. Submit
+#: i18n/src/device/maintenance/BaseDialog.json
+#: i18n/src/inventory/adjustment/InventoryAdjustmentDialogForm.json
+#: i18n/src/person/detail/messages.json
+#: i18n/src/result/detail/ResultDetail.json
+msgid "Submit"
+msgstr "Submit"
+
+#. [pages.ResultDetail.formFields.surnameOfPatient]
+#. defaultMessage is:
+#. Surname
+#: i18n/src/result/detail/CustomField.json
+msgid "Surname"
+msgstr "Surname"
+
+#. [pages.PersonDetails.systemAccessControl]
+#. defaultMessage is:
+#. System Access & Jobs
+#: i18n/src/person/detail/messages.json
+msgid "System Access & Jobs"
+msgstr "System Access & Jobs"
+
+#. [pages.DeviceDetailEdit.tags]
+#. defaultMessage is:
+#. Tags
+#. [pages.ResultDetail.tags]
+#. defaultMessage is:
+#. Tags
+#. [pages.SiteDetail.fieldTags]
+#. defaultMessage is:
+#. Tags
+#: i18n/src/device/detail/edit/DeviceDetailEdit.json
+#: i18n/src/result/detail/ResultDetail.json i18n/src/site/detail/messages.json
+msgid "Tags"
+msgstr "Tags"
+
+#. [pages.Status.targetLabel]
+#. defaultMessage is:
+#. Target:
+#: i18n/src/dashboard/status/messages.json
+msgid "Target:"
+msgstr "Target:"
+
+#. [pages.TaskAggre.title]
+#. defaultMessage is:
+#. Task
+#. [pages.TaskDetail.title]
+#. defaultMessage is:
+#. Task
+#: i18n/src/task/aggre/TaskAggre.json i18n/src/task/detail/TaskDetail.json
+msgid "Task"
+msgstr "Task"
+
+#. [pages.TaskList.title]
+#. defaultMessage is:
+#. Tasks
+#: i18n/src/task/list/TaskList.json
+msgid "Tasks"
+msgstr "Tasks"
+
+#. [pages.ContactDetails.phone]
+#. defaultMessage is:
+#. Telephone
+#: i18n/src/person/detail/messages.json
+msgid "Telephone"
+msgstr "Telephone"
+
+#. [pages.DeviceDetailOperation.temperature]
+#. defaultMessage is:
+#. Temperature
+#: i18n/src/device/detail/operation/DeviceDetailOperation.json
+msgid "Temperature"
+msgstr "Temperature"
+
+#. [filter.ConsumableReasonSelectField.ConsumableReason_TestConducted]
+#. defaultMessage is:
+#. Test Conducted
+#: i18n/src/filter/resource/ConsumableReasonSelectField.json
+msgid "Test Conducted"
+msgstr "Test Conducted"
+
+#. [pages.DeviceDetailProfile.EndedOn]
+#. defaultMessage is:
+#. Test Date
+#. [pages.ResultList.EndedOn]
+#. defaultMessage is:
+#. Test Date
+#: i18n/src/device/detail/profile/DeviceDetailProfile.json
+#: i18n/src/result/list/ResultList.json
+msgid "Test Date"
+msgstr "Test Date"
+
+#. [pages.DeviceList.errorRate]
+#. defaultMessage is:
+#. Test failures
+#: i18n/src/device/list/messages.json
+msgid "Test failures"
+msgstr "Test failures"
+
+#. [pages.ReporterDetail.fieldTotalNumberOfTests]
+#. defaultMessage is:
+#. Tests
+#. [pages.RouterDetail.fieldTotalNumberOfTests]
+#. defaultMessage is:
+#. Tests
+#: i18n/src/reporter/detail/ReporterDetail.json
+#: i18n/src/router/detail/RouterDetail.json
+msgid "Tests"
+msgstr "Tests"
+
+#. [pages.ReporterList.numberOfTestsRight]
+#. defaultMessage is:
+#. Tests Delivered
+#: i18n/src/reporter/list/ReporterList.json
+msgid "Tests Delivered"
+msgstr "Tests Delivered"
+
+#. [pages.InventoryAdjustmentDialogForm.testsRunBetween]
+#. defaultMessage is:
+#. Tests Run Between
+#: i18n/src/inventory/adjustment/InventoryAdjustmentDialogForm.json
+msgid "Tests Run Between"
+msgstr "Tests Run Between"
+
+#. [errorResponseMessages.saveLoginDetails.PUT.403.message]
+#. defaultMessage is:
+#. The current password that you have entered is incorrect.
+#: i18n/src/account/AccountRedux.json
+msgid "The current password that you have entered is incorrect."
+msgstr "The current password that you have entered is incorrect."
+
+#. [errorResponseMessages.loginStart.POST.default.default.message]
+#. defaultMessage is:
+#. The details that you have entered are incorrect
+#: i18n/src/auth/AuthRedux.json
+msgid "The details that you have entered are incorrect"
+msgstr "The details that you have entered are incorrect"
+
+#. [pages.Status.issueAcknowledgedSuccessfully]
+#. defaultMessage is:
+#. The issue has been acknowledged successfully
+#: i18n/src/dashboard/status/messages.json
+msgid "The issue has been acknowledged successfully"
+msgstr "The issue has been acknowledged successfully"
+
+#. [pages.RemoveInventoryDialogForm.positiveQuantityRequired]
+#. defaultMessage is:
+#. The most that you can remove is {currentQuantity}
+#: i18n/src/inventory/adjustment/RemoveInventoryDialogForm.json
+msgid "The most that you can remove is {currentQuantity}"
+msgstr "The most that you can remove is {currentQuantity}"
+
+#. [pages.TransferInventoryDialogForm.positiveQuantityRequired]
+#. defaultMessage is:
+#. The most that you can transfer is {currentQuantity}
+#: i18n/src/inventory/adjustment/TransferInventoryDialogForm.json
+msgid "The most that you can transfer is {currentQuantity}"
+msgstr "The most that you can transfer is {currentQuantity}"
+
+#. [pages.NotFound.help]
+#. defaultMessage is:
+#. The page you're looking for doesn't exist.
+#: i18n/src/error/notFound/NotFound.json
 msgid "The page you're looking for doesn't exist."
 msgstr "The page you're looking for doesn't exist."
 
-#. [pages.DeviceList.totalTests] - undefined
-#: i18n/src/components/pages/device/DeviceList.json
-msgid "Total Tests"
-msgstr "Total Tests"
+#. [pages.UpdateLoginDetails.newPasswordTooShort]
+#. defaultMessage is:
+#. The password needs to be at least 8 characters long
+#: i18n/src/person/detail/messages.json
+msgid "The password needs to be at least 8 characters long"
+msgstr "The password needs to be at least 8 characters long"
+
+#. [pages.UpdateLoginDetails.newPasswordMustContainANumberOrSpecialCharacter]
+#. defaultMessage is:
+#. The password needs to contain at least one number or special character (%!$*...)
+#: i18n/src/person/detail/messages.json
+msgid ""
+"The password needs to contain at least one number or special character (%!"
+"$*...)"
+msgstr ""
+"The password needs to contain at least one number or special character (%!"
+"$*...)"
+
+#. [pages.UpdateLoginDetails.invalidPassword]
+#. defaultMessage is:
+#. The password that you entered is not valid
+#: i18n/src/person/detail/messages.json
+msgid "The password that you entered is not valid"
+msgstr "The password that you entered is not valid"
+
+#. [errorResponseMessages.common.filterError.message]
+#. defaultMessage is:
+#. The server rejected the values specified in these filter fields. Our technical team has been notified and will attend to the problem as soon as possible.
+#: i18n/src/error/CommonErrorNotifications.json
+msgid ""
+"The server rejected the values specified in these filter fields. Our "
+"technical team has been notified and will attend to the problem as soon as "
+"possible."
+msgstr ""
+"The server rejected the values specified in these filter fields. Our "
+"technical team has been notified and will attend to the problem as soon as "
+"possible."
+
+#. [errorResponseMessages.saveLoginDetails.PUT.409.message]
+#. defaultMessage is:
+#. The username that you have entered is already in use by another user on the system
+#. [errorResponseMessages.updateSinglePersonLoginDetails.PUT.409.message]
+#. defaultMessage is:
+#. The username that you have entered is already in use by another user on the system
+#: i18n/src/account/AccountRedux.json i18n/src/person/PersonRedux.json
+msgid ""
+"The username that you have entered is already in use by another user on the "
+"system"
+msgstr ""
+"The username that you have entered is already in use by another user on the "
+"system"
+
+#. [pages.Status.noActionsTitle]
+#. defaultMessage is:
+#. There are no waiting actions!
+#: i18n/src/dashboard/status/messages.json
+msgid "There are no waiting actions!"
+msgstr "There are no waiting actions!"
+
+#. [pages.ResetPassword.passwordsDoNotMatch]
+#. defaultMessage is:
+#. These passwords don't match
+#. [pages.UpdateLoginDetails.passwordsDoNotMatch]
+#. defaultMessage is:
+#. These passwords don't match
+#: i18n/src/auth/resetPassword/messages.json
+#: i18n/src/person/detail/messages.json
+msgid "These passwords don't match"
+msgstr "These passwords don't match"
+
+#. [pages.Status.thisMonth]
+#. defaultMessage is:
+#. This Month
+#. [pages.DeviceList.thisMonth]
+#. defaultMessage is:
+#. This Month
+#. [pages.dateRangeSelector.thisMonth]
+#. defaultMessage is:
+#. This Month
+#. [pages.ReporterList.deliveredThisMonth]
+#. defaultMessage is:
+#. This Month
+#: i18n/src/dashboard/status/messages.json i18n/src/device/list/messages.json
+#: i18n/src/filter/date/DateRangeSelector.json
+#: i18n/src/reporter/list/ReporterList.json
+msgid "This Month"
+msgstr "This Month"
+
+#. [pages.Status.thisQuarter]
+#. defaultMessage is:
+#. This Quarter
+#. [pages.dateRangeSelector.thisQuarter]
+#. defaultMessage is:
+#. This Quarter
+#: i18n/src/dashboard/status/messages.json
+#: i18n/src/filter/date/DateRangeSelector.json
+msgid "This Quarter"
+msgstr "This Quarter"
+
+#. [errorResponseMessages.saveLoginDetails.PUT.409.title]
+#. defaultMessage is:
+#. This Username is Unavailable
+#. [errorResponseMessages.updateSinglePersonLoginDetails.PUT.409.title]
+#. defaultMessage is:
+#. This Username is Unavailable
+#: i18n/src/account/AccountRedux.json i18n/src/person/PersonRedux.json
+msgid "This Username is Unavailable"
+msgstr "This Username is Unavailable"
+
+#. [pages.dateRangeSelector.thisWeek]
+#. defaultMessage is:
+#. This Week
+#: i18n/src/filter/date/DateRangeSelector.json
+msgid "This Week"
+msgstr "This Week"
+
+#. [pages.Status.thisYear]
+#. defaultMessage is:
+#. This Year
+#. [pages.dateRangeSelector.thisYear]
+#. defaultMessage is:
+#. This Year
+#: i18n/src/dashboard/status/messages.json
+#: i18n/src/filter/date/DateRangeSelector.json
+msgid "This Year"
+msgstr "This Year"
+
+#. [pages.UpdateLoginDetails.usernameUnavailable]
+#. defaultMessage is:
+#. This username is unavailable
+#: i18n/src/person/detail/messages.json
+msgid "This username is unavailable"
+msgstr "This username is unavailable"
+
+#. [pages.TaskList.time]
+#. defaultMessage is:
+#. Time
+#. [pages.TaskList.time]
+#. defaultMessage is:
+#. Time
+#: i18n/src/task/aggre/TaskAggre.json i18n/src/task/list/TaskList.json
+msgid "Time"
+msgstr "Time"
+
+#. [pages.ResultDetail.formFields.timeInstrumentResulted]
+#. defaultMessage is:
+#. Time Instrument Resulted
+#: i18n/src/result/detail/CustomField.json
+msgid "Time Instrument Resulted"
+msgstr "Time Instrument Resulted"
+
+#. [pages.ResultDetail.formFields.timeSampleTaken]
+#. defaultMessage is:
+#. Time Sample Taken
+#: i18n/src/result/detail/CustomField.json
+msgid "Time Sample Taken"
+msgstr "Time Sample Taken"
+
+#. [pages.UserPreferences.timezone]
+#. defaultMessage is:
+#. Time Zone
+#. [pages.SiteDetail.fieldTimeZone]
+#. defaultMessage is:
+#. Time Zone
+#: i18n/src/person/detail/messages.json i18n/src/site/detail/messages.json
+msgid "Time Zone"
+msgstr "Time Zone"
+
+#. [pages.InventoryAdjustmentDialogForm.toSiteName]
+#. defaultMessage is:
+#. To Site
+#: i18n/src/inventory/adjustment/InventoryAdjustmentDialogForm.json
+msgid "To Site"
+msgstr "To Site"
+
+#. [pages.UpdateLoginDetails.currentPasswordDialogMessage]
+#. defaultMessage is:
+#. To update your login details, please enter your current password
+#: i18n/src/person/detail/messages.json
+msgid "To update your login details, please enter your current password"
+msgstr "To update your login details, please enter your current password"
+
+#. [pages.dateRangeSelector.toDate]
+#. defaultMessage is:
+#. To...
+#: i18n/src/filter/date/DateRangeSelector.json
+msgid "To..."
+msgstr "To..."
+
+#. [pages.dateRangeSelector.today]
+#. defaultMessage is:
+#. Today
+#: i18n/src/filter/date/DateRangeSelector.json
+msgid "Today"
+msgstr "Today"
+
+#. [pages.TaskList.topic]
+#. defaultMessage is:
+#. Topic
+#. [pages.TaskList.topic]
+#. defaultMessage is:
+#. Topic
+#: i18n/src/task/aggre/TaskAggre.json i18n/src/task/list/TaskList.json
+msgid "Topic"
+msgstr "Topic"
+
+#. [pages.ReportList.totalErrors]
+#. defaultMessage is:
+#. Total Errors
+#: i18n/src/report/list/ReportList.json
+msgid "Total Errors"
+msgstr "Total Errors"
+
+#. [pages.ReportList.totalTestsRun]
+#. defaultMessage is:
+#. Total Tests Run
+#: i18n/src/report/list/ReportList.json
+msgid "Total Tests Run"
+msgstr "Total Tests Run"
+
+#. [pages.ResultDetail.totalFilesLabel]
+#. defaultMessage is:
+#. Total files: {totalFiles}
+#: i18n/src/result/detail/ResultDetail.json
+msgid "Total files: {totalFiles}"
+msgstr "Total files: {totalFiles}"
+
+#. [pages.NotificationList.totalTriggers]
+#. defaultMessage is:
+#. Total triggers
+#: i18n/src/notification/list/NotificationList.json
+msgid "Total triggers"
+msgstr "Total triggers"
+
+#. [pages.InventoryItemsList.transferInventory]
+#. defaultMessage is:
+#. Transfer Inventory
+#: i18n/src/inventory/list/InventoryItemsList.json
+msgid "Transfer Inventory"
+msgstr "Transfer Inventory"
+
+#. [pages.TransferInventoryDialogForm.dialogTitle]
+#. defaultMessage is:
+#. Transfer {consumableName}
+#: i18n/src/inventory/adjustment/TransferInventoryDialogForm.json
+msgid "Transfer {consumableName}"
+msgstr "Transfer {consumableName}"
+
+#. [errorResponseMessages.transferInventory.PUT.default.title]
+#. defaultMessage is:
+#. Transferring Inventory Failed
+#: i18n/src/inventory/InventoryRedux.json
+msgid "Transferring Inventory Failed"
+msgstr "Transferring Inventory Failed"
+
+#. [pages.SiteDetail.buttonUpdate]
+#. defaultMessage is:
+#. UPDATE
+#: i18n/src/site/detail/messages.json
+msgid "UPDATE"
+msgstr "UPDATE"
+
+#. [pages.Status.updateStockLevel]
+#. defaultMessage is:
+#. UPDATE STOCK LEVEL:
+#: i18n/src/dashboard/status/messages.json
+msgid "UPDATE STOCK LEVEL:"
+msgstr "UPDATE STOCK LEVEL:"
+
+#. [pages.ResetPassword.generateTokenFailedTitle]
+#. defaultMessage is:
+#. Unable to Reset Password
+#: i18n/src/auth/resetPassword/messages.json
+msgid "Unable to Reset Password"
+msgstr "Unable to Reset Password"
+
+#. [pages.ResultDetail.formOptions.uninterpretable]
+#. defaultMessage is:
+#. Uninterpretable
+#: i18n/src/result/detail/CustomField.json
+msgid "Uninterpretable"
+msgstr "Uninterpretable"
+
+#. [pages.Status.update]
+#. defaultMessage is:
+#. Update
+#. [pages.ReporterDetail.update]
+#. defaultMessage is:
+#. Update
+#. [pages.RouterDetail.update]
+#. defaultMessage is:
+#. Update
+#: i18n/src/dashboard/status/messages.json
+#: i18n/src/reporter/detail/ReporterDetail.json
+#: i18n/src/router/detail/RouterDetail.json
+msgid "Update"
+msgstr "Update"
+
+#. [errorResponseMessages.updateInventory.PUT.default.title]
+#. defaultMessage is:
+#. Updating Inventory Failed
+#: i18n/src/inventory/InventoryRedux.json
+msgid "Updating Inventory Failed"
+msgstr "Updating Inventory Failed"
+
+#. [pages.UpdateLoginDetails.userEnableLabel]
+#. defaultMessage is:
+#. User lockedout
+#: i18n/src/person/detail/messages.json
+msgid "User lockedout"
+msgstr "User lockedout"
+
+#. [pages.PersonDetails.userPreferencesUpdatedMessage]
+#. defaultMessage is:
+#. User preferences changed successfully
+#: i18n/src/person/detail/messages.json
+msgid "User preferences changed successfully"
+msgstr "User preferences changed successfully"
+
+#. [pages.Login.user]
+#. defaultMessage is:
+#. Username
+#. [pages.UpdateLoginDetails.username]
+#. defaultMessage is:
+#. Username
+#: i18n/src/auth/login/Login.json i18n/src/person/detail/messages.json
+msgid "Username"
+msgstr "Username"
+
+#. [pages.AccountDetails.usernameAndPassword]
+#. defaultMessage is:
+#. Username & Password
+#: i18n/src/account/detail/messages.json
+msgid "Username & Password"
+msgstr "Username & Password"
+
+#. [pages.DeviceDetailProfile.utilizationRate]
+#. defaultMessage is:
+#. Utilization Rate
+#: i18n/src/device/detail/profile/DeviceDetailProfile.json
+msgid "Utilization Rate"
+msgstr "Utilization Rate"
+
+#. [pages.NotificationDetail.view]
+#. defaultMessage is:
+#. View
+#: i18n/src/notification/detail/NotificationDetailBackBar.json
+msgid "View"
+msgstr "View"
+
+#. [pages.DeviceApiKeyList.filterTemplate]
+#. defaultMessage is:
+#. Viewing all device api keys<GEOGRAPHY><NAME>.
+#: i18n/src/deviceApiKey/list/DeviceApiKeyList.json
+msgid "Viewing all device api keys<GEOGRAPHY><NAME>."
+msgstr "Viewing all device api keys<GEOGRAPHY><NAME>."
+
+#. [pages.ManageDevices.filterTemplate]
+#. defaultMessage is:
+#. Viewing all devices<GEOGRAPHY><NAME>.
+#: i18n/src/styleguide/main/StyleguideMain.json
+msgid "Viewing all devices<GEOGRAPHY><NAME>."
+msgstr "Viewing all devices<GEOGRAPHY><NAME>."
+
+#. [pages.DeviceDetailOperation.voltage]
+#. defaultMessage is:
+#. Voltage
+#: i18n/src/device/detail/operation/DeviceDetailOperation.json
+msgid "Voltage"
+msgstr "Voltage"
+
+#. [pages.ResultDetail.formFields.ward]
+#. defaultMessage is:
+#. Ward
+#: i18n/src/result/detail/CustomField.json
+msgid "Ward"
+msgstr "Ward"
+
+#. [pages.DeviceDetailProfile.warranty]
+#. defaultMessage is:
+#. Warranty
+#. [pages.DeviceList.warranty]
+#. defaultMessage is:
+#. Warranty
+#: i18n/src/device/detail/profile/DeviceDetailProfile.json
+#: i18n/src/device/list/messages.json
+msgid "Warranty"
+msgstr "Warranty"
+
+#. [pages.WarrantyDialog.warrantyDueDate]
+#. defaultMessage is:
+#. Warranty Due Date
+#: i18n/src/device/maintenance/WarrantyDialog.json
+msgid "Warranty Due Date"
+msgstr "Warranty Due Date"
+
+#. [pages.WarrantyDialog.warrantyDueDateIsRequired]
+#. defaultMessage is:
+#. Warranty Due Date is required
+#: i18n/src/device/maintenance/WarrantyDialog.json
+msgid "Warranty Due Date is required"
+msgstr "Warranty Due Date is required"
+
+#. [pages.ResetPassword.checkEmailContent]
+#. defaultMessage is:
+#. We have sent an email to {emailAddress} that contains a link which will allow you to reset your password. Please check your inbox.
+#: i18n/src/auth/resetPassword/messages.json
+msgid ""
+"We have sent an email to {emailAddress} that contains a link which will "
+"allow you to reset your password. Please check your inbox."
+msgstr ""
+"We have sent an email to {emailAddress} that contains a link which will "
+"allow you to reset your password. Please check your inbox."
+
+#. [pages.ResetPassword.generateTokenFailedMessage]
+#. defaultMessage is:
+#. We were unable to reset your password.
+#. [pages.ResetPassword.passwordUpdateFailedMessage]
+#. defaultMessage is:
+#. We were unable to reset your password.
+#: i18n/src/auth/resetPassword/messages.json
+msgid "We were unable to reset your password."
+msgstr "We were unable to reset your password."
+
+#. [pages.StrongPasswordInput.passwordStrengthMeterWeak]
+#. defaultMessage is:
+#. Weak
+#: i18n/src/components/shared/StrongPasswordInput.json
+msgid "Weak"
+msgstr "Weak"
+
+#. [pages.dateRangeSelector.week]
+#. defaultMessage is:
+#. Week
+#: i18n/src/filter/date/DateRangeSelector.json
+msgid "Week"
+msgstr "Week"
+
+#. [filter.popover.workflowStatus]
+#. defaultMessage is:
+#. Workflow Status
+#: i18n/src/filter/popover/FiltersPanel.json
+msgid "Workflow Status"
+msgstr "Workflow Status"
+
+#. [component.DateTimeInput.year.placeholder]
+#. defaultMessage is:
+#. Year
+#. [pages.dateRangeSelector.year]
+#. defaultMessage is:
+#. Year
+#: i18n/src/components/shared/DateTimeInput/messages.json
+#: i18n/src/filter/date/DateRangeSelector.json
+msgid "Year"
+msgstr "Year"
+
+#. [pages.dateRangeSelector.yesterday]
+#. defaultMessage is:
+#. Yesterday
+#: i18n/src/filter/date/DateRangeSelector.json
+msgid "Yesterday"
+msgstr "Yesterday"
+
+#. [errorResponseMessages.loginStart.POST.401.accountLocked.resolution]
+#. defaultMessage is:
+#. You can contact us to unlock your account for you by email ({supportEmail})
+#: i18n/src/auth/AuthRedux.json
+msgid ""
+"You can contact us to unlock your account for you by email ({supportEmail})"
+msgstr ""
+"You can contact us to unlock your account for you by email ({supportEmail})"
+
+#. [pages.PersonDetails.loginDetailsUpdatedMessage]
+#. defaultMessage is:
+#. You can now login with these new details
+#: i18n/src/person/detail/messages.json
+msgid "You can now login with these new details"
+msgstr "You can now login with these new details"
+
+#. [pages.ResetPassword.generateTokenFailedResolution]
+#. defaultMessage is:
+#. You can request further help by sending an email to {supportEmail}
+#. [pages.ResetPassword.passwordUpdateFailedResolution]
+#. defaultMessage is:
+#. You can request further help by sending an email to {supportEmail}
+#: i18n/src/auth/resetPassword/messages.json
+msgid "You can request further help by sending an email to {supportEmail}"
+msgstr "You can request further help by sending an email to {supportEmail}"
+
+#. [pages.ResetPassword.passwordUpdatedMessage]
+#. defaultMessage is:
+#. You may now login with your new login details.
+#: i18n/src/auth/resetPassword/messages.json
+msgid "You may now login with your new login details."
+msgstr "You may now login with your new login details."
+
+#. [pages.Login.reasonExpiredJWT]
+#. defaultMessage is:
+#. You were logged out due to an expired session
+#: i18n/src/auth/loggedOutReasons.json
+msgid "You were logged out due to an expired session"
+msgstr "You were logged out due to an expired session"
+
+#. [pages.Login.reasonIdle]
+#. defaultMessage is:
+#. You were logged out due to inactivity
+#: i18n/src/auth/loggedOutReasons.json
+msgid "You were logged out due to inactivity"
+msgstr "You were logged out due to inactivity"
+
+#. [pages.Login.reasonRefreshJWTFailure]
+#. defaultMessage is:
+#. You were logged out due to refreshing session failure
+#: i18n/src/auth/loggedOutReasons.json
+msgid "You were logged out due to refreshing session failure"
+msgstr "You were logged out due to refreshing session failure"
+
+#. [shared.IdleDialog.help]
+#. defaultMessage is:
+#. You will be logged out automatically in one minute due to inactivity. To stay logged in, hit any button or move your mouse.
+#: i18n/src/idle/components/IdleDialog.json
+msgid ""
+"You will be logged out automatically in one minute due to inactivity. To "
+"stay logged in, hit any button or move your mouse."
+msgstr ""
+"You will be logged out automatically in one minute due to inactivity. To "
+"stay logged in, hit any button or move your mouse."
+
+#. [pages.Login.reasonUserRequested]
+#. defaultMessage is:
+#. You've successfully logged out
+#: i18n/src/auth/loggedOutReasons.json
+msgid "You've successfully logged out"
+msgstr "You've successfully logged out"
+
+#. [pages.ResetPassword.finishContent]
+#. defaultMessage is:
+#. Your password has been changed successfully. You can now login with your new details
+#: i18n/src/auth/resetPassword/messages.json
+msgid ""
+"Your password has been changed successfully. You can now login with your new "
+"details"
+msgstr ""
+"Your password has been changed successfully. You can now login with your new "
+"details"
+
+#. [pages.ResetPassword.newPasswordTooShort]
+#. defaultMessage is:
+#. Your password needs to be at least 8 characters long
+#: i18n/src/auth/resetPassword/messages.json
+msgid "Your password needs to be at least 8 characters long"
+msgstr "Your password needs to be at least 8 characters long"
+
+#. [pages.ResetPassword.newPasswordMustContainANumber]
+#. defaultMessage is:
+#. Your password needs to contain at least one number or special character (%!$*...)
+#: i18n/src/auth/resetPassword/messages.json
+msgid ""
+"Your password needs to contain at least one number or special character (%!"
+"$*...)"
+msgstr ""
+"Your password needs to contain at least one number or special character (%!"
+"$*...)"
+
+#. [errorResponseMessages.loginStart.POST.401.accountLocked.message]
+#. defaultMessage is:
+#. Your user account has been locked
+#: i18n/src/auth/AuthRedux.json
+msgid "Your user account has been locked"
+msgstr "Your user account has been locked"
+
+#. [pages.SiteDetail.fieldZip]
+#. defaultMessage is:
+#. Zip
+#: i18n/src/site/detail/messages.json
+msgid "Zip"
+msgstr "Zip"
+
+#. [pages.ContactDetails.zip]
+#. defaultMessage is:
+#. Zip Code
+#: i18n/src/person/detail/messages.json
+msgid "Zip Code"
+msgstr "Zip Code"
+
+#. [filter.btnGroup.dateFrom]
+#. defaultMessage is:
+#. after {date}
+#: i18n/src/filter/btnGroup/FiltersBtnGroup.json
+msgid "after {date}"
+msgstr "after {date}"
+
+#. [pages.InventoryAdjustmentDialogForm.and]
+#. defaultMessage is:
+#. and
+#: i18n/src/inventory/adjustment/InventoryAdjustmentDialogForm.json
+msgid "and"
+msgstr "and"
+
+#. [filter.btnGroup.dateTo]
+#. defaultMessage is:
+#. before {date}
+#: i18n/src/filter/btnGroup/FiltersBtnGroup.json
+msgid "before {date}"
+msgstr "before {date}"
+
+#. [pages.Status.summaryCalibrationTitle]
+#. defaultMessage is:
+#. calibration
+#: i18n/src/dashboard/status/messages.json
+msgid "calibration"
+msgstr "calibration"
+
+#. [pages.OperationalData.calibrationCompliance]
+#. defaultMessage is:
+#. calibration compliance
+#: i18n/src/dashboard/operational/messages.json
+msgid "calibration compliance"
+msgstr "calibration compliance"
+
+#. [pages.Status.clinicalTitle]
+#. defaultMessage is:
+#. clinical
+#: i18n/src/dashboard/status/messages.json
+msgid "clinical"
+msgstr "clinical"
+
+#. [pages.Status.consumableTitle]
+#. defaultMessage is:
+#. consumables
+#: i18n/src/dashboard/status/messages.json
+msgid "consumables"
+msgstr "consumables"
+
+#. [pages.OperationalData.daysUnavailable]
+#. defaultMessage is:
+#. days unavailable
+#: i18n/src/dashboard/operational/messages.json
+msgid "days unavailable"
+msgstr "days unavailable"
+
+#. [pages.Status.summaryDeviceManagementTitle]
+#. defaultMessage is:
+#. device management
+#: i18n/src/dashboard/status/messages.json
+msgid "device management"
+msgstr "device management"
+
+#. [pages.Status.devicesTitle]
+#. defaultMessage is:
+#. devices
+#: i18n/src/dashboard/status/messages.json
+msgid "devices"
+msgstr "devices"
+
+#. [pages.Status.discardConsumablesLabel]
+#. defaultMessage is:
+#. discard Consumables
+#: i18n/src/dashboard/status/messages.json
+msgid "discard Consumables"
+msgstr "discard Consumables"
+
+#. [pages.OperationalData.expiringTitle]
+#. defaultMessage is:
+#. expiring
+#: i18n/src/dashboard/operational/messages.json
+msgid "expiring"
+msgstr "expiring"
+
+#. [pages.Status.expiringStockStatus]
+#. defaultMessage is:
+#. expiring stock
+#: i18n/src/dashboard/status/messages.json
+msgid "expiring stock"
+msgstr "expiring stock"
+
+#. [pages.Status.fullyOperationalStatus]
+#. defaultMessage is:
+#. fully operational
+#: i18n/src/dashboard/status/messages.json
+msgid "fully operational"
+msgstr "fully operational"
+
+#. [pages.Status.summaryHealthPlusHIVTBTitle]
+#. defaultMessage is:
+#. health Plus HIV TB
+#: i18n/src/dashboard/status/messages.json
+msgid "health Plus HIV TB"
+msgstr "health Plus HIV TB"
+
+#. [pages.Status.highFailuresRatesStatus]
+#. defaultMessage is:
+#. high failures rates
+#: i18n/src/dashboard/status/messages.json
+msgid "high failures rates"
+msgstr "high failures rates"
+
+#. [pages.Status.last30Days]
+#. defaultMessage is:
+#. last 30 days
+#: i18n/src/dashboard/status/messages.json
+msgid "last 30 days"
+msgstr "last 30 days"
+
+#. [pages.Status.manageConsumablesLabel]
+#. defaultMessage is:
+#. manage Consumables
+#: i18n/src/dashboard/status/messages.json
+msgid "manage Consumables"
+msgstr "manage Consumables"
+
+#. [pages.Status.summaryMedicoTBTitle]
+#. defaultMessage is:
+#. medico TB
+#: i18n/src/dashboard/status/messages.json
+msgid "medico TB"
+msgstr "medico TB"
+
+#. [component.DateTimeInput.minutes.placeholder]
+#. defaultMessage is:
+#. min.
+#: i18n/src/components/shared/DateTimeInput/messages.json
+msgid "min."
+msgstr "min."
+
+#. [pages.DeviceDetailProfile.undefinedValue]
+#. defaultMessage is:
+#. n/a
+#: i18n/src/device/detail/profile/DeviceDetailProfile.json
+msgid "n/a"
+msgstr "n/a"
+
+#. [pages.Status.needCalibrationStatus]
+#. defaultMessage is:
+#. need calibration
+#: i18n/src/dashboard/status/messages.json
+msgid "need calibration"
+msgstr "need calibration"
+
+#. [pages.Status.notReportingStatus]
+#. defaultMessage is:
+#. not reporting
+#: i18n/src/dashboard/status/messages.json
+msgid "not reporting"
+msgstr "not reporting"
+
+#. [pages.DeviceDetailProfile.notes]
+#. defaultMessage is:
+#. notes
+#: i18n/src/device/detail/profile/DeviceDetailProfile.json
+msgid "notes"
+msgstr "notes"
+
+#. [pages.Status.ofTotalDevicesTitle]
+#. defaultMessage is:
+#. of {total} devices
+#: i18n/src/dashboard/status/messages.json
+msgid "of {total} devices"
+msgstr "of {total} devices"
+
+#. [pages.Status.ofTotalSitesTitle]
+#. defaultMessage is:
+#. of {total} sites
+#: i18n/src/dashboard/status/messages.json
+msgid "of {total} sites"
+msgstr "of {total} sites"
+
+#. [pages.Status.summaryOnlineNowTitle]
+#. defaultMessage is:
+#. online now
+#: i18n/src/dashboard/status/messages.json
+msgid "online now"
+msgstr "online now"
+
+#. [pages.Status.summaryOperationalDevicesTitle]
+#. defaultMessage is:
+#. operational devices
+#: i18n/src/dashboard/status/messages.json
+msgid "operational devices"
+msgstr "operational devices"
+
+#. [filter.btnGroup.partnerId]
+#. defaultMessage is:
+#. partner "{partnerName}"
+#: i18n/src/filter/btnGroup/FiltersBtnGroup.json
+msgid "partner \"{partnerName}\""
+msgstr "partner \"{partnerName}\""
+
+#. [filter.btnGroup.patientOrResearchId]
+#. defaultMessage is:
+#. patient/study ID {patientOrResearchId}
+#: i18n/src/filter/btnGroup/FiltersBtnGroup.json
+msgid "patient/study ID {patientOrResearchId}"
+msgstr "patient/study ID {patientOrResearchId}"
+
+#. [pages.Status.receiveConsumablesLabel]
+#. defaultMessage is:
+#. receive Consumables
+#: i18n/src/dashboard/status/messages.json
+msgid "receive Consumables"
+msgstr "receive Consumables"
+
+#. [pages.Status.reportingStatus]
+#. defaultMessage is:
+#. reporting
+#: i18n/src/dashboard/status/messages.json
+msgid "reporting"
+msgstr "reporting"
+
+#. [pages.Status.resultsTitle]
+#. defaultMessage is:
+#. results
+#: i18n/src/dashboard/status/messages.json
+msgid "results"
+msgstr "results"
+
+#. [pages.Status.runningLowStatus]
+#. defaultMessage is:
+#. running low
+#: i18n/src/dashboard/status/messages.json
+msgid "running low"
+msgstr "running low"
+
+#. [filter.btnGroup.sampleGroup]
+#. defaultMessage is:
+#. sample group {sampleGroup}
+#: i18n/src/filter/btnGroup/FiltersBtnGroup.json
+msgid "sample group {sampleGroup}"
+msgstr "sample group {sampleGroup}"
+
+#. [filter.btnGroup.sampleOriginSite]
+#. defaultMessage is:
+#. sample origin site is {sampleOriginSiteName}
+#: i18n/src/filter/btnGroup/FiltersBtnGroup.json
+msgid "sample origin site is {sampleOriginSiteName}"
+msgstr "sample origin site is {sampleOriginSiteName}"
+
+#. [filter.btnGroup.sampleId]
+#. defaultMessage is:
+#. sample {sampleId}
+#: i18n/src/filter/btnGroup/FiltersBtnGroup.json
+msgid "sample {sampleId}"
+msgstr "sample {sampleId}"
+
+#. [pages.Status.sitesTitle]
+#. defaultMessage is:
+#. sites
+#: i18n/src/dashboard/status/messages.json
+msgid "sites"
+msgstr "sites"
+
+#. [pages.Status.summaryStockManagementTitle]
+#. defaultMessage is:
+#. stock management
+#: i18n/src/dashboard/status/messages.json
+msgid "stock management"
+msgstr "stock management"
+
+#. [pages.OperationalData.stockOutsTitle]
+#. defaultMessage is:
+#. stock outs
+#: i18n/src/dashboard/operational/messages.json
+msgid "stock outs"
+msgstr "stock outs"
+
+#. [pages.OperationalData.testFailures]
+#. defaultMessage is:
+#. test failures
+#. [pages.Status.summaryTestFailuresTitle]
+#. defaultMessage is:
+#. test failures
+#: i18n/src/dashboard/operational/messages.json
+#: i18n/src/dashboard/status/messages.json
+msgid "test failures"
+msgstr "test failures"
+
+#. [pages.Status.summaryTestQualityTitle]
+#. defaultMessage is:
+#. test quality
+#: i18n/src/dashboard/status/messages.json
+msgid "test quality"
+msgstr "test quality"
+
+#. [pages.Status.summaryUploadingDataTitle]
+#. defaultMessage is:
+#. uploading data
+#: i18n/src/dashboard/status/messages.json
+msgid "uploading data"
+msgstr "uploading data"
+
+#. [pages.Status.personTitle]
+#. defaultMessage is:
+#. users
+#: i18n/src/dashboard/status/messages.json
+msgid "users"
+msgstr "users"
+
+#. [pages.Status.summaryWarrantyExpiringTitle]
+#. defaultMessage is:
+#. warranty expiring
+#. [pages.Status.warrantyExpiringStatus]
+#. defaultMessage is:
+#. warranty expiring
+#: i18n/src/dashboard/status/messages.json
+msgid "warranty expiring"
+msgstr "warranty expiring"
+
+#. [pages.Status.welcome]
+#. defaultMessage is:
+#. welcome {userName}
+#: i18n/src/dashboard/status/messages.json
+msgid "welcome {userName}"
+msgstr "welcome {userName}"
+
+#. [filter.btnGroup.whereDeviceNameIncludes]
+#. defaultMessage is:
+#. where device name includes "{deviceName}"
+#: i18n/src/filter/btnGroup/FiltersBtnGroup.json
+msgid "where device name includes \"{deviceName}\""
+msgstr "where device name includes \"{deviceName}\""
+
+#. [filter.btnGroup.whereDeviceIdIsIn]
+#. defaultMessage is:
+#. where deviceId is in ({joinedIds})
+#: i18n/src/filter/btnGroup/FiltersBtnGroup.json
+msgid "where deviceId is in ({joinedIds})"
+msgstr "where deviceId is in ({joinedIds})"
+
+#. [filter.btnGroup.whereExternalIdIncludes]
+#. defaultMessage is:
+#. where externalId includes "{externalId}"
+#: i18n/src/filter/btnGroup/FiltersBtnGroup.json
+msgid "where externalId includes \"{externalId}\""
+msgstr "where externalId includes \"{externalId}\""
+
+#. [filter.btnGroup.whereSiteNameIncludes]
+#. defaultMessage is:
+#. where site name includes "{siteName}"
+#: i18n/src/filter/btnGroup/FiltersBtnGroup.json
+msgid "where site name includes \"{siteName}\""
+msgstr "where site name includes \"{siteName}\""
+
+#. [filter.btnGroup.whereSiteIdIsIn]
+#. defaultMessage is:
+#. where siteId is in ({joinedIds})
+#: i18n/src/filter/btnGroup/FiltersBtnGroup.json
+msgid "where siteId is in ({joinedIds})"
+msgstr "where siteId is in ({joinedIds})"
+
+#. [filter.btnGroup.whoseNameOrEmailIncludes]
+#. defaultMessage is:
+#. whose name/email includes "{contactNameOrEmail}"
+#: i18n/src/filter/btnGroup/FiltersBtnGroup.json
+msgid "whose name/email includes \"{contactNameOrEmail}\""
+msgstr "whose name/email includes \"{contactNameOrEmail}\""
+
+#. [pages.Status.withDeviceIssues]
+#. defaultMessage is:
+#. with device issues
+#: i18n/src/dashboard/status/messages.json
+msgid "with device issues"
+msgstr "with device issues"
+
+#. [filter.btnGroup.withDeviceStatus]
+#. defaultMessage is:
+#. with device status is {deviceStatusName}
+#: i18n/src/filter/btnGroup/FiltersBtnGroup.json
+msgid "with device status is {deviceStatusName}"
+msgstr "with device status is {deviceStatusName}"
+
+#. [filter.btnGroup.withDeviceType]
+#. defaultMessage is:
+#. with device type is {deviceTypeName}
+#: i18n/src/filter/btnGroup/FiltersBtnGroup.json
+msgid "with device type is {deviceTypeName}"
+msgstr "with device type is {deviceTypeName}"
+
+#. [pages.Status.withQualityIssues]
+#. defaultMessage is:
+#. with quality issues
+#: i18n/src/dashboard/status/messages.json
+msgid "with quality issues"
+msgstr "with quality issues"
+
+#. [filter.btnGroup.withResultCategory]
+#. defaultMessage is:
+#. with result {resultCategoryName}
+#: i18n/src/filter/btnGroup/FiltersBtnGroup.json
+msgid "with result {resultCategoryName}"
+msgstr "with result {resultCategoryName}"
+
+#. [pages.Status.withStockIssues]
+#. defaultMessage is:
+#. with stock issues
+#: i18n/src/dashboard/status/messages.json
+msgid "with stock issues"
+msgstr "with stock issues"
+
+#. [filter.btnGroup.withWorkflowStatus]
+#. defaultMessage is:
+#. with workflow status is {workflowStatusName}
+#: i18n/src/filter/btnGroup/FiltersBtnGroup.json
+msgid "with workflow status is {workflowStatusName}"
+msgstr "with workflow status is {workflowStatusName}"
+
+#. [pages.Status.actionCount]
+#. defaultMessage is:
+#. {actionCount, plural, one {# Action} other {# Actions}}
+#: i18n/src/dashboard/status/messages.json
+msgid "{actionCount, plural, one {# Action} other {# Actions}}"
+msgstr "{actionCount, plural, one {# Action} other {# Actions}}"
+
+#. [pages.TaskList.alertCount]
+#. defaultMessage is:
+#. {alertCount, plural, one {# alert} other {# alerts}}
+#: i18n/src/task/list/TaskList.json
+msgid "{alertCount, plural, one {# alert} other {# alerts}}"
+msgstr "{alertCount, plural, one {# alert} other {# alerts}}"
+
+#. [pages.OperationalData.deviceWithProblems]
+#. defaultMessage is:
+#. {count} device with problems
+#: i18n/src/dashboard/operational/messages.json
+msgid "{count} device with problems"
+msgstr "{count} device with problems"
+
+#. [pages.ReporterDetail.nestedDataSubtitle]
+#. defaultMessage is:
+#. {count} fields
+#. [pages.RouterDetail.nestedDataSubtitle]
+#. defaultMessage is:
+#. {count} fields
+#: i18n/src/reporter/detail/ReporterDetail.json
+#: i18n/src/router/detail/RouterDetail.json
+msgid "{count} fields"
+msgstr "{count} fields"
+
+#. [pages.DeviceList.errorOfTotal]
+#. defaultMessage is:
+#. {count} of {total}
+#: i18n/src/device/list/messages.json
+msgid "{count} of {total}"
+msgstr "{count} of {total}"
+
+#. [pages.DeviceList.availabilityOfDays]
+#. defaultMessage is:
+#. {count} of {total} days
+#: i18n/src/device/list/messages.json
+msgid "{count} of {total} days"
+msgstr "{count} of {total} days"
+
+#. [pages.OperationalData.siteWithProblems]
+#. defaultMessage is:
+#. {count} site with problems
+#: i18n/src/dashboard/operational/messages.json
+msgid "{count} site with problems"
+msgstr "{count} site with problems"
