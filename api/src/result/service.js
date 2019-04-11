@@ -305,7 +305,10 @@ async function getDownloadResultsList(query, auth) {
           .orWhere('r.sampleId', 'like', `${+'%' + params.patientSample}%`)
       }
       if (params.assayTypeAbbreviations) {
-        queryBuilder.whereIn('a.abbreviation', params.assayTypeAbbreviations)
+        queryBuilder.whereIn(
+          'a.abbreviation',
+          params.assayTypeAbbreviations.split(',')
+        )
       }
       if (params.resultCategories) {
         queryBuilder
