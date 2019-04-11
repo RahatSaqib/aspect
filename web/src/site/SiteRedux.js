@@ -344,6 +344,11 @@ export default function siteReducer(state = initialState, action) {
         const immutItem = Immutable.fromJS(action.item)
         mutState.set('items', receiveItem(mutState.items, immutItem))
       })
+    case types.RECEIVE_ASSIGN_PERSON:
+      return state.withMutations(mutState => {
+        const immutItem = Immutable.fromJS(action.itemd)
+        mutState.set('items', receiveItem(mutState.items, immutItem))
+      })
     case types.REQUEST_SITES_FOR_SELECT_LIST:
       return state.setIn(['selectList', 'loading'], true)
     case types.RECEIVE_SITES_FOR_SELECT_LIST:

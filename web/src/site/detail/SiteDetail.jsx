@@ -18,6 +18,8 @@ import {
   Site,
 } from '../SiteRedux'
 import { fetchTags, updateTags } from '../../tag/TagRedux'
+import { fetchSiteContacts } from '../../person/PersonRedux'
+
 import messages from './messages'
 import SiteDetailAlert from './alerts/SiteDetailAlerts'
 import SiteDetailProfile from './profile/SiteDetailProfile'
@@ -39,6 +41,7 @@ const SiteDetail = props => {
 
   const handleFetchSite = ({ match }) => {
     props.fetchSingleSite(match.params.siteId)
+    props.fetchSiteContacts(match.params.siteId)
     props.fetchTags(match.params.siteId, 'site')
   }
 
@@ -53,9 +56,9 @@ const SiteDetail = props => {
     match,
     siteTags,
     editable,
+    siteContacts,
     updateLatLongFromFormAddress,
   } = props
-
   return (
     <div>
       <Helmet title={intl.formatMessage(messages.title)} />
@@ -72,6 +75,8 @@ const SiteDetail = props => {
                 {...props}
                 site={site}
                 siteTags={siteTags.toJS()}
+                onSiteTagChange={onSiteTagChange}
+                siteContacts={siteContacts.toJS()}
               />
             )}
           />
@@ -101,6 +106,7 @@ const SiteDetail = props => {
                   {...props}
                   site={site}
                   siteTags={siteTags.toJS()}
+                  siteContacts={siteContacts.toJS()}
                 />
               ) : (
                 <Redirect to={match.url} />
@@ -119,9 +125,11 @@ const SiteDetail = props => {
 }
 
 const mapStateToProps = (state, ownProps) => {
-  const site = state.site.items.byId.get(ownProps.match.params.siteId)
-  const siteTags = state.tag.tags.getIn(
-    ['site', ownProps.match.params.siteId],
+  const { siteId } = ownProps.match.params
+  const site = state.site.items.byId.get(siteId)
+  const siteTags = state.tag.tags.getIn(['site', siteId], Immutable.List())
+  const siteContacts = state.person.siteContacts.getIn(
+    [siteId],
     Immutable.List()
   )
   return {
@@ -129,6 +137,7 @@ const mapStateToProps = (state, ownProps) => {
     site,
     siteTags,
     lastServerResponseTime: state.getIn(['globals', 'lastServerResponseTime']),
+    siteContacts,
   }
 }
 
@@ -144,8 +153,11 @@ SiteDetail.propTypes = {
   editable: PropTypes.bool.isRequired,
   site: PropTypes.objectOf(Site).isRequired,
   siteTags: PropTypes.instanceOf(Immutable.List).isRequired,
+  siteContacts: PropTypes.instanceOf(Immutable.List).isRequired,
+  onSiteTagChange: PropTypes.func.isRequired,
   fetchSingleSite: PropTypes.func.isRequired,
   updateSingleSiteFromForm: PropTypes.func.isRequired,
+  fetchSiteContacts: PropTypes.func.isRequired,
   fetchTags: PropTypes.func.isRequired,
   updateTags: PropTypes.func.isRequired,
   updateLatLongFromFormAddress: PropTypes.func.isRequired,
@@ -153,6 +165,7 @@ SiteDetail.propTypes = {
 export default connect(mapStateToProps, {
   fetchSingleSite,
   updateSingleSiteFromForm,
+  fetchSiteContacts,
   fetchTags,
   updateTags,
   updateLatLongFromFormAddress,

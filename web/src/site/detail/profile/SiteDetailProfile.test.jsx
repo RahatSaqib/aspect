@@ -7,6 +7,7 @@ import SiteDetailProfile from './SiteDetailProfile'
 describe('SiteDetailProfile Component', () => {
   const props = {
     site: fromJS({
+      id: '50',
       name: 'Cuyahoga County Ohio #2',
       shortName: 'Cuyahoga, OH #2',
       externalId: 'Ohio_2',
@@ -22,6 +23,7 @@ describe('SiteDetailProfile Component', () => {
       contacts: [{ id: 1, name: 'contact' }],
     }),
     siteTags: [{ title: 'tag1' }],
+    siteContacts: [{ id: 1, name: 'Joe Doe' }],
     formatMessage: message => message.defaultMessage,
     history: {},
     location: {},
