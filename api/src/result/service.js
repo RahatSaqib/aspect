@@ -278,12 +278,12 @@ async function getDownloadResultsList(query, auth) {
     .leftJoin('Site as si', 'r.siteId', 'si.id')
     .leftJoin(
       'ResultTreatmentStatusLog as rtsl',
-      'r.ResultTreatmentStatusLogId',
+      'r.treatmentStatusLogId',
       'rtsl.id'
     )
     .leftJoin(
       'ResultTreatmentStatus as resultTreatment',
-      'rtsl.treatmentStatusId',
+      'rtsl.resultTreatmentStatusId',
       'resultTreatment.id'
     )
 
@@ -309,8 +309,8 @@ async function getDownloadResultsList(query, auth) {
       }
       if (params.resultCategories) {
         queryBuilder
-          .orWhereIn('rc1.externalId', params.resultCategories)
-          .orWhereIn('rc2.externalId', params.resultCategories)
+          .orWhereIn('rc1.externalId', params.resultCategories.split(','))
+          .orWhereIn('rc2.externalId', params.resultCategories.split(','))
       }
       if (params.workflowStatus) {
         queryBuilder.where('rws.externalId', params.workflowStatus)
@@ -339,7 +339,7 @@ async function getDownloadResultsList(query, auth) {
       'r.updatedOn',
       'r.longitude',
       'r.latitude',
-      'r.treatmentStatusWorkflowId',
+      'r.treatmentStatusLogId',
       'a.externalId as assayExternalId',
       'si.name as siteName',
       'd.name as deviceName',
@@ -392,7 +392,7 @@ async function getDownloadResultsList(query, auth) {
           'resultTreatmentStatusId'
         )
         .from('ResultTreatmentStatusLog')
-        .whereIn('id', data.map(d => d.treatmentStatusWorkflowId))
+        .whereIn('id', data.map(d => d.treatmentStatusLogId))
 
         .as('rtslMax'),
       'rwl.resultId',
