@@ -329,13 +329,6 @@ async function getDownloadResultsList(query, auth) {
       else queryBuilder.where('dt.externalId', 'CepheidGeneXpert')
     }, query)
     .modify(addConstraints, dataConstraints, { device: 'd', sample: 's' })
-
-  console.log(
-    resultQuery
-      .select('*')
-      .toSQL()
-      .toNative()
-  )
   // get total count for paging
   const getCount = resultQuery
     .clone()
