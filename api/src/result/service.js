@@ -925,22 +925,12 @@ async function updateTreatmentStatus(request) {
       changedOn: updatedOn,
       createdBy: currentUserId,
     })
-<<<<<<< HEAD
     if (lastTreatment.updatedOn < updatedOn) {
       await knex('Result')
         .where('id', resultId)
         .update({ resultTreatmentStatusLogId })
       lastTreatment = await getLastTreatmentStatusByResult(resultId)
     }
-=======
-
-    // TODO: When we merge with tikect 996 we should change this.
-    // We must create a constraint to validate if there is some offline update, check if its the lastone or not.
-    // We only need to update the last state in this moment.
-    await knex('Result')
-      .where('id', resultId)
-      .update({ treatmentStatusLogId: resultTreatmentStatusLogId })
->>>>>>> All test running
   }
   const response = await showResult(request)
   response.data.treatmentStatus = lastTreatment
