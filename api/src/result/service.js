@@ -261,6 +261,7 @@ async function getDownloadResultsList(query, auth) {
   const resultQuery = knex('Result as r')
     .innerJoin('Assay as a', 'r.assayId', 'a.id')
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
+    .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .leftJoin('Geography as g', 'r.geographyId', 'g.id')
     .leftJoin('Country as c', 'g.countryId', 'c.id')
     .leftJoin('State as st', 'g.stateId', 'st.id')
@@ -286,7 +287,6 @@ async function getDownloadResultsList(query, auth) {
       'rtsl.resultTreatmentStatusId',
       'resultTreatment.id'
     )
-
     .modify((queryBuilder, params) => {
       if (params.minUpdatedOn) {
         queryBuilder.where('r.updatedOn', '>=', params.minUpdatedOn)
@@ -295,14 +295,16 @@ async function getDownloadResultsList(query, auth) {
         queryBuilder.where('r.updatedOn', '<', params.maxUpdatedOn)
       }
       if (params.patientSample) {
-        queryBuilder
-          .orWhere('r.sampleId', 'like', `%${params.patientSample}%`)
-          .orWhere(
-            knex.raw('JSON_EXTRACT(patientData,"$.firstName")'),
-            'like',
-            `%${params.patientSample}%`
-          )
-          .orWhere('r.sampleId', 'like', `${+'%' + params.patientSample}%`)
+        queryBuilder.where(builder =>
+          builder
+            .where('r.sampleId', 'like', `%${params.patientSample}%`)
+            .orWhere(
+              knex.raw('JSON_EXTRACT(patientData,"$.firstName")'),
+              'like',
+              `%${params.patientSample}%`
+            )
+            .orWhere('r.sampleId', 'like', `%${params.patientSample}%`)
+        )
       }
       if (params.assayTypeAbbreviations) {
         queryBuilder.whereIn(
@@ -311,18 +313,29 @@ async function getDownloadResultsList(query, auth) {
         )
       }
       if (params.resultCategories) {
-        queryBuilder
-          .orWhereIn('rc1.externalId', params.resultCategories.split(','))
-          .orWhereIn('rc2.externalId', params.resultCategories.split(','))
+        queryBuilder.where(builder =>
+          builder
+            .whereIn('rc1.externalId', params.resultCategories.split(','))
+            .orWhereIn('rc2.externalId', params.resultCategories.split(','))
+        )
       }
       if (params.workflowStatus) {
         queryBuilder.where('rws.externalId', params.workflowStatus)
       }
       if (params.treatmentStatus)
         queryBuilder.where('resultTreatment.externalId', params.treatmentStatus)
+      if (params.deviceType)
+        queryBuilder.where('dt.externalId', params.deviceType)
+      else queryBuilder.where('dt.externalId', 'CepheidGeneXpert')
     }, query)
     .modify(addConstraints, dataConstraints, { device: 'd', sample: 's' })
 
+  console.log(
+    resultQuery
+      .select('*')
+      .toSQL()
+      .toNative()
+  )
   // get total count for paging
   const getCount = resultQuery
     .clone()
@@ -332,7 +345,7 @@ async function getDownloadResultsList(query, auth) {
   // get rows
   const getItems = resultQuery
     .clone()
-    .modify(sortPageParams, query, 'updatedOn')
+    .modify(sortPageParams, query, 'r.updatedOn')
     .select(
       'r.id',
       'r.externalId',
@@ -388,18 +401,9 @@ async function getDownloadResultsList(query, auth) {
     )
     .join('ResultWorkflowStatus as rws', 'rwl.resultWorkflowStatusId', 'rws.id')
     .leftJoin(
-      knex
-        .select(
-          'resultId',
-          'changedOn as maxChangedOn',
-          'resultTreatmentStatusId'
-        )
-        .from('ResultTreatmentStatusLog')
-        .whereIn('id', data.map(d => d.treatmentStatusLogId))
-
-        .as('rtslMax'),
+      'ResultTreatmentStatusLog as rtslMax',
       'rwl.resultId',
-      'rtslMax.resultId'
+      'rtslMax.id'
     )
     .leftJoin(
       'ResultTreatmentStatus as rts',
@@ -413,7 +417,7 @@ async function getDownloadResultsList(query, auth) {
       'rws.i18nKey',
       'rwl.reason',
       'rwl.changedOn',
-      'rtslMax.maxChangedOn as treatmentChangedOn',
+      'rtslMax.ChangedOn as treatmentChangedOn',
       'rts.name as resultTreatmentName',
       'rts.externalId as treatmentexternalId',
       'rts.i18nKey as treatmenti18nKey'

@@ -347,6 +347,11 @@ const routes = [
             treatmentStatus: Joi.string()
               .optional()
               .description('External Id of the treatment status'),
+            deviceType: Joi.string()
+              .optional()
+              .description(
+                'External Id Device type, the default value is CepheidGeneXpert'
+              ),
           },
           validateSortPageParams('updatedOn')
         ),
