@@ -594,7 +594,9 @@ const getTags = (regExp, field) => {
 async function resolveAutoTagging(knex, result) {
   const country = await getCountryByDeviceId(knex, result.deviceId)
 
+  // taggingResults is array of strings ['']
   const taggingResults = getAllResultTags(country, result)
+  // existingTags is array [{ id: number, title: 'string' }]
   const existingTags = await getExistingTagByPartner(
     knex,
     result.partnerId,
@@ -607,7 +609,9 @@ async function resolveAutoTagging(knex, result) {
   )
 
   const tagsToBeUpdated = _.uniqBy(
-    _.filter(existingTags, tag => includesIgnoreCase(taggingResults, tag))
+    _.filter(existingTags, tag =>
+      includesIgnoreCase(taggingResults.map(title => ({ title })), tag.title)
+    )
   )
 
   _.map(tagsToBeAdded, async tag => {
