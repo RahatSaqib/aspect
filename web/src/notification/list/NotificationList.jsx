@@ -45,10 +45,6 @@ const messages = defineMessages({
     id: 'pages.NotificationList.lastTriggered',
     defaultMessage: 'Last triggered',
   },
-  recipients: {
-    id: 'pages.NotificationList.recipients',
-    defaultMessage: 'Recipients',
-  },
   totalTriggers: {
     id: 'pages.NotificationList.totalTriggers',
     defaultMessage: 'Total triggers',
@@ -102,7 +98,7 @@ const filtersFromLocation = composeSanitizer(
 const enhance = compose(
   withProps(
     makeSortPageSelector({
-      sortCol: 'lastTriggeredOn',
+      sortCol: 'name',
       sortDir: 'desc',
     })
   ),
@@ -186,97 +182,97 @@ export const NotificationList = ({
   pageSize,
   onRowClick,
   reducedFilters,
-}) => (
-  <div className={cssClasses('Container')}>
-    <Helmet title={intl.formatMessage(messages.notificationsTitle)} />
-    <NavTitle title={intl.formatMessage(messages.notificationsTitle)} />
-    <BrowseFilters
-      history={history}
-      location={location}
-      intl={intl}
-      config={reducedFilters}
-    />
-    <DataTableCard key={`DataTableCard--table-${location.key}`}>
-      <DataTableProgressBar disabled={!table.loading} />
-      {items.currentIdList.isEmpty() && (
-        <BrowseEmptyList history={history} location={location} intl={intl} />
-      )}
-      {!items.currentIdList.isEmpty() && (
-        <NotificationDataTable
-          selectable={false}
-          className={cssClasses('NotificationDataTable')}
-        >
-          <NotificationDataTableHead
-            history={history}
-            location={location}
-            sortColumnKey={sortCol}
-            sortColumnDir={sortDir}
-            columns={[
-              {
-                key: 'alertName',
-                label: intl.formatMessage(messages.notificationsName),
-                sortable: true,
-              },
-              {
-                key: 'lastTriggeredOn',
-                label: intl.formatMessage(messages.lastTriggered),
-                sortable: true,
-              },
-              {
-                key: 'recipientsCount',
-                label: intl.formatMessage(messages.recipients),
-                sortable: true,
-              },
-              {
-                key: 'triggersCount',
-                label: intl.formatMessage(messages.totalTriggers),
-                sortable: true,
-              },
-              {
-                key: 'issues',
-                label: intl.formatMessage(messages.issues),
-                sortable: true,
-              },
-              {
-                key: 'sms',
-                label: intl.formatMessage(messages.sms),
-                sortable: true,
-              },
-              {
-                key: 'email',
-                label: intl.formatMessage(messages.email),
-                sortable: true,
-              },
-            ]}
-          />
-          {items.currentIdList
-            .map(id => items.byId.get(id))
-            .map(notification => (
-              <NotificationDataTableRow
-                key={notification.get('id')}
-                intl={intl}
-                notification={notification}
-                onClick={onRowClick}
-                data-notification-id="detail"
-              />
-            ))}
-        </NotificationDataTable>
-      )}
-      <TableBody>
-        {!items.currentIdList.isEmpty() && (
-          <BrowseTablePaginator
-            history={history}
-            location={location}
-            intl={intl}
-            paginatorStatus={messages.paginatorStatus}
-            total={table.total}
-            pageAt={pageAt}
-            pageSize={pageSize}
-          />
+}) => {
+  items.currentIdList
+    .map(id => items.byId.get(id))
+    .map(notification => console.log('===', notification.toJS()))
+  return (
+    <div className={cssClasses('Container')}>
+      <Helmet title={intl.formatMessage(messages.notificationsTitle)} />
+      <NavTitle title={intl.formatMessage(messages.notificationsTitle)} />
+      <BrowseFilters
+        history={history}
+        location={location}
+        intl={intl}
+        config={reducedFilters}
+      />
+      <DataTableCard key={`DataTableCard--table-${location.key}`}>
+        <DataTableProgressBar disabled={!table.loading} />
+        {items.currentIdList.isEmpty() && (
+          <BrowseEmptyList history={history} location={location} intl={intl} />
         )}
-      </TableBody>
-    </DataTableCard>
-  </div>
-)
+        {!items.currentIdList.isEmpty() && (
+          <NotificationDataTable
+            selectable={false}
+            className={cssClasses('NotificationDataTable')}
+          >
+            <NotificationDataTableHead
+              history={history}
+              location={location}
+              sortColumnKey={sortCol}
+              sortColumnDir={sortDir}
+              columns={[
+                {
+                  key: 'name',
+                  label: intl.formatMessage(messages.notificationsName),
+                  sortable: true,
+                },
+                {
+                  key: 'lastTriggeredOn',
+                  label: intl.formatMessage(messages.lastTriggered),
+                  sortable: true,
+                },
+                {
+                  key: 'totalTriggers',
+                  label: intl.formatMessage(messages.totalTriggers),
+                  sortable: true,
+                },
+                {
+                  key: 'issues',
+                  label: intl.formatMessage(messages.issues),
+                  sortable: true,
+                },
+                {
+                  key: 'sms',
+                  label: intl.formatMessage(messages.sms),
+                  sortable: true,
+                },
+                {
+                  key: 'email',
+                  label: intl.formatMessage(messages.email),
+                  sortable: true,
+                },
+              ]}
+            />
+            {items.currentIdList
+              .map(id => items.byId.get(id))
+              .map(notification => (
+                <NotificationDataTableRow
+                  key={notification.get('id')}
+                  intl={intl}
+                  notification={notification}
+                  onClick={onRowClick}
+                  data-notification-id="detail"
+                />
+              ))}
+          </NotificationDataTable>
+        )}
+        <TableBody>
+          {!items.currentIdList.isEmpty() && (
+            <BrowseTablePaginator
+              history={history}
+              location={location}
+              intl={intl}
+              paginatorStatus={messages.paginatorStatus}
+              total={table.total}
+              pageAt={pageAt}
+              pageSize={pageSize}
+            />
+          )}
+        </TableBody>
+      </DataTableCard>
+    </div>
+  )
+}
 
 export default enhance(NotificationList)

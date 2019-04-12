@@ -17,14 +17,20 @@ const { messageStatusToId } = require('../shared/dictionary')
 
 async function listNotifications(request) {
   const { query } = request
-  const now = Date.now()
+
+  console.log('quuuuuu', query)
 
   const notificationQuery = knex('Notification as n')
     .innerJoin('NotificationType as nt', 'nt.id', 'n.notificationTypeId')
     .leftJoin('MessageType as m', 'm.id', 'nt.messageTypeId')
+
+  // .modify(filterParams, query, {})
+  const getItems = notificationQuery
+    .clone()
     .select(
       'nt.name',
       'nt.messageTypeId',
+      knex.raw('GROUP_CONCAT(n.issueId) as triggers'),
       knex.raw('GROUP_CONCAT(n.alertMessageId) as issues'),
       knex.raw('GROUP_CONCAT(n.emailMessageId) as emails'),
       knex.raw('GROUP_CONCAT(n.smsMessageId) as sms'),
@@ -36,124 +42,36 @@ async function listNotifications(request) {
     .max('n.createdOn as lastTriggeredOn')
     .groupBy('nt.name')
     .modify(filterDateRangeParams, query, 'lastTriggeredOn')
-  // .modify(filterParams, query, {})
-  const getItems = notificationQuery
-    .clone()
     .modify(sortPageParams, query, 'nt.name')
   const getCount = notificationQuery
     .clone()
     .count('n.id as count')
     .first()
-  const [{ count: tota }, Data] = await Promise.all([getCount, getItems])
-  Data.forEach(notification => {
-    notification.issueCount = notification.alertTemplateId
-      ? _.size(notification.issues.split(','))
-      : 'Not Configured'
-    notification.emailCount = notification.emailTemplateId
-      ? _.size(notification.emails.split(','))
-      : 'Not Configured'
-    notification.issueCount = notification.smsTemplateId
-      ? _.size(notification.sms.split(','))
-      : 'Not Configured'
+  const [{ count: total }, data] = await Promise.all([getCount, getItems])
+
+  console.log('+++++', data)
+  data.forEach(notification => {
+    const {
+      triggers,
+      alertTemplateId,
+      emailTemplateId,
+      smsTemplateId,
+      issues,
+      emails,
+      sms,
+    } = notification
+    notification.triggersCount = triggers ? _.size(triggers.split(',')) : 0
+    notification.issueCount = getItemCount(alertTemplateId, issues)
+    notification.emailCount = getItemCount(emailTemplateId, emails)
+    notification.smsCount = getItemCount(smsTemplateId, sms)
   })
-  console.log('-----------', Data)
+  console.log('-----------', data, data.length)
 
-  const data = _.flowRight(
-    x =>
-      x.map((it, i) => {
-        it.id = i + 1
-        return it
-      }),
-    query.sortDir === 'desc' ? _.reverse : _.identity,
-    x => _.sortBy(x, query.sortCol || _.identity)
-  )([
-    {
-      alertType: 'mine',
-      alertName: 'TB MTB+ Rif+ in Western Region',
-      lastTriggeredOn: subMinutes(now, 0),
-      recipientsCount: 4,
-      triggersCount: 20,
-      errorsCount: 30,
-    },
-    {
-      alertType: 'normal',
-      alertName: 'New HIV+ Case',
-      lastTriggeredOn: subMinutes(now, 60),
-      recipientsCount: 14,
-      triggersCount: 7,
-      errorsCount: 0,
-    },
-    {
-      alertType: 'normal',
-      alertName: 'Inventory about to expire',
-      lastTriggeredOn: subMinutes(now, 200),
-      recipientsCount: 3,
-      triggersCount: 1,
-      errorsCount: 0,
-    },
-    {
-      alertType: 'normal',
-      alertName: 'New HIV+ Case',
-      lastTriggeredOn: subMinutes(now, 345),
-      recipientsCount: 7,
-      triggersCount: 3,
-      errorsCount: 0,
-    },
-    {
-      alertType: 'mine',
-      alertName: 'Module swapped',
-      lastTriggeredOn: subMinutes(now, 800),
-      recipientsCount: 14,
-      triggersCount: 7,
-      errorsCount: 5,
-    },
-    {
-      alertType: 'mine',
-      alertName: 'TB MTB+ Rif+ in Western Region',
-      lastTriggeredOn: subMinutes(now, 1202),
-      recipientsCount: 3,
-      triggersCount: 1,
-      errorsCount: 23,
-    },
-    {
-      alertType: 'normal',
-      alertName: 'New HIV+ Case',
-      lastTriggeredOn: subMinutes(now, 1634),
-      recipientsCount: 7,
-      triggersCount: 3,
-      errorsCount: 0,
-    },
-    {
-      alertType: 'normal',
-      alertName: 'Device Offline',
-      lastTriggeredOn: subMinutes(now, 1645),
-      recipientsCount: 14,
-      triggersCount: 7,
-      errorsCount: 0,
-    },
-    {
-      alertType: 'normal',
-      alertName: 'TB MTB+ Rif+ in Southern Region',
-      lastTriggeredOn: subMinutes(now, 2346),
-      recipientsCount: 3,
-      triggersCount: 1,
-      errorsCount: 0,
-    },
-    {
-      alertType: 'normal',
-      alertName: 'New HIV+ Case',
-      lastTriggeredOn: subMinutes(now, 13457),
-      recipientsCount: 7,
-      triggersCount: 3,
-      errorsCount: 0,
-    },
-  ])
+  function getItemCount(comparer, arr) {
+    return comparer ? (arr ? _.size(arr.split(',')) : 0) : 'Not Configured'
+  }
 
-  const total = data.length
-
-  const result = { ok: true, total, data, length: data.length }
-
-  return result
+  return { ok: true, total, data, length: data.length }
 }
 
 async function onIssueEscalated({ issueId }, { messageContext: context }) {
