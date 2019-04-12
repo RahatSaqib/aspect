@@ -73,9 +73,7 @@ function getUserId(username) {
 
 async function authenticate(request) {
   const { payload } = request
-
   let user = await getUser(payload.name)
-
   if (!user) {
     // no user with such username in Aspect yet - check it in GxAlert
     user = await validateUserAtGxAlert(payload.name, payload.password)
@@ -83,7 +81,6 @@ async function authenticate(request) {
       return Boom.unauthorized('Authentication failed. Wrong password.')
     }
   }
-
   if (user.lockedOut === 1) {
     return Boom.unauthorized('Your account is locked.')
   }
@@ -100,6 +97,7 @@ async function authenticate(request) {
     // this is for "regular" accounts that were either created in aspect
     // or migrated from GxAlert and updated their password
     const pwResult = await bcryptCompare(payload.password, user.password)
+
     if (!pwResult) {
       const lock =
         user.failedPasswordAttempts + 1 >= config.passwordAttempts ? 1 : 0
@@ -140,13 +138,14 @@ async function authenticate(request) {
       lastActive: now,
     })
 
-  const accessToken = await getAccessToken(user)
+  const accessToken = await getAccessToken(user, payload.clientName)
   const displayPreferences = await getDisplayPreferences(user)
 
   return {
     access: accessToken,
     refresh: refreshToken,
     clientId,
+    clientType: payload.clientType,
     culture: user.culture || 'en-US',
     timezone: user.timezone || 'Eastern Standard Time',
     displayPreferences,
@@ -262,9 +261,8 @@ async function hasFeature(userId, partnerId, module) {
     .first('f.module')
   return !_.isEmpty(userFeature)
 }
-
 // generate a new jwt for the given user data
-function getAccessToken({ id, name, partnerId, personId }) {
+function getAccessToken({ id, name, partnerId, personId }, clientName = 'web') {
   return query('Get permissions for user and partner')
     .from('Permission as p')
     .innerJoin('JobFunctionPermission as jfp', 'p.id', 'jfp.permissionId')
@@ -282,7 +280,9 @@ function getAccessToken({ id, name, partnerId, personId }) {
           name,
           permissions: data.map(p => `${p.module}:${p.activity}`),
           hasToAcceptLicenseId:
-            !applicableLicense || applicableLicense.acceptedOn
+            clientName.includes(REPORTERAPP) ||
+            !applicableLicense ||
+            applicableLicense.acceptedOn
               ? null
               : applicableLicense.id,
         },
