@@ -856,12 +856,13 @@ async function updateTreatmentStatus(request) {
       changedOn: now,
       createdBy: currentUserId,
     })
+
     // TODO: When we merge with tikect 996 we should change this.
     // We must create a constraint to validate if there is some offline update, check if its the lastone or not.
     // We only need to update the last state in this moment.
     await knex('Result')
       .where('id', resultId)
-      .update({ resultTreatmentStatusLogId })
+      .update({ treatmentStatusLogId: resultTreatmentStatusLogId })
   }
   const response = await showResult(request)
   response.data.treatmentStatus = await getLastTreatmentStatusByResult(resultId)
@@ -869,7 +870,12 @@ async function updateTreatmentStatus(request) {
   return response
 }
 async function getLastTreatmentStatusByResult(resultId) {
-  return knex('ResultTreatmentStatusLog as rtl')
+  return knex('Result as r')
+    .innerJoin(
+      'ResultTreatmentStatusLog as rtl',
+      'r.treatmentStatusLogId',
+      'rtl.id'
+    )
     .innerJoin(
       'ResultTreatmentStatus as ts',
       'rtl.resultTreatmentStatusId',
