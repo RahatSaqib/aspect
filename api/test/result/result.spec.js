@@ -801,7 +801,7 @@ describe('Result Workflow Status Log', () => {
   })
 })
 
-describe.only('Result download routes', () => {
+describe('Result download routes', () => {
   const path = '/api/result/download'
   describe('GET', () => {
     shared.checkToken(server, path)
