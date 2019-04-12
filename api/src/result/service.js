@@ -260,6 +260,7 @@ async function getDownloadResultsList(query, auth) {
   const dataConstraints = await getConstraints(auth.credentials)
   const resultQuery = knex('Result as r')
     .innerJoin('Assay as a', 'r.assayId', 'a.id')
+    .innerJoin('AssayType as at', 'a.assayTypeId', 'at.id')
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .leftJoin('Geography as g', 'r.geographyId', 'g.id')
@@ -308,7 +309,7 @@ async function getDownloadResultsList(query, auth) {
       }
       if (params.assayTypeAbbreviations) {
         queryBuilder.whereIn(
-          'a.abbreviation',
+          'at.abbreviation',
           params.assayTypeAbbreviations.split(',')
         )
       }
