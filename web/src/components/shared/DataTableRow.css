@@ -91,3 +91,7 @@
     visibility: visible;
   }
 }
+
+.TableCell__tag {
+  margin-right: 10px;
+}

@@ -123,17 +123,15 @@ export class PersonDetail extends PureComponent {
     fetchPartnersAndJobFunctionsForSelectList()
   }
 
-  saveContactDetails = () => {
+  saveContactDetails = values => {
     const { person, updateSinglePerson } = this.props
     const contactDetails = new ContactDetails(person)
-    return updateSinglePerson(contactDetails.get('id'), contactDetails).then(
-      () => {
-        this.props.showAcknowledgement({
-          title: messages.detailsUpdatedSuccessfully,
-          message: messages.contactDetailsUpdatedMessage,
-        })
-      }
-    )
+    return updateSinglePerson(contactDetails.get('id'), values).then(() => {
+      this.props.showAcknowledgement({
+        title: messages.detailsUpdatedSuccessfully,
+        message: messages.contactDetailsUpdatedMessage,
+      })
+    })
   }
 
   saveLoginDetails = ({ username, newPassword, userLockedOut }) => {

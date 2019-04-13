@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import React from 'react'
+import Immutable from 'immutable'
 import ReactShallowRenderer from 'react-test-renderer/shallow'
 
 describe('ContactDetailsForm module', () => {
@@ -40,6 +41,9 @@ describe('ContactDetailsForm module', () => {
     onZipChange: _.noop,
     onNotesChange: _.noop,
     handleSubmit: _.noop,
+    contactDetails: Immutable.Map(),
+    personTags: Immutable.List(),
+    onPersonTagsChange: _.noop,
   }
 
   describe('ContactDetailsForm component', () => {

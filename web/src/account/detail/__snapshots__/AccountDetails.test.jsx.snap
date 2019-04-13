@@ -40,7 +40,7 @@ exports[`AccountDetails module AccountDetails component should shallow render co
         >
           Contact Details
         </Visible>
-        <pure(lifecycle(recomposeForm(withHandlers(ContactDetailsForm))))
+        <pure(Connect(withHandlers(lifecycle(recomposeForm(withHandlers(ContactDetailsForm))))))
           contactDetails={
             Immutable.Record {
               "id": null,

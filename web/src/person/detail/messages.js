@@ -191,4 +191,12 @@ export default defineMessages({
     id: 'pages.UserPreferences.language',
     defaultMessage: 'Language',
   },
+  tags: {
+    id: 'pages.UserPreferences.tags',
+    defaultMessage: 'Tags',
+  },
+  chooseTags: {
+    id: 'pages.UserPreferences.chooseTags',
+    defaultMessage: 'Choose tags',
+  },
 })
