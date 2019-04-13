@@ -212,7 +212,7 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable a
       <h1>
         Tags
       </h1>
-      <pure(Connect(lifecycle(withHandlers(mapProps(ConnectedTagInput)))))
+      <Connect(ConnectedTagInput)
         allowCreate={true}
         label="Choose tags"
         onTagChange={[Function]}
@@ -448,7 +448,7 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
       <h1>
         Tags
       </h1>
-      <pure(Connect(lifecycle(withHandlers(mapProps(ConnectedTagInput)))))
+      <Connect(ConnectedTagInput)
         allowCreate={true}
         label="Choose tags"
         onTagChange={[Function]}
@@ -684,7 +684,7 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
       <h1>
         Tags
       </h1>
-      <pure(Connect(lifecycle(withHandlers(mapProps(ConnectedTagInput)))))
+      <Connect(ConnectedTagInput)
         allowCreate={true}
         label="Choose tags"
         onTagChange={[Function]}
@@ -920,7 +920,7 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
       <h1>
         Tags
       </h1>
-      <pure(Connect(lifecycle(withHandlers(mapProps(ConnectedTagInput)))))
+      <Connect(ConnectedTagInput)
         allowCreate={true}
         label="Choose tags"
         onTagChange={[Function]}
@@ -1156,7 +1156,7 @@ exports[`ContactDetailsForm module ContactDetailsForm component should enable th
       <h1>
         Tags
       </h1>
-      <pure(Connect(lifecycle(withHandlers(mapProps(ConnectedTagInput)))))
+      <Connect(ConnectedTagInput)
         allowCreate={true}
         label="Choose tags"
         onTagChange={[Function]}
@@ -1392,7 +1392,7 @@ exports[`ContactDetailsForm module ContactDetailsForm component should render co
       <h1>
         Tags
       </h1>
-      <pure(Connect(lifecycle(withHandlers(mapProps(ConnectedTagInput)))))
+      <Connect(ConnectedTagInput)
         allowCreate={true}
         label="Choose tags"
         onTagChange={[Function]}

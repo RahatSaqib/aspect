@@ -4,7 +4,6 @@ const { query, knex, filterParams, sortPageParams } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 const userService = require('../auth/service')
 const { transformGeographyFromUpdates } = require('../geography/service')
-const { addConstraints, getConstraints } = require('../auth/constraints')
 const { revokeUsersToken, lockedOutUser } = require('../auth/service')
 
 const getPeople = () =>
