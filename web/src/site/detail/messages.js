@@ -73,7 +73,7 @@ export default defineMessages({
   },
   fieldContact: {
     id: 'pages.SiteDetail.fieldContact',
-    defaultMessage: 'Site Contact',
+    defaultMessage: 'Site Contacts',
   },
   buttonSetBasedonAddress: {
     id: 'pages.SiteDetail.buttonSetBasedonAddress',
@@ -82,5 +82,17 @@ export default defineMessages({
   buttonUpdate: {
     id: 'pages.SiteDetail.buttonUpdate',
     defaultMessage: 'UPDATE',
+  },
+  fieldNoContact: {
+    id: 'pages.SiteDetail.fieldNoContact',
+    defaultMessage: 'No contacts assigned to site',
+  },
+  fieldNoMatch: {
+    id: 'pages.SiteDetail.fieldNoMatch',
+    defaultMessage: 'No matching results found',
+  },
+  fieldNoMatchTags: {
+    id: 'pages.SiteDetail.fieldNoMatchTags',
+    defaultMessage: 'Press enter to add tag',
   },
 })

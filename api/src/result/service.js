@@ -328,52 +328,7 @@ async function getDownloadResultsList(query, auth) {
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
 
   // get latest workflow log entry for every result:
-  const workflowLogs = await knex('ResultWorkflowLog as rwl')
-    .join(
-      knex
-        .select('resultId')
-        .max('changedOn as maxChangedOn')
-        .from('ResultWorkflowLog')
-        .whereIn('resultId', data.map(d => d.id))
-        .groupBy('resultId')
-        .as('rwlMax'),
-      function() {
-        this.on('rwl.resultId', 'rwlMax.resultId').on(
-          'rwl.changedOn',
-          'rwlMax.maxChangedOn'
-        )
-      }
-    )
-    .join('ResultWorkflowStatus as rws', 'rwl.resultWorkflowStatusId', 'rws.id')
-    .leftJoin(
-      knex
-        .select('resultId')
-        .max('changedOn as maxChangedOn')
-        .max('resultTreatmentStatusId as resultTreatmentStatusId')
-        .from('ResultTreatmentStatusLog')
-        .whereIn('resultId', data.map(d => d.id))
-        .groupBy('resultId')
-        .as('rtslMax'),
-      'rwl.resultId',
-      'rtslMax.resultId'
-    )
-    .leftJoin(
-      'ResultTreatmentStatus as rts',
-      'rtslMax.resultTreatmentStatusId',
-      'rts.id'
-    )
-    .select(
-      'rwl.resultId',
-      'rws.name',
-      'rws.externalId',
-      'rws.i18nKey',
-      'rwl.reason',
-      'rwl.changedOn',
-      'rtslMax.maxChangedOn as treatmentChangedOn',
-      'rts.name as resultTreatmentName',
-      'rts.externalId as treatmentexternalId',
-      'rts.i18nKey as treatmenti18nKey'
-    )
+  const workflowLogs = await getLatestResultWorkflowLogs(data.map(d => d.id))
   const transformedData = _.map(data, d => {
     const resultWorkflow = _.find(workflowLogs, { resultId: d.id })
     return {
@@ -553,6 +508,67 @@ async function downloadFileAsync({ auth, params }) {
   return getPathFromFileReferenceId(knex, fileReference.id)
 }
 
+async function getLatestResultWorkflowLogs(resultIds) {
+  if (
+    !resultIds ||
+    // make sure array is not empty and doesn't contain undefined/null
+    _.isEmpty(resultIds.filter(x => !!x))
+  ) {
+    return []
+  }
+  // get latest workflow log entry for each specified result id's
+  return knex('ResultWorkflowLog as rwl')
+    .join(
+      knex
+        .from('ResultWorkflowLog')
+        .whereIn('resultId', resultIds)
+        .groupBy('resultId')
+        .as('rwlMax')
+        // keep 'select' as last item in chain - in faked knex 'select' stops chaining in test api/test/result/service.test.js (see createFakeKnex())
+        .select('resultId', knex.raw('max(changedOn) as maxChangedOn')),
+      function() {
+        this.on('rwl.resultId', 'rwlMax.resultId').on(
+          'rwl.changedOn',
+          'rwlMax.maxChangedOn'
+        )
+      }
+    )
+    .join('ResultWorkflowStatus as rws', 'rwl.resultWorkflowStatusId', 'rws.id')
+    .leftJoin(
+      knex
+        .from('ResultTreatmentStatusLog')
+        .whereIn('resultId', resultIds)
+        .groupBy('resultId')
+        .as('rtslMax')
+        // keep 'select' as last item in chain - in faked knex 'select' stops chaining in test api/test/result/service.test.js (see createFakeKnex())
+        .select(
+          'resultId',
+          knex.raw('max(changedOn) as maxChangedOn'),
+          knex.raw('max(resultTreatmentStatusId) as resultTreatmentStatusId')
+        ),
+      'rwl.resultId',
+      'rtslMax.resultId'
+    )
+    .leftJoin(
+      'ResultTreatmentStatus as rts',
+      'rtslMax.resultTreatmentStatusId',
+      'rts.id'
+    )
+    .select(
+      'rwl.resultId',
+      'rws.name',
+      'rws.externalId',
+      'rws.i18nKey',
+      'rwl.reason',
+      'rwl.changedOn',
+      'rwl.createdOn',
+      'rtslMax.maxChangedOn as treatmentChangedOn',
+      'rts.name as resultTreatmentName',
+      'rts.externalId as treatmentexternalId',
+      'rts.i18nKey as treatmenti18nKey'
+    )
+}
+
 async function getResultByResultId(request, fields = SELECT_SHOW_FIELDS) {
   const { auth, params } = request
   const dataConstraints = await getConstraints(auth.credentials)
@@ -610,6 +626,13 @@ async function getResultByResultId(request, fields = SELECT_SHOW_FIELDS) {
     // select files attached to this result
     const { data: files } = await showFileReferences(request)
     data.files = files
+
+    // get latest workflow log
+    const [{ reason, createdOn } = {}] = await getLatestResultWorkflowLogs([
+      data.id,
+    ])
+    data.resultWorkflowLogReason = reason
+    data.resultWorkflowLogCreatedOn = createdOn
   }
 
   return { ok: results.length === 1, data }
@@ -777,6 +800,7 @@ async function updateWorkflowStatus(request) {
 
 async function updateTreatmentStatus(request) {
   const { auth, params, payload } = request
+  const { updatedOn = new Date() } = payload
   const now = new Date()
   const { resultId } = params
   const { id: currentUserId } = await getUser(auth.credentials.name)
@@ -809,7 +833,7 @@ async function updateTreatmentStatus(request) {
       method,
       data,
       createdOn: now,
-      changedOn: now,
+      changedOn: updatedOn,
       createdBy: currentUserId,
     })
   }

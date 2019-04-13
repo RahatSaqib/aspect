@@ -33,7 +33,10 @@ import ConnectedTagInput from '../../tag/ConnectedTagInput'
 import { fetchTags, updateTags } from '../../tag/TagRedux'
 import isEditable from '../../shared/selectors/result'
 import { Unit } from '../../components/pureGrids'
-import { ReadOnlyField } from '../../components/shared/ReadOnlyFields'
+import {
+  ReadOnlyField,
+  ReadOnlyFields,
+} from '../../components/shared/ReadOnlyFields'
 import DetailPanel from '../../components/shared/detailPanel/DetailPanel'
 import {
   ExpansionPanel,
@@ -41,6 +44,7 @@ import {
   ExpansionPanelDetail,
 } from '../../components/shared/expansionPanel'
 import CustomField from './CustomField'
+import { formatDate } from '../../shared/utils/dateFormat'
 
 import styles from './ResultDetail.css'
 
@@ -109,6 +113,26 @@ const messages = defineMessages({
   submit: {
     id: 'pages.ResultDetail.formFields.submit',
     defaultMessage: 'Submit',
+  },
+  fieldWorkflow: {
+    id: 'pages.ResultDetail.fieldWorkflow',
+    defaultMessage: 'Workflow',
+  },
+  workflowQcOk: {
+    id: 'pages.ResultDetail.workflowQcOk',
+    defaultMessage: 'QC OK',
+  },
+  resultWorkflowStatus: {
+    id: 'pages.ResultDetail.resultWorkflowStatus',
+    defaultMessage: 'Status',
+  },
+  resultWorkflowLogReason: {
+    id: 'pages.ResultDetail.resultWorkflowLogReason',
+    defaultMessage: 'Reason',
+  },
+  resultWorkflowLogCreatedOn: {
+    id: 'pages.ResultDetail.resultWorkflowLogCreatedOn',
+    defaultMessage: 'Created On',
   },
 })
 
@@ -513,6 +537,62 @@ export class ResultDetail extends PureComponent {
     )
   }
 
+  renderWorkflow() {
+    const { result, intl } = this.props
+    const { formatMessage } = intl
+    const fields = [
+      'resultWorkflowStatus',
+      'resultWorkflowLogReason',
+      'resultWorkflowLogCreatedOn',
+    ].map((fieldName, key) => {
+      let value = result.get(fieldName)
+      if (fieldName.includes('CreatedOn')) {
+        value = formatDate(value)
+      }
+      return {
+        key,
+        label: formatMessage(messages[fieldName]),
+        value,
+      }
+    })
+
+    return (
+      <ExpansionPanel className={cssClasses('FieldsContainer')}>
+        <ExpansionPanelHeader label={formatMessage(messages.fieldWorkflow)}>
+          <span
+            role="checkbox"
+            aria-checked="false"
+            tabIndex="0"
+            onKeyDown={() => {}}
+            onClick={e => e.stopPropagation()}
+          >
+            <CheckboxField
+              name="Status"
+              label={formatMessage(messages.workflowQcOk)}
+              style={{ marginRight: 4 }}
+              checked={result.get('qcCheck') === 1}
+              onChange={this.onChangeQcCheck}
+              disabled={
+                result.get('resultWorkflowStatusExternalId') !== 'Deliverable'
+              }
+              title={
+                result.get('resultWorkflowStatusExternalId') !== 'Deliverable'
+                  ? formatMessage(messages.qcCheckDisabledHelp)
+                  : ''
+              }
+            />
+          </span>
+        </ExpansionPanelHeader>
+        <ExpansionPanelDetail>
+          <ReadOnlyFields
+            className={cssClasses('Field__Container')}
+            fields={fields}
+          />
+        </ExpansionPanelDetail>
+      </ExpansionPanel>
+    )
+  }
+
   renderContent() {
     const { result, screenSchema, resultTags, editable, intl } = this.props
     return (
@@ -529,27 +609,8 @@ export class ResultDetail extends PureComponent {
           {/* Render lower-level sections in assay schema in cards */}
           {this.renderFormData()}
 
-          <ExpansionPanel className={cssClasses('FieldsContainer')}>
-            <ExpansionPanelHeader
-              label={intl.formatMessage(messages.fieldFollowup)}
-            >
-              <CheckboxField
-                name="Status"
-                label={intl.formatMessage(messages.confirmed)}
-                style={{ marginRight: 4 }}
-                checked={result.get('qcCheck') === 1}
-                onChange={this.onChangeQcCheck}
-                disabled={
-                  result.get('resultWorkflowStatusExternalId') !== 'Deliverable'
-                }
-                title={
-                  result.get('resultWorkflowStatusExternalId') !== 'Deliverable'
-                    ? intl.formatMessage(messages.qcCheckDisabledHelp)
-                    : ''
-                }
-              />
-            </ExpansionPanelHeader>
-          </ExpansionPanel>
+          {this.renderWorkflow()}
+
           <ExpansionPanel disabled>
             <ExpansionPanelHeader label={intl.formatMessage(messages.tags)}>
               <ConnectedTagInput

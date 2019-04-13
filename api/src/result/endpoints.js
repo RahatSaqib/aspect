@@ -418,6 +418,9 @@ const routes = [
                     changedOn: Joi.date().description(
                       'Date of the latest change to the workflow status'
                     ),
+                    createdOn: Joi.date().description(
+                      'Date of creation of the workflow status'
+                    ),
                     externalId: Joi.string().description(
                       'External ID of the workflow status'
                     ),
@@ -519,8 +522,8 @@ const routes = [
     path: '/result/treatment-status/{resultId}',
     handler: asyncHandler(updateTreatmentStatus),
     config: {
-      description: 'Update Result Status',
-      notes: 'Update the status of a result',
+      description: 'Update Result Treatment Status',
+      notes: 'Update the treatment status of a result',
       auth: { scope: ['result:edit'] },
       validate: {
         params: {
@@ -537,6 +540,12 @@ const routes = [
           externalId: Joi.string().allow('', null),
           data: Joi.string().allow('', null),
           method: Joi.string().allow('', null),
+          updatedOn: Joi.date()
+            .iso()
+            .optional()
+            .description(
+              'This is the date when the status were updated. This is optional'
+            ),
         },
       },
       response: {
@@ -704,6 +713,12 @@ const routes = [
               treatmentStatus: Joi.object()
                 .allow(null)
                 .description('The treatment status object'),
+              resultWorkflowLogReason: Joi.string()
+                .allow(null)
+                .description('Value of Reason from latest ResultWorkflowLog'),
+              resultWorkflowLogCreatedOn: Joi.date()
+                .allow(null)
+                .description('CreatedOn date from latest ResultWorkflowLog'),
             }),
         }),
       },

@@ -5,9 +5,12 @@ const {
 } = require('../geography/requestValidation')
 const {
   listPeople,
+  availableContacts,
   showPerson,
   updatePerson,
   updatePersonUserPreferences,
+  assignContact,
+  unAssignContact,
 } = require('./service')
 
 const routes = [
@@ -26,9 +29,68 @@ const routes = [
               .allow('')
               .description('Filter for person name/email'),
           },
+          {
+            siteId: Joi.number()
+              .allow('')
+              .description('Site ID'),
+          },
           validateAllGeographyFilterParams(),
           validateSortPageParams('name', 'level', 'state', 'lga')
         ),
+      },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/person/available',
+    handler: asyncHandler(availableContacts),
+    config: {
+      description: 'Available People List',
+      notes: 'List of available users that logged in user can assign to a site',
+      auth: { scope: ['site:view', 'site:edit'] },
+    },
+  },
+  {
+    method: 'PUT',
+    path: '/person/assign/{siteId}',
+    handler: asyncHandler(assignContact),
+    config: {
+      description: 'Assign person as site contact',
+      auth: { scope: ['site:view', 'site:edit'] },
+      validate: {
+        params: {
+          siteId: Joi.string()
+            .description('Site ID')
+            .required(),
+        },
+        payload: {
+          id: Joi.number()
+            .integer()
+            .positive()
+            .required(),
+        },
+      },
+    },
+  },
+  {
+    method: 'PUT',
+    path: '/person/unassign/{siteId}',
+    handler: asyncHandler(unAssignContact),
+    config: {
+      description: "Remove person from site's contacts",
+      auth: { scope: ['site:view', 'site:edit'] },
+      validate: {
+        params: {
+          siteId: Joi.string()
+            .description('Site ID')
+            .required(),
+        },
+        payload: {
+          id: Joi.number()
+            .integer()
+            .positive()
+            .required(),
+        },
       },
     },
   },

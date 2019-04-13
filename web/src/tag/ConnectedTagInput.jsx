@@ -1,72 +1,93 @@
-import React from 'react'
 import PropTypes from 'prop-types'
+import React, { useEffect } from 'react'
 import _fp from 'lodash/fp'
 import Immutable from 'immutable'
-import {
-  compose,
-  lifecycle,
-  mapProps,
-  pure,
-  setPropTypes,
-  withHandlers,
-} from 'recompose'
-
-import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 
 import TagInput from '../components/shared/TagInput'
-import { fetchPossibleTags } from '../tag/TagRedux'
-
-const enhance = compose(
-  pure,
-  setPropTypes({
-    qryId: PropTypes.string.isRequired,
-    qryType: PropTypes.oneOf(['result', 'device', 'site', 'person']).isRequired,
-    onTagChange: PropTypes.func.isRequired,
-  }),
-  connect(
-    state => ({
-      tags: state.tag.possibleTags,
-    }),
-    bindActionCreators.bind(null, {
-      fetchPossibleTags,
-    })
-  ),
-  lifecycle({
-    componentDidMount() {
-      const { qryType } = this.props
-      this.props.fetchPossibleTags(qryType)
-    },
-  }),
-  withHandlers({
-    onTagChange: ({ qryId, qryType, onTagChange }) => value => {
-      onTagChange(qryId, qryType, value)
-    },
-  }),
-  mapProps(props => ({
-    ..._fp.omit(['fetchTags'], props),
-    possibleTags: _fp.map(
-      'title',
-      props.tags.getIn([props.qryType, 'items'], Immutable.List()).toJS()
-    ),
-    value: _fp.map('title', props.value),
-  }))
-)
+import { fetchPossibleTags } from './TagRedux'
 
 const ConnectedTagInput = ({
-  possibleTags,
+  qryId,
+  qryType,
+  tags,
+  maxTags,
   value,
   onTagChange,
+  fetchPossibleTags,
   ...restProps
-}) => (
-  <TagInput
-    allowCreate
-    keepFocusOnChange
-    source={possibleTags}
-    value={value}
-    onTagChange={onTagChange}
-    {...restProps}
-  />
-)
+}) => {
+  useEffect(() => {
+    fetchPossibleTags(qryType)
+  }, [])
+  const possibleTags = tags.getIn([qryType, 'items'], Immutable.List()).toJS()
 
-export default enhance(ConnectedTagInput)
+  const onChange = value => {
+    const tags = _fp.map('title', value)
+    onTagChange(qryId, qryType, tags)
+  }
+
+  const onDelete = (item, selectedItem) => {
+    const newSelectedItem = [...selectedItem]
+    newSelectedItem.splice(newSelectedItem.indexOf(item), 1)
+    onChange(newSelectedItem)
+  }
+
+  const onAdd = (item, selectedItem) => {
+    const newTag = _fp.isObject(item) ? item.title : item
+
+    if (newTag && newTag.trim() === '') {
+      return
+    }
+    if (maxTags > 0 && selectedItem.length >= maxTags) {
+      return
+    }
+
+    const isExist = Array.from(selectedItem).some(
+      val => val.title.toLowerCase() === newTag.toLowerCase()
+    )
+
+    const newSelectedItem = !isExist
+      ? [...selectedItem, { title: newTag }]
+      : [...selectedItem]
+
+    onChange(newSelectedItem)
+  }
+
+  return (
+    <TagInput
+      allowCreate
+      keepFocusOnChange
+      source={possibleTags}
+      value={value}
+      tagName="title"
+      onAdd={onAdd}
+      onDelete={onDelete}
+      {...restProps}
+    />
+  )
+}
+
+const mapStateToProps = state => ({
+  tags: state.tag.possibleTags,
+})
+
+ConnectedTagInput.defaultProps = {
+  maxTags: 10,
+}
+
+ConnectedTagInput.propTypes = {
+  fetchPossibleTags: PropTypes.func.isRequired,
+  qryId: PropTypes.string.isRequired,
+  qryType: PropTypes.oneOf(['result', 'device', 'site', 'person']).isRequired,
+  value: PropTypes.arrayOf(PropTypes.string).isRequired,
+  onTagChange: PropTypes.func.isRequired,
+  onAdd: PropTypes.func.isRequired,
+  onDelete: PropTypes.func.isRequired,
+  tags: PropTypes.instanceOf(Immutable.List).isRequired,
+  maxTags: PropTypes.number,
+}
+
+export default connect(mapStateToProps, { fetchPossibleTags })(
+  ConnectedTagInput
+)

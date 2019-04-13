@@ -5,6 +5,7 @@ import classnames from 'classnames/bind'
 import Card from '@material-ui/core/Card'
 
 // Our own imports
+import Contacts from '../contacts/Contacts'
 import messages from '../messages'
 import { Site } from '../../SiteRedux'
 import Summary from '../../../globals/components/Summary'
@@ -15,6 +16,7 @@ const cssClasses = classnames.bind(require('../SiteDetail.css'))
 const SiteDetailProfile = ({
   site,
   siteTags,
+  siteContacts,
   formatMessage,
   history,
   location,
@@ -55,18 +57,6 @@ const SiteDetailProfile = ({
     {
       label: formatMessage(messages.fieldLGA),
       value: site.get('lga'),
-    },
-    {
-      label: formatMessage(messages.fieldContact),
-      value:
-        site.get('contacts') &&
-        site
-          .get('contacts')
-          .toJS()
-          .map(contact => ({
-            description: contact.name,
-            to: `/browse/person/${contact.id}`,
-          })),
     },
     {
       label: formatMessage(messages.fieldDevices),
@@ -111,6 +101,13 @@ const SiteDetailProfile = ({
               cols="4"
             />
           ))}
+
+          <Contacts
+            id={site.get('id')}
+            formatMessage={formatMessage}
+            title={formatMessage(messages.fieldContact)}
+            contacts={siteContacts}
+          />
         </Card>
       </section>
     </div>
@@ -119,6 +116,7 @@ const SiteDetailProfile = ({
 
 SiteDetailProfile.defaultProps = {
   siteTags: [],
+  siteContacts: [],
 }
 
 SiteDetailProfile.propTypes = {
@@ -129,6 +127,7 @@ SiteDetailProfile.propTypes = {
   match: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   disabled: PropTypes.bool.isRequired,
   siteTags: PropTypes.arrayOf(PropTypes.object),
+  siteContacts: PropTypes.arrayOf(PropTypes.object),
 }
 
 export default SiteDetailProfile

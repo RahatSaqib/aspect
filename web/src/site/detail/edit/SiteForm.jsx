@@ -66,6 +66,7 @@ const SiteForm = props => {
     longitude: formatMessage(messages.fieldLongitude),
     latitude: formatMessage(messages.fieldLatitude),
     tags: formatMessage(messages.fieldTags),
+    noMatch: formatMessage(messages.fieldNoMatchTags),
   }
   return (
     <div>
@@ -84,6 +85,7 @@ const SiteForm = props => {
           <EditableFieldsFormContainer
             formatMessage={formatMessage}
             labels={labels}
+            id={site.get('id')}
             enableReinitialize
             initialValues={initialValues}
             siteTags={siteTags}

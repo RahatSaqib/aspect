@@ -3073,7 +3073,7 @@ describe('Device API routes for GxAlert Device', () => {
             basicResultPayload,
             {
               result: {
-                id: dateFormat(new Date(), 'x'),
+                id: dateFormat(new Date(), 'T'),
                 startedOn: now,
                 endedOn: now,
                 instrument: {
@@ -3097,7 +3097,6 @@ describe('Device API routes for GxAlert Device', () => {
         expect(JSON.parse(result1.resultData)).to.containSubset({ a: 'b' })
         assert.isNotOk(result1.errorCode)
         assert.equal(initialCount + 1, await countResults())
-
         deviceApiResponse = await postToDeviceApi({
           authHeader: deviceAuth,
           payload: _.merge(
@@ -3107,7 +3106,7 @@ describe('Device API routes for GxAlert Device', () => {
             basicResultPayload,
             {
               result: {
-                id: dateFormat(new Date(), 'x'),
+                id: dateFormat(new Date(), 'T'),
                 startedOn: now,
                 endedOn: now,
                 instrument: {
@@ -3144,7 +3143,7 @@ describe('Device API routes for GxAlert Device', () => {
             basicResultPayload,
             {
               result: {
-                id: dateFormat(new Date(), 'x'),
+                id: dateFormat(new Date(), 'T'),
                 startedOn: subMinutes(now, 5),
                 endedOn: now,
                 instrument: {
@@ -3188,7 +3187,7 @@ describe('Device API routes for GxAlert Device', () => {
             basicResultPayload,
             {
               result: {
-                id: dateFormat(new Date(), 'x'),
+                id: dateFormat(new Date(), 'T'),
                 data: { a: 'b', c: 2, d: false, e: { f: 'g' } },
                 type: { id: 'Study' },
                 source: { id: 'EnteredByHand' },
@@ -3663,7 +3662,7 @@ describe('Device API routes for GxAlert Device', () => {
               basicResultPayload,
               {
                 result: {
-                  id: dateFormat(new Date(), 'x'),
+                  id: dateFormat(new Date(), 'T'),
                   startedOn: testStartedOn,
                   endedOn: testEndedOn,
                   sample: { id: 'Existing Sample' },
@@ -3712,7 +3711,7 @@ describe('Device API routes for GxAlert Device', () => {
       describe('when the test already exists in the database', () => {
         it('should NOT reduce inventory levels of the consumable', () =>
           runTest(async knex => {
-            const uniqueTestId = dateFormat(new Date(), 'x')
+            const uniqueTestId = dateFormat(new Date(), 'T')
             const consumableAssays = await knex('ConsumableAssay as ca')
               .join('Assay as a', 'ca.assayId', 'a.id')
               .join('DeviceType as dt', 'a.deviceTypeId', 'dt.id')

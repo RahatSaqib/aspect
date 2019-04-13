@@ -909,7 +909,7 @@ describe('Device API routes for GxConnect Devices', () => {
             basicResultPayload,
             {
               result: {
-                id: dateFormat(new Date(), 'x'),
+                id: dateFormat(new Date(), 'T'),
                 startedOn: now,
                 endedOn: now,
                 instrument: {
@@ -944,7 +944,7 @@ describe('Device API routes for GxConnect Devices', () => {
             basicResultPayload,
             {
               result: {
-                id: dateFormat(new Date(), 'x'),
+                id: dateFormat(new Date(), 'T'),
                 startedOn: now,
                 endedOn: now,
                 instrument: {
@@ -982,7 +982,7 @@ describe('Device API routes for GxConnect Devices', () => {
             basicResultPayload,
             {
               result: {
-                id: dateFormat(new Date(), 'x'),
+                id: dateFormat(new Date(), 'T'),
                 startedOn: subMinutes(now, 5),
                 endedOn: now,
                 instrument: {
@@ -1026,7 +1026,7 @@ describe('Device API routes for GxConnect Devices', () => {
             basicResultPayload,
             {
               result: {
-                id: dateFormat(new Date(), 'x'),
+                id: dateFormat(new Date(), 'T'),
                 data: { a: 'b', c: 2, d: false, e: { f: 'g' } },
                 type: { id: 'Study' },
                 source: { id: 'EnteredByHand' },
@@ -1411,7 +1411,7 @@ describe('Device API routes for GxConnect Devices', () => {
                 _.assign({}, basicDevicePayload, basicResultPayload),
                 {
                   result: _.assign({}, basicResultPayload.result, {
-                    id: dateFormat(new Date(), 'x'),
+                    id: dateFormat(new Date(), 'T'),
                     startedOn: testStartedOn,
                     endedOn: testEndedOn,
                     sample: { id: 'Existing Sample' },
@@ -1464,7 +1464,7 @@ describe('Device API routes for GxConnect Devices', () => {
         it('should NOT reduce inventory levels of the consumable', () =>
           runTest(async knex => {
             const { basicDevicePayload, deviceAuth, site, now } = context
-            const uniqueTestId = dateFormat(new Date(), 'x')
+            const uniqueTestId = dateFormat(new Date(), 'T')
 
             const consumableAssays = await knex('ConsumableAssay as ca')
               .join('Assay as a', 'ca.assayId', 'a.id')

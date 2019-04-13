@@ -55,34 +55,34 @@ const renderSuggestion = ({
   itemProps,
   highlightedIndex,
   selectedItem,
+  tagName,
 }) => {
   const isHighlighted = highlightedIndex === index
   const isSelected = (selectedItem || '').indexOf(suggestion.text) > -1
-
   return (
     <MenuItem
       {...itemProps}
-      key={suggestion.value}
+      key={suggestion.id}
       selected={isHighlighted}
       component="div"
       style={{
         fontWeight: isSelected ? 500 : 400,
       }}
     >
-      {suggestion}
+      {suggestion[tagName]}
     </MenuItem>
   )
 }
 
-const getSuggestions = (suggestions, selectedItem, value = '') => {
+const getSuggestions = (suggestions, selectedItem, value = '', tagName) => {
   const inputValue = _.deburr(value.trim()).toLowerCase()
 
   return inputValue.length === 0
     ? []
     : suggestions.filter(
         suggestion =>
-          !_.includes(selectedItem, suggestion) &&
-          suggestion.toLowerCase().indexOf(inputValue) > -1
+          !_.some(selectedItem, suggestion) &&
+          suggestion[tagName].toLowerCase().indexOf(inputValue) > -1
       )
 }
 
@@ -90,10 +90,12 @@ const TagInput = ({
   classes: classNameValues,
   disabled,
   fullWidth,
-  maxTags,
   source,
-  onTagChange,
+  onDelete,
+  onAdd,
+  tagName,
   value: selectedItem,
+  noMatch,
 }) => {
   const [inputValue, setInputValue] = useState('')
   const [active, setActive] = useState(false)
@@ -102,7 +104,7 @@ const TagInput = ({
   const handleInputKeyDown = event => {
     // Backspace
     if (selectedItem.length && !inputValue.length && event.which === 8) {
-      onTagChange(selectedItem.slice(0, selectedItem.length - 1))
+      onDelete(selectedItem[selectedItem.length - 1], selectedItem)
     }
     // Enter / comma
     if (!active && (event.which === 13 || event.which === 188)) {
@@ -132,28 +134,13 @@ const TagInput = ({
 
   const handleDelete = item => () => {
     if (!disabled) {
-      const newSelectedItem = [...selectedItem]
-      newSelectedItem.splice(newSelectedItem.indexOf(item), 1)
-      onTagChange(newSelectedItem)
+      onDelete(item, selectedItem)
     }
   }
 
   const select = newValue => {
-    if (newValue && newValue.trim() === '') {
-      return
-    }
-    if (maxTags > 0 && selectedItem.length >= maxTags) {
-      return
-    }
-
-    const isExist = Array.from(selectedItem).some(
-      val => val.toLowerCase() === newValue.toLowerCase()
-    )
-    const newSelectedItem = !isExist
-      ? [...selectedItem, newValue]
-      : [...selectedItem]
+    onAdd(newValue, selectedItem)
     setInputValue('')
-    onTagChange(newSelectedItem)
   }
 
   return (
@@ -162,6 +149,8 @@ const TagInput = ({
       onChange={handleChange}
       onStateChange={handleStateChange}
       selectedItem={selectedItem}
+      tagName={tagName}
+      noMatch={noMatch}
     >
       {({
         getInputProps,
@@ -171,62 +160,77 @@ const TagInput = ({
         inputValue,
         selectedItem,
         highlightedIndex,
-      }) => (
-        <div className={classNameValues.container}>
-          <Grid container spacing={4} alignItems="stretch">
-            {selectedItem.length > 0 && (
-              <Grid item>
-                {selectedItem.map(item => (
-                  <Chip
-                    key={item}
-                    tabIndex={-1}
-                    label={item}
-                    deleteIcon={
-                      <ClearIcon className={classNameValues.deleteIcon} />
-                    }
-                    className={classNameValues.chip}
-                    onDelete={handleDelete(item)}
-                  />
-                ))}
-              </Grid>
-            )}
-            <Grid item className={classNameValues.inputContainer}>
-              <RootRef rootRef={popperNode}>
-                <Input
-                  fullWidth={fullWidth}
-                  {...getInputProps({
-                    onChange: handleInputChange,
-                    onKeyDown: handleInputKeyDown,
+      }) => {
+        const options = getSuggestions(
+          source,
+          selectedItem,
+          inputValue,
+          tagName
+        )
+        return (
+          <div className={classNameValues.container}>
+            <Grid container spacing={4} alignItems="stretch">
+              {selectedItem.length > 0 && (
+                <Grid item>
+                  {selectedItem.map(item => {
+                    const name = item[tagName]
+                    return (
+                      <Chip
+                        key={item.id}
+                        tabIndex={-1}
+                        label={name}
+                        deleteIcon={
+                          <ClearIcon className={classNameValues.deleteIcon} />
+                        }
+                        className={classNameValues.chip}
+                        onDelete={handleDelete(item)}
+                      />
+                    )
                   })}
-                />
-              </RootRef>
+                </Grid>
+              )}
+              <Grid item className={classNameValues.inputContainer}>
+                <RootRef rootRef={popperNode}>
+                  <Input
+                    fullWidth={fullWidth}
+                    {...getInputProps({
+                      onChange: handleInputChange,
+                      onKeyDown: handleInputKeyDown,
+                    })}
+                  />
+                </RootRef>
+              </Grid>
             </Grid>
-          </Grid>
-          <Popper
-            open={isOpen}
-            anchorEl={popperNode.current}
-            className={classNameValues.popper}
-            transition
-            popperOptions={{ placement: 'bottom-start' }}
-            {...(isOpen ? getMenuProps({}, { suppressRefError: true }) : {})}
-          >
-            {isOpen ? (
-              <Paper className={classNameValues.paper} square>
-                {getSuggestions(source, selectedItem, inputValue).map(
-                  (suggestion, index) =>
-                    renderSuggestion({
-                      suggestion,
-                      index,
-                      itemProps: getItemProps({ item: suggestion }),
-                      highlightedIndex,
-                      selectedItem,
-                    })
-                )}
-              </Paper>
-            ) : null}
-          </Popper>
-        </div>
-      )}
+            <Popper
+              open={isOpen}
+              anchorEl={popperNode.current}
+              className={classNameValues.popper}
+              transition
+              popperOptions={{ placement: 'bottom-start' }}
+              {...(isOpen ? getMenuProps({}, { suppressRefError: true }) : {})}
+            >
+              {isOpen ? (
+                <Paper className={classNameValues.paper} square>
+                  {options.length ? (
+                    options.map((suggestion, index) =>
+                      renderSuggestion({
+                        suggestion,
+                        index,
+                        itemProps: getItemProps({ item: suggestion }),
+                        highlightedIndex,
+                        selectedItem,
+                        tagName,
+                      })
+                    )
+                  ) : (
+                    <MenuItem>{noMatch}</MenuItem>
+                  )}
+                </Paper>
+              ) : null}
+            </Popper>
+          </div>
+        )
+      }}
     </Downshift>
   )
 }
@@ -235,17 +239,18 @@ TagInput.propTypes = {
   classes: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
   disabled: PropTypes.bool,
   fullWidth: PropTypes.bool,
-  maxTags: PropTypes.number,
-  onTagChange: PropTypes.func,
+  tagName: PropTypes.string.isRequired,
+  onAdd: PropTypes.func.isRequired,
+  onDelete: PropTypes.func.isRequired,
   source: PropTypes.arrayOf(PropTypes.object),
   value: PropTypes.arrayOf(PropTypes.object),
+  noMatch: PropTypes.string.isRequired,
 }
 
 TagInput.defaultProps = {
   disabled: false,
   fullWidth: true,
   maxTags: 10,
-  onTagChange: _.identity,
   source: [],
   value: [],
 }

@@ -1,25 +1,32 @@
 const _ = require('lodash')
 const Boom = require('boom')
 const { query, knex, filterParams, sortPageParams } = require('../db')
+const { getConstraints, addConstraints } = require('../auth/constraints')
 const userService = require('../auth/service')
 const { transformGeographyFromUpdates } = require('../geography/service')
 const { addConstraints, getConstraints } = require('../auth/constraints')
 const { revokeUsersToken, lockedOutUser } = require('../auth/service')
 
+const getPeople = () =>
+  knex('Person as p')
+    .leftJoin('Geography as g', 'p.geographyId', 'g.id')
+    .leftOuterJoin('State as st', 'g.stateId', 'st.id')
+    .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
+    .leftJoin('Job as j', 'p.id', 'j.personId')
+    .leftJoin('JobContext as jc', 'jc.jobId', 'j.id')
+    .leftJoin('Site as s', 'jc.siteId', 's.id')
+
 async function listPeople(request) {
   const { auth, query } = request
   const dataConstraints = await getConstraints(auth.credentials)
 
-  const personQuery = knex('Person as p')
-    .leftJoin('Geography as g', 'p.geographyId', 'g.id')
-    .leftOuterJoin('State as s', 'g.stateId', 's.id')
-    .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
-    .modify(filterParams, query, {
-      countryId: 'g.countryId',
-      stateId: 'g.stateId',
-      lgaId: 'g.lgaId',
-      contactNameOrEmail: ['p.name', 'p.email', 'p.email2'],
-    })
+  const personQuery = getPeople().modify(filterParams, query, {
+    countryId: 'g.countryId',
+    stateId: 'g.stateId',
+    lgaId: 'g.lgaId',
+    contactNameOrEmail: ['p.name', 'p.email', 'p.email2'],
+    siteId: 'jc.siteId',
+  })
 
   // get total count for paging
   const getCount = personQuery
@@ -59,6 +66,102 @@ async function listPeople(request) {
   return { ok: true, total, data, length: data.length }
 }
 
+async function availableContacts(request) {
+  const { auth } = request
+  const dataConstraints = await getConstraints(auth.credentials)
+
+  const data = await getPeople()
+    .modify(addConstraints, dataConstraints, { geography: 'g' })
+    .select('p.name', 'p.id')
+    .groupBy('id')
+  return { ok: true, data }
+}
+
+async function assignContact(request) {
+  const { siteId, personDetails, site } = await validateContact(request)
+
+  if (_.isEmpty(personDetails) || _.isEmpty(site)) {
+    return Boom.notFound()
+  }
+
+  let { jobId } = personDetails
+
+  if (!jobId) {
+    const { id: jobFunctionIdDefault } = await knex('JobFunction')
+      .where({ name: 'Lab User' })
+      .first('id')
+    jobId = await knex('Job').insert({
+      personId: personDetails.id,
+      jobFunctionId: jobFunctionIdDefault,
+    })
+  }
+
+  const newContact = { jobId, siteId }
+
+  try {
+    const response = await knex('JobContext').insert(newContact)
+    if (response) return { ok: true, data: await siteContacts(siteId) }
+  } catch (e) {
+    return Boom.conflict('Contact is already assigned to site')
+  }
+}
+
+async function unAssignContact(request) {
+  const { siteId, personDetails, site } = await validateContact(request)
+
+  if (_.isEmpty(personDetails) || _.isEmpty(site)) {
+    return Boom.notFound()
+  }
+
+  const contact = { jobId: personDetails.jobId, siteId }
+  const jcRecord = await knex('JobContext')
+    .where(contact)
+    .first()
+  if (!jcRecord) {
+    return Boom.notFound()
+  }
+  await knex('JobContext')
+    .where(contact)
+    .del()
+
+  return { ok: true, data: await siteContacts(siteId) }
+}
+
+function getSite(siteId, dataConstraints) {
+  return query('Get site to add contact to')
+    .from('Site as s')
+    .leftJoin('Geography as g', 's.geographyId', 'g.id')
+    .modify(addConstraints, dataConstraints, { geography: 'g' })
+    .where('s.id', '=', siteId)
+}
+
+function siteContacts(id) {
+  return knex('JobContext as jc')
+    .innerJoin('Job as j', 'jc.jobId', 'j.id')
+    .innerJoin('Person as p', 'j.personId', 'p.id')
+    .where('jc.siteId', id)
+    .select('p.name', 'p.id')
+}
+
+async function validateContact(request) {
+  const { params: { siteId }, payload: { id }, auth } = request
+  const dataConstraints = await getConstraints(auth.credentials)
+
+  const site = await getSite(siteId, dataConstraints)
+
+  const personDetails = await getPersonDetails(id).modify(
+    addConstraints,
+    dataConstraints,
+    { geography: 'g' }
+  )
+
+  return {
+    siteId,
+    site,
+    personDetails,
+  }
+}
+
 function getPersonDetails(personId) {
   return query('Get person details')
     .from('Person as p')
@@ -67,6 +170,7 @@ function getPersonDetails(personId) {
     .leftOuterJoin('State as s', 'g.stateId', 's.id')
     .leftOuterJoin('Country as c', 'g.countryId', 'c.id')
     .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
+    .leftOuterJoin('Job as j', 'p.id', 'j.personId')
     .where({ 'p.id': personId })
     .first(
       'p.id',
@@ -79,6 +183,7 @@ function getPersonDetails(personId) {
       'p.phone',
       'p.cell',
       'g.countryId',
+      'g.id as geogId',
       'g.stateId',
       'g.lgaId',
       'p.zip',
@@ -93,7 +198,8 @@ function getPersonDetails(personId) {
       's.name as stateName',
       'l.name as lgaName',
       'u.lockedOut as userLockedOut',
-      'p.canLogIn'
+      'p.canLogIn',
+      'j.id as jobId'
     )
 }
 
@@ -202,6 +308,9 @@ async function updatePersonUserPreferences(request) {
 
 module.exports = {
   listPeople,
+  availableContacts,
+  assignContact,
+  unAssignContact,
   showPerson,
   updatePerson,
   updatePersonUserPreferences,
