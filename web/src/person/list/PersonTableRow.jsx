@@ -29,9 +29,10 @@ const formatTags = tagsStr => {
     )
     return tags
   }
-  return tags.map(tag => (
+  return tags.map((tag, index) => (
     <span key={tag} className={cssClasses('TableCell__tag')}>
       {tag}
+      {tags.length > 1 && index < tags.length - 1 ? ',' : ''}
     </span>
   ))
 }
