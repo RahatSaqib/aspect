@@ -88,9 +88,10 @@ const searchSanitizer = makeSearchParamsSanitizer({
     'name',
     'lastTriggeredOn',
     'totalTriggers',
-    'issues',
-    'sms',
-    'email',
+    'triggersCount',
+    'issueCount',
+    'emailCount',
+    'smsCount',
   ],
 })
 const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
@@ -233,17 +234,17 @@ export const NotificationList = ({
                   sortable: true,
                 },
                 {
-                  key: 'issues',
+                  key: 'issueCount',
                   label: intl.formatMessage(messages.issues),
                   sortable: true,
                 },
                 {
-                  key: 'sms',
+                  key: 'smsCount',
                   label: intl.formatMessage(messages.sms),
                   sortable: true,
                 },
                 {
-                  key: 'email',
+                  key: 'emailCount',
                   label: intl.formatMessage(messages.email),
                   sortable: true,
                 },

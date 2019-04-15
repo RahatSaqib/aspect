@@ -29,14 +29,35 @@ async function listNotifications(request) {
       'n.notificationTypeId as id',
       'nt.name',
       'nt.messageTypeId',
-      knex.raw('GROUP_CONCAT(n.issueId) as triggers'),
-      knex.raw('GROUP_CONCAT(n.alertMessageId) as issues'),
-      knex.raw('GROUP_CONCAT(n.emailMessageId) as emails'),
-      knex.raw('GROUP_CONCAT(n.smsMessageId) as sms'),
-      knex.raw('GROUP_CONCAT(n.createdOn)'),
-      'm.alertTemplateId',
-      'm.emailTemplateId',
-      'm.smsTemplateId'
+      knex.raw(
+        'SUM(CASE WHEN n.issueId IS NULL then 0 ELSE 1 END) as totalTriggers'
+      ),
+      knex.raw(
+        `CASE 
+          WHEN m.alertTemplateId IS NULL
+          THEN "Not Configured"
+          ELSE CAST(SUM(CASE WHEN n.alertMessageId IS NULL THEN 0 ELSE 1 END) as CHAR) END as issueCount`
+      ),
+      knex.raw(
+        `CASE 
+          WHEN m.emailTemplateId IS NULL
+          THEN "Not Configured"
+          ELSE CAST(SUM(CASE WHEN n.emailMessageId IS NULL THEN 0 ELSE 1 END) as CHAR) END as emailCount`
+      ),
+      knex.raw(
+        `CASE 
+          WHEN m.smsTemplateId = null 
+          THEN 'Not Configured' 
+          ELSE CAST(SUM(CASE WHEN smsMessageId IS NULL then 0 ELSE 1 END)  as CHAR) END as smsCount`
+      )
+      // knex.raw('GROUP_CONCAT(n.issueId) as triggers'),
+      // knex.raw('GROUP_CONCAT(n.alertMessageId) as issues'),
+      // knex.raw('GROUP_CONCAT(n.emailMessageId) as emails'),
+      // knex.raw('GROUP_CONCAT(n.smsMessageId) as sms'),
+      // knex.raw('GROUP_CONCAT(n.createdOn)'),
+      // 'm.alertTemplateId',
+      // 'm.emailTemplateId',
+      // 'm.smsTemplateId'
     )
     .max('n.createdOn as lastTriggeredOn')
     .groupBy('nt.name')
@@ -49,25 +70,26 @@ async function listNotifications(request) {
 
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
 
-  data.forEach(notification => {
-    const {
-      triggers,
-      alertTemplateId,
-      emailTemplateId,
-      smsTemplateId,
-      issues,
-      emails,
-      sms,
-    } = notification
-    notification.triggersCount = triggers ? _.size(triggers.split(',')) : 0
-    notification.issueCount = getItemCount(alertTemplateId, issues)
-    notification.emailCount = getItemCount(emailTemplateId, emails)
-    notification.smsCount = getItemCount(smsTemplateId, sms)
-  })
+  // data.forEach(notification => {
+  //   const {
+  //     triggers,
+  //     alertTemplateId,
+  //     emailTemplateId,
+  //     smsTemplateId,
+  //     issues,
+  //     emails,
+  //     sms,
+  //   } = notification
+  //   notification.triggersCount = triggers ? _.size(triggers.split(',')) : 0
+  //   notification.issueCount = getItemCount(alertTemplateId, issues)
+  //   notification.emailCount = getItemCount(emailTemplateId, emails)
+  //   notification.smsCount = getItemCount(smsTemplateId, sms)
+  // })
 
-  function getItemCount(comparer, arr) {
-    return comparer ? (arr ? _.size(arr.split(',')) : 0) : 'Not Configured'
-  }
+  console.log("=======", data)
+  // function getItemCount(comparer, arr) {
+  //   return comparer ? (arr ? _.size(arr.split(',')) : 0) : 'Not Configured'
+  // }
 
   return { ok: true, total, data, length: data.length }
 }
