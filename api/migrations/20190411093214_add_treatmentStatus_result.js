@@ -7,7 +7,7 @@ async function up(knex) {
       .unsigned()
       .references('id')
       .inTable('ResultTreatmentStatusLog')
-      .onDelete(null)
+      .onDelete('SET NULL')
   })
 }
 async function down(knex) {

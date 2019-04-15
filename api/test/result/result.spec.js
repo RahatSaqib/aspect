@@ -810,7 +810,7 @@ describe('Result Workflow Status Log', () => {
   })
 })
 
-describe.only('Result download routes', () => {
+describe('Result download routes', () => {
   const path = '/api/result/download'
   describe('GET', () => {
     shared.checkToken(server, path)
@@ -867,8 +867,8 @@ describe.only('Result download routes', () => {
         })
     })
 
-    it.only('should test querying different results with different optional parameters', done => {
-      const resultCategories = ['NotDetected', 'Success', 'Error']
+    it('should test querying different results with different optional parameters', done => {
+      const resultCategories = ['Detected', 'Invalid', 'NoResult']
       server
         .get(`${path}?size=1&resultCategories=${resultCategories.join(',')}`)
         .set('Authorization', `Bearer ${shared.token}`)
@@ -935,34 +935,6 @@ describe.only('Result download routes', () => {
 
           assert.typeOf(res.body.data, 'array')
           assert.equal(res.body.data.length, 0)
-
-          assert.property(res.body.data[0], 'id')
-          assert.property(res.body.data[0], 'externalId')
-          assert.property(res.body.data[0], 'startedOn')
-          assert.property(res.body.data[0], 'endedOn')
-          assert.property(res.body.data[0], 'createdOn')
-          assert.property(res.body.data[0], 'updatedOn')
-          assert.property(res.body.data[0], 'longitude')
-          assert.property(res.body.data[0], 'latitude')
-          assert.property(res.body.data[0], 'assayExternalId')
-          assert.property(res.body.data[0], 'siteName')
-          assert.property(res.body.data[0], 'deviceName')
-          assert.property(res.body.data[0], 'resultCategory1ExternalId')
-          assert.property(res.body.data[0], 'resultCategory2ExternalId')
-          assert.property(res.body.data[0], 'workflowStatus')
-          assert.property(res.body.data[0], 'treatmentStatus')
-          assert.property(res.body.data[0], 'patientData')
-          assert.property(res.body.data[0], 'resultData')
-          assert.property(res.body.data[0], 'formData')
-          assert.property(res.body.data[0], 'researchId')
-          assert.property(res.body.data[0], 'senderVersion')
-          assert.property(res.body.data[0], 'senderOperator')
-          assert.property(res.body.data[0], 'notes')
-          assert.property(res.body.data[0], 'errorCode')
-          assert.property(res.body.data[0], 'errorNotes')
-          assert.property(res.body.data[0], 'sample')
-
-          assert.equal(Object.keys(res.body.data[0]).length, 25)
         })
       server
         .get(`${path}?size=1&workflowStatus=OK`)
@@ -982,34 +954,6 @@ describe.only('Result download routes', () => {
 
           assert.typeOf(res.body.data, 'array')
           assert.equal(res.body.data.length, 0)
-
-          assert.property(res.body.data[0], 'id')
-          assert.property(res.body.data[0], 'externalId')
-          assert.property(res.body.data[0], 'startedOn')
-          assert.property(res.body.data[0], 'endedOn')
-          assert.property(res.body.data[0], 'createdOn')
-          assert.property(res.body.data[0], 'updatedOn')
-          assert.property(res.body.data[0], 'longitude')
-          assert.property(res.body.data[0], 'latitude')
-          assert.property(res.body.data[0], 'assayExternalId')
-          assert.property(res.body.data[0], 'siteName')
-          assert.property(res.body.data[0], 'deviceName')
-          assert.property(res.body.data[0], 'resultCategory1ExternalId')
-          assert.property(res.body.data[0], 'resultCategory2ExternalId')
-          assert.property(res.body.data[0], 'workflowStatus')
-          assert.property(res.body.data[0], 'treatmentStatus')
-          assert.property(res.body.data[0], 'patientData')
-          assert.property(res.body.data[0], 'resultData')
-          assert.property(res.body.data[0], 'formData')
-          assert.property(res.body.data[0], 'researchId')
-          assert.property(res.body.data[0], 'senderVersion')
-          assert.property(res.body.data[0], 'senderOperator')
-          assert.property(res.body.data[0], 'notes')
-          assert.property(res.body.data[0], 'errorCode')
-          assert.property(res.body.data[0], 'errorNotes')
-          assert.property(res.body.data[0], 'sample')
-
-          assert.equal(Object.keys(res.body.data[0]).length, 25)
         })
       server
         .get(`${path}?size=1&treatmentStatus=OnTreatment`)
@@ -1028,8 +972,6 @@ describe.only('Result download routes', () => {
 
           assert.typeOf(res.body.data, 'array')
           assert.equal(res.body.data.length, 0)
-
-          assert.isNull(res.body.data)
         })
       server
         .get(`${path}?size=1&patientSample=Janet`)
@@ -1048,35 +990,8 @@ describe.only('Result download routes', () => {
           assert.equal(res.body.length, 0)
 
           assert.typeOf(res.body.data, 'array')
-          assert.equal(res.body.data.length, 1)
+          assert.equal(res.body.data.length, 0)
 
-          assert.property(res.body.data[0], 'id')
-          assert.property(res.body.data[0], 'externalId')
-          assert.property(res.body.data[0], 'startedOn')
-          assert.property(res.body.data[0], 'endedOn')
-          assert.property(res.body.data[0], 'createdOn')
-          assert.property(res.body.data[0], 'updatedOn')
-          assert.property(res.body.data[0], 'longitude')
-          assert.property(res.body.data[0], 'latitude')
-          assert.property(res.body.data[0], 'assayExternalId')
-          assert.property(res.body.data[0], 'siteName')
-          assert.property(res.body.data[0], 'deviceName')
-          assert.property(res.body.data[0], 'resultCategory1ExternalId')
-          assert.property(res.body.data[0], 'resultCategory2ExternalId')
-          assert.property(res.body.data[0], 'workflowStatus')
-          assert.property(res.body.data[0], 'treatmentStatus')
-          assert.property(res.body.data[0], 'patientData')
-          assert.property(res.body.data[0], 'resultData')
-          assert.property(res.body.data[0], 'formData')
-          assert.property(res.body.data[0], 'researchId')
-          assert.property(res.body.data[0], 'senderVersion')
-          assert.property(res.body.data[0], 'senderOperator')
-          assert.property(res.body.data[0], 'notes')
-          assert.property(res.body.data[0], 'errorCode')
-          assert.property(res.body.data[0], 'errorNotes')
-          assert.property(res.body.data[0], 'sample')
-
-          assert.equal(Object.keys(res.body.data[0]).length, 25)
           done()
         })
     })
