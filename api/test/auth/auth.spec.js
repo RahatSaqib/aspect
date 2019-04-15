@@ -15,8 +15,8 @@ const { assert } = chai
 describe('Authentication routes', () => {
   const adminUsername = 'admin'
   const adminPassword = 'test07'
-  const unlisencedUser = 'testuser'
-  const unlisencedUserPassword = 'test07'
+  const unlicensedUser = 'testuser'
+  const unlicensedPassword = 'test07'
   let path = '/api/auth'
   let jwToken = ''
   let refreshToken = ''
@@ -36,8 +36,8 @@ describe('Authentication routes', () => {
 
         const culture = 'en'
         const [id] = await knex('User').insert({
-          name: unlisencedUser.toLowerCase(),
-          password: bcrypt.hashSync(unlisencedUserPassword, saltRounds),
+          name: unlicensedUser.toLowerCase(),
+          password: bcrypt.hashSync(unlicensedPassword, saltRounds),
           legacyPassword: 0,
           approved: 1,
           lockedOut: 0,
@@ -47,7 +47,7 @@ describe('Authentication routes', () => {
 
         await knex('Person').insert({
           userId: id,
-          name: unlisencedUser,
+          name: unlicensedUser,
           lastPartnerId,
           lastCountryId,
           timezone,
@@ -64,10 +64,10 @@ describe('Authentication routes', () => {
           .whereIn('clientId', ['123123123-123123123', '9999-9999'])
           .delete()
         await knex('Person')
-          .where('name', unlisencedUser)
+          .where('name', unlicensedUser)
           .delete()
         await knex('User')
-          .where('name', unlisencedUser)
+          .where('name', unlicensedUser)
           .delete()
       })
     )
@@ -110,8 +110,8 @@ describe('Authentication routes', () => {
         const refreshToken = await server
           .post(path)
           .send({
-            name: unlisencedUser,
-            password: unlisencedUserPassword,
+            name: unlicensedUser,
+            password: unlicensedPassword,
             clientName: 'web',
             clientId: '9999-9999',
           })
@@ -137,7 +137,7 @@ describe('Authentication routes', () => {
         const diffTimeDays = diffTime / (1000 * 60 * 60 * 24)
         assert.equal(rt.clientType, 'web')
         assert.equal(rt.clientName, 'web')
-        assert.closeTo(diffTimeDays, 7, 0.00001, 'Expiracy days errors')
+        assert.closeTo(diffTimeDays, 7, 0.00001, 'Expiration days errors')
       }))
   })
   describe('POST', () => {
