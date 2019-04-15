@@ -911,6 +911,7 @@ async function updateTreatmentStatus(request) {
     treatmentStatusId = resultTreatmentStatusId
   }
   let lastTreatment = await getLastTreatmentStatusByResult(resultId)
+
   if (resultTreatmentStatusId !== result.data.resultTreatmentStatusId) {
     const [resultTreatmentStatusLogId] = await knex(
       'ResultTreatmentStatusLog'
