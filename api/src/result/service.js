@@ -305,6 +305,16 @@ async function getDownloadResultsList(query, auth) {
               `%${params.patientSample}%`
             )
             .orWhere(
+              knex.raw('JSON_EXTRACT(patientData,"$.lastName")'),
+              'like',
+              `%${params.patientSample}%`
+            )
+            .orWhere(
+              knex.raw('JSON_EXTRACT(patientData,"$.name")'),
+              'like',
+              `%${params.patientSample}%`
+            )
+            .orWhere(
               knex.raw('JSON_EXTRACT(patientData,"$.id")'),
               'like',
               `%${params.patientSample}%`

@@ -5,6 +5,7 @@ async function up(knex) {
     result
       .integer('treatmentStatusLogId')
       .unsigned()
+      .after('resultWorkflowStatusId')
       .references('id')
       .inTable('ResultTreatmentStatusLog')
       .onDelete('SET NULL')
