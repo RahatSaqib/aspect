@@ -304,7 +304,11 @@ async function getDownloadResultsList(query, auth) {
               'like',
               `%${params.patientSample}%`
             )
-            .orWhere('r.sampleId', 'like', `%${params.patientSample}%`)
+            .orWhere(
+              knex.raw('JSON_EXTRACT(patientData,"$.id")'),
+              'like',
+              `%${params.patientSample}%`
+            )
         )
       }
       if (params.assayTypeAbbreviations) {
@@ -913,7 +917,7 @@ async function updateTreatmentStatus(request) {
   let lastTreatment = await getLastTreatmentStatusByResult(resultId)
 
   if (resultTreatmentStatusId !== result.data.resultTreatmentStatusId) {
-    const [resultTreatmentStatusLogId] = await knex(
+    const [treatmentStatusLogId] = await knex(
       'ResultTreatmentStatusLog'
     ).insert({
       resultId,
@@ -924,10 +928,13 @@ async function updateTreatmentStatus(request) {
       changedOn: updatedOn,
       createdBy: currentUserId,
     })
-    if (lastTreatment.updatedOn < updatedOn) {
+    if (
+      !lastTreatment ||
+      (lastTreatment && lastTreatment.changedOn < updatedOn)
+    ) {
       await knex('Result')
         .where('id', resultId)
-        .update({ resultTreatmentStatusLogId })
+        .update({ treatmentStatusLogId })
       lastTreatment = await getLastTreatmentStatusByResult(resultId)
     }
   }
@@ -948,7 +955,6 @@ async function getLastTreatmentStatusByResult(resultId) {
       'rtl.resultTreatmentStatusId',
       'ts.id'
     )
-    .innerJoin('Result as r', 'r.treatmentStatusLogId', 'rtl.id')
     .where('rtl.resultId', resultId)
     .orderBy('rtl.changedOn', 'desc')
     .first('rtl.changedOn', 'ts.name', 'ts.externalId', 'ts.i18nKey')

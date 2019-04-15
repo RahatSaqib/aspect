@@ -1005,7 +1005,7 @@ describe('Result download routes', () => {
           assert.equal(res.body.data.length, 0)
         })
       server
-        .get(`${path}?size=1&patientSample=Rose&deviceType=DaktariVirology`)
+        .get(`${path}?size=1&patientSample=-&deviceType=DaktariVirology`)
         .set('Authorization', `Bearer ${shared.token}`)
         .end((err, res) => {
           assert.equal(res.status, 200)
