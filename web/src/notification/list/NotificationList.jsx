@@ -88,8 +88,7 @@ const searchSanitizer = makeSearchParamsSanitizer({
     'name',
     'lastTriggeredOn',
     'totalTriggers',
-    'triggersCount',
-    'issueCount',
+    'alertCount',
     'emailCount',
     'smsCount',
   ],
@@ -190,95 +189,92 @@ export const NotificationList = ({
   pageSize,
   onRowClick,
   reducedFilters,
-}) => {
-  console.log(table.toJS(), 'rendered')
-  return (
-    <div className={cssClasses('Container')}>
-      <Helmet title={intl.formatMessage(messages.notificationsTitle)} />
-      <NavTitle title={intl.formatMessage(messages.notificationsTitle)} />
-      <BrowseFilters
-        history={history}
-        location={location}
-        intl={intl}
-        config={reducedFilters}
-      />
-      <DataTableCard key={`DataTableCard--table-${location.key}`}>
-        <DataTableProgressBar disabled={!table.loading} />
-        {items.currentIdList.isEmpty() && (
-          <BrowseEmptyList history={history} location={location} intl={intl} />
-        )}
-        {!items.currentIdList.isEmpty() && (
-          <NotificationDataTable
-            selectable={false}
-            className={cssClasses('NotificationDataTable')}
-          >
-            <NotificationDataTableHead
-              history={history}
-              location={location}
-              sortColumnKey={sortCol}
-              sortColumnDir={sortDir}
-              columns={[
-                {
-                  key: 'name',
-                  label: intl.formatMessage(messages.notificationsName),
-                  sortable: true,
-                },
-                {
-                  key: 'lastTriggeredOn',
-                  label: intl.formatMessage(messages.lastTriggered),
-                  sortable: true,
-                },
-                {
-                  key: 'totalTriggers',
-                  label: intl.formatMessage(messages.totalTriggers),
-                  sortable: true,
-                },
-                {
-                  key: 'issueCount',
-                  label: intl.formatMessage(messages.issues),
-                  sortable: true,
-                },
-                {
-                  key: 'smsCount',
-                  label: intl.formatMessage(messages.sms),
-                  sortable: true,
-                },
-                {
-                  key: 'emailCount',
-                  label: intl.formatMessage(messages.email),
-                  sortable: true,
-                },
-              ]}
-            />
-            <TableBody>
-              {items.currentIdList
-                .map(id => items.byId.get(id))
-                .map(notification => (
-                  <NotificationDataTableRow
-                    key={notification.get('id')}
-                    intl={intl}
-                    notification={notification}
-                    onClick={onRowClick}
-                    data-notification-id={notification.get('id')}
-                  />
-                ))}
-            </TableBody>
-          </NotificationDataTable>
-        )}
-        {!items.currentIdList.isEmpty() && (
-          <BrowseTablePaginator
+}) => (
+  <div className={cssClasses('Container')}>
+    <Helmet title={intl.formatMessage(messages.notificationsTitle)} />
+    <NavTitle title={intl.formatMessage(messages.notificationsTitle)} />
+    <BrowseFilters
+      history={history}
+      location={location}
+      intl={intl}
+      config={reducedFilters}
+    />
+    <DataTableCard key={`DataTableCard--table-${location.key}`}>
+      <DataTableProgressBar disabled={!table.loading} />
+      {items.currentIdList.isEmpty() && (
+        <BrowseEmptyList history={history} location={location} intl={intl} />
+      )}
+      {!items.currentIdList.isEmpty() && (
+        <NotificationDataTable
+          selectable={false}
+          className={cssClasses('NotificationDataTable')}
+        >
+          <NotificationDataTableHead
             history={history}
             location={location}
-            intl={intl}
-            paginatorStatus={messages.paginatorStatus}
-            total={table.total}
-            pageAt={pageAt}
-            pageSize={pageSize}
+            sortColumnKey={sortCol}
+            sortColumnDir={sortDir}
+            columns={[
+              {
+                key: 'name',
+                label: intl.formatMessage(messages.notificationsName),
+                sortable: true,
+              },
+              {
+                key: 'lastTriggeredOn',
+                label: intl.formatMessage(messages.lastTriggered),
+                sortable: true,
+              },
+              {
+                key: 'totalTriggers',
+                label: intl.formatMessage(messages.totalTriggers),
+                sortable: true,
+              },
+              {
+                key: 'alertCount',
+                label: intl.formatMessage(messages.issues),
+                sortable: true,
+              },
+              {
+                key: 'smsCount',
+                label: intl.formatMessage(messages.sms),
+                sortable: true,
+              },
+              {
+                key: 'emailCount',
+                label: intl.formatMessage(messages.email),
+                sortable: true,
+              },
+            ]}
           />
-        )}
-      </DataTableCard>
-    </div>
-  )
-}
+          <TableBody>
+            {items.currentIdList
+              .map(id => items.byId.get(id))
+              .map(notification => (
+                <NotificationDataTableRow
+                  key={notification.get('id')}
+                  intl={intl}
+                  notification={notification}
+                  onClick={onRowClick}
+                  data-notification-id={notification.get('id')}
+                />
+              ))}
+          </TableBody>
+        </NotificationDataTable>
+      )}
+      {!items.currentIdList.isEmpty() && (
+        <BrowseTablePaginator
+          history={history}
+          location={location}
+          intl={intl}
+          paginatorStatus={messages.paginatorStatus}
+          total={table.total}
+          pageAt={pageAt}
+          pageSize={pageSize}
+        />
+      )}
+    </DataTableCard>
+  </div>
+)
 
 export default enhance(NotificationList)

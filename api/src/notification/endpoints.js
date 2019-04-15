@@ -21,8 +21,8 @@ const routes = [
           validateSortPageParams(
             'name',
             'lastTriggeredOn',
-            'issueCount',
-            'triggersCount',
+            'alertCount',
+            'totalTriggers',
             'emailCount',
             'smsCount'
           )

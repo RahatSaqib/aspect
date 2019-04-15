@@ -12,16 +12,20 @@ const cssClasses = classnames.bind(require('./NotificationTableRow.css'))
 const enhance = _.identity
 
 const NotificationTableRow = ({ intl, notification, ...restProps }) => {
+  const counter = column =>
+    notification.get(column) === null
+      ? 'Not Configured'
+      : notification.get(column)
   return (
     <TableRow {...restProps} className={cssClasses(restProps.className)}>
       <TableCell>{notification.get('name')}</TableCell>
       <TableCell>
         {intl.formatRelative(notification.get('lastTriggeredOn'))}
       </TableCell>
-      <TableCell>{notification.get('triggersCount')}</TableCell>
-      <TableCell>{notification.get('issueCount')}</TableCell>
-      <TableCell>{notification.get('smsCount')}</TableCell>
-      <TableCell>{notification.get('emailCount')}</TableCell>
+      <TableCell>{notification.get('totalTriggers')}</TableCell>
+      <TableCell>{counter('alertCount')}</TableCell>
+      <TableCell>{counter('smsCount')}</TableCell>
+      <TableCell>{counter('emailCount')}</TableCell>
     </TableRow>
   )
 }
