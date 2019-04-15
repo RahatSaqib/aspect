@@ -1,6 +1,5 @@
 const _ = require('lodash')
 const Promise = require('bluebird')
-const subMinutes = require('date-fns/subMinutes')
 const {
   knex,
   filterParams,
@@ -18,16 +17,16 @@ const { messageStatusToId } = require('../shared/dictionary')
 async function listNotifications(request) {
   const { query } = request
 
-  console.log('quuuuuu', query)
-
   const notificationQuery = knex('Notification as n')
     .innerJoin('NotificationType as nt', 'nt.id', 'n.notificationTypeId')
     .leftJoin('MessageType as m', 'm.id', 'nt.messageTypeId')
+    .modify(filterParams, query, {})
+    .modify(filterDateRangeParams, query, 'lastTriggeredOn')
 
-  // .modify(filterParams, query, {})
   const getItems = notificationQuery
     .clone()
     .select(
+      'n.notificationTypeId as id',
       'nt.name',
       'nt.messageTypeId',
       knex.raw('GROUP_CONCAT(n.issueId) as triggers'),
@@ -41,15 +40,15 @@ async function listNotifications(request) {
     )
     .max('n.createdOn as lastTriggeredOn')
     .groupBy('nt.name')
-    .modify(filterDateRangeParams, query, 'lastTriggeredOn')
     .modify(sortPageParams, query, 'nt.name')
+
   const getCount = notificationQuery
     .clone()
-    .count('n.id as count')
+    .countDistinct('n.notificationTypeId as count')
     .first()
+
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
 
-  console.log('+++++', data)
   data.forEach(notification => {
     const {
       triggers,
@@ -65,7 +64,6 @@ async function listNotifications(request) {
     notification.emailCount = getItemCount(emailTemplateId, emails)
     notification.smsCount = getItemCount(smsTemplateId, sms)
   })
-  console.log('-----------', data, data.length)
 
   function getItemCount(comparer, arr) {
     return comparer ? (arr ? _.size(arr.split(',')) : 0) : 'Not Configured'

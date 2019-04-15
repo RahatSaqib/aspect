@@ -71,6 +71,12 @@ const messages = defineMessages({
 })
 
 const FILTERS_CONFIG = [
+  { name: true, requiredPermissions: [] },
+  { lastTriggeredOn: true, requiredPermissions: [] },
+  { totalTriggers: true, requiredPermissions: [] },
+  { issues: true, requiredPermissions: [] },
+  { sms: true, requiredPermissions: [] },
+  { email: true, requiredPermissions: [] },
   {
     contactNameOrEmail: true,
     requiredPermissions: [],
@@ -79,11 +85,12 @@ const FILTERS_CONFIG = [
 
 const searchSanitizer = makeSearchParamsSanitizer({
   availableSortCol: [
-    'alertName',
+    'name',
     'lastTriggeredOn',
-    'recipientsCount',
-    'triggersCount',
-    'errorsCount',
+    'totalTriggers',
+    'issues',
+    'sms',
+    'email',
   ],
 })
 const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
@@ -183,9 +190,7 @@ export const NotificationList = ({
   onRowClick,
   reducedFilters,
 }) => {
-  items.currentIdList
-    .map(id => items.byId.get(id))
-    .map(notification => console.log('===', notification.toJS()))
+  console.log(table.toJS(), 'rendered')
   return (
     <div className={cssClasses('Container')}>
       <Helmet title={intl.formatMessage(messages.notificationsTitle)} />
@@ -244,32 +249,32 @@ export const NotificationList = ({
                 },
               ]}
             />
-            {items.currentIdList
-              .map(id => items.byId.get(id))
-              .map(notification => (
-                <NotificationDataTableRow
-                  key={notification.get('id')}
-                  intl={intl}
-                  notification={notification}
-                  onClick={onRowClick}
-                  data-notification-id="detail"
-                />
-              ))}
+            <TableBody>
+              {items.currentIdList
+                .map(id => items.byId.get(id))
+                .map(notification => (
+                  <NotificationDataTableRow
+                    key={notification.get('id')}
+                    intl={intl}
+                    notification={notification}
+                    onClick={onRowClick}
+                    data-notification-id={notification.get('id')}
+                  />
+                ))}
+            </TableBody>
           </NotificationDataTable>
         )}
-        <TableBody>
-          {!items.currentIdList.isEmpty() && (
-            <BrowseTablePaginator
-              history={history}
-              location={location}
-              intl={intl}
-              paginatorStatus={messages.paginatorStatus}
-              total={table.total}
-              pageAt={pageAt}
-              pageSize={pageSize}
-            />
-          )}
-        </TableBody>
+        {!items.currentIdList.isEmpty() && (
+          <BrowseTablePaginator
+            history={history}
+            location={location}
+            intl={intl}
+            paginatorStatus={messages.paginatorStatus}
+            total={table.total}
+            pageAt={pageAt}
+            pageSize={pageSize}
+          />
+        )}
       </DataTableCard>
     </div>
   )

@@ -12,7 +12,6 @@ const cssClasses = classnames.bind(require('./NotificationTableRow.css'))
 const enhance = _.identity
 
 const NotificationTableRow = ({ intl, notification, ...restProps }) => {
-  console.log('-------', notification.toJS())
   return (
     <TableRow {...restProps} className={cssClasses(restProps.className)}>
       <TableCell>{notification.get('name')}</TableCell>
