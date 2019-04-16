@@ -45,7 +45,12 @@ async function onResultLogged({ resultId }, { messageContext }) {
 
 async function mergeResults({ knex, actions, resultId, now }) {
   const qcResult = await knex('Result as r')
-    .join('ResultWorkflowStatus as rws', 'r.resultWorkflowStatusId', 'rws.id')
+    .join('ResultWorkflowLog as rwsl', 'r.resultWorkflowStatusLogId', 'rwsl.id')
+    .join(
+      'ResultWorkflowStatus as rwsl',
+      'rwsl.resultWorkflowStatusId',
+      'rws.id'
+    )
     .join('Device as d', 'r.deviceId', 'd.id')
     .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .join('Sample as sm', 'r.sampleId', 'sm.id')
@@ -139,7 +144,7 @@ async function mergeChaiResultToReporters(
           .where({ id: processedResult.id })
           .update({
             qcCheck: 1,
-            resultWorkflowStatusId: deliverableId,
+            //  resultWorkflowStatusId: deliverableId,
           })
         processedResult.qcCheck = 1
         processedResult.resultWorkflowStatusId = deliverableId

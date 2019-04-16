@@ -990,7 +990,12 @@ async function getDeviceLog(
 function addDeviceLogResultConstraints(queryBuilder) {
   queryBuilder
     .join('Result as r', 'dl.resultId', 'r.id')
-    .join('ResultWorkflowStatus as rws', 'r.resultWorkflowStatusId', 'rws.id')
+    .join('ResultWorkflowLog as rwsl', 'r.resultWorkflowStatusLogId', 'rwsl.id')
+    .join(
+      'ResultWorkflowStatus as rws',
+      'rwsl.resultWorkflowStatusId',
+      'rws.id'
+    )
     .where('r.qcCheck', 1)
     .where('rws.externalId', '<>', 'Purged')
 }

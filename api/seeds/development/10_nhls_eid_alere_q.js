@@ -807,7 +807,7 @@ async function seed(knex) {
       sampleId: 'TEST',
       testStartedOn: parseDateOrDefault('2018-04-18 09:55:24', now),
       testEndedOn: parseDateOrDefault('2018-04-18 09:55:24', now),
-      resultWorkflowStatusId: resultWorkflowStatusErrorId,
+      // resultWorkflowStatusId: resultWorkflowStatusErrorId,
       category1: resultCategoryErrorId,
       category2: resultCategoryErrorId,
       resultData:

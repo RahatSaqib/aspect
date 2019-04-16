@@ -369,7 +369,7 @@ async function createResult(
     geographyId,
     siteId,
     deviceId,
-    resultWorkflowStatusId: await resultWorkflowStatusToId('OK'),
+    // resultWorkflowStatusId: await resultWorkflowStatusToId('OK'),
     resultSourceId: await resultSourceToId('Generated'),
     resultTypeId: await resultTypeToId('Patient'),
     sampleId,
@@ -378,7 +378,18 @@ async function createResult(
     startedOn: subHours(now, 2),
     endedOn: now,
   })
-
+  const [lastLogId] = await knex('ResultWorkflowLog').insert({
+    resultWorkflowStatusId: await resultWorkflowStatusToId('OK'),
+    resultId,
+    changedOn: subHours(now, 2),
+    createdOn: subHours(now, 2),
+    createdBy: 1,
+  })
+  await knex('Result')
+    .where('id', resultId)
+    .update({
+      resultWorkflowStatusLogId: lastLogId,
+    })
   return resultId
 }
 

@@ -11,6 +11,7 @@ async function up(knex) {
       .index()
       .references('id')
       .inTable('ResultWorkflowLog')
+      .onDelete('CASCADE')
   })
 }
 async function down(knex) {

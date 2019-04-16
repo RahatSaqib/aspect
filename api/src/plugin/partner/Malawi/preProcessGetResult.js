@@ -32,7 +32,16 @@ async function updateResultWorkflowStatusOnGetResult(
   now = new Date()
 ) {
   const row = await knex('Result as r')
-    .leftJoin('ResultWorkflowStatus as rs', 'r.resultWorkflowStatusId', 'rs.id')
+    .leftJoin(
+      'ResultWorkflowStatusLog as rsl',
+      'r.resultWorkflowStatusLogId',
+      'rsl.id'
+    )
+    .leftJoin(
+      'ResultWorkflowStatus as rs',
+      'rsl.resultWorkflowStatusId',
+      'rs.id'
+    )
     .where('r.id', resultId)
     .first('r.id as resultId', 'rs.externalId as resultWorkflowStatusId')
   // only set to delivered the first time and

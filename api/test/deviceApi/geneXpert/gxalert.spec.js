@@ -3351,7 +3351,12 @@ describe('Device API routes for GxAlert Device', () => {
         assert.equal(result2Source.externalId, 'EnteredByHand')
 
         const result2Status = await knex('ResultWorkflowStatus as rs')
-          .where({ id: result2.resultWorkflowStatusId })
+          .innerJoin(
+            'ResultWorkflowStatusLog as rsl',
+            'rs.id',
+            'rsl.ResultWorkflowStatusId'
+          )
+          .where('rsl.id', result2.resultWorkflowStatusLogId)
           .first('externalId')
         assert.equal(result2Status.externalId, 'Acknowledged')
 

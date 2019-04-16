@@ -36,9 +36,7 @@ async function postProcessUpdateSite(context, site, previousSite) {
 
 async function purgePreviousResults(knex, actions, deviceId, now) {
   const purgedStatusId = await resultWorkflowStatusToId(PURGED_EXTERNALID)
-  await knex('Result')
-    .where({ deviceId })
-    .update({ resultWorkflowStatusId: purgedStatusId })
+
   const resultIds = await knex('Result as r')
     .join('Device as d', 'r.deviceId', 'd.id')
     .where({
@@ -50,7 +48,7 @@ async function purgePreviousResults(knex, actions, deviceId, now) {
     _.map(resultIds, async result => {
       const { resultId, deviceName } = result
 
-      await knex('ResultWorkflowLog').insert({
+      const [lastLogId] = await knex('ResultWorkflowLog').insert({
         resultId,
         resultWorkflowStatusId: purgedStatusId,
         operator: '',
@@ -58,6 +56,10 @@ async function purgePreviousResults(knex, actions, deviceId, now) {
         createdOn: now,
         changedOn: now,
       })
+
+      await knex('Result')
+        .where({ id: resultId })
+        .update({ resultWorkflowStatusId: lastLogId })
       actions.resultUpdated(resultId)
     })
   )
@@ -94,7 +96,12 @@ async function generateHistoricalResults(
 
   const sourceResults = await knex('DeviceLog as dl')
     .join('Result as r', 'dl.resultId', 'r.id')
-    .join('ResultWorkflowStatus as rws', 'r.resultWorkflowStatusId', 'rws.id')
+    .join('ResultWorkflowLog as rwsl', 'r.resultWorkflowStatusLogId', 'rwsl.id')
+    .join(
+      'ResultWorkflowStatus as rws',
+      'rwsl.resultWorkflowStatusId',
+      'rws.id'
+    )
     .join('Device as d', 'dl.deviceId', 'd.id')
     .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .join('Sample as sm', 'r.sampleId', 'sm.id')

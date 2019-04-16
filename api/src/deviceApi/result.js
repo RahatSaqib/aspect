@@ -243,7 +243,7 @@ async function mergeResult(
     ),
     resultTypeId,
     resultSourceId,
-    resultWorkflowStatusId,
+    // resultWorkflowStatusId,
     sampleId,
     sampleRunNumber: _.get(
       payload,
@@ -366,7 +366,16 @@ async function getResult(knex, resultId) {
     .leftJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
     .leftJoin('ResultType as rt', 'r.resultTypeId', 'rt.id')
     .leftJoin('ResultSource as rsc', 'r.resultSourceId', 'rsc.id')
-    .leftJoin('ResultWorkflowStatus as rs', 'r.resultWorkflowStatusId', 'rs.id')
+    .leftJoin(
+      'ResultWorkflowLog as rsl',
+      'r.resultWorkflowStatusLogId',
+      'rsl.id'
+    )
+    .leftJoin(
+      'ResultWorkflowStatus as rs',
+      'rsl.resultWorkflowStatusId',
+      'rs.id'
+    )
     .where('r.id', resultId)
     .first(
       'r.externalId as resultExternalId',
@@ -732,7 +741,7 @@ async function addResultWorkflowLogIfChanged(
   }
 
   if (resultWorkflowChanged) {
-    await knex('ResultWorkflowLog').insert({
+    const [lastLogId] = await knex('ResultWorkflowLog').insert({
       resultId: result.id,
       resultWorkflowStatusId: result.resultWorkflowStatusId,
       reason,
@@ -742,6 +751,9 @@ async function addResultWorkflowLogIfChanged(
       changedOn: _.get(payload, 'workflow.changedOn', changedOn || now),
       createdOn: now,
     })
+    await knex('Result')
+      .where('id', result.id)
+      .update({ resultWorkflowStatusLogId: lastLogId })
   }
   return resultWorkflowChanged
 }
@@ -764,21 +776,23 @@ async function updateResultWorkflowStatus(
   }
 
   // update result
-  const rows = await knex('Result as r')
+  /* const rows = await knex('Result as r')
     .where('r.id', resultId)
     .update({ resultWorkflowStatusId })
-
+*/
   // keep log if update was successful. don't need to check permission again because
   // rows would be 0 if no permission in query above
-  if (rows) {
-    await knex('ResultWorkflowLog').insert({
-      resultId,
-      resultWorkflowStatusId,
-      reason,
-      changedOn: now,
-      createdOn: now,
-    })
-  }
+
+  const [lastLogId] = await knex('ResultWorkflowLog').insert({
+    resultId,
+    resultWorkflowStatusId,
+    reason,
+    changedOn: now,
+    createdOn: now,
+  })
+  await knex('Result')
+    .where('id', resultId)
+    .update({ resultWorkflowStatusLogId: lastLogId })
 
   return {}
 }
