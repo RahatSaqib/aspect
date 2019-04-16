@@ -235,7 +235,7 @@ async function createResults(
         geographyId,
         siteId,
         deviceId,
-        resultWorkflowStatusId: deliverable,
+        //  resultWorkflowStatusId: deliverable,
         longitude: -33.78725,
         latitude: -13.96692,
         resultSourceId: resultSourceLimsId,
@@ -276,14 +276,16 @@ async function createResults(
       createdBy: userId,
     })
 
-    await knex('ResultWorkflowLog').insert({
+    const [lastLogId] = await knex('ResultWorkflowLog').insert({
       resultId,
       resultWorkflowStatusId: deliverable,
       changedOn: addHours(randomDate, 2),
       createdOn: addHours(randomDate, 1),
       createdBy: userId,
     })
-
+    await knex('Result')
+      .where('id', resultId)
+      .update({ resultWorkflowStatusLogId: lastLogId })
     // for 1st result - add an attachment image
     if (i === 0) {
       const { id: fileContentTypeId } = await knex('FileContentType')

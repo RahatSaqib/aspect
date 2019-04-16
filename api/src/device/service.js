@@ -152,7 +152,7 @@ async function getListDevices(query, auth) {
       'frd30Errors.resultCount as thisMonthErrors',
       knex('Result as r')
         .innerJoin('Sample as s', 'r.sampleId', 's.id')
-        .innerJoin('ResultWorkflowLog as rl', 'r.id', 'rl.resultId')
+        .innerJoin('ResultWorkflowLog as rl', 'r.resultWorkflowLogId', 'rl.id')
         .innerJoin(
           'ResultWorkflowStatus as rw',
           'rl.resultWorkflowStatusId',
