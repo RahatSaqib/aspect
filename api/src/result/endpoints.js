@@ -330,6 +330,28 @@ const routes = [
               .iso()
               .allow(null)
               .description('Updated To Date'),
+            patientSample: Joi.string()
+              .optional()
+              .description(
+                'Is the string for look for the patient. this string could be the patient id, the sample id or the patient name'
+              ),
+            assayTypeAbbreviations: Joi.string()
+              .optional()
+              .description('an array with the assay type abbreviation'),
+            resultCategories: Joi.string()
+              .optional()
+              .description('an array with the assay type abbreviation'),
+            workflowStatus: Joi.string()
+              .optional()
+              .description('External Id of the workflow status'),
+            treatmentStatus: Joi.string()
+              .optional()
+              .description('External Id of the treatment status'),
+            deviceType: Joi.string()
+              .optional()
+              .description(
+                'External Id Device type, the default value is CepheidGeneXpert'
+              ),
           },
           validateSortPageParams('updatedOn')
         ),
