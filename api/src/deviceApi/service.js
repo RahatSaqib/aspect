@@ -511,7 +511,6 @@ async function mergeResultWithContext(context) {
   } = await mergeResult(knex, deviceId, transformedPayload, { now })
 
   context.addDeviceLogUpdate('resultId', result.id)
-
   const postProcess = await loadPlugin(plugins, 'postProcessMergeResult')
   const postProcessResult = await postProcess(
     pluginContext,
@@ -990,12 +989,16 @@ async function getDeviceLog(
 function addDeviceLogResultConstraints(queryBuilder) {
   queryBuilder
     .join('Result as r', 'dl.resultId', 'r.id')
-    .join('ResultWorkflowLog as rwsl', 'r.resultWorkflowStatusLogId', 'rwsl.id')
+    /* .join(
+      'ResultWorkflowLog as resultworkflowsl',
+      'r.resultWorkflowStatusLogId',
+      'resultworkflowsl.id'
+    )
     .join(
       'ResultWorkflowStatus as rws',
-      'rwsl.resultWorkflowStatusId',
+      'resultworkflowsl.resultWorkflowStatusId',
       'rws.id'
-    )
+    ) */
     .where('r.qcCheck', 1)
     .where('rws.externalId', '<>', 'Purged')
 }

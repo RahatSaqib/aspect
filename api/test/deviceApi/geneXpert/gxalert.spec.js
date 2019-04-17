@@ -3352,7 +3352,7 @@ describe('Device API routes for GxAlert Device', () => {
 
         const result2Status = await knex('ResultWorkflowStatus as rs')
           .innerJoin(
-            'ResultWorkflowStatusLog as rsl',
+            'ResultWorkflowLog as rsl',
             'rs.id',
             'rsl.ResultWorkflowStatusId'
           )

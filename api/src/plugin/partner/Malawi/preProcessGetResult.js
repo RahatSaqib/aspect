@@ -33,7 +33,7 @@ async function updateResultWorkflowStatusOnGetResult(
 ) {
   const row = await knex('Result as r')
     .leftJoin(
-      'ResultWorkflowStatusLog as rsl',
+      'ResultWorkflowLog as rsl',
       'r.resultWorkflowStatusLogId',
       'rsl.id'
     )

@@ -38,7 +38,7 @@ function waitAsyncComplete(result) {
     .then(() => result)
 }
 
-describe('Device Result API routes', () => {
+describe.only('Device Result API routes', () => {
   const clientBasePath = '/api/result'
   function setResultAsDeliverable(context, resultId) {
     const { clientAuth } = context

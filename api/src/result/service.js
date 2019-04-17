@@ -184,7 +184,7 @@ async function getListResults(query, auth) {
     .leftJoin('SampleType as stp', 'sp.sampleTypeId', 'stp.id')
     .leftJoin('Site as so', 'sp.originSiteId', 'so.id')
     .leftJoin(
-      'ResultWorkflowStatusLog as rsl',
+      'ResultWorkflowLog as rsl',
       'r.resultWorkflowStatusLogId',
       'rsl.id'
     )
@@ -596,7 +596,7 @@ async function getResultByResultId(request, fields = SELECT_SHOW_FIELDS) {
     .leftJoin('SampleType as stp', 'sp.sampleTypeId', 'stp.id')
     .leftJoin('Site as so', 'sp.originSiteId', 'so.id')
     .leftJoin(
-      'ResultWorkflowStatusLog as rsl',
+      'ResultWorkflowLog as rsl',
       'r.resultWorkflowStatusLogId',
       'rsl.id'
     )
@@ -777,7 +777,6 @@ async function updateWorkflowStatus(request) {
   const now = new Date()
   const { resultId } = params
   const { id: currentUserId } = await getUser(auth.credentials.name)
-
   // get the result so we can check access and if status changed
   const result = await getResultByResultId(request)
   if (!result.ok) {

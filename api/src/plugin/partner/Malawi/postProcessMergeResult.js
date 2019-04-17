@@ -97,11 +97,7 @@ async function checkResultDeliverable(context, result) {
   if (patientData && patientDataIsComplete(JSON.parse(patientData))) {
     const resultWorkflowExternalId = (await knex('Result as r')
       .where('r.id', resultId)
-      .join(
-        'ResultWorkflowStatusLog as rwl',
-        'r.resultWorkflowStatusLogId',
-        'rwl.id'
-      )
+      .join('ResultWorkflowLog as rwl', 'r.resultWorkflowStatusLogId', 'rwl.id')
       .join('ResultWorkflowStatus as rw', 'rwl.resultWorkflowStatusId', 'rw.id')
       .first('rw.externalId')).externalId
 

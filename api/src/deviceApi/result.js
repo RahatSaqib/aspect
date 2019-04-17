@@ -57,7 +57,7 @@ async function mergeResult(
   }
 
   // Select Workflow Status if specified, otherwise Error or OK depending on error payload
-  let resultWorkflowStatusId = null
+  let resultWorkflowStatusId = await resultWorkflowStatusToId('OK')
   if (_.has(payload, 'workflow.status.id')) {
     resultWorkflowStatusId = await resultWorkflowStatusToId(
       _.get(payload, 'workflow.status.id', '')
@@ -66,8 +66,6 @@ async function mergeResult(
     resultWorkflowStatusId = await resultWorkflowStatusToId('Error')
   } else if (existingResult) {
     ;({ resultWorkflowStatusId } = existingResult)
-  } else {
-    resultWorkflowStatusId = await resultWorkflowStatusToId('OK')
   }
 
   // Categories if specified, otherwise Error or Success depending on error payload
@@ -351,6 +349,18 @@ async function mergeResult(
       .update(result)
   } else {
     ;[resultId] = await knex('Result').insert(processedResult)
+    const [lastLogId] = await knex('ResultWorkflowLog').insert({
+      resultId,
+      resultWorkflowStatusId,
+      createdOn: new Date(),
+      changedOn: new Date(),
+      createdBy: 1,
+    })
+    await knex('Result')
+      .where({ id: resultId })
+      .update({
+        resultWorkflowStatusLogId: lastLogId,
+      })
   }
   processedResult.id = resultId
   return { processedResult, existingResult }
@@ -559,6 +569,7 @@ async function getResult(knex, resultId) {
 
 async function postProcessMergeResult(context, result, previousResult) {
   const { knex, payload, now } = context
+  console.log('-------------------aca llega')
   await addResultWorkflowLogIfChanged(
     knex,
     payload,
@@ -728,6 +739,7 @@ async function addResultWorkflowLogIfChanged(
         +latestResultWorkflowLog.changedOn
   }
   if (!resultWorkflowChanged && changedOn) {
+    console.log('-------------------------add resultworkflow')
     // check to see if specified changedOn is different from latest log
     if (!latestResultWorkflowLog) {
       latestResultWorkflowLog = await getLatestResultWorkflowLog(
@@ -743,7 +755,8 @@ async function addResultWorkflowLogIfChanged(
   if (resultWorkflowChanged) {
     const [lastLogId] = await knex('ResultWorkflowLog').insert({
       resultId: result.id,
-      resultWorkflowStatusId: result.resultWorkflowStatusId,
+      resultWorkflowStatusId:
+        result.resultWorkflowStatusId || (await resultWorkflowStatusToId('OK')),
       reason,
       operator:
         _.get(payload, 'workflow.operator', null) ||
@@ -782,14 +795,19 @@ async function updateResultWorkflowStatus(
 */
   // keep log if update was successful. don't need to check permission again because
   // rows would be 0 if no permission in query above
-
+  console.log(
+    'el error esta aca',
+    resultWorkflowStatusId || (await resultWorkflowStatusToId('OK'))
+  )
   const [lastLogId] = await knex('ResultWorkflowLog').insert({
     resultId,
-    resultWorkflowStatusId,
+    resultWorkflowStatusId:
+      resultWorkflowStatusId || (await resultWorkflowStatusToId('OK')),
     reason,
     changedOn: now,
     createdOn: now,
   })
+
   await knex('Result')
     .where('id', resultId)
     .update({ resultWorkflowStatusLogId: lastLogId })

@@ -7,6 +7,7 @@ async function up(knex) {
     t
       .integer('resultWorkflowStatusLogId')
       .unsigned()
+      .nullable()
       .after('deviceId')
       .index()
       .references('id')

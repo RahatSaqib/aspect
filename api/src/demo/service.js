@@ -116,7 +116,7 @@ async function postDemoDeviceResult(request) {
     .leftJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
     .leftJoin('ResultType as rt', 'r.resultTypeId', 'rt.id')
     .leftJoin(
-      'ResultWorkflowStatusLog as rsl',
+      'ResultWorkflowLog as rsl',
       'r.resultWorkflowStatusLogId',
       'rsl.id'
     )
