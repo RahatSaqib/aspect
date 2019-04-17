@@ -44,19 +44,8 @@ describe('Person routes', () => {
       })
     )
 
-    after(() =>
-      run(async knex => {
-        await knex('JobContext')
-          .where({
-            jobId: person.jobId,
-            siteId,
-          })
-          .del()
-      })
-    )
-
     describe('/person/assign/{siteId}', () => {
-      it('Should assign contact to site', () => {
+      it('Should assign contact to site', done => {
         server
           .put(`${path}/assign/${siteId}`)
           .send({ id: person.id })
@@ -67,7 +56,18 @@ describe('Person routes', () => {
             res.body.data.some(contact =>
               expect(contact).to.have.property('id', person.id)
             )
+            server
+              .put(`${path}/assign/${siteId}`)
+              .send({ id: person.id })
+              .set('Authorization', `Bearer ${shared.token}`)
+              .end((err, res) => {
+                assert.equal(res.status, 409)
+              })
+            done()
           })
+      })
+
+      it('Should return 400 when a the ID of the user is not an integer', done => {
         server
           .put(`${path}/assign/${siteId}`)
           .send({ id: 'Invalid' })
@@ -75,7 +75,11 @@ describe('Person routes', () => {
           .end((err, res) => {
             assert.equal(res.status, 400)
             assert.typeOf(res.body, 'Object')
+            done()
           })
+      })
+
+      it('Should return 404 when trying to assign a user that does not exit', done => {
         server
           .put(`${path}/assign/${siteId}`)
           .send({ id: '1000' })
@@ -87,13 +91,7 @@ describe('Person routes', () => {
               error: 'Not Found',
               message: 'Not Found',
             })
-          })
-        server
-          .put(`${path}/assign/${siteId}`)
-          .send({ id: person.id })
-          .set('Authorization', `Bearer ${shared.token}`)
-          .end((err, res) => {
-            assert.equal(res.status, 409)
+            done()
           })
       })
     })
