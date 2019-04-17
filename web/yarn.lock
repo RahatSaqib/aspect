@@ -925,13 +925,19 @@
   dependencies:
     d3-shape "^1.0.6"
 
-"@vx/geo@^0.0.143":
-  version "0.0.143"
-  resolved "https://registry.yarnpkg.com/@vx/geo/-/geo-0.0.143.tgz#cc4ef6993567c4e796cd35a9fde1e669b9aa0171"
+"@vx/event@0.0.182", "@vx/event@^0.0.182":
+  version "0.0.182"
+  resolved "https://registry.yarnpkg.com/@vx/event/-/event-0.0.182.tgz#b5b20a4e14fcd383511ef7a318ca0a10e6da8140"
   dependencies:
-    "@vx/group" "0.0.143"
+    "@vx/point" "0.0.182"
+
+"@vx/geo@^0.0.184":
+  version "0.0.184"
+  resolved "https://registry.yarnpkg.com/@vx/geo/-/geo-0.0.184.tgz#d1ffae2369f9d3dd8dc6f49bcc7a966ba654e782"
+  dependencies:
+    "@vx/group" "0.0.183"
     classnames "^2.2.5"
-    d3-geo "^1.6.4"
+    d3-geo "^1.11.3"
     prop-types "^15.5.10"
 
 "@vx/glyph@^0.0.143":
@@ -964,6 +970,13 @@
   dependencies:
     classnames "^2.2.5"
 
+"@vx/group@0.0.183":
+  version "0.0.183"
+  resolved "https://registry.yarnpkg.com/@vx/group/-/group-0.0.183.tgz#15c8b14c5cadbe5f76c3ddcab8c5698cae24b443"
+  dependencies:
+    classnames "^2.2.5"
+    prop-types "^15.6.2"
+
 "@vx/legend@^0.0.143":
   version "0.0.143"
   resolved "https://registry.yarnpkg.com/@vx/legend/-/legend-0.0.143.tgz#a1b50087298123f1e65de26a3bc73a6bd9268421"
@@ -975,6 +988,10 @@
 "@vx/point@0.0.143":
   version "0.0.143"
   resolved "https://registry.yarnpkg.com/@vx/point/-/point-0.0.143.tgz#7b6dfa611175ee1b74e3c392072589a79dadf265"
+
+"@vx/point@0.0.182":
+  version "0.0.182"
+  resolved "https://registry.yarnpkg.com/@vx/point/-/point-0.0.182.tgz#72abfa6ae923cf9bad23d9dd51709b2f31d81bf8"
 
 "@vx/responsive@^0.0.149":
   version "0.0.149"
@@ -1007,6 +1024,13 @@
     "@vx/bounds" "0.0.147"
     classnames "^2.2.5"
     prop-types "^15.5.10"
+
+"@vx/zoom@^0.0.185":
+  version "0.0.185"
+  resolved "https://registry.yarnpkg.com/@vx/zoom/-/zoom-0.0.185.tgz#3a0cb2ab3653988052bc01aa13aa529029de01cb"
+  dependencies:
+    "@vx/event" "0.0.182"
+    prop-types "^15.6.2"
 
 "@vxna/mini-html-webpack-template@^0.1.7":
   version "0.1.7"
@@ -3216,9 +3240,9 @@ d3-format@1:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/d3-format/-/d3-format-1.2.1.tgz#4e19ecdb081a341dafaf5f555ee956bcfdbf167f"
 
-d3-geo@^1.6.4:
-  version "1.9.0"
-  resolved "https://registry.yarnpkg.com/d3-geo/-/d3-geo-1.9.0.tgz#15c7d7a8ea9346e59ed150dc7b1f7f95479056e9"
+d3-geo@^1.11.3:
+  version "1.11.3"
+  resolved "https://registry.yarnpkg.com/d3-geo/-/d3-geo-1.11.3.tgz#5bb08388f45e4b281491faa72d3abd43215dbd1c"
   dependencies:
     d3-array "1"
 
