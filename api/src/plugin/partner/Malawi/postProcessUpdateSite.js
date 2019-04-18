@@ -59,7 +59,7 @@ async function purgePreviousResults(knex, actions, deviceId, now) {
 
       await knex('Result')
         .where({ id: resultId })
-        .update({ resultWorkflowStatusId: lastLogId })
+        .update({ resultWorkflowStatusLogId: lastLogId })
       actions.resultUpdated(resultId)
     })
   )

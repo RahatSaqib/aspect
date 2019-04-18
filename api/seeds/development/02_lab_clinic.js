@@ -1115,7 +1115,7 @@ async function seed(knex) {
     })
     await knex('Result')
       .where({ id: resultId })
-      .update({ resultWorkflowStatusId: lastLogId })
+      .update({ resultWorkflowStatusLogId: lastLogId })
   }
 
   for (const i of _.range(resultHivVlNumber)) {

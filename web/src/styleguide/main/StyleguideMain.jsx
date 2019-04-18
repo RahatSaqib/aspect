@@ -209,7 +209,7 @@ const mockData = Immutable.fromJS({
   lgaName: 'Wayne',
   resultCategory1Name: 'Detected',
   resultCategory2Name: 'Not Detected',
-  resultWorkflowStatusId: 3,
+  // resultWorkflowStatusId: 3,
   resultWorkflowStatus: 'Ordered',
   resultWorkflowStatusExternalId: 'Ordered',
   resultData: {

@@ -215,9 +215,14 @@ describe.only('Device Result API routes', () => {
 
         assert.equal(result1Source.externalId, 'DiagnosticDevice')
 
-        const result1Status = await knex('ResultWorkflowStatus as rs')
-          .where({ id: result1.resultWorkflowStatusId })
-          .first('externalId')
+        const result1Status = await knex('ResultWorkflowLog as rsl')
+          .join(
+            'ResultWorkflowStatus as rs',
+            'rsl.resultWorkflowStatusId',
+            'rs.id'
+          )
+          .where('rsl.id', result1.resultWorkflowStatusLogId)
+          .first('rs.externalId')
 
         assert.equal(result1Status.externalId, 'OK')
 
@@ -544,8 +549,13 @@ describe.only('Device Result API routes', () => {
           .first('externalId')
         assert.equal(result2Source.externalId, 'EnteredByHand')
 
-        const result2Status = await knex('ResultWorkflowStatus as rs')
-          .where({ id: result2.resultWorkflowStatusId })
+        const result2Status = await knex('ResultWorkflowLog as rsl')
+          .join(
+            'ResultWorkflowStatus as rs',
+            'rsl.resultWorkflowStatusId',
+            'rs.id'
+          )
+          .where('rsl.id', result2.resultWorkflowStatusLogId)
           .first('externalId')
         assert.equal(result2Status.externalId, 'Acknowledged')
 
@@ -868,8 +878,13 @@ describe.only('Device Result API routes', () => {
         assert.deepEqual(JSON.parse(result1.resultData), { a: 'b' })
         assert.isNotOk(result1.errorCode)
 
-        const result1Status = await knex('ResultWorkflowStatus as rs')
-          .where({ id: result1.resultWorkflowStatusId })
+        const result1Status = await knex('ResultWorkflowLog as rsl')
+          .innerJoin(
+            'ResultWorkflowStatus as rs',
+            'rsl.resultWorkflowStatusId',
+            'rs.Id'
+          )
+          .where('rsl.id', result1.resultWorkflowStatusLogId)
           .first('externalId')
 
         assert.equal(result1Status.externalId, 'Deliverable')
@@ -920,8 +935,13 @@ describe.only('Device Result API routes', () => {
         assert.deepEqual(JSON.parse(result2.resultData), { a: 'c' })
         assert.equal(result2.errorCode, '1')
 
-        const result2Status = await knex('ResultWorkflowStatus as rs')
-          .where({ id: result2.resultWorkflowStatusId })
+        const result2Status = await await knex('ResultWorkflowLog as rsl')
+          .innerJoin(
+            'ResultWorkflowStatus as rs',
+            'rsl.resultWorkflowStatusId',
+            'rs.Id'
+          )
+          .where('rsl.id', result2.resultWorkflowStatusLogId)
           .first('externalId')
 
         assert.equal(result2Status.externalId, 'Deliverable')
@@ -958,8 +978,13 @@ describe.only('Device Result API routes', () => {
         assert.deepEqual(JSON.parse(result3.resultData), { a: 'd' })
         assert.equal(result3.errorCode, '1')
 
-        const result3Status = await knex('ResultWorkflowStatus as rs')
-          .where({ id: result3.resultWorkflowStatusId })
+        const result3Status = await knex('ResultWorkflowLog as rsl')
+          .innerJoin(
+            'ResultWorkflowStatus as rs',
+            'rsl.resultWorkflowStatusId',
+            'rs.Id'
+          )
+          .where('rsl.id', result3.resultWorkflowStatusLogId)
           .first('externalId')
         assert.equal(result3Status.externalId, 'Error')
 
@@ -1011,8 +1036,13 @@ describe.only('Device Result API routes', () => {
         assert.deepEqual(JSON.parse(result4.resultData), { a: 'e' })
         assert.isNotOk(result4.errorCode)
 
-        const result4Status = await knex('ResultWorkflowStatus as rs')
-          .where({ id: result4.resultWorkflowStatusId })
+        const result4Status = await knex('ResultWorkflowLog as rsl')
+          .innerJoin(
+            'ResultWorkflowStatus as rs',
+            'rsl.resultWorkflowStatusId',
+            'rs.Id'
+          )
+          .where('rsl.id', result4.resultWorkflowStatusLogId)
           .first('externalId')
         assert.equal(result4Status.externalId, 'Deliverable')
 
@@ -1285,8 +1315,13 @@ describe.only('Device Result API routes', () => {
           .first('externalId')
         assert.equal(result2Source.externalId, 'EnteredByHand')
 
-        const result2Status = await knex('ResultWorkflowStatus as rs')
-          .where({ id: result2.resultWorkflowStatusId })
+        const result2Status = await knex('ResultWorkflowLog as rsl')
+          .innerJoin(
+            'ResultWorkflowStatus as rs',
+            'rsl.resultWorkflowStatusId',
+            'rs.Id'
+          )
+          .where('rsl.id', result2.resultWorkflowStatusLogId)
           .first('externalId')
         assert.equal(result2Status.externalId, 'Acknowledged')
 
@@ -4063,8 +4098,13 @@ describe.only('Device Result API routes', () => {
         })
         assert.isNotOk(result.errorCode)
 
-        const resultWorkflowStatus = await knex('ResultWorkflowStatus as rs')
-          .where({ id: result.resultWorkflowStatusId })
+        const resultWorkflowStatus = await knex('ResultWorkflowLog as rsl')
+          .innerJoin(
+            'ResultWorkflowStatus as rs',
+            'rsl.resultWorkflowStatusId',
+            'rs.Id'
+          )
+          .where('rsl.id', result.resultWorkflowStatusLogId)
           .first('externalId')
         assert.equal(resultWorkflowStatus.externalId, 'Delivered')
       }))

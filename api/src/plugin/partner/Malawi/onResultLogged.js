@@ -140,11 +140,12 @@ async function mergeChaiResultToReporters(
         const deliverableId = await resultWorkflowStatusToId(
           DELIVERABLE_EXTERNALID
         )
+
         await knex('Result')
           .where({ id: processedResult.id })
           .update({
             qcCheck: 1,
-            //  resultWorkflowStatusId: deliverableId,
+            // resultWorkflowStatusLogId:LastLogId
           })
         processedResult.qcCheck = 1
         processedResult.resultWorkflowStatusId = deliverableId
