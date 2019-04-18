@@ -363,6 +363,9 @@ async function mergeResult(
       .update({
         resultWorkflowStatusLogId: lastLogId,
       })
+
+    processedResult.resultWorkflowStatusLogId = lastLogId
+    processedResult.resultWorkflowStatusId = resultWorkflowStatusId
   }
   processedResult.id = resultId
   return { processedResult, existingResult }

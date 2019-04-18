@@ -14,6 +14,14 @@ async function up(knex) {
       .inTable('ResultWorkflowLog')
       .onDelete('CASCADE')
   })
+  await knex.schema.alterTable('ResultWorkflowLog', t => {
+    t.dropForeign('resultId')
+    t
+      .foreign('resultId')
+      .references('id')
+      .inTable('Result')
+      .onDelete('SET NULL')
+  })
 }
 async function down(knex) {
   await knex.schema.alterTable('Result', t => {

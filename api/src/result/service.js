@@ -784,9 +784,11 @@ async function updateWorkflowStatus(request) {
   }
 
   let { resultWorkflowStatusId } = payload
+
   // check if a externalId is provided
   if (payload.externalId) {
     resultWorkflowStatusId = await resultWorkflowStatusToId(payload.externalId)
+
     if (!resultWorkflowStatusId) {
       return Boom.badRequest('Invalid ResultWorkflowStatus ID')
     }
@@ -811,6 +813,7 @@ async function updateWorkflowStatus(request) {
   }
 
   const response = await showResult(request)
+
   return response
 }
 
