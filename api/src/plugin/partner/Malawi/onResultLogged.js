@@ -47,7 +47,7 @@ async function mergeResults({ knex, actions, resultId, now }) {
   const qcResult = await knex('Result as r')
     .join('ResultWorkflowLog as rwsl', 'r.resultWorkflowStatusLogId', 'rwsl.id')
     .join(
-      'ResultWorkflowStatus as rwsl',
+      'ResultWorkflowStatus as rws',
       'rwsl.resultWorkflowStatusId',
       'rws.id'
     )

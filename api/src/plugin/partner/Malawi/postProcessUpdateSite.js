@@ -41,7 +41,7 @@ async function purgePreviousResults(knex, actions, deviceId, now) {
     .join('Device as d', 'r.deviceId', 'd.id')
     .where({
       'd.id': deviceId,
-      'r.resultWorkflowStatusId': purgedStatusId,
+      'r.resultWorkflowStatusLogId': purgedStatusId,
     })
     .select('r.id as resultId', 'd.name as deviceName')
   await Promise.all(

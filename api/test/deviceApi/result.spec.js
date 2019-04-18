@@ -3221,8 +3221,13 @@ describe.only('Device Result API routes', () => {
         let lastResultId = await getLastResultId(knex, deviceLab.id)
         let lastResult = await knex('Result as r')
           .join(
+            'ResultWorkflowLog as rwsl',
+            'r.resultWorkflowStatusLogId',
+            'rwsl.id'
+          )
+          .join(
             'ResultWorkflowStatus as rws',
-            'r.resultWorkflowStatusId',
+            'rwsl.resultWorkflowStatusId',
             'rws.id'
           )
           .where({ 'r.id': lastResultId })
@@ -3383,8 +3388,13 @@ describe.only('Device Result API routes', () => {
         lastResultId = await getLastResultId(knex, deviceLab.id)
         lastResult = await knex('Result as r')
           .join(
+            'ResultWorkflowLog as rwsl',
+            'r.resultWorkflowStatusLogId',
+            'rwsl.id'
+          )
+          .join(
             'ResultWorkflowStatus as rws',
-            'r.resultWorkflowStatusId',
+            'rwsl.resultWorkflowStatusId',
             'rws.id'
           )
           .where({ 'r.id': lastResultId })
@@ -4178,8 +4188,13 @@ describe.only('Device Result API routes', () => {
             for (let i = 0; i < numberOfTestsToRun; i++) {
               const resultWorkflowStatus = await knex('Result as r') // eslint-disable-line no-await-in-loop
                 .innerJoin(
+                  'ResultWorkflowLog as rswl',
+                  'r.resultWorkflowStatusLogId',
+                  'rswl.id'
+                )
+                .innerJoin(
                   'ResultWorkflowStatus as rs',
-                  'r.resultWorkflowStatusId',
+                  'rswl.resultWorkflowStatusId',
                   'rs.id'
                 )
                 .where({ 'r.externalId': `${externalIdStart}-${i}` })
@@ -4347,11 +4362,17 @@ describe.only('Device Result API routes', () => {
             // Verify that results have been not been auto acknowledged
             for (let i = 0; i < numberOfTestsToRun; i++) {
               const resultWorkflowStatus = await knex('Result as r') // eslint-disable-line no-await-in-loop
-                .innerJoin(
+                .join(
+                  'ResultWorkflowLog as rwsl',
+                  'r.resultWorkflowStatusLogId',
+                  'rwsl.id'
+                )
+                .join(
                   'ResultWorkflowStatus as rs',
-                  'r.resultWorkflowStatusId',
+                  'rwsl.resultWorkflowStatusId',
                   'rs.id'
                 )
+
                 .where({ 'r.externalId': `${externalIdStart}-${i}` })
                 .first('rs.externalId')
 
@@ -4478,11 +4499,17 @@ describe.only('Device Result API routes', () => {
             // Verify that results have been not been auto acknowledged
             for (let i = 0; i < numberOfTestsToRun; i++) {
               const resultWorkflowStatus = await knex('Result as r') // eslint-disable-line no-await-in-loop
-                .innerJoin(
+                .join(
+                  'ResultWorkflowLog as rwsl',
+                  'r.resultWorkflowStatusLogId',
+                  'rwsl.id'
+                )
+                .join(
                   'ResultWorkflowStatus as rs',
-                  'r.resultWorkflowStatusId',
+                  'rwsl.resultWorkflowStatusId',
                   'rs.id'
                 )
+
                 .where({ 'r.externalId': `${externalIdStart}-${i}` })
                 .first('rs.externalId')
 
