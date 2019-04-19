@@ -661,6 +661,7 @@ async function getLatestResultWorkflowLogs(resultIds) {
       'rws.externalId',
       'rws.i18nKey',
       'rwl.reason',
+      'rwl.operator',
       'rwl.changedOn',
       'rwl.createdOn',
       'rtslMax.maxChangedOn as treatmentChangedOn',
@@ -729,11 +730,12 @@ async function getResultByResultId(request, fields = SELECT_SHOW_FIELDS) {
     data.files = files
 
     // get latest workflow log
-    const [{ reason, createdOn } = {}] = await getLatestResultWorkflowLogs([
-      data.id,
-    ])
+    const [
+      { reason, createdOn, operator } = {},
+    ] = await getLatestResultWorkflowLogs([data.id])
     data.resultWorkflowLogReason = reason
     data.resultWorkflowLogCreatedOn = createdOn
+    data.resultWorkflowLogOperator = operator
   }
 
   return { ok: results.length === 1, data }
@@ -868,6 +870,7 @@ async function updateWorkflowStatus(request) {
   }
 
   let { resultWorkflowStatusId } = payload
+  const { updatedOn = now, operator, reason } = payload
   // check if a externalId is provided
   if (payload.externalId) {
     resultWorkflowStatusId = await resultWorkflowStatusToId(payload.externalId)
@@ -883,13 +886,15 @@ async function updateWorkflowStatus(request) {
       .update({
         resultWorkflowStatusId,
         updatedBy: currentUserId,
-        updatedOn: now,
+        updatedOn,
       })
 
     await knex('ResultWorkflowLog').insert({
       resultId,
       resultWorkflowStatusId,
       createdBy: currentUserId,
+      operator,
+      reason,
       changedOn: now,
       createdOn: now,
     })

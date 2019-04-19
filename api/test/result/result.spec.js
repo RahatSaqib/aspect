@@ -1,6 +1,7 @@
 const supertest = require('supertest')
 const chai = require('chai')
 const _ = require('lodash')
+const dateFormat = require('date-fns/format')
 
 const shared = require('../utils/sharedToken')
 const { runTestWithKnex } = require('../utils/generatorFunctionUtils')
@@ -22,6 +23,9 @@ describe('Result routes', () => {
   let assayId = 1
   let initialResultWorkflowStatus = ''
   let initialResultWorkflowStatusName = ''
+  const reason = 'testing'
+  const operator = 'Tester'
+  const updatedOn = new Date()
   describe('GET', () => {
     shared.checkToken(server, path)
 
@@ -170,6 +174,9 @@ describe('Result routes', () => {
       const updateWithExternalId = {
         resultWorkflowStatusId: null,
         externalId: 'Validated',
+        reason,
+        operator,
+        updatedOn,
       }
       const updateWithId = {
         resultWorkflowStatusId: 1,
@@ -220,13 +227,21 @@ describe('Result routes', () => {
             'updatedOn',
             'assayId',
             'assay',
+            'resultWorkflowLogReason',
+            'resultWorkflowLogCreatedOn',
+            'resultWorkflowLogOperator',
           ]
           _.each(resultFieldNames, fieldName => {
             assert.property(res.body.data, fieldName)
           })
-
           // check the updated fieldName
           assert.equal(res.body.data.resultWorkflowStatus, 'Validated')
+          assert.equal(res.body.data.resultWorkflowLogReason, reason)
+          assert.equal(res.body.data.resultWorkflowLogOperator, operator)
+          assert.equal(
+            dateFormat(res.body.data.updatedOn, 'yyyy-MM-dd HH:mm:ss'),
+            dateFormat(updatedOn, 'yyyy-MM-dd HH:mm:ss')
+          )
 
           // update with resultWorkflowStatusId
           server

@@ -225,6 +225,18 @@ const routes = [
             .integer()
             .allow(null),
           externalId: Joi.string().allow('', null),
+          reason: Joi.string()
+            .description('Reason for the latest workflow status change')
+            .allow(null, '')
+            .max(255),
+          operator: Joi.string()
+            .description('The sender operator')
+            .allow(null, '')
+            .max(255),
+          updatedOn: Joi.date()
+            .description('Date when the status was updated.')
+            .iso()
+            .allow(null),
         },
       },
     },
@@ -738,6 +750,9 @@ const routes = [
               resultWorkflowLogReason: Joi.string()
                 .allow(null)
                 .description('Value of Reason from latest ResultWorkflowLog'),
+              resultWorkflowLogOperator: Joi.string()
+                .allow(null)
+                .description('Value of Operator from latest ResultWorkflowLog'),
               resultWorkflowLogCreatedOn: Joi.date()
                 .allow(null)
                 .description('CreatedOn date from latest ResultWorkflowLog'),
