@@ -22,6 +22,30 @@ async function up(knex) {
       .inTable('Result')
       .onDelete('SET NULL')
   })
+
+  // await knex.schema.alterTable('ResultGeneratedResult', t => {
+  //   t.dropForeign('sourceResultId')
+  //   t
+  //     .foreign('sourceResultId')
+  //     .references('id')
+  //     .inTable('Result')
+  //     .onDelete('CASCADE')
+  //   t.dropForeign('generatedResultId')
+  //   t
+  //     .foreign('generatedResultId')
+  //     .references('id')
+  //     .inTable('Result')
+  //     .onDelete('CASCADE')
+  // })
+
+  // await knex.schema.alterTable('DeviceLog', t => {
+  //   t.dropForeign('deviceId')
+  //   t
+  //     .foreign('deviceId')
+  //     .references('id')
+  //     .inTable('Device')
+  //     .onDelete('CASCADE')
+  // })
 }
 async function down(knex) {
   await knex.schema.alterTable('Result', t => {

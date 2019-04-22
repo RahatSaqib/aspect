@@ -205,7 +205,7 @@ async function mergeResultAndUpdateWorkflowStatus(
   Object.assign(processedResult, resultUpdates)
   await knex('Result')
     .where({ id: processedResult.id })
-    .update(resultUpdates)
+    .update({ qcCheck: 1 })
   await knex('ResultGeneratedResult').insert({
     sourceResultId: resultId,
     generatedResultId: processedResult.id,

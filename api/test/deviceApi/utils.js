@@ -32,7 +32,7 @@ async function deleteTestDataFromCheckpoint(knex, checkpoint, deviceIds) {
   }
 
   const deviceUpdates = await knex('DeviceLog as dl')
-    .where('dl.id', '>=', minDeviceLog.id)
+    // .where('dl.id', '>=', minDeviceLog.id)
     .whereIn('dl.deviceId', deviceIds)
     .select('dl.id', 'dl.resultId', 'dl.deviceOperationId')
 
@@ -121,13 +121,15 @@ async function deleteDeviceAndTestData(knex, apiKeys) {
   await knex('ResultQualityControlLog')
     .whereIn('resultId', resultIds)
     .delete()
-  await knex('ResultWorkflowLog')
-    .whereIn('resultId', resultIds)
-    .delete()
   await knex('ResultGeneratedResult')
     .whereIn('sourceResultId', resultIds)
     .orWhereIn('generatedResultId', resultIds)
     .delete()
+
+  await knex('ResultWorkflowLog')
+    .whereIn('resultId', resultIds)
+    .delete()
+
   await knex('ResultFileReference')
     .whereIn('resultId', resultIds)
     .delete()

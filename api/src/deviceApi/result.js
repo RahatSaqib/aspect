@@ -350,23 +350,22 @@ async function mergeResult(
       .update(result)
   } else {
     ;[resultId] = await knex('Result').insert(processedResult)
-    const [lastLogId] = await knex('ResultWorkflowLog').insert({
-      resultId,
-      resultWorkflowStatusId:
-        resultWorkflowStatusId || (await resultWorkflowStatusToId('OK')),
-      createdOn: new Date(),
-      changedOn: new Date(),
-      createdBy: 1,
-    })
-    await knex('Result')
-      .where({ id: resultId })
-      .update({
-        resultWorkflowStatusLogId: lastLogId,
-      })
-
-    processedResult.resultWorkflowStatusLogId = lastLogId
-    processedResult.resultWorkflowStatusId = resultWorkflowStatusId
   }
+  const [lastLogId] = await knex('ResultWorkflowLog').insert({
+    resultId,
+    resultWorkflowStatusId:
+      resultWorkflowStatusId || (await resultWorkflowStatusToId('OK')),
+    createdOn: new Date(),
+    changedOn: new Date(),
+    createdBy: 1,
+  })
+  await knex('Result')
+    .where({ id: resultId })
+    .update({
+      resultWorkflowStatusLogId: lastLogId,
+    })
+  processedResult.resultWorkflowStatusLogId = lastLogId
+  processedResult.resultWorkflowStatusId = resultWorkflowStatusId
   processedResult.id = resultId
   return { processedResult, existingResult }
 }
