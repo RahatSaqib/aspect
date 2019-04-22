@@ -30,15 +30,16 @@ const baseConfig = {
 // Number of milliseconds to wait for completion of
 // asynchronous updates as acceptance criteria
 const ASYNC_TEST_ACCEPTANCE_TIME = 250
-
-// Waits acceptance time and resolves promise with optional result
-function waitAsyncComplete(result) {
-  return new Promise(resolve => setTimeout(resolve, ASYNC_TEST_ACCEPTANCE_TIME))
-    .then(waitForIdle)
-    .then(() => result)
-}
-
 describe('Device Result API routes', () => {
+  // Waits acceptance time and resolves promise with optional result
+  function waitAsyncComplete(result) {
+    return new Promise(resolve =>
+      setTimeout(resolve, ASYNC_TEST_ACCEPTANCE_TIME)
+    )
+      .then(waitForIdle)
+      .then(() => result)
+  }
+
   const clientBasePath = '/api/result'
   function setResultAsDeliverable(context, resultId) {
     const { clientAuth } = context

@@ -495,8 +495,6 @@ async function mergeResultWithContext(context) {
     payload,
     now,
   }
-  console.log('paso1')
-  console.log('plugins', plugins)
   const preProcess = await loadPlugin(plugins, 'preProcessMergeResult')
   await preProcess(pluginContext)
 
@@ -505,15 +503,12 @@ async function mergeResultWithContext(context) {
     'transformMergeResultPayload'
   )
   const transformedPayload = await transformPayload(pluginContext)
-  console.log('paso2')
   const {
     processedResult: result,
     existingResult: previousResult,
   } = await mergeResult(knex, deviceId, transformedPayload, { now })
-  console.log('despues del merge')
   context.addDeviceLogUpdate('resultId', result.id)
   const postProcess = await loadPlugin(plugins, 'postProcessMergeResult')
-  console.log('despues del postprocess')
   const postProcessResult = await postProcess(
     pluginContext,
     result,
