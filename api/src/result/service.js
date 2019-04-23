@@ -782,7 +782,7 @@ async function updateWorkflowStatus(request) {
   if (!result.ok) {
     Boom.notFound()
   }
-
+  const { updatedOn } = payload
   let { resultWorkflowStatusId } = payload
 
   // check if a externalId is provided
@@ -800,7 +800,7 @@ async function updateWorkflowStatus(request) {
       resultId,
       resultWorkflowStatusId,
       createdBy: currentUserId,
-      changedOn: now,
+      changedOn: updatedOn || now,
       createdOn: now,
     })
     await knex('Result')

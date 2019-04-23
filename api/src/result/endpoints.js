@@ -224,7 +224,194 @@ const routes = [
           resultWorkflowStatusId: Joi.number()
             .integer()
             .allow(null),
+          updatedOn: Joi.date()
+            .iso()
+            .allow(null)
+            .description('Status updated date'),
           externalId: Joi.string().allow('', null),
+        },
+        response: {
+          options: {
+            allowUnknown: false,
+          },
+          schema: Joi.object().keys({
+            ok: Joi.bool()
+              .required()
+              .description('False if there was some sort of error'),
+            total: Joi.number()
+              .required()
+              .description(
+                'The total number of results that match the given filters'
+              ),
+            length: Joi.number()
+              .required()
+              .description('The number of results included in this response'),
+            data: Joi.array()
+              .required()
+              .description('The results')
+              .items(
+                Joi.object().keys({
+                  id: Joi.number()
+                    .required()
+                    .description(
+                      'Unique ID of the result for this instance of Aspect'
+                    ),
+                  externalId: Joi.string()
+                    .required()
+                    .description(
+                      'Unique ID of the result for this diagnostic device'
+                    ),
+                  startedOn: Joi.date()
+                    .required()
+                    .description(
+                      'When sample processing started. Note that the zone designator is empty because this is the local date/time as reported by the device. This should be shown as is and not converted to the user time zone.'
+                    ),
+                  endedOn: Joi.date()
+                    .required()
+                    .description(
+                      'When sample processing ended. Note that the zone designator is empty because this is the local date/time as reported by the device. This should be shown as is and not converted to the user time zone.'
+                    ),
+                  createdOn: Joi.date()
+                    .required()
+                    .description(
+                      'When the result was added to the Aspect database. This can be converted to the user time zone.'
+                    ),
+                  updatedOn: Joi.date()
+                    .required()
+                    .description(
+                      'When the result was last updated in the Aspect database. This can be converted to the user time zone.'
+                    ),
+                  longitude: Joi.number()
+                    .allow(null)
+                    .description(
+                      'Longitude of the device at the time the sample was processed'
+                    ),
+                  latitude: Joi.number()
+                    .allow(null)
+                    .description(
+                      'Latitude of the device at the time the sample was processed'
+                    ),
+                  assayExternalId: Joi.string()
+                    .required()
+                    .description('Unique ID of the Assay'),
+                  siteName: Joi.string()
+                    .required()
+                    .description(
+                      'Name of the site where the device was located when the sample was processed'
+                    ),
+                  deviceName: Joi.string()
+                    .required()
+                    .description('Name of the device'),
+                  resultCategory1ExternalId: Joi.string()
+                    .allow(null)
+                    .description('Category of the first result'),
+                  resultCategory2ExternalId: Joi.string()
+                    .allow(null)
+                    .description('Category of the second result'),
+                  workflowStatus: Joi.object()
+                    .description('Current workflow status of the result')
+                    .keys({
+                      changedOn: Joi.date().description(
+                        'Date of the latest change to the workflow status'
+                      ),
+                      createdOn: Joi.date().description(
+                        'Date of creation of the workflow status'
+                      ),
+                      externalId: Joi.string().description(
+                        'External ID of the workflow status'
+                      ),
+                      i18nKey: Joi.string().description(
+                        'i18nKey ID of the workflow status'
+                      ),
+                      name: Joi.string().description(
+                        'Name of the workflow status'
+                      ),
+                      reason: Joi.string()
+                        .description(
+                          'Reason for the latest workflow status change'
+                        )
+                        .allow(null, ''),
+                    }),
+                  treatmentStatus: Joi.object()
+                    .allow(null)
+                    .description('Current treatment status of the result')
+                    .keys({
+                      changedOn: Joi.date()
+                        .description(
+                          'Date of the latest change to the treatment status'
+                        )
+                        .allow(null),
+                      externalId: Joi.string()
+                        .description('External ID of the treatment status')
+                        .allow(null),
+                      i18nKey: Joi.string()
+                        .description('i18nKey ID of the treatment status')
+                        .allow(null),
+                      name: Joi.string()
+                        .description('Name of the treatment status')
+                        .allow(null),
+                    }),
+                  patientData: Joi.object()
+                    .allow(null)
+                    .description('Data about the patient'),
+                  resultData: Joi.object()
+                    .allow(null)
+                    .description('Data about the result'),
+                  researchId: Joi.string()
+                    .allow(null)
+                    .description('An optional research ID for the patient'),
+                  formData: Joi.object()
+                    .allow(null)
+                    .description('Form data that was entered in the Aspect UI'),
+                  senderVersion: Joi.string()
+                    .allow(null)
+                    .description('Version of the device software'),
+                  senderOperator: Joi.string()
+                    .allow(null)
+                    .description('Operator of the device'),
+                  notes: Joi.string()
+                    .allow(null)
+                    .description('Any notes entered for the sample'),
+                  errorCode: Joi.string()
+                    .allow(null)
+                    .description(
+                      'If an error occurred, contains the error code from the device'
+                    ),
+                  errorNotes: Joi.string()
+                    .allow(null)
+                    .description('Contains any details about the error'),
+                  sample: Joi.object()
+                    .description('The sample that the result is based on')
+                    .keys({
+                      id: Joi.string()
+                        .allow(null)
+                        .description('ID of the sample'),
+                      collectedOn: Joi.date()
+                        .allow(null)
+                        .description('When the sample was collected'),
+                      group: Joi.string()
+                        .allow(null)
+                        .description(
+                          'The group of samples that this sample is a part of'
+                        ),
+                      type: Joi.string()
+                        .allow(null)
+                        .description(
+                          'Type of the sample ("DBS", "Sputum", etc.)'
+                        ),
+                      originSite: Joi.object()
+                        .allow(null)
+                        .description('The site where the sample was taken')
+                        .keys({
+                          externalId: Joi.string().description(
+                            'ID of the site'
+                          ),
+                          name: Joi.string().description('Name of the site'),
+                        }),
+                    }),
+                })
+              ),
+          }),
         },
       },
     },
