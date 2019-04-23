@@ -6,7 +6,11 @@ const {
   filterDateRangeParams,
   sortPageParams,
 } = require('../db')
-const { getJobConstraints, addConstraints } = require('../auth/constraints')
+const {
+  getJobConstraints,
+  addConstraints,
+  getConstraints,
+} = require('../auth/constraints')
 const { notificationCreated } = require('./actions')
 const { alertMessageCreated } = require('../alert/actions')
 const { emailMessageCreated } = require('../email/actions')
@@ -15,11 +19,15 @@ const { webhookMessageCreated } = require('../webhook/actions')
 const { messageStatusToId } = require('../shared/dictionary')
 
 async function listNotifications(request) {
-  const { query } = request
+  const { query, auth } = request
+
+  // get data constraints
+  const dataConstraints = await getConstraints(auth.credentials)
 
   const notificationQuery = knex('Notification as n')
     .innerJoin('NotificationType as nt', 'nt.id', 'n.notificationTypeId')
     .leftJoin('MessageType as m', 'm.id', 'nt.messageTypeId')
+    .leftJoin('Partner as p', 'nt.partnerId', 'p.id')
     .modify(filterParams, query, {})
     .modify(filterDateRangeParams, query, 'lastTriggeredOn')
 
@@ -38,6 +46,14 @@ async function listNotifications(request) {
     .max('n.createdOn as lastTriggeredOn')
     .groupBy('nt.name')
     .modify(sortPageParams, query, 'nt.name')
+    .modify(filterParams, query, {
+      notificationName: 'nt.name',
+      // stateId: 'g.stateId',
+      // lgaId: 'g.lgaId',
+      // siteName: 's.name',
+      // externalId: 's.externalId',
+    })
+  // .modify(addConstraints, dataConstraints, { partner: 'p' })
 
   function columnCount(column) {
     return knex.raw(

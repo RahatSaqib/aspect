@@ -13,11 +13,11 @@ const routes = [
       auth: { scope: ['notification:view', 'notification:edit'] },
       validate: {
         query: Object.assign(
-          // {
-          //   contactNameOrEmail: Joi.string()
-          //     .allow('')
-          //     .description('Filter for notification name'),
-          // },
+          {
+            notificationName: Joi.string()
+              .allow('')
+              .description('Filter for notification name'),
+          },
           validateSortPageParams(
             'name',
             'lastTriggeredOn',

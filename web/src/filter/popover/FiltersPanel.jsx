@@ -314,6 +314,14 @@ const messages = defineMessages({
     id: 'filter.popover.enterExternalId',
     defaultMessage: 'Enter facility code...',
   },
+  notificationName: {
+    id: 'filter.popover.notificationName',
+    defaultMessage: 'Notification',
+  },
+  selectNotificationName: {
+    id: 'filter.popover.selectNotificationName',
+    defaultMessage: 'Enter notification name...',
+  },
 })
 
 export const FiltersPanel = ({
@@ -667,6 +675,21 @@ export const FiltersPanel = ({
               floatingLabelText={intl.formatMessage(messages.deviceType)}
               style={{ verticalAlign: 'bottom' }}
               autoWidth
+            />
+          </div>
+        )}
+        {config.notificationName && (
+          <div className={cssClasses('Control')}>
+            <FocusBlurTextField
+              name="notificationName"
+              value={filters.notificationName || ''}
+              onCommitValue={onTextFieldCommitValue}
+              InputLabelProps={{
+                shrink: true,
+              }}
+              placeholder={intl.formatMessage(messages.selectNotificationName)}
+              label={intl.formatMessage(messages.notificationName)}
+              margin="normal"
             />
           </div>
         )}
