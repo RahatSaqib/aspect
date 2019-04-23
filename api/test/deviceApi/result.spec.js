@@ -85,7 +85,7 @@ describe('Device Result API routes', () => {
     )
   }
 
-  describe('admin result updates', () => {
+  describe.only('admin result updates', () => {
     const context = createTestContext(server, {
       user: 'admin',
       type: 'DaktariVirology',
@@ -3142,7 +3142,7 @@ describe('Device Result API routes', () => {
         assert.deepEqual(op2, { a: 'basd' })
       }))
 
-    it.only('should honor device sample origin site', () =>
+    it('should honor device sample origin site', () =>
       runTest(async knex => {
         const { deviceAuth, apiKey: labKey } = context
 
