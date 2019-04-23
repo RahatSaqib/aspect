@@ -91,7 +91,6 @@ async function addResultCategory(context, result) {
 async function checkResultDeliverable(context, result) {
   const { knex, actions, now } = context
   const { id: resultId, patientData } = result
-
   // Now's a good time to see if the result is in the
   // status "Validated" and can be promoted to "Deliverable" base on patient data
   if (patientData && patientDataIsComplete(JSON.parse(patientData))) {
@@ -104,6 +103,7 @@ async function checkResultDeliverable(context, result) {
     // only auto update if not already in deliverable
     // status, it hasn't been delivered yet,
     // and it is now in the status "Validated"
+
     if (resultWorkflowExternalId === VALIDATED_EXTERNALID) {
       const resultWorkflowDeliverableId = await resultWorkflowStatusToId(
         DELIVERABLE_EXTERNALID

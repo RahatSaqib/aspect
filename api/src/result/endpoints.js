@@ -257,7 +257,7 @@ const routes = [
                   'Unique ID of the result for this diagnostic device'
                 ),
               startedOn: Joi.date()
-                .required()
+                .allow(null)
                 .description(
                   'When sample processing started. Note that the zone designator is empty because this is the local date/time as reported by the device. This should be shown as is and not converted to the user time zone.'
                 ),

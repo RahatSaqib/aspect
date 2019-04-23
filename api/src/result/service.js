@@ -813,7 +813,6 @@ async function updateWorkflowStatus(request) {
   }
 
   const response = await showResult(request)
-  console.log(response)
   return response
 }
 
