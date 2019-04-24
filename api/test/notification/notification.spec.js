@@ -8,7 +8,7 @@ const { run } = require('../../src/db')
 const server = supertest.agent('http://localhost:8080')
 const { assert } = chai
 
-describe.only('Notification routes', () => {
+describe('Notification routes', () => {
   const path = '/api/notification'
 
   const now = new Date()
