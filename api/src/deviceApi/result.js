@@ -66,7 +66,12 @@ async function mergeResult(
   } else if (payload.error) {
     resultWorkflowStatusId = await resultWorkflowStatusToId('Error')
   } else if (existingResult) {
-    ;({ resultWorkflowStatusId } = existingResult)
+    ;({ resultWorkflowStatusId } = await getLatestResultWorkflowLog(
+      knex,
+      existingResult.id
+    ))
+  } else {
+    resultWorkflowStatusId = await resultWorkflowStatusToId('OK')
   }
 
   // Categories if specified, otherwise Error or Success depending on error payload
@@ -351,22 +356,24 @@ async function mergeResult(
   } else {
     ;[resultId] = await knex('Result').insert(processedResult)
   }
+
   const [lastLogId] = await knex('ResultWorkflowLog').insert({
     resultId,
-    resultWorkflowStatusId:
-      resultWorkflowStatusId || (await resultWorkflowStatusToId('OK')),
-    createdOn: new Date(),
-    changedOn: new Date(),
+    resultWorkflowStatusId,
+    createdOn: now,
+    changedOn: now,
     createdBy: 1,
   })
   await knex('Result')
     .where({ id: resultId })
     .update({
       resultWorkflowStatusLogId: lastLogId,
+      updatedOn: now,
     })
   processedResult.resultWorkflowStatusLogId = lastLogId
   processedResult.resultWorkflowStatusId = resultWorkflowStatusId
   processedResult.id = resultId
+  processedResult.updatedOn = now
   return { processedResult, existingResult }
 }
 
@@ -726,7 +733,7 @@ async function addResultWorkflowLogIfChanged(
   // Log Result Workflow Update if any field changed
   let resultWorkflowChanged =
     !previousResult ||
-    previousResult.resultWorkflowStatusLogId !== result.resultWorkflowStatusId
+    previousResult.resultWorkflowStatusId !== result.resultWorkflowStatusId
   let latestResultWorkflowLog
   if (
     !resultWorkflowChanged &&
@@ -821,7 +828,7 @@ async function getLatestResultWorkflowLog(knex, resultId) {
     .where({ resultId })
     .orderBy('createdOn', 'desc')
     .orderBy('id', 'desc')
-    .first('operator', 'changedOn')
+    .first('operator', 'changedOn', 'resultWorkflowStatusId')
   return latestResultWorkFlowLog
 }
 
