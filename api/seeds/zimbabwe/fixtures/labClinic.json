@@ -1,0 +1,35 @@
+{
+  "labs": [
+    {
+      "externalId": "NMRL",
+      "name": "NMRL Harare",
+      "shortName": "NMRL Harare",
+      "stateName": "Harare",
+      "lgaName": "Harare",
+      "latitude": -17.859121,
+      "longitude": 31.0109402,
+      "devices": [
+        {
+          "deviceTypeId": "BDMGIT",
+          "name": "NMRL BD MGIT MG3394",
+          "shortName": "NMRL MG3394",
+          "deviceSerial": "MG3394",
+          "deviceApiKey": "c1d62qva2xbuvk3dgad0"
+        },
+        {
+          "deviceTypeId": "BDMGIT",
+          "name": "NMRL BD MGIT MG3075",
+          "shortName": "NMRL MG3075",
+          "deviceSerial": "MG3075",
+          "deviceApiKey": "259xca1mqtf0yhbrz4w0"
+        },
+        {
+          "deviceTypeId": "HainGenoScan",
+          "name": "NMRL Hain GenoScan",
+          "shortName": "NMRL Hain GenoScan",
+          "deviceApiKey": "qptwpk3y5vb662c6g0dg"
+        }
+      ]
+    }
+  ]
+}

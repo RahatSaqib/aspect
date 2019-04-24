@@ -1,0 +1,61 @@
+{
+  "countries": [
+    {
+      "abbreviation": "ZW",
+      "name": "Zimbabwe",
+      "a3": "ZWE",
+      "culture": "en",
+      "countryCode": "263",
+      "stateLabel": "Province",
+      "lgaLabel": "District",
+      "timezone": "South Africa Standard Time",
+      "portNumber": 3029,
+      "exportColumns": "DeploymentDescription|TestEndedOn|AssayName|AssayVersion|User|Result1|Result2|ResultText|PatientId|ReagentLotID|ExpirationDate|CartridgeSerial|ModuleSerial|SoftwareVersion|ErrorCode|ErrorCategory|ErrorDescription|SampleId|Notes|ProbeDCt|ProbeCCt|ProbeECt|ProbeBCt|Qc1Ct|Qc2Ct",
+      "inventoryDaysThreshold": 21,
+      "monthStartsOnDay": 1,
+      "states": [
+        {
+          "name": "Bulawayo"
+        },
+        {
+          "name": "Harare",
+          "lgas": [
+            {
+              "name": "Chitungwiza"
+            },
+            {
+              "name": "Epworth"
+            },
+            {
+              "name": "Harare"
+            }
+          ]
+        },
+        {
+          "name": "Manicaland"
+        },
+        {
+          "name": "Mashonaland Central"
+        },
+        {
+          "name": "Mashonaland East"
+        },
+        {
+          "name": "Mashonaland West"
+        },
+        {
+          "name": "Masvingo"
+        },
+        {
+          "name": "Matabeleland North"
+        },
+        {
+          "name": "Matabeleland South"
+        },
+        {
+          "name": "Midlands"
+        }
+      ]
+    }
+  ]
+}
