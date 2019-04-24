@@ -780,6 +780,9 @@ const routes = [
                 .description(
                   'When the result was last updated in the Aspect database. This can be converted to the user time zone.'
                 ),
+              resultWorkflowChangedOn: Joi.date()
+                .allow(null)
+                .description('The date when status was changed'),
               deviceId: Joi.number()
                 .integer()
                 .positive()
