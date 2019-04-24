@@ -804,14 +804,8 @@ async function updateWorkflowStatus(request) {
       changedOn: updatedOn || new Date(),
       createdOn: now,
     })
-    console.log(
-      '----------Result data',
-      result.data.resultWorkflowChangedOn,
-      updatedOn
-    )
-    if (!updatedOn || result.data.resultWorkflowChangedOn < updatedOn) {
-      console.log('----------Update Status', lastLogId)
 
+    if (!updatedOn || result.data.resultWorkflowChangedOn < updatedOn) {
       await knex('Result')
         .where('id', resultId)
         .update({

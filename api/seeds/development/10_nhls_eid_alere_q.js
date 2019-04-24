@@ -1229,7 +1229,7 @@ async function seed(knex) {
       )
       const [lastLogId] = await knex('ResultWorkflowLog').insert({
         resultId,
-        resultWorkflowStatusId: result.resultWorkflowStatusId,
+        resultWorkflowStatusId: result.resultWorkflowStatusId || 1,
         changedOn: now,
         createdOn: now,
         reason: 'Device API Update',

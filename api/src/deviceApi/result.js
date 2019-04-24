@@ -247,7 +247,6 @@ async function mergeResult(
     ),
     resultTypeId,
     resultSourceId,
-    // resultWorkflowStatusId,
     sampleId,
     sampleRunNumber: _.get(
       payload,
@@ -798,14 +797,6 @@ async function updateResultWorkflowStatus(
       `Workflow status with external ID "${workflowStatusExternalId}" not found`
     )
   }
-
-  // update result
-  /* const rows = await knex('Result as r')
-    .where('r.id', resultId)
-    .update({ resultWorkflowStatusId })
-*/
-  // keep log if update was successful. don't need to check permission again because
-  // rows would be 0 if no permission in query above
 
   const [lastLogId] = await knex('ResultWorkflowLog').insert({
     resultId,

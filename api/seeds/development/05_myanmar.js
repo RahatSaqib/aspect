@@ -619,8 +619,8 @@ async function seed(knex) {
               const [lastLogId] = await knex('ResultWorkflowLog').insert({
                 resultId: rid,
                 resultWorkflowStatusId,
-                changedOn: now(),
-                createdOn: now(),
+                changedOn: now,
+                createdOn: now,
                 createdBy: adminId,
               })
               await knex('Result')
