@@ -62,6 +62,7 @@ const SELECT_SHOW_FIELDS = [
   'rs.id as resultWorkflowStatusId',
   'rs.name as resultWorkflowStatus',
   'rs.externalId as resultWorkflowStatusExternalId',
+  'rsl.changedOn as resultWorkflowChangedOn',
   'r.resultData',
   'r.formData',
   'r.siteId',
@@ -803,13 +804,14 @@ async function updateWorkflowStatus(request) {
       changedOn: updatedOn,
       createdOn: now,
     })
-    await knex('Result')
-      .where('id', resultId)
-      .update({
-        resultWorkflowStatusLogId: lastLogId,
-        updatedBy: currentUserId,
-        updatedOn: now,
-      })
+    if (result.data.resultWorkflowChangedOn <= updatedOn)
+      await knex('Result')
+        .where('id', resultId)
+        .update({
+          resultWorkflowStatusLogId: lastLogId,
+          updatedBy: currentUserId,
+          updatedOn: now,
+        })
   }
 
   const response = await showResult(request)

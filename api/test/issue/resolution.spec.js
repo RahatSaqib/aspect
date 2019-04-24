@@ -1007,7 +1007,6 @@ describe('Issue Resolution', () => {
           geographyId: device.geographyId,
           siteId: device.siteId,
           deviceId: device.id,
-          //    resultWorkflowStatusId: resultWorkflowStatus.id,
           resultSourceId: resultSource.id,
           resultTypeId: resultType.id,
           sampleId,

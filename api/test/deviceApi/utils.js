@@ -370,7 +370,6 @@ async function createResult(
     geographyId,
     siteId,
     deviceId,
-    // resultWorkflowStatusId: await resultWorkflowStatusToId('OK'),
     resultSourceId: await resultSourceToId('Generated'),
     resultTypeId: await resultTypeToId('Patient'),
     sampleId,

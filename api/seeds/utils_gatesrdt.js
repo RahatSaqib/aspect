@@ -235,7 +235,6 @@ async function createResults(
         geographyId,
         siteId,
         deviceId,
-        //  resultWorkflowStatusId: deliverable,
         longitude: -33.78725,
         latitude: -13.96692,
         resultSourceId: resultSourceLimsId,

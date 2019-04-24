@@ -293,6 +293,9 @@ const routes = [
               lgaName: Joi.string()
                 .allow(null)
                 .description("The device's lga name"),
+              resultWorkflowChangedOn: Joi.date()
+                .allow(null)
+                .description('The date when status was changed'),
               resultCategory1Name: Joi.string()
                 .allow(null)
                 .description("The result's category 1 name"),

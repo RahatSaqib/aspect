@@ -39,12 +39,19 @@ describe('Device Result API routes', () => {
   }
 
   const clientBasePath = '/api/result'
-  function setResultAsDeliverable(context, resultId) {
+  function setResultAsDeliverable(
+    context,
+    resultId,
+    changedOn,
+    testStatus = true
+  ) {
     const { clientAuth } = context
+    const status = { externalId: 'Deliverable' }
+    if (changedOn) status.updatedOn = changedOn.toISOString()
     const clientSingleResultPath = `${clientBasePath}/`
     return server
       .put(`${clientSingleResultPath}workflow-status/${resultId}`)
-      .send({ externalId: 'Deliverable' })
+      .send(status)
       .set('Authorization', clientAuth)
       .then(res => {
         assert.equal(
@@ -55,7 +62,8 @@ describe('Device Result API routes', () => {
         assert.typeOf(res.body, 'Object')
         assert.property(res.body, 'data')
         assert.typeOf(res.body.data, 'Object')
-        assert.equal(res.body.data.resultWorkflowStatus, 'Ready for delivery')
+        if (testStatus)
+          assert.equal(res.body.data.resultWorkflowStatus, 'Ready for delivery')
         return res
       })
   }
@@ -833,6 +841,74 @@ describe('Device Result API routes', () => {
             assert.typeOf(res.body, 'Object')
             assert.equal(res.body.name, deviceFirstName)
           })
+      }))
+
+    it('should set result status with different updatedOn parameters', () =>
+      runTest(async knex => {
+        const resultIds = []
+        const { deviceId, deviceAuth, now } = context
+
+        const resultPayload = {
+          startedOn: now,
+          checkpoint: '3123',
+          data: { a: 'b' },
+          assay: { id: 'DaktariHivVl' },
+          instrument: { serial: '1234567' },
+          sample: { id: '76543789' },
+        }
+        await server
+          .post(devicePostResultPath)
+          .set('Authorization', deviceAuth)
+          .send(resultPayload)
+          .then(res => {
+            assert.equal(res.status, 200)
+          })
+
+        resultIds.push(await getLastResultId(knex, deviceId))
+
+        await setResultAsDeliverable(
+          context,
+          _.last(resultIds),
+          new Date(2010, 1, 1),
+          false
+        )
+
+        const result1 = await knex('Result as r')
+          .where({ id: _.last(resultIds) })
+          .first()
+
+        const result1Status = await knex('ResultWorkflowLog as rsl')
+          .innerJoin(
+            'ResultWorkflowStatus as rs',
+            'rsl.resultWorkflowStatusId',
+            'rs.Id'
+          )
+          .where('rsl.id', result1.resultWorkflowStatusLogId)
+          .first('externalId')
+
+        assert.equal(result1Status.externalId, 'OK')
+
+        const now2 = new Date()
+        await setResultAsDeliverable(
+          context,
+          _.last(resultIds),
+          new Date(now2.setMinutes(now2.getMinutes() + 30))
+        )
+
+        const result2 = await knex('Result as r')
+          .where({ id: _.last(resultIds) })
+          .first()
+
+        const result2Status = await await knex('ResultWorkflowLog as rsl')
+          .innerJoin(
+            'ResultWorkflowStatus as rs',
+            'rsl.resultWorkflowStatusId',
+            'rs.Id'
+          )
+          .where('rsl.id', result2.resultWorkflowStatusLogId)
+          .first('externalId')
+
+        assert.equal(result2Status.externalId, 'Deliverable')
       }))
 
     it('should set default result status and categories', () =>

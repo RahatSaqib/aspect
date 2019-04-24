@@ -145,7 +145,6 @@ async function mergeChaiResultToReporters(
           .where({ id: processedResult.id })
           .update({
             qcCheck: 1,
-            // resultWorkflowStatusLogId:LastLogId
           })
         processedResult.qcCheck = 1
         processedResult.resultWorkflowStatusId = deliverableId

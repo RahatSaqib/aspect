@@ -807,7 +807,6 @@ async function seed(knex) {
       sampleId: 'TEST',
       testStartedOn: parseDateOrDefault('2018-04-18 09:55:24', now),
       testEndedOn: parseDateOrDefault('2018-04-18 09:55:24', now),
-      // resultWorkflowStatusId: resultWorkflowStatusErrorId,
       category1: resultCategoryErrorId,
       category2: resultCategoryErrorId,
       resultData:
@@ -1209,7 +1208,6 @@ async function seed(knex) {
           geographyId: cmjahGeographyId,
           siteId: cmjahSiteId,
           deviceId: cmjahDeviceId,
-          // resultWorkflowStatusId: result.resultWorkflowStatusId,
           resultSourceId: resultSourceDiagnosticDeviceId,
           resultTypeId: resultTypePatientId,
           sampleId,

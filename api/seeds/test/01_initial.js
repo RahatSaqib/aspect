@@ -1856,7 +1856,6 @@ async function seed(knex) {
         geographyId: siteData.geographyId,
         siteId: siteData.id,
         deviceId: device.id,
-        //   resultWorkflowStatusId: processed,
         longitude: -81.581222,
         latitude: 28.419348,
         resultSourceId: resultSourceDiagnosticId,
