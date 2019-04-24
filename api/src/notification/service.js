@@ -48,12 +48,8 @@ async function listNotifications(request) {
     .modify(sortPageParams, query, 'nt.name')
     .modify(filterParams, query, {
       notificationName: 'nt.name',
-      // stateId: 'g.stateId',
-      // lgaId: 'g.lgaId',
-      // siteName: 's.name',
-      // externalId: 's.externalId',
     })
-  // .modify(addConstraints, dataConstraints, { partner: 'p' })
+    .modify(addConstraints, dataConstraints, { partner: 'p' })
 
   function columnCount(column) {
     return knex.raw(
