@@ -30,6 +30,7 @@ async function listNotifications(request) {
     .leftJoin('Partner as p', 'nt.partnerId', 'p.id')
     .modify(filterParams, query, {})
     .modify(filterDateRangeParams, query, 'lastTriggeredOn')
+    .modify(addConstraints, dataConstraints, { partner: 'p' })
 
   const getItems = notificationQuery
     .clone()
@@ -49,7 +50,6 @@ async function listNotifications(request) {
     .modify(filterParams, query, {
       notificationName: 'nt.name',
     })
-    .modify(addConstraints, dataConstraints, { partner: 'p' })
 
   function columnCount(column) {
     return knex.raw(
