@@ -25,7 +25,7 @@ describe('Result routes', () => {
   let initialResultWorkflowStatusName = ''
   const reason = 'testing'
   const operator = 'Tester'
-  const updatedOn = new Date()
+  const updatedOn = new Date(dateFormat(new Date(), 'yyyy-MM-dd HH:mm:ss.000Z'))
   describe('GET', () => {
     shared.checkToken(server, path)
 
