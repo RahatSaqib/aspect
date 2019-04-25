@@ -12,24 +12,22 @@ describe('Person routes', () => {
   describe('GET /person', () => {
     shared.checkToken(server, path)
 
-    it('should return a list of persons when using valid token', done => {
-      server
+    it('should return a list of persons when using valid token', async () => {
+      const res = await server
         .get(path)
         .set('Authorization', `Bearer ${shared.token}`)
-        .end((err, res) => {
-          assert.equal(res.status, 200)
-          assert.typeOf(res.body, 'Object')
-          assert.property(res.body, 'data')
-          assert.typeOf(res.body.data, 'array')
-          assert.isAtLeast(res.body.data.length, 3)
-          assert.property(res.body.data[0], 'id')
-          assert.property(res.body.data[0], 'name')
-          assert.property(res.body.data[0], 'level')
-          assert.property(res.body.data[0], 'state')
-          assert.property(res.body.data[0], 'lga')
-          assert.property(res.body, 'total')
-          done()
-        })
+
+      assert.equal(res.status, 200)
+      assert.typeOf(res.body, 'Object')
+      assert.property(res.body, 'data')
+      assert.typeOf(res.body.data, 'array')
+      assert.isAtLeast(res.body.data.length, 3)
+      assert.property(res.body.data[0], 'id')
+      assert.property(res.body.data[0], 'name')
+      assert.property(res.body.data[0], 'level')
+      assert.property(res.body.data[0], 'state')
+      assert.property(res.body.data[0], 'lga')
+      assert.property(res.body, 'total')
     })
   })
 
@@ -44,69 +42,62 @@ describe('Person routes', () => {
       })
     )
 
-    after(() =>
-      run(async knex => {
-        await knex('JobContext')
-          .where({
-            jobId: person.jobId,
-            siteId,
-          })
-          .del()
-      })
-    )
-
     describe('/person/assign/{siteId}', () => {
-      it('Should assign contact to site', () => {
-        server
+      it('Should assign contact to site', async () => {
+        const resAssign = await server
           .put(`${path}/assign/${siteId}`)
           .send({ id: person.id })
           .set('Authorization', `Bearer ${shared.token}`)
-          .end((err, res) => {
-            assert.equal(res.status, 200)
-            assert.typeOf(res.body, 'Object')
-            res.body.data.some(contact =>
-              expect(contact).to.have.property('id', person.id)
-            )
-          })
-        server
+
+        assert.equal(resAssign.status, 200)
+        assert.typeOf(resAssign.body, 'Object')
+        expect(resAssign.body.data).to.containSubset([{ id: person.id }])
+
+        const resAssignDupe = await server
+          .put(`${path}/assign/${siteId}`)
+          .send({ id: person.id })
+          .set('Authorization', `Bearer ${shared.token}`)
+
+        assert.equal(resAssignDupe.status, 409)
+      })
+
+      it('Should return 400 when the ID of the user is not an integer', async () => {
+        const res = await server
           .put(`${path}/assign/${siteId}`)
           .send({ id: 'Invalid' })
           .set('Authorization', `Bearer ${shared.token}`)
-          .end((err, res) => {
-            assert.equal(res.status, 400)
-            assert.typeOf(res.body, 'Object')
-          })
-        server
+        assert.equal(res.status, 400)
+        assert.typeOf(res.body, 'Object')
+      })
+
+      it('Should return 404 when trying to assign a user that does not exist', async () => {
+        const res = await server
           .put(`${path}/assign/${siteId}`)
           .send({ id: '1000' })
           .set('Authorization', `Bearer ${shared.token}`)
-          .end((err, res) => {
-            assert.typeOf(res.body, 'Object')
-            expect(res.body).to.include({
-              statusCode: 404,
-              error: 'Not Found',
-              message: 'Not Found',
-            })
-          })
-        server
-          .put(`${path}/assign/${siteId}`)
-          .send({ id: person.id })
-          .set('Authorization', `Bearer ${shared.token}`)
-          .end((err, res) => {
-            assert.equal(res.status, 409)
-          })
+
+        assert.typeOf(res.body, 'Object')
+        expect(res.body).to.include({
+          statusCode: 404,
+          error: 'Not Found',
+          message: 'Not Found',
+        })
       })
     })
 
     describe('/person/unassign/{siteId}', () => {
-      it('Should remove contact from site', () => {
-        server
+      it('Should remove contact from site', async () => {
+        await server
+          .put(`${path}/assign/${siteId}`)
+          .send({ id: person.id })
+          .set('Authorization', `Bearer ${shared.token}`)
+
+        const res = await server
           .put(`${path}/unassign/${siteId}`)
           .send({ id: person.id })
           .set('Authorization', `Bearer ${shared.token}`)
-          .end((err, res) => {
-            assert.equal(res.status, 200)
-          })
+
+        assert.equal(res.status, 200)
       })
     })
   })
