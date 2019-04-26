@@ -298,7 +298,7 @@ async function seed(knex) {
         list: false,
         order: 10,
         type: 'string',
-        title: 'Operator',
+        title: 'Blood-Sample-ID',
       },
       pid: {
         list: true,
@@ -787,7 +787,7 @@ async function seed(knex) {
         list: false,
         order: 10,
         type: 'string',
-        title: 'Operator',
+        title: 'Blood-Sample-ID',
       },
       pid: {
         list: true,
@@ -1672,7 +1672,7 @@ async function seed(knex) {
         list: false,
         order: 10,
         type: 'string',
-        title: 'Operator',
+        title: 'Blood-Sample-ID',
       },
       pid: {
         list: true,
@@ -2438,7 +2438,7 @@ async function seed(knex) {
         list: false,
         order: 10,
         type: 'string',
-        title: 'Operator',
+        title: 'Blood-Sample-ID',
       },
       pid: {
         list: true,
