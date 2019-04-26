@@ -7,6 +7,7 @@ async function postProcessMergeResult(context, result, previousResult) {
   const { knex, payload, now } = context
 
   const { pickedUpOn } = JSON.parse(result.resultData)
+
   await addResultWorkflowLogIfChanged(
     knex,
     payload,

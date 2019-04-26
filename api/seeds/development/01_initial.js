@@ -2156,7 +2156,6 @@ async function seed(knex) {
         geographyId: siteData.geographyId,
         siteId: siteData.id,
         deviceId: device.id,
-        resultWorkflowStatusId: ordered,
         longitude: -81.581222,
         latitude: 28.419348,
         resultSourceId: resultSourceDiagnosticId,
@@ -2194,7 +2193,7 @@ async function seed(knex) {
       })
     )
 
-    await knex('ResultWorkflowLog').insert({
+    const [lastLogId] = await knex('ResultWorkflowLog').insert({
       resultId,
       resultWorkflowStatusId: ordered,
       operator: 'Marsha',
@@ -2211,6 +2210,10 @@ async function seed(knex) {
       createdOn: addHours(randomDate, 1),
       createdBy: adminId,
     })
+
+    await knex('Result')
+      .where('id', resultId)
+      .update({ resultWorkflowStatusLogId: lastLogId })
 
     await knex('DeviceLog').insert({
       deviceId: device.id,
@@ -2242,7 +2245,6 @@ async function seed(knex) {
               geographyId: siteData.geographyId,
               siteId: siteData.id,
               deviceId: device.id,
-              resultWorkflowStatusId: ordered,
               longitude: -81.581222,
               latitude: 28.419348,
               resultSourceId: resultSourceDiagnosticId,
@@ -2388,7 +2390,6 @@ async function seed(knex) {
               geographyId: siteData.geographyId,
               siteId: siteData.id,
               deviceId: device.id,
-              resultWorkflowStatusId: processed,
               longitude: -81.581222,
               latitude: 28.419348,
               resultSourceId: resultSourceDiagnosticId,
@@ -2435,7 +2436,7 @@ async function seed(knex) {
             createdBy: adminId,
           })
 
-          await knex('ResultWorkflowLog').insert({
+          const [lastLogId] = await knex('ResultWorkflowLog').insert({
             resultId,
             resultWorkflowStatusId: processed,
             operator: 'Marsha',
@@ -2452,6 +2453,10 @@ async function seed(knex) {
             createdOn: addHours(randomDate, 42),
             createdBy: adminId,
           })
+
+          await knex('Result')
+            .where('id', resultId)
+            .update({ resultWorkflowStatusLogId: lastLogId })
         }
       })
     )
@@ -2553,7 +2558,6 @@ async function seed(knex) {
               geographyId: siteData.geographyId,
               siteId: siteData.id,
               deviceId: device.id,
-              resultWorkflowStatusId: resultStatus,
               longitude: -81.581222,
               latitude: 28.419348,
               resultSourceId: resultSourceDiagnosticId,
@@ -2589,7 +2593,7 @@ async function seed(knex) {
             })
           )
 
-          await knex('ResultWorkflowLog').insert({
+          const [lastLogId] = await knex('ResultWorkflowLog').insert({
             resultId,
             resultWorkflowStatusId: resultStatus,
             operator: 'Marsha',
@@ -2597,6 +2601,9 @@ async function seed(knex) {
             createdOn: subHours(randomDate, 3),
             createdBy: adminId,
           })
+          await knex('Result')
+            .where('id', resultId)
+            .update({ resultWorkflowStatusLogId: lastLogId })
         }
       })
     )
@@ -2680,7 +2687,6 @@ async function seed(knex) {
               geographyId: siteData.geographyId,
               siteId: siteData.id,
               deviceId: device.id,
-              resultWorkflowStatusId: processed,
               longitude: -81.581222,
               latitude: 28.419348,
               resultSourceId: resultSourceDiagnosticId,
@@ -2717,7 +2723,7 @@ async function seed(knex) {
             })
           )
 
-          await knex('ResultWorkflowLog').insert({
+          const [lastLogId] = await knex('ResultWorkflowLog').insert({
             resultId,
             resultWorkflowStatusId: processed,
             operator: 'Gene Hackman',
@@ -2725,6 +2731,9 @@ async function seed(knex) {
             createdOn: addMinutes(randomDate, 90),
             createdBy: adminId,
           })
+          await knex('Result')
+            .where('id', resultId)
+            .update({ resultWorkflowStatusLogId: lastLogId })
         }
       })
     )
@@ -2819,7 +2828,6 @@ async function seed(knex) {
               geographyId: siteData.geographyId,
               siteId: siteData.id,
               deviceId: device.id,
-              resultWorkflowStatusId: acknowledged,
               longitude: -81.581222,
               latitude: 28.419348,
               resultSourceId: resultSourceDiagnosticId,
@@ -2856,7 +2864,7 @@ async function seed(knex) {
             })
           )
 
-          await knex('ResultWorkflowLog').insert({
+          const [lastLogId] = await knex('ResultWorkflowLog').insert({
             resultId,
             resultWorkflowStatusId: acknowledged,
             operator: 'Aaron',
@@ -2864,6 +2872,9 @@ async function seed(knex) {
             createdOn: addMinutes(randomDate, 90),
             createdBy: adminId,
           })
+          await knex('Result')
+            .where('id', resultId)
+            .update({ resultWorkflowStatusLogId: lastLogId })
         }
       })
     )
@@ -2958,7 +2969,6 @@ async function seed(knex) {
               geographyId: siteData.geographyId,
               siteId: siteData.id,
               deviceId: device.id,
-              resultWorkflowStatusId: acknowledged,
               longitude: -81.581222,
               latitude: 28.419348,
               resultSourceId: resultSourceDiagnosticId,
@@ -2995,7 +3005,7 @@ async function seed(knex) {
             })
           )
 
-          await knex('ResultWorkflowLog').insert({
+          const [lastLogId] = await knex('ResultWorkflowLog').insert({
             resultId,
             resultWorkflowStatusId: acknowledged,
             operator: 'Aaron',
@@ -3003,6 +3013,9 @@ async function seed(knex) {
             createdOn: addMinutes(randomDate, 120),
             createdBy: adminId,
           })
+          await knex('Result')
+            .where('id', resultId)
+            .update({ resultWorkflowStatusLogId: lastLogId })
         }
       })
     )

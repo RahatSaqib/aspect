@@ -392,8 +392,13 @@ class GxAlertApiTestContext {
         .join('Result as r', 'dl.resultId', 'r.id')
         .join('Device as sourceDevice', 'r.deviceId', 'r.deviceId')
         .leftJoin(
+          'ResultWorkflowLog as rwsl',
+          'r.resultWorkflowStatusLogId',
+          'rwsl.id'
+        )
+        .leftJoin(
           'ResultWorkflowStatus as rws',
-          'r.resultWorkflowStatusId',
+          'rwsl.resultWorkflowStatusId',
           'rws.id'
         )
         .leftJoin('Assay as a', 'r.assayId', 'a.id')
@@ -457,8 +462,13 @@ class GxAlertApiTestContext {
       const resultDetails = await knex('Result as r')
         .join('Device as sourceDevice', 'r.deviceId', 'r.deviceId')
         .leftJoin(
+          'ResultWorkflowLog as rwsl',
+          'r.resultWorkflowStatusLogId',
+          'rwsl.id'
+        )
+        .leftJoin(
           'ResultWorkflowStatus as rws',
-          'r.resultWorkflowStatusId',
+          'rwsl.resultWorkflowStatusId',
           'rws.id'
         )
         .leftJoin('Assay as a', 'r.assayId', 'a.id')

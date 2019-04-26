@@ -102,15 +102,14 @@ async function deleteDeviceAndTestData(knex, apiKeys) {
   await knex('Tag')
     .whereIn('id', tagIds)
     .delete()
+  await knex('DeviceLog')
+    .whereIn('deviceId', deviceIds)
+    .delete()
   await knex('DeviceStatusLog')
     .whereIn('deviceId', deviceIds)
     .delete()
   await knex('FactDeviceFlag')
     .whereIn('deviceId', deviceIds)
-    .delete()
-  await knex('DeviceLog')
-    .whereIn('deviceId', deviceIds)
-    .orWhereIn('resultId', resultIds)
     .delete()
   await knex('DeviceSiteHistory')
     .whereIn('deviceId', deviceIds)
@@ -121,13 +120,15 @@ async function deleteDeviceAndTestData(knex, apiKeys) {
   await knex('ResultQualityControlLog')
     .whereIn('resultId', resultIds)
     .delete()
-  await knex('ResultWorkflowLog')
-    .whereIn('resultId', resultIds)
-    .delete()
   await knex('ResultGeneratedResult')
     .whereIn('sourceResultId', resultIds)
     .orWhereIn('generatedResultId', resultIds)
     .delete()
+
+  await knex('ResultWorkflowLog')
+    .whereIn('resultId', resultIds)
+    .delete()
+
   await knex('ResultFileReference')
     .whereIn('resultId', resultIds)
     .delete()
@@ -369,7 +370,6 @@ async function createResult(
     geographyId,
     siteId,
     deviceId,
-    resultWorkflowStatusId: await resultWorkflowStatusToId('OK'),
     resultSourceId: await resultSourceToId('Generated'),
     resultTypeId: await resultTypeToId('Patient'),
     sampleId,
@@ -378,7 +378,18 @@ async function createResult(
     startedOn: subHours(now, 2),
     endedOn: now,
   })
-
+  const [lastLogId] = await knex('ResultWorkflowLog').insert({
+    resultWorkflowStatusId: await resultWorkflowStatusToId('OK'),
+    resultId,
+    changedOn: subHours(now, 2),
+    createdOn: subHours(now, 2),
+    createdBy: 1,
+  })
+  await knex('Result')
+    .where('id', resultId)
+    .update({
+      resultWorkflowStatusLogId: lastLogId,
+    })
   return resultId
 }
 

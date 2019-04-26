@@ -10,6 +10,7 @@ const {
   sampleTypeToId,
 } = require('../shared/dictionary')
 
+const { getDevice } = require('../device/service')
 const inventory = require('../inventory/service')
 
 async function mergeResult(
@@ -65,7 +66,10 @@ async function mergeResult(
   } else if (payload.error) {
     resultWorkflowStatusId = await resultWorkflowStatusToId('Error')
   } else if (existingResult) {
-    ;({ resultWorkflowStatusId } = existingResult)
+    ;({ resultWorkflowStatusId } = await getLatestResultWorkflowLog(
+      knex,
+      existingResult.id
+    ))
   } else {
     resultWorkflowStatusId = await resultWorkflowStatusToId('OK')
   }
@@ -94,7 +98,7 @@ async function mergeResult(
   if (
     !site ||
     !resultTypeId ||
-    !resultWorkflowStatusId ||
+    // !resultWorkflowStatusId ||
     !resultCategory1 ||
     assays.length !== 1
   ) {
@@ -105,11 +109,11 @@ async function mergeResult(
     if (!resultTypeId) {
       requestErrors.push(`result type with id ${_.get(payload, 'type.id')}`)
     }
-    if (!resultWorkflowStatusId) {
+    /* if (!resultWorkflowStatusId) {
       requestErrors.push(
         `result workflow status id ${_.get(payload, 'workflow.status.id')}`
       )
-    }
+    } */
     if (!resultCategory1) {
       requestErrors.push(`result categories with ids ${categoryIds.join(' ')}`)
     }
@@ -243,7 +247,6 @@ async function mergeResult(
     ),
     resultTypeId,
     resultSourceId,
-    resultWorkflowStatusId,
     sampleId,
     sampleRunNumber: _.get(
       payload,
@@ -352,7 +355,24 @@ async function mergeResult(
   } else {
     ;[resultId] = await knex('Result').insert(processedResult)
   }
+
+  const [lastLogId] = await knex('ResultWorkflowLog').insert({
+    resultId,
+    resultWorkflowStatusId,
+    createdOn: now,
+    changedOn: now,
+    createdBy: 1,
+  })
+  await knex('Result')
+    .where({ id: resultId })
+    .update({
+      resultWorkflowStatusLogId: lastLogId,
+      updatedOn: now,
+    })
+  processedResult.resultWorkflowStatusLogId = lastLogId
+  processedResult.resultWorkflowStatusId = resultWorkflowStatusId
   processedResult.id = resultId
+  processedResult.updatedOn = now
   return { processedResult, existingResult }
 }
 
@@ -366,7 +386,16 @@ async function getResult(knex, resultId) {
     .leftJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
     .leftJoin('ResultType as rt', 'r.resultTypeId', 'rt.id')
     .leftJoin('ResultSource as rsc', 'r.resultSourceId', 'rsc.id')
-    .leftJoin('ResultWorkflowStatus as rs', 'r.resultWorkflowStatusId', 'rs.id')
+    .leftJoin(
+      'ResultWorkflowLog as rsl',
+      'r.resultWorkflowStatusLogId',
+      'rsl.id'
+    )
+    .leftJoin(
+      'ResultWorkflowStatus as rs',
+      'rsl.resultWorkflowStatusId',
+      'rs.id'
+    )
     .where('r.id', resultId)
     .first(
       'r.externalId as resultExternalId',
@@ -550,6 +579,7 @@ async function getResult(knex, resultId) {
 
 async function postProcessMergeResult(context, result, previousResult) {
   const { knex, payload, now } = context
+
   await addResultWorkflowLogIfChanged(
     knex,
     payload,
@@ -730,18 +760,23 @@ async function addResultWorkflowLogIfChanged(
       !latestResultWorkflowLog ||
       +changedOn !== +latestResultWorkflowLog.changedOn
   }
-
+  const device = await getDevice(result.deviceId)
   if (resultWorkflowChanged) {
-    await knex('ResultWorkflowLog').insert({
+    const [lastLogId] = await knex('ResultWorkflowLog').insert({
       resultId: result.id,
-      resultWorkflowStatusId: result.resultWorkflowStatusId,
-      reason,
+      resultWorkflowStatusId:
+        result.resultWorkflowStatusId || (await resultWorkflowStatusToId('OK')),
+      reason: reason || 'Device Api Update',
       operator:
         _.get(payload, 'workflow.operator', null) ||
-        _.get(payload, 'sender.operator', null),
+        _.get(payload, 'sender.operator', null) ||
+        device.name,
       changedOn: _.get(payload, 'workflow.changedOn', changedOn || now),
       createdOn: now,
     })
+    await knex('Result')
+      .where('id', result.id)
+      .update({ resultWorkflowStatusLogId: lastLogId })
   }
   return resultWorkflowChanged
 }
@@ -763,22 +798,18 @@ async function updateResultWorkflowStatus(
     )
   }
 
-  // update result
-  const rows = await knex('Result as r')
-    .where('r.id', resultId)
-    .update({ resultWorkflowStatusId })
+  const [lastLogId] = await knex('ResultWorkflowLog').insert({
+    resultId,
+    resultWorkflowStatusId:
+      resultWorkflowStatusId || (await resultWorkflowStatusToId('OK')),
+    reason,
+    changedOn: now,
+    createdOn: now,
+  })
 
-  // keep log if update was successful. don't need to check permission again because
-  // rows would be 0 if no permission in query above
-  if (rows) {
-    await knex('ResultWorkflowLog').insert({
-      resultId,
-      resultWorkflowStatusId,
-      reason,
-      changedOn: now,
-      createdOn: now,
-    })
-  }
+  await knex('Result')
+    .where('id', resultId)
+    .update({ resultWorkflowStatusLogId: lastLogId })
 
   return {}
 }
@@ -788,7 +819,7 @@ async function getLatestResultWorkflowLog(knex, resultId) {
     .where({ resultId })
     .orderBy('createdOn', 'desc')
     .orderBy('id', 'desc')
-    .first('operator', 'changedOn')
+    .first('operator', 'changedOn', 'resultWorkflowStatusId')
   return latestResultWorkFlowLog
 }
 

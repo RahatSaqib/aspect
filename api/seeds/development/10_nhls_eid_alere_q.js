@@ -807,7 +807,6 @@ async function seed(knex) {
       sampleId: 'TEST',
       testStartedOn: parseDateOrDefault('2018-04-18 09:55:24', now),
       testEndedOn: parseDateOrDefault('2018-04-18 09:55:24', now),
-      resultWorkflowStatusId: resultWorkflowStatusErrorId,
       category1: resultCategoryErrorId,
       category2: resultCategoryErrorId,
       resultData:
@@ -1209,7 +1208,6 @@ async function seed(knex) {
           geographyId: cmjahGeographyId,
           siteId: cmjahSiteId,
           deviceId: cmjahDeviceId,
-          resultWorkflowStatusId: result.resultWorkflowStatusId,
           resultSourceId: resultSourceDiagnosticDeviceId,
           resultTypeId: resultTypePatientId,
           sampleId,
@@ -1229,14 +1227,17 @@ async function seed(knex) {
           qcCheck: 0,
         })
       )
-      await knex('ResultWorkflowLog').insert({
+      const [lastLogId] = await knex('ResultWorkflowLog').insert({
         resultId,
-        resultWorkflowStatusId: result.resultWorkflowStatusId,
+        resultWorkflowStatusId: result.resultWorkflowStatusId || 1,
         changedOn: now,
         createdOn: now,
         reason: 'Device API Update',
         operator: result.senderOperator,
       })
+      await knex('Result')
+        .where('id', resultId)
+        .update({ resultWorkflowStatusLogId: lastLogId })
     },
     { concurrency: config.db.connectionLimit }
   )
