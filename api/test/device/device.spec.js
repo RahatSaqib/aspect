@@ -265,7 +265,7 @@ describe('Device routes', () => {
 
                   // ----------------------
                   // post new date
-                  notes = 'Another sample notes'
+                  notes = '' // empty note
                   contextDate = new Date('2088-10-10').toISOString()
                   reqData = { contextDate, notes, externalId }
                   server

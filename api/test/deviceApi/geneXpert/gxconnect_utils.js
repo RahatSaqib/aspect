@@ -376,8 +376,13 @@ class GxConnectApiTestContext {
       const resultDetails = await knex('DeviceLog as dl')
         .join('Result as r', 'dl.resultId', 'r.id')
         .leftJoin(
+          'ResultWorkflowLog as rwsl',
+          'r.resultWorkflowStatusLogId',
+          'rwsl.id'
+        )
+        .leftJoin(
           'ResultWorkflowStatus as rws',
-          'r.resultWorkflowStatusId',
+          'rwsl.resultWorkflowStatusId',
           'rws.id'
         )
         .leftJoin('Assay as a', 'r.assayId', 'a.id')

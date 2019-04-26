@@ -26,7 +26,6 @@ const {
   deviceStatusToId,
   resultSourceToId,
   resultTypeToId,
-  resultWorkflowStatusToId,
   sampleTypeToId,
 } = require('../../src/shared/dictionary')
 const patients = require('../../seeds/test/fixtures/patients.json')
@@ -177,7 +176,6 @@ describe('DataCategoryLow Issues Endpoint', () => {
 
       // get dictionary data
       const sampleTypeId = await sampleTypeToId('DBS')
-      const resultWorkflowStatusId = await resultWorkflowStatusToId('OK')
       const resultSourceId = await resultSourceToId('Generated')
       const resultTypeId = await resultTypeToId('Patient')
       const resultMtbNumber = 100
@@ -255,7 +253,6 @@ describe('DataCategoryLow Issues Endpoint', () => {
             geographyId,
             siteId, // new site
             deviceId, // new device
-            resultWorkflowStatusId,
             resultSourceId,
             resultTypeId,
             sampleId: sample.id, // new sanple

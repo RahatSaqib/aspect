@@ -570,7 +570,7 @@ async function seed(knex) {
               )
 
               resultData.resultText = result.resultText
-              await knex('Result').insert(
+              const [rid] = await knex('Result').insert(
                 Object.assign({}, auditFields, {
                   externalId: `UQTB-${i}`,
                   assayId: assays.GxMtbRif.id,
@@ -578,7 +578,6 @@ async function seed(knex) {
                   geographyId: siteData.geographyId,
                   siteId: siteData.id,
                   deviceId: device.id,
-                  resultWorkflowStatusId,
                   longitude: siteData.latitude,
                   latitude: siteData.longitude,
                   resultSourceId,
@@ -617,6 +616,16 @@ async function seed(knex) {
                       : null,
                 })
               )
+              const [lastLogId] = await knex('ResultWorkflowLog').insert({
+                resultId: rid,
+                resultWorkflowStatusId,
+                changedOn: now,
+                createdOn: now,
+                createdBy: adminId,
+              })
+              await knex('Result')
+                .where('id', rid)
+                .update({ resultWorkflowStatusLogId: lastLogId })
             })
           )
         })

@@ -1190,7 +1190,12 @@ describe('Device API routes for GxConnect Devices', () => {
         assert.equal(result2Source.externalId, 'EnteredByHand')
 
         const result2Status = await knex('ResultWorkflowStatus as rs')
-          .where({ id: result2.resultWorkflowStatusId })
+          .innerJoin(
+            'ResultWorkflowLog as rwl',
+            'rs.id',
+            'rwl.ResultWorkflowStatusId'
+          )
+          .where('rwl.id', result2.resultWorkflowStatusLogId)
           .first('externalId')
         assert.equal(result2Status.externalId, 'Acknowledged')
 

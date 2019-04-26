@@ -220,6 +220,142 @@ function listDevicesBaseConfig() {
   }
 }
 
+const deviceDetailsResponseFields = Joi.object()
+  .required()
+  .description('Device details fields')
+  .keys({
+    id: Joi.number()
+      .required()
+      .description('The ID of the device'),
+    name: Joi.string()
+      .required()
+      .description('The name of the device'),
+    shortName: Joi.string()
+      .allow('', null)
+      .description('The short name of the device'),
+    createdOn: Joi.date()
+      .required()
+      .description('When the device was added to the database'),
+    lastPingOn: Joi.date()
+      .allow(null)
+      .description('When the device last pinged'),
+    lastSeen: Joi.date()
+      .allow(null)
+      .description(
+        'When the device was last seen. Unlike the ping, this date is also updated whenever the device sends a results, not just on an explicit ping.'
+      ),
+    state: Joi.string()
+      .allow('', null)
+      .description('The state where the device is located'),
+    siteId: Joi.number()
+      .allow('', null)
+      .description('The ID of the site where the device is located'),
+    siteName: Joi.string()
+      .allow('', null)
+      .description('The name of the site where the device is located'),
+    hostId: Joi.string()
+      .allow('', null)
+      .description('The host ID of the device'),
+    deviceType: Joi.object()
+      .keys({
+        id: Joi.number()
+          .required()
+          .description('ID of the device type'),
+        name: Joi.string()
+          .required()
+          .description('Name of the device type'),
+        externalId: Joi.string()
+          .required()
+          .description('External ID of the device type'),
+        configurationDataSchema: Joi.object()
+          .allow('', null)
+          .description(
+            'Configuration data schema associated with the device type'
+          ),
+        deviceOperationSchema: Joi.object()
+          .allow('', null)
+          .description('Operation data schema associated with the device type'),
+      })
+      .description('Details on the device type of the device'),
+    deviceStatusId: Joi.number()
+      .required()
+      .description('The device status ID of the device'),
+    configurationData: Joi.object()
+      .allow('', null)
+      .description('Configuration data for the device'),
+    notes: Joi.string()
+      .allow('', null)
+      .description('Any notes that were added to the device'),
+    serial: Joi.string()
+      .allow('', null)
+      .description('The serial number of the device'),
+    status: Joi.string()
+      .required()
+      .description('The current status of the device'),
+    statusToken: Joi.string()
+      .required()
+      .description('The external ID of the status'),
+    category: Joi.string()
+      .required()
+      .description('The device category'),
+    hasResults: Joi.number()
+      .required()
+      .min(0)
+      .max(1)
+      .description(
+        'Does the device have/produce results (i.e. a medical device)?'
+      ),
+    hasConnectivity: Joi.number()
+      .required()
+      .min(0)
+      .max(1)
+      .description(
+        'Does the device have connectivity built-in (i.e. a device with an included router)?'
+      ),
+    resultCountThisMonth: Joi.number()
+      .allow(null)
+      .description('Number of results in the last 30 days'),
+    resultCountLastMonth: Joi.number()
+      .allow(null)
+      .description('Number of results in the 30 days before that'),
+    resultCount60: Joi.number()
+      .allow(null)
+      .description('Number of results in the last 60 days'),
+    utilizationRateThisMonth: Joi.number()
+      .allow(null)
+      .description('Utilization rate in last 30 days'),
+    errorCountThisMonth: Joi.number()
+      .allow(null)
+      .description('Number of errors in the last 30 days'),
+    errorCountLastMonth: Joi.number()
+      .allow(null)
+      .description('Number of errors in the 30 days before that'),
+    errorCount60: Joi.number()
+      .allow(null)
+      .description('Number of results in the last 60 days'),
+    errorRateThisMonth: Joi.number()
+      .allow(null)
+      .description('Error rate in last 30 days'),
+    dailyCapacity: Joi.number()
+      .allow(null)
+      .description('Number of results delivered in the last 30 days'),
+    deliveredLastMonth: Joi.number()
+      .allow(null)
+      .description('Number of results delivered in the 30 days before that'),
+    calibrationDate: Joi.date()
+      .allow(null)
+      .description('Date of the last calibration'),
+    calibrationNotes: Joi.string()
+      .allow('', null)
+      .description('Notes about the last calibration'),
+    warrantyDueDate: Joi.date()
+      .allow(null)
+      .description('Latest warranty due date'),
+    warrantyNotes: Joi.string()
+      .allow('', null)
+      .description('Notes on the latest warranty'),
+  })
+
 const routes = [
   {
     method: 'GET',
@@ -261,142 +397,7 @@ const routes = [
           ok: Joi.bool()
             .required()
             .description('False if there was some sort of error'),
-          data: Joi.object().keys({
-            id: Joi.number()
-              .required()
-              .description('The ID of the device'),
-            name: Joi.string()
-              .required()
-              .description('The name of the device'),
-            shortName: Joi.string()
-              .allow('', null)
-              .description('The short name of the device'),
-            createdOn: Joi.date()
-              .required()
-              .description('When the device was added to the database'),
-            lastPingOn: Joi.date()
-              .allow(null)
-              .description('When the device last pinged'),
-            lastSeen: Joi.date()
-              .allow(null)
-              .description(
-                'When the device was last seen. Unlike the ping, this date is also updated whenever the device sends a results, not just on an explicit ping.'
-              ),
-            state: Joi.string()
-              .allow('', null)
-              .description('The state where the device is located'),
-            siteId: Joi.number()
-              .allow('', null)
-              .description('The ID of the site where the device is located'),
-            siteName: Joi.string()
-              .allow('', null)
-              .description('The name of the site where the device is located'),
-            hostId: Joi.string()
-              .allow('', null)
-              .description('The host ID of the device'),
-            deviceType: Joi.object()
-              .keys({
-                id: Joi.number()
-                  .required()
-                  .description('ID of the device type'),
-                name: Joi.string()
-                  .required()
-                  .description('Name of the device type'),
-                externalId: Joi.string()
-                  .required()
-                  .description('External ID of the device type'),
-                configurationDataSchema: Joi.object()
-                  .allow('', null)
-                  .description(
-                    'Configuration data schema associated with the device type'
-                  ),
-                deviceOperationSchema: Joi.object()
-                  .allow('', null)
-                  .description(
-                    'Operation data schema associated with the device type'
-                  ),
-              })
-              .description('Details on the device type of the device'),
-            deviceStatusId: Joi.number()
-              .required()
-              .description('The device status ID of the device'),
-            configurationData: Joi.object()
-              .allow('', null)
-              .description('Configuration data for the device'),
-            notes: Joi.string()
-              .allow('', null)
-              .description('Any notes that were added to the device'),
-            serial: Joi.string()
-              .allow('', null)
-              .description('The serial number of the device'),
-            status: Joi.string()
-              .required()
-              .description('The current status of the device'),
-            statusToken: Joi.string()
-              .required()
-              .description('The external ID of the status'),
-            category: Joi.string()
-              .required()
-              .description('The device category'),
-            hasResults: Joi.number()
-              .required()
-              .min(0)
-              .max(1)
-              .description(
-                'Does the device have/produce results (i.e. a medical device)?'
-              ),
-            hasConnectivity: Joi.number()
-              .required()
-              .min(0)
-              .max(1)
-              .description(
-                'Does the device have connectivity built-in (i.e. a device with an included router)?'
-              ),
-            resultCountThisMonth: Joi.number()
-              .allow(null)
-              .description('Number of results in the last 30 days'),
-            resultCountLastMonth: Joi.number()
-              .allow(null)
-              .description('Number of results in the 30 days before that'),
-            resultCount60: Joi.number()
-              .allow(null)
-              .description('Number of results in the last 60 days'),
-            utilizationRateThisMonth: Joi.number()
-              .allow(null)
-              .description('Utilization rate in last 30 days'),
-            errorCountThisMonth: Joi.number()
-              .allow(null)
-              .description('Number of errors in the last 30 days'),
-            errorCountLastMonth: Joi.number()
-              .allow(null)
-              .description('Number of errors in the 30 days before that'),
-            errorCount60: Joi.number()
-              .allow(null)
-              .description('Number of results in the last 60 days'),
-            errorRateThisMonth: Joi.number()
-              .allow(null)
-              .description('Error rate in last 30 days'),
-            dailyCapacity: Joi.number()
-              .allow(null)
-              .description('Number of results delivered in the last 30 days'),
-            deliveredLastMonth: Joi.number()
-              .allow(null)
-              .description(
-                'Number of results delivered in the 30 days before that'
-              ),
-            calibrationDate: Joi.date()
-              .allow(null)
-              .description('Date of the last calibration'),
-            calibrationNotes: Joi.string()
-              .allow('', null)
-              .description('Notes about the last calibration'),
-            warrantyDueDate: Joi.date()
-              .allow(null)
-              .description('Latest warranty due date'),
-            warrantyNotes: Joi.string()
-              .allow('', null)
-              .description('Notes on the latest warranty'),
-          }),
+          data: deviceDetailsResponseFields,
         }),
       },
     },
@@ -490,8 +491,22 @@ const routes = [
             .description(
               'Specified date for type of maintenance, i.e. warranty due date, calibration date'
             ),
-          notes: Joi.string(),
+          notes: Joi.string().allow('', null),
         },
+      },
+      response: {
+        options: {
+          allowUnknown: false,
+        },
+        schema: Joi.object().keys({
+          ok: Joi.bool()
+            .required()
+            .description('False if there was some sort of error'),
+          data: deviceDetailsResponseFields,
+          deviceMaintenanceId: Joi.number()
+            .required()
+            .description('DeviceMaintenance.id for specified deviceId'),
+        }),
       },
     },
   },

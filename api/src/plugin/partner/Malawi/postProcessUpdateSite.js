@@ -36,21 +36,19 @@ async function postProcessUpdateSite(context, site, previousSite) {
 
 async function purgePreviousResults(knex, actions, deviceId, now) {
   const purgedStatusId = await resultWorkflowStatusToId(PURGED_EXTERNALID)
-  await knex('Result')
-    .where({ deviceId })
-    .update({ resultWorkflowStatusId: purgedStatusId })
+
   const resultIds = await knex('Result as r')
     .join('Device as d', 'r.deviceId', 'd.id')
     .where({
       'd.id': deviceId,
-      'r.resultWorkflowStatusId': purgedStatusId,
+      'r.resultWorkflowStatusLogId': purgedStatusId,
     })
     .select('r.id as resultId', 'd.name as deviceName')
   await Promise.all(
     _.map(resultIds, async result => {
       const { resultId, deviceName } = result
 
-      await knex('ResultWorkflowLog').insert({
+      const [lastLogId] = await knex('ResultWorkflowLog').insert({
         resultId,
         resultWorkflowStatusId: purgedStatusId,
         operator: '',
@@ -58,6 +56,10 @@ async function purgePreviousResults(knex, actions, deviceId, now) {
         createdOn: now,
         changedOn: now,
       })
+
+      await knex('Result')
+        .where({ id: resultId })
+        .update({ resultWorkflowStatusLogId: lastLogId })
       actions.resultUpdated(resultId)
     })
   )
@@ -94,7 +96,12 @@ async function generateHistoricalResults(
 
   const sourceResults = await knex('DeviceLog as dl')
     .join('Result as r', 'dl.resultId', 'r.id')
-    .join('ResultWorkflowStatus as rws', 'r.resultWorkflowStatusId', 'rws.id')
+    .join('ResultWorkflowLog as rwsl', 'r.resultWorkflowStatusLogId', 'rwsl.id')
+    .join(
+      'ResultWorkflowStatus as rws',
+      'rwsl.resultWorkflowStatusId',
+      'rws.id'
+    )
     .join('Device as d', 'dl.deviceId', 'd.id')
     .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .join('Sample as sm', 'r.sampleId', 'sm.id')
@@ -198,7 +205,7 @@ async function mergeResultAndUpdateWorkflowStatus(
   Object.assign(processedResult, resultUpdates)
   await knex('Result')
     .where({ id: processedResult.id })
-    .update(resultUpdates)
+    .update({ qcCheck: 1 })
   await knex('ResultGeneratedResult').insert({
     sourceResultId: resultId,
     generatedResultId: processedResult.id,

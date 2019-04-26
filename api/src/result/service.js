@@ -59,9 +59,10 @@ const SELECT_SHOW_FIELDS = [
   'lg.name as lgaName',
   'rc1.name as resultCategory1Name',
   'rc2.name as resultCategory2Name',
-  'r.resultWorkflowStatusId',
+  'rs.id as resultWorkflowStatusId',
   'rs.name as resultWorkflowStatus',
   'rs.externalId as resultWorkflowStatusExternalId',
+  'rsl.changedOn as resultWorkflowChangedOn',
   'r.resultData',
   'r.formData',
   'r.siteId',
@@ -183,7 +184,16 @@ async function getListResults(query, auth) {
     .leftJoin('Sample as sp', 'r.sampleId', 'sp.id')
     .leftJoin('SampleType as stp', 'sp.sampleTypeId', 'stp.id')
     .leftJoin('Site as so', 'sp.originSiteId', 'so.id')
-    .leftJoin('ResultWorkflowStatus as rs', 'r.resultWorkflowStatusId', 'rs.id')
+    .leftJoin(
+      'ResultWorkflowLog as rsl',
+      'r.resultWorkflowStatusLogId',
+      'rsl.id'
+    )
+    .leftJoin(
+      'ResultWorkflowStatus as rs',
+      'rsl.resultWorkflowStatusId',
+      'rs.id'
+    )
     .leftJoin('Site as si', 'r.siteId', 'si.id')
     .modify(filterDateRangeParams, query, 'r.endedOn')
     .modify(filterParams, query, {
@@ -198,7 +208,7 @@ async function getListResults(query, auth) {
       sampleId: 'sp.externalId',
       sampleOriginSite: 'so.name',
       sampleGroup: 'r.sampleGroup',
-      workflowStatusId: 'r.resultWorkflowStatusId',
+      workflowStatusId: 'rs.id',
     })
     .modify((queryBuilder, params) => {
       if (params.patientOrResearchId) {
@@ -298,7 +308,7 @@ async function getDownloadResultsList(query, auth) {
       if (params.patientSample) {
         queryBuilder.where(builder =>
           builder
-            .where('r.sampleId', 'like', `%${params.patientSample}%`)
+            .where('sp.externalId', 'like', `%${params.patientSample}%`)
             .orWhere(
               knex.raw('JSON_EXTRACT(patientData,"$.firstName")'),
               'like',
@@ -688,7 +698,16 @@ async function getResultByResultId(request, fields = SELECT_SHOW_FIELDS) {
     .leftJoin('Sample as sp', 'r.sampleId', 'sp.id')
     .leftJoin('SampleType as stp', 'sp.sampleTypeId', 'stp.id')
     .leftJoin('Site as so', 'sp.originSiteId', 'so.id')
-    .leftJoin('ResultWorkflowStatus as rs', 'r.resultWorkflowStatusId', 'rs.id')
+    .leftJoin(
+      'ResultWorkflowLog as rsl',
+      'r.resultWorkflowStatusLogId',
+      'rsl.id'
+    )
+    .leftJoin(
+      'ResultWorkflowStatus as rs',
+      'rsl.resultWorkflowStatusId',
+      'rs.id'
+    )
     .leftJoin('ResultForm as rf', function() {
       this.on('r.assayId', 'rf.assayId').andOn('r.partnerId', 'rf.partnerId')
     })
@@ -863,18 +882,20 @@ async function updateWorkflowStatus(request) {
   const now = new Date()
   const { resultId } = params
   const { id: currentUserId } = await getUser(auth.credentials.name)
-
   // get the result so we can check access and if status changed
   const result = await getResultByResultId(request)
   if (!result.ok) {
     Boom.notFound()
   }
-
+  const { updatedOn } = payload
   let { resultWorkflowStatusId } = payload
+
   const { changedOn = now, operator, reason } = payload
+
   // check if a externalId is provided
   if (payload.externalId) {
     resultWorkflowStatusId = await resultWorkflowStatusToId(payload.externalId)
+
     if (!resultWorkflowStatusId) {
       return Boom.badRequest('Invalid ResultWorkflowStatus ID')
     }
@@ -882,23 +903,26 @@ async function updateWorkflowStatus(request) {
 
   // update the resultWorkflowStatusId.
   if (resultWorkflowStatusId !== result.data.resultWorkflowStatusId) {
-    await knex('Result')
-      .where('id', resultId)
-      .update({
-        resultWorkflowStatusId,
-        updatedBy: currentUserId,
-        updatedOn: changedOn,
-      })
-
-    await knex('ResultWorkflowLog').insert({
+    const [lastLogId] = await knex('ResultWorkflowLog').insert({
       resultId,
       resultWorkflowStatusId,
       createdBy: currentUserId,
       operator,
       reason,
       changedOn,
+
       createdOn: now,
     })
+
+    if (!updatedOn || result.data.resultWorkflowChangedOn < updatedOn) {
+      await knex('Result')
+        .where('id', resultId)
+        .update({
+          resultWorkflowStatusLogId: lastLogId,
+          updatedBy: currentUserId,
+          updatedOn: now,
+        })
+    }
   }
 
   const response = await showResult(request)

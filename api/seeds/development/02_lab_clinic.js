@@ -872,7 +872,6 @@ async function seed(knex) {
         geographyId: siteData.geographyId,
         siteId: siteData.id,
         deviceId: device.id,
-        resultWorkflowStatusId: deliverable,
         longitude: -33.78725,
         latitude: -13.96692,
         resultSourceId: resultSourceLimsId,
@@ -918,13 +917,16 @@ async function seed(knex) {
       createdBy: adminId,
     })
 
-    await knex('ResultWorkflowLog').insert({
+    const [lastLogId] = await knex('ResultWorkflowLog').insert({
       resultId,
       resultWorkflowStatusId: deliverable,
       changedOn: addHours(randomDate, 2),
       createdOn: addHours(randomDate, 1),
       createdBy: adminId,
     })
+    await knex('Result')
+      .where('id', resultId)
+      .update({ resultWorkflowStatusLogId: lastLogId })
   }
 
   for (const i of _.range(resultEidNumber)) {
@@ -1060,7 +1062,6 @@ async function seed(knex) {
         geographyId: siteData.geographyId,
         siteId: siteData.id,
         deviceId: device.id,
-        resultWorkflowStatusId: deliverable,
         longitude: -33.78725,
         latitude: -13.96692,
         resultSourceId: resultSourceLimsId,
@@ -1103,13 +1104,16 @@ async function seed(knex) {
       createdBy: adminId,
     })
 
-    await knex('ResultWorkflowLog').insert({
+    const [lastLogId] = await knex('ResultWorkflowLog').insert({
       resultId,
       resultWorkflowStatusId: deliverable,
       changedOn: addHours(randomDate, 2),
       createdOn: addHours(randomDate, 1),
       createdBy: adminId,
     })
+    await knex('Result')
+      .where({ id: resultId })
+      .update({ resultWorkflowStatusLogId: lastLogId })
   }
 
   for (const i of _.range(resultHivVlNumber)) {

@@ -31,7 +31,6 @@ const { loadPlugin } = require('../../src/plugin/registration')
 const {
   deviceTypeToId,
   deviceStatusToId,
-  resultWorkflowStatusToId,
   resultSourceToId,
   resultTypeToId,
   resultCategoryToId,
@@ -557,7 +556,6 @@ async function createTestResult(knex, device) {
     .where({ externalId: 'GxMtbRif' })
     .first()
 
-  const resultWorkflowStatusId = await resultWorkflowStatusToId('OK')
   const resultSourceId = await resultSourceToId('DiagnosticDevice')
   const resultTypeId = await resultTypeToId('Patient')
   const sampleTypeId = await sampleTypeToId('DBS')
@@ -581,7 +579,6 @@ async function createTestResult(knex, device) {
     geographyId: device.geographyId,
     siteId: device.siteId,
     deviceId: device.id,
-    resultWorkflowStatusId,
     resultSourceId,
     resultTypeId,
     sampleId,

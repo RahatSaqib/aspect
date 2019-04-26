@@ -140,6 +140,18 @@ const messages = defineMessages({
     id: 'pages.DeviceDetailProfile.notes',
     defaultMessage: 'notes',
   },
+  buttonAddRecord: {
+    id: 'pages.DeviceDetailProfile.buttonAddRecord',
+    defaultMessage: 'Add Record',
+  },
+  buttonUpdate: {
+    id: 'pages.DeviceDetailProfile.buttonUpdate',
+    defaultMessage: 'Update',
+  },
+  buttonChange: {
+    id: 'pages.DeviceDetailProfile.buttonChange',
+    defaultMessage: 'Change',
+  },
 })
 
 const FILTERS_CONFIG = {
@@ -498,7 +510,7 @@ export const DeviceDetailProfile = ({
                   onClick={onToggleDeviceStatus}
                   disabled={disabled}
                 >
-                  Change
+                  {intl.formatMessage(messages.buttonChange)}
                 </Button>
               }
             />
@@ -524,7 +536,7 @@ export const DeviceDetailProfile = ({
                   onClick={onShowCalibrationDialog}
                   disabled={disabled}
                 >
-                  Add record
+                  {intl.formatMessage(messages.buttonAddRecord)}
                 </Button>
               }
             />
@@ -561,7 +573,7 @@ export const DeviceDetailProfile = ({
                   onClick={onShowWarrantyDialog}
                   disabled={disabled}
                 >
-                  Update
+                  {intl.formatMessage(messages.buttonUpdate)}
                 </Button>
               }
             />

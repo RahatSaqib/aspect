@@ -1857,7 +1857,6 @@ async function seed(knex) {
         geographyId: siteData.geographyId,
         siteId: siteData.id,
         deviceId: device.id,
-        resultWorkflowStatusId: processed,
         longitude: -81.581222,
         latitude: 28.419348,
         resultSourceId: resultSourceDiagnosticId,
@@ -1895,7 +1894,7 @@ async function seed(knex) {
 
   await Promise.each(resultDatas, async resultData => {
     const resultId = await knex('Result').insert(resultData)
-    await knex('ResultWorkflowLog').insert({
+    const [lastLogId] = await knex('ResultWorkflowLog').insert({
       resultId,
       resultWorkflowStatusId: processed,
       operator: 'Aaron',
@@ -1903,6 +1902,9 @@ async function seed(knex) {
       createdOn: subMinutes(now, 90),
       createdBy: adminId,
     })
+    await knex('Result')
+      .where('id', resultId)
+      .update({ resultWorkflowStatusLogId: lastLogId })
   })
 
   // Job Functions
