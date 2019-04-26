@@ -298,7 +298,7 @@ async function getDownloadResultsList(query, auth) {
       if (params.patientSample) {
         queryBuilder.where(builder =>
           builder
-            .where('r.sampleId', 'like', `%${params.patientSample}%`)
+            .where('sp.externalId', 'like', `%${params.patientSample}%`)
             .orWhere(
               knex.raw('JSON_EXTRACT(patientData,"$.firstName")'),
               'like',
