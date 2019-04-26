@@ -25,7 +25,7 @@ describe('Result routes', () => {
   let initialResultWorkflowStatusName = ''
   const reason = 'testing'
   const operator = 'Tester'
-  const updatedOn = new Date(dateFormat(new Date(), 'yyyy-MM-dd HH:mm:ss.000Z'))
+  const changedOn = new Date(dateFormat(new Date(), 'yyyy-MM-dd HH:mm:ss.000Z'))
   describe('GET', () => {
     shared.checkToken(server, path)
 
@@ -176,7 +176,7 @@ describe('Result routes', () => {
         externalId: 'Validated',
         reason,
         operator,
-        updatedOn,
+        changedOn,
       }
       const updateWithId = {
         resultWorkflowStatusId: 1,
@@ -240,7 +240,14 @@ describe('Result routes', () => {
           assert.equal(res.body.data.resultWorkflowLogOperator, operator)
           assert.equal(
             dateFormat(res.body.data.updatedOn, 'yyyy-MM-dd HH:mm:ss'),
-            dateFormat(updatedOn, 'yyyy-MM-dd HH:mm:ss')
+            dateFormat(changedOn, 'yyyy-MM-dd HH:mm:ss')
+          )
+          assert.equal(
+            dateFormat(
+              res.body.data.resultWorkflowLogChangedOn,
+              'yyyy-MM-dd HH:mm:ss'
+            ),
+            dateFormat(changedOn, 'yyyy-MM-dd HH:mm:ss')
           )
 
           // update with resultWorkflowStatusId

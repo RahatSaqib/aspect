@@ -233,7 +233,7 @@ const routes = [
             .description('The sender operator')
             .allow(null, '')
             .max(255),
-          updatedOn: Joi.date()
+          changedOn: Joi.date()
             .description('Date when the status was updated.')
             .iso()
             .allow(null),
@@ -749,13 +749,16 @@ const routes = [
                 .description('The treatment status object'),
               resultWorkflowLogReason: Joi.string()
                 .allow(null)
-                .description('Value of Reason from latest ResultWorkflowLog'),
+                .description('Value of Reason of latest ResultWorkflowLog'),
               resultWorkflowLogOperator: Joi.string()
                 .allow(null)
-                .description('Value of Operator from latest ResultWorkflowLog'),
+                .description('Value of Operator of latest ResultWorkflowLog'),
               resultWorkflowLogCreatedOn: Joi.date()
                 .allow(null)
-                .description('CreatedOn date from latest ResultWorkflowLog'),
+                .description('CreatedOn date of latest ResultWorkflowLog'),
+              resultWorkflowLogChangedOn: Joi.date()
+                .allow(null)
+                .description('ChangedOn date of latest ResultWorkflowLog'),
             }),
         }),
       },

@@ -731,11 +731,12 @@ async function getResultByResultId(request, fields = SELECT_SHOW_FIELDS) {
 
     // get latest workflow log
     const [
-      { reason, createdOn, operator } = {},
+      { reason, operator, createdOn, changedOn } = {},
     ] = await getLatestResultWorkflowLogs([data.id])
     data.resultWorkflowLogReason = reason
-    data.resultWorkflowLogCreatedOn = createdOn
     data.resultWorkflowLogOperator = operator
+    data.resultWorkflowLogCreatedOn = createdOn
+    data.resultWorkflowLogChangedOn = changedOn
   }
 
   return { ok: results.length === 1, data }
@@ -870,7 +871,7 @@ async function updateWorkflowStatus(request) {
   }
 
   let { resultWorkflowStatusId } = payload
-  const { updatedOn = now, operator, reason } = payload
+  const { changedOn = now, operator, reason } = payload
   // check if a externalId is provided
   if (payload.externalId) {
     resultWorkflowStatusId = await resultWorkflowStatusToId(payload.externalId)
@@ -886,7 +887,7 @@ async function updateWorkflowStatus(request) {
       .update({
         resultWorkflowStatusId,
         updatedBy: currentUserId,
-        updatedOn,
+        updatedOn: changedOn,
       })
 
     await knex('ResultWorkflowLog').insert({
@@ -895,7 +896,7 @@ async function updateWorkflowStatus(request) {
       createdBy: currentUserId,
       operator,
       reason,
-      changedOn: now,
+      changedOn,
       createdOn: now,
     })
   }
