@@ -15,7 +15,6 @@ const {
 } = require('../../src/shared/dictionary')
 
 async function seed(knex) {
-  // Skip this seed file if we already have an admin user
   const { id: adminId } = await knex('User')
     .where({ name: 'admin' })
     .first('id')
