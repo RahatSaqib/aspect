@@ -10,19 +10,31 @@ const {
 async function seed(knex) {
   const labDeviceTypeCategoryId = await deviceTypeCategoryToId('Lab')
 
-  const [deviceTypeBDMGITId] = await knex('DeviceType').insert({
-    externalId: 'BDMGIT',
-    name: 'BD MGIT',
-    manufacturer: 'Becton Dickinson',
-    deviceTypeCategoryId: labDeviceTypeCategoryId,
-  })
+  let { id: deviceTypeBDMGITId } =
+    (await knex('DeviceType')
+      .where('externalId', 'BDMGIT')
+      .first('id')) || {}
+  if (!deviceTypeBDMGITId) {
+    ;[deviceTypeBDMGITId] = await knex('DeviceType').insert({
+      externalId: 'BDMGIT',
+      name: 'BD MGIT',
+      manufacturer: 'Becton Dickinson',
+      deviceTypeCategoryId: labDeviceTypeCategoryId,
+    })
+  }
 
-  const [deviceTypeHainGenoScanId] = await knex('DeviceType').insert({
-    externalId: 'HainGenoScan',
-    name: 'Hain GenoScan',
-    manufacturer: 'Hain Lifescience',
-    deviceTypeCategoryId: labDeviceTypeCategoryId,
-  })
+  let { id: deviceTypeHainGenoScanId } =
+    (await knex('DeviceType')
+      .where('externalId', 'HainGenoScan')
+      .first('id')) || {}
+  if (!deviceTypeHainGenoScanId) {
+    ;[deviceTypeHainGenoScanId] = await knex('DeviceType').insert({
+      externalId: 'HainGenoScan',
+      name: 'Hain GenoScan',
+      manufacturer: 'Hain Lifescience',
+      deviceTypeCategoryId: labDeviceTypeCategoryId,
+    })
+  }
 
   const patientDataSchema = JSON.stringify({
     name: {
@@ -96,8 +108,10 @@ async function seed(knex) {
       order: 12,
     },
   })
+  // TODO: ZIMBABWE Determine the standard set of consumables used in MGIT and GenoScan tests
+  const piece = await unitToId('Piece')
 
-  await knex('Assay').insert({
+  const assayBdMgitFirstLineDst = {
     name: 'BD MGIT First Line DST',
     abbreviation: 'MGIT 1ST DST',
     i18nKey: 'assayBdMgitFirstLineDst',
@@ -181,9 +195,23 @@ async function seed(knex) {
       },
     }),
     patientDataSchema,
-  })
+  }
+  const { id: assayBdMgitFirstLineDstId } =
+    (await knex('Assay')
+      .where('externalId', 'assayBdMgitFirstLineDst')
+      .first('id')) || {}
+  if (!assayBdMgitFirstLineDstId) {
+    await knex('Assay').insert({
+      ...assayBdMgitFirstLineDst,
+      externalId: 'assayBdMgitFirstLineDst',
+    })
+  } else {
+    await knex('Assay')
+      .where('id', assayBdMgitFirstLineDstId)
+      .update(assayBdMgitFirstLineDst)
+  }
 
-  const [hainGenoScanAssayId] = await knex('Assay').insert({
+  const hainGenoScanAssay = {
     name: 'Hain GenoScan',
     abbreviation: 'GenoScan',
     i18nKey: 'assayHainGenoScan',
@@ -436,22 +464,32 @@ async function seed(knex) {
       },
     }),
     patientDataSchema,
-  })
-
-  // TODO: ZIMBABWE Determine the standard set of consumables used in MGIT and GenoScan tests
-  const piece = await unitToId('Piece')
-  const [genoTypeTestSripId] = await knex('Consumable').insert({
-    name: 'GenoType Test Strip',
-    unit: piece,
-    canExpire: 1,
-    manufacturer: 'Hain Lifescience',
-  })
-
-  await knex('ConsumableAssay').insert([
-    {
-      assayId: hainGenoScanAssayId,
-      consumableId: genoTypeTestSripId,
-      quantity: 1,
-    },
-  ])
+  }
+  let { id: hainGenoScanAssayId } =
+    (await knex('Assay')
+      .where('externalId', 'assayHainGenoScan')
+      .first('id')) || {}
+  if (!hainGenoScanAssayId) {
+    ;[hainGenoScanAssayId] = await knex('Assay').insert({
+      ...hainGenoScanAssay,
+      externalId: 'assayHainGenoScan',
+    })
+    const [genoTypeTestSripId] = await knex('Consumable').insert({
+      name: 'GenoType Test Strip',
+      unit: piece,
+      canExpire: 1,
+      manufacturer: 'Hain Lifescience',
+    })
+    await knex('ConsumableAssay').insert([
+      {
+        assayId: hainGenoScanAssayId,
+        consumableId: genoTypeTestSripId,
+        quantity: 1,
+      },
+    ])
+  } else {
+    await knex('Assay')
+      .where('id', hainGenoScanAssayId)
+      .update(hainGenoScanAssay)
+  }
 }
