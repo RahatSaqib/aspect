@@ -2,46 +2,37 @@ const supertest = require('supertest')
 const chai = require('chai')
 const Promise = require('bluebird')
 
+const { rowsAsObject } = require('../../seeds/utils')
 const shared = require('../utils/sharedToken')
 const { run } = require('../../src/db')
 
 const server = supertest.agent('http://localhost:8080')
 const { assert } = chai
 
-describe('Notification routes', () => {
+describe.only('Notification routes', () => {
   const path = '/api/notification'
 
   const now = new Date()
-
-  const notificationTypes = [
-    {
-      partnerId: 1,
-      issueTypeId: 2,
-      name: 'Results Delayed',
-      createdOn: now,
-      updatedOn: now,
-    },
-    {
-      partnerId: 1,
-      issueTypeId: 3,
-      name: 'Module Failure',
-      createdOn: now,
-      updatedOn: now,
-    },
-    {
-      partnerId: 1,
-      issueTypeId: 4,
-      name: 'Machine Temperature High',
-      createdOn: now,
-      updatedOn: now,
-    },
+  const sampleIssues = [
+    'DeviceOffline',
+    'DeviceMaintenance',
+    'ModuleFailureError',
   ]
+
   const ntArr = []
 
   beforeEach(async () => {
     run(async knex => {
-      await Promise.each(notificationTypes, async notificationType => {
-        const [ntId] = await knex('NotificationType').insert(notificationType)
+      const issueTypes = await rowsAsObject(knex, 'IssueType', 'externalId')
+      await Promise.each(sampleIssues, async issue => {
+        const issueType = issueTypes[issue]
+        const [ntId] = await knex('NotificationType').insert({
+          partnerId: 1,
+          issueTypeId: issueType.id,
+          name: issueType.name,
+          createdOn: now,
+          updatedOn: now,
+        })
         ntArr.push(ntId)
         await knex('Notification').insert({
           notificationTypeId: ntId,
