@@ -30,6 +30,7 @@ const { errorCodes } = require('./fixtures/errorCodes.js')
 const {
   addMilliseconds,
   addMinutes,
+  subMinutes,
 
   subDays,
 } = require('date-fns')
@@ -1897,8 +1898,8 @@ async function seed(knex) {
       resultId,
       resultWorkflowStatusId: processed,
       operator: 'Aaron',
-      changedOn: addMinutes(now, 90),
-      createdOn: addMinutes(now, 90),
+      changedOn: subMinutes(now, 90),
+      createdOn: subMinutes(now, 90),
       createdBy: adminId,
     })
     await knex('Result')

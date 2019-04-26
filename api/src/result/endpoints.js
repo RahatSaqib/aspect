@@ -230,6 +230,18 @@ const routes = [
             .allow(null)
             .description('Status updated date'),
           externalId: Joi.string().allow('', null),
+          reason: Joi.string()
+            .description('Reason for the latest workflow status change')
+            .allow(null, '')
+            .max(255),
+          operator: Joi.string()
+            .description('The sender operator')
+            .allow(null, '')
+            .max(255),
+          changedOn: Joi.date()
+            .description('Date when the status was updated.')
+            .iso()
+            .allow(null),
         },
       },
       response: {

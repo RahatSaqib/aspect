@@ -671,6 +671,7 @@ async function getLatestResultWorkflowLogs(resultIds) {
       'rws.externalId',
       'rws.i18nKey',
       'rwl.reason',
+      'rwl.operator',
       'rwl.changedOn',
       'rwl.createdOn',
       'rtslMax.maxChangedOn as treatmentChangedOn',
@@ -748,11 +749,13 @@ async function getResultByResultId(request, fields = SELECT_SHOW_FIELDS) {
     data.files = files
 
     // get latest workflow log
-    const [{ reason, createdOn } = {}] = await getLatestResultWorkflowLogs([
-      data.id,
-    ])
+    const [
+      { reason, operator, createdOn, changedOn } = {},
+    ] = await getLatestResultWorkflowLogs([data.id])
     data.resultWorkflowLogReason = reason
+    data.resultWorkflowLogOperator = operator
     data.resultWorkflowLogCreatedOn = createdOn
+    data.resultWorkflowLogChangedOn = changedOn
   }
 
   return { ok: results.length === 1, data }
@@ -887,6 +890,8 @@ async function updateWorkflowStatus(request) {
   const { updatedOn } = payload
   let { resultWorkflowStatusId } = payload
 
+  const { changedOn = now, operator, reason } = payload
+
   // check if a externalId is provided
   if (payload.externalId) {
     resultWorkflowStatusId = await resultWorkflowStatusToId(payload.externalId)
@@ -902,7 +907,10 @@ async function updateWorkflowStatus(request) {
       resultId,
       resultWorkflowStatusId,
       createdBy: currentUserId,
-      changedOn: updatedOn || new Date(),
+      operator,
+      reason,
+      changedOn,
+
       createdOn: now,
     })
 
