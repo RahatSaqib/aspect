@@ -238,9 +238,10 @@ describe('Result routes', () => {
           assert.equal(res.body.data.resultWorkflowStatus, 'Validated')
           assert.equal(res.body.data.resultWorkflowLogReason, reason)
           assert.equal(res.body.data.resultWorkflowLogOperator, operator)
-          assert.equal(
-            dateFormat(res.body.data.updatedOn, 'yyyy-MM-dd HH:mm:ss'),
-            dateFormat(changedOn, 'yyyy-MM-dd HH:mm:ss')
+          assert.closeTo(
+            new Date(res.body.data.updatedOn).getTime(),
+            new Date().getTime(),
+            5000
           )
           assert.equal(
             dateFormat(
@@ -328,13 +329,13 @@ describe('Result routes', () => {
             })
         })
     })
-    it('Should update result treatment status given a resultId', () => {
+    it('Should update result treatment status given a resultId', done => {
       const updateWithExternalId = {
         resultTreatmentStatusId: null,
         externalId: 'AwaitingTreatment',
         data: 'should be treated',
         method: 'sms',
-        updatedOn: '2019-03-28T10:00:33.000Z',
+        changedOn: '2019-03-28T10:00:33.000Z',
       }
       const updateWithId = {
         resultTreatmentStatusId: 2,
@@ -402,7 +403,7 @@ describe('Result routes', () => {
             res.body.data.treatmentStatus.changedOn,
             '2019-03-28T10:00:33.000Z'
           )
-          // update with resultWorkflowStatusId
+          // update with resultTreatmentStatusId
           server
             .put(`${path}/treatment-status/${resultId}`)
             .send(updateWithId)
@@ -460,6 +461,8 @@ describe('Result routes', () => {
               const diffTime =
                 new Date(res.body.data.treatmentStatus.changedOn) - new Date()
               assert.closeTo(diffTime / 1000, 0, 0.9, 'should be near from now')
+
+              done()
             })
         })
     })
@@ -470,6 +473,7 @@ describe('Result routes', () => {
         .send({
           resultWorkflowStatusId: null,
           externalId: 'Validated',
+          changedOn: new Date(),
         })
         .set('Authorization', `Bearer${shared.token}`)
         .end(() => {
@@ -491,6 +495,7 @@ describe('Result routes', () => {
         .send({
           resultWorkflowStatusId: null,
           externalId: 'Deliverable',
+          changedOn: new Date(),
         })
         .set('Authorization', `Bearer${shared.token}`)
         .end(() => {
@@ -618,7 +623,7 @@ describe('Result routes', () => {
                         .set('Authorization', `Bearer${shared.token}`)
                         .end((err, res) => {
                           assert.equal(
-                            res.body.data.resultWorkflowStatus,
+                            res.body.data.resultWorkflowStatusExternalId,
                             initialResultWorkflowStatus
                           )
                           done()

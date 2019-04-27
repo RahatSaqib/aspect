@@ -507,6 +507,16 @@ const routes = [
                     name: Joi.string()
                       .description('Name of the treatment status')
                       .allow(null),
+                    method: Joi.string()
+                      .description(
+                        'The method that was used to update the treatment status'
+                      )
+                      .allow(null),
+                    data: Joi.string()
+                      .description(
+                        'Any additional data related to the treamtent status'
+                      )
+                      .allow(null),
                   }),
                 patientData: Joi.object()
                   .allow(null)
@@ -593,7 +603,7 @@ const routes = [
           externalId: Joi.string().allow('', null),
           data: Joi.string().allow('', null),
           method: Joi.string().allow('', null),
-          updatedOn: Joi.date()
+          changedOn: Joi.date()
             .iso()
             .optional()
             .description(
