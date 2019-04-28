@@ -2198,15 +2198,19 @@ async function addDeviceCapacities(knex) {
       name,
       dailyCapacity,
     }) => {
-      await knex('DeviceCapacity').insert(
-        _.map(partners, partner => ({
-          partnerId: partner.id,
-          deviceTypeId: deviceTypes[deviceTypeExternalId].id,
-          defaultForDeviceType,
-          name,
-          dailyCapacity,
-        }))
-      )
+      if (deviceTypes[deviceTypeExternalId]) {
+        await knex('DeviceCapacity').insert(
+          _.map(partners, partner => ({
+            partnerId: partner.id,
+            deviceTypeId: deviceTypes[deviceTypeExternalId].id,
+            defaultForDeviceType,
+            name,
+            dailyCapacity,
+          }))
+        )
+      } else {
+        await Promise.resolve()
+      }
     }
   )
 }

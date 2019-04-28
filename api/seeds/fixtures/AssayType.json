@@ -70,6 +70,11 @@
       "name": "Generic RDT",
       "i18nKey": "genericRDT",
       "abbreviation":"RDT"
+    },
+    {
+      "name": "GenoType Test Strip",
+      "i18nKey": "genoTypeTestStrip",
+      "abbreviation":"GTTS"
     }
   ]
 }
