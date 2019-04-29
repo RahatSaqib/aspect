@@ -390,9 +390,18 @@ function validateResultResponse() {
     resultWorkflowLogReason: Joi.string()
       .allow(null)
       .description('Value of Reason from latest ResultWorkflowLog'),
+    resultWorkflowLogOperator: Joi.string()
+      .allow(null)
+      .description('Operator from the latest ResultWorkflowLog'),
+    resultWorkflowLogChangedOn: Joi.date()
+      .allow(null)
+      .description('ChangedOn date from the latest ResultWorkflowLog'),
     resultWorkflowLogCreatedOn: Joi.date()
       .allow(null)
       .description('CreatedOn date from latest ResultWorkflowLog'),
+    resultTreatmentStatusId: Joi.number()
+      .allow(null)
+      .description('ID of the result treatment status'),
   }
 }
 
