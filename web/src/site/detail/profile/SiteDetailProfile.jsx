@@ -107,6 +107,7 @@ const SiteDetailProfile = ({
             formatMessage={formatMessage}
             title={formatMessage(messages.fieldContact)}
             contacts={siteContacts}
+            disabled={disabled}
           />
         </Card>
       </section>

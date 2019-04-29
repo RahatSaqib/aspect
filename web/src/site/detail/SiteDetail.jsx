@@ -28,7 +28,7 @@ import SiteLocationFormMap from './SiteLocationFormMap'
 
 const cssClasses = classnames.bind(require('./SiteDetail.css'))
 
-const SiteDetail = props => {
+export const SiteDetail = props => {
   useEffect(
     () => {
       handleFetchSite(props)

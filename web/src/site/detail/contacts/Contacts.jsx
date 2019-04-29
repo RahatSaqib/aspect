@@ -15,7 +15,7 @@ const cssClasses = classnames.bind(
   require('../../../globals/components/Summary.css')
 )
 
-const Contacts = ({ id, title, contacts, formatMessage }) => {
+const Contacts = ({ id, title, contacts, formatMessage, disabled }) => {
   const [edit, setEdit] = useState(false)
   const saveContacts = () => {
     setEdit(true)
@@ -64,7 +64,11 @@ const Contacts = ({ id, title, contacts, formatMessage }) => {
             <i>{formatMessage(messages.fieldNoContact)}</i>
           )}
           <span className={cssClasses('Summary__Description__Action')}>
-            <Button variant="contained" onClick={saveContacts}>
+            <Button
+              variant="contained"
+              onClick={saveContacts}
+              disabled={disabled}
+            >
               {contacts.length ? 'Update' : 'Add'}
             </Button>
           </span>
@@ -73,12 +77,15 @@ const Contacts = ({ id, title, contacts, formatMessage }) => {
     </Unit>
   )
 }
-
+Contacts.defaultProps = {
+  disabled: false,
+}
 Contacts.propTypes = {
   id: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
   contacts: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
   formatMessage: PropTypes.func.isRequired,
+  disabled: PropTypes.bool,
 }
 
 export default Contacts
