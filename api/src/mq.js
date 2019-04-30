@@ -109,6 +109,7 @@ class MessageQueue {
         let shouldHandle = () => true
         let consumeOptions
         let bindingKey = ''
+        let purgeOnStart = false
         if (_.isFunction(messageHandler)) {
           handlerFunction = messageHandler
         } else {
@@ -130,6 +131,9 @@ class MessageQueue {
           if (messageHandler.bindingKey) {
             bindingKey = `.${messageHandler.bindingKey}`
           }
+          if (messageHandler.purgeOnStart) {
+            purgeOnStart = true
+          }
         }
         const { channel, name: queueName } = this
         const subscribeName = `${queueName}_${name}_actions_${type}`
@@ -138,6 +142,9 @@ class MessageQueue {
         const { queue } = channel.assertQueue(subscribeName)
         this.queues.push(queue)
         channel.bindQueue(queue, exchange, topic)
+        if (purgeOnStart) {
+          channel.purgeQueue(queue)
+        }
         channel.consume(
           queue,
           message => {

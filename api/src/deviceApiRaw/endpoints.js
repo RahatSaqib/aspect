@@ -22,14 +22,24 @@ const routes = [
 const subscriptions = [
   {
     actions: {
-      DEVICE_RAW_MESSAGE_RESPONSE_READY: async () => Promise.resolve(),
+      DEVICE_RAW_MESSAGE_RESPONSE_READY: {
+        purgeOnStart: true,
+        handlerFunction: async () => Promise.resolve(),
+      },
       DEVICE_RAW_MESSAGE_POSTED: {
+        purgeOnStart: true,
         handlerFunction: async () => Promise.resolve(),
         shouldHandle: () => false,
         allowInfiniteListeners: true,
       },
-      DEVICE_RAW_MESSAGE_PROCESSED: async () => Promise.resolve(),
-      DEVICE_RAW_MESSAGE_ERROR: async () => Promise.resolve(),
+      DEVICE_RAW_MESSAGE_PROCESSED: {
+        purgeOnStart: true,
+        handlerFunction: async () => Promise.resolve(),
+      },
+      DEVICE_RAW_MESSAGE_ERROR: {
+        purgeOnStart: true,
+        handlerFunction: async () => Promise.resolve(),
+      },
     },
   },
 ]
