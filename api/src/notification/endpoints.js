@@ -14,16 +14,17 @@ const routes = [
       validate: {
         query: Object.assign(
           {
-            contactNameOrEmail: Joi.string()
+            notificationName: Joi.string()
               .allow('')
               .description('Filter for notification name'),
           },
           validateSortPageParams(
-            'alertName',
+            'name',
             'lastTriggeredOn',
-            'recipientsCount',
-            'triggersCount',
-            'errorsCount'
+            'alertCount',
+            'totalTriggers',
+            'emailCount',
+            'smsCount'
           )
         ),
       },

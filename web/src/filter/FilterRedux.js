@@ -76,6 +76,7 @@ const ListConfig = Immutable.Record({
   workflowStatus: false,
   deviceStatus: false,
   externalId: false,
+  notificationName: false,
 })
 
 const ListExport = Immutable.Record({

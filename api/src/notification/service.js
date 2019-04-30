@@ -1,7 +1,16 @@
 const _ = require('lodash')
 const Promise = require('bluebird')
-const subMinutes = require('date-fns/subMinutes')
-const { getJobConstraints, addConstraints } = require('../auth/constraints')
+const {
+  knex,
+  filterParams,
+  filterDateRangeParams,
+  sortPageParams,
+} = require('../db')
+const {
+  getJobConstraints,
+  addConstraints,
+  getConstraints,
+} = require('../auth/constraints')
 const { notificationCreated } = require('./actions')
 const { alertMessageCreated } = require('../alert/actions')
 const { emailMessageCreated } = require('../email/actions')
@@ -10,105 +19,55 @@ const { webhookMessageCreated } = require('../webhook/actions')
 const { messageStatusToId } = require('../shared/dictionary')
 
 async function listNotifications(request) {
-  const { query } = request
-  const now = Date.now()
+  const { query, auth } = request
 
-  const data = _.flowRight(
-    x =>
-      x.map((it, i) => {
-        it.id = i + 1
-        return it
-      }),
-    query.sortDir === 'desc' ? _.reverse : _.identity,
-    x => _.sortBy(x, query.sortCol || _.identity)
-  )([
-    {
-      alertType: 'mine',
-      alertName: 'TB MTB+ Rif+ in Western Region',
-      lastTriggeredOn: subMinutes(now, 0),
-      recipientsCount: 4,
-      triggersCount: 20,
-      errorsCount: 30,
-    },
-    {
-      alertType: 'normal',
-      alertName: 'New HIV+ Case',
-      lastTriggeredOn: subMinutes(now, 60),
-      recipientsCount: 14,
-      triggersCount: 7,
-      errorsCount: 0,
-    },
-    {
-      alertType: 'normal',
-      alertName: 'Inventory about to expire',
-      lastTriggeredOn: subMinutes(now, 200),
-      recipientsCount: 3,
-      triggersCount: 1,
-      errorsCount: 0,
-    },
-    {
-      alertType: 'normal',
-      alertName: 'New HIV+ Case',
-      lastTriggeredOn: subMinutes(now, 345),
-      recipientsCount: 7,
-      triggersCount: 3,
-      errorsCount: 0,
-    },
-    {
-      alertType: 'mine',
-      alertName: 'Module swapped',
-      lastTriggeredOn: subMinutes(now, 800),
-      recipientsCount: 14,
-      triggersCount: 7,
-      errorsCount: 5,
-    },
-    {
-      alertType: 'mine',
-      alertName: 'TB MTB+ Rif+ in Western Region',
-      lastTriggeredOn: subMinutes(now, 1202),
-      recipientsCount: 3,
-      triggersCount: 1,
-      errorsCount: 23,
-    },
-    {
-      alertType: 'normal',
-      alertName: 'New HIV+ Case',
-      lastTriggeredOn: subMinutes(now, 1634),
-      recipientsCount: 7,
-      triggersCount: 3,
-      errorsCount: 0,
-    },
-    {
-      alertType: 'normal',
-      alertName: 'Device Offline',
-      lastTriggeredOn: subMinutes(now, 1645),
-      recipientsCount: 14,
-      triggersCount: 7,
-      errorsCount: 0,
-    },
-    {
-      alertType: 'normal',
-      alertName: 'TB MTB+ Rif+ in Southern Region',
-      lastTriggeredOn: subMinutes(now, 2346),
-      recipientsCount: 3,
-      triggersCount: 1,
-      errorsCount: 0,
-    },
-    {
-      alertType: 'normal',
-      alertName: 'New HIV+ Case',
-      lastTriggeredOn: subMinutes(now, 13457),
-      recipientsCount: 7,
-      triggersCount: 3,
-      errorsCount: 0,
-    },
-  ])
+  // get data constraints
+  const dataConstraints = await getConstraints(auth.credentials)
 
-  const total = data.length
+  const notificationQuery = knex('Notification as n')
+    .innerJoin('NotificationType as nt', 'nt.id', 'n.notificationTypeId')
+    .leftJoin('MessageType as m', 'm.id', 'nt.messageTypeId')
+    .leftJoin('Partner as p', 'nt.partnerId', 'p.id')
+    .modify(filterParams, query, {})
+    .modify(filterDateRangeParams, query, 'lastTriggeredOn')
+    .modify(addConstraints, dataConstraints, { partner: 'p' })
 
-  const result = { ok: true, total, data, length: data.length }
+  const getItems = notificationQuery
+    .clone()
+    .select(
+      'n.notificationTypeId as id',
+      'nt.name',
+      knex.raw(
+        'SUM(CASE WHEN n.issueId IS NULL then 0 ELSE 1 END) as totalTriggers'
+      ),
+      columnCount('alert'),
+      columnCount('sms'),
+      columnCount('email')
+    )
+    .max('n.createdOn as lastTriggeredOn')
+    .groupBy('nt.name')
+    .modify(sortPageParams, query, 'nt.name')
+    .modify(filterParams, query, {
+      notificationName: 'nt.name',
+    })
 
-  return result
+  function columnCount(column) {
+    return knex.raw(
+      `CASE 
+        WHEN m.${column}TemplateId IS NULL
+        THEN null
+        ELSE SUM(CASE WHEN n.${column}MessageId IS NULL THEN 0 ELSE 1 END) END as ${column}Count`
+    )
+  }
+
+  const getCount = notificationQuery
+    .clone()
+    .countDistinct('n.notificationTypeId as count')
+    .first()
+
+  const [{ count: total }, data] = await Promise.all([getCount, getItems])
+
+  return { ok: true, total, data, length: data.length }
 }
 
 async function onIssueEscalated({ issueId }, { messageContext: context }) {

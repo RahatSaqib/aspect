@@ -82,6 +82,10 @@ const messages = defineMessages({
     id: 'filter.btnGroup.whereSiteIdIsIn',
     defaultMessage: 'where siteId is in ({joinedIds})',
   },
+  whereNotificationNameIncludes: {
+    id: 'filter.btnGroup.whereNotificationNameIncludes',
+    defaultMessage: 'where notification name includes "{notificationName}"',
+  },
 })
 
 const enhance = compose(
@@ -122,6 +126,7 @@ const filtersOrdering = {
   workflowStatusId: 16,
   deviceStatusId: 17,
   externalId: 15,
+  notificationName: 20,
   // -1: Special orderings
   siteIds: -1,
 }
@@ -266,6 +271,11 @@ const buttonBy = {
   externalId: makeButton(({ intl }, externalId) =>
     intl.formatMessage(messages.whereExternalIdIncludes, {
       externalId,
+    })
+  ),
+  notificationName: makeButton(({ intl }, notificationName) =>
+    intl.formatMessage(messages.whereNotificationNameIncludes, {
+      notificationName,
     })
   ),
   // Special keys

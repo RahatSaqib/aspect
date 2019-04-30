@@ -55,6 +55,7 @@ const sanitizerByConfigKey = {
   siteName: defaultSanitizer,
   sampleOriginSite: defaultSanitizer,
   contactNameOrEmail: defaultSanitizer,
+  notificationName: defaultSanitizer,
   externalId: defaultSanitizer,
   consumable: makeKeySanitizer('consumableId'),
   workflowStatus: makeKeySanitizer('workflowStatusId'),
@@ -185,6 +186,9 @@ export const reduceFiltersConfig = (configObject, userPermissions) => {
               break
             case 'contactNameOrEmail':
               result.contactNameOrEmail = true
+              break
+            case 'notificationName':
+              result.notificationName = true
               break
             default:
           }
