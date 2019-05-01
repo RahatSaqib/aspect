@@ -1,5 +1,15 @@
 const { rowsAsObject } = require('../utils')
 const { messageStatusToId } = require('../../src/shared/dictionary')
+
+const {
+  /* addMilliseconds,
+  addHours,
+  addMinutes,
+  subDays,
+  subHours,
+  subMinutes, */
+  subMonths,
+} = require('date-fns')
 const _ = require('lodash')
 const Promise = require('bluebird')
 
@@ -13,6 +23,46 @@ async function seed(knex) {
     .join('Person as p', 'u.id', 'p.userId')
     .where('u.name', 'Admin')
     .first('u.id as userId', 'p.Id as personId')
+  const auditFields = {
+    createdOn: subMonths(now, 1),
+    createdBy: userId,
+    updatedOn: now,
+    updatedBy: userId,
+  }
+  const deviceTypes = await knex('DeviceType').select()
+  const { deviceStatusId } = await knex('DeviceStatus')
+    .where('token', 'approved')
+    .first('id as deviceStatusId')
+  const sites = await knex('Site as s')
+    .join('Geography as g', 's.geographyid', 'g.id')
+    .join('Country as c', 'g.countryId', 'c.id')
+    .where('c.a3', 'USA')
+    .orderBy('s.updatedOn')
+    .select('s.*')
+  await Promise.each(new Array(4), async () => {
+    const site = _.sample(sites)
+    await knex('Device').insert(
+      Object.assign(
+        {
+          partnerId: site.partnerId,
+          geographyId: site.geographyId,
+          siteId: site.id,
+          deviceTypeId: _.sample(deviceTypes).id,
+          deviceStatusId,
+          name: `Device -${_.random(100000, 999999)}`,
+          shortName: `R-${_.random(100000, 999999)}`,
+          serial: `S1-R-${_.random(100000, 999999)}`,
+          lastSeenOn: now,
+          lastPingOn: now,
+          lastPingFromIp: '41.70.127.33',
+          putInService: subMonths(now, 2),
+          putInServiceSource: 'Installed at clinic',
+          configurationData: '{}',
+        },
+        auditFields
+      )
+    )
+  })
 
   // Fill Issue/AlertMessage/Notification table with some mock data
   const devices = await knex('Device as d')
