@@ -3,7 +3,7 @@ import classnames from 'classnames/bind'
 import React from 'react'
 import Helmet from 'react-helmet'
 import DeviceDetailBackBar from '../DeviceDetailBackBar'
-import Summary from '../../../globals/components/Summary'
+import TaskList from '../../../task/list/TaskList'
 
 const cssClasses = classnames.bind(require('../DeviceDetail.css'))
 
@@ -21,6 +21,7 @@ export const DeviceDetailAlerts = ({
   const deviceName = `${device.getIn(['deviceType', 'name'])} at ${device.get(
     'siteName'
   )}`
+  const { deviceId } = match.params
   return (
     <div>
       <Helmet title={deviceName} />
@@ -33,9 +34,14 @@ export const DeviceDetailAlerts = ({
         title={deviceName}
       />
       <section className={cssClasses('Section', 'Section--first')}>
-        <div className={cssClasses('Section__Content')}>
-          <Summary title="Alerts" description="TODO" />
-        </div>
+        <TaskList
+          intl={intl}
+          history={history}
+          location={location}
+          filterOptions={{
+            deviceId,
+          }}
+        />
       </section>
     </div>
   )

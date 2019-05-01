@@ -20,6 +20,14 @@ const routes = [
             issueCategory: Joi.string()
               .allow('')
               .description('Filter for issue category'),
+            deviceId: Joi.number()
+              .integer()
+              .allow(null)
+              .description('Filter for device id'),
+            siteId: Joi.number()
+              .integer()
+              .allow(null)
+              .description('Filter for site id'),
           },
           validateSortPageParams('issueCategory', 'site', 'time')
         ),
@@ -110,6 +118,14 @@ const routes = [
             alertTemplateId: Joi.number().description(
               'Filter for the alert template'
             ),
+            deviceId: Joi.number()
+              .integer()
+              .allow(null)
+              .description('Filter for device id'),
+            siteId: Joi.number()
+              .integer()
+              .allow(null)
+              .description('Filter for site id'),
           },
           validateSortPageParams('topic', 'site', 'time')
         ),

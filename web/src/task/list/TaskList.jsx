@@ -1,7 +1,15 @@
 import _ from 'lodash'
 import classnames from 'classnames/bind'
 import React from 'react'
-import { compose, withProps, withHandlers, lifecycle } from 'recompose'
+import PropTypes from 'prop-types'
+import {
+  compose,
+  withProps,
+  withHandlers,
+  lifecycle,
+  setPropTypes,
+  defaultProps,
+} from 'recompose'
 import { defineMessages } from 'react-intl'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
@@ -80,7 +88,26 @@ export const filtersFromLocation = composeSanitizer(
   searchSanitizer
 )
 
+function mergeFilterOptions(searchParams, filterOptions = {}) {
+  const options = _.pickBy(filterOptions, _.identity)
+  Object.keys(options).forEach(key => {
+    const param = searchParams.get(key)
+    const option = options[key]
+    if (param && _.isEqual(param, option)) {
+      return
+    }
+    searchParams.set(key, option)
+  })
+  return searchParams
+}
+
 const enhance = compose(
+  setPropTypes({
+    baseFilterOptions: PropTypes.object,
+  }),
+  defaultProps({
+    baseFilterOptions: {},
+  }),
   withProps(
     makeSortPageSelector({
       sortCol: 'time',
@@ -105,14 +132,21 @@ const enhance = compose(
       sortDir,
       pageAt,
       pageSize,
+      filterOptions,
     }) => () => {
       const { sanitized, value: filtersParams } = filtersFromLocation(location)
       if (!sanitized) {
-        fetchTasks(filtersParams, sortCol, sortDir, pageAt, pageSize)
+        fetchTasks(
+          mergeFilterOptions(filtersParams, filterOptions),
+          sortCol,
+          sortDir,
+          pageAt,
+          pageSize
+        )
       }
     },
 
-    onAlertTypeClick: ({ history, location }) => ({
+    onAlertTypeClick: ({ history, location, filterOptions }) => ({
       currentTarget: { dataset: { alertType } },
     }) => {
       const searchParams = new URLSearchParams(location.search)
@@ -120,7 +154,10 @@ const enhance = compose(
         searchParams.get('filters') || ''
       )
       filtersParams.set('alertType', alertType)
-      searchParams.set('filters', filtersParams)
+      searchParams.set(
+        'filters',
+        mergeFilterOptions(filtersParams, filterOptions)
+      )
 
       history.replace({
         ...location,
@@ -128,7 +165,7 @@ const enhance = compose(
       })
     },
 
-    onIssueCategoryChange: ({ history, location }) => ({
+    onIssueCategoryChange: ({ history, location, filterOptions }) => ({
       target: { value: issueCategory },
     }) => {
       const searchParams = new URLSearchParams(location.search)
@@ -136,7 +173,10 @@ const enhance = compose(
         searchParams.get('filters') || ''
       )
       filtersParams.set('issueCategory', issueCategory)
-      searchParams.set('filters', filtersParams)
+      searchParams.set(
+        'filters',
+        mergeFilterOptions(filtersParams, filterOptions)
+      )
 
       history.replace({
         ...location,
@@ -149,18 +189,20 @@ const enhance = compose(
   }),
   lifecycle({
     componentWillMount() {
-      const { sanitized, value: searchParams } = searchSanitizer(
-        this.props.location
-      )
+      const { location, history, filterOptions } = this.props
+      const { sanitized, value: searchParams } = searchSanitizer(location)
       const {
         sanitized: filtersSanitized,
         value: filtersParams,
       } = filtersSanitizer(searchParams.get('filters') || '')
-      if (sanitized || filtersSanitized) {
-        searchParams.set('filters', filtersParams)
+      if (sanitized || filtersSanitized || filterOptions) {
+        searchParams.set(
+          'filters',
+          mergeFilterOptions(filtersParams, filterOptions)
+        )
 
-        this.props.history.replace({
-          ...this.props.location,
+        history.replace({
+          ...location,
           search: searchParams.toString(),
         })
       }
@@ -176,9 +218,10 @@ const enhance = compose(
       }
     },
   }),
-  withProps(({ location }) => {
+  withProps(({ location, filterOptions }) => {
     const searchParams = new URLSearchParams(location.search)
-    const filtersParams = new URLSearchParams(searchParams.get('filters') || '')
+    let filtersParams = new URLSearchParams(searchParams.get('filters') || '')
+    filtersParams = mergeFilterOptions(filtersParams, filterOptions)
 
     return {
       alertType: filtersParams.get('alertType') || 'all',
@@ -193,6 +236,7 @@ export const TaskList = ({
   location,
   table,
   items,
+  filterOptions,
   // --- injected by recompose ---
 
   issueCategory,
@@ -345,9 +389,15 @@ export const TaskList = ({
               },
             ]}
           />
-          {items.currentIdList
-            .map(id => items.byId.get(id))
-            .map(task => (
+          {items.currentIdList.map(id => items.byId.get(id)).map(task => {
+            const filtersParams = new URLSearchParams(filterOptions)
+            const aggreListQuerystring = new URLSearchParams({
+              filters: filtersParams.toString(),
+              categoryId: task.get('issueCategoryId'),
+              date: task.get('time'),
+              alertTemplateId: task.get('alertTemplateId'),
+            })
+            return (
               <TaskDataTableRow
                 key={task.get('id')}
                 intl={intl}
@@ -356,15 +406,12 @@ export const TaskList = ({
                 onClick={onRowClick}
                 data-task-id={
                   task.get('issueCount') > 1
-                    ? `aggre-list?categoryId=${task.get(
-                        'issueCategoryId'
-                      )}&date=${task.get('time')}&alertTemplateId=${task.get(
-                        'alertTemplateId'
-                      )}`
+                    ? `aggre-list?${aggreListQuerystring.toString()}`
                     : `${task.get('id')}`
                 }
               />
-            ))}
+            )
+          })}
         </TaskDataTable>
       )}
       {!items.currentIdList.isEmpty() && (

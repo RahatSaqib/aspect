@@ -85,9 +85,9 @@ const SiteDetail = props => {
             path={`${match.path}/alerts`}
             render={props => (
               <SiteDetailAlert
-                formatMessage={intl.formatMessage}
-                disabled={!editable}
                 {...props}
+                intl={intl}
+                disabled={!editable}
                 site={site}
               />
             )}

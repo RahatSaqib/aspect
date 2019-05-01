@@ -14,7 +14,6 @@ async function seed(knex) {
     .join('IssueType as it', 'i.issueTypeId', 'it.id')
     .join('IssueCategory as ic', 'it.issueCategoryId', 'ic.id')
     .select('i.id', 'i.deviceId', 'i.siteId')
-    .limit(100)
 
   const messageStatusId = await messageStatusToId('Initial')
   await Promise.each(issues, async elem => {

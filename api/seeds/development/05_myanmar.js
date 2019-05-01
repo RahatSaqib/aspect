@@ -784,7 +784,12 @@ async function seed(knex) {
   )
 
   // Fill Issue/AlertMessage/Notification table with some mock data
-  const devices = await knex('Device').where({ partnerId })
+  const { rootId } = await knex('User')
+    .where({ name: 'Admin' })
+    .first('id as rootId')
+  const devices = await knex('Device')
+    .where({ partnerId })
+    .orWhere('partnerId', rootId)
   const issueStatusActiveId = await getId(knex, 'IssueStatus', 'Active')
   const issueStatusAcknowledgedId = await getId(
     knex,
@@ -928,7 +933,7 @@ async function seed(knex) {
 
   await Promise.all(
     _.map(luPolicies, async policy => {
-      const deviceId = deviceIds[policy.deviceId][policy.personId]
+      const deviceId = _.get(deviceIds, ['policy.deviceId', 'policy.personId'])
       if (deviceId) {
         const [alertMessageId] = await knex('AlertMessage').insert(
           Object.assign(
@@ -1057,7 +1062,7 @@ async function seed(knex) {
 
   await Promise.all(
     _.map(roPolicies, async policy => {
-      const deviceId = deviceIds[policy.deviceId][policy.personId]
+      const deviceId = _.get(deviceIds, ['policy.deviceId', 'policy.personId'])
       if (deviceId) {
         const message = policy.notificationTypeName.endsWith('RO View')
           ? luAlertMessages[policy.issueTypeId]

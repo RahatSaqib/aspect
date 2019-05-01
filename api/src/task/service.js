@@ -29,6 +29,10 @@ async function getQuery(request, query, queryBuilder) {
         )
       if (_.isString(query.alertType) && query.alertType !== 'all')
         builder = builder.where('it.name', query.alertType)
+      if (_.isInteger(query.deviceId))
+        builder = builder.where('am.deviceId', query.deviceId)
+      if (_.isInteger(query.siteId))
+        builder = builder.where('am.siteId', query.siteId)
 
       return builder
         .where('am.personId', accountDetails.id)
