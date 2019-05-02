@@ -12,7 +12,7 @@ const saltRounds = parseInt(config.passwordSaltRounds, 10)
 const server = supertest.agent('http://localhost:8080')
 const { assert } = chai
 
-describe('Authentication routes', () => {
+describe.only('Authentication routes', () => {
   const adminUsername = 'admin'
   const adminPassword = 'test07'
   const unlicensedUser = 'testuser'
@@ -22,11 +22,7 @@ describe('Authentication routes', () => {
   let refreshToken = ''
   let clientId = ''
 
-  beforeEach(() => {
-    path = '/api/auth'
-  })
-
-  describe('POST', () => {
+  describe('/api/auth', () => {
     before(async () =>
       runTestWithKnex(async knex => {
         const lastPartnerId = 4
@@ -71,194 +67,196 @@ describe('Authentication routes', () => {
           .delete()
       })
     )
-    it('should return a JSON message that contains a valid jwt, access token, and client ID with different expiration for Reporter App', async () =>
-      runTestWithKnex(async knex => {
-        const refreshToken = await server
+
+    describe('POST', () => {
+      it('should return a JSON message that contains a valid jwt, access token, and client ID with different expiration for Reporter App', async () =>
+        runTestWithKnex(async knex => {
+          const refreshToken = await server
+            .post(path)
+            .send({
+              name: adminUsername,
+              password: adminPassword,
+              clientName: 'reporter_app',
+              clientType: 'Moto g6',
+              clientId: '123123123-123123123',
+            })
+            .then(res => {
+              assert.equal(res.status, 200)
+              assert.isAbove(res.body.access.length, 100)
+              assert.isAbove(res.body.refresh.length, 50)
+              assert.equal(res.body.clientId, '123123123-123123123')
+              assert.property(res.body, 'culture')
+              assert.property(res.body, 'displayPreferences')
+              assert.property(res.body, 'timezone')
+              const jwtdecoded = jwtDecode(res.body.access)
+              assert.property(jwtdecoded, 'hasToAcceptLicenseId')
+              assert.isNull(jwtdecoded.hasToAcceptLicenseId)
+              return res.body.refresh
+            })
+
+          const rt = await knex('RefreshToken')
+            .where('token', refreshToken)
+            .first()
+          const diffTime = rt.expires - new Date()
+          const diffTimeDays = diffTime / (1000 * 60 * 60 * 24)
+          assert.equal(rt.clientType, 'Moto g6')
+          assert.closeTo(diffTimeDays, 30, 0.00001)
+        }))
+
+      it('should return a JSON message that contains a valid jwt, access token, and client ID with different expiration for web', async () =>
+        runTestWithKnex(async knex => {
+          const refreshToken = await server
+            .post(path)
+            .send({
+              name: unlicensedUser,
+              password: unlicensedPassword,
+              clientName: 'web',
+              clientId: '9999-9999',
+            })
+            .then(res => {
+              assert.equal(res.status, 200)
+              assert.isAbove(res.body.access.length, 100)
+              assert.isAbove(res.body.refresh.length, 50)
+              assert.equal(res.body.clientId, '9999-9999')
+              assert.property(res.body, 'culture')
+              assert.property(res.body, 'displayPreferences')
+              assert.property(res.body, 'timezone')
+              const jwtdecoded = jwtDecode(res.body.access)
+              assert.property(jwtdecoded, 'hasToAcceptLicenseId')
+              assert.isNotNull(jwtdecoded.hasToAcceptLicenseId)
+
+              return res.body.refresh
+            })
+
+          const rt = await knex('RefreshToken')
+            .where('token', refreshToken)
+            .first()
+          const diffTime = rt.expires - new Date()
+          const diffTimeDays = diffTime / (1000 * 60 * 60 * 24)
+          assert.equal(rt.clientType, 'web')
+          assert.equal(rt.clientName, 'web')
+          assert.closeTo(diffTimeDays, 7, 0.00001, 'Expiration days errors')
+        }))
+
+      it('should return 400 and error message if no user name is provided', done => {
+        server
+          .post(path)
+          .send()
+          .end((err, res) => {
+            assert.equal(res.status, 400)
+            assert.isString(res.body.message)
+            assert.notEqual('', res.body.message)
+            done()
+          })
+      })
+
+      it('should return 400 and error message if user name is provided, but pw is missing', done => {
+        server
+          .post(path)
+          .send({ name: adminUsername })
+          .end((err, res) => {
+            assert.equal(res.status, 400)
+            assert.equal(
+              res.body.message,
+              'child "password" fails because ["password" is required]'
+            )
+            done()
+          })
+      })
+
+      it('should return 400 and error message if user name and password is provided, but client name is missing', done => {
+        server
+          .post(path)
+          .send({ name: adminUsername, password: 'password' })
+          .end((err, res) => {
+            assert.equal(res.status, 400)
+            assert.equal(
+              res.body.message,
+              'child "clientName" fails because ["clientName" is required]'
+            )
+            done()
+          })
+      })
+
+      it('should return 401 if user not found', done => {
+        server
+          .post(path)
+          .send({
+            name: 'MickeyMouse',
+            password: 'password',
+            clientName: 'Mocha/Chai',
+          })
+          .end((err, res) => {
+            assert.equal(res.status, 401)
+            done()
+          })
+      })
+
+      it('should return 401 and error message if incorrect password', done => {
+        server
+          .post(path)
+          .send({
+            name: adminUsername,
+            password: 'password',
+            clientName: 'Mocha/Chai',
+          })
+          .end((err, res) => {
+            assert.equal(res.status, 401)
+            assert.equal(
+              res.body.message,
+              'Authentication failed. Wrong password.'
+            )
+            done()
+          })
+      })
+
+      it('should return a JSON message that contains a valid jwt, access token, and client ID if username/password are correct', done => {
+        server
           .post(path)
           .send({
             name: adminUsername,
             password: adminPassword,
-            clientName: 'reporter_app',
-            clientType: 'Moto g6',
-            clientId: '123123123-123123123',
+            clientName: 'Mocha/Chai',
           })
-          .then(res => {
+          .end((err, res) => {
             assert.equal(res.status, 200)
             assert.isAbove(res.body.access.length, 100)
             assert.isAbove(res.body.refresh.length, 50)
-            assert.equal(res.body.clientId, '123123123-123123123')
-            assert.property(res.body, 'culture')
-            assert.property(res.body, 'displayPreferences')
-            assert.property(res.body, 'timezone')
-            const jwtdecoded = jwtDecode(res.body.access)
-            assert.property(jwtdecoded, 'hasToAcceptLicenseId')
-            assert.isNull(jwtdecoded.hasToAcceptLicenseId)
-            return res.body.refresh
-          })
+            assert.isAbove(res.body.clientId.length, 32)
 
-        const rt = await knex('RefreshToken')
-          .where('token', refreshToken)
-          .first()
-        const diffTime = rt.expires - new Date()
-        const diffTimeDays = diffTime / (1000 * 60 * 60 * 24)
-        assert.equal(rt.clientType, 'Moto g6')
-        assert.closeTo(diffTimeDays, 30, 0.00001)
-      }))
+            // save token for the following tests:
+            jwToken = res.body.access
+            shared.token = jwToken
+            refreshToken = res.body.refresh
+            ;({ clientId } = res.body)
 
-    it('should return a JSON message that contains a valid jwt, access token, and client ID with different expiration for web', async () =>
-      runTestWithKnex(async knex => {
-        const refreshToken = await server
-          .post(path)
-          .send({
-            name: unlicensedUser,
-            password: unlicensedPassword,
-            clientName: 'web',
-            clientId: '9999-9999',
+            jwt.verify(res.body.access, config.secret, (err, decoded) => {
+              assert.isNotOk(err) // isNotOk = is falsy
+              assert.property(decoded, 'name')
+              assert.property(decoded, 'permissions')
+              assert.property(decoded, 'iat')
+              assert.property(decoded, 'exp')
+              assert.property(decoded, 'iss')
+
+              done()
+            })
           })
-          .then(res => {
+      })
+    })
+
+    describe('GET', () => {
+      shared.checkToken(server, path)
+
+      it('should return 200 and welcome message when using valid token', done => {
+        server
+          .get(path)
+          .set('Authorization', `Bearer ${jwToken}`)
+          .end((err, res) => {
             assert.equal(res.status, 200)
-            assert.isAbove(res.body.access.length, 100)
-            assert.isAbove(res.body.refresh.length, 50)
-            assert.equal(res.body.clientId, '9999-9999')
-            assert.property(res.body, 'culture')
-            assert.property(res.body, 'displayPreferences')
-            assert.property(res.body, 'timezone')
-            const jwtdecoded = jwtDecode(res.body.access)
-            assert.property(jwtdecoded, 'hasToAcceptLicenseId')
-            assert.isNotNull(jwtdecoded.hasToAcceptLicenseId)
-
-            return res.body.refresh
-          })
-
-        const rt = await knex('RefreshToken')
-          .where('token', refreshToken)
-          .first()
-        const diffTime = rt.expires - new Date()
-        const diffTimeDays = diffTime / (1000 * 60 * 60 * 24)
-        assert.equal(rt.clientType, 'web')
-        assert.equal(rt.clientName, 'web')
-        assert.closeTo(diffTimeDays, 7, 0.00001, 'Expiration days errors')
-      }))
-  })
-  describe('POST', () => {
-    it('should return 400 and error message if no user name is provided', done => {
-      server
-        .post(path)
-        .send()
-        .end((err, res) => {
-          assert.equal(res.status, 400)
-          assert.isString(res.body.message)
-          assert.notEqual('', res.body.message)
-          done()
-        })
-    })
-
-    it('should return 400 and error message if user name is provided, but pw is missing', done => {
-      server
-        .post(path)
-        .send({ name: adminUsername })
-        .end((err, res) => {
-          assert.equal(res.status, 400)
-          assert.equal(
-            res.body.message,
-            'child "password" fails because ["password" is required]'
-          )
-          done()
-        })
-    })
-
-    it('should return 400 and error message if user name and password is provided, but client name is missing', done => {
-      server
-        .post(path)
-        .send({ name: adminUsername, password: 'password' })
-        .end((err, res) => {
-          assert.equal(res.status, 400)
-          assert.equal(
-            res.body.message,
-            'child "clientName" fails because ["clientName" is required]'
-          )
-          done()
-        })
-    })
-
-    it('should return 401 if user not found', done => {
-      server
-        .post(path)
-        .send({
-          name: 'MickeyMouse',
-          password: 'password',
-          clientName: 'Mocha/Chai',
-        })
-        .end((err, res) => {
-          assert.equal(res.status, 401)
-          done()
-        })
-    })
-
-    it('should return 401 and error message if incorrect password', done => {
-      server
-        .post(path)
-        .send({
-          name: adminUsername,
-          password: 'password',
-          clientName: 'Mocha/Chai',
-        })
-        .end((err, res) => {
-          assert.equal(res.status, 401)
-          assert.equal(
-            res.body.message,
-            'Authentication failed. Wrong password.'
-          )
-          done()
-        })
-    })
-
-    it('should return a JSON message that contains a valid jwt, access token, and client ID if username/password are correct', done => {
-      server
-        .post(path)
-        .send({
-          name: adminUsername,
-          password: adminPassword,
-          clientName: 'Mocha/Chai',
-        })
-        .end((err, res) => {
-          assert.equal(res.status, 200)
-          assert.isAbove(res.body.access.length, 100)
-          assert.isAbove(res.body.refresh.length, 50)
-          assert.isAbove(res.body.clientId.length, 32)
-
-          // save token for the following tests:
-          jwToken = res.body.access
-          shared.token = jwToken
-          refreshToken = res.body.refresh
-          ;({ clientId } = res.body)
-
-          jwt.verify(res.body.access, config.secret, (err, decoded) => {
-            assert.isNotOk(err) // isNotOk = is falsy
-            assert.property(decoded, 'name')
-            assert.property(decoded, 'permissions')
-            assert.property(decoded, 'iat')
-            assert.property(decoded, 'exp')
-            assert.property(decoded, 'iss')
-
+            assert.equal(res.body.message, 'Welcome to the API!')
             done()
           })
-        })
-    })
-  })
-
-  describe('GET', () => {
-    shared.checkToken(server, path)
-
-    it('should return 200 and welcome message when using valid token', done => {
-      server
-        .get(path)
-        .set('Authorization', `Bearer ${jwToken}`)
-        .end((err, res) => {
-          assert.equal(res.status, 200)
-          assert.equal(res.body.message, 'Welcome to the API!')
-          done()
-        })
+      })
     })
   })
 

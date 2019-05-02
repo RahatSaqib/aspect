@@ -71,6 +71,14 @@ function getUserId(username) {
     .first('u.id')
 }
 
+function getTokenExpiry(clientName, currentTime) {
+  const expiresTime =
+    clientName && clientName.includes(REPORTERAPP)
+      ? 30 * 86400000
+      : 7 * 86400000
+  return new Date(currentTime.getTime() + expiresTime)
+}
+
 async function authenticate(request) {
   const { payload } = request
   let user = await getUser(payload.name)
@@ -160,11 +168,7 @@ function setRefreshToken(
   now,
   clientType = 'web'
 ) {
-  const expiresTime =
-    clientName && clientName.includes(REPORTERAPP)
-      ? 30 * 86400000
-      : 7 * 86400000
-  const expires = new Date(now.getTime() + expiresTime) // 7 days from now or 30 depending if its a reporter app
+  const expires = getTokenExpiry(clientName, now)
   // upsert refresh token
   return query('Create new refresh token for the user').raw(
     'INSERT INTO RefreshToken set ? ON DUPLICATE KEY UPDATE ?',
@@ -188,15 +192,17 @@ function setRefreshToken(
 
 async function refreshToken(request) {
   // find the token in the db
-  const { clientId, token } = request.payload
+  const { clientId, token, clientType } = request.payload
+
   const data = await query('Find existing token for client ID')
     .from('RefreshToken as rt')
     .innerJoin('User as u', 'rt.userId', 'u.id')
     .innerJoin('Person as p', 'u.id', 'p.userId')
-    .where({ clientId, token, revoked: 0 })
+    .where({ clientId, token, clientType, revoked: 0 })
     .first(
       'rt.userId as id',
       'rt.expires',
+      'rt.clientName',
       'u.name',
       'p.culture',
       'p.timezone',
@@ -217,7 +223,7 @@ async function refreshToken(request) {
   }
 
   // looks like we have a valid refresh token. set new one in db
-  const expires = new Date(now.getTime() + 7 * 86400000) // 7 days from now
+  const expires = getTokenExpiry(data.clientName, now)
   const refreshToken = crypto.randomBytes(48).toString('base64')
 
   await query('Update refresh token expiry date')
@@ -230,6 +236,7 @@ async function refreshToken(request) {
     access: accessToken,
     refresh: refreshToken,
     clientId,
+    clientType,
   }
 }
 

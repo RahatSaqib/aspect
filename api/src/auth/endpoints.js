@@ -69,6 +69,7 @@ const routes = [
         payload: {
           clientId: Joi.string().required(),
           token: Joi.string().required(),
+          clientType: Joi.string().default('web'),
         },
       },
     },
