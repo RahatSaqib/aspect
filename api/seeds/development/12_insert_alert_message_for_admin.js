@@ -1,15 +1,7 @@
 const { rowsAsObject } = require('../utils')
 const { messageStatusToId } = require('../../src/shared/dictionary')
 
-const {
-  /* addMilliseconds,
-  addHours,
-  addMinutes,
-  subDays,
-  subHours,
-  subMinutes, */
-  subMonths,
-} = require('date-fns')
+const { subDays, subMonths } = require('date-fns')
 const _ = require('lodash')
 const Promise = require('bluebird')
 
@@ -52,8 +44,8 @@ async function seed(knex) {
           name: `Device -${_.random(100000, 999999)}`,
           shortName: `R-${_.random(100000, 999999)}`,
           serial: `S1-R-${_.random(100000, 999999)}`,
-          lastSeenOn: now,
-          lastPingOn: now,
+          lastSeenOn: subDays(now, _.random(1, 30)),
+          lastPingOn: subDays(now, _.random(1, 30)),
           lastPingFromIp: '41.70.127.33',
           putInService: subMonths(now, 2),
           putInServiceSource: 'Installed at clinic',
@@ -83,8 +75,8 @@ async function seed(knex) {
   const issue = {
     level: 1,
     partnerId: _.head(devices).partnerId,
-    createdOn: now,
-    updatedOn: now,
+    createdOn: subDays(now, _.random(1, 30)),
+    updatedOn: subDays(now, _.random(1, 30)),
   }
   const issueTypes = await rowsAsObject(knex, 'IssueType', 'externalId')
   let issueIds = []
@@ -98,7 +90,7 @@ async function seed(knex) {
     issueTypes.MachinePowerError.id,
     issueTypes.ModuleProceduralError.id,
     issueTypes.MachineProceduralError.id,
-    //  issueTypes.DataCategoryLowError.id,
+
     issueTypes.StockLevelUpdate.id,
     issueTypes.ReagentHealthError.id,
   ]
@@ -119,7 +111,6 @@ async function seed(knex) {
       'Module A2 errors, conduct troubleshooting',
     [issueTypes.MachineProceduralError.id]:
       'Procedural errors across machine, conduct troubleshooting',
-    // [issueTypes.DataCategoryLowError.id]: 'HIV Status collection rate 89%',
     [issueTypes.StockLevelUpdate.id]: 'Stock Level',
     [issueTypes.ReagentHealthError.id]: 'Cartridge-specific errors exceed 5%',
   }
@@ -231,8 +222,8 @@ async function seed(knex) {
             {
               messageStatusId: messageStatusSentId,
               message: luAlertMessages[policy.issueTypeId],
-              createdOn: now,
-              updatedOn: now,
+              createdOn: subDays(now, _.random(1, 30)),
+              updatedOn: subDays(now, _.random(1, 30)),
             },
             _.pick(policy, [
               'alertTemplateId',
@@ -247,7 +238,7 @@ async function seed(knex) {
         await knex('Notification').insert(
           Object.assign(
             {
-              createdOn: now,
+              createdOn: subDays(now, _.random(1, 30)),
               alertMessageId,
             },
             _.pick(policy, ['notificationTypeId', 'issueId', 'personId'])
@@ -264,7 +255,6 @@ async function seed(knex) {
     issueTypes.ModuleProceduralError.id,
     issueTypes.MachineProceduralError.id,
     issueTypes.StockLevelUpdate.id,
-    //    issueTypes.DataCategoryLowError.id,
     issueTypes.ReagentHealthError.id,
   ]
 
@@ -294,8 +284,8 @@ async function seed(knex) {
             await knex('IssueStatusLog').insert({
               issueId,
               issueStatusId: issueStatusActiveId,
-              changedOn: now,
-              createdOn: now,
+              changedOn: subDays(now, _.random(1, 30)),
+              createdOn: subDays(now, _.random(1, 30)),
               createdBy: userId,
             })
           }
@@ -340,12 +330,12 @@ async function seed(knex) {
         personId,
         siteId: elem.siteId,
         deviceId: elem.deviceId,
-        createdOn: now,
-        updatedOn: now,
+        createdOn: subDays(now, _.random(1, 30)),
+        updatedOn: subDays(now, _.random(1, 30)),
       })
     await knex('Notification').insert(
       Object.assign({
-        createdOn: now,
+        createdOn: subDays(now, _.random(1, 30)),
         alertMessageId: insertedid,
         issueId: elem.id,
         personId,
