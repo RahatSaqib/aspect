@@ -7,7 +7,7 @@ const CompressionPlugin = require('compression-webpack-plugin')
 const FaviconsWebpackPlugin = require('favicons-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin')
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
+const TerserPlugin = require('terser-webpack-plugin')
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
 
 const config = () => {
@@ -105,7 +105,7 @@ const config = () => {
         },
       },
       minimizer: [
-        new UglifyJsPlugin(),
+        new TerserPlugin(),
         new OptimizeCSSAssetsPlugin({
           assetNameRegExp: /\.css$/g,
           cssProcessorOptions: {
