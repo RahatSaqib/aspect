@@ -71,9 +71,9 @@ function getUserId(username) {
     .first('u.id')
 }
 
-function getTokenExpiry(clientName, currentTime) {
+function getTokenExpiry(clientType, currentTime) {
   const expiresTime =
-    clientName && clientName.includes(REPORTERAPP)
+    clientType && clientType.includes(REPORTERAPP)
       ? 30 * 86400000
       : 7 * 86400000
   return new Date(currentTime.getTime() + expiresTime)
@@ -168,7 +168,7 @@ function setRefreshToken(
   now,
   clientType = 'web'
 ) {
-  const expires = getTokenExpiry(clientName, now)
+  const expires = getTokenExpiry(clientType, now)
   // upsert refresh token
   return query('Create new refresh token for the user').raw(
     'INSERT INTO RefreshToken set ? ON DUPLICATE KEY UPDATE ?',
@@ -192,7 +192,9 @@ function setRefreshToken(
 
 async function refreshToken(request) {
   // find the token in the db
-  const { clientId, token, clientType } = request.payload
+  const { clientId, token } = request.payload
+  let { clientType } = request.payload
+  if (!clientType) clientType = 'web'
 
   const data = await query('Find existing token for client ID')
     .from('RefreshToken as rt')
@@ -203,6 +205,7 @@ async function refreshToken(request) {
       'rt.userId as id',
       'rt.expires',
       'rt.clientName',
+      'rt.clientType',
       'u.name',
       'p.culture',
       'p.timezone',
@@ -223,7 +226,7 @@ async function refreshToken(request) {
   }
 
   // looks like we have a valid refresh token. set new one in db
-  const expires = getTokenExpiry(data.clientName, now)
+  const expires = getTokenExpiry(data.clientType, now)
   const refreshToken = crypto.randomBytes(48).toString('base64')
 
   await query('Update refresh token expiry date')
