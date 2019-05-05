@@ -239,7 +239,9 @@ describe('Device API Raw routes', () => {
       )
       expect(JSON.parse(deviceApiKeySnapshot)).to.deep.equal(deviceApiKey)
       const decryptedRequestData = JSON.parse(
-        decrypt(deviceApiRawRecord.rawData, deviceApiRawRecord.salt)
+        deviceApiRawRecord.salt
+          ? decrypt(deviceApiRawRecord.rawData, deviceApiRawRecord.salt)
+          : deviceApiRawRecord.rawData
       )
       expect(decryptedRequestData.payload).to.deep.equal(payload)
       expect(decryptedRequestData.params).to.deep.equal({

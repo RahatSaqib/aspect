@@ -6,6 +6,7 @@ class DefaultAlereQ extends AsynchronousDataProcessor {
   constructor(request, messageContext) {
     super(request, messageContext)
     this.processRequest = this.processRequest.bind(this)
+    this.encryptRawData = false
   }
 
   static async canProcessRequest(request) {

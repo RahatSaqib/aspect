@@ -247,6 +247,9 @@ server.register(
 // Device API raw data route mounted under /device/raw
 function deviceApiRawPlugin(server, options, next) {
   addDeviceRawRoutes(server)
+  // TODO ZIMBABWE: Spin up data processors for incomplete records in DeviceApiRaw
+  // TODO ZIMBABWE: Try create a test that would have blocked the queue if purgeOnStart hadn't been set
+  // TODO ZIMBABWE: Test if files can be uploaded to RAW device API
   next()
 }
 deviceApiRawPlugin.attributes = {

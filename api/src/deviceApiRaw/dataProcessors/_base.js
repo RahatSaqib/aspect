@@ -21,6 +21,7 @@ class DataProcessor {
     this.timeoutMessage = 'Timeout waiting for raw message to be handled'
     this.request = request
     this.messageContext = messageContext
+    this.encryptRawData = true
     this.saveRequestAsReady = this.saveRequestAsReady.bind(this)
     this.start = this.start.bind(this)
     this.responseReadyPromise = this.responseReadyPromise.bind(this)
@@ -43,33 +44,35 @@ class DataProcessor {
   async saveRequestAsReady() {
     const { auth = { credentials: { token: null } } } = this.request
     const { credentials: { token } } = auth
-    const salt = createSalt()
     const utcNow = getUtcTime()
     const deviceApiKey = await knex('DeviceApiKey')
       .where({ token })
       .first()
+    let salt = null
+    let rawData = JSON.stringify(
+      _.pick(
+        this.request,
+        'url',
+        'query',
+        'path',
+        'method',
+        'mime',
+        'headers',
+        'info',
+        'id',
+        'app',
+        'auth',
+        'params',
+        'paramsArray',
+        'payload'
+      )
+    )
+    if (this.encryptRawData) {
+      salt = createSalt()
+      rawData = encrypt(rawData, salt)
+    }
     const [deviceApiRawId] = await knex('DeviceApiRaw').insert({
-      rawData: encrypt(
-        JSON.stringify(
-          _.pick(
-            this.request,
-            'url',
-            'query',
-            'path',
-            'method',
-            'mime',
-            'headers',
-            'info',
-            'id',
-            'app',
-            'auth',
-            'params',
-            'paramsArray',
-            'payload'
-          )
-        ),
-        salt
-      ),
+      rawData,
       salt,
       deviceApiKeyId: deviceApiKey.id,
       deviceApiKeySnapshot: JSON.stringify(deviceApiKey),
