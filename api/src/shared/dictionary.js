@@ -38,6 +38,7 @@ const cacheConfig = {
   ResultSource: {},
   ResultType: {},
   ResultWorkflowStatus: {},
+  ResultTreatmentStatus: {},
   SampleType: {},
   Unit: {
     keyColumn: 'name',
