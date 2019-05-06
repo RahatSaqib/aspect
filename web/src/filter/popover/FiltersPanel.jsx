@@ -334,6 +334,7 @@ export const FiltersPanel = ({
   config,
   dateFilterLabel,
   // --- injected by recompose ---
+  dateFormat,
   onToggleShown,
   isShown,
   onCountryIdChange,
@@ -702,6 +703,7 @@ export const FiltersPanel = ({
             controlClassName={cssClasses('Control')}
             minDate={filters.minDate}
             maxDate={filters.maxDate}
+            dateFormat={dateFormat}
             autoOk
           />
         )}

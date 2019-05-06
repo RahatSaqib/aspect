@@ -27,7 +27,8 @@ import Divider from '@material-ui/core/Divider'
 // Our own imports
 import SelectField from '../../components/shared/SelectField'
 import DateTimeInput from '../../components/shared/DateTimeInput'
-import { formatDate } from '../../shared/utils/dateFormat'
+import FormGroup from '../../components/themedReactToolbox/FormGroup'
+
 import styles from './DateRangeSelector.css'
 
 const messages = defineMessages({
@@ -141,11 +142,13 @@ export class DateRangeSelector extends PureComponent {
     controlClassName: PropTypes.string.isRequired,
     minDate: PropTypes.string,
     maxDate: PropTypes.string,
+    dateFormat: PropTypes.string,
   }
 
   static defaultProps = {
     minDate: null,
     maxDate: null,
+    dateFormat: 'yyyy-MM-dd',
   }
 
   state = {
@@ -422,11 +425,8 @@ export class DateRangeSelector extends PureComponent {
   }
 
   render() {
-    const {
-      intl: { formatMessage },
-      floatingLabelText,
-      controlClassName,
-    } = this.props
+    const { intl, floatingLabelText, controlClassName, dateFormat } = this.props
+    const { formatMessage } = intl
 
     const dropDownSelectItems = {
       any: [],
@@ -495,24 +495,30 @@ export class DateRangeSelector extends PureComponent {
             case 'custom':
               return (
                 <div className={styles.DateRangeSelector__DatePickerContainer}>
-                  <DateTimeInput
-                    {...restProps}
-                    label=" "
+                  <FormGroup
                     className={controlClassName}
-                    labelFunc={formatDate}
-                    value={this.getMinDate()}
-                    placeholder={formatMessage(messages.fromDate)}
-                    onChange={this.handleMinDateChange}
-                  />
-                  <DateTimeInput
-                    {...restProps}
-                    label=" "
+                    label={formatMessage(messages.fromDate)}
+                  >
+                    <DateTimeInput
+                      {...restProps}
+                      intl={intl}
+                      dateFormat={dateFormat}
+                      value={this.getMinDate()}
+                      onChange={this.handleMinDateChange}
+                    />
+                  </FormGroup>
+                  <FormGroup
                     className={controlClassName}
-                    labelFunc={formatDate}
-                    value={this.getMaxDate()}
-                    onChange={this.handleMaxDateChange}
-                    placeholder={formatMessage(messages.toDate)}
-                  />
+                    label={formatMessage(messages.toDate)}
+                  >
+                    <DateTimeInput
+                      {...restProps}
+                      intl={intl}
+                      dateFormat={dateFormat}
+                      value={this.getMaxDate()}
+                      onChange={this.handleMaxDateChange}
+                    />
+                  </FormGroup>
                 </div>
               )
             default:

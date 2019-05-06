@@ -4,6 +4,7 @@ import { defineMessages } from 'react-intl'
 
 import recomposeForm from '../../components/recomposeForm'
 import { SHARED_DEFAULT_VALUES, sharedFields, BaseDialog } from './BaseDialog'
+import { withDateFormatProps } from '../../shared/utils/dateFormat'
 
 const messages = defineMessages({
   dialogTitle: {
@@ -32,6 +33,7 @@ const DEFAULT_VALUES = _.pick(SHARED_DEFAULT_VALUES, ['contextDate', 'notes'])
 
 const enhance = compose(
   pure,
+  withDateFormatProps,
   lifecycle({
     componentWillMount() {
       const { device } = this.props

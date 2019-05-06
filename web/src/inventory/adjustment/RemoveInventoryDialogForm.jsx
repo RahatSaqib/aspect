@@ -10,9 +10,12 @@ import {
   testConductedReasonI18nKey,
   sharedMessages,
   sharedFields,
-  withTodayProps,
   InventoryAdjustmentDialogForm,
 } from './InventoryAdjustmentDialogForm'
+import {
+  withTodayProps,
+  withDateFormatProps,
+} from '../../shared/utils/dateFormat'
 
 const EMPTY_MAP = Immutable.Map()
 
@@ -111,6 +114,7 @@ const DEFAULT_VALUES = {
 const enhance = compose(
   pure,
   withTodayProps,
+  withDateFormatProps,
   lifecycle({
     componentWillMount() {
       const onChange = values => this.setState({ values })

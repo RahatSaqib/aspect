@@ -44,7 +44,11 @@ import {
   ExpansionPanelDetail,
 } from '../../components/shared/expansionPanel'
 import CustomField from './CustomField'
-import { formatDate } from '../../shared/utils/dateFormat'
+import {
+  formatDate,
+  withDateFormatProps,
+  withTimeFormatProps,
+} from '../../shared/utils/dateFormat'
 
 import styles from './ResultDetail.css'
 
@@ -144,6 +148,8 @@ const enhance = compose(
       }).isRequired,
     }).isRequired,
   }),
+  withDateFormatProps,
+  withTimeFormatProps,
   connect(
     (state, props) => {
       const result = state.result.items.byId.get(props.match.params.resultId)
@@ -366,6 +372,8 @@ export class ResultDetail extends PureComponent {
       setResultFormDataValue,
       formDataSaving,
       formDataDirty,
+      dateFormat,
+      timeFormat,
     } = this.props
     if (!result || !result.getIn(['formSchema', 'fields'])) {
       return false
@@ -418,6 +426,8 @@ export class ResultDetail extends PureComponent {
                     formatMessage={formatMessage}
                     isMultiField={isMultiField}
                     updateFormData={updateFormData}
+                    dateFormat={dateFormat}
+                    timeFormat={timeFormat}
                   />
                 </Unit>
               )

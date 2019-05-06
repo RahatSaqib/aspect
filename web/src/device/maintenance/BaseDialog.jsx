@@ -1,8 +1,6 @@
 import _ from 'lodash'
-import startOfDay from 'date-fns/startOfDay'
 import classnames from 'classnames/bind'
 import React from 'react'
-import { withProps } from 'recompose'
 import { defineMessages } from 'react-intl'
 import Button from '@material-ui/core/Button'
 import TextField from '@material-ui/core/TextField'
@@ -10,7 +8,6 @@ import InputLabel from '@material-ui/core/InputLabel'
 
 import AspectDialog from '../../components/shared/AspectDialog'
 import DateTimeInput from '../../components/shared/DateTimeInput'
-import { formatDate } from '../../shared/utils/dateFormat'
 
 const cssClasses = classnames.bind(require('./BaseDialog.css'))
 
@@ -37,10 +34,6 @@ export const sharedFields = {
   },
 }
 
-export const withTodayProps = withProps(() => ({
-  today: startOfDay(new Date()),
-}))
-
 export const messages = defineMessages({
   submit: {
     id: 'pages.BaseDialog.submit',
@@ -57,6 +50,7 @@ export const BaseDialog = ({
   isDialogActive,
   onCancel,
   // --- injected by recompose ---
+  dateFormat,
   labels,
   form,
   values,
@@ -94,18 +88,18 @@ export const BaseDialog = ({
                 {labels.contextDate}
               </InputLabel>
               <DateTimeInput
-                className={cssClasses('DateTime')}
-                autoOk
                 fullWidth
-                name="contextDate"
-                displayFormat="Y-M-D"
-                label={labels.contextDate}
-                disabled={form.submitting}
-                labelFunc={formatDate}
                 margin="normal"
+                className={cssClasses('DateTime')}
+                dateFormat={dateFormat}
+                intl={intl}
+                disabled={form.submitting}
                 value={values.contextDate}
                 onChange={onContextDateChange}
-                placeholder={labels.contextDate}
+                RootProps={{
+                  name: 'contextDate',
+                }}
+                // autoOk
               />
             </div>
           )}

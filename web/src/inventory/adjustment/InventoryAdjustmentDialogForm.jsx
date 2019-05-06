@@ -1,9 +1,7 @@
 import _ from 'lodash'
-import startOfDay from 'date-fns/startOfDay'
 import Immutable from 'immutable'
 import classnames from 'classnames/bind'
 import React from 'react'
-import { withProps } from 'recompose'
 import { connect } from 'react-redux'
 import { defineMessages } from 'react-intl'
 import Button from '@material-ui/core/Button'
@@ -11,12 +9,12 @@ import TextField from '@material-ui/core/TextField'
 
 import AspectDialog from '../../components/shared/AspectDialog'
 import DateTimeInput from '../../components/shared/DateTimeInput'
+import FormGroup from '../../components/themedReactToolbox/FormGroup'
 import SiteSelectField from '../../filter/resource/SiteSelectField'
 import ConsumableSelectField from '../../filter/resource/ConsumableSelectField'
 import ConsumableReasonSelectField, {
   testConductedReasonI18nKey,
 } from '../../filter/resource/ConsumableReasonSelectField'
-import { formatDate } from '../../shared/utils/dateFormat'
 
 const cssClasses = classnames.bind(
   require('./InventoryAdjustmentDialogForm.css')
@@ -105,10 +103,6 @@ export const sharedFields = {
   },
 }
 
-export const withTodayProps = withProps(() => ({
-  today: startOfDay(new Date()),
-}))
-
 export const connectConsumableFromInventoryItem = connect(
   (state, { inventoryItem }) => ({
     consumable: state.consumable.consumables.items.find(
@@ -173,6 +167,7 @@ export const InventoryAdjustmentDialogForm = ({
   // --- injected by recompose ---
   consumable,
   consumableReason,
+  dateFormat = 'yyyy-MM-dd',
   labels,
   form,
   values,
@@ -245,17 +240,24 @@ export const InventoryAdjustmentDialogForm = ({
             inputProps={{ maxLength: 500 }}
           />
           {values.canExpire && (
-            <DateTimeInput
-              name="expiresOn"
-              label={intl.formatMessage(messages.expiryDate)}
-              disabled={form.submitting}
-              // container="inline"
-              // mode="landscape"
-              // autoOk
-              // style={formFieldStyle}
-              onChange={onExpiresOnChange}
-              value={values.expiresOn}
-            />
+            <FormGroup label={intl.formatMessage(messages.expiryDate)}>
+              <DateTimeInput
+                fullWidth
+                margin="normal"
+                disabled={form.submitting}
+                dateFormat={dateFormat}
+                intl={intl}
+                RootProps={{
+                  name: 'expiresOn',
+                  // style: formFieldStyle
+                }}
+                onChange={onExpiresOnChange}
+                value={values.expiresOn}
+                // container="inline"
+                // mode="landscape"
+                // autoOk
+              />
+            </FormGroup>
           )}
         </section>
         <section>
@@ -341,53 +343,64 @@ export const InventoryAdjustmentDialogForm = ({
         {consumableReason &&
           consumableReason.get('i18nKey') === testConductedReasonI18nKey && (
             <section>
-              <DateTimeInput
-                autoOk
-                fullWidth
-                name="dateAdjustedFrom"
-                label={intl.formatMessage(messages.testsRunBetween)}
-                disabled={form.submitting}
-                labelFunc={formatDate}
-                margin="normal"
-                // container="inline"
-                // mode="landscape"
-                // style={formFieldStyle}
-                value={values.dateAdjustedFrom}
-                onChange={onDateAdjustedFromChange}
-              />
-
-              <DateTimeInput
-                autoOk
-                fullWidth
-                name="dateAdjustedTo"
-                label={intl.formatMessage(messages.and)}
-                disabled={form.submitting}
-                labelFunc={formatDate}
-                margin="normal"
-                // container="inline"
-                // mode="landscape"
-                // style={formFieldStyle}
-                value={values.dateAdjustedTo}
-                onChange={onDateAdjustedToChange}
-              />
+              <FormGroup label={intl.formatMessage(messages.testsRunBetween)}>
+                <DateTimeInput
+                  fullWidth
+                  margin="normal"
+                  intl={intl}
+                  disabled={form.submitting}
+                  dateFormat={dateFormat}
+                  RootProps={{
+                    name: 'dateAdjustedFrom',
+                    // style: formFieldStyle
+                  }}
+                  value={values.dateAdjustedFrom}
+                  onChange={onDateAdjustedFromChange}
+                  // autoOk
+                  // container="inline"
+                  // mode="landscape"
+                />
+              </FormGroup>
+              <FormGroup label={intl.formatMessage(messages.and)}>
+                <DateTimeInput
+                  fullWidth
+                  margin="normal"
+                  disabled={form.submitting}
+                  dateFormat={dateFormat}
+                  intl={intl}
+                  RootProps={{
+                    name: 'dateAdjustedTo',
+                    // style: formFieldStyle
+                  }}
+                  value={values.dateAdjustedTo}
+                  onChange={onDateAdjustedToChange}
+                  // container="inline"
+                  // mode="landscape"
+                  // style={formFieldStyle}
+                />
+              </FormGroup>
             </section>
           )}
         {_.has(values, 'dateAdjusted') && (
           <section>
-            <DateTimeInput
-              autoOk
-              fullWidth
-              name="dateAdjusted"
-              label={labels.dateAdjusted}
-              disabled={form.submitting}
-              labelFunc={formatDate}
-              margin="normal"
-              // container="inline"
-              // mode="landscape"
-              // style={formFieldStyle}
-              value={values.dateAdjusted}
-              onChange={onDateAdjustedChange}
-            />
+            <FormGroup label={labels.dateAdjusted}>
+              <DateTimeInput
+                fullWidth
+                margin="normal"
+                disabled={form.submitting}
+                dateFormat={dateFormat}
+                intl={intl}
+                RootProps={{
+                  name: 'dateAdjusted',
+                  // style: formFieldStyle
+                }}
+                value={values.dateAdjusted}
+                onChange={onDateAdjustedChange}
+                // container="inline"
+                // mode="landscape"
+                // style={formFieldStyle}
+              />
+            </FormGroup>
           </section>
         )}
         <section>

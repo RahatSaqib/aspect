@@ -107,6 +107,8 @@ export default class CustomField extends PureComponent {
       fieldSchema,
       formData,
       formatMessage,
+      dateFormat,
+      timeFormat,
       isMultiField = false,
     } = this.props
 
@@ -197,8 +199,11 @@ export default class CustomField extends PureComponent {
           key={formFieldKey}
         >
           <DateTimeInput
+            showNowButton
             className={cssClasses('DateTime')}
-            displayFormat="Y-M-D H:m"
+            dateFormat={dateFormat}
+            timeFormat={timeFormat}
+            intl={{ formatMessage }}
             value={fieldDateTime}
             onChange={this.onUpdateData}
           />
