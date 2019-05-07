@@ -18,7 +18,7 @@ const messages = defineMessages({
   },
 })
 
-const SiteDetailBackBar = ({
+export const SiteDetailBackBar = ({
   formatMessage,
   history,
   location,

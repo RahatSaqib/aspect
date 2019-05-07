@@ -1,6 +1,6 @@
 import React from 'react'
-import { render } from 'enzyme'
-
+import { mount } from 'enzyme'
+import Button from '@material-ui/core/Button'
 import Contacts from './Contacts'
 
 describe('Contacts Component', () => {
@@ -12,6 +12,12 @@ describe('Contacts Component', () => {
   }
 
   it('should render without crash', () => {
-    render(<Contacts {...props} />)
+    mount(<Contacts {...props} />)
+  })
+
+  it('should have disabled button if user has no edit rights', () => {
+    const wrapper = mount(<Contacts {...props} />)
+    wrapper.setProps({ disabled: true })
+    expect(wrapper.find(Button).prop('disabled')).toBe(true)
   })
 })
