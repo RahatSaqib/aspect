@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import classNames from 'classnames'
-import React, { useCallback } from 'react'
+import React from 'react'
 import { withStyles } from '@material-ui/core/styles'
 import TableHead from '@material-ui/core/TableHead'
 import TableRow from '@material-ui/core/TableRow'
@@ -49,7 +49,7 @@ const DataTableHead = ({
   sortColumnKey,
   sortColumnDir,
   columns,
-  onHeadColumnClick,
+  onHeadColumnClick = _.noop,
 }) => (
   <TableHead>
     <TableRow className={classNames({ [classes.compact]: compact })}>
@@ -90,14 +90,7 @@ const DataTableHead = ({
               <TableSortLabel
                 active={sortColumnKey === key}
                 direction={sortColumnDir}
-                onClick={
-                  onHeadColumnClick &&
-                  useCallback(() => onHeadColumnClick(key), [
-                    key,
-                    sortColumnDir,
-                    sortColumnKey,
-                  ])
-                }
+                onClick={() => onHeadColumnClick(key)}
                 IconComponent={KeyboardArrowDown}
                 classes={{
                   icon: classes.sortIcon,

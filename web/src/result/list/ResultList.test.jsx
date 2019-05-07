@@ -13,13 +13,22 @@ describe('Result List component', () => {
 
   const props = {
     intl,
-    location: { search: '?filters=assayType%3DTB' },
     table: new Table(),
     items: new Items(),
   }
 
-  it('should shallow render correctly', () => {
-    const element = renderer.render(<ResultList {...props} />)
+  it('should shallow render correctly when filter for assay type', () => {
+    const element = renderer.render(
+      <ResultList {...props} location={{ search: '?filters=assayType%3DTB' }} />
+    )
+
+    expect(element).toMatchSnapshot()
+  })
+
+  it('should shallow render correctly when filter for assay id', () => {
+    const element = renderer.render(
+      <ResultList {...props} location={{ search: '?filters=assayId%3D9' }} />
+    )
 
     expect(element).toMatchSnapshot()
   })
