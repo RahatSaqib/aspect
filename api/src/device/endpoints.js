@@ -213,6 +213,9 @@ function listDevicesBaseConfig() {
                     .required()
                     .description('The error rate'),
                 }),
+              user: Joi.string().description(
+                'The user of the reporter / device'
+              ),
             })
           ),
       }),

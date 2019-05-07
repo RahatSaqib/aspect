@@ -198,11 +198,13 @@ async function getListDevices(query, auth) {
   data.forEach(it => {
     // FIXME: Use actual data instead
     const availabilityCount = _.random(25, 30)
+
     it.availability = {
       count: availabilityCount,
       total: 30,
       rate: availabilityCount / 30,
     }
+    it.user = '0' // fix when result download table is added
 
     it.error = {
       count: it.thisMonthErrors || 0,

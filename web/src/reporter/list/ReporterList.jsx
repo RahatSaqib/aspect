@@ -41,13 +41,13 @@ const messages = defineMessages({
     id: 'pages.ReporterList.reporterName',
     defaultMessage: 'Reporter Name',
   },
-  reporterShortName: {
-    id: 'pages.ReporterList.reporterShortName',
-    defaultMessage: 'Reporter',
+  reporterDevice: {
+    id: 'pages.ReporterList.reporterDevice',
+    defaultMessage: 'Device',
   },
-  reporterSite: {
-    id: 'pages.ReporterList.siteName',
-    defaultMessage: 'Site',
+  reporterUser: {
+    id: 'pages.ReporterList.user',
+    defaultMessage: 'User',
   },
   status: {
     id: 'pages.ReporterList.status',
@@ -248,13 +248,13 @@ export const ReporterList = ({
             sortColumnDir={sortDir}
             columns={[
               {
-                key: 'siteName',
-                label: intl.formatMessage(messages.reporterSite),
+                key: 'user',
+                label: intl.formatMessage(messages.reporterUser),
                 sortable: true,
               },
               {
-                key: 'shortName',
-                label: intl.formatMessage(messages.reporterShortName),
+                key: 'device',
+                label: intl.formatMessage(messages.reporterDevice),
                 sortable: true,
               },
               {
