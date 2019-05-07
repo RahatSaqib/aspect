@@ -93,6 +93,19 @@ class DataProcessor {
     )
   }
 
+  async populateFromDeviceApiRawRecord(deviceApiRawRecord) {
+    this.id = deviceApiRawRecord.id
+    this.messageContext = this.messageContext.bindActionCreators(
+      {
+        deviceRawMessageResponseReady,
+        deviceRawMessagePosted,
+        deviceRawMessageProcessed,
+        deviceRawMessageError,
+      },
+      this.id
+    )
+  }
+
   async start() {
     try {
       const actionIsForThisDataProcessorInstance = action =>

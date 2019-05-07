@@ -16,6 +16,7 @@ const { addSubscriptions } = require('./subscriptions')
 const { startScheduler } = require('./scheduler')
 const { addLoggers } = require('./logger/service')
 const deviceApiKeyPlugin = require('./deviceApi/deviceApiKeyPlugin')
+const { continueUnprocessedRawData } = require('./deviceApiRaw/service')
 
 const server = new Hapi.Server()
 const port = process.env.PORT || 8080
@@ -247,9 +248,9 @@ server.register(
 // Device API raw data route mounted under /device/raw
 function deviceApiRawPlugin(server, options, next) {
   addDeviceRawRoutes(server)
-  // TODO ZIMBABWE: Spin up data processors for incomplete records in DeviceApiRaw
   // TODO ZIMBABWE: Try create a test that would have blocked the queue if purgeOnStart hadn't been set
   // TODO ZIMBABWE: Test if files can be uploaded to RAW device API
+  continueUnprocessedRawData()
   next()
 }
 deviceApiRawPlugin.attributes = {
