@@ -329,143 +329,124 @@ describe('Result routes', () => {
             })
         })
     })
-    it('Should update result treatment status given a resultId', done => {
+
+    // ------------------------------------------------------------------------
+    // helper function
+    const baseTreatmentStatusAssertion = res => {
+      assert.equal(res.status, 200)
+      assert.typeOf(res.body, 'Object')
+      assert.property(res.body, 'data')
+      assert.typeOf(res.body.data, 'Object')
+      assert.typeOf(res.body.data.assay, 'Object')
+      assert.typeOf(res.body.data.assay.resultDataSchema, 'Object')
+      assert.typeOf(res.body.data.resultData, 'Object')
+      const resultFieldNames = [
+        'id',
+        'endedOn',
+        'deviceName',
+        'countryName',
+        'stateName',
+        'lgaName',
+        'resultCategory1Name',
+        'resultCategory2Name',
+        'resultData',
+        'sampleId',
+        'sampleGroup',
+        'patientId',
+        'siteName',
+        'assayVersion',
+        'consumableSerial',
+        'consumableLot',
+        'consumableExpirationDate',
+        'instrumentSerial',
+        'moduleName',
+        'moduleSerial',
+        'researchId',
+        'senderVersion',
+        'senderOperator',
+        'notes',
+        'errorCode',
+        'errorNotes',
+        'createdOn',
+        'updatedOn',
+        'assayId',
+        'assay',
+      ]
+      _.each(resultFieldNames, fieldName => {
+        assert.property(res.body.data, fieldName)
+      })
+    }
+
+    it('Should update result treatment status given a resultId - with externalId', done => {
+      const changedOn = '2019-03-25T10:00:33.000Z'
       const updateWithExternalId = {
-        resultTreatmentStatusId: null,
         externalId: 'AwaitingTreatment',
         data: 'should be treated',
         method: 'sms',
-        changedOn: '2019-03-28T10:00:33.000Z',
+        changedOn,
       }
-      const updateWithId = {
-        resultTreatmentStatusId: 2,
-        externalId: null,
-        data: 'should be treated',
-        method: 'sms',
-      }
-
       // update with external ID
       server
         .put(`${path}/treatment-status/${resultId}`)
         .send(updateWithExternalId)
         .set('Authorization', `Bearer${shared.token}`)
         .end((err, res) => {
-          assert.equal(res.status, 200)
-          assert.typeOf(res.body, 'Object')
-          assert.property(res.body, 'data')
-          assert.typeOf(res.body.data, 'Object')
-          assert.typeOf(res.body.data.assay, 'Object')
-          assert.typeOf(res.body.data.assay.resultDataSchema, 'Object')
-          assert.typeOf(res.body.data.resultData, 'Object')
-          const resultFieldNames = [
-            'id',
-            'endedOn',
-            'deviceName',
-            'countryName',
-            'stateName',
-            'lgaName',
-            'resultCategory1Name',
-            'resultCategory2Name',
-            'resultData',
-            'sampleId',
-            'sampleGroup',
-            'patientId',
-            'siteName',
-            'assayVersion',
-            'consumableSerial',
-            'consumableLot',
-            'consumableExpirationDate',
-            'instrumentSerial',
-            'moduleName',
-            'moduleSerial',
-            'researchId',
-            'senderVersion',
-            'senderOperator',
-            'notes',
-            'errorCode',
-            'errorNotes',
-            'createdOn',
-            'updatedOn',
-            'assayId',
-            'assay',
-          ]
-          _.each(resultFieldNames, fieldName => {
-            assert.property(res.body.data, fieldName)
-          })
+          baseTreatmentStatusAssertion(res)
 
+          const { treatmentStatus } = res.body.data
           // check the updated fieldName
-          assert.equal(
-            res.body.data.treatmentStatus.externalId,
-            'AwaitingTreatment'
-          )
+          assert.equal(treatmentStatus.externalId, 'AwaitingTreatment')
+          assert.equal(treatmentStatus.changedOn, changedOn)
 
-          assert.equal(
-            res.body.data.treatmentStatus.changedOn,
-            '2019-03-28T10:00:33.000Z'
-          )
-          // update with resultTreatmentStatusId
-          server
-            .put(`${path}/treatment-status/${resultId}`)
-            .send(updateWithId)
-            .set('Authorization', `Bearer${shared.token}`)
-            .end((err, res) => {
-              assert.equal(res.status, 200)
-              assert.typeOf(res.body, 'Object')
-              assert.property(res.body, 'data')
-              assert.typeOf(res.body.data, 'Object')
-              assert.typeOf(res.body.data.assay, 'Object')
-              assert.typeOf(res.body.data.assay.resultDataSchema, 'Object')
-              assert.typeOf(res.body.data.resultData, 'Object')
-              const resultFieldNames = [
-                'id',
-                'endedOn',
-                'deviceName',
-                'countryName',
-                'stateName',
-                'lgaName',
-                'resultCategory1Name',
-                'resultCategory2Name',
-                'resultData',
-                'sampleId',
-                'sampleGroup',
-                'patientId',
-                'siteName',
-                'assayVersion',
-                'consumableSerial',
-                'consumableLot',
-                'consumableExpirationDate',
-                'instrumentSerial',
-                'moduleName',
-                'moduleSerial',
-                'researchId',
-                'senderVersion',
-                'senderOperator',
-                'notes',
-                'errorCode',
-                'errorNotes',
-                'createdOn',
-                'updatedOn',
-                'assayId',
-                'assay',
-              ]
-              _.each(resultFieldNames, fieldName => {
-                assert.property(res.body.data, fieldName)
-              })
-
-              // check if resultWorkflowStatus was updated
-              assert.equal(
-                res.body.data.treatmentStatus.externalId,
-                'OnTreatment'
-              )
-
-              const diffTime =
-                new Date(res.body.data.treatmentStatus.changedOn) - new Date()
-              assert.closeTo(diffTime / 1000, 0, 0.9, 'should be near from now')
-
-              done()
-            })
+          done()
         })
     })
+    it('Should update result treatment status given a resultId - with resultTreatmentStatusId', done => {
+      const changedOn = '2019-03-26T10:00:33.000Z'
+      const updateWithId = {
+        resultTreatmentStatusId: 2,
+        data: 'should be treated',
+        method: 'sms',
+        changedOn,
+      }
+      // update with resultTreatmentStatusId
+      server
+        .put(`${path}/treatment-status/${resultId}`)
+        .send(updateWithId)
+        .set('Authorization', `Bearer${shared.token}`)
+        .end((err, res) => {
+          baseTreatmentStatusAssertion(res)
+
+          const { treatmentStatus } = res.body.data
+          // check if resultWorkflowStatus was updated
+          assert.equal(treatmentStatus.externalId, 'OnTreatment')
+          assert.equal(treatmentStatus.changedOn, changedOn)
+
+          done()
+        })
+    })
+    it('Should update result treatment status given a resultId - set to null', done => {
+      const changedOn = '2019-03-27T10:00:33.000Z'
+      const updateWithNull = {
+        resultTreatmentStatusId: null,
+        data: 'should be treated',
+        method: 'sms',
+        changedOn,
+      }
+      // set to null
+      server
+        .put(`${path}/treatment-status/${resultId}`)
+        .send(updateWithNull)
+        .set('Authorization', `Bearer${shared.token}`)
+        .end((err, res) => {
+          baseTreatmentStatusAssertion(res)
+
+          assert.isUndefined(res.body.data.treatmentStatus)
+
+          done()
+        })
+    })
+
     it('Updating "QC Check" should fail if not in status "Deliverable"', done => {
       // try settings
       server

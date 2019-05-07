@@ -16,7 +16,10 @@ const {
   generateExcelFile,
   generateCsvFile,
 } = require('../shared/io')
-const { resultWorkflowStatusToId } = require('../shared/dictionary')
+const {
+  resultWorkflowStatusToId,
+  resultTreatmentStatusToId,
+} = require('../shared/dictionary')
 const { oneDirectionalMd5Hash } = require('../shared/encryption')
 const { returnIso8601StringWithoutTimeZoneOffset } = require('../shared/date')
 const { getPathFromFileReferenceId } = require('../file/service')
@@ -852,23 +855,25 @@ async function updateTreatmentStatus(request) {
   }
 
   const { resultTreatmentStatusId, data, method, changedOn = now } = payload
-  let treatmentStatusId
+  let treatmentStatusId = null
   // check if a externalId is provided
   if (payload.externalId) {
-    const treatmentStatus = await resultTreatmentStatusToId(payload.externalId)
-    treatmentStatusId = treatmentStatus.id
+    treatmentStatusId = await resultTreatmentStatusToId(payload.externalId)
     if (!treatmentStatusId) {
-      return Boom.badRequest('Invalid ResultWorkflowStatus ID')
+      return Boom.badRequest('Invalid externalId')
     }
-  } else {
+  } else if (resultTreatmentStatusId) {
+    // check if value of resultTreatmentStatusId is valid
+    const treatmentStatus = await knex('ResultTreatmentStatus')
+      .where('id', resultTreatmentStatusId)
+      .first()
+    if (!treatmentStatus) {
+      return Boom.badRequest('Invalid resultTreatmentStatusId')
+    }
     treatmentStatusId = resultTreatmentStatusId
   }
   let lastTreatment = await getLastTreatmentStatusByResult(resultId)
-
-  if (
-    treatmentStatusId !== result.data.resultTreatmentStatusId ||
-    !result.data.resultTreatmentStatusId
-  ) {
+  if (treatmentStatusId !== result.data.resultTreatmentStatusId) {
     const [treatmentStatusLogId] = await knex(
       'ResultTreatmentStatusLog'
     ).insert({
@@ -914,11 +919,6 @@ async function getLastTreatmentStatusByResult(resultId) {
     .where('rtl.resultId', resultId)
     .orderBy('rtl.changedOn', 'desc')
     .first('rtl.changedOn', 'ts.name', 'ts.externalId', 'ts.i18nKey')
-}
-async function resultTreatmentStatusToId(externalId) {
-  return knex('ResultTreatmentStatus')
-    .where('externalId', externalId)
-    .first('id')
 }
 async function updateQcCheck(request) {
   const { auth, params, payload, plugins: { messageContext } } = request

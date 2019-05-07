@@ -599,7 +599,7 @@ const routes = [
           resultTreatmentStatusId: Joi.number()
             .integer()
             .positive()
-            .allow('', null),
+            .allow(null),
           externalId: Joi.string().allow('', null),
           data: Joi.string().allow('', null),
           method: Joi.string().allow('', null),
