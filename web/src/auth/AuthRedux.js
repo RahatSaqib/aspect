@@ -5,7 +5,10 @@ import jwtDecode from 'jwt-decode'
 import { SubmissionError } from 'redux-form/immutable'
 
 import config from '../config'
-import { getClientName, getClientType } from '../shared/utils/browser'
+import {
+  getClientName,
+  getClientType as clientType,
+} from '../shared/utils/browser'
 import { aspectFetch } from '../shared/utils/fetch'
 import {
   errorPleaseTryAgainInAFewMinutes,
@@ -223,7 +226,7 @@ export function refreshStart() {
       body: JSON.stringify({
         token: refresh,
         clientId,
-        clientType: getClientType(),
+        clientType,
       }),
     })
       .then(json =>

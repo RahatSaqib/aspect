@@ -14,9 +14,7 @@ export function getClientName() {
   return `${getBrowserNameAndVersion()} on ${window.navigator.platform}`
 }
 
-export function getClientType() {
-  return 'web'
-}
+export const getClientType = 'web'
 
 export function getBrowserNameAndVersion() {
   const browser = getBrowserInfo()

@@ -3,11 +3,13 @@ const supertest = require('supertest')
 const chai = require('chai')
 const jwt = require('jsonwebtoken')
 const uuid = require('node-uuid')
+const bcrypt = require('bcrypt')
+
 const config = require('../../src/config')
 const shared = require('../utils/sharedToken')
+const { reporterApp } = require('../../src/auth/service')
 const { run } = require('../../src/db')
 const { runTestWithKnex } = require('../utils/generatorFunctionUtils')
-const bcrypt = require('bcrypt')
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 const server = supertest.agent('http://localhost:8080')
@@ -19,16 +21,19 @@ describe('Authentication routes', () => {
   const unlicensedUser = 'testuser'
   const unlicensedPassword = 'test07'
   const authPath = '/api/auth'
-  const webClient = 'Mocha web'
-  const appClient = 'Mocha app'
+  const webClientName = 'Mocha web'
+  const webClientType = 'web'
+  const appClientName = 'Mocha app'
+  const appClientType = reporterApp
+
   let jwToken
   let webToken
   let webClientId
   let appToken
   let appClientId
 
-  async function getToken(clientName, clientType) {
-    const responseBody = await server
+  const getToken = (clientName, clientType) =>
+    server
       .post(authPath)
       .send({
         name: adminUsername,
@@ -37,16 +42,14 @@ describe('Authentication routes', () => {
         clientType,
       })
       .then(res => res.body)
-    return responseBody
-  }
 
   const daysToExpire = token =>
     (token.expires - new Date()) / (1000 * 60 * 60 * 24)
 
   beforeEach(async () =>
     run(async () => {
-      const webResponse = await getToken(webClient, 'web')
-      const appResponse = await getToken(appClient, 'reporter_app')
+      const webResponse = await getToken(webClientName, webClientType)
+      const appResponse = await getToken(appClientName, reporterApp)
       jwToken = webResponse.access
       shared.token = jwToken
 
@@ -59,7 +62,7 @@ describe('Authentication routes', () => {
   afterEach(async () =>
     run(async knex => {
       await knex('RefreshToken')
-        .whereIn('clientName', [webClient, appClient])
+        .whereIn('clientName', [webClientName, appClientName])
         .delete()
     })
   )
@@ -117,7 +120,7 @@ describe('Authentication routes', () => {
           .send({
             name: adminUsername,
             password: adminPassword,
-            clientName: webClient,
+            clientName: webClientName,
           })
           .end((err, res) => {
             assert.equal(res.status, 200)
@@ -136,14 +139,14 @@ describe('Authentication routes', () => {
             })
           })
       })
-      it('should return the appropriate lisense status for the user', () =>
+      it('should return the appropriate license status for the user', () =>
         run(async () => {
           await server
             .post(authPath)
             .send({
               name: adminUsername,
               password: adminPassword,
-              clientName: webClient,
+              clientName: webClientName,
               clientId: '9999-9999',
             })
             .then(res => {
@@ -163,7 +166,7 @@ describe('Authentication routes', () => {
             .send({
               name: unlicensedUser,
               password: unlicensedPassword,
-              clientName: webClient,
+              clientName: webClientName,
               clientId: '9999-9999',
             })
             .then(res => {
@@ -179,8 +182,8 @@ describe('Authentication routes', () => {
           const rt = await knex('RefreshToken')
             .where('token', appToken)
             .first()
-          assert.equal(rt.clientName, appClient)
-          assert.equal(rt.clientType, 'reporter_app')
+          assert.equal(rt.clientName, appClientName)
+          assert.equal(rt.clientType, appClientType)
           assert.closeTo(
             daysToExpire(rt),
             30,
@@ -194,8 +197,8 @@ describe('Authentication routes', () => {
           const rt = await knex('RefreshToken')
             .where('token', webToken)
             .first()
-          assert.equal(rt.clientName, webClient)
-          assert.equal(rt.clientType, 'web')
+          assert.equal(rt.clientName, webClientName)
+          assert.equal(rt.clientType, webClientType)
           assert.closeTo(
             daysToExpire(rt),
             7,
@@ -249,7 +252,7 @@ describe('Authentication routes', () => {
           .send({
             name: 'MickeyMouse',
             password: adminPassword,
-            clientName: webClient,
+            clientName: webClientName,
           })
           .end((err, res) => {
             // test returns 500 if its run offline
@@ -264,7 +267,7 @@ describe('Authentication routes', () => {
           .send({
             name: adminUsername,
             password: 'password',
-            clientName: webClient,
+            clientName: webClientName,
           })
           .end((err, res) => {
             assert.equal(res.status, 401)
@@ -330,8 +333,8 @@ describe('Authentication routes', () => {
         const rt = await knex('RefreshToken')
           .where('token', newWebToken)
           .first()
-        assert.equal(rt.clientName, webClient)
-        assert.equal(rt.clientType, 'web')
+        assert.equal(rt.clientName, webClientName)
+        assert.equal(rt.clientType, webClientType)
         assert.closeTo(
           daysToExpire(rt),
           7,
@@ -347,7 +350,7 @@ describe('Authentication routes', () => {
           .send({
             clientId: appClientId,
             token: appToken,
-            clientType: 'reporter_app',
+            clientType: appClientType,
           })
           .then(res => {
             assert.equal(res.status, 200)
@@ -357,8 +360,8 @@ describe('Authentication routes', () => {
         const rt = await knex('RefreshToken')
           .where('token', newAppToken)
           .first()
-        assert.equal(rt.clientName, appClient)
-        assert.equal(rt.clientType, 'reporter_app')
+        assert.equal(rt.clientName, appClientName)
+        assert.equal(rt.clientType, appClientType)
         assert.closeTo(
           daysToExpire(rt),
           30,
@@ -426,7 +429,7 @@ describe('Authentication routes', () => {
         .put(path)
         .send({
           currentPassword: adminPassword,
-          clientName: webClient,
+          clientName: webClientName,
           newUsername,
         })
         .set('Authorization', `Bearer ${shared.token}`)
@@ -450,7 +453,7 @@ describe('Authentication routes', () => {
               .send({
                 name: newUsername,
                 password: adminPassword,
-                clientName: webClient,
+                clientName: webClientName,
               })
               .end((err, res) => {
                 assert.equal(res.status, 200)
@@ -472,7 +475,7 @@ describe('Authentication routes', () => {
                     .put(path)
                     .send({
                       currentPassword: adminPassword,
-                      clientName: webClient,
+                      clientName: webClientName,
                       newUsername: adminUsername,
                     })
                     .set('Authorization', `Bearer ${shared.token}`)
@@ -495,7 +498,7 @@ describe('Authentication routes', () => {
                             .send({
                               name: adminUsername,
                               password: adminPassword,
-                              clientName: webClient,
+                              clientName: webClientName,
                             })
                             .end((err, res) => {
                               assert.equal(res.status, 200)
@@ -516,7 +519,7 @@ describe('Authentication routes', () => {
         .put(path)
         .send({
           currentPassword: adminPassword,
-          clientName: webClient,
+          clientName: webClientName,
           newPassword,
         })
         .set('Authorization', `Bearer ${shared.token}`)
@@ -539,7 +542,7 @@ describe('Authentication routes', () => {
               .send({
                 name: adminUsername,
                 password: newPassword,
-                clientName: webClient,
+                clientName: webClientName,
               })
               .end((err, res) => {
                 assert.equal(res.status, 200)
@@ -561,7 +564,7 @@ describe('Authentication routes', () => {
                     .put(path)
                     .send({
                       currentPassword: newPassword,
-                      clientName: webClient,
+                      clientName: webClientName,
                       newPassword: adminPassword,
                     })
                     .set('Authorization', `Bearer ${shared.token}`)
@@ -586,7 +589,7 @@ describe('Authentication routes', () => {
                             .send({
                               name: adminUsername,
                               password: adminPassword,
-                              clientName: webClient,
+                              clientName: webClientName,
                             })
                             .end((err, res) => {
                               assert.equal(res.status, 200)
@@ -607,7 +610,7 @@ describe('Authentication routes', () => {
         .put(path)
         .send({
           currentPassword: adminPassword,
-          clientName: webClient,
+          clientName: webClientName,
           newPassword,
           newUsername,
         })
@@ -632,7 +635,7 @@ describe('Authentication routes', () => {
               .send({
                 name: newUsername,
                 password: newPassword,
-                clientName: webClient,
+                clientName: webClientName,
               })
               .end((err, res) => {
                 assert.equal(res.status, 200)
@@ -654,7 +657,7 @@ describe('Authentication routes', () => {
                     .put(path)
                     .send({
                       currentPassword: newPassword,
-                      clientName: webClient,
+                      clientName: webClientName,
                       newPassword: adminPassword,
                       newUsername: adminUsername,
                     })
@@ -681,7 +684,7 @@ describe('Authentication routes', () => {
                             .send({
                               name: adminUsername,
                               password: adminPassword,
-                              clientName: webClient,
+                              clientName: webClientName,
                             })
                             .end((err, res) => {
                               assert.equal(res.status, 200)

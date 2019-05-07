@@ -17,7 +17,7 @@ const { query } = require('../db')
 const { validateUserAtGxAlert } = require('./gxalert')
 const { getRemoteAddress } = require('../shared/request')
 
-const REPORTERAPP = 'reporter_app'
+const reporterApp = 'reporter_app'
 async function checkAuthentication() {
   return { message: 'Welcome to the API!' }
 }
@@ -73,7 +73,7 @@ function getUserId(username) {
 
 function getTokenExpiry(clientType, currentTime) {
   const expiresTime =
-    clientType && clientType.includes(REPORTERAPP)
+    clientType && clientType.includes(reporterApp)
       ? 30 * 86400000
       : 7 * 86400000
   return new Date(currentTime.getTime() + expiresTime)
@@ -192,9 +192,7 @@ function setRefreshToken(
 
 async function refreshToken(request) {
   // find the token in the db
-  const { clientId, token } = request.payload
-  let { clientType } = request.payload
-  if (!clientType) clientType = 'web'
+  const { clientId, token, clientType = 'web' } = request.payload
 
   const data = await query('Find existing token for client ID')
     .from('RefreshToken as rt')
@@ -290,7 +288,7 @@ function getAccessToken({ id, name, partnerId, personId }, clientName = 'web') {
           name,
           permissions: data.map(p => `${p.module}:${p.activity}`),
           hasToAcceptLicenseId:
-            clientName.includes(REPORTERAPP) ||
+            clientName.includes(reporterApp) ||
             !applicableLicense ||
             applicableLicense.acceptedOn
               ? null
@@ -703,4 +701,5 @@ module.exports = {
   acceptLicense,
   revokeUsersToken,
   lockedOutUser,
+  reporterApp,
 }
