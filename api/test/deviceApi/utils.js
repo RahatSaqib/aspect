@@ -39,7 +39,6 @@ async function deleteTestDataFromCheckpoint(knex, checkpoint, deviceIds) {
   const deviceLogIds = _.uniq(_.map(deviceUpdates, 'id'))
   const resultIds = _.uniq(_.map(deviceUpdates, 'resultId'))
   const opIds = _.uniq(_.map(deviceUpdates, 'deviceOperationId'))
-
   await deleteIssues(knex, { resultIds })
   await knex('DeviceLog')
     .whereIn('id', deviceLogIds)
@@ -63,6 +62,8 @@ async function deleteTestDataFromCheckpoint(knex, checkpoint, deviceIds) {
     .whereIn('resultId', resultIds)
     .delete()
   await knex('ResultTag').del()
+  await knex('PersonTag').del()
+  await knex('NotificationTypeTag').del()
   await knex('Tag').del()
   await knex('Result')
     .whereIn('id', resultIds)
