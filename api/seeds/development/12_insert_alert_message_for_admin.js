@@ -320,6 +320,7 @@ async function seed(knex) {
   await Promise.each(issues, async elem => {
     // add sample alert message
     const now = new Date(new Date().toDateString())
+    const createdOn = subDays(now, _.random(1, 30))
     const idTemplate = Math.floor(Math.random() * 9) + 1
     const insertedid = await knex('AlertMessage')
       .returning('id')
@@ -330,8 +331,8 @@ async function seed(knex) {
         personId,
         siteId: elem.siteId,
         deviceId: elem.deviceId,
-        createdOn: subDays(now, _.random(1, 30)),
-        updatedOn: subDays(now, _.random(1, 30)),
+        createdOn,
+        updatedOn: createdOn,
       })
     await knex('Notification').insert(
       Object.assign({
