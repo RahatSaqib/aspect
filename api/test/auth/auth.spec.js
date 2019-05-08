@@ -7,7 +7,7 @@ const bcrypt = require('bcrypt')
 
 const config = require('../../src/config')
 const shared = require('../utils/sharedToken')
-const { reporterApp } = require('../../src/auth/service')
+const { clientTypes } = require('../../src/auth/service')
 const { run } = require('../../src/db')
 const { runTestWithKnex } = require('../utils/generatorFunctionUtils')
 
@@ -22,9 +22,9 @@ describe('Authentication routes', () => {
   const unlicensedPassword = 'test07'
   const authPath = '/api/auth'
   const webClientName = 'Mocha web'
-  const webClientType = 'web'
+  const webClientType = clientTypes.web
   const appClientName = 'Mocha app'
-  const appClientType = reporterApp
+  const appClientType = clientTypes.app
 
   let jwToken
   let webToken
@@ -49,7 +49,7 @@ describe('Authentication routes', () => {
   beforeEach(async () =>
     run(async () => {
       const webResponse = await getToken(webClientName, webClientType)
-      const appResponse = await getToken(appClientName, reporterApp)
+      const appResponse = await getToken(appClientName, appClientType)
       jwToken = webResponse.access
       shared.token = jwToken
 
