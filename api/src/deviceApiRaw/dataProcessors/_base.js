@@ -93,7 +93,7 @@ class DataProcessor {
     )
   }
 
-  async populateFromDeviceApiRawRecord(deviceApiRawRecord) {
+  populateFromDeviceApiRawRecord(deviceApiRawRecord) {
     this.id = deviceApiRawRecord.id
     this.messageContext = this.messageContext.bindActionCreators(
       {

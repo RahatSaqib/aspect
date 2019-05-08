@@ -16,7 +16,7 @@ async function createMessageQueue(name) {
   return new MessageQueue(name).connect()
 }
 
-async function getMessageQueue(name) {
+async function loadMessageQueue(name) {
   if (name == null) {
     throw new Error('Must specify unique queue name')
   }
@@ -48,7 +48,7 @@ class MessageQueue {
 
   async loadChannel() {
     if (!this.channel) {
-      debug(`get ${this.name}`)
+      debug(`load ${this.name}`)
       const connection = await amqp.connect(config.amqp.url)
       this.channel = _.get(connection, 'connection.channels[0]')
     }
@@ -401,4 +401,4 @@ class MessageContext {
   }
 }
 
-module.exports = { createMessageQueue, getMessageQueue }
+module.exports = { createMessageQueue, loadMessageQueue }

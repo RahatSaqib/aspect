@@ -5,7 +5,7 @@ const { asyncHandler } = require('../routes')
 const { loadRawDataProcessor } = require('./dataProcessors/registration')
 const { deviceApiRawStatusToId } = require('../shared/dictionary')
 const { knex } = require('../db')
-const { getMessageQueue } = require('../mq')
+const { loadMessageQueue } = require('../mq')
 const { decrypt } = require('../shared/encryption')
 
 const addDeviceRawDataHandler = asyncHandler(async request => {
@@ -39,7 +39,7 @@ async function continueUnprocessedRawData() {
   const readyDeviceApiRawRecords = await knex('DeviceApiRaw')
     .where('deviceApiRawStatusId', readyId)
     .select()
-  const queue = await getMessageQueue('aspect')
+  const queue = await loadMessageQueue('aspect')
   await Promise.each(
     readyDeviceApiRawRecords,
     async readyDeviceApiRawRecord => {
