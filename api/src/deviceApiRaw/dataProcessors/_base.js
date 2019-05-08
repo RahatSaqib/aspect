@@ -131,7 +131,6 @@ class DataProcessor {
               handlerFunction: async () => {
                 try {
                   await this.handlerFunction()
-                  this.messageContext.deviceRawMessageProcessed(this.id)
                 } catch (error) {
                   this.messageContext.deviceRawMessageError(this.id, error)
                 }
@@ -284,6 +283,7 @@ class SynchronousDataProcessor extends DataProcessor {
 
   async handlerFunction() {
     await this.processRequest()
+    this.messageContext.deviceRawMessageProcessed(this.id)
     const response = await this.getResponse()
     this.messageContext.deviceRawMessageResponseReady(this.id, response)
   }
@@ -303,6 +303,7 @@ class AsynchronousDataProcessor extends DataProcessor {
     const response = await this.getResponse()
     this.messageContext.deviceRawMessageResponseReady(this.id, response)
     await this.processRequest()
+    this.messageContext.deviceRawMessageProcessed(this.id)
   }
 }
 

@@ -104,13 +104,17 @@ function messageQueuePlugin(server, options, next) {
       if (config.scheduler.enabled) {
         startScheduler(queue)
       }
-      server.ext('onPreHandler', (request, reply) => {
-        request.plugins.messageContext = queue.createMessageContext(
-          'aspect_request'
-        )
-        reply.continue()
-      })
-      next()
+      return continueUnprocessedRawData(queue)
+        .then(() => {
+          server.ext('onPreHandler', (request, reply) => {
+            request.plugins.messageContext = queue.createMessageContext(
+              'aspect_request'
+            )
+            reply.continue()
+          })
+          next()
+        })
+        .catch(next)
     })
     .catch(next)
 }
@@ -250,7 +254,10 @@ function deviceApiRawPlugin(server, options, next) {
   addDeviceRawRoutes(server)
   // TODO ZIMBABWE: Try create a test that would have blocked the queue if purgeOnStart hadn't been set
   // TODO ZIMBABWE: Test if files can be uploaded to RAW device API
-  continueUnprocessedRawData()
+
+  // TODO Raw Device API: Wait for a data processor topic to be created on the message queue before dispatching messages to it.
+  // TODO Raw Device API: Delete topics on the message queue that were completely processed when server starts
+  // TODO Raw Device API: Archive records from the DeviceApiRaw table once they have been processed
   next()
 }
 deviceApiRawPlugin.attributes = {

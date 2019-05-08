@@ -24,6 +24,7 @@ const subscriptions = [
     actions: {
       DEVICE_RAW_MESSAGE_RESPONSE_READY: {
         purgeOnStart: true,
+        shouldHandle: () => false,
         handlerFunction: async () => Promise.resolve(),
       },
       DEVICE_RAW_MESSAGE_POSTED: {
@@ -34,10 +35,12 @@ const subscriptions = [
       },
       DEVICE_RAW_MESSAGE_PROCESSED: {
         purgeOnStart: true,
+        shouldHandle: () => false,
         handlerFunction: async () => Promise.resolve(),
       },
       DEVICE_RAW_MESSAGE_ERROR: {
         purgeOnStart: true,
+        shouldHandle: () => false,
         handlerFunction: async () => Promise.resolve(),
       },
     },

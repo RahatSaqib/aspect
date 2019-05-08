@@ -7,6 +7,7 @@ const { getUtcTime } = require('../../src/shared/date')
 const { decrypt } = require('../../src/shared/encryption')
 const { randomToken } = require('../../src/deviceApi/apiKey')
 const { waitAsyncComplete } = require('../utils/generatorFunctionUtils')
+const { deviceApiRawStatusToId } = require('../../src/shared/dictionary')
 
 const server = supertest.agent('http://localhost:8080')
 const { assert, expect } = chai
@@ -253,6 +254,10 @@ describe('Device API Raw routes', () => {
       })
       expect(decryptedRequestData.auth.credentials.token).to.equal(
         validApiKeyToken
+      )
+      const processedStatusId = await deviceApiRawStatusToId('Processed')
+      expect(deviceApiRawRecord.deviceApiRawStatusId).to.equal(
+        processedStatusId
       )
     })
 

@@ -16,13 +16,6 @@ async function createMessageQueue(name) {
   return new MessageQueue(name).connect()
 }
 
-async function loadMessageQueue(name) {
-  if (name == null) {
-    throw new Error('Must specify unique queue name')
-  }
-  return new MessageQueue(name).loadChannel()
-}
-
 class MessageQueue {
   constructor(name) {
     this.name = name
@@ -42,15 +35,6 @@ class MessageQueue {
       // Do not deliver next message until ack previous per subscriber
       await channel.prefetch(1, false)
       this.channel = channel
-    }
-    return this
-  }
-
-  async loadChannel() {
-    if (!this.channel) {
-      debug(`load ${this.name}`)
-      const connection = await amqp.connect(config.amqp.url)
-      this.channel = _.get(connection, 'connection.channels[0]')
     }
     return this
   }
@@ -401,4 +385,4 @@ class MessageContext {
   }
 }
 
-module.exports = { createMessageQueue, loadMessageQueue }
+module.exports = { createMessageQueue }

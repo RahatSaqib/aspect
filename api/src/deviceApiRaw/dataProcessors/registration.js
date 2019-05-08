@@ -3,6 +3,7 @@ const Promise = require('bluebird')
 const registeredDataProcessors = [
   require('./cepheidGeneXpert'),
   require('./alereQ'),
+  require('./bdMgit'),
   require('./default'),
 ]
 
