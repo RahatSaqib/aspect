@@ -28,6 +28,12 @@
           "name": "NMRL Hain GenoScan",
           "shortName": "NMRL Hain GenoScan",
           "deviceApiKey": "qptwpk3y5vb662c6g0dg"
+        },
+        {
+          "deviceTypeId": "SenaiteLims",
+          "name": "NMRL Senaite LIMS",
+          "shortName": "NMRL Senaite",
+          "deviceApiKey": "259xca1mqtf0yhbrz4w0"
         }
       ]
     }

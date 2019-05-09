@@ -9,6 +9,7 @@ const {
   addDeviceCapacities,
   setCapacityForExistingDevices,
 } = require('../utils')
+const { randomToken } = require('../../src/deviceApi/apiKey')
 const {
   deviceTypeToId,
   deviceStatusToId,
@@ -200,10 +201,11 @@ async function seed(knex) {
       if (lab.devices) {
         await Promise.all(
           _.map(lab.devices, async device => {
+            const deviceAiKeyToken = device.deviceApiKey || randomToken()
             const deviceData =
               (await knex('DeviceApiKey as dak')
                 .join('Device as d', 'dak.deviceId', 'd.id')
-                .where('dak.token', device.deviceApiKey)
+                .where('dak.token', deviceAiKeyToken)
                 .first('d.*')) || {}
             if (_.isEmpty(deviceData)) {
               deviceData.partnerId = partnerId
@@ -226,7 +228,7 @@ async function seed(knex) {
               })
               deviceData.id = deviceId
               await knex('DeviceApiKey').insert({
-                token: device.deviceApiKey,
+                token: deviceAiKeyToken,
                 revoked: 0,
                 partnerId,
                 geographyId: siteData.geographyId,

@@ -9,6 +9,22 @@ const {
 
 async function seed(knex) {
   const labDeviceTypeCategoryId = await deviceTypeCategoryToId('Lab')
+  const informationSystemDeviceTypeCategoryId = await deviceTypeCategoryToId(
+    'Information System'
+  )
+
+  const { id: deviceTypeSenaiteLimsId } =
+  (await knex('DeviceType')
+    .where('externalId', 'SenaiteLims')
+    .first('id')) || {}
+  if (!deviceTypeSenaiteLimsId) {
+    await knex('DeviceType').insert({
+      externalId: 'SenaiteLims',
+      name: 'Senaite LIMS',
+      manufacturer: 'Senaite',
+      deviceTypeCategoryId: informationSystemDeviceTypeCategoryId,
+    })
+  }
 
   let { id: deviceTypeBDMGITId } =
     (await knex('DeviceType')
