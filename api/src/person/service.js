@@ -305,12 +305,58 @@ async function updatePersonUserPreferences(request) {
   return response
 }
 
+async function listReporters(request) {
+  const { query, auth } = request
+  const dataConstraints = await getConstraints(auth.credentials)
+
+  const reporterQuery = knex('RefreshToken as r')
+    .innerJoin('Person as p', 'r.userId', 'p.userId')
+    .innerJoin('Partner as prt', 'p.lastPartnerId', 'prt.id')
+    // .where('pt.personId', '=', knex.raw('p.id'))  get just reporter_app
+    .modify(addConstraints, dataConstraints, { partner: 'prt' })
+    // .where('')
+    .modify(filterParams, query, {})
+
+  const getCount = reporterQuery
+    .clone()
+    .count('r.clientId as count')
+    .first()
+
+  const getItems = reporterQuery
+    .clone()
+    .modify(sortPageParams, query, 'name')
+    .select(
+      'p.name as user',
+      'r.clientName as deviceName',
+      'r.createdOn',
+      'r.revoked as status'
+    )
+
+  const [{ count: total }, data] = await Promise.all([getCount, getItems])
+
+  // Fix with real data from Results download table
+  data.forEach(it => {
+    it.lastSeen = Date.now()
+    it.deliveredLastMonth = _.random(0, 10)
+    it.deliveredThisMonth = _.random(0, 20)
+    it.acknowledgedRatio = _.random(0, 1)
+    it.totalFlagged = _.random(1, total)
+  })
+  return { ok: true, total, length: data.length, data }
+}
+
+async function updateReporter() {
+  const data = ['updated']
+  return { ok: true, total: 40, length: data.length, data }
+}
 module.exports = {
   listPeople,
+  listReporters,
   availableContacts,
   assignContact,
   unAssignContact,
   showPerson,
   updatePerson,
   updatePersonUserPreferences,
+  updateReporter,
 }

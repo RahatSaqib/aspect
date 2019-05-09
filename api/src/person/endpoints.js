@@ -1,14 +1,20 @@
 const Joi = require('joi')
-const { asyncHandler, validateSortPageParams } = require('../routes')
+const {
+  asyncHandler,
+  validateDateRangeParams,
+  validateSortPageParams,
+} = require('../routes')
 const {
   validateAllGeographyFilterParams,
 } = require('../geography/requestValidation')
 const {
   listPeople,
+  listReporters,
   availableContacts,
   showPerson,
   updatePerson,
   updatePersonUserPreferences,
+  updateReporter,
   assignContact,
   unAssignContact,
 } = require('./service')
@@ -48,6 +54,57 @@ const routes = [
       description: 'Available People List',
       notes: 'List of available users that logged in user can assign to a site',
       auth: { scope: ['site:view', 'site:edit'] },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/reporter',
+    handler: asyncHandler(listReporters),
+    config: {
+      description: 'List of all reporter apps',
+      auth: { scope: ['reporter:view', 'reporter:edit'] },
+      validate: {
+        query: Object.assign(
+          {
+            contactNameOrEmail: Joi.string()
+              .allow('')
+              .description('Filter for person name/email'),
+            deviceName: Joi.string()
+              .allow('')
+              .description('Filter for device name'),
+            status: Joi.string()
+              .valid('0', '1')
+              .description('Filter for revoked status'),
+          },
+          validateDateRangeParams(),
+          validateSortPageParams(
+            'user',
+            'deviceName',
+            'createdOn',
+            // Fix with real data from ResultsDownlad table tbd
+            // 'lastSeen',
+            // 'lastMonth',
+            // 'thisMonth',
+            // 'deliveredLastMonth',
+            // 'deliveredThisMonth',
+            // 'acknowledgedRatio',
+            // 'totalFlagged',
+            'status'
+          )
+        ),
+      },
+    },
+  },
+  {
+    method: 'PUT',
+    path: '/reporter',
+    handler: asyncHandler(updateReporter),
+    config: {
+      description: 'List of all reporter apps',
+      auth: { scope: ['reporter:edit'] },
+      validate: {
+        query: Object.assign({}),
+      },
     },
   },
   {

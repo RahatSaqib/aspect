@@ -4,10 +4,9 @@ import Immutable from 'immutable'
 import { defineMessages } from 'react-intl'
 
 import { aspectFetch } from '../shared/utils/fetch'
-import { mergeToFiltersParams } from '../filter/utils'
 import {
   filterFieldsRejectedError,
-  errorNotFound,
+  // errorNotFound,
   errorPleaseTryAgainInAFewMinutes,
   errorInsufficientScope,
 } from '../error/CommonErrorNotifications'
@@ -22,9 +21,6 @@ import {
 export const types = {
   REQUEST_REPORTERS: 'REQUEST_REPORTERS',
   RECEIVE_REPORTERS: 'RECEIVE_REPORTERS',
-
-  REQUEST_SINGLE_REPORTER: 'REQUEST_SINGLE_REPORTER',
-  RECEIVE_SINGLE_REPORTER: 'RECEIVE_SINGLE_REPORTER',
 
   REQUEST_UPDATING_SINGLE_REPORTER: 'REQUEST_UPDATING_SINGLE_REPORTER',
   RECEIVE_UPDATED_SINGLE_REPORTER: 'RECEIVE_UPDATED_SINGLE_REPORTER',
@@ -52,20 +48,18 @@ function receiveReporters(json) {
 }
 
 export function fetchReporters(
-  rawFiltersParams,
-  extraFilters = {},
+  filtersParams,
   sortCol,
   sortDir,
   page,
   pageSize
 ) {
   return dispatch => {
-    const filtersParams = mergeToFiltersParams(extraFilters, rawFiltersParams)
     const filters = _.fromPairs([...filtersParams.entries()])
     dispatch(requestReporters(sortCol, sortDir, page, pageSize, filters))
 
     return aspectFetch(
-      `/device?${stringify({
+      `/reporter?${stringify({
         sortCol,
         sortDir,
         page,
@@ -101,47 +95,6 @@ export function fetchReporters(
         },
       }
     ).then(json => dispatch(receiveReporters(json)))
-  }
-}
-
-function requestSingleReporter(reporterId) {
-  return {
-    type: types.REQUEST_SINGLE_REPORTER,
-    reporterId,
-  }
-}
-
-function receiveSingleReporter(item) {
-  return {
-    type: types.RECEIVE_SINGLE_REPORTER,
-    item,
-  }
-}
-
-export function fetchSingleReporter(reporterId) {
-  return dispatch => {
-    dispatch(requestSingleReporter(reporterId))
-
-    return aspectFetch(`/device/${reporterId}`, {
-      errorNotifications: {
-        404: errorNotFound(
-          defineMessages({
-            title: {
-              id: 'errorResponseMessages.fetchSingleReporter.GET.404.title',
-              defaultMessage: 'Could Not Find Reporter Details',
-            },
-          })
-        ),
-        default: errorPleaseTryAgainInAFewMinutes(
-          defineMessages({
-            title: {
-              id: 'errorResponseMessages.fetchSingleReporter.GET.default.title',
-              defaultMessage: 'Error Loading Reporter Details',
-            },
-          })
-        ),
-      },
-    }).then(json => dispatch(receiveSingleReporter(json.data)))
   }
 }
 
@@ -202,7 +155,6 @@ export default function reporterReducer(state = initialState, action) {
         mutState.set('items', receiveList(mutState.items, immutList))
         mutState.set('table', receiveTableItems(mutState.table, action.total))
       })
-    case types.RECEIVE_SINGLE_REPORTER:
     case types.RECEIVE_UPDATED_SINGLE_REPORTER:
       return state.withMutations(mutState => {
         const immutItem = Immutable.fromJS(action.item)
