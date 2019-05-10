@@ -675,7 +675,6 @@ const unassignJobContext = async request =>
 async function manageJobContext(request, mode) {
   const { payload } = request
   const { personId, jobFunctionId, geographyId, siteId } = payload
-  // const { payload: { personId, jobFunctionId, geographyId, siteId } } = request
   // validate
   const bothMissing = !geographyId && !siteId
   const bothPresent = !!geographyId && !!siteId
