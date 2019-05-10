@@ -40,13 +40,13 @@ class DefaultSenaiteLIMS extends SynchronousDataProcessor {
           'Invalid device API key: Cannot determine which device this came from'
         )
       }
-      const [deviceLogId] = await knex('DeviceLog').insert({
+      await knex('DeviceLog').insert({
         deviceId,
         source: _.get(payload, 'log.source', ''),
         createdOn: now,
         senderIp: remoteAddress,
         // TODO: DeviceLog handle non-JSON payloads
-        rawMessage: request.plugins.rawPayload,
+        rawMessage: JSON.stringify(request.plugins.rawPayload),
       })
       await knex('Device')
         .where({ id: deviceId })

@@ -47,7 +47,7 @@ class DefaultBDMGIT extends SynchronousDataProcessor {
         createdOn: now,
         senderIp: remoteAddress,
         // TODO: DeviceLog handle non-JSON payloads
-        rawMessage: request.plugins.rawPayload,
+        rawMessage: JSON.stringify(request.plugins.rawPayload),
       })
       await knex('Device')
         .where({ id: deviceId })
