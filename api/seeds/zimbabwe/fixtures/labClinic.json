@@ -11,15 +11,15 @@
       "devices": [
         {
           "deviceTypeId": "BDMGIT",
-          "name": "NMRL BD MGIT MG3394",
-          "shortName": "NMRL MG3394",
+          "name": "NMRL BD MGIT GF009366 #2",
+          "shortName": "NMRL MGIT #2",
           "deviceSerial": "MG3394",
           "deviceApiKey": "c1d62qva2xbuvk3dgad0"
         },
         {
           "deviceTypeId": "BDMGIT",
-          "name": "NMRL BD MGIT MG3075",
-          "shortName": "NMRL MG3075",
+          "name": "NMRL BD MGIT GF009367 #1",
+          "shortName": "NMRL MGIT #1",
           "deviceSerial": "MG3075",
           "deviceApiKey": "259xca1mqtf0yhbrz4w0"
         },
