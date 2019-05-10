@@ -4,6 +4,7 @@ const registeredDataProcessors = [
   require('./cepheidGeneXpert'),
   require('./alereQ'),
   require('./bdMgit'),
+  require('./senaiteLims'),
   require('./default'),
 ]
 
