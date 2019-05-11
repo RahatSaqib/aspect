@@ -602,6 +602,7 @@ async function getUserFeatures(request) {
   const featureModules = await getFeatures(id, name, partnerId)
   return { ok: true, data: featureModules }
 }
+
 async function getApplicableLicense(personId, partnerId) {
   const latestLicense = await query(
     'Get latest applicable license and when user accepted it'
