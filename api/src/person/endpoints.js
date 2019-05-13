@@ -58,7 +58,7 @@ const routes = [
   },
   {
     method: 'GET',
-    path: '/reporter',
+    path: '/person/reporter',
     handler: asyncHandler(listReporters),
     config: {
       description: 'List of all reporter apps',
@@ -97,13 +97,20 @@ const routes = [
   },
   {
     method: 'PUT',
-    path: '/reporter',
+    path: '/person/reporter/{reporterId}',
     handler: asyncHandler(updateReporter),
     config: {
-      description: 'List of all reporter apps',
-      auth: { scope: ['reporter:edit'] },
+      description: 'Update a reporter',
+      auth: { scope: ['reporter:view', 'reporter:edit'] },
       validate: {
-        query: Object.assign({}),
+        params: {
+          reporterId: Joi.string()
+            .description('Reporter id')
+            .required(),
+        },
+        payload: {
+          revoked: Joi.bool().required(),
+        },
       },
     },
   },

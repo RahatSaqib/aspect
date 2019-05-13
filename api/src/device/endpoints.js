@@ -109,6 +109,9 @@ function listDevicesBaseConfig() {
           .description('The devices')
           .items(
             Joi.object().keys({
+              // error
+              // errorRateThreshold
+
               id: Joi.number()
                 .required()
                 .description('The ID of the device'),
@@ -213,9 +216,6 @@ function listDevicesBaseConfig() {
                     .required()
                     .description('The error rate'),
                 }),
-              user: Joi.string().description(
-                'The user of the reporter / device'
-              ),
             })
           ),
       }),

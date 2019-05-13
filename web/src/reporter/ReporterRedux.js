@@ -59,7 +59,7 @@ export function fetchReporters(
     dispatch(requestReporters(sortCol, sortDir, page, pageSize, filters))
 
     return aspectFetch(
-      `/reporter?${stringify({
+      `/person/reporter?${stringify({
         sortCol,
         sortDir,
         page,
@@ -116,8 +116,7 @@ function receiveUpdatedSingleReporter(item) {
 export function updateSingleReporter(reporterId, data) {
   return dispatch => {
     dispatch(requestUpdatingSingleReporter(reporterId, data))
-
-    return aspectFetch(`/device/${reporterId}`, {
+    return aspectFetch(`/person/reporter/${reporterId}`, {
       method: 'PUT',
       body: JSON.stringify(data),
       errorNotifications: {
@@ -132,7 +131,9 @@ export function updateSingleReporter(reporterId, data) {
           })
         ),
       },
-    }).then(json => dispatch(receiveUpdatedSingleReporter(json.data)))
+    }).then(json => {
+      return dispatch(receiveUpdatedSingleReporter(json.data))
+    })
   }
 }
 /*

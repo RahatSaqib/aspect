@@ -312,9 +312,8 @@ async function listReporters(request) {
   const reporterQuery = knex('RefreshToken as r')
     .innerJoin('Person as p', 'r.userId', 'p.userId')
     .innerJoin('Partner as prt', 'p.lastPartnerId', 'prt.id')
-    // .where('pt.personId', '=', knex.raw('p.id'))  get just reporter_app
+    // .where({ clientType: 'reporter_app' }) // get just reporter_app
     .modify(addConstraints, dataConstraints, { partner: 'prt' })
-    // .where('')
     .modify(filterParams, query, {})
 
   const getCount = reporterQuery
@@ -324,12 +323,13 @@ async function listReporters(request) {
 
   const getItems = reporterQuery
     .clone()
-    .modify(sortPageParams, query, 'name')
+    .modify(sortPageParams, query, 'user')
     .select(
+      'r.clientId as id',
       'p.name as user',
       'r.clientName as deviceName',
       'r.createdOn',
-      'r.revoked as status'
+      'r.revoked'
     )
 
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
@@ -345,9 +345,25 @@ async function listReporters(request) {
   return { ok: true, total, length: data.length, data }
 }
 
-async function updateReporter() {
-  const data = ['updated']
-  return { ok: true, total: 40, length: data.length, data }
+async function updateReporter(request) {
+  const { params, payload } = request
+  const selectedReporter = await knex('RefreshToken')
+    .where('clientId', params.reporterId)
+    .update({
+      revoked: payload.revoked,
+    })
+
+  if (selectedReporter !== 1) {
+    return Boom.badRequest()
+  }
+
+  return {
+    ok: true,
+    data: {
+      id: params.reporterId,
+      revoked: payload.revoked,
+    },
+  }
 }
 module.exports = {
   listPeople,

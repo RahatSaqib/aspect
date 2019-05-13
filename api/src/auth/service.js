@@ -243,6 +243,7 @@ async function getFeatures(id, name, partnerId) {
     .where({ 'ps.userId': id, 'jf.partnerId': partnerId })
     .orderBy(['f.module'])
     .distinct('f.module')
+  // console.log('==========', modules)
   return modules
 }
 

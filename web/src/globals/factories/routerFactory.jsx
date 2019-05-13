@@ -39,7 +39,7 @@ import InventoryItemsList from '../../inventory/list/InventoryItemsList'
 import RouterList from '../../router/list/RouterList'
 import RouterDetail from '../../router/detail/RouterDetail'
 import ReporterList from '../../reporter/list/ReporterList'
-import ReporterDetail from '../../reporter/detail/ReporterDetail'
+// import ReporterDetail from '../../reporter/detail/ReporterDetail'
 import NotFound from '../../error/notFound/NotFound'
 import License from '../../auth/license/License'
 
@@ -120,7 +120,7 @@ const renderDeviceApiKeyList = loggedInFactory(DeviceApiKeyList)
 const renderRouterList = loggedInFactory(RouterList)
 const renderRouterDetail = loggedInFactory(RouterDetail)
 const renderReporterList = loggedInFactory(ReporterList)
-const renderReporterDetail = loggedInFactory(ReporterDetail)
+// const renderReporterDetail = loggedInFactory(ReporterDetail)
 const renderResultList = loggedInFactory(ResultList)
 const renderResultDetail = loggedInFactory(ResultDetail)
 const renderSiteList = loggedInFactory(SiteList)
@@ -314,7 +314,7 @@ export const routerFactory = () => props => (
           renderReporterList
         }
       />
-      <Route
+      {/* <Route
         path="/browse/reporter/:terminalId"
         render={
           renderRedirectToLoginOr(props) ||
@@ -322,7 +322,7 @@ export const routerFactory = () => props => (
           renderRedirectToNotFound(props, ['reporter']) ||
           renderReporterDetail
         }
-      />
+      /> */}
 
       <Route
         exact

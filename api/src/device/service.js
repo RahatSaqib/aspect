@@ -204,7 +204,6 @@ async function getListDevices(query, auth) {
       total: 30,
       rate: availabilityCount / 30,
     }
-    it.user = '0' // fix when result download table is added
 
     it.error = {
       count: it.thisMonthErrors || 0,
