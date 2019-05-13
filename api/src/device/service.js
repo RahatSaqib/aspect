@@ -198,7 +198,6 @@ async function getListDevices(query, auth) {
   data.forEach(it => {
     // FIXME: Use actual data instead
     const availabilityCount = _.random(25, 30)
-
     it.availability = {
       count: availabilityCount,
       total: 30,

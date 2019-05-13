@@ -6,7 +6,7 @@ import { defineMessages } from 'react-intl'
 import { aspectFetch } from '../shared/utils/fetch'
 import {
   filterFieldsRejectedError,
-  // errorNotFound,
+  errorNotFound,
   errorPleaseTryAgainInAFewMinutes,
   errorInsufficientScope,
 } from '../error/CommonErrorNotifications'
@@ -120,6 +120,14 @@ export function updateSingleReporter(reporterId, data) {
       method: 'PUT',
       body: JSON.stringify(data),
       errorNotifications: {
+        404: errorNotFound(	
+          defineMessages({	
+            title: {	
+              id: 'errorResponseMessages.updateSingleReporter.GET.404.title',	
+              defaultMessage: 'Could Not Find Reporter',	
+            },	
+          })	
+        ),
         default: errorPleaseTryAgainInAFewMinutes(
           defineMessages({
             title: {
@@ -131,9 +139,7 @@ export function updateSingleReporter(reporterId, data) {
           })
         ),
       },
-    }).then(json => {
-      return dispatch(receiveUpdatedSingleReporter(json.data))
-    })
+    }).then(json => dispatch(receiveUpdatedSingleReporter(json.data)))
   }
 }
 /*

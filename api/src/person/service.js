@@ -354,7 +354,7 @@ async function updateReporter(request) {
     })
 
   if (selectedReporter !== 1) {
-    return Boom.badRequest()
+    return Boom.notFound()
   }
 
   return {

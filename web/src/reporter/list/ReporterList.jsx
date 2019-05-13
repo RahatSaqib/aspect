@@ -283,8 +283,6 @@ export const ReporterList = ({
                 key={reporter.get('id')}
                 intl={intl}
                 reporter={reporter}
-                // onClick={onRowClick}
-                data-reporter-id={reporter.get('id')}
               />
             ))}
           </TableBody>
