@@ -1,6 +1,5 @@
 const _ = require('lodash')
 const Boom = require('boom')
-const isBoom = require('boom/isBoom')
 const { query, knex, transact } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 const { getUser } = require('../auth/service')
@@ -50,6 +49,29 @@ async function getJobFunctionsForSelectList(request) {
     data: partners,
   }
 }
+// ----------------------------------------------------------------------------------------
+async function getPermissions(request) {
+  const { params: { personId, partnerId } } = request
+  const { auth } = request
+  const user = await getUser(auth.credentials.name)
+  if (user.partnerId !== +partnerId) {
+    return Boom.expectationFailed('partnerId does not match user.partnerId')
+  }
+  //
+  const data = await query('Get permissions for person and partner')
+    .from('Permission as p')
+    .innerJoin('JobFunctionPermission as jfp', 'p.id', 'jfp.permissionId')
+    .innerJoin('JobFunction as jf', 'jfp.jobFunctionId', 'jf.id')
+    .innerJoin('Job as j', 'j.jobFunctionId', 'jf.id')
+    .innerJoin('Person as ps', 'j.personId', 'ps.id')
+    .where('jf.partnerId', partnerId)
+    .where('ps.id', personId)
+    .orderBy(['p.module', 'p.activity'])
+    .distinct('p.module', 'p.activity')
+    .then(async items => items.map(p => `${p.module}:${p.activity}`))
+  //
+  return { ok: true, data }
+}
 
 // ----------------------------------------------------------------------------------------
 async function getJobFunction(jobFunctionId, partnerId, err) {
@@ -76,7 +98,7 @@ async function manageJob(request, mode) {
   // should be same 'partnerId' in requested jobFunction and current user
   const err = 'Only Admin with same partnerId as JobFunction can manage Jobs'
   const jf = await getJobFunction(jobFunctionId, partnerId, err)
-  if (isBoom(jf)) {
+  if (jf.isBoom) {
     return jf
   }
 
@@ -120,29 +142,50 @@ const unassignJobContext = async request =>
 async function manageJobContext(request, mode) {
   const { payload } = request
   const { personId, jobFunctionId, geographyId, siteId } = payload
-  // validate
-  const bothMissing = !geographyId && !siteId
-  const bothPresent = !!geographyId && !!siteId
-  if (bothMissing || bothPresent) {
-    return Boom.conflict(
-      'Either geographyId or siteId (not both) is needed to manage JobContext'
+  let { jobId } = payload
+  // validate - at least one id is needed
+  if (!jobId && !personId && !jobFunctionId) {
+    return Boom.expectationFailed(
+      'Either jobId or geographyId or siteId is needed to manage JobContext'
     )
   }
-  const jobResponse = await assignJob(request)
-  if (isBoom(jobResponse)) {
-    return jobResponse
+  // validate - if no jobId, then check personId/jobFunctionId and geographyId/siteId
+  if (!jobId) {
+    if (!personId && !jobFunctionId) {
+      return Boom.expectationFailed(
+        'Both personId and jobFunctionId are missing'
+      )
+    }
+    const bothMissing = !geographyId && !siteId
+    const bothPresent = !!geographyId && !!siteId
+    if (bothMissing || bothPresent) {
+      return Boom.conflict(
+        'Either geographyId or siteId (not both) is needed to manage JobContext'
+      )
+    }
+    const jobResponse = await assignJob(request)
+    if (jobResponse.isBoom) {
+      return jobResponse
+    }
+    // get jobId for requested 'personId' and 'jobFunctionId'
+    // (notice that array jobResponse.data must have such item after 'assignJob()')
+    ;[{ id: jobId }] = jobResponse.data.filter(
+      x => x.personId === personId && x.jobFunctionId === jobFunctionId
+    )
   }
-  // get jobId for requested 'personId' and 'jobFunctionId'
-  // (notice that array jobResponse.data must have such item after 'assignJob()')
-  const { id: jobId } = jobResponse.data.find(
-    x => x.personId === personId && x.jobFunctionId === jobFunctionId
-  )
-  const whereProps = { jobId, geographyId, siteId }
+
+  const q = knex('JobContext')
+    .where({ jobId })
+    .where(function() {
+      if (geographyId) {
+        this.where({ geographyId })
+      } else if (siteId) {
+        this.where({ siteId })
+      }
+    })
   if (mode === MODE_DELETE) {
     // remove JobContext
-    await knex('JobContext')
-      .where(whereProps)
-      .del()
+    await q.clone().del()
     // remove Job if requested
     const { removeJob } = payload
     if (removeJob) {
@@ -150,17 +193,15 @@ async function manageJobContext(request, mode) {
     }
   } else if (mode === MODE_INSERT) {
     // create JobContext entry if missing
-    const jobContext = await knex('JobContext')
-      .where(whereProps)
-      .first()
+    const jobContext = await q.clone().first()
     if (!jobContext) {
-      await knex('JobContext').insert(whereProps)
+      await knex('JobContext').insert({ jobId, geographyId, siteId })
     }
   }
   // return all jobContexts for requested person
   const jobContexts = await knex('JobContext as jc')
     .join('Job as j', 'jc.jobId', 'j.id')
-    .where('j.personId', personId)
+    .where('jc.jobId', jobId)
     .select(
       'jc.jobId',
       'jc.geographyId',
@@ -180,7 +221,7 @@ async function manageJobFunctionBaseItems(request, tableName, mode, err) {
 
   // should be same 'partnerId' in requested jobFunction and current user
   const jf = await getJobFunction(jobFunctionId, partnerId, err)
-  if (isBoom(jf)) {
+  if (jf.isBoom) {
     return jf
   }
 
@@ -303,6 +344,7 @@ async function unassignJobFunctionPermissions(request) {
 
 module.exports = {
   getJobFunctionsForSelectList,
+  getPermissions,
   //
   assignJob,
   unassignJob,

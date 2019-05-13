@@ -2,9 +2,7 @@ const Joi = require('joi')
 const { asyncHandler } = require('../routes')
 const {
   getJobFunctionsForSelectList,
-  // --------------------
-  // API for permissions
-  // --------------------
+  getPermissions,
   assignJob,
   unassignJob,
   assignJobContext,
@@ -29,76 +27,60 @@ const ok = Joi.boolean()
     FYI - breakable error is when return Boom.
     `
   )
-const jobConfig = {
-  auth: { scope: ['person:admin'] },
-  validate: {
-    payload: {
-      personId: Joi.number().required(),
-      jobFunctionId: Joi.number().required(),
-    },
+
+const jobResponse = {
+  options: {
+    allowUnknown: false,
   },
-  response: {
-    options: {
-      allowUnknown: false,
-    },
-    schema: Joi.object().keys({
-      ok,
-      data: Joi.array()
-        .required()
-        .description('All jobs for specified person')
-        .items(
-          Joi.object().keys({
-            id: Joi.number()
-              .required()
-              .description('Job.id'),
-            personId: Joi.number()
-              .required()
-              .description('Job.personId'),
-            jobFunctionId: Joi.number()
-              .required()
-              .description('Job.jobFunctionId'),
-          })
-        ),
-    }),
-  },
+  schema: Joi.object().keys({
+    ok,
+    data: Joi.array()
+      .required()
+      .description('All jobs for specified person')
+      .items(
+        Joi.object().keys({
+          id: Joi.number()
+            .required()
+            .description('Job.id'),
+          personId: Joi.number()
+            .required()
+            .description('Job.personId'),
+          jobFunctionId: Joi.number()
+            .required()
+            .description('Job.jobFunctionId'),
+        })
+      ),
+  }),
 }
-const jobContextConfig = {
-  auth: { scope: ['person:admin'] },
-  validate: {
-    payload: {
-      personId: Joi.number().required(),
-      jobFunctionId: Joi.number().required(),
-      geographyId: Joi.number().allow(null),
-      siteId: Joi.number().allow(null),
-      removeJob: Joi.boolean().allow(null),
-    },
+const jobContextResponse = {
+  options: {
+    allowUnknown: false,
   },
-  response: {
-    options: {
-      allowUnknown: false,
-    },
-    schema: Joi.object().keys({
-      ok,
-      data: Joi.array()
-        .required()
-        .description('All job contexts for specified person')
-        .items(
-          Joi.object().keys({
-            jobId: Joi.number()
-              .required()
-              .description('JobContext.jobId'),
-            personId: Joi.number()
-              .required()
-              .description('Job.personId'),
-            jobFunctionId: Joi.number()
-              .required()
-              .description('Job.jobFunctionId'),
-            geographyId: Joi.number().description('JobContext.geographyId'),
-            siteId: Joi.number().description('JobContext.siteId'),
-          })
-        ),
-    }),
-  },
+  schema: Joi.object().keys({
+    ok,
+    data: Joi.array()
+      .required()
+      .description('All job contexts for specified person')
+      .items(
+        Joi.object().keys({
+          jobId: Joi.number()
+            .required()
+            .description('JobContext.jobId'),
+          personId: Joi.number()
+            .required()
+            .description('Job.personId'),
+          jobFunctionId: Joi.number()
+            .required()
+            .description('Job.jobFunctionId'),
+          geographyId: Joi.number()
+            .allow(null)
+            .description('JobContext.geographyId'),
+          siteId: Joi.number()
+            .allow(null)
+            .description('JobContext.siteId'),
+        })
+      ),
+  }),
 }
 const jobFunctionDashboardWidgetResponse = {
   options: {
@@ -178,6 +160,32 @@ const routes = [
       auth: { scope: ['person'] },
     },
   },
+  {
+    method: 'GET',
+    path: '/job-function/permissions/{personId}/{partnerId}',
+    handler: asyncHandler(getPermissions),
+    config: {
+      description: 'Get list of permissions for person and partner',
+      notes: 'Get list of permissions for person and partner',
+      auth: { scope: ['person'] },
+      response: {
+        options: {
+          allowUnknown: false,
+        },
+        schema: Joi.object().keys({
+          ok,
+          data: Joi.array()
+            .required()
+            .description('Base list of permissions for person and partner')
+            .items(
+              Joi.string()
+                .required()
+                .description('in format "module:action", like "device:edit" ')
+            ),
+        }),
+      },
+    },
+  },
   // ------------
   // Job
   // ------------
@@ -188,17 +196,31 @@ const routes = [
     config: {
       description: 'Assign person to job function',
       notes: 'Assign person to job function',
-      ...jobConfig,
+      auth: { scope: ['person:admin'] },
+      validate: {
+        payload: {
+          personId: Joi.number().required(),
+          jobFunctionId: Joi.number().required(),
+        },
+      },
+      response: jobResponse,
     },
   },
   {
-    method: 'PUT',
+    method: 'POST',
     path: '/job-function/unassign-job',
     handler: asyncHandler(unassignJob),
     config: {
       description: 'Un-assign person from job function',
       notes: 'Un-assign person from job function',
-      ...jobConfig,
+      auth: { scope: ['person:admin'] },
+      validate: {
+        payload: {
+          personId: Joi.number().required(),
+          jobFunctionId: Joi.number().required(),
+        },
+      },
+      response: jobResponse,
     },
   },
   // ------------
@@ -211,17 +233,39 @@ const routes = [
     config: {
       description: 'Assign specified person to Job Context',
       notes: 'Assign specified person to Job Context',
-      ...jobContextConfig,
+      auth: { scope: ['person:admin'] },
+      validate: {
+        payload: {
+          jobId: Joi.number(),
+          personId: Joi.number(),
+          jobFunctionId: Joi.number(),
+          geographyId: Joi.number(),
+          siteId: Joi.number(),
+          removeJob: Joi.boolean(),
+        },
+      },
+      response: jobContextResponse,
     },
   },
   {
-    method: 'PUT',
+    method: 'POST',
     path: '/job-function/unassign-job-context',
     handler: asyncHandler(unassignJobContext),
     config: {
       description: 'Un-assign specified person from Job Context',
       notes: 'Un-assign specified person from Job Context',
-      ...jobContextConfig,
+      auth: { scope: ['person:admin'] },
+      validate: {
+        payload: {
+          jobId: Joi.number(),
+          personId: Joi.number(),
+          jobFunctionId: Joi.number(),
+          geographyId: Joi.number(),
+          siteId: Joi.number(),
+          removeJob: Joi.boolean(),
+        },
+      },
+      response: jobContextResponse,
     },
   },
   // ------------
@@ -247,7 +291,7 @@ const routes = [
     },
   },
   {
-    method: 'PUT',
+    method: 'POST',
     path: '/job-function/unassign-dashboard-widget',
     handler: asyncHandler(unassignJobFunctionDashboardWidgets),
     config: {
@@ -289,7 +333,7 @@ const routes = [
     },
   },
   {
-    method: 'PUT',
+    method: 'POST',
     path: '/job-function/unassign-features',
     handler: asyncHandler(unassignJobFunctionFeatures),
     config: {
@@ -331,7 +375,7 @@ const routes = [
     },
   },
   {
-    method: 'PUT',
+    method: 'POST',
     path: '/job-function/unassign-permissions',
     handler: asyncHandler(unassignJobFunctionPermissions),
     config: {
