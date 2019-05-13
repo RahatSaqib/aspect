@@ -281,6 +281,7 @@ export class RouterDetail extends PureComponent {
   renderContent() {
     const { router, intl } = this.props
     const { formatMessage, formatDate, formatRelative } = intl
+    const contacts = router.get('contacts')
     if (!router || !router.has('deviceType')) {
       return false
     }
@@ -403,15 +404,17 @@ export class RouterDetail extends PureComponent {
           </ExpansionPanelSummary>
           <ExpansionPanelDetails>
             <Typography variant="body2">
-              {router.get('contacts').map(c => (
-                <Link
-                  key={c.get('id')}
-                  to={`/browse/person/${c.get('id')}`}
-                  className={styles.Contact}
-                >
-                  {c.get('name')}
-                </Link>
-              ))}
+              {// temp fix to get router details to display
+              contacts &&
+                contacts.map(c => (
+                  <Link
+                    key={c.get('id')}
+                    to={`/browse/person/${c.get('id')}`}
+                    className={styles.Contact}
+                  >
+                    {c.get('name')}
+                  </Link>
+                ))}
             </Typography>
           </ExpansionPanelDetails>
         </ExpansionPanel>
