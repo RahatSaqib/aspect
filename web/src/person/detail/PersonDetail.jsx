@@ -21,7 +21,7 @@ import UserPreferencesForm from './UserPreferencesForm'
 import AspectTabs from '../../components/shared/AspectTabs'
 import { Hidden, Visible } from '../../components/pureGrids'
 import NavTitle from '../../globals/components/NavTitle'
-import isEditable from '../../shared/selectors/person'
+import isEditable from '../../shared/selectors/isEditable'
 import {
   fetchSinglePerson,
   updateSinglePerson,
@@ -52,7 +52,7 @@ const enhance = compose(
       const person = state.person.items.byId.get(props.match.params.personId)
       const prefillUser = person && person.get('userId') > 0
       return {
-        editable: isEditable(state.user, person),
+        editable: isEditable(state.user, 'person'),
         person,
         canLogIn: person && person.get('canLogIn'),
         user: state.user,
