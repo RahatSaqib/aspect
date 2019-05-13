@@ -278,13 +278,15 @@ export const ReporterList = ({
             ]}
           />
           <TableBody>
-            {items.currentIdList.map(id => items.byId.get(id)).map(reporter => (
-              <ReporterDataTableRow
-                key={reporter.get('id')}
-                intl={intl}
-                reporter={reporter}
-              />
-            ))}
+            {items.currentIdList
+              .map(id => items.byId.get(id))
+              .map(reporter => (
+                <ReporterDataTableRow
+                  key={reporter.get('id')}
+                  intl={intl}
+                  reporter={reporter}
+                />
+              ))}
           </TableBody>
         </ReporterDataTable>
       )}

@@ -312,7 +312,7 @@ async function listReporters(request) {
   const reporterQuery = knex('RefreshToken as r')
     .innerJoin('Person as p', 'r.userId', 'p.userId')
     .innerJoin('Partner as prt', 'p.lastPartnerId', 'prt.id')
-    // .where({ clientType: 'reporter_app' }) // get just reporter_app
+    .where({ clientType: 'reporter_app' })
     .modify(addConstraints, dataConstraints, { partner: 'prt' })
     .modify(filterParams, query, {})
 

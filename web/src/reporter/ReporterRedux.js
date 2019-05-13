@@ -120,13 +120,13 @@ export function updateSingleReporter(reporterId, data) {
       method: 'PUT',
       body: JSON.stringify(data),
       errorNotifications: {
-        404: errorNotFound(	
-          defineMessages({	
-            title: {	
-              id: 'errorResponseMessages.updateSingleReporter.GET.404.title',	
-              defaultMessage: 'Could Not Find Reporter',	
-            },	
-          })	
+        404: errorNotFound(
+          defineMessages({
+            title: {
+              id: 'errorResponseMessages.updateSingleReporter.GET.404.title',
+              defaultMessage: 'Could Not Find Reporter',
+            },
+          })
         ),
         default: errorPleaseTryAgainInAFewMinutes(
           defineMessages({
