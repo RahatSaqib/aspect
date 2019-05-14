@@ -1,5 +1,6 @@
 const supertest = require('supertest')
 const chai = require('chai')
+const _ = require('lodash')
 
 const shared = require('../utils/sharedToken')
 const { runTestWithKnex } = require('../utils/generatorFunctionUtils')
@@ -7,12 +8,13 @@ const { runTestWithKnex } = require('../utils/generatorFunctionUtils')
 const server = supertest.agent('http://localhost:8080')
 const { assert } = chai
 
-describe.only('Permissions', () => {
+describe('Permissions', () => {
+  const path = '/api/job-function'
   const countryAbbreviation = 'US'
-  let countryId
   const partner1 = 1
-  let jobFunctionId
   const personId = 1
+  let countryId
+  let jobFunctionId
   let cleanJob = false
   let jobId
   let siteId
@@ -23,7 +25,6 @@ describe.only('Permissions', () => {
         .where('abbreviation', countryAbbreviation)
         .first('id')
       ;[{ id: countryId }] = [country]
-      // console.log({ countryId, userName })
       ;[{ id: jobFunctionId }] = [
         await knex('JobFunction')
           .where({ partnerId: partner1 })
@@ -78,8 +79,6 @@ describe.only('Permissions', () => {
   })
 
   describe('Job', () => {
-    const path = '/api/job-function'
-
     it('should un-assign person from JobFunction and return list of remaining Jobs for person', done => {
       server
         .post(`${path}/unassign-job`)
@@ -128,7 +127,7 @@ describe.only('Permissions', () => {
             x => x.personId === personId && x.jobFunctionId === jobFunctionId
           )
           assert.typeOf(item, 'Object')
-          // get 'jobId' for use in next steps
+          // get 'jobId' to use in next steps
           jobId = item.id
           assert.isNumber(jobId)
           //
@@ -138,7 +137,6 @@ describe.only('Permissions', () => {
   })
 
   describe('Job Context', () => {
-    const path = '/api/job-function'
     let cleanJobContext = false
     //
     before(async () =>
@@ -218,4 +216,123 @@ describe.only('Permissions', () => {
         })
     })
   })
+
+  // -----------------------------------------------
+  // testing 3 similar tables - JobFunctionDashboardWidget, JobFunctionFeature, JobFunctionPermission
+  // -----------------------------------------------
+  describe(
+    'JobFunction <--> Dashboard Widgets',
+    assertBaseItems('JobFunctionDashboardWidget')
+  )
+  describe('JobFunction <-> Features', assertBaseItems('JobFunctionFeature'))
+  describe(
+    'JobFunction <-> Permissions',
+    assertBaseItems('JobFunctionPermission')
+  )
+  // helper function for all 3 tables
+  function assertBaseItems(tableName) {
+    let refTable
+    let fieldName
+    let itemsPropName
+    switch (tableName) {
+      case 'JobFunctionDashboardWidget':
+        fieldName = 'widgetId' // foreign-key field name in specified tableName
+        refTable = 'DashboardWidget' // ref table pointed by FK 'fieldName'
+        itemsPropName = 'widgets' // in request payload
+        break
+      case 'JobFunctionFeature':
+        fieldName = 'featureId'
+        refTable = 'Feature'
+        itemsPropName = 'features'
+        break
+      case 'JobFunctionPermission':
+        fieldName = 'permissionId'
+        refTable = 'Permission'
+        itemsPropName = 'permissions'
+        break
+      default:
+        return _.noop
+    }
+
+    return () => {
+      let initialItems = []
+      let allRefIds = []
+      let items = []
+      const totalSampleItems = 5
+      //
+      before(async () =>
+        runTestWithKnex(async knex => {
+          allRefIds = await knex(refTable)
+            .orderBy('id')
+            .select('id')
+            .map(x => x.id)
+          // checkpoint of all existing items before test to restore them after
+          initialItems = await knex(tableName)
+            .where({ jobFunctionId })
+            .select('jobFunctionId', fieldName)
+        })
+      )
+      //
+      after(async () =>
+        runTestWithKnex(async knex => {
+          // restore to checkpoint
+          await knex(tableName)
+            .where({ jobFunctionId })
+            .del()
+          await knex(tableName).insert(initialItems)
+        })
+      )
+
+      it(`should un-assign ${totalSampleItems} ${itemsPropName} from JobFunction and return list of remaining ${itemsPropName} for this jobFunction`, done => {
+        items = _.sampleSize(allRefIds, totalSampleItems)
+        server
+          .post(`${path}/unassign-${itemsPropName}`)
+          .send({ jobFunctionId, [itemsPropName]: items })
+          .set('Authorization', `Bearer ${shared.token}`)
+          .end((err, res) => {
+            assert.equal(res.status, 200)
+            assert.typeOf(res.body, 'Object')
+            assert.property(res.body, 'ok')
+            assert.property(res.body, 'data')
+            assert.typeOf(res.body.data, 'array')
+            // list must NOT contain items we just removed
+            const item = res.body.data.find(
+              x =>
+                x.jobFunctionId === jobFunctionId &&
+                items.includes(x[fieldName])
+            )
+            assert.isUndefined(item)
+            //
+            done()
+          })
+      })
+
+      it(`should assign ${totalSampleItems} ${itemsPropName} to JobFunction and return list of all ${itemsPropName} for this jobFunction`, done => {
+        server
+          .post(`${path}/assign-${itemsPropName}`)
+          .send({ jobFunctionId, [itemsPropName]: items })
+          .set('Authorization', `Bearer ${shared.token}`)
+          .end((err, res) => {
+            assert.equal(res.status, 200)
+            assert.typeOf(res.body, 'Object')
+            assert.property(res.body, 'ok')
+            assert.property(res.body, 'data')
+            assert.typeOf(res.body.data, 'array')
+            assert.isAtLeast(res.body.data.length, totalSampleItems)
+            let item = res.body.data[0]
+            assert.property(item, fieldName)
+            assert.property(item, 'jobFunctionId')
+            // list must contain items we just added
+            item = res.body.data.find(
+              x =>
+                x.jobFunctionId === jobFunctionId &&
+                items.includes(x[fieldName])
+            )
+            assert.typeOf(item, 'Object')
+            //
+            done()
+          })
+      })
+    }
+  }
 })

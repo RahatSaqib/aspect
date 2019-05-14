@@ -273,7 +273,7 @@ const routes = [
   // ------------
   {
     method: 'POST',
-    path: '/job-function/assign-dashboard-widget',
+    path: '/job-function/assign-widgets',
     handler: asyncHandler(assignJobFunctionDashboardWidgets),
     config: {
       description: 'Assign user to access dashboard widget',
@@ -292,7 +292,7 @@ const routes = [
   },
   {
     method: 'POST',
-    path: '/job-function/unassign-dashboard-widget',
+    path: '/job-function/unassign-widgets',
     handler: asyncHandler(unassignJobFunctionDashboardWidgets),
     config: {
       description: 'Un-assign user from dashboard widget',
