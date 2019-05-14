@@ -176,10 +176,16 @@ describe('Result routes', () => {
         externalId: 'Validated',
         reason,
         operator,
+        data: 'data 2',
+        method: 'method 2',
         changedOn,
       }
       const updateWithId = {
         resultWorkflowStatusId: 1,
+        operator: 'operator 1',
+        data: 'data 1',
+        method: 'method 1',
+        reason: 'reason 1',
         externalId: null,
       }
 
@@ -230,6 +236,12 @@ describe('Result routes', () => {
             'resultWorkflowLogReason',
             'resultWorkflowLogCreatedOn',
             'resultWorkflowLogOperator',
+            'resultWorkflowLogMethod',
+            'resultWorkflowLogData',
+            'resultTreatmentMethod',
+            'resultTreatmentData',
+            'resultTreatmentReason',
+            'resultTreatmentOperator',
           ]
           _.each(resultFieldNames, fieldName => {
             assert.property(res.body.data, fieldName)
@@ -237,6 +249,14 @@ describe('Result routes', () => {
           // check the updated fieldName
           assert.equal(res.body.data.resultWorkflowStatus, 'Validated')
           assert.equal(res.body.data.resultWorkflowLogReason, reason)
+          assert.equal(
+            res.body.data.resultWorkflowLogData,
+            updateWithExternalId.data
+          )
+          assert.equal(
+            res.body.data.resultWorkflowLogMethod,
+            updateWithExternalId.method
+          )
           assert.equal(res.body.data.resultWorkflowLogOperator, operator)
           assert.closeTo(
             new Date(res.body.data.updatedOn).getTime(),
@@ -383,6 +403,8 @@ describe('Result routes', () => {
         externalId: 'AwaitingTreatment',
         data: 'should be treated',
         method: 'sms',
+        operator: 'operator 1',
+        reason: 'reason 1',
         changedOn,
       }
       // update with external ID
@@ -396,7 +418,6 @@ describe('Result routes', () => {
           const { treatmentStatus } = res.body.data
           // check the updated fieldName
           assert.equal(treatmentStatus.externalId, 'AwaitingTreatment')
-          assert.equal(treatmentStatus.changedOn, changedOn)
 
           done()
         })

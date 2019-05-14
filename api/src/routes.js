@@ -402,6 +402,24 @@ function validateResultResponse() {
     resultTreatmentStatusId: Joi.number()
       .allow(null)
       .description('ID of the result treatment status'),
+    resultWorkflowLogMethod: Joi.string()
+      .allow(null, '')
+      .description('Method from latest ResultWorkflowLog'),
+    resultWorkflowLogData: Joi.string()
+      .allow(null, '')
+      .description('Data from latest ResultWorkflowLog'),
+    resultTreatmentMethod: Joi.string()
+      .allow(null, '')
+      .description('Method from latest ResultTreatmentWorkflowLog'),
+    resultTreatmentReason: Joi.string()
+      .allow(null, '')
+      .description('Reason from latest ResultTreatmentWorkflowLog'),
+    resultTreatmentOperator: Joi.string()
+      .allow(null, '')
+      .description('Operator from latest ResultTreatmentWorkflowLog'),
+    resultTreatmentData: Joi.string()
+      .allow(null, '')
+      .description('Operator from latest ResultTreatmentWorkflowLog'),
   }
 }
 
