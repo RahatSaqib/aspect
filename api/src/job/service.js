@@ -229,7 +229,7 @@ async function manageJobFunctionBaseItems(request, tableName, mode, err) {
   let itemsPropName
   switch (tableName) {
     case 'JobFunctionDashboardWidget':
-      fieldName = 'widgetId'
+      fieldName = 'widgetId' // foreign key to table DashboardWidget
       itemsPropName = 'widgets' // in request payload
       break
     case 'JobFunctionFeature':
@@ -241,7 +241,7 @@ async function manageJobFunctionBaseItems(request, tableName, mode, err) {
       itemsPropName = 'permissions' // in request payload
       break
     default:
-      return Boom.badData(`Incorrect table name = ${tableName}`)
+      return Boom.badData(`Incorrect tableName "${tableName}"`)
   }
 
   const items = payload[itemsPropName]

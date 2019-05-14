@@ -8,7 +8,7 @@ const { runTestWithKnex } = require('../utils/generatorFunctionUtils')
 const server = supertest.agent('http://localhost:8080')
 const { assert } = chai
 
-describe('Permissions', () => {
+describe.only('Permissions', () => {
   const path = '/api/job-function'
   const countryAbbreviation = 'US'
   const partner1 = 1
@@ -21,10 +21,11 @@ describe('Permissions', () => {
 
   before(async () =>
     runTestWithKnex(async knex => {
-      const country = await knex('Country')
-        .where('abbreviation', countryAbbreviation)
-        .first('id')
-      ;[{ id: countryId }] = [country]
+      ;[{ id: countryId }] = [
+        await knex('Country')
+          .where('abbreviation', countryAbbreviation)
+          .first('id'),
+      ]
       ;[{ id: jobFunctionId }] = [
         await knex('JobFunction')
           .where({ partnerId: partner1 })
