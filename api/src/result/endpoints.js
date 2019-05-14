@@ -234,14 +234,6 @@ const routes = [
             .description('Reason for the latest workflow status change')
             .allow(null, '')
             .max(255),
-          method: Joi.string()
-            .description('The method for the result')
-            .allow(null, '')
-            .max(255),
-          data: Joi.string()
-            .description('The Data for the result')
-            .allow(null, '')
-            .max(255),
           operator: Joi.string()
             .description('The sender operator')
             .allow(null, '')
@@ -611,8 +603,6 @@ const routes = [
           externalId: Joi.string().allow('', null),
           data: Joi.string().allow('', null),
           method: Joi.string().allow('', null),
-          operator: Joi.string().allow('', null),
-          reason: Joi.string().allow('', null),
           changedOn: Joi.date()
             .iso()
             .optional()

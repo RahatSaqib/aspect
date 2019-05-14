@@ -359,8 +359,6 @@ describe('Device Result API routes', () => {
             workflow: {
               status: { id: 'Acknowledged' },
               operator: 'Goody Two Shoes',
-              method: 'method',
-              data: 'data',
               reason: 'Reason 1',
               changedOn: '2013-12-01T01:35',
             },
@@ -605,8 +603,6 @@ describe('Device Result API routes', () => {
           workflow: {
             status: { id: 'Acknowledged' },
             operator: 'Goody Two Shoes',
-            data: 'data',
-            method: 'method',
             reason: 'Reason 1',
             changedOn: '2013-12-01T01:35',
           },

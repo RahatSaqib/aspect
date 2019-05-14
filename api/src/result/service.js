@@ -100,12 +100,8 @@ const SELECT_SHOW_FIELDS = [
   'rsl.operator as resultWorkflowLogOperator',
   'rsl.createdOn as resultWorkflowLogCreatedOn',
   'rsl.changedOn as resultWorkflowLogChangedOn',
-  'rsl.method as resultWorkflowLogMethod',
-  'rsl.data as resultWorkflowLogData',
   'rtsl.method as resultTreatmentMethod',
   'rtsl.data as resultTreatmentData',
-  'rtsl.reason as resultTreatmentReason',
-  'rtsl.operator as resultTreatmentOperator',
   'rtsl.resultTreatmentStatusId',
 ]
 
@@ -810,7 +806,7 @@ async function updateWorkflowStatus(request) {
     Boom.notFound()
   }
   let { resultWorkflowStatusId } = payload
-  const { changedOn = now, operator, reason, data, method, updatedOn } = payload
+  const { changedOn = now, operator, reason, updatedOn } = payload
 
   // check if a externalId is provided
   if (payload.externalId) {
@@ -829,8 +825,6 @@ async function updateWorkflowStatus(request) {
       createdBy: currentUserId,
       operator,
       reason,
-      data,
-      method,
       changedOn,
       createdOn: now,
     })
@@ -862,14 +856,7 @@ async function updateTreatmentStatus(request) {
     Boom.notFound()
   }
 
-  const {
-    resultTreatmentStatusId,
-    data,
-    method,
-    changedOn = now,
-    reason,
-    operator,
-  } = payload
+  const { resultTreatmentStatusId, data, method, changedOn = now } = payload
   let treatmentStatusId = null
   // check if a externalId is provided
   if (payload.externalId) {
@@ -896,8 +883,6 @@ async function updateTreatmentStatus(request) {
       resultTreatmentStatusId: treatmentStatusId,
       method,
       data,
-      reason,
-      operator,
       createdOn: now,
       changedOn,
       createdBy: currentUserId,
