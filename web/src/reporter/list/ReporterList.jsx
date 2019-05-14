@@ -91,11 +91,12 @@ const FILTERS_CONFIG = [
   { state: true, requiredPermissions: [] },
   { lga: true, requiredPermissions: [] },
   {
-    siteName: true,
-    requiredPermissions: ['site:view', 'site:admin', 'site:edit'],
+    contactNameOrEmail: true,
+    requiredPermissions: [],
   },
+  { date: true, requiredPermissions: [] },
   { deviceName: true, requiredPermissions: [] },
-  { deviceStatus: true, requiredPermissions: [] },
+  { revoked: true, requiredPermissions: [] },
 ]
 
 const searchSanitizer = makeSearchParamsSanitizer({

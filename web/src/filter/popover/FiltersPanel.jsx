@@ -22,6 +22,7 @@ import ResultWorkflowStatusSelectField from '../resource/ResultWorkflowStatusSel
 import DeviceStatusSelectField from '../resource/DeviceStatusSelectField'
 import DeviceTypeSelectField from '../resource/DeviceTypeSelectField'
 import AspectButton from '../../components/shared/AspectButton'
+import RevokedSelectField from '../resource/RevokedSelectField'
 
 const cssClasses = classnames.bind(require('./FiltersPanel.css'))
 
@@ -98,6 +99,10 @@ const enhance = compose(
     onDeviceTypeIdChange: ({ onChangeFilters }) => deviceTypeId =>
       onChangeFilters({
         deviceTypeId,
+      }),
+    onRevokedChange: ({ onChangeFilters }) => revoked =>
+      onChangeFilters({
+        revoked,
       }),
 
     onExcelExport: props => () =>
@@ -322,6 +327,14 @@ const messages = defineMessages({
     id: 'filter.popover.selectNotificationName',
     defaultMessage: 'Enter notification name...',
   },
+  revoked: {
+    id: 'filter.popover.revoked',
+    defaultMessage: 'Revoked',
+  },
+  selectRevoked: {
+    id: 'filter.popover.selectRevoked',
+    defaultMessage: 'Select revoked status...',
+  },
 })
 
 export const FiltersPanel = ({
@@ -351,6 +364,7 @@ export const FiltersPanel = ({
   onWorkflowStatusIdChange,
   onDeviceStatusIdChange,
   onDeviceTypeIdChange,
+  onRevokedChange,
 }) => (
   <div className={cssClasses('Container', className)}>
     <AspectButton
@@ -704,6 +718,20 @@ export const FiltersPanel = ({
             minDate={filters.minDate}
             maxDate={filters.maxDate}
             dateFormat={dateFormat}
+            autoOk
+          />
+        )}
+
+        {config.revoked && (
+          <RevokedSelectField
+            floatingLabelText={intl.formatMessage(messages.revoked)}
+            onRevokedChange={onRevokedChange}
+            controlClassName={cssClasses('Control')}
+            allItemText={intl.formatMessage(messages.all)}
+            value={filters.revoked}
+            // floatingLabelFixed
+            // hintText={intl.formatMessage(messages.selectRevoked)}
+            // style={{ verticalAlign: 'bottom' }}
             autoOk
           />
         )}

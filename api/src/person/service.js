@@ -1,6 +1,12 @@
 const _ = require('lodash')
 const Boom = require('boom')
-const { query, knex, filterParams, sortPageParams } = require('../db')
+const {
+  query,
+  knex,
+  filterParams,
+  filterDateRangeParams,
+  sortPageParams,
+} = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 const userService = require('../auth/service')
 const { transformGeographyFromUpdates } = require('../geography/service')
@@ -312,9 +318,18 @@ async function listReporters(request) {
   const reporterQuery = knex('RefreshToken as r')
     .innerJoin('Person as p', 'r.userId', 'p.userId')
     .innerJoin('Partner as prt', 'p.lastPartnerId', 'prt.id')
+    .leftJoin('Geography as g', 'p.geographyId', 'g.id')
     .where({ clientType: 'reporter_app' })
     .modify(addConstraints, dataConstraints, { partner: 'prt' })
-    .modify(filterParams, query, {})
+    .modify(filterDateRangeParams, query, 'r.createdOn')
+    .modify(filterParams, query, {
+      countryId: 'g.countryId',
+      stateId: 'g.stateId',
+      lgaId: 'g.lgaId',
+      contactNameOrEmail: ['p.name', 'p.email', 'p.email2'],
+      deviceName: 'r.clientName',
+      revoked: 'r.revoked',
+    })
 
   const getCount = reporterQuery
     .clone()
