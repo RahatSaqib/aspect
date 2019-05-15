@@ -180,6 +180,8 @@ describe('Result routes', () => {
       }
       const updateWithId = {
         resultWorkflowStatusId: 1,
+        operator: 'operator 1',
+        reason: 'reason 1',
         externalId: null,
       }
 
@@ -230,6 +232,8 @@ describe('Result routes', () => {
             'resultWorkflowLogReason',
             'resultWorkflowLogCreatedOn',
             'resultWorkflowLogOperator',
+            'resultTreatmentMethod',
+            'resultTreatmentData',
           ]
           _.each(resultFieldNames, fieldName => {
             assert.property(res.body.data, fieldName)
@@ -396,7 +400,6 @@ describe('Result routes', () => {
           const { treatmentStatus } = res.body.data
           // check the updated fieldName
           assert.equal(treatmentStatus.externalId, 'AwaitingTreatment')
-          assert.equal(treatmentStatus.changedOn, changedOn)
 
           done()
         })

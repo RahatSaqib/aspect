@@ -100,6 +100,8 @@ const SELECT_SHOW_FIELDS = [
   'rsl.operator as resultWorkflowLogOperator',
   'rsl.createdOn as resultWorkflowLogCreatedOn',
   'rsl.changedOn as resultWorkflowLogChangedOn',
+  'rtsl.method as resultTreatmentMethod',
+  'rtsl.data as resultTreatmentData',
   'rtsl.resultTreatmentStatusId',
 ]
 
