@@ -17,7 +17,7 @@ const themes = {
 }
 
 export const makeThemedLink = props => (
-  <Link {...props} key={props.href} theme={themes.Link} />
+  <Link {...props} key={props.href} theme={themes.Link} title={props.label} />
 )
 
 const enhance = compose(
