@@ -723,17 +723,17 @@ export const FiltersPanel = ({
         )}
 
         {config.revoked && (
-          <RevokedSelectField
-            floatingLabelText={intl.formatMessage(messages.revoked)}
-            onRevokedChange={onRevokedChange}
-            controlClassName={cssClasses('Control')}
-            allItemText={intl.formatMessage(messages.all)}
-            value={filters.revoked}
-            // floatingLabelFixed
-            // hintText={intl.formatMessage(messages.selectRevoked)}
-            // style={{ verticalAlign: 'bottom' }}
-            autoOk
-          />
+          <div className={cssClasses('Control')}>
+            <RevokedSelectField
+              floatingLabelText={intl.formatMessage(messages.revoked)}
+              onRevokedChange={onRevokedChange}
+              allItemText={intl.formatMessage(messages.all)}
+              value={filters.revoked}
+              floatingLabelFixed
+              hintText={intl.formatMessage(messages.selectRevoked)}
+              style={{ verticalAlign: 'bottom' }}
+            />
+          </div>
         )}
       </FallbackUntilDone>
     </div>

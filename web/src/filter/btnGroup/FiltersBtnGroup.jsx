@@ -94,11 +94,11 @@ const messages = defineMessages({
 })
 const revokedOptions = [
   {
-    id: 0,
+    id: '0',
     name: 'false',
   },
   {
-    id: 1,
+    id: '1',
     name: 'true',
   },
 ]
@@ -297,7 +297,7 @@ const buttonBy = {
   revoked: makeButton(({ intl }, revoked) =>
     intl.formatMessage(messages.withRevoked, {
       revokedStatus: revokedOptions.find(
-        it => it.id == revoked,
+        it => it.id === revoked,
         EMPTY_CONTEXT,
         EMPTY_MAP
       ).name,
