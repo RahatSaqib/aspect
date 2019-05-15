@@ -68,7 +68,7 @@
 .Navigation--horizontal .Link__link {
   text-align: center;
   margin: 0 15px;
-  display: inline;
+  display: inline-block;
 }
 
 .IconMenu__icon:not([disabled]).IconMenu__icon:not([disabled]) {
@@ -95,12 +95,12 @@
   font-weight: var(--lato-font-weight-bold);
 }
 
-.Navigation--vertical .Link__link::after {
+.Navigation--vertical .Link__link::after, .Navigation--horizontal .Link__link::after {
   /* provides placeholder content for bold font: https://stackoverflow.com/a/20249560 */
   display: block;
   content: attr(title);
   font-weight: var(--lato-font-weight-bold);
-  height: 1px;
+  height: 0;
   color: transparent;
   overflow: hidden;
   visibility: hidden;

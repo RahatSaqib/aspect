@@ -17,7 +17,11 @@ const { query } = require('../db')
 const { validateUserAtGxAlert } = require('./gxalert')
 const { getRemoteAddress } = require('../shared/request')
 
-const REPORTERAPP = 'reporter_app'
+const clientTypes = {
+  app: 'reporter_app',
+  web: 'web',
+}
+// const reporterApp = 'reporter_app'
 async function checkAuthentication() {
   return { message: 'Welcome to the API!' }
 }
@@ -69,6 +73,14 @@ function getUserId(username) {
     .from('User as u')
     .where({ 'u.name': username })
     .first('u.id')
+}
+
+function getTokenExpiry(clientType, currentTime) {
+  const expiresTime =
+    clientType && clientType.includes(clientTypes.app)
+      ? 30 * 86400000
+      : 7 * 86400000
+  return new Date(currentTime.getTime() + expiresTime)
 }
 
 async function authenticate(request) {
@@ -158,13 +170,9 @@ function setRefreshToken(
   clientId,
   refreshToken,
   now,
-  clientType = 'web'
+  clientType = clientTypes.web
 ) {
-  const expiresTime =
-    clientName && clientName.includes(REPORTERAPP)
-      ? 30 * 86400000
-      : 7 * 86400000
-  const expires = new Date(now.getTime() + expiresTime) // 7 days from now or 30 depending if its a reporter app
+  const expires = getTokenExpiry(clientType, now)
   // upsert refresh token
   return query('Create new refresh token for the user').raw(
     'INSERT INTO RefreshToken set ? ON DUPLICATE KEY UPDATE ?',
@@ -188,15 +196,18 @@ function setRefreshToken(
 
 async function refreshToken(request) {
   // find the token in the db
-  const { clientId, token } = request.payload
+  const { clientId, token, clientType = clientTypes.web } = request.payload
+
   const data = await query('Find existing token for client ID')
     .from('RefreshToken as rt')
     .innerJoin('User as u', 'rt.userId', 'u.id')
     .innerJoin('Person as p', 'u.id', 'p.userId')
-    .where({ clientId, token, revoked: 0 })
+    .where({ clientId, token, clientType, revoked: 0 })
     .first(
       'rt.userId as id',
       'rt.expires',
+      'rt.clientName',
+      'rt.clientType',
       'u.name',
       'p.culture',
       'p.timezone',
@@ -217,7 +228,7 @@ async function refreshToken(request) {
   }
 
   // looks like we have a valid refresh token. set new one in db
-  const expires = new Date(now.getTime() + 7 * 86400000) // 7 days from now
+  const expires = getTokenExpiry(data.clientType, now)
   const refreshToken = crypto.randomBytes(48).toString('base64')
 
   await query('Update refresh token expiry date')
@@ -230,6 +241,7 @@ async function refreshToken(request) {
     access: accessToken,
     refresh: refreshToken,
     clientId,
+    clientType,
   }
 }
 
@@ -281,7 +293,7 @@ function getAccessToken({ id, name, partnerId, personId }, clientName = 'web') {
           name,
           permissions: data.map(p => `${p.module}:${p.activity}`),
           hasToAcceptLicenseId:
-            clientName.includes(REPORTERAPP) ||
+            clientName.includes(clientTypes.app) ||
             !applicableLicense ||
             applicableLicense.acceptedOn
               ? null
@@ -694,4 +706,5 @@ module.exports = {
   acceptLicense,
   revokeUsersToken,
   lockedOutUser,
+  clientTypes,
 }
