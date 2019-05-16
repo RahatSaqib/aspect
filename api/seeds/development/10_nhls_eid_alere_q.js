@@ -1224,7 +1224,7 @@ async function seed(knex) {
           senderOperator: result.senderOperator,
           rawData: result.rawData,
           errorCode: result.errorCode,
-          qcCheck: 0,
+          //  qcCheck: 0,
         })
       )
       const [lastLogId] = await knex('ResultWorkflowLog').insert({

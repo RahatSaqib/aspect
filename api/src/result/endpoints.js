@@ -12,7 +12,6 @@ const {
   listResultTypes,
   updateWorkflowStatus,
   updateTreatmentStatus,
-  updateQcCheck,
   updateFormData,
   listWorkflowStatusTypes,
   listWorkflowStatusLog,
@@ -257,27 +256,6 @@ const routes = [
             .description('The results')
             .keys(validateResultResponse()),
         }),
-      },
-    },
-  },
-  {
-    method: 'PUT',
-    path: '/result/qc-check/{resultId}',
-    handler: asyncHandler(updateQcCheck),
-    config: {
-      description: 'Update QC Check Flag',
-      notes: 'Update the QC Check flag of a result',
-      auth: { scope: ['result:edit'] },
-      validate: {
-        params: {
-          resultId: Joi.number()
-            .integer()
-            .positive()
-            .description('Result Id'),
-        },
-        payload: {
-          qcCheck: Joi.boolean(),
-        },
       },
     },
   },

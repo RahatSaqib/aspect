@@ -996,7 +996,7 @@ function addDeviceLogResultConstraints(queryBuilder) {
       'resultworkflowsl.resultWorkflowStatusId',
       'rws.id'
     )
-    .where('r.qcCheck', 1)
+    .where('rws.externalId', 'Deliverable')
     .where('rws.externalId', '<>', 'Purged')
 }
 

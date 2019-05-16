@@ -28,7 +28,7 @@ const baseConfig = {
 // Number of milliseconds to wait for completion of
 // asynchronous updates as acceptance criteria
 const ASYNC_TEST_ACCEPTANCE_TIME = 250
-describe('Device Result API routes', () => {
+describe.only('Device Result API routes', () => {
   // Waits acceptance time and resolves promise with optional result
   function waitAsyncComplete(result) {
     return new Promise(resolve =>
@@ -68,30 +68,11 @@ describe('Device Result API routes', () => {
       })
   }
 
-  function approveResult(context, resultId) {
-    const { clientAuth } = context
-    const clientSingleResultPath = `${clientBasePath}/`
-    return server
-      .put(`${clientSingleResultPath}qc-check/${resultId}`)
-      .send({ qcCheck: true })
-      .set('Authorization', clientAuth)
-      .then(res => {
-        assert.equal(
-          res.status,
-          200,
-          res && res.body && res.body.message ? res.body.message : ''
-        )
-        return waitAsyncComplete(res)
-      })
-  }
-
   function setResultAsDeliverableAndApprove(context, resultId) {
-    return setResultAsDeliverable(context, resultId).then(() =>
-      approveResult(context, resultId)
-    )
+    return setResultAsDeliverable(context, resultId)
   }
 
-  describe('admin result updates', () => {
+  describe.only('admin result updates', () => {
     const context = createTestContext(server, {
       user: 'admin',
       type: 'DaktariVirology',

@@ -263,7 +263,7 @@ async function createResults(
           artNumber: patient.artHccNumber,
           dateOfBirth: patient.dob,
         }),
-        qcCheck: 1,
+        // qcCheck: 1,
       })
     )
 

@@ -905,7 +905,7 @@ async function seed(knex) {
           motherSurname: patient.lastName,
           eidRegistrationNumber: patient.artHccNumber,
         }),
-        qcCheck: 1,
+        // qcCheck: 1,
       })
     )
 
@@ -1092,7 +1092,7 @@ async function seed(knex) {
           artNumber: patient.artHccNumber,
           dateOfBirth: patient.dob,
         }),
-        qcCheck: 1,
+        // qcCheck: 1,
       })
     )
 

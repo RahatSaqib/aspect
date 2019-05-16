@@ -125,7 +125,6 @@ async function checkResultDeliverable(context, result) {
         .update({
           resultWorkflowStatusLogId: lastLogId,
           // auto QC-check Deliverable results RRT-313
-          qcCheck: 1,
         })
       actions.resultUpdated(resultId)
     }
