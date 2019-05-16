@@ -4,6 +4,9 @@ const { deviceTypeCategoryToId } = require('../../src/shared/dictionary')
 
 async function seed(knex) {
   const labDeviceTypeCategoryId = await deviceTypeCategoryToId('Lab')
+  const informationSystemDeviceTypeCategoryId = await deviceTypeCategoryToId(
+    'Information System'
+  )
 
   const { id: deviceTypeBDMGITId } =
     (await knex('DeviceType')
@@ -28,6 +31,19 @@ async function seed(knex) {
       name: 'Hain GenoScan',
       manufacturer: 'Hain Lifescience',
       deviceTypeCategoryId: labDeviceTypeCategoryId,
+    })
+  }
+
+  const { id: deviceTypeSenaiteLimsId } =
+    (await knex('DeviceType')
+      .where('externalId', 'SenaiteLims')
+      .first('id')) || {}
+  if (!deviceTypeSenaiteLimsId) {
+    await knex('DeviceType').insert({
+      externalId: 'SenaiteLims',
+      name: 'Senaite LIMS',
+      manufacturer: 'Senaite',
+      deviceTypeCategoryId: informationSystemDeviceTypeCategoryId,
     })
   }
 }

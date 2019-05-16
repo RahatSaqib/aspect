@@ -1,7 +1,5 @@
 const supertest = require('supertest')
 const chai = require('chai')
-const Promise = require('bluebird')
-const _ = require('lodash')
 const { knex } = require('../../src/db')
 const { getUtcTime } = require('../../src/shared/date')
 const { decrypt } = require('../../src/shared/encryption')
@@ -259,77 +257,6 @@ describe('Device API Raw routes', () => {
       expect(deviceApiRawRecord.deviceApiRawStatusId).to.equal(
         processedStatusId
       )
-    })
-
-    it('should process the request data using the correct data processor', async () => {
-      const alereQPayload = {
-        type: {
-          id: 'AlereQ',
-        },
-      }
-      const alereQResponse = await server
-        .post(deviceApiRawPath)
-        .set('Authorization', `Bearer ${validApiKeyToken}`)
-        .send(alereQPayload)
-      assert.equal(alereQResponse.statusCode, 200)
-      const alereQDeviceApiRawRecord = await knex('DeviceApiRaw')
-        .where({ id: alereQResponse.body })
-        .first()
-      assert.equal(alereQDeviceApiRawRecord.dataProcessor, 'DefaultAlereQ')
-
-      const geneXpertPayload = {
-        name: 'Raw GxConnect Test',
-        type: {
-          id: 'CepheidGeneXpert',
-        },
-        configuration: {
-          data: {
-            country: 'US',
-          },
-        },
-      }
-      const geneXpertResponse = await server
-        .post(deviceApiRawPath)
-        .set('Authorization', `Bearer ${validApiKeyToken}`)
-        .send(geneXpertPayload)
-      assert.equal(geneXpertResponse.statusCode, 200)
-
-      const unknownPayload = {
-        type: {
-          id: 'Unknown',
-        },
-      }
-      const unknownResponse = await server
-        .post(deviceApiRawPath)
-        .set('Authorization', `Bearer ${validApiKeyToken}`)
-        .send(unknownPayload)
-      assert.equal(unknownResponse.statusCode, 200)
-      const unknownDeviceApiRawRecord = await knex('DeviceApiRaw')
-        .where({ id: unknownResponse.body })
-        .first()
-      assert.equal(
-        unknownDeviceApiRawRecord.dataProcessor,
-        'DefaultDataProcessor'
-      )
-    })
-
-    it('should be able to process many sequential requests for an asynchronous data processor', async () => {
-      const alereQPayload = {
-        type: {
-          id: 'AlereQ',
-        },
-      }
-      await Promise.each(_.range(100), async requestNumber => {
-        const alereQResponse = await server
-          .post(deviceApiRawPath)
-          .set('Authorization', `Bearer ${validApiKeyToken}`)
-          .send({ ...alereQPayload, requestNumber })
-        assert.equal(alereQResponse.statusCode, 200)
-        const alereQDeviceApiRawRecord = await knex('DeviceApiRaw')
-          .where({ id: alereQResponse.body })
-          .first()
-        assert.equal(alereQDeviceApiRawRecord.dataProcessor, 'DefaultAlereQ')
-      })
     })
   })
 })
