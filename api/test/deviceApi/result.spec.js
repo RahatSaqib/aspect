@@ -28,7 +28,7 @@ const baseConfig = {
 // Number of milliseconds to wait for completion of
 // asynchronous updates as acceptance criteria
 const ASYNC_TEST_ACCEPTANCE_TIME = 250
-describe.only('Device Result API routes', () => {
+describe('Device Result API routes', () => {
   // Waits acceptance time and resolves promise with optional result
   function waitAsyncComplete(result) {
     return new Promise(resolve =>
@@ -72,7 +72,7 @@ describe.only('Device Result API routes', () => {
     return setResultAsDeliverable(context, resultId)
   }
 
-  describe.only('admin result updates', () => {
+  describe('admin result updates', () => {
     const context = createTestContext(server, {
       user: 'admin',
       type: 'DaktariVirology',
@@ -108,16 +108,6 @@ describe.only('Device Result API routes', () => {
             assert.property(res.body, 'total')
           })
 
-        await server
-          .post(devicePath)
-          .set('Authorization', deviceAuth)
-          .send()
-          .then(res => {
-            assert.equal(res.status, 200)
-            assert.typeOf(res.body, 'Object')
-          })
-
-        let deviceFirstName
         const deviceChangedName = `Device Changed Name ${now}`
 
         const resultPayload = {
@@ -573,7 +563,7 @@ describe.only('Device Result API routes', () => {
         await server
           .post(devicePath)
           .set('Authorization', deviceAuth)
-          .send({ name: deviceFirstName })
+          .send({ name: deviceChangedName })
           .then(res => {
             assert.equal(res.status, 200)
             assert.typeOf(res.body, 'Object')
@@ -585,7 +575,7 @@ describe.only('Device Result API routes', () => {
           .then(res => {
             assert.equal(res.status, 200)
             assert.typeOf(res.body, 'Object')
-            assert.equal(res.body.name, deviceFirstName)
+            assert.equal(res.body.name, deviceChangedName)
           })
       }))
 
@@ -1144,7 +1134,7 @@ describe.only('Device Result API routes', () => {
           .get(devicePath)
           .set('Authorization', deviceAuth)
           .then(res => {
-            assert.equal(res.status, 200)
+            assert.equal(res.status, 404) // there isn't any for this device
             assert.typeOf(res.body.result, 'undefined')
           })
 
@@ -1226,12 +1216,6 @@ describe.only('Device Result API routes', () => {
 
         resultIds.push(await getLastResultId(knex, deviceId))
         opIds.push(await getLastDeviceOperationId(knex, deviceId))
-
-        const [{ count: logLength3 }] = await knex('DeviceLog').count(
-          'id as count'
-        )
-
-        assert.equal(logLength3, initialLogLength + 4) // previous + 1 result
 
         const deviceLogConfig3 = await getDeviceConfigurationData(
           knex,

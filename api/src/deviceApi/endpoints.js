@@ -5,6 +5,7 @@
 // only result data is posted.
 const Joi = require('joi')
 const {
+  getDeviceDataHandler,
   getDeviceOperationHandler,
   getResultHandler,
   addDeviceDataHandler,
@@ -339,6 +340,41 @@ const resultPayload = {
 }
 
 const routes = [
+  {
+    // GET /device
+    method: 'GET',
+    path: '/',
+    handler: getDeviceDataHandler,
+    config: {
+      description: 'Get Device Data',
+      notes:
+        'Get device configuration, operational and result data' +
+        ' returns assigned site and last checkpoint posted for device.',
+      response: {
+        options: {
+          allowUnknown: true,
+        },
+        schema: Object.assign({}, devicePayload, {
+          checkpoint: Joi.string()
+            .allow('', null)
+            .description('The client checkpoint'),
+          log: Joi.object()
+            .keys(logResponse)
+            .description('Device Log Data'),
+          configuration: Joi.object()
+            .keys(configurationPayload)
+            .description('Device Configuration Data'),
+          operation: Joi.object()
+            .keys(operationPayload)
+            .description('Device Operation Data'),
+          result: Joi.object()
+            .keys(resultPayload)
+            .description('Device Result Data.'),
+          error: errorPayload,
+        }),
+      },
+    },
+  },
   {
     // POST /device {  configuration, operation, result }
     method: 'POST',
