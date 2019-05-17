@@ -18,8 +18,6 @@ const {
 
 const { assert } = chai
 
-const devicePath = '/device'
-
 const server = supertest.agent('http://localhost:8080')
 
 async function deleteDeviceAndTestData(knex, apiKeys) {
@@ -489,7 +487,6 @@ class DeviceApiTestContext {
       await knex('DeviceApiKey')
         .where({ token: apiKey.token })
         .update({ deviceId })
-
     })
   }
 
