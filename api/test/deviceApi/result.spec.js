@@ -95,10 +95,6 @@ describe.only('Device Result API routes', () => {
         const clientPath = `${clientBasePath}?deviceId=${deviceId}&size=1000`
 
         let initialDataLength = 0
-        const [{ count: initialLogLength }] = await knex('DeviceLog').count(
-          'id as count'
-        )
-
         await server
           .get(clientPath)
           .set('Authorization', clientAuth)
@@ -115,7 +111,7 @@ describe.only('Device Result API routes', () => {
         await server
           .post(devicePath)
           .set('Authorization', deviceAuth)
-          .send({ checkpoint: 'ck0' })
+          .send()
           .then(res => {
             assert.equal(res.status, 200)
             assert.typeOf(res.body, 'Object')
@@ -123,16 +119,6 @@ describe.only('Device Result API routes', () => {
 
         let deviceFirstName
         const deviceChangedName = `Device Changed Name ${now}`
-        await server
-          .get(`${devicePath}?checkpoint=ck0`)
-          .set('Authorization', deviceAuth)
-          .then(res => {
-            assert.equal(res.status, 200)
-            assert.typeOf(res.body, 'Object')
-            assert.typeOf(res.body.name, 'string')
-            assert.equal(res.body.checkpoint, 'ck0')
-            deviceFirstName = res.body.name
-          })
 
         const resultPayload = {
           startedOn: now,
@@ -146,7 +132,6 @@ describe.only('Device Result API routes', () => {
           .set('Authorization', deviceAuth)
           .send({
             name: deviceChangedName,
-            checkpoint: 'ck1',
             result: resultPayload,
           })
           .then(res => {
@@ -155,12 +140,6 @@ describe.only('Device Result API routes', () => {
           })
 
         resultIds.push(await getLastResultId(knex, deviceId))
-
-        const [{ count: logLength1 }] = await knex('DeviceLog').count(
-          'id as count'
-        )
-
-        assert.equal(logLength1, initialLogLength + 2) // checkpoint + post
 
         await server
           .get(clientPath)
@@ -244,86 +223,6 @@ describe.only('Device Result API routes', () => {
         assert.equal(result1Category1.externalId, 'Success')
         assert.isNotOk(result1Category2)
 
-        const [{ rawMessage: log1Raw, resultId: resultId1 }] = await knex(
-          'DeviceLog as dl'
-        )
-          .innerJoin('Result as r', 'r.id', 'dl.resultId')
-          .where({ 'r.id': resultIds[0] })
-          .select('rawMessage', 'resultId')
-
-        assert.deepEqual(JSON.parse(log1Raw), {
-          name: deviceChangedName,
-          checkpoint: 'ck1',
-          result: {
-            data: resultPayload.data,
-            assay: resultPayload.assay,
-            instrument: resultPayload.instrument,
-            sample: resultPayload.sample,
-            startedOn: resultPayload.startedOn.toISOString(),
-          },
-        })
-
-        await server
-          .get(`${clientSingleResultPath}${resultId1}`)
-          .set('Authorization', clientAuth)
-          .then(res => {
-            assert.equal(res.status, 200)
-            assert.typeOf(res.body, 'Object')
-            assert.typeOf(res.body.data, 'Object')
-            assert.typeOf(res.body.data.resultData, 'Object')
-            assert.deepEqual(res.body.data.resultData, { a: 'b' })
-          })
-
-        const { checkpoint: checkpoint1 } = await knex('DeviceLog')
-          .where({ deviceId })
-          .orderBy('id', 'desc')
-          .first('checkpoint')
-
-        assert.equal(checkpoint1, 'ck1')
-
-        await server
-          .get(`${devicePath}?checkpoint=ck0`)
-          .set('Authorization', deviceAuth)
-          .then(res => {
-            assert.equal(res.status, 200)
-            assert.typeOf(res.body, 'Object')
-            assert.equal(res.body.checkpoint, 'ck0')
-            assert.typeOf(res.body.result, 'undefined')
-          })
-
-        await setResultAsDeliverableAndApprove(context, resultId1)
-
-        await server
-          .get(`${devicePath}?checkpoint=ck1`)
-          .set('Authorization', deviceAuth)
-          .then(res => {
-            assert.equal(res.status, 200)
-            assert.typeOf(res.body, 'Object')
-            assert.equal(res.body.checkpoint, 'ck1')
-            assert.equal(res.body.name, deviceChangedName)
-            assert.typeOf(res.body.result, 'Object')
-
-            const lastResult = res.body.result
-            assert.typeOf(lastResult, 'Object')
-            assert.property(lastResult.sample.originSite, 'id')
-            assert.equal(
-              lastResult.sample.originSite.id,
-              result1SampleSite.externalId
-            )
-            assert.typeOf(lastResult.workflow, 'Object')
-            assert.typeOf(lastResult.workflow.status, 'Object')
-            assert.property(lastResult.workflow, 'changedOn')
-
-            expect(lastResult).to.containSubset({
-              data: resultPayload.data,
-              assay: resultPayload.assay,
-              category: [{ id: 'Success' }],
-              type: { id: 'Patient' },
-              source: { id: 'DiagnosticDevice' },
-              instrument: resultPayload.instrument,
-            })
-          })
-
         const result2SampleSite = await knex('Site as s')
           .where('partnerId', result1SampleSite.partnerId)
           .where('id', '<>', result1.siteId)
@@ -333,7 +232,6 @@ describe.only('Device Result API routes', () => {
           .post(devicePostResultPath)
           .set('Authorization', deviceAuth)
           .send({
-            checkpoint: 'ck2',
             data: { a: 'b', c: 2, d: false, e: { f: 'g' } },
             type: { id: 'Study' },
             source: { id: 'EnteredByHand' },
@@ -428,17 +326,6 @@ describe.only('Device Result API routes', () => {
           })
 
         resultIds.push(await getLastResultId(knex, deviceId))
-
-        const { checkpoint: checkpoint2 } = await knex('DeviceLog')
-          .where({ deviceId })
-          .orderBy('id', 'desc')
-          .first('checkpoint')
-        assert.equal(checkpoint2, 'ck2')
-        const [{ count: logLength2 }] = await knex('DeviceLog').count(
-          'id as count'
-        )
-
-        assert.equal(logLength2, initialLogLength + 4)
 
         await server
           .get(clientPath)
@@ -577,7 +464,6 @@ describe.only('Device Result API routes', () => {
           .select('rawMessage', 'resultId')
 
         assert.deepEqual(JSON.parse(log2Raw), {
-          checkpoint: 'ck2',
           data: { a: 'b', c: 2, d: false, e: { f: 'g' } },
           type: { id: 'Study' },
           source: { id: 'EnteredByHand' },
@@ -682,130 +568,7 @@ describe.only('Device Result API routes', () => {
             })
           })
 
-        await server
-          .get(`${devicePath}?checkpoint=ck1`)
-          .set('Authorization', deviceAuth)
-          .then(res => {
-            assert.equal(res.status, 200)
-            assert.typeOf(res.body, 'Object')
-            assert.equal(res.body.checkpoint, 'ck1')
-            assert.typeOf(res.body.result, 'Object')
-          })
-
         await setResultAsDeliverableAndApprove(context, resultId2)
-
-        await server
-          .get(`${devicePath}?checkpoint=ck2`)
-          .set('Authorization', deviceAuth)
-          .then(res => {
-            assert.equal(res.status, 200)
-            assert.typeOf(res.body, 'object')
-            assert.equal(res.body.checkpoint, 'ck2')
-            assert.typeOf(res.body.result, 'Object')
-
-            const lastResult = res.body.result
-            assert.typeOf(lastResult, 'Object')
-            assert.property(lastResult, 'endedOn')
-            assert.property(lastResult.sample, 'id')
-            assert.property(lastResult.sample.originSite, 'id')
-            assert.equal(
-              lastResult.sample.originSite.id,
-              result2SampleSite.externalId
-            )
-            assert.property(lastResult, 'location')
-            assert.approximately(
-              lastResult.location.latitude,
-              30.419348,
-              0.000001
-            )
-            assert.approximately(
-              lastResult.location.longitude,
-              -87.581222,
-              0.000001
-            )
-            assert.equal(lastResult.workflow.status.id, 'Deliverable')
-            expect(lastResult).to.containSubset({
-              data: { a: 'b', c: 2, d: false, e: { f: 'g' } },
-              assay: {
-                id: 'DaktariHivVl',
-                version: '1a.c1',
-              },
-              type: { id: 'Study' },
-              source: { id: 'EnteredByHand' },
-              category: [{ id: 'Detected' }, { id: 'Indeterminate' }],
-              sample: {
-                id: `Sample${now}`,
-                runNumber: '10z',
-                group: 'Sample Group X-1',
-                collectedOn: '2013-11-25T00:00:00.000Z',
-                type: {
-                  id: 'DBS',
-                },
-                originSite: {
-                  id: result2SampleSite.externalId,
-                },
-              },
-              startedOn: '2013-12-01T00:00:00.000Z',
-              endedOn: '2013-12-01T01:30:00.000Z',
-              consumable: [
-                {
-                  serial: '132-44-222',
-                  expirationDate: '2014-03-01T00:00:00.000Z',
-                  lot: '331-1',
-                },
-              ],
-              instrument: {
-                serial: '444-3',
-                module: {
-                  name: 'ModA',
-                  serial: '555-8',
-                },
-              },
-              research: { id: 'R123' },
-              patient: {
-                id: 'P-333',
-                name: 'Bob',
-                surname: 'Hope',
-                gender: 'M',
-                age: 72,
-                dateOfBirth: '1903-05-29T00:00:00.000Z',
-                address: '123 Main Street',
-                phone: '856-7909',
-              },
-              oemData: JSON.stringify({
-                maker: 'XYZ',
-                model: '876A',
-                serial: '123-456-789',
-              }),
-              rawData: JSON.stringify({
-                startedOn: '2013-05-13',
-                endedOn: '2013-12-01T01:30',
-                patientData: {
-                  id: 'P-333',
-                  name: 'Bob',
-                  surname: 'Hope',
-                  gender: 'M',
-                  age: 72,
-                  dateOfBirth: '1903-05-29',
-                  address: '123 Main Street',
-                  phone: '856-7909',
-                },
-                location: {
-                  longitude: -87.581222,
-                  latitude: 30.419348,
-                },
-              }),
-              sender: {
-                version: '99-1',
-                operator: 'Bob O',
-              },
-              notes: 'My Awesome notes about this Awesome result!, 123-12',
-              error: {
-                code: '123',
-                notes: 'Oh NOZE!',
-              },
-            })
-          })
 
         await server
           .post(devicePath)
@@ -833,7 +596,6 @@ describe.only('Device Result API routes', () => {
 
         const resultPayload = {
           startedOn: now,
-          checkpoint: '3123',
           data: { a: 'b' },
           assay: { id: 'DaktariHivVl' },
           instrument: { serial: '1234567' },
@@ -901,7 +663,6 @@ describe.only('Device Result API routes', () => {
 
         const resultPayload = {
           startedOn: now,
-          checkpoint: '3123',
           data: { a: 'b' },
           assay: { id: 'DaktariHivVl' },
           instrument: { serial: '1234567' },
@@ -918,16 +679,6 @@ describe.only('Device Result API routes', () => {
         resultIds.push(await getLastResultId(knex, deviceId))
 
         await setResultAsDeliverableAndApprove(context, _.last(resultIds))
-
-        await server
-          .get(`${devicePath}?checkpoint=3123`)
-          .set('Authorization', deviceAuth)
-          .then(res => {
-            assert.equal(res.status, 200)
-            assert.typeOf(res.body, 'Object')
-            assert.typeOf(res.body.result, 'Object')
-            assert.deepEqual(res.body.result.data, { a: 'b' })
-          })
 
         const result1 = await knex('Result as r')
           .where({ id: resultIds[0] })
@@ -957,7 +708,6 @@ describe.only('Device Result API routes', () => {
 
         const resultErrorPayload = {
           startedOn: now,
-          checkpoint: '312',
           data: { a: 'c' },
           error: { code: '1' },
           assay: { id: 'DaktariHivVl' },
@@ -974,17 +724,6 @@ describe.only('Device Result API routes', () => {
         resultIds.push(await getLastResultId(knex, deviceId))
 
         await setResultAsDeliverableAndApprove(context, _.last(resultIds))
-
-        await server
-          .get(`${devicePath}?checkpoint=312`)
-          .set('Authorization', deviceAuth)
-          .then(res => {
-            assert.equal(res.status, 200)
-            assert.typeOf(res.body, 'Object')
-            assert.typeOf(res.body.result, 'Object')
-            assert.deepEqual(res.body.result.data, { a: 'c' })
-            assert.deepEqual(res.body.result.error.code, '1')
-          })
 
         const result2 = await knex('Result as r')
           .where({ id: resultIds[1] })
@@ -1056,7 +795,6 @@ describe.only('Device Result API routes', () => {
 
         const resultDetectedNotDetectedPayload = {
           startedOn: now,
-          checkpoint: '31',
           data: { a: 'e' },
           category: [{ id: 'Detected' }, { id: 'NotDetected' }],
           assay: { id: 'DaktariHivVl' },
@@ -1073,20 +811,6 @@ describe.only('Device Result API routes', () => {
         resultIds.push(await getLastResultId(knex, deviceId))
 
         await setResultAsDeliverableAndApprove(context, _.last(resultIds))
-
-        await server
-          .get(`${devicePath}?checkpoint=31`)
-          .set('Authorization', deviceAuth)
-          .then(res => {
-            assert.equal(res.status, 200)
-            assert.typeOf(res.body, 'Object')
-            assert.typeOf(res.body.result, 'Object')
-            assert.deepEqual(res.body.result.data, { a: 'e' })
-            assert.deepEqual(res.body.result.category, [
-              { id: 'Detected' },
-              { id: 'NotDetected' },
-            ])
-          })
 
         const result4 = await knex('Result as r')
           .where({ id: resultIds[3] })
@@ -1422,19 +1146,12 @@ describe.only('Device Result API routes', () => {
           .then(res => {
             assert.equal(res.status, 200)
             assert.typeOf(res.body.result, 'undefined')
-            assert.property(res.body, 'checkpoint')
           })
 
         await server
           .post(devicePath)
           .set('Authorization', deviceAuth)
-          .send({ checkpoint: 'ck000' })
-
-        await server
-          .post(devicePath)
-          .set('Authorization', deviceAuth)
           .send({
-            checkpoint: 'ck123',
             configuration: { data: { a: 'b' } },
             operation: { data: { a: 'c' } },
             result: {
@@ -1487,38 +1204,13 @@ describe.only('Device Result API routes', () => {
           .set('Authorization', deviceAuth)
           .then(res => {
             assert.equal(res.status, 200)
-            assert.equal(res.body.checkpoint, 'ck123')
             assert.typeOf(res.body.result, 'Object')
-          })
-
-        await server
-          .get(`${devicePath}?checkpoint=ck000`)
-          .set('Authorization', deviceAuth)
-          .then(res => {
-            // does not include result uploaded with previous checkpoint
-            assert.equal(res.status, 200)
-            assert.equal(res.body.checkpoint, 'ck000')
-            assert.typeOf(res.body.result, 'undefined')
-          })
-
-        await server
-          .get(`${devicePath}?checkpoint=ck123`)
-          .set('Authorization', deviceAuth)
-          .then(res => {
-            assert.equal(res.status, 200)
-            assert.equal(res.body.checkpoint, 'ck123')
-            assert.typeOf(res.body.result, 'Object')
-
-            const lastResult = res.body.result
-            assert.typeOf(lastResult, 'Object')
-            assert.deepEqual(lastResult.data, { a: 'd' })
           })
 
         await server
           .post(devicePath)
           .set('Authorization', deviceAuth)
           .send({
-            checkpoint: 'ck234',
             configuration: { data: { a: 'c' } },
             operation: { data: { a: 'd' } },
             result: {
@@ -1563,42 +1255,6 @@ describe.only('Device Result API routes', () => {
         assert.isOk(deviceLogUpdates3[0].resultId)
 
         await setResultAsDeliverableAndApprove(context, _.last(resultIds))
-
-        await server
-          .get(devicePath)
-          .set('Authorization', deviceAuth)
-          .then(res => {
-            assert.equal(res.status, 200)
-            assert.typeOf(res.body.result, 'Object')
-            assert.equal(res.body.checkpoint, 'ck234')
-          })
-
-        await server
-          .get(`${devicePath}?checkpoint=ck234`)
-          .set('Authorization', deviceAuth)
-          .then(res => {
-            assert.equal(res.status, 200)
-            assert.typeOf(res.body.result, 'Object')
-            assert.equal(res.body.checkpoint, 'ck234')
-          })
-
-        await server
-          .get(`${devicePath}?checkpoint=ck123`)
-          .set('Authorization', deviceAuth)
-          .then(res => {
-            assert.equal(res.status, 200)
-            assert.typeOf(res.body.result, 'Object')
-            assert.equal(res.body.checkpoint, 'ck123')
-          })
-
-        await server
-          .get(`${devicePath}?checkpoint=ck000`)
-          .set('Authorization', deviceAuth)
-          .then(res => {
-            assert.equal(res.status, 200)
-            assert.typeOf(res.body.result, 'undefined')
-            assert.equal(res.body.checkpoint, 'ck000')
-          })
       }))
 
     describe('inventory management', () => {

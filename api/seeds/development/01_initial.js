@@ -2219,7 +2219,6 @@ async function seed(knex) {
       deviceId: device.id,
       createdOn: addHours(randomDate, 1),
       senderIp: '0.0.0.0',
-      checkPoint: `rrt_${_.random(20)}`,
       source: 'seed data',
       rawMessage: JSON.stringify({
         type: {

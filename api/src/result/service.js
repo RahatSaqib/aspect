@@ -512,7 +512,6 @@ async function getDeviceLogsByResultId(request) {
     .modify(addConstraints, dataConstraints, { device: 'd' })
     .select(
       'dl.createdOn',
-      'dl.checkpoint as checkPoint',
       'dl.deviceOperationId',
       'dl.source',
       'dl.deviceConfigurationUpdated',

@@ -220,10 +220,8 @@ class GxConnectApiTestContext {
         id: 'CepheidGeneXpert',
       },
       site: null,
-      checkpoint: null,
       log: null,
       configuration: {
-        checkpoint: null,
         data: { macAddress, hostId, deviceSerialNumber },
       },
       operation: null,
@@ -330,7 +328,6 @@ class GxConnectApiTestContext {
       .send(
         _.merge({}, this.basicDevicePayload, {
           configuration: {
-            checkpoint: null,
             data: configurationData,
           },
         })

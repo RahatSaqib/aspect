@@ -5,7 +5,6 @@
 // only result data is posted.
 const Joi = require('joi')
 const {
-  getDeviceDataHandler,
   getDeviceOperationHandler,
   getResultHandler,
   addDeviceDataHandler,
@@ -79,9 +78,6 @@ const devicePayload = {
 }
 
 const configurationPayload = {
-  checkpoint: Joi.string()
-    .allow('', null)
-    .description('The client checkpoint'),
   data: Joi.object()
     .required()
     .description(
@@ -90,9 +86,6 @@ const configurationPayload = {
 }
 
 const operationPayload = {
-  checkpoint: Joi.string()
-    .allow('', null)
-    .description('The client checkpoint'),
   startedOn: Joi.date()
     .iso()
     .description(
@@ -116,9 +109,6 @@ const resultPayload = {
         ' multiple result updates with the same ID will merge into the same result.  If no ID is' +
         ' specified, a new result is created with every POST.'
     ),
-  checkpoint: Joi.string()
-    .allow('', null)
-    .description('The client checkpoint'),
   startedOn: Joi.date()
     .allow(null)
     .iso()
@@ -350,57 +340,7 @@ const resultPayload = {
 
 const routes = [
   {
-    // GET /device
-    method: 'GET',
-    path: '/',
-    handler: getDeviceDataHandler,
-    config: {
-      description: 'Get Device Data',
-      notes:
-        'Get device configuration, operational and result data since the specified checkpoint.' +
-        ' If not specified, returns assigned site and last checkpoint posted for device.',
-      validate: {
-        query: {
-          checkpoint: Joi.string().description(
-            'The client checkpoint.  If the checkpoint is specified, will retrieve data uploaded' +
-              ' with that checkpoint.  Otherwise will return data that does not depend on checkpoint.'
-          ),
-          offset: Joi.string().description(
-            'The result offset from the  client checkpoint, default 0. If offset is 0, device data' +
-              ' uploaded with the specified checkpoint will be retrieved. A positive offset will retrieve' +
-              ' the data uploaded after the checkpoint, e.g. to download data updated after the last' +
-              ' Device Checkin from an outside source. A negative offset will retrieve data uploaded' +
-              ' before the checkpoint, e.g. to download historical data'
-          ),
-        },
-      },
-      response: {
-        options: {
-          allowUnknown: true,
-        },
-        schema: Object.assign({}, devicePayload, {
-          checkpoint: Joi.string()
-            .allow('', null)
-            .description('The client checkpoint'),
-          log: Joi.object()
-            .keys(logResponse)
-            .description('Device Log Data'),
-          configuration: Joi.object()
-            .keys(configurationPayload)
-            .description('Device Configuration Data'),
-          operation: Joi.object()
-            .keys(operationPayload)
-            .description('Device Operation Data'),
-          result: Joi.object()
-            .keys(resultPayload)
-            .description('Device Result Data.'),
-          error: errorPayload,
-        }),
-      },
-    },
-  },
-  {
-    // POST /device { checkpoint, configuration, operation, result }
+    // POST /device {  configuration, operation, result }
     method: 'POST',
     path: '/',
     handler: addDeviceDataHandler,
@@ -417,9 +357,6 @@ const routes = [
             name: Joi.string()
               .allow('', null)
               .description('The device name'),
-            checkpoint: Joi.string()
-              .allow('', null)
-              .description('The client checkpoint'),
             log: Joi.object()
               .allow(null)
               .keys(logPayload)
@@ -505,20 +442,12 @@ const routes = [
       notes: 'Get device operational data',
       description:
         'Get last updated operation data for the authenticated device given search constraints',
-      validate: {
-        query: {
-          checkpoint: Joi.string(),
-          offset: Joi.string(),
-        },
-      },
+
       response: {
         options: {
           allowUnknown: true,
         },
         schema: {
-          checkpoint: Joi.string()
-            .allow('', null)
-            .description('The client checkpoint'),
           log: Joi.object()
             .keys(logResponse)
             .description('Device Log Data'),
@@ -570,8 +499,6 @@ const routes = [
         'Get last updated result data for the authenticated device given search constraints',
       validate: {
         query: {
-          checkpoint: Joi.string(),
-          offset: Joi.string(),
           resultId: Joi.string(),
         },
       },
@@ -580,9 +507,6 @@ const routes = [
           allowUnknown: true,
         },
         schema: {
-          checkpoint: Joi.string()
-            .allow('', null)
-            .description('The client checkpoint'),
           log: Joi.object()
             .keys(logResponse)
             .description('Device Log Data'),
