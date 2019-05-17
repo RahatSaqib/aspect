@@ -139,6 +139,38 @@ describe('Authentication routes', () => {
             })
           })
       })
+      it('should only generate random clientId  if none is sent with the request', done => {
+        server
+          .post(authPath)
+          .send({
+            name: adminUsername,
+            password: adminPassword,
+            clientName: webClientName,
+            clientId: webClientId,
+          })
+          .end((err, res) => {
+            assert.equal(res.status, 200)
+            assert.isAbove(res.body.access.length, 100)
+            assert.isAbove(res.body.refresh.length, 50)
+            assert.isAbove(res.body.clientId.length, 32)
+            assert.strictEqual(res.body.clientId, webClientId)
+          })
+        server
+          .post(authPath)
+          .send({
+            name: adminUsername,
+            password: adminPassword,
+            clientName: webClientName,
+          })
+          .end((err, res) => {
+            assert.equal(res.status, 200)
+            assert.isAbove(res.body.access.length, 100)
+            assert.isAbove(res.body.refresh.length, 50)
+            assert.isDefined(res.body.clientId)
+            assert.isAbove(res.body.clientId.length, 32)
+            done()
+          })
+      })
       it('should return the appropriate license status for the user', () =>
         run(async () => {
           await server
