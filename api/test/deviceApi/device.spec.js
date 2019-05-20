@@ -170,15 +170,6 @@ describe('Device API routes', () => {
         const { deviceAuth, deviceId } = context
 
         await server
-          .get(devicePath)
-          .set('Authorization', deviceAuth)
-          .then(res => {
-            assert.equal(res.status, 200)
-            assert.typeOf(res.body, 'Object')
-            assert.equal(res.body.status.id, 'approved')
-          })
-
-        await server
           .post(devicePath)
           .set('Authorization', deviceAuth)
           .send({

@@ -19,7 +19,7 @@ const {
   createNewDevice,
 } = require('./device')
 const { deviceSeen } = require('../device/actions')
-const { mergeResult, getResult } = require('./result')
+const { mergeResult } = require('./result')
 const { loadPlugin } = require('../plugin/registration')
 
 const DEVICE_LOG_TYPE_NONE = 0
@@ -294,8 +294,6 @@ async function getDeviceDataWithContext(context) {
   const includeOp =
     deviceApproved &&
     (includeAll || deviceLogType === DEVICE_LOG_TYPE_OPERATION)
-  const includeResult =
-    deviceApproved && (includeAll || deviceLogType === DEVICE_LOG_TYPE_RESULT)
 
   const response = { requestedOn: now.toISOString() }
   if (includeDevice) {
@@ -330,13 +328,6 @@ async function getDeviceDataWithContext(context) {
       const op = await getDeviceOperationWithContext(context)
       if (op != null) {
         response.operation = op
-      }
-    }
-
-    if (includeResult) {
-      const result = await getResultWithContext(context)
-      if (result != null) {
-        response.result = result
       }
     }
   }
@@ -508,29 +499,6 @@ async function mergeResultWithContext(context) {
   return postProcessResult
 }
 
-async function getResultWithContext(context) {
-  const {
-    knex,
-    actions,
-    deviceLog: { resultId },
-    pluginNames: plugins,
-    query,
-    now,
-  } = context
-
-  const pluginContext = { knex, actions, resultId, query, now }
-
-  const preProcess = await loadPlugin(plugins, 'preProcessGetResult')
-  await preProcess(pluginContext)
-
-  const result = await getResult(knex, resultId)
-
-  const postProcess = await loadPlugin(plugins, 'postProcessGetResult')
-
-  const postProcessResult = await postProcess(pluginContext, result)
-  return postProcessResult
-}
-
 async function createDeviceApiContext(
   handler,
   originalRequest,
@@ -669,7 +637,7 @@ async function createDeviceApiContext(
     return {
       error:
         lastDeviceLog == null &&
-        Boom.notFound('Cannot find specified resultId'),
+        Boom.notFound('Cannot find Logs records for the specific device'),
       context,
     }
   }

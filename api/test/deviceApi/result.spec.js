@@ -1188,15 +1188,6 @@ describe('Device Result API routes', () => {
         assert.equal(deviceLogUpdates2[0].resultId, deviceLogResult2.id)
 
         await setResultAsDeliverableAndApprove(context, _.last(resultIds))
-
-        await server
-          .get(devicePath)
-          .set('Authorization', deviceAuth)
-          .then(res => {
-            assert.equal(res.status, 200)
-            assert.typeOf(res.body.result, 'Object')
-          })
-
         await server
           .post(devicePath)
           .set('Authorization', deviceAuth)
