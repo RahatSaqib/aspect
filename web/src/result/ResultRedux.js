@@ -269,14 +269,7 @@ export function updateResultWorkflowStatus(resultId) {
   }
 }
 
-// update a single result's QC Check flag
-function updateSingleResultQcCheck(resultId, qcCheck) {
-  return {
-    type: types.REQUEST_SINGLE_RESULT,
-    resultId,
-    qcCheck,
-  }
-}
+
 
 function setSingleResultFormDataValue(resultId, formFieldKey, value) {
   return {
@@ -294,27 +287,6 @@ function savingSingleResultFormData(resultId) {
   }
 }
 
-export function updateResultQcCheck(resultId, qcCheck) {
-  return dispatch => {
-    dispatch(updateSingleResultQcCheck(resultId, qcCheck))
-
-    return aspectFetch(`/result/qc-check/${resultId}`, {
-      method: 'PUT',
-      body: JSON.stringify({ qcCheck }),
-      errorNotifications: {
-        default: errorPleaseTryAgainInAFewMinutes(
-          defineMessages({
-            title: {
-              id: 'errorResponseMessages.updateResultQcCheck.PUT.default.title',
-              defaultMessage:
-                'An error occurred when trying to update the "QC Check" flag.',
-            },
-          })
-        ),
-      },
-    }).then(json => dispatch(receiveUpdatedSingleResult(json.data)))
-  }
-}
 
 function sendUpdatedResultFormData(dispatch, resultId, formData) {
   return aspectFetch(`/result/form-data/${resultId}`, {
