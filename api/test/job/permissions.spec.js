@@ -104,6 +104,7 @@ describe.only('Permissions', () => {
         })
     })
 
+    let numJobs = 0
     it('should assign person to JobFunction and return list of Jobs for person', done => {
       server
         .post(`${path}/assign-job`)
@@ -119,6 +120,40 @@ describe.only('Permissions', () => {
           assert.property(res.body, 'data')
           assert.typeOf(res.body.data, 'array')
           assert.isAtLeast(res.body.data.length, 1)
+
+          numJobs = res.body.data.length
+          let item = res.body.data[0]
+          assert.property(item, 'id')
+          assert.property(item, 'jobFunctionId')
+          assert.property(item, 'personId')
+          // list must contain item we just added
+          item = res.body.data.find(
+            x => x.personId === personId && x.jobFunctionId === jobFunctionId
+          )
+          assert.typeOf(item, 'Object')
+          // get 'jobId' to use in next steps
+          jobId = item.id
+          assert.isNumber(jobId)
+          //
+          done()
+        })
+    })
+
+    it('should return same list of jobs as before after assign person to the same JobFunction', done => {
+      server
+        .post(`${path}/assign-job`)
+        .send({
+          personId,
+          jobFunctionId,
+        })
+        .set('Authorization', `Bearer ${shared.token}`)
+        .end((err, res) => {
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+          assert.property(res.body, 'ok')
+          assert.property(res.body, 'data')
+          assert.typeOf(res.body.data, 'array')
+          assert.equal(res.body.data.length, numJobs)
           let item = res.body.data[0]
           assert.property(item, 'id')
           assert.property(item, 'jobFunctionId')
