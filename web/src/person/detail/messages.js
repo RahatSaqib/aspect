@@ -23,6 +23,14 @@ export default defineMessages({
     id: 'pages.PersonDetails.languageAndTimezone',
     defaultMessage: 'Language & Timezone',
   },
+  detailsCreatedSuccessfully: {
+    id: 'pages.PersonDetails.detailsCreatedSuccessfully',
+    defaultMessage: 'Contact Created Successfully',
+  },
+  contactDetailsCreatedMessage: {
+    id: 'pages.PersonDetails.contactDetailsCreatedMessage',
+    defaultMessage: 'Contact details created successfully',
+  },
   detailsUpdatedSuccessfully: {
     id: 'pages.PersonDetails.detailsUpdatedSuccessfully',
     defaultMessage: 'Details Changed Successfully',
@@ -198,5 +206,9 @@ export default defineMessages({
   chooseTags: {
     id: 'pages.UserPreferences.chooseTags',
     defaultMessage: 'Choose tags',
+  },
+  create: {
+    id: 'pages.PersonDetails.create',
+    defaultMessage: 'Create',
   },
 })

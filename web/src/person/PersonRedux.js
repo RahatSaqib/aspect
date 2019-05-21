@@ -35,6 +35,9 @@ export const types = {
   REQUEST_SINGLE_PERSON: 'REQUEST_SINGLE_PERSON',
   RECEIVE_SINGLE_PERSON: 'RECEIVE_SINGLE_PERSON',
 
+  REQUEST_CREATING_SINGLE_PERSON: 'REQUEST_CREATING_SINGLE_PERSON',
+  RECEIVE_CREATED_SINGLE_PERSON: 'RECEIVE_CREATED_SINGLE_PERSON',
+
   REQUEST_UPDATING_SINGLE_PERSON: 'REQUEST_UPDATING_SINGLE_PERSON',
   RECEIVE_UPDATED_SINGLE_PERSON: 'RECEIVE_UPDATED_SINGLE_PERSON',
   RECEIVE_UPDATED_SINGLE_PERSON_LOGIN_DETAILS:
@@ -43,6 +46,22 @@ export const types = {
   REQUEST_UPDATE_SITE_CONTACTS: 'REQUEST_UPDATE_SITE_CONTACTS',
   RECEIVE_UPDATE_SITE_CONTACTS: 'RECEIVE_UPDATE_SITE_CONTACTS',
 }
+
+const contactDetailsFields = [
+  'name',
+  'title',
+  'email',
+  'email2',
+  'phone',
+  'cell',
+  'countryId',
+  'stateId',
+  'lgaId',
+  'zip',
+  'notes',
+  'lastPartnerId',
+  'canLogIn',
+]
 /*
  * ---------------- Action Creators -----------------
  */
@@ -248,6 +267,49 @@ export function fetchSinglePerson(personId) {
   }
 }
 
+// creating a single person with given data
+function requestCreatingSinglePerson(data) {
+  return {
+    type: types.REQUEST_CREATING_SINGLE_PERSON,
+    data,
+  }
+}
+
+// received a created single person
+function receiveCreatedSinglePerson(item) {
+  return {
+    type: types.RECEIVE_CREATED_SINGLE_PERSON,
+    item,
+  }
+}
+
+// create a single person with given data
+export function createPerson(data) {
+  return dispatch => {
+    dispatch(requestCreatingSinglePerson(data))
+
+    const personJson = data.toJS ? data.toJS() : data
+    return aspectFetch('/person', {
+      method: 'POST',
+      body: JSON.stringify(_.pick(personJson, contactDetailsFields)),
+      errorNotifications: {
+        default: errorPleaseTryAgainInAFewMinutes(
+          defineMessages({
+            title: {
+              id: 'errorResponseMessages.createPerson.POST.default.title',
+              defaultMessage:
+                'An Error Occurred When Trying to Create the Contact',
+            },
+          })
+        ),
+      },
+    }).then(json => {
+      dispatch(receiveCreatedSinglePerson(json.data))
+      return json.data
+    })
+  }
+}
+
 // updating a single person with given personId and data
 function requestUpdatingSinglePerson(personId, data) {
   return {
@@ -305,21 +367,12 @@ function updatePerson(path, personId, data, fields) {
 }
 
 export function updateSinglePerson(personId, data) {
-  return updatePerson(`/person/${personId}`, personId, data, [
-    'name',
-    'title',
-    'email',
-    'email2',
-    'phone',
-    'cell',
-    'countryId',
-    'stateId',
-    'lgaId',
-    'zip',
-    'notes',
-    'lastPartnerId',
-    'canLogIn',
-  ])
+  return updatePerson(
+    `/person/${personId}`,
+    personId,
+    data,
+    contactDetailsFields
+  )
 }
 
 export function updateSinglePersonLoginDetails(personId, data) {
@@ -433,6 +486,7 @@ const Person = Immutable.Record({
   table: new Table(),
   availableContacts: Immutable.Map(),
   siteContacts: Immutable.Map(),
+  personNew: Immutable.Map(),
 })
 
 const ContactTagItems = Immutable.Record({
@@ -525,6 +579,7 @@ export default function personReducer(state = initialState, action) {
       )
     case types.RECEIVE_SINGLE_PERSON:
     case types.RECEIVE_UPDATED_SINGLE_PERSON:
+    case types.RECEIVE_CREATED_SINGLE_PERSON:
       return state.withMutations(mutState => {
         const immutItem = Immutable.fromJS({ ...action.item, loaded: true })
         mutState.set('items', receiveItem(mutState.items, immutItem))
@@ -554,6 +609,8 @@ export default function personReducer(state = initialState, action) {
           .set('loaded', false)
         mutState.set('items', receiveItem(mutState.items, person))
       })
+    case types.REQUEST_CREATING_SINGLE_PERSON:
+      return state.setIn(['personNew', 'loaded'], false)
     default:
       return state
   }

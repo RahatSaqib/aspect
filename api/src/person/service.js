@@ -282,6 +282,36 @@ async function savePerson(request, updatablePersonFields) {
   return response
 }
 
+async function createPerson(request) {
+  const { payload } = request
+
+  const currentlyLoggedInUser = await userService.getUser(
+    request.auth.credentials.name
+  )
+
+  const changedFields = {
+    // 'payload' contains at least one required field - 'name'
+    ...payload,
+    // add other required fields
+    ..._.pick(currentlyLoggedInUser, ['timezone', 'culture']),
+    createdOn: new Date(),
+    updatedOn: new Date(),
+    createdBy: currentlyLoggedInUser.id,
+    updatedBy: currentlyLoggedInUser.id,
+  }
+
+  const changedPersonFields = await transformGeographyFromUpdates(changedFields)
+  if (changedFields.countryId) {
+    changedPersonFields.lastCountryId = changedFields.countryId
+  }
+
+  const [personId] = await knex('Person').insert(changedPersonFields)
+  const personDetails = await getPersonDetails(personId)
+  personDetails.jobFunctions = []
+
+  return { ok: true, data: personDetails }
+}
+
 async function updatePerson(request) {
   return savePerson(request, [
     'name',
@@ -312,5 +342,6 @@ module.exports = {
   unAssignContact,
   showPerson,
   updatePerson,
+  createPerson,
   updatePersonUserPreferences,
 }

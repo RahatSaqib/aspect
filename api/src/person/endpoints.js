@@ -8,10 +8,56 @@ const {
   availableContacts,
   showPerson,
   updatePerson,
+  createPerson,
   updatePersonUserPreferences,
   assignContact,
   unAssignContact,
 } = require('./service')
+
+const contactDetailsPayload = {
+  name: Joi.string()
+    .max(500)
+    .required(),
+  title: Joi.string()
+    .max(255)
+    .allow('', null),
+  email: Joi.string()
+    .max(500)
+    .allow('', null),
+  email2: Joi.string()
+    .max(500)
+    .allow('', null),
+  phone: Joi.string()
+    .max(45)
+    .allow('', null),
+  cell: Joi.string()
+    .max(45)
+    .allow('', null),
+  countryId: Joi.number()
+    .integer()
+    .positive()
+    .allow('', null),
+  stateId: Joi.number()
+    .integer()
+    .positive()
+    .allow('', null),
+  lgaId: Joi.number()
+    .integer()
+    .positive()
+    .allow('', null),
+  zip: Joi.string()
+    .max(45)
+    .allow('', null),
+  notes: Joi.string()
+    .optional()
+    .max(1200)
+    .allow('', null),
+  lastPartnerId: Joi.number()
+    .integer()
+    .positive()
+    .allow('', null),
+  canLogIn: [Joi.boolean(), Joi.number().only(0, 1)],
+}
 
 const routes = [
   {
@@ -125,50 +171,20 @@ const routes = [
             .description('Person ID')
             .required(),
         },
-        payload: {
-          name: Joi.string()
-            .max(500)
-            .required(),
-          title: Joi.string()
-            .max(255)
-            .allow('', null),
-          email: Joi.string()
-            .max(500)
-            .allow('', null),
-          email2: Joi.string()
-            .max(500)
-            .allow('', null),
-          phone: Joi.string()
-            .max(45)
-            .allow('', null),
-          cell: Joi.string()
-            .max(45)
-            .allow('', null),
-          countryId: Joi.number()
-            .integer()
-            .positive()
-            .allow('', null),
-          stateId: Joi.number()
-            .integer()
-            .positive()
-            .allow('', null),
-          lgaId: Joi.number()
-            .integer()
-            .positive()
-            .allow('', null),
-          zip: Joi.string()
-            .max(45)
-            .allow('', null),
-          notes: Joi.string()
-            .optional()
-            .max(1200)
-            .allow('', null),
-          lastPartnerId: Joi.number()
-            .integer()
-            .positive()
-            .allow('', null),
-          canLogIn: [Joi.boolean(), Joi.number().only(0, 1)],
-        },
+        payload: contactDetailsPayload,
+      },
+    },
+  },
+  {
+    method: 'POST',
+    path: '/person',
+    handler: asyncHandler(createPerson),
+    config: {
+      description: 'Create New Person',
+      notes: 'Details of a person',
+      auth: { scope: ['person:edit', 'person:admin'] },
+      validate: {
+        payload: contactDetailsPayload,
       },
     },
   },
