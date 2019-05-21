@@ -10,7 +10,11 @@ const {
 const { getConstraints, addConstraints } = require('../auth/constraints')
 const userService = require('../auth/service')
 const { transformGeographyFromUpdates } = require('../geography/service')
-const { revokeUsersToken, lockedOutUser } = require('../auth/service')
+const {
+  clientTypes,
+  revokeUsersToken,
+  lockedOutUser,
+} = require('../auth/service')
 
 const getPeople = () =>
   knex('Person as p')
@@ -311,15 +315,15 @@ async function updatePersonUserPreferences(request) {
   return response
 }
 
-async function listReporters(request) {
+async function listRefreshTokens(request) {
   const { query, auth } = request
   const dataConstraints = await getConstraints(auth.credentials)
 
-  const reporterQuery = knex('RefreshToken as r')
+  const tokenQuery = knex('RefreshToken as r')
     .innerJoin('Person as p', 'r.userId', 'p.userId')
     .innerJoin('Partner as prt', 'p.lastPartnerId', 'prt.id')
     .leftJoin('Geography as g', 'p.geographyId', 'g.id')
-    .where({ clientType: 'reporter_app' })
+    .where({ clientType: clientTypes.app })
     .modify(addConstraints, dataConstraints, { partner: 'prt' })
     .modify(filterDateRangeParams, query, 'r.createdOn')
     .modify(filterParams, query, {
@@ -331,12 +335,12 @@ async function listReporters(request) {
       revoked: 'r.revoked',
     })
 
-  const getCount = reporterQuery
+  const getCount = tokenQuery
     .clone()
     .count('r.clientId as count')
     .first()
 
-  const getItems = reporterQuery
+  const getItems = tokenQuery
     .clone()
     .modify(sortPageParams, query, 'user')
     .select(
@@ -349,7 +353,7 @@ async function listReporters(request) {
 
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
 
-  // Fix with real data from Results download table
+  // TODO: Fix with real data from Results download table
   data.forEach(it => {
     it.lastSeen = Date.now()
     it.deliveredLastMonth = _.random(0, 10)
@@ -360,34 +364,34 @@ async function listReporters(request) {
   return { ok: true, total, length: data.length, data }
 }
 
-async function updateReporter(request) {
+async function updateRefreshToken(request) {
   const { params, payload } = request
-  const selectedReporter = await knex('RefreshToken')
-    .where('clientId', params.reporterId)
+  const selectedToken = await knex('RefreshToken')
+    .where('clientId', params.refreshTokenId)
     .update({
       revoked: payload.revoked,
     })
 
-  if (selectedReporter !== 1) {
+  if (selectedToken !== 1) {
     return Boom.notFound()
   }
 
   return {
     ok: true,
     data: {
-      id: params.reporterId,
+      id: params.refreshTokenId,
       revoked: payload.revoked,
     },
   }
 }
 module.exports = {
   listPeople,
-  listReporters,
+  listRefreshTokens,
   availableContacts,
   assignContact,
   unAssignContact,
   showPerson,
   updatePerson,
   updatePersonUserPreferences,
-  updateReporter,
+  updateRefreshToken,
 }

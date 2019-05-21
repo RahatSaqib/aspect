@@ -22,7 +22,7 @@ const ReporterTableRow = ({
   ...restProps
 }) => {
   const onRevokedChange = ({ target }, revoked) => {
-    updateSingleReporter(target.dataset.reporterId, { revoked })
+    updateSingleReporter(target.dataset.id, { revoked })
   }
   return (
     <TableRow {...restProps} className={cssClasses(restProps.className)}>
@@ -47,7 +47,7 @@ const ReporterTableRow = ({
           name="revoked"
           className={cssClasses('Checkbox__field')}
           inputProps={{
-            'data-reporter-id': reporter.get('id'),
+            'data-id': reporter.get('id'),
           }}
           disabled={disabled}
           checked={reporter.get('revoked')}
@@ -62,6 +62,7 @@ const mapStateToProps = state => ({
   disabled: !isEditable(state.user, 'reporter'),
 })
 
-export default connect(mapStateToProps, { updateSingleReporter })(
-  ReporterTableRow
-)
+export default connect(
+  mapStateToProps,
+  { updateSingleReporter }
+)(ReporterTableRow)

@@ -59,7 +59,7 @@ export function fetchReporters(
     dispatch(requestReporters(sortCol, sortDir, page, pageSize, filters))
 
     return aspectFetch(
-      `/person/reporter?${stringify({
+      `/person/refresh-token?${stringify({
         sortCol,
         sortDir,
         page,
@@ -98,10 +98,10 @@ export function fetchReporters(
   }
 }
 
-function requestUpdatingSingleReporter(reporterId, data) {
+function requestUpdatingSingleReporter(id, data) {
   return {
     type: types.REQUEST_UPDATING_SINGLE_REPORTER,
-    reporterId,
+    refreshTokenId: id,
     data,
   }
 }
@@ -113,10 +113,10 @@ function receiveUpdatedSingleReporter(item) {
   }
 }
 
-export function updateSingleReporter(reporterId, data) {
+export function updateSingleReporter(id, data) {
   return dispatch => {
-    dispatch(requestUpdatingSingleReporter(reporterId, data))
-    return aspectFetch(`/person/reporter/${reporterId}`, {
+    dispatch(requestUpdatingSingleReporter(id, data))
+    return aspectFetch(`/person/refresh-token/${id}`, {
       method: 'PUT',
       body: JSON.stringify(data),
       errorNotifications: {

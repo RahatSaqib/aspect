@@ -3,7 +3,7 @@ const { assert } = require('chai')
 const _ = require('lodash')
 const endpointUtils = require('../utils/endpointUtils')
 
-describe.only('person endpoints', () => {
+describe('person endpoints', () => {
   function setupRoute(method, path, serviceStub) {
     const endpoints = proxyquire('../../src/person/endpoints', {
       './service': serviceStub,
@@ -77,13 +77,13 @@ describe.only('person endpoints', () => {
           .execute()
       })
     })
-    describe('/person/reporter', () => {
+    describe('/person/refresh-token', () => {
       let endpoint
       const expectedResponse = { value: 'Expected result' }
 
       before(() => {
-        endpoint = setupRoute('GET', '/person/reporter', {
-          async listReporters() {
+        endpoint = setupRoute('GET', '/person/refresh-token', {
+          async listRefreshTokens() {
             return expectedResponse
           },
         })
@@ -188,13 +188,13 @@ describe.only('person endpoints', () => {
       })
     })
 
-    describe('/person/reporter/{reporterId}', () => {
+    describe('/person/refresh-token/{refreshTokenId}', () => {
       let endpoint
       const expectedResponse = { value: 'Expected result' }
 
       before(() => {
-        endpoint = setupRoute('PUT', '/person/reporter/{reporterId}', {
-          async updateReporter() {
+        endpoint = setupRoute('PUT', '/person/refresh-token/{refreshTokenId}', {
+          async updateRefreshToken() {
             return expectedResponse
           },
         })

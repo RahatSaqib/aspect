@@ -10,6 +10,7 @@ const {
   updateUsernameAndPasswordForPerson,
   createResetPasswordToken,
   updatePasswordWithResetPasswordToken,
+  clientTypes,
   getUserFeatures,
   getLicense,
   acceptLicense,
@@ -30,7 +31,9 @@ const routes = [
           password: Joi.string().required(),
           clientName: Joi.string().required(),
           clientId: Joi.string(),
-          clientType: Joi.string(),
+          clientType: Joi.string()
+            .lowercase()
+            .valid(Object.values(clientTypes)),
         },
       },
       response: {
@@ -69,7 +72,9 @@ const routes = [
         payload: {
           clientId: Joi.string().required(),
           token: Joi.string().required(),
-          clientType: Joi.string(),
+          clientType: Joi.string()
+            .lowercase()
+            .valid(Object.values(clientTypes)),
         },
       },
     },
@@ -93,6 +98,10 @@ const routes = [
             .max(100)
             .allow('', null),
           clientName: Joi.string().required(),
+          clientType: Joi.string()
+            .lowercase()
+            .valid(Object.values(clientTypes))
+            .required(),
           clientId: Joi.string(),
         },
       },

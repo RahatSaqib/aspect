@@ -9,12 +9,12 @@ const {
 } = require('../geography/requestValidation')
 const {
   listPeople,
-  listReporters,
+  listRefreshTokens,
   availableContacts,
   showPerson,
   updatePerson,
   updatePersonUserPreferences,
-  updateReporter,
+  updateRefreshToken,
   assignContact,
   unAssignContact,
 } = require('./service')
@@ -58,10 +58,10 @@ const routes = [
   },
   {
     method: 'GET',
-    path: '/person/reporter',
-    handler: asyncHandler(listReporters),
+    path: '/person/refresh-token',
+    handler: asyncHandler(listRefreshTokens),
     config: {
-      description: 'List of all reporter apps',
+      description: 'List of all reporter app refresh tokens',
       auth: { scope: ['reporter:view', 'reporter:edit'] },
       validate: {
         query: Object.assign(
@@ -82,7 +82,7 @@ const routes = [
             'user',
             'deviceName',
             'createdOn',
-            // Fix with real data from ResultsDownlad table tbd
+            // TODO: Fix with real data from ResultsDownload table tbd
             // 'lastSeen',
             // 'lastMonth',
             // 'thisMonth',
@@ -105,11 +105,13 @@ const routes = [
           total: Joi.number()
             .required()
             .description(
-              'The total number of reporters that match the given filters'
+              'The total number of refresh tokens that match the given filters'
             ),
           length: Joi.number()
             .required()
-            .description('The number of reporters included in this response'),
+            .description(
+              'The number of refresh tokens included in this response'
+            ),
           data: Joi.array()
             .required()
             .description('Reporters')
@@ -117,7 +119,7 @@ const routes = [
               Joi.object().keys({
                 id: Joi.string()
                   .required()
-                  .description('The Client ID of the reporter'),
+                  .description('The Client ID of the refresh token'),
                 user: Joi.string()
                   .required()
                   .description(
@@ -162,15 +164,15 @@ const routes = [
   },
   {
     method: 'PUT',
-    path: '/person/reporter/{reporterId}',
-    handler: asyncHandler(updateReporter),
+    path: '/person/refresh-token/{refreshTokenId}',
+    handler: asyncHandler(updateRefreshToken),
     config: {
-      description: 'Update a reporter',
+      description: 'Update a refresh token',
       auth: { scope: ['reporter:view', 'reporter:edit'] },
       validate: {
         params: {
-          reporterId: Joi.string()
-            .description('Reporter id')
+          refreshTokenId: Joi.string()
+            .description('Refresh token id')
             .required(),
         },
         payload: {
@@ -186,11 +188,11 @@ const routes = [
             .required()
             .description('False if there was some sort of error'),
           data: Joi.object()
-            .description('The reporter that has been updated')
+            .description('The refresh token that has been updated')
             .keys({
               id: Joi.string()
                 .required()
-                .description('The Client ID of the reporter'),
+                .description('The Client ID of the refresh token'),
               revoked: Joi.boolean()
                 .valid(true, false)
                 .required()

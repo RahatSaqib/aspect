@@ -106,6 +106,7 @@ export function loginStart({ user, password }) {
         name: user,
         password,
         clientId,
+        clientType,
         clientName: getClientName(),
       }),
       errorNotifications: {
