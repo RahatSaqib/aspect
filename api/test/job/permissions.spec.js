@@ -8,7 +8,7 @@ const { runTestWithKnex } = require('../utils/generatorFunctionUtils')
 const server = supertest.agent('http://localhost:8080')
 const { assert } = chai
 
-describe.only('Permissions', () => {
+describe('Permissions', () => {
   const path = '/api/job-function'
   const countryAbbreviation = 'US'
   const partner1 = 1
