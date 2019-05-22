@@ -6,6 +6,7 @@ import { SubmissionError } from 'redux-form/immutable'
 
 import config from '../config'
 import {
+  getClientId,
   getClientName,
   getClientType as clientType,
 } from '../shared/utils/browser'
@@ -91,15 +92,12 @@ function loginFailure(err) {
 }
 
 export function loginStart({ user, password }) {
-  return function(dispatch, getState) {
+  return function(dispatch) {
     // First dispatch: the app state is updated to inform
     // that the API call is starting.
     const requestedAt = Date.now()
     dispatch(loginRequest(requestedAt))
-
-    const state = getState()
-    const { clientId } = state.user
-
+    const clientId = localStorage.getItem('asClientId') || getClientId()
     return aspectFetch('/auth', {
       method: 'POST',
       body: JSON.stringify({
