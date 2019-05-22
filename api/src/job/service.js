@@ -50,6 +50,7 @@ async function getJobFunctionsForSelectList(request) {
   }
 }
 // ----------------------------------------------------------------------------------------
+// permissions for specified 'person' for this 'partner'
 async function getPermissions(request) {
   const { params: { personId, partnerId } } = request
   const { auth } = request
@@ -139,19 +140,19 @@ async function manageJob(request, mode) {
 const assignJobContext = async request => manageJobContext(request, MODE_INSERT)
 const unassignJobContext = async request =>
   manageJobContext(request, MODE_DELETE)
-async function manageJobContext(request, mode) {
+const validateAndNormalizeJobContextData = async request => {
   const { payload } = request
   const { personId, jobFunctionId, geographyId, siteId } = payload
   let { jobId } = payload
 
-  // validate - either jobId or both (personId and jobFunctionId) are needed
+  // either jobId or both (personId and jobFunctionId) are needed
   const hasPersonAndJobFunction = !!personId && !!jobFunctionId
   if (!jobId && !hasPersonAndJobFunction) {
     return Boom.expectationFailed(
       'Either jobId or (personId and jobFunctionId) is needed to manage JobContext'
     )
   }
-  // validate - either geographyId or siteId is needed
+  // either geographyId or siteId is needed
   const bothMissing = !geographyId && !siteId
   const bothPresent = !!geographyId && !!siteId
   if (bothMissing || bothPresent) {
@@ -159,8 +160,36 @@ async function manageJobContext(request, mode) {
       'Either geographyId or siteId (not both) is needed to manage JobContext'
     )
   }
-  // if no jobId - create Job with personId/jobFunctionId
-  if (!jobId) {
+  // existing siteId
+  if (siteId) {
+    const item = await knex('Site')
+      .where({ id: siteId })
+      .first()
+    if (!item) {
+      return Boom.badData(`Missing site with specified siteId=${siteId}`)
+    }
+  }
+  // existing geographyId
+  if (geographyId) {
+    const item = await knex('Geography')
+      .where({ id: geographyId })
+      .first()
+    if (!item) {
+      return Boom.badData(
+        `Missing geography with specified geographyId=${geographyId}`
+      )
+    }
+  }
+  if (jobId) {
+    const item = await knex('Job')
+      .where({ id: jobId })
+      .first()
+    if (!item) {
+      return Boom.badData(`Missing job with specified jobId=${jobId}`)
+    }
+  } else if (!jobId) {
+    // if no jobId - create Job with personId/jobFunctionId
+
     // use 'personId, jobFunctionId' from request to create/get Job
     const jobResponse = await assignJob(request)
     if (jobResponse.isBoom) {
@@ -170,7 +199,24 @@ async function manageJobContext(request, mode) {
     ;[{ id: jobId }] = jobResponse.data.filter(
       x => x.personId === personId && x.jobFunctionId === jobFunctionId
     )
+  } else {
+    const item = await knex('Job')
+      .where({ id: jobId })
+      .first()
+    if (!item) {
+      return Boom.badData(`Missing job with specified jobId=${jobId}`)
+    }
   }
+  return { jobId }
+}
+async function manageJobContext(request, mode) {
+  const { payload } = request
+  const { geographyId, siteId } = payload
+  const normalizedData = await validateAndNormalizeJobContextData(request)
+  if (normalizedData.isBoom) {
+    return normalizedData
+  }
+  const { jobId } = normalizedData
 
   const q = knex('JobContext')
     .where({ jobId })

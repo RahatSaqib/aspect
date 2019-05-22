@@ -13,6 +13,7 @@ describe('Permissions', () => {
   const countryAbbreviation = 'US'
   const partner1 = 1
   const personId = 1
+  const wrongValue = 99999999
   let countryId
   let jobFunctionId
   let cleanJob = false
@@ -264,7 +265,6 @@ describe('Permissions', () => {
           done()
         })
     })
-
     it('should fail - missing both `siteId` and `geographyId`', done => {
       server
         .post(`${path}/assign-job-context`)
@@ -276,7 +276,6 @@ describe('Permissions', () => {
           done()
         })
     })
-
     it('should fail - missing jobId or both (personId and jobFunctionId)', done => {
       server
         .post(`${path}/assign-job-context`)
@@ -284,6 +283,39 @@ describe('Permissions', () => {
         .set('Authorization', `Bearer ${shared.token}`)
         .end((err, res) => {
           assert.equal(res.status, 417) // Boom.expectationFailed
+          //
+          done()
+        })
+    })
+    it('should fail - wrong jobId', done => {
+      server
+        .post(`${path}/assign-job-context`)
+        .send({ jobId: wrongValue, siteId })
+        .set('Authorization', `Bearer ${shared.token}`)
+        .end((err, res) => {
+          assert.equal(res.status, 422) // Boom.badData
+          //
+          done()
+        })
+    })
+    it('should fail - wrong siteId', done => {
+      server
+        .post(`${path}/assign-job-context`)
+        .send({ jobId, siteId: wrongValue })
+        .set('Authorization', `Bearer ${shared.token}`)
+        .end((err, res) => {
+          assert.equal(res.status, 422) // Boom.badData
+          //
+          done()
+        })
+    })
+    it('should fail - wrong geographyId', done => {
+      server
+        .post(`${path}/assign-job-context`)
+        .send({ jobId, geographyId: wrongValue })
+        .set('Authorization', `Bearer ${shared.token}`)
+        .end((err, res) => {
+          assert.equal(res.status, 422) // Boom.badData
           //
           done()
         })
