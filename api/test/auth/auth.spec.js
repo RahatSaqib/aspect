@@ -166,7 +166,7 @@ describe('Authentication routes', () => {
             assert.equal(res.status, 200)
             assert.isAbove(res.body.access.length, 100)
             assert.isAbove(res.body.refresh.length, 50)
-            assert.isDefined(res.body.clientId)
+            assert.isString(res.body.clientId)
             assert.isAbove(res.body.clientId.length, 32)
             done()
           })
