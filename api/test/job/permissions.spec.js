@@ -172,6 +172,38 @@ describe('Permissions', () => {
           done()
         })
     })
+    it('should fail - wrong personId', done => {
+      server
+        .post(`${path}/assign-job`)
+        .send({
+          personId: wrongValue,
+          jobFunctionId,
+        })
+        .set('Authorization', `Bearer ${shared.token}`)
+        .end((err, res) => {
+          assert.equal(res.status, 422) // Boom.badData
+          assert.equal(
+            res.body.message,
+            `Can not find person with id=${wrongValue}`
+          )
+          //
+          done()
+        })
+    })
+    it('should fail - personId is from another geography (i.e. another country)', done => {
+      server
+        .post(`${path}/assign-job`)
+        .send({
+          personId: 7,
+          jobFunctionId,
+        })
+        .set('Authorization', `Bearer ${shared.token}`)
+        .end((err, res) => {
+          assert.equal(res.status, 422) // Boom.badData
+          //
+          done()
+        })
+    })
   })
 
   describe('Job Context', () => {

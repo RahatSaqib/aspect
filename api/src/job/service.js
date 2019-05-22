@@ -94,13 +94,31 @@ const unassignJob = async request => manageJob(request, MODE_DELETE)
 async function manageJob(request, mode) {
   const { payload: { personId, jobFunctionId } } = request
   const { auth } = request
-  const { partnerId } = await getUser(auth.credentials.name)
+  const { partnerId, countryId } = await getUser(auth.credentials.name)
 
   // should be same 'partnerId' in requested jobFunction and current user
   const err = 'Only Admin with same partnerId as JobFunction can manage Jobs'
   const jf = await getJobFunction(jobFunctionId, partnerId, err)
   if (jf.isBoom) {
     return jf
+  }
+
+  const person = await knex('Person as p')
+    .leftOuterJoin('Geography as g', 'p.geographyId', 'g.id')
+    .where('p.id', personId)
+    .first('g.countryId')
+  if (!person) {
+    return Boom.badData(`Can not find person with id=${personId}`)
+  }
+  if (!person.countryId) {
+    return Boom.badData('Requested person does not have countryId')
+  }
+  if (person.countryId !== countryId) {
+    return Boom.badData(
+      `Different countryIds in current Admin user (${countryId}) and requested person ${
+        person.countryId
+      }`
+    )
   }
 
   const job = await knex('Job')
