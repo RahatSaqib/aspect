@@ -1,3 +1,4 @@
+const Promise = require('bluebird')
 const supertest = require('supertest')
 const chai = require('chai')
 const _ = require('lodash')
@@ -82,6 +83,45 @@ describe('Permissions', () => {
   })
 
   describe('Job', () => {
+    /*
+    deleting Job also deletes linked JobContext entries,
+    and we need to restore original values in after()
+    */
+    let jobContextsOld
+    before(async () =>
+      runTestWithKnex(async knex => {
+        // keep JobContext entries, if any exists
+        jobContextsOld = await knex('JobContext as jc')
+          .join('Job as j', 'jc.jobId', 'j.id')
+          .where('j.personId', personId)
+          .where('j.jobFunctionId', jobFunctionId)
+          .select('jc.geographyId', 'jc.siteId')
+      })
+    )
+    //
+    after(async () =>
+      runTestWithKnex(async knex => {
+        await Promise.each(jobContextsOld, async jc => {
+          const jcOld = await knex('JobContext')
+            .where({ jobId })
+            .where(function() {
+              if (jc.geographyId) {
+                this.where({ geographyId: jc.geographyId })
+              } else if (jc.siteId) {
+                this.where({ siteId: jc.siteId })
+              }
+            })
+            .first()
+          if (!jcOld) {
+            await knex('JobContext').insert({
+              jobId,
+              geographyId: jc.geographyId,
+              siteId: jc.siteId,
+            })
+          }
+        })
+      })
+    )
     it('should un-assign person from JobFunction and return list of remaining Jobs for person', done => {
       server
         .post(`${path}/unassign-job`)
@@ -140,7 +180,6 @@ describe('Permissions', () => {
           done()
         })
     })
-
     it('should return same list of jobs as before after assign person to the same JobFunction', done => {
       server
         .post(`${path}/assign-job`)
@@ -226,11 +265,6 @@ describe('Permissions', () => {
           await knex('JobContext')
             .where({ jobId, siteId })
             .whereNull('geographyId')
-            .del()
-        }
-        if (cleanJob) {
-          await knex('Job')
-            .where('id', jobId)
             .del()
         }
       })
