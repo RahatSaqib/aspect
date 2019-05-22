@@ -142,6 +142,8 @@ const unassignJobContext = async request =>
   manageJobContext(request, MODE_DELETE)
 const validateAndNormalizeJobContextData = async request => {
   const { payload } = request
+  const { auth } = request
+  const { partnerId } = await getUser(auth.credentials.name)
   const { personId, jobFunctionId, geographyId, siteId } = payload
   let { jobId } = payload
 
@@ -181,11 +183,16 @@ const validateAndNormalizeJobContextData = async request => {
     }
   }
   if (jobId) {
-    const item = await knex('Job')
-      .where({ id: jobId })
-      .first()
+    const item = await knex('Job as j')
+      .join('JobFunction as jf', 'j.jobFunctionId', 'jf.id')
+      .where('j.id', jobId)
+      .first('j.id', 'jf.partnerId')
     if (!item) {
       return Boom.badData(`Missing job with specified jobId=${jobId}`)
+    } else if (item.partnerId !== partnerId) {
+      return Boom.expectationFailed(
+        'Only Admin with same partnerId as Job/JobFunction can manage Jobs'
+      )
     }
   } else if (!jobId) {
     // if no jobId - create Job with personId/jobFunctionId
@@ -193,6 +200,7 @@ const validateAndNormalizeJobContextData = async request => {
     // use 'personId, jobFunctionId' from request to create/get Job
     const jobResponse = await assignJob(request)
     if (jobResponse.isBoom) {
+      // Boom when current Admin user and JobFunction have different partnerId's
       return jobResponse
     }
     // get jobId for requested personId/jobFunctionId from list of all Jobs for personId

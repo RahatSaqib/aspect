@@ -261,6 +261,10 @@ describe('Permissions', () => {
         .set('Authorization', `Bearer ${shared.token}`)
         .end((err, res) => {
           assert.equal(res.status, 409) // Boom.conflict
+          assert.equal(
+            res.body.message,
+            'Either geographyId or siteId (not both) is needed to manage JobContext'
+          )
           //
           done()
         })
@@ -272,6 +276,10 @@ describe('Permissions', () => {
         .set('Authorization', `Bearer ${shared.token}`)
         .end((err, res) => {
           assert.equal(res.status, 409) // Boom.conflict
+          assert.equal(
+            res.body.message,
+            'Either geographyId or siteId (not both) is needed to manage JobContext'
+          )
           //
           done()
         })
@@ -283,6 +291,10 @@ describe('Permissions', () => {
         .set('Authorization', `Bearer ${shared.token}`)
         .end((err, res) => {
           assert.equal(res.status, 417) // Boom.expectationFailed
+          assert.equal(
+            res.body.message,
+            'Either jobId or (personId and jobFunctionId) is needed to manage JobContext'
+          )
           //
           done()
         })
@@ -294,6 +306,10 @@ describe('Permissions', () => {
         .set('Authorization', `Bearer ${shared.token}`)
         .end((err, res) => {
           assert.equal(res.status, 422) // Boom.badData
+          assert.equal(
+            res.body.message,
+            `Missing job with specified jobId=${wrongValue}`
+          )
           //
           done()
         })
@@ -305,6 +321,10 @@ describe('Permissions', () => {
         .set('Authorization', `Bearer ${shared.token}`)
         .end((err, res) => {
           assert.equal(res.status, 422) // Boom.badData
+          assert.equal(
+            res.body.message,
+            `Missing site with specified siteId=${wrongValue}`
+          )
           //
           done()
         })
@@ -316,6 +336,25 @@ describe('Permissions', () => {
         .set('Authorization', `Bearer ${shared.token}`)
         .end((err, res) => {
           assert.equal(res.status, 422) // Boom.badData
+          assert.equal(
+            res.body.message,
+            `Missing geography with specified geographyId=${wrongValue}`
+          )
+          //
+          done()
+        })
+    })
+    it('should fail - current Admin user and jobId point to different partnerId', done => {
+      server
+        .post(`${path}/assign-job-context`)
+        .send({ jobId: 8, geographyId })
+        .set('Authorization', `Bearer ${shared.token}`)
+        .end((err, res) => {
+          assert.equal(res.status, 417) // Boom.expectationFailed
+          assert.equal(
+            res.body.message,
+            'Only Admin with same partnerId as Job/JobFunction can manage Jobs'
+          )
           //
           done()
         })
