@@ -143,32 +143,30 @@ async function manageJobContext(request, mode) {
   const { payload } = request
   const { personId, jobFunctionId, geographyId, siteId } = payload
   let { jobId } = payload
-  // validate - at least one id is needed
-  if (!jobId && !personId && !jobFunctionId) {
+
+  // validate - either jobId or both (personId and jobFunctionId) are needed
+  const hasPersonAndJobFunction = !!personId && !!jobFunctionId
+  if (!jobId && !hasPersonAndJobFunction) {
     return Boom.expectationFailed(
-      'Either jobId or geographyId or siteId is needed to manage JobContext'
+      'Either jobId or (personId and jobFunctionId) is needed to manage JobContext'
     )
   }
-  // validate - if no jobId, then check personId/jobFunctionId and geographyId/siteId
+  // validate - either geographyId or siteId is needed
+  const bothMissing = !geographyId && !siteId
+  const bothPresent = !!geographyId && !!siteId
+  if (bothMissing || bothPresent) {
+    return Boom.conflict(
+      'Either geographyId or siteId (not both) is needed to manage JobContext'
+    )
+  }
+  // if no jobId - create Job with personId/jobFunctionId
   if (!jobId) {
-    if (!personId && !jobFunctionId) {
-      return Boom.expectationFailed(
-        'Both personId and jobFunctionId are missing'
-      )
-    }
-    const bothMissing = !geographyId && !siteId
-    const bothPresent = !!geographyId && !!siteId
-    if (bothMissing || bothPresent) {
-      return Boom.conflict(
-        'Either geographyId or siteId (not both) is needed to manage JobContext'
-      )
-    }
+    // use 'personId, jobFunctionId' from request to create/get Job
     const jobResponse = await assignJob(request)
     if (jobResponse.isBoom) {
       return jobResponse
     }
-    // get jobId for requested 'personId' and 'jobFunctionId'
-    // (notice that array jobResponse.data must have such item after 'assignJob()')
+    // get jobId for requested personId/jobFunctionId from list of all Jobs for personId
     ;[{ id: jobId }] = jobResponse.data.filter(
       x => x.personId === personId && x.jobFunctionId === jobFunctionId
     )

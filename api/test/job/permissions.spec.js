@@ -18,6 +18,7 @@ describe('Permissions', () => {
   let cleanJob = false
   let jobId
   let siteId
+  let geographyId
 
   before(async () =>
     runTestWithKnex(async knex => {
@@ -32,12 +33,12 @@ describe('Permissions', () => {
           .first(),
       ]
       //
-      ;[{ id: siteId }] = [
+      ;[{ id: siteId, geographyId }] = [
         await knex('Site as s')
           .join('Geography as g', 's.geographyId', 'g.id')
           .where('g.countryId', countryId)
           .where('s.partnerId', partner1)
-          .first('s.id'),
+          .first('s.id', 's.geographyId'),
       ]
       // if Job doesn't exist then entry added during the test will be removed in after()
       const job = await knex('Job')
@@ -247,6 +248,42 @@ describe('Permissions', () => {
             x => x.jobId === jobId && x.siteId === siteId && !x.geographyId
           )
           assert.typeOf(item, 'Object')
+          //
+          done()
+        })
+    })
+
+    it('should fail - either `siteId` or `geographyId` is needed, not both', done => {
+      server
+        .post(`${path}/assign-job-context`)
+        .send({ jobId, siteId, geographyId })
+        .set('Authorization', `Bearer ${shared.token}`)
+        .end((err, res) => {
+          assert.equal(res.status, 409) // Boom.conflict
+          //
+          done()
+        })
+    })
+
+    it('should fail - missing both `siteId` and `geographyId`', done => {
+      server
+        .post(`${path}/assign-job-context`)
+        .send({ jobId })
+        .set('Authorization', `Bearer ${shared.token}`)
+        .end((err, res) => {
+          assert.equal(res.status, 409) // Boom.conflict
+          //
+          done()
+        })
+    })
+
+    it('should fail - missing jobId or both (personId and jobFunctionId)', done => {
+      server
+        .post(`${path}/assign-job-context`)
+        .send({ siteId, geographyId })
+        .set('Authorization', `Bearer ${shared.token}`)
+        .end((err, res) => {
+          assert.equal(res.status, 417) // Boom.expectationFailed
           //
           done()
         })
