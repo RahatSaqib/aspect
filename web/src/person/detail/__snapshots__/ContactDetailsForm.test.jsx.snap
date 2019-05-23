@@ -1416,6 +1416,228 @@ exports[`ContactDetailsForm module ContactDetailsForm component should render co
 </form>
 `;
 
+exports[`ContactDetailsForm module ContactDetailsForm component should show form for New Contact 1`] = `
+<form
+  className="Form"
+  onSubmit={[Function]}
+>
+  <div
+    className="Form__Content"
+  >
+    <section>
+      <TextField
+        FormHelperTextProps={
+          Object {
+            "margin": "dense",
+          }
+        }
+        disabled={false}
+        fullWidth={true}
+        inputProps={
+          Object {
+            "maxLength": 500,
+          }
+        }
+        label="Full Name"
+        margin="normal"
+        name="name"
+        onChange={[Function]}
+        required={false}
+        select={false}
+        type="text"
+        variant="standard"
+      />
+      <TextField
+        FormHelperTextProps={
+          Object {
+            "margin": "dense",
+          }
+        }
+        disabled={false}
+        fullWidth={true}
+        inputProps={
+          Object {
+            "maxLength": 255,
+          }
+        }
+        label="Job Title"
+        margin="normal"
+        name="title"
+        onChange={[Function]}
+        required={false}
+        select={false}
+        type="text"
+        variant="standard"
+      />
+    </section>
+    <section>
+      <h1>
+        Email
+      </h1>
+      <TextField
+        FormHelperTextProps={
+          Object {
+            "margin": "dense",
+          }
+        }
+        disabled={false}
+        fullWidth={true}
+        inputProps={
+          Object {
+            "maxLength": 500,
+          }
+        }
+        label="Primary"
+        margin="normal"
+        name="email"
+        onChange={[Function]}
+        required={false}
+        select={false}
+        type="email"
+        variant="standard"
+      />
+      <TextField
+        FormHelperTextProps={
+          Object {
+            "margin": "dense",
+          }
+        }
+        disabled={false}
+        fullWidth={true}
+        inputProps={
+          Object {
+            "maxLength": 500,
+          }
+        }
+        label="Alternate"
+        margin="normal"
+        name="email2"
+        onChange={[Function]}
+        required={false}
+        select={false}
+        type="email"
+        variant="standard"
+      />
+    </section>
+    <section>
+      <h1>
+        Phone
+      </h1>
+      <pure(withProps(withHandlers(DialCodeDropdownInput)))
+        FormHelperTextProps={
+          Object {
+            "margin": "dense",
+          }
+        }
+        disabled={false}
+        inputProps={
+          Object {
+            "maxLength": 40,
+          }
+        }
+        label="Telephone"
+        margin="normal"
+        name="phone"
+        onChange={[Function]}
+      />
+      <pure(withProps(withHandlers(DialCodeDropdownInput)))
+        FormHelperTextProps={
+          Object {
+            "margin": "dense",
+          }
+        }
+        disabled={false}
+        inputProps={
+          Object {
+            "maxLength": 40,
+          }
+        }
+        label="Mobile"
+        margin="normal"
+        name="cell"
+        onChange={[Function]}
+      />
+    </section>
+    <section>
+      <h1>
+        Location
+      </h1>
+      <div
+        className="GeographyDropdownGroup"
+      >
+        <Connect(CountrySelectField)
+          allItemText="All"
+          className="GeographyDropdown"
+          floatingLabelFixed={true}
+          floatingLabelText="Country"
+          onCountryIdChange={[Function]}
+        />
+        <Connect(StateSelectField)
+          allItemText="All"
+          className="GeographyDropdown"
+          floatingLabelFixed={true}
+          floatingLabelText="State"
+          onStateIdChange={[Function]}
+        />
+        <Connect(LgaSelectField)
+          allItemText="All"
+          className="GeographyDropdown"
+          floatingLabelFixed={true}
+          floatingLabelText="Area"
+          onLgaIdChange={[Function]}
+        />
+      </div>
+      <TextField
+        FormHelperTextProps={
+          Object {
+            "margin": "dense",
+          }
+        }
+        disabled={false}
+        fullWidth={true}
+        inputProps={
+          Object {
+            "maxLength": 45,
+          }
+        }
+        label="Zip Code"
+        margin="normal"
+        name="zip"
+        onChange={[Function]}
+        required={false}
+        select={false}
+        type="text"
+        variant="standard"
+      />
+    </section>
+    <section>
+      <h1>
+        Tags
+      </h1>
+      <Connect(ConnectedTagInput)
+        allowCreate={true}
+        label="Choose tags"
+        onTagChange={[Function]}
+        qryType="person"
+        value={Array []}
+      />
+    </section>
+  </div>
+  <div
+    className="Form__ActionRow"
+  >
+    <WithStyles(Button)
+      color="primary"
+      disabled={true}
+      type="submit"
+      variant="contained"
+    >
+      Create
+    </WithStyles(Button)>
+  </div>
+</form>
+`;
+
 exports[`ContactDetailsForm module validate function should validate email addresses if they have been entered 1`] = `
 Object {
   "email": "Please enter a valid email address",
