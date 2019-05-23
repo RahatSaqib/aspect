@@ -235,7 +235,7 @@ async function refreshToken(request) {
   await query('Update refresh token expiry date')
     .from('RefreshToken')
     .where({ token })
-    .update({ token: refreshToken, expires })
+    .update({ token: refreshToken, expires, updatedOn: now })
 
   const accessToken = await getAccessToken(data)
   return {

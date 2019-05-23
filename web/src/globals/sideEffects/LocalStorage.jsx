@@ -86,9 +86,9 @@ const enhance = compose(
       storageMappings.forEach(
         ({ storageKey, propsKey, update = _.identity }) => {
           const value = props[propsKey]
-          if (_.isUndefined(value)) {
+          if (_.isUndefined(value) && propsKey !== 'clientId') {
             localStorage.removeItem(storageKey)
-          } else {
+          } else if (update(value)) {
             localStorage.setItem(storageKey, update(value))
           }
         }
@@ -100,7 +100,6 @@ const enhance = compose(
       localStorage.removeItem('jwt')
       localStorage.removeItem('jwt_expires')
       localStorage.removeItem('refresh')
-      localStorage.removeItem('clientId')
       localStorage.removeItem('culture')
       localStorage.removeItem('timezone')
       // End-TODO
