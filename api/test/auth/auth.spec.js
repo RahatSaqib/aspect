@@ -434,6 +434,7 @@ describe('Authentication routes', () => {
         })
         .set('Authorization', `Bearer ${shared.token}`)
         .end((err, res) => {
+          console.log(res.body)
           assert.equal(res.status, 200)
           assert.isTrue(res.body.ok)
           assert.equal(res.body.data.username, newUsername)
