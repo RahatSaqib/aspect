@@ -15,6 +15,7 @@ import Language from '@material-ui/icons/Language'
 import Lock from '@material-ui/icons/Lock'
 import ContactDetailsForm from './ContactDetailsForm'
 import LoginDetailsForm from './LoginDetailsForm'
+import JobAssignemntForm from './JobAssignmentForm'
 import UserPreferencesForm from './UserPreferencesForm'
 
 // Our own imports
@@ -227,7 +228,7 @@ export class PersonDetail extends PureComponent {
               <Tab
                 icon={<Lock fontSize="large" />}
                 style={{
-                  visibility: userIsAdmin && isUser ? 'visible' : 'hidden',
+                  display: userIsAdmin && isUser ? 'block' : 'none',
                 }}
                 label={
                   <Hidden xs component="span">
@@ -240,6 +241,30 @@ export class PersonDetail extends PureComponent {
                   {formatMessage(messages.systemAccessControl)}
                 </Visible>
                 <LoginDetailsForm
+                  intl={intl}
+                  loading={loading}
+                  shouldPrefill={shouldPrefill}
+                  emailValue={emailValue}
+                  loginDetails={loginDetails}
+                  onSubmit={this.saveLoginDetails}
+                />
+              </Tab>
+              <Tab
+                icon={<Lock fontSize="large" />}
+                style={{
+                  display: userIsAdmin ? 'block' : 'none',
+                }}
+                label={
+                  <Hidden xs component="span">
+                    {formatMessage(messages.jobAssignment)}
+                  </Hidden>
+                }
+              >
+                {loading && <LinearProgress />}
+                <Visible xs component="h2" className={styles.Form__Header}>
+                  {formatMessage(messages.systemAccessControl)}
+                </Visible>
+                <JobAssignemntForm
                   intl={intl}
                   loading={loading}
                   shouldPrefill={shouldPrefill}

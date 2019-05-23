@@ -199,4 +199,8 @@ export default defineMessages({
     id: 'pages.UserPreferences.chooseTags',
     defaultMessage: 'Choose tags',
   },
+  jobAssignment: {
+    id: 'pages.UserPreferences.jobAssignment',
+    defaultMessage: 'Job Assignment',
+  },
 })
