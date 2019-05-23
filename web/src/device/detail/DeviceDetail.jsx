@@ -5,7 +5,7 @@ import { compose, withHandlers, lifecycle, withProps } from 'recompose'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { Switch, Redirect, Route } from 'react-router-dom'
-import isEditable from '../../shared/selectors/device'
+import isEditable from '../../shared/selectors/isEditable'
 import { DelayShowingProgressCircular } from '../../components/shared/DelayShowingProgressBar'
 import { fetchSingleDevice, updateSingleDevice } from '../DeviceRedux'
 import DeviceDetailProfile from './profile/DeviceDetailProfile'
@@ -28,7 +28,7 @@ const enhance = compose(
       const { displayPreferences } = state.user
 
       return {
-        editable: isEditable(state.user, device),
+        editable: isEditable(state.user, 'device'),
         loading: !!state.device.requestedAt,
         device,
         displayPreferences,

@@ -31,7 +31,7 @@ import {
 } from '../ResultRedux'
 import ConnectedTagInput from '../../tag/ConnectedTagInput'
 import { fetchTags, updateTags } from '../../tag/TagRedux'
-import isEditable from '../../shared/selectors/result'
+import isEditable from '../../shared/selectors/isEditable'
 import { Unit } from '../../components/pureGrids'
 import {
   ReadOnlyField,
@@ -165,7 +165,7 @@ const enhance = compose(
         screenSchema,
         deviceLogs: state.result.deviceLogs,
         resultTags,
-        editable: isEditable(state.user, result),
+        editable: isEditable(state.user, 'result'),
         token: state.user.access,
         formDataSaving,
         formDataDirty,

@@ -25,7 +25,7 @@ import Typography from '@material-ui/core/Typography'
 // Our own imports
 import AspectDialog from '../../components/shared/AspectDialog'
 import { Unit } from '../../components/pureGrids'
-import isEditable from '../../shared/selectors/device'
+import isEditable from '../../shared/selectors/isEditable'
 import { fetchSingleRouter, updateSingleRouter } from '../RouterRedux'
 import { ReadOnlyField } from '../../components/shared/ReadOnlyFields'
 import JSONSchemaCard from '../../components/shared/JSONSchemaCard'
@@ -126,7 +126,7 @@ const enhance = compose(
       const router = state.router.items.byId.get(props.match.params.routerId)
 
       return {
-        editable: isEditable(state.user, router),
+        editable: isEditable(state.user, 'device'),
         router,
       }
     },
@@ -281,6 +281,7 @@ export class RouterDetail extends PureComponent {
   renderContent() {
     const { router, intl } = this.props
     const { formatMessage, formatDate, formatRelative } = intl
+    const contacts = router.get('contacts')
     if (!router || !router.has('deviceType')) {
       return false
     }
@@ -403,15 +404,17 @@ export class RouterDetail extends PureComponent {
           </ExpansionPanelSummary>
           <ExpansionPanelDetails>
             <Typography variant="body2">
-              {router.get('contacts').map(c => (
-                <Link
-                  key={c.get('id')}
-                  to={`/browse/person/${c.get('id')}`}
-                  className={styles.Contact}
-                >
-                  {c.get('name')}
-                </Link>
-              ))}
+              {// temp fix to get router details to display
+              contacts &&
+                contacts.map(c => (
+                  <Link
+                    key={c.get('id')}
+                    to={`/browse/person/${c.get('id')}`}
+                    className={styles.Contact}
+                  >
+                    {c.get('name')}
+                  </Link>
+                ))}
             </Typography>
           </ExpansionPanelDetails>
         </ExpansionPanel>

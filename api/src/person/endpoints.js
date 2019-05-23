@@ -1,14 +1,20 @@
 const Joi = require('joi')
-const { asyncHandler, validateSortPageParams } = require('../routes')
+const {
+  asyncHandler,
+  validateDateRangeParams,
+  validateSortPageParams,
+} = require('../routes')
 const {
   validateAllGeographyFilterParams,
 } = require('../geography/requestValidation')
 const {
   listPeople,
+  listRefreshTokens,
   availableContacts,
   showPerson,
   updatePerson,
   updatePersonUserPreferences,
+  updateRefreshToken,
   assignContact,
   unAssignContact,
 } = require('./service')
@@ -48,6 +54,154 @@ const routes = [
       description: 'Available People List',
       notes: 'List of available users that logged in user can assign to a site',
       auth: { scope: ['site:view', 'site:edit'] },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/person/refresh-token',
+    handler: asyncHandler(listRefreshTokens),
+    config: {
+      description: 'List of all reporter app refresh tokens',
+      auth: { scope: ['reporter:view', 'reporter:edit'] },
+      validate: {
+        query: Object.assign(
+          {
+            contactNameOrEmail: Joi.string()
+              .allow('')
+              .description('Filter for person name/email'),
+            deviceName: Joi.string()
+              .allow('')
+              .description('Filter for device name'),
+            revoked: Joi.string()
+              .valid('0', '1')
+              .description('Filter for revoked status'),
+          },
+          validateAllGeographyFilterParams(),
+          validateDateRangeParams(),
+          validateSortPageParams(
+            'user',
+            'deviceName',
+            'createdOn',
+            // TODO: Fix with real data from ResultsDownload table tbd
+            // 'lastSeen',
+            // 'lastMonth',
+            // 'thisMonth',
+            // 'deliveredLastMonth',
+            // 'deliveredThisMonth',
+            // 'acknowledgedRatio',
+            // 'totalFlagged',
+            'revoked'
+          )
+        ),
+      },
+      response: {
+        options: {
+          allowUnknown: false,
+        },
+        schema: Joi.object().keys({
+          ok: Joi.bool()
+            .required()
+            .description('False if there was some sort of error'),
+          total: Joi.number()
+            .required()
+            .description(
+              'The total number of refresh tokens that match the given filters'
+            ),
+          length: Joi.number()
+            .required()
+            .description(
+              'The number of refresh tokens included in this response'
+            ),
+          data: Joi.array()
+            .required()
+            .description('Reporters')
+            .items(
+              Joi.object().keys({
+                id: Joi.string()
+                  .required()
+                  .description('The Client ID of the refresh token'),
+                user: Joi.string()
+                  .required()
+                  .description(
+                    'The username of the person logged into the reporter app'
+                  ),
+                deviceName: Joi.string()
+                  .required()
+                  .description('The name of the mobile device used'),
+                createdOn: Joi.date()
+                  .required()
+                  .description(
+                    'The data a refresh token was created for the particular device'
+                  ),
+                revoked: Joi.number()
+                  .valid(0, 1)
+                  .required()
+                  .description(
+                    'Indicator of whether or not a token has been revoked'
+                  ),
+                lastSeen: Joi.date()
+                  .required()
+                  .description('The date when the device was last online'),
+                deliveredThisMonth: Joi.number()
+                  .allow(null)
+                  .description('Number of tests delivered in the last 30 days'),
+                deliveredLastMonth: Joi.number()
+                  .allow(null)
+                  .description(
+                    'Number of tests delivered in the 30 days before that'
+                  ),
+                acknowledgedRatio: Joi.number()
+                  .required()
+                  .description('The acknowledged ratio'),
+                totalFlagged: Joi.number()
+                  .required()
+                  .description('The total flagged'),
+              })
+            ),
+        }),
+      },
+    },
+  },
+  {
+    method: 'PUT',
+    path: '/person/refresh-token/{refreshTokenId}',
+    handler: asyncHandler(updateRefreshToken),
+    config: {
+      description: 'Update a refresh token',
+      auth: { scope: ['reporter:view', 'reporter:edit'] },
+      validate: {
+        params: {
+          refreshTokenId: Joi.string()
+            .description('Refresh token id')
+            .required(),
+        },
+        payload: {
+          revoked: Joi.bool().required(),
+        },
+      },
+      response: {
+        options: {
+          allowUnknown: false,
+        },
+        schema: Joi.object().keys({
+          ok: Joi.bool()
+            .required()
+            .description('False if there was some sort of error'),
+          data: Joi.object()
+            .description('The refresh token that has been updated')
+            .keys({
+              id: Joi.string()
+                .required()
+                .description('The Client ID of the refresh token'),
+              revoked: Joi.boolean()
+                .valid(true, false)
+                .required()
+                .description(
+                  'Indicator of whether or not a token has been revoked'
+                ),
+            }),
+        }),
+      },
     },
   },
   {
