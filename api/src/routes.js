@@ -393,15 +393,21 @@ function validateResultResponse() {
     resultWorkflowLogOperator: Joi.string()
       .allow(null)
       .description('Operator from the latest ResultWorkflowLog'),
+    resultWorkflowLogCreatedOn: Joi.date()
+      .allow(null)
+      .description('CreatedOn date from the latest ResultWorkflowLog'),
     resultWorkflowLogChangedOn: Joi.date()
       .allow(null)
       .description('ChangedOn date from the latest ResultWorkflowLog'),
-    resultWorkflowLogCreatedOn: Joi.date()
-      .allow(null)
-      .description('CreatedOn date from latest ResultWorkflowLog'),
     resultTreatmentStatusId: Joi.number()
       .allow(null)
       .description('ID of the result treatment status'),
+    resultTreatmentMethod: Joi.string()
+      .allow(null, '')
+      .description('Method from latest ResultTreatmentWorkflowLog'),
+    resultTreatmentData: Joi.string()
+      .allow(null, '')
+      .description('Operator from latest ResultTreatmentWorkflowLog'),
   }
 }
 

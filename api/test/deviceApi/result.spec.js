@@ -359,6 +359,7 @@ describe('Device Result API routes', () => {
             workflow: {
               status: { id: 'Acknowledged' },
               operator: 'Goody Two Shoes',
+              reason: 'Reason 1',
               changedOn: '2013-12-01T01:35',
             },
             category: [{ id: 'Detected' }, { id: 'Indeterminate' }],
@@ -602,6 +603,7 @@ describe('Device Result API routes', () => {
           workflow: {
             status: { id: 'Acknowledged' },
             operator: 'Goody Two Shoes',
+            reason: 'Reason 1',
             changedOn: '2013-12-01T01:35',
           },
           category: [{ id: 'Detected' }, { id: 'Indeterminate' }],
