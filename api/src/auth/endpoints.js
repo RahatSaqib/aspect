@@ -100,7 +100,8 @@ const routes = [
           clientName: Joi.string().required(),
           clientType: Joi.string()
             .lowercase()
-            .valid(Object.values(clientTypes)),
+            .valid(Object.values(clientTypes))
+            .required(),
           clientId: Joi.string(),
         },
       },
