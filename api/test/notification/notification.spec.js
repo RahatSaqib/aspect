@@ -21,10 +21,10 @@ describe('Notification routes', () => {
 
   const ntArr = []
 
-  beforeEach(async () => {
+  beforeEach(async () =>
     run(async knex => {
       const issueTypes = await rowsAsObject(knex, 'IssueType', 'externalId')
-      await Promise.each(sampleIssues, async issue => {
+      Promise.each(sampleIssues, async issue => {
         const issueType = issueTypes[issue]
         const [ntId] = await knex('NotificationType').insert({
           partnerId: 1,
@@ -33,16 +33,18 @@ describe('Notification routes', () => {
           createdOn: now,
           updatedOn: now,
         })
+
         ntArr.push(ntId)
+
         await knex('Notification').insert({
           notificationTypeId: ntId,
           createdOn: now,
         })
       })
     })
-  })
+  )
 
-  afterEach(async () => {
+  afterEach(async () =>
     run(async knex => {
       await Promise.each(ntArr, async ntId => {
         await knex('Notification')
@@ -53,7 +55,8 @@ describe('Notification routes', () => {
           .del()
       })
     })
-  })
+  )
+
   describe('GET /notification', () => {
     shared.checkToken(server, path)
 
