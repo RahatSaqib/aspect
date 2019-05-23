@@ -24,7 +24,7 @@ describe('Notification routes', () => {
   beforeEach(async () =>
     run(async knex => {
       const issueTypes = await rowsAsObject(knex, 'IssueType', 'externalId')
-      Promise.each(sampleIssues, async issue => {
+      await Promise.each(sampleIssues, async issue => {
         const issueType = issueTypes[issue]
         const [ntId] = await knex('NotificationType').insert({
           partnerId: 1,
