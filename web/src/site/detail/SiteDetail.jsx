@@ -10,7 +10,7 @@ import classnames from 'classnames/bind'
 import Paper from '@material-ui/core/Paper'
 import LinearProgress from '@material-ui/core/LinearProgress'
 
-import isEditable from '../../shared/selectors/site'
+import isEditable from '../../shared/selectors/isEditable'
 import {
   fetchSingleSite,
   updateSingleSiteFromForm,
@@ -133,7 +133,7 @@ const mapStateToProps = (state, ownProps) => {
     Immutable.List()
   )
   return {
-    editable: isEditable(state.user, site),
+    editable: isEditable(state.user, 'site'),
     site,
     siteTags,
     lastServerResponseTime: state.getIn(['globals', 'lastServerResponseTime']),

@@ -1,11 +1,3 @@
-export function isEditable(user /* TODO: add me back, site */) {
-  const notEditable = user.jwt.permissions
-    .intersect(['site:admin', 'site:edit'])
-    .isEmpty()
-
-  return !notEditable
-}
-
 export function latLng(site) {
   return {
     lat: site.get('latitude'),
@@ -23,5 +15,3 @@ export function address(site) {
     address2: site.get('street2'),
   }
 }
-
-export { isEditable as default }

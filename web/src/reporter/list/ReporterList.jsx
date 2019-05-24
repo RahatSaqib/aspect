@@ -37,21 +37,17 @@ const messages = defineMessages({
     id: 'pages.ReporterList.reportersTitle',
     defaultMessage: 'Reporters',
   },
-  reporterName: {
-    id: 'pages.ReporterList.reporterName',
-    defaultMessage: 'Reporter Name',
+  reporterUser: {
+    id: 'pages.ReporterList.user',
+    defaultMessage: 'User',
   },
-  reporterShortName: {
-    id: 'pages.ReporterList.reporterShortName',
-    defaultMessage: 'Reporter',
+  reporterDevice: {
+    id: 'pages.ReporterList.reporterDevice',
+    defaultMessage: 'Device',
   },
-  reporterSite: {
-    id: 'pages.ReporterList.siteName',
-    defaultMessage: 'Site',
-  },
-  status: {
-    id: 'pages.ReporterList.status',
-    defaultMessage: 'Status',
+  revoked: {
+    id: 'pages.ReporterList.revoked',
+    defaultMessage: 'Revoked',
   },
   connectedSince: {
     id: 'pages.ReporterList.connectedSince',
@@ -61,13 +57,9 @@ const messages = defineMessages({
     id: 'pages.ReporterList.lastSeen',
     defaultMessage: 'Last Seen',
   },
-  numberOfTestsLeft: {
+  numberOfTests: {
     id: 'pages.ReporterList.numberOfTestsLeft',
-    defaultMessage: 'Number Of',
-  },
-  numberOfTestsRight: {
-    id: 'pages.ReporterList.numberOfTestsRight',
-    defaultMessage: 'Tests Delivered',
+    defaultMessage: 'Number Of Tests Delivered',
   },
   deliveredLastMonth: {
     id: 'pages.ReporterList.deliveredLastMonth',
@@ -99,25 +91,16 @@ const FILTERS_CONFIG = [
   { state: true, requiredPermissions: [] },
   { lga: true, requiredPermissions: [] },
   {
-    siteName: true,
-    requiredPermissions: ['site:view', 'site:admin', 'site:edit'],
+    contactNameOrEmail: true,
+    requiredPermissions: [],
   },
+  { date: true, requiredPermissions: [] },
   { deviceName: true, requiredPermissions: [] },
-  { deviceStatus: true, requiredPermissions: [] },
+  { revoked: true, requiredPermissions: [] },
 ]
 
 const searchSanitizer = makeSearchParamsSanitizer({
-  availableSortCol: [
-    'siteName',
-    'shortName',
-    'status',
-    'createdOn',
-    'lastSeen',
-    'deliveredLastMonth',
-    'deliveredThisMonth',
-    'acknowledgedRatio',
-    'totalFlagged',
-  ],
+  availableSortCol: ['user', 'deviceName', 'createdOn', 'lastSeen', 'status'],
 })
 const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
 const filtersFromLocation = composeSanitizer(
@@ -131,7 +114,7 @@ const filtersFromLocation = composeSanitizer(
 const enhance = compose(
   withProps(
     makeSortPageSelector({
-      sortCol: 'name',
+      sortCol: 'user',
     })
   ),
   connect(
@@ -155,20 +138,9 @@ const enhance = compose(
     }) => () => {
       const { sanitized, value: filtersParams } = filtersFromLocation(location)
       if (!sanitized) {
-        fetchReporters(
-          filtersParams,
-          { hasResults: 0, hasConnectivity: 0 },
-          sortCol,
-          sortDir,
-          pageAt,
-          pageSize
-        )
+        fetchReporters(filtersParams, sortCol, sortDir, pageAt, pageSize)
       }
     },
-
-    onRowClick: ({ history }) => ({
-      currentTarget: { dataset: { reporterId } },
-    }) => history.push(`/browse/reporter/${reporterId}`),
   }),
   lifecycle({
     componentWillMount() {
@@ -219,7 +191,6 @@ export const ReporterList = ({
   sortDir,
   pageAt,
   pageSize,
-  onRowClick,
   reducedFilters,
 }) => (
   <div className={cssClasses('Container')}>
@@ -242,24 +213,37 @@ export const ReporterList = ({
           className={cssClasses('ReporterDataTable')}
         >
           <ReporterDataTableHead
+            compact
+            columns={[
+              {
+                key: 'emptystart',
+                colSpan: 4,
+              },
+              {
+                key: 'tests',
+                colSpan: 2,
+                label: intl.formatMessage(messages.numberOfTests),
+              },
+              {
+                key: 'emptyend',
+                colSpan: 3,
+              },
+            ]}
+          />
+          <ReporterDataTableHead
             history={history}
             location={location}
             sortColumnKey={sortCol}
             sortColumnDir={sortDir}
             columns={[
               {
-                key: 'siteName',
-                label: intl.formatMessage(messages.reporterSite),
+                key: 'user',
+                label: intl.formatMessage(messages.reporterUser),
                 sortable: true,
               },
               {
-                key: 'shortName',
-                label: intl.formatMessage(messages.reporterShortName),
-                sortable: true,
-              },
-              {
-                key: 'status',
-                label: intl.formatMessage(messages.status),
+                key: 'device',
+                label: intl.formatMessage(messages.reporterDevice),
                 sortable: true,
               },
               {
@@ -270,40 +254,26 @@ export const ReporterList = ({
               {
                 key: 'lastSeen',
                 label: intl.formatMessage(messages.lastSeen),
-                sortable: true,
               },
               {
                 key: 'deliveredLastMonth',
-                className: cssClasses('ReporterDataTableHead__Tests--left'),
-                sortable: true,
-                label: (
-                  <span>
-                    {intl.formatMessage(messages.numberOfTestsLeft)}
-                    <br />
-                    {intl.formatMessage(messages.deliveredLastMonth)}
-                  </span>
-                ),
+                label: intl.formatMessage(messages.deliveredLastMonth),
               },
               {
                 key: 'deliveredThisMonth',
-                className: cssClasses('ReporterDataTableHead__Tests--right'),
-                sortable: true,
-                label: (
-                  <span>
-                    {intl.formatMessage(messages.numberOfTestsRight)}
-                    <br />
-                    {intl.formatMessage(messages.deliveredThisMonth)}
-                  </span>
-                ),
+                label: intl.formatMessage(messages.deliveredThisMonth),
               },
               {
                 key: 'acknowledgedRatio',
                 label: intl.formatMessage(messages.acknowledgedRatio),
-                sortable: true,
               },
               {
                 key: 'totalFlagged',
                 label: intl.formatMessage(messages.flagged),
+              },
+              {
+                key: 'revoked',
+                label: intl.formatMessage(messages.revoked),
                 sortable: true,
               },
             ]}
@@ -316,8 +286,6 @@ export const ReporterList = ({
                   key={reporter.get('id')}
                   intl={intl}
                   reporter={reporter}
-                  onClick={onRowClick}
-                  data-reporter-id={reporter.get('id')}
                 />
               ))}
           </TableBody>

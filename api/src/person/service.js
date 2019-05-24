@@ -1,10 +1,20 @@
 const _ = require('lodash')
 const Boom = require('boom')
-const { query, knex, filterParams, sortPageParams } = require('../db')
+const {
+  query,
+  knex,
+  filterParams,
+  filterDateRangeParams,
+  sortPageParams,
+} = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 const userService = require('../auth/service')
 const { transformGeographyFromUpdates } = require('../geography/service')
-const { revokeUsersToken, lockedOutUser } = require('../auth/service')
+const {
+  clientTypes,
+  revokeUsersToken,
+  lockedOutUser,
+} = require('../auth/service')
 
 const getPeople = () =>
   knex('Person as p')
@@ -305,12 +315,83 @@ async function updatePersonUserPreferences(request) {
   return response
 }
 
+async function listRefreshTokens(request) {
+  const { query, auth } = request
+  const dataConstraints = await getConstraints(auth.credentials)
+
+  const tokenQuery = knex('RefreshToken as r')
+    .innerJoin('Person as p', 'r.userId', 'p.userId')
+    .innerJoin('Partner as prt', 'p.lastPartnerId', 'prt.id')
+    .leftJoin('Geography as g', 'p.geographyId', 'g.id')
+    .where({ clientType: clientTypes.app })
+    .modify(addConstraints, dataConstraints, { partner: 'prt' })
+    .modify(filterDateRangeParams, query, 'r.createdOn')
+    .modify(filterParams, query, {
+      countryId: 'g.countryId',
+      stateId: 'g.stateId',
+      lgaId: 'g.lgaId',
+      contactNameOrEmail: ['p.name', 'p.email', 'p.email2'],
+      deviceName: 'r.clientName',
+      revoked: 'r.revoked',
+    })
+
+  const getCount = tokenQuery
+    .clone()
+    .count('r.clientId as count')
+    .first()
+
+  const getItems = tokenQuery
+    .clone()
+    .modify(sortPageParams, query, 'user')
+    .select(
+      'r.clientId as id',
+      'p.name as user',
+      'r.clientName as deviceName',
+      'r.createdOn',
+      'r.revoked'
+    )
+
+  const [{ count: total }, data] = await Promise.all([getCount, getItems])
+
+  // TODO: Fix with real data from Results download table
+  data.forEach(it => {
+    it.lastSeen = Date.now()
+    it.deliveredLastMonth = _.random(0, 10)
+    it.deliveredThisMonth = _.random(0, 20)
+    it.acknowledgedRatio = _.random(0, 1)
+    it.totalFlagged = _.random(1, total)
+  })
+  return { ok: true, total, length: data.length, data }
+}
+
+async function updateRefreshToken(request) {
+  const { params, payload } = request
+  const selectedToken = await knex('RefreshToken')
+    .where('clientId', params.refreshTokenId)
+    .update({
+      revoked: payload.revoked,
+    })
+
+  if (selectedToken !== 1) {
+    return Boom.notFound()
+  }
+
+  return {
+    ok: true,
+    data: {
+      id: params.refreshTokenId,
+      revoked: payload.revoked,
+    },
+  }
+}
 module.exports = {
   listPeople,
+  listRefreshTokens,
   availableContacts,
   assignContact,
   unAssignContact,
   showPerson,
   updatePerson,
   updatePersonUserPreferences,
+  updateRefreshToken,
 }
