@@ -1,10 +1,9 @@
 import PropTypes from 'prop-types'
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useCallback } from 'react'
 import classNames from 'classnames'
 import _fp from 'lodash/fp'
 import _ from 'lodash'
 import Downshift from 'downshift'
-
 import FormControl from '@material-ui/core/FormControl'
 import { withStyles } from '@material-ui/core/styles'
 import MenuItem from '@material-ui/core/MenuItem'
@@ -360,7 +359,7 @@ const Options = props => {
     () => {
       setHighlightedIndex(0)
     },
-    [inputValue]
+    [inputValue, setHighlightedIndex]
   )
 
   return (
@@ -557,7 +556,7 @@ const DateTimeInput = props => {
   const minDate = toDate(min)
   const maxDate = toDate(max)
   const orderList = getOrderList(displayFormat)
-  const isControlled = () => !(value === undefined)
+  const isControlled = useCallback(() => !(value === undefined))
   const initialValue = isControlled()
     ? value
     : normalizeDate({ minDate, maxDate, date: defaultValue })
@@ -580,14 +579,17 @@ const DateTimeInput = props => {
         setIsBlured(false)
       }
     },
-    [value]
+    [isBlured, isControlled, onBlur, value]
   )
 
-  useEffect(() => {
-    if (defaultToNow) {
-      setNow()
-    }
-  }, [])
+  useEffect(
+    () => {
+      if (defaultToNow) {
+        setNow()
+      }
+    },
+    [defaultToNow, setNow]
+  )
 
   // methods
   const getValue = () => (isControlled() ? value : dateTime)

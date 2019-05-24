@@ -17,7 +17,6 @@ import Button from '@material-ui/core/Button'
 // Our own imports
 import config from '../../config'
 import DelayShowingProgressBar from '../../components/shared/DelayShowingProgressBar'
-import CheckboxField from '../../components/shared/CheckboxField'
 import JSONSchemaCard from '../../components/shared/JSONSchemaCard'
 import NavTitle from '../../globals/components/NavTitle'
 import {
@@ -60,7 +59,6 @@ const messages = defineMessages({
     id: 'pages.ResultDetail.title',
     defaultMessage: 'Result Detail',
   },
-
 
   fieldRawData: {
     id: 'pages.ResultDetail.rawData',
@@ -207,7 +205,6 @@ export class ResultDetail extends PureComponent {
     }
   }
 
-  
   onResultTagChange = (qryId, qryType, tags) => {
     this.props.updateTags(qryId, qryType, tags.join(','))
   }
@@ -550,9 +547,7 @@ export class ResultDetail extends PureComponent {
 
     return (
       <ExpansionPanel className={cssClasses('FieldsContainer')}>
-        <ExpansionPanelHeader label={formatMessage(messages.fieldWorkflow)}>
-    
-        </ExpansionPanelHeader>
+        <ExpansionPanelHeader label={formatMessage(messages.fieldWorkflow)} />
         <ExpansionPanelDetail>
           <ReadOnlyFields
             className={cssClasses('Field__Container')}

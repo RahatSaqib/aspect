@@ -17,9 +17,12 @@ const ContactsTag = ({
   fetchUpdateSiteContacts,
   ...restProps
 }) => {
-  useEffect(() => {
-    fetchAvailablePersons('person')
-  }, [])
+  useEffect(
+    () => {
+      fetchAvailablePersons('person')
+    },
+    [fetchAvailablePersons]
+  )
 
   const contactsList = contacts
     .getIn(['person', 'items'], Immutable.List())

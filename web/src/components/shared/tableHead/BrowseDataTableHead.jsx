@@ -23,7 +23,7 @@ export const useSortFilter = ({
         search: searchParams.toString(),
       })
     },
-    [sortCol, sortDir]
+    [history, location, sortCol, sortDir]
   )
   return { onSortColumn }
 }

@@ -2,8 +2,6 @@
 This is a copy of utils.js but removes the concept of checkpoint from the device
   context
 
-GxConnect is unaware of checkpoints
-
 GxConnect also has the requirement to be able to  register itself as a device
 */
 const _ = require('lodash')

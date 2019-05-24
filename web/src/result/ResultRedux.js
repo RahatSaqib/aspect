@@ -269,8 +269,6 @@ export function updateResultWorkflowStatus(resultId) {
   }
 }
 
-
-
 function setSingleResultFormDataValue(resultId, formFieldKey, value) {
   return {
     type: types.SET_RESULT_FORM_DATA_VALUE,
@@ -286,7 +284,6 @@ function savingSingleResultFormData(resultId) {
     resultId,
   }
 }
-
 
 function sendUpdatedResultFormData(dispatch, resultId, formData) {
   return aspectFetch(`/result/form-data/${resultId}`, {

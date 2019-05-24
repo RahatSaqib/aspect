@@ -33,7 +33,7 @@ export const SiteDetail = props => {
     () => {
       handleFetchSite(props)
     },
-    [props.match.params.siteId]
+    [handleFetchSite, props, props.match.params.siteId]
   )
   const onSiteTagChange = (qryId, qryType, tags) => {
     props.updateTags(qryId, qryType, tags.join(','))

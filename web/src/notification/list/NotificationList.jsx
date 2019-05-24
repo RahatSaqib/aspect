@@ -110,7 +110,7 @@ export const NotificationList = props => {
     () => {
       onInitialLoad()
     },
-    [location.search]
+    [location.search, onInitialLoad]
   )
   const onInitialLoad = () => {
     const { sanitized, value: filtersParams } = filtersFromLocation(location)
@@ -121,9 +121,12 @@ export const NotificationList = props => {
   const [reducedFilters, setReducedFilters] = useState({
     name: true,
   })
-  useEffect(() => {
-    setFilters()
-  }, [])
+  useEffect(
+    () => {
+      setFilters()
+    },
+    [setFilters]
+  )
   const setFilters = () => {
     const { sanitized, value: searchParams } = searchSanitizer(location)
     const {

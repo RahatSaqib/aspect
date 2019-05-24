@@ -355,9 +355,6 @@ const routes = [
           allowUnknown: true,
         },
         schema: Object.assign({}, devicePayload, {
-          checkpoint: Joi.string()
-            .allow('', null)
-            .description('The client checkpoint'),
           log: Joi.object()
             .keys(logResponse)
             .description('Device Log Data'),
