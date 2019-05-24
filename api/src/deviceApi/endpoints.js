@@ -349,7 +349,7 @@ const routes = [
       description: 'Get Device Data',
       notes:
         'Get device configuration, operational and result data' +
-        ' returns assigned site and last checkpoint posted for device.',
+        ' returns assigned site',
       response: {
         options: {
           allowUnknown: true,
