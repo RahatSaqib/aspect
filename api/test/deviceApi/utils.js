@@ -252,7 +252,8 @@ async function createSite(knex, { partner, user, site }) {
 
 async function createDevice(
   knex,
-  { siteId, type = 'DaktariVirology', status = 'approved', baseConfig = {} }
+  { siteId, type = 'DaktariVirology', status = 'approved', baseConfig = {} },
+  insertLog = false
 ) {
   const now = new Date()
 
@@ -282,6 +283,15 @@ async function createDevice(
   })
 
   await knex('FactDeviceFlag').insert({ deviceId, updatedOn: now })
+  if (insertLog) {
+    await knex('DeviceLog').insert({
+      createdOn: now,
+      deviceId,
+      senderIp: '127.0.0.1',
+      source: 'Test Message',
+      rawMessage: 'This is a test device',
+    })
+  }
 
   return deviceId
 }
@@ -408,12 +418,16 @@ class DeviceApiTestContext {
       this.siteIds.push(siteId)
       this.siteIds.push(site2Id)
 
-      const deviceId = await createDevice(knex, {
-        siteId,
-        type: this.type,
-        status: this.status,
-        baseConfig: this.baseConfig,
-      })
+      const deviceId = await createDevice(
+        knex,
+        {
+          siteId,
+          type: this.type,
+          status: this.status,
+          baseConfig: this.baseConfig,
+        },
+        true
+      )
       this.deviceId = deviceId
       this.deviceIds.push(deviceId)
 

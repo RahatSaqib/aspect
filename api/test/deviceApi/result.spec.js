@@ -1134,7 +1134,7 @@ describe('Device Result API routes', () => {
           .get(devicePath)
           .set('Authorization', deviceAuth)
           .then(res => {
-            assert.equal(res.status, 404) // there isn't any for this device
+            assert.equal(res.status, 200) // there isn't any for this device
             assert.typeOf(res.body.result, 'undefined')
           })
 
@@ -1161,7 +1161,7 @@ describe('Device Result API routes', () => {
         const [{ count: logLength2 }] = await knex('DeviceLog').count(
           'id as count'
         )
-        assert.equal(logLength2, initialLogLength + 2)
+        assert.equal(logLength2, initialLogLength + 1) // I add new devicelog for the current device
 
         const deviceLogResult2 = await knex('Result')
           .where({ id: resultIds[resultIds.length - 1] })
