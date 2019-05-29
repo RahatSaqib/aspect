@@ -294,6 +294,15 @@ async function savePerson(request, updatablePersonFields) {
 
 async function createPerson(request) {
   const { payload } = request
+  const { name } = payload
+
+  // if user with specified 'name' exists - return Boom
+  const person = await knex('Person')
+    .where({ name })
+    .first()
+  if (person) {
+    return Boom.conflict('Person with requested name already exists')
+  }
 
   const currentlyLoggedInUser = await userService.getUser(
     request.auth.credentials.name

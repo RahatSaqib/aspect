@@ -103,6 +103,7 @@ describe('Person routes', () => {
   })
 
   describe('POST', () => {
+    const testingPersonName = 'TESTING PERSON'
     let testingPersonId
     after(async () =>
       run(async knex => {
@@ -125,7 +126,7 @@ describe('Person routes', () => {
       it('Should create new person', async () => {
         const res = await server
           .post(`${path}`)
-          .send({ name: 'TESTING PERSON' })
+          .send({ name: testingPersonName })
           .set('Authorization', `Bearer ${shared.token}`)
 
         assert.equal(res.status, 200)
@@ -138,6 +139,17 @@ describe('Person routes', () => {
         assert.property(personDetails, 'countryId')
         // keep person id to remove it in after()
         testingPersonId = personDetails.id
+      })
+      it('Should fail to create person with same name', async () => {
+        const res = await server
+          .post(`${path}`)
+          .send({ name: testingPersonName })
+          .set('Authorization', `Bearer ${shared.token}`)
+        assert.equal(res.status, 409) // Boom.conflict
+        assert.equal(
+          res.body.message,
+          'Person with requested name already exists'
+        )
       })
     })
   })
