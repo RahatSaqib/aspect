@@ -2,8 +2,6 @@
 This is a copy of utils.js but removes the concept of checkpoint from the device
   context
 
-GxConnect is unaware of checkpoints
-
 GxConnect also has the requirement to be able to  register itself as a device
 */
 const _ = require('lodash')
@@ -220,10 +218,8 @@ class GxConnectApiTestContext {
         id: 'CepheidGeneXpert',
       },
       site: null,
-      checkpoint: null,
       log: null,
       configuration: {
-        checkpoint: null,
         data: { macAddress, hostId, deviceSerialNumber },
       },
       operation: null,
@@ -330,7 +326,6 @@ class GxConnectApiTestContext {
       .send(
         _.merge({}, this.basicDevicePayload, {
           configuration: {
-            checkpoint: null,
             data: configurationData,
           },
         })

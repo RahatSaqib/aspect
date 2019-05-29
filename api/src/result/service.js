@@ -94,7 +94,6 @@ const SELECT_SHOW_FIELDS = [
   'stp.name as sampleTypeName',
   knex.raw('JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id")) as patientId'),
   'r.patientData',
-  'r.qcCheck',
   'rf.formSchema',
   'rsl.reason as resultWorkflowLogReason',
   'rsl.operator as resultWorkflowLogOperator',
@@ -513,7 +512,6 @@ async function getDeviceLogsByResultId(request) {
     .modify(addConstraints, dataConstraints, { device: 'd' })
     .select(
       'dl.createdOn',
-      'dl.checkpoint as checkPoint',
       'dl.deviceOperationId',
       'dl.source',
       'dl.deviceConfigurationUpdated',
@@ -922,52 +920,6 @@ async function getLastTreatmentStatusByResult(resultId) {
     .orderBy('rtl.changedOn', 'desc')
     .first('rtl.changedOn', 'ts.name', 'ts.externalId', 'ts.i18nKey')
 }
-async function updateQcCheck(request) {
-  const { auth, params, payload, plugins: { messageContext } } = request
-  const now = new Date()
-  const { resultId } = params
-  const { id: currentUserId } = await getUser(auth.credentials.name)
-
-  // get the result so we can check access and workflow status
-  const result = await getResultByResultId(request)
-  if (!result.ok) {
-    return Boom.notFound()
-  }
-
-  if (result.data.resultWorkflowStatusExternalId !== 'Deliverable') {
-    return Boom.badRequest(
-      '"QC Check" can only be set for results that are in the workflow status "Ready for Delivery".'
-    )
-  }
-
-  // update the result QC Check flag
-  messageContext.bindActionCreators({
-    resultUpdated,
-  })
-  await messageContext.transact(async knex => {
-    await knex('Result')
-      .where('id', resultId)
-      .update({
-        qcCheck: payload.qcCheck,
-        updatedBy: currentUserId,
-        updatedOn: now,
-      })
-
-    // log QC-Check change in separate table
-    await knex('ResultQualityControlLog').insert({
-      resultId,
-      qcCheck: payload.qcCheck,
-      createdBy: currentUserId,
-      createdOn: now,
-    })
-
-    // notify result updated so result is redelivered
-    messageContext.resultUpdated(resultId)
-  })
-
-  const response = await showResult(request)
-  return response
-}
 
 async function updateFormData(request) {
   const { auth, params, payload, plugins: { messageContext } } = request
@@ -1175,7 +1127,7 @@ module.exports = {
   listResultTypes,
   updateWorkflowStatus,
   updateTreatmentStatus,
-  updateQcCheck,
+
   updateFormData,
   listWorkflowStatusTypes,
   listWorkflowStatusLog,

@@ -170,19 +170,9 @@ describe('Device API routes', () => {
         const { deviceAuth, deviceId } = context
 
         await server
-          .get(devicePath)
-          .set('Authorization', deviceAuth)
-          .then(res => {
-            assert.equal(res.status, 200)
-            assert.typeOf(res.body, 'Object')
-            assert.equal(res.body.status.id, 'approved')
-          })
-
-        await server
           .post(devicePath)
           .set('Authorization', deviceAuth)
           .send({
-            checkpoint: '124j',
             configuration: { data: { a: 'b' } },
             operation: { data: { a: 'b' } },
           })
@@ -202,8 +192,6 @@ describe('Device API routes', () => {
           .then(res => {
             assert.equal(res.status, 200)
             assert.typeOf(res.body, 'Object')
-            assert.property(res.body, 'checkpoint')
-            assert.equal(res.body.checkpoint, '124j')
             assert.typeOf(res.body.configuration, 'Object')
             assert.deepEqual(res.body.configuration.data, config1)
             assert.typeOf(res.body.operation, 'Object')
@@ -216,15 +204,12 @@ describe('Device API routes', () => {
           .then(res => {
             assert.equal(res.status, 200)
             assert.typeOf(res.body, 'Object')
-            assert.property(res.body, 'checkpoint')
-            assert.equal(res.body.checkpoint, '124j')
           })
 
         await server
           .post(devicePath)
           .set('Authorization', deviceAuth)
           .send({
-            checkpoint: '12313',
             configuration: { data: { a: 'c', c: 2, d: false, e: { f: 'g' } } },
             operation: { data: { a: 'b', c: 2, d: false, e: { f: 'g' } } },
           })
@@ -240,18 +225,6 @@ describe('Device API routes', () => {
           _.assign({}, baseConfig, { a: 'c', c: 2, d: false, e: { f: 'g' } })
         )
         assert.deepEqual(op2, { a: 'b', c: 2, d: false, e: { f: 'g' } })
-
-        await server
-          .get(`${devicePath}?checkpoint=12313`)
-          .set('Authorization', deviceAuth)
-          .then(res => {
-            assert.equal(res.status, 200)
-            assert.typeOf(res.body, 'Object')
-            assert.typeOf(res.body.configuration, 'Object')
-            assert.deepEqual(res.body.configuration.data, config2)
-            assert.typeOf(res.body.operation, 'Object')
-            assert.deepEqual(res.body.operation.data, op2)
-          })
       }))
   })
 

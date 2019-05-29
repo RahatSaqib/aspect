@@ -17,13 +17,11 @@ import Button from '@material-ui/core/Button'
 // Our own imports
 import config from '../../config'
 import DelayShowingProgressBar from '../../components/shared/DelayShowingProgressBar'
-import CheckboxField from '../../components/shared/CheckboxField'
 import JSONSchemaCard from '../../components/shared/JSONSchemaCard'
 import NavTitle from '../../globals/components/NavTitle'
 import {
   fetchSingleResult,
   fetchResultLog,
-  updateResultQcCheck,
   saveResultFormDataValue,
   setResultFormDataValue,
   saveResultFormData,
@@ -61,15 +59,7 @@ const messages = defineMessages({
     id: 'pages.ResultDetail.title',
     defaultMessage: 'Result Detail',
   },
-  qcCheck: {
-    id: 'pages.ResultDetail.qcCheck',
-    defaultMessage: 'QC Check',
-  },
-  qcCheckDisabledHelp: {
-    id: 'pages.ResultDetail.qcCheckDisabledHelp',
-    defaultMessage:
-      '"QC Check" is only enabled if the result is in the status "Ready for Delivery" and hasn\'t been sent to the reporter yet',
-  },
+
   fieldRawData: {
     id: 'pages.ResultDetail.rawData',
     defaultMessage: 'Raw Data',
@@ -122,10 +112,6 @@ const messages = defineMessages({
     id: 'pages.ResultDetail.fieldWorkflow',
     defaultMessage: 'Workflow',
   },
-  workflowQcOk: {
-    id: 'pages.ResultDetail.workflowQcOk',
-    defaultMessage: 'QC OK',
-  },
   resultWorkflowStatus: {
     id: 'pages.ResultDetail.resultWorkflowStatus',
     defaultMessage: 'Status',
@@ -176,7 +162,6 @@ const enhance = compose(
         {
           fetchSingleResult,
           fetchResultLog,
-          updateResultQcCheck,
           saveResultFormDataValue,
           setResultFormDataValue,
           saveResultFormData,
@@ -192,7 +177,6 @@ const enhance = compose(
     editable: PropTypes.bool.isRequired,
     fetchSingleResult: PropTypes.func.isRequired,
     fetchResultLog: PropTypes.func.isRequired,
-    updateResultQcCheck: PropTypes.func.isRequired,
     fetchTags: PropTypes.func.isRequired,
     updateTags: PropTypes.func.isRequired,
     formDataSaving: PropTypes.bool.isRequired,
@@ -219,11 +203,6 @@ export class ResultDetail extends PureComponent {
     if (this.props.match.params.resultId !== nextProps.match.params.resultId) {
       this.handleFetchResult()
     }
-  }
-
-  onChangeQcCheck = event => {
-    const { result } = this.props
-    this.props.updateResultQcCheck(result.get('id'), event.target.checked)
   }
 
   onResultTagChange = (qryId, qryType, tags) => {
@@ -568,31 +547,7 @@ export class ResultDetail extends PureComponent {
 
     return (
       <ExpansionPanel className={cssClasses('FieldsContainer')}>
-        <ExpansionPanelHeader label={formatMessage(messages.fieldWorkflow)}>
-          <span
-            role="checkbox"
-            aria-checked="false"
-            tabIndex="0"
-            onKeyDown={() => {}}
-            onClick={e => e.stopPropagation()}
-          >
-            <CheckboxField
-              name="Status"
-              label={formatMessage(messages.workflowQcOk)}
-              style={{ marginRight: 4 }}
-              checked={result.get('qcCheck') === 1}
-              onChange={this.onChangeQcCheck}
-              disabled={
-                result.get('resultWorkflowStatusExternalId') !== 'Deliverable'
-              }
-              title={
-                result.get('resultWorkflowStatusExternalId') !== 'Deliverable'
-                  ? formatMessage(messages.qcCheckDisabledHelp)
-                  : ''
-              }
-            />
-          </span>
-        </ExpansionPanelHeader>
+        <ExpansionPanelHeader label={formatMessage(messages.fieldWorkflow)} />
         <ExpansionPanelDetail>
           <ReadOnlyFields
             className={cssClasses('Field__Container')}

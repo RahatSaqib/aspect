@@ -214,7 +214,6 @@ describe('Device API routes for GxConnect Devices', () => {
               .send(
                 _.merge({}, secondContext.basicDevicePayload, {
                   configuration: {
-                    checkpoint: null,
                     data: {
                       country: countryCode,
                       deviceSerialNumber,

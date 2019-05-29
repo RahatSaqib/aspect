@@ -1754,10 +1754,8 @@ describe('Device API routes for GxAlert Device', () => {
               status: null,
               type: { id: 'CepheidGeneXpert' },
               site: null,
-              checkpoint: null,
               log: null,
               configuration: {
-                checkpoint: null,
                 data: {
                   macAddress: 'MAC0A0027000010',
                   hostId: 'xPertLab',
@@ -1816,10 +1814,8 @@ describe('Device API routes for GxAlert Device', () => {
               status: null,
               type: { id: 'CepheidGeneXpert' },
               site: null,
-              checkpoint: null,
               log: null,
               configuration: {
-                checkpoint: null,
                 data: {
                   macAddress: 'MAC0A0027000010',
                   gxAlertDeviceId,
@@ -1896,10 +1892,8 @@ describe('Device API routes for GxAlert Device', () => {
               status: null,
               type: { id: 'CepheidGeneXpert' },
               site: null,
-              checkpoint: null,
               log: null,
               configuration: {
-                checkpoint: null,
                 data: {
                   macAddress: 'MAC0A0127001010',
                   hostId,
@@ -2375,10 +2369,8 @@ describe('Device API routes for GxAlert Device', () => {
               status: null,
               type: { id: 'CepheidGeneXpert' },
               site: null,
-              checkpoint: null,
               log: null,
               configuration: {
-                checkpoint: null,
                 data: {
                   macAddress: 'MAC0A0127019921',
                   hostId,
@@ -2837,10 +2829,8 @@ describe('Device API routes for GxAlert Device', () => {
             status: null,
             type: { id: 'CepheidGeneXpert' },
             site: null,
-            checkpoint: null,
             log: null,
             configuration: {
-              checkpoint: null,
               data: { macAddress, gxAlertDeviceId: deviceIdFromGxAlert },
             },
             operation: null,

@@ -230,7 +230,6 @@ class GxAlertApiTestContext {
         id: 'CepheidGeneXpert',
       },
       site: null,
-      checkpoint: null,
       log: null,
       configuration: null,
       operation: null,

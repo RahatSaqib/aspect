@@ -56,7 +56,7 @@ async function mergeResults({ knex, actions, resultId, now }) {
     .join('Sample as sm', 'r.sampleId', 'sm.id')
     .where({
       'r.id': resultId,
-      'r.qcCheck': 1,
+      'rws.externalId': 'Deliverable', // Replace condition qccheck:1 by Status = deliverable
     })
     .first(
       'sm.originSiteId as sampleSiteId',
@@ -135,18 +135,11 @@ async function mergeChaiResultToReporters(
         { sampleId, now }
       )
       if (!existingResult) {
-        // auto QC Check new result and mark as deliverable, but do
         // not change workflow status otherwise
         const deliverableId = await resultWorkflowStatusToId(
           DELIVERABLE_EXTERNALID
         )
 
-        await knex('Result')
-          .where({ id: processedResult.id })
-          .update({
-            qcCheck: 1,
-          })
-        processedResult.qcCheck = 1
         processedResult.resultWorkflowStatusId = deliverableId
 
         await addResultWorkflowLogIfChanged(

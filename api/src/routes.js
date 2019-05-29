@@ -377,7 +377,6 @@ function validateResultResponse() {
     patientData: Joi.object()
       .allow(null)
       .description('The patient data'),
-    qcCheck: Joi.number().description('Qc check name'),
     formSchema: Joi.object()
       .allow(null)
       .description('The form data object'),

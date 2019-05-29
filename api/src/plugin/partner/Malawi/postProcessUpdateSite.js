@@ -106,7 +106,7 @@ async function generateHistoricalResults(
     .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .join('Sample as sm', 'r.sampleId', 'sm.id')
     .where({
-      'r.qcCheck': 1,
+      'rws.externalId': 'Deliverable', // Replace condition qccheck:1 by Status = deliverable
       'dt.externalId': DEVICE_TYPE_CHAI,
       'sm.originSiteId': siteId,
     })
@@ -188,7 +188,7 @@ async function mergeResultAndUpdateWorkflowStatus(
       autoAcknowledgeOlderThan != null &&
       +resultEndedOn < +autoAcknowledgeOlderThan)
 
-  const resultUpdates = { qcCheck: 1 }
+  const resultUpdates = {}
   if (autoAcknowledge) {
     processedResult.resultWorkflowStatusId = acknowledgedStatusId
     await addResultWorkflowLogIfChanged(
@@ -203,9 +203,6 @@ async function mergeResultAndUpdateWorkflowStatus(
   }
 
   Object.assign(processedResult, resultUpdates)
-  await knex('Result')
-    .where({ id: processedResult.id })
-    .update({ qcCheck: 1 })
   await knex('ResultGeneratedResult').insert({
     sourceResultId: resultId,
     generatedResultId: processedResult.id,

@@ -17,9 +17,12 @@ const ConnectedTagInput = ({
   fetchPossibleTags,
   ...restProps
 }) => {
-  useEffect(() => {
-    fetchPossibleTags(qryType)
-  }, [])
+  useEffect(
+    () => {
+      fetchPossibleTags(qryType)
+    },
+    [fetchPossibleTags, qryType]
+  )
   const possibleTags = tags.getIn([qryType, 'items'], Immutable.List()).toJS()
 
   const onChange = value => {

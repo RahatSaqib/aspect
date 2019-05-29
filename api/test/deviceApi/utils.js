@@ -18,60 +18,7 @@ const {
 
 const { assert } = chai
 
-const devicePath = '/device'
-
 const server = supertest.agent('http://localhost:8080')
-
-async function deleteTestDataFromCheckpoint(knex, checkpoint, deviceIds) {
-  const minDeviceLog = await knex('DeviceLog as dl')
-    .where('dl.checkpoint', checkpoint)
-    .first('dl.id as id')
-  if (!minDeviceLog) {
-    // if no updates, nothing to delete
-    return
-  }
-
-  const deviceUpdates = await knex('DeviceLog as dl')
-    .where('dl.id', '>=', minDeviceLog.id)
-    .whereIn('dl.deviceId', deviceIds)
-    .select('dl.id', 'dl.resultId', 'dl.deviceOperationId')
-
-  const deviceLogIds = _.uniq(_.map(deviceUpdates, 'id'))
-  const resultIds = _.uniq(_.map(deviceUpdates, 'resultId'))
-  const opIds = _.uniq(_.map(deviceUpdates, 'deviceOperationId'))
-  await deleteIssues(knex, { resultIds })
-  await knex('DeviceLog')
-    .whereIn('id', deviceLogIds)
-    .delete()
-  await knex('InventoryLog')
-    .whereIn('resultId', resultIds)
-    .delete()
-  await knex('ResultQualityControlLog')
-    .whereIn('resultId', resultIds)
-    .delete()
-  await knex('ResultWorkflowLog')
-    .whereIn('resultId', resultIds)
-    .delete()
-  await knex('ResultGeneratedResult')
-    .whereIn('generatedResultId', resultIds)
-    .delete()
-  await knex('ResultGeneratedResult')
-    .whereIn('sourceResultId', resultIds)
-    .delete()
-  await knex('ResultFileReference')
-    .whereIn('resultId', resultIds)
-    .delete()
-  await knex('ResultTag').del()
-  await knex('PersonTag').del()
-  await knex('NotificationTypeTag').del()
-  await knex('Tag').del()
-  await knex('Result')
-    .whereIn('id', resultIds)
-    .delete()
-  await knex('DeviceOperation')
-    .whereIn('id', opIds)
-    .delete()
-}
 
 async function deleteDeviceAndTestData(knex, apiKeys) {
   const tokens = apiKeys.map(key => key.token)
@@ -305,7 +252,8 @@ async function createSite(knex, { partner, user, site }) {
 
 async function createDevice(
   knex,
-  { siteId, type = 'DaktariVirology', status = 'approved', baseConfig = {} }
+  { siteId, type = 'DaktariVirology', status = 'approved', baseConfig = {} },
+  insertLog = false
 ) {
   const now = new Date()
 
@@ -335,6 +283,15 @@ async function createDevice(
   })
 
   await knex('FactDeviceFlag').insert({ deviceId, updatedOn: now })
+  if (insertLog) {
+    await knex('DeviceLog').insert({
+      createdOn: now,
+      deviceId,
+      senderIp: '127.0.0.1',
+      source: 'Test Message',
+      rawMessage: 'This is a test device',
+    })
+  }
 
   return deviceId
 }
@@ -461,12 +418,16 @@ class DeviceApiTestContext {
       this.siteIds.push(siteId)
       this.siteIds.push(site2Id)
 
-      const deviceId = await createDevice(knex, {
-        siteId,
-        type: this.type,
-        status: this.status,
-        baseConfig: this.baseConfig,
-      })
+      const deviceId = await createDevice(
+        knex,
+        {
+          siteId,
+          type: this.type,
+          status: this.status,
+          baseConfig: this.baseConfig,
+        },
+        true
+      )
       this.deviceId = deviceId
       this.deviceIds.push(deviceId)
 
@@ -478,16 +439,6 @@ class DeviceApiTestContext {
       await knex('DeviceApiKey')
         .where({ token: apiKey.token })
         .update({ deviceId })
-
-      this.checkpoint = `Device API Device Tests ${new Date()}`
-      await this.server
-        .post(devicePath)
-        .set('Authorization', this.deviceAuth)
-        .send({ checkpoint: this.checkpoint })
-        .then(res => {
-          assert.equal(res.status, 200)
-          assert.typeOf(res.body, 'Object')
-        })
     })
   }
 
@@ -550,16 +501,6 @@ class DeviceApiTestContext {
       await knex('DeviceApiKey')
         .where({ token: apiKey.token })
         .update({ deviceId })
-
-      this.checkpoint = `Device API Device Tests ${new Date()}`
-      await this.server
-        .post(devicePath)
-        .set('Authorization', this.deviceAuth)
-        .send({ checkpoint: this.checkpoint })
-        .then(res => {
-          assert.equal(res.status, 200)
-          assert.typeOf(res.body, 'Object')
-        })
     })
   }
 
@@ -638,14 +579,6 @@ class DeviceApiTestContext {
       // Wait for queue to be idle so all created data
       // that will be created can be cleared
       await queuePurge()
-
-      if (this.checkpoint) {
-        await deleteTestDataFromCheckpoint(
-          knex,
-          this.checkpoint,
-          this.deviceIds
-        )
-      }
 
       if (this.apiKeysWithoutDevice.length > 0) {
         await deleteDeviceAndTestData(knex, this.apiKeysWithoutDevice)
