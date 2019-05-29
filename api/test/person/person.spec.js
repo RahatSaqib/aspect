@@ -116,6 +116,12 @@ describe('Person routes', () => {
     )
 
     describe('/person', () => {
+      it('Should fail to create person because of missing required field `name`', async () => {
+        const res = await server
+          .post(`${path}`)
+          .set('Authorization', `Bearer ${shared.token}`)
+        assert.equal(res.status, 400)
+      })
       it('Should create new person', async () => {
         const res = await server
           .post(`${path}`)
