@@ -7,6 +7,9 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 import TableBody from '@material-ui/core/TableBody'
+import IconButton from '@material-ui/core/IconButton'
+import Tooltip from '@material-ui/core/Tooltip'
+import AddIcon from '@material-ui/icons/Add'
 
 import {
   makeSortPageSelector,
@@ -17,6 +20,7 @@ import {
   sanitizeFiltersStringBy,
   reduceFiltersConfig,
 } from '../../filter/utils'
+// import CheckboxField from '../../components/shared/CheckboxField'
 import NavTitle from '../../globals/components/NavTitle'
 import BrowseFilters from '../../globals/components/BrowseFilters'
 import BrowseEmptyList from '../../globals/components/BrowseEmptyList'
@@ -63,6 +67,10 @@ const messages = defineMessages({
   tags: {
     id: 'pages.PersonList.tags',
     defaultMessage: 'Tags',
+  },
+  addContact: {
+    id: 'pages.PersonList.addContact',
+    defaultMessage: 'Add Contact',
   },
 })
 
@@ -122,6 +130,11 @@ const enhance = compose(
     onRowClick: ({ history }) => ({
       currentTarget: { dataset: { personId } },
     }) => history.push(`/browse/person/${personId}`),
+
+    showNewContactPage: ({ history }) => event => {
+      event.stopPropagation()
+      history.push('/browse/person/add')
+    },
   }),
   lifecycle({
     componentWillMount() {
@@ -174,6 +187,7 @@ export const PersonList = ({
   pageSize,
   onRowClick,
   reducedFilters,
+  showNewContactPage,
 }) => (
   <div className={cssClasses('Container')}>
     <Helmet title={intl.formatMessage(messages.contactsTitle)} />
@@ -184,6 +198,20 @@ export const PersonList = ({
       intl={intl}
       config={reducedFilters}
     />
+    <DataTableCard className={cssClasses('DataTableCard--action')}>
+      <div />
+      <Tooltip
+        title={intl.formatMessage(messages.addContact)}
+        placement="bottom"
+      >
+        <IconButton
+          aria-label={intl.formatMessage(messages.addContact)}
+          onClick={showNewContactPage}
+        >
+          <AddIcon fontSize="large" />
+        </IconButton>
+      </Tooltip>
+    </DataTableCard>
     <DataTableCard key={`DataTableCard--table-${location.key}`}>
       <DataTableProgressBar disabled={!table.loading} />
       {items.currentIdList.isEmpty() && (
