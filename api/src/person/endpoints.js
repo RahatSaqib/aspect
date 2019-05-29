@@ -19,51 +19,7 @@ const {
   assignContact,
   unAssignContact,
 } = require('./service')
-
-const contactDetailsPayload = {
-  name: Joi.string()
-    .max(500)
-    .required(),
-  title: Joi.string()
-    .max(255)
-    .allow('', null),
-  email: Joi.string()
-    .max(500)
-    .allow('', null),
-  email2: Joi.string()
-    .max(500)
-    .allow('', null),
-  phone: Joi.string()
-    .max(45)
-    .allow('', null),
-  cell: Joi.string()
-    .max(45)
-    .allow('', null),
-  countryId: Joi.number()
-    .integer()
-    .positive()
-    .allow('', null),
-  stateId: Joi.number()
-    .integer()
-    .positive()
-    .allow('', null),
-  lgaId: Joi.number()
-    .integer()
-    .positive()
-    .allow('', null),
-  zip: Joi.string()
-    .max(45)
-    .allow('', null),
-  notes: Joi.string()
-    .optional()
-    .max(1200)
-    .allow('', null),
-  lastPartnerId: Joi.number()
-    .integer()
-    .positive()
-    .allow('', null),
-  canLogIn: [Joi.boolean(), Joi.number().only(0, 1)],
-}
+const { contactDetailsPayload, personDetailsResponse } = require('./helpers')
 
 const routes = [
   {
@@ -309,6 +265,7 @@ const routes = [
             .required(),
         },
       },
+      response: personDetailsResponse,
     },
   },
   {
@@ -327,6 +284,7 @@ const routes = [
         },
         payload: contactDetailsPayload,
       },
+      response: personDetailsResponse,
     },
   },
   {
@@ -340,6 +298,7 @@ const routes = [
       validate: {
         payload: contactDetailsPayload,
       },
+      response: personDetailsResponse,
     },
   },
   {
