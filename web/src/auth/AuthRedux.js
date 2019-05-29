@@ -171,6 +171,7 @@ export function loginStart({ user, password }) {
             access: json.access,
             refresh: json.refresh,
             clientId: json.clientId,
+            countryId: json.countryId,
             culture: json.culture,
             timezoneId: json.timezone,
             displayPreferences: Immutable.Map(json.displayPreferences),
@@ -449,6 +450,7 @@ const User = Immutable.Record({
   loggedOutReason: '',
   features: Immutable.Set(),
   licenseContent: undefined,
+  countryId: undefined,
 })
 
 const initialState = new User()
@@ -477,6 +479,7 @@ export default function authReducer(state = initialState, action) {
             mutState.set(k, v)
           }
         })
+        console.log('---oo-', action.data)
         mutState.mergeDeepIn(
           ['jwt'],
           _.pick(jwtDecode(action.data.access), [

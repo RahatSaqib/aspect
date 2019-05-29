@@ -203,4 +203,16 @@ export default defineMessages({
     id: 'pages.UserPreferences.jobAssignment',
     defaultMessage: 'Job Assignment',
   },
+  job: {
+    id: 'pages.UserPreferences.job',
+    defaultMessage: 'Job',
+  },
+  assignmentDetails: {
+    id: 'pages.UserPreferences.assignmentDetails',
+    defaultMessage: 'Assignment Details',
+  },
+  assignments: {
+    id: 'pages.UserPreferences.assignments',
+    defaultMessage: 'This contact is assigned to:',
+  },
 })

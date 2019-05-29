@@ -1,3 +1,5 @@
+@import '../../globals/variables.css';
+
 .Container {
   padding: 10px 10px 20px 10px;
 }
@@ -34,4 +36,39 @@
 h2.Form__Header {
   padding: 1em 0 0 1.5em;
   margin: 0 0 -0.5em;
+}
+.Job__Assignment{
+  max-width: 800px;
+  margin:0 auto;
+  padding-bottom: 2em;
+}
+.Assignment__Form{
+  margin-top: 2em
+}
+
+.Section__Content{padding:0 2em}
+.Assignment__Form section > div { 
+  width:100%
+}
+
+.MuiListroot{width:100%}
+.Assignment__Title{
+  color: var(--aspect-color-grey-2);
+  font-weight: var(--lato-font-weight-bold);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.Assignment__Link{
+  margin-left:0.5em
+}
+.Assignment__Section{
+  line-height: 1.8em;
+  font-size:0.85em;
+  color: var(--aspect-color-grey-3);
+}
+
+.Assignment__Section:not(:last-child){
+  border-bottom: 1px solid;
+  margin-bottom:1.3em
 }

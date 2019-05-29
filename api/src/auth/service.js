@@ -162,6 +162,7 @@ async function authenticate(request) {
     culture: user.culture || 'en-US',
     timezone: user.timezone || 'Eastern Standard Time',
     displayPreferences,
+    countryId: user.countryId,
   }
 }
 

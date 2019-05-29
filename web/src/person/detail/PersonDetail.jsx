@@ -163,6 +163,7 @@ export class PersonDetail extends PureComponent {
       })
     })
   }
+  addAssignment = () => {}
   render() {
     const { intl, person, user, editable } = this.props
     const { formatMessage } = intl
@@ -174,6 +175,7 @@ export class PersonDetail extends PureComponent {
     const isUser = !person || person.get('canLogIn') || undefined
     const shouldPrefill = person && person.get('userId') == null
     const emailValue = (person && person.get('email')) || ''
+
     return (
       <div className={styles.Container}>
         <Helmet title={formatMessage(messages.title)} />
@@ -262,15 +264,15 @@ export class PersonDetail extends PureComponent {
               >
                 {loading && <LinearProgress />}
                 <Visible xs component="h2" className={styles.Form__Header}>
-                  {formatMessage(messages.systemAccessControl)}
+                  {formatMessage(messages.jobAssignment)}
                 </Visible>
                 <JobAssignemntForm
                   intl={intl}
                   loading={loading}
                   shouldPrefill={shouldPrefill}
                   emailValue={emailValue}
-                  loginDetails={loginDetails}
-                  onSubmit={this.saveLoginDetails}
+                  countryId={user.countryId}
+                  onSubmit={this.addAssignment}
                 />
               </Tab>
             </AspectTabs>
