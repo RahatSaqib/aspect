@@ -13,10 +13,11 @@ import recomposeForm from '../../components/recomposeForm'
 import { Unit } from '../../components/pureGrids'
 
 import messages from './messages'
-import PartnerSelectField from '../../filter/partner/PartnerSelectField'
+// import PartnerSelectField from '../../filter/partner/PartnerSelectField'
 import CountrySelectField from '../../filter/geography/CountrySelectField'
 import StateSelectField from '../../filter/geography/StateSelectField'
 import LgaSelectField from '../../filter/geography/LgaSelectField'
+// import SiteSelectField from '../../filter/resource/SiteSelectField'
 
 const cssClasses = classnames.bind(require('./PersonDetail.css'))
 

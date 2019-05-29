@@ -322,6 +322,7 @@ export function updateSinglePerson(personId, data) {
     'notes',
     'lastPartnerId',
     'canLogIn',
+    'jobFunctions',
   ])
 }
 
@@ -459,6 +460,7 @@ export const ContactDetails = Immutable.Record({
   notes: null,
   lastPartnerId: null,
   canLogIn: false,
+  jobFunctions: Immutable.Map(),
 })
 export const LoginDetails = Immutable.Record({
   id: null,

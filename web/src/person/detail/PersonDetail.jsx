@@ -269,6 +269,7 @@ export class PersonDetail extends PureComponent {
                 <JobAssignemntForm
                   intl={intl}
                   loading={loading}
+                  contactDetails={contactDetails}
                   shouldPrefill={shouldPrefill}
                   emailValue={emailValue}
                   countryId={user.countryId}
