@@ -13,6 +13,8 @@ const {
   unassignJobFunctionFeatures,
   assignJobFunctionPermissions,
   unassignJobFunctionPermissions,
+  assignPersonTo,
+  getPersonAssignments,
 } = require('./service')
 
 // ---------------------------------------------------------------------------------------------
@@ -78,6 +80,72 @@ const jobContextResponse = {
           siteId: Joi.number()
             .allow(null)
             .description('JobContext.siteId'),
+        })
+      ),
+  }),
+}
+const personAssignmentsResponse = {
+  options: {
+    allowUnknown: false,
+  },
+  schema: Joi.object().keys({
+    ok,
+    data: Joi.array()
+      .required()
+      .description('All job assignments for specified person')
+      .items(
+        Joi.object().keys({
+          // ----------
+          // required
+          // ----------
+          personId: Joi.number()
+            .required()
+            .description('Job.personId'),
+          partnerId: Joi.number()
+            .required()
+            .description('JobFunction.personId'),
+          jobContextId: Joi.number()
+            .required()
+            .description('JobContext.id'),
+          jobId: Joi.number()
+            .required()
+            .description('JobContext.jobId'),
+          jobFunctionId: Joi.number()
+            .required()
+            .description('Job.jobFunctionId'),
+          jobFunctionName: Joi.string()
+            .required()
+            .description('JobFunction.name'),
+          countryId: Joi.number()
+            .required()
+            .description('Country.id'),
+          countryName: Joi.string()
+            .required()
+            .description('Country.name'),
+          // ----------
+          // optional
+          // ----------
+          siteId: Joi.number()
+            .allow(null)
+            .description('JobContext.siteId'),
+          siteName: Joi.string()
+            .allow(null, '')
+            .description('Site.name'),
+          geographyId: Joi.number()
+            .allow(null)
+            .description('JobContext.geographyId'),
+          stateId: Joi.number()
+            .allow(null)
+            .description('State.id'),
+          stateName: Joi.string()
+            .allow(null, '')
+            .description('State.name'),
+          lgaId: Joi.number()
+            .allow(null)
+            .description('Lga.id'),
+          lgaName: Joi.string()
+            .allow(null, '')
+            .description('Lga.name'),
         })
       ),
   }),
@@ -392,6 +460,55 @@ const routes = [
         },
       },
       response: jobFunctionPermissionsResponse,
+    },
+  },
+  // ------------
+  // Get person assignments
+  // ------------
+  {
+    method: 'GET',
+    path: '/job-function/person-assignments/{personId}',
+    handler: asyncHandler(getPersonAssignments),
+    config: {
+      description: 'Get all person assignments',
+      notes: 'List of JobFunctions/Site/Geography/etc person is assigned to',
+      auth: { scope: ['person:admin'] },
+      validate: {
+        params: {
+          personId: Joi.string()
+            .description('Person ID')
+            .required(),
+        },
+      },
+      response: personAssignmentsResponse,
+    },
+  },
+  // ------------
+  // Add person assignments
+  // ------------
+  {
+    method: 'POST',
+    path: '/job-function/assign-person-to-job-and-site',
+    handler: asyncHandler(assignPersonTo),
+    config: {
+      description:
+        'Assign specified person to Job Context with most granular input params',
+      notes: 'Assign specified person to Job Context',
+      auth: { scope: ['person:admin'] },
+      validate: {
+        payload: {
+          personId: Joi.number().required(),
+          jobFunctionId: Joi.number().required(),
+          // --- below props for getting either siteId (wins if defined) or geographyId (if siteId is missing) for JobContext
+          // geography
+          countryId: Joi.number().allow(null),
+          stateId: Joi.number().allow(null),
+          lgaId: Joi.number().allow(null),
+          // site
+          siteId: Joi.number().allow(null),
+        },
+      },
+      response: personAssignmentsResponse,
     },
   },
 ]

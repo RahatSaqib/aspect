@@ -20,6 +20,7 @@ describe('Permissions', () => {
   let cleanJob = false
   let jobId
   let siteId
+  let siteName
   let geographyId
 
   before(async () =>
@@ -35,12 +36,12 @@ describe('Permissions', () => {
           .first(),
       ]
       //
-      ;[{ id: siteId, geographyId }] = [
+      ;[{ id: siteId, name: siteName, geographyId }] = [
         await knex('Site as s')
           .join('Geography as g', 's.geographyId', 'g.id')
           .where('g.countryId', countryId)
           .where('s.partnerId', partner1)
-          .first('s.id', 's.geographyId'),
+          .first('s.id', 's.name', 's.geographyId'),
       ]
       // if Job doesn't exist then entry added during the test will be removed in after()
       const job = await knex('Job')
@@ -545,4 +546,132 @@ describe('Permissions', () => {
       })
     }
   }
+
+  describe('Person Assignments', () => {
+    let jobFunctionClinicianId
+    const toCleanUp = {
+      jobProps: null,
+      jobContextProps: null,
+      jobContextIds: [],
+    }
+    //
+    before(async () =>
+      runTestWithKnex(async knex => {
+        ;[{ id: jobFunctionClinicianId }] = [
+          await knex('JobFunction')
+            .where({ partnerId: partner1, name: 'Clinician' })
+            .first('id'),
+        ]
+
+        const jobProps = { personId, jobFunctionId: jobFunctionClinicianId }
+        const job = await knex('Job')
+          .where(jobProps)
+          .first()
+        if (!job) {
+          // if such Job is missing - keep it's properties to remove it in after()
+          toCleanUp.jobProps = jobProps
+          // --> toCleanUp.jobContextIds will be defined when assigning person to job
+        } else {
+          const jobContextProps = { jobId: job.id, siteId }
+          // check if JobContext exists
+          const jobContext = await knex('JobContext')
+            .where(jobContextProps)
+            .first()
+          if (!jobContext) {
+            // if such JobContext is missing - keep it's properties to remove it in after()
+            toCleanUp.jobContextProps = jobContextProps
+          }
+        }
+      })
+    )
+    //
+    after(async () =>
+      runTestWithKnex(async knex => {
+        // if Job existed but JobContext didn't exist before this test
+        if (toCleanUp.jobContextProps) {
+          await knex('JobContext')
+            .where(toCleanUp.jobContextProps)
+            .del()
+        }
+        // if Job didn't exist before this test, we got jobContextId after assigning person
+        if (toCleanUp.jobContextIds.length) {
+          await knex('JobContext')
+            .whereIn('id', toCleanUp.jobContextIds)
+            .del()
+        }
+        if (toCleanUp.jobProps) {
+          await knex('Job')
+            .where(toCleanUp.jobProps)
+            .del()
+        }
+      })
+    )
+    function assertItemProperties(item) {
+      assert.property(item, 'personId')
+      assert.property(item, 'partnerId')
+      assert.property(item, 'jobId')
+      assert.property(item, 'jobFunctionId')
+      assert.property(item, 'jobFunctionName')
+      assert.property(item, 'jobContextId')
+      assert.property(item, 'countryId')
+      assert.property(item, 'countryName')
+      assert.property(item, 'stateId')
+      assert.property(item, 'stateName')
+      assert.property(item, 'lgaId')
+      assert.property(item, 'lgaName')
+      assert.property(item, 'siteId')
+      assert.property(item, 'siteName')
+    }
+
+    it('should return list of person assignments', done => {
+      server
+        .get(`${path}/person-assignments/${personId}`)
+        .set('Authorization', `Bearer ${shared.token}`)
+        .end((err, res) => {
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+          assert.property(res.body, 'ok')
+          assert.property(res.body, 'data')
+          const items = res.body.data
+          assert.typeOf(items, 'array')
+          if (items.length) {
+            const item = items[0]
+            assertItemProperties(item)
+          }
+          done()
+        })
+    })
+    it('should assign person to site as Clinician', done => {
+      server
+        .post(`${path}/assign-person-to-job-and-site`)
+        .send({ personId, jobFunctionId: jobFunctionClinicianId, siteId })
+        .set('Authorization', `Bearer ${shared.token}`)
+        .end((err, res) => {
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+          assert.property(res.body, 'ok')
+          assert.property(res.body, 'data')
+          const items = res.body.data
+          assert.typeOf(items, 'array')
+          assert.isAtLeast(items.length, 1)
+
+          const item = items.find(
+            x =>
+              x.personId === personId &&
+              x.jobFunctionId === jobFunctionClinicianId &&
+              x.siteId === siteId
+          )
+          assertItemProperties(item)
+          assert.equal(item.siteName, siteName)
+
+          // keep jobContextId if Job didn't exist before this test, in which case jobContextId
+          // is needed to delete JobContext in after()
+          if (toCleanUp.jobProps) {
+            toCleanUp.jobContextIds.push(item.jobContextId)
+          }
+
+          done()
+        })
+    })
+  })
 })

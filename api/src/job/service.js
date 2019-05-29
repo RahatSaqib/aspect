@@ -94,31 +94,10 @@ const unassignJob = async request => manageJob(request, MODE_DELETE)
 async function manageJob(request, mode) {
   const { payload: { personId, jobFunctionId } } = request
   const { auth } = request
-  const { partnerId, countryId } = await getUser(auth.credentials.name)
 
-  // should be same 'partnerId' in requested jobFunction and current user
-  const err = 'Only Admin with same partnerId as JobFunction can manage Jobs'
-  const jf = await getJobFunction(jobFunctionId, partnerId, err)
-  if (jf.isBoom) {
-    return jf
-  }
-
-  const person = await knex('Person as p')
-    .leftOuterJoin('Geography as g', 'p.geographyId', 'g.id')
-    .where('p.id', personId)
-    .first('g.countryId')
-  if (!person) {
-    return Boom.badData(`Can not find person with id=${personId}`)
-  }
-  if (!person.countryId) {
-    return Boom.badData('Requested person does not have countryId')
-  }
-  if (person.countryId !== countryId) {
-    return Boom.badData(
-      `Different countryIds in current Admin user (${countryId}) and requested person ${
-        person.countryId
-      }`
-    )
+  const valResult = await validateJobData({ personId, jobFunctionId, auth })
+  if (valResult.isBoom) {
+    return valResult
   }
 
   const job = await knex('Job')
@@ -411,6 +390,191 @@ async function unassignJobFunctionPermissions(request) {
   )
 }
 // ----------------------------------------------------------------------------------------
+async function assignPersonTo(request) {
+  const { payload } = request
+  // ----------------
+  // jobId
+  // ----------------
+  const { personId, jobFunctionId } = payload
+  const { auth } = request
+  const validator = await validateJobData({ personId, jobFunctionId, auth })
+  if (validator.isBoom) {
+    return validator
+  }
+  let jobId
+  const jobProps = { personId, jobFunctionId }
+  const job = await knex('Job')
+    .where(jobProps)
+    .first()
+  if (!job) {
+    ;[jobId] = await knex('Job').insert(jobProps)
+  } else {
+    jobId = job.id
+  }
+  // ----------------
+  // siteId or geographyId
+  // ----------------
+  const { countryId, stateId, lgaId, siteId } = payload
+  let geographyId
+  if (!siteId) {
+    // ----------------
+    // geographyId
+    // ----------------
+    const geographyProps = { countryId, stateId, lgaId }
+    const geography = await knex('Geography')
+      .where(geographyProps)
+      .first('id')
+    if (!geography) {
+      ;[geographyId] = await knex('Geography').insert(geographyProps)
+    } else {
+      geographyId = geography.id
+    }
+  }
+  // ----------------
+  // JobContext
+  // ----------------
+  // create JobContext entry if missing
+  const jobContext = await knex('JobContext')
+    .where({ jobId })
+    .where(function() {
+      if (siteId) {
+        this.where({ siteId })
+      } else if (geographyId) {
+        this.where({ geographyId })
+      }
+    })
+    .first()
+  if (!jobContext) {
+    await knex('JobContext').insert({ jobId, geographyId, siteId })
+  }
+  // ----------------
+  // return list of person assignments for showing in right side of Person Job Assignment tab
+  // ----------------
+  const personAssignments = await getAssignments(personId)
+  return { ok: true, data: personAssignments }
+}
+// ----------------------------------------------------------------------------------------
+async function getPersonAssignments(request) {
+  const { params: { personId } } = request
+  const personAssignments = await getAssignments(personId)
+  return { ok: true, data: personAssignments }
+}
+// ----------------------------------------------------------------------------------------
+async function getAssignments(personId) {
+  const personAssignments = await knex('JobContext as jc')
+    .innerJoin('Job as j', 'jc.jobId', 'j.id')
+    .innerJoin('JobFunction as jf', 'j.jobFunctionId', 'jf.id')
+    // JobContext with geographyId
+    .leftOuterJoin('Geography as g', 'jc.geographyId', 'g.id')
+    .leftOuterJoin('Country as c', 'g.countryId', 'c.id')
+    .leftOuterJoin('State as st', 'g.stateId', 'st.id')
+    .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
+    // JobContext with siteId
+    .leftOuterJoin('Site as s', 'jc.siteId', 's.id')
+    .leftOuterJoin('Geography as g2', 's.geographyId', 'g2.id')
+    .leftOuterJoin('Country as c2', 'g2.countryId', 'c2.id')
+    .leftOuterJoin('State as st2', 'g2.stateId', 'st2.id')
+    .leftOuterJoin('Lga as l2', 'g2.lgaId', 'l2.id')
+    //
+    .where('j.personId', personId)
+    .orderBy(['jf.name', 's.name', 'c.name', 'st.name', 'l.name'])
+    .select(
+      'j.personId',
+      'jf.partnerId',
+      'jc.jobId',
+      'j.jobFunctionId',
+      'jf.name as jobFunctionName',
+      'jc.id as jobContextId',
+      'jc.siteId',
+      'jc.geographyId',
+      // JobContext with geographyId
+      'c.id as countryId',
+      'c.name as countryName',
+      'st.id as stateId',
+      'st.name as stateName',
+      'l.id as lgaId',
+      'l.name as lgaName',
+      // JobContext with siteId
+      's.id as siteId',
+      's.name as siteName',
+      'c2.id as countryId2',
+      'c2.name as countryName2',
+      'st2.id as stateId2',
+      'st2.name as stateName2',
+      'l2.id as lgaId2',
+      'l2.name as lgaName2'
+    )
+    .map(item => {
+      const { siteId } = item
+      let { countryId, countryName, stateId, stateName, lgaId, lgaName } = item
+
+      // if siteId is used by JobContext - then get site's geography props
+      if (siteId) {
+        ;[
+          {
+            countryId2: countryId,
+            countryName2: countryName,
+            stateId2: stateId,
+            stateName2: stateName,
+            lgaId2: lgaId,
+            lgaName2: lgaName,
+          },
+        ] = [item]
+      }
+      return {
+        ..._.pick(item, [
+          'personId',
+          'partnerId',
+          'jobId',
+          'jobFunctionId',
+          'jobFunctionName',
+          'jobContextId',
+          'siteId',
+          'siteName',
+          'geographyId',
+        ]),
+        countryId,
+        countryName,
+        stateId,
+        stateName,
+        lgaId,
+        lgaName,
+      }
+    })
+  return personAssignments
+}
+// ----------------------------------------------------------------------------------------
+async function validateJobData({ personId, jobFunctionId, auth }) {
+  const { partnerId, countryId } = await getUser(auth.credentials.name)
+
+  // should be same 'partnerId' in requested jobFunction and current user
+  const err = 'Only Admin with same partnerId as JobFunction can manage Jobs'
+  const jf = await getJobFunction(jobFunctionId, partnerId, err)
+  if (jf.isBoom) {
+    return jf
+  }
+
+  const person = await knex('Person as p')
+    .leftOuterJoin('Geography as g', 'p.geographyId', 'g.id')
+    .where('p.id', personId)
+    .first('g.countryId')
+  if (!person) {
+    return Boom.badData(`Can not find person with id=${personId}`)
+  }
+  if (!person.countryId) {
+    return Boom.badData('Requested person does not have countryId')
+  }
+  if (person.countryId !== countryId) {
+    return Boom.badData(
+      `Different countryIds in current Admin user (${countryId}) and requested person ${
+        person.countryId
+      }`
+    )
+  }
+
+  return true
+}
+// ----------------------------------------------------------------------------------------
 
 module.exports = {
   getJobFunctionsForSelectList,
@@ -426,4 +590,6 @@ module.exports = {
   unassignJobFunctionFeatures,
   assignJobFunctionPermissions,
   unassignJobFunctionPermissions,
+  assignPersonTo,
+  getPersonAssignments,
 }
