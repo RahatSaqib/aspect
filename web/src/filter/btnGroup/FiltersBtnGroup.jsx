@@ -86,8 +86,22 @@ const messages = defineMessages({
     id: 'filter.btnGroup.whereNotificationNameIncludes',
     defaultMessage: 'where notification name includes "{notificationName}"',
   },
-})
 
+  withRevoked: {
+    id: 'filter.btnGroup.withRevoked',
+    defaultMessage: 'where revoked is "{revokedStatus}"',
+  },
+})
+const revokedOptions = [
+  {
+    id: '0',
+    name: 'false',
+  },
+  {
+    id: '1',
+    name: 'true',
+  },
+]
 const enhance = compose(
   pure,
   connect(
@@ -127,6 +141,7 @@ const filtersOrdering = {
   deviceStatusId: 17,
   externalId: 15,
   notificationName: 20,
+  revoked: 21,
   // -1: Special orderings
   siteIds: -1,
 }
@@ -276,6 +291,16 @@ const buttonBy = {
   notificationName: makeButton(({ intl }, notificationName) =>
     intl.formatMessage(messages.whereNotificationNameIncludes, {
       notificationName,
+    })
+  ),
+
+  revoked: makeButton(({ intl }, revoked) =>
+    intl.formatMessage(messages.withRevoked, {
+      revokedStatus: revokedOptions.find(
+        it => it.id === revoked,
+        EMPTY_CONTEXT,
+        EMPTY_MAP
+      ).name,
     })
   ),
   // Special keys

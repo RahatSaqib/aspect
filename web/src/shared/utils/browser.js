@@ -16,6 +16,14 @@ export function getClientName() {
 
 export const getClientType = 'web'
 
+export function getClientId() {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, char => {
+    const randomNo = (Math.random() * 16) | 0 // eslint-disable-line  no-bitwise
+    const clientId = char === 'x' ? randomNo : (randomNo & 0x3) | 0x8 // eslint-disable-line  no-bitwise
+    return clientId.toString(16)
+  })
+}
+
 export function getBrowserNameAndVersion() {
   const browser = getBrowserInfo()
 

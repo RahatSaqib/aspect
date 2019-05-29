@@ -4,7 +4,6 @@ import Immutable from 'immutable'
 import { defineMessages } from 'react-intl'
 
 import { aspectFetch } from '../shared/utils/fetch'
-import { mergeToFiltersParams } from '../filter/utils'
 import {
   filterFieldsRejectedError,
   errorNotFound,
@@ -22,9 +21,6 @@ import {
 export const types = {
   REQUEST_REPORTERS: 'REQUEST_REPORTERS',
   RECEIVE_REPORTERS: 'RECEIVE_REPORTERS',
-
-  REQUEST_SINGLE_REPORTER: 'REQUEST_SINGLE_REPORTER',
-  RECEIVE_SINGLE_REPORTER: 'RECEIVE_SINGLE_REPORTER',
 
   REQUEST_UPDATING_SINGLE_REPORTER: 'REQUEST_UPDATING_SINGLE_REPORTER',
   RECEIVE_UPDATED_SINGLE_REPORTER: 'RECEIVE_UPDATED_SINGLE_REPORTER',
@@ -52,20 +48,18 @@ function receiveReporters(json) {
 }
 
 export function fetchReporters(
-  rawFiltersParams,
-  extraFilters = {},
+  filtersParams,
   sortCol,
   sortDir,
   page,
   pageSize
 ) {
   return dispatch => {
-    const filtersParams = mergeToFiltersParams(extraFilters, rawFiltersParams)
     const filters = _.fromPairs([...filtersParams.entries()])
     dispatch(requestReporters(sortCol, sortDir, page, pageSize, filters))
 
     return aspectFetch(
-      `/device?${stringify({
+      `/person/refresh-token?${stringify({
         sortCol,
         sortDir,
         page,
@@ -104,51 +98,10 @@ export function fetchReporters(
   }
 }
 
-function requestSingleReporter(reporterId) {
-  return {
-    type: types.REQUEST_SINGLE_REPORTER,
-    reporterId,
-  }
-}
-
-function receiveSingleReporter(item) {
-  return {
-    type: types.RECEIVE_SINGLE_REPORTER,
-    item,
-  }
-}
-
-export function fetchSingleReporter(reporterId) {
-  return dispatch => {
-    dispatch(requestSingleReporter(reporterId))
-
-    return aspectFetch(`/device/${reporterId}`, {
-      errorNotifications: {
-        404: errorNotFound(
-          defineMessages({
-            title: {
-              id: 'errorResponseMessages.fetchSingleReporter.GET.404.title',
-              defaultMessage: 'Could Not Find Reporter Details',
-            },
-          })
-        ),
-        default: errorPleaseTryAgainInAFewMinutes(
-          defineMessages({
-            title: {
-              id: 'errorResponseMessages.fetchSingleReporter.GET.default.title',
-              defaultMessage: 'Error Loading Reporter Details',
-            },
-          })
-        ),
-      },
-    }).then(json => dispatch(receiveSingleReporter(json.data)))
-  }
-}
-
-function requestUpdatingSingleReporter(reporterId, data) {
+function requestUpdatingSingleReporter(id, data) {
   return {
     type: types.REQUEST_UPDATING_SINGLE_REPORTER,
-    reporterId,
+    refreshTokenId: id,
     data,
   }
 }
@@ -160,14 +113,21 @@ function receiveUpdatedSingleReporter(item) {
   }
 }
 
-export function updateSingleReporter(reporterId, data) {
+export function updateSingleReporter(id, data) {
   return dispatch => {
-    dispatch(requestUpdatingSingleReporter(reporterId, data))
-
-    return aspectFetch(`/device/${reporterId}`, {
+    dispatch(requestUpdatingSingleReporter(id, data))
+    return aspectFetch(`/person/refresh-token/${id}`, {
       method: 'PUT',
       body: JSON.stringify(data),
       errorNotifications: {
+        404: errorNotFound(
+          defineMessages({
+            title: {
+              id: 'errorResponseMessages.updateSingleReporter.GET.404.title',
+              defaultMessage: 'Could Not Find Reporter',
+            },
+          })
+        ),
         default: errorPleaseTryAgainInAFewMinutes(
           defineMessages({
             title: {
@@ -202,7 +162,6 @@ export default function reporterReducer(state = initialState, action) {
         mutState.set('items', receiveList(mutState.items, immutList))
         mutState.set('table', receiveTableItems(mutState.table, action.total))
       })
-    case types.RECEIVE_SINGLE_REPORTER:
     case types.RECEIVE_UPDATED_SINGLE_REPORTER:
       return state.withMutations(mutState => {
         const immutItem = Immutable.fromJS(action.item)

@@ -21,7 +21,7 @@ const clientTypes = {
   app: 'reporter_app',
   web: 'web',
 }
-// const reporterApp = 'reporter_app'
+
 async function checkAuthentication() {
   return { message: 'Welcome to the API!' }
 }
@@ -131,6 +131,7 @@ async function authenticate(request) {
   const now = new Date()
   const refreshToken = crypto.randomBytes(48).toString('base64')
   const clientId = payload.clientId || uuid.v4()
+  const clientType = payload.clientType || clientTypes.web
 
   await setRefreshToken(
     user.id,
@@ -138,7 +139,7 @@ async function authenticate(request) {
     clientId,
     refreshToken,
     now,
-    payload.clientType
+    clientType
   )
 
   await query('Update failed password attempts to 0')
@@ -150,7 +151,7 @@ async function authenticate(request) {
       lastActive: now,
     })
 
-  const accessToken = await getAccessToken(user, payload.clientName)
+  const accessToken = await getAccessToken(user, payload.clientType)
   const displayPreferences = await getDisplayPreferences(user)
 
   return {
@@ -234,7 +235,7 @@ async function refreshToken(request) {
   await query('Update refresh token expiry date')
     .from('RefreshToken')
     .where({ token })
-    .update({ token: refreshToken, expires })
+    .update({ token: refreshToken, expires, updatedOn: now })
 
   const accessToken = await getAccessToken(data)
   return {
@@ -274,7 +275,7 @@ async function hasFeature(userId, partnerId, module) {
   return !_.isEmpty(userFeature)
 }
 // generate a new jwt for the given user data
-function getAccessToken({ id, name, partnerId, personId }, clientName = 'web') {
+function getAccessToken({ id, name, partnerId, personId }, clientType = 'web') {
   return query('Get permissions for user and partner')
     .from('Permission as p')
     .innerJoin('JobFunctionPermission as jfp', 'p.id', 'jfp.permissionId')
@@ -292,7 +293,7 @@ function getAccessToken({ id, name, partnerId, personId }, clientName = 'web') {
           name,
           permissions: data.map(p => `${p.module}:${p.activity}`),
           hasToAcceptLicenseId:
-            clientName.includes(clientTypes.app) ||
+            clientType.includes(clientTypes.app) ||
             !applicableLicense ||
             applicableLicense.acceptedOn
               ? null
@@ -426,13 +427,15 @@ async function updateUsernameAndPasswordForLoggedInUser(request) {
 
   const refreshToken = crypto.randomBytes(48).toString('base64')
   const clientId = payload.clientId || uuid.v4()
+  const clientType = payload.clientType || clientTypes.web
 
   await setRefreshToken(
     loggedInUser.id,
     payload.clientName,
     clientId,
     refreshToken,
-    now
+    now,
+    clientType
   )
 
   const accessToken = await getAccessToken(loggedInUser)
