@@ -92,7 +92,7 @@ const personAssignmentsResponse = {
     ok,
     data: Joi.array()
       .required()
-      .description('All job contexts for specified person')
+      .description('All job assignments for specified person')
       .items(
         Joi.object().keys({
           // ----------
