@@ -490,15 +490,17 @@ async function downloadResultsList(request) {
   const { query, auth } = request
   const user = await getUser(auth.credentials.name)
   const result = await getDownloadResultsList(query, auth)
-  const idsToUpdate = _.map(
-    _.omitBy(
-      result.data,
-      elem => elem.workflowStatus.externalId !== 'Delivered'
-    ),
-    elem => elem.id
+  const idsToUpdate = _.uniq(
+    _.map(
+      _.omitBy(
+        result.data,
+        elem => elem.workflowStatus.externalId !== 'Delivered'
+      ),
+      elem => elem.id
+    )
   )
 
-  const idsToBeRegistered = _.map(elem => elem.id)
+  const idsToBeRegistered = _.uniq(_.map(result.data, elem => elem.id))
   if (idsToUpdate) await updateResultStatus(idsToUpdate, user)
   if (idsToBeRegistered) await addResultDownloadLog(idsToBeRegistered, user.id)
 
