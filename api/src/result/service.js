@@ -1,7 +1,7 @@
 const Boom = require('boom')
 const _ = require('lodash')
 const dateFormat = require('date-fns/format')
-
+const Promise = require('bluebird')
 const {
   knex,
   filterParams,
@@ -488,14 +488,54 @@ async function getDownloadResultsList(query, auth) {
 
 async function downloadResultsList(request) {
   const { query, auth } = request
+  const user = await getUser(auth.credentials.name)
   const result = await getDownloadResultsList(query, auth)
-  const idsToUpdate = _.map(result.data, elem => elem.id)
-  await updateResultStatus(idsToUpdate)
+  const idsToUpdate = _.map(
+    _.omitBy(
+      result.data,
+      elem => elem.workflowStatus.externalId !== 'Delivered'
+    ),
+    elem => elem.id
+  )
+
+  const idsToBeRegistered = _.map(elem => elem.id)
+  if (idsToUpdate) await updateResultStatus(idsToUpdate, user)
+  if (idsToBeRegistered) await addResultDownloadLog(idsToBeRegistered, user.id)
 
   return result
 }
-async function updateResultStatus(idsToUpdate) {
-  await knex('ResultStatusLog').whereIn()
+async function addResultDownloadLog(idsToBeRegistered, userId) {
+  const now = new Date()
+
+  await Promise.each(idsToBeRegistered, async resultId => {
+    await knex('ResultDownloadLog').insert({
+      resultId,
+      createdOn: now,
+      createdBy: userId,
+    })
+  })
+}
+async function updateResultStatus(idsToUpdate, user) {
+  const { id: DeliveredId } = await knex('ResultWorkflowStatus')
+    .where('externalId', 'Delivered')
+    .first('id')
+  const now = new Date()
+  await Promise.each(idsToUpdate, async resultId => {
+    const [resultWorkflowStatusLogId] = await knex('ResultWorkflowLog').insert({
+      resultId,
+      resultWorkflowStatusId: DeliveredId,
+      changedOn: now,
+      createdOn: now,
+      createdBy: user.id,
+      reason: 'Download Results Api',
+      operator: 'Reporter App',
+    })
+    await knex('Result')
+      .where({
+        id: resultId,
+      })
+      .update({ resultWorkflowStatusLogId })
+  })
 }
 async function showResult(request) {
   const result = await getResultByResultId(request)

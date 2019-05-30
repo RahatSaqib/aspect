@@ -710,7 +710,13 @@ describe.only('Result download routes', () => {
     })
 
     it('should test querying different results with different optional parameters', done => {
-      const resultCategories = ['Detected', 'Invalid', 'Error']
+      const resultCategories = [
+        'Detected',
+        'Invalid',
+        'Error',
+        'Acknowledged',
+        'Processed',
+      ]
       server
         .get(
           `${path}?size=1&deviceType=DaktariVirology&resultCategories=${resultCategories.join(
