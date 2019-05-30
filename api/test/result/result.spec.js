@@ -652,9 +652,9 @@ describe('Result Workflow Status Log', () => {
   })
 })
 
-describe('Result download routes', () => {
+describe.only('Result download routes', () => {
   const path = '/api/result/download'
-  describe('GET', () => {
+  describe.only('GET', () => {
     shared.checkToken(server, path)
 
     it('should return a paged list of results, including all result details', done => {

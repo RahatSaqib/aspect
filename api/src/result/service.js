@@ -489,9 +489,14 @@ async function getDownloadResultsList(query, auth) {
 async function downloadResultsList(request) {
   const { query, auth } = request
   const result = await getDownloadResultsList(query, auth)
+  const idsToUpdate = _.map(result.data, elem => elem.id)
+  await updateResultStatus(idsToUpdate)
+
   return result
 }
-
+async function updateResultStatus(idsToUpdate) {
+  await knex('ResultStatusLog').whereIn()
+}
 async function showResult(request) {
   const result = await getResultByResultId(request)
   return result.ok ? result : Boom.notFound()
