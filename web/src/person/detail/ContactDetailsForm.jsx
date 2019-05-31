@@ -81,13 +81,16 @@ const enhance = compose(
   pure,
   connect(
     (state, props) => {
+      const personId = props.contactDetails.get('id')
+      const isNew = !personId
       const personTags = state.tag.tags.getIn(
-        ['person', props.contactDetails.get('id')],
+        ['person', personId],
         Immutable.List()
       )
 
       return {
         personTags,
+        isNew,
       }
     },
     {
@@ -201,18 +204,22 @@ export const ContactDetailsForm = ({
   contactDetails,
   personTags,
   onPersonTagsChange,
+  isNew,
 }) => (
   <form onSubmit={handleSubmit} className={cssClasses('Form')}>
     <div className={cssClasses('Form__Content')}>
-      <div style={{ marginBottom: 20 }}>
-        <AspectCheckbox
-          name="canLogIn"
-          margin="normal"
-          checked={values.canLogIn}
-          onChange={onUserCanLogInChange}
-        />{' '}
-        This contact can log in as a user
-      </div>
+      {!isNew && (
+        <div style={{ marginBottom: 20 }}>
+          <AspectCheckbox
+            name="canLogIn"
+            margin="normal"
+            checked={values.canLogIn}
+            onChange={onUserCanLogInChange}
+            // disabled={isNew}
+          />{' '}
+          This contact can log in as a user
+        </div>
+      )}
       <section>
         <TextField
           fullWidth
@@ -426,7 +433,7 @@ export const ContactDetailsForm = ({
         variant="contained"
         disabled={loading || form.pristine || !form.valid || form.submitting}
       >
-        {intl.formatMessage(messages.save)}
+        {intl.formatMessage(isNew ? messages.create : messages.save)}
       </Button>
     </div>
   </form>

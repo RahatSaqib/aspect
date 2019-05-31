@@ -98,6 +98,13 @@ describe('ContactDetailsForm module', () => {
       )
       expect(element).toMatchSnapshot()
     })
+
+    it('should show form for New Contact', () => {
+      const element = renderer.render(
+        <ContactDetailsForm {...props} form={{}} isNew />
+      )
+      expect(element).toMatchSnapshot()
+    })
   })
 
   describe('validate function', () => {

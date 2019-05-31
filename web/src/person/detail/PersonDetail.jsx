@@ -25,6 +25,7 @@ import NavTitle from '../../globals/components/NavTitle'
 import isEditable from '../../shared/selectors/isEditable'
 import {
   fetchSinglePerson,
+  createPerson,
   updateSinglePerson,
   updateSinglePersonLoginDetails,
   updateSinglePersonUserPreferences,
@@ -50,12 +51,19 @@ const enhance = compose(
   }),
   connect(
     (state, props) => {
-      const person = state.person.items.byId.get(props.match.params.personId)
+      let { personId } = props.match.params
+      if (personId === 'add') {
+        personId = undefined
+      }
+      const isNew = !personId
+      const { personNew, items } = state.person
+      const person = isNew ? personNew : items.byId.get(personId)
       const prefillUser = person && person.get('userId') > 0
       return {
         editable: isEditable(state.user, 'person'),
+        isNew,
         person,
-        canLogIn: person && person.get('canLogIn'),
+        canLogIn: person && !!person.get('canLogIn'),
         user: state.user,
         emailValue: person && person.get('email'),
         prefillUser,
@@ -69,6 +77,7 @@ const enhance = compose(
         {
           showAcknowledgement,
           fetchSinglePerson,
+          createPerson,
           updateSinglePerson,
           updateSinglePersonLoginDetails,
           updateSinglePersonUserPreferences,
@@ -86,10 +95,12 @@ const enhance = compose(
     person: PropTypes.object.isRequired,
     showAcknowledgement: PropTypes.func.isRequired,
     fetchSinglePerson: PropTypes.func.isRequired,
+    createPerson: PropTypes.func.isRequired,
     updateSinglePerson: PropTypes.func.isRequired,
     updateSinglePersonLoginDetails: PropTypes.func.isRequired,
     updateSinglePersonUserPreferences: PropTypes.func.isRequired,
     fetchPartnersAndJobFunctionsForSelectList: PropTypes.func.isRequired,
+    isNew: PropTypes.bool.isRequired,
   })
 )
 
@@ -104,7 +115,8 @@ export class PersonDetail extends PureComponent {
     }
   }
 
-  handleFetchPerson = ({ match, fetchSinglePerson }) => {
+  handleFetchPerson = ({ match, fetchSinglePerson, isNew }) => {
+    if (isNew) return
     fetchSinglePerson(match.params.personId)
   }
 
@@ -125,7 +137,17 @@ export class PersonDetail extends PureComponent {
   }
 
   saveContactDetails = values => {
-    const { person, updateSinglePerson } = this.props
+    const { person, updateSinglePerson, isNew, createPerson } = this.props
+    if (isNew) {
+      return createPerson(values).then(person => {
+        this.props.showAcknowledgement({
+          title: messages.detailsCreatedSuccessfully,
+          message: messages.contactDetailsCreatedMessage,
+        })
+        // replace current url to show just added contact for editing other tabs
+        this.props.history.replace(`/browse/person/${person.id}`)
+      })
+    }
     const contactDetails = new ContactDetails(person)
     return updateSinglePerson(contactDetails.get('id'), values).then(() => {
       this.props.showAcknowledgement({
@@ -165,15 +187,16 @@ export class PersonDetail extends PureComponent {
   }
   addAssignment = () => {}
   render() {
-    const { intl, person, user, editable } = this.props
+    const { intl, person, user, editable, isNew } = this.props
     const { formatMessage } = intl
     const contactDetails = new ContactDetails(person)
     const loginDetails = new LoginDetails(person)
     const userPreferences = new UserPreferences(person)
     const userIsAdmin = user.jwt.permissions.includes('person:admin')
-    const loading = !person || person.get('loaded') !== true
-    const isUser = !person || person.get('canLogIn') || undefined
-    const shouldPrefill = person && person.get('userId') == null
+    const loading = !isNew && (!person || person.get('loaded') !== true)
+    // const isUser = !person || person.get('canLogIn') || undefined
+    const isUser = !person || !!person.get('canLogIn')
+    const shouldPrefill = !isNew && person && person.get('userId') == null
     const emailValue = (person && person.get('email')) || ''
 
     return (
@@ -191,7 +214,7 @@ export class PersonDetail extends PureComponent {
                   </Hidden>
                 }
               >
-                {!person && <LinearProgress />}
+                {!isNew && !person && <LinearProgress />}
                 {loading && <LinearProgress />}
                 <Visible xs component="h2" className={styles.Form__Header}>
                   {formatMessage(messages.contactDetails)}
@@ -207,9 +230,11 @@ export class PersonDetail extends PureComponent {
                   onSubmit={this.saveContactDetails}
                 />
               </Tab>
-
               <Tab
                 icon={<Language fontSize="large" />}
+                style={{
+                  visibility: isNew ? 'hidden' : 'visible',
+                }}
                 label={
                   <Hidden xs component="span">
                     {formatMessage(messages.languageAndTimezone)}
@@ -230,7 +255,9 @@ export class PersonDetail extends PureComponent {
               <Tab
                 icon={<Lock fontSize="large" />}
                 style={{
-                  display: userIsAdmin && isUser ? 'block' : 'none',
+                  // display: userIsAdmin && isUser ? 'block' : 'none',
+                  visibility:
+                    !isNew && userIsAdmin && isUser ? 'visible' : 'hidden',
                 }}
                 label={
                   <Hidden xs component="span">

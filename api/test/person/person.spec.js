@@ -101,6 +101,58 @@ describe('Person routes', () => {
       })
     })
   })
+
+  describe('POST', () => {
+    const testingPersonName = 'TESTING PERSON'
+    let testingPersonId
+    after(async () =>
+      run(async knex => {
+        // remove testing person
+        if (testingPersonId) {
+          await knex('Person')
+            .where({ id: testingPersonId })
+            .del()
+        }
+      })
+    )
+
+    describe('/person', () => {
+      it('Should fail to create person because of missing required field `name`', async () => {
+        const res = await server
+          .post(`${path}`)
+          .set('Authorization', `Bearer ${shared.token}`)
+        assert.equal(res.status, 400)
+      })
+      it('Should create new person', async () => {
+        const res = await server
+          .post(`${path}`)
+          .send({ name: testingPersonName })
+          .set('Authorization', `Bearer ${shared.token}`)
+
+        assert.equal(res.status, 200)
+        assert.typeOf(res.body, 'Object')
+        const personDetails = res.body.data
+        assert.property(personDetails, 'id')
+        assert.property(personDetails, 'name')
+        assert.property(personDetails, 'username')
+        assert.property(personDetails, 'title')
+        assert.property(personDetails, 'countryId')
+        // keep person id to remove it in after()
+        testingPersonId = personDetails.id
+      })
+      it('Should fail to create person with same name', async () => {
+        const res = await server
+          .post(`${path}`)
+          .send({ name: testingPersonName })
+          .set('Authorization', `Bearer ${shared.token}`)
+        assert.equal(res.status, 409) // Boom.conflict
+        assert.equal(
+          res.body.message,
+          'Person with requested name already exists'
+        )
+      })
+    })
+  })
 })
 
 // -----------------------------------

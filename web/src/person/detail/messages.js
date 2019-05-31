@@ -23,6 +23,14 @@ export default defineMessages({
     id: 'pages.PersonDetails.languageAndTimezone',
     defaultMessage: 'Language & Timezone',
   },
+  detailsCreatedSuccessfully: {
+    id: 'pages.PersonDetails.detailsCreatedSuccessfully',
+    defaultMessage: 'Contact Created Successfully',
+  },
+  contactDetailsCreatedMessage: {
+    id: 'pages.PersonDetails.contactDetailsCreatedMessage',
+    defaultMessage: 'Contact details created successfully',
+  },
   detailsUpdatedSuccessfully: {
     id: 'pages.PersonDetails.detailsUpdatedSuccessfully',
     defaultMessage: 'Details Changed Successfully',
@@ -214,5 +222,8 @@ export default defineMessages({
   assignments: {
     id: 'pages.UserPreferences.assignments',
     defaultMessage: 'This contact is assigned to:',
+  create: {
+    id: 'pages.PersonDetails.create',
+    defaultMessage: 'Create',
   },
 })
