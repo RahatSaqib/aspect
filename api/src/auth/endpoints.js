@@ -34,6 +34,7 @@ const routes = [
           clientType: Joi.string()
             .lowercase()
             .valid(Object.values(clientTypes)),
+          deviceTokenId: Joi.string().allow(null),
         },
       },
       response: {
@@ -44,9 +45,11 @@ const routes = [
           access: Joi.string().required(),
           refresh: Joi.string().required(),
           clientId: Joi.string().required(),
+          clientType: Joi.string().required(),
           culture: Joi.string().required(),
           timezone: Joi.string().required(),
           displayPreferences: Joi.object(),
+          deviceTokenId: Joi.string().allow(null),
         },
       },
     },
@@ -75,6 +78,19 @@ const routes = [
           clientType: Joi.string()
             .lowercase()
             .valid(Object.values(clientTypes)),
+          deviceTokenId: Joi.string().allow(null),
+        },
+      },
+      response: {
+        options: {
+          allowUnknown: true,
+        },
+        schema: {
+          access: Joi.string().required(),
+          refresh: Joi.string().required(),
+          clientId: Joi.string().required(),
+          clientType: Joi.string().required(),
+          deviceTokenId: Joi.string().allow(null),
         },
       },
     },
