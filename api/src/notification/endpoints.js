@@ -1,6 +1,7 @@
 const Joi = require('joi')
 const { asyncHandler, validateSortPageParams } = require('../routes')
 const { listNotifications, onIssueEscalated } = require('./service')
+const { testPush } = require('./pushnotifications/service')
 
 const routes = [
   {
@@ -28,6 +29,14 @@ const routes = [
           )
         ),
       },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/testpushnotification',
+    handler: asyncHandler(testPush),
+    config: {
+      description: 'Test for sending push notification to all devices',
     },
   },
 ]
