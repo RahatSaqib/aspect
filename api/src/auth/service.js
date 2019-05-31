@@ -137,7 +137,9 @@ async function authenticate(request) {
   } = payload
   // handle 'deviceTokenId' only for reporter app
   let { deviceTokenId = null } = payload
-  deviceTokenId = clientType === clientTypes.app ? deviceTokenId : null
+  if (clientType !== clientTypes.app) {
+    deviceTokenId = null
+  }
 
   await setRefreshToken({
     clientId,
@@ -211,7 +213,9 @@ async function refreshToken(request) {
 
   // handle 'deviceTokenId' only for reporter app
   let { deviceTokenId = null } = request.payload
-  deviceTokenId = clientType === clientTypes.app ? deviceTokenId : null
+  if (clientType !== clientTypes.app) {
+    deviceTokenId = null
+  }
 
   const data = await query('Find existing token for client ID')
     .from('RefreshToken as rt')
