@@ -504,6 +504,10 @@ async function downloadResultsList(request) {
   if (idsToUpdate) await updateResultStatus(idsToUpdate, user)
   if (idsToBeRegistered) await addResultDownloadLog(idsToBeRegistered, user.id)
 
+  const assigmentValue = elem => {
+    elem.workflowStatus.externalId = 'Delivered'
+  }
+  _.forEach(result.data, assigmentValue)
   return result
 }
 async function addResultDownloadLog(idsToBeRegistered, userId) {

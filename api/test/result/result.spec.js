@@ -652,17 +652,22 @@ describe('Result Workflow Status Log', () => {
   })
 })
 
-describe.only('Result download routes', () => {
+describe('Result download routes', () => {
   const path = '/api/result/download'
-  describe.only('GET', () => {
+  afterEach(() =>
+    runTestWithKnex(async knex => {
+      await knex('ResultDownloadLog').delete()
+    })
+  )
+  describe('GET', () => {
     shared.checkToken(server, path)
 
-    it('should return a paged list of results, including all result details', done =>
-      runTestWithKnex(async knex => {
+    it('should return a paged list of results, including all result details', () =>
+      runTestWithKnex(knex => {
         server
           .get(`${path}?size=1&deviceType=DaktariVirology`)
           .set('Authorization', `Bearer ${shared.token}`)
-          .end((err, res) => {
+          .end(async (err, res) => {
             assert.equal(res.status, 200)
             assert.typeOf(res.body, 'Object')
 
@@ -692,6 +697,11 @@ describe.only('Result download routes', () => {
             assert.property(res.body.data[0], 'resultCategory1ExternalId')
             assert.property(res.body.data[0], 'resultCategory2ExternalId')
             assert.property(res.body.data[0], 'workflowStatus')
+            assert.equal(
+              res.body.data[0].workflowStatus.externalId,
+              'Delivered'
+            )
+
             assert.property(res.body.data[0], 'treatmentStatus')
             assert.property(res.body.data[0], 'patientData')
             assert.property(res.body.data[0], 'resultData')
@@ -705,12 +715,13 @@ describe.only('Result download routes', () => {
             assert.property(res.body.data[0], 'sample')
 
             assert.equal(Object.keys(res.body.data[0]).length, 25)
-            const totalResult = await knex('ResultDownloadLog').where(
-              'resultId',
-              res.body.data[0].id
-            )
+            // check if the download is register in the table.
+            const { count: totalResult } = await knex('ResultDownloadLog')
+              .where('resultId', res.body.data[0].id)
+              .count('id as count')
+              .first()
 
-            done()
+            assert.isAtLeast(totalResult, 1)
           })
       }))
 
@@ -759,6 +770,7 @@ describe.only('Result download routes', () => {
           assert.property(res.body.data[0], 'resultCategory1ExternalId')
           assert.property(res.body.data[0], 'resultCategory2ExternalId')
           assert.property(res.body.data[0], 'workflowStatus')
+          assert.equal(res.body.data[0].workflowStatus.externalId, 'Delivered')
           assert.property(res.body.data[0], 'treatmentStatus')
           assert.property(res.body.data[0], 'patientData')
           assert.property(res.body.data[0], 'resultData')
@@ -819,6 +831,7 @@ describe.only('Result download routes', () => {
           assert.property(res.body.data[0], 'errorCode')
           assert.property(res.body.data[0], 'errorNotes')
           assert.property(res.body.data[0], 'sample')
+          assert.equal(res.body.data[0].workflowStatus.externalId, 'Delivered')
         })
       server
         .get(`${path}?size=1&workflowStatus=OK`)
@@ -893,6 +906,7 @@ describe.only('Result download routes', () => {
           assert.property(res.body.data[0], 'treatmentStatus')
           assert.property(res.body.data[0], 'patientData')
           assert.property(res.body.data[0], 'resultData')
+          assert.equal(res.body.data[0].workflowStatus.externalId, 'Delivered')
           assert.property(res.body.data[0], 'formData')
           assert.property(res.body.data[0], 'researchId')
           assert.property(res.body.data[0], 'senderVersion')
