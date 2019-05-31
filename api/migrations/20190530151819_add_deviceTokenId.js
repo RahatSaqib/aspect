@@ -6,7 +6,6 @@ async function up(knex) {
       .string('deviceTokenId', 255)
       .nullable()
       .after('token')
-      .unique()
       .index()
   })
 }
