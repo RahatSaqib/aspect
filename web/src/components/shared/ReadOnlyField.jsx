@@ -30,6 +30,7 @@ export const ReadOnlyField = ({
 }) =>
   label && (
     <div className={cssClasses('Container', { 'Container--large': lg })}>
+      {/* eslint-disable jsx-a11y/label-has-for */}
       <label
         htmlFor={label.replace(' ', '_')}
         className={cssClasses('Container__Label', {
@@ -38,6 +39,7 @@ export const ReadOnlyField = ({
       >
         {label}
       </label>
+      {/* eslint-enable jsx-a11y/label-has-for */}
       <div
         id={label.replace(' ', '_')}
         className={cssClasses('Container__Value')}
