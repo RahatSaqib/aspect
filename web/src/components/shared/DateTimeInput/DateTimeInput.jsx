@@ -1,9 +1,10 @@
 import PropTypes from 'prop-types'
-import React, { useState, useEffect, useRef, useCallback } from 'react'
+import React, { useState, useEffect, useRef, createRef } from 'react'
 import classNames from 'classnames'
 import _fp from 'lodash/fp'
 import _ from 'lodash'
 import Downshift from 'downshift'
+
 import FormControl from '@material-ui/core/FormControl'
 import { withStyles } from '@material-ui/core/styles'
 import MenuItem from '@material-ui/core/MenuItem'
@@ -318,13 +319,13 @@ const getSuggestionOptions = (value, options) => {
 }
 
 const useSelectRefs = displayFormat => {
-  const refs = {}
   const orderList = getOrderList(displayFormat)
-
-  _fp.forEach(key => {
-    refs[key] = useRef(null)
-  })(orderList)
-
+  const refs = useRef(
+    orderList.reduce(
+      (acc, orderKey) => ({ ...acc, [orderKey]: createRef() }),
+      {}
+    )
+  )
   return refs
 }
 
@@ -359,7 +360,7 @@ const Options = props => {
     () => {
       setHighlightedIndex(0)
     },
-    [inputValue, setHighlightedIndex]
+    [inputValue] // eslint-disable-line react-hooks/exhaustive-deps
   )
 
   return (
@@ -556,7 +557,7 @@ const DateTimeInput = props => {
   const minDate = toDate(min)
   const maxDate = toDate(max)
   const orderList = getOrderList(displayFormat)
-  const isControlled = useCallback(() => !(value === undefined))
+  const isControlled = () => !(value === undefined)
   const initialValue = isControlled()
     ? value
     : normalizeDate({ minDate, maxDate, date: defaultValue })
@@ -579,23 +580,20 @@ const DateTimeInput = props => {
         setIsBlured(false)
       }
     },
-    [isBlured, isControlled, onBlur, value]
+    [value] // eslint-disable-line react-hooks/exhaustive-deps
   )
 
-  useEffect(
-    () => {
-      if (defaultToNow) {
-        setNow()
-      }
-    },
-    [defaultToNow, setNow]
-  )
+  useEffect(() => {
+    if (defaultToNow) {
+      setNow()
+    }
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   // methods
   const getValue = () => (isControlled() ? value : dateTime)
 
   const focusNextField = nextFieldKey => () => {
-    const nextSelectRef = selectRefs[nextFieldKey]
+    const nextSelectRef = selectRefs.current[nextFieldKey]
     if (nextSelectRef) {
       nextSelectRef.current.focus()
     }
@@ -622,7 +620,7 @@ const DateTimeInput = props => {
     _fp.pipe(
       _fp.values,
       _fp.filter(
-        ref => ref && ref.current && _.isFunction(ref.current.handleBlur)
+        ref => ref && ref.current && _.isFunction(ref.current[handlerName])
       ),
       _fp.map(ref => ref.current[handlerName](...args))
     )(refs)
@@ -631,7 +629,7 @@ const DateTimeInput = props => {
     const { currentTarget } = event
     setTimeout(() => {
       if (!currentTarget.contains(document.activeElement)) {
-        invokeAll(methodRefs, 'handleBlur')()
+        invokeAll(methodRefs.current, 'handleBlur')()
         setIsBlured(true)
       }
     }, 0)
@@ -641,7 +639,7 @@ const DateTimeInput = props => {
     const now = new Date()
     setOptionsDate(now)
     setDateTime(now)
-    invokeAll(methodRefs, 'setValueByDate')(now)
+    invokeAll(methodRefs.current, 'setValueByDate')(now)
 
     if (isControlled()) {
       onChange(now)
@@ -679,10 +677,10 @@ const DateTimeInput = props => {
               maxDate={maxDate}
               handleChange={handleChange(displayOption.set)}
               handleKeyPress={handleKeyPress(nextFieldKey)}
-              methodRef={methodRefs[display]}
+              methodRef={methodRefs.current[display]}
               baseKey={baseKey}
               formatToken={formatToken}
-              inputRef={selectRefs[display]}
+              inputRef={selectRefs.current[display]}
               TextFieldProps={_fp.merge(TextFieldProps, {
                 ...restPropsToTextFields,
                 disabled,
