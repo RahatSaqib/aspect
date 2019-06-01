@@ -110,7 +110,8 @@ export const NotificationList = props => {
     () => {
       onInitialLoad()
     },
-    [location.search, onInitialLoad]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [location.search]
   )
   const onInitialLoad = () => {
     const { sanitized, value: filtersParams } = filtersFromLocation(location)
@@ -121,12 +122,10 @@ export const NotificationList = props => {
   const [reducedFilters, setReducedFilters] = useState({
     name: true,
   })
-  useEffect(
-    () => {
-      setFilters()
-    },
-    [setFilters]
-  )
+  useEffect(() => {
+    setFilters()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
   const setFilters = () => {
     const { sanitized, value: searchParams } = searchSanitizer(location)
     const {
