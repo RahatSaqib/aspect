@@ -9,7 +9,7 @@ const { run } = require('../../src/db')
 const server = supertest.agent('http://localhost:8080')
 const { assert } = chai
 
-describe('Notification routes', () => {
+describe.only('Notification routes', () => {
   const path = '/api/notification'
 
   const now = new Date()
@@ -83,16 +83,18 @@ describe('Notification routes', () => {
     })
   })
 
-  describe('GET /TestPushNotification', () => {
+  describe.only('GET /TestPushNotification', () => {
     shared.checkToken(server, path)
 
-    it.skip('should send a push notification for all test devices', () => {
+    it('should send a push notification for all test devices', () => {
       server
         .get('/api/testpushnotification')
         .set('Authorization', `Bearer ${shared.token}`)
         .end((err, res) => {
           assert.equal(res.status, 200)
           assert.typeOf(res.body, 'Object')
+          assert.property(res.body, 'ok')
+          assert.equal(res.body.ok, true)
         })
     })
   })

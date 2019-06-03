@@ -1,7 +1,7 @@
 const Joi = require('joi')
 const { asyncHandler, validateSortPageParams } = require('../routes')
 const { listNotifications, onIssueEscalated } = require('./service')
-const { testPush } = require('./pushnotifications/service')
+const { testPush } = require('./pushnotification/service')
 
 const routes = [
   {
@@ -37,6 +37,18 @@ const routes = [
     handler: asyncHandler(testPush),
     config: {
       description: 'Test for sending push notification to all devices',
+      response: {
+        options: {
+          allowUnknown: false,
+        },
+        schema: Joi.object().keys({
+          ok: Joi.bool()
+            .required()
+            .description(
+              'False if there was some sort of error sending the push'
+            ),
+        }),
+      },
     },
   },
 ]

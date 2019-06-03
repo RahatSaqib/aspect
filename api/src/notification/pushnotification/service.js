@@ -30,7 +30,7 @@ async function testPush() {
 
   // Send a message to the device corresponding to the provided
   // registration token.
-  firebaseAdmin
+  return firebaseAdmin
     .messaging()
     .send(message)
     .then(response => {
