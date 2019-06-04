@@ -74,6 +74,16 @@
       "name": "Unknown",
       "externalId": "Unknown",
       "i18nKey": "resultCategoryUnknown"
+    },
+    {
+      "name": "Susceptible",
+      "externalId": "Susceptible",
+      "i18nKey": "resultCategorySusceptible"
+    },
+    {
+      "name": "Resistant",
+      "externalId": "Resistant",
+      "i18nKey": "resultCategoryResistant"
     }
   ]
 }

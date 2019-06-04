@@ -5,6 +5,7 @@ const tableCache = {}
 
 // TODO ASP-757 Standardize static data key on externalId
 const cacheConfig = {
+  Assay: {},
   AssayType: {
     keyColumn: 'name',
   },

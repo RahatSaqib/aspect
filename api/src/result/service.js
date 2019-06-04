@@ -27,7 +27,7 @@ const { getPathFromFileReferenceId } = require('../file/service')
 const SELECT_LIST_FIELDS = [
   'r.id',
   'r.externalId',
-  'r.endedOn',
+  knex.raw('IFNULL(r.endedOn, r.startedOn) as endedOn'),
   'd.name as deviceName',
   'c.name as countryName',
   'st.name as stateName',
