@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
 import { compose, setPropTypes } from 'recompose'
@@ -34,6 +35,9 @@ import {
   UserPreferences,
   personCanLogIn,
   emailValueBlur,
+  addPersonAssignment,
+  fetchPersonAssignments,
+  deletePersonAssignment,
 } from '../PersonRedux'
 import { fetchPartnersAndJobFunctionsForSelectList } from '../../job/JobRedux'
 import { showAcknowledgement } from '../../appNotification/AppNotificationRedux'
@@ -59,6 +63,16 @@ const enhance = compose(
       const { personNew, items } = state.person
       const person = isNew ? personNew : items.byId.get(personId)
       const prefillUser = person && person.get('userId') > 0
+
+      const partnersAndJobFunctionsForSelectList = state.jobs.get(
+        'partnersAndJobFunctionsForSelectList'
+      )
+      const jobFunctions = partnersAndJobFunctionsForSelectList.getIn([
+        'partners',
+        0,
+        'jobFunctions',
+      ])
+
       return {
         editable: isEditable(state.user, 'person'),
         isNew,
@@ -67,9 +81,8 @@ const enhance = compose(
         user: state.user,
         emailValue: person && person.get('email'),
         prefillUser,
-        partnersAndJobFunctionsForSelectList: state.jobs.get(
-          'partnersAndJobFunctionsForSelectList'
-        ),
+        partnersAndJobFunctionsForSelectList,
+        jobFunctions,
       }
     },
     dispatch =>
@@ -84,6 +97,9 @@ const enhance = compose(
           fetchPartnersAndJobFunctionsForSelectList,
           personCanLogIn,
           emailValueBlur,
+          addPersonAssignment,
+          fetchPersonAssignments,
+          deletePersonAssignment,
         },
         dispatch
       )
@@ -101,6 +117,8 @@ const enhance = compose(
     updateSinglePersonUserPreferences: PropTypes.func.isRequired,
     fetchPartnersAndJobFunctionsForSelectList: PropTypes.func.isRequired,
     isNew: PropTypes.bool.isRequired,
+    addPersonAssignment: PropTypes.func.isRequired,
+    deletePersonAssignment: PropTypes.func.isRequired,
   })
 )
 
@@ -115,9 +133,16 @@ export class PersonDetail extends PureComponent {
     }
   }
 
-  handleFetchPerson = ({ match, fetchSinglePerson, isNew }) => {
+  handleFetchPerson = ({
+    match,
+    fetchSinglePerson,
+    fetchPersonAssignments,
+    isNew,
+  }) => {
     if (isNew) return
-    fetchSinglePerson(match.params.personId)
+    fetchSinglePerson(match.params.personId, () => {
+      fetchPersonAssignments(match.params.personId)
+    })
   }
 
   handlePersonCanLogIn = canLogin => {
@@ -185,19 +210,42 @@ export class PersonDetail extends PureComponent {
       })
     })
   }
-  addAssignment = () => {}
+  addAssignment = values => {
+    const { person, addPersonAssignment } = this.props
+    const data = {
+      personId: person.get('id'),
+      ..._.pick(values, [
+        'jobFunctionId',
+        'countryId',
+        'stateId',
+        'lgaId',
+        'siteId',
+      ]),
+    }
+    addPersonAssignment(data)
+  }
+  deleteAssignment = jobContextId => {
+    const { person, deletePersonAssignment } = this.props
+    const data = {
+      personId: person.get('id'),
+      jobContextId,
+    }
+    deletePersonAssignment(data)
+  }
+
   render() {
-    const { intl, person, user, editable, isNew } = this.props
+    const { intl, person, user, editable, isNew, jobFunctions } = this.props
     const { formatMessage } = intl
     const contactDetails = new ContactDetails(person)
     const loginDetails = new LoginDetails(person)
     const userPreferences = new UserPreferences(person)
     const userIsAdmin = user.jwt.permissions.includes('person:admin')
     const loading = !isNew && (!person || person.get('loaded') !== true)
-    // const isUser = !person || person.get('canLogIn') || undefined
-    const isUser = !person || !!person.get('canLogIn')
+    const canLogIn = person && !!person.get('canLogIn')
     const shouldPrefill = !isNew && person && person.get('userId') == null
     const emailValue = (person && person.get('email')) || ''
+    const assignments = (person && person.get('assignments')) || []
+    const loadedAssignments = person && !!person.get('loadedAssignments')
 
     return (
       <div className={styles.Container}>
@@ -255,9 +303,7 @@ export class PersonDetail extends PureComponent {
               <Tab
                 icon={<Lock fontSize="large" />}
                 style={{
-                  // display: userIsAdmin && isUser ? 'block' : 'none',
-                  visibility:
-                    !isNew && userIsAdmin && isUser ? 'visible' : 'hidden',
+                  display: !isNew && userIsAdmin && canLogIn ? 'block' : 'none',
                 }}
                 label={
                   <Hidden xs component="span">
@@ -281,7 +327,7 @@ export class PersonDetail extends PureComponent {
               <Tab
                 icon={<Lock fontSize="large" />}
                 style={{
-                  display: userIsAdmin ? 'block' : 'none',
+                  display: !isNew && userIsAdmin ? 'block' : 'none',
                 }}
                 label={
                   <Hidden xs component="span">
@@ -299,8 +345,12 @@ export class PersonDetail extends PureComponent {
                   contactDetails={contactDetails}
                   shouldPrefill={shouldPrefill}
                   emailValue={emailValue}
-                  countryId={user.countryId}
+                  countryId={user.jwt.countryId}
                   onSubmit={this.addAssignment}
+                  onDeleteAssignment={this.deleteAssignment}
+                  jobFunctions={jobFunctions}
+                  assignments={assignments}
+                  loadedAssignments={loadedAssignments}
                 />
               </Tab>
             </AspectTabs>

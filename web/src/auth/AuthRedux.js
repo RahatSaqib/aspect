@@ -430,6 +430,7 @@ export function acceptLicenseStart(licenseId) {
  * ---------------- Reducers -----------------
  */
 const JWT = Immutable.Record({
+  countryId: undefined,
   name: '',
   permissions: Immutable.Set(),
   hasToAcceptLicenseId: undefined,
@@ -479,10 +480,10 @@ export default function authReducer(state = initialState, action) {
             mutState.set(k, v)
           }
         })
-        console.log('---oo-', action.data)
         mutState.mergeDeepIn(
           ['jwt'],
           _.pick(jwtDecode(action.data.access), [
+            'countryId',
             'name',
             'permissions',
             'hasToAcceptLicenseId',

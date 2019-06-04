@@ -15,6 +15,7 @@ const {
   unassignJobFunctionPermissions,
   assignPersonTo,
   getPersonAssignments,
+  removePersonAssignment,
 } = require('./service')
 
 // ---------------------------------------------------------------------------------------------
@@ -523,6 +524,32 @@ const routes = [
           lgaId: Joi.number().allow(null),
           // site
           siteId: Joi.number().allow(null),
+        },
+      },
+      response: personAssignmentsResponse,
+    },
+  },
+  // ------------
+  // Remove person assignment
+  // ------------
+  {
+    method: 'DELETE',
+    path: '/job-function/person-assignment/{personId}/{jobContextId}',
+    handler: asyncHandler(removePersonAssignment),
+    config: {
+      description: 'Remove specified person assignment',
+      notes: 'Remove specified person assignment',
+      auth: { scope: ['person:admin'] },
+      validate: {
+        params: {
+          personId: Joi.number()
+            .integer()
+            .positive()
+            .required(),
+          jobContextId: Joi.number()
+            .integer()
+            .positive()
+            .required(),
         },
       },
       response: personAssignmentsResponse,

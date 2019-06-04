@@ -60,7 +60,7 @@ h2.Form__Header {
   align-items: center;
 }
 .Assignment__Link{
-  margin-left:0.5em
+  margin-left: 0.5em;
 }
 .Assignment__Section{
   line-height: 1.8em;
@@ -70,5 +70,6 @@ h2.Form__Header {
 
 .Assignment__Section:not(:last-child){
   border-bottom: 1px solid;
-  margin-bottom:1.3em
+  margin-bottom: 1em;
+  padding-bottom: 1em;
 }

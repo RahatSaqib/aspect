@@ -16,7 +16,7 @@ export function getSelectedCountry({ countries, countryId }) {
   if (!countryId) {
     return
   }
-  return countries.items.find(c => c.id === countryId)
+  return countries.items.find(c => +c.id === +countryId)
 }
 
 export function getSelectedCountryStates(props) {

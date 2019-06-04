@@ -222,8 +222,25 @@ export default defineMessages({
   assignments: {
     id: 'pages.UserPreferences.assignments',
     defaultMessage: 'This contact is assigned to:',
+  },
   create: {
     id: 'pages.PersonDetails.create',
     defaultMessage: 'Create',
+  },
+  site: {
+    id: 'pages.JobAssignments.site',
+    defaultMessage: 'Site',
+  },
+  selectJob: {
+    id: 'pages.JobAssignments.selectJob',
+    defaultMessage: 'Select Job',
+  },
+  cancel: {
+    id: 'pages.JobAssignments.cancel',
+    defaultMessage: 'Cancel',
+  },
+  yesDelete: {
+    id: 'pages.JobAssignments.yesDelete',
+    defaultMessage: 'Yes, delete',
   },
 })

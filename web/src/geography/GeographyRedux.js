@@ -13,6 +13,8 @@ export const types = {
   RECEIVE_STATES_FOR_LOCATION_SELECTOR: 'RECEIVE_STATES_FOR_LOCATION_SELECTOR',
   REQUEST_LGAS_FOR_LOCATION_SELECTOR: 'REQUEST_LGAS_FOR_LOCATION_SELECTOR',
   RECEIVE_LGAS_FOR_LOCATION_SELECTOR: 'RECEIVE_LGAS_FOR_LOCATION_SELECTOR',
+  REQUEST_SITES_FOR_LOCATION_SELECTOR: 'REQUEST_SITES_FOR_LOCATION_SELECTOR',
+  RECEIVE_SITES_FOR_LOCATION_SELECTOR: 'RECEIVE_SITES_FOR_LOCATION_SELECTOR',
 }
 
 /*
@@ -67,6 +69,34 @@ function createReceiveLgasForLocationSelector(
     lgas,
     selectedCountryId,
     selectedStateId,
+    lastRefreshed: new Date(),
+  }
+}
+
+function createRequestSitesForLocationSelector(
+  selectedCountryId,
+  selectedStateId,
+  selectedLgaId
+) {
+  return {
+    type: types.REQUEST_SITES_FOR_LOCATION_SELECTOR,
+    selectedCountryId,
+    selectedStateId,
+    selectedLgaId,
+  }
+}
+function createReceiveSitesForLocationSelector(
+  sites,
+  selectedCountryId,
+  selectedStateId,
+  selectedLgaId
+) {
+  return {
+    type: types.RECEIVE_SITES_FOR_LOCATION_SELECTOR,
+    sites,
+    selectedCountryId,
+    selectedStateId,
+    selectedLgaId,
     lastRefreshed: new Date(),
   }
 }
@@ -175,6 +205,49 @@ export const fetchLgasForLocationSelector = (
         json.data,
         selectedCountry.get('id'),
         selectedState.get('id')
+      )
+    )
+  )
+}
+// ##################################################################################################
+export const fetchSitesForLocationSelector = (
+  selectedCountry,
+  selectedState,
+  selectedLga
+) => dispatch => {
+  if (
+    selectedLga.getIn(['children', 'loading']) ||
+    !isExpired(selectedLga.getIn(['children', 'lastRefreshed']))
+  ) {
+    return
+  }
+  dispatch(
+    createRequestSitesForLocationSelector(
+      selectedCountry.get('id'),
+      selectedState.get('id'),
+      selectedLga.get('id')
+    )
+  )
+  return aspectFetch(`/geography/site-select-list/${selectedLga.get('id')}`, {
+    errorNotifications: {
+      default: errorPleaseTryAgainInAFewMinutes(
+        defineMessages({
+          title: {
+            id:
+              'errorResponseMessages.fetchSitesForLocationSelector.GET.default.title',
+            defaultMessage: 'Error loading sites for {lgaName}',
+          },
+        }),
+        { lgaName: selectedLga.get('name') }
+      ),
+    },
+  }).then(json =>
+    dispatch(
+      createReceiveSitesForLocationSelector(
+        json.data,
+        selectedCountry.get('id'),
+        selectedState.get('id'),
+        selectedLga.get('id')
       )
     )
   )
@@ -405,10 +478,125 @@ function receiveLgasForLocationSelector(
             loading: false,
             lastRefreshed,
             items: new Immutable.List(
-              _.map(lgas, lga => new LazyLoadChild(lga))
+              _.map(
+                lgas,
+                lga =>
+                  new LazyLoadParent({
+                    id: lga.id,
+                    name: lga.name,
+                    children: new LazyLoadItems({
+                      loading: false,
+                      lastRefreshed: lga.sites ? lastRefreshed : undefined,
+                      items: lga.sites
+                        ? new Immutable.List(
+                            _.map(lga.sites, site => new LazyLoadChild(site))
+                          )
+                        : EMPTY_LIST,
+                    }),
+                  })
+              )
             ),
           }
         )
+      }
+    }
+  }
+  return state
+}
+
+function requestSitesForLocationSelector(
+  state,
+  selectedCountryId,
+  selectedStateId,
+  selectedLgaId
+) {
+  if (state.getIn(['countriesForLocationSelector', 'items'])) {
+    const selectedCountry = state
+      .getIn(['countriesForLocationSelector', 'items'])
+      .find(country => country.get('id') === selectedCountryId)
+    if (selectedCountry && selectedCountry.getIn(['children', 'items'])) {
+      const selectedState = selectedCountry
+        .getIn(['children', 'items'])
+        .find(state => state.get('id') === selectedStateId)
+      if (selectedState && selectedState.getIn(['children', 'items'])) {
+        const selectedLga = selectedState
+          .getIn(['children', 'items'])
+          .find(lga => lga.get('id') === selectedLgaId)
+
+        if (selectedLga) {
+          return state.setIn(
+            [
+              'countriesForLocationSelector',
+              'items',
+              state
+                .getIn(['countriesForLocationSelector', 'items'])
+                .indexOf(selectedCountry),
+              'children',
+              'items',
+              selectedCountry
+                .getIn(['children', 'items'])
+                .indexOf(selectedState),
+              'children',
+              'items',
+              selectedState.getIn(['children', 'items']).indexOf(selectedLga),
+              'children',
+              'loading',
+            ],
+            true
+          )
+        }
+      }
+    }
+  }
+  return state
+}
+function receiveSitesForLocationSelector(
+  state,
+  sites,
+  selectedCountryId,
+  selectedStateId,
+  selectedLgaId,
+  lastRefreshed
+) {
+  if (state.getIn(['countriesForLocationSelector', 'items'])) {
+    const selectedCountry = state
+      .getIn(['countriesForLocationSelector', 'items'])
+      .find(country => country.get('id') === selectedCountryId)
+    if (selectedCountry && selectedCountry.getIn(['children', 'items'])) {
+      const selectedState = selectedCountry
+        .getIn(['children', 'items'])
+        .find(state => state.get('id') === selectedStateId)
+      if (selectedState && selectedState.getIn(['children', 'items'])) {
+        const selectedLga = selectedState
+          .getIn(['children', 'items'])
+          .find(lga => lga.get('id') === selectedLgaId)
+        if (selectedLga) {
+          return state.mergeDeepIn(
+            [
+              'countriesForLocationSelector',
+              'items',
+              state
+                .getIn(['countriesForLocationSelector', 'items'])
+                .indexOf(selectedCountry),
+              'children',
+              'items',
+              selectedCountry
+                .getIn(['children', 'items'])
+                .indexOf(selectedState),
+              'children',
+              'items',
+              selectedState.getIn(['children', 'items']).indexOf(selectedLga),
+              'children',
+            ],
+            {
+              loading: false,
+              lastRefreshed,
+              items: new Immutable.List(
+                _.map(sites, site => new LazyLoadChild(site))
+              ),
+            }
+          )
+        }
       }
     }
   }
@@ -448,6 +636,24 @@ export default function geographyReducer(state = initialState, action) {
         action.selectedStateId,
         action.lastRefreshed
       )
+
+    case types.REQUEST_SITES_FOR_LOCATION_SELECTOR:
+      return requestSitesForLocationSelector(
+        state,
+        action.selectedCountryId,
+        action.selectedStateId,
+        action.selectedLgaId
+      )
+    case types.RECEIVE_SITES_FOR_LOCATION_SELECTOR:
+      return receiveSitesForLocationSelector(
+        state,
+        action.sites,
+        action.selectedCountryId,
+        action.selectedStateId,
+        action.selectedLgaId,
+        action.lastRefreshed
+      )
+
     default:
       return state
   }

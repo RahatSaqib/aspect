@@ -575,6 +575,43 @@ async function validateJobData({ personId, jobFunctionId, auth }) {
   return true
 }
 // ----------------------------------------------------------------------------------------
+async function removePersonAssignment(request) {
+  const { params: { personId, jobContextId } } = request
+
+  const jobContext = await knex('JobContext as jc')
+    .innerJoin('Job as j', 'jc.jobId', 'j.id')
+    .where('jc.id', jobContextId)
+    .first('j.personId', 'jc.jobId')
+  // validate
+  if (!jobContext) {
+    return Boom.badData('Incorrect jobContextId specified')
+  }
+  if (personId !== jobContext.personId) {
+    return Boom.badData('Specified personId does not match job personId')
+  }
+
+  // remove JobContext
+  await knex('JobContext')
+    .where('id', jobContextId)
+    .del()
+
+  // remove also Job entry if no other JobContexts use it
+  const { count } = await knex('JobContext')
+    .where('jobId', jobContext.jobId)
+    .count('id as count')
+    .first()
+  if (count === 0) {
+    await knex('Job')
+      .where('id', jobContext.jobId)
+      .del()
+  }
+  // ----------------
+  // return list of remaining person assignments
+  // ----------------
+  const personAssignments = await getAssignments(personId)
+  return { ok: true, data: personAssignments }
+}
+// ----------------------------------------------------------------------------------------
 
 module.exports = {
   getJobFunctionsForSelectList,
@@ -592,4 +629,5 @@ module.exports = {
   unassignJobFunctionPermissions,
   assignPersonTo,
   getPersonAssignments,
+  removePersonAssignment,
 }

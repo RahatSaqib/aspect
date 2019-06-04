@@ -137,9 +137,13 @@ const personDetailsResponse = {
         lgaName: Joi.string()
           .allow(null)
           .description('Lga name'),
-        userLockedOut: Joi.boolean()
-          .allow(null)
-          .description('User lockedOut'),
+        userLockedOut: [
+          // User lockedOut
+          Joi.boolean().allow(null),
+          Joi.number()
+            .only(0, 1)
+            .allow(null),
+        ],
         canLogIn: Joi.number()
           .allow(null)
           .description('Person canLogIn'),
