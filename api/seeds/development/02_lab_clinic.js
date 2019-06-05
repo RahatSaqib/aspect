@@ -3,6 +3,7 @@ module.exports = require('../utils').seed(seed)
 
 const bcrypt = require('bcrypt')
 const _ = require('lodash')
+const Promise = require('bluebird')
 const {
   addMilliseconds,
   addHours,
@@ -26,7 +27,9 @@ const {
   allResultWorkflowStatusToId,
   assayTypeToId,
   partnerTypeToId,
+  deviceTypeToId,
   deviceTypeCategoryToId,
+  deviceStatusToId,
   resultSourceToId,
   resultTypeToId,
 } = require('../../src/shared/dictionary')
@@ -477,13 +480,7 @@ async function seed(knex) {
     .where({ externalId: 'MetacomRouter' })
     .first()
 
-  const { id: deviceTypeIdChai } = await knex('DeviceType')
-    .where({ externalId: 'CHAILIMS' })
-    .first()
-
-  const { id: deviceStatusId } = await knex('DeviceStatus')
-    .where({ token: 'approved' })
-    .first()
+  const approvedDeviceStatusId = await deviceStatusToId('approved')
 
   // every clinic has a site and a Reporter device
   await Promise.all(
@@ -523,7 +520,7 @@ async function seed(knex) {
               geographyId,
               siteId,
               deviceTypeId: deviceTypeIdReporter,
-              deviceStatusId,
+              deviceStatusId: approvedDeviceStatusId,
               name: `${siteData.name} Reporter`,
               shortName: `R-${_.random(100000, 999999)}`,
               serial: `S1-R-${_.random(100000, 999999)}`,
@@ -561,7 +558,7 @@ async function seed(knex) {
             name: `Router at ${siteData.name}`,
             shortName: `RO-${siteData.shortName}`,
             deviceTypeId: deviceTypeIdRouter,
-            deviceStatusId,
+            deviceStatusId: approvedDeviceStatusId,
             partnerId: siteData.partnerId,
             geographyId: siteData.geographyId,
             siteId: siteData.id,
@@ -625,62 +622,74 @@ async function seed(knex) {
       if (lab.devices) {
         await Promise.all(
           _.map(lab.devices, async device => {
-            const lastTime = subMinutes(now, _.random(0, 60))
-
-            const [deviceId] = await knex('Device').insert(
-              Object.assign(
-                {
-                  partnerId,
-                  geographyId,
-                  siteId,
-                  deviceTypeId: deviceTypeIdChai,
-                  deviceStatusId,
-                  name: device.name,
-                  shortName: device.shortName,
-                  macAddress: device.macAddress,
-                  serial: device.serial,
-                  hostId: device.hostId,
-                  lastSeenOn: lastTime,
-                  lastPingOn: lastTime,
-                  lastPingFromIp: device.lastPingFromIp,
-                  putInService: subMonths(now, 30),
-                  putInServiceSource: 'Installed at lab',
-                  configurationData: '{}',
-                },
-                auditFields
+            const deviceApiKeyToken = device.deviceApiKey || randomToken()
+            const deviceData =
+              (await knex('DeviceApiKey as dak')
+                .join('Device as d', 'dak.deviceId', 'd.id')
+                .where('dak.token', deviceApiKeyToken)
+                .first('d.*')) || {}
+            if (_.isEmpty(deviceData)) {
+              const lastDeviceActivity = subMinutes(now, _.random(0, 60))
+              deviceData.partnerId = partnerId
+              deviceData.geographyId = siteData.geographyId
+              deviceData.siteId = siteData.id
+              deviceData.deviceTypeId = await deviceTypeToId(
+                device.deviceTypeId
               )
-            )
-
-            await knex('DeviceApiKey').insert(
-              Object.assign(
-                {
-                  token: randomToken(),
-                  revoked: 0,
-                  partnerId,
-                  geographyId,
-                  siteId,
-                  deviceId,
-                },
-                auditFields
-              )
-            )
-
-            // Router
-            await knex('Device').insert(
-              Object.assign({}, auditFields, {
-                name: `Router at ${siteData.name}`,
-                shortName: `RO-${siteData.shortName}`,
-                deviceTypeId: deviceTypeIdRouter,
-                deviceStatusId,
-                partnerId: siteData.partnerId,
-                geographyId: siteData.geographyId,
-                siteId: siteData.id,
-                lastSeenOn: lastTime,
-                lastPingOn: lastTime,
+              deviceData.deviceStatusId = approvedDeviceStatusId
+              deviceData.name = device.name
+              deviceData.shortName = device.shortName
+              deviceData.macAddress = device.macAddress
+              deviceData.serial = device.deviceSerial
+              deviceData.hostId = device.hostId
+              deviceData.lastSeenOn = lastDeviceActivity
+              deviceData.lastPingOn = lastDeviceActivity
+              deviceData.lastPingFromIp = device.lastPingFromIp
+              deviceData.putInService = subMonths(now, 30)
+              deviceData.putInServiceSource = 'Installed at lab'
+              deviceData.configurationData = '{}'
+              const [deviceId] = await knex('Device').insert({
+                ...deviceData,
+                ...auditFields,
               })
-            )
+              deviceData.id = deviceId
+              await knex('DeviceApiKey').insert({
+                token: deviceApiKeyToken,
+                revoked: 0,
+                partnerId,
+                geographyId,
+                siteId,
+                deviceId,
+                ...auditFields,
+              })
+            }
           })
         )
+        const routerData =
+          (await knex('Device')
+            .where({
+              shortName: `RO-${siteData.shortName}`,
+              deviceTypeId: deviceTypeIdRouter,
+              siteId: siteData.id,
+              partnerId: siteData.partnerId,
+            })
+            .first()) || {}
+        if (_.isEmpty(routerData)) {
+          const lastRouterActivity = subMinutes(now, _.random(0, 60))
+          routerData.name = `Router at ${siteData.name}`
+          routerData.shortName = `RO-${siteData.shortName}`
+          routerData.deviceTypeId = deviceTypeIdRouter
+          routerData.deviceStatusId = approvedDeviceStatusId
+          routerData.partnerId = siteData.partnerId
+          routerData.geographyId = siteData.geographyId
+          routerData.siteId = siteData.id
+          routerData.lastSeenOn = lastRouterActivity
+          routerData.lastPingOn = lastRouterActivity
+          await knex('Device').insert({
+            ...routerData,
+            ...auditFields,
+          })
+        }
       }
     })
   )
@@ -817,8 +826,9 @@ async function seed(knex) {
     },
   ]
 
-  const devicesM2000 = await knex('Device')
-    .where('deviceTypeId', deviceTypeIdChai)
+  const deviceTypeCHAILIMS = await deviceTypeToId('CHAILIMS')
+  const CHAILIMSM2000Devices = await knex('Device')
+    .where('deviceTypeId', deviceTypeCHAILIMS)
     .select('id', 'siteId')
 
   async function createUniqueResultIdForDevice(
@@ -846,7 +856,7 @@ async function seed(knex) {
   }
 
   async function createResultEid(i) {
-    const device = devicesM2000[i % devicesM2000.length]
+    const device = CHAILIMSM2000Devices[i % CHAILIMSM2000Devices.length]
     const siteData = await knex('Site')
       .where('id', device.siteId)
       .first('id')
@@ -1021,7 +1031,7 @@ async function seed(knex) {
   }
 
   async function createResultHiv(i) {
-    const device = devicesM2000[i % devicesM2000.length]
+    const device = CHAILIMSM2000Devices[i % CHAILIMSM2000Devices.length]
     const siteData = await knex('Site')
       .where('id', device.siteId)
       .first('id')

@@ -201,11 +201,11 @@ async function seed(knex) {
       if (lab.devices) {
         await Promise.all(
           _.map(lab.devices, async device => {
-            const deviceAiKeyToken = device.deviceApiKey || randomToken()
+            const deviceApiKeyToken = device.deviceApiKey || randomToken()
             const deviceData =
               (await knex('DeviceApiKey as dak')
                 .join('Device as d', 'dak.deviceId', 'd.id')
-                .where('dak.token', deviceAiKeyToken)
+                .where('dak.token', deviceApiKeyToken)
                 .first('d.*')) || {}
             if (_.isEmpty(deviceData)) {
               deviceData.partnerId = partnerId
@@ -228,7 +228,7 @@ async function seed(knex) {
               })
               deviceData.id = deviceId
               await knex('DeviceApiKey').insert({
-                token: deviceAiKeyToken,
+                token: deviceApiKeyToken,
                 revoked: 0,
                 partnerId,
                 geographyId: siteData.geographyId,
