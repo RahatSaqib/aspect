@@ -2051,7 +2051,9 @@ async function updateCategoryAssay(knex) {
   await Promise.each(categories, async ({ id, externalId }) => {
     let json
     if (
-      ['Detected', 'Trace Detected', 'MoreThan1000'].indexOf(externalId) >= 0
+      ['Detected', 'Trace Detected', 'MoreThan1000', 'Resistant'].indexOf(
+        externalId
+      ) >= 0
     ) {
       json = {
         requiresTreatment: true,
@@ -2067,6 +2069,7 @@ async function updateCategoryAssay(knex) {
         'Discordant',
         'Rejected',
         'Missing',
+        'Susceptible',
       ].indexOf(externalId) >= 0
     ) {
       json = {

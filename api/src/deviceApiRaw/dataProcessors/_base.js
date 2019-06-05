@@ -23,7 +23,9 @@ class DataProcessor {
     this.messageContext = messageContext
     this.encryptRawData = true
     this.saveRequestAsReady = this.saveRequestAsReady.bind(this)
-    this.populateFromDeviceApiRawRecord = this.populateFromDeviceApiRawRecord.bind(this)
+    this.populateFromDeviceApiRawRecord = this.populateFromDeviceApiRawRecord.bind(
+      this
+    )
     this.start = this.start.bind(this)
     this.responseReadyPromise = this.responseReadyPromise.bind(this)
     this.dataProcessorErrorPromise = this.dataProcessorErrorPromise.bind(this)
