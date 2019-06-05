@@ -1,7 +1,7 @@
 module.exports = require('../src/db').migration(up, down)
 
 async function up(knex) {
-  await knex.schema.createTable('resultDownloadLog', table => {
+  await knex.schema.createTable('ResultDownloadLog', table => {
     table.increments('id')
     table
       .string('method')
@@ -17,7 +17,6 @@ async function up(knex) {
       .index()
       .references('id')
       .inTable('User')
-
     table
       .integer('resultId')
       .unsigned()
@@ -27,7 +26,5 @@ async function up(knex) {
   })
 }
 async function down(knex) {
-  await knex.schema.dropTable('RefreshToken', refreshToken => {
-    refreshToken.dropColumn('updatedOn')
-  })
+  await knex.schema.dropTable('ResultDownloadLog')
 }

@@ -501,7 +501,7 @@ async function downloadResultsList(request) {
   )
 
   const idsToBeRegistered = _.uniq(_.map(result.data, elem => elem.id))
-  if (idsToUpdate) await updateResultStatus(idsToUpdate, user)
+  if (idsToUpdate) await updateResultStatus(idsToUpdate, user.id)
   if (idsToBeRegistered) await addResultDownloadLog(idsToBeRegistered, user.id)
 
   const assigmentValue = elem => {
@@ -521,7 +521,7 @@ async function addResultDownloadLog(idsToBeRegistered, userId) {
     })
   })
 }
-async function updateResultStatus(idsToUpdate, user) {
+async function updateResultStatus(idsToUpdate, userId) {
   const { id: DeliveredId } = await knex('ResultWorkflowStatus')
     .where('externalId', 'Delivered')
     .first('id')
@@ -532,7 +532,7 @@ async function updateResultStatus(idsToUpdate, user) {
       resultWorkflowStatusId: DeliveredId,
       changedOn: now,
       createdOn: now,
-      createdBy: user.id,
+      createdBy: userId,
       reason: 'Download Results Api',
       operator: 'Reporter App',
     })
