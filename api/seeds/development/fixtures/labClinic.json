@@ -4407,6 +4407,36 @@
       "externalId": "CHIZ",
       "name": "Chiradzulu District Hospital",
       "shortName": "Chiradzulu"
+    },
+    {
+      "externalId": "TB-REF-LAB",
+      "name": "TB Reference Lab",
+      "shortName": "TB Reference",
+      "stateName": "Harare",
+      "lgaName": "Harare",
+      "latitude": -17.859121,
+      "longitude": 31.0109402,
+      "devices": [
+        {
+          "deviceTypeId": "BDMGIT",
+          "name": "TB Reference Lab BD MGIT GF012345",
+          "shortName": "TB-REF-LAB MGIT",
+          "deviceSerial": "MG1234",
+          "deviceApiKey": "d2e73rwb3ycvwl4ehbe11"
+        },
+        {
+          "deviceTypeId": "HainGenoScan",
+          "name": "TB Reference Lab Hain GenoScan",
+          "shortName": "TB-REF-LAB Hain GenoScan",
+          "deviceApiKey": "rquxrl4z6wc773d7h1eh"
+        },
+        {
+          "deviceTypeId": "SenaiteLims",
+          "name": "TB Reference Lab Senaite LIMS",
+          "shortName": "TB-REF-LAB Senaite",
+          "deviceApiKey": "isu0v2968rzfe56uci41"
+        }
+      ]
     }
   ]
 }
