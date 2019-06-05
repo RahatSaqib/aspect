@@ -4424,19 +4424,19 @@
           "name": "TB Reference Lab BD MGIT GF012345",
           "shortName": "TB-REF-LAB MGIT",
           "deviceSerial": "MG1234",
-          "deviceApiKey": "d2e73rwb3ycvwl4ehbe11"
+          "deviceApiKey": "7et5utnhhmgp82mcr6x0"
         },
         {
           "deviceTypeId": "HainGenoScan",
           "name": "TB Reference Lab Hain GenoScan",
           "shortName": "TB-REF-LAB Hain GenoScan",
-          "deviceApiKey": "rquxrl4z6wc773d7h1eh"
+          "deviceApiKey": "jvjptuf4f9p72tmuew10"
         },
         {
           "deviceTypeId": "SenaiteLims",
           "name": "TB Reference Lab Senaite LIMS",
           "shortName": "TB-REF-LAB Senaite",
-          "deviceApiKey": "isu0v2968rzfe56uci41"
+          "deviceApiKey": "q8f2ujd19kcnf31f1tzg"
         }
       ]
     }
