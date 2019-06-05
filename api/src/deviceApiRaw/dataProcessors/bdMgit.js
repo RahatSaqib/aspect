@@ -41,7 +41,8 @@ class DefaultBDMGIT extends SynchronousDataProcessor {
     const { request } = this
     const { auth, payload } = request
 
-    this.response = await transact(async knex => {
+    this.response = { deviceApiRawId: this.id }
+    await transact(async knex => {
       const { deviceId } = await knex('DeviceApiKey')
         .where('token', auth.credentials.token)
         .first('deviceId')
@@ -51,6 +52,8 @@ class DefaultBDMGIT extends SynchronousDataProcessor {
           'Invalid device API key: Cannot determine which device this came from'
         )
       }
+
+      this.response.deviceId = deviceId
 
       const now = getUtcTime()
 
@@ -62,6 +65,8 @@ class DefaultBDMGIT extends SynchronousDataProcessor {
         // TODO: DeviceLog handle non-JSON payloads
         rawMessage: JSON.stringify(request.plugins.rawPayload),
       })
+
+      this.response.deviceLogId = deviceLogId
 
       await knex('Device')
         .where({ id: deviceId })
@@ -294,12 +299,6 @@ class DefaultBDMGIT extends SynchronousDataProcessor {
       await knex('DeviceLog')
         .where('id', deviceLogId)
         .update({ resultId })
-
-      return {
-        deviceApiRawId: this.id,
-        deviceId,
-        deviceLogId,
-      }
     })
   }
 
