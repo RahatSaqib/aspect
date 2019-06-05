@@ -349,9 +349,9 @@ async function seed(knex) {
   })
 
   const { id: deviceTypeSenaiteLimsId } =
-  (await knex('DeviceType')
-    .where('externalId', 'SenaiteLims')
-    .first('id')) || {}
+    (await knex('DeviceType')
+      .where('externalId', 'SenaiteLims')
+      .first('id')) || {}
   if (!deviceTypeSenaiteLimsId) {
     await knex('DeviceType').insert({
       externalId: 'SenaiteLims',
@@ -362,9 +362,9 @@ async function seed(knex) {
   }
 
   let { id: deviceTypeBDMGITId } =
-  (await knex('DeviceType')
-    .where('externalId', 'BDMGIT')
-    .first('id')) || {}
+    (await knex('DeviceType')
+      .where('externalId', 'BDMGIT')
+      .first('id')) || {}
   if (!deviceTypeBDMGITId) {
     ;[deviceTypeBDMGITId] = await knex('DeviceType').insert({
       externalId: 'BDMGIT',
@@ -375,9 +375,9 @@ async function seed(knex) {
   }
 
   let { id: deviceTypeHainGenoScanId } =
-  (await knex('DeviceType')
-    .where('externalId', 'HainGenoScan')
-    .first('id')) || {}
+    (await knex('DeviceType')
+      .where('externalId', 'HainGenoScan')
+      .first('id')) || {}
   if (!deviceTypeHainGenoScanId) {
     ;[deviceTypeHainGenoScanId] = await knex('DeviceType').insert({
       externalId: 'HainGenoScan',
@@ -732,9 +732,9 @@ async function seed(knex) {
     patientDataSchema,
   }
   let { id: assayBdMgitAstId } =
-  (await knex('Assay')
-    .where('externalId', 'assayBdMgitAst')
-    .first('id')) || {}
+    (await knex('Assay')
+      .where('externalId', 'assayBdMgitAst')
+      .first('id')) || {}
   if (!assayBdMgitAstId) {
     assayBdMgitAstId = await knex('Assay').insert({
       ...assayBdMgitAst,
@@ -915,9 +915,9 @@ async function seed(knex) {
     patientDataSchema,
   }
   let { id: assayBdMgitGndId } =
-  (await knex('Assay')
-    .where('externalId', 'assayBdMgitGnd')
-    .first('id')) || {}
+    (await knex('Assay')
+      .where('externalId', 'assayBdMgitGnd')
+      .first('id')) || {}
   if (!assayBdMgitGndId) {
     assayBdMgitGndId = await knex('Assay').insert({
       ...assayBdMgitGnd,
@@ -1403,9 +1403,9 @@ async function seed(knex) {
     patientDataSchema,
   }
   let { id: assayGenoTypeMTBCV1Id } =
-  (await knex('Assay')
-    .where('externalId', 'assayGenoTypeMTBCV1')
-    .first('id')) || {}
+    (await knex('Assay')
+      .where('externalId', 'assayGenoTypeMTBCV1')
+      .first('id')) || {}
   if (!assayGenoTypeMTBCV1Id) {
     ;[assayGenoTypeMTBCV1Id] = await knex('Assay').insert({
       ...assayGenoTypeMTBCV1,
@@ -2300,9 +2300,9 @@ async function seed(knex) {
     patientDataSchema,
   }
   let { id: assayGenoTypeMTBDRplusV2Id } =
-  (await knex('Assay')
-    .where('externalId', 'assayGenoTypeMTBDRplusV2')
-    .first('id')) || {}
+    (await knex('Assay')
+      .where('externalId', 'assayGenoTypeMTBDRplusV2')
+      .first('id')) || {}
   if (!assayGenoTypeMTBDRplusV2Id) {
     ;[assayGenoTypeMTBDRplusV2Id] = await knex('Assay').insert({
       ...assayGenoTypeMTBDRplusV2,
@@ -3065,9 +3065,9 @@ async function seed(knex) {
     patientDataSchema,
   }
   let { id: assayGenoTypeMTBDRslV1Id } =
-  (await knex('Assay')
-    .where('externalId', 'assayGenoTypeMTBDRslV1')
-    .first('id')) || {}
+    (await knex('Assay')
+      .where('externalId', 'assayGenoTypeMTBDRslV1')
+      .first('id')) || {}
   if (!assayGenoTypeMTBDRslV1Id) {
     ;[assayGenoTypeMTBDRslV1Id] = await knex('Assay').insert({
       ...assayGenoTypeMTBDRslV1,
@@ -3951,9 +3951,9 @@ async function seed(knex) {
     patientDataSchema,
   }
   let { id: assayGenoTypeMTBDRslV2Id } =
-  (await knex('Assay')
-    .where('externalId', 'assayGenoTypeMTBDRslV2')
-    .first('id')) || {}
+    (await knex('Assay')
+      .where('externalId', 'assayGenoTypeMTBDRslV2')
+      .first('id')) || {}
   if (!assayGenoTypeMTBDRslV2Id) {
     ;[assayGenoTypeMTBDRslV2Id] = await knex('Assay').insert({
       ...assayGenoTypeMTBDRslV2,
