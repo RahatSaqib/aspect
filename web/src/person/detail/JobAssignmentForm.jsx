@@ -1,24 +1,20 @@
 import _ from 'lodash'
-import React, { useState } from 'react'
+import React from 'react'
 import { compose, lifecycle, withHandlers, pure } from 'recompose'
 import Button from '@material-ui/core/Button'
 import MenuItem from '@material-ui/core/MenuItem'
 import classnames from 'classnames/bind'
-import { Link } from 'react-router-dom'
-import FaExternalLink from 'react-icons/lib/fa/external-link'
-import RemoveIcon from '@material-ui/icons/RemoveCircle'
-import LinearProgress from '@material-ui/core/LinearProgress'
 import recomposeForm from '../../components/recomposeForm'
 
 import { Unit } from '../../components/pureGrids'
-import AspectDialog from '../../components/shared/AspectDialog'
 
 import messages from './messages'
 import CountrySelectField from '../../filter/geography/CountrySelectField'
 import StateSelectField from '../../filter/geography/StateSelectField'
 import LgaSelectField from '../../filter/geography/LgaSelectField'
-import SiteSelectField from '../../filter/geography/SiteSelectField'
+import SiteSelectField from '../../filter/resource/SiteSelectField'
 import SelectField from '../../components/shared/SelectField'
+import PersonAssignments from './PersonAssignments'
 
 const cssClasses = classnames.bind(require('./PersonDetail.css'))
 
@@ -86,6 +82,7 @@ export const JobAssignemntForm = ({
   intl,
   loading,
   form,
+  meta,
   values,
   onJobFunctionIdChange,
   onStateIdChange,
@@ -97,49 +94,13 @@ export const JobAssignemntForm = ({
   loadedAssignments,
   onDeleteAssignment,
 }) => {
-  const [confirmation, setConfirmation] = useState({ isActive: false })
-  const onCancelConfirmation = () => setConfirmation({ isActive: false })
-  const onConfirmRemove = () => {
-    setConfirmation({ isActive: false })
-    onDeleteAssignment(confirmation.assignment.jobContextId)
+  const baseProps = {
+    allItemText: intl.formatMessage(messages.all),
+    disabled: form.submitting,
+    floatingLabelFixed: true,
+    fullWidth: true,
+    hintText: intl.formatMessage(messages.all),
   }
-  const askConfirmation = (assignment, index) => {
-    setConfirmation({ isActive: true, assignment, index })
-  }
-  const renderAssignment = (assignment, showLinks) => {
-    if (!assignment) {
-      return null
-    }
-    return (
-      <div className={cssClasses('Assignment__Section')}>
-        <div className={cssClasses('Assignment__Title')}>
-          {assignment.jobFunctionName}
-          {showLinks && (
-            <Link
-              to="#"
-              onClick={() => askConfirmation(assignment)}
-              className={cssClasses('Assignment__Link')}
-              color="primary"
-            >
-              <RemoveIcon />
-            </Link>
-          )}
-        </div>
-        <div>{assignment.countryName}</div>
-        <div>{assignment.stateName || 'All states'}</div>
-        <div>{assignment.lgaName || 'All LGAs'}</div>
-        <div>
-          <span>{assignment.siteName || 'All sites'}</span>
-          {showLinks && (
-            <Link to="#" className={cssClasses('Assignment__Link')}>
-              <FaExternalLink />
-            </Link>
-          )}
-        </div>
-      </div>
-    )
-  }
-
   return (
     <div className={cssClasses('Job__Assignment', 'Form__Content')}>
       <Unit sm="1-2" className={cssClasses('Section__Content')}>
@@ -156,6 +117,12 @@ export const JobAssignemntForm = ({
             }}
             floatingLabelFixed
             floatingLabelText={intl.formatMessage(messages.job)}
+            errorStyle={{
+              float: 'left',
+              whiteSpace: 'nowrap',
+              textOverflow: 'visible',
+            }}
+            errorText={meta.jobFunctionId.touched && meta.jobFunctionId.error}
           >
             {jobFunctions.map(x => (
               <MenuItem key={x.id} value={x.id}>
@@ -173,34 +140,28 @@ export const JobAssignemntForm = ({
               floatingLabelText={intl.formatMessage(messages.country)}
             />
             <StateSelectField
-              allItemText={intl.formatMessage(messages.all)}
-              hintText={intl.formatMessage(messages.all)}
+              {...baseProps}
               onStateIdChange={onStateIdChange}
               countryId={values.countryId}
               stateId={values.stateId}
-              floatingLabelFixed
               floatingLabelText={intl.formatMessage(messages.state)}
             />
             <LgaSelectField
-              allItemText={intl.formatMessage(messages.all)}
-              hintText={intl.formatMessage(messages.all)}
+              {...baseProps}
               onLgaIdChange={onLgaIdChange}
               countryId={values.countryId}
               stateId={values.stateId}
               lgaId={values.lgaId}
-              floatingLabelFixed
               floatingLabelText={intl.formatMessage(messages.lga)}
             />
             <SiteSelectField
-              allItemText={intl.formatMessage(messages.all)}
-              hintText={intl.formatMessage(messages.all)}
-              onSiteIdChange={onSiteIdChange}
+              {...baseProps}
+              floatingLabelText={intl.formatMessage(messages.site)}
+              value={values.siteId}
+              onSiteChange={onSiteIdChange}
               countryId={values.countryId}
               stateId={values.stateId}
               lgaId={values.lgaId}
-              siteId={values.siteId}
-              floatingLabelFixed
-              floatingLabelText={intl.formatMessage(messages.site)}
             />
           </section>
           <div className={cssClasses('Form__ActionRow')}>
@@ -218,31 +179,13 @@ export const JobAssignemntForm = ({
         </form>
       </Unit>
       <Unit sm="1-2" className={cssClasses('Section__Content')}>
-        <section className={cssClasses('Assignments')}>
-          <h1>{intl.formatMessage(messages.assignments)}</h1>
-          {!loadedAssignments && <LinearProgress />}
-          {assignments.length === 0 && <h4>Not specified</h4>}
-          {assignments.map(assignment => renderAssignment(assignment, true))}
-        </section>
+        <PersonAssignments
+          intl={intl}
+          assignments={assignments}
+          loadedAssignments={loadedAssignments}
+          onDeleteAssignment={onDeleteAssignment}
+        />
       </Unit>
-
-      <AspectDialog
-        actions={[
-          <Button color="primary" onClick={onCancelConfirmation}>
-            {intl.formatMessage(messages.cancel)}
-          </Button>,
-          <Button color="primary" variant="contained" onClick={onConfirmRemove}>
-            {intl.formatMessage(messages.yesDelete)}
-          </Button>,
-        ]}
-        maxWidth="sm"
-        open={confirmation.isActive}
-        onEscapeKeyDown={onCancelConfirmation}
-        onClose={onCancelConfirmation}
-      >
-        <h3>Do you want to remove below assignment?</h3>
-        {renderAssignment(confirmation.assignment)}
-      </AspectDialog>
     </div>
   )
 }

@@ -232,18 +232,6 @@ async function lgaSelectList(request) {
   return { ok: true, data: lgas }
 }
 
-async function siteSelectList(request) {
-  const { params } = request
-  const sites = await query('Get Sites for select list')
-    .from('Site as s')
-    .innerJoin('Geography as g', 's.geographyId', 'g.id')
-    .where('g.lgaId', params.lgaId)
-    .orderBy(['s.name'], 'asc')
-    .distinct('s.id', 's.name')
-
-  return { ok: true, data: sites }
-}
-
 async function transformGeographyFromUpdates(updates) {
   const geoFieldNames = ['countryId', 'stateId', 'lgaId']
   const geoFields = _.pick(updates, geoFieldNames)
@@ -263,6 +251,5 @@ module.exports = {
   countrySelectList,
   stateSelectList,
   lgaSelectList,
-  siteSelectList,
   transformGeographyFromUpdates,
 }

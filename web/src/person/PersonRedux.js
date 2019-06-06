@@ -473,7 +473,7 @@ export function fetchUpdateSiteContacts(siteId, person, operation) {
       method: 'PUT',
       body: JSON.stringify(person),
       errorNotifications: {
-        404: errorInsufficientScope(
+        403: errorInsufficientScope(
           defineMessages({
             title: {
               id: 'errorResponseMessages.fetchUpdateSiteContacts.PUT.404.title',
@@ -491,7 +491,7 @@ export function fetchPersonAssignments(personId) {
     dispatch(requestPersonAssignments(personId))
     return aspectFetch(`/job-function/person-assignments/${personId}`, {
       errorNotifications: {
-        404: errorInsufficientScope(
+        403: errorInsufficientScope(
           defineMessages({
             title: {
               id: 'errorResponseMessages.fetchPersonAssignments.GET.404.title',
@@ -511,7 +511,7 @@ export function addPersonAssignment(data) {
       method: 'POST',
       body: JSON.stringify(data),
       errorNotifications: {
-        404: errorInsufficientScope(
+        403: errorInsufficientScope(
           defineMessages({
             title: {
               id: 'errorResponseMessages.addPersonAssignment.POST.404.title',
@@ -536,7 +536,7 @@ export function deletePersonAssignment(data) {
       {
         method: 'DELETE',
         errorNotifications: {
-          404: errorInsufficientScope(
+          403: errorInsufficientScope(
             defineMessages({
               title: {
                 id:

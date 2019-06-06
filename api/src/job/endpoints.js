@@ -214,7 +214,6 @@ const jobFunctionPermissionsResponse = {
       ),
   }),
 }
-// const getJobsForPerson = () => {}
 
 // ---------------------------------------------------------------------------------------------
 // routes
@@ -259,22 +258,6 @@ const routes = [
   // ------------
   // Job
   // ------------
-  // {
-  //   method: 'GET',
-  //   path: '/job-function/{personId}',
-  //   handler: asyncHandler(getJobsForPerson),
-  //   config: {
-  //     description: 'Get Jobs for a particular person',
-  //     auth: { scope: ['person:view'] },
-  //     validate: {
-  //       payload: {
-  //         personId: Joi.number().required(),
-  //         jobFunctionId: Joi.number().required(),
-  //       },
-  //     },
-  //     response: jobResponse,
-  //   },
-  // },
   {
     method: 'POST',
     path: '/job-function/assign-job',

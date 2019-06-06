@@ -5,7 +5,6 @@ const {
   countrySelectList,
   stateSelectList,
   lgaSelectList,
-  siteSelectList,
 } = require('./service')
 
 const routes = [
@@ -111,22 +110,6 @@ const routes = [
         params: {
           stateId: Joi.number()
             .description('State ID')
-            .required(),
-        },
-      },
-    },
-  },
-  {
-    method: 'GET',
-    path: '/geography/site-select-list/{lgaId}',
-    handler: asyncHandler(siteSelectList),
-    config: {
-      description: 'Site List',
-      notes: 'List of Site IDs and Names',
-      validate: {
-        params: {
-          lgaId: Joi.number()
-            .description('LGA ID')
             .required(),
         },
       },
