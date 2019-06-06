@@ -345,7 +345,7 @@ export class PersonDetail extends PureComponent {
                   contactDetails={contactDetails}
                   shouldPrefill={shouldPrefill}
                   emailValue={emailValue}
-                  countryId={user.jwt.countryId}
+                  countryId={user.get('countryId')}
                   onSubmit={this.addAssignment}
                   onDeleteAssignment={this.deleteAssignment}
                   jobFunctions={jobFunctions}

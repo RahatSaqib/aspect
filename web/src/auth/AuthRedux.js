@@ -235,6 +235,7 @@ export function refreshStart() {
             access: json.access,
             refresh: json.refresh,
             clientId: json.clientId,
+            countryId: json.countryId,
           })
         )
       )
@@ -418,6 +419,7 @@ export function acceptLicenseStart(licenseId) {
             culture: json.culture,
             timezoneId: json.timezone,
             displayPreferences: Immutable.Map(json.displayPreferences),
+            countryId: json.countryId,
           })
         )
       )
@@ -430,7 +432,6 @@ export function acceptLicenseStart(licenseId) {
  * ---------------- Reducers -----------------
  */
 const JWT = Immutable.Record({
-  countryId: undefined,
   name: '',
   permissions: Immutable.Set(),
   hasToAcceptLicenseId: undefined,
@@ -483,7 +484,6 @@ export default function authReducer(state = initialState, action) {
         mutState.mergeDeepIn(
           ['jwt'],
           _.pick(jwtDecode(action.data.access), [
-            'countryId',
             'name',
             'permissions',
             'hasToAcceptLicenseId',

@@ -244,6 +244,7 @@ async function refreshToken(request) {
     refresh: refreshToken,
     clientId,
     clientType,
+    countryId: data.countryId,
   }
 }
 
