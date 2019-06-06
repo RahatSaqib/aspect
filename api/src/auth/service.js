@@ -130,11 +130,9 @@ async function authenticate(request) {
 
   const now = new Date()
   const refreshToken = crypto.randomBytes(48).toString('base64')
-  const {
-    clientId = uuid.v4(),
-    clientType = clientTypes.web,
-    clientName,
-  } = payload
+  const { clientType = clientTypes.web, clientName } = payload
+  let { clientId } = payload
+  clientId = clientId || uuid.v4()
   // handle 'deviceTokenId' only for reporter app
   let { deviceTokenId = null } = payload
   if (clientType !== clientTypes.app) {
@@ -450,12 +448,9 @@ async function updateUsernameAndPasswordForLoggedInUser(request) {
   }
 
   const refreshToken = crypto.randomBytes(48).toString('base64')
-  const {
-    clientId = uuid.v4(),
-    clientType = clientTypes.web,
-    clientName,
-    deviceTokenId,
-  } = payload
+  const { clientType = clientTypes.web, clientName, deviceTokenId } = payload
+  let { clientId } = payload
+  clientId = clientId || uuid.v4()
 
   await setRefreshToken({
     clientId,
@@ -478,6 +473,7 @@ async function updateUsernameAndPasswordForLoggedInUser(request) {
     access: accessToken,
     refresh: refreshToken,
     clientId,
+    deviceTokenId,
   }
 }
 
