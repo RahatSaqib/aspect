@@ -235,6 +235,10 @@ export default defineMessages({
     id: 'pages.JobAssignments.selectJob',
     defaultMessage: 'Select Job',
   },
+  jobRequired: {
+    id: 'pages.JobAssignments.jobRequired',
+    defaultMessage: 'Please select Job',
+  },
   cancel: {
     id: 'pages.JobAssignments.cancel',
     defaultMessage: 'Cancel',

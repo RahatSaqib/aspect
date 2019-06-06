@@ -29,7 +29,7 @@ const DEFAULT_VALUES = {
 const validate = ({ jobFunctionId }, { intl }) => {
   const errors = {}
   if (!jobFunctionId) {
-    errors.jobFunctionId = intl.formatMessage(messages.nameRequired)
+    errors.jobFunctionId = intl.formatMessage(messages.jobRequired)
   }
   return errors
 }
