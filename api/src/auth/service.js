@@ -284,10 +284,9 @@ function getAccessToken({ id, name, partnerId, personId }, clientType = 'web') {
     .innerJoin('JobFunction as jf', 'jfp.jobFunctionId', 'jf.id')
     .innerJoin('Job as j', 'j.jobFunctionId', 'jf.id')
     .innerJoin('Person as ps', 'j.personId', 'ps.id')
-    .leftOuterJoin('Geography as g', 'ps.geographyId', 'g.id')
     .where({ 'ps.userId': id, 'jf.partnerId': partnerId })
     .orderBy(['p.module', 'p.activity'])
-    .distinct('p.module', 'p.activity', 'g.countryId')
+    .distinct('p.module', 'p.activity')
     .then(async data => {
       const applicableLicense = await getApplicableLicense(personId, partnerId)
       // create a new token
@@ -295,7 +294,6 @@ function getAccessToken({ id, name, partnerId, personId }, clientType = 'web') {
         {
           name,
           permissions: data.map(p => `${p.module}:${p.activity}`),
-          countryId: data.map(x => x.countryId)[0],
           hasToAcceptLicenseId:
             clientType.includes(clientTypes.app) ||
             !applicableLicense ||

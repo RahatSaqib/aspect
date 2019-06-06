@@ -414,7 +414,7 @@ async function assignPersonTo(request) {
   // ----------------
   // siteId or geographyId
   // ----------------
-  const { countryId, stateId, lgaId, siteId } = payload
+  const { countryId, stateId = null, lgaId = null, siteId = null } = payload
   let geographyId
   if (!siteId) {
     // ----------------
