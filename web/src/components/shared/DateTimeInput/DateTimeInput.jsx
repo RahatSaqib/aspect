@@ -1,5 +1,11 @@
 import PropTypes from 'prop-types'
-import React, { useState, useEffect, useRef, createRef } from 'react'
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  createRef,
+} from 'react'
 import classNames from 'classnames'
 import _fp from 'lodash/fp'
 import _ from 'lodash'
@@ -557,7 +563,7 @@ const DateTimeInput = props => {
   const minDate = toDate(min)
   const maxDate = toDate(max)
   const orderList = getOrderList(displayFormat)
-  const isControlled = () => !(value === undefined)
+  const isControlled = useCallback(() => !(value === undefined), [value])
   const initialValue = isControlled()
     ? value
     : normalizeDate({ minDate, maxDate, date: defaultValue })

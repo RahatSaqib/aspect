@@ -17,12 +17,10 @@ const ContactsTag = ({
   fetchUpdateSiteContacts,
   ...restProps
 }) => {
-  useEffect(
-    () => {
-      fetchAvailablePersons('person')
-    },
-    [fetchAvailablePersons]
-  )
+  useEffect(() => {
+    fetchAvailablePersons('person')
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const contactsList = contacts
     .getIn(['person', 'items'], Immutable.List())

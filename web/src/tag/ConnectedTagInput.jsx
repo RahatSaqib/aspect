@@ -21,7 +21,8 @@ const ConnectedTagInput = ({
     () => {
       fetchPossibleTags(qryType)
     },
-    [fetchPossibleTags, qryType]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [qryType]
   )
   const possibleTags = tags.getIn([qryType, 'items'], Immutable.List()).toJS()
 
