@@ -4,15 +4,22 @@ const { knex } = require('../../src/db')
 const { getUtcTime } = require('../../src/shared/date')
 const { randomToken } = require('../../src/deviceApi/apiKey')
 const { waitAsyncComplete } = require('../utils/generatorFunctionUtils')
-const { deviceApiRawStatusToId } = require('../../src/shared/dictionary')
 
 const server = supertest.agent('http://localhost:8080')
 const { assert, expect } = chai
+
+const {
+  assayToId,
+  resultTypeToId,
+  resultSourceToId,
+  resultCategoryToId,
+} = require('../../src/shared/dictionary')
 
 describe('Device API Raw routes for BD MGIT', () => {
   const deviceApiRawPath = '/device/raw'
   const validApiKeyToken = randomToken()
   let bdMgitDeviceId
+  let bdMgitSiteId
   before(async () => {
     const now = getUtcTime()
     const { id: userId } = await knex('User').first('id')
@@ -40,8 +47,23 @@ describe('Device API Raw routes for BD MGIT', () => {
       .where({ partnerId: partner.id })
       .where({ defaultForDeviceType: 1 })
       .first('id')
+    ;[bdMgitSiteId] = await knex('Site').insert({
+      name: 'Some Site for Some BD MGIT Device',
+      shortName: 'SSFSBDMD',
+      externalId: 'SSFSBDMD',
+      partnerId: partner.id,
+      geographyId: geography.id,
+      city: 'Sparks',
+      street1: '7 Loveton Circle',
+      zip: '21152',
+      longitude: 17.0,
+      latitude: 95.0,
+      createdOn: now,
+      updatedOn: now,
+    })
     ;[bdMgitDeviceId] = await knex('Device').insert({
       partnerId: partner.id,
+      siteId: bdMgitSiteId,
       geographyId: geography.id,
       deviceTypeId: bdMgitDeviceType.id,
       deviceCapacityId: deviceCapacity ? deviceCapacity.id : null,
@@ -57,6 +79,7 @@ describe('Device API Raw routes for BD MGIT', () => {
     await knex('DeviceApiKey').insert({
       token: validApiKeyToken,
       deviceId: bdMgitDeviceId,
+      siteId: bdMgitSiteId,
       revoked: false,
       createdOn: now,
       createdBy: userId,
@@ -116,6 +139,34 @@ describe('Device API Raw routes for BD MGIT', () => {
     await knex('FactResultsDeviceByCategory1And2')
       .where('deviceId', deviceId)
       .delete()
+    await knex('InventoryLog')
+      .whereIn('resultId', resultIds)
+      .delete()
+    await knex('ResultQualityControlLog')
+      .whereIn('resultId', resultIds)
+      .delete()
+    await knex('ResultWorkflowLog')
+      .whereIn('resultId', resultIds)
+      .delete()
+    await knex('ResultGeneratedResult')
+      .whereIn('sourceResultId', resultIds)
+      .orWhereIn('generatedResultId', resultIds)
+      .delete()
+    await knex('ResultTag')
+      .whereIn('resultId', resultIds)
+      .delete()
+    await knex('Result')
+      .whereIn('id', resultIds)
+      .delete()
+    const sampleIds = await knex('Result')
+      .whereIn('id', resultIds)
+      .pluck('sampleId')
+    await knex('Sample')
+      .whereIn('id', sampleIds)
+      .delete()
+    await knex('Sample')
+      .where('originSiteId', siteId)
+      .delete()
     await knex('DeviceApiRaw')
       .where({ deviceApiKeyId })
       .delete()
@@ -125,6 +176,9 @@ describe('Device API Raw routes for BD MGIT', () => {
       .delete()
     await knex('Device')
       .where('id', deviceId)
+      .delete()
+    await knex('Site')
+      .where('id', siteId)
       .delete()
     const inventoryItemIds = await knex('InventoryItem as ii')
       .where('ii.siteId', siteId)
@@ -146,45 +200,18 @@ describe('Device API Raw routes for BD MGIT', () => {
         }
       })
       .delete()
-    await knex('InventoryLog')
-      .whereIn('resultId', resultIds)
-      .delete()
-    await knex('ResultQualityControlLog')
-      .whereIn('resultId', resultIds)
-      .delete()
-    await knex('ResultWorkflowLog')
-      .whereIn('resultId', resultIds)
-      .delete()
-    await knex('ResultGeneratedResult')
-      .whereIn('sourceResultId', resultIds)
-      .orWhereIn('generatedResultId', resultIds)
-      .delete()
-    await knex('ResultTag')
-      .whereIn('sourceResultId', resultIds)
-      .delete()
-    await knex('Result')
-      .whereIn('id', resultIds)
-      .delete()
-    await knex('Sample')
-      .where('originSiteId', siteId)
-      .delete()
-    await knex('Site')
-      .where('id', siteId)
-      .delete()
   })
 
   it('should save the request in DeviceApiRaw and respond with the record ID', async () => {
-    const payload =
-      'H|\\^&|||Becton Dickinson|7 Loveton Circle^Sparks^MD^21152||410 316-4000||||P|V1.00|19981019184200\n' +
-      'P|1\n' +
-      'O|1|0970038018^1||^^^MGIT_960_AST\n' +
-      'R|1|^^^AST_MGIT^439309967349^EMB^5.0^ug/ml|INST_ONGOING^123|||||P|||19960502115414|19960502115414|MGIT960^^^13^B/A02\n' +
-      'R|2|^^^AST_MGIT^439309967349^RIF^1.0^ug/ml|INST_ONGOING^12|||||P|||19960502115414|19960502115414|MGIT960^^^13^B/A03\n' +
-      'L|1|N'
+    const payload = {
+      header:
+        'H|\\^&|||Becton Dickinson|7 Loveton Circle^Sparks^MD^21152||410 316-4000||||P|V1.00|20191019184200',
+      body: `P|1\nO|1|0970038018^1||^^^MGIT_960_AST\nR|1|^^^AST_MGIT^439309967349^EMB^5.0^ug/ml|INST_ONGOING^123|||||P|||20190502115414|20190502135414|MGIT960^^^13^B/A02\nR|2|^^^AST_MGIT^439309967349^RIF^1.0^ug/ml|INST_ONGOING^12|||||P|||20190502115414|20190502135414|MGIT960^^^13^B/A03\nL|1|N`,
+    }
     const response = await server
       .post(deviceApiRawPath)
       .set('Authorization', `Bearer ${validApiKeyToken}`)
-      .set('Content-type', 'text/plain')
+      .set('Content-type', 'application/json')
       .send(payload)
     assert.equal(response.statusCode, 200)
     const deviceApiRawRecord = await knex('DeviceApiRaw')
@@ -197,19 +224,228 @@ describe('Device API Raw routes for BD MGIT', () => {
     expect(response.body.deviceLogId).to.be.above(0)
   })
 
-  it('should process the request data using the correct data processor', async () => {
-    const payload = 'Some unexpected payload'
+  it('should throw an error on uknown assay', async () => {
+    const payload = {
+      header:
+        'H|\\^&|||Becton Dickinson|7 Loveton Circle^Sparks^MD^21152||410 316-4000||||P|V1.00|20191019184200',
+      body: `P|1\nO|1|XYZ^1||^^^MGIT_960_XYZ\nR|1|^^^XYZ_MGIT^12345678^^^|INST_ONGOING^|||||P|||20190502115414||MGIT960^^^^\nL|1|N`,
+    }
     const response = await server
       .post(deviceApiRawPath)
       .set('Authorization', `Bearer ${validApiKeyToken}`)
-      .set('Content-type', 'text/plain')
+      .set('Content-type', 'application/json')
+      .send(payload)
+    assert.equal(response.statusCode, 400)
+  })
+
+  it('should parse the GND-ASTM message and save the result in the database', async () => {
+    const payload = {
+      header:
+        'H|\\^&|||Becton Dickinson|7 Loveton Circle^Sparks^MD^21152||410 316-4000||||P|V1.00|20191019184200',
+      body: `P|1\nO|1|0970038020||^^^MGIT_960_GND\nR|1|^^^GND_MGIT^430109967351|INST_POSITIVE^1234|||||P|||20190502115414|20190509123456|MGIT960^^42^1^B/A01\nL|1|N`,
+    }
+
+    const response = await server
+      .post(deviceApiRawPath)
+      .set('Authorization', `Bearer ${validApiKeyToken}`)
+      .set('Content-type', 'application/json')
       .send(payload)
     assert.equal(response.statusCode, 200)
-    const deviceApiRawRecord = await knex('DeviceApiRaw')
-      .where({ id: response.body.deviceApiRawId })
+
+    // make sure that result ID was set in the device log entry
+    const deviceLogRecord = await knex('DeviceLog')
+      .where({
+        id: response.body.deviceLogId,
+      })
       .first()
-    assert.equal(deviceApiRawRecord.dataProcessor, 'DefaultBDMGIT')
-    const processedStatusId = await deviceApiRawStatusToId('Processed')
-    expect(deviceApiRawRecord.deviceApiRawStatusId).to.equal(processedStatusId)
+    expect(deviceLogRecord.resultId).to.be.above(0)
+
+    // inspect that the result that was created has the expected values:
+    const result = await knex('Result')
+      .where({
+        id: deviceLogRecord.resultId,
+      })
+      .first()
+
+    const site = await knex('Site')
+      .where({
+        id: bdMgitSiteId,
+      })
+      .first()
+
+    expect(result.assayId).to.equal(await assayToId('assayBdMgitGnd'))
+    expect(result.partnerId).to.equal(site.partnerId)
+    expect(result.geographyId).to.equal(site.geographyId)
+    expect(result.siteId).to.equal(bdMgitSiteId)
+    expect(result.deviceId).to.equal(bdMgitDeviceId)
+    expect(result.longitude).to.equal(site.longitude)
+    expect(result.latitude).to.equal(site.latitude)
+    expect(result.resultSourceId).to.equal(
+      await resultSourceToId('DiagnosticDevice')
+    )
+    expect(result.resultTypeId).to.equal(await resultTypeToId('Patient'))
+    expect(result.resultCategory1).to.equal(
+      await resultCategoryToId('Detected')
+    )
+    expect(result.resultCategory2).to.equal(null)
+    expect(result.startedOn.getTime()).to.equal(
+      new Date(2019, 4, 2, 11, 54, 14).getTime()
+    )
+    expect(result.consumableSerial).to.equal('430109967351')
+    expect(result.senderVersion).to.equal('V1.00')
+    expect(result.updatedOn.getTime()).to.be.closeTo(
+      getUtcTime().getTime(),
+      10000
+    )
+
+    // inspect result data
+    const resultData = {
+      senderName: 'Becton Dickinson',
+      versionNumber: 'V1.00',
+      messageDateTime: '20191019184200',
+      accessionNumber: '0970038020',
+      testId: 'MGIT_960_GND',
+      resultTypeCode: 'GND_MGIT',
+      consumableSequenceNumber: '430109967351',
+      preliminaryFinalStatus: 'P',
+      testStartDateTime: '20190502115414',
+      testEndedDateTime: '20190509123456',
+      instrumentType: 'MGIT960',
+      protocolLength: '42',
+      instrumentNumber: '1',
+      instrumentLocation: 'B/A01',
+    }
+    expect(JSON.parse(result.resultData)).to.deep.equal(resultData)
+
+    // inspect sample record
+    const sample = await knex('Sample')
+      .where('id', result.sampleId)
+      .first()
+    expect(sample.externalId).to.equal('0970038020')
+    expect(sample.originSiteId).to.equal(bdMgitSiteId)
+
+    // inspect workflow log record
+    const resultWorkflowLog = await knex('ResultworkflowLog')
+      .where('id', result.resultWorkflowStatusLogId)
+      .first()
+
+    expect(resultWorkflowLog.changedOn.getTime()).to.be.closeTo(
+      getUtcTime().getTime(),
+      10000
+    )
+    expect(resultWorkflowLog.createdOn.getTime()).to.be.closeTo(
+      getUtcTime().getTime(),
+      10000
+    )
+  })
+
+  it('should parse the AST-ASTM message and save the result in the database', async () => {
+    const payload = {
+      header:
+        'H|\\^&|||Becton Dickinson|7 Loveton Circle^Sparks^MD^21152||410 316-4000||||P|V1.00|20191019184200',
+      body: `P|1\nO|1|0970038018^1||^^^MGIT_960_AST\nR|1|^^^AST_MGIT^439309967350^EMB^5.0^ug/ml|INST_ONGOING^123|||||P|||20190503115414|20190503135414|MGIT960^^^13^B/A02\nR|2|^^^AST_MGIT^439309967350^RIF^1.0^ug/ml|INST_ONGOING^12|||||P|||20190503115414|20190503135414|MGIT960^^^13^B/A03\nL|1|N`,
+    }
+
+    const response = await server
+      .post(deviceApiRawPath)
+      .set('Authorization', `Bearer ${validApiKeyToken}`)
+      .set('Content-type', 'application/json')
+      .send(payload)
+    assert.equal(response.statusCode, 200)
+
+    // make sure that result ID was set in the device log entry
+    const deviceLogRecord = await knex('DeviceLog')
+      .where({
+        id: response.body.deviceLogId,
+      })
+      .first()
+    expect(deviceLogRecord.resultId).to.be.above(0)
+
+    // inspect that the result that was created has the expected values:
+    const result = await knex('Result')
+      .where({
+        id: deviceLogRecord.resultId,
+      })
+      .first()
+
+    const site = await knex('Site')
+      .where({
+        id: bdMgitSiteId,
+      })
+      .first()
+
+    expect(result.assayId).to.equal(await assayToId('assayBdMgitAst'))
+    expect(result.partnerId).to.equal(site.partnerId)
+    expect(result.geographyId).to.equal(site.geographyId)
+    expect(result.siteId).to.equal(bdMgitSiteId)
+    expect(result.deviceId).to.equal(bdMgitDeviceId)
+    expect(result.longitude).to.equal(site.longitude)
+    expect(result.latitude).to.equal(site.latitude)
+    expect(result.resultSourceId).to.equal(
+      await resultSourceToId('DiagnosticDevice')
+    )
+    expect(result.resultTypeId).to.equal(await resultTypeToId('Patient'))
+    expect(result.resultCategory1).to.equal(await resultCategoryToId('Unknown'))
+    expect(result.resultCategory2).to.equal(null)
+    expect(result.startedOn.getTime()).to.equal(
+      new Date(2019, 4, 3, 11, 54, 14).getTime()
+    )
+    expect(result.consumableSerial).to.equal('439309967350')
+    expect(result.senderVersion).to.equal('V1.00')
+    expect(result.updatedOn.getTime()).to.be.closeTo(
+      getUtcTime().getTime(),
+      10000
+    )
+
+    // inspect result data
+    const resultData = {
+      EMB: {
+        growthUnits: '123',
+        antibioticConcentration: '5.0',
+        antibioticConcentrationUnits: 'ug/ml',
+      },
+      RIF: {
+        growthUnits: '12',
+        antibioticConcentration: '1.0',
+        antibioticConcentrationUnits: 'ug/ml',
+      },
+      senderName: 'Becton Dickinson',
+      versionNumber: 'V1.00',
+      messageDateTime: '20191019184200',
+      accessionNumber: '0970038018',
+      isolateNumber: '1',
+      testId: 'MGIT_960_AST',
+      resultTypeCode: 'AST_MGIT',
+      consumableSequenceNumber: '439309967350',
+      preliminaryFinalStatus: 'P',
+      testStartDateTime: '20190503115414',
+      testEndedDateTime: '20190503135414',
+      instrumentType: 'MGIT960',
+      protocolLength: '',
+      instrumentNumber: '13',
+      instrumentLocation: 'B/A02',
+    }
+    expect(JSON.parse(result.resultData)).to.deep.equal(resultData)
+
+    // inspect sample record
+    const sample = await knex('Sample')
+      .where('id', result.sampleId)
+      .first()
+    expect(sample.externalId).to.equal('0970038018')
+    expect(sample.originSiteId).to.equal(bdMgitSiteId)
+
+    // inspect workflow log record
+    const resultWorkflowLog = await knex('ResultworkflowLog')
+      .where('id', result.resultWorkflowStatusLogId)
+      .first()
+
+    expect(resultWorkflowLog.changedOn.getTime()).to.be.closeTo(
+      getUtcTime().getTime(),
+      10000
+    )
+    expect(resultWorkflowLog.createdOn.getTime()).to.be.closeTo(
+      getUtcTime().getTime(),
+      10000
+    )
   })
 })

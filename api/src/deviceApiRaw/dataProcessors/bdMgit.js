@@ -94,8 +94,9 @@ class DefaultBDMGIT extends SynchronousDataProcessor {
       if (
         mgitResultTypeCode !== 'GND_MGIT' &&
         mgitResultTypeCode !== 'AST_MGIT'
-      )
-        return
+      ) {
+        throw Boom.badRequest(`Unknown result type: ${mgitResultTypeCode}`)
+      }
 
       const assayId = await assayToId(
         mgitResultTypeCode === 'AST_MGIT' ? 'assayBdMgitAst' : 'assayBdMgitGnd'
@@ -152,6 +153,10 @@ class DefaultBDMGIT extends SynchronousDataProcessor {
           's.longitude',
           's.latitude'
         )
+
+      const device = await knex('Device')
+        .where('id', deviceId)
+        .first()
 
       //  It is possible that a single plastic carrier could be used more than once for a particular access number.
       // The test start date/time, with the sequence number, uniquely identifies a test and its result.
@@ -216,12 +221,12 @@ class DefaultBDMGIT extends SynchronousDataProcessor {
       // add/update result
       const resultFields = {
         assayId,
-        partnerId: site.partnerId,
-        geographyId: site.geographyId,
-        siteId: site.id,
+        partnerId: device.partnerId,
+        geographyId: site ? site.geographyId : null,
+        siteId: site ? site.id : null,
         deviceId,
-        longitude: site.longitude,
-        latitude: site.latitude,
+        longitude: site ? site.longitude : null,
+        latitude: site ? site.latitude : null,
         resultSourceId,
         resultTypeId,
         resultCategory1,
@@ -239,7 +244,7 @@ class DefaultBDMGIT extends SynchronousDataProcessor {
       // add/update sample
       const sampleFields = {
         externalId: mgitAccessionNumber,
-        originSiteId: site.id,
+        originSiteId: site ? site.id : null,
       }
 
       // Insert or update result
