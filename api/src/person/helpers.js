@@ -72,25 +72,25 @@ const personDetailsResponse = {
           .allow(null)
           .description('User id'),
         username: Joi.string()
-          .allow(null)
+          .allow(null, '')
           .description('User name'),
         name: Joi.string()
           .required()
           .description('Person name'),
         title: Joi.string()
-          .allow(null)
+          .allow(null, '')
           .description('Person title'),
         email: Joi.string()
-          .allow(null)
+          .allow(null, '')
           .description('Person email'),
         email2: Joi.string()
-          .allow(null)
+          .allow(null, '')
           .description('Person second email'),
         phone: Joi.string()
-          .allow(null)
+          .allow(null, '')
           .description('Person phone'),
         cell: Joi.string()
-          .allow(null)
+          .allow(null, '')
           .description('Person cell'),
         countryId: Joi.number()
           .allow(null)
@@ -105,7 +105,7 @@ const personDetailsResponse = {
           .allow(null)
           .description('Lga id'),
         zip: Joi.string()
-          .allow(null)
+          .allow(null, '')
           .description('Person zip'),
         timezone: Joi.string()
           .required()
@@ -114,7 +114,7 @@ const personDetailsResponse = {
           .required()
           .description('Person culture'),
         notes: Joi.string()
-          .allow(null)
+          .allow(null, '')
           .description('Person notes'),
         lastPartnerId: Joi.number()
           .allow(null)
@@ -126,16 +126,16 @@ const personDetailsResponse = {
           .allow(null)
           .description('Person hideSampleId'),
         hideNotes: Joi.string()
-          .allow(null)
+          .allow(null, '')
           .description('Person hideNotes'),
         country: Joi.string()
-          .allow(null)
+          .allow(null, '')
           .description('Country name'),
         stateName: Joi.string()
-          .allow(null)
+          .allow(null, '')
           .description('State name'),
         lgaName: Joi.string()
-          .allow(null)
+          .allow(null, '')
           .description('Lga name'),
         userLockedOut: [
           // User lockedOut
