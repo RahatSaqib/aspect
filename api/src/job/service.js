@@ -450,20 +450,24 @@ async function assignPersonTo(request) {
   // ----------------
   // return list of person assignments for showing in right side of Person Job Assignment tab
   // ----------------
-  const personAssignments = await getAssignments(personId)
+  const personAssignments = await getAssignments({ auth, personId })
   return { ok: true, data: personAssignments }
 }
 // ----------------------------------------------------------------------------------------
 async function getPersonAssignments(request) {
-  const { params: { personId } } = request
-  const personAssignments = await getAssignments(personId)
+  const { auth, params: { personId } } = request
+  const personAssignments = await getAssignments({ auth, personId })
   return { ok: true, data: personAssignments }
 }
 // ----------------------------------------------------------------------------------------
-async function getAssignments(personId) {
+async function getAssignments({ auth, personId }) {
+  const dataConstraints = await getConstraints(auth.credentials)
   const personAssignments = await knex('JobContext as jc')
     .innerJoin('Job as j', 'jc.jobId', 'j.id')
     .innerJoin('JobFunction as jf', 'j.jobFunctionId', 'jf.id')
+    // constraints to make sure current user can access this data
+    .innerJoin('Partner as p', 'jf.partnerId', 'p.id')
+    .modify(addConstraints, dataConstraints, { partner: 'p' })
     // JobContext with geographyId
     .leftOuterJoin('Geography as g', 'jc.geographyId', 'g.id')
     .leftOuterJoin('Country as c', 'g.countryId', 'c.id')
@@ -576,18 +580,29 @@ async function validateJobData({ personId, jobFunctionId, auth }) {
 }
 // ----------------------------------------------------------------------------------------
 async function removePersonAssignment(request) {
-  const { params: { personId, jobContextId } } = request
+  const { auth, params: { personId, jobContextId } } = request
+  const dataConstraints = await getConstraints(auth.credentials)
 
   const jobContext = await knex('JobContext as jc')
     .innerJoin('Job as j', 'jc.jobId', 'j.id')
+    // constraints to make sure current user can access this data
+    .innerJoin('JobFunction as jf', 'j.jobFunctionId', 'jf.id')
+    .innerJoin('Partner as p', 'jf.partnerId', 'p.id')
+    .modify(addConstraints, dataConstraints, { partner: 'p' })
     .where('jc.id', jobContextId)
-    .first('j.personId', 'jc.jobId')
+    .first('j.personId', 'jc.jobId', 'j.jobFunctionId')
   // validate
   if (!jobContext) {
     return Boom.badData('Incorrect jobContextId specified')
   }
   if (personId !== jobContext.personId) {
     return Boom.badData('Specified personId does not match job personId')
+  }
+  // check 'person' constraints
+  const { jobFunctionId } = jobContext
+  const validator = await validateJobData({ personId, jobFunctionId, auth })
+  if (validator.isBoom) {
+    return validator
   }
 
   // remove JobContext
@@ -608,7 +623,7 @@ async function removePersonAssignment(request) {
   // ----------------
   // return list of remaining person assignments
   // ----------------
-  const personAssignments = await getAssignments(personId)
+  const personAssignments = await getAssignments({ auth, personId })
   return { ok: true, data: personAssignments }
 }
 // ----------------------------------------------------------------------------------------
