@@ -183,6 +183,7 @@ function setRefreshToken({
   userId,
 }) {
   const expires = getTokenExpiry(clientType, now)
+  deviceTokenId = clientType === clientTypes.app ? deviceTokenId : null
   // upsert refresh token
   return query('Create new refresh token for the user').raw(
     'INSERT INTO RefreshToken set ? ON DUPLICATE KEY UPDATE ?',
@@ -195,11 +196,12 @@ function setRefreshToken({
         expires,
         createdOn: now,
         clientType,
-        deviceTokenId: clientType === clientTypes.app ? deviceTokenId : null,
+        deviceTokenId,
       },
       {
         token: refreshToken,
         expires,
+        deviceTokenId,
       },
     ]
   )
