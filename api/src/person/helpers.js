@@ -93,7 +93,7 @@ const personDetailsResponse = {
           .allow(null, '')
           .description('Person cell'),
         countryId: Joi.number()
-          .allow(null)
+          .required()
           .description('Country id'),
         geogId: Joi.number()
           .allow(null)

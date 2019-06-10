@@ -119,6 +119,10 @@ export default defineMessages({
     id: 'pages.ContactDetails.nameRequired',
     defaultMessage: 'Please enter your Full name',
   },
+  countryRequired: {
+    id: 'pages.ContactDetails.countryRequired',
+    defaultMessage: 'Please select Country',
+  },
   invalidEmailAddress: {
     id: 'pages.ContactDetails.invalidEmailAddress',
     defaultMessage: 'Please enter a valid email address',
