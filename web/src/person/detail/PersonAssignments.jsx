@@ -36,6 +36,7 @@ export default ({
           assignment={assignment}
           showLinks
           onAskConfirmation={askConfirmation}
+          intl={intl}
         />
       ))}
 
@@ -54,7 +55,7 @@ export default ({
         onClose={onCancelConfirmation}
       >
         <h3>Do you want to remove below assignment?</h3>
-        <PersonAssignment assignment={confirmation.assignment} />
+        <PersonAssignment assignment={confirmation.assignment} intl={intl} />
       </AspectDialog>
     </section>
   )

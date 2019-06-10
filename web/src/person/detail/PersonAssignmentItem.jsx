@@ -4,10 +4,11 @@ import { Link } from 'react-router-dom'
 import FaExternalLink from 'react-icons/lib/fa/external-link'
 import CloseIcon from '@material-ui/icons/Close'
 import { mergeToFiltersParams } from '../../filter/utils'
+import messages from './messages'
 
 const cssClasses = classnames.bind(require('./PersonDetail.css'))
 
-export default ({ assignment, showLinks, onAskConfirmation }) => {
+export default ({ assignment, showLinks, onAskConfirmation, intl }) => {
   if (!assignment) {
     return null
   }
@@ -51,7 +52,9 @@ export default ({ assignment, showLinks, onAskConfirmation }) => {
         )}
       </div>
       <div>
-        <span>{assignment.stateName || 'All states'}</span>
+        <span>
+          {assignment.stateName || intl.formatMessage(messages.allStates)}
+        </span>
         {showLinks && (
           <Link
             to={`/browse/site?${searchStateParams.toString()}`}
@@ -62,7 +65,9 @@ export default ({ assignment, showLinks, onAskConfirmation }) => {
         )}
       </div>
       <div>
-        <span>{assignment.lgaName || 'All LGAs'}</span>
+        <span>
+          {assignment.lgaName || intl.formatMessage(messages.allAreas)}
+        </span>
         {showLinks && (
           <Link
             to={`/browse/site?${searchLgaParams.toString()}`}
@@ -73,7 +78,9 @@ export default ({ assignment, showLinks, onAskConfirmation }) => {
         )}
       </div>
       <div>
-        <span>{assignment.siteName || 'All sites'}</span>
+        <span>
+          {assignment.siteName || intl.formatMessage(messages.allSites)}
+        </span>
         {showLinks && (
           <Link
             to={

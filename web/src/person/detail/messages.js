@@ -251,4 +251,16 @@ export default defineMessages({
     id: 'pages.JobAssignments.yesDelete',
     defaultMessage: 'Yes, delete',
   },
+  allStates: {
+    id: 'pages.JobAssignments.allStates',
+    defaultMessage: 'All states',
+  },
+  allAreas: {
+    id: 'pages.JobAssignments.allAreas',
+    defaultMessage: 'All areas',
+  },
+  allSites: {
+    id: 'pages.JobAssignments.allSites',
+    defaultMessage: 'All sites',
+  },
 })
