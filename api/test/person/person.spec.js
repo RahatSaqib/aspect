@@ -9,6 +9,7 @@ const { assert, expect } = chai
 
 describe('Person routes', () => {
   const path = '/api/person'
+  let countryId
   describe('GET /person', () => {
     shared.checkToken(server, path)
 
@@ -39,6 +40,12 @@ describe('Person routes', () => {
         const dataConstraints = await getConstraints({ name: 'admin' })
         person = await getTestContact(knex, dataConstraints)
         siteId = await getTestSiteId(knex, dataConstraints)
+        ;[{ countryId }] = [
+          await knex('Site as s')
+            .innerJoin('Geography as g', 's.geographyId', 'g.id')
+            .where('s.id', siteId)
+            .first('g.countryId'),
+        ]
       })
     )
 
@@ -126,7 +133,7 @@ describe('Person routes', () => {
       it('Should create new person', async () => {
         const res = await server
           .post(`${path}`)
-          .send({ name: testingPersonName })
+          .send({ name: testingPersonName, countryId })
           .set('Authorization', `Bearer ${shared.token}`)
 
         assert.equal(res.status, 200)
@@ -143,7 +150,7 @@ describe('Person routes', () => {
       it('Should fail to create person with same name', async () => {
         const res = await server
           .post(`${path}`)
-          .send({ name: testingPersonName })
+          .send({ name: testingPersonName, countryId })
           .set('Authorization', `Bearer ${shared.token}`)
         assert.equal(res.status, 409) // Boom.conflict
         assert.equal(
