@@ -31,18 +31,19 @@ const cssClasses = classnames.bind(require('./SiteDetail.css'))
 export const SiteDetail = props => {
   useEffect(
     () => {
+      const handleFetchSite = ({ match }) => {
+        props.fetchSingleSite(match.params.siteId)
+        props.fetchSiteContacts(match.params.siteId)
+        props.fetchTags(match.params.siteId, 'site')
+      }
+
       handleFetchSite(props)
     },
-    [handleFetchSite, props, props.match.params.siteId]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [props.match.params.siteId]
   )
   const onSiteTagChange = (qryId, qryType, tags) => {
     props.updateTags(qryId, qryType, tags.join(','))
-  }
-
-  const handleFetchSite = ({ match }) => {
-    props.fetchSingleSite(match.params.siteId)
-    props.fetchSiteContacts(match.params.siteId)
-    props.fetchTags(match.params.siteId, 'site')
   }
 
   const hasSiteWithLocation = () => {

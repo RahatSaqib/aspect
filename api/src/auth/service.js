@@ -130,17 +130,24 @@ async function authenticate(request) {
 
   const now = new Date()
   const refreshToken = crypto.randomBytes(48).toString('base64')
-  const clientId = payload.clientId || uuid.v4()
-  const clientType = payload.clientType || clientTypes.web
+  const { clientType = clientTypes.web, clientName } = payload
+  let { clientId } = payload
+  clientId = clientId || uuid.v4()
+  // handle 'deviceTokenId' only for reporter app
+  let { deviceTokenId = null } = payload
+  if (clientType !== clientTypes.app) {
+    deviceTokenId = null
+  }
 
-  await setRefreshToken(
-    user.id,
-    payload.clientName,
+  await setRefreshToken({
     clientId,
-    refreshToken,
+    clientName,
+    clientType,
+    deviceTokenId,
     now,
-    clientType
-  )
+    refreshToken,
+    userId: user.id,
+  })
 
   await query('Update failed password attempts to 0')
     .from('User')
@@ -151,30 +158,33 @@ async function authenticate(request) {
       lastActive: now,
     })
 
-  const accessToken = await getAccessToken(user, payload.clientType)
+  const accessToken = await getAccessToken(user, clientType)
   const displayPreferences = await getDisplayPreferences(user)
 
   return {
     access: accessToken,
     refresh: refreshToken,
     clientId,
-    clientType: payload.clientType,
+    clientType,
     culture: user.culture || 'en-US',
     timezone: user.timezone || 'Eastern Standard Time',
     displayPreferences,
     countryId: user.countryId,
+    deviceTokenId,
   }
 }
 
-function setRefreshToken(
-  userId,
-  clientName,
+function setRefreshToken({
   clientId,
-  refreshToken,
+  clientName,
+  clientType = clientTypes.web,
+  deviceTokenId = null,
   now,
-  clientType = clientTypes.web
-) {
+  refreshToken,
+  userId,
+}) {
   const expires = getTokenExpiry(clientType, now)
+  deviceTokenId = clientType === clientTypes.app ? deviceTokenId : null
   // upsert refresh token
   return query('Create new refresh token for the user').raw(
     'INSERT INTO RefreshToken set ? ON DUPLICATE KEY UPDATE ?',
@@ -187,10 +197,12 @@ function setRefreshToken(
         expires,
         createdOn: now,
         clientType,
+        deviceTokenId,
       },
       {
         token: refreshToken,
         expires,
+        deviceTokenId,
       },
     ]
   )
@@ -199,6 +211,12 @@ function setRefreshToken(
 async function refreshToken(request) {
   // find the token in the db
   const { clientId, token, clientType = clientTypes.web } = request.payload
+
+  // handle 'deviceTokenId' only for reporter app
+  let { deviceTokenId = null } = request.payload
+  if (clientType !== clientTypes.app) {
+    deviceTokenId = null
+  }
 
   const data = await query('Find existing token for client ID')
     .from('RefreshToken as rt')
@@ -236,7 +254,12 @@ async function refreshToken(request) {
   await query('Update refresh token expiry date')
     .from('RefreshToken')
     .where({ token })
-    .update({ token: refreshToken, expires, updatedOn: now })
+    .update({
+      token: refreshToken,
+      expires,
+      updatedOn: now,
+      deviceTokenId,
+    })
 
   const accessToken = await getAccessToken(data)
   return {
@@ -245,6 +268,7 @@ async function refreshToken(request) {
     clientId,
     clientType,
     countryId: data.countryId,
+    deviceTokenId,
   }
 }
 
@@ -428,17 +452,19 @@ async function updateUsernameAndPasswordForLoggedInUser(request) {
   }
 
   const refreshToken = crypto.randomBytes(48).toString('base64')
-  const clientId = payload.clientId || uuid.v4()
-  const clientType = payload.clientType || clientTypes.web
+  const { clientType = clientTypes.web, clientName, deviceTokenId } = payload
+  let { clientId } = payload
+  clientId = clientId || uuid.v4()
 
-  await setRefreshToken(
-    loggedInUser.id,
-    payload.clientName,
+  await setRefreshToken({
     clientId,
-    refreshToken,
+    clientName,
+    clientType,
+    deviceTokenId,
     now,
-    clientType
-  )
+    refreshToken,
+    userId: loggedInUser.id,
+  })
 
   const accessToken = await getAccessToken(loggedInUser)
 
@@ -451,6 +477,7 @@ async function updateUsernameAndPasswordForLoggedInUser(request) {
     access: accessToken,
     refresh: refreshToken,
     clientId,
+    deviceTokenId,
   }
 }
 

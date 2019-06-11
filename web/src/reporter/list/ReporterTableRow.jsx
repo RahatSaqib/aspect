@@ -62,7 +62,6 @@ const mapStateToProps = state => ({
   disabled: !isEditable(state.user, 'reporter'),
 })
 
-export default connect(
-  mapStateToProps,
-  { updateSingleReporter }
-)(ReporterTableRow)
+export default connect(mapStateToProps, { updateSingleReporter })(
+  ReporterTableRow
+)

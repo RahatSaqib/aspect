@@ -88,12 +88,12 @@ export class StyleguideMain extends PureComponent {
   }
 
   handleResultTagChange = (qryId, qryType, tags) => {
-    console.log(qryId, qryType, tags)
+    // console.log(qryId, qryType, tags)
     this.props.updateTags(qryId, qryType, tags.join(','))
   }
 
   handleSiteTagChange = (qryId, qryType, tags) => {
-    console.log(qryId, qryType, tags)
+    // console.log(qryId, qryType, tags)
     this.props.updateTags(qryId, qryType, tags.join(','))
   }
 

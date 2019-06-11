@@ -387,6 +387,7 @@ describe('Authentication routes', () => {
           .then(res => {
             assert.equal(res.status, 200)
             assert.isAbove(res.body.refresh.length, 50)
+            assert.isNull(res.body.deviceTokenId)
             return res.body.refresh
           })
         const rt = await knex('RefreshToken')
@@ -394,12 +395,56 @@ describe('Authentication routes', () => {
           .first()
         assert.equal(rt.clientName, appClientName)
         assert.equal(rt.clientType, appClientType)
+        assert.isNull(rt.deviceTokenId)
         assert.closeTo(
           daysToExpire(rt),
           30,
           0.00001,
           'Expiration for app after refresh'
         )
+      }))
+
+    it('should store deviceTokenId for reporter app and return a JSON message with a deviceTokenId for reporter app', async () =>
+      runTestWithKnex(async knex => {
+        const deviceTokenId = 'DEVICE_TOKEN_ID'
+        const newAppToken = await server
+          .post(`${authPath}/refresh`)
+          .send({
+            clientId: appClientId,
+            token: appToken,
+            clientType: appClientType,
+            deviceTokenId,
+          })
+          .then(res => {
+            assert.equal(res.status, 200)
+            assert.equal(res.body.deviceTokenId, deviceTokenId)
+            return res.body.refresh
+          })
+        const rt = await knex('RefreshToken')
+          .where('token', newAppToken)
+          .first()
+        assert.equal(rt.deviceTokenId, deviceTokenId)
+      }))
+    it('should not store deviceTokenId for web app and return a JSON message with deviceTokenId = null for web app', async () =>
+      runTestWithKnex(async knex => {
+        const deviceTokenId = 'DEVICE_TOKEN_ID'
+        const newAppToken = await server
+          .post(`${authPath}/refresh`)
+          .send({
+            clientId: webClientId,
+            token: webToken,
+            clientType: webClientType,
+            deviceTokenId,
+          })
+          .then(res => {
+            assert.equal(res.status, 200)
+            assert.isNull(res.body.deviceTokenId)
+            return res.body.refresh
+          })
+        const rt = await knex('RefreshToken')
+          .where('token', newAppToken)
+          .first()
+        assert.isNull(rt.deviceTokenId)
       }))
 
     it('should return 400 and error message if no client ID provided', done => {
