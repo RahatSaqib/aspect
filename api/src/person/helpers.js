@@ -93,7 +93,7 @@ const personDetailsResponse = {
           .allow(null)
           .description('Person cell'),
         countryId: Joi.number()
-          .allow(null)
+          .required()
           .description('Country id'),
         geogId: Joi.number()
           .allow(null)
@@ -137,7 +137,8 @@ const personDetailsResponse = {
         lgaName: Joi.string()
           .allow(null)
           .description('Lga name'),
-        userLockedOut: Joi.boolean()
+        userLockedOut: Joi.number()
+          .only(0, 1)
           .allow(null)
           .description('User lockedOut'),
         canLogIn: Joi.number()

@@ -15,7 +15,7 @@ import SelectField from '../../components/shared/SelectField'
 
 export function getSelectedState(props) {
   const states = getSelectedCountryStates(props)
-  return states.find(s => s.id === props.stateId)
+  return states.find(s => +s.id === +props.stateId)
 }
 
 export function getSelectedStateLgas(props) {

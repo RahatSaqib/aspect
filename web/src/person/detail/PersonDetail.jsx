@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
 import { compose, setPropTypes } from 'recompose'
@@ -15,6 +16,7 @@ import Language from '@material-ui/icons/Language'
 import Lock from '@material-ui/icons/Lock'
 import ContactDetailsForm from './ContactDetailsForm'
 import LoginDetailsForm from './LoginDetailsForm'
+import JobAssignemntForm from './JobAssignmentForm'
 import UserPreferencesForm from './UserPreferencesForm'
 
 // Our own imports
@@ -33,6 +35,9 @@ import {
   UserPreferences,
   personCanLogIn,
   emailValueBlur,
+  addPersonAssignment,
+  fetchPersonAssignments,
+  deletePersonAssignment,
 } from '../PersonRedux'
 import { fetchPartnersAndJobFunctionsForSelectList } from '../../job/JobRedux'
 import { showAcknowledgement } from '../../appNotification/AppNotificationRedux'
@@ -58,6 +63,16 @@ const enhance = compose(
       const { personNew, items } = state.person
       const person = isNew ? personNew : items.byId.get(personId)
       const prefillUser = person && person.get('userId') > 0
+
+      const partnersAndJobFunctionsForSelectList = state.jobs.get(
+        'partnersAndJobFunctionsForSelectList'
+      )
+      const jobFunctions = partnersAndJobFunctionsForSelectList.getIn([
+        'partners',
+        0,
+        'jobFunctions',
+      ])
+
       return {
         editable: isEditable(state.user, 'person'),
         isNew,
@@ -66,9 +81,8 @@ const enhance = compose(
         user: state.user,
         emailValue: person && person.get('email'),
         prefillUser,
-        partnersAndJobFunctionsForSelectList: state.jobs.get(
-          'partnersAndJobFunctionsForSelectList'
-        ),
+        partnersAndJobFunctionsForSelectList,
+        jobFunctions,
       }
     },
     dispatch =>
@@ -83,6 +97,9 @@ const enhance = compose(
           fetchPartnersAndJobFunctionsForSelectList,
           personCanLogIn,
           emailValueBlur,
+          addPersonAssignment,
+          fetchPersonAssignments,
+          deletePersonAssignment,
         },
         dispatch
       )
@@ -100,6 +117,8 @@ const enhance = compose(
     updateSinglePersonUserPreferences: PropTypes.func.isRequired,
     fetchPartnersAndJobFunctionsForSelectList: PropTypes.func.isRequired,
     isNew: PropTypes.bool.isRequired,
+    addPersonAssignment: PropTypes.func.isRequired,
+    deletePersonAssignment: PropTypes.func.isRequired,
   })
 )
 
@@ -114,9 +133,16 @@ export class PersonDetail extends PureComponent {
     }
   }
 
-  handleFetchPerson = ({ match, fetchSinglePerson, isNew }) => {
+  handleFetchPerson = ({
+    match,
+    fetchSinglePerson,
+    fetchPersonAssignments,
+    isNew,
+  }) => {
     if (isNew) return
-    fetchSinglePerson(match.params.personId)
+    fetchSinglePerson(match.params.personId, () => {
+      fetchPersonAssignments(match.params.personId)
+    })
   }
 
   handlePersonCanLogIn = canLogin => {
@@ -137,8 +163,9 @@ export class PersonDetail extends PureComponent {
 
   saveContactDetails = values => {
     const { person, updateSinglePerson, isNew, createPerson } = this.props
+    const vals = _.pickBy(values, v => v !== '')
     if (isNew) {
-      return createPerson(values).then(person => {
+      return createPerson(vals).then(person => {
         this.props.showAcknowledgement({
           title: messages.detailsCreatedSuccessfully,
           message: messages.contactDetailsCreatedMessage,
@@ -148,7 +175,7 @@ export class PersonDetail extends PureComponent {
       })
     }
     const contactDetails = new ContactDetails(person)
-    return updateSinglePerson(contactDetails.get('id'), values).then(() => {
+    return updateSinglePerson(contactDetails.get('id'), vals).then(() => {
       this.props.showAcknowledgement({
         title: messages.detailsUpdatedSuccessfully,
         message: messages.contactDetailsUpdatedMessage,
@@ -184,18 +211,43 @@ export class PersonDetail extends PureComponent {
       })
     })
   }
+  addAssignment = values => {
+    const { person, addPersonAssignment } = this.props
+    const data = {
+      personId: person.get('id'),
+      ..._.pick(values, [
+        'jobFunctionId',
+        'countryId',
+        'stateId',
+        'lgaId',
+        'siteId',
+      ]),
+    }
+    addPersonAssignment(data)
+  }
+  deleteAssignment = jobContextId => {
+    const { person, deletePersonAssignment } = this.props
+    const data = {
+      personId: person.get('id'),
+      jobContextId,
+    }
+    deletePersonAssignment(data)
+  }
+
   render() {
-    const { intl, person, user, editable, isNew } = this.props
+    const { intl, person, user, editable, isNew, jobFunctions } = this.props
     const { formatMessage } = intl
     const contactDetails = new ContactDetails(person)
     const loginDetails = new LoginDetails(person)
     const userPreferences = new UserPreferences(person)
     const userIsAdmin = user.jwt.permissions.includes('person:admin')
     const loading = !isNew && (!person || person.get('loaded') !== true)
-    // const isUser = !person || person.get('canLogIn') || undefined
-    const isUser = !person || !!person.get('canLogIn')
+    const canLogIn = person && !!person.get('canLogIn')
     const shouldPrefill = !isNew && person && person.get('userId') == null
     const emailValue = (person && person.get('email')) || ''
+    const assignments = (person && person.get('assignments')) || []
+    const loadedAssignments = person && !!person.get('loadedAssignments')
+
     return (
       <div className={styles.Container}>
         <Helmet title={formatMessage(messages.title)} />
@@ -252,8 +304,7 @@ export class PersonDetail extends PureComponent {
               <Tab
                 icon={<Lock fontSize="large" />}
                 style={{
-                  visibility:
-                    !isNew && userIsAdmin && isUser ? 'visible' : 'hidden',
+                  display: !isNew && userIsAdmin && canLogIn ? 'block' : 'none',
                 }}
                 label={
                   <Hidden xs component="span">
@@ -272,6 +323,35 @@ export class PersonDetail extends PureComponent {
                   emailValue={emailValue}
                   loginDetails={loginDetails}
                   onSubmit={this.saveLoginDetails}
+                />
+              </Tab>
+              <Tab
+                icon={<Lock fontSize="large" />}
+                style={{
+                  display: !isNew && userIsAdmin ? 'block' : 'none',
+                }}
+                label={
+                  <Hidden xs component="span">
+                    {formatMessage(messages.jobAssignment)}
+                  </Hidden>
+                }
+              >
+                {loading && <LinearProgress />}
+                <Visible xs component="h2" className={styles.Form__Header}>
+                  {formatMessage(messages.jobAssignment)}
+                </Visible>
+                <JobAssignemntForm
+                  intl={intl}
+                  loading={loading}
+                  contactDetails={contactDetails}
+                  shouldPrefill={shouldPrefill}
+                  emailValue={emailValue}
+                  countryId={user.get('countryId')}
+                  onSubmit={this.addAssignment}
+                  onDeleteAssignment={this.deleteAssignment}
+                  jobFunctions={jobFunctions}
+                  assignments={assignments}
+                  loadedAssignments={loadedAssignments}
                 />
               </Tab>
             </AspectTabs>

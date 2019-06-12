@@ -45,6 +45,7 @@ const routes = [
           access: Joi.string().required(),
           refresh: Joi.string().required(),
           clientId: Joi.string().required(),
+          countryId: Joi.number(),
           clientType: Joi.string().required(),
           culture: Joi.string().required(),
           timezone: Joi.string().required(),

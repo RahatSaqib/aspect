@@ -49,6 +49,8 @@ const enhance = compose(
     ..._fp.omit(
       [
         'countryId',
+        'stateId',
+        'lgaId',
         'partnerId',
         'onSiteChange',
         'fetchSitesForSelectList',
@@ -58,10 +60,16 @@ const enhance = compose(
     ),
     sitesSelectList: props.sitesSelectList.items
       .filter(item => {
-        if (props.countryId && props.countryId !== item.get('countryId')) {
+        if (props.countryId && +props.countryId !== +item.get('countryId')) {
           return false
         }
-        if (props.partnerId && props.partnerId !== item.get('partnerId')) {
+        if (props.partnerId && +props.partnerId !== +item.get('partnerId')) {
+          return false
+        }
+        if (props.stateId && +props.stateId !== +item.get('stateId')) {
+          return false
+        }
+        if (props.lgaId && +props.lgaId !== +item.get('lgaId')) {
           return false
         }
         return true
@@ -74,9 +82,15 @@ const enhance = compose(
   }))
 )
 
-export function SiteSelectField({ sitesSelectList, onChange, ...restProps }) {
+export function SiteSelectField({
+  sitesSelectList,
+  onChange,
+  allItemText,
+  ...restProps
+}) {
   return (
     <SelectField {...restProps} onChange={onChange}>
+      {allItemText && <MenuItem value={undefined}>{allItemText}</MenuItem>}
       {sitesSelectList.map(s => (
         <MenuItem key={s.value} value={s.value}>
           {s.text}

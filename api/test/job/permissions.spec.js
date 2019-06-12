@@ -549,6 +549,7 @@ describe('Permissions', () => {
 
   describe('Person Assignments', () => {
     let jobFunctionClinicianId
+    let jobContextId
     const toCleanUp = {
       jobProps: null,
       jobContextProps: null,
@@ -669,6 +670,29 @@ describe('Permissions', () => {
           if (toCleanUp.jobProps) {
             toCleanUp.jobContextIds.push(item.jobContextId)
           }
+
+          // keep jobContextId to delete it in next text
+          ;[{ jobContextId }] = [item]
+
+          done()
+        })
+    })
+    it('should remove person assignment to site as Clinician', done => {
+      server
+        .delete(`${path}/person-assignment/${personId}/${jobContextId}`)
+        .set('Authorization', `Bearer ${shared.token}`)
+        .end((err, res) => {
+          assert.equal(res.status, 200)
+          assert.typeOf(res.body, 'Object')
+          assert.property(res.body, 'ok')
+          assert.property(res.body, 'data')
+          const items = res.body.data
+          assert.typeOf(items, 'array')
+
+          const item = items.find(
+            x => x.personId === personId && x.jobContextId === jobContextId
+          )
+          assert.isUndefined(item)
 
           done()
         })

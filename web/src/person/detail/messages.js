@@ -119,6 +119,10 @@ export default defineMessages({
     id: 'pages.ContactDetails.nameRequired',
     defaultMessage: 'Please enter your Full name',
   },
+  countryRequired: {
+    id: 'pages.ContactDetails.countryRequired',
+    defaultMessage: 'Please select Country',
+  },
   invalidEmailAddress: {
     id: 'pages.ContactDetails.invalidEmailAddress',
     defaultMessage: 'Please enter a valid email address',
@@ -207,8 +211,56 @@ export default defineMessages({
     id: 'pages.UserPreferences.chooseTags',
     defaultMessage: 'Choose tags',
   },
+  jobAssignment: {
+    id: 'pages.UserPreferences.jobAssignment',
+    defaultMessage: 'Job Assignment',
+  },
+  job: {
+    id: 'pages.UserPreferences.job',
+    defaultMessage: 'Job',
+  },
+  assignmentDetails: {
+    id: 'pages.UserPreferences.assignmentDetails',
+    defaultMessage: 'Assignment Details',
+  },
+  assignments: {
+    id: 'pages.UserPreferences.assignments',
+    defaultMessage: 'This contact is assigned to:',
+  },
   create: {
     id: 'pages.PersonDetails.create',
     defaultMessage: 'Create',
+  },
+  site: {
+    id: 'pages.JobAssignments.site',
+    defaultMessage: 'Site',
+  },
+  selectJob: {
+    id: 'pages.JobAssignments.selectJob',
+    defaultMessage: 'Select Job',
+  },
+  jobRequired: {
+    id: 'pages.JobAssignments.jobRequired',
+    defaultMessage: 'Please select Job',
+  },
+  cancel: {
+    id: 'pages.JobAssignments.cancel',
+    defaultMessage: 'Cancel',
+  },
+  yesDelete: {
+    id: 'pages.JobAssignments.yesDelete',
+    defaultMessage: 'Yes, delete',
+  },
+  allStates: {
+    id: 'pages.JobAssignments.allStates',
+    defaultMessage: 'All states',
+  },
+  allAreas: {
+    id: 'pages.JobAssignments.allAreas',
+    defaultMessage: 'All areas',
+  },
+  allSites: {
+    id: 'pages.JobAssignments.allSites',
+    defaultMessage: 'All sites',
   },
 })

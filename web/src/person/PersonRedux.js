@@ -45,6 +45,11 @@ export const types = {
 
   REQUEST_UPDATE_SITE_CONTACTS: 'REQUEST_UPDATE_SITE_CONTACTS',
   RECEIVE_UPDATE_SITE_CONTACTS: 'RECEIVE_UPDATE_SITE_CONTACTS',
+
+  REQUEST_ASSIGNMENTS: 'REQUEST_ASSIGNMENTS',
+  RECEIVE_ASSIGNMENTS: 'RECEIVE_ASSIGNMENTS',
+  REQUEST_DELETE_ASSIGNMENT: 'REQUEST_DELETE_ASSIGNMENT',
+  RECEIVE_DELETE_ASSIGNMENT: 'RECEIVE_DELETE_ASSIGNMENT',
 }
 
 const contactDetailsFields = [
@@ -240,7 +245,7 @@ function receiveSinglePerson(item) {
 }
 
 // load a single person with given personId
-export function fetchSinglePerson(personId) {
+export function fetchSinglePerson(personId, cb) {
   return dispatch => {
     dispatch(requestSinglePerson(personId))
 
@@ -263,7 +268,10 @@ export function fetchSinglePerson(personId) {
           })
         ),
       },
-    }).then(json => dispatch(receiveSinglePerson(json.data)))
+    }).then(json => {
+      dispatch(receiveSinglePerson(json.data))
+      if (cb) cb()
+    })
   }
 }
 
@@ -465,7 +473,7 @@ export function fetchUpdateSiteContacts(siteId, person, operation) {
       method: 'PUT',
       body: JSON.stringify(person),
       errorNotifications: {
-        404: errorInsufficientScope(
+        403: errorInsufficientScope(
           defineMessages({
             title: {
               id: 'errorResponseMessages.fetchUpdateSiteContacts.PUT.404.title',
@@ -475,6 +483,91 @@ export function fetchUpdateSiteContacts(siteId, person, operation) {
         ),
       },
     }).then(json => dispatch(receiveUpdateSiteContacts(siteId, json.data)))
+  }
+}
+
+export function fetchPersonAssignments(personId) {
+  return dispatch => {
+    dispatch(requestPersonAssignments(personId))
+    return aspectFetch(`/job-function/person-assignments/${personId}`, {
+      errorNotifications: {
+        403: errorInsufficientScope(
+          defineMessages({
+            title: {
+              id: 'errorResponseMessages.fetchPersonAssignments.GET.404.title',
+              defaultMessage: 'Not Found',
+            },
+          })
+        ),
+      },
+    }).then(json => dispatch(receivePersonAssignments(personId, json.data)))
+  }
+}
+export function addPersonAssignment(data) {
+  return dispatch => {
+    const { personId } = data
+    dispatch(requestPersonAssignments(personId))
+    return aspectFetch(`/job-function/assign-person-to-job-and-site`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+      errorNotifications: {
+        403: errorInsufficientScope(
+          defineMessages({
+            title: {
+              id: 'errorResponseMessages.addPersonAssignment.POST.404.title',
+              defaultMessage: 'Not Found',
+            },
+          })
+        ),
+      },
+    }).then(json => dispatch(receivePersonAssignments(personId, json.data)))
+  }
+}
+export function deletePersonAssignment(data) {
+  return dispatch => {
+    const { personId, jobContextId } = data
+    dispatch({
+      type: types.REQUEST_DELETE_ASSIGNMENT,
+      personId,
+      jobContextId,
+    })
+    return aspectFetch(
+      `/job-function/person-assignment/${personId}/${jobContextId}`,
+      {
+        method: 'DELETE',
+        errorNotifications: {
+          403: errorInsufficientScope(
+            defineMessages({
+              title: {
+                id:
+                  'errorResponseMessages.deletePersonAssignment.DELETE.404.title',
+                defaultMessage: 'Not Found',
+              },
+            })
+          ),
+        },
+      }
+    ).then(json =>
+      dispatch({
+        type: types.RECEIVE_DELETE_ASSIGNMENT,
+        personId,
+        jobContextId,
+        items: json.data,
+      })
+    )
+  }
+}
+function requestPersonAssignments(personId) {
+  return {
+    type: types.REQUEST_ASSIGNMENTS,
+    personId,
+  }
+}
+function receivePersonAssignments(personId, items) {
+  return {
+    type: types.RECEIVE_ASSIGNMENTS,
+    personId,
+    items,
   }
 }
 
@@ -611,6 +704,24 @@ export default function personReducer(state = initialState, action) {
       })
     case types.REQUEST_CREATING_SINGLE_PERSON:
       return state.setIn(['personNew', 'loaded'], false)
+
+    case types.REQUEST_ASSIGNMENTS:
+    case types.REQUEST_DELETE_ASSIGNMENT:
+      return state.withMutations(mutState => {
+        const person = state.items.byId
+          .get(action.personId)
+          .set('loadedAssignments', false)
+        mutState.set('items', receiveItem(mutState.items, person))
+      })
+    case types.RECEIVE_ASSIGNMENTS:
+    case types.RECEIVE_DELETE_ASSIGNMENT:
+      return state.withMutations(mutState => {
+        const person = state.items.byId
+          .get(action.personId)
+          .set('loadedAssignments', true)
+          .set('assignments', action.items)
+        mutState.set('items', receiveItem(mutState.items, person))
+      })
     default:
       return state
   }

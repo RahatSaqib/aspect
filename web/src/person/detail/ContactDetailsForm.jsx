@@ -21,10 +21,13 @@ import AspectCheckbox from '../../components/shared/AspectCheckbox'
 
 const cssClasses = classnames.bind(require('./PersonDetail.css'))
 
-export function validate({ name, email, email2 }, { intl }) {
+export function validate({ name, email, email2, countryId }, { intl }) {
   const errors = {}
   if (!name) {
     errors.name = intl.formatMessage(messages.nameRequired)
+  }
+  if (!countryId) {
+    errors.countryId = intl.formatMessage(messages.countryRequired)
   }
   if (
     !validateEmailAddress(email)

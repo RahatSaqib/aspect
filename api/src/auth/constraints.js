@@ -210,57 +210,40 @@ function addConstraints(queryBuilder, constraints, aliases) {
 
   // data filter constraints are ORed
   if (!_.isEmpty(_.get(constraints, '$or'))) {
+    const getBaseProps = (queryBuilder, constraint) => ({
+      queryBuilder,
+      jobFunctionAlias: jobFunction,
+      jobFunctionConstraint: constraint.jobFunction,
+      personAlias: person,
+      personConstraint: constraint.person,
+      allowAdminThrough,
+    })
     queryBuilder.where(function() {
       for (const constraint of constraints.$or) {
         addConstraintWithJobFunction({
-          queryBuilder: this,
+          ...getBaseProps(this, constraint),
           alias: geography,
           constraint: constraint.geography,
-          jobFunctionAlias: jobFunction,
-          jobFunctionConstraint: constraint.jobFunction,
-          personAlias: person,
-          personConstraint: constraint.person,
-          allowAdminThrough,
         })
         addConstraintWithJobFunction({
-          queryBuilder: this,
+          ...getBaseProps(this, constraint),
           alias: site,
           constraint: constraint.site,
-          jobFunctionAlias: jobFunction,
-          jobFunctionConstraint: constraint.jobFunction,
-          personAlias: person,
-          personConstraint: constraint.person,
-          allowAdminThrough,
         })
         addConstraintWithJobFunction({
-          queryBuilder: this,
+          ...getBaseProps(this, constraint),
           alias: device,
           constraint: constraint.device,
-          jobFunctionAlias: jobFunction,
-          jobFunctionConstraint: constraint.jobFunction,
-          personAlias: person,
-          personConstraint: constraint.person,
-          allowAdminThrough,
         })
         addConstraintWithJobFunction({
-          queryBuilder: this,
+          ...getBaseProps(this, constraint),
           alias: sample,
           constraint: constraint.sample,
-          jobFunctionAlias: jobFunction,
-          jobFunctionConstraint: constraint.jobFunction,
-          personAlias: person,
-          personConstraint: constraint.person,
-          allowAdminThrough,
         })
         addConstraintWithJobFunction({
-          queryBuilder: this,
+          ...getBaseProps(this, constraint),
           alias: person,
           constraint: constraint.person,
-          jobFunctionAlias: jobFunction,
-          jobFunctionConstraint: constraint.jobFunction,
-          personAlias: person,
-          personConstraint: constraint.person,
-          allowAdminThrough,
         })
       }
     })

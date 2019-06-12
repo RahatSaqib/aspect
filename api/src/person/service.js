@@ -40,7 +40,7 @@ async function listPeople(request) {
   // get total count for paging
   const getCount = personQuery
     .clone()
-    .count('p.id as count')
+    .select(knex.raw('count(distinct p.id) as total'))
     .first()
 
   const getJobFunctionNames = knex('Job as j')
@@ -60,6 +60,7 @@ async function listPeople(request) {
   const getItems = personQuery
     .clone()
     .modify(sortPageParams, query, 'p.name')
+    .groupBy('p.id')
     .select(
       'p.id',
       'p.name',
@@ -70,7 +71,7 @@ async function listPeople(request) {
     )
 
   // return result when both queries are finished
-  const [{ count: total }, data] = await Promise.all([getCount, getItems])
+  const [{ total }, data] = await Promise.all([getCount, getItems])
 
   return { ok: true, total, data, length: data.length }
 }
@@ -81,8 +82,8 @@ async function availableContacts(request) {
 
   const data = await getPeople()
     .modify(addConstraints, dataConstraints, { geography: 'g' })
+    .groupBy('p.id')
     .select('p.name', 'p.id')
-    .groupBy('id')
   return { ok: true, data }
 }
 

@@ -198,7 +198,14 @@ async function listSitesForSelectList(request) {
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
     .modify(addConstraints, dataConstraints, { site: 's', geography: 'g' })
     .orderBy(['s.name'], 'asc')
-    .select('s.id', 's.name', 's.partnerId', 'g.countryId')
+    .select(
+      's.id',
+      's.name',
+      's.partnerId',
+      'g.countryId',
+      'g.stateId',
+      'g.lgaId'
+    )
 
   const countryState = await knex('Country as c')
     .innerJoin('Geography as g', 'g.countryId', 'c.id')
