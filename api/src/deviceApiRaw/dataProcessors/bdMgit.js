@@ -55,12 +55,12 @@ class DefaultBDMGIT extends SynchronousDataProcessor {
 
       this.response.deviceId = deviceId
 
-      const now = getUtcTime()
+      const utcNow = getUtcTime()
 
       const [deviceLogId] = await knex('DeviceLog').insert({
         deviceId,
         source: _.get(payload, 'log.source', ''),
-        createdOn: now,
+        createdOn: utcNow,
         senderIp: remoteAddress,
         // TODO: DeviceLog handle non-JSON payloads
         rawMessage: JSON.stringify(request.plugins.rawPayload),
@@ -70,7 +70,7 @@ class DefaultBDMGIT extends SynchronousDataProcessor {
 
       await knex('Device')
         .where({ id: deviceId })
-        .update({ lastSeenOn: now, updatedOn: now })
+        .update({ lastSeenOn: utcNow, updatedOn: utcNow })
       this.messageContext.dispatch(deviceSeen(deviceId))
 
       if (!this.request.payload) {
@@ -89,6 +89,9 @@ class DefaultBDMGIT extends SynchronousDataProcessor {
 
       // Use result type code to determine assay ID
       // GND_MGIT for growth and Detection specimens or AST_MGIT for AST sets
+      // For those new to MGIT & TB diagnostics:
+      //   - GND_MGIT is an assay used to detect the presence & concentration of TB
+      //   - AST_MGIT is an assay used to detect the resistance/susceptibility to various sets of antibiotics
       const mgitResultTypeCode = getAstmField(astm, 'R,3,1,4')
 
       if (
@@ -158,7 +161,7 @@ class DefaultBDMGIT extends SynchronousDataProcessor {
         .where('id', deviceId)
         .first()
 
-      //  It is possible that a single plastic carrier could be used more than once for a particular access number.
+      // It is possible that a single plastic carrier could be used more than once for a particular access number.
       // The test start date/time, with the sequence number, uniquely identifies a test and its result.
       const externalId = `${mgitStartedOn}_${mgitConsumableSequenceNumber}`
       const result = await knex('Result')
@@ -231,13 +234,13 @@ class DefaultBDMGIT extends SynchronousDataProcessor {
         resultTypeId,
         resultCategory1,
         resultCategory2,
-        startedOn: dateParse(mgitStartedOn, 'yyyyLLddHHmmss', now),
+        startedOn: dateParse(mgitStartedOn, 'yyyyLLddHHmmss', utcNow),
         endedOn: mgitEndedOn
-          ? dateParse(mgitEndedOn, 'yyyyLLddHHmmss', now)
+          ? dateParse(mgitEndedOn, 'yyyyLLddHHmmss', utcNow)
           : null,
         consumableSerial: mgitConsumableSequenceNumber,
         senderVersion: mgitVersionNumber,
-        updatedOn: now,
+        updatedOn: utcNow,
         resultData: JSON.stringify(resultData),
       }
 
@@ -272,7 +275,7 @@ class DefaultBDMGIT extends SynchronousDataProcessor {
             deviceId,
             externalId,
             sampleId,
-            createdOn: now,
+            createdOn: utcNow,
           })
         )
       }
@@ -292,8 +295,8 @@ class DefaultBDMGIT extends SynchronousDataProcessor {
         const logId = await knex('ResultWorkflowLog').insert({
           resultId,
           resultWorkflowStatusId,
-          changedOn: now,
-          createdOn: now,
+          changedOn: utcNow,
+          createdOn: utcNow,
         })
 
         await knex('Result')
