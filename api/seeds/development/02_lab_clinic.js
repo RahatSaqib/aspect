@@ -48,7 +48,7 @@ function calculateDateForResult(
 ) {
   const daysToSubtract =
     resultTimeFrameInDays -
-    Math.ceil(currentResult / totalResults * resultTimeFrameInDays)
+    Math.ceil((currentResult / totalResults) * resultTimeFrameInDays)
 
   return addMilliseconds(
     subDays(now, daysToSubtract),
@@ -877,7 +877,7 @@ async function seed(knex) {
         resultSourceId: resultSourceLimsId,
         resultTypeId: resultTypePatientId,
         sampleId: sample.id,
-        sampleRunNumber: `${i % 2 + 1}`,
+        sampleRunNumber: `${(i % 2) + 1}`,
         sampleGroup: sample.externalId.substring(0, 10),
         resultCategory1: result.category1,
         resultData: JSON.stringify(resultData),
@@ -1066,7 +1066,7 @@ async function seed(knex) {
         resultSourceId: resultSourceLimsId,
         resultTypeId: resultTypePatientId,
         sampleId: sample.id,
-        sampleRunNumber: `${i % 2 + 1}`,
+        sampleRunNumber: `${(i % 2) + 1}`,
         sampleGroup: sample.externalId.substring(0, 10),
         resultCategory1: result.category1,
         resultData: JSON.stringify(resultData),

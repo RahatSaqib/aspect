@@ -19,7 +19,9 @@ class NotificationTestContext {
 
   runTest(test) {
     return run(async knex => {
-      const { auth: { user } } = this
+      const {
+        auth: { user },
+      } = this
       const { partnerId } = await knex('User as u')
         .innerJoin('Person as p', 'p.userId', 'u.id')
         .where('u.name', user)

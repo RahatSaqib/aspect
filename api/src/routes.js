@@ -177,7 +177,9 @@ function getSortParams(params, sortColumnMapping, defaultSort) {
   result.sortCol =
     sortColumnMapping && params.sortCol && sortColumnMapping[params.sortCol]
       ? sortColumnMapping[params.sortCol]
-      : params.sortCol ? params.sortCol : defaultSort
+      : params.sortCol
+      ? params.sortCol
+      : defaultSort
   result.sortDir = params.sortDir === 'desc' ? 'desc' : 'asc'
 
   return result

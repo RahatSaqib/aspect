@@ -582,8 +582,7 @@ async function up(knex) {
 
   await knex.schema.createTable('DeviceOperation', op => {
     op.increments('id')
-    op
-      .integer('deviceId')
+    op.integer('deviceId')
       .unsigned()
       .notNullable()
       .index()
@@ -1523,19 +1522,16 @@ async function up(knex) {
 
   // facts-table for result counts by device
   await knex.schema.createTable('FactResultsDevice', x => {
-    x
-      .integer('deviceId')
+    x.integer('deviceId')
       .unsigned()
       .references('id')
       .inTable('Device')
       .notNullable()
       .onDelete('CASCADE')
-    x
-      .integer('days')
+    x.integer('days')
       .unsigned()
       .notNullable()
-    x
-      .integer('resultCount')
+    x.integer('resultCount')
       .unsigned()
       .notNullable()
     x.specificType('calculatedOn', 'DATETIME(3)').notNullable()
@@ -1543,26 +1539,22 @@ async function up(knex) {
   })
 
   await knex.schema.createTable('FactResultsDeviceByAssay', x => {
-    x
-      .integer('deviceId')
+    x.integer('deviceId')
       .unsigned()
       .references('id')
       .inTable('Device')
       .notNullable()
       .onDelete('CASCADE')
-    x
-      .integer('days')
+    x.integer('days')
       .unsigned()
       .notNullable()
-    x
-      .integer('assayId')
+    x.integer('assayId')
       .unsigned()
       .references('id')
       .inTable('Assay')
       .notNullable()
       .onDelete('CASCADE')
-    x
-      .integer('resultCount')
+    x.integer('resultCount')
       .unsigned()
       .notNullable()
     x.specificType('calculatedOn', 'DATETIME(3)').notNullable()
@@ -1570,34 +1562,29 @@ async function up(knex) {
   })
 
   await knex.schema.createTable('FactResultsDeviceByCategory1', x => {
-    x
-      .integer('deviceId')
+    x.integer('deviceId')
       .unsigned()
       .references('id')
       .inTable('Device')
       .notNullable()
       .onDelete('CASCADE')
-    x
-      .integer('days')
+    x.integer('days')
       .unsigned()
       .notNullable()
-    x
-      .integer('assayId')
+    x.integer('assayId')
       .unsigned()
       .references('id')
       .inTable('Assay')
       .notNullable()
       .onDelete('CASCADE')
-    x
-      .integer('resultCategory1')
+    x.integer('resultCategory1')
       .unsigned()
       .index()
       .references('id')
       .inTable('ResultCategory')
       .notNullable()
       .onDelete('CASCADE')
-    x
-      .integer('resultCount')
+    x.integer('resultCount')
       .unsigned()
       .notNullable()
     x.specificType('calculatedOn', 'DATETIME(3)').notNullable()
@@ -1608,42 +1595,36 @@ async function up(knex) {
   })
 
   await knex.schema.createTable('FactResultsDeviceByCategory1And2', x => {
-    x
-      .integer('deviceId')
+    x.integer('deviceId')
       .unsigned()
       .references('id')
       .inTable('Device')
       .notNullable()
       .onDelete('CASCADE')
-    x
-      .integer('days')
+    x.integer('days')
       .unsigned()
       .notNullable()
-    x
-      .integer('assayId')
+    x.integer('assayId')
       .unsigned()
       .references('id')
       .inTable('Assay')
       .notNullable()
       .onDelete('CASCADE')
-    x
-      .integer('resultCategory1')
+    x.integer('resultCategory1')
       .unsigned()
       .index()
       .references('id')
       .inTable('ResultCategory')
       .notNullable()
       .onDelete('CASCADE')
-    x
-      .integer('resultCategory2')
+    x.integer('resultCategory2')
       .unsigned()
       .index()
       .references('id')
       .inTable('ResultCategory')
       .notNullable()
       .onDelete('CASCADE')
-    x
-      .integer('resultCount')
+    x.integer('resultCount')
       .unsigned()
       .notNullable()
     x.specificType('calculatedOn', 'DATETIME(3)').notNullable()
@@ -1655,52 +1636,41 @@ async function up(knex) {
 
   // facts-table for device flags
   await knex.schema.createTable('FactDeviceFlag', x => {
-    x
-      .integer('deviceId')
+    x.integer('deviceId')
       .unsigned()
       .references('id')
       .inTable('Device')
       .notNullable()
       .primary()
       .onDelete('CASCADE')
-    x
-      .boolean('offline')
+    x.boolean('offline')
       .notNullable()
       .defaultTo(0)
-    x
-      .boolean('noResults')
+    x.boolean('noResults')
       .notNullable()
       .defaultTo(0)
-    x
-      .boolean('service')
+    x.boolean('service')
       .notNullable()
       .defaultTo(0)
-    x
-      .boolean('calibration')
+    x.boolean('calibration')
       .notNullable()
       .defaultTo(0)
-    x
-      .boolean('errorRate')
+    x.boolean('errorRate')
       .notNullable()
       .defaultTo(0)
-    x
-      .boolean('qcProblem')
+    x.boolean('qcProblem')
       .notNullable()
       .defaultTo(0)
-    x
-      .boolean('lowInventory')
+    x.boolean('lowInventory')
       .notNullable()
       .defaultTo(0)
-    x
-      .boolean('outOfInventory')
+    x.boolean('outOfInventory')
       .notNullable()
       .defaultTo(0)
-    x
-      .boolean('expiringInventory')
+    x.boolean('expiringInventory')
       .notNullable()
       .defaultTo(0)
-    x
-      .boolean('expiringWarranty')
+    x.boolean('expiringWarranty')
       .notNullable()
       .defaultTo(0)
     x.dateTime('updatedOn').notNullable()
@@ -1718,14 +1688,12 @@ async function up(knex) {
   })
 
   await knex.schema.createTable('ResultTag', rt => {
-    rt
-      .integer('resultId')
+    rt.integer('resultId')
       .unsigned()
       .index()
       .references('id')
       .inTable('Result')
-    rt
-      .integer('tagId')
+    rt.integer('tagId')
       .unsigned()
       .index()
       .references('id')
@@ -1734,14 +1702,12 @@ async function up(knex) {
   })
 
   await knex.schema.createTable('SiteTag', st => {
-    st
-      .integer('siteId')
+    st.integer('siteId')
       .unsigned()
       .index()
       .references('id')
       .inTable('Site')
-    st
-      .integer('tagId')
+    st.integer('tagId')
       .unsigned()
       .index()
       .references('id')
@@ -1750,14 +1716,12 @@ async function up(knex) {
   })
 
   await knex.schema.createTable('DeviceTag', dt => {
-    dt
-      .integer('deviceId')
+    dt.integer('deviceId')
       .unsigned()
       .index()
       .references('id')
       .inTable('Device')
-    dt
-      .integer('tagId')
+    dt.integer('tagId')
       .unsigned()
       .index()
       .references('id')
@@ -1766,14 +1730,12 @@ async function up(knex) {
   })
 
   await knex.schema.createTable('PersonTag', pt => {
-    pt
-      .integer('personId')
+    pt.integer('personId')
       .unsigned()
       .index()
       .references('id')
       .inTable('Person')
-    pt
-      .integer('tagId')
+    pt.integer('tagId')
       .unsigned()
       .index()
       .references('id')

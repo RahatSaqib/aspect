@@ -52,7 +52,9 @@ async function getJobFunctionsForSelectList(request) {
 // ----------------------------------------------------------------------------------------
 // permissions for specified 'person' for this 'partner'
 async function getPermissions(request) {
-  const { params: { personId, partnerId } } = request
+  const {
+    params: { personId, partnerId },
+  } = request
   const { auth } = request
   const user = await getUser(auth.credentials.name)
   if (user.partnerId !== +partnerId) {
@@ -92,7 +94,9 @@ async function getJobFunction(jobFunctionId, partnerId, err) {
 const assignJob = async request => manageJob(request, MODE_INSERT)
 const unassignJob = async request => manageJob(request, MODE_DELETE)
 async function manageJob(request, mode) {
-  const { payload: { personId, jobFunctionId } } = request
+  const {
+    payload: { personId, jobFunctionId },
+  } = request
   const { auth } = request
 
   const valResult = await validateJobData({ personId, jobFunctionId, auth })
@@ -455,7 +459,10 @@ async function assignPersonTo(request) {
 }
 // ----------------------------------------------------------------------------------------
 async function getPersonAssignments(request) {
-  const { auth, params: { personId } } = request
+  const {
+    auth,
+    params: { personId },
+  } = request
   const personAssignments = await getAssignments({ auth, personId })
   return { ok: true, data: personAssignments }
 }
@@ -570,9 +577,7 @@ async function validateJobData({ personId, jobFunctionId, auth }) {
   }
   if (person.countryId !== countryId) {
     return Boom.badData(
-      `Different countryIds in current Admin user (${countryId}) and requested person ${
-        person.countryId
-      }`
+      `Different countryIds in current Admin user (${countryId}) and requested person ${person.countryId}`
     )
   }
 
@@ -580,7 +585,10 @@ async function validateJobData({ personId, jobFunctionId, auth }) {
 }
 // ----------------------------------------------------------------------------------------
 async function removePersonAssignment(request) {
-  const { auth, params: { personId, jobContextId } } = request
+  const {
+    auth,
+    params: { personId, jobContextId },
+  } = request
   const dataConstraints = await getConstraints(auth.credentials)
 
   const jobContext = await knex('JobContext as jc')

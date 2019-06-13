@@ -37,8 +37,8 @@ async function postProcessMergeResult(context, result, previousResult) {
     resultDetails.assayExternalId === 'assayAlereQHiv12Detect'
       ? 'EID+'
       : resultDetails.assayExternalId === 'assayAlereQHiv12VLPlasma'
-        ? 'HIV-VL>50'
-        : null
+      ? 'HIV-VL>50'
+      : null
   if (resultIsPositive && positiveResultTagTitle) {
     const existingResultTags = await knex('ResultTag')
       .where('resultId', result.id)
@@ -67,17 +67,15 @@ async function postProcessMergeResult(context, result, previousResult) {
       resultDetails.assayExternalId === 'assayAlereQHiv12Detect'
         ? 'EID+'
         : resultDetails.assayExternalId === 'assayAlereQHiv12VLPlasma'
-          ? 'VL>50'
-          : null
+        ? 'VL>50'
+        : null
 
     if (resultDetails.siteExternalId && positiveResultSiteTagTitlePrefix) {
       const positiveResultTagForSite = _.find(
         partnerTags,
         partnerTag =>
           partnerTag.title.toLowerCase() ===
-          `${positiveResultSiteTagTitlePrefix}${
-            resultDetails.siteExternalId
-          }`.toLowerCase()
+          `${positiveResultSiteTagTitlePrefix}${resultDetails.siteExternalId}`.toLowerCase()
       )
 
       const resultAlreadyTaggedPositiveForSite = _.some(existingResultTags, {

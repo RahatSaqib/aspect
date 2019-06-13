@@ -659,7 +659,10 @@ async function siteDashboard(request) {
   const deviceList = await getDeviceList(auth, dataConstraints)
   const inventoryItemList = await getInventoryItemList(auth, dataConstraints)
 
-  const filteredLength = _.flowRight(_.size, _.filter)
+  const filteredLength = _.flowRight(
+    _.size,
+    _.filter
+  )
   const siteIdAccumulator = (acc, it, siteId) => {
     if (it) {
       acc.push(siteId)

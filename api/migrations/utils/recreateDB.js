@@ -1,5 +1,7 @@
 const { knex } = require('../../src/db')
-const { db: { database } } = require('../../src/config')
+const {
+  db: { database },
+} = require('../../src/config')
 
 async function recreateDB() {
   await knex.raw(`DROP DATABASE ${database};`)

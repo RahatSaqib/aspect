@@ -70,9 +70,7 @@ describe('/account-details', () => {
         assert.notEqual(
           accountDetails.title,
           newJobTitle,
-          `The title of this person is already set to 'New Job Title'. This could be a problem with the cleanup that was supposed to have happened the last time this test was run. Please update the title of person (id=${
-            accountDetails.id
-          }) to something other than '${newJobTitle}'`
+          `The title of this person is already set to 'New Job Title'. This could be a problem with the cleanup that was supposed to have happened the last time this test was run. Please update the title of person (id=${accountDetails.id}) to something other than '${newJobTitle}'`
         )
         let contactDetails = _.omit(accountDetails, [
           'userId',
@@ -155,9 +153,7 @@ describe('/account-details', () => {
         assert.notEqual(
           accountDetails.timezone,
           newTimezone,
-          `The timezone set for this person is already set to 'South African Standard Time'. This could be a problem with the cleanup that was supposed to have happened the last time this test was run. Please update the timezone for this person (id=${
-            accountDetails.id
-          }) to something other than '${newTimezone}'`
+          `The timezone set for this person is already set to 'South African Standard Time'. This could be a problem with the cleanup that was supposed to have happened the last time this test was run. Please update the timezone for this person (id=${accountDetails.id}) to something other than '${newTimezone}'`
         )
         let userPreferences = _.omit(accountDetails, [
           'userId',

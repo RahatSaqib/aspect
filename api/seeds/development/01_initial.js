@@ -57,7 +57,7 @@ function calculateDateForResult(
 ) {
   const daysToSubtract =
     resultTimeFrameInDays -
-    Math.ceil(currentResult / totalResults * resultTimeFrameInDays)
+    Math.ceil((currentResult / totalResults) * resultTimeFrameInDays)
 
   return addMilliseconds(
     subDays(now, daysToSubtract),
@@ -1652,15 +1652,13 @@ async function seed(knex) {
                 )
               ) {
                 await Promise.all(
-                  _.map(_.range(1, 6 - lgaData.id % 5), async siteNumber => {
+                  _.map(_.range(1, 6 - (lgaData.id % 5)), async siteNumber => {
                     const siteData = Object.assign(
                       {
                         partnerId: partnerOneId,
                         geographyId,
                         externalId: `${state.name}_${siteNumber}`,
-                        name: `${lga.name} ${country.lgaLabel} ${
-                          state.name
-                        } #${siteNumber}`,
+                        name: `${lga.name} ${country.lgaLabel} ${state.name} #${siteNumber}`,
                         shortName: `${lga.name}, ${stateKey} #${siteNumber}`,
                         city: `${lga.name} City`,
                         street1: `${lgaData.id} Main Street`,
@@ -1785,8 +1783,8 @@ async function seed(knex) {
           siteId: siteData.id,
           createdOn: new Date(+now - 3 * i * millisInHour),
           updatedOn: new Date(+now - i * millisInHour),
-          lastPingOn: new Date(+now - i * millisInHour / 3),
-          lastSeenOn: new Date(+now - i * millisInHour / 3),
+          lastPingOn: new Date(+now - (i * millisInHour) / 3),
+          lastSeenOn: new Date(+now - (i * millisInHour) / 3),
         })
       )
       routerIds.push(routerId)
@@ -1835,8 +1833,8 @@ async function seed(knex) {
         deviceId: routerId || null,
         createdOn: new Date(+now - 3 * i * millisInHour),
         updatedOn: new Date(+now - i * millisInHour),
-        lastPingOn: new Date(+now - i * millisInHour / 3),
-        lastSeenOn: new Date(+now - i * millisInHour / 3),
+        lastPingOn: new Date(+now - (i * millisInHour) / 3),
+        lastSeenOn: new Date(+now - (i * millisInHour) / 3),
         hostId: _.times(8, () =>
           String.fromCharCode(65 + _.random(25) + (_.random(1) > 0 ? 32 : 0))
         ).join(''),
@@ -1915,8 +1913,8 @@ async function seed(knex) {
         deviceId: routerId || null,
         createdOn: new Date(+now - 3 * i * millisInHour),
         updatedOn: new Date(+now - i * millisInHour),
-        lastPingOn: new Date(+now - i * millisInHour / 3),
-        lastSeenOn: new Date(+now - i * millisInHour / 3),
+        lastPingOn: new Date(+now - (i * millisInHour) / 3),
+        lastSeenOn: new Date(+now - (i * millisInHour) / 3),
         hostId: _.times(8, () =>
           String.fromCharCode(65 + _.random(25) + (_.random(1) > 0 ? 32 : 0))
         ).join(''),
@@ -2161,7 +2159,7 @@ async function seed(knex) {
         resultSourceId: resultSourceDiagnosticId,
         resultTypeId: resultTypePatientId,
         sampleId: sample.id,
-        sampleRunNumber: `${i % 2 + 1}`,
+        sampleRunNumber: `${(i % 2) + 1}`,
         sampleGroup: `GRP-HIV-${i % 5}`,
         resultCategory1: result.category1,
         resultCategory2: result.category2,
@@ -2249,7 +2247,7 @@ async function seed(knex) {
               resultSourceId: resultSourceDiagnosticId,
               resultTypeId: resultTypePatientId,
               sampleId: sample.id,
-              sampleRunNumber: `${i % 2 + 1}`,
+              sampleRunNumber: `${(i % 2) + 1}`,
               sampleGroup: `GRP-HIV-${i % 5}`,
               resultCategory1: result.category1,
               resultCategory2: result.category2,
@@ -2394,7 +2392,7 @@ async function seed(knex) {
               resultSourceId: resultSourceDiagnosticId,
               resultTypeId: resultTypePatientId,
               sampleId: sample.id,
-              sampleRunNumber: `${i % 2 + 1}`,
+              sampleRunNumber: `${(i % 2) + 1}`,
               resultCategory1: result.category1,
               sampleGroup: `GRP-HIV-${i % 5}`,
               resultCategory2: result.category2,
@@ -2547,7 +2545,9 @@ async function seed(knex) {
           const resultStatus =
             ensureResultIds.shift() || _.random(1) < 0.3
               ? acknowledged
-              : _.random(1) < 0.5 ? validated : deliverable
+              : _.random(1) < 0.5
+              ? validated
+              : deliverable
 
           const resultId = await knex('Result').insert(
             Object.assign({}, auditFields, {
@@ -2562,7 +2562,7 @@ async function seed(knex) {
               resultSourceId: resultSourceDiagnosticId,
               resultTypeId: resultTypePatientId,
               sampleId: sample.id,
-              sampleRunNumber: `${i % 2 + 1}`,
+              sampleRunNumber: `${(i % 2) + 1}`,
               resultCategory1: result.category1,
               resultData: JSON.stringify(resultData),
               assayVersion: '4',
@@ -2691,7 +2691,7 @@ async function seed(knex) {
               resultSourceId: resultSourceDiagnosticId,
               resultTypeId: resultTypePatientId,
               sampleId: sample.id,
-              sampleRunNumber: `${i % 2 + 1}`,
+              sampleRunNumber: `${(i % 2) + 1}`,
               sampleGroup: `GRP-HIV-${i % 5}`,
               resultCategory1: result.category1,
               resultData: JSON.stringify(resultData),
@@ -2832,7 +2832,7 @@ async function seed(knex) {
               resultSourceId: resultSourceDiagnosticId,
               resultTypeId: resultTypePatientId,
               sampleId: sample.id,
-              sampleRunNumber: `${i % 2 + 1}`,
+              sampleRunNumber: `${(i % 2) + 1}`,
               sampleGroup: `GRP-HIV-${i % 5}`,
               resultCategory1: result.category1,
               resultData: JSON.stringify(resultData),
@@ -2973,7 +2973,7 @@ async function seed(knex) {
               resultSourceId: resultSourceDiagnosticId,
               resultTypeId: resultTypePatientId,
               sampleId: sample.id,
-              sampleRunNumber: `${i % 2 + 1}`,
+              sampleRunNumber: `${(i % 2) + 1}`,
               sampleGroup: `GRP-HIV-${i % 5}`,
               resultCategory1: result.category1,
               resultData: JSON.stringify(resultData),

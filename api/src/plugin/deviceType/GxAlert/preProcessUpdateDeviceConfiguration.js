@@ -7,7 +7,11 @@ const {
 const { parseDateOrDefault } = require('../../../shared/date')
 
 async function preProcessUpdateDeviceConfiguration(context) {
-  const { payload, device: { id: deviceId }, messageContext } = context
+  const {
+    payload,
+    device: { id: deviceId },
+    messageContext,
+  } = context
   const inactive = _.get(payload, 'data.inactive', null)
   if (!_.isNull(inactive)) {
     const blankMaintenanceData = {

@@ -30,7 +30,6 @@
     "import/no-unresolved": "off",
     "import/no-named-as-default-member": "off",
     "jsx-a11y/anchor-has-content": "off",
-    "linebreak-style": "off",
     "new-cap": ["error", { "properties": false }],
     "newline-per-chained-call": "off",
     "no-nested-ternary": "off",

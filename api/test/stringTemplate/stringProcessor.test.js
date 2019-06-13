@@ -1314,12 +1314,8 @@ describe('stringTemplate', () => {
           const patientData = JSON.parse(dataSource.resultPatientData)
           assert.equal(
             message.payload,
-            `GxAlert. ${dataSource.expectedTitle} ${
-              dataSource.siteShortName
-            }; ` +
-              `in Ward: ${formData.ward}; Sample ID: ${
-                dataSource.sampleExternalId
-              };  ` +
+            `GxAlert. ${dataSource.expectedTitle} ${dataSource.siteShortName}; ` +
+              `in Ward: ${formData.ward}; Sample ID: ${dataSource.sampleExternalId};  ` +
               `Patient ID: ${patientData.id} on ${formatDateOrDefault(
                 dataSource.resultEndedOn,
                 displayPreferences.dateFormat

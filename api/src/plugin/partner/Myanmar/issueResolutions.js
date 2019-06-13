@@ -144,7 +144,7 @@ async function resolveMachineTemperatureError(knex, issue) {
 
   return (
     machine != null &&
-    100 * machine.errorCount / total.resultCount <
+    (100 * machine.errorCount) / total.resultCount <
       minPrcntMachineTemperatureResolve
   )
 }
@@ -222,9 +222,10 @@ async function resolveMachinePowerError(knex, issue) {
 
   return (
     machine != null &&
-    100 * machine.errorCount / total.resultCount <
+    (100 * machine.errorCount) / total.resultCount <
       minPrcntMachinePowerResolve &&
-    100 * noResult.resultCount / total.resultCount < maxPrcntMachinePowerErrors
+    (100 * noResult.resultCount) / total.resultCount <
+      maxPrcntMachinePowerErrors
   )
 }
 
@@ -255,7 +256,7 @@ async function resolveModuleProceduralError(knex, issue) {
     .count('r.id as resultCount')
   return (
     module != null &&
-    100 * module.errorCount / total.resultCount <
+    (100 * module.errorCount) / total.resultCount <
       minPrcntModuleProceduralResolve
   )
 }
@@ -283,7 +284,7 @@ async function resolveMachineProceduralError(knex, issue) {
     .count('r.id as resultCount')
   return (
     machine != null &&
-    100 * machine.errorCount / total.resultCount <
+    (100 * machine.errorCount) / total.resultCount <
       minPrcntMachineProceduralResolve
   )
 }
@@ -324,7 +325,7 @@ async function resolveModuleUnknownError(knex, issue) {
     .where('r.moduleSerial', module.moduleSerial)
     .where('r.deviceId', issue.deviceId)
     .count('r.id as moduleResultCount')
-  const prcntModuleError = module.errorCount / moduleResultCount * 100
+  const prcntModuleError = (module.errorCount / moduleResultCount) * 100
   return (
     prcntModuleError <= maxPrcntErrors ||
     module.errorCount < moduleMaxUnknownErrors
@@ -363,7 +364,7 @@ async function resolveMachineUnknownError(knex, issue) {
       .where('r.deviceId', issue.deviceId)
       .where('r.moduleSerial', module.moduleSerial)
       .count('r.id as moduleResultCount')
-    const prcntModuleError = module.errorCount / moduleResultCount * 100
+    const prcntModuleError = (module.errorCount / moduleResultCount) * 100
     allModulesErr =
       allModulesErr && prcntModuleError > minPrcntModuleUnknownErrors
     allModulesTotalErrors += module.errorCount

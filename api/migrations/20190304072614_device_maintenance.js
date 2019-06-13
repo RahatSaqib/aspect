@@ -15,40 +15,34 @@ async function up(knex) {
 
   await knex.schema.createTable('DeviceMaintenance', x => {
     x.increments('id')
-    x
-      .integer('deviceId')
+    x.integer('deviceId')
       .unsigned()
       .index()
       .notNullable()
       .references('id')
       .inTable('Device')
-    x
-      .integer('deviceMaintenanceTypeId')
+    x.integer('deviceMaintenanceTypeId')
       .unsigned()
       .index()
       .notNullable()
       .references('id')
       .inTable('DeviceMaintenanceType')
     x.string('notes', 2000)
-    x
-      .dateTime('contextDate')
+    x.dateTime('contextDate')
       .index()
       .notNullable()
-    x
-      .boolean('current')
+    x.boolean('current')
       .index()
       .notNullable()
     x.dateTime('createdOn').notNullable()
-    x
-      .integer('createdBy')
+    x.integer('createdBy')
       .unsigned()
       .index()
       .notNullable()
       .references('id')
       .inTable('User')
     x.dateTime('updatedOn').notNullable()
-    x
-      .integer('updatedBy')
+    x.integer('updatedBy')
       .unsigned()
       .index()
       .notNullable()

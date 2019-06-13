@@ -574,7 +574,10 @@ async function getDeviceLogsByResultId(request) {
 }
 
 async function showFileReferences(request) {
-  const { params: { resultId }, auth } = request
+  const {
+    params: { resultId },
+    auth,
+  } = request
   const dataConstraints = await getConstraints(auth.credentials)
   const fileReferences = await knex('ResultFileReference as rf')
     .join('FileReference as f', 'f.id', 'rf.fileReferenceId')
@@ -612,7 +615,10 @@ function downloadFile(request, reply) {
 }
 
 function downloadFirstImage(request, reply) {
-  const { auth, params: { resultId } } = request
+  const {
+    auth,
+    params: { resultId },
+  } = request
   return downloadFileAsync({ auth, params: { resultId, mimeType: 'image' } })
     .then(path => {
       reply.file(path)
@@ -973,7 +979,12 @@ async function getLastTreatmentStatusByResult(resultId) {
 }
 
 async function updateFormData(request) {
-  const { auth, params, payload, plugins: { messageContext } } = request
+  const {
+    auth,
+    params,
+    payload,
+    plugins: { messageContext },
+  } = request
   const now = new Date()
   const { resultId } = params
 

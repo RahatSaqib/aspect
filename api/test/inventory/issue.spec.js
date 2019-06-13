@@ -495,9 +495,7 @@ async function triggerInitialIssue({
     assert.equal(
       action2.totalWasted,
       TO_BE_WASTED,
-      `action.totalWasted (${TO_BE_WASTED}) does not match totalWasted in db (${
-        action2.totalWasted
-      })`
+      `action.totalWasted (${TO_BE_WASTED}) does not match totalWasted in db (${action2.totalWasted})`
     )
   }
 

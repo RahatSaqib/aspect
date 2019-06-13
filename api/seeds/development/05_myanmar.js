@@ -583,7 +583,7 @@ async function seed(knex) {
                   resultSourceId,
                   resultTypeId,
                   sampleId: sample.id,
-                  sampleRunNumber: `${i % 2 + 1}`,
+                  sampleRunNumber: `${(i % 2) + 1}`,
                   sampleGroup: `GRP-TB-${i % 5}`,
                   resultCategory1: result.category1,
                   resultCategory2: result.category2,
@@ -1110,7 +1110,7 @@ function calculateDateForResult(
 ) {
   const daysToSubtract =
     resultTimeFrameInDays -
-    Math.ceil(currentResult / totalResults * resultTimeFrameInDays)
+    Math.ceil((currentResult / totalResults) * resultTimeFrameInDays)
 
   return addMilliseconds(
     subDays(now, daysToSubtract),

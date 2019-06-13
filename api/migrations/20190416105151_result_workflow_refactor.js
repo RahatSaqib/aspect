@@ -4,8 +4,7 @@ async function up(knex) {
   await knex.schema.alterTable('Result', t => {
     t.dropForeign('resultWorkflowStatusId')
     t.dropColumn('resultWorkflowStatusId')
-    t
-      .integer('resultWorkflowStatusLogId')
+    t.integer('resultWorkflowStatusLogId')
       .unsigned()
       .nullable()
       .after('deviceId')
@@ -16,8 +15,7 @@ async function up(knex) {
   })
   await knex.schema.alterTable('ResultWorkflowLog', t => {
     t.dropForeign('resultId')
-    t
-      .foreign('resultId')
+    t.foreign('resultId')
       .references('id')
       .inTable('Result')
       .onDelete('SET NULL')
@@ -27,8 +25,7 @@ async function down(knex) {
   await knex.schema.alterTable('Result', t => {
     t.dropForeign('resultWorkflowStatusLogId')
     t.dropColumn('resultWorkflowStatusLogId')
-    t
-      .integer('resultWorkflowStatusId')
+    t.integer('resultWorkflowStatusId')
       .unsigned()
       .after('deviceId')
       .index()

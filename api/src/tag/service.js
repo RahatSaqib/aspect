@@ -11,7 +11,10 @@ const {
 const SELECT_LIST_FIELDS = ['t.id', 't.title', 't.partnerId']
 
 async function listTags(request) {
-  const { auth, params: { tagType } } = request
+  const {
+    auth,
+    params: { tagType },
+  } = request
   if (!canView(auth, `${tagType}:`)) {
     return { ok: true, data: [] }
   }
@@ -34,7 +37,10 @@ async function getTags(auth, tagType) {
 }
 
 async function listTagsByType(request) {
-  const { auth, params: { id, tagType } } = request
+  const {
+    auth,
+    params: { id, tagType },
+  } = request
   if (!canView(auth, `${tagType}:`)) {
     return { ok: true, data: [] }
   }
@@ -74,7 +80,11 @@ function includesIgnoreCase(collection, value) {
 }
 
 async function updateTag(request) {
-  const { auth, params: { id, tagType }, payload: { tags } } = request
+  const {
+    auth,
+    params: { id, tagType },
+    payload: { tags },
+  } = request
 
   if (!canEdit(auth, `${tagType}:`)) {
     return Boom.forbidden(

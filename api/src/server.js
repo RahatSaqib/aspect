@@ -26,7 +26,10 @@ server.connection({
   },
 })
 
-const { swagger: { enabled: swaggerEnabled }, raven } = config
+const {
+  swagger: { enabled: swaggerEnabled },
+  raven,
+} = config
 
 // Load Raven (Sentry) plugin if configured
 const ravenPlugins = raven

@@ -154,7 +154,11 @@ function siteContacts(id) {
 }
 
 async function validateContact(request) {
-  const { params: { siteId }, payload: { id }, auth } = request
+  const {
+    params: { siteId },
+    payload: { id },
+    auth,
+  } = request
   const dataConstraints = await getConstraints(auth.credentials)
 
   const site = await getSite(siteId, dataConstraints)

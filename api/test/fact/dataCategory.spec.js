@@ -47,7 +47,7 @@ function calculateDateForResult(
 ) {
   const daysToSubtract =
     resultTimeFrameInDays -
-    Math.ceil(currentResult / totalResults * resultTimeFrameInDays)
+    Math.ceil((currentResult / totalResults) * resultTimeFrameInDays)
 
   return addMilliseconds(
     subDays(now, daysToSubtract),
@@ -147,7 +147,9 @@ describe('DataCategoryLow Issues Endpoint', () => {
         .first()
 
       // get 1st site for current partner and labUser
-      const { s: { geographyId } } = await getSite(knex, {
+      const {
+        s: { geographyId },
+      } = await getSite(knex, {
         partnerId,
         countryAbbreviation,
         requireInventory: false,
@@ -256,7 +258,7 @@ describe('DataCategoryLow Issues Endpoint', () => {
             resultSourceId,
             resultTypeId,
             sampleId: sample.id, // new sanple
-            sampleRunNumber: `${i % 2 + 1}`,
+            sampleRunNumber: `${(i % 2) + 1}`,
             sampleGroup: `GRP-${i % 5}`,
             resultCategory1: resultCategoryDetectedId,
             patientData: JSON.stringify(patient),

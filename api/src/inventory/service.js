@@ -477,9 +477,7 @@ async function listInventoryItemsGroupedBySite(request) {
       request.query.sortDir === 'desc'
         ? '1000-01-01 00:00:00'
         : '9999-12-31 23:59:59'
-    sortColumnField = `COALESCE(${
-      INVENTORY_ITEM_SORT_FIELDS[sortColumnName]
-    }, '${defaultDateOrderBy}')`
+    sortColumnField = `COALESCE(${INVENTORY_ITEM_SORT_FIELDS[sortColumnName]}, '${defaultDateOrderBy}')`
   }
   const aggregateColumn = `${sortAggregate}(${sortColumnField}) as ${sortColumnName}`
   const getSiteIds = sitesQuery
