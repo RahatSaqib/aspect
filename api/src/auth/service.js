@@ -665,7 +665,9 @@ async function getApplicableLicense(personId, partnerId) {
 }
 
 async function getLicense(request) {
-  const { query: { licenseId } } = request
+  const {
+    query: { licenseId },
+  } = request
 
   const license = await query('Get license')
     .from('License')
@@ -676,7 +678,9 @@ async function getLicense(request) {
 }
 
 async function acceptLicense(request) {
-  const { payload: { licenseId } } = request
+  const {
+    payload: { licenseId },
+  } = request
 
   const loggedInUser = await getUser(request.auth.credentials.name)
 

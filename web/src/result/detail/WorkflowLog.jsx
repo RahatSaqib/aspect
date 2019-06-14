@@ -55,12 +55,16 @@ const enhance = compose(
   pure,
   withHandlers({
     onHeadColumnClick: ({ onFetch, table }) => ({
-      currentTarget: { dataset: { column: nextSortCol } },
+      currentTarget: {
+        dataset: { column: nextSortCol },
+      },
     }) =>
       onFetch(
         nextSortCol,
         table.sortCol === nextSortCol
-          ? table.sortDir === 'asc' ? 'desc' : 'asc'
+          ? table.sortDir === 'asc'
+            ? 'desc'
+            : 'asc'
           : table.sortDir,
         0,
         table.pageSize

@@ -128,9 +128,7 @@ export const SummaryStatus = ({
               <Icon
                 className={cssClasses('Summary__Card__Title__Icon')}
                 // eslint-disable-next-line import/no-dynamic-require
-                type={require(`../../components/shared/icon/assets/${
-                  widget.icon
-                }.svg`)}
+                type={require(`../../components/shared/icon/assets/${widget.icon}.svg`)}
               />
               <span className={cssClasses('Summary__Card__Title--main')}>
                 {formatMessage('title', widget, intl, defaultMessages)}

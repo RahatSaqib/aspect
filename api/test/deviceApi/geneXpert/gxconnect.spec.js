@@ -2256,7 +2256,10 @@ describe('Device API routes for GxConnect Devices', () => {
       const initialQuantityOnHand = 100
       beforeEach(async () =>
         run(async knex => {
-          const { basicDevicePayload, site: { id: siteId } } = context
+          const {
+            basicDevicePayload,
+            site: { id: siteId },
+          } = context
           const consumableAssay = await knex('ConsumableAssay as ca')
             .join('Assay as a', 'ca.assayId', 'a.id')
             .join('DeviceType as dt', 'a.deviceTypeId', 'dt.id')

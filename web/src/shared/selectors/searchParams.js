@@ -3,14 +3,12 @@ const DEFAULT_SORT_DIR = 'asc'
 const DEFAULT_PAGE_AT = 0
 const DEFAULT_PAGE_SIZE = 10
 
-export const makeSortPageSelector = (
-  {
-    sortCol: defaultSortCol = DEFAULT_SORT_COL,
-    sortDir: defaultSortDir = DEFAULT_SORT_DIR,
-    pageAt: defaultPageAt = DEFAULT_PAGE_AT,
-    pageSize: defaultPageSize = DEFAULT_PAGE_SIZE,
-  } = {}
-) => ({ location }) => {
+export const makeSortPageSelector = ({
+  sortCol: defaultSortCol = DEFAULT_SORT_COL,
+  sortDir: defaultSortDir = DEFAULT_SORT_DIR,
+  pageAt: defaultPageAt = DEFAULT_PAGE_AT,
+  pageSize: defaultPageSize = DEFAULT_PAGE_SIZE,
+} = {}) => ({ location }) => {
   const searchParams = new URLSearchParams(location.search)
   return {
     sortCol: searchParams.get('sortCol') || defaultSortCol,
@@ -20,9 +18,10 @@ export const makeSortPageSelector = (
   }
 }
 
-export const makeSearchParamsSanitizer = (
-  { availableSortCol = ['id'], availableSortDir = ['asc', 'desc'] } = {}
-) => location => {
+export const makeSearchParamsSanitizer = ({
+  availableSortCol = ['id'],
+  availableSortDir = ['asc', 'desc'],
+} = {}) => location => {
   const searchParams = new URLSearchParams(location.search)
   let sanitized = false
   if (

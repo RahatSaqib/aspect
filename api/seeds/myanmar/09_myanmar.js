@@ -1,11 +1,11 @@
+module.exports = require('../utils').seed(seed)
+
+const _ = require('lodash')
+const Promise = require('bluebird')
 const { rowsAsObject } = require('../utils')
 const { getPermissionModules } = require('../utils')
 
-module.exports = require('../utils').seed(seed)
-
 const geography = require('./fixtures/geography.json')
-const _ = require('lodash')
-const Promise = require('bluebird')
 
 async function seed(knex) {
   const alertTemplateWithHideFlag = await knex('AlertTemplate')

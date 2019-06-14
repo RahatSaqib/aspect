@@ -1,5 +1,10 @@
 module.exports = require('../utils').seed(seed)
 
+const _ = require('lodash')
+const bcrypt = require('bcrypt')
+const Promise = require('bluebird')
+const { addMilliseconds, addMinutes, subMinutes, subDays } = require('date-fns')
+
 const config = require('../../src/config')
 const {
   getPermissionModules,
@@ -19,21 +24,11 @@ const {
   resultWorkflowStatusToId,
   unitToId,
 } = require('../../src/shared/dictionary')
-const _ = require('lodash')
-const bcrypt = require('bcrypt')
-const Promise = require('bluebird')
 const { randomToken } = require('../../src/deviceApi/apiKey')
 const geography = require('./fixtures/geography.json')
 const patients = require('./fixtures/patients.json')
 const dashboardWidget = require('./fixtures/dashboardWidget.json')
 const { errorCodes } = require('./fixtures/errorCodes.js')
-const {
-  addMilliseconds,
-  addMinutes,
-  subMinutes,
-
-  subDays,
-} = require('date-fns')
 
 const millisInHour = 1000 * 60 * 60
 const millisInMinute = 1000 * 60
@@ -54,7 +49,7 @@ function calculateDateForResult(
 ) {
   const daysToSubtract =
     resultTimeFrameInDays -
-    Math.ceil(currentResult / totalResults * resultTimeFrameInDays)
+    Math.ceil((currentResult / totalResults) * resultTimeFrameInDays)
 
   return addMilliseconds(
     subDays(now, daysToSubtract),
@@ -1697,8 +1692,8 @@ async function seed(knex) {
       siteId: site.id,
       createdOn: new Date(+now - 3 * _.random(10) * millisInHour),
       updatedOn: new Date(+now - _.random(10) * millisInHour),
-      lastPingOn: new Date(+now - _.random(10) * millisInHour / 3),
-      lastSeenOn: new Date(+now - _.random(10) * millisInHour / 3),
+      lastPingOn: new Date(+now - (_.random(10) * millisInHour) / 3),
+      lastSeenOn: new Date(+now - (_.random(10) * millisInHour) / 3),
     })
   )
 
@@ -1730,8 +1725,8 @@ async function seed(knex) {
       deviceId: i === 0 ? routerId : null,
       createdOn: new Date(+now - 3 * i * millisInHour),
       updatedOn: new Date(+now - i * millisInHour),
-      lastPingOn: new Date(+now - i * millisInHour / 3),
-      lastSeenOn: new Date(+now - i * millisInHour / 3),
+      lastPingOn: new Date(+now - (i * millisInHour) / 3),
+      lastSeenOn: new Date(+now - (i * millisInHour) / 3),
       hostId: _.times(8, () =>
         String.fromCharCode(65 + i + (_.random(1) > 0 ? 32 : 0))
       ).join(''),
@@ -1862,7 +1857,7 @@ async function seed(knex) {
         resultSourceId: resultSourceDiagnosticId,
         resultTypeId: resultTypePatientId,
         sampleId: sample.id,
-        sampleRunNumber: `${i % 2 + 1}`,
+        sampleRunNumber: `${(i % 2) + 1}`,
         sampleGroup: `GRP-HIV-${i % 5}`,
         resultCategory1: result.category1,
         resultData: JSON.stringify(resultData),

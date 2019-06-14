@@ -76,7 +76,9 @@ async function getHandlerOptionsFromRequest(
   let plugins = []
   let partnerPluginName
   let deviceTypePluginName
-  const { credentials: { token: deviceApiKeyToken } } = auth
+  const {
+    credentials: { token: deviceApiKeyToken },
+  } = auth
   if (deviceApiKeyToken) {
     ;({ partnerPluginName, deviceTypePluginName } =
       (await knex
@@ -377,7 +379,10 @@ async function updateDeviceConfigurationWithContext(context) {
 }
 
 async function getDeviceOperationWithContext(context) {
-  const { knex, deviceLog: { id: deviceLogId } } = context
+  const {
+    knex,
+    deviceLog: { id: deviceLogId },
+  } = context
   const op = await getDeviceOperation(knex, deviceLogId)
   return op
 }

@@ -299,7 +299,9 @@ const enhanceResults = compose(
     },
 
     onRowClick: ({ history }) => ({
-      currentTarget: { dataset: { resultId } },
+      currentTarget: {
+        dataset: { resultId },
+      },
       // TODO: correct path?
     }) => history.push(`/browse/result/${resultId}`),
   }),

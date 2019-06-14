@@ -330,8 +330,8 @@ export class RouterDetail extends PureComponent {
                       {formatRelative(router.get('createdOn'))}
                     </div>
                     <div className={styles.StatusText}>
-                      {formatMessage(messages.fieldStatus)}
-                      : {router.get('status')}
+                      {formatMessage(messages.fieldStatus)}:{' '}
+                      {router.get('status')}
                       &nbsp;•&nbsp;
                       <Link to="/browse/result">
                         {router.get('totalTests')}{' '}

@@ -38,7 +38,9 @@ const enhance = compose(
     },
 
     onAssayTypeClick: ({ history, location }) => ({
-      currentTarget: { dataset: { assayType } },
+      currentTarget: {
+        dataset: { assayType },
+      },
     }) => {
       const searchParams = new URLSearchParams(location.search)
       const filtersParams = new URLSearchParams(
@@ -54,7 +56,9 @@ const enhance = compose(
     },
 
     onDateRangeClick: ({ history, location }) => ({
-      currentTarget: { dataset: { dateRange } },
+      currentTarget: {
+        dataset: { dateRange },
+      },
     }) => {
       const searchParams = new URLSearchParams(location.search)
       const filtersParams = new URLSearchParams(

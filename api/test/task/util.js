@@ -1,8 +1,9 @@
 const _ = require('lodash')
 const chai = require('chai')
+const Promise = require('bluebird')
+
 const { messageStatusToId } = require('../../src/shared/dictionary')
 const { run } = require('../../src/db')
-const Promise = require('bluebird')
 
 const { assert } = chai
 
@@ -25,7 +26,9 @@ class TaskContextTest {
 
   beforeEach() {
     return run(async knex => {
-      const { auth: { user } } = this
+      const {
+        auth: { user },
+      } = this
       const { userId } = await knex('User')
         .where({ name: user })
         .first('id as userId')

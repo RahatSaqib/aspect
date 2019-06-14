@@ -24,6 +24,7 @@
   margin-left: 20px;
 }
 
-.Summary__Tags__Wrap > div{
-  max-width: calc(100% - 100px); display: inline-block
+.Summary__Tags__Wrap > div {
+  max-width: calc(100% - 100px);
+  display: inline-block;
 }

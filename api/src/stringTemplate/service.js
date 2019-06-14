@@ -403,7 +403,8 @@ function extractNumericViralLoadValue(value) {
           numericValue: numericValue + 1,
           text: `> ${numericStringValue}`,
         }
-      } else if (isRegexMatch(rawValue, '<[\\d|\\s|\\.]+')) {
+      }
+      if (isRegexMatch(rawValue, '<[\\d|\\s|\\.]+')) {
         return {
           numericValue: numericValue - 1,
           text: `< ${numericStringValue}`,

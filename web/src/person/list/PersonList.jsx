@@ -128,7 +128,9 @@ const enhance = compose(
     },
 
     onRowClick: ({ history }) => ({
-      currentTarget: { dataset: { personId } },
+      currentTarget: {
+        dataset: { personId },
+      },
     }) => history.push(`/browse/person/${personId}`),
 
     showNewContactPage: ({ history }) => event => {

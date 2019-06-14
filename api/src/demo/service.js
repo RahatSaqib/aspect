@@ -1,9 +1,5 @@
 const _ = require('lodash')
 const Boom = require('boom')
-const { knex } = require('../db')
-const { getConstraints, addConstraints } = require('../auth/constraints')
-const { groupToken, randomToken } = require('../deviceApi/apiKey')
-
 const {
   createFetch,
   base,
@@ -12,6 +8,10 @@ const {
   method,
   body,
 } = require('http-client')
+
+const { knex } = require('../db')
+const { getConstraints, addConstraints } = require('../auth/constraints')
+const { groupToken, randomToken } = require('../deviceApi/apiKey')
 
 async function getDemoDevice(request) {
   const { auth, params } = request

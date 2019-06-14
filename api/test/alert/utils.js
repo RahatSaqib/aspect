@@ -22,7 +22,9 @@ class AlertTestContext {
 
   runTest(test) {
     return run(async knex => {
-      const { auth: { user } } = this
+      const {
+        auth: { user },
+      } = this
       const { userId } = await knex('User')
         .where({ name: user })
         .first('id as userId')

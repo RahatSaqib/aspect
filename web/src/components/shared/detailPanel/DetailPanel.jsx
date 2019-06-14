@@ -23,7 +23,11 @@ const enhance = _.identity
 const format = (type, intl) =>
   type === 'number'
     ? intl.formatNumber
-    : type === 'date' ? formatDate : type === 'time' ? formatDateTime : null
+    : type === 'date'
+    ? formatDate
+    : type === 'time'
+    ? formatDateTime
+    : null
 
 const makeLink = (template, data) => {
   try {

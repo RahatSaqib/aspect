@@ -43,6 +43,10 @@
       "web/src/**/*.jsx": [
         "eslint --fix",
         "git add"
+      ],
+      "web/*.js": [
+        "eslint --fix",
+        "git add"
       ]
     }
   },

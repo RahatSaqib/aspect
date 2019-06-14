@@ -28,7 +28,10 @@ import messages from './messages'
 const cssClasses = classnames.bind(require('./Status.css'))
 
 const getIssueIdsFromSummaryList = (key, summaryList) =>
-  _fp.pipe(_fp.flatMap(_fp.prop([key])), _fp.uniq)(summaryList)
+  _fp.pipe(
+    _fp.flatMap(_fp.prop([key])),
+    _fp.uniq
+  )(summaryList)
 
 function getFillColor({ id, activeSiteIds, issueSiteIds }) {
   if (_.includes(activeSiteIds, id)) {

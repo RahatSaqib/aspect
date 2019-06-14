@@ -163,11 +163,14 @@ SiteDetail.propTypes = {
   updateTags: PropTypes.func.isRequired,
   updateLatLongFromFormAddress: PropTypes.func.isRequired,
 }
-export default connect(mapStateToProps, {
-  fetchSingleSite,
-  updateSingleSiteFromForm,
-  fetchSiteContacts,
-  fetchTags,
-  updateTags,
-  updateLatLongFromFormAddress,
-})(SiteDetail)
+export default connect(
+  mapStateToProps,
+  {
+    fetchSingleSite,
+    updateSingleSiteFromForm,
+    fetchSiteContacts,
+    fetchTags,
+    updateTags,
+    updateLatLongFromFormAddress,
+  }
+)(SiteDetail)

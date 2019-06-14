@@ -321,7 +321,10 @@ async function getDeviceByDeviceId({
 }
 
 async function getDeviceByRequest(request, fields = SELECT_SHOW_FIELDS) {
-  const { auth: { credentials }, params: { deviceId } } = request
+  const {
+    auth: { credentials },
+    params: { deviceId },
+  } = request
 
   return getDeviceByDeviceId({
     deviceId,
@@ -523,7 +526,11 @@ async function getDevice(deviceId) {
 }
 
 async function updateDeviceMaintenance(request) {
-  const { auth: { credentials }, params, payload } = request
+  const {
+    auth: { credentials },
+    params,
+    payload,
+  } = request
   const dataConstraints = await getConstraints(credentials)
 
   let device = await knex('Device as d')

@@ -1,8 +1,9 @@
 module.exports = require('../utils').seed(seed)
 
-const _ = require('lodash')
-const config = require('../../src/config')
 const bcrypt = require('bcrypt')
+const _ = require('lodash')
+
+const config = require('../../src/config')
 
 const {
   rowsAsObject,

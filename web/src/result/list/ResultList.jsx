@@ -192,7 +192,9 @@ const enhance = compose(
     },
 
     onRowClick: ({ history }) => ({
-      currentTarget: { dataset: { resultId } },
+      currentTarget: {
+        dataset: { resultId },
+      },
     }) => history.push(`/browse/result/${resultId}`),
   }),
   lifecycle({

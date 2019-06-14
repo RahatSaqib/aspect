@@ -3031,8 +3031,12 @@ describe('Device API routes for GxAlert Device', () => {
           expectedStatusCode: 200,
         })
 
-        const { body: { result: firstResult } } = firstResponse
-        const { body: { result: secondResult } } = secondResponse
+        const {
+          body: { result: firstResult },
+        } = firstResponse
+        const {
+          body: { result: secondResult },
+        } = secondResponse
         assert.equal(secondResult.id, firstResult.id)
         assert.equal(secondResult.createdOn, firstResult.createdOn)
         expect(JSON.parse(secondResult.resultData)).to.containSubset(
@@ -3776,7 +3780,9 @@ describe('Device API routes for GxAlert Device', () => {
               .where('d.id', firstResponse.body.device.id)
               .first('d.siteId')
             const {
-              body: { result: { id: resultIdAfterFirstRequest } },
+              body: {
+                result: { id: resultIdAfterFirstRequest },
+              },
             } = firstResponse
 
             const inventoryItemsAfterFirstRequest = await knex('InventoryItem')
@@ -3871,7 +3877,9 @@ describe('Device API routes for GxAlert Device', () => {
               .first('d.siteId')
             assert.equal(siteIdFromSecondRequest, siteIdFromFirstRequest)
             const {
-              body: { result: { id: resultIdAfterSecondRequest } },
+              body: {
+                result: { id: resultIdAfterSecondRequest },
+              },
             } = secondResponse
             assert.equal(resultIdAfterSecondRequest, resultIdAfterFirstRequest)
 

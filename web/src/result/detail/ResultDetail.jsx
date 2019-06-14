@@ -230,7 +230,11 @@ export class ResultDetail extends PureComponent {
   }
 
   handleFetchResult = () => {
-    const { match: { params: { resultId } } } = this.props
+    const {
+      match: {
+        params: { resultId },
+      },
+    } = this.props
     this.props.fetchSingleResult(resultId)
 
     this.props.fetchResultLog(resultId)
@@ -285,7 +289,10 @@ export class ResultDetail extends PureComponent {
   }
 
   renderRawResult() {
-    const { intl: { formatMessage }, deviceLogs } = this.props
+    const {
+      intl: { formatMessage },
+      deviceLogs,
+    } = this.props
     const logs = deviceLogs.toJS()
 
     return (
@@ -384,7 +391,9 @@ export class ResultDetail extends PureComponent {
         <ExpansionPanelHeader label={sectionLabel}>
           <div className={cssClasses('FormDataContainer')}>
             {fieldKeys.map(formFieldKey => {
-              const { intl: { formatMessage } } = this.props
+              const {
+                intl: { formatMessage },
+              } = this.props
               const fieldSchema = result.getIn([
                 'formSchema',
                 'fields',
@@ -432,7 +441,11 @@ export class ResultDetail extends PureComponent {
   }
 
   renderImagesSection() {
-    const { intl: { formatMessage }, result, token } = this.props
+    const {
+      intl: { formatMessage },
+      result,
+      token,
+    } = this.props
 
     const files = result.get('files') || Immutable.List()
     const totalFiles = files.count()
@@ -609,7 +622,9 @@ export class ResultDetail extends PureComponent {
   }
 
   render() {
-    const { intl: { formatMessage } } = this.props
+    const {
+      intl: { formatMessage },
+    } = this.props
 
     return (
       <div className={cssClasses('Container')}>

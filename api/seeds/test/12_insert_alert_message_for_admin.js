@@ -1,7 +1,7 @@
 module.exports = require('../utils').seed(seed)
 
-const { messageStatusToId } = require('../../src/shared/dictionary')
 const Promise = require('bluebird')
+const { messageStatusToId } = require('../../src/shared/dictionary')
 
 async function seed(knex) {
   const { userId } = await knex('User')

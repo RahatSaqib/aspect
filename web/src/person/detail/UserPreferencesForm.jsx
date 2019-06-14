@@ -102,9 +102,9 @@ export const UserPreferencesForm = ({
             <span>
               <FlagIcon
                 withRightMargin
-                countryIsoAlpha2Code={item.iso_alpha2_code}
+                countryIsoAlpha2Code={item.isoAlpha2Code}
               />
-              {item.language_name}
+              {item.languageName}
             </span>
           </MenuItem>
         ))}

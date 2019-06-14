@@ -5,7 +5,9 @@ function getRemoteAddress(request) {
 
   return forwardedFor
     ? forwardedFor.split(',')[0]
-    : request.info ? request.info.remoteAddress : ''
+    : request.info
+    ? request.info.remoteAddress
+    : ''
 }
 
 module.exports = {

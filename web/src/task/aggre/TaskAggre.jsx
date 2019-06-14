@@ -103,8 +103,11 @@ const enhance = compose(
       history.goBack()
     },
 
-    onRowClick: ({ history }) => ({ currentTarget: { dataset: { taskId } } }) =>
-      history.push(`/task-list/${taskId}`),
+    onRowClick: ({ history }) => ({
+      currentTarget: {
+        dataset: { taskId },
+      },
+    }) => history.push(`/task-list/${taskId}`),
   }),
   lifecycle({
     componentWillMount() {

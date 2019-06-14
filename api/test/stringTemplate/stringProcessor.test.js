@@ -2,9 +2,10 @@ const _ = require('lodash')
 const proxyquire = require('proxyquire')
 const Promise = require('bluebird')
 const { assert, expect } = require('chai')
+const { convertToTimeZone } = require('date-fns-timezone')
+
 const { runTest } = require('../utils/generatorFunctionUtils')
 const { formatDateOrDefault } = require('../../src/shared/date')
-const { convertToTimeZone } = require('date-fns-timezone')
 
 describe('stringTemplate', () => {
   describe('processUsingHandlebarsSyntax', () => {
@@ -1314,12 +1315,8 @@ describe('stringTemplate', () => {
           const patientData = JSON.parse(dataSource.resultPatientData)
           assert.equal(
             message.payload,
-            `GxAlert. ${dataSource.expectedTitle} ${
-              dataSource.siteShortName
-            }; ` +
-              `in Ward: ${formData.ward}; Sample ID: ${
-                dataSource.sampleExternalId
-              };  ` +
+            `GxAlert. ${dataSource.expectedTitle} ${dataSource.siteShortName}; ` +
+              `in Ward: ${formData.ward}; Sample ID: ${dataSource.sampleExternalId};  ` +
               `Patient ID: ${patientData.id} on ${formatDateOrDefault(
                 dataSource.resultEndedOn,
                 displayPreferences.dateFormat

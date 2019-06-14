@@ -259,11 +259,18 @@ const cleanFormat = str => {
   return _.filter(str, c => keys.includes(c)).join('')
 }
 
-const normalizeFormat = _fp.pipe(uniqLastRepeatStr, _fp.join(''), pruneFormat)
+const normalizeFormat = _fp.pipe(
+  uniqLastRepeatStr,
+  _fp.join(''),
+  pruneFormat
+)
 
 const normalizeDateFormat = normalizeFormat
 
-const normalizeTimeFormat = _fp.pipe(_fp.replace(/s/g, ''), normalizeFormat)
+const normalizeTimeFormat = _fp.pipe(
+  _fp.replace(/s/g, ''),
+  normalizeFormat
+)
 
 const getDateTimeFormat = ({ dateFormat = '', timeFormat = '' }) =>
   dateFormat + timeFormat
@@ -301,7 +308,11 @@ const getOrderList = _fp.pipe(
   _fp.filter(c => Object.keys(dateTimeKeyMap).includes(c))
 )
 
-const normalizeText = _fp.pipe(_fp.trim, _fp.deburr, _fp.toLower)
+const normalizeText = _fp.pipe(
+  _fp.trim,
+  _fp.deburr,
+  _fp.toLower
+)
 
 const findOptionByValue = (value, options) =>
   options.find(option => option.value === value)

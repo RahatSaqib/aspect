@@ -218,7 +218,8 @@ async function onResultLogged({ resultId }, { messageContext }) {
               .where('r.moduleSerial', module.moduleSerial)
               .whereNotIn('r.moduleSerial', replacedModuleSerials)
               .count('r.id as moduleResultCount')
-            const prcntModuleError = module.errorCount / moduleResultCount * 100
+            const prcntModuleError =
+              (module.errorCount / moduleResultCount) * 100
             allModulesErr = allModulesErr && prcntModuleError > maxPrcntErrors
             // count errors from all modules
             allModulesTotalErrors += module.errorCount
@@ -239,7 +240,8 @@ async function onResultLogged({ resultId }, { messageContext }) {
               .where('r.moduleSerial', module.moduleSerial)
               .whereNotIn('r.moduleSerial', replacedModuleSerials)
               .count('r.id as moduleResultCount')
-            const prcntModuleError = module.errorCount / moduleResultCount * 100
+            const prcntModuleError =
+              (module.errorCount / moduleResultCount) * 100
             if (
               prcntModuleError > maxPrcntErrors &&
               // LU Generic Module: Minimum of 6 errors
@@ -326,7 +328,8 @@ async function onResultLogged({ resultId }, { messageContext }) {
               .where('r.endedOn', '>=', last30day)
               .where('r.moduleSerial', module.moduleSerial)
               .count('r.id as moduleResultCount')
-            const prcntModuleError = module.errorCount / moduleResultCount * 100
+            const prcntModuleError =
+              (module.errorCount / moduleResultCount) * 100
             allModulesErr =
               allModulesErr && prcntModuleError > minPrcntModuleUnknownErrors
             totalResults[module.moduleSerial] = moduleResultCount
@@ -345,7 +348,8 @@ async function onResultLogged({ resultId }, { messageContext }) {
           // Check for module issue
           _.map(modules, async module => {
             const moduleResultCount = totalResults[module.moduleSerial]
-            const prcntModuleError = module.errorCount / moduleResultCount * 100
+            const prcntModuleError =
+              (module.errorCount / moduleResultCount) * 100
             if (
               prcntModuleError > maxPrcntErrors &&
               // LU Module Unknown Error: Minimum of 6 errors
@@ -380,7 +384,7 @@ async function onResultLogged({ resultId }, { messageContext }) {
       .count('r.id as machineResultCount')
 
     if (machineResultCount !== 0) {
-      const prcntNoResult = noResultCount / machineResultCount * 100
+      const prcntNoResult = (noResultCount / machineResultCount) * 100
       if (
         (prcntNoResult > maxPrcntMachinePowerErrors &&
           noResultCount >= machinePowerMinNoResults) ||

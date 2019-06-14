@@ -2,6 +2,8 @@
 // configuration =========
 // =======================
 const _ = require('lodash')
+const Hapi = require('hapi')
+
 const config = require('./config')
 const { version } = require('./../package.json')
 const { addClientRoutes, addDeviceRoutes } = require('./routes')
@@ -10,7 +12,6 @@ const { addSubscriptions } = require('./subscriptions')
 const { startScheduler } = require('./scheduler')
 const { addLoggers } = require('./logger/service')
 const deviceApiKeyPlugin = require('./deviceApi/deviceApiKeyPlugin')
-const Hapi = require('hapi')
 
 const server = new Hapi.Server()
 const port = process.env.PORT || 8080
@@ -26,7 +27,10 @@ server.connection({
   },
 })
 
-const { swagger: { enabled: swaggerEnabled }, raven } = config
+const {
+  swagger: { enabled: swaggerEnabled },
+  raven,
+} = config
 
 // Load Raven (Sentry) plugin if configured
 const ravenPlugins = raven
@@ -41,7 +45,7 @@ const ravenPlugins = raven
 // Load Swagger documentation if configured
 const swaggerPlugins = swaggerEnabled
   ? [
-      require('vision'),
+      require('vision'), // eslint-disable-line import/order
       {
         register: require('hapi-swagger'),
         options: {
@@ -68,16 +72,16 @@ const swaggerPlugins = swaggerEnabled
 
 const plugins = [
   ...ravenPlugins,
-  require('inert'),
+  require('inert'), // eslint-disable-line import/order
   ...swaggerPlugins,
   // JWT for authentication in client API
-  require('hapi-auth-jwt2'),
+  require('hapi-auth-jwt2'), // eslint-disable-line import/order
 
   // API Key in Device API
   deviceApiKeyPlugin,
 
   // Basic authentication in Device API
-  require('hapi-auth-basic'),
+  require('hapi-auth-basic'), // eslint-disable-line import/order
 
   // Set payload prior to validation transformation
   rawPayloadPlugin,

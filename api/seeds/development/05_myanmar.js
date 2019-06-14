@@ -2,18 +2,18 @@ module.exports = require('../utils').seed(seed)
 
 const bcrypt = require('bcrypt')
 const _ = require('lodash')
-
-const config = require('../../src/config')
-const myanmarSites = require('./fixtures/myanmarSites.json')
-let patients = require('./fixtures/patients.json')
-const dashboardWidget = require('./fixtures/myanmarDashboardWidget.json')
-const { errorCodes } = require('./fixtures/errorCodes.js')
 const {
   addMilliseconds,
   addMinutes,
   subDays,
   differenceInDays,
 } = require('date-fns')
+
+const config = require('../../src/config')
+const myanmarSites = require('./fixtures/myanmarSites.json')
+let patients = require('./fixtures/patients.json')
+const dashboardWidget = require('./fixtures/myanmarDashboardWidget.json')
+const { errorCodes } = require('./fixtures/errorCodes.js')
 const {
   rowsAsObject,
   getPermissionModules,
@@ -583,7 +583,7 @@ async function seed(knex) {
                   resultSourceId,
                   resultTypeId,
                   sampleId: sample.id,
-                  sampleRunNumber: `${i % 2 + 1}`,
+                  sampleRunNumber: `${(i % 2) + 1}`,
                   sampleGroup: `GRP-TB-${i % 5}`,
                   resultCategory1: result.category1,
                   resultCategory2: result.category2,
@@ -1110,7 +1110,7 @@ function calculateDateForResult(
 ) {
   const daysToSubtract =
     resultTimeFrameInDays -
-    Math.ceil(currentResult / totalResults * resultTimeFrameInDays)
+    Math.ceil((currentResult / totalResults) * resultTimeFrameInDays)
 
   return addMilliseconds(
     subDays(now, daysToSubtract),

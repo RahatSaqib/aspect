@@ -314,7 +314,11 @@ const enhance = compose(
     },
 
     onSelectedChange: ({ dialogState, onChangeDialogState }) => (
-      { target: { dataset: { deviceApiKeyId } } },
+      {
+        target: {
+          dataset: { deviceApiKeyId },
+        },
+      },
       isInputChecked
     ) => {
       const { assignerValues } = dialogState
@@ -332,7 +336,11 @@ const enhance = compose(
     },
 
     onRevokedChange: ({ updateSingleDeviceApiKey }) => (event, revoked) => {
-      const { target: { dataset: { deviceApiKeyId } } } = event
+      const {
+        target: {
+          dataset: { deviceApiKeyId },
+        },
+      } = event
       updateSingleDeviceApiKey(deviceApiKeyId, {
         revoked,
       })

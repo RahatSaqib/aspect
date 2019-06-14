@@ -124,7 +124,9 @@ function processTaskResults(dataWithFilteredIssueCategory, total) {
   return result
 }
 async function getTask(request) {
-  const { params: { taskId } } = request
+  const {
+    params: { taskId },
+  } = request
   const loggedUserName = request.auth.credentials.name
   const accountDetails = await getAccountDetailsForUsername(loggedUserName)
 

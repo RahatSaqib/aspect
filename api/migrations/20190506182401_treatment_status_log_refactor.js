@@ -7,8 +7,7 @@ async function up(knex) {
     t.dropColumn('resultTreatmentStatusId')
   })
   await knex.schema.alterTable('ResultTreatmentStatusLog', t => {
-    t
-      .integer('resultTreatmentStatusId')
+    t.integer('resultTreatmentStatusId')
       .unsigned()
       .after('resultId')
       .nullable()
@@ -26,8 +25,7 @@ async function down(knex) {
     t.dropColumn('resultTreatmentStatusId')
   })
   await knex.schema.alterTable('ResultTreatmentStatusLog', t => {
-    t
-      .integer('resultTreatmentStatusId')
+    t.integer('resultTreatmentStatusId')
       .unsigned()
       .after('resultId')
       .notNullable()
