@@ -38,7 +38,8 @@ function pageParams(queryBuilder, params) {
 function getWhereArgs(columnName, paramValue) {
   if (_.isString(paramValue)) {
     return [columnName, 'like', `%${paramValue}%`]
-  } else if (_.isArray(paramValue)) {
+  }
+  if (_.isArray(paramValue)) {
     return [columnName, paramValue]
   }
   return [columnName, '=', paramValue]

@@ -1,4 +1,9 @@
 const _ = require('lodash')
+const addDays = require('date-fns/addDays')
+const subDays = require('date-fns/subDays')
+const isAfter = require('date-fns/isAfter')
+const differenceInDays = require('date-fns/differenceInDays')
+
 const { knex, filterParams, filterDateRangeParams } = require('../db')
 const {
   getConstraints,
@@ -9,10 +14,6 @@ const {
   canViewInventories,
   canEditInventories,
 } = require('../auth/constraints')
-const addDays = require('date-fns/addDays')
-const subDays = require('date-fns/subDays')
-const isAfter = require('date-fns/isAfter')
-const differenceInDays = require('date-fns/differenceInDays')
 const { getUser, hasFeature } = require('../auth/service')
 const { processDynamicMessage } = require('../stringTemplate/service')
 

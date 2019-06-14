@@ -95,7 +95,8 @@
   font-weight: var(--lato-font-weight-bold);
 }
 
-.Navigation--vertical .Link__link::after, .Navigation--horizontal .Link__link::after {
+.Navigation--vertical .Link__link::after,
+.Navigation--horizontal .Link__link::after {
   /* provides placeholder content for bold font: https://stackoverflow.com/a/20249560 */
   display: block;
   content: attr(title);

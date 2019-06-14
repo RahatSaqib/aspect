@@ -65,7 +65,9 @@
       {
         "semi": false,
         "singleQuote": true,
-        "trailingComma": "es5"
+        "trailingComma": "es5",
+        "eol": "lf",
+        "parser": "babel"
       }
     ],
     "react/no-multi-comp": "off",

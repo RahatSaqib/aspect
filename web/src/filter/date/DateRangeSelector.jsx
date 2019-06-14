@@ -156,7 +156,9 @@ export class DateRangeSelector extends PureComponent {
   }
 
   getDaysSelectList = () => {
-    const { intl: { formatMessage, formatDate } } = this.props
+    const {
+      intl: { formatMessage, formatDate },
+    } = this.props
     const now = new Date()
     const yesterday = subtractDays(now, 1)
     const daysBeforeYesterday = []
@@ -196,7 +198,9 @@ export class DateRangeSelector extends PureComponent {
   }
 
   getWeeksSelectList = () => {
-    const { intl: { formatMessage, formatDate } } = this.props
+    const {
+      intl: { formatMessage, formatDate },
+    } = this.props
     const now = new Date()
     const last7DaysStart = subtractDays(now, 7)
     const thisWeekStart = startOfWeek(now)
@@ -263,7 +267,9 @@ export class DateRangeSelector extends PureComponent {
   }
 
   getMonthsSelectList = () => {
-    const { intl: { formatMessage, formatDate } } = this.props
+    const {
+      intl: { formatMessage, formatDate },
+    } = this.props
     const now = new Date()
     const last30DaysStart = subtractDays(now, 30)
     const thisMonthStart = startOfMonth(now)
@@ -322,7 +328,9 @@ export class DateRangeSelector extends PureComponent {
   }
 
   getQuartersSelectList = () => {
-    const { intl: { formatMessage, formatDate } } = this.props
+    const {
+      intl: { formatMessage, formatDate },
+    } = this.props
     const now = new Date()
     const thisQuarterStart = startOfQuarter(now)
     const thisQuarterEnd = endOfQuarter(now)
@@ -351,7 +359,9 @@ export class DateRangeSelector extends PureComponent {
   }
 
   getYearsSelectList = () => {
-    const { intl: { formatMessage, formatDate } } = this.props
+    const {
+      intl: { formatMessage, formatDate },
+    } = this.props
     const now = new Date()
     const thisYearStart = startOfYear(now)
     const thisYearEnd = endOfYear(now)

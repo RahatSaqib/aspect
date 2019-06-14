@@ -114,7 +114,9 @@ const StrongPasswordInput = ({
 
   const passwordStrengthScore = passwordStrengthResults.isWeak
     ? 30
-    : passwordStrengthResults.isStrong ? 100 : 60
+    : passwordStrengthResults.isStrong
+    ? 100
+    : 60
   const iconStyle = {
     lineHeight: '1.3em',
     width: '1.3em',
@@ -138,12 +140,14 @@ const StrongPasswordInput = ({
   const strengthMessage = passwordStrengthResults.isStrong
     ? formatMessage(messages.passwordStrengthMeterStrong)
     : passwordStrengthResults.isWeak
-      ? formatMessage(messages.passwordStrengthMeterWeak)
-      : formatMessage(messages.passwordStrengthMeterOkay)
+    ? formatMessage(messages.passwordStrengthMeterWeak)
+    : formatMessage(messages.passwordStrengthMeterOkay)
 
   const strengthMessageStyle = passwordStrengthResults.isStrong
     ? strongStyle
-    : passwordStrengthResults.isWeak ? weakStyle : okayStyle
+    : passwordStrengthResults.isWeak
+    ? weakStyle
+    : okayStyle
 
   return (
     <div>
@@ -177,8 +181,8 @@ const StrongPasswordInput = ({
               barColorPrimary: passwordStrengthResults.isWeak
                 ? classesMap.linearColorError
                 : passwordStrengthResults.isStrong
-                  ? classesMap.linearColorSuccess
-                  : classesMap.linearColorWarning,
+                ? classesMap.linearColorSuccess
+                : classesMap.linearColorWarning,
             }}
             variant="determinate"
             value={passwordStrengthScore}

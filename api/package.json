@@ -68,6 +68,10 @@
       "api/seeds/**/*.js": [
         "eslint --fix",
         "git add"
+      ],
+      "api/*.js": [
+        "eslint --fix",
+        "git add"
       ]
     }
   },

@@ -74,6 +74,9 @@ function mapDispatchToProps(dispatch) {
   )
 }
 
-export default _.flowRight(connect(mapStateToProps, mapDispatchToProps))(
-  ResultWorkflowStatusSelectField
-)
+export default _.flowRight(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )
+)(ResultWorkflowStatusSelectField)

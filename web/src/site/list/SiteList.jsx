@@ -145,12 +145,19 @@ const enhance = compose(
 
     onAlertClick: ({ history }) => event => {
       event.stopPropagation()
-      const { currentTarget: { dataset: { siteId } } } = event
+      const {
+        currentTarget: {
+          dataset: { siteId },
+        },
+      } = event
       history.push(`/browse/site/${siteId}/alerts`)
     },
 
-    onRowClick: ({ history }) => ({ currentTarget: { dataset: { siteId } } }) =>
-      history.push(`/browse/site/${siteId}`),
+    onRowClick: ({ history }) => ({
+      currentTarget: {
+        dataset: { siteId },
+      },
+    }) => history.push(`/browse/site/${siteId}`),
   }),
   lifecycle({
     componentWillMount() {

@@ -1,8 +1,9 @@
 const _ = require('lodash')
 const chai = require('chai')
+const Promise = require('bluebird')
+
 const { messageStatusToId } = require('../../src/shared/dictionary')
 const { run } = require('../../src/db')
-const Promise = require('bluebird')
 
 const { assert } = chai
 

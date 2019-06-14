@@ -79,9 +79,7 @@ const styles = theme => ({
     right: 0,
     overflowY: 'auto',
     overflowX: 'hidden',
-    maxHeight: `calc(${theme.typography.button.lineHeight} * ${
-      theme.typography.button.fontSize
-    } * 10)`,
+    maxHeight: `calc(${theme.typography.button.lineHeight} * ${theme.typography.button.fontSize} * 10)`,
   },
   inputRoot: {
     flexWrap: 'wrap',

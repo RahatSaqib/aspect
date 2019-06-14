@@ -123,7 +123,9 @@ const enhance = compose(
       }
     },
     onRowClick: ({ history }) => ({
-      currentTarget: { dataset: { routerId } },
+      currentTarget: {
+        dataset: { routerId },
+      },
     }) => history.push(`/browse/router/${routerId}`),
   }),
   lifecycle({

@@ -1,7 +1,8 @@
 module.exports = require('../utils').seed(seed)
 
-const config = require('../../src/config')
 const bcrypt = require('bcrypt')
+
+const config = require('../../src/config')
 const {
   getPermissionModules,
   assignAllFeaturesToJobFunctionIds,

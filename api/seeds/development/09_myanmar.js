@@ -1,14 +1,14 @@
+module.exports = require('../utils').seed(seed)
+
+const _ = require('lodash')
+const Promise = require('bluebird')
+
 const { rowsAsObject, updateUnknownErrorOnModuleMessage } = require('../utils')
 const {
   getPermissionModules,
   upsertIssueResolutionTrigger,
 } = require('../utils')
-
-module.exports = require('../utils').seed(seed)
-
 const geography = require('./fixtures/geography.json')
-const _ = require('lodash')
-const Promise = require('bluebird')
 const { updateDashboardWidgetQueries } = require('../utils_myanmar')
 const {
   updateDataCategoryNotificationTypeForRO,

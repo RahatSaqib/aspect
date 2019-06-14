@@ -88,7 +88,9 @@ const enhance = compose(
     onActionListClick: ({ history }) => event => {
       event.stopPropagation()
       const {
-        currentTarget: { dataset: { siteId, deviceId, resultId } },
+        currentTarget: {
+          dataset: { siteId, deviceId, resultId },
+        },
       } = event
       if (resultId) {
         history.push(`/browse/result/${resultId}`)
@@ -233,18 +235,16 @@ export const ActionStatus = ({
             ]}
           />
           <TableBody>
-            {actionSummaryMap
-              .get(selectedCategory, EMPTY_LIST)
-              .map(action => (
-                <ActionDataTableRow
-                  key={action.get('id')}
-                  intl={intl}
-                  messages={messages}
-                  action={action}
-                  onActionListClick={onActionListClick}
-                  sortingProps={sortingProps}
-                />
-              ))}
+            {actionSummaryMap.get(selectedCategory, EMPTY_LIST).map(action => (
+              <ActionDataTableRow
+                key={action.get('id')}
+                intl={intl}
+                messages={messages}
+                action={action}
+                onActionListClick={onActionListClick}
+                sortingProps={sortingProps}
+              />
+            ))}
           </TableBody>
         </ActionDataTable>
         {!actionSummaryMap.has(selectedCategory) && (

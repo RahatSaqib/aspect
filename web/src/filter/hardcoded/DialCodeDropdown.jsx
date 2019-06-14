@@ -17,15 +17,13 @@ import dialCodes from './dialCodes'
 
 const cssClasses = classnames.bind(require('./DialCodeDropdown.css'))
 
-const countryBy = _.keyBy(countries, 'iso_alpha2_code')
+const countryBy = _.keyBy(countries, 'isoAlpha2Code')
 
-const dialCodesWithCountry = dialCodes.map(
-  ({ dial_code, iso_alpha2_code }) => ({
-    iso_alpha2_code,
-    dial_code,
-    country_name: countryBy[iso_alpha2_code].name,
-  })
-)
+const dialCodesWithCountry = dialCodes.map(({ dialCode, isoAlpha2Code }) => ({
+  isoAlpha2Code,
+  dialCode,
+  countryName: countryBy[isoAlpha2Code].name,
+}))
 
 const renderInput = ({
   selectedItem,
@@ -45,7 +43,7 @@ const renderInput = ({
         {selectedItem && (
           <FlagIcon
             withRightMargin
-            countryIsoAlpha2Code={selectedItem.iso_alpha2_code}
+            countryIsoAlpha2Code={selectedItem.isoAlpha2Code}
           />
         )}
       </InputAdornment>
@@ -60,11 +58,7 @@ const renderInput = ({
 
 const renderMenuItem = ({ index, style, key, getItemProps, selectedItem }) => {
   const item = dialCodesWithCountry[index]
-  const {
-    dial_code: dialCode,
-    iso_alpha2_code: countryIsoAlpha2Code,
-    country_name: countryName,
-  } = item
+  const { dialCode, isoAlpha2Code, countryName } = item
   const itemProps = getItemProps({ item })
   const isSelected = selectedItem === item
 
@@ -76,7 +70,7 @@ const renderMenuItem = ({ index, style, key, getItemProps, selectedItem }) => {
       selected={isSelected}
       {...itemProps}
     >
-      <FlagIcon withRightMargin countryIsoAlpha2Code={countryIsoAlpha2Code} />
+      <FlagIcon withRightMargin isoAlpha2Code={isoAlpha2Code} />
       <span>
         {countryName} ({dialCode})
       </span>
@@ -84,7 +78,7 @@ const renderMenuItem = ({ index, style, key, getItemProps, selectedItem }) => {
   )
 }
 
-const itemToString = item => (item ? item.dial_code : '')
+const itemToString = item => (item ? item.dialCode : '')
 
 export const DialCodeDropdown = ({ className, ...props }) => {
   const popperNode = useRef(null)

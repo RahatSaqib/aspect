@@ -200,7 +200,7 @@ export const TargetStatus = ({
     parseFloat(target.get('thresholdPercentageDataCollection'))
 
   const getProgressValue = target =>
-    `${Math.round(target.get('count') / target.get('target') * 100)}%`
+    `${Math.round((target.get('count') / target.get('target')) * 100)}%`
 
   return (
     isShow &&

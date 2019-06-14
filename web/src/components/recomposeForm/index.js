@@ -13,14 +13,13 @@ export const errorProps = ({ touched, error } = {}) =>
       }
     : {}
 
-const mapFieldNames = _fp.map(
-  fieldNameLike =>
-    _fp.isObject(fieldNameLike)
-      ? fieldNameLike
-      : {
-          fieldName: fieldNameLike,
-          valueFromChangeEvent: normalChangeEventReader,
-        }
+const mapFieldNames = _fp.map(fieldNameLike =>
+  _fp.isObject(fieldNameLike)
+    ? fieldNameLike
+    : {
+        fieldName: fieldNameLike,
+        valueFromChangeEvent: normalChangeEventReader,
+      }
 )
 
 const createFieldListHandlers = _fp.reduce(

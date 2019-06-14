@@ -30,9 +30,7 @@ const styles = theme => ({
     right: 0,
     overflowY: 'auto',
     overflowX: 'hidden',
-    maxHeight: `calc(${theme.typography.button.lineHeight} * ${
-      theme.typography.button.fontSize
-    } * 10)`,
+    maxHeight: `calc(${theme.typography.button.lineHeight} * ${theme.typography.button.fontSize} * 10)`,
   },
   chip: {
     backgroundColor:
@@ -250,7 +248,6 @@ TagInput.propTypes = {
 TagInput.defaultProps = {
   disabled: false,
   fullWidth: true,
-  maxTags: 10,
   source: [],
   value: [],
 }

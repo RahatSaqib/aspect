@@ -1,9 +1,10 @@
 const _ = require('lodash')
-const config = require('./config')
 const amqp = require('amqplib')
-const { run, transact } = require('./db')
 const EventEmitter = require('events')
 const debug = require('debug')('aspect:mq')
+
+const config = require('./config')
+const { run, transact } = require('./db')
 
 const exchange = 'aspect'
 

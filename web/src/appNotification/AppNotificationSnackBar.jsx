@@ -30,7 +30,12 @@ const genericMessages = defineMessages({
   },
 })
 
-const enhance = _.flowRight(connect(mapStateToProps, mapDispatchToProps))
+const enhance = _.flowRight(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )
+)
 
 const styles = {
   info: {

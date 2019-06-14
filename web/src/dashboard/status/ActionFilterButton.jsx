@@ -34,8 +34,8 @@ export const ActionFilterButton = ({
           actions.some(x => x.get('status') === 'Active')
             ? 'active'
             : actions.some(x => x.get('status') === 'Acknowledged')
-              ? 'acknowledged'
-              : 'ok'
+            ? 'acknowledged'
+            : 'ok'
         }
       />
 

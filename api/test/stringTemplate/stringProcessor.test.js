@@ -2,9 +2,10 @@ const _ = require('lodash')
 const proxyquire = require('proxyquire')
 const Promise = require('bluebird')
 const { assert, expect } = require('chai')
+const { convertToTimeZone } = require('date-fns-timezone')
+
 const { runTest } = require('../utils/generatorFunctionUtils')
 const { formatDateOrDefault } = require('../../src/shared/date')
-const { convertToTimeZone } = require('date-fns-timezone')
 
 describe('stringTemplate', () => {
   describe('processUsingHandlebarsSyntax', () => {

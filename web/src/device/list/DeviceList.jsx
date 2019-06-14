@@ -142,11 +142,17 @@ const enhance = compose(
       }
     },
     onRowClick: ({ history }) => ({
-      currentTarget: { dataset: { deviceId } },
+      currentTarget: {
+        dataset: { deviceId },
+      },
     }) => history.push(`/browse/device/${deviceId}`),
     onAlertClick: ({ history }) => event => {
       event.stopPropagation()
-      const { currentTarget: { dataset: { deviceId } } } = event
+      const {
+        currentTarget: {
+          dataset: { deviceId },
+        },
+      } = event
       history.push(`/browse/device/${deviceId}/alerts`)
     },
   }),

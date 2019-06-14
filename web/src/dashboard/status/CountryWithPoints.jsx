@@ -244,11 +244,19 @@ const CountryWithPoints = ({
     rawMargin
   )
 
-  const onMouseEnter = ({ target: { dataset: { pointId } } }) => {
+  const onMouseEnter = ({
+    target: {
+      dataset: { pointId },
+    },
+  }) => {
     onMouseEnterPoint(pointId)
   }
 
-  const onMouseLeave = ({ target: { dataset: { pointId } } }) => {
+  const onMouseLeave = ({
+    target: {
+      dataset: { pointId },
+    },
+  }) => {
     onMouseLeavePoint(pointId)
   }
 

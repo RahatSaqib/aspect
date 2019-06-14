@@ -66,9 +66,11 @@ const NotificationDetailBackBar = ({
     ].map(({ label, path, disabled }) => (
       <AspectButton
         key={path}
-        onClick={({ currentTarget: { dataset: { path } } }) =>
-          onPathClick(path)
-        }
+        onClick={({
+          currentTarget: {
+            dataset: { path },
+          },
+        }) => onPathClick(path)}
         data-path={path}
         color="primary"
         variant="contained"

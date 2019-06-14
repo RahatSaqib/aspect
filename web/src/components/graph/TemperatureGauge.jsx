@@ -44,7 +44,9 @@ const TemperatureGauge = ({
 
   const fillColor = hasError
     ? errorColor
-    : Math.round(percentComplete * 100) >= 100 ? achievedColor : normalColor
+    : Math.round(percentComplete * 100) >= 100
+    ? achievedColor
+    : normalColor
 
   return (
     <svg width={width} height={height}>

@@ -1,5 +1,15 @@
 module.exports = require('../utils').seed(seed)
 
+const _ = require('lodash')
+const bcrypt = require('bcrypt')
+const {
+  addMilliseconds,
+  addMinutes,
+  addHours,
+  subHours,
+  subDays,
+} = require('date-fns')
+
 const config = require('../../src/config')
 const {
   getPermissionModules,
@@ -19,20 +29,11 @@ const {
   resultTypeToId,
   unitToId,
 } = require('../../src/shared/dictionary')
-const _ = require('lodash')
-const bcrypt = require('bcrypt')
 const { randomToken } = require('../../src/deviceApi/apiKey')
 const geography = require('./fixtures/geography.json')
 const patients = require('./fixtures/patients.json')
 const dashboardWidget = require('./fixtures/dashboardWidget.json')
 const { errorCodes } = require('./fixtures/errorCodes.js')
-const {
-  addMilliseconds,
-  addMinutes,
-  addHours,
-  subHours,
-  subDays,
-} = require('date-fns')
 
 const millisInHour = 1000 * 60 * 60
 const millisInMinute = 1000 * 60

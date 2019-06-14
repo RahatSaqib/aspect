@@ -41,7 +41,8 @@
     "prettier/prettier": ["error", {
       "semi": false,
       "singleQuote": true,
-      "trailingComma": "es5"
+      "trailingComma": "es5",
+      "eol": "lf"
     }],
     "require-yield": "off",
     "no-confusing-arrow": ["error", {"allowParens": true}],

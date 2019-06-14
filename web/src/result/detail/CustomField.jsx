@@ -84,7 +84,11 @@ const messages = defineMessages({
 })
 
 export default class CustomField extends PureComponent {
-  onButtonGroupClick = ({ currentTarget: { dataset: { value } } }) => {
+  onButtonGroupClick = ({
+    currentTarget: {
+      dataset: { value },
+    },
+  }) => {
     this.onUpdateData(value || null)
   }
 

@@ -2,18 +2,18 @@ module.exports = require('../utils').seed(seed)
 
 const bcrypt = require('bcrypt')
 const _ = require('lodash')
-
-const config = require('../../src/config')
-const myanmarSites = require('./fixtures/myanmarSites.json')
-let patients = require('./fixtures/patients.json')
-const dashboardWidget = require('./fixtures/myanmarDashboardWidget.json')
-const { errorCodes } = require('./fixtures/errorCodes.js')
 const {
   addMilliseconds,
   addMinutes,
   subDays,
   differenceInDays,
 } = require('date-fns')
+
+const config = require('../../src/config')
+const myanmarSites = require('./fixtures/myanmarSites.json')
+let patients = require('./fixtures/patients.json')
+const dashboardWidget = require('./fixtures/myanmarDashboardWidget.json')
+const { errorCodes } = require('./fixtures/errorCodes.js')
 const {
   rowsAsObject,
   getPermissionModules,

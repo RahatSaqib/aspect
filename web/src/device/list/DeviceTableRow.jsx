@@ -67,21 +67,19 @@ const DeviceTableRow = ({
       />
     </TableCell>
     <TableCell className={cssClasses('TableCell--alerts')}>
-      {device
-        .get('issueCategories')
-        .map(it => (
-          <ColoredButton
-            key={it.get('key')}
-            className={sharedCssClasses('ColoredButton--micro')}
-            shipCove={it.get('key') === 'issueCategoryDeviceHealth'}
-            shakespeare={it.get('key') === 'issueCategoryReagentHealth'}
-            mountain={it.get('key') === 'issueCategoryDataHealth'}
-            brink={it.get('key') === 'issueCategoryConnectivityHealth'}
-            label={intl.formatMessage(messages[it.get('key')])}
-            onClick={onAlertClick}
-            data-device-id={device.get('id')}
-          />
-        ))}
+      {device.get('issueCategories').map(it => (
+        <ColoredButton
+          key={it.get('key')}
+          className={sharedCssClasses('ColoredButton--micro')}
+          shipCove={it.get('key') === 'issueCategoryDeviceHealth'}
+          shakespeare={it.get('key') === 'issueCategoryReagentHealth'}
+          mountain={it.get('key') === 'issueCategoryDataHealth'}
+          brink={it.get('key') === 'issueCategoryConnectivityHealth'}
+          label={intl.formatMessage(messages[it.get('key')])}
+          onClick={onAlertClick}
+          data-device-id={device.get('id')}
+        />
+      ))}
     </TableCell>
     <TableCell>
       {intl.formatMessage(messages.reportingForDays, {

@@ -63,9 +63,11 @@ const DeviceDetailBackBar = ({
       ].map(({ label, path, disabled = false }) => (
         <AspectButton
           key={path}
-          onClick={({ currentTarget: { dataset: { path } } }) =>
-            onPathClick(path)
-          }
+          onClick={({
+            currentTarget: {
+              dataset: { path },
+            },
+          }) => onPathClick(path)}
           disabled={disabled}
           data-path={path}
           color="primary"

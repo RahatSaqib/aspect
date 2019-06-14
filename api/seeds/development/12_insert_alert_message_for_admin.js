@@ -1,14 +1,14 @@
-const { rowsAsObject } = require('../utils')
-const { messageStatusToId } = require('../../src/shared/dictionary')
+module.exports = require('../utils').seed(seed)
 
 const { subDays, subMonths } = require('date-fns')
 const _ = require('lodash')
 const Promise = require('bluebird')
 
+const { rowsAsObject } = require('../utils')
+const { messageStatusToId } = require('../../src/shared/dictionary')
+
 const millisInHour = 1000 * 60 * 60
 const now = new Date()
-
-module.exports = require('../utils').seed(seed)
 
 async function seed(knex) {
   const { userId, personId } = await knex('User as u')

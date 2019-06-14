@@ -58,17 +58,16 @@ const TaskTableRow = ({ intl, messages, task, ...restProps }) => (
         <span className={cssClasses('Message__Text')}>
           {task.get('message')}
         </span>
-        {messages.alertCount &&
-          task.get('issueCount') > 1 && (
-            <span className={cssClasses('Message__Alert')}>
-              <FaExclamationTriangle
-                className={cssClasses('FaExclamationTriangle')}
-              />
-              {intl.formatMessage(messages.alertCount, {
-                alertCount: task.get('issueCount'),
-              })}
-            </span>
-          )}
+        {messages.alertCount && task.get('issueCount') > 1 && (
+          <span className={cssClasses('Message__Alert')}>
+            <FaExclamationTriangle
+              className={cssClasses('FaExclamationTriangle')}
+            />
+            {intl.formatMessage(messages.alertCount, {
+              alertCount: task.get('issueCount'),
+            })}
+          </span>
+        )}
       </div>
     </TableCell>
     <TableCell className={cssClasses('TableCell')}>

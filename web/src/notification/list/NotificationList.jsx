@@ -142,8 +142,11 @@ export const NotificationList = props => {
     }
     setReducedFilters(reduceFiltersConfig(FILTERS_CONFIG, userPermissions))
   }
-  const onRowClick = ({ currentTarget: { dataset: { notificationId } } }) =>
-    history.push(`/browse/notification/${notificationId}`)
+  const onRowClick = ({
+    currentTarget: {
+      dataset: { notificationId },
+    },
+  }) => history.push(`/browse/notification/${notificationId}`)
   return (
     <div className={cssClasses('Container')}>
       <Helmet title={intl.formatMessage(messages.notificationsTitle)} />
@@ -268,6 +271,7 @@ NotificationList.propTypes = {
   pageSize: PropTypes.number.isRequired,
 }
 
-export default connect(mapStateToProps, { fetchNotifications })(
-  NotificationList
-)
+export default connect(
+  mapStateToProps,
+  { fetchNotifications }
+)(NotificationList)

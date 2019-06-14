@@ -1,8 +1,9 @@
 module.exports = require('../utils').seed(seed)
 
-const config = require('../../src/config')
 const _ = require('lodash')
 const bcrypt = require('bcrypt')
+
+const config = require('../../src/config')
 const geography = require('./fixtures/geography.json')
 const { deviceTypeCategoryToId } = require('../../src/shared/dictionary')
 

@@ -446,38 +446,35 @@ export const FiltersPanel = ({
             />
           </div>
         )}
-        {config.geography &&
-          config.state && (
-            <div className={cssClasses('Control')}>
-              <StateSelectField
-                allItemText={intl.formatMessage(messages.all)}
-                onStateIdChange={onStateIdChange}
-                countryId={filters.countryId}
-                stateId={filters.stateId}
-                floatingLabelFixed
-                hintText={intl.formatMessage(messages.selectState)}
-                floatingLabelText={intl.formatMessage(messages.state)}
-                style={{ verticalAlign: 'bottom' }}
-              />
-            </div>
-          )}
-        {config.geography &&
-          config.state &&
-          config.lga && (
-            <div className={cssClasses('Control')}>
-              <LgaSelectField
-                allItemText={intl.formatMessage(messages.all)}
-                onLgaIdChange={onLgaIdChange}
-                countryId={filters.countryId}
-                stateId={filters.stateId}
-                lgaId={filters.lgaId}
-                floatingLabelFixed
-                hintText={intl.formatMessage(messages.selectLga)}
-                floatingLabelText={intl.formatMessage(messages.lga)}
-                style={{ verticalAlign: 'bottom' }}
-              />
-            </div>
-          )}
+        {config.geography && config.state && (
+          <div className={cssClasses('Control')}>
+            <StateSelectField
+              allItemText={intl.formatMessage(messages.all)}
+              onStateIdChange={onStateIdChange}
+              countryId={filters.countryId}
+              stateId={filters.stateId}
+              floatingLabelFixed
+              hintText={intl.formatMessage(messages.selectState)}
+              floatingLabelText={intl.formatMessage(messages.state)}
+              style={{ verticalAlign: 'bottom' }}
+            />
+          </div>
+        )}
+        {config.geography && config.state && config.lga && (
+          <div className={cssClasses('Control')}>
+            <LgaSelectField
+              allItemText={intl.formatMessage(messages.all)}
+              onLgaIdChange={onLgaIdChange}
+              countryId={filters.countryId}
+              stateId={filters.stateId}
+              lgaId={filters.lgaId}
+              floatingLabelFixed
+              hintText={intl.formatMessage(messages.selectLga)}
+              floatingLabelText={intl.formatMessage(messages.lga)}
+              style={{ verticalAlign: 'bottom' }}
+            />
+          </div>
+        )}
         {config.assayAndResultCategory && (
           <div className={cssClasses('Control')}>
             <AssaySelectField

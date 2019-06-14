@@ -92,6 +92,7 @@ ConnectedTagInput.propTypes = {
   maxTags: PropTypes.number,
 }
 
-export default connect(mapStateToProps, { fetchPossibleTags })(
-  ConnectedTagInput
-)
+export default connect(
+  mapStateToProps,
+  { fetchPossibleTags }
+)(ConnectedTagInput)

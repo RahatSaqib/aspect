@@ -1,6 +1,7 @@
-const { normalizePhoneNumber } = require('../../../shared/phoneNormalization')
 const _ = require('lodash')
 const Boom = require('boom')
+
+const { normalizePhoneNumber } = require('../../../shared/phoneNormalization')
 const { getDateOrDefault } = require('../../../shared/date')
 
 async function transformInitialPayload({ payload }, countryAbbreviation) {

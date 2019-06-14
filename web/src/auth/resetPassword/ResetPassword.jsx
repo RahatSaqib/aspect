@@ -168,7 +168,9 @@ export class ResetPassword extends PureComponent {
 
   render() {
     const { intl } = this.props
-    const { intl: { formatMessage } } = this.props
+    const {
+      intl: { formatMessage },
+    } = this.props
     const { stepIndex, emailAddress, resettingPassword } = this.state
     const adminHelpDialogActions = [
       <Button color="secondary" onClick={this.closeAdminHelpDialog}>

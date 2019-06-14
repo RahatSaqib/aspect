@@ -190,7 +190,8 @@ const validateAndNormalizeJobContextData = async request => {
       .first('j.id', 'jf.partnerId')
     if (!item) {
       return Boom.badData(`Missing job with specified jobId=${jobId}`)
-    } else if (item.partnerId !== partnerId) {
+    }
+    if (item.partnerId !== partnerId) {
       return Boom.expectationFailed(
         'Only Admin with same partnerId as Job/JobFunction can manage Jobs'
       )

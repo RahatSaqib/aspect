@@ -9,7 +9,7 @@ import dialCodes from './dialCodes'
 
 const cssClasses = classnames.bind(require('./DialCodeDropdownInput.css'))
 
-const dialCodeBy = _.keyBy(dialCodes, 'dial_code')
+const dialCodeBy = _.keyBy(dialCodes, 'dialCode')
 
 export const parseRawNumber = rawNumber => {
   let numberPart = rawNumber.replace(/^\s+/, '')
@@ -49,9 +49,7 @@ const enhance = compose(
     }
   }),
   withHandlers({
-    onDialCodeChange: ({ onChange, numberPart }) => ({
-      dial_code: dialCode,
-    }) => {
+    onDialCodeChange: ({ onChange, numberPart }) => ({ dialCode }) => {
       onChange(`${dialCode} ${numberPart}`.trim())
     },
 
