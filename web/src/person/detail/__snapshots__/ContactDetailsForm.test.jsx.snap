@@ -171,14 +171,12 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable a
           onCountryIdChange={[Function]}
         />
         <Connect(StateSelectField)
-          allItemText="All"
           className="GeographyDropdown"
           floatingLabelFixed={true}
           floatingLabelText="State"
           onStateIdChange={[Function]}
         />
         <Connect(LgaSelectField)
-          allItemText="All"
           className="GeographyDropdown"
           floatingLabelFixed={true}
           floatingLabelText="Area"
@@ -407,14 +405,12 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
           onCountryIdChange={[Function]}
         />
         <Connect(StateSelectField)
-          allItemText="All"
           className="GeographyDropdown"
           floatingLabelFixed={true}
           floatingLabelText="State"
           onStateIdChange={[Function]}
         />
         <Connect(LgaSelectField)
-          allItemText="All"
           className="GeographyDropdown"
           floatingLabelFixed={true}
           floatingLabelText="Area"
@@ -643,14 +639,12 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
           onCountryIdChange={[Function]}
         />
         <Connect(StateSelectField)
-          allItemText="All"
           className="GeographyDropdown"
           floatingLabelFixed={true}
           floatingLabelText="State"
           onStateIdChange={[Function]}
         />
         <Connect(LgaSelectField)
-          allItemText="All"
           className="GeographyDropdown"
           floatingLabelFixed={true}
           floatingLabelText="Area"
@@ -879,14 +873,12 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
           onCountryIdChange={[Function]}
         />
         <Connect(StateSelectField)
-          allItemText="All"
           className="GeographyDropdown"
           floatingLabelFixed={true}
           floatingLabelText="State"
           onStateIdChange={[Function]}
         />
         <Connect(LgaSelectField)
-          allItemText="All"
           className="GeographyDropdown"
           floatingLabelFixed={true}
           floatingLabelText="Area"
@@ -1115,14 +1107,12 @@ exports[`ContactDetailsForm module ContactDetailsForm component should enable th
           onCountryIdChange={[Function]}
         />
         <Connect(StateSelectField)
-          allItemText="All"
           className="GeographyDropdown"
           floatingLabelFixed={true}
           floatingLabelText="State"
           onStateIdChange={[Function]}
         />
         <Connect(LgaSelectField)
-          allItemText="All"
           className="GeographyDropdown"
           floatingLabelFixed={true}
           floatingLabelText="Area"
@@ -1351,14 +1341,12 @@ exports[`ContactDetailsForm module ContactDetailsForm component should render co
           onCountryIdChange={[Function]}
         />
         <Connect(StateSelectField)
-          allItemText="All"
           className="GeographyDropdown"
           floatingLabelFixed={true}
           floatingLabelText="State"
           onStateIdChange={[Function]}
         />
         <Connect(LgaSelectField)
-          allItemText="All"
           className="GeographyDropdown"
           floatingLabelFixed={true}
           floatingLabelText="Area"
@@ -1573,14 +1561,12 @@ exports[`ContactDetailsForm module ContactDetailsForm component should show form
           onCountryIdChange={[Function]}
         />
         <Connect(StateSelectField)
-          allItemText="All"
           className="GeographyDropdown"
           floatingLabelFixed={true}
           floatingLabelText="State"
           onStateIdChange={[Function]}
         />
         <Connect(LgaSelectField)
-          allItemText="All"
           className="GeographyDropdown"
           floatingLabelFixed={true}
           floatingLabelText="Area"
@@ -1640,18 +1626,21 @@ exports[`ContactDetailsForm module ContactDetailsForm component should show form
 
 exports[`ContactDetailsForm module validate function should validate email addresses if they have been entered 1`] = `
 Object {
+  "countryId": "Please select Country",
   "email": "Please enter a valid email address",
 }
 `;
 
 exports[`ContactDetailsForm module validate function should validate email addresses if they have been entered 2`] = `
 Object {
+  "countryId": "Please select Country",
   "email2": "Please enter a valid email address",
 }
 `;
 
 exports[`ContactDetailsForm module validate function should validate name and both email addresses 1`] = `
 Object {
+  "countryId": "Please select Country",
   "email": "Please enter a valid email address",
   "email2": "Please enter a valid email address",
   "name": "Please enter your Full name",
@@ -1660,6 +1649,7 @@ Object {
 
 exports[`ContactDetailsForm module validate function should validate name and both email addresses 2`] = `
 Object {
+  "countryId": "Please select Country",
   "email": "Please enter a valid email address",
   "email2": "Please enter a valid email address",
 }
@@ -1667,14 +1657,20 @@ Object {
 
 exports[`ContactDetailsForm module validate function should validate name and both email addresses 3`] = `
 Object {
+  "countryId": "Please select Country",
   "email2": "Please enter a valid email address",
 }
 `;
 
-exports[`ContactDetailsForm module validate function should validate name and both email addresses 4`] = `Object {}`;
+exports[`ContactDetailsForm module validate function should validate name and both email addresses 4`] = `
+Object {
+  "countryId": "Please select Country",
+}
+`;
 
 exports[`ContactDetailsForm module validate function should validate that name has been entered 1`] = `
 Object {
+  "countryId": "Please select Country",
   "name": "Please enter your Full name",
 }
 `;

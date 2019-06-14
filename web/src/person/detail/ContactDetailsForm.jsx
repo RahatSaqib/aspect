@@ -360,7 +360,6 @@ export const ContactDetailsForm = ({
           />
           <StateSelectField
             className={cssClasses('GeographyDropdown')}
-            allItemText={intl.formatMessage(messages.all)}
             onStateIdChange={onStateIdChange}
             countryId={values.countryId}
             stateId={values.stateId}
@@ -369,7 +368,6 @@ export const ContactDetailsForm = ({
           />
           <LgaSelectField
             className={cssClasses('GeographyDropdown')}
-            allItemText={intl.formatMessage(messages.all)}
             onLgaIdChange={onLgaIdChange}
             countryId={values.countryId}
             stateId={values.stateId}
