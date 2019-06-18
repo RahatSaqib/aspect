@@ -13,6 +13,7 @@ import {
 
 export class CountrySelectField extends PureComponent {
   static propTypes = {
+    allItemText: PropTypes.string,
     countries: PropTypes.objectOf(LazyLoadItems).isRequired,
     fetchCountriesForLocationSelector: PropTypes.func.isRequired,
     onCountryIdChange: PropTypes.func.isRequired,
@@ -20,27 +21,12 @@ export class CountrySelectField extends PureComponent {
   }
 
   static defaultProps = {
+    allItemText: 'All',
     countryId: '',
-  }
-
-  state = {
-    checkNoOfListedCountry: '',
   }
 
   componentDidMount() {
     const { countries } = this.props
-    let checkNoOfListedCountry = ''
-
-    if (countries.items.size === 1) {
-      countries.items.map(country => {
-        checkNoOfListedCountry = country.id
-        this.setState({ checkNoOfListedCountry: country.id })
-        return country.id
-      })
-      if (this.props.onCountryIdChange && checkNoOfListedCountry) {
-        this.props.onCountryIdChange(checkNoOfListedCountry)
-      }
-    }
     this.props.fetchCountriesForLocationSelector(countries)
   }
 
@@ -49,19 +35,19 @@ export class CountrySelectField extends PureComponent {
   }
 
   render() {
-    const { countries, countryId, ...others } = this.props
+    const { allItemText, countries, countryId, ...others } = this.props
 
     const restProps = _.omit(others, [
       'onCountryIdChange',
       'fetchCountriesForLocationSelector',
     ])
-
     return (
       <SelectField
         {...restProps}
-        value={this.state.checkNoOfListedCountry || countryId}
+        value={countryId}
         onChange={this.handleSelectFieldChange}
       >
+        {allItemText && <MenuItem value="all">{allItemText}</MenuItem>}
         {countries.items.map(c => (
           <MenuItem key={c.id} value={c.id}>
             {c.name}

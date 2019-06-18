@@ -67,17 +67,10 @@ export function PartnerSelectField({
   disabled,
   ...restProps
 }) {
-  let checkNoOfListedPartner = ''
-
-  if (partnerList.length === 1) {
-    const [partner] = partnerList
-    checkNoOfListedPartner = partner && partner.value
-  }
-
   return (
     <SelectField
       {...restProps}
-      value={checkNoOfListedPartner || partnerId}
+      value={partnerId}
       onChange={onChangePartner}
       disabled={disabled || _fp.isEmpty(partnerList)}
     >

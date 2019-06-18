@@ -37,7 +37,7 @@ export class StateSelectField extends PureComponent {
   }
 
   static defaultProps = {
-    allItemText: '',
+    allItemText: 'All',
     countryId: '',
     stateId: '',
   }
@@ -62,11 +62,11 @@ export class StateSelectField extends PureComponent {
   }
 
   handleSelectFieldChange = ({ target: { value } }) => {
-    this.props.onStateIdChange(value === '' ? undefined : value)
+    this.props.onStateIdChange(value === 'all' ? undefined : value)
   }
 
   render() {
-    const { stateId } = this.props
+    const { allItemText, stateId } = this.props
     const restProps = _.omit(this.props, [
       'allItemText',
       'countries',
@@ -84,6 +84,7 @@ export class StateSelectField extends PureComponent {
         onChange={this.handleSelectFieldChange}
         disabled={stateselected.size === 0}
       >
+        {allItemText && <MenuItem value="all">{allItemText}</MenuItem>}
         {getSelectedCountryStates(this.props).map(s => (
           <MenuItem key={s.id} value={s.id}>
             {s.name}

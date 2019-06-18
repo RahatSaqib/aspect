@@ -164,19 +164,21 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable a
         className="GeographyDropdownGroup"
       >
         <Connect(CountrySelectField)
-          allItemText="All"
+          allItemText=""
           className="GeographyDropdown"
           floatingLabelFixed={true}
           floatingLabelText="Country"
           onCountryIdChange={[Function]}
         />
         <Connect(StateSelectField)
+          allItemText=""
           className="GeographyDropdown"
           floatingLabelFixed={true}
           floatingLabelText="State"
           onStateIdChange={[Function]}
         />
         <Connect(LgaSelectField)
+          allItemText="All"
           className="GeographyDropdown"
           floatingLabelFixed={true}
           floatingLabelText="Area"
@@ -398,19 +400,21 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
         className="GeographyDropdownGroup"
       >
         <Connect(CountrySelectField)
-          allItemText="All"
+          allItemText=""
           className="GeographyDropdown"
           floatingLabelFixed={true}
           floatingLabelText="Country"
           onCountryIdChange={[Function]}
         />
         <Connect(StateSelectField)
+          allItemText=""
           className="GeographyDropdown"
           floatingLabelFixed={true}
           floatingLabelText="State"
           onStateIdChange={[Function]}
         />
         <Connect(LgaSelectField)
+          allItemText="All"
           className="GeographyDropdown"
           floatingLabelFixed={true}
           floatingLabelText="Area"
@@ -632,19 +636,21 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
         className="GeographyDropdownGroup"
       >
         <Connect(CountrySelectField)
-          allItemText="All"
+          allItemText=""
           className="GeographyDropdown"
           floatingLabelFixed={true}
           floatingLabelText="Country"
           onCountryIdChange={[Function]}
         />
         <Connect(StateSelectField)
+          allItemText=""
           className="GeographyDropdown"
           floatingLabelFixed={true}
           floatingLabelText="State"
           onStateIdChange={[Function]}
         />
         <Connect(LgaSelectField)
+          allItemText="All"
           className="GeographyDropdown"
           floatingLabelFixed={true}
           floatingLabelText="Area"
@@ -866,19 +872,21 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
         className="GeographyDropdownGroup"
       >
         <Connect(CountrySelectField)
-          allItemText="All"
+          allItemText=""
           className="GeographyDropdown"
           floatingLabelFixed={true}
           floatingLabelText="Country"
           onCountryIdChange={[Function]}
         />
         <Connect(StateSelectField)
+          allItemText=""
           className="GeographyDropdown"
           floatingLabelFixed={true}
           floatingLabelText="State"
           onStateIdChange={[Function]}
         />
         <Connect(LgaSelectField)
+          allItemText="All"
           className="GeographyDropdown"
           floatingLabelFixed={true}
           floatingLabelText="Area"
@@ -1100,19 +1108,21 @@ exports[`ContactDetailsForm module ContactDetailsForm component should enable th
         className="GeographyDropdownGroup"
       >
         <Connect(CountrySelectField)
-          allItemText="All"
+          allItemText=""
           className="GeographyDropdown"
           floatingLabelFixed={true}
           floatingLabelText="Country"
           onCountryIdChange={[Function]}
         />
         <Connect(StateSelectField)
+          allItemText=""
           className="GeographyDropdown"
           floatingLabelFixed={true}
           floatingLabelText="State"
           onStateIdChange={[Function]}
         />
         <Connect(LgaSelectField)
+          allItemText="All"
           className="GeographyDropdown"
           floatingLabelFixed={true}
           floatingLabelText="Area"
@@ -1334,19 +1344,21 @@ exports[`ContactDetailsForm module ContactDetailsForm component should render co
         className="GeographyDropdownGroup"
       >
         <Connect(CountrySelectField)
-          allItemText="All"
+          allItemText=""
           className="GeographyDropdown"
           floatingLabelFixed={true}
           floatingLabelText="Country"
           onCountryIdChange={[Function]}
         />
         <Connect(StateSelectField)
+          allItemText=""
           className="GeographyDropdown"
           floatingLabelFixed={true}
           floatingLabelText="State"
           onStateIdChange={[Function]}
         />
         <Connect(LgaSelectField)
+          allItemText="All"
           className="GeographyDropdown"
           floatingLabelFixed={true}
           floatingLabelText="Area"
@@ -1554,19 +1566,21 @@ exports[`ContactDetailsForm module ContactDetailsForm component should show form
         className="GeographyDropdownGroup"
       >
         <Connect(CountrySelectField)
-          allItemText="All"
+          allItemText=""
           className="GeographyDropdown"
           floatingLabelFixed={true}
           floatingLabelText="Country"
           onCountryIdChange={[Function]}
         />
         <Connect(StateSelectField)
+          allItemText=""
           className="GeographyDropdown"
           floatingLabelFixed={true}
           floatingLabelText="State"
           onStateIdChange={[Function]}
         />
         <Connect(LgaSelectField)
+          allItemText="All"
           className="GeographyDropdown"
           floatingLabelFixed={true}
           floatingLabelText="Area"

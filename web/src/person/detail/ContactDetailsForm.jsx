@@ -62,7 +62,7 @@ const DEFAULT_VALUES = {
   canLogIn: false,
 }
 
-const getInitialValues = contactDetails => ({
+const getInitialValues = (contactDetails, partnerList, countries) => ({
   name: contactDetails.get('name') || DEFAULT_VALUES.name,
   title: contactDetails.get('title') || DEFAULT_VALUES.title,
   email: contactDetails.get('email') || DEFAULT_VALUES.email,
@@ -70,8 +70,15 @@ const getInitialValues = contactDetails => ({
   phone: contactDetails.get('phone') || DEFAULT_VALUES.phone,
   cell: contactDetails.get('cell') || DEFAULT_VALUES.cell,
   lastPartnerId:
-    contactDetails.get('lastPartnerId') || DEFAULT_VALUES.lastPartnerId,
-  countryId: contactDetails.get('countryId') || DEFAULT_VALUES.countryId,
+    contactDetails.get('lastPartnerId') ||
+    (partnerList && partnerList.length === 1
+      ? partnerList[0].value
+      : DEFAULT_VALUES.lastPartnerId),
+  countryId:
+    contactDetails.get('countryId') ||
+    (countries && countries.items.size === 1
+      ? countries.items.first().get('id')
+      : DEFAULT_VALUES.countryId),
   stateId: contactDetails.get('stateId') || DEFAULT_VALUES.stateId,
   lgaId: contactDetails.get('lgaId') || DEFAULT_VALUES.lgaId,
   zip: contactDetails.get('zip') || DEFAULT_VALUES.zip,
@@ -91,9 +98,22 @@ const enhance = compose(
         Immutable.List()
       )
 
+      const countries = state.geography.countriesForLocationSelector
+
+      const partnerList = state.jobs.partnersAndJobFunctionsForSelectList.partners
+        // Filter out empty items if props.emptyText is an empty string
+        .filter(item => (props.emptyText ? true : item.get('id')))
+        .map(item => ({
+          value: item.get('id') || props.emptyId,
+          text: item.get('name') || props.emptyText,
+        }))
+        .toJS()
+
       return {
         personTags,
         isNew,
+        partnerList,
+        countries,
       }
     },
     {
@@ -110,10 +130,12 @@ const enhance = compose(
   }),
   lifecycle({
     componentWillMount() {
+      const { partnerList, countries, contactDetails } = this.props
+
       const onChange = values => this.setState({ values })
       this.setState({
         onChange,
-        values: getInitialValues(this.props.contactDetails),
+        values: getInitialValues(contactDetails, partnerList, countries),
       })
     },
 
@@ -122,10 +144,15 @@ const enhance = compose(
     },
 
     componentDidUpdate(prevProps) {
-      const { contactDetails } = this.props
-      if (prevProps.contactDetails !== contactDetails) {
+      const { contactDetails, partnerList, countries } = this.props
+      if (
+        prevProps.contactDetails !== contactDetails ||
+        prevProps.partnerList.length !== partnerList.length
+      ) {
         this.props.onLoadTags()
-        this.state.onChange(getInitialValues(contactDetails))
+        this.state.onChange(
+          getInitialValues(contactDetails, partnerList, countries)
+        )
       }
     },
   }),
@@ -352,7 +379,7 @@ export const ContactDetailsForm = ({
         <div className={cssClasses('GeographyDropdownGroup')}>
           <CountrySelectField
             className={cssClasses('GeographyDropdown')}
-            allItemText={intl.formatMessage(messages.all)}
+            allItemText=""
             onCountryIdChange={onCountryIdChange}
             countryId={values.countryId}
             floatingLabelFixed
@@ -360,6 +387,7 @@ export const ContactDetailsForm = ({
           />
           <StateSelectField
             className={cssClasses('GeographyDropdown')}
+            allItemText=""
             onStateIdChange={onStateIdChange}
             countryId={values.countryId}
             stateId={values.stateId}
@@ -368,6 +396,7 @@ export const ContactDetailsForm = ({
           />
           <LgaSelectField
             className={cssClasses('GeographyDropdown')}
+            allItemText={intl.formatMessage(messages.all)}
             onLgaIdChange={onLgaIdChange}
             countryId={values.countryId}
             stateId={values.stateId}
