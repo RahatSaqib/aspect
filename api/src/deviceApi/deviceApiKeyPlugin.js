@@ -48,7 +48,6 @@ async function authToken(token) {
     .leftJoin('Device as d', 'd.id', 'k.deviceId')
     .where({ 'k.token': token, 'k.revoked': false })
     .first('k.id as keyId', 'd.name as deviceName')
-
   if (key == null) {
     throw Boom.unauthorized('Cannot authorize API Key')
   }

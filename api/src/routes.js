@@ -79,6 +79,14 @@ function addDeviceRoutes(server) {
   )
 }
 
+function addDeviceRawRoutes(server) {
+  server.route(
+    require('./deviceApiRaw/endpoints').routes.map(
+      decorateDeviceAPI('device/raw')
+    )
+  )
+}
+
 // Decorates an API route with common configuration so
 // it does not need to specified explicity for every route
 function decorateClientAPI(module) {
@@ -415,6 +423,7 @@ function validateResultResponse() {
 module.exports = {
   addClientRoutes,
   addDeviceRoutes,
+  addDeviceRawRoutes,
   asyncHandler,
   getSortParams,
   getPageParams,

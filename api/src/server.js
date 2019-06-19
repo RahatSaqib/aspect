@@ -6,17 +6,23 @@ const Hapi = require('hapi')
 
 const config = require('./config')
 const { version } = require('./../package.json')
-const { addClientRoutes, addDeviceRoutes } = require('./routes')
+const {
+  addClientRoutes,
+  addDeviceRoutes,
+  addDeviceRawRoutes,
+} = require('./routes')
 const { createMessageQueue } = require('./mq')
 const { addSubscriptions } = require('./subscriptions')
 const { startScheduler } = require('./scheduler')
 const { addLoggers } = require('./logger/service')
 const deviceApiKeyPlugin = require('./deviceApi/deviceApiKeyPlugin')
+const { continueUnprocessedRawData } = require('./deviceApiRaw/service')
 
 const server = new Hapi.Server()
 const port = process.env.PORT || 8080
 const clientApiPath = '/api'
 const deviceApiPath = '/device'
+const deviceApiRawPath = '/device/raw'
 
 server.connection({
   port,
@@ -98,13 +104,17 @@ function messageQueuePlugin(server, options, next) {
       if (config.scheduler.enabled) {
         startScheduler(queue)
       }
-      server.ext('onPreHandler', (request, reply) => {
-        request.plugins.messageContext = queue.createMessageContext(
-          'aspect_request'
-        )
-        reply.continue()
-      })
-      next()
+      return continueUnprocessedRawData(queue)
+        .then(() => {
+          server.ext('onPreHandler', (request, reply) => {
+            request.plugins.messageContext = queue.createMessageContext(
+              'aspect_request'
+            )
+            reply.continue()
+          })
+          next()
+        })
+        .catch(next)
     })
     .catch(next)
 }
@@ -232,6 +242,33 @@ server.register(
   {
     routes: {
       prefix: deviceApiPath,
+    },
+  },
+  err => {
+    if (err) throw err
+  }
+)
+
+// Device API raw data route mounted under /device/raw
+function deviceApiRawPlugin(server, options, next) {
+  addDeviceRawRoutes(server)
+  // TODO ZIMBABWE: Try create a test that would have blocked the queue if purgeOnStart hadn't been set
+  // TODO ZIMBABWE: Test if files can be uploaded to RAW device API
+
+  // TODO Raw Device API: Wait for a data processor topic to be created on the message queue before dispatching messages to it.
+  // TODO Raw Device API: Delete topics on the message queue that were completely processed when server starts
+  // TODO Raw Device API: Archive records from the DeviceApiRaw table once they have been processed
+  next()
+}
+deviceApiRawPlugin.attributes = {
+  name: 'deviceApiRaw',
+  version,
+}
+server.register(
+  { register: deviceApiRawPlugin },
+  {
+    routes: {
+      prefix: deviceApiRawPath,
     },
   },
   err => {

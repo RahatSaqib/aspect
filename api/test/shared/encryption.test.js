@@ -1,4 +1,4 @@
-const { assert } = require('chai')
+const { assert, expect } = require('chai')
 const encryption = require('../../src/shared/encryption')
 
 describe('encryption shared util', () => {
@@ -35,6 +35,40 @@ describe('encryption shared util', () => {
       assert.isUndefined(hashedUndefined)
       const hashedNull = oneDirectionalMd5Hash(null)
       assert.isNull(hashedNull)
+    })
+  })
+
+  describe('createSalt', () => {
+    const { createSalt } = encryption
+
+    it('should be able to generate a salt of 44 characters', () => {
+      const salt = createSalt()
+      expect(salt).to.have.lengthOf(44)
+    })
+
+    it('should generate a random salt', () => {
+      const salt1 = createSalt()
+      const salt2 = createSalt()
+      expect(salt1).to.not.equal(salt2)
+    })
+  })
+
+  describe('encrypt/decrypt', () => {
+    const { createSalt, encrypt, decrypt } = encryption
+
+    it('should be able to encrypt a string that is passed to it', () => {
+      const plainText = 'This string is to be encrypted'
+      const salt = createSalt()
+      const encryptedText = encrypt(plainText, salt)
+      expect(encryptedText).to.not.equal(plainText)
+    })
+
+    it('should be able to decrypt a string that is passed to it', () => {
+      const plainText = 'This string is to be encrypted'
+      const salt = createSalt()
+      const encryptedText = encrypt(plainText, salt)
+      const decryptedText = decrypt(encryptedText, salt)
+      expect(decryptedText).to.equal(plainText)
     })
   })
 })

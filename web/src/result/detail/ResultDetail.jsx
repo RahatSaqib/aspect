@@ -581,6 +581,9 @@ export class ResultDetail extends PureComponent {
           schema={screenSchema}
           className={cssClasses('FieldsContainer')}
         >
+          {/* Render lower-level sections in assay schema in cards */}
+          {this.renderLowerLevelSchemaSections()}
+
           {/* Render images attachment */}
           {this.renderImagesSection()}
 
@@ -601,9 +604,6 @@ export class ResultDetail extends PureComponent {
               />
             </ExpansionPanelHeader>
           </ExpansionPanel>
-
-          {/* Render lower-level sections in assay schema in cards */}
-          {this.renderLowerLevelSchemaSections()}
           {/* Render Raw Result sections */}
           {this.renderRawResult()}
         </DetailPanel>

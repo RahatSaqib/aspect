@@ -54,6 +54,10 @@ module.exports = {
   scheduler: {
     enabled: process.env['scheduler.enabled'] === 'true',
   },
+  encryption: {
+    passPhrase: process.env['encryption.passPhrase'],
+    initVector: process.env['encryption.initVector'],
+  },
 }
 
 configureOptional(module.exports)
