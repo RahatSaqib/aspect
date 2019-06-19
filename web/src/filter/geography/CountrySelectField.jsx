@@ -41,7 +41,6 @@ export class CountrySelectField extends PureComponent {
       'onCountryIdChange',
       'fetchCountriesForLocationSelector',
     ])
-
     return (
       <SelectField
         {...restProps}
