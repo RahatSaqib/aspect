@@ -8,7 +8,9 @@ const { knex } = require('../db')
 const { decrypt } = require('../shared/encryption')
 
 const addDeviceRawDataHandler = asyncHandler(async request => {
-  const { plugins: { messageContext } } = request
+  const {
+    plugins: { messageContext },
+  } = request
 
   const dataProcessor = await loadRawDataProcessor(request, messageContext)
   await dataProcessor.saveRequestAsReady()

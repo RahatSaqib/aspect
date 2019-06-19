@@ -78,9 +78,7 @@ class DefaultBDMGIT extends SynchronousDataProcessor {
       }
 
       // reconstruct ASTM message:
-      const astm = `${this.request.payload.header}\n${
-        this.request.payload.body
-      }`
+      const astm = `${this.request.payload.header}\n${this.request.payload.body}`
 
       // NOTE: BACTEC MGIT 960 does not support patient information and therefore always transmits an empty Patient record.
 

@@ -1,6 +1,8 @@
 const crypto = require('crypto')
 const _ = require('lodash')
-const { encryption: { passPhrase, initVector } } = require('../config')
+const {
+  encryption: { passPhrase, initVector },
+} = require('../config')
 
 function oneDirectionalMd5Hash(inputString) {
   if (inputString == null || _.isUndefined(inputString)) {

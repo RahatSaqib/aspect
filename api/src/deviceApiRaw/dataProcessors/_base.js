@@ -46,7 +46,9 @@ class DataProcessor {
 
   async saveRequestAsReady() {
     const { auth = { credentials: { token: null } } } = this.request
-    const { credentials: { token } } = auth
+    const {
+      credentials: { token },
+    } = auth
     const utcNow = getUtcTime()
     const deviceApiKey = await knex('DeviceApiKey')
       .where({ token })
@@ -125,9 +127,7 @@ class DataProcessor {
             DEVICE_RAW_MESSAGE_RESPONSE_READY: {
               ...dataProcessorMessageHandlerSpec,
               handlerFunction: async () => Promise.resolve(),
-              consumerTag: `${this.name}_DEVICE_RAW_MESSAGE_RESPONSE_READY_${
-                this.id
-              }`,
+              consumerTag: `${this.name}_DEVICE_RAW_MESSAGE_RESPONSE_READY_${this.id}`,
             },
             DEVICE_RAW_MESSAGE_POSTED: {
               ...dataProcessorMessageHandlerSpec,
@@ -144,9 +144,7 @@ class DataProcessor {
             DEVICE_RAW_MESSAGE_PROCESSED: {
               ...dataProcessorMessageHandlerSpec,
               handlerFunction: this.onDeviceRawMessageProcessed,
-              consumerTag: `${this.name}_DEVICE_RAW_MESSAGE_PROCESSED_${
-                this.id
-              }`,
+              consumerTag: `${this.name}_DEVICE_RAW_MESSAGE_PROCESSED_${this.id}`,
             },
             DEVICE_RAW_MESSAGE_ERROR: {
               ...dataProcessorMessageHandlerSpec,
