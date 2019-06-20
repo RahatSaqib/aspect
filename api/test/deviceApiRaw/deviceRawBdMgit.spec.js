@@ -325,7 +325,7 @@ describe('Device API Raw routes for BD MGIT', () => {
     expect(sample.originSiteId).to.equal(bdMgitSiteId)
 
     // inspect workflow log record
-    const resultWorkflowLog = await knex('ResultworkflowLog')
+    const resultWorkflowLog = await knex('ResultWorkflowLog')
       .where('id', result.resultWorkflowStatusLogId)
       .first()
 
@@ -435,7 +435,7 @@ describe('Device API Raw routes for BD MGIT', () => {
     expect(sample.originSiteId).to.equal(bdMgitSiteId)
 
     // inspect workflow log record
-    const resultWorkflowLog = await knex('ResultworkflowLog')
+    const resultWorkflowLog = await knex('ResultWorkflowLog')
       .where('id', result.resultWorkflowStatusLogId)
       .first()
 
