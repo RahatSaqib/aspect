@@ -1,8 +1,15 @@
 const _ = require('lodash')
 const Boom = require('boom')
+const Promise = require('bluebird')
 const { knex, transact } = require('../../db')
 const { getRemoteAddress } = require('../../shared/request')
-const { getUtcTime } = require('../../shared/date')
+const { getUtcTime, parseDateOrDefault } = require('../../shared/date')
+const {
+  allAssayToId,
+  resultSourceToId,
+  resultTypeToId,
+  sampleTypeToId,
+} = require('../../shared/dictionary')
 const { deviceSeen } = require('../../device/actions')
 const { SynchronousDataProcessor } = require('./_base')
 
@@ -31,9 +38,35 @@ class DefaultSenaiteLIMS extends SynchronousDataProcessor {
     const { auth, payload } = request
     const now = getUtcTime()
     await transact(async knex => {
-      const { deviceId } = await knex('DeviceApiKey')
-        .where('token', auth.credentials.token)
-        .first('deviceId')
+      const {
+        deviceId,
+        partnerId,
+        siteId,
+        longitude,
+        latitude,
+        geographyId,
+        countryId,
+      } = await knex('DeviceApiKey as dak')
+        .leftJoin('Site as s1', 'dak.siteId', 's1.id')
+        .leftJoin('Device as d', 'dak.deviceId', 'd.id')
+        .leftJoin('Site as s2', 'd.siteId', 's2.id')
+        .leftJoin('Geography as g1', 'dak.geographyId', 'g1.id')
+        .leftJoin('Geography as g2', 's1.geographyId', 'g2.id')
+        .leftJoin('Geography as g3', 's2.geographyId', 'g3.id')
+        .where('dak.token', auth.credentials.token)
+        .first(
+          'dak.deviceId',
+          'dak.partnerId',
+          knex.raw('COALESCE(d.siteId, dak.siteId) as siteId'),
+          knex.raw('COALESCE(s2.longitude, s1.longitude) as longitude'),
+          knex.raw('COALESCE(s2.latitude, s1.latitude) as latitude'),
+          knex.raw(
+            'COALESCE(s2.geographyId, s1.geographyId, dak.geographyId) as geographyId'
+          ),
+          knex.raw(
+            'COALESCE(g1.countryId, g2.countryId, g3.countryId) as countryId'
+          )
+        )
       const remoteAddress = getRemoteAddress(request)
       if (!deviceId) {
         throw Boom.badRequest(
@@ -53,107 +86,388 @@ class DefaultSenaiteLIMS extends SynchronousDataProcessor {
         .update({ lastSeenOn: now, updatedOn: now })
       this.messageContext.dispatch(deviceSeen(deviceId))
 
-      // Get or Create Geography & Facility
-      // Remote Facility Details
-      const facilityName = payload.Client // "Henderson Clinic"
-      const limsFacilityId = payload.ClientUID // "354b7f04781c4bbeaf87500031b82b11"
-      const limsPatientId = payload.ClientPatientID // "8e233dceaa6b4551ada8d6ff7485e282"
-      const facilityContactName = payload.ContactFullName // "Sister in charge"
-      const limsFacilityContactId = payload.ContactFullName // "24cf4e36f70c41aeaf2959cb6cdd27a1"
       const provinceName = payload.getProvince // "Mashonaland Central"
-      const lgaName = payload.getDistrict // "Mazowe"
-
-      // Get or Create Result with Result Data & Patient Data
-      // Patient Details
-      const patientId = payload.getPatientID // "P17-00590"
-      const facilityPatientId = payload.ClientSampleID // "Frank Kangara"
-      const patientName = payload.Patient // "Frank Kangara"
-      const limsPatientId = payload.Patient_uid // "eda130e9e110406fa9b0b063c6d95e40"
-
-      // Sample Details
-      const limsSampleId = payload.SampleUID // "dc4275a004c24b2fb2c20b319d9a088c"
-      const sampleId = payload.getSampleID // "SP17-002058"
-      const samplePartitionId = payload.id // "SP17-002058-R01"
-      const sampleDateReceived = payload.DateReceived // "2017/10/24 12:02:16 GMT+2"
-      const sampleDateCollected = payload.DateSampled // "2017/09/25 00:00:00 GMT+0"
-      const sampleCollectedByEmail = payload.SamplerEmail // "kadyea@nmrl.org.zw"
-      const receivedBy = payload.ReceivedBy // "muzavazip"
-      const sampleType = payload.SampleTypeTitle // "Sputum"
-      const limsSampleTypeId = payload.SampleTypeUID // "ac0cbd54fc4d4c86b9e42fe4c870c184"
-
-      // Lab Request Details
-      const labRequestId = payload.UID // "b98da3709f1845f7bef097ed5a95c634"
-      const printed = payload.getPrinted // "0"
-      const priority = payload.Priority // "3"
-      const profile = payload.ProfilesTitleStr // "TB Culture"
-      const dateVerified = payload.getDateVerified // null
-      const doctorTitle = payload.getDoctorTitle // ""
-      const limsDoctorId = payload.getDoctorUID // ""
-
-      // Lab Request Audit Fields
-      const limsCreatedBy = payload.Creator // "kadyea"
-      const limsCreatedByEmail = payload.CreatorEmail // "kadyea@nmrl.org.zw"
-      const limsCreatedByFullName = payload.CreatorFullName // "kadyea"
-      const limsCreationDate = payload.creation_date // "2017/10/23 09:04:58 GMT+2"
-      const limsLastModifiedDate = payload.modification_date // "2019/02/18 11:15:15.191914 GMT+2"
-
-      // Test Details
-      if (!_.isEmpty(payload.Analyses)) {
-        _.each(payload.Analyses, testDetail => {
-          const testType = testDetail.id // "MGITRESULT"
-          if (!['SampleAppearance', 'SampleVolume'].includes(testType)) {
-            const testTypeName = testDetail.title // "MGIT RESULT"
-            const limsTestId = testDetail.UID // "d2b24013cefd4ab49b55ca1b7afcee52"
-            const retested = testDetail.Retested // false
-            const resultOptions = testDetail.ResultOptions // Array with objects like { "ResultText": "Positive", "ResultValue": "0", "value": "" }
-            const selectedResultOption = testDetail.Result // ""
-            const selectedResult =
-              _.find(resultOptions, { ResultValue: selectedResultOption }) || {}
-            const resultText = selectedResult.ResultText
-            const resultValue = selectedResult.value
-            const limsDateResultCaptured = testDetail.ResultCaptureDate // "2018/03/20 06:23:3.774431 GMT+2"
-            const remarks = testDetail.Remarks // ""
-            const resultUnit = testDetail.Unit // ""
-            const pointOfCapture = testDetail.PointOfCapture // "lab"
-            const manualEntryOfResults = testDetail.ManualEntryOfResults // true
-            const instrument = testDetail.Instrument // null
-            const instrumentEntryOfResults = testDetail.InstrumentEntryOfResults // false
-            const hidden = testDetail.Hidden // true
-            const hiddenManually = testDetail.HiddenManually // false
-            const analyst = testDetail.Analyst // "" <- LIMS Username
-            const verificators = testDetail.Verificators // "" <- LIMS Username
-            const testReviewState = testDetail.review_state // "verified"
-            const testWorksheetAnalysisReviewState =
-              testDetail.worksheetanalysis_review_state // "unassigned"
-          } else if (testType === 'SampleAppearance') {
-            const sampleAppearanceOptions = testDetail.ResultOptions // Array of objects
-            const sampleAppearanceSelectedOption = testDetail.Result // "1"
-            const selectedSampleAppearance =
-              _.find(sampleAppearanceOptions, {
-                ResultValue: sampleAppearanceSelectedOption,
-              }) || {}
-            const sampleAppearanceText = selectedSampleAppearance.ResultText // "Mucoid"
-            const sampleAppearanceRemarks = testDetail.Remarks // ""
-          } else if (testType === 'SampleVolume') {
-            const sampleVolumeOptions = testDetail.ResultOptions // Array of objects
-            const sampleVolumeSelectedOption = testDetail.Result // "1"
-            const selectedSampleVolume =
-              _.find(sampleVolumeOptions, {
-                ResultValue: sampleVolumeSelectedOption,
-              }) || {}
-            const sampleVolumeText =
-              selectedSampleVolume.ResultText + ' ' + testDetail.Unit || null // "3-5 ml"
-            const sampleVolumeRemarks = testDetail.Remarks // ""
+      const districtName = payload.getDistrict // "Mazowe"
+      let stateId = null
+      let lgaId = null
+      let originSiteGeographyId = null
+      if (countryId && provinceName) {
+        let { stateId, lgaId } = await knex('Geography as g')
+          .leftJoin('State as s', function() {
+            this.on('g.stateId', 's.id').andOn('s.name', knex.raw(provinceName))
+          })
+          .leftJoin('Lga as l', function() {
+            this.on('g.lgaId', 'l.id').andOn('l.name', knex.raw(districtName))
+          })
+          .where('g.countryId', countryId)
+          .select('g.id', 'g.stateId', 'g.lgaId')
+        if (!stateId) {
+          ;[stateId] = await knex('State').insert({ name: provinceName })
+          ;[originSiteGeographyId] = await knex('Geography').insert({
+            countryId,
+            stateId,
+          })
+        }
+        if (!lgaId && districtName) {
+          ;[lgaId] = await knex('Lga').insert({ name: districtName })
+          ;[originSiteGeographyId] = await knex('Geography').insert({
+            countryId,
+            stateId,
+            lgaId,
+          })
+        }
+      }
+      let originSiteId = null
+      const limsFacilityId = payload.ClientUID // "354b7f04781c4bbeaf87500031b82b11"
+      const facilityName = payload.Client // "Henderson Clinic"
+      if (limsFacilityId) {
+        const originSite = await knex('Site as s')
+          .join('Geography as g', 's.geographyId', 'g.id')
+          .where('g.countryId', countryId)
+          .andWhere('s.partnerId', partnerId)
+          .andWhere('s.externalId', limsFacilityId)
+          .first('s.id', 'g.stateId', 'g.lgaId', 's.name')
+        originSiteId = originSite.id
+        if (!stateId) {
+          ;({ stateId } = originSite)
+        }
+        if (!lgaId) {
+          ;({ lgaId } = originSite)
+        }
+        if (!originSiteGeographyId) {
+          originSiteGeographyId = (await knex('Geography as g')
+            .where('g.countryId', countryId)
+            .andWhere(function() {
+              if (!stateId) {
+                this.whereNull('g.stateId')
+              } else {
+                this.where('g.stateId', stateId)
+              }
+            })
+            .andWhere(function() {
+              if (!lgaId) {
+                this.whereNull('g.lgaId')
+              } else {
+                this.where('g.lgaId', lgaId)
+              }
+            })
+            .first('g.id')).id
+        }
+        if (!originSiteId) {
+          ;[originSiteId] = await knex('Site').insert({
+            name: facilityName,
+            externalId: limsFacilityId,
+            partnerId,
+            geographyId: originSiteGeographyId,
+          })
+        } else if (
+          (!originSite.stateId && stateId) ||
+          (!originSite.lgaId && lgaId) ||
+          (originSite.name !== facilityName && facilityName)
+        ) {
+          const updatedSiteInfo = {}
+          if (
+            (!originSite.stateId && stateId) ||
+            (!originSite.lgaId && lgaId)
+          ) {
+            updatedSiteInfo.geographyId = originSiteGeographyId
+            updatedSiteInfo.updatedOn = now
           }
-
-          // Test Details Audit Fields
-          const testLimsCreatedBy = testDetail.Creator // "kadyea"
-          const testLimsCreationDate = testDetail.creation_date // "2017/10/23 09:04:58 GMT+2"
-          const testLimsLastModifiedDate = testDetail.modification_date // "2018/03/20 06:23:4.257171 GMT+2"
-        })
+          if (originSite.name !== facilityName && facilityName) {
+            updatedSiteInfo.name = facilityName
+            updatedSiteInfo.updatedOn = now
+          }
+          await knex('Site')
+            .where('id', originSiteId)
+            .update(updatedSiteInfo)
+        }
       }
 
-      // "Digest": "{'composite': False, 'client_order_num': '', 'managers': {'dict': {'kadyea': {'name': u'Agripa Kadye', 'departments': '', 'phone': u'', 'signature': '', 'salutation': u'Mr', 'email': u'kadyea@nmrl.org.zw', 'job_title': u''}}, 'ids': ['kadyea']}, 'parent_analysisrequest': None, 'ar_attachments': [], 'member_discount': '0.00', 'sample': {'sampler': {}, 'date_sampled': DateTime('2017/09/25 00:00:00 GMT+0'), 'obj': <Sample at SP17-002058>, 'date_expired': DateTime('2018/03/20 06:23:5.210258 GMT+2'), 'url': 'http://192.168.0.25/clients/client17-1100/SP17-002058', 'sample_point': {}, 'client_sampleid': 'Frank Kangara', 'date_disposed': DateTime('2018/03/20 06:23:5.207907 GMT+2'), 'adhoc': False, 'date_received': DateTime('2017/10/24 12:02:15 GMT+2'), 'composite': False, 'sampling_date': DateTime('2018/03/20 06:23:5.308375 GMT+2'), 'sample_type': {'url': 'http://192.168.0.25/bika_setup/bika_sampletypes/sampletype-12', 'obj': <SampleType at sampletype-12>, 'id': 'sampletype-12', 'title': 'Sputum'}, 'date_disposal': DateTime('2017/09/25 00:00:00 GMT+2'), 'remarks': '', 'id': 'SP17-002058'}, 'invalid': False, 'laboratory': {'confidence': None, 'obj': <Laboratory at laboratory>, 'title': 'NMRL', 'url': '', 'accreditation_body': '', 'accredited': False, 'address': \"<div class='address'><span>2nd Floor New Laboratory Complex</span><span>Southerton</span><span>Harare</span><span>Harare</span><span>Zimbabwe</span></div>\", 'logo': 'http://192.168.0.25/logo_print.png', 'supervisor': '', 'accreditation_logo': ''}, 'id': 'SP17-002058-R01', 'categorized_analyses': {'Lab Analyses': {'TB Sample Analysis': [{'scientific_name': False, 'formatted_result': 'Mucoid', 'result': '1', 'formatted_specs': '', 'formatted_uncertainty': '', 'point_of_capture': 'Lab Analyses', 'refsample': 'SP17-002058', 'specs': {'max': '', 'min': '', 'warn_max': '', 'warn_min': ''}, 'unit': '', 'previous': [], 'category': 'TB Sample Analysis', 'title': 'Sample Appearance', 'outofrange': False, 'accredited': False, 'id': 'SampleAppearance', 'worksheet_url': None, 'type': 'Analysis', 'formatted_unit': '', 'reftype': None, 'remarks': '', 'obj': <Analysis at SampleAppearance>, 'retested': False, 'previous_results': '', 'keyword': 'SampleAppearance', 'worksheet': None, 'uncertainty': None, 'capture_date': DateTime('2018/03/20 06:23:4.211296 GMT+2'), 'request_id': 'SP17-002058-R01', 'isnumber': True}, {'scientific_name': False, 'formatted_result': '1-3', 'result': '1', 'formatted_specs': '', 'formatted_uncertainty': '', 'point_of_capture': 'Lab Analyses', 'refsample': 'SP17-002058', 'specs': {'max': '', 'min': '', 'warn_max': '', 'warn_min': ''}, 'unit': 'ml', 'previous': [], 'category': 'TB Sample Analysis', 'title': 'Sample Volume', 'outofrange': False, 'accredited': False, 'id': 'SampleVolume', 'worksheet_url': None, 'type': 'Analysis', 'formatted_unit': 'ml', 'reftype': None, 'remarks': '', 'obj': <Analysis at SampleVolume>, 'retested': False, 'previous_results': '', 'keyword': 'SampleVolume', 'worksheet': None, 'uncertainty': None, 'capture_date': DateTime('2018/03/20 06:23:4.034411 GMT+2'), 'request_id': 'SP17-002058-R01', 'isnumber': True}]}}, 'invoiced': False, 'totalprice': Decimal('0.0000'), 'hasblanks': False, 'qcanalyses': [], 'points_of_capture': ['Lab Analyses'], 'categorized_qcanalyses': {}, 'adhoc': False, 'date_received': '2017-10-24T12:02:16+02:00', 'late': True, 'specifications': {}, 'contact': {'pubpref': ('email', 'pdf', 'print', 'smsresult'), 'fullname': 'Sister in charge', 'obj': <Contact at contact-508>, 'email': ''}, 'invoice_exclude': False, 'department_analyses': {'fcf36ce00a2d451aaef7e82f06636b0a': {'Lab Analyses': {'TB Sample Analysis': [{'scientific_name': False, 'formatted_result': 'Mucoid', 'result': '1', 'formatted_specs': '', 'formatted_uncertainty': '', 'point_of_capture': 'Lab Analyses', 'refsample': 'SP17-002058', 'specs': {'max': '', 'min': '', 'warn_max': '', 'warn_min': ''}, 'unit': '', 'previous': [], 'category': 'TB Sample Analysis', 'title': 'Sample Appearance', 'outofrange': False, 'accredited': False, 'id': 'SampleAppearance', 'worksheet_url': None, 'type': 'Analysis', 'formatted_unit': '', 'reftype': None, 'remarks': '', 'obj': <Analysis at SampleAppearance>, 'retested': False, 'previous_results': '', 'keyword': 'SampleAppearance', 'worksheet': None, 'uncertainty': None, 'capture_date': DateTime('2018/03/20 06:23:4.211296 GMT+2'), 'request_id': 'SP17-002058-R01', 'isnumber': True}, {'scientific_name': False, 'formatted_result': '1-3', 'result': '1', 'formatted_specs': '', 'formatted_uncertainty': '', 'point_of_capture': 'Lab Analyses', 'refsample': 'SP17-002058', 'specs': {'max': '', 'min': '', 'warn_max': '', 'warn_min': ''}, 'unit': 'ml', 'previous': [], 'category': 'TB Sample Analysis', 'title': 'Sample Volume', 'outofrange': False, 'accredited': False, 'id': 'SampleVolume', 'worksheet_url': None, 'type': 'Analysis', 'formatted_unit': 'ml', 'reftype': None, 'remarks': '', 'obj': <Analysis at SampleVolume>, 'retested': False, 'previous_results': '', 'keyword': 'SampleVolume', 'worksheet': None, 'uncertainty': None, 'capture_date': DateTime('2018/03/20 06:23:4.034411 GMT+2'), 'request_id': 'SP17-002058-R01', 'isnumber': True}]}}}, 'date_sampled': '2017-09-25T00:00:00', 'prepublish': True, 'reporter': {'username': u'tinarwok', 'fullname': 'Kennedy Tinarwo', 'email': 'tinarwok@nmrl.org.zw'}, 'an_attachments': [], 'date_published': '2019-02-18T11:14:50+02:00', 'portal': {'url': 'http://192.168.0.25', 'obj': <PloneSite at senaite>}, 'hascontrols': False, 'remarks': '', 'analyses': [{'scientific_name': False, 'formatted_result': 'Mucoid', 'result': '1', 'formatted_specs': '', 'formatted_uncertainty': '', 'point_of_capture': 'Lab Analyses', 'refsample': 'SP17-002058', 'specs': {'max': '', 'min': '', 'warn_max': '', 'warn_min': ''}, 'unit': '', 'previous': [], 'category': 'TB Sample Analysis', 'title': 'Sample Appearance', 'outofrange': False, 'accredited': False, 'id': 'SampleAppearance', 'worksheet_url': None, 'type': 'Analysis', 'formatted_unit': '', 'reftype': None, 'remarks': '', 'obj': <Analysis at SampleAppearance>, 'retested': False, 'previous_results': '', 'keyword': 'SampleAppearance', 'worksheet': None, 'uncertainty': None, 'capture_date': DateTime('2018/03/20 06:23:4.211296 GMT+2'), 'request_id': 'SP17-002058-R01', 'isnumber': True}, {'scientific_name': False, 'formatted_result': '1-3', 'result': '1', 'formatted_specs': '', 'formatted_uncertainty': '', 'point_of_capture': 'Lab Analyses', 'refsample': 'SP17-002058', 'specs': {'max': '', 'min': '', 'warn_max': '', 'warn_min': ''}, 'unit': 'ml', 'previous': [], 'category': 'TB Sample Analysis', 'title': 'Sample Volume', 'outofrange': False, 'accredited': False, 'id': 'SampleVolume', 'worksheet_url': None, 'type': 'Analysis', 'formatted_unit': 'ml', 'reftype': None, 'remarks': '', 'obj': <Analysis at SampleVolume>, 'retested': False, 'previous_results': '', 'keyword': 'SampleVolume', 'worksheet': None, 'uncertainty': None, 'capture_date': DateTime('2018/03/20 06:23:4.034411 GMT+2'), 'request_id': 'SP17-002058-R01', 'isnumber': True}], 'child_analysisrequest': None, 'subtotal': Decimal('0.00'), 'haspreviousresults': False, 'categories': ['TB Sample Analysis'], 'client_reference': '', 'obj': <AnalysisRequest at SP17-002058-R01>, 'vat_amount': Decimal('0.0000'), 'footer': '', 'url': 'http://192.168.0.25/clients/client17-1100/SP17-002058-R01', 'client_sampleid': 'Frank Kangara', 'batch': {}, 'client': {'fax': '', 'obj': <Client at client17-1100>, 'name': 'Henderson Clinic', 'url': 'http://192.168.0.25/clients/client17-1100', 'phone': '+263778126772', 'address': \"<div class='address'></div>\", 'id': 'client17-1100'}, 'resultsinterpretationdepts': {'': {'uid': 'general', 'richtext': ''}, 'TB': {'uid': 'fcf36ce00a2d451aaef7e82f06636b0a', 'richtext': ''}}, 'hasduplicates': False, 'resultsinterpretation': ''}",
+      // Get or Create Sample
+      const limsSampleId = payload.getSampleID // "SP17-002058"
+      const sampleDateCollected = payload.DateSampled // "2017/09/25 00:00:00 GMT+0"
+      const sampleType = payload.SampleTypeTitle // "Sputum"
+      const sampleTypeMapping = {
+        'Blood plasma': 'Plasma',
+        'Dried Blood Spot': 'DBS',
+        Sputum: 'Sputum',
+      }
+      let sampleTypeExternalId = 'Other'
+      if (sampleType && sampleTypeMapping[sampleType]) {
+        sampleTypeExternalId = sampleTypeMapping[sampleType]
+      }
+      const sample =
+        (await knex('Sample as s')
+          .join('SampleType as st', 's.sampleTypeId', 'st.id')
+          .where({
+            's.externalId': limsSampleId,
+            's.originSiteId': originSiteId,
+            'st.externalId': sampleTypeExternalId,
+          })
+          .first('s.*')) || {}
+      let { id: sampleId } = sample
+      if (!sampleId) {
+        ;[sampleId] = await knex('Sample').insert({
+          externalId: limsSampleId,
+          collectedOn: parseDateOrDefault(sampleDateCollected),
+          sampleTypeId: await sampleTypeToId(sampleTypeExternalId),
+          originSiteId,
+        })
+      } else if (!sample.collectedOn && sampleDateCollected) {
+        await knex('Sample')
+          .where('id', sampleId)
+          .update({
+            collectedOn: parseDateOrDefault(sampleDateCollected),
+          })
+      }
+      const baseResultData = {
+        senaite: {
+          analysisRequest: {
+            creationDate: payload.creation_date, // "2017/10/23 09:04:58 GMT+2"
+            creator: payload.Creator, // "kadyea"
+            creatorEmail: payload.CreatorEmail, // "kadyea@nmrl.org.zw"
+            creatorFullName: payload.CreatorFullName, // "kadyea"
+            dateVerified: payload.getDateVerified, // null
+            doctorTitle: payload.getDoctorTitle, // ""
+            doctorUid: payload.getDoctorUID, // ""
+            modificationDate: payload.modification_date, // "2019/02/18 11:15:15.191914 GMT+2"
+            printed: payload.getPrinted, // "0"
+            priority: payload.Priority, // "3"
+            profilesTitleStr: payload.ProfilesTitleStr, // "TB Culture"
+            uid: payload.UID, // "b98da3709f1845f7bef097ed5a95c634"
+          },
+          referringFacility: {
+            contactEmail: payload.ContactEmail, // ""
+            contactFullName: payload.ContactFullName, // "Sister in charge"
+            contactUid: payload.ContactUID, // "24cf4e36f70c41aeaf2959cb6cdd27a1"
+          },
+          sample: {
+            appearance: null,
+            appearanceRemarks: null,
+            volume: null,
+            volumeRemarks: null,
+            dateReceived: payload.DateReceived, // "2017/10/24 12:02:16 GMT+2"
+            partitionId: payload.id, // "SP17-002058-R01"
+            receivedBy: payload.ReceivedBy, // "muzavazip"
+            samplerEmail: payload.SamplerEmail, // "kadyea@nmrl.org.zw"
+            typeUid: payload.SampleTypeUID, // "ac0cbd54fc4d4c86b9e42fe4c870c184"
+            uid: payload.SampleUID, // "dc4275a004c24b2fb2c20b319d9a088c"
+          },
+          result: {
+            title: null,
+            uid: null,
+            retested: null,
+            result: null,
+            resultText: null,
+            value: null,
+            resultCaptureDate: null,
+            remarks: null,
+            unit: null,
+            pointOfCapture: null,
+            manualEntryOfResults: null,
+            instrument: null,
+            instrumentEntryOfResults: null,
+            hidden: null,
+            hiddenManually: null,
+            analyst: null,
+            verificators: null,
+            testReviewState: null,
+            worksheetAnalysisReviewState: null,
+            creationDate: null,
+            creator: null,
+            modificationDate: null,
+          },
+        },
+      }
+      const patientData = {
+        senaite: {
+          patientId: payload.getPatientID, // "P17-00590"
+          patientUid: payload.Patient_uid, // "eda130e9e110406fa9b0b063c6d95e40"
+          referringFacilityPatientName: payload.Patient, // "Frank Kangara"
+          referringFacilityPatientUid: payload.ClientPatientID, // "8e233dceaa6b4551ada8d6ff7485e282"
+          referringFacilitySampleId: payload.ClientSampleID, // "Frank Kangara"
+        },
+      }
+
+      const sampleAppearanceAnalysis = _.find(payload.Analyses, {
+        id: 'SampleAppearance',
+      })
+      if (_.get(sampleAppearanceAnalysis, 'Result')) {
+        if (!_.isEmpty(sampleAppearanceAnalysis.ResultOptions)) {
+          const selectedSampleAppearance = _.find(
+            sampleAppearanceAnalysis.ResultOptions,
+            { ResultValue: sampleAppearanceAnalysis.Result }
+          )
+          if (_.get(selectedSampleAppearance, 'ResultText')) {
+            if (sampleAppearanceAnalysis.Unit) {
+              baseResultData.sample.appearance = `${selectedSampleAppearance.ResultText} ${sampleAppearanceAnalysis.Unit}`
+            } else {
+              baseResultData.sample.appearance =
+                selectedSampleAppearance.ResultText
+            }
+          } else if (_.get(selectedSampleAppearance, 'value')) {
+            baseResultData.sample.appearance = selectedSampleAppearance.value
+          }
+        } else {
+          baseResultData.sample.appearance = sampleAppearanceAnalysis.Result
+        }
+      }
+      if (_.get(sampleAppearanceAnalysis, 'Remarks')) {
+        baseResultData.sample.appearanceRemarks =
+          sampleAppearanceAnalysis.Remarks
+      }
+      const sampleVolumeAnalysis = _.find(payload.Analyses, {
+        id: 'SampleVolume',
+      })
+      if (_.get(sampleVolumeAnalysis, 'Result')) {
+        if (!_.isEmpty(sampleVolumeAnalysis.ResultOptions)) {
+          const selectedSampleVolume = _.find(
+            sampleVolumeAnalysis.ResultOptions,
+            { ResultValue: sampleVolumeAnalysis.Result }
+          )
+          if (_.get(selectedSampleVolume, 'ResultText')) {
+            if (sampleVolumeAnalysis.Unit) {
+              baseResultData.sample.volume = `${selectedSampleVolume.ResultText} ${sampleVolumeAnalysis.Unit}`
+            } else {
+              baseResultData.sample.volume = selectedSampleVolume.ResultText
+            }
+          } else if (_.get(selectedSampleVolume, 'value')) {
+            baseResultData.sample.volume = selectedSampleVolume.value
+          }
+        } else {
+          baseResultData.sample.volume = sampleVolumeAnalysis.Result
+        }
+      }
+      if (_.get(sampleVolumeAnalysis, 'Remarks')) {
+        baseResultData.sample.volumeRemarks = sampleVolumeAnalysis.Remarks
+      }
+
+      const testResultAnalyses = _.filter(payload.Analyses, analysis =>
+        ['SampleAppearance', 'SampleVolume'].includes(!analysis.id)
+      )
+      // Test Details
+      const assayIds = await allAssayToId()
+      if (!_.isEmpty(payload.Analyses)) {
+        await Promise.each(testResultAnalyses, async testResultAnalysis => {
+          let assayId = assayIds.senaiteUnknown
+          let resultRecord = {
+            patientData: _.merge({}, patientData),
+            resultData: _.merge({}, baseResultData),
+          }
+          if (testResultAnalysis.id === 'MGITRESULT') {
+            assayId = assayIds.assayBdMgitAst
+            // TODO: Perform duplicate checking on MGIT data processor
+            resultRecord = await knex('Result')
+              .where('sampleId', sampleId)
+              .andWhere('assayId', assayId)
+              .first()
+            if (resultRecord) {
+              resultRecord.patientData = _.merge(
+                resultRecord.patientData
+                  ? JSON.parse(resultRecord.patientData)
+                  : {},
+                patientData
+              )
+              resultRecord.resultData = _.merge(
+                resultRecord.resultData
+                  ? JSON.parse(resultRecord.resultData)
+                  : {},
+                patientData
+              )
+            } else {
+              resultRecord.externalId = testResultAnalysis.UID
+              resultRecord.assayId = assayId
+              resultRecord.partnerId = partnerId
+              resultRecord.sampleId = sampleId
+              resultRecord.deviceId = deviceId
+              resultRecord.rawData = JSON.stringify(payload)
+              resultRecord.createdOn = now
+            }
+          }
+          if (!resultRecord.geographyId) {
+            resultRecord.geographyId = geographyId
+          }
+          if (!resultRecord.siteId) {
+            resultRecord.siteId = siteId
+          }
+          if (!resultRecord.longitude) {
+            resultRecord.longitude = longitude
+          }
+          if (!resultRecord.latitude) {
+            resultRecord.latitude = latitude
+          }
+          if (!resultRecord.resultSourceId) {
+            resultRecord.resultSourceId = await resultSourceToId('LIMS')
+          }
+          if (!resultRecord.resultTypeId) {
+            resultRecord.resultTypeId = await resultTypeToId('Patient')
+          }
+          /*
+          `resultCategory1` int(10) unsigned DEFAULT NULL,
+            `resultCategory2` int(10) unsigned DEFAULT NULL,
+          */
+          resultRecord.updatedOn = now
+
+          resultRecord.resultData.senaite.result.title =
+            testResultAnalysis.title // "MGIT RESULT"
+          resultRecord.resultData.senaite.result.uid = testResultAnalysis.UID // "d2b24013cefd4ab49b55ca1b7afcee52"
+          resultRecord.resultData.senaite.result.retested =
+            testResultAnalysis.Retested // false
+          resultRecord.resultData.senaite.result.result =
+            testResultAnalysis.Result // ""
+          const resultOptions = testResultAnalysis.ResultOptions // Array with objects like { "ResultText": "Positive", "ResultValue": "0", "value": "" }
+          const selectedResultOption =
+            _.find(resultOptions, {
+              ResultValue: resultRecord.resultData.senaite.result.result,
+            }) || {}
+          resultRecord.resultData.senaite.result.resultText =
+            selectedResultOption.ResultText
+          resultRecord.resultData.senaite.result.value =
+            selectedResultOption.value
+          resultRecord.resultData.senaite.result.resultCaptureDate = parseDateOrDefault(
+            testResultAnalysis.ResultCaptureDate
+          ) // "2018/03/20 06:23:3.774431 GMT+2"
+          resultRecord.resultData.senaite.result.remarks =
+            testResultAnalysis.Remarks // ""
+          resultRecord.resultData.senaite.result.unit = testResultAnalysis.Unit // ""
+          resultRecord.resultData.senaite.result.pointOfCapture =
+            testResultAnalysis.PointOfCapture // "lab"
+          resultRecord.resultData.senaite.result.manualEntryOfResults =
+            testResultAnalysis.ManualEntryOfResults // true
+          resultRecord.resultData.senaite.result.instrument =
+            testResultAnalysis.Instrument // null
+          resultRecord.resultData.senaite.result.instrumentEntryOfResults =
+            testResultAnalysis.InstrumentEntryOfResults // false
+          resultRecord.resultData.senaite.result.hidden =
+            testResultAnalysis.Hidden // true
+          resultRecord.resultData.senaite.result.hiddenManually =
+            testResultAnalysis.HiddenManually // false
+          resultRecord.resultData.senaite.result.analyst =
+            testResultAnalysis.Analyst // "" <- LIMS Username
+          resultRecord.resultData.senaite.result.verificators =
+            testResultAnalysis.Verificators // "" <- LIMS Username
+          resultRecord.resultData.senaite.result.testReviewState =
+            testResultAnalysis.review_state // "verified"
+          resultRecord.resultData.senaite.result.worksheetAnalysisReviewState =
+            testResultAnalysis.worksheetanalysis_review_state // "unassigned"
+          resultRecord.resultData.senaite.result.creationDate = parseDateOrDefault(
+            testResultAnalysis.creation_date
+          ) // "2017/10/23 09:04:58 GMT+2"
+          resultRecord.resultData.senaite.result.creator =
+            testResultAnalysis.Creator // "kadyea"
+          resultRecord.resultData.senaite.result.modificationDate = parseDateOrDefault(
+            testResultAnalysis.modification_date
+          ) // "2018/03/20 06:23:4.257171 GMT+2"
+
+          if (resultRecord.id) {
+            await knex('Result')
+              .where('id')
+              .update(resultRecord)
+          } else {
+            await knex('Result').insert(resultRecord)
+          }
+        })
+      }
     })
   }
 }
