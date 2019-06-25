@@ -4,7 +4,6 @@ const _ = require('lodash')
 const Promise = require('bluebird')
 const {
   assayTypeToId,
-  deviceTypeToId,
   resultCategoryToId,
   resultSourceToId,
 } = require('../../src/shared/dictionary')
@@ -284,12 +283,15 @@ async function seed(knex) {
     },
   }
 
+  const { id: deviceTypeId } = await knex('DeviceType')
+    .where('externalId', 'SenaiteLims')
+    .first()
   const [assaySenaiteLimsUnknownId] = await knex('Assay').insert({
     name: 'Senaite LIMS Unknown',
     i18nKey: 'assaySenaiteLIMSUnknown',
     externalId: 'senaiteUnknown',
     assayTypeId: await assayTypeToId('Unknown'),
-    deviceTypeId: await deviceTypeToId('SenaiteLims'),
+    deviceTypeId,
     resultSourceId: await resultSourceToId('LIMS'),
     patientDataSchema: JSON.stringify(senaiteLimsPatientDataSchema),
     resultDataSchema: JSON.stringify(senaiteLimsResultDataSchema),
@@ -302,14 +304,7 @@ async function seed(knex) {
   })
 
   await Promise.each(
-    [
-      'assayBdMgitAst',
-      'assayBdMgitGnd',
-      'assayGenoTypeMTBCV1',
-      'assayGenoTypeMTBDRplusV2',
-      'assayGenoTypeMTBDRslV1',
-      'assayGenoTypeMTBDRslV2',
-    ],
+    ['assayBdMgitAst', 'assayBdMgitGnd'],
     async assayExternalId => {
       const {
         resultDataSchema: resultDataSchemaString,
@@ -317,8 +312,8 @@ async function seed(knex) {
       } = await knex('Assay')
         .where('externalId', assayExternalId)
         .first('resultDataSchema', 'patientDataSchema')
-      const resultDataSchema = JSON.parse(resultDataSchemaString)
-      const patientDataSchema = JSON.parse(patientDataSchemaString)
+      const resultDataSchema = JSON.parse(resultDataSchemaString) || {}
+      const patientDataSchema = JSON.parse(patientDataSchemaString) || {}
       if (!resultDataSchema.senaite || !patientDataSchema.senaite) {
         if (!resultDataSchema.senaite) {
           const resultDataSchemaSenaiteOrder =
