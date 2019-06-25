@@ -1,3 +1,4 @@
+const Promise = require('bluebird')
 module.exports = require('../utils').seed(seed)
 const patients = require('./fixtures/patients.json')
 const { errorCodes } = require('./fixtures/errorCodes.js')
@@ -16,6 +17,7 @@ const {
   allResultSourceToId,
   allSampleTypeToId,
   resultTypeToId,
+  allDeviceStatusToId,
 } = require('../../src/shared/dictionary')
 
 const patientNumber = patients.length - 1
@@ -23,10 +25,10 @@ const millisInHour = 1000 * 60 * 60
 const millisInMinute = 1000 * 60
 const resultTimeFrameInDays = 365
 const resultMultiplier = process.env['seeds.resultMultiplier'] || 100
-const resultMtbNumber = 1 * resultMultiplier
-const resultEbolaNumber = 0.5 * resultMultiplier
-const resultHivVlNumber = 0.5 * resultMultiplier
-const resultHcvNumber = 0.5 * resultMultiplier
+const resultMtbNumber = 0.05 * resultMultiplier
+const resultEbolaNumber = 0.05 * resultMultiplier
+const resultHivVlNumber = 0.05 * resultMultiplier
+const resultHcvNumber = 0.05 * resultMultiplier
 const now = new Date()
 
 function calculateDateForResult(
@@ -81,7 +83,11 @@ async function seed(knex) {
     Acknowledged: acknowledged,
   } = await allResultWorkflowStatusToId()
 
-  const siteDatas = await knex('Site').select()
+  const partnerOne = await knex('Partner').first()
+  const partnerOneId = partnerOne.id
+  const siteDatas = await knex('Site')
+    .where({ partnerId: partnerOneId })
+    .select()
 
   // Results section
   // TB results:
@@ -160,7 +166,6 @@ async function seed(knex) {
   }
   // Create partner types
 
-  const { id: partnerOneId } = await knex('Partner').first('id')
   const deviceTypes = await knex('DeviceType').select()
   // const assayTypes = await knex('AssayType').select()
   const assays = await knex('Assay').select()
@@ -172,9 +177,38 @@ async function seed(knex) {
     deviceTypes,
     elem => elem.externalId === 'CepheidGeneXpert'
   ).id
+  // DeviceStatus
+  const { approved: deviceStatusApproved } = await allDeviceStatusToId()
+  const { DeviceCount } = await knex('Device')
+    .where('partnerId', partnerOneId)
+    .count('* as DeviceCount')
+  if (deviceTypes.length === DeviceCount) {
+    let i = 0
+    await Promise.each(deviceTypes, async elem => {
+      const siteData = _.sample(siteDatas)
+      await knex('Device').insert(
+        Object.assign({}, auditFields, {
+          name: `Router at ${i} ${siteData.shortName}`,
+          shortName: `r${i}`,
+          deviceTypeId: elem.id,
+          deviceStatusId: deviceStatusApproved,
+          partnerId: siteData.partnerId,
+          geographyId: siteData.geographyId,
+          siteId: siteData.id,
+          createdOn: new Date(+now - 3 * i * millisInHour),
+          updatedOn: new Date(+now - i * millisInHour),
+          lastPingOn: new Date(+now - (i * millisInHour) / 3),
+          lastSeenOn: new Date(+now - (i * millisInHour) / 3),
+        })
+      )
+      i += 1
+    })
+  }
+
   const devicesGeneXpert = await knex('Device')
-    .where({ deviceTypeId: deviceTypeGeneXpertId })
+    .where({ deviceTypeId: deviceTypeGeneXpertId, partnerId: partnerOneId })
     .select()
+
   const { id: lastSampleId } = await knex('Sample')
     .orderBy('id', 'desc')
     .first('id')
@@ -676,7 +710,7 @@ async function seed(knex) {
     elem => elem.externalId === 'GxHcv'
   ).id
   const devicesDaktari = await knex('Device')
-    .where({ deviceTypeId: deviceTypeGeneXpertId })
+    .where({ deviceTypeId: deviceTypeGeneXpertId, partnerId: partnerOneId })
     .select()
   _.map(_.range(resultHcvNumber), async i => {
     const device = devicesDaktari[i % devicesDaktari.length]
