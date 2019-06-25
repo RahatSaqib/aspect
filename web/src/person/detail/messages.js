@@ -13,7 +13,7 @@ export default defineMessages({
   },
   systemAccessControl: {
     id: 'pages.PersonDetails.systemAccessControl',
-    defaultMessage: 'System Access & Jobs',
+    defaultMessage: 'Login',
   },
   none: {
     id: 'pages.PersonDetails.none',
@@ -53,7 +53,7 @@ export default defineMessages({
   },
   jobTitle: {
     id: 'pages.ContactDetails.title',
-    defaultMessage: 'Job Title',
+    defaultMessage: 'Title',
   },
   emailHeader: {
     id: 'pages.ContactDetails.emailHeader',
@@ -61,11 +61,11 @@ export default defineMessages({
   },
   primaryEmail: {
     id: 'pages.ContactDetails.email',
-    defaultMessage: 'Primary',
+    defaultMessage: 'Email',
   },
   secondaryEmail: {
     id: 'pages.ContactDetails.email2',
-    defaultMessage: 'Alternate',
+    defaultMessage: 'Alternate Email',
   },
   phone: {
     id: 'pages.ContactDetails.phoneHeader',

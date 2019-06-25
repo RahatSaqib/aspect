@@ -2,7 +2,7 @@ import React from 'react'
 import classnames from 'classnames/bind'
 import { Link } from 'react-router-dom'
 import FaExternalLink from 'react-icons/lib/fa/external-link'
-import CloseIcon from '@material-ui/icons/Close'
+import CloseIcon from '@material-ui/icons/RemoveCircle'
 import { mergeToFiltersParams } from '../../filter/utils'
 import messages from './messages'
 
@@ -36,7 +36,7 @@ export default ({ assignment, showLinks, onAskConfirmation, intl }) => {
             onClick={() => onAskConfirmation(assignment)}
             className={cssClasses('Assignment__Link')}
           >
-            <CloseIcon style={{ fill: 'grey' }} />
+            <CloseIcon style={{ fill: '--aspect-color-chill-blue-1' }} />
           </Link>
         )}
       </div>
