@@ -6,6 +6,7 @@ import React from 'react'
 import { compose, lifecycle, withHandlers, pure } from 'recompose'
 import Button from '@material-ui/core/Button'
 import TextField from '@material-ui/core/TextField'
+import MenuItem from '@material-ui/core/MenuItem'
 
 import recomposeForm from '../../components/recomposeForm'
 import ConnectedTagInput from '../../tag/ConnectedTagInput'
@@ -16,6 +17,8 @@ import PartnerSelectField from '../../filter/partner/PartnerSelectField'
 import CountrySelectField from '../../filter/geography/CountrySelectField'
 import StateSelectField from '../../filter/geography/StateSelectField'
 import LgaSelectField from '../../filter/geography/LgaSelectField'
+import FlagIcon from '../../components/shared/flagIcon/FlagIcon'
+import { timezones, languages } from '../../filter/hardcoded'
 import messages from './messages'
 import AspectCheckbox from '../../components/shared/AspectCheckbox'
 
@@ -60,9 +63,16 @@ const DEFAULT_VALUES = {
   zip: '',
   notes: '',
   canLogIn: false,
+  timezone: '',
+  culture: '',
 }
 
-const getInitialValues = (contactDetails, partnerList, countries) => ({
+const getInitialValues = (
+  contactDetails,
+  partnerList,
+  countries,
+  userPreferences
+) => ({
   name: contactDetails.get('name') || DEFAULT_VALUES.name,
   title: contactDetails.get('title') || DEFAULT_VALUES.title,
   email: contactDetails.get('email') || DEFAULT_VALUES.email,
@@ -85,6 +95,12 @@ const getInitialValues = (contactDetails, partnerList, countries) => ({
   notes: contactDetails.get('notes') || DEFAULT_VALUES.notes,
   canLogIn: !!contactDetails.get('canLogIn') || DEFAULT_VALUES.canLogIn,
   userId: contactDetails.get('userId') || undefined,
+  timezone:
+    (userPreferences && userPreferences.get('timezone')) ||
+    DEFAULT_VALUES.timezone,
+  culture:
+    (userPreferences && userPreferences.get('culture')) ||
+    DEFAULT_VALUES.culture,
 })
 
 const enhance = compose(
@@ -130,12 +146,22 @@ const enhance = compose(
   }),
   lifecycle({
     componentWillMount() {
-      const { partnerList, countries, contactDetails } = this.props
+      const {
+        partnerList,
+        countries,
+        contactDetails,
+        userPreferences,
+      } = this.props
 
       const onChange = values => this.setState({ values })
       this.setState({
         onChange,
-        values: getInitialValues(contactDetails, partnerList, countries),
+        values: getInitialValues(
+          contactDetails,
+          partnerList,
+          countries,
+          userPreferences
+        ),
       })
     },
 
@@ -144,14 +170,25 @@ const enhance = compose(
     },
 
     componentDidUpdate(prevProps) {
-      const { contactDetails, partnerList, countries } = this.props
+      const {
+        contactDetails,
+        partnerList,
+        countries,
+        userPreferences,
+      } = this.props
       if (
         prevProps.contactDetails !== contactDetails ||
-        prevProps.partnerList.length !== partnerList.length
+        prevProps.partnerList.length !== partnerList.length ||
+        prevProps.userPreferences !== userPreferences
       ) {
         this.props.onLoadTags()
         this.state.onChange(
-          getInitialValues(contactDetails, partnerList, countries)
+          getInitialValues(
+            contactDetails,
+            partnerList,
+            countries,
+            userPreferences
+          )
         )
       }
     },
@@ -176,6 +213,14 @@ const enhance = compose(
       {
         fieldName: 'canLogIn',
         valueFromChangeEvent: it => it.target.checked,
+      },
+      {
+        fieldName: 'timezone',
+        valueFromChangeEvent: it => it.target.value,
+      },
+      {
+        fieldName: 'culture',
+        valueFromChangeEvent: it => it.target.value,
       },
     ],
     validate,
@@ -230,6 +275,8 @@ export const ContactDetailsForm = ({
   onLgaIdChange,
   onZipChange,
   onNotesChange,
+  onTimezoneChange,
+  onCultureChange,
   handleSubmit,
   contactDetails,
   personTags,
@@ -286,94 +333,76 @@ export const ContactDetailsForm = ({
       </section>
       <section>
         <h1>{intl.formatMessage(messages.emailHeader)}</h1>
-        <TextField
-          fullWidth
-          type="email"
-          name="email"
-          label={intl.formatMessage(messages.primaryEmail)}
-          value={values.email}
-          onChange={onEmailChange}
-          onBlur={onEmailBlur}
-          disabled={loading}
-          error={meta.email.touched && meta.email.error}
-          helperText={meta.email.touched && meta.email.error}
-          margin="normal"
-          FormHelperTextProps={{
-            margin: 'dense',
-          }}
-          inputProps={{ maxLength: 500 }}
-        />
-        <TextField
-          fullWidth
-          type="email"
-          name="email2"
-          label={intl.formatMessage(messages.secondaryEmail)}
-          value={values.email2}
-          onChange={onEmail2Change}
-          disabled={loading}
-          error={meta.email2.touched && meta.email2.error}
-          helperText={meta.email2.touched && meta.email2.error}
-          margin="normal"
-          FormHelperTextProps={{
-            margin: 'dense',
-          }}
-          inputProps={{ maxLength: 500 }}
-        />
+        <div className={cssClasses('Form__Content__Arrange-field')}>
+          <TextField
+            fullWidth
+            type="email"
+            name="email"
+            label={intl.formatMessage(messages.primaryEmail)}
+            value={values.email}
+            onChange={onEmailChange}
+            onBlur={onEmailBlur}
+            disabled={loading}
+            error={meta.email.touched && meta.email.error}
+            helperText={meta.email.touched && meta.email.error}
+            margin="normal"
+            FormHelperTextProps={{
+              margin: 'dense',
+            }}
+            inputProps={{ maxLength: 500 }}
+          />
+          <TextField
+            fullWidth
+            type="email"
+            name="email2"
+            label={intl.formatMessage(messages.secondaryEmail)}
+            value={values.email2}
+            onChange={onEmail2Change}
+            disabled={loading}
+            error={meta.email2.touched && meta.email2.error}
+            helperText={meta.email2.touched && meta.email2.error}
+            margin="normal"
+            FormHelperTextProps={{
+              margin: 'dense',
+            }}
+            inputProps={{ maxLength: 500 }}
+          />
+        </div>
       </section>
       <section>
         <h1>{intl.formatMessage(messages.phone)}</h1>
-        <DialCodeDropdownInput
-          name="phone"
-          label={intl.formatMessage(messages.telephone)}
-          value={values.phone}
-          onChange={onPhoneChange}
-          disabled={loading}
-          error={meta.phone.touched && meta.phone.error}
-          helperText={meta.phone.touched && meta.phone.error}
-          margin="normal"
-          FormHelperTextProps={{
-            margin: 'dense',
-          }}
-          inputProps={{ maxLength: 40 }}
-        />
-        <DialCodeDropdownInput
-          name="cell"
-          label={intl.formatMessage(messages.mobile)}
-          value={values.cell}
-          onChange={onCellChange}
-          disabled={loading}
-          error={meta.cell.touched && meta.cell.error}
-          helperText={meta.cell.touched && meta.cell.error}
-          margin="normal"
-          FormHelperTextProps={{
-            margin: 'dense',
-          }}
-          inputProps={{ maxLength: 40 }}
-        />
-      </section>
-      {userIsAdmin && (
-        <section>
-          <h1>{intl.formatMessage(messages.partner)}</h1>
-          <PartnerSelectField
-            name="lastPartnerId"
-            floatingLabelText={intl.formatMessage(messages.partner)}
-            emptyId="-1"
-            emptyText=""
-            partnerId={values.lastPartnerId}
-            onChangePartner={onLastPartnerIdChange}
+        <div className={cssClasses('Form__Content__Arrange-field', '')}>
+          <DialCodeDropdownInput
+            name="phone"
+            label={intl.formatMessage(messages.telephone)}
+            value={values.phone}
+            onChange={onPhoneChange}
             disabled={loading}
-            errorStyle={{
-              float: 'left',
-              whiteSpace: 'nowrap',
-              textOverflow: 'visible',
+            error={meta.phone.touched && meta.phone.error}
+            helperText={meta.phone.touched && meta.phone.error}
+            margin="normal"
+            FormHelperTextProps={{
+              margin: 'dense',
             }}
-            errorText={meta.lastPartnerId.touched && meta.lastPartnerId.error}
-            autoWidth
-            tabIndex="0"
-            aria-haspopup
+            inputProps={{ maxLength: 40 }}
           />
-        </section>
-      )}
+          <DialCodeDropdownInput
+            name="cell"
+            label={intl.formatMessage(messages.mobile)}
+            value={values.cell}
+            onChange={onCellChange}
+            disabled={loading}
+            error={meta.cell.touched && meta.cell.error}
+            helperText={meta.cell.touched && meta.cell.error}
+            margin="normal"
+            FormHelperTextProps={{
+              margin: 'dense',
+            }}
+            inputProps={{ maxLength: 40 }}
+          />
+        </div>
+      </section>
+
       <section>
         <h1>{intl.formatMessage(messages.location)}</h1>
         <div className={cssClasses('GeographyDropdownGroup')}>
@@ -409,6 +438,7 @@ export const ContactDetailsForm = ({
           fullWidth
           type="text"
           name="zip"
+          className={cssClasses('ZipCodeField')}
           label={intl.formatMessage(messages.zip)}
           value={values.zip}
           onChange={onZipChange}
@@ -420,6 +450,88 @@ export const ContactDetailsForm = ({
             margin: 'dense',
           }}
           inputProps={{ maxLength: 45 }}
+        />
+      </section>
+      {userIsAdmin && (
+        <section>
+          <h1>{intl.formatMessage(messages.partner)}</h1>
+          <PartnerSelectField
+            name="lastPartnerId"
+            floatingLabelText={intl.formatMessage(messages.partner)}
+            emptyId="-1"
+            emptyText=""
+            className={cssClasses('PartnerDropDown')}
+            partnerId={values.lastPartnerId}
+            onChangePartner={onLastPartnerIdChange}
+            disabled={loading}
+            errorStyle={{
+              float: 'left',
+              whiteSpace: 'nowrap',
+              textOverflow: 'visible',
+            }}
+            errorText={meta.lastPartnerId.touched && meta.lastPartnerId.error}
+            autoWidth
+            tabIndex="0"
+            aria-haspopup
+          />
+        </section>
+      )}
+      <section>
+        <TextField
+          select
+          fullWidth
+          id="timezone"
+          name="timezone"
+          className={cssClasses('TimezoneField')}
+          label={intl.formatMessage(messages.timezone)}
+          disabled={loading || form.submitting}
+          onChange={onTimezoneChange}
+          value={values.timezone}
+          margin="normal"
+          InputLabelProps={{ shrink: true }}
+        >
+          {timezones.map(item => (
+            <MenuItem key={item.id} value={item.id}>
+              {item.name}
+            </MenuItem>
+          ))}
+        </TextField>
+
+        <TextField
+          select
+          fullWidth
+          id="culture"
+          name="culture"
+          className={cssClasses('CultureField')}
+          label={intl.formatMessage(messages.language)}
+          disabled={loading || form.submitting}
+          onChange={onCultureChange}
+          value={values.culture}
+          margin="normal"
+          InputLabelProps={{ shrink: true }}
+        >
+          {languages.map(item => (
+            <MenuItem key={item.culture} value={item.culture}>
+              <span>
+                <FlagIcon
+                  withRightMargin
+                  countryIsoAlpha2Code={item.isoAlpha2Code}
+                />
+                {item.languageName}
+              </span>
+            </MenuItem>
+          ))}
+        </TextField>
+      </section>
+      <section>
+        <h1>{intl.formatMessage(messages.tags)}</h1>
+        <ConnectedTagInput
+          allowCreate
+          label={intl.formatMessage(messages.chooseTags)}
+          onTagChange={onPersonTagsChange}
+          qryId={contactDetails.get('id')}
+          qryType="person"
+          value={personTags.toJS()}
         />
       </section>
       {showNotesField && (
@@ -444,17 +556,6 @@ export const ContactDetailsForm = ({
           />
         </section>
       )}
-      <section>
-        <h1>{intl.formatMessage(messages.tags)}</h1>
-        <ConnectedTagInput
-          allowCreate
-          label={intl.formatMessage(messages.chooseTags)}
-          onTagChange={onPersonTagsChange}
-          qryId={contactDetails.get('id')}
-          qryType="person"
-          value={personTags.toJS()}
-        />
-      </section>
     </div>
     <div className={cssClasses('Form__ActionRow')}>
       <Button

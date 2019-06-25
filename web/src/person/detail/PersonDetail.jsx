@@ -1,6 +1,7 @@
 import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React, { PureComponent } from 'react'
+import { Switch, Route, Redirect } from 'react-router-dom'
 import { compose, setPropTypes } from 'recompose'
 import { intlShape } from 'react-intl'
 import { bindActionCreators } from 'redux'
@@ -9,19 +10,12 @@ import Helmet from 'react-helmet'
 
 // Material-UI
 import Paper from '@material-ui/core/Paper'
-import Tab from '@material-ui/core/Tab'
 import LinearProgress from '@material-ui/core/LinearProgress'
-import MapsPersonPin from '@material-ui/icons/PersonPinRounded'
-import Language from '@material-ui/icons/Language'
-import Lock from '@material-ui/icons/Lock'
 import ContactDetailsForm from './ContactDetailsForm'
 import LoginDetailsForm from './LoginDetailsForm'
 import JobAssignemntForm from './JobAssignmentForm'
-import UserPreferencesForm from './UserPreferencesForm'
+import PersonDetailBackBar from './PersonDetailsBackBar'
 
-// Our own imports
-import AspectTabs from '../../components/shared/AspectTabs'
-import { Hidden, Visible } from '../../components/pureGrids'
 import NavTitle from '../../globals/components/NavTitle'
 import isEditable from '../../shared/selectors/isEditable'
 import {
@@ -235,7 +229,17 @@ export class PersonDetail extends PureComponent {
   }
 
   render() {
-    const { intl, person, user, editable, isNew, jobFunctions } = this.props
+    const {
+      intl,
+      person,
+      user,
+      editable,
+      isNew,
+      jobFunctions,
+      match,
+      history,
+      location,
+    } = this.props
     const { formatMessage } = intl
     const contactDetails = new ContactDetails(person)
     const loginDetails = new LoginDetails(person)
@@ -252,111 +256,114 @@ export class PersonDetail extends PureComponent {
       <div className={styles.Container}>
         <Helmet title={formatMessage(messages.title)} />
         <NavTitle title={formatMessage(messages.title)} />
-        <Paper>
-          {editable && (
-            <AspectTabs fullWidth>
-              <Tab
-                icon={<MapsPersonPin fontSize="large" />}
-                label={
-                  <Hidden xs component="span">
-                    {formatMessage(messages.contactDetails)}
-                  </Hidden>
-                }
-              >
-                {!isNew && !person && <LinearProgress />}
+        <Switch>
+          <Route
+            exact
+            path={match.path}
+            render={props =>
+              editable ? (
+                <div>
+                  {!isNew && !person && <LinearProgress />}
+                  {loading && <LinearProgress />}
+
+                  <PersonDetailBackBar
+                    formatMessage={formatMessage}
+                    history={history}
+                    location={location}
+                    match={match}
+                    {...props}
+                    isNew={isNew}
+                    title={isNew ? 'Add Contact' : person && person.get('name')}
+                    canUserLoggedIn={!isNew && userIsAdmin && canLogIn}
+                  />
+                  <Paper className={styles.ContactDetailsForm}>
+                    <ContactDetailsForm
+                      intl={intl}
+                      loading={loading}
+                      onEmailBlur={this.handleEmailBlur}
+                      contactDetails={contactDetails}
+                      showNotesField
+                      userIsAdmin
+                      isUserChange={this.handlePersonCanLogIn}
+                      onSubmit={this.saveContactDetails}
+                      userPreferences={userPreferences}
+                      saveUserPreferences={this.saveUserPreferences}
+                    />
+                  </Paper>
+                </div>
+              ) : (
+                <Redirect to={match.url} />
+              )
+            }
+          />
+          <Route
+            exact
+            path={`${match.path}/system-access-control`}
+            render={props => (
+              <div>
                 {loading && <LinearProgress />}
-                <Visible xs component="h2" className={styles.Form__Header}>
-                  {formatMessage(messages.contactDetails)}
-                </Visible>
-                <ContactDetailsForm
-                  intl={intl}
-                  loading={loading}
-                  onEmailBlur={this.handleEmailBlur}
-                  contactDetails={contactDetails}
-                  showNotesField
-                  userIsAdmin
-                  isUserChange={this.handlePersonCanLogIn}
-                  onSubmit={this.saveContactDetails}
+
+                <PersonDetailBackBar
+                  formatMessage={formatMessage}
+                  history={history}
+                  location={location}
+                  match={match}
+                  {...props}
+                  isNew={isNew}
+                  title={person && person.get('name')}
+                  canUserLoggedIn={!isNew && userIsAdmin && canLogIn}
                 />
-              </Tab>
-              <Tab
-                icon={<Language fontSize="large" />}
-                style={{
-                  visibility: isNew ? 'hidden' : 'visible',
-                }}
-                label={
-                  <Hidden xs component="span">
-                    {formatMessage(messages.languageAndTimezone)}
-                  </Hidden>
-                }
-              >
+
+                <Paper className={styles.ContactDetailsForm}>
+                  <LoginDetailsForm
+                    intl={intl}
+                    loading={loading}
+                    shouldPrefill={shouldPrefill}
+                    emailValue={emailValue}
+                    loginDetails={loginDetails}
+                    onSubmit={this.saveLoginDetails}
+                  />
+                </Paper>
+              </div>
+            )}
+          />
+          <Route
+            exact
+            path={`${match.path}/job-assignment`}
+            render={props => (
+              <div>
                 {loading && <LinearProgress />}
-                <Visible xs component="h2" className={styles.Form__Header}>
-                  {formatMessage(messages.languageAndTimezone)}
-                </Visible>
-                <UserPreferencesForm
-                  intl={intl}
-                  loading={loading}
-                  userPreferences={userPreferences}
-                  onSubmit={this.saveUserPreferences}
+
+                <PersonDetailBackBar
+                  formatMessage={formatMessage}
+                  history={history}
+                  location={location}
+                  match={match}
+                  {...props}
+                  isNew={isNew}
+                  title={person && person.get('name')}
+                  canUserLoggedIn={!isNew && userIsAdmin && canLogIn}
                 />
-              </Tab>
-              <Tab
-                icon={<Lock fontSize="large" />}
-                style={{
-                  display: !isNew && userIsAdmin && canLogIn ? 'block' : 'none',
-                }}
-                label={
-                  <Hidden xs component="span">
-                    {formatMessage(messages.systemAccessControl)}
-                  </Hidden>
-                }
-              >
-                {loading && <LinearProgress />}
-                <Visible xs component="h2" className={styles.Form__Header}>
-                  {formatMessage(messages.systemAccessControl)}
-                </Visible>
-                <LoginDetailsForm
-                  intl={intl}
-                  loading={loading}
-                  shouldPrefill={shouldPrefill}
-                  emailValue={emailValue}
-                  loginDetails={loginDetails}
-                  onSubmit={this.saveLoginDetails}
-                />
-              </Tab>
-              <Tab
-                icon={<Lock fontSize="large" />}
-                style={{
-                  display: !isNew && userIsAdmin ? 'block' : 'none',
-                }}
-                label={
-                  <Hidden xs component="span">
-                    {formatMessage(messages.jobAssignment)}
-                  </Hidden>
-                }
-              >
-                {loading && <LinearProgress />}
-                <Visible xs component="h2" className={styles.Form__Header}>
-                  {formatMessage(messages.jobAssignment)}
-                </Visible>
-                <JobAssignemntForm
-                  intl={intl}
-                  loading={loading}
-                  contactDetails={contactDetails}
-                  shouldPrefill={shouldPrefill}
-                  emailValue={emailValue}
-                  countryId={user.get('countryId')}
-                  onSubmit={this.addAssignment}
-                  onDeleteAssignment={this.deleteAssignment}
-                  jobFunctions={jobFunctions}
-                  assignments={assignments}
-                  loadedAssignments={loadedAssignments}
-                />
-              </Tab>
-            </AspectTabs>
-          )}
-        </Paper>
+
+                <Paper className={styles.ContactDetailsForm}>
+                  <JobAssignemntForm
+                    intl={intl}
+                    loading={loading}
+                    contactDetails={contactDetails}
+                    shouldPrefill={shouldPrefill}
+                    emailValue={emailValue}
+                    countryId={user.get('countryId')}
+                    onSubmit={this.addAssignment}
+                    onDeleteAssignment={this.deleteAssignment}
+                    jobFunctions={jobFunctions}
+                    assignments={assignments}
+                    loadedAssignments={loadedAssignments}
+                  />
+                </Paper>
+              </div>
+            )}
+          />
+        </Switch>
       </div>
     )
   }

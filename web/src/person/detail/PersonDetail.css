@@ -1,7 +1,11 @@
 @import '../../globals/variables.css';
 
 .Container {
-  padding: 10px 10px 20px 10px;
+  padding: 0;
+}
+
+.ContactDetailsForm {
+  margin: 25px;
 }
 
 .Form {
@@ -10,6 +14,7 @@
 
 .Form__Content {
   composes: Form__Content from '../../components/shared/Shared.css';
+  padding: 20px 20px 0 0;
 }
 
 .Form__Content section h1 {
@@ -29,8 +34,18 @@
   vertical-align: bottom;
 }
 
+.GeographyDropdownGroup > div {
+  margin-right: 30px;
+}
+
+.GeographyDropdownGroup > div:last-child {
+  margin-right: 0;
+}
+
 .Form__ActionRow {
   composes: Form__ActionRow from '../../components/shared/Shared.css';
+  text-align: left;
+  padding: 0;
 }
 
 h2.Form__Header {
@@ -38,16 +53,19 @@ h2.Form__Header {
   margin: 0 0 -0.5em;
 }
 .Job__Assignment {
-  max-width: 800px;
-  margin: 0 auto;
-  padding-bottom: 2em;
+  margin: 25px;
 }
+
+.Assignments {
+  padding-left: 2rem;
+}
+
 .Assignment__Form {
   margin-top: 2em;
 }
 
 .Section__Content {
-  padding: 0 2em;
+  padding: 2em 0;
 }
 .Assignment__Form section > div {
   width: 100%;
@@ -59,9 +77,10 @@ h2.Form__Header {
 .Assignment__Title {
   color: var(--aspect-color-grey-2);
   font-weight: var(--lato-font-weight-bold);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+}
+
+.Assignment__Title > a {
+  margin-left: 15rem;
 }
 .Assignment__Link {
   margin-left: 0.5em;
@@ -76,4 +95,21 @@ h2.Form__Header {
   border-bottom: 1px solid;
   margin-bottom: 1em;
   padding-bottom: 1em;
+}
+
+.Form__Content__Arrange-field {
+  display: flex;
+  justify-content: space-between;
+}
+
+.Form__Content__Arrange-field > div:first-child {
+  margin-right: 30px;
+}
+
+.Form__Content__Arrange-field > div {
+  width: 100%
+}
+
+.ZipCodeField, .PartnerDropDown, .TimezoneField, .CultureField {
+  width: 66%;
 }

@@ -58,7 +58,7 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable a
             "maxLength": 255,
           }
         }
-        label="Job Title"
+        label="Title"
         margin="normal"
         name="title"
         onChange={[Function]}
@@ -72,89 +72,97 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable a
       <h1>
         Email
       </h1>
-      <TextField
-        FormHelperTextProps={
-          Object {
-            "margin": "dense",
+      <div
+        className="Form__Content__Arrange-field"
+      >
+        <TextField
+          FormHelperTextProps={
+            Object {
+              "margin": "dense",
+            }
           }
-        }
-        disabled={true}
-        fullWidth={true}
-        inputProps={
-          Object {
-            "maxLength": 500,
+          disabled={true}
+          fullWidth={true}
+          inputProps={
+            Object {
+              "maxLength": 500,
+            }
           }
-        }
-        label="Primary"
-        margin="normal"
-        name="email"
-        onChange={[Function]}
-        required={false}
-        select={false}
-        type="email"
-        variant="standard"
-      />
-      <TextField
-        FormHelperTextProps={
-          Object {
-            "margin": "dense",
+          label="Email"
+          margin="normal"
+          name="email"
+          onChange={[Function]}
+          required={false}
+          select={false}
+          type="email"
+          variant="standard"
+        />
+        <TextField
+          FormHelperTextProps={
+            Object {
+              "margin": "dense",
+            }
           }
-        }
-        disabled={true}
-        fullWidth={true}
-        inputProps={
-          Object {
-            "maxLength": 500,
+          disabled={true}
+          fullWidth={true}
+          inputProps={
+            Object {
+              "maxLength": 500,
+            }
           }
-        }
-        label="Alternate"
-        margin="normal"
-        name="email2"
-        onChange={[Function]}
-        required={false}
-        select={false}
-        type="email"
-        variant="standard"
-      />
+          label="Alternate Email"
+          margin="normal"
+          name="email2"
+          onChange={[Function]}
+          required={false}
+          select={false}
+          type="email"
+          variant="standard"
+        />
+      </div>
     </section>
     <section>
       <h1>
         Phone
       </h1>
-      <pure(withProps(withHandlers(DialCodeDropdownInput)))
-        FormHelperTextProps={
-          Object {
-            "margin": "dense",
+      <div
+        className="Form__Content__Arrange-field"
+      >
+        <pure(withProps(withHandlers(DialCodeDropdownInput)))
+          FormHelperTextProps={
+            Object {
+              "margin": "dense",
+            }
           }
-        }
-        disabled={true}
-        inputProps={
-          Object {
-            "maxLength": 40,
+          disabled={true}
+          inputProps={
+            Object {
+              "maxLength": 40,
+            }
           }
-        }
-        label="Telephone"
-        margin="normal"
-        name="phone"
-        onChange={[Function]}
-      />
-      <pure(withProps(withHandlers(DialCodeDropdownInput)))
-        FormHelperTextProps={
-          Object {
-            "margin": "dense",
+          label="Telephone"
+          margin="normal"
+          name="phone"
+          onChange={[Function]}
+        />
+        <pure(withProps(withHandlers(DialCodeDropdownInput)))
+          FormHelperTextProps={
+            Object {
+              "margin": "dense",
+            }
           }
-        }
-        disabled={true}
-        inputProps={
-          Object {
-            "maxLength": 40,
+          disabled={true}
+          inputProps={
+            Object {
+              "maxLength": 40,
+            }
           }
-        }
-        label="Mobile"
-        margin="normal"
-        name="cell"
-        onChange={[Function]}
-      />
+          label="Mobile"
+          margin="normal"
+          name="cell"
+          onChange={[Function]}
+        />
+      </div>
     </section>
     <section>
       <h1>
@@ -191,6 +199,7 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable a
             "margin": "dense",
           }
         }
+        className="ZipCodeField"
         disabled={true}
         fullWidth={true}
         inputProps={
@@ -207,6 +216,571 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable a
         type="text"
         variant="standard"
       />
+    </section>
+    <section>
+      <TextField
+        InputLabelProps={
+          Object {
+            "shrink": true,
+          }
+        }
+        className="TimezoneField"
+        disabled={true}
+        fullWidth={true}
+        id="timezone"
+        label="Time Zone"
+        margin="normal"
+        name="timezone"
+        required={false}
+        select={true}
+        variant="standard"
+      >
+        <WithStyles(MenuItem)
+          value="Dateline Standard Time"
+        >
+          International Date Line West (UTC-12:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="UTC-11"
+        >
+          Coordinated Universal Time-11 (UTC-11:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Hawaiian Standard Time"
+        >
+          Hawaii (UTC-10:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Alaskan Standard Time"
+        >
+          Alaska (UTC-09:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Pacific Standard Time (Mexico)"
+        >
+          Baja California (UTC-08:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Pacific Standard Time"
+        >
+          Pacific Time (US & Canada) (UTC-08:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="US Mountain Standard Time"
+        >
+          Arizona (UTC-07:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Mountain Standard Time (Mexico)"
+        >
+          Chihuahua, La Paz, Mazatlan (UTC-07:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Mountain Standard Time"
+        >
+          Mountain Time (US & Canada) (UTC-07:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Central America Standard Time"
+        >
+          Central America (UTC-06:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Central Standard Time"
+        >
+          Central Time (US & Canada) (UTC-06:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Central Standard Time (Mexico)"
+        >
+          Guadalajara, Mexico City, Monterrey (UTC-06:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Canada Central Standard Time"
+        >
+          Saskatchewan (UTC-06:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="SA Pacific Standard Time"
+        >
+          Bogota, Lima, Quito (UTC-05:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Eastern Standard Time"
+        >
+          Eastern Time (US & Canada) (UTC-05:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="US Eastern Standard Time"
+        >
+          Indiana (East) (UTC-05:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Venezuela Standard Time"
+        >
+          Caracas (UTC-04:30)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Paraguay Standard Time"
+        >
+          Asuncion (UTC-04:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Atlantic Standard Time"
+        >
+          Atlantic Time (Canada) (UTC-04:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Central Brazilian Standard Time"
+        >
+          Cuiaba (UTC-04:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="SA Western Standard Time"
+        >
+          Georgetown, La Paz, Manaus, San Juan (UTC-04:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Pacific SA Standard Time"
+        >
+          Santiago (UTC-04:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Newfoundland Standard Time"
+        >
+          Newfoundland (UTC-03:30)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="E. South America Standard Time"
+        >
+          Brasilia (UTC-03:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Argentina Standard Time"
+        >
+          Buenos Aires (UTC-03:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="SA Eastern Standard Time"
+        >
+          Cayenne, Fortaleza (UTC-03:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Greenland Standard Time"
+        >
+          Greenland (UTC-03:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Montevideo Standard Time"
+        >
+          Montevideo (UTC-03:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Bahia Standard Time"
+        >
+          Salvador (UTC-03:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="UTC-02"
+        >
+          Coordinated Universal Time-02 (UTC-02:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Mid-Atlantic Standard Time"
+        >
+          Mid-Atlantic (UTC-02:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Azores Standard Time"
+        >
+          Azores (UTC-01:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Cape Verde Standard Time"
+        >
+          Cape Verde Is. (UTC-01:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Morocco Standard Time"
+        >
+          Casablanca (UTC)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="UTC"
+        >
+          Coordinated Universal Time (UTC)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="GMT Standard Time"
+        >
+          Dublin, Edinburgh, Lisbon, London (UTC)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Greenwich Standard Time"
+        >
+          Monrovia, Reykjavik (UTC)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="W. Europe Standard Time"
+        >
+          Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna (UTC+01:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Central Europe Standard Time"
+        >
+          Belgrade, Bratislava, Budapest, Ljubljana, Prague (UTC+01:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Romance Standard Time"
+        >
+          Brussels, Copenhagen, Madrid, Paris (UTC+01:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Central European Standard Time"
+        >
+          Sarajevo, Skopje, Warsaw, Zagreb (UTC+01:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="W. Central Africa Standard Time"
+        >
+          West Central Africa (UTC+01:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Namibia Standard Time"
+        >
+          Windhoek (UTC+01:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Jordan Standard Time"
+        >
+          Amman (UTC+02:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="GTB Standard Time"
+        >
+          Athens, Bucharest (UTC+02:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Middle East Standard Time"
+        >
+          Beirut (UTC+02:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Egypt Standard Time"
+        >
+          Cairo (UTC+02:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Syria Standard Time"
+        >
+          Damascus (UTC+02:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="South Africa Standard Time"
+        >
+          Harare, Pretoria (UTC+02:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="FLE Standard Time"
+        >
+          Helsinki, Kyiv, Riga, Sofia, Tallinn, Vilnius (UTC+02:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Turkey Standard Time"
+        >
+          Istanbul (UTC+02:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Israel Standard Time"
+        >
+          Jerusalem (UTC+02:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="E. Europe Standard Time"
+        >
+          Nicosia (UTC+02:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Arabic Standard Time"
+        >
+          Baghdad (UTC+03:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Kaliningrad Standard Time"
+        >
+          Kaliningrad, Minsk (UTC+03:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Arab Standard Time"
+        >
+          Kuwait, Riyadh (UTC+03:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="E. Africa Standard Time"
+        >
+          Nairobi (UTC+03:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Iran Standard Time"
+        >
+          Tehran (UTC+03:30)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Arabian Standard Time"
+        >
+          Abu Dhabi, Muscat (UTC+04:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Azerbaijan Standard Time"
+        >
+          Baku (UTC+04:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Russian Standard Time"
+        >
+          Moscow, St. Petersburg, Volgograd (UTC+04:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Mauritius Standard Time"
+        >
+          Port Louis (UTC+04:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Georgian Standard Time"
+        >
+          Tbilisi (UTC+04:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Caucasus Standard Time"
+        >
+          Yerevan (UTC+04:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Afghanistan Standard Time"
+        >
+          Kabul (UTC+04:30)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Pakistan Standard Time"
+        >
+          Islamabad, Karachi (UTC+05:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="West Asia Standard Time"
+        >
+          Tashkent (UTC+05:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="India Standard Time"
+        >
+          Chennai, Kolkata, Mumbai, New Delhi (UTC+05:30)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Sri Lanka Standard Time"
+        >
+          Sri Jayawardenepura (UTC+05:30)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Nepal Standard Time"
+        >
+          Kathmandu (UTC+05:45)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Central Asia Standard Time"
+        >
+          Astana (UTC+06:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Bangladesh Standard Time"
+        >
+          Dhaka (UTC+06:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Ekaterinburg Standard Time"
+        >
+          Ekaterinburg (UTC+06:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Myanmar Standard Time"
+        >
+          Yangon (Rangoon) (UTC+06:30)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="SE Asia Standard Time"
+        >
+          Bangkok, Hanoi, Jakarta (UTC+07:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="N. Central Asia Standard Time"
+        >
+          Novosibirsk (UTC+07:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="China Standard Time"
+        >
+          Beijing, Chongqing, Hong Kong, Urumqi (UTC+08:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="North Asia Standard Time"
+        >
+          Krasnoyarsk (UTC+08:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Singapore Standard Time"
+        >
+          Kuala Lumpur, Singapore (UTC+08:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="W. Australia Standard Time"
+        >
+          Perth (UTC+08:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Taipei Standard Time"
+        >
+          Taipei (UTC+08:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Ulaanbaatar Standard Time"
+        >
+          Ulaanbaatar (UTC+08:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="North Asia East Standard Time"
+        >
+          Irkutsk (UTC+09:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Tokyo Standard Time"
+        >
+          Osaka, Sapporo, Tokyo (UTC+09:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Korea Standard Time"
+        >
+          Seoul (UTC+09:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Cen. Australia Standard Time"
+        >
+          Adelaide (UTC+09:30)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="AUS Central Standard Time"
+        >
+          Darwin (UTC+09:30)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="E. Australia Standard Time"
+        >
+          Brisbane (UTC+10:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="AUS Eastern Standard Time"
+        >
+          Canberra, Melbourne, Sydney (UTC+10:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="West Pacific Standard Time"
+        >
+          Guam, Port Moresby (UTC+10:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Tasmania Standard Time"
+        >
+          Hobart (UTC+10:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Yakutsk Standard Time"
+        >
+          Yakutsk (UTC+10:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Central Pacific Standard Time"
+        >
+          Solomon Is., New Caledonia (UTC+11:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Vladivostok Standard Time"
+        >
+          Vladivostok (UTC+11:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="New Zealand Standard Time"
+        >
+          Auckland, Wellington (UTC+12:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="UTC+12"
+        >
+          Coordinated Universal Time+12 (UTC+12:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Fiji Standard Time"
+        >
+          Fiji (UTC+12:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Magadan Standard Time"
+        >
+          Magadan (UTC+12:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Kamchatka Standard Time"
+        >
+          Petropavlovsk-Kamchatsky - Old (UTC+12:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Tonga Standard Time"
+        >
+          Nuku'alofa (UTC+13:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Samoa Standard Time"
+        >
+          Samoa (UTC+13:00)
+        </WithStyles(MenuItem)>
+      </TextField>
+      <TextField
+        InputLabelProps={
+          Object {
+            "shrink": true,
+          }
+        }
+        className="CultureField"
+        disabled={true}
+        fullWidth={true}
+        id="culture"
+        label="Language"
+        margin="normal"
+        name="culture"
+        required={false}
+        select={true}
+        variant="standard"
+      >
+        <WithStyles(MenuItem)
+          value="fr-FR"
+        >
+          <span>
+            <FlagIcon
+              countryIsoAlpha2Code="FR"
+              withRightMargin={true}
+            />
+            French (FR)
+          </span>
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="en-US"
+        >
+          <span>
+            <FlagIcon
+              countryIsoAlpha2Code="US"
+              withRightMargin={true}
+            />
+            English (US)
+          </span>
+        </WithStyles(MenuItem)>
+      </TextField>
     </section>
     <section>
       <h1>
@@ -294,7 +868,7 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
             "maxLength": 255,
           }
         }
-        label="Job Title"
+        label="Title"
         margin="normal"
         name="title"
         onChange={[Function]}
@@ -308,89 +882,97 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
       <h1>
         Email
       </h1>
-      <TextField
-        FormHelperTextProps={
-          Object {
-            "margin": "dense",
+      <div
+        className="Form__Content__Arrange-field"
+      >
+        <TextField
+          FormHelperTextProps={
+            Object {
+              "margin": "dense",
+            }
           }
-        }
-        disabled={false}
-        fullWidth={true}
-        inputProps={
-          Object {
-            "maxLength": 500,
+          disabled={false}
+          fullWidth={true}
+          inputProps={
+            Object {
+              "maxLength": 500,
+            }
           }
-        }
-        label="Primary"
-        margin="normal"
-        name="email"
-        onChange={[Function]}
-        required={false}
-        select={false}
-        type="email"
-        variant="standard"
-      />
-      <TextField
-        FormHelperTextProps={
-          Object {
-            "margin": "dense",
+          label="Email"
+          margin="normal"
+          name="email"
+          onChange={[Function]}
+          required={false}
+          select={false}
+          type="email"
+          variant="standard"
+        />
+        <TextField
+          FormHelperTextProps={
+            Object {
+              "margin": "dense",
+            }
           }
-        }
-        disabled={false}
-        fullWidth={true}
-        inputProps={
-          Object {
-            "maxLength": 500,
+          disabled={false}
+          fullWidth={true}
+          inputProps={
+            Object {
+              "maxLength": 500,
+            }
           }
-        }
-        label="Alternate"
-        margin="normal"
-        name="email2"
-        onChange={[Function]}
-        required={false}
-        select={false}
-        type="email"
-        variant="standard"
-      />
+          label="Alternate Email"
+          margin="normal"
+          name="email2"
+          onChange={[Function]}
+          required={false}
+          select={false}
+          type="email"
+          variant="standard"
+        />
+      </div>
     </section>
     <section>
       <h1>
         Phone
       </h1>
-      <pure(withProps(withHandlers(DialCodeDropdownInput)))
-        FormHelperTextProps={
-          Object {
-            "margin": "dense",
+      <div
+        className="Form__Content__Arrange-field"
+      >
+        <pure(withProps(withHandlers(DialCodeDropdownInput)))
+          FormHelperTextProps={
+            Object {
+              "margin": "dense",
+            }
           }
-        }
-        disabled={false}
-        inputProps={
-          Object {
-            "maxLength": 40,
+          disabled={false}
+          inputProps={
+            Object {
+              "maxLength": 40,
+            }
           }
-        }
-        label="Telephone"
-        margin="normal"
-        name="phone"
-        onChange={[Function]}
-      />
-      <pure(withProps(withHandlers(DialCodeDropdownInput)))
-        FormHelperTextProps={
-          Object {
-            "margin": "dense",
+          label="Telephone"
+          margin="normal"
+          name="phone"
+          onChange={[Function]}
+        />
+        <pure(withProps(withHandlers(DialCodeDropdownInput)))
+          FormHelperTextProps={
+            Object {
+              "margin": "dense",
+            }
           }
-        }
-        disabled={false}
-        inputProps={
-          Object {
-            "maxLength": 40,
+          disabled={false}
+          inputProps={
+            Object {
+              "maxLength": 40,
+            }
           }
-        }
-        label="Mobile"
-        margin="normal"
-        name="cell"
-        onChange={[Function]}
-      />
+          label="Mobile"
+          margin="normal"
+          name="cell"
+          onChange={[Function]}
+        />
+      </div>
     </section>
     <section>
       <h1>
@@ -427,6 +1009,7 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
             "margin": "dense",
           }
         }
+        className="ZipCodeField"
         disabled={false}
         fullWidth={true}
         inputProps={
@@ -443,6 +1026,571 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
         type="text"
         variant="standard"
       />
+    </section>
+    <section>
+      <TextField
+        InputLabelProps={
+          Object {
+            "shrink": true,
+          }
+        }
+        className="TimezoneField"
+        disabled={false}
+        fullWidth={true}
+        id="timezone"
+        label="Time Zone"
+        margin="normal"
+        name="timezone"
+        required={false}
+        select={true}
+        variant="standard"
+      >
+        <WithStyles(MenuItem)
+          value="Dateline Standard Time"
+        >
+          International Date Line West (UTC-12:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="UTC-11"
+        >
+          Coordinated Universal Time-11 (UTC-11:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Hawaiian Standard Time"
+        >
+          Hawaii (UTC-10:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Alaskan Standard Time"
+        >
+          Alaska (UTC-09:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Pacific Standard Time (Mexico)"
+        >
+          Baja California (UTC-08:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Pacific Standard Time"
+        >
+          Pacific Time (US & Canada) (UTC-08:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="US Mountain Standard Time"
+        >
+          Arizona (UTC-07:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Mountain Standard Time (Mexico)"
+        >
+          Chihuahua, La Paz, Mazatlan (UTC-07:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Mountain Standard Time"
+        >
+          Mountain Time (US & Canada) (UTC-07:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Central America Standard Time"
+        >
+          Central America (UTC-06:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Central Standard Time"
+        >
+          Central Time (US & Canada) (UTC-06:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Central Standard Time (Mexico)"
+        >
+          Guadalajara, Mexico City, Monterrey (UTC-06:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Canada Central Standard Time"
+        >
+          Saskatchewan (UTC-06:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="SA Pacific Standard Time"
+        >
+          Bogota, Lima, Quito (UTC-05:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Eastern Standard Time"
+        >
+          Eastern Time (US & Canada) (UTC-05:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="US Eastern Standard Time"
+        >
+          Indiana (East) (UTC-05:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Venezuela Standard Time"
+        >
+          Caracas (UTC-04:30)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Paraguay Standard Time"
+        >
+          Asuncion (UTC-04:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Atlantic Standard Time"
+        >
+          Atlantic Time (Canada) (UTC-04:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Central Brazilian Standard Time"
+        >
+          Cuiaba (UTC-04:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="SA Western Standard Time"
+        >
+          Georgetown, La Paz, Manaus, San Juan (UTC-04:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Pacific SA Standard Time"
+        >
+          Santiago (UTC-04:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Newfoundland Standard Time"
+        >
+          Newfoundland (UTC-03:30)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="E. South America Standard Time"
+        >
+          Brasilia (UTC-03:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Argentina Standard Time"
+        >
+          Buenos Aires (UTC-03:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="SA Eastern Standard Time"
+        >
+          Cayenne, Fortaleza (UTC-03:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Greenland Standard Time"
+        >
+          Greenland (UTC-03:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Montevideo Standard Time"
+        >
+          Montevideo (UTC-03:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Bahia Standard Time"
+        >
+          Salvador (UTC-03:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="UTC-02"
+        >
+          Coordinated Universal Time-02 (UTC-02:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Mid-Atlantic Standard Time"
+        >
+          Mid-Atlantic (UTC-02:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Azores Standard Time"
+        >
+          Azores (UTC-01:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Cape Verde Standard Time"
+        >
+          Cape Verde Is. (UTC-01:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Morocco Standard Time"
+        >
+          Casablanca (UTC)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="UTC"
+        >
+          Coordinated Universal Time (UTC)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="GMT Standard Time"
+        >
+          Dublin, Edinburgh, Lisbon, London (UTC)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Greenwich Standard Time"
+        >
+          Monrovia, Reykjavik (UTC)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="W. Europe Standard Time"
+        >
+          Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna (UTC+01:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Central Europe Standard Time"
+        >
+          Belgrade, Bratislava, Budapest, Ljubljana, Prague (UTC+01:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Romance Standard Time"
+        >
+          Brussels, Copenhagen, Madrid, Paris (UTC+01:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Central European Standard Time"
+        >
+          Sarajevo, Skopje, Warsaw, Zagreb (UTC+01:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="W. Central Africa Standard Time"
+        >
+          West Central Africa (UTC+01:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Namibia Standard Time"
+        >
+          Windhoek (UTC+01:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Jordan Standard Time"
+        >
+          Amman (UTC+02:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="GTB Standard Time"
+        >
+          Athens, Bucharest (UTC+02:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Middle East Standard Time"
+        >
+          Beirut (UTC+02:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Egypt Standard Time"
+        >
+          Cairo (UTC+02:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Syria Standard Time"
+        >
+          Damascus (UTC+02:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="South Africa Standard Time"
+        >
+          Harare, Pretoria (UTC+02:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="FLE Standard Time"
+        >
+          Helsinki, Kyiv, Riga, Sofia, Tallinn, Vilnius (UTC+02:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Turkey Standard Time"
+        >
+          Istanbul (UTC+02:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Israel Standard Time"
+        >
+          Jerusalem (UTC+02:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="E. Europe Standard Time"
+        >
+          Nicosia (UTC+02:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Arabic Standard Time"
+        >
+          Baghdad (UTC+03:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Kaliningrad Standard Time"
+        >
+          Kaliningrad, Minsk (UTC+03:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Arab Standard Time"
+        >
+          Kuwait, Riyadh (UTC+03:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="E. Africa Standard Time"
+        >
+          Nairobi (UTC+03:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Iran Standard Time"
+        >
+          Tehran (UTC+03:30)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Arabian Standard Time"
+        >
+          Abu Dhabi, Muscat (UTC+04:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Azerbaijan Standard Time"
+        >
+          Baku (UTC+04:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Russian Standard Time"
+        >
+          Moscow, St. Petersburg, Volgograd (UTC+04:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Mauritius Standard Time"
+        >
+          Port Louis (UTC+04:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Georgian Standard Time"
+        >
+          Tbilisi (UTC+04:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Caucasus Standard Time"
+        >
+          Yerevan (UTC+04:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Afghanistan Standard Time"
+        >
+          Kabul (UTC+04:30)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Pakistan Standard Time"
+        >
+          Islamabad, Karachi (UTC+05:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="West Asia Standard Time"
+        >
+          Tashkent (UTC+05:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="India Standard Time"
+        >
+          Chennai, Kolkata, Mumbai, New Delhi (UTC+05:30)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Sri Lanka Standard Time"
+        >
+          Sri Jayawardenepura (UTC+05:30)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Nepal Standard Time"
+        >
+          Kathmandu (UTC+05:45)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Central Asia Standard Time"
+        >
+          Astana (UTC+06:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Bangladesh Standard Time"
+        >
+          Dhaka (UTC+06:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Ekaterinburg Standard Time"
+        >
+          Ekaterinburg (UTC+06:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Myanmar Standard Time"
+        >
+          Yangon (Rangoon) (UTC+06:30)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="SE Asia Standard Time"
+        >
+          Bangkok, Hanoi, Jakarta (UTC+07:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="N. Central Asia Standard Time"
+        >
+          Novosibirsk (UTC+07:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="China Standard Time"
+        >
+          Beijing, Chongqing, Hong Kong, Urumqi (UTC+08:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="North Asia Standard Time"
+        >
+          Krasnoyarsk (UTC+08:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Singapore Standard Time"
+        >
+          Kuala Lumpur, Singapore (UTC+08:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="W. Australia Standard Time"
+        >
+          Perth (UTC+08:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Taipei Standard Time"
+        >
+          Taipei (UTC+08:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Ulaanbaatar Standard Time"
+        >
+          Ulaanbaatar (UTC+08:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="North Asia East Standard Time"
+        >
+          Irkutsk (UTC+09:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Tokyo Standard Time"
+        >
+          Osaka, Sapporo, Tokyo (UTC+09:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Korea Standard Time"
+        >
+          Seoul (UTC+09:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Cen. Australia Standard Time"
+        >
+          Adelaide (UTC+09:30)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="AUS Central Standard Time"
+        >
+          Darwin (UTC+09:30)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="E. Australia Standard Time"
+        >
+          Brisbane (UTC+10:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="AUS Eastern Standard Time"
+        >
+          Canberra, Melbourne, Sydney (UTC+10:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="West Pacific Standard Time"
+        >
+          Guam, Port Moresby (UTC+10:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Tasmania Standard Time"
+        >
+          Hobart (UTC+10:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Yakutsk Standard Time"
+        >
+          Yakutsk (UTC+10:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Central Pacific Standard Time"
+        >
+          Solomon Is., New Caledonia (UTC+11:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Vladivostok Standard Time"
+        >
+          Vladivostok (UTC+11:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="New Zealand Standard Time"
+        >
+          Auckland, Wellington (UTC+12:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="UTC+12"
+        >
+          Coordinated Universal Time+12 (UTC+12:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Fiji Standard Time"
+        >
+          Fiji (UTC+12:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Magadan Standard Time"
+        >
+          Magadan (UTC+12:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Kamchatka Standard Time"
+        >
+          Petropavlovsk-Kamchatsky - Old (UTC+12:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Tonga Standard Time"
+        >
+          Nuku'alofa (UTC+13:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Samoa Standard Time"
+        >
+          Samoa (UTC+13:00)
+        </WithStyles(MenuItem)>
+      </TextField>
+      <TextField
+        InputLabelProps={
+          Object {
+            "shrink": true,
+          }
+        }
+        className="CultureField"
+        disabled={false}
+        fullWidth={true}
+        id="culture"
+        label="Language"
+        margin="normal"
+        name="culture"
+        required={false}
+        select={true}
+        variant="standard"
+      >
+        <WithStyles(MenuItem)
+          value="fr-FR"
+        >
+          <span>
+            <FlagIcon
+              countryIsoAlpha2Code="FR"
+              withRightMargin={true}
+            />
+            French (FR)
+          </span>
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="en-US"
+        >
+          <span>
+            <FlagIcon
+              countryIsoAlpha2Code="US"
+              withRightMargin={true}
+            />
+            English (US)
+          </span>
+        </WithStyles(MenuItem)>
+      </TextField>
     </section>
     <section>
       <h1>
@@ -530,7 +1678,7 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
             "maxLength": 255,
           }
         }
-        label="Job Title"
+        label="Title"
         margin="normal"
         name="title"
         onChange={[Function]}
@@ -544,89 +1692,97 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
       <h1>
         Email
       </h1>
-      <TextField
-        FormHelperTextProps={
-          Object {
-            "margin": "dense",
+      <div
+        className="Form__Content__Arrange-field"
+      >
+        <TextField
+          FormHelperTextProps={
+            Object {
+              "margin": "dense",
+            }
           }
-        }
-        disabled={false}
-        fullWidth={true}
-        inputProps={
-          Object {
-            "maxLength": 500,
+          disabled={false}
+          fullWidth={true}
+          inputProps={
+            Object {
+              "maxLength": 500,
+            }
           }
-        }
-        label="Primary"
-        margin="normal"
-        name="email"
-        onChange={[Function]}
-        required={false}
-        select={false}
-        type="email"
-        variant="standard"
-      />
-      <TextField
-        FormHelperTextProps={
-          Object {
-            "margin": "dense",
+          label="Email"
+          margin="normal"
+          name="email"
+          onChange={[Function]}
+          required={false}
+          select={false}
+          type="email"
+          variant="standard"
+        />
+        <TextField
+          FormHelperTextProps={
+            Object {
+              "margin": "dense",
+            }
           }
-        }
-        disabled={false}
-        fullWidth={true}
-        inputProps={
-          Object {
-            "maxLength": 500,
+          disabled={false}
+          fullWidth={true}
+          inputProps={
+            Object {
+              "maxLength": 500,
+            }
           }
-        }
-        label="Alternate"
-        margin="normal"
-        name="email2"
-        onChange={[Function]}
-        required={false}
-        select={false}
-        type="email"
-        variant="standard"
-      />
+          label="Alternate Email"
+          margin="normal"
+          name="email2"
+          onChange={[Function]}
+          required={false}
+          select={false}
+          type="email"
+          variant="standard"
+        />
+      </div>
     </section>
     <section>
       <h1>
         Phone
       </h1>
-      <pure(withProps(withHandlers(DialCodeDropdownInput)))
-        FormHelperTextProps={
-          Object {
-            "margin": "dense",
+      <div
+        className="Form__Content__Arrange-field"
+      >
+        <pure(withProps(withHandlers(DialCodeDropdownInput)))
+          FormHelperTextProps={
+            Object {
+              "margin": "dense",
+            }
           }
-        }
-        disabled={false}
-        inputProps={
-          Object {
-            "maxLength": 40,
+          disabled={false}
+          inputProps={
+            Object {
+              "maxLength": 40,
+            }
           }
-        }
-        label="Telephone"
-        margin="normal"
-        name="phone"
-        onChange={[Function]}
-      />
-      <pure(withProps(withHandlers(DialCodeDropdownInput)))
-        FormHelperTextProps={
-          Object {
-            "margin": "dense",
+          label="Telephone"
+          margin="normal"
+          name="phone"
+          onChange={[Function]}
+        />
+        <pure(withProps(withHandlers(DialCodeDropdownInput)))
+          FormHelperTextProps={
+            Object {
+              "margin": "dense",
+            }
           }
-        }
-        disabled={false}
-        inputProps={
-          Object {
-            "maxLength": 40,
+          disabled={false}
+          inputProps={
+            Object {
+              "maxLength": 40,
+            }
           }
-        }
-        label="Mobile"
-        margin="normal"
-        name="cell"
-        onChange={[Function]}
-      />
+          label="Mobile"
+          margin="normal"
+          name="cell"
+          onChange={[Function]}
+        />
+      </div>
     </section>
     <section>
       <h1>
@@ -663,6 +1819,7 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
             "margin": "dense",
           }
         }
+        className="ZipCodeField"
         disabled={false}
         fullWidth={true}
         inputProps={
@@ -679,6 +1836,571 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
         type="text"
         variant="standard"
       />
+    </section>
+    <section>
+      <TextField
+        InputLabelProps={
+          Object {
+            "shrink": true,
+          }
+        }
+        className="TimezoneField"
+        disabled={false}
+        fullWidth={true}
+        id="timezone"
+        label="Time Zone"
+        margin="normal"
+        name="timezone"
+        required={false}
+        select={true}
+        variant="standard"
+      >
+        <WithStyles(MenuItem)
+          value="Dateline Standard Time"
+        >
+          International Date Line West (UTC-12:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="UTC-11"
+        >
+          Coordinated Universal Time-11 (UTC-11:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Hawaiian Standard Time"
+        >
+          Hawaii (UTC-10:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Alaskan Standard Time"
+        >
+          Alaska (UTC-09:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Pacific Standard Time (Mexico)"
+        >
+          Baja California (UTC-08:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Pacific Standard Time"
+        >
+          Pacific Time (US & Canada) (UTC-08:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="US Mountain Standard Time"
+        >
+          Arizona (UTC-07:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Mountain Standard Time (Mexico)"
+        >
+          Chihuahua, La Paz, Mazatlan (UTC-07:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Mountain Standard Time"
+        >
+          Mountain Time (US & Canada) (UTC-07:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Central America Standard Time"
+        >
+          Central America (UTC-06:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Central Standard Time"
+        >
+          Central Time (US & Canada) (UTC-06:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Central Standard Time (Mexico)"
+        >
+          Guadalajara, Mexico City, Monterrey (UTC-06:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Canada Central Standard Time"
+        >
+          Saskatchewan (UTC-06:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="SA Pacific Standard Time"
+        >
+          Bogota, Lima, Quito (UTC-05:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Eastern Standard Time"
+        >
+          Eastern Time (US & Canada) (UTC-05:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="US Eastern Standard Time"
+        >
+          Indiana (East) (UTC-05:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Venezuela Standard Time"
+        >
+          Caracas (UTC-04:30)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Paraguay Standard Time"
+        >
+          Asuncion (UTC-04:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Atlantic Standard Time"
+        >
+          Atlantic Time (Canada) (UTC-04:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Central Brazilian Standard Time"
+        >
+          Cuiaba (UTC-04:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="SA Western Standard Time"
+        >
+          Georgetown, La Paz, Manaus, San Juan (UTC-04:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Pacific SA Standard Time"
+        >
+          Santiago (UTC-04:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Newfoundland Standard Time"
+        >
+          Newfoundland (UTC-03:30)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="E. South America Standard Time"
+        >
+          Brasilia (UTC-03:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Argentina Standard Time"
+        >
+          Buenos Aires (UTC-03:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="SA Eastern Standard Time"
+        >
+          Cayenne, Fortaleza (UTC-03:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Greenland Standard Time"
+        >
+          Greenland (UTC-03:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Montevideo Standard Time"
+        >
+          Montevideo (UTC-03:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Bahia Standard Time"
+        >
+          Salvador (UTC-03:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="UTC-02"
+        >
+          Coordinated Universal Time-02 (UTC-02:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Mid-Atlantic Standard Time"
+        >
+          Mid-Atlantic (UTC-02:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Azores Standard Time"
+        >
+          Azores (UTC-01:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Cape Verde Standard Time"
+        >
+          Cape Verde Is. (UTC-01:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Morocco Standard Time"
+        >
+          Casablanca (UTC)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="UTC"
+        >
+          Coordinated Universal Time (UTC)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="GMT Standard Time"
+        >
+          Dublin, Edinburgh, Lisbon, London (UTC)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Greenwich Standard Time"
+        >
+          Monrovia, Reykjavik (UTC)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="W. Europe Standard Time"
+        >
+          Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna (UTC+01:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Central Europe Standard Time"
+        >
+          Belgrade, Bratislava, Budapest, Ljubljana, Prague (UTC+01:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Romance Standard Time"
+        >
+          Brussels, Copenhagen, Madrid, Paris (UTC+01:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Central European Standard Time"
+        >
+          Sarajevo, Skopje, Warsaw, Zagreb (UTC+01:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="W. Central Africa Standard Time"
+        >
+          West Central Africa (UTC+01:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Namibia Standard Time"
+        >
+          Windhoek (UTC+01:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Jordan Standard Time"
+        >
+          Amman (UTC+02:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="GTB Standard Time"
+        >
+          Athens, Bucharest (UTC+02:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Middle East Standard Time"
+        >
+          Beirut (UTC+02:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Egypt Standard Time"
+        >
+          Cairo (UTC+02:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Syria Standard Time"
+        >
+          Damascus (UTC+02:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="South Africa Standard Time"
+        >
+          Harare, Pretoria (UTC+02:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="FLE Standard Time"
+        >
+          Helsinki, Kyiv, Riga, Sofia, Tallinn, Vilnius (UTC+02:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Turkey Standard Time"
+        >
+          Istanbul (UTC+02:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Israel Standard Time"
+        >
+          Jerusalem (UTC+02:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="E. Europe Standard Time"
+        >
+          Nicosia (UTC+02:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Arabic Standard Time"
+        >
+          Baghdad (UTC+03:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Kaliningrad Standard Time"
+        >
+          Kaliningrad, Minsk (UTC+03:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Arab Standard Time"
+        >
+          Kuwait, Riyadh (UTC+03:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="E. Africa Standard Time"
+        >
+          Nairobi (UTC+03:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Iran Standard Time"
+        >
+          Tehran (UTC+03:30)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Arabian Standard Time"
+        >
+          Abu Dhabi, Muscat (UTC+04:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Azerbaijan Standard Time"
+        >
+          Baku (UTC+04:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Russian Standard Time"
+        >
+          Moscow, St. Petersburg, Volgograd (UTC+04:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Mauritius Standard Time"
+        >
+          Port Louis (UTC+04:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Georgian Standard Time"
+        >
+          Tbilisi (UTC+04:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Caucasus Standard Time"
+        >
+          Yerevan (UTC+04:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Afghanistan Standard Time"
+        >
+          Kabul (UTC+04:30)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Pakistan Standard Time"
+        >
+          Islamabad, Karachi (UTC+05:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="West Asia Standard Time"
+        >
+          Tashkent (UTC+05:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="India Standard Time"
+        >
+          Chennai, Kolkata, Mumbai, New Delhi (UTC+05:30)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Sri Lanka Standard Time"
+        >
+          Sri Jayawardenepura (UTC+05:30)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Nepal Standard Time"
+        >
+          Kathmandu (UTC+05:45)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Central Asia Standard Time"
+        >
+          Astana (UTC+06:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Bangladesh Standard Time"
+        >
+          Dhaka (UTC+06:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Ekaterinburg Standard Time"
+        >
+          Ekaterinburg (UTC+06:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Myanmar Standard Time"
+        >
+          Yangon (Rangoon) (UTC+06:30)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="SE Asia Standard Time"
+        >
+          Bangkok, Hanoi, Jakarta (UTC+07:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="N. Central Asia Standard Time"
+        >
+          Novosibirsk (UTC+07:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="China Standard Time"
+        >
+          Beijing, Chongqing, Hong Kong, Urumqi (UTC+08:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="North Asia Standard Time"
+        >
+          Krasnoyarsk (UTC+08:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Singapore Standard Time"
+        >
+          Kuala Lumpur, Singapore (UTC+08:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="W. Australia Standard Time"
+        >
+          Perth (UTC+08:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Taipei Standard Time"
+        >
+          Taipei (UTC+08:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Ulaanbaatar Standard Time"
+        >
+          Ulaanbaatar (UTC+08:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="North Asia East Standard Time"
+        >
+          Irkutsk (UTC+09:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Tokyo Standard Time"
+        >
+          Osaka, Sapporo, Tokyo (UTC+09:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Korea Standard Time"
+        >
+          Seoul (UTC+09:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Cen. Australia Standard Time"
+        >
+          Adelaide (UTC+09:30)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="AUS Central Standard Time"
+        >
+          Darwin (UTC+09:30)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="E. Australia Standard Time"
+        >
+          Brisbane (UTC+10:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="AUS Eastern Standard Time"
+        >
+          Canberra, Melbourne, Sydney (UTC+10:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="West Pacific Standard Time"
+        >
+          Guam, Port Moresby (UTC+10:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Tasmania Standard Time"
+        >
+          Hobart (UTC+10:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Yakutsk Standard Time"
+        >
+          Yakutsk (UTC+10:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Central Pacific Standard Time"
+        >
+          Solomon Is., New Caledonia (UTC+11:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Vladivostok Standard Time"
+        >
+          Vladivostok (UTC+11:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="New Zealand Standard Time"
+        >
+          Auckland, Wellington (UTC+12:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="UTC+12"
+        >
+          Coordinated Universal Time+12 (UTC+12:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Fiji Standard Time"
+        >
+          Fiji (UTC+12:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Magadan Standard Time"
+        >
+          Magadan (UTC+12:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Kamchatka Standard Time"
+        >
+          Petropavlovsk-Kamchatsky - Old (UTC+12:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Tonga Standard Time"
+        >
+          Nuku'alofa (UTC+13:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Samoa Standard Time"
+        >
+          Samoa (UTC+13:00)
+        </WithStyles(MenuItem)>
+      </TextField>
+      <TextField
+        InputLabelProps={
+          Object {
+            "shrink": true,
+          }
+        }
+        className="CultureField"
+        disabled={false}
+        fullWidth={true}
+        id="culture"
+        label="Language"
+        margin="normal"
+        name="culture"
+        required={false}
+        select={true}
+        variant="standard"
+      >
+        <WithStyles(MenuItem)
+          value="fr-FR"
+        >
+          <span>
+            <FlagIcon
+              countryIsoAlpha2Code="FR"
+              withRightMargin={true}
+            />
+            French (FR)
+          </span>
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="en-US"
+        >
+          <span>
+            <FlagIcon
+              countryIsoAlpha2Code="US"
+              withRightMargin={true}
+            />
+            English (US)
+          </span>
+        </WithStyles(MenuItem)>
+      </TextField>
     </section>
     <section>
       <h1>
@@ -766,7 +2488,7 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
             "maxLength": 255,
           }
         }
-        label="Job Title"
+        label="Title"
         margin="normal"
         name="title"
         onChange={[Function]}
@@ -780,89 +2502,97 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
       <h1>
         Email
       </h1>
-      <TextField
-        FormHelperTextProps={
-          Object {
-            "margin": "dense",
+      <div
+        className="Form__Content__Arrange-field"
+      >
+        <TextField
+          FormHelperTextProps={
+            Object {
+              "margin": "dense",
+            }
           }
-        }
-        disabled={false}
-        fullWidth={true}
-        inputProps={
-          Object {
-            "maxLength": 500,
+          disabled={false}
+          fullWidth={true}
+          inputProps={
+            Object {
+              "maxLength": 500,
+            }
           }
-        }
-        label="Primary"
-        margin="normal"
-        name="email"
-        onChange={[Function]}
-        required={false}
-        select={false}
-        type="email"
-        variant="standard"
-      />
-      <TextField
-        FormHelperTextProps={
-          Object {
-            "margin": "dense",
+          label="Email"
+          margin="normal"
+          name="email"
+          onChange={[Function]}
+          required={false}
+          select={false}
+          type="email"
+          variant="standard"
+        />
+        <TextField
+          FormHelperTextProps={
+            Object {
+              "margin": "dense",
+            }
           }
-        }
-        disabled={false}
-        fullWidth={true}
-        inputProps={
-          Object {
-            "maxLength": 500,
+          disabled={false}
+          fullWidth={true}
+          inputProps={
+            Object {
+              "maxLength": 500,
+            }
           }
-        }
-        label="Alternate"
-        margin="normal"
-        name="email2"
-        onChange={[Function]}
-        required={false}
-        select={false}
-        type="email"
-        variant="standard"
-      />
+          label="Alternate Email"
+          margin="normal"
+          name="email2"
+          onChange={[Function]}
+          required={false}
+          select={false}
+          type="email"
+          variant="standard"
+        />
+      </div>
     </section>
     <section>
       <h1>
         Phone
       </h1>
-      <pure(withProps(withHandlers(DialCodeDropdownInput)))
-        FormHelperTextProps={
-          Object {
-            "margin": "dense",
+      <div
+        className="Form__Content__Arrange-field"
+      >
+        <pure(withProps(withHandlers(DialCodeDropdownInput)))
+          FormHelperTextProps={
+            Object {
+              "margin": "dense",
+            }
           }
-        }
-        disabled={false}
-        inputProps={
-          Object {
-            "maxLength": 40,
+          disabled={false}
+          inputProps={
+            Object {
+              "maxLength": 40,
+            }
           }
-        }
-        label="Telephone"
-        margin="normal"
-        name="phone"
-        onChange={[Function]}
-      />
-      <pure(withProps(withHandlers(DialCodeDropdownInput)))
-        FormHelperTextProps={
-          Object {
-            "margin": "dense",
+          label="Telephone"
+          margin="normal"
+          name="phone"
+          onChange={[Function]}
+        />
+        <pure(withProps(withHandlers(DialCodeDropdownInput)))
+          FormHelperTextProps={
+            Object {
+              "margin": "dense",
+            }
           }
-        }
-        disabled={false}
-        inputProps={
-          Object {
-            "maxLength": 40,
+          disabled={false}
+          inputProps={
+            Object {
+              "maxLength": 40,
+            }
           }
-        }
-        label="Mobile"
-        margin="normal"
-        name="cell"
-        onChange={[Function]}
-      />
+          label="Mobile"
+          margin="normal"
+          name="cell"
+          onChange={[Function]}
+        />
+      </div>
     </section>
     <section>
       <h1>
@@ -899,6 +2629,7 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
             "margin": "dense",
           }
         }
+        className="ZipCodeField"
         disabled={false}
         fullWidth={true}
         inputProps={
@@ -915,6 +2646,571 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
         type="text"
         variant="standard"
       />
+    </section>
+    <section>
+      <TextField
+        InputLabelProps={
+          Object {
+            "shrink": true,
+          }
+        }
+        className="TimezoneField"
+        disabled={true}
+        fullWidth={true}
+        id="timezone"
+        label="Time Zone"
+        margin="normal"
+        name="timezone"
+        required={false}
+        select={true}
+        variant="standard"
+      >
+        <WithStyles(MenuItem)
+          value="Dateline Standard Time"
+        >
+          International Date Line West (UTC-12:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="UTC-11"
+        >
+          Coordinated Universal Time-11 (UTC-11:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Hawaiian Standard Time"
+        >
+          Hawaii (UTC-10:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Alaskan Standard Time"
+        >
+          Alaska (UTC-09:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Pacific Standard Time (Mexico)"
+        >
+          Baja California (UTC-08:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Pacific Standard Time"
+        >
+          Pacific Time (US & Canada) (UTC-08:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="US Mountain Standard Time"
+        >
+          Arizona (UTC-07:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Mountain Standard Time (Mexico)"
+        >
+          Chihuahua, La Paz, Mazatlan (UTC-07:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Mountain Standard Time"
+        >
+          Mountain Time (US & Canada) (UTC-07:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Central America Standard Time"
+        >
+          Central America (UTC-06:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Central Standard Time"
+        >
+          Central Time (US & Canada) (UTC-06:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Central Standard Time (Mexico)"
+        >
+          Guadalajara, Mexico City, Monterrey (UTC-06:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Canada Central Standard Time"
+        >
+          Saskatchewan (UTC-06:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="SA Pacific Standard Time"
+        >
+          Bogota, Lima, Quito (UTC-05:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Eastern Standard Time"
+        >
+          Eastern Time (US & Canada) (UTC-05:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="US Eastern Standard Time"
+        >
+          Indiana (East) (UTC-05:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Venezuela Standard Time"
+        >
+          Caracas (UTC-04:30)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Paraguay Standard Time"
+        >
+          Asuncion (UTC-04:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Atlantic Standard Time"
+        >
+          Atlantic Time (Canada) (UTC-04:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Central Brazilian Standard Time"
+        >
+          Cuiaba (UTC-04:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="SA Western Standard Time"
+        >
+          Georgetown, La Paz, Manaus, San Juan (UTC-04:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Pacific SA Standard Time"
+        >
+          Santiago (UTC-04:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Newfoundland Standard Time"
+        >
+          Newfoundland (UTC-03:30)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="E. South America Standard Time"
+        >
+          Brasilia (UTC-03:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Argentina Standard Time"
+        >
+          Buenos Aires (UTC-03:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="SA Eastern Standard Time"
+        >
+          Cayenne, Fortaleza (UTC-03:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Greenland Standard Time"
+        >
+          Greenland (UTC-03:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Montevideo Standard Time"
+        >
+          Montevideo (UTC-03:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Bahia Standard Time"
+        >
+          Salvador (UTC-03:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="UTC-02"
+        >
+          Coordinated Universal Time-02 (UTC-02:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Mid-Atlantic Standard Time"
+        >
+          Mid-Atlantic (UTC-02:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Azores Standard Time"
+        >
+          Azores (UTC-01:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Cape Verde Standard Time"
+        >
+          Cape Verde Is. (UTC-01:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Morocco Standard Time"
+        >
+          Casablanca (UTC)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="UTC"
+        >
+          Coordinated Universal Time (UTC)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="GMT Standard Time"
+        >
+          Dublin, Edinburgh, Lisbon, London (UTC)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Greenwich Standard Time"
+        >
+          Monrovia, Reykjavik (UTC)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="W. Europe Standard Time"
+        >
+          Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna (UTC+01:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Central Europe Standard Time"
+        >
+          Belgrade, Bratislava, Budapest, Ljubljana, Prague (UTC+01:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Romance Standard Time"
+        >
+          Brussels, Copenhagen, Madrid, Paris (UTC+01:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Central European Standard Time"
+        >
+          Sarajevo, Skopje, Warsaw, Zagreb (UTC+01:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="W. Central Africa Standard Time"
+        >
+          West Central Africa (UTC+01:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Namibia Standard Time"
+        >
+          Windhoek (UTC+01:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Jordan Standard Time"
+        >
+          Amman (UTC+02:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="GTB Standard Time"
+        >
+          Athens, Bucharest (UTC+02:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Middle East Standard Time"
+        >
+          Beirut (UTC+02:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Egypt Standard Time"
+        >
+          Cairo (UTC+02:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Syria Standard Time"
+        >
+          Damascus (UTC+02:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="South Africa Standard Time"
+        >
+          Harare, Pretoria (UTC+02:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="FLE Standard Time"
+        >
+          Helsinki, Kyiv, Riga, Sofia, Tallinn, Vilnius (UTC+02:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Turkey Standard Time"
+        >
+          Istanbul (UTC+02:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Israel Standard Time"
+        >
+          Jerusalem (UTC+02:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="E. Europe Standard Time"
+        >
+          Nicosia (UTC+02:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Arabic Standard Time"
+        >
+          Baghdad (UTC+03:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Kaliningrad Standard Time"
+        >
+          Kaliningrad, Minsk (UTC+03:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Arab Standard Time"
+        >
+          Kuwait, Riyadh (UTC+03:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="E. Africa Standard Time"
+        >
+          Nairobi (UTC+03:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Iran Standard Time"
+        >
+          Tehran (UTC+03:30)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Arabian Standard Time"
+        >
+          Abu Dhabi, Muscat (UTC+04:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Azerbaijan Standard Time"
+        >
+          Baku (UTC+04:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Russian Standard Time"
+        >
+          Moscow, St. Petersburg, Volgograd (UTC+04:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Mauritius Standard Time"
+        >
+          Port Louis (UTC+04:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Georgian Standard Time"
+        >
+          Tbilisi (UTC+04:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Caucasus Standard Time"
+        >
+          Yerevan (UTC+04:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Afghanistan Standard Time"
+        >
+          Kabul (UTC+04:30)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Pakistan Standard Time"
+        >
+          Islamabad, Karachi (UTC+05:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="West Asia Standard Time"
+        >
+          Tashkent (UTC+05:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="India Standard Time"
+        >
+          Chennai, Kolkata, Mumbai, New Delhi (UTC+05:30)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Sri Lanka Standard Time"
+        >
+          Sri Jayawardenepura (UTC+05:30)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Nepal Standard Time"
+        >
+          Kathmandu (UTC+05:45)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Central Asia Standard Time"
+        >
+          Astana (UTC+06:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Bangladesh Standard Time"
+        >
+          Dhaka (UTC+06:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Ekaterinburg Standard Time"
+        >
+          Ekaterinburg (UTC+06:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Myanmar Standard Time"
+        >
+          Yangon (Rangoon) (UTC+06:30)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="SE Asia Standard Time"
+        >
+          Bangkok, Hanoi, Jakarta (UTC+07:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="N. Central Asia Standard Time"
+        >
+          Novosibirsk (UTC+07:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="China Standard Time"
+        >
+          Beijing, Chongqing, Hong Kong, Urumqi (UTC+08:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="North Asia Standard Time"
+        >
+          Krasnoyarsk (UTC+08:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Singapore Standard Time"
+        >
+          Kuala Lumpur, Singapore (UTC+08:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="W. Australia Standard Time"
+        >
+          Perth (UTC+08:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Taipei Standard Time"
+        >
+          Taipei (UTC+08:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Ulaanbaatar Standard Time"
+        >
+          Ulaanbaatar (UTC+08:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="North Asia East Standard Time"
+        >
+          Irkutsk (UTC+09:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Tokyo Standard Time"
+        >
+          Osaka, Sapporo, Tokyo (UTC+09:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Korea Standard Time"
+        >
+          Seoul (UTC+09:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Cen. Australia Standard Time"
+        >
+          Adelaide (UTC+09:30)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="AUS Central Standard Time"
+        >
+          Darwin (UTC+09:30)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="E. Australia Standard Time"
+        >
+          Brisbane (UTC+10:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="AUS Eastern Standard Time"
+        >
+          Canberra, Melbourne, Sydney (UTC+10:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="West Pacific Standard Time"
+        >
+          Guam, Port Moresby (UTC+10:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Tasmania Standard Time"
+        >
+          Hobart (UTC+10:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Yakutsk Standard Time"
+        >
+          Yakutsk (UTC+10:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Central Pacific Standard Time"
+        >
+          Solomon Is., New Caledonia (UTC+11:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Vladivostok Standard Time"
+        >
+          Vladivostok (UTC+11:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="New Zealand Standard Time"
+        >
+          Auckland, Wellington (UTC+12:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="UTC+12"
+        >
+          Coordinated Universal Time+12 (UTC+12:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Fiji Standard Time"
+        >
+          Fiji (UTC+12:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Magadan Standard Time"
+        >
+          Magadan (UTC+12:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Kamchatka Standard Time"
+        >
+          Petropavlovsk-Kamchatsky - Old (UTC+12:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Tonga Standard Time"
+        >
+          Nuku'alofa (UTC+13:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Samoa Standard Time"
+        >
+          Samoa (UTC+13:00)
+        </WithStyles(MenuItem)>
+      </TextField>
+      <TextField
+        InputLabelProps={
+          Object {
+            "shrink": true,
+          }
+        }
+        className="CultureField"
+        disabled={true}
+        fullWidth={true}
+        id="culture"
+        label="Language"
+        margin="normal"
+        name="culture"
+        required={false}
+        select={true}
+        variant="standard"
+      >
+        <WithStyles(MenuItem)
+          value="fr-FR"
+        >
+          <span>
+            <FlagIcon
+              countryIsoAlpha2Code="FR"
+              withRightMargin={true}
+            />
+            French (FR)
+          </span>
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="en-US"
+        >
+          <span>
+            <FlagIcon
+              countryIsoAlpha2Code="US"
+              withRightMargin={true}
+            />
+            English (US)
+          </span>
+        </WithStyles(MenuItem)>
+      </TextField>
     </section>
     <section>
       <h1>
@@ -1002,7 +3298,7 @@ exports[`ContactDetailsForm module ContactDetailsForm component should enable th
             "maxLength": 255,
           }
         }
-        label="Job Title"
+        label="Title"
         margin="normal"
         name="title"
         onChange={[Function]}
@@ -1016,89 +3312,97 @@ exports[`ContactDetailsForm module ContactDetailsForm component should enable th
       <h1>
         Email
       </h1>
-      <TextField
-        FormHelperTextProps={
-          Object {
-            "margin": "dense",
+      <div
+        className="Form__Content__Arrange-field"
+      >
+        <TextField
+          FormHelperTextProps={
+            Object {
+              "margin": "dense",
+            }
           }
-        }
-        disabled={false}
-        fullWidth={true}
-        inputProps={
-          Object {
-            "maxLength": 500,
+          disabled={false}
+          fullWidth={true}
+          inputProps={
+            Object {
+              "maxLength": 500,
+            }
           }
-        }
-        label="Primary"
-        margin="normal"
-        name="email"
-        onChange={[Function]}
-        required={false}
-        select={false}
-        type="email"
-        variant="standard"
-      />
-      <TextField
-        FormHelperTextProps={
-          Object {
-            "margin": "dense",
+          label="Email"
+          margin="normal"
+          name="email"
+          onChange={[Function]}
+          required={false}
+          select={false}
+          type="email"
+          variant="standard"
+        />
+        <TextField
+          FormHelperTextProps={
+            Object {
+              "margin": "dense",
+            }
           }
-        }
-        disabled={false}
-        fullWidth={true}
-        inputProps={
-          Object {
-            "maxLength": 500,
+          disabled={false}
+          fullWidth={true}
+          inputProps={
+            Object {
+              "maxLength": 500,
+            }
           }
-        }
-        label="Alternate"
-        margin="normal"
-        name="email2"
-        onChange={[Function]}
-        required={false}
-        select={false}
-        type="email"
-        variant="standard"
-      />
+          label="Alternate Email"
+          margin="normal"
+          name="email2"
+          onChange={[Function]}
+          required={false}
+          select={false}
+          type="email"
+          variant="standard"
+        />
+      </div>
     </section>
     <section>
       <h1>
         Phone
       </h1>
-      <pure(withProps(withHandlers(DialCodeDropdownInput)))
-        FormHelperTextProps={
-          Object {
-            "margin": "dense",
+      <div
+        className="Form__Content__Arrange-field"
+      >
+        <pure(withProps(withHandlers(DialCodeDropdownInput)))
+          FormHelperTextProps={
+            Object {
+              "margin": "dense",
+            }
           }
-        }
-        disabled={false}
-        inputProps={
-          Object {
-            "maxLength": 40,
+          disabled={false}
+          inputProps={
+            Object {
+              "maxLength": 40,
+            }
           }
-        }
-        label="Telephone"
-        margin="normal"
-        name="phone"
-        onChange={[Function]}
-      />
-      <pure(withProps(withHandlers(DialCodeDropdownInput)))
-        FormHelperTextProps={
-          Object {
-            "margin": "dense",
+          label="Telephone"
+          margin="normal"
+          name="phone"
+          onChange={[Function]}
+        />
+        <pure(withProps(withHandlers(DialCodeDropdownInput)))
+          FormHelperTextProps={
+            Object {
+              "margin": "dense",
+            }
           }
-        }
-        disabled={false}
-        inputProps={
-          Object {
-            "maxLength": 40,
+          disabled={false}
+          inputProps={
+            Object {
+              "maxLength": 40,
+            }
           }
-        }
-        label="Mobile"
-        margin="normal"
-        name="cell"
-        onChange={[Function]}
-      />
+          label="Mobile"
+          margin="normal"
+          name="cell"
+          onChange={[Function]}
+        />
+      </div>
     </section>
     <section>
       <h1>
@@ -1135,6 +3439,7 @@ exports[`ContactDetailsForm module ContactDetailsForm component should enable th
             "margin": "dense",
           }
         }
+        className="ZipCodeField"
         disabled={false}
         fullWidth={true}
         inputProps={
@@ -1151,6 +3456,571 @@ exports[`ContactDetailsForm module ContactDetailsForm component should enable th
         type="text"
         variant="standard"
       />
+    </section>
+    <section>
+      <TextField
+        InputLabelProps={
+          Object {
+            "shrink": true,
+          }
+        }
+        className="TimezoneField"
+        disabled={false}
+        fullWidth={true}
+        id="timezone"
+        label="Time Zone"
+        margin="normal"
+        name="timezone"
+        required={false}
+        select={true}
+        variant="standard"
+      >
+        <WithStyles(MenuItem)
+          value="Dateline Standard Time"
+        >
+          International Date Line West (UTC-12:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="UTC-11"
+        >
+          Coordinated Universal Time-11 (UTC-11:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Hawaiian Standard Time"
+        >
+          Hawaii (UTC-10:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Alaskan Standard Time"
+        >
+          Alaska (UTC-09:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Pacific Standard Time (Mexico)"
+        >
+          Baja California (UTC-08:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Pacific Standard Time"
+        >
+          Pacific Time (US & Canada) (UTC-08:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="US Mountain Standard Time"
+        >
+          Arizona (UTC-07:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Mountain Standard Time (Mexico)"
+        >
+          Chihuahua, La Paz, Mazatlan (UTC-07:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Mountain Standard Time"
+        >
+          Mountain Time (US & Canada) (UTC-07:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Central America Standard Time"
+        >
+          Central America (UTC-06:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Central Standard Time"
+        >
+          Central Time (US & Canada) (UTC-06:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Central Standard Time (Mexico)"
+        >
+          Guadalajara, Mexico City, Monterrey (UTC-06:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Canada Central Standard Time"
+        >
+          Saskatchewan (UTC-06:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="SA Pacific Standard Time"
+        >
+          Bogota, Lima, Quito (UTC-05:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Eastern Standard Time"
+        >
+          Eastern Time (US & Canada) (UTC-05:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="US Eastern Standard Time"
+        >
+          Indiana (East) (UTC-05:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Venezuela Standard Time"
+        >
+          Caracas (UTC-04:30)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Paraguay Standard Time"
+        >
+          Asuncion (UTC-04:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Atlantic Standard Time"
+        >
+          Atlantic Time (Canada) (UTC-04:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Central Brazilian Standard Time"
+        >
+          Cuiaba (UTC-04:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="SA Western Standard Time"
+        >
+          Georgetown, La Paz, Manaus, San Juan (UTC-04:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Pacific SA Standard Time"
+        >
+          Santiago (UTC-04:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Newfoundland Standard Time"
+        >
+          Newfoundland (UTC-03:30)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="E. South America Standard Time"
+        >
+          Brasilia (UTC-03:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Argentina Standard Time"
+        >
+          Buenos Aires (UTC-03:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="SA Eastern Standard Time"
+        >
+          Cayenne, Fortaleza (UTC-03:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Greenland Standard Time"
+        >
+          Greenland (UTC-03:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Montevideo Standard Time"
+        >
+          Montevideo (UTC-03:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Bahia Standard Time"
+        >
+          Salvador (UTC-03:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="UTC-02"
+        >
+          Coordinated Universal Time-02 (UTC-02:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Mid-Atlantic Standard Time"
+        >
+          Mid-Atlantic (UTC-02:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Azores Standard Time"
+        >
+          Azores (UTC-01:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Cape Verde Standard Time"
+        >
+          Cape Verde Is. (UTC-01:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Morocco Standard Time"
+        >
+          Casablanca (UTC)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="UTC"
+        >
+          Coordinated Universal Time (UTC)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="GMT Standard Time"
+        >
+          Dublin, Edinburgh, Lisbon, London (UTC)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Greenwich Standard Time"
+        >
+          Monrovia, Reykjavik (UTC)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="W. Europe Standard Time"
+        >
+          Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna (UTC+01:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Central Europe Standard Time"
+        >
+          Belgrade, Bratislava, Budapest, Ljubljana, Prague (UTC+01:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Romance Standard Time"
+        >
+          Brussels, Copenhagen, Madrid, Paris (UTC+01:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Central European Standard Time"
+        >
+          Sarajevo, Skopje, Warsaw, Zagreb (UTC+01:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="W. Central Africa Standard Time"
+        >
+          West Central Africa (UTC+01:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Namibia Standard Time"
+        >
+          Windhoek (UTC+01:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Jordan Standard Time"
+        >
+          Amman (UTC+02:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="GTB Standard Time"
+        >
+          Athens, Bucharest (UTC+02:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Middle East Standard Time"
+        >
+          Beirut (UTC+02:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Egypt Standard Time"
+        >
+          Cairo (UTC+02:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Syria Standard Time"
+        >
+          Damascus (UTC+02:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="South Africa Standard Time"
+        >
+          Harare, Pretoria (UTC+02:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="FLE Standard Time"
+        >
+          Helsinki, Kyiv, Riga, Sofia, Tallinn, Vilnius (UTC+02:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Turkey Standard Time"
+        >
+          Istanbul (UTC+02:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Israel Standard Time"
+        >
+          Jerusalem (UTC+02:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="E. Europe Standard Time"
+        >
+          Nicosia (UTC+02:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Arabic Standard Time"
+        >
+          Baghdad (UTC+03:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Kaliningrad Standard Time"
+        >
+          Kaliningrad, Minsk (UTC+03:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Arab Standard Time"
+        >
+          Kuwait, Riyadh (UTC+03:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="E. Africa Standard Time"
+        >
+          Nairobi (UTC+03:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Iran Standard Time"
+        >
+          Tehran (UTC+03:30)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Arabian Standard Time"
+        >
+          Abu Dhabi, Muscat (UTC+04:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Azerbaijan Standard Time"
+        >
+          Baku (UTC+04:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Russian Standard Time"
+        >
+          Moscow, St. Petersburg, Volgograd (UTC+04:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Mauritius Standard Time"
+        >
+          Port Louis (UTC+04:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Georgian Standard Time"
+        >
+          Tbilisi (UTC+04:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Caucasus Standard Time"
+        >
+          Yerevan (UTC+04:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Afghanistan Standard Time"
+        >
+          Kabul (UTC+04:30)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Pakistan Standard Time"
+        >
+          Islamabad, Karachi (UTC+05:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="West Asia Standard Time"
+        >
+          Tashkent (UTC+05:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="India Standard Time"
+        >
+          Chennai, Kolkata, Mumbai, New Delhi (UTC+05:30)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Sri Lanka Standard Time"
+        >
+          Sri Jayawardenepura (UTC+05:30)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Nepal Standard Time"
+        >
+          Kathmandu (UTC+05:45)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Central Asia Standard Time"
+        >
+          Astana (UTC+06:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Bangladesh Standard Time"
+        >
+          Dhaka (UTC+06:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Ekaterinburg Standard Time"
+        >
+          Ekaterinburg (UTC+06:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Myanmar Standard Time"
+        >
+          Yangon (Rangoon) (UTC+06:30)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="SE Asia Standard Time"
+        >
+          Bangkok, Hanoi, Jakarta (UTC+07:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="N. Central Asia Standard Time"
+        >
+          Novosibirsk (UTC+07:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="China Standard Time"
+        >
+          Beijing, Chongqing, Hong Kong, Urumqi (UTC+08:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="North Asia Standard Time"
+        >
+          Krasnoyarsk (UTC+08:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Singapore Standard Time"
+        >
+          Kuala Lumpur, Singapore (UTC+08:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="W. Australia Standard Time"
+        >
+          Perth (UTC+08:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Taipei Standard Time"
+        >
+          Taipei (UTC+08:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Ulaanbaatar Standard Time"
+        >
+          Ulaanbaatar (UTC+08:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="North Asia East Standard Time"
+        >
+          Irkutsk (UTC+09:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Tokyo Standard Time"
+        >
+          Osaka, Sapporo, Tokyo (UTC+09:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Korea Standard Time"
+        >
+          Seoul (UTC+09:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Cen. Australia Standard Time"
+        >
+          Adelaide (UTC+09:30)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="AUS Central Standard Time"
+        >
+          Darwin (UTC+09:30)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="E. Australia Standard Time"
+        >
+          Brisbane (UTC+10:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="AUS Eastern Standard Time"
+        >
+          Canberra, Melbourne, Sydney (UTC+10:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="West Pacific Standard Time"
+        >
+          Guam, Port Moresby (UTC+10:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Tasmania Standard Time"
+        >
+          Hobart (UTC+10:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Yakutsk Standard Time"
+        >
+          Yakutsk (UTC+10:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Central Pacific Standard Time"
+        >
+          Solomon Is., New Caledonia (UTC+11:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Vladivostok Standard Time"
+        >
+          Vladivostok (UTC+11:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="New Zealand Standard Time"
+        >
+          Auckland, Wellington (UTC+12:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="UTC+12"
+        >
+          Coordinated Universal Time+12 (UTC+12:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Fiji Standard Time"
+        >
+          Fiji (UTC+12:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Magadan Standard Time"
+        >
+          Magadan (UTC+12:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Kamchatka Standard Time"
+        >
+          Petropavlovsk-Kamchatsky - Old (UTC+12:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Tonga Standard Time"
+        >
+          Nuku'alofa (UTC+13:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Samoa Standard Time"
+        >
+          Samoa (UTC+13:00)
+        </WithStyles(MenuItem)>
+      </TextField>
+      <TextField
+        InputLabelProps={
+          Object {
+            "shrink": true,
+          }
+        }
+        className="CultureField"
+        disabled={false}
+        fullWidth={true}
+        id="culture"
+        label="Language"
+        margin="normal"
+        name="culture"
+        required={false}
+        select={true}
+        variant="standard"
+      >
+        <WithStyles(MenuItem)
+          value="fr-FR"
+        >
+          <span>
+            <FlagIcon
+              countryIsoAlpha2Code="FR"
+              withRightMargin={true}
+            />
+            French (FR)
+          </span>
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="en-US"
+        >
+          <span>
+            <FlagIcon
+              countryIsoAlpha2Code="US"
+              withRightMargin={true}
+            />
+            English (US)
+          </span>
+        </WithStyles(MenuItem)>
+      </TextField>
     </section>
     <section>
       <h1>
@@ -1238,7 +4108,7 @@ exports[`ContactDetailsForm module ContactDetailsForm component should render co
             "maxLength": 255,
           }
         }
-        label="Job Title"
+        label="Title"
         margin="normal"
         name="title"
         onChange={[Function]}
@@ -1252,89 +4122,97 @@ exports[`ContactDetailsForm module ContactDetailsForm component should render co
       <h1>
         Email
       </h1>
-      <TextField
-        FormHelperTextProps={
-          Object {
-            "margin": "dense",
+      <div
+        className="Form__Content__Arrange-field"
+      >
+        <TextField
+          FormHelperTextProps={
+            Object {
+              "margin": "dense",
+            }
           }
-        }
-        disabled={false}
-        fullWidth={true}
-        inputProps={
-          Object {
-            "maxLength": 500,
+          disabled={false}
+          fullWidth={true}
+          inputProps={
+            Object {
+              "maxLength": 500,
+            }
           }
-        }
-        label="Primary"
-        margin="normal"
-        name="email"
-        onChange={[Function]}
-        required={false}
-        select={false}
-        type="email"
-        variant="standard"
-      />
-      <TextField
-        FormHelperTextProps={
-          Object {
-            "margin": "dense",
+          label="Email"
+          margin="normal"
+          name="email"
+          onChange={[Function]}
+          required={false}
+          select={false}
+          type="email"
+          variant="standard"
+        />
+        <TextField
+          FormHelperTextProps={
+            Object {
+              "margin": "dense",
+            }
           }
-        }
-        disabled={false}
-        fullWidth={true}
-        inputProps={
-          Object {
-            "maxLength": 500,
+          disabled={false}
+          fullWidth={true}
+          inputProps={
+            Object {
+              "maxLength": 500,
+            }
           }
-        }
-        label="Alternate"
-        margin="normal"
-        name="email2"
-        onChange={[Function]}
-        required={false}
-        select={false}
-        type="email"
-        variant="standard"
-      />
+          label="Alternate Email"
+          margin="normal"
+          name="email2"
+          onChange={[Function]}
+          required={false}
+          select={false}
+          type="email"
+          variant="standard"
+        />
+      </div>
     </section>
     <section>
       <h1>
         Phone
       </h1>
-      <pure(withProps(withHandlers(DialCodeDropdownInput)))
-        FormHelperTextProps={
-          Object {
-            "margin": "dense",
+      <div
+        className="Form__Content__Arrange-field"
+      >
+        <pure(withProps(withHandlers(DialCodeDropdownInput)))
+          FormHelperTextProps={
+            Object {
+              "margin": "dense",
+            }
           }
-        }
-        disabled={false}
-        inputProps={
-          Object {
-            "maxLength": 40,
+          disabled={false}
+          inputProps={
+            Object {
+              "maxLength": 40,
+            }
           }
-        }
-        label="Telephone"
-        margin="normal"
-        name="phone"
-        onChange={[Function]}
-      />
-      <pure(withProps(withHandlers(DialCodeDropdownInput)))
-        FormHelperTextProps={
-          Object {
-            "margin": "dense",
+          label="Telephone"
+          margin="normal"
+          name="phone"
+          onChange={[Function]}
+        />
+        <pure(withProps(withHandlers(DialCodeDropdownInput)))
+          FormHelperTextProps={
+            Object {
+              "margin": "dense",
+            }
           }
-        }
-        disabled={false}
-        inputProps={
-          Object {
-            "maxLength": 40,
+          disabled={false}
+          inputProps={
+            Object {
+              "maxLength": 40,
+            }
           }
-        }
-        label="Mobile"
-        margin="normal"
-        name="cell"
-        onChange={[Function]}
-      />
+          label="Mobile"
+          margin="normal"
+          name="cell"
+          onChange={[Function]}
+        />
+      </div>
     </section>
     <section>
       <h1>
@@ -1371,6 +4249,7 @@ exports[`ContactDetailsForm module ContactDetailsForm component should render co
             "margin": "dense",
           }
         }
+        className="ZipCodeField"
         disabled={false}
         fullWidth={true}
         inputProps={
@@ -1387,6 +4266,569 @@ exports[`ContactDetailsForm module ContactDetailsForm component should render co
         type="text"
         variant="standard"
       />
+    </section>
+    <section>
+      <TextField
+        InputLabelProps={
+          Object {
+            "shrink": true,
+          }
+        }
+        className="TimezoneField"
+        fullWidth={true}
+        id="timezone"
+        label="Time Zone"
+        margin="normal"
+        name="timezone"
+        required={false}
+        select={true}
+        variant="standard"
+      >
+        <WithStyles(MenuItem)
+          value="Dateline Standard Time"
+        >
+          International Date Line West (UTC-12:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="UTC-11"
+        >
+          Coordinated Universal Time-11 (UTC-11:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Hawaiian Standard Time"
+        >
+          Hawaii (UTC-10:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Alaskan Standard Time"
+        >
+          Alaska (UTC-09:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Pacific Standard Time (Mexico)"
+        >
+          Baja California (UTC-08:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Pacific Standard Time"
+        >
+          Pacific Time (US & Canada) (UTC-08:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="US Mountain Standard Time"
+        >
+          Arizona (UTC-07:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Mountain Standard Time (Mexico)"
+        >
+          Chihuahua, La Paz, Mazatlan (UTC-07:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Mountain Standard Time"
+        >
+          Mountain Time (US & Canada) (UTC-07:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Central America Standard Time"
+        >
+          Central America (UTC-06:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Central Standard Time"
+        >
+          Central Time (US & Canada) (UTC-06:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Central Standard Time (Mexico)"
+        >
+          Guadalajara, Mexico City, Monterrey (UTC-06:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Canada Central Standard Time"
+        >
+          Saskatchewan (UTC-06:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="SA Pacific Standard Time"
+        >
+          Bogota, Lima, Quito (UTC-05:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Eastern Standard Time"
+        >
+          Eastern Time (US & Canada) (UTC-05:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="US Eastern Standard Time"
+        >
+          Indiana (East) (UTC-05:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Venezuela Standard Time"
+        >
+          Caracas (UTC-04:30)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Paraguay Standard Time"
+        >
+          Asuncion (UTC-04:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Atlantic Standard Time"
+        >
+          Atlantic Time (Canada) (UTC-04:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Central Brazilian Standard Time"
+        >
+          Cuiaba (UTC-04:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="SA Western Standard Time"
+        >
+          Georgetown, La Paz, Manaus, San Juan (UTC-04:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Pacific SA Standard Time"
+        >
+          Santiago (UTC-04:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Newfoundland Standard Time"
+        >
+          Newfoundland (UTC-03:30)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="E. South America Standard Time"
+        >
+          Brasilia (UTC-03:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Argentina Standard Time"
+        >
+          Buenos Aires (UTC-03:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="SA Eastern Standard Time"
+        >
+          Cayenne, Fortaleza (UTC-03:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Greenland Standard Time"
+        >
+          Greenland (UTC-03:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Montevideo Standard Time"
+        >
+          Montevideo (UTC-03:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Bahia Standard Time"
+        >
+          Salvador (UTC-03:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="UTC-02"
+        >
+          Coordinated Universal Time-02 (UTC-02:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Mid-Atlantic Standard Time"
+        >
+          Mid-Atlantic (UTC-02:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Azores Standard Time"
+        >
+          Azores (UTC-01:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Cape Verde Standard Time"
+        >
+          Cape Verde Is. (UTC-01:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Morocco Standard Time"
+        >
+          Casablanca (UTC)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="UTC"
+        >
+          Coordinated Universal Time (UTC)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="GMT Standard Time"
+        >
+          Dublin, Edinburgh, Lisbon, London (UTC)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Greenwich Standard Time"
+        >
+          Monrovia, Reykjavik (UTC)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="W. Europe Standard Time"
+        >
+          Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna (UTC+01:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Central Europe Standard Time"
+        >
+          Belgrade, Bratislava, Budapest, Ljubljana, Prague (UTC+01:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Romance Standard Time"
+        >
+          Brussels, Copenhagen, Madrid, Paris (UTC+01:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Central European Standard Time"
+        >
+          Sarajevo, Skopje, Warsaw, Zagreb (UTC+01:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="W. Central Africa Standard Time"
+        >
+          West Central Africa (UTC+01:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Namibia Standard Time"
+        >
+          Windhoek (UTC+01:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Jordan Standard Time"
+        >
+          Amman (UTC+02:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="GTB Standard Time"
+        >
+          Athens, Bucharest (UTC+02:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Middle East Standard Time"
+        >
+          Beirut (UTC+02:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Egypt Standard Time"
+        >
+          Cairo (UTC+02:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Syria Standard Time"
+        >
+          Damascus (UTC+02:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="South Africa Standard Time"
+        >
+          Harare, Pretoria (UTC+02:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="FLE Standard Time"
+        >
+          Helsinki, Kyiv, Riga, Sofia, Tallinn, Vilnius (UTC+02:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Turkey Standard Time"
+        >
+          Istanbul (UTC+02:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Israel Standard Time"
+        >
+          Jerusalem (UTC+02:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="E. Europe Standard Time"
+        >
+          Nicosia (UTC+02:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Arabic Standard Time"
+        >
+          Baghdad (UTC+03:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Kaliningrad Standard Time"
+        >
+          Kaliningrad, Minsk (UTC+03:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Arab Standard Time"
+        >
+          Kuwait, Riyadh (UTC+03:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="E. Africa Standard Time"
+        >
+          Nairobi (UTC+03:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Iran Standard Time"
+        >
+          Tehran (UTC+03:30)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Arabian Standard Time"
+        >
+          Abu Dhabi, Muscat (UTC+04:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Azerbaijan Standard Time"
+        >
+          Baku (UTC+04:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Russian Standard Time"
+        >
+          Moscow, St. Petersburg, Volgograd (UTC+04:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Mauritius Standard Time"
+        >
+          Port Louis (UTC+04:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Georgian Standard Time"
+        >
+          Tbilisi (UTC+04:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Caucasus Standard Time"
+        >
+          Yerevan (UTC+04:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Afghanistan Standard Time"
+        >
+          Kabul (UTC+04:30)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Pakistan Standard Time"
+        >
+          Islamabad, Karachi (UTC+05:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="West Asia Standard Time"
+        >
+          Tashkent (UTC+05:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="India Standard Time"
+        >
+          Chennai, Kolkata, Mumbai, New Delhi (UTC+05:30)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Sri Lanka Standard Time"
+        >
+          Sri Jayawardenepura (UTC+05:30)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Nepal Standard Time"
+        >
+          Kathmandu (UTC+05:45)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Central Asia Standard Time"
+        >
+          Astana (UTC+06:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Bangladesh Standard Time"
+        >
+          Dhaka (UTC+06:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Ekaterinburg Standard Time"
+        >
+          Ekaterinburg (UTC+06:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Myanmar Standard Time"
+        >
+          Yangon (Rangoon) (UTC+06:30)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="SE Asia Standard Time"
+        >
+          Bangkok, Hanoi, Jakarta (UTC+07:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="N. Central Asia Standard Time"
+        >
+          Novosibirsk (UTC+07:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="China Standard Time"
+        >
+          Beijing, Chongqing, Hong Kong, Urumqi (UTC+08:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="North Asia Standard Time"
+        >
+          Krasnoyarsk (UTC+08:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Singapore Standard Time"
+        >
+          Kuala Lumpur, Singapore (UTC+08:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="W. Australia Standard Time"
+        >
+          Perth (UTC+08:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Taipei Standard Time"
+        >
+          Taipei (UTC+08:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Ulaanbaatar Standard Time"
+        >
+          Ulaanbaatar (UTC+08:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="North Asia East Standard Time"
+        >
+          Irkutsk (UTC+09:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Tokyo Standard Time"
+        >
+          Osaka, Sapporo, Tokyo (UTC+09:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Korea Standard Time"
+        >
+          Seoul (UTC+09:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Cen. Australia Standard Time"
+        >
+          Adelaide (UTC+09:30)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="AUS Central Standard Time"
+        >
+          Darwin (UTC+09:30)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="E. Australia Standard Time"
+        >
+          Brisbane (UTC+10:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="AUS Eastern Standard Time"
+        >
+          Canberra, Melbourne, Sydney (UTC+10:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="West Pacific Standard Time"
+        >
+          Guam, Port Moresby (UTC+10:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Tasmania Standard Time"
+        >
+          Hobart (UTC+10:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Yakutsk Standard Time"
+        >
+          Yakutsk (UTC+10:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Central Pacific Standard Time"
+        >
+          Solomon Is., New Caledonia (UTC+11:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Vladivostok Standard Time"
+        >
+          Vladivostok (UTC+11:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="New Zealand Standard Time"
+        >
+          Auckland, Wellington (UTC+12:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="UTC+12"
+        >
+          Coordinated Universal Time+12 (UTC+12:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Fiji Standard Time"
+        >
+          Fiji (UTC+12:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Magadan Standard Time"
+        >
+          Magadan (UTC+12:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Kamchatka Standard Time"
+        >
+          Petropavlovsk-Kamchatsky - Old (UTC+12:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Tonga Standard Time"
+        >
+          Nuku'alofa (UTC+13:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Samoa Standard Time"
+        >
+          Samoa (UTC+13:00)
+        </WithStyles(MenuItem)>
+      </TextField>
+      <TextField
+        InputLabelProps={
+          Object {
+            "shrink": true,
+          }
+        }
+        className="CultureField"
+        fullWidth={true}
+        id="culture"
+        label="Language"
+        margin="normal"
+        name="culture"
+        required={false}
+        select={true}
+        variant="standard"
+      >
+        <WithStyles(MenuItem)
+          value="fr-FR"
+        >
+          <span>
+            <FlagIcon
+              countryIsoAlpha2Code="FR"
+              withRightMargin={true}
+            />
+            French (FR)
+          </span>
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="en-US"
+        >
+          <span>
+            <FlagIcon
+              countryIsoAlpha2Code="US"
+              withRightMargin={true}
+            />
+            English (US)
+          </span>
+        </WithStyles(MenuItem)>
+      </TextField>
     </section>
     <section>
       <h1>
@@ -1460,7 +4902,7 @@ exports[`ContactDetailsForm module ContactDetailsForm component should show form
             "maxLength": 255,
           }
         }
-        label="Job Title"
+        label="Title"
         margin="normal"
         name="title"
         onChange={[Function]}
@@ -1474,89 +4916,97 @@ exports[`ContactDetailsForm module ContactDetailsForm component should show form
       <h1>
         Email
       </h1>
-      <TextField
-        FormHelperTextProps={
-          Object {
-            "margin": "dense",
+      <div
+        className="Form__Content__Arrange-field"
+      >
+        <TextField
+          FormHelperTextProps={
+            Object {
+              "margin": "dense",
+            }
           }
-        }
-        disabled={false}
-        fullWidth={true}
-        inputProps={
-          Object {
-            "maxLength": 500,
+          disabled={false}
+          fullWidth={true}
+          inputProps={
+            Object {
+              "maxLength": 500,
+            }
           }
-        }
-        label="Primary"
-        margin="normal"
-        name="email"
-        onChange={[Function]}
-        required={false}
-        select={false}
-        type="email"
-        variant="standard"
-      />
-      <TextField
-        FormHelperTextProps={
-          Object {
-            "margin": "dense",
+          label="Email"
+          margin="normal"
+          name="email"
+          onChange={[Function]}
+          required={false}
+          select={false}
+          type="email"
+          variant="standard"
+        />
+        <TextField
+          FormHelperTextProps={
+            Object {
+              "margin": "dense",
+            }
           }
-        }
-        disabled={false}
-        fullWidth={true}
-        inputProps={
-          Object {
-            "maxLength": 500,
+          disabled={false}
+          fullWidth={true}
+          inputProps={
+            Object {
+              "maxLength": 500,
+            }
           }
-        }
-        label="Alternate"
-        margin="normal"
-        name="email2"
-        onChange={[Function]}
-        required={false}
-        select={false}
-        type="email"
-        variant="standard"
-      />
+          label="Alternate Email"
+          margin="normal"
+          name="email2"
+          onChange={[Function]}
+          required={false}
+          select={false}
+          type="email"
+          variant="standard"
+        />
+      </div>
     </section>
     <section>
       <h1>
         Phone
       </h1>
-      <pure(withProps(withHandlers(DialCodeDropdownInput)))
-        FormHelperTextProps={
-          Object {
-            "margin": "dense",
+      <div
+        className="Form__Content__Arrange-field"
+      >
+        <pure(withProps(withHandlers(DialCodeDropdownInput)))
+          FormHelperTextProps={
+            Object {
+              "margin": "dense",
+            }
           }
-        }
-        disabled={false}
-        inputProps={
-          Object {
-            "maxLength": 40,
+          disabled={false}
+          inputProps={
+            Object {
+              "maxLength": 40,
+            }
           }
-        }
-        label="Telephone"
-        margin="normal"
-        name="phone"
-        onChange={[Function]}
-      />
-      <pure(withProps(withHandlers(DialCodeDropdownInput)))
-        FormHelperTextProps={
-          Object {
-            "margin": "dense",
+          label="Telephone"
+          margin="normal"
+          name="phone"
+          onChange={[Function]}
+        />
+        <pure(withProps(withHandlers(DialCodeDropdownInput)))
+          FormHelperTextProps={
+            Object {
+              "margin": "dense",
+            }
           }
-        }
-        disabled={false}
-        inputProps={
-          Object {
-            "maxLength": 40,
+          disabled={false}
+          inputProps={
+            Object {
+              "maxLength": 40,
+            }
           }
-        }
-        label="Mobile"
-        margin="normal"
-        name="cell"
-        onChange={[Function]}
-      />
+          label="Mobile"
+          margin="normal"
+          name="cell"
+          onChange={[Function]}
+        />
+      </div>
     </section>
     <section>
       <h1>
@@ -1593,6 +5043,7 @@ exports[`ContactDetailsForm module ContactDetailsForm component should show form
             "margin": "dense",
           }
         }
+        className="ZipCodeField"
         disabled={false}
         fullWidth={true}
         inputProps={
@@ -1609,6 +5060,569 @@ exports[`ContactDetailsForm module ContactDetailsForm component should show form
         type="text"
         variant="standard"
       />
+    </section>
+    <section>
+      <TextField
+        InputLabelProps={
+          Object {
+            "shrink": true,
+          }
+        }
+        className="TimezoneField"
+        fullWidth={true}
+        id="timezone"
+        label="Time Zone"
+        margin="normal"
+        name="timezone"
+        required={false}
+        select={true}
+        variant="standard"
+      >
+        <WithStyles(MenuItem)
+          value="Dateline Standard Time"
+        >
+          International Date Line West (UTC-12:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="UTC-11"
+        >
+          Coordinated Universal Time-11 (UTC-11:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Hawaiian Standard Time"
+        >
+          Hawaii (UTC-10:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Alaskan Standard Time"
+        >
+          Alaska (UTC-09:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Pacific Standard Time (Mexico)"
+        >
+          Baja California (UTC-08:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Pacific Standard Time"
+        >
+          Pacific Time (US & Canada) (UTC-08:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="US Mountain Standard Time"
+        >
+          Arizona (UTC-07:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Mountain Standard Time (Mexico)"
+        >
+          Chihuahua, La Paz, Mazatlan (UTC-07:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Mountain Standard Time"
+        >
+          Mountain Time (US & Canada) (UTC-07:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Central America Standard Time"
+        >
+          Central America (UTC-06:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Central Standard Time"
+        >
+          Central Time (US & Canada) (UTC-06:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Central Standard Time (Mexico)"
+        >
+          Guadalajara, Mexico City, Monterrey (UTC-06:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Canada Central Standard Time"
+        >
+          Saskatchewan (UTC-06:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="SA Pacific Standard Time"
+        >
+          Bogota, Lima, Quito (UTC-05:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Eastern Standard Time"
+        >
+          Eastern Time (US & Canada) (UTC-05:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="US Eastern Standard Time"
+        >
+          Indiana (East) (UTC-05:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Venezuela Standard Time"
+        >
+          Caracas (UTC-04:30)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Paraguay Standard Time"
+        >
+          Asuncion (UTC-04:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Atlantic Standard Time"
+        >
+          Atlantic Time (Canada) (UTC-04:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Central Brazilian Standard Time"
+        >
+          Cuiaba (UTC-04:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="SA Western Standard Time"
+        >
+          Georgetown, La Paz, Manaus, San Juan (UTC-04:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Pacific SA Standard Time"
+        >
+          Santiago (UTC-04:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Newfoundland Standard Time"
+        >
+          Newfoundland (UTC-03:30)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="E. South America Standard Time"
+        >
+          Brasilia (UTC-03:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Argentina Standard Time"
+        >
+          Buenos Aires (UTC-03:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="SA Eastern Standard Time"
+        >
+          Cayenne, Fortaleza (UTC-03:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Greenland Standard Time"
+        >
+          Greenland (UTC-03:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Montevideo Standard Time"
+        >
+          Montevideo (UTC-03:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Bahia Standard Time"
+        >
+          Salvador (UTC-03:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="UTC-02"
+        >
+          Coordinated Universal Time-02 (UTC-02:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Mid-Atlantic Standard Time"
+        >
+          Mid-Atlantic (UTC-02:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Azores Standard Time"
+        >
+          Azores (UTC-01:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Cape Verde Standard Time"
+        >
+          Cape Verde Is. (UTC-01:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Morocco Standard Time"
+        >
+          Casablanca (UTC)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="UTC"
+        >
+          Coordinated Universal Time (UTC)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="GMT Standard Time"
+        >
+          Dublin, Edinburgh, Lisbon, London (UTC)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Greenwich Standard Time"
+        >
+          Monrovia, Reykjavik (UTC)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="W. Europe Standard Time"
+        >
+          Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna (UTC+01:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Central Europe Standard Time"
+        >
+          Belgrade, Bratislava, Budapest, Ljubljana, Prague (UTC+01:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Romance Standard Time"
+        >
+          Brussels, Copenhagen, Madrid, Paris (UTC+01:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Central European Standard Time"
+        >
+          Sarajevo, Skopje, Warsaw, Zagreb (UTC+01:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="W. Central Africa Standard Time"
+        >
+          West Central Africa (UTC+01:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Namibia Standard Time"
+        >
+          Windhoek (UTC+01:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Jordan Standard Time"
+        >
+          Amman (UTC+02:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="GTB Standard Time"
+        >
+          Athens, Bucharest (UTC+02:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Middle East Standard Time"
+        >
+          Beirut (UTC+02:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Egypt Standard Time"
+        >
+          Cairo (UTC+02:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Syria Standard Time"
+        >
+          Damascus (UTC+02:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="South Africa Standard Time"
+        >
+          Harare, Pretoria (UTC+02:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="FLE Standard Time"
+        >
+          Helsinki, Kyiv, Riga, Sofia, Tallinn, Vilnius (UTC+02:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Turkey Standard Time"
+        >
+          Istanbul (UTC+02:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Israel Standard Time"
+        >
+          Jerusalem (UTC+02:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="E. Europe Standard Time"
+        >
+          Nicosia (UTC+02:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Arabic Standard Time"
+        >
+          Baghdad (UTC+03:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Kaliningrad Standard Time"
+        >
+          Kaliningrad, Minsk (UTC+03:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Arab Standard Time"
+        >
+          Kuwait, Riyadh (UTC+03:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="E. Africa Standard Time"
+        >
+          Nairobi (UTC+03:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Iran Standard Time"
+        >
+          Tehran (UTC+03:30)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Arabian Standard Time"
+        >
+          Abu Dhabi, Muscat (UTC+04:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Azerbaijan Standard Time"
+        >
+          Baku (UTC+04:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Russian Standard Time"
+        >
+          Moscow, St. Petersburg, Volgograd (UTC+04:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Mauritius Standard Time"
+        >
+          Port Louis (UTC+04:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Georgian Standard Time"
+        >
+          Tbilisi (UTC+04:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Caucasus Standard Time"
+        >
+          Yerevan (UTC+04:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Afghanistan Standard Time"
+        >
+          Kabul (UTC+04:30)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Pakistan Standard Time"
+        >
+          Islamabad, Karachi (UTC+05:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="West Asia Standard Time"
+        >
+          Tashkent (UTC+05:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="India Standard Time"
+        >
+          Chennai, Kolkata, Mumbai, New Delhi (UTC+05:30)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Sri Lanka Standard Time"
+        >
+          Sri Jayawardenepura (UTC+05:30)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Nepal Standard Time"
+        >
+          Kathmandu (UTC+05:45)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Central Asia Standard Time"
+        >
+          Astana (UTC+06:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Bangladesh Standard Time"
+        >
+          Dhaka (UTC+06:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Ekaterinburg Standard Time"
+        >
+          Ekaterinburg (UTC+06:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Myanmar Standard Time"
+        >
+          Yangon (Rangoon) (UTC+06:30)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="SE Asia Standard Time"
+        >
+          Bangkok, Hanoi, Jakarta (UTC+07:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="N. Central Asia Standard Time"
+        >
+          Novosibirsk (UTC+07:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="China Standard Time"
+        >
+          Beijing, Chongqing, Hong Kong, Urumqi (UTC+08:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="North Asia Standard Time"
+        >
+          Krasnoyarsk (UTC+08:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Singapore Standard Time"
+        >
+          Kuala Lumpur, Singapore (UTC+08:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="W. Australia Standard Time"
+        >
+          Perth (UTC+08:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Taipei Standard Time"
+        >
+          Taipei (UTC+08:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Ulaanbaatar Standard Time"
+        >
+          Ulaanbaatar (UTC+08:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="North Asia East Standard Time"
+        >
+          Irkutsk (UTC+09:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Tokyo Standard Time"
+        >
+          Osaka, Sapporo, Tokyo (UTC+09:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Korea Standard Time"
+        >
+          Seoul (UTC+09:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Cen. Australia Standard Time"
+        >
+          Adelaide (UTC+09:30)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="AUS Central Standard Time"
+        >
+          Darwin (UTC+09:30)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="E. Australia Standard Time"
+        >
+          Brisbane (UTC+10:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="AUS Eastern Standard Time"
+        >
+          Canberra, Melbourne, Sydney (UTC+10:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="West Pacific Standard Time"
+        >
+          Guam, Port Moresby (UTC+10:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Tasmania Standard Time"
+        >
+          Hobart (UTC+10:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Yakutsk Standard Time"
+        >
+          Yakutsk (UTC+10:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Central Pacific Standard Time"
+        >
+          Solomon Is., New Caledonia (UTC+11:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Vladivostok Standard Time"
+        >
+          Vladivostok (UTC+11:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="New Zealand Standard Time"
+        >
+          Auckland, Wellington (UTC+12:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="UTC+12"
+        >
+          Coordinated Universal Time+12 (UTC+12:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Fiji Standard Time"
+        >
+          Fiji (UTC+12:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Magadan Standard Time"
+        >
+          Magadan (UTC+12:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Kamchatka Standard Time"
+        >
+          Petropavlovsk-Kamchatsky - Old (UTC+12:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Tonga Standard Time"
+        >
+          Nuku'alofa (UTC+13:00)
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="Samoa Standard Time"
+        >
+          Samoa (UTC+13:00)
+        </WithStyles(MenuItem)>
+      </TextField>
+      <TextField
+        InputLabelProps={
+          Object {
+            "shrink": true,
+          }
+        }
+        className="CultureField"
+        fullWidth={true}
+        id="culture"
+        label="Language"
+        margin="normal"
+        name="culture"
+        required={false}
+        select={true}
+        variant="standard"
+      >
+        <WithStyles(MenuItem)
+          value="fr-FR"
+        >
+          <span>
+            <FlagIcon
+              countryIsoAlpha2Code="FR"
+              withRightMargin={true}
+            />
+            French (FR)
+          </span>
+        </WithStyles(MenuItem)>
+        <WithStyles(MenuItem)
+          value="en-US"
+        >
+          <span>
+            <FlagIcon
+              countryIsoAlpha2Code="US"
+              withRightMargin={true}
+            />
+            English (US)
+          </span>
+        </WithStyles(MenuItem)>
+      </TextField>
     </section>
     <section>
       <h1>
