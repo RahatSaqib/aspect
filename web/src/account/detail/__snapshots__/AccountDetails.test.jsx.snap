@@ -12,152 +12,16 @@ exports[`AccountDetails module AccountDetails component should shallow render co
   <Connect(lifecycle(Component))
     title="Account Details"
   />
-  <WithStyles(Paper)>
-    <AspectTabs
-      fullWidth={true}
-      initialSelectedIndex={0}
-    >
-      <WithStyles(Tab)
-        icon={
-          <pure(PersonPinRoundedIcon)
-            fontSize="large"
-          />
-        }
-        label={
-          <Hidden
-            className={null}
-            component="span"
-            xs={true}
-          >
-            Contact Details
-          </Hidden>
-        }
-      >
-        <Visible
-          className="Form__Header"
-          component="h2"
-          xs={true}
-        >
-          Contact Details
-        </Visible>
-        <pure(Connect(withHandlers(lifecycle(recomposeForm(withHandlers(ContactDetailsForm))))))
-          contactDetails={
-            Immutable.Record {
-              "id": null,
-              "name": null,
-              "title": null,
-              "email": null,
-              "email2": null,
-              "phone": null,
-              "cell": null,
-              "countryId": null,
-              "stateId": null,
-              "lgaId": null,
-              "zip": null,
-              "notes": null,
-              "lastPartnerId": null,
-              "canLogIn": false,
-            }
-          }
-          intl={
-            Object {
-              "formatMessage": [Function],
-            }
-          }
-          loading={false}
-          onSubmit={[Function]}
-        />
-      </WithStyles(Tab)>
-      <WithStyles(Tab)
-        icon={
-          <pure(LockIcon)
-            fontSize="large"
-          />
-        }
-        label={
-          <Hidden
-            className={null}
-            component="span"
-            xs={true}
-          >
-            Username & Password
-          </Hidden>
-        }
-      >
-        <Visible
-          className="Form__Header"
-          component="h2"
-          xs={true}
-        >
-          Username & Password
-        </Visible>
-        <pure(lifecycle(recomposeForm(withHandlers(LoginDetailsForm))))
-          closeCurrentPasswordInputDialog={[Function]}
-          currentPasswordInputDialogOpen={false}
-          intl={
-            Object {
-              "formatMessage": [Function],
-            }
-          }
-          loading={false}
-          loginDetails={
-            Immutable.Record {
-              "id": null,
-              "username": null,
-              "newPassword": null,
-              "confirmNewPassword": null,
-              "currentPassword": null,
-              "partnerId": null,
-              "jobFunctions": Immutable.List [],
-              "userLockedOut": null,
-              "email": null,
-            }
-          }
-          onSubmit={[Function]}
-          openCurrentPasswordInputDialog={[Function]}
-        />
-      </WithStyles(Tab)>
-      <WithStyles(Tab)
-        icon={
-          <pure(LanguageIcon)
-            fontSize="large"
-          />
-        }
-        label={
-          <Hidden
-            className={null}
-            component="span"
-            xs={true}
-          >
-            Language & Timezone
-          </Hidden>
-        }
-      >
-        <Visible
-          className="Form__Header"
-          component="h2"
-          xs={true}
-        >
-          Language & Timezone
-        </Visible>
-        <pure(lifecycle(recomposeForm(UserPreferencesForm)))
-          intl={
-            Object {
-              "formatMessage": [Function],
-            }
-          }
-          loading={false}
-          onSubmit={[Function]}
-          userPreferences={
-            Immutable.Record {
-              "id": null,
-              "timezone": null,
-              "culture": null,
-            }
-          }
-        />
-      </WithStyles(Tab)>
-    </AspectTabs>
-  </WithStyles(Paper)>
+  <Switch>
+    <Route
+      exact={true}
+      render={[Function]}
+    />
+    <Route
+      exact={true}
+      path="undefined/system-access-control"
+      render={[Function]}
+    />
+  </Switch>
 </div>
 `;

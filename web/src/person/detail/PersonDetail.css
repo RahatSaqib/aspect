@@ -23,6 +23,7 @@
   text-transform: uppercase;
   font-weight: 400;
   margin: 2em 0 1em;
+  display: none;
 }
 
 .GeographyDropdownGroup {
@@ -45,7 +46,6 @@
 .Form__ActionRow {
   composes: Form__ActionRow from '../../components/shared/Shared.css';
   text-align: left;
-  padding: 0;
 }
 
 h2.Form__Header {
@@ -58,6 +58,10 @@ h2.Form__Header {
 
 .Assignments {
   padding-left: 2rem;
+}
+
+.Assignments > h1 {
+  display: block !important;
 }
 
 .Assignment__Form {
@@ -112,4 +116,15 @@ h2.Form__Header {
 
 .ZipCodeField, .PartnerDropDown, .TimezoneField, .CultureField {
   width: 66%;
+}
+
+.TagLabel > p {
+  color: var(--aspect-color-grey-3);
+}
+
+.NameField {
+  display: flex;
+}
+.NameField > div:first-child {
+  margin-right: 30px;
 }
