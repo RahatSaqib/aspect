@@ -36,8 +36,15 @@ class DefaultSenaiteLIMS extends SynchronousDataProcessor {
 
   async processRequest() {
     const { request } = this
-    const { auth, payload: payloadString } = request
-    const payload = JSON.parse(payloadString)
+    const { auth, payload: payloadBody } = request
+    let payload = payloadBody
+    if (!_.isObject(payload)) {
+      try {
+        payload = JSON.parse(payloadBody)
+      } catch (error) {
+        console.error(error)
+      }
+    }
     const now = getUtcTime()
     await transact(async knex => {
       const {
@@ -380,7 +387,6 @@ class DefaultSenaiteLIMS extends SynchronousDataProcessor {
         payload.Analyses,
         analysis => !['SampleAppearance', 'SampleVolume'].includes(!analysis.id)
       )
-      // Test Details
       const assayIds = await allAssayToId()
       if (!_.isEmpty(testResultAnalyses)) {
         await Promise.each(testResultAnalyses, async testResultAnalysis => {
