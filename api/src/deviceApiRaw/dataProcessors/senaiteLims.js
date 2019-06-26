@@ -93,15 +93,34 @@ class DefaultSenaiteLIMS extends SynchronousDataProcessor {
       let lgaId = null
       let originSiteGeographyId = null
       if (countryId && provinceName) {
-        let { stateId, lgaId } = await knex('Geography as g')
-          .leftJoin('State as s', function() {
-            this.on('g.stateId', 's.id').andOn('s.name', knex.raw(`'${provinceName}'`))
+        let originSiteGeography = await knex('Geography as g')
+          .join('State as s', 'g.stateId', 's.id')
+          .join('Lga as l', 'g.lgaId', 'l.id')
+          .where({
+            'g.countryId': countryId,
+            's.name': provinceName,
+            'l.name': districtName,
           })
-          .leftJoin('Lga as l', function() {
-            this.on('g.lgaId', 'l.id').andOn('l.name', knex.raw(`'${districtName}'`))
-          })
-          .where('g.countryId', countryId)
-          .select('g.id', 'g.stateId', 'g.lgaId')
+          .first('g.id', 'g.stateId', 'g.lgaId')
+        if (!originSiteGeography) {
+          originSiteGeography = await knex('Geography as g')
+            .join('State as s', 'g.stateId', 's.id')
+            .whereNull('g.lgaId')
+            .andWhere({
+              'g.countryId': countryId,
+              's.name': provinceName,
+            })
+            .first('g.id', 'g.stateId', 'g.lgaId')
+        }
+        if (!originSiteGeography) {
+          originSiteGeography = await knex('Geography')
+            .whereNull('lgaId')
+            .whereNull('stateId')
+            .andWhere('countryId', countryId)
+            .first('id', 'stateId', 'lgaId')
+        }
+        let { stateId, lgaId } = originSiteGeography
+        ;({ id: originSiteGeographyId } = originSiteGeography)
         if (!stateId) {
           ;[stateId] = await knex('State').insert({ name: provinceName })
           ;[originSiteGeographyId] = await knex('Geography').insert({
@@ -316,10 +335,12 @@ class DefaultSenaiteLIMS extends SynchronousDataProcessor {
                 selectedSampleAppearance.ResultText
             }
           } else if (_.get(selectedSampleAppearance, 'value')) {
-            baseResultData.senaite.sample.appearance = selectedSampleAppearance.value
+            baseResultData.senaite.sample.appearance =
+              selectedSampleAppearance.value
           }
         } else {
-          baseResultData.senaite.sample.appearance = sampleAppearanceAnalysis.Result
+          baseResultData.senaite.sample.appearance =
+            sampleAppearanceAnalysis.Result
         }
       }
       if (_.get(sampleAppearanceAnalysis, 'Remarks')) {
@@ -339,7 +360,8 @@ class DefaultSenaiteLIMS extends SynchronousDataProcessor {
             if (sampleVolumeAnalysis.Unit) {
               baseResultData.senaite.sample.volume = `${selectedSampleVolume.ResultText} ${sampleVolumeAnalysis.Unit}`
             } else {
-              baseResultData.senaite.sample.volume = selectedSampleVolume.ResultText
+              baseResultData.senaite.sample.volume =
+                selectedSampleVolume.ResultText
             }
           } else if (_.get(selectedSampleVolume, 'value')) {
             baseResultData.senaite.sample.volume = selectedSampleVolume.value
@@ -349,7 +371,8 @@ class DefaultSenaiteLIMS extends SynchronousDataProcessor {
         }
       }
       if (_.get(sampleVolumeAnalysis, 'Remarks')) {
-        baseResultData.senaite.sample.volumeRemarks = sampleVolumeAnalysis.Remarks
+        baseResultData.senaite.sample.volumeRemarks =
+          sampleVolumeAnalysis.Remarks
       }
 
       const testResultAnalyses = _.filter(
