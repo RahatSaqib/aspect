@@ -2,8 +2,7 @@ import _ from 'lodash'
 import React from 'react'
 import ReactShallowRenderer from 'react-test-renderer/shallow'
 import { shallow } from 'enzyme'
-import Tab from '@material-ui/core/Tab'
-import LinearProgress from '@material-ui/core/LinearProgress'
+import { Route } from 'react-router-dom'
 
 import { AccountDetailsData } from '../AccountRedux'
 
@@ -24,6 +23,9 @@ describe('AccountDetails module', () => {
       saveContactDetails: _.noop,
       saveLoginDetails: _.noop,
       saveUserPreferences: _.noop,
+      history: {},
+      location: {},
+      match: {},
     }
 
     it('should shallow render correctly', () => {
@@ -35,11 +37,10 @@ describe('AccountDetails module', () => {
     describe('loading status', () => {
       it('should show a progress bar in each tab', () => {
         const wrapper = shallow(<AccountDetails {...props} loading />)
-        const results = wrapper.find(Tab)
-        expect(results).toHaveLength(3)
-        results.forEach(w =>
-          expect(w.children().find(LinearProgress)).toHaveLength(1)
-        )
+        const results = wrapper.find(Route)
+
+        expect(results).toHaveLength(2)
+        results.forEach(route => expect(route.prop('render')).toHaveLength(1))
       })
     })
 

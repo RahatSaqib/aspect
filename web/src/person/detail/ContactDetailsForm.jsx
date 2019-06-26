@@ -258,6 +258,7 @@ export const ContactDetailsForm = ({
   userIsAdmin,
   showNotesField,
   onEmailBlur,
+  canModify = true,
   // --- injected by recompose ---
   form,
   values,
@@ -285,7 +286,7 @@ export const ContactDetailsForm = ({
 }) => (
   <form onSubmit={handleSubmit} className={cssClasses('Form')}>
     <div className={cssClasses('Form__Content')}>
-      {!isNew && (
+      {!isNew && canModify && (
         <div style={{ marginBottom: 20 }}>
           <AspectCheckbox
             name="canLogIn"
@@ -297,7 +298,7 @@ export const ContactDetailsForm = ({
           This contact can log in as a user
         </div>
       )}
-      <section>
+      <section className={cssClasses('NameField')}>
         <TextField
           fullWidth
           type="text"
@@ -523,8 +524,8 @@ export const ContactDetailsForm = ({
           ))}
         </TextField>
       </section>
-      <section>
-        <h1>{intl.formatMessage(messages.tags)}</h1>
+      <section className={cssClasses('TagLabel')}>
+        <p>{intl.formatMessage(messages.tags)}</p>
         <ConnectedTagInput
           allowCreate
           label={intl.formatMessage(messages.chooseTags)}

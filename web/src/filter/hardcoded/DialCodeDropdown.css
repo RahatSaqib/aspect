@@ -9,4 +9,5 @@
 
 .Dropdown__Input {
   cursor: pointer;
+  text-align: right;
 }

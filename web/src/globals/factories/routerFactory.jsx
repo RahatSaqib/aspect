@@ -107,7 +107,7 @@ const renderTaskList = loggedInFactory(TaskList)
 const renderTaskAggre = loggedInDetailFactory(TaskAggre)
 const renderTaskDetail = loggedInDetailFactory(TaskDetail)
 const renderOperationalData = loggedInFactory(OperationalData)
-const renderAccountDetails = loggedInFactory(AccountDetails)
+const renderAccountDetails = loggedInDetailFactory(AccountDetails)
 const renderDeviceDemo = loggedInFactory(DeviceDemo)
 /* TODO: real components */
 const renderClinicalIndicators = notImplementedLoggedInFactory(

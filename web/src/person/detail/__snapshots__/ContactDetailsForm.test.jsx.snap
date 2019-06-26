@@ -22,7 +22,9 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable a
        
       This contact can log in as a user
     </div>
-    <section>
+    <section
+      className="NameField"
+    >
       <TextField
         FormHelperTextProps={
           Object {
@@ -782,10 +784,12 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable a
         </WithStyles(MenuItem)>
       </TextField>
     </section>
-    <section>
-      <h1>
+    <section
+      className="TagLabel"
+    >
+      <p>
         Tags
-      </h1>
+      </p>
       <Connect(ConnectedTagInput)
         allowCreate={true}
         label="Choose tags"
@@ -832,7 +836,9 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
        
       This contact can log in as a user
     </div>
-    <section>
+    <section
+      className="NameField"
+    >
       <TextField
         FormHelperTextProps={
           Object {
@@ -1592,10 +1598,12 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
         </WithStyles(MenuItem)>
       </TextField>
     </section>
-    <section>
-      <h1>
+    <section
+      className="TagLabel"
+    >
+      <p>
         Tags
-      </h1>
+      </p>
       <Connect(ConnectedTagInput)
         allowCreate={true}
         label="Choose tags"
@@ -1642,7 +1650,9 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
        
       This contact can log in as a user
     </div>
-    <section>
+    <section
+      className="NameField"
+    >
       <TextField
         FormHelperTextProps={
           Object {
@@ -2402,10 +2412,12 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
         </WithStyles(MenuItem)>
       </TextField>
     </section>
-    <section>
-      <h1>
+    <section
+      className="TagLabel"
+    >
+      <p>
         Tags
-      </h1>
+      </p>
       <Connect(ConnectedTagInput)
         allowCreate={true}
         label="Choose tags"
@@ -2452,7 +2464,9 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
        
       This contact can log in as a user
     </div>
-    <section>
+    <section
+      className="NameField"
+    >
       <TextField
         FormHelperTextProps={
           Object {
@@ -3212,10 +3226,12 @@ exports[`ContactDetailsForm module ContactDetailsForm component should disable t
         </WithStyles(MenuItem)>
       </TextField>
     </section>
-    <section>
-      <h1>
+    <section
+      className="TagLabel"
+    >
+      <p>
         Tags
-      </h1>
+      </p>
       <Connect(ConnectedTagInput)
         allowCreate={true}
         label="Choose tags"
@@ -3262,7 +3278,9 @@ exports[`ContactDetailsForm module ContactDetailsForm component should enable th
        
       This contact can log in as a user
     </div>
-    <section>
+    <section
+      className="NameField"
+    >
       <TextField
         FormHelperTextProps={
           Object {
@@ -4022,10 +4040,12 @@ exports[`ContactDetailsForm module ContactDetailsForm component should enable th
         </WithStyles(MenuItem)>
       </TextField>
     </section>
-    <section>
-      <h1>
+    <section
+      className="TagLabel"
+    >
+      <p>
         Tags
-      </h1>
+      </p>
       <Connect(ConnectedTagInput)
         allowCreate={true}
         label="Choose tags"
@@ -4072,7 +4092,9 @@ exports[`ContactDetailsForm module ContactDetailsForm component should render co
        
       This contact can log in as a user
     </div>
-    <section>
+    <section
+      className="NameField"
+    >
       <TextField
         FormHelperTextProps={
           Object {
@@ -4830,10 +4852,12 @@ exports[`ContactDetailsForm module ContactDetailsForm component should render co
         </WithStyles(MenuItem)>
       </TextField>
     </section>
-    <section>
-      <h1>
+    <section
+      className="TagLabel"
+    >
+      <p>
         Tags
-      </h1>
+      </p>
       <Connect(ConnectedTagInput)
         allowCreate={true}
         label="Choose tags"
@@ -4866,7 +4890,9 @@ exports[`ContactDetailsForm module ContactDetailsForm component should show form
   <div
     className="Form__Content"
   >
-    <section>
+    <section
+      className="NameField"
+    >
       <TextField
         FormHelperTextProps={
           Object {
@@ -5624,10 +5650,12 @@ exports[`ContactDetailsForm module ContactDetailsForm component should show form
         </WithStyles(MenuItem)>
       </TextField>
     </section>
-    <section>
-      <h1>
+    <section
+      className="TagLabel"
+    >
+      <p>
         Tags
-      </h1>
+      </p>
       <Connect(ConnectedTagInput)
         allowCreate={true}
         label="Choose tags"

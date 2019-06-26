@@ -82,8 +82,15 @@ const itemToString = item => (item ? item.dialCode : '')
 
 export const DialCodeDropdown = ({ className, ...props }) => {
   const popperNode = useRef(null)
+  const initialDialcode =
+    props.value.length > 0 && props.value.length < 6 ? props.value : ''
+
   return (
-    <Downshift itemToString={itemToString} {...props}>
+    <Downshift
+      itemToString={itemToString}
+      {...props}
+      initialInputValue={initialDialcode}
+    >
       {({
         getInputProps,
         getToggleButtonProps,

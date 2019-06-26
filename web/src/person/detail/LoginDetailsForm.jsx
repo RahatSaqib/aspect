@@ -138,6 +138,7 @@ export const LoginDetailsForm = ({
   loading,
   currentPasswordInputDialogOpen,
   closeCurrentPasswordInputDialog,
+  canModify = true,
   // classes,
   // --- injected by recompose ---
   onSubmit,
@@ -205,12 +206,14 @@ export const LoginDetailsForm = ({
         }
         inputProps={{ maxLength: 100 }}
       />
-      <AspectSwitch
-        name="userLockedOut"
-        checked={values.userLockedOut}
-        onChange={onUserLockedOutChange}
-        labelText={intl.formatMessage(messages.userLockedOutLabel)}
-      />
+      {canModify && (
+        <AspectSwitch
+          name="userLockedOut"
+          checked={values.userLockedOut}
+          onChange={onUserLockedOutChange}
+          labelText={intl.formatMessage(messages.userLockedOutLabel)}
+        />
+      )}
     </div>
     <div className={cssClasses('Form__ActionRow')}>
       <Button
