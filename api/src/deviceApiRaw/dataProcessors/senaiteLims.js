@@ -121,12 +121,13 @@ class DefaultSenaiteLIMS extends SynchronousDataProcessor {
       const limsFacilityId = payload.ClientUID // "354b7f04781c4bbeaf87500031b82b11"
       const facilityName = payload.Client // "Henderson Clinic"
       if (limsFacilityId) {
-        const originSite = await knex('Site as s')
-          .join('Geography as g', 's.geographyId', 'g.id')
-          .where('g.countryId', countryId)
-          .andWhere('s.partnerId', partnerId)
-          .andWhere('s.externalId', limsFacilityId)
-          .first('s.id', 'g.stateId', 'g.lgaId', 's.name')
+        const originSite =
+          (await knex('Site as s')
+            .join('Geography as g', 's.geographyId', 'g.id')
+            .where('g.countryId', countryId)
+            .andWhere('s.partnerId', partnerId)
+            .andWhere('s.externalId', limsFacilityId)
+            .first('s.id', 'g.stateId', 'g.lgaId', 's.name')) || {}
         originSiteId = originSite.id
         if (!stateId) {
           ;({ stateId } = originSite)
@@ -135,23 +136,25 @@ class DefaultSenaiteLIMS extends SynchronousDataProcessor {
           ;({ lgaId } = originSite)
         }
         if (!originSiteGeographyId) {
-          originSiteGeographyId = (await knex('Geography as g')
-            .where('g.countryId', countryId)
-            .andWhere(function() {
-              if (!stateId) {
-                this.whereNull('g.stateId')
-              } else {
-                this.where('g.stateId', stateId)
-              }
-            })
-            .andWhere(function() {
-              if (!lgaId) {
-                this.whereNull('g.lgaId')
-              } else {
-                this.where('g.lgaId', lgaId)
-              }
-            })
-            .first('g.id')).id
+          const originSiteGeography =
+            (await knex('Geography as g')
+              .where('g.countryId', countryId)
+              .andWhere(function() {
+                if (!stateId) {
+                  this.whereNull('g.stateId')
+                } else {
+                  this.where('g.stateId', stateId)
+                }
+              })
+              .andWhere(function() {
+                if (!lgaId) {
+                  this.whereNull('g.lgaId')
+                } else {
+                  this.where('g.lgaId', lgaId)
+                }
+              })
+              .first('g.id')) || {}
+          originSiteGeographyId = originSiteGeography.id
         }
         if (!originSiteId) {
           ;[originSiteId] = await knex('Site').insert({
@@ -185,6 +188,9 @@ class DefaultSenaiteLIMS extends SynchronousDataProcessor {
 
       // Get or Create Sample
       const limsSampleId = payload.getSampleID // "SP17-002058"
+      if (!limsSampleId) {
+        return
+      }
       const sampleDateCollected = payload.DateSampled // "2017/09/25 00:00:00 GMT+0"
       const sampleType = payload.SampleTypeTitle // "Sputum"
       const sampleTypeMapping = {
@@ -199,10 +205,14 @@ class DefaultSenaiteLIMS extends SynchronousDataProcessor {
       const sample =
         (await knex('Sample as s')
           .join('SampleType as st', 's.sampleTypeId', 'st.id')
-          .where({
-            's.externalId': limsSampleId,
-            's.originSiteId': originSiteId,
-            'st.externalId': sampleTypeExternalId,
+          .where(function() {
+            this.where('s.externalId', limsSampleId).andWhere(
+              'st.externalId',
+              sampleTypeExternalId
+            )
+            if (originSiteId) {
+              this.andWhere('s.originSiteId', originSiteId)
+            }
           })
           .first('s.*')) || {}
       let { id: sampleId } = sample
