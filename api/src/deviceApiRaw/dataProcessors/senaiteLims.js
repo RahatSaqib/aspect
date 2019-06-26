@@ -6,6 +6,7 @@ const { getRemoteAddress } = require('../../shared/request')
 const { getUtcTime, parseDateOrDefault } = require('../../shared/date')
 const {
   allAssayToId,
+  resultCategoryToId,
   resultSourceToId,
   resultTypeToId,
   sampleTypeToId,
@@ -384,8 +385,30 @@ class DefaultSenaiteLIMS extends SynchronousDataProcessor {
       if (!_.isEmpty(testResultAnalyses)) {
         await Promise.each(testResultAnalyses, async testResultAnalysis => {
           let assayId = assayIds.senaiteUnknown
+          let resultCategories = {}
           if (testResultAnalysis.id === 'MGITRESULT') {
-            assayId = assayIds.assayBdMgitAst
+            assayId = assayIds.assayBdMgitGnd
+            resultCategories = {
+              Negative: 'Negative',
+              Positive: 'Positive',
+            }
+          } else if (testResultAnalysis.id === 'TBCulture') {
+            assayId = assayIds.senaiteTbCulture
+            resultCategories = {
+              Contaminated: 'Contaminated',
+              Negative: 'Negative',
+              'Positive MOTT': 'PositiveMOTT',
+              'Positive MTB': 'PositiveMTB',
+            }
+          } else if (testResultAnalysis.id === 'SmearMicroscopy') {
+            assayId = assayIds.senaiteSmearMicroscopy
+            resultCategories = {
+              Negative: 'Negative',
+              'Positive (+)': 'Positive1',
+              'Positive (++)': 'Positive2',
+              'Positive (+++)': 'Positive3',
+              'Scanty (1-9/100)': 'Scanty',
+            }
           }
           // TODO: Perform duplicate checking on MGIT data processor
           const resultRecord = (await knex('Result')
@@ -435,13 +458,7 @@ class DefaultSenaiteLIMS extends SynchronousDataProcessor {
           if (!resultRecord.resultTypeId) {
             resultRecord.resultTypeId = await resultTypeToId('Patient')
           }
-          /*
-          TODO: Assign Result Categories
-          `resultCategory1` int(10) unsigned DEFAULT NULL,
-            `resultCategory2` int(10) unsigned DEFAULT NULL,
-          */
           resultRecord.updatedOn = now
-
           resultRecord.resultData.senaite.result.title =
             testResultAnalysis.title // "MGIT RESULT"
           resultRecord.resultData.senaite.result.uid = testResultAnalysis.UID // "d2b24013cefd4ab49b55ca1b7afcee52"
@@ -456,6 +473,17 @@ class DefaultSenaiteLIMS extends SynchronousDataProcessor {
             }) || {}
           resultRecord.resultData.senaite.result.resultText =
             selectedResultOption.ResultText
+          const unknownResultCategoryId = await resultCategoryToId('Unknown')
+          if (
+            !resultRecord.resultCategory1 ||
+            resultRecord.resultCategory1 === unknownResultCategoryId
+          ) {
+            const resultCategoryExternalId =
+              resultCategories[selectedResultOption.ResultText] || 'Unknown'
+            resultRecord.resultCategory1 = await resultCategoryToId(
+              resultCategoryExternalId
+            )
+          }
           resultRecord.resultData.senaite.result.value =
             selectedResultOption.value
           resultRecord.resultData.senaite.result.resultCaptureDate = parseDateOrDefault(

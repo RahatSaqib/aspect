@@ -3,9 +3,9 @@ module.exports = require('../utils').seed(seed)
 const _ = require('lodash')
 const Promise = require('bluebird')
 const {
+  assayToId,
   assayTypeToId,
   deviceTypeToId,
-  resultCategoryToId,
   resultSourceToId,
 } = require('../../src/shared/dictionary')
 
@@ -284,6 +284,165 @@ async function seed(knex) {
     },
   }
 
+  const bdMgitGndResultCategories = [
+    {
+      name: 'Negative',
+      i18nKey: 'resultCategoryNegative',
+      externalId: 'Negative',
+    },
+    {
+      name: 'Positive',
+      i18nKey: 'resultCategoryPositive',
+      externalId: 'Positive',
+    },
+    {
+      name: 'Unknown',
+      i18nKey: 'resultCategoryUnknown',
+      externalId: 'Unknown',
+    },
+  ]
+  const bdMgitGndAssayId = await assayToId('assayBdMgitGnd')
+  await Promise.each(bdMgitGndResultCategories, async resultCategory => {
+    let { id: resultCategoryId } =
+      (await knex('ResultCategory')
+        .where('externalId', resultCategory.externalId)
+        .first()) || {}
+    if (!resultCategoryId) {
+      ;[resultCategoryId] = await knex('ResultCategory').insert(resultCategory)
+    }
+    const resultCategoryAssay = await knex('ResultCategoryAssay')
+      .where('assayId', bdMgitGndAssayId)
+      .andWhere('resultCategoryId', resultCategoryId)
+      .first()
+    if (!resultCategoryAssay) {
+      await knex('ResultCategoryAssay').insert({
+        assayId: bdMgitGndAssayId,
+        resultCategoryId,
+      })
+    }
+  })
+
+  const [assaySenaiteLimsSmearMicroscopyId] = await knex('Assay').insert({
+    name: 'Senaite LIMS Smear Microscopy',
+    i18nKey: 'assaySenaiteLIMSSmearMicroscopy',
+    externalId: 'senaiteSmearMicroscopy',
+    assayTypeId: await assayTypeToId('TB G&D'),
+    deviceTypeId: await deviceTypeToId('SenaiteLims'),
+    resultSourceId: await resultSourceToId('LIMS'),
+    patientDataSchema: JSON.stringify(senaiteLimsPatientDataSchema),
+    resultDataSchema: JSON.stringify(senaiteLimsResultDataSchema),
+    abbreviation: 'SL SM',
+  })
+  const smearMicroscopyResultCategories = [
+    {
+      name: 'Negative',
+      i18nKey: 'resultCategoryNegative',
+      externalId: 'Negative',
+    },
+    {
+      name: 'Positive (+)',
+      i18nKey: 'resultCategoryPositive1',
+      externalId: 'Positive1',
+    },
+    {
+      name: 'Positive (++)',
+      i18nKey: 'resultCategoryPositive2',
+      externalId: 'Positive2',
+    },
+    {
+      name: 'Positive (+++)',
+      i18nKey: 'resultCategoryPositive3',
+      externalId: 'Positive3',
+    },
+    {
+      name: 'Scanty (1-9/100)',
+      i18nKey: 'resultCategoryScanty',
+      externalId: 'Scanty',
+    },
+    {
+      name: 'Unknown',
+      i18nKey: 'resultCategoryUnknown',
+      externalId: 'Unknown',
+    },
+  ]
+  await Promise.each(smearMicroscopyResultCategories, async resultCategory => {
+    let { id: resultCategoryId } =
+      (await knex('ResultCategory')
+        .where('externalId', resultCategory.externalId)
+        .first()) || {}
+    if (!resultCategoryId) {
+      ;[resultCategoryId] = await knex('ResultCategory').insert(resultCategory)
+    }
+    const resultCategoryAssay = await knex('ResultCategoryAssay')
+      .where('assayId', assaySenaiteLimsSmearMicroscopyId)
+      .andWhere('resultCategoryId', resultCategoryId)
+      .first()
+    if (!resultCategoryAssay) {
+      await knex('ResultCategoryAssay').insert({
+        assayId: assaySenaiteLimsSmearMicroscopyId,
+        resultCategoryId,
+      })
+    }
+  })
+
+  const [assaySenaiteLimsTbCultureId] = await knex('Assay').insert({
+    name: 'Senaite LIMS TB Culture',
+    i18nKey: 'assaySenaiteLIMSTbCulture',
+    externalId: 'senaiteTbCulture',
+    assayTypeId: await assayTypeToId('TB G&D'),
+    deviceTypeId: await deviceTypeToId('SenaiteLims'),
+    resultSourceId: await resultSourceToId('LIMS'),
+    patientDataSchema: JSON.stringify(senaiteLimsPatientDataSchema),
+    resultDataSchema: JSON.stringify(senaiteLimsResultDataSchema),
+    abbreviation: 'SL TBC',
+  })
+  const tbCultureResultCategories = [
+    {
+      name: 'Contaminated',
+      i18nKey: 'resultCategoryContaminated',
+      externalId: 'Contaminated',
+    },
+    {
+      name: 'Negative',
+      i18nKey: 'resultCategoryNegative',
+      externalId: 'Negative',
+    },
+    {
+      name: 'Positive MOTT',
+      i18nKey: 'resultCategoryPositiveMOTT',
+      externalId: 'PositiveMOTT',
+    },
+    {
+      name: 'Positive MTB',
+      i18nKey: 'resultCategoryPositiveMTB',
+      externalId: 'PositiveMTB',
+    },
+    {
+      name: 'Unknown',
+      i18nKey: 'resultCategoryUnknown',
+      externalId: 'Unknown',
+    },
+  ]
+  await Promise.each(tbCultureResultCategories, async resultCategory => {
+    let { id: resultCategoryId } =
+      (await knex('ResultCategory')
+        .where('externalId', resultCategory.externalId)
+        .first()) || {}
+    if (!resultCategoryId) {
+      ;[resultCategoryId] = await knex('ResultCategory').insert(resultCategory)
+    }
+    const resultCategoryAssay = await knex('ResultCategoryAssay')
+      .where('assayId', assaySenaiteLimsTbCultureId)
+      .andWhere('resultCategoryId', resultCategoryId)
+      .first()
+    if (!resultCategoryAssay) {
+      await knex('ResultCategoryAssay').insert({
+        assayId: assaySenaiteLimsTbCultureId,
+        resultCategoryId,
+      })
+    }
+  })
+
   const [assaySenaiteLimsUnknownId] = await knex('Assay').insert({
     name: 'Senaite LIMS Unknown',
     i18nKey: 'assaySenaiteLIMSUnknown',
@@ -295,10 +454,31 @@ async function seed(knex) {
     resultDataSchema: JSON.stringify(senaiteLimsResultDataSchema),
     abbreviation: 'SL UK',
   })
-
-  await knex('ResultCategoryAssay').insert({
-    resultCategoryId: await resultCategoryToId('Unknown'),
-    assayId: assaySenaiteLimsUnknownId,
+  const senaiteUnknownResultCategories = [
+    {
+      name: 'Unknown',
+      i18nKey: 'resultCategoryUnknown',
+      externalId: 'Unknown',
+    },
+  ]
+  await Promise.each(senaiteUnknownResultCategories, async resultCategory => {
+    let { id: resultCategoryId } =
+      (await knex('ResultCategory')
+        .where('externalId', resultCategory.externalId)
+        .first()) || {}
+    if (!resultCategoryId) {
+      ;[resultCategoryId] = await knex('ResultCategory').insert(resultCategory)
+    }
+    const resultCategoryAssay = await knex('ResultCategoryAssay')
+      .where('assayId', assaySenaiteLimsUnknownId)
+      .andWhere('resultCategoryId', resultCategoryId)
+      .first()
+    if (!resultCategoryAssay) {
+      await knex('ResultCategoryAssay').insert({
+        assayId: assaySenaiteLimsUnknownId,
+        resultCategoryId,
+      })
+    }
   })
 
   await Promise.each(
