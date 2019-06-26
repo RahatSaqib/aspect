@@ -35,7 +35,8 @@ class DefaultSenaiteLIMS extends SynchronousDataProcessor {
 
   async processRequest() {
     const { request } = this
-    const { auth, payload } = request
+    const { auth, payload: payloadString } = request
+    const payload = JSON.parse(payloadString)
     const now = getUtcTime()
     await transact(async knex => {
       const {
@@ -94,10 +95,10 @@ class DefaultSenaiteLIMS extends SynchronousDataProcessor {
       if (countryId && provinceName) {
         let { stateId, lgaId } = await knex('Geography as g')
           .leftJoin('State as s', function() {
-            this.on('g.stateId', 's.id').andOn('s.name', knex.raw(provinceName))
+            this.on('g.stateId', 's.id').andOn('s.name', knex.raw(`'${provinceName}'`))
           })
           .leftJoin('Lga as l', function() {
-            this.on('g.lgaId', 'l.id').andOn('l.name', knex.raw(districtName))
+            this.on('g.lgaId', 'l.id').andOn('l.name', knex.raw(`'${districtName}'`))
           })
           .where('g.countryId', countryId)
           .select('g.id', 'g.stateId', 'g.lgaId')
@@ -185,7 +186,6 @@ class DefaultSenaiteLIMS extends SynchronousDataProcessor {
             .update(updatedSiteInfo)
         }
       }
-
       // Get or Create Sample
       const limsSampleId = payload.getSampleID // "SP17-002058"
       if (!limsSampleId) {
@@ -310,20 +310,20 @@ class DefaultSenaiteLIMS extends SynchronousDataProcessor {
           )
           if (_.get(selectedSampleAppearance, 'ResultText')) {
             if (sampleAppearanceAnalysis.Unit) {
-              baseResultData.sample.appearance = `${selectedSampleAppearance.ResultText} ${sampleAppearanceAnalysis.Unit}`
+              baseResultData.senaite.sample.appearance = `${selectedSampleAppearance.ResultText} ${sampleAppearanceAnalysis.Unit}`
             } else {
-              baseResultData.sample.appearance =
+              baseResultData.senaite.sample.appearance =
                 selectedSampleAppearance.ResultText
             }
           } else if (_.get(selectedSampleAppearance, 'value')) {
-            baseResultData.sample.appearance = selectedSampleAppearance.value
+            baseResultData.senaite.sample.appearance = selectedSampleAppearance.value
           }
         } else {
-          baseResultData.sample.appearance = sampleAppearanceAnalysis.Result
+          baseResultData.senaite.sample.appearance = sampleAppearanceAnalysis.Result
         }
       }
       if (_.get(sampleAppearanceAnalysis, 'Remarks')) {
-        baseResultData.sample.appearanceRemarks =
+        baseResultData.senaite.sample.appearanceRemarks =
           sampleAppearanceAnalysis.Remarks
       }
       const sampleVolumeAnalysis = _.find(payload.Analyses, {
@@ -337,62 +337,62 @@ class DefaultSenaiteLIMS extends SynchronousDataProcessor {
           )
           if (_.get(selectedSampleVolume, 'ResultText')) {
             if (sampleVolumeAnalysis.Unit) {
-              baseResultData.sample.volume = `${selectedSampleVolume.ResultText} ${sampleVolumeAnalysis.Unit}`
+              baseResultData.senaite.sample.volume = `${selectedSampleVolume.ResultText} ${sampleVolumeAnalysis.Unit}`
             } else {
-              baseResultData.sample.volume = selectedSampleVolume.ResultText
+              baseResultData.senaite.sample.volume = selectedSampleVolume.ResultText
             }
           } else if (_.get(selectedSampleVolume, 'value')) {
-            baseResultData.sample.volume = selectedSampleVolume.value
+            baseResultData.senaite.sample.volume = selectedSampleVolume.value
           }
         } else {
-          baseResultData.sample.volume = sampleVolumeAnalysis.Result
+          baseResultData.senaite.sample.volume = sampleVolumeAnalysis.Result
         }
       }
       if (_.get(sampleVolumeAnalysis, 'Remarks')) {
-        baseResultData.sample.volumeRemarks = sampleVolumeAnalysis.Remarks
+        baseResultData.senaite.sample.volumeRemarks = sampleVolumeAnalysis.Remarks
       }
 
-      const testResultAnalyses = _.filter(payload.Analyses, analysis =>
-        ['SampleAppearance', 'SampleVolume'].includes(!analysis.id)
+      const testResultAnalyses = _.filter(
+        payload.Analyses,
+        analysis => !['SampleAppearance', 'SampleVolume'].includes(!analysis.id)
       )
       // Test Details
       const assayIds = await allAssayToId()
-      if (!_.isEmpty(payload.Analyses)) {
+      if (!_.isEmpty(testResultAnalyses)) {
         await Promise.each(testResultAnalyses, async testResultAnalysis => {
           let assayId = assayIds.senaiteUnknown
-          let resultRecord = {
+          if (testResultAnalysis.id === 'MGITRESULT') {
+            assayId = assayIds.assayBdMgitAst
+          }
+          // TODO: Perform duplicate checking on MGIT data processor
+          const resultRecord = (await knex('Result')
+            .where('sampleId', sampleId)
+            .andWhere('assayId', assayId)
+            .first()) || {
             patientData: _.merge({}, patientData),
             resultData: _.merge({}, baseResultData),
           }
-          if (testResultAnalysis.id === 'MGITRESULT') {
-            assayId = assayIds.assayBdMgitAst
-            // TODO: Perform duplicate checking on MGIT data processor
-            resultRecord = await knex('Result')
-              .where('sampleId', sampleId)
-              .andWhere('assayId', assayId)
-              .first()
-            if (resultRecord) {
-              resultRecord.patientData = _.merge(
-                resultRecord.patientData
-                  ? JSON.parse(resultRecord.patientData)
-                  : {},
-                patientData
-              )
-              resultRecord.resultData = _.merge(
-                resultRecord.resultData
-                  ? JSON.parse(resultRecord.resultData)
-                  : {},
-                patientData
-              )
-            } else {
-              resultRecord.externalId = testResultAnalysis.UID
-              resultRecord.assayId = assayId
-              resultRecord.partnerId = partnerId
-              resultRecord.sampleId = sampleId
-              resultRecord.deviceId = deviceId
-              resultRecord.rawData = JSON.stringify(payload)
-              resultRecord.createdOn = now
-            }
+          if (resultRecord.id) {
+            resultRecord.patientData = _.merge(
+              resultRecord.patientData
+                ? JSON.parse(resultRecord.patientData)
+                : {},
+              patientData
+            )
+            resultRecord.resultData = _.merge(
+              resultRecord.resultData
+                ? JSON.parse(resultRecord.resultData)
+                : {},
+              baseResultData
+            )
+          } else {
+            resultRecord.externalId = testResultAnalysis.UID
+            resultRecord.assayId = assayId
+            resultRecord.partnerId = partnerId
+            resultRecord.sampleId = sampleId
+            resultRecord.deviceId = deviceId
+            resultRecord.rawData = JSON.stringify(payload)
+            resultRecord.createdOn = now
           }
           if (!resultRecord.geographyId) {
             resultRecord.geographyId = geographyId
@@ -413,6 +413,7 @@ class DefaultSenaiteLIMS extends SynchronousDataProcessor {
             resultRecord.resultTypeId = await resultTypeToId('Patient')
           }
           /*
+          TODO: Assign Result Categories
           `resultCategory1` int(10) unsigned DEFAULT NULL,
             `resultCategory2` int(10) unsigned DEFAULT NULL,
           */
@@ -469,9 +470,11 @@ class DefaultSenaiteLIMS extends SynchronousDataProcessor {
             testResultAnalysis.modification_date
           ) // "2018/03/20 06:23:4.257171 GMT+2"
 
+          resultRecord.patientData = JSON.stringify(resultRecord.patientData)
+          resultRecord.resultData = JSON.stringify(resultRecord.resultData)
           if (resultRecord.id) {
             await knex('Result')
-              .where('id')
+              .where('id', resultRecord.id)
               .update(resultRecord)
           } else {
             await knex('Result').insert(resultRecord)
