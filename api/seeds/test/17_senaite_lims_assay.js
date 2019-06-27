@@ -108,7 +108,7 @@ async function seed(knex) {
           order: 2,
         },
         volume: {
-          title: 'Volume Remarks',
+          title: 'Volume',
           type: 'string',
           order: 3,
         },
