@@ -258,72 +258,68 @@ class DefaultSenaiteLIMS extends SynchronousDataProcessor {
           })
       }
       const baseResultData = {
-        senaite: {
-          analysisRequest: {
-            creationDate: payload.creation_date, // "2017/10/23 09:04:58 GMT+2"
-            creator: payload.Creator, // "kadyea"
-            creatorEmail: payload.CreatorEmail, // "kadyea@nmrl.org.zw"
-            creatorFullName: payload.CreatorFullName, // "kadyea"
-            dateVerified: payload.getDateVerified, // null
-            doctorTitle: payload.getDoctorTitle, // ""
-            doctorUid: payload.getDoctorUID, // ""
-            modificationDate: payload.modification_date, // "2019/02/18 11:15:15.191914 GMT+2"
-            printed: payload.getPrinted, // "0"
-            priority: payload.Priority, // "3"
-            profilesTitleStr: payload.ProfilesTitleStr, // "TB Culture"
-            uid: payload.UID, // "b98da3709f1845f7bef097ed5a95c634"
-          },
-          referringFacility: {
-            contactEmail: payload.ContactEmail, // ""
-            contactFullName: payload.ContactFullName, // "Sister in charge"
-            contactUid: payload.ContactUID, // "24cf4e36f70c41aeaf2959cb6cdd27a1"
-          },
-          sample: {
-            appearance: null,
-            appearanceRemarks: null,
-            volume: null,
-            volumeRemarks: null,
-            dateReceived: payload.DateReceived, // "2017/10/24 12:02:16 GMT+2"
-            partitionId: payload.id, // "SP17-002058-R01"
-            receivedBy: payload.ReceivedBy, // "muzavazip"
-            samplerEmail: payload.SamplerEmail, // "kadyea@nmrl.org.zw"
-            typeUid: payload.SampleTypeUID, // "ac0cbd54fc4d4c86b9e42fe4c870c184"
-            uid: payload.SampleUID, // "dc4275a004c24b2fb2c20b319d9a088c"
-          },
-          result: {
-            title: null,
-            uid: null,
-            retested: null,
-            result: null,
-            resultText: null,
-            value: null,
-            resultCaptureDate: null,
-            remarks: null,
-            unit: null,
-            pointOfCapture: null,
-            manualEntryOfResults: null,
-            instrument: null,
-            instrumentEntryOfResults: null,
-            hidden: null,
-            hiddenManually: null,
-            analyst: null,
-            verificators: null,
-            testReviewState: null,
-            worksheetAnalysisReviewState: null,
-            creationDate: null,
-            creator: null,
-            modificationDate: null,
-          },
+        senaiteAnalysisRequest: {
+          creationDate: payload.creation_date, // "2017/10/23 09:04:58 GMT+2"
+          creator: payload.Creator, // "kadyea"
+          creatorEmail: payload.CreatorEmail, // "kadyea@nmrl.org.zw"
+          creatorFullName: payload.CreatorFullName, // "kadyea"
+          dateVerified: payload.getDateVerified, // null
+          doctorTitle: payload.getDoctorTitle, // ""
+          doctorUid: payload.getDoctorUID, // ""
+          modificationDate: payload.modification_date, // "2019/02/18 11:15:15.191914 GMT+2"
+          printed: payload.getPrinted, // "0"
+          priority: payload.Priority, // "3"
+          profilesTitleStr: payload.ProfilesTitleStr, // "TB Culture"
+          uid: payload.UID, // "b98da3709f1845f7bef097ed5a95c634"
+        },
+        senaiteReferringFacility: {
+          contactEmail: payload.ContactEmail, // ""
+          contactFullName: payload.ContactFullName, // "Sister in charge"
+          contactUid: payload.ContactUID, // "24cf4e36f70c41aeaf2959cb6cdd27a1"
+        },
+        senaiteSample: {
+          appearance: null,
+          appearanceRemarks: null,
+          volume: null,
+          volumeRemarks: null,
+          dateReceived: payload.DateReceived, // "2017/10/24 12:02:16 GMT+2"
+          partitionId: payload.id, // "SP17-002058-R01"
+          receivedBy: payload.ReceivedBy, // "muzavazip"
+          samplerEmail: payload.SamplerEmail, // "kadyea@nmrl.org.zw"
+          typeUid: payload.SampleTypeUID, // "ac0cbd54fc4d4c86b9e42fe4c870c184"
+          uid: payload.SampleUID, // "dc4275a004c24b2fb2c20b319d9a088c"
+        },
+        senaiteResult: {
+          title: null,
+          uid: null,
+          retested: null,
+          result: null,
+          resultText: null,
+          value: null,
+          resultCaptureDate: null,
+          remarks: null,
+          unit: null,
+          pointOfCapture: null,
+          manualEntryOfResults: null,
+          instrument: null,
+          instrumentEntryOfResults: null,
+          hidden: null,
+          hiddenManually: null,
+          analyst: null,
+          verificators: null,
+          testReviewState: null,
+          worksheetAnalysisReviewState: null,
+          creationDate: null,
+          creator: null,
+          modificationDate: null,
         },
       }
       const patientData = {
-        senaite: {
-          patientId: payload.getPatientID, // "P17-00590"
-          patientUid: payload.Patient_uid, // "eda130e9e110406fa9b0b063c6d95e40"
-          referringFacilityPatientName: payload.Patient, // "Frank Kangara"
-          referringFacilityPatientUid: payload.ClientPatientID, // "8e233dceaa6b4551ada8d6ff7485e282"
-          referringFacilitySampleId: payload.ClientSampleID, // "Frank Kangara"
-        },
+        id: payload.getPatientID, // "P17-00590"
+        patientUid: payload.Patient_uid, // "eda130e9e110406fa9b0b063c6d95e40"
+        referringFacilityPatientName: payload.Patient, // "Frank Kangara"
+        referringFacilityPatientUid: payload.ClientPatientID, // "8e233dceaa6b4551ada8d6ff7485e282"
+        referringFacilitySampleId: payload.ClientSampleID, // "Frank Kangara"
       }
 
       const sampleAppearanceAnalysis = _.find(payload.Analyses, {
@@ -337,22 +333,22 @@ class DefaultSenaiteLIMS extends SynchronousDataProcessor {
           )
           if (_.get(selectedSampleAppearance, 'ResultText')) {
             if (sampleAppearanceAnalysis.Unit) {
-              baseResultData.senaite.sample.appearance = `${selectedSampleAppearance.ResultText} ${sampleAppearanceAnalysis.Unit}`
+              baseResultData.senaiteSample.appearance = `${selectedSampleAppearance.ResultText} ${sampleAppearanceAnalysis.Unit}`
             } else {
-              baseResultData.senaite.sample.appearance =
+              baseResultData.senaiteSample.appearance =
                 selectedSampleAppearance.ResultText
             }
           } else if (_.get(selectedSampleAppearance, 'value')) {
-            baseResultData.senaite.sample.appearance =
+            baseResultData.senaiteSample.appearance =
               selectedSampleAppearance.value
           }
         } else {
-          baseResultData.senaite.sample.appearance =
+          baseResultData.senaiteSample.appearance =
             sampleAppearanceAnalysis.Result
         }
       }
       if (_.get(sampleAppearanceAnalysis, 'Remarks')) {
-        baseResultData.senaite.sample.appearanceRemarks =
+        baseResultData.senaiteSample.appearanceRemarks =
           sampleAppearanceAnalysis.Remarks
       }
       const sampleVolumeAnalysis = _.find(payload.Analyses, {
@@ -366,20 +362,20 @@ class DefaultSenaiteLIMS extends SynchronousDataProcessor {
           )
           if (_.get(selectedSampleVolume, 'ResultText')) {
             if (sampleVolumeAnalysis.Unit) {
-              baseResultData.senaite.sample.volume = `${selectedSampleVolume.ResultText} ${sampleVolumeAnalysis.Unit}`
+              baseResultData.senaiteSample.volume = `${selectedSampleVolume.ResultText} ${sampleVolumeAnalysis.Unit}`
             } else {
-              baseResultData.senaite.sample.volume =
+              baseResultData.senaiteSample.volume =
                 selectedSampleVolume.ResultText
             }
           } else if (_.get(selectedSampleVolume, 'value')) {
-            baseResultData.senaite.sample.volume = selectedSampleVolume.value
+            baseResultData.senaiteSample.volume = selectedSampleVolume.value
           }
         } else {
-          baseResultData.senaite.sample.volume = sampleVolumeAnalysis.Result
+          baseResultData.senaiteSample.volume = sampleVolumeAnalysis.Result
         }
       }
       if (_.get(sampleVolumeAnalysis, 'Remarks')) {
-        baseResultData.senaite.sample.volumeRemarks =
+        baseResultData.senaiteSample.volumeRemarks =
           sampleVolumeAnalysis.Remarks
       }
 
@@ -465,19 +461,19 @@ class DefaultSenaiteLIMS extends SynchronousDataProcessor {
             resultRecord.resultTypeId = await resultTypeToId('Patient')
           }
           resultRecord.updatedOn = now
-          resultRecord.resultData.senaite.result.title =
+          resultRecord.resultData.senaiteResult.title =
             testResultAnalysis.title // "MGIT RESULT"
-          resultRecord.resultData.senaite.result.uid = testResultAnalysis.UID // "d2b24013cefd4ab49b55ca1b7afcee52"
-          resultRecord.resultData.senaite.result.retested =
+          resultRecord.resultData.senaiteResult.uid = testResultAnalysis.UID // "d2b24013cefd4ab49b55ca1b7afcee52"
+          resultRecord.resultData.senaiteResult.retested =
             testResultAnalysis.Retested // false
-          resultRecord.resultData.senaite.result.result =
+          resultRecord.resultData.senaiteResult.result =
             testResultAnalysis.Result // ""
           const resultOptions = testResultAnalysis.ResultOptions // Array with objects like { "ResultText": "Positive", "ResultValue": "0", "value": "" }
           const selectedResultOption =
             _.find(resultOptions, {
-              ResultValue: resultRecord.resultData.senaite.result.result,
+              ResultValue: resultRecord.resultData.senaiteResult.result,
             }) || {}
-          resultRecord.resultData.senaite.result.resultText =
+          resultRecord.resultData.senaiteResult.resultText =
             selectedResultOption.ResultText
           const unknownResultCategoryId = await resultCategoryToId('Unknown')
           if (
@@ -490,40 +486,40 @@ class DefaultSenaiteLIMS extends SynchronousDataProcessor {
               resultCategoryExternalId
             )
           }
-          resultRecord.resultData.senaite.result.value =
+          resultRecord.resultData.senaiteResult.value =
             selectedResultOption.value
-          resultRecord.resultData.senaite.result.resultCaptureDate = parseDateOrDefault(
+          resultRecord.resultData.senaiteResult.resultCaptureDate = parseDateOrDefault(
             testResultAnalysis.ResultCaptureDate
           ) // "2018/03/20 06:23:3.774431 GMT+2"
-          resultRecord.resultData.senaite.result.remarks =
+          resultRecord.resultData.senaiteResult.remarks =
             testResultAnalysis.Remarks // ""
-          resultRecord.resultData.senaite.result.unit = testResultAnalysis.Unit // ""
-          resultRecord.resultData.senaite.result.pointOfCapture =
+          resultRecord.resultData.senaiteResult.unit = testResultAnalysis.Unit // ""
+          resultRecord.resultData.senaiteResult.pointOfCapture =
             testResultAnalysis.PointOfCapture // "lab"
-          resultRecord.resultData.senaite.result.manualEntryOfResults =
+          resultRecord.resultData.senaiteResult.manualEntryOfResults =
             testResultAnalysis.ManualEntryOfResults // true
-          resultRecord.resultData.senaite.result.instrument =
+          resultRecord.resultData.senaiteResult.instrument =
             testResultAnalysis.Instrument // null
-          resultRecord.resultData.senaite.result.instrumentEntryOfResults =
+          resultRecord.resultData.senaiteResult.instrumentEntryOfResults =
             testResultAnalysis.InstrumentEntryOfResults // false
-          resultRecord.resultData.senaite.result.hidden =
+          resultRecord.resultData.senaiteResult.hidden =
             testResultAnalysis.Hidden // true
-          resultRecord.resultData.senaite.result.hiddenManually =
+          resultRecord.resultData.senaiteResult.hiddenManually =
             testResultAnalysis.HiddenManually // false
-          resultRecord.resultData.senaite.result.analyst =
+          resultRecord.resultData.senaiteResult.analyst =
             testResultAnalysis.Analyst // "" <- LIMS Username
-          resultRecord.resultData.senaite.result.verificators =
+          resultRecord.resultData.senaiteResult.verificators =
             testResultAnalysis.Verificators // "" <- LIMS Username
-          resultRecord.resultData.senaite.result.testReviewState =
+          resultRecord.resultData.senaiteResult.testReviewState =
             testResultAnalysis.review_state // "verified"
-          resultRecord.resultData.senaite.result.worksheetAnalysisReviewState =
+          resultRecord.resultData.senaiteResult.worksheetAnalysisReviewState =
             testResultAnalysis.worksheetanalysis_review_state // "unassigned"
-          resultRecord.resultData.senaite.result.creationDate = parseDateOrDefault(
+          resultRecord.resultData.senaiteResult.creationDate = parseDateOrDefault(
             testResultAnalysis.creation_date
           ) // "2017/10/23 09:04:58 GMT+2"
-          resultRecord.resultData.senaite.result.creator =
+          resultRecord.resultData.senaiteResult.creator =
             testResultAnalysis.Creator // "kadyea"
-          resultRecord.resultData.senaite.result.modificationDate = parseDateOrDefault(
+          resultRecord.resultData.senaiteResult.modificationDate = parseDateOrDefault(
             testResultAnalysis.modification_date
           ) // "2018/03/20 06:23:4.257171 GMT+2"
 

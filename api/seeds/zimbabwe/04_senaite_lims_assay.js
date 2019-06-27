@@ -11,276 +11,263 @@ const {
 
 async function seed(knex) {
   const senaiteLimsResultDataSchema = {
-    senaite: {
+    senaiteAnalysisRequest: {
       list: false,
       order: 0,
       type: 'object',
-      title: 'Senaite LIMS',
+      title: 'Senaite LIMS Analysis Request',
       properties: {
-        analysisRequest: {
-          list: false,
+        profile: {
+          title: 'Profile',
+          type: 'string',
           order: 0,
-          type: 'object',
-          title: 'Analysis Request',
-          properties: {
-            profile: {
-              title: 'Profile',
-              type: 'string',
-              order: 0,
-            },
-            priority: {
-              title: 'Priority',
-              type: 'number',
-              order: 1,
-            },
-            doctorTitle: {
-              title: 'Doctor Title',
-              type: 'string',
-              order: 2,
-            },
-            dateVerified: {
-              title: 'verified On',
-              type: 'time',
-              order: 3,
-            },
-            printed: {
-              title: 'Printed',
-              type: 'number',
-              order: 4,
-            },
-            creator: {
-              title: 'Created By',
-              type: 'string',
-              order: 5,
-            },
-            creatorFullName: {
-              title: 'Created By (Name)',
-              type: 'string',
-              order: 6,
-            },
-            creatorEmail: {
-              title: 'Created By (Email)',
-              type: 'string',
-              order: 7,
-            },
-            creationDate: {
-              title: 'Created On',
-              type: 'time',
-              order: 8,
-            },
-            modificationDate: {
-              title: 'Modified On',
-              type: 'time',
-              order: 9,
-            },
-          },
         },
-        referringFacility: {
-          list: false,
+        priority: {
+          title: 'Priority',
+          type: 'number',
           order: 1,
-          type: 'object',
-          title: 'Referring Facility',
-          properties: {
-            contactFullName: {
-              title: 'Contact Name',
-              type: 'string',
-              order: 0,
-            },
-            contactEmail: {
-              title: 'Contact Email',
-              type: 'string',
-              order: 1,
-            },
-          },
         },
-        sample: {
-          list: false,
+        doctorTitle: {
+          title: 'Doctor Title',
+          type: 'string',
           order: 2,
-          type: 'object',
-          title: 'Sample',
-          properties: {
-            partitionId: {
-              title: 'Sample Partition ID',
-              type: 'string',
-              order: 0,
-            },
-            appearance: {
-              title: 'Appearance',
-              type: 'string',
-              order: 1,
-            },
-            appearanceRemarks: {
-              title: 'Appearance Remarks',
-              type: 'string',
-              order: 2,
-            },
-            volume: {
-              title: 'Volume Remarks',
-              type: 'string',
-              order: 3,
-            },
-            volumeRemarks: {
-              title: 'Volume Remarks',
-              type: 'string',
-              order: 4,
-            },
-            dateReceived: {
-              title: 'Date Received',
-              type: 'time',
-              order: 5,
-            },
-            receivedBy: {
-              title: 'Received By',
-              type: 'string',
-              order: 6,
-            },
-            samplerEmail: {
-              title: 'Sampler Email',
-              type: 'string',
-              order: 7,
-            },
-          },
+        },
+        dateVerified: {
+          title: 'verified On',
+          type: 'time',
+          order: 3,
+        },
+        printed: {
+          title: 'Printed',
+          type: 'number',
+          order: 4,
+        },
+        creator: {
+          title: 'Created By',
+          type: 'string',
+          order: 5,
+        },
+        creatorFullName: {
+          title: 'Created By (Name)',
+          type: 'string',
+          order: 6,
+        },
+        creatorEmail: {
+          title: 'Created By (Email)',
+          type: 'string',
+          order: 7,
+        },
+        creationDate: {
+          title: 'Created On',
+          type: 'time',
+          order: 8,
+        },
+        modificationDate: {
+          title: 'Modified On',
+          type: 'time',
+          order: 9,
+        },
+      },
+    },
+    senaiteReferringFacility: {
+      list: false,
+      order: 1,
+      type: 'object',
+      title: 'Senaite LIMS Referring Facility',
+      properties: {
+        contactFullName: {
+          title: 'Contact Name',
+          type: 'string',
+          order: 0,
+        },
+        contactEmail: {
+          title: 'Contact Email',
+          type: 'string',
+          order: 1,
+        },
+      },
+    },
+    senaiteSample: {
+      list: false,
+      order: 2,
+      type: 'object',
+      title: 'Senaite LIMS Sample',
+      properties: {
+        partitionId: {
+          title: 'Sample Partition ID',
+          type: 'string',
+          order: 0,
+        },
+        appearance: {
+          title: 'Appearance',
+          type: 'string',
+          order: 1,
+        },
+        appearanceRemarks: {
+          title: 'Appearance Remarks',
+          type: 'string',
+          order: 2,
+        },
+        volume: {
+          title: 'Volume Remarks',
+          type: 'string',
+          order: 3,
+        },
+        volumeRemarks: {
+          title: 'Volume Remarks',
+          type: 'string',
+          order: 4,
+        },
+        dateReceived: {
+          title: 'Date Received',
+          type: 'time',
+          order: 5,
+        },
+        receivedBy: {
+          title: 'Received By',
+          type: 'string',
+          order: 6,
+        },
+        samplerEmail: {
+          title: 'Sampler Email',
+          type: 'string',
+          order: 7,
+        },
+      },
+    },
+    senaiteResult: {
+      list: false,
+      order: 3,
+      type: 'object',
+      title: 'Senaite LIMS Result',
+      properties: {
+        title: {
+          title: 'Test Type',
+          type: 'string',
+          order: 0,
+        },
+        retested: {
+          title: 'Retested',
+          type: 'number',
+          order: 1,
         },
         result: {
-          list: false,
+          title: 'Selected Result',
+          type: 'string',
+          order: 2,
+        },
+        resultText: {
+          title: 'Result Text',
+          type: 'string',
           order: 3,
-          type: 'object',
-          title: 'Result',
-          properties: {
-            title: {
-              title: 'Test Type',
-              type: 'string',
-              order: 0,
-            },
-            retested: {
-              title: 'Retested',
-              type: 'number',
-              order: 1,
-            },
-            result: {
-              title: 'Selected Result',
-              type: 'string',
-              order: 2,
-            },
-            resultText: {
-              title: 'Result Text',
-              type: 'string',
-              order: 3,
-            },
-            value: {
-              title: 'Result Value',
-              type: 'string',
-              order: 4,
-            },
-            resultCaptureDate: {
-              title: 'Capture date',
-              type: 'time',
-              order: 5,
-            },
-            remarks: {
-              title: 'Remarks',
-              type: 'string',
-              order: 6,
-            },
-            unit: {
-              title: 'Unit',
-              type: 'string',
-              order: 7,
-            },
-            pointOfCapture: {
-              title: 'Point of Capture',
-              type: 'string',
-              order: 8,
-            },
-            manualEntryOfResults: {
-              title: 'Sample Partition ID',
-              type: 'string',
-              order: 9,
-            },
-            instrument: {
-              title: 'Instrument',
-              type: 'string',
-              order: 10,
-            },
-            instrumentEntryOfResults: {
-              title: 'Entered by Instrument',
-              type: 'number',
-              order: 11,
-            },
-            hidden: {
-              title: 'Hidden',
-              type: 'number',
-              order: 12,
-            },
-            hiddenManually: {
-              title: 'Hidden Manually',
-              type: 'number',
-              order: 13,
-            },
-            analyst: {
-              title: 'Analyst',
-              type: 'string',
-              order: 14,
-            },
-            verificators: {
-              title: 'Verificators',
-              type: 'string',
-              order: 15,
-            },
-            testReviewState: {
-              title: 'Test Review State',
-              type: 'string',
-              order: 16,
-            },
-            worksheetAnalysisReviewState: {
-              title: 'Worksheet Analysis Review State',
-              type: 'string',
-              order: 17,
-            },
-            creator: {
-              title: 'Created By',
-              type: 'string',
-              order: 18,
-            },
-            creationDate: {
-              title: 'Created On',
-              type: 'time',
-              order: 19,
-            },
-            modificationDate: {
-              title: 'Modified On',
-              type: 'time',
-              order: 20,
-            },
-          },
+        },
+        value: {
+          title: 'Result Value',
+          type: 'string',
+          order: 4,
+        },
+        resultCaptureDate: {
+          title: 'Capture date',
+          type: 'time',
+          order: 5,
+        },
+        remarks: {
+          title: 'Remarks',
+          type: 'string',
+          order: 6,
+        },
+        unit: {
+          title: 'Unit',
+          type: 'string',
+          order: 7,
+        },
+        pointOfCapture: {
+          title: 'Point of Capture',
+          type: 'string',
+          order: 8,
+        },
+        manualEntryOfResults: {
+          title: 'Sample Partition ID',
+          type: 'string',
+          order: 9,
+        },
+        instrument: {
+          title: 'Instrument',
+          type: 'string',
+          order: 10,
+        },
+        instrumentEntryOfResults: {
+          title: 'Entered by Instrument',
+          type: 'number',
+          order: 11,
+        },
+        hidden: {
+          title: 'Hidden',
+          type: 'number',
+          order: 12,
+        },
+        hiddenManually: {
+          title: 'Hidden Manually',
+          type: 'number',
+          order: 13,
+        },
+        analyst: {
+          title: 'Analyst',
+          type: 'string',
+          order: 14,
+        },
+        verificators: {
+          title: 'Verificators',
+          type: 'string',
+          order: 15,
+        },
+        testReviewState: {
+          title: 'Test Review State',
+          type: 'string',
+          order: 16,
+        },
+        worksheetAnalysisReviewState: {
+          title: 'Worksheet Analysis Review State',
+          type: 'string',
+          order: 17,
+        },
+        creator: {
+          title: 'Created By',
+          type: 'string',
+          order: 18,
+        },
+        creationDate: {
+          title: 'Created On',
+          type: 'time',
+          order: 19,
+        },
+        modificationDate: {
+          title: 'Modified On',
+          type: 'time',
+          order: 20,
         },
       },
     },
   }
 
   const senaiteLimsPatientDataSchema = {
-    senaite: {
-      list: false,
+    id: {
+      list: true,
+      title: 'Patient ID',
+      type: 'string',
       order: 0,
-      type: 'object',
-      title: 'Senaite LIMS',
-      properties: {
-        patientId: {
-          title: 'Patient ID',
-          type: 'string',
-          order: 0,
-        },
-        referringFacilityPatientName: {
-          title: 'Patient Name from Referring Facility',
-          type: 'string',
-          order: 1,
-        },
-        referringFacilitySampleId: {
-          title: 'Sample ID from Referring Facility',
-          type: 'string',
-          order: 2,
-        },
-      },
+    },
+    referringFacilityPatientName: {
+      list: false,
+      title: 'Patient Name from Referring Facility',
+      type: 'string',
+      order: 1,
+    },
+    referringFacilitySampleId: {
+      list: false,
+      title: 'Sample ID from Referring Facility',
+      type: 'string',
+      order: 2,
     },
   }
 
@@ -497,36 +484,48 @@ async function seed(knex) {
       } = await knex('Assay')
         .where('externalId', assayExternalId)
         .first('resultDataSchema', 'patientDataSchema')
-      const resultDataSchema = JSON.parse(resultDataSchemaString)
-      const patientDataSchema = JSON.parse(patientDataSchemaString)
-      if (!resultDataSchema.senaite || !patientDataSchema.senaite) {
-        if (!resultDataSchema.senaite) {
-          const resultDataSchemaSenaiteOrder =
-            _.max(_.map(Object.values(resultDataSchema), 'order')) + 1
-          resultDataSchema.senaite = _.merge(
-            {
-              order: resultDataSchemaSenaiteOrder,
-            },
-            senaiteLimsResultDataSchema.senaite
-          )
+      const resultDataSchema = JSON.parse(resultDataSchemaString || '{}')
+      const patientDataSchema = JSON.parse(patientDataSchemaString || '{}')
+      _.each(
+        Object.keys(senaiteLimsResultDataSchema),
+        senaiteLimsResultDataSchemaKey => {
+          if (!resultDataSchema[senaiteLimsResultDataSchemaKey]) {
+            const resultDataSchemaFields = Object.values(resultDataSchema)
+            const resultDataSchemaFieldOrder = _.isEmpty(resultDataSchemaFields)
+              ? 0
+              : _.max(_.map(resultDataSchemaFields, 'order')) + 1
+            resultDataSchema[senaiteLimsResultDataSchemaKey] = _.assign(
+              {},
+              senaiteLimsResultDataSchema[senaiteLimsResultDataSchemaKey],
+              { order: resultDataSchemaFieldOrder }
+            )
+          }
         }
-        if (!patientDataSchema.senaite) {
-          const patientDataSchemaSenaiteOrder =
-            _.max(_.map(Object.values(patientDataSchema), 'order')) + 1
-          patientDataSchema.senaite = _.merge(
-            {
-              order: patientDataSchemaSenaiteOrder,
-            },
-            senaiteLimsPatientDataSchema.senaite
-          )
+      )
+      _.each(
+        Object.keys(senaiteLimsPatientDataSchema),
+        senaiteLimsPatientDataSchemaKey => {
+          if (!patientDataSchema[senaiteLimsPatientDataSchemaKey]) {
+            const patientDataSchemaFields = Object.values(patientDataSchema)
+            const patientDataSchemaFieldOrder = _.isEmpty(
+              patientDataSchemaFields
+            )
+              ? 0
+              : _.max(_.map(patientDataSchemaFields, 'order')) + 1
+            patientDataSchema[senaiteLimsPatientDataSchemaKey] = _.assign(
+              {},
+              senaiteLimsPatientDataSchema[senaiteLimsPatientDataSchemaKey],
+              { order: patientDataSchemaFieldOrder }
+            )
+          }
         }
-        await knex('Assay')
-          .where('externalId', assayExternalId)
-          .update({
-            resultDataSchema: JSON.stringify(resultDataSchema),
-            patientDataSchema: JSON.stringify(patientDataSchema),
-          })
-      }
+      )
+      await knex('Assay')
+        .where('externalId', assayExternalId)
+        .update({
+          resultDataSchema: JSON.stringify(resultDataSchema),
+          patientDataSchema: JSON.stringify(patientDataSchema),
+        })
     }
   )
 }
