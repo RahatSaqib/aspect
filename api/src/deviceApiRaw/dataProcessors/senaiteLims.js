@@ -42,7 +42,7 @@ class DefaultSenaiteLIMS extends SynchronousDataProcessor {
       try {
         payload = JSON.parse(payloadBody)
       } catch (error) {
-        console.error(error)
+        console.error(error) // eslint-disable-line no-console
       }
     }
     const now = getUtcTime()
