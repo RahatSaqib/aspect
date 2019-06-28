@@ -1,4 +1,4 @@
-module.exports = require('../utils').seed(seed)
+module.exports = require('../utils').seed(seed, 'test_05_gatesrdt')
 
 const bcrypt = require('bcrypt')
 const _ = require('lodash')
@@ -23,14 +23,6 @@ const {
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 
 async function seed(knex) {
-  // Skip this seed file if we already have an admin user
-  const existingAdminUser = await knex('User')
-    .where({ name: 'gates_rdt' })
-    .first('id')
-  if (existingAdminUser) {
-    return
-  }
-
   // Create admin user and audit fields
   const now = new Date()
   const [adminId] = await knex('User').insert({
@@ -75,7 +67,12 @@ async function seed(knex) {
     resultCategory1Label: 'Status',
     resultDataSchema: JSON.stringify({
       resultText: { list: true, order: 1, type: 'string', title: 'Result' },
-      hcwResult: { list: true, order: 2, type: 'string', title: 'HCW Result' },
+      hcwResult: {
+        list: true,
+        order: 2,
+        type: 'string',
+        title: 'HCW Result',
+      },
       hcwConfirmatoryResult: {
         list: false,
         order: 3,
@@ -94,8 +91,16 @@ async function seed(knex) {
       age: { type: 'int', order: 1, title: 'Age' },
       gender: { type: 'string', order: 2, title: 'Gender' },
       phone: { type: 'string', order: 3, title: 'Phone Number' },
-      educationLevel: { type: 'string', order: 4, title: 'Education Level' },
-      previousTesting: { type: 'string', order: 5, title: 'Previous Testing' },
+      educationLevel: {
+        type: 'string',
+        order: 4,
+        title: 'Education Level',
+      },
+      previousTesting: {
+        type: 'string',
+        order: 5,
+        title: 'Previous Testing',
+      },
     }),
   })
 
@@ -130,9 +135,18 @@ async function seed(knex) {
     partnerId,
   })
   await knex('JobFunctionPermission').insert([
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.browse.view },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.result.admin },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.device.admin },
+    {
+      jobFunctionId: jobFunctionIdAdmin,
+      permissionId: modules.browse.view,
+    },
+    {
+      jobFunctionId: jobFunctionIdAdmin,
+      permissionId: modules.result.admin,
+    },
+    {
+      jobFunctionId: jobFunctionIdAdmin,
+      permissionId: modules.device.admin,
+    },
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.site.admin },
     {
       jobFunctionId: jobFunctionIdAdmin,

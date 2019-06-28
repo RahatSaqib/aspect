@@ -1,4 +1,7 @@
-module.exports = require('../utils').seed(seed)
+module.exports = require('../utils').seed(
+  seed,
+  'test_16_mgit_genoscan_senaite_device_types'
+)
 
 const {
   assayTypeToId,

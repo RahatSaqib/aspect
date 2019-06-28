@@ -1,4 +1,4 @@
-module.exports = require('../utils').seed(seed)
+module.exports = require('../utils').seed(seed, 'test_07_myanmar')
 
 const _ = require('lodash')
 const Promise = require('bluebird')
@@ -14,15 +14,6 @@ const {
 } = require('../dataCategoryLow')
 
 async function seed(knex) {
-  const alertTemplateWithHideFlag = await knex('AlertTemplate')
-    .where('hideWhenSiteFilterIsSelected', 1)
-    .orWhere('hideWhenSiteFilterIsNotSelected', 1)
-    .first()
-
-  if (alertTemplateWithHideFlag) {
-    return
-  }
-
   await knex('AlertTemplate')
     .where({
       message:

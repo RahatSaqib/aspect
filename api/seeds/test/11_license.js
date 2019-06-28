@@ -1,4 +1,4 @@
-module.exports = require('../utils').seed(seed)
+module.exports = require('../utils').seed(seed, 'test_11_license')
 
 const { addLicenses, addLicensePersons } = require('../utils')
 

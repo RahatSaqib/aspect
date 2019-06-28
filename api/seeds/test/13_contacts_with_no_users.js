@@ -1,4 +1,7 @@
-module.exports = require('../utils').seed(seed)
+module.exports = require('../utils').seed(
+  seed,
+  'test_13_contacts_with_no_users'
+)
 const _ = require('lodash')
 const Promise = require('bluebird')
 

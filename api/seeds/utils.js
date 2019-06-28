@@ -49,22 +49,41 @@ const foreignKeys = {
 
 // Helper for seeed files. Ru
 let hasSeededStaticData = false
-function seed(seed) {
+function seed(seed, fileName) {
   return {
     seed(knex) {
-      return runSeed(seed, knex).catch(err => {
+      return runSeed(seed, knex, fileName).catch(err => {
         console.error(err) // eslint-disable-line no-console
         throw err
       })
     },
   }
 }
-async function runSeed(seed, knex) {
-  if (!hasSeededStaticData) {
-    await seedStaticData(knex)
-    hasSeededStaticData = true
+
+async function runSeed(seed, knex, fileName) {
+  const { seedsRun } = await getSeedsRun(knex)
+
+  if (fileName && (!seedsRun || !seedsRun[fileName])) {
+    if (!hasSeededStaticData) {
+      await seedStaticData(knex)
+      hasSeededStaticData = true
+    }
+    return seed(knex)
+      .catch(async e => {
+        await knex('AspectSeed').insert({
+          fileName,
+          success: false,
+          errorMessage: e.message,
+        })
+        throw e
+      })
+      .then(async () => {
+        await knex('AspectSeed').insert({
+          fileName,
+          success: true,
+        })
+      })
   }
-  return seed(knex)
 }
 
 async function rowsAsObject(knex, table, column = 'name') {
@@ -2240,6 +2259,15 @@ async function setCapacityForExistingDevices(knex) {
     }
   })
 }
+async function getSeedsRun(knex) {
+  return knex('AspectSeed as ap')
+    .where({ success: true })
+    .select('ap.fileName')
+    .reduce((memo, row) => {
+      memo[row.fileName] = true
+      return memo
+    }, {})
+}
 
 async function seedDeviceMaintenanceType(knex) {
   const { data: deviceMaintenanceTypes } = await readJson(
@@ -2256,6 +2284,7 @@ async function seedDeviceMaintenanceType(knex) {
 
 module.exports = {
   seed,
+  getSeedsRun,
   rowsAsObject,
   getDefaultMessageTypes,
   seedStockIssues,
