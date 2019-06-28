@@ -60,9 +60,10 @@ class DefaultSenaiteLIMS extends SynchronousDataProcessor {
         .leftJoin('Site as s1', 'dak.siteId', 's1.id')
         .leftJoin('Device as d', 'dak.deviceId', 'd.id')
         .leftJoin('Site as s2', 'd.siteId', 's2.id')
-        .leftJoin('Geography as g1', 'dak.geographyId', 'g1.id')
+        .leftJoin('Geography as g1', 's2.geographyId', 'g1.id')
         .leftJoin('Geography as g2', 's1.geographyId', 'g2.id')
-        .leftJoin('Geography as g3', 's2.geographyId', 'g3.id')
+        .leftJoin('Geography as g3', 'd.geographyId', 'g3.id')
+        .leftJoin('Geography as g4', 'dak.geographyId', 'g4.id')
         .where('dak.token', auth.credentials.token)
         .first(
           'dak.deviceId',
@@ -71,10 +72,10 @@ class DefaultSenaiteLIMS extends SynchronousDataProcessor {
           knex.raw('COALESCE(s2.longitude, s1.longitude) as longitude'),
           knex.raw('COALESCE(s2.latitude, s1.latitude) as latitude'),
           knex.raw(
-            'COALESCE(s2.geographyId, s1.geographyId, dak.geographyId) as geographyId'
+            'COALESCE(s2.geographyId, s1.geographyId, d.geographyId, dak.geographyId) as geographyId'
           ),
           knex.raw(
-            'COALESCE(g1.countryId, g2.countryId, g3.countryId) as countryId'
+            'COALESCE(g1.countryId, g2.countryId, g3.countryId, g4.countryId) as countryId'
           )
         )
       const remoteAddress = getRemoteAddress(request)
@@ -152,7 +153,7 @@ class DefaultSenaiteLIMS extends SynchronousDataProcessor {
       if (limsFacilityId) {
         const originSite =
           (await knex('Site as s')
-            .join('Geography as g', 's.geographyId', 'g.id')
+            .leftJoin('Geography as g', 's.geographyId', 'g.id')
             .where('g.countryId', countryId)
             .andWhere('s.partnerId', partnerId)
             .andWhere('s.externalId', limsFacilityId)
@@ -215,7 +216,7 @@ class DefaultSenaiteLIMS extends SynchronousDataProcessor {
         }
       }
       // Get or Create Sample
-      const limsSampleId = payload.getSampleID // "SP17-002058"
+      const limsSampleId = payload.SampleID // "SP17-002058"
       if (!limsSampleId) {
         return
       }
@@ -326,60 +327,59 @@ class DefaultSenaiteLIMS extends SynchronousDataProcessor {
       const sampleAppearanceAnalysis = _.find(payload.Analyses, {
         id: 'SampleAppearance',
       })
-      if (_.get(sampleAppearanceAnalysis, 'Result')) {
-        if (!_.isEmpty(sampleAppearanceAnalysis.ResultOptions)) {
-          const selectedSampleAppearance = _.find(
-            sampleAppearanceAnalysis.ResultOptions,
-            { ResultValue: sampleAppearanceAnalysis.Result }
-          )
-          if (_.get(selectedSampleAppearance, 'ResultText')) {
-            if (sampleAppearanceAnalysis.Unit) {
-              baseResultData.senaiteSample.appearance = `${selectedSampleAppearance.ResultText} ${sampleAppearanceAnalysis.Unit}`
-            } else {
+      if (sampleAppearanceAnalysis) {
+        if (sampleAppearanceAnalysis.Result) {
+          if (!_.isEmpty(sampleAppearanceAnalysis.ResultOptions)) {
+            const selectedSampleAppearance = _.find(
+              sampleAppearanceAnalysis.ResultOptions,
+              { ResultValue: sampleAppearanceAnalysis.Result }
+            )
+            if (_.get(selectedSampleAppearance, 'ResultText')) {
+              if (sampleAppearanceAnalysis.Unit) {
+                baseResultData.senaiteSample.appearance = `${selectedSampleAppearance.ResultText} ${sampleAppearanceAnalysis.Unit}`
+              } else {
+                baseResultData.senaiteSample.appearance =
+                  selectedSampleAppearance.ResultText
+              }
+            } else if (_.get(selectedSampleAppearance, 'value')) {
               baseResultData.senaiteSample.appearance =
-                selectedSampleAppearance.ResultText
+                selectedSampleAppearance.value
             }
-          } else if (_.get(selectedSampleAppearance, 'value')) {
+          } else {
             baseResultData.senaiteSample.appearance =
-              selectedSampleAppearance.value
+              sampleAppearanceAnalysis.Result
           }
-        } else {
-          baseResultData.senaiteSample.appearance =
-            sampleAppearanceAnalysis.Result
         }
-      }
-      if (_.get(sampleAppearanceAnalysis, 'Remarks')) {
         baseResultData.senaiteSample.appearanceRemarks =
           sampleAppearanceAnalysis.Remarks
       }
       const sampleVolumeAnalysis = _.find(payload.Analyses, {
         id: 'SampleVolume',
       })
-      if (_.get(sampleVolumeAnalysis, 'Result')) {
-        if (!_.isEmpty(sampleVolumeAnalysis.ResultOptions)) {
-          const selectedSampleVolume = _.find(
-            sampleVolumeAnalysis.ResultOptions,
-            { ResultValue: sampleVolumeAnalysis.Result }
-          )
-          if (_.get(selectedSampleVolume, 'ResultText')) {
-            if (sampleVolumeAnalysis.Unit) {
-              baseResultData.senaiteSample.volume = `${selectedSampleVolume.ResultText} ${sampleVolumeAnalysis.Unit}`
-            } else {
-              baseResultData.senaiteSample.volume =
-                selectedSampleVolume.ResultText
+      if (sampleVolumeAnalysis) {
+        if (sampleVolumeAnalysis.Result) {
+          if (!_.isEmpty(sampleVolumeAnalysis.ResultOptions)) {
+            const selectedSampleVolume = _.find(
+              sampleVolumeAnalysis.ResultOptions,
+              { ResultValue: sampleVolumeAnalysis.Result }
+            )
+            if (_.get(selectedSampleVolume, 'ResultText')) {
+              if (sampleVolumeAnalysis.Unit) {
+                baseResultData.senaiteSample.volume = `${selectedSampleVolume.ResultText} ${sampleVolumeAnalysis.Unit}`
+              } else {
+                baseResultData.senaiteSample.volume =
+                  selectedSampleVolume.ResultText
+              }
+            } else if (_.get(selectedSampleVolume, 'value')) {
+              baseResultData.senaiteSample.volume = selectedSampleVolume.value
             }
-          } else if (_.get(selectedSampleVolume, 'value')) {
-            baseResultData.senaiteSample.volume = selectedSampleVolume.value
+          } else {
+            baseResultData.senaiteSample.volume = sampleVolumeAnalysis.Result
           }
-        } else {
-          baseResultData.senaiteSample.volume = sampleVolumeAnalysis.Result
         }
-      }
-      if (_.get(sampleVolumeAnalysis, 'Remarks')) {
         baseResultData.senaiteSample.volumeRemarks =
           sampleVolumeAnalysis.Remarks
       }
-
       const testResultAnalyses = _.filter(
         payload.Analyses,
         analysis => !['SampleAppearance', 'SampleVolume'].includes(!analysis.id)

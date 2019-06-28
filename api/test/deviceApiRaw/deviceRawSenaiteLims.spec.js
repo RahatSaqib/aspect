@@ -7,6 +7,7 @@ const { getUtcTime } = require('../../src/shared/date')
 const { randomToken } = require('../../src/deviceApi/apiKey')
 const { waitAsyncComplete } = require('../utils/generatorFunctionUtils')
 const { deviceApiRawStatusToId } = require('../../src/shared/dictionary')
+const { parseDateOrDefault } = require('../../src/shared/date')
 
 const server = supertest.agent('http://localhost:8080')
 const { assert, expect } = chai
@@ -30,8 +31,8 @@ describe('Device API Raw routes for Senaite LIMS', () => {
       .from('Country as c')
       .join('Geography as g', 'g.countryId', 'c.id')
       .where('c.abbreviation', 'US')
-      .andWhere('g.stateId', null)
-      .andWhere('g.lgaId', null)
+      .whereNull('g.stateId')
+      .whereNull('g.lgaId')
       .first('g.*')
     const approvedDeviceStatus = await knex
       .from('DeviceStatus')
@@ -1836,7 +1837,9 @@ describe('Device API Raw routes for Senaite LIMS', () => {
       .to.be.an('array')
       .that.has.lengthOf(1)
     const results = await knex('Result as r')
+      .join('Assay as a', 'r.assayId', 'a.id')
       .join('Sample as s', 'r.sampleId', 's.id')
+      .join('SampleType as sty', 's.sampleTypeId', 'sty.id')
       .join('Site as si', 's.originSiteId', 'si.id')
       .join('Geography as g', 'si.geographyId', 'g.id')
       .join('State as st', 'g.stateId', 'st.id')
@@ -1847,28 +1850,189 @@ describe('Device API Raw routes for Senaite LIMS', () => {
         'rwl.resultWorkflowStatusId',
         'rws.id'
       )
+      .leftJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
       .where('r.sampleId', sampleIdsAfter[0])
       .select(
         'r.id',
+        'r.externalId',
         'r.resultData',
         'r.patientData',
         'rws.externalId as workflowStatus',
         'si.name as referringFacilityName',
         'st.name as stateName',
-        'l.name as lgaName'
+        'l.name as lgaName',
+        'sty.externalId as sampleType',
+        's.externalId as sampleId',
+        's.collectedOn as sampleCollectedOn',
+        'a.externalId as assayId',
+        'rc1.externalId as result1'
       )
       .map(result =>
         Object.assign({}, result, {
           resultData: JSON.parse(result.resultData),
           patientData: JSON.parse(result.patientData),
+          sampleCollectedOn: JSON.stringify(result.sampleCollectedOn),
         })
       )
+    const sampleTypeMapping = {
+      'Blood plasma': 'Plasma',
+      'Dried Blood Spot': 'DBS',
+      Sputum: 'Sputum',
+    }
+    const sampleAppearanceAnalysis = _.find(payload.Analyses, {
+      id: 'SampleAppearance',
+    })
+    const selectedAppearanceText = _.find(
+      sampleAppearanceAnalysis.ResultOptions,
+      { ResultValue: sampleAppearanceAnalysis.Result }
+    ).ResultText
+    const sampleAppearance = sampleAppearanceAnalysis.Unit
+      ? `${selectedAppearanceText} ${sampleAppearanceAnalysis.Unit}`
+      : selectedAppearanceText
+    const sampleVolumeAnalysis = _.find(payload.Analyses, {
+      id: 'SampleVolume',
+    })
+    const selectedVolumeText = _.find(sampleVolumeAnalysis.ResultOptions, {
+      ResultValue: sampleVolumeAnalysis.Result,
+    }).ResultText
+    const sampleVolume = sampleVolumeAnalysis.Unit
+      ? `${selectedVolumeText} ${sampleVolumeAnalysis.Unit}`
+      : selectedVolumeText
+    const assayResultMappings = {
+      SmearMicroscopy: {
+        assayId: 'senaiteSmearMicroscopy',
+        resultCategories: {
+          Negative: 'Negative',
+          'Positive (+)': 'Positive1',
+          'Positive (++)': 'Positive2',
+          'Positive (+++)': 'Positive3',
+          'Scanty (1-9/100)': 'Scanty',
+        },
+      },
+      TBCulture: {
+        assayId: 'senaiteTbCulture',
+        resultCategories: {
+          Contaminated: 'Contaminated',
+          Negative: 'Negative',
+          'Positive MOTT': 'PositiveMOTT',
+          'Positive MTB': 'PositiveMTB',
+        },
+      },
+      MGITRESULT: {
+        assayId: 'assayBdMgitGnd',
+        resultCategories: {
+          Negative: 'Negative',
+          Positive: 'Positive',
+        },
+      },
+    }
+    const resultWorkflowStatusSenaiteMapping = {
+      sample_received: 'Ordered',
+      to_be_verified: 'Processed',
+      verified: 'Validated',
+    }
     results.forEach(result => {
+      const sampleType = sampleTypeMapping[payload.SampleTypeTitle] || 'Other'
+      const testResultAnalysis = _.find(payload.Analyses, {
+        UID: result.externalId,
+      })
+      const resultOptions = testResultAnalysis.ResultOptions
+      const selectedResultOption =
+        _.find(resultOptions, {
+          ResultValue: testResultAnalysis.Result,
+        }) || {}
       expect(result).to.containSubset({
         stateName: payload.getProvince,
         lgaName: payload.getDistrict,
         referringFacilityName: payload.Client,
+        sampleType,
+        sampleId: payload.SampleID,
+        sampleCollectedOn: JSON.stringify(
+          parseDateOrDefault(payload.DateSampled)
+        ),
+        resultData: {
+          senaiteAnalysisRequest: {
+            creationDate: payload.creation_date,
+            creator: payload.Creator,
+            creatorEmail: payload.CreatorEmail,
+            creatorFullName: payload.CreatorFullName,
+            dateVerified: payload.getDateVerified,
+            doctorTitle: payload.getDoctorTitle,
+            doctorUid: payload.getDoctorUID,
+            modificationDate: payload.modification_date,
+            printed: payload.getPrinted,
+            priority: payload.Priority,
+            profilesTitleStr: payload.ProfilesTitleStr,
+            uid: payload.UID,
+          },
+          senaiteReferringFacility: {
+            contactEmail: payload.ContactEmail,
+            contactFullName: payload.ContactFullName,
+            contactUid: payload.ContactUID,
+          },
+          senaiteSample: {
+            dateReceived: payload.DateReceived,
+            partitionId: payload.id,
+            receivedBy: payload.ReceivedBy,
+            samplerEmail: payload.SamplerEmail,
+            typeUid: payload.SampleTypeUID,
+            uid: payload.SampleUID,
+            appearance: sampleAppearance,
+            appearanceRemarks: sampleAppearanceAnalysis.Remarks,
+            volume: sampleVolume,
+            volumeRemarks: sampleVolumeAnalysis.Remarks,
+          },
+          senaiteResult: {
+            testTypeId: testResultAnalysis.id,
+            title: testResultAnalysis.title,
+            uid: testResultAnalysis.UID,
+            retested: testResultAnalysis.Retested,
+            result: testResultAnalysis.Result,
+            resultText: selectedResultOption.ResultText,
+            value: selectedResultOption.value,
+            remarks: testResultAnalysis.Remarks,
+            unit: testResultAnalysis.Unit,
+            pointOfCapture: testResultAnalysis.PointOfCapture,
+            manualEntryOfResults: testResultAnalysis.ManualEntryOfResults,
+            instrument: testResultAnalysis.Instrument,
+            instrumentEntryOfResults:
+              testResultAnalysis.InstrumentEntryOfResults,
+            hidden: testResultAnalysis.Hidden,
+            hiddenManually: testResultAnalysis.HiddenManually,
+            analyst: testResultAnalysis.Analyst,
+            verificators: testResultAnalysis.Verificators,
+            testReviewState: testResultAnalysis.review_state,
+            creator: testResultAnalysis.Creator,
+          },
+        },
+        patientData: {
+          id: payload.getPatientID,
+          patientUid: payload.Patient_uid,
+          referringFacilityPatientName: payload.Patient,
+          referringFacilityPatientUid: payload.ClientPatientID,
+          referringFacilitySampleId: payload.ClientSampleID,
+        },
       })
+      if (assayResultMappings[testResultAnalysis.id]) {
+        const resultOptions = testResultAnalysis.ResultOptions
+        const selectedResultOption =
+          _.find(resultOptions, { ResultValue: testResultAnalysis.Result }) ||
+          {}
+        const expectedResult =
+          assayResultMappings[testResultAnalysis.id].resultCategories[
+            selectedResultOption.ResultText
+          ] || 'Unknown'
+        expect(result).to.containSubset({
+          assayId: assayResultMappings[testResultAnalysis.id].assayId,
+          result1: expectedResult,
+        })
+      }
+      if (resultWorkflowStatusSenaiteMapping[testResultAnalysis.review_state]) {
+        assert.equal(
+          result.workflowStatus,
+          resultWorkflowStatusSenaiteMapping[testResultAnalysis.review_state]
+        )
+      }
     })
   })
 })
