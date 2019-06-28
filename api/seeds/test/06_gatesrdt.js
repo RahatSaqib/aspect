@@ -1,7 +1,6 @@
 module.exports = require('../utils').seed(seed, 'test_06_gatesrdt')
 
 async function seed(knex) {
-  throw new Exception("")
   const { id: partnerId } = await knex('Partner')
     .where('name', 'GatesRDT')
     .first()
