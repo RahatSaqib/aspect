@@ -1,6 +1,7 @@
 const supertest = require('supertest')
 const chai = require('chai')
 const Promise = require('bluebird')
+const _ = require('lodash')
 const { knex } = require('../../src/db')
 const { getUtcTime } = require('../../src/shared/date')
 const { randomToken } = require('../../src/deviceApi/apiKey')
@@ -74,15 +75,30 @@ describe('Device API Raw routes for Senaite LIMS', () => {
       .leftJoin('Device as d', 'dak.deviceId', 'd.id')
       .where('dak.token', validApiKeyToken)
       .first('dak.id', 'dak.deviceId', 'd.siteId')
-    const resultIds = await knex('Result')
-      .where('deviceId', deviceId)
-      .pluck('id')
+    const results = await knex('Result as r')
+      .leftJoin('Sample as s', 'r.sampleId', 's.id')
+      .where('r.deviceId', deviceId)
+      .select('r.id', 'r.sampleId', 's.originSiteId')
       .union(function() {
         this.from('ResultGeneratedResult as rgr')
           .innerJoin('Result as r', 'rgr.sourceResultId', 'r.id')
+          .innerJoin('Result as gr', 'rgr.generatedResultId', 'gr.id')
+          .leftJoin('Sample as s', 'gr.sampleId', 's.id')
           .where('r.deviceId', deviceId)
-          .pluck('generatedResultId as id')
+          .select('gr.id', 'gr.sampleId', 's.originSiteId')
       })
+    const resultIds = _.uniq(
+      _.map(_.filter(results, result => result.id !== null), 'id')
+    )
+    const sampleIds = _.uniq(
+      _.map(_.filter(results, result => result.sampleId !== null), 'sampleId')
+    )
+    const originSiteIds = _.uniq(
+      _.map(
+        _.filter(results, result => result.originSiteId !== null),
+        'originSiteId'
+      )
+    )
     const opIds = await knex('DeviceOperation')
       .where('deviceId', deviceId)
       .map(op => op.id)
@@ -124,9 +140,6 @@ describe('Device API Raw routes for Senaite LIMS', () => {
       .where('token', validApiKeyToken)
       .orWhere('deviceId', deviceId)
       .delete()
-    await knex('Device')
-      .where('id', deviceId)
-      .delete()
     const inventoryItemIds = await knex('InventoryItem as ii')
       .where('ii.siteId', siteId)
       .distinct('ii.id')
@@ -161,16 +174,20 @@ describe('Device API Raw routes for Senaite LIMS', () => {
       .orWhereIn('generatedResultId', resultIds)
       .delete()
     await knex('ResultTag')
-      .whereIn('sourceResultId', resultIds)
+      .whereIn('resultId', resultIds)
       .delete()
     await knex('Result')
       .whereIn('id', resultIds)
       .delete()
+    await knex('Device')
+      .where('id', deviceId)
+      .delete()
     await knex('Sample')
-      .where('originSiteId', siteId)
+      .whereIn('id', sampleIds)
       .delete()
     await knex('Site')
-      .where('id', siteId)
+      .whereIn('id', originSiteIds)
+      .orWhere('id', siteId)
       .delete()
   })
 
@@ -879,5 +896,979 @@ describe('Device API Raw routes for Senaite LIMS', () => {
     assert.equal(deviceApiRawRecord.dataProcessor, 'DefaultSenaiteLIMS')
     const processedStatusId = await deviceApiRawStatusToId('Processed')
     expect(deviceApiRawRecord.deviceApiRawStatusId).to.equal(processedStatusId)
+  })
+
+  it('should correctly save a result for each of the analysis requests in the payload', async () => {
+    const payload = {
+      AdHoc: false,
+      Analyses: [
+        {
+          Accredited: false,
+          AllowManualDetectionLimit: false,
+          AllowManualUncertainty: false,
+          AnalysisService: '<AnalysisService at analysisservice-9>',
+          Analyst: 'baumgartner',
+          Attachment: [],
+          AttachmentOption: 'p',
+          BulkPrice: '0.00',
+          Calculation: null,
+          Category: '<AnalysisCategory at analysiscategory-2>',
+          CommercialID: '',
+          Creator: 'baumgartner',
+          Department: '<Department at department-13>',
+          DetectionLimitOperand: null,
+          DetectionLimitSelector: false,
+          DuplicateVariation: '0.00',
+          ExponentialFormatPrecision: 7,
+          Hidden: false,
+          HiddenManually: false,
+          Instrument: null,
+          InstrumentEntryOfResults: false,
+          InterimFields: [],
+          IsReflexAnalysis: false,
+          Keyword: 'SampleAppearance',
+          LowerDetectionLimit: '0.0000000',
+          ManualEntryOfResults: true,
+          MaxTimeAllowed: {},
+          Method: null,
+          NumberOfRequiredVerifications: 1,
+          OriginalReflexedAnalysis: null,
+          PointOfCapture: 'lab',
+          Precision: null,
+          PrecisionFromUncertainty: false,
+          Price: '0.00',
+          ProtocolID: '',
+          ReflexAnalysisOf: null,
+          ReflexRuleAction: '',
+          ReflexRuleActionsTriggered: '',
+          ReflexRuleLocalID: '',
+          Remarks: '',
+          Result: '0',
+          ResultCaptureDate: '2018/03/20 15:43:42.594776 GMT+2',
+          ResultOptions: [
+            {
+              ResultText: 'Salivary',
+              ResultValue: '0',
+              value: '',
+            },
+            {
+              ResultText: 'Mucoid',
+              ResultValue: '1',
+              value: '',
+            },
+            {
+              ResultText: 'Mucosalivary',
+              ResultValue: '2',
+              value: '',
+            },
+            {
+              ResultText: 'Mucopurulent',
+              ResultValue: '3',
+              value: '',
+            },
+            {
+              ResultText: 'Blood stained',
+              ResultValue: '4',
+              value: '',
+            },
+            {
+              ResultText: 'Bloody',
+              ResultValue: '5',
+              value: '',
+            },
+          ],
+          Retested: false,
+          SamplePartition: '<SamplePartition at SP18-127022-P1>',
+          ScientificName: false,
+          SelfVerification: -1,
+          ShortTitle: '',
+          SortKey: null,
+          UID: '356a6005582d4002ae3cf217810c834e',
+          Uncertainties: [],
+          Uncertainty: null,
+          Unit: '',
+          UpperDetectionLimit: '1000000000.0000000',
+          VAT: '15.00',
+          Verificators: 'epelmana',
+          allowDiscussion: null,
+          allowedRolesAndUsers: [
+            'LabManager',
+            'Publisher',
+            'Preserver',
+            'SamplingCoordinator',
+            'Verifier',
+            'Manager',
+            'Client',
+            'LabClerk',
+            'Sampler',
+            'user:admin',
+            'Analyst',
+            'RegulatoryInspector',
+          ],
+          contributors: [],
+          creation_date: '2017/08/18 10:54:08 GMT+2',
+          creators: ['baumgartner'],
+          description: '',
+          effectiveDate: '2018/03/20 15:43:42.585899 GMT+2',
+          expirationDate: '2018/03/20 15:43:42.557820 GMT+2',
+          getAnalyst: 'baumgartner',
+          getClientOrderNumber: '',
+          getClientTitle: 'Belvedere Clinic',
+          getDateSampled: null,
+          getDepartmentUID: 'fcf36ce00a2d451aaef7e82f06636b0a',
+          getId: 'SampleAppearance',
+          getInstrumentUID: null,
+          getKeyword: 'SampleAppearance',
+          getMethodUID: null,
+          getParentUID: 'bff3d6d1fbbb401cbd10812468a7fc83',
+          getPrioritySortkey:
+            '3.2017-08-18T10:54:08+02:00.sp17-000022-r01.999999.000sample appearance',
+          getRequestID: 'SP18-127022-R01',
+          getRetested: false,
+          getSampleTypeUID: 'ac0cbd54fc4d4c86b9e42fe4c870c184',
+          getServiceUID: '266c45a39c5041feb8728677d4e0359b',
+          id: 'SampleAppearance',
+          language: 'en',
+          location: '',
+          modification_date: '2018/09/18 13:23:27.384468 GMT+2',
+          portal_type: 'Analysis',
+          review_state: 'verified',
+          rights: '',
+          subject: [],
+          title: 'Sample Appearance',
+          transitions: [
+            {
+              id: 'assign',
+              title: 'assign_transition_title',
+            },
+            {
+              id: 'publish',
+              title: 'publish_transition_title',
+            },
+            {
+              id: 'reject',
+              title: 'reject_transition_title',
+            },
+          ],
+          worksheetanalysis_review_state: 'unassigned',
+        },
+        {
+          Accredited: false,
+          AllowManualDetectionLimit: false,
+          AllowManualUncertainty: false,
+          AnalysisService: '<AnalysisService at analysisservice-10>',
+          Analyst: 'baumgartner',
+          Attachment: [],
+          AttachmentOption: 'p',
+          BulkPrice: '0.00',
+          Calculation: null,
+          Category: '<AnalysisCategory at analysiscategory-2>',
+          CommercialID: '',
+          Creator: 'baumgartner',
+          Department: '<Department at department-13>',
+          DetectionLimitOperand: null,
+          DetectionLimitSelector: false,
+          DuplicateVariation: '0.00',
+          ExponentialFormatPrecision: 7,
+          Hidden: false,
+          HiddenManually: false,
+          Instrument: null,
+          InstrumentEntryOfResults: false,
+          InterimFields: [],
+          IsReflexAnalysis: false,
+          Keyword: 'SampleVolume',
+          LowerDetectionLimit: '0.0000000',
+          ManualEntryOfResults: true,
+          MaxTimeAllowed: {},
+          Method: null,
+          NumberOfRequiredVerifications: 1,
+          OriginalReflexedAnalysis: null,
+          PointOfCapture: 'lab',
+          Precision: null,
+          PrecisionFromUncertainty: false,
+          Price: '0.00',
+          ProtocolID: '',
+          ReflexAnalysisOf: null,
+          ReflexRuleAction: '',
+          ReflexRuleActionsTriggered: '',
+          ReflexRuleLocalID: '',
+          Remarks: '',
+          Result: '1',
+          ResultCaptureDate: '2018/03/20 15:43:42.036855 GMT+2',
+          ResultOptions: [
+            {
+              ResultText: '<1',
+              ResultValue: '0',
+              value: '',
+            },
+            {
+              ResultText: '1-3',
+              ResultValue: '1',
+              value: '',
+            },
+            {
+              ResultText: '3-5',
+              ResultValue: '2',
+              value: '',
+            },
+            {
+              ResultText: '>5',
+              ResultValue: '3',
+              value: '',
+            },
+          ],
+          Retested: false,
+          SamplePartition: '<SamplePartition at SP18-127022-P1>',
+          ScientificName: false,
+          SelfVerification: -1,
+          ShortTitle: '',
+          SortKey: null,
+          UID: '4ae8006153ee4730a7637be7cc57e31a',
+          Uncertainties: [],
+          Uncertainty: null,
+          Unit: 'ml',
+          UpperDetectionLimit: '1000000000.0000000',
+          VAT: '15.00',
+          Verificators: 'epelmana',
+          allowDiscussion: null,
+          allowedRolesAndUsers: [
+            'LabManager',
+            'Publisher',
+            'Preserver',
+            'SamplingCoordinator',
+            'Verifier',
+            'Manager',
+            'Client',
+            'LabClerk',
+            'Sampler',
+            'user:admin',
+            'Analyst',
+            'RegulatoryInspector',
+          ],
+          contributors: [],
+          creation_date: '2017/08/18 10:54:09 GMT+2',
+          creators: ['baumgartner'],
+          description: '',
+          effectiveDate: '2018/03/20 15:43:42.027460 GMT+2',
+          expirationDate: '2018/03/20 15:43:41.999819 GMT+2',
+          getAnalyst: 'baumgartner',
+          getClientOrderNumber: '',
+          getClientTitle: 'Belvedere Clinic',
+          getDateSampled: null,
+          getDepartmentUID: 'fcf36ce00a2d451aaef7e82f06636b0a',
+          getId: 'SampleVolume',
+          getInstrumentUID: null,
+          getKeyword: 'SampleVolume',
+          getMethodUID: null,
+          getParentUID: 'bff3d6d1fbbb401cbd10812468a7fc83',
+          getPrioritySortkey:
+            '3.2017-08-18T10:54:08+02:00.sp17-000022-r01.999999.000sample volume',
+          getRequestID: 'SP18-127022-R01',
+          getRetested: false,
+          getSampleTypeUID: 'ac0cbd54fc4d4c86b9e42fe4c870c184',
+          getServiceUID: 'f06f0c6f05834ac4b088e440c481b4dc',
+          id: 'SampleVolume',
+          language: 'en',
+          location: '',
+          modification_date: '2018/09/18 13:23:27.624088 GMT+2',
+          portal_type: 'Analysis',
+          review_state: 'verified',
+          rights: '',
+          subject: [],
+          title: 'Sample Volume',
+          transitions: [
+            {
+              id: 'assign',
+              title: 'assign_transition_title',
+            },
+            {
+              id: 'publish',
+              title: 'publish_transition_title',
+            },
+            {
+              id: 'reject',
+              title: 'reject_transition_title',
+            },
+          ],
+          worksheetanalysis_review_state: 'unassigned',
+        },
+        {
+          Accredited: false,
+          AllowManualDetectionLimit: false,
+          AllowManualUncertainty: false,
+          AnalysisService: '<AnalysisService at analysisservice-5>',
+          Analyst: 'baumgartner',
+          Attachment: [],
+          AttachmentOption: 'p',
+          BulkPrice: '0.00',
+          Calculation: null,
+          Category: '<AnalysisCategory at analysiscategory-3>',
+          CommercialID: '',
+          Creator: 'baumgartner',
+          Department: '<Department at department-13>',
+          DetectionLimitOperand: null,
+          DetectionLimitSelector: false,
+          DuplicateVariation: '0.00',
+          ExponentialFormatPrecision: 7,
+          Hidden: false,
+          HiddenManually: false,
+          Instrument: null,
+          InstrumentEntryOfResults: false,
+          InterimFields: [],
+          IsReflexAnalysis: false,
+          Keyword: 'SmearMicroscopy',
+          LowerDetectionLimit: '0.0000000',
+          ManualEntryOfResults: true,
+          MaxTimeAllowed: {
+            hours: '48',
+          },
+          Method: null,
+          NumberOfRequiredVerifications: 1,
+          OriginalReflexedAnalysis: null,
+          PointOfCapture: 'lab',
+          Precision: null,
+          PrecisionFromUncertainty: false,
+          Price: '0.00',
+          ProtocolID: '',
+          ReflexAnalysisOf: null,
+          ReflexRuleAction: '',
+          ReflexRuleActionsTriggered: '',
+          ReflexRuleLocalID: '',
+          Remarks: '',
+          Result: '1',
+          ResultCaptureDate: '2018/03/20 15:43:42.317157 GMT+2',
+          ResultOptions: [
+            {
+              ResultText: 'Negative',
+              ResultValue: '0',
+              value: '',
+            },
+            {
+              ResultText: 'Positive (+)',
+              ResultValue: '2',
+              value: '',
+            },
+            {
+              ResultText: 'Positive (++)',
+              ResultValue: '3',
+              value: '',
+            },
+            {
+              ResultText: 'Positive (+++)',
+              ResultValue: '4',
+              value: '',
+            },
+            {
+              ResultText: 'Scanty (1-9/100)',
+              ResultValue: '1',
+              value: '',
+            },
+          ],
+          Retested: false,
+          SamplePartition: '<SamplePartition at SP18-127022-P1>',
+          ScientificName: false,
+          SelfVerification: -1,
+          ShortTitle: '',
+          SortKey: null,
+          UID: '9ef5e60e6c484af6a5887932c2f2a679',
+          Uncertainties: [],
+          Uncertainty: null,
+          Unit: '',
+          UpperDetectionLimit: '1000000000.0000000',
+          VAT: '15.00',
+          Verificators: 'epelmana',
+          allowDiscussion: null,
+          allowedRolesAndUsers: [
+            'LabManager',
+            'Publisher',
+            'Preserver',
+            'SamplingCoordinator',
+            'Verifier',
+            'Manager',
+            'Client',
+            'LabClerk',
+            'Sampler',
+            'user:admin',
+            'Analyst',
+            'RegulatoryInspector',
+          ],
+          contributors: [],
+          creation_date: '2017/08/18 10:54:08 GMT+2',
+          creators: ['baumgartner'],
+          description: '',
+          effectiveDate: '2018/03/20 15:43:42.307938 GMT+2',
+          expirationDate: '2018/03/20 15:43:42.279949 GMT+2',
+          getAnalyst: 'baumgartner',
+          getClientOrderNumber: '',
+          getClientTitle: 'Belvedere Clinic',
+          getDateSampled: null,
+          getDepartmentUID: 'fcf36ce00a2d451aaef7e82f06636b0a',
+          getId: 'SmearMicroscopy',
+          getInstrumentUID: null,
+          getKeyword: 'SmearMicroscopy',
+          getMethodUID: null,
+          getParentUID: 'bff3d6d1fbbb401cbd10812468a7fc83',
+          getPrioritySortkey:
+            '3.2017-08-18T10:54:08+02:00.sp17-000022-r01.999999.000smear microscopy',
+          getRequestID: 'SP18-127022-R01',
+          getRetested: false,
+          getSampleTypeUID: 'ac0cbd54fc4d4c86b9e42fe4c870c184',
+          getServiceUID: '1cc10f8290a248198e768dc4aaaee28c',
+          id: 'SmearMicroscopy',
+          language: 'en',
+          location: '',
+          modification_date: '2018/09/18 13:23:27.862904 GMT+2',
+          portal_type: 'Analysis',
+          review_state: 'verified',
+          rights: '',
+          subject: [],
+          title: 'Smear Microscopy',
+          transitions: [
+            {
+              id: 'assign',
+              title: 'assign_transition_title',
+            },
+            {
+              id: 'publish',
+              title: 'publish_transition_title',
+            },
+            {
+              id: 'reject',
+              title: 'reject_transition_title',
+            },
+          ],
+          worksheetanalysis_review_state: 'unassigned',
+        },
+        {
+          Accredited: false,
+          AllowManualDetectionLimit: false,
+          AllowManualUncertainty: false,
+          AnalysisService: '<AnalysisService at analysisservice-6>',
+          Analyst: '',
+          Attachment: [],
+          AttachmentOption: 'p',
+          BulkPrice: '0.00',
+          Calculation: null,
+          Category: '<AnalysisCategory at analysiscategory-4>',
+          CommercialID: '',
+          Creator: 'baumgartner',
+          Department: '<Department at department-13>',
+          DetectionLimitOperand: null,
+          DetectionLimitSelector: false,
+          DuplicateVariation: '0.00',
+          ExponentialFormatPrecision: 7,
+          Hidden: false,
+          HiddenManually: false,
+          Instrument: null,
+          InstrumentEntryOfResults: false,
+          InterimFields: [],
+          IsReflexAnalysis: false,
+          Keyword: 'TBCulture',
+          LowerDetectionLimit: '0.0000000',
+          ManualEntryOfResults: true,
+          MaxTimeAllowed: {
+            days: '42',
+          },
+          Method: null,
+          NumberOfRequiredVerifications: 1,
+          OriginalReflexedAnalysis: null,
+          PointOfCapture: 'lab',
+          Precision: null,
+          PrecisionFromUncertainty: false,
+          Price: '0.00',
+          ProtocolID: '',
+          ReflexAnalysisOf: null,
+          ReflexRuleAction: '',
+          ReflexRuleActionsTriggered: '',
+          ReflexRuleLocalID: '',
+          Remarks: '',
+          Result: '',
+          ResultCaptureDate: '2018/03/20 15:43:42.928214 GMT+2',
+          ResultOptions: [
+            {
+              ResultText: 'Contaminated',
+              ResultValue: '3',
+              value: '',
+            },
+            {
+              ResultText: 'Negative',
+              ResultValue: '0',
+              value: '',
+            },
+            {
+              ResultText: 'Positive MOTT',
+              ResultValue: '2',
+              value: '',
+            },
+            {
+              ResultText: 'Positive MTB',
+              ResultValue: '1',
+              value: '',
+            },
+          ],
+          Retested: false,
+          SamplePartition: '<SamplePartition at SP18-127022-P1>',
+          ScientificName: false,
+          SelfVerification: -1,
+          ShortTitle: '',
+          SortKey: null,
+          UID: 'e8a5ef9abe404aea83a95619fa929297',
+          Uncertainties: [],
+          Uncertainty: null,
+          Unit: '',
+          UpperDetectionLimit: '1000000000.0000000',
+          VAT: '15.00',
+          Verificators: '',
+          allowDiscussion: null,
+          allowedRolesAndUsers: [
+            'LabManager',
+            'Publisher',
+            'Preserver',
+            'SamplingCoordinator',
+            'Verifier',
+            'Manager',
+            'Client',
+            'LabClerk',
+            'Sampler',
+            'user:admin',
+            'Analyst',
+            'RegulatoryInspector',
+          ],
+          contributors: [],
+          creation_date: '2017/08/18 10:54:08 GMT+2',
+          creators: ['baumgartner'],
+          description: '',
+          effectiveDate: '2018/03/20 15:43:42.919128 GMT+2',
+          expirationDate: '2018/03/20 15:43:42.890911 GMT+2',
+          getAnalyst: '',
+          getClientOrderNumber: '',
+          getClientTitle: 'Belvedere Clinic',
+          getDateSampled: null,
+          getDepartmentUID: 'fcf36ce00a2d451aaef7e82f06636b0a',
+          getDueDate: '',
+          getId: 'TBCulture',
+          getInstrumentUID: null,
+          getKeyword: 'TBCulture',
+          getMethodUID: null,
+          getParentUID: 'bff3d6d1fbbb401cbd10812468a7fc83',
+          getPrioritySortkey:
+            '3.2018-03-20T15:43:41+02:00.sp17-000022-r01.999999.000tb culture',
+          getRequestID: 'SP18-127022-R01',
+          getRetested: false,
+          getSampleTypeUID: null,
+          getServiceUID: '8efc879a62534eca87f189334ff57edb',
+          id: 'TBCulture',
+          language: 'en',
+          location: '',
+          modification_date: '2018/03/20 15:43:43.129362 GMT+2',
+          portal_type: 'Analysis',
+          review_state: 'sample_received',
+          rights: '',
+          subject: [],
+          title: 'TB Culture',
+          transitions: [
+            {
+              id: 'cancel',
+              title: 'cancel_transition_title',
+            },
+            {
+              id: 'sample_prep',
+              title: 'sample_prep_transition_title',
+            },
+            {
+              id: 'assign',
+              title: 'assign_transition_title',
+            },
+            {
+              id: 'submit',
+              title: 'submit_transition_title',
+            },
+            {
+              id: 'reject',
+              title: 'reject_transition_title',
+            },
+          ],
+          worksheetanalysis_review_state: 'unassigned',
+        },
+        {
+          Accredited: false,
+          AllowManualDetectionLimit: false,
+          AllowManualUncertainty: false,
+          AnalysisService: '<AnalysisService at analysisservice-39>',
+          Analyst: '',
+          Attachment: [],
+          AttachmentOption: 'p',
+          BulkPrice: '0.00',
+          Calculation: null,
+          Category: '<AnalysisCategory at analysiscategory-13>',
+          CommercialID: '',
+          Creator: 'baumgartner',
+          Department: '<Department at department-13>',
+          DetectionLimitOperand: null,
+          DetectionLimitSelector: false,
+          DuplicateVariation: '0.00',
+          ExponentialFormatPrecision: 7,
+          Hidden: false,
+          HiddenManually: false,
+          Instrument: null,
+          InstrumentEntryOfResults: false,
+          InterimFields: [],
+          IsReflexAnalysis: false,
+          Keyword: 'TBIntepretation',
+          LowerDetectionLimit: '0.0000000',
+          ManualEntryOfResults: true,
+          MaxTimeAllowed: {
+            hours: '24',
+          },
+          Method: null,
+          NumberOfRequiredVerifications: 1,
+          OriginalReflexedAnalysis: null,
+          PointOfCapture: 'lab',
+          Precision: null,
+          PrecisionFromUncertainty: false,
+          Price: '0.00',
+          ProtocolID: '',
+          ReflexAnalysisOf: null,
+          ReflexRuleAction: '',
+          ReflexRuleActionsTriggered: '',
+          ReflexRuleLocalID: '',
+          Remarks: '',
+          Result: '',
+          ResultCaptureDate: '2018/03/20 15:43:41.758700 GMT+2',
+          ResultOptions: [
+            {
+              ResultText: 'Drug Sensitive TB',
+              ResultValue: '7',
+              value: '',
+            },
+            {
+              ResultText: 'Extensively Drug Resistant TB',
+              ResultValue: '1',
+              value: '',
+            },
+            {
+              ResultText: 'Floroquinolones Mono Resistant TB',
+              ResultValue: '5',
+              value: '',
+            },
+            {
+              ResultText: 'Injectables Mono Resistant TB',
+              ResultValue: '4',
+              value: '',
+            },
+            {
+              ResultText: 'Iso Mono Resistant TB',
+              ResultValue: '3',
+              value: '',
+            },
+            {
+              ResultText: 'Multi Drug Resistant TB',
+              ResultValue: '0',
+              value: '',
+            },
+            {
+              ResultText: 'Mycobacterium Other Than TB',
+              ResultValue: '6',
+              value: '',
+            },
+            {
+              ResultText: 'Rif Mono Resistant TB',
+              ResultValue: '2',
+              value: '',
+            },
+          ],
+          Retested: false,
+          SamplePartition: '<SamplePartition at SP18-127022-P1>',
+          ScientificName: false,
+          SelfVerification: -1,
+          ShortTitle: '',
+          SortKey: null,
+          UID: '62642611877c4821addb7c82b7c1f840',
+          Uncertainties: [],
+          Uncertainty: null,
+          Unit: '',
+          UpperDetectionLimit: '1000000000.0000000',
+          VAT: '15.00',
+          Verificators: '',
+          allowDiscussion: null,
+          allowedRolesAndUsers: [
+            'LabManager',
+            'Publisher',
+            'Preserver',
+            'SamplingCoordinator',
+            'Verifier',
+            'Manager',
+            'Client',
+            'LabClerk',
+            'Sampler',
+            'user:admin',
+            'Analyst',
+            'RegulatoryInspector',
+          ],
+          contributors: [],
+          creation_date: '2017/08/18 10:54:08 GMT+2',
+          creators: ['baumgartner'],
+          description: '',
+          effectiveDate: '2018/03/20 15:43:41.753842 GMT+2',
+          expirationDate: '2018/03/20 15:43:41.733167 GMT+2',
+          getAnalyst: '',
+          getClientOrderNumber: '',
+          getClientTitle: 'Belvedere Clinic',
+          getDateSampled: null,
+          getDepartmentUID: 'fcf36ce00a2d451aaef7e82f06636b0a',
+          getDueDate: '',
+          getId: 'TBIntepretation',
+          getInstrumentUID: null,
+          getKeyword: 'TBIntepretation',
+          getMethodUID: null,
+          getParentUID: 'bff3d6d1fbbb401cbd10812468a7fc83',
+          getPrioritySortkey:
+            '3.2018-03-20T15:43:41+02:00.sp17-000022-r01.999999.000result intepretation',
+          getRequestID: 'SP18-127022-R01',
+          getRetested: false,
+          getSampleTypeUID: null,
+          getServiceUID: '336a73af8ec744ddb92bf5ddc08a5653',
+          id: 'TBIntepretation',
+          language: 'en',
+          location: '',
+          modification_date: '2018/03/20 15:43:43.743483 GMT+2',
+          portal_type: 'Analysis',
+          review_state: 'sample_received',
+          rights: '',
+          subject: [],
+          title: 'Result Intepretation',
+          transitions: [
+            {
+              id: 'cancel',
+              title: 'cancel_transition_title',
+            },
+            {
+              id: 'sample_prep',
+              title: 'sample_prep_transition_title',
+            },
+            {
+              id: 'assign',
+              title: 'assign_transition_title',
+            },
+            {
+              id: 'submit',
+              title: 'submit_transition_title',
+            },
+            {
+              id: 'reject',
+              title: 'reject_transition_title',
+            },
+          ],
+          worksheetanalysis_review_state: 'unassigned',
+        },
+      ],
+      AnalysisServicesSettings: [],
+      Attachment: [],
+      Batch: null,
+      BatchID: '',
+      BatchURL: '',
+      CCContact: [],
+      CCEmails: '',
+      ChildAnalysisRequest: null,
+      Client: 'Belvedere Clinic',
+      ClientOrderNumber: '',
+      ClientPatientID: 'eeee6859d93d4cf88a205bcaf8c00587',
+      ClientReference: '',
+      ClientSampleID: '',
+      ClientTitle: 'Belvedere Clinic',
+      ClientUID: 'f1b176f190784a80a06626d920b9bb2f',
+      ClientURL: '/clients/client17-1484',
+      Client_uid: 'f1b176f190784a80a06626d920b9bb2f',
+      Composite: false,
+      Contact: '<Contact at contact-43>',
+      ContactEmail: '',
+      ContactFullName: 'Sister in charge c/o BRIDH',
+      ContactUID: '937b59d2480c47b58d0074ab2de65003',
+      ContactUsername: '',
+      Creator: 'baumgartner',
+      CreatorEmail: 'baumgartner@health.gov',
+      CreatorFullName: 'baumgartner',
+      DatePublished: null,
+      DatePublishedViewer: '',
+      DateReceived: '2017/08/18 10:55:04 GMT+2',
+      DateSampled: '2016/01/05 00:00:00 GMT+0',
+      DefaultContainerType: null,
+      Digest:
+        "{'client_order_num': '', 'managers': {'dict': {'epelmana': {'name': u'Florence Nightingale', 'departments': '', 'phone': u'', 'signature': '', 'salutation': u'Mrs', 'email': u'epelmana@health.gov', 'job_title': u''}}, 'ids': ['epelmana']}, 'parent_analysisrequest': None, 'ar_attachments': [], 'an_attachments': [], 'member_discount': '0.00', 'sample': {'date_sampled': DateTime('2016/01/05 00:00:00 GMT+0'), 'obj': <Sample at SP18-127022>, 'date_expired': DateTime('2018/03/20 15:43:44.432657 GMT+2'), 'url': 'http://192.168.0.25/clients/client17-1484/SP18-127022', 'sample_point': {}, 'client_sampleid': '', 'date_disposed': DateTime('2018/03/20 15:43:44.429135 GMT+2'), 'adhoc': False, 'date_received': DateTime('2017/08/18 10:55:03 GMT+2'), 'composite': False, 'sampling_date': DateTime('2018/03/20 15:43:44.557745 GMT+2'), 'sample_type': {'url': 'http://192.168.0.25/bika_setup/bika_sampletypes/sampletype-12', 'obj': <SampleType at sampletype-12>, 'id': 'sampletype-12', 'title': 'Sputum'}, 'sampler': {}, 'remarks': '', 'id': 'SP18-127022', 'date_disposal': DateTime('2016/01/05 00:00:00 GMT+2')}, 'adhoc': False, 'laboratory': {'confidence': None, 'obj': <Laboratory at laboratory>, 'title': 'NMRL', 'url': '', 'accreditation_body': '', 'accredited': False, 'address': \"<div class='address'><span>2nd Floor New Laboratory Complex</span><span>Southerton</span><span>Harare</span><span>Harare</span><span>Zimbabwe</span></div>\", 'logo': 'http://192.168.0.25/logo_print.png', 'supervisor': '', 'accreditation_logo': ''}, 'id': 'SP18-127022-R01', 'categorized_analyses': {'Lab Analyses': {'TB Sample Analysis': [{'scientific_name': False, 'formatted_result': 'Salivary', 'result': '0', 'formatted_specs': '', 'formatted_uncertainty': '', 'point_of_capture': 'Lab Analyses', 'refsample': 'SP18-127022', 'id': 'SampleAppearance', 'unit': '', 'worksheet_url': None, 'category': 'TB Sample Analysis', 'title': 'Sample Appearance', 'outofrange': False, 'accredited': False, 'specs':{'max': '', 'warn_min': '', 'min': '', 'warn_max': ''}, 'previous': [], 'type': 'Analysis', 'formatted_unit': '', 'reftype': None, 'remarks': '', 'previous_results': '', 'retested': False, 'obj': <Analysis at SampleAppearance>, 'keyword': 'SampleAppearance', 'worksheet': None, 'uncertainty': None, 'capture_date': DateTime('2018/03/20 15:43:42.594776 GMT+2'), 'request_id': 'SP18-127022-R01', 'isnumber': True}, {'scientific_name': False, 'formatted_result': '1-3', 'result': '1', 'formatted_specs': '', 'formatted_uncertainty': '', 'point_of_capture': 'Lab Analyses', 'refsample': 'SP18-127022', 'id': 'SampleVolume', 'unit': 'ml', 'worksheet_url': None, 'category': 'TB Sample Analysis', 'title': 'Sample Volume', 'outofrange': False, 'accredited': False, 'specs': {'max': '', 'warn_min': '', 'min': '', 'warn_max': ''}, 'previous': [], 'type': 'Analysis', 'formatted_unit': 'ml', 'reftype': None, 'remarks': '', 'previous_results': '', 'retested': False, 'obj': <Analysis at SampleVolume>, 'keyword': 'SampleVolume', 'worksheet': None, 'uncertainty': None, 'capture_date': DateTime('2018/03/20 15:43:42.036855 GMT+2'), 'request_id': 'SP18-127022-R01', 'isnumber': True}], 'Smear Microscopy': [{'scientific_name': False, 'formatted_result': 'Scanty (1-9/100)', 'result': '1', 'formatted_specs': '', 'formatted_uncertainty': '', 'point_of_capture': 'Lab Analyses', 'refsample': 'SP18-127022', 'id': 'SmearMicroscopy', 'unit': '', 'worksheet_url': None, 'category': 'Smear Microscopy', 'title': 'Smear Microscopy', 'outofrange': False, 'accredited': False, 'specs': {'max': '', 'warn_min': '', 'min': '', 'warn_max': ''}, 'previous': [], 'type': 'Analysis', 'formatted_unit': '', 'reftype': None, 'remarks': '', 'previous_results': '', 'retested': False, 'obj': <Analysis at SmearMicroscopy>, 'keyword': 'SmearMicroscopy', 'worksheet': None, 'uncertainty': None, 'capture_date': DateTime('2018/03/20 15:43:42.317157 GMT+2'), 'request_id': 'SP18-127022-R01', 'isnumber': True}]}}, 'invoiced': False, 'totalprice': Decimal('0.0000'), 'hasblanks': False, 'qcanalyses': [], 'points_of_capture': ['Lab Analyses'], 'categorized_qcanalyses': {}, 'invalid': False, 'date_received': '2017-08-18T10:55:04+02:00', 'late': True, 'specifications': {}, 'client': {'fax': '', 'obj': <Client at client17-1484>, 'name': 'Belvedere Clinic', 'url': 'http://192.168.0.25/clients/client17-1484', 'phone': '+263783282894', 'address': \"<div class='address'></div>\", 'id': 'client17-1484'}, 'invoice_exclude': False, 'department_analyses': {'fcf36ce00a2d451aaef7e82f06636b0a': {'Lab Analyses': {'TB Sample Analysis': [{'scientific_name': False, 'formatted_result': 'Salivary', 'result': '0', 'formatted_specs': '', 'formatted_uncertainty': '', 'point_of_capture': 'Lab Analyses', 'refsample': 'SP18-127022', 'id': 'SampleAppearance', 'unit': '', 'worksheet_url': None, 'category': 'TB Sample Analysis', 'title': 'Sample Appearance', 'outofrange': False, 'accredited': False, 'specs': {'max': '', 'warn_min': '', 'min': '', 'warn_max': ''}, 'previous': [], 'type': 'Analysis', 'formatted_unit': '', 'reftype': None, 'remarks': '', 'previous_results': '', 'retested': False, 'obj': <Analysis at SampleAppearance>, 'keyword': 'SampleAppearance', 'worksheet': None, 'uncertainty': None, 'capture_date': DateTime('2018/03/20 15:43:42.594776 GMT+2'), 'request_id': 'SP18-127022-R01', 'isnumber': True}, {'scientific_name': False, 'formatted_result': '1-3', 'result': '1', 'formatted_specs': '', 'formatted_uncertainty': '', 'point_of_capture': 'Lab Analyses', 'refsample': 'SP18-127022', 'id': 'SampleVolume', 'unit': 'ml', 'worksheet_url': None, 'category': 'TB Sample Analysis', 'title': 'Sample Volume', 'outofrange': False, 'accredited': False, 'specs': {'max': '', 'warn_min': '', 'min': '', 'warn_max': ''}, 'previous': [], 'type': 'Analysis', 'formatted_unit': 'ml', 'reftype': None, 'remarks': '', 'previous_results': '', 'retested': False, 'obj': <Analysis at SampleVolume>, 'keyword': 'SampleVolume', 'worksheet': None, 'uncertainty': None, 'capture_date': DateTime('2018/03/20 15:43:42.036855 GMT+2'), 'request_id': 'SP18-127022-R01', 'isnumber': True}], 'Smear Microscopy': [{'scientific_name': False, 'formatted_result': 'Scanty (1-9/100)', 'result': '1', 'formatted_specs': '', 'formatted_uncertainty': '', 'point_of_capture': 'Lab Analyses', 'refsample': 'SP18-127022', 'id': 'SmearMicroscopy', 'unit': '', 'worksheet_url': None, 'category': 'Smear Microscopy', 'title': 'Smear Microscopy', 'outofrange': False,'accredited': False, 'specs': {'max': '', 'warn_min': '', 'min': '', 'warn_max': ''}, 'previous': [], 'type': 'Analysis', 'formatted_unit': '', 'reftype': None, 'remarks': '', 'previous_results': '', 'retested': False, 'obj': <Analysis at SmearMicroscopy>, 'keyword': 'SmearMicroscopy', 'worksheet': None, 'uncertainty': None, 'capture_date': DateTime('2018/03/20 15:43:42.317157 GMT+2'), 'request_id': 'SP18-127022-R01', 'isnumber': True}]}}}, 'date_sampled': '2016-01-05T00:00:00', 'resultsinterpretationdepts': {'': {'uid': 'general', 'richtext': ''}, 'TB': {'uid': 'fcf36ce00a2d451aaef7e82f06636b0a', 'richtext': ''}}, 'reporter': {'username': u'tinarwok', 'fullname': 'Kennedy Tinarwo', 'email': 'tinarwok@health.gov'}, 'composite': False, 'date_published': '2019-02-18T11:17:43+02:00', 'portal': {'url': 'http://192.168.0.25', 'obj': <PloneSite at senaite>}, 'hascontrols': False, 'remarks': '', 'analyses': [{'scientific_name': False, 'formatted_result': 'Salivary', 'result': '0', 'formatted_specs': '', 'formatted_uncertainty': '', 'point_of_capture': 'Lab Analyses', 'refsample': 'SP18-127022', 'id': 'SampleAppearance', 'unit': '', 'worksheet_url': None, 'category': 'TB Sample Analysis', 'title': 'Sample Appearance', 'outofrange': False, 'accredited': False, 'specs': {'max': '', 'warn_min': '', 'min': '', 'warn_max': ''}, 'previous': [], 'type': 'Analysis', 'formatted_unit': '', 'reftype': None, 'remarks': '', 'previous_results': '', 'retested': False, 'obj': <Analysis at SampleAppearance>, 'keyword': 'SampleAppearance', 'worksheet': None, 'uncertainty': None, 'capture_date': DateTime('2018/03/20 15:43:42.594776 GMT+2'), 'request_id': 'SP18-127022-R01', 'isnumber': True}, {'scientific_name': False, 'formatted_result': '1-3', 'result': '1', 'formatted_specs': '', 'formatted_uncertainty': '', 'point_of_capture': 'Lab Analyses', 'refsample': 'SP18-127022', 'id': 'SampleVolume', 'unit': 'ml', 'worksheet_url': None, 'category': 'TB Sample Analysis', 'title': 'Sample Volume', 'outofrange': False, 'accredited': False, 'specs': {'max': '', 'warn_min': '', 'min': '', 'warn_max': ''}, 'previous': [], 'type': 'Analysis', 'formatted_unit':'ml', 'reftype': None, 'remarks': '', 'previous_results': '', 'retested': False, 'obj': <Analysis at SampleVolume>, 'keyword': 'SampleVolume', 'worksheet': None, 'uncertainty': None, 'capture_date': DateTime('2018/03/20 15:43:42.036855 GMT+2'), 'request_id': 'SP18-127022-R01', 'isnumber': True}, {'scientific_name': False, 'formatted_result': 'Scanty (1-9/100)', 'result': '1', 'formatted_specs': '', 'formatted_uncertainty': '', 'point_of_capture': 'Lab Analyses', 'refsample': 'SP18-127022', 'id': 'SmearMicroscopy', 'unit': '', 'worksheet_url': None, 'category': 'Smear Microscopy', 'title': 'Smear Microscopy', 'outofrange': False, 'accredited': False, 'specs': {'max': '', 'warn_min': '', 'min': '', 'warn_max': ''}, 'previous': [], 'type': 'Analysis', 'formatted_unit': '', 'reftype': None, 'remarks': '', 'previous_results': '', 'retested': False, 'obj': <Analysis at SmearMicroscopy>, 'keyword': 'SmearMicroscopy', 'worksheet': None, 'uncertainty': None, 'capture_date': DateTime('2018/03/20 15:43:42.317157 GMT+2'), 'request_id': 'SP18-127022-R01', 'isnumber': True}], 'child_analysisrequest': None, 'subtotal': Decimal('0.00'), 'haspreviousresults': False, 'categories': ['Smear Microscopy', 'TB Sample Analysis'], 'client_reference': '', 'obj': <AnalysisRequest at SP18-127022-R01>, 'vat_amount': Decimal('0.0000'), 'footer': '', 'url': 'http://192.168.0.25/clients/client17-1484/SP18-127022-R01', 'client_sampleid': '', 'batch': {}, 'contact': {'pubpref': ('email', 'pdf', 'print', 'smsresult'), 'fullname': 'Sister in charge', 'obj': <Contact at contact-43>, 'email': ''}, 'prepublish': True, 'hasduplicates': False, 'resultsinterpretation': ''}",
+      Doctor: null,
+      EnvironmentalConditions: '',
+      Invoice: null,
+      InvoiceExclude: false,
+      Invoiced: false,
+      MemberDiscount: '0.00',
+      PanicEmailAlertToClientSent: false,
+      ParentAnalysisRequest: null,
+      Patient: 'Edward Jones',
+      Patient_uid: '40cdc8ed7bae4bd89805a1a76dc55699',
+      PreparationWorkflow: '',
+      Printed: '',
+      Priority: '3',
+      Profile: null,
+      Profiles: [],
+      ProfilesTitle: [],
+      ProfilesTitleStr: '',
+      ProfilesUID: [],
+      ProfilesURL: [],
+      PublicationSpecification: null,
+      ReceivedBy: 'baumgartner',
+      RejectionReasons: [],
+      Remarks: '',
+      ResultsInterpretation: '',
+      ResultsInterpretationDepts: [],
+      ResultsRange: [],
+      Sample: '<Sample at SP18-127022>',
+      SampleCondition: null,
+      SampleID: 'SP18-127022',
+      SamplePoint: null,
+      SamplePointTitle: '',
+      SamplePointUID: '',
+      SampleType: '<SampleType at sampletype-12>',
+      SampleTypeTitle: 'Sputum',
+      SampleTypeUID: 'ac0cbd54fc4d4c86b9e42fe4c870c184',
+      SampleUID: '23315fe9b70540d890d8d60d64be124b',
+      SampleURL: '/clients/client17-1484/SP18-127022',
+      Sampler: '',
+      SamplerEmail: 'baumgartner@health.gov',
+      SamplerFullName: '',
+      SamplingDate: '2018/03/20 15:43:44.557745 GMT+2',
+      SamplingDeviation: null,
+      SamplingRound: null,
+      SamplingRoundUID: '',
+      ScheduledSamplingSampler: '',
+      Specification: null,
+      StorageLocation: null,
+      StorageLocationUID: '',
+      SubGroup: null,
+      Template: null,
+      TemplateTitle: '',
+      TemplateUID: '',
+      TemplateURL: '',
+      UID: 'bff3d6d1fbbb401cbd10812468a7fc83',
+      allowDiscussion: null,
+      allowedRolesAndUsers: [
+        'LabManager',
+        'Publisher',
+        'Preserver',
+        'SamplingCoordinator',
+        'Verifier',
+        'Manager',
+        'Client',
+        'LabClerk',
+        'Sampler',
+        'user:admin',
+        'Analyst',
+        'RegulatoryInspector',
+      ],
+      assigned_state: 'unassigned',
+      contributors: [],
+      creation_date: '2017/08/18 10:54:08 GMT+2',
+      creators: ['baumgartner'],
+      description: 'SP18-127022-R01 Belvedere Clinic',
+      effectiveDate: '2018/03/20 15:43:44.514348 GMT+2',
+      expirationDate: '2018/03/20 15:43:44.504073 GMT+2',
+      getBatchUID: null,
+      getClientSampleID: '',
+      getClientTitle: 'Belvedere Clinic',
+      getClientUID: 'f1b176f190784a80a06626d920b9bb2f',
+      getDatePublished: null,
+      getDateVerified: null,
+      getDepartmentUIDs: ['fcf36ce00a2d451aaef7e82f06636b0a'],
+      getDistrict: 'North Western',
+      getDoctorTitle: '',
+      getDoctorUID: '',
+      getId: 'SP18-127022-R01',
+      getPatientID: 'P17-0045',
+      getPatientTitle: 'Edward Jones',
+      getPatientUID: '40cdc8ed7bae4bd89805a1a76dc55699',
+      getPrinted: '0',
+      getPrioritySortkey: '3.2017-08-18T10:54:08+02:00',
+      getProvince: 'Harare',
+      getSampleID: 'SP18-127022',
+      getSampleUID: '23315fe9b70540d890d8d60d64be124b',
+      getSampler: '',
+      id: 'SP18-127022-R01',
+      language: 'en',
+      location: '',
+      modification_date: '2019/02/18 11:18:15.875778 GMT+2',
+      path: '/senaite/clients/client17-1484/SP18-127022-R01',
+      portal_type: 'AnalysisRequest',
+      review_state: 'sample_received',
+      rights: '',
+      subject: [],
+      title: 'SP18-127022-R01',
+      transitions: [
+        {
+          id: 'prepublish',
+          title: 'prepublish_transition_title',
+        },
+        {
+          id: 'reject',
+          title: 'reject_transition_title',
+        },
+      ],
+    }
+    const { id: sampleIdBefore } =
+      (await knex('Sample')
+        .where('externalId', payload.SampleID)
+        .first('id')) || {}
+    assert.isUndefined(sampleIdBefore)
+    const response = await server
+      .post(deviceApiRawPath)
+      .set('Authorization', `Bearer ${validApiKeyToken}`)
+      .send(payload)
+    assert.equal(response.statusCode, 200)
+    await Promise.delay(2000)
+    const deviceApiRawRecord = await knex('DeviceApiRaw')
+      .where({ id: response.body })
+      .first()
+    assert.equal(deviceApiRawRecord.dataProcessor, 'DefaultSenaiteLIMS')
+    const processedStatusId = await deviceApiRawStatusToId('Processed')
+    expect(deviceApiRawRecord.deviceApiRawStatusId).to.equal(processedStatusId)
+    const sampleIdsAfter = await knex('Sample')
+      .where('externalId', payload.SampleID)
+      .pluck('id')
+    expect(sampleIdsAfter)
+      .to.be.an('array')
+      .that.has.lengthOf(1)
+    const results = await knex('Result as r')
+      .join('Sample as s', 'r.sampleId', 's.id')
+      .join('Site as si', 's.originSiteId', 'si.id')
+      .join('Geography as g', 'si.geographyId', 'g.id')
+      .join('State as st', 'g.stateId', 'st.id')
+      .join('Lga as l', 'g.lgaId', 'l.id')
+      .join('ResultWorkflowLog as rwl', 'r.resultWorkflowStatusLogId', 'rwl.id')
+      .join(
+        'ResultWorkflowStatus as rws',
+        'rwl.resultWorkflowStatusId',
+        'rws.id'
+      )
+      .where('r.sampleId', sampleIdsAfter[0])
+      .select(
+        'r.id',
+        'r.resultData',
+        'r.patientData',
+        'rws.externalId as workflowStatus',
+        'si.name as referringFacilityName',
+        'st.name as stateName',
+        'l.name as lgaName'
+      )
+      .map(result =>
+        Object.assign({}, result, {
+          resultData: JSON.parse(result.resultData),
+          patientData: JSON.parse(result.patientData),
+        })
+      )
+    results.forEach(result => {
+      expect(result).to.containSubset({
+        stateName: payload.getProvince,
+        lgaName: payload.getDistrict,
+        referringFacilityName: payload.Client,
+      })
+    })
   })
 })
