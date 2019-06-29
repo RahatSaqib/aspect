@@ -95,3 +95,23 @@
 .TableCell__tag {
   margin-right: 10px;
 }
+
+.ok {
+  color: green;
+  margin-left: 20px;
+}
+
+.alert {
+  color: red;
+  margin-left: 20px;
+}
+
+.na {
+  color: grey;
+  margin-left: 20px;
+}
+
+.warning {
+  color: yellow;
+  margin-left: 20px;
+}

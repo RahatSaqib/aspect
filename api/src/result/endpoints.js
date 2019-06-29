@@ -12,6 +12,7 @@ const {
   listResultTypes,
   updateWorkflowStatus,
   updateTreatmentStatus,
+  listTreatmentStatusTypes,
   updateFormData,
   listWorkflowStatusTypes,
   listWorkflowStatusLog,
@@ -61,6 +62,9 @@ function listResultsBaseConfig() {
           workflowStatusId: Joi.number()
             .allow('')
             .description('Filter for Result Workflow Status ID'),
+          treatmentStatusId: Joi.number()
+            .allow('')
+            .description('Filter for Result Treatment Status ID'),
           jsonFields: Joi.array()
             .max(10)
             .items(Joi.string().max(50))
@@ -557,6 +561,16 @@ const routes = [
         }),
       },
     }),
+  },
+  {
+    method: 'GET',
+    path: '/result/treatment-status-types',
+    handler: asyncHandler(listTreatmentStatusTypes),
+    config: {
+      description: 'Result Treatment Status List',
+      notes: 'Dictionary set of Result Treatment Status options',
+      auth: { scope: ['result:view', 'result:edit'] },
+    },
   },
   {
     method: 'PUT',

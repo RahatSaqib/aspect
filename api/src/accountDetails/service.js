@@ -38,9 +38,10 @@ async function getAccountDetailsForLoggedInUser(request) {
 
 async function saveDetailsForLoggedInUser(request, updatablePersonFields) {
   const username = request.auth.credentials.name
-  const newAccountDetails = request.payload
-
+  let newAccountDetails = request.payload
   let accountDetails = await getAccountDetailsForUsername(username)
+
+  newAccountDetails = _.pickBy(newAccountDetails, acct => acct !== '')
 
   // The account details do not belong to the user that submitted this request!
   if (accountDetails.id !== newAccountDetails.id) {
