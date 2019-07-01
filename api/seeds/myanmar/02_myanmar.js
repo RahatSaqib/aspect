@@ -3,11 +3,11 @@ module.exports = require('../utils').seed(seed, 'myanmar_02_myanmar')
 const ADMIN_PW = '8v5TMxkpzP'
 const RO_PW = 'u4W9wupFBA'
 
-const bcrypt = require('./bcrypt')
-const _ = require('./lodash')
+const bcrypt = require('bcrypt')
+const _ = require('lodash')
 
 const config = require('../../src/config')
-const dashboardWidget = require('./fixtures/dashboardWidget.json.js')
+const dashboardWidget = require('./fixtures/dashboardWidget.json')
 const {
   rowsAsObject,
   getDefaultMessageTypes,

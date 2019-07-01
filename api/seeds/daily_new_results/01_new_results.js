@@ -1,11 +1,11 @@
-const Promise = require('./bluebird')
+const Promise = require('bluebird')
 module.exports = require('../utils').seed(
   seed,
   `daily_new_results_01_new_results${new Date().toISOString()}`
 )
-const patients = require('./fixtures/patients.json.js')
+const patients = require('./fixtures/patients.json')
 const { errorCodes } = require('./fixtures/errorCodes.js')
-const _ = require('./lodash')
+const _ = require('lodash')
 const {
   addMilliseconds,
   addMinutes,
@@ -182,10 +182,10 @@ async function seed(knex) {
   ).id
   // DeviceStatus
   const { approved: deviceStatusApproved } = await allDeviceStatusToId()
-  const { DeviceCount } = await knex('Device')
+  const [{ DeviceCount }] = await knex('Device')
     .where('partnerId', partnerOneId)
     .count('* as DeviceCount')
-  if (deviceTypes.length === DeviceCount) {
+  if (deviceTypes.length > DeviceCount) {
     let i = 0
     await Promise.each(deviceTypes, async elem => {
       const siteData = _.sample(siteDatas)

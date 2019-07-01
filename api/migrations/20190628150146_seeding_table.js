@@ -9,7 +9,7 @@ async function up(knex) {
       .notNullable()
       .defaultTo(knex.fn.now(6))
     seeds.boolean('success').notNullable()
-    seeds.string('errorMessage').nullable()
+    seeds.text('errorMessage').nullable()
   })
 }
 async function down(knex) {

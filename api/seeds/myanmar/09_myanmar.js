@@ -1,11 +1,11 @@
 module.exports = require('../utils').seed(seed, 'myanmar_09_myanmar')
 
-const _ = require('./lodash')
-const Promise = require('./bluebird')
+const _ = require('lodash')
+const Promise = require('bluebird')
 const { rowsAsObject } = require('../utils')
 const { getPermissionModules } = require('../utils')
 
-const geography = require('./fixtures/geography.json.js')
+const geography = require('./fixtures/geography.json')
 
 async function seed(knex) {
   const issueTypes = await rowsAsObject(knex, 'IssueType', 'externalId')

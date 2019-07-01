@@ -1,10 +1,10 @@
 module.exports = require('../utils').seed(seed, 'myanmar_01_initial')
 
-const _ = require('./lodash')
-const bcrypt = require('./bcrypt')
+const _ = require('lodash')
+const bcrypt = require('bcrypt')
 
 const config = require('../../src/config')
-const geography = require('./fixtures/geography.json.js')
+const geography = require('./fixtures/geography.json')
 const {
   allAssayTypeToId,
   allDeviceTypeCategoryToId,

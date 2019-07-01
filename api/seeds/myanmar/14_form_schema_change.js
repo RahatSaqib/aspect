@@ -1,7 +1,7 @@
 module.exports = require('../utils').seed(seed, 'myanmar_14_form_schema_change')
 
-const _ = require('./lodash')
-const Promise = require('./bluebird')
+const _ = require('lodash')
+const Promise = require('bluebird')
 
 const config = require('../../src/config')
 
