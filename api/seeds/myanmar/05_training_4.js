@@ -1,14 +1,11 @@
-module.exports = require('../utils').seed(seed)
+module.exports = require('../utils').seed(seed, 'myanmar_05_training_4')
 const { getDefaultMessageTypes } = require('../utils')
 
 async function seed(knex) {
   const defaultMessageTypes = await getDefaultMessageTypes(knex)
-  const { id: partnerId, plugin: existingPluginName } = await knex('Partner')
+  const { id: partnerId } = await knex('Partner')
     .where({ name: 'Myanmar' })
     .first()
-  if (existingPluginName === 'myanmar') {
-    return
-  }
 
   await knex('AlertTemplate')
     .where({ id: defaultMessageTypes.DeviceOffline.alertTemplateId })

@@ -1,10 +1,10 @@
-module.exports = require('../utils').seed(seed)
+module.exports = require('../utils').seed(seed, 'myanmar_01_initial')
 
-const _ = require('lodash')
-const bcrypt = require('bcrypt')
+const _ = require('./lodash')
+const bcrypt = require('./bcrypt')
 
 const config = require('../../src/config')
-const geography = require('./fixtures/geography.json')
+const geography = require('./fixtures/geography.json.js')
 const {
   allAssayTypeToId,
   allDeviceTypeCategoryToId,
@@ -20,14 +20,6 @@ const now = new Date()
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 
 async function seed(knex) {
-  // Skip this seed file if we already have an admin user
-  const existingAdminUser = await knex('User')
-    .where({ name: 'admin' })
-    .first('id')
-  if (existingAdminUser) {
-    return
-  }
-
   // Create admin user and audit fields
   const [adminId] = await knex('User').insert({
     name: 'admin',

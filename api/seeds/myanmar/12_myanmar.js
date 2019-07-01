@@ -1,4 +1,4 @@
-module.exports = require('../utils').seed(seed)
+module.exports = require('../utils').seed(seed, 'myanmar_12_myanmar')
 
 const { updateDashboardWidgetQueries } = require('../utils_myanmar')
 const {
@@ -6,13 +6,6 @@ const {
 } = require('../dataCategoryLow')
 
 async function seed(knex) {
-  const widget = await knex('DashboardWidget')
-    .where('title', 'children')
-    .first('id')
-
-  if (widget == null) {
-    return
-  }
   await removeChildrenDashboardTarget(knex)
   await updateDashboardWidgetQueries(knex)
   await turnOffEmailSms(knex)

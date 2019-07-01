@@ -1,4 +1,4 @@
-module.exports = require('../utils').seed(seed)
+module.exports = require('../utils').seed(seed, 'development_07_gatesrdt')
 
 const { createResults } = require('../utils_gatesrdt')
 
@@ -10,14 +10,6 @@ async function seed(knex) {
   const { id: assayId, deviceTypeId } = await knex('Assay')
     .where('externalId', 'CommCareGatesRDT')
     .first()
-
-  // Skip this seed file if we already have a result form for the GatesRDT assay
-  const existingResultForm = await knex('ResultForm')
-    .where({ partnerId, assayId })
-    .first('partnerId', 'assayId')
-  if (existingResultForm) {
-    return
-  }
 
   await knex('ResultForm').insert({
     partnerId,

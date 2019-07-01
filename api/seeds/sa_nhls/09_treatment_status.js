@@ -1,4 +1,4 @@
-module.exports = require('../utils').seed(seed)
+module.exports = require('../utils').seed(seed, 'sa_nhls_09_device_capacity')
 
 const treatmentStatus = require('../fixtures/treatmentStatus.json')
 

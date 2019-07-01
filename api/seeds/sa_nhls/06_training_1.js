@@ -1,4 +1,4 @@
-module.exports = require('../utils').seed(seed)
+module.exports = require('../utils').seed(seed, 'sa_nhls_06_training_1.js')
 
 const _ = require('lodash')
 const Promise = require('bluebird')
@@ -13,15 +13,6 @@ async function seed(knex) {
         formSchema: JSON.parse(resultForm.formSchema),
       })
     )
-
-  // Skip if form schemas have already been changed
-  if (
-    _.every(resultForms, resultForm =>
-      _.isNil(resultForm.formSchema.fields.studyID)
-    )
-  ) {
-    return
-  }
 
   await Promise.map(
     resultForms,

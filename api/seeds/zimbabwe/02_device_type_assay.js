@@ -1,4 +1,4 @@
-module.exports = require('../utils').seed(seed)
+module.exports = require('../utils').seed(seed, 'zimbabwe_02_device_type_assay')
 
 const {
   deviceTypeCategoryToId,

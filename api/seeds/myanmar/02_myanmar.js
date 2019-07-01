@@ -1,13 +1,13 @@
-module.exports = require('../utils').seed(seed)
+module.exports = require('../utils').seed(seed, 'myanmar_02_myanmar')
 
 const ADMIN_PW = '8v5TMxkpzP'
 const RO_PW = 'u4W9wupFBA'
 
-const bcrypt = require('bcrypt')
-const _ = require('lodash')
+const bcrypt = require('./bcrypt')
+const _ = require('./lodash')
 
 const config = require('../../src/config')
-const dashboardWidget = require('./fixtures/dashboardWidget.json')
+const dashboardWidget = require('./fixtures/dashboardWidget.json.js')
 const {
   rowsAsObject,
   getDefaultMessageTypes,
@@ -25,14 +25,6 @@ const now = new Date()
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 
 async function seed(knex) {
-  // Skip this seed file if we already have an admin user
-  const existingAdminUser = await knex('User')
-    .where({ name: 'myanmar_admin' })
-    .first('id')
-  if (existingAdminUser) {
-    return
-  }
-
   // Create admin user and audit fields
   const [adminId] = await knex('User').insert({
     name: 'myanmar_admin',

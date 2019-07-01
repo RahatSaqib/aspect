@@ -1,4 +1,4 @@
-module.exports = require('../utils').seed(seed)
+module.exports = require('../utils').seed(seed, 'gates_03_gatesrdt')
 
 const { rowsAsObject, seedIssueEventTriggersForPartner } = require('../utils')
 const {
@@ -7,14 +7,9 @@ const {
 } = require('../../src/shared/dictionary')
 
 async function seed(knex) {
-  // Skip this seed file if we already have an  Issue
-  const [issueTypes, webhookTemplates] = await Promise.all([
-    rowsAsObject(knex, 'IssueType', 'externalId'),
+  const [webhookTemplates] = await Promise.all([
     rowsAsObject(knex, 'WebhookTemplate', 'externalId'),
   ])
-  if (issueTypes.ResultReceived) {
-    return
-  }
 
   const now = new Date()
   const { id: adminId } = await knex('User')

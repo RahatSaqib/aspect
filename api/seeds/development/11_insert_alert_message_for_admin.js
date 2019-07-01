@@ -1,4 +1,7 @@
-module.exports = require('../utils').seed(seed)
+module.exports = require('../utils').seed(
+  seed,
+  'development_11_insert_alert_message_for_admin'
+)
 
 const { subDays, subMonths } = require('date-fns')
 const _ = require('lodash')

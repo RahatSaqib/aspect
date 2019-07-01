@@ -1,4 +1,4 @@
-module.exports = require('../utils').seed(seed)
+module.exports = require('../utils').seed(seed, 'myanmar_04_launch')
 const { rowsAsObject } = require('../utils')
 const {
   featureToId,
@@ -9,13 +9,6 @@ const {
 const now = new Date()
 
 async function seed(knex) {
-  const issueTypeDeviceMaintenance = await knex('IssueType')
-    .where({ externalId: 'DeviceMaintenance' })
-    .first('id')
-  if (issueTypeDeviceMaintenance != null) {
-    return
-  }
-
   const { id: partnerId } = await knex('Partner')
     .where({ name: 'Myanmar' })
     .first()

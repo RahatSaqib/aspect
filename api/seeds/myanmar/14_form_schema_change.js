@@ -1,7 +1,7 @@
-module.exports = require('../utils').seed(seed)
+module.exports = require('../utils').seed(seed, 'myanmar_14_form_schema_change')
 
-const _ = require('lodash')
-const Promise = require('bluebird')
+const _ = require('./lodash')
+const Promise = require('./bluebird')
 
 const config = require('../../src/config')
 
@@ -13,14 +13,6 @@ async function seed(knex) {
         formSchema: JSON.parse(resultForm.formSchema),
       })
     )
-
-  // Skip if form schemas have already been changed
-  if (
-    _.every(resultForms, resultForm => !_.isNil(resultForm.formSchema.fields))
-  ) {
-    return
-  }
-
   const saNhlsPartner = await knex('Partner')
     .where('name', 'South Africa NHLS')
     .first('id')

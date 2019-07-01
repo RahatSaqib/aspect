@@ -1,4 +1,4 @@
-module.exports = require('../utils').seed(seed)
+module.exports = require('../utils').seed(seed, 'myanmar_13_myanmar')
 
 const { seedIssueEventTriggersForPartner } = require('../utils')
 
@@ -7,14 +7,6 @@ const { issueCategoryToId } = require('../../src/shared/dictionary')
 const { updateDashboardWidgetQueries } = require('../utils_myanmar')
 
 async function seed(knex) {
-  const moduleReplacedIssueType = await knex('IssueType')
-    .where('externalId', 'ModuleReplaced')
-    .first('id')
-
-  if (moduleReplacedIssueType) {
-    return
-  }
-
   const { id: partnerId } = await knex('Partner')
     .where({ name: 'Myanmar' })
     .first()

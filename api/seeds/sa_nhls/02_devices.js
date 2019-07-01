@@ -1,4 +1,4 @@
-module.exports = require('../utils').seed(seed)
+module.exports = require('../utils').seed(seed, 'sa_nhls_02_devices')
 
 const _ = require('lodash')
 const labClinic = require('./fixtures/labClinic.json')

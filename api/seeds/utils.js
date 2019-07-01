@@ -61,8 +61,7 @@ function seed(seed, fileName) {
 }
 
 async function runSeed(seed, knex, fileName) {
-  const { seedsRun } = await getSeedsRun(knex)
-
+  const seedsRun = await getSeedsRun(knex)
   if (fileName && (!seedsRun || !seedsRun[fileName])) {
     if (!hasSeededStaticData) {
       await seedStaticData(knex)
@@ -2264,7 +2263,9 @@ async function getSeedsRun(knex) {
     .where({ success: true })
     .select('ap.fileName')
     .reduce((memo, row) => {
-      memo[row.fileName] = true
+      if (!memo[row.fileName]) {
+        memo[row.fileName] = true
+      }
       return memo
     }, {})
 }

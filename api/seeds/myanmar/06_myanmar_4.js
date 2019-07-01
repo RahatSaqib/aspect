@@ -1,17 +1,9 @@
-module.exports = require('../utils').seed(seed)
+module.exports = require('../utils').seed(seed, 'myanmar_06_myanmar_4')
 const { rowsAsObject, getDefaultMessageTypes } = require('../utils')
 
 const now = new Date()
 
 async function seed(knex) {
-  // check if this seed already ran
-  const assayHcv = await knex('Assay')
-    .where('externalId', 'GxHcv')
-    .first()
-
-  if (assayHcv) {
-    return
-  }
   const [issueTypes, defaultMessageTypes] = await Promise.all([
     rowsAsObject(knex, 'IssueType', 'externalId'),
     getDefaultMessageTypes(knex),

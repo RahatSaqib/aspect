@@ -9,14 +9,6 @@ async function seed(knex) {
     .where('externalId', 'CommCareGatesRDT')
     .first()
 
-  // Skip this seed file if we already have a result form for the GatesRDT assay
-  const existingResultForm = await knex('ResultForm')
-    .where({ partnerId, assayId: commCareGatesRdtAssayId })
-    .first('partnerId', 'assayId')
-  if (existingResultForm) {
-    return
-  }
-
   await knex('ResultForm').insert({
     partnerId,
     assayId: commCareGatesRdtAssayId,

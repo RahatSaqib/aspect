@@ -1,4 +1,4 @@
-module.exports = require('../utils').seed(seed)
+module.exports = require('../utils').seed(seed, 'sa_nhls_07_redcap_webhook_fix')
 
 const _ = require('lodash')
 const Promise = require('bluebird')

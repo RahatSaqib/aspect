@@ -1,4 +1,4 @@
-module.exports = require('../utils').seed(seed)
+module.exports = require('../utils').seed(seed, 'sa_nhls_05_users_from_gxalert')
 
 const _ = require('lodash')
 const Promise = require('bluebird')

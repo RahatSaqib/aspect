@@ -1,4 +1,4 @@
-module.exports = require('../utils').seed(seed)
+module.exports = require('../utils').seed(seed, 'sa_nhls_03_notifications')
 
 const { seedNotifications } = require('../utils_sa_nhls')
 

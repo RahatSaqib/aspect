@@ -1,7 +1,7 @@
-module.exports = require('../utils').seed(seed)
+module.exports = require('../utils').seed(seed, 'myanmar_03_training')
 
-const _ = require('lodash')
-const geography = require('./fixtures/geography.json')
+const _ = require('./lodash')
+const geography = require('./fixtures/geography.json.js')
 const { rowsAsObject, getDefaultMessageTypes } = require('../utils')
 
 async function seed(knex) {
@@ -16,18 +16,6 @@ async function seed(knex) {
     rowsAsObject(knex, 'IssueType', 'externalId'),
     getDefaultMessageTypes(knex),
   ])
-
-  const roLuNetworkNotificationType = await knex('NotificationType')
-    .where({
-      jobFunctionId: jobFunctionIdRegionalOfficer,
-      issueTypeId: issueTypes.DeviceOffline.id,
-      level: 1,
-    })
-    .first()
-
-  if (roLuNetworkNotificationType != null) {
-    return
-  }
 
   const now = new Date()
   const { id: adminId } = await knex('User as u')
