@@ -35,8 +35,10 @@ const SELECT_LIST_FIELDS = [
   'rc1.name as resultCategory1Name',
   'rc2.name as resultCategory2Name',
   'rs.name as resultWorkflowStatus',
-  'rts.name as resultTreatmentStatus',
-  'rtas.requiresTreatment as requiresTreatment',
+  'rts.externalId as resultTreatmentStatus',
+  knex.raw(
+    'GREATEST(rtas.requiresTreatment, rtas2.requiresTreatment) as requiresTreatment'
+  ),
   'so.name as sampleOriginSiteName',
   'sp.externalId as sampleId',
   'r.sampleGroup',
@@ -198,7 +200,18 @@ async function getListResults(query, auth) {
     .leftJoin('Sample as sp', 'r.sampleId', 'sp.id')
     .leftJoin('SampleType as stp', 'sp.sampleTypeId', 'stp.id')
     .leftJoin('Site as so', 'sp.originSiteId', 'so.id')
-    .leftJoin('ResultCategoryAssay as rtas', 'r.assayId', 'rtas.assayId')
+    .leftJoin('ResultCategoryAssay as rtas', function() {
+      this.on('r.assayId', 'rtas.assayId').andOn(
+        'r.resultCategory1',
+        'rtas.resultCategoryId'
+      )
+    })
+    .leftJoin('ResultCategoryAssay as rtas2', function() {
+      this.on('r.assayId', 'rtas2.assayId').andOn(
+        'r.resultCategory1',
+        'rtas2.resultCategoryId'
+      )
+    })
     .leftJoin(
       'ResultWorkflowLog as rsl',
       'r.resultWorkflowStatusLogId',
@@ -274,41 +287,22 @@ async function getListResults(query, auth) {
     })
   }
 
+
+  const lastThirtyDays = new Date()
+  let isPastThirtyDays = 0
+
   const newData = _.map(data, v => {
-    if (v.resultTreatmentStatus === 'On Treatment') {
-      return {
-        ...v,
-        treatmentStatus: 'ok',
-      }
-    }
-    if (v.requiresTreatment === 0) {
-      return {
-        ...v,
-        treatmentStatus: 'na',
-      }
-    }
-
-    const lastThirtyDays = new Date()
-
-    //  Subtract 30 days from today
     lastThirtyDays.setDate(lastThirtyDays.getDate() - 30)
+    isPastThirtyDays = lastThirtyDays <= v.endedOn
 
-    // check if endon date pass 30 days
-    const isPastThirtyDays = lastThirtyDays <= v.endedOn
+    v.treatmentStatus =
+      v.resultTreatmentStatus === 'OnTreatment'
+        ? 'ok'
+        : v.requiresTreatment === 1 && !isPastThirtyDays
+          ? 'alert'
+          : v.requiresTreatment === 1 && !isPastThirtyDays ? 'warning' : 'na'
 
-    if (v.requiresTreatment === 1 && !isPastThirtyDays) {
-      return {
-        ...v,
-        treatmentStatus: 'alert',
-      }
-    }
-
-    if (v.requiresTreatment === 1 && isPastThirtyDays) {
-      return {
-        ...v,
-        treatmentStatus: 'warning',
-      }
-    }
+    return v
   })
 
   const result = {

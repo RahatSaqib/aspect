@@ -247,7 +247,7 @@ async function savePerson(request, updatablePersonFields) {
   const { params, payload } = request
 
   _.mapKeys(payload, (value, key) => {
-    if (value == '') {
+    if (value === '') {
       _.set(payload, `${key}`, null)
     }
   })
