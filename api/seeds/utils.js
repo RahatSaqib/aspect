@@ -61,7 +61,7 @@ function seed(seed, fileName) {
 }
 
 async function runSeed(seed, knex, fileName) {
-  const seedsRun = await getSeedsRun(knex)
+  const seedsRun = await getSeedsRan(knex)
   if (fileName && (!seedsRun || !seedsRun[fileName])) {
     if (!hasSeededStaticData) {
       await seedStaticData(knex)
@@ -2258,7 +2258,7 @@ async function setCapacityForExistingDevices(knex) {
     }
   })
 }
-async function getSeedsRun(knex) {
+async function getSeedsRan(knex) {
   return knex('AspectSeed as ap')
     .where({ success: true })
     .select('ap.fileName')
@@ -2285,7 +2285,7 @@ async function seedDeviceMaintenanceType(knex) {
 
 module.exports = {
   seed,
-  getSeedsRun,
+  getSeedsRan,
   rowsAsObject,
   getDefaultMessageTypes,
   seedStockIssues,

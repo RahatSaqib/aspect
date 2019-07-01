@@ -1,8 +1,11 @@
-const Promise = require('bluebird')
-module.exports = require('../utils').seed(seed)
-const patients = require('./fixtures/patients.json')
+const Promise = require('./bluebird')
+module.exports = require('../utils').seed(
+  seed,
+  `daily_new_results_01_new_results${new Date().toISOString()}`
+)
+const patients = require('./fixtures/patients.json.js')
 const { errorCodes } = require('./fixtures/errorCodes.js')
-const _ = require('lodash')
+const _ = require('./lodash')
 const {
   addMilliseconds,
   addMinutes,
