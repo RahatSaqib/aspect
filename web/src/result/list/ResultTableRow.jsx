@@ -2,6 +2,7 @@ import _ from 'lodash'
 import classnames from 'classnames/bind'
 import React from 'react'
 import PermIdentity from '@material-ui/icons/PermIdentity'
+import Tooltip from '@material-ui/core/Tooltip'
 
 import {
   DataTableRow as TableRow,
@@ -34,7 +35,9 @@ const ResultTableRow = ({ intl, extraColumns, result, ...restProps }) => (
     <TableCell>{result.get('resultText')}</TableCell>
     <TableCell hiddenOn="sm">{result.get('resultWorkflowStatus')}</TableCell>
     <TableCell hiddenOn="sm">
-      <PermIdentity className={styles[`${result.get('treatmentStatus')}`]} />
+      <Tooltip title={result.get('resultTreatmentStatusName')}>
+        <PermIdentity className={styles[`${result.get('treatmentStatus')}`]} />
+      </Tooltip>
     </TableCell>
     <TableCell hiddenOn="xs">{result.get('patientId')}</TableCell>
     {extraColumns.map(column => (

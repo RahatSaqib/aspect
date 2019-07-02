@@ -1,6 +1,7 @@
 const Boom = require('boom')
 const _ = require('lodash')
 const dateFormat = require('date-fns/format')
+const { subDays } = require('date-fns')
 const Promise = require('bluebird')
 const {
   knex,
@@ -36,6 +37,7 @@ const SELECT_LIST_FIELDS = [
   'rc2.name as resultCategory2Name',
   'rs.name as resultWorkflowStatus',
   'rts.externalId as resultTreatmentStatus',
+  knex.raw('ifnull(rts.name, "N/A") as resultTreatmentStatusName'),
   knex.raw(
     'GREATEST(rtas.requiresTreatment, rtas2.requiresTreatment) as requiresTreatment'
   ),
@@ -287,22 +289,23 @@ async function getListResults(query, auth) {
     })
   }
 
-  const lastThirtyDays = new Date()
+  const lastThirtyDays = subDays(new Date(), 30)
   let isPastThirtyDays = 0
 
   const newData = _.map(data, v => {
-    lastThirtyDays.setDate(lastThirtyDays.getDate() - 30)
     isPastThirtyDays = lastThirtyDays <= v.endedOn
 
-    v.treatmentStatus =
-      v.resultTreatmentStatus === 'OnTreatment'
-        ? 'ok'
-        : v.requiresTreatment === 1 && !isPastThirtyDays
-        ? 'alert'
-        : v.requiresTreatment === 1 && !isPastThirtyDays
-        ? 'warning'
-        : 'na'
-
+    if (v.resultTreatmentStatus === 'OnTreatment') {
+      v.treatmentStatus = 'ok'
+    } else if (v.resultTreatmentStatus === 'NotPossible') {
+      v.treatmentStatus = 'na'
+    } else if (v.requiresTreatment === 1 && isPastThirtyDays) {
+      v.treatmentStatus = 'alert'
+    } else if (v.requiresTreatment === 1 && !isPastThirtyDays) {
+      v.treatmentStatus = 'warning'
+    } else {
+      v.treatmentStatus = 'na'
+    }
     return v
   })
 
