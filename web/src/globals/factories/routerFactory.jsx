@@ -41,6 +41,7 @@ import RouterDetail from '../../router/detail/RouterDetail'
 import ReporterList from '../../reporter/list/ReporterList'
 import NotFound from '../../error/notFound/NotFound'
 import License from '../../auth/license/License'
+import SampleCharts from '../../components/charts/Samples'
 
 const notImplementedLoggedInFactory = compose(
   loggedInFactory,
@@ -134,6 +135,7 @@ const renderNotificationDetail = loggedInDetailFactory(NotificationDetail)
 const renderReportList = loggedInFactory(ReportList)
 const renderNotFound = signedOutFactory(NotFound)
 const renderLicense = signedOutFactory(License)
+const renderSampleCharts = loggedInFactory(SampleCharts)
 
 export const routerFactory = () => props => (
   <Router history={history}>
@@ -147,6 +149,8 @@ export const routerFactory = () => props => (
           renderRedirectToDashboard(props)
         }
       />
+
+      <Route path="/sample-charts" render={renderSampleCharts} />
 
       <Route path="/login" render={renderLoadableLogin} />
       <Route path="/reset-password" render={renderResetPassword} />
