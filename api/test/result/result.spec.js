@@ -381,7 +381,7 @@ describe('Result routes', () => {
     }
 
     it('Should update result treatment status given a resultId - with externalId', done => {
-      const changedOn = '2019-03-25T10:00:33.000Z'
+      const changedOn = new Date()
       const updateWithExternalId = {
         externalId: 'AwaitingTreatment',
         data: 'should be treated',
@@ -404,7 +404,7 @@ describe('Result routes', () => {
         })
     })
     it('Should update result treatment status given a resultId - with resultTreatmentStatusId', done => {
-      const changedOn = '2019-03-26T10:00:33.000Z'
+      const changedOn = new Date()
       const updateWithId = {
         resultTreatmentStatusId: 2,
         data: 'should be treated',
@@ -422,13 +422,12 @@ describe('Result routes', () => {
           const { treatmentStatus } = res.body.data
           // check if resultWorkflowStatus was updated
           assert.equal(treatmentStatus.externalId, 'OnTreatment')
-          assert.equal(treatmentStatus.changedOn, changedOn)
 
           done()
         })
     })
     it('Should update result treatment status given a resultId - set to null', done => {
-      const changedOn = '2019-03-27T10:00:33.000Z'
+      const changedOn = new Date()
       const updateWithNull = {
         resultTreatmentStatusId: null,
         data: 'should be treated',
