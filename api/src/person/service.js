@@ -308,11 +308,10 @@ async function createPerson(request) {
   const { name } = payload
 
   _.mapKeys(payload, (value, key) => {
-    if (value == '') {
+    if (value === '') {
       _.set(payload, `${key}`, null)
     }
   })
-
 
   // if user with specified 'name' exists - return Boom
   const person = await knex('Person')

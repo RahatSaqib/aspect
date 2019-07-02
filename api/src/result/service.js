@@ -287,7 +287,6 @@ async function getListResults(query, auth) {
     })
   }
 
-
   const lastThirtyDays = new Date()
   let isPastThirtyDays = 0
 
@@ -299,8 +298,10 @@ async function getListResults(query, auth) {
       v.resultTreatmentStatus === 'OnTreatment'
         ? 'ok'
         : v.requiresTreatment === 1 && !isPastThirtyDays
-          ? 'alert'
-          : v.requiresTreatment === 1 && !isPastThirtyDays ? 'warning' : 'na'
+        ? 'alert'
+        : v.requiresTreatment === 1 && !isPastThirtyDays
+        ? 'warning'
+        : 'na'
 
     return v
   })

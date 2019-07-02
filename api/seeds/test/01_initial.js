@@ -22,7 +22,6 @@ const {
   sampleTypeToId,
   resultTypeToId,
   resultWorkflowStatusToId,
-  resultTreatmentStatusToId,
   unitToId,
 } = require('../../src/shared/dictionary')
 const { randomToken } = require('../../src/deviceApi/apiKey')
