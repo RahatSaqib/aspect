@@ -1901,9 +1901,7 @@ async function seed(knex) {
 
     await knex('Result')
       .where('id', resultId)
-      .update({
-        resultWorkflowStatusLogId: lastLogId,
-      })
+      .update({ resultWorkflowStatusLogId: lastLogId })
   })
 
   // Job Functions
