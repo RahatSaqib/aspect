@@ -50,7 +50,7 @@ function calculateDateForResult(
 ) {
   const daysToSubtract =
     resultTimeFrameInDays -
-    Math.ceil(currentResult / totalResults * resultTimeFrameInDays)
+    Math.ceil((currentResult / totalResults) * resultTimeFrameInDays)
 
   return addMilliseconds(
     subDays(now, daysToSubtract),
@@ -1568,8 +1568,6 @@ async function seed(knex) {
   // Result Workflow Status
   const processed = await resultWorkflowStatusToId('Processed')
 
-  const treatment = await resultTreatmentStatusToId('AwaitingTreatment')
-
   // Create geographic hierarchy
   const countries = {}
   const siteDatas = []
@@ -1901,18 +1899,10 @@ async function seed(knex) {
       createdBy: adminId,
     })
 
-    const [lastTreatmentLogId] = await knex('ResultTreatmentStatusLog').insert({
-      resultTreatmentStatusId: treatment,
-      changedOn: subMinutes(now, 90),
-      createdOn: subMinutes(now, 90),
-      createdBy: adminId,
-    })
-
     await knex('Result')
       .where('id', resultId)
       .update({
         resultWorkflowStatusLogId: lastLogId,
-        treatmentStatusLogId: lastTreatmentLogId,
       })
   })
 

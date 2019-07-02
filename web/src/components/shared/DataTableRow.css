@@ -97,21 +97,21 @@
 }
 
 .ok {
-  color: green;
+  color: var(--aspect-color-mantis);
   margin-left: 20px;
 }
 
 .alert {
-  color: red;
+  color: var(--aspect-color-mandy);
   margin-left: 20px;
 }
 
 .na {
-  color: grey;
+  color: var(--aspect-color-grey-5);
   margin-left: 20px;
 }
 
 .warning {
-  color: yellow;
+  color: var(--aspect-color-supernova);
   margin-left: 20px;
 }
