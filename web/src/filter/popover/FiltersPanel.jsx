@@ -19,6 +19,7 @@ import ConsumableSelectField from '../resource/ConsumableSelectField'
 import SiteAutoCompleteField from '../resource/SiteAutoCompleteField'
 import DateRangeSelector from '../date/DateRangeSelector'
 import ResultWorkflowStatusSelectField from '../resource/ResultWorkflowStatusSelectField'
+import ResultTreatmentStatusSelectField from '../resource/ResultTreatmentStatusSelectField'
 import DeviceStatusSelectField from '../resource/DeviceStatusSelectField'
 import DeviceTypeSelectField from '../resource/DeviceTypeSelectField'
 import AspectButton from '../../components/shared/AspectButton'
@@ -90,6 +91,11 @@ const enhance = compose(
     onWorkflowStatusIdChange: ({ onChangeFilters }) => workflowStatusId =>
       onChangeFilters({
         workflowStatusId,
+      }),
+
+    onTreatmentStatusIdChange: ({ onChangeFilters }) => treatmentStatusId =>
+      onChangeFilters({
+        treatmentStatusId,
       }),
 
     onDeviceStatusIdChange: ({ onChangeFilters }) => deviceStatusId =>
@@ -295,6 +301,14 @@ const messages = defineMessages({
     id: 'filter.popover.selectWorkflowStatus',
     defaultMessage: 'Select status...',
   },
+  treatmentStatus: {
+    id: 'filter.popover.workflowStatus',
+    defaultMessage: 'Treatment Status',
+  },
+  selectTreatmentStatus: {
+    id: 'filter.popover.selectWorkflowStatus',
+    defaultMessage: 'Select status...',
+  },
   deviceStatus: {
     id: 'filter.popover.deviceStatus',
     defaultMessage: 'Device Status',
@@ -362,6 +376,7 @@ export const FiltersPanel = ({
   onSampleOriginSiteChange,
   onDateChange,
   onWorkflowStatusIdChange,
+  onTreatmentStatusIdChange,
   onDeviceStatusIdChange,
   onDeviceTypeIdChange,
   onRevokedChange,
@@ -729,6 +744,20 @@ export const FiltersPanel = ({
               floatingLabelFixed
               hintText={intl.formatMessage(messages.selectRevoked)}
               style={{ verticalAlign: 'bottom' }}
+            />
+          </div>
+        )}
+        {config.treatmentStatus && (
+          <div className={cssClasses('Control')}>
+            <ResultTreatmentStatusSelectField
+              allItemText={intl.formatMessage(messages.all)}
+              value={filters.treatmentStatusId}
+              onTreatmentStatusChange={onTreatmentStatusIdChange}
+              floatingLabelFixed
+              hintText={intl.formatMessage(messages.selectTreatmentStatus)}
+              floatingLabelText={intl.formatMessage(messages.treatmentStatus)}
+              style={{ verticalAlign: 'bottom' }}
+              autoWidth
             />
           </div>
         )}

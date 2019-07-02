@@ -1897,6 +1897,7 @@ async function seed(knex) {
       createdOn: subMinutes(now, 90),
       createdBy: adminId,
     })
+
     await knex('Result')
       .where('id', resultId)
       .update({ resultWorkflowStatusLogId: lastLogId })

@@ -157,9 +157,9 @@ export class PersonDetail extends PureComponent {
 
   saveContactDetails = values => {
     const { person, updateSinglePerson, isNew, createPerson } = this.props
-    const vals = _.pickBy(values, v => v !== '')
+
     if (isNew) {
-      return createPerson(vals).then(person => {
+      return createPerson(values).then(person => {
         this.props.showAcknowledgement({
           title: messages.detailsCreatedSuccessfully,
           message: messages.contactDetailsCreatedMessage,
@@ -169,7 +169,7 @@ export class PersonDetail extends PureComponent {
       })
     }
     const contactDetails = new ContactDetails(person)
-    return updateSinglePerson(contactDetails.get('id'), vals).then(() => {
+    return updateSinglePerson(contactDetails.get('id'), values).then(() => {
       this.props.showAcknowledgement({
         title: messages.detailsUpdatedSuccessfully,
         message: messages.contactDetailsUpdatedMessage,

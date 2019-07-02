@@ -246,6 +246,12 @@ async function showPerson(request) {
 async function savePerson(request, updatablePersonFields) {
   const { params, payload } = request
 
+  _.mapKeys(payload, (value, key) => {
+    if (value === '') {
+      _.set(payload, `${key}`, null)
+    }
+  })
+
   // TODO: check access level permissions
   const currentlyLoggedInUser = await userService.getUser(
     request.auth.credentials.name
@@ -300,6 +306,12 @@ async function savePerson(request, updatablePersonFields) {
 async function createPerson(request) {
   const { payload } = request
   const { name } = payload
+
+  _.mapKeys(payload, (value, key) => {
+    if (value === '') {
+      _.set(payload, `${key}`, null)
+    }
+  })
 
   // if user with specified 'name' exists - return Boom
   const person = await knex('Person')
