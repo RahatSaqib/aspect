@@ -2,6 +2,7 @@ const supertest = require('supertest')
 const chai = require('chai')
 const _ = require('lodash')
 const dateFormat = require('date-fns/format')
+const { addMinutes } = require('date-fns')
 
 const shared = require('../utils/sharedToken')
 const { runTestWithKnex } = require('../utils/generatorFunctionUtils')
@@ -403,8 +404,9 @@ describe('Result routes', () => {
           done()
         })
     })
+
     it('Should update result treatment status given a resultId - with resultTreatmentStatusId', done => {
-      const changedOn = new Date()
+      const changedOn = addMinutes(new Date(), 1)
       const updateWithId = {
         resultTreatmentStatusId: 2,
         data: 'should be treated',
@@ -426,8 +428,9 @@ describe('Result routes', () => {
           done()
         })
     })
+
     it('Should update result treatment status given a resultId - set to null', done => {
-      const changedOn = new Date()
+      const changedOn = addMinutes(new Date(), 2)
       const updateWithNull = {
         resultTreatmentStatusId: null,
         data: 'should be treated',
