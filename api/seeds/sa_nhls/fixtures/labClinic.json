@@ -9,15 +9,11 @@
       "devices": [
         {
           "deviceTypeId": "AlereQ",
-          "deviceSerial": "NAT-04000925"
-        },
-        {
-          "deviceTypeId": "AlereQ",
           "deviceSerial": "nat-04001091"
         },
         {
           "deviceTypeId": "AlereQ",
-          "deviceSerial": "NAT-04000553"
+          "deviceSerial": "NAT-04000523"
         },
         {
           "deviceTypeId": "AlereQ",
@@ -39,6 +35,22 @@
         {
           "deviceTypeId": "AlereQ",
           "deviceSerial": "NAT-04000893"
+        },
+        {
+          "deviceTypeId": "AlereQ",
+          "deviceSerial": "NAT-04000537"
+        },
+        {
+          "deviceTypeId": "AlereQ",
+          "deviceSerial": "nat-04000533"
+        },
+        {
+          "deviceTypeId": "AlereQ",
+          "deviceSerial": "nat-04000283"
+        },
+        {
+          "deviceTypeId": "AlereQ",
+          "deviceSerial": "NAT-04000535"
         }
       ]
     },
@@ -47,20 +59,20 @@
       "name": "Charlotte Maxeke Johannesburg Academic Hospital",
       "shortName": "CMJAH",
       "stateName": "Gauteng",
-      "lgaName": "Parktown",
-      "devices": [
-        {
-          "deviceTypeId": "AlereQ",
-          "deviceSerial": "NAT-04001093"
-        }
-      ]
+      "lgaName": "Parktown"
     },
     {
       "externalId": "KPTH",
       "name": "Kalafong KPTH",
       "shortName": "Kalafong KPTH",
       "stateName": "Gauteng",
-      "lgaName": "Kalafong"
+      "lgaName": "Kalafong",
+      "devices": [
+        {
+          "deviceTypeId": "AlereQ",
+          "deviceSerial": "NAT-04001093"
+        }
+      ]
     },
     {
       "externalId": "DNAH",
