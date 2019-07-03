@@ -1,4 +1,4 @@
-module.exports = require('../utils').seed(seed, __filename)
+module.exports = require('../utils').seed(seed, __filename, true)
 
 const _ = require('lodash')
 const Promise = require('bluebird')

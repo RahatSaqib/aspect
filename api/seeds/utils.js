@@ -49,10 +49,13 @@ const foreignKeys = {
 
 // Helper for seeed files. Ru
 let hasSeededStaticData = false
-function seed(seed, fileName) {
+// Set up the file name of the seed with __filename, ensureExecute is to store and not run the seed.
+// This parameter it should be used for the seeds that were run before the seeds tracking functionality.
+// ensureExecute should be set to true if you know that seed was already run before.
+function seed(seed, fileName, ensureExecute = false) {
   return {
     seed(knex) {
-      return runSeed(seed, knex, fileName).catch(err => {
+      return runSeed(seed, knex, fileName, ensureExecute).catch(err => {
         console.error(err) // eslint-disable-line no-console
         throw err
       })
@@ -60,7 +63,7 @@ function seed(seed, fileName) {
   }
 }
 
-async function runSeed(seed, knex, fileName) {
+async function runSeed(seed, knex, fileName, ensureExecute) {
   const seedsRun = await getSeedsRan(knex)
   if (!hasSeededStaticData) {
     await seedStaticData(knex)
@@ -70,6 +73,12 @@ async function runSeed(seed, knex, fileName) {
     fileName = path.relative(__filename, fileName).slice(3)
   }
   if (fileName && (!seedsRun || !seedsRun[fileName])) {
+    if (ensureExecute) {
+      return knex('AspectSeed').insert({
+        fileName,
+        success: true,
+      })
+    }
     return seed(knex)
       .catch(async e => {
         await knex('AspectSeed').insert({

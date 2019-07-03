@@ -1,18 +1,19 @@
 const Promise = require('bluebird')
-module.exports = require('../utils').seed(
-  seed,
-  `${__filename}-${new Date().getFullYear()}-${new Date().getMonth()}-${new Date().getDay()}`
-)
-const patients = require('./fixtures/patients.json')
-const { errorCodes } = require('./fixtures/errorCodes.js')
-const _ = require('lodash')
 const {
   addMilliseconds,
   addMinutes,
   addHours,
   subHours,
   subDays,
+  format,
 } = require('date-fns')
+module.exports = require('../utils').seed(
+  seed,
+  `${__filename}-${format(new Date(), 'YYYY-MM-DD')}`
+)
+const patients = require('./fixtures/patients.json')
+const { errorCodes } = require('./fixtures/errorCodes.js')
+const _ = require('lodash')
 
 const {
   allResultCategoryToId,
