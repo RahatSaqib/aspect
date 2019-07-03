@@ -1,7 +1,7 @@
 const Promise = require('bluebird')
 module.exports = require('../utils').seed(
   seed,
-  `daily_new_results_01_new_results${new Date().toISOString()}`
+  `${__filename}-${new Date().getFullYear()}-${new Date().getMonth()}-${new Date().getDay()}`
 )
 const patients = require('./fixtures/patients.json')
 const { errorCodes } = require('./fixtures/errorCodes.js')

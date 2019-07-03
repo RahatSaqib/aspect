@@ -1,4 +1,4 @@
-module.exports = require('../utils').seed(seed, 'sa_nhls_06_training_1.js')
+module.exports = require('../utils').seed(seed, 'sa_nhls_06_training_1')
 
 const _ = require('lodash')
 const Promise = require('bluebird')

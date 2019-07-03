@@ -1,7 +1,4 @@
-module.exports = require('../utils').seed(
-  seed,
-  'test_10_insert_alert_message_for_admin'
-)
+module.exports = require('../utils').seed(seed, __filename)
 
 const Promise = require('bluebird')
 const { messageStatusToId } = require('../../src/shared/dictionary')

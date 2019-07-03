@@ -1,4 +1,4 @@
-module.exports = require('../utils').seed(seed, 'development_03_bluesense')
+module.exports = require('../utils').seed(seed, __filename)
 
 const bcrypt = require('bcrypt')
 

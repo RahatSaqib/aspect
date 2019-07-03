@@ -1,5 +1,4 @@
-module.exports = require('../utils').seed(seed, 'gates_02_gatesrdt')
-
+module.exports = require('../utils').seed(seed, __filename)
 const _ = require('lodash')
 const bcrypt = require('bcrypt')
 

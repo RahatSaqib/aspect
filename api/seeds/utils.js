@@ -1,7 +1,7 @@
 const Promise = require('bluebird')
 const _ = require('lodash')
 const { readJson } = require('fs-extra')
-
+const path = require('path')
 const { allFeatureToId } = require('../src/shared/dictionary')
 
 const uniqueKeys = {
@@ -62,11 +62,14 @@ function seed(seed, fileName) {
 
 async function runSeed(seed, knex, fileName) {
   const seedsRun = await getSeedsRan(knex)
+  if (!hasSeededStaticData) {
+    await seedStaticData(knex)
+    hasSeededStaticData = true
+  }
+  if (fileName) {
+    fileName = path.relative(__filename, fileName).slice(3)
+  }
   if (fileName && (!seedsRun || !seedsRun[fileName])) {
-    if (!hasSeededStaticData) {
-      await seedStaticData(knex)
-      hasSeededStaticData = true
-    }
     return seed(knex)
       .catch(async e => {
         await knex('AspectSeed').insert({

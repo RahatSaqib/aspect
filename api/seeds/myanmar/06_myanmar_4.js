@@ -1,4 +1,5 @@
-module.exports = require('../utils').seed(seed, 'myanmar_06_myanmar_4')
+module.exports = require('../utils').seed(seed, __filename)
+
 const { rowsAsObject, getDefaultMessageTypes } = require('../utils')
 
 const now = new Date()

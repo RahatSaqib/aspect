@@ -1,4 +1,4 @@
-module.exports = require('../utils').seed(seed, 'test_15_treatment_status')
+module.exports = require('../utils').seed(seed, __filename)
 
 const treatmentStatus = require('../fixtures/treatmentStatus.json')
 

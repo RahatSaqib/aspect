@@ -1,4 +1,4 @@
-module.exports = require('../utils').seed(seed, 'test_09_form_schema_change')
+module.exports = require('../utils').seed(seed, __filename)
 
 const _ = require('lodash')
 const Promise = require('bluebird')

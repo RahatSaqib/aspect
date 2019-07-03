@@ -1,4 +1,5 @@
-module.exports = require('../utils').seed(seed, 'myanmar_04_launch')
+module.exports = require('../utils').seed(seed, __filename)
+
 const { rowsAsObject } = require('../utils')
 const {
   featureToId,

@@ -1,4 +1,4 @@
-module.exports = require('../utils').seed(seed, 'myanmar_08_myanmar')
+module.exports = require('../utils').seed(seed, __filename)
 
 const {
   rowsAsObject,

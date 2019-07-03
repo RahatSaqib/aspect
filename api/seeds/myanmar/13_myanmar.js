@@ -1,4 +1,4 @@
-module.exports = require('../utils').seed(seed, 'myanmar_13_myanmar')
+module.exports = require('../utils').seed(seed, __filename)
 
 const { seedIssueEventTriggersForPartner } = require('../utils')
 

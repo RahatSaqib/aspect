@@ -1,4 +1,4 @@
-module.exports = require('../utils').seed(seed, 'myanmar_12_myanmar')
+module.exports = require('../utils').seed(seed, __filename)
 
 const { updateDashboardWidgetQueries } = require('../utils_myanmar')
 const {

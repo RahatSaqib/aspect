@@ -1,4 +1,4 @@
-module.exports = require('../utils').seed(seed, 'test_04_generic_rdt')
+module.exports = require('../utils').seed(seed, __filename)
 const {
   assayTypeToId,
   deviceTypeCategoryToId,

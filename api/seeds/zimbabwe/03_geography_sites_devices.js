@@ -1,7 +1,4 @@
-module.exports = require('../utils').seed(
-  seed,
-  'zimbabwe_03_geography_sites_devices'
-)
+module.exports = require('../utils').seed(seed, __filename)
 
 const _ = require('lodash')
 const Promise = require('bluebird')

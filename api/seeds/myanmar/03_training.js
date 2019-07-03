@@ -1,4 +1,4 @@
-module.exports = require('../utils').seed(seed, 'myanmar_03_training')
+module.exports = require('../utils').seed(seed, __filename)
 
 const _ = require('lodash')
 const geography = require('./fixtures/geography.json')

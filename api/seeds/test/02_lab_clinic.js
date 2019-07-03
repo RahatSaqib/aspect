@@ -1,5 +1,5 @@
 /* eslint no-await-in-loop: 0 */
-module.exports = require('../utils').seed(seed, 'test_02_lab_clinic')
+module.exports = require('../utils').seed(seed, __filename)
 
 const bcrypt = require('bcrypt')
 const _ = require('lodash')

@@ -1,5 +1,4 @@
-module.exports = require('../utils').seed(seed, 'gates_03_gatesrdt')
-
+module.exports = require('../utils').seed(seed, __filename)
 const { rowsAsObject, seedIssueEventTriggersForPartner } = require('../utils')
 const {
   issueCategoryToId,

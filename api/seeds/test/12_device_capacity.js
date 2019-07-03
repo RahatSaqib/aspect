@@ -1,4 +1,4 @@
-module.exports = require('../utils').seed(seed, 'test_12_device_capacity')
+module.exports = require('../utils').seed(seed, __filename)
 
 const {
   addDeviceCapacities,

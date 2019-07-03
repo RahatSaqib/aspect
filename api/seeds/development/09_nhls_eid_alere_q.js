@@ -1,7 +1,4 @@
-module.exports = require('../utils').seed(
-  seed,
-  'development_09_nhls_eid_alere_q'
-)
+module.exports = require('../utils').seed(seed, __filename)
 
 const _ = require('lodash')
 const bcrypt = require('bcrypt')

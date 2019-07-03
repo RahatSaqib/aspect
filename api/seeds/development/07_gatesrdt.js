@@ -1,4 +1,4 @@
-module.exports = require('../utils').seed(seed, 'development_07_gatesrdt')
+module.exports = require('../utils').seed(seed, __filename)
 
 const { createResults } = require('../utils_gatesrdt')
 

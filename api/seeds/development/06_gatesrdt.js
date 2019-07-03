@@ -1,4 +1,4 @@
-module.exports = require('../utils').seed(seed, 'development_06_gatesrdt')
+module.exports = require('../utils').seed(seed, __filename)
 
 const _ = require('lodash')
 const config = require('../../src/config')

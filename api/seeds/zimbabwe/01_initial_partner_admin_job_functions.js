@@ -1,7 +1,4 @@
-module.exports = require('../utils').seed(
-  seed,
-  'zimbabwe_01_initial_partner_admin_job_functions'
-)
+module.exports = require('../utils').seed(seed, __filename)
 
 const _ = require('lodash')
 const Promise = require('bluebird')

@@ -1,4 +1,4 @@
-module.exports = require('../utils').seed(seed, 'development_13_license.js')
+module.exports = require('../utils').seed(seed, __filename)
 
 const { addLicenses, addLicensePersons } = require('../utils')
 

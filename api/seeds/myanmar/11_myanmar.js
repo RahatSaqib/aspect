@@ -1,4 +1,4 @@
-module.exports = require('../utils').seed(seed, 'myanmar_11_myanmar')
+module.exports = require('../utils').seed(seed, __filename)
 
 const { seedDataCategory } = require('../dataCategoryLow')
 const {
