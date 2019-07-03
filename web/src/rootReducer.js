@@ -29,6 +29,7 @@ import idle from './idle/IdleRedux'
 import jobs from './job/JobRedux'
 import router from './router/RouterRedux'
 import resultWorkflowStatus from './resultWorkflowStatus/ResultWorkflowStatusRedux'
+import resultTreatmentStatus from './resultTreatmentStatus/ResultTreatmentStatusRedux'
 import reporter from './reporter/ReporterRedux'
 
 const appReducer = combineReducers({
@@ -60,6 +61,7 @@ const appReducer = combineReducers({
   report,
   router,
   resultWorkflowStatus,
+  resultTreatmentStatus,
   reporter,
 })
 
@@ -92,6 +94,7 @@ const App = Immutable.Record({
   idle: undefined,
   router: undefined,
   resultWorkflowStatus: undefined,
+  resultTreatmentStatus: undefined,
   reporter: undefined,
 })
 
