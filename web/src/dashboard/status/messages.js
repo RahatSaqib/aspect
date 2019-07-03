@@ -1,3 +1,4 @@
+/* eslint-disable linebreak-style */
 import { defineMessages } from 'react-intl'
 
 export const messages = defineMessages({
@@ -268,6 +269,10 @@ export const messages = defineMessages({
   activeSince: {
     id: 'pages.Status.activeSince',
     defaultMessage: 'Active since',
+  },
+  treatmentTitle: {
+    id: 'pages.Status.treatmentTitle',
+    defaultMessage: 'Confirmed Treatment Tracking',
   },
 })
 

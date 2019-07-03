@@ -1,3 +1,4 @@
+/* eslint-disable linebreak-style */
 import classnames from 'classnames/bind'
 import React from 'react'
 import { compose, lifecycle, withState } from 'recompose'
@@ -13,6 +14,7 @@ import ActionStatus from './ActionStatus'
 import TargetStatus from './TargetStatus'
 import Reports from './Reports'
 import BrowseSiteDropdown from '../../globals/components/BrowseSiteDropdown'
+import TreatmentStatus from './TreatmentStatus'
 
 const cssClasses = classnames.bind(require('./Status.css'))
 
@@ -60,6 +62,14 @@ const Status = ({
       history={history}
       location={location}
       className={cssClasses('Section--summary')}
+    />
+
+    <TreatmentStatus
+      intl={intl}
+      history={history}
+      location={location}
+      className={cssClasses('Section--withDropdown')}
+      title={intl.formatMessage(messages.treatmentTitle)}
     />
 
     <TargetStatus

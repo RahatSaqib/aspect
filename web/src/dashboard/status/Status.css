@@ -427,3 +427,17 @@
     margin: 0 20px;
   }
 }
+
+.Treatment--ArrowLeftContainer {
+  text-align: center;
+  height: 260px;
+  border-right: 1px solid var(--aspect-color-grey-5);
+  padding-top: 105px;
+}
+
+.Treatment--ArrowRightContainer {
+  text-align: center;
+  height: 260px;
+  border-left: 1px solid var(--aspect-color-grey-5);
+  padding-top: 105px;
+}
