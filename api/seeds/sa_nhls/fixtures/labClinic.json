@@ -9,7 +9,7 @@
       "devices": [
         {
           "deviceTypeId": "AlereQ",
-          "deviceSerial": "nat-04001091"
+          "deviceSerial": "nat-04000286"
         },
         {
           "deviceTypeId": "AlereQ",
@@ -17,40 +17,15 @@
         },
         {
           "deviceTypeId": "AlereQ",
-          "deviceSerial": "nat-04000286"
-        }
-      ]
-    },
-    {
-      "externalId": "RMMCH",
-      "name": "Rahima Moosa Mother and Child Hospital",
-      "shortName": "RMMCH",
-      "stateName": "Gauteng",
-      "lgaName": "Coronationville",
-      "devices": [
-        {
-          "deviceTypeId": "AlereQ",
-          "deviceSerial": "NAT-04001094"
+          "deviceSerial": "NAT-04000553"
         },
         {
           "deviceTypeId": "AlereQ",
-          "deviceSerial": "NAT-04000893"
+          "deviceSerial": "NAT-04000925"
         },
         {
           "deviceTypeId": "AlereQ",
-          "deviceSerial": "NAT-04000537"
-        },
-        {
-          "deviceTypeId": "AlereQ",
-          "deviceSerial": "nat-04000533"
-        },
-        {
-          "deviceTypeId": "AlereQ",
-          "deviceSerial": "nat-04000283"
-        },
-        {
-          "deviceTypeId": "AlereQ",
-          "deviceSerial": "NAT-04000535"
+          "deviceSerial": "nat-04001091"
         }
       ]
     },
@@ -59,7 +34,19 @@
       "name": "Charlotte Maxeke Johannesburg Academic Hospital",
       "shortName": "CMJAH",
       "stateName": "Gauteng",
-      "lgaName": "Parktown"
+      "lgaName": "Parktown",
+      "devices": [
+        {
+          "deviceTypeId": "AlereQ",
+          "deviceSerial": "NAT-04001093"
+        }
+      ]
+    },
+    {
+      "externalId": "DNAH",
+      "name": "Dora Nginza Hospital",
+      "shortName": "Dora Nginza Hospital",
+      "stateName": "Eastern Cape"
     },
     {
       "externalId": "KPTH",
@@ -75,10 +62,37 @@
       ]
     },
     {
-      "externalId": "DNAH",
-      "name": "Dora Nginza Hospital",
-      "shortName": "Dora Nginza Hospital",
-      "stateName": "Eastern Cape"
+      "externalId": "RMMCH",
+      "name": "Rahima Moosa Mother and Child Hospital",
+      "shortName": "RMMCH",
+      "stateName": "Gauteng",
+      "lgaName": "Coronationville",
+      "devices": [
+        {
+          "deviceTypeId": "AlereQ",
+          "deviceSerial": "nat-04000283"
+        },
+        {
+          "deviceTypeId": "AlereQ",
+          "deviceSerial": "nat-04000533"
+        },
+        {
+          "deviceTypeId": "AlereQ",
+          "deviceSerial": "NAT-04000535"
+        },
+        {
+          "deviceTypeId": "AlereQ",
+          "deviceSerial": "NAT-04000537"
+        },
+        {
+          "deviceTypeId": "AlereQ",
+          "deviceSerial": "NAT-04000893"
+        },
+        {
+          "deviceTypeId": "AlereQ",
+          "deviceSerial": "NAT-04001094"
+        }
+      ]
     }
   ]
 }
