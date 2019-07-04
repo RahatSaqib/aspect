@@ -1,4 +1,4 @@
-module.exports = require('../utils').seed(seed, __filename, true)
+module.exports = require('../utils').seed(seed, __filename)
 
 const _ = require('lodash')
 const Promise = require('bluebird')
@@ -13,6 +13,13 @@ async function seed(knex) {
         formSchema: JSON.parse(resultForm.formSchema),
       })
     )
+
+  // Skip if form schemas have already been changed
+  if (
+    _.every(resultForms, resultForm => !_.isNil(resultForm.formSchema.fields))
+  ) {
+    return
+  }
   const saNhlsPartner = await knex('Partner')
     .where('name', 'South Africa NHLS')
     .first('id')
