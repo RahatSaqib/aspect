@@ -8,6 +8,18 @@ const {
 } = require('../utils')
 
 async function seed(knex) {
+  // check if seed already ran:
+  const issueTypes = await rowsAsObject(knex, 'IssueType', 'externalId')
+
+  const reagentHealthResolution = await knex('IssueResolutionTrigger')
+    .where({
+      issueTypeId: issueTypes.ReagentHealthError.id,
+    })
+    .first()
+
+  if (reagentHealthResolution != null) {
+    return
+  }
   await seedStockIssuesUpdate(knex, 'Myanmar')
   await seedReagentHealthResolution(knex)
   await updateTemplatesToIncludeDeviceName(knex)

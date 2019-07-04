@@ -1,10 +1,16 @@
-module.exports = require('../utils').seed(seed, __filename, true)
+module.exports = require('../utils').seed(seed, __filename)
 
 const { rowsAsObject, getDefaultMessageTypes } = require('../utils')
 
 const now = new Date()
 
 async function seed(knex) {
+  const { id: partnerId, plugin: existingPluginName } = await knex('Partner')
+    .where({ name: 'Myanmar' })
+    .first()
+  if (existingPluginName === 'myanmar') {
+    return
+  }
   const [issueTypes, defaultMessageTypes] = await Promise.all([
     rowsAsObject(knex, 'IssueType', 'externalId'),
     getDefaultMessageTypes(knex),
@@ -121,11 +127,6 @@ async function seed(knex) {
     module: 'browse',
     activity: 'view',
   })
-
-  const { id: partnerId } = await knex('Partner')
-    .where({ name: 'Myanmar' })
-    .first()
-
   // Issue Resolution Triggers
   await knex('IssueResolutionTrigger').insert([
     {

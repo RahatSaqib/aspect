@@ -17,6 +17,12 @@ async function seed(knex) {
     .where('name', 'South Africa NHLS')
     .first('id')
 
+  // Skip if form schemas have already been changed
+  if (
+    _.every(resultForms, resultForm => !_.isNil(resultForm.formSchema.fields))
+  ) {
+    return
+  }
   await Promise.map(
     resultForms,
     resultForm => {

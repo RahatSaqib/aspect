@@ -1,4 +1,4 @@
-module.exports = require('../utils').seed(seed, __filename, true)
+module.exports = require('../utils').seed(seed, __filename)
 
 const _ = require('lodash')
 const bcrypt = require('bcrypt')
@@ -20,6 +20,13 @@ const now = new Date()
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 
 async function seed(knex) {
+  // Skip this seed file if we already have an admin user
+  const existingAdminUser = await knex('User')
+    .where({ name: 'admin' })
+    .first('id')
+  if (existingAdminUser) {
+    return
+  }
   // Create admin user and audit fields
   const [adminId] = await knex('User').insert({
     name: 'admin',

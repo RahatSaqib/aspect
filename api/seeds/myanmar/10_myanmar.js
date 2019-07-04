@@ -6,6 +6,17 @@ async function seed(knex) {
   const { id: partnerId } = await knex('Partner')
     .where({ name: 'Myanmar' })
     .first()
+
+  // check if this seed already ran
+  const issueResolutionTrigger = await knex('IssueResolutionTrigger')
+    .where({ partnerId })
+    .whereRaw(
+      'resolutionConditions->>"$.evaluationParameter" = "resolveIssueStockout"'
+    )
+    .first()
+  if (issueResolutionTrigger) {
+    return
+  }
   const now = new Date()
   const issueTypes = await rowsAsObject(knex, 'IssueType', 'externalId')
 

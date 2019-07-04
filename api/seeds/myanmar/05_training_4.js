@@ -1,4 +1,4 @@
-module.exports = require('../utils').seed(seed, __filename, true)
+module.exports = require('../utils').seed(seed, __filename)
 
 const { getDefaultMessageTypes } = require('../utils')
 

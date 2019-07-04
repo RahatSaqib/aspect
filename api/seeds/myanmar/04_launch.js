@@ -1,4 +1,4 @@
-module.exports = require('../utils').seed(seed, __filename, true)
+module.exports = require('../utils').seed(seed, __filename)
 
 const { rowsAsObject } = require('../utils')
 const {
@@ -10,6 +10,12 @@ const {
 const now = new Date()
 
 async function seed(knex) {
+  const issueTypeDeviceMaintenance = await knex('IssueType')
+    .where({ externalId: 'DeviceMaintenance' })
+    .first('id')
+  if (issueTypeDeviceMaintenance != null) {
+    return
+  }
   const { id: partnerId } = await knex('Partner')
     .where({ name: 'Myanmar' })
     .first()

@@ -1,4 +1,4 @@
-module.exports = require('../utils').seed(seed, __filename, true)
+module.exports = require('../utils').seed(seed, __filename)
 
 const {
   rowsAsObject,
@@ -10,6 +10,15 @@ async function seed(knex) {
   const [issueTypes] = await Promise.all([
     rowsAsObject(knex, 'IssueType', 'externalId'),
   ])
+
+  // check if this seed already ran
+  const issueEscalationTrigger = await knex('IssueEscalationTrigger')
+    .where('issueTypeId', issueTypes.ModuleTemperatureError.id)
+    .first()
+
+  if (issueEscalationTrigger) {
+    return
+  }
 
   const { id: adminId } = await knex('User as u')
     .where({ 'u.name': 'myanmar_admin' })
