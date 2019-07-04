@@ -25,6 +25,7 @@ async function seed(knex) {
     return
   }
 
+  const redCapDateTimeFormat = 'yyyy-MM-dd HH:mm'
   await knex('WebhookTemplate')
     .where('id', redCAPWebhookTemplate.id)
     .update({
