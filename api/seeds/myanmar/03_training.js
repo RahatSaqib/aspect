@@ -5,17 +5,6 @@ const geography = require('./fixtures/geography.json')
 const { rowsAsObject, getDefaultMessageTypes } = require('../utils')
 
 async function seed(knex) {
-  const roLuNetworkNotificationType = await knex('NotificationType')
-    .where({
-      jobFunctionId: jobFunctionIdRegionalOfficer,
-      issueTypeId: issueTypes.DeviceOffline.id,
-      level: 1,
-    })
-    .first()
-
-  if (roLuNetworkNotificationType != null) {
-    return
-  }
   const { id: jobFunctionIdRegionalOfficer, partnerId } = await knex(
     'JobFunction as jf'
   )
@@ -27,6 +16,17 @@ async function seed(knex) {
     rowsAsObject(knex, 'IssueType', 'externalId'),
     getDefaultMessageTypes(knex),
   ])
+  const roLuNetworkNotificationType = await knex('NotificationType')
+    .where({
+      jobFunctionId: jobFunctionIdRegionalOfficer,
+      issueTypeId: issueTypes.DeviceOffline.id,
+      level: 1,
+    })
+    .first()
+
+  if (roLuNetworkNotificationType != null) {
+    return
+  }
 
   const now = new Date()
   const { id: adminId } = await knex('User as u')
