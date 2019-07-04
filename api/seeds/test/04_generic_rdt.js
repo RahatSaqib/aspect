@@ -6,6 +6,13 @@ const {
 } = require('../../src/shared/dictionary')
 
 async function seed(knex) {
+  // Skip this seed file if generic RDT device is already set up
+  const existingGenericRdtDeviceType = await knex('DeviceType')
+    .where({ externalId: 'GenericRDT' })
+    .first('id')
+  if (existingGenericRdtDeviceType) {
+    return
+  }
   const deviceTypeCategoryId = await deviceTypeCategoryToId('Lab')
   const assayTypeId = await assayTypeToId('Generic RDT')
   const resultSourceId = await resultSourceToId('DiagnosticDevice')

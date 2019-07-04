@@ -30,7 +30,13 @@ const saltRounds = parseInt(config.passwordSaltRounds, 10)
 
 async function seed(knex) {
   const pluginName = 'myanmar'
-
+  // Skip this seed file if we already have an admin user
+  const existingAdminUser = await knex('User')
+    .where({ name: 'myanmar_admin' })
+    .first('id')
+  if (existingAdminUser) {
+    return
+  }
   // Create admin user and audit fields
   const [adminId] = await knex('User').insert({
     name: 'myanmar_admin',

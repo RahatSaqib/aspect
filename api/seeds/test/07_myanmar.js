@@ -14,6 +14,14 @@ const {
 } = require('../dataCategoryLow')
 
 async function seed(knex) {
+  const alertTemplateWithHideFlag = await knex('AlertTemplate')
+    .where('hideWhenSiteFilterIsSelected', 1)
+    .orWhere('hideWhenSiteFilterIsNotSelected', 1)
+    .first()
+
+  if (alertTemplateWithHideFlag) {
+    return
+  }
   await knex('AlertTemplate')
     .where({
       message:

@@ -58,6 +58,13 @@ function calculateDateForResult(
 }
 
 async function seed(knex) {
+  // Skip this seed file if we already have an admin user
+  const existingAdminUser = await knex('User')
+    .where({ name: 'admin' })
+    .first('id')
+  if (existingAdminUser) {
+    return
+  }
   // Create admin user and audit fields
   const [adminId] = await knex('User').insert({
     name: 'admin',

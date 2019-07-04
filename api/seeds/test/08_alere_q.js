@@ -9,6 +9,14 @@ const {
 } = require('../../src/shared/dictionary')
 
 async function seed(knex) {
+  // Skip this seed file if we already have an AlereFtpConnector Device Type
+  const alereFtpConnectorDeviceType = await knex('DeviceType')
+    .where('externalId', 'AlereFtpConnector')
+    .first('id')
+  if (alereFtpConnectorDeviceType) {
+    return
+  }
+
   const deviceTypeCategoryConnector = await deviceTypeCategoryToId('Connector')
 
   await knex('DeviceType').insert({
