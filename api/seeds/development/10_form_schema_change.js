@@ -13,6 +13,12 @@ async function seed(knex) {
         formSchema: JSON.parse(resultForm.formSchema),
       })
     )
+  // Skip if form schemas have already been changed
+  if (
+    _.every(resultForms, resultForm => !_.isNil(resultForm.formSchema.fields))
+  ) {
+    return
+  }
 
   const saNhlsPartner = await knex('Partner')
     .where('name', 'South Africa NHLS')
