@@ -6,9 +6,14 @@ const {
 } = require('../../src/shared/dictionary')
 
 async function seed(knex) {
-  const [webhookTemplates] = await Promise.all([
+  // Skip this seed file if we already have an  Issue
+  const [issueTypes, webhookTemplates] = await Promise.all([
+    rowsAsObject(knex, 'IssueType', 'externalId'),
     rowsAsObject(knex, 'WebhookTemplate', 'externalId'),
   ])
+  if (issueTypes.ResultReceived) {
+    return
+  }
 
   const now = new Date()
   const { id: adminId } = await knex('User')
