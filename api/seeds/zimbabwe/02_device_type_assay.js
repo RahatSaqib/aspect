@@ -18,6 +18,14 @@ async function seed(knex) {
     (await knex('DeviceType')
       .where('externalId', 'SenaiteLims')
       .first('id')) || {}
+  // skip seed if already run.
+  const existingDeviceType = await knex('DeviceType')
+    .where({
+      externalId: 'SenaiteLims',
+    })
+    .first('id')
+  if (existingDeviceType) return
+
   if (!deviceTypeSenaiteLimsId) {
     await knex('DeviceType').insert({
       externalId: 'SenaiteLims',
