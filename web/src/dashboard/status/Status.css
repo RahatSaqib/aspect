@@ -428,16 +428,44 @@
   }
 }
 
+@media screen and (--lg-viewport) {
+  .Treatment--TitleContainer::after {
+    flex: none;
+  }
+}
+.Treatment--arrow-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 .Treatment--ArrowLeftContainer {
   text-align: center;
-  height: 260px;
+  height: 245px;
   border-right: 1px solid var(--aspect-color-grey-5);
   padding-top: 105px;
 }
-
 .Treatment--ArrowRightContainer {
   text-align: center;
-  height: 260px;
+  height: 245px;
   border-left: 1px solid var(--aspect-color-grey-5);
   padding-top: 105px;
+}
+.Treatment--graph-legend{
+  display: flex;
+  margin: 30px 0;
+}
+.Treatment--graph-legend-item{
+  display: flex;
+  align-items: center;
+  margin-right: 30px;
+}
+.Treatment--graph-legend-item-text {
+  margin: 0 2px 0 5px;
+  font-size: 1.1em;
+}
+
+.Treatment--graph-tooltip-color {
+  width: 15px;
+  height: 15px;
+  margin-right: 5px;
 }

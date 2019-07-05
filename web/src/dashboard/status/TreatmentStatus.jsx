@@ -1,6 +1,6 @@
 /* eslint-disable linebreak-style */
-import _ from 'lodash'
-import _fp from 'lodash/fp'
+// import _ from 'lodash'
+// import _fp from 'lodash/fp'
 import Immutable from 'immutable'
 import classnames from 'classnames/bind'
 import React from 'react'
@@ -9,7 +9,8 @@ import {
   compose,
   withProps,
   lifecycle,
-  withStateHandlers,
+  // withStateHandlers,
+  withHandlers,
   pure,
 } from 'recompose'
 import { connect } from 'react-redux'
@@ -19,39 +20,17 @@ import IconTitle from 'react-icons/lib/fa/pie-chart'
 import IconBarChart from 'react-icons/lib/fa/bar-chart'
 import IconArrowLeft from 'react-icons/lib/md/keyboard-arrow-left'
 import IconArrowRight from 'react-icons/lib/md/keyboard-arrow-right'
+import IconHelp from 'react-icons/lib/md/help'
 import { ResponsiveBar } from '@nivo/bar'
 
-import { findKeyInTree } from '../../shared/utils/dom'
 import { Unit } from '../../components/pureGrids'
 import requirePermissions from '../../components/shared/requirePermissions'
-import { fetchSiteDashboard, fetchDeviceDashboard } from '../DashboardRedux'
+import { fetchSitesForSelectList } from '../../site/SiteRedux'
 import Title from './Title'
 import messages from './messages'
 import StyledDropdown from '../../components/shared/StyledDropdown'
 
 const cssClasses = classnames.bind(require('./Status.css'))
-
-// const EMPTY_LIST = Immutable.List()
-
-const getIssueIdsFromSummaryMap = (key, summaryMap) =>
-  _fp.pipe(
-    _fp.values,
-    _fp.flatMap(_fp.prop([key])),
-    _fp.uniq,
-    _fp.filter(id => !_fp.isNil(id))
-  )(summaryMap)
-
-function getFillColor({ id, activeSiteIds, issueSiteIds }) {
-  if (_.includes(activeSiteIds, id)) {
-    return process.env['--aspect-color-mandy']
-  }
-
-  if (_.includes(issueSiteIds, id)) {
-    return process.env['--aspect-color-supernova']
-  }
-
-  return process.env['--aspect-color-mantis']
-}
 
 const enhance = compose(
   pure,
@@ -68,116 +47,83 @@ const enhance = compose(
   }),
   connect(
     state => ({
-      siteList: state.dashboard.siteList,
-      siteSummaryMap: state.dashboard.siteSummaryMap,
-      deviceList: state.dashboard.deviceList,
-      deviceSummaryMap: state.dashboard.deviceSummaryMap,
+      sitesSelectList: state.site.selectList,
     }),
     bindActionCreators.bind(null, {
-      fetchSiteDashboard,
-      fetchDeviceDashboard,
+      fetchSitesForSelectList,
     })
   ),
   lifecycle({
     componentDidMount() {
-      this.props.fetchSiteDashboard()
-      this.props.fetchDeviceDashboard()
+      this.props.fetchSitesForSelectList()
     },
   }),
-  withStateHandlers(
-    () => ({
-      activeSiteIds: [],
-    }),
-    {
-      onSummaryItemClick: (state, { history }) => (type, event) => {
-        const searchParams = new URLSearchParams()
-        const filtersParams = new URLSearchParams()
-        const ids = `${type}Ids`
-        const { target } = event
-        filtersParams.set(ids, JSON.parse(findKeyInTree(target, ids)))
-        searchParams.set('filters', filtersParams)
-
-        history.push({
-          pathname: `/browse/${type}`,
-          search: searchParams.toString(),
-        })
-      },
-
-      onMouseEnter: () => ({ target }) => ({
-        activeSiteIds: JSON.parse(findKeyInTree(target, 'siteIds')),
-      }),
-      onMouseLeave: ({ activeSiteIds }) => ({ target }) => ({
-        activeSiteIds: _.isEqual(
-          JSON.parse(findKeyInTree(target, 'siteIds')),
-          activeSiteIds
-        )
-          ? []
-          : activeSiteIds,
-      }),
-    }
-  ),
-  withProps(({ siteList, activeSiteIds, siteSummaryMap, deviceSummaryMap }) => {
-    const siteStateAbbrs = siteList.map(it => it.get('stateAbbr')).toSet()
-    const issueSiteIdsFromSiteSummaryMap = getIssueIdsFromSummaryMap(
-      'siteIds',
-      siteSummaryMap.toJS()
-    )
-    const issueSiteIdsFromDeviceSummaryMap = getIssueIdsFromSummaryMap(
-      'siteIds',
-      deviceSummaryMap.toJS()
-    ).map(id => String(id))
-
-    const issueSiteIds = _.uniq(
-      issueSiteIdsFromSiteSummaryMap.concat(issueSiteIdsFromDeviceSummaryMap)
-    )
-
+  withHandlers({
+    onChange: ({ history, location }) => ({ target: { value } }) => {
+console.log('------siteId', value)
+    },
+  }),
+  withProps(({ intl, location, sitesSelectList, theme }) => {
+    const searchParams = new URLSearchParams(location.search)
+    const filtersParams = new URLSearchParams(searchParams.get('filters') || '')
+console.log('____sitesSelectList.items', sitesSelectList.items.toJS())
     return {
-      fill: ({ properties: { postal } }) =>
-        siteStateAbbrs.has(postal) ? '#00c4e0' : '#a4e6f2',
-      points: siteList
-        .map(it => ({
-          id: it.get('name'),
-          siteName: it.get('name'),
-          size: 5,
-          fill: getFillColor({ activeSiteIds, issueSiteIds, id: it.get('id') }),
-          latitude: it.get('latitude'),
-          longitude: it.get('longitude'),
+      theme,
+      isSingleSite:
+        sitesSelectList.items.size === 1 && !sitesSelectList.stateName,
+      source: sitesSelectList.items
+        .map(item => ({
+          value: item.get('id'),
+          label: item.get('name'),
         }))
+        .insert(0, {
+          value: '',
+          label: intl.formatMessage(messages.treatmentAllSites, {
+            region: sitesSelectList.stateName || sitesSelectList.countryName,
+          }),
+        })
         .toJS(),
+      value: sitesSelectList.items
+        .find(
+          it => it.get('id') === filtersParams.get('siteId'),
+          null,
+          Immutable.Map()
+        )
+        .get('id', ''),
     }
   })
 )
 
-const CustomSymbolShape = ({ size, fill }) => (
-  <IconBarChart size={size} color={fill} />
-)
-
 const data = [
-  { period: 'January', '% Confirmed': 50, '% Unaccountable': 10 },
-  { period: 'February', '% Confirmed': 20, '% Unaccountable': 50 },
-  { period: 'March', '% Confirmed': 90, '% Unaccountable': 10 },
-  { period: 'April', '% Confirmed': 50, '% Unaccountable': 30 },
-  { period: 'May', '% Confirmed': 150, '% Unaccountable': 20 },
-  { period: 'June', '% Confirmed': 40, '% Unaccountable': 50 },
+  { period: 'January', confirmed: 50, unaccountable: 10 },
+  { period: 'February', confirmed: 20, unaccountable: 50 },
+  { period: 'March', confirmed: 90, unaccountable: 10 },
+  { period: 'April', confirmed: 50, unaccountable: 30 },
+  { period: 'May', confirmed: 38, unaccountable: 20 },
+  { period: 'June', confirmed: 40, unaccountable: 50 },
 ]
+
 export const TreatmentStatus = ({
-  // intl,
+  history,
+  location,
+  intl,
+
   className,
   title,
-  // fill,
+
+  isSingleSite,
+  source,
+  ...restProps
 }) => {
-  // const withPersistedEvent = fn => type => event => {
-  //   event.persist()
-  //   fn(type, event)
-  // }
-  // const onClick = withPersistedEvent(onItemClick)
+  const keys = ['confirmed', 'unaccountable']
+  const colors = ['rgb(65, 174, 118)', 'grey']
+  const tickSeparatorX = `-${50 / data.length}%`
+
   return (
     <Card className={className}>
-      {/* <Title
-        title={title}
-        icon={<MdDashboard className={cssClasses('Title__Icon')} />}
-      /> */}
-      <div className={cssClasses('TitleContainer')}>
+      <div
+        className={cssClasses('TitleContainer', 'Treatment--TitleContainer')}
+      >
         <Title
           title={title}
           icon={<IconTitle className={cssClasses('Title__Icon')} />}
@@ -188,79 +134,146 @@ export const TreatmentStatus = ({
             'FiltersGroup__Child--dropdown'
           )}
         >
-          <StyledDropdown
-            // value={dateRange}
-            // source={dateRangeList}
-            // onChange={onDateRangeClick}
-          />
+          {source.length > 1 &&
+            (isSingleSite ? (
+              <div className={cssClasses('SiteDropdown__Label')}>
+                {source[1].label}
+              </div>
+            ) : (
+              <StyledDropdown displayEmpty source={source} {...restProps} />
+            ))}
         </div>
+        <Unit sm="1-8" />
       </div>
+
       <div style={{ marginTop: 30 }}>
         <Unit sm="1-8" className={cssClasses('Treatment--ArrowLeftContainer')}>
           <IconArrowLeft size={40} color="grey" />
         </Unit>
         <Unit sm="3-4" style={{ height: 320 }}>
-          <ResponsiveBar
-            data={data}
-            keys={['% Confirmed', '% Unaccountable']}
-            indexBy="period"
-            margin={{ top: 0, right: 0, bottom: 90, left: 0 }}
-            padding={0.01}
-            innerPadding={1}
-            colors={['rgb(65, 174, 118)', 'grey']}
-            borderColor={{ from: 'color', modifiers: [['darker', 1.6]] }}
-            axisTop={null}
-            axisRight={null}
-            axisBottom={{
-              tickSize: 0,
-              tickPadding: 10,
-              tickRotation: 0,
-            }}
-            axisLeft={{
-              tickValues: 2,
-            }}
-            enableGridY={false}
-            enableLabel={false}
-            labelSkipWidth={12}
-            labelSkipHeight={12}
-            labelTextColor={{ from: 'color', modifiers: [['darker', 1.6]] }}
-            legends={[
-              {
-                dataFrom: 'keys',
-                // dataFrom: d => {
-                //   console.log('____', { d })
-                //   return { label: 'aaaaaa', id: '1', color: 'red' }
-                // },
-                anchor: 'bottom-left',
-                direction: 'row',
-                justify: false,
-                translateX: 5,
-                translateY: 80,
-                itemsSpacing: 2,
-                itemWidth: 200,
-                itemHeight: 20,
-                itemDirection: 'left-to-right',
-                itemOpacity: 0.85,
-                symbolSize: 20,
-                effects: [
-                  {
-                    on: 'hover',
-                    style: {
-                      itemOpacity: 1,
-                    },
+          <div style={{ height: 250 }}>
+            <ResponsiveBar
+              data={data}
+              keys={keys}
+              indexBy="period"
+              margin={{ top: 0, right: 0, bottom: 40, left: 0 }}
+              padding={0.01} // between stacks, (ratio)
+              innerPadding={1} // between bars in a stack, (px)
+              colors={colors}
+              axisBottom={{
+                tickSize: 0,
+                tickPadding: 10,
+                tickRotation: 0,
+                renderTick: tick => (
+                  <g
+                    key={tick.key}
+                    transform={`translate(${tick.x},${tick.y + 20})`}
+                  >
+                    {tick.tickIndex > 0 && (
+                      <line
+                        stroke="#b7b7be"
+                        strokeWidth={1}
+                        y1={-20}
+                        y2={15}
+                        x1={tickSeparatorX}
+                        x2={tickSeparatorX}
+                      />
+                    )}
+                    <text
+                      textAnchor="middle"
+                      dominantBaseline="middle"
+                      style={{
+                        fill: '#333',
+                        fontSize: 14,
+                      }}
+                    >
+                      {tick.value}
+                    </text>
+                  </g>
+                ),
+              }}
+              axisLeft={{
+                tickValues: 2,
+              }}
+              enableGridY={false}
+              enableLabel={false}
+              // labelSkipWidth={12}
+              // labelSkipHeight={12}
+              // labelTextColor={{ from: 'color', modifiers: [['darker', 1.6]] }}
+              // legends={[
+              //   {
+              //     dataFrom: 'keys',
+              //     // dataFrom: d => {
+              //     //   console.log('____', { d })
+              //     //   return { label: 'aaaaaa', id: '1', color: 'red' }
+              //     // },
+              //     anchor: 'bottom-left',
+              //     direction: 'row',
+              //     justify: false,
+              //     translateX: 5,
+              //     translateY: 80,
+              //     itemsSpacing: 2,
+              //     itemWidth: 200,
+              //     itemHeight: 20,
+              //     itemDirection: 'left-to-right',
+              //     itemOpacity: 0.85,
+              //     symbolSize: 20,
+              //     effects: [
+              //       {
+              //         on: 'hover',
+              //         style: {
+              //           itemOpacity: 1,
+              //         },
+              //       },
+              //     ],
+              //     symbolShape: CustomSymbolShape,
+              //   },
+              // ]}
+              animate
+              motionStiffness={90}
+              motionDamping={15}
+              tooltip={({ id, value, color, indexValue }) => (
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <div
+                      className={cssClasses('Treatment--graph-tooltip-color')}
+                      style={{ backgroundColor: color }}
+                    />
+                    {`% ${id[0].toUpperCase()}${id.substr(1)} `}
+                  </div>
+                  <div>
+                    {`${indexValue}: `}
+                    <strong>{value}</strong>%
+                  </div>
+                </div>
+              )}
+              theme={{
+                tooltip: {
+                  container: {
+                    background: '#ffffcc',
+                    border: '1px solid #555',
                   },
-                ],
-                symbolShape: CustomSymbolShape,
-                // data: [
-                //   { id: 'Confirmed', label: '11111', color: 'cyan' },
-                //   { id: 'a2', label: '22221', color: 'red' },
-                // ],
-              },
-            ]}
-            animate
-            motionStiffness={90}
-            motionDamping={15}
-          />
+                },
+              }}
+            />
+          </div>
+          <div className={cssClasses('Treatment--graph-legend')}>
+            {keys.map((key, index) => (
+              <div className={cssClasses('Treatment--graph-legend-item')}>
+                <IconBarChart size={20} color={colors[index]} />
+                <span
+                  className={cssClasses('Treatment--graph-legend-item-text')}
+                >
+                  {` % ${key[0].toUpperCase()}${key.substr(1)} `}
+                </span>
+                <IconHelp
+                  size={15}
+                  color="#34717c"
+                  style={{ marginTop: -10, cursor: 'pointer' }}
+                />
+              </div>
+            ))}
+          </div>
         </Unit>
         <Unit sm="1-8" className={cssClasses('Treatment--ArrowRightContainer')}>
           <IconArrowRight size={40} color="grey" />

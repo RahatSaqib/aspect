@@ -274,6 +274,10 @@ export const messages = defineMessages({
     id: 'pages.Status.treatmentTitle',
     defaultMessage: 'Confirmed Treatment Tracking',
   },
+  treatmentAllSites: {
+    id: 'pages.SiteDropdown.allSites',
+    defaultMessage: 'All Sites',
+  },
 })
 
 export default messages
