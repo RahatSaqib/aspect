@@ -27,7 +27,7 @@ const saltRounds = parseInt(config.passwordSaltRounds, 10)
 async function seed(knex) {
   // Skip this seed file if we already have an admin user
   const existingAdminUser = await knex('User')
-    .where({ name: 'admin' })
+    .where({ name: 'myanmar_admin' })
     .first('id')
   if (existingAdminUser) {
     return

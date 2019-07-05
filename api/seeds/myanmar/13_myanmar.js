@@ -11,6 +11,7 @@ async function seed(knex) {
     .where({ name: 'Myanmar' })
     .first()
 
+  if (partnerId) return
   await insertModuleReplacedIssue(knex)
   await seedIssueEventTriggersForPartner(knex, partnerId, {
     issueTypeWhitelist: ['DeviceMaintenance', 'ModuleReplaced'],
