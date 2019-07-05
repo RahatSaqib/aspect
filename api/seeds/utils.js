@@ -49,9 +49,7 @@ const foreignKeys = {
 
 // Helper for seeed files. Ru
 let hasSeededStaticData = false
-// Set up the file name of the seed with __filename, ensureExecute is to store and not run the seed.
-// This parameter it should be used for the seeds that were run before the seeds tracking functionality.
-// ensureExecute should be set to true if you know that seed was already run before.
+// Set up the file name of the seed with __filename.
 function seed(seed, fileName) {
   return {
     seed(knex) {
