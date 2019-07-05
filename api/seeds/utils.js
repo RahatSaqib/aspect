@@ -52,10 +52,10 @@ let hasSeededStaticData = false
 // Set up the file name of the seed with __filename, ensureExecute is to store and not run the seed.
 // This parameter it should be used for the seeds that were run before the seeds tracking functionality.
 // ensureExecute should be set to true if you know that seed was already run before.
-function seed(seed, fileName, skipExecute = false) {
+function seed(seed, fileName) {
   return {
     seed(knex) {
-      return runSeed(seed, knex, fileName, skipExecute).catch(err => {
+      return runSeed(seed, knex, fileName).catch(err => {
         console.error(err) // eslint-disable-line no-console
         throw err
       })
@@ -63,7 +63,7 @@ function seed(seed, fileName, skipExecute = false) {
   }
 }
 
-async function runSeed(seed, knex, fileName, skipExecute) {
+async function runSeed(seed, knex, fileName) {
   const seedsRun = await getSeedsRan(knex)
   if (!hasSeededStaticData) {
     await seedStaticData(knex)
@@ -73,12 +73,6 @@ async function runSeed(seed, knex, fileName, skipExecute) {
     fileName = path.relative(__filename, fileName).slice(3)
   }
   if (fileName && (!seedsRun || !seedsRun[fileName])) {
-    if (skipExecute) {
-      return knex('AspectSeed').insert({
-        fileName,
-        success: true,
-      })
-    }
     return seed(knex)
       .catch(async e => {
         await knex('AspectSeed').insert({
