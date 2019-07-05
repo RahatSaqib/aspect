@@ -1,15 +1,14 @@
-module.exports = require('../utils').seed(seed)
+module.exports = require('../utils').seed(seed, __filename)
+
 const { rowsAsObject, getDefaultMessageTypes } = require('../utils')
 
 const now = new Date()
 
 async function seed(knex) {
-  // check if this seed already ran
-  const assayHcv = await knex('Assay')
-    .where('externalId', 'GxHcv')
+  const { id: partnerId, plugin: existingPluginName } = await knex('Partner')
+    .where({ name: 'Myanmar' })
     .first()
-
-  if (assayHcv) {
+  if (existingPluginName === 'myanmar') {
     return
   }
   const [issueTypes, defaultMessageTypes] = await Promise.all([
@@ -128,11 +127,6 @@ async function seed(knex) {
     module: 'browse',
     activity: 'view',
   })
-
-  const { id: partnerId } = await knex('Partner')
-    .where({ name: 'Myanmar' })
-    .first()
-
   // Issue Resolution Triggers
   await knex('IssueResolutionTrigger').insert([
     {

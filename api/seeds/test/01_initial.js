@@ -1,4 +1,4 @@
-module.exports = require('../utils').seed(seed)
+module.exports = require('../utils').seed(seed, __filename)
 
 const _ = require('lodash')
 const bcrypt = require('bcrypt')
@@ -65,7 +65,6 @@ async function seed(knex) {
   if (existingAdminUser) {
     return
   }
-
   // Create admin user and audit fields
   const [adminId] = await knex('User').insert({
     name: 'admin',
@@ -1593,7 +1592,9 @@ async function seed(knex) {
     countries[country.abbreviation] = countryData
     countryData.states = {}
 
-    const [countryGeographyId] = await knex('Geography').insert({ countryId })
+    const [countryGeographyId] = await knex('Geography').insert({
+      countryId,
+    })
     countryData.geographyId = countryGeographyId
 
     await Promise.each(country.states || [], async state => {
@@ -1800,7 +1801,10 @@ async function seed(knex) {
       resultText: 'HIV Detected (log {1})',
       category1: resultCategoryDetectedId,
     },
-    { resultText: 'HIV Not Detected', category1: resultCategoryNotDetectedId },
+    {
+      resultText: 'HIV Not Detected',
+      category1: resultCategoryNotDetectedId,
+    },
     { resultText: 'No Result', category1: resultCategoryNoResultId },
     { resultText: 'Error', category1: resultCategoryErrorId },
     { resultText: 'Invalid', category1: resultCategoryInvalidId },
@@ -1946,11 +1950,23 @@ async function seed(knex) {
       jobFunctionId: jobFunctionIdAdmin,
       permissionId: modules.deviceApiKey.admin,
     },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.device.admin },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.person.admin },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.result.admin },
+    {
+      jobFunctionId: jobFunctionIdAdmin,
+      permissionId: modules.device.admin,
+    },
+    {
+      jobFunctionId: jobFunctionIdAdmin,
+      permissionId: modules.person.admin,
+    },
+    {
+      jobFunctionId: jobFunctionIdAdmin,
+      permissionId: modules.result.admin,
+    },
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.site.admin },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.assay.admin },
+    {
+      jobFunctionId: jobFunctionIdAdmin,
+      permissionId: modules.assay.admin,
+    },
     {
       jobFunctionId: jobFunctionIdAdmin,
       permissionId: modules.inventory.admin,
@@ -1964,13 +1980,31 @@ async function seed(knex) {
       permissionId: modules.issue.admin,
     },
     { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.task.admin },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.report.admin },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.browse.view },
-    { jobFunctionId: jobFunctionIdAdmin, permissionId: modules.reporter.admin },
+    {
+      jobFunctionId: jobFunctionIdAdmin,
+      permissionId: modules.report.admin,
+    },
+    {
+      jobFunctionId: jobFunctionIdAdmin,
+      permissionId: modules.browse.view,
+    },
+    {
+      jobFunctionId: jobFunctionIdAdmin,
+      permissionId: modules.reporter.admin,
+    },
 
-    { jobFunctionId: jobFunctionIdManager, permissionId: modules.site.edit },
-    { jobFunctionId: jobFunctionIdManager, permissionId: modules.device.edit },
-    { jobFunctionId: jobFunctionIdManager, permissionId: modules.assay.edit },
+    {
+      jobFunctionId: jobFunctionIdManager,
+      permissionId: modules.site.edit,
+    },
+    {
+      jobFunctionId: jobFunctionIdManager,
+      permissionId: modules.device.edit,
+    },
+    {
+      jobFunctionId: jobFunctionIdManager,
+      permissionId: modules.assay.edit,
+    },
     {
       jobFunctionId: jobFunctionIdManager,
       permissionId: modules.inventory.edit,
@@ -1980,18 +2014,27 @@ async function seed(knex) {
       permissionId: modules.reporter.edit,
     },
 
-    { jobFunctionId: jobFunctionIdPartnerTwo, permissionId: modules.site.edit },
+    {
+      jobFunctionId: jobFunctionIdPartnerTwo,
+      permissionId: modules.site.edit,
+    },
     {
       jobFunctionId: jobFunctionIdPartnerTwo,
       permissionId: modules.device.edit,
     },
 
-    { jobFunctionId: jobFunctionIdClinician, permissionId: modules.site.view },
+    {
+      jobFunctionId: jobFunctionIdClinician,
+      permissionId: modules.site.view,
+    },
     {
       jobFunctionId: jobFunctionIdClinician,
       permissionId: modules.device.view,
     },
-    { jobFunctionId: jobFunctionIdClinician, permissionId: modules.assay.view },
+    {
+      jobFunctionId: jobFunctionIdClinician,
+      permissionId: modules.assay.view,
+    },
     {
       jobFunctionId: jobFunctionIdClinician,
       permissionId: modules.inventory.view,
@@ -2057,7 +2100,10 @@ async function seed(knex) {
 
     { jobFunctionId: jobFunctionIdPartnerTwo, widgetId: widgetIds.sites },
     { jobFunctionId: jobFunctionIdPartnerTwo, widgetId: widgetIds.devices },
-    { jobFunctionId: jobFunctionIdPartnerTwo, widgetId: widgetIds.contacts },
+    {
+      jobFunctionId: jobFunctionIdPartnerTwo,
+      widgetId: widgetIds.contacts,
+    },
 
     { jobFunctionId: jobFunctionIdClinician, widgetId: widgetIds.sites },
     { jobFunctionId: jobFunctionIdClinician, widgetId: widgetIds.devices },

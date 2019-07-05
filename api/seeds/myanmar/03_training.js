@@ -1,4 +1,4 @@
-module.exports = require('../utils').seed(seed)
+module.exports = require('../utils').seed(seed, __filename)
 
 const _ = require('lodash')
 const geography = require('./fixtures/geography.json')
@@ -16,7 +16,6 @@ async function seed(knex) {
     rowsAsObject(knex, 'IssueType', 'externalId'),
     getDefaultMessageTypes(knex),
   ])
-
   const roLuNetworkNotificationType = await knex('NotificationType')
     .where({
       jobFunctionId: jobFunctionIdRegionalOfficer,

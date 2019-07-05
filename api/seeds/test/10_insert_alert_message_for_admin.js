@@ -1,4 +1,4 @@
-module.exports = require('../utils').seed(seed)
+module.exports = require('../utils').seed(seed, __filename)
 
 const Promise = require('bluebird')
 const { messageStatusToId } = require('../../src/shared/dictionary')

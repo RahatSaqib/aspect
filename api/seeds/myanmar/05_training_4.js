@@ -1,4 +1,5 @@
-module.exports = require('../utils').seed(seed)
+module.exports = require('../utils').seed(seed, __filename)
+
 const { getDefaultMessageTypes } = require('../utils')
 
 async function seed(knex) {

@@ -1,15 +1,19 @@
 const Promise = require('bluebird')
-module.exports = require('../utils').seed(seed)
-const patients = require('./fixtures/patients.json')
-const { errorCodes } = require('./fixtures/errorCodes.js')
-const _ = require('lodash')
 const {
   addMilliseconds,
   addMinutes,
   addHours,
   subHours,
   subDays,
+  format,
 } = require('date-fns')
+module.exports = require('../utils').seed(
+  seed,
+  `${__filename}-${format(new Date(), 'YYYY-MM-dd')}`
+)
+const patients = require('./fixtures/patients.json')
+const { errorCodes } = require('./fixtures/errorCodes.js')
+const _ = require('lodash')
 
 const {
   allResultCategoryToId,
@@ -179,10 +183,10 @@ async function seed(knex) {
   ).id
   // DeviceStatus
   const { approved: deviceStatusApproved } = await allDeviceStatusToId()
-  const { DeviceCount } = await knex('Device')
+  const [{ DeviceCount }] = await knex('Device')
     .where('partnerId', partnerOneId)
     .count('* as DeviceCount')
-  if (deviceTypes.length === DeviceCount) {
+  if (deviceTypes.length > DeviceCount) {
     let i = 0
     await Promise.each(deviceTypes, async elem => {
       const siteData = _.sample(siteDatas)
