@@ -304,7 +304,6 @@ async function seed(knex) {
               : null,
         })
       )
-      console.log('Result and lastlog uqtb', resultId)
       const [lastLogId] = await knex('ResultWorkflowLog').insert({
         resultId,
         resultWorkflowStatusId: ordered,
@@ -313,8 +312,6 @@ async function seed(knex) {
         createdOn: subHours(randomDate, 26),
         createdBy: adminId,
       })
-      console.log('Result and lastlog uqtb', resultId, lastLogId)
-
       await knex('Result')
         .where('id', resultId)
         .update({ resultWorkflowStatusLogId: lastLogId })
@@ -467,7 +464,6 @@ async function seed(knex) {
           })
 
           const [resultId] = await knex('Result').insert(resultObject)
-          console.log('Result  uqeb', resultId)
           const [lastLogId] = await knex('ResultWorkflowLog').insert({
             resultId,
             resultWorkflowStatusId: acknowledged,
@@ -476,8 +472,6 @@ async function seed(knex) {
             createdOn: addHours(randomDate, 1),
             createdBy: adminId,
           })
-          console.log('Result and lastlog uqeb', resultId, lastLogId)
-
           await knex('Result')
             .where('id', resultId)
             .update({ resultWorkflowStatusLogId: lastLogId })
@@ -579,7 +573,6 @@ async function seed(knex) {
             : _.random(1) < 0.5
             ? validated
             : deliverable
-        console.log(resultStatus)
         const [resultId] = await knex('Result').insert(
           Object.assign({}, auditFields, {
             externalId: `UQHIV-${i + lastSampleId}-${j}`,
@@ -622,7 +615,6 @@ async function seed(knex) {
                 : null,
           })
         )
-        console.log('Result uqhiv', resultId)
         const [lastLogId] = await knex('ResultWorkflowLog').insert({
           resultId,
           resultWorkflowStatusId: resultStatus,
@@ -631,7 +623,6 @@ async function seed(knex) {
           createdOn: subHours(randomDate, 3),
           createdBy: adminId,
         })
-        console.log('Result and lastlog hcv', resultId, lastLogId)
         await knex('Result')
           .where('id', resultId)
           .update({ resultWorkflowStatusLogId: lastLogId })
@@ -759,7 +750,6 @@ async function seed(knex) {
                   : null,
             })
           )
-          console.log('Result uq-gx-hcv', resultId)
           const [lastLogId] = await knex('ResultWorkflowLog').insert({
             resultId,
             resultWorkflowStatusId: processed,
@@ -768,7 +758,6 @@ async function seed(knex) {
             createdOn: addMinutes(randomDate, 90),
             createdBy: adminId,
           })
-          console.log('Result and lastlog uq-gx-hcv', resultId, lastLogId)
           await knex('Result')
             .where('id', resultId)
             .update({ resultWorkflowStatusLogId: lastLogId })
@@ -906,7 +895,6 @@ async function seed(knex) {
                   : null,
             })
           )
-          console.log('Result uq-dak-hiv', resultId)
           const [lastLogId] = await knex('ResultWorkflowLog')
             .returning('id')
             .insert({
@@ -917,7 +905,6 @@ async function seed(knex) {
               createdOn: addMinutes(randomDate, 90),
               createdBy: adminId,
             })
-          console.log('Result and lastlog uq-gx-hiv', resultId, lastLogId)
           await knex('Result')
             .where('id', resultId)
             .update({ resultWorkflowStatusLogId: lastLogId })
@@ -1054,7 +1041,6 @@ async function seed(knex) {
               : null,
         })
       )
-      console.log('Result dak hcv', resultId)
       const [lastLogId] = await knex('ResultWorkflowLog')
         .returning('id')
         .insert({
@@ -1065,7 +1051,6 @@ async function seed(knex) {
           createdOn: addMinutes(randomDate, 120),
           createdBy: adminId,
         })
-      console.log('Result dak hcv and lastid', resultId, lastLogId)
       await knex('Result')
         .where('id', resultId)
         .update({ resultWorkflowStatusLogId: lastLogId })
