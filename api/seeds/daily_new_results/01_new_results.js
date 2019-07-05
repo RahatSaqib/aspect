@@ -249,7 +249,7 @@ async function seed(knex) {
       const device = devicesGeneXpert[i % devicesGeneXpert.length]
       const siteData = siteDatas.find(site => site.id === device.siteId)
       const sample = samples[i % samples.length]
-      const randomDate = calculateDateForResult(i, resultMtbNumber, 6000)
+      const randomDate = subDays(new Date(), _.random(5))
 
       // Result source
 
@@ -409,7 +409,7 @@ async function seed(knex) {
       const device = devicesGeneXpert[i % devicesGeneXpert.length]
       const siteData = siteDatas.find(site => site.id === device.siteId)
       const sample = samples[i % samples.length]
-      const randomDate = calculateDateForResult(i, resultEbolaNumber, 6000)
+      const randomDate = subDays(new Date(), _.random(5))
       // Result source
       const {
         DiagnosticDevice: resultSourceDiagnosticId,
@@ -538,7 +538,7 @@ async function seed(knex) {
     const device = devicesGeneXpert[i % devicesGeneXpert.length]
     const siteData = siteDatas.find(site => site.id === device.siteId)
     const sample = samples[i % samples.length]
-    const randomDate = calculateDateForResult(i, resultHivVlNumber, 6000)
+    const randomDate = subDays(new Date(), _.random(5))
 
     // make sure we have at least one result with these status
     const ensureResultIds = [acknowledged, validated, deliverable]
@@ -690,7 +690,7 @@ async function seed(knex) {
       const device = devicesDaktari[i % devicesDaktari.length]
       const siteData = siteDatas.find(site => site.id === device.siteId)
       const sample = samples[i % samples.length]
-      const randomDate = calculateDateForResult(i, resultHcvNumber, 6000)
+      const randomDate = subDays(new Date(), _.random(5))
 
       let j = 0
 
@@ -829,7 +829,7 @@ async function seed(knex) {
       const device = devicesDaktari[i % devicesDaktari.length]
       const siteData = siteDatas.find(site => site.id === device.siteId)
       const sample = samples[i % samples.length]
-      const randomDate = calculateDateForResult(i, resultHivVlNumber, 6000)
+      const randomDate = subDays(new Date(), _.random(5))
 
       let j = 0
 
@@ -977,7 +977,7 @@ async function seed(knex) {
       const device = devicesDaktari[i % devicesDaktari.length]
       const siteData = siteDatas.find(site => site.id === device.siteId)
       const sample = samples[i % samples.length]
-      const randomDate = calculateDateForResult(i, resultHcvNumber, 6000)
+      const randomDate = subDays(new Date(), _.random(5))
 
       let j = 0
 
